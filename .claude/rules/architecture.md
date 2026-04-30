@@ -160,7 +160,7 @@ that chain may import from it.
 |---|---|---|
 | `game-engine` | Node built-ins only | `registry`, `preplan`, `server`, `vue-sfc-loader`, any `apps/*`, `pg` |
 | `registry` | Node built-ins, `zod` | `game-engine`, `preplan`, `server`, `vue-sfc-loader`, any `apps/*`, `pg` |
-| `preplan` | `game-engine` (types only), Node built-ins | `game-engine` (runtime), `registry`, `server`, `vue-sfc-loader`, any `apps/*`, `pg`, `boardgame.io` |
+| `preplan` | `game-engine` — type-only imports at compile time; reads engine state via projections passed in by the host app. Node built-ins. | `game-engine` (runtime), `registry`, `server`, `vue-sfc-loader`, any `apps/*`, `pg`, `boardgame.io` |
 | `vue-sfc-loader` (WP-065) | `@vue/compiler-sfc` (peer), `vue` (peer), `typescript` (optional, test-only), Node built-ins | `game-engine`, `registry`, `preplan`, `server`, any `apps/*`, `pg`, `boardgame.io`, any runtime UI code |
 | `apps/server` | `game-engine`, `registry`, `pg`, Node built-ins | `preplan`, `vue-sfc-loader`, UI packages, browser APIs |
 | `apps/registry-viewer` | `registry`, UI framework, `vue-sfc-loader` (devDep only, test scripts) | `game-engine`, `preplan`, `server`, `pg`, `vue-sfc-loader` at runtime |
@@ -224,6 +224,7 @@ The server never does.
 
 Enforcement: `.claude/rules/game-engine.md`
 
+<!-- canonical phrasing per WP-119 / D-11901; if you edit this section, sync the other two files: docs/ai/ARCHITECTURE.md, docs/02-ARCHITECTURE.md -->
 ### Pre-Planning Layer (Non-Authoritative, Per-Client)
 
 **Purpose:**
@@ -231,9 +232,11 @@ Enforcement: `.claude/rules/game-engine.md`
 - Track speculative reveals for deterministic rewind
 - Detect disruptions and produce invalidation events
 
+**Import / read posture:** type-only imports at compile time; reads engine state via projections passed in by the host app.
+
 **May:**
 - Import engine type definitions (`import type` only, e.g., `CardExtId`)
-- Read engine state projections (read-only snapshots)
+- Read engine state via projections passed in by the host app (no runtime engine import)
 - Use a client-local seedable PRNG for speculative deck shuffling
 - Maintain disposable sandbox state
 
@@ -245,7 +248,7 @@ Enforcement: `.claude/rules/game-engine.md`
 - Use `ctx.random.*` or depend on engine randomness
 - Persist state to any storage
 
-**Direction:** Game Engine -> Pre-Planning (read-only types)
+**Direction:** Game Engine -> Pre-Planning (type-only imports at compile time; reads engine state via projections passed in by the host app)
 
 The engine **does not know** pre-planning exists.
 Pre-planning observes the engine; it never influences it.
@@ -286,7 +289,7 @@ Enforcement: `.claude/rules/server.md`
 ```
 Registry -> Game Engine -> Server -> Client / CLI
                     |
-                    └-> Pre-Planning (types only, read-only)
+                    └-> Pre-Planning (type-only imports; reads engine state via host-app projections)
 
 Shared Tooling (orthogonal):
   packages/vue-sfc-loader/ -> apps/* (test scripts only, never runtime)

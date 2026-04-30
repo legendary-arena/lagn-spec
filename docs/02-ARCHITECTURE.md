@@ -62,14 +62,23 @@
   +-------------------------------+    +-------------------------------+
   |  packages/preplan (shipped)   |    |  packages/vue-sfc-loader      |
   |  Speculative per-client       |    |  Shared Tooling (orthogonal)  |
-  |  planning; TYPE-only imports  |    |  test-time SFC transform;     |
-  |  from engine; non-authoritative|   |  never in production runtime  |
+  |  planning; type-only imports; |    |  test-time SFC transform;     |
+  |  reads engine state via       |    |  never in production runtime  |
+  |  host-app projections;        |    |                               |
+  |  non-authoritative            |    |                               |
   +-------------------------------+    +-------------------------------+
+
+  +-------------------------------+
+  |  apps/replay-producer         |
+  |  CLI tool (cli-producer-app   |
+  |  category, D-6301 / WP-063)   |
+  |  consumes packages/game-engine|
+  |  no DB, no network, no I/O    |
+  +-------------------------------+
 ```
 
-Pre-planning is read-only against engine projections; the engine has no awareness of it (no
-runtime edges into preplan). Shared Tooling is orthogonal — apps consume it only via
-`devDependencies` and test scripts.
+<!-- canonical phrasing per WP-119 / D-11901; if you edit the preplan paragraph below, sync the other two files: docs/ai/ARCHITECTURE.md, .claude/rules/architecture.md -->
+Pre-planning's import / read posture: type-only imports at compile time; reads engine state via projections passed in by the host app. The engine has no awareness of pre-planning (no runtime edges into preplan). Shared Tooling is orthogonal — apps consume it only via `devDependencies` and test scripts. The `apps/replay-producer` CLI is an orthogonal consumer of `packages/game-engine` for replay snapshot production (no DB, no network, no I/O — see D-6301 / WP-063).
 
 ---
 
@@ -79,11 +88,12 @@ runtime edges into preplan). Shared Tooling is orthogonal — apps consume it on
 |---------|---------------|------------|-----------------|
 | `packages/game-engine` | All gameplay logic (phases, moves, rules, endgame) | Node built-ins only | registry, preplan, server, vue-sfc-loader, pg, any apps |
 | `packages/registry` | Card data loading and Zod validation | Node built-ins, zod | game-engine, preplan, server, vue-sfc-loader, pg, any apps |
-| `packages/preplan` | Speculative per-client planning (non-authoritative) | game-engine **types only**, Node built-ins | game-engine runtime, registry, server, boardgame.io, pg, any apps |
+| `packages/preplan` | Speculative per-client planning (non-authoritative) | game-engine — **type-only imports at compile time; reads engine state via projections passed in by the host app**. Node built-ins. | game-engine runtime, registry, server, boardgame.io, pg, any apps |
 | `packages/vue-sfc-loader` | Shared Tooling — Vue SFC transform for `node:test` | `@vue/compiler-sfc`, `vue`, Node built-ins | every other package; never in any app's runtime `dependencies` |
 | `apps/server` | Wiring: registry + rules + (future) Hanko session validation, runs Server() | game-engine, registry, pg | preplan, vue-sfc-loader, UI packages, browser APIs |
 | `apps/registry-viewer` | Read-only card browser SPA (public) | registry, Vue, vue-sfc-loader (devDep) | game-engine, preplan, server, pg, vue-sfc-loader at runtime |
 | `apps/arena-client` | Live-match gameplay client (Vue 3 SPA) | UI framework, `@legendary-arena/preplan` (runtime, per D-5901), vue-sfc-loader (devDep) | game-engine runtime, registry runtime, server, pg, vue-sfc-loader at runtime |
+| `apps/replay-producer` | CLI tool — replay snapshot production (cli-producer-app category, D-6301 / WP-063) | game-engine, Node built-ins | registry, preplan, server, pg, boardgame.io (engine bridges CJS internally), any UI package, any network or DB I/O |
 
 **Violations are bugs.** Dependencies flow strictly downward; the Shared Tooling layer is
 orthogonal and test-only. No layer may reach upward or sideways.
@@ -303,6 +313,12 @@ All builders use `registry: unknown` with local structural interfaces to respect
 | Rules text | PostgreSQL `legendary.rules` | No (seeded at deploy) |
 | Card registry | Server in-memory | No (read-only after load) |
 | Match setup config | boardgame.io matchData | No (input) |
+
+---
+
+## Internationalization
+
+MVP is English-only. i18n is deferred. No `i18n` library is adopted; user-visible strings live where they are used. Future adoption requires a dedicated WP + `DECISIONS.md` entry. Vision §17 covers accessibility (keyboard nav, screen-reader support, high-contrast modes, color-blind indicators), not internationalization. **Authoritative version:** [`docs/ai/ARCHITECTURE.md §Internationalization`](ai/ARCHITECTURE.md#internationalization). **Controlling decision:** D-11901.
 
 ---
 

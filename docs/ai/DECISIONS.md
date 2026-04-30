@@ -11916,6 +11916,22 @@ The amendment was authorized at pre-flight time as a **scope-neutral pre-session
 
 ---
 
+### D-11901 — Internationalization Posture: Deferred (English-Only MVP)
+
+**Decision:** Legendary Arena's MVP ships English-only. Internationalization (i18n) is deferred. No `i18n` library is adopted. User-visible strings live where they are used (Vue templates, server prose, error messages, lobby UI text, etc.) and are NOT abstracted into a translation layer. This decision is anchored in `docs/ai/ARCHITECTURE.md §Internationalization` and forecloses ad-hoc i18n drift across all future WPs until a dedicated i18n-adoption WP supersedes it.
+
+**Forbidden until a future i18n-adoption WP lands:** adopting any i18n library (`vue-i18n`, `@formatjs/intl`, `react-intl`, etc.); adding a `/locales/` directory or per-language string catalogs; introducing `t('...')` translation wrappers or equivalent helpers around user-visible strings; premature key extraction (moving inline strings to a key-based catalog "in preparation for i18n later"); any other ad-hoc string abstraction that creates a partial translation surface without a governance anchor. This is the "soft i18n" creep that this decision exists to prevent.
+
+**Vision §17 scoping note (per WP-119 PS-1).** Vision §17 (Accessibility & Inclusivity) covers keyboard navigation, screen-reader support, high-contrast modes, and color-blind-friendly indicators — it does NOT mention internationalization. The `00.3 §17.1 #9` lint trigger surface groups accessibility and i18n together for governance review purposes, but Vision itself is silent on i18n. D-11901 fills that vision-level gap at the architecture-doc level until a future Vision-amendment WP closes the gap at the vision level (out of scope for WP-119). Future i18n adoption that touches accessibility surfaces (e.g., RTL layout that affects screen-reader order) will trigger full Vision Alignment review under §17, not just D-11901.
+
+**Future i18n adoption requires:** a dedicated WP that explicitly evaluates the i18n library landscape, commits to a specific library + version, defines the translation-key contract, identifies the prompt-locale + fallback policy, addresses the accessibility surface interactions (e.g., RTL screen-reader order per Vision §17), and lands a corresponding `D-NNNNN` entry in this file. The WP MUST cite D-11901 in its Vision Alignment section and either preserve the deferred posture (if scope-bounded) or explicitly supersede D-11901 (if adopting i18n).
+
+**Introduced:** WP-119 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** Vision §17 (lint-trigger anchor only — §17 itself does not commit to any i18n posture); 00.3 §17.1 #9 (the lint-trigger surface that grouped accessibility and i18n together, prompting this gap-fill); 00.3 §7 (forbidden-packages discipline — this decision adds i18n libraries to the locked-out list until a future WP supersedes)
+**Status:** Active
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

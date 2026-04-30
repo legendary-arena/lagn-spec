@@ -203,7 +203,7 @@ C:\pcloud\BB\DEV\legendary-arena\
 |---|---|---|
 | `game-engine` | Node built-ins only | `registry`, `preplan`, `server`, `vue-sfc-loader`, any `apps/*`, `pg` |
 | `registry` | Node built-ins, `zod` | `game-engine`, `preplan`, `server`, `vue-sfc-loader`, any `apps/*`, `pg` |
-| `preplan` | `game-engine` (types only), Node built-ins | `game-engine` (runtime), `registry`, `server`, `vue-sfc-loader`, any `apps/*`, `pg`, `boardgame.io` |
+| `preplan` | `game-engine` — type-only imports at compile time; reads engine state via projections passed in by the host app. Node built-ins. | `game-engine` (runtime), `registry`, `server`, `vue-sfc-loader`, any `apps/*`, `pg`, `boardgame.io` |
 | `vue-sfc-loader` (WP-065) | `@vue/compiler-sfc` (peer), `vue` (peer), `typescript` (optional, test-only), Node built-ins | `game-engine`, `registry`, `preplan`, `server`, any `apps/*`, `pg`, `boardgame.io`, any runtime UI code |
 | `apps/server` | `game-engine`, `registry`, `pg`, Node built-ins | `preplan`, `vue-sfc-loader`, UI packages, browser APIs |
 | `apps/registry-viewer` | `registry`, UI framework, `vue-sfc-loader` (devDep only, test scripts) | `game-engine`, `preplan`, `server`, `pg`, `vue-sfc-loader` at runtime |
@@ -212,7 +212,9 @@ C:\pcloud\BB\DEV\legendary-arena\
 As of WP-059 (D-5901), `apps/arena-client` may runtime-import
 `@legendary-arena/preplan`. This exception is confined to the arena client;
 no other app or package may runtime-import preplan. The preplan package
-itself remains non-authoritative and read-only toward the engine.
+itself remains non-authoritative — its import / read posture is **type-only
+imports at compile time; reads engine state via projections passed in by
+the host app** (see `## Layer Boundary (Authoritative) → Pre-Planning Layer`).
 
 Violations of these rules are bugs. The TypeScript build should catch them via
 `"paths"` restrictions in `tsconfig.json`. The `vue-sfc-loader` row is
@@ -267,17 +269,22 @@ time, never imported by runtime code in any other layer.
   as persistent storage, or load registry data after setup time.
 - Direction: Game Engine wires into `Server()`.
 
+<!-- canonical phrasing per WP-119 / D-11901; if you edit this section, sync the other two files: docs/02-ARCHITECTURE.md, .claude/rules/architecture.md -->
 #### Pre-Planning Layer (Non-Authoritative, Per-Client)
 
 - Provide speculative turn planning for waiting players; track speculative
   reveals for deterministic rewind; detect disruptions and produce
   invalidation events.
-- May import engine **type** definitions (`import type` only); read engine
-  state projections (read-only); use a client-local seedable PRNG.
+- **Import / read posture:** type-only imports at compile time; reads engine
+  state via projections passed in by the host app.
+- May import engine type definitions (`import type` only); read engine
+  state via projections passed in by the host app; use a client-local
+  seedable PRNG.
 - Must NEVER write to `G`, `ctx`, or any authoritative game state; import
   engine runtime code, registry, server, or `boardgame.io`; persist state.
-- Direction: Game Engine supplies read-only types to Pre-Planning. The
-  engine does not know pre-planning exists.
+- Direction: Game Engine supplies type-only imports at compile time to
+  Pre-Planning, which reads engine state via projections passed in by the
+  host app. The engine does not know pre-planning exists.
 
 #### Server Layer (Wiring Only)
 
@@ -314,7 +321,7 @@ time, never imported by runtime code in any other layer.
 ```
 Registry -> Game Engine -> Server -> Client / CLI
                     |
-                    └-> Pre-Planning (types only, read-only)
+                    └-> Pre-Planning (type-only imports; reads engine state via host-app projections)
 
 Shared Tooling (orthogonal):
   packages/vue-sfc-loader/ -> apps/* (test scripts only, never runtime)
@@ -1605,7 +1612,25 @@ These constraints are enforced by:
 
 ---
 
-*Last updated: WP-041 — formal architecture certification pass; version stamp 1.0.0; authority chain locks 01-VISION.md between ARCHITECTURE.md and .claude/rules; Field Classification table verified complete for all 20 G-class Runtime fields (WP-005B through WP-026)*
+## Internationalization
+
+The MVP is English-only. Internationalization (i18n) is deferred. No `i18n` library is adopted; user-visible strings live where they are used (Vue templates, server prose, error messages, lobby UI text, etc.) and are NOT abstracted into a translation layer.
+
+**Vision §17 scoping note.** Vision §17 (Accessibility & Inclusivity) covers keyboard navigation, screen-reader support, high-contrast modes, and color-blind-friendly indicators — it does **not** address internationalization. The `00.3 §17.1 #9` lint trigger surface groups accessibility and i18n together for governance review purposes, but Vision itself is silent on i18n. This section fills the vision-level i18n gap at the architecture-doc level until a future Vision-amendment WP closes the gap at the vision level (out of scope for WP-119).
+
+**Future i18n adoption requires a dedicated WP and a `DECISIONS.md` entry.** Until that WP lands, the following are forbidden across all of `apps/arena-client`, `apps/registry-viewer`, `apps/server`, and any future user-visible surface:
+
+- Adopting any i18n library (`vue-i18n`, `@formatjs/intl`, `react-intl`, etc.)
+- Adding a `/locales/` directory or per-language string catalogs
+- Introducing `t('...')` translation wrappers or equivalent helpers around user-visible strings
+- Premature key extraction — moving inline strings to a key-based catalog "in preparation for i18n later"
+- Any other ad-hoc string abstraction that creates a partial translation surface without a governance anchor
+
+A future i18n WP triggering full Vision Alignment under §17 is required if the WP touches accessibility surfaces (e.g., RTL layout that affects screen-reader order). The controlling decision is `D-11901` in `docs/ai/DECISIONS.md`.
+
+---
+
+*Last updated: WP-041 — formal architecture certification pass; version stamp 1.0.0; authority chain locks 01-VISION.md between ARCHITECTURE.md and .claude/rules; Field Classification table verified complete for all 20 G-class Runtime fields (WP-005B through WP-026); WP-119 — added `## Internationalization` section, aligned preplan import-rule wording across the four surface sites in this file*
 *Maintained by: human developer — update this file when package boundaries or
 data flow decisions change. Do not let a Work Packet change what this file says
 without also updating this file.*
