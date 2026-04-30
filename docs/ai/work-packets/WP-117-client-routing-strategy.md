@@ -301,6 +301,16 @@ Get-ChildItem -Path "docs\ai\execution-checklists" -Filter "EC-*-client-routing-
 
 Select-String -Path "docs\ai\execution-checklists\EC_INDEX.md" -Pattern "client-routing-strategy"
 # Expected: one row if any router adopted; no rows otherwise. The matching row must include a retarget note matching the established precedent format.
+
+# Step 9 — architecture-inventory cross-check (advisory)
+# Confirms the routing decision lands in the deterministic dependency snapshot.
+pnpm arch:inventory:save
+Select-String -Path "docs\ai\audits\architecture-inventory-latest.md" -Pattern "vue-router"
+# Expected (D-11701 = A or D-11702 = A): `vue-router` appears in the
+#   `### Framework — client` table with the locked version.
+# Expected (D-11701 = B/C and D-11702 = B/C): no match in the category
+#   table; `vue-router` stays under "Other candidates ... not currently
+#   installed". Advisory step — not a gate.
 ```
 
 ---

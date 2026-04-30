@@ -48,6 +48,7 @@ processes are holding the relevant ports.
 | [`check-connections.mjs`](check-connections.mjs) | Connection health check — Postgres, R2, game server, Cloudflare Pages, GitHub. Invoked via `pnpm check`. |
 | [`migrate.mjs`](migrate.mjs) | Database migrations. |
 | [`validate-r2.mjs`](validate-r2.mjs) | R2 data validation. Invoked via `pnpm validate`. |
+| [`architecture-inventory.mjs`](architecture-inventory.mjs) | Library adoption snapshot — walks every workspace `package.json`, counts real source imports, and cross-references `docs/02-ARCHITECTURE.md` + `docs/ai/ARCHITECTURE.md`. Markdown to stdout by default; `pnpm arch:inventory:save` writes `docs/ai/audits/architecture-inventory-latest.md`. Feed the report into the gap-analysis prompt for prioritized recommendations. |
 
 ---
 

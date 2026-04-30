@@ -21,7 +21,10 @@
     "validate":             "node scripts/validate-r2.mjs",
     "validate:ps":          "pwsh scripts/Validate-R2.ps1",
     "validate:r2":          "pwsh scripts/Validate-R2.ps1 -R2Mode",
-    "validate:r2:fast":     "pwsh scripts/Validate-R2.ps1 -R2Mode -SkipImages"
+    "validate:r2:fast":     "pwsh scripts/Validate-R2.ps1 -R2Mode -SkipImages",
+
+    "arch:inventory":       "node scripts/architecture-inventory.mjs",
+    "arch:inventory:save":  "node scripts/architecture-inventory.mjs --out docs/ai/audits/architecture-inventory-latest.md"
   },
   "workspaces": [
     "packages/*",
