@@ -1612,6 +1612,14 @@ These constraints are enforced by:
 
 ---
 
+## HTTP API Surface
+
+The authoritative catalog of HTTP endpoints exposed (or coded but not yet exposed) by `apps/server` lives at [`docs/ai/REFERENCE/api-endpoints.md`](REFERENCE/api-endpoints.md). Every endpoint carries one of four `Status` values — `Wired | Shipped-but-unwired | Library-only | Pending` — and uses canonical field names from [`docs/ai/REFERENCE/00.2-data-requirements.md`](REFERENCE/00.2-data-requirements.md). Auth posture per endpoint is one of three values — `guest | handle-required | authenticated-session-required` — per `D-9905`. Update obligations on future API-touching WPs are locked by `D-11804` plus lint §21 (`docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`) plus a one-line rule in `.claude/rules/work-packets.md` (replace-whole-row merge semantics — partial-update is FAIL). The catalog is descriptive, not prescriptive: this section adds a cross-link without re-describing the existing summary text in §"Match Lifecycle: From Config to Game State" or any other prose elsewhere in this file.
+
+<!-- why: top-level cross-link section per WP-118 §6.1 file 2; placement chosen ahead of `## Internationalization` so the catalog appears as a top-level architectural surface alongside other cross-cutting governance docs. -->
+
+---
+
 ## Internationalization
 
 The MVP is English-only. Internationalization (i18n) is deferred. No `i18n` library is adopted; user-visible strings live where they are used (Vue templates, server prose, error messages, lobby UI text, etc.) and are NOT abstracted into a translation layer.

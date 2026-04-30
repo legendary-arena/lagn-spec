@@ -158,6 +158,12 @@ Hanko-wiring WP. No Hanko code lives in the repo as of 2026-04-29.
 
 ---
 
+## HTTP API Surface
+
+The authoritative catalog of HTTP endpoints exposed (or coded but not yet exposed) by `apps/server` lives at [`docs/ai/REFERENCE/api-endpoints.md`](ai/REFERENCE/api-endpoints.md). Every endpoint carries one of four `Status` values — `Wired | Shipped-but-unwired | Library-only | Pending` — and uses canonical field names from [`docs/ai/REFERENCE/00.2-data-requirements.md`](ai/REFERENCE/00.2-data-requirements.md). Auth posture per endpoint is one of three values — `guest | handle-required | authenticated-session-required` — per `D-9905`. Update obligations on future API-touching WPs are locked by `D-11804` plus lint §21 plus a one-line rule in `.claude/rules/work-packets.md` (replace-whole-row merge semantics — partial-update is FAIL). **Authoritative version:** [`docs/ai/ARCHITECTURE.md §HTTP API Surface`](ai/ARCHITECTURE.md#http-api-surface).
+
+---
+
 ## Authentication & Identity
 
 Authentication and identity are **deliberately separated** per Vision §7a and D-9901..D-9905.

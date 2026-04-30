@@ -11916,6 +11916,82 @@ The amendment was authorized at pre-flight time as a **scope-neutral pre-session
 
 ---
 
+### D-11801 — HTTP API Catalog Format: Markdown Table (Option A)
+
+**Decision:** The authoritative HTTP API catalog at `docs/ai/REFERENCE/api-endpoints.md` (introduced by WP-118) is a Markdown document containing one table per endpoint group with columns: `Status`, `Method`, `Path`, `Auth`, `Request Schema (file ref)`, `Response Schema (file ref)`, `Authorizing WP`, `Notes`. No OpenAPI / JSON-Schema / YAML companion is produced under WP-118; future WPs may add an OpenAPI companion alongside the Markdown without breaking the index, but the Markdown remains the human-first source of truth.
+
+**Rationale:** Matches the project's existing reference-doc style (`docs/ai/REFERENCE/00.2-data-requirements.md`, `docs/ai/REFERENCE/02-CODE-CATEGORIES.md` — both Markdown tables with no parallel machine-readable form). Zero new tooling, trivially diff-able in PRs, and the catalog is read by future Work Packet authors first and client developers second — a human-first format matches the actual consumer set. A future OpenAPI / contract-test path is preserved, not foreclosed: when a tooling consumer for OpenAPI emerges (codegen, automated contract tests, third-party integrator), a follow-up WP may add the YAML companion without breaking the Markdown index.
+
+**Rejected:**
+- **Option B (OpenAPI YAML/JSON only):** would unlock future tooling but no consumer exists today; would create a second source of truth that drifts faster than the Markdown.
+- **Option C (Hybrid Markdown + OpenAPI):** doubles maintenance burden until tooling consumes the OpenAPI; deferred to a future WP if/when that tooling lands.
+
+**Introduced:** WP-118 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** `docs/ai/REFERENCE/00.2-data-requirements.md` (canonical-field-name source — the catalog references its field-name spellings verbatim); WP-118 §Decision Points D-11801
+**Status:** Active
+
+---
+
+### D-11802 — HTTP API Error Response Shape: Split (Option C)
+
+**Decision:** The HTTP API catalog records two distinct error-response contracts, one per ownership domain:
+
+1. **boardgame.io built-in lobby endpoints** (`POST /games/legendary-arena/create`, `POST /games/legendary-arena/{matchID}/join`, `GET /games/legendary-arena`, plus any other built-ins surfaced by the framework's Server() wiring) — error semantics are owned by the upstream `boardgame.io` framework. The catalog documents them descriptively only and never reshapes them; reconciliation of any divergence is out of scope for WP-118 and is recorded as a `Drift:` annotation on the affected catalog row.
+2. **Project-owned handlers** (the deferred `GET /api/players/:handle/profile` route per D-10202; the future leaderboard routes per WP-115; any future request-handler-WP-wired routes for handle, replay, competition, etc.) — error responses use the project-specific shape `{ code: string, message: string, requestId?: string }`.
+
+**Optional-field semantics for `requestId`:** `requestId` is `conditional-on-server-trace-injection`. It is **absent** on every project-owned endpoint until a future request-handler WP lands request-ID middleware; it is **present** on every project-owned endpoint once that middleware lands; it is never both present-on-some and absent-on-others within the same release. Catalog rows that diverge from these semantics are recorded as `Drift:` annotations, not normalized in this WP.
+
+**Rationale:** Honest about the existing split — boardgame.io's lobby endpoints are owned by an upstream framework and reshaping them is out of scope for a documentation packet. The project-specific shape `{ code, message, requestId? }` matches the existing `MoveError` `{ code, message, path }` discriminated-union style and preserves a discriminated tag (`code`) for future client-side switching. Drift entries dominate the initial catalog and reconciliation is explicitly out of scope per WP-118 §Non-Negotiable Constraints. This is the only honest description of today's reality; pretending the surface is uniform would either misrepresent boardgame.io behavior or force an out-of-scope reconciliation.
+
+**Rejected:**
+- **Option A (RFC 9457 Problem Details):** standard but reshapes the existing surface; would force `Drift:` annotations on every shipped or shipped-but-unwired endpoint and a follow-up reconciliation WP that WP-118 §Non-Negotiable Constraints already forbids.
+- **Option B (project-specific shape uniformly):** can't apply to boardgame.io's own error surface without reshaping it, which is out of scope for a documentation packet.
+
+**Introduced:** WP-118 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** D-9905 (auth-posture three-value closed set — `requestId` middleware is the natural seam for both); D-10202 (WP-102 profile route deferral — its error responses already use the project-specific shape); WP-118 §Decision Points D-11802
+**Status:** Active
+
+---
+
+### D-11803 — HTTP API Versioning Policy: No Versioning, Catalog Is The Contract (Option B)
+
+**Decision:** HTTP endpoints live at their natural path (`/api/players/:handle/profile`, `/api/leaderboards/scenarios`, `/health`, etc.) with no `/v1/` prefix and no header-based content negotiation. The catalog at `docs/ai/REFERENCE/api-endpoints.md` itself serves as the contract: every consumer (client, CLI script, third party) reads the catalog row to learn the current contract. Breaking changes to a shipped endpoint require a coordinated client + server release plus a `Drift:` annotation in the affected catalog row plus a corresponding `DECISIONS.md` entry justifying the break.
+
+**Rationale:** Matches the current tightly-coupled client+server reality. The only HTTP clients today are `apps/arena-client/`, the registry-viewer's leaderboard fetch when WP-115 lands, and the CLI scripts in `apps/server/scripts/{create-match,list-matches,join-match}.mjs` — all in the same repository and released together. No third-party integrator is on the planning horizon. The decision is fully reversible: adding `/v1/` later is a mechanical rename plus a catalog-row update across each affected endpoint. Path versioning today would be dead-weight ceremony with no operational benefit; deferring versioning until a real consumer needs it preserves optionality.
+
+**Rejected:**
+- **Option A (path versioning `/v1/...`):** correct only if a third-party integrator is on the near horizon; would force a rename of every existing path today for no operational benefit.
+- **Option C (header-based `Accept-Version`):** rare in practice; adds CDN/cache complications and requires versioning logic on every handler before any consumer needs it.
+
+**Introduced:** WP-118 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** `docs/ai/REFERENCE/api-endpoints.md` (the catalog itself is the contract surface this decision relies on); D-11804 (the catalog-update obligation that keeps the contract honest as endpoints evolve); WP-118 §Decision Points D-11803
+**Status:** Active
+
+---
+
+### D-11804 — HTTP API Catalog-Update Obligation: Lint §21 + Work-Packets Rule (Option C, Replace-Whole-Row Merge Semantics)
+
+**Decision:** Every Work Packet that adds, modifies, removes, or changes the status of an HTTP endpoint or a library function reachable via direct import from `apps/server/src/**` MUST update `docs/ai/REFERENCE/api-endpoints.md` in the same commit. Enforcement is belt-and-suspenders, matching the project's existing duplicated-clause governance pattern (the lint-gate clause itself is duplicated across `.claude/CLAUDE.md`, `00.3 §17.1`, and `.claude/rules/work-packets.md`):
+
+1. **Lint-checklist §21 "API Catalog Update"** in `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md` catches missing catalog updates at WP-draft time during the Lint Gate.
+2. **`.claude/rules/work-packets.md`** carries a one-line rule that catches missing catalog updates during execution.
+
+A future API-touching WP that slips past one gate is still caught by the other; both gates must pass.
+
+**Merge semantics — replace-whole-row only.** Any future WP that modifies an existing endpoint must replace the **entire** affected catalog row in the same commit. Partial-update of an existing row (changing one column while leaving others stale) is FAIL under both lint §21 and the `.claude/rules/work-packets.md` rule. Status transitions — for example, the WP-115 row changing from `Pending: WP-115 (STUB DRAFT 2026-04-29)` to `Wired` when WP-115 executes — are full-row replacements, never field-level edits. This semantics rule prevents the slow drift that "I'll only update the Status column for now" would create across many small updates.
+
+**Rationale:** Lint checklist §21 catches at WP-draft time; `.claude/rules/work-packets.md` catches during execution. The marginal maintenance cost (one one-line edit on each side) is dwarfed by the cost of a missed catalog update — the catalog's whole value depends on staying current with the shipped surface, and a single missed update in either direction (catalog claims an endpoint exists when it doesn't, or fails to record one that does) erodes its authority. The replace-whole-row constraint prevents partial-update drift: every status transition or shape change carries the full row's other columns forward intact, so reviewers compare a complete-row before vs. complete-row after rather than chasing a chain of column-by-column edits.
+
+**Rejected:**
+- **Option A (lint-checklist only):** only catches at WP-draft time; an executing session that adds an endpoint mid-flight could bypass it.
+- **Option B (work-packets rule only):** only catches during execution; a WP drafted with a missing catalog row could pass review.
+
+**Introduced:** WP-118 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** D-11801 (Markdown-table format — the rule replaces whole rows of that format); D-11803 (catalog-is-the-contract — this decision is what keeps it honest); 00.3 §21 (the lint surface this decision creates); `.claude/rules/work-packets.md` (the execution-time surface this decision creates); WP-118 §Decision Points D-11804 (with copilot-check re-run FIX #6 merge-semantics lock)
+**Status:** Active
+
+---
+
 ### D-11901 — Internationalization Posture: Deferred (English-Only MVP)
 
 **Decision:** Legendary Arena's MVP ships English-only. Internationalization (i18n) is deferred. No `i18n` library is adopted. User-visible strings live where they are used (Vue templates, server prose, error messages, lobby UI text, etc.) and are NOT abstracted into a translation layer. This decision is anchored in `docs/ai/ARCHITECTURE.md §Internationalization` and forecloses ad-hoc i18n drift across all future WPs until a dedicated i18n-adoption WP supersedes it.

@@ -114,6 +114,25 @@ Source: WORK_INDEX.md, Conventions Established Across WPs
 
 ---
 
+## API Catalog Update Obligation (per D-11804)
+
+Any Work Packet that adds, modifies, removes, or changes the status of an
+HTTP endpoint exposed by `apps/server`, OR that adds, modifies, removes, or
+changes the status of a library function reachable via direct import from
+`apps/server/src/**` recorded in the catalog as `Library-only`, MUST update
+`docs/ai/REFERENCE/api-endpoints.md` in the same commit. The affected row
+is replaced **entirely** (no partial-column updates per D-11804
+replace-whole-row merge semantics — partial-update is FAIL). Closed sets
+are enforced: `Status` ∈ `{ Wired, Shipped-but-unwired, Library-only,
+Pending }`; `Auth` ∈ `{ guest, handle-required,
+authenticated-session-required }` (per D-9905). Canonical field names in
+request and response schemas match
+`docs/ai/REFERENCE/00.2-data-requirements.md` exactly. The companion
+draft-time gate is `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md §21`;
+both gates must pass.
+
+---
+
 ## Adding or Extending Work Packets
 
 Claude may assist only if **all** of the following are done:
