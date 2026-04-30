@@ -11866,6 +11866,56 @@ Option C selected by operator decision 2026-04-29 with the rationale that doc sy
 
 ---
 
+### D-11401 — URL Parameter Names Use Canonical 9-Field Composition Names Verbatim
+
+**Decision:** WP-114's URL-driven setup-preview surface binds exactly five `MatchSetupConfig` composition fields to URL query parameters using the canonical 9-field names verbatim: `schemeId`, `mastermindId`, `villainGroupIds`, `henchmanGroupIds`, `heroDeckIds`. Paraphrases (`scheme`, `mastermind`, `villains`, `heroes`, etc.) are forbidden — the parser does not accept them, the serializer does not emit them, and EC-116 §11 declares paraphrasing a Session Abort Condition.
+
+**Rationale:** WP-091 + WP-093 + WP-113 established the canonical 9-field composition contract. A parallel naming for URL-bound fields would fork the contract — every consumer (parser, serializer, validator, downloaded JSON, future arena-client URL ingestion) would need a translation layer, and the translation would silently rot whenever the canonical contract evolved. Using the canonical names verbatim makes URL params, downloaded JSON keys, and validator error paths share one vocabulary; round-trips between "Copy Setup Link" → reload → "Edit this loadout" → "Download JSON" preserve names without any field mapping.
+
+**Introduced:** WP-114 (Commit A `c059199`, 2026-04-30)
+**Reinforces:** D-9101 (envelope-defaults), D-9301 (heroSelectionMode v1 enum), D-10014 (set-qualified ID format), 00.2 §7 9-field composition lock, .claude/rules/code-style.md §Data Contracts
+**Status:** Active
+
+---
+
+### D-11402 — Count Fields and Envelope Fields Deliberately Not URL-Bound
+
+**Decision:** WP-114's URL parser/serializer (`setupUrlParams.ts`) binds **only** the five composition entity-ID fields. The four composition count fields (`bystandersCount`, `woundsCount`, `officersCount`, `sidekicksCount`) and all envelope fields (`schemaVersion`, `setupId`, `createdAt`, `createdBy`, `seed`, `playerCount`, `themeId`, `expansions`, `heroSelectionMode`) are deliberately omitted from the URL. The composable `useSetupFromUrl` synthesizes a complete `MatchSetupDocument` by combining parsed composition params with envelope defaults imported (not re-declared) from `useLoadoutDraft.ts`.
+
+**Rationale:** Count fields are operator-tunable rather than thematic — surfacing them in URL would invite "what bystander count produces a fair match?" optimization-game URLs that drift from the curated "Game of the Week" intent. Envelope fields are mostly structural metadata (`schemaVersion`, `createdAt`, `createdBy`) or runtime concerns (`seed`) that don't belong in a shareable preview link. The four envelope fields that *could* be URL-meaningful (`themeId`, `expansions`, `heroSelectionMode`, `playerCount`) are reserved for a future-extension WP that explicitly justifies each addition. The synthesized envelope uses fixed-string defaults (`createdAt: "1970-01-01T00:00:00.000Z"`, `seed: "0000000000000000"`, `setupId: "url-preview"`, `createdBy: "system"`) rather than `Date.now()` / `crypto.randomUUID()` because identical URLs MUST yield byte-identical synthetic JSON — the §Goal determinism contract holds at synthesis time even though the engine is never reached.
+
+**Introduced:** WP-114 (Commit A `c059199`, 2026-04-30)
+**Reinforces:** D-11401 (canonical URL keys), D-9101 (envelope-defaults), D-2801 (projection-purity / no clocks / no randomness in projection paths)
+**Status:** Active
+
+---
+
+### D-11403 — Auto-Switch-to-Loadout-Tab Fires Once Per Mount, Not on Every Render
+
+**Decision:** WP-114's `App.vue` auto-switches the active tab to "loadout" on first mount **only** when `hasUrlParams === true`. A `hasAppliedUrlAutoSwitch` boolean ref initialized to `false` gates re-firing — once flipped to `true` after the first switch, the auto-switch never fires again for the page's lifetime. Subsequent user tab navigation (clicking 🃏 Cards / 🎭 Themes / 🧰 Loadout) is preserved without override.
+
+**Rationale:** URL params are a **declarative arrival signal** ("the user shared this preview link with me; show me the preview"), not a **sticky preference** ("always force me onto the Loadout tab"). Re-applying the switch on every render would override the user's manual navigation — a user who arrived via a `?schemeId=...` URL but then clicked 🃏 Cards to look up something specific would be yanked back to Loadout on every reactive update (search input, filter click). One-shot semantics match user expectation: the URL says where to start; subsequent navigation is the user's call. Verified by manual smoke §14.2 (2026-04-30): tab switches to Loadout on first render with URL params; stays on Cards / Themes after manual navigation + reactive update.
+
+**Introduced:** WP-114 (Commit A `c059199`, 2026-04-30)
+**Reinforces:** D-9101 (no persistence in viewer), Vision §10a (Registry Viewer public surface — auto-switch is a UX hint, not a lock)
+**Status:** Active
+
+---
+
+### D-11404 — PS-1 Additive `export` of Six `DEFAULT_*` Constants in `useLoadoutDraft.ts`
+
+**Decision:** WP-114 pre-flight applied a strictly additive `export` keyword to six existing `const` declarations in `apps/registry-viewer/src/composables/useLoadoutDraft.ts` (lines 39–44 post-amendment): `DEFAULT_BYSTANDERS_COUNT`, `DEFAULT_WOUNDS_COUNT`, `DEFAULT_OFFICERS_COUNT`, `DEFAULT_SIDEKICKS_COUNT`, `DEFAULT_PLAYER_COUNT`, `DEFAULT_EXPANSIONS`. The amendment landed at Commit `49e07ec` (`EC-116:` prefix) **before** the WP-114 execution session began — `useLoadoutDraft.ts` is read-only in the execution session and is NOT re-modified in Commit A `c059199`. Logic, signatures, mutator API, `loadFromJson` behavior, `exportToJsonBlob` / `exportFilename`, internal helpers all preserved byte-for-byte from the WP-091 baseline; the only diff is the `export` token on six `const` declarations.
+
+**Rationale:** WP-114's `useSetupFromUrl` composable synthesizes a `MatchSetupDocument` envelope using these six default values. Without the `export`, the composable would either re-declare the constants (breaking the editor/preview drift contract — if editor and preview ever forked, "Edit this loadout" would silently change defaults) or import-via-runtime-introspection (anti-pattern). The drift test in `useSetupFromUrl.test.ts` imports the constants live from `useLoadoutDraft.ts` and asserts the synthesized envelope uses these exact values; failure means defaults forked, breaking round-trip consistency between "Edit this loadout" and the original URL.
+
+The amendment was authorized at pre-flight time as a **scope-neutral pre-session amendment** per the WP-029 D-2902 upstream-producer-modification precedent and the WP-031 D-3103 scope-neutral amendment pattern. Both precedents establish that additive-only modifications to immutable upstream files (no logic / signature / test invariant changes) are permitted at pre-flight time when the consumer WP cannot land without them and the alternative would be either a separate consumer-widening WP (excessive churn) or violation of the immutable-file constraint (worse).
+
+**Introduced:** WP-114 (PS-1 pre-execution amendment, 2026-04-29 at `49e07ec`)
+**Reinforces:** D-2902 (WP-029 upstream-producer-modification precedent), D-3103 (WP-031 scope-neutral amendment pattern), WP-091 immutable-file lock (preserved on every other line)
+**Status:** Active
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
