@@ -21,6 +21,14 @@ import GlossaryPanel  from "./components/GlossaryPanel.vue";
 import ImageLightbox  from "./components/ImageLightbox.vue";
 import ViewModeToggle from "./components/ViewModeToggle.vue";
 import LoadoutBuilder from "./components/LoadoutBuilder.vue";
+import LoadoutPreview from "./components/LoadoutPreview.vue";
+import { useSetupFromUrl } from "./composables/useSetupFromUrl";
+import type {
+  MatchSetupDocument,
+  MatchSetupValidationError,
+  SetupCompositionInput,
+} from "@legendary-arena/registry/setupContract";
+import type { SetupMatchedCount } from "./composables/useSetupFromUrl";
 
 // ── Glossary panel ───────────────────────────────────────────────────────────
 const glossary = useGlossary();
@@ -67,6 +75,33 @@ const rulebookPdfUrl = ref<string | null>(null);
 // switcher is extended in place.
 type ActiveView = "cards" | "themes" | "loadout";
 const activeView = ref<ActiveView>("cards");
+
+// ── URL-driven setup preview (WP-114) ────────────────────────────────────────
+// why: A single useSetupFromUrl instance per page prevents duplicate URL
+// parsing and duplicate validator runs across the parent (auto-switch
+// decision below) and the child (<LoadoutPreview> render). Instantiated
+// lazily inside onMounted because the composable needs the real
+// CardRegistryReader and registry.value is null until the R2 fetch
+// resolves. The composable reads window.location.search exactly once at
+// instantiation, so deferring to post-registry-load does not change the
+// declarative arrival semantics.
+const setupHasUrlParams = ref(false);
+const setupPreviewDocument = ref<MatchSetupDocument | null>(null);
+const setupValidationErrors = ref<MatchSetupValidationError[]>([]);
+const setupMatchedCount = ref<SetupMatchedCount>({
+  schemes: 0,
+  masterminds: 0,
+  villainGroups: 0,
+  henchmanGroups: 0,
+  heroDecks: 0,
+});
+const setupParsedParams = ref<Partial<SetupCompositionInput>>({});
+
+// why: One-shot auto-switch — URL params are a declarative arrival signal,
+// not a sticky preference. The first render with hasUrlParams=true flips
+// activeView to "loadout"; this ref then latches and the auto-switch never
+// re-fires, preserving the user's subsequent manual tab navigation.
+const hasAppliedUrlAutoSwitch = ref(false);
 
 // ── Theme state ──────────────────────────────────────────────────────────────
 const allThemes       = ref<ThemeDefinition[]>([]);
@@ -203,6 +238,28 @@ onMounted(async () => {
     allCards.value      = reg.listCards();
     filteredCards.value = allCards.value;
     healthReport.value  = reg.validate();
+
+    // WP-114: instantiate the URL-preview composable exactly once with the
+    // real registry, snapshot its outputs into top-level refs (the
+    // composable's inputs are stable for the page lifetime so a single read
+    // is sufficient), and apply the one-shot auto-switch.
+    const setupApi = useSetupFromUrl(reg);
+    setupHasUrlParams.value = setupApi.hasUrlParams.value;
+    setupPreviewDocument.value = setupApi.previewDocument.value;
+    setupValidationErrors.value = setupApi.validationErrors.value;
+    setupMatchedCount.value = setupApi.matchedCount.value;
+    setupParsedParams.value = setupApi.parsedParams.value;
+
+    if (
+      setupHasUrlParams.value &&
+      !hasAppliedUrlAutoSwitch.value &&
+      activeView.value !== "loadout"
+    ) {
+      activeView.value = "loadout";
+      hasAppliedUrlAutoSwitch.value = true;
+    } else if (setupHasUrlParams.value) {
+      hasAppliedUrlAutoSwitch.value = true;
+    }
 
     // Load themes in parallel (non-blocking — card view works even if themes fail)
     loadStatus.value = "Loading themes…";
@@ -543,7 +600,17 @@ function navigateToCard(slug: string, cardType: string) {
 
         <!-- Loadout content -->
         <template v-if="activeView === 'loadout' && registry">
-          <LoadoutBuilder :registry="registry!" :themes="allThemes" />
+          <div class="loadout-tab-stack">
+            <LoadoutPreview
+              :hasUrlParams="setupHasUrlParams"
+              :previewDocument="setupPreviewDocument"
+              :validationErrors="setupValidationErrors"
+              :matchedCount="setupMatchedCount"
+              :parsedParams="setupParsedParams"
+              :registry="registry!"
+            />
+            <LoadoutBuilder :registry="registry!" :themes="allThemes" />
+          </div>
         </template>
       </div>
     </template>
@@ -682,4 +749,7 @@ select { padding: 0.4rem 0.6rem; background: #22222e; border: 1px solid #33334a;
 .view-tab.active .tab-count { color: #7070e0; }
 
 .body { display: flex; flex: 1; overflow: hidden; }
+
+/* WP-114: stack LoadoutPreview above LoadoutBuilder inside the Loadout tab */
+.loadout-tab-stack { display: flex; flex-direction: column; flex: 1; overflow: auto; }
 </style>

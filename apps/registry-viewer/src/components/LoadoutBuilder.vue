@@ -10,7 +10,7 @@
 // rather than inline template literals (EC-091 §Guardrails). Paraphrasing is
 // a Session Abort Condition.
 
-import { computed, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 // why: Import from the narrow `./setupContract` subpath to keep the
 // viewer's browser build free of `node:fs/promises` (pulled in by the
 // root `@legendary-arena/registry` barrel via localRegistry). Same
@@ -28,6 +28,7 @@ import type {
 } from "../registry/browser";
 import type { ThemeDefinition } from "../lib/themeClient";
 import { useLoadoutDraft } from "../composables/useLoadoutDraft";
+import { serializeSetupToUrl } from "../lib/setupUrlParams";
 
 // why: Verbatim WP-093 UI strings referenced via imported constants, but also
 // recorded in these comments so the §11 Step 9 Select-String gate confirms
@@ -257,6 +258,33 @@ function onFileImport(event: Event): void {
   reader.readAsText(file);
 }
 
+// ── URL share button (WP-114) ───────────────────────────────────────────────
+
+const copyLinkUrl = ref("");
+const copyLinkStatus = ref<"idle" | "copied" | "fallback">("idle");
+const fallbackInputRef = ref<HTMLInputElement | null>(null);
+
+async function onCopySetupLink(): Promise<void> {
+  const url = serializeSetupToUrl(
+    draft.value.composition,
+    window.location.origin + window.location.pathname,
+  );
+  copyLinkUrl.value = url;
+  try {
+    await navigator.clipboard.writeText(url);
+    copyLinkStatus.value = "copied";
+  } catch {
+    // why: Browsers gate `clipboard.writeText` behind a permissions prompt
+    // and an insecure-context block (HTTP / non-localhost). The
+    // readonly-input fallback ensures the URL is never lost — the user can
+    // still select+copy manually. Both branches are required by EC-116
+    // §Guardrails #10.
+    copyLinkStatus.value = "fallback";
+    await nextTick();
+    fallbackInputRef.value?.select();
+  }
+}
+
 // ── Errors grouped by envelope vs composition ──────────────────────────────
 
 const envelopeErrors = computed(() =>
@@ -480,6 +508,23 @@ function slotLabel(slot: PickerSlot): string {
             ⬇ Download JSON
           </button>
           <button type="button" class="mini-btn" @click="resetDraft">🔄 Reset draft</button>
+          <button type="button" class="mini-btn" @click="onCopySetupLink">🔗 Copy Setup Link</button>
+        </div>
+
+        <p v-if="copyLinkStatus === 'copied'" class="copy-link-success">
+          Setup link copied to clipboard.
+        </p>
+        <div v-if="copyLinkStatus === 'fallback'" class="copy-link-fallback">
+          <label class="field">
+            <span class="field-label">Setup link (clipboard unavailable — copy manually)</span>
+            <input
+              type="text"
+              readonly
+              :value="copyLinkUrl"
+              ref="fallbackInputRef"
+              @focus="($event.target as HTMLInputElement).select()"
+            />
+          </label>
         </div>
 
         <details class="import-details">
@@ -717,6 +762,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #6060c0
   font-family: inherit;
 }
 .mini-btn:hover { background: #2a2a3a; }
+
+.copy-link-success { color: #6ee7b7; font-size: 0.78rem; margin: 0.25rem 0 0 0; }
+.copy-link-fallback { margin-top: 0.4rem; }
+.copy-link-fallback input { width: 100%; font-family: ui-monospace, Consolas, monospace; font-size: 0.75rem; }
 
 .import-details { background: #12121a; border: 1px solid #22222e; border-radius: 6px; padding: 0.5rem 0.8rem; }
 .import-details summary { cursor: pointer; color: #c0c0ff; font-size: 0.85rem; }
