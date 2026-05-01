@@ -1620,6 +1620,23 @@ The authoritative catalog of HTTP endpoints exposed (or coded but not yet expose
 
 ---
 
+## Client Routing
+
+Both Vue 3 SPAs (`apps/arena-client`, `apps/registry-viewer`) ship with **no client router** today. Per-app view-state lives in app-local mechanisms preserved as the locked posture under `D-11701` (arena-client) and `D-11702` (registry-viewer):
+
+- **`apps/arena-client`** discriminates the active view via a `selectRoute(parseQuery(window.location.search))` helper at `apps/arena-client/src/App.vue:84`, returning one of `'profile' | 'fixture' | 'live' | 'lobby'`. Deep-linking via `?profile=` / `?fixture=` / `?match=` + `?player=` + `?credentials=` is shipped and load-bearing for WP-061 fixture replay and WP-102 public profile (`/?profile=alice`). The Pinia store `useUiStateStore` (`apps/arena-client/src/stores/uiState.ts`) holds the `UIState` projection snapshot only — never view/tab/route state.
+- **`apps/registry-viewer`** discriminates via a local `const activeView = ref<ActiveView>("cards")` at `apps/registry-viewer/src/App.vue:77`, switching across `'cards' | 'themes' | 'loadout'`. The WP-114 `setupUrlParams` query-string handling (`apps/registry-viewer/src/lib/setupUrlParams.ts` + `useSetupFromUrl.ts` + `LoadoutPreview.vue`) carries the loadout-preview URL surface.
+
+History mode (`D-11703`) is **N/A** — `createWebHistory()` vs `createWebHashHistory()` is irrelevant when no client router is adopted in either app. A future WP that supersedes `D-11701` or `D-11702` with formal `vue-router@4.x` adoption owns the `D-11703` decision under its own scope.
+
+The shareable replay URL format (`D-11704`) is **deferred** to whichever WP first exposes a replay UI surface. Likely candidate: a future `WP-NNN: Replay Viewer` or a client-side extension to WP-115's leaderboard `GET /api/leaderboards/scores/:replayHash` endpoint when its UI lands. Locking the format absent a concrete consumer would foreclose future format choices (short-IDs, signed-URL variants) without justification.
+
+**Forbidden until a future supersession WP lands:** adopting any router other than `vue-router@4.x` (per `00.3 §7` forbidden-packages discipline); wiring `<router-view>` into either `App.vue` without superseding `D-11701` or `D-11702`; routing-driven SSR (Vue SPAs remain client-rendered); promoting either `selectRoute()` or `activeView` into a formal in-house router abstraction (Option C is bikeshed bait per WP-117 §Decision Points).
+
+<!-- why: top-level cross-link section per WP-117 §6.1 file 1; placement after `## HTTP API Surface` and before `## Internationalization` so the routing posture appears alongside other cross-cutting governance surfaces. -->
+
+---
+
 ## Internationalization
 
 The MVP is English-only. Internationalization (i18n) is deferred. No `i18n` library is adopted; user-visible strings live where they are used (Vue templates, server prose, error messages, lobby UI text, etc.) and are NOT abstracted into a translation layer.

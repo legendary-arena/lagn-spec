@@ -11916,6 +11916,67 @@ The amendment was authorized at pre-flight time as a **scope-neutral pre-session
 
 ---
 
+### D-11701 — `apps/arena-client` Router Posture: No Router; Preserve `selectRoute()` (Option B)
+
+**Decision:** No `vue-router` adopted for `apps/arena-client`. The current `selectRoute(parseQuery(window.location.search))` helper at `apps/arena-client/src/App.vue:84` is preserved verbatim, returning one of `'profile' | 'fixture' | 'live' | 'lobby'` based on the route discriminator precedence comment at `App.vue:84-95` (`profile > fixture > live > lobby`). The shipped deep-linking surface (`?profile=` / `?fixture=` / `?match=` + `?player=` + `?credentials=`) continues to function unchanged. `<router-view>` is **not** introduced; `useUiStateStore` continues to hold the `UIState` projection snapshot only (no Pinia view/tab state added).
+
+**Rationale:** The shipped `selectRoute()` helper is a 28-line pure URL-parsing function that already carries the project's only deep-linking surface (WP-061 fixture replay; WP-102 public profile). It was added intentionally under prior WPs and is grep-discoverable, deterministic, and side-effect-free. Adopting `vue-router` would introduce a ~13 KB gzip dependency without a concrete consumer beyond what the existing helper handles, plus a layer of `<router-view>` indirection that's specifically called out as out-of-scope for WP-117. The current state is "no router today; future WP-NNN may adopt one with a named consumer" — this decision codifies that posture rather than relitigating it on every URL-bearing feature WP.
+
+**De-facto Option C note (per WP-117 pre-flight PS-10):** the existing `selectRoute()` is structurally similar to what Option C describes (a lightweight in-house route discriminator). Option B as resolved here is **not** a formal Option C selection — it is preservation of an existing helper that pre-dates this WP's option taxonomy. A future WP that supersedes D-11701 with formal Option A (adopt `vue-router`) treats the existing `selectRoute()` as the migration starting point, not as a "to-be-replaced legacy" scaffolding.
+
+**Rejected:**
+- **Option A (adopt `vue-router@4.x`):** would unblock formal route guards / `<router-view>` slot / browser-history integration, but no current consumer demands them. The deferral cost is mechanically inert (a future WP can adopt with a one-line dependency add, an EC stub, and `<router-view>` wiring). Reversing the choice is cheap; introducing the dependency without a consumer is the lifecycle-creep failure mode (`01.7` copilot-check #16) that the lens is specifically designed to prevent.
+- **Option C (formalize as in-house router with extraordinary justification):** the WP body explicitly flags Option C as bikeshed bait. The existing `selectRoute()` does not need formal Option C blessing; it is preserved as part of `App.vue`'s view-discriminator surface, not promoted to a router abstraction.
+
+**Introduced:** WP-117 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** WP-061 (gameplay-client framework lock — Vue 3 + Vite + Pinia); WP-102 (public profile deep-linking surface that the preserved `selectRoute()` carries); D-10001 + 2026-04-26 Amendment (no-EC governance precedent — the deferral is documented governance, not skipped governance)
+**Status:** Active
+
+---
+
+### D-11702 — `apps/registry-viewer` Router Posture: No Router; Preserve `activeView` + WP-114 Query Params (Option B)
+
+**Decision:** No `vue-router` adopted for `apps/registry-viewer`. The current local `const activeView = ref<ActiveView>("cards")` at `apps/registry-viewer/src/App.vue:77` is preserved verbatim, switching across `'cards' | 'themes' | 'loadout'`. The WP-114 `setupUrlParams` query-string handling (`apps/registry-viewer/src/lib/setupUrlParams.ts`, `apps/registry-viewer/src/composables/useSetupFromUrl.ts`, `apps/registry-viewer/src/components/LoadoutPreview.vue` — all shipped at `c059199`, closed at `8e67447`) carries the loadout-preview URL surface unchanged. The file-level `apps/registry-viewer/CLAUDE.md` "No router — single-page with tab switching (Cards / Themes)" documentation continues to be accurate.
+
+**Rationale:** Registry-viewer is public-facing (`cards.barefootbetters.com`) and Option A (adopt `vue-router`) would unblock proper SEO + per-card deep links, but those concerns have not surfaced as concrete consumer demands and the WP-114 query-param surface already proves that Option B can carry deep-link weight for the curated-loadout surface. The cost of switching to Option A is non-zero (lockfile churn, EC stub, rules update, follow-up `<router-view>` wiring WP) and would be premature absent a named consumer beyond "SEO eventually". The deferral is reversible by a future WP that supersedes D-11702 with Option A and names the consumer.
+
+**Rejected:**
+- **Option A (adopt `vue-router@4.x`):** premature without a concrete consumer; the WP-114 query-param surface already serves the only shipped deep-link demand on this app. SEO / per-card deep-link demand has not surfaced from operators or analytics.
+- **Option C (in-house router with extraordinary justification):** the registry-viewer's `activeView` ref is a single-line tab switcher, not a router. Promoting it to formal Option C is unjustified.
+
+**Introduced:** WP-117 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** WP-061 (Vue 3 framework lock); WP-114 (URL-parameterized loadout preview — the existing query-param surface that this decision preserves); D-10001 + 2026-04-26 Amendment (no-EC governance precedent)
+**Status:** Active
+
+---
+
+### D-11703 — Client-Side History Mode: N/A (No Router Adopted)
+
+**Decision:** Recorded as **N/A** because both `D-11701` (`apps/arena-client`) and `D-11702` (`apps/registry-viewer`) resolved to Option B (no `vue-router` adopted in either app). Without a router, the `createWebHistory()` vs `createWebHashHistory()` choice is irrelevant — there is no Vue Router instance to configure. This entry exists to make grep-by-decision-ID queries (`D-11703`) return an explicit "N/A — see D-11701, D-11702, WP-117" hit rather than a missing entry.
+
+**Future supersession:** A future WP that supersedes `D-11701` or `D-11702` with Option A (formally adopt `vue-router@4.x`) owns the `D-11703` decision under its own scope, with full rationale + rejected options (`createWebHistory()` requires server-side SPA fallback per `apps/server` or static-host config; `createWebHashHistory()` sidesteps server config but yields uglier URLs and SEO/analytics quirks).
+
+**Introduced:** WP-117 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** D-11701 (arena-client = no router); D-11702 (registry-viewer = no router)
+**Status:** N/A — automatically superseded when a future WP adopts a router under either D-11701 or D-11702.
+
+---
+
+### D-11704 — Shareable Replay URL Format: Deferred (Option B)
+
+**Decision:** No replay URL format is locked in this WP. The format is deferred to whichever WP first exposes a replay UI surface. Likely candidates: a future `WP-NNN: Replay Viewer`, or a client-side extension to WP-115's leaderboard `GET /api/leaderboards/scores/:replayHash` endpoint when its UI lands (the URL path-param spelling `:replayHash` matches `00.2-data-requirements.md` and is the natural starting point for the future format lock). When that WP lands, it owns the D-11704 supersession with full §17 Vision Alignment treatment (Vision §18 / §22 / §24 trigger surfaces) under its own scope.
+
+**Rationale:** No replay UI is shipped today; locking the URL format absent a concrete consumer is exactly the kind of "decide before code exists" trap that the WP would otherwise create. The WP-115 stub (`bfdefe1` 2026-04-30) names `:replayHash` as the canonical replay identity in HTTP path-param spelling, matching `00.2-data-requirements.md` — that spelling is the natural starting point for the future format lock, but locking it now without a UI consumer would foreclose future format choices (e.g., short-IDs, signed-URL variants) without justification. The deferral keeps WP-117 smaller (no §17 Vision Alignment trigger; §17 N/A under D-11704 = B) and lets implementation context shape the format when a consumer emerges.
+
+**Rejected:**
+- **Option A (lock format now):** triggers `00.3 §17.1 #2` (Replays — Vision §18, §22, §24) in this WP for a contract surface no consumer needs today. The cost is unbounded — any future replay-viewer WP would have to either accept the format or supersede D-11704, and the supersession path is identical to the deferral path with one fewer hop.
+
+**Introduced:** WP-117 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** WP-115 stub (`bfdefe1` 2026-04-30 — names `:replayHash` as the canonical replay identity); WP-103 (replay storage / loader — the underlying replay-identity contract); `docs/ai/REFERENCE/00.2-data-requirements.md` (canonical field-name source for `replayHash` spelling)
+**Status:** Active (deferral); superseded automatically by the future WP that introduces a replay UI surface.
+
+---
+
 ### D-11801 — HTTP API Catalog Format: Markdown Table (Option A)
 
 **Decision:** The authoritative HTTP API catalog at `docs/ai/REFERENCE/api-endpoints.md` (introduced by WP-118) is a Markdown document containing one table per endpoint group with columns: `Status`, `Method`, `Path`, `Auth`, `Request Schema (file ref)`, `Response Schema (file ref)`, `Authorizing WP`, `Notes`. No OpenAPI / JSON-Schema / YAML companion is produced under WP-118; future WPs may add an OpenAPI companion alongside the Markdown without breaking the index, but the Markdown remains the human-first source of truth.

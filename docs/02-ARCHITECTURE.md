@@ -118,6 +118,7 @@ orthogonal and test-only. No layer may reach upward or sideways.
 | Authentication | Hanko (broker only) | -- | WP-099 / D-9901 (impl deferred WP-112) |
 | Test runner | `node:test` (built-in) | -- | `*.test.ts` files; never `.test.mjs` |
 | Vue SFC test transform | `@legendary-arena/vue-sfc-loader` (in-house) | workspace | dev/test only -- Shared Tooling |
+| Client routing | None — per-app view-state preserved | -- | D-11701 (arena-client `selectRoute()`) / D-11702 (registry-viewer `activeView` + WP-114 query params); future WP that supersedes either with `vue-router@4.x` carries its own scope |
 
 ---
 
@@ -161,6 +162,12 @@ Hanko-wiring WP. No Hanko code lives in the repo as of 2026-04-29.
 ## HTTP API Surface
 
 The authoritative catalog of HTTP endpoints exposed (or coded but not yet exposed) by `apps/server` lives at [`docs/ai/REFERENCE/api-endpoints.md`](ai/REFERENCE/api-endpoints.md). Every endpoint carries one of four `Status` values — `Wired | Shipped-but-unwired | Library-only | Pending` — and uses canonical field names from [`docs/ai/REFERENCE/00.2-data-requirements.md`](ai/REFERENCE/00.2-data-requirements.md). Auth posture per endpoint is one of three values — `guest | handle-required | authenticated-session-required` — per `D-9905`. Update obligations on future API-touching WPs are locked by `D-11804` plus lint §21 plus a one-line rule in `.claude/rules/work-packets.md` (replace-whole-row merge semantics — partial-update is FAIL). **Authoritative version:** [`docs/ai/ARCHITECTURE.md §HTTP API Surface`](ai/ARCHITECTURE.md#http-api-surface).
+
+---
+
+## Client Routing
+
+Both Vue 3 SPAs ship with **no client router** today. `apps/arena-client` uses a `selectRoute()` query-string discriminator (`?profile=` / `?fixture=` / `?match=` + `?player=` + `?credentials=`); `apps/registry-viewer` uses a local `activeView` ref + WP-114 `setupUrlParams` query-string handling. History mode (`D-11703`) is N/A; replay URL format (`D-11704`) is deferred. **Authoritative version:** [`docs/ai/ARCHITECTURE.md §Client Routing`](ai/ARCHITECTURE.md#client-routing). **Controlling decisions:** D-11701 (arena-client posture), D-11702 (registry-viewer posture), D-11703 (history mode N/A), D-11704 (replay URL format deferred).
 
 ---
 
