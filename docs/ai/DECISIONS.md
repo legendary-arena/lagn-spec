@@ -12135,6 +12135,54 @@ A future API-touching WP that slips past one gate is still caught by the other; 
 
 ---
 
+### D-12301 — Viewer cardType Widening and `set.other[]` Dispatch (WP-123)
+
+**Decision:** The viewer-live `FlatCard.cardType` at `apps/registry-viewer/src/registry/types/types-index.ts:37` widens from the prior 9-value string union (`"hero" | "mastermind" | "villain" | "henchman" | "scheme" | "bystander" | "wound" | "location" | "other"`) to plain `string`. Paired widening: `CardQuerySchema.cardType` and `.cardTypes` at `apps/registry-viewer/src/registry/schema.ts:123–124` widen from `z.enum([...])` to `z.string().optional()` and `z.array(z.string()).optional()`. The `// Other` block in `apps/registry-viewer/src/registry/shared.ts` is rewritten wholesale to dispatch on `entry.cardType` from each `set.other[]` entry, falling back to `"other"` when absent. Locked key shape: `` `${abbr}-${cardType}-${slug}` `` with `"other"` fallback preserving byte-identical behavior for legacy untagged entries. The `packages/registry/src/shared.ts` copy of `flattenSet` is unchanged; it does not iterate `set.other[]` at all and emits only narrow literals (`hero` / `mastermind` / `villain` / `scheme`) that satisfy the widened type trivially.
+
+**Rationale:**
+1. **Type-projection drift closer:** WP-086 Phase 1 widened the data-side per-card `cardType` to `z.string().optional()` at `packages/registry/src/schema.ts:174` but left the viewer-side `FlatCard` projection at the 9-value union, creating a documented drift. The forward-pointing `// why:` comment at `App.vue:113–118` annotates the asymmetry as anticipating a future widening; this WP is that future.
+2. **Runtime taxonomy is data-driven:** `data/metadata/card-types.json` carries 13 entries fetched at runtime by `cardTypesClient.ts`. Narrowing the projection type to a closed enum is drift-prone and re-introduces the WP-086 Phase 1 rigidity that this WP exists to relax.
+3. **Dispatch foundation:** the prior `// Other` block hardcoded `cardType: "other"` and the key prefix `${abbr}-other-${slug}`. Reading `entry.cardType` (when present) makes the viewer ready to receive any taxonomy-tagged `set.other[]` entry — Sidekick, S.H.I.E.L.D. Officer / Trooper / Agent, or any future taxonomy slug — without further changes. The `"other"` fallback preserves byte-identical behavior for legacy entries.
+4. **Backward compatibility is total:** prior `set.other[]` arrays are empty across all 40 sets (verified 2026-05-01), so the new dispatch loop emits zero records under current data. Phase 2 data authoring (separate operator/upstream task) is the long-pole; this WP makes it possible without further viewer changes.
+5. **Non-optional projection vs. optional schema:** `FlatCard.cardType` widens to plain `string` (not optional) because the dispatch expression always normalizes to a concrete string via the `?? "other"` fallback. Schema is `.optional()` (data may omit the field); projection is non-optional (the projection always populates it). This asymmetry is intentional.
+
+**Three-FlatCard-types-coexist state post-WP-123 (per PS-2):**
+
+After this WP lands, three `FlatCard.cardType` widths exist in the codebase:
+1. `packages/registry/src/types/index.ts:57` — 4-value (`"hero" | "mastermind" | "villain" | "scheme"`) — engine-side, **unchanged by WP-123**, correct because the engine-side `flattenSet` emits only those four literals.
+2. `apps/registry-viewer/src/registry/types/index.ts:37` — 4-value (`"hero" | "mastermind" | "villain" | "scheme"`) — viewer-side legacy, **unchanged by WP-123**, structurally a copy of the engine-side type, re-exported via `apps/registry-viewer/src/registry/index.ts:23` but no in-viewer consumer imports from that barrel at runtime (the live FlatCard imported by `shared.ts`, `shared.test.ts`, `browser.ts`, `httpRegistry.ts` is the `types-index.ts` one, not the legacy one).
+3. `apps/registry-viewer/src/registry/types/types-index.ts:37` — `string` (post-WP-123) — viewer-side live, the FlatCard imported throughout the viewer at runtime.
+
+This asymmetry was inherited from EC-102's consolidation effort. WP-123 widens only the live type; legacy-type cleanup is **deferred to a future EC-102-style consolidation WP**. Future maintainers MUST cite D-12301 if they want to widen the engine type or the viewer-legacy type without explicit justification — the engine-side narrow type is correct as-is because its `flattenSet` only emits four literals.
+
+**Alternatives rejected:**
+- **Cast at the dispatch site (`as FlatCard["cardType"]`) without widening the projection type:** REJECTED. Existing test casts (`as unknown as FlatCardType[]`) already demonstrated the pattern is fragile and had to be removed when widening landed. Casting at every dispatch site multiplies the surface area; widening once at the type definition is cleaner.
+- **Widen `FlatCardType` to a re-derived union of `card-types.json` entries:** REJECTED. Re-deriving a TypeScript union from runtime JSON requires either build-time codegen (new tooling) or maintaining a parallel hardcoded union (drift surface). The runtime taxonomy is the closed-set contract; the projection type accepts any string and trusts the dispatch / fallback logic.
+- **Widen the engine-side `FlatCard.cardType` symmetrically:** REJECTED. The engine-side `flattenSet` at `packages/registry/src/shared.ts` only emits 4 literals (hero / mastermind / villain / scheme); widening would weaken the type without a runtime consumer of the wider set. Engine-side narrowness is correct; the viewer-live divergence is intentional.
+- **Delete the viewer-legacy `FlatCard` at `apps/registry-viewer/src/registry/types/index.ts`:** REJECTED for this WP. EC-102 consolidation is a separate concern; touching the legacy file in WP-123 would expand scope. Deferred to a future consolidation WP per the three-FlatCard-types paragraph above.
+
+**Locked values (verbatim — do not paraphrase or re-derive):**
+- Widening direction: `FlatCard.cardType: string` (plain, non-optional, non-branded)
+- Schema widening: `cardType: z.string().optional()` and `cardTypes: z.array(z.string()).optional()`
+- Key shape: `` `${abbr}-${cardType}-${slug}` ``
+- Fallback cardType literal: `"other"`
+- Loop variable: `entry` (not `o` or `ot`)
+- Narrowed-record alias: `entryRecord` (not `o` or `ot`)
+- Slug fallback chain: `String(entryRecord["slug"] ?? entryRecord["name"] ?? "other")`
+- Dispatch expression: `String(entryRecord["cardType"] ?? "other")`
+- Test describe block title: `"flattenSet other-block cardType dispatch (WP-123)"`
+- Test minimum: 3 `it` cases (4 recommended; 4 authored at execution)
+- Pre-session test baseline: `tests 27 / suites 5 / pass 27 / fail 0`
+- Post-session test baseline: `tests 31 / suites 6 / pass 31 / fail 0` (with the recommended fourth case)
+
+**Future supersession:** any future WP that wants to narrow `FlatCard.cardType` back to a closed union, or to widen the engine-side `FlatCard.cardType` symmetrically, MUST cite D-12301 with rationale. The three-FlatCard-types-coexist state is intentional and stable; legacy-type cleanup is the responsibility of a future EC-102-style consolidation WP, not a one-off narrowing.
+
+**Introduced:** WP-123 (drafted 2026-05-01; executed 2026-05-01 at Commit A `fbb5174` `EC-125:`)
+**Reinforces:** WP-086 D-8602 / D-8603 (Phase 1 taxonomy + per-card data-side widening); WP-122 D-12201 (viewer-local `flattenSet` divergence precedent — same file, same divergent-from-`packages/registry` viewer-local copy); 00.6 Rule 4 (no abbreviations — drives `entry` and `entryRecord` over `o` / `ot`); 00.6 Rule 6 (`// why:` comments where reason is non-obvious — drives the five-clause block above the rewritten loop); `.claude/rules/architecture.md` §Layer Boundary (Registry-Viewer is Client-UI; this fix stays entirely inside the Client-UI layer)
+**Status:** Active
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
