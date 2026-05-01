@@ -16,6 +16,7 @@ import CardGrid        from "./components/CardGrid.vue";
 import CardSizeSlider  from "./components/CardSizeSlider.vue";
 import CardDetail      from "./components/CardDetail.vue";
 import ThemeGrid      from "./components/ThemeGrid.vue";
+import ThemeSizeSlider from "./components/ThemeSizeSlider.vue";
 import ThemeDetail    from "./components/ThemeDetail.vue";
 import HealthPanel    from "./components/HealthPanel.vue";
 import GlossaryPanel  from "./components/GlossaryPanel.vue";
@@ -509,6 +510,7 @@ function navigateToCard(slug: string, cardType: string) {
       <template v-if="activeView === 'themes'">
         <div class="filter-bar">
           <input v-model="themeSearchText" class="search" placeholder="Search themes by name, tag, hero…" @input="applyThemeFilters" />
+          <ThemeSizeSlider />
           <span class="count">{{ filteredThemes.length }} themes</span>
         </div>
       </template>

@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import type { ThemeDefinition } from "../lib/themeClient";
 import { TAG_COLOR } from "../lib/theme";
+// why: composable is the single source of truth for theme grid size; the
+// grid reads it directly to avoid prop plumbing through App.vue, parallel
+// to the useCardSize precedent at CardGrid.vue.
+import { useThemeSize } from "../composables/useThemeSize";
 
 defineProps<{ themes: ThemeDefinition[]; selectedId?: string }>();
 const emit = defineEmits<{ select: [theme: ThemeDefinition] }>();
+
+const { themeSize } = useThemeSize();
 
 function primaryTag(theme: ThemeDefinition): string {
   return (theme.tags ?? [])[0] ?? "";
@@ -20,7 +26,11 @@ function tagColor(theme: ThemeDefinition): string {
 <template>
   <div class="grid-wrapper">
     <div v-if="!themes.length" class="empty">No themes match your filters.</div>
-    <div class="grid">
+    <!-- why: scaling is CSS-driven (no per-tile recalculation); .img-wrap's
+         aspect-ratio: 3/4 propagates width to height proportionally; the
+         literal 150px fallback in the minmax(...) call preserves pre-packet
+         behavior if the inline style is dropped. -->
+    <div class="grid" :style="{ '--theme-grid-min-width': themeSize + 'px' }">
       <button
         v-for="theme in themes"
         :key="theme.themeId"
@@ -57,7 +67,7 @@ function tagColor(theme: ThemeDefinition): string {
 <style scoped>
 .grid-wrapper { flex: 1; overflow-y: auto; padding: 1rem; background: #0f0f13; }
 .empty { text-align: center; color: #55556a; padding: 3rem; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--theme-grid-min-width, 150px), 1fr)); gap: 0.75rem; }
 
 .theme-tile {
   background: #1a1a24;
