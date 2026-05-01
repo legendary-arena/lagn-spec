@@ -76,26 +76,52 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
   }
 
   // Henchmen
-  for (const h of set.henchmen) {
-    if (typeof h !== "object" || h === null) continue;
-    const hm = h as Record<string, unknown>;
-    const hmCards = Array.isArray(hm["cards"]) ? hm["cards"] : [];
-    const groupSlug = String(hm["slug"] ?? "henchman");
-    for (const card of hmCards) {
-      if (typeof card !== "object" || card === null) continue;
-      const c = card as Record<string, unknown>;
-      const slug = String(c["slug"] ?? c["name"] ?? "card");
-      cards.push({
-        key:       `${abbr}-henchman-${groupSlug}-${slug}`,
-        cardType:  "henchman",
-        setAbbr:   abbr,
-        setName,
-        name:      String(c["name"] ?? slug),
-        slug,
-        imageUrl:  String(c["imageUrl"] ?? ""),
-        abilities: Array.isArray(c["abilities"]) ? c["abilities"] as string[] : [],
-      });
-    }
+  // why (a): the prior implementation looked for a nested `cards` sub-array
+  //   on each henchman entry and iterated it. The actual data shape across
+  //   all 40 set files in `data/cards/*.json` is a flat object per henchman
+  //   group — `{ id, name, slug, imageUrl, abilities, vAttack, vp }` with no
+  //   `cards` array. The shape sweep at WP-122 pre-flight (2026-05-01)
+  //   confirmed 44 henchman entries, zero with nested `cards`. The result
+  //   was zero henchman emission and an empty `Henchman` ribbon pill.
+  // why (b): this flat treatment mirrors the bystanders block (below at
+  //   "Bystanders") and the wounds block (below at "Wounds") in this same
+  //   file — same null-narrowing, same `Record<string, unknown>` cast,
+  //   same slug fallback chain, same single push per group.
+  // why (c): the sibling `flattenSet` in `packages/registry/src/shared.ts`
+  //   does not iterate `set.henchmen` at all (it emits only hero,
+  //   mastermind, villain, and scheme cards) and therefore needs no
+  //   parallel fix. This is a viewer-local divergence, intentional and
+  //   isolated.
+  // why (d): see DECISIONS.md D-12201 for the locked decision (key
+  //   format, locked test minimum, divergence rationale).
+  // why (e): scope reference WP-122 / EC-123.
+  // why (f): one `FlatCard` per henchman group, not a per-card expansion.
+  //   In Legendary, a henchman group enters the villain deck as 10 copies,
+  //   but that expansion is an engine-layer concern in
+  //   `packages/game-engine/**`. `FlatCard` is the registry-display
+  //   projection (one record per registry entry), not a deck realization.
+  // why (g): only the flat `imageUrl` field is surfaced; the class-keyed
+  //   image map (covert / instinct / ranged / strength / tech) carried by
+  //   a few henchman entries is intentionally ignored. Confirmed examples
+  //   `amwp/tardigrade` and `wtif/ultron-sentries` carry both a flat
+  //   `imageUrl` and the class-keyed map. The current `FlatCard` schema
+  //   models only `imageUrl: string`; surfacing class-keyed art requires
+  //   widening `FlatCard` plus paired UI changes in `CardGrid.vue` /
+  //   `CardDetail.vue`. Deferred to a future WP that widens `FlatCard`.
+  for (const henchman of set.henchmen) {
+    if (typeof henchman !== "object" || henchman === null) continue;
+    const henchmanRecord = henchman as Record<string, unknown>;
+    const slug = String(henchmanRecord["slug"] ?? henchmanRecord["name"] ?? "henchman");
+    cards.push({
+      key:       `${abbr}-henchman-${slug}`,
+      cardType:  "henchman",
+      setAbbr:   abbr,
+      setName,
+      name:      String(henchmanRecord["name"] ?? slug),
+      slug,
+      imageUrl:  String(henchmanRecord["imageUrl"] ?? ""),
+      abilities: Array.isArray(henchmanRecord["abilities"]) ? henchmanRecord["abilities"] as string[] : [],
+    });
   }
 
   // Schemes
