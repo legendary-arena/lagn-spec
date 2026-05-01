@@ -11,12 +11,19 @@ import { devLog } from "../lib/devLog";
 // click on ViewModeToggle.vue now flips both the sidebar and every grid
 // tile in lockstep, with no prop plumbing.
 import { useCardViewMode } from "../composables/useCardViewMode";
+// why: useCardSize is the module-scoped single source of truth for the
+// card-grid zoom slider. CardGrid.vue reads cardSize directly to avoid
+// prop plumbing through App.vue — the same pattern the line above uses
+// for viewMode. The slider component (CardSizeSlider.vue) writes the
+// same composable; this file is read-only against it.
+import { useCardSize } from "../composables/useCardSize";
 import CardDataTile from "./CardDataTile.vue";
 
 const props = defineProps<{ cards: FlatCard[]; selectedKey?: string }>();
 const emit = defineEmits<{ select: [card: FlatCard]; clearFilters: [] }>();
 
 const { viewMode } = useCardViewMode();
+const { cardSize } = useCardSize();
 
 // why: when a card is selected (either by clicking or via cross-link from
 // themes view), scroll it into view so the user can see which tile is active
@@ -39,7 +46,17 @@ watch(() => props.selectedKey, (newKey) => {
       <p>No cards match your filters.</p>
       <button class="clear-filters-btn" @click="emit('clearFilters')">Clear all filters</button>
     </div>
-    <div class="grid">
+    <!--
+      why: scaling is CSS-driven (no per-card recalculation). The
+      existing `aspect-ratio: 3/4` rule on .img-wrap propagates width
+      changes to height proportionally, so a single CSS variable on
+      .grid drives every tile's size uniformly. The .grid rule below
+      reads --card-grid-min-width with a literal `130px` fallback inside
+      `minmax(...)`, so the grid still renders at the production
+      baseline if this inline binding is ever dropped (e.g. by a future
+      server-render shim or a test harness that omits the prop).
+    -->
+    <div class="grid" :style="{ '--card-grid-min-width': cardSize + 'px' }">
       <button
         v-for="card in cards"
         :key="card.key"
@@ -104,7 +121,7 @@ watch(() => props.selectedKey, (newKey) => {
   transition: background 0.15s;
 }
 .clear-filters-btn:hover { background: #3a3a7a; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.75rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-grid-min-width, 130px), 1fr)); gap: 0.75rem; }
 .card-tile { background: #1a1a24; border: 2px solid #2e2e42; border-radius: 8px; cursor: pointer; transition: border-color 0.15s, transform 0.1s; overflow: hidden; display: flex; flex-direction: column; text-align: left; padding: 0; }
 .card-tile:hover { border-color: #5050a0; transform: translateY(-2px); }
 .card-tile.selected { border-color: #7070e0; box-shadow: 0 0 12px rgba(112, 112, 224, 0.35); }

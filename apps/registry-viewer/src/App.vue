@@ -12,8 +12,9 @@ import { setGlossaries } from "./composables/useRules";
 import { useGlossary, rebuildGlossaryEntries } from "./composables/useGlossary";
 import { useLightbox } from "./composables/useLightbox";
 import { useCardViewMode } from "./composables/useCardViewMode";
-import CardGrid       from "./components/CardGrid.vue";
-import CardDetail     from "./components/CardDetail.vue";
+import CardGrid        from "./components/CardGrid.vue";
+import CardSizeSlider  from "./components/CardSizeSlider.vue";
+import CardDetail      from "./components/CardDetail.vue";
 import ThemeGrid      from "./components/ThemeGrid.vue";
 import ThemeDetail    from "./components/ThemeDetail.vue";
 import HealthPanel    from "./components/HealthPanel.vue";
@@ -530,6 +531,8 @@ function navigateToCard(slug: string, cardType: string) {
           <option value="">All Classes</option>
           <option v-for="hc in HC_OPTIONS" :key="hc" :value="hc">{{ hc }}</option>
         </select>
+
+        <CardSizeSlider />
 
         <span class="count">{{ filteredCards.length }} cards</span>
       </div>
