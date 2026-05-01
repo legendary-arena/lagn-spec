@@ -76,49 +76,72 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
   }
 
   // Henchmen
-  // why (a): the prior implementation looked for a nested `cards` sub-array
-  //   on each henchman entry and iterated it. The actual data shape across
-  //   all 40 set files in `data/cards/*.json` is a flat object per henchman
-  //   group — `{ id, name, slug, imageUrl, abilities, vAttack, vp }` with no
-  //   `cards` array. The shape sweep at WP-122 pre-flight (2026-05-01)
-  //   confirmed 44 henchman entries, zero with nested `cards`. The result
-  //   was zero henchman emission and an empty `Henchman` ribbon pill.
-  // why (b): this flat treatment mirrors the bystanders block (below at
-  //   "Bystanders") and the wounds block (below at "Wounds") in this same
-  //   file — same null-narrowing, same `Record<string, unknown>` cast,
-  //   same slug fallback chain, same single push per group.
+  // why (a): most henchman groups are flat objects — `{ id, name, slug,
+  //   imageUrl, abilities, vAttack, vp }` with no nested `cards`. WP-122
+  //   pre-flight (2026-05-01) confirmed this for 44 entries across 40 set
+  //   files, and the viewer originally emitted one FlatCard per group.
+  // why (b): the upstream converter (modern-master-strike convert-cards-v15)
+  //   was extended (2026-05-01) to emit a `cards: [{ name, slug, imageUrl,
+  //   abilities }]` sub-array on multi-card henchman groups whose source
+  //   cards are name-distinct (Mandarin's Rings has 10 different rings;
+  //   Tardigrade and Ultron Sentries each have 5 class variants). For those
+  //   groups we emit one FlatCard per card so each variant is browseable
+  //   with its own art. Single-card groups (Hand Ninjas etc.) keep the
+  //   original one-FlatCard-per-group behavior — `cards` is absent and the
+  //   flat-shape branch fires.
   // why (c): the sibling `flattenSet` in `packages/registry/src/shared.ts`
   //   does not iterate `set.henchmen` at all (it emits only hero,
   //   mastermind, villain, and scheme cards) and therefore needs no
   //   parallel fix. This is a viewer-local divergence, intentional and
   //   isolated.
-  // why (d): see DECISIONS.md D-12201 for the locked decision (key
-  //   format, locked test minimum, divergence rationale).
-  // why (e): scope reference WP-122 / EC-123.
-  // why (f): one `FlatCard` per henchman group, not a per-card expansion.
-  //   In Legendary, a henchman group enters the villain deck as 10 copies,
-  //   but that expansion is an engine-layer concern in
-  //   `packages/game-engine/**`. `FlatCard` is the registry-display
-  //   projection (one record per registry entry), not a deck realization.
-  // why (g): only the flat `imageUrl` field is surfaced; the class-keyed
-  //   image map (covert / instinct / ranged / strength / tech) carried by
-  //   a few henchman entries is intentionally ignored. Confirmed examples
-  //   `amwp/tardigrade` and `wtif/ultron-sentries` carry both a flat
-  //   `imageUrl` and the class-keyed map. The current `FlatCard` schema
-  //   models only `imageUrl: string`; surfacing class-keyed art requires
-  //   widening `FlatCard` plus paired UI changes in `CardGrid.vue` /
-  //   `CardDetail.vue`. Deferred to a future WP that widens `FlatCard`.
+  // why (d): see DECISIONS.md D-12201 for the original locked decision; the
+  //   per-card branch added 2026-05-01 supersedes the "one push per group"
+  //   rule for the multi-card case while preserving it for single-card
+  //   groups. Engine-layer expansion to 10 deck copies is unrelated and
+  //   continues to live in `packages/game-engine/**`.
+  // why (e): scope reference WP-122 / EC-123 (original flat-shape branch);
+  //   per-card branch added under EC-124 (ad-hoc, no WP) coordinated with
+  //   the upstream converter change. Both ECs together cover the deployed
+  //   data shapes; either alone leaves a partial-emission regression.
+  // why (f): the class-keyed `imageUrlByClass` map carried by tardigrade and
+  //   ultron-sentries is still ignored at this seam — those groups now have
+  //   a `cards` array which is the canonical per-variant source. The flat
+  //   `imageUrl`/`imageUrlByClass` patch fields remain in the JSON for
+  //   backward compatibility with engine consumers but are not surfaced
+  //   here.
   for (const henchman of set.henchmen) {
     if (typeof henchman !== "object" || henchman === null) continue;
     const henchmanRecord = henchman as Record<string, unknown>;
-    const slug = String(henchmanRecord["slug"] ?? henchmanRecord["name"] ?? "henchman");
+    const groupSlug = String(henchmanRecord["slug"] ?? henchmanRecord["name"] ?? "henchman");
+    const groupName = String(henchmanRecord["name"] ?? groupSlug);
+    const subCards = henchmanRecord["cards"];
+
+    if (Array.isArray(subCards) && subCards.length > 0) {
+      for (const c of subCards) {
+        if (typeof c !== "object" || c === null) continue;
+        const cardRecord = c as Record<string, unknown>;
+        const cardSlug = String(cardRecord["slug"] ?? cardRecord["name"] ?? groupSlug);
+        cards.push({
+          key:       `${abbr}-henchman-${groupSlug}-${cardSlug}`,
+          cardType:  "henchman",
+          setAbbr:   abbr,
+          setName,
+          name:      String(cardRecord["name"] ?? groupName),
+          slug:      cardSlug,
+          imageUrl:  String(cardRecord["imageUrl"] ?? henchmanRecord["imageUrl"] ?? ""),
+          abilities: Array.isArray(cardRecord["abilities"]) ? cardRecord["abilities"] as string[] : [],
+        });
+      }
+      continue;
+    }
+
     cards.push({
-      key:       `${abbr}-henchman-${slug}`,
+      key:       `${abbr}-henchman-${groupSlug}`,
       cardType:  "henchman",
       setAbbr:   abbr,
       setName,
-      name:      String(henchmanRecord["name"] ?? slug),
-      slug,
+      name:      groupName,
+      slug:      groupSlug,
       imageUrl:  String(henchmanRecord["imageUrl"] ?? ""),
       abilities: Array.isArray(henchmanRecord["abilities"]) ? henchmanRecord["abilities"] as string[] : [],
     });

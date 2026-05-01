@@ -1238,14 +1238,99 @@
       "name": "HYDRA Base",
       "slug": "hydra-base",
       "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-hydra-base.webp",
-      "abilities": []
+      "abilities": [
+        "HYDRA Base gets +2[icon:attack] while there's a Villain here.",
+        "Fight: KO one of your Heroes."
+      ]
     },
     {
       "id": 34,
       "name": "Mandarin's Rings",
       "slug": "mandarins-rings",
-      "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings.webp",
-      "abilities": []
+      "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-daimonic-the-white-light.webp",
+      "abilities": [],
+      "cards": [
+        {
+          "name": "Daimonic, The White Light",
+          "slug": "daimonic-the-white-light",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-daimonic-the-white-light.webp",
+          "abilities": [
+            "Fight: Draw a card."
+          ]
+        },
+        {
+          "name": "Incandescence, The Flame Blast",
+          "slug": "incandescence-the-flame-blast",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-incandescence-the-flame-blast.webp",
+          "abilities": [
+            "Fight: You may KO a card from your discard pile."
+          ]
+        },
+        {
+          "name": "Influence, The Impact Beam",
+          "slug": "influence-the-impact-beam",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-influence-the-impact-beam.webp",
+          "abilities": [
+            "Fight: You get +1[icon:recruit]."
+          ]
+        },
+        {
+          "name": "Liar, The Mento-Intensifier",
+          "slug": "liar-the-mento-intensifier",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-liar-the-mento-intensifier.webp",
+          "abilities": [
+            "Fight: Look at the top card of another player's deck. Say it is “Good“ or “Bad.“ That player chooses to put it in your discard pile or their discard pile."
+          ]
+        },
+        {
+          "name": "Lightning, The Electro-Blast",
+          "slug": "lightning-the-electro-blast",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-lightning-the-electro-blast.webp",
+          "abilities": [
+            "Fight: Reveal the top card of your deck. You may KO it."
+          ]
+        },
+        {
+          "name": "Nightbringer, The Black Light",
+          "slug": "nightbringer-the-black-light",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-nightbringer-the-black-light.webp",
+          "abilities": [
+            "Fight: Reveal the top three cards of the Villain Deck. You may defeat a Villain you revealed worth 2VP or less. (Do its Fight effect.) Put the rest back in any order."
+          ]
+        },
+        {
+          "name": "Remaker, The Matter Rearranger",
+          "slug": "remaker-the-matter-rearranger",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-remaker-the-matter-rearranger.webp",
+          "abilities": [
+            "Fight: You may choose a card from your hand or discard pile. The player on your right puts it in their hand."
+          ]
+        },
+        {
+          "name": "Spectral, The Disintegration Beam",
+          "slug": "spectral-the-disintegration-beam",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-spectral-the-disintegration-beam.webp",
+          "abilities": [
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Spin, The Vortex Beam",
+          "slug": "spin-the-vortex-beam",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-spin-the-vortex-beam.webp",
+          "abilities": [
+            "Fight: Reveal the top six cards of your deck. Discard all of them that cost 0, then put the rest back in any order."
+          ]
+        },
+        {
+          "name": "Zero, The Ice Blast",
+          "slug": "zero-the-ice-blast",
+          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-zero-the-ice-blast.webp",
+          "abilities": [
+            "Fight: Choose a card you played this turn that costs 0. When you draw a new hand of cards at the end of this turn, add that card to your hand as an extra card."
+          ]
+        }
+      ]
     }
   ],
   "schemes": [

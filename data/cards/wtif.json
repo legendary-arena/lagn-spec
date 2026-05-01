@@ -1570,14 +1570,20 @@
       "name": "Giants of Jotunheim",
       "slug": "giants-of-jotunheim",
       "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-giants-of-jotunheim.webp",
-      "abilities": []
+      "abilities": [
+        "Ambush: Each player discards the top three cards of their deck.",
+        "Fight: You may KO a grey Hero from your discard pile."
+      ]
     },
     {
       "id": 39,
       "name": "Vibranium Liberator Drones",
       "slug": "vibranium-liberator-drones",
       "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-vibranium-liberator-drones.webp",
-      "abilities": []
+      "abilities": [
+        "Ambush: Another Villain captures a Bystander. ",
+        "Fight: [keyword:Liberate 3]. The next time you rescue a Bystander this turn (Including from this Henchmen), KO one of your Heroes."
+      ]
     },
     {
       "id": 40,
@@ -1585,6 +1591,53 @@
       "slug": "ultron-sentries",
       "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-covert.webp",
       "abilities": [],
+      "cards": [
+        {
+          "name": "Ultron Sentries (Covert)",
+          "slug": "ultron-sentries-covert",
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-covert.webp",
+          "abilities": [
+            "[keyword:Empowered] by [hc:covert]",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Ultron Sentries (Instinct)",
+          "slug": "ultron-sentries-instinct",
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-instinct.webp",
+          "abilities": [
+            "[keyword:Empowered] by [hc:instinct]",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Ultron Sentries (Ranged)",
+          "slug": "ultron-sentries-ranged",
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-ranged.webp",
+          "abilities": [
+            "[keyword:Empowered] by [hc:ranged]",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Ultron Sentries (Strength)",
+          "slug": "ultron-sentries-strength",
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-strength.webp",
+          "abilities": [
+            "[keyword:Empowered] by [hc:strength]",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Ultron Sentries (Tech)",
+          "slug": "ultron-sentries-tech",
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-tech.webp",
+          "abilities": [
+            "[keyword:Empowered] by [hc:tech]",
+            "Fight: KO one of your Heroes."
+          ]
+        }
+      ],
       "imageUrlByClass": {
         "covert": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-covert.webp",
         "instinct": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-instinct.webp",

@@ -1454,14 +1454,20 @@
       "name": "Quantumnauts",
       "slug": "quantumnauts",
       "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-quantumnauts.webp",
-      "abilities": []
+      "abilities": [
+        "[keyword:Rooftops Conqueror 1]",
+        "[keyword:Streets Conqueror 1]",
+        "Fight: KO one of your Heroes."
+      ]
     },
     {
       "id": 42,
       "name": "Quantum Hound",
       "slug": "quantum-hound",
       "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-quantum-hound.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: Choose [icon:recruit] or [icon:attack]. Then [keyword:Explore]. If the Found Hero has the icon you chose, KO one of your Heroes."
+      ]
     },
     {
       "id": 43,
@@ -1469,6 +1475,53 @@
       "slug": "tardigrade",
       "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-covert.webp",
       "abilities": [],
+      "cards": [
+        {
+          "name": "Tardigrade (Covert)",
+          "slug": "tardigrade-covert",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-covert.webp",
+          "abilities": [
+            "[keyword:Microscopic Size-Changing] [hc:covert][hc:covert][hc:covert]",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Tardigrade (Instinct)",
+          "slug": "tardigrade-instinct",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-instinct.webp",
+          "abilities": [
+            "[keyword:Microscopic Size-Changing] [hc:instinct][hc:instinct][hc:instinct]",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Tardigrade (Ranged)",
+          "slug": "tardigrade-ranged",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-ranged.webp",
+          "abilities": [
+            "[keyword:Microscopic Size-Changing] [hc:ranged][hc:ranged][hc:ranged]",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Tardigrade (Strength)",
+          "slug": "tardigrade-strength",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-strength.webp",
+          "abilities": [
+            "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength]",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "name": "Tardigrade (Tech)",
+          "slug": "tardigrade-tech",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-tech.webp",
+          "abilities": [
+            "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
+            "Fight: KO one of your Heroes."
+          ]
+        }
+      ],
       "imageUrlByClass": {
         "covert": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-covert.webp",
         "instinct": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-instinct.webp",

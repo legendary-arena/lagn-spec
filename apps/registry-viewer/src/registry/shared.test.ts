@@ -176,4 +176,51 @@ describe("flattenSet henchman emission (WP-122)", () => {
     const projection = result[0]! as unknown as Record<string, unknown>;
     assert.equal(projection["imageUrlByClass"], undefined);
   });
+
+  it("emits one FlatCard per card when a henchman group has a multi-entry cards array", () => {
+    // why: locks the per-card branch added 2026-05-01 alongside the upstream
+    // converter change. Mandarin's Rings (rvlt) has 10 name-distinct ring
+    // cards, each with its own image. Each card must surface as its own
+    // browsable FlatCard with key {abbr}-henchman-{groupSlug}-{cardSlug}.
+    const setData = buildHenchmanFixture([
+      {
+        id:        34,
+        name:      "Mandarin's Rings",
+        slug:      "mandarins-rings",
+        imageUrl:  "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-daimonic-the-white-light.webp",
+        abilities: [],
+        cards: [
+          {
+            name:      "Daimonic, The White Light",
+            slug:      "daimonic-the-white-light",
+            imageUrl:  "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-daimonic-the-white-light.webp",
+            abilities: ["Fight: Draw a card."],
+          },
+          {
+            name:      "Zero, The Ice Blast",
+            slug:      "zero-the-ice-blast",
+            imageUrl:  "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-zero-the-ice-blast.webp",
+            abilities: ["Fight: Choose a card you played this turn that costs 0..."],
+          },
+        ],
+      },
+    ]);
+    const result = flattenSet(setData, "Revelations");
+    assert.equal(result.length, 2);
+    assert.equal(result[0]!.cardType, "henchman");
+    assert.equal(result[0]!.slug, "daimonic-the-white-light");
+    assert.equal(result[0]!.key, "core-henchman-mandarins-rings-daimonic-the-white-light");
+    assert.equal(result[0]!.name, "Daimonic, The White Light");
+    assert.equal(
+      result[0]!.imageUrl,
+      "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-daimonic-the-white-light.webp"
+    );
+    assert.deepEqual(result[0]!.abilities, ["Fight: Draw a card."]);
+    assert.equal(result[1]!.slug, "zero-the-ice-blast");
+    assert.equal(result[1]!.key, "core-henchman-mandarins-rings-zero-the-ice-blast");
+    assert.equal(
+      result[1]!.imageUrl,
+      "https://images.barefootbetters.com/rvlt/rvlt-hm-mandarins-rings-zero-the-ice-blast.webp"
+    );
+  });
 });
