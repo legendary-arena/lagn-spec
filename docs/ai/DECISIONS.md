@@ -12098,6 +12098,43 @@ A future API-touching WP that slips past one gate is still caught by the other; 
 
 ---
 
+### D-12201 — Viewer Henchman flattenSet Emission: Flat Treatment, Locked Key Format, Class-Keyed Art Deferred
+
+**Decision:** The viewer-local `flattenSet()` in `apps/registry-viewer/src/registry/shared.ts` emits exactly one `FlatCard` per `set.henchmen` entry, using a flat treatment that mirrors the bystanders/wounds blocks already present in the same file. The locked key format is `` `${abbr}-henchman-${slug}` `` (one segment after `henchman-`, matching the bystanders/wounds shape). The locked `cardType` literal is `"henchman"`. The locked slug fallback chain is `String(henchmanRecord["slug"] ?? henchmanRecord["name"] ?? "henchman")`. The locked loop variable name is `henchman` (full English; no abbreviation); the locked narrowed-record alias is `henchmanRecord` (full English; not `hm` or `h`). Locked test minimum: at least three `it` cases in the new `flattenSet henchman emission (WP-122)` describe block in `apps/registry-viewer/src/registry/shared.test.ts`; a fourth case pinning the flat-`imageUrl`-only projection contract is recommended and was authored at execution. The sibling `flattenSet` in `packages/registry/src/shared.ts` is **unchanged** by this decision; it does not iterate `set.henchmen` at all (it emits only hero / mastermind / villain / scheme cards) and therefore needs no parallel fix. This is a viewer-local divergence, intentional and isolated.
+
+**Rationale:**
+1. **Bug class:** silent-zero-emission. The original viewer code at `shared.ts:78–99` expected a nested `cards` sub-array per henchman group and iterated it via `for (const card of hmCards)`. The actual data shape across all 40 sets in `data/cards/*.json` is a flat object per henchman group (`{ id, name, slug, imageUrl, abilities, vAttack, vp }` — no nested `cards`). The shape sweep at WP-122 pre-flight (2026-05-01) confirmed 44 henchman entries across 40 sets, zero with nested `cards`. The inner loop iterated zero times for every henchman group, dropping all 44 henchmen from emission. The bug was latent until WP-086 introduced the taxonomy-driven ribbon, at which point the `Henchman` ribbon pill on `cards.barefootbetters.com` started showing zero cards.
+2. **Compatibility:** the fix is purely additive. Prior emission was zero, so no runtime consumer of any `${abbr}-henchman-*` key existed. Introducing the new key shape cannot break compatibility because the prior keyspace was empty.
+3. **One record per group, not per-card expansion:** `FlatCard` is the registry-display projection (one record per registry entry), not a deck realization. In Legendary, a henchman group enters the villain deck as 10 copies, but that expansion is an engine-layer concern in `packages/game-engine/**`. The viewer correctly emits one record per registry entry; deck expansion is the engine's responsibility.
+4. **Class-keyed image map deferred:** some henchmen carry both a flat `imageUrl` and a class-keyed image map keyed by hero class (covert / instinct / ranged / strength / tech). Confirmed examples: `amwp/tardigrade` and `wtif/ultron-sentries`. The current `FlatCard` schema models only `imageUrl: string` and has no field for class-specific art. Surfacing the class-keyed map requires widening `FlatCard` plus paired UI changes in `CardGrid.vue` / `CardDetail.vue` to render the class variant. This is out of scope for WP-122; deferred to a future WP that widens `FlatCard` to expose hero-class-specific henchman art.
+5. **No parallel fix in `packages/registry/`:** the engine consumes `MatchSetupConfig.henchmanGroupIds` via the registry layer (set-qualified IDs per WP-113 D-10014), not via `FlatCard` records. The package-level `flattenSet` does not iterate henchmen at all and has no consumer of henchman `FlatCard` records; adding a parallel emission would be speculative engine-side work without a current consumer.
+6. **Bystanders/wounds parallel:** the chosen flat treatment exactly mirrors the bystanders block at `shared.ts:116–130` and the wounds block at `shared.ts:132–147` — same null-narrowing, same `Record<string, unknown>` cast, same slug fallback chain, same single push per group. This is a structural consistency win and follows the WP-094 precedent of a focused viewer-local divergence isolated in this same file.
+
+**Alternatives rejected:**
+- **Synthesize per-card expansion (10 copies per group) to match villain-deck semantics:** REJECTED. Crosses the engine/registry layer boundary; `FlatCard` is a display projection, not a deck realization. Engine-layer deck expansion is the right home for that logic.
+- **Mirror the fix into `packages/registry/src/shared.ts`:** REJECTED. That file does not iterate henchmen at all; no consumer exists. Adding a parallel emission would be speculative engine-side work without a current consumer.
+- **Surface the class-keyed image map in this WP:** REJECTED. Requires `FlatCard` widening + paired UI changes in `CardGrid.vue` / `CardDetail.vue`. Out of scope for a single-file bug fix; deferred to a future WP that widens `FlatCard`.
+- **Add a Phase-1.5 conditional path that handles both flat and nested-`cards` shapes:** REJECTED. Premature defensive coding; the data sweep confirmed zero entries with nested `cards` across all 40 sets. If upstream ever introduces a new shape, that WP owns the conditional path; not WP-122.
+
+**Locked values (verbatim — do not paraphrase or re-derive):**
+- Henchman key format: `` `${abbr}-henchman-${slug}` `` (one segment after `henchman-`)
+- `cardType` literal: `"henchman"`
+- Loop variable name: `henchman` (not `h`, `hm`, `hench`)
+- Narrowed-record alias: `henchmanRecord` (not `hm`, `h`)
+- Slug fallback chain: `String(henchmanRecord["slug"] ?? henchmanRecord["name"] ?? "henchman")`
+- Test describe block title: `"flattenSet henchman emission (WP-122)"`
+- Test minimum: 3 `it` cases (4 recommended; 4 authored at execution)
+- Pre-session test baseline: `tests 22 / suites 4 / pass 22 / fail 0`
+- Post-session test baseline: `tests 26 / suites 5 / pass 26 / fail 0` (with the recommended fourth case)
+
+**Future supersession:** any future WP that wants to widen `FlatCard` to expose class-keyed henchman art (the deferred path noted under Rationale #4) MUST cite D-12201 and either supersede the class-keyed-art-deferred portion (with rationale + paired UI changes in `CardGrid.vue` / `CardDetail.vue`) or scope-bound the change (e.g., add a sibling field without disturbing the existing flat `imageUrl`). The locked key format `${abbr}-henchman-${slug}`, the `cardType: "henchman"` literal, and the slug fallback chain remain valid under any such widening.
+
+**Introduced:** WP-122 (drafted 2026-05-01; executed 2026-05-01 at Commit A `a5c1653` `EC-123:`)
+**Reinforces:** WP-094 D-9401 (viewer-local `flattenSet` divergence precedent — `apps/registry-viewer/src/registry/shared.ts` is the divergent copy from `packages/registry/src/shared.ts`); WP-086 D-8607 (viewer `node:test` harness via `tsx`); 00.6 Rule 4 (no abbreviations — drives `henchman` and `henchmanRecord` over `h` / `hm`); 00.6 Rule 6 (`// why:` comments where reason is non-obvious — drives the seven-clause block above the rewritten loop); `.claude/rules/architecture.md` §Layer Boundary (Registry-Viewer is Client-UI; this fix stays entirely inside the Client-UI layer)
+**Status:** Active
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
