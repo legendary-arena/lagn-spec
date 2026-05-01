@@ -12183,6 +12183,47 @@ This asymmetry was inherited from EC-102's consolidation effort. WP-123 widens o
 
 ---
 
+### D-12401 — Theme Zoom Slider: Locked Range, Default, Storage Key, CSS Variable, Composable Name (WP-124)
+
+**Decision:** The Themes view at `cards.barefootbetters.com` exposes a dedicated `Theme Size` zoom slider mounted in the themes-view filter bar between the search input and the count span. The slider drives a single CSS variable (`--theme-grid-min-width`) on `ThemeGrid.vue`'s `.grid` element; the existing `aspect-ratio: 3/4` rule on `.img-wrap` propagates width changes to height proportionally. The slider value is persisted to `localStorage['themeGridSize']` via a new module-scoped `useThemeSize` composable that mirrors `useCardSize.ts` (WP-121 / D-12101) line-for-line with theme-prefixed names.
+
+**Locked values (verbatim — do not paraphrase or re-derive):**
+- localStorage key: `'themeGridSize'` (flat camelCase, non-abbreviated, unprefixed; parallels `'cardGridSize'`).
+- CSS variable: `--theme-grid-min-width` (full English; parallels `--card-grid-min-width`).
+- Range: `MIN_THEME_WIDTH_PX = 80`, `MAX_THEME_WIDTH_PX = 260`, `THEME_WIDTH_STEP_PX = 10`.
+- **Default: `DEFAULT_THEME_WIDTH_PX = 150`.** Asymmetric with the cards-side default of `130`. Each default matches its view's pre-packet `minmax(...)` literal so a zero-config first run is visually identical to the pre-packet baseline (cards: `minmax(130px, 1fr)`; themes: `minmax(150px, 1fr)`).
+- Composable public API: `{ themeSize: Ref<number>; setThemeSize: (next: number) => void; }` plus the four range-constant exports.
+- Composable name: `useThemeSize` at `apps/registry-viewer/src/composables/useThemeSize.ts`.
+- Component name: `ThemeSizeSlider.vue` at `apps/registry-viewer/src/components/ThemeSizeSlider.vue`.
+- Slider label text: `Theme Size`.
+- Slider `aria-label`: `Theme grid size in pixels`.
+- `.grid` column-track rule on `ThemeGrid.vue`: `grid-template-columns: repeat(auto-fill, minmax(var(--theme-grid-min-width, 150px), 1fr));` (literal `150px` fallback preserved).
+- `.grid` `:style` binding on `ThemeGrid.vue`: `:style="{ '--theme-grid-min-width': themeSize + 'px' }"`.
+
+**Rationale:**
+1. **Symmetry with the cards-side slider:** the themes view at `cards.barefootbetters.com` shipped at a single fixed column min-width of `150px` (`ThemeGrid.vue:60`). Users scanning many themes wanted denser tiles; users reviewing comic art wanted larger tiles. The cards view shipped a `Card Size` slider under WP-121 / D-12101; the themes view had no analogous control. WP-124 closes that asymmetry.
+2. **Inheritance from the WP-121 pattern:** WP-121 / D-12101 already settled storage-key conventions, CSS variable naming, range-constant naming, composable public-API shape, and slider mount discipline. WP-124 inherits these conventions verbatim with a theme-prefixed substitution, with one intentional asymmetry — see point 3.
+3. **Cards / themes default asymmetry — not a bug:** `DEFAULT_CARD_WIDTH_PX = 130` (D-12101) and `DEFAULT_THEME_WIDTH_PX = 150` (D-12401) are intentionally different. Each matches the pre-packet `minmax(<n>px, 1fr)` rule on its respective grid component (`CardGrid.vue` ships `130`; `ThemeGrid.vue` ships `150`). A zero-config first run on either view is visually identical to the pre-slider baseline. Code review SHOULD NOT "fix" this asymmetry.
+
+**Duplicate-first rule citation:**
+
+Per `.claude/rules/code-style.md §"Abstraction & Control Flow"`: *"Duplicate first, abstract only when a third copy appears."* WP-124 deliberately duplicates `useCardSize.ts` → `useThemeSize.ts` and `CardSizeSlider.vue` → `ThemeSizeSlider.vue` rather than parameterizing the existing pair. With two copies in the codebase post-WP-124, the rule defers any future abstraction to a third zoom-slider WP. No shared base file exists; no helper is extracted; `useCardSize.ts` and `CardSizeSlider.vue` are byte-identical pre- and post-WP-124. Future maintainers MUST cite D-12401 if they want to refactor either file pair into a shared abstraction without explicit justification — the duplication is a settled architectural choice for the two-copy state, not an oversight.
+
+**Alternatives rejected:**
+- **Parameterize `useCardSize` to take a storage key + range tuple:** REJECTED. Two copies are below the *duplicate first* threshold. Parameterizing prematurely encodes design assumptions (e.g., that all zoom sliders share a step granularity) that may not hold for a third use case.
+- **Share a single CSS variable** (e.g., `--grid-min-width`) across both grids: REJECTED. The two grids have independent state under separate localStorage keys (`cardGridSize` / `themeGridSize`); a shared CSS variable would couple them at the cascade level even if the composables stayed independent.
+- **Mount the slider in `header-actions`** (next to the view tabs): REJECTED. Placing it next to the view tabs would imply global scope; the slider is themes-view-only (a cards-view slider already exists in the cards-view filter bar). The locked mount is the themes-view filter bar, between the search input and the count span.
+- **Add tests:** REJECTED. The viewer has no Vue component-test harness at baseline (precedent: WP-066 / WP-094 / WP-096 / WP-114 / WP-121 / WP-122 / WP-123). Verification is build + typecheck + manual smoke. Test baseline `31 / 6 / 31 / 0` is preserved.
+- **Use `Number(raw)` instead of `Number.parseInt(raw, 10)`:** REJECTED. `Number('150px')` is `NaN` (would reject the `150px` legacy value if such ever appeared); `Number.parseInt('150px', 10)` is `150` (accepts both `'150'` and the hypothetical `'150px'`). The `parseInt` choice mirrors `useCardSize.ts:54`.
+
+**Future supersession:** any future WP that wants to change the storage key, CSS variable name, range bounds, default, or composable shape MUST cite D-12401 explicitly and either supersede it (with rationale) or scope-bound the change. A future WP that introduces a third zoom slider (e.g., a Loadout Size slider) MAY cite D-12101 + D-12401 together to authorize abstraction into a shared composable factory.
+
+**Introduced:** WP-124 (drafted 2026-05-01; executed 2026-05-01 at Commit A `078e234` `EC-126:`)
+**Reinforces:** WP-121 D-12101 (composable + slider shape — line-for-line precedent); WP-066 (composable narrowing + self-heal + swallow precedent); `.claude/rules/code-style.md §"Abstraction & Control Flow"` (*duplicate first* rule); 00.6 Rule 4 (no abbreviations — drives `themeSize` / `setThemeSize` over `tSize`); 00.6 Rule 6 (`// why:` comments where reason is non-obvious — drives the eight-clause block across the new files); 00.6 Rule 11 (full-sentence swallow comment on the `setItem` catch); `.claude/rules/architecture.md` §Layer Boundary (Registry-Viewer is Client-UI; this affordance stays entirely inside the Client-UI layer)
+**Status:** Active
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
