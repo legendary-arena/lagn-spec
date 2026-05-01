@@ -12069,6 +12069,35 @@ A future API-touching WP that slips past one gate is still caught by the other; 
 
 ---
 
+### D-12101 — Card Zoom Slider: Locked Range, Default, Storage Key, and CSS Variable
+
+**Decision:** The registry-viewer's card-grid zoom slider (introduced under WP-121 / EC-122) locks four contract values that future viewer-touching WPs MUST NOT re-derive without explicit supersession:
+
+1. **localStorage key (verbatim):** `'cardGridSize'`. Flat, camelCase, non-abbreviated, unprefixed — matches the existing viewer convention (`useCardViewMode.ts` → `'cardViewMode'`; `useResizable.ts` → `'cardDetailWidth'`). The viewer is a single-origin SPA; no product-wide namespace prefix is needed.
+2. **CSS variable name (verbatim):** `--card-grid-min-width`. Full English; no abbreviations per `00.6` Rule 4. Bound on `CardGrid.vue`'s `.grid` element via `:style`; consumed by the column-track rule `grid-template-columns: repeat(auto-fill, minmax(var(--card-grid-min-width, 130px), 1fr));`.
+3. **Range constants (verbatim):** `MIN_CARD_WIDTH_PX = 80`, `MAX_CARD_WIDTH_PX = 260`, `CARD_WIDTH_STEP_PX = 10`. The minimum keeps `.tile-name` and `.tile-meta` legible at the smallest tile; the maximum fits a 1024px viewport without grid reflow; the step matches the slider's keyboard-arrow granularity.
+4. **Default value (verbatim):** `DEFAULT_CARD_WIDTH_PX = 130`. Matches the pre-packet `CardGrid.vue` rule `minmax(130px, 1fr)` exactly so a zero-config first run is visually identical to the pre-WP-121 baseline. The `130px` literal also appears as the fallback inside `minmax(var(--card-grid-min-width, 130px), 1fr)` so the grid still renders at the production baseline if the inline style binding is ever dropped (e.g., by a future server-render shim or test-harness).
+
+**Rationale:** Locking the storage key, CSS variable name, range, and default at draft time prevents two failure modes: (a) future viewer WPs picking different keys / variable names and creating ghost storage entries or unused CSS variables; (b) future range adjustments breaking the layout without a documented reason. The default-equals-baseline lock means zero-config first-run is byte-for-byte identical to the pre-packet view, so users with no preference set perceive no visual change.
+
+**Composable shape (locked):** `useCardSize()` exports exactly `{ cardSize: Ref<number>; setCardSize: (next: number) => void; }` plus the four range constants as named exports. No `resetCardSize`, no `clamp`, no `min`/`max` accessor — adding unused API surface is forbidden by `.claude/rules/architecture.md` §"Prohibited AI Failure Patterns". Mirrors `useCardViewMode.ts` shape line-for-line with a number payload instead of a string-literal union.
+
+**Mount-point lock:** the slider is mounted in `App.vue`'s cards-view filter bar only — between the hero-class `<select>` and the `<span class="count">`. Not in `header-actions` (which would imply global scope across all views), not in the themes-view filter bar, not in the loadout view. The themes grid uses a different column-track rule and is out of scope for this packet; a future WP may extend either if user feedback warrants.
+
+**Rejected alternatives at draft:**
+- Per-view-mode size (separate values for `viewMode === 'image'` vs `'data'`): rejected as premature; one knob covers both renderings until user feedback warrants the split.
+- A `width: <preset>` discrete enum (small / medium / large): rejected because the column-track behaves continuously and the preset-vs-continuous question would re-litigate at every range adjustment.
+- Storing as a percentage of viewport width: rejected because the CSS Grid `minmax(...)` rule expects an absolute length; converting at every read introduces a unit-coupling failure mode.
+- Mounting the slider next to `ViewModeToggle` in `header-actions`: rejected because the slider is cards-only and global placement implies cross-view applicability.
+
+**Future supersession:** any future WP that wants to change the storage key, CSS variable name, range bounds, default, or composable shape MUST cite D-12101 explicitly and either supersede it (with rationale) or scope-bound the change (e.g., add a sibling `cardGridSizeThemes` key without disturbing `cardGridSize`).
+
+**Introduced:** WP-121 (drafted 2026-05-01; awaiting commit)
+**Reinforces:** WP-066 D-* (composable shape precedent — `useCardViewMode.ts` is the line-for-line template for `useCardSize.ts`); 00.6 Rule 4 (no abbreviations — drives the full-English CSS variable name and storage key); `.claude/rules/architecture.md` §"Prohibited AI Failure Patterns" (no API without callers — drives the two-name + four-constant export lock)
+**Status:** Active
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
