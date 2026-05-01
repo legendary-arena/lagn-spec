@@ -34,7 +34,7 @@ export type CardQuery       = z.infer<typeof CardQuerySchema>;
 export interface FlatCard {
   /** Unique key: "{setAbbr}-{cardType}-{slug}"  */
   key:       string;
-  cardType:  "hero" | "mastermind" | "villain" | "henchman" | "scheme" | "bystander" | "wound" | "location" | "other";
+  cardType:  string;
   setAbbr:   string;
   setName:   string;
   name:      string;

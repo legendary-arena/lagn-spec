@@ -120,7 +120,7 @@ export const CardQuerySchema = z.object({
   heroClass:    HeroClassSchema.optional(),
   team:         z.string().optional(),
   nameContains: z.string().optional(),
-  cardType:     z.enum(["hero", "mastermind", "villain", "henchman", "scheme", "bystander", "wound", "location", "other"]).optional(),
-  cardTypes:    z.array(z.enum(["hero", "mastermind", "villain", "henchman", "scheme", "bystander", "wound", "location", "other"])).optional(),
+  cardType:     z.string().optional(),
+  cardTypes:    z.array(z.string()).optional(),
   rarity:       z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
 });

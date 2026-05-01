@@ -196,19 +196,38 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
   }
 
   // Other
-  for (const o of set.other) {
-    if (typeof o !== "object" || o === null) continue;
-    const ot = o as Record<string, unknown>;
-    const slug = String(ot["slug"] ?? ot["name"] ?? "other");
+  // why (a): set.other[] is the registry's generic bucket for cards that don't
+  //   fit the seven primary categories. Reading entry.cardType (when present)
+  //   and using it as the FlatCard's cardType is the foundation for any future
+  //   Phase 2 emission -- Sidekick, S.H.I.E.L.D. Officer, Trooper, and Agent,
+  //   or any new taxonomy slug -- without hardcoding new top-level loops.
+  // why (b): entries without a cardType field preserve the prior behavior
+  //   (FlatCard.cardType = "other", key = ${abbr}-other-${slug}). This is
+  //   byte-identical to the pre-WP-123 output for the existing (currently
+  //   empty) set.other[] arrays -- introducing the dispatch cannot break
+  //   compatibility because legacy entries take the fallback branch.
+  // why (c): WP-086 Phase 2 wire-through: see WP-086 §Out of Scope ("Phase 2
+  //   -- upstream modern-master-strike generator emits cardType on each card;
+  //   regenerate 40 sets -- is a follow-up WP, not in scope here"). This WP
+  //   is the viewer side of that wire; the upstream data-authoring side is a
+  //   separate operator/upstream task and is out of scope here.
+  // why (d): see DECISIONS.md D-12301 for the locked decision (key shape,
+  //   fallback string, type-widening pairing).
+  // why (e): scope reference WP-123 / EC-125.
+  for (const entry of set.other) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const entryRecord = entry as Record<string, unknown>;
+    const cardType = String(entryRecord["cardType"] ?? "other");
+    const slug = String(entryRecord["slug"] ?? entryRecord["name"] ?? "other");
     cards.push({
-      key:       `${abbr}-other-${slug}`,
-      cardType:  "other",
+      key:       `${abbr}-${cardType}-${slug}`,
+      cardType,
       setAbbr:   abbr,
       setName,
-      name:      String(ot["name"] ?? slug),
+      name:      String(entryRecord["name"] ?? slug),
       slug,
-      imageUrl:  String(ot["imageUrl"] ?? ""),
-      abilities: Array.isArray(ot["abilities"]) ? ot["abilities"] as string[] : [],
+      imageUrl:  String(entryRecord["imageUrl"] ?? ""),
+      abilities: Array.isArray(entryRecord["abilities"]) ? entryRecord["abilities"] as string[] : [],
     });
   }
 
