@@ -21,6 +21,7 @@ Failure to satisfy any item below is a failed execution of WP-104.
 - [ ] D-10401 + D-10402 present in WP-104 §Decision Points (locked at draft).
 - [ ] `pnpm -r build` exits 0 on `main` HEAD; `pnpm --filter @legendary-arena/server test` exits 0 (post-WP-112 baseline `pass 73 / fail 0 / skipped 36`).
 - [ ] Six executor decisions locked in writing before coding: D-DEC-1 (privacy-toggle granularity), D-DEC-2 (`player_links.provider` validation), D-DEC-3 (URL validation posture), D-DEC-4 (PATCH semantics), D-DEC-5 (PUT links semantics), D-DEC-6 (route-wiring posture). Recommended defaults documented in WP-104 §Decision Points; executor may override with rationale.
+- [ ] If `docs/ai/REFERENCE/00.2-data-requirements.md §4.1 Table Inventory` does not yet carry rows for `legendary.player_profiles` and `legendary.player_links`, add them in the same commit per `00.3 §6` canonical-name discipline. Field-name spellings (`avatarUrl` ↔ `avatar_url`, `aboutMe` ↔ `about_me`, `avatarVisibility` / `aboutMeVisibility` / `linksVisibility`, `provider`, `url`, `isPublic` ↔ `is_public`, `displayOrder` ↔ `display_order`, `updatedAt` ↔ `updated_at`) are locked under D-DEC-1 / D-DEC-2 and resolved at execution; the `00.2 §4.1` rows reflect the resolved spellings verbatim.
 
 ## §1 — Scope Lock + File Allowlist
 
@@ -71,6 +72,13 @@ Exactly 10 production / reference files may change. Plus 4 governance ledgers in
 - [ ] Commit prefix: `EC-128:` (code under `apps/server/src/`, `apps/arena-client/src/`, and `data/migrations/` is staged → SPEC: prefix forbidden per `01.3` Rule 5).
 - [ ] Vision trailer: `Vision: §3, §11, §14, §15, NG-1, NG-3, NG-6` per `01.3` Vision Trailer convention.
 - [ ] **D-11804 catalog update obligation lands in same commit:** `docs/ai/REFERENCE/api-endpoints.md` carries three new rows for the `/api/me/*` endpoints. Each row's `Status` is exactly the resolved D-DEC-6 value; `Auth` is exactly `authenticated-session-required`; `Authorizing WP` is `WP-104`. Field names match `00.2-data-requirements.md` verbatim.
+- [ ] **`// why:` coverage gate.** Manual review confirms `// why:` comments are present at each of the following six required sites per `00.6-code-style.md` Rule 6 (mirrors WP-115 / EC-119 coverage discipline):
+  - (a) **Migration 009 privacy-column DEFAULT clauses** — one comment block above the `legendary.player_profiles` table block citing D-DEC-1 + Vision §3 (most-private fail-closed default rationale).
+  - (b) **Every `requireAuthenticatedSession` invocation in `ownerProfile.routes.ts`** — a single `// why:` block at the top of `registerOwnerProfileRoutes` is sufficient (cites D-11202 + the WP-112 caller-injected pattern); per-handler repetition is not required.
+  - (c) **Per-suite-run uniqueness construction in `ownerProfile.logic.test.ts`** — citing the EC-112 lesson + the §2 SQL-write gate that forbids `beforeEach` cleanup in scope.
+  - (d) **`INSERT ... ON CONFLICT (player_id) DO UPDATE` upsert clause in `upsertOwnerProfile`** — citing the read-no-mutate invariant on the GET path and the "first PATCH creates the row" semantics.
+  - (e) **`Cache-Control: no-store` first-statement in every handler** — citing the WP-115 D-11504 lock that the header is set BEFORE any branching logic so error paths still carry it.
+  - (f) **`getOwnerProfile`'s synthesized-default branch** — citing the read-no-mutate invariant from WP-104 §Scope (In) §C "Read invariant".
 - [ ] No `--no-verify`, no `--no-gpg-sign` per `01.3` "Bypassing Hooks".
 
 ## §4 — Post-Execution Checks
@@ -104,3 +112,4 @@ Exactly 10 production / reference files may change. Plus 4 governance ledgers in
 - Migration 009 includes a `team_id` or `friends_visibility` column → premature WP-109 / future-friend-graph schema creep. Fix: every such extension is column-additive in the WP that authors it.
 - Test file uses `if (!hasTestDatabase) return` or manual `t.skip()` instead of the locked `hasTestDatabase ? {} : { skip: 'requires test database' }` per-test option object → fixture pattern lock violated. Fix: copy the WP-101 `handle.logic.test.ts` form verbatim.
 - Decision codes `D-DEC-1` through `D-DEC-6` appear in production code (TS files), test files, the migration, or `api-endpoints.md` → draft-time placeholders leaked into shipped artifacts. Fix: cite only the executed `D-104NN` numbers (D-10403..D-10408 per the renumbering note in WP-104 §Decision Points).
+- `MyProfilePage.vue` uses `<script setup>` instead of `defineComponent({ setup() { return {...} } })` per the D-6512 / P6-30 separate-compile precedent → viewer build fails at the `@legendary-arena/vue-sfc-loader` step when the template references non-prop bindings (mirrors the BootstrapProbe failure mode that originated D-6512). Fix: mirror `apps/arena-client/src/pages/PlayerProfilePage.vue`'s `defineComponent({ setup() {...} })` pattern verbatim. The choice is locked under D-6512 / P6-30; do not re-litigate at execution.

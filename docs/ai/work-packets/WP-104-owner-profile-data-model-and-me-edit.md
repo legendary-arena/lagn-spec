@@ -883,6 +883,29 @@ Before writing a single line:
   header; cookies are not consulted. No CSRF surface is
   introduced; cookie support is deferred to WP-126 or a future
   hardening WP that introduces both cookies and CSRF together.
+- **Lifecycle prohibition (locked, mirrors WP-102 RISK #16
+  precedent).** The four exported owner-profile functions —
+  `getOwnerProfile`, `upsertOwnerProfile`, `replaceOwnerLinks`,
+  `registerOwnerProfileRoutes` — plus the implicit consumer
+  surface `fetchOwnerProfile` / `updateOwnerProfile` /
+  `replaceOwnerLinks` on the client (`ownerProfileApi.ts`)
+  MUST NOT be called from any of the following sites: `game.ts`,
+  any `LegendaryGame.moves` entry, any phase hook (`onBegin` /
+  `onEnd` / `endIf`), any file under `packages/` (`game-engine`,
+  `registry`, `preplan`, `vue-sfc-loader`), any file under
+  `apps/replay-producer/` or `apps/registry-viewer/`, any file
+  under `apps/server/src/identity/`, `apps/server/src/replay/`,
+  `apps/server/src/competition/`, `apps/server/src/par/`,
+  `apps/server/src/rules/`, or `apps/server/src/game/`. They are
+  consumed only by their own test file
+  (`ownerProfile.logic.test.ts`), by `ownerProfile.routes.ts`
+  (route adapter), by `apps/server/src/server.mjs` (one-line
+  registration call per D-DEC-6 = (a) default), and by
+  `apps/arena-client/src/pages/MyProfilePage.vue` via
+  `ownerProfileApi.ts`. Verified at execution by grep — the
+  EC-128 §2 verification gates enforce zero forbidden-import
+  matches in the four listed sites. Mirrors the WP-101 / EC-114
+  and WP-102 / EC-117 lifecycle-prohibition precedents.
 
 **Session protocol:**
 - If any contract, field name, or reference is unclear, stop
@@ -1047,6 +1070,36 @@ WP-052 / WP-101 / WP-102 precedent).
   Uses an `INSERT ... ON CONFLICT (player_id) DO UPDATE SET ...`
   pattern so the first PATCH on a never-edited account creates
   the row.
+- **Three-state input discrimination (locked under D-DEC-4).**
+  The validator distinguishes the three input states via
+  explicit `Object.hasOwn` checks; inline ternaries returning
+  `T | undefined` are forbidden under
+  `exactOptionalPropertyTypes`. Pattern (locked verbatim):
+
+  ```ts
+  // why: Object.hasOwn distinguishes "key absent" (leave
+  // unchanged) from "key present, value null" (clear).
+  // typeof check distinguishes "value is the literal four-
+  // character string 'null'" (set the field to that string)
+  // from "value is the JSON null sentinel" (clear).
+  if (Object.hasOwn(patch, 'avatarUrl') === false) {
+    // leave avatar_url unchanged — do not append to the SET clause
+  } else if (patch.avatarUrl === null) {
+    setClauseParts.push('avatar_url = NULL');
+  } else if (typeof patch.avatarUrl === 'string') {
+    setClauseParts.push(`avatar_url = $${paramIndex++}`);
+    params.push(patch.avatarUrl);
+  } else {
+    return { ok: false, code: 'invalid_request', reason: '...' };
+  }
+  ```
+
+  Conditional assignment (build the SET clause without the
+  field, then conditionally append) is the locked pattern;
+  inline ternaries that yield `T | undefined` for the value
+  branch fail TypeScript's `exactOptionalPropertyTypes` check
+  and are forbidden. The same `Object.hasOwn` discrimination
+  applies to `aboutMe` and to every privacy-toggle field.
 - `replaceOwnerLinks(accountId, links, database):
   Promise<OwnerProfileResult<OwnerProfileView>>` — replace-all-
   by-list per D-DEC-5. Validates the entire array before
