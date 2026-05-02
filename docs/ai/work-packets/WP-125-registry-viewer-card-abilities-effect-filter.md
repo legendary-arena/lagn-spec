@@ -246,11 +246,18 @@ Before writing a single line:
   all workspaces.
 
 **Packet-specific:**
-- **Production files limited to five.** Three new
+- **Production files limited to six (post-amendment).** Three new
   (`card-abilities.json`, `cardAbilitiesClient.ts`,
-  `AbilityEffectFilter.vue`) and two modified (`schema.ts`,
-  `App.vue`). No other production files touched besides governance
-  (STATUS, DECISIONS, WORK_INDEX, EC_INDEX, the WP and EC themselves).
+  `AbilityEffectFilter.vue`) and three modified (`schema.ts`,
+  `App.vue`, `devLog.ts`). The original draft limited the count to
+  five; `devLog.ts` was added pre-execution (2026-05-01) when the
+  duplicate-first mirror of `cardTypesClient.ts` surfaced a
+  mechanical dependency on extending the closed `Category` union
+  with `"cardAbilities"`. WP-086 (commit `ccc6d0e`) hit the same
+  situation and is the precedent. See EC-127 §0 pre-execution
+  amendment + D-12501. No other production files touched besides
+  governance (STATUS, DECISIONS, WORK_INDEX, EC_INDEX, the WP and
+  EC themselves).
 - **Schema modifications limited to additions.** `schema.ts` gains
   `CardAbilityMatcherSchema`, `CardAbilityEntrySchema`,
   `CardAbilitiesIndexSchema`, `CardAbilityMatcher`,
@@ -860,6 +867,12 @@ matching the orphan-parentType discipline of WP-086.
   imports, three new refs, one new fetch in `onMounted`, one
   modified `applyFilters` body, one extended `clearAllFilters`,
   one new template mount between type-bar and set-pills.
+- `apps/registry-viewer/src/lib/devLog.ts` — **modified** — single
+  `"cardAbilities"` member appended to the closed `Category` union,
+  required for `cardAbilitiesClient.ts` to compile under `vue-tsc`.
+  Added pre-execution (2026-05-01) under EC-127 §0 amendment;
+  WP-086 (commit `ccc6d0e`) precedent for the parallel
+  `"cardTypes"` extension.
 - `docs/ai/work-packets/WP-125-registry-viewer-card-abilities-effect-filter.md` —
   **new** — this file.
 - `docs/ai/execution-checklists/EC-127-registry-viewer-card-abilities-effect-filter.checklist.md` —

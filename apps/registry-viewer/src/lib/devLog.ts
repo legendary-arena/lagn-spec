@@ -11,7 +11,13 @@
 
 import { DEBUG_VIEWER } from "./debugMode";
 
-type Category = "registry" | "theme" | "filter" | "render" | "glossary" | "cardTypes";
+// why: "cardAbilities" appended under EC-127 §0 pre-execution amendment
+// (2026-05-01) — mechanical dependency of cardAbilitiesClient.ts which
+// mirrors cardTypesClient.ts line-for-line per the duplicate-first rule.
+// WP-086 (commit ccc6d0e) is the precedent: the same audit-trail extension
+// added "cardTypes" when WP-086 introduced cardTypesClient.ts. D-12501
+// records the lock.
+type Category = "registry" | "theme" | "filter" | "render" | "glossary" | "cardTypes" | "cardAbilities";
 
 /**
  * Logs a categorized dev event. No-op when `DEBUG_VIEWER` is false.

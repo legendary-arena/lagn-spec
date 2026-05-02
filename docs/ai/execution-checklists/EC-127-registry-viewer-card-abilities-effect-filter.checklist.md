@@ -15,39 +15,57 @@
 This EC enforces **two distinct scopes**. They are not the same; do not
 conflate them.
 
-### A) Runtime / implementation scope (STRICT — 5 files)
+> **Pre-execution amendment (2026-05-01).** The original §0(A) listed five
+> production files. During execution prep, the duplicate-first mirror of
+> `cardTypesClient.ts` surfaced a mechanical dependency on
+> `apps/registry-viewer/src/lib/devLog.ts`: the `Category` union there is
+> closed (`"registry" | "theme" | "filter" | "render" | "glossary" | "cardTypes"`)
+> and adding `"cardAbilities"` is required for `cardAbilitiesClient.ts` to
+> compile under `vue-tsc`. WP-086 hit the exact same situation when
+> `"cardTypes"` was added (commit `ccc6d0e`); it shipped as a documented
+> audit-trail extension. To keep §0 mechanically accurate at session close,
+> this EC was amended *before* execution to include `devLog.ts` as a sixth
+> production file. Operator approved 2026-05-01 (option-2 path: amend the
+> contract, then execute, rather than retro-document an audit-trail file).
+> All §0 / §Locked Values / §Guardrails / §After Completing references to
+> "5 files" / "11 files" / "12th file" were updated in the same amendment.
 
-Only these five production files may change:
+### A) Runtime / implementation scope (STRICT — 6 files)
+
+Only these six production files may change:
 
 1. `data/metadata/card-abilities.json` (new)
 2. `packages/registry/src/schema.ts` (modified — additions only)
 3. `apps/registry-viewer/src/lib/cardAbilitiesClient.ts` (new)
 4. `apps/registry-viewer/src/components/AbilityEffectFilter.vue` (new)
 5. `apps/registry-viewer/src/App.vue` (modified)
+6. `apps/registry-viewer/src/lib/devLog.ts` (modified — additions only;
+   single new `"cardAbilities"` member appended to the `Category` union)
 
 Any other change under `apps/`, `packages/`, or `data/` is a **hard
 abort** (see §Session Abort Conditions A).
 
-### B) Total staged set (11 files at session close)
+### B) Total staged set (12 files at session close)
 
 This execution closes WP-125 and records EC-127, so doc/ledger files
 are also staged. The complete `git diff --name-only` output at session
-end is expected to be exactly these **11** files — no more, no less:
+end is expected to be exactly these **12** files — no more, no less:
 
 1. `data/metadata/card-abilities.json`
 2. `packages/registry/src/schema.ts`
 3. `apps/registry-viewer/src/lib/cardAbilitiesClient.ts`
 4. `apps/registry-viewer/src/components/AbilityEffectFilter.vue`
 5. `apps/registry-viewer/src/App.vue`
-6. `docs/ai/work-packets/WP-125-registry-viewer-card-abilities-effect-filter.md`
-7. `docs/ai/execution-checklists/EC-127-registry-viewer-card-abilities-effect-filter.checklist.md`
-8. `docs/ai/work-packets/WORK_INDEX.md`
-9. `docs/ai/execution-checklists/EC_INDEX.md`
-10. `docs/ai/DECISIONS.md`
-11. `docs/ai/STATUS.md`
+6. `apps/registry-viewer/src/lib/devLog.ts`
+7. `docs/ai/work-packets/WP-125-registry-viewer-card-abilities-effect-filter.md`
+8. `docs/ai/execution-checklists/EC-127-registry-viewer-card-abilities-effect-filter.checklist.md`
+9. `docs/ai/work-packets/WORK_INDEX.md`
+10. `docs/ai/execution-checklists/EC_INDEX.md`
+11. `docs/ai/DECISIONS.md`
+12. `docs/ai/STATUS.md`
 
-A 12th file under `apps/`, `packages/`, or `data/` is a runtime-scope
-violation (§Session Abort Conditions A). A 12th file under `docs/`
+A 13th file under `apps/`, `packages/`, or `data/` is a runtime-scope
+violation (§Session Abort Conditions A). A 13th file under `docs/`
 (beyond the 6 ledger / doc files above) is a doc-scope violation
 (§Session Abort Conditions A).
 
@@ -207,10 +225,10 @@ observed during execution.
   `ImageLightbox.vue`, `CardSizeSlider.vue`, `ThemeSizeSlider.vue`
   if WP-124 merged, `ViewModeToggle.vue` — all out-of-scope).
 - Any additional file under `apps/`, `packages/`, or `data/`
-  appears in `git diff --name-only` beyond the five files permitted
+  appears in `git diff --name-only` beyond the six files permitted
   in §0(A).
 - Any additional doc file appears in `git diff --name-only` beyond
-  the six ledger / doc files in §0(B) (positions 6–11).
+  the six ledger / doc files in §0(B) (positions 7–12).
 
 ### B) Semantic violations
 
@@ -295,6 +313,9 @@ observed during execution.
   - `apps/registry-viewer/src/lib/cardAbilitiesClient.ts` (new)
   - `apps/registry-viewer/src/components/AbilityEffectFilter.vue` (new)
   - `apps/registry-viewer/src/App.vue` (modified)
+  - `apps/registry-viewer/src/lib/devLog.ts` (modified — single new
+    `"cardAbilities"` member appended to the `Category` union; per the
+    §0 pre-execution amendment)
 - **R2 metadata path (verbatim):** `metadata/card-abilities.json`.
 - **Schema export names (verbatim):**
   `CardAbilityMatcherSchema`, `CardAbilityEntrySchema`,
@@ -359,9 +380,10 @@ observed during execution.
 
 ## Guardrails
 
-- **Five-file production scope.** Only the five files in §0(A) are
-  edited. Any other file outside that set (governance ledgers
-  excluded — see §0(B)) is a scope violation.
+- **Six-file production scope.** Only the six files in §0(A) are
+  edited (per the §0 pre-execution amendment that added
+  `devLog.ts` as the sixth). Any other file outside that set
+  (governance ledgers excluded — see §0(B)) is a scope violation.
 - **Stage by exact file path only.** See the staging-discipline
   callout immediately after §0 Scope Model — that callout is the
   single source of truth for staging discipline; do not re-derive.
@@ -449,9 +471,11 @@ observed during execution.
 
 ## Required `// why:` Comments
 
-All **eleven** clauses below are mandatory. Missing any clause is an
-EC fail. (The schema-block header counts as the first clause; the
-remaining ten span the client, the component, and `App.vue`.)
+All **twelve** clauses below are mandatory. Missing any clause is an
+EC fail. (The schema-block header counts as the first clause; the next
+ten span the client, the component, and `App.vue`; the twelfth covers
+the `devLog.ts` Category-union extension added under the §0
+pre-execution amendment.)
 
 - **`packages/registry/src/schema.ts` block header for the new
   taxonomy:** WP-125 second metadata-driven taxonomy under WP-086
@@ -516,6 +540,13 @@ remaining ten span the client, the component, and `App.vue`.)
   package's per-viewer flatten copy) and an effect-tag concept is
   out of scope for that helper; keeping the filter outside
   preserves the helper's purity.
+- **`devLog.ts` on the new `"cardAbilities"` Category member:** the
+  Category union is closed and `cardAbilitiesClient.ts` calls
+  `devLog("cardAbilities", …)` per the *duplicate first* mirror of
+  `cardTypesClient.ts`; adding the member is a mechanical
+  dependency on the new client. Same disposition as WP-086 (commit
+  `ccc6d0e`) which appended `"cardTypes"`. Recorded in §0
+  pre-execution amendment + D-12501.
 
 
 ## Files to Produce
@@ -542,8 +573,13 @@ remaining ten span the client, the component, and `App.vue`.)
   step), one extended `clearAllFilters` (resets
   `selectedEffectSlugs`), one new template mount between type-bar
   and set-pills (with `v-if` on taxonomy length).
-- Governance at session close (positions 6–11 of the §0(B) staged
-  set, not counted against §0(A)'s 5-file runtime scope):
+- `apps/registry-viewer/src/lib/devLog.ts` — **modified** — single
+  `"cardAbilities"` member appended to the `Category` union per the
+  §0 pre-execution amendment; mechanical dependency of
+  `cardAbilitiesClient.ts`. One `// why:` clause cites the §0
+  amendment + D-12501. WP-086 (`ccc6d0e`) is the precedent.
+- Governance at session close (positions 7–12 of the §0(B) staged
+  set, not counted against §0(A)'s 6-file runtime scope):
   `STATUS.md` block; `DECISIONS.md` D-12501 entry;
   `WORK_INDEX.md` WP-125 `[ ]` → `[x]`; `EC_INDEX.md` EC-127 Draft →
   Done; the WP and EC files themselves.
@@ -584,11 +620,14 @@ remaining ten span the client, the component, and `App.vue`.)
       no output.
 - [ ] `git diff apps/registry-viewer/package.json` → no output.
 - [ ] `git diff packages/registry/package.json` → no output.
-- [ ] `git diff --name-only` lists exactly the 11 files in §0(B), no
+- [ ] `git diff --name-only` lists exactly the 12 files in §0(B), no
       more, no less. Any additional file under `apps/`, `packages/`,
       or `data/` is a §0(A) runtime-scope violation; any additional
       file under `docs/` is a §0(B) doc-scope violation. Both are
       FAILED criteria — see §Session Abort Conditions A.
+- [ ] `Select-String -Path "apps\registry-viewer\src\lib\devLog.ts" -Pattern '"cardAbilities"'`
+      returns at least one match (the new Category-union member added
+      under the §0 pre-execution amendment).
 - [ ] `Select-String -Path "packages\registry\src\schema.ts" -Pattern "CardAbilityMatcherSchema = z.object"`
       returns exactly one match.
 - [ ] `Select-String -Path "packages\registry\src\schema.ts" -Pattern "CardAbilityEntrySchema = z.object"`
@@ -748,12 +787,13 @@ remaining ten span the client, the component, and `App.vue`.)
   Session Abort Condition A. The viewer-registry copy is
   byte-identical lock; the abilities filter is a viewer-local
   post-step in `App.vue`. Revert `shared.ts`.
-- **Symptom:** A 12th file appears in `git diff --name-only` →
-  Session Abort Condition A. The five-file production lock is
-  intentional. Re-read §0(A) (runtime / implementation scope) vs
-  §0(B) (total staged set) to identify which scope was violated.
-  Common cause: an over-eager `git add -A` or `git add .`
-  (forbidden — see §0 Staging discipline callout).
+- **Symptom:** A 13th file appears in `git diff --name-only` →
+  Session Abort Condition A. The six-file production lock is
+  intentional (post-amendment). Re-read §0(A) (runtime /
+  implementation scope) vs §0(B) (total staged set) to identify
+  which scope was violated. Common cause: an over-eager
+  `git add -A` or `git add .` (forbidden — see §0 Staging
+  discipline callout).
 - **Symptom:** `git diff apps/registry-viewer/src/lib/cardTypesClient.ts`
   shows changes → the cards-side fetcher was edited (likely an
   attempt to refactor into a shared base). Revert. The
@@ -764,10 +804,11 @@ remaining ten span the client, the component, and `App.vue`.)
   upload precondition was skipped. Production users see degraded
   mode (chip ribbon hidden) until the upload completes. Upload
   immediately and verify with another `curl --head`.
-- **Symptom:** Eleven `// why:` clauses are not all present →
-  re-read §Required `// why:` Comments; all eleven are mandatory
-  (the schema header counts as one). Missing any clause is an EC
-  fail.
+- **Symptom:** Twelve `// why:` clauses are not all present →
+  re-read §Required `// why:` Comments; all twelve are mandatory
+  (the schema header counts as one; the `devLog.ts` Category
+  extension counts as the twelfth, added under the §0
+  pre-execution amendment). Missing any clause is an EC fail.
 - **Symptom:** Schema parse smoke (`node -e` in §After Completing)
   reports "expected 10 entries, got N" → the initial taxonomy was
   authored with the wrong count. Locked at exactly ten starter

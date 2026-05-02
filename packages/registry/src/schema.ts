@@ -223,6 +223,34 @@ export const CardTypesIndexSchema = z.array(CardTypeEntrySchema);
 export type CardTypeEntry  = z.infer<typeof CardTypeEntrySchema>;
 export type CardTypesIndex = z.infer<typeof CardTypesIndexSchema>;
 
+// ── Card-abilities effect-tag taxonomy (card-abilities.json) ────────────
+// why: WP-125 second metadata-driven taxonomy under WP-086 precedent
+// (card-types.json was the first). .strict() rejects unknown fields so any
+// future pipeline drift surfaces as an explicit Zod error rather than silent
+// data loss. The matcher.type field is locked to a single z.literal("regex")
+// so adding a future matcher type (substring / token-presence / structured)
+// is an explicit schema decision in a follow-up WP rather than a silent
+// extension. D-12501 records the lock.
+export const CardAbilityMatcherSchema = z.object({
+  type:    z.literal("regex"),
+  pattern: z.string().min(1),
+  flags:   z.string().optional(),
+}).strict();
+
+export const CardAbilityEntrySchema = z.object({
+  slug:     z.string().min(1).regex(/^[a-z][a-z0-9-]*$/),
+  label:    z.string().min(1),
+  emoji:    z.string().optional(),
+  order:    z.number().int().nonnegative(),
+  matchers: z.array(CardAbilityMatcherSchema).min(1),
+}).strict();
+
+export const CardAbilitiesIndexSchema = z.array(CardAbilityEntrySchema);
+
+export type CardAbilityMatcher = z.infer<typeof CardAbilityMatcherSchema>;
+export type CardAbilityEntry   = z.infer<typeof CardAbilityEntrySchema>;
+export type CardAbilitiesIndex = z.infer<typeof CardAbilitiesIndexSchema>;
+
 // why: CardType = string is the named alias replacing the prior 4-value
 // z.enum(["hero","mastermind","villain","scheme"]) at CardQuerySchema. The
 // registry package stays permissive at load (any string accepted); the viewer

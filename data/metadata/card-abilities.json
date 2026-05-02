@@ -1,0 +1,92 @@
+[
+  {
+    "slug": "draw",
+    "label": "Draw a card",
+    "emoji": "🃏",
+    "order": 10,
+    "matchers": [
+      { "type": "regex", "pattern": "\\bdraw (a|one|two|three|four|five|\\d+) cards?\\b", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "ko-from-hand",
+    "label": "KO from hand",
+    "emoji": "🥊",
+    "order": 20,
+    "matchers": [
+      { "type": "regex", "pattern": "\\bKO (a|one|two|\\d+) cards? from your hand\\b", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "ko-from-discard",
+    "label": "KO from discard",
+    "emoji": "🗑️",
+    "order": 30,
+    "matchers": [
+      { "type": "regex", "pattern": "\\bKO (a|one|two|\\d+) cards? from your discard\\b", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "ko-from-hand-or-discard",
+    "label": "KO from hand or discard",
+    "emoji": "♻️",
+    "order": 40,
+    "matchers": [
+      { "type": "regex", "pattern": "\\bKO (a|one|two|\\d+) cards? from your hand or discard\\b", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "rescue-bystander",
+    "label": "Rescue a Bystander",
+    "emoji": "🛟",
+    "order": 50,
+    "matchers": [
+      { "type": "regex", "pattern": "\\brescue (a|one|two|three|\\d+|any) Bystanders?\\b", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "gain-attack",
+    "label": "Gain Attack",
+    "emoji": "⚔️",
+    "order": 60,
+    "matchers": [
+      { "type": "regex", "pattern": "\\+\\d+\\[icon:attack\\]", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "gain-recruit",
+    "label": "Gain Recruit",
+    "emoji": "💰",
+    "order": 70,
+    "matchers": [
+      { "type": "regex", "pattern": "\\+\\d+\\[icon:recruit\\]", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "gain-piercing",
+    "label": "Gain Piercing",
+    "emoji": "🎯",
+    "order": 80,
+    "matchers": [
+      { "type": "regex", "pattern": "\\+\\d+\\[icon:piercing\\]", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "gain-wound",
+    "label": "Gain a Wound",
+    "emoji": "🤕",
+    "order": 90,
+    "matchers": [
+      { "type": "regex", "pattern": "\\bgain (a|one|\\d+) Wounds?\\b", "flags": "i" }
+    ]
+  },
+  {
+    "slug": "defeat-villain",
+    "label": "Defeat a Villain",
+    "emoji": "🏆",
+    "order": 100,
+    "matchers": [
+      { "type": "regex", "pattern": "\\bdefeat (a|one|the|that|each|any|\\d+) Villains?\\b", "flags": "i" }
+    ]
+  }
+]

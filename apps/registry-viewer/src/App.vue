@@ -6,8 +6,9 @@ import { getThemes } from "./lib/themeClient";
 import type { ThemeDefinition } from "./lib/themeClient";
 import { getKeywordGlossary, getKeywordPdfPages, getRuleGlossary } from "./lib/glossaryClient";
 import { getCardTypes } from "./lib/cardTypesClient";
+import { getCardAbilities, buildAbilityTagIndex } from "./lib/cardAbilitiesClient";
 import { devLog } from "./lib/devLog";
-import type { CardTypeEntry } from "@legendary-arena/registry/schema";
+import type { CardTypeEntry, CardAbilityEntry } from "@legendary-arena/registry/schema";
 import { setGlossaries } from "./composables/useRules";
 import { useGlossary, rebuildGlossaryEntries } from "./composables/useGlossary";
 import { useLightbox } from "./composables/useLightbox";
@@ -24,6 +25,7 @@ import ImageLightbox  from "./components/ImageLightbox.vue";
 import ViewModeToggle from "./components/ViewModeToggle.vue";
 import LoadoutBuilder from "./components/LoadoutBuilder.vue";
 import LoadoutPreview from "./components/LoadoutPreview.vue";
+import AbilityEffectFilter from "./components/AbilityEffectFilter.vue";
 import { useSetupFromUrl } from "./composables/useSetupFromUrl";
 import type {
   MatchSetupDocument,
@@ -188,6 +190,15 @@ const cardTypes = ref<CardTypeEntry[]>([]);
 // query() type signature.
 const selectedTypes = ref<Set<string>>(new Set());
 
+// ── Card-abilities effect-tag taxonomy (WP-125 / EC-127) ──────────────────────
+// Live taxonomy fetched from card-abilities.json. Empty until onMounted
+// resolves; stays empty if fetch fails or schema rejects (non-blocking by
+// design — cardAbilitiesClient.ts never throws). The chip ribbon stays
+// hidden when this is empty.
+const abilitiesTaxonomy = ref<CardAbilityEntry[]>([]);
+const abilityTagIndex = ref<Map<string, Set<string>> | null>(null);
+const selectedEffectSlugs = ref<Set<string>>(new Set());
+
 function toggleGroup(group: TypeGroup) {
   const allSelected = group.types.every((t) => selectedTypes.value.has(t));
   const next = new Set(selectedTypes.value);
@@ -219,6 +230,7 @@ function clearAllFilters() {
   filterSet.value = "";
   filterHC.value = "";
   selectedTypes.value = new Set();
+  selectedEffectSlugs.value = new Set();
   selectedCard.value = null;
   applyFilters();
 }
@@ -287,6 +299,25 @@ onMounted(async () => {
       devLog("cardTypes", "using legacy fallback");
     }
 
+    // why: Parallel to the cardTypes / glossary fetches — the abilities
+    // client is non-blocking (resolves to [] on HTTP failure or schema
+    // rejection). When the taxonomy is empty the chip ribbon stays
+    // silently hidden via v-if on AbilityEffectFilter.vue's outer
+    // wrapper; the cards view remains fully functional.
+    loadStatus.value = "Loading abilities taxonomy…";
+    abilitiesTaxonomy.value = await getCardAbilities(metadataBaseUrl);
+    if (abilitiesTaxonomy.value.length > 0) {
+      // why: build the per-card effect-tag index exactly once after both
+      // registry and taxonomy resolve. Keyed by card.key (the
+      // ${abbr}-${cardType}-${slug} string established by WP-122).
+      // Subsequent chip toggles consult the index without recomputing —
+      // see applyFilters() below.
+      abilityTagIndex.value = buildAbilityTagIndex(
+        allCards.value,
+        abilitiesTaxonomy.value,
+      );
+    }
+
     // why: Parallel to getThemes() above — glossary fetch is non-blocking.
     // If R2 is unreachable or the JSON files are missing, console.warn and
     // continue; tooltips will be absent but the card view remains functional.
@@ -350,8 +381,30 @@ function applyFilters() {
   if (filterSet.value)  q.setAbbr      = filterSet.value;
   if (filterHC.value)   q.heroClass    = filterHC.value as CardQueryExtended["heroClass"];
   if (searchText.value) q.nameContains = searchText.value;
-  filteredCards.value = registry.value.query(q as any);
-  selectedCard.value  = null;
+  const queryResults = registry.value.query(q as any);
+  // why: the abilities filter is applied *after* applyQuery() rather than
+  // inside it. applyQuery() lives in apps/registry-viewer/src/registry/shared.ts
+  // (the registry package's per-viewer flatten copy) and an effect-tag
+  // concept is out of scope for that helper — keeping the filter outside
+  // preserves shared.ts's purity. Semantics: OR within the abilities
+  // filter (a card matches if ANY selected effect's tag is present); AND
+  // with every other filter (set / hero class / card type / search —
+  // existing applyQuery() semantics preserved upstream).
+  if (selectedEffectSlugs.value.size > 0 && abilityTagIndex.value) {
+    const tagIndex = abilityTagIndex.value;
+    const selected = selectedEffectSlugs.value;
+    filteredCards.value = queryResults.filter((card) => {
+      const tags = tagIndex.get(card.key);
+      if (!tags) return false;
+      for (const slug of selected) {
+        if (tags.has(slug)) return true;
+      }
+      return false;
+    });
+  } else {
+    filteredCards.value = queryResults;
+  }
+  selectedCard.value = null;
 }
 
 const activeTypeCount = computed(() => selectedTypes.value.size);
@@ -569,6 +622,15 @@ function navigateToCard(slug: string, cardType: string) {
           @click="clearTypes"
         >✕ clear</button>
       </div>
+
+      <!-- ── Effect-tag chip ribbon (WP-125) ─────────────────────────────────── -->
+      <AbilityEffectFilter
+        v-if="abilitiesTaxonomy.length > 0"
+        :taxonomy="abilitiesTaxonomy"
+        :tag-index="abilityTagIndex"
+        v-model:selected-effect-slugs="selectedEffectSlugs"
+        @update:selected-effect-slugs="applyFilters"
+      />
 
       <!-- ── Set quick-filter pills ──────────────────────────────────────────── -->
       <div class="set-pills">
