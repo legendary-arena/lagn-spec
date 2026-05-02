@@ -227,7 +227,14 @@ inspect `G` beyond routing. Import UI packages.
 **Failure mode:** Authority and trust violations. Data leaks. Deployment
 issues.
 
-**Directories:** `apps/server/`
+**Directories:** `apps/server/` (including subdirectories such as
+`apps/server/src/db/` (per WP-115 PS-3, 2026-05-01),
+`apps/server/src/leaderboards/`, `apps/server/src/profile/`,
+`apps/server/src/par/`, `apps/server/src/identity/`,
+`apps/server/src/competition/`, `apps/server/src/replay/`,
+`apps/server/src/rules/`, etc.; the `server` category covers all
+descendants of `apps/server/` unless an explicit DECISIONS.md
+entry carves out a sub-classification).
 
 ---
 
