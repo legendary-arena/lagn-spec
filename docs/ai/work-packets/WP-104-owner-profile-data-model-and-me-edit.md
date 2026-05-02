@@ -253,6 +253,16 @@ the same commit if they are not yet present.
 > blocks for the executor to resolve at execution time, with
 > constraints documented here so the executor can lock them without
 > re-litigating at coding time.
+>
+> **Note on numbering.** The `D-DEC-N` identifiers below are
+> temporary draft-time placeholders. At execution close-out they are
+> renumbered and recorded as **D-10403** (D-DEC-1) / **D-10404**
+> (D-DEC-2) / **D-10405** (D-DEC-3) / **D-10406** (D-DEC-4) /
+> **D-10407** (D-DEC-5) / **D-10408** (D-DEC-6) in `DECISIONS.md`,
+> preserving order and rationale verbatim. The `D-DEC-N` names
+> appear nowhere outside this WP file and the paired EC-128
+> checklist; production code, test files, and the catalog must cite
+> only the executed `D-104NN` numbers.
 
 ### D-10401 — WP-104 Module Path: Extend `apps/server/src/profile/` (Not New `apps/server/src/account/`) [LOCKED AT DRAFT]
 
@@ -516,6 +526,24 @@ semantics that JS clients commonly assume; matches the WP-052
 on the players table) intent; option (b) inverts the verb's
 meaning; option (c) adds endpoints without clear benefit at
 MVP scope.
+
+**Norm (locked regardless of which option the executor picks):**
+explicit `null` in the request body **clears** the corresponding
+nullable field; key absence **leaves the field unchanged**. No
+other interpretation is permitted — in particular, a string
+literal `"null"` is treated as the literal four-character string,
+not as a clear-intent signal. The validator distinguishes these
+three cases at the top of `upsertOwnerProfile` before any SQL
+issues.
+
+**No companion `PUT /api/me/profile` endpoint.** A full-replace
+PUT is intentionally omitted: it would invite accidental full-row
+nulling on partial-form submissions and complicate the
+audit-friendly sparse-update story. PATCH-only is the locked
+verb posture for this surface; if a future surface needs
+all-or-nothing replace semantics it MUST justify the addition in
+its own DECISIONS.md entry rather than retroactively adding PUT
+here.
 
 ### D-DEC-5 — `PUT /api/me/links` Semantics [DECISION REQUIRED]
 
@@ -782,15 +810,33 @@ Before writing a single line:
   authority. The existing `apps/server/src/profile/` directory
   classification (D-10201) covers WP-104's new files by precedent.
 - **Owner-only writes go through `requireAuthenticatedSession`.**
-  Every PATCH / PUT handler invokes the caller-injected
+  Every PATCH / PUT / GET handler invokes the caller-injected
   `requireAuthenticatedSession(req, options)` orchestrator as its
   first step; on any `Result.fail`, the handler returns the
-  appropriate HTTP status (401 for `'missing_token'` /
-  `'invalid_token'` / `'expired_token'`; 401 or 403 for
-  `'unknown_account'` per D-DEC-7 if the executor surfaces it;
-  500 for `'session_verifier_not_configured'` /
-  `'lookup_failed'`) with a typed `{ error: <code> }` body. No
-  request silently passes.
+  appropriate HTTP status with a typed `{ error: <code> }` body
+  per the locked closed-set mapping below. No request silently
+  passes.
+
+  | `SessionValidationErrorCode` | HTTP status | Body |
+  |---|---|---|
+  | `'missing_token'` | **401** | `{ error: 'missing_token' }` |
+  | `'invalid_token'` | **401** | `{ error: 'invalid_token' }` |
+  | `'expired_token'` | **401** | `{ error: 'expired_token' }` |
+  | `'unknown_account'` | **401** | `{ error: 'unknown_account' }` |
+  | `'session_verifier_not_configured'` | **500** | `{ error: 'session_verifier_not_configured' }` |
+  | `'lookup_failed'` | **500** | `{ error: 'lookup_failed' }` |
+
+  **`'unknown_account'` returns 401, NOT 403.** Locked rationale:
+  a 403 would distinguish "your token is valid but no account
+  row exists" from "your token is invalid", giving an attacker
+  an account-existence probe — they could enumerate which
+  `(authProvider, authProviderSub)` pairs correspond to
+  provisioned vs. unprovisioned accounts by counting 401-vs-403
+  responses. Collapsing both to 401 with distinct `error`
+  payload codes preserves the closed-set diagnostic surface for
+  legitimate callers without leaking presence-vs-absence to
+  attackers. Mirrors the WP-102 `{ "error": "player_not_found" }`
+  no-information-leak posture verbatim.
 - **Read-only against existing tables; writes only to new tables.**
   No `INSERT`, `UPDATE`, or `DELETE` against
   `legendary.players`, `legendary.replay_ownership`,
@@ -868,6 +914,15 @@ Before writing a single line:
   locked under D-DEC-1 / D-DEC-2 at execution; the executor
   pastes the resolved shape into `ownerProfile.types.ts` per
   the WP-102 `PublicProfileView` precedent).**
+- **`OwnerProfileView.links` ordering invariant (locked).**
+  The `links` array is ALWAYS returned sorted ascending by
+  `displayOrder` (ties broken by `link_id` ascending — should
+  not occur given the UNIQUE `(player_id, display_order)`
+  constraint, but defended in code). Both the SELECT inside
+  `getOwnerProfile` and the SELECT inside `replaceOwnerLinks`'s
+  post-write composition path apply `ORDER BY display_order
+  ASC, link_id ASC` verbatim. Clients MUST NOT defensively
+  re-sort the array; the server is authoritative on order.
 - **`OwnerProfileErrorCode` union (closed; minimal shape locked
   here, executor extends per D-DEC-3 / D-DEC-4 / D-DEC-5):**
   `'invalid_request' | 'invalid_avatar_url' | 'invalid_link_url'
@@ -914,6 +969,16 @@ Idempotent DDL for two new tables in the `legendary.*` namespace:
   - `is_public boolean NOT NULL DEFAULT false` (most-private default)
   - `display_order int NOT NULL DEFAULT 0` (preserves the order the client sent per D-DEC-5)
   - Unique constraint `(player_id, display_order)` so reordering is deterministic.
+  - `CREATE INDEX IF NOT EXISTS idx_player_links_player_id ON legendary.player_links(player_id);` — every read path
+    on this table filters by `player_id` first; the explicit
+    index protects the hot path against PostgreSQL's planner
+    choosing a sequential scan as the table grows. The
+    `(player_id, display_order)` UNIQUE index alone is
+    sufficient for prefix lookups, but a dedicated single-column
+    index on `player_id` is the cheaper plan for the common
+    `WHERE player_id = $1 ORDER BY display_order` shape and
+    is consistent with the WP-052 / WP-101 single-column-FK
+    indexing posture on `legendary.replay_ownership`.
 - All `CREATE TABLE`, `CREATE INDEX`, and `CHECK` constraints use `IF NOT EXISTS` (idempotent re-application — mirrors migration 008).
 
 ### B) `apps/server/src/profile/ownerProfile.types.ts` — new
@@ -958,6 +1023,21 @@ WP-052 / WP-101 / WP-102 precedent).
   `unknown_account` (extremely rare race — the
   `requireAuthenticatedSession` orchestrator just produced the
   `accountId`), returns `Result.fail({ code: 'unknown_account' })`.
+- **Read invariant (locked).** `getOwnerProfile` MUST NOT
+  create, update, or delete any row. If no
+  `legendary.player_profiles` row exists for the supplied
+  `accountId` (a never-edited account), the helper returns a
+  **synthesized default view** — every owner-editable field at
+  its locked default per D-DEC-1 (most-private privacy values,
+  `null` avatar URL, `null` about-me, empty `links` array),
+  `updatedAt` set to the row-equivalent of "no edit yet" (per
+  D-DEC-1's resolved option — the executor picks either `null`
+  or the account's `created_at` timestamp; recommended:
+  `null` to make the no-edit-yet state explicit on the wire).
+  No INSERT fires on the read path. The first PATCH is the
+  sole site that creates the `legendary.player_profiles` row
+  (via the `INSERT ... ON CONFLICT (player_id) DO UPDATE`
+  upsert pattern in `upsertOwnerProfile`).
 - `upsertOwnerProfile(accountId, patch, database):
   Promise<OwnerProfileResult<OwnerProfileView>>` — sparse
   partial update per D-DEC-4. Validates the entire request
@@ -1008,11 +1088,32 @@ single top-level `describe('owner profile logic (WP-104)',
 - `replaceOwnerLinks` rejects over-cap with code `'too_many_links'`
   (pure — no DB needed).
 
-DB-required tests use the WP-052 `hasTestDatabase ? {} : { skip:
-'requires test database' }` non-silent skip pattern. Test cleanup
-follows the EC-112 lesson — each DB-required test generates
-unique `player_id` values via per-suite-run identifiers (NOT
-`beforeEach` `DELETE`) so the §2 grep gates pass. Mirror the
+DB-required tests SHALL use the locked WP-052 / WP-101 /
+EC-112 fixture pattern verbatim — no ad-hoc environment checks.
+The pattern is:
+
+```ts
+const hasTestDatabase = process.env.TEST_DATABASE_URL !== undefined;
+// ...inside each DB-required test:
+test(
+  'description',
+  hasTestDatabase ? {} : { skip: 'requires test database' },
+  async () => { /* ... */ },
+);
+```
+
+The boolean lives at module scope (top of the test file, after
+imports); each per-test option object is the literal
+`hasTestDatabase ? {} : { skip: 'requires test database' }`
+expression. Bespoke spellings like `if (!hasTestDatabase) return`,
+manual `t.skip()` calls, or `{ skip: <other-string> }` variants
+are forbidden — they trip drift detection and break the
+homogeneous skip-output that `pnpm --filter
+@legendary-arena/server test` emits.
+
+Test cleanup follows the EC-112 lesson — each DB-required test
+generates unique `player_id` values via per-suite-run identifiers
+(NOT `beforeEach` `DELETE`) so the §2 grep gates pass. Mirror the
 EC-112 `accountLookup.logic.test.ts` per-suite-run-uniqueness
 pattern verbatim.
 
@@ -1100,10 +1201,21 @@ D-6512 / P6-30).
   re-renders from the server response (no client-side merge).
 - On links-form submit, calls `replaceOwnerLinks`; on success,
   re-renders from the server response.
-- On any 500 response, surfaces a banner: "Authentication is not
-  yet configured on this server — please try again later." (Per
-  D-11204 fail-closed posture during the WP-104-shipped /
-  WP-126-not-yet-shipped window.)
+- On any 500 response carrying `{ error:
+  'session_verifier_not_configured' }`, surfaces a banner with
+  the locked verbatim copy: **"Authentication is not yet
+  configured on this server. Owner profile editing is
+  temporarily unavailable."** Per D-11204 fail-closed posture
+  during the WP-104-shipped / WP-126-not-yet-shipped window.
+  The copy avoids "please try again later" because retry will
+  not change the outcome — only a server-side wiring change
+  (when WP-126 lands and production wiring calls
+  `configureSessionValidation` at startup) flips the response.
+  On a generic 500 (`{ error: 'lookup_failed' }`), surface a
+  separate banner: **"Server error — owner profile editing is
+  temporarily unavailable. Try again in a moment."** (where
+  retry IS appropriate because the underlying database fault
+  is typically transient).
 - All form inputs have associated `<label>` elements; arena-
   client's existing `vuejs-accessibility` lint rules are
   preserved (per the EC-120 LoadoutBuilder a11y precedent).
@@ -1186,7 +1298,17 @@ in the same commit as the production files):
   `legendary.player_profiles` with team-affiliation data; that
   extension is WP-109's scope, not WP-104's. WP-104's table
   shape is forward-compatible (column-additive) per the
-  migration-additivity precedent.
+  migration-additivity precedent. **Premature-schema-creep
+  prohibition (locked).** WP-104 MUST NOT introduce nullable
+  placeholder columns for future team / cohort / friend-graph
+  data on either new table — no `team_id NULL`, no
+  `cohort_label NULL`, no `friends_visibility` enum value, no
+  forward-reference fields of any kind. Every such extension
+  is column-additive in the WP that authors it (WP-109 for
+  teams; a future friend-graph WP for friends). Forward-
+  reference columns rot when their authoring WP shifts scope
+  or is canceled, and dead columns are expensive to remove
+  once any code path has touched them.
 - **Account deletion / GDPR endpoints.** Future WP that extends
   WP-052 `deletePlayerData`.
 - **Friend graphs / follow models.** No friend-graph table, no
