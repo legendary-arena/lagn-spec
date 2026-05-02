@@ -1653,6 +1653,38 @@ The MVP is English-only. Internationalization (i18n) is deferred. No `i18n` libr
 
 A future i18n WP triggering full Vision Alignment under §17 is required if the WP touches accessibility surfaces (e.g., RTL layout that affects screen-reader order). The controlling decision is `D-11901` in `docs/ai/DECISIONS.md`.
 
+## Disconnect & Reconnect Semantics
+
+Multiplayer match traffic flows over Socket.IO 4.8.x via `boardgame.io/client` (transport row in [`docs/02-ARCHITECTURE.md §Transport`](../02-ARCHITECTURE.md#transport); shipped under WP-090 2026-04-24). The application-level policy on top of that transport is locked under D-11601..D-11605 (with D-11606 deferred). The future implementation WP that wires reconnect handlers MUST cite WP-116 + the corresponding D-entries; no implementation may rely on boardgame.io's built-in defaults without an explicit DECISIONS supersession.
+
+**Disconnect tracking does not mutate `G`.** Disconnect tracking, if added later, lives in `boardgame.io` framework state or in server-side session storage — never in `G`. The deterministic message log (`G.messages: string[]` per `packages/game-engine/src/types.ts:442`) MAY carry one-line disconnect / reconnect entries for replay inspection; that is a recording surface, not a state surface.
+
+**Disconnect / reconnect events do not advance RNG state, auto-resolve randomness, or implicitly execute turn logic.** Any advancement of turn order, phase boundaries, or stage progression triggered by a disconnect or reconnect MUST be the explicit, deterministic consequence of a policy choice recorded in a `D-116NN` entry, with a `// why:` comment in the implementation citing the corresponding D-entry. Specifically: a disconnect handler MAY NOT call `ctx.events.endTurn()` or `ctx.events.setPhase()` as a side effect of the disconnect itself.
+
+### Phase × event matrix
+
+Outcomes per phase × event combination. Concrete timer magnitudes (grace windows, hard timeouts) are intentionally NOT locked here. Only the policy class per cell is governed in this WP; a future implementation WP gathers telemetry and locks numbers under its own DECISIONS entry.
+
+| Phase \ Event | `disconnect` | `reconnect` | `timeout` |
+|---|---|---|---|
+| `lobby` | Player's `G.lobby.ready[playerId]` flag is cleared per **D-11603 = B**. Phase remains `lobby`. Other players continue to ready / unready independently. The lobby-class grace window from **D-11601 = B** starts. | Player rejoins the lobby as **not-ready** (re-confirmation required per **D-11603 = B**). State sync via boardgame.io standard sync. | Past the lobby-class grace window without rejoin, the player slot remains open until host action or until the **D-11604 = A** hard-timeout abandonment threshold accumulates (the lobby-class threshold may differ from the play-class threshold; the future implementation WP locks magnitudes). The lobby itself does not auto-cancel. |
+| `setup` | Setup is server-driven and deterministic — no player input is solicited during `setup`, so a client disconnect during this phase does not pause setup execution. The setup-class grace window from **D-11601 = B** starts. | Player resumes whatever phase the engine is in (likely `play` if setup completed during the disconnect window). State sync via boardgame.io standard sync. | Past the setup-class grace window without rejoin, if the engine has advanced to `play`, the **D-11604 = A** play-class abandonment threshold begins accumulating from the start of `play`. The setup-class grace itself does not trigger abandonment. |
+| `play` | Match is **paused** per **D-11602 = B**: no moves accepted from any player; `ctx.events.endTurn()` and `ctx.events.setPhase()` not fired as side effects of the disconnect. Read-only actions (viewing current `G` projection; chat if implemented) MAY remain available. The socket connection is NOT frozen — clients continue receiving heartbeats. The play-class grace window from **D-11601 = B** (longest of all phase classes) starts. A deterministic disconnect-event entry is appended to `G.messages`. | Pause is released; turn order resumes from where it was suspended; the dropped player rejoins their seat with full move authority. State sync via boardgame.io standard sync. A deterministic reconnect-event entry is appended to `G.messages`. | Past the play-class grace window without rejoin, the **D-11604 = A** hard-timeout window starts. If the player has not rejoined by hard-timeout expiry, the match forcibly ends; a deterministic replay is emitted with `endReason: 'abandoned'` per **D-11605 = A**. |
+| `end` | Match is already terminated; disconnect from `end` is a UI close-out event. No state mutation triggered; no replay re-emission. | Rejoin to `end` is a read-only re-attachment — the player can view the final `G` projection but cannot mutate state (the engine treats post-`end` moves as no-ops per the existing move-validation contract). | N/A — `end` is terminal; no further timeout window applies. |
+
+**Turn-stage adjacency in `play.main`.** A disconnect during `play.main` (the action window between `play.start` and `play.cleanup`) follows the `play` row above: pause begins; the play-class grace window starts; the dropped player's main-phase action authority is preserved across the pause. A disconnect during `play.start` or `play.cleanup` follows the same rule — pause is uniform across turn stages within `play`. The disconnect handler MUST NOT advance `G.currentStage` as a side effect of the disconnect; stage progression resumes only when the dropped player rejoins (or fails to rejoin and the abandonment threshold fires per **D-11604 = A**).
+
+### Decision references
+
+- **D-11601** — Rejoin grace window: phase-aware (Option B); concrete magnitudes deferred to future implementation WP.
+- **D-11602** — Turn-handover during `play.main`: pause match (Option B); pause definition is structural (no `ctx.events.*` calls fire on disconnect; no moves accepted; read-only actions remain available; heartbeats continue).
+- **D-11603** — Lobby ready-state on rejoin: cleared on disconnect (Option B); rejoining player must explicitly re-ready.
+- **D-11604** — Mid-match abandonment threshold: hard timeout (Option A); match forcibly ends; replay emitted with `endReason: 'abandoned'`.
+- **D-11605** — Replay-on-abort behavior: replay always emitted, with explicit `endReason` discriminator (Option A); partial replays under abandonment must be byte-replayable from recorded inputs up to the abandonment point per Vision §22.
+- **D-11606** — Spectator behavior on player drop: deferred (Option A default); spectator-disconnect handling is undefined and forbidden from being inferred by implementation WPs until a future spectator-focused WP supersedes D-11606 with Option B.
+
+The full closed set of `endReason` values is locked at the future implementation WP that wires the policy; D-11604 commits only that the field is required and that `'abandoned'` is one valid value. This mirrors the WP-118 D-11804 status-enum closed-set pattern.
+
 ---
 
 *Last updated: WP-041 — formal architecture certification pass; version stamp 1.0.0; authority chain locks 01-VISION.md between ARCHITECTURE.md and .claude/rules; Field Classification table verified complete for all 20 G-class Runtime fields (WP-005B through WP-026); WP-119 — added `## Internationalization` section, aligned preplan import-rule wording across the four surface sites in this file*

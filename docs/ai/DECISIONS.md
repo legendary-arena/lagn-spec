@@ -11916,6 +11916,401 @@ The amendment was authorized at pre-flight time as a **scope-neutral pre-session
 
 ---
 
+### D-11501 — pg.Pool Lifecycle Owner: `apps/server/src/db/database.ts` (WP-115)
+
+**Decision:** The long-lived `pg.Pool` introduced by WP-115 lives at
+`apps/server/src/db/database.ts`. The module exports exactly two
+functions: `createPool(): pg.Pool` and `closePool(pool: pg.Pool):
+Promise<void>`. The Pool is constructed exactly once per server
+process inside `startServer()` in `apps/server/src/server.mjs`
+(verified by static-grep `Select-String "new Pool\\(" -Path
+"apps/server/src/" -Recurse` returning exactly one match — the
+hard `must` invariant per WP-115 v1.1 §Debuggability &
+Diagnostics). It is closed exactly once on `SIGTERM` from
+`apps/server/src/index.mjs`, AFTER the HTTP server's
+graceful-shutdown callback resolves; no route handler ever calls
+`pool.end()` directly.
+
+**Why this location.** Per `02-CODE-CATEGORIES.md` line 230 (clarified
+under WP-115 PS-3, 2026-05-01), `apps/server/src/db/` falls under
+the existing `server` category by inclusion — no new category
+needed. The path is parallel to `apps/server/src/par/` (PAR gate),
+`apps/server/src/rules/` (rules loader), and
+`apps/server/src/leaderboards/` (WP-054 read library): each
+single-purpose subdirectory holds the wiring + helpers for one
+infrastructure concern. Putting the Pool in `db/` rather than
+`server.mjs` keeps `server.mjs` a pure orchestration file (load
+registry, load rules, build PAR gate, construct Pool, register
+routes, start listening) and makes the Pool independently
+testable should a future WP add unit tests for its initialization.
+
+**Why a single Pool, not per-request.** Per
+`docs/ai/REFERENCE/00.3-prompt-lint-checklist.md §8 Backend`: "`pg`
+pool used for all database connections (not a single client)". A
+per-request `new Pool()` exhausts the upstream PostgreSQL
+connection limit under any meaningful traffic, defeats
+checkout-reuse semantics, and creates a connection leak the
+moment a handler throws before `pool.end()`. A single long-lived
+Pool is the only safe pattern for a Node web server using `pg`.
+
+**Why close on SIGTERM AFTER httpServer.close().** Closing the Pool
+before HTTP graceful shutdown completes severs in-flight handlers
+mid-query — any leaderboard request already past the
+`Cache-Control` set() but not yet returned would surface a `pg`
+"Cannot use a pool after calling end" error to the client,
+defeating the graceful-shutdown contract. The SIGTERM handler in
+`index.mjs` chains: `httpServer.close(async () => { await
+closePool(pool); process.exit(0); })`.
+
+**Rejected alternatives.**
+- **Pool inline in `server.mjs`:** Rejected because it makes
+  `server.mjs` import `pg` directly, bloats the file beyond
+  pure orchestration, and resists future testing.
+- **Pool per-request:** Rejected per `00.3 §8 Backend` and the
+  exhaustion / leak failure modes above.
+- **Pool in `apps/server/src/leaderboards/`:** Rejected because
+  the Pool is shared infrastructure — WP-102 profile route
+  wiring (D-10202 deferral) and any future request-handler WP
+  also needs it. Locating it per-domain would force every
+  follow-up WP to either duplicate the Pool or refactor.
+
+**Future supersession:** any future WP that wants to relocate the
+Pool, change its construction site, or change the lifecycle owner
+MUST cite D-11501 explicitly and either supersede it or scope-
+bound the change.
+
+**Introduced:** WP-115 (executed 2026-05-01 at Commit A `EC-119:`)
+**Reinforces:** `00.3 §8 Backend` (Pool, not Client); WP-115
+§Locked Contract Values (Pool sizing); D-11502 (sizing rationale);
+D-11505 (D-10202 reaffirmation); `.claude/rules/server.md` §Server
+Role (server is wiring layer only — Pool is wiring); WP-051
+`createParGate` precedent (single-purpose subdirectory under
+`apps/server/src/`).
+**Status:** Active
+
+---
+
+### D-11502 — pg.Pool Sizing: max=10 / idle=30s / connect=5s (WP-115)
+
+**Decision:** The Pool sizing values constructed by `createPool()`
+are locked at `max: 10, idleTimeoutMillis: 30000,
+connectionTimeoutMillis: 5000`. No env-var override is wired in
+WP-115; production tuning is a future hardening WP.
+
+**Why these values.**
+- **`max: 10`** — sized for a Render starter instance (1 vCPU /
+  512 MiB) running boardgame.io plus the public leaderboard
+  surface. Ten concurrent connections matches expected request
+  concurrency for the public leaderboard surface (read-only,
+  cached by WP-054 query patterns) without exhausting the
+  upstream PostgreSQL connection limit. Higher values would not
+  buy throughput — single-vCPU contention dominates first.
+- **`idleTimeoutMillis: 30000`** — releases idle clients after
+  30 s so a brief traffic spike does not hold connections
+  unnecessarily. Lower values churn connections under steady
+  state; higher values waste connection slots.
+- **`connectionTimeoutMillis: 5000`** — fails fast on upstream
+  outages so a hung handler does not silently consume a checkout
+  slot. Render's PostgreSQL service typically connects within
+  100 ms; a 5 s ceiling is generous slack.
+
+**Why no env-var override in this WP.** WP-115 is wiring, not
+tuning. Adding env-var overrides without operational data would
+be premature; the locked defaults are calibrated to the current
+infrastructure and traffic profile. A future WP that demonstrates
+load-bearing need (Render plan upgrade, traffic growth, observed
+saturation) may override via env vars and supersede D-11502 with
+the new values.
+
+**Future supersession:** any future WP that changes pool sizing
+MUST cite D-11502 explicitly, justify the new values with
+operational data, and update the Pool-construction log message
+text under D-11506 in the same commit (because the message
+embeds the `(max=N)` literal).
+
+**Introduced:** WP-115 (executed 2026-05-01 at Commit A `EC-119:`)
+**Reinforces:** D-11501 (Pool location); WP-115 §Locked Contract
+Values (sizing block); `00.3 §8 Backend` (Pool pattern).
+**Status:** Active
+
+---
+
+### D-11503 — Rate-Limit Deferred to Future Hardening WP (WP-115)
+
+**Decision:** WP-115 ships zero rate limiting. No `koa-ratelimit`,
+no token-bucket middleware, no per-IP throttle. Defense-in-depth
+rate limiting is deferred to a future hardening WP that will own
+the dependency justification and the rate-limit policy choices
+(per-IP, per-endpoint, sliding window vs fixed window, etc.).
+
+**Why deferred.**
+- The Cloudflare CDN edge in front of `cards.barefootbetters.com`
+  provides initial DDoS protection; basic abuse is filtered before
+  reaching the Render origin.
+- `koa-ratelimit` adds a Redis or in-memory backend dependency
+  that itself requires operational decisions (eviction policy,
+  per-instance vs cross-instance state, fail-open vs fail-closed
+  semantics under backend failure). Bundling those decisions
+  into WP-115 would muddle the wiring concern with a hardening
+  concern.
+- The leaderboard endpoints are read-only with bounded response
+  sizes (`limit ≤ 100`, `offset ≤ 10000`). A traffic spike is
+  not a database integrity threat — it is a cost / latency
+  concern that operational telemetry (which WP-115 also defers)
+  will surface before any abuse vector materializes.
+
+**Future supersession:** the future hardening WP that introduces
+rate limiting MUST cite D-11503 explicitly, justify the chosen
+backend, document the per-endpoint policy, and cover the
+fail-open vs fail-closed semantics under backend failure.
+
+**Introduced:** WP-115 (executed 2026-05-01 at Commit A `EC-119:`)
+**Reinforces:** WP-115 §Out of Scope (rate limiting deferred);
+WP-054 §Lifecycle Prohibition (cache-control / throttling listed
+as wiring-WP responsibilities).
+**Status:** Active
+
+---
+
+### D-11504 — Cache-Control: no-store on Every Response (Including Errors) (WP-115)
+
+**Decision:** Every response from every leaderboard handler
+(`/api/leaderboards/scenarios`, `/scenarios/:scenarioKey`,
+`/scores/:replayHash`) sets `Cache-Control: no-store` as the
+**first statement** in the handler body — before any status
+assignment, body assignment, or `await` of a WP-054 helper. The
+header is set on success paths (200) and on every error path
+(400 path-param / 400 invalid_query / 404 score_not_found / 500
+internal_error). Test #8 in `leaderboard.routes.test.ts` asserts
+the always-set discipline by checking call ordering on a mock
+context across success + 400 + 500 paths.
+
+**Why first-statement.** A thrown exception in the WP-054 call
+must still leave the header set on the eventual 500 response. If
+`koaContext.set('Cache-Control', ...)` came after the WP-054
+`await`, an exception path would emit a 500 with no
+`Cache-Control` header — a downstream cache (browser, CDN,
+intermediary proxy) might then cache the error response,
+turning a transient infrastructure blip into a sticky outage
+visible to every user behind the same cache.
+
+**Why no-store, not no-cache or max-age=0.** `no-store` forbids
+any cache (browser, CDN, intermediary) from storing the response
+at all. `no-cache` allows storage but requires revalidation;
+`max-age=0` allows storage and immediate staleness — both leave
+windows where a stale leaderboard projection could surface.
+`no-store` is the only directive that forbids the underlying
+storage entirely. The leaderboard surface is a near-real-time
+projection of `legendary.competitive_scores` writes; stale
+responses would mislead users about scenario rankings and
+single-record permalink lookups.
+
+**Future supersession:** if a future caching-policy WP introduces
+per-endpoint cache directives (e.g., `max-age=60` on the
+scenario index), it MUST cite D-11504 explicitly and document the
+freshness vs hit-rate tradeoff per endpoint. The error-path
+`no-store` discipline survives that supersession — error
+responses always remain `no-store` regardless of success-path
+policy.
+
+**Introduced:** WP-115 (executed 2026-05-01 at Commit A `EC-119:`)
+**Reinforces:** WP-115 §Locked Contract Values (Cache header);
+WP-115 v1.1 Patch 8 (always-set discipline expanded to error
+paths); WP-054 §Lifecycle Prohibition (cache control listed as
+wiring-WP responsibility).
+**Status:** Active
+
+---
+
+### D-11505 — D-10202 Reaffirmed: WP-102 Profile Route Wiring Stays Deferred (WP-115)
+
+**Decision:** WP-115 introduces the long-lived `pg.Pool` that
+WP-102's `registerProfileRoutes(router, database)` is waiting on.
+WP-115 nonetheless does NOT call `registerProfileRoutes` from
+`server.mjs`. D-10202's deferral remains in force — the WP-102
+follow-up WP that wires the profile route owns its own commit,
+its own governance close, and its own post-mortem.
+
+**Why not "while I'm here" wire it.** D-10202's deferral was
+chosen at WP-102 close to keep that packet's scope coherent —
+WP-102 ships the handler code and contract, the wiring follows
+in a separate one-line packet that the operator schedules
+independently. Wiring it inside WP-115 would:
+- Conflate two packet boundaries (WP-115 is leaderboards; WP-102
+  is profile) and make the WP-115 commit harder to audit.
+- Surface the WP-102 surface to public traffic without the
+  operator's explicit go-decision.
+- Force a downstream catalog row update on the WP-102 profile
+  row (`Shipped-but-unwired` → `Wired`) that WP-115 should not
+  authorize.
+
+**Verification gate.** `Select-String -Path
+"apps/server/src/server.mjs" -Pattern "registerProfileRoutes"`
+returns no matches at WP-115 close (verified at execution).
+
+**Future supersession:** the future WP that wires the profile
+route will cite D-11505 + D-10202 together, register
+`registerProfileRoutes(server.router, pool)` in `server.mjs`,
+and graduate the WP-102 row in `api-endpoints.md` from
+`Shipped-but-unwired` to `Wired` per D-11804. That WP will be a
+~10-line packet — exactly the scope D-10202 reserved for it.
+
+**Introduced:** WP-115 (executed 2026-05-01 at Commit A `EC-119:`)
+**Reinforces:** WP-102 D-10202 (profile-route wiring deferral);
+WP-115 §Out of Scope; WP-115 §Acceptance Criteria
+("registerProfileRoutes is **not** called from `server.mjs`").
+**Status:** Active
+
+---
+
+### D-11506 — Pool-Construction Log Message Text Locked Verbatim (WP-115)
+
+**Decision:** The Pool-construction log message emitted from
+`server.mjs` immediately after `createPool()` is the literal
+string `'[server] pg.Pool constructed (max=10)'` — text locked
+verbatim. The message lives in `server.mjs` (not inside
+`database.ts`) so `database.ts` stays pure of console output;
+this matches the existing `console.log('[server] ...')` pattern
+at `server.mjs:55` (registry-loaded) and the post-startup
+listening-on-port line.
+
+**Why verbatim lock.** A future observability WP may grep for
+this string to drive a Render log-based metric (Pool-construction
+counter, restart-frequency dashboard, etc.). Changing the message
+text without coordinating with that downstream WP would break the
+metric silently. Locking the text here means a future WP that
+wants to change it must cite D-11506 explicitly and update both
+sides in the same commit.
+
+**Why `(max=10)` suffix.** The suffix tracks the locked Pool
+sizing values from D-11502. If a future hardening WP changes
+`max` (e.g., to `25` on a Render plan upgrade), the log suffix
+updates in the same commit and the new text becomes the new
+locked verbatim under that WP's D-115xx successor entry.
+
+**Why this is a `should` not a `must` under EC-119.** Per WP-115
+v1.1 Patch 9, the runtime log emission was downgraded from `must`
+to `should` because the load-bearing invariant is the
+**static-grep "exactly one `new Pool(...)` call across
+`apps/server/src/`"** which is enforced as a hard gate. The
+runtime log is a debuggability aid, not an architectural
+invariant. D-11506 locks the text only if the log is emitted —
+removing the log entirely (a future WP's choice) does not
+violate D-11506.
+
+**Future supersession:** any future WP that changes the message
+text, location (out of `server.mjs`), or suffix MUST cite D-11506
+explicitly, justify the change (typically: pool-sizing change
+under D-11502 successor), and verify no downstream observability
+WP's grep is broken.
+
+**Introduced:** WP-115 (executed 2026-05-01 at Commit A `EC-119:`)
+**Reinforces:** D-11502 (Pool sizing — drives the `(max=10)`
+suffix); WP-115 v1.1 Patch 9 (log enforceability downgrade);
+WP-115 §Debuggability & Diagnostics (verbatim text lock).
+**Status:** Active
+
+---
+
+### D-11601 — Rejoin Grace Window: Phase-Aware (Option B)
+
+**Decision:** A phase-aware grace window: longer in `play` (mid-turn drops are the most painful failure mode the WP is designed to address); shorter in `lobby` / `setup` / `end` (drop-during-lobby is functionally a leave-and-rejoin, not a recoverable interruption). Concrete window magnitudes per phase are NOT locked here — the future implementation WP gathers production telemetry and locks numbers under its own DECISIONS entry.
+
+**Rationale:** Vision §4 (Faithful Multiplayer Experience — *"Multiplayer synchronization, reconnection, and late-joining must be reliable"*) and Vision §3 (Player Trust & Fairness — opaque automation is forbidden; the policy must visibly distinguish recoverable interruptions from voluntary leaves). The WP body itself names this tradeoff: *"B matches game UX (mid-turn drops are more painful than lobby drops)"*. A phase-aware class is structurally compatible with §3 because every transition is observable via deterministic `G.messages` entries and the per-phase magnitudes are server-side configuration (not in `G`, not in moves).
+
+**Rejected:**
+- **Option A (fixed window regardless of phase):** under-serves the load-bearing `play.main` mid-turn case the WP names as primary motivation. A fixed window long enough for `play` is wastefully long for `lobby`; a window short enough for `lobby` is unfair for `play`. The simplicity gain does not outweigh the per-phase fairness loss.
+- **Option C (defer to boardgame.io defaults):** explicitly forbidden by WP-116 `## Goal` line 26 (*"This WP explicitly forbids implicit reliance on boardgame.io's built-in disconnect / reconnect behavior"*). Option C as written would produce a policy that drifts whenever the framework version is bumped — exactly the silent-drift failure mode Vision §14 forbids.
+
+**Introduced:** WP-116 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** WP-090 (Socket.IO transport — the layer this policy sits on); D-10001 + 2026-04-26 Amendment (no-EC governance precedent — the deferral is documented governance, not skipped governance); Vision §4 (multiplayer correctness covenant)
+**Status:** Active
+
+---
+
+### D-11602 — Turn-Handover During `play.main`: Pause Match (Option B)
+
+**Decision:** During `play.main`, a player disconnect **pauses the match** for the duration of the rejoin grace window plus any extension up to the D-11604 abandonment threshold. The "pause" definition (binding on the future implementation WP) is: all players are blocked from advancing turn or phase state — **no moves are accepted, no `ctx.events.endTurn()` or `ctx.events.setPhase()` calls fire** as a side effect of the disconnect itself. Read-only actions (viewing current `G` projection, chat if implemented) MAY remain available. The socket connection itself is NOT frozen — clients continue receiving heartbeats; only authoritative-state-mutating moves are gated. The pause is **bounded** by D-11604's hard-timeout abandonment threshold, so Option B does not create unbounded zombie matches.
+
+**Rationale:** Vision §3 (Trust & Fairness — Option A's auto-pass would penalize the dropped player without consent or a fair grace window; pause is fair). Vision §1 (Rules Authenticity — tabletop Legendary semantics treat a player stepping away as the table waiting, not as the table proceeding without them). The pause bound (D-11604 = A hard timeout) prevents the well-known "B is fair but lets one drop hang the room" failure mode the WP body names. The structural pause definition (no `ctx.events.*` calls, no moves accepted) directly matches WP-116 `## Non-Negotiable Constraints` line 95 (*"a disconnect handler MAY NOT call `ctx.events.endTurn()` or `ctx.events.setPhase()` as a side effect of the disconnect itself"*).
+
+**Rejected:**
+- **Option A (auto-pass turn):** keeps games moving but penalizes the dropped player — directly violates Vision §3's covenant that *"the system enforces rules with perfect neutrality — it never makes strategic decisions on behalf of players"*. Auto-passing a turn IS a strategic decision (it forfeits the dropped player's main-phase actions), made by the system, on the dropped player's behalf, without their authorization.
+- **Option C (host-decides):** adds UI complexity (host controls, host-promotion-on-host-drop, host-abuse mitigation) without a concrete consumer demand. Option C is reversible — a future WP can supersede D-11602 with Option C and add the host-controls surface under its own scope when host-decides is requested by a real consumer.
+
+**Introduced:** WP-116 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** WP-090 (transport); D-11601 (grace window — D-11602's pause duration is bounded by the play-class grace window before D-11604's hard timeout begins); D-11604 (abandonment threshold — caps the pause); Vision §3 (Trust & Fairness)
+**Status:** Active
+
+---
+
+### D-11603 — Lobby Ready-State on Rejoin: Cleared on Disconnect (Option B)
+
+**Decision:** When a player disconnects from the `lobby` phase, their ready flag (`G.lobby.ready[playerId]` per `packages/game-engine/src/types.ts` `LobbyState`) is cleared. On rejoin, the player must explicitly re-ready before the lobby may transition to `setup`. Server-side ready-state caches (Option A's mechanism) are explicitly forbidden by this decision.
+
+**Rationale:** Vision §3 (Trust & Fairness — *"No hidden modifiers, manipulated randomness, or opaque automation"*). A flapping connection that auto-restores readiness creates an opaque automation surface: the player did not actively confirm readiness for the post-flap state, but the system records them as ready. That is exactly the implicit-state-confirmation pattern §3 forbids. The friction cost is per-rejoin (one click per drop event) and the safety property is structural — Vision §3 wins.
+
+**Rejected:**
+- **Option A (ready state preserved across reconnect):** friendlier ergonomics but the WP body itself names the failure mode: *"a flapping connection can falsely confirm readiness"*. Under Option A, a player whose connection drops at the moment another player toggles a ready-affecting parameter (scheme change, hero-selection mode change per WP-093 D-9301) would be auto-confirmed as ready under the new parameters they never saw — a Vision §3 covenant violation. Reversible — a future WP can supersede D-11603 with a refined Option A that re-confirms-on-rejoin (effectively a hybrid) if the per-rejoin click friction proves load-bearing.
+
+**Introduced:** WP-116 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** WP-090 (transport); WP-093 D-9301 (hero-selection mode change — one example of a ready-affecting parameter that flapping-connection auto-restoration would silently apply to without user consent); Vision §3 (Trust & Fairness)
+**Status:** Active
+
+---
+
+### D-11604 — Mid-Match Abandonment Threshold: Hard Timeout (Option A)
+
+**Decision:** After the rejoin grace window from D-11601 elapses without the dropped player rejoining, an additional **hard timeout** elapses and the match is forcibly ended. The match-end transition emits a deterministic replay (per D-11605) with an explicit `endReason: 'abandoned'` field. The hard-timeout magnitude is NOT locked here — the future implementation WP gathers production telemetry and locks numbers under its own DECISIONS entry. What this WP commits is the *class*: deterministic threshold ⇒ deterministic match end ⇒ replay emitted with explicit `endReason`.
+
+**Rationale:** Vision §3 (Trust & Fairness — bounded outcomes; no zombie matches that the system has no recovery path for) and Vision §22 (Deterministic & Reproducible Evaluation — the abandonment trigger is a deterministic threshold, not a moderator decision, so the replay re-scores deterministically). Pairs cleanly with D-11602 = B (pause is capped by abandonment, not unbounded). The `endReason: 'abandoned'` field is the seam for downstream filtering (WP-115 leaderboard, future replay-viewer WP) to distinguish abandonment-triggered match ends from natural game ends without inspecting the replay body.
+
+**Forward-link to future implementation WP:** the full closed set of `endReason` values (e.g., `'natural-victory' | 'natural-defeat' | 'abandoned' | ...`) is locked at the future implementation WP that wires the policy. D-11604 commits only that the field is required and that `'abandoned'` is one valid value. This mirrors the WP-118 D-11804 status-enum closed-set pattern (locking the field-presence + one canonical value here, deferring the full enum to the implementation surface).
+
+**Rejected:**
+- **Option B (vote-to-abandon by remaining players):** respects player agency but requires a UI surface (vote prompt, vote-tally state, vote-timeout policy) no consumer demands today. Reversible — a future WP can supersede D-11604 with Option B and add the vote-controls surface when the policy concern emerges.
+- **Option C (no automatic abandonment):** risks zombie matches that the system has no recovery path for. Vision §3 covenant *"All game state transitions must be inspectable, logged, and defensible"* is harder to satisfy when matches sit indefinitely in a paused state with no operator-visible end condition. Operations Guardrails (Vision §"Operational Guardrails") implicitly require bounded match lifecycle for capacity planning.
+
+**Introduced:** WP-116 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** D-11602 (pause match — D-11604 caps the pause); D-11605 (replay-on-abort — D-11604 is the trigger event for the replay emission with `endReason: 'abandoned'`); WP-115 stub `bfdefe1` 2026-04-30 (leaderboard — `endReason` is the seam for downstream filtering); Vision §3 + §22
+**Status:** Active
+
+---
+
+### D-11605 — Replay-on-Abort Behavior: Replay Always Emitted with Explicit `endReason` (Option A)
+
+**Decision:** Every match end — natural victory, natural defeat, or abandonment per D-11604 — emits a deterministic replay. The replay record always carries the `endReason` field defined under D-11604. Partial replays under abandonment must be **byte-replayable from recorded inputs up to the abandonment point** per the Vision §22 constraint preserved verbatim below. Stub records (Option B) are forbidden — there is exactly one record shape, distinguished by the `endReason` discriminator.
+
+**Vision constraint (preserved verbatim from WP-116 §Decision Points D-11605):** whichever option is chosen, abandonment MUST NOT produce non-deterministic replay semantics — partial replays under Option A must be byte-replayable from the recorded inputs up to the abandonment point. "Partial replay" semantics that can't be deterministically reproduced are forbidden under either option.
+
+**Rationale:** Vision §22 (Deterministic & Reproducible Evaluation — *"If a game can be replayed, it must produce the same score. Anything else is invalid"*) and Vision §24 (Replay-Verified Competitive Integrity — *"All leaderboard entries must be backed by a complete, deterministic replay ... immune to tampering, editing, or manual adjustment"*). Option A keeps the replay format uniform: downstream consumers (WP-115 leaderboard, future replay-viewer WP, replay-validation tooling) work against one record shape; abandonment is a discriminator value, not a separate record type. Vision §14 (Explicit Decisions, No Silent Drift) is preserved because the discriminator is explicit on every record.
+
+**Rejected:**
+- **Option B (replay emitted only on natural game end; abandonment produces a stub record):** cleaner per-record but creates two record types that bifurcate downstream consumers. WP-115 leaderboard would have to special-case stubs (display? hide? aggregate?); the future replay-viewer WP would have to detect record-type and branch. The bifurcation cost is per-consumer and grows over time. The "stub records must NOT claim replay semantics they don't have" Vision constraint already forbids the most common Option B failure mode (stub records labelled as replays); under that constraint, Option B's record-type bifurcation buys nothing the `endReason` discriminator does not.
+
+**Introduced:** WP-116 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** D-11604 (abandonment trigger — emits replay with `endReason: 'abandoned'`); WP-103 (replay storage / loader — the underlying replay-identity contract); WP-115 stub (`bfdefe1` — leaderboard consumer of `endReason`); Vision §22 + §24
+**Status:** Active
+
+---
+
+### D-11606 — Spectator Behavior on Player Drop: Deferred (Option A default)
+
+**Decision:** Recorded as **deferred — Option A default**. This WP makes no guarantees about spectator behavior on disconnect. Spectators observe whatever outcome the player-policy (D-11601..D-11605) produces, with no separate handling. **Spectator-disconnect handling is undefined and forbidden from being inferred by implementation WPs** until a future spectator-focused WP supersedes D-11606 with Option B. This entry exists as a standalone decision (rather than a preamble marker) so grep-by-decision-ID queries (`D-11606`) return an explicit "deferred — see WP-116" hit rather than a missing entry, mirroring the WP-117 D-11703 N/A interpretation precedent.
+
+**Rationale:** No spectator surface ships today; locking spectator semantics absent a concrete consumer is the "decide before code exists" trap pattern the WP-117 D-11704 deferral established. The original Option A wording (*"undefined and forbidden from being inferred"*) is preserved as the binding posture: future spectator-focused WPs that wire the spectator surface must supersede D-11606 with their own Option B decision; they may not silently extend the player-policy to spectators.
+
+**Future supersession:** A future WP that introduces a spectator surface owns the D-11606 supersession with full §17 Vision Alignment treatment (Vision §3 trust covenant for spectator visibility; Vision §11 stateless-client posture for spectator state). Until then, the deferral is the policy.
+
+**Rejected:**
+- **Option B (opt in now):** premature without a concrete consumer; would add a sixth decision row to the phase × event matrix and a sixth full-policy DECISIONS entry for a surface no current WP touches. The deferral is reversible by a future WP that names the consumer.
+
+**Introduced:** WP-116 (single `SPEC:` commit, 2026-04-30)
+**Reinforces:** D-11601..D-11605 (player-policy that spectators passively observe under the deferral)
+**Status:** Deferred — automatically superseded when a future spectator-focused WP introduces a spectator surface.
+
+---
+
 ### D-11701 — `apps/arena-client` Router Posture: No Router; Preserve `selectRoute()` (Option B)
 
 **Decision:** No `vue-router` adopted for `apps/arena-client`. The current `selectRoute(parseQuery(window.location.search))` helper at `apps/arena-client/src/App.vue:84` is preserved verbatim, returning one of `'profile' | 'fixture' | 'live' | 'lobby'` based on the route discriminator precedence comment at `App.vue:84-95` (`profile > fixture > live > lobby`). The shipped deep-linking surface (`?profile=` / `?fixture=` / `?match=` + `?player=` + `?credentials=`) continues to function unchanged. `<router-view>` is **not** introduced; `useUiStateStore` continues to hold the `UIState` projection snapshot only (no Pinia view/tab state added).

@@ -13,6 +13,8 @@ import { createRequire } from 'node:module';
 import { createRegistryFromLocalFiles } from '@legendary-arena/registry';
 import { loadRules, getRules } from './rules/loader.mjs';
 import { createParGate } from './par/parGate.mjs';
+import { createPool } from './db/database.js';
+import { registerLeaderboardRoutes } from './leaderboards/leaderboard.routes.js';
 import { LegendaryGame, setRegistryForSetup } from '@legendary-arena/game-engine';
 
 // why: boardgame.io v0.50 only ships a CJS server bundle (dist/cjs/server.js)
@@ -73,7 +75,10 @@ async function loadRegistry() {
  * from PostgreSQL. Both startup tasks must succeed before the server accepts
  * requests. On failure, logs a full-sentence error and exits.
  *
- * @returns {Promise<import('http').Server>} The running HTTP server instance.
+ * @returns {Promise<{ appServer: import('http').Server, pool: import('pg').Pool }>}
+ *   The running HTTP server instance and the long-lived `pg.Pool`. The
+ *   caller (`apps/server/src/index.mjs`) closes the pool from the SIGTERM
+ *   path after the HTTP server's graceful-shutdown step resolves.
  */
 export async function startServer() {
   // why: PAR gate is the third independent startup task per WP-051 / D-5101.
@@ -81,15 +86,12 @@ export async function startServer() {
   // (warn-log + continue with partial or empty coverage per D-5101 graceful
   // degradation; server never crashes on PAR-load failure). PAR_VERSION env
   // var is read per D-5102; the ?? 'v1' fallback matches the PORT ?? '8000'
-  // pattern below. The returned gate is captured for future request handlers
-  // (WP-053 submission, WP-054 leaderboards); no consumers exist yet so the
-  // binding is intentionally unused at this seam.
+  // pattern below.
   const [registry, , parGate] = await Promise.all([
     loadRegistry(),
     loadRules(),
     createParGate('data/par', process.env.PAR_VERSION ?? 'v1'),
   ]);
-  void parGate;
 
   // why: D-10014 — engine's setRegistryForSetup() must be called
   // before Server() is constructed so Game.setup() sees the
@@ -119,6 +121,20 @@ export async function startServer() {
 
   registerHealthRoute(server.router);
 
+  // why: WP-115 — construct the long-lived pg.Pool exactly once
+  // here. Lifetime is the process lifetime; close-on-SIGTERM is
+  // owned by index.mjs (after the HTTP server's graceful-shutdown
+  // step resolves), never by a route handler. parGate is now bound
+  // (no longer dangling per the pre-existing `void parGate;`
+  // placeholder removed in this commit) — registerLeaderboardRoutes
+  // injects parGate.checkParPublished into every WP-054 call site.
+  // WP-102's registerProfileRoutes is intentionally NOT wired here
+  // per D-10202 — that follow-up WP owns its own commit even though
+  // the pool introduced here is the lifecycle anchor it needs.
+  const pool = createPool();
+  console.log('[server] pg.Pool constructed (max=10)');
+  registerLeaderboardRoutes(server.router, pool, parGate);
+
   // why: Render.com injects PORT automatically. The fallback 8000 is for
   // local development only. Do not set PORT in the Render dashboard --
   // Render will override it anyway and double-setting causes confusion.
@@ -131,5 +147,5 @@ export async function startServer() {
     `(${rulesCount} rules loaded, NODE_ENV=${process.env.NODE_ENV ?? 'development'})`
   );
 
-  return appServer;
+  return { appServer, pool };
 }

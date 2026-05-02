@@ -159,6 +159,12 @@ Hanko-wiring WP. No Hanko code lives in the repo as of 2026-04-29.
 
 ---
 
+## Disconnect & Reconnect Semantics
+
+Application-layer policy on top of the Socket.IO transport above. Locked under D-11601..D-11605 (with D-11606 deferred). Highlights: rejoin grace window is phase-aware (longer in `play`, shorter in `lobby` / `setup`); `play.main` drops **pause the match** (no moves accepted, no `ctx.events.*` calls fire on disconnect, heartbeats continue); lobby ready-state is cleared on disconnect (rejoining player must re-ready); past the grace window, a hard-timeout abandonment threshold forcibly ends the match and emits a replay with `endReason: 'abandoned'`; replay is always emitted (one record shape, distinguished by the `endReason` discriminator); spectator-disconnect handling is deferred until a future spectator-focused WP. **Disconnect tracking does not mutate `G`.** **Disconnect / reconnect events do not advance RNG state or implicitly execute turn logic.** **Authoritative version:** [`docs/ai/ARCHITECTURE.md §Disconnect & Reconnect Semantics`](ai/ARCHITECTURE.md#disconnect--reconnect-semantics). **Controlling decisions:** D-11601 (grace window), D-11602 (pause-on-drop), D-11603 (ready-cleared), D-11604 (hard-timeout abandonment), D-11605 (replay always emitted), D-11606 (spectator deferred).
+
+---
+
 ## HTTP API Surface
 
 The authoritative catalog of HTTP endpoints exposed (or coded but not yet exposed) by `apps/server` lives at [`docs/ai/REFERENCE/api-endpoints.md`](ai/REFERENCE/api-endpoints.md). Every endpoint carries one of four `Status` values — `Wired | Shipped-but-unwired | Library-only | Pending` — and uses canonical field names from [`docs/ai/REFERENCE/00.2-data-requirements.md`](ai/REFERENCE/00.2-data-requirements.md). Auth posture per endpoint is one of three values — `guest | handle-required | authenticated-session-required` — per `D-9905`. Update obligations on future API-touching WPs are locked by `D-11804` plus lint §21 plus a one-line rule in `.claude/rules/work-packets.md` (replace-whole-row merge semantics — partial-update is FAIL). **Authoritative version:** [`docs/ai/ARCHITECTURE.md §HTTP API Surface`](ai/ARCHITECTURE.md#http-api-surface).

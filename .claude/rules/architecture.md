@@ -343,6 +343,10 @@ If a layer starts doing another layer's job, the architecture is already broken.
 
 Source: ARCHITECTURE.md, Package Import Rules
 
+### Disconnect & Reconnect Posture (Cross-Reference)
+
+See [`docs/ai/ARCHITECTURE.md §Disconnect & Reconnect Semantics`](../../docs/ai/ARCHITECTURE.md#disconnect--reconnect-semantics) for the application-layer disconnect / reconnect policy on top of WP-090's Socket.IO transport. Locked under D-11601..D-11605 (D-11606 deferred). Future implementation WP that wires reconnect handlers MUST cite WP-116 + the corresponding D-entries; this rules file does **not** duplicate the policy.
+
 ---
 
 ## Prohibited AI Failure Patterns [Guardrail]
