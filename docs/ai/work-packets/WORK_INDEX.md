@@ -1348,7 +1348,7 @@ These packets ship the game and keep it running.
   `legendary.competitive_scores`; does NOT modify WP-048, WP-051,
   WP-052, WP-027, WP-103, or WP-053a contracts
 
-- [ ] WP-054 — Public Leaderboards & Read-Only Web Access ✅ Reviewed
+- [x] WP-054 — Public Leaderboards & Read-Only Web Access ✅ Reviewed ✅ Completed 2026-05-01 (Library-only via `EC-054:` cherry-pick of `f34e917`).
   Dependencies: WP-053, WP-052, WP-051, WP-004
   Notes: Read-only public access to verified competitive results;
   scenario-scoped leaderboards sorted by `finalScore` ascending,
@@ -1359,7 +1359,34 @@ These packets ship the game and keep it running.
   (`playerId`, `email`, `replayHash`, `stateHash`, `scoreBreakdown`);
   no new database tables — query projections of existing tables; no SQL
   write operations; no engine imports; no scoring logic; does NOT modify
-  WP-053 or WP-052 contracts
+  WP-053 or WP-052 contracts.
+  **Closed 2026-05-01 via cherry-pick of side-branch tip `f34e917`** —
+  the side-branch `wp-054-public-leaderboards-read-only` had been sitting
+  since 2026-04-26 with the implementation never merged (governance close
+  commits `eb23c47` + `a973c19` were authored at that time on the side
+  branch but never reached `main` because the branch had diverged
+  catastrophically — 188 files / +3K / −39.5K diff against current main
+  including deletions of WP-101 / WP-102 / WP-113 server files). The
+  cherry-pick of `f34e917` only is mechanically clean (3 new files in
+  `apps/server/src/leaderboards/`: `leaderboard.types.ts` 122 lines,
+  `leaderboard.logic.ts` 305 lines, `leaderboard.logic.test.ts` 858
+  lines — pure additions, zero conflicts). The branch's other two
+  commits (the parGate-seam TODO + the side-branch governance close)
+  are obsolete: the parGate seam is already on main via `e6d2f64`, and
+  the governance close is replaced by this row + EC-054 row in
+  EC_INDEX.md + the three Library-only catalog rows added to
+  `docs/ai/REFERENCE/api-endpoints.md` (per D-11804). Server test
+  baseline shifts `47 pass / 24 skipped / 0 fail` →
+  **`48 pass / 32 skipped / 0 fail`** (+1 always-runs unconditional
+  test #9 + 8 DB-required skipped tests; matches the WP-054 Commit A
+  claim verbatim). Engine baseline `pass 604 / fail 0` UNCHANGED.
+  **Lifecycle prohibition (locked):** none of the three leaderboard
+  functions are called from `game.ts` / phase hooks / `server.mjs` /
+  `apps/arena-client/` / `apps/replay-producer/` / `apps/registry-viewer/`
+  / any `packages/**` package. WP-115 is the request-handler WP that
+  wires them as HTTP endpoints. Until WP-115 lands, all three are
+  Library-only per the catalog. The WP-054 side-branch is preserved
+  (not deleted) for historical reference.
 
 - [x] WP-050 — PAR Artifact Storage & Indexing ✅ Reviewed ✅ Completed 2026-04-23 (Commit A `ccdf44e`)
   Dependencies: WP-049, WP-048
