@@ -11866,6 +11866,85 @@ Option C selected by operator decision 2026-04-29 with the rationale that doc sy
 
 ---
 
+### D-11201 — WP-112 Architectural Choice: SIBLING WP (Not Inline) (WP-112)
+
+**Decision:** WP-112 ships the broker-agnostic orchestrator + the `SessionVerifier` interface + the `findAccountByAuthProviderSub` lookup helper + tests. The broker-specific verifier (SDK initialization, JWKS fetch / cache / refresh, JWT signature verification, claim extraction) is deferred to a sibling implementation WP — **WP-126 — External Authentication Integration (Hanko Session Verifier)** — whose deferred-placeholder row is added to `WORK_INDEX.md` in the same `SPEC:` drafting commit as WP-112. WP-126 supplies a concrete `SessionVerifier` that production wiring (a future request-handler WP) injects into the orchestrator at startup.
+
+**Rationale.**
+- **WP-099 §B already names the sibling WP.** WP-099 §B "Hanko Wiring Module (Future Implementation WP)" was authored 2026-04-27 with the provisional name "WP-1XX External Authentication Integration (Hanko)". WP-112's sibling-WP choice locks that provisional name to `WP-126`. No new architectural surface is introduced.
+- **D-9904 module-path lock is preserved at the WP boundary.** D-9904 locks `apps/server/src/auth/hanko/` as the home for broker-specific code. SIBLING means **zero** broker-specific imports in WP-112's files; ALL broker-specific code lives in WP-126's `apps/server/src/auth/hanko/`. INLINE would distribute broker code across WP-112's `auth/` root and WP-126's `auth/hanko/` — a less crisp boundary. SIBLING preserves the D-9904 replacement-safety guarantee at the WP boundary, not just the file boundary.
+- **Tests stay logic-pure.** WP-112's tests inject a fake `SessionVerifier`. No need for a fake JWKS endpoint, fake JWT generator, or fake broker tenant fixture at test time.
+- **The `[DECISION REQUIRED]` blocks (D-11202 / D-11203 / D-11204) stay scoped.** Broker SDK selection (which `@teamhanko/*` package, which version pin, which JWKS refresh policy) is a WP-126-time concern, not a WP-112-time concern. SIBLING keeps the WP-112 lint gate clear of decisions WP-099 has not pre-locked.
+
+**Rejected alternative — INLINE.** WP-112 ships orchestrator + broker adapter together. Rejected because: (a) it expands WP-112's scope to include the broker SDK selection that WP-099 explicitly deferred to a future WP; (b) it pushes the file count toward the ≤8 cap, especially once JWKS cache + refresh policy + broker-specific test fixtures land; (c) it dilutes the `SessionVerifier` interface's broker-agnosticism because the only concrete implementation in the same WP becomes the de-facto contract; (d) it makes a future broker swap a multi-file edit instead of a directory-replacement.
+
+**Status:** Active. Status flips to `Resolved` once WP-126 lands.
+
+**Introduced:** WP-112 (drafted 2026-05-02; executed 2026-05-02 at `EC-112:`)
+**Reinforces:** WP-099 §A (Session Validation Middleware policy contract); WP-099 §B (Hanko Wiring Module — the surface WP-126 populates); D-9901 (broker selected); D-9904 (broker-specific module path lock); D-9905 (guest policy preserved).
+
+---
+
+### D-11202 — WP-112 Token Extraction Source: Authorization Bearer Header Only (WP-112)
+
+**Decision:** `requireAuthenticatedSession` extracts the bearer token exclusively from the HTTP `Authorization: Bearer <token>` header. Cookie-based session tokens, `Sec-WebSocket-Protocol` carriers, query-string tokens, and any other carrier are out of scope for WP-112 and forbidden from this orchestrator's request-parsing surface. The orchestrator's request shape is the narrow `{ headers }` projection — a Node `IncomingMessage` satisfies it directly; future cookie / WebSocket carriers (WP-126 or a future reconnect WP) supply their own thin adapter without modifying any WP-112 file.
+
+**Rationale.**
+- **Single-source design is deterministic and auditable.** Multi-source fallback (Authorization header preferred, cookie fallback) creates a request-routing surface where the client doesn't know which token was honored — a debuggability hazard on the trust surface (Vision §3, Player Trust & Fairness).
+- **No CSRF surface in WP-112.** Cookies require CSRF protection; WP-112 introduces no CSRF middleware. Deferring cookie support to WP-126 (or a future hardening WP) keeps the CSRF concern paired with the cookie concern instead of split across packets.
+- **Replacement-safety preserved.** A thin `{ headers, cookies?, ... }` adapter shape lets WP-126 wire a cookie carrier without re-litigating WP-112's signature.
+
+**Rejected alternatives:**
+- **Cookie only.** Rejected because WP-112 ships no CSRF middleware; cookie support without CSRF is a known security hole. Defer to a paired WP (WP-126 or hardening) that introduces both together.
+- **Authorization preferred, cookie fallback.** Rejected because the client cannot determine which token was honored, complicating field debugging and creating an attacker-controllable selection surface (Vision §3).
+- **Query-string token.** Rejected because URL-embedded credentials leak via referrer headers, server logs, and browser history (Vision §3 + global `<user_privacy>` URL Parameter Protection guidance).
+
+**Introduced:** WP-112 (executed 2026-05-02 at `EC-112:`)
+**Reinforces:** WP-099 §A (Session Validation Middleware policy — token-source choice deferred to WP-112); Vision §3 (Player Trust & Fairness); D-11201 (sibling-WP architectural choice).
+**Status:** Active
+
+---
+
+### D-11203 — WP-112 `findAccountByAuthProviderSub` Signature: Positional Args, `Result.ok(null)` On No Match (WP-112)
+
+**Decision:** The new lookup helper at `apps/server/src/auth/accountLookup.logic.ts` exports `findAccountByAuthProviderSub(authProvider: AuthProvider, authProviderSub: string, database: DatabaseClient): Promise<Result<{ accountId: AccountId; authProvider: AuthProvider; authProviderId: string } | null>>`. The closed-union error code is `AccountLookupErrorCode = 'lookup_failed'` (single value at this lock; future codes extend the union and the consuming switch in the orchestrator together). The helper returns `Result.ok(null)` on a clean no-match (the SELECT ran successfully but no row matched the `(authProvider, authProviderSub)` pair) and `Result.fail({ code: 'lookup_failed' })` on a database fault. Locked SQL: `SELECT ext_id, auth_provider, auth_provider_id FROM legendary.players WHERE auth_provider = $1 AND auth_provider_id = $2 LIMIT 1`. The translation from the verifier-side `authProviderSub` (OIDC nomenclature) to the canonical wire-level `authProviderId` field name (per `00.2-data-requirements.md`) happens at exactly one site — the SQL parameter binding inside this helper. No INSERT / UPDATE / DELETE in scope.
+
+**Rationale.**
+- **`Result.ok(null)` distinguishes "no match" from "DB fault."** A `'unknown_account'` error code conflates a normal first-callback condition (a brand-new user whose account row hasn't been provisioned yet) with a server fault (connection lost, permission denied). The `Result.ok(null)` / `Result.fail({code: 'lookup_failed'})` split mirrors the WP-101 `findAccountByHandle` precedent: a clean no-match is a normal, expected outcome that doesn't deserve an error code at the lookup boundary; the orchestrator's `AccountResolver` translates `Result.ok(null)` to the public-facing `'unknown_account'` code.
+- **Positional args match the WP-101 / WP-052 sibling-helper precedent.** `findAccountByHandle(canonicalHandle, database)` and `findPlayerByEmail(email, database)` both use positional args. A struct-args spelling (`{ authProvider, authProviderSub }, database`) would be ergonomically inconsistent with the existing two-arg lookup family. Two ergonomic args don't need a struct envelope.
+- **Closed-union error code (single value at this lock) keeps the consuming switch deterministic.** Adding a future code (e.g., `'malformed_row'` for a defensive row-shape check) extends both the union and the orchestrator's switch in the same change, per the `00.6-code-style.md §"Drift Detection"` discipline.
+
+**Rejected alternatives:**
+- **`'unknown_account'` error code on no match.** Rejected — blurs DB-error vs no-match boundary. The WP-101 precedent's `Result.ok=null`/`Result.fail` split is load-bearing here.
+- **Struct args `({ authProvider, authProviderSub }, database)`.** Rejected — inconsistent with WP-101 / WP-052 sibling helpers; two ergonomic positional args don't need a struct envelope.
+- **Wider error union** (e.g., `'lookup_failed' | 'malformed_row' | 'unauthorized'`). Rejected at this lock — the helper does no authorization (caller-injected `DatabaseClient` already encodes the auth posture); malformed-row defense can be a future code if/when a defensive row-shape check is added.
+
+**Introduced:** WP-112 (executed 2026-05-02 at `EC-112:`)
+**Reinforces:** WP-101 `findAccountByHandle` (positional-args + `null`-on-no-match precedent); WP-052 D-5201 (`Result<T>` discriminated union); D-9902 (`auth_provider` enum unchanged); D-9904 (broker-specific module-path lock; this helper lives in `auth/`, not `auth/hanko/` and not `identity/`).
+**Status:** Active
+
+---
+
+### D-11204 — WP-112 Unconfigured-Default Behavior: Fail-Closed With `'session_verifier_not_configured'` (WP-112)
+
+**Decision:** When `requireAuthenticatedSession` is invoked with `options.verifier` (or `options.accountResolver`) missing or `undefined` — the WP-112-shipped / WP-126-not-yet-shipped window, or a misconfigured production deployment — the orchestrator returns `Result.fail({ code: 'session_verifier_not_configured', reason: <full sentence naming the missing factory call> })`. No request is silently treated as authenticated. The orchestrator never throws — the unconfigured case is a typed `Result.fail`, not an exception. `options` itself is required at the type level; the unconfigured-default check fires when `options.verifier === undefined`, never when `options` is omitted entirely (the type system does not permit that).
+
+**Rationale.**
+- **Fail-closed is the only safe posture for misconfiguration.** Per Vision §3 (Player Trust & Fairness), a missing verifier MUST NOT cause every authenticated request to silently succeed. Returning a typed `'session_verifier_not_configured'` Result lets a future request-handler WP map to HTTP 500 with a recognizable log line.
+- **Operator diagnosability.** Production startup must call `configureSessionValidation({ verifier, accountResolver, database })` exactly once. If it doesn't, every authenticated route returns 401 / 500 with the same recognizable code; an operator can grep one log line to diagnose "why is every authenticated route failing?"
+- **No throw per ARCHITECTURE.md.** Server-layer helpers do not throw on caller error; they return `Result<T>` per the WP-052 D-5201 precedent. The unconfigured case is caller error (production wiring forgot to bind the verifier), not infrastructure failure.
+
+**Rejected alternatives:**
+- **Throw on missing verifier.** Rejected — violates the WP-052 D-5201 Result-type contract; a thrown error in route-handler middleware would bubble to the framework's default error handler with no closed-union code for callers to dispatch on.
+- **Default to a no-op verifier that always returns success.** Rejected — silently treats unauthenticated requests as authenticated, violating Vision §3.
+- **Default to a verifier that always returns `'invalid_token'`.** Rejected — masks the configuration mistake under a token-correctness error code; an operator debugging "why is every authenticated request failing?" can't tell whether tokens are bad or wiring is incomplete.
+
+**Introduced:** WP-112 (executed 2026-05-02 at `EC-112:`)
+**Reinforces:** Vision §3 (Player Trust & Fairness); WP-052 D-5201 (`Result<T>` discriminated union; never throw on caller error); ARCHITECTURE.md (server-layer helpers return Results, not exceptions); D-11201 (sibling-WP architectural choice — the broker-specific verifier lands separately).
+**Status:** Active. Status flips to `Resolved` once production wiring (a future request-handler WP) calls `configureSessionValidation` exactly once at startup.
+
+---
+
 ### D-11401 — URL Parameter Names Use Canonical 9-Field Composition Names Verbatim
 
 **Decision:** WP-114's URL-driven setup-preview surface binds exactly five `MatchSetupConfig` composition fields to URL query parameters using the canonical 9-field names verbatim: `schemeId`, `mastermindId`, `villainGroupIds`, `henchmanGroupIds`, `heroDeckIds`. Paraphrases (`scheme`, `mastermind`, `villains`, `heroes`, etc.) are forbidden — the parser does not accept them, the serializer does not emit them, and EC-116 §11 declares paraphrasing a Session Abort Condition.
