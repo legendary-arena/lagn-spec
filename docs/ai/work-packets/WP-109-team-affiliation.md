@@ -1,21 +1,46 @@
 # WP-109 — Team Affiliation (Profile-Level Cooperative Cohorts)
 
-**Status:** Draft (drafted 2026-04-26; lint-gate self-review **PASS** —
-see `## Lint Self-Review` at foot; pre-flight pending). Listed in
-`WORK_INDEX.md` as a deferred placeholder pending WP-104.
+**Status:** Draft (drafted 2026-04-26; review-pass amendment 2026-05-03
+hardened captain invariant, default invalidity behavior, same-size
+cohort exclusivity, read-time visibility, and timeline monotonicity;
+**hard dependency on WP-104 satisfied 2026-05-02 at `cea9108`** when
+WP-104 / EC-128 landed; pre-flight + copilot check completed 2026-05-03
+in `docs/ai/invocations/preflight-wp109.md` with **CONFIRM** disposition
+after fourteen scope-neutral amendments landed in this commit; user
+pre-locked 2026-05-03 PS-3 = YES (extend `OwnerProfileView` 7 → 8
+keys + modify `MyProfilePage.vue`) and OQ-4 = (a) (denormalize
+`team_size` into `legendary.team_member_events`); session prompt
+fully resolved at `docs/ai/invocations/session-wp109-team-affiliation.md`.
+Lint-gate self-review **PASS** — see `## Lint Self-Review` at foot.
+**Promoted from deferred placeholder; READY FOR EXECUTION** at any
+EC-mode session.
 
 **Primary Layer:** Server (persistence) + App (read surfaces on profile
 page). No engine, registry, or pre-planning code.
 
 **Dependencies:**
-- **Hard:** WP-104 (Player Profile Core & Owner-Editable Extensions) —
-  this WP extends the profile schema introduced by WP-104 and lives in
-  the same migration / table family. WP-104 is presently a deferred
-  placeholder row in `WORK_INDEX.md`; WP-109 cannot be promoted to
-  executable until WP-104 lands.
-- **Soft:** WP-102 (public profile page, drafted) — the read surface
-  that exposes team affiliation on a player's profile reuses the
-  WP-102 page composition pattern.
+- **Hard:** WP-104 (Owner Profile Data Model & `/me` Edit) — landed
+  **2026-05-02 at `cea9108`** (`EC-128:`). Created
+  `legendary.player_profiles` (1:1 with `legendary.players`,
+  `ON DELETE CASCADE`) + `legendary.player_links`, the
+  `OwnerProfileView` / `OwnerProfileLink` / `OwnerProfileResult<T>`
+  type contracts at `apps/server/src/profile/ownerProfile.types.ts`,
+  three new HTTP routes under `/api/me/`, and migration slot 009.
+  WP-109's migration is slot **010** (assigned at pre-flight 2026-05-03
+  per PS-4). WP-109 extends WP-102's `PublicProfileView` with
+  `teamAffiliations[]` (per PS-3 reframing, NOT WP-104's owner-edit
+  surface — team membership is not owner-editable, requiring
+  invitation + acceptance per §8.3 / §10).
+- **Soft:** WP-102 (public profile page, landed 2026-04-28) — the
+  read surface that exposes team affiliation on a player's profile
+  reuses the WP-102 page composition pattern. WP-102's
+  `PublicProfileView` (`apps/server/src/profile/profile.types.ts:54`,
+  4 locked keys) is extended to 5 keys; the drift test at
+  `profile.logic.test.ts:168–173` is updated in the same commit.
+- **Soft:** WP-115 (long-lived `pg.Pool` lifecycle anchor + same-commit
+  `register*Routes(...)` precedent, landed 2026-05-01) — WP-109 mirrors
+  the `registerOwnerProfileRoutes(server.router, pool, deps)` shape as
+  `registerTeamRoutes(...)`.
 
 ---
 
@@ -141,6 +166,10 @@ plays a specific Legendary format together.
 - **Members**: exactly `teamSize` core members at full roster.
 - **Substitutes**: up to `min(2, teamSize − 2)` substitutes (1 for
   3-player teams, 2 for 4- and 5-player teams).
+- **Captain**: exactly one `captainPlayerId` exists per team at all
+  times. The captain MUST be a current `member` (role `'member'`) —
+  never a `substitute`. Captain reassignment under §9 must select a
+  current member.
 - **Fixed duration**: default one calendar year.
 
 Teams are independent of individual runs or scenarios. A team's
@@ -203,10 +232,41 @@ teamAffiliations: {
 }[]
 ```
 
-This field is added to the owner-editable profile shape introduced by
-WP-104. The denormalization (including `teamSize`) is intentional: it
-makes "show this player's teams" a single-row read on the profile,
-rather than a join across the team-membership table for every render.
+This field extends WP-102's `PublicProfileView`
+([`apps/server/src/profile/profile.types.ts:54`](../../apps/server/src/profile/profile.types.ts))
+column-additively (locked 4-key set → 5-key set; the drift test at
+[`apps/server/src/profile/profile.logic.test.ts:168–173`](../../apps/server/src/profile/profile.logic.test.ts)
+is updated in the same commit per pre-flight PS-6). Team-side data
+(`name`, `cohortLabel`, etc.) is composed at read time via a join
+through the new team tables, with the per-team `visibility` filter
+applied server-side per §11 (`friends` falls back to `private` when
+no friend-graph surface exists).
+
+The denormalization (including `teamSize`) on the player-side
+projection is intentional: it makes "show this player's teams" a
+single-row read on the profile, with team-side details fetched only
+for visible affiliations.
+
+The owner's [`MyProfilePage.vue`](../../apps/arena-client/src/pages/MyProfilePage.vue)
+(WP-104) optionally surfaces a read-only "your teams" block reusing
+the same composer; under that default (recommended YES — one
+read-only listing on the owner-edit page), `OwnerProfileView`
+([`apps/server/src/profile/ownerProfile.types.ts:129`](../../apps/server/src/profile/ownerProfile.types.ts))
+gains the field column-additively (7 → 8 keys) and the drift test at
+[`apps/server/src/profile/ownerProfile.logic.test.ts:146–155`](../../apps/server/src/profile/ownerProfile.logic.test.ts)
+is updated likewise. **Team membership is NOT owner-editable**: a
+player cannot unilaterally add themselves to a team — invitation +
+acceptance per §8.3 / §10 Creation is required. The owner-side
+listing is read-only; mutation flows always go through the
+team-side `/api/teams/...` endpoints.
+
+> **Authoritative source note:** All membership mutations are recorded
+> as immutable, timestamped, attributed events. `Team.members[]`
+> reflects the current view derived from those events. No mutation
+> path updates historical records in place — corrections follow the
+> amendment pattern (new record, original preserved) per §10 and
+> [DESIGN-RANKING.md §10.2](../DESIGN-RANKING.md). This invariant is
+> mirrored in EC-115 Guardrail 3.
 
 ---
 
@@ -242,6 +302,12 @@ The 3-player case allows a thinner roster (1 member + 1 sub) by
 design; 3-player teams have less roster headroom and the grace-of-one
 rule preserves continuity through a single departure.
 
+**Default enforcement behavior:** unless overridden at pre-flight and
+recorded in `DECISIONS.md`, a mutation that would leave a team in an
+invalid state **MUST FAIL** with a full-sentence error message. No
+implicit transition to a `paused` or recovery status occurs by default.
+A future alternative is tracked in §17.
+
 ### 8.3 Promotion semantics
 
 - **Promotion is explicit only.** Two events are required:
@@ -255,6 +321,21 @@ rule preserves continuity through a single departure.
 
 - Initial creation requires explicit acceptance by every initial
   member (§10 Creation). No silent enrollment.
+
+### 8.5 Active cohort exclusivity
+
+- By default, a player may belong to **at most one `active` team per
+  `teamSize` value**.
+- Belonging to multiple `active` teams of *different* `teamSize` values
+  is permitted, since each represents a distinct gameplay format
+  (e.g., a 3-player cohort that meets on weeknights and a 5-player
+  cohort that meets on weekends).
+- Within a single `teamSize`, a player's cooperative cohort identity
+  is singular while any of their teams remain `active`.
+
+Whether this same-size exclusivity should ever be loosened is tracked
+in §17. Until that question is reopened with an explicit DECISIONS.md
+entry, the rule is enforced.
 
 ---
 
@@ -303,13 +384,23 @@ keeping all mutations attributable.
 
 ### Completion
 
-- At `endDate`, status auto-transitions to `completed`
-- Roster becomes read-only
+- Semantic meaning: **natural end** of a cohort.
+- At `endDate`, status auto-transitions to `completed`. A captain may
+  also transition early (e.g., the cohort finished its planned arc
+  ahead of schedule).
+- Roster becomes read-only.
 
 ### Retirement
 
-- Manual terminal state for abandoned or dissolved cohorts
-- Data remains visible based on `visibility`
+- Semantic meaning: **premature or administrative termination** —
+  abandoned, dissolved, or operator-force-retired cohorts.
+- Manual terminal state, captain-initiated or operator-initiated
+  under §9.
+- Data remains visible based on `visibility`.
+
+The `completed` / `retired` distinction is observational and exists
+to give admin tooling and historical narrative a clean signal. Both
+are terminal states; neither permits further roster edits.
 
 ---
 
@@ -327,6 +418,13 @@ friend-graph surface that does not yet exist; if WP-109 lands before
 that surface, `friends` collapses to `private` until the graph exists.
 That fallback is an implementation detail to confirm at execution-time
 pre-flight.
+
+Visibility is evaluated **at read time**, not cached or persisted per
+viewer. There is no historical visibility ledger — a profile read
+returns whatever the team's *current* `visibility` value permits for
+the requesting viewer. This keeps the surface honest (no stale or
+"replayed" visibility states) and prevents future drift into
+per-viewer ACL caches.
 
 ---
 
@@ -407,14 +505,26 @@ once teams exist.
    subsequent update attempt.
 7. The validity rule (§8.2) is enforced at creation and on every
    membership mutation; transitions that would leave a team invalid
-   either fail with a full-sentence error or transition the team to
-   a defined recovery state (chosen at execution-time pre-flight).
+   **fail with a full-sentence error message** (default per §8.2).
+   Any alternative recovery-state behavior requires an explicit
+   DECISIONS.md entry and EC update before the override is honored.
 8. Operator-override audit rows are distinguishable from
    captain-driven rows in the audit log (operator identity field
    populated; `reason` text non-empty).
 9. Migration leaves every pre-existing profile row with
    `teamAffiliations: []` (verified by SQL count comparison
    pre/post migration).
+10. The captain is always a current `member` of the team and exactly
+    one `captainPlayerId` exists per team at all times. Attempts to
+    set a captain who is not currently in `role: 'member'` (e.g., a
+    substitute, a former member, or a non-member) fail validation.
+11. No team-membership record exists where `joinedAt > leftAt`. All
+    membership timelines are monotonic and validated at write time
+    (rejects backdated `leftAt` predating `joinedAt`, and rejects
+    rewriting `joinedAt` after a `leftAt` has been recorded).
+12. A player has **at most one `active` team per `teamSize` value**
+    at any moment (§8.5). Attempts to add a player to a second
+    `active` team of the same `teamSize` fail validation.
 
 ---
 
@@ -440,25 +550,26 @@ per [`docs/ai/REFERENCE/01.1-how-to-use-ecs-while-coding.md`](../REFERENCE/01.1-
   requires explicit promotion. Confirm this is the desired UX before
   schema lock — a one-event "departure-triggers-promotion" flow may
   be preferable for captains' day-to-day ergonomics.
-- **Cohort overlap rule (cross-size):** may a player belong to
-  multiple `active` teams simultaneously when those teams have
-  **different** `teamSize` values (e.g., a 3-player cohort and a
-  5-player cohort that meet on different nights)? Default reading:
-  yes — different `teamSize` values represent different gameplay
-  formats and are not mutually exclusive. Resolvable at pre-flight.
-- **Cohort overlap rule (same-size):** may a player belong to
-  multiple `active` teams of the **same** `teamSize` simultaneously?
-  Default reading: no — within a single format, a player's
-  cooperative cohort identity should be singular. Resolvable at
-  pre-flight.
+- **Cohort overlap rule (cross-size):** **resolved by default in §8.5**
+  — different `teamSize` values represent different gameplay formats
+  and are not mutually exclusive, so a player may belong to multiple
+  `active` teams when their `teamSize` values differ. Preserved here
+  only to track whether the rule should ever be tightened (e.g., to
+  cap total active-team count) in a future WP; tightening requires
+  an explicit DECISIONS.md entry.
+- **Cohort overlap rule (same-size):** **resolved by default in §8.5**
+  — a player may belong to at most one `active` team per `teamSize`.
+  This question is preserved here only to track whether the rule
+  should ever be loosened in a future WP; reopening requires an
+  explicit DECISIONS.md entry.
 - **Cohort rollover:** does an `active` team automatically create a
   successor team for the next `cohortLabel`, or must each cohort be
   initiated explicitly? Default reading: explicit creation only.
-- **Invalidity recovery state:** when a membership mutation would
-  leave a team invalid (§8.2), does the team transition to a
-  `paused` or similar recovery status, or does the mutation simply
-  fail? Either is defensible; pre-flight should pick one and the EC
-  Locked Values record it.
+- **Invalidity recovery state:** **resolved by default in §8.2** —
+  mutations that would leave a team invalid fail with a full-sentence
+  error. A future alternative (`paused` status or similar recovery
+  state) is defensible but requires an explicit DECISIONS.md entry
+  and EC update before the override is honored.
 
 ---
 
@@ -558,16 +669,48 @@ not proceed.
 ## Scope (In)
 
 - New server module: `apps/server/src/teams/` (types, logic, routes,
-  tests).
-- New migration: `data/migrations/NNN-team-affiliation.sql` (team
-  table + member events table + audit log table).
-- Profile DTO extension: `apps/server/src/profile/profile.types.ts`
+  tests). Module exports include `TeamId` branded type per pre-flight
+  PS-14.
+- New migration: `data/migrations/010_create_teams_and_membership.sql`
+  (slot 010 assigned per pre-flight PS-4; team table + member events
+  table + audit log table; idempotent; `ON DELETE CASCADE` chain
+  through `legendary.players`; `legendary.team_member_events` carries
+  a denormalized `team_size int NOT NULL CHECK (team_size IN
+  (3, 4, 5))` column per OQ-4 = (a) user pre-lock 2026-05-03,
+  enabling the simple `(player_id, team_size) WHERE left_at IS NULL`
+  UNIQUE partial index for same-size exclusivity defense in depth).
+- Public Profile DTO extension: `apps/server/src/profile/profile.types.ts`
   and `apps/server/src/profile/profile.logic.ts` updated to compose
-  `teamAffiliations[]` into the public profile DTO.
-- Public profile page: `apps/arena-client/src/pages/PublicProfile.vue`
-  renders a read-only team-affiliation block.
+  `teamAffiliations[]` into WP-102's `PublicProfileView` (4 → 5 keys).
+  Co-located drift test at `profile.logic.test.ts:168–173` updated in
+  the same commit per pre-flight PS-6.
+- Owner Profile DTO extension (per PS-3 = YES user pre-lock
+  2026-05-03): `apps/server/src/profile/ownerProfile.types.ts` and
+  `apps/server/src/profile/ownerProfile.logic.ts` updated to compose
+  `teamAffiliations[]` into WP-104's `OwnerProfileView` (7 → 8 keys),
+  read-only. Co-located drift test at
+  `ownerProfile.logic.test.ts:146–155` updated likewise.
+- Owner-side read-only "your teams" block (per PS-3 = YES user
+  pre-lock 2026-05-03): `apps/arena-client/src/pages/MyProfilePage.vue`
+  modified to render the listing in a new region using the existing
+  `defineComponent({ setup() {...} })` wrapper (no `<script setup>`
+  switch per D-6512 / P6-30).
+- Same-commit route wiring: `apps/server/src/server.mjs` updated to
+  call `registerTeamRoutes(server.router, pool, deps)` per the
+  WP-104 D-10408 precedent.
+- Public profile page: `apps/arena-client/src/pages/PlayerProfilePage.vue`
+  (corrected path per pre-flight PS-5; `PublicProfile.vue` does not
+  exist) renders a read-only team-affiliation block.
+- D-11804 catalog update: `docs/ai/REFERENCE/api-endpoints.md` gains
+  8 new `Wired` rows for the new `/api/teams/...` endpoints (per
+  pre-flight PS-7).
+- Canonical-name registry update:
+  `docs/ai/REFERENCE/00.2-data-requirements.md §4.1 Table Inventory`
+  gains 3 new rows for `legendary.teams`, `legendary.team_member_events`,
+  `legendary.team_audit_log` (per pre-flight PS-8).
 - New D-entry classifying `apps/server/src/teams/` as a server-layer
-  directory (mirrors D-5202 / D-10301).
+  directory (mirrors D-5202 / D-10301 / D-10201; D-NNNN assigned at
+  execution per pre-flight PS-10).
 
 ## Out of Scope
 
@@ -591,27 +734,109 @@ discoverability.)
 ## Files Expected to Change
 
 - `apps/server/src/teams/team.types.ts` — **new** — `Team`,
-  `TeamMember`, audit-event shapes; Zod validators including the
-  `teamSize: 3 | 4 | 5` constraint.
+  `TeamMember`, audit-event shapes; `TeamId` branded-type
+  (`type TeamId = string & { readonly __brand: 'TeamId' }`,
+  mirroring the `AccountId` precedent per pre-flight PS-14);
+  `TeamErrorCode` closed union + `TEAM_ERROR_CODES` canonical
+  readonly array (drift test in `team.logic.test.ts`); `TeamResult<T>`
+  declared locally per the WP-102 / WP-104 PS-5 precedent; Zod
+  validators including the `teamSize: 3 | 4 | 5` constraint.
 - `apps/server/src/teams/team.logic.ts` — **new** — create / invite /
   accept / member-add / member-leave / role-change / rename /
   visibility-change / status-change / captain-change /
-  operator-override paths; parameterized validity rule (§8.2).
+  operator-override paths; parameterized validity rule (§8.2);
+  captain-must-be-member validator (§6 / EC-115 Guardrail 11);
+  same-size cohort exclusivity check (§8.5 / EC-115 Guardrail 12);
+  monotonic-timeline check (AC #11 / EC-115 Guardrail 13);
+  multi-row create-team writes wrapped in a single PostgreSQL
+  `BEGIN/COMMIT` transaction per the WP-104 D-10407 precedent
+  (EC-115 Guardrail 15 per pre-flight PS-11);
+  `composeTeamAffiliationsForProfile(playerId, viewerContext)` read
+  helper consumed by both `profile.logic.ts` and (per PS-3 default
+  YES) `ownerProfile.logic.ts`.
 - `apps/server/src/teams/team.routes.ts` — **new** — HTTP routes for
   captain-driven actions; admin-route stubs deferred to admin-auth WP.
-- `apps/server/src/teams/team.logic.test.ts` — **new** — invariant
-  tests covering the §Guardrails list in EC-115.
-- `data/migrations/NNN-team-affiliation.sql` — **new** — team table,
-  member events table, audit log table; idempotent.
+- `apps/server/src/teams/team.logic.test.ts` — **new** — drift tests
+  (`Team` field-key set, `TEAM_ERROR_CODES` ↔ `TeamErrorCode`) plus
+  invariant tests covering the EC-115 Guardrails list (validity
+  rules across all three `teamSize` values, captain invariant,
+  same-size exclusivity, monotonic timeline, two-event promotion,
+  operator-override audit shape, friends-fallback-to-private,
+  single-transaction rollback on partial create-team failure,
+  pre/post migration row-count parity).
+- `data/migrations/010_create_teams_and_membership.sql` — **new** —
+  team table, member events table, audit log table; idempotent
+  (`CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`); SQL
+  CHECK `(left_at IS NULL OR left_at >= joined_at)` for monotonic
+  timeline defense in depth (validator is the primary gate per
+  RS-17); UNIQUE partial index on
+  `(player_id, team_size) WHERE status='active' AND left_at IS NULL`
+  for same-size exclusivity defense in depth (RS-18); `ON DELETE
+  CASCADE` chain through `legendary.players`. Migration slot 010
+  assigned at pre-flight 2026-05-03 (slot 009 taken by WP-104).
 - `apps/server/src/profile/profile.types.ts` — **modified** — extend
-  WP-104's profile DTO with `teamAffiliations[]`.
-- `apps/server/src/profile/profile.logic.ts` — **modified** — compose
-  `teamAffiliations[]` into the public profile DTO.
-- `apps/arena-client/src/pages/PublicProfile.vue` — **modified** —
-  render team-affiliation block (read-only, no competitive copy).
+  WP-102's `PublicProfileView` with
+  `teamAffiliations: TeamAffiliation[]` (4 → 5 keys; column-additive).
+- `apps/server/src/profile/profile.logic.ts` — **modified** —
+  `getPublicProfileByHandle` composes `teamAffiliations[]` via
+  `composeTeamAffiliationsForProfile` from `team.logic.ts` with
+  read-time visibility filter; ordering invariant
+  `ORDER BY joined_at ASC, team_id ASC` per EC-115 Locked Values
+  (pre-flight PS-13).
+- `apps/server/src/profile/profile.logic.test.ts` — **modified** —
+  extend the 4-key drift test at lines 168–173 to 5 keys
+  (`teamAffiliations` added); add an empty-array fixture and a
+  populated-array fixture covering the read-time visibility filter
+  (per pre-flight PS-6).
+- `apps/server/src/profile/ownerProfile.types.ts` — **modified
+  (per PS-3 = YES user pre-lock 2026-05-03)** — extend
+  `OwnerProfileView` with `teamAffiliations: TeamAffiliation[]`
+  (7 → 8 keys; column-additive, read-only on the owner-edit
+  surface).
+- `apps/server/src/profile/ownerProfile.logic.ts` — **modified
+  (per PS-3 = YES user pre-lock 2026-05-03)** — `getOwnerProfile`
+  composes `teamAffiliations[]` via the same
+  `composeTeamAffiliationsForProfile` helper, scoped to the owner
+  viewer (always sees own affiliations).
+- `apps/server/src/profile/ownerProfile.logic.test.ts` — **modified
+  (per PS-3 = YES user pre-lock 2026-05-03)** — extend the 7-key
+  drift test at lines 146–155 to 8 keys (`teamAffiliations` added).
+- `apps/server/src/server.mjs` — **modified** — register the new
+  team routes via `registerTeamRoutes(server.router, pool, deps)`,
+  mirroring the `registerOwnerProfileRoutes(...)` shape per the
+  WP-104 D-10408 same-commit-wiring precedent.
+- `apps/arena-client/src/pages/PlayerProfilePage.vue` — **modified
+  (corrected path per pre-flight PS-5; the original draft cited a
+  non-existent `PublicProfile.vue`)** — render team-affiliation
+  block (read-only, no competitive copy).
+- `apps/arena-client/src/pages/MyProfilePage.vue` — **modified
+  (per PS-3 = YES user pre-lock 2026-05-03)** — render read-only
+  "your teams" block in a new region beneath the existing profile
+  / links regions; uses the existing
+  `defineComponent({ setup() {...} })` wrapper (no `<script setup>`
+  switch per D-6512 / P6-30); no edit affordance, no captain-promote
+  button, no team-creation CTA (those flow through
+  `/api/teams/...` mutations, not through `MyProfilePage.vue`).
+- `docs/ai/REFERENCE/api-endpoints.md` — **modified per pre-flight
+  PS-7** — add 8 new `Wired` rows per D-11804 for the new
+  `/api/teams/...` endpoints. Auth: `handle-required` for the read
+  endpoints and `authenticated-session-required` for captain-driven
+  mutations; admin operator-override paths are `Library-only` until
+  the admin-auth WP exposes them.
+- `docs/ai/REFERENCE/00.2-data-requirements.md` — **modified per
+  pre-flight PS-8** — add 3 new rows to §4.1 Table Inventory for
+  `legendary.teams`, `legendary.team_member_events`,
+  `legendary.team_audit_log`. Field-naming convention follows the
+  WP-104 precedent: camelCase wire ↔ snake_case SQL.
 
-Migration number, exact route prefix, and the new D-entry number are
-all pre-flight items.
+A new `D-NNNN` entry classifying `apps/server/src/teams/` as a
+server-layer directory is added to `docs/ai/DECISIONS.md` at
+execution time (mirrors D-5202 for `identity/`, D-10301 for
+`replay/`, D-10201 for `profile/`); the D-NNNN number is assigned
+when the entry is written. The exact route prefix (recommended
+default: `/api/teams`) and the route count (recommended default:
+8 endpoints, enumerated in pre-flight Scope Lock) are also
+pre-flight items resolved before session prompt generation.
 
 ## Non-Negotiable Constraints
 
@@ -658,21 +883,48 @@ all pre-flight items.
   Hero-vs-villain "vs" framing remains fine
   (project memory: `feedback_pvp_terminology_scope`).
 - **No engine import.** No file under `apps/server/src/teams/` or
-  `apps/arena-client/src/pages/PublicProfile.vue` may import
+  `apps/arena-client/src/pages/PlayerProfilePage.vue` may import
   `boardgame.io`, `@legendary-arena/game-engine`, or
   `@legendary-arena/registry`.
 - **No pre-planning import.** `packages/preplan/**` is not imported
   from any WP-109 file.
+- **Lifecycle prohibition (locked, mirrors WP-102 / WP-104 RISK #16
+  per pre-flight PS-12).** The exported team-logic functions
+  (`createTeam`, `recordMembershipChange`, `promoteSubstitute`,
+  `reassignCaptain`, `transitionTeamStatus`, `applyOperatorOverride`,
+  `composeTeamAffiliationsForProfile`, `registerTeamRoutes`) MUST
+  NOT be called from `game.ts`, any `LegendaryGame.moves` entry,
+  any phase hook (`onBegin` / `onEnd` / `endIf`), any file under
+  `packages/`, any file under `apps/replay-producer/` or
+  `apps/registry-viewer/`, or any sibling-server-domain file under
+  `apps/server/src/{identity,replay,competition,par,rules,game}/`.
+  They are consumed only by their own test file, by `team.routes.ts`
+  (route adapter), by `apps/server/src/server.mjs` (one-line
+  `registerTeamRoutes(...)` call), by
+  `apps/server/src/profile/profile.logic.ts`
+  (`composeTeamAffiliationsForProfile` only — for the public-profile
+  read surface), and (per PS-3 default YES) by
+  `apps/server/src/profile/ownerProfile.logic.ts` (same composer
+  helper, scoped to the owner viewer). The arena-client
+  `PlayerProfilePage.vue` consumes the data via the
+  `PublicProfileView.teamAffiliations[]` projection, never via direct
+  team-logic import.
 
 **Session protocol:**
 
-- If WP-104 has not landed, **STOP** — this WP is BLOCKED.
-- If pre-flight reveals that the migration number, route prefix, or
-  D-entry number must be assigned ad hoc, **stop and ask** rather
-  than guessing.
-- If the friend-graph surface has landed since draft time, **stop and
-  ask** whether to remove the `friends → private` fallback in this
-  same WP or defer to a follow-up.
+- WP-104 has landed (2026-05-02 at `cea9108`); the previous BLOCK
+  on WP-104 is resolved. The remaining gating items are the fourteen
+  pre-flight + copilot-check amendments documented in
+  `docs/ai/invocations/preflight-wp109.md` (PS-1..PS-14, applied at
+  this commit) and the §17 Open Questions resolution at session
+  start.
+- If pre-flight reveals that the route prefix or D-entry number
+  must be assigned ad hoc beyond the pre-flight defaults
+  (`/api/teams`, D-NNNN at execution), **stop and ask** rather
+  than guessing. Migration slot 010 is locked per pre-flight PS-4.
+- If the friend-graph surface has landed since pre-flight (2026-05-03),
+  **stop and ask** whether to remove the `friends → private` fallback
+  in this same WP or defer to a follow-up.
 
 **Locked contract values:**
 
@@ -767,8 +1019,10 @@ on 2026-04-26:
 - §12 (tests): tests use `node:test`; no boardgame.io import. **PASS**
 - §13 (verification commands): exact `pnpm` and PowerShell commands
   given. **PASS**
-- §14 (acceptance criteria): 9 binary observable items. **PASS**
-  (within 6–12 range)
+- §14 (acceptance criteria): 12 binary observable items. **PASS**
+  (at upper bound of 6–12 range; expanded 2026-05-03 to lock captain
+  invariant, monotonic-timeline check, and same-size exclusivity that
+  were previously implicit)
 - §15 (Definition of Done): includes STATUS / DECISIONS /
   WORK_INDEX updates and scope-boundary check. **PASS**
 - §16 (code style): WP body references `00.6-code-style.md`; no
