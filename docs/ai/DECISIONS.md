@@ -12754,6 +12754,185 @@ Per `.claude/rules/code-style.md §"Abstraction & Control Flow"`: *"Duplicate fi
 
 ---
 
+### D-10401 — WP-104 Module Path: Extend `apps/server/src/profile/` (Not New `apps/server/src/account/`)
+
+**Type:** Architectural Boundary
+**Packet:** WP-104 / EC-128
+**Date:** 2026-05-02
+
+**Decision:** Owner-edit code lives under `apps/server/src/profile/` as siblings to the WP-102 read-only files. Specifically: `ownerProfile.types.ts`, `ownerProfile.logic.ts`, `ownerProfile.logic.test.ts`, `ownerProfile.routes.ts`. WP-102's existing files (`profile.types.ts`, `profile.logic.ts`, `profile.routes.ts`, `profile.logic.test.ts`) are NOT modified — they remain locked contract files per their WP-102 close.
+
+**Rationale.**
+
+- **Single home for profile concerns.** Profile is a domain, not a routing partition. The public read surface (WP-102) and the owner-write surface (WP-104) are the two halves of the same domain; splitting them across `profile/` and `account/` would fork the directory classification.
+- **D-10201 / D-5202 / D-10301 module-path precedent.** Each server domain (`identity/`, `replay/`, `competition/`, `profile/`) is a sibling of the others; new domains extend their own subdirectory rather than fragmenting across new ones. WP-104 is profile-domain work — it extends `profile/`.
+- **Naming prefix prevents collision with WP-102 files.** Every new file uses the `ownerProfile.*` prefix so there is no filename collision with `profile.*` files; the executor and reviewers can grep `ownerProfile` to find WP-104 surface and `profile.` (terminal dot) to find WP-102 surface.
+
+**Rejected alternative — new `apps/server/src/account/` directory.** WP-104 ships under `apps/server/src/account/`. Rejected because: (a) profile is a domain, not a routing partition — the read and write halves belong together; (b) it would require a new D-entry per the D-5202 / D-10301 module-path classification precedent for no clear benefit; (c) the future surface-integration WP (joining owner fields onto the public profile) would import from both directories, creating a circular-feeling layout where one half of the profile read path lives in `account/`.
+
+**Status:** Resolved at WP-104 / EC-128 close (2026-05-02).
+
+**Citation:** WP-102 §Locked contract values "Module path (locked): `apps/server/src/profile/`"; D-10201 (`apps/server/src/profile/` directory classification); D-10301 (`apps/server/src/replay/` directory classification — sibling to `identity/`); D-5202 (`apps/server/src/identity/` directory classification).
+
+---
+
+### D-10402 — WP-104 Migration Slot: Single File `009_create_player_profiles_and_links.sql`
+
+**Type:** Migration Slot Lock
+**Packet:** WP-104 / EC-128
+**Date:** 2026-05-02
+
+**Decision:** WP-104 introduces both new tables in a single migration file at slot **009**: `data/migrations/009_create_player_profiles_and_links.sql`. The file creates `legendary.player_profiles` (1:1 with `legendary.players`) and `legendary.player_links` (many-to-1 with `legendary.players`) in one idempotent script.
+
+**Rationale.**
+
+- **Slot 009 is next free.** Slots 001–003 (server schema / rules / sessions); 004 (players); 005 (replay_ownership); 006 (replay_blobs); 007 (competitive_scores); 008 (add_handle_to_players). No prior WP reserved slot 009.
+- **Single migration file for two related tables.** Both tables are owned by WP-104 and introduced together. Splitting across `009_create_player_profiles.sql` and `010_create_player_links.sql` would consume two slots for no operational benefit — there is no scenario in which one table is wanted without the other within WP-104's scope.
+- **`CREATE TABLE IF NOT EXISTS` idempotency.** The migration uses `IF NOT EXISTS` for both tables and for every index, so re-applying the script is a no-op (mirrors the WP-101 migration 008 idempotency pattern).
+
+**Rejected alternative — split into `009` + `010`.** Rejected because: (a) consumes two slots for one WP; (b) introduces a transient state where `legendary.player_profiles` exists without `legendary.player_links`, which the executor would have to reason about during partial-application recovery; (c) the WP-101 precedent for adding three columns + one partial unique index to `legendary.players` shipped as a single migration file — the equivalent precedent for two related new tables is a single file.
+
+**Status:** Resolved at WP-104 / EC-128 close (2026-05-02).
+
+**Citation:** `data/migrations/008_add_handle_to_players.sql` (WP-101 precedent — single migration, multiple `ADD COLUMN IF NOT EXISTS` + `CREATE UNIQUE INDEX IF NOT EXISTS`); `data/migrations/004_create_players_table.sql` (WP-052 precedent); `data/migrations/006_create_replay_blobs_table.sql` (WP-103 precedent).
+
+---
+
+### D-10403 — Privacy Model Granularity: Per-Section Closed-Set Enum (Option A)
+
+**Type:** Schema / Trust Surface
+**Packet:** WP-104 / EC-128
+**Date:** 2026-05-02
+
+**Decision:** Three privacy-toggle columns on `legendary.player_profiles` — `avatar_visibility`, `about_me_visibility`, `links_visibility` — each `text NOT NULL DEFAULT 'private' CHECK (... IN ('private', 'public'))`. Each section can be hidden independently. The closed set deliberately excludes `'friends'` until a friend-graph WP lands; introducing the value without a consumer creates dead-code risk.
+
+**Rationale.**
+
+- **Closed-set values extend cleanly.** The `'private'` / `'public'` values extend to `'friends'` (or any future visibility class) by adding the value to both the SQL CHECK and the TypeScript union without changing column shape.
+- **Per-section granularity matches user expectations.** The common preference pattern is "I want my avatar visible but my about-me private." Booleans (option b) tie us to two values forever; a single profile-level toggle (option c) loses granularity that users typically want; the hybrid (option d) splits the model across two tables with mismatched value spaces.
+- **Most-private default per Vision §3.** A never-edited account row defaults all three columns to `'private'`, so any future surface-integration WP that joins these toggles onto WP-102's `PublicProfileView` returns nothing visible by construction.
+
+**Rejected alternatives.** **Option (b) per-section booleans:** same granularity but no extensibility for future visibility values. **Option (c) single profile-level enum:** coarser; an account is fully hidden or fully visible. **Option (d) hybrid (profile-level boolean + per-link `is_public`):** splits the model across two tables.
+
+**Status:** Resolved at WP-104 / EC-128 close (2026-05-02).
+
+**Citation:** `data/migrations/009_create_player_profiles_and_links.sql` (the three-column lock); `apps/server/src/profile/ownerProfile.types.ts` (`OwnerProfileView.avatarVisibility` / `aboutMeVisibility` / `linksVisibility`); D-9905 (closed-set `Auth` taxonomy precedent for catalog rows); Vision §3 (Player Trust & Fairness).
+
+---
+
+### D-10404 — `legendary.player_links.provider` Validation: Closed-Set 6-Entry Allowlist (Option A)
+
+**Type:** Schema / Closed Set
+**Packet:** WP-104 / EC-128
+**Date:** 2026-05-02
+
+**Decision:** The `provider` column on `legendary.player_links` is `text NOT NULL CHECK (provider IN ('twitter', 'github', 'twitch', 'discord', 'youtube', 'website'))`. The application-layer `validateLinks` helper in `ownerProfile.logic.ts` enforces the same allowlist at the validator boundary so a typed `Result.fail({ code: 'invalid_request' })` returns before any SQL fires. Adding a provider requires a new migration + a new D-entry.
+
+**Rationale.**
+
+- **Closed-set values give the UI predictable iconography** without per-row provider-icon configuration; the arena-client `MyProfilePage.vue` renders a `<select>` over the six values.
+- **Six entries fit on one screen of the edit form** — the WP-104 §H form-region UX target.
+- **Adding a provider is a deliberate decision** — a future WP introducing `mastodon` / `bluesky` / `linkedin` extends both the SQL CHECK and the TypeScript union together with a new D-entry justifying the addition.
+
+**Rejected alternatives.** **Option (b) freeform string with length cap:** users type whatever they want. Pushes the icon problem to the client and creates a display surface that grows without governance. **Option (c) closed set + freeform `'other'` fallback with `provider_label` column:** more flexible but adds a second column for limited benefit at MVP scope.
+
+**Status:** Resolved at WP-104 / EC-128 close (2026-05-02).
+
+**Citation:** `data/migrations/009_create_player_profiles_and_links.sql` (the SQL CHECK clause); `apps/server/src/profile/ownerProfile.logic.ts#ALLOWED_LINK_PROVIDERS` (the application-layer mirror of the SQL allowlist); `apps/server/src/profile/ownerProfile.types.ts#OwnerProfileLink.provider` (the TypeScript union).
+
+---
+
+### D-10405 — `avatar_url` and `player_links.url` Validation: HTTPS-Only Any Host (Option A)
+
+**Type:** Validation Posture
+**Packet:** WP-104 / EC-128
+**Date:** 2026-05-02
+
+**Decision:** Both `legendary.player_profiles.avatar_url` and `legendary.player_links.url` carry SQL CHECK constraints `~ '^https://'` (defense-in-depth) plus an application-layer validator (`validateAvatarUrl` / `validateLinkUrl`) that returns a typed `Result.fail` with code `'invalid_avatar_url'` / `'invalid_link_url'` before any SQL fires. No network HEAD / GET on the URL — the validator is synchronous and side-effect-free per the layer-boundary read-only-against-runtime-state discipline. The `links.url` CHECK additionally caps length at 2048 characters.
+
+**Rationale.**
+
+- **HTTPS-only any-host is the right MVP posture.** The avatar upload pipeline (WP-106) is a separate surface; gating `avatar_url` to a closed origin in WP-104 would prevent users from pasting a manually-uploaded image URL during the WP-104-shipped / WP-106-not-yet-shipped window.
+- **Defense-in-depth.** The application-layer validator returns a friendlier typed `Result.fail` than a raw SQL constraint violation 500. The SQL CHECK is the second line of defense — even if a future WP refactors the validator, the SQL constraint prevents `http://` URLs from landing.
+- **Synchronous validation only.** A network HEAD / GET would introduce non-determinism (resolver latency, transient 5xx responses, redirect loops) on the request path. Owners enter URLs, the server validates shape only; the future R2-upload pipeline (WP-106) handles content validation.
+
+**Rejected alternatives.** **Option (b) closed-origin allowlist for `avatar_url`:** premature today (R2 host known but upload pipeline doesn't exist). **Option (c) HTTPS + `isImageUrl` heuristic:** rejects legitimate URLs without file extensions (CDN-served avatars).
+
+**Status:** Resolved at WP-104 / EC-128 close (2026-05-02).
+
+**Citation:** `data/migrations/009_create_player_profiles_and_links.sql` (the two SQL CHECK clauses); `apps/server/src/profile/ownerProfile.logic.ts#validateAvatarUrl` / `#validateLinkUrl`. Future WP-106 (avatar upload pipeline) may supersede this with a closed-origin allowlist for `avatar_url` once the R2 upload pipeline lands.
+
+---
+
+### D-10406 — `PATCH /api/me/profile` Semantics: Sparse Partial RFC 7396 with `Object.hasOwn` Three-State (Option A)
+
+**Type:** Wire Contract / Endpoint Semantics
+**Packet:** WP-104 / EC-128
+**Date:** 2026-05-02
+
+**Decision:** `PATCH /api/me/profile` accepts a sparse partial body; key absence leaves the field unchanged; explicit `null` clears the nullable field; a string value sets the field to that string. The literal four-character string `"null"` is treated as the literal string, NOT as a clear-intent signal. The validator distinguishes the three input states via explicit `Object.hasOwn` checks before any SQL fires; inline ternaries returning `T | undefined` for optional values fail `exactOptionalPropertyTypes` and are forbidden. `updated_at` advances on every successful PATCH (idempotent timestamp bump). No companion `PUT /api/me/profile` endpoint — full-replace PUT is intentionally omitted to prevent accidental full-row nulling on partial-form submissions.
+
+**Rationale.**
+
+- **RFC 7396 JSON Merge Patch semantics** match what JS clients commonly assume.
+- **`Object.hasOwn` is the locked discriminator pattern.** Inline ternaries returning `T | undefined` for optional fields fail `exactOptionalPropertyTypes`. Conditional assignment (build the SET clause without the field, then conditionally append) is the locked pattern.
+- **Validation runs BEFORE the DB lookup.** A malformed PATCH body fails fast with a typed `Result.fail` rather than burning a database round-trip on a known-bad input.
+- **Empty-body PATCHes still bump `updated_at`.** Idempotent semantics: identical request body twice produces identical row state twice, but the timestamp advances each time so observability tooling can distinguish "same data" from "no PATCH issued."
+- **No companion PUT** prevents the failure mode where a partial form submission accidentally nulls every unfilled field.
+
+**Rejected alternatives.** **Option (b) full replace (PUT semantics):** inverts the verb's meaning. **Option (c) sparse partial with explicit-null rejection:** adds endpoints (a separate `DELETE /api/me/profile/avatar`) without clear benefit at MVP scope.
+
+**Status:** Resolved at WP-104 / EC-128 close (2026-05-02).
+
+**Citation:** `apps/server/src/profile/ownerProfile.logic.ts#upsertOwnerProfile` (the locked validator + INSERT/ON CONFLICT pattern); `apps/server/src/profile/ownerProfile.types.ts#OwnerProfilePatch` (the wire shape); D-6512 / P6-30 (TypeScript `exactOptionalPropertyTypes` precedent — same compile-time gate that drives `defineComponent({ setup() {...} })` over `<script setup>`).
+
+---
+
+### D-10407 — `PUT /api/me/links` Semantics: Replace-All-By-List with 10-Entry Cap (Option A)
+
+**Type:** Wire Contract / Endpoint Semantics
+**Packet:** WP-104 / EC-128
+**Date:** 2026-05-02
+
+**Decision:** `PUT /api/me/links` accepts the full new `links` array of `{ provider, url, isPublic, displayOrder }` objects. The server transactionally `DELETE`s all existing rows for the account and `INSERT`s the new array inside a single `BEGIN` / `COMMIT` envelope so partial state is never visible to a concurrent reader. Maximum **10** links per account; over-cap requests return `400` with `{ "error": "too_many_links" }` before any SQL fires. `display_order` is the loop index (0-based), preserving the order the client sent — the wire-supplied `displayOrder` field is ignored on the write path. The endpoint returns the updated full `OwnerProfileView` so clients re-render from server authoritative state without client-side merge.
+
+**Rationale.**
+
+- **Simplest transactional shape** — clients render the existing list, let the user reorder / add / remove via in-place form edits, and submit the full array; no client-side ID tracking.
+- **Mirrors patterns in similar profile surfaces** (e.g., GitHub social accounts).
+- **Server-authoritative ordering** — the server uses the loop index as the authoritative `display_order` value. Clients MUST NOT defensively re-sort the returned `links` array; the locked `ORDER BY display_order ASC, link_id ASC` SQL clause in both the read path (`getOwnerProfile`) and the post-write composition path (`replaceOwnerLinks`) guarantees ASC-sorted output.
+- **10-entry cap** balances the visual footprint of the edit page against legitimate use cases (most users have 2-5 links).
+
+**Rejected alternatives.** **Option (b) upsert-by-id with separate DELETE:** requires the client to track server-assigned IDs across edit sessions. **Option (c) POST-add / DELETE-remove only:** bloats the endpoint count for marginal gain.
+
+**Status:** Resolved at WP-104 / EC-128 close (2026-05-02).
+
+**Citation:** `apps/server/src/profile/ownerProfile.logic.ts#replaceOwnerLinks` (the locked transaction envelope + cap check); `data/migrations/009_create_player_profiles_and_links.sql` (the `UNIQUE (player_id, display_order)` constraint enforcing deterministic order).
+
+---
+
+### D-10408 — Route-Wiring Posture: Same-Commit Wiring (Option A)
+
+**Type:** Mid-Execution Wiring Decision
+**Packet:** WP-104 / EC-128
+**Date:** 2026-05-02
+
+**Decision:** WP-104 wires the three new owner-only routes in `apps/server/src/server.mjs` in the same commit via a single `registerOwnerProfileRoutes(server.router, pool, { requireAuthenticatedSession })` line inserted after the existing `registerLeaderboardRoutes(...)` call and before `Server({...})` construction (per the WP-115 / WP-113 PS-5 wiring-ordering invariant). The three catalog rows in `api-endpoints.md` ship with `Status: Wired`. WP-104 ships a complete, end-to-end working surface — modulo the WP-126 broker, which is fail-closed by construction per D-11204 (every authenticated request returns 500 with `code: 'session_verifier_not_configured'` until production wiring calls `configureSessionValidation` at startup).
+
+**Rationale.**
+
+- **WP-115 set the precedent for same-commit wiring.** WP-115 landed `registerLeaderboardRoutes` alongside its library functions on 2026-05-01 at `EC-119:`; the long-lived `pg.Pool` lifecycle anchor that WP-115 introduced is the same pool WP-104 reuses.
+- **The WP-102 / D-10202 deferral rationale no longer applies.** WP-102's profile route was deferred per D-10202 because no long-lived `pg.Pool` lifecycle anchor existed at WP-102 close time. WP-115 introduced that anchor; D-11505 reaffirmed D-10202 as a separate concern (WP-102's wiring still owns its own commit). WP-104's authenticated surface is structurally different — the caller-injected `requireAuthenticatedSession` provider is a sibling concern to the pool, and shipping WP-104 as `Library-only` would defer the `MyProfilePage.vue` surface from displaying any data, breaking the WP's end-user goal.
+- **Fail-closed by construction.** Until WP-126 lands the `SessionVerifier` implementation, every authenticated request returns 500 with `code: 'session_verifier_not_configured'` per D-11204. The arena-client surfaces the locked verbatim banner copy. Production wiring is incomplete on purpose; the user-facing UX is honest about that state.
+
+**Rejected alternative — Option (b) deferred wiring (`Library-only` rows).** WP-104 ships the four production TS files + the migration + the Vue page + `ownerProfileApi.ts`; `server.mjs` is unmodified; catalog rows ship as `Library-only`. Rejected because: (a) the long-lived `pg.Pool` anchor that justified D-10202 / D-11505 already exists; (b) the arena-client `MyProfilePage.vue` would 404 instead of surfacing the locked banner copy, hiding the WP-126 dependency from operators; (c) a future request-handler WP would need to re-traverse the same wiring with no scope-discipline gain.
+
+**Status:** Resolved at WP-104 / EC-128 close (2026-05-02).
+
+**Citation:** `apps/server/src/server.mjs` (the locked one-line `registerOwnerProfileRoutes` call site); D-11505 (D-10202 reaffirmation — WP-102 wiring stays deferred even though pool now exists); D-11501 / D-11502 (Pool location + sizing — the lifecycle anchor WP-104 reuses); D-11204 (fail-closed unconfigured-default; the user-facing fail-mode during the WP-104-shipped / WP-126-not-yet-shipped window).
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

@@ -30,7 +30,15 @@ const PlayerProfilePage = defineAsyncComponent(
   () => import('./pages/PlayerProfilePage.vue'),
 );
 
-type AppRoute = 'fixture' | 'live' | 'lobby' | 'profile';
+// why: WP-104 — MyProfilePage is the owner-edit surface at ?route=me.
+// Lazy-loaded for the same bundle-size reason as PlayerProfilePage;
+// the component is only fetched when route === 'me' renders for the
+// first time.
+const MyProfilePage = defineAsyncComponent(
+  () => import('./pages/MyProfilePage.vue'),
+);
+
+type AppRoute = 'fixture' | 'live' | 'lobby' | 'profile' | 'me';
 
 interface LiveRouteParams {
   matchID: string;
@@ -42,6 +50,7 @@ interface ParsedQuery {
   fixtureName: string | null;
   live: LiveRouteParams | null;
   profileHandle: string | null;
+  meRoute: boolean;
 }
 
 // why: defineComponent({ setup() { return {...} } }) is required (NOT
@@ -78,21 +87,27 @@ function parseQuery(search: string): ParsedQuery {
 
   const profileHandle = readQueryParam(params, 'profile');
 
-  return { fixtureName, live, profileHandle };
+  // why: WP-104 — `?route=me` is the owner-edit surface. We look for the
+  // literal `me` value to avoid false-positive matches on stale `?route=`
+  // values left over from past sessions; future surfaces will extend the
+  // closed set here rather than introducing per-feature query keys.
+  const routeParam = readQueryParam(params, 'route');
+  const meRoute = routeParam === 'me';
+
+  return { fixtureName, live, profileHandle, meRoute };
 }
 
 function selectRoute(parsed: ParsedQuery): AppRoute {
-  // why: route discriminator precedence is `profile > fixture > live > lobby`.
-  // Presence of `?profile=<canonical>` takes priority over `?fixture=` /
-  // `?match=` / `?player=` / `?credentials=` because the profile surface is
-  // a leaf navigation target — once a user lands on `/?profile=alice` we
-  // don't want a stale `?match=` to silently fall through to the live
-  // route, and we don't want a `?fixture=` dev-fixture query param to
-  // shadow the public-profile request either. The fixture branch then
-  // short-circuits live wiring so WP-061's offline/testing UX and the
-  // team's reproducible bug-report mechanism stay intact when live query
-  // params are also present (PS-2 / WP-102 §Required `// why:` Comments
-  // site #8).
+  // why: route discriminator precedence is `me > profile > fixture > live > lobby`.
+  // Presence of `?route=me` takes priority over every other query
+  // param so the owner-edit surface always wins when the user has
+  // navigated to it (e.g., a stale `?match=` left over from a past
+  // session must not shadow the explicit `?route=me`). The
+  // `profile > fixture > live > lobby` ordering below remains
+  // unchanged from WP-102.
+  if (parsed.meRoute === true) {
+    return 'me';
+  }
   if (parsed.profileHandle !== null) {
     return 'profile';
   }
@@ -112,7 +127,7 @@ function selectRoute(parsed: ParsedQuery): AppRoute {
 
 export default defineComponent({
   name: 'App',
-  components: { ArenaHud, LobbyView, PlayView, PlayerProfilePage },
+  components: { ArenaHud, LobbyView, PlayView, PlayerProfilePage, MyProfilePage },
   props: {
     // why: `searchOverride` is a testing seam. Production callers never pass
     // it — `null` means "read from window.location.search at setup time".
@@ -186,7 +201,10 @@ export default defineComponent({
 
 <template>
   <main data-testid="app-root" :data-route="route">
-    <template v-if="route === 'profile'">
+    <template v-if="route === 'me'">
+      <MyProfilePage />
+    </template>
+    <template v-else-if="route === 'profile'">
       <PlayerProfilePage :handle="profileHandle" />
     </template>
     <template v-else-if="route === 'fixture'">

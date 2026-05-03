@@ -15,6 +15,8 @@ import { loadRules, getRules } from './rules/loader.mjs';
 import { createParGate } from './par/parGate.mjs';
 import { createPool } from './db/database.js';
 import { registerLeaderboardRoutes } from './leaderboards/leaderboard.routes.js';
+import { registerOwnerProfileRoutes } from './profile/ownerProfile.routes.js';
+import { requireAuthenticatedSession } from './auth/sessionToken.logic.js';
 import { LegendaryGame, setRegistryForSetup } from '@legendary-arena/game-engine';
 
 // why: boardgame.io v0.50 only ships a CJS server bundle (dist/cjs/server.js)
@@ -134,6 +136,20 @@ export async function startServer() {
   const pool = createPool();
   console.log('[server] pg.Pool constructed (max=10)');
   registerLeaderboardRoutes(server.router, pool, parGate);
+
+  // why: WP-104 / D-10408 — register the three owner-only routes
+  // (/api/me/profile GET + PATCH, /api/me/links PUT) on the same
+  // long-lived pool. requireAuthenticatedSession is the WP-112
+  // orchestrator; verifier + accountResolver remain undefined
+  // until WP-126 lands the broker-specific SessionVerifier
+  // implementation, at which point production wiring will pass
+  // them through here. Until then, every authenticated request
+  // returns 500 with code: 'session_verifier_not_configured' per
+  // D-11204 fail-closed posture (caller-injected pattern preserved
+  // by the broker-agnostic orchestrator).
+  registerOwnerProfileRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+  });
 
   // why: Render.com injects PORT automatically. The fallback 8000 is for
   // local development only. Do not set PORT in the Render dashboard --
