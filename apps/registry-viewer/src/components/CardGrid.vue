@@ -17,6 +17,12 @@ import { useCardViewMode } from "../composables/useCardViewMode";
 // for viewMode. The slider component (CardSizeSlider.vue) writes the
 // same composable; this file is read-only against it.
 import { useCardSize } from "../composables/useCardSize";
+// why: ABILITY_THRESHOLD_PX lives in a sibling single-export module
+// rather than `useCardSize.ts` to preserve D-12101's locked composable
+// surface. See `cardTileThresholds.ts` module-header JSDoc for the full
+// rationale; this file imports the constant by name and never inlines
+// the numeric literal.
+import { ABILITY_THRESHOLD_PX } from "../composables/cardTileThresholds";
 import CardDataTile from "./CardDataTile.vue";
 
 const props = defineProps<{ cards: FlatCard[]; selectedKey?: string }>();
@@ -65,7 +71,17 @@ watch(() => props.selectedKey, (newKey) => {
         :class="{ selected: card.key === selectedKey }"
         @click="emit('select', card)"
       >
-        <div class="img-wrap">
+        <!--
+          why: above-threshold data tiles drop the 3:4 aspect-ratio lock
+          (via the new `.img-wrap.data-expanded` rule below) so the
+          newly-revealed `Ability` block can grow the tile vertically
+          without overflow. Both AND-clauses are required: image-mode
+          tiles never receive the class (image tiles stay 3:4 at every
+          slider value), and below-threshold data tiles never receive
+          the class (the WP-096 baseline tile renders byte-identically).
+          Cites D-9601 amendment 2026-05-02 + WP-127.
+        -->
+        <div class="img-wrap" :class="{ 'data-expanded': viewMode === 'data' && cardSize >= ABILITY_THRESHOLD_PX }">
           <template v-if="viewMode === 'image'">
             <img :src="card.imageUrl" :alt="card.name" loading="lazy"
               @error="($event.target as HTMLImageElement).style.opacity = '0.2'; devLog('render', 'image load failed', { card: card.name, url: card.imageUrl })" />
@@ -126,6 +142,7 @@ watch(() => props.selectedKey, (newKey) => {
 .card-tile:hover { border-color: #5050a0; transform: translateY(-2px); }
 .card-tile.selected { border-color: #7070e0; box-shadow: 0 0 12px rgba(112, 112, 224, 0.35); }
 .img-wrap { position: relative; width: 100%; aspect-ratio: 3/4; background: #12121a; overflow: hidden; }
+.img-wrap.data-expanded { aspect-ratio: auto; }
 .img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .type-badge { position: absolute; bottom: 4px; left: 4px; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600; text-transform: capitalize; }
 .tile-info { padding: 0.4rem 0.5rem 0.5rem; display: flex; flex-direction: column; gap: 0.15rem; }

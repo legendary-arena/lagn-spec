@@ -17,19 +17,70 @@
  * cannot accommodate full set names like "Marvel Studios: What If…?"
  * without ellipsis defenses or grid-column reflow.
  *
- * Ability text is intentionally omitted from the tile per D-9601: the
- * sidebar (CardDataDisplay.vue) is the place to read full ability text,
- * and rendering ability strings on a 130px-wide tile would either
- * overflow the 3:4 box or require grid-column resizing.
+ * why (WP-127 / EC-129 / D-9601 amendment 2026-05-02): two additional
+ * threshold-gated rows render only when `cardSize.value >=
+ * ABILITY_THRESHOLD_PX` (the value lives in `cardTileThresholds.ts` to
+ * preserve D-12101's locked `useCardSize.ts` surface). Above threshold:
+ * a `Team` row inserts between `Class` and `Cost` (mirroring the
+ * sidebar's row ordering at CardDataDisplay.vue:90), and an `Ability`
+ * block appends beneath the `<dl>` rendering plain-text bullets from
+ * `card.abilities`. Below threshold: the seven-row WP-096 baseline is
+ * byte-identical (no `Team` row, no `Ability` block, 3:4 aspect lock
+ * preserved by `.img-wrap` on `CardGrid.vue`). The seven existing rows,
+ * their AND-semantics guards, their CSS, and the `@media print` block
+ * are byte-identical pre- and post-amendment.
  *
  * AND-semantics: empty / null / undefined / empty-string fields are
  * omitted entirely (no em-dash, no "—", no placeholder). Guard forms
- * mirror CardDataDisplay.vue exactly for the six common rows.
+ * mirror CardDataDisplay.vue exactly for the six common rows; the new
+ * `Team` row mirrors CardDataDisplay.vue:90–93 with an additional
+ * `showAbilityRow` threshold prefix; the new `Ability` block mirrors
+ * CardDataDisplay.vue:130–141 with the same threshold prefix.
  */
 
+import { computed } from "vue";
 import type { FlatCard } from "../registry/browser";
+// why: useCardSize is the cousin of CardGrid.vue's composable-direct
+// consumption pattern (lines 14–19 in that file). Reading cardSize here
+// keeps the threshold-gated reveal a pure derivation from the same
+// module-scoped ref the slider writes — no prop plumbing, no second
+// source of truth. D-12101's locked composable surface is preserved
+// verbatim: this file is read-only against `cardSize` and adds zero
+// exports to `useCardSize.ts`.
+import { useCardSize } from "../composables/useCardSize";
+// why: the threshold lives in a sibling single-export module rather
+// than `useCardSize.ts` to preserve D-12101's locked composable surface
+// (exactly two names plus the four range constants). See
+// `cardTileThresholds.ts` module-header JSDoc for the full rationale.
+import { ABILITY_THRESHOLD_PX } from "../composables/cardTileThresholds";
 
 defineProps<{ card: FlatCard }>();
+
+const { cardSize } = useCardSize();
+
+// why: single source of truth across the two new template guards (the
+// `Team` row and the `Ability` block). The threshold value is defined
+// exactly once in `cardTileThresholds.ts` as `ABILITY_THRESHOLD_PX`;
+// this file imports it by name and never inlines the numeric literal.
+// Below threshold, both guards short-circuit and the WP-096 baseline
+// tile renders byte-identically (seven rows, no `Team`, no `Ability`
+// block).
+const showAbilityRow = computed(() => cardSize.value >= ABILITY_THRESHOLD_PX);
+
+/**
+ * Returns true when the supplied ability line carries no useful text.
+ * Guards against the literal string "[object Object]" that appears in
+ * some set JSON where a structured ability accidentally serialized
+ * through String() — the same guard already lives in CardDataDisplay.vue
+ * and CardDetail.vue.
+ */
+function hasAbilityText(line: string): boolean {
+  if (!line) return false;
+  const trimmed = line.trim();
+  if (trimmed.length === 0) return false;
+  if (trimmed === "[object Object]") return false;
+  return true;
+}
 </script>
 
 <template>
@@ -50,6 +101,11 @@ defineProps<{ card: FlatCard }>();
       <template v-if="card.hc">
         <dt>Class</dt>
         <dd class="capitalize">{{ card.hc }}</dd>
+      </template>
+
+      <template v-if="showAbilityRow && card.team">
+        <dt>Team</dt>
+        <dd>{{ card.team }}</dd>
       </template>
 
       <!--
@@ -91,6 +147,19 @@ defineProps<{ card: FlatCard }>();
         <dd>{{ card.rarity }}</dd>
       </template>
     </dl>
+
+    <div v-if="showAbilityRow && card.abilities && card.abilities.some(hasAbilityText)" class="ability-block">
+      <div class="ability-block-title">Ability</div>
+      <ul class="ability-lines">
+        <li
+          v-for="(abilityLine, lineIndex) in card.abilities"
+          :key="lineIndex"
+          class="ability-line"
+        >
+          <template v-if="hasAbilityText(abilityLine)">{{ abilityLine }}</template>
+        </li>
+      </ul>
+    </div>
   </section>
 </template>
 
@@ -151,6 +220,35 @@ defineProps<{ card: FlatCard }>();
   text-transform: capitalize;
 }
 
+.ability-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
+}
+
+.ability-block-title {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6666aa;
+}
+
+.ability-lines {
+  margin: 0;
+  padding-left: 0.9rem;
+  list-style-type: disc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.ability-line {
+  font-size: 0.6rem;
+  color: #c8c8e0;
+  line-height: 1.45;
+}
+
 @media print {
   .card-data-tile {
     background: #ffffff;
@@ -168,6 +266,14 @@ defineProps<{ card: FlatCard }>();
   }
 
   .data-grid dd {
+    color: #000000;
+  }
+
+  .ability-block-title {
+    color: #333333;
+  }
+
+  .ability-line {
     color: #000000;
   }
 }
