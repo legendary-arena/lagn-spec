@@ -28,6 +28,7 @@ import type {
   DatabaseClient,
   PlayerAccount,
 } from '../identity/identity.types.js';
+import type { TeamAffiliation } from '../teams/team.types.js';
 
 // why: re-exported so other modules in this layer (and tests) can
 // reference the identity-layer aliases through `./profile.types.js`
@@ -35,27 +36,31 @@ import type {
 // preserving the single import boundary documented above.
 export type { AccountId, DatabaseClient, PlayerAccount };
 
-// why: 4-field shape locked by WP-102 §Locked contract values; rename
-// or addition requires a `DECISIONS.md` entry. `accountId` is
+// why: 5-field shape — extended by WP-109 from the original WP-102
+// 4-field set with `teamAffiliations: TeamAffiliation[]`. Rename or
+// further addition requires a `DECISIONS.md` entry. `accountId` is
 // intentionally absent — handle is the public identifier on this
 // surface and exposing the server-internal stable ID per WP-052
 // D-5201 would leak a cross-service identifier the public surface
 // has no use for. `email`, `authProvider`, `authProviderId`,
 // `createdAt`, and `updatedAt` from `PlayerAccount` are also absent
 // for the same reason — the drift test in `profile.logic.test.ts`
-// asserts `Object.keys(view).sort()` equals exactly the four fields
+// asserts `Object.keys(view).sort()` equals exactly the five fields
 // listed below.
 /**
  * Public, read-only projection of a player's profile composed by
- * `getPublicProfileByHandle` from `legendary.players` and
- * `legendary.replay_ownership`. Returned verbatim as the JSON body
- * of `GET /api/players/:handle/profile` (200 path).
+ * `getPublicProfileByHandle` from `legendary.players`,
+ * `legendary.replay_ownership`, and (per WP-109)
+ * `legendary.team_member_events` ⨝ `legendary.teams`. Returned
+ * verbatim as the JSON body of `GET /api/players/:handle/profile`
+ * (200 path).
  */
 export interface PublicProfileView {
   readonly handleCanonical: string;
   readonly displayHandle: string;
   readonly displayName: string;
   readonly publicReplays: PublicReplaySummary[];
+  readonly teamAffiliations: TeamAffiliation[];
 }
 
 // why: `'private'` is intentionally absent from the visibility union.

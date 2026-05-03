@@ -14,6 +14,26 @@ import {
 // (D-6512 / P6-30; precedent matches App.vue, ArenaHud, and
 // ReplayFileLoader).
 
+// why: WP-109 — TeamAffiliation shape declared locally rather than
+// imported from profileApi.ts. profileApi.ts is locked under WP-102
+// contract (byte-identical post-WP-109 per Hard Stop list); the
+// server JSON body carries the additional `teamAffiliations` field
+// regardless. The local interface mirrors the server's shape per the
+// engine/server isolation rule (WP-102 §Scope (In) §G); a future WP
+// that lifts the WP-102 contract lock can move this declaration into
+// profileApi.ts.
+interface TeamAffiliationDisplay {
+  readonly teamId: string;
+  readonly teamSize: 3 | 4 | 5;
+  readonly role: 'member' | 'substitute';
+  readonly joinedAt: string;
+  readonly leftAt: string | null;
+}
+
+interface PublicProfileViewWithTeams extends PublicProfileView {
+  readonly teamAffiliations: readonly TeamAffiliationDisplay[];
+}
+
 type LoadState = 'loading' | 'ready' | 'not_found' | 'error';
 
 // why: format `createdAt` once at render time rather than persisting
@@ -35,6 +55,19 @@ function formatCreatedAt(raw: string): string {
   }).format(parsed);
 }
 
+// why: per WP-109 §6, Legendary supports three meaningful cooperative
+// formats; the human-facing label uses the "N-handed cohort" framing
+// rather than "N-player team" to avoid the competitive overtone of
+// "team" in casual reading. Hero-vs-villain "vs" framing remains
+// permitted per the project memory feedback_pvp_terminology_scope.
+function formatTeamSizeLabel(size: 3 | 4 | 5): string {
+  return `${size}-handed cohort`;
+}
+
+function formatRoleLabel(role: 'member' | 'substitute'): string {
+  return role === 'member' ? 'member' : 'substitute';
+}
+
 export default defineComponent({
   name: 'PlayerProfilePage',
   props: {
@@ -45,7 +78,12 @@ export default defineComponent({
   },
   setup(props) {
     const state = ref<LoadState>('loading');
-    const view = ref<PublicProfileView | null>(null);
+    // why: cast to the locally-extended view type so the template can
+    // reach `view.teamAffiliations` without modifying the locked
+    // profileApi.ts contract. The server's wire shape carries the
+    // additional field per WP-109; the client's structural-typing
+    // upgrade is local to this page.
+    const view = ref<PublicProfileViewWithTeams | null>(null);
     const errorStatus = ref<number>(0);
 
     async function load(handle: string): Promise<void> {
@@ -54,7 +92,7 @@ export default defineComponent({
       errorStatus.value = 0;
       const result = await fetchPublicProfile(handle);
       if (result.ok === true) {
-        view.value = result.value;
+        view.value = result.value as PublicProfileViewWithTeams;
         state.value = 'ready';
         return;
       }
@@ -82,6 +120,8 @@ export default defineComponent({
       view,
       errorStatus,
       formatCreatedAt,
+      formatTeamSizeLabel,
+      formatRoleLabel,
     };
   },
 });
@@ -124,6 +164,40 @@ export default defineComponent({
             <span class="profile-replay-scenario">{{ replay.scenarioKey }}</span>
             <span class="profile-replay-date">{{ formatCreatedAt(replay.createdAt) }}</span>
             <span class="profile-replay-visibility">{{ replay.visibility }}</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- why: WP-109 §7 / §11 / EC-115 — read-only listing of the
+           player's visible team affiliations. Server is authoritative
+           on visibility (private / friends-fallback teams hidden by
+           composeTeamAffiliationsForProfile) AND ordering (ascending
+           by joinedAt with teamId tiebreaker per pre-flight PS-13);
+           this template MUST NOT defensively re-sort or re-filter.
+           User-facing copy uses neutral cohort framing per EC-115
+           Guardrail 8; the forbidden-vocabulary list is enumerated
+           in the EC + project memory, not repeated here. -->
+      <section
+        class="profile-teams"
+        data-testid="player-profile-teams"
+      >
+        <h2>Teams</h2>
+        <template v-if="view.teamAffiliations.length === 0">
+          <p>No team affiliations to display.</p>
+        </template>
+        <ul v-else>
+          <li
+            v-for="affiliation in view.teamAffiliations"
+            :key="affiliation.teamId"
+            class="profile-team"
+          >
+            <span class="profile-team-size">{{ formatTeamSizeLabel(affiliation.teamSize) }}</span>
+            <span class="profile-team-role">{{ formatRoleLabel(affiliation.role) }}</span>
+            <span class="profile-team-joined">since {{ formatCreatedAt(affiliation.joinedAt) }}</span>
+            <span
+              v-if="affiliation.leftAt !== null"
+              class="profile-team-left"
+            >until {{ formatCreatedAt(affiliation.leftAt) }}</span>
           </li>
         </ul>
       </section>
@@ -280,5 +354,37 @@ export default defineComponent({
   font-weight: 500;
   margin: 0;
   color: rgba(0, 0, 0, 0.6);
+}
+
+.profile-teams h2 {
+  font-size: 1.125rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.profile-teams ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-team {
+  display: grid;
+  grid-template-columns: 8rem 6rem 1fr 1fr;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  align-items: baseline;
+}
+
+.profile-team-size {
+  font-weight: 500;
+}
+
+.profile-team-role,
+.profile-team-joined,
+.profile-team-left {
+  color: rgba(0, 0, 0, 0.65);
 }
 </style>

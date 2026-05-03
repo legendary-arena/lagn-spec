@@ -50,6 +50,7 @@ import type {
   SessionTokenRequest,
   SessionVerifier,
 } from '../auth/sessionToken.types.js';
+import type { TeamAffiliation } from '../teams/team.types.js';
 
 // why: re-exported so other modules in this layer (and tests) can
 // reference the identity-layer + auth-layer aliases through
@@ -106,12 +107,16 @@ export interface OwnerProfileLink {
  *
  * `Object.keys(view).sort()` MUST equal exactly:
  *   `['aboutMe','aboutMeVisibility','avatarUrl','avatarVisibility',
- *     'links','linksVisibility','updatedAt']`
+ *     'links','linksVisibility','teamAffiliations','updatedAt']`
  * — drift-detection test in `ownerProfile.logic.test.ts` enforces
- * this. `email`, `authProvider`, `authProviderId`, `createdAt` from
- * `legendary.players` are deliberately absent: they are private
- * fields of the account and have no business on the owner-edit
- * surface.
+ * this. WP-109 / D-10904 (PS-3 = YES user pre-lock 2026-05-03)
+ * extended the locked field set from 7 to 8 keys with the
+ * read-only `teamAffiliations[]` listing — composed by the same
+ * shared helper that powers the public profile per pre-flight
+ * PS-3. `email`, `authProvider`, `authProviderId`, `createdAt`
+ * from `legendary.players` are deliberately absent: they are
+ * private fields of the account and have no business on the
+ * owner-edit surface.
  *
  * `null` values on `avatarUrl` / `aboutMe` / `updatedAt` represent
  * the never-edited synthesized-default state per WP-104 §Scope
@@ -134,6 +139,14 @@ export interface OwnerProfileView {
   readonly linksVisibility: 'private' | 'public';
   readonly links: OwnerProfileLink[];
   readonly updatedAt: string | null;
+  // why: WP-109 / D-10904 (PS-3 = YES user pre-lock 2026-05-03) —
+  // read-only listing of the owner's team affiliations as the
+  // owner sees them (viewer = subject, so 'private' teams are
+  // visible). Composed by composeTeamAffiliationsForProfile (same
+  // helper that powers the public profile); team mutations flow
+  // through /api/teams/* and never through MyProfilePage.vue or
+  // /api/me endpoints.
+  readonly teamAffiliations: TeamAffiliation[];
 }
 
 /**

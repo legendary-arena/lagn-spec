@@ -16,6 +16,7 @@ import { createParGate } from './par/parGate.mjs';
 import { createPool } from './db/database.js';
 import { registerLeaderboardRoutes } from './leaderboards/leaderboard.routes.js';
 import { registerOwnerProfileRoutes } from './profile/ownerProfile.routes.js';
+import { registerTeamRoutes } from './teams/team.routes.js';
 import { requireAuthenticatedSession } from './auth/sessionToken.logic.js';
 import { LegendaryGame, setRegistryForSetup } from '@legendary-arena/game-engine';
 
@@ -148,6 +149,18 @@ export async function startServer() {
   // D-11204 fail-closed posture (caller-injected pattern preserved
   // by the broker-agnostic orchestrator).
   registerOwnerProfileRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+  });
+
+  // why: WP-109 / D-10408 — register the eight team-affiliation
+  // routes (/api/teams + 7 team-scoped endpoints) on the same
+  // long-lived pool. Same caller-injected pattern as
+  // registerOwnerProfileRoutes — verifier + accountResolver remain
+  // undefined until WP-126 lands the broker-specific
+  // SessionVerifier; until then every authenticated team request
+  // returns 500 with code: 'session_verifier_not_configured' per
+  // D-11204 fail-closed posture.
+  registerTeamRoutes(server.router, pool, {
     requireAuthenticatedSession,
   });
 

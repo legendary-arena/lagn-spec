@@ -52,6 +52,7 @@ import type {
   OwnerProfileResult,
   OwnerProfileView,
 } from './ownerProfile.types.js';
+import { composeTeamAffiliationsForProfile } from '../teams/team.logic.js';
 
 /**
  * Locked closed-set allowlist for `legendary.player_links.provider`
@@ -481,6 +482,20 @@ export async function getOwnerProfile(
     [playerId],
   );
 
+  // why: WP-109 / D-10904 (PS-3 = YES) — compose teamAffiliations[]
+  // via the shared helper. Viewer is the owner themselves (subject
+  // = viewer = the same player_id), so 'private'-visibility teams
+  // are visible. Friend-graph service is undefined per WP-109 §11
+  // until a future WP introduces it; 'friends'-visibility teams
+  // collapse to 'private' semantics server-side (still visible to
+  // current/historical members, including the owner here).
+  const teamAffiliations = await composeTeamAffiliationsForProfile(
+    database,
+    String(playerId),
+    String(playerId),
+    undefined,
+  );
+
   if (profileResult.rows.length === 0) {
     // why: read-no-mutate invariant per WP-104 §Scope (In) §C —
     // synthesize the most-private default view when no profile row
@@ -490,7 +505,10 @@ export async function getOwnerProfile(
     // (degenerate but legal) link rows under the same player_id —
     // a dangling state that should not exist in practice but the
     // read path tolerates by overlaying the synthesized profile
-    // defaults onto whatever links are present.
+    // defaults onto whatever links are present. teamAffiliations
+    // is composed identically regardless of whether the
+    // legendary.player_profiles row exists, so the synthesized-
+    // default branch returns the same shape as the normal branch.
     const view = synthesizeDefaultOwnerProfileView();
     const links: OwnerProfileLink[] = [];
     for (const row of linkResult.rows as PlayerLinkRow[]) {
@@ -501,6 +519,7 @@ export async function getOwnerProfile(
       value: {
         ...view,
         links,
+        teamAffiliations: [...teamAffiliations],
       },
     };
   }
@@ -510,7 +529,10 @@ export async function getOwnerProfile(
     profileRow,
     linkResult.rows as PlayerLinkRow[],
   );
-  return { ok: true, value: view };
+  return {
+    ok: true,
+    value: { ...view, teamAffiliations: [...teamAffiliations] },
+  };
 }
 
 /**
@@ -721,12 +743,25 @@ export async function upsertOwnerProfile(
     [playerId],
   );
 
+  // why: WP-109 / D-10904 (PS-3 = YES) — upsertOwnerProfile
+  // returns the full OwnerProfileView (8 keys) so clients re-render
+  // without an extra GET. teamAffiliations are observational and
+  // unaffected by the PATCH; composing them here keeps the wire
+  // shape consistent across getOwnerProfile / upsertOwnerProfile /
+  // replaceOwnerLinks return paths.
+  const teamAffiliations = await composeTeamAffiliationsForProfile(
+    database,
+    String(playerId),
+    String(playerId),
+    undefined,
+  );
+
   return {
     ok: true,
-    value: composeOwnerProfileView(
-      profileRow,
-      linkResult.rows as PlayerLinkRow[],
-    ),
+    value: {
+      ...composeOwnerProfileView(profileRow, linkResult.rows as PlayerLinkRow[]),
+      teamAffiliations: [...teamAffiliations],
+    },
   };
 }
 

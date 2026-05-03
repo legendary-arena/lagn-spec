@@ -12972,6 +12972,182 @@ Per `.claude/rules/code-style.md §"Abstraction & Control Flow"`: *"Duplicate fi
 
 ---
 
+### D-10901 — WP-109 OQ-1: `'friends'` Visibility Falls Back to `'private'` Server-Side When No Friend Graph (WP-109)
+
+**Type:** Pre-Session Open Question Resolution (user pre-lock 2026-05-03)
+**Packet:** WP-109 / EC-115
+**Date:** 2026-05-03
+
+**Decision:** When the host app does not inject a `friendGraphService` into `composeTeamAffiliationsForProfile`, `'friends'`-visibility teams behave like `'private'`-visibility teams (visible only to current/historical members of the team). The fallback is enforced server-side at the SQL WHERE clause via a fourth branch matching `(t.visibility = 'friends' AND $2::boolean = false AND e.player_id = $3)`. The `$2` parameter is the friend-graph result (always `false` when no service is injected); `$3` is the viewer's player_id (NULL for unauthenticated public reads, in which case the branch never matches). The server is the sole gate — clients cannot influence visibility.
+
+**Rationale.**
+
+- **WP-109 §11 explicitly states "friends collapses to private" when no friend graph exists.** The locked SELECT in the session prompt had three branches (`'public'` / `'friends' AND $2=true` / `'private' AND e.player_id=$3`); without a fourth branch, a `'friends'` team in the absence of a friend graph would have been hidden from EVERYONE — including its own captain. The fourth branch matches the §11 "collapses to private" semantic by visibility-renaming `'friends'` to `'private'` for the no-graph case.
+- **Fail-closed posture preserved.** The fourth branch is not a permissive default — it only matches when `e.player_id = $3` (viewer is the subject), which on the team-affiliation read path means viewer is querying their own profile. Outsiders (non-members) still see nothing.
+- **Forward-compatible with a future friend-graph WP.** When a friend-graph service is injected, `$2 = true` for confirmed friends; the second branch matches, the fourth becomes a no-op (the third clause `e.player_id = $3` doesn't fire when viewer ≠ subject). Removing the fourth branch when the graph lands is a one-line cleanup.
+
+**Rejected alternative — option (b) "render `'friends'` as visible to everyone when no graph exists".** Rejected because the visibility intent is privacy-preserving; treating it as `'public'` in the absence of the graph would silently leak data the user marked non-public.
+
+**Status:** Resolved at WP-109 / EC-115 close (2026-05-03).
+
+**Citation:** `apps/server/src/teams/team.logic.ts:composeTeamAffiliationsForProfile` (the four-branch WHERE clause); WP-109 §11; EC-115 Guardrail 6.
+
+---
+
+### D-10902 — WP-109 OQ-2: Substitute Promotion Is Two Events, Captain-Driven (WP-109)
+
+**Type:** Pre-Session Open Question Resolution (user pre-lock 2026-05-03)
+**Packet:** WP-109 / EC-115
+**Date:** 2026-05-03
+
+**Decision:** Promoting a substitute to a member requires TWO separate captain (or operator) API calls: (1) `DELETE /api/teams/:teamId/members/:playerId` records the departing member's `leftAt` (sealing the open event row); (2) `PATCH /api/teams/:teamId/members/:playerId` records the substitute's role change to `'member'` (sealing the substitute event row + INSERTing a new member event row). The captain is responsible for issuing both. Auto-promotion-on-leave is forbidden — `recordMemberLeave` does NOT touch any other player's row. The two API calls produce two audit-log entries (`'member_leave'` + `'role_change'`).
+
+**Rationale.**
+
+- **The captain's mental model stays clean.** Captains explicitly know when a sub is being promoted — there is no surprising auto-action.
+- **Operator-override rows are distinguishable.** Auto-promotion would require the system to attribute the role-change event to "the system" (no actor); explicit captain action means every event carries `actor_id = captain` (or `is_operator = true` + `actor_id = operator` for override paths).
+- **Roster validity remains predictable.** A captain who removes a member without promoting a substitute might leave the team in a `'roster_invalid'` state for a moment; the explicit two-step lets them sequence the actions to avoid that, or accept the temporary invalidity if the validity rule's mutation-fail default permits.
+
+**Rejected alternative — option (b) auto-promote-on-leave.** Rejected because: (a) it surprises captains who expected the sub to remain a sub until they say otherwise; (b) it conflates two semantically distinct events into one row; (c) it complicates the audit trail.
+
+**Status:** Resolved at WP-109 / EC-115 close (2026-05-03).
+
+**Citation:** `apps/server/src/teams/team.logic.ts:promoteSubstitute` + `:recordMemberLeave` (the two separate exported orchestrators); WP-109 §8.3; EC-115 Guardrail 4.
+
+---
+
+### D-10903 — WP-109 OQ-3: Cohort Rollover Is Explicit Creation Only (WP-109)
+
+**Type:** Pre-Session Open Question Resolution (user pre-lock 2026-05-03)
+**Packet:** WP-109 / EC-115
+**Date:** 2026-05-03
+
+**Decision:** When a team's `endDate` arrives, the team auto-transitions to `'completed'` status (per WP-109 §10), but no successor team is auto-created for the next `cohortLabel` window. Each cohort must be initiated explicitly by the captain via `POST /api/teams`. There is no rollover endpoint, no auto-renewal cron, and no successor-team relationship modeled in the schema.
+
+**Rationale.**
+
+- **Auto-rollover would obscure cohort identity.** A team that auto-renewed would blur the boundary between cohorts — the bowling-league analogy (a fixed group across a fixed window) requires a clean break between cohorts.
+- **Captain agency preserved.** The captain decides whether the cohort continues. A team that completed its planned arc may not want to continue; a team that wants to may want different members or a different `teamSize`.
+- **No new schema state.** Auto-rollover would require a `successor_team_id` FK or similar relationship modeling, expanding the schema for a feature that users haven't asked for.
+
+**Rejected alternative — option (b) auto-create successor on `endDate`.** Rejected for the reasons above. A future WP that introduces a "renew this cohort" convenience UI can compose the existing `POST /api/teams` endpoint without schema changes.
+
+**Status:** Resolved at WP-109 / EC-115 close (2026-05-03).
+
+**Citation:** WP-109 §17 Open Questions; EC-115 §Locked Values.
+
+---
+
+### D-10904 — WP-109 PS-3: Extend `OwnerProfileView` 7 → 8 Keys + Modify `MyProfilePage.vue` (WP-109)
+
+**Type:** Pre-Session Scope Decision (user pre-lock 2026-05-03)
+**Packet:** WP-109 / EC-115
+**Date:** 2026-05-03
+
+**Decision:** WP-109 extends WP-104's `OwnerProfileView` from 7 to 8 keys by adding the read-only `teamAffiliations: TeamAffiliation[]` field, and modifies `apps/arena-client/src/pages/MyProfilePage.vue` to render a read-only "your teams" listing in a new region beneath the existing profile / links regions. The same `composeTeamAffiliationsForProfile` helper powers both the public profile (viewer = null) and the owner /me page (viewer = subject). Team membership is NOT owner-editable — `MyProfilePage.vue` carries no edit affordance, no captain-promote button, and no team-creation CTA; mutation flows go through `/api/teams/*` exclusively, never through `/api/me/*`.
+
+**Rationale.**
+
+- **One read-only listing, one composer.** A separate listing on `MyProfilePage.vue` would require a parallel composer (or duplicate the existing one); the shared helper keeps the read paths consistent.
+- **Owner viewer scope unlocks `'private'` visibility.** The owner sees their own `'private'`-visibility teams (composer called with `viewerPlayerId === subjectPlayerId`); the public profile does not. Same composer, different viewer scope.
+- **Defines the locked field set extension pattern.** Before WP-109, `OwnerProfileView` was the canonical 7-key shape per WP-104. The 7 → 8 extension establishes the precedent for future column-additive WPs that need to extend a locked-field-set DTO. Drift test extension at `ownerProfile.logic.test.ts:146–155` lands in the same commit as the type addition — never as a follow-up.
+
+**Rejected alternative — PS-3 = NO (keep `OwnerProfileView` at 7 keys; only the public profile gets `teamAffiliations[]`).** Rejected because (a) the owner's own profile page is the natural surface to display their own affiliations; (b) the same composer powers both reads with no extra cost; (c) excluding `MyProfilePage.vue` would leave a usability gap that a follow-up WP would have to fill.
+
+**Status:** Resolved at WP-109 / EC-115 close (2026-05-03) — user pre-lock 2026-05-03.
+
+**Citation:** `apps/server/src/profile/ownerProfile.types.ts:OwnerProfileView` (the 8-key locked shape); `apps/server/src/profile/ownerProfile.logic.ts:getOwnerProfile` (the composer wiring); `apps/arena-client/src/pages/MyProfilePage.vue` (the read-only "your teams" region).
+
+---
+
+### D-10905 — `apps/server/src/teams/` Classified Under `server` Code Category (WP-109)
+
+**Type:** Code Category Classification
+**Packet:** WP-109 / EC-115
+**Date:** 2026-05-03
+
+**Decision:** The new `apps/server/src/teams/` directory is classified under the `server` code category, mirroring D-5202 (`apps/server/src/identity/`), D-10301 (`apps/server/src/replay/`), and D-10201 (`apps/server/src/profile/`). The four files (`team.types.ts`, `team.logic.ts`, `team.logic.test.ts`, `team.routes.ts`) are server-layer code per `.claude/rules/server.md`; they may import from `apps/server/src/{identity,profile,auth}/` but MUST NOT import from `packages/{game-engine,registry,preplan,vue-sfc-loader}/`, `apps/arena-client/`, `apps/replay-producer/`, or `apps/registry-viewer/`.
+
+**Rationale.**
+
+- **`02-CODE-CATEGORIES.md` umbrella rule covers `apps/server/src/**`.** Per the umbrella rule at `02-CODE-CATEGORIES.md:230–237`, every descendant of `apps/server/` is `server` category by default unless an explicit DECISIONS.md entry carves out a sub-classification. WP-109 inherits the default; this entry exists for documentation symmetry with the four prior server-domain directories (identity / replay / profile / leaderboards).
+- **No lifecycle-prohibition gap.** The exported team-logic functions MUST NOT be called from `game.ts`, any `LegendaryGame.moves` entry, any phase hook, any file under `packages/`, any file under `apps/replay-producer/` or `apps/registry-viewer/`, or any sibling-server-domain file under `apps/server/src/{identity,replay,competition,par,rules,game}/`. They are consumed only by their own test file, by `team.routes.ts`, by `apps/server/src/server.mjs` (one-line `registerTeamRoutes(...)` call), by `apps/server/src/profile/profile.logic.ts` (composer only), and (per PS-3 = YES / D-10904) by `apps/server/src/profile/ownerProfile.logic.ts` (composer only).
+
+**Status:** Resolved at WP-109 / EC-115 close (2026-05-03).
+
+**Citation:** `02-CODE-CATEGORIES.md:230–237`; D-5202 (identity precedent); D-10301 (replay precedent); D-10201 (profile precedent); WP-109 §"Non-Negotiable Constraints" — Lifecycle prohibition.
+
+---
+
+### D-10906 — Migration Slot 010 + Idempotency + OQ-4 = (a) Denormalized `team_size` (WP-109)
+
+**Type:** Schema Lock
+**Packet:** WP-109 / EC-115
+**Date:** 2026-05-03
+
+**Decision:** WP-109's migration is `data/migrations/010_create_teams_and_membership.sql` (slot 010 — slot 009 is taken by WP-104's `legendary.player_profiles` + `legendary.player_links`). The migration is fully idempotent: every `CREATE TABLE` uses `IF NOT EXISTS`, every `CREATE INDEX` uses `IF NOT EXISTS`. Three tables created: `legendary.teams`, `legendary.team_member_events`, `legendary.team_audit_log`. ON DELETE CASCADE chain through `legendary.players`. SQL CHECK `(left_at IS NULL OR left_at >= joined_at)` on `legendary.team_member_events` for monotonic-timeline defense in depth.
+
+**OQ-4 = (a) lock (folded into this entry):** `legendary.team_member_events` carries a denormalized `team_size int NOT NULL CHECK (team_size IN (3, 4, 5))` column. The value is INSERT-time copied from `legendary.teams.team_size`; structurally immutable post-INSERT — no UPDATE path in `team.logic.ts` touches the column. The denormalization unlocks the simple-form UNIQUE partial index `uq_team_member_events_active_size ON legendary.team_member_events(player_id, team_size) WHERE left_at IS NULL` which enforces same-size cohort exclusivity per WP-109 §8.5 + EC-115 Guardrail 12.
+
+**Rationale.**
+
+- **PostgreSQL prohibits subqueries inside CREATE INDEX expressions.** The naïve form `(player_id, (SELECT team_size FROM legendary.teams WHERE team_id = ...)) WHERE left_at IS NULL` is rejected by the planner. Denormalization is the only path to a partial UNIQUE index that enforces same-size exclusivity at the DB layer.
+- **Defense in depth.** The application validator `validateSameSizeExclusivity` is the primary gate (issued before INSERT); the partial UNIQUE index is the concurrency-safe backstop (PostgreSQL serializes concurrent INSERTs through the UNIQUE constraint). A captain could ONLY bypass the application validator by directly INSERTing into the table, bypassing the orchestrator — at which point the index catches them.
+- **Immutability invariant.** The denormalized column MUST equal the team's `team_size` at INSERT time; once written, no UPDATE touches it. A `team_size` mismatch between `legendary.teams.team_size` and `legendary.team_member_events.team_size` for the same `team_id` would be a bug, not a permitted state.
+- **Idempotency mirrors WP-052 / WP-101 / WP-104 precedent.** Every migration in the project is idempotent so the migration runner can be re-run safely against an already-seeded database.
+
+**Status:** Resolved at WP-109 / EC-115 close (2026-05-03) — user pre-lock 2026-05-03 OQ-4 = (a).
+
+**Citation:** `data/migrations/010_create_teams_and_membership.sql` (the locked SQL); `apps/server/src/teams/team.logic.ts:validateSameSizeExclusivity` (the application validator); WP-109 §8.5; EC-115 Guardrail 12.
+
+---
+
+### D-10907 — Single-Transaction Multi-Row Create-Team (WP-109)
+
+**Type:** Mid-Execution Wiring Decision
+**Packet:** WP-109 / EC-115
+**Date:** 2026-05-03
+
+**Decision:** `createTeam` wraps every multi-row write in a single PostgreSQL `BEGIN/COMMIT` transaction: (1) INSERT into `legendary.teams`; (2) INSERT N rows into `legendary.team_member_events` (one per founding member, including the captain); (3) INSERT one audit-log row into `legendary.team_audit_log` (action `'create'`, actor = captain). On any failure inside the transaction, ROLLBACK fires and the captured error is converted to a typed `TeamResult.fail({ code: 'invalid_request' })` at the orchestrator seam — preserving the never-throw rule at the public boundary. The pooled connection is released only after either COMMIT or ROLLBACK has fired (pg-pool does not auto-rollback on release).
+
+**Rationale.**
+
+- **Mirrors WP-104 D-10407 precedent.** `replaceOwnerLinks` uses the same `BEGIN/COMMIT` envelope for its DELETE-then-INSERT sequence. Establishes the convention that any multi-row write to multiple tables (or even multiple rows in one table) goes through a single transaction.
+- **Partial team state is structurally impossible.** Without the transaction, a mid-write failure could leave a team row in `legendary.teams` with no member-event rows in `legendary.team_member_events` — a captain-less, member-less team that would fail validity gates everywhere. The transaction makes that state unreachable.
+- **The `throw error` in the catch block is the ONE exception to the never-throw rule.** The orchestrator (the exported `createTeam` function) catches the throw and converts to `TeamResult.fail` at the seam. Inside the transaction envelope, the throw is the canonical signal that triggers the catch + ROLLBACK.
+
+**Status:** Resolved at WP-109 / EC-115 close (2026-05-03).
+
+**Citation:** `apps/server/src/teams/team.logic.ts:createTeam` (the locked transaction envelope); WP-104 D-10407 (replace-all-by-list precedent); EC-115 Guardrail 15.
+
+---
+
+### D-10908 — `TeamId` Branded Type (WP-109)
+
+**Type:** Type-Safety Lock
+**Packet:** WP-109 / EC-115
+**Date:** 2026-05-03
+
+**Decision:** WP-109 declares `TeamId` as a TypeScript branded type at `apps/server/src/teams/team.types.ts`:
+
+```ts
+export type TeamId = string & { readonly __brand: 'TeamId' };
+```
+
+Branding prevents accidental interchange with other string identifiers (`AccountId`, `handle`, `replayHash`, etc.) at compile time. The brand exists only at the TypeScript layer; the underlying SQL column on `legendary.teams.team_id` is plain `text`. Brand-cast happens at exactly one site: the `createTeam` orchestrator generates a UUID v4 via `node:crypto.randomUUID()` and casts the result. Every other entry point (route handlers, validators) uses the `toTeamId(raw: string): TeamResult<TeamId>` constructor, which validates UUID v4 shape (strict 8-4-4-4-12 lowercase-hex regex) and brand-casts on success.
+
+**Rationale.**
+
+- **Mirrors the `AccountId` brand precedent (WP-052 D-5201).** The identity layer's `AccountId` is branded for the same reason; WP-109's `TeamId` follows the same pattern verbatim.
+- **Compile-time safety at API boundaries.** Route parameters, JSON bodies, validator inputs, and SQL parameters all carry `TeamId` (not bare `string`); accidentally passing an `AccountId` or a `handle` where a `TeamId` is expected fails type-check before runtime.
+- **Single validation site preserves branding integrity.** All untrusted inputs (route params, request bodies) flow through `toTeamId` exactly once. The orchestrator's UUID generation is the only "trust me, this is valid" cast in the codebase.
+
+**Status:** Resolved at WP-109 / EC-115 close (2026-05-03).
+
+**Citation:** `apps/server/src/teams/team.types.ts:TeamId` + `:toTeamId`; `apps/server/src/identity/identity.types.ts:AccountId` (the precedent); WP-052 D-5201; EC-115 §Locked Values §"`TeamId` branded type".
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

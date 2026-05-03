@@ -19,6 +19,26 @@ import {
 
 type LoadState = 'loading' | 'ready' | 'error';
 
+// why: WP-109 / D-10904 (PS-3 = YES) — local TeamAffiliation
+// declaration mirroring the server's wire shape. ownerProfileApi.ts
+// is locked under WP-104 contract (byte-identical post-WP-109 per
+// Hard Stop list); the server JSON body carries the additional
+// `teamAffiliations` field on OwnerProfileView regardless. The
+// local interface mirrors the server's shape per the engine/server
+// isolation rule (WP-104 §Scope (In) §G); a future WP can lift the
+// declaration into ownerProfileApi.ts.
+interface TeamAffiliationDisplay {
+  readonly teamId: string;
+  readonly teamSize: 3 | 4 | 5;
+  readonly role: 'member' | 'substitute';
+  readonly joinedAt: string;
+  readonly leftAt: string | null;
+}
+
+interface OwnerProfileViewWithTeams extends OwnerProfileView {
+  readonly teamAffiliations: readonly TeamAffiliationDisplay[];
+}
+
 const ALLOWED_PROVIDERS: readonly OwnerProfileLink['provider'][] = [
   'twitter',
   'github',
@@ -32,6 +52,32 @@ interface DraftLink {
   provider: OwnerProfileLink['provider'];
   url: string;
   isPublic: boolean;
+}
+
+// why: per WP-109 §6, Legendary supports three meaningful cooperative
+// formats; the human-facing label uses the "N-handed cohort" framing
+// rather than "N-player team" to avoid the competitive overtone of
+// "team" in casual reading. User-facing copy stays neutral per
+// EC-115 Guardrail 8; the forbidden-vocabulary list is enumerated
+// in the EC + project memory, not repeated here.
+function formatTeamSizeLabel(size: 3 | 4 | 5): string {
+  return `${size}-handed cohort`;
+}
+
+function formatRoleLabel(role: 'member' | 'substitute'): string {
+  return role === 'member' ? 'member' : 'substitute';
+}
+
+function formatJoinedDate(raw: string): string {
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) {
+    return raw;
+  }
+  return new Intl.DateTimeFormat(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(parsed);
 }
 
 function bannerCopyForCode(code: string | null): string {
@@ -55,7 +101,12 @@ export default defineComponent({
   name: 'MyProfilePage',
   setup() {
     const state = ref<LoadState>('loading');
-    const view = ref<OwnerProfileView | null>(null);
+    // why: cast to the locally-extended view type so the template can
+    // reach `view.teamAffiliations` without modifying the locked
+    // ownerProfileApi.ts contract. The server's wire shape carries
+    // the additional field per WP-109 / D-10904; the client's
+    // structural-typing upgrade is local to this page.
+    const view = ref<OwnerProfileViewWithTeams | null>(null);
     const errorBanner = ref<string>('');
 
     const formAvatarUrl = ref<string>('');
@@ -79,7 +130,7 @@ export default defineComponent({
     }
 
     function applyView(loaded: OwnerProfileView): void {
-      view.value = loaded;
+      view.value = loaded as OwnerProfileViewWithTeams;
       formAvatarUrl.value = loaded.avatarUrl ?? '';
       formAboutMe.value = loaded.aboutMe ?? '';
       formAvatarVisibility.value = loaded.avatarVisibility;
@@ -169,6 +220,9 @@ export default defineComponent({
       saveLinks,
       addDraftLink,
       removeDraftLink,
+      formatTeamSizeLabel,
+      formatRoleLabel,
+      formatJoinedDate,
     };
   },
 });
@@ -319,6 +373,46 @@ export default defineComponent({
           Save links
         </button>
       </section>
+
+      <!-- why: WP-109 / D-10904 (PS-3 = YES) — read-only "your teams"
+           block. Owner viewer scope means 'private'-visibility teams
+           are visible to the owner themselves (the composer is called
+           server-side with viewerPlayerId === subjectPlayerId). No
+           edit affordance, no captain-promote button, no team-creation
+           CTA — those mutation flows go through /api/teams/* and never
+           through MyProfilePage.vue or /api/me endpoints. A future WP
+           may add captain-side affordances on a sibling page; this
+           block is observational only. No competitive copy per EC-115
+           Guardrail 8. -->
+      <section
+        v-if="view !== null"
+        class="profile-teams"
+        data-testid="my-profile-teams"
+      >
+        <h2>Your teams</h2>
+        <template v-if="view.teamAffiliations.length === 0">
+          <p class="profile-help">
+            You're not currently affiliated with any teams. Teams are formed by
+            invitation; ask a captain to invite you.
+          </p>
+        </template>
+        <ul v-else class="profile-teams-list">
+          <li
+            v-for="affiliation in view.teamAffiliations"
+            :key="affiliation.teamId"
+            class="profile-team-row"
+            :data-testid="`my-profile-team-row-${affiliation.teamId}`"
+          >
+            <span class="profile-team-size">{{ formatTeamSizeLabel(affiliation.teamSize) }}</span>
+            <span class="profile-team-role">{{ formatRoleLabel(affiliation.role) }}</span>
+            <span class="profile-team-joined">since {{ formatJoinedDate(affiliation.joinedAt) }}</span>
+            <span
+              v-if="affiliation.leftAt !== null"
+              class="profile-team-left"
+            >until {{ formatJoinedDate(affiliation.leftAt) }}</span>
+          </li>
+        </ul>
+      </section>
     </template>
   </article>
 </template>
@@ -411,5 +505,32 @@ export default defineComponent({
   align-items: center;
   gap: 0.25rem;
   font-size: 0.875rem;
+}
+
+.profile-teams-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-team-row {
+  display: grid;
+  grid-template-columns: 8rem 6rem 1fr 1fr;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  align-items: baseline;
+}
+
+.profile-team-size {
+  font-weight: 500;
+}
+
+.profile-team-role,
+.profile-team-joined,
+.profile-team-left {
+  color: rgba(0, 0, 0, 0.65);
 }
 </style>

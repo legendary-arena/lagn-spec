@@ -82,12 +82,13 @@ describe('public profile logic (WP-102)', () => {
     }
   });
 
-  test('PublicProfileView shape contains exactly the four locked fields and no others', () => {
+  test('PublicProfileView shape contains exactly the five locked fields and no others', () => {
     const fixture: PublicProfileView = {
       handleCanonical: 'alice',
       displayHandle: 'Alice',
       displayName: 'Alice Example',
       publicReplays: [],
+      teamAffiliations: [],
     };
     const keys = Object.keys(fixture).sort();
     assert.deepEqual(keys, [
@@ -95,6 +96,7 @@ describe('public profile logic (WP-102)', () => {
       'displayName',
       'handleCanonical',
       'publicReplays',
+      'teamAffiliations',
     ]);
   });
 
@@ -165,12 +167,153 @@ describe('public profile logic (WP-102)', () => {
         assert.equal(result.value.displayHandle, 'Alice');
         assert.equal(result.value.displayName, 'Alice Example');
         assert.deepEqual(result.value.publicReplays, []);
+        // why: WP-109 PS-3 — PublicProfileView extends from 4 to 5
+        // keys with teamAffiliations[]. Empty for a player with no
+        // memberships.
+        assert.deepEqual(result.value.teamAffiliations, []);
         assert.deepEqual(Object.keys(result.value).sort(), [
           'displayHandle',
           'displayName',
           'handleCanonical',
           'publicReplays',
+          'teamAffiliations',
         ]);
+      }
+    },
+  );
+
+  test(
+    'getPublicProfileByHandle returns empty teamAffiliations when player has no team memberships (WP-109 fixture)',
+    hasTestDatabase ? {} : { skip: 'requires test database' },
+    async () => {
+      assert.ok(testPool !== null);
+      let counter = 0;
+      const idProvider = () =>
+        `00000000-0000-4000-8000-${String(counter++).padStart(12, '0')}`;
+
+      const accountResult = await createPlayerAccount(
+        {
+          email: 'noteam@example.com',
+          displayName: 'No Team',
+          authProvider: 'email',
+          authProviderId: 'noteam@example.com',
+        },
+        testPool,
+        idProvider,
+      );
+      assert.ok(accountResult.ok === true);
+      const claimResult = await claimHandle(
+        accountResult.value.accountId,
+        'noteam',
+        testPool,
+      );
+      assert.ok(claimResult.ok === true);
+
+      const result = await getPublicProfileByHandle('noteam', testPool);
+      assert.equal(result.ok, true);
+      if (result.ok === true) {
+        assert.deepEqual(
+          result.value.teamAffiliations,
+          [],
+          'player with zero team memberships must yield empty teamAffiliations[]',
+        );
+      }
+    },
+  );
+
+  test(
+    "getPublicProfileByHandle exposes 'public'-visibility team affiliations and hides 'private' / 'friends' (no friend graph) (WP-109 fixture)",
+    hasTestDatabase ? {} : { skip: 'requires test database' },
+    async () => {
+      assert.ok(testPool !== null);
+      let counter = 0;
+      const idProvider = () =>
+        `00000000-0000-4000-8000-${String(counter++).padStart(12, '0')}`;
+
+      // Provision the subject (handle owner).
+      const subjectResult = await createPlayerAccount(
+        {
+          email: 'subject@example.com',
+          displayName: 'Subject',
+          authProvider: 'email',
+          authProviderId: 'subject@example.com',
+        },
+        testPool,
+        idProvider,
+      );
+      assert.ok(subjectResult.ok === true);
+      const claim = await claimHandle(subjectResult.value.accountId, 'subject', testPool);
+      assert.ok(claim.ok === true);
+      const subjectLookup = await testPool.query(
+        'SELECT player_id FROM legendary.players WHERE ext_id = $1',
+        [subjectResult.value.accountId],
+      );
+      const subjectPlayerId = String(subjectLookup.rows[0].player_id);
+
+      // Provision two other players for founders.
+      const f1 = await createPlayerAccount(
+        {
+          email: 'f1@example.com',
+          displayName: 'F1',
+          authProvider: 'email',
+          authProviderId: 'f1@example.com',
+        },
+        testPool,
+        idProvider,
+      );
+      assert.ok(f1.ok === true);
+      const f2 = await createPlayerAccount(
+        {
+          email: 'f2@example.com',
+          displayName: 'F2',
+          authProvider: 'email',
+          authProviderId: 'f2@example.com',
+        },
+        testPool,
+        idProvider,
+      );
+      assert.ok(f2.ok === true);
+      const f1Lookup = await testPool.query(
+        'SELECT player_id FROM legendary.players WHERE ext_id = $1',
+        [f1.value.accountId],
+      );
+      const f2Lookup = await testPool.query(
+        'SELECT player_id FROM legendary.players WHERE ext_id = $1',
+        [f2.value.accountId],
+      );
+      const f1PlayerId = String(f1Lookup.rows[0].player_id);
+      const f2PlayerId = String(f2Lookup.rows[0].player_id);
+
+      // Insert a 'public'-visibility team and a 'private'-visibility
+      // team with the subject as captain. (Direct INSERTs are used
+      // here rather than calling team.logic.createTeam to keep the
+      // test independent of the team module's roster validator —
+      // these fixtures are about the visibility filter on the read
+      // composer.)
+      await testPool.query(
+        "INSERT INTO legendary.teams (team_id, name, cohort_label, team_size, start_date, end_date, status, captain_player_id, visibility) " +
+          "VALUES ('00000000-0000-4000-8000-aaaaaaaaaaaa', 'Pub', '2026', 3, '2026-01-01', '2026-12-31', 'active', $1, 'public'), " +
+          "       ('00000000-0000-4000-8000-bbbbbbbbbbbb', 'Priv', '2026', 3, '2026-01-01', '2026-12-31', 'active', $1, 'private')",
+        [subjectPlayerId],
+      );
+      await testPool.query(
+        'INSERT INTO legendary.team_member_events (team_id, player_id, team_size, role, joined_at, actor_id) ' +
+          "VALUES ('00000000-0000-4000-8000-aaaaaaaaaaaa', $1, 3, 'member', now(), $1), " +
+          "       ('00000000-0000-4000-8000-aaaaaaaaaaaa', $2, 3, 'member', now(), $1), " +
+          "       ('00000000-0000-4000-8000-bbbbbbbbbbbb', $1, 3, 'member', now(), $1), " +
+          "       ('00000000-0000-4000-8000-bbbbbbbbbbbb', $3, 3, 'member', now(), $1)",
+        [subjectPlayerId, f1PlayerId, f2PlayerId],
+      );
+
+      const result = await getPublicProfileByHandle('subject', testPool);
+      assert.equal(result.ok, true);
+      if (result.ok === true) {
+        // Public profile read = anonymous viewer = only 'public' visible.
+        assert.equal(result.value.teamAffiliations.length, 1);
+        assert.equal(
+          result.value.teamAffiliations[0].teamId,
+          '00000000-0000-4000-8000-aaaaaaaaaaaa',
+        );
       }
     },
   );

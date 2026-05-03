@@ -52,6 +52,7 @@ import type {
   PublicProfileView,
   PublicReplaySummary,
 } from './profile.types.js';
+import { composeTeamAffiliationsForProfile } from '../teams/team.logic.js';
 
 /**
  * Internal shape returned by the locked replay-filter SELECT. The
@@ -208,6 +209,20 @@ export async function getPublicProfileByHandle(
           : row.created_at,
     });
   }
+  // why: WP-109 §7 — compose teamAffiliations[] via the shared helper
+  // in team.logic.ts. The viewer is null for unauthenticated public
+  // reads (no cookie-based viewer ID inference per WP-104 D-11202
+  // bearer-only auth lock + EC-115 §AI Agent Warning #5); only
+  // 'public'-visibility teams will return for anonymous readers.
+  // The friend-graph service is undefined until a future WP lands,
+  // so 'friends'-visibility teams collapse to 'private' semantics
+  // server-side per OQ-1 = (a) / D-10901 + EC-115 Guardrail 6.
+  const teamAffiliations = await composeTeamAffiliationsForProfile(
+    database,
+    String(playerId),
+    null,
+    undefined,
+  );
   return {
     ok: true,
     value: {
@@ -215,6 +230,7 @@ export async function getPublicProfileByHandle(
       displayHandle,
       displayName: playerAccount.displayName,
       publicReplays,
+      teamAffiliations: [...teamAffiliations],
     },
   };
 }

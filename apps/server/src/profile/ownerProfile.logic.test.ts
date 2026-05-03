@@ -133,7 +133,7 @@ describe('owner profile logic (WP-104)', () => {
     }
   });
 
-  test('OwnerProfileView shape contains exactly the seven locked fields and excludes private account fields', () => {
+  test('OwnerProfileView shape contains exactly the eight locked fields (WP-109 PS-3 = YES extension) and excludes private account fields', () => {
     const view: OwnerProfileView = {
       avatarUrl: null,
       aboutMe: null,
@@ -142,6 +142,7 @@ describe('owner profile logic (WP-104)', () => {
       linksVisibility: 'private',
       links: [],
       updatedAt: null,
+      teamAffiliations: [],
     };
     const keys = Object.keys(view).sort();
     assert.deepEqual(keys, [
@@ -151,6 +152,7 @@ describe('owner profile logic (WP-104)', () => {
       'avatarVisibility',
       'links',
       'linksVisibility',
+      'teamAffiliations',
       'updatedAt',
     ]);
     assert.ok(!('email' in view));
@@ -558,6 +560,55 @@ describe('owner profile logic (WP-104)', () => {
         Date.parse(secondTs as string) > Date.parse(firstTs as string),
         'updated_at must strictly advance on a subsequent PATCH',
       );
+    },
+  );
+
+  test(
+    "getOwnerProfile exposes the owner's own 'private'-visibility teams via teamAffiliations[] (WP-109 PS-3 = YES fixture)",
+    hasTestDatabase ? {} : { skip: 'requires test database' },
+    async () => {
+      assert.ok(testPool !== null);
+      const accountId = await provisionAccount(testPool, 'private-team');
+      // Resolve the owner's player_id for the team-row INSERT.
+      const lookup = await testPool.query(
+        'SELECT player_id FROM legendary.players WHERE ext_id = $1',
+        [accountId],
+      );
+      const playerId = String(lookup.rows[0].player_id);
+
+      // Insert a 'private'-visibility team with the owner as captain
+      // and a single member event for the owner. Direct INSERTs are
+      // used here to keep the test independent of team.logic's
+      // roster validator — this fixture exercises the composer
+      // wiring on the owner-side read path, not the team-creation
+      // orchestrator.
+      await testPool.query(
+        "INSERT INTO legendary.teams (team_id, name, cohort_label, team_size, start_date, end_date, status, captain_player_id, visibility) " +
+          "VALUES ('00000000-0000-4000-8000-cccccccccccc', 'Owner-Priv', '2026', 3, '2026-01-01', '2026-12-31', 'active', $1, 'private')",
+        [playerId],
+      );
+      await testPool.query(
+        'INSERT INTO legendary.team_member_events (team_id, player_id, team_size, role, joined_at, actor_id) ' +
+          "VALUES ('00000000-0000-4000-8000-cccccccccccc', $1, 3, 'member', now(), $1)",
+        [playerId],
+      );
+
+      const owner = await getOwnerProfile(accountId, testPool);
+      assert.ok(owner.ok === true);
+      // why: owner viewing their own profile sees 'private'-visibility
+      // teams (viewer == subject branch matches in the locked
+      // composer SELECT).
+      assert.equal(
+        owner.value.teamAffiliations.length,
+        1,
+        "owner must see their own 'private'-visibility team affiliation",
+      );
+      assert.equal(
+        owner.value.teamAffiliations[0].teamId,
+        '00000000-0000-4000-8000-cccccccccccc',
+      );
+      assert.equal(owner.value.teamAffiliations[0].teamSize, 3);
+      assert.equal(owner.value.teamAffiliations[0].role, 'member');
     },
   );
 });
