@@ -109,6 +109,17 @@ watch(() => props.selectedKey, (newKey) => {
           <span class="tile-name">{{ card.name }}</span>
           <span v-if="card.heroName && card.heroName !== card.name" class="tile-hero">{{ card.heroName }}</span>
           <div class="tile-meta">
+            <!--
+              why: surface the set abbr on every tile (image and data modes
+              alike) so users can identify a card's source set without
+              flipping to data mode or opening the detail panel. The :title
+              binding renders the full set name from sets.json on hover via
+              the browser's native tooltip — no JS, no tooltip library, no
+              new dependency. setAbbr / setName both flow through FlatCard
+              already (populated by `flattenSet` from `sets.json`); this
+              binding consumes existing data.
+            -->
+            <span v-if="card.setAbbr" class="set-tag" :title="card.setName || card.setAbbr">{{ card.setAbbr }}</span>
             <span v-if="card.hc" class="hc-tag" :style="{ color: HC_COLOR[card.hc] }">{{ card.hc }}</span>
             <span v-if="card.cost !== undefined" class="cost">⚡{{ card.cost }}</span>
             <span v-if="card.rarity" class="rarity-dot" :style="{ background: RARITY_DOT[card.rarity] }"></span>
@@ -149,6 +160,7 @@ watch(() => props.selectedKey, (newKey) => {
 .tile-name { font-size: 0.72rem; font-weight: 600; color: #d8d8ee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tile-hero { font-size: 0.62rem; color: #7777aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tile-meta { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.1rem; }
+.set-tag { font-size: 0.6rem; color: #8a8aa8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; cursor: help; }
 .hc-tag { font-size: 0.6rem; text-transform: capitalize; }
 .cost { font-size: 0.65rem; color: #fbbf24; }
 .rarity-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-left: auto; }

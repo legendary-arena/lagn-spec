@@ -105,7 +105,7 @@ function hasAbilityText(line: string): boolean {
 
       <template v-if="card.setAbbr">
         <dt>Set</dt>
-        <dd>{{ card.setAbbr }}</dd>
+        <dd :title="card.setName || card.setAbbr">{{ card.setAbbr }}</dd>
       </template>
 
       <template v-if="card.hc">
