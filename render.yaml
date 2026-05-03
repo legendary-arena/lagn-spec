@@ -32,6 +32,22 @@ services:
       # node --input-type=module -e "import { randomBytes } from 'node:crypto'; console.log(randomBytes(32).toString('hex'))"
       - key: JWT_SECRET
         sync: false
+      # Hanko session-verifier configuration (WP-126 / D-12602).
+      # HANKO_TENANT_BASE_URL is the tenant-scoped origin (Hanko Cloud's
+      # documented /{tenant_id}/.well-known/jwks.json endpoint shape —
+      # e.g., https://passkeys.hanko.io/<tenant_id>); the verifier
+      # appends /.well-known/jwks.json programmatically.
+      - key: HANKO_TENANT_BASE_URL
+        sync: false
+      # HANKO_EXPECTED_AUDIENCE is the audience identifier configured in
+      # the Hanko tenant; the verifier matches this against the JWT
+      # `aud` claim.
+      - key: HANKO_EXPECTED_AUDIENCE
+        sync: false
+      # HANKO_JWKS_REFRESH_INTERVAL_MS is optional; absence yields the
+      # D-12603 default of 300_000 ms (5 minutes).
+      - key: HANKO_JWKS_REFRESH_INTERVAL_MS
+        sync: false
 
 databases:
   # Managed PostgreSQL — rules engine backing store

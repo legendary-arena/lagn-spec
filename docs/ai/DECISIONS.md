@@ -11917,7 +11917,7 @@ Option C selected by operator decision 2026-04-29 with the rationale that doc sy
 
 **Rejected alternative — INLINE.** WP-112 ships orchestrator + broker adapter together. Rejected because: (a) it expands WP-112's scope to include the broker SDK selection that WP-099 explicitly deferred to a future WP; (b) it pushes the file count toward the ≤8 cap, especially once JWKS cache + refresh policy + broker-specific test fixtures land; (c) it dilutes the `SessionVerifier` interface's broker-agnosticism because the only concrete implementation in the same WP becomes the de-facto contract; (d) it makes a future broker swap a multi-file edit instead of a directory-replacement.
 
-**Status:** Active. Status flips to `Resolved` once WP-126 lands.
+**Status:** Resolved at WP-126 / EC-130 close (2026-05-03). The sibling-WP architectural choice held: WP-126 introduced a new `apps/server/src/auth/hanko/` directory under D-9904 with two production logic files plus two test files; zero broker-specific imports, URL strings, or type names leaked into WP-112's `auth/` root. The verifier returned by `createHankoSessionVerifier(config)` conforms to the WP-112 `SessionVerifier` interface verbatim.
 
 **Introduced:** WP-112 (drafted 2026-05-02; executed 2026-05-02 at `EC-112:`)
 **Reinforces:** WP-099 §A (Session Validation Middleware policy contract); WP-099 §B (Hanko Wiring Module — the surface WP-126 populates); D-9901 (broker selected); D-9904 (broker-specific module path lock); D-9905 (guest policy preserved).
@@ -13145,6 +13145,152 @@ Branding prevents accidental interchange with other string identifiers (`Account
 **Status:** Resolved at WP-109 / EC-115 close (2026-05-03).
 
 **Citation:** `apps/server/src/teams/team.types.ts:TeamId` + `:toTeamId`; `apps/server/src/identity/identity.types.ts:AccountId` (the precedent); WP-052 D-5201; EC-115 §Locked Values §"`TeamId` branded type".
+
+---
+
+### D-12601 — Hanko Session Verifier Dependency Surface: Built-Ins-Only (Node v22 `node:crypto`) (WP-126)
+
+**Type:** Dependency-Surface Lock
+**Packet:** WP-126 / EC-130
+**Date:** 2026-05-03
+
+**Decision:** `apps/server/src/auth/hanko/hankoVerifier.logic.ts` performs RS256 JWT signature verification using only Node v22 built-ins — `node:crypto.createPublicKey({ key, format: 'jwk' })` to import the JWKS-published public key + `node:crypto.createVerify('RSA-SHA256')` to verify the signature. No top-level npm dependency is added in `apps/server/package.json`. No `@teamhanko/*` SDK is consumed. `pnpm-lock.yaml` is unchanged by WP-126.
+
+**Rationale.**
+- **Zero new transitive surface.** The optional `@teamhanko/*` SDK alternative would have pulled in JWT-handling libraries (`jose` / `jsonwebtoken` / `jwks-rsa`) as transitives. F-5 (no top-level JWT-handling lib add) is preserved trivially under built-ins-only because `pnpm install` produces a no-op diff.
+- **Replacement safety preserved.** WP-099 D-9901's "broker swap is a directory replacement" guarantee depends on the broker's surface being *only* the JWT shape and the JWKS endpoint. Built-ins-only verification consumes exactly that surface — a future replacement broker that also publishes RSA-signed JWTs against a JWKS endpoint can drop in by editing the `verify(token)` step ordering and the `HANKO_IDP_TO_AUTH_PROVIDER` lookup; no SDK migration cost.
+- **No SDK lock-in for an MVP-stage product.** Hanko's SDK would have added value if WP-126 needed Hanko-specific features beyond JWT verification (organization metadata, custom user attributes, etc.). The verifier needs none of that — only `kid`-keyed RSA public keys and standard JWT claims. The SDK would have been overhead, not leverage.
+- **Test fixtures stay local.** Built-ins-only verification means tests use `node:crypto.generateKeyPairSync('rsa', { modulusLength: 2048 })` to mint a fixture keypair at module-load time and sign tokens with `createSign('RSA-SHA256')`. No mock-SDK surface to maintain; no version-skew between SDK fixtures and SDK runtime.
+
+**Locked values:**
+- `apps/server/package.json` is unchanged by WP-126 (verified by `git diff apps/server/package.json` returning no output).
+- `pnpm-lock.yaml` is unchanged by WP-126.
+- The verifier imports `createPublicKey`, `createVerify` from `node:crypto`. No other crypto imports.
+- Tests import `createSign`, `generateKeyPairSync` from `node:crypto`. No `jose`, no `jsonwebtoken`, no `jwks-rsa`, no `@teamhanko/*`.
+
+**Rejected alternative — `@teamhanko/*` SDK path.** WP-126 adopts the `@teamhanko/<package>` SDK at an exact version pin and uses its JWT verification primitives. Rejected because (a) it adds 1 + N transitive packages for a verification call we already wrote in 30 lines; (b) it complicates the F-5 grep gate (transitive JWT-handling libs land via `pnpm install` and the executor must trace which transitives arrived); (c) it pins Hanko-specific surface beyond what WP-099 D-9904 contains (D-9904 contains *broker-specific code*; the SDK transitively pins specific JWT verification logic the project wouldn't otherwise consume); (d) Hanko's published JWT shape and JWKS endpoint are stable RFC 7515/7517 surface — using built-ins keeps the project's verification logic legible and auditable without a 3rd-party indirection layer.
+
+**Status:** Active.
+
+**Citation:** `apps/server/src/auth/hanko/hankoVerifier.logic.ts` (the verifier); `apps/server/src/auth/hanko/hankoVerifier.logic.test.ts` (the fixture-keypair test fixtures); WP-099 §B F-5 (no top-level JWT lib add); WP-099 D-9901 (broker selected — replacement safety contract).
+
+---
+
+### D-12602 — Hanko Verifier Config Shape & Env-Var Names (WP-126)
+
+**Type:** Config Boundary Lock
+**Packet:** WP-126 / EC-130
+**Date:** 2026-05-03
+
+**Decision:** `HankoVerifierConfig` carries four fields, all `readonly`: `tenantBaseUrl: string`, `expectedAudience: string`, `jwksRefreshIntervalMs?: number`, `fetcher?: JwksFetcher`. Production wiring populates the first two from env vars `HANKO_TENANT_BASE_URL` and `HANKO_EXPECTED_AUDIENCE`; `jwksRefreshIntervalMs` is optional with a D-12603 default; `fetcher` is optional and only injected by tests. `tenantBaseUrl` is the **tenant-scoped origin** per Hanko Cloud's documented `/{tenant_id}/.well-known/jwks.json` endpoint shape (e.g., `https://passkeys.hanko.io/<tenant_id>`); the verifier appends `/.well-known/jwks.json` programmatically — the path is never hand-coded.
+
+**Rationale.**
+- **Smallest possible config.** The verifier only needs (a) where to fetch the JWKS, (b) what audience to expect, and (c) test-time seams. Anything else (rate limits, retry budgets, logger hooks) is YAGNI for the MVP and would invite ad-hoc additions; the executor is forced to either honor the four locked fields or write a follow-up WP that supersedes this entry.
+- **Tenant-scoped origin matches Hanko Cloud's published URL shape.** Hanko Cloud's documented JWKS endpoint is `/{tenant_id}/.well-known/jwks.json`. Configuring `tenantBaseUrl` as the tenant-scoped origin (with the tenant ID baked in) means there's exactly one place a misconfigured tenant could surface — the Render dashboard env var — not split across two env vars (`HANKO_HOST` + `HANKO_TENANT_ID`) that could drift independently.
+- **Programmatic suffix lock prevents drift.** Hand-coding the `/.well-known/jwks.json` path in the env var would invite copy-paste errors (e.g., `HANKO_JWKS_URL=https://passkeys.hanko.io/<tenant_id>/.wellknown/jwks.json` with a typo). The verifier appending the suffix programmatically eliminates that error class.
+- **`fetcher` injection seam keeps tests local.** The optional `fetcher` field lets tests pass a fake `(url) => Promise<Response>` without stubbing `globalThis.fetch` (PS-2 lock). Production wiring leaves it `undefined` and the cache falls back to the Node v22 global `fetch`.
+
+**Locked values:**
+- Config interface name: `HankoVerifierConfig`.
+- Env var names: `HANKO_TENANT_BASE_URL`, `HANKO_EXPECTED_AUDIENCE`, `HANKO_JWKS_REFRESH_INTERVAL_MS` (optional).
+- Tenant URL placeholder in `.env.example`: `https://passkeys.hanko.io/YOUR_TENANT_ID`. Real tenant IDs live in the Render dashboard only.
+- Audience placeholder in `.env.example`: `legendary-arena`.
+- JWKS endpoint composition: `${tenantBaseUrl}/.well-known/jwks.json` — the `/.well-known/jwks.json` segment is appended programmatically inside the verifier factory, never hand-coded in env or YAML.
+
+**Rejected alternative — split host + tenant ID env vars.** `HANKO_HOST=https://passkeys.hanko.io` + `HANKO_TENANT_ID=<id>`, composed at construction time. Rejected because two env vars can drift independently (the executor changes one but not the other), and the only legitimate composition is `${HOST}/${TENANT_ID}` — there's no flexibility gained from splitting. The single env var is the tenant-scoped URL the operator copies from the Hanko dashboard.
+
+**Status:** Active.
+
+**Citation:** `apps/server/src/auth/hanko/hankoVerifier.types.ts:HankoVerifierConfig`; `render.yaml` `apps/server` service envVars; `.env.example` `## Hanko Session Verifier (WP-126)` block.
+
+---
+
+### D-12603 — JWKS Cache Refresh Policy: Per-Instance, Single-Flight, One-Shot Retry, Graceful Degradation, Aliasing-Defended (WP-126)
+
+**Type:** Cache-Behavior Lock
+**Packet:** WP-126 / EC-130
+**Date:** 2026-05-03
+
+**Decision:** `apps/server/src/auth/hanko/jwksCache.logic.ts` constructs a per-instance JWKS cache with: (1) per-instance closure-private state — no module-level singleton; (2) a refresh interval timer started at construction time, default `300_000 ms` (5 minutes), substituted for `undefined` `jwksRefreshIntervalMs` at exactly one site in `hankoVerifier.logic.ts`'s factory body; (3) single-flight refresh — N concurrent `getKey(kid)` calls during an in-flight refresh share one fetcher invocation; (4) one-shot retry — `getKey(kid)` on a cache miss triggers exactly one refresh-and-retry; (5) graceful degradation — a failed refresh leaves the existing cache in place; (6) aliasing defense — keys are `Object.freeze`'d at insertion time so a caller mutating a key returned by `getKey(kid)` either no-ops (sloppy mode) or throws (strict mode), but the stored shape is preserved.
+
+**Rationale.**
+- **Per-instance is mandatory for testability.** A module-level singleton would mean two `createHankoSessionVerifier(config)` calls share a JWKS cache. The verifier suite's "two factory calls produce independent verifiers" test enforces independence; a singleton would either fail the test or force all tests to run serially with cache-clear hooks.
+- **Single-flight prevents thundering-herd on the JWKS endpoint.** A naive cache that re-fetches on every `getKey` cache miss would saturate the JWKS endpoint under traffic. Sharing the in-flight `Promise<Response>` means concurrent waiters see one fetcher invocation. The flag clears in a `finally` block so a failed refresh does not pin the cache into a permanently-broken state.
+- **One-shot retry handles key rotation cleanly.** Hanko rotates JWKS keys periodically. A token signed with the new key arrives at a verifier holding the old cache; `getKey('new-kid')` misses, triggers one refresh, retries, hits. Two-shot or unbounded retry would invite cascade failures during a JWKS endpoint outage.
+- **Graceful degradation preserves uptime during transient JWKS failures.** A failed refresh that wiped the cache would mean every still-valid token fails verification during a transient JWKS outage. Preserving the existing cache means already-known `kid`s keep working; only an unknown-`kid` `getKey` surfaces the failure.
+- **Aliasing defense was a copilot Issue #17 catch.** Returning a direct reference to the stored `JsonWebKey` lets a caller mutate it; the next `getKey(kid)` for the same `kid` returns the corrupted shape. `Object.freeze` at insertion is one of two acceptable defenses (the other is defensive shallow copy at return). Insertion-time freezing is cheaper (one freeze per refresh, not per `getKey`).
+- **Single-site default substitution prevents drift.** The `jwksRefreshIntervalMs` default of `300_000 ms` substitutes for `undefined` at exactly one site (the verifier factory body, NOT the cache). Downstream the cache config always carries a concrete number. Two substitution sites would invite drift if the default needs to change.
+
+**Locked values:**
+- Cache factory name: `createJwksCache`.
+- Cache interface name: `JwksCache` (exposes only `getKey`).
+- Cache config interface name: `JwksCacheConfig`.
+- Default refresh interval: `300_000 ms` (5 minutes).
+- Default-substitution site: `apps/server/src/auth/hanko/hankoVerifier.logic.ts` factory body, exactly one site (the `?? DEFAULT_JWKS_REFRESH_INTERVAL_MS` expression).
+- Cache-local error code union: `JwksCacheErrorCode = 'cache_miss' | 'refresh_failed'`.
+- Cache fetcher resolution: `config.fetcher ?? fetch` at exactly one site (inside `createJwksCache`).
+- Aliasing defense: `Object.freeze({ ...key })` at insertion time inside `fetchJwks`.
+
+**Rejected alternative — module-level singleton.** A single shared cache for all verifier instances. Rejected because (a) breaks test independence; (b) two tenants per process is hypothetical but architecturally legitimate, and a singleton precludes it; (c) per-instance state is cheap (one Map + two refs per verifier).
+
+**Rejected alternative — defensive shallow copy at return.** Spread the key on every `getKey` call instead of freezing at insertion. Rejected as a default because freezing is cheaper amortized (refreshes are infrequent; `getKey` calls are frequent) and prevents the corruption-of-stored-shape failure mode at the source. Both defenses are acceptable; insertion-time freezing was selected.
+
+**Status:** Active.
+
+**Citation:** `apps/server/src/auth/hanko/jwksCache.logic.ts` (the cache); `apps/server/src/auth/hanko/jwksCache.logic.test.ts` (8 test cases enforcing the policy); copilot Issue #17 (the aliasing-defense catch — pre-flight session log for WP-126).
+
+---
+
+### D-12604 — Hanko Federated-IdP Claim Mapping: `amr` Array + Closed-Set Object-Literal Lookup with Two-Pass Priority Scan (WP-126)
+
+**Type:** Closed-Set Lookup Lock
+**Packet:** WP-126 / EC-130
+**Date:** 2026-05-03
+
+**Decision:** The Hanko federation claim is the documented `amr` (Authentication Method References) JSON array on the JWT payload. The verifier classifies the resulting `AuthProvider` (`'email' | 'google' | 'discord'`) via the closed-set object-literal `HANKO_IDP_TO_AUTH_PROVIDER: Readonly<Record<string, AuthProvider>>` with the seven locked entries:
+
+```ts
+{
+  'ext:google': 'google',
+  'ext:discord': 'discord',
+  pwd: 'email',
+  passkey: 'email',
+  otp: 'email',
+  totp: 'email',
+  security_key: 'email',
+}
+```
+
+The verifier scans the `amr` array via two-pass priority: pass 1 finds any element whose mapped value is non-`'email'` (i.e., a federated provider); pass 2 finds any element whose mapped value is `'email'`. Federated values take precedence over native methods — a JWT with `amr: ['pwd', 'ext:google']` resolves to `'google'`, not `'email'`. Both passes use object-literal lookup; no string-prefix check (no `value.startsWith('ext:')`), no regex.
+
+**Rationale.**
+- **The `amr` claim is Hanko's documented federation surface.** Per Hanko's [Sessions guide](https://docs.hanko.io/guides/session-management) (sample payload showing `"amr": [ "pwd", "totp" ]`) and Hanko's source `backend/flow_api/flow/shared/hook_determine_amr_values.go` (literal `amr = append(amr, "ext:"+thirdPartyProvider)`), the `amr` array carries both native auth methods (`pwd`, `passkey`, `otp`, `totp`, `security_key`) and federated providers (`ext:<provider>`). No other claim contains the federation signal.
+- **The `ext:<provider>` format is published in source.** The exact format string concatenates `"ext:"` with the provider's internal ID. The provider IDs (`google`, `discord`, `apple`, `github`, `microsoft`, `linkedin`, `facebook`) are visible in Hanko's `backend/thirdparty/provider.go` switch-case constants. WP-126 locks the two providers the project supports (`'ext:google'`, `'ext:discord'`); `'ext:apple'` and friends correctly resolve to `'unknown_provider'` until they enter scope.
+- **Closed-set object-literal lookup eliminates string-prefix bug surface.** A `value.startsWith('ext:')` check would accept `ext:apple`, `ext:facebook`, `ext:newprovider-future`, etc., as legitimate federation signals — silently. Object-literal lookup means "not in the table" → `'unknown_provider'`, full stop. Adding a new provider requires touching this entry's locked values; silent extension is impossible.
+- **Federated-precedence rule reflects user intent.** A user who logs in via Google AND has a password fallback at the Hanko level should be recorded as `authProvider: 'google'` — that's the strongest signal of who they are at the third-party layer. Two-pass priority makes this deterministic regardless of `amr` array order.
+- **Native-method values all map to `'email'` by project convention.** Hanko's native auth methods (passkey, password, OTP via email, TOTP, security key) all represent users who created accounts directly within Hanko (no third-party IdP). The project records them under `auth_provider = 'email'` because email is the contact channel that anchors the account.
+
+**Locked values:**
+- Federation claim key: `amr` (array of strings).
+- Closed-set lookup constant name: `HANKO_IDP_TO_AUTH_PROVIDER` at `apps/server/src/auth/hanko/hankoVerifier.types.ts`.
+- Closed-set keys: exactly the seven listed above. No regex, no prefix check.
+- Federation-precedence algorithm: two-pass scan in `classifyAuthProvider(amr)` at `apps/server/src/auth/hanko/hankoVerifier.logic.ts`.
+- Output values: `'email' | 'google' | 'discord'` only — the WP-052 `AuthProvider` enum verbatim, no `'hanko'` value (F-1 lock).
+
+**Citations (the lock evidence):**
+- Hanko docs: [Sessions and tokens in Hanko](https://docs.hanko.io/guides/session-management) — sample payload showing `"amr": [ "pwd", "totp" ]` and the `ext:<provider>` format with documented example `ext:microsoft`.
+- Hanko source: `backend/flow_api/flow/shared/hook_determine_amr_values.go` — literal `amr = append(amr, "ext:"+thirdPartyProvider)` confirming the format string.
+- Hanko source: `backend/thirdparty/provider.go` — switch-case constants `"google"`, `"discord"`, `"apple"`, `"github"`, `"microsoft"`, `"linkedin"`, `"facebook"` confirming the provider ID values.
+
+**Rejected alternative — single closed-set table without priority.** Map every `amr` element through one table and take the first hit by iteration order. Rejected because Hanko's `amr` array order is undefined for our purposes, and a Google-with-password user could resolve to `'email'` if `pwd` appears before `ext:google` in the array. Two-pass priority (federated first) makes the answer deterministic.
+
+**Rejected alternative — string-prefix check (`value.startsWith('ext:')`) for federation detection.** Rejected because (a) it admits unknown providers silently as "federation present"; (b) it conflates "claim shape Hanko uses" (the `ext:` prefix) with "providers our app accepts"; (c) the prompt's `HANKO_IDP_TO_AUTH_PROVIDER` lock explicitly forbids prefix checks and regex.
+
+**Rejected alternative — regex matcher.** Rejected for the same reason as prefix check, plus regex is overkill for a 7-element closed-set lookup.
+
+**Status:** Active.
+
+**Citation:** `apps/server/src/auth/hanko/hankoVerifier.types.ts:HANKO_IDP_TO_AUTH_PROVIDER` (the table); `apps/server/src/auth/hanko/hankoVerifier.logic.ts:classifyAuthProvider` (the two-pass scan); WP-126 §Locked Values §"Federated-IdP mapping output values"; WP-099 D-9902 (`AuthProvider` enum lock); WP-099 §B F-1 (no `'hanko'` value).
 
 ---
 
