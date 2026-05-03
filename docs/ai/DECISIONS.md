@@ -10227,6 +10227,24 @@ WP-121 introduced user-controlled tile sizing (`cardSize.value` ∈ [80, 260] px
 
 ---
 
+**Amendment-2 — 2026-05-03 (WP-127 manual-smoke follow-up):** `Team` row decoupled from threshold gate — eight-row tile vocabulary lock.
+
+Manual smoke at session close (2026-05-02) on the local dev server surfaced that the `Team` value is a single-line short string (`"Avengers"`, `"X-Men"`, `"S.H.I.E.L.D."`, `"Marvel Knights"`, etc.) that fits on the smallest tile width (80px) without overflow defenses. The 2026-05-02 amendment's threshold gate on the `Team` row was driven by parity with the `Ability` block (which has variable-length token-heavy ability strings that genuinely require above-threshold horizontal width to render two-to-three plain-text bullet lines without wrapping or overflow). The same constraint does not apply to `Team`: short value + already-defensive `<dd>` cell CSS at `CardDataTile.vue` (`word-break: break-word; overflow: hidden; text-overflow: ellipsis;` on `.data-grid dd`) means even an unusually long team name truncates gracefully at any tile size in the locked [80, 260] px range under D-12101.
+
+**Code change:** the `Team` row guard form on `CardDataTile.vue` drops the `showAbilityRow` prefix. New form: `v-if="card.team"`. Mirrors `CardDataDisplay.vue:90–93` byte-for-byte with no threshold gate. Placement (between `Class` and `Cost` in the `<dl>`, matching sidebar ordering) is unchanged.
+
+**`Ability` block remains threshold-gated.** The 2026-05-02 amendment's guard form `v-if="showAbilityRow && card.abilities && card.abilities.some(hasAbilityText)"` is unchanged and still required: ability strings genuinely overflow at sub-190px widths without truncation defenses that produce unhelpful renderings on token-heavy text.
+
+**`.img-wrap.data-expanded` class binding is unchanged.** Only the `Ability` block drives the aspect-ratio drop on `CardGrid.vue`'s `.img-wrap`; the `Team` row alone fits inside the existing 3:4 box at all tile widths (one row's vertical footprint — ~0.18rem `.data-grid` row-gap + ~0.65rem dd font-size + ~0.55rem dt font-size — is comfortably accommodated by the box at every locked tile width). The `viewMode === 'data' && cardSize >= ABILITY_THRESHOLD_PX` AND-clause pair on the `data-expanded` class binding remains the load-bearing gate for the aspect-ratio drop.
+
+**Updated rule #1 lock (post-amendment-2):** `CardDataTile.vue` renders exactly these `FlatCard` fields, in this order, each guarded by AND-semantics omission: `name` (heading, no labelled row); `cardType` (label `Type`); `setAbbr` (label `Set`); `hc` (label `Class`); `team` (label `Team`); `cost` (label `Cost`); `attack` (label `Attack`); `recruit` (label `Recruit`); `rarityLabel` (preferred) or `rarity` (fallback) (label `Rarity`). The locked tile vocabulary is now **eight labelled rows** (was seven under the original D-9601, became seven-with-threshold-gated-eighth under the 2026-05-02 amendment, now eight unconditional under amendment-2). Future field-set additions (`victoryPoints`, `recruiterText`, `attackerText`, `heroName`, `slot`) still require amending D-9601 first.
+
+**Five locks below the (Ability-only) threshold are still preserved** post-amendment-2: composable-direct consumption (rule #2 unchanged); AND-semantics parity (rule #3 — the `Team` row's `v-if="card.team"` guard mirrors `CardDataDisplay.vue:90` byte-identically with no threshold prefix and joins the AND-semantics tile vocabulary as the eighth labelled row); tile-compaction divergence (rule #5 — `Set` / `setAbbr` divergence preserved verbatim); `.img-wrap`-internal placement (the `data-expanded` class binding is on the same `<div class="img-wrap">` element); `@media print` parity (the existing `.data-grid dd` print rule already covers the `Team` row's dd; no additional print rules required for the unconditional `Team` row beyond what's already on the file).
+
+**Citation:** WP-127 + EC-129 manual smoke 2026-05-02 (Step 1 finding: Team should be unconditional, just one line); `apps/registry-viewer/src/components/CardDataTile.vue` (modified — `Team` row guard form simplified to `v-if="card.team"`; module-header JSDoc updated to document the eight-row vocabulary; `showAbilityRow` `// why:` comment updated to reflect Ability-only single-source-of-truth role); `apps/registry-viewer/src/components/CardGrid.vue` (unchanged from the 2026-05-02 amendment — `.img-wrap.data-expanded` aspect-ratio drop is `Ability`-block-only); D-9601 amendment 2026-05-02 (the parent amendment this amendment-2 narrows in scope).
+
+---
+
 ### D-5201 — Server-Side Identity Type Is `AccountId`, Not `PlayerId`
 
 **Type:** Cross-Layer Naming Discipline

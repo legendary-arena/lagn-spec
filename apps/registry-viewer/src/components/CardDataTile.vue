@@ -17,18 +17,26 @@
  * cannot accommodate full set names like "Marvel Studios: What If…?"
  * without ellipsis defenses or grid-column reflow.
  *
- * why (WP-127 / EC-129 / D-9601 amendment 2026-05-02): two additional
- * threshold-gated rows render only when `cardSize.value >=
- * ABILITY_THRESHOLD_PX` (the value lives in `cardTileThresholds.ts` to
- * preserve D-12101's locked `useCardSize.ts` surface). Above threshold:
- * a `Team` row inserts between `Class` and `Cost` (mirroring the
- * sidebar's row ordering at CardDataDisplay.vue:90), and an `Ability`
- * block appends beneath the `<dl>` rendering plain-text bullets from
- * `card.abilities`. Below threshold: the seven-row WP-096 baseline is
- * byte-identical (no `Team` row, no `Ability` block, 3:4 aspect lock
- * preserved by `.img-wrap` on `CardGrid.vue`). The seven existing rows,
- * their AND-semantics guards, their CSS, and the `@media print` block
- * are byte-identical pre- and post-amendment.
+ * why (WP-127 / EC-129 / D-9601 amendments 2026-05-02 + 2026-05-03):
+ * the locked tile vocabulary is now eight labelled rows — `Team` joins
+ * unconditionally between `Class` and `Cost` (mirroring the sidebar's
+ * row ordering at CardDataDisplay.vue:90 byte-for-byte with the same
+ * AND-semantics `v-if="card.team"` guard, no threshold prefix). The
+ * 2026-05-02 amendment originally gated `Team` behind the threshold
+ * for parity with the `Ability` block, but manual smoke surfaced that
+ * `team` values are short single-line strings ("Avengers", "X-Men",
+ * "S.H.I.E.L.D.") that fit at every tile width — the existing `<dd>`
+ * cell CSS (`word-break: break-word; overflow: hidden; text-overflow:
+ * ellipsis;`) defends against unusually long values. The 2026-05-03
+ * amendment-2 decoupled `Team` from `showAbilityRow`. The `Ability`
+ * block remains threshold-gated (only renders when `cardSize.value >=
+ * ABILITY_THRESHOLD_PX`) because ability strings are token-heavy and
+ * variable-length; sub-threshold widths genuinely overflow.
+ * `cardTileThresholds.ts` holds the threshold to preserve D-12101's
+ * locked `useCardSize.ts` surface. The seven WP-096 rows + their CSS +
+ * the existing `@media print` block are byte-identical pre- and
+ * post-amendments; the `Team` row's `<dd>` is covered by the existing
+ * `.data-grid dd` print rule (no new print rule required for it).
  *
  * AND-semantics: empty / null / undefined / empty-string fields are
  * omitted entirely (no em-dash, no "—", no placeholder). Guard forms
@@ -58,13 +66,15 @@ defineProps<{ card: FlatCard }>();
 
 const { cardSize } = useCardSize();
 
-// why: single source of truth across the two new template guards (the
-// `Team` row and the `Ability` block). The threshold value is defined
-// exactly once in `cardTileThresholds.ts` as `ABILITY_THRESHOLD_PX`;
-// this file imports it by name and never inlines the numeric literal.
-// Below threshold, both guards short-circuit and the WP-096 baseline
-// tile renders byte-identically (seven rows, no `Team`, no `Ability`
-// block).
+// why: gates the `Ability` block reveal only (per D-9601 amendment-2,
+// 2026-05-03). `Team` joins the tile vocabulary unconditionally and
+// uses a plain `card.team` guard mirroring CardDataDisplay.vue:90.
+// The threshold value is defined exactly once in
+// `cardTileThresholds.ts` as `ABILITY_THRESHOLD_PX`; this file imports
+// it by name and never inlines the numeric literal. Below threshold,
+// the `Ability` block guard short-circuits and the WP-096 seven-row
+// baseline + the unconditional `Team` row render byte-identically to
+// the post-amendment-2 spec.
 const showAbilityRow = computed(() => cardSize.value >= ABILITY_THRESHOLD_PX);
 
 /**
@@ -103,7 +113,7 @@ function hasAbilityText(line: string): boolean {
         <dd class="capitalize">{{ card.hc }}</dd>
       </template>
 
-      <template v-if="showAbilityRow && card.team">
+      <template v-if="card.team">
         <dt>Team</dt>
         <dd>{{ card.team }}</dd>
       </template>
