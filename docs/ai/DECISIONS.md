@@ -10206,6 +10206,27 @@ This policy prevents schema drift, wording forks, and retroactive renames across
 
 ---
 
+**Amendment — 2026-05-02 (WP-127 / EC-129):** Threshold-gated relaxation of rules #1 and #4 above.
+
+WP-121 introduced user-controlled tile sizing (`cardSize.value` ∈ [80, 260] px under D-12101); the small-tile constraint that drove rule #4's "ability text intentionally omitted from the tile" is no longer uniform across all tile sizes. This amendment permits two specific field-set additions on `CardDataTile.vue` **only above a locked threshold** of `cardSize.value >= 190px`:
+
+1. **`Team` row.** Added between the existing `Class` row and the `Cost` row in the `<dl>`. Guard form `v-if="showAbilityRow && card.team"` mirrors `CardDataDisplay.vue:90–93` byte-for-byte (with the additional `showAbilityRow` threshold gate). Below threshold, no `Team` row renders; rule #1's locked seven-row tile vocabulary (`Type`, `Set`, `Class`, `Cost`, `Attack`, `Recruit`, `Rarity`) holds byte-identically.
+2. **`Ability` block.** Appended beneath the existing `</dl>`. Guard form `v-if="showAbilityRow && card.abilities && card.abilities.some(hasAbilityText)"` mirrors `CardDataDisplay.vue:130–141` byte-for-byte (with the threshold gate prefix). Plain-text bullet items, no tokenization. Below threshold, no `Ability` block renders; rule #4's omission holds byte-identically.
+
+**Conditional aspect-ratio rule:** A new sibling rule `.img-wrap.data-expanded { aspect-ratio: auto; }` is added on `CardGrid.vue` beneath the existing `.img-wrap` rule. The `data-expanded` class is bound on `.img-wrap` only when **both** conditions hold: `viewMode === 'data'` AND `cardSize.value >= ABILITY_THRESHOLD_PX`. Image-mode tiles never receive the class. Below-threshold data tiles never receive the class. The existing `.img-wrap { aspect-ratio: 3/4; ... }` rule is byte-identical pre- and post-execution.
+
+**Threshold module:** `ABILITY_THRESHOLD_PX = 190` is defined in `apps/registry-viewer/src/composables/cardTileThresholds.ts` (a new single-export module with zero imports). `apps/registry-viewer/src/composables/useCardSize.ts` is **not modified** — D-12101's locked composable surface ("exactly two names plus the four range constants") is preserved verbatim. The threshold constant intentionally lives outside `useCardSize.ts` to avoid cross-feature coupling between zoom-range constants and tile-content gating.
+
+**Five locks below threshold are unchanged:** composable-direct consumption (rule #2), AND-semantics parity (rule #3 — six rows byte-identical; the `Team` row's guard form is added with its own AND-semantics treatment), tile-compaction divergence (rule #5 — `Set` / `setAbbr` divergence preserved verbatim), `.img-wrap`-internal placement (the new `data-expanded` class binding is on the same `<div class="img-wrap">` element; the inner content swap stays inside), `@media print` parity (the four new ability-block CSS classes have print rules mirroring the sidebar's print palette).
+
+**Future field-set additions** (e.g., `victoryPoints`, `recruiterText`, `attackerText`, `heroName`, `slot`) still require amending D-9601 first. The amendment template established here (in-place dated block citing WP + EC) is reusable for future field additions.
+
+**Threshold tuning** (e.g., 180 / 200) requires amending this amendment block in turn — the value `190` is locked here pending an explicit re-tuning WP.
+
+**Citation:** WP-127 + EC-129; `apps/registry-viewer/src/composables/cardTileThresholds.ts` (new — `ABILITY_THRESHOLD_PX = 190`); `apps/registry-viewer/src/components/CardDataTile.vue` (modified — `Team` row + `Ability` block + scoped CSS + print rules + JSDoc + 3 `// why:` comments); `apps/registry-viewer/src/components/CardGrid.vue` (modified — class binding + sibling `.img-wrap.data-expanded` rule + 1 `// why:` comment); D-12101 (locked `useCardSize.ts` surface, preserved verbatim by this amendment); WP-096 / EC-096 (the original D-9601 lock this amendment relaxes for the above-threshold branch only).
+
+---
+
 ### D-5201 — Server-Side Identity Type Is `AccountId`, Not `PlayerId`
 
 **Type:** Cross-Layer Naming Discipline
