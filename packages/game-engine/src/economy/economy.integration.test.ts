@@ -34,6 +34,7 @@ function createMockGameState(options?: {
   cardStats?: LegendaryGameState['cardStats'];
   villainDeck?: LegendaryGameState['villainDeck'];
   villainDeckCardTypes?: LegendaryGameState['villainDeckCardTypes'];
+  heroDeck?: LegendaryGameState['heroDeck'];
 }): LegendaryGameState {
   const config = {
     schemeId: 'test-scheme',
@@ -89,6 +90,11 @@ function createMockGameState(options?: {
     },
     city: options?.city ?? initializeCity(),
     hq: options?.hq ?? initializeHq(),
+    // why: WP-135 — recruitHero refills the vacated HQ slot via
+    // refillHqSlot (FIFO front-pop on G.heroDeck). The integration mock
+    // supplies an empty reservoir by default; tests that exercise the
+    // refill branch override `heroDeck`.
+    heroDeck: options?.heroDeck ?? [],
     lobby: {
       requiredPlayers: 1,
       ready: {},

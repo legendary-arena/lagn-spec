@@ -504,12 +504,15 @@ export function buildUIState(
   // why: WP-128 / WP-014A determinism contract — counts only; the
   // next-card identity is NEVER projected.
   //
-  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
-  // PS-3. Gap (heroDeckCount): no hero-deck reservoir on G — HQ is
-  // static post-setup; recruited cards leave to player discard with no
-  // refill. Future WP-NNN will resolve `G.heroDeck` if a future
-  // scenario introduces hero-deck refilling.
-  const heroDeckCount = 0; // SAFE-SKIP-WP128
+  // why: WP-135 graduates `heroDeckCount` from the WP-128 D-12806
+  // safe-skip constant 0 to `gameState.heroDeck.length`. The hero deck
+  // reservoir is now built at Game.setup() (buildHeroDeck) from
+  // MatchSetupConfig.heroDeckIds and the locked rarity → copy-count map
+  // (D-13501); recruitHero refills HQ slots from the reservoir front
+  // (FIFO via refillHqSlot). The WP-128 safe-skip marker that lived on
+  // this assignment is removed; assignment-site marker count drops from
+  // 8 to 7 across this file (the line-14 JSDoc reference is unchanged).
+  const heroDeckCount = gameState.heroDeck.length;
   const decks: UIDecksState = {
     villainDeckCount: gameState.villainDeck.deck.length,
     heroDeckCount,

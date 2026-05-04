@@ -34,8 +34,9 @@ import {
   buildVillainDeck,
   isVillainDeckRegistryReader,
 } from '../villainDeck/villainDeck.setup.js';
-import { initializeCity, initializeHq } from '../board/city.logic.js';
+import { initializeCity, fillHqFromDeck } from '../board/city.logic.js';
 import { buildCardStats, resetTurnEconomy } from '../economy/economy.logic.js';
+import { buildHeroDeck } from './buildHeroDeck.js';
 import {
   buildMastermindState,
   isMastermindRegistryReader,
@@ -85,6 +86,13 @@ const STARTING_AGENTS_COUNT = 8;
 
 /** Number of S.H.I.E.L.D. Trooper cards in each player's starting deck. */
 const STARTING_TROOPERS_COUNT = 4;
+
+// why: D-12903 — HQ slot count is 5 for MVP (graceful extension to 6 reserved
+// for set-specific variants). WP-135 reads the same constant when populating
+// the HQ from the front of the shuffled hero deck reservoir; recruitHero
+// refills exactly one slot per success via refillHqSlot.
+/** Number of HQ slots populated from the hero deck at setup time (MVP). */
+const HQ_SLOT_COUNT = 5;
 
 /**
  * Builds an unshuffled starting deck of CardExtId strings for one player.
@@ -276,6 +284,21 @@ export function buildInitialGameState(
     setupMessages.push(completenessMessage);
   }
 
+  // why: WP-135 — build the per-match hero deck reservoir from
+  // MatchSetupConfig.heroDeckIds via the locked rarity → copy-count map
+  // (D-13501; 5/3/3/3 = 14 cards per hero across the four-label set).
+  // Single ctx.random.Shuffle call inside buildHeroDeck — the determinism
+  // envelope is locked here; no per-turn reshuffle. fillHqFromDeck takes
+  // the first 5 cards into G.hq slots 0..4 (deck top → slot 0); the
+  // remainder lives at G.heroDeck. Narrow test mocks → empty reservoir →
+  // empty HQ (mirrors sibling builders).
+  const shuffledHeroDeck = buildHeroDeck(
+    [...config.heroDeckIds],
+    registry,
+    context,
+  );
+  const filledHqResult = fillHqFromDeck(shuffledHeroDeck, HQ_SLOT_COUNT);
+
   // why: build the base state first, then apply scheme setup instructions.
   // executeSchemeSetup returns updated state — pure function, no mutation.
   // At MVP, schemeSetupInstructions is always [], so this is a no-op passthrough.
@@ -305,8 +328,14 @@ export function buildInitialGameState(
     attachedBystanders: {},
     // why: City initialized empty; villains enter via revealVillainCard (WP-015)
     city: initializeCity(),
-    // why: HQ initialized empty; recruit slot population is WP-016 scope
-    hq: initializeHq(),
+    // why: HQ filled from first 5 of the shuffled hero deck via
+    // fillHqFromDeck; remainder stored at G.heroDeck per WP-135.
+    hq: filledHqResult.hq,
+    // why: G.heroDeck holds the post-shuffle, post-HQ-fill remainder of
+    // the per-match hero deck reservoir. Single source for refilling
+    // vacated HQ slots inside recruitHero (FIFO via refillHqSlot;
+    // empty-deck branch leaves the slot null per D-13503).
+    heroDeck: filledHqResult.remainingDeck,
     // why: mastermind state built at setup from registry; tactics deck
     // shuffled deterministically; base card fightCost in G.cardStats
     mastermind: mastermindState,

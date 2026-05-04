@@ -85,3 +85,114 @@ export function initializeHq(): HqZone {
   // why: recruit slot population is WP-016 scope
   return [null, null, null, null, null];
 }
+
+// ---------------------------------------------------------------------------
+// fillHqFromDeck — WP-135 setup-time HQ population
+// ---------------------------------------------------------------------------
+
+/**
+ * Result of filling the HQ from the front of a hero deck.
+ */
+export interface FillHqFromDeckResult {
+  /** The newly populated HQ — slots filled left-to-right from the deck front. */
+  hq: HqZone;
+  /** The deck after popping the cards used to populate the HQ. */
+  remainingDeck: CardExtId[];
+}
+
+/**
+ * Pops the first `slotCount` cards off the front of `heroDeck` and places
+ * them into HQ slots 0..(slotCount-1) in deck-front order. When the deck
+ * has fewer than `slotCount` cards, the trailing slots stay null.
+ *
+ * Pure helper — pops front-to-back so the deck's top card lands at HQ slot 0.
+ * Mirrors the city's pushVillainIntoCity entry-edge pattern; engine indexes 0-4
+ * with slot 0 as the canonical first-fill site. Index 0 = first-fill slot is
+ * locked semantics; do not reorder.
+ *
+ * @param heroDeck - Source hero deck reservoir; not mutated.
+ * @param slotCount - Number of HQ slots to fill (typically 5 for MVP).
+ * @returns The populated HQ and the deck after the front-pop.
+ */
+export function fillHqFromDeck(
+  heroDeck: CardExtId[],
+  slotCount: number,
+): FillHqFromDeckResult {
+  const newHq: (CardExtId | null)[] = [];
+  for (let slotIndex = 0; slotIndex < slotCount; slotIndex++) {
+    const card = heroDeck[slotIndex];
+    newHq.push(card === undefined ? null : card);
+  }
+
+  const remainingDeck: CardExtId[] = [];
+  for (let cardIndex = slotCount; cardIndex < heroDeck.length; cardIndex++) {
+    remainingDeck.push(heroDeck[cardIndex]!);
+  }
+
+  return {
+    hq: newHq as HqZone,
+    remainingDeck,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// refillHqSlot — WP-135 move-time HQ refill
+// ---------------------------------------------------------------------------
+
+/**
+ * Result of refilling a single HQ slot from the front of a hero deck.
+ */
+export interface RefillHqSlotResult {
+  /** The newly assembled HQ with the supplied slot replaced. */
+  hq: HqZone;
+  /** The deck after popping the front card (or unchanged when deck was empty). */
+  heroDeck: CardExtId[];
+}
+
+/**
+ * Refills `hq[hqIndex]` with the front card of `heroDeck` (FIFO via shift).
+ * When the deck is empty, the slot stays `null` and the deck remains `[]`
+ * per D-13503 — no auto-reshuffle of the active player's discard back into
+ * the shared hero deck.
+ *
+ * Pure helper — returns new arrays; never mutates the supplied hq or
+ * heroDeck. The move body rebinds `G.hq = result.hq; G.heroDeck =
+ * result.heroDeck` to apply the refill; never `G.heroDeck.shift()` /
+ * `G.hq[i] = ...` directly.
+ *
+ * @param hq - Current HQ zone; not mutated.
+ * @param hqIndex - 0-based slot to refill.
+ * @param heroDeck - Current hero deck reservoir; not mutated.
+ * @returns The new HQ and the post-pop deck.
+ */
+export function refillHqSlot(
+  hq: HqZone,
+  hqIndex: number,
+  heroDeck: CardExtId[],
+): RefillHqSlotResult {
+  const newHq: (CardExtId | null)[] = [];
+  for (let slotIndex = 0; slotIndex < hq.length; slotIndex++) {
+    newHq.push(hq[slotIndex] ?? null);
+  }
+
+  if (heroDeck.length === 0) {
+    newHq[hqIndex] = null;
+    return {
+      hq: newHq as HqZone,
+      heroDeck: [],
+    };
+  }
+
+  const nextCard = heroDeck[0]!;
+  newHq[hqIndex] = nextCard;
+
+  const remainingDeck: CardExtId[] = [];
+  for (let cardIndex = 1; cardIndex < heroDeck.length; cardIndex++) {
+    remainingDeck.push(heroDeck[cardIndex]!);
+  }
+
+  return {
+    hq: newHq as HqZone,
+    heroDeck: remainingDeck,
+  };
+}

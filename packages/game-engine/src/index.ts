@@ -111,8 +111,24 @@ export { recruitHero } from './moves/recruitHero.js';
 export { buildVillainDeck } from './villainDeck/villainDeck.setup.js';
 export type { VillainDeckRegistryReader } from './villainDeck/villainDeck.setup.js';
 export type { CityZone, CitySpace, HqZone, HqSlot } from './board/city.types.js';
-export { pushVillainIntoCity, initializeCity, initializeHq } from './board/city.logic.js';
-export type { PushVillainResult } from './board/city.logic.js';
+export {
+  pushVillainIntoCity,
+  initializeCity,
+  initializeHq,
+  fillHqFromDeck,
+  refillHqSlot,
+} from './board/city.logic.js';
+export type {
+  PushVillainResult,
+  FillHqFromDeckResult,
+  RefillHqSlotResult,
+} from './board/city.logic.js';
+export {
+  buildHeroDeck,
+  buildHeroDeckCards,
+  shuffleHeroDeck,
+} from './setup/buildHeroDeck.js';
+export type { RegistryReader as HeroDeckRegistryReader } from './setup/buildHeroDeck.js';
 export { validateCityShape } from './board/city.validate.js';
 export type { ValidateCityShapeResult } from './board/city.validate.js';
 export { koCard } from './board/ko.logic.js';

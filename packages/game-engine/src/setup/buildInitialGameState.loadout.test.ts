@@ -67,6 +67,54 @@ function buildLoadoutFixtureRegistry() {
         ],
       },
     ],
+    // why: WP-135 — heroes data drives buildHeroDeck (D-13501 rarity →
+    // copy-count map: 5/3/3/3 = 14 cards per hero across the four-label
+    // set). Each card carries a slug + rarityLabel + display fields.
+    // black-widow with the canonical four labels yields 14 hero cards
+    // total for a 1-hero loadout (HQ takes 5; G.heroDeck holds 9).
+    heroes: [
+      {
+        slug: 'black-widow',
+        cards: [
+          {
+            slug: 'mission-accomplished',
+            rarityLabel: 'Common 1',
+            name: 'Mission Accomplished',
+            imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
+            cost: 2,
+            attack: null,
+            recruit: '2',
+          },
+          {
+            slug: 'silent-takedown',
+            rarityLabel: 'Common 2',
+            name: 'Silent Takedown',
+            imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-2.webp',
+            cost: 3,
+            attack: '2',
+            recruit: null,
+          },
+          {
+            slug: 'covert-operation',
+            rarityLabel: 'Uncommon',
+            name: 'Covert Operation',
+            imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-3.webp',
+            cost: 4,
+            attack: null,
+            recruit: '3',
+          },
+          {
+            slug: 'taskmaster',
+            rarityLabel: 'Rare',
+            name: 'Taskmaster',
+            imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-4.webp',
+            cost: 6,
+            attack: '4',
+            recruit: null,
+          },
+        ],
+      },
+    ],
   };
 
   return {
@@ -198,6 +246,129 @@ describe('buildInitialGameState — loadout integration', () => {
       gameState.cardStats['core-mastermind-dr-doom-doom-base'],
       'cardStats must include the mastermind base card ext_id (core-mastermind-dr-doom-doom-base)',
     );
+  });
+
+  it('populates G.cardStats with hero card-instance entries in slash-format (WP-135 D-13502)', () => {
+    const registry = buildLoadoutFixtureRegistry();
+    const config = buildLoadoutConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    // Each of the 4 cards in black-widow gets a slash-format entry.
+    assert.ok(
+      gameState.cardStats['core/black-widow/mission-accomplished'],
+      'cardStats must include slash-format hero card-instance ext_id',
+    );
+    assert.ok(
+      gameState.cardStats['core/black-widow/silent-takedown'],
+      'cardStats must include slash-format silent-takedown',
+    );
+    assert.ok(
+      gameState.cardStats['core/black-widow/covert-operation'],
+      'cardStats must include slash-format covert-operation',
+    );
+    assert.ok(
+      gameState.cardStats['core/black-widow/taskmaster'],
+      'cardStats must include slash-format taskmaster',
+    );
+
+    // Cost values parse correctly.
+    assert.equal(gameState.cardStats['core/black-widow/mission-accomplished']!.cost, 2);
+    assert.equal(gameState.cardStats['core/black-widow/silent-takedown']!.cost, 3);
+    assert.equal(gameState.cardStats['core/black-widow/covert-operation']!.cost, 4);
+    assert.equal(gameState.cardStats['core/black-widow/taskmaster']!.cost, 6);
+  });
+
+  it('populates G.cardDisplayData with hero card-instance entries in slash-format (WP-135 D-13502)', () => {
+    const registry = buildLoadoutFixtureRegistry();
+    const config = buildLoadoutConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    const cardDisplayData = gameState.cardDisplayData;
+    const missionDisplay = cardDisplayData['core/black-widow/mission-accomplished'];
+    assert.ok(missionDisplay, 'cardDisplayData must include slash-format hero card-instance');
+    assert.equal(missionDisplay!.name, 'Mission Accomplished');
+    assert.equal(
+      missionDisplay!.imageUrl,
+      'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
+    );
+    assert.equal(missionDisplay!.cost, 2);
+
+    const taskmasterDisplay = cardDisplayData['core/black-widow/taskmaster'];
+    assert.ok(taskmasterDisplay);
+    assert.equal(taskmasterDisplay!.name, 'Taskmaster');
+    assert.equal(taskmasterDisplay!.cost, 6);
+  });
+
+  it('builds G.heroDeck with 14 cards per hero minus 5 in HQ (WP-135 — 1 hero loadout: 14 - 5 = 9)', () => {
+    const registry = buildLoadoutFixtureRegistry();
+    const config = buildLoadoutConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    assert.equal(
+      gameState.heroDeck.length,
+      9,
+      '1 hero × 14 cards minus 5 cards filling HQ = 9 cards in G.heroDeck',
+    );
+  });
+
+  it('populates G.hq with 5 non-null slots from the hero deck front (WP-135)', () => {
+    const registry = buildLoadoutFixtureRegistry();
+    const config = buildLoadoutConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    const filledSlots = gameState.hq.filter((slot) => slot !== null);
+    assert.equal(
+      filledSlots.length,
+      5,
+      'All 5 HQ slots must be populated from the hero deck front',
+    );
+  });
+
+  it('every CardExtId in G.hq (non-null) has a corresponding entry in G.cardStats AND G.cardDisplayData (WP-135)', () => {
+    const registry = buildLoadoutFixtureRegistry();
+    const config = buildLoadoutConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    for (const slot of gameState.hq) {
+      if (slot === null) continue;
+      assert.ok(
+        gameState.cardStats[slot],
+        `HQ slot card '${slot}' must have a cardStats entry`,
+      );
+      assert.ok(
+        gameState.cardDisplayData[slot],
+        `HQ slot card '${slot}' must have a cardDisplayData entry`,
+      );
+    }
+  });
+
+  it('every CardExtId in G.heroDeck has a corresponding entry in G.cardStats AND G.cardDisplayData (WP-135)', () => {
+    const registry = buildLoadoutFixtureRegistry();
+    const config = buildLoadoutConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    for (const cardId of gameState.heroDeck) {
+      assert.ok(
+        gameState.cardStats[cardId],
+        `heroDeck card '${cardId}' must have a cardStats entry`,
+      );
+      assert.ok(
+        gameState.cardDisplayData[cardId],
+        `heroDeck card '${cardId}' must have a cardDisplayData entry`,
+      );
+    }
   });
 
   it('does NOT push any "skipped" diagnostic into G.messages with a real-shape registry (NEGATIVE — orchestration-side guards must all pass)', () => {

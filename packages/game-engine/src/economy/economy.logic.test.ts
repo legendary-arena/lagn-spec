@@ -215,3 +215,86 @@ describe('buildCardStats — qualified ID parsing (WP-113 PS-7 amendment)', () =
     );
   });
 });
+
+// ===========================================================================
+// WP-135 — buildCardStats hero card-instance walk (slash-format ext_id)
+// ===========================================================================
+
+/**
+ * Builds a fixture registry with a hero `cards: []` array exposing the
+ * per-card slug + cost / attack / recruit fields. Drives the WP-135
+ * hero card-instance walk that emits slash-format ext_id entries
+ * (D-13502) into G.cardStats.
+ */
+function buildHeroCardInstanceFixture() {
+  const setData = {
+    abbr: 'core',
+    villains: [],
+    henchmen: [],
+    heroes: [
+      {
+        slug: 'spider-man',
+        cards: [
+          { slug: 'mission-accomplished', rarityLabel: 'Common 1', cost: 2, attack: null, recruit: '2' },
+          { slug: 'astonishing-strength', rarityLabel: 'Rare', cost: 6, attack: '4', recruit: null },
+        ],
+      },
+    ],
+  };
+  return {
+    listCards: () => [],
+    listSets: () => [{ abbr: 'core' }],
+    getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+  };
+}
+
+describe('buildCardStats — WP-135 hero card-instance walk (slash-format ext_id)', () => {
+  it('emits a stats entry per hero card instance keyed by <setAbbr>/<heroSlug>/<cardSlug>', () => {
+    const registry = buildHeroCardInstanceFixture();
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/spider-man'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+
+    assert.ok(stats['core/spider-man/mission-accomplished'], 'Slash-format mission-accomplished entry must be present');
+    assert.ok(stats['core/spider-man/astonishing-strength'], 'Slash-format astonishing-strength entry must be present');
+  });
+
+  it('parses cost / attack / recruit into the locked CardStatEntry shape (fightCost is always 0 for heroes)', () => {
+    const registry = buildHeroCardInstanceFixture();
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/spider-man'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+
+    const missionStats = stats['core/spider-man/mission-accomplished']!;
+    assert.equal(missionStats.cost, 2);
+    assert.equal(missionStats.attack, 0, 'null attack parses to 0');
+    assert.equal(missionStats.recruit, 2);
+    assert.equal(missionStats.fightCost, 0, 'Heroes are never fought; fightCost is always 0');
+
+    const astonishStats = stats['core/spider-man/astonishing-strength']!;
+    assert.equal(astonishStats.cost, 6);
+    assert.equal(astonishStats.attack, 4);
+    assert.equal(astonishStats.recruit, 0, 'null recruit parses to 0');
+    assert.equal(astonishStats.fightCost, 0);
+  });
+});

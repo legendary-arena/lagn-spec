@@ -21,6 +21,32 @@ import type { TurnEconomy, CardStatEntry } from './economy.types.js';
 // needed for card stat resolution at setup time.
 
 /**
+ * Minimal structural type for one hero card-instance entry inside
+ * SetData.heroes[i].cards[j]. Used by the WP-135 hero card-instance walk
+ * that populates slash-format ext_id entries (D-13502) into G.cardStats.
+ */
+interface HeroCardInstanceEntry {
+  /** Card-level slug within the hero (e.g., 'mission-accomplished'). */
+  slug: string;
+  /** Per-card attack value; raw from registry. Undefined for non-attack cards. */
+  attack?: string | number | null | undefined;
+  /** Per-card recruit value; raw from registry. Undefined for non-recruit cards. */
+  recruit?: string | number | null | undefined;
+  /** Per-card recruit cost; raw from registry. */
+  cost?: string | number | null | undefined;
+}
+
+/**
+ * Minimal structural type for a hero entry inside SetData.heroes[i].
+ */
+interface HeroInstanceEntry {
+  /** Hero-level slug within the set (e.g., 'black-widow'). */
+  slug: string;
+  /** Per-card data. */
+  cards: HeroCardInstanceEntry[];
+}
+
+/**
  * Minimal structural type for a flat card returned by listCards().
  * Matches a subset of FlatCard from the registry package.
  *
@@ -194,6 +220,40 @@ export function buildCardStats(
         recruit: parseCardStatValue(card.recruit),
         cost: parseCardStatValue(card.cost),
         // why: heroes are never fought; fightCost is for villains only
+        fightCost: 0,
+      };
+    }
+  }
+
+  // --- 1b. Hero card instances (WP-135 — slash-format ext_id per D-13502) ---
+  // why: WP-135 — extends the cardStats walk to per-hero card instances
+  // populated by buildHeroDeck into G.heroDeck and G.hq. The new entries
+  // are keyed by the slash-format ext_id <setAbbr>/<heroSlug>/<cardSlug>
+  // (D-13502); these coexist with the FlatCard hyphen keys emitted in
+  // step 1 above (no migration). recruitHero looks up cost via the
+  // slash-format key when validating the recruit. Walks the same heroes
+  // as buildHeroDeck so cost/attack/recruit are populated for every card
+  // that can land in HQ.
+  for (const heroDeckId of matchConfig.heroDeckIds) {
+    const parsed = parseQualifiedIdForSetup(heroDeckId);
+    if (parsed === null) continue;
+
+    const setData = registry.getSet(parsed.setAbbr);
+    if (!setData || typeof setData !== 'object') continue;
+
+    const heroEntry = findHeroEntry(setData, parsed.slug);
+    if (heroEntry === null) continue;
+
+    for (const card of heroEntry.cards) {
+      if (!card || typeof card !== 'object') continue;
+      if (typeof card.slug !== 'string') continue;
+
+      const extId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}` as CardExtId;
+      stats[extId] = {
+        attack: parseCardStatValue(card.attack),
+        recruit: parseCardStatValue(card.recruit),
+        cost: parseCardStatValue(card.cost),
+        // why: heroes are never fought; fightCost is for villains only.
         fightCost: 0,
       };
     }
@@ -470,6 +530,32 @@ function extractHeroSlug(card: CardStatsFlatCard): string {
   }
 
   return afterPrefix.slice(0, lastDashIndex);
+}
+
+/**
+ * Finds a hero entry within a set's heroes[] array by slug.
+ *
+ * Returns null if the set data is malformed (missing heroes array) or
+ * the named hero is not present. Used by the WP-135 hero card-instance
+ * walk inside buildCardStats.
+ */
+function findHeroEntry(
+  setData: unknown,
+  heroSlug: string,
+): HeroInstanceEntry | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { heroes?: unknown };
+  if (!Array.isArray(candidate.heroes)) return null;
+
+  for (const entry of candidate.heroes) {
+    if (!entry || typeof entry !== 'object') continue;
+    const heroEntry = entry as HeroInstanceEntry;
+    if (typeof heroEntry.slug !== 'string') continue;
+    if (heroEntry.slug !== heroSlug) continue;
+    if (!Array.isArray(heroEntry.cards)) continue;
+    return heroEntry;
+  }
+  return null;
 }
 
 /**

@@ -15,6 +15,7 @@
 import type { FnContext, PlayerID } from 'boardgame.io';
 import type { LegendaryGameState } from '../types.js';
 import { getAvailableRecruit, spendRecruit } from '../economy/economy.logic.js';
+import { refillHqSlot } from '../board/city.logic.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
@@ -68,12 +69,30 @@ export function recruitHero(
   if (G.currentStage !== 'main') return;
 
   // Step 3: Mutate G
-  // why: MVP has no recruit point check; WP-018 adds the economy. Any
-  // player can recruit any occupied HQ slot without spending recruit points.
-  G.hq[hqIndex] = null;
+  // why: WP-018 — economy deduction lands first; WP-135 — HQ slot refill
+  // lands after the discard append. The slot is vacated by refillHqSlot
+  // (which assigns null when heroDeck is empty per D-13503), so we must
+  // not pre-null G.hq[hqIndex] here.
   G.playerZones[ctx.currentPlayer]!.discard.push(cardId);
   G.turnEconomy = spendRecruit(G.turnEconomy, requiredCost);
+
+  // why: WP-135 — refill the vacated slot from G.heroDeck (FIFO via shift).
+  // Empty-deck case leaves the slot null per D-13503; no auto-reshuffle of
+  // recruited cards back into the deck (separate engine WP if ever needed).
+  const refillResult = refillHqSlot(G.hq, hqIndex, G.heroDeck);
+  G.hq = refillResult.hq;
+  G.heroDeck = refillResult.heroDeck;
+
+  // why: WP-135 — log line is replay-visible and snapshotted; format is
+  // locked at this site to byte-equality. Replaces the pre-WP-135 line
+  // shape from WP-016 (one push per successful recruit, not two). Never
+  // add timestamps or non-deterministic context. The empty-deck branch
+  // substitutes the trailing parenthetical per the §7.6 byte-locked format.
+  const refillSuffix =
+    refillResult.hq[hqIndex] === null
+      ? '(heroDeck empty; slot left null)'
+      : `(heroDeck.length: ${String(refillResult.heroDeck.length)})`;
   G.messages.push(
-    `Player ${ctx.currentPlayer} recruited "${cardId}" from HQ slot ${hqIndex}.`,
+    `Player ${ctx.currentPlayer} recruited ${cardId}; HQ slot ${String(hqIndex)} refilled from heroDeck ${refillSuffix}`,
   );
 }

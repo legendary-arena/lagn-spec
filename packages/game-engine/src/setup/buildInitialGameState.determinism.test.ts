@@ -137,6 +137,113 @@ describe('buildInitialGameState — determinism', () => {
     );
   });
 
+  // why: WP-135 — full-registry determinism assertions. Inline fixture
+  // mirrors buildLoadoutFixtureRegistry in loadout.test and
+  // buildShapeFixtureRegistry in shape.test (intentional duplication per
+  // code-style Rule 1: duplicate first, abstract on third copy — the
+  // third copy is here, but the abstraction would couple three unrelated
+  // test files; better to keep them self-contained).
+  function buildDeterminismFixtureRegistry() {
+    const setData = {
+      abbr: 'core',
+      schemes: [{ slug: 's1' }],
+      masterminds: [{ slug: 'mm', cards: [{ slug: 'mm-base', tactic: false }] }],
+      henchmen: [{ slug: 'henchies' }],
+      villains: [{ slug: 'vg', cards: [{ slug: 'v1', vAttack: '4' }] }],
+      heroes: [
+        {
+          slug: 'hero-x',
+          cards: [
+            { slug: 'card-c1', rarityLabel: 'Common 1' },
+            { slug: 'card-c2', rarityLabel: 'Common 2' },
+            { slug: 'card-uncommon', rarityLabel: 'Uncommon' },
+            { slug: 'card-rare', rarityLabel: 'Rare' },
+          ],
+        },
+      ],
+    };
+    return {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'core' }],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+  }
+
+  function buildDeterminismFixtureConfig(): MatchSetupConfig {
+    return {
+      schemeId: 'core/s1',
+      mastermindId: 'core/mm',
+      villainGroupIds: ['core/vg'],
+      henchmanGroupIds: ['core/henchies'],
+      heroDeckIds: ['core/hero-x'],
+      bystandersCount: 1,
+      woundsCount: 1,
+      officersCount: 1,
+      sidekicksCount: 1,
+    };
+  }
+
+  it('G.heroDeck deep-equals expectedShuffledDeck.slice(5) — same shuffle order, HQ-prefix popped (WP-135)', () => {
+    // why: WP-135 §C acceptance criterion — the orchestrator's hero deck
+    // is the front-pop of buildHeroDeck's shuffle output. Reproducing the
+    // shuffle externally with the same ShuffleProvider mock should yield
+    // a sequence whose .slice(5) matches G.heroDeck (and whose [0..4]
+    // matches G.hq).
+    const registry = buildDeterminismFixtureRegistry();
+    const config = buildDeterminismFixtureConfig();
+
+    // Build the expected shuffled deck the same way the orchestrator does:
+    // 5+3+3+3 = 14 cards in the hero-card-instance order they're emitted,
+    // then run through the same ShuffleProvider mock (which reverses).
+    const unshuffled: string[] = [];
+    for (let i = 0; i < 5; i++) unshuffled.push('core/hero-x/card-c1');
+    for (let i = 0; i < 3; i++) unshuffled.push('core/hero-x/card-c2');
+    for (let i = 0; i < 3; i++) unshuffled.push('core/hero-x/card-uncommon');
+    for (let i = 0; i < 3; i++) unshuffled.push('core/hero-x/card-rare');
+
+    const externalContext = makeMockCtx({ numPlayers: 1 });
+    const expectedShuffledDeck = shuffleDeck(unshuffled, externalContext);
+
+    // Build the engine state with a fresh (but identically-behaving) context.
+    const engineContext = makeMockCtx({ numPlayers: 1 });
+    const gameState = buildInitialGameState(config, registry, engineContext);
+
+    assert.deepStrictEqual(
+      gameState.heroDeck,
+      expectedShuffledDeck.slice(5),
+      'G.heroDeck must equal the shuffled hero deck minus its first 5 cards (HQ prefix)',
+    );
+  });
+
+  it('HQ index-0 first-fill: hq[0] is non-null whenever heroDeck has at least 1 card (WP-135)', () => {
+    const registry = buildDeterminismFixtureRegistry();
+    const config = buildDeterminismFixtureConfig();
+    const context = makeMockCtx({ numPlayers: 1 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    // 14 cards built; hq[0] must be the deck top.
+    assert.ok(
+      gameState.hq[0] !== null,
+      'When heroDeck.length >= 1, hq[0] must be non-null (deck top → slot 0)',
+    );
+  });
+
+  it('HQ index-0..4 are all non-null (deck-front order) when heroDeck has at least 5 cards (WP-135)', () => {
+    const registry = buildDeterminismFixtureRegistry();
+    const config = buildDeterminismFixtureConfig();
+    const context = makeMockCtx({ numPlayers: 1 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    for (let slotIndex = 0; slotIndex < 5; slotIndex++) {
+      assert.ok(
+        gameState.hq[slotIndex] !== null,
+        `When heroDeck.length >= 5, hq[${slotIndex}] must be non-null`,
+      );
+    }
+  });
+
   it('shuffleDeck does not mutate the input array', () => {
     const original = ['card-a', 'card-b', 'card-c', 'card-d'];
     const snapshot = [...original];

@@ -451,7 +451,15 @@ describe('UIState type drift (WP-128 / EC-131) — type pinning', () => {
     assert.equal(ui.economy.piercing, 0);
     // 6. economy.woundsDrawn === 0 (no G.turnEconomy.woundsDrawn today).
     assert.equal(ui.economy.woundsDrawn, 0);
-    // 7. decks.heroDeckCount === 0 (no G.heroDeck reservoir today).
+    // 7. decks.heroDeckCount === 0 — narrow registry produces an empty
+    //    G.heroDeck reservoir per WP-135's soft-skip on incomplete
+    //    RegistryReader (mirrors sibling builders). The value still
+    //    derives from gameState.heroDeck.length now (safe-skip
+    //    constant 0 graduated by WP-135 per D-12806 closure for this
+    //    site); the assignment-site SAFE-SKIP-WP128 marker is removed
+    //    on this projection field. The line-14 JSDoc reference is
+    //    unchanged. See the positive-value assertion below for the
+    //    real-shape registry case.
     assert.equal(ui.decks.heroDeckCount, 0);
     // 8. piles.horrorsCount === 0 (D-12802 always-present default).
     assert.equal(ui.piles.horrorsCount, 0);
@@ -531,6 +539,93 @@ describe('UIState type drift (WP-128 / EC-131) — type pinning', () => {
 // (folded into the WP-128 type-drift describe above to keep the suite
 // count within EC-131 §5 budget — same conceptual block.)
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// WP-135 — heroDeckCount graduation from safe-skip constant 0 to
+// gameState.heroDeck.length. The drift suite asserts both directions:
+// the empty-registry case (count === 0; covered above) and the
+// loaded-hero case (count > 0; covered here).
+// ---------------------------------------------------------------------------
+
+describe('UIState — WP-135 heroDeckCount graduation', () => {
+  it('decks.heroDeckCount > 0 when the registry exposes a hero with a 14-card cards[] array', () => {
+    // why: WP-135 — the projection now reads gameState.heroDeck.length.
+    // For a 1-hero loadout against a real-shape registry that supplies
+    // the four-label rarity set, buildHeroDeck produces 14 cards; HQ
+    // takes the first 5; G.heroDeck holds the remaining 9.
+    const setData = {
+      abbr: 'core',
+      schemes: [{ slug: 's' }],
+      masterminds: [{ slug: 'mm', cards: [{ slug: 'mm-base', tactic: false }] }],
+      henchmen: [{ slug: 'h' }],
+      villains: [{ slug: 'v', cards: [{ slug: 'v1', vAttack: '4' }] }],
+      heroes: [
+        {
+          slug: 'hero-x',
+          cards: [
+            { slug: 'card-c1', rarityLabel: 'Common 1' },
+            { slug: 'card-c2', rarityLabel: 'Common 2' },
+            { slug: 'card-uncommon', rarityLabel: 'Uncommon' },
+            { slug: 'card-rare', rarityLabel: 'Rare' },
+          ],
+        },
+      ],
+    };
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'core' }],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: ['core/v'],
+      henchmanGroupIds: ['core/h'],
+      heroDeckIds: ['core/hero-x'],
+      bystandersCount: 1,
+      woundsCount: 1,
+      officersCount: 1,
+      sidekicksCount: 1,
+    };
+    const setupContext = makeMockCtx({ numPlayers: 1 });
+    const gameState = buildInitialGameState(config, registry, setupContext);
+    const ctx = { phase: 'play' as string | null, turn: 1, currentPlayer: '0' };
+    const ui = buildUIState(gameState, ctx);
+
+    // 14 cards built (5 + 3 + 3 + 3); HQ takes 5; heroDeck holds 9.
+    assert.equal(
+      ui.decks.heroDeckCount,
+      9,
+      'heroDeckCount must equal G.heroDeck.length post-WP-135 (1 hero × 14 - 5 = 9)',
+    );
+  });
+
+  it('G.heroDeck field is pinned on LegendaryGameState shape (WP-135 — type drift gate)', () => {
+    // why: locks the heroDeck field onto LegendaryGameState so a future
+    // rename or removal trips this assertion at runtime in addition to
+    // typecheck. Mirrors the WP-128 board-layout fields' type-drift
+    // assertions above.
+    const config: MatchSetupConfig = {
+      schemeId: 'test-scheme-001',
+      mastermindId: 'test-mastermind-001',
+      villainGroupIds: ['test-villain-group-001'],
+      henchmanGroupIds: ['test-henchman-group-001'],
+      heroDeckIds: ['test-hero-deck-001'],
+      bystandersCount: 1,
+      woundsCount: 1,
+      officersCount: 1,
+      sidekicksCount: 1,
+    };
+    const registry: CardRegistryReader = { listCards: () => [] };
+    const setupContext = makeMockCtx();
+    const gameState = buildInitialGameState(config, registry, setupContext);
+
+    assert.ok(
+      Array.isArray(gameState.heroDeck),
+      'G.heroDeck must be present and an array on LegendaryGameState',
+    );
+  });
+});
 
 /** Shared test-config helper for safe-skip + path-correction pinning. */
 function buildEmptyMatchUIState() {

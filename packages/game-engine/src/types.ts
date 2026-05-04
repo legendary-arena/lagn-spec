@@ -469,10 +469,25 @@ export interface LegendaryGameState {
   /** City zone: 5 spaces for villain/henchman cards. */
   city: CityZone;
 
-  // why: HQ is a 5-slot row for hero recruit cards. Initialized empty at setup;
-  // recruit slot population is WP-016 scope.
+  // why: HQ is a 5-slot row for hero recruit cards. Populated at setup time
+  // from the first 5 cards of the shuffled hero deck reservoir
+  // (G.heroDeck) via fillHqFromDeck per WP-135. Refilled on each
+  // successful recruitHero via refillHqSlot; empty-deck branch leaves the
+  // vacated slot null per D-13503 (no auto-reshuffle).
   /** HQ zone: 5 hero recruit slots. */
   hq: HqZone;
+
+  // why: WP-135 — sibling pattern with G.villainDeck.deck. CardExtId-strings-only
+  // array seeded once at Game.setup() by buildHeroDeck (single ctx.random.Shuffle
+  // call) from MatchSetupConfig.heroDeckIds and the locked rarity → copy-count
+  // map (D-13501; 5/3/3/3 = 14 cards per hero across the four-label set
+  // { 'Common 1', 'Common 2', 'Uncommon', 'Rare' }). The first 5 cards of the
+  // shuffled reservoir populate G.hq; the remainder lives here. Front-popped on
+  // every successful recruitHero (FIFO via shift through refillHqSlot). Closes
+  // the WP-128 D-12806 safe-skip for decks.heroDeckCount projection — the count
+  // graduates from the constant 0 to gameState.heroDeck.length.
+  /** Shared hero deck reservoir (post-shuffle, post-HQ-fill remainder). */
+  heroDeck: CardExtId[];
 
   // why: KO pile stores cards permanently removed from the game. Destination-only
   // zone — cards enter via koCard helper and never return in MVP. Initialized

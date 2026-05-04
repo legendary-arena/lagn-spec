@@ -401,3 +401,118 @@ describe('buildCardDisplayData', () => {
     );
   });
 });
+
+// ===========================================================================
+// WP-135 — hero card-instance walk (slash-format ext_id)
+// ===========================================================================
+
+describe('buildCardDisplayData — WP-135 hero card-instance walk (slash-format ext_id)', () => {
+  it('emits one display entry per hero card instance keyed by <setAbbr>/<heroSlug>/<cardSlug>', () => {
+    const setData = {
+      abbr: 'core',
+      villains: [],
+      henchmen: [],
+      masterminds: [],
+      heroes: [
+        {
+          slug: 'black-widow',
+          cards: [
+            {
+              slug: 'mission-accomplished',
+              rarityLabel: 'Common 1',
+              name: 'Mission Accomplished',
+              imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
+              cost: 2,
+            },
+            {
+              slug: 'taskmaster',
+              rarityLabel: 'Rare',
+              name: 'Taskmaster',
+              imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-4.webp',
+              cost: 6,
+            },
+          ],
+        },
+      ],
+    };
+
+    const registry = {
+      listCards: () => [],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/black-widow'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config);
+
+    const mission = result['core/black-widow/mission-accomplished'];
+    assert.ok(mission, 'Slash-format mission-accomplished entry must be present');
+    assert.equal(mission!.name, 'Mission Accomplished');
+    assert.equal(
+      mission!.imageUrl,
+      'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
+    );
+    assert.equal(mission!.cost, 2);
+
+    const taskmaster = result['core/black-widow/taskmaster'];
+    assert.ok(taskmaster, 'Slash-format taskmaster entry must be present');
+    assert.equal(taskmaster!.name, 'Taskmaster');
+    assert.equal(taskmaster!.cost, 6);
+  });
+
+  it('emits cost === null when registry has no cost field on the card', () => {
+    const setData = {
+      abbr: 'core',
+      villains: [],
+      henchmen: [],
+      masterminds: [],
+      heroes: [
+        {
+          slug: 'no-cost-hero',
+          cards: [
+            {
+              slug: 'free-card',
+              rarityLabel: 'Common 1',
+              name: 'Free Card',
+              imageUrl: '',
+              // cost intentionally omitted
+            },
+          ],
+        },
+      ],
+    };
+
+    const registry = {
+      listCards: () => [],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/no-cost-hero'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config);
+
+    const freeCard = result['core/no-cost-hero/free-card'];
+    assert.ok(freeCard, 'Slash-format entry must be present');
+    assert.equal(freeCard!.cost, null, 'Missing cost must project as null (preserves the "no cost shown" UX distinction)');
+  });
+});

@@ -78,6 +78,32 @@ describe('buildInitialGameState — shape', () => {
       gameState.attachedBystanders !== undefined,
       'G must have attachedBystanders',
     );
+    assert.ok(
+      Array.isArray(gameState.heroDeck),
+      'G must have heroDeck array (WP-135)',
+    );
+  });
+
+  it('G.heroDeck is empty when registry mock is narrow (WP-135 soft-skip)', () => {
+    // why: WP-135 — the narrow CardRegistryReader (listCards-only) does
+    // not satisfy buildHeroDeck's RegistryReader (requires getSet); the
+    // builder soft-skips per the sibling pattern (mirrors
+    // buildVillainDeck) and returns []. With heroDeck === [], HQ stays
+    // all nulls — same as the pre-WP-135 initializeHq() result.
+    const config = createTestConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+    const registry = createMockRegistry();
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    assert.deepStrictEqual(gameState.heroDeck, []);
+    for (let slotIndex = 0; slotIndex < 5; slotIndex++) {
+      assert.equal(
+        gameState.hq[slotIndex],
+        null,
+        `Slot ${slotIndex} must be null when heroDeck is empty (narrow registry)`,
+      );
+    }
   });
 
   it('G.playerZones has one entry per player with all 5 zone arrays', () => {
@@ -350,6 +376,100 @@ describe('buildInitialGameState — shape', () => {
       [...gameState.matchConfiguration.heroDeckIds],
       'selection.heroDeckIds must equal matchConfiguration.heroDeckIds',
     );
+  });
+
+  // why: WP-135 — full-registry shape assertions. Inline fixture mirrors
+  // buildLoadoutFixtureRegistry in loadout.test (intentional duplication
+  // per code-style Rule 1: duplicate first, abstract on third copy).
+  function buildShapeFixtureRegistry() {
+    const setData = {
+      abbr: 'core',
+      schemes: [{ slug: 'midtown-bank-robbery' }],
+      masterminds: [
+        {
+          slug: 'dr-doom',
+          cards: [
+            { slug: 'doom-base', tactic: false, vAttack: '8' },
+            { slug: 'doom-tactic-a', tactic: true, vAttack: '4' },
+          ],
+        },
+      ],
+      henchmen: [{ slug: 'doombot-legion', vAttack: '3' }],
+      villains: [
+        {
+          slug: 'brotherhood',
+          cards: [{ slug: 'magneto', vAttack: '6' }],
+        },
+      ],
+      heroes: [
+        {
+          slug: 'black-widow',
+          cards: [
+            { slug: 'mission-accomplished', rarityLabel: 'Common 1', name: 'Mission', imageUrl: '', cost: 2 },
+            { slug: 'silent-takedown', rarityLabel: 'Common 2', name: 'Silent', imageUrl: '', cost: 3 },
+            { slug: 'covert-operation', rarityLabel: 'Uncommon', name: 'Covert', imageUrl: '', cost: 4 },
+            { slug: 'taskmaster', rarityLabel: 'Rare', name: 'Taskmaster', imageUrl: '', cost: 6 },
+          ],
+        },
+      ],
+    };
+    return {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'core' }],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+  }
+
+  function buildShapeFixtureConfig(): MatchSetupConfig {
+    return {
+      schemeId: 'core/midtown-bank-robbery',
+      mastermindId: 'core/dr-doom',
+      villainGroupIds: ['core/brotherhood'],
+      henchmanGroupIds: ['core/doombot-legion'],
+      heroDeckIds: ['core/black-widow'],
+      bystandersCount: 5,
+      woundsCount: 5,
+      officersCount: 5,
+      sidekicksCount: 5,
+    };
+  }
+
+  it('G.heroDeck.length === total hero cards built minus 5 in HQ (WP-135 — 1 hero × 14 - 5 = 9)', () => {
+    const registry = buildShapeFixtureRegistry();
+    const config = buildShapeFixtureConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    assert.equal(
+      gameState.heroDeck.length,
+      9,
+      '14 hero cards (1 hero × 5/3/3/3) minus 5 in HQ = 9 in G.heroDeck',
+    );
+  });
+
+  it('G.hq has exactly 5 non-null slots when heroDeck is large enough (WP-135)', () => {
+    const registry = buildShapeFixtureRegistry();
+    const config = buildShapeFixtureConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    const filledCount = gameState.hq.filter((slot) => slot !== null).length;
+    assert.equal(filledCount, 5, 'All 5 HQ slots must be populated from the hero deck front');
+  });
+
+  it('JSON.stringify(G) succeeds when G.heroDeck is populated (WP-135 — serialization invariant)', () => {
+    const registry = buildShapeFixtureRegistry();
+    const config = buildShapeFixtureConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const gameState = buildInitialGameState(config, registry, context);
+
+    const serialized = JSON.stringify(gameState);
+    assert.ok(serialized, 'JSON.stringify(G) must succeed with a populated G.heroDeck');
+    const parsed = JSON.parse(serialized) as { heroDeck: unknown };
+    assert.deepStrictEqual(parsed.heroDeck, gameState.heroDeck);
   });
 
   it('selection arrays are copies, not shared references with matchConfiguration', () => {

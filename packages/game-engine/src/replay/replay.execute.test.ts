@@ -38,7 +38,20 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // to updating an existing literal — no behavioral or logic change to
 // this test. Pre-flight 2026-04-29 §Runtime Readiness Check + session
 // prompt §5 explicitly authorize this cascade.
-const PRE_WP080_HASH = '46f7863c';
+// why: WP-135 / EC-138 — value-only update under
+// docs/ai/REFERENCE/01.5-runtime-wiring-allowance.md, per WP-128 D-12807
+// conditional-cascade procedure. Two simultaneous inputs to
+// computeStateHash changed: (1) G.heroDeck: CardExtId[] field added to
+// LegendaryGameState (the new hero deck reservoir built at Game.setup()
+// from MatchSetupConfig.heroDeckIds via buildHeroDeck); (2) recruitHero
+// G.messages line reshaped from the pre-WP-135 WP-016 format
+// (`Player {playerId} recruited "{cardId}" from HQ slot {hqIndex}.`)
+// to the WP-135 byte-locked format (`Player {playerId} recruited
+// {heroExtId}; HQ slot {hqIndex} refilled from heroDeck (heroDeck.length:
+// {N})`). Pre-edit hash: '46f7863c'. Post-edit hash: '2baeecc3'. No
+// behavioral or logic change to this test — literal-only update at
+// exactly one site per the binary cascade procedure.
+const PRE_WP080_HASH = '2baeecc3';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

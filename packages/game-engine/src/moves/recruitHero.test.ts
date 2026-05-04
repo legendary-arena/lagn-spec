@@ -29,6 +29,7 @@ import { initializeCity, initializeHq } from '../board/city.logic.js';
 function createMockGameState(options?: {
   hq?: LegendaryGameState['hq'];
   currentStage?: LegendaryGameState['currentStage'];
+  heroDeck?: LegendaryGameState['heroDeck'];
 }): LegendaryGameState {
   const config = {
     schemeId: 'test-scheme',
@@ -84,6 +85,10 @@ function createMockGameState(options?: {
     },
     city: initializeCity(),
     hq: options?.hq ?? initializeHq(),
+    // why: WP-135 — recruitHero refills the vacated HQ slot from G.heroDeck
+    // via refillHqSlot. The mock supplies an empty reservoir by default;
+    // tests that exercise the refill branch override `heroDeck` per case.
+    heroDeck: options?.heroDeck ?? [],
     lobby: {
       requiredPlayers: 1,
       ready: {},
@@ -241,5 +246,138 @@ describe('recruitHero', () => {
       1,
       'Discard unchanged after second recruit on same (now null) slot',
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-135 — HQ refill on recruit + D-13503 empty-deck branch + locked log line
+// ---------------------------------------------------------------------------
+
+describe('recruitHero — WP-135 HQ refill', () => {
+  it('refills the vacated slot with the front card of G.heroDeck (FIFO)', () => {
+    const gameState = createMockGameState({
+      hq: ['hero-a', null, null, null, null],
+      heroDeck: ['next-card', 'after-next', 'tail'],
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    recruitHero(moveContext, { hqIndex: 0 });
+
+    assert.equal(
+      moveContext.G.hq[0],
+      'next-card',
+      'Vacated slot must be refilled with the front card of G.heroDeck (FIFO)',
+    );
+    assert.deepStrictEqual(
+      moveContext.G.heroDeck,
+      ['after-next', 'tail'],
+      'G.heroDeck length decrements by 1; remaining cards preserved in order',
+    );
+  });
+
+  it('empty-deck branch: vacated slot stays null; G.heroDeck stays []', () => {
+    const gameState = createMockGameState({
+      hq: ['hero-a', null, null, null, null],
+      heroDeck: [],
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    recruitHero(moveContext, { hqIndex: 0 });
+
+    assert.equal(
+      moveContext.G.hq[0],
+      null,
+      'Empty-deck branch: vacated slot stays null per D-13503',
+    );
+    assert.deepStrictEqual(
+      moveContext.G.heroDeck,
+      [],
+      'G.heroDeck stays [] — no auto-reshuffle of recruited cards back into the deck',
+    );
+  });
+
+  it('refills only the vacated slot — other slots are unchanged', () => {
+    const gameState = createMockGameState({
+      hq: ['hero-a', 'hero-b', 'hero-c', 'hero-d', 'hero-e'],
+      heroDeck: ['refill-card', 'tail'],
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    recruitHero(moveContext, { hqIndex: 2 });
+
+    assert.equal(moveContext.G.hq[0], 'hero-a', 'slot 0 unchanged');
+    assert.equal(moveContext.G.hq[1], 'hero-b', 'slot 1 unchanged');
+    assert.equal(moveContext.G.hq[2], 'refill-card', 'slot 2 refilled');
+    assert.equal(moveContext.G.hq[3], 'hero-d', 'slot 3 unchanged');
+    assert.equal(moveContext.G.hq[4], 'hero-e', 'slot 4 unchanged');
+  });
+});
+
+describe('recruitHero — WP-135 G.messages locked log format', () => {
+  it('exactly ONE G.messages entry per successful recruit (the WP-135 push REPLACES the WP-016 push)', () => {
+    const gameState = createMockGameState({
+      hq: ['core/spider-man/astonishing-strength', null, null, null, null],
+      heroDeck: ['core/black-widow/mission-accomplished'],
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    const messagesBefore = moveContext.G.messages.length;
+    recruitHero(moveContext, { hqIndex: 0 });
+
+    const newMessageCount = moveContext.G.messages.length - messagesBefore;
+    assert.equal(
+      newMessageCount,
+      1,
+      'Each successful recruit must push exactly one G.messages entry (replaces the pre-WP-135 WP-016 push, not augments)',
+    );
+  });
+
+  it('non-empty deck: log line follows the byte-locked WP-135 format', () => {
+    const gameState = createMockGameState({
+      hq: ['core/spider-man/astonishing-strength', null, null, null, null],
+      heroDeck: ['core/black-widow/mission-accomplished', 'core/black-widow/silent-takedown'],
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    recruitHero(moveContext, { hqIndex: 0 });
+
+    const lastMessage = moveContext.G.messages[moveContext.G.messages.length - 1];
+    assert.equal(
+      lastMessage,
+      'Player 0 recruited core/spider-man/astonishing-strength; HQ slot 0 refilled from heroDeck (heroDeck.length: 1)',
+      'Locked WP-135 byte-equality format must match exactly',
+    );
+  });
+
+  it('empty-deck branch: log line substitutes the trailing parenthetical', () => {
+    const gameState = createMockGameState({
+      hq: ['core/spider-man/astonishing-strength', null, null, null, null],
+      heroDeck: [],
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    recruitHero(moveContext, { hqIndex: 0 });
+
+    const lastMessage = moveContext.G.messages[moveContext.G.messages.length - 1];
+    assert.equal(
+      lastMessage,
+      'Player 0 recruited core/spider-man/astonishing-strength; HQ slot 0 refilled from heroDeck (heroDeck empty; slot left null)',
+      'Empty-deck branch must substitute the locked trailing parenthetical',
+    );
+  });
+
+  it('log line never contains a timestamp, date, or other non-deterministic context', () => {
+    const gameState = createMockGameState({
+      hq: ['core/spider-man/astonishing-strength', null, null, null, null],
+      heroDeck: ['core/black-widow/mission-accomplished'],
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    recruitHero(moveContext, { hqIndex: 0 });
+
+    const lastMessage = moveContext.G.messages[moveContext.G.messages.length - 1]!;
+    assert.equal(/\d{4}-\d{2}-\d{2}/.test(lastMessage), false, 'No date pattern (YYYY-MM-DD) in log line');
+    assert.equal(/T\d{2}:\d{2}:\d{2}/.test(lastMessage), false, 'No ISO timestamp pattern in log line');
+    assert.equal(/\d{13}/.test(lastMessage), false, 'No millisecond unix timestamp in log line');
   });
 });

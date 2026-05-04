@@ -10,8 +10,15 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { pushVillainIntoCity, initializeCity, initializeHq } from './city.logic.js';
-import type { CityZone } from './city.types.js';
+import {
+  pushVillainIntoCity,
+  initializeCity,
+  initializeHq,
+  fillHqFromDeck,
+  refillHqSlot,
+} from './city.logic.js';
+import type { CityZone, HqZone } from './city.types.js';
+import type { CardExtId } from '../state/zones.types.js';
 
 describe('pushVillainIntoCity', () => {
   it('places card at space 0 of an empty city', () => {
@@ -132,5 +139,143 @@ describe('initializeHq', () => {
     for (let slotIndex = 0; slotIndex < 5; slotIndex++) {
       assert.equal(hq[slotIndex], null, `Slot ${slotIndex} must be null`);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-135 — fillHqFromDeck (setup-time HQ population)
+// ---------------------------------------------------------------------------
+
+describe('fillHqFromDeck', () => {
+  it('pops the first 5 cards into HQ slots 0..4 in deck-front order', () => {
+    const deck: CardExtId[] = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
+
+    const result = fillHqFromDeck(deck, 5);
+
+    assert.equal(result.hq[0], 'c0', 'Deck top must land at HQ slot 0');
+    assert.equal(result.hq[1], 'c1');
+    assert.equal(result.hq[2], 'c2');
+    assert.equal(result.hq[3], 'c3');
+    assert.equal(result.hq[4], 'c4');
+  });
+
+  it('returns the deck remainder after the front-pop', () => {
+    const deck: CardExtId[] = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
+
+    const result = fillHqFromDeck(deck, 5);
+
+    assert.deepStrictEqual(
+      result.remainingDeck,
+      ['c5', 'c6'],
+      'Remaining deck must contain everything after the popped prefix',
+    );
+  });
+
+  it('when deck.length < slotCount: trailing slots stay null; remainingDeck is empty', () => {
+    const deck: CardExtId[] = ['only-card'];
+
+    const result = fillHqFromDeck(deck, 5);
+
+    assert.equal(result.hq[0], 'only-card', 'First slot is filled');
+    assert.equal(result.hq[1], null, 'Trailing slots stay null');
+    assert.equal(result.hq[2], null);
+    assert.equal(result.hq[3], null);
+    assert.equal(result.hq[4], null);
+    assert.deepStrictEqual(result.remainingDeck, [], 'Remaining deck is empty');
+  });
+
+  it('when deck is empty: HQ is all nulls; remainingDeck is empty', () => {
+    const result = fillHqFromDeck([], 5);
+
+    for (let slotIndex = 0; slotIndex < 5; slotIndex++) {
+      assert.equal(result.hq[slotIndex], null);
+    }
+    assert.deepStrictEqual(result.remainingDeck, []);
+  });
+
+  it('does not mutate the supplied deck (input-array immutability)', () => {
+    const deck: CardExtId[] = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5'];
+    const snapshot = [...deck];
+
+    fillHqFromDeck(deck, 5);
+
+    assert.deepStrictEqual(deck, snapshot, 'Input deck must be unchanged after fillHqFromDeck');
+  });
+
+  it('returned hq is a new 5-element array reference', () => {
+    const deck: CardExtId[] = ['c0', 'c1', 'c2', 'c3', 'c4'];
+    const result = fillHqFromDeck(deck, 5);
+    assert.equal(result.hq.length, 5);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-135 — refillHqSlot (move-time HQ refill)
+// ---------------------------------------------------------------------------
+
+describe('refillHqSlot', () => {
+  it('refills the supplied slot with the front card of the deck (FIFO)', () => {
+    const hq: HqZone = [null, 'b', 'c', 'd', 'e'];
+    const deck: CardExtId[] = ['next-card', 'after-next'];
+
+    const result = refillHqSlot(hq, 0, deck);
+
+    assert.equal(result.hq[0], 'next-card', 'Vacated slot must be refilled');
+    assert.equal(result.hq[1], 'b', 'Other slots unchanged');
+    assert.equal(result.hq[2], 'c');
+    assert.equal(result.hq[3], 'd');
+    assert.equal(result.hq[4], 'e');
+    assert.deepStrictEqual(result.heroDeck, ['after-next'], 'Deck length decrements by 1');
+  });
+
+  it('when deck is empty: vacated slot stays null; deck stays []', () => {
+    const hq: HqZone = [null, 'b', 'c', 'd', 'e'];
+    const deck: CardExtId[] = [];
+
+    const result = refillHqSlot(hq, 0, deck);
+
+    assert.equal(result.hq[0], null, 'Empty-deck branch leaves slot null per D-13503');
+    assert.deepStrictEqual(result.heroDeck, [], 'Deck stays empty (no auto-reshuffle)');
+  });
+
+  it('refills only the requested slot — other slots are unchanged', () => {
+    const hq: HqZone = ['a', 'b', null, 'd', 'e'];
+    const deck: CardExtId[] = ['refill', 'tail'];
+
+    const result = refillHqSlot(hq, 2, deck);
+
+    assert.equal(result.hq[0], 'a');
+    assert.equal(result.hq[1], 'b');
+    assert.equal(result.hq[2], 'refill');
+    assert.equal(result.hq[3], 'd');
+    assert.equal(result.hq[4], 'e');
+  });
+
+  it('does not mutate the supplied hq (input-array immutability)', () => {
+    const hq: HqZone = ['a', 'b', null, 'd', 'e'];
+    const hqSnapshot = [...hq];
+    const deck: CardExtId[] = ['refill', 'tail'];
+
+    refillHqSlot(hq, 2, deck);
+
+    assert.deepStrictEqual(
+      [...hq],
+      hqSnapshot,
+      'Input hq must be unchanged after refillHqSlot',
+    );
+  });
+
+  it('does not mutate the supplied deck (input-array immutability)', () => {
+    const hq: HqZone = [null, 'b', 'c', 'd', 'e'];
+    const deck: CardExtId[] = ['refill', 'tail'];
+    const deckSnapshot = [...deck];
+
+    refillHqSlot(hq, 0, deck);
+
+    assert.deepStrictEqual(
+      deck,
+      deckSnapshot,
+      'Input deck must be unchanged after refillHqSlot',
+    );
   });
 });
