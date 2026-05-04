@@ -47,7 +47,7 @@ Before writing a single line:
 - `packages/game-engine/src/ui/uiState.types.ts` — read entirely (post-WP-128 shape); every new field is what this packet renders.
 - `apps/arena-client/src/components/play/` — read every file. The WP-100 scaffolds are superseded — confirm the existing component tree before writing replacements.
 - `apps/arena-client/src/components/hud/` — read every file. WP-062 HUD components are extended (not replaced) by this packet for the new HUD-bar contents (twist progress + tactics defeated + escape counter + skin selector).
-- `apps/arena-client/src/lobby/LiveMatchView.vue` — read entirely. The active board layout replaces or coexists with the existing lobby/play view discriminator.
+- `apps/arena-client/src/App.vue` — read entirely. The live-match transition is the `route === 'live'` template branch (App.vue:213-223) which currently mounts `<PlayView />` directly with prop-drilled `submitMove` (App.vue:214). WP-129 replaces that single mount with `<PlayViewport>`. The existing `AppRoute` type (`'fixture' | 'live' | 'lobby' | 'profile' | 'me'` at App.vue:41) does NOT need new variants — `'live'` simply mounts `<PlayViewport>` instead of `<PlayView>`. (Per pre-flight PS-2 2026-05-04 — the originally-cited `apps/arena-client/src/lobby/LiveMatchView.vue` does not exist; the actual seam is `App.vue`.)
 - `docs/ai/REFERENCE/00.6-code-style.md` — Rule 4 (no abbreviations), Rule 6 (`// why:` comments), Rule 13 (ESM only).
 - `docs/ai/REFERENCE/01.4-pre-flight-invocation.md` — read the `defineComponent({ setup() { return {...} } })` rule (P6-30 / P6-46 / D-6512): any `.vue` component with a tested template using non-prop / non-emit bindings MUST use `defineComponent` form, not `<script setup>`.
 - `.claude/rules/architecture.md` Layer Boundary section — the arena-client layer cannot import engine runtime.
@@ -73,7 +73,7 @@ Before writing a single line:
 - Both viewports (desktop + mobile portrait) render from the **same `UIState`**. Different layouts, identical data flow. No viewport-specific data fetching.
 - Stage-gating per WP-007A: every interactive element is enabled only when `game.currentStage` matches its allowed stage. Disabled state shows a tooltip explaining why.
 - Cost-affordability gating: a Hero in HQ with cost > `economy.availableRecruit` renders disabled with a tooltip; same for villains in city with attack > `economy.availableAttack`. WP-128 ships the data; this packet adds the disabled-state rendering.
-- The `[Pass priority]` button advances to `play.cleanup` without firing a move; the `[End turn]` button fires the `endTurn` move.
+- The `[Pass priority]` button fires the `advanceStage` move (canonical stage-advance vocabulary per D-10011; already in the `UiMoveName` union at `apps/arena-client/src/components/play/uiMoveName.types.ts:44`); the `[End turn]` button fires the `endTurn` move. Per pre-flight PS-5 2026-05-04 — the original draft "advances without firing a move" wording contradicted D-10011's locked vocabulary.
 - The 3-step turn structure (per `DESIGN-BOARD-LAYOUT.md §5.1`) is the canonical turn-actions display. Every step shows its current stage; only the active step's affordances are at full prominence.
 - Mobile portrait wireframe locks `48-char target width` for the design intent; the actual implementation uses CSS responsive units (rem, vw, vh) and adapts gracefully across the 375–414px range.
 - Two-viewport DRY: shared component logic lives in headless composables (`useCityRow`, `useHqRow`, `useTurnActions`, etc.); per-viewport `.vue` files differ only in template + scoped CSS.
@@ -246,13 +246,26 @@ At session start, lock D-12901..D-12909 in DECISIONS.md per `DESIGN-BOARD-LAYOUT
 - `apps/arena-client/src/components/play/PlayView.vue` — deleted (role split across new `pages/PlayViewport.vue` + `pages/PlayDesktop.vue` + `pages/PlayMobile.vue`).
 - `apps/arena-client/src/components/play/PlayView.test.ts` — deleted (replaced by per-page tests under `pages/`).
 
+**Untouched by this WP (out of scope; remain at HEAD):**
+- `apps/arena-client/src/components/play/LobbyControls.vue` + `LobbyControls.test.ts` — lobby-flow concern owned by the WP-100 revision (commit `5f9cdd4`). The lobby-phase moves (`setPlayerReady`, `startMatchIfReady`) are a separate surface from the WP-129 board-layout components and remain in place.
+- `apps/arena-client/src/components/play/uiMoveName.types.ts` — the locked typed-prop union per WP-100 D-10004 (10 names: `setPlayerReady`, `startMatchIfReady`, `drawCards`, `advanceStage`, `revealVillainCard`, `playCard`, `endTurn`, `fightVillain`, `recruitHero`, `fightMastermind`). Extension requires a new WP; WP-129 reuses the existing vocabulary verbatim. Per pre-flight PS-4 2026-05-04.
+
 **Governance:**
 - `docs/ai/STATUS.md` — modified (new `### WP-129 / EC-132 Executed` block).
 - `docs/ai/DECISIONS.md` — modified (D-12901..D-12909 inserted).
 - `docs/ai/work-packets/WORK_INDEX.md` — modified (WP-129 row flipped).
 - `docs/ai/execution-checklists/EC_INDEX.md` — modified (EC-132 row flipped).
 
-**Total projected:** ~30–40 files. Within range for a single execution session given the WP-104 / WP-109 precedent (14–21 files); this packet is on the larger side. **Backup plan if execution-time scope creeps:** split into WP-129a (Desktop) + WP-129b (Mobile) at draft amendment time.
+**Total projected:** ~48 files (~28 production/reference + ~16 tests + 4 governance). **Above the recent-precedent envelope** (WP-104 = 14, WP-109 = 21); EC-132 §0 18-file backup-plan trigger fires.
+
+**Backup-plan disposition (per pre-flight PS-3 2026-05-04 — EC-132 §0 trigger acknowledged):** **Path (b) chosen — keep as one WP with tightened scope discipline.** Path (a) (WP-129a Desktop + WP-129b Mobile split) was the named alternative and is rejected for the following reasons:
+
+- **13 of the 16 new SFCs are presentational leaf components** (`<SchemeTile>`, `<MasterStrikePile>`, `<SchemeTwistPile>`, `<EscapedPile>`, `<SharedDecks>`, `<KOPile>`, `<OpponentVictoryModal>`, `<OpponentPanel>`, `<YourVictoryPile>`, `<YourDeckDiscardZone>`, `<EconomyBar>`, `<TopHudBar>`, plus minor extensions to existing scaffolds). The same components mount in both viewports — only the parent `pages/Play{Desktop,Mobile}.vue` template differs. Splitting forces WP-129b (mobile) to depend on WP-129a's leaf set, leaving WP-129b with only the mobile viewport SFC + Teleport polish (~5 files).
+- **The 6 headless composables** (`useCityRow`, `useHqRow`, `useTurnActions`, `useCardCostGating`, `useVictoryPileComposition`, `useViewport`) are the load-bearing two-viewport DRY mechanism. They MUST land before either viewport SFC. A split puts them all in WP-129a as a forced prerequisite for WP-129b's mobile layout — net zero risk reduction.
+- **The 18-file trigger was designed for behavioral WPs** where each file signals mutation/contract risk. A leaf-heavy presentational WP carries lower per-file risk: each leaf is a pure UIState-prop-in / template-out shape with no state machine, no engine touch, no cross-file invariants beyond the shared composable contract.
+- **Mitigation in lieu of split:** (a) the §Scope Enforcement gate (`git diff --name-only` against the §Files Expected to Change allowlist) catches creep at session close; (b) the ≥30-test floor (EC-132 §5) prevents shallow drive-by additions; (c) each new SFC has a one-screen JSDoc body limit per `00.6` Rule 5; (d) the SFC authoring whitelist (`<script setup>` only for props-only-template leafs) is mechanical and grep-verifiable; (e) the leaf-aggregation allowance (EC-132 §5) lets pure presentational leafs share their parent's `.test.ts` rather than carrying a direct sibling, capping the test-file fanout.
+
+**Hard amendment trigger (post-resolution):** if at execution-start the file count projects above **33 production/reference** files (i.e., scope grew between draft and start), STOP and re-evaluate the split. The 28-file projection at draft is the locked baseline.
 
 ---
 
