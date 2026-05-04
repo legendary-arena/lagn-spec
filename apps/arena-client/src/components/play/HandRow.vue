@@ -68,11 +68,34 @@ export default defineComponent({
       return !useTurnActions(props.currentStage).canPlayCard().allowed;
     }
 
+    function humanizeCardId(cardId: string): string {
+      // why: produce a readable label from a CardExtId when the engine's
+      // cardDisplayData lookup misses (returns the WP-111
+      // UNKNOWN_DISPLAY_PLACEHOLDER with name '<unknown>'). The starter
+      // cards `'starting-shield-agent'` / `'starting-shield-trooper'`
+      // are engine-synthetic and not in the registry, so
+      // buildCardDisplayData does not populate entries for them — a
+      // future engine WP will close the gap. This fallback is
+      // formatting-only (replace dashes with spaces); no engine
+      // knowledge of canonical card names lives client-side.
+      return cardId.replace(/-/g, ' ');
+    }
+
     function displayName(cardId: string, index: number): string {
       if (props.handDisplay !== undefined && index < props.handDisplay.length) {
-        return props.handDisplay[index]!.name;
+        const candidate = props.handDisplay[index]!.name;
+        // why: detect the WP-111 UNKNOWN_DISPLAY_PLACEHOLDER shape and
+        // fall back to a humanized cardId. The placeholder ships with
+        // name '<unknown>' and imageUrl '' (per
+        // packages/game-engine/src/ui/uiState.build.ts:73-78). Either
+        // signal indicates the engine has no display data for this
+        // ext_id; the cardId itself is informative enough as a fallback
+        // until the engine gap is closed.
+        if (candidate !== '<unknown>') {
+          return candidate;
+        }
       }
-      return cardId;
+      return humanizeCardId(cardId);
     }
 
     return { onPlay, buttonReason, buttonDisabled, displayName };
