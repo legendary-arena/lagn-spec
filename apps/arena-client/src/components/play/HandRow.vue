@@ -1,20 +1,46 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
+import type { UICardDisplay } from '@legendary-arena/game-engine';
+import { useTurnActions } from '../../composables/useTurnActions';
 import type { SubmitMove } from './uiMoveName.types';
 
-// why: defineComponent({ setup() { return {...} } }) is required (NOT
-// <script setup>) because the template references the click handler as a
-// non-prop binding. Under @legendary-arena/vue-sfc-loader's separate-compile
-// pipeline (D-6512 / P6-30), top-level <script setup> bindings do not reach
-// the template's _ctx. Returning the handler from setup() places it on the
-// instance proxy where the template can call it. Precedent: PlayerPanel,
-// ArenaHud, App.vue, LobbyView.vue.
+/**
+ * Active player's hand row — renders one button per CardExtId in
+ * `players[ownIndex].handCards`. WP-129 extends the WP-100 scaffold with
+ * `handDisplay` integration (display name + image lookup) and binds the
+ * stage-gating reason from {@link useTurnActions} per EC-132 §3 disabled-
+ * state tooltip precedence.
+ *
+ * Cost gating does NOT apply to playCard — every hand card may be played
+ * during the main step regardless of economy state. Only stage gating
+ * applies here.
+ *
+ * Per the EC-132 §2 SFC authoring whitelist: this is a tested non-leaf
+ * composer that USES a composable, so it MUST use
+ * `defineComponent({ setup() { return {...} } })` per P6-30 / P6-46 /
+ * D-6512.
+ *
+ * @see WP-129 §Acceptance Criteria — Click-to-play handCards
+ * @see EC-132 §2 move table — Hand card → playCard at play.main
+ * @see EC-132 §3 disabled-state tooltip precedence
+ */
 export default defineComponent({
   name: 'HandRow',
   props: {
     handCards: {
       type: Array as PropType<readonly string[]>,
       required: true,
+    },
+    /**
+     * Parallel display payload for `handCards`; populated by WP-128's
+     * `players[ownIndex].handDisplay`. Length must match `handCards`
+     * exactly when present. Undefined when redacted (other audiences) —
+     * but for the active-player surface the field is always present.
+     */
+    handDisplay: {
+      type: Array as PropType<readonly UICardDisplay[] | undefined>,
+      required: false,
+      default: undefined,
     },
     currentStage: {
       type: String,
@@ -26,16 +52,30 @@ export default defineComponent({
     },
   },
   setup(props) {
-    /**
-     * Emit a `playCard` intent for the clicked card. The engine validates
-     * that the card is in the active player's hand and silently no-ops on
-     * invalid input — the UI never computes outcomes.
-     */
     function onPlay(cardId: string): void {
       props.submitMove('playCard', { cardId });
     }
 
-    return { onPlay };
+    function buttonReason(): string | null {
+      // why: per EC-132 §3 disabled-state tooltip precedence — stage →
+      // resource → structural. playCard has no resource cost (any hand
+      // card may be played); only the stage gate applies.
+      const gate = useTurnActions(props.currentStage).canPlayCard();
+      return gate.allowed ? null : gate.reason;
+    }
+
+    function buttonDisabled(): boolean {
+      return !useTurnActions(props.currentStage).canPlayCard().allowed;
+    }
+
+    function displayName(cardId: string, index: number): string {
+      if (props.handDisplay !== undefined && index < props.handDisplay.length) {
+        return props.handDisplay[index]!.name;
+      }
+      return cardId;
+    }
+
+    return { onPlay, buttonReason, buttonDisabled, displayName };
   },
 });
 </script>
@@ -54,19 +94,25 @@ export default defineComponent({
       Hand is empty.
     </p>
     <ul v-else class="hand-cards">
-      <li v-for="cardId in handCards" :key="cardId" class="hand-card">
+      <li
+        v-for="(cardId, index) in handCards"
+        :key="`${cardId}-${index}`"
+        class="hand-card"
+      >
         <button
           type="button"
           data-testid="play-hand-card"
           :data-card-id="cardId"
-          :disabled="currentStage !== 'main'"
+          :disabled="buttonDisabled()"
+          :aria-disabled="buttonDisabled() ? 'true' : undefined"
+          :title="buttonReason() ?? undefined"
           @click="onPlay(cardId)"
         >
-          <!-- why: locked stage gating per WP-100 §Locked contract values —
-               playCard is enabled only in the 'main' stage. Cost-based
-               affordability gating is deferred until UIState projects card
-               costs (see WP-111). -->
-          {{ cardId }}
+          <!-- why: disabled-state tooltip precedence locked at EC-132 §3
+               (stage → resource → structural). The reason text is bound
+               from useTurnActions().canPlayCard() rather than composed
+               ad-hoc. -->
+          {{ displayName(cardId, index) }}
         </button>
       </li>
     </ul>

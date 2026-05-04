@@ -9,7 +9,7 @@ import {
 
 import ArenaHud from './components/hud/ArenaHud.vue';
 import LobbyView from './lobby/LobbyView.vue';
-import PlayView from './components/play/PlayView.vue';
+import PlayViewport from './pages/PlayViewport.vue';
 import {
   createLiveClient,
   type LiveClientHandle,
@@ -127,7 +127,7 @@ function selectRoute(parsed: ParsedQuery): AppRoute {
 
 export default defineComponent({
   name: 'App',
-  components: { ArenaHud, LobbyView, PlayView, PlayerProfilePage, MyProfilePage },
+  components: { ArenaHud, LobbyView, PlayViewport, PlayerProfilePage, MyProfilePage },
   props: {
     // why: `searchOverride` is a testing seam. Production callers never pass
     // it — `null` means "read from window.location.search at setup time".
@@ -211,7 +211,7 @@ export default defineComponent({
       <ArenaHud />
     </template>
     <template v-else-if="route === 'live'">
-      <PlayView :submit-move="submitMove" />
+      <PlayViewport :submit-move="submitMove" />
       <footer
         v-if="isDev"
         class="live-diagnostics"

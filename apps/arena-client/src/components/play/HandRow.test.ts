@@ -4,6 +4,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mount } from '@vue/test-utils';
 import HandRow from './HandRow.vue';
+import type { UICardDisplay } from '@legendary-arena/game-engine';
 import type { SubmitMove, UiMoveName } from './uiMoveName.types';
 
 interface RecordedCall {
@@ -19,78 +20,93 @@ function recorder(): { calls: RecordedCall[]; submitMove: SubmitMove } {
   return { calls, submitMove };
 }
 
-describe('HandRow (WP-100)', () => {
+function display(extId: string, name: string, cost: number | null = null): UICardDisplay {
+  return {
+    extId,
+    name,
+    imageUrl: `https://images.barefootbetters.com/${extId}.png`,
+    cost,
+  };
+}
 
-test('HandRow renders one button per CardExtId in the hand', () => {
-  const { submitMove } = recorder();
-  const wrapper = mount(HandRow, {
-    props: {
-      handCards: ['cap-rogers', 'iron-man-stark', 'spider-man-parker'],
-      currentStage: 'main',
-      submitMove,
-    },
-  });
-
-  const buttons = wrapper.findAll('[data-testid="play-hand-card"]');
-  assert.equal(buttons.length, 3);
-  assert.equal(buttons[0]!.attributes('data-card-id'), 'cap-rogers');
-  assert.equal(buttons[1]!.attributes('data-card-id'), 'iron-man-stark');
-  assert.equal(buttons[2]!.attributes('data-card-id'), 'spider-man-parker');
-});
-
-test('HandRow click emits playCard with the card id', () => {
-  const { calls, submitMove } = recorder();
-  const wrapper = mount(HandRow, {
-    props: {
-      handCards: ['cap-rogers', 'iron-man-stark'],
-      currentStage: 'main',
-      submitMove,
-    },
-  });
-
-  const buttons = wrapper.findAll('[data-testid="play-hand-card"]');
-  void buttons[1]!.trigger('click');
-
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0]!.name, 'playCard');
-  assert.deepEqual(calls[0]!.args, { cardId: 'iron-man-stark' });
-});
-
-test('HandRow disables every button when currentStage is not main', () => {
-  const { submitMove } = recorder();
-  for (const stage of ['start', 'cleanup'] as const) {
+describe('HandRow (WP-129 — extends WP-100)', () => {
+  test('renders one button per CardExtId in the hand', () => {
+    const { submitMove } = recorder();
     const wrapper = mount(HandRow, {
       props: {
-        handCards: ['a', 'b'],
-        currentStage: stage,
+        handCards: ['cap-rogers', 'iron-man-stark', 'spider-man-parker'],
+        currentStage: 'main',
         submitMove,
       },
     });
     const buttons = wrapper.findAll('[data-testid="play-hand-card"]');
-    for (const button of buttons) {
-      assert.equal(
-        button.attributes('disabled'),
-        '',
-        `button should be disabled in stage '${stage}'`,
-      );
-    }
-  }
-});
-
-test('HandRow renders the "Hand is empty" placeholder when handCards is empty', () => {
-  const { submitMove } = recorder();
-  const wrapper = mount(HandRow, {
-    props: {
-      handCards: [],
-      currentStage: 'main',
-      submitMove,
-    },
+    assert.equal(buttons.length, 3);
+    assert.equal(buttons[0]!.attributes('data-card-id'), 'cap-rogers');
   });
 
-  const empty = wrapper.find('[data-testid="play-hand-empty"]');
-  assert.equal(empty.exists(), true);
-  assert.equal(empty.text(), 'Hand is empty.');
-  assert.equal(wrapper.findAll('[data-testid="play-hand-card"]').length, 0);
-});
+  test('uses handDisplay names when provided (WP-128 parallel array)', () => {
+    const { submitMove } = recorder();
+    const wrapper = mount(HandRow, {
+      props: {
+        handCards: ['cap-rogers', 'iron-man-stark'],
+        handDisplay: [display('cap-rogers', 'Captain America'), display('iron-man-stark', 'Iron Man')],
+        currentStage: 'main',
+        submitMove,
+      },
+    });
+    const buttons = wrapper.findAll('[data-testid="play-hand-card"]');
+    assert.equal(buttons[0]!.text(), 'Captain America');
+    assert.equal(buttons[1]!.text(), 'Iron Man');
+  });
 
+  test('falls back to extId when handDisplay is missing', () => {
+    const { submitMove } = recorder();
+    const wrapper = mount(HandRow, {
+      props: {
+        handCards: ['cap-rogers'],
+        currentStage: 'main',
+        submitMove,
+      },
+    });
+    assert.equal(wrapper.find('[data-testid="play-hand-card"]').text(), 'cap-rogers');
+  });
+
+  test('click emits playCard with the card id at play.main', () => {
+    const { calls, submitMove } = recorder();
+    const wrapper = mount(HandRow, {
+      props: {
+        handCards: ['cap-rogers', 'iron-man-stark'],
+        currentStage: 'main',
+        submitMove,
+      },
+    });
+    void wrapper.findAll('[data-testid="play-hand-card"]')[1]!.trigger('click');
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0]!.name, 'playCard');
+    assert.deepEqual(calls[0]!.args, { cardId: 'iron-man-stark' });
+  });
+
+  test('disables every button at play.start and play.cleanup with stage-gating tooltip', () => {
+    const { submitMove } = recorder();
+    for (const stage of ['start', 'cleanup'] as const) {
+      const wrapper = mount(HandRow, {
+        props: { handCards: ['a', 'b'], currentStage: stage, submitMove },
+      });
+      const buttons = wrapper.findAll('[data-testid="play-hand-card"]');
+      for (const button of buttons) {
+        assert.equal(button.attributes('disabled'), '', `disabled in stage '${stage}'`);
+        assert.equal(button.attributes('aria-disabled'), 'true');
+        assert.match(button.attributes('title')!, /Only available during the Main/);
+      }
+    }
+  });
+
+  test('renders empty placeholder when handCards is empty', () => {
+    const { submitMove } = recorder();
+    const wrapper = mount(HandRow, {
+      props: { handCards: [], currentStage: 'main', submitMove },
+    });
+    assert.equal(wrapper.find('[data-testid="play-hand-empty"]').exists(), true);
+    assert.equal(wrapper.findAll('[data-testid="play-hand-card"]').length, 0);
+  });
 });

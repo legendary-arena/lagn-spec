@@ -13509,6 +13509,218 @@ The verifier scans the `amr` array via two-pass priority: pass 1 finds any eleme
 
 ---
 
+### D-12901 — Mastermind Position: Top-Left (WP-129)
+
+**Type:** UI Layout Lock
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** The Mastermind zone occupies the top-left of the desktop landscape board (`<PlayDesktop>` zone 1) and the second sticky band of the mobile portrait layout (`<PlayMobile>` after the top HUD). The Scheme zone sits to its right (desktop) or directly below (mobile).
+
+**Rationale.**
+- Top-left is the canonical US-reading-order anchor; players' eyes land on the Mastermind first when scanning the board.
+- Mirrors physical Marvel Legendary play with right-handed users (Mastermind tile placed top-left of the playmat).
+- Top-center crowds the Scheme zone visually; top-right is symmetric with the Active-player HUD reading-order anchor and would conflict.
+
+**Rejected alternatives:**
+- Top-center — crowds the Scheme zone; reduces the available width for both tiles.
+- Top-right — fights with the Active-player HUD reading-order anchor; mirrors right-handed physical play poorly.
+
+**Status:** Active.
+
+**Citation:** `DESIGN-BOARD-LAYOUT.md §7.2 #1`; WP-129 §D D-12901; EC-132 §0 nine-decision lock.
+
+---
+
+### D-12902 — Opponent Panel Orientation: Top-Edge Row for 3-4 Players, Left-Edge Column for 5+ Players (WP-129)
+
+**Type:** UI Layout Lock
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** Opponent panels render along the **top edge as a horizontal row** when the seated-player count is 3 or 4, and along the **left edge as a vertical column** when the count is 5 or more. The active player's own zone always occupies the bottom-prominent region.
+
+**Rationale.**
+- 3-handed and 4-handed matches fit 2-3 opponent panels horizontally without crowding the Mastermind/Scheme row.
+- 5-handed matches (4 opponents) cannot render top-edge without the panels squeezing below readable density at 1280px width; left-edge column gives each opponent more vertical real-estate.
+- Mobile portrait collapses both into a sticky-collapsible band — the desktop orientation only matters at landscape viewports.
+
+**Rejected alternatives:**
+- Always top-edge — fails at 5+ players; breaks density at narrower desktop widths.
+- Always left-edge — wastes horizontal real-estate at 3-4 players where Mastermind/Scheme already monopolize the top row.
+
+**Status:** Active.
+
+**Citation:** `DESIGN-BOARD-LAYOUT.md §7.2 #2`; WP-129 §D D-12902; EC-132 §0 nine-decision lock.
+
+---
+
+### D-12903 — HQ Slot Count: 5 for MVP, Graceful Extension to 6 for Set-Specific Variants (WP-129)
+
+**Type:** UI Layout Lock
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** `<HQRow>` renders **5 hero slots** for MVP per WP-015's locked HQ size, plus the Hero Deck cell as column 6 (total: 6 cells). When a future scenario uses 6 hero slots, `<HQRow>` extends to **6 hero slots + Hero Deck = 7 cells** by gracefully widening rather than re-flowing. The §7.4 column-order lock (`Hero1 | Hero2 | Hero3 | Hero4 | Hero5 | Hero Deck`) is the MVP shape.
+
+**Rationale.**
+- WP-015 locks 5 hero slots for MVP; `UIHQState.slots` is a 5-entry array today.
+- Some Marvel Legendary set variants use 6 hero slots; the renderer should not break when `hq.slots.length === 6`.
+- Choosing "graceful extend" over "rewrite for 6 + scale 5 down" preserves the MVP-locked column-order lock and avoids a follow-up board-layout WP just to switch counts.
+
+**Rejected alternatives:**
+- Lock 6-slot for forward-compatibility now — premature abstraction; the engine projection ships 5 today and the test fixture becomes brittle.
+- Render 5-slot stretched + Hero Deck (no count switch) — fails when set-specific scenarios load with 6 slots.
+
+**Status:** Active.
+
+**Citation:** `DESIGN-BOARD-LAYOUT.md §7.2 #3`; WP-129 §D D-12903; EC-132 §0 nine-decision lock.
+
+---
+
+### D-12904 — In-Play Card Persistence: Persist Through Cleanup, Animate to Discard on End Turn (WP-129)
+
+**Type:** UI Behavior Lock
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** When a card is played, it persists in the in-play row through `play.main` and `play.cleanup` stages until the player fires `endTurn`. The engine's `endTurn` move (per WP-008B) atomically moves all in-play + remaining hand cards to the discard pile; the UI reflects this by showing the cards moving to the discard zone on the same render-frame as the `endTurn` resolves. Per `DESIGN-BOARD-LAYOUT.md §8.1` no transitions / animations are introduced in WP-129 — the visual move is an instantaneous re-render.
+
+**Rationale.**
+- Engine semantics: in-play cards exist as a distinct `playerZones[i].inPlay` zone until `endTurn` resolves; the engine moves them on cleanup, not mid-turn.
+- WP-129 explicitly excludes animations per `§8.1` out-of-scope list; persistence-through-cleanup with an instantaneous re-render is the deterministic, animation-free shape.
+- Mid-turn migration would require introducing a UI-side animation queue or a per-card state machine — both out of scope.
+
+**Rejected alternatives:**
+- Mid-turn migration to discard immediately on play — diverges from engine semantics; the in-play zone exists to track this turn's plays for cost-effect resolution.
+- Animated transition to discard on End Turn — out of scope per `§8.1`; deferred to a future polish WP.
+
+**Status:** Active.
+
+**Citation:** `DESIGN-BOARD-LAYOUT.md §7.2 #4`; WP-129 §D D-12904; WP-008B `endTurn` move semantics; `§8.1` animation out-of-scope.
+
+---
+
+### D-12905 — Card-Back Representation: Number-with-Deck-Icon, Theme-Overridable per WP-130 (WP-129)
+
+**Type:** UI Visual Lock
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** Face-down cards (Mastermind tactics deck, Hero deck, Villain deck, Wounds, Horrors, Bystanders, Officers, Sidekicks, Your deck) render as a **number-with-deck-icon** at MVP — i.e., the deck count `[N]` overlayed on a generic deck-stack icon, no per-deck themed art. The future re-skin selector (WP-130) may override this with per-skin face-down art; D-12905 only locks the MVP fallback.
+
+**Rationale.**
+- Number-with-icon avoids the asset-pipeline scope of generating per-deck face-down art (5 shared decks × N skins).
+- The representation is unambiguous (count is always visible) and accessible (the icon is a stable visual anchor, the count is a stable text anchor).
+- Themed art is a WP-130 concern; locking it here would couple WP-129 to the asset pipeline.
+
+**Rejected alternatives:**
+- Generic card-back art (no count overlay) — hides the deck count, which is the only information players need from a face-down deck.
+- Per-deck themed art at MVP — couples to WP-130's asset pipeline; explodes scope.
+
+**Status:** Active.
+
+**Citation:** `DESIGN-BOARD-LAYOUT.md §7.2 #5`; WP-129 §D D-12905; D-12907 (WP-130 deferred re-skin).
+
+---
+
+### D-12906 — Scenario-Specific Composition Counters: Derive from Card Effects in Loaded Scenario, Future Metadata File If Discovery Fails (WP-129)
+
+**Type:** UI Data-Discovery Lock
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** Scenario-specific victory-pile composition counters (e.g., "S.H.I.E.L.D. Level", "HYDRA Level", "Smashes", "Bindings") are derived at render time from the card effects active in the loaded scenario, via the `useVictoryPileComposition` composable. If the discovery mechanism cannot identify the relevant counters from card-effect data alone (e.g., scenario uses a counter named in the rules text but not surfaced through `UICardDisplay`), a future `data/metadata/scenario-counters.json` file lists the counters per scenario as a fallback. The MVP shape: derive from card effects; the metadata file is a deferred fallback path with no implementation in WP-129.
+
+**Rationale.**
+- Card effects are the authoritative source of which counters matter — the same data drives the counter's effect resolution and its readout.
+- Hand-curating a metadata file at MVP couples WP-129 to per-scenario authorship that has not been done yet.
+- The `useVictoryPileComposition` composable can ship a "last 3 most-frequently-referenced counter names" heuristic for MVP and graduate to the metadata file when discovery proves insufficient.
+
+**Rejected alternatives:**
+- `data/metadata/scenario-counters.json` upfront — premature; couples to per-scenario authorship.
+- Hardcode the universal counters (Bystanders / Villains / Henchmen / Mastermind / Wounds) only and skip scenario-specific — fails the §3 wireframe's S.H.I.E.L.D. + HYDRA Level illustrative columns.
+
+**Status:** Active.
+
+**Citation:** `DESIGN-BOARD-LAYOUT.md §7.2 #6`; WP-129 §D D-12906; `useVictoryPileComposition` composable.
+
+---
+
+### D-12907 — Re-Skin / Playmat Selector: Deferred to WP-130; HUD-Bar Slot Reserved (WP-129)
+
+**Type:** UI Slot Reservation
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** The re-skin / playmat selector is **deferred to WP-130**. WP-129 reserves the HUD-bar slot only — `<TopHudBar>` exposes a slot named `skin-selector` with a placeholder display and no interactive behavior. The `🎨 Skin: <name> ▼` affordance is NOT implemented in WP-129. Scope of a skin (board art, color theme, card-frame style, audio), discovery mechanism (bundled vs R2 vs operator-uploaded), default skin, persistence, and empty-state fallback are all WP-130's locks — not WP-129's.
+
+**Rationale.**
+- The skin selector requires its own DECISIONS lock per `§7.2 #7` (a-e) — five sub-decisions, each non-trivial.
+- WP-129's scope is the layout itself; building the selector inline would expand scope by one full WP's worth of work.
+- Reserving the slot lets WP-130 swap in the implementation without modifying `<TopHudBar>`'s shape.
+
+**Rejected alternatives:**
+- Implement inline at MVP — scope explosion; WP-130 has its own session.
+- Omit the slot entirely — forces WP-130 to refactor `<TopHudBar>` instead of consuming the reserved slot.
+
+**Status:** Active.
+
+**Citation:** `DESIGN-BOARD-LAYOUT.md §7.2 #7`; WP-129 §D D-12907; **WP-130** as the deferred implementation packet.
+
+---
+
+### D-12908 — Pre-Plan UI Integration Affordance: Deferred per WP-059; Bottom-Edge Slot Reserved (WP-129)
+
+**Type:** UI Slot Reservation
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** The pre-plan UI integration affordance is **deferred per WP-059** (currently in design at `wp-059-spec-bundle-v2`). WP-129 reserves the bottom-edge slot only — `<PlayDesktop>` and `<PlayMobile>` expose a slot named `preplan-affordance` with a placeholder reservation and no interactive behavior. The integration shape (modal overlay, side drawer, inline replacement of the turn-actions bar) is WP-059's lock — not WP-129's.
+
+**Rationale.**
+- Pre-plan integration requires WP-059's full `@legendary-arena/preplan` runtime per D-5901 — that's a separate runtime contract from WP-129's pure-UIState consumption.
+- WP-129's scope is the layout; integrating pre-plan inline would couple WP-129 to WP-059's runtime contract.
+- Reserving the slot lets WP-059's executor swap in the implementation without modifying the page-level SFCs' shape.
+
+**Rejected alternatives:**
+- Implement inline at MVP — scope explosion; couples to WP-059's runtime.
+- Omit the slot entirely — forces WP-059 to refactor `<PlayDesktop>` / `<PlayMobile>` instead of consuming the reserved slot.
+
+**Status:** Active.
+
+**Citation:** `DESIGN-BOARD-LAYOUT.md §7.2 #8`; WP-129 §D D-12908; **WP-059** as the deferred implementation packet; D-5901 (preplan runtime carve-out).
+
+---
+
+### D-12909 — Desktop/Mobile Viewport Breakpoint: 767px Mobile Cutoff Inclusive (WP-129)
+
+**Type:** UI Responsive Layout Lock
+**Packet:** WP-129 / EC-132
+**Date:** 2026-05-04
+
+**Decision:** The desktop/mobile viewport breakpoint for `<PlayViewport>` is locked at `@media (max-width: 767px)` resolves to `<PlayMobile>`; `min-width: 768px` resolves to `<PlayDesktop>`. The constant `BREAKPOINT_MOBILE_MAX_PX = 767` is exported from `apps/arena-client/src/composables/useViewport.ts`. The `// why:` comment citing D-12909 lives on the constant declaration site (NOT on the watcher logic) per copilot RISK 25 single-responsibility lock.
+
+**Rationale.**
+- 767/768 aligns with iPad Mini portrait cutoff (768px) and the existing Tailwind/CSS breakpoint convention.
+- Mobile cutoff is **inclusive** of 767px (i.e., a 767px-wide viewport is mobile, a 768px-wide viewport is desktop) — the inequality `<= 767` reads naturally and matches CSS `(max-width: 767px)`.
+- Locking before the first production component file is written prevents bikeshedding mid-execution.
+
+**Rejected alternatives:**
+- 640px cutoff — too narrow; routes mid-size phones (375-640px) to mobile but routes the 6-7" phablet/tablet boundary (640-768px) to desktop, creating a layout gap.
+- 820px cutoff — collides with iPad landscape (1024×768 → 1024 in landscape, but 820 in odd cases); routes landscape tablets to mobile, breaking the assumption that landscape devices want desktop.
+
+**Locked values:**
+- `BREAKPOINT_MOBILE_MAX_PX = 767` (constant declaration in `useViewport.ts`).
+- CSS breakpoint: `@media (max-width: 767px)` resolves to mobile; `@media (min-width: 768px)` resolves to desktop.
+- `// why:` comment citation site: the constant declaration (per copilot RISK 25); NOT the watcher logic.
+
+**Status:** Active.
+
+**Citation:** WP-129 §Acceptance Criteria sub-decision promoted to D-12909; EC-132 §2 `useViewport` single-responsibility lock; copilot RISK 25 2026-05-04.
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
