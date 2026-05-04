@@ -23,7 +23,7 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
   test('Reveal click emits revealVillainCard with empty payload at play.start', () => {
     const { calls, submitMove } = recorder();
     const wrapper = mount(TurnActionBar, {
-      props: { currentStage: 'start', submitMove },
+      props: { currentStage: 'start', handCount: 0, submitMove },
     });
     void wrapper.find('[data-testid="play-action-reveal"]').trigger('click');
     assert.equal(calls.length, 1);
@@ -34,7 +34,7 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
   test('Reveal is enabled only in start with stage tooltip otherwise', () => {
     const { submitMove } = recorder();
     const startWrapper = mount(TurnActionBar, {
-      props: { currentStage: 'start', submitMove },
+      props: { currentStage: 'start', handCount: 0, submitMove },
     });
     assert.equal(
       startWrapper.find('[data-testid="play-action-reveal"]').attributes('disabled'),
@@ -43,7 +43,7 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
 
     for (const stage of ['main', 'cleanup'] as const) {
       const wrapper = mount(TurnActionBar, {
-        props: { currentStage: stage, submitMove },
+        props: { currentStage: stage, handCount: 0, submitMove },
       });
       const reveal = wrapper.find('[data-testid="play-action-reveal"]');
       assert.equal(reveal.attributes('disabled'), '');
@@ -54,7 +54,7 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
   test('Pass-priority click emits advanceStage per D-10011 (canonical, not no-op)', () => {
     const { calls, submitMove } = recorder();
     const wrapper = mount(TurnActionBar, {
-      props: { currentStage: 'main', submitMove },
+      props: { currentStage: 'main', handCount: 0, submitMove },
     });
     void wrapper.find('[data-testid="play-action-pass-priority"]').trigger('click');
     assert.equal(calls.length, 1);
@@ -66,7 +66,7 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
     const { submitMove } = recorder();
     for (const stage of ['start', 'main', 'cleanup'] as const) {
       const wrapper = mount(TurnActionBar, {
-        props: { currentStage: stage, submitMove },
+        props: { currentStage: stage, handCount: 0, submitMove },
       });
       assert.equal(
         wrapper.find('[data-testid="play-action-pass-priority"]').attributes('disabled'),
@@ -79,7 +79,7 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
   test('End Turn click emits endTurn with empty payload at play.cleanup', () => {
     const { calls, submitMove } = recorder();
     const wrapper = mount(TurnActionBar, {
-      props: { currentStage: 'cleanup', submitMove },
+      props: { currentStage: 'cleanup', handCount: 0, submitMove },
     });
     void wrapper.find('[data-testid="play-action-end-turn"]').trigger('click');
     assert.equal(calls.length, 1);
@@ -91,7 +91,7 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
     const { submitMove } = recorder();
     for (const stage of ['start', 'main'] as const) {
       const wrapper = mount(TurnActionBar, {
-        props: { currentStage: stage, submitMove },
+        props: { currentStage: stage, handCount: 0, submitMove },
       });
       const endTurn = wrapper.find('[data-testid="play-action-end-turn"]');
       assert.equal(endTurn.attributes('disabled'), '');
@@ -99,7 +99,7 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
     }
 
     const cleanupWrapper = mount(TurnActionBar, {
-      props: { currentStage: 'cleanup', submitMove },
+      props: { currentStage: 'cleanup', handCount: 0, submitMove },
     });
     assert.equal(
       cleanupWrapper.find('[data-testid="play-action-end-turn"]').attributes('disabled'),
@@ -107,10 +107,51 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100)', () => {
     );
   });
 
+  test('Draw click emits drawCards with count = max(0, 6 - handCount) at play.start', () => {
+    const { calls, submitMove } = recorder();
+    const wrapper = mount(TurnActionBar, {
+      props: { currentStage: 'start', handCount: 0, submitMove },
+    });
+    void wrapper.find('[data-testid="play-action-draw"]').trigger('click');
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0]!.name, 'drawCards');
+    assert.deepEqual(calls[0]!.args, { count: 6 });
+  });
+
+  test('Draw caps count to fill exactly to 6 cards (D-10013 idempotency)', () => {
+    const { calls, submitMove } = recorder();
+    const wrapper = mount(TurnActionBar, {
+      props: { currentStage: 'main', handCount: 4, submitMove },
+    });
+    void wrapper.find('[data-testid="play-action-draw"]').trigger('click');
+    assert.equal(calls.length, 1);
+    assert.deepEqual(calls[0]!.args, { count: 2 });
+  });
+
+  test('Draw is disabled with full-sentence tooltip when hand is already at 6 cards', () => {
+    const { submitMove } = recorder();
+    const wrapper = mount(TurnActionBar, {
+      props: { currentStage: 'main', handCount: 6, submitMove },
+    });
+    const draw = wrapper.find('[data-testid="play-action-draw"]');
+    assert.equal(draw.attributes('disabled'), '');
+    assert.match(draw.attributes('title')!, /Hand already at 6 cards/);
+  });
+
+  test('Draw is disabled at play.cleanup with stage-gating tooltip', () => {
+    const { submitMove } = recorder();
+    const wrapper = mount(TurnActionBar, {
+      props: { currentStage: 'cleanup', handCount: 0, submitMove },
+    });
+    const draw = wrapper.find('[data-testid="play-action-draw"]');
+    assert.equal(draw.attributes('disabled'), '');
+    assert.match(draw.attributes('title')!, /Only available during the Start.*or Main step/);
+  });
+
   test('renders 3 steps with the active step flagged', () => {
     const { submitMove } = recorder();
     const wrapper = mount(TurnActionBar, {
-      props: { currentStage: 'main', submitMove },
+      props: { currentStage: 'main', handCount: 0, submitMove },
     });
     const root = wrapper.find('[data-testid="play-turn-action-bar"]');
     assert.equal(root.attributes('data-active-step'), '2');

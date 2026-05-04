@@ -193,6 +193,7 @@ export default defineComponent({
       >
         <TurnActionBar
           :current-stage="snapshot.game.currentStage"
+          :hand-count="viewer.handCount"
           :submit-move="submitMove"
         />
         <!-- why: D-12908 — pre-plan affordance slot reserved for WP-059
