@@ -235,7 +235,7 @@ merge semantics from D-11804):**
   - `Method` / `Path`: `(n/a)` / `(n/a — function createHankoSessionVerifier)` matching the WP-112 / WP-101 / WP-103 precedent rows in the same section.
   - `Auth`: `(n/a — caller-injected dependencies)` matching the precedent for caller-injected `DatabaseClient` rows.
   - `Request Schema (file ref)`: factory-config arg (`HankoVerifierConfig`) linked to `[apps/server/src/auth/hanko/hankoVerifier.logic.ts:N]` (line number filled in at execution time).
-  - `Response Schema (file ref)`: returns `SessionVerifier` (the WP-112 interface). `verify(token)` returns `Result<VerifiedSessionClaim, SessionVerificationErrorCode>` per WP-112's lock.
+  - `Response Schema (file ref)`: returns `SessionVerifier` (the WP-112 interface). `verify(token)` returns `Promise<Result<VerifiedSessionClaim>>` per WP-112's shipped contract; the failure-payload `code` field carries a `SessionVerificationErrorCode` value (the orchestrator translates it to `SessionValidationErrorCode` at the single mapping site in `sessionToken.logic.ts:191`, mirroring the `as SessionVerificationErrorCode` cast already shipped there).
   - `Authorizing WP`: `WP-126`.
   - `Notes`: cite WP-099 §B as the policy contract; cite F-1..F-7 disposition (PASS by construction); note that production wiring (`configureSessionValidation({ verifier: createHankoSessionVerifier(config), ... })`) is deferred to a future request-handler WP; note any draft-time `[DECISION REQUIRED]` items locked at execution.
 
@@ -341,10 +341,13 @@ which environment variables hydrate it?
 **Recommended default (executor may override):**
 
 ```typescript
+type JwksFetcher = (url: string) => Promise<Response>;
+
 interface HankoVerifierConfig {
   readonly tenantBaseUrl: string;            // e.g. https://passkeys.hanko.io/<tenant_id>
   readonly expectedAudience: string;         // JWT 'aud' claim
-  readonly jwksRefreshIntervalMs?: number;   // default per D-12603
+  readonly jwksRefreshIntervalMs?: number;   // default per D-12603 if undefined
+  readonly fetcher?: JwksFetcher;            // test-injection seam; defaults to global fetch
 }
 ```
 
@@ -354,6 +357,20 @@ so the tenant ID is part of the base URL, not a separate config
 field. The verifier appends `/.well-known/jwks.json` programmatically
 to whatever base URL the operator configures (Hanko Cloud or
 self-hosted).
+
+`fetcher` is an optional caller-injected hook that the factory
+forwards verbatim into `createJwksCache`. Production wiring leaves
+it `undefined` (the cache uses Node v22's global `fetch`); logic-pure
+tests pass a fake `(url) => Promise<Response>` that returns stubbed
+JWKS payloads. This mirrors the WP-112 caller-injected provider
+pattern (verifier + accountResolver + database), extended to the
+broker-side network seam, and obviates global `fetch` stubbing.
+
+`jwksRefreshIntervalMs` is optional. If `undefined` at factory time,
+the factory applies the D-12603 default (5 minutes / 300_000 ms);
+the substitution happens at exactly one site (the factory body) and
+is documented with a `// why:` comment. The cache config seen by
+`createJwksCache` always carries a concrete number, never `undefined`.
 
 Env vars (locked at execution): `HANKO_TENANT_BASE_URL`,
 `HANKO_EXPECTED_AUDIENCE`, `HANKO_JWKS_REFRESH_INTERVAL_MS` (optional;
@@ -396,6 +413,15 @@ the default refresh interval?
   the one-shot retry also fails.
 - The refresh interval MUST be observable in production logs (one
   log line per successful refresh, one per failed refresh).
+- `getKey(kid)` MUST NOT return a reference to the cache's internal
+  `JsonWebKey` object. Either (a) every cache entry is frozen via
+  `Object.freeze` at insertion time, or (b) `getKey` returns a
+  defensive shallow copy. Aliasing risk per copilot-check Issue #17
+  ("Hidden Mutation via Aliasing"): a verifier that mutated the
+  returned key — even accidentally, e.g. by tagging it with metadata —
+  would corrupt the cache for future calls. Tests assert non-aliasing
+  by mutating the returned key and verifying that a subsequent
+  `getKey(kid)` for the same `kid` still returns the original shape.
 
 **Recommended default (executor may override):** Refresh interval
 **5 minutes** (300_000 ms). Rationale: industry-standard JWKS cache
@@ -532,6 +558,7 @@ Before writing a single line:
 - **No new top-level JWT library.** Per F-5 + D-12601: any `jsonwebtoken` / `jose` / `jwks-rsa` is a Hanko transitive only, never a direct `dependencies` add.
 - **No real secrets in the repo.** `render.yaml` and `.env.example` declare placeholder env-var values. The Hanko tenant base URL declared in `.env.example` MUST use a placeholder pattern matching Hanko Cloud's documented `/{tenant_id}/.well-known/jwks.json` endpoint shape (e.g., `https://passkeys.hanko.io/YOUR_TENANT_ID`) — never a real tenant ID.
 - **Result-typed at runtime; verifier never throws.** The `verify()` closure and all per-request paths never throw and always return `Result`. The factory `createHankoSessionVerifier(config)` MAY throw **only** for invalid or missing startup configuration (validated once at construction time per D-12602); same posture for `createJwksCache(config)`. Caller-error at runtime never throws. Per WP-052 D-5201 precedent.
+- **`Result<T>` is single-parameter.** The shipped contract at `apps/server/src/identity/identity.types.ts:139` is `type Result<T> = { ok: true; value: T } | { ok: false; reason: string; code: IdentityErrorCode }` — single type parameter, with `IdentityErrorCode` hard-wired on the failure branch. WP-112 already uses this `Result<T>` for the verifier's return shape and emits `code` values outside `IdentityErrorCode` (`'invalid_token'`, `'expired_token'`, `'unknown_provider'`, `'verification_failed'`); the orchestrator translates them at the single `as SessionVerificationErrorCode` cast site at `sessionToken.logic.ts:191–193`. WP-126 conforms verbatim to this pattern: the verifier returns `Promise<Result<VerifiedSessionClaim>>` (single param) and emits `SessionVerificationErrorCode` values via the `code` field. WP-126 MUST NOT introduce a second `Result<T, E>` type; MUST NOT amend `identity.types.ts`; MUST NOT alter the orchestrator's translation site. Widening `Result<T>` to `Result<T, E = IdentityErrorCode>` is a separate WP-052 contract change, out of WP-126 scope.
 - **Per-instance state, no module-level singletons.** The JWKS cache lives inside the closure returned by `createHankoSessionVerifier`. Two factory calls produce two independent caches.
 - **Logic-pure tests.** All tests use `node:test` + `node:assert`. No live Hanko tenant, no real network. Fake JWKS endpoints and signed fixture tokens injected at construction time. Tests run without `TEST_DATABASE_URL` and without network access.
 - **No registry-viewer or arena-client modifications.** WP-126 is server-only.
@@ -603,9 +630,10 @@ Locked exports:
 
 Locked exports:
 
-- `createJwksCache(config: { tenantBaseUrl: string; refreshIntervalMs: number }): JwksCache` — the cache factory. Returns a per-instance cache with: (a) `getKey(kid: string): Promise<Result<JsonWebKey>>` — returns the cached key for `kid`, or triggers a one-shot refresh-and-retry on miss; (b) internal `refresh()` method (not exported) that fetches `${tenantBaseUrl}/.well-known/jwks.json` via Node 22 built-in `fetch`, validates the response shape, and updates the cache atomically.
-- `JwksCache` interface — exposes only `getKey`. The interval-tick refresh and the one-shot retry are implementation details.
-- Errors are `Result<JsonWebKey, 'cache_miss' | 'refresh_failed'>`. The verifier translates these into `SessionVerificationErrorCode` values at the call site in `hankoVerifier.logic.ts`.
+- `createJwksCache(config: JwksCacheConfig): JwksCache` — the cache factory. `JwksCacheConfig` shape (locked): `{ tenantBaseUrl: string; refreshIntervalMs: number; fetcher?: JwksFetcher }`. Returns a per-instance cache with: (a) `getKey(kid: string): Promise<Result<JsonWebKey>>` — returns the cached key for `kid`, or triggers a one-shot refresh-and-retry on miss; (b) internal `refresh()` method (not exported) that fetches `${tenantBaseUrl}/.well-known/jwks.json`, validates the response shape, and updates the cache atomically.
+- `JwksFetcher` type — `(url: string) => Promise<Response>`. Optional config field, intentionally typed to match the global `fetch` signature so production wiring passes `fetch` directly. **Test-injection seam:** logic-pure tests pass a fake fetcher that returns a stubbed `Response` carrying signed-fixture JWKS payloads — no global `fetch` stubbing, no `undici` mocking, no real network. If `config.fetcher` is `undefined`, the cache uses the Node v22 global `fetch` directly. This mirrors WP-112's caller-injected provider pattern (verifier + accountResolver + database), extended to the broker-side network seam.
+- `JwksCache` interface — exposes only `getKey`. The interval-tick refresh, the one-shot retry, and the in-flight single-flight deduplication are implementation details.
+- Errors use the shipped single-parameter `Result<T>`: `Result.fail({ code: 'cache_miss' | 'refresh_failed', reason: <full sentence> })`. The cache's `code` values (`'cache_miss'`, `'refresh_failed'`) are local to this file; the verifier translates them into `SessionVerificationErrorCode` values at the call site in `hankoVerifier.logic.ts`. The cache MUST NOT emit codes from any other union directly.
 
 ### E) `apps/server/src/auth/hanko/jwksCache.logic.test.ts` — new
 
@@ -617,6 +645,7 @@ Locked exports:
 - Refresh failure preserves the existing cache: failed refresh + subsequent `getKey('kid-1')` (which IS in the existing cache) returns `Result.ok(key)`.
 - Two cache instances are independent (per-instance state lock).
 - `refresh()` is rate-limited to one in-flight request at a time (concurrent `getKey` calls during a refresh deduplicate).
+- Aliasing defense: mutating a key returned by `getKey(kid)` does not corrupt the cache; a subsequent `getKey(kid)` for the same `kid` returns the unmodified original shape (per the D-12603 freeze-or-copy lock).
 
 ### F) `apps/server/package.json` — modified or unchanged (depends on D-12601 lock)
 
@@ -749,6 +778,8 @@ All items must be binary pass/fail. No partial credit.
 - [ ] `getKey(kid)` triggers a one-shot refresh-and-retry on cache miss before returning `Result.fail({ code: 'refresh_failed' })`.
 - [ ] A failed refresh preserves the existing cache (a subsequent `getKey` call for a key still in the cache returns `Result.ok`).
 - [ ] Concurrent `getKey` calls during an in-flight refresh deduplicate to a single network request.
+- [ ] `getKey(kid)` does not alias the cache's internal `JsonWebKey` — either every cache entry is frozen via `Object.freeze` at insertion time, or `getKey` returns a defensive shallow copy. Verified by a test that mutates a returned key and confirms the next `getKey(kid)` still returns the original shape.
+- [ ] `createJwksCache(config)` honors the optional `config.fetcher` injection seam — passing a fake `(url) => Promise<Response>` lets tests run with no real network access; absence of `config.fetcher` falls back to Node v22 global `fetch`. `createHankoSessionVerifier(config)` forwards `config.fetcher` to the inner cache verbatim.
 
 ### F-1..F-7 Future-Auth Gate
 - [ ] **F-1:** Zero file in scope contains the literal `'hanko'` or `"hanko"` as an `auth_provider` enum value, fixture, seed, or quoted string (verified by grep at §Verification Steps Step 4).
@@ -936,3 +967,202 @@ execution by re-running the §1–§21 walkthrough against any
 intervening governance changes (none expected — WP-099 / WP-112 /
 WP-052 are locked; the four `[DECISION REQUIRED]` items are
 executor-time concerns).
+
+---
+
+## Pre-Flight & Copilot Check Review Log
+
+> Applied 2026-05-03 against
+> `docs/ai/REFERENCE/01.4-pre-flight-invocation.md` and
+> `docs/ai/REFERENCE/01.7-copilot-check.md`. This block captures
+> the verdict in the WP body so future readers do not need to
+> reconstruct it from the gitignored pre-flight scratchpad
+> (`docs/ai/invocations/preflight-wp126.md`, scratchpad-by-default
+> per `.claude/rules/work-packets.md`).
+
+### 01.4 Pre-Flight (Infrastructure & Verification class)
+
+WP-126 is classed **Infrastructure & Verification** — server-layer
+auth broker integration, no `G` mutation, no boardgame.io move
+addition, no phase hook. Mandatory sections per `01.4`: Dependency
+Check, Input Data Traceability, Structural Readiness, Scope Lock,
+Test Expectations, Risk Review, Runtime Readiness Check, Dependency
+Contract Verification, Maintainability & Upgrade Readiness.
+
+- **Authority chain (must read):** `.claude/CLAUDE.md`,
+  `docs/ai/ARCHITECTURE.md`, `docs/01-VISION.md`,
+  `docs/03.1-DATA-SOURCES.md`,
+  `docs/ai/REFERENCE/02-CODE-CATEGORIES.md`, `EC-130`, `WP-126`.
+  All confirmed present and consulted.
+- **Vision sanity check:** §3 / §11 / §14 / §15 + NG-1 / NG-3 /
+  NG-6 cited in §Vision Alignment with explicit no-conflict
+  assertion. Determinism N/A (no engine/replay surface). NG
+  proximity confirmed clear. PASS.
+- **Dependency & sequencing:** WP-099 complete (D-9901..D-9905
+  present in `DECISIONS.md`); WP-112 complete and shipped at
+  `apps/server/src/auth/sessionToken.{types,logic}.ts` +
+  `accountLookup.logic.ts`; WP-052 complete (`AuthProvider` =
+  `'email' | 'google' | 'discord'` at
+  `apps/server/src/identity/identity.types.ts:149–153`). PASS.
+- **Dependency contract verification:**
+  - `SessionVerifier` interface verified verbatim at
+    `apps/server/src/auth/sessionToken.types.ts:153–155`:
+    `verify(token: string): Promise<Result<VerifiedSessionClaim>>`
+    (single-parameter `Result<T>`, NOT two-parameter
+    `Result<T, E>`).
+  - `Result<T>` verified at
+    `apps/server/src/identity/identity.types.ts:139–141`: single
+    type parameter; failure branch carries `code: IdentityErrorCode`
+    hard-wired. WP-112's orchestrator already emits `code` values
+    outside `IdentityErrorCode` and casts at the single mapping
+    site at `sessionToken.logic.ts:191–193` (`as
+    SessionVerificationErrorCode`); WP-126 conforms verbatim to
+    this pattern.
+  - `apps/server` has no `tsc --noEmit` step in the workflow
+    (verified by `apps/server/package.json` carrying only
+    `"start"` and `"test"` scripts; `tsx` is the runtime
+    transpiler). Structural narrowing mismatches between the
+    shipped `Result<T>` and emitted `code` values do not surface
+    at build time. WP-126 inherits this posture; widening
+    `Result<T>` to `Result<T, E = IdentityErrorCode>` is a
+    separate WP-052 contract change, out of WP-126 scope.
+  - `VerifiedSessionClaim` shape verified at lines 137–141 of
+    `sessionToken.types.ts` (`authProvider`, `authProviderSub`,
+    `expiresAt` all `readonly`).
+  - `SessionVerificationErrorCode` closed union verified at
+    lines 53–57: `'invalid_token' | 'expired_token' |
+    'unknown_provider' | 'verification_failed'`.
+- **Wiring-Site Infrastructure Singletons check:** N/A — WP-126
+  ships the verifier as a library function with no production
+  caller (mirrors WP-053 / WP-054 / WP-102 D-10202 fail-closed-
+  unwired precedent). No `apps/server/src/server.mjs`
+  modification in scope.
+- **Input data traceability:** Hanko's JWKS endpoint is an
+  external network input. `docs/03.1-DATA-SOURCES.md` does not
+  currently list external auth-broker endpoints (it covers card
+  data, replay storage, and PostgreSQL rules). PS-N item: at
+  execution, the executor evaluates whether to add an entry per
+  the WP-097 / WP-098 governance-doc-update precedent. Not
+  blocking; the verifier's inputs are operational, not gameplay-
+  authoritative.
+- **Structural readiness:** all prior WPs build green per
+  `pnpm -r build` smoke at draft time (engine + registry-viewer
+  + arena-client all complete; server has no build script per
+  the inheritance noted above). PASS.
+- **Code category boundary:** `apps/server/` is classified
+  `server` per `02-CODE-CATEGORIES.md`; `apps/server/src/auth/hanko/`
+  inherits the `server` classification. Optional D-12605 entry
+  is acceptable per WP-099 §B + the D-5202 / D-10201 / D-10301
+  precedent (executor's call at execution time).
+- **Scope lock:** five new `apps/server/src/auth/hanko/` files +
+  one modified `apps/server/package.json` (or unchanged under
+  D-12601 built-ins-only path) + `render.yaml` + `.env.example` +
+  `docs/ai/REFERENCE/api-endpoints.md`. Eight or nine production /
+  reference files + four governance ledgers = 12 or 13 at session
+  close. PASS.
+- **Test expectations:** logic-pure `node:test` cases (12–18 for
+  `hankoVerifier.logic.test.ts`; 6–10 for `jwksCache.logic.test.ts`).
+  Server test baseline `pass 82 / fail 0 / skipped 42` (locked
+  at WP-104 close 2026-05-02) is the prior baseline; new cases
+  add to this. Engine baseline `pass 604 / fail 0` UNCHANGED. PASS.
+- **Mutation boundary:** N/A — no `G` mutation.
+- **Risks resolved during pre-flight (PS-#):**
+  - **PS-1 (RESOLVED 2026-05-03):** WP-126 spec text in multiple
+    places used two-parameter `Result<T, E>` syntax inconsistent
+    with the shipped single-parameter `Result<T>` at
+    `identity.types.ts:139`. Catalog row response-schema
+    reference at WP-126 §API Catalog Update §Required catalog
+    update was updated to `Promise<Result<VerifiedSessionClaim>>`
+    with the failure-payload `code` discriminant pattern. A new
+    Non-Negotiable Constraint locks the single-parameter posture
+    and the orchestrator's `as SessionVerificationErrorCode` cast
+    site so the executor does not re-derive (cites
+    `sessionToken.logic.ts:191–193`).
+  - **PS-2 (RESOLVED 2026-05-03):** logic-pure tests had no JWKS
+    injection seam — would have required global `fetch`
+    stubbing or `undici` mocking to run without real network.
+    `JwksCacheConfig` extended with optional `fetcher?:
+    JwksFetcher` field; `HankoVerifierConfig` extended likewise
+    and forwards it to the inner cache verbatim. Mirrors WP-112's
+    caller-injected provider pattern.
+  - **PS-3 (RESOLVED 2026-05-03):** `jwksRefreshIntervalMs?:
+    number` default-application at factory time was left
+    implicit. D-12602 recommended-default block now states
+    explicitly that the factory substitutes the D-12603 default
+    (5 minutes / 300_000 ms) at exactly one site when the field
+    is `undefined`; the cache config seen by `createJwksCache`
+    always carries a concrete number.
+  - **PS-4 (RESOLVED 2026-05-03):** per copilot-check Issue #17
+    ("Hidden Mutation via Aliasing"), `getKey(kid)` returning a
+    direct reference to the cache's internal `JsonWebKey` would
+    let a misbehaving verifier corrupt the cache. D-12603
+    constraints now require either `Object.freeze` at insertion
+    or a defensive shallow copy at return; a test case asserts
+    non-aliasing.
+- **Risks surfaced but not resolved (RS-#, executor-time):**
+  - **RS-1:** Hanko's `@teamhanko/*` SDK landscape unverified at
+    draft time. D-12601's built-ins-only recommended default
+    sidesteps this; if the executor locks the optional SDK path,
+    the WP body must record the chosen package + transitive JWT
+    libraries. Acceptable.
+  - **RS-2:** Hanko's actual session-JWT federation/IdP claim
+    shape unverified at draft time. D-12604 no-default lock
+    forces the executor to observe a real token (or cite Hanko
+    docs) before locking the lookup-table keys. Acceptable.
+  - **RS-3:** `apps/server` has no `tsc --noEmit` step in the
+    workflow. WP-126 inherits the structural posture; flagging
+    a follow-up Foundation-Phase WP to add server typechecking
+    is out of WP-126 scope. Acceptable.
+
+**Verdict: READY TO EXECUTE.** PS-1..PS-4 resolved during
+pre-flight in-place (scope-neutral spec / constraint
+clarifications, no allowlist or boundary change). RS-1 / RS-2 are
+documented executor-time concerns with locked recommended defaults
+or explicit no-default locks. RS-3 is an inherited posture, out of
+WP-126 scope.
+
+### 01.7 Copilot Check (30-issue lens)
+
+| # | Category | Verdict |
+|---|---|---|
+| 1, 9, 16, 29 | Boundary / Lifecycle | PASS — server-only WP; F-2 grep gates lock containment to `apps/server/src/auth/hanko/`; explicit "no HTTP route registration" + "no orchestrator modification" Out-of-Scope items |
+| 2, 8, 23 | Determinism | N/A — no engine / replay / RNG / scoring surface (locked at §Vision Alignment determinism line) |
+| 3, 17 | Mutation discipline | PASS — no `G` mutation; PS-4 added defensive-copy / freeze guidance to `JwksCache.getKey` after Issue #17 surfaced aliasing risk |
+| 4, 5, 6, 10, 21 | Type / contract integrity | PASS post-PS-1 — single-parameter `Result<T>` aligned with shipped contract; closed-union error codes; no `string`/`any`/`unknown` widening at boundaries; WP-052 `AuthProvider` enum byte-locked |
+| 7, 19, 24 | Persistence | PASS — JWKS cache is in-memory only; no `G` field added; `'hanko'` forbidden from `auth_provider` rows / fixtures / types (D-9902 / F-1) |
+| 11 | Test invariants | PASS — tests assert per-instance state, single-flight, graceful degradation, and non-aliasing as invariants (not just behavior) |
+| 12 | Scope creep | PASS — explicit allowlist with conditional `package.json` modification; `git diff --name-only` verification step; "anything not explicitly allowed is forbidden" framing |
+| 13 | Unclassified directories | PASS — `apps/server/src/auth/hanko/` inherits `server` classification per `02-CODE-CATEGORIES.md`; optional D-12605 lock per executor's call (mirrors D-5202 / D-10201 / D-10301 / D-11201 precedent) |
+| 14, 28 | Extension / upgrade story | PASS — replacement-safety locked structurally (F-2 + F-6); `SessionVerifier` interface admits any verifier; broker swap is a directory replacement |
+| 15 | Why for invariants | PASS — every constraint carries rationale; EC §4 enumerates required `// why:` sites; new D-12603 freeze-or-copy invariant carries a `// why:` requirement |
+| 18, 22 | Failure semantics | PASS — closed-union error codes; full-sentence `reason` per Rule 11; fail-closed default per D-11204; verifier-side `expiresAt` defense-in-depth + orchestrator-side canonical lock |
+| 20 | Authority chain | PASS — explicit hierarchy citation in §Context (Read First); WP-099 §A / §B / §C / D-9901..D-9905 / WP-112 D-11201..D-11204 cited verbatim |
+| 25 | Single responsibility | PASS — `createHankoSessionVerifier` orchestrates verification; `createJwksCache` owns key fetch + cache; mapping-table lookup is its own constant |
+| 26 | Implicit semantics | PASS — federation claim → `AuthProvider` mapping is locked under D-12604 (no-default; executor observes real token); JWKS endpoint convention locked |
+| 27 | Naming discipline | PASS — `apps/server/src/auth/hanko/` path locked; `'hanko'` literal forbidden as enum value; `createHankoSessionVerifier` mirrors `createPlayerAccount` precedent; canonical wire-level field names per WP-052 |
+| 30 | Pre-session governance | PASS — four PS items resolved in-place during pre-flight; three RS items documented as executor-time concerns; D-12601..D-12604 listed as required-at-execution; D-11201 status flip from `Active` → `Resolved` listed in DoD |
+
+**Disposition: CONFIRM.** No `RISK` or `BLOCK` findings outstanding
+post-PS-1..PS-4. Pre-flight `READY TO EXECUTE` verdict stands.
+Session prompt generation authorized when an executor is assigned.
+
+**Mandatory governance follow-ups at execution (per `01.7`
+Required Output Format):**
+
+- DECISIONS.md: D-12601, D-12602, D-12603, D-12604 written with
+  executor-locked choices + rejected alternatives + status
+  `Active`. D-11201 status flipped `Active` → `Resolved`. Optional
+  D-12605 (`apps/server/src/auth/hanko/` directory classification)
+  per executor's call.
+- 02-CODE-CATEGORIES.md: optional update only if D-12605 is
+  written (mirrors D-5202 / D-10201 / D-10301 / D-11201
+  precedent of in-DECISIONS.md classification rather than
+  direct registry update).
+- WORK_INDEX.md: WP-126 row checked off with date + EC-mode
+  commit hash; deferred-placeholder text replaced with
+  completion summary mirroring WP-104 / WP-112 row format.
+- EC_INDEX.md: EC-130 row flipped `Draft` → `Done {YYYY-MM-DD}`.
+- 03.1-DATA-SOURCES.md: optional addition documenting Hanko's
+  JWKS endpoint as an external operational input (executor's
+  call; not blocking per the pre-flight Input Data Traceability
+  N/A disposition above).
