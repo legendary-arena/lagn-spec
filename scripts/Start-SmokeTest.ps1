@@ -160,4 +160,26 @@ Write-Host "  Stop   : Ctrl+C in this window stops the server. Close the Vite wi
 Write-Host ""
 Write-Host "Starting boardgame.io server..." -ForegroundColor Cyan
 
-node --env-file=.env apps/server/src/index.mjs
+# why: --import points at tsx's loader.mjs entry because apps/server/src
+# has TypeScript files (database.ts + .logic.ts / .types.ts / .routes.ts
+# under auth/, leaderboards/, profile/, teams/) imported via the
+# canonical .js-extension ESM convention; without a TS loader Node
+# fails with ERR_MODULE_NOT_FOUND for db/database.js. The server's
+# pnpm test script uses the same `--import tsx` pattern; this mirrors
+# it for production startup. The render.yaml startCommand should adopt
+# a similar flag if the server is deployed without a separate TS build.
+#
+# why: cwd stays at repo root (no `pnpm exec` chdir) because the
+# server's loadRegistry() resolves `data/metadata` and `data/cards`
+# relative to process.cwd(); chdir to apps/server/ would yield
+# "0 sets, 0 heroes, 0 cards".
+#
+# why: absolute file:// URL to dist/loader.mjs — tsx is hoisted under
+# apps/server/node_modules per pnpm strict hoisting (bare `tsx`
+# specifier is not resolvable from the repo root), and ESM --import
+# rejects directory paths (the package directory isn't a valid entry).
+# Windows additionally requires file:// scheme; raw `C:\...` is rejected
+# as an unsupported ESM URL scheme.
+$tsxLoaderPath = (Join-Path $repoRoot 'apps/server/node_modules/tsx/dist/loader.mjs').Replace('\', '/')
+$tsxLoaderUrl = "file:///$tsxLoaderPath"
+node "--import=$tsxLoaderUrl" --env-file=.env apps/server/src/index.mjs

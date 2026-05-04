@@ -33,6 +33,11 @@
   "devDependencies": {
     "typescript": "^5.4.5"
   },
+  "pnpm": {
+    "overrides": {
+      "generator-function": "1.0.0"
+    }
+  },
   "engines": {
     "node": ">=22",
     "pnpm": ">=10"
