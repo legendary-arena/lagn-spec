@@ -212,3 +212,120 @@ describe('filterUIStateForAudience', () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-128 / EC-131 — audience-filter redaction matrix for new fields
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds a UIState with known in-play cards, victory cards, and
+ * discard-top entries for the WP-128 redaction matrix tests.
+ */
+function createWp128TestUIState(): UIState {
+  const config = createTestConfig();
+  const registry = createMockRegistry();
+  const setupContext = makeMockCtx();
+  const gameState = buildInitialGameState(config, registry, setupContext);
+
+  // why: populate per-player zones with known cards so filter behavior
+  // can be observed at the field level.
+  gameState.playerZones['0']!.inPlay.push('inplay-0-001', 'inplay-0-002');
+  gameState.playerZones['0']!.discard.push('discard-0-bottom', 'discard-0-top');
+  gameState.playerZones['0']!.victory.push('victory-0-001');
+
+  gameState.playerZones['1']!.inPlay.push('inplay-1-001');
+  gameState.playerZones['1']!.discard.push('discard-1-top');
+  gameState.playerZones['1']!.victory.push('victory-1-001', 'victory-1-002');
+
+  return buildUIState(gameState, mockCtx);
+}
+
+describe('filterUIStateForAudience — WP-128 redaction matrix', () => {
+  it('opponent audience: inPlayCards AND inPlayDisplay redacted (=== undefined)', () => {
+    // why: D-12803 — non-self audiences see counts only for in-play
+    // cards. Both fields omitted, mirroring handCards / handDisplay
+    // privacy posture. EC-131 §5 verifies redaction via `=== undefined`
+    // assertion.
+    const uiState = createWp128TestUIState();
+    const result = filterUIStateForAudience(uiState, PLAYER_1);
+
+    const player0 = result.players.find((p) => p.playerId === '0');
+    assert.ok(player0 !== undefined);
+    assert.equal(player0.inPlayCards, undefined, 'opponent inPlayCards must be undefined');
+    assert.equal(player0.inPlayDisplay, undefined, 'opponent inPlayDisplay must be undefined');
+    assert.equal(player0.inPlayCount, 2, 'inPlayCount must remain visible');
+  });
+
+  it('spectator audience: inPlayCards/inPlayDisplay AND handCards/handDisplay all redacted', () => {
+    // why: D-12803 — spectators see counts only for both hand and
+    // in-play. Same omit-don't-assign pattern; verified via
+    // `=== undefined` assertion.
+    const uiState = createWp128TestUIState();
+    const result = filterUIStateForAudience(uiState, SPECTATOR);
+
+    for (const player of result.players) {
+      assert.equal(player.handCards, undefined, `spectator handCards must be undefined for ${player.playerId}`);
+      assert.equal(player.handDisplay, undefined, `spectator handDisplay must be undefined for ${player.playerId}`);
+      assert.equal(player.inPlayCards, undefined, `spectator inPlayCards must be undefined for ${player.playerId}`);
+      assert.equal(player.inPlayDisplay, undefined, `spectator inPlayDisplay must be undefined for ${player.playerId}`);
+    }
+  });
+
+  it('own player keeps inPlayCards / inPlayDisplay parallel arrays', () => {
+    // why: D-12803 — viewing player sees own in-play array for gameplay.
+    // Length-equality invariant with inPlayCount.
+    const uiState = createWp128TestUIState();
+    const result = filterUIStateForAudience(uiState, PLAYER_0);
+
+    const player0 = result.players.find((p) => p.playerId === '0');
+    assert.ok(player0 !== undefined);
+    assert.ok(player0.inPlayCards !== undefined, 'own inPlayCards must be present');
+    assert.ok(player0.inPlayDisplay !== undefined, 'own inPlayDisplay must be present');
+    assert.equal(player0.inPlayCards.length, 2);
+    assert.equal(player0.inPlayCards.length, player0.inPlayDisplay.length);
+  });
+
+  it('discardTopCard / victoryCards / victoryVP visible to ALL audiences (public)', () => {
+    // why: D-12803 — these are public fields. Verify each audience
+    // (own / opponent / spectator) sees them. EC-131 §5 verifies
+    // public-fields-not-redacted.
+    const uiState = createWp128TestUIState();
+
+    for (const audience of [PLAYER_0, PLAYER_1, SPECTATOR]) {
+      const result = filterUIStateForAudience(uiState, audience);
+      for (const player of result.players) {
+        assert.ok(
+          player.discardTopCard !== undefined,
+          `discardTopCard must be present for ${player.playerId} in ${audience.kind} view`,
+        );
+        assert.ok(
+          player.victoryCards !== undefined,
+          `victoryCards must be present for ${player.playerId} in ${audience.kind} view`,
+        );
+        assert.equal(
+          typeof player.victoryVP,
+          'number',
+          `victoryVP must be a number for ${player.playerId} in ${audience.kind} view`,
+        );
+      }
+    }
+  });
+
+  it('shared-board fields (decks/piles/koPile/mastermind/scheme/city) pass through every audience', () => {
+    // why: D-12806 — shared-board projections are public. Filter must
+    // produce per-entry shallow copies (no aliasing) but never redact.
+    const uiState = createWp128TestUIState();
+
+    for (const audience of [PLAYER_0, PLAYER_1, SPECTATOR]) {
+      const result = filterUIStateForAudience(uiState, audience);
+      assert.equal(typeof result.decks.villainDeckCount, 'number');
+      assert.equal(typeof result.piles.bystandersCount, 'number');
+      assert.equal(typeof result.koPile.count, 'number');
+      assert.ok(Array.isArray(result.mastermind.attachedBystanders));
+      assert.ok(Array.isArray(result.mastermind.strikePile));
+      assert.ok(Array.isArray(result.scheme.twistPile));
+      assert.ok(Array.isArray(result.city.escapedPile));
+    }
+  });
+
+});

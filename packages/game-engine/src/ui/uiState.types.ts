@@ -8,6 +8,16 @@
  * All types are JSON-serializable. No engine internals are exposed.
  *
  * Implements D-0301 (UI Consumes Projections Only).
+ *
+ * WP-128 / EC-131 — extends UIState with the projection contract for the
+ * board-layout wireframe (`docs/ai/DESIGN-BOARD-LAYOUT.md §4`). New
+ * top-level fields: `decks`, `piles`, `koPile`. New per-player optional
+ * fields: `inPlayCards?`, `inPlayDisplay?`, `discardTopCard?`,
+ * `victoryCards?`, `victoryVP?`. New required fields on existing types:
+ * `mastermind.attachedBystanders`, `mastermind.strikePile`,
+ * `scheme.twistPile`, `city.escapedPile`, `economy.piercing`,
+ * `economy.woundsDrawn`. Eight projections lack a `G` source today and
+ * ship as Option A safe-skips per D-12806 — see `uiState.build.ts`.
  */
 
 import type { FinalScoreSummary } from '../scoring/scoring.types.js';
@@ -23,6 +33,11 @@ import type { FinalScoreSummary } from '../scoring/scoring.types.js';
  *
  * Derived from G and ctx by buildUIState. The UI never reads G directly.
  * JSON-serializable. Contains no engine internals.
+ *
+ * // why: WP-128 / EC-131 — `decks`, `piles`, `koPile` added as required
+ * top-level fields so the board-layout wireframe binds to a stable shape.
+ * Each is always-present (deterministic safe-skip when the underlying G
+ * source is absent — see D-12806).
  */
 export interface UIState {
   game: {
@@ -39,6 +54,9 @@ export interface UIState {
   economy: UITurnEconomyState;
   log: string[];
   progress: UIProgressCounters;
+  decks: UIDecksState;
+  piles: UISharedPilesState;
+  koPile: UIKoPileState;
   gameOver?: UIGameOverState;
 }
 
@@ -71,6 +89,21 @@ export interface UICardDisplay {
  * convenience and drift-detection sanity) plus the display payload.
  */
 export interface UIHQCard {
+  extId: string;
+  display: UICardDisplay;
+}
+
+/**
+ * Generic display-bearing entry: the (extId, display) pair used by every
+ * face-up pile / array projection in WP-128.
+ *
+ * // why: WP-128 / D-12805 — defined once and reused by `victoryCards`,
+ * `strikePile`, `twistPile`, `escapedPile`, `koPile.cards`, `koPile.topCard`,
+ * `discardTopCard`, and `attachedBystanders`. Repeating the inline literal
+ * `{ extId: string; display: UICardDisplay }` at every consumer site is
+ * a DRY violation; the shared alias keeps the projection contract uniform.
+ */
+export interface UIDisplayEntry {
   extId: string;
   display: UICardDisplay;
 }
@@ -113,6 +146,55 @@ export interface UIPlayerState {
    * write `handDisplay: undefined` literally.
    */
   handDisplay?: UICardDisplay[];
+  /**
+   * In-play card ext_ids for this player's currently-played cards.
+   *
+   * // why: WP-128 / D-12803 — redacted by `filterUIStateForAudience` for
+   * `audience !== ownPlayerId` and for `'spectator'`. Mirrors the
+   * `handCards` privacy posture: in-play cards are technically face-up
+   * at the physical table, but the wireframe shows count-only in
+   * opponent panels. Length matches `inPlayCount` exactly when present.
+   */
+  inPlayCards?: string[];
+  /**
+   * Per-in-play-card display data, parallel-aligned with `inPlayCards`.
+   *
+   * // why: WP-128 / D-12803 — privacy-symmetric with `inPlayCards`;
+   * leaking display data is identical to leaking the CardExtId.
+   * Redacted (omitted) alongside `inPlayCards` by the audience filter.
+   */
+  inPlayDisplay?: UICardDisplay[];
+  /**
+   * Top of this player's discard pile, or `null` when the discard is empty.
+   *
+   * // why: WP-128 / D-12803 — optional AND nullable encodes two distinct
+   * states: optional (`undefined`) means "redacted by audience filter";
+   * `null` means "visible but empty (`discardCount === 0`)". Without this
+   * distinction the `?: T | null` shape reads ambiguous. Discard top is
+   * face-up at the physical table — public to all audiences.
+   */
+  discardTopCard?: UIDisplayEntry | null;
+  /**
+   * Full victory-pile contents for this player.
+   *
+   * // why: WP-128 / D-12803 — VP cards are public knowledge by design
+   * (VP is built from face-up resolved cards). NOT redacted by the
+   * audience filter. Length matches `victoryCount` exactly when present.
+   * Per-entry shallow copy via `resolveDisplay` per WP-111 D-11105
+   * aliasing-defense.
+   */
+  victoryCards?: UIDisplayEntry[];
+  /**
+   * Total VP this player has accumulated, derived from
+   * `computeFinalScores(G).players[i].totalVP`.
+   *
+   * // why: WP-128 / D-12801 — projected by the engine, not computed by
+   * the UI. Field name uses uppercase `VP` to match the canonical
+   * `PlayerScoreBreakdown.totalVP` engine convention (`00.6` Rule 14).
+   * The `?` flags audience-redaction parity with `victoryCards?` (both
+   * go together).
+   */
+  victoryVP?: number;
 }
 
 /**
@@ -131,9 +213,15 @@ export interface UICityCard {
 
 /**
  * City zone projection with display-safe card info.
+ *
+ * // why: WP-128 / D-12806 — `escapedPile` ships as `[]` until a future
+ * WP adds `G.city.escapedPile` for escaped-villain card preservation
+ * (today only the counter `G.counters[ESCAPED_VILLAINS]` increments).
+ * The composition counter is unaffected by this projection.
  */
 export interface UICityState {
   spaces: (UICityCard | null)[];
+  escapedPile: UIDisplayEntry[];
 }
 
 /**
@@ -159,30 +247,103 @@ export interface UIHQState {
  * (the canonical G.cardStats / G.cardDisplayData join key per pre-flight
  * 2026-04-29 PS-5); `id` continues to expose the qualified group id
  * (e.g., "core/dr-doom"). UI consumers never see the join key.
+ *
+ * // why: WP-128 / D-12805 — `attachedBystanders` represents bystanders
+ * captured by the mastermind itself (Master Strike effects, per
+ * Interpretation B). Engine has no source today; ships as `[]` per
+ * D-12806 safe-skip. **Do NOT flatten `G.attachedBystanders`** (city-villain
+ * captures, top-level on `LegendaryGameState`) — those captures are
+ * rendered on the city row, not on the mastermind tile.
+ *
+ * // why: WP-128 / D-12806 — `strikePile` ships as `[]` until a future
+ * WP adds `G.mastermind.strikePile` so resolved Master Strike cards are
+ * preserved for replay (today they live in `G.villainDeck.discard`).
  */
 export interface UIMastermindState {
   id: string;
   tacticsRemaining: number;
   tacticsDefeated: number;
   display: UICardDisplay;
+  attachedBystanders: UIDisplayEntry[];
+  strikePile: UIDisplayEntry[];
 }
 
 /**
  * Scheme projection with identity and twist count.
+ *
+ * // why: WP-128 / D-12806 — `twistPile` ships as `[]` until a future
+ * WP adds `G.scheme.twistPile` so resolved Scheme Twist cards are
+ * preserved for replay. The existing `twistCount` (already derived from
+ * `villainDeck.discard`) is unaffected.
  */
 export interface UISchemeState {
   id: string;
   twistCount: number;
+  twistPile: UIDisplayEntry[];
 }
 
 /**
  * Economy projection with totals and available amounts.
+ *
+ * // why: WP-128 / D-12806 — `piercing` and `woundsDrawn` ship as `0`
+ * until future WPs add `G.turnEconomy.piercing` (and the move logic
+ * that increments it) and `G.turnEconomy.woundsDrawn` (and the
+ * wound-draw tracking it requires).
  */
 export interface UITurnEconomyState {
   attack: number;
   recruit: number;
   availableAttack: number;
   availableRecruit: number;
+  piercing: number;
+  woundsDrawn: number;
+}
+
+/**
+ * Shared deck reservoirs surfaced as counts only.
+ *
+ * // why: WP-128 / WP-014A determinism contract — counts only; the
+ * next-card identity is NEVER projected. Revealing future villain or
+ * hero cards would break replay determinism. `heroDeckCount` ships as
+ * `0` per D-12806 safe-skip until a future WP adds a hero-deck
+ * reservoir on `G` (today HQ is static post-setup).
+ */
+export interface UIDecksState {
+  villainDeckCount: number;
+  heroDeckCount: number;
+}
+
+/**
+ * Shared global pile counts (Bystanders / Wounds / Horrors / Officers /
+ * Sidekicks).
+ *
+ * // why: WP-128 — counts only; pile contents are not card-identity-stable
+ * sources for board-layout rendering. `horrorsCount` is always present
+ * with `0` default per D-12802 (avoids `?: number` ergonomics tax) and
+ * ships as the safe-skip default per D-12806.
+ */
+export interface UISharedPilesState {
+  bystandersCount: number;
+  woundsCount: number;
+  horrorsCount: number;
+  officersCount: number;
+  sidekicksCount: number;
+}
+
+/**
+ * KO pile projection — count, top card, and full contents.
+ *
+ * // why: WP-128 / D-12804 — KO pile is shared (NOT per-player) and
+ * face-up; full visibility matches physical-table semantics. `topCard`
+ * is the last entry (`null` when count === 0); `cards` is the full
+ * pile in deterministic insertion order. Source path is top-level
+ * `G.ko: CardExtId[]` per `types.ts:481` — NOT `G.piles.ko` (no such
+ * path exists; pre-flight 2026-05-03 PS-1 corrected this).
+ */
+export interface UIKoPileState {
+  count: number;
+  topCard: UIDisplayEntry | null;
+  cards: UIDisplayEntry[];
 }
 
 /**

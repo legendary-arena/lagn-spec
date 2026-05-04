@@ -10,6 +10,14 @@
  *
  * No boardgame.io imports. No registry imports. No LegendaryGameState.
  * No .reduce(). No mutation of input. No I/O.
+ *
+ * WP-128 / EC-131 — extends the redaction matrix for the new per-player
+ * fields. `inPlayCards` / `inPlayDisplay` redacted for `audience !==
+ * ownPlayerId` and for `'spectator'` (D-12803). `discardTopCard` /
+ * `victoryCards` / `victoryVP` are public and pass through every
+ * audience (D-12803). Shared-board fields (mastermind / scheme / city /
+ * decks / piles / koPile) are public and pass through unchanged with
+ * per-entry shallow copies (WP-111 D-11105 aliasing-defense).
  */
 
 import type {
@@ -18,17 +26,23 @@ import type {
   UITurnEconomyState,
   UICityCard,
   UIHQCard,
+  UIDisplayEntry,
+  UIKoPileState,
 } from './uiState.types.js';
 import type { UIAudience } from './uiAudience.types.js';
 
 // why: non-active players and spectators must not see the active player's
-// remaining resources (attack/recruit). Zeroed economy prevents strategic
-// information leakage while maintaining type stability.
+// remaining resources (attack/recruit/piercing/woundsDrawn). Zeroed
+// economy prevents strategic information leakage while maintaining type
+// stability. WP-128 extends the sentinel with the new `piercing` and
+// `woundsDrawn` fields that follow the same active-player-only redaction.
 const REDACTED_ECONOMY: UITurnEconomyState = {
   attack: 0,
   recruit: 0,
   availableAttack: 0,
   availableRecruit: 0,
+  piercing: 0,
+  woundsDrawn: 0,
 };
 
 /**
@@ -83,14 +97,59 @@ function deepCopyHqSlotDisplay(
   return result;
 }
 
+// why: WP-128 / D-12805 — per-entry shallow copy of UIDisplayEntry[] at
+// the filter boundary. Mirrors deepCopyCitySpaces / deepCopyHqSlotDisplay
+// pattern: every entry is a fresh `{ extId, display }` object with
+// display itself shallow-cloned. Used by victoryCards / strikePile /
+// twistPile / escapedPile / koPile.cards / attachedBystanders.
 /**
- * Builds a redacted copy of a UIPlayerState with hand cards removed.
+ * Per-entry shallow copy of UIDisplayEntry[] for filter aliasing-defense.
+ */
+function deepCopyDisplayEntries(
+  entries: UIDisplayEntry[],
+): UIDisplayEntry[] {
+  const result: UIDisplayEntry[] = [];
+  for (const entry of entries) {
+    result.push({ extId: entry.extId, display: { ...entry.display } });
+  }
+  return result;
+}
+
+// why: WP-128 / D-12804 — shallow-copy the koPile shape; topCard is
+// either null or a freshly-cloned UIDisplayEntry; cards is per-entry
+// cloned via deepCopyDisplayEntries.
+/**
+ * Builds a deep-copied UIKoPileState from the source.
+ */
+function deepCopyKoPile(koPile: UIKoPileState): UIKoPileState {
+  let topCard: UIDisplayEntry | null;
+  if (koPile.topCard === null) {
+    topCard = null;
+  } else {
+    topCard = {
+      extId: koPile.topCard.extId,
+      display: { ...koPile.topCard.display },
+    };
+  }
+  return {
+    count: koPile.count,
+    topCard,
+    cards: deepCopyDisplayEntries(koPile.cards),
+  };
+}
+
+/**
+ * Builds a redacted copy of a UIPlayerState with private fields removed.
+ *
+ * Redacted fields (omitted): handCards, handDisplay, inPlayCards,
+ * inPlayDisplay. Preserved fields (public information): all counts,
+ * discardTopCard, victoryCards, victoryVP.
  *
  * @param player - The source player state. Not mutated.
- * @returns A new UIPlayerState with handCards set to undefined.
+ * @returns A new UIPlayerState with private fields omitted.
  */
 function redactHandCards(player: UIPlayerState): UIPlayerState {
-  return {
+  const base: UIPlayerState = {
     playerId: player.playerId,
     deckCount: player.deckCount,
     handCount: player.handCount,
@@ -105,14 +164,47 @@ function redactHandCards(player: UIPlayerState): UIPlayerState {
     // the CardExtId for opponent privacy purposes. Conditional
     // assignment is moot here because we simply do not assign the
     // field at all (mirrors the existing handCards omission pattern).
+    // why: WP-128 / D-12803 — inPlayCards / inPlayDisplay redacted
+    // for non-self / spectator audiences. Same omit-don't-assign
+    // pattern as handCards for `exactOptionalPropertyTypes` discipline.
   };
+
+  // why: WP-128 / D-12803 — discardTopCard is public information (face-up
+  // at the physical table). Pass through with per-entry shallow copy
+  // to prevent aliasing. Distinguish optional (undefined = redacted by
+  // some other layer) from null (visible-but-empty: `discardCount === 0`).
+  if (player.discardTopCard !== undefined) {
+    if (player.discardTopCard === null) {
+      base.discardTopCard = null;
+    } else {
+      base.discardTopCard = {
+        extId: player.discardTopCard.extId,
+        display: { ...player.discardTopCard.display },
+      };
+    }
+  }
+
+  // why: WP-128 / D-12803 — victoryCards is public knowledge by design
+  // (VP is built from face-up resolved cards). Per-entry shallow copy
+  // mirrors the projection-time aliasing-defense.
+  if (player.victoryCards !== undefined) {
+    base.victoryCards = deepCopyDisplayEntries(player.victoryCards);
+  }
+
+  // why: WP-128 / D-12801 — victoryVP is public; primitive number, no
+  // aliasing concern.
+  if (player.victoryVP !== undefined) {
+    base.victoryVP = player.victoryVP;
+  }
+
+  return base;
 }
 
 /**
- * Builds a copy of a UIPlayerState preserving hand cards.
+ * Builds a copy of a UIPlayerState preserving all hand/in-play/public fields.
  *
  * @param player - The source player state. Not mutated.
- * @returns A new UIPlayerState with handCards preserved.
+ * @returns A new UIPlayerState with all fields preserved (per-entry shallow-copied).
  */
 function preserveHandCards(player: UIPlayerState): UIPlayerState {
   const base: UIPlayerState = {
@@ -143,6 +235,46 @@ function preserveHandCards(player: UIPlayerState): UIPlayerState {
       copiedHandDisplay.push({ ...display });
     }
     base.handDisplay = copiedHandDisplay;
+  }
+
+  // why: WP-128 / D-12803 — active player sees own inPlayCards /
+  // inPlayDisplay; same conditional-assignment pattern as handCards.
+  // Spread copy prevents aliasing with input UIState.
+  if (player.inPlayCards !== undefined) {
+    base.inPlayCards = [...player.inPlayCards];
+  }
+
+  if (player.inPlayDisplay !== undefined) {
+    const copiedInPlayDisplay = [];
+    for (const display of player.inPlayDisplay) {
+      copiedInPlayDisplay.push({ ...display });
+    }
+    base.inPlayDisplay = copiedInPlayDisplay;
+  }
+
+  // why: WP-128 / D-12803 — discardTopCard is public information; same
+  // copy treatment as in redactHandCards above. Optional+nullable combo
+  // distinguishes redacted (`undefined`) from visible-but-empty (`null`).
+  if (player.discardTopCard !== undefined) {
+    if (player.discardTopCard === null) {
+      base.discardTopCard = null;
+    } else {
+      base.discardTopCard = {
+        extId: player.discardTopCard.extId,
+        display: { ...player.discardTopCard.display },
+      };
+    }
+  }
+
+  // why: WP-128 / D-12803 — victoryCards is public; per-entry shallow
+  // copy mirrors the projection-time aliasing-defense.
+  if (player.victoryCards !== undefined) {
+    base.victoryCards = deepCopyDisplayEntries(player.victoryCards);
+  }
+
+  // why: WP-128 / D-12801 — victoryVP is public; primitive number.
+  if (player.victoryVP !== undefined) {
+    base.victoryVP = player.victoryVP;
   }
 
   return base;
@@ -195,12 +327,15 @@ export function filterUIStateForAudience(
   let economy: UITurnEconomyState;
 
   if (audience.kind === 'player' && audience.playerId === uiState.game.activePlayerId) {
-    // why: only the active player sees their own economy
+    // why: only the active player sees their own economy. WP-128 extends
+    // with `piercing` / `woundsDrawn` — same active-player-only posture.
     economy = {
       attack: uiState.economy.attack,
       recruit: uiState.economy.recruit,
       availableAttack: uiState.economy.availableAttack,
       availableRecruit: uiState.economy.availableRecruit,
+      piercing: uiState.economy.piercing,
+      woundsDrawn: uiState.economy.woundsDrawn,
     };
   } else {
     // why: non-active players and spectators do not see economy details
@@ -217,10 +352,17 @@ export function filterUIStateForAudience(
   // prevent aliasing with the input UIState's card display objects.
   // Mastermind is shallow-copied with a nested {...display} to copy
   // the display payload alongside id / tacticsRemaining / tacticsDefeated.
+  // why: WP-128 / D-12806 — `mastermind.attachedBystanders`,
+  // `mastermind.strikePile`, `scheme.twistPile`, `city.escapedPile`,
+  // `koPile` are public and pass through with per-entry shallow copies.
+  // `decks` and `piles` are primitive-only; plain shallow copy.
   const result: UIState = {
     game: { ...uiState.game },
     players: filteredPlayers,
-    city: { spaces: deepCopyCitySpaces(uiState.city.spaces) },
+    city: {
+      spaces: deepCopyCitySpaces(uiState.city.spaces),
+      escapedPile: deepCopyDisplayEntries(uiState.city.escapedPile),
+    },
     hq: {
       slots: [...uiState.hq.slots],
       ...(uiState.hq.slotDisplay !== undefined
@@ -228,16 +370,29 @@ export function filterUIStateForAudience(
         : {}),
     },
     mastermind: {
-      ...uiState.mastermind,
+      id: uiState.mastermind.id,
+      tacticsRemaining: uiState.mastermind.tacticsRemaining,
+      tacticsDefeated: uiState.mastermind.tacticsDefeated,
       display: { ...uiState.mastermind.display },
+      attachedBystanders: deepCopyDisplayEntries(
+        uiState.mastermind.attachedBystanders,
+      ),
+      strikePile: deepCopyDisplayEntries(uiState.mastermind.strikePile),
     },
-    scheme: { ...uiState.scheme },
+    scheme: {
+      id: uiState.scheme.id,
+      twistCount: uiState.scheme.twistCount,
+      twistPile: deepCopyDisplayEntries(uiState.scheme.twistPile),
+    },
     economy,
     log: [...uiState.log],
     // why: progress counters are public (no redaction needed) — passed through
     // unchanged via fresh object copy to avoid aliasing with the input UIState.
     // Forced cascade from WP-067 making `progress` a required UIState field.
     progress: { ...uiState.progress },
+    decks: { ...uiState.decks },
+    piles: { ...uiState.piles },
+    koPile: deepCopyKoPile(uiState.koPile),
   };
 
   if (uiState.gameOver !== undefined) {

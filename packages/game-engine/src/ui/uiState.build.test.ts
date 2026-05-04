@@ -563,3 +563,72 @@ describe('buildInitialGameState — setup-time completeness diagnostic (PS-8)', 
     );
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-128 / EC-131 — board-layout projection contract
+// ---------------------------------------------------------------------------
+
+describe('buildUIState — WP-128 board-layout projections', () => {
+  it('per-player victoryCards aliasing: mutating returned entry does NOT mutate G', () => {
+    // why: WP-111 D-11105 aliasing-defense — every projected
+    // UIDisplayEntry in victoryCards must be a fresh object with a
+    // shallow-cloned display payload. Mutating the returned entry must
+    // not propagate into G.cardDisplayData. Standard tests cannot
+    // detect aliasing; this explicit contract is the contract.
+    const gameState = createTestGameState();
+
+    const heroExtId = 'hero-victory-001' as CardExtId;
+    (gameState as { cardDisplayData: Readonly<Record<CardExtId, UICardDisplay>> }).cardDisplayData = {
+      [heroExtId]: {
+        extId: heroExtId,
+        name: 'Victory Hero',
+        imageUrl: '',
+        cost: 2,
+      },
+    };
+    gameState.playerZones['0']!.victory.push(heroExtId);
+
+    const originalName = gameState.cardDisplayData[heroExtId]!.name;
+    const ui = buildUIState(gameState, mockCtx);
+
+    const player0VictoryCards = ui.players[0]!.victoryCards;
+    assert.ok(player0VictoryCards !== undefined, 'victoryCards must be present');
+    assert.ok(player0VictoryCards.length > 0, 'victoryCards must be non-empty');
+    player0VictoryCards[0]!.display.name = 'mutated-by-test';
+
+    assert.equal(
+      gameState.cardDisplayData[heroExtId]!.name,
+      originalName,
+      'G.cardDisplayData must not be aliased by victoryCards entries',
+    );
+  });
+
+  it('discardTopCard projects null when discardCount === 0', () => {
+    // why: D-12803 distinguishes "redacted" (undefined) from
+    // "visible-but-empty" (null). Empty discard projects null with the
+    // optional present.
+    const gameState = createTestGameState();
+    const ui = buildUIState(gameState, mockCtx);
+
+    const player0 = ui.players[0]!;
+    assert.equal(player0.discardCount, 0);
+    assert.equal(
+      player0.discardTopCard,
+      null,
+      'discardTopCard must be null (not undefined) when discard is empty',
+    );
+  });
+
+  it('victoryVP projects from computeFinalScores().players[i].totalVP (uppercase VP)', () => {
+    // why: D-12801 — engine projects victoryVP via computeFinalScores;
+    // canonical casing is `totalVP` per scoring.types.ts:53. Empty
+    // victory pile + no tactics defeated yields 0 for every player.
+    const gameState = createTestGameState();
+    const ui = buildUIState(gameState, mockCtx);
+
+    for (const player of ui.players) {
+      assert.equal(typeof player.victoryVP, 'number');
+      assert.equal(player.victoryVP, 0);
+    }
+  });
+});

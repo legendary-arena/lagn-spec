@@ -8,6 +8,14 @@
  * runtime test could catch it. WP-062's HUD aria-labels bind to these
  * names verbatim — the contract is non-negotiable.
  *
+ * WP-128 / EC-131 — extends the drift suite with type-pinning + value-pinning
+ * for the new board-layout projection contract: top-level `decks` / `piles` /
+ * `koPile`, per-player `inPlayCards?` / `inPlayDisplay?` / `discardTopCard?` /
+ * `victoryCards?` / `victoryVP?`, required new fields on existing types
+ * (`mastermind.attachedBystanders`, `mastermind.strikePile`, `scheme.twistPile`,
+ * `city.escapedPile`, `economy.piercing`, `economy.woundsDrawn`), and
+ * safe-skip default-value pinning per D-12806.
+ *
  * Uses node:test and node:assert only. No boardgame.io imports.
  */
 
@@ -22,7 +30,19 @@ import type {
   UIHQState,
   UIPlayerState,
   UIMastermindState,
+  UISchemeState,
+  UICityState,
+  UITurnEconomyState,
+  UIDecksState,
+  UISharedPilesState,
+  UIKoPileState,
+  UIDisplayEntry,
 } from './uiState.types.js';
+import { buildUIState } from './uiState.build.js';
+import { buildInitialGameState } from '../setup/buildInitialGameState.js';
+import { makeMockCtx } from '../test/mockCtx.js';
+import type { MatchSetupConfig } from '../matchSetup.types.js';
+import type { CardRegistryReader } from '../matchSetup.validate.js';
 
 describe('UIState type drift (WP-067)', () => {
   it('UIProgressCounters field names match the locked WP-048/WP-062 contract', () => {
@@ -210,8 +230,10 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
 
   it('UIMastermindState retains existing fields AND has display', () => {
     // why: WP-111 — additive extension; existing id / tacticsRemaining /
-    // tacticsDefeated preserved verbatim.
-    const fixture = {
+    // tacticsDefeated preserved verbatim. WP-128 extends with required
+    // attachedBystanders + strikePile (covered in the WP-128 drift block
+    // below).
+    const fixture: UIMastermindState = {
       id: 'core/dr-doom',
       tacticsRemaining: 4,
       tacticsDefeated: 0,
@@ -221,13 +243,311 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
         imageUrl: '',
         cost: 9,
       },
-    } satisfies UIMastermindState;
+      attachedBystanders: [],
+      strikePile: [],
+    };
 
+    // why: keys sorted to compare to the locked field list. WP-128 added
+    // `attachedBystanders` and `strikePile`; the assertion below pins
+    // both alongside the existing four.
     assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'attachedBystanders',
       'display',
       'id',
+      'strikePile',
       'tacticsDefeated',
       'tacticsRemaining',
     ]);
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-128 / EC-131 — board-layout projection contract drift
+// ---------------------------------------------------------------------------
+
+describe('UIState type drift (WP-128 / EC-131) — type pinning', () => {
+  it('UIDisplayEntry has exactly { extId, display }', () => {
+    // why: WP-128 / D-12805 — shared alias used by victoryCards /
+    // strikePile / twistPile / escapedPile / koPile.cards / koPile.topCard /
+    // discardTopCard / attachedBystanders. Repeating the inline literal
+    // at every consumer site would be a DRY violation; this pin guards
+    // the alias's two-field shape.
+    const fixture = {
+      extId: 'core-villain-brotherhood-magneto',
+      display: {
+        extId: 'core-villain-brotherhood-magneto',
+        name: 'Magneto',
+        imageUrl: '',
+        cost: 5,
+      },
+    } satisfies UIDisplayEntry;
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), ['display', 'extId']);
+  });
+
+  it('UIDecksState pins villainDeckCount + heroDeckCount field names', () => {
+    // why: WP-128 — counts only; next-card identity NEVER projected per
+    // WP-014A determinism contract. Both fields required (never optional).
+    const fixture = {
+      villainDeckCount: 24,
+      heroDeckCount: 0,
+    } satisfies UIDecksState;
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'heroDeckCount',
+      'villainDeckCount',
+    ]);
+  });
+
+  it('UISharedPilesState pins all five count field names including horrorsCount', () => {
+    // why: WP-128 / D-12802 — `horrorsCount` always present (required, not
+    // optional). All five count fields are pinned here so a rename to
+    // e.g. `bystanderCount` (singular) trips at compile time.
+    const fixture = {
+      bystandersCount: 10,
+      woundsCount: 15,
+      horrorsCount: 0,
+      officersCount: 20,
+      sidekicksCount: 5,
+    } satisfies UISharedPilesState;
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'bystandersCount',
+      'horrorsCount',
+      'officersCount',
+      'sidekicksCount',
+      'woundsCount',
+    ]);
+  });
+
+  it('UIKoPileState pins count + topCard + cards (count must be number; topCard nullable)', () => {
+    // why: WP-128 / D-12804 — KO pile is shared and face-up. `topCard`
+    // is `UIDisplayEntry | null` (null when count === 0); `cards` is
+    // the full pile in deterministic insertion order. Source path is
+    // top-level `G.ko` per `types.ts:481` — NOT `G.piles.ko`.
+    const populated: UIKoPileState = {
+      count: 2,
+      topCard: {
+        extId: 'core-villain-brotherhood-toad',
+        display: {
+          extId: 'core-villain-brotherhood-toad',
+          name: 'Toad',
+          imageUrl: '',
+          cost: 2,
+        },
+      },
+      cards: [
+        {
+          extId: 'core-villain-brotherhood-pyro',
+          display: {
+            extId: 'core-villain-brotherhood-pyro',
+            name: 'Pyro',
+            imageUrl: '',
+            cost: 3,
+          },
+        },
+        {
+          extId: 'core-villain-brotherhood-toad',
+          display: {
+            extId: 'core-villain-brotherhood-toad',
+            name: 'Toad',
+            imageUrl: '',
+            cost: 2,
+          },
+        },
+      ],
+    };
+
+    const empty: UIKoPileState = { count: 0, topCard: null, cards: [] };
+
+    assert.deepStrictEqual(Object.keys(populated).sort(), [
+      'cards',
+      'count',
+      'topCard',
+    ]);
+    assert.equal(empty.topCard, null);
+    assert.equal(empty.count, 0);
+  });
+
+  it('UISchemeState retains id + twistCount AND adds required twistPile', () => {
+    // why: WP-128 — additive extension; existing id + twistCount preserved
+    // verbatim. `twistPile: UIDisplayEntry[]` is required (safe-skip `[]`
+    // until a future WP adds `G.scheme.twistPile`).
+    const fixture: UISchemeState = {
+      id: 'core/scheme-001',
+      twistCount: 0,
+      twistPile: [],
+    };
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'id',
+      'twistCount',
+      'twistPile',
+    ]);
+  });
+
+  it('UICityState retains spaces AND adds required escapedPile', () => {
+    // why: WP-128 — additive extension; existing `spaces` preserved
+    // verbatim. `escapedPile: UIDisplayEntry[]` is required (safe-skip
+    // `[]` until a future WP adds `G.city.escapedPile`).
+    const fixture: UICityState = {
+      spaces: [null, null, null, null, null],
+      escapedPile: [],
+    };
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'escapedPile',
+      'spaces',
+    ]);
+  });
+
+  it('UITurnEconomyState retains existing fields AND adds piercing + woundsDrawn', () => {
+    // why: WP-128 — additive extension; existing attack / recruit /
+    // availableAttack / availableRecruit preserved verbatim. piercing
+    // and woundsDrawn ship as `0` safe-skip per D-12806.
+    const fixture: UITurnEconomyState = {
+      attack: 0,
+      recruit: 0,
+      availableAttack: 0,
+      availableRecruit: 0,
+      piercing: 0,
+      woundsDrawn: 0,
+    };
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'attack',
+      'availableAttack',
+      'availableRecruit',
+      'piercing',
+      'recruit',
+      'woundsDrawn',
+    ]);
+  });
+
+  it('all 8 safe-skip sites (D-12806) project typed-stable defaults on empty match; koPile uses G.ko top-level path (NOT G.piles.ko, PS-1)', () => {
+    // why: D-12806 commits to deterministic safe-skip values when the
+    // underlying G source is absent. When a future WP adds the source,
+    // only the value flips — the field shape stays identical. This
+    // test pins every safe-skip default so a future contributor adding
+    // the real source value sees the test fail before drift propagates.
+    // Also pins the PS-1 koPile correction: source path is `G.ko`
+    // (top-level, line 481 of types.ts) — NOT `G.piles.ko` (no such
+    // path). Empty match has `G.ko === []`, so count === 0, topCard
+    // === null, cards === [].
+    const ui = buildEmptyMatchUIState();
+
+    // 1. mastermind.attachedBystanders === [] (Interpretation B; do NOT
+    //    flatten G.attachedBystanders city-villain captures here).
+    assert.deepStrictEqual(ui.mastermind.attachedBystanders, []);
+    // 2. mastermind.strikePile === [] (Master Strike cards live in
+    //    G.villainDeck.discard today; future WP preserves them on G).
+    assert.deepStrictEqual(ui.mastermind.strikePile, []);
+    // 3. scheme.twistPile === [] (no G.scheme object today).
+    assert.deepStrictEqual(ui.scheme.twistPile, []);
+    // 4. city.escapedPile === [] (CityZone is a 5-tuple; escapes
+    //    increment counter only).
+    assert.deepStrictEqual(ui.city.escapedPile, []);
+    // 5. economy.piercing === 0 (no G.turnEconomy.piercing today).
+    assert.equal(ui.economy.piercing, 0);
+    // 6. economy.woundsDrawn === 0 (no G.turnEconomy.woundsDrawn today).
+    assert.equal(ui.economy.woundsDrawn, 0);
+    // 7. decks.heroDeckCount === 0 (no G.heroDeck reservoir today).
+    assert.equal(ui.decks.heroDeckCount, 0);
+    // 8. piles.horrorsCount === 0 (D-12802 always-present default).
+    assert.equal(ui.piles.horrorsCount, 0);
+
+    // PS-1 koPile path: G.ko (NOT G.piles.ko)
+    assert.equal(ui.koPile.count, 0);
+    assert.equal(ui.koPile.topCard, null);
+    assert.deepStrictEqual(ui.koPile.cards, []);
+  });
+
+  it('UIPlayerState adds optional inPlayCards / inPlayDisplay / discardTopCard / victoryCards / victoryVP', () => {
+    // why: WP-128 — additive optional extensions. All five flag the
+    // audience-filter redaction posture (D-12803): inPlayCards /
+    // inPlayDisplay redacted for non-self / spectator; discardTopCard /
+    // victoryCards / victoryVP NOT redacted (public).
+    const populated: UIPlayerState = {
+      playerId: '0',
+      deckCount: 6,
+      handCount: 4,
+      discardCount: 2,
+      inPlayCount: 1,
+      victoryCount: 3,
+      woundCount: 0,
+      handCards: ['hero-001'],
+      handDisplay: [
+        { extId: 'hero-001', name: 'Hero One', imageUrl: '', cost: 2 },
+      ],
+      inPlayCards: ['hero-002'],
+      inPlayDisplay: [
+        { extId: 'hero-002', name: 'Hero Two', imageUrl: '', cost: 1 },
+      ],
+      discardTopCard: {
+        extId: 'hero-003',
+        display: {
+          extId: 'hero-003',
+          name: 'Hero Three',
+          imageUrl: '',
+          cost: 0,
+        },
+      },
+      victoryCards: [
+        {
+          extId: 'villain-001',
+          display: {
+            extId: 'villain-001',
+            name: 'Villain One',
+            imageUrl: '',
+            cost: 4,
+          },
+        },
+      ],
+      victoryVP: 7,
+    };
+
+    // Empty discard projects null; redacted form omits the optional fields.
+    const emptyDiscard: UIPlayerState = {
+      playerId: '1',
+      deckCount: 8,
+      handCount: 4,
+      discardCount: 0,
+      inPlayCount: 0,
+      victoryCount: 0,
+      woundCount: 0,
+      discardTopCard: null,
+      victoryCards: [],
+      victoryVP: 0,
+    };
+
+    assert.equal(populated.victoryVP, 7);
+    assert.equal(populated.inPlayCards!.length, populated.inPlayDisplay!.length);
+    assert.equal(emptyDiscard.discardTopCard, null);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-128 / EC-131 — safe-skip default-value pinning (D-12806)
+// (folded into the WP-128 type-drift describe above to keep the suite
+// count within EC-131 §5 budget — same conceptual block.)
+// ---------------------------------------------------------------------------
+
+/** Shared test-config helper for safe-skip + path-correction pinning. */
+function buildEmptyMatchUIState() {
+  const config: MatchSetupConfig = {
+    schemeId: 'test-scheme-001',
+    mastermindId: 'test-mastermind-001',
+    villainGroupIds: ['test-villain-group-001'],
+    henchmanGroupIds: ['test-henchman-group-001'],
+    heroDeckIds: ['test-hero-deck-001', 'test-hero-deck-002'],
+    bystandersCount: 10,
+    woundsCount: 15,
+    officersCount: 20,
+    sidekicksCount: 5,
+  };
+  const registry: CardRegistryReader = { listCards: () => [] };
+  const setupContext = makeMockCtx();
+  const gameState = buildInitialGameState(config, registry, setupContext);
+  const ctx = { phase: 'play' as string | null, turn: 1, currentPlayer: '0' };
+  return buildUIState(gameState, ctx);
+}

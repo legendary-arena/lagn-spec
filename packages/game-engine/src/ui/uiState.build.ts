@@ -7,6 +7,13 @@
  *
  * No boardgame.io imports. No registry imports. No .reduce().
  * No mutation of G or ctx.
+ *
+ * WP-128 / EC-131 — extends the projection contract for the board-layout
+ * wireframe (`docs/ai/DESIGN-BOARD-LAYOUT.md §4`). Eight projections
+ * lack a `G` source today and ship as Option A safe-skips per D-12806;
+ * each carries a `// SAFE-SKIP-WP128` marker and a 3-clause `// why:`
+ * comment. CI grep enforces the marker count (≥ 8). Aliasing-defense
+ * follows WP-111 D-11105 (per-entry shallow copy via resolveDisplay).
  */
 
 import type { LegendaryGameState } from '../types.js';
@@ -20,6 +27,10 @@ import type {
   UIParBreakdown,
   UICardDisplay,
   UIHQCard,
+  UIDisplayEntry,
+  UIDecksState,
+  UISharedPilesState,
+  UIKoPileState,
 } from './uiState.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
 import { evaluateEndgame } from '../endgame/endgame.evaluate.js';
@@ -87,6 +98,28 @@ function resolveDisplay(
     return { ...entry };
   }
   return { ...UNKNOWN_DISPLAY_PLACEHOLDER, extId };
+}
+
+// why: WP-128 / D-12805 — produce a per-entry shallow-copied
+// `UIDisplayEntry` array from a CardExtId list. Aliasing-defense per
+// WP-111 D-11105: every entry is a fresh `{ extId, display }` object
+// and the display payload is itself shallow-cloned via resolveDisplay.
+// `[...zone]` would alias the entries; `zone.map(e => e)` would alias
+// the shallow shape but not the extId/display pair — both are the
+// forbidden patterns. The correct shape (this helper) builds fresh
+// objects per entry.
+/**
+ * Builds a UIDisplayEntry[] from a CardExtId[] with per-entry shallow copy.
+ */
+function buildDisplayEntries(
+  cardExtIds: ReadonlyArray<string>,
+  gameState: LegendaryGameState,
+): UIDisplayEntry[] {
+  const entries: UIDisplayEntry[] = [];
+  for (const extId of cardExtIds) {
+    entries.push({ extId, display: resolveDisplay(extId, gameState) });
+  }
+  return entries;
 }
 
 /**
@@ -245,6 +278,18 @@ export function buildUIState(
   // --- 2. Project player states ---
   // why: zone counts hide card identities from the UI; wound count
   // uses WOUND_EXT_ID constant to identify wound cards across all zones
+  //
+  // why: WP-128 / D-12801 — `victoryVP` is projected by the engine via
+  // `computeFinalScores` (single source of truth per WP-020). Indexed by
+  // playerId so the per-player loop below doesn't depend on `players`
+  // ordering. computeFinalScores is pure and cheap; one call per
+  // projection.
+  const finalScores = computeFinalScores(gameState);
+  const totalVPByPlayer: Record<string, number> = {};
+  for (const breakdown of finalScores.players) {
+    totalVPByPlayer[breakdown.playerId] = breakdown.totalVP;
+  }
+
   const players: UIPlayerState[] = [];
   for (const playerId of Object.keys(gameState.playerZones)) {
     const zones = gameState.playerZones[playerId]!;
@@ -256,6 +301,42 @@ export function buildUIState(
     for (const cardExtId of zones.hand) {
       handDisplay.push(resolveDisplay(cardExtId, gameState));
     }
+
+    // why: WP-128 / D-12803 — inPlayDisplay length-equals-inPlayCards
+    // invariant. Audience filter redacts both fields together for
+    // non-self / spectator audiences (mirrors handCards posture).
+    const inPlayDisplay: UICardDisplay[] = [];
+    for (const cardExtId of zones.inPlay) {
+      inPlayDisplay.push(resolveDisplay(cardExtId, gameState));
+    }
+
+    // why: WP-128 / D-12803 — discard top is the last entry in the
+    // discard array; `null` when discard is empty (count === 0). Optional
+    // (`discardTopCard?`) encodes "redacted by audience filter"; `null`
+    // encodes "visible but empty" — the pair distinguishes the two
+    // states unambiguously.
+    const discardLength = zones.discard.length;
+    let discardTopCard: UIDisplayEntry | null;
+    if (discardLength === 0) {
+      discardTopCard = null;
+    } else {
+      const topExtId = zones.discard[discardLength - 1]!;
+      discardTopCard = {
+        extId: topExtId,
+        display: resolveDisplay(topExtId, gameState),
+      };
+    }
+
+    // why: WP-128 / D-12803 — VP cards are public knowledge by design;
+    // not redacted by audience filter. WP-111 D-11105 aliasing-defense:
+    // every entry is a fresh `{ extId, display }` with display itself
+    // shallow-cloned (via resolveDisplay).
+    const victoryCards = buildDisplayEntries(zones.victory, gameState);
+
+    // why: WP-128 / D-12801 — uppercase `VP` matches canonical
+    // `PlayerScoreBreakdown.totalVP` engine convention (`00.6` Rule 14).
+    const victoryVP = totalVPByPlayer[playerId] ?? 0;
+
     players.push({
       playerId,
       deckCount: zones.deck.length,
@@ -269,6 +350,14 @@ export function buildUIState(
       // with G.playerZones[playerId].hand.
       handCards: [...zones.hand],
       handDisplay,
+      // why: WP-128 / D-12803 — in-play card ext_ids included; filter
+      // redacts for non-self / spectator. Spread copy prevents aliasing
+      // with G.playerZones[playerId].inPlay.
+      inPlayCards: [...zones.inPlay],
+      inPlayDisplay,
+      discardTopCard,
+      victoryCards,
+      victoryVP,
     });
   }
 
@@ -294,6 +383,13 @@ export function buildUIState(
       });
     }
   }
+
+  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
+  // PS-3. Gap: `CityZone` is a 5-tuple; escapes increment
+  // `G.counters[ESCAPED_VILLAINS]` but the cards themselves aren't
+  // preserved. Future WP-NNN will resolve `G.city.escapedPile` so escaped
+  // villain cards are preserved post-escape.
+  const escapedPile: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
 
   // --- 4. Project HQ ---
   // why: HQ slots expose ext_ids for registry display lookup; no
@@ -323,11 +419,30 @@ export function buildUIState(
   // gameState.mastermind.id (the qualified group id). Per-entry shallow
   // copy via resolveDisplay prevents aliasing. Cite pre-flight
   // 2026-04-29 PS-5.
+  //
+  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
+  // PS-3. Gap (attachedBystanders): `G.mastermind.attachedBystanders`
+  // does not exist; engine has no mastermind-side bystander capture
+  // surface today. **Do NOT flatten `G.attachedBystanders`** (city-villain
+  // captures, top-level on `LegendaryGameState`) into this field —
+  // D-12805 Interpretation B forbids it; those captures are rendered
+  // on the city row, not on the mastermind tile. Future WP-NNN will
+  // resolve `G.mastermind.attachedBystanders` for Master Strike captures.
+  //
+  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
+  // PS-3. Gap (strikePile): `G.mastermind.strikePile` does not exist;
+  // mastermind-strike cards live in `G.villainDeck.discard` filtered by
+  // type. Future WP-NNN will resolve `G.mastermind.strikePile` so
+  // resolved Master Strike cards are preserved for replay.
+  const mastermindAttachedBystanders: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
+  const mastermindStrikePile: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
   const mastermind = {
     id: gameState.mastermind.id,
     tacticsRemaining: gameState.mastermind.tacticsDeck.length,
     tacticsDefeated: gameState.mastermind.tacticsDefeated.length,
     display: resolveDisplay(gameState.mastermind.baseCardId, gameState),
+    attachedBystanders: mastermindAttachedBystanders,
+    strikePile: mastermindStrikePile,
   };
 
   // --- 6. Project scheme — derive twist count ---
@@ -339,19 +454,41 @@ export function buildUIState(
       twistCount += 1;
     }
   }
+  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
+  // PS-3. Gap: no `G.scheme` object; resolved Scheme Twist cards live
+  // in `G.villainDeck.discard`. Future WP-NNN will resolve
+  // `G.scheme.twistPile` so revealed twist cards are preserved as
+  // first-class state for replay.
+  const schemeTwistPile: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
   const scheme = {
     id: gameState.selection.schemeId,
     twistCount,
+    twistPile: schemeTwistPile,
   };
 
   // --- 7. Project economy ---
   // why: available amounts computed via engine helpers, not raw
   // subtraction, to stay consistent with move validation logic
+  //
+  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
+  // PS-3. Gap (piercing): `TurnEconomy` has only `attack` / `recruit` /
+  // `spentAttack` / `spentRecruit`; no `piercing` field. Future WP-NNN
+  // will resolve `G.turnEconomy.piercing` and the move logic that
+  // increments it.
+  //
+  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
+  // PS-3. Gap (woundsDrawn): same — `woundsDrawn` field doesn't exist
+  // on `TurnEconomy`. Future WP-NNN will resolve `G.turnEconomy.woundsDrawn`
+  // and the wound-draw tracking logic that produces it.
+  const piercing = 0; // SAFE-SKIP-WP128
+  const woundsDrawn = 0; // SAFE-SKIP-WP128
   const economy = {
     attack: gameState.turnEconomy.attack,
     recruit: gameState.turnEconomy.recruit,
     availableAttack: getAvailableAttack(gameState.turnEconomy),
     availableRecruit: getAvailableRecruit(gameState.turnEconomy),
+    piercing,
+    woundsDrawn,
   };
 
   // --- 8. Project log ---
@@ -363,10 +500,68 @@ export function buildUIState(
   // so the HUD can render a stable shape. WP-067.
   const progress = buildProgressCounters(gameState);
 
-  // --- 10. Project game over ---
+  // --- 10. Project decks (counts only) ---
+  // why: WP-128 / WP-014A determinism contract — counts only; the
+  // next-card identity is NEVER projected.
+  //
+  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
+  // PS-3. Gap (heroDeckCount): no hero-deck reservoir on G — HQ is
+  // static post-setup; recruited cards leave to player discard with no
+  // refill. Future WP-NNN will resolve `G.heroDeck` if a future
+  // scenario introduces hero-deck refilling.
+  const heroDeckCount = 0; // SAFE-SKIP-WP128
+  const decks: UIDecksState = {
+    villainDeckCount: gameState.villainDeck.deck.length,
+    heroDeckCount,
+  };
+
+  // --- 11. Project shared piles (counts only) ---
+  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
+  // PS-3. Gap (horrorsCount): `GlobalPiles` has no `horrors` field;
+  // D-12802 default is `0` when no scenario uses Horrors. Future
+  // scenario WP-NNN will resolve `G.piles.horrors` when a Horrors-using
+  // scenario lands.
+  const horrorsCount = 0; // SAFE-SKIP-WP128
+  const piles: UISharedPilesState = {
+    bystandersCount: gameState.piles.bystanders.length,
+    woundsCount: gameState.piles.wounds.length,
+    horrorsCount,
+    officersCount: gameState.piles.officers.length,
+    sidekicksCount: gameState.piles.sidekicks.length,
+  };
+
+  // --- 12. Project KO pile ---
+  // why: WP-128 / D-12804 — KO pile is shared and face-up; full
+  // visibility matches physical-table semantics. Source path is
+  // top-level `G.ko: CardExtId[]` per `types.ts:481`. The pre-flight
+  // 2026-05-03 PS-1 correction (away from a non-existent nested path
+  // under `G.piles`) is documented in D-12804 + the drift test
+  // comment block — not repeated here so the EC §5 grep gate sees a
+  // clean projection file. `topCard` is the last entry (`null` when
+  // count === 0); `cards` is the full pile in deterministic insertion
+  // order. WP-111 D-11105 aliasing-defense via per-entry shallow copy
+  // in buildDisplayEntries.
+  const koCardCount = gameState.ko.length;
+  let koTopCard: UIDisplayEntry | null;
+  if (koCardCount === 0) {
+    koTopCard = null;
+  } else {
+    const topExtId = gameState.ko[koCardCount - 1]!;
+    koTopCard = {
+      extId: topExtId,
+      display: resolveDisplay(topExtId, gameState),
+    };
+  }
+  const koPile: UIKoPileState = {
+    count: koCardCount,
+    topCard: koTopCard,
+    cards: buildDisplayEntries(gameState.ko, gameState),
+  };
+
+  // --- 13. Project game over ---
   // why: endgame state derived from G counters via evaluateEndgame
-  // (pure); scores computed via computeFinalScores (pure). No ctx.gameover
-  // access needed.
+  // (pure); scores reuse the finalScores already computed for victoryVP
+  // (avoids a second pass). No ctx.gameover access needed.
   let gameOver: UIGameOverState | undefined;
   const endgameResult = evaluateEndgame(gameState);
   if (endgameResult !== null) {
@@ -378,7 +573,7 @@ export function buildUIState(
     gameOver = {
       outcome: endgameResult.outcome,
       reason: endgameResult.reason,
-      scores: computeFinalScores(gameState),
+      scores: finalScores,
       ...(par !== undefined ? { par } : {}),
     };
   }
@@ -386,7 +581,9 @@ export function buildUIState(
   return {
     game,
     players,
-    city: { spaces: citySpaces },
+    // why: WP-128 / D-12806 — `escapedPile` ships safe-skip `[]` until
+    // a future WP adds `G.city.escapedPile`.
+    city: { spaces: citySpaces, escapedPile },
     // why: WP-111 — slots preserved verbatim (PS-6 fallback); slotDisplay
     // added as a parallel array. Length-equals-slots invariant is
     // maintained by the unified for-of loop above.
@@ -396,6 +593,9 @@ export function buildUIState(
     economy,
     log,
     progress,
+    decks,
+    piles,
+    koPile,
     ...(gameOver !== undefined ? { gameOver } : {}),
   };
 }

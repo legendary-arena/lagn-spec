@@ -13294,6 +13294,221 @@ The verifier scans the `amr` array via two-pass priority: pass 1 finds any eleme
 
 ---
 
+### D-12801 — `victoryVP` Projected by Engine, Not Computed by UI (WP-128)
+
+**Type:** Projection-Surface Lock
+**Packet:** WP-128 / EC-131
+**Date:** 2026-05-03
+
+**Decision:** `players[i].victoryVP` is projected by the engine via `computeFinalScores(G).players[i].totalVP` and surfaced through `UIPlayerState.victoryVP?: number`. The UI does NOT recompute VP from `victoryCards[]` + registry metadata.
+
+**Rationale.**
+- WP-020's `computeFinalScores` is the engine's single source of truth for per-player VP. Projecting through `UIState` is one extra `for...of` over the existing `FinalScoreSummary.players` array — cheap.
+- A client-side recomputation duplicates WP-020's authority surface and creates drift risk. Two implementations of the same VP table is one implementation too many.
+- Canonical casing is `totalVP` (uppercase `VP`) per `scoring/scoring.types.ts:53`; the projection field is `victoryVP` to match. `00.6` Rule 14 forbids drift from canonical engine field names.
+
+**Locked values:**
+- Field name: `victoryVP` (uppercase `VP`).
+- Source: `computeFinalScores(gameState).players[i].totalVP` keyed by `playerId`.
+- Type: `number` (optional on `UIPlayerState`; see D-12803 audience-filter parity with `victoryCards?`).
+
+**Rejected alternative — UI computes from `victoryCards[]` + registry.** Rejected because it duplicates WP-020 scoring logic in a second layer with no guard against drift; consumers would have to track two VP-computation code paths.
+
+**Status:** Active.
+
+**Citation:** WP-128 §Decision Points D-DEC-1; EC-131 §2 Locked Values; `scoring/scoring.types.ts:53` (canonical `totalVP`); `scoring/scoring.logic.ts:computeFinalScores` (the helper).
+
+---
+
+### D-12802 — `piles.horrorsCount` Always Present, Default `0` (WP-128)
+
+**Type:** Projection-Surface Lock
+**Packet:** WP-128 / EC-131
+**Date:** 2026-05-03
+
+**Decision:** `UISharedPilesState.horrorsCount: number` is **always present** on every projected `UIState`. Scenarios that don't use Horrors project `0`. The field is NOT typed `horrorsCount?: number`.
+
+**Rationale.**
+- Optional fields force every consumer to write `if (defined)` checks; an always-present `0` removes that ergonomics tax.
+- `0` is the semantically correct rendering for "this scenario doesn't use Horrors" — empty / zero / off all collapse to the same UI affordance.
+- Mirrors the existing `piles.{bystanders,wounds,officers,sidekicks}Count: number` always-present pattern.
+- Combined with D-12806 (Option A safe-skip), `horrorsCount` is a pure constant `0` until a future scenario WP adds `G.piles.horrors` — no engine source today.
+
+**Locked values:**
+- Type: `number`, required (not optional).
+- MVP value: `0` for every scenario (safe-skip per D-12806).
+
+**Rejected alternative — `horrorsCount?: number`.** Rejected because optional typing forces every consumer (current and future) to null-check the field. The `0` default carries the same semantic "off" signal at zero ergonomics cost.
+
+**Status:** Active.
+
+**Citation:** WP-128 §Decision Points D-DEC-2; EC-131 §2 Locked Values; D-12806 (safe-skip resolution).
+
+---
+
+### D-12803 — `inPlayCards` / `inPlayDisplay` Redacted for Opponents and Spectators (WP-128)
+
+**Type:** Audience-Filter Lock
+**Packet:** WP-128 / EC-131
+**Date:** 2026-05-03
+
+**Decision:** `filterUIStateForAudience` redacts `players[i].inPlayCards` and `players[i].inPlayDisplay` (omits both fields per `exactOptionalPropertyTypes` D-2902) for `audience !== ownPlayerId` and for `'spectator'`. `discardTopCard`, `victoryCards`, `victoryVP` are NOT redacted (public information).
+
+**Rationale.**
+- Mirrors the existing `handCards` / `handDisplay` redaction posture (D-2901..D-2903). In-play cards are technically face-up at the physical table, but the wireframe (`docs/ai/DESIGN-BOARD-LAYOUT.md`) shows count-only in opponent panels; surfacing the full array would either bloat opponent-panel renders or force the UI to redact in a second place.
+- VP cards are public knowledge by design — VP is built from face-up resolved cards. Discard-top is also face-up at the table.
+- Owner-only access is the most restrictive default we can ship without breaking the wireframe.
+
+**Locked values:**
+- Optional fields: `inPlayCards?: string[]`, `inPlayDisplay?: UICardDisplay[]` on `UIPlayerState`.
+- Redaction rule: `audience.kind === 'spectator'` OR (`audience.kind === 'player'` AND `audience.playerId !== player.playerId`) → omit both.
+- Public fields (NOT redacted): `discardTopCard?`, `victoryCards?`, `victoryVP?`.
+- Conditional-assignment pattern per WP-029 D-2902 — never assign `undefined` literally.
+
+**Rejected alternative — project for all audiences.** Rejected because (a) it bloats opponent panels with data the wireframe doesn't render, (b) it breaks the symmetry with `handCards` redaction, and (c) it would require the client to redact in a second layer.
+
+**Status:** Active.
+
+**Citation:** WP-128 §Decision Points D-DEC-3; EC-131 §2 Audience-filter matrix; WP-029 D-2902 (conditional-assignment); `docs/ai/DESIGN-BOARD-LAYOUT.md §4`.
+
+---
+
+### D-12804 — KO Pile Fully Projected: count + topCard + cards (WP-128)
+
+**Type:** Projection-Surface Lock
+**Packet:** WP-128 / EC-131
+**Date:** 2026-05-03
+
+**Decision:** `UIKoPileState` carries three fields: `count: number`, `topCard: UIDisplayEntry | null`, `cards: UIDisplayEntry[]`. The full pile is projected (not count-only). Source path is top-level `G.ko: CardExtId[]` per `types.ts:481` — **NOT** `G.piles.ko` (no such path exists).
+
+**Rationale.**
+- The KO pile is shared and face-up — physical-table semantics permit any player to pick it up and inspect it. Full visibility matches that.
+- The wireframe's "click to view all" drill-down requires the full array.
+- `topCard: UIDisplayEntry | null` makes the typical render (just show the top) cheap; `cards: UIDisplayEntry[]` enables the drill-down without a second projection pass.
+- The earlier WP-128 draft path `G.piles.ko` was a spec error caught by pre-flight 2026-05-03 PS-1 and corrected here. `G.ko` is the only real path.
+
+**Locked values:**
+- Source path: `gameState.ko` (top-level on `LegendaryGameState`).
+- `count = gameState.ko.length`.
+- `topCard = gameState.ko.length > 0 ? { extId: gameState.ko[gameState.ko.length - 1], display: resolveDisplay(...) } : null`.
+- `cards = gameState.ko.map(extId => ({ extId, display: resolveDisplay(extId, gameState) }))`.
+- Per-entry shallow copy via `resolveDisplay` per WP-111 D-11105 aliasing-defense.
+- NOT redacted by audience filter (public).
+
+**Rejected alternative — count + topCard only.** Rejected because it limits the wireframe's drill-down without saving meaningful payload (KO piles are typically small to medium in size).
+
+**Rejected alternative — project from `G.piles.ko`.** Rejected because no such path exists. Pre-flight PS-1 caught this.
+
+**Status:** Active.
+
+**Citation:** WP-128 §Decision Points D-DEC-4; EC-131 §2 Locked Values; `types.ts:481` (KO pile path verification); preflight-wp128.md PS-1.
+
+---
+
+### D-12805 — Mastermind `attachedBystanders` Shape AND Data Semantics (Interpretation B Locked) (WP-128)
+
+**Type:** Projection-Shape + Semantics Lock
+**Packet:** WP-128 / EC-131
+**Date:** 2026-05-03
+
+**Decision (shape):** `UIMastermindState.attachedBystanders: UIDisplayEntry[]` — `{ extId: string; display: UICardDisplay }[]`. Mirrors `victoryCards` shape so clients render bystander art without a separate registry lookup.
+
+**Decision (semantics — Interpretation B locked at pre-flight 2026-05-03 PS-4):** The projection represents bystanders captured by the **mastermind itself** (e.g., Master Strike effects in canonical Marvel Legendary). The engine has no source for this today; under D-12806 Option A safe-skip the projection is `[]` until a future WP adds `G.mastermind.attachedBystanders`.
+
+**Rationale (Interpretation B over A).**
+- `G.attachedBystanders` (top-level, line 488 of `types.ts`) is keyed by **city villain CardExtId** — semantically "bystanders attached to specific villains in the city row," not "bystanders attached to the mastermind."
+- Flattening city-villain captures into the mastermind tile (Interpretation A) would (a) misrepresent city-row data as mastermind-row data, (b) double-render bystanders that already display on their attached city villains, and (c) lock in a derivation that future engine work (Master Strike–driven mastermind capture) would have to undo.
+- Interpretation B preserves the wireframe placement (mastermind tile shows mastermind-side captures) AND keeps the data semantics honest: the projection is empty today because the engine has no source today, not because we're hiding data.
+- The same shape (`UIDisplayEntry[]`) applies to both interpretations, so the type contract is interpretation-agnostic and can be extended without breaking changes.
+
+**Locked values:**
+- Field type: `UIDisplayEntry[]` (`{ extId: string; display: UICardDisplay }[]`).
+- Required field on `UIMastermindState` (not optional).
+- MVP value: `[]` (safe-skip per D-12806).
+- "Do NOT flatten `G.attachedBystanders`" guardrail surfaces in three places: WP-128 §Non-Negotiable, EC-131 §2, and the build-site `// SAFE-SKIP-WP128` comment.
+
+**Rejected alternative — Interpretation A (flatten city-villain captures).** Rejected because (a) it misrepresents city-row data; (b) it double-renders bystanders already on city villains; (c) it locks in a derivation future engine work would have to undo when `G.mastermind.attachedBystanders` lands.
+
+**Rejected alternative — `string[]` (extId only).** Rejected because it diverges from the WP-111 inline-`display` pattern; clients would need a separate registry lookup to render the bystander art.
+
+**Status:** Active.
+
+**Citation:** WP-128 §Decision Points D-DEC-5; EC-131 §2 / §Common Failure Smells; `types.ts:488` (`G.attachedBystanders` keyed by city villain); preflight-wp128.md PS-4 Resolution Log.
+
+---
+
+### D-12806 — Option A Safe-Skip Resolution: 8 Missing-G-Source Projection Sites (WP-128)
+
+**Type:** Projection-Resolution Lock (mirrors WP-023 / WP-025 / WP-026 / WP-030 evaluator-time precedent at projection time)
+**Packet:** WP-128 / EC-131
+**Date:** 2026-05-03
+
+**Decision:** Eight WP-128 projection fields lack a `G` source today. Each is projected with a deterministic typed-stable safe-skip value (`[]` for arrays, `0` for counts) plus a CI-greppable `// SAFE-SKIP-WP128` marker on the assignment line. The `// why:` comment beside each marker carries three required clauses: (a) Option A safe-skip per pre-flight 2026-05-03 PS-3 / D-12806; (b) the specific gap; (c) future WP-NNN that resolves `G.<path>`.
+
+**The 8 sites:**
+
+| Field | Safe-skip value | Gap |
+|---|---|---|
+| `mastermind.attachedBystanders` | `[]` | `G.mastermind.attachedBystanders` does not exist; no mastermind-side bystander capture today. **Do NOT flatten `G.attachedBystanders`** (city-villain captures) — D-12805 Interpretation B. |
+| `mastermind.strikePile` | `[]` | `G.mastermind.strikePile` does not exist; mastermind-strike cards live in `G.villainDeck.discard`. |
+| `scheme.twistPile` | `[]` | No `G.scheme` object; twist cards live in `G.villainDeck.discard`. |
+| `city.escapedPile` | `[]` | `CityZone` is a 5-tuple; escapes increment `G.counters[ESCAPED_VILLAINS]` but cards aren't preserved. |
+| `economy.piercing` | `0` | `TurnEconomy` has only `attack`/`recruit`/`spentAttack`/`spentRecruit`. |
+| `economy.woundsDrawn` | `0` | Same — `woundsDrawn` field doesn't exist. |
+| `decks.heroDeckCount` | `0` | No hero-deck reservoir on G; HQ is static post-setup. |
+| `piles.horrorsCount` | `0` | `GlobalPiles` has no `horrors`; D-12802 default. |
+
+**Rationale.**
+- The WP must ship the **type contract** for all 17 new projection fields so WP-129 (board-layout components) has a stable shape to bind to. Deferring the contract until G has every source field would cascade-block WP-129 / WP-130.
+- The safe-skip pattern is established precedent: WP-023 / WP-025 / WP-026 / WP-030 all use evaluator-time safe-skips when a `G` field is missing. WP-128 applies the same pattern at projection time.
+- Each safe-skip carries the `// SAFE-SKIP-WP128` marker so when a future WP adds the underlying `G` state, CI grep finds every site that needs to flip from constant to derivation. The marker count drops as sites are resolved — a built-in audit signal.
+- Required-field contract preserved: each safe-skip projects a typed-stable default (`[]` / `0`) — never `undefined`. Consumers don't need null-checks.
+- The strict alternative (STOP and split into a predecessor G-extension WP) was rejected because the G-extensions span six engine subsystems (mastermind, economy, city, hero deck, scheme, horrors) and would require move-logic and setup wiring across all six. That's a separate workstream, not a WP-128 prerequisite.
+
+**Locked rules:**
+- The marker `// SAFE-SKIP-WP128` MUST appear on the assignment line (or directly above) at every safe-skip site. EC-131 §5 verification gate greps for marker count ≥ 8.
+- The accompanying `// why:` comment MUST cite (a) D-12806; (b) the gap; (c) the future WP-NNN placeholder (the resolution-WP IDs land in `WORK_INDEX.md` Pending block).
+- Drift tests assert each safe-skip field is present with its typed-stable default value. When a future WP adds the `G` source, only the safe-skip value flips — the field name and shape stay identical.
+
+**Rejected alternative — Option B (predecessor G-extension WP).** Rejected because it adds 6 G fields plus move-logic plus setup wiring across six subsystems, expanding scope far beyond the WP-128 board-layout chain. The safe-skip path keeps WP-128 contract-only and defers the engine work to its own WPs.
+
+**Rejected alternative — Option C (drop the gap fields).** Rejected because it removes 8 of 17 wireframe rows, defeating the WP-128 goal that "WP-129 has every field it needs."
+
+**Rejected alternative — assign `undefined` instead of `[]` / `0`.** Rejected because the required-field contract demands typed-stable defaults; `undefined` would force consumer null-checks.
+
+**Status:** Active.
+
+**Citation:** WP-128 §Scope B Safe-Skip Resolutions; EC-131 §2 / §3 / §4 / §5; preflight-wp128.md PS-3 Resolution Log; WP-023 / WP-025 / WP-026 / WP-030 (precedent).
+
+---
+
+### D-12807 — WP-128 01.5 Cascade Resolution: No Cascade (replay.execute.test.ts Untouched) (WP-128)
+
+**Type:** 01.5 Cascade Resolution
+**Packet:** WP-128 / EC-131
+**Date:** 2026-05-03
+
+**Decision:** WP-128 invokes `01.5 IS INVOKED` as a **conditional cascade only**. Per EC-131 §2's binary procedure, the executor captured `PRE_WP080_HASH` (`46f7863c`) before any edit, ran the full engine test suite after all WP-128 projection / filter / type changes landed, and confirmed the replay-determinism regression guard (`replay.execute.test.ts:117 — preserves replayGame stateHash byte-identically`) still passes against the same literal `46f7863c`. **No cascade fired. `replay.execute.test.ts` is untouched in the WP-128 commit.**
+
+**Rationale.**
+- UIState fields are **downstream** of `computeStateHash` inputs. The hash digests `G`-side state (per `replay.hash.ts`); UIState is a derived projection consumed by the UI, not part of the digested input.
+- WP-128 ships **no new `G` fields** (Option A safe-skip locked at D-12806). With no `G` mutation, `computeStateHash(replayGame(standardInput, mockRegistry).stateHash)` produces a byte-identical result.
+- The conditional-cascade EC-131 §2 procedure (capture pre / capture post / update only on divergence) was followed verbatim. Pre-hash and post-hash both equal `46f7863c`.
+
+**Locked values:**
+- Pre-projection hash: `PRE_WP080_HASH = '46f7863c'` (unchanged at session close).
+- Post-projection hash: `46f7863c` (verified via passing test suite).
+- Modified replay-test files: **none**. `git diff packages/game-engine/src/replay/replay.execute.test.ts` returns empty.
+- 01.5 cascade scope at session close: **conditional-cascade allowance not exercised**.
+
+**Future contributor note.** The next WP that adds the underlying `G` fields for the 8 D-12806 safe-skip sites WILL trigger a `computeStateHash` cascade (each new `G` field expands the JSON-encoded structure hash). At that point, the conditional-cascade procedure must be re-run (capture pre / capture post / update literal on divergence) — that's a property of the future WP, not a debt of WP-128.
+
+**Status:** Active.
+
+**Citation:** EC-131 §2 (binary procedure); `replay.execute.test.ts:41` (`PRE_WP080_HASH`); WP-111 / EC-118 precedent (cascade fired there because `cardDisplayData` was added to `G`); preflight-wp128.md Risk R-3.
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
