@@ -17,11 +17,13 @@
 ## §1 — Locked Values (do not re-derive)
 
 - **HQ slot count (MVP):** 5.
+- **HQ index semantics:** index `0` is the deterministic first-fill slot at setup AND on refill. Deck top (post-shuffle, position 0) lands at HQ slot 0. Tests assert: `heroDeck.length >= 1 → hq[0] !== null`; `heroDeck.length >= 5 → hq[0..4]` are non-null in deck-front order.
 - **PlayerZones keys:** `deck` | `hand` | `discard` | `inPlay` | `victory`.
 - **Phase / stage names:** phases `'lobby'` | `'setup'` | `'play'` | `'end'`; stages `'start'` | `'main'` | `'cleanup'`.
 - **Hero card instance ext_id format (D-13502):** `<setAbbr>/<heroSlug>/<cardSlug>` (e.g., `core/spider-man/astonishing-strength`).
 - **Rarity → copy-count mapping (D-13501; recommended default):** Common 1 = 5; Common 2 = 3; Uncommon = 3; Rare = 3 (sum = 14 per hero).
 - **Empty-deck recruit behavior (D-13503):** vacated slot stays `null`; no auto-reshuffle.
+- **`G.messages` recruit log format (locked byte-for-byte):** `"Player {playerId} recruited {heroExtId}; HQ slot {hqIndex} refilled from heroDeck (heroDeck.length: {N})"`. Empty-deck branch substitutes `(heroDeck empty; slot left null)` for the trailing parenthetical. No timestamps, no wall-clock data, no debug context. Replay diffs depend on byte-equality.
 - **Safe-skip marker count after this packet:** 7 (was 8; this packet closes `decks.heroDeckCount`).
 
 ## §2 — Guardrails
@@ -31,9 +33,11 @@
 - `recruitHero.impl.ts` is the SOLE post-setup mutator of `G.heroDeck`. Any other mutation is a violation.
 - HQ refill on recruit uses a pure helper (`refillHqSlot`); no inline `splice` / `shift` in the move body.
 - The shuffle uses `ctx.random.Shuffle` exclusively. Never `Math.random()`.
-- `G.heroDeck` and `G.hq` mutations return new arrays; no in-place mutation outside zoneOps.
+- `G.heroDeck` and `G.hq` mutations return new arrays; no in-place mutation. Helpers in `city.logic.ts` (`fillHqFromDeck`, `refillHqSlot`) build new arrays and the orchestrator / move body rebinds `G.heroDeck = newArray` — never `G.heroDeck.push()` / `.shift()` / `.splice()` directly.
+- **Determinism Envelope (must not be widened):** exactly one `ctx.random.Shuffle` call at setup; HQ population is a deterministic prefix pop (FIFO from index 0) with no re-sort, re-shuffle, partition, or rearrangement; `recruitHero` performs a single front-pop per success — no batching, no replacement, no auto-reshuffle of recruited cards back into the deck. The registry walk in `buildHeroDeckCards` is ordering-stable (heroes per `config.heroDeckIds` order, cards per registry `cards[]` order, copies per rarity-map order). Refactors that "preserve test pass" but widen this envelope (per-turn shuffle, batched front-pops, deck sorting) are forbidden — they break replay determinism. The replay-hash regression guard is the canary.
 - `decks.heroDeckCount` projection graduates at exactly one site in `uiState.build.ts`; the `// SAFE-SKIP-WP128` marker is removed on that line.
 - Move-as-no-throw contract preserved: no new `throw` statements in `recruitHero.impl.ts`.
+- `G.messages` recruit log format is locked byte-for-byte at the §1 string. Future "helpful" additions (timestamps, debug context, formatted dates) silently break replay diffs and are forbidden.
 - 01.5 conditional cascade: capture `PRE_WP080_HASH` before any edit; update only on hash divergence; cite 01.5 + D-12807 + WP-135 at the update site.
 - 01.6 post-mortem MANDATORY (new long-lived `G` field; new contract surface).
 
@@ -96,7 +100,9 @@
 - [ ] D-13501..D-13503 cited at the locked sites (per §3).
 - [ ] `git diff packages/game-engine/src/replay/replay.execute.test.ts` is empty (no cascade) OR a single-line `PRE_WP080_HASH` literal update with a `// why:` comment.
 - [ ] `git diff --name-only apps/ packages/registry packages/preplan packages/vue-sfc-loader .claude/rules` returns no output.
-- [ ] Manual smoke (recommended): start the smoke-test server, create a 2-player match, confirm 5 HQ slots are populated at match start; recruit one hero on the active player's turn; confirm the slot refills from the deck and `decks.heroDeckCount` decrements by 1.
+- [ ] **Order-equality test present:** at least one test in `buildInitialGameState.test.ts` constructs the expected post-shuffle deck via the same `ShuffleProvider` mock used by setup, then asserts deep-equal between `G.heroDeck` and `expectedShuffledDeck.slice(5)`. This locks the single-shuffle + FIFO-prefix-pop construction path against silent envelope-widening.
+- [ ] **HQ index-0 first-fill test present:** at least one test asserts `G.hq[0] !== null` whenever `heroDeck.length >= 1` post-setup; another asserts `G.hq[0..4]` are all non-null in deck-front order whenever `heroDeck.length >= 5`.
+- [ ] Manual smoke (recommended): start the smoke-test server, create a 2-player match, confirm 5 HQ slots are populated at match start; recruit one hero on the active player's turn; confirm the slot refills from the deck and `decks.heroDeckCount` decrements by 1; confirm the `G.messages` log line matches the locked format byte-for-byte (no timestamps, no extra context).
 
 ## §6 — Commit Hygiene
 
@@ -124,3 +130,6 @@
 - `recruitHero` test fails on the empty-deck branch → check D-13503 site; the slot must be set to `null`, not the prior recruited card or a stale value.
 - Drift test fails on safe-skip count → forgot to decrement from 8 to 7 in the drift assertion.
 - New `throw` statement in `recruitHero.impl.ts` → move-as-no-throw contract violated; refactor the empty-deck branch to return-void rather than throw.
+- Replay-hash test fails AND no 01.5 cascade in `git diff replay.execute.test.ts` → determinism envelope was widened (extra shuffle, deck reorder, batched pop, registry-walk reorder). Revert the envelope-widening change; the 01.5 cascade is only legitimate when the new `G` field itself changed `computeStateHash`, not when the envelope was silently extended.
+- `G.messages` recruit line contains a timestamp, formatted date, debug payload, or otherwise differs from the §1 locked format string → replay diff loses byte-equality. Revert to the locked format; if a richer log surface is genuinely needed, that's a separate WP that updates `G.messages` semantics globally.
+- HQ slot 0 is `null` while `G.heroDeck.length > 0` → HQ index-0 first-fill semantics violated. The orchestrator's `fillHqFromDeck` call probably popped from the wrong end (back-pop instead of front-pop) or the HQ assignment swapped slot ordering.

@@ -14,6 +14,8 @@ WP-016 added `recruitHero({ hqIndex })` as a `play.main` move but deferred the H
 
 ## Goal
 
+> **This packet locks the hero deck composition model (rarity → copy counts) as an explicit decision (D-13501) before any setup logic is executed.** Deck math is contractual, not advisory: it sets the reservoir size, the HQ fill prefix length, the test invariants, and the replay-hash input shape simultaneously. Locking the rarity map at session start is the single decision that prevents downstream drift.
+
 After this packet, `Game.setup()` builds a deterministic per-match hero-deck reservoir at `G.heroDeck: CardExtId[]` from each entry in `MatchSetupConfig.heroDeckIds`, shuffles it via `ctx.random.Shuffle`, and pops the first 5 cards into `G.hq` so HQ slots render with real heroes at match start. The `recruitHero` move refills the vacated slot from `G.heroDeck.shift()` on success; when the deck is empty, the slot stays empty (no auto-shuffle of recruited cards back into the deck — recruited cards belong to the active player's discard per WP-016). `G.cardStats` and `G.cardDisplayData` are extended to cover the hero card instances (cost, attack, recruit, name, imageUrl) so cost-gating and display-name resolution work end-to-end. UIState's `decks.heroDeckCount` projection graduates from the WP-128 / D-12806 safe-skip constant `0` to `G.heroDeck.length`. The match-start "structurally unwinnable" state (4 attack max per turn from starter cards alone vs Magneto's 6-attack tactic cost) is no longer the engine's shipped reality.
 
 ---
@@ -72,8 +74,15 @@ Before writing a single line:
 - No database / network / filesystem in `buildHeroDeck` or `recruitHero` modifications.
 - Human-style code per `docs/ai/REFERENCE/00.6-code-style.md`.
 
+**Determinism Envelope (must not be widened):**
+- Exactly **one** shuffle of the hero deck occurs at setup, via `ctx.random.Shuffle`. No second shuffle anywhere in the engine post-setup.
+- HQ population is a deterministic prefix pop (FIFO from index 0) from that shuffled deck. Setup may not re-order, sort, partition, or otherwise rearrange the deck after the shuffle.
+- No other randomization or reordering is permitted in setup or moves. `recruitHero` mutates `G.heroDeck` via a single front-pop per success — no batching, no replacement, no auto-reshuffle of recruited cards back into the deck.
+- The registry walk that builds the unshuffled `buildHeroDeckCards` output is itself ordering-stable: heroes iterated in `config.heroDeckIds` order, cards iterated per the registry's `cards[]` array order, copies appended in rarity-map order. Any reordering of the walk changes the post-shuffle distribution and therefore the replay hash.
+- Future contributors: refactors that "preserve test pass" but widen this envelope (e.g., introducing a per-turn shuffle, batching front-pops, sorting the deck for "predictability") are forbidden — they break replay determinism. The replay-hash regression guard is the canary; if it diverges without a corresponding 01.5 cascade in the diff, the envelope was widened.
+
 **Packet-specific:**
-- `G.heroDeck` is a **CardExtId-strings-only** array. Never card objects, never display payloads. Aliasing-defense: every push / shift returns a new array; no in-place mutation outside the canonical zone-ops boundary.
+- `G.heroDeck` is a **CardExtId-strings-only** array. Never card objects, never display payloads. Aliasing-defense: every helper that mutates the deck returns a NEW array (no in-place `.push()` / `.shift()` / `.splice()`); the orchestrator and `recruitHero` rebind `G.heroDeck = newArray` after each helper call. The pure helpers in §D / §F are the only mutator entry points; arbitrary `G.heroDeck.shift()` in move bodies is forbidden.
 - The hero-card-instance ext_id format is set-qualified per D-10014: `<setAbbr>/<heroSlug>/<cardSlug>` (e.g., `core/spider-man/astonishing-strength`). Locked at D-DEC-2.
 - `buildHeroDeck` is a **pure helper** (no `boardgame.io` import; no `Math.random`; no I/O). Receives a `ShuffleProvider` argument the same way `buildPlayerState` does (per `playerInit.ts:25-29`).
 - `recruitHero` move modification is the SOLE site where `G.heroDeck` is mutated post-setup. Any other mutation is a violation of the move-as-only-mutator contract.
@@ -129,11 +138,11 @@ Before writing a single line:
 
 - **`packages/game-engine/src/setup/buildInitialGameState.ts`** — modified:
   - Import `buildHeroDeck`.
-  - After `buildVillainDeck` and before the `LegendaryGameState` literal: build the hero deck via `buildHeroDeck(config.heroDeckIds, registry, context)`, slice the first 5 cards as the initial HQ contents, leave the rest as `G.heroDeck`.
-  - Replace `hq: initializeHq()` with `hq: <hq-from-first-5-of-shuffled-deck>` (use a new helper from §D, NOT inline slicing in the orchestrator).
-  - Add `heroDeck: <remaining-shuffled-deck>` field to the literal.
-  - Update the existing comment on line 308-309 from "HQ initialized empty; recruit slot population is WP-016 scope" to "HQ filled from first 5 of the shuffled hero deck; remainder stored at G.heroDeck per WP-135."
-  - `// why:` comment on the `ctx.random.Shuffle`-driven hero-deck construction citing WP-135 + the determinism guarantee.
+  - After `buildVillainDeck` and before the `LegendaryGameState` literal: build the hero deck via `buildHeroDeck(config.heroDeckIds, registry, context)` exactly once, then call `fillHqFromDeck(shuffledDeck, 5)` (from §D) which returns `{ hq, remainingDeck }`. The HQ initial draw consumes the **same deck instance** later used for refills (the `remainingDeck` returned from `fillHqFromDeck` IS `G.heroDeck`); there is no second deck construction, no parallel reservoir, no per-zone copy.
+  - Replace `hq: initializeHq()` with `hq: fillHqResult.hq` (use the helper from §D, NOT inline slicing in the orchestrator).
+  - Add `heroDeck: fillHqResult.remainingDeck` field to the literal.
+  - Update the existing comment on line 308-309 from "HQ initialized empty; recruit slot population is WP-016 scope" to "HQ filled from first 5 of the shuffled hero deck via fillHqFromDeck; remainder stored at G.heroDeck per WP-135."
+  - `// why:` comment on the `ctx.random.Shuffle`-driven hero-deck construction citing WP-135 + the determinism envelope (single-shuffle + deterministic-prefix-pop).
 
 ### D) HQ helper — `fillHqFromDeck`
 
@@ -141,8 +150,9 @@ Before writing a single line:
   - Add a new pure helper `fillHqFromDeck(heroDeck: CardExtId[], slotCount: number): { hq: HqZone; remainingDeck: CardExtId[] }`.
   - Pops up to `slotCount` cards from the front of the deck into the HQ; remaining cards stay in `remainingDeck`.
   - When `heroDeck.length < slotCount`, fills as many slots as possible and leaves the rest as `null`.
-  - No `boardgame.io` import; no `.reduce()`; explicit `for` loop.
-  - `// why:` comment on the helper: "Pure helper — pops front-to-back so the deck's top card lands at HQ slot 0. Mirrors the city's pushVillainIntoCity entry-edge pattern; engine indexes 0-4 with slot 0 as the canonical first-fill site."
+  - No `boardgame.io` import; no `.reduce()`; explicit `for` loop. Returns NEW arrays for both `hq` and `remainingDeck`; never mutates the input `heroDeck`.
+  - **Index Semantics (locked):** HQ index `0` is the deterministic first-fill slot at setup AND on refill. The deck's top card (post-shuffle, position 0) MUST land at HQ slot 0. Tests assert: when `heroDeck.length >= 1`, `hq[0] !== null`; when `heroDeck.length >= 5`, `hq[0..4]` are all non-null in deck-front order. This contract is non-negotiable — if HQ ever becomes non-linear (e.g., column-grouped variants), the new layout is a separate WP, not a refactor of `fillHqFromDeck`.
+  - `// why:` comment on the helper: "Pure helper — pops front-to-back so the deck's top card lands at HQ slot 0. Mirrors the city's pushVillainIntoCity entry-edge pattern; engine indexes 0-4 with slot 0 as the canonical first-fill site. Index 0 = first-fill slot is locked semantics; do not reorder."
   - `initializeHq()` is preserved verbatim (returns `[null, null, null, null, null]`); it remains the contract for "no hero deck supplied" paths (e.g., test fixtures that don't need HQ filled). The orchestrator's call site swaps to `fillHqFromDeck`.
 
 ### E) HQ refill on recruit — `recruitHero` modification
@@ -150,8 +160,9 @@ Before writing a single line:
 - **`packages/game-engine/src/moves/recruitHero.impl.ts`** — modified:
   - On successful recruit (post-discard append + post-cardStats deduction), call a new pure helper `refillHqSlot(hq, hqIndex, heroDeck): { hq, heroDeck }`.
   - When `heroDeck.length === 0`, the slot stays `null` and `heroDeck` remains `[]`.
-  - Append a one-line `G.messages` entry per Debuggability §3.
-  - `// why:` comment on the refill site: "WP-135 — refill the vacated slot from G.heroDeck (FIFO via shift). Empty-deck case leaves the slot null; no auto-reshuffle of recruited cards back into the deck (that's a separate engine WP if ever needed)."
+  - **Append a single deterministic one-line entry to `G.messages`. The string format is stable and MUST NOT include timestamps, wall-clock data, random tokens, object addresses, or any other non-deterministic data.** Replay diffs depend on exact byte-equality of `G.messages`; future "helpful" additions (millisecond timestamps, debug context, formatted dates) silently break replay determinism. Locked format: `"Player {playerId} recruited {heroExtId}; HQ slot {hqIndex} refilled from heroDeck (heroDeck.length: {N})"` where `{playerId}` is the bare engine playerID string, `{heroExtId}` is the recruited card's set-qualified ext_id (NOT the human display name — display data is projection-time, not runtime), `{hqIndex}` is the integer index, `{N}` is the post-refill deck length. Empty-deck branch substitutes `(heroDeck empty; slot left null)` for the trailing parenthetical.
+  - `// why:` comment on the refill site: "WP-135 — refill the vacated slot from G.heroDeck (FIFO via shift). Empty-deck case leaves the slot null per D-13503; no auto-reshuffle of recruited cards back into the deck (separate engine WP if ever needed)."
+  - `// why:` comment on the G.messages append site: "WP-135 — log line is replay-visible and snapshotted; format is locked at this site to byte-equality. Never add timestamps or non-deterministic context."
 
 ### F) Refill helper — `refillHqSlot`
 
@@ -228,7 +239,7 @@ These [DECISION REQUIRED] blocks land in DECISIONS.md as D-13501..D-13503 in num
 
 - **D-DEC-1 — Hero rarity → copy-count mapping.** Recommended default per Marvel Legendary canonical rules: `Common 1` = 5 copies, `Common 2` = 3, `Uncommon` = 3, `Rare` = 3 (total 14 per hero). Alternatives: source the count from `data/metadata/hero-deck-composition.json` (deferred — no such file exists today); query a registry helper (deferred — no such helper). Lock the hardcoded 5/3/3/3 mapping in `buildHeroDeck.ts` with a `// why:` comment citing D-13501 + the canonical 14-cards-per-hero rule.
 
-- **D-DEC-2 — Hero card instance ext_id format.** Recommended default per D-10014 set-qualification: `<setAbbr>/<heroSlug>/<cardSlug>` (e.g., `core/spider-man/astonishing-strength`). Alternatives: `<setAbbr>/<heroSlug>/<rarityLabel>/<cardSlug>` (more drift-resistant if two hero cards ever share a slug across rarities; rejected at MVP — no observed collisions in `data/cards/core.json`). Lock at D-13502 with a sample ext_id and the canonical join key.
+- **D-DEC-2 — Hero card instance ext_id format.** Recommended default per D-10014 set-qualification: `<setAbbr>/<heroSlug>/<cardSlug>` (e.g., `core/spider-man/astonishing-strength`). Alternatives: `<setAbbr>/<heroSlug>/<rarityLabel>/<cardSlug>` (more drift-resistant if two hero cards ever share a slug across rarities). Rejected at MVP because (a) registry data guarantees hero-scoped uniqueness today — no observed collisions across all 40 sets in `data/cards/`; (b) introducing rarity into the ext_id would prematurely fragment the sibling-snapshot maps (`G.cardStats`, `G.cardDisplayData`) by adding a synthetic key segment that has no upstream registry-side authority, complicating every future card-data join across `cardStats[extId]` / `cardDisplayData[extId]` / `villainDeckCardTypes[extId]` / `cardKeywords[extId]` for zero observed benefit; (c) future-proofing against a hypothetical collision is properly handled by extending the registry's hero-card schema with a stable disambiguator field, not by overloading the ext_id surface. Lock at D-13502 with a sample ext_id and the canonical join key.
 
 - **D-DEC-3 — Empty-deck recruit behavior.** Recommended default: vacated slot stays `null`; no auto-reshuffle of recruited cards back into the deck. Alternatives: error out the recruit (rejected — recruit was successful from the engine's POV; the empty-deck state is post-success); reshuffle the active player's discard into the heroDeck (rejected — that's the player's deck, not the shared hero pool; would conflate per-player and shared zones). Lock at D-13503.
 
@@ -309,6 +320,7 @@ These [DECISION REQUIRED] blocks land in DECISIONS.md as D-13501..D-13503 in num
 - [ ] Every CardExtId in `G.hq` (non-null) has entries in `G.cardStats` AND `G.cardDisplayData`.
 - [ ] Every CardExtId in `G.heroDeck` has entries in `G.cardStats` AND `G.cardDisplayData`.
 - [ ] The original "WP-016 scope" comment at line 308-309 is removed; the new comment cites WP-135.
+- [ ] **Order-semantics lock:** the post-setup `G.heroDeck` array equals the post-shuffle deck array with the first 5 cards removed (`shuffledDeck.slice(5)`). Tests construct the expected deck via the same `ShuffleProvider` mock, run `buildHeroDeck` + `fillHqFromDeck(_, 5)`, and assert deep-equal between `G.heroDeck` and `expected.slice(5)`. Single-shuffle, FIFO-prefix-pop is the only permitted construction path; any deviation (re-sort, re-shuffle, partition-and-merge) violates the determinism envelope.
 
 ### D — HQ refill on recruit
 
