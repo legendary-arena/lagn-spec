@@ -13721,6 +13721,109 @@ The verifier scans the `amr` array via two-pass priority: pass 1 finds any eleme
 
 ---
 
+### D-13501 — Hero Rarity → Copy-Count Map + Option A Loud-Fail on Unknown Labels (WP-135)
+
+**Type:** Engine Setup-Time Lock
+**Packet:** WP-135 / EC-138
+**Date:** 2026-05-04
+
+**Decision:** `buildHeroDeck` (new pure helper at `packages/game-engine/src/setup/buildHeroDeck.ts`) builds the per-match hero deck reservoir at `Game.setup()` from `MatchSetupConfig.heroDeckIds`. Each hero contributes a fixed number of card-instance copies into the flat array, keyed by the per-card `rarityLabel` value, per the canonical Marvel Legendary tabletop rule of 14 cards per hero (5 + 3 + 3 + 3 = 14). The locked rarity → copy-count map is:
+
+```
+Common 1 = 5
+Common 2 = 3
+Uncommon = 3
+Rare     = 3
+———————————
+Total      14 per hero
+```
+
+**Coverage scope:** the four-label set `{ 'Common 1', 'Common 2', 'Uncommon', 'Rare' }`. Verified at draft time against `data/cards/core.json` (every hero in core uses only these four labels). Cross-set audit at WP-135 pre-flight (2026-05-04): 76 of 307 heroes across 40 sets in `data/cards/` carry rarity labels outside this set (notably the entire `amwp.json` set uses `'Common 3'` and `'Uncommon 2'` and 6-card-per-hero arrays).
+
+**Option A loud-fail lock.** When `buildHeroDeckCards` encounters a card whose `rarityLabel` is not in the four-label set, `buildHeroDeck` throws a full-sentence `Error` inside `Game.setup()`. The error message names the offending hero ext_id (e.g., `'amwp/ant-man'`), the unrecognized `rarityLabel` (e.g., `'Common 3'`), and the supported four-label set. Throwing inside `Game.setup()` is the canonical loud-fail surface (per `.claude/rules/game-engine.md §Throwing Convention` — only `Game.setup()` may throw; moves never throw). The throw site lives in `buildHeroDeck.ts` (or its `buildHeroDeckCards` helper); no other call path may swallow the error. MVP loadouts confine `MatchSetupConfig.heroDeckIds` to compliant sets (`core.json` and any other set whose hero cards use only the four locked labels).
+
+**Rationale.**
+- The 5/3/3/3 map is the canonical Marvel Legendary tabletop hero composition for cards labeled `Common 1` / `Common 2` / `Uncommon` / `Rare`. `core.json` data uses these four labels exclusively, so the MVP scenario is fully covered.
+- Loud-fail (Option A) over silent-skip (Option B) preserves replay determinism and the §A acceptance criterion that the deck contains exactly `(rarity-map-sum) × N` cards. A hero with an unknown label would silently produce an undersized deck under silent-skip — invisible to tests, replay diffs, and the engine's own consistency checks. Throwing surfaces the data drift the moment it is observed, at the canonical setup-time abort surface.
+- Cross-set extension is its own scoped problem: it requires sourcing canonical tabletop copy counts for `'Common 3'` / `'Uncommon 2'` / any other observed labels with rule citations, extending the rarity map, adding cross-set test fixtures, and updating D-13501 with the extension and the per-set hero-card count (likely 18 for AMWP-class). That's a deliberate follow-up WP, not a scope creep on WP-135.
+
+**Rejected alternatives:**
+- **Option B — extend the rarity map now to cover `'Common 3'` / `'Uncommon 2'` / etc.:** rejected because (a) it widens WP-135's scope without a tabletop-rule citation per affected set; (b) the cross-set audit revealed 76/307 heroes are affected, making the extension non-trivial; (c) test fixtures for every new label add substantial verification surface. Deferred to a Pending follow-up WP recorded in `WORK_INDEX.md`.
+- **Silent-skip on unknown labels (return 0 copies for that card; continue building the deck):** rejected because the deck would be undersized at runtime with no diagnostic, and the §A acceptance criterion checking the rarity-map-sum-times-N total would fail with no actionable error message. Replay determinism guarantees would be violated by data drift the engine never surfaced.
+- **Sourcing the count from a registry helper or `data/metadata/hero-deck-composition.json`:** deferred — neither artifact exists today and creating one would widen WP-135's scope. The hardcoded map in `buildHeroDeck.ts` is a single-source-of-truth that future contributors can grep for trivially.
+
+**Locked values:**
+- Map literal lives in `buildHeroDeck.ts`; a `// why:` comment cites D-13501 + the canonical 14-cards-per-hero rule + the Option A loud-fail clause + the deferred follow-up WP cross-reference.
+- Throw site: a `// why:` comment cites D-13501 Option A loud-fail and the deferred follow-up WP placeholder in `WORK_INDEX.md` (the `(deferred placeholder) Extend D-13501 hero rarity → copy-count map to AMWP-class sets` row).
+- Total cards per hero (under the locked map): 14.
+- Total cards per hero deck composition: `14 × heroDeckIds.length` (e.g., 4 heroes → 56 cards; HQ takes first 5, `G.heroDeck` holds the remaining 51).
+
+**Status:** Active.
+
+**Citation:** WP-135 §B + §6 + §17; EC-138 §1 + §3 + §5; `WORK_INDEX.md` deferred-follow-up placeholder; pre-flight `docs/ai/invocations/preflight-wp135.md` cross-set audit.
+
+---
+
+### D-13502 — Hero Card Instance ext_id Format `<setAbbr>/<heroSlug>/<cardSlug>` (WP-135)
+
+**Type:** Engine Naming Lock
+**Packet:** WP-135 / EC-138
+**Date:** 2026-05-04
+
+**Decision:** Hero card instances are keyed by the set-qualified ext_id `<setAbbr>/<heroSlug>/<cardSlug>` (e.g., `core/black-widow/mission-accomplished`). This format is used for every hero card instance in `G.heroDeck`, `G.hq` (post-population), `G.cardStats[extId]`, `G.cardDisplayData[extId]`, and the active player's discard pile after `recruitHero`.
+
+The slash-format hero-card-instance ext_id is **distinct from** the existing FlatCard hyphen-key format (`<setAbbr>-hero-<heroSlug>-<slot>`) emitted by `registry.listCards()`. The FlatCard hyphen keys remain in `G.cardStats` / `G.cardDisplayData` (as the existing hero-template-level entries built before WP-135). The new slash-format keys are **additional** entries representing the actual card instances populated into the hero deck reservoir. Both coexist; no key migration is performed.
+
+**Rationale.**
+- Set-qualification per D-10014 is the canonical way to disambiguate cross-set slug collisions. Hero card slugs collide across sets at the same rate as hero slugs themselves (51/307 hero-slug instances collide per the WP-113 PS-8 probe).
+- Slashes (rather than hyphens) match the existing `<setAbbr>/<heroSlug>` qualified-ID grammar in `MatchSetupConfig.heroDeckIds`. A reader scanning `G.heroDeck` strings can immediately distinguish "set-qualified hero card instance" from "FlatCard registry-level template" by the separator.
+- Card-level uniqueness within a hero is guaranteed by the registry schema (no observed slug collisions across all 40 sets per the pre-flight audit), so the three-segment form `<setAbbr>/<heroSlug>/<cardSlug>` is sufficient — no rarity disambiguation needed.
+
+**Rejected alternatives:**
+- `<setAbbr>/<heroSlug>/<rarityLabel>/<cardSlug>` (more drift-resistant if two hero cards ever share a slug across rarities): rejected because (a) registry data guarantees hero-scoped uniqueness today — no observed collisions; (b) introducing rarity into the ext_id would prematurely fragment the sibling-snapshot maps (`G.cardStats`, `G.cardDisplayData`, `G.villainDeckCardTypes`, `G.cardKeywords`) by adding a synthetic key segment with no upstream registry-side authority, complicating every future card-data join across the four maps; (c) future-proofing against a hypothetical collision is properly handled by extending the registry's hero-card schema with a stable disambiguator field, not by overloading the ext_id surface.
+- Reusing the FlatCard hyphen key (`<setAbbr>-hero-<heroSlug>-<slot>`) as the canonical hero-card-instance ext_id: rejected because (a) the FlatCard `slot` segment is a registry-internal numeric index that has no semantic meaning at gameplay time; (b) FlatCard keys are emitted as a flat list across all hero cards in all sets, mixing hero-template metadata with hero-card-instance lookups; (c) the slash form aligns with the qualified-ID grammar already used elsewhere in `MatchSetupConfig`.
+
+**Locked values:**
+- ext_id format: `<setAbbr>/<heroSlug>/<cardSlug>` — exactly two slash separators, exactly three segments.
+- Sample: `core/black-widow/mission-accomplished`.
+- Construction site: `buildHeroDeckCards` in `buildHeroDeck.ts` (the only emitter); a `// why:` comment cites D-13502.
+- Sibling-snapshot maps (`G.cardStats`, `G.cardDisplayData`) gain entries keyed by this format from extended walks in `economy/economy.logic.ts:buildCardStats` and `setup/buildCardDisplayData.ts:buildCardDisplayData`.
+
+**Status:** Active.
+
+**Citation:** WP-135 §B + §G; EC-138 §1.2 + §3 + §7.2; D-10014 (set-qualification rule); WP-113 PS-8 (cross-set slug collision audit).
+
+---
+
+### D-13503 — Empty-Deck `recruitHero` Behavior: Slot Stays `null`; No Auto-Reshuffle (WP-135)
+
+**Type:** Engine Move-Time Behavior Lock
+**Packet:** WP-135 / EC-138
+**Date:** 2026-05-04
+
+**Decision:** When `recruitHero` succeeds and `G.heroDeck.length === 0`, the vacated HQ slot stays `null` and `G.heroDeck` remains `[]`. There is **no auto-reshuffle** of the active player's discard back into `G.heroDeck`, no fallback draw from any other player's discard, and no sentinel placeholder card. The slot remains visibly empty until either (a) a future `recruitHero` from a non-empty deck refills the OTHER slots first (which doesn't refill this slot), (b) a future engine WP introduces a deliberate reshuffle mechanic (none planned), or (c) the match ends.
+
+**Rationale.**
+- Marvel Legendary's tabletop rule: when the hero deck runs out, the HQ stays partially populated for the rest of the match. Recruited cards from other slots leave to the recruiting player's discard; they do not return to the shared hero pool.
+- Auto-reshuffling discarded recruited cards would conflate the per-player owned-card layer with the shared hero-supply layer. Once a card is in a player's discard, it is owned by that player; reshuffling it back to the shared `G.heroDeck` would let other players recruit it, which contradicts the ownership model and the §3 Trust & Fairness vision goal.
+- The empty-deck branch is invisible at draft-game-progression time (most matches don't exhaust the hero deck), but the determinism contract requires explicit behavior at every code path. Locking the empty-deck branch to "slot stays null" preserves replay determinism and matches the tabletop rule.
+
+**Rejected alternatives:**
+- **Auto-reshuffle the active player's discard back into `G.heroDeck`:** rejected because (a) it conflates per-player ownership with the shared hero supply (see Rationale); (b) it widens WP-135's scope to introduce a new shuffle event mid-game, requiring its own `ctx.random.Shuffle` call site, replay determinism review, and `G.messages` log format; (c) Marvel Legendary's tabletop rule is "deck stays empty," so auto-reshuffling would be a deliberate departure from the canonical rule with no design justification.
+- **Sentinel placeholder card (e.g., `'EMPTY-SLOT'` or `null`-typed string):** rejected because `G.hq` is `HqZone = HqSlot[]` where `HqSlot = CardExtId | null`, and `null` is the canonical empty representation. A sentinel string would require every `G.hq[i]`-reading code path (UIState projection, drift tests, validators) to handle a third state ("present-but-empty") — substantial widening with no benefit.
+- **Block the recruit when the deck is empty:** rejected because the recruit itself succeeds (the slot was non-null when validated; the player has the cost; the HQ has the card). Blocking the recruit would invent a new failure mode tied to deck-empty state, contradicting the move validation contract that decoupled "can recruit?" from "can refill?".
+
+**Locked values:**
+- Empty-deck branch in `recruitHero.ts`: `G.hq[hqIndex] = null; G.heroDeck` stays `[]`.
+- `G.messages` log line for the empty-deck branch substitutes the trailing parenthetical: `(heroDeck empty; slot left null)` (per the §7.6 byte-locked format in EC-138).
+- `// why:` comment on the empty-deck branch cites D-13503.
+
+**Status:** Active.
+
+**Citation:** WP-135 §E + §6; EC-138 §1.5 + §3 + §7.5; Marvel Legendary tabletop rule.
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
