@@ -174,6 +174,8 @@ apps/
 - `registry-viewer` must NOT import: `game-engine`, `server`, `pg`
 - `replay-producer` may import: `@legendary-arena/game-engine` (type + runtime), `@legendary-arena/registry`, Node built-ins
 
+**HTTP framework note:** every routes file under `apps/server/src/**` (`auth/`, `competition/`, `leaderboards/`, `profile/`, `teams/`, `replay/`) attaches to the Koa router (`@koa/router` 10.x on top of `koa` 2.x) bundled by `boardgame.io`'s server entrypoint. Neither `koa` nor `@koa/router` is a direct workspace dependency — both reach the server transitively via `boardgame.io`. Route registrars follow the `registerXyzRoutes(server.router, database, deps)` pattern. See [`docs/ai/ARCHITECTURE.md §HTTP API Surface`](ai/ARCHITECTURE.md#http-api-surface) for the authoritative version.
+
 **WP-126 / D-9904 module-path lock:** every `@teamhanko/*` import (none under D-12601's built-ins-only path), every `hanko.io` URL, and every Hanko-specific type lives **only** under `apps/server/src/auth/hanko/`. The F-2 grep gate (per WP-099 §B) enforces this boundary at every commit.
 
 ---
@@ -207,7 +209,8 @@ packages/
 │   │   ├── scheme/             # SchemeSetupInstruction types + executor (WP-026)
 │   │   ├── scoring/            # PAR-aware scoring + ScenarioScoringConfig loaders (WP-053a)
 │   │   ├── setup/              # buildInitialGameState + buildCardDisplayData (WP-111)
-│   │   ├── simulation/         # AI playtesting framework (WP-036)
+│   │   ├── simulation/         # AI playtesting framework (WP-036) + PAR Simulation Engine
+│   │   │                       # (WP-049: par.aggregator, par.storage, ai.competent, ai.tiers)
 │   │   ├── state/              # Zone types (CardExtId, PlayerZones, GlobalPiles), validators
 │   │   ├── test/               # makeMockCtx (shared test helper)
 │   │   ├── turn/               # Turn stages, phase loop, advanceTurnStage

@@ -115,6 +115,7 @@ orthogonal and test-only. No layer may reach upward or sideways.
 | Database driver | `pg` (PostgreSQL) | ^8.13 | [apps/server/package.json](../apps/server/package.json) |
 | Static asset host | Cloudflare R2 | -- | `https://images.barefootbetters.com/` |
 | Real-time transport | Socket.IO (via boardgame.io/client) | 4.8.x | shipped WP-090 (2026-04-24) |
+| HTTP router (server) | `@koa/router` on `koa` (via boardgame.io server) | 10.x / 2.x | transitive — `apps/server` does not declare `koa` or `@koa/router` as direct deps; framework choice is locked to whatever `boardgame.io` ships |
 | Authentication | Hanko (broker only) | -- | WP-099 / D-9901 (impl deferred WP-112) |
 | Test runner | `node:test` (built-in) | -- | `*.test.ts` files; never `.test.mjs` |
 | Vue SFC test transform | `@legendary-arena/vue-sfc-loader` (in-house) | workspace | dev/test only -- Shared Tooling |
@@ -167,7 +168,7 @@ Application-layer policy on top of the Socket.IO transport above. Locked under D
 
 ## HTTP API Surface
 
-The authoritative catalog of HTTP endpoints exposed (or coded but not yet exposed) by `apps/server` lives at [`docs/ai/REFERENCE/api-endpoints.md`](ai/REFERENCE/api-endpoints.md). Every endpoint carries one of four `Status` values — `Wired | Shipped-but-unwired | Library-only | Pending` — and uses canonical field names from [`docs/ai/REFERENCE/00.2-data-requirements.md`](ai/REFERENCE/00.2-data-requirements.md). Auth posture per endpoint is one of three values — `guest | handle-required | authenticated-session-required` — per `D-9905`. Update obligations on future API-touching WPs are locked by `D-11804` plus lint §21 plus a one-line rule in `.claude/rules/work-packets.md` (replace-whole-row merge semantics — partial-update is FAIL). **Authoritative version:** [`docs/ai/ARCHITECTURE.md §HTTP API Surface`](ai/ARCHITECTURE.md#http-api-surface).
+The authoritative catalog of HTTP endpoints exposed (or coded but not yet exposed) by `apps/server` lives at [`docs/ai/REFERENCE/api-endpoints.md`](ai/REFERENCE/api-endpoints.md). Every endpoint carries one of four `Status` values — `Wired | Shipped-but-unwired | Library-only | Pending` — and uses canonical field names from [`docs/ai/REFERENCE/00.2-data-requirements.md`](ai/REFERENCE/00.2-data-requirements.md). Auth posture per endpoint is one of three values — `guest | handle-required | authenticated-session-required` — per `D-9905`. Update obligations on future API-touching WPs are locked by `D-11804` plus lint §21 plus a one-line rule in `.claude/rules/work-packets.md` (replace-whole-row merge semantics — partial-update is FAIL). Routes attach to a Koa router (`@koa/router` 10.x on top of `koa` 2.x) bundled by `boardgame.io`'s server entrypoint — see Tech Stack row above. Route registrars follow the `registerXyzRoutes(server.router, database, deps)` pattern. **Authoritative version:** [`docs/ai/ARCHITECTURE.md §HTTP API Surface`](ai/ARCHITECTURE.md#http-api-surface).
 
 ---
 
