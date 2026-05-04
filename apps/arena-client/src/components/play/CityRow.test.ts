@@ -85,7 +85,13 @@ describe('CityRow (WP-129 — extends WP-100)', () => {
     assert.equal(wrapper.find('[data-testid="play-city-villain-deck"]').exists(), true);
   });
 
-  test('villain buttons map cityIndex to engine slot 0..4', () => {
+  test('villain buttons render in visual left-to-right order with engine indices reversed', () => {
+    // why: fullCity() has occupants at engine indices 0 (doom-bot,
+    // newly entered), 2 (electro), 4 (thug, about to escape). Visually
+    // these render as Bridge=engine4=thug, Rooftops=engine2=electro,
+    // Sewers=engine0=doom-bot — so reading left-to-right the
+    // data-city-index attributes are 4, 2, 0 (entry edge sits on the
+    // right per DESIGN-BOARD-LAYOUT.md §7.1).
     const { submitMove } = recorder();
     const wrapper = mount(CityRow, {
       props: {
@@ -98,7 +104,7 @@ describe('CityRow (WP-129 — extends WP-100)', () => {
     });
     const villains = wrapper.findAll('[data-testid="play-city-villain"]');
     const indices = villains.map((b) => b.attributes('data-city-index'));
-    assert.deepEqual(indices, ['0', '2', '4']);
+    assert.deepEqual(indices, ['4', '2', '0']);
   });
 
   test('clicking a villain emits fightVillain with cityIndex', () => {
