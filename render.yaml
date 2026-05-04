@@ -17,8 +17,19 @@ services:
     #
     # No --env-file flag: Render injects envVars into the process environment
     # directly. There is no .env file in the build environment.
+    #
+    # why: --import points at tsx's loader.mjs because apps/server/src
+    # contains TypeScript files (db/database.ts + auth/ + leaderboards/ +
+    # profile/ + teams/ .logic.ts / .types.ts / .routes.ts modules)
+    # imported via the canonical .js-extension ESM convention. Without a
+    # TS loader Node fails at startup with ERR_MODULE_NOT_FOUND for
+    # db/database.js. tsx is a devDep of apps/server and is installed by
+    # the buildCommand's `pnpm install`. The relative path
+    # ./apps/server/node_modules/tsx/dist/loader.mjs resolves from the
+    # service's repo-root cwd; bare `tsx` would not (pnpm hoists it
+    # under apps/server/node_modules per strict hoisting policy).
     buildCommand: pnpm install && node scripts/migrate.mjs
-    startCommand: node apps/server/src/index.mjs
+    startCommand: node --import ./apps/server/node_modules/tsx/dist/loader.mjs apps/server/src/index.mjs
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
