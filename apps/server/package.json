@@ -6,7 +6,7 @@
   "description": "Legendary Arena boardgame.io game server — wiring layer only",
   "main": "src/server.mjs",
   "scripts": {
-    "start": "node src/index.mjs",
+    "start": "cd ../.. && node --import ./apps/server/node_modules/tsx/dist/loader.mjs apps/server/src/index.mjs",
     "test": "node --import tsx --test scripts/**/*.test.ts src/**/*.test.ts"
   },
   "dependencies": {
