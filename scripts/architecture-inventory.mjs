@@ -323,6 +323,105 @@ const FIRST_PARTY_SUBSYSTEMS = [
 ];
 
 // ---------------------------------------------------------------------------
+// Importance tiering — cross-cutting axis on top of CATEGORY_DEFINITIONS.
+// CATEGORY_DEFINITIONS groups by *concern* (Vue ecosystem, testing infra,
+// etc.); IMPORTANCE_DEFINITIONS groups by *blast radius if removed*.
+// Same data, different cut.
+// ---------------------------------------------------------------------------
+
+// why: an executive-summary reviewer asks two different questions about
+// the same dep list — "what's it for?" (concern, answered above) and
+// "how badly would removing it hurt?" (importance, answered here).
+//
+// Tier definitions:
+// - Foundational: replacing it means rewriting the architecture. The
+//   engine model, runtime contract, schema discipline, or persistence
+//   story rests on this dep.
+// - Adopted:      explicit framework choice, locked by a WP or DECISIONS
+//   entry. Replaceable with significant effort but the architecture
+//   doesn't *require* this specific package.
+// - Tooling:      supports the dev / test / build loop. Replaceable
+//   with low effort; no architectural surface depends on the choice.
+//
+// Entries can be a bare package name string OR an object with
+// `{ name, transitiveVia }`. Use the object form for packages that
+// reach the workspace transitively (e.g., `socket.io` and `@koa/router`
+// ship via `boardgame.io`'s server bundle, not as direct deps), so the
+// rendered table can annotate the fact instead of mis-reporting them
+// as "not installed."
+//
+// Curation discipline: this is a judgment call, not derivable from data.
+// Reasonable people disagree at the boundaries. Anything in `aggregate`
+// without an entry here surfaces under "Not yet classified" so the
+// curator sees the gap on the next inventory run.
+const IMPORTANCE_DEFINITIONS = [
+  ['Foundational', [
+    'boardgame.io',
+    'typescript',
+    'zod',
+    'pg',
+  ]],
+  ['Adopted', [
+    'vue',
+    'pinia',
+    'vite',
+    { name: 'socket.io', transitiveVia: 'boardgame.io' },
+    { name: 'socket.io-client', transitiveVia: 'boardgame.io' },
+    { name: '@koa/router', transitiveVia: 'boardgame.io' },
+    { name: 'koa', transitiveVia: 'boardgame.io' },
+  ]],
+  ['Tooling', [
+    'vue-tsc',
+    'tsx',
+    'eslint',
+    '@vitejs/plugin-vue',
+    '@vue/test-utils',
+    'jsdom',
+    '@vue/compiler-sfc',
+    '@types/node',
+    '@types/jsdom',
+    '@typescript-eslint/eslint-plugin',
+    '@typescript-eslint/parser',
+    '@vue/eslint-config-typescript',
+    '@vue/tsconfig',
+    'eslint-plugin-vue',
+    'eslint-plugin-vuejs-accessibility',
+    // why: R2 is foundational storage, but the SDK choice is replaceable.
+    // R2 is S3-compatible, so any S3 client would work. The SDK is used
+    // by scripts/validate-r2.mjs and upload tooling, never at runtime by
+    // any app — Tooling.
+    '@aws-sdk/client-s3',
+    // why: pure type declarations, no runtime behavior.
+    '@cloudflare/workers-types',
+    // why: env-var loader for scripts. Not load-bearing for any
+    // architectural surface. Reaches the workspace via side-effect
+    // import (`import "dotenv/config"`) at
+    // `packages/registry/scripts/upload-r2.ts`.
+    'dotenv',
+    // why: declared in `packages/registry/package.json` since the
+    // initial commit but never imported by any source file. Verified
+    // across the surviving registry scripts (validate.ts,
+    // upload-r2.ts) and the three scripts deleted by EC-081. Listed
+    // here under Tooling for completeness; the resulting `0 ⚠` row in
+    // the report is the standing signal for the future operator-
+    // tooling cleanup WP foreshadowed in EC-081 to drop it.
+    'fast-glob',
+  ]],
+];
+
+// why: flatten once for O(1) "is this package classified, and at what
+// tier?" lookups during the Not-yet-classified bucket render. Stores
+// just the tier label per package — the entry's transitiveVia metadata
+// is not needed at lookup time, only at render time.
+const PACKAGE_TO_IMPORTANCE = new Map();
+for (const [tierLabel, entries] of IMPORTANCE_DEFINITIONS) {
+  for (const entry of entries) {
+    const packageName = typeof entry === 'string' ? entry : entry.name;
+    PACKAGE_TO_IMPORTANCE.set(packageName, tierLabel);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // CLI argument parsing — keep it tiny, no dep needed
 // ---------------------------------------------------------------------------
 
@@ -536,8 +635,11 @@ async function countImportsPerPackage(packageNames) {
       packageName,
       // matches: import ... from 'pkg' | "pkg" | from 'pkg/sub'
       // and:     import('pkg') / require('pkg')
+      // and:     import 'pkg' / import "pkg/config"   (side-effect-only;
+      //          required to see deps like dotenv that ship with `import
+      //          "dotenv/config"` rather than a named/default import)
       pattern: new RegExp(
-        `(?:from\\s+|import\\(\\s*|require\\(\\s*)['"\`]${escaped}(?:/[^'"\`]*)?['"\`]`,
+        `(?:from\\s+|import\\s+|import\\(\\s*|require\\(\\s*)['"\`]${escaped}(?:/[^'"\`]*)?['"\`]`,
       ),
     };
   });
@@ -1400,6 +1502,30 @@ async function renderReport({
     lines.push('');
   }
 
+  // why: pivot the same dep data the category tables show, but cut by
+  // *blast radius if removed* instead of by concern. Adjacent placement
+  // reinforces "same data, different cut." The curated tier map lives
+  // at IMPORTANCE_DEFINITIONS near the top of the file.
+  lines.push(`## Importance tiering`);
+  lines.push('');
+  lines.push(`Same packages as the category tables above, pivoted by **blast`);
+  lines.push(`radius if removed** instead of by concern. Three tiers:`);
+  lines.push('');
+  lines.push(`- **Foundational** — replacing it means rewriting the`);
+  lines.push(`  architecture (engine model, runtime contract, schema`);
+  lines.push(`  discipline, or persistence story rests on this dep).`);
+  lines.push(`- **Adopted** — explicit framework choice locked by a WP or`);
+  lines.push(`  \`DECISIONS.md\` entry; replaceable with significant effort.`);
+  lines.push(`- **Tooling** — supports the dev / test / build loop;`);
+  lines.push(`  replaceable with low effort, no architectural surface depends`);
+  lines.push(`  on the choice.`);
+  lines.push('');
+  lines.push(`Curation is a judgment call, not derived from data. Anything`);
+  lines.push(`installed but not yet placed surfaces under "Not yet classified".`);
+  lines.push('');
+  lines.push(renderImportanceSection(aggregate, importCounts, lockfilePackages));
+  lines.push('');
+
   // ---------------------------------------------------------------------------
   // Usage anomalies
   // ---------------------------------------------------------------------------
@@ -1970,6 +2096,138 @@ async function collectExportedSymbols(directory) {
     }
   }
   return symbols;
+}
+
+/**
+ * Render the "Importance tiering" section: pivots the same dep data
+ * the category tables show, but cut by *blast radius if removed*
+ * instead of by concern. Three tiers come from `IMPORTANCE_DEFINITIONS`:
+ * Foundational, Adopted, Tooling.
+ *
+ * For each tier-listed entry we resolve its install state in three
+ * passes:
+ * - Direct dep:  found in `aggregate` — render with declared version(s)
+ *   and the workspaces that declare it.
+ * - Transitive:  not in `aggregate` but present in `lockfilePackages`
+ *   and the entry carries a `transitiveVia` annotation — render with
+ *   the lockfile-resolved version and a "(transitive via X)" note.
+ * - Missing:     in neither — flag with a ⚠ so a stale curation entry
+ *   surfaces immediately on the next inventory run.
+ *
+ * After the three tier tables, a "Not yet classified" bucket lists
+ * every package in `aggregate` that has no entry in `PACKAGE_TO_IMPORTANCE`.
+ * That keeps the curation gap visible without forcing the curator to
+ * diff `aggregate` against the importance map by hand.
+ *
+ * @param {Map<string, { versions: Set<string>, locations: any[] }>} aggregate
+ * @param {Map<string, number>} importCounts
+ * @param {Map<string, Set<string>>} lockfilePackages
+ * @returns {string}
+ */
+function renderImportanceSection(aggregate, importCounts, lockfilePackages) {
+  const lines = [];
+  for (const [tierLabel, entries] of IMPORTANCE_DEFINITIONS) {
+    lines.push(`### ${tierLabel}`);
+    lines.push('');
+    if (entries.length === 0) {
+      lines.push(`_No packages classified in this tier._`);
+      lines.push('');
+      continue;
+    }
+    lines.push(`| Package | Version(s) | Adoption | Files importing |`);
+    lines.push(`|---|---|---|---:|`);
+    // why: stable alphabetical ordering by package name keeps the
+    // diff between two inventory runs minimal — only real changes
+    // surface, not row-shuffle noise.
+    const normalized = entries
+      .map((entry) =>
+        typeof entry === 'string'
+          ? { name: entry, transitiveVia: null }
+          : { name: entry.name, transitiveVia: entry.transitiveVia ?? null },
+      )
+      .sort((a, b) => a.name.localeCompare(b.name));
+    for (const { name, transitiveVia } of normalized) {
+      const directInfo = aggregate.get(name);
+      if (directInfo !== undefined) {
+        const versionList = [...directInfo.versions].join(', ');
+        const importCount = importCounts.get(name) ?? 0;
+        const usageCell = renderUsageCell(importCount, name, directInfo);
+        // why: list the unique workspaces that declare the package,
+        // not every (workspace, scope) pair — the importance section
+        // is summary-grain, not the full Declared-in detail of the
+        // category tables. The category section already provides that.
+        const declaringWorkspaces = [
+          ...new Set(directInfo.locations.map((loc) => loc.manifest)),
+        ];
+        const workspaceList = declaringWorkspaces
+          .map((manifest) => `\`${manifest}\``)
+          .join(', ');
+        lines.push(
+          `| \`${name}\` | ${versionList} | direct dep — ${workspaceList} | ${usageCell} |`,
+        );
+        continue;
+      }
+      const lockfileVersions = lockfilePackages.get(name);
+      if (lockfileVersions !== undefined) {
+        const versionList = [...lockfileVersions].join(', ');
+        // why: a transitive dep has zero direct imports by definition
+        // (no workspace declared it, so no source file imports it via
+        // its own dep chain), but it can still be reached via the
+        // parent package — render an empty usage cell rather than the
+        // misleading "0 ⚠" anomaly badge.
+        const transitiveSource =
+          transitiveVia !== null
+            ? `transitive via \`${transitiveVia}\``
+            : `transitive (lockfile only — declarer not annotated)`;
+        lines.push(
+          `| \`${name}\` | ${versionList} | ${transitiveSource} | _(transitive)_ |`,
+        );
+        continue;
+      }
+      lines.push(
+        `| \`${name}\` | — | ⚠ not installed (curation entry stale) | — |`,
+      );
+    }
+    lines.push('');
+  }
+
+  // why: surface the curation gap so reviewers can see what's NOT yet
+  // classified. Anything in aggregate without a PACKAGE_TO_IMPORTANCE
+  // entry lands here. Same pattern as the category section's
+  // "Other / uncategorized" bucket — explicit > implicit.
+  //
+  // First-party workspace packages (`@legendary-arena/*`) are filtered
+  // out: importance tiering describes blast radius of *external*
+  // libraries, not of the project's own internal modules. The
+  // `## First-party subsystems` section near the top of the report is
+  // the right place to reason about internal modules' significance.
+  const unclassified = [];
+  for (const [packageName] of aggregate) {
+    if (packageName.startsWith('@legendary-arena/')) {
+      continue;
+    }
+    if (!PACKAGE_TO_IMPORTANCE.has(packageName)) {
+      unclassified.push(packageName);
+    }
+  }
+  unclassified.sort();
+  lines.push(`### Not yet classified`);
+  lines.push('');
+  if (unclassified.length === 0) {
+    lines.push(`_Every installed package is classified into one of the three tiers above._`);
+    lines.push('');
+    return lines.join('\n').trimEnd();
+  }
+  lines.push(`Packages declared in some \`package.json\` but not yet placed`);
+  lines.push(`into Foundational / Adopted / Tooling. Add to`);
+  lines.push(`\`IMPORTANCE_DEFINITIONS\` near the top of the script when any`);
+  lines.push(`of these become load-bearing for the architecture.`);
+  lines.push('');
+  for (const packageName of unclassified) {
+    lines.push(`- \`${packageName}\``);
+  }
+  lines.push('');
+  return lines.join('\n').trimEnd();
 }
 
 /**
