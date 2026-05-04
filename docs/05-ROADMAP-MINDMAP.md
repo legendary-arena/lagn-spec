@@ -1,225 +1,279 @@
 # Legendary Arena -- Development Roadmap (Mindmap)
 
+> **Checklist rule (hard):** one line per item; status-first; no subordinate clauses; no file lists / commit hashes / decisions / dependency prose. If the line forces the reader to *read* before answering "done / drafted / blocked", it's still wrong.
+>
+> **Status vocabulary (closed set):**
+> `✅ Done` · `🚧 In Progress` · `📝 Drafted` (WP file authored; awaiting execution) · `📦 Queued` (deps met; WP file not yet authored) · `⏸ Blocked` (dep unmet) · `📝 Placeholder` (forward-looking only).
+>
+> All audit detail (per-WP file lists, commit hashes, decision IDs, baselines, deltas, post-mortems) lives in `docs/ai/work-packets/WORK_INDEX.md`, the per-WP files under `docs/ai/work-packets/`, and `docs/ai/STATUS.md`. This file is navigation — not a record.
+
 ```mermaid
 mindmap
   root((Legendary Arena))
     ["Multiplayer Deck-Builder\nboardgame.io + TypeScript + R2"]
 
       Foundation
-        ["FP-00.4 ✅\nEnvironment Check"]
-        ["FP-00.5 ✅\nR2 Validation"]
-        ["FP-01 ✅\nRender.com Backend"]
-        ["FP-02 ✅\nDatabase Migrations"]
+        ["FP-00.4 ✅ Environment check"]
+        ["FP-00.5 ✅ R2 validation"]
+        ["FP-01 ✅ Backend hosting"]
+        ["FP-02 ✅ Database migrations"]
 
-      Phase 0 -- Coordination ✅
-        ["WP-001 ✅\nCoordination System"]
-        ["WP-002 ✅\nGame Skeleton"]
-        ["WP-003 ✅\nCard Registry"]
-        ["WP-004 ✅\nServer Bootstrap"]
-        ["WP-043..047 ✅\nGovernance Alignment (5)"]
+      Phase 0 — Coordination
+        ["WP-001 ✅ Coordination system"]
+        ["WP-002 ✅ Game skeleton"]
+        ["WP-003 ✅ Card registry"]
+        ["WP-004 ✅ Server bootstrap"]
+        ["WP-043..047 ✅ Governance alignment"]
 
-      Phase 1 -- Game Setup ✅
-        ["WP-005A/B ✅\nMatch Setup & Determinism"]
-        ["WP-006A/B ✅\nPlayer Zones & Global Piles"]
+      Phase 1 — Game Setup
+        ["WP-005A/B ✅ Deterministic match setup"]
+        ["WP-006A/B ✅ Player zones and piles"]
 
-      Phase 2 -- Core Turn Engine ✅
-        ["WP-007A/B ✅\nTurn Structure & Loop"]
-        ["WP-008A ✅\nCore Moves Contracts"]
-        ["WP-008B ✅\nCore Moves Implementation"]
+      Phase 2 — Core Turn Engine
+        ["WP-007A/B ✅ Turn structure and loop"]
+        ["WP-008A ✅ Core move contracts"]
+        ["WP-008B ✅ Core move implementation"]
 
-      Phase 3 -- MVP Multiplayer ✅
-        ["WP-009A/B ✅\nRule Hooks & Execution"]
-        ["WP-010 ✅\nVictory & Loss"]
-        ["WP-011 ✅\nLobby Flow"]
-        ["WP-012 ✅\nMatch List & Join"]
-        ["WP-013 ✅\nPersistence Boundaries"]
+      Phase 3 — MVP Multiplayer
+        ["WP-009A/B ✅ Rule hooks and execution"]
+        ["WP-010 ✅ Victory and loss"]
+        ["WP-011 ✅ Lobby flow"]
+        ["WP-012 ✅ Match list and join"]
+        ["WP-013 ✅ Persistence boundaries"]
 
-      Phase 4 -- Core Gameplay Loop ✅
-        ["WP-014A/B ✅\nVillain Deck & Reveal"]
-        ["WP-015 ✅\nCity & HQ Zones"]
-        ["WP-016 ✅\nFight & Recruit"]
-        ["WP-017 ✅\nKO, Wounds, Bystanders"]
-        ["WP-018 ✅\nAttack/Recruit Economy"]
-        ["WP-019 ✅\nMastermind & Tactics"]
-        ["WP-020 ✅\nVP Scoring & Win Summary"]
+      Phase 4 — Core Gameplay Loop
+        ["WP-014A/B ✅ Villain deck and reveal"]
+        ["WP-015 ✅ City and HQ zones"]
+        ["WP-016 ✅ Fight and recruit"]
+        ["WP-017 ✅ KO, wounds, bystanders"]
+        ["WP-018 ✅ Attack / recruit economy"]
+        ["WP-019 ✅ Mastermind and tactics"]
+        ["WP-020 ✅ VP scoring and summary"]
+
+      Phase 5 — Card Mechanics
+        ["WP-021 ✅ Hero hooks"]
+        ["WP-022 ✅ Hero keywords"]
+        ["WP-023 ✅ Conditional effects"]
+        ["WP-024 ✅ Scheme / mastermind execution"]
+        ["WP-025 ✅ Board keywords"]
+        ["WP-026 ✅ Scheme setup"]
+
+      Phase 6 — Verification & Production
+        ["✅ Phase-6 closed (tag phase-6-complete)"]
+        ["WP-027 ✅ Replay harness"]
+        ["WP-028 ✅ UIState contract"]
+        ["WP-029 ✅ Spectator permissions"]
+        ["WP-030 ✅ Campaign framework"]
+        ["WP-031 ✅ Production hardening"]
+        ["WP-032 ✅ Network sync"]
+        ["WP-033 ✅ Content authoring toolkit"]
+        ["WP-034 ✅ Versioning and save migration"]
+        ["WP-035 ✅ Release and ops playbook"]
+        ["WP-042 ✅ Deployment checklists"]
+        ["WP-066 ✅ Registry image/data toggle"]
+        ["WP-067 ✅ UIState PAR projection"]
+        ["WP-079 ✅ Determinism-only replay labeling"]
+        ["WP-080 ✅ Step-level replay API"]
+        ["WP-048..051 ✅ PAR pipeline (see Scoring & PAR)"]
+
+      UI Implementation Chain
+        ["WP-065 ✅ Vue SFC test transform"]
+        ["WP-061 ✅ Gameplay client bootstrap"]
+        ["WP-062 ✅ Arena HUD and scoreboard"]
+        ["WP-063 ✅ Replay snapshot producer"]
+        ["WP-064 ✅ Game log and replay inspector"]
 
       Content Layer
-        ["WP-055 ✅\nTheme Data Model\nShipped 2026-04-20 (EC-055, commit dc7010e)"]
-        ["WP-060 ✅\nKeyword & Rule Glossary R2 Migration\nShipped 2026-04-21 (EC-106, commit 412a31c) — moves keyword + rule glossary from hardcoded useRules maps to R2; retargets useRules + useGlossary; non-blocking fetch with console.warn + empty-Map fallback; 123 keywords + 20 rules after the migration"]
+        ["WP-055 ✅ Theme data model"]
+        ["WP-060 ✅ Glossary R2 migration"]
 
-      Pre-Planning System (parallel-safe with Phase 4+)
-        ["WP-056 ✅\nState Model & Lifecycle (types-only core)\npackages/preplan/\nShipped 2026-04-20 (EC-056, execution eade2d0; governance close cff16e1; 01.6 template-gap-closure addendum 5bce4a2) — D-5601 new `preplan` code category; RS-2 zero-test lock; §1 Binary Health verified + §7 Test Adequacy N/A per Skip Rule + §9 Forward-Safety all YES"]
-        ["WP-057 ✅\nSandbox Execution (first runtime consumer of WP-056 types)\npackages/preplan/\nShipped 2026-04-20 (EC-057, pre-flight bundle f12c796; execution 8a324f0; governance close 7414656) — client-local Fisher-Yates PRNG (speculativePrng.ts), sandbox creation (preplanSandbox.ts), five speculative operations (speculativeOperations.ts), and PREPLAN_STATUS_VALUES canonical readonly array + drift-detection (preplanStatus.ts) deferred from WP-056; full-spread aliasing discipline (WP-028 precedent) on every return; uniform null-on-inactive contract for all five operations; preplan 0/0/0 → 23/4/0; 01.6 post-mortem at docs/ai/post-mortems/01.6-WP-057-preplan-sandbox-execution.md"]
-        ["WP-058 ✅\nDisruption Pipeline (Detect → Invalidate → Rewind → Notify)\npackages/preplan/\nShipped 2026-04-20 (EC-058, pre-flight bundle 29c66d2; execution bae70e7; governance close 00687c5; A-058-01..05 amendments) — isPrePlanDisrupted + invalidatePrePlan + computeSourceRestoration + buildDisruptionNotification + executeDisruptionPipeline across disruption.types.ts + disruptionDetection.ts + disruptionPipeline.ts; PREPLAN_EFFECT_TYPES canonical readonly array + compile-time drift-check (preplanEffectTypes.ts) deferred from WP-056; first implementation of DESIGN-CONSTRAINT #3 ledger-sole rewind authority; first-mutation-wins status guard; full-spread 42/42 aliasing discipline on invalidation; preplan 23/4/0 → 52/7/0; 01.6 post-mortem at docs/ai/post-mortems/01.6-WP-058-preplan-disruption-pipeline.md"]
-        ["WP-059 📝 Drafted 2026-04-24\nUI Integration (Pinia store, lifecycle adapter, PrePlanNotification + PrePlanStepList Vue 3 components, fixture module)\nDeferral lifted — WP-028 done 2026-04-14, framework settled by WP-061 (Vue 3 + Vite + Pinia at 2e68530)\nAwaiting Prompt Lint Gate (00.3) + pre-flight bundle"]
+      Pre-Planning System
+        ["WP-056 ✅ State model and lifecycle"]
+        ["WP-057 ✅ Sandbox execution"]
+        ["WP-058 ✅ Disruption pipeline"]
+        ["WP-059 ✅ UI integration"]
+        ["WP-070 📦 Queued — live mutation middleware"]
 
-      Post-Phase-6 Hygiene (Landed 2026-04-20..22)
-        ["WP-081 ✅\nRegistry Build Pipeline Cleanup\nSubtractive — delete 3 broken scripts + trim package.json/ci.yml/README/03-DATA-PIPELINE.md\nShipped 2026-04-20 (EC-081, execution commit ea5cfdd; PS-2 9fae043; PS-3 aab002f; close 61ceb71; post-mortem ba48982; PRE-COMMIT-REVIEW d6911e8) — D-8101 + D-8102; first green `pnpm --filter @legendary-arena/registry build` since WP-003; engine 436/109/0 UNCHANGED; repo-wide 536/0 UNCHANGED"]
-        ["WP-085 ✅\nVision Alignment Audit (Detection, Classification & Gating)\nShipped 2026-04-22 (EC-085, execution c836b29; session prompt a3e67bb; governance close — STATUS.md + WORK_INDEX.md + EC_INDEX.md + DECISIONS.md D-8502/8503/8504) — audit-tooling bundle; no engine modifications, no gameplay logic, no runtime behavior. scripts/audit/vision/run-all.mjs orchestrator combining four domain greps (determinism, monetization, registry, engine-boundary) into one PASS/FAIL verdict + dated combined report under docs/audits/; two-channel DET-001 model (script-channel executable count post comment-aware filter + orchestrator-channel allowlist verification against six packages/game-engine/src/ doc-comment file:line pairs); DET-007 single-channel with four-pair allowlist diff; same-day re-run refusal (audit-history immutability); calibrated baseline 6 DET-001 / 4 DET-007 / 0 / 0 / 0 at INFRA 24996a9 consumed as locked acceptance contract (any deviation = FAIL; re-calibration requires superseding WP per AC-6); scripts/audit/vision/determinism.greps.mjs adds isDocCommentLine(rawLine) helper + DET-001-only filter; first audit report docs/audits/vision-alignment-2026-04-22.md VERDICT PASS at 604eaaa; §17 Vision Alignment now enforced by executable orchestrator (supersedes D-8501 pre-execution queued-instrument framing for operational assertions while D-8501 remains immutable historical record)"]
-        ["WP-082 ✅\nGlossary Schema, Labels, and Rulebook Deep-Links\nShipped 2026-04-21 (EC-107, commit 752fcca; close 0acdf3c) — KeywordGlossary{Entry,}Schema + RuleGlossary{Entry,}Schema in packages/registry/src/schema.ts (first `.strict()` use); adds required `label` + optional `pdfPage` to 123 keywords and 20 rules; uploads Marvel Legendary Universal Rules v23 (hyperlinks).pdf (44 MB) to R2 at version-pinned URL; adds rulebookPdfUrl to viewer config; glossaryClient retrofitted to `.safeParse(...)` at fetch boundary with `[Glossary] Rejected …` warning + empty-Map fallback; deletes `titleCase()` heuristic + introduces explicit HERO_CLASS_LABELS; D-8201..D-8206 + A-082-01 (`./schema` subpath export); 596/0 baseline"]
-        ["EC-110 ✅\nValidate Registry CI Path Fix (ad-hoc INFRA, not a WP)\nShipped 2026-04-21 (commit 4e53e9f) — validate.ts resolves defaults via fileURLToPath(import.meta.url); env overrides win; HEALTH_OUT intentionally CWD-relative. Surfaced two data defects (msp1 sentinel ids; shld stringified attack/recruit) repaired upstream."]
-        ["WP-084 ✅\nDelete Unused Auxiliary Metadata Schemas and Files\nShipped 2026-04-21 (EC-109, commit b250bf1; close 4cc9ded; A-084-01 SPEC amendment) — subtractive: five auxiliary Zod schemas (CardType/HeroClass/HeroTeam/Icon/Leads) + five data/metadata/*.json + card-types-old.json + Phase-2 validate block deleted; viewer dead-code localRegistry drifted duplicate deleted; 00.2-data-requirements rewritten; current-state docs sweep; legacy Validate-R2-old.ps1 deleted; D-8401..D-8407 + D-6002 historical-neighbor note; 596/0 baseline preserved"]
-        ["WP-083 ✅\nFetch-Time Schema Validation (Viewer Config + Themes)\nShipped 2026-04-21 (EC-108, commit 601d6fc; close 7f054e1; A-083-01..04 SPEC amendments) — adds ViewerConfigSchema (.strict()) + ThemeIndexSchema + inferred types; registryClient + themeClient retrofitted to `.safeParse(...)` with first-Zod-issue rendering; `[RegistryConfig] Rejected …` throws; `[Themes] Rejected …` throws on index / warns+skips on individual themes per D-8303 severity; four inline TS interfaces deleted; A-083-04 adds `./theme.schema` subpath export (D-8305 locks precedent); D-8301..D-8305; theme.schema.ts + theme.validate.ts untouched; 596/0 baseline preserved; 69 shipped themes validate"]
+      Post-Phase-6 Hygiene
+        ["WP-081 ✅ Registry build pipeline cleanup"]
+        ["WP-082 ✅ Glossary schema and labels"]
+        ["WP-083 ✅ Fetch-time schema validation"]
+        ["WP-084 ✅ Auxiliary metadata deletion"]
+        ["WP-085 ✅ Vision alignment audit"]
 
-      Phase 5 -- Card Mechanics ✅
-        ["WP-021 ✅ Hero Hooks"]
-        ["WP-022 ✅ Hero Keywords"]
-        ["WP-023 ✅ Conditional Effects"]
-        ["WP-024 ✅ Scheme/Mastermind Exec"]
-        ["WP-025 ✅ Board Keywords"]
-        ["WP-026 ✅ Scheme Setup"]
-
-      Phase 6 ✅ Verification & Production (tagged phase-6-complete at c376467, 2026-04-19)
-        ["WP-027 ✅ Replay Harness (2026-04-14)"]
-        ["WP-028 ✅ UIState Contract (2026-04-14)"]
-        ["WP-029 ✅ Spectator & Permissions (2026-04-14)"]
-        ["WP-030 ✅ Campaign Framework (2026-04-14)"]
-        ["WP-031 ✅ Production Hardening (2026-04-15)"]
-        ["WP-032 ✅ Network Sync (2026-04-15)"]
-        ["WP-033 ✅ Content Authoring Toolkit (2026-04-16)"]
-        ["WP-048 ✅ PAR Scoring & Leaderboards (2026-04-17, EC-048, commit 2587bbb)"]
-        ["WP-067 ✅ UIState PAR + Progress Projection (2026-04-17, EC-068, commit 1d709e5)"]
-        ["WP-079 ✅ Label Replay Harness Determinism-Only (2026-04-19, EC-073, commit 1e6de0b)"]
-        ["WP-080 ✅ Replay Harness Step-Level API (2026-04-19, EC-072, commit dd0e2fd)"]
-        ["WP-034 ✅ Versioning & Save Migration\n(2026-04-19, EC-034, commit 5139817)"]
-        ["WP-035 ✅ Release & Ops Playbook\n(2026-04-19, EC-035, commit d5935b5)"]
-        ["WP-042 ✅ Deployment Checklists\n(2026-04-19, EC-042, commit c964cf4 — scope-reduced per D-4201)"]
-        ["WP-042.1 ⏸ Deferred PostgreSQL Seeding Sections\n(blocked on FP-03 revival per D-4201)"]
-        ["WP-066 ✅ Registry Viewer Image-to-Data Toggle\nClosed 2026-04-22 at 8c5f28f (pre-flight + 01.6 post-mortem)"]
-
-      UI Implementation Chain (Phase 6)
-        ["WP-065 ✅ Vue SFC Test Transform\npackages/vue-sfc-loader/\nShipped 2026-04-17 (EC-065, commit bc23913)"]
-        ["WP-061 ✅ Gameplay Client Bootstrap\napps/arena-client/ Vue 3 + Pinia + Vite\nShipped 2026-04-17 (EC-067, commit 2e68530)"]
-        ["WP-062 ✅ Arena HUD & Scoreboard\nTurn/phase, PAR delta, player panels, EndgameSummary\nShipped 2026-04-18 (EC-069, commit 7eab3dc; merged at 3307b12) — generalized D-6512 to P6-30/40 vue-sfc-loader pattern"]
-        ["WP-063 ✅ Replay Snapshot Producer\nEngine helper + apps/replay-producer/ CLI\nShipped 2026-04-19 (EC-071, commit 97560b1) — first cli-producer-app per D-6301"]
-        ["WP-064 ✅ Game Log & Replay Inspector\nparseReplayJson + GameLogPanel + ReplayInspector + ReplayFileLoader\nShipped 2026-04-19 (EC-074, commit 76beddc) — locks D-6401 keyboard focus pattern (tabindex=0 + listeners-on-root, first repo stepper precedent)"]
-
-      Phase 7 -- Beta, Launch & PAR
-        ["WP-036 ✅\nAI Playtesting & Balance Simulation\nShipped 2026-04-21 (EC-036, execution 539b543; close 61df4c0; A-036-02 amendment) — D-3601 simulation code category + D-3602 same-pipeline-as-humans + D-3603 random-policy MVP baseline + D-3604 two-independent-PRNG-domain seed reproducibility"]
-        ["WP-037 ✅\nPublic Beta Strategy\nShipped 2026-04-22 (EC-037, execution 160d9b9; A0 SPEC bundle a4f5574 pre-landed D-3701 + 02-CODE-CATEGORIES.md update) — new packages/game-engine/src/beta/ subdirectory (D-3701 engine code category, 10th instance) exporting BetaFeedback (6 required + 1 optional fields) + BetaCohort (closed 3-member literal union: expert-tabletop / general-strategy / passive-observer) + FeedbackCategory (closed 5-member literal union: rules / ui / balance / performance / confusion) — all pure type contracts, never persisted in G; docs/beta/BETA_STRATEGY.md (8 sections: objectives, scope, cohorts, access control, feedback collection model, timeline, exit summary, related docs) + docs/beta/BETA_EXIT_CRITERIA.md (4 binary pass/fail categories: rules correctness, UX clarity, balance perception, stability — every criterion cites a specific source signal); D-3702 invitation-only signal-quality + D-3703 three cohorts by expertise/role + D-3704 beta uses the same release gates as production; engine 436→444 (+8) / suites 109→110 (+1); repo-wide 588→596"]
-        ["WP-038 ✅\nLaunch Readiness & Go-Live Checklist\nShipped 2026-04-22 (EC-038, execution 2134f33; governance close d4fe447) — documentation-only, no engine modifications. docs/ops/LAUNCH_READINESS.md: 17 binary pass/fail readiness gates across 4 categories (Engine & Determinism 4, Content & Balance 4 + warning-acceptance discipline requiring non-invariant + non-competitive + non-exploitable classification, Beta Exit Criteria 4 consumed from BETA_EXIT_CRITERIA.md per D-3803, Ops & Deployment 5); single launch authority model with 3 non-override clauses (MAY NOT waive failing gates; MAY ONLY decide once all gates pass; exists to prevent deadlock, not to override invariants) + 4 required sign-offs (engine integrity, replay determinism, content safety, operations readiness); GO/NO-GO decision record schema; boolean aggregation rule (any false short-circuits launch verdict). docs/ops/LAUNCH_DAY.md: T-1h Final Build Verification → T-0 Soft Launch with explicit PAUSE-vs-ROLLBACK distinction → Go-Live Signal (first clean session + replay-matches-live + zero critical alerts) → T+0 to T+72h Post-Launch Guardrails (72h change freeze + bugfix criteria deterministic + backward compatible + roll-forward safe + Freeze Exception Record's 5 required fields: triggering condition, proof of determinism, proof of backward compatibility, roll-forward safety analysis, launch authority approval timestamp + 4 rollback triggers verbatim: invariant violation spike, replay hash divergence, migration failure, client desync). D-3801 single-launch-authority + D-3802 72h-stability-observation-window + D-3803 launch-gates-inherit-from-beta-exit-gates. Three-commit topology: A0 SPEC pre-flight bundle (9ecbe70) → A EC-038 content + 01.6 post-mortem (2134f33) → B SPEC governance close (d4fe447). Engine 444/110/0 + repo-wide 596/0 UNCHANGED through both commits (zero new tests)."]
-        ["WP-039 ✅\nPost-Launch Metrics & Live Ops\nShipped 2026-04-23 (EC-039, A0 SPEC pre-flight bundle 9e7d9bd; execution 4b1cf5c; governance close ee5e1d5) — documentation-only, no engine modifications, zero new types, zero re-exports, zero new tests. docs/ops/LIVE_OPS_FRAMEWORK.md: 11 top-level sections (§1 Purpose anchored to 4 load-bearing assumptions — engine-is-source-of-truth, severity-already-modeled, counters-already-modeled, rollback-always-preserved / §2 Foundational Constraints with 8 binary rows citing D-0901 + D-0902 + D-1002 + INCIDENT_RESPONSE.md + ops.types.ts + D-3501 / §3 Severity Taxonomy — reference-only cross-link to INCIDENT_RESPONSE.md §Severity Levels; replay desync classified **P1** per INCIDENT_RESPONSE.md:33 with no same-version vs cross-version split; the P0-P3 severity table is NOT restated (Verification Step 9 grep for 'Immediate rollback' returned 0) / §4 Observability Surface — reference-only cross-link to OpsCounters in packages/game-engine/src/ops/ops.types.ts; one-line orientation summary only, no field redefinition / §5 Metric Label Conventions — four organizational-prose labels (System Health / Gameplay Stability / Balance Signals / UX Friction), explicitly NOT a typed union, NOT a code constant, NOT enforced by any build step; severity applies per event, not per label / §6 Data Collection Rules — 6 binary rules including §18 prose-vs-grep discipline: §6.6 cites D-0901 rather than enumerating forbidden runtime tokens / §7 Live Ops Cadence — daily / weekly / monthly rhythm with named input surface and binary output per row; out-of-cadence review permitted only for P0/P1 / §8 Change Management — allowed rows (validated content via WP-033, AI-simulation-validated balance tweaks via D-0702/WP-036, semantic-preserving UI updates via D-1002) + forbidden rows (rule changes without version increment, unversioned hot-patches, silent behavior changes, changes-justified-solely-by-live-metrics, auto-heal, parallel severity taxonomy, parallel counter container) / §9 Success Criteria — 6 binary criteria with named source signals / §10 Non-Goals — 9 explicit exclusions including retention funnels, monetization analytics, marketing analytics, auto-heal, parallel severity taxonomy, parallel counter container, live-metric-driven engine/server/client modifications, metrics collection infrastructure deferred to a future WP / §11 Summary stewardship-not-optimization). **D-3901** (Live Ops Reuses Existing IncidentSeverity and OpsCounters Rather Than Parallel Types) — Path A resolved all three v1 pre-flight blockers by construction: dropped MetricPriority (would have duplicated landed IncidentSeverity), dropped same-version-vs-cross-version replay desync split (contradicted INCIDENT_RESPONSE.md:33), dropped MetricEntry (would have created a parallel counter container alongside OpsCounters); added INCIDENT_RESPONSE.md + ops.types.ts to Context (Read First) as AUTHORITATIVE so future ops-observability WPs inherit the re-read discipline. Three-commit topology: A0 SPEC pre-flight bundle 9e7d9bd (v1 preflight + v2 preflight + copilot check CONFIRM 29/30 PASS + session prompt + Path A rewrites of WP-039 + EC-039) → A EC-039 content 4b1cf5c (LIVE_OPS_FRAMEWORK.md + docs/ai/post-mortems/01.6-WP-039-post-launch-metrics-live-ops.md 14-section post-mortem) → B SPEC governance close ee5e1d5 (STATUS + WORK_INDEX + EC_INDEX Draft→Done with Done-counter 11→12 + D-3901). One pre-Commit-A reality reconciliation documented in post-mortem §10.1: the MetricCategory identifier in §5 meta-prose tripped Verification Step 5 even though the prose was advocating against the type; paraphrased to 'code-level union' with zero semantic change. Engine 444/110/0 + repo-wide 596/0 UNCHANGED through all three commits (zero new tests). 01.5 NOT INVOKED (all four trigger criteria absent). 01.6 MANDATORY (one new long-lived abstraction document becomes the canonical live-ops surface for the project)."]
-        ["WP-040 ✅\nGrowth Governance & Change Budget\nShipped 2026-04-23 (EC-040, execution 6faaf3b; pre-flight bundle 5e1a0fa + tightening c861b24; governance close bd5bec0) — first code-landing Phase-7 WP after the launch-readiness quartet. docs/governance/CHANGE_GOVERNANCE.md (new) — five change categories (ENGINE / RULES / CONTENT / UI / OPS) with layer-boundary mapping, versionImpact axis, five immutable surfaces, per-release change-budget template, growth-vector policy, per-category review requirements, exactOptionalPropertyTypes authoring pattern. packages/game-engine/src/governance/governance.types.ts (new) — three readonly metadata types: ChangeCategory + ChangeBudget + ChangeClassification; D-3901 reuse-verification recorded in file-header why:; additive re-exports only, never members of LegendaryGameState. D-4001 (packages/game-engine/src/governance/ classified as engine code category) + D-4002 (five change categories map to architectural layer partition) + D-4003 (content and UI are primary growth vectors) + D-4004 (five immutable surfaces require major version bump). Consumes LIVE_OPS_FRAMEWORK.md §8 Change Management. Engine 444/110/0 + repo-wide 596/0 UNCHANGED (zero new tests; 01.5 NOT INVOKED; 01.6 MANDATORY satisfied by docs/ai/post-mortems/01.6-WP-040-growth-governance-change-budget.md)"]
-        ["WP-041 ✅\nSystem Architecture Definition & Authority Model\nShipped 2026-04-23 (EC-041, commit 0e8e8b1)"]
-        ["WP-049 ✅\nPAR Simulation Engine\nShipped 2026-04-23 (EC-049, commit 021555e) — T2 heuristic AI + PAR aggregation + policy tiers"]
-        ["WP-050 ✅\nPAR Artifact Storage & Indexing\nShipped 2026-04-23 (EC-050, commit ccdf44e) — immutable versioned artifacts + index + validation"]
-        ["WP-051 ✅\nPAR Publication & Server Gate Contract\nShipped 2026-04-23 (EC-051, commit ce3bffb) — pre-release gate + fail-closed competitive check"]
-        ["WP-052 ✅\nPlayer Identity, Replay Ownership & Access Control\nShipped 2026-04-25 (EC-052, execution fd769f1; governance close cf4e111) — apps/server/src/identity/; AccountId branded type deliberately distinct from engine PlayerId per D-5201/D-8701; race-safe assignReplayOwnership CTE + ON CONFLICT (player_id, replay_hash) DO UPDATE … RETURNING idiom; listAccountReplays read-time expiry filter; deletePlayerData single-PostgreSQL-transaction GDPR; AUTH_PROVIDERS + REPLAY_VISIBILITY_VALUES canonical readonly arrays + drift tests; migrations 004_create_players_table.sql + 005_create_replay_ownership_table.sql; server 19/3/0 → 31/5/0 with 6 {skip:'requires test database'} when TEST_DATABASE_URL unset; D-5201..D-5203 + D-8701"]
-        ["WP-053a ✅\nPAR Artifact Carries Full ScenarioScoringConfig\nShipped 2026-04-25 (EC-053a, execution e5b9d15; governance close d896690) — predecessor for WP-053 per D-5306; extends SeedParArtifact + SimulationParArtifact + ParIndex.scenarios[key] + ParGateHit with non-optional scoringConfig: ScenarioScoringConfig; data/scoring-configs/<scenario_key>.json authoring origin per D-5306a; loadScoringConfigForScenario / loadAllScoringConfigs engine loaders; aggregator gains scoringConfig as required input; validator enforces version-equality invariant + one-cycle parBaseline === scoringConfig.parBaseline redundancy with errorType: 'par_baseline_redundancy_drift' (D-5306c); engine 513/115/0 → 522/116/0; server 36/6/0 → 38/6/0; INFRA hook fix fbbedb5 accepts lowercase letter suffix in EC-### prefix"]
-        ["WP-053 ✅\nCompetitive Score Submission & Verification\nShipped 2026-04-26 (EC-053, A0 SPEC v1.5 27d3004 adding Vision Alignment block + IF NOT EXISTS migration idempotency + Funding Surface Gate §20 N/A declaration; execution 56e8134; governance close 26e122f) — apps/server/src/competition/; submitCompetitiveScore(identity, replayHash, database): Promise<SubmissionResult> 16-step locked flow (guest fail-fast → ownership → owner → visibility → idempotency fast-path at 4b → scenario key → PAR gate → replay load → re-execute → state-hash anchor → scoring inputs → raw score → defense-in-depth equality → final score → breakdown → CTE INSERT with xmax = 0 idiom); SubmissionRejectionReason 6-value union + SUBMISSION_REJECTION_REASONS canonical readonly array; CompetitiveScoreRecord 11 readonly fields; migration 007_create_competitive_scores_table.sql (CREATE TABLE IF NOT EXISTS + bigserial submission_id PRIMARY KEY + UNIQUE (player_id, replay_hash) + 10 -- why: blocks); lifecycle prohibition LOCKED (no production caller until future request-handler WP); server 38/6/0 → 47/7/0; D-5301..D-5305"]
-        ["WP-054 ⬜\nPublic Leaderboards & Read-Only Web Access\nReady for Implementation — pre-execution contract tightening landed 2026-04-24 at 729f056 (totalEligibleEntries filter alignment + global rank + display-name fail-closed)"]
-
-      Engine Hardening (Landed 2026-04-23)
-        ["WP-087 ✅\nEngine Type Hardening: PlayerId Alias + Setup-Only Array readonly\nShipped 2026-04-23 (EC-087, commit 73aeada) — type-only hardening pass; readonly deferred per D-8702 (scope-narrowed)"]
-        ["WP-088 ✅\nSetup Module Hardening: buildCardKeywords Runtime Guards, Villain Pre-Index, Output Ordering\nShipped 2026-04-23 (EC-088, commit d183991; A0 SPEC bundle 88580a9) — engine 507/114/0; repo-wide 672/128/0; D-8802 freshly-constructed BoardKeyword[] per WP-028 cardKeywords contract"]
-
-      Client Integration Cluster (Landed 2026-04-24)
-        ["WP-089 ✅\nEngine PlayerView Wiring\nShipped 2026-04-24 — LegendaryGame.playerView = buildPlayerView; clients receive audience-filtered UIState, never raw LegendaryGameState; pure / never-throwing; spectator handling for null/undefined playerID; prerequisite for WP-090"]
-        ["WP-090 ✅\nLive Match Client Wiring\nShipped 2026-04-24 (EC-090, commit 54b266a) — first browser gameplay client to connect to the boardgame.io game server; apps/arena-client/ lobby view + create/join + boardgame.io/client SocketIO wiring; query-string routing (?match=&player=&credentials=); preserves ?fixture= regression path; D-9001 records CLI credentials field drift in apps/server/scripts/join-match.mjs (deferred placeholder)"]
-        ["WP-091 ✅\nLoadout Builder in Registry Viewer\nShipped 2026-04-24 (EC-091) — packages/registry/src/setupContract/ zod schema + pure validateMatchSetupDocument(); third 'Loadout' tab in apps/registry-viewer alongside Cards and Themes; download/upload/paste schema-valid MATCH-SETUP JSON; emits heroSelectionMode: 'GROUP_STANDARD' explicitly per WP-093; D-9101; +18 setupContract tests bringing packages/registry baseline to 31/3/0"]
-        ["WP-092 ✅\nLobby Loadout Intake (JSON → Create Match)\nShipped 2026-04-24 (EC-092, commit cb982ff) — parseLoadoutJson() pure shape-guard parser; 'Create match from loadout JSON (recommended)' affordance above WP-090's manual form (preserved byte-for-byte under 'Fill in manually (advanced)' <details> collapse); arena-client baseline 77/3/0 → 109/5/0 (+32 tests / +2 suites); D-9201"]
-        ["WP-093 ✅\nMatch-Setup Rule-Mode Envelope Field (Governance)\nShipped 2026-04-24 (EC-093) — governance-only, zero code changes; optional heroSelectionMode envelope field with v1 enum ['GROUP_STANDARD']; reserves 'HERO_DRAFT' in prose for future WP; preserves 9-field composition lock verbatim; canonicalizes 'unsupported_hero_selection_mode' error code consumed by WP-091 + WP-092; D-9301; consumer byte-for-byte strings canonicalized"]
-        ["WP-094 ✅\nViewer Hero FlatCard Key Uniqueness\nShipped 2026-04-24 (commit eac678c) — single-file viewer-side bug fix in apps/registry-viewer/src/registry/shared.ts; flattenSet key suffix card.slot → card.slug; resolves duplicate Vue v-for keys for wwhk Caiera / Miek The Unhived / Rick Jones (cards appearing in every search result); harmonizing the two flattenSet copies tracked as future follow-up"]
-
-      Beta-Launch Pillar Execution & Predecessors (Landed 2026-04-25..26)
-        ["WP-103 ✅\nServer-Side Replay Storage & Loader\nShipped 2026-04-25 (EC-111, execution fe7db3e; governance close f74d180) — apps/server/src/replay/; storeReplay(replayHash, replayInput, db): Promise<void> content-addressed immutable INSERT … ON CONFLICT (replay_hash) DO NOTHING + loadReplay(replayHash, db): Promise<ReplayInput | null> via pg jsonb codec; migration 006_create_replay_blobs_table.sql with text replay_hash PRIMARY KEY (D-10302) + jsonb replay_input (D-10303); no Result<T> wrapper (infra failures throw; application-side failure modes don't exist for write-by-hash idempotent / read-by-hash null-on-miss); predecessor for WP-053 — closes EC-053 §Before Starting line 21 hard prerequisite (no mocks accepted); server 31/5/0 → 36/6/0 (+5 tests / +1 suite); engine 513/115/0 unchanged; EC retargeted EC-103 → EC-111 per PS-1 filename collision with viewer EC-103 a11y/CI gating; D-10301..D-10303"]
-        ["WP-096 ✅\nRegistry Viewer: Grid Data View Mode\nShipped 2026-04-25 (EC-096, execution 4fe8382; governance close 811114a) — corrective follow-up to WP-066 / EC-066. Two production files in apps/registry-viewer/src/components/: new CardDataTile.vue (tile-sized cousin of CardDataDisplay.vue — eight locked FlatCard fields rendered in order under AND-semantics omission with @media print parity) + modified CardGrid.vue (consumes useCardViewMode directly per WP-066 'global toggle' intent; branches inside .img-wrap on viewMode; .tile-info footer renders unconditionally; grid track minmax(130px, 1fr) and 3:4 swap-area dimensions byte-identical). Six labelled rows byte-identical to sidebar; seventh row uses compact Set / setAbbr per D-9601 (130px-min .img-wrap cannot accommodate full set names like 'Marvel Studios: What If…?' without ellipsis defenses or grid reflow). Ability text intentionally omitted from tile (sidebar remains place for full ability text). Manual smoke a–h user-verified passed 2026-04-25; lint baseline calibrated against pre-existing 11 EC-091 inheritance errors per user-authorized path-1 reconciliation"]
-
-      Auth Stack & Profile Surface (Landed 2026-04-27..2026-05-03)
-        ["WP-099 ✅\nAuth Provider Selection — Hanko (Governance)\nShipped 2026-04-27 (EC-099, Commit A f6cd591) — selects Hanko (open-source, self-hostable, OIDC-compliant, passkey-first); locked Hanko module path apps/server/src/auth/hanko/ (NOT under identity/); the string 'hanko' MUST NOT appear as auth_provider enum value (F-1 lock); WP-052 authProvider enum unchanged at 'email' | 'google' | 'discord'; AccountId source unchanged at node:crypto.randomUUID(); D-9901..D-9905 + F-1..F-7 Future-Auth Gates locked"]
-        ["WP-101 ✅\nHandle Claim Flow & Global Uniqueness\nShipped 2026-04-28 (EC-114, Commit A fb1ca2b) — adds immutable, globally unique, URL-safe handle to legendary.players via migration 008_add_handle_to_players.sql (slot 008 — 007 taken by WP-053); claimHandle / findAccountByHandle / getHandleForAccount; locked regex ^[a-z][a-z0-9_]{2,23}$; 15-entry alphabetical reserved set; consecutive-underscore check in code, not regex; locked idempotent UPDATE SQL with 23505 → 'handle_taken' / empty-RETURNING-disambiguation; no-tombstone policy (deleted handles drop out of partial UNIQUE index and become re-claimable); server 51/8/0 → 63/9/0"]
-        ["WP-102 ✅\nPublic Player Profile Page (Read-Only)\nShipped 2026-04-28 (EC-117, Commit A 369c0a4) — apps/server/src/profile/ getPublicProfileByHandle returns PublicProfileView (4 fields: handleCanonical / displayHandle / displayName / publicReplays); 404 body {\"error\":\"player_not_found\"} verbatim (no information leak); arena-client PlayerProfilePage.vue lazy-loaded as separate chunk via defineAsyncComponent; route registration deferred per D-10202 (long-lived pg.Pool lifecycle owned by WP-115); server 63/9/0 → 71/10/0; D-10201 + D-10202"]
-        ["WP-104 ✅\nOwner Profile Data Model & /me Edit\nShipped 2026-05-02 (EC-128, cea9108) — new legendary.player_profiles (1:1 with legendary.players, ON DELETE CASCADE) + legendary.player_links tables via migration 009_create_player_profiles_and_links.sql. Three owner-only HTTP endpoints (GET /api/me/profile, PATCH /api/me/profile sparse partial per RFC 7396, PUT /api/me/links replace-all-by-list with 10-entry cap, single BEGIN/COMMIT transaction). Per-section closed-set privacy enum defaulting to 'private' per Vision §3 fail-closed posture; HTTPS-only any-host URL CHECK; 6-entry provider allowlist (twitter / github / twitch / discord / youtube / website). 'unknown_account' returns HTTP 401, NOT 403, per account-existence-probe defense. Server 73/9/0 → 82/10/0; D-10401..D-10408"]
-        ["WP-109 ✅\nTeam Affiliation (Profile-Level Cooperative Cohorts)\nShipped 2026-05-03 (EC-115, 7fe59a1) — apps/server/src/teams/; three new PostgreSQL tables (legendary.teams + legendary.team_member_events + legendary.team_audit_log) with ON DELETE CASCADE chain; eight new HTTP routes under /api/teams/*; variable team size 3 / 4 / 5 declared at creation and immutable; sub cap min(2, teamSize − 2); validity rule liveMembers ≥ teamSize − 2 AND liveMembers + liveSubs ≥ teamSize − 1; same-size cohort exclusivity per UNIQUE partial index (player_id, team_size) WHERE left_at IS NULL; column-additive teamAffiliations[] projection on both PublicProfileView (4 → 5 keys) and OwnerProfileView (7 → 8 keys); TeamId branded type per AccountId precedent; single-transaction multi-row create-team. **No scoring, no rankings, no comparison surface** — DESIGN-RANKING.md §12 deferral honored; D-0005 preserved trivially. Server 82/10/0 → 99/11/0; D-10901..D-10908"]
-        ["WP-111 ✅\nUIState Card Display Projection (Engine-Side)\nShipped 2026-04-29 (EC-118, f842f71) — closes WP-100 D-10004 deferral. Engine-side sibling snapshot G.cardDisplayData: Readonly<Record<CardExtId, UICardDisplay>> built once at setup from registry data (name, imageUrl, cost: number | null) and projected through buildUIState as additive display fields on UICityCard / UIMastermindState plus optional parallel arrays UIHQState.slotDisplay? and UIPlayerState.handDisplay?. Sibling to G.cardStats (WP-018) / G.villainDeckCardTypes (WP-014B) / G.cardKeywords (WP-025); read only from uiState.build.ts; gameplay reads G.cardStats only (presentation-vs-gameplay separation lock — grep-enforced). 01.5 IS INVOKED (additive LegendaryGameState.cardDisplayData field). Engine 570/126/0 → 604/132/0 (+34 tests / +6 suites); D-11101..D-11106"]
-        ["WP-112 ✅\nSession Token Validation Middleware (Broker-Agnostic)\nShipped 2026-05-02 (EC-112, d0fefa3) — apps/server/src/auth/; requireAuthenticatedSession(req, options): Promise<Result<AccountId>> orchestrator + SessionVerifier interface + findAccountByAuthProviderSub lookup + AccountResolver caller-injected provider pattern. Closed-union SessionVerificationErrorCode (4 values: invalid_token / expired_token / unknown_provider / verification_failed) + SessionValidationErrorCode (6 values, public). Translation at exactly one site (sessionToken.logic.ts:191-193). Fail-closed default per D-11204 — every authenticated request returns 500 with code: 'session_verifier_not_configured' until production wiring lands. SIBLING WP architectural choice locked under D-11201 — broker-specific verifier deferred to WP-126. Server 56/0/32 → 73/0/36; D-11201..D-11204"]
-        ["WP-126 ✅\nExternal Authentication Integration (Hanko Session Verifier)\nShipped 2026-05-03 (EC-130, 2aa7690; SPEC reconciliation 1e9c629) — apps/server/src/auth/hanko/ (the D-9904 module-path lock); five new files: hankoVerifier.types.ts (config + closed-set HANKO_IDP_TO_AUTH_PROVIDER lookup with seven keys + WP-112 re-exports), hankoVerifier.logic.ts (createHankoSessionVerifier(config): SessionVerifier factory + 8-step verify(token) closure following the locked order from WP-126 §Scope (In) §B), hankoVerifier.logic.test.ts (17 cases), jwksCache.logic.ts (per-instance cache with single-flight refresh + one-shot retry + graceful degradation + insertion-time Object.freeze), jwksCache.logic.test.ts (8 cases). Plus three modified config / reference (render.yaml + .env.example HANKO_TENANT_BASE_URL / HANKO_EXPECTED_AUDIENCE / HANKO_JWKS_REFRESH_INTERVAL_MS declarations + 1 new Library-only catalog row per D-11804) and four governance ledgers. Four executor-time DECISIONS land in numeric order: D-12601 (built-ins-only — RS256 via Node v22 node:crypto; zero new npm dependency; apps/server/package.json UNCHANGED) + D-12602 (4-field HankoVerifierConfig; tenant-scoped origin per Hanko Cloud's documented /{tenant_id}/.well-known/jwks.json shape; verifier appends suffix programmatically) + D-12603 (per-instance JWKS cache; default 300_000 ms; single-flight; one-shot retry; failed-refresh preserves cache; aliasing-defended via Object.freeze at insertion per copilot Issue #17; single-site default-substitution at the verifier factory body) + D-12604 (federation claim = amr array per Hanko docs https://docs.hanko.io/guides/session-management + Hanko source backend/flow_api/flow/shared/hook_determine_amr_values.go literal amr = append(amr, \"ext:\"+thirdPartyProvider); closed-set table {'ext:google':'google', 'ext:discord':'discord', 'pwd':'email', 'passkey':'email', 'otp':'email', 'totp':'email', 'security_key':'email'}; two-pass priority scan with federated values winning over native; no string-prefix check, no regex). D-11201 status flips Active → Resolved. F-1..F-7 Future-Auth Gates PASS by construction. Single-parameter Result<T> lock preserved (PS-1; verifier emits SessionVerificationErrorCode strings into the structurally-typed code field via 'as never' mirroring sessionToken.logic.test.ts:84's settled pattern). Server 99/0/54 → 124/0/54 (+25 logic-pure tests, all always-runs). Engine 604/0 UNCHANGED. Production wiring stays deferred — requireAuthenticatedSession continues to fail-closed with 'session_verifier_not_configured' until a future request-handler WP wires configureSessionValidation({ verifier: createHankoSessionVerifier(config), accountResolver, database }) per D-11204 + D-11201 staging."]
-
-      Engine + Server Wiring & Public Leaderboard HTTP Surface (Landed 2026-04-27..2026-05-01)
-        ["WP-113 ✅\nEngine-Server Registry Wiring + Match-Setup ID Format Lock\nShipped 2026-04-27 (EC-113, 2a00193) — closes WP-100 silent-empty-deck failure. Set-qualified ID format <setAbbr>/<slug> LOCKED on all five entity-ID fields (schemeId / mastermindId / villainGroupIds / henchmanGroupIds / heroDeckIds); bare slugs / display names / flat-card keys rejected. parseQualifiedId(input) rejects malformed shapes. Validator + builder agree on the single source of truth. Empirical collision evidence: 23 hero / 11 mastermind / 4 villain group / 2 scheme slug collisions across loaded sets — bare-slug ambiguity is non-hypothetical. Engine 524/117/0 → 570/126/0 (+46 tests / +10 suites); server 47/7/0 → 51/8/0 (+4 / +1); arena-client 182/17/0 UNCHANGED. D-10014 reserved at execution. PS-7 mid-execution amendment added a fifth internal-iterator site (economy/economy.logic.ts buildCardStats())"]
-        ["WP-114 ✅\nRegistry Viewer URL-Parameterized Setup Preview ('Game of the Week')\nShipped 2026-04-30 (EC-116, c059199) — URL-driven setup preview at cards.barefootbetters.com; reuses validateMatchSetupDocument() against the loaded CardRegistry; 'Copy Setup Link' button on LoadoutBuilder.vue; auto-switches to Loadout tab on first mount only when URL params are present (one-shot). Composable-ownership lock — single useSetupFromUrl(registry) instance per page. Type-correct round-trip; empty-singular semantics (?schemeId= returns {schemeId:''}); validator owns ID-validity rejection. Registry-viewer 8/2/0 → 22/4/0; D-11401..D-11404"]
-        ["WP-054 ✅ (Library-only)\nPublic Leaderboards Library\nShipped 2026-05-01 (EC-054, cherry-picked f34e917 from side-branch into main) — apps/server/src/leaderboards/; three exported async functions: getScenarioLeaderboard(options, database, deps?) + getPublicScoreByReplayHash(replayHash, database) + listScenarioKeys(database); PublicLeaderboardEntry strips D-5201 sensitive fields; LeaderboardDependencies injection seam; PRODUCTION_DEPENDENCIES.checkParPublished = () => null fail-closed default per D-5201 / D-5306 Option A; lifecycle prohibition locked (no production caller until WP-115 wires HTTP routes); server 47/0/24 → 48/0/32 (+1 always-runs + 8 DB-required-skipped). Three Library-only catalog rows added per D-11804 (graduated to Wired by WP-115)"]
-        ["WP-115 ✅\nPublic Leaderboard HTTP Endpoints + pg.Pool Bootstrap\nShipped 2026-05-01 (EC-119, 35572df cherry-pick + governance) — apps/server/src/db/database.ts long-lived pg.Pool lifecycle anchor (max=10 / idle=30s / connect=5s per D-11502); three HTTP endpoints under /api/leaderboards/* consuming the WP-054 library functions; Cache-Control: no-store on every response per D-11504; rate-limit deferred per D-11503; pool-construction log message text locked verbatim per D-11506. WP-054 Library-only catalog rows graduated to Wired in same commit per D-11804 single-row-graduation semantics. D-11501..D-11506"]
-
-      Registry Viewer Enhancements (Landed 2026-05-01..2026-05-02)
-        ["WP-121 ✅\nRegistry Viewer: Card Zoom Slider\nShipped 2026-05-01 (EC-122, e3c6af7) — keyboard-accessible 'Card Size' slider in the cards-view filter bar; --card-grid-min-width CSS variable on CardGrid.vue's .grid; useCardSize.ts composable mirroring useCardViewMode.ts; persisted to localStorage['cardGridSize']; range 80–260, default 130, step 10. Default chosen so .tile-name / .tile-meta remain legible at the minimum and the largest tile fits a 1024px viewport without grid reflow. Registry-viewer 22/4/0 UNCHANGED (no tests added per viewer-side precedent); D-12101"]
-        ["WP-122 ✅\nViewer Henchman flattenSet Emission Fix\nShipped 2026-05-01 (EC-123, a5c1653) — fixes silent-zero-emission bug surfaced by WP-086. Viewer's flattenSet() expected nested cards sub-array per henchman group; actual data shape across all 40 sets is flat object per group — inner loop iterated zero times, dropping all 44 henchmen from the search index. Replaces with flat treatment mirroring bystanders/wounds blocks; locked key shape ${abbr}-henchman-${slug}; cardType: 'henchman' literal; only flat imageUrl surfaced (class-keyed image map deferred to future WP per D-12201). Registry-viewer 22/4/0 → 26/5/0 (+4 / +1)"]
-        ["WP-123 ✅\nViewer cardType Widening + set.other[] Dispatch\nShipped 2026-05-01 (EC-125, fbb5174) — closes type-projection drift surfaced by WP-086 Phase 1. FlatCard.cardType widens from 9-value union to plain string (types-index.ts:37); CardQuerySchema.cardType + cardTypes widen to z.string().optional() / z.array(z.string()).optional() (schema.ts:123-124); viewer flattenSet()'s // Other block rewritten to dispatch on each set.other[] entry's cardType field (with 'other' fallback when absent). Registry-viewer 27/5/0 → 31/6/0 (+4 / +1); D-12301"]
-        ["WP-124 ✅\nRegistry Viewer: Theme Zoom Slider\nShipped 2026-05-01 (EC-126, 078e234) — parallel to WP-121's cards-side Card Size slider. useThemeSize.ts composable mirrors useCardSize.ts (D-12101) line-for-line with theme-prefixed names; range 80–260, default 150, step 10. Default asymmetry intentional: cards default 130, themes default 150 (D-12401); each default matches its view's pre-packet minmax(<n>px, 1fr) rule so a zero-config first run is visually identical to the pre-packet baseline. Registry-viewer 31/6/0 UNCHANGED"]
-        ["WP-125 ✅\nRegistry Viewer: Card Abilities Effect-Tag Filter\nShipped 2026-05-01 (EC-127, Commit A) — curated effect-tag chip ribbon driven by data/metadata/card-abilities.json. Schema additions to packages/registry/src/schema.ts (CardAbilityMatcherSchema with type: z.literal('regex') single-literal lock; CardAbilityEntrySchema with slug regex /^[a-z][a-z0-9-]*$/; CardAbilitiesIndexSchema; all .strict() mirroring CardTypeEntrySchema:213-219 exactly). Ten initial effect-tag entries (draw / ko-from-hand / ko-from-discard / etc). OR-semantics within the chip set; AND with every other filter. devLog Category union extended with 'cardAbilities' per pre-execution scope amendment. D-12501"]
-        ["WP-127 ✅\nRegistry Viewer: Grid Tile Team & Ability Text (Threshold-Gated)\nShipped 2026-05-02 (EC-129, 1323266) — two threshold-gated additions (cardSize.value >= 190px) on CardDataTile.vue: a Team row inserted between existing Class and Cost rows + an Ability block appended below </dl>. Below threshold the WP-096 baseline is byte-identical. New cardTileThresholds.ts single-export module preserves D-12101's locked useCardSize.ts surface verbatim. CardGrid.vue gets a new data-expanded class on .img-wrap above threshold so the tile grows vertically to fit the ability block. D-9601 amended in place"]
-
-      Governance Drafts Pending (2026-04-25..)
-        ["WP-097 / EC-097 📝 Drafted 2026-04-25\nTournament Funding Policy (Governance)\nDrafted at c33d42b — Open Collective primary + PayPal supplemental; locked authorized labels (Support Tournaments / Tournament Funding / Donate); 5 disallowed funding models (Buy / Purchase / Order / Subscribe / Upgrade / Unlock / Get Access forbidden lexicon); D-9701; EC-097 docs-only checklist authored alongside; ≤60 content lines per EC-TEMPLATE; pre-flight pending"]
-        ["WP-098 / EC-098 📝 Drafted 2026-04-25 (blocked on WP-097 execution)\nFunding Surface Gate Trigger (00.3 §20)\nDrafted at c33d42b — adds §20 between §19 and Final Gate, structurally parallel to §17 Vision Alignment, citing WP-097 §F G-1..G-7 by ID without duplicating; ≥4 new fail-condition rows in Final Gate; D-9801 distinguishes scope from D-9701; hard dep on WP-097 execution (D-9701 must exist before §20 cites it); pre-flight pending"]
-        ["WP-105..108 📝 Profile-page follow-up placeholders\nplayer badges / avatar upload / integrity admin / funding surface — pending WP-104 landed; WP-108 also blocked on WP-097 + WP-098 + future payment-integration WP"]
-        ["VISION §25 amend + boundary freeze ✅\nLanded 2026-04-26 at 00f0a38 — badges issuer model; D-0006 + D-0007 + D-1004"]
-        ["PROPOSAL-BADGES.md addendum polish ✅\nLanded 2026-04-26 at 4d419a4 — A1-A6 surgical refinements"]
+      Phase 7 — Beta, Launch & PAR
+        ["WP-036 ✅ AI playtesting and balance simulation"]
+        ["WP-037 ✅ Public beta strategy"]
+        ["WP-038 ✅ Launch readiness checklist"]
+        ["WP-039 ✅ Live ops framework"]
+        ["WP-040 ✅ Change governance and budget"]
+        ["WP-041 ✅ System architecture definition"]
 
       Scoring & PAR Pipeline
-        ["12-SCORING-REFERENCE.md\nFormula & Invariants"]
-        ["12.1-PAR-ARTIFACT-INTEGRITY.md\nHashing Trust Model"]
-        ["WP-048 → 049 → 050 → 051\nSimulation → Storage → Gate"]
+        ["WP-048 ✅ PAR scenario scoring and leaderboards"]
+        ["WP-049 ✅ PAR simulation engine"]
+        ["WP-050 ✅ PAR artifact storage and indexing"]
+        ["WP-051 ✅ PAR publication and server gate"]
 
-      Registry Viewer
-        ["cards.barefootbetters.com\nCard + Theme browser"]
-        ["Keyword/Rule tooltips\n123 keywords (118 with pdfPage) + 20 rules (19 with pdfPage) — fetched from R2 via glossaryClient.ts per WP-060/EC-106; schemas + labels + pdfPage added by WP-082/EC-107"]
-        ["Fetch-time Zod validation on all four R2 fetchers (registry config, themes, keyword glossary, rule glossary) — WP-082/083; `./schema` + `./theme.schema` subpath exports (A-082-01 / A-083-04) keep browser bundles free of Node-only imports"]
-        ["Rulebook PDF deep-links (📖 Rulebook p. N) — version-pinned URL on R2, RFC 3778 `#page=N` with mandatory target=_blank + rel=noopener (D-8205)"]
-        ["Hero class tooltips\n5 superpower descriptions (HERO_CLASS_GLOSSARY + HERO_CLASS_LABELS, hardcoded per D-6006)"]
+      Beta-Launch Pillar
+        ["WP-052 ✅ Player identity and replay ownership"]
+        ["WP-053a ✅ PAR artifact carries scoring config"]
+        ["WP-053 ✅ Competitive score submission"]
+        ["WP-054 ✅ Public leaderboards library"]
+        ["WP-103 ✅ Replay storage and loader"]
 
-      Governance
-        [".claude/CLAUDE.md\nRoot coordination"]
-        ["Execution Checklists\nWP-backed (EC-001..051, 060s+) + R-EC hygiene + EC-101+ viewer\nDone: EC-FP01, EC-001, EC-048 (WP-048), EC-065 (WP-065), EC-067 (WP-061), EC-068 (WP-067), EC-069 (WP-062), EC-071 (WP-063), EC-072 (WP-080), EC-073 (WP-079), EC-074 (WP-064), EC-103, EC-104, R-EC-02\nDeferred: R-EC-01, R-EC-03\nSee EC_INDEX.md"]
-        ["7 Rule Files\n(.claude/rules/)"]
-        ["Immutable Decisions\nDECISIONS.md\nPhase-6-era: D-4801..4806 PAR scoring spec set, D-6301 cli-producer-app category, D-6303 version-bump policy, D-6305 ReplayInputsFile naming, D-6401 keyboard focus pattern, D-6512/P6-30 vue-sfc-loader defineComponent rule, D-6701 PAR safe-skip, D-3401 versioning code category, D-3501..D-3504 ops playbook, D-4201..D-4203 deployment-checklist scope + form-(2)/form-(1) invariants, D-5601 preplan code category, D-8101/D-8102 registry-pipeline hygiene.\n2026-04-21 drop: D-6001..D-6007 glossary R2 migration (WP-060); D-8201..D-8206 glossary schema + rulebook deep-links (WP-082); D-3601..D-3604 AI playtesting + two-independent-PRNG-domain determinism (WP-036); D-8401..D-8407 auxiliary-metadata deletion + `*-old.*` repo-smell rule + viewer drifted-duplicate rule (WP-084); D-8301..D-8305 viewer fetch-boundary validation + ViewerConfig-vs-RegistryConfig naming lock + severity policy + `./theme.schema` subpath precedent (WP-083)"]
-        ["Phase 3 Gate\nClosed (D-1320)"]
+      Engine Hardening
+        ["WP-087 ✅ Engine type hardening"]
+        ["WP-088 ✅ Setup module hardening"]
+
+      Client Integration Cluster
+        ["WP-089 ✅ Engine PlayerView wiring"]
+        ["WP-090 ✅ Live match client wiring"]
+        ["WP-091 ✅ Loadout builder"]
+        ["WP-092 ✅ Lobby loadout intake"]
+        ["WP-093 ✅ Match-setup rule-mode envelope"]
+        ["WP-094 ✅ Viewer hero key uniqueness"]
+        ["WP-100 ✅ Interactive gameplay surface"]
+
+      Auth Stack & Profile Surface
+        ["WP-099 ✅ Auth provider selection (Hanko)"]
+        ["WP-101 ✅ Handle claim flow"]
+        ["WP-102 ✅ Public player profile page"]
+        ["WP-104 ✅ Owner profile and /me edit"]
+        ["WP-109 ✅ Team affiliation"]
+        ["WP-111 ✅ UIState card display projection"]
+        ["WP-112 ✅ Session token validation middleware"]
+        ["WP-126 ✅ Hanko session verifier"]
+        ["WP-131 📝 Drafted — authenticated route production wiring"]
+
+      Engine + Server Wiring & Leaderboard HTTP
+        ["WP-113 ✅ Engine-server registry wiring"]
+        ["WP-114 ✅ Viewer URL-parameterized setup preview"]
+        ["WP-115 ✅ Public leaderboard HTTP and pg.Pool bootstrap"]
+
+      Registry Viewer Enhancements
+        ["WP-121 ✅ Card zoom slider"]
+        ["WP-122 ✅ Henchman emission fix"]
+        ["WP-123 ✅ cardType widening and other dispatch"]
+        ["WP-124 ✅ Theme zoom slider"]
+        ["WP-125 ✅ Card abilities effect-tag filter"]
+        ["WP-127 ✅ Grid tile team and ability text"]
+
+      Phase 8 — Interactive Board Layout
+        ["WP-128 📝 Drafted — UIState board projections"]
+        ["WP-129 📝 Drafted — board layout (desktop/mobile)"]
+        ["WP-130 📝 Drafted — playmat / reskin selector"]
+
+      Monetization Stack
+        ["WP-132 📝 Drafted — entitlements data model and read endpoint"]
+        ["WP-133 📝 Drafted — Stripe checkout and webhook ingestion"]
+        ["WP-134 📝 Drafted — webhook to entitlement fulfillment"]
+
+      Phase 9 — Profile Surface Follow-ups
+        ["WP-105 📦 Queued — player badges"]
+        ["WP-106 ⏸ Blocked — avatar upload pipeline"]
+        ["WP-107 ⏸ Blocked — integrity / anti-cheat surface"]
+        ["WP-108 ⏸ Blocked — profile billing & funding history UI (consumes WP-132/133/134)"]
+
+      Phase 10 — Debugging, Testing & Troubleshooting
+        ["Future-WP-A 📝 Placeholder — replay diff tool"]
+        ["Future-WP-B 📝 Placeholder — ops histogram aggregator"]
+        ["Future-WP-C 📝 Placeholder — determinism verifier"]
+        ["Future-WP-D 📝 Placeholder — server error telemetry"]
+        ["Future-WP-E 📝 Placeholder — engine perf profiler"]
+        ["Future-WP-F 📝 Placeholder — end-to-end smoke suite"]
+        ["Future-WP-G 📝 Placeholder — disconnect stress suite"]
+        ["Future-WP-H 📝 Placeholder — synthetic load generator"]
+
+      Governance Drafts
+        ["WP-097 📝 Drafted — tournament funding policy"]
+        ["WP-098 ⏸ Blocked — funding surface lint gate"]
+        ["WP-042.1 ⏸ Blocked — PostgreSQL seeding checklists"]
+
+      Reference (one-line pointers)
+        ["docs/12-SCORING-REFERENCE.md — formula and invariants"]
+        ["docs/12.1-PAR-ARTIFACT-INTEGRITY.md — hashing trust model"]
+        ["cards.barefootbetters.com — registry viewer (public)"]
+        [".claude/CLAUDE.md — root coordination"]
+        [".claude/rules/ — 7 rule files"]
+        ["EC_INDEX.md — execution checklists EC-001..EC-137"]
+        ["DECISIONS.md — D-NNNN ledger (range in Project Baselines)"]
+        ["WORK_INDEX.md — authoritative per-WP audit log"]
 ```
 
-## Progress Summary
+---
 
-| Phase | Packets | Done | Remaining |
-|-------|---------|------|-----------|
-| Foundation | FP-00.4, 00.5, 01, 02 | 4/4 | -- |
-| Phase 0 | WP-001..004, 043..047 | 9/9 | -- |
-| Phase 1 | WP-005A/B, 006A/B | 4/4 | -- |
-| Phase 2 | WP-007A/B, 008A/B | 4/4 | -- |
-| Phase 3 | WP-009A/B, 010..013 | 6/6 | -- |
-| Phase 4 | WP-014A/B..020 | 8/8 | -- |
-| Content | WP-055, 060 | **2/2** ✅ | — |
-| Phase 5 | WP-021..026 | 6/6 | -- |
-| Phase 6 | WP-027..035, 042, 048, 067, 079, 080 | **14/14** ✅ | — (tagged `phase-6-complete` at `c376467`) |
-| UI Chain | WP-061..065 | 5/5 | ✅ all (WP-061, 062, 063, 064, 065) |
-| Phase 7 | WP-036..041, 049..051 | **9/9** ✅ | — (WP-036/037/038/039/040 done 2026-04-21..23; WP-041, WP-049..051 done 2026-04-23) |
-| Beta-Launch Pillar | WP-052, 053a, 053, 054 | **4/4** ✅ | — WP-052 (`cf4e111`) + WP-053a (`d896690`) + WP-053 (`26e122f`) + WP-054 Library-only via cherry-pick (`f56a955` / catalog rows graduated to Wired by WP-115) |
-| Replay Storage Predecessor | WP-103 | **1/1** ✅ | — (landed 2026-04-25 at `f74d180`; predecessor for WP-053) |
-| Registry Viewer Follow-up | WP-096 | **1/1** ✅ | — (landed 2026-04-25 at `811114a`; corrective follow-up to WP-066) |
-| Pre-Plan | WP-056..058 | **3/3** ✅ | — (WP-059 📝 drafted 2026-04-24; deferral lifted, awaiting Lint Gate + pre-flight) |
-| Engine Hardening | WP-087, 088 | **2/2** ✅ | — (landed 2026-04-23) |
-| Client Integration | WP-089..094 | **6/6** ✅ | — (landed 2026-04-24; first browser gameplay client + loadout builder + lobby intake + viewer fix) |
-| Post-Phase-6 Hygiene | WP-081, 082, 083, 084, 085 (+ EC-110 INFRA) | **5/5** ✅ | — (landed 2026-04-20..22) |
-| Auth Stack & Profile Surface | WP-099, 101, 102, 104, 109, 111, 112, 126 | **8/8** ✅ | — WP-099 (`f6cd591` 2026-04-27, Hanko selection) + WP-101 (`fb1ca2b` 2026-04-28, handle claim) + WP-102 (`369c0a4` 2026-04-28, public profile) + WP-104 (`cea9108` 2026-05-02, owner profile + /me edit) + WP-109 (`7fe59a1` 2026-05-03, team affiliation) + WP-111 (`f842f71` 2026-04-29, UIState card display) + WP-112 (`d0fefa3` 2026-05-02, session-token middleware) + **WP-126 (`2aa7690` 2026-05-03, Hanko session verifier — D-12601..D-12604 + D-11201 flipped)** |
-| Engine + Server Wiring & Leaderboard HTTP Surface | WP-113, 114, 054, 115 | **4/4** ✅ | — WP-113 (`2a00193` 2026-04-27, set-qualified ID lock) + WP-114 (`c059199` 2026-04-30, viewer URL preview) + WP-054 library + WP-115 (`35572df` 2026-05-01, leaderboard HTTP + pg.Pool bootstrap) |
-| Registry Viewer Enhancements | WP-121..125, 127 | **6/6** ✅ | — WP-121 card zoom (`e3c6af7`) + WP-122 henchman fix (`a5c1653`) + WP-123 cardType widening (`fbb5174`) + WP-124 theme zoom (`078e234`) + WP-125 ability filter (Commit A) + WP-127 grid tile team+ability (`1323266`) |
-| Governance Drafts Pending | WP-097, 098 | **0/2** | 📝 WP-097 (funding policy) + WP-098 (lint-gate trigger; blocked on WP-097 execution) |
-| Profile-Page Follow-up Placeholders | WP-105..108 | **0/4** | 📝 Placeholder rows; WP-105 badges + WP-106 avatar upload + WP-107 integrity admin + WP-108 funding surface (blocked on WP-097/098 + payment-integration WP) |
-| Carry-forward | WP-042.1, WP-066 | 1/2 | ⏸ WP-042.1 blocked on FP-03 revival per D-4201; ✅ WP-066 closed 2026-04-22 at `8c5f28f` |
-| **Total** | | **108/113** | drafts: WP-059 + WP-097/098 + WP-105..108; carry-forward: WP-042.1 (deferred) |
+## Progress Summary (counts only)
 
-**Phase 6 closed on 2026-04-19 — tag `phase-6-complete` at `c376467`.** Engine baseline `604/0` (post-WP-111 + WP-113); server baseline `124/0/54` (post-WP-126); repo-wide all green.
+| Cluster | Done | Open |
+|---|---|---|
+| Foundation | 4/4 | — |
+| Phase 0–5 | 47/47 | — |
+| Phase 6 | 15/15 | — |
+| UI Implementation Chain | 5/5 | — |
+| Content Layer | 2/2 | — |
+| Pre-Planning System | 4/4 | 1 📦 (WP-070) |
+| Post-Phase-6 Hygiene | 5/5 | — |
+| Phase 7 | 6/6 | — |
+| Scoring & PAR Pipeline | 4/4 | — |
+| Beta-Launch Pillar | 5/5 | — |
+| Engine Hardening | 2/2 | — |
+| Client Integration Cluster | 7/7 | — |
+| Auth Stack & Profile Surface | 8/8 | 1 📝 (WP-131) |
+| Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
+| Registry Viewer Enhancements | 6/6 | — |
+| Phase 8 — Interactive Board Layout | 0/3 | 3 📝 |
+| Monetization Stack | 0/3 | 3 📝 |
+| Phase 9 — Profile Surface Follow-ups | 0/4 | 1 📦, 3 ⏸ |
+| Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
+| Governance Drafts | 0/3 | 1 📝, 2 ⏸ |
+| **Total** | **123/135 ✅** | 8 📝 + 2 📦 + 5 ⏸ |
 
-**Next unblocked (dependencies met, no active work):**
-- **Authenticated route-handler WP (next major surface):** With WP-126 ✅ landed 2026-05-03, the auth stack is fully shipped — broker-agnostic orchestrator (WP-112) + broker-specific Hanko verifier (WP-126) + handle claim (WP-101) + public read (WP-102) + owner write (WP-104) + team affiliation (WP-109). The next surface is a request-handler WP that wires `configureSessionValidation({ verifier: createHankoSessionVerifier(config), accountResolver, database })` exactly once at server startup and graduates the existing fail-closed `'session_verifier_not_configured'` defaults on `/api/me/*` (WP-104) and `/api/teams/*` (WP-109) into genuinely authenticated routes. Mirrors WP-115's pg.Pool bootstrap pattern for long-lived lifecycle ownership.
-- **Pre-Plan UI Integration (WP-059):** 📝 drafted 2026-04-24, deferral lifted (WP-028 done 2026-04-14; framework settled by WP-061 Vue 3 + Vite + Pinia at `2e68530`). Awaiting Prompt Lint Gate (00.3) and pre-flight bundle before execution. Live-mutation middleware that triggers `executeDisruptionPipeline` is **out of scope** for WP-059 — it depends on the live-match transport landed in WP-090 and will be a follow-up WP.
-- **Governance drafts (WP-097/098):** WP-097 (Tournament Funding Policy — Open Collective primary + PayPal supplemental; D-9701) and WP-098 (Funding Surface Gate Trigger §20 — blocked on WP-097 execution; D-9801 distinguishes scope from D-9701). Pre-flight bundles pending.
-- **Profile-page follow-ups (WP-105..108):** WP-105 player badges + WP-106 avatar upload + WP-107 profile integrity / admin review (blocked on a future admin-auth WP) + WP-108 profile funding surface (blocked on WP-097 + WP-098 + future payment-integration WP).
-- **Carry-forward backlog:** WP-042.1 (unblocks when Foundation Prompt 03 is revived). WP-066 ✅ closed 2026-04-22 at `8c5f28f` — no longer carry-forward.
-- **Deferred CLI placeholder (D-9001):** two bugs in `apps/server/scripts/join-match.mjs` — script omits `playerID` from POST body; reads `result.credentials` after join when canonical field is `result.playerCredentials`. CLI-only scope; can land standalone or be deleted if obsoleted by the lobby UI.
+> Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 
-**Ops chain closed:** `WP-034 → WP-035 → WP-042` landed sequentially on 2026-04-19 (`5139817` → `d5935b5` → `c964cf4`) and the phase was governance-closed at `c376467`. Both the scoring side (WP-048 → WP-067 → WP-062) and the replay side (WP-079 → WP-080 → WP-063 → WP-064) also landed. **All three Phase 6 sub-chains shipped within 24 hours on 2026-04-19.**
+---
 
-**Post-Phase-6 delivery (2026-04-20):** five WPs landed on the governance trunk after the `phase-6-complete` tag — WP-055 (content), WP-056 (pre-planning types), WP-057 (pre-plan sandbox execution), WP-058 (pre-plan disruption pipeline), WP-081 (registry build hygiene) — all without reopening Phase 6. Engine baseline held at 436/109/0; repo-wide went 526 → 536 on WP-055 (+10 theme-schema tests) → 536 through WP-056 (zero-test) → 559 on WP-057 (+23 preplan-runtime tests across four `describe` blocks) → 588 on WP-058 (+29 preplan-pipeline tests across three `describe` blocks) → 588 through WP-081 (zero-test; subtractive). End-of-day 2026-04-20 baseline: 588 passing / 0 failing.
+## Project Baselines (canonical — single source; do not restate elsewhere)
 
-**2026-04-21 delivery wave** (five WPs + one ad-hoc INFRA commit): **WP-060** glossary R2 migration (EC-106, `412a31c`) + **WP-082** glossary schema/labels/rulebook deep-links (EC-107, `752fcca`; ten new registry-package tests took repo-wide 536 → 596) + **EC-110** ad-hoc Validate-Registry CI path fix (`4e53e9f`, surfaced and repaired upstream msp1/shld data defects via three `INFRA:` commits) + **WP-036** AI playtesting & balance simulation (EC-036, `539b543`) + **WP-084** auxiliary-metadata deletion (EC-109, `b250bf1`; subtractive; 596/0 preserved) + **WP-083** viewer-fetch-boundary Zod validation (EC-108, `601d6fc`; retrofit; 596/0 preserved). Phase-6 tag `phase-6-complete` at `c376467` still stands — all 2026-04-21 work is hygiene, content, or Phase-7 entry and does not retroactively reopen Phase 6.
+- **Phase 3 Gate:** Closed (D-1320)
+- **Phase 6 Gate:** Closed 2026-04-19 — tag `phase-6-complete` at `c376467`
+- **Engine test baseline:** `604 / 132 / 0` (post-WP-111 + WP-113)
+- **Server test baseline:** `124 / 0 / 54` (post-WP-126; pre-WP-131)
+- **DECISIONS.md range:** `D-4801..D-13405` reserved (WP-097 → D-9701; WP-098 → D-9801; WP-131 → D-13101..D-13104; WP-132 → D-13201..D-13206; WP-133 → D-13301..D-13309; WP-134 → D-13401..D-13405)
+- **EC range:** `EC-001..EC-137` (EC-131/132/133 reserved by board-layout chain WP-128/129/130; EC-134 reserved by WP-131; EC-135/136/137 reserved by monetization stack WP-132/133/134)
 
-*Last updated: 2026-04-26 (**Beta-Launch Pillar half-shipped + WP-103 replay loader landed + WP-109 / EC-109 drafted**) — Three of the four Beta-Launch Pillar packets executed across 2026-04-25..26: WP-052 ✅ player identity & replay ownership at `cf4e111` (EC-052, execution `fd769f1`; `apps/server/src/identity/`; `AccountId` deliberately distinct from engine `PlayerId` per D-5201/D-8701; race-safe `assignReplayOwnership` CTE; migrations `004_create_players_table.sql` + `005_create_replay_ownership_table.sql`; `AUTH_PROVIDERS` + `REPLAY_VISIBILITY_VALUES` canonical readonly arrays + drift tests; server 19/3/0 → 31/5/0 with 6 `{skip:'requires test database'}` when `TEST_DATABASE_URL` unset; D-5201..D-5203 + D-8701) → WP-053a ✅ PAR artifact `ScenarioScoringConfig` extension at `d896690` (EC-053a, execution `e5b9d15`; predecessor for WP-053 per D-5306; extends `SeedParArtifact` + `SimulationParArtifact` + `ParIndex.scenarios[key]` + `ParGateHit` with non-optional `scoringConfig`; `data/scoring-configs/<scenario_key>.json` authoring origin per D-5306a; engine 513/115/0 → 522/116/0; INFRA hook fix `fbbedb5` accepts lowercase letter suffix in EC-### prefix to land `EC-053a:` commits) → WP-053 ✅ competitive score submission & verification at `26e122f` (EC-053, A0 SPEC v1.5 `27d3004` adding Vision Alignment block + `IF NOT EXISTS` migration idempotency + Funding Surface Gate `§20 — N/A` declaration; execution `56e8134`; `apps/server/src/competition/`; 16-step locked submission flow with idempotency fast-path + CTE `xmax = 0` idiom; `SUBMISSION_REJECTION_REASONS` canonical readonly array; migration `007_create_competitive_scores_table.sql`; lifecycle prohibition LOCKED — no production caller until future request-handler WP; server 38/6/0 → 47/7/0; D-5301..D-5305). WP-103 ✅ server-side replay storage & loader at `f74d180` (EC-111, execution `fe7db3e`; `apps/server/src/replay/`; content-addressed `INSERT … ON CONFLICT (replay_hash) DO NOTHING`; migration `006_create_replay_blobs_table.sql` with `text replay_hash PRIMARY KEY` per D-10302 + `jsonb replay_input` per D-10303; predecessor for WP-053 closing EC-053 §Before Starting line 21 hard prerequisite; server 31/5/0 → 36/6/0; EC retargeted EC-103 → EC-111 per PS-1 filename collision with viewer EC-103). WP-096 ✅ registry viewer grid data view at `811114a` (EC-096, execution `4fe8382`; corrective follow-up to WP-066 / EC-066; `CardDataTile.vue` + `CardGrid.vue` consumes `useCardViewMode` directly per WP-066 "global toggle" intent; D-9601 `Set` / `setAbbr` divergence from sidebar). **Governance drafts 2026-04-25 at `c33d42b`:** WP-097 / EC-097 (Tournament Funding Policy — Open Collective primary + PayPal supplemental; D-9701) + WP-098 / EC-098 (Funding Surface Gate Trigger — `00.3 §20`; blocked on WP-097 execution; D-9801) + WP-099 / EC-099 (Auth Provider Selection — Hanko at `apps/server/src/auth/hanko/`; D-9901..D-9905) + WP-101 / EC-101 (Handle Claim Flow — migration slot `007_add_handle_to_players.sql`; locked regex `^[a-z][a-z0-9_]{2,23}$` + 15-entry reserved set; no-tombstone policy). **WP-102 + WP-104..108 placeholder rows 2026-04-25 at `75186ce`** (public profile page + 5 follow-up placeholders pending WP-101). **VISION §25 amendment 2026-04-26 at `00f0a38`** (badges issuer model + boundary freeze; D-0006 / D-0007 / D-1004) + **PROPOSAL-BADGES.md addendum polish at `4d419a4`** (A1-A6 surgical refinements). **WP-109 / EC-109 drafted 2026-04-26 (this session, uncommitted)** — Team Affiliation; variable team size 3 / 4 / 5 declared at creation and immutable (per D-1004 boundary freeze); sub cap = `min(2, teamSize − 2)`; validity rule `liveMembers ≥ teamSize − 2 AND liveMembers + liveSubs ≥ teamSize − 1`; vision-aligned per §3 / §4 / §23(b) / §25; D-0005 preserved (no comparison surface); DESIGN-RANKING.md §12 deferral honored; lint-PASS; **blocked on WP-104** (placeholder row). **Tally updates:** Phase 7 row gained WP-052 ✅ + WP-053a ✅ + WP-053 ✅ rows + WP-054 ⬜ row split; new "Beta-Launch Pillar Execution & Predecessors" mindmap section added covering WP-103 ✅ + WP-096 ✅; new "Governance & Profile-Page Drafts" mindmap section covering WP-097/098/099/101/102 + WP-104..108 placeholders + WP-109 + the VISION/PROPOSAL updates; Progress Summary table gained Replay Storage Predecessor + Registry Viewer Follow-up + Governance Drafts + Profile-Page Drafts + Team Affiliation Draft rows; grand total 88/92 → 92/96; remaining 3 → 1 (WP-054 only — plus drafts WP-059 + WP-097/098/099/101/102 + WP-104..108 placeholders + WP-109; WP-042.1 deferred). Phase 6 tag `phase-6-complete` at `c376467` still stands; Phase 7 closure stands. Back-sync-only edit; no underlying work changed. **Original 2026-04-24 footer preserved below for context.** ---- 2026-04-24 (**Phase 7 closed + first browser gameplay client + WP-059 deferral lifted**) — Phase 7 main sequence sealed when WP-041 ✅ system architecture definition shipped at `0e8e8b1` under EC-041 alongside the PAR pipeline closure: WP-049 ✅ PAR simulation engine at `021555e` → WP-050 ✅ PAR artifact storage at `ccdf44e` → WP-051 ✅ PAR publication & server gate at `ce3bffb` (all 2026-04-23). Engine hardening pass landed 2026-04-23: WP-087 ✅ at `73aeada` (`PlayerId` alias; `readonly` deferred per D-8702) + WP-088 ✅ at `d183991` (engine 507/114/0; repo-wide 672/128/0; D-8802 freshly-constructed `BoardKeyword[]`). Client integration cluster shipped 2026-04-24: WP-089 ✅ engine PlayerView wiring (`LegendaryGame.playerView = buildPlayerView`; clients receive audience-filtered `UIState`) + WP-090 ✅ live match client wiring at `54b266a` (first browser gameplay client; `apps/arena-client/` lobby + create/join + boardgame.io/client SocketIO; D-9001 records CLI credentials drift) + WP-091 ✅ loadout builder in registry viewer (D-9101; setupContract package; +18 tests bringing registry to 31/3/0) + WP-092 ✅ lobby loadout intake at `cb982ff` (D-9201; arena-client 77/3/0 → 109/5/0; manual form preserved byte-for-byte under `<details>` collapse) + WP-093 ✅ match-setup rule-mode envelope field (D-9301; governance-only; optional `heroSelectionMode` v1 enum `["GROUP_STANDARD"]`; preserves 9-field composition lock) + WP-094 ✅ viewer hero FlatCard key uniqueness at `eac678c` (single-file viewer fix). **WP-059 deferral lifted 2026-04-24** — WP-028 done 2026-04-14, framework settled by WP-061 Vue 3 + Vite + Pinia at `2e68530`; WP-059 + EC-059 drafted 2026-04-24, awaiting Lint Gate. **WP-052/053/054 contract tightening pass 2026-04-24** at `729f056` (pre-execution surgical clarifications across the player-identity / score-submission / leaderboard pillar). **WP-055 / EC-055 doc polish 2026-04-24** at `b24b589` (post-completion clarifications). **Tally updates:** Phase 7 row 5/9 → 9/9; new Beta-Launch Pillar row 0/3 (WP-052..054 Ready); new Engine Hardening row 2/2; new Client Integration row 6/6; grand total 75/80 → 88/92; remaining 5 → 3 (plus WP-059 Drafted; WP-042.1 deferred). Mindmap gained Engine Hardening + Client Integration sections; Phase 7 PAR pipeline (049/050/051) flipped from ⬜ to ✅; WP-066 row corrected from ⬜ "not yet reviewed" to ✅ closed; WP-059 row updated from ⏸ Deferred to 📝 Drafted. Phase 6 tag `phase-6-complete` at `c376467` still stands. **Original 2026-04-23 footer preserved below for context.** ---- 2026-04-23 (**Phase 7 back-sync wave 2 — WP-040 growth-governance landed**) — WP-040 ✅ growth governance & change budget at `6faaf3b` (EC-040; A0 SPEC pre-flight bundle `5e1a0fa` with v1+v2 preflights + copilot check CONFIRM 27/30 PASS + pre-pre-flight tightening `c861b24` + Path A rewrites of WP-040 + EC-040 + session prompt; Commit A `6faaf3b` lands `docs/governance/CHANGE_GOVERNANCE.md` framework doc + `packages/game-engine/src/governance/governance.types.ts` three readonly metadata types + additive re-exports through `packages/game-engine/src/types.ts` + public-API exports through `packages/game-engine/src/index.ts` + `docs/ai/post-mortems/01.6-WP-040-growth-governance-change-budget.md` 01.6 MANDATORY post-mortem; Commit B governance close `bd5bec0`). First code-landing Phase-7 WP after the launch-readiness quartet (WP-036..039 were documentation / type-contract only). Five change categories — ENGINE / RULES / CONTENT / UI / OPS — map 1:1 to the architectural layer partition (D-4002); content and UI are marked the primary growth vectors (D-4003); five immutable surfaces require a major version bump (D-4004 — engine move contract, G shape, rule hook contract, PAR artifact format, scoring formula); `packages/game-engine/src/governance/` classified as the engine code category's 11th directory (D-4001). Governance types never members of `LegendaryGameState`; zero engine gameplay files touched; zero G state touched; zero new tests. Engine 444/110/0 + repo-wide 596/0 UNCHANGED through all three commits (01.5 NOT INVOKED; 01.6 MANDATORY satisfied by the post-mortem). **Tally updates:** Phase 7 row 4/9 → 5/9; grand total 74/80 → 75/80; remaining 6 → 5 (plus 1 deferred WP-042.1). Mindmap Phase 7 node block gained `WP-040 ✅` card with full execution detail; `WP-040..041 ⬜` combined row replaced with standalone `WP-041 ⬜`. Next unblocked paragraph updated — WP-041 (System Architecture Definition & Authority Model) is now the next Phase 7 main-sequence item. Phase 6 tag `phase-6-complete` at `c376467` still stands. Back-sync-only edit; no underlying work changed. **Original 2026-04-23 WP-039 footer preserved below for context.** ---- 2026-04-23 (**Phase 7 launch-readiness quartet back-sync — WP-039 landed**) — WP-039 ✅ post-launch metrics & live ops at `4b1cf5c` (EC-039; A0 SPEC pre-flight bundle `9e7d9bd` with v1+v2 preflights + copilot check CONFIRM 29/30 PASS + Path A rewrites of WP-039 and EC-039 + session prompt; Commit A `4b1cf5c` lands `docs/ops/LIVE_OPS_FRAMEWORK.md` 11-section framework doc + `docs/ai/post-mortems/01.6-WP-039-post-launch-metrics-live-ops.md` 14-section post-mortem; Commit B governance close `ee5e1d5` appends **D-3901** live-ops-reuses-existing-IncidentSeverity-and-OpsCounters-rather-than-parallel-types, flips WP-039 checkbox with 2026-04-23 date, moves EC-039 Draft → Done with Done-counter 11 → 12). Path A resolved all three v1 pre-flight blockers by construction — dropped `MetricPriority` duplicate severity type, dropped same-version-vs-cross-version replay desync split contradicting `INCIDENT_RESPONSE.md:33` (replay desync classified P1 full stop), dropped `MetricEntry` parallel counter container; added `INCIDENT_RESPONSE.md` + `ops.types.ts` to Context (Read First) as AUTHORITATIVE. §3 Severity Taxonomy cross-links to `INCIDENT_RESPONSE.md` without restating the P0-P3 table (Verification Step 9 grep for "Immediate rollback" returned 0); §4 Observability Surface cross-links to `OpsCounters` in `ops.types.ts` without redefining the four counter fields; §5 Metric Label Conventions are organizational prose only — not a typed union, not a code constant. One pre-Commit-A reality reconciliation documented in post-mortem §10.1 — the `MetricCategory` identifier in §5 meta-prose tripped Verification Step 5 even though the prose was advocating against the type; paraphrased to "code-level union" with zero semantic change. Engine 444/110/0 + repo-wide 596/0 UNCHANGED through all three commits (zero new tests; 01.5 NOT INVOKED; 01.6 MANDATORY satisfied by the post-mortem). **Tally updates:** Phase 7 row 3/9 → 4/9; grand total 73/80 → 74/80; remaining 7 → 6 (plus 1 deferred WP-042.1). Mindmap Phase 7 node block gained `WP-039 ✅` card with full execution detail; `WP-039..041 ⬜` row replaced with `WP-040..041 ⬜` (2-item pending). Next unblocked paragraph updated — WP-040 (Growth Governance & Change Budget) is now the next Phase 7 main-sequence item and consumes `LIVE_OPS_FRAMEWORK.md` §8 Change Management directly for its five change categories (ENGINE | RULES | CONTENT | UI | OPS). Phase 6 tag `phase-6-complete` at `c376467` still stands. Back-sync-only edit; no underlying work changed. **Original 2026-04-22 trio footer preserved below for context.** ---- 2026-04-22 (**Phase 7 launch-readiness trio back-sync** — WP-037 ✅ public beta strategy at `160d9b9` (EC-037; new `packages/game-engine/src/beta/` D-3701 engine code category 10th instance; `BetaFeedback` + `BetaCohort` + `FeedbackCategory` pure type contracts; `docs/beta/BETA_STRATEGY.md` + `docs/beta/BETA_EXIT_CRITERIA.md` strategy-doc-pair with 4 binary pass/fail exit categories; D-3702 invitation-only signal-quality + D-3703 three-cohorts-by-expertise-and-role + D-3704 beta-uses-the-same-release-gates-as-production; engine 436→444 / suites 109→110; repo-wide 588→596) + **WP-038** ✅ launch readiness & go-live checklist at `2134f33` (EC-038, governance close `d4fe447`; documentation-only — `docs/ops/LAUNCH_READINESS.md` 8 top-level sections covering 4 readiness gate categories + 17 binary pass/fail gates + single launch authority model with 3 non-override clauses + 4 required sign-offs + GO/NO-GO boolean aggregation rule; `docs/ops/LAUNCH_DAY.md` T-1h Final Build Verification + T-0 Soft Launch with PAUSE-vs-ROLLBACK distinction + Go-Live Signal + T+0 to T+72h Post-Launch Guardrails with 5-field Freeze Exception Record and 4 verbatim rollback triggers — invariant violation spike, replay hash divergence, migration failure, client desync; D-3801 single-launch-authority + D-3802 72h-stability-observation-window + D-3803 launch-gates-inherit-from-beta-exit-gates; three-commit topology A0 SPEC pre-flight bundle `9ecbe70` → A EC-038 content + 01.6 post-mortem `2134f33` → B SPEC governance close `d4fe447`; engine 444/110/0 + repo-wide 596/0 UNCHANGED through both commits — zero new tests). **Tally updates:** Phase 7 row 1/9 → 3/9; Carry-forward row 0/2 → 1/2 (WP-066 ✅ closed 2026-04-22 at `8c5f28f` — no longer carry-forward); grand total 70/79 → 72/79; remaining 9 → 7 (plus 1 deferred WP-042.1). Phase 6 tag `phase-6-complete` at `c376467` still stands. Mindmap Phase 7 node block gained `WP-037 ✅` and `WP-038 ✅` cards with full execution detail; `WP-037..041 ⬜` row replaced with `WP-039..041 ⬜` (3-item pending). Back-sync-only edit; no underlying work changed. **Original 2026-04-21 footer preserved below for context.** ---- **2026-04-21 delivery wave**: five WPs + one ad-hoc INFRA landed atop the 2026-04-20 Post-Phase-6 pass. **WP-060** ✅ at `412a31c` (EC-106, close `cd811eb`) — migrates 123-entry keyword glossary + 20-entry rule glossary from hardcoded useRules maps to R2; retargets useRules + useGlossary to fetched Maps; non-blocking fetch with console.warn + empty-Map fallback; D-6001..D-6007 (including D-6002 historical-neighbor glossary-wiring lock); repo-wide 536/0 UNCHANGED. **WP-082** ✅ at `752fcca` (EC-107, close `0acdf3c`; A-082-01..03 amendments) — authors KeywordGlossary{Entry,}Schema + RuleGlossary{Entry,}Schema in packages/registry/src/schema.ts (first `.strict()` use in that file); backfills required `label` + optional `pdfPage` onto all 123 keywords + 20 rules; uploads Marvel Legendary Universal Rules v23 hyperlinks.pdf to R2 at version-pinned URL; adds rulebookPdfUrl to viewer config; glossaryClient retrofitted to `.safeParse(...)` at fetch boundary with `[Glossary] Rejected …` full-sentence warning + empty-Map fallback; deletes `titleCase()` heuristic + introduces explicit HERO_CLASS_LABELS; D-8201..D-8206; A-082-01 locks `./schema` subpath export precedent that A-083-04 later mirrors for themes; +10 tests in registry package → repo-wide 536 → 596. **EC-110** ✅ at `4e53e9f` (ad-hoc INFRA, not a WP) — validate.ts defaults resolve via fileURLToPath(import.meta.url); surfaced two pre-existing data errors (msp1 sentinel ids, shld stringified attack/recruit) repaired upstream in modern-master-strike and regenerated via three `INFRA:` commits; baseline 596/0 preserved. **WP-036** ✅ at `539b543` (EC-036, close `61df4c0`; A-036-02 amendment) — AI playtesting & balance simulation framework; D-3601 simulation code category + D-3602 same-pipeline-as-humans + D-3603 random-policy MVP baseline + D-3604 two-independent-PRNG-domain seed reproducibility; first Phase-7 WP to land. **WP-084** ✅ at `b250bf1` (EC-109, close `4cc9ded`; A-084-01 amendment) — subtractive: five auxiliary Zod schemas (CardType/HeroClass/HeroTeam/Icon/Leads) + five data/metadata/*.json + card-types-old.json + Phase-2 validate block deleted; viewer drifted-duplicate `localRegistry.ts` deleted; 00.2-data-requirements rewritten; current-state docs sweep; legacy Validate-R2-old.ps1 deleted; D-8401..D-8407 (incl. D-8403 `*-old.*` repo-smell rule, D-8406 viewer drifted-duplicate rule, D-8407 legacy-ps1 deletion); 596/0 preserved. **WP-083** ✅ at `601d6fc` (EC-108, close `7f054e1`; A-083-01..04 amendments) — adds ViewerConfigSchema (.strict()) + ThemeIndexSchema + inferred types to packages/registry/src/schema.ts; retrofits registryClient + themeClient to `.safeParse(...)` at the fetch boundary with first-Zod-issue rendering (`[RegistryConfig] Rejected …` throws; `[Themes] Rejected …` throws on index / warns + skips on individual themes per D-8303 severity policy); four inline TS interfaces deleted; A-083-04 adds `./theme.schema` subpath export to packages/registry/package.json (D-8305 locks precedent); D-8301..D-8305; theme.schema.ts + theme.validate.ts untouched (empty git diff); 69 shipped themes validate against ThemeDefinitionSchema with fail = 0; 596/0 preserved. **Totals:** Content row 1/2 → 2/2; Phase 7 row 0/9 → 1/9; Post-Phase-6 Hygiene row 1/1 → 4/4 (new denominator absorbed WP-082, WP-083, WP-084); repo-wide grand total 63/76 → 68/79. Phase 6 tag `phase-6-complete` at `c376467` still stands. Prior 2026-04-19 Phase 6 closure history preserved: ops chain WP-034 → WP-035 → WP-042, replay sub-chain WP-027 → WP-079 → WP-080 → WP-063 → WP-064, scoring side WP-048 → WP-067 → WP-062. Precedent-log entries through P6-51 live in `docs/ai/REFERENCE/01.4-pre-flight-invocation.md`. **2026-04-22 roadmap back-sync:** WP-057 ✅ and WP-058 ✅ rows updated from ⬜ — authoritative status per `WORK_INDEX.md:1431, :1445` has been Done since 2026-04-20 executions `8a324f0` + `bae70e7` (governance closes `7414656` + `00687c5`); Pre-Plan row bumped 1/3 → 3/3; grand total 68/79 → 70/79 with 11 → 9 remaining; Post-Phase-6 delivery paragraph updated from three → five WPs with 2026-04-20 test-count arithmetic reconciled 526 → 588. Back-sync-only edit; no underlying work changed.)*
+---
+
+## Next Unblocked (ordered)
+
+1. **WP-131** — drafted; all deps satisfied; awaiting Lint Gate + pre-flight.
+2. **WP-128 → WP-129 → WP-130** — drafted; awaiting Lint Gate. WP-130 deferrable.
+3. **WP-132 → WP-133 → WP-134** — drafted 2026-05-03; awaiting Lint Gate + pre-flight + WORK_INDEX entry. Sequenced strictly: WP-132 (entitlement substrate) before WP-133 (Stripe wiring) before WP-134 (fulfillment processor). WP-131 should land first so `/api/me/entitlements` is genuinely authenticated rather than fail-closed `'session_verifier_not_configured'`.
+4. **WP-105** — queued (WP-104 dep cleared 2026-05-02); WP file not yet authored.
+5. **WP-070** — queued (WP-059 ✅ + WP-090 ✅); WP file + EC not yet authored.
+6. **WP-097 → WP-098** — pre-flight bundles pending; WP-098 blocked on WP-097 execution. WP-108 is now blocked on **WP-097 + WP-098 + WP-132 + WP-133 + WP-134** (reframed 2026-05-03 — see WORK_INDEX.md).
+7. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
+8. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+
+---
+
+## Phase Closure Records
+
+### Phase 6 (Closed 2026-04-19)
+- Tag: `phase-6-complete` @ `c376467`
+- Engine baseline at close: `604 / 132 / 0`
+- Server baseline at close: `124 / 0 / 54`
+
+### Phase 3 Gate
+- Closed (D-1320)
+
+---
+
+## WP Disambiguators
+
+- **WP-042 vs WP-042.1** — WP-042 is intentionally scope-reduced per D-4201; the four PostgreSQL seeding checklist sections are partitioned to a sibling sequel WP-042.1 (Governance Drafts). WP-042 is **complete**; WP-042.1 is **blocked** on FP-03 revival. Not a partial undo.
+- **WP-128/129/130 vs WP-131 EC slot** — WP-128/129/130 reserved EC-131/132/133 by chronological-tail ordering; WP-131 (next free WP slot) retargets to EC-134 per the locked WP-keyed-EC retarget precedent.
+
+---
+
+*Last updated: 2026-05-03 (review-pass 4: added Monetization Stack cluster for WP-132/133/134 drafts; reframed WP-108 as UI consumer of the stack; DECISIONS.md range extended to D-13405; EC range extended to EC-137).*

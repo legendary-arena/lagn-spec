@@ -280,6 +280,49 @@ for (const [categoryLabel, packageNames] of CATEGORY_DEFINITIONS) {
 }
 
 // ---------------------------------------------------------------------------
+// First-party subsystems — internally-built modules of architectural
+// significance that don't surface in the dep / category tables because
+// they aren't libraries.
+// ---------------------------------------------------------------------------
+
+// why: this script's two existing fact-shapes are external library
+// adoption (category tables) and per-app stacks (Application stacks
+// section). First-party subsystems are neither — they're our own
+// modules living inside `packages/*` that nonetheless deserve top-level
+// orientation. Keep this list tight: only entries a reviewer would
+// expect to see called out at the executive-summary altitude.
+//
+// Each entry's `contractSymbols` is verified against actual exports at
+// render time, so a renamed or removed symbol surfaces as a drift
+// warning instead of a stale doc lie.
+const FIRST_PARTY_SUBSYSTEMS = [
+  {
+    name: 'PAR Simulation Engine',
+    location: 'packages/game-engine/src/simulation',
+    owningWp: 'WP-049',
+    owningWpPath: 'docs/ai/work-packets/WP-049-par-simulation-engine.md',
+    description:
+      'AI-policy-driven calibration pipeline. T0 RandomPolicy and T2 ' +
+      'CompetentHeuristicPolicy sample raw scores via runSimulation; ' +
+      'aggregateParFromSimulation reduces the distribution to a percentile ' +
+      'PAR (Player Approachability Rating) value, which is persisted as a ' +
+      'versioned artifact. Calibration tooling, not gameplay logic (D-0701).',
+    contractSymbols: [
+      'runSimulation',
+      'getLegalMoves',
+      'createRandomPolicy',
+      'createCompetentHeuristicPolicy',
+      'AI_POLICY_TIERS',
+      'aggregateParFromSimulation',
+      'generateScenarioPar',
+      'validateParResult',
+      'validateTierOrdering',
+      'resolveParForScenario',
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------------
 // CLI argument parsing — keep it tiny, no dep needed
 // ---------------------------------------------------------------------------
 
@@ -398,6 +441,11 @@ async function readManifest(manifestPath) {
   return {
     name: parsed.name ?? '(unnamed)',
     relativePath: relative(REPO_ROOT, manifestPath).split(sep).join('/'),
+    // why: package.json `description` is the workspace's self-authored
+    // role label. Surfacing it in the Workspace table and the
+    // Application stacks section keeps role descriptions self-maintaining
+    // — to change a workspace's role label, edit its description.
+    description: typeof parsed.description === 'string' ? parsed.description : null,
     dependencies: parsed.dependencies ?? {},
     devDependencies: parsed.devDependencies ?? {},
     peerDependencies: parsed.peerDependencies ?? {},
@@ -1176,9 +1224,9 @@ async function extractMentionedPackages(docPath) {
  * @param {Map<string, Set<string>>} input.lockfilePackages
  * @param {Set<string>} input.docMentionsArch
  * @param {Set<string>} input.docMentionsArch02
- * @returns {string}
+ * @returns {Promise<string>}
  */
-function renderReport({
+async function renderReport({
   manifests,
   aggregate,
   importCounts,
@@ -1200,6 +1248,37 @@ function renderReport({
   lines.push(`for prioritized advice.`);
   lines.push('');
 
+  // why: lead with a per-app stack narrative so a reviewer can orient
+  // themselves on "what is each app, what is it built with" before
+  // descending into the per-package tables. Synthesised from each
+  // workspace's own deps + descriptions; no hardcoded labels.
+  lines.push(`## Application stacks`);
+  lines.push('');
+  lines.push(`One entry per \`apps/*\` workspace. Each "Stack" line is`);
+  lines.push(`synthesised from that workspace's own \`package.json\` deps,`);
+  lines.push(`plus a few transitive facts confirmed against \`pnpm-lock.yaml\``);
+  lines.push(`(Socket.IO and Koa router both ship via \`boardgame.io\`,`);
+  lines.push(`not as direct deps). Descriptions come from each workspace's`);
+  lines.push(`\`package.json#description\`.`);
+  lines.push('');
+  lines.push(renderApplicationStacksSection(manifests, lockfilePackages));
+  lines.push('');
+
+  // why: surface internally-built subsystems that don't appear in the
+  // dep tables (because they aren't libraries) or the per-app stacks
+  // (because they live inside `packages/*`). Curated list lives at
+  // `FIRST_PARTY_SUBSYSTEMS` near the top of the file.
+  lines.push(`## First-party subsystems`);
+  lines.push('');
+  lines.push(`Internally-built modules of architectural significance that`);
+  lines.push(`don't surface in the library tables or per-app stacks.`);
+  lines.push(`Each entry's contract surface is verified against actual`);
+  lines.push(`\`export\` declarations on disk, so a renamed or removed`);
+  lines.push(`symbol shows up here as drift instead of a stale doc lie.`);
+  lines.push('');
+  lines.push(await renderFirstPartySubsystemsSection());
+  lines.push('');
+
   lines.push(`## Runtime & toolchain`);
   lines.push('');
   lines.push(renderRuntimeSection(manifests, aggregate));
@@ -1207,11 +1286,16 @@ function renderReport({
 
   lines.push(`## Workspace`);
   lines.push('');
-  lines.push(`| Manifest | Name | deps | devDeps | peerDeps |`);
-  lines.push(`|---|---|---:|---:|---:|`);
+  lines.push(`| Manifest | Name | Role | deps | devDeps | peerDeps |`);
+  lines.push(`|---|---|---|---:|---:|---:|`);
   for (const manifest of manifests) {
+    // why: the Role column is sourced directly from each workspace's
+    // `package.json#description`. Self-maintaining: when a workspace's
+    // role changes, the description gets updated and the next inventory
+    // run reflects it without touching this script.
+    const roleCell = manifest.description ?? '_(no description)_';
     lines.push(
-      `| \`${manifest.relativePath}\` | ${manifest.name} | ` +
+      `| \`${manifest.relativePath}\` | ${manifest.name} | ${roleCell} | ` +
         `${Object.keys(manifest.dependencies).length} | ` +
         `${Object.keys(manifest.devDependencies).length} | ` +
         `${Object.keys(manifest.peerDependencies).length} |`,
@@ -1643,6 +1727,252 @@ function renderRuntimeSection(manifests, aggregate) {
 }
 
 /**
+ * Render the "Application stacks" preamble: one entry per `apps/*`
+ * workspace, narrating the stack synthesised from that workspace's
+ * declared deps. Surfaces which UI framework, state library, router,
+ * bundler, game framework, transport, and database the workspace
+ * actually pulls in.
+ *
+ * Synthesis rules (all evidence-driven, no hardcoded labels):
+ * - Description text is each workspace's own `package.json#description`.
+ * - Direct deps are read from the workspace's `dependencies` /
+ *   `devDependencies` so version numbers stay in sync with the manifest.
+ * - The Socket.IO transport line is gated on the lockfile actually
+ *   containing `socket.io` (it ships transitively via `boardgame.io`,
+ *   not as a direct dep), so the report stays accurate if upstream
+ *   ever swaps transports.
+ *
+ * @param {Array<Awaited<ReturnType<typeof readManifest>>>} manifests
+ * @param {Map<string, Set<string>>} lockfilePackages
+ * @returns {string}
+ */
+function renderApplicationStacksSection(manifests, lockfilePackages) {
+  const apps = manifests.filter((manifest) =>
+    manifest.relativePath.startsWith('apps/'),
+  );
+  if (apps.length === 0) {
+    return '_No `apps/*` workspaces found._';
+  }
+
+  // why: boardgame.io 0.50 bundles Socket.IO as its default transport.
+  // We don't want to claim "Socket.IO" if a future upgrade replaces it,
+  // so confirm presence in the lockfile (where transitives live) before
+  // naming it. socket.io / socket.io-client both count.
+  const lockfileHasSocketIo =
+    lockfilePackages.has('socket.io') || lockfilePackages.has('socket.io-client');
+
+  const lines = [];
+  for (const app of apps) {
+    const directDeps = app.dependencies;
+    const devDeps = app.devDependencies;
+    const stackFacts = [];
+
+    if (directDeps.vue !== undefined) {
+      stackFacts.push(`Vue 3 SFCs (\`vue@${directDeps.vue}\`)`);
+    }
+    if (directDeps.pinia !== undefined) {
+      stackFacts.push(`Pinia stores (\`pinia@${directDeps.pinia}\`)`);
+    }
+    if (directDeps['vue-router'] !== undefined) {
+      stackFacts.push(`vue-router (\`vue-router@${directDeps['vue-router']}\`)`);
+    }
+    if (devDeps.vite !== undefined) {
+      stackFacts.push(`Vite bundler (\`vite@${devDeps.vite}\`)`);
+    }
+    if (directDeps['boardgame.io'] !== undefined) {
+      const bgioVersion = directDeps['boardgame.io'];
+      const transportNote = lockfileHasSocketIo
+        ? ' over Socket.IO (transitive via `boardgame.io`)'
+        : '';
+      stackFacts.push(`boardgame.io (\`boardgame.io@${bgioVersion}\`)${transportNote}`);
+    }
+    // why: boardgame.io's server entrypoint bundles Koa + @koa/router for
+    // HTTP route registration. Server-side workspaces (boardgame.io
+    // present without Vue) attach REST adapters to that router — e.g.
+    // owner-profile / leaderboard / team routes per WP-102/103/104.
+    // Client-side workspaces never see Koa — boardgame.io's client
+    // entrypoint doesn't ship it. Versions come from the lockfile
+    // because no workspace declares Koa directly.
+    const isServerSideBgio =
+      directDeps['boardgame.io'] !== undefined && directDeps.vue === undefined;
+    if (isServerSideBgio && lockfilePackages.has('@koa/router')) {
+      const koaRouterVersions = [...lockfilePackages.get('@koa/router')].join(', ');
+      const koaVersionNote = lockfilePackages.has('koa')
+        ? ` + \`koa@${[...lockfilePackages.get('koa')].join(', ')}\``
+        : '';
+      stackFacts.push(
+        `HTTP routes via Koa router (\`@koa/router@${koaRouterVersions}\`${koaVersionNote}, both transitive via \`boardgame.io\`)`,
+      );
+    }
+    if (directDeps.pg !== undefined) {
+      stackFacts.push(`PostgreSQL via \`pg@${directDeps.pg}\``);
+    }
+
+    const description = app.description ?? '_(no description in package.json)_';
+    const stackLine =
+      stackFacts.length > 0
+        ? stackFacts.join(' + ')
+        : '_(no recognised framework deps — likely a CLI or pure Node app)_';
+    const workspaceDirectory = app.relativePath.replace(/\/package\.json$/, '');
+    lines.push(`- **\`${workspaceDirectory}\`** — ${description}`);
+    lines.push(`  - Stack: ${stackLine}.`);
+  }
+
+  return lines.join('\n');
+}
+
+/**
+ * Render the "First-party subsystems" section: internally-built
+ * modules of architectural significance that don't surface in the
+ * library/category tables (because they aren't libraries) or the
+ * Application stacks section (because they live inside `packages/*`,
+ * not `apps/*`).
+ *
+ * For each subsystem the section emits: name, owning WP, on-disk
+ * location, description, and a verified contract surface. "Verified"
+ * means: every symbol in `contractSymbols` is checked against actual
+ * `export` declarations across the subsystem's files. A missing
+ * symbol surfaces as a drift warning so the report can't quietly go
+ * stale when a function gets renamed.
+ *
+ * The directory's existence is also confirmed; a missing location
+ * surfaces as a top-level warning rather than silently emitting an
+ * entry that doesn't reflect reality.
+ *
+ * @returns {Promise<string>}
+ */
+async function renderFirstPartySubsystemsSection() {
+  if (FIRST_PARTY_SUBSYSTEMS.length === 0) {
+    return '_No first-party subsystems registered._';
+  }
+
+  const lines = [];
+  for (const subsystem of FIRST_PARTY_SUBSYSTEMS) {
+    const absoluteLocation = join(REPO_ROOT, subsystem.location);
+    const owningWpAbsolute = join(REPO_ROOT, subsystem.owningWpPath);
+    const wpExists = existsSync(owningWpAbsolute);
+    const wpCell = wpExists
+      ? `[${subsystem.owningWp}](${subsystem.owningWpPath})`
+      : `${subsystem.owningWp} ⚠ _(work packet file not found at \`${subsystem.owningWpPath}\`)_`;
+
+    lines.push(`### ${subsystem.name}`);
+    lines.push('');
+    lines.push(`- **Location:** \`${subsystem.location}\``);
+    lines.push(`- **Owning work packet:** ${wpCell}`);
+    lines.push('');
+    lines.push(subsystem.description);
+    lines.push('');
+
+    if (!existsSync(absoluteLocation)) {
+      lines.push(
+        `⚠ _Subsystem directory not found at \`${subsystem.location}\` — ` +
+          `the entry in \`FIRST_PARTY_SUBSYSTEMS\` may be stale._`,
+      );
+      lines.push('');
+      continue;
+    }
+
+    // why: read every TS / JS file directly under the subsystem
+    // directory once, collect the union of exported symbol names, then
+    // verify each contract symbol against that set. Catches renames
+    // and removals without hand-editing the script.
+    const exportedSymbols = await collectExportedSymbols(absoluteLocation);
+    const contractRows = subsystem.contractSymbols.map((symbol) => {
+      const present = exportedSymbols.has(symbol);
+      const presenceCell = present ? 'present' : '⚠ missing';
+      return `| \`${symbol}\` | ${presenceCell} |`;
+    });
+
+    lines.push(`**Contract surface (verified against on-disk exports):**`);
+    lines.push('');
+    lines.push(`| Symbol | Status |`);
+    lines.push(`|---|---|`);
+    for (const row of contractRows) {
+      lines.push(row);
+    }
+    lines.push('');
+  }
+
+  return lines.join('\n').trimEnd();
+}
+
+/**
+ * Walk the immediate (non-recursive) contents of a directory and
+ * return the union set of exported symbol names declared across every
+ * `.ts` / `.tsx` / `.mjs` / `.js` file.
+ *
+ * Recognises:
+ * - `export function|class|interface|type|const|let|var|enum <name>`
+ * - `export async function <name>`
+ * - `export { foo, bar as baz }` (the exported name — `baz` here)
+ *
+ * Does NOT chase `export *` re-exports; subsystem entries should
+ * declare their contract symbols at the location where they're
+ * defined, not where they're funnelled through a barrel.
+ *
+ * @param {string} directory
+ * @returns {Promise<Set<string>>}
+ */
+async function collectExportedSymbols(directory) {
+  const symbols = new Set();
+  let entries;
+  try {
+    entries = await readdir(directory, { withFileTypes: true });
+  } catch {
+    return symbols;
+  }
+  // why: keep this non-recursive on purpose. A subsystem's contract
+  // surface should live at its top level; nested helpers are
+  // implementation detail and not part of the verified API.
+  const directDeclarationPattern =
+    /^export\s+(?:async\s+)?(?:function|class|interface|type|const|let|var|enum|abstract\s+class)\s+(\w+)/gm;
+  const reExportPattern = /^export\s*\{([^}]+)\}/gm;
+  for (const entry of entries) {
+    if (!entry.isFile()) {
+      continue;
+    }
+    const dotIndex = entry.name.lastIndexOf('.');
+    if (dotIndex === -1) {
+      continue;
+    }
+    const extension = entry.name.slice(dotIndex);
+    if (extension !== '.ts' && extension !== '.tsx' && extension !== '.mjs' && extension !== '.js') {
+      continue;
+    }
+    let contents;
+    try {
+      contents = await readFile(join(directory, entry.name), 'utf8');
+    } catch {
+      continue;
+    }
+    let match;
+    directDeclarationPattern.lastIndex = 0;
+    while ((match = directDeclarationPattern.exec(contents)) !== null) {
+      symbols.add(match[1]);
+    }
+    reExportPattern.lastIndex = 0;
+    while ((match = reExportPattern.exec(contents)) !== null) {
+      const names = match[1].split(',');
+      for (const rawName of names) {
+        const trimmed = rawName.trim();
+        // why: `export { foo as bar }` — the externally-visible name
+        // is `bar`, not `foo`. Strip default-export markers too.
+        const aliasMatch = /\bas\s+(\w+)\s*$/.exec(trimmed);
+        if (aliasMatch !== null) {
+          symbols.add(aliasMatch[1]);
+          continue;
+        }
+        const plainMatch = /^(\w+)/.exec(trimmed);
+        if (plainMatch !== null) {
+          symbols.add(plainMatch[1]);
+        }
+      }
+    }
+  }
+  return symbols;
+}
+
+/**
  * Format the import-count cell with a usage badge so a reviewer can
  * skim the table without doing math.
  *
@@ -1820,7 +2150,7 @@ async function main() {
     join(REPO_ROOT, 'docs', '02-ARCHITECTURE.md'),
   );
 
-  const reportMarkdown = renderReport({
+  const reportMarkdown = await renderReport({
     manifests,
     aggregate,
     importCounts,

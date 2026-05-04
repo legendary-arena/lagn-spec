@@ -76,7 +76,7 @@ Failure to satisfy any item below is a failed execution of WP-130.
 - [ ] D-13004 cites WP-104 column-additive precedent as the not-taken path (server-side sync deferred).
 - [ ] Manual smoke: HUD-bar selector renders the active skin name.
 - [ ] Manual smoke: clicking selector opens overlay; overlay lists 3 bundled skins.
-- [ ] Manual smoke: clicking a different skin updates the CSS class on `<PlayView>` root within one Vue tick.
+- [ ] Manual smoke: clicking a different skin updates the CSS class on `<PlayViewport>` root within one Vue tick.
 - [ ] Manual smoke: reload page → selected skin persists.
 - [ ] Manual smoke: manually corrupt `localStorage['arenaClientPlaymatSkin']` to a non-JSON string → reload → fallback to `'classic'` + `console.warn` logged.
 - [ ] Manual smoke: Escape key closes overlay; outside-click closes overlay.

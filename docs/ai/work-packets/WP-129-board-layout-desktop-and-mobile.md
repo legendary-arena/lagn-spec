@@ -14,7 +14,7 @@ WP-128 extended `UIState` with every `Pending` field the board-layout wireframe 
 
 ## Goal
 
-After this packet, `apps/arena-client/` renders the full Marvel Legendary cooperative game board against the WP-128-extended `UIState`. The active player can take a complete turn (Reveal → Play/Recruit/Fight → End turn) at desktop (1280×800 to 1920×1080) and mobile portrait (375×667 to 414×896) viewports, with the eight visual zones from the wireframe (City row, HQ row, Mastermind, Scheme, Shared Decks, Shared KO Pile, Opponent panels, Your Zone) rendering live data through the WP-089 player-view projection. The eight `[DECISION REQUIRED]` blocks from `DESIGN-BOARD-LAYOUT.md §7.2` are locked at execution as `D-12901..D-12908`.
+After this packet, `apps/arena-client/` renders the full Marvel Legendary cooperative game board against the WP-128-extended `UIState`. The active player can take a complete turn (Reveal → Play/Recruit/Fight → End turn) at desktop (1280×800 to 1920×1080) and mobile portrait (375×667 to 414×896) viewports, with the eight visual zones from the wireframe (City row, HQ row, Mastermind, Scheme, Shared Decks, Shared KO Pile, Opponent panels, Your Zone) rendering live data through the WP-089 player-view projection. Nine decision blocks are locked at execution: the eight `[DECISION REQUIRED]` blocks from `DESIGN-BOARD-LAYOUT.md §7.2` as `D-12901..D-12908`, plus `D-12909` for the desktop/mobile viewport breakpoint (promoted from a §Acceptance Criteria sub-decision because it carries layout semantics, not just CSS).
 
 ---
 
@@ -79,9 +79,21 @@ Before writing a single line:
 - Two-viewport DRY: shared component logic lives in headless composables (`useCityRow`, `useHqRow`, `useTurnActions`, etc.); per-viewport `.vue` files differ only in template + scoped CSS.
 - `defineComponent({ setup() { return {...} } })` form REQUIRED for any tested non-leaf SFC under `vue-sfc-loader/register` — `<script setup>` only allowed for props-only-template components per P6-30 / P6-46 / D-6512.
 
+**SFC authoring rule (mechanical whitelist — locked):**
+
+`<script setup>` is permitted **only** for SFCs that satisfy **all** of:
+- props-only template (no emitted events)
+- no computed state in `<script>`
+- no composable usage (`use*`)
+- no direct `.test.ts` sibling
+
+Any SFC that has emitted events, computed state, composable usage, **or** non-trivial tests MUST use `defineComponent({ setup() { return {...} } })` per P6-30 / P6-46 / D-6512.
+
+Concrete WP-129 application: every SFC under `pages/` and every composer (`<TopHudBar>`, `<EconomyBar>`, `<TurnActionBar>`, `<OpponentPanel>`, `<YourVictoryPile>`, `<YourDeckDiscardZone>`) uses `defineComponent`. Pure leaf display SFCs (e.g. `<SchemeTile>`, `<MasterStrikePile>`, `<SchemeTwistPile>`, `<EscapedPile>`, `<SharedDecks>`, `<KOPile>`, `<OpponentVictoryModal>`) MAY use `<script setup>` only if they emit no events, run no composables, and are covered indirectly by their parent's `.test.ts` (no direct test sibling).
+
 **Session protocol:**
 - If a wireframe item conflicts with the WP-128 projection contract, the projection contract wins. Surface the conflict and ask the human; do not invent a UI shape that requires a projection extension.
-- The eight `[DECISION REQUIRED]` blocks (D-DEC-1..D-DEC-8) MUST be locked in writing before writing any production component file.
+- The eight `[DECISION REQUIRED]` blocks (D-DEC-1..D-DEC-8) plus the breakpoint decision (D-DEC-9 → D-12909) MUST be locked in writing before writing any production component file.
 
 **Locked contract values (do not paraphrase):**
 - **PlayerZones keys:** `deck` | `hand` | `discard` | `inPlay` | `victory`.
@@ -98,6 +110,12 @@ Before writing a single line:
 - Every interactive component must accept its UIState slice as a prop and emit move-intent events upward; container components compose move-emission into the WP-090 `submitMove` seam.
 - Layout regions must be queryable via `data-testid` (recommended pattern per `DESIGN-BOARD-LAYOUT.md §9` item 4 — board-layout WP locks the test-id naming; this packet establishes the pattern).
 - Disabled-state tooltips are testable via `aria-disabled` + `title` / `aria-describedby`; manual smoke confirms each disabled affordance shows a reason.
+- **Disabled-state tooltip precedence (locked):** when multiple disable conditions apply simultaneously, only the highest-priority reason is displayed:
+  1. Stage gating (e.g., "can only fight during Main step")
+  2. Resource affordability (e.g., "needs 4 attack, you have 2")
+  3. Structural lock (e.g., "not the active player", "card already played this turn")
+
+  This precedence is implemented once in the gating composables (`useTurnActions`, `useCardCostGating`) and consumed by every disabled affordance. Components MUST NOT compose tooltips ad-hoc — they bind the reason returned by the composable.
 - The mobile portrait layout must degrade gracefully if a sticky-zone z-index conflicts with a modal — use Vue 3 Teleport for modals to keep them above sticky zones.
 
 ---
@@ -114,7 +132,7 @@ Replace or extend the following WP-100 scaffolds; introduce new components for t
 - `<HQRow>` — render `hq.slots` + `hq.slotDisplay` + `heroDeckCount` (col 6 cell). 6-column visual.
 - `<MastermindTile>` — render `mastermind.{id, display, tacticsRemaining, tacticsDefeated, attachedBystanders}`.
 - `<TurnActionBar>` — render the locked 3-step turn structure per `DESIGN-BOARD-LAYOUT.md §5.1`.
-- `<PlayView>` — top-level container; mounts everything.
+- The WP-100 `components/play/PlayView.vue` composer is **deleted** (not refactored). Its role is split across the new `pages/PlayViewport.vue` discriminator and the two viewport SFCs (`pages/PlayDesktop.vue`, `pages/PlayMobile.vue`). The D-10005 prop-drilling rule (App.vue → composer → children) is preserved with App.vue → `<PlayViewport>` → `<PlayDesktop>`/`<PlayMobile>` → children as the new chain.
 
 **New:**
 - `<SchemeTile>` — render `scheme.{id, twistCount}` + scenario twist threshold (read from registry metadata at mount).
@@ -142,7 +160,7 @@ Replace or extend the following WP-100 scaffolds; introduce new components for t
 
 - `apps/arena-client/src/pages/PlayDesktop.vue` — desktop landscape layout (mounts component tree per `§3.1` wireframe).
 - `apps/arena-client/src/pages/PlayMobile.vue` — mobile portrait layout (mounts component tree per `§3.2` wireframe; sticky top + bottom; horizontal scroll for wide rows).
-- `apps/arena-client/src/pages/PlayView.vue` — viewport discriminator: chooses `<PlayDesktop>` or `<PlayMobile>` based on `useViewport()` composable (CSS media-query observer).
+- `apps/arena-client/src/pages/PlayViewport.vue` — viewport discriminator: chooses `<PlayDesktop>` or `<PlayMobile>` based on `useViewport()` composable (CSS media-query observer). Renamed from the originally-drafted `PlayView.vue` to disambiguate from the WP-100 `components/play/PlayView.vue` scaffold this packet deletes (see Files Expected to Change).
 
 ### C) Per-component tests (`node:test` + `vue-sfc-loader/register`)
 
@@ -153,9 +171,9 @@ Replace or extend the following WP-100 scaffolds; introduce new components for t
   - Disables affordance when cost gating fails (with tooltip reason).
 - Composable tests for `useCardCostGating`, `useVictoryPileComposition` — pure helpers, fully unit-testable.
 
-### D) Resolve the 8 [DECISION REQUIRED] blocks
+### D) Resolve the 9 decision blocks
 
-At session start, lock D-12901..D-12908 in DECISIONS.md per `DESIGN-BOARD-LAYOUT.md §7.2` recommended defaults (override allowed with rationale):
+At session start, lock D-12901..D-12909 in DECISIONS.md per `DESIGN-BOARD-LAYOUT.md §7.2` recommended defaults (override allowed with rationale):
 - D-12901 — Mastermind position (default: top-left)
 - D-12902 — Opponent panel orientation (default: top-edge row 3-4 handed; left-edge column 5-handed)
 - D-12903 — HQ slot count for non-MVP variants (default: 5 for MVP; gracefully extend to 6 when scenario uses it)
@@ -164,12 +182,13 @@ At session start, lock D-12901..D-12908 in DECISIONS.md per `DESIGN-BOARD-LAYOUT
 - D-12906 — Scenario-specific composition counters discovery (default: derive from card effects in the loaded scenario; future `data/metadata/scenario-counters.json` if discovery fails)
 - D-12907 — Re-skin / playmat selector (deferred to WP-130; D-12907 reserves the HUD-bar slot only)
 - D-12908 — Pre-plan UI integration affordance (deferred per WP-059; D-12908 reserves the bottom-edge slot only)
+- D-12909 — Desktop/mobile viewport breakpoint. Default: `@media (max-width: 767px)` resolves to mobile portrait; ≥768px resolves to desktop landscape. Rationale: aligns with iPad Mini portrait cutoff (768px) and the existing Tailwind/CSS breakpoint convention; the `<PlayViewport>` discriminator binds this single value. Rejected alternatives: 640px (too narrow — would route mid-size phones to desktop layout), 820px (collides with iPad landscape and would route landscape tablets to mobile). Locked **before any production component file is written** so the value is not bikeshed mid-execution.
 
 ### E) Integration into `apps/arena-client/src/App.vue`
 
 - Extend `AppRoute` with `'play-desktop'` and `'play-mobile'` (or unify under single `'play'` with viewport discriminator).
-- Wire `<PlayView>` into the lobby→play transition per existing WP-090 plumbing.
-- WP-100 scaffolds removed once WP-129 components verify smoke; intermediate state preserves both during the transition WP execution and the WP-100 files are deleted in the same commit.
+- Wire `<PlayViewport>` into the lobby→play transition per existing WP-090 plumbing.
+- WP-100 scaffolds removed once WP-129 components verify smoke; intermediate state preserves both during the transition WP execution and the WP-100 files are deleted in the same commit. The WP-100 `components/play/PlayView.vue` and `components/play/PlayView.test.ts` are deleted entirely (no successor file at that path).
 
 ---
 
@@ -194,7 +213,7 @@ At session start, lock D-12901..D-12908 in DECISIONS.md per `DESIGN-BOARD-LAYOUT
 **New files (~13–18):**
 - `apps/arena-client/src/pages/PlayDesktop.vue` — new
 - `apps/arena-client/src/pages/PlayMobile.vue` — new
-- `apps/arena-client/src/pages/PlayView.vue` — new (viewport discriminator)
+- `apps/arena-client/src/pages/PlayViewport.vue` — new (viewport discriminator; basename chosen to disambiguate from the deleted WP-100 `components/play/PlayView.vue`)
 - `apps/arena-client/src/components/play/SchemeTile.vue` — new
 - `apps/arena-client/src/components/play/MasterStrikePile.vue` — new
 - `apps/arena-client/src/components/play/SchemeTwistPile.vue` — new
@@ -216,17 +235,20 @@ At session start, lock D-12901..D-12908 in DECISIONS.md per `DESIGN-BOARD-LAYOUT
 - (Plus `.test.ts` per SFC + per composable — ~16 test files)
 
 **Modified (existing):**
-- `apps/arena-client/src/App.vue` — extend `AppRoute`; wire `<PlayView>`.
+- `apps/arena-client/src/App.vue` — extend `AppRoute`; wire `<PlayViewport>`.
 - `apps/arena-client/src/components/play/HandRow.vue` — extended with `handDisplay` integration; cost-gating; stage-gating refinements.
 - `apps/arena-client/src/components/play/CityRow.vue` — rewritten to 7-column visual + escaped pile + villain deck cell.
 - `apps/arena-client/src/components/play/HQRow.vue` — rewritten to 6-column visual + hero deck cell.
 - `apps/arena-client/src/components/play/MastermindTile.vue` — extended with `attachedBystanders` rendering.
 - `apps/arena-client/src/components/play/TurnActionBar.vue` — rewritten as the 3-step structure.
-- `apps/arena-client/src/components/play/PlayView.vue` — replaced by the new viewport discriminator (filename reused or moved).
+
+**Deleted (existing WP-100 scaffolds, no successor at the same path):**
+- `apps/arena-client/src/components/play/PlayView.vue` — deleted (role split across new `pages/PlayViewport.vue` + `pages/PlayDesktop.vue` + `pages/PlayMobile.vue`).
+- `apps/arena-client/src/components/play/PlayView.test.ts` — deleted (replaced by per-page tests under `pages/`).
 
 **Governance:**
 - `docs/ai/STATUS.md` — modified (new `### WP-129 / EC-132 Executed` block).
-- `docs/ai/DECISIONS.md` — modified (D-12901..D-12908 inserted).
+- `docs/ai/DECISIONS.md` — modified (D-12901..D-12909 inserted).
 - `docs/ai/work-packets/WORK_INDEX.md` — modified (WP-129 row flipped).
 - `docs/ai/execution-checklists/EC_INDEX.md` — modified (EC-132 row flipped).
 
@@ -247,7 +269,7 @@ At session start, lock D-12901..D-12908 in DECISIONS.md per `DESIGN-BOARD-LAYOUT
 
 - [ ] `<PlayDesktop>` renders at 1280×800; matches `DESIGN-BOARD-LAYOUT.md §3.1` zone layout (manual smoke).
 - [ ] `<PlayMobile>` renders at 375×667; matches `DESIGN-BOARD-LAYOUT.md §3.2` zone layout (manual smoke).
-- [ ] `<PlayView>` discriminator switches at the locked CSS breakpoint (default: 768px; D-DEC-EXTRA at execution if alternative breakpoint chosen).
+- [ ] `<PlayViewport>` discriminator switches at the locked CSS breakpoint per D-12909 (`max-width: 767px` → mobile; ≥768px → desktop).
 - [ ] Both viewports render the same fixture `UIState` correctly without divergent data flow.
 
 ### C — Click affordances (per `DESIGN-BOARD-LAYOUT.md §5.2`)
@@ -261,9 +283,10 @@ At session start, lock D-12901..D-12908 in DECISIONS.md per `DESIGN-BOARD-LAYOUT
 
 ### D — Decision blocks
 
-- [ ] D-12901..D-12908 inserted in DECISIONS.md in numeric order with rationale + rejected alternatives.
+- [ ] D-12901..D-12909 inserted in DECISIONS.md in numeric order with rationale + rejected alternatives.
 - [ ] D-12907 (re-skin) explicitly cites WP-130 as the deferred implementation packet.
 - [ ] D-12908 (pre-plan) explicitly cites WP-059 as the deferred implementation packet.
+- [ ] D-12909 (breakpoint) is locked **before** the first production component file is written; `useViewport.ts` cites `D-12909` in the breakpoint-value `// why:` comment.
 
 ### E — Tests
 
@@ -271,6 +294,8 @@ At session start, lock D-12901..D-12908 in DECISIONS.md per `DESIGN-BOARD-LAYOUT
 - [ ] No test imports `boardgame.io` runtime.
 - [ ] No test imports `@legendary-arena/game-engine` runtime (type-only imports permitted).
 - [ ] No test stubs `globalThis.fetch` or imports `MockAgent` from `undici`.
+
+**Leaf-aggregation allowance (test-count safety valve, not scope creep):** purely presentational leaf SFCs (no emitted events, no composable usage, no computed state — only props + template + scoped CSS) MAY be covered indirectly by their parent component's `.test.ts` rather than carrying a direct test sibling. Concrete WP-129 candidates: `<MasterStrikePile>`, `<SchemeTwistPile>`, `<EscapedPile>`, `<SharedDecks>`, `<KOPile>`, `<OpponentVictoryModal>`, `<SchemeTile>`. Any SFC with emits, computed state, or composable usage MUST carry a direct `.test.ts` sibling. The ≥30-test floor still applies; this allowance prevents stalling on test-per-leaf bookkeeping when the parent's test exercises the rendered output.
 
 ### F — Layer boundary
 
@@ -347,9 +372,9 @@ git diff apps/arena-client/src/components/play/
 - [ ] All §Acceptance Criteria pass.
 - [ ] `pnpm -r build` exits 0.
 - [ ] arena-client baseline grows by ≥30 tests across new component / composable suite; engine baseline UNCHANGED post-WP-128.
-- [ ] D-12901..D-12908 inserted in DECISIONS.md.
+- [ ] D-12901..D-12909 inserted in DECISIONS.md.
 - [ ] STATUS.md `### WP-129 / EC-132 Executed` block at top of `## Current State`.
 - [ ] WORK_INDEX.md WP-129 row checked off with date + commit hash.
 - [ ] EC_INDEX.md EC-132 row flipped Draft → Done.
-- [ ] 01.6 post-mortem OPTIONAL per the WP-066 / WP-094 / WP-096 / WP-114 / WP-121..125 viewer-side precedent — author at execution if D-12901..D-12908 surface tension worth capturing.
+- [ ] 01.6 post-mortem OPTIONAL per the WP-066 / WP-094 / WP-096 / WP-114 / WP-121..125 viewer-side precedent — author at execution if D-12901..D-12909 surface tension worth capturing.
 - [ ] Single `EC-132:` commit with the locked file count (~30–40 files; backup-plan splits at draft amendment time if scope creeps).

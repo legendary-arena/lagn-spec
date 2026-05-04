@@ -16,7 +16,7 @@ Failure to satisfy any item below is a failed execution of WP-129.
 - [ ] Engine baseline post-WP-128 green; arena-client baseline established (run `pnpm --filter arena-client test`).
 - [ ] WP-061 / WP-062 / WP-064 / WP-065 / WP-089 / WP-090 / WP-100 contract files present and reviewed.
 - [ ] `docs/ai/DESIGN-BOARD-LAYOUT.md` present at HEAD; the SPEC commit (`277bcca`) loaded as non-normative input.
-- [ ] Eight executor decisions (D-12901..D-12908 per WP-129 §Decision Points and `DESIGN-BOARD-LAYOUT.md §7.2`) locked in writing at the start of the session before writing any production component file.
+- [ ] Nine executor decisions (D-12901..D-12909 per WP-129 §Decision Points; D-12901..D-12909 from `DESIGN-BOARD-LAYOUT.md §7.2`, D-12909 the desktop/mobile viewport breakpoint promoted in WP-129) locked in writing at the start of the session before writing any production component file. D-12909 default: `@media (max-width: 767px)` → mobile, ≥768px → desktop; rationale + rejected alternatives (640px, 820px) recorded in DECISIONS.md.
 - [ ] Backup-plan trigger: if at execution-start the file-count projection exceeds 18 production / reference files, surface a draft amendment proposing a WP-129a (Desktop) + WP-129b (Mobile) split before continuing.
 
 ## §1 — Scope Lock + File Allowlist
@@ -38,7 +38,11 @@ Failure to satisfy any item below is a failed execution of WP-129.
   - Mastermind tile → `fightMastermind`
   - Reveal villain button → `revealVillainCard`
   - End turn button → `endTurn`
-- `defineComponent({ setup() { return {...} } })` form REQUIRED for any tested non-leaf SFC under `vue-sfc-loader/register`. `<script setup>` only allowed for props-only-template components.
+- `defineComponent({ setup() { return {...} } })` form REQUIRED for any tested non-leaf SFC under `vue-sfc-loader/register`.
+- **SFC authoring whitelist (mechanical):** `<script setup>` is permitted **only** for SFCs that satisfy **all** of: (a) props-only template (no emits), (b) no computed state, (c) no composable usage (`use*`), (d) no direct `.test.ts` sibling. Any SFC with emits OR computed state OR composables OR direct tests MUST use `defineComponent({ setup() { return {...} } })`.
+  - WP-129 application: every `pages/*` SFC and every composer (`<TopHudBar>`, `<EconomyBar>`, `<TurnActionBar>`, `<OpponentPanel>`, `<YourVictoryPile>`, `<YourDeckDiscardZone>`) → `defineComponent`.
+  - Pure leaf display SFCs (`<SchemeTile>`, `<MasterStrikePile>`, `<SchemeTwistPile>`, `<EscapedPile>`, `<SharedDecks>`, `<KOPile>`, `<OpponentVictoryModal>`) MAY use `<script setup>` provided they satisfy (a)-(d).
+- **Page-level discriminator filename:** the viewport discriminator lives at `apps/arena-client/src/pages/PlayViewport.vue` (NOT `pages/PlayView.vue` — the basename `PlayView` is reserved for the WP-100 `components/play/PlayView.vue` file that this EC deletes; reusing the basename in `pages/` would create import-path confusion across ~30 files).
 
 ## §3 — Guardrails
 
@@ -48,6 +52,7 @@ Failure to satisfy any item below is a failed execution of WP-129.
 - No engine, server, registry, or replay-producer files modified (this is a client-only WP).
 - Stage gating per WP-007A: every interactive element is enabled only when `game.currentStage` matches its allowed stage. Disabled state shows `aria-disabled="true"` + a tooltip explaining why.
 - Cost gating: heroes in HQ with cost > `economy.availableRecruit` render disabled with tooltip; villains in city with attack > `economy.availableAttack` render disabled with tooltip.
+- **Disabled-state tooltip precedence (locked):** when multiple disable conditions apply, only the highest-priority reason is shown. Order: (1) stage gating → (2) resource affordability → (3) structural lock (not active player, etc.). Implemented once in the gating composables (`useTurnActions`, `useCardCostGating`); components bind the returned reason — they do NOT compose tooltips ad-hoc.
 - Both viewports render from the same `UIState`. Different layouts, identical data flow.
 - Two-viewport DRY: shared logic lives in headless composables; per-viewport SFCs differ only in template + scoped CSS.
 - WP-100 scaffolds are superseded — file deletions are part of this WP's commit (not preserved as parallel structures).
@@ -57,7 +62,7 @@ Failure to satisfy any item below is a failed execution of WP-129.
 
 - Each new SFC module-header JSDoc: cite WP-129 + the specific `DESIGN-BOARD-LAYOUT.md` zone it implements.
 - Composable module-header JSDoc: cite WP-128 fields it consumes.
-- `useViewport.ts` breakpoint-value site: cite the locked desktop/mobile breakpoint (D-DEC-EXTRA at execution).
+- `useViewport.ts` breakpoint-value site: cite **D-12909** (`max-width: 767px` → mobile; ≥768px → desktop) — locked at session start, before any production component file is written.
 - Each `defineComponent` non-leaf component: cite P6-30 / P6-46 / D-6512 (the vue-sfc-loader separate-compile rule).
 - Disabled-state tooltip site for cost gating: cite the WP-128 economy-projection field consumed.
 - 3-step turn-actions panel: cite `DESIGN-BOARD-LAYOUT.md §5.1`.
@@ -70,7 +75,7 @@ Failure to satisfy any item below is a failed execution of WP-129.
 ## §5 — Verification Gates (run all; every item binary)
 
 - [ ] `pnpm -r build` exits 0.
-- [ ] `pnpm --filter arena-client test` exits 0; baseline grows by ≥30 tests across new SFCs + composables.
+- [ ] `pnpm --filter arena-client test` exits 0; baseline grows by ≥30 tests across new SFCs + composables. **Leaf-aggregation allowance:** purely presentational leaf SFCs (no emits, no composables, no computed state) MAY be covered by their parent's `.test.ts` rather than a direct sibling. Concrete WP-129 candidates: `<MasterStrikePile>`, `<SchemeTwistPile>`, `<EscapedPile>`, `<SharedDecks>`, `<KOPile>`, `<OpponentVictoryModal>`, `<SchemeTile>`. The ≥30-test floor still applies.
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0 (UNCHANGED — engine never touched).
 - [ ] No engine runtime import in client: `Select-String -Path "apps\arena-client\src" -Pattern "from ['""]@legendary-arena/game-engine['""]" -Recurse | Where-Object { $_ -notmatch 'import type' }` returns no output.
 - [ ] No registry runtime import in client: `Select-String -Path "apps\arena-client\src" -Pattern "from ['""]@legendary-arena/registry['""]" -Recurse | Where-Object { $_ -notmatch 'import type' }` returns no output.
@@ -78,7 +83,7 @@ Failure to satisfy any item below is a failed execution of WP-129.
 - [ ] No `boardgame.io` import in client (other than the existing WP-090 client transport seam): `Select-String -Path "apps\arena-client\src\components\play","apps\arena-client\src\pages","apps\arena-client\src\composables" -Pattern "from ['""]boardgame\.io" -Recurse` returns no output.
 - [ ] No URL composition logic in components: `Select-String -Path "apps\arena-client\src\components\play" -Pattern "imageUrl\s*=\s*['""]https?:" -Recurse` returns no output (URLs come from `UICardDisplay.imageUrl`).
 - [ ] No engine / server / registry / registry-viewer / replay-producer file modified: `git diff --name-only packages/ apps/server apps/registry-viewer apps/replay-producer` returns no output.
-- [ ] D-12901..D-12908 inserted in DECISIONS.md in numeric order.
+- [ ] D-12901..D-12909 inserted in DECISIONS.md in numeric order.
 - [ ] D-12907 (re-skin) reserves the slot only; cites WP-130 as the implementation packet.
 - [ ] D-12908 (pre-plan) reserves the slot only; cites WP-059 as the implementation packet.
 - [ ] Manual smoke: `<PlayDesktop>` rendered at 1920×1080 shows every zone from `DESIGN-BOARD-LAYOUT.md §3.1`.
@@ -97,7 +102,7 @@ Failure to satisfy any item below is a failed execution of WP-129.
 ## §7 — Post-Execution Checks
 
 - [ ] All WP-129 §Acceptance Criteria pass.
-- [ ] D-12901..D-12908 entries with rationale + rejected alternatives.
+- [ ] D-12901..D-12909 entries with rationale + rejected alternatives.
 - [ ] 01.6 post-mortem OPTIONAL — author if any of the 8 D-decisions surfaced tension worth capturing or if the desktop/mobile DRY pattern surfaces a new abstraction worth documenting.
 - [ ] STATUS.md execution block cites the 8 DECISIONS + the new component tree + the 3-step turn structure + the 7-cell city + the inline-deck pattern + the WP-100 scaffold supersession.
 - [ ] WORK_INDEX.md WP-129 row checked off with date + commit hash.
@@ -106,6 +111,10 @@ Failure to satisfy any item below is a failed execution of WP-129.
 ## Common Failure Smells
 
 - WP-100 scaffolds preserved alongside new components → component-tree duplication; STOP and remove.
+- New page discriminator created at `pages/PlayView.vue` instead of `pages/PlayViewport.vue` → import-path collision with the deleted WP-100 `components/play/PlayView.vue`; STOP and rename to `PlayViewport.vue`.
+- `<script setup>` used for an SFC that emits, runs a composable, has computed state, OR has a direct `.test.ts` → P6-30 / P6-46 / D-6512 violated; switch to `defineComponent({ setup() { return {...} } })`.
+- Tooltip composed ad-hoc in a template instead of bound from `useTurnActions` / `useCardCostGating` → tooltip-precedence rule violated; refactor to consume the composable's returned reason.
+- D-12909 (breakpoint) deferred to "we'll pick at the end" → bikeshedding risk; STOP, lock the value before the first production file write.
 - Engine runtime imported into a client SFC for a "convenient helper" → layer-boundary violated; refactor to consume `UIState` only.
 - Registry runtime imported for "card data" → layer boundary violated; the data is already in `UICardDisplay`.
 - `<script setup>` used for a tested non-leaf component → P6-30 / P6-46 / D-6512 violated; switch to `defineComponent({ setup() { return {...} } })`.

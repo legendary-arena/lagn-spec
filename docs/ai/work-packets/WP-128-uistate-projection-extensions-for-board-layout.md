@@ -68,12 +68,13 @@ Before writing a single line:
 - Human-style code per `docs/ai/REFERENCE/00.6-code-style.md`.
 
 **Packet-specific:**
+- **No new `G` fields.** This packet projects existing `G` state through `UIState` extensions only. If a needed `G` source field is missing at execution, STOP and surface — that's a separate predecessor WP, not an inline extension here. (Canonical statement; other sections refer back to this bullet.)
 - This packet ADDS fields to `UIState`; it does NOT modify or remove any existing field. The drift test must continue to pin every existing field plus the new ones.
 - Every new field on `UIState` must be JSON-serializable — no functions, no `Date`, no `Map` / `Set` (use plain object / array).
 - Per-player victory-pile contents (`players[i].victoryCards[]`) carry only `extId` + `display: UICardDisplay` — never registry runtime objects, never raw card data from `data/cards/*.json`.
 - Composition counters are NOT projected by this packet — the future board-layout WP (WP-129) computes them from `players[i].victoryCards[]` + registry metadata at render time. This packet only ships the pile contents.
 - Scenario-specific composition counters (S.H.I.E.L.D. Level / HYDRA Level) are deferred entirely to WP-129's client-side derivation; no engine-side support.
-- `mastermind.attachedBystanders` projects only the count + the array of `extId` strings — no card-identity leakage beyond what attaching to a face-up villain already implies.
+- `mastermind.attachedBystanders` shape is locked at `{ extId: string; display: UICardDisplay }[]` per D-DEC-5 (mirrors `victoryCards` shape; face-up and public; no audience-filter redaction). Under Option A safe-skip (pre-flight 2026-05-03 PS-3 / PS-4 — Interpretation B), the array is `[]` until a future WP adds `G.mastermind.attachedBystanders` for Master Strike–driven mastermind-side bystander capture. **City-villain captures (`G.attachedBystanders` keyed by city villain CardExtId) are deliberately NOT flattened into this projection** — those captures are rendered on the city row, not on the mastermind tile, and conflating the two would misrepresent gameplay semantics. The projection site MUST carry the `// SAFE-SKIP-WP128` marker per the Safe-Skip Resolutions block.
 - `villainDeck.count` / `heroDeck.count` are projected as numbers only. The next-card identity is **never** projected (revealing future villains breaks determinism per WP-014A).
 - `economy.piercing` and `economy.woundsDrawn` are projected from `G.turnEconomy` — confirm those fields exist in `G` per WP-018; if missing, this packet adds the corresponding `G` projection only (no new gameplay logic).
 - `01.5 IS INVOKED` — this packet adds new fields to the `UIState` shape (the projection contract changes); replay-hash literal updates may cascade and are permitted as 01.5-cascade allowlist additions per WP-111 precedent.
@@ -111,7 +112,7 @@ All projection extensions in this packet must be:
     - `inPlayDisplay?: UICardDisplay[]` — parallel array aligned by index with `inPlayCards`.
     - `discardTopCard?: { extId: string; display: UICardDisplay } | null` — top-of-discard projection (face-up; visible to all audiences). `null` when `discardCount === 0`.
     - `victoryCards?: { extId: string; display: UICardDisplay }[]` — full victory-pile contents (face-up; visible to all audiences — VP cards are public knowledge by design). Length matches `victoryCount` exactly when present.
-    - `victoryVp?: number` — total VP for the player's victory pile, derived per WP-020 scoring.
+    - `victoryVP?: number` — total VP for the player's victory pile, derived from `computeFinalScores(G).players[i].totalVP` (canonical engine field name, uppercase `VP` per `scoring/scoring.types.ts:53` and `00.6` Rule 14). The `?` flags audience redaction parity with `victoryCards?` — both go together.
   - Extend `UIMastermindState` with:
     - `attachedBystanders: { extId: string; display: UICardDisplay }[]` — bystanders captured by villains attached to the mastermind (face-up, visible to all).
     - `strikePile: { extId: string; display: UICardDisplay }[]` — face-up destination pile of resolved Master Strike cards.
@@ -136,27 +137,50 @@ All projection extensions in this packet must be:
     - `topCard: { extId: string; display: UICardDisplay } | null` — `null` when `count === 0`
     - `cards: { extId: string; display: UICardDisplay }[]` — full pile contents (face-up; public)
   - Module-header JSDoc updated to cite WP-128 + the wireframe at `docs/ai/DESIGN-BOARD-LAYOUT.md §4` as the design input.
-  - Required `// why:` comments at: each new optional-vs-required field decision (why `inPlayCards?` is optional + redactable while `attachedBystanders` is required + always-public).
+  - Required `// why:` comments at: each new optional-vs-required field decision (why `inPlayCards?` is optional + redactable while `attachedBystanders` is required + always-public). Specifically — `discardTopCard?: { extId; display } | null` carries a comment explaining the optional-AND-nullable combo: optional encodes "redacted by audience filter"; `null` encodes "visible but empty (`discardCount === 0`)". Without this distinction the `?: T | null` shape reads ambiguous.
 
 ### B) `buildUIState` projection extensions
 
 - **`packages/game-engine/src/ui/uiState.build.ts`** — modified:
-  - Add per-player projection of `inPlayCards`, `inPlayDisplay`, `discardTopCard`, `victoryCards`, `victoryVp` from `G.playerZones[playerId].{inPlay, discard, victory}` and `G.cardDisplayData`. Use the WP-111 aliasing-defense pattern (per-entry shallow copies) for every entry.
+  - Add per-player projection of `inPlayCards`, `inPlayDisplay`, `discardTopCard`, `victoryCards`, `victoryVP` from `G.playerZones[playerId].{inPlay, discard, victory}` and `G.cardDisplayData`. Use the WP-111 aliasing-defense pattern (per-entry shallow copies) for every entry.
   - Add `mastermind.{attachedBystanders, strikePile}` projection from `G.mastermind.{attachedBystanders, strikePile}` (or equivalent — confirm against current `G` shape before writing).
   - Add `scheme.twistPile` projection from `G.scheme.twistPile` (or equivalent).
   - Add `city.escapedPile` projection from `G.city.escapedPile` (or equivalent).
   - Add `economy.{piercing, woundsDrawn}` projection from `G.turnEconomy.{piercing, woundsDrawn}`.
   - Add `decks` projection from `G.{villainDeck, heroDeck}` lengths.
   - Add `piles` projection from `G.piles.{bystanders, wounds, officers, sidekicks}` lengths plus `horrors` (zero if absent).
-  - Add `koPile` projection from `G.piles.ko` (or equivalent — confirm).
-  - **No new `G` fields are introduced by this packet.** If a needed `G` field is missing, log it as a STOP gate and surface to human before proceeding.
+  - Add `koPile` projection from `G.ko: CardExtId[]` (top-level on `LegendaryGameState`, line 481 of `types.ts`). The KO pile is at `G.ko`, NOT `G.piles.ko` — the earlier draft's `G.piles.ko` path was a spec error caught by pre-flight 2026-05-03 PS-1 and corrected here.
+  - See §Non-Negotiable Constraints — no new `G` fields permitted; a missing `G` source is a STOP gate, except where covered by the Safe-Skip Resolutions block below (Option A locked at pre-flight 2026-05-03 PS-3).
+
+#### Safe-Skip Resolutions (Option A — locked at pre-flight 2026-05-03 PS-3)
+
+Pre-flight 2026-05-03 verified that 8 of the 17 new UIState fields require `G` sources that don't exist on `LegendaryGameState` today. Per the WP-023 / WP-025 / WP-026 / WP-030 safe-skip precedent, the projection contract ships in full so WP-129 has stable shapes to bind to, and each missing-source field is projected with a deterministic safe-skip value until a future WP adds the underlying `G` state. Each safe-skip site MUST carry a `// SAFE-SKIP-WP128` marker (CI-greppable) plus a `// why:` comment citing this block and the future WP that resolves the field.
+
+| Field | Type | Safe-skip value | Future-WP gap |
+|---|---|---|---|
+| `mastermind.attachedBystanders` | `{ extId; display }[]` | `[]` | Future WP adds `G.mastermind.attachedBystanders` for Master Strike captures (D-DEC-5 Interpretation B — see Decision Points). City-villain captures (`G.attachedBystanders`) are deliberately NOT flattened into this projection because city-villain attachments are visually rendered on the city row, not on the mastermind tile. |
+| `mastermind.strikePile` | `{ extId; display }[]` | `[]` | Future WP adds `G.mastermind.strikePile` so resolved Master Strike cards are preserved for replay rather than re-derived from `villainDeck.discard`. |
+| `scheme.twistPile` | `{ extId; display }[]` | `[]` | Future WP adds `G.scheme.twistPile` so resolved Scheme Twist cards are preserved for replay. The existing `twistCount` (already derived from `villainDeck.discard`) is unaffected. |
+| `city.escapedPile` | `{ extId; display }[]` | `[]` | Future WP adds `G.city.escapedPile` so escaped villain cards are preserved (today only the counter `G.counters[ESCAPED_VILLAINS]` increments; the cards themselves are dropped). |
+| `economy.piercing` | `number` | `0` | Future WP adds `G.turnEconomy.piercing` (and the move logic that increments it). |
+| `economy.woundsDrawn` | `number` | `0` | Future WP adds `G.turnEconomy.woundsDrawn` (and the wound-draw tracking it requires). |
+| `decks.heroDeckCount` | `number` | `0` | Future WP adds a hero-deck reservoir on `G` (today HQ slots are static; recruited cards leave to discard with no refill). |
+| `piles.horrorsCount` | `number` | `0` | Confirms the D-DEC-2 default — `0` when no scenario uses Horrors. Future scenario WP adds `G.piles.horrors`. |
+
+**Locked rules for safe-skip sites:**
+
+- The CI-greppable marker `// SAFE-SKIP-WP128` MUST appear on the same line as (or directly above) every safe-skip projection assignment. EC-131 §5 verification gate greps for the marker count to match the table above (8 sites).
+- The accompanying `// why:` comment MUST cite (a) "Option A safe-skip per pre-flight 2026-05-03 PS-3", (b) the specific gap the safe-skip covers, and (c) "future WP-NNN will resolve `G.<path>`" — placeholder `WP-NNN` is acceptable; the resolution-WP IDs will be assigned in `WORK_INDEX.md` Pending block.
+- Tests MUST assert that each safe-skip field is present and has its safe-skip value when the source is unavailable (drift-test pinning + value pinning). When the future WP lands and adds the `G` source, only the safe-skip value flips — the field name and shape remain unchanged.
+- Safe-skip values are **never** `undefined` for the required fields above; they use the typed-stable defaults (`[]`, `0`) so consumers downstream of the projection don't need null-checks. The optional per-player fields (`inPlayCards?`, `discardTopCard?`, `victoryCards?`, `victoryVP?`, `inPlayDisplay?`) follow the existing `exactOptionalPropertyTypes` conditional-assignment pattern (D-2902).
+- The composition counters that WP-129 derives at render time consume these fields directly — empty arrays project as zero counts, which is the semantically correct rendering of "this scenario doesn't use Horrors" / "no escapes have happened yet".
 
 ### C) `filterUIStateForAudience` extensions
 
 - **`packages/game-engine/src/ui/uiState.filter.ts`** — modified:
   - For `audience !== ownPlayerId`: redact `players[i].inPlayCards` + `players[i].inPlayDisplay` (in-play this turn is technically face-up at the table BUT the count via `inPlayCount` is sufficient for opponent panels; full-array drill-down is owner-only by design).
   - For `audience === 'spectator'`: redact `inPlayCards` / `inPlayDisplay` for all players (spectators see counts only — same posture as `handCards`/`handDisplay`).
-  - For all audiences: `discardTopCard`, `victoryCards`, `victoryVp` — all NOT redacted (public information by design).
+  - For all audiences: `discardTopCard`, `victoryCards`, `victoryVP` — all NOT redacted (public information by design).
   - Mastermind / scheme / city / decks / piles / koPile fields — all NOT redacted (shared board state, public to all audiences).
 
 ### D) Drift test extensions
@@ -184,7 +208,7 @@ Add `node:test` tests in `packages/game-engine/src/ui/uiState.build.test.ts`:
 
 ## Out of Scope
 
-- No new `G` fields. The packet projects existing `G` state. If a needed `G` field is missing, it's a separate WP.
+- No new `G` fields — see §Non-Negotiable Constraints (canonical statement) and EC-131 §3 Guardrails. A missing `G` source is a STOP gate, not an inline extension.
 - No client UI changes — the packet ships projection only. Vue components consuming the new fields are WP-129's scope.
 - No composition-counter computation. Composition counters (Bystanders rescued, Villains defeated, S.H.I.E.L.D. Level, HYDRA Level, etc.) derive from `players[i].victoryCards[]` + registry metadata at render time; that's WP-129's scope.
 - No `UIAudience` extension. The closed set in `uiAudience.types.ts` is locked.
@@ -204,7 +228,7 @@ Add `node:test` tests in `packages/game-engine/src/ui/uiState.build.test.ts`:
 - `packages/game-engine/src/ui/uiState.build.test.ts` — **modified** — adds projection tests for every new field.
 - `packages/game-engine/src/ui/uiState.filter.test.ts` — **modified** — adds redaction tests.
 - `packages/game-engine/src/replay/replay.execute.test.ts` — **modified ONLY IF** the new fields cascade through `computeStateHash` (per the 01.5 protocol). Confirm at execution start; skip if hashes match pre-/post-projection.
-- `docs/ai/DECISIONS.md` — **modified** — D-12801..D-12806 (or similar block) recording: (1) the public-vs-private redaction rule for new per-player fields, (2) `victoryVp` projection at engine vs UI computation, (3) horrors-count-always-present-zero-when-absent vs conditional rendering, (4) aliasing-defense pattern reused from WP-111, (5) the `01.5` cascade decision (cascaded or didn't), (6) drift-test boundary.
+- `docs/ai/DECISIONS.md` — **modified** — D-12801..D-12807 block recording: (1) the public-vs-private redaction rule for new per-player fields (D-DEC-3 → D-12801), (2) `victoryVP` projection at engine vs UI computation (D-DEC-1 → D-12802), (3) horrors-count-always-present-zero-when-absent vs conditional rendering (D-DEC-2 → D-12803), (4) KO pile contents fully projected vs count-only (D-DEC-4 → D-12804), (5) Mastermind `attachedBystanders` shape AND Interpretation B data semantics (D-DEC-5 → D-12805), (6) **Option A safe-skip resolution for the 8 missing-G-source projections** (locked at pre-flight 2026-05-03 PS-3; covers `mastermind.attachedBystanders`, `mastermind.strikePile`, `scheme.twistPile`, `city.escapedPile`, `economy.piercing`, `economy.woundsDrawn`, `decks.heroDeckCount`, `piles.horrorsCount` — D-12806), (7) the `01.5` cascade resolution captured at session close (D-12807). Drift-test boundary recorded inline at the test file rather than as a separate decision.
 - `docs/ai/STATUS.md` — **modified** — `### WP-128 / EC-131 Executed` block.
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — WP-128 row flipped.
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — EC-131 row flipped.
@@ -219,7 +243,7 @@ No other files may be modified.
 
 - [ ] `uiState.types.ts` exports `UIDecksState`, `UISharedPilesState`, `UIKoPileState` as new types.
 - [ ] `UIState` adds top-level fields `decks: UIDecksState`, `piles: UISharedPilesState`, `koPile: UIKoPileState`.
-- [ ] `UIPlayerState` adds optional `inPlayCards?`, `inPlayDisplay?`, `discardTopCard?`, `victoryCards?`, `victoryVp?`.
+- [ ] `UIPlayerState` adds optional `inPlayCards?`, `inPlayDisplay?`, `discardTopCard?`, `victoryCards?`, `victoryVP?`.
 - [ ] `UIMastermindState` adds required `attachedBystanders`, `strikePile`.
 - [ ] `UISchemeState` adds required `twistPile`.
 - [ ] `UICityState` adds required `escapedPile`.
@@ -228,14 +252,16 @@ No other files may be modified.
 
 ### B — Projection
 
-- [ ] `buildUIState` populates every new field deterministically from `G`.
+- [ ] `buildUIState` populates every new field deterministically from `G` (or from the safe-skip default per §Scope B Safe-Skip Resolutions).
 - [ ] No new field reads `Math.random()`, `Date.now()`, or any I/O.
 - [ ] Per-entry shallow-copy aliasing-defense applied to every projected array entry per the WP-111 D-11105 pattern.
+- [ ] **Safe-skip sites (8) each carry the `// SAFE-SKIP-WP128` marker** plus a `// why:` comment citing pre-flight 2026-05-03 PS-3 / D-12806 and the future WP that will resolve the field. Verified by `Select-String -Path "packages\game-engine\src\ui\uiState.build.ts" -Pattern "SAFE-SKIP-WP128"` returning at least 8 matches.
+- [ ] Each safe-skip projection asserts the typed-stable default (`[]` for arrays, `0` for counts) — never `undefined` for the required fields.
 
 ### C — Filter
 
 - [ ] `filterUIStateForAudience` redacts `inPlayCards` + `inPlayDisplay` for `audience !== ownPlayerId` and for `'spectator'`.
-- [ ] `filterUIStateForAudience` does NOT redact `discardTopCard`, `victoryCards`, `victoryVp`, mastermind/scheme/city extensions, decks, piles, koPile.
+- [ ] `filterUIStateForAudience` does NOT redact `discardTopCard`, `victoryCards`, `victoryVP`, mastermind/scheme/city extensions, decks, piles, koPile.
 
 ### D — Drift + filter + aliasing tests
 
@@ -307,8 +333,8 @@ Select-String -Path "packages\game-engine\src\ui\uiState.types.drift.test.ts" -P
 
 The following decisions surface as `[DECISION REQUIRED]` blocks for the executor at draft-execution time. Recommended defaults documented; executor may override with rationale recorded in DECISIONS.md.
 
-### D-DEC-1 — `victoryVp` projected at engine or computed at UI?
-**Recommended default:** projected at engine via `players[i].victoryVp: number`. The WP-020 scoring already computes per-player VP; surfacing it through the projection is cheaper than re-computing in the client and avoids client-server scoring drift.
+### D-DEC-1 — `victoryVP` projected at engine or computed at UI?
+**Recommended default:** projected at engine via `players[i].victoryVP: number`. The WP-020 scoring already computes per-player VP; surfacing it through the projection is cheaper than re-computing in the client and avoids client-server scoring drift.
 **Alternative:** UI computes from `victoryCards[]` + registry — rejected because it duplicates WP-020's authority surface.
 
 ### D-DEC-2 — `horrors` projection always-present vs conditional?
@@ -323,9 +349,12 @@ The following decisions surface as `[DECISION REQUIRED]` blocks for the executor
 **Recommended default:** full contents in `koPile.cards[]` plus `count` and `topCard`. The KO pile is shared and face-up; full visibility matches physical-table semantics.
 **Alternative:** count + topCard only. Rejected — limits the wireframe's "click to view all" drill-down.
 
-### D-DEC-5 — Mastermind `attachedBystanders` shape: array of `{ extId, display }` vs string array?
-**Recommended default:** `{ extId: string; display: UICardDisplay }[]`. Mirrors `victoryCards` shape; lets clients render bystander art without a separate registry lookup.
-**Alternative:** `string[]` of ext_ids; UI resolves display via existing registry path. Rejected — diverges from the WP-111 inline-`display` pattern.
+### D-DEC-5 — Mastermind `attachedBystanders`: shape AND data semantics
+**Shape (locked):** `{ extId: string; display: UICardDisplay }[]`. Mirrors `victoryCards` shape; lets clients render bystander art without a separate registry lookup. Rejected alternative: `string[]` of ext_ids — diverges from the WP-111 inline-`display` pattern.
+
+**Data semantics (locked at pre-flight 2026-05-03 PS-4 — Interpretation B):** The projection represents bystanders captured by the **mastermind itself** (e.g., Master Strike effects in canonical Marvel Legendary). The engine has no source for this today, so the projection is `[]` under the Option A safe-skip — see Safe-Skip Resolutions in §Scope B. A future WP will add `G.mastermind.attachedBystanders` and populate the array.
+
+**Rejected alternative (Interpretation A — flatten city captures):** Project the values of `G.attachedBystanders` (the existing top-level field, keyed by city-villain CardExtId) flattened into the mastermind tile. Rejected because (a) it misrepresents city-row data as mastermind-row data, (b) the same bystanders are already rendered on the city villains they're attached to, creating a double-render, and (c) it locks in a derivation that the future engine work would have to undo.
 
 ---
 
@@ -335,7 +364,7 @@ The following decisions surface as `[DECISION REQUIRED]` blocks for the executor
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0.
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0; baseline `604+N/132+M/0` with N+M ∈ [12, 20].
 - [ ] `01.5 IS INVOKED` declared in the executed commit; cascade resolution recorded.
-- [ ] D-12801..D-12806 inserted in numeric order in `DECISIONS.md`.
+- [ ] D-12801..D-12807 inserted in numeric order in `DECISIONS.md` (mapping per §Files Expected to Change). D-12806 specifically commits to the Option A safe-skip resolution.
 - [ ] STATUS.md `### WP-128 / EC-131 Executed` block at top of `## Current State`.
 - [ ] WORK_INDEX.md WP-128 row checked off with date + commit hash.
 - [ ] EC_INDEX.md EC-131 row flipped Draft → Done.

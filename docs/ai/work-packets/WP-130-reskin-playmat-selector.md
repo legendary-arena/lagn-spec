@@ -119,8 +119,8 @@ Before writing a single line:
 
 ### D) Skin application
 
-- **`apps/arena-client/src/composables/useSkinApplier.ts`** — new — composable that watches `activeSkin` and applies the corresponding CSS variables / class to the `<body>` or `<PlayView>` root element. Uses Vue's `watchEffect` to react to changes.
-- **`apps/arena-client/src/pages/PlayView.vue`** — modified — invoke `useSkinApplier()` so skin changes propagate to both `<PlayDesktop>` and `<PlayMobile>`.
+- **`apps/arena-client/src/composables/useSkinApplier.ts`** — new — composable that watches `activeSkin` and applies the corresponding CSS variables / class to the `<body>` or `<PlayViewport>` root element. Uses Vue's `watchEffect` to react to changes.
+- **`apps/arena-client/src/pages/PlayViewport.vue`** — modified — invoke `useSkinApplier()` so skin changes propagate to both `<PlayDesktop>` and `<PlayMobile>`. (Filename per WP-129 — disambiguated from the deleted WP-100 `components/play/PlayView.vue`.)
 
 ### E) Tests
 
@@ -147,7 +147,7 @@ At session start, lock D-13001..D-13005 in DECISIONS.md:
 - No R2 manifest infrastructure (D-13001 default = bundled). Future WP if R2 publishing demand emerges.
 - No audio / sound effects.
 - No animations on skin swap.
-- No per-component skin overrides — skins apply globally to the `<PlayView>` root.
+- No per-component skin overrides — skins apply globally to the `<PlayViewport>` root.
 - No skin editor / customization UI — the selector picks from the bundled list only.
 - No server-side persistence of the selection (D-13004 default).
 - No replay-relative skin overrides — replays render in the spectator's selected skin, not the original player's.
@@ -174,7 +174,7 @@ At session start, lock D-13001..D-13005 in DECISIONS.md:
 **Modified:**
 - `apps/arena-client/src/main.ts` — modified (side-effect import for `registerSections.ts`)
 - `apps/arena-client/src/components/play/TopHudBar.vue` — modified (mount `<SkinSelector>`)
-- `apps/arena-client/src/pages/PlayView.vue` — modified (invoke `useSkinApplier`)
+- `apps/arena-client/src/pages/PlayViewport.vue` — modified (invoke `useSkinApplier`)
 
 **Governance:**
 - `docs/ai/STATUS.md` — modified (`### WP-130 / EC-133 Executed` block).
@@ -208,7 +208,7 @@ No other files may be modified.
 
 ### C — Skin application
 
-- [ ] `useSkinApplier()` applies the corresponding CSS class to the `<PlayView>` root.
+- [ ] `useSkinApplier()` applies the corresponding CSS class to the `<PlayViewport>` root.
 - [ ] Changing `activeSkin` propagates the new class within one Vue tick.
 - [ ] Asset-load failure degrades to `'classic'` skin; `console.warn` logs the failure with a full-sentence reason per Rule 11.
 
@@ -269,7 +269,7 @@ Select-String -Path "apps\arena-client\src\prefs","apps\arena-client\src\compone
 git diff --name-only packages/ apps/server apps/registry-viewer apps/replay-producer
 # Expected: no output
 
-# Step 7 — manual smoke: load <PlayView> at desktop, click skin button
+# Step 7 — manual smoke: load <PlayViewport> at desktop, click skin button
 # Expected: overlay opens; selecting a different skin propagates new CSS class instantly
 
 # Step 8 — manual smoke: change skin, reload page
