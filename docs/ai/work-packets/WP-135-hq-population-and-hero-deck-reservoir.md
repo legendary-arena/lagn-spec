@@ -22,7 +22,7 @@ After this packet, `Game.setup()` builds a deterministic per-match hero-deck res
 
 ## Assumes
 
-- WP-016 complete. `recruitHero({ hqIndex })` exists at `packages/game-engine/src/moves/recruitHero.impl.ts` and is registered on `LegendaryGame.moves` at the `play.main` stage.
+- WP-016 complete. `recruitHero({ hqIndex })` exists at `packages/game-engine/src/moves/recruitHero.ts` and is registered on `LegendaryGame.moves` at the `play.main` stage.
 - WP-018 complete. `buildCardStats` builds `G.cardStats` from registry hero / villain / mastermind data; the `parseCardStatValue` helper handles `"2*"` / `"2+"` / integers.
 - WP-111 complete. `buildCardDisplayData` builds `G.cardDisplayData` covering registry heroes / villains / henchmen / mastermind base cards; `UNKNOWN_DISPLAY_PLACEHOLDER` (name `'<unknown>'`) is the projection-time fallback for missing entries.
 - WP-128 complete. `UIDecksState` exists at `packages/game-engine/src/ui/uiState.types.ts` with the `heroDeckCount: number` field; `uiState.build.ts:projectDecks` ships the safe-skip constant `0` with the `// SAFE-SKIP-WP128` marker.
@@ -46,11 +46,11 @@ Before writing a single line:
 - `.claude/rules/persistence.md §Class 1 — Runtime State` — `G.heroDeck` is runtime state, never persisted.
 - `packages/game-engine/src/types.ts` — read entirely. `LegendaryGameState` interface gains the `heroDeck: CardExtId[]` field.
 - `packages/game-engine/src/setup/buildInitialGameState.ts` — read entirely; lines 300-330 show the `LegendaryGameState` literal that needs the new field; line 308-309 comment is the explicit gap this packet closes.
-- `packages/game-engine/src/setup/buildVillainDeck.ts` — sibling-pattern reference; copy the structure verbatim (registry walk → flat array → shuffle → pop into zone) for `buildHeroDeck`. Do NOT import or invoke `buildVillainDeck`.
-- `packages/game-engine/src/setup/buildCardStats.ts` — read entirely; the hero-card-instance walk lands here (each hero's `cards[]` × per-card copy count). Identify what cardStats keys today refer to (set-qualified ext_ids, per D-10014).
+- `packages/game-engine/src/villainDeck/villainDeck.setup.ts` — sibling-pattern reference; copy the structure verbatim (registry walk → flat array → shuffle → pop into zone) for `buildHeroDeck`. Do NOT import or invoke `buildVillainDeck`.
+- `packages/game-engine/src/economy/economy.logic.ts` — read entirely; the hero-card-instance walk lands here (each hero's `cards[]` × per-card copy count). Identify what cardStats keys today refer to (set-qualified ext_ids, per D-10014).
 - `packages/game-engine/src/setup/buildCardDisplayData.ts` — read entirely; sibling extension to buildCardStats for display data; same walk shape.
 - `packages/game-engine/src/board/city.logic.ts` — `initializeHq()` is the gap; either extend signature or add a sibling `fillHqFromDeck(deck, slotCount)` helper. Pure function; no `boardgame.io` import; no `.reduce()`.
-- `packages/game-engine/src/moves/recruitHero.impl.ts` — read entirely; on success, refill `G.hq[hqIndex]` from `G.heroDeck` via a pure helper (no inline shift/splice). Per WP-016 D-1602, the recruited hero card moves to the active player's discard.
+- `packages/game-engine/src/moves/recruitHero.ts` — read entirely; on success, refill `G.hq[hqIndex]` from `G.heroDeck` via a pure helper (no inline shift/splice). Per WP-016 D-1602, the recruited hero card moves to the active player's discard.
 - `packages/game-engine/src/ui/uiState.build.ts` — read entirely; `projectDecks` returns `decks.heroDeckCount`; replace the safe-skip constant `0` with `gameState.heroDeck.length`. Remove the `// SAFE-SKIP-WP128` marker on the assignment. Decrement the marker count from 8 to 7.
 - `packages/game-engine/src/ui/uiState.types.drift.test.ts` — drift test asserts the safe-skip marker count and the canonical field set; both update.
 - `packages/game-engine/src/replay/replay.execute.test.ts` — `PRE_WP080_HASH` literal updates per WP-128 D-12807 conditional-cascade procedure (capture pre / capture post / compare; update only on divergence).
@@ -65,7 +65,7 @@ Before writing a single line:
 
 **Engine-wide (always apply — do not remove):**
 - Never use `Math.random()` — all randomness uses `ctx.random.Shuffle` only (the hero-deck shuffle).
-- Never throw inside `Game.setup()` except for unrecoverable input violations (per the canonical rule that only `Game.setup()` may throw); `buildHeroDeck` throws on invalid registry data with a full-sentence error message.
+- Never throw inside `Game.setup()` except for unrecoverable input violations (per the canonical rule that only `Game.setup()` may throw); `buildHeroDeck` throws on invalid registry data — including unknown `rarityLabel` per D-DEC-1 Option A loud-fail — with a full-sentence Error message that names the offending hero ext_id, the unrecognized label, and the supported four-label set.
 - Never persist `G`, `ctx`, or any runtime state.
 - `G.heroDeck` must be JSON-serializable (`CardExtId[]` — bare strings only, no objects, no functions, no Maps/Sets).
 - ESM only, Node v22+.
@@ -127,12 +127,13 @@ Before writing a single line:
 ### B) New helper — `buildHeroDeck`
 
 - **`packages/game-engine/src/setup/buildHeroDeck.ts`** — new:
-  - Local structural `RegistryReader` interface mirroring `buildCardStats.ts` line 80-95 (no runtime registry import).
+  - Local structural `RegistryReader` interface mirroring `economy/economy.logic.ts` `CardStatsRegistryReader` (lines 89-100, with `isCardStatsRegistryReader` runtime type guard at line 395) — no runtime registry import.
   - `buildHeroDeckCards(heroDeckIds: string[], registry: RegistryReader): CardExtId[]` — pure function returning the unshuffled flat array of hero card ext_ids per the rarity → copy-count map (D-DEC-1).
   - `shuffleHeroDeck(cards: CardExtId[], context: ShuffleProvider): CardExtId[]` — wraps `context.random.Shuffle`. Mirrors `playerInit.ts:shuffleDeck`.
   - `buildHeroDeck(heroDeckIds, registry, context): CardExtId[]` — composes the two; the canonical entry point.
   - JSDoc cites WP-016 (gap closure) + WP-014B (sibling shape) + WP-128 D-12806 (safe-skip closure) + D-DEC-1 (rarity map) + D-DEC-2 (ext_id format).
   - `// why:` comment on the rarity-to-copy-count map declaration: per D-DEC-1, document the 5/3/3/3 mapping (or whatever the executor locks) with a citation to the canonical Marvel Legendary 14-cards-per-hero rule.
+  - **Throws on unknown `rarityLabel` (per D-DEC-1, Option A loud-fail lock).** When a hero card carries a `rarityLabel` outside the locked set `{ 'Common 1', 'Common 2', 'Uncommon', 'Rare' }`, `buildHeroDeck` throws a full-sentence Error citing the offending hero ext_id, the unrecognized `rarityLabel`, and the supported set. This is permitted because `buildHeroDeck` runs only inside `Game.setup()` (the canonical throw site). MVP loadouts MUST select `MatchSetupConfig.heroDeckIds` from sets whose hero cards use only the four locked labels (`core.json` and any other compliant set); cross-set rarity support (e.g., `'Common 3'` and `'Uncommon 2'` observed in `amwp.json` and similar) is deferred to a follow-up engine WP that extends D-13501 with a tabletop-rule citation. `// why:` comment on the throw site cites D-13501 + the deferred follow-up WP ID.
 
 ### C) Setup orchestration — `buildInitialGameState`
 
@@ -157,12 +158,12 @@ Before writing a single line:
 
 ### E) HQ refill on recruit — `recruitHero` modification
 
-- **`packages/game-engine/src/moves/recruitHero.impl.ts`** — modified:
+- **`packages/game-engine/src/moves/recruitHero.ts`** — modified:
   - On successful recruit (post-discard append + post-cardStats deduction), call a new pure helper `refillHqSlot(hq, hqIndex, heroDeck): { hq, heroDeck }`.
   - When `heroDeck.length === 0`, the slot stays `null` and `heroDeck` remains `[]`.
-  - **Append a single deterministic one-line entry to `G.messages`. The string format is stable and MUST NOT include timestamps, wall-clock data, random tokens, object addresses, or any other non-deterministic data.** Replay diffs depend on exact byte-equality of `G.messages`; future "helpful" additions (millisecond timestamps, debug context, formatted dates) silently break replay determinism. Locked format: `"Player {playerId} recruited {heroExtId}; HQ slot {hqIndex} refilled from heroDeck (heroDeck.length: {N})"` where `{playerId}` is the bare engine playerID string, `{heroExtId}` is the recruited card's set-qualified ext_id (NOT the human display name — display data is projection-time, not runtime), `{hqIndex}` is the integer index, `{N}` is the post-refill deck length. Empty-deck branch substitutes `(heroDeck empty; slot left null)` for the trailing parenthetical.
+  - **Replace the existing `recruitHero` `G.messages` push (currently `recruitHero.ts:76-78`, format `"Player {playerId} recruited \"{cardId}\" from HQ slot {hqIndex}."`) with a single deterministic one-line entry in the WP-135 locked format. There is exactly ONE `G.messages` push per successful `recruitHero`, not two.** The string format is stable and MUST NOT include timestamps, wall-clock data, random tokens, object addresses, or any other non-deterministic data. Replay diffs depend on exact byte-equality of `G.messages`; future "helpful" additions (millisecond timestamps, debug context, formatted dates) silently break replay determinism. Locked format: `"Player {playerId} recruited {heroExtId}; HQ slot {hqIndex} refilled from heroDeck (heroDeck.length: {N})"` where `{playerId}` is the bare engine playerID string, `{heroExtId}` is the recruited card's set-qualified ext_id (NOT the human display name — display data is projection-time, not runtime), `{hqIndex}` is the integer index, `{N}` is the post-refill deck length. Empty-deck branch substitutes `(heroDeck empty; slot left null)` for the trailing parenthetical.
   - `// why:` comment on the refill site: "WP-135 — refill the vacated slot from G.heroDeck (FIFO via shift). Empty-deck case leaves the slot null per D-13503; no auto-reshuffle of recruited cards back into the deck (separate engine WP if ever needed)."
-  - `// why:` comment on the G.messages append site: "WP-135 — log line is replay-visible and snapshotted; format is locked at this site to byte-equality. Never add timestamps or non-deterministic context."
+  - `// why:` comment on the G.messages push site: "WP-135 — log line is replay-visible and snapshotted; format is locked at this site to byte-equality. Replaces the pre-WP-135 line shape from WP-016 (one push per successful recruit, not two). Never add timestamps or non-deterministic context."
 
 ### F) Refill helper — `refillHqSlot`
 
@@ -171,7 +172,7 @@ Before writing a single line:
 
 ### G) Sibling-snapshot extensions — `buildCardStats` + `buildCardDisplayData`
 
-- **`packages/game-engine/src/setup/buildCardStats.ts`** — modified:
+- **`packages/game-engine/src/economy/economy.logic.ts`** — modified:
   - Walk extends to `registry.getSet(setAbbr).heroes[i].cards[j]` for each hero in `config.heroDeckIds`.
   - Each hero card instance gets a cardStats entry keyed by its set-qualified ext_id.
   - Map source: card-level `cost`, `attack`, `recruit` fields (parsed via existing `parseCardStatValue`).
@@ -210,17 +211,15 @@ Before writing a single line:
   - `refillHqSlot` shifts one card from deck into the supplied slot; deck length decreases by 1.
   - `refillHqSlot` leaves slot `null` when deck is empty.
   - All tests assert input-array immutability (the supplied `heroDeck` argument is unchanged after the call).
-- **`packages/game-engine/src/setup/buildInitialGameState.test.ts`** — modified:
-  - Post-setup: `G.heroDeck.length === <total hero cards built> - 5`.
-  - Post-setup: `G.hq.filter((s) => s !== null).length === 5` (all slots filled).
-  - Post-setup: every CardExtId in `G.hq` (non-null) has a corresponding entry in `G.cardStats` AND `G.cardDisplayData`.
-  - Post-setup: every CardExtId in `G.heroDeck` has corresponding entries in `G.cardStats` AND `G.cardDisplayData`.
-  - `JSON.stringify(G)` succeeds.
-- **`packages/game-engine/src/moves/recruitHero.impl.test.ts`** — modified:
+- **`packages/game-engine/src/setup/buildInitialGameState.{shape,loadout,determinism}.test.ts`** — modified (note: `buildInitialGameState` tests are split across three sibling files; place each new test in the most-specific file):
+  - `.shape.test.ts` — Post-setup: `G.heroDeck.length === <total hero cards built> - 5`. Post-setup: `G.hq.filter((s) => s !== null).length === 5` (all slots filled). `JSON.stringify(G)` succeeds.
+  - `.loadout.test.ts` — Post-setup: every CardExtId in `G.hq` (non-null) has a corresponding entry in `G.cardStats` AND `G.cardDisplayData`. Post-setup: every CardExtId in `G.heroDeck` has corresponding entries in `G.cardStats` AND `G.cardDisplayData`.
+  - `.determinism.test.ts` — Order-equality test (per §C acceptance criterion): construct expected post-shuffle deck via the same `ShuffleProvider` mock, run `buildHeroDeck` + `fillHqFromDeck(_, 5)`, assert deep-equal between `G.heroDeck` and `expected.slice(5)`. HQ index-0 first-fill assertions land here as well.
+- **`packages/game-engine/src/moves/recruitHero.test.ts`** — modified:
   - `recruitHero` on successful recruit + non-empty heroDeck: vacated slot is refilled with the next deck card; deck length decrements by 1.
   - `recruitHero` on successful recruit + empty heroDeck: vacated slot is `null`; deck stays empty.
   - `G.messages` gains the WP-135 refill log line.
-- **`packages/game-engine/src/setup/buildCardStats.test.ts`** + **`buildCardDisplayData.test.ts`** — modified:
+- **`packages/game-engine/src/economy/economy.logic.test.ts`** + **`buildCardDisplayData.test.ts`** — modified:
   - Hero card instances appear in the result with the locked ext_id format and correct cost/attack/recruit/name/imageUrl values.
 
 ### K) 01.5 conditional cascade
@@ -228,7 +227,7 @@ Before writing a single line:
 - **`packages/game-engine/src/replay/replay.execute.test.ts`** — modified ONLY IF the binary procedure detects a hash divergence:
   - Capture `PRE_WP080_HASH` value from line 41 (or wherever the literal lives) **before any edit**.
   - Run `pnpm --filter @legendary-arena/game-engine test` after all production changes land.
-  - If the regression-guard test (`replay.execute.test.ts:117 — preserves replayGame stateHash byte-identically`) fails, the post-WP-135 hash differs. Update the literal to the new value at exactly one site with a `// why:` comment citing 01.5 + WP-128 D-12807 + WP-135 ("`G.heroDeck` field added; `computeStateHash` input shape changed").
+  - If the regression-guard test (`replay.execute.test.ts:117 — preserves replayGame stateHash byte-identically`) fails, the post-WP-135 hash differs. Update the literal to the new value at exactly one site with a `// why:` comment citing 01.5 + WP-128 D-12807 + WP-135 ("`G.heroDeck` field added; `recruitHero` `G.messages` line reshaped from the pre-WP-135 WP-016 format; `computeStateHash` input shape changed on both axes").
   - If the test passes byte-identically, the cascade did NOT fire — leave the file untouched and note the no-cascade outcome in the post-mortem (per WP-128 D-12807's no-cascade-with-rationale precedent).
 
 ---
@@ -237,7 +236,11 @@ Before writing a single line:
 
 These [DECISION REQUIRED] blocks land in DECISIONS.md as D-13501..D-13503 in numeric order before the first production file is written.
 
-- **D-DEC-1 — Hero rarity → copy-count mapping.** Recommended default per Marvel Legendary canonical rules: `Common 1` = 5 copies, `Common 2` = 3, `Uncommon` = 3, `Rare` = 3 (total 14 per hero). Alternatives: source the count from `data/metadata/hero-deck-composition.json` (deferred — no such file exists today); query a registry helper (deferred — no such helper). Lock the hardcoded 5/3/3/3 mapping in `buildHeroDeck.ts` with a `// why:` comment citing D-13501 + the canonical 14-cards-per-hero rule.
+- **D-DEC-1 — Hero rarity → copy-count mapping + unknown-label loud-fail.** Recommended default per Marvel Legendary canonical rules: `Common 1` = 5 copies, `Common 2` = 3, `Uncommon` = 3, `Rare` = 3 (total 14 per hero). Alternatives: source the count from `data/metadata/hero-deck-composition.json` (deferred — no such file exists today); query a registry helper (deferred — no such helper). Lock the hardcoded 5/3/3/3 mapping in `buildHeroDeck.ts` with a `// why:` comment citing D-13501 + the canonical 14-cards-per-hero rule.
+  - **Coverage scope:** verified at draft time against `core.json` only. **Cross-set audit (this packet's pre-flight):** 76 of 307 heroes across 40 sets in `data/cards/` (e.g., the entire `amwp.json` set) carry rarity labels `'Common 3'` and `'Uncommon 2'` outside the locked four-label set. Those heroes are **out of scope** for this packet.
+  - **Loud-fail lock (Option A):** when `buildHeroDeckCards` encounters a card whose `rarityLabel` is not in `{ 'Common 1', 'Common 2', 'Uncommon', 'Rare' }`, `buildHeroDeck` throws a full-sentence Error citing the offending hero ext_id, the unrecognized `rarityLabel`, and the supported set. Throwing inside `Game.setup()` is the canonical loud-fail surface.
+  - **Rejected alternatives:** Option B (extend the rarity map now to `'Common 3'`, `'Uncommon 2'`, etc.) — rejected at MVP because it widens this packet's scope, requires a tabletop-rule citation per AMWP-class set (none yet sourced), and forces test fixtures across the new labels. Silent-skip on unknown labels — rejected because it produces undersized hero decks at runtime with no diagnostic, breaking replay determinism guarantees and the §A acceptance criterion that the deck contains exactly `(rarity-map-sum) × N` cards.
+  - **Follow-up:** a Pending engine WP (placeholder `WP-NNN — Extend D-13501 to AMWP-class hero rarity labels`) is recorded in `WORK_INDEX.md`. That WP locks the canonical copy counts for `'Common 3'` / `'Uncommon 2'` / any other observed labels with citations and extends `buildHeroDeck`'s rarity map; until then, MVP loadouts confine `MatchSetupConfig.heroDeckIds` to compliant sets.
 
 - **D-DEC-2 — Hero card instance ext_id format.** Recommended default per D-10014 set-qualification: `<setAbbr>/<heroSlug>/<cardSlug>` (e.g., `core/spider-man/astonishing-strength`). Alternatives: `<setAbbr>/<heroSlug>/<rarityLabel>/<cardSlug>` (more drift-resistant if two hero cards ever share a slug across rarities). Rejected at MVP because (a) registry data guarantees hero-scoped uniqueness today — no observed collisions across all 40 sets in `data/cards/`; (b) introducing rarity into the ext_id would prematurely fragment the sibling-snapshot maps (`G.cardStats`, `G.cardDisplayData`) by adding a synthetic key segment that has no upstream registry-side authority, complicating every future card-data join across `cardStats[extId]` / `cardDisplayData[extId]` / `villainDeckCardTypes[extId]` / `cardKeywords[extId]` for zero observed benefit; (c) future-proofing against a hypothetical collision is properly handled by extending the registry's hero-card schema with a stable disambiguator field, not by overloading the ext_id surface. Lock at D-13502 with a sample ext_id and the canonical join key.
 
@@ -270,20 +273,22 @@ These [DECISION REQUIRED] blocks land in DECISIONS.md as D-13501..D-13503 in num
 **Modified (engine — 9):**
 - `packages/game-engine/src/types.ts` — `heroDeck: CardExtId[]` field
 - `packages/game-engine/src/setup/buildInitialGameState.ts` — call buildHeroDeck + fillHqFromDeck; update line 308-309 comment
-- `packages/game-engine/src/setup/buildCardStats.ts` — extend walk to hero card instances
+- `packages/game-engine/src/economy/economy.logic.ts` — extend walk to hero card instances
 - `packages/game-engine/src/setup/buildCardDisplayData.ts` — extend walk to hero card instances
 - `packages/game-engine/src/board/city.logic.ts` — add `fillHqFromDeck` + `refillHqSlot` exports
-- `packages/game-engine/src/moves/recruitHero.impl.ts` — refill slot on success
+- `packages/game-engine/src/moves/recruitHero.ts` — refill slot on success
 - `packages/game-engine/src/ui/uiState.build.ts` — graduate `decks.heroDeckCount` from safe-skip 0 to `gameState.heroDeck.length`; remove the `// SAFE-SKIP-WP128` marker
 - `packages/game-engine/src/index.ts` — export `buildHeroDeck` + `fillHqFromDeck` + `refillHqSlot` + (re-export `LegendaryGameState['heroDeck']` typing if downstream needs it)
 - `packages/game-engine/src/replay/replay.execute.test.ts` — 01.5 conditional cascade (only if hash diverges)
 
 **Modified (tests — 5):**
 - `packages/game-engine/src/board/city.logic.test.ts` — new helper coverage
-- `packages/game-engine/src/setup/buildInitialGameState.test.ts` — post-setup invariants
-- `packages/game-engine/src/setup/buildCardStats.test.ts` — hero card instances
+- `packages/game-engine/src/setup/buildInitialGameState.shape.test.ts` — post-setup heroDeck/hq counts + JSON.stringify
+- `packages/game-engine/src/setup/buildInitialGameState.loadout.test.ts` — every hq/heroDeck CardExtId has cardStats + cardDisplayData entries
+- `packages/game-engine/src/setup/buildInitialGameState.determinism.test.ts` — order-equality + HQ index-0 first-fill
+- `packages/game-engine/src/economy/economy.logic.test.ts` — hero card instances
 - `packages/game-engine/src/setup/buildCardDisplayData.test.ts` — hero card instances
-- `packages/game-engine/src/moves/recruitHero.impl.test.ts` — refill behavior + empty-deck behavior
+- `packages/game-engine/src/moves/recruitHero.test.ts` — refill behavior + empty-deck behavior
 - `packages/game-engine/src/ui/uiState.types.drift.test.ts` — safe-skip count 8 → 7; new field pinned
 
 **Governance (4):**
@@ -295,7 +300,7 @@ These [DECISION REQUIRED] blocks land in DECISIONS.md as D-13501..D-13503 in num
 **Post-mortem (1):**
 - `docs/ai/post-mortems/01.6-WP-135-hq-population-and-hero-deck-reservoir.md` — MANDATORY (new long-lived `G` field; new contract surface)
 
-**Total projected:** ~22 files (3 new production + 9 modified production + 6 modified test + 4 governance + 1 post-mortem; 01.5 cascade adds a 23rd if it fires).
+**Total projected:** ~24 files (2 new production + 1 new test + 9 modified production + 8 modified test [city.logic.test, buildInitialGameState.{shape,loadout,determinism}.test, economy.logic.test, buildCardDisplayData.test, recruitHero.test, uiState.types.drift.test] + 4 governance + 1 post-mortem; 01.5 cascade adds a 25th if it fires).
 
 ---
 
@@ -312,6 +317,7 @@ These [DECISION REQUIRED] blocks land in DECISIONS.md as D-13501..D-13503 in num
 - [ ] Given the locked rarity map (D-13501) and a 4-hero loadout from `data/cards/core.json`, the unshuffled deck has exactly 56 cards (4 × 14) — or whatever the locked map computes.
 - [ ] No `boardgame.io` import.
 - [ ] No `Math.random` use.
+- [ ] `buildHeroDeck` throws a full-sentence Error when given a hero whose `cards[]` carries a `rarityLabel` outside `{ 'Common 1', 'Common 2', 'Uncommon', 'Rare' }` (D-13501 Option A loud-fail). The Error message names the offending hero ext_id, the unrecognized label, and the supported four-label set. Tests in `buildHeroDeck.test.ts` exercise this branch with a synthetic registry mock that emits `'Common 3'` (no real card data is required to drive the test).
 
 ### C — Setup orchestration
 
@@ -326,8 +332,8 @@ These [DECISION REQUIRED] blocks land in DECISIONS.md as D-13501..D-13503 in num
 
 - [ ] `recruitHero` on a non-null HQ slot with `G.heroDeck.length > 0`: the slot is replaced by the next deck card; `G.heroDeck.length` decrements by 1.
 - [ ] `recruitHero` on a non-null HQ slot with `G.heroDeck.length === 0`: the slot is set to `null`; `G.heroDeck` stays empty.
-- [ ] `G.messages` gains a single WP-135 line per successful recruit.
-- [ ] No new `throw` statements in `recruitHero.impl.ts` (move-as-no-throw contract preserved).
+- [ ] `G.messages` gains exactly **one** line per successful `recruitHero` (the WP-135 locked format, replacing the pre-WP-135 WP-016 push). Tests assert byte-identical match against the locked format and that the count of new `G.messages` entries per recruit is `1`, not `2`.
+- [ ] No new `throw` statements in `recruitHero.ts` (move-as-no-throw contract preserved).
 
 ### E — UIState projection graduation
 
@@ -340,12 +346,12 @@ These [DECISION REQUIRED] blocks land in DECISIONS.md as D-13501..D-13503 in num
 - [ ] Three new entries inserted in `DECISIONS.md` in numeric order with rationale + rejected alternatives.
 - [ ] `buildHeroDeck.ts` cites D-13501 at the rarity-map declaration site.
 - [ ] `buildHeroDeck.ts` cites D-13502 at the ext_id-construction site.
-- [ ] `recruitHero.impl.ts` cites D-13503 at the empty-deck branch.
+- [ ] `recruitHero.ts` cites D-13503 at the empty-deck branch.
 
 ### G — Tests
 
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0.
-- [ ] Engine baseline `621 / 135 / 0` → projected `621+N / 135+M / 0` with N+M ∈ [12, 25] new tests.
+- [ ] Engine baseline `621 / 135 / 0` → projected `621+N / 135+M / 0` with N+M ∈ [13, 26] new tests (band widened by +1 vs draft to cover the throw-on-unknown-rarityLabel test from D-13501 Option A).
 
 ### H — 01.5 cascade
 
@@ -369,7 +375,7 @@ pnpm --filter @legendary-arena/game-engine build
 
 # Step 2 — engine tests
 pnpm --filter @legendary-arena/game-engine test
-# Expected: 621+N / 135+M / 0 with N+M in [12, 25]
+# Expected: 621+N / 135+M / 0 with N+M in [13, 26] (the +1 vs the prior [12, 25] band covers the new throw-on-unknown-rarityLabel test mandated by D-13501 Option A loud-fail)
 
 # Step 3 — confirm no Math.random in new files
 Select-String -Path "packages\game-engine\src\setup\buildHeroDeck.ts" -Pattern "Math\.random"
@@ -385,7 +391,7 @@ Select-String -Path "packages\game-engine\src\ui\uiState.build.ts" -Pattern "SAF
 
 # Step 6 — confirm D-13501..D-13503 cited at the locked sites
 Select-String -Path "packages\game-engine\src\setup\buildHeroDeck.ts" -Pattern "D-13501|D-13502"
-Select-String -Path "packages\game-engine\src\moves\recruitHero.impl.ts" -Pattern "D-13503"
+Select-String -Path "packages\game-engine\src\moves\recruitHero.ts" -Pattern "D-13503"
 # Expected: at least 1 match per site
 
 # Step 7 — confirm 01.5 cascade outcome
