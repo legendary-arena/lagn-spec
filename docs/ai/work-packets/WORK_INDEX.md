@@ -33,6 +33,8 @@
 
 All existing WPs through WP-060 are marked ✅ Reviewed. WP-048 through WP-054, WP-055, and WP-060 were audited during the 2026-04-15 Standardization Completeness Pass (no issues found). WP-061 through WP-064 were drafted 2026-04-16 as a UI-implementation chain and passed the lint-gate review (00.3) the same day: Vitest option removed in favor of `node:test`-only per §7/§12; verification code fences switched to `pwsh` and Windows paths per §9; forbidden-packages block added explicitly per §7; WP-063 determinism check now uses `Compare-Object` instead of Unix `diff`. WP-065 was added 2026-04-16 as a hard prerequisite for the UI chain: a shared `packages/vue-sfc-loader/` that makes `.vue` SFCs importable under `node:test` (the lint-forbidden Vitest escape hatch is replaced by this internal loader). WP-079 was added 2026-04-18 as a tiny doc-only decision-closure WP arising from the `docs/ai/MOVE_LOG_FORMAT.md` forensics report; passed the 00.3 lint-gate self-review the same day after two surgical patches (verification-command shell + acceptance-criteria count). Any future WPs must be reviewed before Claude Code executes them.
 
+**Post-2026-04-26 delivery cluster (auth stack + profile surface + leaderboard HTTP + viewer enhancements + WP-126 closing).** Between 2026-04-27 and 2026-05-03, sixteen further WPs landed on `main`, closing every Beta-Launch / Profile / Auth surface that had been queued in the governance trunk: WP-099 ✅ (Hanko broker selected, `f6cd591`) → WP-101 ✅ (handle claim flow, `fb1ca2b`) → WP-102 ✅ (public profile page, `369c0a4`) → WP-104 ✅ (owner profile + `/me` edit, `cea9108`) → WP-109 ✅ (team affiliation, `7fe59a1`) → WP-111 ✅ (UIState card display projection, `f842f71`) → WP-112 ✅ (broker-agnostic session-token middleware, `d0fefa3`) → WP-113 ✅ (engine-server registry wiring + `<setAbbr>/<slug>` ID format lock, `2a00193`) → WP-114 ✅ (registry viewer URL-parameterized setup preview, `c059199`) → WP-054 ✅ (leaderboard library cherry-picked into main; HTTP routes wired by WP-115) → WP-115 ✅ (public leaderboard HTTP endpoints + long-lived `pg.Pool` bootstrap, `35572df`) → WP-121 ✅ (registry viewer card zoom slider, `e3c6af7`) → WP-122 ✅ (viewer henchman flattenSet emission fix, `a5c1653`) → WP-123 ✅ (viewer cardType widening + `set.other[]` dispatch, `fbb5174`) → WP-124 ✅ (registry viewer theme zoom slider, `078e234`) → WP-125 ✅ (registry viewer card abilities effect-tag filter, EC-127 Commit A) → WP-127 ✅ (registry viewer grid tile team & ability text, `1323266`) → **WP-126 ✅ (Hanko session verifier, `2aa7690` 2026-05-03 — D-12601..D-12604 + D-11201 flipped Active→Resolved; closes the auth stack)**. Engine baseline `570/126/0` (post-WP-113) → `604/132/0` (post-WP-111); server baseline `47/7/0` (post-WP-053) → `124/0/54` (post-WP-126). Two surfaces remain governance-drafts (WP-097/098 funding policy + lint-gate trigger; WP-105..108 profile follow-ups). The next major surface is a future request-handler WP that wires `configureSessionValidation({ verifier: createHankoSessionVerifier(config), accountResolver, database })` exactly once at server startup and graduates the existing fail-closed `'session_verifier_not_configured'` defaults on `/api/me/*` (WP-104) and `/api/teams/*` (WP-109) into genuinely authenticated routes.
+
 ---
 
 ## Foundation Prompts (run once before Work Packets begin)
@@ -2616,7 +2618,9 @@ WP-001 (coordination — complete)        │
                        │
                     WP-053 (+ WP-048, WP-027) ←── WP-052
                        │
-                    WP-054 (+ WP-052, WP-051) ←── WP-053
+                    WP-054 lib (Library-only, cherry-picked) ←── WP-053
+                       │
+                    WP-115 HTTP routes (+ WP-054 lib + pg.Pool bootstrap)
                     
                     WP-036 → WP-037 → WP-038 → WP-039 → WP-040
 
@@ -2651,6 +2655,84 @@ WP-001 (coordination — complete)        │
                        └→ WP-092 (+ WP-011, WP-090, WP-091) — lobby JSON intake
                     (WP-093 is a hard prerequisite for both despite higher
                      number — governance-first ordering, not numeric)
+
+                    Auth Stack (Landed 2026-04-27..2026-05-03):
+                    WP-099 (Hanko broker selection — D-9901..D-9905; F-1..F-7 gates)
+                       │
+                       ├→ WP-112 (broker-agnostic orchestrator + SessionVerifier interface
+                       │           + findAccountByAuthProviderSub lookup; D-11201 sibling-WP
+                       │           architectural choice; D-11202..D-11204)
+                       │     │
+                       │     └→ WP-126 (Hanko session verifier — apps/server/src/auth/hanko/
+                       │              under D-9904 module-path lock; built-ins-only RS256
+                       │              via node:crypto per D-12601; per-instance JWKS cache
+                       │              per D-12603; closed-set amr lookup per D-12604;
+                       │              D-11201 status flips Active → Resolved at this close)
+                       │           │
+                       │           └→ future request-handler WP (wires
+                       │              configureSessionValidation({ verifier:
+                       │              createHankoSessionVerifier(config), accountResolver,
+                       │              database }) exactly once at server startup)
+                       │
+                       └→ WP-052 authProvider enum unchanged at 'email'|'google'|'discord'
+                          (the broker-name value 'hanko' MUST NOT appear; F-1 lock)
+
+                    Profile Surface (Landed 2026-04-28..2026-05-03):
+                    WP-052 (identity model + replay ownership)
+                       │
+                       └→ WP-101 (handle claim flow + 008_add_handle_to_players.sql)
+                                │
+                                ├→ WP-102 (public profile page — read-only;
+                                │           PublicProfileView 4 fields; 404 on no-match)
+                                │     │
+                                │     └→ WP-104 (owner profile + /me edit;
+                                │              009_create_player_profiles_and_links.sql;
+                                │              D-10401..D-10408 — sparse PATCH per RFC 7396,
+                                │              replace-all-by-list PUT, per-section privacy
+                                │              enum defaulting to 'private', HTTPS-only URL,
+                                │              6-entry provider allowlist)
+                                │           │
+                                │           └→ WP-109 (team affiliation; team_id branded type;
+                                │                    legendary.teams + team_member_events +
+                                │                    team_audit_log; column-additive
+                                │                    teamAffiliations[] projection on both
+                                │                    PublicProfileView (4→5 keys) and
+                                │                    OwnerProfileView (7→8 keys);
+                                │                    D-10901..D-10908)
+                                │           │
+                                │           └→ WP-105..108 (badges / avatar upload /
+                                │              integrity admin / funding surface — placeholders)
+
+                    Engine + Server Wiring (Landed 2026-04-27..2026-05-01):
+                    WP-100 surfaced silent-empty-deck failure
+                       │
+                       └→ WP-113 (registry wiring + match-setup ID format lock —
+                                <setAbbr>/<slug> qualified format LOCKED on all five
+                                entity-ID fields per D-10014; bare slugs / display names
+                                / flat-card keys rejected; parseQualifiedId() helper)
+
+                    Registry Viewer Enhancements (Landed 2026-05-01..2026-05-02):
+                    WP-066 (image/data toggle) → WP-096 (grid data view; D-9601 setAbbr divergence)
+                                                    │
+                                                    └→ WP-127 (threshold-gated Team row +
+                                                       Ability block at cardSize >= 190px;
+                                                       D-9601 amended in place)
+                    WP-114 (URL-parameterized setup preview — composable-ownership lock; D-11401..D-11404)
+                    WP-121 (card zoom slider — useCardSize composable; D-12101)
+                    WP-122 (henchman flattenSet emission fix — flat treatment; D-12201)
+                    WP-123 (cardType widening + set.other[] dispatch; D-12301)
+                    WP-124 (theme zoom slider — useThemeSize mirrors useCardSize; D-12401)
+                    WP-125 (card abilities effect-tag filter — chip ribbon; D-12501)
+
+                    Engine UIState Card Display Projection (Landed 2026-04-29):
+                    WP-100 surfaced D-10004 deferral
+                       │
+                       └→ WP-111 (G.cardDisplayData sibling snapshot + projection-time
+                                  display fields on UICityCard / UIMastermindState +
+                                  optional parallel arrays on UIHQState.slotDisplay? and
+                                  UIPlayerState.handDisplay?; aliasing-defended via
+                                  per-entry shallow copies; D-11101..D-11106;
+                                  engine 570/126/0 → 604/132/0)
 ```
 
 **Parallel-safe packets** (no dependency on each other):
@@ -2660,6 +2742,11 @@ WP-001 (coordination — complete)        │
 - WP-056/057/058 (Pre-Planning) are parallel with Phase 4+ (depend only on WP-006A + WP-008B from Phase 2)
 - WP-061 (Client Bootstrap) and WP-063 (Replay Snapshot Producer) are parallel — WP-061 touches only `apps/arena-client/` and WP-063 touches `packages/game-engine/` + new `apps/replay-producer/`; WP-064 joins both chains so it waits for both
 - WP-065 (Vue SFC Test Transform) is parallel with every other WP — it touches only `packages/vue-sfc-loader/`; it blocks WP-061, WP-062, WP-064 on the test-harness side only
+- WP-099 (Hanko broker governance, docs-only) is parallel with WP-052..WP-103 — it modifies only `00.3-prompt-lint-checklist.md` §7 and DECISIONS.md
+- WP-101 (handle claim) and WP-103 (replay storage) are parallel — both extend `apps/server/src/identity/` and `apps/server/src/replay/` respectively; both depend only on WP-052
+- WP-114 (registry viewer URL preview) is parallel with WP-091/092 (loadout builder + lobby intake) — depends only on WP-091 (`packages/registry/src/setupContract/` zod schema)
+- WP-121 / WP-122 / WP-123 / WP-124 / WP-125 (registry viewer enhancements) are sibling-parallel — each touches only `apps/registry-viewer/`; only WP-127's `cardTileThresholds.ts` consumes WP-121's `useCardSize.ts` composable (sequential)
+- WP-126 (Hanko session verifier) consumes only WP-099 (broker selection) and WP-112 (`SessionVerifier` interface + orchestrator); does NOT depend on WP-052 / WP-101 / WP-102 / WP-104 / WP-109 / WP-111 — those WPs all consume the WP-112 caller-injected provider pattern with `verifier: undefined` fail-closed defaults
 
 ---
 
@@ -2710,6 +2797,22 @@ Sessions must not relitigate settled choices without updating DECISIONS.md first
 | Full rewind to clean hand is the baseline — partial plan survival is a future optimization | WP-056 | DESIGN-CONSTRAINTS-PREPLANNING.md #3 |
 | Speculative PRNG uses seedable LCG, never `ctx.random.*`; `Date.now()` acceptable for seed entropy | WP-057 | DESIGN-PREPLANNING.md §3 |
 | Disruption pipeline is one cohesive workflow (detect → invalidate → rewind → notify) — never split into separate WPs | WP-058 | DESIGN-PREPLANNING.md §11 |
+| `AccountId` is a TypeScript branded type (`string & { readonly __brand: 'AccountId' }`); deliberately distinct from engine `PlayerId`; minted once at signup via `node:crypto.randomUUID()`; never reused, never derived from broker `sub` | WP-052 | D-5201 + D-8701 |
+| Single-parameter `Result<T>` shape — `\| { ok: true; value: T } \| { ok: false; reason: string; code: IdentityErrorCode }`; the failure-payload `code` field is structurally typed `IdentityErrorCode` but consuming layers emit their own closed-union strings into it via `as never`; the consuming switch translates back via `as <ClosedUnion>` cast at exactly one site | WP-052 / WP-112 | D-5201 + the orchestrator translation site at `sessionToken.logic.ts:191-193` |
+| Server-side broker is invisible at rest — the literal string `'hanko'` MUST NOT appear as an `auth_provider` enum value, fixture, seed, or quoted string anywhere under `apps/`, `packages/`, or `data/migrations/`; the federated-IdP claim mapping outputs only `'email' \| 'google' \| 'discord'` (the WP-052 enum verbatim) | WP-099 | D-9901 + D-9902 + F-1 |
+| Hanko-specific code is confined to `apps/server/src/auth/hanko/` — every `@teamhanko/*` import, every `hanko.io` URL, and every Hanko-specific type lives only under that directory; `render.yaml` and `.env.example` exempt by design (they declare env vars, not import broker code); the F-2 grep gate enforces this at every commit | WP-099 / WP-126 | D-9904 + F-2 |
+| Migration slot numbers are sequential and non-recyclable — once a slot is used (e.g., `004_create_players_table.sql`), it stays used; future WPs claim the next free slot and document the slot number in their §Locked Values | WP-052 onward | D-5202 (identity slot) + WP-101 (slot 008) + WP-104 (slot 009) + WP-109 (slot 010) precedent |
+| Set-qualified `<setAbbr>/<slug>` ID format is LOCKED on all five entity-ID fields of `MatchSetupConfig` (`schemeId`, `mastermindId`, `villainGroupIds`, `henchmanGroupIds`, `heroDeckIds`); bare slugs / display names / flat-card keys are rejected; `parseQualifiedId(input)` rejects malformed shapes; validator + builder agree on the single source of truth | WP-113 | D-10014 |
+| HTTP API catalog at `docs/ai/REFERENCE/api-endpoints.md` is the **authoritative network contract** — any WP that adds, modifies, removes, or changes the status of an HTTP endpoint OR a `Library-only` function reachable via direct import from `apps/server/src/**` MUST update this file in the same commit; closed-set Status taxonomy `{ Wired, Shipped-but-unwired, Library-only, Pending }`; closed-set Auth taxonomy `{ guest, handle-required, authenticated-session-required }`; replace-whole-row merge semantics (no partial-column updates) | WP-118 | D-11804 |
+| Caller-injected provider pattern is the default architectural seam for fallible dependencies (`SessionVerifier`, `AccountResolver`, `JwksFetcher`, `LeaderboardDependencies.checkParPublished`) — production wiring binds the seam at startup; tests inject fakes at construction time; no global `fetch` stubbing, no module-level singletons, no parallel typed surfaces | WP-053 / WP-054 / WP-112 / WP-126 | D-5306 + D-11201 + D-12603 |
+| Sibling-WP architectural choice for broker-specific surfaces — the broker-agnostic orchestrator + interface ships in one WP (e.g., WP-112), the broker-specific implementation ships in a sibling WP (e.g., WP-126); zero broker-specific imports in the orchestrator's files; the `[DECISION REQUIRED]` block for broker SDK selection lives in the sibling WP, never the orchestrator | WP-112 / WP-126 | D-11201 (Active at WP-112 close → Resolved at WP-126 close) |
+| Per-instance state for caller-injected provider seams — every factory call constructs an independent state container (e.g., per-instance JWKS cache, per-instance fetcher binding); no module-level singleton; tests assert independence by constructing two factories and verifying cross-cache misses | WP-126 | D-12603 |
+| Closed-set object-literal lookup for federated-IdP mapping — the lookup table `HANKO_IDP_TO_AUTH_PROVIDER: Readonly<Record<string, AuthProvider>>` enumerates every accepted federation/native key; no string-prefix check (`startsWith('ext:')` forbidden); no regex; unknown values resolve to `Result.fail({ code: 'unknown_provider' })` | WP-126 | D-12604 |
+| JWKS cache aliasing defense at insertion — `Object.freeze({ ...key })` at refresh time so a caller mutating the returned key either no-ops (sloppy mode) or throws (strict mode); the cache's stored shape is preserved across subsequent `getKey(kid)` calls (alternative: defensive shallow copy at return; insertion-time freeze is cheaper) | WP-126 | D-12603 + copilot Issue #17 |
+| Single-site default substitution for optional config fields — when an optional field is `undefined`, the default substitutes at exactly one site (typically the verifier factory body, NOT the cache); downstream code always sees a concrete value; two substitution sites invite drift if the default needs to change | WP-126 | D-12603 + PS-3 |
+| Tests fail loudly on missing test database — `hasTestDatabase ? {} : { skip: 'requires test database' }` inline conditional skip pattern at the `test()` call; never a `beforeEach` row-purge (the §2 SQL-write gate forbids it in scope); per-test uniqueness via per-suite-run identifier prefix avoids `UNIQUE`-constraint conflicts across runs | WP-052 / WP-101 / WP-102 / WP-104 / WP-109 / WP-112 | D-5201 §3.1 |
+| `01.5 NOT INVOKED` is the default declaration on every WP §Definition of Done that does not modify `LegendaryGameState`, `buildInitialGameState`, `LegendaryGame.moves`, or any phase hook; engine surface change requires explicit `01.5 IS INVOKED` declaration with replay-hash literal updates as 01.5-cascade allowlist additions | WP-013 onward; WP-111 IS INVOKED | D-1320 + the WP-111 §Locked Values cascade |
+| Catalog-update obligation lands in the same commit as the WP that touches the network/library surface — never as a separate `SPEC:` follow-up commit (per D-11804 single-row-graduation semantics); pre-flight verifies the catalog row before `git commit` | WP-118 onward | D-11804 |
 
 ---
 
@@ -2754,6 +2857,68 @@ in match setup or its envelope. Runtime switches, conditional logic, and
 rule modifications are not safe knobs. Knobs are tiered by risk (Tier 1
 fully safe, Tier 2 guarded, Tier 3 gated/future). No knob may move to a
 higher tier without a documented decision.
+
+### Auth Stack — Broker-Agnostic Orchestrator + Hanko-Specific Verifier (2026-04-27..2026-05-03)
+
+The complete authentication stack lands across three WPs sharing a single
+F-1..F-7 replacement-safety contract:
+
+- **WP-099** (governance, `f6cd591` 2026-04-27) — selects Hanko as the
+  authentication broker; locks `apps/server/src/auth/hanko/` as the
+  module path for broker-specific code (D-9904); the literal string
+  `'hanko'` is forbidden as an `auth_provider` enum value (D-9902 + F-1);
+  `AccountId` source unchanged at `node:crypto.randomUUID()` (D-9902 +
+  F-3); guest policy preserved (D-9905); Hanko-implementation files NOT
+  created.
+- **WP-112** (broker-agnostic, `d0fefa3` 2026-05-02) — ships
+  `requireAuthenticatedSession(req, options)` orchestrator +
+  `SessionVerifier` interface + `findAccountByAuthProviderSub` lookup +
+  `AccountResolver` caller-injected provider pattern; closed-union
+  `SessionVerificationErrorCode` (4 values, internal) +
+  `SessionValidationErrorCode` (6 values, public); translation at
+  exactly one site (`sessionToken.logic.ts:191-193`); fail-closed
+  default per D-11204 — `'session_verifier_not_configured'` returns 500
+  on every authenticated request until production wiring lands; SIBLING
+  WP architectural choice locked under D-11201 (broker-specific
+  verifier deferred to WP-126).
+- **WP-126** (broker-specific, `2aa7690` 2026-05-03) — ships
+  `apps/server/src/auth/hanko/` with `createHankoSessionVerifier(config):
+  SessionVerifier` factory + 8-step `verify(token)` closure +
+  per-instance JWKS cache; built-ins-only RS256 verification via Node
+  v22 `node:crypto` (D-12601 — zero new npm dependency); 4-field
+  `HankoVerifierConfig` + 3 env vars `HANKO_TENANT_BASE_URL` /
+  `HANKO_EXPECTED_AUDIENCE` / `HANKO_JWKS_REFRESH_INTERVAL_MS` (D-12602);
+  per-instance cache + 300_000 ms default + single-flight + one-shot
+  retry + graceful degradation + insertion-time `Object.freeze`
+  (D-12603); federation claim = `amr` array per Hanko docs; closed-set
+  object-literal `HANKO_IDP_TO_AUTH_PROVIDER` lookup with two-pass
+  priority scan (D-12604). D-11201 status flips Active → Resolved at
+  this close.
+
+**F-1..F-7 Future-Auth Gates** (locked at WP-099 §C; verified at
+WP-112 close; verified at WP-126 close) — F-1 no `'hanko'` enum value
+anywhere; F-2 every `@teamhanko/*` import + every `hanko.io` URL
+contained inside `apps/server/src/auth/hanko/` (runtime sources only —
+`render.yaml` / `.env.example` exempt); F-3 verifier never generates
+`AccountId`; F-4 zero gate change to existing guest-accessible routes;
+F-5 zero new dependency outside the `@teamhanko/*` family (under
+WP-126's built-ins-only D-12601 default, zero net dep change); F-6
+replacement-safety thought experiment passes (deleting
+`apps/server/src/auth/hanko/` + the catalog row + the env vars
+requires zero WP-112 / WP-052 / WP-099 file change); F-7 Vision
+Alignment cites §3 / §11 / §14 / §15 + NG-1 / NG-3 / NG-6 with
+no-conflict + N/A determinism.
+
+**Future request-handler WP** (next major surface) wires
+`configureSessionValidation({ verifier:
+createHankoSessionVerifier(config), accountResolver, database })`
+exactly once at server startup (mirrors WP-115's pg.Pool bootstrap
+pattern) and graduates the existing fail-closed
+`'session_verifier_not_configured'` defaults on `/api/me/*` (WP-104)
+and `/api/teams/*` (WP-109) into genuinely authenticated routes.
+
+**Decisions:** D-9901..D-9905 (WP-099); D-11201..D-11204 (WP-112);
+D-12601..D-12604 (WP-126).
 
 ---
 

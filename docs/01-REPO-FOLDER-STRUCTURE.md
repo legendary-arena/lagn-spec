@@ -1,7 +1,8 @@
 # Legendary Arena -- Repository Folder Structure
 
-> This document maps the actual repository layout as of 2026-04-14 (Phase 5
-> complete, 314 engine tests passing).
+> This document maps the actual repository layout as of 2026-05-03
+> (Phase 6 + Phase 7 + Beta-Launch Pillar + Auth Stack all shipped;
+> engine `604/0`, server `124/0/54` after WP-126 landed at `2aa7690`).
 > It describes what each directory and key file does, who owns it,
 > and what governance rules apply.
 >
@@ -93,31 +94,87 @@ Installed via `pwsh scripts/git/install-ec-hooks.ps1`.
 
 ```
 apps/
-├── registry-viewer/            # Read-only card browser SPA (Vue)
+├── arena-client/               # Gameplay client SPA (Vue 3 + Pinia + Vite, WP-061+)
 │   ├── src/
-│   │   ├── components/         # Vue components
-│   │   ├── composables/        # Vue composables
-│   │   ├── lib/                # Shared utilities
-│   │   └── registry/           # Registry client (types + impl)
+│   │   ├── App.vue             # Root component + route discriminator
+│   │   ├── components/
+│   │   │   ├── hud/            # Arena HUD subtree (WP-062)
+│   │   │   ├── log/            # GameLogPanel (WP-064)
+│   │   │   ├── play/           # Interactive play surface (WP-100)
+│   │   │   └── replay/         # ReplayInspector + ReplayFileLoader (WP-064)
+│   │   ├── lib/
+│   │   │   └── api/            # Server API wrappers (profileApi, ownerProfileApi, ...)
+│   │   ├── lobby/              # LiveMatchView, lobby UI (WP-090, WP-092, WP-100)
+│   │   ├── pages/              # PlayerProfilePage (WP-102), MyProfilePage (WP-104)
+│   │   ├── replay/             # parseReplayJson + replay loaders (WP-064)
+│   │   ├── stores/             # Pinia stores (useUiStateStore, etc.)
+│   │   └── fixtures/           # UIState fixtures + replay/three-turn-sample (WP-064)
 │   ├── public/                 # Static assets
 │   └── dist/                   # Build output (not committed)
+│
+├── registry-viewer/            # Read-only card browser SPA (Vue 3 + Vite)
+│   │                           # cards.barefootbetters.com
+│   ├── src/
+│   │   ├── components/         # CardGrid, CardDetail, CardDataTile (WP-096),
+│   │   │                       # CardSizeSlider (WP-121), AbilityEffectFilter (WP-125),
+│   │   │                       # ThemeSizeSlider (WP-124), GlossaryPanel, etc.
+│   │   ├── composables/        # useCardSize (WP-121), useThemeSize (WP-124),
+│   │   │                       # useCardViewMode, useSetupFromUrl (WP-114),
+│   │   │                       # cardTileThresholds (WP-127)
+│   │   ├── lib/                # cardTypesClient, cardAbilitiesClient (WP-125),
+│   │   │                       # registryClient, themeClient, glossaryClient,
+│   │   │                       # devLog, debugMode
+│   │   ├── prefs/              # Pinia preferences subsystem (WP-068)
+│   │   └── registry/           # Registry client (types + impl, viewer-local)
+│   ├── public/                 # Static assets
+│   └── dist/                   # Build output (not committed)
+│
+├── replay-producer/            # CLI tool — produce-replay (WP-063)
+│   └── src/                    # First cli-producer-app per D-6301
 │
 └── server/                     # @legendary-arena/server -- boardgame.io runtime
     ├── src/
     │   ├── index.mjs           # Process entrypoint (SIGTERM, lifecycle)
-    │   ├── server.mjs          # Server config (registry + rules loading, Server())
+    │   ├── server.mjs          # Server config (registry + rules + routes, Server())
+    │   ├── auth/               # Session-token validation (WP-112)
+    │   │   ├── sessionToken.{types,logic,logic.test}.ts  # Broker-agnostic orchestrator
+    │   │   ├── accountLookup.{logic,logic.test}.ts        # findAccountByAuthProviderSub
+    │   │   └── hanko/          # Hanko-specific verifier (WP-126, D-9904 module-path lock)
+    │   │       ├── hankoVerifier.{types,logic,logic.test}.ts  # createHankoSessionVerifier factory + 8-step verify(token)
+    │   │       └── jwksCache.{logic,logic.test}.ts            # Per-instance JWKS cache + single-flight + Object.freeze at insertion
+    │   ├── competition/        # submitCompetitiveScore + 16-step locked flow (WP-053)
+    │   ├── db/                 # Long-lived pg.Pool lifecycle anchor (WP-115)
     │   ├── game/
     │   │   └── legendary.mjs   # Thin re-export of LegendaryGame from game-engine
-    │   └── rules/
-    │       └── loader.mjs      # PostgreSQL rules loader (loadRules, getRules)
+    │   ├── identity/           # AccountId branded type, players + replay_ownership (WP-052)
+    │   │   ├── identity.{types,logic}.ts  # AccountId, GuestIdentity, replay ownership
+    │   │   ├── handle.{types,logic}.ts    # claimHandle, findAccountByHandle (WP-101)
+    │   │   └── replayOwnership.{types,logic}.ts
+    │   ├── leaderboards/       # Public leaderboards library (WP-054) + HTTP routes (WP-115)
+    │   ├── par/                # PAR gate consumer (parGate.mjs)
+    │   ├── profile/            # Public profile (WP-102) + owner profile + /me edit (WP-104)
+    │   │   ├── profile.{types,logic,routes}.ts                # Public profile (read-only)
+    │   │   └── ownerProfile.{types,logic,routes}.ts           # Owner profile (authenticated writes)
+    │   ├── replay/             # storeReplay + loadReplay (WP-103)
+    │   ├── rules/
+    │   │   └── loader.mjs      # PostgreSQL rules loader (loadRules, getRules)
+    │   └── teams/              # Team affiliation — cooperative cohorts (WP-109)
+    │       ├── team.{types,logic,routes,logic.test}.ts        # createTeam, member events, audit log
+    │       └── ...
+    ├── scripts/                # CLI: create-match.mjs, list-matches.mjs, join-match.mjs
     └── package.json            # Workspace deps: game-engine, registry, boardgame.io, pg
 ```
 
 **Import rules:**
 - `server` may import: `@legendary-arena/game-engine`, `@legendary-arena/registry`, `pg`, Node built-ins
 - `server` must NOT import: UI packages, browser APIs
+- `arena-client` may import: `@legendary-arena/registry` (type-only), UI framework
+- `arena-client` must NOT import: `game-engine` (runtime), `server`, `pg`
 - `registry-viewer` may import: `@legendary-arena/registry`, UI framework
 - `registry-viewer` must NOT import: `game-engine`, `server`, `pg`
+- `replay-producer` may import: `@legendary-arena/game-engine` (type + runtime), `@legendary-arena/registry`, Node built-ins
+
+**WP-126 / D-9904 module-path lock:** every `@teamhanko/*` import (none under D-12601's built-ins-only path), every `hanko.io` URL, and every Hanko-specific type lives **only** under `apps/server/src/auth/hanko/`. The F-2 grep gate (per WP-099 §B) enforces this boundary at every commit.
 
 ---
 
@@ -125,49 +182,79 @@ apps/
 
 ```
 packages/
-├── game-engine/                # @legendary-arena/game-engine (314 tests, 83 suites)
+├── game-engine/                # @legendary-arena/game-engine (604 tests, 132 suites)
 │   ├── src/
 │   │   ├── index.ts            # Public exports (types, builders, executors, helpers)
 │   │   ├── game.ts             # boardgame.io Game() -- phases, moves, validateSetupData
-│   │   ├── types.ts            # MatchConfiguration (9 fields), LegendaryGameState (21 fields)
+│   │   ├── types.ts            # MatchConfiguration (9 fields), LegendaryGameState
+│   │   │                       # (extended via 01.5: cardDisplayData per WP-111)
 │   │   ├── matchSetup.types.ts # MatchSetupConfig Zod schema
-│   │   ├── matchSetup.validate.ts # Setup validation + CardRegistryReader
+│   │   ├── matchSetup.validate.ts # Setup validation + CardRegistryReader (WP-113 lock)
 │   │   │
+│   │   ├── beta/               # BetaFeedback / BetaCohort / FeedbackCategory (WP-037)
 │   │   ├── board/              # City, HQ, KO, wounds, bystanders, board keywords
 │   │   ├── economy/            # TurnEconomy, cardStats, resource gating
 │   │   ├── endgame/            # evaluateEndgame, ENDGAME_CONDITIONS
+│   │   ├── governance/         # ChangeCategory / ChangeBudget / ChangeClassification (WP-040)
 │   │   ├── hero/               # Hero effect execution, conditional evaluation
 │   │   ├── lobby/              # LobbyState, setPlayerReady, startMatchIfReady
 │   │   ├── mastermind/         # MastermindState, tactics, fightMastermind setup
 │   │   ├── moves/              # Core moves, fight, recruit, zoneOps
+│   │   ├── ops/                # OpsCounters / IncidentSeverity / DeploymentEnvironment (WP-035)
 │   │   ├── persistence/        # PERSISTENCE_CLASSES, MatchSnapshot, createSnapshot
+│   │   ├── replay/             # replayGame, applyReplayStep (WP-080), verifyDeterminism
 │   │   ├── rules/              # Hook definitions, execution pipeline, scheme/mastermind handlers
 │   │   ├── scheme/             # SchemeSetupInstruction types + executor (WP-026)
-│   │   ├── scoring/            # computeFinalScores, VP breakdowns
-│   │   ├── setup/              # buildInitialGameState, player/pile init, card keywords, scheme builder
+│   │   ├── scoring/            # PAR-aware scoring + ScenarioScoringConfig loaders (WP-053a)
+│   │   ├── setup/              # buildInitialGameState + buildCardDisplayData (WP-111)
+│   │   ├── simulation/         # AI playtesting framework (WP-036)
 │   │   ├── state/              # Zone types (CardExtId, PlayerZones, GlobalPiles), validators
 │   │   ├── test/               # makeMockCtx (shared test helper)
 │   │   ├── turn/               # Turn stages, phase loop, advanceTurnStage
+│   │   ├── ui/                 # UIState contract (WP-028) + buildUIState (WP-067, WP-111)
+│   │   ├── versioning/         # EngineVersion / VersionedArtifact + checkCompatibility (WP-034)
 │   │   └── villainDeck/        # Deck composition, reveal pipeline, card type classification
 │   └── dist/                   # Build output (not committed)
 │
-└── registry/                   # @legendary-arena/registry
-    ├── src/
-    │   ├── schema.ts           # Zod schemas (authoritative field shapes) -- IMMUTABLE
-    │   ├── shared.ts           # flattenSet(), applyQuery(), buildHealthReport() -- IMMUTABLE
-    │   ├── impl/
-    │   │   ├── localRegistry.ts  # Local file loader (uses sets.json) -- IMMUTABLE
-    │   │   └── httpRegistry.ts   # HTTP/R2 loader (for browser clients)
-    │   ├── types/              # TypeScript type definitions (RegistryInfo, CardRegistry, etc.)
-    │   └── registry.smoke.test.ts  # Smoke test (node:test) -- loads 40 sets
+├── preplan/                    # @legendary-arena/preplan (WP-056..058)
+│   ├── src/
+│   │   ├── preplan.types.ts    # PrePlan, PrePlanSandboxState, RevealRecord, PrePlanStep (WP-056)
+│   │   ├── speculativePrng.ts  # Client-local Fisher-Yates PRNG (WP-057)
+│   │   ├── preplanSandbox.ts   # Sandbox factory (WP-057)
+│   │   ├── speculativeOperations.ts  # Five speculative ops (WP-057)
+│   │   ├── preplanStatus.ts    # PREPLAN_STATUS_VALUES canonical readonly array (WP-057)
+│   │   ├── disruption.types.ts                 # Disruption types (WP-058)
+│   │   ├── disruptionDetection.ts              # isPrePlanDisrupted (WP-058)
+│   │   ├── disruptionPipeline.ts               # executeDisruptionPipeline (WP-058)
+│   │   └── preplanEffectTypes.ts               # PREPLAN_EFFECT_TYPES canonical (WP-058)
+│   └── dist/                   # Build output (not committed)
+│
+├── registry/                   # @legendary-arena/registry
+│   ├── src/
+│   │   ├── schema.ts           # Zod schemas (authoritative field shapes)
+│   │   │                       # — extended additively by WP-082, WP-083, WP-091, WP-125
+│   │   ├── shared.ts           # flattenSet(), applyQuery(), buildHealthReport()
+│   │   ├── setupContract/      # WP-091 — MatchSetupDocument zod schema + validateMatchSetupDocument
+│   │   ├── impl/
+│   │   │   ├── localRegistry.ts  # Local file loader (uses sets.json)
+│   │   │   └── httpRegistry.ts   # HTTP/R2 loader (for browser clients)
+│   │   ├── types/              # TypeScript type definitions (RegistryInfo, CardRegistry, etc.)
+│   │   └── registry.smoke.test.ts  # Smoke test (node:test) -- loads 40 sets
+│   └── dist/                   # Build output (not committed)
+│
+└── vue-sfc-loader/             # @legendary-arena/vue-sfc-loader (Shared Tooling, WP-065)
+    ├── src/                    # @vue/compiler-sfc wrapped in Node 22 module.register() loader hook
     └── dist/                   # Build output (not committed)
 ```
 
 **Import rules:**
 - `game-engine` may import: Node built-ins only
-- `game-engine` must NOT import: `registry`, `server`, any `apps/*`, `pg`
+- `game-engine` must NOT import: `registry`, `preplan`, `server`, any `apps/*`, `pg`, `vue-sfc-loader`
 - `registry` may import: Node built-ins, `zod`
-- `registry` must NOT import: `game-engine`, `server`, any `apps/*`, `pg`
+- `registry` must NOT import: `game-engine`, `preplan`, `server`, any `apps/*`, `pg`
+- `preplan` may import: `game-engine` (type-only at compile time, never at runtime)
+- `preplan` must NOT import: `boardgame.io`, `registry`, `server`, any `apps/*`, `pg`, `vue-sfc-loader`
+- `vue-sfc-loader` is **Shared Tooling** — orthogonal to the main dependency chain; consumed only by `apps/*` test scripts at dev/test time, never at runtime; never appears in any app's runtime `dependencies`
 
 ---
 
@@ -187,12 +274,24 @@ data/
 ├── metadata/                   # Lookup tables and glossaries
 │   ├── sets.json               # Set index -- THE registry manifest (40 entries)
 │   ├── keywords-full.json      # Keyword glossary (123 entries, WP-082)
-│   └── rules-full.json         # Rule glossary (20 entries, WP-082)
+│   ├── rules-full.json         # Rule glossary (20 entries, WP-082)
+│   ├── card-types.json         # Card-types taxonomy (WP-086)
+│   └── card-abilities.json     # Card abilities taxonomy (WP-125, EC-127)
+│
+├── scoring-configs/            # Per-scenario ScenarioScoringConfig (WP-053a, D-5306a)
+│   └── <scenario_key>.json
 │
 ├── migrations/                 # PostgreSQL migrations (applied by scripts/migrate.mjs)
 │   ├── 001_server_schema.sql   # Rules-engine DDL (legendary.* namespace)
 │   ├── 002_seed_rules.sql      # Rules index + rule_docs glossary
-│   └── 003_game_sessions.sql   # Match tracking table (public.game_sessions)
+│   ├── 003_game_sessions.sql   # Match tracking table (public.game_sessions)
+│   ├── 004_create_players_table.sql              # AccountId + auth_provider (WP-052)
+│   ├── 005_create_replay_ownership_table.sql     # Replay ownership + visibility (WP-052)
+│   ├── 006_create_replay_blobs_table.sql         # Content-addressed replay storage (WP-103)
+│   ├── 007_create_competitive_scores_table.sql   # Competitive submissions (WP-053)
+│   ├── 008_add_handle_to_players.sql             # Globally unique handle (WP-101)
+│   ├── 009_create_player_profiles_and_links.sql  # Owner profile + links (WP-104)
+│   └── 010_create_teams_and_membership.sql       # Cooperative cohorts (WP-109)
 │
 ├── schema-server.sql           # Rules-engine DDL (included by 001 migration)
 ├── seed-server.sql             # Galactus example seed data
@@ -337,16 +436,37 @@ in any conflict.
 
 ## What Does NOT Exist Yet
 
-These directories and packages are planned but not created. They will
-be created by their respective Work Packets.
+All previously-planned directories have shipped. Pending work tracked in
+`docs/ai/work-packets/WORK_INDEX.md` — see WP-097/098 (funding policy +
+lint-gate trigger; will add prose to `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`),
+WP-105..108 (player badges + avatar upload + integrity admin + funding
+surface), and the future authenticated request-handler WP that will wire
+`configureSessionValidation({ verifier: createHankoSessionVerifier(config),
+accountResolver, database })` exactly once at server startup.
 
-| Planned | Created by | Purpose |
+| Created surface | Created by | Purpose |
 |---|---|---|
-| `docs/ops/` | WP-035 | Operational playbooks |
-| `docs/beta/` | WP-037 | Beta strategy documents |
-| `docs/governance/` | WP-040 | Growth governance documents |
+| `docs/ops/` | WP-035 | Operational playbooks (RELEASE_CHECKLIST, DEPLOYMENT_FLOW, INCIDENT_RESPONSE, LIVE_OPS_FRAMEWORK, LAUNCH_READINESS, LAUNCH_DAY) |
+| `docs/beta/` | WP-037 | Beta strategy documents (BETA_STRATEGY, BETA_EXIT_CRITERIA) |
+| `docs/governance/` | WP-040 | Growth governance documents (CHANGE_GOVERNANCE) |
+| `docs/audits/` | WP-085 | Vision-alignment audit reports (`vision-alignment-{YYYY-MM-DD}.md`) |
+| `docs/ai/post-mortems/` | WP-053+ | 01.6 post-mortems for WPs that meet the trigger criteria |
+| `apps/arena-client/` | WP-061 | Gameplay client SPA (Vue 3 + Pinia + Vite) |
+| `apps/replay-producer/` | WP-063 | First cli-producer-app per D-6301 |
+| `apps/server/src/auth/` | WP-112 | Session-token validation orchestrator + Hanko adapter (WP-126) |
+| `apps/server/src/auth/hanko/` | WP-126 | Hanko-specific session verifier + JWKS cache (D-9904 module-path lock) |
+| `apps/server/src/competition/` | WP-053 | Competitive score submission |
+| `apps/server/src/db/` | WP-115 | Long-lived pg.Pool lifecycle anchor |
+| `apps/server/src/identity/` | WP-052 / WP-101 | AccountId, players, replay ownership, handle claim |
+| `apps/server/src/leaderboards/` | WP-054 / WP-115 | Leaderboard library + HTTP routes |
+| `apps/server/src/par/` | WP-051 | PAR gate consumer |
+| `apps/server/src/profile/` | WP-102 / WP-104 | Public profile + owner profile + /me edit |
+| `apps/server/src/replay/` | WP-103 | Server-side replay storage & loader |
+| `apps/server/src/teams/` | WP-109 | Team affiliation — cooperative cohorts |
+| `packages/preplan/` | WP-056 | Pre-planning types + sandbox + disruption pipeline |
+| `packages/vue-sfc-loader/` | WP-065 | Shared tooling — `@vue/compiler-sfc` registered for `node:test` |
 
 ---
 
-*Last updated: 2026-04-14 (Phase 5 complete — 314 engine tests, 41/61 items done)*
-*To regenerate: compare against `find . -type d` and `git ls-files`*
+*Last updated: 2026-05-03 (Phase 6 + Phase 7 + Beta-Launch + Auth Stack all shipped — engine 604/0, server 124/0/54 after WP-126)*
+*To regenerate: compare against `git ls-tree HEAD -d --name-only -r | sort` and `find . -type d -not -path '*/node_modules/*' -not -path '*/dist/*' -not -path '*/.git/*' | sort`*
