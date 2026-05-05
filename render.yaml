@@ -25,7 +25,7 @@ services:
     # ./apps/server/node_modules/tsx/dist/loader.mjs resolves from the
     # service's repo-root cwd; bare `tsx` would not (pnpm hoists it
     # under apps/server/node_modules per strict hoisting policy).
-    buildCommand: pnpm install && node scripts/migrate.mjs
+    buildCommand: pnpm install && pnpm -r build && node scripts/migrate.mjs
     startCommand: node --import ./apps/server/node_modules/tsx/dist/loader.mjs apps/server/src/index.mjs
     healthCheckPath: /health
     envVars:
