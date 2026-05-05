@@ -86,7 +86,7 @@ After this session:
     `processed_at timestamptz NULL`, `process_error text NULL`).
   - `legendary.stripe_checkout_sessions` (`id bigserial PK`,
     `session_id text NOT NULL UNIQUE`, `account_id text NOT NULL
-    REFERENCES legendary.players(account_id) ON DELETE CASCADE`,
+    REFERENCES legendary.players(ext_id) ON DELETE CASCADE`,
     `price_id text NOT NULL`, `entitlement_key text NOT NULL`
     (denormalized for WP-134 lookup), `intent_status text NOT
     NULL CHECK (intent_status IN ('open', 'completed', 'expired',
@@ -405,6 +405,25 @@ Before writing a single line:
   `JSON.parse`-roundtrip identical to the stored row.
 - No new npm dependencies beyond `stripe` (Node SDK). The exact
   version is locked under D-DEC-3.
+- The webhook raw-body middleware MUST enforce a size limit of
+  `1mb` via the `jsonLimit` / `limit` parameter.
+  `// why: prevents oversized payload abuse while remaining well
+  above current Stripe event sizes (typical events are < 50kb).`
+- The webhook handler MUST NOT call any Stripe API methods after
+  signature verification (no `stripeClient.*` calls inside the
+  handler body).
+  `// why: any post-verification API call increases latency and
+  Stripe retry amplification; enrichment belongs in WP-134's
+  fulfillment processor.`
+- The `process_error` column on `legendary.stripe_events` is
+  introduced by WP-133 but **never written by WP-133**. It is
+  reserved for WP-134's fulfillment processor to record
+  processing-time errors. WP-133 always inserts `process_error
+  = NULL`.
+- Concurrent webhook deliveries are expected (Stripe at-least-once
+  delivery). Idempotency is enforced exclusively via
+  `UNIQUE(event_id)` at the database layer — no application-level
+  deduplication lock is required or permitted.
 
 **Session protocol:**
 - If any contract, field name, or reference is unclear, stop and ask
@@ -436,7 +455,7 @@ Before writing a single line:
   default.
 - **`legendary.stripe_checkout_sessions` columns:** `id bigserial
   PK`, `session_id text NOT NULL UNIQUE`, `account_id text NOT
-  NULL REFERENCES legendary.players(account_id) ON DELETE CASCADE`,
+  NULL REFERENCES legendary.players(ext_id) ON DELETE CASCADE`,
   `price_id text NOT NULL`, `entitlement_key text NOT NULL`,
   `intent_status text NOT NULL CHECK (intent_status IN ('open',
   'completed', 'expired', 'canceled'))`, `created_at timestamptz
@@ -456,17 +475,22 @@ Before writing a single line:
   version at execution time).
 - **`BillingErrorCode` closed union:** `'unauthorized' |
   'session_verifier_not_configured' | 'invalid_price' |
-  'stripe_error' | 'invalid_signature' | 'billing_not_configured'
-  | 'internal_error'`.
+  'invalid_request' | 'stripe_error' | 'invalid_signature' |
+  'billing_not_configured' | 'internal_error'`.
 
 ---
 
 ## Debuggability & Diagnostics
 
-- Every Stripe API call captures `{ requestId: stripe.lastResponse.requestId }`
-  in the database row's `process_error` field on failure (per
-  Stripe's documented `req_*` request-id convention) so support
-  can grep across the Stripe dashboard and the local DB.
+- Every Stripe API call captures the request ID from the returned
+  object's `lastResponse.requestId` property (e.g.,
+  `session.lastResponse.requestId`) and records it in
+  `process_error` on failure (per Stripe's `req_*` request-id
+  convention) so support can cross-reference the Stripe dashboard
+  and the local DB. Note: `lastResponse` is attached to the
+  returned Stripe response object, NOT to the `stripe` client
+  instance — `stripe.lastResponse` is undefined and must not be
+  used.
 - The `legendary.stripe_events` table is the single source of
   truth for "did Stripe send us this event"; replaying past
   events is a SQL `SELECT ... WHERE processed_at IS NULL` away
@@ -1033,7 +1057,7 @@ domain expansion). Option (c) is rejected.
 - [ ] `legendary.stripe_checkout_sessions` has 8 columns per Locked contract values
 - [ ] UNIQUE constraint on `event_id`; UNIQUE constraint on `session_id`
 - [ ] `intent_status` CHECK matches `('open', 'completed', 'expired', 'canceled')` verbatim
-- [ ] FK to `legendary.players(account_id)` on `stripe_checkout_sessions`
+- [ ] FK on `stripe_checkout_sessions.account_id` references `legendary.players(ext_id)` (the UNIQUE text alternate key — `legendary.players` has no `account_id` column; executor documents chosen fix in D-13302; `player_id bigint REFERENCES legendary.players(player_id)` is also acceptable)
 
 ### Library
 - [ ] `billing.config.ts` exports `loadBillingConfig(env)`

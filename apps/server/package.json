@@ -13,7 +13,8 @@
     "@legendary-arena/game-engine": "workspace:*",
     "@legendary-arena/registry": "workspace:*",
     "boardgame.io": "^0.50.0",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "stripe": "22.1.0"
   },
   "devDependencies": {
     "tsx": "^4.15.7"

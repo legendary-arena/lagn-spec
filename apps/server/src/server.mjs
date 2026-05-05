@@ -18,6 +18,8 @@ import { registerLeaderboardRoutes } from './leaderboards/leaderboard.routes.js'
 import { registerOwnerProfileRoutes } from './profile/ownerProfile.routes.js';
 import { registerTeamRoutes } from './teams/team.routes.js';
 import { registerEntitlementRoutes } from './entitlements/entitlements.routes.js';
+import { registerBillingRoutes } from './billing/billing.routes.js';
+import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
 import { requireAuthenticatedSession } from './auth/sessionToken.logic.js';
 import { createHankoSessionVerifier } from './auth/hanko/hankoVerifier.logic.js';
 import { productionAccountResolver } from './auth/accountResolver.logic.js';
@@ -290,6 +292,55 @@ export async function startServer() {
     requireAuthenticatedSession,
     verifier,
     accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+  });
+
+  // why: WP-133 / D-13301 + D-13303 + D-13305 + D-13309 — load the
+  // billing configuration once at startup (production-fatal on missing
+  // env, mirrors WP-126 / WP-131 startup-guard precedent), then
+  // construct the Stripe client once with the date-stamped apiVersion
+  // pin per D-13303. Both bindings are undefined in non-production
+  // missing-env mode; the routes return 503 'billing_not_configured'
+  // in that case (fail-closed local-dev ergonomics). The deps bundle
+  // mirrors the registerOwnerProfileRoutes / registerEntitlementRoutes
+  // shape with two billing-specific additions (billingConfig +
+  // stripeClient) and the customer-email resolver — the resolver
+  // queries legendary.players.email by ext_id at request time so the
+  // Stripe Checkout Session carries the authenticated owner's email
+  // without ever reading request input (the email is server-derived,
+  // mirroring the successUrl/cancelUrl D-13309 posture).
+  const billingConfig = loadBillingConfig(process.env);
+  const stripeClient =
+    billingConfig === undefined
+      ? undefined
+      : createStripeClient(billingConfig);
+  if (billingConfig !== undefined) {
+    console.log(
+      `[billing] startup: loaded ${billingConfig.priceAllowlist.size} price-allowlist entries`,
+    );
+  } else {
+    console.log(
+      '[billing] not configured (non-production); /api/billing/* routes return 503',
+    );
+  }
+  registerBillingRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+    billingConfig,
+    stripeClient,
+    resolveCustomerEmail: async (accountId, database) => {
+      const lookup = await database.query(
+        'SELECT email FROM legendary.players WHERE ext_id = $1 LIMIT 1',
+        [accountId],
+      );
+      if (lookup.rows.length === 0) {
+        return null;
+      }
+      const emailValue = lookup.rows[0].email;
+      return typeof emailValue === 'string' && emailValue.length > 0
+        ? emailValue
+        : null;
+    },
   });
 
   // why: Render.com injects PORT automatically. The fallback 8000 is for

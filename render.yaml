@@ -59,6 +59,26 @@ services:
       # D-12603 default of 300_000 ms (5 minutes).
       - key: HANKO_JWKS_REFRESH_INTERVAL_MS
         sync: false
+      # Stripe billing configuration (WP-133 / D-13301..D-13309). Production
+      # startup is fatal-on-missing-env per D-13301; provision all four in the
+      # Render dashboard before deploying. STRIPE_SECRET_KEY pairs with the
+      # apiVersion pin '2025-09-30.clover' locked under D-13303.
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      # STRIPE_PRICE_ALLOWLIST is comma-separated priceId:entitlementKey pairs
+      # parsed at startup into a ReadonlyMap<string, EntitlementKey>. Every
+      # entitlementKey is validated against ENTITLEMENT_KEYS at startup
+      # (D-13305 startup-fatal allowlist).
+      - key: STRIPE_PRICE_ALLOWLIST
+        sync: false
+      # PUBLIC_BASE_URL is the deployed application origin (no trailing slash);
+      # used to server-derive Stripe Checkout success_url and cancel_url per
+      # D-13309 — accepting either from request input would permit redirect
+      # manipulation.
+      - key: PUBLIC_BASE_URL
+        sync: false
 
 databases:
   # Managed PostgreSQL — rules engine backing store
