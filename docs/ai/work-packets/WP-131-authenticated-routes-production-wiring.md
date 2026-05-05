@@ -1,6 +1,6 @@
 # WP-131 — Authenticated Routes Production Wiring (Hanko Verifier + Account Resolver)
 
-**Status:** Draft (drafted 2026-05-03; lint-gate self-review **PASS** — see §Lint Self-Review at the foot)
+**Status:** Draft (drafted 2026-05-03; revised 2026-05-04 with reviewer-ergonomics tightening pass — terminology normalization, Session Context shortening, hoisted Invariant block, D-13103 contract-lock language, §C `// why:` clarification on `tryConstructHankoVerifier()`, catalog wording uniformity, one new negative assertion in §C Acceptance Criteria. No scope, contract, or behavior change. Lint-gate self-review **PASS** — see §Lint Self-Review at the foot.)
 **Primary Layer:** Server (`apps/server/src/auth/**` for the new resolver helper; `apps/server/src/server.mjs` for the wiring site)
 **Dependencies:** WP-126 (`createHankoSessionVerifier(config)` factory + `HankoVerifierConfig` shape + three env vars `HANKO_TENANT_BASE_URL` / `HANKO_EXPECTED_AUDIENCE` / `HANKO_JWKS_REFRESH_INTERVAL_MS`); WP-112 (`SessionVerifier` interface + `AccountResolver` type + `requireAuthenticatedSession` orchestrator + `findAccountByAuthProviderSub` lookup helper); WP-104 (`registerOwnerProfileRoutes(router, pool, deps)` accepts `verifier?` + `accountResolver?` in its `deps` bundle); WP-109 (`registerTeamRoutes(router, pool, deps)` accepts the same `deps` bundle shape); WP-115 (long-lived `pg.Pool` lifecycle anchor at `apps/server/src/server.mjs`); WP-052 (`AccountId` brand + `legendary.players` table + `AuthProvider` enum).
 **Slot note:** WP-128 / WP-129 / WP-130 + EC-131 / EC-132 / EC-133 are reserved by the board-layout chain (WP-128 UIState projection extensions, WP-129 desktop / mobile board layout, WP-130 reskin / playmat selector). WP-131 / EC-134 is the next free WP-keyed pair after that chain.
@@ -9,58 +9,53 @@
 
 ## Session Context
 
-WP-126 (executed 2026-05-03 at `2aa7690`, `EC-130:`) shipped the
-broker-specific Hanko `SessionVerifier` library at
-`apps/server/src/auth/hanko/`. Its `createHankoSessionVerifier(config)`
-factory returns a closure conforming to the WP-112 `SessionVerifier`
-interface verbatim. WP-126 explicitly deferred production wiring per
-D-11204 + D-11201 staging — the verifier exists but no call site
-constructs it from environment variables and threads it into the
-authenticated route helpers.
+WP-126 (executed 2026-05-03 at `2aa7690`, `EC-130:`) shipped a
+broker-specific Hanko `SessionVerifier` as a library-only component at
+`apps/server/src/auth/hanko/`. Per D-11204 + D-11201 staging,
+production wiring was explicitly deferred: no startup code constructs
+the verifier from environment variables, and all authenticated routes
+registered by WP-104 (executed 2026-05-02, `EC-128:`) and WP-109
+(executed 2026-05-03, `EC-115:`) were registered with
+`verifier: undefined`.
 
-WP-104 (executed 2026-05-02, `EC-128:`) and WP-109 (executed 2026-05-03,
-`EC-115:`) registered three authenticated routes under `/api/me/*` and
-eight under `/api/teams/*` respectively. Both sets call
-`requireAuthenticatedSession` as the first business-logic step in every
-handler, but pass `verifier: undefined` and `accountResolver: undefined`
-on the dependency bundle. Per D-11204 the orchestrator returns
-`Result.fail({ code: 'session_verifier_not_configured' })` on every
-request, surfacing as HTTP 500 to the arena-client. The shipped routes
-are structurally complete but not yet reachable as authenticated
-endpoints.
+As a result, the eleven authenticated routes added by WP-104 (three
+`/api/me/*`) and WP-109 (eight `/api/teams/*`) are structurally
+complete but intentionally unreachable: every call to
+`requireAuthenticatedSession` returns
+`Result.fail({ code: 'session_verifier_not_configured' })` per D-11204,
+surfacing as HTTP 500 to the arena-client.
 
-This WP does the wiring — it constructs the Hanko verifier from the
-three env vars declared in WP-126's `render.yaml` / `.env.example`
-edits, ships a small production `AccountResolver` that wraps WP-112's
-`findAccountByAuthProviderSub` lookup helper, and threads both into
-both `register*Routes` call sites in `apps/server/src/server.mjs`. The
-existing `Library-only` rows for `requireAuthenticatedSession` /
-`createHankoSessionVerifier` in `docs/ai/REFERENCE/api-endpoints.md`
-remain `Library-only` (they are still library functions consumed at
-startup, not HTTP endpoints), but the eleven `/api/me/*` and
-`/api/teams/*` rows graduate from "fail-closed via D-11204" to
-"genuinely authenticated."
+WP-131 closes that gap. It wires the existing Hanko verifier and a
+production `AccountResolver` into `server.mjs`, lifting the
+fail-closed placeholder into a genuinely authenticated production
+posture while preserving the same fail-closed default for local
+development.
 
 ---
 
 ## Goal
 
 After this session, the production server boots with a fully wired
-session-validation pipeline:
+session-validation pipeline.
+
+**Invariant (hard).** WP-131 is **production wiring**: it composes
+existing libraries, introduces **zero new HTTP endpoints**, modifies
+**zero existing route file**, and does **not** alter any
+authentication, authorization, or error-mapping contract established
+by WP-112, WP-104, WP-109, or WP-126. The only production-code touch
+outside the new resolver helper is `apps/server/src/server.mjs`. The
+two route helpers (`ownerProfile.routes.ts`, `team.routes.ts`) and the
+Hanko verifier directory (`apps/server/src/auth/hanko/**`) remain
+byte-identical pre- and post-WP-131.
+
+**Detail bullets:**
 
 - A new file `apps/server/src/auth/accountResolver.logic.ts` exports `productionAccountResolver: AccountResolver` — a thin closure that takes a `VerifiedSessionClaim` plus a `DatabaseClient` and returns `Result<AccountId | null>` by delegating to WP-112's `findAccountByAuthProviderSub(claim.authProvider, claim.authProviderSub, database)` and remapping its row payload to the bare `AccountId | null` shape the orchestrator expects. The resolver itself never throws; database faults bubble up as `Result.fail({ code: 'lookup_failed' })` per D-11203 verbatim.
 - `apps/server/src/server.mjs`'s `startServer()` reads `HANKO_TENANT_BASE_URL` + `HANKO_EXPECTED_AUDIENCE` + `HANKO_JWKS_REFRESH_INTERVAL_MS` from `process.env`. When `NODE_ENV === 'production'` the missing-env path is fatal — `startServer()` logs a full-sentence error and exits 1 (mirrors the `loadRegistry` failure path at [`apps/server/src/server.mjs:67-73`](../../../apps/server/src/server.mjs)). When `NODE_ENV !== 'production'` and either of the two required vars is unset, the server boots in fail-closed mode (logs a full-sentence warning, leaves `verifier: undefined` so authenticated routes continue to return 500 with `code: 'session_verifier_not_configured'` — matches the current pre-WP-131 behavior verbatim, preserving local-dev ergonomics for engineers who do not need authenticated paths).
 - When the env vars are present, `startServer()` constructs the verifier via `createHankoSessionVerifier({ tenantBaseUrl, expectedAudience, jwksRefreshIntervalMs })` exactly once at startup, binds `productionAccountResolver`, and passes both through the existing `OwnerProfileRouteDependencies` / `TeamRouteDependencies` bundles when calling `registerOwnerProfileRoutes(server.router, pool, { requireAuthenticatedSession, verifier, accountResolver })` and `registerTeamRoutes(server.router, pool, { requireAuthenticatedSession, verifier, accountResolver })`.
 - A new test in `apps/server/src/auth/accountResolver.logic.test.ts` covers the resolver's three branches: hit (returns `Result.ok(accountId)`), clean miss (returns `Result.ok(null)`), database fault (returns `Result.fail({ code: 'lookup_failed' })`).
 - The existing `apps/server/src/server.mjs.test.ts` gains a startup-guard test asserting that production-mode boot with missing `HANKO_TENANT_BASE_URL` exits with a non-zero status and logs the full-sentence operator-facing diagnostic.
-- `docs/ai/REFERENCE/api-endpoints.md` updates eleven `/api/me/*` and `/api/teams/*` rows in place per D-11804 replace-whole-row merge semantics: the response-schema "on `'session_verifier_not_configured'` returns `500`" sentence and the trailing notes-column "fail-closed via WP-112 D-11204 until WP-126 lands" sentence are removed in favour of "genuinely authenticated as of WP-131". One new `Library-only` row is appended for `productionAccountResolver`.
-
-**Invariant:** WP-131 wires existing libraries together. It introduces
-zero new HTTP endpoints; it modifies zero engine, registry, preplan,
-arena-client, registry-viewer, or replay-producer file; it modifies
-zero existing route file (`ownerProfile.routes.ts` / `team.routes.ts`
-remain byte-identical). The only production-code touch outside the new
-resolver helper is `apps/server/src/server.mjs`.
+- `docs/ai/REFERENCE/api-endpoints.md` updates eleven `/api/me/*` and `/api/teams/*` rows in place per D-11804 replace-whole-row merge semantics: the response-schema "on `'session_verifier_not_configured'` returns `500`" sentence and the trailing notes-column "fail-closed via WP-112 D-11204 until WP-126 lands" sentence are removed in favour of the canonical "Genuinely authenticated as of WP-131 / EC-134." sentence. One new `Library-only` row is appended for `productionAccountResolver`.
 
 **Non-Goals Reminder.** This WP does NOT change any
 `SessionValidationErrorCode` value, does NOT introduce CSRF / cookie /
@@ -216,7 +211,7 @@ Before writing a single line:
 - `apps/server/src/server.mjs` MUST NOT modify any existing `// why:` comment block byte-identically — additions are permitted; the WP-115 / WP-104 / WP-109 / WP-126 narrative comments are locked. New `// why:` comments document the verifier construction site, the missing-env branching, and the per-mode behavioral split.
 - The Hanko verifier import in `server.mjs` MUST use the path `./auth/hanko/hankoVerifier.logic.js` (compiled extension `.js` per the project's ESM `.ts` → `.js` import-suffix discipline). The wiring import is permitted at the `apps/server/src/auth/hanko/` *boundary* — D-9904's "Hanko-specific code confined to `apps/server/src/auth/hanko/`" rule applies to symbols defined inside that directory; importing the boundary symbol from outside is the documented integration path.
 - The new `Library-only` catalog row for `productionAccountResolver` is appended in alphabetical / declaration-order position (after the existing `findAccountByAuthProviderSub` row at line 177). Replace-whole-row merge semantics per D-11804 — partial-update is FAIL.
-- The eleven `/api/me/*` and `/api/teams/*` row updates MUST replace each row wholesale; no partial-column edits. The "fail-closed via WP-112 D-11204 until WP-126 lands" sentence in the Notes column is replaced with a "genuinely authenticated as of WP-131 (`EC-134:`)" sentence; the response-schema column drops the "on `'session_verifier_not_configured'` returns `500`" sentence and keeps the other `SessionValidationErrorCode` mappings (`'missing_token'` / `'invalid_token'` / `'expired_token'` / `'unknown_account'` → 401; `'lookup_failed'` → 500). The `Auth` column stays `authenticated-session-required` verbatim.
+- The eleven `/api/me/*` and `/api/teams/*` row updates MUST replace each row wholesale; no partial-column edits. The "fail-closed via WP-112 D-11204 until WP-126 lands" sentence in the Notes column is replaced with the canonical sentence **"Genuinely authenticated as of WP-131 / EC-134."** (slash-separated WP / EC pair, terminating period; no parentheses, no trailing colon — uniform across all eleven rows so future history-age aggregations grep cleanly); the response-schema column drops the "on `'session_verifier_not_configured'` returns `500`" sentence and keeps the other `SessionValidationErrorCode` mappings (`'missing_token'` / `'invalid_token'` / `'expired_token'` / `'unknown_account'` → 401; `'lookup_failed'` → 500). The `Auth` column stays `authenticated-session-required` verbatim.
 - No new npm dependencies. The verifier already exists per WP-126 + D-12601 (built-ins-only path); the resolver consumes only WP-112's `findAccountByAuthProviderSub`.
 - No modifications permitted to:
   - `apps/server/src/auth/sessionToken.types.ts`
@@ -359,7 +354,12 @@ under this WP's scope (contract-immutability per WP-104 / WP-109). The
 `configureSessionValidation` factory remains an unconsumed convenience
 helper, available for a future request-handler WP that introduces a
 non-route consumer (e.g., a WebSocket auth handshake) without paying
-the route-helper refactor tax.
+the route-helper refactor tax. **Option (b) is contractually
+deferred, not stylistically rejected:** consuming
+`configureSessionValidation` in WP-131 would require modifying route
+helpers whose immutability is locked under WP-104 / WP-109. Future WPs
+that legitimately need the single-arg closure shape (non-route
+consumers) may consume the factory without amending those route files.
 
 ### D-DEC-4 (D-13104) — Startup-log discipline (URL masking)
 
@@ -427,6 +427,7 @@ Modifications fall in three blocks; the rest of the file is byte-identical pre- 
      - `NODE_ENV === 'production'`: throws a new `Error` with full-sentence text "Hanko verifier configuration is incomplete. Set HANKO_TENANT_BASE_URL and HANKO_EXPECTED_AUDIENCE in the Render dashboard before deploying. Production cannot start without them."
      - Otherwise: logs `[server] Hanko verifier NOT configured — running in fail-closed dev mode (set HANKO_TENANT_BASE_URL + HANKO_EXPECTED_AUDIENCE to enable authenticated routes)` and returns `undefined`.
    - JSDoc documents the three return paths, the NODE_ENV branch, and the URL masking rule.
+   - Add `// why:` comment immediately above the helper declaration documenting that this function **implements the D-13101 startup-policy gate** — it is not a "best-effort" attempt despite the `try` prefix. In production, missing or invalid env is a fatal misconfiguration; in non-production, the helper deliberately returns `undefined` to preserve local-dev ergonomics for engineers who do not need authenticated paths. The `try` prefix reflects the return type (`SessionVerifier | undefined`), not the policy class.
    - Add `// why:` comment on the `Number()` parsing of `HANKO_JWKS_REFRESH_INTERVAL_MS` explaining that `Number(undefined)` produces `NaN` and the verifier factory's D-12603 default substitution requires `undefined`, not `NaN`.
 
 3. **Modified wiring** (between lines 137 and 165):
@@ -465,7 +466,7 @@ runs under `node:test` — no broader test-file refactor.
 
 Per D-11804 replace-whole-row merge semantics:
 
-1. **Eleven row updates** (the three `/api/me/*` rows at lines 121-123 and the eight `/api/teams/*` rows at lines 124-131): each row is replaced wholesale. The `Status` / `Method` / `Path` / `Auth` / `Authorizing WP` columns stay identical (all `Wired`, all `authenticated-session-required`, all carry their original `WP-104` / `WP-109` authorizing WP — WP-131 does not graduate authorship). The Response Schema column drops its "on `'session_verifier_not_configured'` returns `500`" sentence and keeps the rest of the closed-set `SessionValidationErrorCode` mappings intact. The Notes column drops the "fail-closed via WP-112 D-11204 until WP-126 lands" sentence and adds "Genuinely authenticated as of WP-131 (`EC-134:`); production wiring constructs the Hanko verifier at startup from `HANKO_TENANT_BASE_URL` + `HANKO_EXPECTED_AUDIENCE`."
+1. **Eleven row updates** (the three `/api/me/*` rows at lines 121-123 and the eight `/api/teams/*` rows at lines 124-131): each row is replaced wholesale. The `Status` / `Method` / `Path` / `Auth` / `Authorizing WP` columns stay identical (all `Wired`, all `authenticated-session-required`, all carry their original `WP-104` / `WP-109` authorizing WP — WP-131 does not graduate authorship). The Response Schema column drops its "on `'session_verifier_not_configured'` returns `500`" sentence and keeps the rest of the closed-set `SessionValidationErrorCode` mappings intact. The Notes column drops the "fail-closed via WP-112 D-11204 until WP-126 lands" sentence and adds the canonical sentence "Genuinely authenticated as of WP-131 / EC-134. Production wiring constructs the Hanko verifier at startup from `HANKO_TENANT_BASE_URL` + `HANKO_EXPECTED_AUDIENCE`."
 2. **One new `Library-only` row** appended in the existing `Library-only` section, immediately after the row for `findAccountByAuthProviderSub` (line 177): a row for `productionAccountResolver` documenting the `(claim, database)` signature, the `Result<AccountId | null>` return shape, the no-throw discipline, and the WP-131 authoring WP. The row uses the canonical Status `Library-only` and a Method / Path of `(n/a — function productionAccountResolver)` per the existing Library-only conventions.
 
 No other rows are touched.
@@ -538,6 +539,7 @@ All items must be binary pass/fail. No partial credit.
 - [ ] `startServer()` invokes `tryConstructHankoVerifier()` exactly once, between `createPool()` and `registerOwnerProfileRoutes(...)`.
 - [ ] Both `register*Routes` call sites pass the same three deps fields (`requireAuthenticatedSession`, `verifier`, `accountResolver`) — `verifier` and `accountResolver` are either both defined or both `undefined` (verified by inspection — the `accountResolver` field uses the conditional `verifier === undefined ? undefined : productionAccountResolver`).
 - [ ] No `Math.random` in `apps/server/src/server.mjs` (confirmed with `Select-String`).
+- [ ] `apps/server/src/server.mjs` does NOT import `configureSessionValidation` and does NOT invoke it. Per D-13103 = (a), this helper is contractually deferred — its presence in `server.mjs` would imply the route helpers were refactored to consume the single-arg closure shape, which is a forbidden touch under WP-104 / WP-109 immutability. Confirmed with `Select-String -Path "apps\server\src\server.mjs" -Pattern "configureSessionValidation"` returning zero matches.
 - [ ] The existing `// why:` comment blocks at lines 141-150 (WP-104) and 155-162 (WP-109) are updated per §C step 3 (drop "until WP-126 lands" sentence; add "WP-131 wires …" sentence).
 
 ### D — `server.mjs.test.ts` startup guard
@@ -549,7 +551,7 @@ All items must be binary pass/fail. No partial credit.
 ### E — `api-endpoints.md` catalog update
 - [ ] All eleven `/api/me/*` and `/api/teams/*` rows are replaced wholesale (per D-11804 — partial-update is FAIL).
 - [ ] The string "until WP-126 lands the broker-specific SessionVerifier" appears zero times in `docs/ai/REFERENCE/api-endpoints.md` after the update (confirmed with `Select-String`).
-- [ ] The string "Genuinely authenticated as of WP-131" appears exactly eleven times (one per updated row).
+- [ ] The string "Genuinely authenticated as of WP-131 / EC-134." appears exactly eleven times in `docs/ai/REFERENCE/api-endpoints.md` (one per updated row; verbatim canonical sentence with slash separator and terminating period — partial wording variants FAIL).
 - [ ] One new `Library-only` row exists for `productionAccountResolver` at the locked position (immediately after the `findAccountByAuthProviderSub` row).
 - [ ] All updated rows preserve the `Wired` Status, `authenticated-session-required` Auth, original `Authorizing WP` (WP-104 / WP-109), and original Method / Path columns verbatim.
 - [ ] Every catalog row's `Status` column carries one of the four closed-set values `Wired | Shipped-but-unwired | Library-only | Pending` (per D-11804); every `Auth` column carries one of the three closed-set values `guest | handle-required | authenticated-session-required` (per D-9905). Confirmed by inspection.
@@ -599,13 +601,17 @@ Select-String -Path "apps\server\src" -Pattern "Math.random" -Recurse
 Select-String -Path "docs\ai\REFERENCE\api-endpoints.md" -Pattern "until WP-126 lands"
 # Expected: no output
 
-# Step 7 — confirm the 'Genuinely authenticated as of WP-131' sentence is present 11 times
-(Select-String -Path "docs\ai\REFERENCE\api-endpoints.md" -Pattern "Genuinely authenticated as of WP-131").Count
+# Step 7 — confirm the canonical 'Genuinely authenticated as of WP-131 / EC-134.' sentence is present 11 times
+(Select-String -Path "docs\ai\REFERENCE\api-endpoints.md" -Pattern "Genuinely authenticated as of WP-131 / EC-134\.").Count
 # Expected: 11
 
 # Step 8 — confirm the wiring imports landed in server.mjs
 Select-String -Path "apps\server\src\server.mjs" -Pattern "createHankoSessionVerifier|productionAccountResolver|tryConstructHankoVerifier"
 # Expected: 4 matches (1 import line for verifier factory + 1 import line for resolver + 1 declaration of helper + 1 invocation in startServer)
+
+# Step 8b — confirm configureSessionValidation is NOT imported or invoked (D-13103 = (a) contract lock)
+Select-String -Path "apps\server\src\server.mjs" -Pattern "configureSessionValidation"
+# Expected: no output
 
 # Step 9 — confirm the WP-104 / WP-109 route files were NOT modified
 git diff --name-only apps/server/src/profile/ownerProfile.routes.ts apps/server/src/teams/team.routes.ts
