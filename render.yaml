@@ -86,6 +86,7 @@ services:
 databases:
   # Managed PostgreSQL — rules engine backing store
   - name: legendary-arena-db
-    plan: starter
-    # why: starter plan is sufficient for <100 concurrent games at launch.
+    # why: basic_256mb is sufficient for <100 concurrent games at launch.
     # The rules cache is loaded at startup; ongoing DB queries are minimal.
+    # (Replaces the deprecated 'starter' plan key — see Render's plan rename.)
+    plan: basic_256mb
