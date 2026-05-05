@@ -14356,6 +14356,150 @@ Values.
 
 ---
 
+### D-13301 — Module Path: `apps/server/src/billing/` (WP-133)
+
+**Type:** Server Layer Path Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** Stripe wiring + checkout-session creation + webhook ingestion live under `apps/server/src/billing/` as a sibling of `apps/server/src/entitlements/` (WP-132). Stripe is the payment provider; entitlements are the granted-benefits substrate. The directory holds `billing.types.ts`, `billing.config.ts`, `billing.logic.ts`, `billing.routes.ts`, and matching `.test.ts` files (six files at WP-133 close).
+
+**Rationale:** Mirrors the WP-052 / WP-104 / WP-109 / WP-132 sibling-flat module precedent. Splitting the payment-provider surface from the entitlement substrate keeps the entitlement read path provider-agnostic — a future second payment provider lands under `apps/server/src/billing/<provider>/` (sub-namespace) without fragmenting `apps/server/src/entitlements/`. The EC-136 §5 grep gate enforces that `from 'stripe'` does not appear outside this directory, and the layer-boundary guardrail forbids any import from engine / registry / preplan / arena-client / replay-producer packages.
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-1; EC-136 §0 + §1 + §3 (Stripe SDK confined guardrail).
+
+---
+
+### D-13302 — Migration Slot 012 + FK Form Option A (`account_id text REFERENCES legendary.players(ext_id) ON DELETE CASCADE`) (WP-133)
+
+**Type:** Schema Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** WP-133's migration is `data/migrations/012_create_stripe_events_and_checkout_sessions.sql` (slot 012, the next free per the sequential-non-recyclable convention from D-5202 + WP-101 + WP-104 + WP-109 + WP-132). Two tables in one migration: `legendary.stripe_events` (7 columns) + `legendary.stripe_checkout_sessions` (8 columns). FK form on `stripe_checkout_sessions.account_id` is **Option A**: `account_id text NOT NULL REFERENCES legendary.players(ext_id) ON DELETE CASCADE`. The column-name `account_id` maps semantically to the application-layer `AccountId` brand even though the FK technically targets the `ext_id` UNIQUE alternate key (rather than a hypothetical `players.account_id` column).
+
+**Rationale:** The FK target needed correction at execution time per EC-136 §0 #FK-BUG: WP-133 v1.0 §Locked contract values originally specified `REFERENCES legendary.players(account_id)` but `legendary.players` has no `account_id` column — the bigserial PK is `player_id` and the UNIQUE text alternate key is `ext_id`. Option A (`account_id text REFERENCES legendary.players(ext_id)`) was chosen over Option B (`player_id bigint REFERENCES legendary.players(player_id)`, the WP-104 / WP-109 / WP-132 pattern) because: (1) the `AccountId` brand maps to `ext_id` directly per D-5201; (2) the application layer's INSERT path already carries the `accountId` value, so the bigint two-query lookup pattern would add a SELECT round-trip with no operational benefit at WP-133's ingestion-only scope; (3) WP-134 fulfillment will consume `account_id` directly via the row already inserted by WP-133. Future per-account billing tables should re-evaluate the trade-off — Option B remains correct for tables joined frequently with other per-account data.
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-2 + §Locked contract values FK form correction; EC-136 §0 #FK-BUG + §2 Locked Values; D-5201 (`AccountId` ↔ `ext_id`).
+
+---
+
+### D-13303 — Stripe SDK Version Pin: stripe@22.1.0 + apiVersion: '2025-09-30.clover' (WP-133)
+
+**Type:** Dependency Lock + Wire-Protocol Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** Exact-pin `"stripe": "22.1.0"` in `apps/server/package.json` `dependencies` (Option (a) per WP-133 §Decision Points). The Stripe SDK constructor `apiVersion` parameter is pinned to `'2025-09-30.clover'` — the date-stamped string at `STRIPE_API_VERSION` in [`apps/server/src/billing/billing.config.ts`](../../apps/server/src/billing/billing.config.ts). The Stripe client construction site is the `createStripeClient(billingConfig)` factory exported from `billing.config.ts`; `server.mjs` imports the factory rather than `Stripe` directly so the `from 'stripe'` import stays inside `apps/server/src/billing/` per the EC-136 §5 layer-boundary grep gate.
+
+**Rationale:** Stripe-side webhook event payloads are versioned per the API version configured at SDK construction; accepting an unpinned version risks silent shape drift in event payloads (new fields, removed fields, changed enum values) that could break WP-134's fulfillment parser. A shape change WP-134 doesn't expect can result in either (a) granted entitlements for events that should have been rejected, or (b) cross-validation failures for valid purchases — both outcomes violate Vision §3 Player Trust & Fairness. The exact-pin matches the WP-052 `pg` pinning + WP-126 "built-ins-only or exact-pinned dependency" posture; caret-range and unpinned options were rejected. An `apiVersion` bump is a coordinated WP-133 + WP-134 review (the fulfillment parser reads `payload.data.object.payment_status`, `.client_reference_id`, `.metadata`, `.id`), never a routine dependency update.
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-3 (Option (a)) + §Constraints (locked at draft time); EC-136 §2 (`apiVersion` pin) + §5 (Stripe SDK confined gate); Stripe API version changelog: <https://docs.stripe.com/upgrades>.
+
+---
+
+### D-13304 — Raw-Body Middleware: Route-Level (1mb cap) on `POST /api/billing/webhook/stripe` (WP-133)
+
+**Type:** Webhook Wiring Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** The webhook route registers a route-scoped `captureRawBodyMiddleware` (defined inline in [`apps/server/src/billing/billing.routes.ts`](../../apps/server/src/billing/billing.routes.ts)) that captures the bytes-identical raw payload BEFORE any global JSON parser fires. `RAW_BODY_LIMIT_BYTES = 1048576` (1mb cap) rejects oversized payload abuse. The middleware is a no-op when `ctx.request.rawBody` is already populated (test injection path or future global `koa-body` configured with `includeUnparsed: true`); the global JSON parser remains unchanged for every other route including `POST /api/billing/checkout-session`.
+
+**Rationale:** `stripe.webhooks.constructEvent(rawBody, sig, webhookSecret)` requires bytes-identical raw body; any JSON parse + restringify invalidates the HMAC signature. Route-level scoping (Option (a) per WP-133 §Decision Points) is the well-documented Stripe-recommended approach and keeps the change surface small. Option (b) (global parser bypass via path exclusion) was rejected as introducing hand-rolled byte collection that is its own correctness risk; Option (c) (separate Koa sub-app) over-engineers MVP. The 1mb cap remains well above current Stripe event sizes (typical events are under 50kb) while preventing oversized-payload abuse.
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-4 (Option (a)); EC-136 §3 (Raw-body middleware first guardrail) + §5 (rawBody grep gate).
+
+---
+
+### D-13305 — Price Allowlist Source: `STRIPE_PRICE_ALLOWLIST` Env Var (WP-133)
+
+**Type:** Configuration Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** The `priceId → entitlementKey` allowlist is the comma-separated env var `STRIPE_PRICE_ALLOWLIST` (Option (a) per WP-133 §Decision Points). Format: `priceId1:entitlementKey1,priceId2:entitlementKey2,...`. Parsed once at startup by `parsePriceAllowlist` into `ReadonlyMap<string, EntitlementKey>` and wrapped via `Object.freeze` inside `loadBillingConfig`. Every `entitlementKey` value is validated against `ENTITLEMENT_KEYS` (imported from `apps/server/src/entitlements/entitlements.types.ts`); a non-member value throws a full-sentence diagnostic at startup that names the offending value.
+
+**Rationale:** Mirrors the WP-126 / WP-131 startup env-var construction pattern; keeps secret-adjacent configuration in the same surface (Render env vars / `.env`); does not require new tables; one-deploy-to-update is acceptable at MVP. Option (b) (DB-backed allowlist with admin tool) is correct once admin tooling exists (future WP). Option (c) (JSON file in repo) couples deploys to repo updates and was rejected. The startup-fatal validation against `ENTITLEMENT_KEYS` is the gate that prevents a misconfigured env var from grant-routing payments to an unrecognized entitlement.
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-5 (Option (a)); EC-136 §1 (4-branch test lock) + §3 (allowlist-before-Stripe guardrail).
+
+---
+
+### D-13306 — Webhook Idempotency Key: `event.id` UNIQUE on `legendary.stripe_events.event_id` (WP-133)
+
+**Type:** Idempotency Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** Webhook idempotency uses Stripe `event.id` as the key, enforced at the database layer via `event_id text NOT NULL UNIQUE` on `legendary.stripe_events`. The INSERT pattern is `INSERT INTO legendary.stripe_events (...) VALUES ($1, $2, $3::jsonb, NULL) ON CONFLICT (event_id) DO NOTHING` — Stripe's at-least-once retry contract collapses to a no-op without an application-level deduplication lock. `recordStripeEvent` reports `inserted: false` when `rowCount === 0` (duplicate); the webhook handler surfaces `{ received: true, duplicate: !inserted }` to Stripe.
+
+**Rationale:** Stripe documents `event.id` as unique per event delivery (Option (a) per WP-133 §Decision Points). Tightening to a composite key (Option (b)) buys nothing the docs don't already guarantee. Option (c) (no DB-side idempotency; rely on WP-134 row-level processing) loses defense-in-depth and was rejected. The DB-layer UNIQUE plus the application-layer ON CONFLICT clause means a Stripe retry is correct-by-construction even if a future code path forgets the application check.
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-6 (Option (a)); EC-136 §2 (`stripe_events` idempotency lock) + §5 (ON CONFLICT grep gate).
+
+---
+
+### D-13307 — Subscription Posture: One-Time `mode: 'payment'` Only at MVP (WP-133)
+
+**Type:** Scope Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** Stripe Checkout Sessions are created with `mode: 'payment'` only at WP-133 close (Option (a) per WP-133 §Decision Points). Subscriptions (`mode: 'subscription'`) are deferred to a future WP after the operational surface is designed. Vision §784 stream #1 (Legendary Supporter recurring subscriptions) is enabled in spirit by the entitlement substrate — `'supporter_tier_basic_2026'` is grantable via a one-time annual purchase (deterministic, fully-disclosed, no auto-renewal) — but recurring billing is out of scope for MVP.
+
+**Rationale:** Subscriptions add operational complexity (renewal failure, dunning, prorations, cancel-now-vs-cancel-at-period-end, `customer.subscription.deleted` and `invoice.payment_failed` event types in WP-134's fulfillment set) that is out of scope for MVP. NG-1..NG-7 invariants hold by construction in either path because `EntitlementKey` is closed-set cosmetic-only per WP-132 D-13203. A future WP introduces `mode: 'subscription'` after the operational surface is designed.
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-7 (Option (a)); WP-132 D-13203 (cosmetic-only `EntitlementKey`).
+
+---
+
+### D-13308 — Stripe Customer Creation: Defer to Future WP (Pass `customer_email` Only) (WP-133)
+
+**Type:** Scope Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** WP-133 ships without Stripe Customer creation (Option (c) per WP-133 §Decision Points). The `POST /api/billing/checkout-session` handler passes `customer_email` only (resolved server-side from `legendary.players.email` for the validated `accountId`) and sets `client_reference_id` for fulfillment correlation. No `stripe_customer_id` column is added to any table. The future Customer Portal WP introduces eager Customer creation under its own Decision Points block.
+
+**Rationale:** Customer Portal is a future WP; eager Customer creation in WP-133 imports operational complexity (orphan reconciliation, idempotent creation, customer-vs-account drift) for no MVP benefit. The `client_reference_id` field on each Checkout Session carries the `accountId` so WP-134 can correlate `checkout.session.completed` events back to `legendary.players` rows without a Stripe Customer record. The future Customer Portal WP can introduce eager Customer creation against a clean slate (no orphan rows from this WP).
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-8 (Option (c)); EC-136 §2 (Stripe Customer deferred lock).
+
+---
+
+### D-13309 — `successUrl` / `cancelUrl` Source: Env-Derived `PUBLIC_BASE_URL` (WP-133)
+
+**Type:** Security Lock
+**Packet:** WP-133 / EC-136
+**Date:** 2026-05-05
+
+**Decision:** Stripe Checkout `success_url` and `cancel_url` are server-derived from `BillingConfig.publicBaseUrl` (parsed from the `PUBLIC_BASE_URL` env var at startup) plus fixed paths. The route layer constructs `successUrl = ${publicBaseUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}` and `cancelUrl = ${publicBaseUrl}/billing/cancel`; neither is sourced from request input under any circumstance. The `POST /api/billing/checkout-session` request body shape is exactly `{ priceId: string }` — any extra field (including `successUrl`, `cancelUrl`, `redirectUri`) returns 400 with `code: 'invalid_request'`. `PUBLIC_BASE_URL` is the fourth required env var alongside `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ALLOWLIST`; production startup is fatal-on-missing per the WP-126 / WP-131 guard pattern.
+
+**Rationale:** Accepting `successUrl` or `cancelUrl` from request input would permit a redirect-manipulation attack — an attacker submits a checkout session with `successUrl = attacker.example/phish`; the user pays at Stripe-hosted Checkout and is then redirected to the attacker's page bearing the appearance of a successful purchase. Server-derivation eliminates this vector by construction. Option (a) (env-derived `PUBLIC_BASE_URL`) makes the production domain explicit at the server layer, decouples from Stripe dashboard configuration, and keeps the success-page query-string token (`{CHECKOUT_SESSION_ID}`) under server control. Option (b) (fixed server constant relative paths) is harder to test (relative paths require mocking Stripe's domain expansion). Option (c) (per-request override) was REJECTED at draft time as the redirect-manipulation vector itself.
+
+**Status:** Resolved.
+
+**Citation:** WP-133 §Decision Points D-DEC-9 (Option (a)); EC-136 §3 (Server-derived URLs guardrail) + §5 (no `req.body.successUrl` grep gate).
+
+---
+
 ### D-13501 — Hero Rarity → Copy-Count Map + Option A Loud-Fail on Unknown Labels (WP-135)
 
 **Type:** Engine Setup-Time Lock
