@@ -13721,6 +13721,187 @@ The verifier scans the `amr` array via two-pass priority: pass 1 finds any eleme
 
 ---
 
+### D-13001 — Re-skin / Playmat Selector — Discovery Mechanism = Bundled at MVP (WP-130)
+
+**Type:** Client UI Lock
+**Packet:** WP-130 / EC-133
+**Date:** 2026-05-04
+
+**Decision:** The playmat skin discovery mechanism is **bundled with the
+client at MVP**. Skin assets ship inside the arena-client Vite bundle from
+`apps/arena-client/src/assets/skins/<name>/`. R2-published manifest is
+**deferred to a future WP** if community-skin or premium-skin demand emerges.
+
+**Rationale:**
+- Bundled is faster to ship and avoids R2 latency on every client load.
+- MVP skin set is small (3 skins per D-13003); bundle-size impact is bounded.
+- R2 publishing introduces a new failure mode (network probe + retry) that
+  is unnecessary for a curated default-plus-two MVP set.
+- Asset URL resolution uses the `new URL(path, import.meta.url).href`
+  pattern, which Vite rewrites at build time into a hashed bundle URL and
+  Node resolves at test time into a `file://` URL — same source module
+  works in production, dev, and the `node:test` runner.
+
+**Rejected alternatives:**
+- **R2-published manifest at MVP** — REJECTED for this packet. Adds network
+  latency to skin discovery; introduces a CDN dependency for a feature that
+  ships fine offline. Future WP if community-skin or premium-skin pipeline
+  emerges.
+
+**Status:** Immutable.
+**Citation:** WP-130 §F default-acceptance; EC-133 §2 locked values; pre-flight
+2026-05-04.
+
+---
+
+### D-13002 — Re-skin / Playmat Selector — Scope of a Skin = Background + Theme + Card-Frame (WP-130)
+
+**Type:** Client UI Lock
+**Packet:** WP-130 / EC-133
+**Date:** 2026-05-04
+
+**Decision:** A "skin" comprises three visual elements: (1) board background
+image, (2) color theme (CSS custom properties for palette), (3) card-frame
+style. **Audio is excluded.** Per-card overrides MAY be added by a future WP
+via the reserved `customizations?` field on the manifest entry shape; that
+is NOT in this packet.
+
+**Rationale:**
+- The three elements together define the visual chrome users actually
+  notice when re-skinning the playmat.
+- Audio adds substantial asset weight (~10× image-asset size per skin) and
+  a separate failure mode (autoplay restrictions, mobile silent mode);
+  deferred to a future WP if user demand emerges.
+
+**Rejected alternatives:**
+- **Audio included in MVP** — REJECTED. Mobile autoplay restrictions and
+  silent-mode handling are out of scope for a visual-chrome MVP.
+- **Per-card-rarity overrides included in MVP** — REJECTED. Reserved as
+  the `customizations?` future seam; not implemented.
+
+**Status:** Immutable.
+**Citation:** WP-130 §F default-acceptance; EC-133 §2 locked values.
+
+---
+
+### D-13003 — Re-skin / Playmat Selector — Bundled Set Locked at `classic` + `comic` + `minimal` (WP-130)
+
+**Type:** Client UI Lock
+**Packet:** WP-130 / EC-133
+**Date:** 2026-05-04
+
+**Decision:** The MVP bundled skin set is **`classic`** (default), **`comic`**,
+**`minimal`** (high-contrast a11y-baseline). `'classic'` is BOTH the default
+selection on first launch AND the unconditional fallback when an asset load
+fails (per D-13005). Three skins exactly — no more, no fewer at MVP.
+
+**Rationale:**
+- `'classic'` matches physical Marvel Legendary board art; familiar baseline
+  for tabletop players.
+- `'comic'` provides a stylistic alternative for users who prefer a
+  different aesthetic.
+- `'minimal'` provides a high-contrast a11y-baseline option (text legibility,
+  reduced color complexity, palette independence).
+- Three skins balance discoverability (a one-skin selector is pointless)
+  against bundle weight.
+
+**Rejected alternatives:**
+- **Two skins (`classic` + `comic` only)** — REJECTED. Loses the
+  a11y-baseline option; `'minimal'` is load-bearing for accessibility-
+  conscious users.
+- **Four+ skins at MVP** — REJECTED. Bundle weight grows linearly; user-
+  facing payoff is sub-linear once three options exist. Future WP if curated
+  set expansion is needed.
+
+**Status:** Immutable.
+**Citation:** WP-130 §F default-acceptance; EC-133 §2 locked values.
+
+---
+
+### D-13004 — Re-skin / Playmat Selector — Per-User Persistence = `localStorage` Only (WP-130)
+
+**Type:** Client UI Lock
+**Packet:** WP-130 / EC-133
+**Date:** 2026-05-04
+
+**Decision:** The active skin selection is persisted **exclusively to
+`localStorage['arenaClientPlaymatSkin']`**. Server-side sync to
+`legendary.player_profiles` is **deferred to a future WP** if cross-device
+sync demand emerges, following the WP-104 column-additive precedent
+(`legendary.player_profiles` extension would add a `playmat_skin text`
+column without touching existing rows).
+
+**Rationale:**
+- Skin selection is a UI preference, not engine state; `localStorage` is
+  the right persistence class.
+- Server sync introduces auth coupling, schema migration, and round-trip
+  latency for a feature that works fine per-device.
+- The WP-104 column-additive precedent gives a future WP a clear
+  forward-compatible path without forcing the choice now.
+- Storage key naming (`arenaClientPlaymatSkin`) mirrors the WP-121 /
+  WP-124 viewer-side convention (`cardGridSize` / `themeGridSize`) — flat
+  camelCase, non-abbreviated, app-prefixed because arena-client shares
+  the dev-server origin with registry-viewer.
+
+**Rejected alternatives:**
+- **Server sync at MVP** — REJECTED. Adds auth coupling and schema
+  migration for a feature with weak cross-device demand at MVP. Future WP
+  per WP-104 column-additive precedent if demand emerges.
+- **In-memory only (no persistence)** — REJECTED. User would lose skin
+  choice on every reload; defeats the purpose of the selector.
+
+**Status:** Immutable.
+**Citation:** WP-130 §F default-acceptance; EC-133 §2 locked values.
+
+---
+
+### D-13005 — Re-skin / Playmat Selector — Empty-State + Asset-Failure Fallback = `'classic'` (WP-130)
+
+**Type:** Client UI Lock
+**Packet:** WP-130 / EC-133
+**Date:** 2026-05-04
+
+**Decision:** On asset-load failure OR empty `availableSkins`, the playmat
+selector falls back unconditionally to `'classic'`. **`<SkinSelector>`
+always mounts in the WP-129 reserved slot**; the empty-state path renders
+a disabled `🎨 (default)` chip with tooltip rather than unmounting.
+**Asset-load failure is defined narrowly** as any error resolving the active
+`SkinName` to a manifest entry OR applying its corresponding CSS class.
+Image preloading, network probing, decode-error retries, and HEAD-checks
+against R2 are explicitly out of scope; fallback occurs synchronously on
+detection. `console.warn` logs the failure with a full-sentence reason per
+`00.6` Rule 11.
+
+**Rationale:**
+- `'classic'` is the safe default — matches physical Marvel Legendary
+  board art; bundled with the client; never absent from the manifest.
+- Always-mounted selector prevents HUD-bar layout reflow on empty-state;
+  D-12907 reserves the slot's layout space, not just its functionality.
+- Narrow asset-failure definition prevents the executor from over-
+  engineering preload / probe / retry logic — a recurring failure mode
+  in client-UI MVPs.
+- Empty-state and corrupt-`localStorage` fallback paths converge on the
+  same recovery (return `'classic'`) so the test surface is small.
+
+**Rejected alternatives:**
+- **Selector unmounts on empty-state** — REJECTED. HUD-bar would reflow;
+  D-12907 slot reservation would be violated (the slot reserves layout
+  space, not just functionality).
+- **Asset preload + retry on failure** — REJECTED. Adds complexity (state
+  machine, timeout, retry-count) for a fallback that should be synchronous
+  and deterministic.
+- **Throw on asset-load failure** — REJECTED. Skin code never throws;
+  would break the `<PlayViewport>` render and propagate into the engine
+  via Vue's error-boundary surface. Always fail soft to `'classic'` +
+  `console.warn`.
+
+**Status:** Immutable.
+**Citation:** WP-130 §F default-acceptance; EC-133 §2 locked values + §3
+guardrails (always-mounted rule + sync-write rule + narrow asset-failure
+definition).
+
+---
+
 ### D-13501 — Hero Rarity → Copy-Count Map + Option A Loud-Fail on Unknown Labels (WP-135)
 
 **Type:** Engine Setup-Time Lock
