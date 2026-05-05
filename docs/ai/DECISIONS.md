@@ -13902,6 +13902,222 @@ definition).
 
 ---
 
+### D-13101 — Hanko Verifier Missing-Env Startup Behavior: Branch on `NODE_ENV` (WP-131)
+
+**Type:** Server Startup Lock
+**Packet:** WP-131 / EC-134
+**Date:** 2026-05-04
+
+**Decision:** When either `HANKO_TENANT_BASE_URL` or
+`HANKO_EXPECTED_AUDIENCE` is absent or empty at server boot,
+`tryConstructHankoVerifier()` in
+[`apps/server/src/server.mjs`](../../apps/server/src/server.mjs)
+branches on `NODE_ENV`:
+
+- `NODE_ENV === 'production'`: throw a new `Error` with the locked
+  full-sentence diagnostic body **"Hanko verifier configuration is
+  incomplete. Set HANKO_TENANT_BASE_URL and HANKO_EXPECTED_AUDIENCE
+  in the Render dashboard before deploying. Production cannot start
+  without them."** The throw bubbles up to `index.mjs`, which logs
+  the message and exits with status 1.
+- Otherwise: log a one-line fail-closed-dev-mode warning and return
+  `undefined` so the orchestrator's WP-112 D-11204 default
+  (`Result.fail({ code: 'session_verifier_not_configured' })`)
+  surfaces 500 to authenticated routes — preserves the pre-WP-131
+  local-dev ergonomics verbatim for engineers iterating on
+  non-authenticated routes.
+
+**Rationale:**
+- Production misconfiguration must be loud at deploy time, not
+  silent at first authenticated request — mirrors the `DATABASE_URL`
+  startup posture in `apps/server/src/index.mjs:34`.
+- Local-dev ergonomics: engineers iterating on `/api/leaderboards/*`
+  or `/health` should not need a Hanko tenant to boot the server.
+  Falling back to `verifier: undefined` keeps the existing
+  fail-closed orchestrator path the source of truth in dev — no
+  branching elsewhere in the request pipeline.
+- The startup guard is the SINGLE site that distinguishes
+  production from non-production; downstream code is identical
+  regardless of mode.
+
+**Rejected alternatives:**
+- (b) Always fatal — both production and dev fail to boot when env
+  is missing. Rejected: forces every contributor running the server
+  locally to provision a Hanko tenant or stub one out, which adds
+  onboarding friction unrelated to the WP they are working on.
+- (c) Always silent — production boots in fail-closed mode and
+  surfaces 500 to clients. Rejected: silently shipping an
+  unauthenticated production server defeats the §3 Player Trust &
+  Fairness clause; the deploy fails-fast posture must extend to env
+  misconfiguration.
+
+**Consequence:** Render's deploy logs surface the locked full-
+sentence diagnostic verbatim when a misconfigured tenant is
+promoted; the WP-131 startup-guard test asserts the message body
+verbatim so any future deviation breaks CI before reaching
+production.
+
+**Status:** Active.
+
+**Citation:** WP-131 §C step 2 + §Decision Points D-DEC-1; EC-134 §2
+Locked Values; `apps/server/src/index.mjs:34` (DATABASE_URL precedent).
+
+---
+
+### D-13102 — `productionAccountResolver` Location: New Sibling File (WP-131)
+
+**Type:** Server Layer-Boundary Lock
+**Packet:** WP-131 / EC-134
+**Date:** 2026-05-04
+
+**Decision:** The production wiring of the WP-112 `AccountResolver`
+interface lives in a new file
+[`apps/server/src/auth/accountResolver.logic.ts`](../../apps/server/src/auth/accountResolver.logic.ts)
+as the single named export `productionAccountResolver: AccountResolver`.
+Sibling to `accountLookup.logic.ts` and `sessionToken.logic.ts`.
+Neither of the WP-112 contract files is modified.
+
+**Rationale:**
+- WP-112's contract files (`sessionToken.logic.ts`,
+  `accountLookup.logic.ts`) are byte-locked under the contract-
+  immutability rule from WP-112 §Forbidden Touches. Appending the
+  resolver to either would breach that lock.
+- A dedicated file keeps the production-resolver definition site
+  greppable as a single symbol — `productionAccountResolver` is
+  unique across the codebase, so future broker swaps modify exactly
+  one file and one declaration.
+- The forbidden-import surface inherited from the WP-112
+  `accountLookup.logic.ts` precedent applies verbatim: no
+  boardgame.io / engine / registry / preplan / UI / client /
+  replay-producer; no direct `pg`. `pg.Pool` is reachable only
+  through the `DatabaseClient` alias.
+
+**Rejected alternatives:**
+- (b) Append to `sessionToken.logic.ts` — production wiring lives
+  next to the orchestrator. Rejected: WP-112 contract immutability.
+- (c) Append to `accountLookup.logic.ts` — wraps the lookup helper
+  directly. Rejected: same; also folds two responsibilities (DB
+  read + orchestrator-shape adapter) into one file.
+
+**Consequence:** A future broker swap (per WP-099 D-9901's
+replacement-safety contract) modifies the verifier factory call in
+`server.mjs` and leaves `productionAccountResolver` untouched —
+the resolver is broker-agnostic by construction (consumes
+`VerifiedSessionClaim`, never a Hanko-specific symbol).
+
+**Status:** Active.
+
+**Citation:** WP-131 §A + §Decision Points D-DEC-2; EC-134 §2
+Locked Values; WP-112 contract immutability rule.
+
+---
+
+### D-13103 — Per-Request Options vs. `configureSessionValidation`: Pass Through `RouteDependencies` Bundles (WP-131)
+
+**Type:** Server Wiring Lock
+**Packet:** WP-131 / EC-134
+**Date:** 2026-05-04
+
+**Decision:** `apps/server/src/server.mjs` threads the constructed
+`verifier` and `productionAccountResolver` reference through the
+existing `OwnerProfileRouteDependencies` and `TeamRouteDependencies`
+deps bundles when calling `registerOwnerProfileRoutes(...)` and
+`registerTeamRoutes(...)`. The route helpers continue to construct
+the per-request `options` object via
+`{ verifier: deps.verifier, accountResolver: deps.accountResolver,
+database }` exactly as they do today. **`configureSessionValidation`
+is NOT imported and NOT invoked in `server.mjs`.**
+
+**Rationale:**
+- WP-104 / WP-109 ship the route helpers with `verifier?` and
+  `accountResolver?` deps fields wired through; the structurally
+  optional fields graduate to defined values without modifying the
+  route file.
+- Consuming `configureSessionValidation` (option (b)) requires
+  refactoring
+  [`apps/server/src/profile/ownerProfile.routes.ts`](../../apps/server/src/profile/ownerProfile.routes.ts)
+  and [`apps/server/src/teams/team.routes.ts`](../../apps/server/src/teams/team.routes.ts)
+  to consume a single-arg `(req) => Promise<Result<AccountId>>`
+  closure shape — a forbidden touch under WP-104 / WP-109
+  contract-immutability.
+- **Option (b) is contractually deferred, not stylistically
+  rejected.** A future WP that introduces a non-route consumer
+  (e.g., a WebSocket auth handshake) may consume the
+  `configureSessionValidation` factory without paying the
+  route-helper refactor tax.
+
+**Rejected alternatives:**
+- (b) Refactor route helpers to consume `configureSessionValidation`'s
+  single-arg closure shape. Rejected for THIS WP because it would
+  modify route files locked under WP-104 / WP-109. Reserved for a
+  future WP that adds a non-route consumer.
+
+**Consequence:** The negative-assertion grep gate at EC-134 §5
+(`configureSessionValidation` zero matches in `server.mjs`) is the
+canary; any future "while I'm here" import would trip the contract
+lock and signal that the route helpers were also modified
+(forbidden under this WP's scope).
+
+**Status:** Active.
+
+**Citation:** WP-131 §C step 1 + §Decision Points D-DEC-3; EC-134 §3
+Guardrails + §5 Verification Gates; WP-104 + WP-109
+contract-immutability.
+
+---
+
+### D-13104 — Hanko Verifier Startup-Log URL Masking: Origin Only (WP-131)
+
+**Type:** Server Diagnostic Lock
+**Packet:** WP-131 / EC-134
+**Date:** 2026-05-04
+
+**Decision:** When `tryConstructHankoVerifier()` succeeds, the
+production startup log line carries the tenant URL masked to its
+origin only — the path component is replaced with `***`. Example:
+
+```
+[server] Hanko verifier configured (tenantBaseUrl=https://passkeys.hanko.io/***, refresh=300000ms)
+```
+
+Where the unmasked value would be
+`https://passkeys.hanko.io/<tenant_id>`. The `<intervalMs>` value is
+logged as a number (or the literal `default` when the env var is
+unset).
+
+**Rationale:**
+- Operator diagnostics: the origin (`https://passkeys.hanko.io`)
+  confirms which Hanko Cloud region the deploy hit — sufficient to
+  catch a wrong-region deploy without exposing the tenant ID.
+- Defense-in-depth against log aggregation: tenant IDs surfaced in
+  Datadog / Loggly / similar pipelines become indexable strings
+  associated with the deployment timeline; the `***` mask makes
+  accidental exposure one degree less informative without losing
+  the "did the env var resolve at all" signal.
+- Operators with Render dashboard access already see the unmasked
+  value via the env-var view; no diagnostic loss for the people
+  who legitimately need it.
+
+**Rejected alternatives:**
+- (b) Verbatim — log the full URL including the `/<tenant_id>`
+  path. Rejected: tenant-ID exposure in third-party log aggregation
+  pipelines.
+- (c) Omit — log only the refresh interval. Rejected: loses the
+  "did the env var resolve" signal entirely; operators investigating
+  a misconfigured tenant gain no information from the log line.
+
+**Consequence:** A future WP that introduces additional Hanko
+config surface (e.g., a region selector or multi-tenant
+configuration) follows the same mask-to-origin discipline; the
+helper's URL-parsing block is the canonical site.
+
+**Status:** Active.
+
+**Citation:** WP-131 §C step 2 + §Decision Points D-DEC-4; EC-134 §2
+Locked Values.
+
+---
+
 ### D-13501 — Hero Rarity → Copy-Count Map + Option A Loud-Fail on Unknown Labels (WP-135)
 
 **Type:** Engine Setup-Time Lock
