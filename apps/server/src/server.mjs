@@ -17,6 +17,7 @@ import { createPool } from './db/database.js';
 import { registerLeaderboardRoutes } from './leaderboards/leaderboard.routes.js';
 import { registerOwnerProfileRoutes } from './profile/ownerProfile.routes.js';
 import { registerTeamRoutes } from './teams/team.routes.js';
+import { registerEntitlementRoutes } from './entitlements/entitlements.routes.js';
 import { requireAuthenticatedSession } from './auth/sessionToken.logic.js';
 import { createHankoSessionVerifier } from './auth/hanko/hankoVerifier.logic.js';
 import { productionAccountResolver } from './auth/accountResolver.logic.js';
@@ -269,6 +270,23 @@ export async function startServer() {
   // handles the dev-mode case unchanged, surfacing 500 with
   // code: 'session_verifier_not_configured' per D-11204.
   registerTeamRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+  });
+
+  // why: WP-132 / D-13205 (a) — register the single entitlements
+  // read endpoint (GET /api/me/entitlements) on the same long-lived
+  // pool, threading the SAME deps bundle WP-131 / EC-134 already
+  // built for the owner-profile and team routes (no second verifier
+  // or resolver constructed). The route is genuinely authenticated
+  // from day one because WP-131 / EC-134 (Done 2026-05-04) already
+  // wired the production Hanko verifier — the dev-mode 500 /
+  // 'session_verifier_not_configured' branch (per D-13101) is a
+  // contract that's reachable only when NODE_ENV != 'production',
+  // not a routine response in production. The deps bundle shape is
+  // identical to registerOwnerProfileRoutes / registerTeamRoutes.
+  registerEntitlementRoutes(server.router, pool, {
     requireAuthenticatedSession,
     verifier,
     accountResolver: verifier === undefined ? undefined : productionAccountResolver,

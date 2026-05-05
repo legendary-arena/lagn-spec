@@ -59,13 +59,18 @@ by an authoritative database table. Specifically:
 - A new migration `data/migrations/011_create_entitlements.sql` creates
   `legendary.entitlements` (many-to-1 with `legendary.players`,
   `ON DELETE CASCADE`) idempotently. Columns: `id bigserial PRIMARY KEY`,
-  `account_id text NOT NULL REFERENCES legendary.players(account_id) ON
-  DELETE CASCADE`, `entitlement_key text NOT NULL CHECK (entitlement_key
+  `player_id bigint NOT NULL REFERENCES legendary.players(player_id) ON
+  DELETE CASCADE` (mirrors the WP-104 D-10402 + WP-109 D-10906
+  `bigint`-FK-on-`player_id` precedent — the application layer maps
+  `AccountId` (= `ext_id text`) to `player_id bigint` via
+  `legendary.players` lookup per D-5201, identical to
+  [ownerProfile.logic.ts:123](apps/server/src/profile/ownerProfile.logic.ts:123)),
+  `entitlement_key text NOT NULL CHECK (entitlement_key
   IN (...closed set per D-DEC-3...))`, `source text NOT NULL CHECK
   (source IN ('stripe', 'admin_grant', 'comp'))`, `source_ref text NULL`
   (e.g., Stripe `cs_*` session ID for `source = 'stripe'` rows),
   `granted_at timestamptz NOT NULL DEFAULT now()`, `revoked_at timestamptz
-  NULL`. UNIQUE constraint on `(account_id, entitlement_key) WHERE
+  NULL`. UNIQUE constraint on `(player_id, entitlement_key) WHERE
   revoked_at IS NULL` so a re-grant of an already-active entitlement is
   a no-op (idempotency for WP-134's webhook retries).
 - A new `apps/server/src/entitlements/` quartet:
@@ -73,8 +78,15 @@ by an authoritative database table. Specifically:
   closed union, `EntitlementsResult<T>` mirror of `Result<T>`),
   `entitlements.logic.ts` (`getEntitlementsForAccount(accountId,
   database): Promise<EntitlementsResult<Entitlement[]>>` — read-only;
-  no INSERT site by construction), `entitlements.logic.test.ts` (covers
-  empty / single / multiple / database-fault), `entitlements.routes.ts`
+  no INSERT site by construction; the helper performs the standard
+  two-query pattern used by WP-104 / WP-109 — first
+  `SELECT player_id FROM legendary.players WHERE ext_id = $1 LIMIT 1`
+  to map `AccountId` → `player_id`, then
+  `SELECT … FROM legendary.entitlements WHERE player_id = $1 AND
+  revoked_at IS NULL ORDER BY granted_at ASC`),
+  `entitlements.logic.test.ts` (covers
+  empty / single / multiple / database-fault / `AccountId`-not-found),
+  `entitlements.routes.ts`
   (`registerEntitlementRoutes(router, pool, deps)` registers `GET
   /api/me/entitlements`, gated by
   `deps.requireAuthenticatedSession(req, { verifier:
@@ -88,11 +100,16 @@ by an authoritative database table. Specifically:
 - One new HTTP catalog row at `docs/ai/REFERENCE/api-endpoints.md`
   under `## Wired — Reachable Over HTTP Today → ### Server-Registered
   Routes` for `GET /api/me/entitlements` with `Auth:
-  authenticated-session-required`, `Authorizing WP: WP-132`. If WP-131
-  has not yet executed at WP-132 close, the row carries `Status:
-  Wired` but the Notes column flags that until WP-131 lands the
-  endpoint returns 500 with `code: 'session_verifier_not_configured'`
-  on every request (per D-11204).
+  authenticated-session-required`, `Authorizing WP: WP-132`. The row
+  carries `Status: Wired` and is **genuinely authenticated from day
+  one** because WP-131 / EC-134 (Done 2026-05-04) has already landed
+  the production Hanko verifier wiring; the WP-132 endpoint inherits
+  the same `verifier` + `accountResolver` deps bundle that WP-131
+  threads to `registerOwnerProfileRoutes` / `registerTeamRoutes`.
+  (The fail-closed `'session_verifier_not_configured'` 500 branch per
+  D-13101 / D-11204 is only reachable in non-production environments
+  with missing Hanko env vars; tests still cover this branch as a
+  contract assertion.)
 
 **Invariant locked here:** entitlement read is the only path. WP-132
 introduces **zero** code path that mutates `legendary.entitlements`.
@@ -101,6 +118,17 @@ Tests assert this via grep (`Select-String -Path
 legendary\.entitlements|DELETE FROM legendary\.entitlements"` returns
 no matches outside the migration file). WP-134 is the WP that adds
 the INSERT site.
+
+**Clarification (`revoked_at` posture):** the schema includes a nullable
+`revoked_at` column so a future revocation pathway has somewhere to
+land, but **WP-132 introduces no code path that writes or updates it**.
+The grep above bans `UPDATE legendary.entitlements` for the entire
+WP-132 surface; revocation (manual operator action, refund-driven
+auto-revoke, admin tool) is a separately-authored future WP that must
+introduce its own mutation site under a new `DECISIONS.md` entry. The
+read endpoint silently filters revoked rows via
+`WHERE revoked_at IS NULL` so the column's mere presence cannot affect
+WP-132 response shape.
 
 ---
 
@@ -199,6 +227,83 @@ surface is a separate WP that triggers §20.
 
 ---
 
+## Safe Knob Posture (SAFE-KNOBS.md cross-reference)
+
+`docs/ai/REFERENCE/SAFE-KNOBS.md` is the canonical policy for
+**customer-safe configuration surfaces** — knobs that affect *what
+game is played* without altering *how the rules execute*. Its tier
+hierarchy (Tier 1 fully safe, Tier 2 guarded, Tier 3 gated) targets
+match-setup composition, content selection, presets, expansion pool,
+seed, and themes. WP-132 introduces no match-setup or gameplay
+surface, so the SAFE-KNOBS.md tier classification does not directly
+apply. The doctrine still informs WP-132's design discipline; this
+section makes the alignment explicit so a future reader can confirm
+WP-132 conforms in spirit even though it sits outside the doctrine's
+nominal scope.
+
+**Direct doctrine alignment:**
+
+- **"Safe knobs are data-driven, not code-driven."** WP-132's only
+  extension surface is the `EntitlementKey` closed set
+  (`apps/server/src/entitlements/entitlements.types.ts` —
+  `ENTITLEMENT_KEYS` array + matching union). Adding a key is a data
+  edit guarded by a WP + a `DECISIONS.md` entry + a Vision Alignment
+  §17 review. The route handler, the SQL, the response shape, and
+  the validation pipeline are unchanged when a new key lands.
+- **"Runtime switches, feature flags, and conditional logic are not
+  safe knobs."** WP-132 introduces **zero** runtime feature flags,
+  **zero** env-var-based behavior switches, **zero**
+  conditional-on-account-attribute branches in the route handler.
+  The endpoint's behavior is a pure function of
+  `legendary.entitlements` rows; it cannot be reconfigured at
+  runtime without a code change. This is the doctrine's prohibition
+  applied verbatim.
+- **"Decide with governance."** Each entitlement key, each `source`
+  value, and the partial-unique-index revocation policy is locked in
+  a `DECISIONS.md` entry (D-13203, D-13204, plus future revocation
+  WP). No silent extension path exists.
+
+**Tier mapping (informative, not normative):** if SAFE-KNOBS.md were
+extended to monetization substrates, the closest tier-analogues would
+be:
+
+- **Tier 1 (fully safe):** the `EntitlementKey` closed set — additive
+  expansion is data-only and replay-irrelevant by Layer Boundary
+  construction (the engine never imports
+  `apps/server/src/entitlements/`).
+- **Tier 2 (guarded):** the `source` closed set — additive but
+  governed by per-source semantics (e.g., `'comp'` requires a
+  `DECISIONS.md`-citing `source_ref`); a future WP adding `'gift'`
+  or `'tournament_prize'` carries audit-trail obligations beyond a
+  pure data edit.
+- **Tier 3 (gated / future):** revocation policy — the schema
+  accommodates `revoked_at` but the mutation site is deferred to a
+  future WP, mirroring the seed-wiring deferral pattern under
+  D-1248.
+
+**Non-Configurable Surfaces preserved (per SAFE-KNOBS.md §Explicitly
+Non-Configurable Surfaces):** turn structure, rule execution order,
+keyword behavior, scoring formulas, victory/loss conditions, move
+legality, randomness resolution, phase sequence — all unchanged by
+construction. The Vision NG-1 (no pay-to-win) protection is
+**structural, not procedural**: the engine cannot read entitlements
+because the Layer Boundary forbids the import edge. A future
+contributor cannot accidentally make an entitlement key gameplay-
+affecting without first violating the Layer Boundary, which is itself
+a `.claude/rules/architecture.md` Invariant.
+
+**Customer-feedback translation (informative):** if a future customer
+report says "I'd like cosmetic X" the safe-knob path is "add the
+`cosmetic_X` key to `ENTITLEMENT_KEYS` + the SQL CHECK + a
+`DECISIONS.md` entry + a Vision §17 cosmetic-only confirmation". If
+the request says "my supporter tier should let me draw an extra
+card" the answer is **not a safe knob** — it is a Vision NG-1
+violation and must be refused at intake (per SAFE-KNOBS.md "If
+feedback cannot be expressed via a safe knob, it is not a tuning
+request — it is a product or rules decision.").
+
+---
+
 ## API Catalog Update Obligation (`00.3 §21` + D-11804)
 
 WP-132 adds one new HTTP endpoint, so §21 fires.
@@ -218,13 +323,34 @@ Over HTTP Today → ### Server-Registered Routes`:
 - `Request Schema`: `(none — empty body)` ; bearer session token
   via the `Authorization` header per WP-112 contract
 - `Response Schema`: `{ entitlements: Entitlement[] }` per
-  `apps/server/src/entitlements/entitlements.types.ts`; on
-  `'session_verifier_not_configured'` returns 500 (until WP-131
-  wiring lands); on database fault returns 500 with body `{ error:
-  'internal_error' }` (project-owned envelope per D-11802 = C);
-  status-code domain `{200, 401, 500}`. `Cache-Control: no-store`
-  is the first statement of every response per the WP-115
-  precedent.
+  `apps/server/src/entitlements/entitlements.types.ts`; on database
+  fault returns 500 with body `{ error: 'internal_error' }` (project-
+  owned envelope per D-11802 = C); status-code domain `{200, 401,
+  500}`. `Cache-Control: no-store` is the first statement of every
+  response per the WP-115 precedent. **The route is genuinely
+  authenticated from day one** (per WP-131 / EC-134 Done 2026-05-04,
+  which wired the production Hanko `SessionVerifier` and
+  `productionAccountResolver` into the same `deps` bundle WP-132
+  inherits); the `'session_verifier_not_configured'` 500 branch is
+  reachable only in non-production environments per D-13101 dev-mode
+  posture, and the `entitlements.routes.test.ts` 500-unconfigured
+  test asserts the orchestrator contract for that case rather than a
+  routine production response. **Error envelope split (locked precedent):** error
+  payloads preserve existing project precedent —
+  authentication / configuration failures use `{ code: '<closed-set
+  value>' }` (e.g., `'unauthorized'`,
+  `'session_verifier_not_configured'`); operational faults use
+  `{ error: 'internal_error' }`. The two envelopes intentionally
+  differ so consumers can branch on `'code' in body` without parsing
+  the value. This split was established by WP-112 (`code`-style
+  validation envelope) and WP-115 (`error`-style operational
+  envelope per D-11802 option C); WP-132 inherits both verbatim.
+  **Ordering guarantee:** result ordering is `grantedAt` ASC and is
+  **part of the public contract** — consumers MAY rely on stable
+  oldest-first ordering for deterministic rendering, list memoization,
+  or diff-style "newly granted" UI affordances. A future WP that
+  changes ordering must either add a query parameter (additive) or
+  ship a new endpoint; silent re-ordering is a breaking change.
 - `Authorizing WP`: `WP-132`
 - `Notes`: cite WP-112 (session-token gate); cite the closed-set
   `EntitlementKey` allowlist (per D-DEC-3); cite the entitlements
@@ -246,8 +372,11 @@ row, not edit of an existing row; replace-whole-row pattern N/A.
   - `apps/server/src/identity/identity.types.ts` exports
     `AccountId` (branded `string`), `Result<T>`, `DatabaseClient`,
     `PlayerAccount`.
-  - `legendary.players` table exists with `account_id text PRIMARY
-    KEY` (per migration `004_create_players_table.sql`).
+  - `legendary.players` table exists with `player_id bigserial
+    PRIMARY KEY` and `ext_id text NOT NULL UNIQUE` (per migration
+    `004_create_players_table.sql`); the application layer maps
+    `AccountId` to `ext_id` per D-5201, and per-account tables FK on
+    `player_id` per WP-104 D-10402 + WP-109 D-10906.
 - WP-112 complete. Specifically:
   - `apps/server/src/auth/sessionToken.logic.ts` exports
     `requireAuthenticatedSession(req, options): Promise<Result<AccountId>>`.
@@ -352,8 +481,13 @@ Before writing a single line:
   grants outside the Stripe flow. CHECK constraint enforces.
 - The `GET /api/me/entitlements` route returns ONLY entitlements
   for the requesting account (filtered by validated `AccountId`).
-  Cross-account read is forbidden; tests assert the SQL `WHERE
-  account_id = $1` clause is present.
+  Cross-account read is forbidden. The helper performs the
+  established WP-104 / WP-109 two-query pattern: first
+  `SELECT player_id FROM legendary.players WHERE ext_id = $1 LIMIT 1`
+  to map `AccountId` (= `ext_id`) → `player_id bigint`, then
+  `SELECT … FROM legendary.entitlements WHERE player_id = $1 AND
+  revoked_at IS NULL …`. Tests assert both queries are present and
+  that ordering is preserved (lookup before SELECT).
 - The route MUST set `Cache-Control: no-store` as the FIRST
   statement of every response (200, 401, 500), mirroring the
   WP-115 precedent.
@@ -373,9 +507,16 @@ Before writing a single line:
 **Locked contract values:**
 
 - **`legendary.entitlements` columns:** `id bigserial PRIMARY KEY`,
-  `account_id text NOT NULL`, `entitlement_key text NOT NULL`,
-  `source text NOT NULL`, `source_ref text NULL`, `granted_at
-  timestamptz NOT NULL DEFAULT now()`, `revoked_at timestamptz NULL`.
+  `player_id bigint NOT NULL REFERENCES legendary.players(player_id)
+  ON DELETE CASCADE` (the `bigint`-FK-on-`player_id` convention from
+  WP-104 D-10402 + WP-109 D-10906; the application layer maps
+  `AccountId` (= `ext_id text`) → `player_id bigint` via the standard
+  `SELECT player_id FROM legendary.players WHERE ext_id = $1` lookup
+  per D-5201 — see [ownerProfile.logic.ts:123](apps/server/src/profile/ownerProfile.logic.ts:123)
+  for the precedent),
+  `entitlement_key text NOT NULL`, `source text NOT NULL`,
+  `source_ref text NULL`, `granted_at timestamptz NOT NULL DEFAULT
+  now()`, `revoked_at timestamptz NULL`.
 - **`source` closed set:** `('stripe', 'admin_grant', 'comp')`.
 - **`source_ref` per-source semantics (locked at draft, enforced
   by WP-134 at write time):**
@@ -398,9 +539,15 @@ Before writing a single line:
   `'cosmetic_cardback_default_plus'` |
   `'cosmetic_avatar_frame_supporter'`.
 - **UNIQUE constraint:** `CREATE UNIQUE INDEX IF NOT EXISTS
-  entitlements_active_unique ON legendary.entitlements (account_id,
+  entitlements_active_unique ON legendary.entitlements (player_id,
   entitlement_key) WHERE revoked_at IS NULL;` — partial unique index
   so a re-grant of an already-active entitlement is a no-op.
+- **Secondary lookup index:** `CREATE INDEX IF NOT EXISTS
+  idx_entitlements_player_id ON legendary.entitlements (player_id)
+  WHERE revoked_at IS NULL;` — single-column FK-side index name
+  follows the WP-104 `idx_player_links_player_id` + WP-109
+  `idx_team_member_events_player_id` `idx_<table>_<column>`
+  convention.
 - **HTTP route:** `GET /api/me/entitlements` →
   `{ entitlements: Entitlement[] }`. Auth:
   `authenticated-session-required`. Status-code domain: `{200, 401,
@@ -437,7 +584,14 @@ deterministic reproduction and state inspection.
   parity with the canonical array is human-reviewed at migration
   time and locked by convention; the runtime route-layer guard
   rejecting SELECT-returned values not in the union catches drift
-  if it slips past review.
+  if it slips past review. **SQL CHECK parity is enforced at write
+  time and review time, not test time.** This is intentional: the
+  database is treated as a governance-locked boundary, not a
+  dynamically introspected source — the migration file ships in the
+  same PR as the union, the partial-unique-index policy is a single
+  reviewable artifact, and `information_schema` introspection at test
+  time would couple the unit test to a live DB and trade a hard
+  failure (compile error) for a flaky one (skip-on-no-DB).
 
 ---
 
@@ -447,18 +601,26 @@ deterministic reproduction and state inspection.
 
 - **`data/migrations/011_create_entitlements.sql`** — new:
   - `CREATE TABLE IF NOT EXISTS legendary.entitlements (id bigserial
-    PRIMARY KEY, account_id text NOT NULL REFERENCES
-    legendary.players(account_id) ON DELETE CASCADE, entitlement_key
+    PRIMARY KEY, player_id bigint NOT NULL REFERENCES
+    legendary.players(player_id) ON DELETE CASCADE, entitlement_key
     text NOT NULL CHECK (entitlement_key IN
     ('supporter_tier_basic_2026', 'cosmetic_playmat_classic', ...)),
     source text NOT NULL CHECK (source IN ('stripe', 'admin_grant',
     'comp')), source_ref text NULL, granted_at timestamptz NOT NULL
     DEFAULT now(), revoked_at timestamptz NULL);`
   - `CREATE UNIQUE INDEX IF NOT EXISTS entitlements_active_unique ON
-    legendary.entitlements (account_id, entitlement_key) WHERE
+    legendary.entitlements (player_id, entitlement_key) WHERE
     revoked_at IS NULL;`
-  - `CREATE INDEX IF NOT EXISTS entitlements_account_idx ON
-    legendary.entitlements (account_id) WHERE revoked_at IS NULL;`
+  - `CREATE INDEX IF NOT EXISTS idx_entitlements_player_id ON
+    legendary.entitlements (player_id) WHERE revoked_at IS NULL;`
+  - Add `// why:` SQL comment on the `player_id` FK column declaration
+    citing the WP-104 D-10402 + WP-109 D-10906 + D-5201 precedent —
+    `legendary.players(player_id)` is the `bigint` PK FK target for
+    every per-account table; the application layer maps
+    `AccountId` (= `ext_id text`) to `player_id` via
+    `SELECT player_id FROM legendary.players WHERE ext_id = $1` (the
+    standard two-query pattern at
+    [ownerProfile.logic.ts:123](apps/server/src/profile/ownerProfile.logic.ts:123)).
   - Add `// why:` SQL comment on the partial unique index:
     `-- why: Enforces idempotency for entitlement grants. WP-134's
     fulfillment processor INSERTs entitlement rows on
@@ -469,6 +631,17 @@ deterministic reproduction and state inspection.
     a no-op (ON CONFLICT ... DO NOTHING) rather than a second row.
     See WP-134 §Locked contract values for the matching ON CONFLICT
     clause.`
+  - Add `// why:` SQL comment on the `source_ref text NULL` column
+    declaration explaining why no `source = 'comp' → source_ref NOT
+    NULL` CHECK exists at WP-132: per WP-132 §D-DEC-4 + §Locked
+    contract values, the per-source `source_ref` semantics
+    (`'stripe'` non-NULL, `'admin_grant'` optional, `'comp'`
+    `D-NNNNN`-cited) are review-locked rather than CHECK-encoded
+    because WP-132 ships zero writer for any of the three values;
+    the policy applies to future direct-SQL interventions and
+    future-WP writers, where review discipline is the control. A
+    CHECK is a candidate refinement if `'comp'`-source rows become
+    frequent (deferred to a future WP).
 
 ### B) `apps/server/src/entitlements/entitlements.types.ts` — new
 
@@ -497,28 +670,58 @@ deterministic reproduction and state inspection.
 
 - Export `getEntitlementsForAccount(accountId: AccountId, database:
   DatabaseClient): Promise<EntitlementsResult<Entitlement[]>>`.
-- Single SQL `SELECT entitlement_key, source, source_ref, granted_at,
-  revoked_at FROM legendary.entitlements WHERE account_id = $1 AND
-  revoked_at IS NULL ORDER BY granted_at ASC`.
-- Database fault → `Result.fail({ code: 'lookup_failed' })`.
-- No INSERT / UPDATE / DELETE in this file (verified by
-  `Select-String` in Verification Steps). WP-134 is the WP that adds
-  the INSERT site.
+- **Two-query pattern (WP-104 / WP-109 precedent):**
+  - **Step 1 — `AccountId` → `player_id` lookup:**
+    `SELECT player_id FROM legendary.players WHERE ext_id = $1
+    LIMIT 1`. On zero rows return
+    `Result.fail({ code: 'lookup_failed' })` (the
+    `requireAuthenticatedSession` orchestrator already validated the
+    account exists, so a miss here indicates a database inconsistency
+    or race against account deletion). On database fault return
+    `Result.fail({ code: 'lookup_failed' })`.
+  - **Step 2 — entitlements SELECT keyed on `player_id`:**
+    `SELECT entitlement_key, source, source_ref, granted_at,
+    revoked_at FROM legendary.entitlements WHERE player_id = $1 AND
+    revoked_at IS NULL ORDER BY granted_at ASC`. On database fault
+    return `Result.fail({ code: 'lookup_failed' })`.
+- Step 1 must execute strictly before Step 2 (lookup before SELECT);
+  no parallelization. Use a single pooled connection
+  (`database.query` directly) — no transaction needed because both
+  queries are read-only.
+- The helper does NOT mutate `legendary.players` or
+  `legendary.entitlements`. No INSERT / UPDATE / DELETE in this file
+  (verified by `Select-String` in Verification Steps). WP-134 is the
+  WP that adds the entitlement INSERT site.
 
 ### D) `apps/server/src/entitlements/entitlements.logic.test.ts` — new
 
 `node:test` coverage:
-- Empty result set returns `Result.ok([])`.
+- Empty result set returns `Result.ok([])` (account exists in
+  `legendary.players`; zero entitlement rows).
 - Single active entitlement returns one-element array.
 - Multiple active entitlements ordered by `granted_at ASC`.
 - Revoked entitlements are filtered out by the `WHERE revoked_at IS
   NULL` clause.
-- Database fault returns `Result.fail({ code: 'lookup_failed' })`.
+- `AccountId` not found in `legendary.players` returns
+  `Result.fail({ code: 'lookup_failed' })` (Step 1 zero-row branch;
+  unreachable in production via the orchestrator but covered as a
+  database-inconsistency contract).
+- Step 1 database fault returns
+  `Result.fail({ code: 'lookup_failed' })`.
+- Step 2 database fault returns
+  `Result.fail({ code: 'lookup_failed' })`.
 - Drift-detection test: `ENTITLEMENT_KEYS` array exactly matches the
   `EntitlementKey` union (compile-time assertion via exhaustive
   switch).
 - Test inline-skips when `hasTestDatabase` is false (per D-5201 §3.1
   precedent).
+- Test fixtures use **per-suite-run unique `ext_id` / `player_id`
+  values** (UUID-suffixed) so DB-required tests do not require a
+  `beforeEach` cleanup against `legendary.players` or
+  `legendary.entitlements` (mirrors the EC-128 §3(c) lock + the
+  WP-101 D-5201 §3.1 pattern). The §Verification Steps SQL-write
+  grep gate forbids `DELETE FROM legendary.players` /
+  `DELETE FROM legendary.entitlements` in test setup.
 
 ### E) `apps/server/src/entitlements/entitlements.routes.ts` — new
 
@@ -737,6 +940,21 @@ keys per single Stripe purchase, which complicates the WP-134
 "one purchase = one key" invariant (locked under WP-134 D-13403).
 Option (d) violates §14.
 
+**`_2026` suffix rationale (locked at draft):** the year-suffixed
+key (`supporter_tier_basic_2026`) is intentional and signals that
+supporter tiers are **time-boxed SKUs**. Renewal or evolution in a
+later year (different perks, different price, different cosmetic
+bundle) ships a NEW key (e.g., `supporter_tier_basic_2027`) and
+preserves the 2026 grant in the historical record rather than
+mutating the semantics of an existing entitlement. This converts
+a potential future-regret ("we changed what supporter means and
+now old grants mean something new") into an explicit additive
+design choice. The unsuffixed cosmetic keys (`cosmetic_playmat_*`,
+`cosmetic_cardback_*`, `cosmetic_avatar_frame_*`) are NOT
+time-boxed — a playmat is a playmat regardless of year of
+purchase, and re-using the same key for a re-issued playmat is the
+intended steady state.
+
 ### D-DEC-4 — `source` Column Closed Set [DECISION REQUIRED]
 
 **Question.** What `source` values are accepted on
@@ -857,8 +1075,10 @@ that is itself still maturing (D-5201 §3.1 inline-skip pattern).
 - [ ] Table has exactly the 7 columns from §Locked contract values
 - [ ] CHECK constraint on `entitlement_key` matches the locked set verbatim
 - [ ] CHECK constraint on `source` matches `('stripe', 'admin_grant', 'comp')` verbatim
-- [ ] Partial unique index `(account_id, entitlement_key) WHERE revoked_at IS NULL` exists
-- [ ] FK to `legendary.players(account_id)` with `ON DELETE CASCADE`
+- [ ] Partial unique index `entitlements_active_unique` on `(player_id, entitlement_key) WHERE revoked_at IS NULL` exists
+- [ ] Secondary lookup index `idx_entitlements_player_id` on `(player_id) WHERE revoked_at IS NULL` exists
+- [ ] FK to `legendary.players(player_id)` with `ON DELETE CASCADE` (per WP-104 D-10402 + WP-109 D-10906 `bigint`-FK precedent)
+- [ ] Helper `getEntitlementsForAccount` performs the standard two-query pattern: Step 1 `SELECT player_id FROM legendary.players WHERE ext_id = $1 LIMIT 1` precedes Step 2 `SELECT … FROM legendary.entitlements WHERE player_id = $1 …` — verified by reading the helper file and confirming Step 1 executes strictly before Step 2 (no parallelization).
 
 ### Library
 - [ ] `entitlements.logic.ts` exports `getEntitlementsForAccount(accountId, database)`
@@ -919,6 +1139,18 @@ Select-String -Path "apps\server\src\entitlements\entitlements.routes.ts" -Patte
 # Step 5 — confirm requireAuthenticatedSession is the first middleware
 Select-String -Path "apps\server\src\entitlements\entitlements.routes.ts" -Pattern "requireAuthenticatedSession"
 # Expected: matches inside the GET /api/me/entitlements handler
+
+# Step 5a — confirm two-query pattern: Step 1 ext_id lookup is present
+Select-String -Path "apps\server\src\entitlements\entitlements.logic.ts" -Pattern "FROM legendary\.players WHERE ext_id"
+# Expected: exactly one match (the AccountId -> player_id lookup)
+
+# Step 5b — confirm Step 2 entitlements SELECT keyed on player_id
+Select-String -Path "apps\server\src\entitlements\entitlements.logic.ts" -Pattern "FROM legendary\.entitlements WHERE player_id"
+# Expected: exactly one match (the entitlements read keyed on player_id, not account_id)
+
+# Step 5c — confirm the now-incorrect column name is absent
+Select-String -Path "apps\server\src\entitlements" -Pattern "WHERE account_id" -Recurse
+# Expected: no output (account_id is not a column on legendary.players or legendary.entitlements; helper queries by ext_id then player_id)
 
 # Step 6 — confirm no boardgame.io import in server module
 Select-String -Path "apps\server\src\entitlements" -Pattern "from 'boardgame\.io'" -Recurse
