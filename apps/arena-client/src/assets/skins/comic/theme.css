@@ -1,0 +1,9 @@
+/* Comic skin theme — alternative aesthetic per D-13003.
+   Variables are scoped to the .skin-comic class so they apply only inside
+   <PlayViewport>'s root and do not leak to non-Play pages. */
+.skin-comic {
+  --skin-board-background: #fbbf24;
+  --skin-board-foreground: #1c1917;
+  --skin-card-frame: #dc2626;
+  --skin-accent: #1d4ed8;
+}

@@ -2,6 +2,7 @@ import '../../testing/jsdom-setup';
 
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
+import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
 import type { UIState } from '@legendary-arena/game-engine';
 import TopHudBar from './TopHudBar.vue';
@@ -60,6 +61,7 @@ function fixture(overrides: Partial<UIState['game']> = {}): UIState {
 
 describe('TopHudBar (WP-129)', () => {
   test('renders phase / turn / active / stage', () => {
+    setActivePinia(createPinia());
     const wrapper = mount(TopHudBar, {
       props: {
         snapshot: fixture(),
@@ -74,6 +76,7 @@ describe('TopHudBar (WP-129)', () => {
   });
 
   test('renders twist + mastermind + bystanders + escaped counters', () => {
+    setActivePinia(createPinia());
     const wrapper = mount(TopHudBar, {
       props: {
         snapshot: fixture(),
@@ -88,6 +91,7 @@ describe('TopHudBar (WP-129)', () => {
   });
 
   test('falls back to "pending" when activePlayerId is empty', () => {
+    setActivePinia(createPinia());
     const wrapper = mount(TopHudBar, {
       props: {
         snapshot: fixture({ activePlayerId: '' }),
@@ -98,7 +102,8 @@ describe('TopHudBar (WP-129)', () => {
     assert.equal(wrapper.find('[data-testid="play-hud-active"]').text(), 'Active: pending');
   });
 
-  test('renders D-12907 skin-selector slot placeholder when no slot content provided', () => {
+  test('mounts WP-130 <SkinSelector> in the D-12907 reserved slot when no slot content provided', () => {
+    setActivePinia(createPinia());
     const wrapper = mount(TopHudBar, {
       props: {
         snapshot: fixture(),
@@ -106,8 +111,8 @@ describe('TopHudBar (WP-129)', () => {
         schemeTwistThreshold: 8,
       },
     });
-    const placeholder = wrapper.find('[data-testid="play-hud-skin-placeholder"]');
-    assert.equal(placeholder.exists(), true);
-    assert.match(placeholder.text(), /Skin: Classic/);
+    const selectorButton = wrapper.find('[data-testid="play-hud-skin-selector-button"]');
+    assert.equal(selectorButton.exists(), true);
+    assert.match(selectorButton.text(), /Skin: classic/);
   });
 });

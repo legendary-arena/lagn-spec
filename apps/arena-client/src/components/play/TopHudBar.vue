@@ -1,14 +1,15 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import type { UIState } from '@legendary-arena/game-engine';
+import SkinSelector from './SkinSelector.vue';
 
 /**
  * Top HUD bar for the WP-129 board layout.
  *
  * Renders `game.{phase, turn, activePlayerId, currentStage}` plus
  * `progress.{bystandersRescued, escapedVillains}` plus scheme/mastermind
- * progress. Reserves the skin-selector slot per D-12907 (populated by
- * WP-130 — this WP only declares the slot, no interactive behavior).
+ * progress. Mounts the WP-130 `<SkinSelector>` in the slot reserved by
+ * D-12907.
  *
  * Per the EC-132 §2 SFC authoring whitelist: this is a tested non-leaf
  * composer with computed state (twist progress, mastermind progress) so
@@ -25,6 +26,7 @@ import type { UIState } from '@legendary-arena/game-engine';
  */
 export default defineComponent({
   name: 'TopHudBar',
+  components: { SkinSelector },
   props: {
     snapshot: {
       type: Object as PropType<UIState>,
@@ -95,13 +97,13 @@ export default defineComponent({
       </span>
     </div>
     <div class="top-hud-bar__row">
-      <!-- why: D-12907 reserves the skin-selector slot for WP-130; this WP
-           only renders a placeholder label and emits no interactive event.
-           Future WP-130 swaps in the actual selector. -->
+      <!-- why: D-12907 reserves the skin-selector slot for WP-130; the
+           WP-130 `<SkinSelector>` mounts here as the default slot
+           content. Parents that want to override (test fixtures, future
+           replay-spectator surface) can still pass alternative slot
+           content; the slot itself is preserved. -->
       <slot name="skin-selector">
-        <span data-testid="play-hud-skin-placeholder" class="top-hud-bar__skin-placeholder">
-          🎨 Skin: Classic
-        </span>
+        <SkinSelector />
       </slot>
     </div>
   </header>

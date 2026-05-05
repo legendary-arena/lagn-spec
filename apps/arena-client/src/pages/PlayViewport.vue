@@ -1,9 +1,10 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, ref, type PropType } from 'vue';
 
 import PlayDesktop from './PlayDesktop.vue';
 import PlayMobile from './PlayMobile.vue';
 import { useViewport } from '../composables/useViewport';
+import { useSkinApplier } from '../composables/useSkinApplier';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
 
 /**
@@ -19,7 +20,15 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
  * `defineComponent({ setup() { return {...} } })` per P6-30 / P6-46 /
  * D-6512.
  *
+ * Per WP-130, `useSkinApplier()` is invoked here against the viewport's
+ * root element so the active playmat skin's CSS class propagates to
+ * both `<PlayDesktop>` and `<PlayMobile>` (whichever this component
+ * renders). Application is exclusive to this root element — never
+ * `<body>` or any global document node — so non-Play pages (lobby,
+ * replay-viewer, future routes) never inherit skin styling.
+ *
  * @see WP-129 §Acceptance Criteria — viewport discriminator
+ * @see WP-130 §D "Skin application"
  * @see DECISIONS.md D-12909 viewport breakpoint
  */
 export default defineComponent({
@@ -33,12 +42,22 @@ export default defineComponent({
   },
   setup() {
     const { isMobile } = useViewport();
-    return { isMobile };
+    const viewportRoot = ref<HTMLElement | null>(null);
+    useSkinApplier(viewportRoot);
+    return { isMobile, viewportRoot };
   },
 });
 </script>
 
 <template>
-  <PlayMobile v-if="isMobile" :submit-move="submitMove" />
-  <PlayDesktop v-else :submit-move="submitMove" />
+  <div ref="viewportRoot" class="play-viewport">
+    <PlayMobile v-if="isMobile" :submit-move="submitMove" />
+    <PlayDesktop v-else :submit-move="submitMove" />
+  </div>
 </template>
+
+<style scoped>
+.play-viewport {
+  display: contents;
+}
+</style>

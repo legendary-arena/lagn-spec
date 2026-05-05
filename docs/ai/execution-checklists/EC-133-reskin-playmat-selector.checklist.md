@@ -13,15 +13,16 @@ Failure to satisfy any item below is a failed execution of WP-130.
 ## §0 — Pre-Flight
 
 - [ ] WP-129 / EC-132 executed and shipped on `main`. `<TopHudBar>` exists with the reserved skin-selector slot per D-12907.
-- [ ] WP-061 / WP-068 contract files present and reviewed (Pinia bootstrap; preferences subsystem precedent).
-- [ ] WP-121 (`useCardSize.ts`) + WP-124 (`useThemeSize.ts`) reviewed as single-key preferences pattern precedent.
+- [ ] WP-061 complete on `main` (Pinia bootstrap; `createPinia()` wired in `apps/arena-client/src/main.ts`).
+- [ ] WP-121 (`apps/registry-viewer/src/composables/useCardSize.ts`) + WP-124 (`useThemeSize.ts`) reviewed as the **canonical single-key preferences precedent** — module-scope ref + `STORAGE_KEY` constant + setter writing both ref and `localStorage` synchronously + corruption-safe fallback. This packet mirrors that pattern wrapped in a Pinia setup store.
+- [ ] **WP-068 NOT a dependency** — pre-flight 2026-05-04 PS-1 Option A locked the simplification. Do NOT read `apps/registry-viewer/src/prefs/` source files (the directory does not exist on `main`); the multi-section subsystem is out of scope.
 - [ ] Five executor decisions (D-13001..D-13005 per WP-130 §"Resolve the 5 [DECISION REQUIRED] blocks" + `DESIGN-BOARD-LAYOUT.md §7.2 #7`) locked in writing at the start of the session before writing any production file.
-- [ ] `pnpm -r build` exits 0; arena-client baseline established.
+- [ ] `pnpm -r build` exits 0; arena-client baseline established (`pass 250 / fail 0 / suites 30` post-WP-129 / EC-132).
 - [ ] Bundled skin assets available for D-13003 locked set (`classic`, `comic`, `minimal`) — confirm asset files exist in source-control or generation pipeline before writing the manifest.
 
 ## §1 — Scope Lock + File Allowlist
 
-~16–22 files at session close (10–14 new + 3 modified + 4 governance + ~5 test files).
+~14–20 files at session close (9–12 new + 2 modified + 4 governance + ~5 test files). `apps/arena-client/src/main.ts` is NOT in the allowlist (Option A — no bootstrap import needed).
 
 `git diff --name-only` lists the projected set at session close. Any file outside the WP-130 allowlist = scope creep = STOP.
 
@@ -46,9 +47,13 @@ Failure to satisfy any item below is a failed execution of WP-130.
 - No animations / transitions on skin swap — instant CSS class toggle (animation out of scope per `DESIGN-BOARD-LAYOUT.md §8.1`).
 - The selector overlay is a Vue 3 Teleport modal — keeps it above sticky zones.
 - WP-064 D-6401 keyboard-focus pattern preserved: Escape closes overlay; outside-click closes overlay; tabindex on overlay root.
-- Asset-load failures degrade gracefully to `'classic'` — never break the layout.
+- Asset-load failures degrade gracefully to `'classic'` — never break the layout. "Asset-load failure" is defined as any error resolving the active `SkinName` to a manifest entry OR applying its CSS class; image preloading / network probing is out of scope.
+- `SkinName` enum MUST be derived from the keys of `skinManifest.ts`; no duplicated enum definitions are permitted. Manifest is the canonical source of truth.
+- Skin CSS is applied ONLY at the `<PlayViewport>` root; application to `<body>` or any global document node is forbidden.
+- `setActiveSkin()` is a synchronous write — no async I/O, no `await`, no network round-trip; the Pinia state mutation and the `localStorage` write happen in the same tick.
+- The `<SkinSelector>` component always mounts in the WP-129 reserved slot; the empty-state path renders a disabled chip rather than unmounting the selector.
 - `01.5 NOT INVOKED` (no engine state change).
-- 01.6 post-mortem OPTIONAL per the WP-068 / WP-121 / WP-124 viewer-side precedent.
+- 01.6 post-mortem OPTIONAL per the WP-121 / WP-124 single-key-preference precedent (single-section, single-key — no new long-lived abstraction beyond the playmat store itself).
 
 ## §4 — Required `// why:` Comments
 
@@ -71,6 +76,8 @@ Failure to satisfy any item below is a failed execution of WP-130.
 - [ ] No socket transport reference in skin code: `Select-String -Path "apps\arena-client\src\prefs","apps\arena-client\src\components\play\SkinSelector.vue" -Pattern "submitMove|boardgame\.io" -Recurse` returns no output.
 - [ ] No `Math.random()` / `Date.now()` / `fetch(` in skin code: `Select-String -Path "apps\arena-client\src\prefs" -Pattern "Math\.random|Date\.now|fetch\(" -Recurse` returns no output.
 - [ ] No engine / server / registry / registry-viewer / replay-producer files modified: `git diff --name-only packages/ apps/server apps/registry-viewer apps/replay-producer` returns no output.
+- [ ] `apps/arena-client/src/main.ts` UNMODIFIED (Option A — no bootstrap import): `git diff --name-only apps/arena-client/src/main.ts` returns no output.
+- [ ] No `apps/arena-client/src/prefs/registerSections.ts` file created (Option A — no section registry): `Test-Path "apps\arena-client\src\prefs\registerSections.ts"` returns `False`.
 - [ ] D-13001..D-13005 inserted in DECISIONS.md in numeric order with rationale + rejected alternatives.
 - [ ] D-13003 cites `classic` + `comic` + `minimal` as the locked bundled set.
 - [ ] D-13004 cites WP-104 column-additive precedent as the not-taken path (server-side sync deferred).
@@ -105,6 +112,12 @@ Failure to satisfy any item below is a failed execution of WP-130.
 - Animation added on skin swap → `DESIGN-BOARD-LAYOUT.md §8.1` violated; STOP and remove.
 - Asset-load failure crashes the layout → D-13005 graceful-fallback violated; refactor to fall back to `'classic'`.
 - Schema accepts unknown skin name → schema validation gap; tighten the Zod enum.
+- Hand-maintained `SkinName` union duplicated alongside `skinManifest.ts` → manifest/schema drift inevitable; STOP and derive the enum from `Object.keys(skinManifest)`.
+- Skin CSS class written to `document.body` (or any global document node) → global bleed into non-Play pages; STOP and move application to the `<PlayViewport>` root.
+- Selector unmounted in the empty-state path (no `availableSkins`) → HUD-bar slot reflows; STOP and render the disabled fallback chip in place.
+- `setActiveSkin()` made `async` or wrapped in a network call → write-amplification + race window; STOP and revert to a synchronous Pinia mutation + `localStorage` write.
+- Tried to read `apps/registry-viewer/src/prefs/` for the WP-068 precedent → directory does not exist on `main` (commit `bbd58b0` lives only on branch `wp-068-preferences-foundation`); STOP and read `apps/registry-viewer/src/composables/{useCardSize,useThemeSize}.ts` instead per pre-flight 2026-05-04 PS-1 Option A.
+- Created `apps/arena-client/src/prefs/registerSections.ts` or modified `apps/arena-client/src/main.ts` → Option A simplification violated; the playmat store is a single-section Pinia setup store, lazy-initialized via `usePlaymat()`; no section registry, no bootstrap import. STOP and remove.
 - Selector mounted in a fixed position instead of the WP-129-reserved slot → WP-129 D-12907 contract violated.
 - Premium / paid skin surface introduced → §20 Funding Surface Gate triggered without applicability declaration; STOP and either remove the surface or amend the WP draft to declare §20 applicability.
 - `localStorage` write happens on every reactive update (not coalesced) → write-amplification; gate with `watchEffect` cleanup or single-write-on-set.

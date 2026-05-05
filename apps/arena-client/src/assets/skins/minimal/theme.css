@@ -1,0 +1,9 @@
+/* Minimal skin theme — high-contrast a11y-baseline per D-13003.
+   Variables are scoped to the .skin-minimal class so they apply only inside
+   <PlayViewport>'s root and do not leak to non-Play pages. */
+.skin-minimal {
+  --skin-board-background: #f8fafc;
+  --skin-board-foreground: #0f172a;
+  --skin-card-frame: #0f172a;
+  --skin-accent: #1f2937;
+}

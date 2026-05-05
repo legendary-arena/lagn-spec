@@ -1,0 +1,9 @@
+/* Classic skin theme — matches physical Marvel Legendary board art (D-13003).
+   Variables are scoped to the .skin-classic class so they apply only inside
+   <PlayViewport>'s root and do not leak to non-Play pages. */
+.skin-classic {
+  --skin-board-background: #1e3a8a;
+  --skin-board-foreground: #f5f5f4;
+  --skin-card-frame: #d4af37;
+  --skin-accent: #c2410c;
+}

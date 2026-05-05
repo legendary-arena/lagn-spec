@@ -2,13 +2,13 @@
 
 **Status:** Ready (deferrable — lower priority than WP-128 / WP-129)
 **Primary Layer:** Client UI — preferences (`apps/arena-client/src/prefs/` + `apps/arena-client/src/components/play/`)
-**Dependencies:** WP-129 (board layout — reserves the HUD-bar skin-selector slot under D-12907); WP-061 (Pinia bootstrap); WP-068 (preferences subsystem precedent in `apps/registry-viewer/src/prefs/`)
+**Dependencies:** WP-129 (board layout — reserves the HUD-bar skin-selector slot under D-12907); WP-061 (Pinia bootstrap); WP-121 + WP-124 (single-key preferences precedent — `apps/registry-viewer/src/composables/{useCardSize,useThemeSize}.ts`)
 
 ---
 
 ## Session Context
 
-WP-129 reserves the HUD-bar skin-selector slot under D-12907 but defers implementation; this packet ships the actual re-skin / playmat selector affordance — a Pinia-backed preferences store, an asset-discovery mechanism, and a HUD-bar-mounted selector overlay — following the WP-068 / WP-121 / WP-124 precedent for client-local preferences (Pinia + `localStorage`).
+WP-129 reserves the HUD-bar skin-selector slot under D-12907 but defers implementation; this packet ships the actual re-skin / playmat selector affordance — a Pinia-backed preferences store, an asset-discovery mechanism, and a HUD-bar-mounted selector overlay — following the **WP-121 / WP-124 single-key preferences precedent** (module-scope ref + `localStorage` persistence with corruption-safe fallback). WP-068's multi-section preferences subsystem (`createPreferencesStore` factory + section registry + schema versioning) is **not** a hard dependency of this packet — that branch never landed on `main` (commit `bbd58b0` is on branch `wp-068-preferences-foundation` only), and a single-section playmat preference does not need the multi-section abstractions. Pre-flight 2026-05-04 PS-1 locked this Option A simplification.
 
 ---
 
@@ -23,11 +23,11 @@ After this packet, the active player can change the visual chrome of `<PlayDeskt
 - WP-129 / EC-132 executed and shipped on `main`. Specifically:
   - `<TopHudBar>` exists and includes a reserved slot for the skin selector (D-12907).
   - `<PlayDesktop>` and `<PlayMobile>` mount `<TopHudBar>` as the top-edge zone.
-  - `apps/arena-client/src/prefs/` may or may not exist depending on D-13002 (per-WP-068-pattern decision); confirm before assuming.
-- WP-061 complete. Vue 3 + Vite + Pinia bootstrap; `createPinia()` wired.
-- WP-068 complete. The registry-viewer's preferences subsystem (`apps/registry-viewer/src/prefs/`) is the cross-app precedent — same pattern transplants to `apps/arena-client/src/prefs/`.
+  - `apps/arena-client/src/prefs/` does NOT yet exist — this packet creates it.
+- WP-061 complete. Vue 3 + Vite + Pinia bootstrap; `createPinia()` wired in `apps/arena-client/src/main.ts`.
+- WP-121 + WP-124 complete on `main`. `apps/registry-viewer/src/composables/useCardSize.ts` (storage key `'cardGridSize'`) and `useThemeSize.ts` (storage key `'themeGridSize'`) are the single-key preferences precedent: module-scope `Ref<T>` + setter + `localStorage` round-trip + corruption-safe `clampToRange()` fallback. This packet mirrors that pattern in arena-client, with one difference — the Pinia setup-store API is used instead of plain module-scope refs (per the project's "Pinia-backed" preference for arena-client client state).
 - `pnpm -r build` exits 0 on `main` HEAD.
-- `pnpm --filter arena-client test` baseline established post-WP-129.
+- `pnpm --filter arena-client test` baseline established post-WP-129 (`pass 250 / fail 0 / suites 30`).
 
 If any of the above is false, this packet is **BLOCKED**.
 
@@ -40,10 +40,11 @@ Before writing a single line:
 - `docs/ai/ARCHITECTURE.md §"Layer Boundary (Authoritative)"` — confirms the arena-client preferences subsystem must not affect engine state or replay determinism.
 - `docs/ai/DESIGN-BOARD-LAYOUT.md §7.2 #7` — the five locked sub-decisions for the re-skin selector. This packet's `D-13001..D-13005` resolve them.
 - `docs/ai/DESIGN-BOARD-LAYOUT.md §6.4 + §3.2` — the mobile-portrait HUD-bar shape; the skin selector must compress for portrait.
-- `apps/registry-viewer/src/prefs/` — the WP-068 / D-1414 precedent. Read `createPreferencesStore.ts`, `persistence.ts`, `sectionRegistry.ts`, `usePreferences.ts`, and any `*.schema.ts` files. This packet mirrors the pattern in `apps/arena-client/src/prefs/`.
-- `apps/registry-viewer/src/composables/useCardSize.ts` (WP-121) and `useThemeSize.ts` (WP-124) — single-key preferences pattern with `localStorage` persistence; this packet's selector is similar shape, more keys.
-- `apps/arena-client/src/components/play/TopHudBar.vue` (post-WP-129) — read entirely; the selector mounts here.
-- `docs/ai/REFERENCE/00.6-code-style.md` — Rule 4, Rule 6, Rule 13.
+- `apps/registry-viewer/src/composables/useCardSize.ts` (WP-121) — **canonical single-key preferences precedent**. Read in full. Note the module-scope `Ref<T>` initialization pattern, the `STORAGE_KEY` constant, the `clampToRange()` corruption-safe fallback, and the `setCardSize(next): void` setter that writes both the ref and `localStorage` synchronously. This packet mirrors all five mechanics — only the value type changes (`SkinName` enum vs. clamped number) and the wrapper changes (Pinia setup store vs. plain module-scope ref).
+- `apps/registry-viewer/src/composables/useThemeSize.ts` (WP-124) — second copy of the same pattern. Confirms the precedent is stable across at least two consumers; safe to mirror without re-deriving.
+- `apps/arena-client/src/components/play/TopHudBar.vue` (post-WP-129) — read entirely; the selector mounts in the `<slot name="skin-selector">` reserved at lines 98–105 per D-12907.
+- `apps/arena-client/src/pages/PlayViewport.vue` — read in full; `useSkinApplier()` is invoked here so skin changes propagate to both `<PlayDesktop>` and `<PlayMobile>`.
+- `docs/ai/REFERENCE/00.6-code-style.md` — Rule 4 (no abbreviations), Rule 6 (`// why:` comments), Rule 11 (full-sentence error messages), Rule 13 (ESM only).
 
 ---
 
@@ -65,11 +66,11 @@ Before writing a single line:
   - Be persisted to a server endpoint.
   - Be sent over the WP-090 socket transport.
   - Influence replay determinism or `computeStateHash`.
-- The Pinia store mirrors the WP-068 `createPreferencesStore` pattern: typed sections, schema validation, `localStorage` persistence with corruption-safe fallback.
-- The HUD-bar selector renders only when the bundled skin list (D-13001) is non-empty. Empty-state fallback shows a disabled `🎨 (default)` chip with a tooltip.
+- The Pinia store mirrors the WP-121 / WP-124 single-key pattern (one storage key, one ref, one setter, one corruption-safe fallback) wrapped in a `defineStore('playmat', () => { … })` setup store. Schema validation via Zod; `localStorage` persistence with corruption-safe fallback to `'classic'`.
+- The `<SkinSelector>` component always mounts in the WP-129 reserved slot. When `availableSkins.length === 0`, it renders a disabled `🎨 (default)` chip with a tooltip per D-13005. The component itself is never conditionally hidden from the HUD bar.
 - The "Default" skin (D-13003) is ALWAYS available — both as the default selection on first launch and as the unconditional fallback when an asset load fails.
 - Skin assets (board background, card frames) load from R2 via known URL paths OR from bundled-with-the-client static assets (D-13001 lock).
-- Asset-load failures degrade gracefully to the Default skin — never break the layout.
+- Asset-load failures degrade gracefully to the Default skin — never break the layout. An asset-load failure is defined narrowly as **any error resolving the active `SkinName` to a manifest entry OR applying its corresponding CSS class**. Image preloading, network probing, decode-error retries, and HEAD-checks against R2 are explicitly out of scope; fallback occurs synchronously on detection.
 - The selector overlay is a Vue 3 Teleport modal — keeps it above the wireframe's sticky zones in mobile portrait.
 - The selector closes on overlay-click, Escape key, or skin selection. WP-064 D-6401 keyboard-focus pattern preserved.
 - No animations / transitions on skin swap — instant CSS class toggle (animation is out of scope per `DESIGN-BOARD-LAYOUT.md §8.1`).
@@ -96,13 +97,20 @@ Before writing a single line:
 
 ## Scope (In)
 
-### A) Pinia preferences store
+### A) Pinia preferences store (single-section, mirrors WP-121 / WP-124)
 
-- **`apps/arena-client/src/prefs/playmatSchema.ts`** — new — Zod schema for the playmat preferences section: `{ activeSkin: SkinName, customizations?: { /* future */ } }`. `SkinName` is a closed-set Zod enum derived from the bundled skin list.
-- **`apps/arena-client/src/prefs/playmatStore.ts`** — new — Pinia store + composable `usePlaymat()` exposing `{ activeSkin: Ref<SkinName>, setActiveSkin(name: SkinName): void, availableSkins: readonly SkinName[] }`.
-- **`apps/arena-client/src/prefs/persistence.ts`** — new (or modified if a registry-viewer-style prefs subsystem already exists) — `localStorage` round-trip with corruption-safe fallback per WP-068 precedent.
-- **`apps/arena-client/src/prefs/registerSections.ts`** — new — registers the `playmat` section + any future arena-client preference sections (analogous to registry-viewer's pattern).
-- **`apps/arena-client/src/main.ts`** — modified — side-effect import `./prefs/registerSections.ts` after `createPinia()` per WP-068 precedent.
+`SkinName` MUST have exactly one source of truth. The Zod enum SHALL be derived directly from the keys of `skinManifest.ts` (e.g., `z.enum(Object.keys(skinManifest) as [SkinName, ...SkinName[]])`), never duplicated by hand. Any divergence between the manifest keys and the schema enum is a failing state — drift-detection tests must catch it before merge.
+
+This packet uses the **WP-121 / WP-124 single-key precedent** (one storage key, one value, one setter, one corruption-safe fallback) wrapped in a Pinia setup store. No section registry, no schema-version envelope, no multi-section abstractions — those belong to the deferred WP-068 multi-section subsystem and are explicitly out of scope here per pre-flight 2026-05-04 PS-1 Option A.
+
+- **`apps/arena-client/src/prefs/skinManifest.ts`** — new — typed manifest mapping each bundled `SkinName` to its asset paths (board-background, card-frame, theme-css). The manifest is the **canonical source of truth** for `SkinName` per the rule above. Generated at build time or hand-maintained per D-13001.
+- **`apps/arena-client/src/prefs/playmatSchema.ts`** — new — Zod schema for the active-skin value: `z.enum(Object.keys(skinManifest) as [SkinName, ...SkinName[]])`. Closed set; rejection of unknown names triggers `console.warn` + fallback to `'classic'` per D-13005.
+- **`apps/arena-client/src/prefs/persistence.ts`** — new — `loadActiveSkin(): SkinName` + `saveActiveSkin(name: SkinName): void` helpers. `localStorage` round-trip with corruption-safe fallback to `'classic'` (mirrors WP-121 `useCardSize`'s `clampToRange()` posture: read once, validate, fall back if invalid). Sync-only — no `await`, no network round-trip.
+- **`apps/arena-client/src/prefs/playmatStore.ts`** — new — Pinia setup store via `defineStore('playmat', () => { … })` exposing the `usePlaymat()` composable: `{ activeSkin: Ref<SkinName>, setActiveSkin(name: SkinName): void, availableSkins: readonly SkinName[] }`. Module-load-time initialization calls `loadActiveSkin()` (mirrors WP-121's module-scope ref init); `setActiveSkin` writes the ref AND calls `saveActiveSkin(name)` synchronously.
+
+**Not created** (Option A simplification — these belong to the deferred multi-section subsystem):
+- ~~`registerSections.ts`~~ — no section registry needed; one section, lazy-initialized via `usePlaymat()` on first call.
+- ~~`apps/arena-client/src/main.ts` modification~~ — no side-effect bootstrap import needed; Pinia stores lazy-initialize when first used. `createPinia()` is already wired by WP-061; that's sufficient.
 
 ### B) Skin asset bundle (MVP)
 
@@ -119,7 +127,7 @@ Before writing a single line:
 
 ### D) Skin application
 
-- **`apps/arena-client/src/composables/useSkinApplier.ts`** — new — composable that watches `activeSkin` and applies the corresponding CSS variables / class to the `<body>` or `<PlayViewport>` root element. Uses Vue's `watchEffect` to react to changes.
+- **`apps/arena-client/src/composables/useSkinApplier.ts`** — new — composable that watches `activeSkin` and applies the corresponding CSS class **exclusively to the `<PlayViewport>` root element**. Application to `<body>` or any global document node is FORBIDDEN — it would bleed skin styling into non-Play pages, contaminate replays, and break Teleport-based overlays. Uses Vue's `watchEffect` to react to changes.
 - **`apps/arena-client/src/pages/PlayViewport.vue`** — modified — invoke `useSkinApplier()` so skin changes propagate to both `<PlayDesktop>` and `<PlayMobile>`. (Filename per WP-129 — disambiguated from the deleted WP-100 `components/play/PlayView.vue`.)
 
 ### E) Tests
@@ -130,6 +138,8 @@ Add `node:test` tests for:
 - `useSkinApplier`: applies CSS class on mount; reacts to changes; degrades to default on asset-load failure.
 
 ### F) Resolve the 5 [DECISION REQUIRED] blocks
+
+Unless explicitly overridden at session start, the executor SHALL adopt the recommended defaults for D-13001 through D-13005 as written below. Proceeding with those defaults is itself a valid decision lock and does NOT require alternative proposals or executor deliberation — the defaults already reflect a reviewed, governance-aligned baseline. An override is justified only when the executor has been instructed to re-decide; in that case, the override and its rationale must be recorded alongside the D-entry.
 
 At session start, lock D-13001..D-13005 in DECISIONS.md:
 - D-13001 — Discovery mechanism. **Recommended default:** bundled with client at MVP; R2-published manifest deferred to future expansion. Rationale: bundled is faster to ship and avoids R2 latency on every client load.
@@ -151,30 +161,32 @@ At session start, lock D-13001..D-13005 in DECISIONS.md:
 - No skin editor / customization UI — the selector picks from the bundled list only.
 - No server-side persistence of the selection (D-13004 default).
 - No replay-relative skin overrides — replays render in the spectator's selected skin, not the original player's.
-- Refactors of WP-068 or WP-121 / WP-124 prefs structures.
+- Refactors of WP-121 / WP-124 prefs composables (`useCardSize` / `useThemeSize`).
+- Resurrecting the deferred WP-068 multi-section preferences subsystem — that's a separate future WP if/when arena-client gains multiple preference sections.
 - Refactors of the WP-129 component tree beyond mounting `<SkinSelector>` in the reserved slot.
 
 ---
 
 ## Files Expected to Change
 
-**New files (~10–14):**
-- `apps/arena-client/src/prefs/playmatSchema.ts` — new
-- `apps/arena-client/src/prefs/playmatStore.ts` — new
-- `apps/arena-client/src/prefs/persistence.ts` — new (if not already present from a prior arena-client prefs WP)
-- `apps/arena-client/src/prefs/registerSections.ts` — new (if not already present)
-- `apps/arena-client/src/prefs/skinManifest.ts` — new
-- `apps/arena-client/src/assets/skins/classic/` — new directory + 3 asset files
-- `apps/arena-client/src/assets/skins/comic/` — new directory + 3 asset files (D-13003)
-- `apps/arena-client/src/assets/skins/minimal/` — new directory + 3 asset files (D-13003)
-- `apps/arena-client/src/components/play/SkinSelector.vue` — new
-- `apps/arena-client/src/composables/useSkinApplier.ts` — new
+**New files (~9–12):**
+- `apps/arena-client/src/prefs/skinManifest.ts` — new (canonical source of truth for `SkinName`)
+- `apps/arena-client/src/prefs/playmatSchema.ts` — new (Zod enum derived from manifest keys)
+- `apps/arena-client/src/prefs/persistence.ts` — new (sync `localStorage` round-trip, corruption-safe fallback)
+- `apps/arena-client/src/prefs/playmatStore.ts` — new (Pinia setup store + `usePlaymat()` composable)
+- `apps/arena-client/src/assets/skins/classic/` — new directory + asset bundle (board background + card frame + theme CSS)
+- `apps/arena-client/src/assets/skins/comic/` — new directory + asset bundle (D-13003)
+- `apps/arena-client/src/assets/skins/minimal/` — new directory + asset bundle (D-13003)
+- `apps/arena-client/src/components/play/SkinSelector.vue` — new (HUD-bar button + Vue 3 Teleport overlay)
+- `apps/arena-client/src/composables/useSkinApplier.ts` — new (CSS class application to `<PlayViewport>` root)
 - (Plus `.test.ts` per new TS file + per new SFC — ~5 test files)
 
 **Modified:**
-- `apps/arena-client/src/main.ts` — modified (side-effect import for `registerSections.ts`)
-- `apps/arena-client/src/components/play/TopHudBar.vue` — modified (mount `<SkinSelector>`)
-- `apps/arena-client/src/pages/PlayViewport.vue` — modified (invoke `useSkinApplier`)
+- `apps/arena-client/src/components/play/TopHudBar.vue` — modified (mount `<SkinSelector>` in the WP-129 reserved slot)
+- `apps/arena-client/src/pages/PlayViewport.vue` — modified (invoke `useSkinApplier()`)
+
+**Not modified** (Option A simplification per pre-flight 2026-05-04 PS-1):
+- `apps/arena-client/src/main.ts` — NOT modified. `createPinia()` is already wired by WP-061; the playmat store lazy-initializes on first `usePlaymat()` call. No side-effect bootstrap import is required.
 
 **Governance:**
 - `docs/ai/STATUS.md` — modified (`### WP-130 / EC-133 Executed` block).
@@ -182,7 +194,7 @@ At session start, lock D-13001..D-13005 in DECISIONS.md:
 - `docs/ai/work-packets/WORK_INDEX.md` — modified (WP-130 row flipped).
 - `docs/ai/execution-checklists/EC_INDEX.md` — modified (EC-133 row flipped).
 
-**Total projected:** ~16–22 files. Within the typical recent-WP range (WP-104 = 14, WP-115 = 12, WP-125 = 12, WP-126 = 12).
+**Total projected:** ~14–20 files. Within the typical recent-WP range (WP-104 = 14, WP-115 = 12, WP-125 = 12, WP-126 = 12). Slightly leaner than original projection because `registerSections.ts` and the `main.ts` modification are no longer required.
 
 No other files may be modified.
 
@@ -283,7 +295,7 @@ git diff --name-only packages/ apps/server apps/registry-viewer apps/replay-prod
 
 ## Vision Alignment
 
-§3 (Player Trust & Fairness): preserved — skin selection has zero engine-state effect; replay determinism unaffected. §4 (Faithful Multiplayer Experience): aligned — different skins are visual chrome; cooperative posture unchanged. §11 (Stateless Client Philosophy): aligned — skin is client-local UI state, never round-trips to server. §14 (Explicit Decisions, No Silent Drift): preserved — D-13001..D-13005 surface every choice. §15 (Built for Contributors): aligned — mirrors WP-068 / WP-121 / WP-124 precedent so future contributors pattern-match. NG-1 (no monetization): not crossed — skins are free; not monetized; no in-game purchase surface introduced. NG-3 (no engine network): preserved (no engine touch). NG-6 (deterministic engine): preserved trivially. **Determinism preservation:** N/A at the engine layer (no engine touch); replay determinism explicitly preserved by separating skin state from game state. **§20 Funding Surface Gate: N/A** with explicit justification (no funding affordance — skins are free, no purchase / subscription / unlock surface introduced; if a future WP introduces premium skins, that WP triggers §20 explicitly). **§21 API Catalog: N/A** (no `apps/server/**` files touched).
+§3 (Player Trust & Fairness): preserved — skin selection has zero engine-state effect; replay determinism unaffected. §4 (Faithful Multiplayer Experience): aligned — different skins are visual chrome; cooperative posture unchanged. §11 (Stateless Client Philosophy): aligned — skin is client-local UI state, never round-trips to server. §14 (Explicit Decisions, No Silent Drift): preserved — D-13001..D-13005 surface every choice. §15 (Built for Contributors): aligned — mirrors WP-121 / WP-124 single-key preferences precedent so future contributors pattern-match. (WP-068 multi-section subsystem is not on `main`; this packet does not depend on it per pre-flight 2026-05-04 PS-1 Option A.) NG-1 (no monetization): not crossed — skins are free; not monetized; no in-game purchase surface introduced. NG-3 (no engine network): preserved (no engine touch). NG-6 (deterministic engine): preserved trivially. **Determinism preservation:** N/A at the engine layer (no engine touch); replay determinism explicitly preserved by separating skin state from game state. **§20 Funding Surface Gate: N/A** with explicit justification (no funding affordance — skins are free, no purchase / subscription / unlock surface introduced; if a future WP introduces premium skins, that WP triggers §20 explicitly). **§21 API Catalog: N/A** (no `apps/server/**` files touched).
 
 ---
 
@@ -296,5 +308,5 @@ git diff --name-only packages/ apps/server apps/registry-viewer apps/replay-prod
 - [ ] STATUS.md `### WP-130 / EC-133 Executed` block.
 - [ ] WORK_INDEX.md WP-130 row checked off.
 - [ ] EC_INDEX.md EC-133 row flipped Draft → Done.
-- [ ] 01.6 post-mortem OPTIONAL per the WP-068 / WP-121 / WP-124 precedent.
+- [ ] 01.6 post-mortem OPTIONAL per the WP-121 / WP-124 single-key-preference precedent (single-section, single-key — no new long-lived abstraction beyond the playmat store itself).
 - [ ] Single `EC-133:` commit with the locked file count.
