@@ -14118,6 +14118,244 @@ Locked Values.
 
 ---
 
+### D-13201 — Entitlements Module Path: `apps/server/src/entitlements/` (sibling-flat) (WP-132)
+
+**Type:** File-System Lock
+**Packet:** WP-132 / EC-135
+**Date:** 2026-05-05
+
+**Decision:** The new entitlements substrate lives at
+`apps/server/src/entitlements/` — sibling-flat under `apps/server/src/`,
+parallel to `auth/`, `profile/`, `teams/`, `competition/`,
+`leaderboards/`, `replay/`, `db/`, `identity/`, `par/`, `rules/`, `game/`.
+NOT nested under a `billing/` parent or any other domain wrapper.
+
+**Rejected alternatives:**
+- `apps/server/src/billing/entitlements/` — premature category creation;
+  WP-133 (Stripe wiring) and WP-134 (fulfillment) will each ship as their
+  own sibling-flat module; aggregating them under `billing/` only after a
+  third sibling appears (the *duplicate-first* rule).
+- `apps/server/src/me/entitlements/` — couples module path to URL prefix;
+  the route happens to be `/api/me/entitlements` but the module's
+  consumer surface is wider (the library function is reachable via direct
+  import from any future request-handler WP).
+
+**Consequence:** Future entitlements-related WPs append to
+`apps/server/src/entitlements/`; the URL prefix `/api/me/entitlements`
+is a route concern, not a module-path concern.
+
+**Status:** Active.
+
+**Citation:** WP-132 §Decision Points (locked at draft); EC-135 §1 + §2
+Locked Values.
+
+---
+
+### D-13202 — Entitlements Migration Slot: `data/migrations/011_create_entitlements.sql` (WP-132)
+
+**Type:** Migration-Slot Lock
+**Packet:** WP-132 / EC-135
+**Date:** 2026-05-05
+
+**Decision:** The entitlements migration occupies slot `011`,
+sequentially after WP-109's slot `010`. Slot numbering is sequential and
+non-recyclable per the WP-104 D-10402 + WP-109 D-10906 precedent —
+migration slots are never repurposed even if the underlying WP is later
+amended or rolled back.
+
+**Rejected alternatives:**
+- Reusing a previous slot — migration replay determinism depends on
+  monotonic slot numbering; reuse would violate `scripts/run-migrations.mjs`
+  invariants.
+
+**Consequence:** WP-133 (Stripe wiring) takes the next sequential slot
+(012); WP-134 (fulfillment) takes 013 unless an intervening WP claims it
+first.
+
+**Status:** Active.
+
+**Citation:** WP-132 §Decision Points (locked at draft); EC-135 §1 + §2
+Locked Values.
+
+---
+
+### D-13203 — `EntitlementKey` Closed Set: Six Cosmetic-Only Members with Year-Suffix Discipline on Time-Boxed SKUs (WP-132)
+
+**Type:** Type + Schema Closed-Set Lock
+**Packet:** WP-132 / EC-135
+**Date:** 2026-05-05
+
+**Decision:** The `EntitlementKey` union and the matching SQL CHECK list
+on `legendary.entitlements.entitlement_key` carry exactly the following
+six members at WP-132 close, byte-identical between the TS union, the
+canonical `ENTITLEMENT_KEYS: readonly EntitlementKey[]` array, and the
+SQL CHECK constraint:
+
+- `'supporter_tier_basic_2026'` — time-boxed supporter SKU for the 2026
+  calendar year. Renewal ships a NEW key (e.g.,
+  `'supporter_tier_basic_2027'`) rather than mutating the existing row.
+- `'cosmetic_playmat_classic'` — evergreen playmat skin.
+- `'cosmetic_playmat_comic'` — evergreen playmat skin.
+- `'cosmetic_playmat_minimal'` — evergreen playmat skin.
+- `'cosmetic_cardback_default_plus'` — evergreen card-back skin.
+- `'cosmetic_avatar_frame_supporter'` — evergreen avatar frame.
+
+Year-suffix discipline applies to **time-boxed supporter SKUs only**;
+cosmetic keys are evergreen and NOT year-suffixed. Adding a key requires
+(a) a new WP, (b) a `DECISIONS.md` entry, (c) a Vision §17 cosmetic-only
+confirmation, (d) a byte-identical migration update to the SQL CHECK
+list, and (e) a byte-identical update to `ENTITLEMENT_KEYS`.
+
+**Rejected alternatives:**
+- Including a gameplay-affecting key (e.g., `'starter_deck_premium'`,
+  `'fast_draw_bonus'`) — FAILS Vision §17 cosmetic-only review by
+  construction; NG-1 (no pay-to-win) is structural via the Layer
+  Boundary, but the closed-set lock at the type / SQL CHECK layer is
+  defense-in-depth.
+- A single supporter-tier key without year suffix (`'supporter_tier_basic'`)
+  — would force renewal to either (a) mutate the existing row's
+  `granted_at` (loses forensic history) or (b) introduce a separate
+  expiration mechanism that doesn't exist at WP-132 close. Year-suffixed
+  keys mean each year ships a fresh row that future revocation /
+  expiration mechanics can act on independently.
+
+**Consequence:** WP-134's fulfillment processor maps Stripe SKU IDs to
+`EntitlementKey` values via a lookup table that is itself closed-set;
+adding a Stripe SKU requires updating both the closed set and the
+lookup. The compile-time exhaustive `switch` in `entitlements.logic.test.ts`
+catches TS-side drift; SQL CHECK ↔ canonical array parity is review-locked.
+
+**Status:** Active.
+
+**Citation:** WP-132 §Decision Points D-DEC-3; EC-135 §0 + §2 Locked
+Values.
+
+---
+
+### D-13204 — `source` Closed Set: Three-Value `'stripe' | 'admin_grant' | 'comp'` (WP-132)
+
+**Type:** Type + Schema Closed-Set Lock
+**Packet:** WP-132 / EC-135
+**Date:** 2026-05-05
+
+**Decision:** The `EntitlementSource` union and the matching SQL CHECK
+list on `legendary.entitlements.source` carry exactly three members:
+
+- `'stripe'` — webhook-driven grant (WP-134 owns the writer); `source_ref`
+  MUST carry the Stripe Checkout Session ID (`cs_*`) or Payment Intent ID
+  (`pi_*`).
+- `'admin_grant'` — future admin-tool grant; `source_ref` MAY carry an
+  admin audit ref.
+- `'comp'` — database-direct intervention with a `D-NNNNN` `DECISIONS.md`
+  citation in `source_ref`. Operationally distinct from `'admin_grant'`
+  so forensic queries can separate routine ops from one-off interventions.
+
+The per-source `source_ref` semantics are review-locked rather than
+CHECK-encoded — WP-132 ships ZERO writer for any of the three values.
+A `source = 'comp' → source_ref NOT NULL` CHECK is a candidate refinement
+if `'comp'`-source rows become frequent (deferred to a future WP).
+
+**Rejected alternatives:**
+- Two-value (`'stripe' | 'admin_grant'`) — collapses operational
+  intent; an `'admin_grant'` row from a future admin tool with audit
+  logs is structurally distinct from a `'comp'` row from a direct-SQL
+  intervention; merging them under one value loses forensic granularity.
+- Five-value (adding `'gift'` and `'tournament_prize'`) — out of scope
+  per WP-132 §Out of Scope; each is a separately-authored future WP that
+  must clear its own Vision §17 + §20 gates.
+
+**Consequence:** Adding a `source` value requires updating both the TS
+union and the SQL CHECK constraint in the same migration. WP-134 binds
+exclusively to `'stripe'` at fulfillment time.
+
+**Status:** Active.
+
+**Citation:** WP-132 §Decision Points D-DEC-2 + D-DEC-4; EC-135 §0 + §2
+Locked Values.
+
+---
+
+### D-13205 — Route-Wiring Posture: Same-Commit Wiring (option (a)) (WP-132)
+
+**Type:** Wiring Lock
+**Packet:** WP-132 / EC-135
+**Date:** 2026-05-05
+
+**Decision:** `apps/server/src/server.mjs` is modified in the same
+commit (`EC-135:`) that ships the new `entitlements/` module quartet —
+mirroring the WP-104 / WP-109 / WP-115 / WP-131 same-commit-wiring
+precedent. The new `registerEntitlementRoutes(...)` call lands adjacent
+to the existing `registerOwnerProfileRoutes(...)` and
+`registerTeamRoutes(...)` invocations and threads the **same**
+`{ requireAuthenticatedSession, verifier, accountResolver }` deps bundle
+WP-131 / EC-134 already constructs (no second verifier or resolver
+instance built). The route is genuinely authenticated from day one
+because WP-131 / EC-134 (Done 2026-05-04) already wired the production
+Hanko verifier — no fail-closed-until-X conditional applies in
+production. The dev-mode 500 / `'session_verifier_not_configured'`
+branch (per D-13101) is a contract that's reachable only when
+`NODE_ENV != 'production'`, not a routine response in production. The
+catalog row's `Status` column carries `Wired`.
+
+**Rejected alternatives:**
+- Option (b): `Shipped-but-unwired` — would require a follow-up WP to
+  flip `Wired` and a second SPEC commit; adds friction without payoff
+  given WP-131 already cleared the production-verifier-wired prerequisite.
+
+**Consequence:** WP-134 inherits a wired endpoint for read-back and
+manual smoke-testing during fulfillment development. WP-133's Stripe
+wiring is a separate concern (env vars + webhook signature verification);
+WP-132's read endpoint requires neither.
+
+**Status:** Active.
+
+**Citation:** WP-132 §Decision Points D-DEC-5; EC-135 §0 + §2 Locked
+Values.
+
+---
+
+### D-13206 — Drift-Detection Posture: Compile-Time Exhaustive `switch` with `default: const _: never = key` (option (a)) (WP-132)
+
+**Type:** Test Pattern Lock
+**Packet:** WP-132 / EC-135
+**Date:** 2026-05-05
+
+**Decision:** `apps/server/src/entitlements/entitlements.logic.test.ts`
+includes an `assertExhaustive(key: EntitlementKey)` function with a
+`switch` block whose `default: const _exhaustive: never = key` branch
+throws. The test calls `ENTITLEMENT_KEYS.forEach(assertExhaustive)`.
+The `default` branch is the **load-bearing primitive** — TypeScript
+fails the build at type-check time if `ENTITLEMENT_KEYS` array members
+and `EntitlementKey` union members diverge. The forEach call exercises
+every member at runtime as defense-in-depth that the array literal was
+kept in sync with the switch's case clauses.
+
+SQL CHECK ↔ canonical array parity is **review-locked**, NOT
+machine-enforced at test time. The route-layer runtime guard against
+SELECT-returned `entitlement_key` values catches SQL-side drift if it
+slips past review.
+
+**Rejected alternatives:**
+- `assert.deepEqual(ENTITLEMENT_KEYS, [...union members...])` — checks
+  runtime equality but does NOT fail the build at type-check time when
+  the union changes. Soft check; not load-bearing.
+- Adding a SQL-side runtime check that opens a connection at test time
+  to read `pg_constraint` and compare against `ENTITLEMENT_KEYS` —
+  binds the test suite to a live database; defeats the per-suite-run
+  unique fixture pattern; over-engineered for a closed set whose CHECK
+  constraint is a single grep away.
+
+**Consequence:** The two gates together (compile-time exhaustive switch
++ route-layer runtime guard) provide defense-in-depth against an
+unreviewed migration that adds a key the TS union doesn't know about.
+
+**Status:** Active.
+
+**Citation:** WP-132 §Decision Points D-DEC-6; EC-135 §0 + §2 Locked
+Values.
+
+---
+
 ### D-13501 — Hero Rarity → Copy-Count Map + Option A Loud-Fail on Unknown Labels (WP-135)
 
 **Type:** Engine Setup-Time Lock
