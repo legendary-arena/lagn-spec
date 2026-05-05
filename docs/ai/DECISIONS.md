@@ -14005,6 +14005,73 @@ The slash-format hero-card-instance ext_id is **distinct from** the existing Fla
 
 ---
 
+### D-13601 — JSDOM Test-Harness Constructor URL = `'http://localhost/'` (WP-136)
+
+**Type:** Test Harness Lock
+**Packet:** WP-136 / EC-139
+**Date:** 2026-05-04
+
+**Decision:** The JSDOM constructor in
+`apps/arena-client/src/testing/jsdom-setup.ts` is invoked with
+`{ url: 'http://localhost/' }` (verbatim, including trailing slash).
+This produces a non-opaque tuple origin so `window.localStorage` and
+`window.sessionStorage` are available to consumers under WHATWG
+Storage rules. Two companion `installGlobal('localStorage', dom.window.localStorage)` /
+`installGlobal('sessionStorage', dom.window.sessionStorage)` calls
+bridge the two `Storage` objects from `dom.window` onto `globalThis`,
+because production code in `apps/arena-client/src/prefs/persistence.ts:58,80,83`
+reads bare `localStorage` (resolves through `globalThis`, not
+`dom.window`).
+
+**Rationale:**
+- Stable non-opaque origin: any non-`about:` URL satisfies the WHATWG
+  tuple-origin requirement; `http://localhost/` is the simplest stable
+  choice.
+- Conventional sentinel: `localhost` is the canonical "no real server"
+  hostname across web tooling; no production identity or cookie scope
+  collision.
+- Trailing slash: matches the Vite dev-server default
+  (`http://localhost:5173/`), reducing reviewer cognitive load when
+  reading harness output.
+- `globalThis.window !== globalThis`: JSDOM places `Storage` on the
+  constructed `dom.window` only; bare `localStorage` references in
+  production code resolve through `globalThis`. The two `installGlobal`
+  bridges are load-bearing — without them the URL fix alone leaves bare
+  references unresolved (`ReferenceError: localStorage is not defined`
+  on first access; surfaced 2026-05-04 PS-1 mid-execution).
+
+**Rejected alternatives:**
+- `'http://example.com/'` — non-local hostname; could mask hidden
+  network leaks if a future test fails to mock `fetch`.
+- `'http://localhost:5173/'` — port collision risk if a dev-server
+  runs concurrently with the test suite.
+- `'file:///'` — file-scheme is opaque-origin per WHATWG; fails the
+  Storage exposure criterion outright.
+- Omitting `url` (the WP-130 status quo): produced an opaque
+  `about:blank` origin and required four inline `MemoryStorage` shim
+  copies in test files — the workaround this WP retires.
+- URL fix alone (no `installGlobal` bridges): rejected after PS-1
+  mid-execution finding — fixes `dom.window.localStorage` but leaves
+  bare-`localStorage` references unresolved on `globalThis`, so every
+  prefs/composables/components test fails with `ReferenceError`.
+
+**Consequence:** any future arena-client test that needs `Storage`,
+cookies, or other origin-bound APIs simply imports the shared
+`jsdom-setup` side-effect module and uses the WHATWG-native interface
+(via either bare `localStorage` or `window.localStorage`) without
+per-file boilerplate.
+
+**Scope:** test-harness only. The URL literal lives inside a
+side-effect-only module that Vite excludes from production bundles
+(verified by inspection of `apps/arena-client/vite.config.ts`); zero
+production runtime exposure.
+
+**Status:** Active.
+
+**Citation:** WP-136 §Goal + §Non-Negotiable Constraints + §Scope (In) A; EC-139 §Locked Values + §Guardrails + §Required `// why:` Comments; WHATWG Storage spec (opaque-origin / `Storage` interaction).
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
