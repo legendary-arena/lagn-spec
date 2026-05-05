@@ -4,46 +4,13 @@ import { describe, test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
-
-// why: jsdom-setup's opaque-origin document blocks `window.localStorage`;
-// install a Map-backed shim on `globalThis` so production code (which
-// reads bare `localStorage`) works. See sibling `WP-130` test files
-// for the same shim pattern.
-class MemoryStorage implements Storage {
-  private readonly map = new Map<string, string>();
-  get length(): number {
-    return this.map.size;
-  }
-  clear(): void {
-    this.map.clear();
-  }
-  getItem(key: string): string | null {
-    return this.map.get(key) ?? null;
-  }
-  key(index: number): string | null {
-    return Array.from(this.map.keys())[index] ?? null;
-  }
-  removeItem(key: string): void {
-    this.map.delete(key);
-  }
-  setItem(key: string, value: string): void {
-    this.map.set(key, String(value));
-  }
-}
-const memoryStorage = new MemoryStorage();
-Object.defineProperty(globalThis, 'localStorage', {
-  value: memoryStorage,
-  writable: true,
-  configurable: true,
-});
-
 import SkinSelector from './SkinSelector.vue';
 import { usePlaymat } from '../../prefs/playmatStore';
 import { skinManifest } from '../../prefs/skinManifest';
 
 describe('WP-130 components/play/SkinSelector', () => {
   beforeEach(() => {
-    memoryStorage.clear();
+    localStorage.clear();
     setActivePinia(createPinia());
     Array.from(document.querySelectorAll('[data-testid="play-hud-skin-selector-overlay"]')).forEach(
       (node) => node.remove(),

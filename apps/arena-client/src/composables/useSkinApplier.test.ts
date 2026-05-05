@@ -5,41 +5,6 @@ import assert from 'node:assert/strict';
 import { setActivePinia, createPinia } from 'pinia';
 import { defineComponent, h, ref } from 'vue';
 import { mount } from '@vue/test-utils';
-
-// why: jsdom-setup's opaque-origin document blocks `window.localStorage`;
-// install a Map-backed shim on `globalThis` so production code (which
-// reads bare `localStorage`) works. See `prefs/persistence.test.ts`
-// for the same shim pattern; deduplicating into a shared helper would
-// require touching `src/testing/`, which is outside the WP-130 modify
-// allowlist per EC-133 §1.
-class MemoryStorage implements Storage {
-  private readonly map = new Map<string, string>();
-  get length(): number {
-    return this.map.size;
-  }
-  clear(): void {
-    this.map.clear();
-  }
-  getItem(key: string): string | null {
-    return this.map.get(key) ?? null;
-  }
-  key(index: number): string | null {
-    return Array.from(this.map.keys())[index] ?? null;
-  }
-  removeItem(key: string): void {
-    this.map.delete(key);
-  }
-  setItem(key: string, value: string): void {
-    this.map.set(key, String(value));
-  }
-}
-const memoryStorage = new MemoryStorage();
-Object.defineProperty(globalThis, 'localStorage', {
-  value: memoryStorage,
-  writable: true,
-  configurable: true,
-});
-
 import { useSkinApplier, applySkinToElement, __resetSkinApplierForTests } from './useSkinApplier';
 import { usePlaymat } from '../prefs/playmatStore';
 import { skinManifest } from '../prefs/skinManifest';
@@ -58,7 +23,7 @@ const HostComponent = defineComponent({
 
 describe('WP-130 composables/useSkinApplier', () => {
   beforeEach(() => {
-    memoryStorage.clear();
+    localStorage.clear();
     setActivePinia(createPinia());
     __resetSkinApplierForTests();
     Array.from(document.head.querySelectorAll('link[data-skin-theme]')).forEach((node) => node.remove());
