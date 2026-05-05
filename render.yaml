@@ -6,9 +6,6 @@ services:
   - type: web
     name: legendary-arena-server
     runtime: node
-    # why: pin Node major version so Render does not silently upgrade.
-    # The project requires Node >=22 (apps/server/package.json engines).
-    nodeVersion: "22"
     # why: Running migrate in buildCommand (not startCommand) means migrations
     # complete once per deploy, not once per server restart. On Render, a server
     # can restart multiple times during a deploy. If migrate ran in startCommand,
@@ -34,6 +31,12 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # why: pin Node major version so Render does not silently upgrade.
+      # The project requires Node >=22 (apps/server/package.json engines).
+      # Render's blueprint schema does not accept a `nodeVersion` service
+      # field; NODE_VERSION envVar is the documented pin mechanism.
+      - key: NODE_VERSION
+        value: "22"
       - key: DATABASE_URL
         fromDatabase:
           name: legendary-arena-db
