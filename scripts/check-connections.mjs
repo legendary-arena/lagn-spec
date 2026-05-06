@@ -891,7 +891,7 @@ function checkRclone() {
 
   // List R2 bucket root
   try {
-    const listOutput = execSync('rclone lsd r2:', {
+    const listOutput = execSync('rclone lsd r2:legendary-images', {
       encoding: 'utf8',
       timeout: RCLONE_TIMEOUT_MS,
     });
