@@ -56,7 +56,9 @@ const REQUIRED_VARS = {
     'EXPECTED_DB_NAME',   // e.g. legendary_arena — used for connection verification
   ],
   'Auth': [
-    'JWT_SECRET',         // 32+ byte hex string — see .env.example for generation command
+    'JWT_SECRET',                // 32+ byte hex string — see .env.example for generation command
+    'HANKO_TENANT_BASE_URL',     // tenant-scoped Hanko Cloud origin, e.g. https://passkeys.hanko.io/<tenant_id>
+    'HANKO_EXPECTED_AUDIENCE',   // audience claim configured on the Hanko tenant
   ],
   'Game Server': [
     'NODE_ENV',           // 'development' or 'production'
@@ -625,6 +627,90 @@ async function checkCloudflareR2() {
 }
 
 /**
+ * Checks the Hanko Cloud tenant JWKS endpoint for reachability and a
+ * well-formed JWKS document. Mirrors the production verifier's URL
+ * resolution: reads HANKO_TENANT_BASE_URL and appends /.well-known/jwks.json.
+ *
+ * This is a local-dev probe only. The authoritative verifier lives at
+ * apps/server/src/auth/hanko/ (WP-126 / D-12602); we intentionally do not
+ * import from it so this script stays self-contained like the other
+ * CONNECTIONS checks.
+ */
+async function checkHankoJwks() {
+  const tenantBaseUrl = env.HANKO_TENANT_BASE_URL;
+
+  if (!tenantBaseUrl) {
+    recordResult('CONNECTIONS', 'Hanko JWKS', false,
+      'HANKO_TENANT_BASE_URL is not set. Cannot test Hanko JWKS endpoint.',
+      'Add HANKO_TENANT_BASE_URL to .env. See .env.example.');
+    return;
+  }
+
+  // why: the production verifier (apps/server/src/auth/hanko/hankoVerifier.logic.ts)
+  // builds the JWKS URL by appending this exact path; mirror that resolution so the
+  // probe exercises the same endpoint the server will hit at runtime.
+  const jwksUrl = `${tenantBaseUrl}/.well-known/jwks.json`;
+
+  let response;
+  let elapsedMilliseconds;
+  try {
+    const startTime = Date.now();
+    response = await fetch(jwksUrl, {
+      signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+    });
+    elapsedMilliseconds = Date.now() - startTime;
+  } catch (fetchError) {
+    recordResult('CONNECTIONS', 'Hanko JWKS', false,
+      `Connection to ${jwksUrl} failed: ${fetchError.message}`,
+      'Check HANKO_TENANT_BASE_URL in .env and verify network connectivity to the Hanko tenant.');
+    return;
+  }
+
+  if (!response.ok) {
+    recordResult('CONNECTIONS', 'Hanko JWKS', false,
+      `${jwksUrl} returned HTTP ${response.status} (expected 200).`,
+      'Verify HANKO_TENANT_BASE_URL in .env points at a valid Hanko Cloud tenant origin.');
+    return;
+  }
+
+  let jwksDocument;
+  try {
+    jwksDocument = await response.json();
+  } catch (parseError) {
+    recordResult('CONNECTIONS', 'Hanko JWKS', false,
+      `Response from ${jwksUrl} was not valid JSON: ${parseError.message}`,
+      'Verify HANKO_TENANT_BASE_URL points at a Hanko tenant; the endpoint should serve a JWKS document.');
+    return;
+  }
+
+  if (!Array.isArray(jwksDocument?.keys)) {
+    recordResult('CONNECTIONS', 'Hanko JWKS', false,
+      `JWKS document from ${jwksUrl} is malformed: "keys" field is missing or not an array (RFC 7517).`,
+      'Verify HANKO_TENANT_BASE_URL points at a real Hanko tenant; check the Hanko Cloud dashboard for the correct tenant URL.');
+    return;
+  }
+
+  if (jwksDocument.keys.length === 0) {
+    recordResult('CONNECTIONS', 'Hanko JWKS', false,
+      `JWKS document from ${jwksUrl} is empty (zero keys). Verifier cannot validate any token.`,
+      'Check the Hanko Cloud dashboard — the tenant must have at least one signing key configured.');
+    return;
+  }
+
+  const firstKey = jwksDocument.keys[0];
+  if (typeof firstKey?.kty !== 'string' || typeof firstKey?.kid !== 'string') {
+    recordResult('CONNECTIONS', 'Hanko JWKS', false,
+      `JWKS document from ${jwksUrl} is malformed: first key entry is missing required "kty" or "kid" field (RFC 7517).`,
+      'Verify HANKO_TENANT_BASE_URL points at a real Hanko tenant; the endpoint may be returning a different JSON document.');
+    return;
+  }
+
+  const keyCount = jwksDocument.keys.length;
+  recordResult('CONNECTIONS', 'Hanko JWKS', true,
+    `${jwksUrl} → ${response.status} ${keyCount} key${keyCount === 1 ? '' : 's'}  (${elapsedMilliseconds}ms)`);
+}
+
+/**
  * Checks Cloudflare Pages SPA reachability.
  */
 async function checkCloudflarePages() {
@@ -813,6 +899,7 @@ async function main() {
     checkPostgresConnection(),
     checkBoardgameioServer(),
     checkCloudflareR2(),
+    checkHankoJwks(),
     checkCloudflarePages(),
     checkGithubReachability(),
   ]);
