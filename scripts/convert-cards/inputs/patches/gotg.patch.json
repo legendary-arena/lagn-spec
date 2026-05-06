@@ -1,0 +1,86 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "groot",
+      "cards": [
+        {
+          "slug": "surviving-sprig",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-3c1.webp"
+        },
+        {
+          "slug": "prune-the-growths",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-4c2.webp"
+        },
+        {
+          "slug": "groot-and-branches",
+          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-4u.webp"
+        },
+        {
+          "slug": "i-am-groot",
+          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-8r.webp"
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "supreme-intelligence-of-the-kree",
+      "cards": [
+        {
+          "slug": "supreme-intelligence-of-the-kree",
+          "vAttack": null
+        },
+        {
+          "slug": "combined-knowledge-of-all-kree",
+          "vAttack": null
+        },
+        {
+          "slug": "cosmic-omniscience",
+          "vAttack": null
+        },
+        {
+          "slug": "countermeasure-protocols",
+          "vAttack": null
+        },
+        {
+          "slug": "guide-kree-evolution",
+          "vAttack": null
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "thanos",
+      "cards": [
+        {
+          "slug": "thanos",
+          "vAttack": null
+        },
+        {
+          "slug": "centuries-of-envy",
+          "vAttack": null
+        },
+        {
+          "slug": "god-of-death",
+          "vAttack": null
+        },
+        {
+          "slug": "keeper-of-souls",
+          "vAttack": null
+        },
+        {
+          "slug": "the-mad-titan",
+          "vAttack": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "man-thing",
+      "cards": [
+        {
+          "slug": "form-from-ooze",
+          "abilities": [
+            "[hc:strength]: You get +2[icon:attack] usable only against villains in the Sewers or the Mastermind."
+          ]
+        },
+        {
+          "slug": "travel-the-nexus-of-realities",
+          "abilities": [
+            "[hc:covert]: You may move a Villain to another city space. If another Villain is already there, swap them."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Black Widow",
+      "slug": "black-widow",
+      "team": "avengers",
+      "cards": [
+        {
+          "name": "Mission Accomplished",
+          "displayName": "Mission Accomplished",
+          "slug": "mission-accomplished",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "hc": "tech",
+          "cost": 2,
+          "attack": null,
+          "recruit": null,
+          "abilities": [
+            "Draw a card.",
+            "[hc:tech]: Rescue a Bystander."
+          ]
+        },
+        {
+          "name": "Dangerous Rescue",
+          "displayName": "Dangerous Rescue",
+          "slug": "dangerous-rescue",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "covert",
+          "cost": 3,
+          "attack": "2",
+          "recruit": null,
+          "abilities": [
+            "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander."
+          ]
+        },
+        {
+          "name": "Covert Operation",
+          "displayName": "Covert Operation",
+          "slug": "covert-operation",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3,
+          "hc": "covert",
+          "cost": 4,
+          "attack": "0+",
+          "recruit": null,
+          "abilities": [
+            "You get +1[icon:attack] for each Bystander in your Victory Pile."
+          ]
+        },
+        {
+          "name": "Silent Sniper",
+          "displayName": "Silent Sniper",
+          "slug": "silent-sniper",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4,
+          "hc": "covert",
+          "cost": 7,
+          "attack": "4",
+          "recruit": null,
+          "abilities": [
+            "Defeat a Villain or Mastermind that has a Bystander."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Deadpool",
+      "slug": "deadpool",
+      "team": "unaffiliated",
+      "cards": [
+        {
+          "name": "Here, Hold This for a Second",
+          "displayName": "Here, Hold This for a Second",
+          "slug": "here-hold-this-for-a-second",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "hc": "tech",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "abilities": [
+            "A Villain of your choice captures a Bystander."
+          ]
+        },
+        {
+          "name": "Hey, Can I Get a Do-over?",
+          "displayName": "Hey, Can I Get a Do-over?",
+          "slug": "hey-can-i-get-a-do-over",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "instinct",
+          "cost": 3,
+          "attack": "2",
+          "recruit": null,
+          "abilities": [
+            "If this is the first Hero you played this turn, you may discard the rest of your hand and draw four cards."
+          ]
+        },
+        {
+          "name": "Oddball",
+          "displayName": "Oddball",
+          "slug": "oddball",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3,
+          "hc": "covert",
+          "cost": 5,
+          "attack": "2+",
+          "recruit": null,
+          "abilities": [
+            "You get +1[icon:attack] for each other Hero with an odd-number [icon:recruit] you played this turn."
+          ]
+        },
+        {
+          "name": "Random Acts of Unkindness",
+          "displayName": "Random Acts of Unkindness",
+          "slug": "random-acts-of-unkindness",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4,
+          "hc": "instinct",
+          "cost": 7,
+          "attack": "6",
+          "recruit": null,
+          "abilities": [
+            "You may gain a Wound to your hand. Then each player passes a card from their hand to the player on their left."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Hulk",
+      "slug": "hulk",
+      "team": "avengers",
+      "cards": [
+        {
+          "name": "Growing Anger",
+          "displayName": "Growing Anger",
+          "slug": "growing-anger",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "hc": "strength",
+          "cost": 3,
+          "attack": "2+",
+          "recruit": null,
+          "abilities": [
+            "[hc:strength]: You get +1[icon:attack]."
+          ]
+        },
+        {
+          "name": "Unstoppable Hulk",
+          "displayName": "Unstoppable Hulk",
+          "slug": "unstoppable-hulk",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "instinct",
+          "cost": 4,
+          "attack": "2+",
+          "recruit": null,
+          "abilities": [
+            "You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:attack]."
+          ]
+        },
+        {
+          "name": "Crazed Rampage",
+          "displayName": "Crazed Rampage",
+          "slug": "crazed-rampage",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3,
+          "hc": "strength",
+          "cost": 5,
+          "attack": "4",
+          "recruit": null,
+          "abilities": [
+            "Each player gains a Wound."
+          ]
+        },
+        {
+          "name": "Hulk Smash",
+          "displayName": "Hulk Smash",
+          "slug": "hulk-smash",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4,
+          "hc": "strength",
+          "cost": 8,
+          "attack": "5+",
+          "recruit": null,
+          "abilities": [
+            "[hc:strength]: You get +5[icon:attack]."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "galactus",
+      "cards": [
+        {
+          "slug": "galactus",
+          "vAttack": "20*"
+        },
+        {
+          "slug": "cosmic-entity",
+          "vAttack": 20
+        },
+        {
+          "slug": "force-of-eternity",
+          "vAttack": 20
+        },
+        {
+          "slug": "panicked-mobs",
+          "vAttack": 20
+        },
+        {
+          "slug": "sunder-the-earth",
+          "vAttack": 20
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mole-man",
+      "cards": [
+        {
+          "slug": "dig-to-freedom",
+          "vAttack": 7
+        },
+        {
+          "slug": "master-of-monsters",
+          "vAttack": 7
+        },
+        {
+          "slug": "secret-tunnel",
+          "vAttack": 7
+        },
+        {
+          "slug": "underground-riches",
+          "vAttack": 7
+        }
+      ]
+    }
+  ]
+}

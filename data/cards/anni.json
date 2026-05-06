@@ -8,7 +8,11 @@
       "name": "Brainstorm",
       "slug": "brainstorm",
       "team": "fantastic-four",
-      "cardCounts": null,
+      "cardCounts": {
+        "Time Loop Experiments": 5,
+        "Borrow from the Future": 5,
+        "Reprogram Doombot Legions": 3
+      },
       "cards": [
         {
           "slug": "protege-of-dr-doom",
@@ -89,7 +93,12 @@
       "name": "Fantastic Four United",
       "slug": "fantastic-four-united",
       "team": "fantastic-four",
-      "cardCounts": null,
+      "cardCounts": {
+        "Human Torch": 5,
+        "Thing": 5,
+        "Invisible Woman": 3,
+        "Mr. Fantastic": 1
+      },
       "cards": [
         {
           "name": "Human Torch",
@@ -166,7 +175,12 @@
       "name": "Heralds of Galactus",
       "slug": "heralds-of-galactus",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Firelord": 5,
+        "Silver Surfer": 5,
+        "Stardust": 3,
+        "Galactus Hungers": 1
+      },
       "cards": [
         {
           "name": "Firelord",
@@ -241,7 +255,12 @@
       "name": "Psi-Lord",
       "slug": "psi-lord",
       "team": "fantastic-four",
-      "cardCounts": null,
+      "cardCounts": {
+        "Avert Future Tragedy": 5,
+        "Interdimensional Rescue": 5,
+        "Slip the Timestream": 3,
+        "Reshape Reality": 1
+      },
       "cards": [
         {
           "name": "Avert Future Tragedy",
@@ -318,7 +337,12 @@
       "name": "Super-Skrull",
       "slug": "super-skrull",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Stretching Credibility": 5,
+        "Rock Solid": 5,
+        "Transparent Motives": 3,
+        "Put to the Torch": 1
+      },
       "cards": [
         {
           "name": "Stretching Credibility",

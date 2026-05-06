@@ -8,7 +8,12 @@
       "name": "Agent Phil Coulson",
       "slug": "agent-phil-coulson",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Impeccable Planning": 5,
+        "Build the Strike Team": 5,
+        "Approve Orbital Strike": 3,
+        "Fake But Inspiring Death": 1
+      },
       "cards": [
         {
           "name": "Impeccable Planning",
@@ -85,7 +90,12 @@
       "name": "Deathlok",
       "slug": "deathlok",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Authorize Lethal Force": 5,
+        "Reanimate Into Service": 5,
+        "Headlok": 3,
+        "Behind Enemy Lines": 1
+      },
       "cards": [
         {
           "name": "Authorize Lethal Force",
@@ -161,7 +171,12 @@
       "name": "Mockingbird",
       "slug": "mockingbird",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Take Cover": 5,
+        "Battle Staves": 5,
+        "Spymaster": 3,
+        "Infinity Formula": 1
+      },
       "cards": [
         {
           "name": "Take Cover",
@@ -239,7 +254,12 @@
       "name": "Quake",
       "slug": "quake",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Going Underground": 5,
+        "Aftershock": 5,
+        "Tectonic Wave": 3,
+        "Roil the Earth": 1
+      },
       "cards": [
         {
           "name": "Going Underground",

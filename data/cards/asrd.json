@@ -8,7 +8,12 @@
       "name": "Beta Ray Bill",
       "slug": "beta-ray-bill",
       "team": "heroes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Hope of the Korbinites": 5,
+        "Bio-Engineered Cyborg": 5,
+        "Stormbreaker": 3,
+        "The Warship Skuttlebutt": 1
+      },
       "cards": [
         {
           "name": "Hope of the Korbinites",
@@ -83,7 +88,12 @@
       "name": "Lady Sif",
       "slug": "lady-sif",
       "team": "heroes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Dimensional Blade": 5,
+        "Weapons Master": 5,
+        "Winged Helm": 3,
+        "Golden Apples of Idunn": 1
+      },
       "cards": [
         {
           "name": "Dimensional Blade",
@@ -157,7 +167,12 @@
       "name": "Thor",
       "slug": "thor",
       "team": "heroes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Test of Virtue": 5,
+        "Divine Lightning": 5,
+        "Mjolnir": 3,
+        "Royal Decree": 1
+      },
       "cards": [
         {
           "name": "Test of Virtue",
@@ -231,7 +246,12 @@
       "name": "Valkyrie",
       "slug": "valkyrie",
       "team": "heroes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Dragonfang": 5,
+        "Flying Stallion": 5,
+        "Usher to Valhalla": 3,
+        "Ride of the Valkyries": 1
+      },
       "cards": [
         {
           "name": "Dragonfang",
@@ -307,7 +327,12 @@
       "name": "Warriors Three, The",
       "slug": "warriors-three-the",
       "team": "heroes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Fandral the Dashing": 5,
+        "Hogun the Grim": 5,
+        "Volstagg the Valiant": 3,
+        "Three Stand as One": 1
+      },
       "cards": [
         {
           "name": "Fandral the Dashing",

@@ -1,0 +1,224 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "taskmaster",
+      "cards": [
+        {
+          "slug": "shield-initiative-trainer",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-shield-initiative-trainer.webp",
+          "vAttack": 5
+        },
+        {
+          "slug": "photographic-reflexes",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-photographic-reflexes.webp",
+          "vAttack": 5
+        },
+        {
+          "slug": "teacher-and-assassin",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-teacher-and-assassin.webp",
+          "vAttack": 5
+        },
+        {
+          "slug": "henchman-instructor",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-henchman-instructor.webp",
+          "vAttack": 5
+        },
+        {
+          "slug": "taskmaster",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mm-taskmaster.webp"
+        },
+        {
+          "slug": "epic-taskmaster",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-me-taskmaster.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "indestructible-man",
+      "cards": [
+        {
+          "slug": "manipulate-murderous-mad-monk",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-manipulate-murderous-mad-monk.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "secrets-of-indestructibility",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-secrets-of-indestructibility.webp",
+          "vAttack": "*"
+        },
+        {
+          "slug": "international-arms-dealer",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-international-arms-dealer.webp",
+          "vAttack": "*"
+        },
+        {
+          "slug": "unveil-project-four",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-unveil-project-four.webp",
+          "vAttack": "*"
+        },
+        {
+          "slug": "indestructible-man",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mm-indestructible-man.webp"
+        },
+        {
+          "slug": "epic-indestructible-man",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-me-indestructible-man.webp"
+        }
+      ]
+    }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "white-tiger",
+      "cards": [
+        {
+          "slug": "dark-influence-of-the-hand",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "abilities": [
+            "[keyword:Dodge]",
+            "[keyword:Dark Memories]."
+          ]
+        },
+        {
+          "slug": "amulets-of-the-tiger-god",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2
+        },
+        {
+          "slug": "camouflaged-huntress",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3
+        },
+        {
+          "slug": "shadowed-resurrection",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "red-guardian",
+      "cards": [
+        {
+          "slug": "sleeper-agent",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "abilities": [
+            "[keyword:When Recruited]: Send this [keyword:Undercover].",
+            "When you fight a Villain, you may [keyword:Unleash] this card from [keyword:Undercover].",
+            "[hc:covert]: Draw a card."
+          ]
+        },
+        {
+          "slug": "magnetic-shield",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "abilities": [
+            "[keyword:When Recruited]: Send this [keyword:Undercover].",
+            "When you recruit another [hc:covert] Hero, you may [keyword:Unleash] this card from [keyword:Undercover].",
+            "[hc:covert]: You get +2[icon:attack]."
+          ]
+        },
+        {
+          "slug": "death-was-only-a-ruse",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3,
+          "abilities": [
+            "[keyword:When Recruited]: Send this [keyword:Undercover].",
+            "When a Master Strike is completed or any player fights the Mastermind, you may [keyword:Unleash] this card from [keyword:Undercover].",
+            "[hc:covert]: You may send one of your other Heroes [keyword:Undercover]."
+          ]
+        },
+        {
+          "slug": "champion-of-the-winter-guard",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4,
+          "abilities": [
+            "[keyword:When Recruited]: Send this [keyword:Undercover].",
+            "When a Scheme Twist is completed or you play your third [hc:covert] Hero in a turn, you may [keyword:Unleash] this card from [keyword:Undercover].",
+            "[hc:covert]: You get +2[icon:attack] for each other [hc:covert] Hero you played this turn."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "falcon-winter-soldier",
+      "cards": [
+        {
+          "slug": "attune",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "abilities": [
+            "To play this side, you must discard a card."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-3c1.webp"
+        },
+        {
+          "slug": "atone",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "abilities": [
+            "[keyword:Dark Memories]."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-3c1.webp"
+        },
+        {
+          "slug": "relocate",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3,
+          "abilities": [
+            "[keyword:Dodge].",
+            "[hc:instinct]: You get +1[icon:attack]."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-4c2.webp"
+        },
+        {
+          "slug": "reload",
+          "rarity": 1,
+          "rarityLabel": "Common 4",
+          "slot": 4,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-4c2.webp"
+        },
+        {
+          "slug": "new-wings",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-5u.webp"
+        },
+        {
+          "slug": "new-plan",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 6,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-5u.webp"
+        },
+        {
+          "slug": "captain-americas-legacy",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 7,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-7r.webp"
+        }
+      ]
+    }
+  ]
+}

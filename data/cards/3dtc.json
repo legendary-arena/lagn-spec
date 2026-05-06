@@ -8,7 +8,12 @@
       "name": "Howard the Duck",
       "slug": "howard-the-duck",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Traveling Companion": 5,
+        "Rebel Without a Cause": 5,
+        "Right Place, Wrong Time": 3,
+        "Interplanetary Visitor": 1
+      },
       "cards": [
         {
           "name": "Traveling Companion",
@@ -81,7 +86,12 @@
       "name": "Man-Thing",
       "slug": "man-thing",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Form from Ooze": 5,
+        "Burn the Fearful": 5,
+        "Travel the Nexus of Realities": 3,
+        "Eternity of Solitude": 1
+      },
       "cards": [
         {
           "name": "Form from Ooze",
@@ -375,14 +385,18 @@
       "name": "Circus of Crime",
       "slug": "circus-of-crime",
       "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hm-circus-of-crime.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: Reveal the top card of your deck. If it costs 0[icon:vp], KO it. Otherwise, draw it."
+      ]
     },
     {
       "id": 12,
       "name": "Spider-Slayer",
       "slug": "spider-slayer",
       "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hm-spider-slayer.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: Reveal the top two cards of your deck. Put any that cost 2[icon:vp] or less into your hand. Put the rest back in any order."
+      ]
     }
   ],
   "schemes": [],

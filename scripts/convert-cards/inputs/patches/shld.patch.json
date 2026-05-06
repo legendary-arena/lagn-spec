@@ -1,0 +1,338 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "agent-phil-coulson",
+      "cards": [
+        {
+          "slug": "impeccable-planning",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-agent-phil-coulson-3c1.webp"
+        },
+        {
+          "slug": "build-the-strike-team",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-agent-phil-coulson-4c2.webp"
+        },
+        {
+          "slug": "approve-orbital-strike",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-agent-phil-coulson-6u.webp"
+        },
+        {
+          "slug": "fake-but-inspiring-death",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-agent-phil-coulson-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "deathlok",
+      "cards": [
+        {
+          "slug": "authorize-lethal-force",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-deathlok-2c1.webp"
+        },
+        {
+          "slug": "reanimate-into-service",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-deathlok-4c2.webp"
+        },
+        {
+          "slug": "headlok",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-deathlok-5u.webp"
+        },
+        {
+          "slug": "behind-enemy-lines",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-deathlok-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mockingbird",
+      "cards": [
+        {
+          "slug": "take-cover",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-mockingbird-3c1.webp"
+        },
+        {
+          "slug": "battle-staves",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-mockingbird-4c2.webp"
+        },
+        {
+          "slug": "spymaster",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-mockingbird-5u.webp"
+        },
+        {
+          "slug": "infinity-formula",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-mockingbird-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "quake",
+      "cards": [
+        {
+          "slug": "going-underground",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-quake-3c1.webp"
+        },
+        {
+          "slug": "aftershock",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-quake-4c2.webp"
+        },
+        {
+          "slug": "tectonic-wave",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-quake-6u.webp"
+        },
+        {
+          "slug": "roil-the-earth",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-quake-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Dum Dum Dugan",
+      "slug": "dum-dum-dugan",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "Dum Dum Dugan",
+          "slug": "dum-dum-dugan",
+          "hc": "strength",
+          "cost": 3,
+          "attack": "1",
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-dum-dum-dugan.webp",
+          "abilities": [
+            "You may send this Hero [keyword:Undercover]."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Grant Ward",
+      "slug": "grant-ward",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "Grant Ward",
+          "slug": "grant-ward",
+          "hc": "tech",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-grant-ward.webp",
+          "abilities": [
+            "You may send this Hero [keyword:Undercover]. If you do, KO another [team:shield] Hero from your hand."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "G.W. Bridge",
+      "slug": "gw-bridge",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "G.W. Bridge",
+          "slug": "gw-bridge",
+          "hc": "strength",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-gw-bridge.webp",
+          "abilities": [
+            "You may discard a card. If you do, draw a card."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Leo Fitz and Jemma Simmons",
+      "slug": "leo-fitz-and-jemma-simmons",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "Leo Fitz and Jemma Simmons",
+          "slug": "leo-fitz-and-jemma-simmons",
+          "hc": "tech",
+          "cost": 3,
+          "attack": "0+",
+          "recruit": "0+",
+          "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-leo-fitz-and-jemma-simmons.webp",
+          "abilities": [
+            "Choose one: You get +2[icon:recruit] \u2014 Or you get +1[icon:attack] and draw a card."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Melinda May",
+      "slug": "melinda-may",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "Melinda May",
+          "slug": "melinda-may",
+          "hc": "instinct",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-melinda-may.webp",
+          "abilities": [
+            "[team:shield][team:shield][team:shield]: Draw a card."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Sharon Carter",
+      "slug": "sharon-carter",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "Sharon Carter",
+          "slug": "sharon-carter",
+          "hc": "covert",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-sharon-carter.webp",
+          "abilities": [
+            "You may send this Hero [keyword:Undercover]. If you do, you get +1[icon:recruit]."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Victoria Hand",
+      "slug": "victoria-hand",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "Victoria Hand",
+          "slug": "victoria-hand",
+          "hc": "covert",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-victoria-hand.webp",
+          "abilities": [
+            "[team:shield][team:shield][team:shield]: You may send this Hero or a [team:shield] Hero from your hand [keyword:Undercover]."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Yo-Yo Rodriguez",
+      "slug": "yo-yo-rodriguez",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "Yo-Yo Rodriguez",
+          "slug": "yo-yo-rodriguez",
+          "hc": "ranged",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-yo-yo-rodriguez.webp",
+          "abilities": [
+            "[team:shield][team:shield]: You may send this Hero [keyword:Undercover] or put it on top of your deck."
+          ]
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "hydra-high-council",
+      "cards": [
+        {
+          "slug": "red-skull",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-mt-hydra-high-council-red-skull.webp",
+          "vAttack": "7+"
+        },
+        {
+          "slug": "arnim-zola",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-mt-hydra-high-council-arnim-zola.webp",
+          "vAttack": "6+"
+        },
+        {
+          "slug": "baron-helmut-zemo",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-mt-hydra-high-council-baron-helmut-zemo.webp",
+          "vAttack": "16*"
+        },
+        {
+          "slug": "viper",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-mt-hydra-high-council-viper.webp",
+          "vAttack": "9+"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "hydra-super-adaptoid",
+      "cards": [
+        {
+          "slug": "black-widows-bite",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-mt-hydra-super-adaptoid-black-widows-bite.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "captain-americas-shield",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-mt-hydra-super-adaptoid-captain-americas-shield.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "iron-mans-armor",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-mt-hydra-super-adaptoid-iron-mans-armor.webp",
+          "vAttack": 12
+        },
+        {
+          "slug": "thors-hammer",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-mt-hydra-super-adaptoid-thors-hammer.webp",
+          "vAttack": 14
+        }
+      ]
+    }
+  ],
+  "villains": [
+    {
+      "_op": "merge",
+      "slug": "a-i-m-hydra-offshoot",
+      "cards": [
+        {
+          "slug": "taskmaster",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-vi-aim-hydra-offshoot-taskmaster.webp"
+        },
+        {
+          "slug": "superia",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-vi-aim-hydra-offshoot-superia.webp"
+        },
+        {
+          "slug": "graviton",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-vi-aim-hydra-offshoot-graviton.webp"
+        },
+        {
+          "slug": "mentallo",
+          "imageUrl": "https://images.barefootbetters.com/shld/shld-vi-aim-hydra-offshoot-mentallo.webp"
+        }
+      ]
+    }
+  ]
+}

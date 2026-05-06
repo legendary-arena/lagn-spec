@@ -1,0 +1,133 @@
+{
+  "schemes": [
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Great Old One Chthon",
+      "slug": "great-old-one-chthon",
+      "cardType": "scheme-transform",
+      "prefix": "sx",
+      "note": "Double-sided card — Scheme (Ritual Sacrifice to Summon Chthon) on reverse. Transforms into this Mastermind when the Scheme is completed.",
+      "imageUrl": "https://images.barefootbetters.com/mdns/mdns-sx-great-old-one-chthon.webp",
+      "cards": [
+        {
+          "abilities": [
+            "Master Strike or Twist: Destroy the current player. Shuffle this Strike or Twist back into the Villain Deck.",
+            "Chthon Wins: When all players are destroyed.",
+            "[This card can only start the game as the Scheme on the other side.]"
+          ]
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "lilith-mother-of-demons",
+      "cards": [
+        {
+          "slug": "connoisseur-of-souls",
+          "vAttack": 8
+        },
+        {
+          "slug": "offer-of-corruption",
+          "vAttack": 8
+        },
+        {
+          "slug": "mesopotamian-demon-goddess",
+          "vAttack": 8
+        },
+        {
+          "slug": "respawn-demonic-offspring",
+          "vAttack": 8
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "zarathos",
+      "cards": [
+        {
+          "slug": "eruption-of-hellfire",
+          "vAttack": 7
+        },
+        {
+          "slug": "corrupted-spirit-of-vengeance",
+          "vAttack": 7
+        },
+        {
+          "slug": "imprison-in-the-soul-crystal",
+          "vAttack": 7
+        },
+        {
+          "slug": "demonic-essence-of-ghost-rider",
+          "vAttack": 7
+        }
+      ]
+    }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "blade-daywalker",
+      "team": "midnight-sons",
+      "cards": [
+        {
+          "slug": "hunt-high-and-low",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1
+        },
+        {
+          "slug": "where-monsters-lurk",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2
+        },
+        {
+          "slug": "ride-by-moonlight",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3
+        },
+        {
+          "slug": "creature-of-dawn-and-dusk",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "morbius",
+      "team": "midnight-sons",
+      "cards": [
+        {
+          "slug": "mesmerize",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1
+        },
+        {
+          "slug": "scalded-by-sunlight",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2
+        },
+        {
+          "slug": "insatiable-craving",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3
+        },
+        {
+          "slug": "its-morbin-time",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4
+        }
+      ]
+    }
+  ]
+}

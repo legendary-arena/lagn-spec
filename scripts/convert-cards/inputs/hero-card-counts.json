@@ -1,0 +1,1984 @@
+{
+  "2099": {
+    "spider-man-2099": {
+      "Retractable Talons": 5,
+      "Venomous Fangs": 5,
+      "Spider-Silk Webbing": 3,
+      "Spider-Sense Telepathy": 1
+    },
+    "ghost-rider-2099": {
+      "Cyber-Specter": 5,
+      "Hell Ride": 5,
+      "Death Beyond Death": 3,
+      "Infernal Chainsaw": 1
+    },
+    "doctor-doom-2099": {
+      "Subvert This New Future": 5,
+      "Doomblast": 5,
+      "Flesh-Grafted Doombots": 3,
+      "Tear Through Time Itself": 1
+    },
+    "hulk-2099": {
+      "Rage Incarnate": 5,
+      "Push Pain Under the Surface": 5,
+      "Massive Gamma Detonation": 3,
+      "Cataclysmic Frenzy": 1
+    },
+    "ravage-2099": {
+      "Down in the Dregs": 5,
+      "Toxic Mutations": 5,
+      "Detect Vibrations": 3,
+      "Overhorns and Underhorns": 1
+    }
+  },
+  "3dtc": {
+    "howard-the-duck": {
+      "Traveling Companion": 5,
+      "Rebel Without a Cause": 5,
+      "Right Place, Wrong Time": 3,
+      "Interplanetary Visitor": 1
+    },
+    "man-thing": {
+      "Form from Ooze": 5,
+      "Burn the Fearful": 5,
+      "Travel the Nexus of Realities": 3,
+      "Eternity of Solitude": 1
+    },
+    "black-widow": {
+      "Mission Accomplished": null,
+      "Dangerous Rescue": null,
+      "Covert Operation": null,
+      "Silent Sniper": null
+    },
+    "deadpool": {
+      "Here, Hold This for a Second": null,
+      "Hey, Can I Get a Do-over?": null,
+      "Oddball": null,
+      "Random Acts of Unkindness": null
+    },
+    "hulk": {
+      "Growing Anger": null,
+      "Unstoppable Hulk": null,
+      "Crazed Rampage": null,
+      "Hulk Smash": null
+    }
+  },
+  "amwp": {
+    "scott-lang-cat-burglar": {
+      "Petty Larceny": 3,
+      "Anything for Cassie": 2,
+      "Shocking Support": 3,
+      "X-Con Security Van": 3,
+      "Putting a Crew Together": 2,
+      "The Big Score": 1
+    },
+    "ant-man": {
+      "Hitch a Ride": 3,
+      "Look Out for the Little Guy!": 3,
+      "Shrink Away": 3,
+      "Bug Swarm": 2,
+      "Tiny little Risk": 2,
+      "Giant-Man": 1
+    },
+    "wasp": {
+      "Follow my Lead": 2,
+      "Flitting Sting": 3,
+      "Master Physicist": 3,
+      "Positive Ions": 3,
+      "Infiltrate": 2,
+      "Hope Returns": 1
+    },
+    "cassie-lang": {
+      "Start Small": 3,
+      "Giant Hug": 3,
+      "Colossal Stomp": 3,
+      "Quantum Beacon": 2,
+      "Learn from the Past": 2,
+      "Inspire Revolution": 1
+    },
+    "janet-van-dyne": {
+      "Subatomic Size": 2,
+      "Search for Peace": 3,
+      "Prepare for War": 3,
+      "Wasp of Another Generation": 3,
+      "Quantum Contradiction": 2,
+      "Finally Found You": 1
+    },
+    "freedom-fighters": {
+      "Veb": 2,
+      "Mystics": 3,
+      "Steel Warrior": 3,
+      "Xolum": 3,
+      "Quaz": 2,
+      "Freedom Forever": 1
+    },
+    "jentorra": {
+      "Take the High Ground": 3,
+      "Hit and Run": 3,
+      "Unite the Oppressed": 3,
+      "Find Your Courage": 2,
+      "Lead Powerful Allies": 2,
+      "Conquer the Conqueror": 1
+    },
+    "ant-army": {
+      "Up the Ante": 3,
+      "Antagonize": 3,
+      "Anticipate": 3,
+      "Antiproton Experiments": 2,
+      "Anti-Tank Weapons": 2,
+      "Revolutionary Anthem": 1
+    }
+  },
+  "anni": {
+    "brainstorm": {
+      "Time Loop Experiments": 5,
+      "Borrow from the Future": 5,
+      "Reprogram Doombot Legions": 3,
+      "ProtÃ©gÃ© of Dr. Doom": 1
+    },
+    "fantastic-four-united": {
+      "Human Torch": 5,
+      "Thing": 5,
+      "Invisible Woman": 3,
+      "Mr. Fantastic": 1
+    },
+    "heralds-of-galactus": {
+      "Firelord": 5,
+      "Silver Surfer": 5,
+      "Stardust": 3,
+      "Galactus Hungers": 1
+    },
+    "psi-lord": {
+      "Avert Future Tragedy": 5,
+      "Interdimensional Rescue": 5,
+      "Slip the Timestream": 3,
+      "Reshape Reality": 1
+    },
+    "super-skrull": {
+      "Stretching Credibility": 5,
+      "Rock Solid": 5,
+      "Transparent Motives": 3,
+      "Put to the Torch": 1
+    }
+  },
+  "antm": {
+    "ant-man": {
+      "Ride the Ants": 5,
+      "Risky Science": 5,
+      "Giant Ego": 3,
+      "Pym Particles": 1
+    },
+    "black-knight": {
+      "Amulet of Avalon": 5,
+      "Defend the Weak": 5,
+      "Flying Steed": 3,
+      "The Ebony Blade": 1
+    },
+    "jocasta": {
+      "Creation of Ultron": 5,
+      "Reprocess": 5,
+      "Holographic Image Inducer": 3,
+      "Electromagnetic Eyebeams": 1
+    },
+    "wasp": {
+      "Bio-Electric Sting": 5,
+      "Tiny Winged Justice": null,
+      "Swarm Tactics": 3,
+      "Founding Avenger": 1
+    },
+    "wonder-man": {
+      "One-Hit Wonder": 5,
+      "Ionic Energy": 5,
+      "Absorb Ambient Power": 5,
+      "8th Wonder of the World": 1
+    }
+  },
+  "asrd": {
+    "beta-ray-bill": {
+      "Hope of the Korbinites": 5,
+      "Bio-Engineered Cyborg": 5,
+      "Stormbreaker": 3,
+      "The Warship Skuttlebutt": 1
+    },
+    "lady-sif": {
+      "Dimensional Blade": 5,
+      "Weapons Master": 5,
+      "Winged Helm": 3,
+      "Golden Apples of Idunn": 1
+    },
+    "thor": {
+      "Test of Virtue": 5,
+      "Divine Lightning": 5,
+      "Mjolnir": 3,
+      "Royal Decree": 1
+    },
+    "valkyrie": {
+      "Dragonfang": 5,
+      "Flying Stallion": 5,
+      "Usher to Valhalla": 3,
+      "Ride of the Valkyries": 1
+    },
+    "warriors-three-the": {
+      "Fandral the Dashing": 5,
+      "Hogun the Grim": 5,
+      "Volstagg the Valiant": 3,
+      "Three Stand as One": 1
+    }
+  },
+  "bkpt": {
+    "king-black-panther": {
+      "Unseen Protector": 5,
+      "Vibranium Claws": 5,
+      "Heart-Shaped Herb": 3,
+      "Unite the Tribes of Wakanda": 1
+    },
+    "queen-storm-of-wakanda": {
+      "Hurricane Winds": 5,
+      "Torrential Downpour": 5,
+      "Forked Lightning": 3,
+      "Thunderous Tempest": 1
+    },
+    "princess-shuri": {
+      "Vibranium Experiments": 5,
+      "Kimoyo Beads": 5,
+      "Shock Net": 3,
+      "Become the Next Black Panther": 1
+    },
+    "general-okoye": {
+      "To My Last Breath": 5,
+      "Lead the Dora Milaje": 5,
+      "Sovereign Bodyguard": 3,
+      "Direct the Agents of Wakanda": 1
+    },
+    "white-wolf": {
+      "Secret Assignment": 5,
+      "Cloaking Tech Ambush": 5,
+      "Command the Hatut Zeraze": 3,
+      "Reflective Vibranium Armor": 1
+    }
+  },
+  "bkwd": {
+    "black-widow": {
+      "Evasive Acrobatics": 5,
+      "Widow's Bite": 5,
+      "Weave a Web of Spies": 3,
+      "Infiltrate the Conspiracy": 1
+    },
+    "yelena-belova": {
+      "Strike and Fade": 5,
+      "Unveil Identity": 5,
+      "Twilight Ops": 3,
+      "Destroy the Red Room": 1
+    },
+    "red-guardian": {
+      "Sleeper Agent": 5,
+      "Magnetic Shield": 5,
+      "Death Was Only a Ruse": 3,
+      "Champion of the Winter Guard": 1
+    },
+    "white-tiger": {
+      "Dark Influence of the Hand": 5,
+      "Amulets of the Tiger God": 5,
+      "Camouflaged Huntress": 3,
+      "Shadowed Resurrection": 1
+    },
+    "falcon-winter-soldier": {
+      "Attune": 5,
+      "Atone": 5,
+      "Relocate": 5,
+      "Reload": 5,
+      "New Wings": 3,
+      "New Plan": 3,
+      "Captain America's Legacy": 1
+    }
+  },
+  "ca75": {
+    "agent-x-13": {
+      "Sniper Squad": 5,
+      "Paramilitary Ops": 5,
+      "Spy Network": 3,
+      "Mobilize for War": 1
+    },
+    "captain-america-falcon": {
+      "Aerial Catch": 5,
+      "Winged Salvation": 5,
+      "Flying Shield Block": 3,
+      "Star-Spangled Hero": 1
+    },
+    "captain-america-1941": {
+      "Devoted Patriot": 5,
+      "Storm the Beachhead": 5,
+      "Liberate the Prisoners": 3,
+      "Punch Evil in the Face": 1
+    },
+    "steve-rogers-director-of-shield": {
+      "International Strike Force": 5,
+      "Reassign to Civilian Duty": 5,
+      "Shadow of Wars Past": 3,
+      "Save the World": 1
+    },
+    "winter-soldier": {
+      "Bionic Arm": 5,
+      "Sniper Nest": 5,
+      "KGB Training": 3,
+      "2>4": 1
+    }
+  },
+  "chmp": {
+    "gwenpool": {
+      "Come On, Nobody Reads Card Names": 5,
+      "I'll Rescue You If I Feel Like It": 5,
+      "I Heard Keywords Are Powerful": 3,
+      "I'm the Best at Board Games": 1
+    },
+    "ms-marvel": {
+      "Long Arm of the Law": 5,
+      "Big Impact": 5,
+      "Need to Stretch My Legs": 3,
+      "Rising Hope": 1
+    },
+    "nova": {
+      "Space Cop": 5,
+      "Interstellar Hero": 5,
+      "Holographic Projection": 3,
+      "Growing Nova Force": 1
+    },
+    "totally-awesome-hulk": {
+      "Beloved Behemoth": 5,
+      "Incredible Mind, Awesome Body": 5,
+      "Growing Pains": 3,
+      "7th Smartest Man in the World": 1
+    },
+    "viv-vision": {
+      "Walking Wi-Fi": 5,
+      "Expanding Neural Network": 5,
+      "Crowdsourcing": 3,
+      "Alter Molecular Density": 1
+    }
+  },
+  "core": {
+    "black-widow": {
+      "Dangerous Rescue": null,
+      "Mission Accomplished": null,
+      "Covert Operation": null,
+      "Silent Sniper": null
+    },
+    "captain-america": {
+      "Avengers Assemble!": 5,
+      "Perfect Teamwork": 5,
+      "Diving Block": 3,
+      "A Day Unlike Any Other": 1
+    },
+    "cyclops": {
+      "Determination": null,
+      "Optic Blast": null,
+      "Unending Energy": null,
+      "X-Men United": null
+    },
+    "deadpool": {
+      "Here, Hold This for a Second": null,
+      "Oddball": null,
+      "Hey, Can I Get a Do-Over?": null,
+      "Random Acts of Unkindness": null
+    },
+    "emma-frost": {
+      "Mental Discipline": null,
+      "Shadowed Thoughts": null,
+      "Psychic Link": null,
+      "Diamond Form": null
+    },
+    "gambit": {
+      "Card Shark": null,
+      "Stack the Deck": null,
+      "Hypnotic Charm": null,
+      "High Stakes Jackpot": null
+    },
+    "hawkeye": {
+      "Quick Draw": null,
+      "Team Player": null,
+      "Covering Fire": null,
+      "Impossible Trick Shot": null
+    },
+    "hulk": {
+      "Growing Anger": null,
+      "Unstoppable Hulk": null,
+      "Crazed Rampage": null,
+      "Hulk Smash!": null
+    },
+    "iron-man": {
+      "Endless Invention": null,
+      "Repulsor Rays": null,
+      "Arc Reactor": null,
+      "Quantum Breakthrough": null
+    },
+    "nick-fury": {
+      "Battlefield Promotion": 5,
+      "High-Tech Weaponry": 5,
+      "Legendary Commander": 3,
+      "Pure Fury": 1
+    },
+    "rogue": {
+      "Borrowed Brawn": null,
+      "Energy Drain": null,
+      "Copy Powers": null,
+      "Steal Abilities": null
+    },
+    "spider-man": {
+      "Astonishing Strength": 5,
+      "Great Responsibility": 5,
+      "Web-Shooters": 3,
+      "The Amazing Spider-Man": 1
+    },
+    "storm": {
+      "Gathering Stormclouds": null,
+      "Lightning Bolt": null,
+      "Spinning Cyclone": null,
+      "Tidal Wave": null
+    },
+    "thor": {
+      "Odinson": null,
+      "Surge of Power": null,
+      "Call Lightning": null,
+      "God of Thunder": null
+    },
+    "wolverine": {
+      "Keen Senses": null,
+      "Healing Factor": null,
+      "Frenzied Slashing": null,
+      "Berserker Rage": null
+    }
+  },
+  "cosm": {
+    "adam-warlock": {
+      "Transmute Matter": 5,
+      "Regenerative Cocoon": 5,
+      "Soulblast": 3,
+      "Manifest the Soul Gem": 1
+    },
+    "captain-mar-vell": {
+      "Cosmic Awareness": 5,
+      "Kree Genetics": 5,
+      "Channel the Nega-Bands": 3,
+      "Protector of the Universe": 1
+    },
+    "moondragon": {
+      "Peaceful Meditation": 5,
+      "Psionic Warning": 5,
+      "Psychokinetic Blast": 3,
+      "Lunar Dragon Form": 1
+    },
+    "nebula": {
+      "Ruthless Cyborg": 5,
+      "Galactic Rogue": 5,
+      "Illusion Device": 3,
+      "Daring Raid": 1
+    },
+    "nova": {
+      "Draw From the Worldmind": 5,
+      "Electromagnetic Wave": 5,
+      "Declare Galactic Threat": 3,
+      "Mobilize the Nova Corps": 1
+    },
+    "phyla-vell": {
+      "Channel Cosmic Power": 5,
+      "Quantum Sword": 5,
+      "Martyr": 3,
+      "Avatar of Oblivion": 1
+    },
+    "quasar": {
+      "Manipulate Gravitons": 5,
+      "Cosmic Champion": 5,
+      "The Quantum Bands": 3,
+      "The Star Brand": 1
+    },
+    "ronan-the-accuser": {
+      "Universal Weapon": 5,
+      "Rally Kree Warriors": 5,
+      "Accuse Enemies of the Empire": 3,
+      "Seek the Infinity Gems": 1
+    },
+    "yondu": {
+      "Whistling Arrow": 5,
+      "Interstellar Hunter": 5,
+      "Anticipate Their Movements": 3,
+      "Space Pirate": 1
+    }
+  },
+  "cvwr": {
+    "captain-america-secret-avenger": {
+      "Bold Leadership": 5,
+      "Inspire a Nation": 5,
+      "Inspire a Man": 5,
+      "Secret Avengers Assemble!": 3,
+      "Freedom Never Dies": 1
+    },
+    "cloak-dagger": {
+      "Above": 5,
+      "Below": 5,
+      "Flee": 5,
+      "Fight": 5,
+      "Darkness": 3,
+      "Light": 3,
+      "Penumbra": 1
+    },
+    "daredevil": {
+      "Dual Existence": 5,
+      "Roundhouse Side Kick": 5,
+      "Hidden Identity": 6,
+      "Revealed Identity": 6,
+      "Master of Martial Arts": 1
+    },
+    "falcon": {
+      "Rapid Reinforcements": 5,
+      "Talk with Birds": 5,
+      "Squawk Back": 5,
+      "Scout the Battlefield": 3,
+      "Fly in a Friend": 1
+    },
+    "goliath": {
+      "Brilliant Biochemist": 5,
+      "Massive Warrior": 5,
+      "Growth Industry": 5,
+      "Being Big is Best": 3,
+      "Enormous Implications": 1
+    },
+    "hercules": {
+      "Manly Dullard": 5,
+      "Boy Genius": 5,
+      "Crowd Favorite": 5,
+      "Prince of Power": 3,
+      "Son of Zeus": 1
+    },
+    "hulkling": {
+      "Half-Kree": 5,
+      "Half-Skrull": 5,
+      "Cellular Regeneration": 5,
+      "Impersonate": 3,
+      "Enormous Shapeshifter": 1
+    },
+    "luke-cage": {
+      "Cautious": 5,
+      "Reckless": 5,
+      "Take a Bullet for the Team": 5,
+      "Sweet Christmas": 3,
+      "Unbreakable Skin": 1
+    },
+    "patriot": {
+      "New Generation of Heroes": 5,
+      "Intuitive Tactician": 5,
+      "Incredible Effort": 3,
+      "Effortless": 3,
+      "Lead the Young Avengers": 1
+    },
+    "peter-parker": {
+      "Conflicted Loyalties": 5,
+      "Spider-Man Unmasked": 5,
+      "Protect My Family": 3,
+      "Hot Bowl of Soup": 3,
+      "Reluctant Celebrity": 1
+    },
+    "speedball": {
+      "Reckless Rescue Attempt": 5,
+      "Bounce Around": 5,
+      "Double Down": 3,
+      "Bubble Up": 3,
+      "Kinetic Force Field": 1
+    },
+    "stature": {
+      "Shrink to Nothing": 5,
+      "Crush Ants": 5,
+      "Crush File Sizes": 5,
+      "Growing Confidence": 3,
+      "Trample the Tiny": 1
+    },
+    "storm-black-panther": {
+      "Gathering Rain Clouds": 5,
+      "Gathering Clues": 5,
+      "Lightning Strike": 5,
+      "Pouncing Strike": 5,
+      "Tsunami of Water": 3,
+      "Tsunami of Justice": 3,
+      "King & Queen of Wakanda": 1
+    },
+    "tigra": {
+      "Friendship": 5,
+      "Ferocity": 5,
+      "Supernatural Senses": 5,
+      "Can't Surprise a Cat": 3,
+      "Mystic Talisman": 1
+    },
+    "vision": {
+      "Solar Energy": 5,
+      "Through Solid Objects": 5,
+      "Lighter than Air": 3,
+      "Harder than Diamond": 3,
+      "Insubstantial Accomplishments": 1
+    },
+    "wiccan": {
+      "Sorcerous Illusions": 5,
+      "Astral Projection": 5,
+      "Supersonic Spells": 3,
+      "Supersonic Speed": 3,
+      "Clairvoyance": 1
+    }
+  },
+  "dead": {
+    "bob-agent-of-hydra": {
+      "Bullets Flying, Bob Hiding": null,
+      "HYDRA Half-Wit": null,
+      "How Do I Get Out of Here??": null,
+      "Epic Middle Manager": null
+    },
+    "deadpool": {
+      "Nighttime Is the Right Time": null,
+      "It'll Grow Back": null,
+      "Running Commentary": null,
+      "Deadpool Rage!": null
+    },
+    "slapstick": {
+      "Napoleon Complex": null,
+      "Saturday Morning Harpoons": null,
+      "Surprise Chainsaw": null,
+      "Electroplasmic Insanity": null
+    },
+    "solo": {
+      "Half-Cocked": null,
+      "Merc's Gotta Get Paid": null,
+      "Guns on My Guns": null,
+      "Cut in Half": null
+    },
+    "stingray": {
+      "Deck Chairs on the Titanic": null,
+      "Superpowered Swimsuit": null,
+      "Sting of the Stingray's Sting": null,
+      "PhD in Oceanography": null
+    }
+  },
+  "dims": {
+    "jessica-jones": {
+      "Alter Ego": 5,
+      "Alias Investigations": 5,
+      "Crack the Case": 3,
+      "Uncover Hidden Evil": 1
+    },
+    "ms-america": {
+      "Star Power": 5,
+      "Search Parallel Dimensions": 5,
+      "Kick a Hole in Reality": 3,
+      "Hyper-Cosmic Awareness": 1
+    },
+    "squirrel-girl": {
+      "Find Tiny Friends": 5,
+      "Nut Punch": 5,
+      "Squirrelgility": 3,
+      "Unbeatable Squirrel Girl": 1
+    }
+  },
+  "dkcy": {
+    "angel": {
+      "Diving Catch": null,
+      "High-Speed Chase": null,
+      "Drop off a Friend": null,
+      "Strength of Spirit": null
+    },
+    "bishop": {
+      "Absorb Energies": null,
+      "Whatever the Cost": null,
+      "Concussive Blast": null,
+      "Firepower from the Future": null
+    },
+    "blade": {
+      "Night Hunter": null,
+      "Stalk the Prey": null,
+      "Nowhere to Hide": null,
+      "Vampiric Surge": null
+    },
+    "cable": {
+      "Disaster Survivalist": null,
+      "Strike at the Heart of Evil": null,
+      "Rapid Response Force": null,
+      "Army of One": null
+    },
+    "colossus": {
+      "Draw Their Fire": null,
+      "Invulnerability": null,
+      "Silent Statue": null,
+      "Russian Heavy Tank": null
+    },
+    "daredevil": {
+      "Backflip": 5,
+      "Radar Sense": 5,
+      "Blind Justice": 3,
+      "The Man Without Fear": 1
+    },
+    "domino": {
+      "Lucky Break": null,
+      "Ready for Anything": null,
+      "Specialized Ammunition": null,
+      "Against All Odds": null
+    },
+    "elektra": {
+      "First Strike": 5,
+      "Ninjitsu": 5,
+      "Sai Blades": 3,
+      "Silent Meditation": 1
+    },
+    "forge": {
+      "Dirty Work": null,
+      "Reboot": null,
+      "Overdrive": null,
+      "B.F.G.": null
+    },
+    "ghost-rider": {
+      "Blazing Hellfire": 3,
+      "Hell on Wheels": 5,
+      "Infernal Chains": 5,
+      "Penance Stare": 1
+    },
+    "iceman": {
+      "Deep Freeze": null,
+      "Ice Slide": null,
+      "Frost Spike Armor": null,
+      "Impenetrable Ice Wall": null
+    },
+    "iron-fist": {
+      "Focus Chi": 5,
+      "Wield the Iron Fist": 5,
+      "Ancient Legacy": 3,
+      "Living Weapon": 1
+    },
+    "jean-grey": {
+      "Psychic Search": null,
+      "Read Your Thoughts": null,
+      "Mind Over Matter": null,
+      "Telekinetic Mastery": null
+    },
+    "nightcrawler": {
+      "Bamf!": null,
+      "Blend Into Shadows": null,
+      "Swashbuckler": null,
+      "Along for the Ride": null
+    },
+    "professor-x": {
+      "Psionic Astral Form": null,
+      "Class Dismissed": null,
+      "Telepathic Probe": null,
+      "Mind Control": null
+    },
+    "punisher": {
+      "Boom Goes the Dynamite": 5,
+      "Hail of Bullets": 5,
+      "Hostile Interrogation": 3,
+      "The Punisher": 1
+    },
+    "wolverine": {
+      "Animal Instincts": null,
+      "Sudden Ambush": null,
+      "No Mercy": null,
+      "Reckless Abandon": null
+    }
+  },
+  "dstr": {
+    "doctor-strange": {
+      "Wand of Watoomb": 5,
+      "Keeper of the Sanctum": 5,
+      "Book of Cagliostro": 3,
+      "The Eye of Agamotto": 1
+    },
+    "doctor-voodoo": {
+      "Commune with the Spirit World": 5,
+      "Medallion of Many Loas": 5,
+      "Staff of Legba": 3,
+      "Posessed by Brother's Spirit": 1
+    },
+    "clea": {
+      "Prepare Dark Magic": 5,
+      "Demonic Descendant": 5,
+      "Bind the Dark Dimension": 3,
+      "The Purple Gem": 1
+    },
+    "ancient-one-the": {
+      "Astral Confrontation": 5,
+      "Teachings of Kamar-Taj": 5,
+      "War of the Mind": 3,
+      "The Orb of Agamotto": 1
+    },
+    "vishanti-the": {
+      "Oshtur": 5,
+      "Hoggoth": 5,
+      "Agamotto": 3,
+      "The Book of the Vishanti": 1
+    }
+  },
+  "fear": {
+    "greithoth-breaker-of-wills": {
+      "Absorb Metal": 5,
+      "Mace of Chains": 5,
+      "Break the Will to Resist": 3,
+      "Body of Uru": 1
+    },
+    "kuurth-breaker-of-stone": {
+      "Reach for Power": 5,
+      "Unstoppable Sledge": 5,
+      "Contest of Strength": 3,
+      "Break Every Bone": 1
+    },
+    "nerkkod-breaker-of-oceans": {
+      "Pull of the Tides": 5,
+      "Feed My Undersea Legions": 5,
+      "Cudgel of the Deep": 3,
+      "Break Their Loyalties": 1
+    },
+    "nul-breaker-of-worlds": {
+      "Demolition Derby": 5,
+      "Otherworldly Maul": 5,
+      "Nul Smash!": 3,
+      "Break the World": 1
+    },
+    "skadi": {
+      "Dark Prophecy": 5,
+      "Ancient Oath of HYDRA": 5,
+      "Hammer of the Serpent": 3,
+      "War Banner of HYDRA": 1
+    },
+    "skirn-breaker-of-men": {
+      "Towering Leader": 5,
+      "Underhanded Dealings": 5,
+      "Titanic Bludgeon": 3,
+      "Break Your Hopes": 1
+    }
+  },
+  "ff04": {
+    "human-torch": {
+      "Call for Backup": 5,
+      "Hothead": 5,
+      "Flame On!": 3,
+      "Nova Flame": 1
+    },
+    "invisible-woman": {
+      "Disappearing Act": 5,
+      "Four of a Kind": 5,
+      "Unseen Rescue": 3,
+      "Invisible Barrier": 1
+    },
+    "mr-fantastic": {
+      "Twisting Equations": 5,
+      "Unstable Molecules": 5,
+      "One Gigantic Hand": 3,
+      "Ultimate Nullifier": 1
+    },
+    "silver-surfer": {
+      "Warp Speed": 5,
+      "Epic Destiny": 5,
+      "The Power Cosmic": 3,
+      "Energy Surge": 1
+    },
+    "thing": {
+      "It Started on Yancy Street": 5,
+      "Knuckle Sandwich": 5,
+      "Crime Stopper": 3,
+      "It's Clobberin' Time!": 1
+    }
+  },
+  "gotg": {
+    "drax-the-destroyer": {
+      "Knives of the Hunter": 5,
+      "Interstellar Tracker": 5,
+      "The Destroyer": 3,
+      "Avatar of Destruction": 1
+    },
+    "gamora": {
+      "Bounty Hunter": 5,
+      "Deadliest Woman in the Universe": 5,
+      "Galactic Assassin": 3,
+      "Godslayer Blade": 1
+    },
+    "groot": {
+      "Prune the Growths": 5,
+      "Surviving Sprig": 5,
+      "Groot and Branches": 3,
+      "I Am Groot": 1
+    },
+    "rocket-raccoon": {
+      "Gritty Scavenger": 5,
+      "Trigger Happy": 5,
+      "Incoming Detector": 3,
+      "Vengeance is Rocket": 1
+    },
+    "star-lord": {
+      "Element Guns": 5,
+      "Legendary Outlaw": 5,
+      "Implanted Memory Chip": 3,
+      "Sentient Starship": 1
+    }
+  },
+  "mdns": {
+    "blade-daywalker": {
+      "Hunt High and Low": 3,
+      "Where Monsters Lurk": 5,
+      "Ride by Moonlight": 5,
+      "Creature of Dawn and Dusk": 1
+    },
+    "elsa-bloodstone": {
+      "Axe of the Slayer": 5,
+      "Silver Bullets": 5,
+      "Stalk the Night Stalkers": 3,
+      "Vengeance of the Bloodstone Gem": 1
+    },
+    "morbius": {
+      "Mesmerize": 5,
+      "Scalded by Sunlight": 3,
+      "Insatiable Craving": 5,
+      "It's Morbin' Time!": 1
+    },
+    "werewolf-by-night": {
+      "Starlit Path": 5,
+      "Snarling Fangs": 5,
+      "Release the Beast": 3,
+      "Track the Captives": 1
+    },
+    "wong-master-of-the-mystic-arts": {
+      "Bridge Between Dimensions": 5,
+      "Searing Shards of Sunlight": 5,
+      "Seal the Rift": 3,
+      "Face Your Demons": 1
+    }
+  },
+  "mgtg": {
+    "star-lord": {
+      "Starship Sensors": 3,
+      "Borrowed Nova Blaster": 3,
+      "Give": 2,
+      "Take": 2,
+      "Expandable Helmet": 3,
+      "Don't Need that Stuff": 2,
+      "Hadron Enforcer": 1
+    },
+    "gamora": {
+      "Forgive": 2,
+      "Resent": 2,
+      "Sharpen Blades": 3,
+      "Resourceful Fugitive": 3,
+      "Retractable Sword": 3,
+      "Stolen Necroblaster": 2,
+      "Guardians Escape": 1
+    },
+    "rocket-groot": {
+      "Passion": 3,
+      "Compassion": 3,
+      "Baby Groot": 3,
+      "Gravity Mines": 2,
+      "Don't Press this Button": 3,
+      "Press the Button": 3,
+      "Tricky": 2,
+      "Simple": 2,
+      "We are Groot": 1
+    },
+    "drax": {
+      "Nothing Goes over my Head": 3,
+      "Dual Knives": 2,
+      "I am Invisible": 3,
+      "Xandar is Invincible": 3,
+      "Prison Riot": 3,
+      "Remove his Spine": 2,
+      "Also Illegal": 2,
+      "Revenge for my Family": 1
+    },
+    "mantis": {
+      "Empathic Bond": 3,
+      "Selfless": 3,
+      "Selfish": 3,
+      "Inspire Courage": 3,
+      "Sleep": 2,
+      "Emotional Wave": 2,
+      "Discover the Dead": 1
+    }
+  },
+  "msis": {
+    "doctor-strange": {
+      "Open Portals": 3,
+      "Defend this Dimension": 3,
+      "Sift Futures": 3,
+      "Invoke the Time Stone": 2,
+      "Bind Evil": 2,
+      "1 in 14,000,065": 1
+    },
+    "black-panther": {
+      "Wakanda Forever": 3,
+      "Avengers Reassembled": 3,
+      "Great Many Lives Lost": 3,
+      "Council of War": 2,
+      "Vibranium Nanites": 2,
+      "Fateful Return": 1
+    },
+    "bruce-banner": {
+      "Burst of Rage": 3,
+      "Brains and Brawn": 3,
+      "Hulkbuster Armor": 3,
+      "Hulk Gets Smashed": 2,
+      "Crush Puny Weaklings": 2,
+      "Reverse the Snap": 1
+    },
+    "captain-marvel": {
+      "Dawning Hope": 2,
+      "Infused by the Tesseract": 3,
+      "Return from the Stars": 3,
+      "Turning Point": 3,
+      "Moment of Destiny": 2,
+      "Time to End It": 1
+    },
+    "wanda-vision": {
+      "We Have to Destroy It": 3,
+      "Witchcraft": 3,
+      "Hold On": 3,
+      "Let Go": 3,
+      "Magic": 2,
+      "Science": 2,
+      "Rage": 2,
+      "Grief": 2,
+      "Odd Couple": 1
+    }
+  },
+  "msmc": {
+    "multiple-man": {
+      "Finding Myself": null,
+      "Me, Myself, and I": null,
+      "Perfect Match": null,
+      "Reabsorb Duplicates": null
+    },
+    "shatterstar": {
+      "Strive for Greatness": null,
+      "Bioelectric Surge": null,
+      "Gladiator's Blades": null,
+      "Gene-Spliced Creation": null
+    },
+    "stepford-cuckoos": {
+      "Find Mutants with Cerebro": null,
+      "Shared Thoughts": null,
+      "Telepathic Warning": null,
+      "Mind Wipe": null
+    },
+    "m": {
+      "Penance Form": null,
+      "Three Sisters Combined": null,
+      "Uncover Family Secrets": null,
+      "Interweaving Powers": null
+    },
+    "strong-guy": {
+      "X-Factor Investigations": null,
+      "Absorb Kinetic Energy": null,
+      "Go Big": null,
+      "Treasure Hunt": null
+    },
+    "warpath": {
+      "Grim Tracker": null,
+      "Endless Endurance": null,
+      "Dangerous Maneuver": null,
+      "Superhuman Senses": null
+    },
+    "siryn": {
+      "Echolocation": null,
+      "Hypnotic Call": null,
+      "Three-Octave Arpeggio": null,
+      "Splintering Shriek": null
+    },
+    "rictor": {
+      "Underground Cave-In": null,
+      "Unearth Tectonic Power": null,
+      "Trace the Fault Lines": null,
+      "Massive Earthquake": null
+    }
+  },
+  "msp1": {
+    "black-widow": {
+      "Mission Accomplished": 5,
+      "Dangerous Rescue": 5,
+      "Covert Operation": 3,
+      "Silent Sniper": 1
+    },
+    "captain-america": {
+      "Avengers Assemble!": 5,
+      "Perfect Teamwork": 5,
+      "Diving Block": 3,
+      "A Day Unlike Any Other": 1
+    },
+    "hawkeye": {
+      "Quick Draw": 5,
+      "Team Player": 5,
+      "Covering Fire": 3,
+      "Impossible Trick Shot": 1
+    },
+    "hulk": {
+      "Growing Anger": 5,
+      "Unstoppable Hulk": 5,
+      "Crazed Rampage": 3,
+      "Hulk Smash!": 1
+    },
+    "iron-man": {
+      "Endless Invention": 5,
+      "Repulsor Rays": 5,
+      "Arc Reactor": 3,
+      "Quantum Breakthrough": 1
+    },
+    "nick-fury": {
+      "Battlefield Promotion": 5,
+      "High-Tech Weaponry": 5,
+      "Legendary Commander": 3,
+      "Pure Fury": 1
+    },
+    "thor": {
+      "Odinson": 5,
+      "Surge of Power": 5,
+      "Call Lightning": 3,
+      "God of Thunder": 1
+    }
+  },
+  "nmut": {
+    "karma": {
+      "Sow Rivalry": null,
+      "Temporary Possession": null,
+      "Karmic Balance": null,
+      "Control Like a Puppet": null
+    },
+    "mirage": {
+      "Dreams Made Real": null,
+      "Empathic Link": null,
+      "Nightmare Wolves": null,
+      "Haunted By the Demon Bear": null
+    },
+    "sunspot": {
+      "Absorb Radiation": null,
+      "Solar-Powered": null,
+      "Thermokinetic Fury": null,
+      "Empyreal Force": null
+    },
+    "warlock": {
+      "Earthling Choices": null,
+      "Analyze Planetary Rotation": null,
+      "Techno-Organic Adaptation": null,
+      "Nanite Shapeshifter": null
+    },
+    "wolfsbane": {
+      "Night Vision": null,
+      "Wolf Out": null,
+      "Howl at the Moon": null,
+      "Nocturnal Savagery": null
+    }
+  },
+  "noir": {
+    "angel-noir": {
+      "Impetuous Dive": null,
+      "Multitalented": null,
+      "Identical Twin Brother": null,
+      "Missing Person Case": null
+    },
+    "daredevil-noir": {
+      "Balancing Act": 5,
+      "Listen for Heartbeats": 5,
+      "Discover the Bodies": 3,
+      "Hitting Rock Bottom": 1
+    },
+    "iron-man-noir": {
+      "Steam-Powered Arsenal": 5,
+      "Mechanized Plate-Mail": 5,
+      "Learn from Enemies": 3,
+      "Adventurers Assemble!": 1
+    },
+    "luke-cage-noir": {
+      "Follow Big Leads": 5,
+      "Private Investigations": 5,
+      "Unbreakable Cage": 3,
+      "Weight of the World": 1
+    },
+    "spider-man-noir": {
+      "Gumshoe's Revolver": 5,
+      "Webs of Darkness": 5,
+      "Solve the Crime": 3,
+      "Spider-Totem's Chosen": 1
+    }
+  },
+  "pttr": {
+    "black-cat": {
+      "Casual Bank Robbery": 5,
+      "Pickpocket": 5,
+      "Jinx": 3,
+      "Cat Burglar": 1
+    },
+    "moon-knight": {
+      "Climbing Claws": 5,
+      "Lunar Communion": 5,
+      "Crescent Moon Darts": 3,
+      "Golden Ankh of Khonshu": 1
+    },
+    "scarlet-spider": {
+      "Flip Out": 5,
+      "Perfect Hunter": 5,
+      "Leap from Above": 3,
+      "Sting of the Spider": 1
+    },
+    "spider-woman": {
+      "Bioelectric Shock": 5,
+      "Radioactive Spider": 5,
+      "Venom Blast": 3,
+      "Arachno-Pheromones": 1
+    },
+    "symbiote-spider-man": {
+      "Dark Strength": 5,
+      "Spider-Sense Tingling": 5,
+      "Shadowed Spider": 3,
+      "Thwip!": 1
+    }
+  },
+  "rlmk": {
+    "black-bolt": {
+      "Break the Silence": 5,
+      "Wordless Murmur": 5,
+      "Declaration of War": 3,
+      "The King's Speech": 1
+    },
+    "medusa": {
+      "Queen of the Inhumans": 5,
+      "Splitting Hairs": 5,
+      "Royal Command": 3,
+      "Headstrong": 1
+    },
+    "crystal": {
+      "Earth, Air, Fire, and Water": 5,
+      "Master the Four Elements": 5,
+      "Elemental Princess": 3,
+      "Weave Four Into One": 1
+    },
+    "karnak": {
+      "Brilliant Strategist": 5,
+      "Find Fatal Flaw": 5,
+      "Shatter the Weak Point": 3,
+      "Seek the Center": 1
+    },
+    "gorgon": {
+      "Lockjaw, Inhuman's Best Friend": 5,
+      "Stomping Shockwave": 5,
+      "Trample Underhoof": 3,
+      "Lead the Inhuman Elite": 1
+    }
+  },
+  "rvlt": {
+    "captain-marvel-agent-of-shield": {
+      "The Sword of S.H.I.E.L.D.": 5,
+      "Radiant Blast": 5,
+      "Dominate the Battlefield": 3,
+      "Higher, Further, Faster": 1
+    },
+    "darkhawk": {
+      "Balance the Darkforce": 5,
+      "Hawk Dive": 5,
+      "Travel to Nullspace": 3,
+      "Warflight": 1
+    },
+    "hellcat": {
+      "Catlike Agility": 5,
+      "Part-Time PI": 5,
+      "Demon Sight": 3,
+      "Second Chance at Life": 1
+    },
+    "photon": {
+      "Infrared Conversation": 5,
+      "Ultraviolet Radiation": 5,
+      "Light the Way": 3,
+      "Coruscating Vengeance": 1
+    },
+    "quicksilver": {
+      "Too Fast to See": 5,
+      "Perpetual Motion": 5,
+      "Jittery Impatience": 3,
+      "Around the World Punch": 1
+    },
+    "ronin": {
+      "Mysterious Identity": 5,
+      "Storm of Arrows": 5,
+      "Haunted by Loss": 3,
+      "Brooding Fury": 1
+    },
+    "scarlet-witch": {
+      "Hex Bolt": 5,
+      "Alter Reality": 5,
+      "Chaos Magic": 3,
+      "Warp Time and Space": 1
+    },
+    "speed": {
+      "Accelerate": 5,
+      "Speedy Delivery": 5,
+      "Race to the Rescue": 3,
+      "Break the Sound Barrier": 1
+    },
+    "war-machine": {
+      "Simulated Target Practice": 5,
+      "Military-Industrial Complex": 5,
+      "Hypersonic Cannon": 3,
+      "Overwhelming Firepower": 1
+    }
+  },
+  "shld": {
+    "agent-phil-coulson": {
+      "Impeccable Planning": 5,
+      "Build the Strike Team": 5,
+      "Approve Orbital Strike": 3,
+      "Fake But Inspiring Death": 1
+    },
+    "deathlok": {
+      "Authorize Lethal Force": 5,
+      "Reanimate Into Service": 5,
+      "Headlok": 3,
+      "Behind Enemy Lines": 1
+    },
+    "mockingbird": {
+      "Take Cover": 5,
+      "Battle Staves": 5,
+      "Spymaster": 3,
+      "Infinity Formula": 1
+    },
+    "quake": {
+      "Going Underground": 5,
+      "Aftershock": 5,
+      "Tectonic Wave": 3,
+      "Roil the Earth": 1
+    }
+  },
+  "smhc": {
+    "happy-hogan": {
+      "Head of Security": 5,
+      "Watchful Eye": 5,
+      "Loyal Friend": 3,
+      "Asset Management": 1
+    },
+    "high-tech-spider-man": {
+      "Advanced Targeting System": 5,
+      "Recon Drone Connection": 5,
+      "Spider-Grip": 3,
+      "Friendly Neighborhood...": 1
+    },
+    "peter-parker-homecoming": {
+      "Avenger in Training": 5,
+      "Heightened Senses": 5,
+      "Homemade Web-Shooters": 3,
+      "Something is Happening": 1
+    },
+    "peters-allies": {
+      "Ned": 5,
+      "Michelle": 5,
+      "Liz": 3,
+      "May Parker": 1
+    },
+    "tony-stark": {
+      "Genius, Billionaire...": 5,
+      "Stay Out of Trouble": 5,
+      "Little Grey Area": 3,
+      "As Usual, I Did All the Work": 1
+    }
+  },
+  "ssw1": {
+    "apocalyptic-kitty-pryde": {
+      "Phase Out": null,
+      "Infiltrate HQ": null,
+      "Disrupt Circuits": null,
+      "Untouchable": null
+    },
+    "black-bolt": {
+      "Destructive Whisper": 5,
+      "Speak No Words": 5,
+      "Silence is Golden": 3,
+      "Hypersonic Scream": 1
+    },
+    "black-panther": {
+      "Catlike Reflexes": 5,
+      "Multifaceted Genius": 5,
+      "Stalk the Urban Jungle": 3,
+      "King of Wakanda": 1
+    },
+    "captain-marvel": {
+      "Absorb Energies": 5,
+      "Supersonic Flight": 5,
+      "Marvelous Strength": 3,
+      "Cosmic Energies": 1
+    },
+    "dr-strange": {
+      "Cloak of Levitation": 5,
+      "Trust Me, I'm a Doctor": 5,
+      "Fight the Future": 3,
+      "Sorcerer Supreme": 1
+    },
+    "lady-thor": {
+      "Mysterious Origin": 5,
+      "Chosen by Asgard": 5,
+      "Heir to the Hammer": 3,
+      "Living Thunderstorm": 1
+    },
+    "magik": {
+      "Rally the New Mutants": null,
+      "Travel through Limbo": null,
+      "Dimensional Portal": null,
+      "Wield the Soulsword": null
+    },
+    "maximus": {
+      "Mental Domination": 5,
+      "Enslave the Will": 5,
+      "Pieces on a Chessboard": 3,
+      "Inhuman Mastery": 1
+    },
+    "namor-the-sub-mariner": {
+      "Lead the Armies of Atlantis": 5,
+      "Ruler of the Seas": 5,
+      "Feed the Sharks": 3,
+      "Imperius Rex": 1
+    },
+    "old-man-logan": {
+      "Last Survivor": null,
+      "Loner": null,
+      "Rage Out": null,
+      "No More Heroes": null
+    },
+    "proxima-midnight": {
+      "Inspiration Through Power": 5,
+      "Master Combatant": 5,
+      "General of the Black Order": 3,
+      "Supernova Spear": 1
+    },
+    "superior-iron-man": {
+      "Armor Upgrades": 5,
+      "Optimized Technology": 5,
+      "Superior to Others": 3,
+      "#Humblebrag": 1
+    },
+    "thanos": {
+      "Transdimensional Overlord": 5,
+      "Revel in Destruction": 5,
+      "Galactic Domination": 3,
+      "Utter Annihilation": 1
+    },
+    "ultimate-spider-man": {
+      "Leaping Spider": 5,
+      "Marvel Team-Up": 5,
+      "Web-Slinger": 3,
+      "Hero from Another Dimension": 1
+    }
+  },
+  "ssw2": {
+    "agent-venom": {
+      "Multi-Gun": 5,
+      "Government Payroll": 5,
+      "Big Slimeportunity": 3,
+      "Shapeshifting Symbiote": 1
+    },
+    "arkon-the-magnificent": {
+      "All-Terrain Barbarian": 5,
+      "Quiver of Thunderbolts": 5,
+      "Warlord of Open Spaces": 3,
+      "Lord of Dragons": 1
+    },
+    "beast": {
+      "Balanced Attack": 5,
+      "Upside-down Thinking": 5,
+      "Doctor of Beatdown": 3,
+      "Multi-Variable Smackulus": 1
+    },
+    "black-swan": {
+      "Apocalyptic Vision": 5,
+      "Witness the End": 5,
+      "Dark Foretelling": 3,
+      "Telepathic Control": 1
+    },
+    "captain-and-the-devil-the": {
+      "Jurassic America": 5,
+      "Patriotic Chomp": 5,
+      "Feeding Grounds": 3,
+      "Dino-Roar of Triumph": 1
+    },
+    "captain-britain": {
+      "Transatlantic Savior": 5,
+      "Combined Strength": 5,
+      "Raise the Union Jack": 3,
+      "Lead the Captain Britain Corps": 1
+    },
+    "corvus-glaive": {
+      "Let None Escape You": 5,
+      "Culling Blade": 5,
+      "Rictus Grin": 3,
+      "Atom-Splitting Glaive": 1
+    },
+    "dr-punisher-soldier-supreme": {
+      "Sweep the Streets of Trash": 5,
+      "You're a Slow Learner": 5,
+      "Ice Magic": 3,
+      "Calm Before the Storm": 1
+    },
+    "elsa-bloodstone": {
+      "Monster Hunter": 5,
+      "Bloodstone Pendant": 5,
+      "Defend the S.H.I.E.L.D. Wall": 3,
+      "Prodigy of Ulysses Bloodstone": 1
+    },
+    "phoenix-force-cyclops": {
+      "Reincarnate": null,
+      "Burn Out": null,
+      "Rise from the Ashes": null,
+      "Destruction Is Creation": null
+    },
+    "ruby-summers": {
+      "Guerrilla Warfare": null,
+      "Heir to Legends": null,
+      "Form of Solid Ruby": null,
+      "Extinction Blast": null
+    },
+    "shang-chi": {
+      "Shuffling Footwork": 5,
+      "Acrobatic Kung-Fu": 5,
+      "Seek the Empty Mind": 3,
+      "Muscle Memory": 1
+    },
+    "silk": {
+      "Long-Range Spider-Sense": 5,
+      "Cascading Maneuver": 5,
+      "Silk Stalking": 3,
+      "Borrowed Cloaking Device": 1
+    },
+    "soulsword-colossus": {
+      "Invade the Inferno": null,
+      "Steel Interception": null,
+      "Possessed by the Soulsword": null,
+      "Rescue My Family from Hell": null
+    },
+    "spider-gwen": {
+      "Fateful Bridge": 5,
+      "Save the Day": 5,
+      "First Adventure": 3,
+      "Intertwining Webs": 1
+    },
+    "time-traveling-jean-grey": {
+      "Throw Over the Railing": null,
+      "Bridge to a Better Future": null,
+      "Telekinesis": null,
+      "Change History": null
+    }
+  },
+  "vill": {
+    "bullseye": {
+      "Fulfill the Contract": 5,
+      "Everything's a Weapon": 5,
+      "Specialist Assassin": 3
+    },
+    "dr-octopus": {
+      "Brilliant Research": 5,
+      "Crazed Experiments": 5,
+      "Eighth Time's a Charm": 3,
+      "Octo-Pulverize": 1
+    },
+    "electro": {
+      "Electroshock Therapy": 5,
+      "Shocking Robbery": 5,
+      "Supercharge": 3,
+      "Anti-Matter": 1
+    },
+    "enchantress": {
+      "Enchant the Senses": 5,
+      "Soul Sacrifice": 5,
+      "Irresistible Bribe": 3,
+      "Unending Anguish": 1
+    },
+    "green-goblin": {
+      "Pumpkin Bombs": 5,
+      "Goblin Glider": 5,
+      "Unstable Kidnapper": 3,
+      "Experimental Goblin Serum": 1
+    },
+    "juggernaut": {
+      "Crimson Gem of Cyttorak": 5,
+      "Size Matters": 5,
+      "Runaway Train": 3,
+      "Unstoppable Force": 1
+    },
+    "kingpin": {
+      "Pull the Strings": 5,
+      "Recruitment Day": 5,
+      "Import Illegal Weapons": 3,
+      "Endless Underlings": 1
+    },
+    "kraven": {
+      "Ceaseless Tracker": 5,
+      "Corner the Prey": 5,
+      "Hunt Down": 3,
+      "He's the Best Around": 1
+    },
+    "loki": {
+      "All Humans Are Expendable": 5,
+      "Illusionary Bindings": 5,
+      "Father of Lies": 3,
+      "God of Mischief": 1
+    },
+    "magneto": {
+      "Magnetic Levitation": 5,
+      "Mutants Will Rule": 5,
+      "Weapons from Scrap Metal": 3,
+      "Master of Magnetism": 1
+    },
+    "mysterio": {
+      "Psychedelic Mist": 5,
+      "Shifting Decoy": 5,
+      "Holographic Illusion": 3,
+      "False Reflection": 1
+    },
+    "mystique": {
+      "Show Your True Colors": 5,
+      "Hidden Weapons": 5,
+      "Turn the Tide": 3,
+      "Spy Games": 1
+    },
+    "sabretooth": {
+      "Leap of the Tiger": 5,
+      "Take One for the Team": 5,
+      "Stealthy Predator": 3,
+      "Upper Hand": 1
+    },
+    "ultron": {
+      "Encephalo-Ray": 5,
+      "Army of Ultrons": 5,
+      "Genetic Experimentation": 3,
+      "Molecular Rearrangement": 1
+    },
+    "venom": {
+      "Symbiote Takeover": 5,
+      "Devour": 5,
+      "Horrify the Populace": 3,
+      "Ravenous Greed": 1
+    }
+  },
+  "vnom": {
+    "carnage": {
+      "Rending Claws": 5,
+      "Carnivore": 5,
+      "Gruesome Feast": 3,
+      "Feast or Famine": 1
+    },
+    "venom": {
+      "Devouring Drool": 5,
+      "Razor Teeth": 5,
+      "Symbiotic Adaptation": 3,
+      "Insatiable Hunger": 1
+    },
+    "venom-rocket": {
+      "Hungry for Action": 5,
+      "Spring the Trap": 5,
+      "Serious Overkill": 3,
+      "Ultimate Survivor": 1
+    },
+    "venomized-dr-strange": {
+      "Cauldron of the Cosmos": 5,
+      "See Future Timelines": 5,
+      "Complete the Grand Ritual": 3,
+      "Crystal of Kadavus": 1
+    },
+    "venompool": {
+      "Digest That Chimichanga": 5,
+      "Shenanigans": 5,
+      "Can I Get a Little Gratitude?": 3,
+      "Play to the Crowd": 1
+    }
+  },
+  "wpnx": {
+    "fantomex": {
+      "Sentient Bullets": null,
+      "Three Brains": null,
+      "Misdirection": null,
+      "Weapon XIII": null
+    },
+    "marrow": {
+      "Bone Shards": null,
+      "Hyper-Adaptive Skeleton": null,
+      "Osteogenesis": null,
+      "Metabolic Overdrive": null
+    },
+    "weapon-h": {
+      "Evolving Abilities": 5,
+      "The Future of Warfare": 5,
+      "Slice and Smash": 3,
+      "Ultimate Killing Machine": 1
+    },
+    "weapon-x-wolverine": {
+      "Infuse Skeleton with Adamantium": 5,
+      "Raging Regeneration": 5,
+      "Violent Conditioning": 3,
+      "Escape the Weapon X Lab": 1
+    }
+  },
+  "wtif": {
+    "captain-carter": {
+      "Super Soldier Serum": 3,
+      "Wartime Logistics": 3,
+      "Coordinated Assault": 3,
+      "The Shield of Britain": 2,
+      "Give Them All We've Got": 2,
+      "Icon of Hope": 1
+    },
+    "star-lord-tchalla": {
+      "Fight or Flight": 3,
+      "Interstellar Adventures": 3,
+      "Plan the Heist": 3,
+      "Unexpected Exit": 2,
+      "Cross the Multiverse": 2,
+      "Colliding Dreams": 1
+    },
+    "party-thor": {
+      "Forecast Says Thunder": 3,
+      "Worthy Challenge": 3,
+      "Destructive Feast": 3,
+      "Asgardian Rager": 2,
+      "Only Son": 2,
+      "Worthy of the Lightning": 1
+    },
+    "killmonger-spec-ops": {
+      "Hunt New Prey": 3,
+      "Hostage Rescue": 2,
+      "No Matter the Price": 3,
+      "Violence Leaves Scars": 3,
+      "Plot a Betrayal": 2,
+      "I'm the King Baby!": 1
+    },
+    "apocalyptic-black-widow": {
+      "Relentless": 2,
+      "Humanity's Final Hope": 3,
+      "Plant Hidden Asset": 3,
+      "Precision Strike": 3,
+      "The Last Avenger": 2,
+      "Time to Save the Multiverse": 1
+    },
+    "gamora-destroyer-of-thanos": {
+      "Assassin's Stealth": 3,
+      "Tactical Insight": 3,
+      "Wield the Blade of Thanos": 3,
+      "Titanicide": 2,
+      "Destroy an Infinity Stone": 2,
+      "The Infinity Crusher": 1
+    },
+    "doctor-strange-supreme": {
+      "To Save Christine": 2,
+      "Seize Infernal Power": 3,
+      "Summon Demon Minions": 3,
+      "Wards of the Vishanti": 3,
+      "Break the Absolute Point in Time": 2,
+      "Stygian Communion": 1
+    },
+    "uatu-the-watcher": {
+      "Diverging Timestreams": 3,
+      "Another Dimension Crumbles": 3,
+      "Break the Oath": 3,
+      "Anoint a Champion": 2,
+      "History Repeats": 2,
+      "Convoke the Guardians": 1
+    }
+  },
+  "wwhk": {
+    "amadeus-cho": {
+      "Extrapolate": 5,
+      "Gamma-Draining Nanites": 5,
+      "Like Totally Smart Hulk": 5,
+      "Renegade Genius": 3,
+      "Visualize the Variables": 1
+    },
+    "bruce-banner": {
+      "Solve the Impossible": 5,
+      "Gamma Bomb Disaster": 5,
+      "Savage Hulk Unleashed": 5,
+      "Dangerous Testing": 3,
+      "Gamma Ray Experiment": 1
+    },
+    "caiera": {
+      "Shadow Queen": 5,
+      "Shadowforged Blade": 5,
+      "Focus The Old Power": 3,
+      "Dutiful Protector": 1,
+      "Vengeful Destructor": 1
+    },
+    "gladiator-hulk": {
+      "Don't Make Me Angry": 5,
+      "Seize The Throne": 5,
+      "Hulk Is King": 5,
+      "The Green Scar": 3,
+      "Double-Fisted Smashing": 1
+    },
+    "hiroim": {
+      "Seek Redemption": 5,
+      "Save from the Rubble": 5,
+      "Hiroim Redeemed": 5,
+      "Mystic Shadow Priest": 3,
+      "Blade of the People": 1
+    },
+    "hulkbuster-iron-man": {
+      "Pound for Pound": 5,
+      "Attune Techtonic Transducer": 5,
+      "Build the Suit": 3,
+      "Ultra-Massive Armor": 3,
+      "Final Battle": 1
+    },
+    "joe-fixit-grey-hulk": {
+      "Carefully Considered Smashing": 5,
+      "Threaten And Bribe": 5,
+      "Ambitious Enforcer": 3,
+      "Underworld Boss": 3,
+      "Hulk Runs This Town": 1
+    },
+    "korg": {
+      "Nothing Beats Rock": 5,
+      "Move Mountains": 5,
+      "Forged by Fire": 3,
+      "Lord of Granite": 3,
+      "Kronan Tactician": 1
+    },
+    "miek-the-unhived": {
+      "This Bug Smashes You": 5,
+      "Devouring Frenzy": 5,
+      "Endless Appetite": 3,
+      "Metamorphosis": 1,
+      "Hive King Miek": 1
+    },
+    "namora": {
+      "Crushing Tsunami": 5,
+      "Heart of the Ocean": 5,
+      "Herculean Effort": 3,
+      "Master of Depths": 3,
+      "Turning The Tide": 1
+    },
+    "no-name-brood-queen": {
+      "Surprise Attack": 5,
+      "Appetite for Destruction": 5,
+      "Bursting with Life": 3,
+      "Torrent of Broodlings": 5,
+      "World-Spanning Hunger": 1
+    },
+    "rick-jones": {
+      "Hacktivist": 5,
+      "Seek the Nega-Bands": 5,
+      "Captain Marvel": 5,
+      "Irradiated Blood": 3,
+      "A-Bomb": 3,
+      "Caught in Kree-Skrull War": 1,
+      "The Destiny Force": 1
+    },
+    "sentry": {
+      "Agoraphobia": 5,
+      "Golden Guardian of Good": 5,
+      "Rival Personalities": 5,
+      "Mournful Sentinel": 3,
+      "The Void Unchained": 3,
+      "Vast Unstable Power": 1
+    },
+    "she-hulk": {
+      "Hurl Legal Objections": 5,
+      "Hurl Trucks": 5,
+      "Window of Opportunity": 5,
+      "Radioactive Riot": 3,
+      "Jade Giantess": 1
+    },
+    "skaar-son-of-hulk": {
+      "Anger Management": 5,
+      "Scarred Past": 5,
+      "Mood Swings": 3,
+      "Raging Savage": 3,
+      "Planetary-Level Revenge": 1
+    }
+  },
+  "xmen": {
+    "aurora-northstar": {
+      "Northern Lights": null,
+      "Blazing Flare": null,
+      "Blazing Fists": null,
+      "Twin Blast": null,
+      "Mach 10": null
+    },
+    "banshee": {
+      "Sonar Detection": null,
+      "Speed of Sound": null,
+      "Sonic Blastwave": null,
+      "Bone-Shattering Howl": null
+    },
+    "beast": {
+      "Captivating Conundrum": null,
+      "Furry Fury": null,
+      "Calculated Rage": null,
+      "Recursive Pummeling": null
+    },
+    "cannonball": {
+      "Kinetic Blast Field": null,
+      "Carry to the Air": null,
+      "Natural Leader": null,
+      "Human Cannon": null
+    },
+    "colossus-wolverine": {
+      "Reliable": null,
+      "Unpredictable": null,
+      "Fastball Special": null,
+      "Insane Disregard for Danger": null,
+      "Uncanny X-Men": null
+    },
+    "dazzler": {
+      "Convert Sound to Light": null,
+      "Dazzling Glamour": null,
+      "Citywide Mega-Concert": null,
+      "Inspire the World": null
+    },
+    "havok": {
+      "Blinding Burst": null,
+      "Unleash Havok": null,
+      "Concussive Plasma": null,
+      "Radiation Focus Array": null
+    },
+    "jubilee": {
+      "Light a Spark": null,
+      "Blasting Fireworks": null,
+      "Unexpected Explosion": null,
+      "Prismatic Cascade": null
+    },
+    "kitty-pryde": {
+      "Intangible Qualities": null,
+      "Going through a Phase": null,
+      "Ghost in the Machine": null,
+      "Lockheed, Kitty's Dragon": null
+    },
+    "legion": {
+      "Bend Steel": null,
+      "Bend Light": null,
+      "Split Personality": null,
+      "Split Eardrums": null,
+      "Channel Time": null,
+      "Channel Fire": null,
+      "Maelstrom of Clashing Powers": null
+    },
+    "longshot": {
+      "Fortune Favors the Bold": null,
+      "Flurry of Blades": null,
+      "Make My Own Luck": null,
+      "Escape from Mojo World": null
+    },
+    "phoenix": {
+      "Life & Death Incarnate": null,
+      "Obliterating Fire": null,
+      "Reincarnating Phoenix": null,
+      "Driven Mad by Power": null
+    },
+    "polaris": {
+      "Ride the Magnetic Waves": null,
+      "Electromagnetic Pulse": null,
+      "Subtle Attunement": null,
+      "Reverse Polarity": null
+    },
+    "psylocke": {
+      "Psychic Knife": null,
+      "Precognition": null,
+      "Butterfly Effect": null,
+      "Telepathic Ninjutsu": null
+    },
+    "x-23": {
+      "Adamantium Foot Claws": null,
+      "Healing Factor Genome": null,
+      "Bioengineered Assassin": null,
+      "Heir to Wolverine": null
+    }
+  }
+}

@@ -8,7 +8,14 @@
       "name": "Captain Carter",
       "slug": "captain-carter",
       "team": "guardians-of-the-multiverse",
-      "cardCounts": null,
+      "cardCounts": {
+        "Super Soldier Serum": 3,
+        "Wartime Logistics": 3,
+        "Coordinated Assault": 3,
+        "The Shield of Britain": 2,
+        "Give Them All We've Got": 2,
+        "Icon of Hope": 1
+      },
       "cards": [
         {
           "name": "Super Soldier Serum",
@@ -117,7 +124,14 @@
       "name": "Star-Lord T'Challa",
       "slug": "star-lord-tchalla",
       "team": "guardians-of-the-multiverse",
-      "cardCounts": null,
+      "cardCounts": {
+        "Fight or Flight": 3,
+        "Interstellar Adventures": 3,
+        "Plan the Heist": 3,
+        "Unexpected Exit": 2,
+        "Cross the Multiverse": 2,
+        "Colliding Dreams": 1
+      },
       "cards": [
         {
           "name": "Fight or Flight",
@@ -224,7 +238,14 @@
       "name": "Party Thor",
       "slug": "party-thor",
       "team": "guardians-of-the-multiverse",
-      "cardCounts": null,
+      "cardCounts": {
+        "Forecast Says Thunder": 3,
+        "Worthy Challenge": 3,
+        "Destructive Feast": 3,
+        "Asgardian Rager": 2,
+        "Only Son": 2,
+        "Worthy of the Lightning": 1
+      },
       "cards": [
         {
           "name": "Forecast Says Thunder",
@@ -329,7 +350,14 @@
       "name": "Killmonger, Spec Ops",
       "slug": "killmonger-spec-ops",
       "team": "guardians-of-the-multiverse",
-      "cardCounts": null,
+      "cardCounts": {
+        "Hunt New Prey": 3,
+        "Hostage Rescue": 2,
+        "No Matter the Price": 3,
+        "Violence Leaves Scars": 3,
+        "Plot a Betrayal": 2,
+        "I'm the King Baby!": 1
+      },
       "cards": [
         {
           "name": "Hunt New Prey",
@@ -436,7 +464,14 @@
       "name": "Apocalyptic Black Widow",
       "slug": "apocalyptic-black-widow",
       "team": "guardians-of-the-multiverse",
-      "cardCounts": null,
+      "cardCounts": {
+        "Relentless": 2,
+        "Humanity's Final Hope": 3,
+        "Plant Hidden Asset": 3,
+        "Precision Strike": 3,
+        "The Last Avenger": 2,
+        "Time to Save the Multiverse": 1
+      },
       "cards": [
         {
           "name": "Relentless",
@@ -543,7 +578,14 @@
       "name": "Gamora, Destroyer of Thanos",
       "slug": "gamora-destroyer-of-thanos",
       "team": "guardians-of-the-multiverse",
-      "cardCounts": null,
+      "cardCounts": {
+        "Assassin's Stealth": 3,
+        "Tactical Insight": 3,
+        "Wield the Blade of Thanos": 3,
+        "Titanicide": 2,
+        "Destroy an Infinity Stone": 2,
+        "The Infinity Crusher": 1
+      },
       "cards": [
         {
           "name": "Assassin's Stealth",
@@ -649,7 +691,14 @@
       "name": "Doctor Strange Supreme",
       "slug": "doctor-strange-supreme",
       "team": "guardians-of-the-multiverse",
-      "cardCounts": null,
+      "cardCounts": {
+        "To Save Christine": 2,
+        "Seize Infernal Power": 3,
+        "Summon Demon Minions": 3,
+        "Wards of the Vishanti": 3,
+        "Break the Absolute Point in Time": 2,
+        "Stygian Communion": 1
+      },
       "cards": [
         {
           "name": "To Save Christine",
@@ -755,7 +804,14 @@
       "name": "Uatu, The Watcher",
       "slug": "uatu-the-watcher",
       "team": "guardians-of-the-multiverse",
-      "cardCounts": null,
+      "cardCounts": {
+        "Diverging Timestreams": 3,
+        "Another Dimension Crumbles": 3,
+        "Break the Oath": 3,
+        "Anoint a Champion": 2,
+        "History Repeats": 2,
+        "Convoke the Guardians": 1
+      },
       "cards": [
         {
           "name": "Diverging Timestreams",

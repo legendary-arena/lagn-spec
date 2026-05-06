@@ -1,0 +1,362 @@
+[
+  {
+    "id": 1,
+    "abbr": "core",
+    "pkgId": 1,
+    "slug": "core-box",
+    "name": "Core Set",
+    "releaseDate": "2012-11-13",
+    "type": "1st Core Set"
+  },
+  {
+    "id": 2,
+    "abbr": "dkcy",
+    "pkgId": 2,
+    "slug": "dark-city",
+    "name": "Dark City",
+    "releaseDate": "2013-06-18",
+    "type": "1st Expansion"
+  },
+  {
+    "id": 3,
+    "abbr": "ff04",
+    "pkgId": 3,
+    "slug": "fantastic-four",
+    "name": "Fantastic Four",
+    "releaseDate": "2013-10-15",
+    "type": "2nd Expansion"
+  },
+  {
+    "id": 4,
+    "abbr": "pttr",
+    "pkgId": 4,
+    "slug": "paint-the-town-red",
+    "name": "Paint the Town Red",
+    "releaseDate": "2014-03-12",
+    "type": "3rd Expansion"
+  },
+  {
+    "id": 5,
+    "abbr": "vill",
+    "pkgId": 5,
+    "slug": "villains",
+    "name": "Villains",
+    "releaseDate": "2014-07-02",
+    "type": "2nd Core Set"
+  },
+  {
+    "id": 6,
+    "abbr": "gotg",
+    "pkgId": 6,
+    "slug": "guardians-of-the-galaxy",
+    "name": "Guardians of the Galaxy",
+    "releaseDate": "2014-10-15",
+    "type": "4th Expansion"
+  },
+  {
+    "id": 7,
+    "abbr": "fear",
+    "pkgId": 7,
+    "slug": "fear-itself",
+    "name": "Fear Itself",
+    "releaseDate": "2015-03-11",
+    "type": "5th Expansion"
+  },
+  {
+    "id": 8,
+    "abbr": "3dtc",
+    "pkgId": 8,
+    "slug": "marvel-3d",
+    "name": "Playable Marvel 3D Trading Cards",
+    "releaseDate": "2015-04-01",
+    "type": "Promo / Trading Card Mini-Expansion"
+  },
+  {
+    "id": 9,
+    "abbr": "ssw1",
+    "pkgId": 9,
+    "slug": "secret-wars-vol-1",
+    "name": "Secret Wars Vol 1",
+    "releaseDate": "2015-08-05",
+    "type": "6th Expansion"
+  },
+  {
+    "id": 10,
+    "abbr": "ssw2",
+    "pkgId": 10,
+    "slug": "secret-wars-vol-2",
+    "name": "Secret Wars Vol 2",
+    "releaseDate": "2015-12-08",
+    "type": "7th Expansion"
+  },
+  {
+    "id": 11,
+    "abbr": "ca75",
+    "pkgId": 11,
+    "slug": "captain-america-75th",
+    "name": "Captain America 75th",
+    "releaseDate": "2016-03-23",
+    "type": "8th Expansion"
+  },
+  {
+    "id": 12,
+    "abbr": "cvwr",
+    "pkgId": 12,
+    "slug": "civil-war",
+    "name": "Civil War",
+    "releaseDate": "2016-08-03",
+    "type": "9th Expansion"
+  },
+  {
+    "id": 13,
+    "abbr": "dead",
+    "pkgId": 13,
+    "slug": "deadpool",
+    "name": "Deadpool",
+    "releaseDate": "2016-10-12",
+    "type": "10th Expansion"
+  },
+  {
+    "id": 14,
+    "abbr": "noir",
+    "pkgId": 14,
+    "slug": "noir",
+    "name": "Noir",
+    "releaseDate": "2017-02-15",
+    "type": "11th Expansion"
+  },
+  {
+    "id": 15,
+    "abbr": "xmen",
+    "pkgId": 15,
+    "slug": "x-men",
+    "name": "X-Men",
+    "releaseDate": "2017-06-28",
+    "type": "12th Expansion"
+  },
+  {
+    "id": 16,
+    "abbr": "smhc",
+    "pkgId": 16,
+    "slug": "spider-man-homecoming",
+    "name": "Spider-Man Homecoming",
+    "releaseDate": "2017-10-21",
+    "type": "13th Expansion"
+  },
+  {
+    "id": 17,
+    "abbr": "chmp",
+    "pkgId": 17,
+    "slug": "champions",
+    "name": "Champions",
+    "releaseDate": "2018-02-14",
+    "type": "14th Expansion"
+  },
+  {
+    "id": 18,
+    "abbr": "wwhk",
+    "pkgId": 18,
+    "slug": "world-war-hulk",
+    "name": "World War Hulk",
+    "releaseDate": "2018-06-27",
+    "type": "15th Expansion"
+  },
+  {
+    "id": 19,
+    "abbr": "msp1",
+    "pkgId": 19,
+    "slug": "marvel-studios-phase-1",
+    "name": "Marvel Studios, Phase 1",
+    "releaseDate": "2018-08-02",
+    "type": "3rd Core Set"
+  },
+  {
+    "id": 20,
+    "abbr": "antm",
+    "pkgId": 20,
+    "slug": "ant-man",
+    "name": "Ant-Man",
+    "releaseDate": "2018-11-14",
+    "type": "16th Expansion"
+  },
+  {
+    "id": 21,
+    "abbr": "vnom",
+    "pkgId": 21,
+    "slug": "venom",
+    "name": "Venom",
+    "releaseDate": "2019-03-05",
+    "type": "17th Expansion"
+  },
+  {
+    "id": 22,
+    "abbr": "dims",
+    "pkgId": 22,
+    "slug": "dimensions",
+    "name": "Dimensions",
+    "releaseDate": "2019-05-22",
+    "type": "18th Expansion"
+  },
+  {
+    "id": 23,
+    "abbr": "rvlt",
+    "pkgId": 23,
+    "slug": "revelations",
+    "name": "Revelations",
+    "releaseDate": "2019-08-21",
+    "type": "19th Expansion"
+  },
+  {
+    "id": 24,
+    "abbr": "shld",
+    "pkgId": 24,
+    "slug": "shield",
+    "name": "S.H.I.E.L.D.",
+    "releaseDate": "2019-12-18",
+    "type": "20th Expansion"
+  },
+  {
+    "id": 25,
+    "abbr": "asrd",
+    "pkgId": 25,
+    "slug": "heroes-of-asgard",
+    "name": "Heroes of Asgard",
+    "releaseDate": "2020-03-18",
+    "type": "21st Expansion"
+  },
+  {
+    "id": 26,
+    "abbr": "nmut",
+    "pkgId": 26,
+    "slug": "new-mutants",
+    "name": "New Mutants",
+    "releaseDate": "2020-04-16",
+    "type": "22nd Expansion"
+  },
+  {
+    "id": 27,
+    "abbr": "cosm",
+    "pkgId": 27,
+    "slug": "into-the-cosmos",
+    "name": "Into the Cosmos",
+    "releaseDate": "2020-08-26",
+    "type": "23rd Expansion"
+  },
+  {
+    "id": 28,
+    "abbr": "rlmk",
+    "pkgId": 28,
+    "slug": "realm-of-kings",
+    "name": "Realm of Kings",
+    "releaseDate": "2020-10-28",
+    "type": "24th Expansion"
+  },
+  {
+    "id": 29,
+    "abbr": "anni",
+    "pkgId": 29,
+    "slug": "annihilation",
+    "name": "Annihilation",
+    "releaseDate": "2021-09-15",
+    "type": "25th Expansion"
+  },
+  {
+    "id": 30,
+    "abbr": "msmc",
+    "pkgId": 30,
+    "slug": "messiah-complex",
+    "name": "Messiah Complex",
+    "releaseDate": "2022-01-19",
+    "type": "26th Expansion"
+  },
+  {
+    "id": 31,
+    "abbr": "dstr",
+    "pkgId": 31,
+    "slug": "doctor-strange",
+    "name": "Doctor Strange",
+    "releaseDate": "2022-03-09",
+    "type": "27th Expansion"
+  },
+  {
+    "id": 32,
+    "abbr": "mgtg",
+    "pkgId": 32,
+    "slug": "mcu-guardians-of-the-galaxy",
+    "name": "MCU Guardians of the Galaxy",
+    "releaseDate": "2022-06-15",
+    "type": "28th Expansion"
+  },
+  {
+    "id": 33,
+    "abbr": "bkpt",
+    "pkgId": 33,
+    "slug": "black-panther",
+    "name": "Black Panther",
+    "releaseDate": "2022-07-13",
+    "type": "29th Expansion"
+  },
+  {
+    "id": 34,
+    "abbr": "bkwd",
+    "pkgId": 34,
+    "slug": "black-widow",
+    "name": "Black Widow",
+    "releaseDate": "2022-09-14",
+    "type": "30th Expansion"
+  },
+  {
+    "id": 35,
+    "abbr": "msis",
+    "pkgId": 35,
+    "slug": "mcu-infinity-saga",
+    "name": "MCU The Infinity Saga",
+    "releaseDate": "2023-03-08",
+    "type": "31st Expansion"
+  },
+  {
+    "id": 36,
+    "abbr": "mdns",
+    "pkgId": 36,
+    "slug": "midnight-sons",
+    "name": "Midnight Sons",
+    "releaseDate": "2023-05-10",
+    "type": "32nd Expansion"
+  },
+  {
+    "id": 37,
+    "abbr": "wtif",
+    "pkgId": 37,
+    "slug": "what-if",
+    "name": "What If",
+    "releaseDate": "2023-09-20",
+    "type": "4th Core Set"
+  },
+  {
+    "id": 38,
+    "abbr": "amwp",
+    "pkgId": 38,
+    "slug": "ant-man-and-the-wasp",
+    "name": "Ant-Man and the Wasp",
+    "releaseDate": "2024-01-17",
+    "type": "33rd Expansion"
+  },
+  {
+    "id": 39,
+    "abbr": "2099",
+    "pkgId": 39,
+    "slug": "2099",
+    "name": "2099",
+    "releaseDate": "2024-04-03",
+    "type": "34th Expansion"
+  },
+  {
+    "id": 40,
+    "abbr": "wpnx",
+    "pkgId": 40,
+    "slug": "weapon-x",
+    "name": "Weapon X",
+    "releaseDate": "2024-11-27",
+    "type": "35th Expansion"
+  }
+]

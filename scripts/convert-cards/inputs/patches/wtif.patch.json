@@ -1,0 +1,144 @@
+{
+  "henchmen": [
+    {
+      "_op": "merge",
+      "slug": "ultron-sentries",
+      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-covert.webp",
+      "imageUrlByClass": {
+        "covert": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-covert.webp",
+        "instinct": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-instinct.webp",
+        "ranged": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-ranged.webp",
+        "strength": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-strength.webp",
+        "tech": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-tech.webp"
+      }
+    }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "doctor-strange-supreme",
+      "cards": [
+        {
+          "slug": "to-save-christine",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1
+        },
+        {
+          "slug": "seize-infernal-power",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2
+        },
+        {
+          "slug": "summon-demon-minions",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3
+        },
+        {
+          "slug": "wards-of-the-vishanti",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 4
+        },
+        {
+          "slug": "break-the-absolute-point-in-time",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 5
+        },
+        {
+          "slug": "stygian-communion",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 6
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "killmonger-spec-ops",
+      "cards": [
+        {
+          "slug": "hunt-new-prey",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1
+        },
+        {
+          "slug": "hostage-rescue",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2
+        },
+        {
+          "slug": "no-matter-the-price",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3
+        },
+        {
+          "slug": "violence-leaves-scars",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 4
+        },
+        {
+          "slug": "plot-a-betrayal",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 5
+        },
+        {
+          "slug": "im-the-king-baby",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 6
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "apocalyptic-black-widow",
+      "cards": [
+        {
+          "slug": "relentless",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1
+        },
+        {
+          "slug": "humanitys-final-hope",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2
+        },
+        {
+          "slug": "plant-hidden-asset",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3
+        },
+        {
+          "slug": "precision-strike",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 4
+        },
+        {
+          "slug": "the-last-avenger",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 5
+        },
+        {
+          "slug": "time-to-save-the-multiverse",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 6
+        }
+      ]
+    }
+  ]
+}

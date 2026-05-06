@@ -1,0 +1,108 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "immortal-emperor-zheng-zhu",
+      "cards": [
+        {
+          "slug": "immortal-emperor-zheng-zhu",
+          "vAttack": "7+"
+        },
+        {
+          "slug": "ultimate-kung-fu-mastery",
+          "vAttack": "7+"
+        },
+        {
+          "slug": "emperors-justice",
+          "vAttack": "7+"
+        },
+        {
+          "slug": "humble-the-pretenders",
+          "vAttack": "7+"
+        },
+        {
+          "slug": "imperial-edict",
+          "vAttack": "7+"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "king-hyperion",
+      "cards": [
+        {
+          "slug": "king-hyperion",
+          "vAttack": 12
+        },
+        {
+          "slug": "worshipped-by-millions",
+          "vAttack": 12
+        },
+        {
+          "slug": "royal-treasury",
+          "vAttack": 12
+        },
+        {
+          "slug": "monarch-of-utopolis",
+          "vAttack": 12
+        },
+        {
+          "slug": "rule-with-an-iron-fist",
+          "vAttack": 12
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "shiklah-the-demon-bride",
+      "cards": [
+        {
+          "slug": "shiklah-the-demon-bride",
+          "vAttack": 9
+        },
+        {
+          "slug": "shiklahs-husband-deadpool",
+          "vAttack": 9
+        },
+        {
+          "slug": "enslavement-beam",
+          "vAttack": 9
+        },
+        {
+          "slug": "drain-life",
+          "vAttack": 9
+        },
+        {
+          "slug": "infernal-power",
+          "vAttack": 9
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "spider-queen",
+      "cards": [
+        {
+          "slug": "spider-queen",
+          "vAttack": "8+"
+        },
+        {
+          "slug": "sonic-scream",
+          "vAttack": "8+"
+        },
+        {
+          "slug": "infect-the-entire-city",
+          "vAttack": "8+"
+        },
+        {
+          "slug": "control-arachnid-genes",
+          "vAttack": "8+"
+        },
+        {
+          "slug": "web-the-skyscrapers",
+          "vAttack": "8+"
+        }
+      ]
+    }
+  ]
+}

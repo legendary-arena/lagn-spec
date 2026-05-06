@@ -1,0 +1,944 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "amadeus-cho",
+      "cards": [
+        {
+          "slug": "extrapolate",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-2c1.webp"
+        },
+        {
+          "slug": "gamma-draining-nanites",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-3c2.webp",
+          "transform": "like-totally-smart-hulk"
+        },
+        {
+          "slug": "like-totally-smart-hulk",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-5c3.webp",
+          "transformOf": "gamma-draining-nanites",
+          "isTransform": true
+        },
+        {
+          "slug": "renegade-genius",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-6u.webp"
+        },
+        {
+          "slug": "visualize-the-variables",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "bruce-banner",
+      "cards": [
+        {
+          "slug": "solve-the-impossible",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-2c1.webp"
+        },
+        {
+          "slug": "gamma-bomb-disaster",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-4c2.webp",
+          "transform": "savage-hulk-unleashed"
+        },
+        {
+          "slug": "savage-hulk-unleashed",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-5c3.webp",
+          "transformOf": "gamma-bomb-disaster",
+          "isTransform": true
+        },
+        {
+          "slug": "dangerous-testing",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-6u.webp"
+        },
+        {
+          "slug": "gamma-ray-experiment",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "caiera",
+      "cards": [
+        {
+          "slug": "shadow-queen",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-2c1.webp"
+        },
+        {
+          "slug": "shadowforged-blade",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-4c2.webp"
+        },
+        {
+          "slug": "focus-the-old-power",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-6u.webp"
+        },
+        {
+          "slug": "dutiful-protector",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-7r.webp",
+          "transform": "vengeful-destructor"
+        },
+        {
+          "slug": "vengeful-destructor",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-7r2.webp",
+          "transformOf": "dutiful-protector",
+          "isTransform": true
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "gladiator-hulk",
+      "cards": [
+        {
+          "slug": "dont-make-me-angry",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-3c1.webp"
+        },
+        {
+          "slug": "seize-the-throne",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-4c2.webp",
+          "transform": "hulk-is-king"
+        },
+        {
+          "slug": "hulk-is-king",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-5c3.webp",
+          "transformOf": "seize-the-throne",
+          "isTransform": true
+        },
+        {
+          "slug": "the-green-scar",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-5u.webp"
+        },
+        {
+          "slug": "double-fisted-smashing",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "hiroim",
+      "cards": [
+        {
+          "slug": "seek-redemption",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-3c1.webp"
+        },
+        {
+          "slug": "save-from-the-rubble",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-4c2.webp",
+          "transform": "hiroim-redeemed"
+        },
+        {
+          "slug": "hiroim-redeemed",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-5c3.webp",
+          "transformOf": "save-from-the-rubble",
+          "isTransform": true
+        },
+        {
+          "slug": "mystic-shadow-priest",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-6u.webp"
+        },
+        {
+          "slug": "blade-of-the-people",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "hulkbuster-iron-man",
+      "cards": [
+        {
+          "slug": "pound-for-pound",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-2c1.webp"
+        },
+        {
+          "slug": "attune-techtonic-transducer",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-4c2.webp"
+        },
+        {
+          "slug": "build-the-suit",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-5u.webp"
+        },
+        {
+          "slug": "ultra-massive-armor",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-6u2.webp"
+        },
+        {
+          "slug": "final-battle",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "joe-fixit-grey-hulk",
+      "cards": [
+        {
+          "slug": "carefully-considered-smashing",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-3c1.webp"
+        },
+        {
+          "slug": "threaten-and-bribe",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-4c2.webp"
+        },
+        {
+          "slug": "ambitious-enforcer",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-6u.webp",
+          "transform": "underworld-boss"
+        },
+        {
+          "slug": "underworld-boss",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-6u2.webp",
+          "transformOf": "ambitious-enforcer",
+          "isTransform": true
+        },
+        {
+          "slug": "hulk-runs-this-town",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "korg",
+      "cards": [
+        {
+          "slug": "nothing-beats-rock",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-2c1.webp"
+        },
+        {
+          "slug": "move-mountains",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-4c2.webp"
+        },
+        {
+          "slug": "forged-by-fire",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-3u.webp",
+          "transform": "lord-of-granite"
+        },
+        {
+          "slug": "lord-of-granite",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-5u2.webp",
+          "transformOf": "forged-by-fire",
+          "isTransform": true
+        },
+        {
+          "slug": "kronan-tactician",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "miek-the-unhived",
+      "cards": [
+        {
+          "slug": "this-bug-smashes-you",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-3c1.webp"
+        },
+        {
+          "slug": "devouring-frenzy",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-4c2.webp"
+        },
+        {
+          "slug": "endless-appetite",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-5u.webp"
+        },
+        {
+          "slug": "metamorphosis",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-7r.webp",
+          "transform": "hive-king-miek"
+        },
+        {
+          "slug": "hive-king-miek",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-8r2.webp",
+          "transformOf": "metamorphosis",
+          "isTransform": true
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "namora",
+      "cards": [
+        {
+          "slug": "crushing-tsunami",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-3c1.webp"
+        },
+        {
+          "slug": "heart-of-the-ocean",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-4c2.webp"
+        },
+        {
+          "slug": "herculean-effort",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-5u.webp",
+          "transform": "master-of-depths"
+        },
+        {
+          "slug": "master-of-depths",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-6u2.webp",
+          "transformOf": "herculean-effort",
+          "isTransform": true
+        },
+        {
+          "slug": "turning-the-tide",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "no-name-brood-queen",
+      "cards": [
+        {
+          "slug": "surprise-attack",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-2c1.webp"
+        },
+        {
+          "slug": "appetite-for-destruction",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-4c2.webp"
+        },
+        {
+          "slug": "bursting-with-life",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-3u.webp",
+          "transform": "torrent-of-broodlings"
+        },
+        {
+          "slug": "torrent-of-broodlings",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-5u2.webp",
+          "transformOf": "bursting-with-life",
+          "isTransform": true
+        },
+        {
+          "slug": "world-spanning-hunger",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "rick-jones",
+      "cards": [
+        {
+          "slug": "hacktivist",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-3c1.webp"
+        },
+        {
+          "slug": "seek-the-nega-bands",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-4c2.webp",
+          "transform": "captain-marvel"
+        },
+        {
+          "slug": "captain-marvel",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-5c3.webp",
+          "transformOf": "seek-the-nega-bands",
+          "isTransform": true
+        },
+        {
+          "slug": "irradiated-blood",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-5u.webp",
+          "transform": "a-bomb"
+        },
+        {
+          "slug": "a-bomb",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-6u2.webp",
+          "transformOf": "irradiated-blood",
+          "isTransform": true
+        },
+        {
+          "slug": "caught-in-kree-skrull-war",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-7r.webp",
+          "transform": "the-destiny-force"
+        },
+        {
+          "slug": "the-destiny-force",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-9r2.webp",
+          "transformOf": "caught-in-kree-skrull-war",
+          "isTransform": true
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "sentry",
+      "cards": [
+        {
+          "slug": "agoraphobia",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-2c1.webp",
+          "transform": "golden-guardian-of-good"
+        },
+        {
+          "slug": "golden-guardian-of-good",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-6c2.webp",
+          "transformOf": "agoraphobia",
+          "isTransform": true
+        },
+        {
+          "slug": "rival-personalities",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-4c3.webp"
+        },
+        {
+          "slug": "mournful-sentinel",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-3u.webp",
+          "transform": "the-void-unchained"
+        },
+        {
+          "slug": "the-void-unchained",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-5u2.webp",
+          "transformOf": "mournful-sentinel",
+          "isTransform": true
+        },
+        {
+          "slug": "vast-unstable-power",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "she-hulk",
+      "cards": [
+        {
+          "slug": "hurl-legal-objections",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-3c1.webp",
+          "transform": "hurl-trucks"
+        },
+        {
+          "slug": "hurl-trucks",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-6c2.webp",
+          "transformOf": "hurl-legal-objections",
+          "isTransform": true
+        },
+        {
+          "slug": "window-of-opportunity",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-4c3.webp"
+        },
+        {
+          "slug": "radioactive-riot",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-6u.webp"
+        },
+        {
+          "slug": "jade-giantess",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "skaar-son-of-hulk",
+      "cards": [
+        {
+          "slug": "anger-management",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-3c1.webp"
+        },
+        {
+          "slug": "scarred-past",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-3c2.webp"
+        },
+        {
+          "slug": "mood-swings",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-5u.webp",
+          "transform": "raging-savage"
+        },
+        {
+          "slug": "raging-savage",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-6u2.webp",
+          "transformOf": "mood-swings",
+          "isTransform": true
+        },
+        {
+          "slug": "planetary-level-revenge",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-8r.webp"
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "general-thunderbolt-ross",
+      "cards": [
+        {
+          "slug": "general-thunderbolt-ross",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-general-thunderbolt-ross.webp",
+          "vAttack": "6*"
+        },
+        {
+          "slug": "red-hulk",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-general-thunderbolt-ross.webp",
+          "vAttack": "6*"
+        },
+        {
+          "slug": "bust-you-down-to-private",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-general-thunderbolt-ross-bust-you-down-to-private.webp",
+          "vAttack": 6
+        },
+        {
+          "slug": "call-out-the-army",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-general-thunderbolt-ross-call-out-the-army.webp",
+          "vAttack": 6
+        },
+        {
+          "slug": "personal-arsenal",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-general-thunderbolt-ross-personal-arsenal.webp",
+          "vAttack": 6
+        },
+        {
+          "slug": "urban-warfare",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-general-thunderbolt-ross-urban-warfare.webp",
+          "vAttack": 6
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "illuminati-secret-society",
+      "cards": [
+        {
+          "slug": "illuminati-secret-society",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-illuminati-secret-society.webp",
+          "vAttack": "11+"
+        },
+        {
+          "slug": "illuminati-open-warfare",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-illuminati-secret-society.webp",
+          "vAttack": 13
+        },
+        {
+          "slug": "black-bolts-omni-shout",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-illuminati-secret-society-black-bolts-omni-shout.webp",
+          "vAttack": 11
+        },
+        {
+          "slug": "dr-stranges-orb-of-agamotto",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-illuminati-secret-society-dr-stranges-orb-of-agamotto.webp",
+          "vAttack": 11
+        },
+        {
+          "slug": "hulkbusters-hammer-fist",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-illuminati-secret-society-hulkbusters-hammer-fist.webp",
+          "vAttack": 11
+        },
+        {
+          "slug": "zoms-manacles-of-living-bondage",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-illuminati-secret-society-zoms-manacles-of-living-bondage.webp",
+          "vAttack": 11
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "king-hulk-sakaarson",
+      "cards": [
+        {
+          "slug": "king-hulk-sakaarson",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-king-hulk-sakaarson.webp",
+          "vAttack": "9+"
+        },
+        {
+          "slug": "king-hulk-worldbreaker",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-king-hulk-sakaarson.webp",
+          "vAttack": "10+"
+        },
+        {
+          "slug": "fury-of-the-green-scar",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-king-hulk-sakaarson-fury-of-the-green-scar.webp",
+          "vAttack": 9
+        },
+        {
+          "slug": "oath-of-the-warbound",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-king-hulk-sakaarson-oath-of-the-warbound.webp",
+          "vAttack": 9
+        },
+        {
+          "slug": "revenge-from-the-stars",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-king-hulk-sakaarson-revenge-from-the-stars.webp",
+          "vAttack": 9
+        },
+        {
+          "slug": "rule-by-the-strongest",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-king-hulk-sakaarson-rule-by-the-strongest.webp",
+          "vAttack": 9
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "m-o-d-o-k",
+      "cards": [
+        {
+          "slug": "m-o-d-o-k",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-m-o-d-o-k.webp",
+          "vAttack": 9
+        },
+        {
+          "slug": "m-o-d-o-k-network-nightmare",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-m-o-d-o-k.webp",
+          "vAttack": "8*"
+        },
+        {
+          "slug": "brain-scramble",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-m-o-d-o-k-brain-scramble.webp",
+          "vAttack": 9
+        },
+        {
+          "slug": "designed-only-for-k-o-ing",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-m-o-d-o-k-designed-only-for-k-o-ing.webp",
+          "vAttack": 9
+        },
+        {
+          "slug": "dont-get-a-big-head-about-it",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-m-o-d-o-k-dont-get-a-big-head-about-it.webp",
+          "vAttack": 9
+        },
+        {
+          "slug": "redundancy-algorithim",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-m-o-d-o-k-redundancy-algorithim.webp",
+          "vAttack": 9
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "red-king-the",
+      "cards": [
+        {
+          "slug": "the-red-king",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-red-king-the.webp",
+          "vAttack": "7*"
+        },
+        {
+          "slug": "the-red-king-power-armored",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-red-king-the.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "haughty-spite",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-red-king-the-haughty-spite.webp",
+          "vAttack": 7
+        },
+        {
+          "slug": "royal-bodyguard",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-red-king-the-royal-bodyguard.webp",
+          "vAttack": 7
+        },
+        {
+          "slug": "treasury-of-sakaar",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-red-king-the-treasury-of-sakaar.webp",
+          "vAttack": 7
+        },
+        {
+          "slug": "vast-armies-of-sakaar",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-red-king-the-vast-armies-of-sakaar.webp",
+          "vAttack": 7
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "sentry-the",
+      "cards": [
+        {
+          "slug": "the-sentry",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-sentry-the.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "the-void",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-sentry-the.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "pacifying-light",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-sentry-the-pacifying-light.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "power-of-a-million-exploding-suns",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-sentry-the-power-of-a-million-exploding-suns.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "reflexive-teleportation",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-sentry-the-reflexive-teleportation.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "repressed-darkness",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-sentry-the-repressed-darkness.webp",
+          "vAttack": 10
+        }
+      ]
+    }
+  ],
+  "villains": [
+    {
+      "_op": "merge",
+      "slug": "aspects-of-the-void",
+      "cards": [
+        {
+          "slug": "black-anti-hurricane",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-aspects-of-the-void-black-anti-hurricane.webp"
+        },
+        {
+          "slug": "demonform",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-aspects-of-the-void-demonform.webp"
+        },
+        {
+          "slug": "infini-tendrils",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-aspects-of-the-void-infini-tendrils.webp"
+        },
+        {
+          "slug": "psychotic-break",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-aspects-of-the-void-psychotic-break.webp"
+        },
+        {
+          "slug": "shadow-man",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-aspects-of-the-void-shadow-man.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "code-red",
+      "cards": [
+        {
+          "slug": "caught-red-handed",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-code-red-caught-red-handed.webp"
+        },
+        {
+          "slug": "crimson-dynamo",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-code-red-crimson-dynamo.webp"
+        },
+        {
+          "slug": "elektra-red-blades",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-code-red-elektra-red-blades.webp"
+        },
+        {
+          "slug": "punisher-red-dot-sniper",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-code-red-punisher-red-dot-sniper.webp"
+        },
+        {
+          "slug": "red-she-hulk",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-code-red-red-she-hulk.webp"
+        },
+        {
+          "slug": "thundra",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-code-red-thundra.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "illuminati",
+      "cards": [
+        {
+          "slug": "black-bolt",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-illuminati-black-bolt.webp"
+        },
+        {
+          "slug": "dr-strange",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-illuminati-dr-strange.webp"
+        },
+        {
+          "slug": "dr-strange-possessed-by-zom",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-illuminati-dr-strange-possessed-by-zom.webp"
+        },
+        {
+          "slug": "enchain-the-hulk",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-illuminati-enchain-the-hulk.webp"
+        },
+        {
+          "slug": "hulkbuster-iron-man",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-illuminati-hulkbuster-iron-man.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "intelligencia",
+      "cards": [
+        {
+          "slug": "battle-of-wits",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-intelligencia-battle-of-wits.webp"
+        },
+        {
+          "slug": "cosmic-hulk-robot",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-intelligencia-cosmic-hulk-robot.webp"
+        },
+        {
+          "slug": "doc-samson",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-intelligencia-doc-samson.webp"
+        },
+        {
+          "slug": "the-leader-gamma-fiend",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-intelligencia-the-leader-gamma-fiend.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "sakaar-imperial-guard",
+      "cards": [
+        {
+          "slug": "gladiators-colosseum",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-sakaar-imperial-guard-gladiators-colosseum.webp"
+        },
+        {
+          "slug": "great-devil-corker",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-sakaar-imperial-guard-great-devil-corker.webp"
+        },
+        {
+          "slug": "headman-charr",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-sakaar-imperial-guard-headman-charr.webp"
+        },
+        {
+          "slug": "lieutenant-caiera",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-sakaar-imperial-guard-lieutenant-caiera.webp"
+        },
+        {
+          "slug": "primus-vand",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-sakaar-imperial-guard-primus-vand.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "u-foes",
+      "cards": [
+        {
+          "slug": "ironclad",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-u-foes-ironclad.webp"
+        },
+        {
+          "slug": "vapor",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-u-foes-vapor.webp"
+        },
+        {
+          "slug": "vector",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-u-foes-vector.webp"
+        },
+        {
+          "slug": "unidentified-flying-u-foes",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-u-foes-unidentified-flying-u-foes.webp"
+        },
+        {
+          "slug": "x-ray",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-u-foes-x-ray.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "warbound",
+      "cards": [
+        {
+          "slug": "elloe-kaifi",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-warbound-elloe-kaifi.webp"
+        },
+        {
+          "slug": "hiroim",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-warbound-hiroim.webp"
+        },
+        {
+          "slug": "korg",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-warbound-korg.webp"
+        },
+        {
+          "slug": "miek-the-unhived",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-warbound-miek-the-unhived.webp"
+        },
+        {
+          "slug": "no-name-brood-queen",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-warbound-no-name-brood-queen.webp"
+        },
+        {
+          "slug": "warbound-rescue",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-vi-warbound-warbound-rescue.webp"
+        }
+      ]
+    }
+  ],
+  "henchmen": [
+    {
+      "_op": "merge",
+      "slug": "cytoplasm-spikes",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hm-cytoplasm-spikes.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "deaths-heads",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hm-deaths-heads.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "sakaaran-hivelings",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hm-sakaaran-hivelings.webp"
+    }
+  ],
+  "bystanders": [
+    {
+      "_op": "merge",
+      "slug": "actor",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-by-actor.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "animal-trainer",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-by-animal-trainer.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "tourist-couple",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-by-tourist-couple.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "triage-nurse",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-by-triage-nurse.webp"
+    }
+  ],
+  "schemes": [
+    {
+      "_op": "merge",
+      "slug": "break-the-planet-asunder",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-sc-break-the-planet-asunder.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "cytoplasm-spike-invasion",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-sc-cytoplasm-spike-invasion.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "fall-of-the-hulks",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-sc-fall-of-the-hulks.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "gladiator-pits-of-sakaar",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-sc-gladiator-pits-of-sakaar.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "mutating-gamma-rays",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-sc-mutating-gamma-rays.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "shoot-hulk-into-space",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-sc-shoot-hulk-into-space.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "subjugate-with-obedience-disks",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-sc-subjugate-with-obedience-disks.webp"
+    },
+    {
+      "_op": "merge",
+      "slug": "world-war-hulk",
+      "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-sc-world-war-hulk.webp"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "evil-deadpool",
+      "cards": [
+        {
+          "slug": "evil-even-oddball",
+          "vAttack": 11
+        },
+        {
+          "slug": "hyper-insane-healing-factor",
+          "vAttack": 11
+        },
+        {
+          "slug": "of-course-its-corpse",
+          "vAttack": 11
+        },
+        {
+          "slug": "stitched-from-dead-pool-parts",
+          "vAttack": 11
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "macho-gomez",
+      "cards": [
+        {
+          "slug": "bounty-payout",
+          "vAttack": 9
+        },
+        {
+          "slug": "interstellar-assassin",
+          "vAttack": 9
+        },
+        {
+          "slug": "renegotiate-the-contract",
+          "vAttack": 9
+        },
+        {
+          "slug": "super-macho-man",
+          "vAttack": 9
+        }
+      ]
+    }
+  ]
+}

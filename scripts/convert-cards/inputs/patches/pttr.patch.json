@@ -1,0 +1,126 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "black-cat",
+      "cards": [
+        {
+          "slug": "pickpocket",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-1c1.webp"
+        },
+        {
+          "slug": "casual-bank-robbery",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-4c2.webp"
+        },
+        {
+          "slug": "jinx",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-5u.webp"
+        },
+        {
+          "slug": "cat-burglar",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "spider-woman",
+      "cards": [
+        {
+          "slug": "radioactive-spider",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-2c1.webp"
+        },
+        {
+          "slug": "bioelectric-shock",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-4c2.webp"
+        },
+        {
+          "slug": "venom-blast",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-6u.webp"
+        },
+        {
+          "slug": "arachno-pheromones",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-7r.webp"
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "carnage",
+      "cards": [
+        {
+          "slug": "carnage",
+          "vAttack": null
+        },
+        {
+          "slug": "drooling-jaws",
+          "vAttack": null
+        },
+        {
+          "slug": "endless-hunger",
+          "vAttack": null
+        },
+        {
+          "slug": "feed-me",
+          "vAttack": null
+        },
+        {
+          "slug": "om-nom-nom",
+          "vAttack": null
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mysterio",
+      "cards": [
+        {
+          "slug": "mysterio",
+          "vAttack": null
+        },
+        {
+          "slug": "blurring-images",
+          "vAttack": null
+        },
+        {
+          "slug": "captive-audience",
+          "vAttack": null
+        },
+        {
+          "slug": "master-of-illusions",
+          "vAttack": null
+        },
+        {
+          "slug": "mists-of-deception",
+          "vAttack": null
+        }
+      ]
+    }
+  ]
+}

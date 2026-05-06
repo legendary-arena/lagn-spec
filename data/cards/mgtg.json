@@ -8,7 +8,15 @@
       "name": "Star-Lord",
       "slug": "star-lord",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Starship Sensors": 3,
+        "Borrowed Nova Blaster": 3,
+        "Expandable Helmet": 3,
+        "Give": 2,
+        "Take": 2,
+        "Don't Need that Stuff": 2,
+        "Hadron Enforcer": 1
+      },
       "cards": [
         {
           "name": "Starship Sensors",
@@ -129,7 +137,15 @@
       "name": "Gamora",
       "slug": "gamora",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Sharpen Blades": 3,
+        "Resourceful Fugitive": 3,
+        "Retractable Sword": 3,
+        "Forgive": 2,
+        "Resent": 2,
+        "Stolen Necroblaster": 2,
+        "Guardians Escape": 1
+      },
       "cards": [
         {
           "name": "Forgive",
@@ -251,7 +267,17 @@
       "name": "Rocket & Groot",
       "slug": "rocket-groot",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Baby Groot": 3,
+        "Passion": 3,
+        "Compassion": 3,
+        "Don't Press this Button": 3,
+        "Press the Button": 3,
+        "Gravity Mines": 2,
+        "Tricky": 2,
+        "Simple": 2,
+        "We are Groot": 1
+      },
       "cards": [
         {
           "name": "Passion",
@@ -403,7 +429,16 @@
       "name": "Drax",
       "slug": "drax",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Nothing Goes over my Head": 3,
+        "Prison Riot": 3,
+        "I am Invisible": 3,
+        "Xandar is Invincible": 3,
+        "Remove his Spine": 2,
+        "Also Illegal": 2,
+        "Dual Knives": 2,
+        "Revenge for my Family": 1
+      },
       "cards": [
         {
           "name": "Nothing Goes over my Head",
@@ -541,7 +576,15 @@
       "name": "Mantis",
       "slug": "mantis",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Empathic Bond": 3,
+        "Selfless": 3,
+        "Selfish": 3,
+        "Inspire Courage": 3,
+        "Sleep": 2,
+        "Emotional Wave": 2,
+        "Discover the Dead": 1
+      },
       "cards": [
         {
           "name": "Empathic Bond",
@@ -695,7 +738,7 @@
           "slug": "ronans-throne",
           "tactic": true,
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-the-accuser-ronans-throne.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-ronans-throne.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Rescue 2 Bystanders. Ronan captures this card as a [keyword:Villainous Weapon].",
             "[keyword:Triggered Artifact] — Whenever a Scheme Twist is completed, draw two cards."
@@ -706,7 +749,7 @@
           "slug": "hood-of-the-accuser",
           "tactic": true,
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-the-accuser-hood-of-the-accuser.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-hood-of-the-accuser.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Rescue 2 Bystanders. Ronan captures this card as a [keyword:Villainous Weapon].",
             "[keyword:Triggered Artifact] — Whenever a Master Strike is completed, you may KO one of your cards."
@@ -717,7 +760,7 @@
           "slug": "ancient-kree-armor",
           "tactic": true,
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-the-accuser-ancient-kree-armor.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-ancient-kree-armor.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Rescue 2 Bystanders. Ronan captures this card as a [keyword:Villainous Weapon].",
             "[keyword:Triggered Artifact] — Whenever you gain your first Wound in any turn, you may KO it."
@@ -728,7 +771,7 @@
           "slug": "the-cosmi-rod-warhammer",
           "tactic": true,
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-the-accuser-the-cosmi-rod-warhammer.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-the-cosmi-rod-warhammer.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Rescue 2 Bystanders. Ronan captures this card as a [keyword:Villainous Weapon].",
             "[keyword:Triggered Artifact] — Whenever you recruit a Hero from the HQ, you get +2[icon:attack]."
@@ -760,7 +803,7 @@
           "slug": "epic-ego-the-living-planet",
           "tactic": false,
           "vAttack": "1+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-me-ego-the-living-planet-ego-the-living-planet.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-me-ego-the-living-planet.webp",
           "abilities": [
             "Ego gets +2[icon:attack] for each city space. When there are no more city spaces, Good Wins.",
             "Always Leads: Any Villain Group, plus add two additional Villain Groups (even for 1 player).",
@@ -772,7 +815,7 @@
           "slug": "im-a-celestial-sweetheart",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-the-living-planet-im-a-celestial-sweetheart.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-im-a-celestial-sweetheart.webp",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw two extra cards.",
             "Destroy the leftmost city space. Any Villain there escapes. Shuffle this Tactic back into Ego's Tactics."
@@ -783,7 +826,7 @@
           "slug": "cover-all-that-exists",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-the-living-planet-cover-all-that-exists.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-cover-all-that-exists.webp",
           "abilities": [
             "Fight: You may KO one of your Heroes. Choose a Henchman from any Victory Pile to enter the city.",
             "Destroy the leftmost city space. Any Villain there escapes. Shuffle this Tactic back into Ego's Tactics."
@@ -794,7 +837,7 @@
           "slug": "the-expansion-is-my-purpose",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-the-living-planet-the-expansion-is-my-purpose.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-the-expansion-is-my-purpose.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each empty city space.",
             "Destroy the leftmost city space. Any Villain there escapes. Shuffle this Tactic back into Ego's Tactics."
@@ -805,7 +848,7 @@
           "slug": "until-everything-is-me",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-the-living-planet-until-everything-is-me.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-until-everything-is-me.webp",
           "abilities": [
             "Fight: Rescue three Bystanders.",
             "Destroy the leftmost city space. Any Villain there escapes. Shuffle this Tactic back into Ego's Tactics."
@@ -982,11 +1025,11 @@
           ]
         },
         {
-          "name": "Scavanged Blade",
-          "slug": "scavanged-blade",
+          "name": "Scavenged Blade",
+          "slug": "scavenged-blade",
           "vp": "-1",
           "vAttack": "+2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-scavanged-blade.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-scavenged-blade.webp",
           "abilities": [
             "[keyword:Villainous Weapon]",
             "Ambush: Play another card from the Villain Deck.",

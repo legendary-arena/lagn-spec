@@ -1,0 +1,370 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "ronan-the-accuser",
+      "cards": [
+        {
+          "slug": "ancient-kree-armor",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-ancient-kree-armor.webp",
+          "vAttack": "5+"
+        },
+        {
+          "slug": "the-cosmi-rod-warhammer",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-the-cosmi-rod-warhammer.webp",
+          "vAttack": "6+"
+        },
+        {
+          "slug": "hood-of-the-accuser",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-hood-of-the-accuser.webp",
+          "vAttack": "4+"
+        },
+        {
+          "slug": "ronans-throne",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-ronans-throne.webp",
+          "vAttack": "3+"
+        },
+        {
+          "slug": "ronan-the-accuser",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mm-ronan-the-accuser.webp"
+        },
+        {
+          "slug": "epic-ronan-the-accuser",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-me-ronan-the-accuser.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ego-the-living-planet",
+      "cards": [
+        {
+          "slug": "cover-all-that-exists",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-cover-all-that-exists.webp",
+          "vAttack": 3
+        },
+        {
+          "slug": "the-expansion-is-my-purpose",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-the-expansion-is-my-purpose.webp",
+          "vAttack": 3
+        },
+        {
+          "slug": "im-a-celestial-sweetheart",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-im-a-celestial-sweetheart.webp",
+          "vAttack": 3
+        },
+        {
+          "slug": "until-everything-is-me",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-until-everything-is-me.webp",
+          "vAttack": 3
+        },
+        {
+          "slug": "ego-the-living-planet",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mm-ego-the-living-planet.webp"
+        },
+        {
+          "slug": "epic-ego-the-living-planet",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-me-ego-the-living-planet.webp"
+        }
+      ]
+    }
+  ],
+  "villains": [
+    {
+      "_op": "merge",
+      "slug": "ravagers",
+      "cards": [
+        {
+          "slug": "scavanged-blade",
+          "_slug": "scavenged-blade",
+          "name": "Scavenged Blade",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-scavenged-blade.webp"
+        }
+      ]
+    }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "star-lord",
+      "cards": [
+        {
+          "slug": "starship-sensors",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-2c1.webp"
+        },
+        {
+          "slug": "borrowed-nova-blaster",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-3c2.webp"
+        },
+        {
+          "slug": "expandable-helmet",
+          "slot": 5,
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-5u1.webp"
+        },
+        {
+          "slug": "give",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-4c3.webp"
+        },
+        {
+          "slug": "take",
+          "slot": 4,
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-4c3.webp"
+        },
+        {
+          "slug": "dont-need-that-stuff",
+          "slot": 6,
+          "rarity": 2,
+          "rarityLabel": "Uncommon 3",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-6u2.webp"
+        },
+        {
+          "slug": "hadron-enforcer",
+          "slot": 7,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "gamora",
+      "cards": [
+        {
+          "slug": "sharpen-blades",
+          "slot": 3,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-3c2.webp"
+        },
+        {
+          "slug": "resourceful-fugitive",
+          "slot": 4,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-4c3.webp"
+        },
+        {
+          "slug": "retractable-sword",
+          "slot": 5,
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-5u1.webp"
+        },
+        {
+          "slug": "forgive",
+          "slot": 1,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-2c1.webp"
+        },
+        {
+          "slug": "resent",
+          "slot": 2,
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-2c1.webp"
+        },
+        {
+          "slug": "stolen-necroblaster",
+          "slot": 6,
+          "rarity": 2,
+          "rarityLabel": "Uncommon 3",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-6u2.webp"
+        },
+        {
+          "slug": "guardians-escape",
+          "slot": 7,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "rocket-groot",
+      "cards": [
+        {
+          "slug": "baby-groot",
+          "slot": 3,
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-3c2.webp"
+        },
+        {
+          "slug": "passion",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-2c1.webp"
+        },
+        {
+          "slug": "compassion",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-2c1.webp"
+        },
+        {
+          "slug": "dont-press-this-button",
+          "slot": 5,
+          "rarity": 1,
+          "rarityLabel": "Common 4",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-4u1.webp"
+        },
+        {
+          "slug": "press-the-button",
+          "slot": 6,
+          "rarity": 1,
+          "rarityLabel": "Common 5",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-4u1.webp"
+        },
+        {
+          "slug": "gravity-mines",
+          "slot": 4,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-4c3.webp"
+        },
+        {
+          "slug": "tricky",
+          "slot": 7,
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-5u2.webp"
+        },
+        {
+          "slug": "simple",
+          "slot": 8,
+          "rarity": 2,
+          "rarityLabel": "Uncommon 3",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-5u2.webp"
+        },
+        {
+          "slug": "we-are-groot",
+          "slot": 9,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "drax",
+      "cards": [
+        {
+          "slug": "nothing-goes-over-my-head",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-3c1.webp"
+        },
+        {
+          "slug": "prison-riot",
+          "slot": 5,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-5u1.webp"
+        },
+        {
+          "slug": "i-am-invisible",
+          "slot": 3,
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-4c2.webp"
+        },
+        {
+          "slug": "xandar-is-invincible",
+          "slot": 4,
+          "rarity": 1,
+          "rarityLabel": "Common 4",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-4c2.webp"
+        },
+        {
+          "slug": "remove-his-spine",
+          "slot": 6,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-6u2.webp"
+        },
+        {
+          "slug": "also-illegal",
+          "slot": 7,
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-6u2.webp"
+        },
+        {
+          "slug": "dual-knives",
+          "slot": 2,
+          "rarity": 2,
+          "rarityLabel": "Uncommon 3",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-4c3.webp"
+        },
+        {
+          "slug": "revenge-for-my-family",
+          "slot": 8,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mantis",
+      "cards": [
+        {
+          "slug": "empathic-bond",
+          "slot": 1,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-3c1.webp"
+        },
+        {
+          "slug": "selfless",
+          "slot": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-4c2.webp"
+        },
+        {
+          "slug": "selfish",
+          "slot": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-5c3.webp"
+        },
+        {
+          "slug": "inspire-courage",
+          "slot": 4,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-5u1.webp"
+        },
+        {
+          "slug": "sleep",
+          "slot": 5,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-5c3.webp"
+        },
+        {
+          "slug": "emotional-wave",
+          "slot": 6,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-6u2.webp"
+        },
+        {
+          "slug": "discover-the-dead",
+          "slot": 7,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-7r.webp"
+        }
+      ]
+    }
+  ]
+}

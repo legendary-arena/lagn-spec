@@ -8,7 +8,12 @@
       "name": "Greithoth, Breaker of Wills",
       "slug": "greithoth-breaker-of-wills",
       "team": "foes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Absorb Metal": 5,
+        "Mace of Chains": 5,
+        "Break the Will to Resist": 3,
+        "Body of Uru": 1
+      },
       "cards": [
         {
           "name": "Absorb Metal",
@@ -82,7 +87,12 @@
       "name": "Kuurth, Breaker of Stone",
       "slug": "kuurth-breaker-of-stone",
       "team": "foes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Reach for Power": 5,
+        "Unstoppable Sledge": 5,
+        "Contest of Strength": 3,
+        "Break Every Bone": 1
+      },
       "cards": [
         {
           "name": "Reach for Power",
@@ -156,7 +166,12 @@
       "name": "Nerkkod, Breaker of Oceans",
       "slug": "nerkkod-breaker-of-oceans",
       "team": "foes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Pull of the Tides": 5,
+        "Feed My Undersea Legions": 5,
+        "Cudgel of the Deep": 3,
+        "Break Their Loyalties": 1
+      },
       "cards": [
         {
           "name": "Pull of the Tides",
@@ -230,7 +245,12 @@
       "name": "Nul, Breaker of Worlds",
       "slug": "nul-breaker-of-worlds",
       "team": "foes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Demolition Derby": 5,
+        "Otherworldly Maul": 5,
+        "Nul Smash!": 3,
+        "Break the World": 1
+      },
       "cards": [
         {
           "name": "Demolition Derby",
@@ -304,7 +324,12 @@
       "name": "Skadi",
       "slug": "skadi",
       "team": "hydra",
-      "cardCounts": null,
+      "cardCounts": {
+        "Dark Prophecy": 5,
+        "Ancient Oath of HYDRA": 5,
+        "Hammer of the Serpent": 3,
+        "War Banner of HYDRA": 1
+      },
       "cards": [
         {
           "name": "Dark Prophecy",
@@ -380,7 +405,12 @@
       "name": "Skirn, Breaker of Men",
       "slug": "skirn-breaker-of-men",
       "team": "foes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Towering Leader": 5,
+        "Underhanded Dealings": 5,
+        "Titanic Bludgeon": 3,
+        "Break Your Hopes": 1
+      },
       "cards": [
         {
           "name": "Towering Leader",
@@ -465,7 +495,7 @@
           "slug": "uru-enchanted-iron-man",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-mm-uru-enchanted-iron-man.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-01-1.png",
           "abilities": [
             "Always Leads: The Mighty",
             "Command Strike: [keyword:Demolish] each player. Then stack this Strike next to Iron Man. Uru-Enchanted Iron Man has an [keyword:Uru-Enchanted Weapon] for each Strike stacked here."
@@ -476,7 +506,7 @@
           "slug": "armor-of-the-destroyer",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-mt-uru-enchanted-iron-man-armor-of-the-destroyer.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-02.png",
           "abilities": [
             "Fight: For each [hc:tech] Ally you have, [keyword:demolish] each other player."
           ]
@@ -486,7 +516,7 @@
           "slug": "pepper-potts-in-rescue-armor",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-mt-uru-enchanted-iron-man-pepper-potts-in-rescue-armor.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-03.png",
           "abilities": [
             "Fight: A Bystander from the Bystander Stack becomes a Command Strike that takes effect immediately."
           ]
@@ -496,7 +526,7 @@
           "slug": "quantum-inventions",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-mt-uru-enchanted-iron-man-quantum-inventions.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-04.png",
           "abilities": [
             "Fight: Draw two cards. Then, if you reveal a [hc:tech] card, draw two more cards."
           ]
@@ -506,7 +536,7 @@
           "slug": "repulsor-coils",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-mt-uru-enchanted-iron-man-repulsor-coils.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-05.png",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Ally or gains a Bindings."
           ]
@@ -529,7 +559,7 @@
           "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-black-widow.webp",
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
-            "[keyword:Fight or Fail]: If her Uru-Enchanted Weapons revealed any Bystanders, kidnap them."
+            "Fight or Fail: If her Uru-Enchanted Weapons revealed any Bystanders, kidnap them."
           ]
         },
         {
@@ -541,7 +571,7 @@
           "abilities": [
             "Ambush: Reveal the top three cards of the Adversary Deck. Put the Adversary you revealed with the highest printed VP on top of that deck. Put the rest on the bottom of that deck in random order.",
             "[keyword:Uru-Enchanted Weapon]",
-            "[keyword:Fight or Fail]: You get +2[icon:recruit]."
+            "Fight or Fail: You get +2[icon:recruit]."
           ]
         },
         {
@@ -552,7 +582,7 @@
           "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-hawkeye.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
-            "[keyword:Fight or Fail]: Choose one: Each other player draws a card, or each other player discards a card."
+            "Fight or Fail: Choose one: Each other player draws a card, or each other player discards a card."
           ]
         },
         {
@@ -563,7 +593,7 @@
           "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-iron-fist.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
-            "[keyword:Fight or Fail]: If his Uru-Enchanted Weapon revealed an Adversary, KO one of your Allies."
+            "Fight or Fail: If his Uru-Enchanted Weapon revealed an Adversary, KO one of your Allies."
           ]
         },
         {
@@ -574,7 +604,7 @@
           "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-ms-marvel.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
-            "[keyword:Fight or Fail]: If her Uru-Enchanted Weapon revealed a Command Strike or Plot Twist, play it.",
+            "Fight or Fail: If her Uru-Enchanted Weapon revealed a Command Strike or Plot Twist, play it.",
             "Overrun: Each player reveals a [hc:ranged] Ally or gains a Bindings."
           ]
         },
@@ -586,7 +616,7 @@
           "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-red-she-hulk.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
-            "[keyword:Fight or Fail]: If her Uru-Enchanted Weapon revealed an Adversary, put that Adversary into your Victory Pile."
+            "Fight or Fail: If her Uru-Enchanted Weapon revealed an Adversary, put that Adversary into your Victory Pile."
           ]
         },
         {
@@ -597,7 +627,7 @@
           "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-spider-man.webp",
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
-            "[keyword:Fight or Fail]: Play all the cards revealed by his Uru-Enchanted Weapon that are worth 2 VP or less.",
+            "Fight or Fail: Play all the cards revealed by his Uru-Enchanted Weapon that are worth 2 VP or less.",
             "Overrun: Each player gains a Bindings."
           ]
         },
@@ -609,7 +639,7 @@
           "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-wolverine.webp",
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
-            "[keyword:Fight or Fail]: Draw two cards.",
+            "Fight or Fail: Draw two cards.",
             "Overrun: Each player reveals an [hc:instinct] Ally or gains a Bindings. Then put Wolverine on top of the Adversary Deck."
           ]
         }

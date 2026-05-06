@@ -1,0 +1,338 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "angel",
+      "cards": [
+        {
+          "slug": "high-speed-chase",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-3c1.webp"
+        },
+        {
+          "slug": "diving-catch",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-4c2.webp"
+        },
+        {
+          "slug": "drop-off-a-friend",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-5u.webp"
+        },
+        {
+          "slug": "strength-of-spirit",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "bishop",
+      "cards": [
+        {
+          "slug": "whatever-the-cost",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-2c1.webp"
+        },
+        {
+          "slug": "absorb-energies",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-3c2.webp"
+        },
+        {
+          "slug": "concussive-blast",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-5u.webp"
+        },
+        {
+          "slug": "firepower-from-the-future",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "blade",
+      "cards": [
+        {
+          "slug": "stalk-the-prey",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-3c1.webp"
+        },
+        {
+          "slug": "night-hunter",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-4c2.webp"
+        },
+        {
+          "slug": "nowhere-to-hide",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-6u.webp"
+        },
+        {
+          "slug": "vampiric-surge",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ghost-rider",
+      "cards": [
+        {
+          "slug": "infernal-chains",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-2c1.webp"
+        },
+        {
+          "slug": "hell-on-wheels",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-3c2.webp"
+        },
+        {
+          "slug": "blazing-hellfire",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-5u.webp"
+        },
+        {
+          "slug": "penance-stare",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "iron-fist",
+      "cards": [
+        {
+          "slug": "ancient-legacy",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-1c1.webp"
+        },
+        {
+          "slug": "focus-chi",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-3c2.webp"
+        },
+        {
+          "slug": "wield-the-iron-fist",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-4u.webp"
+        },
+        {
+          "slug": "living-weapon",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-9r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "punisher",
+      "cards": [
+        {
+          "slug": "boom-goes-the-dynamite",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-2c1.webp"
+        },
+        {
+          "slug": "hostile-interrogation",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-3c2.webp"
+        },
+        {
+          "slug": "hail-of-bullets",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-5u.webp"
+        },
+        {
+          "slug": "the-punisher",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-8r.webp"
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "apocalypse",
+      "cards": [
+        {
+          "slug": "apocalypse",
+          "vAttack": 12
+        },
+        {
+          "slug": "apocalyptic-destruction",
+          "vAttack": 12
+        },
+        {
+          "slug": "the-end-of-all-things",
+          "vAttack": 12
+        },
+        {
+          "slug": "horsemen-are-drawing-nearer",
+          "vAttack": 12
+        },
+        {
+          "slug": "immortal-and-undefeated",
+          "vAttack": 12
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "kingpin",
+      "cards": [
+        {
+          "slug": "kingpin",
+          "vAttack": "13*"
+        },
+        {
+          "slug": "call-a-hit",
+          "vAttack": 13
+        },
+        {
+          "slug": "criminal-empire",
+          "vAttack": 13
+        },
+        {
+          "slug": "dirty-cops",
+          "vAttack": 13
+        },
+        {
+          "slug": "mob-war",
+          "vAttack": 13
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mephisto",
+      "cards": [
+        {
+          "slug": "mephisto",
+          "vAttack": 10
+        },
+        {
+          "slug": "damned-if-you-do",
+          "vAttack": 10
+        },
+        {
+          "slug": "devilish-torment",
+          "vAttack": 10
+        },
+        {
+          "slug": "pain-begets-pain",
+          "vAttack": 10
+        },
+        {
+          "slug": "the-price-of-failure",
+          "vAttack": 10
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mr-sinister",
+      "cards": [
+        {
+          "slug": "human-experimentation",
+          "vAttack": 8
+        },
+        {
+          "slug": "master-geneticist",
+          "vAttack": 8
+        },
+        {
+          "slug": "plans-within-plans",
+          "vAttack": 8
+        },
+        {
+          "slug": "telepathic-manipulation",
+          "vAttack": 8
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "stryfe",
+      "cards": [
+        {
+          "slug": "furious-wrath",
+          "vAttack": 7
+        },
+        {
+          "slug": "psychic-torment",
+          "vAttack": 7
+        },
+        {
+          "slug": "swift-vengeance",
+          "vAttack": 7
+        },
+        {
+          "slug": "tide-of-retribution",
+          "vAttack": 7
+        }
+      ]
+    }
+  ],
+  "villains": [
+    {
+      "_op": "merge",
+      "slug": "mutant-liberation-front",
+      "cards": [
+        {
+          "slug": "zero",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-mlf-zero.webp"
+        },
+        {
+          "slug": "wildside",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-mlf-wildside.webp"
+        },
+        {
+          "slug": "reignfire",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-mlf-reignfire.webp"
+        },
+        {
+          "slug": "forearm",
+          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-mlf-forearm.webp"
+        }
+      ]
+    }
+  ]
+}

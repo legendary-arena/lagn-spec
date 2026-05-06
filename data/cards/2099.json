@@ -8,7 +8,12 @@
       "name": "Spider-Man 2099",
       "slug": "spider-man-2099",
       "team": "spider-friends",
-      "cardCounts": null,
+      "cardCounts": {
+        "Retractable Talons": 5,
+        "Venomous Fangs": 5,
+        "Spider-Silk Webbing": 3,
+        "Spider-Sense Telepathy": 1
+      },
       "cards": [
         {
           "name": "Retractable Talons",
@@ -84,7 +89,12 @@
       "name": "Ghost Rider 2099",
       "slug": "ghost-rider-2099",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Cyber-Specter": 5,
+        "Hell Ride": 5,
+        "Death Beyond Death": 3,
+        "Infernal Chainsaw": 1
+      },
       "cards": [
         {
           "name": "Cyber-Specter",
@@ -160,7 +170,12 @@
       "name": "Doctor Doom 2099",
       "slug": "doctor-doom-2099",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Subvert This New Future": 5,
+        "Doomblast": 5,
+        "Flesh-Grafted Doombots": 3,
+        "Tear Through Time Itself": 1
+      },
       "cards": [
         {
           "name": "Subvert This New Future",
@@ -236,7 +251,12 @@
       "name": "Hulk 2099",
       "slug": "hulk-2099",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Rage Incarnate": 5,
+        "Push Pain Under the Surface": 5,
+        "Massive Gamma Detonation": 3,
+        "Cataclysmic Frenzy": 1
+      },
       "cards": [
         {
           "name": "Rage Incarnate",
@@ -313,7 +333,12 @@
       "name": "Ravage 2099",
       "slug": "ravage-2099",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Down in the Dregs": 5,
+        "Toxic Mutations": 5,
+        "Detect Vibrations": 3,
+        "Overhorns and Underhorns": 1
+      },
       "cards": [
         {
           "name": "Down in the Dregs",

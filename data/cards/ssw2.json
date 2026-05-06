@@ -8,7 +8,12 @@
       "name": "Agent Venom",
       "slug": "agent-venom",
       "team": "spider-friends",
-      "cardCounts": null,
+      "cardCounts": {
+        "Multi-Gun": 5,
+        "Government Payroll": 5,
+        "Big Slimeportunity": 3,
+        "Shapeshifting Symbiote": 1
+      },
       "cards": [
         {
           "name": "Multi-Gun",
@@ -86,7 +91,12 @@
       "name": "Arkon the Magnificent",
       "slug": "arkon-the-magnificent",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "All-Terrain Barbarian": 5,
+        "Quiver of Thunderbolts": 5,
+        "Warlord of Open Spaces": 3,
+        "Lord of Dragons": 1
+      },
       "cards": [
         {
           "name": "All-Terrain Barbarian",
@@ -160,7 +170,12 @@
       "name": "Beast",
       "slug": "beast",
       "team": "illuminati",
-      "cardCounts": null,
+      "cardCounts": {
+        "Balanced Attack": 5,
+        "Upside-down Thinking": 5,
+        "Doctor of Beatdown": 3,
+        "Multi-Variable Smackulus": 1
+      },
       "cards": [
         {
           "name": "Balanced Attack",
@@ -235,7 +250,12 @@
       "name": "Black Swan",
       "slug": "black-swan",
       "team": "cabal",
-      "cardCounts": null,
+      "cardCounts": {
+        "Apocalyptic Vision": 5,
+        "Witness the End": 5,
+        "Dark Foretelling": 3,
+        "Telepathic Control": 1
+      },
       "cards": [
         {
           "name": "Apocalyptic Vision",
@@ -309,7 +329,12 @@
       "name": "Captain and the Devil, The",
       "slug": "captain-and-the-devil-the",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Jurassic America": 5,
+        "Patriotic Chomp": 5,
+        "Feeding Grounds": 3,
+        "Dino-Roar of Triumph": 1
+      },
       "cards": [
         {
           "name": "Jurassic America",
@@ -382,7 +407,12 @@
       "name": "Captain Britain",
       "slug": "captain-britain",
       "team": "illuminati",
-      "cardCounts": null,
+      "cardCounts": {
+        "Transatlantic Savior": 5,
+        "Combined Strength": 5,
+        "Raise the Union Jack": 3,
+        "Lead the Captain Britain Corps": 1
+      },
       "cards": [
         {
           "name": "Transatlantic Savior",
@@ -455,7 +485,12 @@
       "name": "Corvus Glaive",
       "slug": "corvus-glaive",
       "team": "cabal",
-      "cardCounts": null,
+      "cardCounts": {
+        "Let None Escape You": 5,
+        "Culling Blade": 5,
+        "Rictus Grin": 3,
+        "Atom-Splitting Glaive": 1
+      },
       "cards": [
         {
           "name": "Let None Escape You",
@@ -470,7 +505,7 @@
           "recruit": "0+",
           "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-2c1.webp",
           "abilities": [
-            "[keyword:Patrol the Escape Pile]: If there are Bystanders in it, you get +2[icon:attack]. Otherwise, you get +2[icon:recruit]."
+            "[keyword:Patrol the Escape Pile]: If there are none Bystanders in it, you get +2[icon:attack]. Otherwise, you get +2[icon:recruit]."
           ]
         },
         {
@@ -528,7 +563,12 @@
       "name": "Dr. Punisher, Soldier Supreme",
       "slug": "dr-punisher-soldier-supreme",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Sweep the Streets of Trash": 5,
+        "You're a Slow Learner": 5,
+        "Ice Magic": 3,
+        "Calm Before the Storm": 1
+      },
       "cards": [
         {
           "name": "Sweep the Streets of Trash",
@@ -602,7 +642,12 @@
       "name": "Elsa Bloodstone",
       "slug": "elsa-bloodstone",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Monster Hunter": 5,
+        "Bloodstone Pendant": 5,
+        "Defend the S.H.I.E.L.D. Wall": 3,
+        "Prodigy of Ulysses Bloodstone": 1
+      },
       "cards": [
         {
           "name": "Monster Hunter",
@@ -822,7 +867,12 @@
       "name": "Shang-Chi",
       "slug": "shang-chi",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Shuffling Footwork": 5,
+        "Acrobatic Kung-Fu": 5,
+        "Seek the Empty Mind": 3,
+        "Muscle Memory": 1
+      },
       "cards": [
         {
           "name": "Shuffling Footwork",
@@ -897,7 +947,12 @@
       "name": "Silk",
       "slug": "silk",
       "team": "spider-friends",
-      "cardCounts": null,
+      "cardCounts": {
+        "Long-Range Spider-Sense": 5,
+        "Cascading Maneuver": 5,
+        "Silk Stalking": 3,
+        "Borrowed Cloaking Device": 1
+      },
       "cards": [
         {
           "name": "Long-Range Spider-Sense",
@@ -1045,7 +1100,12 @@
       "name": "Spider-Gwen",
       "slug": "spider-gwen",
       "team": "spider-friends",
-      "cardCounts": null,
+      "cardCounts": {
+        "Fateful Bridge": 5,
+        "Save the Day": 5,
+        "First Adventure": 3,
+        "Intertwining Webs": 1
+      },
       "cards": [
         {
           "name": "Fateful Bridge",
@@ -1202,8 +1262,8 @@
           "name": "Immortal Emperor Zheng-Zhu",
           "slug": "immortal-emperor-zheng-zhu",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mm-immortal-emperor-zheng-zhu.webp",
+          "vAttack": "7+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/emperor-zheng-zhu-01.png",
           "abilities": [
             "[keyword:7th Circle of Kung-Fu]",
             "Always Leads: K'un-Lun",
@@ -1214,8 +1274,8 @@
           "name": "Ultimate Kung-Fu Mastery",
           "slug": "ultimate-kung-fu-mastery",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-immortal-emperor-zheng-zhu-ultimate-kung-fu-mastery.webp",
+          "vAttack": "7+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/emperor-zheng-zhu-02.png",
           "abilities": [
             "Fight: Each other player reveals a card with “[keyword:Circle of Kung-Fu]“ from their Victory Pile or gains a Wound."
           ]
@@ -1224,8 +1284,8 @@
           "name": "Emperor's Justice",
           "slug": "emperors-justice",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-immortal-emperor-zheng-zhu-emperors-justice.webp",
+          "vAttack": "7+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/emperor-zheng-zhu-03.png",
           "abilities": [
             "Fight: Each other player reveals a [team:marvel-knights] Hero or gains a Wound."
           ]
@@ -1234,8 +1294,8 @@
           "name": "Humble the Pretenders",
           "slug": "humble-the-pretenders",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-immortal-emperor-zheng-zhu-humble-the-pretenders.webp",
+          "vAttack": "7+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/emperor-zheng-zhu-04.png",
           "abilities": [
             "Fight: Each other player reveals a [team:marvel-knights] Hero or discards a card that costs less than 7."
           ]
@@ -1244,8 +1304,8 @@
           "name": "Imperial Edict",
           "slug": "imperial-edict",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-immortal-emperor-zheng-zhu-imperial-edict.webp",
+          "vAttack": "7+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/emperor-zheng-zhu-05.png",
           "abilities": [
             "Fight: Choose any number of Heroes from the HQ. Put them on the bottom of the Hero Deck in random order."
           ]
@@ -1263,8 +1323,8 @@
           "name": "King Hyperion",
           "slug": "king-hyperion",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mm-king-hyperion.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/king-hyperion-01.png",
           "abilities": [
             "Always Leads: Utopolis",
             "Master Strike: King Hyperion enters the city if he was not already there. Then, he [keyword:charges] three spaces.",
@@ -1275,8 +1335,8 @@
           "name": "Worshipped by Millions",
           "slug": "worshipped-by-millions",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-king-hyperion-worshipped-by-millions.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/king-hyperion-05.png",
           "abilities": [
             "Fight: If King Hyperion is in the city, put him back on the Mastermind space and shuffle this Tactic back into his Tactics. If you do, rescue six Bystanders."
           ]
@@ -1285,8 +1345,8 @@
           "name": "Royal Treasury",
           "slug": "royal-treasury",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-king-hyperion-royal-treasury.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/king-hyperion-02.png",
           "abilities": [
             "Fight: If King Hyperion is in the city, put him back on the Mastermind space and shuffle this Tactic back into his Tactics. If you do, you get +5[icon:recruit]."
           ]
@@ -1295,8 +1355,8 @@
           "name": "Monarch of Utopolis",
           "slug": "monarch-of-utopolis",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-king-hyperion-monarch-of-utopolis.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/king-hyperion-04.png",
           "abilities": [
             "Fight: If King Hyperion is in the city, put him back on the Mastermind space and shuffle this Tactic back into his Tactics. If you do, when you drew a new hand of cards at the end of this turn, draw three extra cards."
           ]
@@ -1305,8 +1365,8 @@
           "name": "Rule with an Iron Fist",
           "slug": "rule-with-an-iron-fist",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-king-hyperion-rule-with-an-iron-fist.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/king-hyperion-03.png",
           "abilities": [
             "Fight: If King Hyperion is in the city, put him back on the Mastermind space and shuffle this Tactic back into his Tactics. If you do, you may defeat a Villain in the city for free."
           ]
@@ -1324,8 +1384,8 @@
           "name": "Shiklah, the Demon Bride",
           "slug": "shiklah-the-demon-bride",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mm-shiklah-the-demon-bride.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shiklah-01.png",
           "abilities": [
             "Always Leads: Monster Metropolis",
             "Master Strike: Reveal the top three cards of the Villain Deck. Put all the Scheme Twists you revealed on top of the Villain Deck. Put the rest on the bottom of that deck in random order."
@@ -1335,8 +1395,8 @@
           "name": "Shiklah's Husband, Deadpool",
           "slug": "shiklahs-husband-deadpool",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-shiklah-the-demon-bride-shiklahs-husband-deadpool.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shiklah-05.png",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "You get +1[icon:attack] for each Hero with an odd-numbered cost you played this turn. (0 is even.)"
@@ -1346,8 +1406,8 @@
           "name": "Enslavement Beam",
           "slug": "enslavement-beam",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-shiklah-the-demon-bride-enslavement-beam.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shiklah-02.png",
           "abilities": [
             "Fight: [keyword:Fateful Resurrection]. If she resurrects, rescue four bystanders."
           ]
@@ -1356,8 +1416,8 @@
           "name": "Drain Life",
           "slug": "drain-life",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-shiklah-the-demon-bride-drain-life.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shiklah-03.png",
           "abilities": [
             "Fight: [keyword:Fateful Resurrection]. If she resurrects, defeat a Villain in the city for free."
           ]
@@ -1366,8 +1426,8 @@
           "name": "Infernal Power",
           "slug": "infernal-power",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-shiklah-the-demon-bride-infernal-power.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shiklah-04.png",
           "abilities": [
             "Fight: [keyword:Fateful Resurrection]. If she resurrects, draw two cards."
           ]
@@ -1385,8 +1445,8 @@
           "name": "Spider-Queen",
           "slug": "spider-queen",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mm-spider-queen.webp",
+          "vAttack": "8+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/spider-queen-01.png",
           "abilities": [
             "Spider-Queen gets +1[icon:attack] for each Bystander in the Escape pile.",
             "Always Leads: Spider-Infected",
@@ -1397,8 +1457,8 @@
           "name": "Sonic Scream",
           "slug": "sonic-scream",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-spider-queen-sonic-scream.webp",
+          "vAttack": "8+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/spider-queen-04.png",
           "abilities": [
             "Fight: Reveal the top eight cards of the Villain Deck. Put all the Bystanders you revealed into the Escape pile. Put the rest on the bottom of the Villain Deck in random orders."
           ]
@@ -1407,8 +1467,8 @@
           "name": "Infect the Entire City",
           "slug": "infect-the-entire-city",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-spider-queen-infect-the-entire-city.webp",
+          "vAttack": "8+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/spider-queen-03.png",
           "abilities": [
             "Fight: Put a Bystander from the Bystander Deck into the Escape Pile. Then, each Spider-Infected in the city captures a Bystander."
           ]
@@ -1417,8 +1477,8 @@
           "name": "Control Arachnid Genes",
           "slug": "control-arachnid-genes",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-spider-queen-control-arachnid-genes.webp",
+          "vAttack": "8+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/spider-queen-02.png",
           "abilities": [
             "Fight: You may gain a [team:spider-friends] Hero from the HQ."
           ]
@@ -1427,8 +1487,8 @@
           "name": "Web the Skyscrapers",
           "slug": "web-the-skyscrapers",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-mt-spider-queen-web-the-skyscrapers.webp",
+          "vAttack": "8+",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/spider-queen-05.png",
           "abilities": [
             "Fight: Each other player reveals a [team:spider-friends] Hero or puts a Bystander from their Victory Pile into the Escape pile."
           ]
@@ -1767,21 +1827,30 @@
       "name": "Khonshu Guardians",
       "slug": "khonshu-guardians",
       "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hm-khonshu-guardians.webp",
-      "abilities": []
+      "abilities": [
+        "While in the Sewers, Rooftops or Bridge, this is in “wolf form“ and gets +2[icon:attack].",
+        "Fight: KO one of your Heroes."
+      ]
     },
     {
       "id": 17,
       "name": "Magma Men",
       "slug": "magma-men",
       "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hm-magma-men.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: KO one of your Heroes.",
+        "[keyword:Fateful Resurrection]"
+      ]
     },
     {
       "id": 18,
       "name": "Spider-Infected",
       "slug": "spider-infected",
       "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hm-spider-infected.webp",
-      "abilities": []
+      "abilities": [
+        "Ambush: This captures a Bystander.",
+        "Fight: The next Hero you gain this turn has [keyword:Wall-Crawl]."
+      ]
     }
   ],
   "schemes": [

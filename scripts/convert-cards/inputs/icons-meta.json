@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "value": "attack",
+    "label": "Attack"
+  },
+  {
+    "id": 2,
+    "value": "recruit",
+    "label": "Recruit"
+  },
+  {
+    "id": 3,
+    "value": "cost",
+    "label": "Cost"
+  },
+  {
+    "id": 4,
+    "value": "vp",
+    "label": "Victory Points"
+  },
+  {
+    "id": 5,
+    "value": "focus",
+    "label": "Focus"
+  },
+  {
+    "id": 6,
+    "value": "piercing",
+    "label": "Piercing Energy"
+  },
+  {
+    "id": 7,
+    "value": "token",
+    "label": "Token Card"
+  }
+]

@@ -1,0 +1,130 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "authoritarian-iron-man",
+      "cards": [
+        {
+          "slug": "authoritarian-iron-man",
+          "vAttack": 12
+        },
+        {
+          "slug": "armada-of-armors",
+          "vAttack": 12
+        },
+        {
+          "slug": "freeze-domestic-assets",
+          "vAttack": 12
+        },
+        {
+          "slug": "man-the-fortifications",
+          "vAttack": 12
+        },
+        {
+          "slug": "recall-to-service",
+          "vAttack": 12
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "baron-helmut-zemo",
+      "cards": [
+        {
+          "slug": "baron-helmut-zemo",
+          "vAttack": "16*"
+        },
+        {
+          "slug": "blasted-henchmen",
+          "vAttack": 16
+        },
+        {
+          "slug": "cursed-dynasty",
+          "vAttack": 16
+        },
+        {
+          "slug": "endless-minions",
+          "vAttack": 16
+        },
+        {
+          "slug": "revenge-for-my-father",
+          "vAttack": 16
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "maria-hill-director-of-shield",
+      "cards": [
+        {
+          "slug": "maria-hill-director-of-shield",
+          "vAttack": "7*"
+        },
+        {
+          "slug": "crash-the-helicarrier",
+          "vAttack": 7
+        },
+        {
+          "slug": "declare-martial-law",
+          "vAttack": 7
+        },
+        {
+          "slug": "evacuation-code-epsilon",
+          "vAttack": 7
+        },
+        {
+          "slug": "rapid-response-team",
+          "vAttack": 7
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "misty-knight",
+      "cards": [
+        {
+          "slug": "misty-knight",
+          "vAttack": "14*"
+        },
+        {
+          "slug": "bionic-repulsor-field",
+          "vAttack": 14
+        },
+        {
+          "slug": "cyborg-detective",
+          "vAttack": 14
+        },
+        {
+          "slug": "trusted-bodyguard",
+          "vAttack": 14
+        },
+        {
+          "slug": "vibranium-cyber-arm",
+          "vAttack": 14
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ragnarok",
+      "cards": [
+        {
+          "slug": "electrical-charge",
+          "vAttack": 6
+        },
+        {
+          "slug": "god-of-cyborg-thunder",
+          "vAttack": 6
+        },
+        {
+          "slug": "hammer-goliath",
+          "vAttack": 6
+        },
+        {
+          "slug": "unnatural-storm-clouds",
+          "vAttack": 6
+        }
+      ]
+    }
+  ]
+}

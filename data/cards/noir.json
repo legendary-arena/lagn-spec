@@ -81,7 +81,12 @@
       "name": "Daredevil Noir",
       "slug": "daredevil-noir",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Balancing Act": 5,
+        "Listen for Heartbeats": 5,
+        "Discover the Bodies": 3,
+        "Hitting Rock Bottom": 1
+      },
       "cards": [
         {
           "name": "Balancing Act",
@@ -154,7 +159,12 @@
       "name": "Iron Man Noir",
       "slug": "iron-man-noir",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Steam-Powered Arsenal": 5,
+        "Mechanized Plate-Mail": 5,
+        "Learn from Enemies": 3,
+        "Adventurers Assemble!": 1
+      },
       "cards": [
         {
           "name": "Steam-Powered Arsenal",
@@ -228,7 +238,12 @@
       "name": "Luke Cage Noir",
       "slug": "luke-cage-noir",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Follow Big Leads": 5,
+        "Private Investigations": 5,
+        "Unbreakable Cage": 3,
+        "Weight of the World": 1
+      },
       "cards": [
         {
           "name": "Follow Big Leads",
@@ -301,7 +316,12 @@
       "name": "Spider-Man Noir",
       "slug": "spider-man-noir",
       "team": "spider-friends",
-      "cardCounts": null,
+      "cardCounts": {
+        "Gumshoe's Revolver": 5,
+        "Webs of Darkness": 5,
+        "Solve the Crime": 3,
+        "Spider-Totem's Chosen": 1
+      },
       "cards": [
         {
           "name": "Gumshoe's Revolver",
@@ -383,7 +403,7 @@
           "slug": "charles-xavier-professor-of-crime",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mm-charles-xavier-professor-of-crime.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-01.png",
           "abilities": [
             "Charles Xavier gets +1[icon:attack] for each Bystander in the HQ and city.",
             "Always Leads: X-Men Noir",
@@ -394,8 +414,8 @@
           "name": "Commit to the Asylum",
           "slug": "commit-to-the-asylum",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mt-charles-xavier-professor-of-crime-commit-to-the-asylum.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-02.png",
           "abilities": [
             "Fight: Each other player [keyword:Investigates] their deck for a card with an [icon:attack] icon and KOs it. Players reveal all the cards they [keyword:Investigated]."
           ]
@@ -404,8 +424,8 @@
           "name": "Master Manipulator",
           "slug": "master-manipulator",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mt-charles-xavier-professor-of-crime-master-manipulator.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-04.png",
           "abilities": [
             "Fight: [keyword:Investigate] the Hero Deck for an [team:x-men] card and put it into your discard pile."
           ]
@@ -414,8 +434,8 @@
           "name": "Corrupt Weak Minds",
           "slug": "corrupt-weak-minds",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mt-charles-xavier-professor-of-crime-corrupt-weak-minds.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-03.png",
           "abilities": [
             "Fight: Each other player puts a random Bystander from their Victory Pile onto a Hero in the HQ as a [keyword:Hidden Witness]."
           ]
@@ -424,13 +444,14 @@
           "name": "X-Con Men",
           "slug": "x-con-men",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mt-charles-xavier-professor-of-crime-x-con-men.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-05.png",
           "abilities": [
             "Fight: Each other player reveals an [team:x-men] Hero or gains a Wound."
           ]
         }
-      ]
+      ],
+      "vAttack": "8+"
     },
     {
       "id": 39,
@@ -443,8 +464,8 @@
           "name": "The Goblin, Underworld Boss",
           "slug": "the-goblin-underworld-boss",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mm-the-goblin-underworld-boss.webp",
+          "vAttack": "10*",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-01.png",
           "abilities": [
             "Start of Game: The Goblin captures 2 [keyword:Hidden Witness].",
             "Always Leads: Goblin's Freak Show",
@@ -455,8 +476,8 @@
           "name": "Sinister Dreams",
           "slug": "sinister-dreams",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mt-the-goblin-underworld-boss-sinister-dreams.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-05.png",
           "abilities": [
             "Fight: Each other player reveals a [team:sinister-six] or [team:spider-friends] Hero or gains a Wound."
           ]
@@ -465,8 +486,8 @@
           "name": "Blackmail the Judges",
           "slug": "blackmail-the-judges",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mt-the-goblin-underworld-boss-blackmail-the-judges.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-02.png",
           "abilities": [
             "Fight: For each Goblin's Freak Show Villain in the city, The Goblin captures 2 [keyword:Hidden Witness]."
           ]
@@ -475,8 +496,8 @@
           "name": "Carnival of Carnage",
           "slug": "carnival-of-carnage",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mt-the-goblin-underworld-boss-carnival-of-carnage.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-04.png",
           "abilities": [
             "Fight: For each Goblin's Freak Show Villain in the city, each other player discards a card."
           ]
@@ -485,8 +506,8 @@
           "name": "Blind Loyalty",
           "slug": "blind-loyalty",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-mt-the-goblin-underworld-boss-blind-loyalty.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-03.png",
           "abilities": [
             "Fight: [keyword:Investigate] the Villain Deck for a Goblin's Freak Show Villain and put it into your Victory Pile."
           ]
@@ -528,7 +549,7 @@
           "name": "Kraven, Animal Trainer",
           "slug": "kraven-animal-trainer",
           "vp": "4",
-          "vAttack": "",
+          "vAttack": "*",
           "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-goblins-freak-show-kraven-animal-trainer.webp",
           "abilities": [
             "Ambush: For each Hero in the HQ that costs 7 or more, Kraven captures a [keyword:Hidden Witness]. Kraven's [icon:attack] is equal to the cost of the highest-cost card in the HQ."

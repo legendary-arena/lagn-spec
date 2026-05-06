@@ -8,7 +8,12 @@
       "name": "King Black Panther",
       "slug": "king-black-panther",
       "team": "heroes-of-wakanda",
-      "cardCounts": null,
+      "cardCounts": {
+        "Unseen Protector": 5,
+        "Vibranium Claws": 5,
+        "Heart-Shaped Herb": 3,
+        "Unite the Tribes of Wakanda": 1
+      },
       "cards": [
         {
           "name": "Unseen Protector",
@@ -85,7 +90,12 @@
       "name": "Queen Storm of Wakanda",
       "slug": "queen-storm-of-wakanda",
       "team": "heroes-of-wakanda",
-      "cardCounts": null,
+      "cardCounts": {
+        "Hurricane Winds": 5,
+        "Torrential Downpour": 5,
+        "Forked Lightning": 3,
+        "Thunderous Tempest": 1
+      },
       "cards": [
         {
           "name": "Hurricane Winds",
@@ -135,7 +145,7 @@
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-hr-queen-storm-of-wakanda-6u.webp",
           "abilities": [
             "Wound Villains on the Rooftops and Bridge.",
-            "[hc:covert][hc:ranged]: Gain the [keyword:Thrones Favor]. If you already had it, you may spend it to [rule:Wound the Mastermind] twice."
+            "[hc:covert][hc:ranged]: Gain the [keyword:Thrones Favor]. If you already had it, you may spend it to [keyword:Wound the Mastermind] twice."
           ]
         },
         {
@@ -162,7 +172,12 @@
       "name": "Princess Shuri",
       "slug": "princess-shuri",
       "team": "heroes-of-wakanda",
-      "cardCounts": null,
+      "cardCounts": {
+        "Vibranium Experiments": 5,
+        "Kimoyo Beads": 5,
+        "Shock Net": 3,
+        "Become the Next Black Panther": 1
+      },
       "cards": [
         {
           "name": "Vibranium Experiments",
@@ -238,7 +253,12 @@
       "name": "General Okoye",
       "slug": "general-okoye",
       "team": "heroes-of-wakanda",
-      "cardCounts": null,
+      "cardCounts": {
+        "To My Last Breath": 5,
+        "Lead the Dora Milaje": 5,
+        "Sovereign Bodyguard": 3,
+        "Direct the Agents of Wakanda": 1
+      },
       "cards": [
         {
           "name": "To My Last Breath",
@@ -287,7 +307,7 @@
           "recruit": null,
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-hr-general-okoye-5u.webp",
           "abilities": [
-            "Once per turn, when a player gains a Wound, you may reveal this card to return that Wound to the Wound Stack, draw a card, and [rule:Wound a Villain]."
+            "Once per turn, when a player gains a Wound, you may reveal this card to return that Wound to the Wound Stack, draw a card, and [keyword:Wound a Villain]."
           ]
         },
         {
@@ -313,7 +333,12 @@
       "name": "White Wolf",
       "slug": "white-wolf",
       "team": "heroes-of-wakanda",
-      "cardCounts": null,
+      "cardCounts": {
+        "Secret Assignment": 5,
+        "Cloaking Tech Ambush": 5,
+        "Command the Hatut Zeraze": 3,
+        "Reflective Vibranium Armor": 1
+      },
       "cards": [
         {
           "name": "Secret Assignment",
@@ -328,8 +353,8 @@
           "recruit": "2+",
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-hr-white-wolf-3c1.webp",
           "abilities": [
-            "[hc:covert] [keyword:Ambush]: [rule:Wound the Mastermind].",
-            "[hc:covert]: If any [rule:Villain or Mastermind has any Wounds], you get +2[icon:recruit]."
+            "[hc:covert] [keyword:Ambush]: [keyword:Wound the Mastermind].",
+            "[hc:covert]: If any [keyword:Villain or Mastermind has any Wounds], you get +2[icon:recruit]."
           ]
         },
         {
@@ -345,8 +370,8 @@
           "recruit": null,
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-hr-white-wolf-4c2.webp",
           "abilities": [
-            "[hc:tech] [keyword:Ambush]: [rule:Wound a Villain].",
-            "[hc:tech]: [rule:Wound a Villain]."
+            "[hc:tech] [keyword:Ambush]: [keyword:Wound a Villain].",
+            "[hc:tech]: [keyword:Wound a Villain]."
           ]
         },
         {
@@ -363,7 +388,7 @@
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-hr-white-wolf-5u.webp",
           "abilities": [
             "[team:heroes-of-wakanda] [keyword:Ambush]: You may KO one of your cards.",
-            "[team:heroes-of-wakanda]: If any [rule:Villain or Mastermind has any Wounds], you may KO a card from your hand or discard pile."
+            "[team:heroes-of-wakanda]: If any [keyword:Villain or Mastermind has any Wounds], you may KO a card from your hand or discard pile."
           ]
         },
         {
@@ -379,8 +404,8 @@
           "recruit": null,
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-hr-white-wolf-7r.webp",
           "abilities": [
-            "[hc:tech] [keyword:Ambush]: [rule:Wound each Villain and the Mastermind].",
-            "If a Master Strike would occur, you may reveal this card to KO that Strike and [rule:Wound the Mastermind] instead."
+            "[hc:tech] [keyword:Ambush]: [keyword:Wound each Villain and the Mastermind].",
+            "If a Master Strike would occur, you may reveal this card to KO that Strike and [keyword:Wound the Mastermind] instead."
           ]
         }
       ]
@@ -401,9 +426,9 @@
           "vAttack": null,
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mm-killmonger.webp",
           "abilities": [
-            "While Killmonger has more than 0[icon:attack], you cannot fight him. Instead, you may spend [icon:attack] equal to his [icon:attack] to [rule:Wound him] and get +1[icon:recruit].",
+            "While Killmonger has more than 0[icon:attack], you cannot fight him. Instead, you may spend [icon:attack] equal to his [icon:attack] to [keyword:Wound him] and get +1[icon:recruit].",
             "Always Leads: Killmonger's League",
-            "Master Strike: Each player must reveal 4 different Hero Classes or gain one of the [rule:Wounds on Killmonger]. Any player who can't do either must discard down to 4 cards."
+            "Master Strike: Each player must reveal 4 different Hero Classes or gain one of the [keyword:Wounds on Killmonger]. Any player who can't do either must discard down to 4 cards."
           ]
         },
         {
@@ -413,9 +438,9 @@
           "vAttack": "6",
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-me-killmonger.webp",
           "abilities": [
-            "While Killmonger has more than 0[icon:attack], you cannot fight him. Instead, you may spend [icon:attack] equal to his [icon:attack] to [rule:Wound him] and get +1[icon:recruit]. When you do fight him, each other player gains one of [rule:his Wounds].",
+            "While Killmonger has more than 0[icon:attack], you cannot fight him. Instead, you may spend [icon:attack] equal to his [icon:attack] to [keyword:Wound him] and get +1[icon:recruit]. When you do fight him, each other player gains one of [keyword:his Wounds].",
             "Always Leads: Killmonger's League",
-            "Master Strike: Each player gains a Wound. Gain them from [rule:Killmonger's Wounds] if possible."
+            "Master Strike: Each player gains a Wound. Gain them from [keyword:Killmonger's Wounds] if possible."
           ]
         },
         {
@@ -435,7 +460,7 @@
           "vAttack": 5,
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-rite-of-challenge.webp",
           "abilities": [
-            "Fight: Each player with no Killmonger Tactics in their Victory Pile gains a [rule:Wound that was on Killmonger]. (You have this Tactic, so you won't gain a Wound.)"
+            "Fight: Each player with no Killmonger Tactics in their Victory Pile gains a [keyword:Wound that was on Killmonger]. (You have this Tactic, so you won't gain a Wound.)"
           ]
         },
         {
@@ -455,7 +480,7 @@
           "vAttack": 5,
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-altar-of-resurrection.webp",
           "abilities": [
-            "Fight: The player on your left chooses a non-Henchman Villain from their Victory Pile. It enters the city with a [rule:Wound on it]. Then the player on your right does the same effect. (In solo, you do both.)"
+            "Fight: The player on your left chooses a non-Henchman Villain from their Victory Pile. It enters the city with a [keyword:Wound on it]. Then the player on your right does the same effect. (In solo, you do both.)"
           ]
         }
       ]
@@ -548,8 +573,8 @@
           "vAttack": "3",
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-vi-killmongers-league-preyy.webp",
           "abilities": [
-            "Ambush: Each player reveals an [hc:instinct] Hero or gains a [rule:Wound that was on a Mastermind or Villain].",
-            "While Preyy has more than 0[icon:attack], you cannot fight him. Instead, you may spend [icon:attack] equal to his [icon:attack] to [rule:Wound him] and draw a card."
+            "Ambush: Each player reveals an [hc:instinct] Hero or gains a [keyword:Wound that was on a Mastermind or Villain].",
+            "While Preyy has more than 0[icon:attack], you cannot fight him. Instead, you may spend [icon:attack] equal to his [icon:attack] to [keyword:Wound him] and draw a card."
           ]
         },
         {
@@ -559,8 +584,8 @@
           "vAttack": "4",
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-vi-killmongers-league-malice.webp",
           "abilities": [
-            "Ambush: Return a [rule:Wound from the Mastermind and from each Villain] to the Wound Stack.",
-            "While Malice has more than 0[icon:attack], you cannot fight her. Instead, you may spend [icon:attack] equal to her [icon:attack] to [rule:Wound her] and rescue a Bystander."
+            "Ambush: Return a [keyword:Wound from the Mastermind and from each Villain] to the Wound Stack.",
+            "While Malice has more than 0[icon:attack], you cannot fight her. Instead, you may spend [icon:attack] equal to her [icon:attack] to [keyword:Wound her] and rescue a Bystander."
           ]
         },
         {
@@ -570,7 +595,7 @@
           "vAttack": "5",
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-vi-killmongers-league-baron-macabre.webp",
           "abilities": [
-            "Ambush: A Villain from your Victory Pile enters the city. [rule:Wound that Villain]. Then [rule:Wound Baron Macabre] a number of times equal to that Villain's VP."
+            "Ambush: A Villain from your Victory Pile enters the city. [keyword:Wound that Villain]. Then [keyword:Wound Baron Macabre] a number of times equal to that Villain's VP."
           ]
         },
         {
@@ -580,8 +605,8 @@
           "vAttack": "9",
           "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-vi-killmongers-league-venomm.webp",
           "abilities": [
-            "Ambush: [rule:Wound Venomm]. Each player may discard a card to [rule:Wound Venomm] again.",
-            "Escape: Choose which players gain each of [rule:Venomm's Wounds], dividing them as evenly as possible."
+            "Ambush: [keyword:Wound Venomm]. Each player may discard a card to [keyword:Wound Venomm] again.",
+            "Escape: Choose which players gain each of [keyword:Venomm's Wounds], dividing them as evenly as possible."
           ]
         }
       ]
@@ -678,7 +703,7 @@
         {
           "abilities": [
             "Setup: Twists equal to 5 plus the number of players. 30 Wounds in the Wound Stack.",
-            "Twist: Stack this Twist next to the Scheme as an “Infected Nanite.“ [rule:Wound the Mastermind]. Then for each Infected Nanite, Wound a Hero in the HQ, dividing these new Wounds as evenly as possible.",
+            "Twist: Stack this Twist next to the Scheme as an “Infected Nanite.“ [keyword:Wound the Mastermind]. Then for each Infected Nanite, Wound a Hero in the HQ, dividing these new Wounds as evenly as possible.",
             "Special Rules: Whenever you recruit a Hero (or it leaves the HQ), pay 1[icon:recruit] less for each wound on it and choose players to gain those Wounds, dividing them as evenly as possible. Whenever a Wound is KO'd from anywhere, return it to the bottom of the Wound Stack.",
             "Evil Wins: When the Wound Stack or Villain Deck runs out."
           ]

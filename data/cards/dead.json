@@ -385,7 +385,7 @@
           "slug": "evil-deadpool",
           "tactic": false,
           "vAttack": "11+",
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mm-evil-deadpool.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/evil-deadpool-01.png",
           "abilities": [
             "[keyword:Revenge for Mastermind Tactics]",
             "Always Leads: Evil Deadpool Corpse",
@@ -396,8 +396,8 @@
           "name": "Evil Even Oddball",
           "slug": "evil-even-oddball",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mt-evil-deadpool-evil-even-oddball.webp",
+          "vAttack": 11,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/evil-deadpool-03.png",
           "abilities": [
             "Fight: Each other player reveals their hand. Whoever has the fewest cards with odd-numbered costs (or tied for fewest) gains a Wound."
           ]
@@ -406,8 +406,8 @@
           "name": "Hyper-Insane Healing Factor",
           "slug": "hyper-insane-healing-factor",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mt-evil-deadpool-hyper-insane-healing-factor.webp",
+          "vAttack": 11,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/evil-deadpool-02.png",
           "abilities": [
             "Fight: If this is not the final Tactic, you get +6[icon:recruit] and shuffle this Tactic back into the other Tactics."
           ]
@@ -416,8 +416,8 @@
           "name": "Of Course it's Corpse",
           "slug": "of-course-its-corpse",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mt-evil-deadpool-of-course-its-corpse.webp",
+          "vAttack": 11,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/evil-deadpool-04.png",
           "abilities": [
             "Fight: The other player with the fewest Evil Deadpool Corpse Villains in their Victory Pile (or tied for fewest) gains a Wound."
           ]
@@ -426,8 +426,8 @@
           "name": "Stitched from Dead (Pool) Parts",
           "slug": "stitched-from-dead-pool-parts",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mt-evil-deadpool-stitched-from-dead-pool-parts.webp",
+          "vAttack": 11,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/evil-deadpool-05.png",
           "abilities": [
             "Fight: Each other player discards the top card of their deck. Whoever discards the lowest-costing card (or tied for lowest) gains a Wound."
           ]
@@ -446,7 +446,7 @@
           "slug": "macho-gomez",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mm-macho-gomez.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/macho-gomez-01.png",
           "abilities": [
             "[keyword:Revenge for Deadpool's “Friends“]",
             "Always Leads: Deadpool's “Friends“",
@@ -457,8 +457,8 @@
           "name": "Bounty Payout",
           "slug": "bounty-payout",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mt-macho-gomez-bounty-payout.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/macho-gomez-02.png",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each “Bounty on Your Head“ on other players."
           ]
@@ -467,8 +467,8 @@
           "name": "Interstellar Assassin",
           "slug": "interstellar-assassin",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mt-macho-gomez-interstellar-assassin.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/macho-gomez-03.png",
           "abilities": [
             "Fight: Each other player with at least one “Bounty on Your Head“ discards down to 4 cards."
           ]
@@ -477,8 +477,8 @@
           "name": "Renegotiate the Contract",
           "slug": "renegotiate-the-contract",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mt-macho-gomez-renegotiate-the-contract.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/macho-gomez-04.png",
           "abilities": [
             "Fight: Redistribute the “Bounty on Your Head“ cards among any number of players."
           ]
@@ -487,8 +487,8 @@
           "name": "Super Macho Man",
           "slug": "super-macho-man",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dead/dead-mt-macho-gomez-super-macho-man.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/macho-gomez-05.png",
           "abilities": [
             "Fight: Rescue a Bystander for each “Bounty on Your Head“ on other players."
           ]

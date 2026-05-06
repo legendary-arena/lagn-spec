@@ -1,0 +1,169 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "omega-red",
+      "cards": [
+        {
+          "slug": "epic-omega-red"
+        },
+        {
+          "slug": "carbonadium-tentacles",
+          "vAttack": "10"
+        },
+        {
+          "slug": "the-carbonadium-synthesizer",
+          "vAttack": "10"
+        },
+        {
+          "slug": "death-pheromones",
+          "vAttack": "10"
+        },
+        {
+          "slug": "drain-life-force",
+          "vAttack": "10"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "romulus",
+      "cards": [
+        {
+          "slug": "epic-romulus"
+        },
+        {
+          "slug": "anoint-an-heir-to-take-my-place",
+          "vAttack": "9"
+        },
+        {
+          "slug": "bite-of-the-muramasa-blade",
+          "vAttack": "9"
+        },
+        {
+          "slug": "master-of-schemes",
+          "vAttack": "9"
+        },
+        {
+          "slug": "take-over-the-weapon-x-program",
+          "vAttack": "9"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "sabretooth",
+      "cards": [
+        {
+          "slug": "epic-sabretooth"
+        },
+        {
+          "slug": "adamantium-laced-claws",
+          "vAttack": "8"
+        },
+        {
+          "slug": "lethal-fangs",
+          "vAttack": "8"
+        },
+        {
+          "slug": "salivating-prowl",
+          "vAttack": "8"
+        },
+        {
+          "slug": "sudden-savagery",
+          "vAttack": "8"
+        }
+      ]
+    }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "fantomex",
+      "cards": [
+        {
+          "slug": "sentient-bullets",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1
+        },
+        {
+          "slug": "three-brains",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2
+        },
+        {
+          "slug": "misdirection",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3
+        },
+        {
+          "slug": "weapon-xiii",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 4
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "weapon-x-wolverine",
+      "cards": [
+        {
+          "slug": "violent-conditioning",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1
+        },
+        {
+          "slug": "raging-regeneration",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2
+        },
+        {
+          "slug": "infuse-skeleton-with-adamantium",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3
+        },
+        {
+          "slug": "escape-the-weapon-x-lab",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 4
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "marrow",
+      "cards": [
+        {
+          "slug": "bone-shards",
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-marrow-3c2.webp"
+        },
+        {
+          "slug": "hyper-adaptive-skeleton",
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-marrow-2c1.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "weapon-h",
+      "cards": [
+        {
+          "slug": "evolving-abilities",
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-h-4c2.webp"
+        },
+        {
+          "slug": "the-future-of-warfare",
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-h-3c1.webp"
+        }
+      ]
+    }
+  ]
+}

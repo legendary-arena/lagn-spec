@@ -1,0 +1,30 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "uru-enchanted-iron-man",
+      "cards": [
+        {
+          "slug": "uru-enchanted-iron-man",
+          "vAttack": null
+        },
+        {
+          "slug": "armor-of-the-destroyer",
+          "vAttack": null
+        },
+        {
+          "slug": "pepper-potts-in-rescue-armor",
+          "vAttack": null
+        },
+        {
+          "slug": "quantum-inventions",
+          "vAttack": null
+        },
+        {
+          "slug": "repulsor-coils",
+          "vAttack": null
+        }
+      ]
+    }
+  ]
+}

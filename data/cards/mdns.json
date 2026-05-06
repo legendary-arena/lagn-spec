@@ -8,7 +8,11 @@
       "name": "Blade, Daywalker",
       "slug": "blade-daywalker",
       "team": "midnight-sons",
-      "cardCounts": null,
+      "cardCounts": {
+        "Where Monsters Lurk": 5,
+        "Ride by Moonlight": 5,
+        "Creature of Dawn and Dusk": 1
+      },
       "cards": [
         {
           "name": "Hunt High And Low",
@@ -85,7 +89,12 @@
       "name": "Elsa Bloodstone",
       "slug": "elsa-bloodstone",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Axe of the Slayer": 5,
+        "Silver Bullets": 5,
+        "Stalk the Night Stalkers": 3,
+        "Vengeance of the Bloodstone Gem": 1
+      },
       "cards": [
         {
           "name": "Axe of the Slayer",
@@ -162,7 +171,12 @@
       "name": "Morbius",
       "slug": "morbius",
       "team": "midnight-sons",
-      "cardCounts": null,
+      "cardCounts": {
+        "Mesmerize": 5,
+        "Insatiable Craving": 5,
+        "Scalded by Sunlight": 3,
+        "It's Morbin' Time!": 1
+      },
       "cards": [
         {
           "name": "Mesmerize",
@@ -236,7 +250,12 @@
       "name": "Werewolf by Night",
       "slug": "werewolf-by-night",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Starlit Path": 5,
+        "Snarling Fangs": 5,
+        "Release the Beast": 3,
+        "Track the Captives": 1
+      },
       "cards": [
         {
           "name": "Starlit Path",
@@ -314,7 +333,12 @@
       "name": "Wong, Master of the Mystic Arts",
       "slug": "wong-master-of-the-mystic-arts",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Bridge Between Dimensions": 5,
+        "Searing Shards of Sunlight": 5,
+        "Seal the Rift": 3,
+        "Face Your Demons": 1
+      },
       "cards": [
         {
           "name": "Bridge Between Dimensions",
@@ -378,7 +402,7 @@
           "recruit": null,
           "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-8r.webp",
           "abilities": [
-            "Once this turn, you may fight the top card of the Bystander Deck as if it were a 4[icon:attack] “Darkhold Demon” Villain with “Fight: KO up to two of your Heroes. Rescue this card as a Bystander.”",
+            "Once this turn, you may fight the top card of the Bystander Deck as if it were a 4[icon:attack] “Darkhold Demon” Vilan with “Fight: KO up to two of your Heroes. Rescue this card as a Bystander.”",
             "[keyword:Sunlight]: You get +2[icon:attack]."
           ]
         }
@@ -398,7 +422,7 @@
           "slug": "lilith-mother-of-demons",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mm-lilith-mother-of-demons.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemons.png",
           "abilities": [
             "Lilith gets +1[icon:attack] for each Bystander in the KO pile.",
             "Always Leads: Lilin",
@@ -410,7 +434,7 @@
           "slug": "epic-lilith",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-me-lilith-mother-of-demons.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemons_Epic.png",
           "abilities": [
             "Lilith gets +2[icon:attack] for each Bystander in the KO pile.",
             "Always Leads: Lilin",
@@ -422,7 +446,7 @@
           "slug": "connoisseur-of-souls",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-lilith-mother-of-demons-connoisseur-of-souls.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemonsTactic1.png",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Bystander in the KO pile.",
             "Then Lilith [keyword:Hunts for Victims]."
@@ -433,7 +457,7 @@
           "slug": "offer-of-corruption",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-lilith-mother-of-demons-offer-of-corruption.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemonsTactic3.png",
           "abilities": [
             "Fight: Choose one:",
             "{\"points\":[[\"Gain a Wound and each other player KOs one of their Heroes, or\"],[\"KO one of your Heroes and each other player gains a Wound.\"]]}",
@@ -445,7 +469,7 @@
           "slug": "mesopotamian-demon-goddess",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-lilith-mother-of-demons-mesopotamian-demon-goddess.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemonsTactic2.png",
           "abilities": [
             "Fight: Each other player may discard a card for each Bystander in the KO pile. Each of those players who didn't must gain a Wound instead.",
             "Then Lilith [keyword:Hunts for Victims]."
@@ -456,7 +480,7 @@
           "slug": "respawn-demonic-offspring",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-lilith-mother-of-demons-respawn-demonic-offspring.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemonsTactic4.png",
           "abilities": [
             "Fight: The highest VP Lilin Villain from among all Victory Piles reenters the city. The player who had that Villain rescues three Bystanders.",
             "Then Lilith [keyword:Hunts for Victims].",
@@ -477,7 +501,7 @@
           "slug": "zarathos",
           "tactic": false,
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mm-zarathos.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/Zarathos.png",
           "abilities": [
             "Always Leads: The Fallen",
             "Master Strike: If any Heroes in the HQ are haunted, each player gains a Wound. Then if Zarathos is not already haunting, he [keyword:Haunts] the highest-cost unhaunted Hero in the HQ."
@@ -488,7 +512,7 @@
           "slug": "epic-zarathos",
           "tactic": false,
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-me-zarathos.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/Zarathos_Epic.png",
           "abilities": [
             "Always Leads: The Fallen",
             "Master Strike: If any Heroes in the HQ are haunted, each player gains a Wound. Then if Zarathos is not already haunting, he [keyword:Haunts] the highest-cost unhaunted Hero in the HQ. Then reveal the top card of the Villain Deck. If it's a Villain, it Haunts the highest cost unhaunted Hero in the HQ."
@@ -499,7 +523,7 @@
           "slug": "eruption-of-hellfire",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-zarathos-eruption-of-hellfire.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ZarathosTactic3.png",
           "abilities": [
             "Fight: Zarathos [keyword:Haunts] the highest-cost unhaunted [hc:covert] and/or [hc:ranged] Hero in the HQ.",
             "Each other player discards a [hc:covert] or [hc:ranged] Hero or gains a Wound."
@@ -510,7 +534,7 @@
           "slug": "corrupted-spirit-of-vengeance",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-zarathos-corrupted-spirit-of-vengeance.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ZarathosTactic2.png",
           "abilities": [
             "Fight: Zarathos [keyword:Haunts] the highest-cost unhaunted [hc:instinct] and/or [hc:covert] Hero in the HQ.",
             "Each other player discards a [hc:instinct] or [hc:covert] Hero or discards down to 3 cards."
@@ -521,7 +545,7 @@
           "slug": "imprison-in-the-soul-crystal",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-zarathos-imprison-in-the-soul-crystal.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ZarathosTactic4.png",
           "abilities": [
             "Fight: Zarathos [keyword:Haunts] the highest-cost unhaunted [hc:strength] and/or [hc:instinct] Hero in the HQ.",
             "If you have a [hc:strength] or [hc:instinct] Hero, you may KO a Villain from your Victory Pile. If you do, draw cards equal to that Villain's VP."
@@ -532,7 +556,7 @@
           "slug": "demonic-essence-of-ghost-rider",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-zarathos-demonic-essence-of-ghost-rider.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ZarathosTactic1.png",
           "abilities": [
             "Fight: Zarathos [keyword:Haunts] the highest-cost unhaunted [hc:ranged] and/or [hc:strength] Hero in the HQ.",
             "If you have a [hc:ranged] Hero, you may KO one of your Heroes.",
@@ -658,7 +682,7 @@
           "abilities": [
             "[keyword:Blood Frenzy]",
             "Fight: KO up to two cards from your discard pile.",
-            "Escape: Salomé ascends to become an [rule:additional Mastermind]. She gains the ability “Master Strike: Each player discards a [team:marvel-knights] Hero or gains a Wound.“"
+            "Escape: Salomé ascends to become an additional Mastermind. She gains the ability “Master Strike: Each player discards a [team:marvel-knights] Hero or gains a Wound.“"
           ]
         }
       ]

@@ -8,7 +8,13 @@
       "name": "Captain America, Secret Avenger",
       "slug": "captain-america-secret-avenger",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Bold Leadership": 5,
+        "Inspire a Nation": 5,
+        "Inspire a Man": 5,
+        "Secret Avengers Assemble!": 3,
+        "Freedom Never Dies": 1
+      },
       "cards": [
         {
           "name": "Bold Leadership",
@@ -95,7 +101,15 @@
       "name": "Cloak & Dagger",
       "slug": "cloak-dagger",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Above": 5,
+        "Below": 5,
+        "Flee": 5,
+        "Fight": 5,
+        "Darkness": 3,
+        "Light": 3,
+        "Penumbra": 1
+      },
       "cards": [
         {
           "name": "Above",
@@ -216,7 +230,13 @@
       "name": "Daredevil",
       "slug": "daredevil",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Dual Existence": 5,
+        "Roundhouse Side Kick": 5,
+        "Hidden Identity": 6,
+        "Revealed Identity": 6,
+        "Master of Martial Arts": 1
+      },
       "cards": [
         {
           "name": "Dual Existence",
@@ -305,7 +325,13 @@
       "name": "Falcon",
       "slug": "falcon",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Rapid Reinforcements": 5,
+        "Talk with Birds": 5,
+        "Squawk Back": 5,
+        "Scout the Battlefield": 3,
+        "Fly in a Friend": 1
+      },
       "cards": [
         {
           "name": "Rapid Reinforcements",
@@ -395,7 +421,13 @@
       "name": "Goliath",
       "slug": "goliath",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Brilliant Biochemist": 5,
+        "Massive Warrior": 5,
+        "Growth Industry": 5,
+        "Being Big is Best": 3,
+        "Enormous Implications": 1
+      },
       "cards": [
         {
           "name": "Brilliant Biochemist",
@@ -487,7 +519,13 @@
       "name": "Hercules",
       "slug": "hercules",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Manly Dullard": 5,
+        "Boy Genius": 5,
+        "Crowd Favorite": 5,
+        "Prince of Power": 3,
+        "Son of Zeus": 1
+      },
       "cards": [
         {
           "name": "Manly Dullard",
@@ -577,7 +615,13 @@
       "name": "Hulkling",
       "slug": "hulkling",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Half-Kree": 5,
+        "Half-Skrull": 5,
+        "Cellular Regeneration": 5,
+        "Impersonate": 3,
+        "Enormous Shapeshifter": 1
+      },
       "cards": [
         {
           "name": "Half-Kree",
@@ -670,7 +714,13 @@
       "name": "Luke Cage",
       "slug": "luke-cage",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Cautious": 5,
+        "Reckless": 5,
+        "Take a Bullet for the Team": 5,
+        "Sweet Christmas": 3,
+        "Unbreakable Skin": 1
+      },
       "cards": [
         {
           "name": "Cautious",
@@ -757,7 +807,13 @@
       "name": "Patriot",
       "slug": "patriot",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "New Generation of Heroes": 5,
+        "Intuitive Tactician": 5,
+        "Incredible Effort": 3,
+        "Effortless": 3,
+        "Lead the Young Avengers": 1
+      },
       "cards": [
         {
           "name": "New Generation of Heroes",
@@ -844,7 +900,13 @@
       "name": "Peter Parker",
       "slug": "peter-parker",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Conflicted Loyalties": 5,
+        "Spider-Man Unmasked": 5,
+        "Protect My Family": 3,
+        "Hot Bowl of Soup": 3,
+        "Reluctant Celebrity": 1
+      },
       "cards": [
         {
           "name": "Conflicted Loyalties",
@@ -934,7 +996,13 @@
       "name": "Speedball",
       "slug": "speedball",
       "team": "new-warriors",
-      "cardCounts": null,
+      "cardCounts": {
+        "Reckless Rescue Attempt": 5,
+        "Bounce Around": 5,
+        "Double Down": 3,
+        "Bubble Up": 3,
+        "Kinetic Force Field": 1
+      },
       "cards": [
         {
           "name": "Reckless Rescue Attempt",
@@ -1023,7 +1091,13 @@
       "name": "Stature",
       "slug": "stature",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Shrink to Nothing": 5,
+        "Crush Ants": 5,
+        "Crush File Sizes": 5,
+        "Growing Confidence": 3,
+        "Trample the Tiny": 1
+      },
       "cards": [
         {
           "name": "Shrink to Nothing",
@@ -1118,7 +1192,15 @@
       "name": "Storm & Black Panther",
       "slug": "storm-black-panther",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Gathering Rain Clouds": 5,
+        "Gathering Clues": 5,
+        "Lightning Strike": 5,
+        "Pouncing Strike": 5,
+        "Tsunami of Water": 3,
+        "Tsunami of Justice": 3,
+        "King & Queen of Wakanda": 1
+      },
       "cards": [
         {
           "name": "Gathering Rain Clouds",
@@ -1239,7 +1321,13 @@
       "name": "Tigra",
       "slug": "tigra",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Friendship": 5,
+        "Ferocity": 5,
+        "Supernatural Senses": 5,
+        "Can't Surprise a Cat": 3,
+        "Mystic Talisman": 1
+      },
       "cards": [
         {
           "name": "Friendship",
@@ -1330,7 +1418,13 @@
       "name": "Vision",
       "slug": "vision",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Solar Energy": 5,
+        "Through Solid Objects": 5,
+        "Lighter than Air": 3,
+        "Harder than Diamond": 3,
+        "Insubstantial Accomplishments": 1
+      },
       "cards": [
         {
           "name": "Solar Energy",
@@ -1424,7 +1518,13 @@
       "name": "Wiccan",
       "slug": "wiccan",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Sorcerous Illusions": 5,
+        "Astral Projection": 5,
+        "Supersonic Spells": 3,
+        "Supersonic Speed": 3,
+        "Clairvoyance": 1
+      },
       "cards": [
         {
           "name": "Sorcerous Illusions",
@@ -1524,8 +1624,8 @@
           "name": "Authoritarian Iron Man",
           "slug": "authoritarian-iron-man",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mm-authoritarian-iron-man.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-01.png",
           "abilities": [
             "Always Leads: Superhuman Registration Act",
             "Master Strike: Authoritarian Iron Man [keyword:fortifies] the next city space to his right, starting with the Bridge. You can't fight him while there's a Villain in that space. Villains in that space get +3[icon:attack]."
@@ -1535,8 +1635,8 @@
           "name": "Armada of Armors",
           "slug": "armada-of-armors",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-authoritarian-iron-man-armada-of-armors.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-02.png",
           "abilities": [
             "Fight: You get +6[icon:recruit] usable only to recruit [hc:ranged] and/or [hc:tech] Heroes."
           ]
@@ -1545,8 +1645,8 @@
           "name": "Freeze Domestic Assets",
           "slug": "freeze-domestic-assets",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-authoritarian-iron-man-freeze-domestic-assets.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-03.png",
           "abilities": [
             "Fight: Each other player reveals their hand and discards all their cards with [icon:recruit] icons."
           ]
@@ -1555,8 +1655,8 @@
           "name": "Man the Fortifications",
           "slug": "man-the-fortifications",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-authoritarian-iron-man-man-the-fortifications.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-04.png",
           "abilities": [
             "Fight: Reveal the top card of the Villain Deck. If it's a Villain, it enters the city space that Authoritarian Iron Man is fortifying."
           ]
@@ -1565,8 +1665,8 @@
           "name": "Recall to Service",
           "slug": "recall-to-service",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-authoritarian-iron-man-recall-to-service.webp",
+          "vAttack": 12,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-05.png",
           "abilities": [
             "Fight: The Villain with the highest printed [icon:attack] in the Escape Pile enters the city space that Authoritarian Iron Man is fortifying."
           ]
@@ -1584,8 +1684,8 @@
           "name": "Baron Helmut Zemo",
           "slug": "baron-helmut-zemo",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mm-baron-helmut-zemo.webp",
+          "vAttack": "16*",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-01.png",
           "abilities": [
             "Baron Zemo gets -1[icon:attack] for each Villain in your Victory Pile.",
             "Always Leads: Thunderbolts",
@@ -1596,8 +1696,8 @@
           "name": "Blasted Henchmen!",
           "slug": "blasted-henchmen",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-baron-helmut-zemo-blasted-henchmen.webp",
+          "vAttack": 16,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-02.png",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Hero or KOs a Villain from their Victory Pile."
           ]
@@ -1606,8 +1706,8 @@
           "name": "Cursed Dynasty",
           "slug": "cursed-dynasty",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-baron-helmut-zemo-cursed-dynasty.webp",
+          "vAttack": 16,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-03.png",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw two extra cards."
           ]
@@ -1616,8 +1716,8 @@
           "name": "Endless Minions",
           "slug": "endless-minions",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-baron-helmut-zemo-endless-minions.webp",
+          "vAttack": 16,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-04.png",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Hero or chooses a Villain from their Victory Pile and it enters the city."
           ]
@@ -1626,8 +1726,8 @@
           "name": "Revenge for My Father",
           "slug": "revenge-for-my-father",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-baron-helmut-zemo-revenge-for-my-father.webp",
+          "vAttack": 16,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-05.png",
           "abilities": [
             "Fight: Each other player reveals their hand. Each player who revealed an [team:avengers] Hero gains a Wound."
           ]
@@ -1645,8 +1745,8 @@
           "name": "Maria Hill, Director of S.H.I.E.L.D.",
           "slug": "maria-hill-director-of-shield",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mm-maria-hill-director-of-shield.webp",
+          "vAttack": "7*",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-01.png",
           "abilities": [
             "[keyword:Double S.H.I.E.L.D. Clearance]. You can't fight Maria Hill while there are any S.H.I.E.L.D. Elite or Officers in the city.",
             "Always Leads: S.H.I.E.L.D. Elite",
@@ -1657,8 +1757,8 @@
           "name": "Crash the Helicarrier",
           "slug": "crash-the-helicarrier",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-maria-hill-director-of-shield-crash-the-helicarrier.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-02.png",
           "abilities": [
             "Fight: KO any number of your [team:shield] Heroes."
           ]
@@ -1667,8 +1767,8 @@
           "name": "Declare Martial Law",
           "slug": "declare-martial-law",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-maria-hill-director-of-shield-declare-martial-law.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-03.png",
           "abilities": [
             "Fight: Put a S.H.I.E.L.D. Officer into each empty city space as 3[icon:attack] Villains. When you fight them, gain them as Heroes."
           ]
@@ -1677,8 +1777,8 @@
           "name": "Evacuation Code Epsilon",
           "slug": "evacuation-code-epsilon",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-maria-hill-director-of-shield-evacuation-code-epsilon.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-04.png",
           "abilities": [
             "Fight: Each other player reveals their hand and discards a [team:shield] card."
           ]
@@ -1687,8 +1787,8 @@
           "name": "Rapid Response Team",
           "slug": "rapid-response-team",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-maria-hill-director-of-shield-rapid-response-team.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-05.png",
           "abilities": [
             "Fight: Two S.H.I.E.L.D. Officers enter the city as 3[icon:attack] Villains. When you fight them, gain them as Heroes."
           ]
@@ -1706,8 +1806,8 @@
           "name": "Misty Knight",
           "slug": "misty-knight",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mm-misty-knight.webp",
+          "vAttack": "14*",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-01.png",
           "abilities": [
             "[keyword:Bribe]",
             "Always Leads: Heroes for Hire",
@@ -1718,8 +1818,8 @@
           "name": "Bionic Repulsor Field",
           "slug": "bionic-repulsor-field",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-misty-knight-bionic-repulsor-field.webp",
+          "vAttack": 14,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-02.png",
           "abilities": [
             "Fight: Each other player reveals a [team:marvel-knights] Hero or puts two cards from their hand on top of the deck."
           ]
@@ -1728,8 +1828,8 @@
           "name": "Cyborg Detective",
           "slug": "cyborg-detective",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-misty-knight-cyborg-detective.webp",
+          "vAttack": 14,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-03.png",
           "abilities": [
             "Fight: Reveal the top three cards of the Villain Deck. Put them back in any order."
           ]
@@ -1738,8 +1838,8 @@
           "name": "Trusted Bodyguard",
           "slug": "trusted-bodyguard",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-misty-knight-trusted-bodyguard.webp",
+          "vAttack": 14,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-04.png",
           "abilities": [
             "Fight: Going clockwise, the first other player with Colleen Wing in their Victory Pile rescues 5 Bystanders and returns Colleen Wing to play [keyword:fortifying] Misty Knight."
           ]
@@ -1748,8 +1848,8 @@
           "name": "Vibranium Cyber Arm",
           "slug": "vibranium-cyber-arm",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-misty-knight-vibranium-cyber-arm.webp",
+          "vAttack": 14,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-05.png",
           "abilities": [
             "Fight: Each other player reveals a [team:marvel-knights] Hero or gains a Wound."
           ]
@@ -1768,7 +1868,7 @@
           "slug": "ragnarok",
           "tactic": false,
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mm-ragnarok.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-01.png",
           "abilities": [
             "Ragnarok gets +2[icon:attack] for each Hero Class among Heroes in the HQ.",
             "Always Leads: Registration Enforcers",
@@ -1779,8 +1879,8 @@
           "name": "Electrical Charge",
           "slug": "electrical-charge",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-ragnarok-electrical-charge.webp",
+          "vAttack": 6,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-02.png",
           "abilities": [
             "Fight: Count how many [hc:ranged] Heroes you have. Draw that many cards."
           ]
@@ -1789,8 +1889,8 @@
           "name": "God of Cyborg Thunder",
           "slug": "god-of-cyborg-thunder",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-ragnarok-god-of-cyborg-thunder.webp",
+          "vAttack": 6,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-03.png",
           "abilities": [
             "Fight: You can spend [icon:recruit] as [icon:attack] this turn."
           ]
@@ -1799,8 +1899,8 @@
           "name": "Hammer Goliath",
           "slug": "hammer-goliath",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-ragnarok-hammer-goliath.webp",
+          "vAttack": 6,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-04.png",
           "abilities": [
             "Fight: KO each Hero from the HQ that costs 7 or more."
           ]
@@ -1809,8 +1909,8 @@
           "name": "Unnatural Storm Clouds",
           "slug": "unnatural-storm-clouds",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-mt-ragnarok-unnatural-storm-clouds.webp",
+          "vAttack": 6,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-05.png",
           "abilities": [
             "Fight: Put all Heroes from the HQ on the bottom of the Hero Deck in random order."
           ]
@@ -2187,14 +2287,20 @@
       "name": "Mandroid",
       "slug": "mandroid",
       "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hm-mandroid.webp",
-      "abilities": []
+      "abilities": [
+        "This gets +1[icon:attack] for each other Mandroid in your Victory Pile.",
+        "Fight: KO one of your Heroes."
+      ]
     },
     {
       "id": 20,
       "name": "Cape-Killers",
       "slug": "cape-killers",
       "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hm-cape-killers.webp",
-      "abilities": []
+      "abilities": [
+        "[keyword:S.H.I.E.L.D. Clearance]",
+        "Fight: KO a card from your discard pile."
+      ]
     }
   ],
   "schemes": [
@@ -2352,112 +2458,6 @@
       ]
     }
   ],
-  "wounds": [
-    {
-      "id": 3,
-      "name": "Blinding Flash",
-      "filterName": null,
-      "slug": "blinding-flash",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-wd-blinding-flash.webp",
-      "cards": [
-        {
-          "qtd": 2,
-          "abilities": [
-            "Healing: You may discard a card and have each other player discard a card. If you do, KO this Wound."
-          ]
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "name": "Blunt Force Trauma",
-      "filterName": null,
-      "slug": "blunt-force-trauma",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-wd-blunt-force-trauma.webp",
-      "cards": [
-        {
-          "qtd": 2,
-          "abilities": [
-            "Healing: You may spend 5[icon:attack]. If you do, KO this Wound."
-          ]
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "name": "Corrosive Webbing",
-      "filterName": null,
-      "slug": "corrosive-webbing",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-wd-corrosive-webbing.webp",
-      "cards": [
-        {
-          "qtd": 2,
-          "abilities": [
-            "Healing: You may KO this Wound. If you do, gain another Wound."
-          ]
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "name": "Fatal Blow",
-      "filterName": null,
-      "slug": "fatal-blow",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-wd-fatal-blow.webp",
-      "cards": [
-        {
-          "qtd": 2,
-          "abilities": [
-            "Healing: You may KO a Hero that costs 1 or more from your hand or discard pile. If you do, KO this Wound."
-          ]
-        }
-      ]
-    },
-    {
-      "id": 7,
-      "name": "Psychic Trauma",
-      "filterName": null,
-      "slug": "psychic-trauma",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-wd-psychic-trauma.webp",
-      "cards": [
-        {
-          "qtd": 2,
-          "abilities": [
-            "Healing: You may spend 5[icon:recruit]. If you do, KO this Wound."
-          ]
-        }
-      ]
-    },
-    {
-      "id": 8,
-      "name": "Spreading Nanovirus",
-      "filterName": null,
-      "slug": "spreading-nanovirus",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-wd-spreading-nanovirus.webp",
-      "cards": [
-        {
-          "qtd": 3,
-          "abilities": [
-            "Healing: You may have the player on your left gain this Wound."
-          ]
-        }
-      ]
-    },
-    {
-      "id": 9,
-      "name": "Subdermal Tracker",
-      "filterName": null,
-      "slug": "subdermal-tracker",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-wd-subdermal-tracker.webp",
-      "cards": [
-        {
-          "qtd": 2,
-          "abilities": [
-            "Healing: You may play a card from the Villain Deck. If you do, KO this Wound."
-          ]
-        }
-      ]
-    }
-  ],
+  "wounds": [],
   "other": []
 }

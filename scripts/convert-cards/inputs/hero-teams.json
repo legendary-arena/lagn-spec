@@ -1,0 +1,132 @@
+[
+  {
+    "id": 0,
+    "slug": "unaffiliated",
+    "name": "Unaffiliated"
+  },
+  {
+    "id": 1,
+    "slug": "avengers",
+    "name": "Avengers"
+  },
+  {
+    "id": 2,
+    "slug": "shield",
+    "name": "S.H.I.E.L.D."
+  },
+  {
+    "id": 3,
+    "slug": "spider-friends",
+    "name": "Spider Friends"
+  },
+  {
+    "id": 4,
+    "slug": "x-men",
+    "name": "X-Men"
+  },
+  {
+    "id": 5,
+    "slug": "fantastic-four",
+    "name": "Fantastic Four"
+  },
+  {
+    "id": 6,
+    "slug": "marvel-knights",
+    "name": "Marvel Knights"
+  },
+  {
+    "id": 7,
+    "slug": "x-force",
+    "name": "X-Force"
+  },
+  {
+    "id": 8,
+    "slug": "crime-syndicate",
+    "name": "Crime Syndicate"
+  },
+  {
+    "id": 9,
+    "slug": "sinister-six",
+    "name": "Sinister Six"
+  },
+  {
+    "id": 10,
+    "slug": "foes-of-asgard",
+    "name": "Foes of Asgard"
+  },
+  {
+    "id": 11,
+    "slug": "brotherhood",
+    "name": "Brotherhood"
+  },
+  {
+    "id": 12,
+    "slug": "guardians-of-the-galaxy",
+    "name": "Guardians of the Galaxy"
+  },
+  {
+    "id": 13,
+    "slug": "hydra",
+    "name": "HYDRA"
+  },
+  {
+    "id": 14,
+    "slug": "cabal",
+    "name": "Cabal"
+  },
+  {
+    "id": 15,
+    "slug": "illuminati",
+    "name": "Illuminati"
+  },
+  {
+    "id": 16,
+    "slug": "new-warriors",
+    "name": "New Warriors"
+  },
+  {
+    "id": 17,
+    "slug": "mercs-for-money",
+    "name": "Mercs for Money"
+  },
+  {
+    "id": 18,
+    "slug": "champions",
+    "name": "Champions"
+  },
+  {
+    "id": 19,
+    "slug": "warbound",
+    "name": "Warbound"
+  },
+  {
+    "id": 20,
+    "slug": "venomverse",
+    "name": "Venomverse"
+  },
+  {
+    "id": 21,
+    "slug": "heroes-of-asgard",
+    "name": "Heroes of Asgard"
+  },
+  {
+    "id": 22,
+    "slug": "inhumans",
+    "name": "Inhumans"
+  },
+  {
+    "id": 23,
+    "slug": "x-factor-investigations",
+    "name": "X-Factor Investigations"
+  },
+  {
+    "id": 24,
+    "slug": "heroes-of-wakanda",
+    "name": "Heroes of Wakanda"
+  },
+  {
+    "id": 25,
+    "slug": "guardians-of-the-multiverse",
+    "name": "Guardians of the Multiverse"
+  }
+]

@@ -1,0 +1,995 @@
+[
+  {
+    "id": -1,
+    "value": "none",
+    "label": " NONE",
+    "cardTypes": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 1,
+    "value": "teleport",
+    "label": "Teleport",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      6
+    ]
+  },
+  {
+    "id": 2,
+    "value": "bribe",
+    "label": "Bribe",
+    "cardTypes": [
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 3,
+    "value": "versatile",
+    "label": "Versatile",
+    "cardTypes": [
+      1,
+      2
+    ]
+  },
+  {
+    "id": 4,
+    "value": "focus",
+    "label": "Focus",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 5,
+    "value": "burrow",
+    "label": "Burrow",
+    "cardTypes": [
+      4
+    ]
+  },
+  {
+    "id": 6,
+    "value": "cosmicthreat",
+    "label": "Cosmic Threat",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 7,
+    "value": "wallcrawl",
+    "label": "Wall-Crawl",
+    "cardTypes": [
+      1,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 8,
+    "value": "feast",
+    "label": "Feast",
+    "cardTypes": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 9,
+    "value": "demolish",
+    "label": "Demolish",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 10,
+    "value": "dodge",
+    "label": "Dodge",
+    "cardTypes": [
+      1,
+      5
+    ]
+  },
+  {
+    "id": 11,
+    "value": "elusive",
+    "label": "Elusive",
+    "cardTypes": [
+      4
+    ]
+  },
+  {
+    "id": 12,
+    "value": "xtremeattack",
+    "label": "X-Treme Attack",
+    "cardTypes": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 13,
+    "value": "artifact",
+    "label": "Artifact",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 14,
+    "value": "thrownartifact",
+    "label": "Thrown Artifact",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 15,
+    "value": "uruenchantedweapons",
+    "label": "Uru-Enchanted Weapons",
+    "cardTypes": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 16,
+    "value": "riseofthelivingdead",
+    "label": "Rise of The Living Dead",
+    "cardTypes": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 17,
+    "value": "crossdimensionalrampage",
+    "label": "Cross-Dimensional Rampage",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 18,
+    "value": "spectrum",
+    "label": "Spectrum",
+    "cardTypes": [
+      1,
+      4
+    ]
+  },
+  {
+    "id": 19,
+    "value": "patrol",
+    "label": "Patrol",
+    "cardTypes": [
+      1,
+      4,
+      6
+    ]
+  },
+  {
+    "id": 20,
+    "value": "circleofkungfu",
+    "label": "Circle of Kung-Fu (and Quack-Fu)",
+    "cardTypes": [
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 21,
+    "value": "fatefulresurrection",
+    "label": "Fateful Resurrection",
+    "cardTypes": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 22,
+    "value": "charge",
+    "label": "Charge",
+    "cardTypes": [
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 23,
+    "value": "manoutoftime",
+    "label": "Man/Woman Out of Time",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 24,
+    "value": "savior",
+    "label": "Savior",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 25,
+    "value": "abomination",
+    "label": "Abomination",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 26,
+    "value": "sizechanging",
+    "label": "Size-Changing",
+    "cardTypes": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  {
+    "id": 27,
+    "value": "phasing",
+    "label": "Phasing",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 28,
+    "value": "fortify",
+    "label": "Fortify",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 29,
+    "value": "shieldclearance",
+    "label": "S.H.I.E.L.D. Clearance",
+    "cardTypes": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 30,
+    "value": "excessiveviolence",
+    "label": "Excessive Violence",
+    "cardTypes": [
+      1,
+      4
+    ]
+  },
+  {
+    "id": 31,
+    "value": "revenge",
+    "label": "Revenge",
+    "cardTypes": [
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 32,
+    "value": "investigate",
+    "label": "Investigate",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5,
+      6
+    ]
+  },
+  {
+    "id": 33,
+    "value": "hiddenwitness",
+    "label": "Hidden Witness",
+    "cardTypes": [
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 34,
+    "value": "xgene",
+    "label": "X-Gene",
+    "cardTypes": [
+      1,
+      4
+    ]
+  },
+  {
+    "id": 35,
+    "value": "piercingenergy",
+    "label": "Piercing Energy",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 36,
+    "value": "berserk",
+    "label": "Berserk",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5,
+      6
+    ]
+  },
+  {
+    "id": 37,
+    "value": "soaringflight",
+    "label": "Soaring Flight",
+    "cardTypes": [
+      1,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 38,
+    "value": "lightshow",
+    "label": "Lightshow",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 39,
+    "value": "dominate",
+    "label": "Dominate",
+    "cardTypes": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 40,
+    "value": "humanshield",
+    "label": "Human Shields",
+    "cardTypes": [
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 41,
+    "value": "dangersense",
+    "label": "Danger Sense",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 42,
+    "value": "striker",
+    "label": "Striker",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 43,
+    "value": "coordinate",
+    "label": "Coordinate",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 44,
+    "value": "cheeringcrowds",
+    "label": "Cheering Crowds",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 45,
+    "value": "transform",
+    "label": "Transform",
+    "cardTypes": [
+      1,
+      2
+    ]
+  },
+  {
+    "id": 46,
+    "value": "outwit",
+    "label": "Outwit",
+    "cardTypes": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 47,
+    "value": "smash",
+    "label": "Smash",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 48,
+    "value": "woundedfury",
+    "label": "Wounded Fury",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 49,
+    "value": "conqueror",
+    "label": "Conqueror",
+    "cardTypes": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 50,
+    "value": "microscopicsizechanging",
+    "label": "Microscopic Size-Changing",
+    "cardTypes": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 51,
+    "value": "empowered",
+    "label": "Empowered",
+    "cardTypes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 52,
+    "value": "chivalrousduel",
+    "label": "Chivalrous Duel",
+    "cardTypes": [
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 53,
+    "value": "symbiotebonds",
+    "label": "Symbiote Bonds",
+    "cardTypes": [
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 54,
+    "value": "digest",
+    "label": "Digest",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 55,
+    "value": "indigestion",
+    "label": "Indigestion",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 56,
+    "value": "switcheroo",
+    "label": "Switcheroo",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 57,
+    "value": "hyperspeed",
+    "label": "Hyperspeed",
+    "cardTypes": [
+      1,
+      6
+    ]
+  },
+  {
+    "id": 58,
+    "value": "darkmemories",
+    "label": "Dark Memories",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 59,
+    "value": "laststand",
+    "label": "Last Stand",
+    "cardTypes": [
+      1,
+      4
+    ]
+  },
+  {
+    "id": 60,
+    "value": "undercover",
+    "label": "Undercover",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 61,
+    "value": "shieldlevel",
+    "label": "S.H.I.E.L.D. Level",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 62,
+    "value": "hydralevel",
+    "label": "Hydra Level",
+    "cardTypes": [
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 63,
+    "value": "worthy",
+    "label": "Worthy",
+    "cardTypes": [
+      1,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 64,
+    "value": "moonlightsunlight",
+    "label": "Moonlight and Sunlight",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 65,
+    "value": "wakingnightmare",
+    "label": "Waking Nightmare",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 66,
+    "value": "burnshards",
+    "label": "Burn Shards",
+    "cardTypes": [
+      1,
+      3
+    ]
+  },
+  {
+    "id": 67,
+    "value": "celestialboon",
+    "label": "Celestial Boon",
+    "cardTypes": [
+      4
+    ]
+  },
+  {
+    "id": 68,
+    "value": "contestofchampions",
+    "label": "Contest of Champions",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 69,
+    "value": "whenrecruited",
+    "label": "“When Recruited“ Abilities",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 70,
+    "value": "thronesfavor",
+    "label": "Thrones Favor",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 71,
+    "value": "momentum",
+    "label": "Momentum",
+    "cardTypes": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 72,
+    "value": "clone",
+    "label": "Clone",
+    "cardTypes": [
+      1,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  {
+    "id": 73,
+    "value": "shatter",
+    "label": "Shatter",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      6
+    ]
+  },
+  {
+    "id": 74,
+    "value": "prey",
+    "label": "Prey",
+    "cardTypes": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 75,
+    "value": "tacticalformation",
+    "label": "Tactical Formation",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 76,
+    "value": "astralplane",
+    "label": "Astral Plane",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 77,
+    "value": "demonicbargain",
+    "label": "Demonic Bargain",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 78,
+    "value": "ritualartifact",
+    "label": "Ritual Artifact",
+    "cardTypes": [
+      1,
+      5
+    ]
+  },
+  {
+    "id": 79,
+    "value": "triggeredartifact",
+    "label": "Triggered Artifact",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 80,
+    "value": "excessivekindness",
+    "label": "Excessive Kindness",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 81,
+    "value": "command",
+    "label": "Command",
+    "cardTypes": [
+      4
+    ]
+  },
+  {
+    "id": 82,
+    "value": "villainousweapons",
+    "label": "Villainous Weapons",
+    "cardTypes": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 83,
+    "value": "ambush",
+    "label": "Ambush",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 84,
+    "value": "unleash",
+    "label": "Unleash",
+    "cardTypes": [
+      1,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 85,
+    "value": "whenrecruitedundercover",
+    "label": "When Recruited: Send This Undercover",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 86,
+    "value": "sacrifice",
+    "label": "Sacrifice",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 87,
+    "value": "endgame",
+    "label": "Endgame",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 88,
+    "value": "bloodfrenzy",
+    "label": "Blood Frenzy",
+    "cardTypes": [
+      1,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 89,
+    "value": "huntforvictims",
+    "label": "Hunt for Victims",
+    "cardTypes": [
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 90,
+    "value": "haunt",
+    "label": "Haunt",
+    "cardTypes": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 91,
+    "value": "whatif",
+    "label": "What If...?",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 92,
+    "value": "liberate",
+    "label": "Liberate",
+    "cardTypes": [
+      1,
+      3
+    ]
+  },
+  {
+    "id": 93,
+    "value": "soulbind",
+    "label": "Soulbind",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 94,
+    "value": "heist",
+    "label": "Heist",
+    "cardTypes": [
+      1,
+      4,
+      5
+    ]
+  },
+  {
+    "id": 95,
+    "value": "antics",
+    "label": "Antics",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 96,
+    "value": "explore",
+    "label": "Explore",
+    "cardTypes": [
+      1,
+      3,
+      4
+    ]
+  },
+  {
+    "id": 97,
+    "value": "doublecross",
+    "label": "Double-Cross",
+    "cardTypes": [
+      2,
+      4
+    ]
+  },
+  {
+    "id": 98,
+    "value": "cybermod",
+    "label": "Cyber-Mod",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 99,
+    "value": "fatedfuture",
+    "label": "Fated Future",
+    "cardTypes": [
+      1
+    ]
+  },
+  {
+    "id": 100,
+    "value": "fightorfail",
+    "label": "Fight or Fail",
+    "cardTypes": [
+      4
+    ]
+  },
+  {
+    "id": 101,
+    "value": "weaponxsequence",
+    "label": "Weapon X Sequence",
+    "cardTypes": [
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": 102,
+    "value": "fail",
+    "label": "Fail",
+    "cardTypes": [
+      2,
+      4
+    ]
+  }
+]

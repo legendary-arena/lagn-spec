@@ -1,0 +1,233 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "valkyrie",
+      "cards": [
+        {
+          "slug": "flying-stallion",
+          "abilities": [
+            "[keyword:Streets] [keyword:Conqueror] 1",
+            "When an Ambush ability is played, before it takes effect, you may discard this card. If you do, draw two extra cards at the end of this turn."
+          ]
+        },
+        {
+          "slug": "usher-to-valhalla",
+          "abilities": [
+            "[keyword:Bridge] [keyword:Conqueror] 1",
+            "[team:heroes-of-asgard]: The first time you defeat a Villain this turn, you may KO one of your cards or a card from your discard pile."
+          ]
+        },
+        {
+          "slug": "ride-of-the-valkyries",
+          "abilities": [
+            "[keyword:Streets] [keyword:Conqueror] 1",
+            "[hc:instinct]: You get +1[icon:attack] for every 4 Heroes in the KO pile."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "warriors-three-the",
+      "cards": [
+        {
+          "slug": "volstagg-the-valiant",
+          "abilities": [
+            "[keyword:Bridge] [keyword:Conqueror] 1",
+            "[hc:instinct]: Instead, [keyword:Conqueror]"
+          ]
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "hela-goddess-of-death",
+      "cards": [
+        {
+          "slug": "hela-goddess-of-death",
+          "abilities": [
+            "[keyword:Bridge] [keyword:Conqueror] 5 [keyword:Streets] [keyword:Conqueror] 5",
+            "Always Leads: Omens of Ragnarok",
+            "Master Strike: This Strike enters the city as a 5[icon:attack] \"Army of the Dead\" Villain worth 3VP. Then choose a Villain worth 3VP or more from your Victory Pile (including an Army of the Dead) to enter the city. If you didn't have any, each player gains a Wound."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mm-hela-goddess-of-death.webp",
+          "vAttack": "10+"
+        },
+        {
+          "slug": "epic-hela-goddess-of-death",
+          "abilities": [
+            "[keyword:Bridge] [keyword:Conqueror] 6 [keyword:Streets] [keyword:Conqueror] 6",
+            "Always Leads: Omens of Ragnarok",
+            "Master Strike: This Strike enters the city as a 6[icon:attack] \"Army of the Dead\" Villain worth 4VP. Then choose a Villain worth 4VP or more from your Victory Pile (including an Army of the Dead) to enter the city. If you didn't have any, each player gains a Wound."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-me-hela-goddess-of-death.webp",
+          "vAttack": "12+"
+        },
+        {
+          "slug": "helas-cloak",
+          "abilities": [
+            "Fight: Rescue 4 Bystanders. Hela captures this card as a [keyword:Villainous Weapons].",
+            "",
+            "[keyword:Artifact] - Once during each player's turn, if you would gain a Wound, you may draw a card instead."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-helas-cloak.webp",
+          "vAttack": "+2"
+        },
+        {
+          "slug": "the-nightsword",
+          "abilities": [
+            "Fight: Rescue 4 Bystanders. Hela captures this card as a [keyword:Villainous Weapons].",
+            "",
+            "[keyword:Thrown Artifact] - When you throw this, you get [keyword:Conqueror]."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-the-nightsword.webp",
+          "vAttack": "+3"
+        },
+        {
+          "slug": "naglfar-longship-of-fingernails",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-naglfar-longship-of-fingernails.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "seize-bifrost-the-rainbow-bridge",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-seize-bifrost-the-rainbow-bridge.webp",
+          "vAttack": 10
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "malekith-the-accursed",
+      "cards": [
+        {
+          "slug": "malekith-the-accursed",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mm-malekith-the-accursed.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "epic-malekith-the-accursed",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-me-malekith-the-accursed.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "black-hammer-of-the-accursed",
+          "abilities": [
+            "Fight: Rescue 4 Bystanders. Malekith captures a [keyword:Villainous Weapons] from the city or from any player's control or discard pile. Then this Tactic enters the city as a [keyword:Villainous Weapons].",
+            "",
+            "[keyword:Artifact] - Once per turn, you may KO a Hero from your discard pile."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-black-hammer-of-the-accursed.webp",
+          "vAttack": "+4"
+        },
+        {
+          "slug": "dagger-of-living-abyss",
+          "abilities": [
+            "Fight: Rescue 4 Bystanders. Malekith captures a [keyword:Villainous Weapons] from the city or from any player's control or discard pile. Then this Tactic enters the city as a [keyword:Villainous Weapons].",
+            "",
+            "[keyword:Artifact] - Once per turn, you may defeat a Villain worth 2VP or less."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-dagger-of-living-abyss.webp",
+          "vAttack": "+2"
+        },
+        {
+          "slug": "the-hunting-horn-of-faerie",
+          "abilities": [
+            "Fight: Rescue 4 Bystanders. Malekith captures a [keyword:Villainous Weapons] from the city or from any player's control or discard pile. Then this Tactic enters the city as a [keyword:Villainous Weapons].",
+            "",
+            "[keyword:Artifact] - Once per turn, draw a card."
+          ],
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-the-hunting-horn-of-faerie.webp",
+          "vAttack": "+3"
+        },
+        {
+          "slug": "vulnerable-to-cold-iron",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-vulnerable-to-cold-iron.webp",
+          "vAttack": 8
+        }
+      ]
+    }
+  ],
+  "villains": [
+    {
+      "_op": "merge",
+      "slug": "dark-council",
+      "cards": [
+        {
+          "slug": "jarnbjorn-first-axe-of-thor",
+          "abilities": [
+            "[keyword:Villainous Weapons]",
+            "",
+            "[keyword:Thrown Artifact] When you throw this, you get +3[icon:attack]."
+          ]
+        },
+        {
+          "slug": "the-casket-of-ancient-winters",
+          "abilities": [
+            "[keyword:Villainous Weapons]",
+            "",
+            "[keyword:Artifact] Once per turn, if you are [keyword:Worthy], you get +2[icon:recruit]."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "omens-of-ragnarok",
+      "cards": [
+        {
+          "slug": "the-eternal-flame",
+          "abilities": [
+            "[keyword:Villainous Weapons]",
+            "Ambush: If Surtur is in the city, he captures The Eternal Flame. If a player controls \"Surtur's Crown\", that card enters the city as the Villain Surtur and captures The Eternal Flame.",
+            "[keyword:Artifact] Once per turn, return a 0-cost card from your discard pile to your hand."
+          ]
+        },
+        {
+          "slug": "the-hel-crown",
+          "abilities": [
+            "[keyword:Villainous Weapons]",
+            "",
+            "[keyword:Artifact] Once per turn, you get [keyword:Conqueror]."
+          ]
+        },
+        {
+          "slug": "skurge-the-executioner",
+          "abilities": [
+            "[keyword:Bridge] [keyword:Conqueror] 3",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "slug": "surtur-fire-giant-king",
+          "abilities": [
+            "Fight: Put this into your discard pile as a \"Surtur's Crown\" Artifact.",
+            "Escape: If Surtur was holding The Eternal Flame, say \"Ragnarok has come\", KO each [team:heroes-of-asgard] Hero from the HQ, and each player gains two Wounds.",
+            "",
+            "[keyword:Artifact] Once per turn, you get [keyword:Conqueror]."
+          ]
+        },
+        {
+          "slug": "jormungand-the-world-serpent",
+          "abilities": [
+            "[keyword:Sewers] [keyword:Conqueror] 1",
+            "[keyword:Bank] [keyword:Conqueror] 1",
+            "[keyword:Rooftops] [keyword:Conqueror] 1",
+            "[keyword:Streets] [keyword:Conqueror] 1",
+            "[keyword:Bridge] [keyword:Conqueror] 1",
+            "Fight: Each Hero currently in the HQ costs 1 less this turn."
+          ]
+        },
+        {
+          "slug": "the-fenris-wolf",
+          "abilities": [
+            "[keyword:Streets] [keyword:Conqueror] 2",
+            "Ambush: The Fenris Wolf moves forward to the Rooftops, pushing other Villains forward as normal."
+          ]
+        }
+      ]
+    }
+  ]
+}

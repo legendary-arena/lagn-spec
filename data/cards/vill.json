@@ -8,7 +8,11 @@
       "name": "Bullseye",
       "slug": "bullseye",
       "team": "crime-syndicate",
-      "cardCounts": null,
+      "cardCounts": {
+        "Fulfill the Contract": 5,
+        "Everything's a Weapon": 5,
+        "Specialist Assassin": 3
+      },
       "cards": [
         {
           "name": "Fulfill the Contract",
@@ -82,7 +86,12 @@
       "name": "Dr. Octopus",
       "slug": "dr-octopus",
       "team": "sinister-six",
-      "cardCounts": null,
+      "cardCounts": {
+        "Brilliant Research": 5,
+        "Crazed Experiments": 5,
+        "Eighth Time's a Charm": 3,
+        "Octo-Pulverize": 1
+      },
       "cards": [
         {
           "name": "Brilliant Research",
@@ -155,7 +164,12 @@
       "name": "Electro",
       "slug": "electro",
       "team": "sinister-six",
-      "cardCounts": null,
+      "cardCounts": {
+        "Electroshock Therapy": 5,
+        "Shocking Robbery": 5,
+        "Supercharge": 3,
+        "Anti-Matter": 1
+      },
       "cards": [
         {
           "name": "Electroshock Therapy",
@@ -232,7 +246,12 @@
       "name": "Enchantress",
       "slug": "enchantress",
       "team": "foes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "Enchant the Senses": 5,
+        "Soul Sacrifice": 5,
+        "Irresistible Bribe": 3,
+        "Unending Anguish": 1
+      },
       "cards": [
         {
           "name": "Enchant the Senses",
@@ -307,7 +326,12 @@
       "name": "Green Goblin",
       "slug": "green-goblin",
       "team": "sinister-six",
-      "cardCounts": null,
+      "cardCounts": {
+        "Pumpkin Bombs": 5,
+        "Goblin Glider": 5,
+        "Unstable Kidnapper": 3,
+        "Experimental Goblin Serum": 1
+      },
       "cards": [
         {
           "name": "Pumpkin Bombs",
@@ -383,7 +407,12 @@
       "name": "Juggernaut",
       "slug": "juggernaut",
       "team": "brotherhood",
-      "cardCounts": null,
+      "cardCounts": {
+        "Crimson Gem of Cyttorak": 5,
+        "Size Matters": 5,
+        "Runaway Train": 3,
+        "Unstoppable Force": 1
+      },
       "cards": [
         {
           "name": "Crimson Gem of Cyttorak",
@@ -456,7 +485,12 @@
       "name": "Kingpin",
       "slug": "kingpin",
       "team": "crime-syndicate",
-      "cardCounts": null,
+      "cardCounts": {
+        "Pull the Strings": 5,
+        "Recruitment Day": 5,
+        "Import Illegal Weapons": 3,
+        "Endless Underlings": 1
+      },
       "cards": [
         {
           "name": "Pull the Strings",
@@ -531,7 +565,12 @@
       "name": "Kraven",
       "slug": "kraven",
       "team": "sinister-six",
-      "cardCounts": null,
+      "cardCounts": {
+        "Ceaseless Tracker": 5,
+        "Corner the Prey": 5,
+        "Hunt Down": 3,
+        "He's the Best Around": 1
+      },
       "cards": [
         {
           "name": "Ceaseless Tracker",
@@ -605,7 +644,12 @@
       "name": "Loki",
       "slug": "loki",
       "team": "foes-of-asgard",
-      "cardCounts": null,
+      "cardCounts": {
+        "All Humans Are Expendable": 5,
+        "Illusionary Bindings": 5,
+        "Father of Lies": 3,
+        "God of Mischief": 1
+      },
       "cards": [
         {
           "name": "All Humans Are Expendable",
@@ -678,7 +722,12 @@
       "name": "Magneto",
       "slug": "magneto",
       "team": "brotherhood",
-      "cardCounts": null,
+      "cardCounts": {
+        "Magnetic Levitation": 5,
+        "Mutants Will Rule": 5,
+        "Weapons from Scrap Metal": 3,
+        "Master of Magnetism": 1
+      },
       "cards": [
         {
           "name": "Magnetic Levitation",
@@ -753,7 +802,12 @@
       "name": "Mysterio",
       "slug": "mysterio",
       "team": "sinister-six",
-      "cardCounts": null,
+      "cardCounts": {
+        "Psychedelic Mist": 5,
+        "Shifting Decoy": 5,
+        "Holographic Illusion": 3,
+        "False Reflection": 1
+      },
       "cards": [
         {
           "name": "Psychedelic Mist",
@@ -828,7 +882,12 @@
       "name": "Mystique",
       "slug": "mystique",
       "team": "brotherhood",
-      "cardCounts": null,
+      "cardCounts": {
+        "Show Your True Colors": 5,
+        "Hidden Weapons": 5,
+        "Turn the Tide": 3,
+        "Spy Games": 1
+      },
       "cards": [
         {
           "name": "Show Your True Colors",
@@ -902,7 +961,12 @@
       "name": "Sabretooth",
       "slug": "sabretooth",
       "team": "brotherhood",
-      "cardCounts": null,
+      "cardCounts": {
+        "Leap of the Tiger": 5,
+        "Take One for the Team": 5,
+        "Stealthy Predator": 3,
+        "Upper Hand": 1
+      },
       "cards": [
         {
           "name": "Leap of the Tiger",
@@ -976,7 +1040,12 @@
       "name": "Ultron",
       "slug": "ultron",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Encephalo-Ray": 5,
+        "Army of Ultrons": 5,
+        "Genetic Experimentation": 3,
+        "Molecular Rearrangement": 1
+      },
       "cards": [
         {
           "name": "Encephalo-Ray",
@@ -1052,7 +1121,12 @@
       "name": "Venom",
       "slug": "venom",
       "team": "sinister-six",
-      "cardCounts": null,
+      "cardCounts": {
+        "Symbiote Takeover": 5,
+        "Devour": 5,
+        "Horrify the Populace": 3,
+        "Ravenous Greed": 1
+      },
       "cards": [
         {
           "name": "Symbiote Takeover",
@@ -1134,8 +1208,8 @@
           "name": "Dr. Strange",
           "slug": "dr-strange",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mm-dr-strange.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-01.png",
           "abilities": [
             "Always Leads: Defenders",
             "Command Strike: Reveal the top three cards of the Adversary Deck. Put the Adversary you revealed with the highest printed [icon:attack] on top of that deck. Then play a Plot Twist from among the cards you revealed. Then put the rest of those cards on the bottom of that deck in random order."
@@ -1145,8 +1219,8 @@
           "name": "Book of the Vishanti",
           "slug": "book-of-the-vishanti",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-dr-strange-book-of-the-vishanti.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-05.png",
           "abilities": [
             "Fight: Each other player reveals a [hc:covert] Ally or discards all the cards in their hand, then draws as many cards as they discarded."
           ]
@@ -1155,8 +1229,8 @@
           "name": "Crimson Bands of Cyttorak",
           "slug": "crimson-bands-of-cyttorak",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-dr-strange-crimson-bands-of-cyttorak.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-03.png",
           "abilities": [
             "Fight: Each other player reveals their hand, then gains a Bindings for each non-grey Ally that player has."
           ]
@@ -1165,8 +1239,8 @@
           "name": "Eye of Agamotto",
           "slug": "eye-of-agamotto",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-dr-strange-eye-of-agamotto.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-04.png",
           "abilities": [
             "Fight: Reveal cards from the Ally Deck equal to the number of players. Put one of those cards into each player's discard pile."
           ]
@@ -1175,8 +1249,8 @@
           "name": "Winds of Watoomb",
           "slug": "winds-of-watoomb",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-dr-strange-winds-of-watoomb.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-02.png",
           "abilities": [
             "Fight: After you draw a new hand of cards at the end of this turn, each player simultaneously passes a non-grey Ally from their hand to the hand of the player on their left."
           ]
@@ -1194,8 +1268,8 @@
           "name": "Nick Fury",
           "slug": "nick-fury",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mm-nick-fury.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-01-1.png",
           "abilities": [
             "Always Leads: Avengers",
             "Command Strike: Stack this Strike next to Nick Fury. Then [keyword:demolish] each player once for each Strike stacked here."
@@ -1205,8 +1279,8 @@
           "name": "Bounty on Fury's Head",
           "slug": "bounty-on-furys-head",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-nick-fury-bounty-on-furys-head.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-03-1.png",
           "abilities": [
             "Fight: KO any number of your [team:hydra] Allies. For each Ally you KO'd this way, you may gain a Madame HYDRA."
           ]
@@ -1215,8 +1289,8 @@
           "name": "Purge Hydra",
           "slug": "purge-hydra",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-nick-fury-purge-hydra.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-05.png",
           "abilities": [
             "Fight: Each other player reveals their hand and discards two [team:hydra] Allies."
           ]
@@ -1225,8 +1299,8 @@
           "name": "The Avengers Initiative",
           "slug": "the-avengers-initiative",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-nick-fury-the-avengers-initiative.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-02-1.png",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Ally or chooses an Avengers Adversary from their Victory Pile and it enters the Bridge."
           ]
@@ -1235,8 +1309,8 @@
           "name": "Total Fury",
           "slug": "total-fury",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-nick-fury-total-fury.webp",
+          "vAttack": 9,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-04-1.png",
           "abilities": [
             "Fight: Defeat an Adversary whose [icon:attack] is less than the number of [team:hydra] Allies in the KO pile."
           ]
@@ -1255,7 +1329,7 @@
           "slug": "odin",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mm-odin.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-01.png",
           "abilities": [
             "Always Leads: Asgardian Warriors",
             "Odin gets +1[icon:attack] for each Asgardian Warrior in the city and in the Overrun Pile.",
@@ -1266,8 +1340,8 @@
           "name": "Divine Justice",
           "slug": "divine-justice",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-odin-divine-justice.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-02.png",
           "abilities": [
             "Fight: Each other player with a Bindings in their discard pile gains another Bindings."
           ]
@@ -1276,8 +1350,8 @@
           "name": "Might of Valhalla",
           "slug": "might-of-valhalla",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-odin-might-of-valhalla.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-03.png",
           "abilities": [
             "Fight: Draw a card for each Asgardian Warrior in your Victory Pile."
           ]
@@ -1286,8 +1360,8 @@
           "name": "Riches of Asgard",
           "slug": "riches-of-asgard",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-odin-riches-of-asgard.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-04.png",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Asgardian Warrior in your Victory Pile."
           ]
@@ -1296,8 +1370,8 @@
           "name": "Ride of the Valkyries",
           "slug": "ride-of-the-valkyries",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-odin-ride-of-the-valkyries.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-05.png",
           "abilities": [
             "Fight: Each other player reveals a [team:foes-of-asgard] Ally or discards a card for each Asgardian Warrior in the Overrun Pile."
           ]
@@ -1316,7 +1390,7 @@
           "slug": "professor-x",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mm-professor-x.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-01-1.png",
           "abilities": [
             "Always Leads: X-men First Class",
             "Command Strike: Choose the two highest-cost Allies in the Lair. Stack them next to Professor X as “Telepathic Pawns.“ Professor X gets +1[icon:attack] for each Ally stacked next to him. Players can recrut the top Ally in the stack next to Professor X."
@@ -1326,8 +1400,8 @@
           "name": "Cerebro Device",
           "slug": "cerebro-device",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-professor-x-cerebro-device.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-05.png",
           "abilities": [
             "Fight: Reveal the top three cards of the Adversary Deck. Play any Adversaries you revealed that have “[keyword:X-Treme Attack]“. Put the rest back in random order."
           ]
@@ -1336,8 +1410,8 @@
           "name": "Mental Dominance",
           "slug": "mental-dominance",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-professor-x-mental-dominance.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-03-1.png",
           "abilities": [
             "Fight: Stack the top three cards of the Ally Deck next to Professor X in random order as “Telepathic Pawns.“"
           ]
@@ -1346,8 +1420,8 @@
           "name": "Mightiest Mutant Mind",
           "slug": "mightiest-mutant-mind",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-professor-x-mightiest-mutant-mind.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-04-1.png",
           "abilities": [
             "Fight: Each other player reveals a [team:brotherhood] Ally or stacks a non-grey Ally from their hand next to Professor X as a “Telepathic Pawn.“"
           ]
@@ -1356,8 +1430,8 @@
           "name": "Telepathic Imprisonment",
           "slug": "telepathic-imprisonment",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-mt-professor-x-telepathic-imprisonment.webp",
+          "vAttack": 8,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-02-1.png",
           "abilities": [
             "Fight: Each other player reveals a [team:brotherhood] Ally or gains a Bindings."
           ]
@@ -1772,28 +1846,36 @@
       "name": "Asgardian Warriors",
       "slug": "asgardian-warriors",
       "imageUrl": "https://images.barefootbetters.com/vill/vill-hm-asgardian-warriors.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: Draw a card."
+      ]
     },
     {
       "id": 8,
       "name": "Cops",
       "slug": "cops",
       "imageUrl": "https://images.barefootbetters.com/vill/vill-hm-cops.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: Gain a New Recruit."
+      ]
     },
     {
       "id": 9,
       "name": "Multiple Man",
       "slug": "multiple-man",
       "imageUrl": "https://images.barefootbetters.com/vill/vill-hm-multiple-man.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: KO one of your Allies for each other Multiple Man in your Victory Pile."
+      ]
     },
     {
       "id": 10,
       "name": "S.H.I.E.L.D. Assault Squad",
       "slug": "shield-assault-squad",
       "imageUrl": "https://images.barefootbetters.com/vill/vill-hm-shield-assault-squad.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: Discard the top card of your deck. Then KO an Ally from your discard pile."
+      ]
     }
   ],
   "schemes": [
@@ -2000,22 +2082,6 @@
       ]
     }
   ],
-  "wounds": [
-    {
-      "id": 2,
-      "name": "Bindings",
-      "filterName": null,
-      "slug": "bindings",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-wd-bindings.webp",
-      "cards": [
-        {
-          "qtd": 30,
-          "abilities": [
-            "Betrayal: If you don't recruit any Allies or defeat any Adversaries or Commanders on your turn, you may KO a Bindings from your hand. If you do, the player to your right gains all the other Bindings from your hand."
-          ]
-        }
-      ]
-    }
-  ],
+  "wounds": [],
   "other": []
 }

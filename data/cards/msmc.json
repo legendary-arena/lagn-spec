@@ -711,7 +711,7 @@
           "abilities": [
             "All Sentinel Masterminds get +1[icon:attack] for each Master Strike in the KO pile, even after Bastion is defeated.",
             "Always Leads: Purifiers and any Sentinel Henchmen Group.",
-            "Master Strike: A card from the Bystander Stack ascends to become a 3[icon:attack] [rule:“Prime Sentinel“ Mastermind] with “Fight: Rescue this. Master Strike: Each player reveals the top card of their deck and discards it if it costs 1 or more.“"
+            "Master Strike: A card from the Bystander Stack ascends to become a 3[icon:attack] “Prime Sentinel“ Mastermind with “Fight: Rescue this. Master Strike: Each player reveals the top card of their deck and discards it if it costs 1 or more.“"
           ]
         },
         {
@@ -723,7 +723,7 @@
           "abilities": [
             "All Sentinel enemies get +1[icon:attack] for each Master Strike in the KO pile, even after Bastion is defeated.",
             "Always Leads: Purifiers and any Sentinel Henchmen Group.",
-            "Master Strike: A card from the Bystander Stack ascends to become a 4[icon:attack] [rule:“Prime Sentinel“ Mastermind] with “Fight: Rescue this. Master Strike: Each player reveals the top card of their deck and KOs it if it costs 1 or more.“"
+            "Master Strike: A card from the Bystander Stack ascends to become a 4[icon:attack] “Prime Sentinel“ Mastermind with “Fight: Rescue this. Master Strike: Each player reveals the top card of their deck and KOs it if it costs 1 or more.“"
           ]
         },
         {
@@ -1120,7 +1120,7 @@
       "vAttack": 3
     },
     {
-      "id": 44,
+      "id": 38,
       "name": "Sentinel Squad O∗N∗E∗",
       "slug": "sentinel-squad-o-n-e",
       "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hm-sentinel-squad-o-n-e.webp",

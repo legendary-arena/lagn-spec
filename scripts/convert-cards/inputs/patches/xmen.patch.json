@@ -1,0 +1,196 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "arcade",
+      "cards": [
+        {
+          "slug": "arcade",
+          "vAttack": "3*"
+        },
+        {
+          "slug": "i-love-a-parade",
+          "vAttack": 3
+        },
+        {
+          "slug": "i-need-an-audience",
+          "vAttack": 3
+        },
+        {
+          "slug": "roulette-wheel-of-death",
+          "vAttack": 3
+        },
+        {
+          "slug": "welcome-to-my-theme-park",
+          "vAttack": 3
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "dark-phoenix",
+      "cards": [
+        {
+          "slug": "dark-phoenix",
+          "vAttack": 13
+        },
+        {
+          "slug": "burn-the-world-to-ashes",
+          "vAttack": 13
+        },
+        {
+          "slug": "consume-an-entire-galaxy",
+          "vAttack": 13
+        },
+        {
+          "slug": "fiery-reincarnation",
+          "vAttack": 13
+        },
+        {
+          "slug": "worship-me-as-a-god",
+          "vAttack": 13
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "deathbird",
+      "cards": [
+        {
+          "slug": "shiar-elite-bodyguards",
+          "vAttack": 8
+        },
+        {
+          "slug": "shiar-extermination-legion",
+          "vAttack": 8
+        },
+        {
+          "slug": "shiar-hovertake-battalion",
+          "vAttack": 8
+        },
+        {
+          "slug": "shiar-master-spies",
+          "vAttack": 8
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mojo",
+      "cards": [
+        {
+          "slug": "mojo",
+          "vAttack": "6*"
+        },
+        {
+          "slug": "billions-of-tv-viewers",
+          "vAttack": 6
+        },
+        {
+          "slug": "brain-melting-tv-marathon",
+          "vAttack": 6
+        },
+        {
+          "slug": "cross-dimensional-marketing",
+          "vAttack": 6
+        },
+        {
+          "slug": "mojo-branding-opportunity",
+          "vAttack": 6
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "onslaught",
+      "cards": [
+        {
+          "slug": "godlike-psionic-entity",
+          "vAttack": 10
+        },
+        {
+          "slug": "sins-of-x-men-past",
+          "vAttack": 10
+        },
+        {
+          "slug": "xavier-and-magneto-combined",
+          "vAttack": 10
+        },
+        {
+          "slug": "worldwide-mental-control",
+          "vAttack": 10
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "shadow-king",
+      "cards": [
+        {
+          "slug": "fiend-of-the-astral-plane",
+          "vAttack": 7
+        },
+        {
+          "slug": "poison-their-minds",
+          "vAttack": 7
+        },
+        {
+          "slug": "psychic-seduction",
+          "vAttack": 7
+        },
+        {
+          "slug": "telepathic-betrayal",
+          "vAttack": 7
+        }
+      ]
+    }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "aurora-northstar",
+      "cards": [
+        {
+          "slug": "blazing-fists",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-4c2.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "colossus-wolverine",
+      "cards": [
+        {
+          "slug": "unpredictable",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-3c1.webp"
+        },
+        {
+          "slug": "fastball-special",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-4c2.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "legion",
+      "cards": [
+        {
+          "slug": "bend-light",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-2c1.webp"
+        },
+        {
+          "slug": "split-personality",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-3c3.webp"
+        },
+        {
+          "slug": "split-eardrums",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-3c2.webp"
+        },
+        {
+          "slug": "channel-fire",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-5u.webp"
+        }
+      ]
+    }
+  ]
+}

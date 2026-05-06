@@ -1,0 +1,184 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "doctor-strange",
+      "cards": [
+        {
+          "slug": "wand-of-watoomb",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-3c1.webp"
+        },
+        {
+          "slug": "keeper-of-the-sanctum",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-4c2.webp"
+        },
+        {
+          "slug": "book-of-cagliostro",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-2u.webp"
+        },
+        {
+          "slug": "the-eye-of-agamotto",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "doctor-voodoo",
+      "cards": [
+        {
+          "slug": "commune-with-the-spirit-world",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-3c1.webp"
+        },
+        {
+          "slug": "medallion-of-many-loas",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-4c2.webp"
+        },
+        {
+          "slug": "staff-of-legba",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-5u.webp"
+        },
+        {
+          "slug": "posessed-by-brothers-spirit",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "clea",
+      "cards": [
+        {
+          "slug": "prepare-dark-magic",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-3c1.webp"
+        },
+        {
+          "slug": "demonic-descendant",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-4c2.webp"
+        },
+        {
+          "slug": "bind-the-dark-dimension",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-6u.webp"
+        },
+        {
+          "slug": "the-purple-gem",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ancient-one-the",
+      "cards": [
+        {
+          "slug": "astral-confrontation",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-3c1.webp"
+        },
+        {
+          "slug": "teachings-of-kamar-taj",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-5c2.webp"
+        },
+        {
+          "slug": "war-of-the-mind",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-6u.webp"
+        },
+        {
+          "slug": "the-orb-of-agamotto",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "vishanti-the",
+      "cards": [
+        {
+          "slug": "oshtur",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-3c1.webp"
+        },
+        {
+          "slug": "hoggoth",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-5c2.webp"
+        },
+        {
+          "slug": "agamotto",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-4u.webp"
+        },
+        {
+          "slug": "the-book-of-the-vishanti",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-7r.webp"
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "nightmare",
+      "cards": [
+        {
+          "slug": "nightmare",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mm-nightmare.webp"
+        },
+        {
+          "slug": "epic-nightmare",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-me-nightmare.webp"
+        },
+        {
+          "slug": "deadly-waking-nightmares",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-nightmare-deadly-waking-nightmares.webp",
+          "vAttack": 6
+        },
+        {
+          "slug": "dont-fall-asleep",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-nightmare-dont-fall-asleep.webp",
+          "vAttack": 6
+        },
+        {
+          "slug": "dream-weaver",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-nightmare-dream-weaver.webp",
+          "vAttack": 6
+        },
+        {
+          "slug": "night-terrors",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-nightmare-night-terrors.webp",
+          "vAttack": 6
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "dormammu",
+      "cards": [
+        {
+          "slug": "dormammu",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mm-dormammu.webp"
+        },
+        {
+          "slug": "epic-dormammu",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-me-dormammu.webp"
+        },
+        {
+          "slug": "barter-for-souls",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-dormammu-barter-for-souls.webp",
+          "vAttack": 11
+        },
+        {
+          "slug": "demonic-hellfire",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-dormammu-demonic-hellfire.webp",
+          "vAttack": 11
+        },
+        {
+          "slug": "flames-of-regency",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-dormammu-flames-of-regency.webp",
+          "vAttack": 11
+        },
+        {
+          "slug": "torments-of-the-dark-dimension",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-dormammu-torments-of-the-dark-dimension.webp",
+          "vAttack": 11
+        }
+      ]
+    }
+  ]
+}

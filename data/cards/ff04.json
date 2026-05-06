@@ -8,7 +8,12 @@
       "name": "Human Torch",
       "slug": "human-torch",
       "team": "fantastic-four",
-      "cardCounts": null,
+      "cardCounts": {
+        "Call for Backup": 5,
+        "Hothead": 5,
+        "Flame On!": 3,
+        "Nova Flame": 1
+      },
       "cards": [
         {
           "name": "Call for Backup",
@@ -81,7 +86,12 @@
       "name": "Invisible Woman",
       "slug": "invisible-woman",
       "team": "fantastic-four",
-      "cardCounts": null,
+      "cardCounts": {
+        "Disappearing Act": 5,
+        "Four of a Kind": 5,
+        "Unseen Rescue": 3,
+        "Invisible Barrier": 1
+      },
       "cards": [
         {
           "name": "Disappearing Act",
@@ -154,7 +164,12 @@
       "name": "Mr. Fantastic",
       "slug": "mr-fantastic",
       "team": "fantastic-four",
-      "cardCounts": null,
+      "cardCounts": {
+        "Twisting Equations": 5,
+        "Unstable Molecules": 5,
+        "One Gigantic Hand": 3,
+        "Ultimate Nullifier": 1
+      },
       "cards": [
         {
           "name": "Twisting Equations",
@@ -228,7 +243,12 @@
       "name": "Silver Surfer",
       "slug": "silver-surfer",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Warp Speed": 5,
+        "Epic Destiny": 5,
+        "The Power Cosmic": 3,
+        "Energy Surge": 1
+      },
       "cards": [
         {
           "name": "Warp Speed",
@@ -301,7 +321,12 @@
       "name": "Thing",
       "slug": "thing",
       "team": "fantastic-four",
-      "cardCounts": null,
+      "cardCounts": {
+        "It Started on Yancy Street": 5,
+        "Knuckle Sandwich": 5,
+        "Crime Stopper": 3,
+        "It's Clobberin' Time!": 1
+      },
       "cards": [
         {
           "name": "It Started on Yancy Street",
@@ -383,8 +408,8 @@
           "name": "Galactus",
           "slug": "galactus",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mm-galactus.webp",
+          "vAttack": "20*",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/galactus-01.png",
           "abilities": [
             "[keyword:Cosmic Threat]: [hc:strength][hc:instinct][hc:covert][hc:tech][hc:ranged]",
             "Always Leads: Heralds of Galactus",
@@ -396,8 +421,8 @@
           "name": "Cosmic Entity",
           "slug": "cosmic-entity",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mt-galactus-cosmic-entity.webp",
+          "vAttack": 20,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/galactus-02.png",
           "abilities": [
             "Fight: Choose [hc:strength], [hc:instinct], [hc:covert], [hc:tech] or [hc:ranged]. Each player reveals any number of cards of that class, then draws that many cards."
           ]
@@ -406,8 +431,8 @@
           "name": "Force of Eternity",
           "slug": "force-of-eternity",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mt-galactus-force-of-eternity.webp",
+          "vAttack": 20,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/galactus-03.png",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw six extra cards, then discard six cards."
           ]
@@ -416,8 +441,8 @@
           "name": "Panicked Mobs",
           "slug": "panicked-mobs",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mt-galactus-panicked-mobs.webp",
+          "vAttack": 20,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/galactus-05.png",
           "abilities": [
             "Fight: Choose [hc:strength], [hc:instinct], [hc:covert], [hc:tech] or [hc:ranged]. Each player reveals any number of cards of that class, then rescues that many Bystanders."
           ]
@@ -426,8 +451,8 @@
           "name": "Sunder the Earth",
           "slug": "sunder-the-earth",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mt-galactus-sunder-the-earth.webp",
+          "vAttack": 20,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/galactus-04.png",
           "abilities": [
             "Fight: Each other player KOs all Heroes from their discard pile with the same card name as a Hero in the HQ."
           ]
@@ -446,7 +471,7 @@
           "slug": "mole-man",
           "tactic": false,
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mm-mole-man.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mole-man-01.png",
           "abilities": [
             "Mole Man gets +1[icon:attack] for each Subterranea Villain that has escaped.",
             "Always Leads: Subterranea",
@@ -457,8 +482,8 @@
           "name": "Dig to Freedom",
           "slug": "dig-to-freedom",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mt-mole-man-dig-to-freedom.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mole-man-04.png",
           "abilities": [
             "Fight: Each other player chooses a Subterranea Villain in their Victory Pile and puts it into the Escaped Villains pile."
           ]
@@ -467,8 +492,8 @@
           "name": "Master of Monsters",
           "slug": "master-of-monsters",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mt-mole-man-master-of-monsters.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mole-man-05.png",
           "abilities": [
             "Fight: If this is not the final Tactic, reveal the top six cards of the Villain Deck. Play all the Subterranea Villains you revealed. Put the rest on the bottom of the Villain Deck in random order."
           ]
@@ -477,8 +502,8 @@
           "name": "Secret Tunnel",
           "slug": "secret-tunnel",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mt-mole-man-secret-tunnel.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mole-man-03.png",
           "abilities": [
             "Fight: You get +6[icon:attack] usable only against Villains in the Streets."
           ]
@@ -487,8 +512,8 @@
           "name": "Underground Riches",
           "slug": "underground-riches",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-mt-mole-man-underground-riches.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mole-man-02.png",
           "abilities": [
             "Fight: You get +6[icon:recruit] usable only to recruit Heroes in the HQ space under the Streets."
           ]

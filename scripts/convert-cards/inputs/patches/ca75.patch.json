@@ -1,0 +1,48 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "arnim-zola",
+      "cards": [
+        {
+          "slug": "dominate-the-weak",
+          "vAttack": 6
+        },
+        {
+          "slug": "computer-uploaded-genius",
+          "vAttack": 6
+        },
+        {
+          "slug": "pet-projects",
+          "vAttack": 6
+        },
+        {
+          "slug": "crush-pacifist-resistance",
+          "vAttack": 6
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "baron-heinrich-zemo",
+      "cards": [
+        {
+          "slug": "fallen-idols",
+          "vAttack": 9
+        },
+        {
+          "slug": "finding-zemo",
+          "vAttack": 9
+        },
+        {
+          "slug": "hatred-for-the-avengers",
+          "vAttack": 9
+        },
+        {
+          "slug": "prisoners-of-war",
+          "vAttack": 9
+        }
+      ]
+    }
+  ]
+}

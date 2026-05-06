@@ -1,0 +1,56 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "fin-fang-foom",
+      "cards": [
+        {
+          "slug": "fin-fang-foom",
+          "vAttack": "20*"
+        },
+        {
+          "slug": "alien-dragon-technology",
+          "vAttack": 20
+        },
+        {
+          "slug": "flammable-acid-breath",
+          "vAttack": 20
+        },
+        {
+          "slug": "multipronged-assault",
+          "vAttack": 20
+        },
+        {
+          "slug": "supersonic-dive-attack",
+          "vAttack": 20
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "pagliacci",
+      "cards": [
+        {
+          "slug": "pagliacci",
+          "vAttack": 9
+        },
+        {
+          "slug": "commedia-dellmorte",
+          "vAttack": 9
+        },
+        {
+          "slug": "creative-assassin",
+          "vAttack": 9
+        },
+        {
+          "slug": "insane-clown-has-a-posse",
+          "vAttack": 9
+        },
+        {
+          "slug": "jester-of-a-twisted-opera",
+          "vAttack": 9
+        }
+      ]
+    }
+  ]
+}

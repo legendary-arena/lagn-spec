@@ -8,7 +8,11 @@
       "name": "Black Bolt",
       "slug": "black-bolt",
       "team": "inhumans",
-      "cardCounts": null,
+      "cardCounts": {
+        "Break the Silence": 5,
+        "Declaration of War": 3,
+        "The King's Speech": 1
+      },
       "cards": [
         {
           "name": "Break the Silence",
@@ -29,6 +33,20 @@
           ]
         },
         {
+          "name": "Worldess Murmur",
+          "displayName": "Worldess Murmur",
+          "slug": "worldess-murmur",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "ranged",
+          "cost": 5,
+          "attack": "3",
+          "recruit": "1",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-5c2.webp",
+          "abilities": []
+        },
+        {
           "name": "Declaration of War",
           "displayName": "Declaration of War",
           "slug": "declaration-of-war",
@@ -45,18 +63,11 @@
           ]
         },
         {
-          "name": "Wordless Murmur",
-          "displayName": "Wordless Murmur",
           "slug": "wordless-murmur",
-          "rarity": 1,
-          "rarityLabel": "Uncommon",
-          "slot": 3,
-          "hc": "ranged",
-          "cost": 5,
-          "attack": "3",
-          "recruit": "1",
           "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-5u.webp",
-          "abilities": []
+          "abilities": [],
+          "rarityLabel": "Uncommon",
+          "slot": 3
         },
         {
           "name": "The King's Speech",
@@ -84,7 +95,12 @@
       "name": "Medusa",
       "slug": "medusa",
       "team": "inhumans",
-      "cardCounts": null,
+      "cardCounts": {
+        "Queen of the Inhumans": 5,
+        "Splitting Hairs": 5,
+        "Royal Command": 3,
+        "Headstrong": 1
+      },
       "cards": [
         {
           "name": "Queen of the Inhumans",
@@ -161,7 +177,12 @@
       "name": "Crystal",
       "slug": "crystal",
       "team": "inhumans",
-      "cardCounts": null,
+      "cardCounts": {
+        "Earth, Air, Fire, and Water": 5,
+        "Master the Four Elements": 5,
+        "Elemental Princess": 3,
+        "Weave Four Into One": 1
+      },
       "cards": [
         {
           "name": "Earth, Air, Fire, and Water",
@@ -237,7 +258,12 @@
       "name": "Karnak",
       "slug": "karnak",
       "team": "inhumans",
-      "cardCounts": null,
+      "cardCounts": {
+        "Brilliant Strategist": 5,
+        "Find Fatal Flaw": 5,
+        "Shatter the Weak Point": 3,
+        "Seek the Center": 1
+      },
       "cards": [
         {
           "name": "Brilliant Strategist",
@@ -314,7 +340,12 @@
       "name": "Gorgon",
       "slug": "gorgon",
       "team": "inhumans",
-      "cardCounts": null,
+      "cardCounts": {
+        "Lockjaw, Inhuman's Best Friend": 5,
+        "Stomping Shockwave": 5,
+        "Trample Underhoof": 3,
+        "Lead the Inhuman Elite": 1
+      },
       "cards": [
         {
           "name": "Lockjaw, Inhuman's Best Friend",

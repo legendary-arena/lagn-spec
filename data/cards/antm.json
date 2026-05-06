@@ -8,7 +8,12 @@
       "name": "Ant-Man",
       "slug": "ant-man",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Ride the Ants": 5,
+        "Risky Science": 5,
+        "Giant Ego": 3,
+        "Pym Particles": 1
+      },
       "cards": [
         {
           "name": "Ride the Ants",
@@ -85,7 +90,12 @@
       "name": "Black Knight",
       "slug": "black-knight",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Amulet of Avalon": 5,
+        "Defend the Weak": 5,
+        "Flying Steed": 3,
+        "The Ebony Blade": 1
+      },
       "cards": [
         {
           "name": "Amulet of Avalon",
@@ -158,7 +168,12 @@
       "name": "Jocasta",
       "slug": "jocasta",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Creation of Ultron": 5,
+        "Reprocess": 5,
+        "Holographic Image Inducer": 3,
+        "Electromagnetic Eyebeams": 1
+      },
       "cards": [
         {
           "name": "Creation of Ultron",
@@ -232,7 +247,11 @@
       "name": "Wasp",
       "slug": "wasp",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Bio-Electric Sting": 5,
+        "Swarm Tactics": 3,
+        "Founding Avenger": 1
+      },
       "cards": [
         {
           "name": "Bio-Electric Sting",
@@ -309,7 +328,12 @@
       "name": "Wonder Man",
       "slug": "wonder-man",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "One-Hit Wonder": 5,
+        "Ionic Energy": 5,
+        "Absorb Ambient Power": 5,
+        "8th Wonder of the World": 1
+      },
       "cards": [
         {
           "name": "One-Hit Wonder",
@@ -393,7 +417,7 @@
           "slug": "morgan-le-fay",
           "tactic": false,
           "vAttack": "7*",
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mm-morgan-le-fay.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/morgan-le-fay-01.png",
           "abilities": [
             "[keyword:Chivalrous Duel]",
             "Always Leads: Queen's Vengeance",
@@ -405,7 +429,7 @@
           "slug": "epic-morgan-le-fay",
           "tactic": false,
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-me-morgan-le-fay.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/morgan-le-fay-02.png",
           "abilities": [
             "[keyword:Chivalrous Duel]",
             "Always Leads: Queen's Vengeance",
@@ -417,7 +441,7 @@
           "slug": "reverse-the-flow-of-time",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mt-morgan-le-fay-reverse-the-flow-of-time.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/morgan-le-fay-06.png",
           "abilities": [
             "Fight: For the rest of the game, players take turns in the opposite order around the table."
           ]
@@ -427,7 +451,7 @@
           "slug": "sorcerous-blasts",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mt-morgan-le-fay-sorcerous-blasts.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/morgan-le-fay-03.png",
           "abilities": [
             "Fight: Each other player discards a [hc:covert] Hero or gains a Wound."
           ]
@@ -437,7 +461,7 @@
           "slug": "stolen-tomes-of-merlin",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mt-morgan-le-fay-stolen-tomes-of-merlin.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/morgan-le-fay-05.png",
           "abilities": [
             "Fight: You get +4[icon:recruit] usable only for recruiting [hc:covert] and/or [hc:ranged] Heroes."
           ]
@@ -447,7 +471,7 @@
           "slug": "transmogrify",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mt-morgan-le-fay-transmogrify.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/morgan-le-fay-04.png",
           "abilities": [
             "Fight: Each other player in turn KOs a non-grey Hero from their discard pile, then gains a card from the KO pile that has a lower cost."
           ]
@@ -466,7 +490,7 @@
           "slug": "ultron",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mm-ultron.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ultron-01.png",
           "abilities": [
             "Always Leads: Ultron's Legacy",
             "Master Strike: Each player reveals a [hc:tech] Hero or puts a non-grey Hero from their discard pile into a “Threat Analysis pile“ next to Ultron. Ultron is [keyword:Empowered] by each color in his Threat Analysis pile."
@@ -477,7 +501,7 @@
           "slug": "epic-ultron",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-me-ultron.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ultron-02.png",
           "abilities": [
             "Always Leads: Ultron's Legacy",
             "Master Strike: Each player puts a non-grey Hero from their hand into a “Threat Analysis pile“ next to Ultron. Ultron is [keyword:Triple Empowered] by each color in his Threat Analysis pile."
@@ -488,7 +512,7 @@
           "slug": "arrogant-blindspot",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mt-ultron-arrogant-blindspot.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ultron-06.png",
           "abilities": [
             "Fight: You may gain a Hero from Ultron's Threat Analysis pile."
           ]
@@ -498,7 +522,7 @@
           "slug": "paralyzing-encephalo-ray",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mt-ultron-paralyzing-encephalo-ray.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ultron-03.png",
           "abilities": [
             "Fight: Each other player reveals their hand and discards each card that has the same card name as any card in Ultron's Threat Analysis pile."
           ]
@@ -508,7 +532,7 @@
           "slug": "predictive-analysis",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mt-ultron-predictive-analysis.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ultron-05.png",
           "abilities": [
             "Fight: Put the top three cards of the Hero Deck into Ultron's Threat Analysis pile."
           ]
@@ -518,7 +542,7 @@
           "slug": "self-repairing-legions",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-mt-ultron-self-repairing-legions.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ultron-04.png",
           "abilities": [
             "Fight: Each other player in turn reveals a [hc:tech] Hero or puts an Ultron's Legacy Villain from the Victory Pile into an empty city space."
           ]

@@ -81,7 +81,12 @@
       "name": "Black Bolt",
       "slug": "black-bolt",
       "team": "illuminati",
-      "cardCounts": null,
+      "cardCounts": {
+        "Destructive Whisper": 5,
+        "Speak No Words": 5,
+        "Silence is Golden": 3,
+        "Hypersonic Scream": 1
+      },
       "cards": [
         {
           "name": "Destructive Whisper",
@@ -152,7 +157,12 @@
       "name": "Black Panther",
       "slug": "black-panther",
       "team": "illuminati",
-      "cardCounts": null,
+      "cardCounts": {
+        "Catlike Reflexes": 5,
+        "Multifaceted Genius": 5,
+        "Stalk the Urban Jungle": 3,
+        "King of Wakanda": 1
+      },
       "cards": [
         {
           "name": "Catlike Reflexes",
@@ -226,7 +236,12 @@
       "name": "Captain Marvel",
       "slug": "captain-marvel",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Absorb Energies": 5,
+        "Supersonic Flight": 5,
+        "Marvelous Strength": 3,
+        "Cosmic Energies": 1
+      },
       "cards": [
         {
           "name": "Absorb Energies",
@@ -299,7 +314,12 @@
       "name": "Dr. Strange",
       "slug": "dr-strange",
       "team": "illuminati",
-      "cardCounts": null,
+      "cardCounts": {
+        "Cloak of Levitation": 5,
+        "Trust Me, I'm a Doctor": 5,
+        "Fight the Future": 3,
+        "Sorcerer Supreme": 1
+      },
       "cards": [
         {
           "name": "Cloak of Levitation",
@@ -372,7 +392,12 @@
       "name": "Lady Thor",
       "slug": "lady-thor",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Mysterious Origin": 5,
+        "Chosen by Asgard": 5,
+        "Heir to the Hammer": 3,
+        "Living Thunderstorm": 1
+      },
       "cards": [
         {
           "name": "Mysterious Origin",
@@ -522,7 +547,12 @@
       "name": "Maximus",
       "slug": "maximus",
       "team": "cabal",
-      "cardCounts": null,
+      "cardCounts": {
+        "Mental Domination": 5,
+        "Enslave the Will": 5,
+        "Pieces on a Chessboard": 3,
+        "Inhuman Mastery": 1
+      },
       "cards": [
         {
           "name": "Mental Domination",
@@ -596,7 +626,12 @@
       "name": "Namor, the Sub-Mariner",
       "slug": "namor-the-sub-mariner",
       "team": "cabal",
-      "cardCounts": null,
+      "cardCounts": {
+        "Lead the Armies of Atlantis": 5,
+        "Ruler of the Seas": 5,
+        "Feed the Sharks": 3,
+        "Imperius Rex": 1
+      },
       "cards": [
         {
           "name": "Lead the Armies of Atlantis",
@@ -743,7 +778,12 @@
       "name": "Proxima Midnight",
       "slug": "proxima-midnight",
       "team": "cabal",
-      "cardCounts": null,
+      "cardCounts": {
+        "Inspiration Through Power": 5,
+        "Master Combatant": 5,
+        "General of the Black Order": 3,
+        "Supernova Spear": 1
+      },
       "cards": [
         {
           "name": "Inspiration Through Power",
@@ -814,7 +854,12 @@
       "name": "Superior Iron Man",
       "slug": "superior-iron-man",
       "team": "illuminati",
-      "cardCounts": null,
+      "cardCounts": {
+        "Armor Upgrades": 5,
+        "Optimized Technology": 5,
+        "Superior to Others": 3,
+        "#Humblebrag": 1
+      },
       "cards": [
         {
           "name": "Armor Upgrades",
@@ -887,7 +932,12 @@
       "name": "Thanos",
       "slug": "thanos",
       "team": "cabal",
-      "cardCounts": null,
+      "cardCounts": {
+        "Transdimensional Overlord": 5,
+        "Revel in Destruction": 5,
+        "Galactic Domination": 3,
+        "Utter Annihilation": 1
+      },
       "cards": [
         {
           "name": "Transdimensional Overlord",
@@ -961,7 +1011,12 @@
       "name": "Ultimate Spider-Man",
       "slug": "ultimate-spider-man",
       "team": "spider-friends",
-      "cardCounts": null,
+      "cardCounts": {
+        "Leaping Spider": 5,
+        "Marvel Team-Up": 5,
+        "Web-Slinger": 3,
+        "Hero from Another Dimension": 1
+      },
       "cards": [
         {
           "name": "Leaping Spider",
@@ -1045,8 +1100,8 @@
           "name": "Madelyne Pryor, Goblin Queen",
           "slug": "madelyne-pryor-goblin-queen",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mm-madelyne-pryor-goblin-queen.webp",
+          "vAttack": "10*",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-01.png",
           "abilities": [
             "Bystanders captured by Madelyne are “Demon Goblin“ Villains with 2[icon:attack]. You can fight them to rescue them as Bystanders. You can't fight her while she has any Demon Goblins.",
             "Always Leads: Limbo",
@@ -1057,8 +1112,8 @@
           "name": "City of Demon Goblins",
           "slug": "city-of-demon-goblins",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-madelyne-pryor-goblin-queen-city-of-demon-goblins.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-02.png",
           "abilities": [
             "Fight: Madelyne captures five Bystanders."
           ]
@@ -1067,8 +1122,8 @@
           "name": "Corrupted Clone of Jean Grey",
           "slug": "corrupted-clone-of-jean-grey",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-madelyne-pryor-goblin-queen-corrupted-clone-of-jean-grey.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-03.png",
           "abilities": [
             "Fight: Each other player reveals an [team:x-men] Hero or gains a Wound."
           ]
@@ -1077,8 +1132,8 @@
           "name": "Everyone's a Demon on the Inside",
           "slug": "everyones-a-demon-on-the-inside",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-madelyne-pryor-goblin-queen-everyones-a-demon-on-the-inside.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-04.png",
           "abilities": [
             "Fight: Madelyne captures a Bystander from each other player's Victory Pile."
           ]
@@ -1087,8 +1142,8 @@
           "name": "Gather the Harvest",
           "slug": "gather-the-harvest",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-madelyne-pryor-goblin-queen-gather-the-harvest.webp",
+          "vAttack": 10,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-05.png",
           "abilities": [
             "Fight: For each Limbo Villain in the city and/or Escape Pile, Madelyne captures a Bystander."
           ]
@@ -1106,8 +1161,8 @@
           "name": "Nimrod, Super Sentinel",
           "slug": "nimrod-super-sentinel",
           "tactic": false,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mm-nimrod-super-sentinel.webp",
+          "vAttack": "6*",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-01.png",
           "abilities": [
             "You can't fight Nimrod unless you made at least 6[icon:recruit] this turn.",
             "Always Leads: Sentinel Territories",
@@ -1118,8 +1173,8 @@
           "name": "Adapt and Destroy",
           "slug": "adapt-and-destroy",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-nimrod-super-sentinel-adapt-and-destroy.webp",
+          "vAttack": 6,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-02.png",
           "abilities": [
             "Fight:  Choose [icon:recruit] or [icon:attack]. Each other player reveals their hand and discards a card with that icon."
           ]
@@ -1128,8 +1183,8 @@
           "name": "Detect Mutation",
           "slug": "detect-mutation",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-nimrod-super-sentinel-detect-mutation.webp",
+          "vAttack": 6,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-03.png",
           "abilities": [
             "Fight:  Choose [icon:recruit] or [icon:attack]. Then, reveal the top card of your deck. If that card has that icon, draw it and repeat this process."
           ]
@@ -1138,8 +1193,8 @@
           "name": "Scatter the Mutants",
           "slug": "scatter-the-mutants",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-nimrod-super-sentinel-scatter-the-mutants.webp",
+          "vAttack": 6,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-04.png",
           "abilities": [
             "Fight:  Choose [icon:recruit] or [icon:attack]. Put all Heroes from the HQ with that icon on the bottom of the Hero Deck."
           ]
@@ -1148,8 +1203,8 @@
           "name": "Teleport and Incarcerate",
           "slug": "teleport-and-incarcerate",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-nimrod-super-sentinel-teleport-and-incarcerate.webp",
+          "vAttack": 6,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-05.png",
           "abilities": [
             "Fight:  Choose [icon:recruit] or [icon:attack]. Then, reveal the top card of that Hero Deck. If that card has that icon, gain that card, and [keyword:Teleport] it."
           ]
@@ -1168,7 +1223,7 @@
           "slug": "wasteland-hulk",
           "tactic": false,
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mm-wasteland-hulk.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-01.png",
           "abilities": [
             "Wasteland Hulk gets +3[icon:attack] for each of his Mastermind Tactics among all players' Victory Piles.",
             "Always Leads: Wasteland",
@@ -1179,8 +1234,8 @@
           "name": "Brutal Beating",
           "slug": "brutal-beating",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-wasteland-hulk-brutal-beating.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-02.png",
           "abilities": [
             "Fight: Each other player counts the number of Wounds in their discard pile, then discards that many cards."
           ]
@@ -1189,8 +1244,8 @@
           "name": "Memories of Pain",
           "slug": "memories-of-pain",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-wasteland-hulk-memories-of-pain.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-03.png",
           "abilities": [
             "Fight: Each other player puts two Wounds from their discard pile on top of their deck."
           ]
@@ -1199,8 +1254,8 @@
           "name": "Radioactive Regeneration",
           "slug": "radioactive-regeneration",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-wasteland-hulk-radioactive-regeneration.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-04.png",
           "abilities": [
             "Fight: KO up to two Wounds from your hand and/or discard pile."
           ]
@@ -1209,8 +1264,8 @@
           "name": "Revert to Bruce Banner",
           "slug": "revert-to-bruce-banner",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-wasteland-hulk-revert-to-bruce-banner.webp",
+          "vAttack": 7,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-05.png",
           "abilities": [
             "Fight: You gain a [hc:tech]Hero from the HQ for free."
           ]
@@ -1229,7 +1284,7 @@
           "slug": "zombie-green-goblin",
           "tactic": false,
           "vAttack": "11+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mm-zombie-green-goblin.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-01.png",
           "abilities": [
             "Zombie Green Goblin gets +1[icon:attack] for each Hero in the KO pile that costs 7 or more.",
             "Always Leads: The Deadlands",
@@ -1240,8 +1295,8 @@
           "name": "Army of Cadavers",
           "slug": "army-of-cadavers",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-zombie-green-goblin-army-of-cadavers.webp",
+          "vAttack": 11,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-03.png",
           "abilities": [
             "Fight: [keyword:Rise of The Living Dead] (this effect never makes Mastermind Tactics return.) Then, each other player discards a card for each Villain in the city that has “[keyword:Rise of The Living Dead].“"
           ]
@@ -1250,8 +1305,8 @@
           "name": "The Hungry Dead",
           "slug": "the-hungry-dead",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-zombie-green-goblin-the-hungry-dead.webp",
+          "vAttack": 11,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-05.png",
           "abilities": [
             "Fight: [keyword:Rise of The Living Dead] (this effect never makes Mastermind Tactics return.) Then, each other player gains a Wound if there are any Villains in the city with “[keyword:Rise of The Living Dead].“"
           ]
@@ -1260,8 +1315,8 @@
           "name": "Love to Have You for Dinner",
           "slug": "love-to-have-you-for-dinner",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-zombie-green-goblin-love-to-have-you-for-dinner.webp",
+          "vAttack": 11,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-02.png",
           "abilities": [
             "Fight: [keyword:Rise of The Living Dead] (this effect never makes Mastermind Tactics return.) Then, reveal the top 5 cards of the Hero Deck. KO all those Heroes that cost 7 or more. Put the rest on the bottom of the Hero Deck in random order."
           ]
@@ -1270,8 +1325,8 @@
           "name": "Reign of Terror",
           "slug": "reign-of-terror",
           "tactic": true,
-          "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-mt-zombie-green-goblin-reign-of-terror.webp",
+          "vAttack": 11,
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-04.png",
           "abilities": [
             "Fight: [keyword:Rise of The Living Dead] (this effect never makes Mastermind Tactics return.) Then, put all Heroes from the HQ that cost 6 or less on the bottom of the Hero Deck."
           ]
@@ -1641,21 +1696,29 @@
       "name": "Ghost Racers",
       "slug": "ghost-racers",
       "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hm-ghost-racers.webp",
-      "abilities": []
+      "abilities": [
+        "Ambush: [keyword:Rise of The Living Dead]",
+        "Fight: Reveal a [hc:covert] Hero or KO one of your Heroes with an [icon:attack] icon."
+      ]
     },
     {
       "id": 14,
       "name": "M.O.D.O.K.s",
       "slug": "m-o-d-o-k-s",
       "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hm-m-o-d-o-k-s.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: KO a Hero from your discard pile or the HQ. If that Hero has a [icon:recruit] icon, you get +1[icon:recruit]."
+      ]
     },
     {
       "id": 15,
       "name": "Thor Corps",
       "slug": "thor-corps",
       "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hm-thor-corps.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: Gain this as a Hero.",
+        "[hc:strength][hc:ranged]: You get +1[icon:recruit]."
+      ]
     }
   ],
   "schemes": [

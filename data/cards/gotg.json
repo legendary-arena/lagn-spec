@@ -8,7 +8,12 @@
       "name": "Drax the Destroyer",
       "slug": "drax-the-destroyer",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Knives of the Hunter": 5,
+        "Interstellar Tracker": 5,
+        "The Destroyer": 3,
+        "Avatar of Destruction": 1
+      },
       "cards": [
         {
           "name": "Knives of the Hunter",
@@ -83,7 +88,12 @@
       "name": "Gamora",
       "slug": "gamora",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Bounty Hunter": 5,
+        "Deadliest Woman in the Universe": 5,
+        "Galactic Assassin": 3,
+        "Godslayer Blade": 1
+      },
       "cards": [
         {
           "name": "Bounty Hunter",
@@ -160,38 +170,43 @@
       "name": "Groot",
       "slug": "groot",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Prune the Growths": 5,
+        "Surviving Sprig": 5,
+        "Groot and Branches": 3,
+        "I Am Groot": 1
+      },
       "cards": [
-        {
-          "name": "Prune the Growths",
-          "displayName": "Prune the Growths",
-          "slug": "prune-the-growths",
-          "rarity": 1,
-          "rarityLabel": "Common 1",
-          "slot": 1,
-          "hc": "strength",
-          "cost": 4,
-          "attack": "2",
-          "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-4c1.webp",
-          "abilities": [
-            "[hc:strength]: You may KO a card from your hand or discard pile. If you do, gain a [rule:Shard]."
-          ]
-        },
         {
           "name": "Surviving Sprig",
           "displayName": "Surviving Sprig",
           "slug": "surviving-sprig",
           "rarity": 1,
-          "rarityLabel": "Common 2",
-          "slot": 2,
+          "rarityLabel": "Common 1",
+          "slot": 1,
           "hc": "strength",
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-3c1.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, draw an extra card."
+          ]
+        },
+        {
+          "name": "Prune the Growths",
+          "displayName": "Prune the Growths",
+          "slug": "prune-the-growths",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "strength",
+          "cost": 4,
+          "attack": "2",
+          "recruit": null,
+          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-4c2.webp",
+          "abilities": [
+            "[hc:strength]: You may KO a card from your hand or discard pile. If you do, gain a [rule:Shard]."
           ]
         },
         {
@@ -234,7 +249,12 @@
       "name": "Rocket Raccoon",
       "slug": "rocket-raccoon",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Gritty Scavenger": 5,
+        "Trigger Happy": 5,
+        "Incoming Detector": 3,
+        "Vengeance is Rocket": 1
+      },
       "cards": [
         {
           "name": "Gritty Scavenger",
@@ -308,7 +328,12 @@
       "name": "Star-Lord",
       "slug": "star-lord",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Element Guns": 5,
+        "Legendary Outlaw": 5,
+        "Implanted Memory Chip": 3,
+        "Sentient Starship": 1
+      },
       "cards": [
         {
           "name": "Element Guns",
@@ -393,7 +418,7 @@
           "slug": "supreme-intelligence-of-the-kree",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mm-supreme-intelligence-of-the-kree.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-01.png",
           "abilities": [
             "Always Leads: Kree Starforce",
             "Master Strike: The Supreme Intelligence gains a [rule:Shard]. Then each player reveals their hand and discards each with cost equal to, and cost one higher than, the number of Shards on the Supreme Intelligence."
@@ -404,7 +429,7 @@
           "slug": "combined-knowledge-of-all-kree",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mt-supreme-intelligence-of-the-kree-combined-knowledge-of-all-kree.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-05.png",
           "abilities": [
             "Fight: The Supreme Intelligence gains a [rule:Shard] for each Kree Villain in the city and/or the Escape Pile."
           ]
@@ -414,7 +439,7 @@
           "slug": "cosmic-omniscience",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mt-supreme-intelligence-of-the-kree-cosmic-omniscience.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-04.png",
           "abilities": [
             "Fight: The Supreme Intelligence gains a [rule:Shard] for each Master Strike in the KO pile."
           ]
@@ -424,7 +449,7 @@
           "slug": "countermeasure-protocols",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mt-supreme-intelligence-of-the-kree-countermeasure-protocols.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-03.png",
           "abilities": [
             "Fight: The Supreme Intelligence gains a [rule:Shard] for each Mastermind Tactic (including this one) in any player's Victory Pile."
           ]
@@ -434,7 +459,7 @@
           "slug": "guide-kree-evolution",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mt-supreme-intelligence-of-the-kree-guide-kree-evolution.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-02.png",
           "abilities": [
             "Fight: The Supreme Intelligence and Kree Villains in the city each gain a [rule:Shard]."
           ]
@@ -453,7 +478,7 @@
           "slug": "thanos",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mm-thanos.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-01.png",
           "abilities": [
             "Always Leads: Infinity Gems",
             "Thanos gets -2[icon:attack] for each Infinity Gem Artifact card controlled by any player.",
@@ -465,7 +490,7 @@
           "slug": "centuries-of-envy",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mt-thanos-centuries-of-envy.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-05.png",
           "abilities": [
             "Fight: Each other player discards an Infinity Gem Artifact card they control."
           ]
@@ -475,7 +500,7 @@
           "slug": "god-of-death",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mt-thanos-god-of-death.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-02.png",
           "abilities": [
             "Fight: Each other player reveals their hand and gains a Wound for each card that player has with the same card name as any card in Thanos' Bound Souls pile."
           ]
@@ -485,7 +510,7 @@
           "slug": "keeper-of-souls",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mt-thanos-keeper-of-souls.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-04.png",
           "abilities": [
             "Fight: Gain a Hero from Thanos' Bound Souls pile. Then each other player puts a non-grey Hero from their discard pile into Thanos' Bound Souls pile."
           ]
@@ -495,7 +520,7 @@
           "slug": "the-mad-titan",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-mt-thanos-the-mad-titan.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-03.png",
           "abilities": [
             "Fight: Each other player reveals their hand and discards all cards with the same card name as any card in Thanos' Bound Souls pile."
           ]

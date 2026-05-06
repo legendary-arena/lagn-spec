@@ -8,7 +8,14 @@
       "name": "Scott Lang, Cat Burglar",
       "slug": "scott-lang-cat-burglar",
       "team": "crime-syndicate",
-      "cardCounts": null,
+      "cardCounts": {
+        "Petty Larceny": 3,
+        "Anything for Cassie": 2,
+        "Shocking Support": 3,
+        "X-Con Security Van": 3,
+        "Putting a Crew Together": 2,
+        "The Big Score": 1
+      },
       "cards": [
         {
           "slug": "petty-larceny",
@@ -108,7 +115,14 @@
       "name": "Ant-Man",
       "slug": "ant-man",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Hitch a Ride": 3,
+        "Look Out for the Little Guy!": 3,
+        "Shrink Away": 3,
+        "Bug Swarm": 2,
+        "Tiny little Risk": 2,
+        "Giant-Man": 1
+      },
       "cards": [
         {
           "name": "Hitch a Ride",
@@ -219,7 +233,14 @@
       "name": "Wasp",
       "slug": "wasp",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Follow my Lead": 2,
+        "Flitting Sting": 3,
+        "Master Physicist": 3,
+        "Positive Ions": 3,
+        "Infiltrate": 2,
+        "Hope Returns": 1
+      },
       "cards": [
         {
           "slug": "follow-my-lead",
@@ -326,7 +347,14 @@
       "name": "Cassie Lang",
       "slug": "cassie-lang",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Start Small": 3,
+        "Giant Hug": 3,
+        "Colossal Stomp": 3,
+        "Quantum Beacon": 2,
+        "Learn from the Past": 2,
+        "Inspire Revolution": 1
+      },
       "cards": [
         {
           "name": "Start Small",
@@ -437,7 +465,14 @@
       "name": "Janet van Dyne",
       "slug": "janet-van-dyne",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Subatomic Size": 2,
+        "Search for Peace": 3,
+        "Prepare for War": 3,
+        "Wasp of Another Generation": 3,
+        "Quantum Contradiction": 2,
+        "Finally Found You": 1
+      },
       "cards": [
         {
           "slug": "subatomic-size",
@@ -540,7 +575,14 @@
       "name": "Freedom Fighters",
       "slug": "freedom-fighters",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Veb": 2,
+        "Mystics": 3,
+        "Steel Warrior": 3,
+        "Xolum": 3,
+        "Quaz": 2,
+        "Freedom Forever": 1
+      },
       "cards": [
         {
           "slug": "veb",
@@ -643,7 +685,14 @@
       "name": "Jentorra",
       "slug": "jentorra",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Take the High Ground": 3,
+        "Hit and Run": 3,
+        "Unite the Oppressed": 3,
+        "Find Your Courage": 2,
+        "Lead Powerful Allies": 2,
+        "Conquer the Conqueror": 1
+      },
       "cards": [
         {
           "name": "Take the High Ground",
@@ -751,7 +800,14 @@
       "name": "Ant Army",
       "slug": "ant-army",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Up the Ante": 3,
+        "Antagonize": 3,
+        "Anticipate": 3,
+        "Antiproton Experiments": 2,
+        "Anti-Tank Weapons": 2,
+        "Revolutionary Anthem": 1
+      },
       "cards": [
         {
           "name": "Up the Ante",

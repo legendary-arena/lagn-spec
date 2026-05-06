@@ -1,0 +1,317 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "brainstorm",
+      "cards": [
+        {
+          "slug": "time-loop-experiments",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-2c1.webp"
+        },
+        {
+          "slug": "borrow-from-the-future",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-3c2.webp"
+        },
+        {
+          "slug": "reprogram-doombot-legions",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-6u.webp"
+        },
+        {
+          "slug": "protege-of-dr-doom",
+          "name": "Protege of Dr. Doom",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "fantastic-four-united",
+      "cards": [
+        {
+          "slug": "human-torch",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-4c1.webp",
+          "abilities": [
+            "[keyword:Focus] 2[icon:recruit] [icon:5] KO up to two Wounds from your hand and/or discard pile.",
+            "[keyword:Focus] 6[icon:recruit] [icon:5] You get +6[icon:attack] and gain a Wound."
+          ]
+        },
+        {
+          "slug": "thing",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-4c2.webp",
+          "abilities": [
+            "[team:fantastic-four]: You get +1[icon:recruit].",
+            "[keyword:Focus] 3[icon:recruit] [icon:5] You get +2[icon:attack]."
+          ]
+        },
+        {
+          "slug": "invisible-woman",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-4u.webp",
+          "abilities": [
+            "If you played any other cards that cost 4 this turn, you get +2[icon:recruit].",
+            "[keyword:Focus] 4[icon:recruit] [icon:5] Rescue a Bystander, then you may KO a card from your hand or discard pile."
+          ]
+        },
+        {
+          "slug": "mr-fantastic",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-7r.webp",
+          "abilities": [
+            "Draw two cards.",
+            "[keyword:Focus] 5[icon:recruit] [icon:5] You get +7[icon:attack] usable only against the Mastermind."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "heralds-of-galactus",
+      "cards": [
+        {
+          "slug": "firelord",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-3c1.webp"
+        },
+        {
+          "slug": "silver-surfer",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-4c2.webp",
+          "abilities": [
+            "[keyword:Focus] 2[icon:recruit] [icon:5] Draw a card, then you may move a Villain to an adjacent city space. If another Villain is already there, swap them."
+          ]
+        },
+        {
+          "slug": "stardust",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-6u.webp",
+          "abilities": [
+            "[keyword:Focus] 4[icon:recruit] [icon:5][keyword:Conqueror]",
+            "[keyword:Focus] 11[icon:recruit] [icon:5] Search the Hero Deck, HQ, or your deck or discard pile for “Galactus Hungers“ and put it on top of your deck. Shuffle any deck you searched."
+          ]
+        },
+        {
+          "slug": "galactus-hungers",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-10r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "psi-lord",
+      "cards": [
+        {
+          "slug": "avert-future-tragedy",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-3c1.webp",
+          "abilities": [
+            "[keyword:Focus] 2[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Master Strike, you get +3[icon:attack], KO it, and replace it with the top card from the Bystander Stack.",
+            "[hc:instinct]: [keyword:Man/Woman Out of Time]"
+          ]
+        },
+        {
+          "slug": "interdimensional-rescue",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-4c2.webp",
+          "abilities": [
+            "[keyword:Focus] 1[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Bystander, you get +2[icon:attack], rescue it, and shuffle the top card from the Bystander Stack into the Villain Deck.",
+            "[hc:covert]: [keyword:Man/Woman Out of Time]"
+          ]
+        },
+        {
+          "slug": "slip-the-timestream",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-6u.webp",
+          "abilities": [
+            "[keyword:Focus] 1[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Villain, you get +1[icon:attack] and you may fight it this turn.",
+            "[hc:instinct][hc:covert]: [keyword:Man/Woman Out of Time]"
+          ]
+        },
+        {
+          "slug": "reshape-reality",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-7r.webp",
+          "abilities": [
+            "[keyword:Focus] 3[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Scheme Twist, you get +4[icon:attack] and shuffle the Villain Deck.",
+            "[team:fantastic-four][team:fantastic-four]: [keyword:Man/Woman Out of Time]"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "super-skrull",
+      "cards": [
+        {
+          "slug": "stretching-credibility",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-3c1.webp",
+          "abilities": [
+            "[keyword:Focus] 2[icon:attack] [icon:5] When you draw a new hand of cards at the end of this turn, draw an extra card."
+          ]
+        },
+        {
+          "slug": "rock-solid",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-4c2.webp",
+          "abilities": [
+            "[hc:strength]: [keyword:Conqueror]",
+            "[keyword:Focus] 3[icon:attack] [icon:5] You get +2[icon:recruit]."
+          ]
+        },
+        {
+          "slug": "transparent-motives",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-5u.webp",
+          "abilities": [
+            "[keyword:Conqueror]",
+            "[keyword:Focus] 3[icon:attack] [icon:5] You may KO a card from your hand or discard pile."
+          ]
+        },
+        {
+          "slug": "put-to-the-torch",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-7r.webp",
+          "abilities": [
+            "[keyword:Bridge] [keyword:Conqueror] 1",
+            "[keyword:Streets] [keyword:Conqueror] 1",
+            "You may gain a Wound. If you do, get [keyword:Rooftops] [keyword:Conqueror] 4."
+          ]
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "annihilus",
+      "cards": [
+        {
+          "slug": "annihilus",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mm-annihilus.webp",
+          "abilities": [
+            "Always Leads: Annihilation Wave (1 player: Use 6 Henchmen.)",
+            "Master Strike: Reveal the top card of the Villain Deck. If it's a Bystander, Annihilus captures it. If it's a Villain, it enters the city, captures a Bystander, and moves forward an extra space (before doing any Ambush ability)."
+          ]
+        },
+        {
+          "slug": "epic-annihilus",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-me-annihilus.webp",
+          "abilities": [
+            "Always Leads: Annihilation Wave. Add an extra Villain Group (even for 1 player.)",
+            "Master Strike: Play a card from the Villain Deck. If it's a Villain, play a second card from the Villain Deck."
+          ]
+        },
+        {
+          "slug": "the-cosmic-control-rod",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-annihilus-the-cosmic-control-rod.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "surging-annihilation",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-annihilus-surging-annihilation.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "deploy-the-planet-killer",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-annihilus-deploy-the-planet-killer.webp",
+          "vAttack": 10
+        },
+        {
+          "slug": "pull-into-the-negative-zone",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-annihilus-pull-into-the-negative-zone.webp",
+          "vAttack": 10
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "kang-the-conqueror",
+      "cards": [
+        {
+          "slug": "kang-the-conqueror",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mm-kang-the-conqueror.webp"
+        },
+        {
+          "slug": "epic-kang-the-conqueror",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-me-kang-the-conqueror.webp"
+        },
+        {
+          "slug": "iron-lad-grows-up-to-become-kang",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-kang-the-conqueror-iron-lad-grows-up-to-become-kang.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "leap-into-the-timestream",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-kang-the-conqueror-leap-into-the-timestream.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "pull-from-the-future",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-kang-the-conqueror-pull-from-the-future.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "savior-from-another-timeline",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-kang-the-conqueror-savior-from-another-timeline.webp",
+          "vAttack": 8
+        }
+      ]
+    }
+  ],
+  "villains": [
+    {
+      "_op": "merge",
+      "slug": "annihilation-wave",
+      "cards": [
+        {
+          "slug": "annihilation-armada",
+          "abilities": [
+            "Ambush: A Henchmen Villain from your Victory Pile enters the city."
+          ]
+        },
+        {
+          "slug": "queens-of-annihilation",
+          "abilities": [
+            "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, play it.",
+            "Fight: KO one of your Heroes."
+          ]
+        },
+        {
+          "slug": "ravenous",
+          "abilities": [
+            "Ambush: Ravenous swaps places with an Annihilation Wave Villain that isn't Weaponized Galactus.",
+            "Escape: Each player reveals a [hc:strength] Hero or gains a wound."
+          ]
+        },
+        {
+          "slug": "weaponized-galactus",
+          "abilities": [
+            "Ambush: Weaponized Galactus swaps places with the leftmost Villain in the city.",
+            "Escape: Destroy the leftmost city space. If this destroys the last city space, Evil Wins. Otherwise, each player gains a Wound, and you shuffle Weaponized Galactus back into the Villain Deck. Any Villain from the destroyed city space escapes."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "timelines-of-kang",
+      "cards": [
+        {
+          "slug": "immortus",
+          "abilities": [
+            "Fight: Reveal a [hc:ranged] Hero or reveal the top card of the Villain Deck. If it's a Villain worth 4VP or less, defeat it (do its Fight effect) and put Immortus in its place.",
+            "Escape: Each player reveals a [hc:ranged] Hero or gains a Wound. Shuffle Immortus back into the Villain Deck."
+          ]
+        },
+        {
+          "slug": "iron-lad",
+          "abilities": [
+            "Fight: The player of your choice gains this as a Hero.",
+            "[hc:tech]: [keyword:Man/Woman Out of Time]"
+          ]
+        },
+        {
+          "slug": "pharaoh-rama-tut",
+          "abilities": [
+            "Ambush: If the Bridge is empty, move a Villain to the Bridge.",
+            "Fight: Send a [hc:strength] or [hc:instinct] Hero you played this turn as a [keyword:Man/Woman Out of Time]."
+          ]
+        },
+        {
+          "slug": "scarlet-centurion",
+          "abilities": [
+            "Ambush: Reveal your hand and send your highest-cost Hero as a [keyword:Man/Woman Out of Time].",
+            "Fight: If you played a [hc:covert] Hero this turn, KO one of your Heroes."
+          ]
+        }
+      ]
+    }
+  ]
+}

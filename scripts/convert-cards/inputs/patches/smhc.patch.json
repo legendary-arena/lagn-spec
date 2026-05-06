@@ -1,0 +1,48 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "adrian-toomes",
+      "cards": [
+        {
+          "slug": "dont-interfere",
+          "vAttack": 5
+        },
+        {
+          "slug": "more-harm-than-good",
+          "vAttack": 5
+        },
+        {
+          "slug": "take-everything",
+          "vAttack": 5
+        },
+        {
+          "slug": "the-worlds-changed",
+          "vAttack": 5
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "vulture",
+      "cards": [
+        {
+          "slug": "bird-of-prey",
+          "vAttack": 8
+        },
+        {
+          "slug": "lurking-shadow",
+          "vAttack": 8
+        },
+        {
+          "slug": "mid-air-heist",
+          "vAttack": 8
+        },
+        {
+          "slug": "winged-assault",
+          "vAttack": 8
+        }
+      ]
+    }
+  ]
+}

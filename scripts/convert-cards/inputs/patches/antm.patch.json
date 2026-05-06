@@ -1,0 +1,56 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "morgan-le-fay",
+      "cards": [
+        {
+          "slug": "morgan-le-fay",
+          "vAttack": "7*"
+        },
+        {
+          "slug": "reverse-the-flow-of-time",
+          "vAttack": 7
+        },
+        {
+          "slug": "sorcerous-blasts",
+          "vAttack": 7
+        },
+        {
+          "slug": "stolen-tomes-of-merlin",
+          "vAttack": 7
+        },
+        {
+          "slug": "transmogrify",
+          "vAttack": 7
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ultron",
+      "cards": [
+        {
+          "slug": "ultron",
+          "vAttack": "9+"
+        },
+        {
+          "slug": "arrogant-blindspot",
+          "vAttack": 9
+        },
+        {
+          "slug": "paralyzing-encephalo-ray",
+          "vAttack": 9
+        },
+        {
+          "slug": "predictive-analysis",
+          "vAttack": 9
+        },
+        {
+          "slug": "self-repairing-legions",
+          "vAttack": 9
+        }
+      ]
+    }
+  ]
+}

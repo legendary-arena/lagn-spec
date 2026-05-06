@@ -8,7 +8,12 @@
       "name": "Captain Marvel, Agent of S.H.I.E.L.D.",
       "slug": "captain-marvel-agent-of-shield",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "The Sword of S.H.I.E.L.D.": 5,
+        "Radiant Blast": 5,
+        "Dominate the Battlefield": 3,
+        "Higher, Further, Faster": 1
+      },
       "cards": [
         {
           "name": "The Sword of S.H.I.E.L.D.",
@@ -82,7 +87,12 @@
       "name": "Darkhawk",
       "slug": "darkhawk",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Balance the Darkforce": 5,
+        "Hawk Dive": 5,
+        "Travel to Nullspace": 3,
+        "Warflight": 1
+      },
       "cards": [
         {
           "name": "Balance the Darkforce",
@@ -157,7 +167,12 @@
       "name": "Hellcat",
       "slug": "hellcat",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Catlike Agility": 5,
+        "Part-Time PI": 5,
+        "Demon Sight": 3,
+        "Second Chance at Life": 1
+      },
       "cards": [
         {
           "name": "Catlike Agility",
@@ -232,7 +247,12 @@
       "name": "Photon",
       "slug": "photon",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Infrared Conversation": 5,
+        "Ultraviolet Radiation": 5,
+        "Light the Way": 3,
+        "Coruscating Vengeance": 1
+      },
       "cards": [
         {
           "name": "Infrared Conversation",
@@ -306,7 +326,12 @@
       "name": "Quicksilver",
       "slug": "quicksilver",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Too Fast to See": 5,
+        "Perpetual Motion": 5,
+        "Jittery Impatience": 3,
+        "Around the World Punch": 1
+      },
       "cards": [
         {
           "name": "Too Fast to See",
@@ -382,7 +407,12 @@
       "name": "Ronin",
       "slug": "ronin",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Mysterious Identity": 5,
+        "Storm of Arrows": 5,
+        "Haunted by Loss": 3,
+        "Brooding Fury": 1
+      },
       "cards": [
         {
           "name": "Mysterious Identity",
@@ -457,7 +487,12 @@
       "name": "Scarlet Witch",
       "slug": "scarlet-witch",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Hex Bolt": 5,
+        "Alter Reality": 5,
+        "Chaos Magic": 3,
+        "Warp Time and Space": 1
+      },
       "cards": [
         {
           "name": "Hex Bolt",
@@ -522,7 +557,7 @@
           "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-hr-scarlet-witch-7r.webp",
           "abilities": [
             "Reveal the top three cards of the Hero Deck. Put one of them in your hand. Put the rest on the top or bottom of the Hero Deck in any order.",
-            "[team:avengers][team:avengers][team:avengers]: [keyword:Dark Memories]"
+            "[hc:covert][hc:covert][hc:covert]: [keyword:Dark Memories]"
           ]
         }
       ]
@@ -532,7 +567,12 @@
       "name": "Speed",
       "slug": "speed",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Accelerate": 5,
+        "Speedy Delivery": 5,
+        "Race to the Rescue": 3,
+        "Break the Sound Barrier": 1
+      },
       "cards": [
         {
           "name": "Accelerate",
@@ -607,7 +647,12 @@
       "name": "War Machine",
       "slug": "war-machine",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Simulated Target Practice": 5,
+        "Military-Industrial Complex": 5,
+        "Hypersonic Cannon": 3,
+        "Overwhelming Firepower": 1
+      },
       "cards": [
         {
           "name": "Simulated Target Practice",
@@ -690,7 +735,7 @@
           "slug": "grim-reaper",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mm-grim-reaper.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/grim-reaper-01.png",
           "abilities": [
             "Grim Reaper gets +1[icon:attack] for each [rule:Location] card in the city.",
             "Always Leads: Lethal Legion",
@@ -702,7 +747,7 @@
           "slug": "epic-grim-reaper",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-me-grim-reaper.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/grim-reaper-02.png",
           "abilities": [
             "Grim Reaper gets +2[icon:attack] for each [rule:Location] card in the city.",
             "Always Leads: Lethal Legion",
@@ -714,7 +759,7 @@
           "slug": "carnival-of-concussions",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-grim-reaper-carnival-of-concussions.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/grim-reaper-03.png",
           "abilities": [
             "Fight: If this was not already a [rule:Location], draw three cards, and this card enters the city as a Location with this ability:",
             "Whenever you fight a Villain here, each other player KOs a Bystander from their Victory Pile."
@@ -725,7 +770,7 @@
           "slug": "cult-of-skulls",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-grim-reaper-cult-of-skulls.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/grim-reaper-04.png",
           "abilities": [
             "Fight: If this was not already a [rule:Location], KO up to two cards from your discard pile, and this card enters the city as a Location with this ability:",
             "Whenever you fight a Villain here, each other player reveals their hand and discards a non-grey card."
@@ -736,7 +781,7 @@
           "slug": "maze-of-bones",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-grim-reaper-maze-of-bones.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/grim-reaper-05.png",
           "abilities": [
             "Fight: If this was not already a [rule:Location], look at the top four cards of your deck, KO any number of them, and put the rest back in any order. Then this card enters the city as a Location with this ability:",
             "Whenever you fight a Villain here, each other player gains a Wound."
@@ -747,7 +792,7 @@
           "slug": "prison-of-coffins",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-grim-reaper-prison-of-coffins.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/grim-reaper-06.png",
           "abilities": [
             "Fight: If this was not already a [rule:Location], you get +5[icon:recruit], and this card enters the city as a Location with this ability:",
             "Whenever you fight a Villain here, each other player puts a Villain from their Victory Pile into the Escape Pile."
@@ -767,7 +812,7 @@
           "slug": "the-hood",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mm-hood-the.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/the-hood-01.png",
           "abilities": [
             "[keyword:Dark Memories]",
             "Always Leads: Hood's Gang",
@@ -779,7 +824,7 @@
           "slug": "epic-hood",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-me-hood-the.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/the-hood-02.png",
           "abilities": [
             "[keyword:Double Dark Memories]",
             "Always Leads: Hood's Gang",
@@ -791,7 +836,7 @@
           "slug": "demonic-revelation",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-hood-the-demonic-revelation.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/the-hood-05.png",
           "abilities": [
             "Fight: Each other player reveals their hand and discards a non-grey Hero."
           ]
@@ -801,7 +846,7 @@
           "slug": "focus-magic-through-guns",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-hood-the-focus-magic-through-guns.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/the-hood-04.png",
           "abilities": [
             "Fight: Each other player reveals a [hc:covert] Hero or discards a card.",
             "Then each other player reveals a [hc:tech] Hero or gains a Wound."
@@ -812,7 +857,7 @@
           "slug": "paean-to-dormammu",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-hood-the-paean-to-dormammu.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/the-hood-03.png",
           "abilities": [
             "Fight: Each other player discards their deck."
           ]
@@ -822,7 +867,7 @@
           "slug": "the-hoods-warehouse",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-hood-the-the-hoods-warehouse.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/the-hood-06.png",
           "abilities": [
             "Fight: If this was not already a [rule:Location], rescue 4 Bystanders, and this card enters the city as a Location with this ability:",
             "When you fight a Villain here, play another card from the Villain Deck."
@@ -842,7 +887,7 @@
           "slug": "mandarin",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mm-mandarin.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mandarin-01.png",
           "abilities": [
             "All Mandarin's Rings get +1[icon:attack].",
             "Mandarin gets -1[icon:attack] for each Mandarin's Ring among all players' Victory Piles. (-3[icon:attack] for each in solo.)",
@@ -855,7 +900,7 @@
           "slug": "epic-mandarin",
           "tactic": false,
           "vAttack": "26",
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-me-mandarin.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mandarin-02.png",
           "abilities": [
             "All Mandarin's Rings get +2[icon:attack].",
             "Mandarin gets -2[icon:attack] for each Mandarin's Ring among all players' Victory Piles. (-6[icon:attack] for each in solo.)",
@@ -868,7 +913,7 @@
           "slug": "circles-unbroken",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-mandarin-circles-unbroken.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mandarin-04.png",
           "abilities": [
             "Fight: Draw a card for each Mandarin's Ring in your Victory Pile."
           ]
@@ -878,7 +923,7 @@
           "slug": "dragon-of-heaven-spaceship",
           "tactic": true,
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-mandarin-dragon-of-heaven-spaceship.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mandarin-03.png",
           "abilities": [
             "Fight: If this was not already a [rule:Location], KO up to two of your Heroes, and this card enters the city as a Location with this ability:",
             "Whenever you fight a Villain here, each other player reveals their hand and KOs one of their non-grey Heroes.",
@@ -890,7 +935,7 @@
           "slug": "intertwining-powers",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-mandarin-intertwining-powers.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mandarin-05.png",
           "abilities": [
             "Fight: Each other player without at least two Mandarin's Rings in their Victory Pile gains a Wound."
           ]
@@ -900,7 +945,7 @@
           "slug": "rings-seek-their-true-hand",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-mt-mandarin-rings-seek-their-true-hand.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mandarin-06.png",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Hero or puts a Mandarin's Ring from their Victory Pile into the Escape Pile."
           ]
@@ -1022,7 +1067,7 @@
           "imageUrl": "https://images.barefootbetters.com/rvlt/rvlt-vi-dark-avengers-dark-ms-marvel-moonnstone.webp",
           "abilities": [
             "[keyword:Last Stand]",
-            "Fight: Each other player discards two cards, then draws a card."
+            "Fight: Each other plasyer discards two cards, then draws a card."
           ]
         },
         {

@@ -8,7 +8,14 @@
       "name": "Doctor Strange",
       "slug": "doctor-strange",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Open Portals": 3,
+        "Defend this Dimension": 3,
+        "Sift Futures": 3,
+        "Invoke the Time Stone": 2,
+        "Bind Evil": 2,
+        "1 in 14,000,065": 1
+      },
       "cards": [
         {
           "name": "Open Portals",
@@ -90,7 +97,7 @@
           "recruit": null,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-6u2.webp",
           "abilities": [
-            "[hc:instinct]: Reveal the top card of the Villain Deck. If it's a Master Strike, KO that Strike, you get +3[icon:attack], and put a card from the Bystander Deck on top of the Villain Deck."
+            "[hc:instinct]: Reveal the top card of the Villain Deck. If it's a Marster Strike, KO that Strike, you get +3[icon:attack], and put a card from the Bystander Deck on top of the Villain Deck."
           ]
         },
         {
@@ -116,7 +123,14 @@
       "name": "Black Panther",
       "slug": "black-panther",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Avengers Reassembled": 3,
+        "Great Many Lives Lost": 3,
+        "Wakanda Forever": 3,
+        "Vibranium Nanites": 2,
+        "Council of War": 2,
+        "Fateful Return": 1
+      },
       "cards": [
         {
           "name": "Wakanda Forever",
@@ -223,7 +237,14 @@
       "name": "Bruce Banner",
       "slug": "bruce-banner",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Burst of Rage": 3,
+        "Hulkbuster Armor": 3,
+        "Brains and Brawn": 3,
+        "Hulk Gets Smashed": 2,
+        "Crush Puny Weaklings": 2,
+        "Reverse the Snap": 1
+      },
       "cards": [
         {
           "name": "Burst of Rage",
@@ -328,7 +349,14 @@
       "name": "Captain Marvel",
       "slug": "captain-marvel",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Return from the Stars": 3,
+        "Turning Point": 3,
+        "Infused by the Tesseract": 3,
+        "Moment of Destiny": 2,
+        "Dawning Hope": 2,
+        "Time to End It": 1
+      },
       "cards": [
         {
           "name": "Dawning Hope",
@@ -438,7 +466,17 @@
       "name": "Wanda & Vision",
       "slug": "wanda-vision",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "We Have to Destroy It": 3,
+        "Witchcraft": 3,
+        "Hold On": 3,
+        "Let Go": 3,
+        "Magic": 2,
+        "Science": 2,
+        "Rage": 2,
+        "Grief": 2,
+        "Odd Couple": 1
+      },
       "cards": [
         {
           "name": "We Have to Destroy It",

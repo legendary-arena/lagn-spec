@@ -1,0 +1,48 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "hybrid",
+      "cards": [
+        {
+          "slug": "alien-awakening",
+          "vAttack": 6
+        },
+        {
+          "slug": "escaped-monstrosity",
+          "vAttack": 6
+        },
+        {
+          "slug": "life-foundation-research",
+          "vAttack": 6
+        },
+        {
+          "slug": "symbiotic-call",
+          "vAttack": 6
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "poison-thanos",
+      "cards": [
+        {
+          "slug": "desperate-rescue",
+          "vAttack": 12
+        },
+        {
+          "slug": "poisoned-loyalties",
+          "vAttack": 12
+        },
+        {
+          "slug": "searing-poisons",
+          "vAttack": 12
+        },
+        {
+          "slug": "soul-seize",
+          "vAttack": 12
+        }
+      ]
+    }
+  ]
+}

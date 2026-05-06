@@ -1,0 +1,100 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "dr-strange",
+      "cards": [
+        {
+          "slug": "dr-strange",
+          "vAttack": 8
+        },
+        {
+          "slug": "book-of-the-vishanti",
+          "vAttack": 8
+        },
+        {
+          "slug": "crimson-bands-of-cyttorak",
+          "vAttack": 8
+        },
+        {
+          "slug": "eye-of-agamotto",
+          "vAttack": 8
+        },
+        {
+          "slug": "winds-of-watoomb",
+          "vAttack": 8
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "nick-fury",
+      "cards": [
+        {
+          "slug": "nick-fury",
+          "vAttack": 9
+        },
+        {
+          "slug": "bounty-on-furys-head",
+          "vAttack": 9
+        },
+        {
+          "slug": "purge-hydra",
+          "vAttack": 9
+        },
+        {
+          "slug": "the-avengers-initiative",
+          "vAttack": 9
+        },
+        {
+          "slug": "total-fury",
+          "vAttack": 9
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "odin",
+      "cards": [
+        {
+          "slug": "divine-justice",
+          "vAttack": 10
+        },
+        {
+          "slug": "might-of-valhalla",
+          "vAttack": 10
+        },
+        {
+          "slug": "riches-of-asgard",
+          "vAttack": 10
+        },
+        {
+          "slug": "ride-of-the-valkyries",
+          "vAttack": 10
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "professor-x",
+      "cards": [
+        {
+          "slug": "cerebro-device",
+          "vAttack": 8
+        },
+        {
+          "slug": "mental-dominance",
+          "vAttack": 8
+        },
+        {
+          "slug": "mightiest-mutant-mind",
+          "vAttack": 8
+        },
+        {
+          "slug": "telepathic-imprisonment",
+          "vAttack": 8
+        }
+      ]
+    }
+  ]
+}

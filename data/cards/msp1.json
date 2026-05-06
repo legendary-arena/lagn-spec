@@ -8,7 +8,12 @@
       "name": "Black Widow",
       "slug": "black-widow",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Dangerous Rescue": 5,
+        "Mission Accomplished": 5,
+        "Covert Operation": 3,
+        "Silent Sniper": 1
+      },
       "cards": [
         {
           "name": "Dangerous Rescue",
@@ -82,7 +87,12 @@
       "name": "Captain America",
       "slug": "captain-america",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Avengers Assemble!": 5,
+        "Perfect Teamwork": 5,
+        "Diving Block": 3,
+        "A Day Unlike Any Other": 1
+      },
       "cards": [
         {
           "name": "Avengers Assemble!",
@@ -155,7 +165,12 @@
       "name": "Hawkeye",
       "slug": "hawkeye",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Quick Draw": 5,
+        "Team Player": 5,
+        "Covering Fire": 3,
+        "Impossible Trick Shot": 1
+      },
       "cards": [
         {
           "name": "Quick Draw",
@@ -228,7 +243,12 @@
       "name": "Hulk",
       "slug": "hulk",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Growing Anger": 5,
+        "Unstoppable Hulk": 5,
+        "Crazed Rampage": 3,
+        "Hulk Smash!": 1
+      },
       "cards": [
         {
           "name": "Growing Anger",
@@ -301,7 +321,12 @@
       "name": "Iron Man",
       "slug": "iron-man",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Endless Invention": 5,
+        "Repulsor Rays": 5,
+        "Arc Reactor": 3,
+        "Quantum Breakthrough": 1
+      },
       "cards": [
         {
           "name": "Endless Invention",
@@ -376,7 +401,12 @@
       "name": "Nick Fury",
       "slug": "nick-fury",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Battlefield Promotion": 5,
+        "High-Tech Weaponry": 5,
+        "Legendary Commander": 3,
+        "Pure Fury": 1
+      },
       "cards": [
         {
           "name": "Battlefield Promotion",
@@ -449,7 +479,12 @@
       "name": "Thor",
       "slug": "thor",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Odinson": 5,
+        "Surge of Power": 5,
+        "Call Lightning": 3,
+        "God of Thunder": 1
+      },
       "cards": [
         {
           "name": "Odinson",
@@ -1208,22 +1243,6 @@
       ]
     }
   ],
-  "wounds": [
-    {
-      "id": 10,
-      "name": "Wound",
-      "filterName": "Wound (MS)",
-      "slug": "wound-msp1",
-      "imageUrl": "https://images.barefootbetters.com/msp1/msp1-wd.webp",
-      "cards": [
-        {
-          "qtd": 30,
-          "abilities": [
-            "Healing: If you don't recruit any Heroes or defeat any Villains or Masterminds on your turn, you may KO all the Wounds from your hand."
-          ]
-        }
-      ]
-    }
-  ],
+  "wounds": [],
   "other": []
 }

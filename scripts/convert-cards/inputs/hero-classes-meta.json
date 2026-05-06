@@ -1,0 +1,32 @@
+[
+  {
+    "id": 0,
+    "value": "",
+    "label": ""
+  },
+  {
+    "id": 1,
+    "value": "covert",
+    "label": "Covert"
+  },
+  {
+    "id": 2,
+    "value": "instinct",
+    "label": "Instinct"
+  },
+  {
+    "id": 3,
+    "value": "ranged",
+    "label": "Ranged"
+  },
+  {
+    "id": 4,
+    "value": "strength",
+    "label": "Strength"
+  },
+  {
+    "id": 5,
+    "value": "tech",
+    "label": "Tech"
+  }
+]

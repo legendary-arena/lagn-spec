@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "abbr": "covert",
+    "slug": "covert",
+    "name": "Covert"
+  },
+  {
+    "id": 2,
+    "abbr": "instinct",
+    "slug": "instinct",
+    "name": "Instinct"
+  },
+  {
+    "id": 3,
+    "abbr": "ranged",
+    "slug": "ranged",
+    "name": "Ranged"
+  },
+  {
+    "id": 4,
+    "abbr": "strength",
+    "slug": "strength",
+    "name": "Strength"
+  },
+  {
+    "id": 5,
+    "abbr": "tech",
+    "slug": "tech",
+    "name": "Tech"
+  }
+]

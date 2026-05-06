@@ -1,0 +1,91 @@
+{
+  "_abilityTokenRewrite": {
+    "[rule:Killmonger's Wounds]": "[keyword:Killmonger's Wounds]",
+    "[rule:Venomm's Wounds]": "[keyword:Venomm's Wounds]",
+    "[rule:Villain or Mastermind has any Wounds]": "[keyword:Villain or Mastermind has any Wounds]",
+    "[rule:Wound Baron Macabre]": "[keyword:Wound Baron Macabre]",
+    "[rule:Wound Venomm]": "[keyword:Wound Venomm]",
+    "[rule:Wound a Villain]": "[keyword:Wound a Villain]",
+    "[rule:Wound each Villain and the Mastermind]": "[keyword:Wound each Villain and the Mastermind]",
+    "[rule:Wound from the Mastermind and from each Villain]": "[keyword:Wound from the Mastermind and from each Villain]",
+    "[rule:Wound her]": "[keyword:Wound her]",
+    "[rule:Wound him]": "[keyword:Wound him]",
+    "[rule:Wound on it]": "[keyword:Wound on it]",
+    "[rule:Wound that Villain]": "[keyword:Wound that Villain]",
+    "[rule:Wound that was on Killmonger]": "[keyword:Wound that was on Killmonger]",
+    "[rule:Wound that was on a Mastermind or Villain]": "[keyword:Wound that was on a Mastermind or Villain]",
+    "[rule:Wound the Mastermind]": "[keyword:Wound the Mastermind]",
+    "[rule:Wounds on Killmonger]": "[keyword:Wounds on Killmonger]",
+    "[rule:his Wounds]": "[keyword:his Wounds]"
+  },
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "killmonger",
+      "cards": [
+        {
+          "slug": "a-scar-for-every-kill",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-a-scar-for-every-kill.webp",
+          "vAttack": 5
+        },
+        {
+          "slug": "altar-of-resurrection",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-altar-of-resurrection.webp",
+          "vAttack": 5
+        },
+        {
+          "slug": "rite-of-challenge",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-rite-of-challenge.webp",
+          "vAttack": 5
+        },
+        {
+          "slug": "throw-from-the-waterfall",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-throw-from-the-waterfall.webp",
+          "vAttack": 5
+        },
+        {
+          "slug": "killmonger",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mm-killmonger.webp"
+        },
+        {
+          "slug": "epic-killmonger",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-me-killmonger.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "klaw",
+      "cards": [
+        {
+          "slug": "cohesive-sound-construct",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-klaw-cohesive-sound-construct.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "convert-matter-to-sound",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-klaw-convert-matter-to-sound.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "cruelty-provokes-resistance",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-klaw-cruelty-provokes-resistance.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "ultrasonic-boom",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-klaw-ultrasonic-boom.webp",
+          "vAttack": 8
+        },
+        {
+          "slug": "klaw",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mm-klaw.webp"
+        },
+        {
+          "slug": "epic-klaw",
+          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-me-klaw.webp"
+        }
+      ]
+    }
+  ]
+}

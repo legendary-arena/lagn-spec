@@ -1,0 +1,489 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "darren-cross",
+      "cards": [
+        {
+          "slug": "yellowjacket",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-ma-darren-cross-yellowjacket.webp"
+        },
+        {
+          "slug": "darren-cross",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mm-darren-cross.webp"
+        },
+        {
+          "slug": "corporate-raider",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-darren-cross-corporate-raider.webp"
+        },
+        {
+          "slug": "protect-my-investments",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-darren-cross-protect-my-investments.webp"
+        },
+        {
+          "slug": "shrinking-research-budget",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-darren-cross-shrinking-research-budget.webp"
+        },
+        {
+          "slug": "steal-pym-particles",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-darren-cross-steal-pym-particles.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ghost-master-thief",
+      "cards": [
+        {
+          "slug": "ghost-intangible",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-ma-ghost-master-thief-ghost-intangible.webp"
+        },
+        {
+          "slug": "ghost-master-thief",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mm-ghost-master-thief.webp"
+        },
+        {
+          "slug": "elaborate-rescue-plan",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-ghost-master-thief-elaborate-rescue-plan.webp"
+        },
+        {
+          "slug": "nightmarish-wraith",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-ghost-master-thief-nightmarish-wraith.webp"
+        },
+        {
+          "slug": "shadowy-abduction",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-ghost-master-thief-shadowy-abduction.webp"
+        },
+        {
+          "slug": "draining-quantum-energy-chamber",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-ghost-master-thief-draining-quantum-energy-chamber.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "kang-quantum-conqueror",
+      "cards": [
+        {
+          "slug": "kang-multiverse-conqueror",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-ma-kang-quantum-conqueror-kang-multiverse-conqueror.webp"
+        },
+        {
+          "slug": "kang-quantum-conqueror",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mm-kang-quantum-conqueror.webp"
+        },
+        {
+          "slug": "conquerors-wrath",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-kang-quantum-conqueror-conquerors-wrath.webp"
+        },
+        {
+          "slug": "kangs-defiance",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-kang-quantum-conqueror-kangs-defiance.webp"
+        },
+        {
+          "slug": "multiversal-engine-core",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-kang-quantum-conqueror-multiversal-engine-core.webp"
+        },
+        {
+          "slug": "the-time-sphere",
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-kang-quantum-conqueror-the-time-sphere.webp"
+        }
+      ]
+    }
+  ],
+  "henchmen": [
+    {
+      "_op": "merge",
+      "slug": "tardigrade",
+      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-covert.webp",
+      "imageUrlByClass": {
+        "covert": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-covert.webp",
+        "instinct": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-instinct.webp",
+        "ranged": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-ranged.webp",
+        "strength": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-strength.webp",
+        "tech": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-tech.webp"
+      }
+    }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "scott-lang-cat-burglar",
+      "cards": [
+        {
+          "slug": "petty-larceny",
+          "name": "Petty Larceny",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "hc": "covert",
+          "cost": 1,
+          "attack": null,
+          "recruit": "1+",
+          "abilities": [
+            "Heist: You get +2[icon:recruit]."
+          ]
+        },
+        {
+          "slug": "anything-for-cassie",
+          "name": "Anything for Cassie",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "instinct",
+          "cost": 2,
+          "attack": "1+",
+          "recruit": "1+",
+          "abilities": [
+            "Whenever you gain a Wound this turn, return that Wound to the Wound Deck.",
+            "Heist: Rescue a Bystander."
+          ]
+        },
+        {
+          "slug": "shocking-support",
+          "name": "Shocking Support",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3,
+          "hc": "ranged",
+          "cost": 4,
+          "attack": "2+",
+          "recruit": null,
+          "abilities": [
+            "Heist: You get +2[icon:attack]."
+          ]
+        },
+        {
+          "slug": "x-con-security-van",
+          "name": "X-Con Security Van",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 4,
+          "hc": "tech",
+          "cost": 5,
+          "attack": "2",
+          "recruit": null,
+          "abilities": [
+            "Heist: You may move a Villain to an empty city space. If you do, KO one of your Heroes."
+          ]
+        },
+        {
+          "slug": "putting-a-crew-together",
+          "name": "Putting a Crew Together",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 5,
+          "hc": "strength",
+          "cost": 6,
+          "attack": "3+",
+          "recruit": null,
+          "abilities": [
+            "Heist: You get +1[icon:attack] for each different cost card you have."
+          ]
+        },
+        {
+          "slug": "the-big-score",
+          "name": "The Big Score",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 6,
+          "hc": "covert",
+          "cost": 8,
+          "attack": "4+",
+          "recruit": null,
+          "abilities": [
+            "Heist: You get +4[icon:attack]. If the card revealed from the Villain Deck is a Master Strike, KO it and put a card from the Bystander Deck on top of the Villain Deck."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "wasp",
+      "cards": [
+        {
+          "slug": "follow-my-lead",
+          "name": "Follow my Lead",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "hc": "ranged",
+          "cost": "2*",
+          "attack": "1+",
+          "recruit": null,
+          "abilities": [
+            "Size-Changing [hc:ranged]",
+            "If this is the first card you played this turn, you get +1[icon:attack]."
+          ]
+        },
+        {
+          "slug": "flitting-sting",
+          "name": "Flitting Sting",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "ranged",
+          "cost": "3*",
+          "attack": "1+",
+          "recruit": "1+",
+          "abilities": [
+            "Size-Changing [hc:ranged]",
+            "[hc:ranged]: You get +1[icon:recruit] and +1[icon:attack]."
+          ]
+        },
+        {
+          "slug": "master-physicist",
+          "name": "Master Physicist",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3,
+          "hc": "tech",
+          "cost": "4*",
+          "attack": null,
+          "recruit": "2+",
+          "abilities": [
+            "Size-Changing [hc:tech]",
+            "You get +1[icon:recruit] for each other card you have with a \"+\" symbol in its recruit icon."
+          ]
+        },
+        {
+          "slug": "positive-ions",
+          "name": "Positive Ions",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 4,
+          "hc": "ranged",
+          "cost": "5*",
+          "attack": "2+",
+          "recruit": null,
+          "abilities": [
+            "Size-Changing [hc:ranged]",
+            "You get +1[icon:attack] for each other card you have with a \"+\" symbol in its attack icon."
+          ]
+        },
+        {
+          "slug": "infiltrate",
+          "name": "Infiltrate",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 5,
+          "hc": "tech",
+          "cost": "6*",
+          "attack": "1+",
+          "recruit": null,
+          "abilities": [
+            "Microscopic Size-Changing [hc:tech][hc:tech][hc:tech]",
+            "When you draw a new hand this turn, draw an extra card.",
+            "Heist: You get +3[icon:attack]."
+          ]
+        },
+        {
+          "slug": "hope-returns",
+          "name": "Hope Returns",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 6,
+          "hc": "ranged",
+          "cost": "9*",
+          "attack": "4+",
+          "recruit": "4+",
+          "abilities": [
+            "Microscopic Size-Changing [hc:ranged][hc:ranged][hc:ranged][hc:ranged][hc:ranged]",
+            "You get +1[icon:recruit] for each other card you have with a \"+\" symbol in its recruit icon.",
+            "You get +1[icon:attack] for each other card you have with a \"+\" symbol in its attack icon."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "janet-van-dyne",
+      "team": "unaffiliated",
+      "cards": [
+        {
+          "slug": "subatomic-size",
+          "name": "Subatomic Size",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "hc": "covert",
+          "cost": "2*",
+          "attack": "0+",
+          "recruit": null,
+          "abilities": [
+            "Microscopic Size-Changing [hc:covert][hc:covert]",
+            "Draw a card.",
+            "[hc:covert][hc:covert]: You get +2[icon:attack]."
+          ]
+        },
+        {
+          "slug": "search-for-peace",
+          "name": "Search for Peace",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "covert",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2+",
+          "abilities": [
+            "[hc:covert]: Explore. You get +[icon:recruit] equal to the Found Hero's printed recruit."
+          ]
+        },
+        {
+          "slug": "prepare-for-war",
+          "name": "Prepare for War",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3,
+          "hc": "ranged",
+          "cost": 4,
+          "attack": "2+",
+          "recruit": null,
+          "abilities": [
+            "[hc:ranged]: Explore. You get +[icon:attack] equal to the Found Hero's printed attack."
+          ]
+        },
+        {
+          "slug": "wasp-of-another-generation",
+          "name": "Wasp of Another Generation",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 4,
+          "hc": "covert",
+          "cost": "5*",
+          "attack": "2+",
+          "recruit": null,
+          "abilities": [
+            "Size-Changing [hc:covert]",
+            "[hc:covert]: Explore. Then you get +1[icon:attack] for each time you explored this turn."
+          ]
+        },
+        {
+          "slug": "quantum-contradiction",
+          "name": "Quantum Contradiction",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 5,
+          "hc": "ranged",
+          "cost": 6,
+          "attack": "4",
+          "recruit": "4",
+          "abilities": [
+            "When you play this, put it on top of the Hero Deck or KO it."
+          ]
+        },
+        {
+          "slug": "finally-found-you",
+          "name": "Finally Found You",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 6,
+          "hc": "covert",
+          "cost": 8,
+          "attack": "4+",
+          "recruit": "4+",
+          "abilities": [
+            "Explore.",
+            "[hc:covert]: You get +[icon:recruit] equal to the Found Hero's printed recruit and +[icon:attack] equal to its printed attack."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "freedom-fighters",
+      "team": "unaffiliated",
+      "cards": [
+        {
+          "slug": "veb",
+          "name": "Veb",
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "hc": "instinct",
+          "cost": 2,
+          "attack": "1",
+          "recruit": null,
+          "abilities": [
+            "Reveal the top card of your deck. If that card has any \"holes\" printed inside any of its icons (0, 4, 6, 8, or 9), draw it.",
+            "[hc:instinct]: You may KO the card you drew this way."
+          ]
+        },
+        {
+          "slug": "mystics",
+          "name": "Mystics",
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "hc": "ranged",
+          "cost": 3,
+          "attack": null,
+          "recruit": "1",
+          "abilities": [
+            "When you draw a new hand this turn, draw an extra card."
+          ]
+        },
+        {
+          "slug": "steel-warrior",
+          "name": "Steel Warrior",
+          "rarity": 1,
+          "rarityLabel": "Common 3",
+          "slot": 3,
+          "hc": "instinct",
+          "cost": 4,
+          "attack": "1+",
+          "recruit": null,
+          "abilities": [
+            "Streets Conqueror 1",
+            "Draw a card."
+          ]
+        },
+        {
+          "slug": "xolum",
+          "name": "Xolum",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 4,
+          "hc": "ranged",
+          "cost": 5,
+          "attack": "2+",
+          "recruit": null,
+          "abilities": [
+            "Bridge Conqueror 1",
+            "[hc:ranged]: You get +2[icon:attack]."
+          ]
+        },
+        {
+          "slug": "quaz",
+          "name": "Quaz",
+          "rarity": 2,
+          "rarityLabel": "Uncommon 2",
+          "slot": 5,
+          "hc": "ranged",
+          "cost": 6,
+          "attack": "2+",
+          "recruit": "2+",
+          "abilities": [
+            "[hc:ranged]: Choose recruit or attack. Then Explore. You get the printed value of the icon you chose on the Found Hero."
+          ]
+        },
+        {
+          "slug": "freedom-forever",
+          "name": "Freedom Forever",
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 6,
+          "hc": "instinct",
+          "cost": 7,
+          "attack": "5",
+          "recruit": null,
+          "abilities": [
+            "Explore.",
+            "[hc:instinct]: You may choose a player to gain the Found Hero."
+          ]
+        }
+      ]
+    }
+  ]
+}

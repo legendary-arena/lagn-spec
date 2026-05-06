@@ -1,0 +1,65 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "charles-xavier-professor-of-crime",
+      "vAttack": "8+",
+      "cards": [
+        {
+          "slug": "commit-to-the-asylum",
+          "vAttack": 8
+        },
+        {
+          "slug": "master-manipulator",
+          "vAttack": 8
+        },
+        {
+          "slug": "corrupt-weak-minds",
+          "vAttack": 8
+        },
+        {
+          "slug": "x-con-men",
+          "vAttack": 8
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "the-goblin-underworld-boss",
+      "cards": [
+        {
+          "slug": "the-goblin-underworld-boss",
+          "vAttack": "10*"
+        },
+        {
+          "slug": "sinister-dreams",
+          "vAttack": 10
+        },
+        {
+          "slug": "blackmail-the-judges",
+          "vAttack": 10
+        },
+        {
+          "slug": "carnival-of-carnage",
+          "vAttack": 10
+        },
+        {
+          "slug": "blind-loyalty",
+          "vAttack": 10
+        }
+      ]
+    }
+  ],
+  "villains": [
+    {
+      "_op": "merge",
+      "slug": "goblins-freak-show",
+      "cards": [
+        {
+          "slug": "kraven-animal-trainer",
+          "vAttack": "*"
+        }
+      ]
+    }
+  ]
+}

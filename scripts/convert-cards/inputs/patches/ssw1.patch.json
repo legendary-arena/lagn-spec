@@ -1,0 +1,100 @@
+{
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "madelyne-pryor-goblin-queen",
+      "cards": [
+        {
+          "slug": "madelyne-pryor-goblin-queen",
+          "vAttack": "10*"
+        },
+        {
+          "slug": "city-of-demon-goblins",
+          "vAttack": 10
+        },
+        {
+          "slug": "corrupted-clone-of-jean-grey",
+          "vAttack": 10
+        },
+        {
+          "slug": "everyones-a-demon-on-the-inside",
+          "vAttack": 10
+        },
+        {
+          "slug": "gather-the-harvest",
+          "vAttack": 10
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "nimrod-super-sentinel",
+      "cards": [
+        {
+          "slug": "nimrod-super-sentinel",
+          "vAttack": "6*"
+        },
+        {
+          "slug": "adapt-and-destroy",
+          "vAttack": 6
+        },
+        {
+          "slug": "detect-mutation",
+          "vAttack": 6
+        },
+        {
+          "slug": "scatter-the-mutants",
+          "vAttack": 6
+        },
+        {
+          "slug": "teleport-and-incarcerate",
+          "vAttack": 6
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "wasteland-hulk",
+      "cards": [
+        {
+          "slug": "brutal-beating",
+          "vAttack": 7
+        },
+        {
+          "slug": "memories-of-pain",
+          "vAttack": 7
+        },
+        {
+          "slug": "radioactive-regeneration",
+          "vAttack": 7
+        },
+        {
+          "slug": "revert-to-bruce-banner",
+          "vAttack": 7
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "zombie-green-goblin",
+      "cards": [
+        {
+          "slug": "army-of-cadavers",
+          "vAttack": 11
+        },
+        {
+          "slug": "the-hungry-dead",
+          "vAttack": 11
+        },
+        {
+          "slug": "love-to-have-you-for-dinner",
+          "vAttack": 11
+        },
+        {
+          "slug": "reign-of-terror",
+          "vAttack": 11
+        }
+      ]
+    }
+  ]
+}

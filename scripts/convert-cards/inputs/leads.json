@@ -1,0 +1,192 @@
+[
+  {
+    "_note": "All slugs match the 'slug' field in src/data/cards/*.json",
+    "_note2": "Henchmen leads use the 'henchmen' array. villainGroups and henchmen can both be present.",
+    "_note3": "Sets with no always-leads rule (3dtc, dims) are omitted. ssw1 has 2 unassigned groups noted inline.",
+    "set": "PLACEHOLDER_DELETE_THIS",
+    "mastermind": "PLACEHOLDER_DELETE_THIS",
+    "villainGroups": []
+  },
+
+  { "_set": "2099" },
+  { "set": "2099", "mastermind": "sinister-six-2099",    "villainGroups": ["alchemax-enforcers"] },
+  { "set": "2099", "mastermind": "alchemax-executives",  "villainGroups": ["false-aesir-of-alchemax"] },
+
+  { "_set": "anni" },
+  { "set": "anni", "mastermind": "annihilus",          "villainGroups": ["annihilation-wave"] },
+  { "set": "anni", "mastermind": "kang-the-conqueror", "villainGroups": ["timelines-of-kang"] },
+
+  { "_set": "amwp - Ant-Man & Wasp Quantumania" },
+  { "set": "amwp", "mastermind": "darren-cross",           "villainGroups": ["cross-technologies"] },
+  { "set": "amwp", "mastermind": "ghost-master-thief",     "villainGroups": ["ghost-chasers"] },
+  { "set": "amwp", "mastermind": "kang-quantum-conqueror", "villainGroups": ["armada-of-kang", "quantum-realm"] },
+
+  { "_set": "antm - Ant-Man" },
+  { "set": "antm", "mastermind": "morgan-le-fay", "villainGroups": ["queens-vengeance"] },
+  { "set": "antm", "mastermind": "ultron",         "villainGroups": ["ultrons-legacy"] },
+
+  { "_set": "asrd - Heroes of Asgard" },
+  { "set": "asrd", "mastermind": "hela-goddess-of-death",  "villainGroups": ["dark-council"] },
+  { "set": "asrd", "mastermind": "malekith-the-accursed",  "villainGroups": ["omens-of-ragnarok"] },
+
+  { "_set": "bkpt - Black Panther" },
+  { "set": "bkpt", "mastermind": "killmonger", "villainGroups": ["killmongers-league"] },
+  { "set": "bkpt", "mastermind": "klaw",        "villainGroups": ["enemies-of-wakanda"] },
+
+  { "_set": "bkwd - Black Widow" },
+  { "set": "bkwd", "mastermind": "taskmaster",         "villainGroups": ["taskmasters-thunderbolts"] },
+  { "set": "bkwd", "mastermind": "indestructible-man", "villainGroups": ["elite-assassins"] },
+
+  { "_set": "ca75 - Captain America 75th" },
+  { "set": "ca75", "mastermind": "arnim-zola",          "villainGroups": ["zolas-creations"] },
+  { "set": "ca75", "mastermind": "baron-heinrich-zemo", "villainGroups": ["masters-of-evil-wwii"] },
+
+  { "_set": "chmp - Champions" },
+  { "set": "chmp", "mastermind": "fin-fang-foom", "villainGroups": ["monsters-unleashed"] },
+  { "set": "chmp", "mastermind": "pagliacci",      "villainGroups": ["wrecking-crew"] },
+
+  { "_set": "core - Core Set" },
+  { "set": "core", "mastermind": "dr-doom",  "villainGroups": ["masters-of-evil"] },
+  { "set": "core", "mastermind": "loki",      "villainGroups": ["enemies-of-asgard"] },
+  { "set": "core", "mastermind": "magneto",   "villainGroups": ["brotherhood"] },
+  { "set": "core", "mastermind": "red-skull", "villainGroups": ["hydra"] },
+
+  { "_set": "cosm - Into the Cosmos" },
+  { "set": "cosm", "mastermind": "beyonder-the",    "villainGroups": ["from-beyond"] },
+  { "set": "cosm", "mastermind": "grandmaster-the", "villainGroups": ["elders-of-the-universe"] },
+  { "set": "cosm", "mastermind": "magus",            "villainGroups": [], "henchmen": ["universal-church-of-truth"] },
+
+  { "_set": "cvwr - Civil War" },
+  { "set": "cvwr", "mastermind": "authoritarian-iron-man",        "villainGroups": ["superhuman-registration-act"] },
+  { "set": "cvwr", "mastermind": "baron-helmut-zemo",             "villainGroups": ["thunderbolts"] },
+  { "set": "cvwr", "mastermind": "maria-hill-director-of-shield", "villainGroups": ["shield-elite"] },
+  { "set": "cvwr", "mastermind": "misty-knight",                  "villainGroups": ["heroes-for-hire"] },
+  { "set": "cvwr", "mastermind": "ragnarok",                      "villainGroups": ["registration-enforcers"] },
+
+  { "_set": "dead - Deadpool" },
+  { "set": "dead", "mastermind": "evil-deadpool", "villainGroups": ["evil-deadpool-corpse"] },
+  { "set": "dead", "mastermind": "macho-gomez",   "villainGroups": ["deadpools-friends"] },
+
+  { "_set": "dkcy - Dark City" },
+  { "set": "dkcy", "mastermind": "apocalypse",  "villainGroups": ["four-horsemen"] },
+  { "set": "dkcy", "mastermind": "kingpin",      "villainGroups": ["streets-of-new-york"] },
+  { "set": "dkcy", "mastermind": "mephisto",     "villainGroups": ["emissaries-of-evil"] },
+  { "set": "dkcy", "mastermind": "mr-sinister",  "villainGroups": ["marauders"] },
+  { "set": "dkcy", "mastermind": "stryfe",        "villainGroups": ["mutant-liberation-front"] },
+
+  { "_set": "dstr - Doctor Strange" },
+  { "set": "dstr", "mastermind": "nightmare",  "villainGroups": ["fear-lords"] },
+  { "set": "dstr", "mastermind": "dormammu",   "villainGroups": ["lords-of-the-netherworld"] },
+
+  { "_set": "fear - Fear Itself" },
+  { "set": "fear", "mastermind": "uru-enchanted-iron-man", "villainGroups": ["mighty-the"] },
+
+  { "_set": "ff04 - Fantastic Four" },
+  { "set": "ff04", "mastermind": "galactus",  "villainGroups": ["heralds-of-galactus"] },
+  { "set": "ff04", "mastermind": "mole-man",  "villainGroups": ["subterranea"] },
+
+  { "_set": "gotg - Guardians of the Galaxy" },
+  { "set": "gotg", "mastermind": "supreme-intelligence-of-the-kree", "villainGroups": ["kree-starforce"] },
+  { "set": "gotg", "mastermind": "thanos",                            "villainGroups": ["infinity-gems"] },
+
+  { "_set": "mdns - Midnight Sons" },
+  { "set": "mdns", "mastermind": "lilith-mother-of-demons", "villainGroups": ["lilin"] },
+  { "set": "mdns", "mastermind": "zarathos",                 "villainGroups": ["fallen"] },
+
+  { "_set": "mgtg - MS Guardians of the Galaxy" },
+  { "set": "mgtg", "mastermind": "ronan-the-accuser",     "villainGroups": ["followers-of-ronan"] },
+  { "set": "mgtg", "mastermind": "ego-the-living-planet", "villainGroups": ["ravagers"] },
+
+  { "_set": "msmc - Messiah Complex" },
+  { "set": "msmc", "mastermind": "lady-deathstrike",       "villainGroups": ["reavers"] },
+  { "set": "msmc", "mastermind": "bastion-fused-sentinel", "villainGroups": ["purifiers"] },
+  { "set": "msmc", "mastermind": "exodus",                  "villainGroups": ["acolytes"] },
+
+  { "_set": "msis - MS Infinity Saga" },
+  { "set": "msis", "mastermind": "thanos",    "villainGroups": ["children-of-thanos"] },
+  { "set": "msis", "mastermind": "ebony-maw", "villainGroups": ["infinity-stones"] },
+
+  { "_set": "msp1 - Marvel Studios" },
+  { "set": "msp1", "mastermind": "iron-monger", "villainGroups": ["iron-foes"] },
+  { "set": "msp1", "mastermind": "loki",         "villainGroups": ["enemies-of-asgard", "chitauri"] },
+  { "set": "msp1", "mastermind": "red-skull",    "villainGroups": ["hydra"] },
+
+  { "_set": "nmut - New Mutants" },
+  { "set": "nmut", "mastermind": "belasco-demon-lord-of-limbo", "villainGroups": ["demons-of-limbo"] },
+  { "set": "nmut", "mastermind": "emma-frost-the-white-queen",  "villainGroups": ["hellions"] },
+
+  { "_set": "noir - Noir" },
+  { "set": "noir", "mastermind": "charles-xavier-professor-of-crime", "villainGroups": ["x-men-noir"] },
+  { "set": "noir", "mastermind": "the-goblin-underworld-boss",        "villainGroups": ["goblins-freak-show"] },
+
+  { "_set": "pttr - Paint the Town Red" },
+  { "set": "pttr", "mastermind": "carnage",  "villainGroups": ["maximum-carnage"] },
+  { "set": "pttr", "mastermind": "mysterio", "villainGroups": ["sinister-six"] },
+
+  { "_set": "rlmk - Realm of Kings" },
+  { "set": "rlmk", "mastermind": "maximus-the-mad",             "villainGroups": ["inhuman-rebellion"] },
+  { "set": "rlmk", "mastermind": "emperor-vulcan-of-the-shiar", "villainGroups": ["shiar-imperial-elite"] },
+
+  { "_set": "rvlt - Revelations" },
+  { "set": "rvlt", "mastermind": "grim-reaper", "villainGroups": ["lethal-legion"] },
+  { "set": "rvlt", "mastermind": "hood-the",    "villainGroups": ["hoods-gang"] },
+  { "set": "rvlt", "mastermind": "mandarin",    "villainGroups": [], "henchmen": ["mandarins-rings"] },
+
+  { "_set": "shld - S.H.I.E.L.D." },
+  { "set": "shld", "mastermind": "hydra-high-council",   "villainGroups": ["hydra-elite"] },
+  { "set": "shld", "mastermind": "hydra-super-adaptoid", "villainGroups": ["a-i-m-hydra-offshoot"] },
+
+  { "_set": "smhc - Spider-Man Homecoming" },
+  { "set": "smhc", "mastermind": "adrian-toomes", "villainGroups": ["salvagers"] },
+  { "set": "smhc", "mastermind": "vulture",        "villainGroups": ["vulture-tech"] },
+
+  { "_set": "ssw1 - Secret Wars Vol.1" },
+  { "set": "ssw1", "mastermind": "madelyne-pryor-goblin-queen", "villainGroups": ["limbo"] },
+  { "set": "ssw1", "mastermind": "nimrod-super-sentinel",       "villainGroups": ["sentinel-territories"] },
+  { "set": "ssw1", "mastermind": "wasteland-hulk",              "villainGroups": ["wasteland"] },
+  { "set": "ssw1", "mastermind": "zombie-green-goblin",         "villainGroups": ["deadlands-the"] },
+  { "_unassigned": "ssw1 villain groups domain-of-apocalypse and manhattan-earth-1610 need manual assignment — check physical cards" },
+
+  { "_set": "ssw2 - Secret Wars Vol.2" },
+  { "set": "ssw2", "mastermind": "immortal-emperor-zheng-zhu", "villainGroups": ["kun-lun"] },
+  { "set": "ssw2", "mastermind": "king-hyperion",              "villainGroups": ["utopolis"] },
+  { "set": "ssw2", "mastermind": "shiklah-the-demon-bride",    "villainGroups": ["monster-metropolis"] },
+  { "set": "ssw2", "mastermind": "spider-queen",               "villainGroups": [], "henchmen": ["spider-infected"] },
+
+  { "_set": "vill - Villains" },
+  { "set": "vill", "mastermind": "dr-strange",  "villainGroups": ["defenders"] },
+  { "set": "vill", "mastermind": "nick-fury",   "villainGroups": ["avengers"] },
+  { "set": "vill", "mastermind": "odin",         "villainGroups": [], "henchmen": ["asgardian-warriors"] },
+  { "set": "vill", "mastermind": "professor-x", "villainGroups": ["x-men-first-class"] },
+
+  { "_set": "vnom - Venom" },
+  { "set": "vnom", "mastermind": "hybrid",        "villainGroups": ["life-foundation"] },
+  { "set": "vnom", "mastermind": "poison-thanos", "villainGroups": ["poisons"] },
+
+  { "_set": "wpnx - Weapon X" },
+  { "set": "wpnx", "mastermind": "omega-red",  "villainGroups": ["berserkers"] },
+  { "set": "wpnx", "mastermind": "romulus",     "villainGroups": ["weapon-plus"] },
+  { "set": "wpnx", "mastermind": "sabretooth",  "villainGroups": ["berserkers"] },
+
+  { "_set": "wtif - MS What If" },
+  { "set": "wtif", "mastermind": "hank-pym-yellowjacket",   "villainGroups": [], "_anyVillainGroup": true, "_note": "Always Leads any Villain Group" },
+  { "set": "wtif", "mastermind": "zombie-scarlet-witch",    "villainGroups": ["zombie-avengers"] },
+  { "set": "wtif", "mastermind": "killmonger-the-betrayer", "villainGroups": [], "henchmen": ["vibranium-liberator-drones"] },
+  { "set": "wtif", "mastermind": "ultron-infinity",          "villainGroups": [], "henchmen": ["ultron-sentries"] },
+
+  { "_set": "wwhk - World War Hulk" },
+  { "set": "wwhk", "mastermind": "general-thunderbolt-ross",  "villainGroups": ["code-red"] },
+  { "set": "wwhk", "mastermind": "illuminati-secret-society", "villainGroups": ["illuminati"] },
+  { "set": "wwhk", "mastermind": "king-hulk-sakaarson",       "villainGroups": ["warbound"] },
+  { "set": "wwhk", "mastermind": "m-o-d-o-k",                 "villainGroups": ["intelligencia"] },
+  { "set": "wwhk", "mastermind": "red-king-the",              "villainGroups": ["sakaar-imperial-guard"] },
+  { "set": "wwhk", "mastermind": "sentry-the",                "villainGroups": ["aspects-of-the-void"] },
+
+  { "_set": "xmen - X-Men" },
+  { "set": "xmen", "mastermind": "arcade",       "villainGroups": ["murderworld"] },
+  { "set": "xmen", "mastermind": "dark-phoenix", "villainGroups": ["hellfire-club"] },
+  { "set": "xmen", "mastermind": "deathbird",    "villainGroups": ["shiar-imperial-guard"] },
+  { "set": "xmen", "mastermind": "mojo",          "villainGroups": ["mojoverse"] },
+  { "set": "xmen", "mastermind": "onslaught",    "villainGroups": ["dark-descendants"] },
+  { "set": "xmen", "mastermind": "shadow-king",  "villainGroups": ["shadow-x"] }
+]

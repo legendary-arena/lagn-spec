@@ -1,0 +1,374 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "black-widow",
+      "cards": [
+        {
+          "slug": "mission-accomplished",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-2c1.webp"
+        },
+        {
+          "slug": "dangerous-rescue",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-3c2.webp"
+        },
+        {
+          "slug": "covert-operation",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-4u.webp"
+        },
+        {
+          "slug": "silent-sniper",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "deadpool",
+      "cards": [
+        {
+          "slug": "here-hold-this-for-a-second",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-3c1.webp"
+        },
+        {
+          "slug": "hey-can-i-get-a-do-over",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-3c2.webp"
+        },
+        {
+          "slug": "oddball",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-5u.webp"
+        },
+        {
+          "slug": "random-acts-of-unkindness",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "gambit",
+      "cards": [
+        {
+          "slug": "stack-the-deck",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-2c1.webp"
+        },
+        {
+          "slug": "hypnotic-charm",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-3c2.webp"
+        },
+        {
+          "slug": "card-shark",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-4u.webp"
+        },
+        {
+          "slug": "high-stakes-jackpot",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "iron-man",
+      "cards": [
+        {
+          "slug": "endless-invention",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-3c1.webp"
+        },
+        {
+          "slug": "repulsor-rays",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-3c2.webp"
+        },
+        {
+          "slug": "arc-reactor",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-5u.webp"
+        },
+        {
+          "slug": "quantum-breakthrough",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-7r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "nick-fury",
+      "cards": [
+        {
+          "slug": "high-tech-weaponry",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-3c1.webp"
+        },
+        {
+          "slug": "battlefield-promotion",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-4c2.webp"
+        },
+        {
+          "slug": "legendary-commander",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-6u.webp"
+        },
+        {
+          "slug": "pure-fury",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "rogue",
+      "cards": [
+        {
+          "slug": "energy-drain",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-3c1.webp"
+        },
+        {
+          "slug": "borrowed-brawn",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-4c2.webp"
+        },
+        {
+          "slug": "copy-powers",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-5u.webp"
+        },
+        {
+          "slug": "steal-abilities",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-8r.webp"
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "spider-man",
+      "cards": [
+        {
+          "slug": "astonishing-strength",
+          "slot": 1,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2c1.webp"
+        },
+        {
+          "slug": "great-responsibility",
+          "slot": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2c2.webp"
+        },
+        {
+          "slug": "web-shooters",
+          "slot": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2u.webp"
+        },
+        {
+          "slug": "the-amazing-spider-man",
+          "slot": 4,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2r.webp"
+        }
+      ]
+    }
+  ],
+  "masterminds": [
+    {
+      "_op": "merge",
+      "slug": "dr-doom",
+      "cards": [
+        {
+          "slug": "dr-doom",
+          "vAttack": 9
+        },
+        {
+          "slug": "dark-technology",
+          "vAttack": 9
+        },
+        {
+          "slug": "monarchs-decree",
+          "vAttack": 9
+        },
+        {
+          "slug": "secrets-of-time-travel",
+          "vAttack": 9
+        },
+        {
+          "slug": "treasures-of-latveria",
+          "vAttack": 9
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "loki",
+      "cards": [
+        {
+          "slug": "loki",
+          "vAttack": 10
+        },
+        {
+          "slug": "cruel-ruler",
+          "vAttack": 10
+        },
+        {
+          "slug": "maniacal-tyrant",
+          "vAttack": 10
+        },
+        {
+          "slug": "vanishing-illusions",
+          "vAttack": 10
+        },
+        {
+          "slug": "whispers-and-lies",
+          "vAttack": 10
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "magneto",
+      "cards": [
+        {
+          "slug": "magneto",
+          "vAttack": 8
+        },
+        {
+          "slug": "bitter-captor",
+          "vAttack": 8
+        },
+        {
+          "slug": "crushing-shockwave",
+          "vAttack": 8
+        },
+        {
+          "slug": "electromagnetic-bubble",
+          "vAttack": 8
+        },
+        {
+          "slug": "xaviers-nemesis",
+          "vAttack": 8
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "red-skull",
+      "cards": [
+        {
+          "slug": "red-skull",
+          "vAttack": 7
+        },
+        {
+          "slug": "endless-resources",
+          "vAttack": 7
+        },
+        {
+          "slug": "hydra-conspiracy",
+          "vAttack": 7
+        },
+        {
+          "slug": "negablast-grenades",
+          "vAttack": 7
+        },
+        {
+          "slug": "ruthless-dictator",
+          "vAttack": 7
+        }
+      ]
+    }
+  ],
+  "henchmen": [
+    {
+      "_op": "merge",
+      "slug": "doombot-legion",
+      "vAttack": "3",
+      "vp": "1"
+    },
+    {
+      "_op": "merge",
+      "slug": "hand-ninjas",
+      "vAttack": "3",
+      "vp": "1"
+    },
+    {
+      "_op": "merge",
+      "slug": "savage-land-mutates",
+      "vAttack": "3",
+      "vp": "1"
+    },
+    {
+      "_op": "merge",
+      "slug": "sentinel",
+      "vAttack": "3",
+      "vp": "1"
+    }
+  ]
+}

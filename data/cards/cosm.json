@@ -8,7 +8,12 @@
       "name": "Adam Warlock",
       "slug": "adam-warlock",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Transmute Matter": 5,
+        "Regenerative Cocoon": 5,
+        "Soulblast": 3,
+        "Manifest the Soul Gem": 1
+      },
       "cards": [
         {
           "name": "Transmute Matter",
@@ -85,7 +90,12 @@
       "name": "Captain Mar-Vell",
       "slug": "captain-mar-vell",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Cosmic Awareness": 5,
+        "Kree Genetics": 5,
+        "Channel the Nega-Bands": 3,
+        "Protector of the Universe": 1
+      },
       "cards": [
         {
           "name": "Cosmic Awareness",
@@ -161,7 +171,12 @@
       "name": "Moondragon",
       "slug": "moondragon",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Peaceful Meditation": 5,
+        "Psionic Warning": 5,
+        "Psychokinetic Blast": 3,
+        "Lunar Dragon Form": 1
+      },
       "cards": [
         {
           "name": "Peaceful Meditation",
@@ -237,7 +252,12 @@
       "name": "Nebula",
       "slug": "nebula",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Ruthless Cyborg": 5,
+        "Galactic Rogue": 5,
+        "Illusion Device": 3,
+        "Daring Raid": 1
+      },
       "cards": [
         {
           "name": "Ruthless Cyborg",
@@ -311,7 +331,12 @@
       "name": "Nova",
       "slug": "nova",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Draw From the Worldmind": 5,
+        "Electromagnetic Wave": 5,
+        "Declare Galactic Threat": 3,
+        "Mobilize the Nova Corps": 1
+      },
       "cards": [
         {
           "name": "Draw From the Worldmind",
@@ -387,7 +412,12 @@
       "name": "Phyla-Vell",
       "slug": "phyla-vell",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Channel Cosmic Power": 5,
+        "Quantum Sword": 5,
+        "Martyr": 3,
+        "Avatar of Oblivion": 1
+      },
       "cards": [
         {
           "name": "Channel Cosmic Power",
@@ -462,7 +492,12 @@
       "name": "Quasar",
       "slug": "quasar",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Manipulate Gravitons": 5,
+        "Cosmic Champion": 5,
+        "The Quantum Bands": 3,
+        "The Star Brand": 1
+      },
       "cards": [
         {
           "name": "Manipulate Gravitons",
@@ -493,7 +528,7 @@
           "recruit": null,
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-4c2.webp",
           "abilities": [
-            "[keyword:Burn a Shard]: You get +3[icon:attack]."
+            "[keyword:Burn a Shards]: You get +3[icon:attack]."
           ]
         },
         {
@@ -537,7 +572,12 @@
       "name": "Ronan the Accuser",
       "slug": "ronan-the-accuser",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Universal Weapon": 5,
+        "Rally Kree Warriors": 5,
+        "Accuse Enemies of the Empire": 3,
+        "Seek the Infinity Gems": 1
+      },
       "cards": [
         {
           "name": "Universal Weapon",
@@ -612,7 +652,12 @@
       "name": "Yondu",
       "slug": "yondu",
       "team": "guardians-of-the-galaxy",
-      "cardCounts": null,
+      "cardCounts": {
+        "Whistling Arrow": 5,
+        "Interstellar Hunter": 5,
+        "Anticipate Their Movements": 3,
+        "Space Pirate": 1
+      },
       "cards": [
         {
           "name": "Whistling Arrow",

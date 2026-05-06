@@ -8,7 +8,12 @@
       "name": "Doctor Strange",
       "slug": "doctor-strange",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Wand of Watoomb": 5,
+        "Keeper of the Sanctum": 5,
+        "Book of Cagliostro": 3,
+        "The Eye of Agamotto": 1
+      },
       "cards": [
         {
           "name": "Wand of Watoomb",
@@ -81,7 +86,12 @@
       "name": "Doctor Voodoo",
       "slug": "doctor-voodoo",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Commune with the Spirit World": 5,
+        "Medallion of Many Loas": 5,
+        "Staff of Legba": 3,
+        "Posessed by Brother's Spirit": 1
+      },
       "cards": [
         {
           "name": "Commune with the Spirit World",
@@ -154,7 +164,12 @@
       "name": "Clea",
       "slug": "clea",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Prepare Dark Magic": 5,
+        "Demonic Descendant": 5,
+        "Bind the Dark Dimension": 3,
+        "The Purple Gem": 1
+      },
       "cards": [
         {
           "name": "Prepare Dark Magic",
@@ -227,7 +242,12 @@
       "name": "Ancient One, The",
       "slug": "ancient-one-the",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Astral Confrontation": 5,
+        "Teachings of Kamar-Taj": 5,
+        "War of the Mind": 3,
+        "The Orb of Agamotto": 1
+      },
       "cards": [
         {
           "name": "Astral Confrontation",
@@ -301,7 +321,12 @@
       "name": "Vishanti, The",
       "slug": "vishanti-the",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Oshtur": 5,
+        "Hoggoth": 5,
+        "Agamotto": 3,
+        "The Book of the Vishanti": 1
+      },
       "cards": [
         {
           "name": "Oshtur",

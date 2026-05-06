@@ -8,7 +8,12 @@
       "name": "Black Widow",
       "slug": "black-widow",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Evasive Acrobatics": 5,
+        "Widow's Bite": 5,
+        "Weave a Web of Spies": 3,
+        "Infiltrate the Conspiracy": 1
+      },
       "cards": [
         {
           "name": "Evasive Acrobatics",
@@ -85,7 +90,12 @@
       "name": "Yelena Belova",
       "slug": "yelena-belova",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Strike and Fade": 5,
+        "Unveil Identity": 5,
+        "Twilight Ops": 3,
+        "Destroy the Red Room": 1
+      },
       "cards": [
         {
           "name": "Strike and Fade",
@@ -161,7 +171,12 @@
       "name": "Red Guardian",
       "slug": "red-guardian",
       "team": "unaffiliated",
-      "cardCounts": null,
+      "cardCounts": {
+        "Sleeper Agent": 5,
+        "Magnetic Shield": 5,
+        "Death Was Only a Ruse": 3,
+        "Champion of the Winter Guard": 1
+      },
       "cards": [
         {
           "name": "Sleeper Agent",
@@ -242,7 +257,12 @@
       "name": "White Tiger",
       "slug": "white-tiger",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Amulets of the Tiger God": 5,
+        "Dark Influence of the Hand": 5,
+        "Camouflaged Huntress": 3,
+        "Shadowed Resurrection": 1
+      },
       "cards": [
         {
           "name": "Dark Influence of the Hand",
@@ -316,7 +336,15 @@
       "name": "Falcon & Winter Soldier",
       "slug": "falcon-winter-soldier",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Attune": 5,
+        "Atone": 5,
+        "Relocate": 5,
+        "Reload": 5,
+        "New Wings": 3,
+        "New Plan": 3,
+        "Captain America's Legacy": 1
+      },
       "cards": [
         {
           "name": "Attune",

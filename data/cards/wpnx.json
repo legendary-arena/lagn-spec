@@ -158,7 +158,12 @@
       "name": "Weapon H",
       "slug": "weapon-h",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Evolving Abilities": 5,
+        "The Future of Warfare": 5,
+        "Slice and Smash": 3,
+        "Ultimate Killing Machine": 1
+      },
       "cards": [
         {
           "name": "Evolving Abilities",
@@ -236,7 +241,12 @@
       "name": "Weapon X (Wolverine)",
       "slug": "weapon-x-wolverine",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Infuse Skeleton with Adamantium": 5,
+        "Raging Regeneration": 5,
+        "Violent Conditioning": 3,
+        "Escape the Weapon X Lab": 1
+      },
       "cards": [
         {
           "name": "Violent Conditioning",

@@ -1,0 +1,228 @@
+{
+  "heroes": [
+    {
+      "_op": "append",
+      "name": "Howard the Duck",
+      "slug": "howard-the-duck",
+      "team": "unaffiliated",
+      "cards": [
+        {
+          "name": "Traveling Companion",
+          "slug": "traveling-companion",
+          "hc": "instinct",
+          "cost": 3,
+          "attack": null,
+          "recruit": 2,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-3c1.webp",
+          "abilities": [
+            "Reveal the top card of the Bystander Deck. If it's a Special Bystander, rescue it. Otherwise, put it on the bottom of that deck."
+          ]
+        },
+        {
+          "name": "Rebel Without a Cause",
+          "slug": "rebel-without-a-cause",
+          "hc": "covert",
+          "cost": 4,
+          "attack": 2,
+          "recruit": null,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-4c2.webp",
+          "abilities": [
+            "Reveal the top card of your deck. If it costs 0[icon:recruit] or has no team icon, draw it."
+          ]
+        },
+        {
+          "name": "Right Place, Wrong Time",
+          "slug": "right-place-wrong-time",
+          "hc": "instinct",
+          "cost": 5,
+          "attack": "3+",
+          "recruit": null,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3,
+          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-7u.webp",
+          "abilities": [
+            "You get +1[icon:attack] for each other Hero you played this turn with no team icon."
+          ]
+        },
+        {
+          "name": "Interplanetary Visitor",
+          "slug": "interplanetary-visitor",
+          "hc": "tech",
+          "cost": 7,
+          "attack": 4,
+          "recruit": null,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4,
+          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-5r.webp",
+          "abilities": [
+            "Reveal the top three cards of your deck. Draw one of them, discard one, and KO one."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Man-Thing",
+      "slug": "man-thing",
+      "team": "unaffiliated",
+      "cards": [
+        {
+          "name": "Form from Ooze",
+          "slug": "form-from-ooze",
+          "hc": "strength",
+          "cost": 2,
+          "attack": "0+",
+          "recruit": null,
+          "rarity": 1,
+          "rarityLabel": "Common 1",
+          "slot": 1,
+          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-2c1.webp",
+          "abilities": [
+            "[keyword:Teleport]",
+            "You get +2[icon:attack], usable only against Villains in the Sewers or the Mastermind."
+          ]
+        },
+        {
+          "name": "Burn the Fearful",
+          "slug": "burn-the-fearful",
+          "hc": "instinct",
+          "cost": 4,
+          "attack": 2,
+          "recruit": null,
+          "rarity": 1,
+          "rarityLabel": "Common 2",
+          "slot": 2,
+          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-4c2.webp",
+          "abilities": [
+            "Choose a Villain or Mastermind. If there are no other Villains adjacent to it, it gets -1[icon:attack] this turn."
+          ]
+        },
+        {
+          "name": "Travel the Nexus of Realities",
+          "slug": "travel-the-nexus-of-realities",
+          "hc": "covert",
+          "cost": 5,
+          "attack": null,
+          "recruit": 3,
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
+          "slot": 3,
+          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-5u.webp",
+          "abilities": [
+            "[keyword:Teleport]",
+            "You may move a Villain to another city space. If another Villain is already there, swap them."
+          ]
+        },
+        {
+          "name": "Eternity of Solitude",
+          "slug": "eternity-of-solitude",
+          "hc": "strength",
+          "cost": 7,
+          "attack": "5+",
+          "recruit": null,
+          "rarity": 3,
+          "rarityLabel": "Rare",
+          "slot": 4,
+          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-7r.webp",
+          "abilities": [
+            "[hc:strength]: You get +1[icon:attack] for each empty city space."
+          ]
+        }
+      ]
+    }
+  ],
+  "henchmen": [
+    {
+      "_op": "append",
+      "name": "Circus of Crime",
+      "slug": "circus-of-crime",
+      "vp": 1,
+      "vAttack": 3,
+      "imageUrl": "https://images.barefootbetters.com/dims/dims-hm-circus-of-crime.webp",
+      "abilities": [
+        "[keyword:Fight]: Reveal the top card of your deck. If it costs 0[icon:recruit], KO it. Otherwise, draw it."
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Spider-Slayer",
+      "slug": "spider-slayer",
+      "vp": 1,
+      "vAttack": 3,
+      "imageUrl": "https://images.barefootbetters.com/dims/dims-hm-spider-slayer.webp",
+      "abilities": [
+        "[keyword:Fight]: Reveal the top two cards of your deck. Put any that cost 2[icon:recruit] or less into your hand. Put the rest back in any order."
+      ]
+    }
+  ],
+  "bystanders": [
+    {
+      "_op": "append",
+      "name": "Bulldozer Driver",
+      "slug": "bulldozer-driver",
+      "vp": 1,
+      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-bulldozer-driver.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "When you rescue this Bystander, you may move a Villain to an adjacent city space. If another Villain is already there, swap them."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Double Agent of S.H.I.E.L.D.",
+      "slug": "double-agent-of-shield",
+      "vp": 1,
+      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-double-agent-of-shield.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "When you rescue this Bystander, play a copy of one of your [team:shield] Heroes or [team:hydra] Allies."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Fortune Teller",
+      "slug": "fortune-teller",
+      "vp": 1,
+      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-fortune-teller.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "When you rescue this Bystander, guess \"zero\" or \"not zero.\" Then reveal the top card of your deck and check its cost. If you guessed right, draw that card."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "Photographer",
+      "slug": "photographer",
+      "vp": "1*",
+      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-photographer.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "This Bystander is worth +1[icon:vp] for each Hero you have that costs 7[icon:recruit] or more among all your cards at the end of the game."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -8,7 +8,13 @@
       "name": "Amadeus Cho",
       "slug": "amadeus-cho",
       "team": "champions",
-      "cardCounts": null,
+      "cardCounts": {
+        "Extrapolate": 5,
+        "Gamma-Draining Nanites": 5,
+        "Like Totally Smart Hulk": 5,
+        "Renegade Genius": 3,
+        "Visualize the Variables": 1
+      },
       "cards": [
         {
           "name": "Extrapolate",
@@ -41,7 +47,8 @@
           "abilities": [
             "Draw a card.",
             "Then, if you drew two cards this turn, [keyword:Transform] this into Like Totally Smart Hulk."
-          ]
+          ],
+          "transform": "like-totally-smart-hulk"
         },
         {
           "name": "Like Totally Smart Hulk",
@@ -57,7 +64,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-5c3.webp",
           "abilities": [
             "[keyword:Outwit]: You get +2[icon:attack]."
-          ]
+          ],
+          "transformOf": "gamma-draining-nanites",
+          "isTransform": true
         },
         {
           "name": "Renegade Genius",
@@ -100,7 +109,13 @@
       "name": "Bruce Banner",
       "slug": "bruce-banner",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Solve the Impossible": 5,
+        "Gamma Bomb Disaster": 5,
+        "Savage Hulk Unleashed": 5,
+        "Dangerous Testing": 3,
+        "Gamma Ray Experiment": 1
+      },
       "cards": [
         {
           "name": "Solve the Impossible",
@@ -132,7 +147,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-4c2.webp",
           "abilities": [
             "[keyword:Outwit]: [keyword:Transform] this into Savage Hulk Unleashed."
-          ]
+          ],
+          "transform": "savage-hulk-unleashed"
         },
         {
           "name": "Savage Hulk Unleashed",
@@ -148,7 +164,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-5c3.webp",
           "abilities": [
             "[keyword:Smash 4]"
-          ]
+          ],
+          "transformOf": "gamma-bomb-disaster",
+          "isTransform": true
         },
         {
           "name": "Dangerous Testing",
@@ -189,7 +207,13 @@
       "name": "Caiera",
       "slug": "caiera",
       "team": "warbound",
-      "cardCounts": null,
+      "cardCounts": {
+        "Shadow Queen": 5,
+        "Shadowforged Blade": 5,
+        "Focus The Old Power": 3,
+        "Dutiful Protector": 1,
+        "Vengeful Destructor": 1
+      },
       "cards": [
         {
           "name": "Shadow Queen",
@@ -254,7 +278,8 @@
           "abilities": [
             "Double the [icon:recruit] you have.",
             "If there are at least 3 Heroes per player in the KO pile, [keyword:Transform] this into Vengeful Destructor."
-          ]
+          ],
+          "transform": "vengeful-destructor"
         },
         {
           "name": "Vengeful Destructor",
@@ -267,10 +292,12 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-7r2.webp",
           "abilities": [
             "Double the [icon:attack] you have."
-          ]
+          ],
+          "transformOf": "dutiful-protector",
+          "isTransform": true
         }
       ]
     },
@@ -279,7 +306,13 @@
       "name": "Gladiator Hulk",
       "slug": "gladiator-hulk",
       "team": "warbound",
-      "cardCounts": null,
+      "cardCounts": {
+        "Don't Make Me Angry": 5,
+        "Seize The Throne": 5,
+        "Hulk Is King": 5,
+        "The Green Scar": 3,
+        "Double-Fisted Smashing": 1
+      },
       "cards": [
         {
           "name": "Don't Make Me Angry",
@@ -313,7 +346,8 @@
           "abilities": [
             "[keyword:Smash 3]",
             "Then, if you discarded at least two cards this turn, [keyword:Transform] this into Hulk Is King and put it on top of your deck."
-          ]
+          ],
+          "transform": "hulk-is-king"
         },
         {
           "name": "Hulk Is King",
@@ -329,7 +363,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-5c3.webp",
           "abilities": [
             "When a card effect causes you to discard this card, you may return this card to your hand."
-          ]
+          ],
+          "transformOf": "seize-the-throne",
+          "isTransform": true
         },
         {
           "name": "The Green Scar",
@@ -372,7 +408,13 @@
       "name": "Hiroim",
       "slug": "hiroim",
       "team": "warbound",
-      "cardCounts": null,
+      "cardCounts": {
+        "Seek Redemption": 5,
+        "Save from the Rubble": 5,
+        "Hiroim Redeemed": 5,
+        "Mystic Shadow Priest": 3,
+        "Blade of the People": 1
+      },
       "cards": [
         {
           "name": "Seek Redemption",
@@ -405,14 +447,15 @@
           "abilities": [
             "Draw a card.",
             "If there are at least 2 Bystanders in your Victory Pile, [keyword:Transform] this into Hiroim Redeemed."
-          ]
+          ],
+          "transform": "hiroim-redeemed"
         },
         {
           "name": "Hiroim Redeemed",
           "displayName": "Hiroim Redeemed",
           "slug": "hiroim-redeemed",
-          "rarity": 1,
-          "rarityLabel": "Common 3",
+          "rarity": 2,
+          "rarityLabel": "Uncommon",
           "slot": 3,
           "hc": "strength",
           "cost": 5,
@@ -421,14 +464,16 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-5c3.webp",
           "abilities": [
             "You get +1[icon:attack]for every two Bystanders in your Victory Pile."
-          ]
+          ],
+          "transformOf": "save-from-the-rubble",
+          "isTransform": true
         },
         {
           "name": "Mystic Shadow Priest",
           "displayName": "Mystic Shadow Priest",
           "slug": "mystic-shadow-priest",
           "rarity": 2,
-          "rarityLabel": "Uncommon",
+          "rarityLabel": "Uncommon 2",
           "slot": 4,
           "hc": "covert",
           "cost": 6,
@@ -462,7 +507,13 @@
       "name": "Hulkbuster Iron Man",
       "slug": "hulkbuster-iron-man",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Pound for Pound": 5,
+        "Attune Techtonic Transducer": 5,
+        "Build the Suit": 3,
+        "Ultra-Massive Armor": 3,
+        "Final Battle": 1
+      },
       "cards": [
         {
           "name": "Pound for Pound",
@@ -553,7 +604,13 @@
       "name": "Joe Fixit, Grey Hulk",
       "slug": "joe-fixit-grey-hulk",
       "team": "crime-syndicate",
-      "cardCounts": null,
+      "cardCounts": {
+        "Carefully Considered Smashing": 5,
+        "Threaten And Bribe": 5,
+        "Ambitious Enforcer": 3,
+        "Underworld Boss": 3,
+        "Hulk Runs This Town": 1
+      },
       "cards": [
         {
           "name": "Carefully Considered Smashing",
@@ -601,7 +658,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-6u.webp",
           "abilities": [
             "When you defeat a Villain this turn that has 6[icon:attack] or more, [keyword:Transform] this into Underworld Boss and put it on top of your deck."
-          ]
+          ],
+          "transform": "underworld-boss"
         },
         {
           "name": "Underworld Boss",
@@ -617,7 +675,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-6u2.webp",
           "abilities": [
             "Choose a Villain in your Victory Pile, You get +[icon:attack] equal to it's printed VP."
-          ]
+          ],
+          "transformOf": "ambitious-enforcer",
+          "isTransform": true
         },
         {
           "name": "Hulk Runs This Town",
@@ -642,7 +702,13 @@
       "name": "Korg",
       "slug": "korg",
       "team": "warbound",
-      "cardCounts": null,
+      "cardCounts": {
+        "Nothing Beats Rock": 5,
+        "Move Mountains": 5,
+        "Forged by Fire": 3,
+        "Lord of Granite": 3,
+        "Kronan Tactician": 1
+      },
       "cards": [
         {
           "name": "Nothing Beats Rock",
@@ -691,7 +757,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-3u.webp",
           "abilities": [
             "[hc:strength][hc:strength]: [keyword:Transform] this into Lord of Granite."
-          ]
+          ],
+          "transform": "lord-of-granite"
         },
         {
           "name": "Lord of Granite",
@@ -708,7 +775,9 @@
           "abilities": [
             "Draw a card.",
             "[keyword:Smash 3]"
-          ]
+          ],
+          "transformOf": "forged-by-fire",
+          "isTransform": true
         },
         {
           "name": "Kronan Tactician",
@@ -733,7 +802,13 @@
       "name": "Miek, The Unhived",
       "slug": "miek-the-unhived",
       "team": "warbound",
-      "cardCounts": null,
+      "cardCounts": {
+        "This Bug Smashes You": 5,
+        "Devouring Frenzy": 5,
+        "Endless Appetite": 3,
+        "Metamorphosis": 1,
+        "Hive King Miek": 1
+      },
       "cards": [
         {
           "name": "This Bug Smashes You",
@@ -798,7 +873,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-7r.webp",
           "abilities": [
             "You may [keyword:Feast]. Then, if a card with an[icon:attack] icon was KO'd from your deck this turn, [keyword:Transform] this into Hive King Miek."
-          ]
+          ],
+          "transform": "hive-king-miek"
         },
         {
           "name": "Hive King Miek",
@@ -811,10 +887,12 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-8r2.webp",
           "abilities": [
             "Look at the top three cards of your deck and put them back in any order. Then you may [keyword:Feast]."
-          ]
+          ],
+          "transformOf": "metamorphosis",
+          "isTransform": true
         }
       ]
     },
@@ -823,7 +901,13 @@
       "name": "Namora",
       "slug": "namora",
       "team": "champions",
-      "cardCounts": null,
+      "cardCounts": {
+        "Crushing Tsunami": 5,
+        "Heart of the Ocean": 5,
+        "Herculean Effort": 3,
+        "Master of Depths": 3,
+        "Turning The Tide": 1
+      },
       "cards": [
         {
           "name": "Crushing Tsunami",
@@ -872,7 +956,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-5u.webp",
           "abilities": [
             "When you defeat a Villain in the Sewers or Bridge, [keyword:Transform] this into Master of Depths and put it on top of your deck."
-          ]
+          ],
+          "transform": "master-of-depths"
         },
         {
           "name": "Master of Depths",
@@ -889,7 +974,9 @@
           "abilities": [
             "[keyword:Smash 3]",
             "If you [keyword:Smash] a 0-cost Hero this way, KO it."
-          ]
+          ],
+          "transformOf": "herculean-effort",
+          "isTransform": true
         },
         {
           "name": "Turning The Tide",
@@ -914,7 +1001,13 @@
       "name": "No-Name, Brood Queen",
       "slug": "no-name-brood-queen",
       "team": "warbound",
-      "cardCounts": null,
+      "cardCounts": {
+        "Surprise Attack": 5,
+        "Appetite for Destruction": 5,
+        "Bursting with Life": 3,
+        "Torrent of Broodlings": 5,
+        "World-Spanning Hunger": 1
+      },
       "cards": [
         {
           "name": "Surprise Attack",
@@ -963,7 +1056,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-3u.webp",
           "abilities": [
             "You may [keyword:Feast]. Then, if a non-grey Hero was KO'd from your deck this turn, [keyword:Transform] this into Torrent of Broodlings."
-          ]
+          ],
+          "transform": "torrent-of-broodlings"
         },
         {
           "name": "Torrent of Broodlings",
@@ -979,7 +1073,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-5u2.webp",
           "abilities": [
             "Draw a card."
-          ]
+          ],
+          "transformOf": "bursting-with-life",
+          "isTransform": true
         },
         {
           "name": "World-Spanning Hunger",
@@ -1004,7 +1100,15 @@
       "name": "Rick Jones",
       "slug": "rick-jones",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Hacktivist": 5,
+        "Seek the Nega-Bands": 5,
+        "Captain Marvel": 5,
+        "Irradiated Blood": 3,
+        "A-Bomb": 3,
+        "Caught in Kree-Skrull War": 1,
+        "The Destiny Force": 1
+      },
       "cards": [
         {
           "name": "Hacktivist",
@@ -1036,7 +1140,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-4c2.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 3 or more, [keyword:Transform] this into Captain Marvel."
-          ]
+          ],
+          "transform": "captain-marvel"
         },
         {
           "name": "Captain Marvel",
@@ -1052,7 +1157,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-5c3.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 3 or more, draw it."
-          ]
+          ],
+          "transformOf": "seek-the-nega-bands",
+          "isTransform": true
         },
         {
           "name": "Irradiated Blood",
@@ -1068,7 +1175,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-5u.webp",
           "abilities": [
             "If you have at least 5 Villains in your Victory Pile, [keyword:Transform] this into A-Bomb and put it on top of your deck."
-          ]
+          ],
+          "transform": "a-bomb"
         },
         {
           "name": "A-Bomb",
@@ -1084,7 +1192,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-6u2.webp",
           "abilities": [
             "[keyword:Smash 5]"
-          ]
+          ],
+          "transformOf": "irradiated-blood",
+          "isTransform": true
         },
         {
           "name": "Caught in Kree-Skrull War",
@@ -1100,7 +1210,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-7r.webp",
           "abilities": [
             "If you defeat two Villains this turn, [keyword:Transform] this into The Destiny Force and put it on top of your deck."
-          ]
+          ],
+          "transform": "the-destiny-force"
         },
         {
           "name": "The Destiny Force",
@@ -1113,10 +1224,12 @@
           "cost": 9,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-9r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-9r2.webp",
           "abilities": [
             "Count the number of different printed VP values in your Victory Pile. Draw that many cards."
-          ]
+          ],
+          "transformOf": "caught-in-kree-skrull-war",
+          "isTransform": true
         }
       ]
     },
@@ -1125,7 +1238,14 @@
       "name": "Sentry",
       "slug": "sentry",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Agoraphobia": 5,
+        "Golden Guardian of Good": 5,
+        "Rival Personalities": 5,
+        "Mournful Sentinel": 3,
+        "The Void Unchained": 3,
+        "Vast Unstable Power": 1
+      },
       "cards": [
         {
           "name": "Agoraphobia",
@@ -1141,7 +1261,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-2c1.webp",
           "abilities": [
             "[keyword:Transform] this into Golden Guardian of Good and put it in your discard pile."
-          ]
+          ],
+          "transform": "golden-guardian-of-good"
         },
         {
           "name": "Golden Guardian of Good",
@@ -1157,7 +1278,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-6c2.webp",
           "abilities": [
             "You may [keyword:Transform] this into Agoraphobia and put it in your discard pile. If you do, you get +4[icon:attack]."
-          ]
+          ],
+          "transformOf": "agoraphobia",
+          "isTransform": true
         },
         {
           "name": "Rival Personalities",
@@ -1189,7 +1312,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-3u.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 1 or more, [keyword:Transform] this into The Void Unchained and put it on top of your deck."
-          ]
+          ],
+          "transform": "the-void-unchained"
         },
         {
           "name": "The Void Unchained",
@@ -1205,7 +1329,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-5u2.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 0, then [keyword:Feast]. Otherwise, [keyword:Transform] this into Mournful Sentinel and put it in your discard pile."
-          ]
+          ],
+          "transformOf": "mournful-sentinel",
+          "isTransform": true
         },
         {
           "name": "Vast Unstable Power",
@@ -1230,7 +1356,13 @@
       "name": "She-Hulk",
       "slug": "she-hulk",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Hurl Legal Objections": 5,
+        "Hurl Trucks": 5,
+        "Window of Opportunity": 5,
+        "Radioactive Riot": 3,
+        "Jade Giantess": 1
+      },
       "cards": [
         {
           "name": "Hurl Legal Objections",
@@ -1246,7 +1378,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-3c1.webp",
           "abilities": [
             "Once this turn, if you made at least 6[icon:recruit]this turn, [keyword:Transform] this into Hurl Trucks."
-          ]
+          ],
+          "transform": "hurl-trucks"
         },
         {
           "name": "Hurl Trucks",
@@ -1263,7 +1396,9 @@
           "abilities": [
             "[keyword:Smash 2]",
             "[keyword:Smash 2]"
-          ]
+          ],
+          "transformOf": "hurl-legal-objections",
+          "isTransform": true
         },
         {
           "name": "Window of Opportunity",
@@ -1320,7 +1455,13 @@
       "name": "Skaar, Son of Hulk",
       "slug": "skaar-son-of-hulk",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Anger Management": 5,
+        "Scarred Past": 5,
+        "Mood Swings": 3,
+        "Raging Savage": 3,
+        "Planetary-Level Revenge": 1
+      },
       "cards": [
         {
           "name": "Anger Management",
@@ -1368,7 +1509,8 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-5u.webp",
           "abilities": [
             "[hc:instinct]: You may gain a Wound. If you do, [keyword:Transform] this into Raging Savage."
-          ]
+          ],
+          "transform": "raging-savage"
         },
         {
           "name": "Raging Savage",
@@ -1384,7 +1526,9 @@
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-6u2.webp",
           "abilities": [
             "[keyword:Wounded Fury]"
-          ]
+          ],
+          "transformOf": "mood-swings",
+          "isTransform": true
         },
         {
           "name": "Planetary-Level Revenge",
@@ -1418,7 +1562,7 @@
           "name": "General “Thunderbolt” Ross",
           "slug": "general-thunderbolt-ross",
           "tactic": false,
-          "vAttack": null,
+          "vAttack": "6*",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-general-thunderbolt-ross.webp",
           "abilities": [
             "Start of Game: Stack 8 Bystanders next to General Ross as “Helicopter“ Villains with 2[icon:attack]. You can fight them to rescue them as Bystanders. You can't fight General Ross while he has any Helicopters.",
@@ -1430,8 +1574,8 @@
           "name": "Red Hulk",
           "slug": "red-hulk",
           "tactic": false,
-          "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-general-thunderbolt-ross.webp",
+          "vAttack": "6*",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-general-thunderbolt-ross.webp",
           "abilities": [
             "[keyword:Wounded Fury]",
             "You can't fight Helicopters, and they don't stop you from fighting Red Hulk.",
@@ -1442,7 +1586,7 @@
           "name": "Bust You Down to Private",
           "slug": "bust-you-down-to-private",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 6,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-general-thunderbolt-ross-bust-you-down-to-private.webp",
           "abilities": [
             "Fight: Each other player puts a non-grey Hero from their hand on the bottom of the Hero Deck, then puts a 0-cost Hero from the KO pile into their hand.",
@@ -1453,7 +1597,7 @@
           "name": "Call Out the Army",
           "slug": "call-out-the-army",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 6,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-general-thunderbolt-ross-call-out-the-army.webp",
           "abilities": [
             "Fight: Put 3 Bystanders from the Bystander Stack next to this Mastermind as “Helicopters.“",
@@ -1464,7 +1608,7 @@
           "name": "Personal Arsenal",
           "slug": "personal-arsenal",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 6,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-general-thunderbolt-ross-personal-arsenal.webp",
           "abilities": [
             "Fight: For each Master Strike in the KO pile, put a Bystander from the Bystander Stack next to the Mastermind as a “Helicopter.“",
@@ -1475,7 +1619,7 @@
           "name": "Urban Warfare",
           "slug": "urban-warfare",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 6,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-general-thunderbolt-ross-urban-warfare.webp",
           "abilities": [
             "Fight: Put a random Bystander next to the Mastermind as a “Helicopter“ from each of these places: The Bystander Stack, the Escape Pile, each city space, and each other player's Victory Pile.",
@@ -1507,8 +1651,8 @@
           "name": "Illuminati, Open Warfare",
           "slug": "illuminati-open-warfare",
           "tactic": false,
-          "vAttack": "13",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-illuminati-secret-society.webp",
+          "vAttack": 13,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-illuminati-secret-society.webp",
           "abilities": [
             "Whenever a card effect causes a player to draw any number of cards, that player must then also discard a card.",
             "Master Strike: Each player reveals their hand and discards two cards that each cost between 5 and 8. The Illuminati [keyword:Transform]."
@@ -1518,7 +1662,7 @@
           "name": "Black Bolt's Omni-Shout",
           "slug": "black-bolts-omni-shout",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 11,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-illuminati-secret-society-black-bolts-omni-shout.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards two cards with no rules text.",
@@ -1529,7 +1673,7 @@
           "name": "Dr. Strange's Orb of Agamotto",
           "slug": "dr-stranges-orb-of-agamotto",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 11,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-illuminati-secret-society-dr-stranges-orb-of-agamotto.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards a [hc:ranged] or [hc:instinct] Hero.",
@@ -1540,7 +1684,7 @@
           "name": "Hulkbuster's Hammer Fist",
           "slug": "hulkbusters-hammer-fist",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 11,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-illuminati-secret-society-hulkbusters-hammer-fist.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and KOs a [hc:tech] or [hc:strength] Hero from their hand or discard pile.",
@@ -1551,7 +1695,7 @@
           "name": "Zom's Manacles of Living Bondage",
           "slug": "zoms-manacles-of-living-bondage",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 11,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-illuminati-secret-society-zoms-manacles-of-living-bondage.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:covert] Hero or gains a Wound.",
@@ -1584,7 +1728,7 @@
           "slug": "king-hulk-worldbreaker",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-king-hulk-sakaarson.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-king-hulk-sakaarson.webp",
           "abilities": [
             "[keyword:Wounded Fury]",
             "Master Strike: Each player reveals their hand, then KO's a card from their hand or discard pile that has the same card name as a card in the HQ. King Hulk [keyword:Transforms]."
@@ -1594,7 +1738,7 @@
           "name": "Fury of the Green Scar",
           "slug": "fury-of-the-green-scar",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-king-hulk-sakaarson-fury-of-the-green-scar.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards a Hero that isn't grey and isn't [hc:strength].",
@@ -1605,7 +1749,7 @@
           "name": "Oath of the Warbound",
           "slug": "oath-of-the-warbound",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-king-hulk-sakaarson-oath-of-the-warbound.webp",
           "abilities": [
             "Fight: The Villain in the Escape Pile with the highest printed [icon:attack] enters the Sewers.",
@@ -1616,7 +1760,7 @@
           "name": "Revenge from the Stars",
           "slug": "revenge-from-the-stars",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-king-hulk-sakaarson-revenge-from-the-stars.webp",
           "abilities": [
             "Fight: After you put this in your Victory Pile, [keyword:Cross-Dimensional Hulk Rampage].",
@@ -1627,7 +1771,7 @@
           "name": "Rule By the Strongest",
           "slug": "rule-by-the-strongest",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-king-hulk-sakaarson-rule-by-the-strongest.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each of your [hc:strength] Heroes.",
@@ -1647,7 +1791,7 @@
           "name": "M.O.D.O.K.",
           "slug": "m-o-d-o-k",
           "tactic": false,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-m-o-d-o-k.webp",
           "abilities": [
             "All cards' [keyword:Outwit] abilities require four different costs instead of three.",
@@ -1659,8 +1803,8 @@
           "name": "M.O.D.O.K., Network Nightmare",
           "slug": "m-o-d-o-k-network-nightmare",
           "tactic": false,
-          "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-m-o-d-o-k.webp",
+          "vAttack": "8*",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-m-o-d-o-k.webp",
           "abilities": [
             "You can only fight M.O.D.O.K. with [icon:recruit], not [icon:attack].",
             "Master Strike: Each player who can't [keyword:Outwit] M.O.D.O.K. KO's a non-grey Hero from their discard pile. M.O.D.O.K. [keyword:Transforms]."
@@ -1670,7 +1814,7 @@
           "name": "Brain Scramble",
           "slug": "brain-scramble",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-m-o-d-o-k-brain-scramble.webp",
           "abilities": [
             "Fight: Each other player discards their hand, then draws as many cards as they discarded.",
@@ -1681,7 +1825,7 @@
           "name": "Designed Only For...K.O.ING",
           "slug": "designed-only-for-k-o-ing",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-m-o-d-o-k-designed-only-for-k-o-ing.webp",
           "abilities": [
             "Fight: Reveal the top three cards of your deck. KO one of them, draw one, and discard one.",
@@ -1692,7 +1836,7 @@
           "name": "Don't Get a Big head About It",
           "slug": "dont-get-a-big-head-about-it",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-m-o-d-o-k-dont-get-a-big-head-about-it.webp",
           "abilities": [
             "Fight: Draw a card for each Intelligencia Villain in your Victory Pile.",
@@ -1703,7 +1847,7 @@
           "name": "Redundancy Algorithim",
           "slug": "redundancy-algorithim",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 9,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-m-o-d-o-k-redundancy-algorithim.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards two cards that hand the same cost.",
@@ -1723,7 +1867,7 @@
           "name": "The Red King",
           "slug": "the-red-king",
           "tactic": false,
-          "vAttack": null,
+          "vAttack": "7*",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-red-king-the.webp",
           "abilities": [
             "You can't fight the Red King while any Villains are in the city.",
@@ -1735,8 +1879,8 @@
           "name": "The Red King, Power Armored",
           "slug": "the-red-king-power-armored",
           "tactic": false,
-          "vAttack": "10",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-red-king-the.webp",
+          "vAttack": 10,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-red-king-the.webp",
           "abilities": [
             "Master Strike: The Red King [keyword:Transforms], then play another card from the Villain Deck."
           ]
@@ -1745,7 +1889,7 @@
           "name": "Haughty Spite",
           "slug": "haughty-spite",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 7,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-red-king-the-haughty-spite.webp",
           "abilities": [
             "Fight: Each other player without a Red King Tactic in their Victory Pile gains a Wound.",
@@ -1756,7 +1900,7 @@
           "name": "Royal Bodyguard",
           "slug": "royal-bodyguard",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 7,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-red-king-the-royal-bodyguard.webp",
           "abilities": [
             "Fight: Reveal cards from the Villain Deck until you reveal a Sakaar Imperial Guard. If you find one, play it. Either way, shuffle all the other revealed cards back into the Villain Deck.",
@@ -1767,7 +1911,7 @@
           "name": "Treasury of Sakaar",
           "slug": "treasury-of-sakaar",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 7,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-red-king-the-treasury-of-sakaar.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Sakaar Imperial Guard and Red King Tactic in your Victory Pile, including this one.",
@@ -1778,7 +1922,7 @@
           "name": "Vast Armies of Sakaar",
           "slug": "vast-armies-of-sakaar",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 7,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-red-king-the-vast-armies-of-sakaar.webp",
           "abilities": [
             "Fight: If this is not the final Tactic, reveal the top three cards of the Villain Deck. Play all the Villains you revealed. Put the rest back in random order.",
@@ -1798,7 +1942,7 @@
           "name": "The Sentry",
           "slug": "the-sentry",
           "tactic": false,
-          "vAttack": null,
+          "vAttack": 10,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-sentry-the.webp",
           "abilities": [
             "Start of Game: Shuffle 2 Wounds into each player's deck before drawing starting hands.",
@@ -1810,8 +1954,8 @@
           "name": "The Void",
           "slug": "the-void",
           "tactic": false,
-          "vAttack": "11+",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mm-sentry-the.webp",
+          "vAttack": 10,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-me-sentry-the.webp",
           "abilities": [
             "[keyword:Wounded Fury]",
             "Master Strike: [keyword:Feast] on each player. If this feasts on a player's grey Hero, that player gains a Wound. The Void [keyword:Transforms]."
@@ -1821,7 +1965,7 @@
           "name": "Pacifying Light",
           "slug": "pacifying-light",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 10,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-sentry-the-pacifying-light.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discard two cards with [icon:recruit] icons.",
@@ -1832,7 +1976,7 @@
           "name": "Power of a Million Exploding Suns",
           "slug": "power-of-a-million-exploding-suns",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 10,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-sentry-the-power-of-a-million-exploding-suns.webp",
           "abilities": [
             "Fight: Put all Heroes from the HQ on the bottom of the Hero Deck. Each other player reveals their hand and discards each card with the same card name as any of those cards.",
@@ -1843,7 +1987,7 @@
           "name": "Reflexive Teleportation",
           "slug": "reflexive-teleportation",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 10,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-sentry-the-reflexive-teleportation.webp",
           "abilities": [
             "Fight: Choose one of your Heroes that costs 5 or less. When you draw a new hand of cards at the end of this turn, add that Hero to your hand as an extra card.",
@@ -1854,7 +1998,7 @@
           "name": "Repressed Darkness",
           "slug": "repressed-darkness",
           "tactic": true,
-          "vAttack": null,
+          "vAttack": 10,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-mt-sentry-the-repressed-darkness.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:ranged] Hero or plays an Aspects of the Void Villain from their Victory Pile as if playing it from the Villain Deck.",
@@ -2315,21 +2459,27 @@
       "name": "Cytoplasm Spikes",
       "slug": "cytoplasm-spikes",
       "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hm-cytoplasm-spikes.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: [keyword:Feast]. If Cytoplasm Spikes feasts on a non-grey Hero, you get +2[icon:recruit]."
+      ]
     },
     {
       "id": 27,
       "name": "Death's Heads",
       "slug": "deaths-heads",
       "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hm-deaths-heads.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: If you [keyword:Outwit] these Death's Heads, KO one of your cards that costs 0."
+      ]
     },
     {
       "id": 28,
       "name": "Sakaaran Hivelings",
       "slug": "sakaaran-hivelings",
       "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hm-sakaaran-hivelings.webp",
-      "abilities": []
+      "abilities": [
+        "Fight: Look at the top card of your deck. Put it back on the top or bottom. Then [keyword:Feast]."
+      ]
     }
   ],
   "schemes": [

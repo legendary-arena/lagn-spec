@@ -82,7 +82,12 @@
       "name": "Captain America",
       "slug": "captain-america",
       "team": "avengers",
-      "cardCounts": null,
+      "cardCounts": {
+        "Avengers Assemble!": 3,
+        "Perfect Teamwork": 4,
+        "Diving Block": 6,
+        "A Day Unlike Any Other": 7
+      },
       "cards": [
         {
           "name": "Avengers Assemble!",
@@ -669,7 +674,12 @@
       "name": "Nick Fury",
       "slug": "nick-fury",
       "team": "shield",
-      "cardCounts": null,
+      "cardCounts": {
+        "Battlefield Promotion": 5,
+        "High-Tech Weaponry": 5,
+        "Legendary Commander": 3,
+        "Pure Fury": 1
+      },
       "cards": [
         {
           "name": "High-Tech Weaponry",
@@ -815,7 +825,12 @@
       "name": "Spider-Man",
       "slug": "spider-man",
       "team": "spider-friends",
-      "cardCounts": null,
+      "cardCounts": {
+        "Astonishing Strength": 5,
+        "Great Responsibility": 5,
+        "Web-Shooters": 3,
+        "The Amazing Spider-Man": 1
+      },
       "cards": [
         {
           "name": "Astonishing Strength",
@@ -1120,7 +1135,7 @@
           "slug": "dr-doom",
           "tactic": false,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mm-dr-doom.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-doom-01.png",
           "abilities": [
             "Always Leads: Doombot Legion",
             "Master Strike: Each player with exactly 6 cards in hand reveals a [hc:tech] Hero or puts 2 cards from their hand on top of their deck."
@@ -1131,7 +1146,7 @@
           "slug": "dark-technology",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-dr-doom-dark-technology.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-doom-03.png",
           "abilities": [
             "Fight: You may recruit a [hc:tech] or [hc:ranged] Hero from the HQ for free."
           ]
@@ -1141,7 +1156,7 @@
           "slug": "monarchs-decree",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-dr-doom-monarchs-decree.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-doom-05.png",
           "abilities": [
             "Fight: Choose one: each other player draws a card or each other player discards a card."
           ]
@@ -1151,7 +1166,7 @@
           "slug": "secrets-of-time-travel",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-dr-doom-secrets-of-time-travel.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-doom-04.png",
           "abilities": [
             "Fight: Take another turn after this one."
           ]
@@ -1161,7 +1176,7 @@
           "slug": "treasures-of-latveria",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-dr-doom-treasures-of-latveria.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-doom-02.png",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw three extra cards."
           ]
@@ -1180,7 +1195,7 @@
           "slug": "loki",
           "tactic": false,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mm-loki.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/loki-01.png",
           "abilities": [
             "Always Leads: Enemies of Asgard",
             "Master Strike: Each player reveals a [hc:strength] Hero or gains a Wound."
@@ -1191,7 +1206,7 @@
           "slug": "cruel-ruler",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-loki-cruel-ruler.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/loki-02.png",
           "abilities": [
             "Fight: Defeat a Villain in the City for free."
           ]
@@ -1201,7 +1216,7 @@
           "slug": "maniacal-tyrant",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-loki-maniacal-tyrant.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/loki-03.png",
           "abilities": [
             "Fight: KO up to four cards from your discard pile."
           ]
@@ -1211,7 +1226,7 @@
           "slug": "vanishing-illusions",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-loki-vanishing-illusions.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/loki-04.png",
           "abilities": [
             "Fight: Each other player KOs a Villain from their Victory Pile."
           ]
@@ -1221,7 +1236,7 @@
           "slug": "whispers-and-lies",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-loki-whispers-and-lies.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/loki-05.png",
           "abilities": [
             "Fight: Each other player KOs two Bystanders from their Victory Pile."
           ]
@@ -1240,7 +1255,7 @@
           "slug": "magneto",
           "tactic": false,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mm-magneto.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/magneto-01.png",
           "abilities": [
             "Always Leads: Brotherhood",
             "Master Strike: Each player reveals an [team:x-men] Hero or discards down to four cards."
@@ -1251,7 +1266,7 @@
           "slug": "bitter-captor",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-magneto-bitter-captor.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/magneto-02.png",
           "abilities": [
             "Fight: Recruit an [team:x-men] Hero from the HQ for free."
           ]
@@ -1261,7 +1276,7 @@
           "slug": "crushing-shockwave",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-magneto-crushing-shockwave.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/magneto-03.png",
           "abilities": [
             "Fight: Each other player reveals an [team:x-men] Hero or gains two Wounds."
           ]
@@ -1271,7 +1286,7 @@
           "slug": "electromagnetic-bubble",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-magneto-electromagnetic-bubble.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/magneto-04.png",
           "abilities": [
             "Fight: Choose one of your [team:x-men] Heroes. When you draw a new hand of cards at the end of this turn, add that Hero to your hand as a seventh card."
           ]
@@ -1281,7 +1296,7 @@
           "slug": "xaviers-nemesis",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-magneto-xaviers-nemesis.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/magneto-05.png",
           "abilities": [
             "Fight: For each of your [team:x-men] Heroes, rescue a Bystander."
           ]
@@ -1300,7 +1315,7 @@
           "slug": "red-skull",
           "tactic": false,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mm-red-skull.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/red-skull-01.png",
           "abilities": [
             "Always Leads: HYDRA",
             "Master Strike: Each player KOs a Hero from their hand."
@@ -1311,7 +1326,7 @@
           "slug": "endless-resources",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-red-skull-endless-resources.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/red-skull-03.png",
           "abilities": [
             "Fight: You get +4[icon:recruit]."
           ]
@@ -1321,7 +1336,7 @@
           "slug": "hydra-conspiracy",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-red-skull-hydra-conspiracy.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/red-skull-05.png",
           "abilities": [
             "Fight: Draw two cards. Then draw another card for each HYDRA Villain in your Victory Pile."
           ]
@@ -1331,7 +1346,7 @@
           "slug": "negablast-grenades",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-red-skull-negablast-grenades.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/red-skull-04.png",
           "abilities": [
             "Fight: You get +3[icon:attack]."
           ]
@@ -1341,7 +1356,7 @@
           "slug": "ruthless-dictator",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/core/core-mt-red-skull-ruthless-dictator.webp",
+          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/red-skull-02.png",
           "abilities": [
             "Fight: Look at the top three cards of your deck. KO one, discard one and put one back on top of your deck."
           ]
@@ -1704,7 +1719,9 @@
       "name": "Doombot Legion",
       "slug": "doombot-legion",
       "imageUrl": "https://images.barefootbetters.com/core/core-hm-doombot-legion.webp",
-      "abilities": [],
+      "abilities": [
+        "Fight: Look at the top two cards of your deck. KO one of them and put the other back."
+      ],
       "vAttack": "3",
       "vp": "1"
     },
@@ -1713,7 +1730,9 @@
       "name": "Hand Ninjas",
       "slug": "hand-ninjas",
       "imageUrl": "https://images.barefootbetters.com/core/core-hm-hand-ninjas.webp",
-      "abilities": [],
+      "abilities": [
+        "Fight: You get +1[icon:recruit]."
+      ],
       "vAttack": "3",
       "vp": "1"
     },
@@ -1722,7 +1741,9 @@
       "name": "Savage Land Mutates",
       "slug": "savage-land-mutates",
       "imageUrl": "https://images.barefootbetters.com/core/core-hm-savage-land-mutates.webp",
-      "abilities": [],
+      "abilities": [
+        "Fight: When you draw a new hand of cards at the end of this turn, draw an extra card."
+      ],
       "vAttack": "3",
       "vp": "1"
     },
@@ -1731,7 +1752,9 @@
       "name": "Sentinel",
       "slug": "sentinel",
       "imageUrl": "https://images.barefootbetters.com/core/core-hm-sentinel.webp",
-      "abilities": [],
+      "abilities": [
+        "Fight: KO one of your Heroes."
+      ],
       "vAttack": "3",
       "vp": "1"
     }
@@ -1879,22 +1902,6 @@
       ]
     }
   ],
-  "wounds": [
-    {
-      "id": 1,
-      "name": "Wound",
-      "filterName": "Wound (Core)",
-      "slug": "wound-core",
-      "imageUrl": "https://images.barefootbetters.com/core/core-wd-wound-core.webp",
-      "cards": [
-        {
-          "qtd": 30,
-          "abilities": [
-            "Healing: If you don't recruit any Heroes or defeat any Villains on your turn, you may KO all the Wounds from your hand."
-          ]
-        }
-      ]
-    }
-  ],
+  "wounds": [],
   "other": []
 }
