@@ -46,6 +46,12 @@ const MIN_NODE_MAJOR_VERSION = 22;
 // why: pnpm 8+ is required for workspace protocol support.
 const MIN_PNPM_MAJOR_VERSION = 8;
 
+// why: Cloudflare bot detection pattern-matches generic User-Agent strings
+// (curl/*, the bare 'node' that undici sends by default, blank UA) and returns
+// HTTP 403 from one of several layers. An explicit, meaningful UA passes those
+// filters reliably and also makes our traffic identifiable in Cloudflare logs.
+const USER_AGENT = 'legendary-arena-health-check/1.0';
+
 // ---------------------------------------------------------------------------
 // Required environment variables — grouped by service
 // ---------------------------------------------------------------------------
@@ -568,6 +574,7 @@ async function checkBoardgameioServer() {
     const startTime = Date.now();
     const response = await fetch(`${serverUrl}${HEALTH_CHECK_PATH}`, {
       signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: { 'User-Agent': USER_AGENT },
     });
     const elapsedMilliseconds = Date.now() - startTime;
 
@@ -606,14 +613,36 @@ async function checkCloudflareR2() {
     // No registry-config.json exists — that was an incorrect assumption.
     const response = await fetch(`${publicUrl}/metadata/sets.json`, {
       signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: { 'User-Agent': USER_AGENT },
     });
     const elapsedMilliseconds = Date.now() - startTime;
     const contentType = response.headers.get('content-type') || 'unknown';
 
     if (!response.ok) {
+      // why: Cloudflare returns HTTP 403 from at least three distinct layers
+      // (edge bot rules, CDN-tier Super Bot Fight Mode, and the R2 backend
+      // itself). Distinguishing them by response headers turns a generic 403
+      // into an actionable hint about which Cloudflare setting to change.
+      let layerHint;
+      if (response.status === 403) {
+        const serverHeader = (response.headers.get('server') || '').toLowerCase();
+        const isCloudflareEdge = serverHeader === 'cloudflare';
+        const hasCfCacheStatus = response.headers.has('cf-cache-status');
+
+        if (!isCloudflareEdge) {
+          layerHint = "403 with no 'server: cloudflare' header — request was blocked at the Cloudflare edge before reaching R2. Likely culprit: 'Block AI bots' or similar edge feature in Cloudflare dashboard → Security → Bots. Disable or set scope to 'Do not block'.";
+        } else if (!hasCfCacheStatus) {
+          layerHint = "403 from Cloudflare CDN tier — likely Super Bot Fight Mode 'Definitely automated traffic' set to Block. Fix: Security → Bots → Super Bot Fight Mode → set 'Definitely automated traffic' to Allow.";
+        } else {
+          layerHint = '403 from R2 backend — check bucket public access settings and the custom-domain binding.';
+        }
+      } else {
+        layerHint = 'Check R2_PUBLIC_URL in .env and verify the R2 bucket is publicly accessible.';
+      }
+
       recordResult('CONNECTIONS', 'Cloudflare R2', false,
         `metadata/sets.json returned HTTP ${response.status}.`,
-        'Check R2_PUBLIC_URL in .env and verify the R2 bucket is publicly accessible.');
+        layerHint);
       return;
     }
 
@@ -657,6 +686,7 @@ async function checkHankoJwks() {
     const startTime = Date.now();
     response = await fetch(jwksUrl, {
       signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: { 'User-Agent': USER_AGENT },
     });
     elapsedMilliseconds = Date.now() - startTime;
   } catch (fetchError) {
@@ -727,13 +757,35 @@ async function checkCloudflarePages() {
     const startTime = Date.now();
     const response = await fetch(pagesUrl, {
       signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: { 'User-Agent': USER_AGENT },
     });
     const elapsedMilliseconds = Date.now() - startTime;
 
     if (!response.ok) {
+      // why: Pages and R2 sit behind the same Cloudflare front layers, so a
+      // 403 here may originate from edge bot rules, CDN-tier Super Bot Fight
+      // Mode, or the Pages project itself. Same three header signatures as
+      // the R2 check; the third branch points at Pages instead of R2.
+      let layerHint;
+      if (response.status === 403) {
+        const serverHeader = (response.headers.get('server') || '').toLowerCase();
+        const isCloudflareEdge = serverHeader === 'cloudflare';
+        const hasCfCacheStatus = response.headers.has('cf-cache-status');
+
+        if (!isCloudflareEdge) {
+          layerHint = "403 with no 'server: cloudflare' header — request was blocked at the Cloudflare edge before reaching Pages. Likely culprit: 'Block AI bots' or similar edge feature in Cloudflare dashboard → Security → Bots. Disable or set scope to 'Do not block'.";
+        } else if (!hasCfCacheStatus) {
+          layerHint = "403 from Cloudflare CDN tier — likely Super Bot Fight Mode 'Definitely automated traffic' set to Block. Fix: Security → Bots → Super Bot Fight Mode → set 'Definitely automated traffic' to Allow.";
+        } else {
+          layerHint = '403 from Pages backend — check the Pages project deployment status and any access policies (Cloudflare Access) on the project.';
+        }
+      } else {
+        layerHint = 'Check Cloudflare Pages dashboard for deployment status.';
+      }
+
       recordResult('CONNECTIONS', 'Cloudflare Pages', false,
         `${pagesUrl} returned HTTP ${response.status}.`,
-        'Check Cloudflare Pages dashboard for deployment status.');
+        layerHint);
       return;
     }
 
@@ -754,6 +806,7 @@ async function checkGithubReachability() {
     const startTime = Date.now();
     const response = await fetch(GITHUB_API_URL, {
       signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: { 'User-Agent': USER_AGENT },
     });
     const elapsedMilliseconds = Date.now() - startTime;
 
