@@ -14500,6 +14500,109 @@ Values.
 
 ---
 
+### D-13401 — Synchronous-on-Webhook Fulfillment Posture (WP-134)
+
+**Type:** Operational Lock
+**Packet:** WP-134 / EC-140
+**Date:** 2026-05-07
+
+**Decision:** WP-134's webhook handler invokes `processStripeEvent` synchronously after `recordStripeEvent` and before returning 200 to Stripe. The processing budget is ~50–200 ms per event (one SELECT + one INSERT + two UPDATEs); Stripe's webhook timeout window is 30s, well above. The recovery script (`scripts/process-stripe-events.mjs` per D-13405) is the safety net for the rare case where inline fulfillment fails — the recorded-event ledger remains queryable via `WHERE processed_at IS NULL` regardless of inline outcome.
+
+**Rationale:** At MVP scale (low transaction rate), the operational simplicity of a single code path beats the throughput-and-isolation benefits of a queue. Option (b) (asynchronous via in-process queue or external broker) adds operational complexity (worker process, dead-letter handling) without a clear MVP win. Option (c) (asynchronous via cron / recovery script only) degrades the user-facing post-purchase experience — the "Your benefits" UI is empty until cron fires. Option (a) is the right answer at MVP; option (b) is the right answer at higher scale (a future scaling WP).
+
+**Status:** Resolved.
+
+**Citation:** WP-134 §Decision Points D-DEC-1 (Option (a)); EC-140 §0 + §2 (synchronous-on-webhook lock); EC-140 §8 Post-Execution Checks.
+
+---
+
+### D-13402 — Webhook Response Shape Extension `{ processed, reason }` (WP-134)
+
+**Type:** Wire Contract
+**Packet:** WP-134 / EC-140
+**Date:** 2026-05-07
+
+**Decision:** The webhook response shape extends from WP-133's `{ received, duplicate }` to `{ received: true; duplicate: boolean; processed: boolean; reason: string | null }`. `processed: true` for every `Result.ok` outcome (including the terminal-no-op reasons `'fulfilled'` / `'duplicate'` / `'unhandled_event_type'` / `'unpaid_session'` / `'already_processed'`); `processed: false` only on `Result.fail` from `processStripeEvent` OR on the duplicate-delivery skip branch (existing row's `processed_at` non-NULL). `reason` is a closed-set string union (`FulfillmentSuccessReason ∪ FulfillmentErrorCode ∪ null`); the invariant `processed: true ↔ reason ≠ null` holds by construction. The catalog row at `docs/ai/REFERENCE/api-endpoints.md` is replaced wholesale per D-11804 with the new schema.
+
+**Rationale:** Zero-cost observability win. Stripe never reads the webhook response body; the shape is for our own ops dashboards / log inspection. Grep parity between webhook response logs and the `legendary.stripe_events.process_error` column accelerates incident response — an operator can grep `processed: false` in webhook logs to surface fulfillment errors without a DB query. Option (b) (stay with WP-133's `{ received, duplicate }` shape) was rejected as a missed observability opportunity. The `reason` field is intentionally typed as a closed-set string union rather than free-form prose so log consumers can write exhaustive matchers.
+
+**Status:** Resolved.
+
+**Citation:** WP-134 §Decision Points D-DEC-2 (Option (a)); EC-140 §2 (response shape lock + `reason: null ↔ processed: false` invariant); D-11804 (catalog replace-whole-row obligation).
+
+---
+
+### D-13403 — Bundled Cross-Validation + FK Resolution + Conflict Target + Transaction Posture + Path (a) Re-Fetch Helper (WP-134)
+
+**Type:** Composite Architectural Lock
+**Packet:** WP-134 / EC-140
+**Date:** 2026-05-07
+
+**Decision:** WP-134's fulfillment processor consolidates six interdependent locks into one bundled decision:
+
+1. **Five-axis cross-validation** runs in Phase 2 before any write, fail-fast on first mismatch: (1) `sessionRow.intent_status === 'open'` else `'session_lookup_failed'`; (2) session row exists for event session ID else `'session_lookup_failed'`; (3) `payload.data.object.client_reference_id === sessionRow.account_id` else `'cross_validation_failed'`; (4) `payload.data.object.metadata.entitlementKey === sessionRow.entitlement_key` else `'cross_validation_failed'`; (5) `priceAllowlist.has(sessionRow.price_id) AND priceAllowlist.get(sessionRow.price_id) === sessionRow.entitlement_key` else `'price_not_in_allowlist'`. Authoritative source for fulfillment data is the `legendary.stripe_checkout_sessions` row + `BillingConfig.priceAllowlist`; event payload fields are consistency checks only.
+
+2. **Phase 0a structural type guard** `isCheckoutSessionCompletedPayload(payload: unknown): payload is { ... }` runs FIRST, before any other Phase 1 guard, narrowing the WP-133 / EC-136 `payload: unknown` field. Shape mismatch maps to existing `'cross_validation_failed'` (no new error code introduced).
+
+3. **`accountId → player_id` resolution** uses the WP-104 / EC-135 two-query precedent: `SELECT player_id FROM legendary.players WHERE ext_id = $1 LIMIT 1` runs at Phase 3 step 6, BEFORE the entitlement INSERT. Miss → `Result.fail({ code: 'cross_validation_failed' })`. `legendary.entitlements.player_id` is `bigint` FK to `legendary.players(player_id)`, NOT `text` to `ext_id` — the v1.0 WP-134 draft's `(account_id, ...)` shorthand is superseded by this lock (#ENT-FK correction).
+
+4. **Conflict target** is `(player_id, entitlement_key) WHERE revoked_at IS NULL` matching the WP-132 / EC-135 partial unique index `entitlements_active_unique` byte-for-byte (#CONFLICT-TARGET correction). The locked INSERT clause is `INSERT INTO legendary.entitlements (player_id, entitlement_key, source, source_ref) VALUES ($1, $2, 'stripe', $3) ON CONFLICT (player_id, entitlement_key) WHERE revoked_at IS NULL DO NOTHING RETURNING id`; `RETURNING` row count discriminates `'fulfilled'` (1 row) from `'duplicate'` (0 rows).
+
+5. **Transactional posture: MUST wrap writes 8–10 in `BEGIN; ... COMMIT;`** because `DatabaseClient` (= `pg.Pool`) exposes a transaction primitive via `.connect()`. Mirrors the WP-104 `PUT /api/me/links` multi-statement transaction precedent. Step 10 (event row's `processed_at = now()`) is the LAST write on the success path; partial-write crashes leave `processed_at = NULL` and the recovery script's `WHERE processed_at IS NULL` selector continues to surface the row.
+
+6. **Path (a) re-fetch helper.** The shared local function `loadStripeEventRecordByEventId(pool, eventId): Promise<StripeEventRecord | null>` re-fetches the event row by `event_id` after `recordStripeEvent` returns `inserted: true`. WP-133's `recordStripeEvent` returns `BillingResult<{ inserted: boolean }>` only — the row itself is NOT returned. The helper is local to `billing.routes.ts`, not exported, used by BOTH the newly-inserted branch and the duplicate-delivery branch. Path (b) (modify `recordStripeEvent` to add `RETURNING *`) was rejected as a scope-violation against the WP-133 contract.
+
+**Rationale:** Defense-in-depth posture aligns with §3 (Player Trust & Fairness) and §14 (Explicit Decisions). Two-axis cross-validation (option (b)) gives up cheap drift defense; no cross-validation (option (c)) flunks the §3 trust posture entirely. The Phase 0a guard is the load-bearing input-narrowing seam — every subsequent field access in Phases 1–3 assumes the narrowed type. The conditional-MUST transaction posture removes the partial-write window entirely when the primitive is available; idempotency at writes 8 + 9 plus `processed_at = NULL` survival means correctness holds even if a future runtime change drops the primitive. The path (a) re-fetch preserves the WP-133 contract surface; path (b) would couple WP-134 to a WP-133 internal export and discourage by `.claude/rules/work-packets.md` §Conventions Are Locked.
+
+**Status:** Resolved (bundled).
+
+**Citation:** WP-134 §Decision Points D-DEC-3 (Option (a)); WP-134 §IMPORTANT — Entitlements FK Resolution (#ENT-FK + #CONFLICT-TARGET corrections); EC-140 §0 (PS-1 / PS-2 pre-flight checks RESOLVED); EC-140 §2 (locked INSERT clause, five-axis cross-validation, write ordering, transactional posture, shared helper); EC-140 §3 (single-INSERT-site + ON-CONFLICT-target + processed_at-lifecycle guardrails); EC-140 §6 (grep gates for `INSERT INTO legendary.entitlements` single-site, `ON CONFLICT (player_id, entitlement_key)` byte-for-byte, `SELECT player_id FROM legendary.players WHERE ext_id` Phase 3 step 6, `intent_status.*open` axis 1, no-cast no-`as any`/`as unknown`/`as string` post-Phase-0a). WP-104 ownerProfile.logic.ts:123 (two-query precedent); WP-132 D-13203 (`EntitlementKey` closed set); WP-133 §payload-jsonb (full-envelope storage); migration 011 (partial unique index); migration 012 (FK form Option A).
+
+---
+
+### D-13404 — Always-200 on Signature-Verified Events (WP-134)
+
+**Type:** Webhook Response Lock
+**Packet:** WP-134 / EC-140
+**Date:** 2026-05-07
+
+**Decision:** The webhook handler returns 200 to Stripe on every signature-verified event regardless of `processStripeEvent` outcome. Fulfillment errors are recorded in `legendary.stripe_events.process_error` and surfaced via the response body's `processed: false, reason: <code>`; Stripe does not retry. The recovery script handles backlog via `WHERE processed_at IS NULL`. The SOLE exception to the always-200 posture is the row-absent edge case: when `loadStripeEventRecordByEventId` returns `null` after `recordStripeEvent` reported `inserted: true` (concurrent inconsistency between INSERT and SELECT), the handler logs to stderr and returns 500 `{ error: 'internal_error' }` so Stripe retries.
+
+**Rationale:** Deterministic ops control. Stripe-driven retries on 5xx (option (b)) compound during incidents — e.g., a DB outage triggers retries that compound load when the DB recovers, exacerbating the original fault. Recording the event ledger via `recordStripeEvent` and acknowledging Stripe via 200 establishes a single source of truth (the ledger) for backlog management. The recovery-script cron cadence drains the backlog at 15-minute intervals per D-13405; manual invocation is the incident-response lever. The row-absent 500 is calibrated narrowly: it indicates a serious internal inconsistency (the row vanished between the INSERT we just observed and the SELECT we just issued) that justifies signaling Stripe to retry rather than acknowledging an unprocessable state.
+
+**Status:** Resolved.
+
+**Citation:** WP-134 §Decision Points D-DEC-4 (Option (a)); EC-140 §2 (always-200 lock + row-absent edge case); EC-140 §3 (always-200 guardrail); WP-115 D-11802 = (C) (operational 500 envelope precedent).
+
+---
+
+### D-13405 — Recovery Script Scheduling: Manual + Render Cron @ 15min, Two-Phase Lifecycle (WP-134)
+
+**Type:** Operational Lock
+**Packet:** WP-134 / EC-140
+**Date:** 2026-05-07
+
+**Decision:** The recovery script lives at `scripts/process-stripe-events.mjs`. Invokable manually for incident response (`node --env-file=.env scripts/process-stripe-events.mjs`); production cron schedule configured in `render.yaml` to run every 15 minutes (the cron entry is added by a follow-up infrastructure WP — WP-134 ships only the script). Two-phase lifecycle:
+
+- **Startup phase (exit code 2 on fault).** `loadBillingConfig(process.env)` is called first; production-mode missing env vars throw a full-sentence diagnostic per WP-133 / EC-136 close. The recovery script catches the throw and exits 2 with stderr message naming the missing var(s). Initial DB connection failure also exits 2. Cron pages on operator-actionable startup faults (missing env vars, config parse errors) but stays quiet on transient DB hiccups.
+- **Scan-loop phase (exit code 0 even on per-row faults).** Once `billingConfig` + `pg.Pool` are constructed, the script SELECTs `WHERE processed_at IS NULL ORDER BY received_at ASC LIMIT 100` and calls `processStripeEvent` per row. Per-row `Result.fail` is logged to stderr (full-sentence message + `event_id` + error code); the loop continues. After the loop, stdout summary `processed: N, skipped: M, errors: K` is printed and the script exits 0 even when `K > 0`. Per-row errors are recorded in `legendary.stripe_events.process_error` for forensic review; paging cron on every transient DB hiccup is the wrong noise level.
+
+**Pool teardown via `try { ... } finally { await pool.end(); }` envelope** — short-lived per-cron pool; mirrors the WP-126 / EC-130 short-lived rules-loader pool precedent. The recovery-script pool is decoupled from the long-lived server pool by construction.
+
+**Stripe SDK confinement preserved** (EC-136 §5 grep gate, inherited). The recovery script imports `loadBillingConfig` (and any factory helpers) from `apps/server/src/billing/billing.config.ts`, never directly from a provider SDK. tsx is registered programmatically via `tsx/esm/api` so the spec'd `node --env-file=.env scripts/process-stripe-events.mjs` invocation resolves TypeScript imports without an explicit `--import tsx` flag.
+
+**Exit code domain locked:** `0` (scan completed, with or without per-row errors), `2` (startup failure — missing env var, config parse error, initial DB connection failure), `1` (unexpected JS exception escaping the `try/finally` — Node default crash exit; cron-paged via stderr capture).
+
+**Run-overlap note (future-scaling, not enforced at MVP):** the recovery script's `LIMIT 100` plus expected per-row processing time (≤200 ms each → ≤20 s total) means a 15-minute cron cadence cannot reasonably overlap at MVP scale. If concurrency ever becomes a concern (high-volume incident, multi-instance recovery), the SELECT can be hardened with `FOR UPDATE SKIP LOCKED`. Out of scope for WP-134; documented here so a future scaling WP cites this decision as the precedent rather than re-deriving from scratch.
+
+**Rationale:** Cron at 15-minute cadence catches the rare inline fulfillment failure within an acceptable user-facing window; manual invocation is the incident-response lever. Option (b) (manual only at MVP) risks invisible backlog. Option (c) (in-process timer via `setInterval`) couples ops surface to the request-handling process which is undesirable — a server restart resets the timer; the timer's clock drifts under sustained load. The two-phase lifecycle (startup-fatal vs scan-loop-tolerant) calibrates cron paging to operator-actionable surfaces only, mirroring the WP-126 / WP-131 startup-guard precedent.
+
+**Status:** Resolved.
+
+**Citation:** WP-134 §Decision Points D-DEC-5 (Option (a)); EC-140 §0 (PS-3 pre-flight check RESOLVED — two-phase lifecycle posture); EC-140 §2 (recovery script lifecycle + exit-code domain + pool teardown + Stripe SDK confinement locks); EC-140 §3 (recovery script ESM + `node --env-file` + `try/finally` envelope guardrails); WP-126 / EC-130 (short-lived rules-loader pool precedent); WP-131 / EC-134 (production-fatal env var posture); WP-133 / EC-136 (Stripe SDK confinement origin lock).
+
+---
+
 ### D-13501 — Hero Rarity → Copy-Count Map + Option A Loud-Fail on Unknown Labels (WP-135)
 
 **Type:** Engine Setup-Time Lock
