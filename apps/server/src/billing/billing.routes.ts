@@ -50,6 +50,7 @@ import type {
   AccountId,
   BillingConfig,
   DatabaseClient,
+  StripeEventRecord,
 } from './billing.types.js';
 import type {
   AccountResolver,
@@ -61,6 +62,7 @@ import {
   createCheckoutSession,
   recordStripeEvent,
 } from './billing.logic.js';
+import { processStripeEvent } from './processStripeEvent.logic.js';
 
 /**
  * Closed-set re-statement of the orchestrator's
@@ -184,6 +186,49 @@ async function captureRawBodyMiddleware(
   });
   koaContext.request.rawBody = Buffer.concat(chunks).toString('utf8');
   await next();
+}
+
+// why: WP-134 PS-1 path (a) — `recordStripeEvent` (WP-133) returns
+// `BillingResult<{ inserted: boolean }>` only; the row itself is NOT
+// returned. After `recordStripeEvent` reports `inserted: true` the
+// webhook handler re-fetches the inserted row by `event_id` via a
+// single indexed `SELECT` (≤5 ms typical). The duplicate-delivery
+// branch uses the same helper to load the EXISTING row by `event_id`
+// before inspecting `processed_at` — both branches share one
+// helper so the SELECT logic is not duplicated. Returns `null` on a
+// concurrent inconsistency edge case (e.g., a test-database wipe
+// between `recordStripeEvent` and this fetch); the handler maps null
+// to a 500 `internal_error` per the locked row-absent edge case.
+async function loadStripeEventRecordByEventId(
+  pool: DatabaseClient,
+  eventId: string,
+): Promise<StripeEventRecord | null> {
+  const result = await pool.query(
+    'SELECT id, event_id, event_type, payload, received_at, processed_at, process_error FROM legendary.stripe_events WHERE event_id = $1 LIMIT 1',
+    [eventId],
+  );
+  if (result.rows.length === 0) {
+    return null;
+  }
+  const row = result.rows[0];
+  const rawId = row.id;
+  return {
+    id: typeof rawId === 'bigint' ? rawId : BigInt(rawId),
+    eventId: row.event_id,
+    eventType: row.event_type,
+    payload: row.payload,
+    receivedAt:
+      row.received_at instanceof Date
+        ? row.received_at.toISOString()
+        : String(row.received_at),
+    processedAt:
+      row.processed_at === null || row.processed_at === undefined
+        ? null
+        : row.processed_at instanceof Date
+          ? row.processed_at.toISOString()
+          : String(row.processed_at),
+    processError: row.process_error ?? null,
+  };
 }
 
 function statusForSessionValidationCode(code: SessionValidationCode): number {
@@ -400,11 +445,90 @@ export function registerBillingRoutes(
           koaContext.body = { error: 'internal_error' };
           return;
         }
-        koaContext.status = 200;
-        koaContext.body = {
+
+        // why: PS-1 path (a) — re-fetch the row by event_id via the
+        // shared helper. `recordStripeEvent` (WP-133) returns only
+        // `{ inserted: boolean }`; the row's id and `processed_at`
+        // state are needed for the fulfillment dispatch and
+        // duplicate-delivery branching.
+        const eventRecord = await loadStripeEventRecordByEventId(
+          database,
+          event.id,
+        );
+
+        // why: row-absent edge case is the SOLE exception to the
+        // always-200 posture (D-13404). `recordStripeEvent`
+        // succeeded but the SELECT returned no row — possible
+        // causes: concurrent test-database wipe, or another
+        // process deleting the row between INSERT and SELECT. This
+        // is a serious internal inconsistency; signaling Stripe to
+        // retry via 500 is correct.
+        if (eventRecord === null) {
+          koaContext.status = 500;
+          koaContext.body = { error: 'internal_error' };
+          return;
+        }
+
+        const isDuplicate = recordResult.value.inserted === false;
+
+        // why: duplicate-delivery dispatch (Stripe at-least-once
+        // webhook delivery). The previously-inserted row's
+        // `processed_at` discriminates: if NULL, the first
+        // delivery's processing failed and this duplicate is the
+        // self-heal opportunity; if non-NULL, the row is
+        // terminally processed and we skip re-dispatch.
+        if (isDuplicate && eventRecord.processedAt !== null) {
+          koaContext.status = 200;
+          koaContext.body = {
+            received: true,
+            duplicate: true,
+            processed: false,
+            reason: null,
+          };
+          return;
+        }
+
+        const fulfillmentResult = await processStripeEvent({
+          eventRecord,
+          billingConfig: deps.billingConfig,
+          database,
+        });
+
+        // why: response-shape construction uses conditional
+        // assignment under `exactOptionalPropertyTypes: true`
+        // (WP-029 / D-2902 precedent): build the base object with
+        // the closed-set defaults, then assign the success/failure
+        // arms inline. Inline ternaries that produce `null | string`
+        // collapse the closed-set type union and are rejected by
+        // strict-mode TypeScript.
+        const responseBody: {
+          received: true;
+          duplicate: boolean;
+          processed: boolean;
+          reason: string | null;
+        } = {
           received: true,
-          duplicate: recordResult.value.inserted === false,
+          duplicate: isDuplicate,
+          processed: false,
+          reason: null,
         };
+        if (fulfillmentResult.ok === true) {
+          responseBody.processed = true;
+          responseBody.reason = fulfillmentResult.value.reason;
+        } else {
+          responseBody.processed = false;
+          responseBody.reason = fulfillmentResult.code;
+        }
+
+        // why: D-13404 always-200 on signature-verified events.
+        // Returning 5xx on a `Result.fail` outcome would compound
+        // the recorded-event ledger via Stripe's retry storm during
+        // incidents; the recovery script is the single source of
+        // truth for backlog. Fulfillment errors land in
+        // `legendary.stripe_events.process_error` for forensic
+        // review.
+        koaContext.status = 200;
+        koaContext.body = responseBody;
       } catch (caughtError) {
         void caughtError;
         koaContext.status = 500;

@@ -155,6 +155,123 @@ function makeDatabase(rowCount: number | null = 1): DatabaseClient {
   } as unknown as DatabaseClient;
 }
 
+/**
+ * Stub `DatabaseClient` for WP-134 webhook tests. Dispatches on the
+ * SQL text to return canned responses for `recordStripeEvent` INSERT,
+ * the post-INSERT row SELECT (`loadStripeEventRecordByEventId`),
+ * `processStripeEvent`'s session SELECT, and the transaction-scope
+ * writes. The configuration object lets each test express only the
+ * branches it cares about; defaults reproduce a happy fulfillment
+ * path.
+ */
+function makeWebhookFulfillmentDatabase(args: {
+  insertRowCount?: number;
+  eventRow?: {
+    id: bigint;
+    event_id: string;
+    event_type: string;
+    payload: unknown;
+    received_at: string;
+    processed_at: string | null;
+    process_error: string | null;
+  } | null;
+  sessionRow?: {
+    account_id: string;
+    price_id: string;
+    entitlement_key: string;
+    intent_status: string;
+  } | null;
+  playerIdRow?: { player_id: number } | null;
+  insertEntitlementRowCount?: number;
+}): DatabaseClient {
+  const insertRowCount = args.insertRowCount ?? 1;
+  const eventRow = args.eventRow ?? null;
+  const sessionRow = args.sessionRow ?? null;
+  const playerIdRow = args.playerIdRow ?? { player_id: 42 };
+  const insertEntitlementRowCount = args.insertEntitlementRowCount ?? 1;
+
+  async function dispatch(
+    text: string,
+  ): Promise<{ rows: ReadonlyArray<unknown>; rowCount: number }> {
+    if (text.includes('INSERT INTO legendary.stripe_events')) {
+      return { rows: [], rowCount: insertRowCount };
+    }
+    if (text.includes('FROM legendary.stripe_events WHERE event_id')) {
+      return eventRow === null
+        ? { rows: [], rowCount: 0 }
+        : { rows: [eventRow], rowCount: 1 };
+    }
+    if (
+      text.includes('SELECT account_id, price_id, entitlement_key, intent_status')
+    ) {
+      return sessionRow === null
+        ? { rows: [], rowCount: 0 }
+        : { rows: [sessionRow], rowCount: 1 };
+    }
+    if (text.includes('SELECT player_id FROM legendary.players')) {
+      return playerIdRow === null
+        ? { rows: [], rowCount: 0 }
+        : { rows: [playerIdRow], rowCount: 1 };
+    }
+    if (text.includes('INSERT INTO legendary.entitlements')) {
+      return insertEntitlementRowCount === 1
+        ? { rows: [{ id: 100 }], rowCount: 1 }
+        : { rows: [], rowCount: 0 };
+    }
+    if (text.includes('UPDATE legendary.stripe_checkout_sessions')) {
+      return { rows: [], rowCount: 1 };
+    }
+    if (text.includes('UPDATE legendary.stripe_events')) {
+      return { rows: [], rowCount: 1 };
+    }
+    if (text === 'BEGIN' || text === 'COMMIT' || text === 'ROLLBACK') {
+      return { rows: [], rowCount: 0 };
+    }
+    return { rows: [], rowCount: 0 };
+  }
+
+  const stubClient = {
+    query: async (text: string) => dispatch(text),
+    release: () => undefined,
+  };
+  return {
+    query: async (text: string) => dispatch(text),
+    connect: async () => stubClient,
+  } as unknown as DatabaseClient;
+}
+
+const FAKE_EVENT_ROW = {
+  id: 123n,
+  event_id: 'evt_first',
+  event_type: 'checkout.session.completed',
+  payload: {
+    id: 'evt_first',
+    type: 'checkout.session.completed',
+    data: {
+      object: {
+        id: 'cs_abc',
+        client_reference_id: '00000000-0000-4000-8000-000000000001',
+        metadata: { entitlementKey: 'cosmetic_playmat_classic' },
+        payment_status: 'paid',
+      },
+    },
+  },
+  received_at: '2026-05-07T00:00:00.000Z',
+  processed_at: null,
+  process_error: null,
+};
+
+const FAKE_SESSION_ROW = {
+  account_id: '00000000-0000-4000-8000-000000000001',
+  price_id: 'price_supporter_2026',
+  entitlement_key: 'cosmetic_playmat_classic',
+  intent_status: 'open',
+};
+
+const WEBHOOK_BILLING_CONFIG = makeBillingConfig(
+  makeAllowlist([['price_supporter_2026', 'cosmetic_playmat_classic']]),
+);
+
 function makeRequireOk() {
   return async (): Promise<{ ok: true; value: AccountId }> => ({
     ok: true,
@@ -367,11 +484,16 @@ describe('POST /api/billing/checkout-session (WP-133)', () => {
 });
 
 describe('POST /api/billing/webhook/stripe (WP-133)', () => {
-  test('200 on first-delivery verified event ({ received: true, duplicate: false })', async () => {
+  test('200 on first-delivery verified event with WP-134 fulfillment success shape', async () => {
     const router = new FakeRouter();
-    registerBillingRoutes(router, makeDatabase(1), {
+    const database = makeWebhookFulfillmentDatabase({
+      insertRowCount: 1,
+      eventRow: FAKE_EVENT_ROW,
+      sessionRow: FAKE_SESSION_ROW,
+    });
+    registerBillingRoutes(router, database, {
       requireAuthenticatedSession: makeRequireOk(),
-      billingConfig: VALID_BILLING_CONFIG,
+      billingConfig: WEBHOOK_BILLING_CONFIG,
       stripeClient: makeStripeClient({
         constructEvent: () => ({
           id: 'evt_first',
@@ -387,15 +509,25 @@ describe('POST /api/billing/webhook/stripe (WP-133)', () => {
     });
     await invokeRoute(router.routeFor('/api/billing/webhook/stripe'), ctx);
     assert.equal(ctx.status, 200);
-    assert.deepEqual(ctx.body, { received: true, duplicate: false });
+    assert.deepEqual(ctx.body, {
+      received: true,
+      duplicate: false,
+      processed: true,
+      reason: 'fulfilled',
+    });
     assert.equal(ctx.headersSet['Cache-Control'], 'no-store');
   });
 
-  test('200 on duplicate event ({ received: true, duplicate: true })', async () => {
+  test('200 on duplicate event with already-processed row skips WP-134 dispatch', async () => {
     const router = new FakeRouter();
-    registerBillingRoutes(router, makeDatabase(0), {
+    const database = makeWebhookFulfillmentDatabase({
+      insertRowCount: 0,
+      eventRow: { ...FAKE_EVENT_ROW, processed_at: '2026-05-07T00:00:00.000Z' },
+      sessionRow: FAKE_SESSION_ROW,
+    });
+    registerBillingRoutes(router, database, {
       requireAuthenticatedSession: makeRequireOk(),
-      billingConfig: VALID_BILLING_CONFIG,
+      billingConfig: WEBHOOK_BILLING_CONFIG,
       stripeClient: makeStripeClient({
         constructEvent: () => ({
           id: 'evt_dup',
@@ -410,7 +542,12 @@ describe('POST /api/billing/webhook/stripe (WP-133)', () => {
     });
     await invokeRoute(router.routeFor('/api/billing/webhook/stripe'), ctx);
     assert.equal(ctx.status, 200);
-    assert.deepEqual(ctx.body, { received: true, duplicate: true });
+    assert.deepEqual(ctx.body, {
+      received: true,
+      duplicate: true,
+      processed: false,
+      reason: null,
+    });
   });
 
   test('400 invalid_signature on tampered body / bad signature', async () => {
@@ -474,5 +611,106 @@ describe('POST /api/billing/webhook/stripe (WP-133)', () => {
     await invokeRoute(router.routeFor('/api/billing/webhook/stripe'), ctx);
     assert.equal(ctx.status, 500);
     assert.deepEqual(ctx.body, { error: 'internal_error' });
+  });
+});
+
+describe('webhook handler — WP-134 fulfillment', () => {
+  test('self-heal duplicate-delivery: existing row with processed_at IS NULL triggers fulfillment dispatch', async () => {
+    const router = new FakeRouter();
+    const database = makeWebhookFulfillmentDatabase({
+      insertRowCount: 0,
+      eventRow: { ...FAKE_EVENT_ROW, processed_at: null },
+      sessionRow: FAKE_SESSION_ROW,
+    });
+    registerBillingRoutes(router, database, {
+      requireAuthenticatedSession: makeRequireOk(),
+      billingConfig: WEBHOOK_BILLING_CONFIG,
+      stripeClient: makeStripeClient({
+        constructEvent: () => ({
+          id: 'evt_first',
+          type: 'checkout.session.completed',
+          data: { object: { id: 'cs_abc' } },
+        }) as unknown as Stripe.Event,
+      }),
+    });
+    const ctx = makeContext({
+      rawBody: '{"id":"evt_first"}',
+      headers: { 'stripe-signature': 't=1,v1=abc' },
+    });
+    await invokeRoute(router.routeFor('/api/billing/webhook/stripe'), ctx);
+    assert.equal(ctx.status, 200);
+    assert.deepEqual(ctx.body, {
+      received: true,
+      duplicate: true,
+      processed: true,
+      reason: 'fulfilled',
+    });
+  });
+
+  test('skip duplicate-delivery: existing row with processed_at non-NULL returns reason null', async () => {
+    const router = new FakeRouter();
+    const database = makeWebhookFulfillmentDatabase({
+      insertRowCount: 0,
+      eventRow: {
+        ...FAKE_EVENT_ROW,
+        processed_at: '2026-05-07T00:00:00.000Z',
+      },
+      sessionRow: FAKE_SESSION_ROW,
+    });
+    registerBillingRoutes(router, database, {
+      requireAuthenticatedSession: makeRequireOk(),
+      billingConfig: WEBHOOK_BILLING_CONFIG,
+      stripeClient: makeStripeClient({
+        constructEvent: () => ({
+          id: 'evt_first',
+          type: 'checkout.session.completed',
+          data: { object: { id: 'cs_abc' } },
+        }) as unknown as Stripe.Event,
+      }),
+    });
+    const ctx = makeContext({
+      rawBody: '{"id":"evt_first"}',
+      headers: { 'stripe-signature': 't=1,v1=abc' },
+    });
+    await invokeRoute(router.routeFor('/api/billing/webhook/stripe'), ctx);
+    assert.equal(ctx.status, 200);
+    assert.deepEqual(ctx.body, {
+      received: true,
+      duplicate: true,
+      processed: false,
+      reason: null,
+    });
+  });
+
+  test('always-200 fault: cross-validation failure returns processed false with FulfillmentErrorCode reason', async () => {
+    const router = new FakeRouter();
+    const database = makeWebhookFulfillmentDatabase({
+      insertRowCount: 1,
+      eventRow: FAKE_EVENT_ROW,
+      sessionRow: { ...FAKE_SESSION_ROW, intent_status: 'expired' },
+    });
+    registerBillingRoutes(router, database, {
+      requireAuthenticatedSession: makeRequireOk(),
+      billingConfig: WEBHOOK_BILLING_CONFIG,
+      stripeClient: makeStripeClient({
+        constructEvent: () => ({
+          id: 'evt_first',
+          type: 'checkout.session.completed',
+          data: { object: { id: 'cs_abc' } },
+        }) as unknown as Stripe.Event,
+      }),
+    });
+    const ctx = makeContext({
+      rawBody: '{"id":"evt_first"}',
+      headers: { 'stripe-signature': 't=1,v1=abc' },
+    });
+    await invokeRoute(router.routeFor('/api/billing/webhook/stripe'), ctx);
+    assert.equal(ctx.status, 200);
+    assert.deepEqual(ctx.body, {
+      received: true,
+      duplicate: false,
+      processed: false,
+      reason: 'session_lookup_failed',
+    });
   });
 });
