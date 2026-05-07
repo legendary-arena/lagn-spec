@@ -144,7 +144,7 @@ mindmap
         ["WP-111 ✅ UIState card display projection"]
         ["WP-112 ✅ Session token validation middleware"]
         ["WP-126 ✅ Hanko session verifier"]
-        ["WP-131 📝 Drafted — authenticated route production wiring"]
+        ["WP-131 ✅ Authenticated route production wiring"]
 
       Engine + Server Wiring & Leaderboard HTTP
         ["WP-113 ✅ Engine-server registry wiring"]
@@ -160,20 +160,25 @@ mindmap
         ["WP-127 ✅ Grid tile team and ability text"]
 
       Phase 8 — Interactive Board Layout
-        ["WP-128 📝 Drafted — UIState board projections"]
-        ["WP-129 📝 Drafted — board layout (desktop/mobile)"]
-        ["WP-130 📝 Drafted — playmat / reskin selector"]
+        ["WP-128 ✅ UIState board projections"]
+        ["WP-129 ✅ Board layout (desktop/mobile)"]
+        ["WP-130 ✅ Playmat / reskin selector"]
 
       Monetization Stack
-        ["WP-132 📝 Drafted — entitlements data model and read endpoint"]
-        ["WP-133 📝 Drafted — Stripe checkout and webhook ingestion"]
-        ["WP-134 📝 Drafted — webhook to entitlement fulfillment"]
+        ["WP-132 ✅ Entitlements data model and read endpoint"]
+        ["WP-133 ✅ Stripe checkout and webhook ingestion"]
+        ["WP-134 ✅ Webhook to entitlement fulfillment (closed-loop LIVE for cosmetic SKUs)"]
+
+      Engine & Test-Harness Cleanup
+        ["WP-135 ✅ HQ population and hero deck reservoir"]
+        ["WP-136 ✅ JSDOM opaque-origin storage fix"]
+        ["WP-137 ✅ Hero card-instance distinctness + data-driven cardCounts"]
 
       Phase 9 — Profile Surface Follow-ups
         ["WP-105 📦 Queued — player badges"]
         ["WP-106 ⏸ Blocked — avatar upload pipeline"]
         ["WP-107 ⏸ Blocked — integrity / anti-cheat surface"]
-        ["WP-108 ⏸ Blocked — profile billing & funding history UI (consumes WP-132/133/134)"]
+        ["WP-108 📦 Queued — profile billing & funding history UI (WP-132/133/134 deps cleared 2026-05-07)"]
 
       Phase 10 — Debugging, Testing & Troubleshooting
         ["Future-WP-A 📝 Placeholder — replay diff tool"]
@@ -196,7 +201,7 @@ mindmap
         ["cards.barefootbetters.com — registry viewer (public)"]
         [".claude/CLAUDE.md — root coordination"]
         [".claude/rules/ — 7 rule files"]
-        ["EC_INDEX.md — execution checklists EC-001..EC-137"]
+        ["EC_INDEX.md — execution checklists EC-001..EC-140"]
         ["DECISIONS.md — D-NNNN ledger (range in Project Baselines)"]
         ["WORK_INDEX.md — authoritative per-WP audit log"]
 ```
@@ -219,15 +224,16 @@ mindmap
 | Beta-Launch Pillar | 5/5 | — |
 | Engine Hardening | 2/2 | — |
 | Client Integration Cluster | 7/7 | — |
-| Auth Stack & Profile Surface | 8/8 | 1 📝 (WP-131) |
+| Auth Stack & Profile Surface | 9/9 | — |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
 | Registry Viewer Enhancements | 6/6 | — |
-| Phase 8 — Interactive Board Layout | 0/3 | 3 📝 |
-| Monetization Stack | 0/3 | 3 📝 |
-| Phase 9 — Profile Surface Follow-ups | 0/4 | 1 📦, 3 ⏸ |
+| Phase 8 — Interactive Board Layout | 3/3 | — |
+| Monetization Stack | 3/3 | — |
+| Engine & Test-Harness Cleanup | 3/3 | — |
+| Phase 9 — Profile Surface Follow-ups | 0/4 | 2 📦, 2 ⏸ |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 0/3 | 1 📝, 2 ⏸ |
-| **Total** | **123/135 ✅** | 8 📝 + 2 📦 + 5 ⏸ |
+| **Total** | **133/138 ✅** | 8 📝 placeholders + 3 📦 + 4 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 
@@ -237,23 +243,23 @@ mindmap
 
 - **Phase 3 Gate:** Closed (D-1320)
 - **Phase 6 Gate:** Closed 2026-04-19 — tag `phase-6-complete` at `c376467`
-- **Engine test baseline:** `604 / 132 / 0` (post-WP-111 + WP-113)
-- **Server test baseline:** `124 / 0 / 54` (post-WP-126; pre-WP-131)
-- **DECISIONS.md range:** `D-4801..D-13405` reserved (WP-097 → D-9701; WP-098 → D-9801; WP-131 → D-13101..D-13104; WP-132 → D-13201..D-13206; WP-133 → D-13301..D-13309; WP-134 → D-13401..D-13405)
-- **EC range:** `EC-001..EC-137` (EC-131/132/133 reserved by board-layout chain WP-128/129/130; EC-134 reserved by WP-131; EC-135/136/137 reserved by monetization stack WP-132/133/134)
+- **Engine test baseline:** `698 / 0 / 0 / 150` (post-WP-137)
+- **Server test baseline:** `184 / 0 / 66 / 31` (post-WP-134)
+- **arena-client test baseline:** `286 / 35 / 0` (post-WP-130; preserved by WP-136)
+- **DECISIONS.md range:** `D-4801..D-13703` (WP-097 → D-9701; WP-098 → D-9801; WP-131 → D-13101..D-13104; WP-132 → D-13201..D-13206; WP-133 → D-13301..D-13309; WP-134 → D-13401..D-13405; WP-135 → D-13501..D-13503; WP-136 → D-13601; WP-137 → D-13701..D-13703)
+- **EC range:** `EC-001..EC-140` (EC-131/132/133 = WP-128/129/130; EC-134 = WP-131; EC-135/136 = WP-132/133; EC-137 = WP-137; EC-138 = WP-135; EC-139 = WP-136; EC-140 = WP-134)
 
 ---
 
 ## Next Unblocked (ordered)
 
-1. **WP-131** — drafted; all deps satisfied; awaiting Lint Gate + pre-flight.
-2. **WP-128 → WP-129 → WP-130** — drafted; awaiting Lint Gate. WP-130 deferrable.
-3. **WP-132 → WP-133 → WP-134** — drafted 2026-05-03; awaiting Lint Gate + pre-flight + WORK_INDEX entry. Sequenced strictly: WP-132 (entitlement substrate) before WP-133 (Stripe wiring) before WP-134 (fulfillment processor). WP-131 should land first so `/api/me/entitlements` is genuinely authenticated rather than fail-closed `'session_verifier_not_configured'`.
-4. **WP-105** — queued (WP-104 dep cleared 2026-05-02); WP file not yet authored.
-5. **WP-070** — queued (WP-059 ✅ + WP-090 ✅); WP file + EC not yet authored.
-6. **WP-097 → WP-098** — pre-flight bundles pending; WP-098 blocked on WP-097 execution. WP-108 is now blocked on **WP-097 + WP-098 + WP-132 + WP-133 + WP-134** (reframed 2026-05-03 — see WORK_INDEX.md).
-7. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
-8. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+1. **WP-108** — newly unblocked 2026-05-07 (WP-132/133/134 deps cleared today); WP file not yet authored. Profile billing & funding history UI; user-facing realization of the closed-loop monetization that just shipped server-side. Strongest "next step" candidate because it converts the live backend loop into something customers can see.
+2. **Captain-America cardCounts data fix** — known anomaly logged under WP-137 RS-1 (`core.captain-america.cardCounts` sum 20 vs canonical 14); spawned-task scope; investigates `scripts/convert-cards/convert-cards-v15.mjs` and re-runs the pipeline. Unblocks a real gameplay regression for that hero loadout.
+3. **WP-105** — queued (WP-104 dep cleared 2026-05-02); WP file not yet authored.
+4. **WP-070** — queued (WP-059 ✅ + WP-090 ✅); WP file + EC not yet authored.
+5. **WP-097 → WP-098** — pre-flight bundles pending; WP-098 blocked on WP-097 execution.
+6. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
+7. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
 
 ---
 
@@ -276,4 +282,4 @@ mindmap
 
 ---
 
-*Last updated: 2026-05-03 (review-pass 4: added Monetization Stack cluster for WP-132/133/134 drafts; reframed WP-108 as UI consumer of the stack; DECISIONS.md range extended to D-13405; EC range extended to EC-137).*
+*Last updated: 2026-05-07 (review-pass 5: WP-128/129/130 → ✅; WP-131 → ✅; Monetization Stack WP-132/133/134 all → ✅ — closed-loop cosmetic-SKU monetization is LIVE; new "Engine & Test-Harness Cleanup" cluster captures WP-135/136/137; WP-108 flipped ⏸ → 📦 (deps cleared today); DECISIONS.md range extended to D-13703; EC range extended to EC-140; engine baseline `604/132/0` → `698/0/0`; server baseline `124/0/54` → `184/0/66`; arena-client baseline `286/35/0` added).*
