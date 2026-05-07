@@ -335,6 +335,28 @@ If any of the above is false, this packet is **BLOCKED**.
 
 ---
 
+## IMPORTANT — Entitlements FK Resolution (Post-WP-132 Reality)
+
+WP-132 / EC-135 finalized `legendary.entitlements` with:
+
+- `player_id bigint REFERENCES legendary.players(player_id) ON DELETE CASCADE`
+- partial unique index `entitlements_active_unique ON (player_id, entitlement_key) WHERE revoked_at IS NULL`
+- **NO `account_id text` column on `legendary.entitlements`**
+
+The WP-134 v1.0 draft body's `INSERT INTO legendary.entitlements (..., account_id, ...)` shorthand and `ON CONFLICT (account_id, entitlement_key) WHERE revoked_at IS NULL` clause both reference a column name (`account_id`) that does not exist on the shipped table. Both are superseded by the shipped schema; the executor MUST use the corrected forms below in all production code:
+
+- INSERT columns: `(player_id, entitlement_key, source, source_ref)` — NOT `(account_id, ...)`.
+- `ON CONFLICT` target: `(player_id, entitlement_key) WHERE revoked_at IS NULL DO NOTHING` — matches the EC-135 / WP-132 partial unique index byte-for-byte.
+- `accountId → player_id` resolution: a single SELECT before the INSERT, reusing the WP-104 / EC-135 two-query pattern (`ownerProfile.logic.ts:123` precedent):
+  ```
+  SELECT player_id FROM legendary.players WHERE ext_id = $1 LIMIT 1
+  ```
+  The resolved `player_id` is what's bound to `$1` in the INSERT. The orchestration choice (resolve once at the top of `processStripeEvent` vs resolve inline at the INSERT site) is locked under D-13403 alongside the cross-validation lock.
+
+This correction is reflected verbatim in EC-140 §0 #ENT-FK + #CONFLICT-TARGET pre-flight gates, EC-140 §2 Locked Values, EC-140 §3 Guardrails, and EC-140 Common Failure Smells. The WP design intent (idempotent INSERT keyed on the active-entitlement uniqueness pair) is unchanged — only the column name is corrected to match shipped reality.
+
+---
+
 ## Non-Negotiable Constraints
 
 **Engine-wide (always apply):**
@@ -415,15 +437,76 @@ If any of the above is false, this packet is **BLOCKED**.
 - **Write ordering (locked):** within a single `processStripeEvent`
   call, writes execute in this order: (a) entitlement INSERT, (b)
   stripe_checkout_sessions UPDATE, (c) stripe_events UPDATE
-  (`processed_at = now()`). Writes (a)–(c) SHOULD wrap in a single
-  `BEGIN; ... COMMIT;` transaction (matches the WP-104
-  `PUT /api/me/links` precedent for multi-statement transactions).
-  If `DatabaseClient` does not expose a transaction primitive, the
-  ordering above plus idempotency at (a) and (b) satisfies
-  correctness — a crash between (a) and (c) leaves
-  `processed_at = NULL` so the recovery script re-runs the row;
-  the idempotent INSERT and the idempotent UPDATE both no-op on
-  the second pass; (c) finally completes.
+  (`processed_at = now()`). Step (c) is the LAST write on the
+  success / no-op path.
+- **Transaction requirement (locked):**
+  - **MUST** wrap writes (a)–(c) in a single `BEGIN; ... COMMIT;`
+    transaction IF `DatabaseClient` exposes a transaction primitive
+    (matches the WP-104 `PUT /api/me/links` precedent for
+    multi-statement transactions). The transactional path is the
+    expected default — atomicity gives clearer reasoning at code-
+    review time and removes the partial-write window entirely.
+  - **MAY** fall back to deterministic-ordering-plus-idempotency IF
+    `DatabaseClient` does not expose a transaction primitive. A
+    crash between (a) and (c) leaves `processed_at = NULL` so the
+    recovery script re-runs the row; the idempotent INSERT
+    (`ON CONFLICT DO NOTHING`) and the idempotent UPDATE
+    (`WHERE intent_status = 'open'`) both no-op on the second pass;
+    (c) finally completes. Correctness is preserved without atomicity
+    because every write is keyed by a guard that turns a re-run into
+    a no-op.
+  - The chosen path (transactional vs fallback) is locked in
+    D-13403's DECISIONS.md entry alongside the FK-resolution choice.
+- **Failure classes (locked semantics):** every `Result.fail` from
+  `processStripeEvent` falls into one of two classes. BOTH classes
+  leave `processed_at = NULL` and set `process_error = <full-sentence
+  message>`. The classes differ in expected retry outcome, not in
+  on-row state.
+  - **Transient failures:** `'entitlement_insert_failed'`,
+    `'session_update_failed'`, `'event_update_failed'`. Caused by
+    DB-side faults (connection drop, deadlock, statement timeout).
+    Retry is expected to eventually succeed once the underlying
+    fault clears. The recovery script re-picks the row and writes
+    `processed_at` on the next pass.
+  - **Deterministic validation failures:** `'session_lookup_failed'`,
+    `'cross_validation_failed'`, `'price_not_in_allowlist'`. Caused
+    by the event referencing a session this server did not create,
+    a tampered or drifted payload, or env-config drift between
+    WP-133 INSERT time and WP-134 fulfillment time. Retry will NOT
+    succeed without external correction (manual `UPDATE
+    stripe_events SET processed_at = now()` once the cause is
+    understood, OR a follow-up WP that adds a `retry_count` column /
+    terminal-fault sentinel — out of scope for WP-134).
+  - **Rationale for the unified `processed_at = NULL` posture:**
+    preserves recovery-script visibility for both classes; avoids
+    silent data loss on a real fulfillment bug; escalates
+    deterministic faults via repeated cron-cycle surfacing
+    (intentional operator-visibility signal). Choosing noise over
+    silence aligns with the audit-first posture locked across the
+    monetization chain (Vision §3, §14).
+- **Idempotency dimensions (clarified — two independent axes):**
+  - **Event-level idempotency:** governed by
+    `legendary.stripe_events.processed_at`. Prevents re-processing
+    of an already-finalized event. Outcome:
+    `reason: 'already_processed'`. The Phase 1 early-return guard
+    in `processStripeEvent` enforces this: if
+    `eventRecord.processedAt !== null`, the processor skips all
+    DB writes and returns `Result.ok({ value: { ...,
+    reason: 'already_processed' } })`.
+  - **Entitlement-level idempotency:** governed by the partial
+    unique index `entitlements_active_unique ON (player_id,
+    entitlement_key) WHERE revoked_at IS NULL`. Prevents duplicate
+    active grants. Outcome: `reason: 'duplicate'`. The Phase 3
+    `ON CONFLICT (player_id, entitlement_key) DO NOTHING RETURNING
+    id` clause enforces this: if `RETURNING` returns 0 rows, the
+    entitlement was already active and the processor returns
+    `entitlementGranted: false, reason: 'duplicate'`.
+  - **The two axes are independent by design.** A single event can
+    produce `reason: 'duplicate'` on first processing (if a prior
+    admin grant or earlier event already created the entitlement)
+    AND then `reason: 'already_processed'` on re-delivery (because
+    the first call set `processed_at`). Tests cover both axes
+    independently.
 - **Duplicate-delivery self-heal:** when WP-133's `recordStripeEvent`
   reports `inserted: false` (Stripe at-least-once retry), the
   webhook handler MUST load the existing event row by `event_id`
@@ -432,6 +515,25 @@ If any of the above is false, this packet is **BLOCKED**.
   `processStripeEvent` against the existing row — the duplicate is
   the retry opportunity. If `processed_at IS NOT NULL` (already
   terminally processed), the handler skips processing.
+- **No external Stripe API calls inside `processStripeEvent`.** The
+  processor is a pure DB-mutation path: SELECT from
+  `stripe_checkout_sessions`, conditional INSERT into `entitlements`,
+  conditional UPDATE on `stripe_checkout_sessions`, conditional
+  UPDATE on `stripe_events`. Zero `stripeClient.*` invocations,
+  zero `fetch(`, zero outbound HTTP. All Stripe-side data the
+  processor needs was captured at WP-133 INSERT time
+  (denormalized into `stripe_checkout_sessions`) or arrives in
+  the event payload. This preserves the webhook-fast-return
+  invariant and prevents Stripe-API rate-limiting from blocking
+  fulfillment during incidents.
+- **Webhook response field invariant:** when `processed: true`,
+  `reason` is ALWAYS a populated `FulfillmentSuccessReason` string
+  (one of the 5 closed-union values). When `processed: false`,
+  `reason` is either a `FulfillmentErrorCode` string (Result.fail
+  paths) OR `null` (the "duplicate-delivery skip" branch where
+  `processStripeEvent` is not invoked because the existing row is
+  already terminally processed). `reason: null` paired with
+  `processed: true` is an invalid state and MUST NOT appear.
 - No new npm dependencies.
 
 **Session protocol:**
@@ -464,9 +566,14 @@ If any of the above is false, this packet is **BLOCKED**.
   `'session_lookup_failed' | 'cross_validation_failed' |
   'price_not_in_allowlist' | 'entitlement_insert_failed' |
   'event_update_failed' | 'session_update_failed'`.
-- **Idempotency clause:** `INSERT INTO legendary.entitlements (...)
-  VALUES (...) ON CONFLICT (account_id, entitlement_key) WHERE
-  revoked_at IS NULL DO NOTHING RETURNING id`. If `RETURNING`
+- **Idempotency clause (post-#ENT-FK / #CONFLICT-TARGET correction):**
+  `INSERT INTO legendary.entitlements (player_id, entitlement_key,
+  source, source_ref) VALUES ($1, $2, 'stripe', $3) ON CONFLICT
+  (player_id, entitlement_key) WHERE revoked_at IS NULL DO NOTHING
+  RETURNING id`. `$1` is the bigint resolved via the WP-104 / EC-135
+  two-query pattern (`SELECT player_id FROM legendary.players WHERE
+  ext_id = $1`); `$2` is `sessionRow.entitlement_key` (NOT event
+  metadata); `$3` is the Stripe Checkout Session ID. If `RETURNING`
   returns no row, the entitlement was already active —
   `entitlementGranted: false`, `reason: 'duplicate'`.
 - **Webhook response shape (WP-134 extension):**
@@ -496,6 +603,46 @@ If any of the above is false, this packet is **BLOCKED**.
 - Cross-validation failures log with full context (event ID,
   expected accountId, observed accountId) for support escalation.
 
+### Operator Playbook (Forward Compatibility)
+
+- **When the Phase 0a structural type guard fires** (Stripe sends a
+  `checkout.session.completed` event whose `data.object` shape
+  diverged from the locked predicate), the operator path is: (a)
+  read `process_error` for the missing/wrong-typed field; (b)
+  consult the Stripe API changelog at
+  `https://docs.stripe.com/upgrades` for shape changes since the
+  pinned `apiVersion` (`'2025-09-30.clover'` per WP-133 D-13303);
+  (c) if a Stripe-side shape change is identified, schedule a
+  follow-up WP that bumps `apiVersion` and updates the type guard
+  in lockstep. Do NOT relax the guard inline — shape divergence is
+  the load-bearing signal.
+- **When the `intent_status === 'open'` guard fires** (event
+  references a session that a future cancellation/expiry handler
+  already moved out of `'open'`), the operator path is: (a) read
+  `legendary.stripe_checkout_sessions.intent_status` for the
+  session ID; (b) if `'expired'` or `'canceled'`, the event is
+  legitimately a no-op race — manually `UPDATE stripe_events SET
+  processed_at = now()` once cause is understood and document in
+  DECISIONS.md; (c) if `'completed'` (the entitlement was already
+  granted via an earlier path), the row hits `'duplicate'` not
+  `'session_lookup_failed'` so this path should be unreachable —
+  surface as a forensic anomaly.
+- **When a future WP adds refunds** (writing `revoked_at` on
+  entitlement rows in response to `charge.refunded` events), the
+  partial unique index `entitlements_active_unique ON (player_id,
+  entitlement_key) WHERE revoked_at IS NULL` allows re-grant of a
+  previously-revoked key as a new row without colliding with the
+  historical row. The grant flow in this WP is unchanged; the
+  refund flow is additive. WP-134 ships with this seam intact —
+  no code change required to enable it.
+- **When the loud-fail throw fires for an unsupported event type**
+  in a future event handler (out of scope here — WP-134 maps
+  unknown types to `'unhandled_event_type'` no-op), the operator
+  path follows the same cron-noise discipline as validation
+  failures: the row keeps appearing in recovery-script output until
+  resolved. Do not silence the noise by writing `processed_at` on
+  the failure path — the noise IS the signal.
+
 ---
 
 ## Scope (In)
@@ -503,10 +650,57 @@ If any of the above is false, this packet is **BLOCKED**.
 ### A) `apps/server/src/billing/processStripeEvent.logic.ts` — new
 
 `processStripeEvent({ eventRecord, billingConfig, database })`.
-The body splits into three phases: (1) early-return guards for
+The body splits into four phases: (0a) structural type guard for
+the `payload: unknown` field, (1) early-return guards for
 already-processed / no-op event types, (2) cross-validation against
 the server-recorded session row, (3) the **transactional fulfillment
 write** that grants the entitlement and marks the event processed.
+
+**Phase 0a — Structural payload type guard (no DB writes):**
+
+`StripeEventRecord.payload` is typed `unknown` per WP-133 / EC-136
+(the `payload jsonb` column carries the full Stripe envelope; the
+`unknown` type forces every consumer to narrow before accessing
+fields). `processStripeEvent` reads
+`payload.data.object.{id, client_reference_id, metadata.entitlementKey,
+payment_status}` and MUST narrow the `unknown` value via a local
+structural type guard before any field access:
+
+```
+function isCheckoutSessionCompletedPayload(payload: unknown): payload is {
+  readonly data: {
+    readonly object: {
+      readonly id: string;
+      readonly client_reference_id: string;
+      readonly metadata: { readonly entitlementKey: string };
+      readonly payment_status: string;
+    };
+  };
+} {
+  // Strict, defensive shape check. All four fields must be present
+  // and of the correct primitive type. Returns false on any mismatch
+  // — the caller treats false as a Result.fail with code
+  // 'cross_validation_failed' (event payload shape diverged from
+  // the expected checkout.session.completed structure).
+  // …predicate body…
+}
+```
+
+If the guard returns `false` → return `Result.fail({ reason: 'event
+payload shape did not match the expected checkout.session.completed
+structure (see Stripe API docs for the canonical envelope)', code:
+'cross_validation_failed' })`. Set `process_error` and leave
+`processed_at = NULL` per the locked failure semantic.
+
+The guard is local to `processStripeEvent.logic.ts` (NOT exported)
+and has its own `node:test` coverage (one positive, four negatives —
+one per missing/wrong-typed field) bundled into the Guards-domain
+test set in §B.
+
+**No new error code.** Shape-mismatch failures fall under existing
+`'cross_validation_failed'`; the prose `reason` discriminates the
+shape-mismatch sub-case from the metadata-mismatch sub-case for
+forensic queries via `process_error`.
 
 **Phase 1 — Early-return guards (no DB writes):**
 1. If `eventRecord.processedAt !== null` → return `Result.ok({ value:
@@ -520,7 +714,8 @@ write** that grants the entitlement and marks the event processed.
    } })`.
 3. If `eventRecord.payload.data.object.payment_status !== 'paid'` →
    UPDATE the same row (idempotent), return `reason:
-   'unpaid_session'`.
+   'unpaid_session'`. (Phase 0a already narrowed `payload`, so this
+   field access is type-safe.)
 
 **Phase 2 — Cross-validation (no DB writes):**
 4. SELECT `account_id, price_id, entitlement_key, intent_status`
@@ -531,8 +726,18 @@ write** that grants the entitlement and marks the event processed.
    server did not create.', code: 'session_lookup_failed' })`. **Do
    NOT write `processed_at`** (per locked semantic — failures leave
    `processed_at = NULL`); set `process_error` only.
-5. Cross-validate (all four checks; any single mismatch fails
-   fast):
+5. Cross-validate (five checks; any single mismatch fails fast):
+   - `sessionRow.intent_status === 'open'` (else
+     `'session_lookup_failed'` — extends the "session this server
+     did not create" rationale to "session is no longer in a valid
+     fulfillment state". The `'open' → 'completed'` transition
+     happens at the END of Phase 3 step 8 atomically with the
+     entitlement INSERT; the `'open' → 'expired' / 'canceled'`
+     transitions are owned by future WPs handling
+     `checkout.session.expired` / cancellation events. If a future
+     WP transitions a session to `'expired'` BEFORE WP-134's
+     fulfillment fires (delayed webhook delivery), this guard
+     refuses to grant against a closed session).
    - `eventRecord.payload.data.object.client_reference_id ===
      sessionRow.account_id` (else `cross_validation_failed`).
    - `eventRecord.payload.data.object.metadata.entitlementKey ===
@@ -542,53 +747,94 @@ write** that grants the entitlement and marks the event processed.
      else `price_not_in_allowlist`).
    - `priceAllowlist.has(sessionRow.price_id)` is true (else
      `price_not_in_allowlist`). On any failure, write
-     `process_error = <full-sentence message>` and leave
-     `processed_at = NULL`. Return `Result.fail({ reason: <message>,
-     code })`.
+     `process_error = <full-sentence message, capped at 2000 chars
+     per the operator-internal `process_error` discipline>` and
+     leave `processed_at = NULL`. Return `Result.fail({ reason:
+     <message>, code })`.
 
 **Phase 3 — Transactional fulfillment write:**
-6. Open transaction (`BEGIN;`). If `DatabaseClient` does not expose
-   transactions, the deterministic ordering below plus idempotency
-   at steps 6 and 7 satisfies correctness.
-7. INSERT INTO `legendary.entitlements (account_id, entitlement_key,
-   source, source_ref) VALUES ($1, $2, 'stripe', $3) ON CONFLICT
-   (account_id, entitlement_key) WHERE revoked_at IS NULL DO NOTHING
-   RETURNING id`. If RETURNING returns 1 row → `entitlementGranted:
-   true`, `reason: 'fulfilled'`. If 0 rows → `entitlementGranted:
-   false`, `reason: 'duplicate'`. On DB fault → ROLLBACK; return
-   `Result.fail({ code: 'entitlement_insert_failed' })` with
+6. **Resolve `accountId → player_id`** (per §IMPORTANT — Entitlements
+   FK Resolution). SELECT `player_id FROM legendary.players WHERE
+   ext_id = $1 LIMIT 1`, with `$1 = sessionRow.account_id` (the
+   `text` value already cross-validated against
+   `payload.data.object.client_reference_id` in Phase 2). On miss →
+   return `Result.fail({ code: 'cross_validation_failed', reason:
+   'session row references a player ext_id that does not exist in
+   legendary.players (this is a referential-integrity failure that
+   should be impossible given the FK CASCADE on
+   stripe_checkout_sessions; surface for forensic review)' })`. The
+   miss is operationally distinct from `'session_lookup_failed'` —
+   the session row exists; the referenced player is gone.
    `process_error` set + `processed_at` LEFT NULL.
-8. UPDATE `legendary.stripe_checkout_sessions` SET `intent_status =
+7. Open transaction (`BEGIN;`). If `DatabaseClient` exposes a
+   transaction primitive → MUST use a single `BEGIN; ... COMMIT;`
+   (per WP-104 multi-statement transaction precedent). If NOT
+   exposed → MAY fall back to deterministic-ordering-plus-
+   idempotency. Choice locked in D-13403.
+8. INSERT INTO `legendary.entitlements (player_id, entitlement_key,
+   source, source_ref) VALUES ($1, $2, 'stripe', $3) ON CONFLICT
+   (player_id, entitlement_key) WHERE revoked_at IS NULL DO NOTHING
+   RETURNING id`. `$1` is the `player_id bigint` resolved at step
+   6; `$2` is `sessionRow.entitlement_key` (NOT the event's
+   `metadata.entitlementKey` — the session row is authoritative);
+   `$3` is `eventRecord.payload.data.object.id` (the Stripe Checkout
+   Session ID — `cs_*`, soft-cap 200 chars). If RETURNING returns 1
+   row → `entitlementGranted: true`, `reason: 'fulfilled'`. If 0 rows
+   → `entitlementGranted: false`, `reason: 'duplicate'`. On DB fault
+   → ROLLBACK; return `Result.fail({ code:
+   'entitlement_insert_failed' })` with `process_error` set
+   (full-sentence DB-driver message, soft-cap 2000 chars) +
+   `processed_at` LEFT NULL.
+9. UPDATE `legendary.stripe_checkout_sessions` SET `intent_status =
    'completed'`, `completed_at = now()` WHERE `session_id = $1`
    AND `intent_status = 'open'`. Idempotent — a re-run hits zero
    rows and is a no-op. On DB fault → ROLLBACK; return
    `Result.fail({ code: 'session_update_failed' })` with
    `process_error` set + `processed_at` LEFT NULL.
-9. **LAST WRITE:** UPDATE `legendary.stripe_events` SET `processed_at
-   = now()`, `process_error = NULL` WHERE `id = eventRecord.id`
-   AND `processed_at IS NULL`. On DB fault → ROLLBACK; return
-   `Result.fail({ code: 'event_update_failed' })`. **`processed_at`
-   IS WRITTEN ONLY IN STEP 9** — the success path's last write. A
-   crash between step 7 and step 9 leaves `processed_at = NULL`,
-   which is correct: the recovery script will re-pick the row, and
-   steps 7 + 8 will idempotently no-op while step 9 finally
-   completes.
-10. `COMMIT;` (if step 6 opened a transaction).
-11. Return `Result.ok({ value: { entitlementGranted, entitlementKey:
+10. **LAST WRITE:** UPDATE `legendary.stripe_events` SET `processed_at
+    = now()`, `process_error = NULL` WHERE `id = eventRecord.id`
+    AND `processed_at IS NULL`. On DB fault → ROLLBACK; return
+    `Result.fail({ code: 'event_update_failed' })`. **`processed_at`
+    IS WRITTEN ONLY IN STEP 10** — the success path's last write. A
+    crash between step 8 and step 10 leaves `processed_at = NULL`,
+    which is correct: the recovery script will re-pick the row, and
+    steps 8 + 9 will idempotently no-op while step 10 finally
+    completes.
+11. `COMMIT;` (if step 7 opened a transaction).
+12. Return `Result.ok({ value: { entitlementGranted, entitlementKey:
     sessionRow.entitlement_key, sessionId:
     eventRecord.payload.data.object.id, reason } })`.
 
 `// why:` comments required on:
-- The `ON CONFLICT` clause (cite WP-132 partial unique index +
-  WP-134 D-DEC-3 cross-validation defense-in-depth).
-- The "leave `processed_at = NULL` on failure" branch (cite the
+- The Phase 0a structural type guard (cite the `payload: unknown`
+  type lock from WP-133; cite that shape mismatches map to existing
+  `'cross_validation_failed'` rather than introducing a new error
+  code; cite that `process_error` discriminates the shape sub-case
+  from the metadata sub-case for forensic queries).
+- The Phase 2 `intent_status === 'open'` cross-validation check
+  (cite the future-WP `'expired'` / `'canceled'` transition surface;
+  cite that fulfillment against a non-`'open'` session is refused as
+  a defense against delayed webhook delivery race conditions).
+- The Phase 3 step 6 `accountId → player_id` resolution (cite the
+  WP-104 / EC-135 two-query pattern; cite that
+  `legendary.entitlements.player_id` is `bigint` FK to
+  `legendary.players.player_id`, NOT `text` to `ext_id`).
+- The Phase 3 step 8 `ON CONFLICT (player_id, entitlement_key)`
+  clause (cite WP-132 partial unique index byte-for-byte; cite the
+  application-layer `DO NOTHING` as the idempotency acceptance
+  signal; cite RETURNING-row-count as the `'fulfilled'` vs
+  `'duplicate'` discriminator).
+- The "leave `processed_at = NULL` on failure" branches (cite the
   recovery-script `WHERE processed_at IS NULL` filter — failures
   must remain pickable; setting `processed_at = now()` on failure
   would make events terminally lost).
-- The "step 9 is last" ordering (cite the locked write-ordering
+- The "step 10 is last" ordering (cite the locked write-ordering
   constraint and the crash-recovery guarantee — idempotency at
-  steps 7–8 + `processed_at = NULL` survival means a partial-write
+  steps 8–9 + `processed_at = NULL` survival means a partial-write
   crash heals on the next recovery-script pass).
+- The `process_error` write site (cite that the column is
+  operator-internal; future UI exposure requires sanitization WP;
+  soft-cap 2000 chars to keep recovery-script summaries readable).
 
 ### B) `apps/server/src/billing/processStripeEvent.logic.test.ts` — new
 
@@ -630,11 +876,29 @@ semantic):
 - DB fault on session UPDATE → `'session_update_failed'`;
   `process_error` set, `processed_at` NULL (entitlement INSERT
   succeeded but is recoverable on next pass via idempotency).
-- DB fault on stripe_events UPDATE (step 9) →
+- DB fault on stripe_events UPDATE (step 10) →
   `'event_update_failed'`; `process_error` set, `processed_at` NULL.
+- **Phase 0a structural type guard tests (5 — bundled into the
+  Guards domain):** 1 positive (canonical
+  `checkout.session.completed` payload narrows successfully); 4
+  negatives — one per missing/wrong-typed field
+  (`data.object.id` missing; `client_reference_id` non-string;
+  `metadata.entitlementKey` missing; `payment_status` non-string).
+  Each negative asserts `Result.fail({ code:
+  'cross_validation_failed' })` + `process_error` set + `processed_at`
+  NULL.
+- **`intent_status` non-`'open'` test:** seed a `stripe_checkout_sessions`
+  row with `intent_status = 'expired'`; assert
+  `'session_lookup_failed'` + `process_error` set + `processed_at`
+  NULL. Same for `'canceled'`.
+- **`accountId → player_id` resolution miss test:** seed a session
+  row whose `account_id` (text) does not exist in `legendary.players.ext_id`
+  (referential-integrity edge case); assert
+  `'cross_validation_failed'` + `process_error` set + `processed_at`
+  NULL.
 - **Crash-recovery test:** simulate a partial-write failure between
-  steps 7 and 9 (entitlement INSERT succeeded, stripe_events UPDATE
-  not run); re-run `processStripeEvent`; assert second pass returns
+  Phase 3 step 8 and step 10 (entitlement INSERT succeeded, stripe_events
+  UPDATE not run); re-run `processStripeEvent`; assert second pass returns
   `Result.ok({ value: { reason: 'duplicate' } })` and event row's
   `processed_at` is now set. This test proves the locked
   write-ordering + idempotency guarantee.
@@ -651,10 +915,16 @@ handler now has two branches based on `recordStripeEvent`'s
 `inserted` flag:
 
 **Branch 1 — Newly-inserted event (`inserted === true`):**
-- Pass the inserted event record directly into
-  `processStripeEvent({ eventRecord, billingConfig: deps.billingConfig,
-  database: pool })`. (`recordStripeEvent` returns the inserted row
-  via `RETURNING *` — no separate re-fetch needed.)
+- **Re-fetch the inserted event row by `event_id`** via the shared
+  helper `loadStripeEventRecordByEventId(pool, event_id)` (same SELECT
+  the duplicate-delivery branch uses — see §C-helper below). The
+  shipped `recordStripeEvent` (WP-133 / EC-136) returns
+  `BillingResult<{ inserted: boolean }>` only — the row itself is NOT
+  returned. Re-fetching is a single indexed `SELECT ... WHERE event_id
+  = $1` against the UNIQUE index, ≤5ms in the typical case. The two
+  webhook branches now share one helper; no duplicate SELECT logic.
+- Pass the re-fetched record into `processStripeEvent({ eventRecord,
+  billingConfig: deps.billingConfig, database: pool })`.
 - Build response per the locked `processed` semantic:
   `{ received: true; duplicate: false; processed: result.ok;
   reason: result.ok ? result.value.reason : result.code }`. The
@@ -666,9 +936,8 @@ handler now has two branches based on `recordStripeEvent`'s
   on success or the `FulfillmentErrorCode` on failure.
 
 **Branch 2 — Duplicate delivery (`inserted === false`) — self-heal:**
-- Load the existing event row by `event_id`: `SELECT id, event_id,
-  event_type, payload, received_at, processed_at, process_error
-  FROM legendary.stripe_events WHERE event_id = $1`.
+- Re-fetch the existing event row via the SAME shared helper
+  `loadStripeEventRecordByEventId(pool, event_id)`.
 - If `existingRow.processed_at IS NOT NULL` (already terminally
   processed), skip processing entirely. Response: `{ received:
   true; duplicate: true; processed: false; reason: null }`.
@@ -679,26 +948,104 @@ handler now has two branches based on `recordStripeEvent`'s
   waiting for the recovery-script cron cadence. Response shape
   matches Branch 1 with `duplicate: true`.
 
-**Always return 200** on signature-verified events regardless of
-`processStripeEvent` outcome. Fulfillment errors are logged to
-stderr (full-sentence message + `event_id` + error code) but the
-response is 200 to prevent Stripe-driven retry storms (per locked
-constraint above).
+**Shared helper — `loadStripeEventRecordByEventId(pool, eventId):
+Promise<StripeEventRecord | null>`:**
+- Local function in `billing.routes.ts` (NOT exported; the function
+  is webhook-handler-internal). Pure SELECT:
+  ```
+  SELECT id, event_id, event_type, payload, received_at,
+         processed_at, process_error
+    FROM legendary.stripe_events
+   WHERE event_id = $1
+  ```
+- Maps the row to the `StripeEventRecord` interface (snake_case
+  columns → camelCase fields per WP-133 mapping). Returns `null` if
+  the row is absent — defense against a race where `recordStripeEvent`
+  reports `inserted: true` but the row is gone (e.g., a concurrent
+  test-database wipe). On `null`, the handler logs to stderr and
+  returns 500 `{ error: 'internal_error' }` per the existing
+  always-return-200-on-signature-verified-events caveat: the row
+  being absent after a successful INSERT is a serious internal
+  inconsistency that justifies signaling Stripe to retry.
+- The helper MUST consume the long-lived `pool` from
+  `registerBillingRoutes`'s second positional parameter — never
+  construct a new `pg.Pool`. WP-115 wiring-site singleton invariant
+  preserved.
 
-The route's `deps` bundle gains an additional dep:
-`billingConfig` (already present in WP-133's deps shape — no
-shape change required).
+**Always return 200** on signature-verified events regardless of
+`processStripeEvent` outcome (the row-absent edge case above is the
+sole exception; it indicates internal inconsistency, not fulfillment
+failure). Fulfillment errors are logged to stderr (full-sentence
+message + `event_id` + error code) but the response is 200 to prevent
+Stripe-driven retry storms (per locked constraint above).
+
+The route's `deps` bundle does NOT change shape:
+`billingConfig` is already present in WP-133's deps shape from EC-136
+close.
 
 ### D) `scripts/process-stripe-events.mjs` — new
 
-ESM script. Loads env via `node --env-file=.env`. Constructs
-`billingConfig` and a `pg.Pool`. SELECTs unprocessed events
-from `legendary.stripe_events WHERE processed_at IS NULL ORDER
-BY received_at ASC LIMIT 100`. For each row, call
-`processStripeEvent({ eventRecord, billingConfig, database:
-pool })`. Print summary to stdout: `processed: <N>, skipped:
-<M>, errors: <K>`. Exit 0 on completion (non-zero exit reserved
-for fatal startup errors like missing env vars).
+ESM script. Loads env via `node --env-file=.env`.
+
+**Lifecycle posture (locked, two distinct phases):**
+
+- **Startup phase — fatal on missing config.** `loadBillingConfig`
+  is called first; it throws on missing env vars in production per
+  WP-133 / EC-136 close. Recovery script catches the throw and
+  exits **non-zero (exit code 2)** with a full-sentence stderr
+  message naming the missing var(s). The cron operator wants to
+  know billing config is broken — this is the same posture as the
+  server entrypoint at `apps/server/src/server.mjs`. Missing env
+  vars are an operator-actionable fault (not a transient DB hiccup);
+  exiting non-zero pages cron correctly.
+- **Scan-loop phase — exit 0 on per-row errors.** Once `billingConfig`
+  + `pg.Pool` are constructed, the script SELECTs `WHERE processed_at
+  IS NULL ORDER BY received_at ASC LIMIT 100` and calls
+  `processStripeEvent` per row. Any per-row `Result.fail` is logged
+  to stderr (full-sentence message + `event_id` + error code) and
+  the loop continues to the next row. After the loop, the script
+  prints `processed: <N>, skipped: <M>, errors: <K>` to stdout and
+  exits **0** even when `K > 0`. Per-row errors are recorded in
+  `legendary.stripe_events.process_error` for forensic review;
+  paging cron on every transient DB hiccup is the wrong noise level.
+
+**Pool teardown (locked).** Wrap the scan loop in a
+`try { … } finally { await pool.end(); }` envelope so connections
+release cleanly on every exit path (success, exception, scan-loop
+error). The recovery-script pool is short-lived per cron invocation
+— the WP-115 long-lived `pg.Pool` invariant applies only to the
+server process; the recovery script constructs its own pool, uses
+it within the cron cycle, and disposes it before exit. Mirrors the
+WP-126 / EC-130 short-lived rules-loader pool precedent.
+
+**Stripe SDK confinement (inherited from EC-136).** Recovery script
+imports `loadBillingConfig` (and, if needed, `createStripeClient`)
+from `apps/server/src/billing/billing.config.js` — NEVER directly
+from `'stripe'`. The Stripe SDK boundary established by EC-136 §5
+extends to `scripts/`.
+
+**Output contract.** `processed: <N>, skipped: <M>, errors: <K>`
+where:
+- `processed` = count of rows that returned `Result.ok` (any
+  `FulfillmentSuccessReason`).
+- `skipped` = count of rows already in a terminal state at fetch
+  time (e.g., `processed_at` raced from NULL to non-NULL between
+  SELECT and per-row dispatch — the early-return guard catches it
+  and returns `'already_processed'`; counted separately from
+  `processed` for operator clarity).
+- `errors` = count of rows that returned `Result.fail`. Each error
+  row's `event_id` + error code is logged to stderr immediately
+  after the per-row dispatch, so the operator can grep stderr by
+  `event_id` for diagnostic context.
+
+**Exit codes (locked):**
+- `0` — scan completed (with or without per-row errors).
+- `2` — startup failure (missing env var, config parse error,
+  initial DB connection failure).
+
+The `1` exit code is reserved for unexpected JS exceptions
+escaping the `try/finally` — Node's default crash exit. Any
+exit-1 incident is operator-paged via cron's stderr capture.
 
 ### E) `apps/server/src/billing/billing.routes.test.ts` — modified
 
@@ -970,27 +1317,42 @@ the request-handling process which is undesirable.
 ### Library
 - [ ] `processStripeEvent.logic.ts` exports `processStripeEvent({eventRecord, billingConfig, database})`
 - [ ] `INSERT INTO legendary.entitlements` appears EXACTLY once under `apps/server/src/billing/`, in this file (confirmed with `Select-String`)
-- [ ] INSERT clause uses `ON CONFLICT (account_id, entitlement_key) WHERE revoked_at IS NULL DO NOTHING RETURNING id`
-- [ ] Two-axis cross-validation runs before INSERT (per D-DEC-3 verbatim)
+- [ ] INSERT clause uses `ON CONFLICT (player_id, entitlement_key) WHERE revoked_at IS NULL DO NOTHING RETURNING id` (post-#CONFLICT-TARGET correction — `player_id`, NOT `account_id`)
+- [ ] INSERT column list is `(player_id, entitlement_key, source, source_ref)` (post-#ENT-FK correction)
+- [ ] **Phase 0a structural type guard `isCheckoutSessionCompletedPayload`** is the FIRST check in `processStripeEvent`; shape mismatch returns `Result.fail({ code: 'cross_validation_failed' })`; the guard has 5 dedicated tests (1 positive, 4 negatives — one per missing/wrong-typed field)
+- [ ] **`accountId → player_id` resolution** uses the WP-104 / EC-135 two-query pattern (`SELECT player_id FROM legendary.players WHERE ext_id = $1 LIMIT 1`); a missing player returns `'cross_validation_failed'` (referential-integrity miss; not `'session_lookup_failed'`)
+- [ ] Five-axis cross-validation runs before INSERT (intent_status='open', client_reference_id, metadata.entitlementKey, priceAllowlist mapping, priceAllowlist membership) — fail-fast on first mismatch
 - [ ] **Cross-validation failure leaves `processed_at = NULL`** with `process_error` set; verified by `SELECT processed_at FROM legendary.stripe_events WHERE id = <test event id>` returning NULL post-failure
-- [ ] **Write ordering: `processed_at` is set ONLY by step 9** (the last write on the success / no-op path); confirmed by reading the source file (no `processed_at = now()` UPDATE in the failure branches under §A Phase 2/3)
+- [ ] **Write ordering: `processed_at` is set ONLY by step 10** (the last write on the success / no-op path); confirmed by reading the source file (no `processed_at = now()` UPDATE in the failure branches under §A Phase 2/3)
 - [ ] **Authoritative source is the session row + allowlist**, not event payload — verified by code review that `entitlementKey` passed to INSERT is read from `sessionRow.entitlement_key`, not from `event.metadata.entitlementKey`
 - [ ] **No `payload.line_items` reference** anywhere under `apps/server/src/billing/` (confirmed with `Select-String "line_items"`)
+- [ ] **No type-cast escapes after Phase 0a guard** — zero `as any` / `as unknown` / `as string` matches in `processStripeEvent.logic.ts` (the structural guard narrows once; further casts would defeat the narrowing)
+- [ ] **`process_error` soft-cap 2000 chars** at every write site (operator-internal column; future UI exposure requires sanitization WP)
 - [ ] `FulfillmentResult` matches WP-052 `Result<T>` shape verbatim — success path is `{ ok: true; value: FulfillmentSuccess }`, failure path is `{ ok: false; reason: string; code: FulfillmentErrorCode }`
 
 ### Routes
 - [ ] `billing.routes.ts` calls `processStripeEvent` synchronously on newly-inserted events
-- [ ] **Self-heal duplicate-delivery branch:** when `recordStripeEvent` returns `inserted: false`, the handler loads the existing event row and inspects `processed_at`; if NULL, calls `processStripeEvent` against the existing row
+- [ ] **Shared `loadStripeEventRecordByEventId(pool, eventId)` helper** is used by BOTH the newly-inserted branch and the duplicate-delivery branch to fetch the row from `legendary.stripe_events` by `event_id`; the function is local to `billing.routes.ts` (NOT exported)
+- [ ] **No `RETURNING *` modification to `recordStripeEvent`** — `billing.logic.ts` is unchanged (path (a) per PS-1 resolution; path (b) was rejected as scope-violation against WP-133 contract)
+- [ ] **Self-heal duplicate-delivery branch:** when `recordStripeEvent` returns `inserted: false`, the handler loads the existing event row via the shared helper and inspects `processed_at`; if NULL, calls `processStripeEvent` against the existing row
 - [ ] **Skip duplicate-delivery branch:** when the existing row's `processed_at` is non-NULL, the handler does NOT call `processStripeEvent`
-- [ ] Webhook returns 200 even when `processStripeEvent` fails (per D-DEC-4)
+- [ ] **Row-absent edge case:** if the shared helper returns `null` after `recordStripeEvent` reported `inserted: true` (concurrent test-database wipe or comparable inconsistency), handler logs to stderr and returns 500 `{ error: 'internal_error' }` — the only exception to the always-200 posture
+- [ ] **Webhook handler MUST consume long-lived `pool`** from `registerBillingRoutes`'s second positional parameter; zero `new Pool(` constructions inside `billing.routes.ts` (verified by `Select-String`)
+- [ ] Webhook returns 200 even when `processStripeEvent` fails (per D-13404)
 - [ ] Response shape matches `{ received: true; duplicate: boolean; processed: boolean; reason: string | null }`
-- [ ] `processed: true` for every `Result.ok` outcome (including terminal-no-op `'unhandled_event_type'` / `'unpaid_session'` / `'already_processed'`); `processed: false` only for `Result.fail` (per Hygiene 3 — terminal-outcome-reached semantic)
+- [ ] **Response shape construction uses conditional assignment** for the `reason` field (per `exactOptionalPropertyTypes: true` strictness; build base object without `reason`, then assign in `if` blocks per the WP-029 / D-2902 precedent)
+- [ ] `processed: true` for every `Result.ok` outcome (including terminal-no-op `'unhandled_event_type'` / `'unpaid_session'` / `'already_processed'`); `processed: false` only for `Result.fail` (per terminal-outcome-reached semantic)
+- [ ] **Invariant: `reason: null` paired with `processed: true` is impossible** — verified by reviewer reading source + at least one test asserting `processed: true; reason: 'unhandled_event_type'` (a closed-set string, never null)
 
 ### Recovery script
 - [ ] `scripts/process-stripe-events.mjs` exists and runs without arguments
+- [ ] **Startup-phase posture:** missing env vars exit non-zero (exit code 2) with full-sentence stderr message naming the missing var(s)
+- [ ] **Scan-loop posture:** per-row errors logged to stderr (full-sentence message + `event_id` + error code); loop continues; final exit 0 even when `errors > 0`
+- [ ] **Pool teardown:** scan loop wrapped in `try { ... } finally { await pool.end(); }` envelope (verified by code review)
+- [ ] **No direct `'stripe'` import** — recovery script imports `loadBillingConfig` (and any Stripe factory) from `apps/server/src/billing/billing.config.js`; `Select-String -Path "scripts" -Pattern "from 'stripe'"` returns no output
 - [ ] Reads at most 100 unprocessed events per invocation
-- [ ] Prints `processed: N, skipped: M, errors: K` summary to stdout
-- [ ] Exits 0 on per-row errors (errors logged to stderr)
+- [ ] Prints `processed: N, skipped: M, errors: K` summary to stdout — `skipped` includes rows that raced from NULL→non-NULL between SELECT and dispatch
+- [ ] Exit code domain locked: `0` (scan completed) | `2` (startup failure) | `1` (unexpected JS exception)
 
 ### Catalog
 - [ ] WP-133 webhook row replaced wholesale per D-11804 (response shape includes `processed` + `reason`; `Authorizing WP` is `WP-133, WP-134`)
