@@ -8,7 +8,12 @@
       "name": "Angel",
       "slug": "angel",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Diving Catch": 5,
+        "High-Speed Chase": 5,
+        "Drop off a Friend": 3,
+        "Strength of Spirit": 1
+      },
       "cards": [
         {
           "name": "High-Speed Chase",
@@ -81,7 +86,12 @@
       "name": "Bishop",
       "slug": "bishop",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Absorb Energies": 5,
+        "Whatever the Cost": 5,
+        "Concussive Blast": 3,
+        "Firepower from the Future": 1
+      },
       "cards": [
         {
           "name": "Whatever the Cost",
@@ -762,7 +772,12 @@
       "name": "Iceman",
       "slug": "iceman",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Deep Freeze": 5,
+        "Ice Slide": 5,
+        "Frost Spike Armor": 3,
+        "Impenetrable Ice Wall": 1
+      },
       "cards": [
         {
           "name": "Deep Freeze",
@@ -915,7 +930,12 @@
       "name": "Jean Grey",
       "slug": "jean-grey",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Psychic Search": 5,
+        "Read Your Thoughts": 5,
+        "Mind Over Matter": 3,
+        "Telekinetic Mastery": 1
+      },
       "cards": [
         {
           "name": "Psychic Search",
@@ -989,7 +1009,12 @@
       "name": "Nightcrawler",
       "slug": "nightcrawler",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Bamf!": 5,
+        "Blend Into Shadows": 5,
+        "Swashbuckler": 3,
+        "Along for the Ride": 1
+      },
       "cards": [
         {
           "name": "Bamf!",
@@ -1063,7 +1088,12 @@
       "name": "Professor X",
       "slug": "professor-x",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Psionic Astral Form": 5,
+        "Class Dismissed": 5,
+        "Telepathic Probe": 3,
+        "Mind Control": 1
+      },
       "cards": [
         {
           "name": "Psionic Astral Form",

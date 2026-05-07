@@ -370,10 +370,10 @@
       "A Day Unlike Any Other": 1
     },
     "cyclops": {
-      "Determination": null,
-      "Optic Blast": null,
-      "Unending Energy": null,
-      "X-Men United": null
+      "Determination": 5,
+      "Optic Blast": 5,
+      "Unending Energy": 3,
+      "X-Men United": 1
     },
     "deadpool": {
       "Here, Hold This for a Second": null,
@@ -382,16 +382,16 @@
       "Random Acts of Unkindness": null
     },
     "emma-frost": {
-      "Mental Discipline": null,
-      "Shadowed Thoughts": null,
-      "Psychic Link": null,
-      "Diamond Form": null
+      "Mental Discipline": 5,
+      "Shadowed Thoughts": 5,
+      "Psychic Link": 3,
+      "Diamond Form": 1
     },
     "gambit": {
-      "Card Shark": null,
-      "Stack the Deck": null,
-      "Hypnotic Charm": null,
-      "High Stakes Jackpot": null
+      "Card Shark": 5,
+      "Stack the Deck": 5,
+      "Hypnotic Charm": 3,
+      "High Stakes Jackpot": 1
     },
     "hawkeye": {
       "Quick Draw": null,
@@ -418,10 +418,10 @@
       "Pure Fury": 1
     },
     "rogue": {
-      "Borrowed Brawn": null,
-      "Energy Drain": null,
-      "Copy Powers": null,
-      "Steal Abilities": null
+      "Borrowed Brawn": 5,
+      "Energy Drain": 5,
+      "Copy Powers": 3,
+      "Steal Abilities": 1
     },
     "spider-man": {
       "Astonishing Strength": 5,
@@ -430,10 +430,10 @@
       "The Amazing Spider-Man": 1
     },
     "storm": {
-      "Gathering Stormclouds": null,
-      "Lightning Bolt": null,
-      "Spinning Cyclone": null,
-      "Tidal Wave": null
+      "Gathering Stormclouds": 5,
+      "Lightning Bolt": 5,
+      "Spinning Cyclone": 3,
+      "Tidal Wave": 1
     },
     "thor": {
       "Odinson": null,
@@ -676,16 +676,16 @@
   },
   "dkcy": {
     "angel": {
-      "Diving Catch": null,
-      "High-Speed Chase": null,
-      "Drop off a Friend": null,
-      "Strength of Spirit": null
+      "Diving Catch": 5,
+      "High-Speed Chase": 5,
+      "Drop off a Friend": 3,
+      "Strength of Spirit": 1
     },
     "bishop": {
-      "Absorb Energies": null,
-      "Whatever the Cost": null,
-      "Concussive Blast": null,
-      "Firepower from the Future": null
+      "Absorb Energies": 5,
+      "Whatever the Cost": 5,
+      "Concussive Blast": 3,
+      "Firepower from the Future": 1
     },
     "blade": {
       "Night Hunter": null,
@@ -736,10 +736,10 @@
       "Penance Stare": 1
     },
     "iceman": {
-      "Deep Freeze": null,
-      "Ice Slide": null,
-      "Frost Spike Armor": null,
-      "Impenetrable Ice Wall": null
+      "Deep Freeze": 5,
+      "Ice Slide": 5,
+      "Frost Spike Armor": 3,
+      "Impenetrable Ice Wall": 1
     },
     "iron-fist": {
       "Focus Chi": 5,
@@ -748,22 +748,22 @@
       "Living Weapon": 1
     },
     "jean-grey": {
-      "Psychic Search": null,
-      "Read Your Thoughts": null,
-      "Mind Over Matter": null,
-      "Telekinetic Mastery": null
+      "Psychic Search": 5,
+      "Read Your Thoughts": 5,
+      "Mind Over Matter": 3,
+      "Telekinetic Mastery": 1
     },
     "nightcrawler": {
-      "Bamf!": null,
-      "Blend Into Shadows": null,
-      "Swashbuckler": null,
-      "Along for the Ride": null
+      "Bamf!": 5,
+      "Blend Into Shadows": 5,
+      "Swashbuckler": 3,
+      "Along for the Ride": 1
     },
     "professor-x": {
-      "Psionic Astral Form": null,
-      "Class Dismissed": null,
-      "Telepathic Probe": null,
-      "Mind Control": null
+      "Psionic Astral Form": 5,
+      "Class Dismissed": 5,
+      "Telepathic Probe": 3,
+      "Mind Control": 1
     },
     "punisher": {
       "Boom Goes the Dynamite": 5,
@@ -1053,10 +1053,10 @@
       "Gene-Spliced Creation": null
     },
     "stepford-cuckoos": {
-      "Find Mutants with Cerebro": null,
-      "Shared Thoughts": null,
-      "Telepathic Warning": null,
-      "Mind Wipe": null
+      "Find Mutants with Cerebro": 4,
+      "Shared Thoughts": 4,
+      "Telepathic Warning": 4,
+      "Mind Wipe": 2
     },
     "m": {
       "Penance Form": null,
@@ -1167,10 +1167,10 @@
   },
   "noir": {
     "angel-noir": {
-      "Impetuous Dive": null,
-      "Multitalented": null,
-      "Identical Twin Brother": null,
-      "Missing Person Case": null
+      "Impetuous Dive": 5,
+      "Multitalented": 5,
+      "Identical Twin Brother": 3,
+      "Missing Person Case": 1
     },
     "daredevil-noir": {
       "Balancing Act": 5,
@@ -1413,10 +1413,10 @@
       "Living Thunderstorm": 1
     },
     "magik": {
-      "Rally the New Mutants": null,
-      "Travel through Limbo": null,
-      "Dimensional Portal": null,
-      "Wield the Soulsword": null
+      "Rally the New Mutants": 5,
+      "Travel through Limbo": 5,
+      "Dimensional Portal": 3,
+      "Wield the Soulsword": 1
     },
     "maximus": {
       "Mental Domination": 5,
@@ -1431,10 +1431,10 @@
       "Imperius Rex": 1
     },
     "old-man-logan": {
-      "Last Survivor": null,
-      "Loner": null,
-      "Rage Out": null,
-      "No More Heroes": null
+      "Last Survivor": 5,
+      "Loner": 5,
+      "Rage Out": 3,
+      "No More Heroes": 1
     },
     "proxima-midnight": {
       "Inspiration Through Power": 5,
@@ -1517,16 +1517,16 @@
       "Prodigy of Ulysses Bloodstone": 1
     },
     "phoenix-force-cyclops": {
-      "Reincarnate": null,
-      "Burn Out": null,
-      "Rise from the Ashes": null,
-      "Destruction Is Creation": null
+      "Reincarnate": 5,
+      "Burn Out": 5,
+      "Rise from the Ashes": 3,
+      "Destruction Is Creation": 1
     },
     "ruby-summers": {
-      "Guerrilla Warfare": null,
-      "Heir to Legends": null,
-      "Form of Solid Ruby": null,
-      "Extinction Blast": null
+      "Guerrilla Warfare": 5,
+      "Heir to Legends": 5,
+      "Form of Solid Ruby": 3,
+      "Extinction Blast": 1
     },
     "shang-chi": {
       "Shuffling Footwork": 5,
@@ -1541,10 +1541,10 @@
       "Borrowed Cloaking Device": 1
     },
     "soulsword-colossus": {
-      "Invade the Inferno": null,
-      "Steel Interception": null,
-      "Possessed by the Soulsword": null,
-      "Rescue My Family from Hell": null
+      "Invade the Inferno": 5,
+      "Steel Interception": 5,
+      "Possessed by the Soulsword": 3,
+      "Rescue My Family from Hell": 1
     },
     "spider-gwen": {
       "Fateful Bridge": 5,
@@ -1553,10 +1553,10 @@
       "Intertwining Webs": 1
     },
     "time-traveling-jean-grey": {
-      "Throw Over the Railing": null,
-      "Bridge to a Better Future": null,
-      "Telekinesis": null,
-      "Change History": null
+      "Throw Over the Railing": 5,
+      "Bridge to a Better Future": 5,
+      "Telekinesis": 3,
+      "Change History": 1
     }
   },
   "vill": {
@@ -1886,93 +1886,93 @@
   },
   "xmen": {
     "aurora-northstar": {
-      "Northern Lights": null,
-      "Blazing Flare": null,
-      "Blazing Fists": null,
-      "Twin Blast": null,
-      "Mach 10": null
+      "Northern Lights": 5,
+      "Blazing Flare": 5,
+      "Blazing Fists": 5,
+      "Twin Blast": 3,
+      "Mach 10": 1
     },
     "banshee": {
-      "Sonar Detection": null,
-      "Speed of Sound": null,
-      "Sonic Blastwave": null,
-      "Bone-Shattering Howl": null
+      "Sonar Detection": 5,
+      "Speed of Sound": 5,
+      "Sonic Blastwave": 3,
+      "Bone-Shattering Howl": 1
     },
     "beast": {
-      "Captivating Conundrum": null,
-      "Furry Fury": null,
-      "Calculated Rage": null,
-      "Recursive Pummeling": null
+      "Captivating Conundrum": 5,
+      "Furry Fury": 5,
+      "Calculated Rage": 3,
+      "Recursive Pummeling": 1
     },
     "cannonball": {
-      "Kinetic Blast Field": null,
-      "Carry to the Air": null,
-      "Natural Leader": null,
-      "Human Cannon": null
+      "Kinetic Blast Field": 5,
+      "Carry to the Air": 5,
+      "Natural Leader": 3,
+      "Human Cannon": 1
     },
     "colossus-wolverine": {
-      "Reliable": null,
-      "Unpredictable": null,
-      "Fastball Special": null,
-      "Insane Disregard for Danger": null,
-      "Uncanny X-Men": null
+      "Reliable": 5,
+      "Unpredictable": 5,
+      "Fastball Special": 5,
+      "Insane Disregard for Danger": 3,
+      "Uncanny X-Men": 1
     },
     "dazzler": {
-      "Convert Sound to Light": null,
-      "Dazzling Glamour": null,
-      "Citywide Mega-Concert": null,
-      "Inspire the World": null
+      "Convert Sound to Light": 5,
+      "Dazzling Glamour": 5,
+      "Citywide Mega-Concert": 3,
+      "Inspire the World": 1
     },
     "havok": {
-      "Blinding Burst": null,
-      "Unleash Havok": null,
-      "Concussive Plasma": null,
-      "Radiation Focus Array": null
+      "Blinding Burst": 5,
+      "Unleash Havok": 5,
+      "Concussive Plasma": 3,
+      "Radiation Focus Array": 1
     },
     "jubilee": {
-      "Light a Spark": null,
-      "Blasting Fireworks": null,
-      "Unexpected Explosion": null,
-      "Prismatic Cascade": null
+      "Light a Spark": 5,
+      "Blasting Fireworks": 5,
+      "Unexpected Explosion": 3,
+      "Prismatic Cascade": 1
     },
     "kitty-pryde": {
-      "Intangible Qualities": null,
-      "Going through a Phase": null,
-      "Ghost in the Machine": null,
-      "Lockheed, Kitty's Dragon": null
+      "Intangible Qualities": 5,
+      "Going through a Phase": 5,
+      "Ghost in the Machine": 3,
+      "Lockheed, Kitty's Dragon": 1
     },
     "legion": {
-      "Bend Steel": null,
-      "Bend Light": null,
-      "Split Personality": null,
-      "Split Eardrums": null,
-      "Channel Time": null,
-      "Channel Fire": null,
-      "Maelstrom of Clashing Powers": null
+      "Bend Steel": 5,
+      "Bend Light": 5,
+      "Split Personality": 5,
+      "Split Eardrums": 5,
+      "Channel Time": 3,
+      "Channel Fire": 3,
+      "Maelstrom of Clashing Powers": 1
     },
     "longshot": {
-      "Fortune Favors the Bold": null,
-      "Flurry of Blades": null,
-      "Make My Own Luck": null,
-      "Escape from Mojo World": null
+      "Fortune Favors the Bold": 5,
+      "Flurry of Blades": 5,
+      "Make My Own Luck": 3,
+      "Escape from Mojo World": 1
     },
     "phoenix": {
-      "Life & Death Incarnate": null,
-      "Obliterating Fire": null,
-      "Reincarnating Phoenix": null,
-      "Driven Mad by Power": null
+      "Life & Death Incarnate": 5,
+      "Obliterating Fire": 5,
+      "Reincarnating Phoenix": 3,
+      "Driven Mad by Power": 1
     },
     "polaris": {
-      "Ride the Magnetic Waves": null,
-      "Electromagnetic Pulse": null,
-      "Subtle Attunement": null,
-      "Reverse Polarity": null
+      "Ride the Magnetic Waves": 5,
+      "Electromagnetic Pulse": 5,
+      "Subtle Attunement": 3,
+      "Reverse Polarity": 1
     },
     "psylocke": {
-      "Psychic Knife": null,
-      "Precognition": null,
-      "Butterfly Effect": null,
-      "Telepathic Ninjutsu": null
+      "Psychic Knife": 5,
+      "Precognition": 5,
+      "Butterfly Effect": 3,
+      "Telepathic Ninjutsu": 1
     },
     "x-23": {
       "Adamantium Foot Claws": null,

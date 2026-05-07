@@ -470,7 +470,12 @@
       "name": "Magik",
       "slug": "magik",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Rally the New Mutants": 5,
+        "Travel through Limbo": 5,
+        "Dimensional Portal": 3,
+        "Wield the Soulsword": 1
+      },
       "cards": [
         {
           "name": "Rally the New Mutants",
@@ -705,7 +710,12 @@
       "name": "Old Man Logan",
       "slug": "old-man-logan",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Last Survivor": 5,
+        "Loner": 5,
+        "Rage Out": 3,
+        "No More Heroes": 1
+      },
       "cards": [
         {
           "name": "Last Survivor",

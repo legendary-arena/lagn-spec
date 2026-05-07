@@ -8,7 +8,13 @@
       "name": "Aurora & Northstar",
       "slug": "aurora-northstar",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Northern Lights": 5,
+        "Blazing Flare": 5,
+        "Blazing Fists": 5,
+        "Twin Blast": 3,
+        "Mach 10": 1
+      },
       "cards": [
         {
           "name": "Northern Lights",
@@ -101,7 +107,12 @@
       "name": "Banshee",
       "slug": "banshee",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Sonar Detection": 5,
+        "Speed of Sound": 5,
+        "Sonic Blastwave": 3,
+        "Bone-Shattering Howl": 1
+      },
       "cards": [
         {
           "name": "Sonar Detection",
@@ -179,7 +190,12 @@
       "name": "Beast",
       "slug": "beast",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Captivating Conundrum": 5,
+        "Furry Fury": 5,
+        "Calculated Rage": 3,
+        "Recursive Pummeling": 1
+      },
       "cards": [
         {
           "name": "Captivating Conundrum",
@@ -255,7 +271,12 @@
       "name": "Cannonball",
       "slug": "cannonball",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Kinetic Blast Field": 5,
+        "Carry to the Air": 5,
+        "Natural Leader": 3,
+        "Human Cannon": 1
+      },
       "cards": [
         {
           "name": "Kinetic Blast Field",
@@ -332,7 +353,13 @@
       "name": "Colossus & Wolverine",
       "slug": "colossus-wolverine",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Reliable": 5,
+        "Unpredictable": 5,
+        "Fastball Special": 5,
+        "Insane Disregard for Danger": 3,
+        "Uncanny X-Men": 1
+      },
       "cards": [
         {
           "name": "Reliable",
@@ -422,7 +449,12 @@
       "name": "Dazzler",
       "slug": "dazzler",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Convert Sound to Light": 5,
+        "Dazzling Glamour": 5,
+        "Citywide Mega-Concert": 3,
+        "Inspire the World": 1
+      },
       "cards": [
         {
           "name": "Convert Sound to Light",
@@ -496,7 +528,12 @@
       "name": "Havok",
       "slug": "havok",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Blinding Burst": 5,
+        "Unleash Havok": 5,
+        "Concussive Plasma": 3,
+        "Radiation Focus Array": 1
+      },
       "cards": [
         {
           "name": "Blinding Burst",
@@ -571,7 +608,12 @@
       "name": "Jubilee",
       "slug": "jubilee",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Light a Spark": 5,
+        "Blasting Fireworks": 5,
+        "Unexpected Explosion": 3,
+        "Prismatic Cascade": 1
+      },
       "cards": [
         {
           "name": "Light a Spark",
@@ -646,7 +688,12 @@
       "name": "Kitty Pryde",
       "slug": "kitty-pryde",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Intangible Qualities": 5,
+        "Going through a Phase": 5,
+        "Ghost in the Machine": 3,
+        "Lockheed, Kitty's Dragon": 1
+      },
       "cards": [
         {
           "name": "Intangible Qualities",
@@ -720,7 +767,15 @@
       "name": "Legion",
       "slug": "legion",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Bend Steel": 5,
+        "Bend Light": 5,
+        "Split Personality": 5,
+        "Split Eardrums": 5,
+        "Channel Time": 3,
+        "Channel Fire": 3,
+        "Maelstrom of Clashing Powers": 1
+      },
       "cards": [
         {
           "name": "Bend Steel",
@@ -840,7 +895,12 @@
       "name": "Longshot",
       "slug": "longshot",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Fortune Favors the Bold": 5,
+        "Flurry of Blades": 5,
+        "Make My Own Luck": 3,
+        "Escape from Mojo World": 1
+      },
       "cards": [
         {
           "name": "Fortune Favors the Bold",
@@ -916,7 +976,12 @@
       "name": "Phoenix",
       "slug": "phoenix",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Life & Death Incarnate": 5,
+        "Obliterating Fire": 5,
+        "Reincarnating Phoenix": 3,
+        "Driven Mad by Power": 1
+      },
       "cards": [
         {
           "name": "Life & Death Incarnate",
@@ -994,7 +1059,12 @@
       "name": "Polaris",
       "slug": "polaris",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Ride the Magnetic Waves": 5,
+        "Electromagnetic Pulse": 5,
+        "Subtle Attunement": 3,
+        "Reverse Polarity": 1
+      },
       "cards": [
         {
           "name": "Ride the Magnetic Waves",
@@ -1071,7 +1141,12 @@
       "name": "Psylocke",
       "slug": "psylocke",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Psychic Knife": 5,
+        "Precognition": 5,
+        "Butterfly Effect": 3,
+        "Telepathic Ninjutsu": 1
+      },
       "cards": [
         {
           "name": "Psychic Knife",

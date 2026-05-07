@@ -166,7 +166,12 @@
       "name": "Stepford Cuckoos",
       "slug": "stepford-cuckoos",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Find Mutants with Cerebro": 4,
+        "Shared Thoughts": 4,
+        "Telepathic Warning": 4,
+        "Mind Wipe": 2
+      },
       "cards": [
         {
           "name": "Find Mutants with Cerebro",

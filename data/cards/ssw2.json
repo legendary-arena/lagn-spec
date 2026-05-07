@@ -721,7 +721,12 @@
       "name": "Phoenix Force Cyclops",
       "slug": "phoenix-force-cyclops",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Reincarnate": 5,
+        "Burn Out": 5,
+        "Rise from the Ashes": 3,
+        "Destruction Is Creation": 1
+      },
       "cards": [
         {
           "name": "Reincarnate",
@@ -794,7 +799,12 @@
       "name": "Ruby Summers",
       "slug": "ruby-summers",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Guerrilla Warfare": 5,
+        "Heir to Legends": 5,
+        "Form of Solid Ruby": 3,
+        "Extinction Blast": 1
+      },
       "cards": [
         {
           "name": "Guerrilla Warfare",
@@ -1027,7 +1037,12 @@
       "name": "Soulsword Colossus",
       "slug": "soulsword-colossus",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Invade the Inferno": 5,
+        "Steel Interception": 5,
+        "Possessed by the Soulsword": 3,
+        "Rescue My Family from Hell": 1
+      },
       "cards": [
         {
           "name": "Invade the Inferno",
@@ -1181,7 +1196,12 @@
       "name": "Time-Traveling Jean Grey",
       "slug": "time-traveling-jean-grey",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Throw Over the Railing": 5,
+        "Bridge to a Better Future": 5,
+        "Telekinesis": 3,
+        "Change History": 1
+      },
       "cards": [
         {
           "name": "Throw Over the Railing",

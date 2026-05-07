@@ -83,10 +83,10 @@
       "slug": "captain-america",
       "team": "avengers",
       "cardCounts": {
-        "Avengers Assemble!": 3,
-        "Perfect Teamwork": 4,
-        "Diving Block": 6,
-        "A Day Unlike Any Other": 7
+        "Avengers Assemble!": 5,
+        "Perfect Teamwork": 5,
+        "Diving Block": 3,
+        "A Day Unlike Any Other": 1
       },
       "cards": [
         {
@@ -160,7 +160,12 @@
       "name": "Cyclops",
       "slug": "cyclops",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Determination": 5,
+        "Optic Blast": 5,
+        "Unending Energy": 3,
+        "X-Men United": 1
+      },
       "cards": [
         {
           "name": "Determination",
@@ -306,7 +311,12 @@
       "name": "Emma Frost",
       "slug": "emma-frost",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Mental Discipline": 5,
+        "Shadowed Thoughts": 5,
+        "Psychic Link": 3,
+        "Diamond Form": 1
+      },
       "cards": [
         {
           "name": "Mental Discipline",
@@ -379,7 +389,12 @@
       "name": "Gambit",
       "slug": "gambit",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Card Shark": 5,
+        "Stack the Deck": 5,
+        "Hypnotic Charm": 3,
+        "High Stakes Jackpot": 1
+      },
       "cards": [
         {
           "name": "Stack the Deck",
@@ -752,7 +767,12 @@
       "name": "Rogue",
       "slug": "rogue",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Borrowed Brawn": 5,
+        "Energy Drain": 5,
+        "Copy Powers": 3,
+        "Steal Abilities": 1
+      },
       "cards": [
         {
           "name": "Energy Drain",
@@ -904,7 +924,12 @@
       "name": "Storm",
       "slug": "storm",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Gathering Stormclouds": 5,
+        "Lightning Bolt": 5,
+        "Spinning Cyclone": 3,
+        "Tidal Wave": 1
+      },
       "cards": [
         {
           "name": "Gathering Stormclouds",

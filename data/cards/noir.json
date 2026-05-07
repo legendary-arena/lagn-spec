@@ -8,7 +8,12 @@
       "name": "Angel Noir",
       "slug": "angel-noir",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Impetuous Dive": 5,
+        "Multitalented": 5,
+        "Identical Twin Brother": 3,
+        "Missing Person Case": 1
+      },
       "cards": [
         {
           "name": "Impetuous Dive",
