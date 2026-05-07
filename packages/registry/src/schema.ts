@@ -81,12 +81,22 @@ export const HeroCardSchema = z.object({
 //   - 3dtc:  some heroes have null id
 //   - shld:  heroes 4-11 have no id key at all (undefined, not null)
 //   - msp1:  all heroes use -1 as a sentinel (no positive constraint)
+//
+// why: D-13701 (verbatim per EC-137 §Required `// why:` Comments):
+// `cardCounts` keys are card display names from the upstream dataset; the engine resolves them against `cards[].name` and emits ext_ids using `cards[].slug`.
+// The map is optional and nullable: present-with-value when the upstream
+// patch supplies explicit copy counts (per-hero, per-card-name); null/absent
+// when the engine falls back to the locked rarity → copy-count map (D-13501)
+// keyed by `cards[].rarityLabel`. Values must be positive integers; 0,
+// negative, non-integer, or non-number values are silently ignored and
+// trigger the rarity-map fallback.
 export const HeroSchema = z.object({
-  id:    z.number().int().nullable().optional(),
-  name:  z.string(),
-  slug:  z.string(),
-  team:  z.string(),
-  cards: z.array(HeroCardSchema),
+  id:         z.number().int().nullable().optional(),
+  name:       z.string(),
+  slug:       z.string(),
+  team:       z.string(),
+  cards:      z.array(HeroCardSchema),
+  cardCounts: z.record(z.string(), z.number().int().min(1)).nullable().optional(),
 });
 
 // ── Mastermind card (main card, epic variant, or tactic) ──────────────────────

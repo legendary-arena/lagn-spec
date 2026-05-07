@@ -1,6 +1,6 @@
 {
   "name": "@legendary-arena/game-engine",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "boardgame.io Game Engine for Legendary Arena",
   "type": "module",
   "main": "./dist/index.js",

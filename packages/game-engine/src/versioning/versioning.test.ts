@@ -10,7 +10,11 @@ import {
   checkCompatibility,
   getCurrentEngineVersion,
 } from './versioning.check.js';
-import { migrateArtifact } from './versioning.migrate.js';
+import {
+  migrateArtifact,
+  migrationRegistry,
+  migrateHeroExtIdsForCopyIndex,
+} from './versioning.migrate.js';
 import { stampArtifact } from './versioning.stamp.js';
 
 describe('versioning (WP-034)', () => {
@@ -180,9 +184,14 @@ describe('versioning (WP-034)', () => {
   });
 
   // Test 8 — migrateArtifact with no migration path: throws
+  // why: WP-137 PS-5 fixture update — the original 1.0.0 → 1.1.0 fixture
+  // is now a registered migration path (`migrateHeroExtIdsForCopyIndex`).
+  // Fixture moves to 1.1.0 → 1.2.0 (still no path registered) so the
+  // test continues to exercise the no-path-throws behavior with the
+  // same intent and locked message template.
   test('migrateArtifact throws Error with the locked template when no migration path is registered', () => {
-    const sourceVersion: EngineVersion = { major: 1, minor: 0, patch: 0 };
-    const targetVersion: EngineVersion = { major: 1, minor: 1, patch: 0 };
+    const sourceVersion: EngineVersion = { major: 1, minor: 1, patch: 0 };
+    const targetVersion: EngineVersion = { major: 1, minor: 2, patch: 0 };
     const artifact: VersionedArtifact<{ x: number }> = {
       engineVersion: sourceVersion,
       dataVersion: { ...CURRENT_DATA_VERSION },
@@ -195,7 +204,7 @@ describe('versioning (WP-034)', () => {
       {
         name: 'Error',
         message:
-          'No migration path from engine version 1.0.0 to engine version 1.1.0; cannot migrate artifact saved at 2026-04-19T12:00:00.000Z.',
+          'No migration path from engine version 1.1.0 to engine version 1.2.0; cannot migrate artifact saved at 2026-04-19T12:00:00.000Z.',
       },
     );
   });
@@ -213,5 +222,148 @@ describe('versioning (WP-034)', () => {
     assert.equal(typeof roundtripped.engineVersion.major, 'number');
     assert.equal(typeof roundtripped.dataVersion.version, 'number');
     assert.equal(typeof roundtripped.contentVersion.version, 'number');
+  });
+
+  // why: WP-137 — first migration registered. Tests appended inside the
+  // existing describe() block for suite delta +0 (per RS-3).
+  test('WP-137: migrationRegistry contains the 1.0.0->1.1.0 entry pointing to migrateHeroExtIdsForCopyIndex', () => {
+    assert.equal(
+      migrationRegistry['1.0.0->1.1.0'],
+      migrateHeroExtIdsForCopyIndex,
+      `migrationRegistry['1.0.0->1.1.0'] must point to migrateHeroExtIdsForCopyIndex`,
+    );
+  });
+
+  test('WP-137: migrateHeroExtIdsForCopyIndex rewrites bare hero card-instance ext_ids by appending #0', () => {
+    const legacyPayload = {
+      seed: 'replay-001',
+      setupConfig: {
+        schemeId: 'core/the-scheme',
+        mastermindId: 'core/the-mastermind',
+        villainGroupIds: ['core/villain-group'],
+        henchmanGroupIds: ['core/henchman-group'],
+        heroDeckIds: ['core/black-widow'],
+        bystandersCount: 30,
+        woundsCount: 30,
+        officersCount: 30,
+        sidekicksCount: 0,
+      },
+      playerOrder: ['0', '1'],
+      moves: [
+        {
+          playerId: '0',
+          moveName: 'recruitHero',
+          args: { heroExtId: 'core/black-widow/mission-accomplished' },
+        },
+        {
+          playerId: '1',
+          moveName: 'playCard',
+          args: { cardId: 'core/spider-man/web-shooter' },
+        },
+      ],
+    };
+
+    const migrated = migrateHeroExtIdsForCopyIndex(legacyPayload) as typeof legacyPayload;
+
+    assert.equal(
+      (migrated.moves[0]!.args as { heroExtId: string }).heroExtId,
+      'core/black-widow/mission-accomplished#0',
+      'Bare hero ext_id in move args must be rewritten with #0 suffix',
+    );
+    assert.equal(
+      (migrated.moves[1]!.args as { cardId: string }).cardId,
+      'core/spider-man/web-shooter#0',
+      'Bare hero ext_id in nested args must be rewritten with #0 suffix',
+    );
+  });
+
+  test('WP-137: migrateHeroExtIdsForCopyIndex leaves villain / mastermind / henchman / scheme ext_ids untouched', () => {
+    // Hyphen-form ext_ids carry no `/` separators and must not be
+    // touched by the migration's three-predicate matcher.
+    const legacyPayload = {
+      seed: 'replay-002',
+      setupConfig: {
+        schemeId: 'core/scheme',
+        mastermindId: 'core/mm',
+        villainGroupIds: [],
+        henchmanGroupIds: [],
+        heroDeckIds: [],
+        bystandersCount: 0,
+        woundsCount: 0,
+        officersCount: 0,
+        sidekicksCount: 0,
+      },
+      playerOrder: ['0'],
+      moves: [
+        { playerId: '0', moveName: 'fightVillain', args: { villainId: 'core-villain-brotherhood-magneto' } },
+        { playerId: '0', moveName: 'fightMastermind', args: { tacticId: 'core-mastermind-dr-doom-doom-base' } },
+        { playerId: '0', moveName: 'fightHenchman', args: { henchmanId: 'henchman-doombot-legion-00' } },
+        { playerId: '0', moveName: 'twist', args: { schemeId: 'core-scheme-twist-001' } },
+      ],
+    };
+
+    const migrated = migrateHeroExtIdsForCopyIndex(legacyPayload) as typeof legacyPayload;
+
+    assert.equal(
+      (migrated.moves[0]!.args as { villainId: string }).villainId,
+      'core-villain-brotherhood-magneto',
+      'Hyphen-form villain ext_id must be untouched',
+    );
+    assert.equal(
+      (migrated.moves[1]!.args as { tacticId: string }).tacticId,
+      'core-mastermind-dr-doom-doom-base',
+      'Hyphen-form mastermind ext_id must be untouched',
+    );
+    assert.equal(
+      (migrated.moves[2]!.args as { henchmanId: string }).henchmanId,
+      'henchman-doombot-legion-00',
+      'Hyphen-form henchman ext_id must be untouched',
+    );
+    assert.equal(
+      (migrated.moves[3]!.args as { schemeId: string }).schemeId,
+      'core-scheme-twist-001',
+      'Hyphen-form scheme ext_id must be untouched',
+    );
+  });
+
+  test('WP-137: migrateHeroExtIdsForCopyIndex returns input unchanged when payload is not ReplayInput-shaped', () => {
+    // Per the locked contract: returns `payload` unchanged (no copy)
+    // when the payload doesn't satisfy the ReplayInput-shape guard.
+    assert.equal(migrateHeroExtIdsForCopyIndex(null), null, 'null payload returned unchanged');
+    assert.equal(migrateHeroExtIdsForCopyIndex(undefined), undefined, 'undefined payload returned unchanged');
+    assert.equal(migrateHeroExtIdsForCopyIndex(42), 42, 'primitive payload returned unchanged');
+    assert.equal(migrateHeroExtIdsForCopyIndex('not a payload'), 'not a payload', 'string payload returned unchanged');
+    const noMoves = { seed: 'x' };
+    assert.equal(migrateHeroExtIdsForCopyIndex(noMoves), noMoves, 'object without moves array returned unchanged');
+  });
+
+  test('WP-137: migrateHeroExtIdsForCopyIndex never throws on malformed payloads', () => {
+    // Locked contract: MigrationFn is pure-transform; throw surface is
+    // owned by migrateArtifact (the load-boundary exception).
+    assert.doesNotThrow(() => migrateHeroExtIdsForCopyIndex(null));
+    assert.doesNotThrow(() => migrateHeroExtIdsForCopyIndex(undefined));
+    assert.doesNotThrow(() => migrateHeroExtIdsForCopyIndex({ moves: [null] }));
+    assert.doesNotThrow(() => migrateHeroExtIdsForCopyIndex({ moves: 'not-an-array' }));
+    assert.doesNotThrow(() => migrateHeroExtIdsForCopyIndex({ moves: [{ args: { x: { y: { z: 'core/a/b' } } } }] }));
+  });
+
+  test('WP-137: migrateHeroExtIdsForCopyIndex returns a new payload reference (no aliasing with input)', () => {
+    // WP-028 D-2802 aliasing prevention extended to load-boundary
+    // wrappers. Mutating the returned payload must not mutate the input.
+    const original = {
+      seed: 'replay-003',
+      moves: [
+        { playerId: '0', moveName: 'foo', args: { heroExtId: 'core/black-widow/mission-accomplished' } },
+      ],
+    };
+    const migrated = migrateHeroExtIdsForCopyIndex(original) as typeof original;
+    assert.notEqual(migrated, original, 'Returned payload must be a new object reference');
+    assert.notEqual(migrated.moves, original.moves, 'Returned moves must be a new array reference');
+    assert.notEqual(migrated.moves[0], original.moves[0], 'Returned move must be a new object reference');
+    assert.equal(
+      (original.moves[0]!.args as { heroExtId: string }).heroExtId,
+      'core/black-widow/mission-accomplished',
+      'Original input must be unchanged after migration',
+    );
   });
 });

@@ -406,8 +406,8 @@ describe('buildCardDisplayData', () => {
 // WP-135 — hero card-instance walk (slash-format ext_id)
 // ===========================================================================
 
-describe('buildCardDisplayData — WP-135 hero card-instance walk (slash-format ext_id)', () => {
-  it('emits one display entry per hero card instance keyed by <setAbbr>/<heroSlug>/<cardSlug>', () => {
+describe('buildCardDisplayData — WP-135 / WP-137 hero card-instance walk (slash-format ext_id with #copyIndex)', () => {
+  it('emits one display entry per copy keyed by <setAbbr>/<heroSlug>/<cardSlug>#<copyIndex>', () => {
     const setData = {
       abbr: 'core',
       villains: [],
@@ -455,19 +455,26 @@ describe('buildCardDisplayData — WP-135 hero card-instance walk (slash-format 
 
     const result = buildCardDisplayData(registry, config);
 
-    const mission = result['core/black-widow/mission-accomplished'];
-    assert.ok(mission, 'Slash-format mission-accomplished entry must be present');
-    assert.equal(mission!.name, 'Mission Accomplished');
-    assert.equal(
-      mission!.imageUrl,
-      'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
-    );
-    assert.equal(mission!.cost, 2);
+    // why: WP-137 D-13702 — fan-out per copy. Common 1 emits 5 copies
+    // (#0-#4); Rare emits 3 copies (#0-#2). Each per-copy ext_id is its
+    // own key in G.cardDisplayData with identical display payload.
+    for (let copyIndex = 0; copyIndex < 5; copyIndex++) {
+      const mission = result[`core/black-widow/mission-accomplished#${copyIndex}`];
+      assert.ok(mission, `Slash-format mission-accomplished#${copyIndex} entry must be present`);
+      assert.equal(mission!.name, 'Mission Accomplished');
+      assert.equal(
+        mission!.imageUrl,
+        'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
+      );
+      assert.equal(mission!.cost, 2);
+    }
 
-    const taskmaster = result['core/black-widow/taskmaster'];
-    assert.ok(taskmaster, 'Slash-format taskmaster entry must be present');
-    assert.equal(taskmaster!.name, 'Taskmaster');
-    assert.equal(taskmaster!.cost, 6);
+    for (let copyIndex = 0; copyIndex < 3; copyIndex++) {
+      const taskmaster = result[`core/black-widow/taskmaster#${copyIndex}`];
+      assert.ok(taskmaster, `Slash-format taskmaster#${copyIndex} entry must be present`);
+      assert.equal(taskmaster!.name, 'Taskmaster');
+      assert.equal(taskmaster!.cost, 6);
+    }
   });
 
   it('emits cost === null when registry has no cost field on the card', () => {
@@ -511,8 +518,66 @@ describe('buildCardDisplayData — WP-135 hero card-instance walk (slash-format 
 
     const result = buildCardDisplayData(registry, config);
 
-    const freeCard = result['core/no-cost-hero/free-card'];
-    assert.ok(freeCard, 'Slash-format entry must be present');
-    assert.equal(freeCard!.cost, null, 'Missing cost must project as null (preserves the "no cost shown" UX distinction)');
+    // why: WP-137 D-13702 — Common 1 emits 5 copies (#0-#4); each copy
+    // carries identical display payload including cost === null.
+    for (let copyIndex = 0; copyIndex < 5; copyIndex++) {
+      const freeCard = result[`core/no-cost-hero/free-card#${copyIndex}`];
+      assert.ok(freeCard, `Slash-format entry must be present at #${copyIndex}`);
+      assert.equal(freeCard!.cost, null, 'Missing cost must project as null (preserves the "no cost shown" UX distinction)');
+    }
+  });
+
+  // why: WP-137 D-13702 — per-copy parity. Every #N entry must carry
+  // identical display payload (name, imageUrl, cost). Appended as
+  // it() inside the existing describe() block for suite delta +0.
+  it('per-copy parity: every #N display entry carries identical name / imageUrl / cost across copies', () => {
+    const setData = {
+      abbr: 'core',
+      villains: [],
+      henchmen: [],
+      masterminds: [],
+      heroes: [
+        {
+          slug: 'parity-hero',
+          cards: [
+            {
+              slug: 'shared-card',
+              rarityLabel: 'Common 1',
+              name: 'Shared Card',
+              imageUrl: 'https://images.barefootbetters.com/parity/shared-card.webp',
+              cost: 4,
+            },
+          ],
+        },
+      ],
+    };
+    const registry = {
+      listCards: () => [],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/parity-hero'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config);
+
+    for (let copyIndex = 0; copyIndex < 5; copyIndex++) {
+      const entry = result[`core/parity-hero/shared-card#${copyIndex}`]!;
+      assert.equal(entry.name, 'Shared Card', `shared-card#${copyIndex} name parity`);
+      assert.equal(
+        entry.imageUrl,
+        'https://images.barefootbetters.com/parity/shared-card.webp',
+        `shared-card#${copyIndex} imageUrl parity`,
+      );
+      assert.equal(entry.cost, 4, `shared-card#${copyIndex} cost parity`);
+    }
   });
 });

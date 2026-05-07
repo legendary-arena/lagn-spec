@@ -11,7 +11,7 @@
 
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import type { LegendaryGameState, MatchConfiguration } from '../types.js';
+import type { LegendaryGameState, MatchConfiguration, SetupContext } from '../types.js';
 import type { CardRegistryReader } from '../matchSetup.validate.js';
 import { buildInitialGameState } from '../setup/buildInitialGameState.js';
 import { makeMockCtx } from '../test/mockCtx.js';
@@ -25,6 +25,7 @@ import {
 } from './assertInvariant.js';
 import { runAllInvariantChecks } from './runAllChecks.js';
 import { checkTurnCounterMonotonic } from './lifecycle.checks.js';
+import { checkNoCardInMultipleZones } from './gameRules.checks.js';
 
 /**
  * Builds a valid MatchConfiguration for invariant testing. Mirrors
@@ -217,5 +218,103 @@ test('empty wounds pile does NOT trigger any invariant', () => {
   assert.doesNotThrow(() => runAllInvariantChecks(G, SETUP_CONTEXT));
 });
 
+});
+
+// ===========================================================================
+// WP-137 — 100-seed regression for per-copy distinctness
+// ===========================================================================
+
+describe('WP-137 — checkNoCardInMultipleZones holds across 100 RNG orderings for multi-copy hero loadouts', () => {
+  test('100 distinct shuffle orderings of a multi-copy hero loadout all pass checkNoCardInMultipleZones', () => {
+    // why: WP-137 D-13702 — per-copy distinctness fix. Pre-WP-137,
+    // every physical copy of a hero card was emitted under the same
+    // ext_id string; under specific RNG orderings the deck shuffle
+    // distributed copies across HQ + heroDeck, which trips the
+    // checkNoCardInMultipleZones invariant. Post-WP-137, every copy
+    // carries a distinct `#<copyIndex>` suffix so no shuffle ordering
+    // can produce duplicates. The test exercises 100 distinct shuffle
+    // orderings via a seedable Fisher-Yates Shuffle (no boardgame.io
+    // import; no boardgame.io/testing import).
+    //
+    // Loadout: a single compliant hero with 4 cards across the four
+    // locked rarity labels (5/3/3/3 = 14 cards). The Common 1 card
+    // alone produces 5 copies, which is the minimum needed to exercise
+    // the cross-zone fan-out — pre-WP-137 this loadout would trip the
+    // invariant on at least some seeds.
+
+    // Build a registry that produces a full multi-copy hero.
+    const setData = {
+      abbr: 'core',
+      heroes: [
+        {
+          slug: 'multi-copy-hero',
+          cards: [
+            { slug: 'card-c1', rarityLabel: 'Common 1', name: 'C1' },
+            { slug: 'card-c2', rarityLabel: 'Common 2', name: 'C2' },
+            { slug: 'card-uncommon', rarityLabel: 'Uncommon', name: 'UC' },
+            { slug: 'card-rare', rarityLabel: 'Rare', name: 'R' },
+          ],
+        },
+      ],
+      villains: [],
+      henchmen: [],
+      masterminds: [],
+      schemes: [],
+    };
+    const registry: CardRegistryReader = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'core' }],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+
+    const config: MatchConfiguration = {
+      schemeId: 'core/test-scheme',
+      mastermindId: 'core/test-mastermind',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/multi-copy-hero'],
+      bystandersCount: 30,
+      woundsCount: 30,
+      officersCount: 30,
+      sidekicksCount: 0,
+    };
+
+    for (let seed = 1; seed <= 100; seed++) {
+      // why: per-iteration seedable mock — Fisher-Yates with a Linear
+      // Congruential Generator (LCG) using the seed as state. Different
+      // seeds produce different shuffle outputs; no Math.random, no
+      // wall-clock reads, deterministic per seed.
+      let rngState = seed;
+      const nextInt = (max: number): number => {
+        // LCG constants from Numerical Recipes (cycle 2^31).
+        rngState = (rngState * 1103515245 + 12345) & 0x7fffffff;
+        return rngState % max;
+      };
+      const seededContext: SetupContext = {
+        ctx: { numPlayers: 2 },
+        random: {
+          Shuffle: <T>(deck: T[]): T[] => {
+            const out = [...deck];
+            for (let i = out.length - 1; i > 0; i--) {
+              const j = nextInt(i + 1);
+              const tmp = out[i]!;
+              out[i] = out[j]!;
+              out[j] = tmp;
+            }
+            return out;
+          },
+        },
+      };
+
+      const G = buildInitialGameState(config, registry, seededContext);
+
+      // The 100-seed assertion: per-copy distinctness must hold under
+      // every RNG ordering.
+      assert.doesNotThrow(
+        () => checkNoCardInMultipleZones(G),
+        `Seed ${seed}: checkNoCardInMultipleZones must pass for the multi-copy hero loadout under every RNG ordering`,
+      );
+    }
+  });
 });
 

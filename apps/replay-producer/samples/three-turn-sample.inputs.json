@@ -20,6 +20,6 @@
   ],
   "metadata": {
     "matchId": "three-turn-sample-match",
-    "note": "Golden fixture for WP-063 / EC-071 round-trip determinism verification."
+    "note": "Golden fixture for WP-063 / EC-071 round-trip determinism verification. WP-137 marker: hero card-instance ext_id grammar example /core/black-widow/mission-accomplished#0 (D-13702 #<copyIndex> suffix). Producer does not propagate metadata.note to the output sequence, so the .sequence.json sibling remains byte-identical (RS-5)."
   }
 }

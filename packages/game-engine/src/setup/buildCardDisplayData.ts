@@ -25,6 +25,17 @@ import type { CardExtId } from '../state/zones.types.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { UICardDisplay } from '../ui/uiState.types.js';
 import { parseCardStatValue } from '../economy/economy.logic.js';
+// why: D-13702 fan-out — buildCardDisplayData must resolve hero card-instance
+// copy counts identically to buildHeroDeckCards so G.cardDisplayData keys
+// form a superset of the hero deck reservoir. The shared helper enforces
+// byte-for-byte parity by construction; divergence between the three
+// sites would cause silent display lookup misses for HQ slot rendering
+// and hand display under specific RNG seeds. Per RS-4 lock, the helper
+// is imported (not duplicated) from the canonical emitter site.
+import {
+  buildCardCountsNameLookup,
+  resolveHeroCardCopyCount,
+} from './buildHeroDeck.js';
 
 // ---------------------------------------------------------------------------
 // parseCostNullable — null-distinction wrapper around parseCardStatValue
@@ -105,6 +116,12 @@ interface DisplayDataHeroCardEntry {
   slug: string;
   /** Display name preserved verbatim from the registry. */
   name?: string;
+  /**
+   * Per-card rarity label. Read by the WP-137 cardCounts resolution
+   * helper as the fallback when the cardCounts entry is absent or
+   * malformed.
+   */
+  rarityLabel?: string;
   /** Full image URL preserved verbatim from the registry. */
   imageUrl?: string;
   /** Per-card recruit cost; raw from registry. Null/undefined → "no cost shown". */
@@ -113,10 +130,16 @@ interface DisplayDataHeroCardEntry {
 
 /**
  * Minimal structural type for a hero entry in SetData.heroes[i].
+ *
+ * The optional `cardCounts` field is the WP-137 data-driven copy-count
+ * authority (D-13701). Read by buildCardCountsNameLookup at the top of
+ * each hero loop in the per-copy fan-out branch.
  */
 interface DisplayDataHeroEntry {
   slug: string;
   cards: DisplayDataHeroCardEntry[];
+  /** Optional name-keyed copy-count map (WP-137; see HeroSchema.cardCounts). */
+  cardCounts?: unknown;
 }
 
 /**
@@ -304,14 +327,20 @@ export function buildCardDisplayData(
     }
   }
 
-  // --- 1b. Hero card instances (WP-135 — slash-format ext_id per D-13502) ---
-  // why: WP-135 — extends the display walk to per-hero card instances
-  // populated by buildHeroDeck into G.heroDeck and G.hq. The new entries
-  // are keyed by the slash-format ext_id <setAbbr>/<heroSlug>/<cardSlug>
-  // (D-13502); these coexist with the FlatCard hyphen keys emitted in
-  // step 1 above (no migration). UIState surfaces these for HQ slot
-  // rendering and hand display once recruited cards land in player
-  // discards.
+  // --- 1b. Hero card instances (WP-135 / WP-137 — slash-format ext_id with #<copyIndex>) ---
+  // why: WP-137 D-13702 — extends the display walk to per-copy keys.
+  // Every physical copy of a hero card receives a distinct ext_id
+  // <setAbbr>/<heroSlug>/<cardSlug>#<copyIndex>; G.cardDisplayData keys
+  // must form a superset of the hero deck reservoir so per-copy display
+  // payloads (name, imageUrl, cost) resolve identically across all
+  // copies. The shared helpers resolveHeroCardCopyCount +
+  // buildCardCountsNameLookup imported from setup/buildHeroDeck.js
+  // enforce byte-for-byte parity with buildHeroDeckCards by
+  // construction — divergence would cause silent display lookup misses
+  // for HQ slot rendering and hand display under specific RNG seeds.
+  // Per RS-4 lock, this branch treats null from resolveHeroCardCopyCount
+  // as silent fall-through (the throw surface is reserved for
+  // Game.setup() proper, owned by buildHeroDeckCards).
   for (const heroDeckId of matchConfig.heroDeckIds) {
     const parsed = parseQualifiedIdForSetup(heroDeckId);
     if (parsed === null) continue;
@@ -320,17 +349,32 @@ export function buildCardDisplayData(
     const heroEntry = findHeroEntryForDisplay(setData, parsed.slug);
     if (heroEntry === null) continue;
 
+    const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
+
     for (const card of heroEntry.cards) {
       if (!card || typeof card !== 'object') continue;
       if (typeof card.slug !== 'string') continue;
 
-      const extId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}` as CardExtId;
-      result[extId] = {
-        extId,
-        name: typeof card.name === 'string' ? card.name : '',
-        imageUrl: typeof card.imageUrl === 'string' ? card.imageUrl : '',
-        cost: parseCostNullable(card.cost ?? null),
-      };
+      const rarityLabel = typeof card.rarityLabel === 'string' ? card.rarityLabel : '';
+      const copyCount = resolveHeroCardCopyCount({ name: card.name, rarityLabel }, nameLookup);
+      if (copyCount === null) continue;
+
+      const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}`;
+      const name = typeof card.name === 'string' ? card.name : '';
+      const imageUrl = typeof card.imageUrl === 'string' ? card.imageUrl : '';
+      const cost = parseCostNullable(card.cost ?? null);
+      for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+        const extId = `${baseExtId}#${copyIndex}` as CardExtId;
+        // why: per-copy fresh object literal — no aliasing across keys
+        // (WP-028 D-2802 aliasing prevention extended to setup-time
+        // sibling-snapshot fan-out).
+        result[extId] = {
+          extId,
+          name,
+          imageUrl,
+          cost,
+        };
+      }
     }
   }
 

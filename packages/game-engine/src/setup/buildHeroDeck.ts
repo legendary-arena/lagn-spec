@@ -39,24 +39,43 @@ import type { ShuffleProvider } from './shuffle.js';
 /**
  * Minimal structural type for one hero card entry in SetData.heroes[i].cards[j].
  *
- * The four-label rarity set is locked by D-13501 Option A. Any rarityLabel
- * outside that set causes buildHeroDeck to throw a full-sentence Error.
+ * The four-label rarity set is locked by D-13501 Option A. The cardCounts
+ * lookup added by WP-137 is name-keyed, so the optional `name` field is
+ * read at the count-resolution site; absence falls through to the rarity
+ * map (per D-13701).
  */
 interface HeroCardEntry {
   /** Card-level slug within the hero (e.g., 'mission-accomplished'). */
   slug: string;
+  /**
+   * Display name from the upstream patch. Optional in the registry schema
+   * (HeroCardSchema.name is .optional()); when undefined, the cardCounts
+   * lookup yields undefined and falls through to the rarity-map branch.
+   */
+  name?: string;
   /** Per-card rarity label. Must be one of the four locked values. */
   rarityLabel: string;
 }
 
 /**
  * Minimal structural type for a hero entry in SetData.heroes[i].
+ *
+ * The optional `cardCounts` field is the WP-137 data-driven copy-count
+ * authority (D-13701). Keys are card display names; values are positive
+ * integers; missing/null/malformed entries fall through to the rarity-map
+ * fallback per D-13501.
  */
 interface HeroEntry {
   /** Hero-level slug within the set (e.g., 'black-widow'). */
   slug: string;
   /** Per-card data; one entry per distinct hero card template. */
   cards: HeroCardEntry[];
+  /**
+   * Optional name-keyed copy-count map populated by the upstream
+   * conversion pipeline. Read by buildCardCountsNameLookup at the top
+   * of each hero loop.
+   */
+  cardCounts?: unknown;
 }
 
 /**
@@ -110,12 +129,105 @@ const RARITY_COPY_COUNT: Readonly<Record<string, number>> = {
 };
 
 /** The four locked rarity labels, in canonical iteration order. */
-const SUPPORTED_RARITY_LABELS: readonly string[] = [
+export const SUPPORTED_RARITY_LABELS: readonly string[] = [
   'Common 1',
   'Common 2',
   'Uncommon',
   'Rare',
 ];
+
+// ---------------------------------------------------------------------------
+// Shared cardCounts resolution helpers (WP-137 RS-4 lock)
+// ---------------------------------------------------------------------------
+
+// why: D-13701 — cardCounts is the authoritative per-hero copy-count source
+// when populated; the locked rarity map (D-13501) is the fallback. The
+// helpers are exported so the three setup-time fan-out sites
+// (buildHeroDeckCards here, the hero branch of buildCardStats in
+// economy.logic.ts, and the hero branch of buildCardDisplayData in
+// buildCardDisplayData.ts) resolve copy counts identically by construction.
+// Cross-site divergence would cause silent fan-out misses across
+// G.cardStats and G.cardDisplayData under specific RNG seeds. The
+// shared-helper choice also closes the deferred Phase 7 placeholder
+// (D-13703) — promotes data-driven counts over rarity-map extension to
+// AMWP-class labels.
+/**
+ * Builds a per-hero name-keyed copy-count lookup from the registry's
+ * cardCounts field on a hero entry.
+ *
+ * Returns an empty Map when `cardCounts` is absent, null, not a plain
+ * object, or contains no valid entries. A value is treated as valid only
+ * when ALL three predicates hold:
+ *
+ *   1. typeof v === 'number'
+ *   2. Number.isInteger(v)
+ *   3. v >= 1
+ *
+ * Any other value (0, negative, non-integer float, NaN, string, object,
+ * etc.) is silently dropped — the missing key in the returned Map causes
+ * the caller to fall through to the rarity-map branch.
+ *
+ * @param cardCounts - Raw `cardCounts` value from a hero entry; unknown
+ *   typed because the structural interfaces accept any shape.
+ * @returns A Map of display name → positive integer copy count.
+ */
+export function buildCardCountsNameLookup(
+  cardCounts: unknown,
+): Map<string, number> {
+  const lookup = new Map<string, number>();
+  if (!cardCounts || typeof cardCounts !== 'object') {
+    return lookup;
+  }
+  const candidate = cardCounts as Record<string, unknown>;
+  for (const key of Object.keys(candidate)) {
+    const value = candidate[key];
+    if (typeof value !== 'number') continue;
+    if (!Number.isInteger(value)) continue;
+    if (value < 1) continue;
+    lookup.set(key, value);
+  }
+  return lookup;
+}
+
+/**
+ * Resolves a hero card's copy count via cardCounts (name-keyed) → rarity
+ * map (label-keyed) fallback.
+ *
+ * Returns the resolved positive integer copy count when either source
+ * succeeds; returns `null` when both sources fail. The caller in
+ * buildHeroDeckCards throws on `null` (preserving the loud-fail surface
+ * inside Game.setup() per D-13501 Option A — softened to require BOTH
+ * sources missing per D-13701). Callers in the two fan-out sites
+ * (buildCardStats, buildCardDisplayData) treat `null` as silent
+ * fall-through because their throw surface is reserved for Game.setup()
+ * proper.
+ *
+ * @param card - Hero card entry; only `name` and `rarityLabel` are read.
+ * @param nameLookup - Per-hero map built by buildCardCountsNameLookup.
+ * @returns Positive integer copy count, or null when both sources fail.
+ */
+export function resolveHeroCardCopyCount(
+  card: { name?: string | undefined; rarityLabel: string },
+  nameLookup: Map<string, number>,
+): number | null {
+  // why: D-13701 — cardCounts authoritative when present; D-13501 rarity
+  // map fallback when absent; D-13703 closes the deferred Phase 7
+  // placeholder by promoting data-driven counts over rarity-map extension.
+  // Lookup is name-keyed against `card.name` because the upstream patch
+  // ships cardCounts keyed by display name (NOT slug); `cardCounts[card.slug]`
+  // is always wrong.
+  if (typeof card.name === 'string') {
+    const fromCardCounts = nameLookup.get(card.name);
+    if (typeof fromCardCounts === 'number') {
+      return fromCardCounts;
+    }
+  }
+  const fromRarity = RARITY_COPY_COUNT[card.rarityLabel];
+  if (typeof fromRarity === 'number') {
+    return fromRarity;
+  }
+  return null;
+}
 
 // ---------------------------------------------------------------------------
 // parseQualifiedIdForSetup — local duplicate (WP-113 §6 precedent)
@@ -172,20 +284,24 @@ function isRegistryReader(registry: unknown): registry is RegistryReader {
 /**
  * Builds the unshuffled flat array of hero card-instance ext_ids.
  *
- * For each hero in heroDeckIds, walks setData.heroes[i].cards[j], emits
- * one ext_id per card-copy according to the locked rarity → copy-count
- * map (D-13501), and appends to a flat array. Card order: heroes per
- * heroDeckIds order; cards per registry cards[] order; copies appended in
- * rarity-map iteration order (Common 1 → Common 2 → Uncommon → Rare).
+ * For each hero in heroDeckIds, walks setData.heroes[i].cards[j], resolves
+ * the per-card copy count via the cardCounts → rarity-map cascade (D-13701
+ * → D-13501), and emits one ext_id per copy with a `#<copyIndex>` suffix
+ * (D-13702). Card order: heroes per heroDeckIds order; cards per registry
+ * cards[] order; copies appended in zero-indexed contiguous order
+ * (`#0`, `#1`, …, `#(N-1)`).
  *
- * Throws a full-sentence Error (D-13501 Option A loud-fail) when any
- * hero card carries a rarityLabel outside the four-label set. The error
- * message names the offending hero ext_id, the unrecognized label, and
- * the supported four-label set.
+ * Throws a full-sentence Error (the surviving D-13501 Option A loud-fail
+ * surface) when, for a given card, BOTH copy-count sources fail
+ * simultaneously: the cardCounts entry is absent / malformed AND the
+ * rarityLabel is not in the four-label set. The message enumerates both
+ * attempted paths so the operator can fix the patch file or extend the
+ * rarity map as appropriate.
  *
  * @param heroDeckIds - Array of qualified hero deck IDs `<setAbbr>/<heroSlug>`.
  * @param registry - Setup-time registry reader. Must satisfy RegistryReader.
- * @returns Unshuffled flat array of hero card-instance CardExtIds.
+ * @returns Unshuffled flat array of hero card-instance CardExtIds, each
+ *   suffixed with `#<copyIndex>`.
  */
 export function buildHeroDeckCards(
   heroDeckIds: string[],
@@ -213,38 +329,52 @@ export function buildHeroDeckCards(
     if (heroEntry === null) continue;
     if (!Array.isArray(heroEntry.cards)) continue;
 
+    // why: per-hero name-keyed lookup is built once at the top of the hero
+    // loop so the name → count resolution happens in O(1) per card. Fresh
+    // per hero — never cached across heroes — because two heroes in
+    // different sets could share a card display name (e.g., a generic
+    // "Strike" entry); a hero-scoped lookup avoids cross-hero pollution.
+    const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
+
     for (const card of heroEntry.cards) {
       if (!card || typeof card !== 'object') continue;
       if (typeof card.slug !== 'string' || typeof card.rarityLabel !== 'string') {
         continue;
       }
 
-      const copyCount = RARITY_COPY_COUNT[card.rarityLabel];
-      if (copyCount === undefined) {
-        // why: D-13501 Option A loud-fail — Game.setup() is the canonical
-        // throw site (.claude/rules/game-engine.md §Throwing Convention).
-        // Surfaces data drift the moment it is observed; cross-set support
-        // is the deferred follow-up WP placeholder in WORK_INDEX.md.
+      const copyCount = resolveHeroCardCopyCount(card, nameLookup);
+      if (copyCount === null) {
+        // why: D-13701 softens D-13501 Option A — the loud-fail throw
+        // fires only when BOTH copy-count sources fail (cardCounts entry
+        // absent/malformed AND rarityLabel unrecognized). The error
+        // message enumerates both attempted paths (the missing card
+        // display name and the unrecognized rarity label) so the
+        // operator can fix the patch file or extend the rarity map as
+        // appropriate. Game.setup() is the canonical throw site
+        // (.claude/rules/game-engine.md §Throwing Convention).
         const supportedList = SUPPORTED_RARITY_LABELS.map((label) => `'${label}'`).join(', ');
+        const cardNameDisplay = typeof card.name === 'string' && card.name.length > 0 ? card.name : '<unnamed>';
         throw new Error(
           `buildHeroDeck refused to build hero '${parsed.setAbbr}/${parsed.slug}': ` +
-            `card '${card.slug}' carries unrecognized rarityLabel '${card.rarityLabel}'. ` +
-            `Supported rarity labels are ${supportedList}. ` +
-            `Cross-set rarity support is deferred to a follow-up WP — see the ` +
-            `'(deferred placeholder) Extend D-13501 hero rarity → copy-count map ` +
-            `to AMWP-class sets' row in docs/ai/work-packets/WORK_INDEX.md. ` +
-            `Until then, MatchSetupConfig.heroDeckIds must select heroes whose ` +
-            `cards use only the four locked rarity labels.`,
+            `card '${card.slug}' (display name '${cardNameDisplay}') has no resolvable copy count — ` +
+            `the per-hero cardCounts map has no positive integer entry for display name '${cardNameDisplay}', ` +
+            `and the card's rarityLabel '${card.rarityLabel}' is not in the supported four-label set ${supportedList}. ` +
+            `Either populate cardCounts in the hero entry of data/cards/${parsed.setAbbr}.json with a positive integer keyed by '${cardNameDisplay}', ` +
+            `or correct the card's rarityLabel to one of the supported labels.`,
         );
       }
 
-      // why: D-13502 — set-qualified hero card-instance ext_id format
-      // <setAbbr>/<heroSlug>/<cardSlug>. Distinct from the FlatCard hyphen
-      // key emitted by registry.listCards(); slash form aligns with the
-      // qualified-ID grammar already used in MatchSetupConfig.heroDeckIds.
-      const extId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}` as CardExtId;
+      // why: D-13702 — extends D-13502 hero card-instance ext_id grammar
+      // with `#<copyIndex>` (decimal, zero-indexed, contiguous) so every
+      // physical copy of a hero card receives a distinct ext_id.
+      // Establishes the `Set.size === Array.length` invariant tested in
+      // the WP-137 distinctness test, which in turn satisfies
+      // checkNoCardInMultipleZones deterministically across all RNG
+      // seeds. The `#` separator never appears inside MatchSetupConfig
+      // field values — it is internal to setup-derived ext_ids only.
+      const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}`;
       for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
-        cards.push(extId);
+        cards.push(`${baseExtId}#${copyIndex}` as CardExtId);
       }
     }
   }

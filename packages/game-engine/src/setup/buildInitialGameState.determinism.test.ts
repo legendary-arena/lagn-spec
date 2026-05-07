@@ -183,12 +183,16 @@ describe('buildInitialGameState — determinism', () => {
     };
   }
 
-  it('G.heroDeck deep-equals expectedShuffledDeck.slice(5) — same shuffle order, HQ-prefix popped (WP-135)', () => {
+  it('G.heroDeck deep-equals expectedShuffledDeck.slice(5) — same shuffle order, HQ-prefix popped (WP-135 + WP-137)', () => {
     // why: WP-135 §C acceptance criterion — the orchestrator's hero deck
     // is the front-pop of buildHeroDeck's shuffle output. Reproducing the
     // shuffle externally with the same ShuffleProvider mock should yield
     // a sequence whose .slice(5) matches G.heroDeck (and whose [0..4]
     // matches G.hq).
+    // why: WP-137 PS-5 cascade — D-13702 extends ext_id grammar with
+    // `#<copyIndex>` (decimal, zero-indexed, contiguous). Each per-card
+    // emission appends #0..#(N-1) for N copies. Ordering is unchanged;
+    // only the suffix differs.
     const registry = buildDeterminismFixtureRegistry();
     const config = buildDeterminismFixtureConfig();
 
@@ -196,10 +200,10 @@ describe('buildInitialGameState — determinism', () => {
     // 5+3+3+3 = 14 cards in the hero-card-instance order they're emitted,
     // then run through the same ShuffleProvider mock (which reverses).
     const unshuffled: string[] = [];
-    for (let i = 0; i < 5; i++) unshuffled.push('core/hero-x/card-c1');
-    for (let i = 0; i < 3; i++) unshuffled.push('core/hero-x/card-c2');
-    for (let i = 0; i < 3; i++) unshuffled.push('core/hero-x/card-uncommon');
-    for (let i = 0; i < 3; i++) unshuffled.push('core/hero-x/card-rare');
+    for (let i = 0; i < 5; i++) unshuffled.push(`core/hero-x/card-c1#${i}`);
+    for (let i = 0; i < 3; i++) unshuffled.push(`core/hero-x/card-c2#${i}`);
+    for (let i = 0; i < 3; i++) unshuffled.push(`core/hero-x/card-uncommon#${i}`);
+    for (let i = 0; i < 3; i++) unshuffled.push(`core/hero-x/card-rare#${i}`);
 
     const externalContext = makeMockCtx({ numPlayers: 1 });
     const expectedShuffledDeck = shuffleDeck(unshuffled, externalContext);

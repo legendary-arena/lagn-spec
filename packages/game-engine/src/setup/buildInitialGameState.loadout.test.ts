@@ -248,47 +248,53 @@ describe('buildInitialGameState — loadout integration', () => {
     );
   });
 
-  it('populates G.cardStats with hero card-instance entries in slash-format (WP-135 D-13502)', () => {
+  it('populates G.cardStats with hero card-instance entries in slash-format with #copyIndex (WP-135 D-13502 + WP-137 D-13702)', () => {
     const registry = buildLoadoutFixtureRegistry();
     const config = buildLoadoutConfig();
     const context = makeMockCtx({ numPlayers: 2 });
 
     const gameState = buildInitialGameState(config, registry, context);
 
-    // Each of the 4 cards in black-widow gets a slash-format entry.
+    // why: WP-137 PS-5 cascade — each of the 4 cards in black-widow now
+    // emits per-copy entries: mission-accomplished (Common 1) #0-#4,
+    // silent-takedown (Common 2) #0-#2, covert-operation (Uncommon)
+    // #0-#2, taskmaster (Rare) #0-#2. Asserting #0 is sufficient
+    // because per-copy parity is enforced separately (see appended
+    // tests in economy.logic.test.ts).
     assert.ok(
-      gameState.cardStats['core/black-widow/mission-accomplished'],
+      gameState.cardStats['core/black-widow/mission-accomplished#0'],
       'cardStats must include slash-format hero card-instance ext_id',
     );
     assert.ok(
-      gameState.cardStats['core/black-widow/silent-takedown'],
-      'cardStats must include slash-format silent-takedown',
+      gameState.cardStats['core/black-widow/silent-takedown#0'],
+      'cardStats must include slash-format silent-takedown#0',
     );
     assert.ok(
-      gameState.cardStats['core/black-widow/covert-operation'],
-      'cardStats must include slash-format covert-operation',
+      gameState.cardStats['core/black-widow/covert-operation#0'],
+      'cardStats must include slash-format covert-operation#0',
     );
     assert.ok(
-      gameState.cardStats['core/black-widow/taskmaster'],
-      'cardStats must include slash-format taskmaster',
+      gameState.cardStats['core/black-widow/taskmaster#0'],
+      'cardStats must include slash-format taskmaster#0',
     );
 
     // Cost values parse correctly.
-    assert.equal(gameState.cardStats['core/black-widow/mission-accomplished']!.cost, 2);
-    assert.equal(gameState.cardStats['core/black-widow/silent-takedown']!.cost, 3);
-    assert.equal(gameState.cardStats['core/black-widow/covert-operation']!.cost, 4);
-    assert.equal(gameState.cardStats['core/black-widow/taskmaster']!.cost, 6);
+    assert.equal(gameState.cardStats['core/black-widow/mission-accomplished#0']!.cost, 2);
+    assert.equal(gameState.cardStats['core/black-widow/silent-takedown#0']!.cost, 3);
+    assert.equal(gameState.cardStats['core/black-widow/covert-operation#0']!.cost, 4);
+    assert.equal(gameState.cardStats['core/black-widow/taskmaster#0']!.cost, 6);
   });
 
-  it('populates G.cardDisplayData with hero card-instance entries in slash-format (WP-135 D-13502)', () => {
+  it('populates G.cardDisplayData with hero card-instance entries in slash-format with #copyIndex (WP-135 D-13502 + WP-137 D-13702)', () => {
     const registry = buildLoadoutFixtureRegistry();
     const config = buildLoadoutConfig();
     const context = makeMockCtx({ numPlayers: 2 });
 
     const gameState = buildInitialGameState(config, registry, context);
 
+    // why: WP-137 PS-5 cascade — per-copy keys for cardDisplayData.
     const cardDisplayData = gameState.cardDisplayData;
-    const missionDisplay = cardDisplayData['core/black-widow/mission-accomplished'];
+    const missionDisplay = cardDisplayData['core/black-widow/mission-accomplished#0'];
     assert.ok(missionDisplay, 'cardDisplayData must include slash-format hero card-instance');
     assert.equal(missionDisplay!.name, 'Mission Accomplished');
     assert.equal(
@@ -297,7 +303,7 @@ describe('buildInitialGameState — loadout integration', () => {
     );
     assert.equal(missionDisplay!.cost, 2);
 
-    const taskmasterDisplay = cardDisplayData['core/black-widow/taskmaster'];
+    const taskmasterDisplay = cardDisplayData['core/black-widow/taskmaster#0'];
     assert.ok(taskmasterDisplay);
     assert.equal(taskmasterDisplay!.name, 'Taskmaster');
     assert.equal(taskmasterDisplay!.cost, 6);

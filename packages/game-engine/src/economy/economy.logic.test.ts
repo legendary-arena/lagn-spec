@@ -248,8 +248,8 @@ function buildHeroCardInstanceFixture() {
   };
 }
 
-describe('buildCardStats — WP-135 hero card-instance walk (slash-format ext_id)', () => {
-  it('emits a stats entry per hero card instance keyed by <setAbbr>/<heroSlug>/<cardSlug>', () => {
+describe('buildCardStats — WP-135 / WP-137 hero card-instance walk (slash-format ext_id with #copyIndex)', () => {
+  it('emits one stats entry per copy keyed by <setAbbr>/<heroSlug>/<cardSlug>#<copyIndex>', () => {
     const registry = buildHeroCardInstanceFixture();
     const config: MatchSetupConfig = {
       schemeId: 'core/s',
@@ -265,8 +265,21 @@ describe('buildCardStats — WP-135 hero card-instance walk (slash-format ext_id
 
     const stats = buildCardStats(registry, config);
 
-    assert.ok(stats['core/spider-man/mission-accomplished'], 'Slash-format mission-accomplished entry must be present');
-    assert.ok(stats['core/spider-man/astonishing-strength'], 'Slash-format astonishing-strength entry must be present');
+    // why: WP-137 D-13702 — fan-out per copy. Common 1 emits 5 copies
+    // (#0-#4); Rare emits 3 copies (#0-#2). Each per-copy ext_id is its
+    // own key in G.cardStats.
+    for (let copyIndex = 0; copyIndex < 5; copyIndex++) {
+      assert.ok(
+        stats[`core/spider-man/mission-accomplished#${copyIndex}`],
+        `Slash-format mission-accomplished#${copyIndex} entry must be present`,
+      );
+    }
+    for (let copyIndex = 0; copyIndex < 3; copyIndex++) {
+      assert.ok(
+        stats[`core/spider-man/astonishing-strength#${copyIndex}`],
+        `Slash-format astonishing-strength#${copyIndex} entry must be present`,
+      );
+    }
   });
 
   it('parses cost / attack / recruit into the locked CardStatEntry shape (fightCost is always 0 for heroes)', () => {
@@ -285,16 +298,90 @@ describe('buildCardStats — WP-135 hero card-instance walk (slash-format ext_id
 
     const stats = buildCardStats(registry, config);
 
-    const missionStats = stats['core/spider-man/mission-accomplished']!;
+    // why: WP-137 D-13702 — assert numerics on the first copy of each
+    // card; per-copy parity is enforced separately (see WP-137-appended
+    // tests in this file).
+    const missionStats = stats['core/spider-man/mission-accomplished#0']!;
     assert.equal(missionStats.cost, 2);
     assert.equal(missionStats.attack, 0, 'null attack parses to 0');
     assert.equal(missionStats.recruit, 2);
     assert.equal(missionStats.fightCost, 0, 'Heroes are never fought; fightCost is always 0');
 
-    const astonishStats = stats['core/spider-man/astonishing-strength']!;
+    const astonishStats = stats['core/spider-man/astonishing-strength#0']!;
     assert.equal(astonishStats.cost, 6);
     assert.equal(astonishStats.attack, 4);
     assert.equal(astonishStats.recruit, 0, 'null recruit parses to 0');
     assert.equal(astonishStats.fightCost, 0);
+  });
+
+  // why: WP-137 D-13702 — per-copy parity. Every #N entry must carry
+  // identical numerics; divergence between copies indicates a fan-out
+  // bug. Extends the prior single-key assertion to the full per-copy
+  // key set. Appended as test() inside the existing describe() block
+  // for suite delta +0 (per RS-3).
+  it('per-copy parity: every #N stats entry carries identical numerics across copies', () => {
+    const registry = buildHeroCardInstanceFixture();
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/spider-man'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+
+    // Common 1: 5 copies must all share { cost:2, attack:0, recruit:2, fightCost:0 }.
+    for (let copyIndex = 0; copyIndex < 5; copyIndex++) {
+      const entry = stats[`core/spider-man/mission-accomplished#${copyIndex}`]!;
+      assert.equal(entry.cost, 2, `mission-accomplished#${copyIndex} cost parity`);
+      assert.equal(entry.attack, 0, `mission-accomplished#${copyIndex} attack parity`);
+      assert.equal(entry.recruit, 2, `mission-accomplished#${copyIndex} recruit parity`);
+      assert.equal(entry.fightCost, 0, `mission-accomplished#${copyIndex} fightCost parity`);
+    }
+
+    // Rare: 3 copies must all share { cost:6, attack:4, recruit:0, fightCost:0 }.
+    for (let copyIndex = 0; copyIndex < 3; copyIndex++) {
+      const entry = stats[`core/spider-man/astonishing-strength#${copyIndex}`]!;
+      assert.equal(entry.cost, 6, `astonishing-strength#${copyIndex} cost parity`);
+      assert.equal(entry.attack, 4, `astonishing-strength#${copyIndex} attack parity`);
+      assert.equal(entry.recruit, 0, `astonishing-strength#${copyIndex} recruit parity`);
+      assert.equal(entry.fightCost, 0, `astonishing-strength#${copyIndex} fightCost parity`);
+    }
+  });
+
+  it('G.cardStats keys form a superset of the hero deck reservoir for the chosen heroDeckIds', () => {
+    // why: WP-137 D-13702 — fan-out parity guard. Every CardExtId in
+    // the unshuffled hero deck reservoir built by buildHeroDeckCards
+    // must have a corresponding entry in G.cardStats. Divergence
+    // (e.g., a fan-out site computing a different copyCount than the
+    // canonical emitter) would surface here as a missing key.
+    const registry = buildHeroCardInstanceFixture();
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/spider-man'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+
+    // Common 1 (5) + Rare (3) = 8 expected slash-format keys.
+    const expectedKeys: string[] = [];
+    for (let i = 0; i < 5; i++) expectedKeys.push(`core/spider-man/mission-accomplished#${i}`);
+    for (let i = 0; i < 3; i++) expectedKeys.push(`core/spider-man/astonishing-strength#${i}`);
+
+    for (const key of expectedKeys) {
+      assert.ok(stats[key], `cardStats must include reservoir key ${key} (fan-out parity)`);
+    }
   });
 });

@@ -77,4 +77,60 @@ describe("registry smoke test", async () => {
       JSON.stringify(blockingErrors, null, 2)
     );
   });
+
+  // why: WP-137 D-13701 — additive optional cardCounts on HeroSchema.
+  // Smoke-test that real registry data exposes the field for at least
+  // one set with patch data (2099 / spider-man-2099) and tolerates
+  // its absence/null on at least one other hero. The registry must
+  // load both shapes without a parse error (the new field is
+  // .nullable().optional() so omission and explicit null are both
+  // legal).
+  it("WP-137: cardCounts populates on at least one hero with patch data and is absent/null on at least one without", () => {
+    const set2099 = registry.getSet("2099");
+    assert.ok(set2099, "2099 set must load — cardCounts smoke test depends on Phase A pipeline output");
+    const spider2099 = (set2099 as { heroes: Array<{ slug: string; cardCounts?: Record<string, number> | null }> }).heroes.find(
+      (hero) => hero.slug === "spider-man-2099",
+    );
+    assert.ok(spider2099, "2099/spider-man-2099 hero must be present");
+    assert.ok(
+      spider2099!.cardCounts && typeof spider2099!.cardCounts === "object",
+      "2099/spider-man-2099 must have a populated cardCounts map (Phase A pipeline output)",
+    );
+    const cardCountsKeys = Object.keys(spider2099!.cardCounts!);
+    assert.ok(
+      cardCountsKeys.length > 0,
+      "spider-man-2099 cardCounts must contain at least one entry",
+    );
+    for (const key of cardCountsKeys) {
+      const value = spider2099!.cardCounts![key];
+      assert.ok(
+        typeof value === "number" && Number.isInteger(value) && value >= 1,
+        `spider-man-2099 cardCounts[${key}] must be a positive integer`,
+      );
+    }
+
+    // Find at least one hero across all sets where cardCounts is
+    // null or absent — i.e., the rarity-map fallback path must remain
+    // exercised by real data. Most non-patched core heroes will
+    // satisfy this.
+    const allSets = registry.listSets();
+    let foundFallback = false;
+    for (const setEntry of allSets) {
+      const setData = registry.getSet(setEntry.abbr) as
+        | { heroes?: Array<{ slug: string; cardCounts?: Record<string, number> | null }> }
+        | undefined;
+      if (!setData || !Array.isArray(setData.heroes)) continue;
+      for (const hero of setData.heroes) {
+        if (hero.cardCounts === null || hero.cardCounts === undefined) {
+          foundFallback = true;
+          break;
+        }
+      }
+      if (foundFallback) break;
+    }
+    assert.ok(
+      foundFallback,
+      "At least one hero across all sets must have cardCounts: null or absent (rarity-map fallback path coverage)",
+    );
+  });
 });

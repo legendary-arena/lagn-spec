@@ -20,21 +20,37 @@ import type {
 import { migrationRegistry } from './versioning.migrate.js';
 
 // why: hand-mirror of `packages/game-engine/package.json` `version`
-// field (`1.0.0`). The constant is the single source of truth at
-// runtime; package.json is the human-readable copy. A future engine
-// bump updates BOTH atomically. Avoiding `import pkg from
+// field. The constant is the single source of truth at runtime;
+// package.json is the human-readable copy. A future engine bump
+// updates BOTH atomically. Avoiding `import pkg from
 // '../../package.json'` keeps the engine `tsconfig` independent of
 // `resolveJsonModule` and removes a transitive coupling that would
 // break under any future build pipeline that strips JSON imports.
+// why: WP-137 D-13702 — engine reducer behavior changed (hero card-instance
+// ext_id grammar extended with `#<copyIndex>` suffix; setup-time fan-out
+// of G.cardStats and G.cardDisplayData per copy). This is an engine-axis
+// bump (1.0.0 → 1.1.0), simultaneous with the D-13701 data-axis bump
+// below because WP-137's surface change is both a behavior change AND a
+// wire-shape change for ReplayInput.moves[].args. package.json:version
+// bumps to "1.1.0" in lockstep.
 const CURRENT_ENGINE_VERSION_VALUE: EngineVersion = {
   major: 1,
-  minor: 0,
+  minor: 1,
   patch: 0,
 };
 
-// why: first version of the data axis. Increments monotonically when
-// the wire shape of any persisted artifact changes (D-0801).
-export const CURRENT_DATA_VERSION: DataVersion = { version: 1 };
+// why: WP-137 D-13701 — wire shape of ReplayInput.moves[].args changed
+// (hero card-instance ext_ids now carry a `#<copyIndex>` suffix). This
+// is a data-axis bump (1 → 2) per D-0801, simultaneous with the D-13702
+// engine-axis bump above. The migration migrateHeroExtIdsForCopyIndex
+// at registry key `'1.0.0->1.1.0'` performs best-effort schema
+// compatibility for legacy ReplayInput payloads (rewriting bare hero
+// ext_ids to `#0`-suffixed form); pre-WP-137 replays are expected to
+// fail re-verification because shuffle order shifts under the new
+// copy-index convention (D-0802 fail-loud at the load boundary still
+// applies — operators inspecting old replays should treat pre-WP-137
+// fixtures as historical artifacts).
+export const CURRENT_DATA_VERSION: DataVersion = { version: 2 };
 
 /**
  * Returns the current engine version as a fresh object on every call.
