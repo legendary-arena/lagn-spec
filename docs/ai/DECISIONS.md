@@ -14670,6 +14670,80 @@ production runtime exposure.
 
 ---
 
+### D-13701 — `cardCounts` Authoritative When Present + Additive Schema Change (WP-137)
+
+**Decision:** the registry's per-hero `cardCounts: Record<string, number> | null` field is the authoritative source of per-card copy counts when populated; the locked rarity → copy-count map (D-13501) remains the fallback when `cardCounts` is absent / null / malformed for a given (hero, card) pair. The schema change is **additive only**: `cardCounts` is added to `HeroSchema` as `z.record(z.string(), z.number().int().min(1)).nullable().optional()`; no other field renamed, removed, narrowed, or widened.
+
+**Authoritative scope:** a value in `cardCounts[name]` is treated as valid only when ALL three predicates hold:
+
+1. `typeof v === 'number'`
+2. `Number.isInteger(v)`
+3. `v >= 1`
+
+Any other value (`0`, negative, non-integer float, `NaN`, string, object, etc.) is silently ignored and triggers the rarity-map fallback. Keys not matching any `cards[].name` are silently ignored (orphan keys do not throw). Cards whose `name` is `undefined` (permitted by `HeroCardSchema.name.optional()`) fall through to the rarity-map branch — `nameLookup.get(undefined)` returns `undefined` by construction.
+
+**Loud-fail throw site (softening of D-13501 Option A):** the throw at `buildHeroDeckCards` fires only when **both** copy-count sources fail simultaneously — `cardCounts` has no positive integer entry for `card.name` AND `RARITY_COPY_COUNT[card.rarityLabel]` is absent. The error message enumerates both attempted paths so the operator can fix the patch file or extend the rarity map as appropriate.
+
+**Lookup direction (locked at three sites):** `cardCounts` resolution uses `card.name` (display name); ext_id emission uses `card.slug`. The asymmetry is isolated to a single seam at the count-resolution site. The shared exported helpers `resolveHeroCardCopyCount` + `buildCardCountsNameLookup` defined in `packages/game-engine/src/setup/buildHeroDeck.ts` are imported by `economy/economy.logic.ts` and `setup/buildCardDisplayData.ts` (RS-4 lock) so all three sites produce identical resolved copy counts by construction. The schema-comment block above `HeroSchema` carries the verbatim sentence: *"`cardCounts` keys are card display names from the upstream dataset; the engine resolves them against `cards[].name` and emits ext_ids using `cards[].slug`."*
+
+**Why authoritative:** the rarity-map default (D-13501; 5/3/3/3 across the four-label set) is canonical for sets whose hero data follows the four-label convention, but cross-set sets (AMWP-class with `'Common 3'` / `'Uncommon 2'`, 2099 with explicit non-default counts like 5/5/3/1) need data-driven counts. Promoting `cardCounts` to authoritative when populated supports those sets without per-set rarity-map extensions and keeps the rarity-map seam narrow.
+
+**Why additive (not replacement of rarity map):** the rarity map is the well-defined fallback for sets without patch data — most non-patched core heroes still resolve via the rarity-map branch. Removing the rarity map would force every hero's `cardCounts` to be populated upstream, which is a larger data-pipeline ask than this WP scopes.
+
+**Why schema-additive:** `.claude/rules/registry.md §Schema Authority` requires schema modifications be conservative. The new field is `optional()` and `nullable()` so pre-WP-137 fixtures (where `cardCounts` is absent) parse unchanged.
+
+**Alternatives rejected:**
+
+- *Rarity-map extension to AMWP-class labels (`'Common 3'` / `'Uncommon 2'`)*: rejected because the upstream convention varies across sets and the extension would not generalize to 2099-class sets that use non-default counts within the four-label set. Closes the deferred Phase 7 placeholder per D-13703.
+- *Throw on cardCounts present-but-malformed*: rejected because malformed entries are a data-quality issue that should fall through to a known-good fallback rather than crash setup. The both-fail throw is the correct loud-fail surface — at that point neither source has an answer.
+- *Replace rarity map with cardCounts*: rejected because too many heroes in `data/cards/*.json` ship with `cardCounts: null` (rarity-map fallback path); promoting cardCounts to required would require pipeline-wide data backfill out of WP-137's scope.
+
+**Status:** Active.
+
+**Citation:** WP-137 §Goal + §Non-Negotiable Constraints + §Scope A + §Vision Alignment; EC-137 §Locked Values + §Required `// why:` Comments + §Guardrails; pre-flight 2026-05-06 §Resolution Pass (PS-1, RS-2, RS-4); copilot-check-wp137.md Issue 4 + Issue 5 + Issue 21; D-13501 (rarity map fallback); D-13502 (ext_id base format); D-0801 (data-axis bump rationale).
+
+---
+
+### D-13702 — Hero Card-Instance ext_id Grammar Extension `<setAbbr>/<heroSlug>/<cardSlug>#<copyIndex>` (WP-137)
+
+**Decision:** the WP-135 hero card-instance ext_id format `<setAbbr>/<heroSlug>/<cardSlug>` (D-13502) is extended with a `#<copyIndex>` suffix so every physical copy of a hero card receives a distinct ext_id within a match. The suffix grammar is `#<decimal>`, zero-indexed, contiguous from `#0` to `#(N-1)` for an N-copy emission, no leading zeros, no spaces. The `#` separator does not appear inside `MatchSetupConfig` field values — internal to setup-derived ext_ids only. `parseQualifiedIdForSetup` continues to reject inputs containing `/` more than once (the `#` separator does not interact with the qualified-ID parser).
+
+**Sole emission site:** `buildHeroDeckCards` in `packages/game-engine/src/setup/buildHeroDeck.ts` is the canonical emitter of the reservoir flat array. Build-time fan-out callers (`buildCardStats` hero branch in `economy/economy.logic.ts`; `buildCardDisplayData` hero branch in `setup/buildCardDisplayData.ts`) mirror the suffixing solely to populate ext_id-keyed sibling-snapshot maps so `Game.setup()` produces parallel keys in `G.cardStats` and `G.cardDisplayData`. **No runtime consumer** (move handlers, projection builders, replay verifiers, UI) may construct or strip hero card-instance ext_ids — runtime consumers always do straight lookups by full ext_id.
+
+**Distinctness invariant:** for the unshuffled reservoir array `R = buildHeroDeckCards(...)`, `new Set(R).size === R.length` holds by construction. This invariant is what `checkNoCardInMultipleZones` (`packages/game-engine/src/invariants/gameRules.checks.ts:74`) needs to satisfy deterministically across all RNG seeds — pre-WP-137, the invariant tripped RNG-dependently when the deck shuffle distributed identical-key copies across HQ + heroDeck.
+
+**URL embedding guardrail:** hero card-instance ext_ids MUST NOT be embedded unencoded in URLs. `#` is the URL fragment delimiter; raw embedding truncates the ext_id at `#`. If forced to traverse a URL, percent-encode (`#` → `%23`). This is a forward-safety guardrail; the current code paths use JSON over WebSocket and have no per-card ext_ids in URLs.
+
+**Why suffix and not new field:** adding `copyIndex: number` to a hypothetical card-instance object would force every consumer (every projection, every move, every snapshot) to learn about the (extId, copyIndex) pair as a composite identity, rather than a single ext_id string. The string-suffix form preserves the existing `CardExtId = string` named alias and the `Record<CardExtId, T>` keying pattern used everywhere in `G`.
+
+**Why hash separator:** `#` is not a legal character in any of the existing slug-formed segments (`<setAbbr>` / `<heroSlug>` / `<cardSlug>` are all `[a-z0-9-]+`), so the suffix is unambiguously parseable. The migration's grammar matcher (D-13702 in `versioning.migrate.ts`) requires exactly two `/` separators and no `#` to avoid false matches against villain / mastermind / henchman / scheme hyphen-form ext_ids (which use no `/`). Alternative separators like `/` (`/...#0/0`) or `:` were rejected — the former blurs the `<setAbbr>/<heroSlug>/<cardSlug>` parser boundary, the latter is not URL-safe in path segments.
+
+**Alternatives rejected:**
+
+- *Per-copy UUIDs*: rejected because UUID generation is non-deterministic and would break the determinism envelope; the deterministic suffix preserves the WP-135 single-shuffle determinism guarantee.
+- *Composite identity `(extId, copyIndex)`*: rejected because every consumer (cardStats lookup, cardDisplayData lookup, zone-membership checks, projection builders) would need to be rewritten to handle the composite. The string-suffix form is a strict superset of D-13502's grammar and preserves all existing identity-string consumers.
+- *Reuse the rarity-map iteration order as a virtual identity*: rejected because the same card slot in two different shuffle outcomes would collide on slot index, defeating the per-copy distinctness. The copy-index is the only suffix that satisfies the `Set.size === Array.length` invariant.
+
+**Status:** Active.
+
+**Citation:** WP-137 §Goal + §Non-Negotiable Constraints + §Scope C/G + §Vision Alignment; EC-137 §Locked Values + §Required `// why:` Comments; pre-flight 2026-05-06 §Resolution Pass (PS-3 — 01.5 cascade procedure); D-13502 (base format extended); D-13501 (rarity map preserved as fallback); D-0801 (engine-axis bump rationale).
+
+---
+
+### D-13703 — Closure of Deferred AMWP-Class Rarity-Map Extension Placeholder (WP-137)
+
+**Decision:** the deferred placeholder at `docs/ai/work-packets/WORK_INDEX.md` Phase 7 — *"(deferred placeholder) Extend D-13501 hero rarity → copy-count map to AMWP-class sets (`'Common 3'`, `'Uncommon 2'`, etc.)"* recorded 2026-05-04 by WP-135 pre-flight PS-2 — is **closed and superseded by WP-137**. The placeholder row is replaced at execution time with a one-line back-reference to WP-137. WP-137 promotes per-hero `cardCounts` (a registry-data-driven field) to authoritative when present, with the rarity map continuing as fallback for sets without patch data; this surface supersedes the rarity-map-extension scope the placeholder anticipated.
+
+**Why supersede rather than execute the placeholder:** the placeholder's scope (extend `RARITY_COPY_COUNT` to AMWP-class labels with sourced canonical counts) would solve only one specific cross-set case. The data-driven `cardCounts` path generalizes — 2099-class non-default-count cases (e.g., `spider-man-2099` with 5/5/3/1, summing to 14 within the four-label set), AMWP-class non-four-label cases (e.g., `'Common 3'` with custom counts), and any future set-specific count overrides all flow through the same surface. Promoting cardCounts is one additive schema change that closes the placeholder permanently; rarity-map extensions would compound per-set.
+
+**Why not delete the placeholder row:** WORK_INDEX.md preserves the row with a back-reference so future readers tracing D-13501 → AMWP-extension → WP-137 understand the supersession path. Deleting the row would erase the historical context; replacing it with `(deferred placeholder — superseded at execution time by WP-137)` documents the closure.
+
+**Status:** Active (placeholder closed).
+
+**Citation:** WP-137 §Supersedes + §Goal; WORK_INDEX.md Phase 7 placeholder line (replaced at WP-137 execution); WP-135 pre-flight 2026-05-04 PS-2 (placeholder origin); D-13501 (rarity-map lock retained as fallback).
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
