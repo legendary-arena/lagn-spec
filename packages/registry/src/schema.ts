@@ -76,6 +76,47 @@ export const HeroCardSchema = z.object({
   abilities:   z.array(z.string()).optional(),
 });
 
+// ── Physical card (deck-composition primitive — WP-138 Phase 1a) ──────────────
+// why: D-13801 — `physicalCards[]` is the authoritative deck-composition
+// surface for hero decks. A `PhysicalCard` represents a single physical
+// artifact in the deck; its `sides[]` list names the per-face card slugs
+// (one for solo cards, two for split-side cards like Falcon/Winter Soldier's
+// Attune/Atone). Deck size for split heroes is the sum of `count` across
+// `physicalCards[]`, NOT the sum of per-side `cardCounts`. The previous
+// model conflated "card" with "card side" and silently produced inflated
+// deck reservoirs for split heroes (Falcon/Winter Soldier 27 instead of 14).
+// `cardCounts` becomes a derived view validated against physicalCards counts
+// at registry load.
+// why: D-13802 — `imageUrl` lives on the physicalCard, not on the card-side.
+// The convert script computes it deterministically from sorted side slugs:
+// solo cards `{abbr}-hr-{hero}-{slug}.webp`; split cards
+// `{abbr}-hr-{hero}-{sortedA}-{sortedB}.webp` where sort is
+// `Array.prototype.sort()` with NO comparator argument (UTF-16 code-unit
+// ordering). See D-13802 for the full forbidden list of locale-aware
+// comparison APIs and the rationale: locale-dependent collation would
+// produce non-deterministic URLs across environments.
+// why: D-13804 — physical-card identity is a registry concept, not an
+// ext_id concept. Per-side ext_ids (D-13502 grammar
+// `<setAbbr>/<heroSlug>/<cardSlug>` plus WP-137's `#N` copy suffix per
+// D-13702) are unchanged. Replay or audit code MUST NOT assume that a
+// per-side ext_id alone uniquely identifies a physical card instance —
+// for split heroes, two ext_ids share one physicalCard.
+// why: `sides` is typed `readonly string[]` (not a tuple union) with the
+// `1 <= length <= 2` invariant enforced by the validator below. This
+// keeps the ceiling raise (e.g., future triple-face cards in some games)
+// a single Zod-check change rather than a TypeScript-type migration
+// across every consumer. The `<= 2` ceiling is locked for this WP;
+// raising it requires its own DECISIONS entry.
+export const PhysicalCardSchema = z
+  .object({
+    id:       z.string().regex(/^p\d+$/, "physicalCard id must match ^p\\d+$ (e.g., p1, p2)"),
+    count:    z.number().int().min(1),
+    imageUrl: z.string().url(),
+    sides:    z.array(z.string().min(1))
+                .min(1, "physicalCard.sides[] must contain at least one side slug")
+                .max(2, "physicalCard.sides[] must contain at most two side slugs (D-13802 ceiling lock; raising requires a new DECISIONS entry)"),
+  });
+
 // ── Hero (a named hero deck with 3-7 cards) ───────────────────────────────────
 // id permissiveness:
 //   - 3dtc:  some heroes have null id
@@ -90,14 +131,109 @@ export const HeroCardSchema = z.object({
 // keyed by `cards[].rarityLabel`. Values must be positive integers; 0,
 // negative, non-integer, or non-number values are silently ignored and
 // trigger the rarity-map fallback.
-export const HeroSchema = z.object({
-  id:         z.number().int().nullable().optional(),
-  name:       z.string(),
-  slug:       z.string(),
-  team:       z.string(),
-  cards:      z.array(HeroCardSchema),
-  cardCounts: z.record(z.string(), z.number().int().min(1)).nullable().optional(),
-});
+//
+// why: D-13803 — `physicalCards[]` is required and non-empty whenever
+// `cards[]` is non-empty. Solo heroes get one single-side physicalCard
+// per `cards[]` entry (uniform model — no special-casing in consumer
+// code: every hero has `physicalCards[]`). The empty-cards case
+// (`cards: []`) is the only case `physicalCards: []` is allowed.
+//
+// superRefine enforces three cross-field invariants from WP-138:
+//   - non-empty physicalCards when cards[] non-empty (D-13803)
+//   - orphan-side rejection: every physicalCards[].sides[] entry resolves
+//     to an existing cards[].slug under the same hero (WP-138 §8)
+//   - duplicate-membership rejection: a side slug appears in at most one
+//     physicalCard within the same hero (WP-138 §9)
+//   - drift detection: when cardCounts is populated, for every side named
+//     in cardCounts the sum of physicalCards[].count over physicalCards
+//     whose sides[] includes that side must equal cardCounts[sideName]
+//     (D-13801 — physicalCards is the authoritative deck-composition surface)
+export const HeroSchema = z
+  .object({
+    id:            z.number().int().nullable().optional(),
+    name:          z.string(),
+    slug:          z.string(),
+    team:          z.string(),
+    cards:         z.array(HeroCardSchema),
+    cardCounts:    z.record(z.string(), z.number().int().min(1)).nullable().optional(),
+    physicalCards: z.array(PhysicalCardSchema),
+  })
+  .superRefine((hero, ctx) => {
+    if (hero.cards.length > 0 && hero.physicalCards.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["physicalCards"],
+        message:
+          `Hero "${hero.slug}" has ${hero.cards.length} card-side(s) but no ` +
+          `physicalCards[] entries. Every hero with non-empty cards[] must ` +
+          `declare its deck composition via physicalCards[] (D-13803 uniform model).`,
+      });
+      return;
+    }
+
+    const cardSlugs = new Set<string>();
+    for (const card of hero.cards) {
+      cardSlugs.add(card.slug);
+    }
+
+    const sideOwner = new Map<string, string>();
+    for (const physicalCard of hero.physicalCards) {
+      for (const sideSlug of physicalCard.sides) {
+        if (!cardSlugs.has(sideSlug)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["physicalCards"],
+            message:
+              `Hero "${hero.slug}" physicalCard "${physicalCard.id}" references ` +
+              `unknown side slug "${sideSlug}". Every physicalCards[].sides[] ` +
+              `entry must resolve to an existing cards[].slug under the same hero.`,
+          });
+        }
+        const previousOwner = sideOwner.get(sideSlug);
+        if (previousOwner !== undefined) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["physicalCards"],
+            message:
+              `Hero "${hero.slug}" side slug "${sideSlug}" appears in physicalCards ` +
+              `"${previousOwner}" and "${physicalCard.id}". A side slug must appear ` +
+              `in at most one physicalCard within a given hero.`,
+          });
+        } else {
+          sideOwner.set(sideSlug, physicalCard.id);
+        }
+      }
+    }
+
+    if (hero.cardCounts) {
+      for (const [sideName, expectedCount] of Object.entries(hero.cardCounts)) {
+        // why: cardCounts keys are display names (e.g., "Attune") per D-13701;
+        // physicalCards.sides[] entries are slugs (e.g., "attune"). Resolve
+        // the display name to its slug via cards[] before summing.
+        const card = hero.cards.find((c) => c.name === sideName);
+        if (!card) continue;
+        const sideSlug = card.slug;
+        let actualCount = 0;
+        for (const physicalCard of hero.physicalCards) {
+          if (physicalCard.sides.includes(sideSlug)) {
+            actualCount += physicalCard.count;
+          }
+        }
+        if (actualCount !== expectedCount) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["physicalCards"],
+            message:
+              `Hero "${hero.slug}" cardCounts["${sideName}"] = ${expectedCount} but ` +
+              `physicalCards summing for side slug "${sideSlug}" = ${actualCount}. ` +
+              `physicalCards is the authoritative deck-composition surface ` +
+              `(D-13801); cardCounts must equal the sum of physicalCards[].count ` +
+              `over physicalCards whose sides[] includes the side slug.`,
+          });
+        }
+      }
+    }
+  });
 
 // ── Mastermind card (main card, epic variant, or tactic) ──────────────────────
 // vAttack is nullable: some sets (msmc, dstr, bkpt) have the main mastermind

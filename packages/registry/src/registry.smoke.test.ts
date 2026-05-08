@@ -20,6 +20,7 @@ import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { join } from "node:path";
 import { createRegistryFromLocalFiles } from "./impl/localRegistry.js";
+import { HeroSchema, PhysicalCardSchema } from "./schema.js";
 
 // why: pnpm --filter sets CWD to the package directory (packages/registry/).
 // The card data lives at the monorepo root under data/, so we resolve two
@@ -132,5 +133,206 @@ describe("registry smoke test", async () => {
       foundFallback,
       "At least one hero across all sets must have cardCounts: null or absent (rarity-map fallback path coverage)",
     );
+  });
+});
+
+// why: WP-138 Phase 1a — physicalCards is the new authoritative
+// deck-composition surface (D-13801..D-13806). The seven tests below
+// cover schema validation (sides[] length 0/3, id format), cross-field
+// invariants enforced via HeroSchema.superRefine (drift, orphan-side,
+// duplicate-membership), and the bkwd/falcon-winter-soldier reference
+// fixture (3 split + 1 solo physicalCards summing to 14 deck instances).
+describe("physicalCards (WP-138 Phase 1a)", () => {
+  // why: shared baseline used by validator tests so each case differs only
+  // in the field under examination. Using a single hero shape with one
+  // common card means cross-field tests don't accidentally trip an
+  // unrelated validator path.
+  const validHeroBase = {
+    name: "Test Hero",
+    slug: "test-hero",
+    team: "avengers",
+    cards: [
+      {
+        slug: "card-a",
+        name: "Card A",
+        imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-a.webp",
+      },
+      {
+        slug: "card-b",
+        name: "Card B",
+        imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-b.webp",
+      },
+    ],
+  };
+
+  it("rejects physicalCards.sides[] of length 0", () => {
+    const result = PhysicalCardSchema.safeParse({
+      id:       "p1",
+      count:    1,
+      imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero.webp",
+      sides:    [],
+    });
+    assert.equal(result.success, false, "Empty sides[] must fail PhysicalCardSchema");
+    if (!result.success) {
+      const message = result.error.issues.map((i) => i.message).join("; ");
+      assert.ok(
+        /at least one side/i.test(message),
+        `Expected error message to mention 'at least one side'; got: ${message}`,
+      );
+    }
+  });
+
+  it("rejects physicalCards.sides[] of length 3", () => {
+    const result = PhysicalCardSchema.safeParse({
+      id:       "p1",
+      count:    1,
+      imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-a-b-c.webp",
+      sides:    ["a", "b", "c"],
+    });
+    assert.equal(result.success, false, "Triple-side sides[] must fail PhysicalCardSchema (D-13802 ceiling lock)");
+    if (!result.success) {
+      const message = result.error.issues.map((i) => i.message).join("; ");
+      assert.ok(
+        /at most two side/i.test(message),
+        `Expected error message to mention the two-side ceiling; got: ${message}`,
+      );
+    }
+  });
+
+  it("rejects physicalCards.id with non-conforming format", () => {
+    const badIds = ["q1", "physical-card-1", "P1", "p", "p1a", "1"];
+    for (const badId of badIds) {
+      const result = PhysicalCardSchema.safeParse({
+        id:       badId,
+        count:    1,
+        imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-a.webp",
+        sides:    ["card-a"],
+      });
+      assert.equal(
+        result.success,
+        false,
+        `physicalCards.id "${badId}" must fail; expected ^p\\d+$ format`,
+      );
+    }
+  });
+
+  it("rejects drift between cardCounts and sum of physicalCards counts", () => {
+    const result = HeroSchema.safeParse({
+      ...validHeroBase,
+      cardCounts: { "Card A": 5, "Card B": 5 },
+      physicalCards: [
+        {
+          id: "p1",
+          count: 4,
+          imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-a.webp",
+          sides: ["card-a"],
+        },
+        {
+          id: "p2",
+          count: 5,
+          imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-b.webp",
+          sides: ["card-b"],
+        },
+      ],
+    });
+    assert.equal(result.success, false, "Drift between cardCounts and physicalCards must fail load");
+    if (!result.success) {
+      const message = result.error.issues.map((i) => i.message).join("; ");
+      assert.ok(
+        message.includes("test-hero") && /cardCounts/.test(message) && /physicalCards/.test(message),
+        `Expected drift error to name hero, cardCounts, and physicalCards; got: ${message}`,
+      );
+    }
+  });
+
+  it("rejects orphan side: a sides[] entry that does not match any cards[].slug", () => {
+    const result = HeroSchema.safeParse({
+      ...validHeroBase,
+      physicalCards: [
+        {
+          id: "p1",
+          count: 1,
+          imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-a.webp",
+          sides: ["card-a"],
+        },
+        {
+          id: "p2",
+          count: 1,
+          imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-not-a-real-side.webp",
+          sides: ["not-a-real-side"],
+        },
+      ],
+    });
+    assert.equal(result.success, false, "Orphan sides[] entry must fail HeroSchema (WP-138 §8)");
+    if (!result.success) {
+      const message = result.error.issues.map((i) => i.message).join("; ");
+      assert.ok(
+        message.includes("test-hero") &&
+          message.includes("p2") &&
+          message.includes("not-a-real-side"),
+        `Expected orphan-side error to name hero, physicalCard id, and missing slug; got: ${message}`,
+      );
+    }
+  });
+
+  it("rejects duplicate side membership: a side slug appearing in two physicalCards", () => {
+    const result = HeroSchema.safeParse({
+      ...validHeroBase,
+      physicalCards: [
+        {
+          id: "p1",
+          count: 1,
+          imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-a.webp",
+          sides: ["card-a"],
+        },
+        {
+          id: "p2",
+          count: 1,
+          imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-a-card-b.webp",
+          sides: ["card-a", "card-b"],
+        },
+      ],
+    });
+    assert.equal(result.success, false, "Duplicate side membership must fail HeroSchema (WP-138 §9)");
+    if (!result.success) {
+      const message = result.error.issues.map((i) => i.message).join("; ");
+      assert.ok(
+        message.includes("test-hero") &&
+          message.includes("card-a") &&
+          message.includes("p1") &&
+          message.includes("p2"),
+        `Expected duplicate-membership error to name hero, side slug, and both physicalCard ids; got: ${message}`,
+      );
+    }
+  });
+
+  // why: end-to-end validation of the canonical reference patch — this is
+  // the only Phase 1a curated split-hero declaration. The 3 split + 1 solo
+  // shape and 14-instance deck size are the locked acceptance values.
+  it("bkwd/falcon-winter-soldier reference fixture has 4 physicalCards (3 split + 1 solo) summing to 14", async () => {
+    const registry = await createRegistryFromLocalFiles({ metadataDir, cardsDir });
+    const bkwd = registry.getSet("bkwd");
+    assert.ok(bkwd, "bkwd set must load — falcon-winter-soldier reference fixture depends on it");
+    const falconWinterSoldier = bkwd.heroes.find((hero) => hero.slug === "falcon-winter-soldier");
+    assert.ok(
+      falconWinterSoldier,
+      "bkwd/falcon-winter-soldier hero must be present (canonical reference patch under WP-138 Phase 1a)",
+    );
+    const physicalCards = falconWinterSoldier.physicalCards;
+    assert.equal(physicalCards.length, 4, "Expected 4 physicalCards (3 split + 1 solo)");
+    const splitCount = physicalCards.filter((p) => p.sides.length === 2).length;
+    const soloCount = physicalCards.filter((p) => p.sides.length === 1).length;
+    assert.equal(splitCount, 3, "Expected 3 split-side physicalCards (Attune/Atone, Relocate/Reload, New Wings/New Plan)");
+    assert.equal(soloCount, 1, "Expected 1 solo physicalCard (Captain America's Legacy)");
+    let totalCount = 0;
+    for (const physicalCard of physicalCards) {
+      totalCount += physicalCard.count;
+    }
+    assert.equal(totalCount, 14, "Expected sum(physicalCards[].count) === 14 deck instances");
+    // Look up via the runtime index using the namespaced key.
+    const lookup = registry.getPhysicalCardForSide("falcon-winter-soldier", "attune");
+    assert.ok(lookup, "getPhysicalCardForSide must resolve the 'attune' side");
+    assert.equal(lookup.id, "p1", "attune resolves to the first declared physicalCard (p1)");
+    assert.deepEqual(lookup.sides, ["attune", "atone"], "p1.sides[] must include both faces of the split card");
   });
 });

@@ -26,6 +26,7 @@ import type {
   RegistryInfo,
   HealthReport,
   HttpRegistryOptions,
+  PhysicalCard,
 } from "../types/index.js";
 
 /**
@@ -128,6 +129,26 @@ export async function createRegistryFromHttp(
     return allCards;
   }
 
+  // why: D-13806 — the sideToPhysicalCard map is a registry-internal cache
+  // built once at load time from immutable input data. It is never persisted,
+  // never serialized, and never written to PostgreSQL: regenerating it from
+  // the registry data is always cheaper than caching it across boundaries.
+  // why: namespaced compound key `<heroSlug>/<sideSlug>` is required, not
+  // cosmetic — global uniqueness of a card slug across heroes is NOT
+  // assumed (e.g., a slug like "night-vision" can recur under multiple
+  // heroes in different sets). Keying on `sideSlug` alone would silently
+  // collide.
+  const sideToPhysicalCard = new Map<string, PhysicalCard>();
+  for (const set of loadedSets.values()) {
+    for (const hero of set.heroes) {
+      for (const physicalCard of hero.physicalCards) {
+        for (const sideSlug of physicalCard.sides) {
+          sideToPhysicalCard.set(`${hero.slug}/${sideSlug}`, physicalCard);
+        }
+      }
+    }
+  }
+
   // ── Public API ─────────────────────────────────────────────────────────────
   return {
     /** @returns High-level counts for the registry. */
@@ -174,6 +195,11 @@ export async function createRegistryFromHttp(
     /** @returns Health / validation report including any parse errors. */
     validate(): HealthReport {
       return buildHealthReport(setIndex, [...loadedSets.values()], errors);
+    },
+
+    /** @returns The PhysicalCard owning the given (heroSlug, sideSlug), or undefined. */
+    getPhysicalCardForSide(heroSlug: string, sideSlug: string): PhysicalCard | undefined {
+      return sideToPhysicalCard.get(`${heroSlug}/${sideSlug}`);
     },
   };
 }

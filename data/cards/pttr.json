@@ -26,7 +26,7 @@
           "cost": 1,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-1c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-pickpocket.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top card of any player's deck. You get +[icon:attack] equal to that card's printed [icon:recruit] plus its printed [icon:attack]."
@@ -43,7 +43,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-casual-bank-robbery.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "You get another +1[icon:recruit]usable only to recruit the Hero in the HQ Space under the Bank."
@@ -60,7 +60,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-jinx.webp",
           "abilities": [
             "Each player reveals the top card of their deck. Choose any number of those cards to be discarded."
           ]
@@ -76,10 +76,44 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-cat-burglar.webp",
           "abilities": [
             "Each other player reveals a [hc:covert] Hero or chooses a Bystander from their Victory Pile. You rescue those Bystanders.",
             "[team:spider-friends]: You get +1[icon:attack] for each Bystander you rescued this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-pickpocket.webp",
+          "sides": [
+            "pickpocket"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-casual-bank-robbery.webp",
+          "sides": [
+            "casual-bank-robbery"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-jinx.webp",
+          "sides": [
+            "jinx"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-cat-burglar.webp",
+          "sides": [
+            "cat-burglar"
           ]
         }
       ]
@@ -107,7 +141,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-climbing-claws.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[hc:instinct]: You get +1[icon:recruit]."
@@ -124,7 +158,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-lunar-communion.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Whenever you defeat a Villain on the Rooftops this turn, you may KO one of your cards or a card from your discard pile."
@@ -141,7 +175,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-crescent-moon-darts.webp",
           "abilities": [
             "Reveal the top card of your deck. If it's [hc:instinct] or [hc:tech], draw it."
           ]
@@ -157,10 +191,44 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-golden-ankh-of-khonshu.webp",
           "abilities": [
             "Whenever you defeat a Villain on the Rooftops this turn, rescue Bystanders equal to that Villain's printed [icon:piercing].",
             "[hc:tech]: You may move a Villain to the Rooftops. If another Villain is already there, swap them."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-climbing-claws.webp",
+          "sides": [
+            "climbing-claws"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-lunar-communion.webp",
+          "sides": [
+            "lunar-communion"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-crescent-moon-darts.webp",
+          "sides": [
+            "crescent-moon-darts"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-golden-ankh-of-khonshu.webp",
+          "sides": [
+            "golden-ankh-of-khonshu"
           ]
         }
       ]
@@ -188,7 +256,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-flip-out.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[team:spider-friends]: Draw a card."
@@ -205,7 +273,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-perfect-hunter.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Draw a card."
@@ -222,7 +290,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-leap-from-above.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -239,9 +307,43 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-sting-of-the-spider.webp",
           "abilities": [
             "Whenever you put a card on top of your deck this turn, you may draw that card."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-flip-out.webp",
+          "sides": [
+            "flip-out"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-perfect-hunter.webp",
+          "sides": [
+            "perfect-hunter"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-leap-from-above.webp",
+          "sides": [
+            "leap-from-above"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-sting-of-the-spider.webp",
+          "sides": [
+            "sting-of-the-spider"
           ]
         }
       ]
@@ -269,7 +371,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-radioactive-spider.webp",
           "abilities": [
             "To play this card, you must put a card from your hand on top of your deck."
           ]
@@ -285,7 +387,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-bioelectric-shock.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top card of your deck. If that card has an [icon:attack] icon, draw it."
@@ -302,7 +404,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-venom-blast.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top card of your deck. If that card has a [icon:recruit] icon, draw it."
@@ -319,10 +421,44 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-arachno-pheromones.webp",
           "abilities": [
             "Recruit a Hero from the HQ for free.",
             "[team:spider-friends]: Put that Hero on top of your deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-radioactive-spider.webp",
+          "sides": [
+            "radioactive-spider"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-bioelectric-shock.webp",
+          "sides": [
+            "bioelectric-shock"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-venom-blast.webp",
+          "sides": [
+            "venom-blast"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-arachno-pheromones.webp",
+          "sides": [
+            "arachno-pheromones"
           ]
         }
       ]
@@ -350,7 +486,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-dark-strength.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top card of your deck. If it costs 1 [icon:vp] or 2 [icon:vp], you get +2[icon:attack]."
@@ -367,7 +503,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-2c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-spider-sense-tingling.webp",
           "abilities": [
             "Reveal the top two cards of your deck. Put any that cost 2 [icon:vp] or less into your hand. Put the rest back in any order."
           ]
@@ -383,7 +519,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-2u.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-shadowed-spider.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "You get +1[icon:attack] for each other Hero you played this turn that costs 1 [icon:vp] or 2 [icon:vp]."
@@ -400,9 +536,43 @@
           "cost": 2,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-2r.webp",
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-thwip.webp",
           "abilities": [
             "To play this card, you must put two cards from your hand on top of your deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-dark-strength.webp",
+          "sides": [
+            "dark-strength"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-spider-sense-tingling.webp",
+          "sides": [
+            "spider-sense-tingling"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-shadowed-spider.webp",
+          "sides": [
+            "shadowed-spider"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-thwip.webp",
+          "sides": [
+            "thwip"
           ]
         }
       ]

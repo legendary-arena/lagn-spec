@@ -20,6 +20,7 @@ export type {
   HealthReport,
   CardRegistry,
   HttpRegistryOptions,
+  PhysicalCard,
 } from "./types/index.js";
 
 // Factories

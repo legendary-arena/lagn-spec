@@ -27,7 +27,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-extrapolate.webp",
           "abilities": [
             "[keyword:Outwit]: Draw a card."
           ]
@@ -43,7 +43,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-gamma-draining-nanites.webp",
           "abilities": [
             "Draw a card.",
             "Then, if you drew two cards this turn, [keyword:Transform] this into Like Totally Smart Hulk."
@@ -61,7 +61,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-5c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-like-totally-smart-hulk.webp",
           "abilities": [
             "[keyword:Outwit]: You get +2[icon:attack]."
           ],
@@ -79,7 +79,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-renegade-genius.webp",
           "abilities": [
             "You get +1[icon:attack] for each different cost of Hero you have.",
             "[keyword:Outwit]: Draw a card."
@@ -96,10 +96,52 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-visualize-the-variables.webp",
           "abilities": [
             "Whenever you use an [keyword:Outwit] ability this turn, you may use it an extra time. ",
             "[keyword:Outwit]: Look at the top card of your deck. KO it or put it back."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-extrapolate.webp",
+          "sides": [
+            "extrapolate"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-gamma-draining-nanites.webp",
+          "sides": [
+            "gamma-draining-nanites"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-like-totally-smart-hulk.webp",
+          "sides": [
+            "like-totally-smart-hulk"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-renegade-genius.webp",
+          "sides": [
+            "renegade-genius"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-visualize-the-variables.webp",
+          "sides": [
+            "visualize-the-variables"
           ]
         }
       ]
@@ -128,7 +170,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-solve-the-impossible.webp",
           "abilities": [
             "[keyword:Outwit]: When you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -144,7 +186,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-gamma-bomb-disaster.webp",
           "abilities": [
             "[keyword:Outwit]: [keyword:Transform] this into Savage Hulk Unleashed."
           ],
@@ -161,7 +203,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-5c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-savage-hulk-unleashed.webp",
           "abilities": [
             "[keyword:Smash 4]"
           ],
@@ -179,7 +221,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-dangerous-testing.webp",
           "abilities": [
             "[hc:tech]: Reveal the top card of your deck. If it costs 0, KO it."
           ]
@@ -195,9 +237,51 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-gamma-ray-experiment.webp",
           "abilities": [
             "[keyword:Outwit]: Look at the top three cards of your deck. Draw one of them, KO one, and put one back."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-solve-the-impossible.webp",
+          "sides": [
+            "solve-the-impossible"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-gamma-bomb-disaster.webp",
+          "sides": [
+            "gamma-bomb-disaster"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-savage-hulk-unleashed.webp",
+          "sides": [
+            "savage-hulk-unleashed"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-dangerous-testing.webp",
+          "sides": [
+            "dangerous-testing"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-gamma-ray-experiment.webp",
+          "sides": [
+            "gamma-ray-experiment"
           ]
         }
       ]
@@ -226,7 +310,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-shadow-queen.webp",
           "abilities": [
             "[keyword:Outwit]: Draw a card."
           ]
@@ -242,7 +326,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-shadowforged-blade.webp",
           "abilities": [
             "[hc:covert]: [keyword:Smash 2]"
           ]
@@ -258,7 +342,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-focus-the-old-power.webp",
           "abilities": [
             "[keyword:Outwit]: You may KO a card from your hand or discard pile."
           ]
@@ -274,7 +358,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-dutiful-protector.webp",
           "abilities": [
             "Double the [icon:recruit] you have.",
             "If there are at least 3 Heroes per player in the KO pile, [keyword:Transform] this into Vengeful Destructor."
@@ -292,12 +376,54 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-7r2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-vengeful-destructor.webp",
           "abilities": [
             "Double the [icon:attack] you have."
           ],
           "transformOf": "dutiful-protector",
           "isTransform": true
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-shadow-queen.webp",
+          "sides": [
+            "shadow-queen"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-shadowforged-blade.webp",
+          "sides": [
+            "shadowforged-blade"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-focus-the-old-power.webp",
+          "sides": [
+            "focus-the-old-power"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-dutiful-protector.webp",
+          "sides": [
+            "dutiful-protector"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-caiera-vengeful-destructor.webp",
+          "sides": [
+            "vengeful-destructor"
+          ]
         }
       ]
     },
@@ -325,7 +451,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-dont-make-me-angry.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Smash 2]"
@@ -342,7 +468,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-seize-the-throne.webp",
           "abilities": [
             "[keyword:Smash 3]",
             "Then, if you discarded at least two cards this turn, [keyword:Transform] this into Hulk Is King and put it on top of your deck."
@@ -360,7 +486,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-5c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-hulk-is-king.webp",
           "abilities": [
             "When a card effect causes you to discard this card, you may return this card to your hand."
           ],
@@ -378,7 +504,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-the-green-scar.webp",
           "abilities": [
             "[hc:strength]: [keyword:Cross-Dimensional Hulk Rampage.]",
             "If any players gained a Wound this way, you get [keyword:Wounded Fury]."
@@ -395,10 +521,52 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-double-fisted-smashing.webp",
           "abilities": [
             "You get double[icon:attack] from each Smash this turn.",
             "[keyword:Smash 3]"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-dont-make-me-angry.webp",
+          "sides": [
+            "dont-make-me-angry"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-seize-the-throne.webp",
+          "sides": [
+            "seize-the-throne"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-hulk-is-king.webp",
+          "sides": [
+            "hulk-is-king"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-the-green-scar.webp",
+          "sides": [
+            "the-green-scar"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-double-fisted-smashing.webp",
+          "sides": [
+            "double-fisted-smashing"
           ]
         }
       ]
@@ -427,7 +595,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-seek-redemption.webp",
           "abilities": [
             "[hc:covert]: The first time you defeat a Villain this turn, rescue a Bystander."
           ]
@@ -443,7 +611,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-save-from-the-rubble.webp",
           "abilities": [
             "Draw a card.",
             "If there are at least 2 Bystanders in your Victory Pile, [keyword:Transform] this into Hiroim Redeemed."
@@ -461,7 +629,7 @@
           "cost": 5,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-5c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-hiroim-redeemed.webp",
           "abilities": [
             "You get +1[icon:attack]for every two Bystanders in your Victory Pile."
           ],
@@ -479,7 +647,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-mystic-shadow-priest.webp",
           "abilities": [
             "[team:warbound]: You may KO a 0-cost card from any player's discard pile. If you KO a Wound this way, rescue a Bystander."
           ]
@@ -495,9 +663,51 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-blade-of-the-people.webp",
           "abilities": [
             "Choose one: Rescue three Bystanders, or defeat any Villain or Mastermind whose [icon:attack] is less than the number of Bystanders in your Victory Pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-seek-redemption.webp",
+          "sides": [
+            "seek-redemption"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-save-from-the-rubble.webp",
+          "sides": [
+            "save-from-the-rubble"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-hiroim-redeemed.webp",
+          "sides": [
+            "hiroim-redeemed"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-mystic-shadow-priest.webp",
+          "sides": [
+            "mystic-shadow-priest"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-blade-of-the-people.webp",
+          "sides": [
+            "blade-of-the-people"
           ]
         }
       ]
@@ -526,7 +736,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-pound-for-pound.webp",
           "abilities": [
             "Draw a card.",
             "[hc:tech]: You get +2[icon:attack]."
@@ -543,7 +753,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-attune-techtonic-transducer.webp",
           "abilities": [
             "[keyword:Outwit]: [keyword:Smash 2]"
           ]
@@ -559,7 +769,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-build-the-suit.webp",
           "abilities": [
             "[hc:tech][hc:strength]: [keyword:Transform] this into Ultra-Massive Armor."
           ]
@@ -575,7 +785,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-ultra-massive-armor.webp",
           "abilities": [
             "Draw two cards.",
             "[keyword:Smash 2]"
@@ -592,9 +802,51 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-final-battle.webp",
           "abilities": [
             "You get +2[icon:attack] for each other [hc:tech] and/or [hc:strength] card you played this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-pound-for-pound.webp",
+          "sides": [
+            "pound-for-pound"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-attune-techtonic-transducer.webp",
+          "sides": [
+            "attune-techtonic-transducer"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-build-the-suit.webp",
+          "sides": [
+            "build-the-suit"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-ultra-massive-armor.webp",
+          "sides": [
+            "ultra-massive-armor"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-final-battle.webp",
+          "sides": [
+            "final-battle"
           ]
         }
       ]
@@ -623,7 +875,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-carefully-considered-smashing.webp",
           "abilities": [
             "[hc:strength]: [keyword:Smash 2]"
           ]
@@ -639,7 +891,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-threaten-and-bribe.webp",
           "abilities": [
             "Choose a Villain. You can spend any combination of[icon:recruit]and[icon:attack]to fight it this turn."
           ]
@@ -655,7 +907,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-ambitious-enforcer.webp",
           "abilities": [
             "When you defeat a Villain this turn that has 6[icon:attack] or more, [keyword:Transform] this into Underworld Boss and put it on top of your deck."
           ],
@@ -672,7 +924,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-underworld-boss.webp",
           "abilities": [
             "Choose a Villain in your Victory Pile, You get +[icon:attack] equal to it's printed VP."
           ],
@@ -690,9 +942,51 @@
           "cost": 7,
           "attack": null,
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-hulk-runs-this-town.webp",
           "abilities": [
             "You can spend any combination of[icon:recruit]and[icon:attack]to fight the Mastermind this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-carefully-considered-smashing.webp",
+          "sides": [
+            "carefully-considered-smashing"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-threaten-and-bribe.webp",
+          "sides": [
+            "threaten-and-bribe"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-ambitious-enforcer.webp",
+          "sides": [
+            "ambitious-enforcer"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-underworld-boss.webp",
+          "sides": [
+            "underworld-boss"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-hulk-runs-this-town.webp",
+          "sides": [
+            "hulk-runs-this-town"
           ]
         }
       ]
@@ -721,7 +1015,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-nothing-beats-rock.webp",
           "abilities": [
             "Draw a card.",
             "[hc:strength]: [keyword:Smash 2]. If you [keyword:Smash] a Wound this way, KO it."
@@ -738,7 +1032,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-move-mountains.webp",
           "abilities": [
             "[keyword:Outwit]: Draw a card."
           ]
@@ -754,7 +1048,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-3u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-forged-by-fire.webp",
           "abilities": [
             "[hc:strength][hc:strength]: [keyword:Transform] this into Lord of Granite."
           ],
@@ -771,7 +1065,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-5u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-lord-of-granite.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Smash 3]"
@@ -790,9 +1084,51 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-kronan-tactician.webp",
           "abilities": [
             "Put all cards from the HQ on the bottom of the Hero Deck in random order. You get their total printed[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-nothing-beats-rock.webp",
+          "sides": [
+            "nothing-beats-rock"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-move-mountains.webp",
+          "sides": [
+            "move-mountains"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-forged-by-fire.webp",
+          "sides": [
+            "forged-by-fire"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-lord-of-granite.webp",
+          "sides": [
+            "lord-of-granite"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-kronan-tactician.webp",
+          "sides": [
+            "kronan-tactician"
           ]
         }
       ]
@@ -821,7 +1157,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-this-bug-smashes-you.webp",
           "abilities": [
             "[keyword:Smash 1]"
           ]
@@ -837,7 +1173,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-devouring-frenzy.webp",
           "abilities": [
             "Look at the top card of your deck. Put it back on the top or bottom.",
             "[hc:instinct]: You may [keyword:Feast]."
@@ -854,7 +1190,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-endless-appetite.webp",
           "abilities": [
             "Whenever a card is KO'd from your deck this turn, you may draw a card."
           ]
@@ -870,7 +1206,7 @@
           "cost": 7,
           "attack": null,
           "recruit": "5",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-metamorphosis.webp",
           "abilities": [
             "You may [keyword:Feast]. Then, if a card with an[icon:attack] icon was KO'd from your deck this turn, [keyword:Transform] this into Hive King Miek."
           ],
@@ -887,12 +1223,54 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-8r2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-hive-king-miek.webp",
           "abilities": [
             "Look at the top three cards of your deck and put them back in any order. Then you may [keyword:Feast]."
           ],
           "transformOf": "metamorphosis",
           "isTransform": true
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-this-bug-smashes-you.webp",
+          "sides": [
+            "this-bug-smashes-you"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-devouring-frenzy.webp",
+          "sides": [
+            "devouring-frenzy"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-endless-appetite.webp",
+          "sides": [
+            "endless-appetite"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-metamorphosis.webp",
+          "sides": [
+            "metamorphosis"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-miek-the-unhived-hive-king-miek.webp",
+          "sides": [
+            "hive-king-miek"
+          ]
         }
       ]
     },
@@ -920,7 +1298,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-crushing-tsunami.webp",
           "abilities": [
             "Draw a card.",
             "[hc:ranged]: [keyword:Smash 3]"
@@ -937,7 +1315,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-heart-of-the-ocean.webp",
           "abilities": [
             "You get +1[icon:attack], usable only against Villains in the Sewers or Bridge or the Mastermind."
           ]
@@ -953,7 +1331,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-herculean-effort.webp",
           "abilities": [
             "When you defeat a Villain in the Sewers or Bridge, [keyword:Transform] this into Master of Depths and put it on top of your deck."
           ],
@@ -970,7 +1348,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-master-of-depths.webp",
           "abilities": [
             "[keyword:Smash 3]",
             "If you [keyword:Smash] a 0-cost Hero this way, KO it."
@@ -989,9 +1367,51 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-turning-the-tide.webp",
           "abilities": [
             "[hc:covert]: If the Bridge is empty, you may move a Villain there from another city space. A Villain moved this way gets -3[icon:attack] this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-crushing-tsunami.webp",
+          "sides": [
+            "crushing-tsunami"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-heart-of-the-ocean.webp",
+          "sides": [
+            "heart-of-the-ocean"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-herculean-effort.webp",
+          "sides": [
+            "herculean-effort"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-master-of-depths.webp",
+          "sides": [
+            "master-of-depths"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-turning-the-tide.webp",
+          "sides": [
+            "turning-the-tide"
           ]
         }
       ]
@@ -1020,7 +1440,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-surprise-attack.webp",
           "abilities": [
             "If this is the first card you played this turn, draw a card."
           ]
@@ -1036,7 +1456,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-appetite-for-destruction.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[hc:covert]: You may [keyword:Feast]."
@@ -1053,7 +1473,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-3u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-bursting-with-life.webp",
           "abilities": [
             "You may [keyword:Feast]. Then, if a non-grey Hero was KO'd from your deck this turn, [keyword:Transform] this into Torrent of Broodlings."
           ],
@@ -1070,7 +1490,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-5u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-torrent-of-broodlings.webp",
           "abilities": [
             "Draw a card."
           ],
@@ -1088,9 +1508,51 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-world-spanning-hunger.webp",
           "abilities": [
             "Look at the top card of your deck. Then [keyword:Feast] up to three times. You get +2[icon:attack] for each non-grey Hero that was KO'd from your deck this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-surprise-attack.webp",
+          "sides": [
+            "surprise-attack"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-appetite-for-destruction.webp",
+          "sides": [
+            "appetite-for-destruction"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-bursting-with-life.webp",
+          "sides": [
+            "bursting-with-life"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-torrent-of-broodlings.webp",
+          "sides": [
+            "torrent-of-broodlings"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-world-spanning-hunger.webp",
+          "sides": [
+            "world-spanning-hunger"
           ]
         }
       ]
@@ -1121,7 +1583,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-hacktivist.webp",
           "abilities": [
             "[hc:tech]: Reveal the top card of your deck. If it's a[team:shield], draw it."
           ]
@@ -1137,7 +1599,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-seek-the-nega-bands.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 3 or more, [keyword:Transform] this into Captain Marvel."
           ],
@@ -1154,7 +1616,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-5c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-captain-marvel.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 3 or more, draw it."
           ],
@@ -1172,7 +1634,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-irradiated-blood.webp",
           "abilities": [
             "If you have at least 5 Villains in your Victory Pile, [keyword:Transform] this into A-Bomb and put it on top of your deck."
           ],
@@ -1189,7 +1651,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-a-bomb.webp",
           "abilities": [
             "[keyword:Smash 5]"
           ],
@@ -1207,7 +1669,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-caught-in-kree-skrull-war.webp",
           "abilities": [
             "If you defeat two Villains this turn, [keyword:Transform] this into The Destiny Force and put it on top of your deck."
           ],
@@ -1224,12 +1686,70 @@
           "cost": 9,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-9r2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-the-destiny-force.webp",
           "abilities": [
             "Count the number of different printed VP values in your Victory Pile. Draw that many cards."
           ],
           "transformOf": "caught-in-kree-skrull-war",
           "isTransform": true
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-hacktivist.webp",
+          "sides": [
+            "hacktivist"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-seek-the-nega-bands.webp",
+          "sides": [
+            "seek-the-nega-bands"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-captain-marvel.webp",
+          "sides": [
+            "captain-marvel"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-irradiated-blood.webp",
+          "sides": [
+            "irradiated-blood"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-a-bomb.webp",
+          "sides": [
+            "a-bomb"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-caught-in-kree-skrull-war.webp",
+          "sides": [
+            "caught-in-kree-skrull-war"
+          ]
+        },
+        {
+          "id": "p7",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-the-destiny-force.webp",
+          "sides": [
+            "the-destiny-force"
+          ]
         }
       ]
     },
@@ -1258,7 +1778,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-agoraphobia.webp",
           "abilities": [
             "[keyword:Transform] this into Golden Guardian of Good and put it in your discard pile."
           ],
@@ -1275,7 +1795,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-6c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-golden-guardian-of-good.webp",
           "abilities": [
             "You may [keyword:Transform] this into Agoraphobia and put it in your discard pile. If you do, you get +4[icon:attack]."
           ],
@@ -1293,7 +1813,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-rival-personalities.webp",
           "abilities": [
             "You get +1[icon:attack]for each card that [keyword:Transformed] this turn."
           ]
@@ -1309,7 +1829,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-3u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-mournful-sentinel.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 1 or more, [keyword:Transform] this into The Void Unchained and put it on top of your deck."
           ],
@@ -1326,7 +1846,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-5u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-the-void-unchained.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 0, then [keyword:Feast]. Otherwise, [keyword:Transform] this into Mournful Sentinel and put it in your discard pile."
           ],
@@ -1344,9 +1864,59 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-vast-unstable-power.webp",
           "abilities": [
             "Reveal the top five cards of the Hero Deck, gain their total printed[icon:attack], and put them on the bottom of that deck. If this card makes 12[icon:attack] or more, then [keyword:Transform] this card into [rule:The Void Mastermind] and add it to the game at the start of the next turn with one random Tactic."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-agoraphobia.webp",
+          "sides": [
+            "agoraphobia"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-golden-guardian-of-good.webp",
+          "sides": [
+            "golden-guardian-of-good"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-rival-personalities.webp",
+          "sides": [
+            "rival-personalities"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-mournful-sentinel.webp",
+          "sides": [
+            "mournful-sentinel"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-the-void-unchained.webp",
+          "sides": [
+            "the-void-unchained"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-vast-unstable-power.webp",
+          "sides": [
+            "vast-unstable-power"
           ]
         }
       ]
@@ -1375,7 +1945,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-hurl-legal-objections.webp",
           "abilities": [
             "Once this turn, if you made at least 6[icon:recruit]this turn, [keyword:Transform] this into Hurl Trucks."
           ],
@@ -1392,7 +1962,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-6c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-hurl-trucks.webp",
           "abilities": [
             "[keyword:Smash 2]",
             "[keyword:Smash 2]"
@@ -1411,7 +1981,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-window-of-opportunity.webp",
           "abilities": [
             "[keyword:Outwit]: Draw a card."
           ]
@@ -1427,7 +1997,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-radioactive-riot.webp",
           "abilities": [
             "Once this turn, if you made at least 6[icon:recruit]this turn, you may KO a card from your hand or discard pile."
           ]
@@ -1443,9 +2013,51 @@
           "cost": 8,
           "attack": "0+",
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-jade-giantess.webp",
           "abilities": [
             "For every 2[icon:recruit]you made this turn, Reveal the top card of the Hero Deck, put it on the bottom of that deck, and you get that card's printed[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-hurl-legal-objections.webp",
+          "sides": [
+            "hurl-legal-objections"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-hurl-trucks.webp",
+          "sides": [
+            "hurl-trucks"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-window-of-opportunity.webp",
+          "sides": [
+            "window-of-opportunity"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-radioactive-riot.webp",
+          "sides": [
+            "radioactive-riot"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-jade-giantess.webp",
+          "sides": [
+            "jade-giantess"
           ]
         }
       ]
@@ -1474,7 +2086,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-anger-management.webp",
           "abilities": [
             "[hc:strength]: [keyword:Smash 3]"
           ]
@@ -1490,7 +2102,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-scarred-past.webp",
           "abilities": [
             "[hc:instinct]: [keyword:Wounded Fury]."
           ]
@@ -1506,7 +2118,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-mood-swings.webp",
           "abilities": [
             "[hc:instinct]: You may gain a Wound. If you do, [keyword:Transform] this into Raging Savage."
           ],
@@ -1523,7 +2135,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-raging-savage.webp",
           "abilities": [
             "[keyword:Wounded Fury]"
           ],
@@ -1541,10 +2153,52 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-planetary-level-revenge.webp",
           "abilities": [
             "[keyword:Wounded Fury]",
             "Then, you may KO any number of Wounds from your hand and/or discard pile, then draw that many cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-anger-management.webp",
+          "sides": [
+            "anger-management"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-scarred-past.webp",
+          "sides": [
+            "scarred-past"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-mood-swings.webp",
+          "sides": [
+            "mood-swings"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-raging-savage.webp",
+          "sides": [
+            "raging-savage"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-planetary-level-revenge.webp",
+          "sides": [
+            "planetary-level-revenge"
           ]
         }
       ]

@@ -21,7 +21,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-mission-accomplished.webp",
           "abilities": [
             "Draw a Card.",
             "[hc:tech]: Rescue a Bystander."
@@ -38,7 +38,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-dangerous-rescue.webp",
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander."
           ]
@@ -54,7 +54,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-covert-operation.webp",
           "abilities": [
             "You get +1[icon:attack] for each Bystander in your Victory Pile."
           ]
@@ -70,9 +70,43 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-silent-sniper.webp",
           "abilities": [
             "Defeat a Villain or Mastermind that has a Bystander."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-mission-accomplished.webp",
+          "sides": [
+            "mission-accomplished"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-dangerous-rescue.webp",
+          "sides": [
+            "dangerous-rescue"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-covert-operation.webp",
+          "sides": [
+            "covert-operation"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-silent-sniper.webp",
+          "sides": [
+            "silent-sniper"
           ]
         }
       ]
@@ -100,7 +134,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-avengers-assemble.webp",
           "abilities": [
             "You get +1[icon:recruit] for each color of Hero you have."
           ]
@@ -116,7 +150,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-perfect-teamwork.webp",
           "abilities": [
             "You get +1[icon:attack] for each color of Hero you have."
           ]
@@ -132,7 +166,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-diving-block.webp",
           "abilities": [
             "If you would gain a Wound, you may reveal this card and draw a card instead."
           ]
@@ -148,9 +182,43 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-a-day-unlike-any-other.webp",
           "abilities": [
             "[team:avengers]: You get +3[icon:attack] for each other [team:avengers] you played this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-avengers-assemble.webp",
+          "sides": [
+            "avengers-assemble"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-perfect-teamwork.webp",
+          "sides": [
+            "perfect-teamwork"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-diving-block.webp",
+          "sides": [
+            "diving-block"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-captain-america-a-day-unlike-any-other.webp",
+          "sides": [
+            "a-day-unlike-any-other"
           ]
         }
       ]
@@ -178,7 +246,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-determination.webp",
           "abilities": [
             "To play this card, you must discard a card from your hand. "
           ]
@@ -194,7 +262,7 @@
           "cost": 3,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-optic-blast.webp",
           "abilities": [
             "To play this card, you must discard a card from your hand."
           ]
@@ -210,7 +278,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-unending-energy.webp",
           "abilities": [
             "If a card effect makes you discard this card, you may return this card to your hand."
           ]
@@ -226,9 +294,43 @@
           "cost": 8,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-x-men-united.webp",
           "abilities": [
             "[team:x-men]: You get +2[icon:attack] for each other [team:x-men] Hero you played this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-determination.webp",
+          "sides": [
+            "determination"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-optic-blast.webp",
+          "sides": [
+            "optic-blast"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-unending-energy.webp",
+          "sides": [
+            "unending-energy"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-cyclops-x-men-united.webp",
+          "sides": [
+            "x-men-united"
           ]
         }
       ]
@@ -251,7 +353,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-here-hold-this-for-a-second.webp",
           "abilities": [
             "A Villain of your choice captures a Bystander."
           ]
@@ -267,7 +369,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-hey-can-i-get-a-do-over.webp",
           "abilities": [
             "If this is the first Hero you played this turn, you may discard the rest of your hand and draw four cards."
           ]
@@ -283,7 +385,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-oddball.webp",
           "abilities": [
             "You get +1[icon:attack] for each other Hero with an odd-numbered [icon:vp] you played this turn."
           ]
@@ -299,9 +401,43 @@
           "cost": 7,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-random-acts-of-unkindness.webp",
           "abilities": [
             "You may gain a Wound to your hand. Then each player passes a card from their hand to the player on their left."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-here-hold-this-for-a-second.webp",
+          "sides": [
+            "here-hold-this-for-a-second"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-hey-can-i-get-a-do-over.webp",
+          "sides": [
+            "hey-can-i-get-a-do-over"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-oddball.webp",
+          "sides": [
+            "oddball"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-random-acts-of-unkindness.webp",
+          "sides": [
+            "random-acts-of-unkindness"
           ]
         }
       ]
@@ -329,7 +465,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-mental-discipline.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -345,7 +481,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-shadowed-thoughts.webp",
           "abilities": [
             "[hc:covert]: You may play the top card of the Villain Deck. If you do, you get +2[icon:attack]."
           ]
@@ -361,7 +497,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-psychic-link.webp",
           "abilities": [
             "Each player may reveal another [team:x-men] Hero. Each player who does draws a card."
           ]
@@ -377,9 +513,43 @@
           "cost": 7,
           "attack": "5",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-diamond-form.webp",
           "abilities": [
             "Whenever you defeat a Villain or Mastermind this turn, you get +3[icon:recruit]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-mental-discipline.webp",
+          "sides": [
+            "mental-discipline"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-shadowed-thoughts.webp",
+          "sides": [
+            "shadowed-thoughts"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-psychic-link.webp",
+          "sides": [
+            "psychic-link"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-emma-frost-diamond-form.webp",
+          "sides": [
+            "diamond-form"
           ]
         }
       ]
@@ -407,7 +577,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-stack-the-deck.webp",
           "abilities": [
             "Draw two cards. Then put a card from your hand on top of your deck."
           ]
@@ -423,7 +593,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-hypnotic-charm.webp",
           "abilities": [
             "Reveal the top card of your deck. Discard it or put it back.",
             "[hc:instinct]: Do the same thing to each other player's deck."
@@ -440,7 +610,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-card-shark.webp",
           "abilities": [
             "Reveal the top card of your deck. If it's an [team:x-men] Hero, draw it."
           ]
@@ -456,9 +626,43 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-high-stakes-jackpot.webp",
           "abilities": [
             "Reveal the top card of your deck. You get +[icon:attack] equal to that card's cost."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-stack-the-deck.webp",
+          "sides": [
+            "stack-the-deck"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-hypnotic-charm.webp",
+          "sides": [
+            "hypnotic-charm"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-card-shark.webp",
+          "sides": [
+            "card-shark"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-high-stakes-jackpot.webp",
+          "sides": [
+            "high-stakes-jackpot"
           ]
         }
       ]
@@ -481,7 +685,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-quick-draw.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -497,7 +701,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-team-player.webp",
           "abilities": [
             "[team:avengers]: You get +1[icon:attack]."
           ]
@@ -513,7 +717,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-covering-fire.webp",
           "abilities": [
             "[hc:tech]: Choose one: each other player draws a card or each other player discards a card."
           ]
@@ -529,9 +733,43 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-impossible-trick-shot.webp",
           "abilities": [
             "Whenever you defeat a Villain or Mastermind this turn, rescue three Bystanders."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-quick-draw.webp",
+          "sides": [
+            "quick-draw"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-team-player.webp",
+          "sides": [
+            "team-player"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-covering-fire.webp",
+          "sides": [
+            "covering-fire"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hawkeye-impossible-trick-shot.webp",
+          "sides": [
+            "impossible-trick-shot"
           ]
         }
       ]
@@ -554,7 +792,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-growing-anger.webp",
           "abilities": [
             "[hc:strength]: You get +1[icon:attack]."
           ]
@@ -570,7 +808,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-unstoppable-hulk.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:attack]."
           ]
@@ -586,7 +824,7 @@
           "cost": 5,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-crazed-rampage.webp",
           "abilities": [
             "Each player gains a Wound."
           ]
@@ -602,9 +840,43 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-hulk-smash.webp",
           "abilities": [
             "[hc:strength]: You get +5[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-growing-anger.webp",
+          "sides": [
+            "growing-anger"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-unstoppable-hulk.webp",
+          "sides": [
+            "unstoppable-hulk"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-crazed-rampage.webp",
+          "sides": [
+            "crazed-rampage"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-hulk-hulk-smash.webp",
+          "sides": [
+            "hulk-smash"
           ]
         }
       ]
@@ -627,7 +899,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-endless-invention.webp",
           "abilities": [
             "Draw a card.",
             "[hc:tech]: Draw another card."
@@ -644,7 +916,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-repulsor-rays.webp",
           "abilities": [
             "[hc:ranged]: You get +1[icon:attack]."
           ]
@@ -660,7 +932,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-arc-reactor.webp",
           "abilities": [
             "[hc:tech]: You get +1[icon:attack] for each other[hc:tech] Hero you played this turn."
           ]
@@ -676,10 +948,44 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-quantum-breakthrough.webp",
           "abilities": [
             "Draw two cards.",
             "[hc:tech]: Draw two more cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-endless-invention.webp",
+          "sides": [
+            "endless-invention"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-repulsor-rays.webp",
+          "sides": [
+            "repulsor-rays"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-arc-reactor.webp",
+          "sides": [
+            "arc-reactor"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-quantum-breakthrough.webp",
+          "sides": [
+            "quantum-breakthrough"
           ]
         }
       ]
@@ -707,7 +1013,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-high-tech-weaponry.webp",
           "abilities": [
             "[hc:tech]: You get +1[icon:attack]."
           ]
@@ -723,7 +1029,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-battlefield-promotion.webp",
           "abilities": [
             "You may KO a [team:shield] Hero from your hand or discard pile. If you do, you may gain a S.H.I.E.L.D. Officer to your hand."
           ]
@@ -739,7 +1045,7 @@
           "cost": 6,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-legendary-commander.webp",
           "abilities": [
             "You get +1[icon:attack] for each other[team:shield] Hero you played this turn."
           ]
@@ -755,9 +1061,43 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-pure-fury.webp",
           "abilities": [
             "Defeat any Villain or Mastermind whose [icon:attack] is less than the number of [team:shield] Heroes in the KO pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-high-tech-weaponry.webp",
+          "sides": [
+            "high-tech-weaponry"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-battlefield-promotion.webp",
+          "sides": [
+            "battlefield-promotion"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-legendary-commander.webp",
+          "sides": [
+            "legendary-commander"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-pure-fury.webp",
+          "sides": [
+            "pure-fury"
           ]
         }
       ]
@@ -785,7 +1125,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-energy-drain.webp",
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile. If you do, you get +1[icon:recruit]."
           ]
@@ -801,7 +1141,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-borrowed-brawn.webp",
           "abilities": [
             "[hc:strength]: You get +3[icon:attack]."
           ]
@@ -817,7 +1157,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-copy-powers.webp",
           "abilities": [
             "Play this card as a copy of another Hero you played this turn. This card is both [hc:covert] and the color you copy."
           ]
@@ -833,9 +1173,43 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-steal-abilities.webp",
           "abilities": [
             "Each player discards the top card of their deck. Play a copy of each of those cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-energy-drain.webp",
+          "sides": [
+            "energy-drain"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-borrowed-brawn.webp",
+          "sides": [
+            "borrowed-brawn"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-copy-powers.webp",
+          "sides": [
+            "copy-powers"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-steal-abilities.webp",
+          "sides": [
+            "steal-abilities"
           ]
         }
       ]
@@ -863,7 +1237,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-astonishing-strength.webp",
           "abilities": [
             "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it."
           ]
@@ -879,7 +1253,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-great-responsibility.webp",
           "abilities": [
             "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it."
           ]
@@ -895,7 +1269,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-web-shooters.webp",
           "abilities": [
             "Rescue a Bystander.",
             "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it."
@@ -912,9 +1286,43 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-the-amazing-spider-man.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Put any that cost 2[icon:vp] or less into your hand. Put the rest back in any order."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-astonishing-strength.webp",
+          "sides": [
+            "astonishing-strength"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-great-responsibility.webp",
+          "sides": [
+            "great-responsibility"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-web-shooters.webp",
+          "sides": [
+            "web-shooters"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-the-amazing-spider-man.webp",
+          "sides": [
+            "the-amazing-spider-man"
           ]
         }
       ]
@@ -942,7 +1350,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-gathering-stormclouds.webp",
           "abilities": [
             "[hc:ranged]:  Draw a card."
           ]
@@ -958,7 +1366,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-lightning-bolt.webp",
           "abilities": [
             "Any Villain you fight on the Rooftops this turn gets -2[icon:attack]."
           ]
@@ -974,7 +1382,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-spinning-cyclone.webp",
           "abilities": [
             "You may move a Villain to a new city space. Rescue any Bystanders captured by that Villain.",
             "(If you move a Villain to a city space that already has Villain, swap them.)"
@@ -991,10 +1399,44 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-tidal-wave.webp",
           "abilities": [
             "Any Villain you fight on the Bridge this turn gets -2[icon:attack].",
             "[hc:ranged]: The Mastermind gets -2[icon:attack] this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-gathering-stormclouds.webp",
+          "sides": [
+            "gathering-stormclouds"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-lightning-bolt.webp",
+          "sides": [
+            "lightning-bolt"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-spinning-cyclone.webp",
+          "sides": [
+            "spinning-cyclone"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-storm-tidal-wave.webp",
+          "sides": [
+            "tidal-wave"
           ]
         }
       ]
@@ -1017,7 +1459,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-odinson.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:recruit]."
           ]
@@ -1033,7 +1475,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-surge-of-power.webp",
           "abilities": [
             "If you made 8 or more [icon:recruit] this turn, you get +3[icon:attack]."
           ]
@@ -1049,7 +1491,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-call-lightning.webp",
           "abilities": [
             "[hc:ranged]: You get +3[icon:attack]."
           ]
@@ -1065,9 +1507,43 @@
           "cost": 8,
           "attack": "0+",
           "recruit": "5",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-god-of-thunder.webp",
           "abilities": [
             "You can use [icon:recruit] as [icon:attack] this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-odinson.webp",
+          "sides": [
+            "odinson"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-surge-of-power.webp",
+          "sides": [
+            "surge-of-power"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-call-lightning.webp",
+          "sides": [
+            "call-lightning"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-thor-god-of-thunder.webp",
+          "sides": [
+            "god-of-thunder"
           ]
         }
       ]
@@ -1090,7 +1566,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-keen-senses.webp",
           "abilities": [
             "[hc:instinct]: Draw a card."
           ]
@@ -1106,7 +1582,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-healing-factor.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, draw a card."
           ]
@@ -1122,7 +1598,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-frenzied-slashing.webp",
           "abilities": [
             "[hc:instinct]: Draw two cards."
           ]
@@ -1138,10 +1614,44 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-berserker-rage.webp",
           "abilities": [
             "Draw three cards.",
             "[hc:instinct]: You get +1[icon:attack] for each extra card you've drawn this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-keen-senses.webp",
+          "sides": [
+            "keen-senses"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-healing-factor.webp",
+          "sides": [
+            "healing-factor"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-frenzied-slashing.webp",
+          "sides": [
+            "frenzied-slashing"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/core/core-hr-wolverine-berserker-rage.webp",
+          "sides": [
+            "berserker-rage"
           ]
         }
       ]

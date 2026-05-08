@@ -25,7 +25,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-break-the-silence.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may KO one of your cards with no rules text.",
             "—",
@@ -43,7 +43,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-worldess-murmur.webp",
           "abilities": []
         },
         {
@@ -57,14 +57,14 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-declaration-of-war.webp",
           "abilities": [
             "[team:inhumans]: Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to reveal the top two cards of your deck. Put each of those cards with no rules text into your hand and put the rest back in any order."
           ]
         },
         {
           "slug": "wordless-murmur",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-wordless-murmur.webp",
           "abilities": [],
           "rarityLabel": "Uncommon",
           "slot": 3
@@ -80,12 +80,54 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-the-kings-speech.webp",
           "abilities": [
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to choose \"Speak\" or \"Don't Speak\" then reveal the top 3 cards of your deck:",
             "[keyword:Speak]: Put all of them with rules text into your hand.",
             "[keyword:Don't Speak]: You may KO any number of them with no rules text.",
             "Put the rest back in any order."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-break-the-silence.webp",
+          "sides": [
+            "break-the-silence"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-worldess-murmur.webp",
+          "sides": [
+            "worldess-murmur"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-declaration-of-war.webp",
+          "sides": [
+            "declaration-of-war"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-wordless-murmur.webp",
+          "sides": [
+            "wordless-murmur"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-the-kings-speech.webp",
+          "sides": [
+            "the-kings-speech"
           ]
         }
       ]
@@ -113,7 +155,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-queen-of-the-inhumans.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: Gain the [keyword:Thrones Favor].",
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to get +2[icon:attack]."
@@ -130,7 +172,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-splitting-hairs.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: Draw a card and gain the [keyword:Thrones Favor].",
             "[hc:instinct]: Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to draw a card."
@@ -147,7 +189,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-royal-command.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: Gain the [keyword:Thrones Favor].",
             "[team:inhumans]: Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to KO one of your cards."
@@ -164,10 +206,44 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-headstrong.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: Draw two cards and gain the [keyword:Thrones Favor].",
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to draw two cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-queen-of-the-inhumans.webp",
+          "sides": [
+            "queen-of-the-inhumans"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-splitting-hairs.webp",
+          "sides": [
+            "splitting-hairs"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-royal-command.webp",
+          "sides": [
+            "royal-command"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-headstrong.webp",
+          "sides": [
+            "headstrong"
           ]
         }
       ]
@@ -195,7 +271,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-earth-air-fire-and-water.webp",
           "abilities": [
             "[hc:strength][hc:instinct][hc:covert][hc:ranged]: You get +3[icon:attack]."
           ]
@@ -211,7 +287,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-master-the-four-elements.webp",
           "abilities": [
             "Choose [hc:strength], [hc:instinct], [hc:covert], or [hc:ranged]. This card is only that Hero Class this turn.",
             "Draw a card."
@@ -228,7 +304,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-elemental-princess.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may KO one of your cards that isn't [hc:strength], [hc:instinct], [hc:covert], or [hc:ranged].",
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to make this card [hc:strength], [hc:instinct], [hc:covert], and [hc:ranged] this turn."
@@ -245,10 +321,44 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-weave-four-into-one.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may gain a [hc:strength], [hc:instinct], [hc:covert], or [hc:ranged] Hero from the HQ.",
             "Reveal the top four cards of your deck. Put a [hc:strength] Hero, a [hc:instinct] Hero, a [hc:covert] Hero, and a [hc:ranged] Hero from among them into your hand. Put the rest back in any order."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-earth-air-fire-and-water.webp",
+          "sides": [
+            "earth-air-fire-and-water"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-master-the-four-elements.webp",
+          "sides": [
+            "master-the-four-elements"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-elemental-princess.webp",
+          "sides": [
+            "elemental-princess"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-weave-four-into-one.webp",
+          "sides": [
+            "weave-four-into-one"
           ]
         }
       ]
@@ -276,7 +386,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-brilliant-strategist.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You get +1[icon:attack].",
             "[hc:covert]: When you draw a new hand of cards at the end of this turn, draw an extra card."
@@ -293,7 +403,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-find-fatal-flaw.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You get +2[icon:attack].",
             "[rule:Choose a Villain Group]. You get +1[icon:recruit] for each Villain in your Victory Pile from that Group."
@@ -310,7 +420,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-shatter-the-weak-point.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You get +3[icon:attack].",
             "[rule:Choose a Villain Group]. You get +1[icon:attack] for each Villain in your Victory Pile from that Group."
@@ -327,10 +437,44 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-seek-the-center.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You get +4[icon:attack].",
             "Whenever you play a card this turn, including this one, you may first use that card's \"When Recruited\" ability."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-brilliant-strategist.webp",
+          "sides": [
+            "brilliant-strategist"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-find-fatal-flaw.webp",
+          "sides": [
+            "find-fatal-flaw"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-shatter-the-weak-point.webp",
+          "sides": [
+            "shatter-the-weak-point"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-seek-the-center.webp",
+          "sides": [
+            "seek-the-center"
           ]
         }
       ]
@@ -358,7 +502,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-lockjaw-inhumans-best-friend.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may [keyword:Teleport] a 0-cost Hero from your hand.",
             "[hc:covert]: You may [keyword:Teleport] another card from your hand."
@@ -375,7 +519,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-stomping-shockwave.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: [keyword:Abomination] (after refilling HQ)",
             "[hc:strength]: [keyword:Streets Abomination]"
@@ -392,7 +536,7 @@
           "cost": 6,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-trample-underhoof.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may KO one of your cards with no [icon:attack] icon.",
             "[keyword:Highest Abomination]"
@@ -409,11 +553,45 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-lead-the-inhuman-elite.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: [keyword:Abomination] (after refilling HQ)",
             "[keyword:Teleport] [team:inhumans]: [keyword:Rooftops Abomination]",
             "[team:inhumans]: [keyword:Abomination]"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-lockjaw-inhumans-best-friend.webp",
+          "sides": [
+            "lockjaw-inhumans-best-friend"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-stomping-shockwave.webp",
+          "sides": [
+            "stomping-shockwave"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-trample-underhoof.webp",
+          "sides": [
+            "trample-underhoof"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-lead-the-inhuman-elite.webp",
+          "sides": [
+            "lead-the-inhuman-elite"
           ]
         }
       ]

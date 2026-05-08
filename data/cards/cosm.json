@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-transmute-matter.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[keyword:Burn 2 Shards]: Halve the cost of a Hero in the HQ this turn. (Round the cost up.)"
@@ -43,7 +43,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-regenerative-cocoon.webp",
           "abilities": [
             "To play this, you must discard a card.",
             "When you draw a new hand of cards at the end of this turn, draw two extra cards."
@@ -60,7 +60,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-soulblast.webp",
           "abilities": [
             "Gain 2 [rule:Shards].",
             "[hc:covert]: [keyword:Burn 4 Shards]: Defeat a Villain."
@@ -77,10 +77,44 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-manifest-the-soul-gem.webp",
           "abilities": [
             "Gain 4 [rule:Shards].",
             "[team:avengers][team:avengers]: [keyword:Burn 8 Shards]: Defeat the Mastermind once. Then reveal the top card of the Villain Deck. If it's a Master Strike, then Adam Warlock is corrupted by power. At the start of next turn, add the [rule:Magus Mastermind] to the game with one random Tactic. (If he has never been in this game.)"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-transmute-matter.webp",
+          "sides": [
+            "transmute-matter"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-regenerative-cocoon.webp",
+          "sides": [
+            "regenerative-cocoon"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-soulblast.webp",
+          "sides": [
+            "soulblast"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-manifest-the-soul-gem.webp",
+          "sides": [
+            "manifest-the-soul-gem"
           ]
         }
       ]
@@ -108,7 +142,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-cosmic-awareness.webp",
           "abilities": [
             "If you would get [icon:attack] from [keyword:Danger Sense] this turn, gain that many [rule:Shards] instead.",
             "[keyword:Danger Sense 1]",
@@ -126,7 +160,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-kree-genetics.webp",
           "abilities": [
             "If you gained any [rule:Shards] this turn, draw a card."
           ]
@@ -142,7 +176,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-channel-the-nega-bands.webp",
           "abilities": [
             "[team:avengers]: Reveal the top card of your deck. If it costs 1 or more, gain a [rule:Shard]. If it costs 0, KO it."
           ]
@@ -158,10 +192,44 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-protector-of-the-universe.webp",
           "abilities": [
             "[keyword:Danger Sense 4]",
             "If you gained any [rule:Shards] this turn before playing this card, [keyword:Danger Sense 7] instead."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-cosmic-awareness.webp",
+          "sides": [
+            "cosmic-awareness"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-kree-genetics.webp",
+          "sides": [
+            "kree-genetics"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-channel-the-nega-bands.webp",
+          "sides": [
+            "channel-the-nega-bands"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-protector-of-the-universe.webp",
+          "sides": [
+            "protector-of-the-universe"
           ]
         }
       ]
@@ -189,7 +257,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-peaceful-meditation.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, if you didn't fight anything this turn, draw an extra card."
           ]
@@ -205,7 +273,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-psionic-warning.webp",
           "abilities": [
             "[keyword:Danger Sense 2]",
             "[hc:instinct]: If this revealed any Scheme Twists, gain a [rule:Shard]."
@@ -222,7 +290,7 @@
           "cost": 6,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-psychokinetic-blast.webp",
           "abilities": [
             "[keyword:Danger Sense 4]",
             "[team:avengers]: If this revealed at least two Master Strikes, you may shuffle the Villain Deck."
@@ -239,10 +307,44 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-lunar-dragon-form.webp",
           "abilities": [
             "[keyword:Danger Sense 1]",
             "If this revealed a Scheme Twist, you get +3[icon:attack] and you may shuffle the Villain Deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-peaceful-meditation.webp",
+          "sides": [
+            "peaceful-meditation"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-psionic-warning.webp",
+          "sides": [
+            "psionic-warning"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-psychokinetic-blast.webp",
+          "sides": [
+            "psychokinetic-blast"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-lunar-dragon-form.webp",
+          "sides": [
+            "lunar-dragon-form"
           ]
         }
       ]
@@ -270,7 +372,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-ruthless-cyborg.webp",
           "abilities": [
             "Whenever you take any number of [rule:Shards] from a Villain, Mastermind, or other player this turn, you may KO one of your cards or a card from your discard pile."
           ]
@@ -286,7 +388,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-galactic-rogue.webp",
           "abilities": [
             "A Villain gains a [rule:Shard].",
             "[hc:instinct][hc:tech]: Take a [rule:Shard] from a Villain."
@@ -303,7 +405,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-illusion-device.webp",
           "abilities": [
             "[hc:tech]: Choose another player. Unless that player reveals a [hc:covert] Hero, take one of their [rule:Shards] or “rescue“ a Bystander from their Victory Pile."
           ]
@@ -319,9 +421,43 @@
           "cost": 7,
           "attack": "5",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-daring-raid.webp",
           "abilities": [
             "Whenever you take any number of [rule:Shards] from a Villain, Mastermind, or other player this turn, you get +3[icon:recruit]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-ruthless-cyborg.webp",
+          "sides": [
+            "ruthless-cyborg"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-galactic-rogue.webp",
+          "sides": [
+            "galactic-rogue"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-illusion-device.webp",
+          "sides": [
+            "illusion-device"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-daring-raid.webp",
+          "sides": [
+            "daring-raid"
           ]
         }
       ]
@@ -349,7 +485,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-draw-from-the-worldmind.webp",
           "abilities": [
             "Draw a card.",
             "[hc:tech]: You get +1[icon:recruit] or +1[icon:attack]."
@@ -366,7 +502,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-electromagnetic-wave.webp",
           "abilities": [
             "Choose one: You get +2[icon:recruit], or you gain a [rule:Shard].",
             "[hc:ranged]: Instead, do both."
@@ -383,7 +519,7 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-declare-galactic-threat.webp",
           "abilities": [
             "A Villain gains [keyword:Cosmic Threat] [hc:tech] this turn. (It loses any previous Cosmic Threat abilities and penalties it had.)",
             "If there were no Villains in the city, draw two cards instead."
@@ -400,9 +536,43 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-mobilize-the-nova-corps.webp",
           "abilities": [
             "Choose one: Draw three cards or a Mastermind gains [keyword:Cosmic Threat] [hc:ranged] this turn. (It loses any previous Cosmic Threat abilities and penalties it had.)"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-draw-from-the-worldmind.webp",
+          "sides": [
+            "draw-from-the-worldmind"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-electromagnetic-wave.webp",
+          "sides": [
+            "electromagnetic-wave"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-declare-galactic-threat.webp",
+          "sides": [
+            "declare-galactic-threat"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-mobilize-the-nova-corps.webp",
+          "sides": [
+            "mobilize-the-nova-corps"
           ]
         }
       ]
@@ -430,7 +600,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-channel-cosmic-power.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[hc:instinct]: Draw a card."
@@ -447,7 +617,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-quantum-sword.webp",
           "abilities": [
             "If you have at least 4 [rule:Shards], you get +2[icon:attack]."
           ]
@@ -463,7 +633,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-3u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-martyr.webp",
           "abilities": [
             "If any player would gain a Wound, you may discard this card and gain 2 [rule:Shards] instead."
           ]
@@ -479,10 +649,44 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-avatar-of-oblivion.webp",
           "abilities": [
             "You may KO a card from your hand or discard pile. If you do, gain 2 [rule:Shards].",
             "Then, if you have at least 8 [rule:Shards], you get +3[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-channel-cosmic-power.webp",
+          "sides": [
+            "channel-cosmic-power"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-quantum-sword.webp",
+          "sides": [
+            "quantum-sword"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-martyr.webp",
+          "sides": [
+            "martyr"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-avatar-of-oblivion.webp",
+          "sides": [
+            "avatar-of-oblivion"
           ]
         }
       ]
@@ -510,7 +714,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-manipulate-gravitons.webp",
           "abilities": [
             "[hc:covert]: Whenever you recruit a Hero from the HQ this turn, gain a [rule:Shard]."
           ]
@@ -526,7 +730,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-cosmic-champion.webp",
           "abilities": [
             "[keyword:Burn a Shards]: You get +3[icon:attack]."
           ]
@@ -542,7 +746,7 @@
           "cost": 5,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-the-quantum-bands.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[keyword:Burn 2 Shards]: You man KO a card from your hand or discard pile."
@@ -559,10 +763,44 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-the-star-brand.webp",
           "abilities": [
             "Whenever you defeat a Villain or Mastermind this turn, gain a [rule:Shard].",
             "[keyword:Burn 4 Shards]: You get +7[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-manipulate-gravitons.webp",
+          "sides": [
+            "manipulate-gravitons"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-cosmic-champion.webp",
+          "sides": [
+            "cosmic-champion"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-the-quantum-bands.webp",
+          "sides": [
+            "the-quantum-bands"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-the-star-brand.webp",
+          "sides": [
+            "the-star-brand"
           ]
         }
       ]
@@ -590,7 +828,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-universal-weapon.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[keyword:Burn 2 Shards]: Draw two cards."
@@ -607,7 +845,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-rally-kree-warriors.webp",
           "abilities": [
             "Whenever you rescue a Bystander this turn, gain a [rule:Shard].",
             "[hc:strength]: Rescue a Bystander."
@@ -624,7 +862,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-accuse-enemies-of-the-empire.webp",
           "abilities": [
             "[keyword:Contest of Champions][hc:tech]. Each player that wins rescues a Bystander. If the Mastermind wins, it captures a Bystander."
           ]
@@ -640,9 +878,43 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-seek-the-infinity-gems.webp",
           "abilities": [
             "[keyword:Contest of Champions][hc:strength]. Each other player that loses must lose a [rule:Shard]. Each player that wins gains 2 [rule:Shards]. If the Mastermind wins, a Villain gains 2 [rule:Shards]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-universal-weapon.webp",
+          "sides": [
+            "universal-weapon"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-rally-kree-warriors.webp",
+          "sides": [
+            "rally-kree-warriors"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-accuse-enemies-of-the-empire.webp",
+          "sides": [
+            "accuse-enemies-of-the-empire"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-seek-the-infinity-gems.webp",
+          "sides": [
+            "seek-the-infinity-gems"
           ]
         }
       ]
@@ -670,7 +942,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-whistling-arrow.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[hc:ranged]: [keyword:Burn any number of Shards]: Defeat a Villain with printed VP equal to the number of Shards you burned. (This can't affect a Villain with 0 VP or no printed VP.)"
@@ -687,7 +959,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-interstellar-hunter.webp",
           "abilities": [
             "[keyword:Danger Sense 2]",
             "[hc:covert]: If this revealed any Master Strikes, draw a card."
@@ -704,7 +976,7 @@
           "cost": 5,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-anticipate-their-movements.webp",
           "abilities": [
             "[keyword:Danger Sense 3]",
             "[team:guardians-of-the-galaxy]: You may do the Fight effect of a Henchman Villain revealed this way. (Don't defeat it.)"
@@ -721,10 +993,44 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-space-pirate.webp",
           "abilities": [
             "Choose one: Gain a Hero from the HQ for free, or gain a [rule:Shard] for each empty city space.",
             "[team:guardians-of-the-galaxy][team:guardians-of-the-galaxy][team:guardians-of-the-galaxy]: Do both."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-whistling-arrow.webp",
+          "sides": [
+            "whistling-arrow"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-interstellar-hunter.webp",
+          "sides": [
+            "interstellar-hunter"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-anticipate-their-movements.webp",
+          "sides": [
+            "anticipate-their-movements"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-space-pirate.webp",
+          "sides": [
+            "space-pirate"
           ]
         }
       ]

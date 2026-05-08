@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-call-for-backup.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, you get +1[icon:recruit]."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-hothead.webp",
           "abilities": [
             "You gain a Wound."
           ]
@@ -58,7 +58,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-flame-on.webp",
           "abilities": [
             "[keyword:Focus 6][icon:recruit]  [icon:5] You get +4 [icon:attack]."
           ]
@@ -74,9 +74,43 @@
           "cost": 8,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-nova-flame.webp",
           "abilities": [
             "[team:fantastic-four]: You get +1[icon:attack] for each city space that contains a Villain."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-call-for-backup.webp",
+          "sides": [
+            "call-for-backup"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-hothead.webp",
+          "sides": [
+            "hothead"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-flame-on.webp",
+          "sides": [
+            "flame-on"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-human-torch-nova-flame.webp",
+          "sides": [
+            "nova-flame"
           ]
         }
       ]
@@ -104,7 +138,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-4c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-disappearing-act.webp",
           "abilities": [
             "[keyword:Focus 2][icon:recruit]  [icon:5] You may KO a card from your hand or discard pile."
           ]
@@ -120,7 +154,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-four-of-a-kind.webp",
           "abilities": [
             "If you played any other cards that cost 4 [icon:vp] this turn, you get +2[icon:attack]."
           ]
@@ -136,7 +170,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-unseen-rescue.webp",
           "abilities": [
             "[keyword:Focus 2][icon:recruit]  [icon:5] Rescue a Bystander. You may only use this ability up to four times this turn."
           ]
@@ -152,9 +186,43 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-invisible-barrier.webp",
           "abilities": [
             "If an ambush effect would occur, you may reveal this card and draw two cards instead."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-disappearing-act.webp",
+          "sides": [
+            "disappearing-act"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-four-of-a-kind.webp",
+          "sides": [
+            "four-of-a-kind"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-unseen-rescue.webp",
+          "sides": [
+            "unseen-rescue"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-invisible-woman-invisible-barrier.webp",
+          "sides": [
+            "invisible-barrier"
           ]
         }
       ]
@@ -182,7 +250,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-twisting-equations.webp",
           "abilities": [
             "[keyword:Focus 2][icon:recruit]  [icon:5] When you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -198,7 +266,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-unstable-molecules.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -214,7 +282,7 @@
           "cost": 5,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-one-gigantic-hand.webp",
           "abilities": [
             "[team:fantastic-four]: You get +1[icon:attack] for each card in your hand."
           ]
@@ -230,10 +298,44 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-ultimate-nullifier.webp",
           "abilities": [
             "If an Enemy you fight this turn would have a fight effect, you may cancel that effect instead.",
             "[keyword:Focus 1][icon:recruit]  [icon:5] You get +1[icon:attack] usable only against the Mastermind."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-twisting-equations.webp",
+          "sides": [
+            "twisting-equations"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-unstable-molecules.webp",
+          "sides": [
+            "unstable-molecules"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-one-gigantic-hand.webp",
+          "sides": [
+            "one-gigantic-hand"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-mr-fantastic-ultimate-nullifier.webp",
+          "sides": [
+            "ultimate-nullifier"
           ]
         }
       ]
@@ -261,7 +363,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-warp-speed.webp",
           "abilities": [
             "[keyword:Focus 2][icon:recruit]  [icon:5] Draw a card."
           ]
@@ -277,7 +379,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-epic-destiny.webp",
           "abilities": [
             "[keyword:Focus 6][icon:recruit]  [icon:5] Defeat a Villain of 5 [icon:attack] or 6 [icon:attack]."
           ]
@@ -293,7 +395,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-the-power-cosmic.webp",
           "abilities": [
             "[keyword:Focus 9][icon:recruit]  [icon:5] You get +9 [icon:attack]."
           ]
@@ -309,9 +411,43 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-energy-surge.webp",
           "abilities": [
             "Double the [icon:recruit] you have."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-warp-speed.webp",
+          "sides": [
+            "warp-speed"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-epic-destiny.webp",
+          "sides": [
+            "epic-destiny"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-the-power-cosmic.webp",
+          "sides": [
+            "the-power-cosmic"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-silver-surfer-energy-surge.webp",
+          "sides": [
+            "energy-surge"
           ]
         }
       ]
@@ -339,7 +475,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-it-started-on-yancy-street.webp",
           "abilities": [
             "[team:fantastic-four]: You get +2[icon:recruit]."
           ]
@@ -355,7 +491,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-knuckle-sandwich.webp",
           "abilities": [
             "[keyword:Focus 3][icon:recruit]  [icon:5] You get +2[icon:attack]."
           ]
@@ -371,7 +507,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-crime-stopper.webp",
           "abilities": [
             "Whenever you defeat a Villain in the Bank this turn, rescue a Bystander.",
             "[keyword:Focus 1][icon:recruit]  [icon:5] Move a Villain to an adjacent city space. If another Villain is already there, swap them."
@@ -388,9 +524,43 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-its-clobberin-time.webp",
           "abilities": [
             "[hc:strength]: You get +3[icon:attack]for each other [hc:strength]card you played this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-it-started-on-yancy-street.webp",
+          "sides": [
+            "it-started-on-yancy-street"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-knuckle-sandwich.webp",
+          "sides": [
+            "knuckle-sandwich"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-crime-stopper.webp",
+          "sides": [
+            "crime-stopper"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ff04/ff04-hr-thing-its-clobberin-time.webp",
+          "sides": [
+            "its-clobberin-time"
           ]
         }
       ]

@@ -108,6 +108,56 @@
           ],
           "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-8r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-petty-larceny.webp",
+          "sides": [
+            "petty-larceny"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-anything-for-cassie.webp",
+          "sides": [
+            "anything-for-cassie"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-shocking-support.webp",
+          "sides": [
+            "shocking-support"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-x-con-security-van.webp",
+          "sides": [
+            "x-con-security-van"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-putting-a-crew-together.webp",
+          "sides": [
+            "putting-a-crew-together"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-the-big-score.webp",
+          "sides": [
+            "the-big-score"
+          ]
+        }
       ]
     },
     {
@@ -226,6 +276,56 @@
             "You get +1[icon:attack] for each card you played this turn that's [hc:strength] and/or has Size-Changing."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-hitch-a-ride.webp",
+          "sides": [
+            "hitch-a-ride"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-look-out-for-the-little-guy.webp",
+          "sides": [
+            "look-out-for-the-little-guy"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-shrink-away.webp",
+          "sides": [
+            "shrink-away"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-bug-swarm.webp",
+          "sides": [
+            "bug-swarm"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-tiny-little-risk.webp",
+          "sides": [
+            "tiny-little-risk"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-giant-man.webp",
+          "sides": [
+            "giant-man"
+          ]
+        }
       ]
     },
     {
@@ -339,6 +439,56 @@
             "You get +1[icon:attack] for each other card you have with a \"+\" symbol in its attack icon."
           ],
           "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-9r.webp"
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-follow-my-lead.webp",
+          "sides": [
+            "follow-my-lead"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-flitting-sting.webp",
+          "sides": [
+            "flitting-sting"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-master-physicist.webp",
+          "sides": [
+            "master-physicist"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-positive-ions.webp",
+          "sides": [
+            "positive-ions"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-infiltrate.webp",
+          "sides": [
+            "infiltrate"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-hope-returns.webp",
+          "sides": [
+            "hope-returns"
+          ]
         }
       ]
     },
@@ -458,6 +608,56 @@
             "You get +1[icon:attack] for each Villain worth 2[icon:piercing] or less in your Victory Pile."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-start-small.webp",
+          "sides": [
+            "start-small"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-giant-hug.webp",
+          "sides": [
+            "giant-hug"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-colossal-stomp.webp",
+          "sides": [
+            "colossal-stomp"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-quantum-beacon.webp",
+          "sides": [
+            "quantum-beacon"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-learn-from-the-past.webp",
+          "sides": [
+            "learn-from-the-past"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-inspire-revolution.webp",
+          "sides": [
+            "inspire-revolution"
+          ]
+        }
       ]
     },
     {
@@ -568,6 +768,56 @@
           ],
           "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-8r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-subatomic-size.webp",
+          "sides": [
+            "subatomic-size"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-search-for-peace.webp",
+          "sides": [
+            "search-for-peace"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-prepare-for-war.webp",
+          "sides": [
+            "prepare-for-war"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-wasp-of-another-generation.webp",
+          "sides": [
+            "wasp-of-another-generation"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-quantum-contradiction.webp",
+          "sides": [
+            "quantum-contradiction"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-finally-found-you.webp",
+          "sides": [
+            "finally-found-you"
+          ]
+        }
       ]
     },
     {
@@ -677,6 +927,56 @@
             "[hc:instinct]: You may choose a player to gain the Found Hero."
           ],
           "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-7r.webp"
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-veb.webp",
+          "sides": [
+            "veb"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-mystics.webp",
+          "sides": [
+            "mystics"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-steel-warrior.webp",
+          "sides": [
+            "steel-warrior"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-xolum.webp",
+          "sides": [
+            "xolum"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-quaz.webp",
+          "sides": [
+            "quaz"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-freedom-forever.webp",
+          "sides": [
+            "freedom-forever"
+          ]
         }
       ]
     },
@@ -791,6 +1091,56 @@
           "abilities": [
             "[keyword:Bridge Conqueror 1]",
             "You get +1[icon:attack] for each Villain worth, 4[icon:piercing] or more and each Mastermind Tactic in your Victory Pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-take-the-high-ground.webp",
+          "sides": [
+            "take-the-high-ground"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-hit-and-run.webp",
+          "sides": [
+            "hit-and-run"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-unite-the-oppressed.webp",
+          "sides": [
+            "unite-the-oppressed"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-find-your-courage.webp",
+          "sides": [
+            "find-your-courage"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-lead-powerful-allies.webp",
+          "sides": [
+            "lead-powerful-allies"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-conquer-the-conqueror.webp",
+          "sides": [
+            "conquer-the-conqueror"
           ]
         }
       ]
@@ -909,6 +1259,56 @@
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech][hc:tech][hc:tech]",
             "[keyword:Antics]: You get +2[icon:attack].",
             "[keyword:Heist]: You get +2[icon:attack]. If the card revealed from the Villain Deck is a Scheme Twist, you get another +2[icon:attack], and you may shuffle that deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-up-the-ante.webp",
+          "sides": [
+            "up-the-ante"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-antagonize.webp",
+          "sides": [
+            "antagonize"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-anticipate.webp",
+          "sides": [
+            "anticipate"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-antiproton-experiments.webp",
+          "sides": [
+            "antiproton-experiments"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-anti-tank-weapons.webp",
+          "sides": [
+            "anti-tank-weapons"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-revolutionary-anthem.webp",
+          "sides": [
+            "revolutionary-anthem"
           ]
         }
       ]

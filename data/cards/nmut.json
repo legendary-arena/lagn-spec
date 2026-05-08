@@ -21,7 +21,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-sow-rivalry.webp",
           "abilities": [
             "[hc:covert]: Choose a Villain. You get +1[icon:attack] for each Villain adjacent to it."
           ]
@@ -37,7 +37,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-temporary-possession.webp",
           "abilities": [
             "Guess a color. Then reveal the top card of the Hero Deck and put it back on the top or bottom of that deck. If you guessed right, you get +2[icon:attack]."
           ]
@@ -53,7 +53,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-karmic-balance.webp",
           "abilities": [
             "Reveal the top card of the Hero Deck. You may recruit it this turn. If you do, you may KO one of your cards or a card from your discard pile."
           ]
@@ -69,9 +69,43 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-control-like-a-puppet.webp",
           "abilities": [
             "[team:x-men]: Choose a Villain in the city. You get +[icon:attack] equal to its VP, usable only against other Villains or the Mastermind."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-sow-rivalry.webp",
+          "sides": [
+            "sow-rivalry"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-temporary-possession.webp",
+          "sides": [
+            "temporary-possession"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-karmic-balance.webp",
+          "sides": [
+            "karmic-balance"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-control-like-a-puppet.webp",
+          "sides": [
+            "control-like-a-puppet"
           ]
         }
       ]
@@ -94,7 +128,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-dreams-made-real.webp",
           "abilities": [
             "[keyword:Moonlight]: You may discard a card. If you do, draw a card."
           ]
@@ -110,7 +144,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-empathic-link.webp",
           "abilities": [
             "When a card effect causes you to discard this card, set it aside. At the end of this turn, add it to your hand as an extra card."
           ]
@@ -126,7 +160,7 @@
           "cost": 6,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-nightmare-wolves.webp",
           "abilities": [
             "You may have a [keyword:Waking Nightmare]. You get +[icon:attack] equal to the cost of the card you discarded this way."
           ]
@@ -142,10 +176,44 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-haunted-by-the-demon-bear.webp",
           "abilities": [
             "Whenever a card effect causes you to discard a card from your hand this turn, you get +2[icon:attack].",
             "[keyword:Moonlight]: You may have a [keyword:Waking Nightmare]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-dreams-made-real.webp",
+          "sides": [
+            "dreams-made-real"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-empathic-link.webp",
+          "sides": [
+            "empathic-link"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-nightmare-wolves.webp",
+          "sides": [
+            "nightmare-wolves"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-haunted-by-the-demon-bear.webp",
+          "sides": [
+            "haunted-by-the-demon-bear"
           ]
         }
       ]
@@ -168,7 +236,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-absorb-radiation.webp",
           "abilities": [
             "[keyword:Moonlight]: You may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[keyword:Sunlight]: Draw a card."
@@ -185,7 +253,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-solar-powered.webp",
           "abilities": [
             "[keyword:Sunlight]: You may put a card from your hand on the bottom of you deck. If you do, you get +2[icon:attack]."
           ]
@@ -201,7 +269,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-thermokinetic-fury.webp",
           "abilities": [
             "To play this, you must put a card from your hand on the bottom of your deck.",
             "[keyword:Sunlight]: You get +1[icon:attack] for each other [team:x-men] card you played this turn."
@@ -218,10 +286,44 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-empyreal-force.webp",
           "abilities": [
             "Choose any number of Heroes in the HQ. Put them on the bottom of the Hero Deck.",
             "[keyword:Sunlight]: You get +1[icon:attack] for each Hero in the HQ with an even-numbered cost."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-absorb-radiation.webp",
+          "sides": [
+            "absorb-radiation"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-solar-powered.webp",
+          "sides": [
+            "solar-powered"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-thermokinetic-fury.webp",
+          "sides": [
+            "thermokinetic-fury"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-empyreal-force.webp",
+          "sides": [
+            "empyreal-force"
           ]
         }
       ]
@@ -244,7 +346,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-earthling-choices.webp",
           "abilities": [
             "Look at the top two cards of your deck. Draw one and discard the other."
           ]
@@ -260,7 +362,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-analyze-planetary-rotation.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +2[icon:recruit].",
             "[keyword:Moonlight]: You get +2[icon:attack].",
@@ -278,7 +380,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-techno-organic-adaptation.webp",
           "abilities": [
             "[hc:tech]: The first time you defeat a Villain this turn, you may KO one of your cards or a card from your discard pile."
           ]
@@ -294,11 +396,45 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-nanite-shapeshifter.webp",
           "abilities": [
             "[keyword:Sunlight]: Draw 3 cards.",
             "[keyword:Moonlight]: You get +3[icon:recruit] and +3[icon:attack].",
             "[team:x-men][team:x-men][team:x-men][team:x-men]: Instead, you get both."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-earthling-choices.webp",
+          "sides": [
+            "earthling-choices"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-analyze-planetary-rotation.webp",
+          "sides": [
+            "analyze-planetary-rotation"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-techno-organic-adaptation.webp",
+          "sides": [
+            "techno-organic-adaptation"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-nanite-shapeshifter.webp",
+          "sides": [
+            "nanite-shapeshifter"
           ]
         }
       ]
@@ -321,7 +457,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-night-vision.webp",
           "abilities": [
             "[keyword:Moonlight]: Look at the top two cards of your deck. Discard any number of them and put the rest back in any order."
           ]
@@ -337,7 +473,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-wolf-out.webp",
           "abilities": [
             "[keyword:Sunlight]: You may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[keyword:Moonlight]: Draw a card."
@@ -354,7 +490,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-howl-at-the-moon.webp",
           "abilities": [
             "[keyword:Moonlight]: Look at the top card of your deck. KO it or put it back."
           ]
@@ -370,10 +506,44 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-nocturnal-savagery.webp",
           "abilities": [
             "Look at the top three cards of your deck. Discard any number of them and put the rest back in any order.",
             "[keyword:Moonlight]: You get the total printed [icon:attack] of all the cards you discarded from your deck this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-night-vision.webp",
+          "sides": [
+            "night-vision"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-wolf-out.webp",
+          "sides": [
+            "wolf-out"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-howl-at-the-moon.webp",
+          "sides": [
+            "howl-at-the-moon"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-nocturnal-savagery.webp",
+          "sides": [
+            "nocturnal-savagery"
           ]
         }
       ]

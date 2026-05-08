@@ -158,6 +158,12 @@
     {
       "_op": "merge",
       "slug": "falcon-winter-soldier",
+      "physicalCards": [
+        { "id": "p1", "count": 5, "sides": ["attune", "atone"] },
+        { "id": "p2", "count": 5, "sides": ["relocate", "reload"] },
+        { "id": "p3", "count": 3, "sides": ["new-wings", "new-plan"] },
+        { "id": "p4", "count": 1, "sides": ["captain-americas-legacy"] }
+      ],
       "cards": [
         {
           "slug": "attune",

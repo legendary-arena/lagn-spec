@@ -26,7 +26,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-multi-gun.webp",
           "abilities": [
             "[keyword:Spectrum]: You get +1[icon:recruit] and +1[icon:attack]."
           ]
@@ -42,7 +42,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-government-payroll.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Patrol the Bank]: If it's empty, you get +2[icon:recruit]. If it's not, you get +2[icon:attack]."
@@ -59,7 +59,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-big-slimeportunity.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Patrol the Sewers]: If it's empty, draw a card."
@@ -76,12 +76,46 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-shapeshifting-symbiote.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "For each other card you played this turn with a [icon:recruit] icon, you get +1[icon:recruit].",
             "For each other card you played this turn with a [icon:attack] icon, you get +1[icon:attack].",
             "(If another card has both [icon:recruit] and [icon:attack], you get both bonuses.)"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-multi-gun.webp",
+          "sides": [
+            "multi-gun"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-government-payroll.webp",
+          "sides": [
+            "government-payroll"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-big-slimeportunity.webp",
+          "sides": [
+            "big-slimeportunity"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-agent-venom-shapeshifting-symbiote.webp",
+          "sides": [
+            "shapeshifting-symbiote"
           ]
         }
       ]
@@ -109,7 +143,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-all-terrain-barbarian.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Patrol the Sewers]: If it's empty, you get +1[icon:recruit]."
@@ -126,7 +160,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-quiver-of-thunderbolts.webp",
           "abilities": [
             "[keyword:Spectrum]: Draw a card."
           ]
@@ -142,7 +176,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-warlord-of-open-spaces.webp",
           "abilities": [
             "[keyword:Patrol two adjacent city spaces]: If they're both empty, you get +1[icon:attack]."
           ]
@@ -158,9 +192,43 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-lord-of-dragons.webp",
           "abilities": [
             "[keyword:Patrol the Rooftops]: If it's empty, you get +4[icon:recruit] and +4[icon:attack]. If it's not, defeat the Villain there for free."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-all-terrain-barbarian.webp",
+          "sides": [
+            "all-terrain-barbarian"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-quiver-of-thunderbolts.webp",
+          "sides": [
+            "quiver-of-thunderbolts"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-warlord-of-open-spaces.webp",
+          "sides": [
+            "warlord-of-open-spaces"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-arkon-the-magnificent-lord-of-dragons.webp",
+          "sides": [
+            "lord-of-dragons"
           ]
         }
       ]
@@ -188,7 +256,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-balanced-attack.webp",
           "abilities": [
             "Reveal the top card of your deck. If it's [hc:tech] or [hc:strength], draw it."
           ]
@@ -204,7 +272,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-upside-down-thinking.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Patrol any city space]: If it's empty, then the hero in the HQ space under it costs 3 less this turn."
@@ -221,7 +289,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-doctor-of-beatdown.webp",
           "abilities": [
             "For each other [hc:strength] card you played this turn, you get +1[icon:attack].",
             "For each other [hc:tech] card you played this turn, you get +1[icon:attack]."
@@ -238,9 +306,43 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-multi-variable-smackulus.webp",
           "abilities": [
             "[hc:tech][hc:tech][hc:strength][hc:strength]: Draw three cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-balanced-attack.webp",
+          "sides": [
+            "balanced-attack"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-upside-down-thinking.webp",
+          "sides": [
+            "upside-down-thinking"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-doctor-of-beatdown.webp",
+          "sides": [
+            "doctor-of-beatdown"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-beast-multi-variable-smackulus.webp",
+          "sides": [
+            "multi-variable-smackulus"
           ]
         }
       ]
@@ -268,7 +370,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-apocalyptic-vision.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top card of the Villain Deck. If it's a Scheme Twist, you get +2[icon:attack]. Otherwise, put it back on the top or bottom."
           ]
@@ -284,7 +386,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-witness-the-end.webp",
           "abilities": [
             "[hc:instinct]: You may KO a card from your hand or discard pile. If you do, draw a card."
           ]
@@ -300,7 +402,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-dark-foretelling.webp",
           "abilities": [
             "Reveal the top three cards of the Villain Deck. Rescue any Bystanders you revealed, then put the rest back in any order."
           ]
@@ -316,10 +418,44 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-telepathic-control.webp",
           "abilities": [
             "Reveal the top five cards of the Villain Deck. You get +[icon:attack] equal to the printed [icon:piercing] of one of those cards. Put them back in any order.",
             "[team:cabal]: Instead, you get +[icon:attack] for two of those cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-apocalyptic-vision.webp",
+          "sides": [
+            "apocalyptic-vision"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-witness-the-end.webp",
+          "sides": [
+            "witness-the-end"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-dark-foretelling.webp",
+          "sides": [
+            "dark-foretelling"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-black-swan-telepathic-control.webp",
+          "sides": [
+            "telepathic-control"
           ]
         }
       ]
@@ -347,7 +483,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-jurassic-america.webp",
           "abilities": [
             "[keyword:Spectrum]: you get +2[icon:recruit]."
           ]
@@ -363,7 +499,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-patriotic-chomp.webp",
           "abilities": [
             "[keyword:Spectrum]: you get +2[icon:attack]."
           ]
@@ -379,7 +515,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-feeding-grounds.webp",
           "abilities": [
             "[keyword:Patrol the Streets]: If it's empty, you may KO a card from your hand or discard pile."
           ]
@@ -395,9 +531,43 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-dino-roar-of-triumph.webp",
           "abilities": [
             "Whenever you defeat a Villain this turn, each Villain and Mastermind adjacent to it gets -2[icon:attack] this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-jurassic-america.webp",
+          "sides": [
+            "jurassic-america"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-patriotic-chomp.webp",
+          "sides": [
+            "patriotic-chomp"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-feeding-grounds.webp",
+          "sides": [
+            "feeding-grounds"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-and-the-devil-the-dino-roar-of-triumph.webp",
+          "sides": [
+            "dino-roar-of-triumph"
           ]
         }
       ]
@@ -425,7 +595,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-transatlantic-savior.webp",
           "abilities": [
             "You get +1[icon:recruit] for each different team icon among your heroes."
           ]
@@ -441,7 +611,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-combined-strength.webp",
           "abilities": [
             "You get +1[icon:attack] for each different team icon among your heroes."
           ]
@@ -457,7 +627,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-raise-the-union-jack.webp",
           "abilities": [
             "[keyword:Patrol the Rooftops]: If it's empty, reveal the top two cards of your deck. If they have different team icons, draw them. Otherwise, put them back in any order."
           ]
@@ -473,9 +643,43 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-lead-the-captain-britain-corps.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, draw three extra cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-transatlantic-savior.webp",
+          "sides": [
+            "transatlantic-savior"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-combined-strength.webp",
+          "sides": [
+            "combined-strength"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-raise-the-union-jack.webp",
+          "sides": [
+            "raise-the-union-jack"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-captain-britain-lead-the-captain-britain-corps.webp",
+          "sides": [
+            "lead-the-captain-britain-corps"
           ]
         }
       ]
@@ -503,7 +707,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-let-none-escape-you.webp",
           "abilities": [
             "[keyword:Patrol the Escape Pile]: If there are none Bystanders in it, you get +2[icon:attack]. Otherwise, you get +2[icon:recruit]."
           ]
@@ -519,7 +723,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-culling-blade.webp",
           "abilities": [
             "KO a Bystander from the Bystander Deck. If it's a Special Bystander, you may use its Rescue effect."
           ]
@@ -535,7 +739,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-rictus-grin.webp",
           "abilities": [
             "[team:cabal]: KO a Bystander from the Bystander Stack. Then, you get +1[icon:attack] for every four Bystanders in the KO Pile."
           ]
@@ -551,9 +755,43 @@
           "cost": 8,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-atom-splitting-glaive.webp",
           "abilities": [
             "[team:cabal]: You may KO a Bystander from the Escape Pile and from each player's Victory Pile. You get +1[icon:attack] for each Bystander KO'd this way."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-let-none-escape-you.webp",
+          "sides": [
+            "let-none-escape-you"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-culling-blade.webp",
+          "sides": [
+            "culling-blade"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-rictus-grin.webp",
+          "sides": [
+            "rictus-grin"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-corvus-glaive-atom-splitting-glaive.webp",
+          "sides": [
+            "atom-splitting-glaive"
           ]
         }
       ]
@@ -581,7 +819,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-sweep-the-streets-of-trash.webp",
           "abilities": [
             "[keyword:Patrol the Streets]: If it's empty, draw a card."
           ]
@@ -597,7 +835,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-youre-a-slow-learner.webp",
           "abilities": [
             "[hc:tech]: Reveal the top card of your deck. If it costs 0, KO it and you get +1[icon:attack]."
           ]
@@ -613,7 +851,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-3u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-ice-magic.webp",
           "abilities": [
             "Reveal the top card of the Villain Deck. If it's a Villain, you may fight it this turn.",
             "[hc:ranged][hc:ranged]: You get +[icon:attack] equal to that Villain's printed [icon:piercing]."
@@ -630,9 +868,43 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-calm-before-the-storm.webp",
           "abilities": [
             "[keyword:Patrol every city space]: For each space that's empty, you get +1[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-sweep-the-streets-of-trash.webp",
+          "sides": [
+            "sweep-the-streets-of-trash"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-youre-a-slow-learner.webp",
+          "sides": [
+            "youre-a-slow-learner"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-ice-magic.webp",
+          "sides": [
+            "ice-magic"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-dr-punisher-soldier-supreme-calm-before-the-storm.webp",
+          "sides": [
+            "calm-before-the-storm"
           ]
         }
       ]
@@ -660,7 +932,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-monster-hunter.webp",
           "abilities": [
             "[keyword:Patrol the Sewers]: If it's empty, rescue a Bystander."
           ]
@@ -676,7 +948,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-bloodstone-pendant.webp",
           "abilities": [
             "[keyword:Spectrum]: You may KO a card from your hand or discard pile. If you do, you get +1[icon:recruit]."
           ]
@@ -692,7 +964,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-defend-the-shield-wall.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "You get +1[icon:attack] for each other [team:shield] Hero you played this turn."
@@ -709,9 +981,43 @@
           "cost": 8,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-prodigy-of-ulysses-bloodstone.webp",
           "abilities": [
             "[keyword:Spectrum]: You get +3[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-monster-hunter.webp",
+          "sides": [
+            "monster-hunter"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-bloodstone-pendant.webp",
+          "sides": [
+            "bloodstone-pendant"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-defend-the-shield-wall.webp",
+          "sides": [
+            "defend-the-shield-wall"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-elsa-bloodstone-prodigy-of-ulysses-bloodstone.webp",
+          "sides": [
+            "prodigy-of-ulysses-bloodstone"
           ]
         }
       ]
@@ -739,7 +1045,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-reincarnate.webp",
           "abilities": [
             "KO this card. Gain a hero from the S.H.I.E.L.D. Officer stack or HQ that costs 4 or less and put it into your hand."
           ]
@@ -755,7 +1061,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-burn-out.webp",
           "abilities": [
             "You may KO this card. If you do, you gain +2[icon:attack]."
           ]
@@ -771,7 +1077,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-rise-from-the-ashes.webp",
           "abilities": [
             "Gain a Hero that was KO'd this turn."
           ]
@@ -787,9 +1093,43 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-destruction-is-creation.webp",
           "abilities": [
             "KO up to three cards from your hand. Draw that many cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-reincarnate.webp",
+          "sides": [
+            "reincarnate"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-burn-out.webp",
+          "sides": [
+            "burn-out"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-rise-from-the-ashes.webp",
+          "sides": [
+            "rise-from-the-ashes"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-phoenix-force-cyclops-destruction-is-creation.webp",
+          "sides": [
+            "destruction-is-creation"
           ]
         }
       ]
@@ -817,7 +1157,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-guerrilla-warfare.webp",
           "abilities": [
             "When a card effect causes you to discard this card, if it is your turn, [keyword:Teleport] it instead. If it is not your turn, set it aside and add it to your hand at the end of this turn."
           ]
@@ -833,7 +1173,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-heir-to-legends.webp",
           "abilities": [
             "To play this card, you must discard a card from your hand."
           ]
@@ -849,7 +1189,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-form-of-solid-ruby.webp",
           "abilities": [
             "[team:x-men]: Whenever you defeat a villain or mastermind this turn, you get +2[icon:recruit]."
           ]
@@ -865,9 +1205,43 @@
           "cost": 8,
           "attack": "10",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-extinction-blast.webp",
           "abilities": [
             "To play this card, you must discard three cards from your hand."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-guerrilla-warfare.webp",
+          "sides": [
+            "guerrilla-warfare"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-heir-to-legends.webp",
+          "sides": [
+            "heir-to-legends"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-form-of-solid-ruby.webp",
+          "sides": [
+            "form-of-solid-ruby"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-ruby-summers-extinction-blast.webp",
+          "sides": [
+            "extinction-blast"
           ]
         }
       ]
@@ -895,7 +1269,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-shuffling-footwork.webp",
           "abilities": [
             "[hc:instinct]: You may shuffle your discard pile into your deck."
           ]
@@ -911,7 +1285,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-acrobatic-kung-fu.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Patrol the Rooftops]: If it's empty, you get +1[icon:attack]."
@@ -928,7 +1302,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-seek-the-empty-mind.webp",
           "abilities": [
             "[keyword:Patrol your discard pile]: If it's empty, you get +2[icon:attack]."
           ]
@@ -944,10 +1318,44 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-muscle-memory.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Any time you are shuffling your deck with this card in it, you may set this card aside and put it on top of your deck at the end of the shuffle."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-shuffling-footwork.webp",
+          "sides": [
+            "shuffling-footwork"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-acrobatic-kung-fu.webp",
+          "sides": [
+            "acrobatic-kung-fu"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-seek-the-empty-mind.webp",
+          "sides": [
+            "seek-the-empty-mind"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-shang-chi-muscle-memory.webp",
+          "sides": [
+            "muscle-memory"
           ]
         }
       ]
@@ -975,7 +1383,7 @@
           "cost": 2,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-long-range-spider-sense.webp",
           "abilities": [
             "[keyword:Spectrum]: Reveal the top card of your deck. If it costs 2 or less, draw it."
           ]
@@ -991,7 +1399,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-2c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-cascading-maneuver.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Spectrum]: Draw a card."
@@ -1008,7 +1416,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-2u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-silk-stalking.webp",
           "abilities": [
             "[team:spider-friends]: Reveal the top card of your deck. If it costs 0, KO it. If it costs 1 or 2, draw it."
           ]
@@ -1024,10 +1432,44 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-2r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-borrowed-cloaking-device.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Spectrum]: Reveal the top four cards of your deck. Put any combination of those cards with a total cost of 2 or less into your hand. But the rest back in any order."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-long-range-spider-sense.webp",
+          "sides": [
+            "long-range-spider-sense"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-cascading-maneuver.webp",
+          "sides": [
+            "cascading-maneuver"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-silk-stalking.webp",
+          "sides": [
+            "silk-stalking"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-silk-borrowed-cloaking-device.webp",
+          "sides": [
+            "borrowed-cloaking-device"
           ]
         }
       ]
@@ -1055,7 +1497,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-invade-the-inferno.webp",
           "abilities": [
             "[hc:covert]: Once this turn, you may fight the top card of the Bystander Stack as if it were a 3[icon:attack] Demon Villain with “Fight: KO one of your heroes.“"
           ]
@@ -1071,7 +1513,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-steel-interception.webp",
           "abilities": [
             "If a player would gain a Wound, you may discard this card instead. If you do, draw two cards."
           ]
@@ -1087,7 +1529,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-possessed-by-the-soulsword.webp",
           "abilities": [
             "[hc:strength]: [keyword:Cross-Dimensional Colossus Rampage]. You get +2[icon:attack] if at least one other player didn't reveal a Colossus card."
           ]
@@ -1103,9 +1545,43 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-rescue-my-family-from-hell.webp",
           "abilities": [
             "[team:x-men]: You may gain an [team:x-men] Hero from the HQ or the KO pile to your hand."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-invade-the-inferno.webp",
+          "sides": [
+            "invade-the-inferno"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-steel-interception.webp",
+          "sides": [
+            "steel-interception"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-possessed-by-the-soulsword.webp",
+          "sides": [
+            "possessed-by-the-soulsword"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-soulsword-colossus-rescue-my-family-from-hell.webp",
+          "sides": [
+            "rescue-my-family-from-hell"
           ]
         }
       ]
@@ -1133,7 +1609,7 @@
           "cost": 2,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-fateful-bridge.webp",
           "abilities": [
             "[keyword:Patrol the Bridge]: If it's empty, reveal the top card of your deck. If that card costs 2 or less, draw it."
           ]
@@ -1149,7 +1625,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-2c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-save-the-day.webp",
           "abilities": [
             "[keyword:Patrol the Rooftops]: If it's empty, rescue a Bystander, and then you get +1[icon:attack] for every two Bystanders in your Victory Pile."
           ]
@@ -1165,7 +1641,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-2u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-first-adventure.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Patrol the Bank]: If it's empty, you get +1[icon:attack].",
@@ -1183,10 +1659,44 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-2r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-intertwining-webs.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top three cards of your deck, then put them back in any order. You get +1[icon:attack] for each card you revealed that costs 2 or less."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-fateful-bridge.webp",
+          "sides": [
+            "fateful-bridge"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-save-the-day.webp",
+          "sides": [
+            "save-the-day"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-first-adventure.webp",
+          "sides": [
+            "first-adventure"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-spider-gwen-intertwining-webs.webp",
+          "sides": [
+            "intertwining-webs"
           ]
         }
       ]
@@ -1214,7 +1724,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-throw-over-the-railing.webp",
           "abilities": [
             "[hc:covert]: Choose a Villain on the Rooftops or Bridge. It gets -2[icon:attack] this turn."
           ]
@@ -1230,7 +1740,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-bridge-to-a-better-future.webp",
           "abilities": [
             "[keyword:Patrol the Bridge]: If it's empty, then when you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -1246,7 +1756,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-telekinesis.webp",
           "abilities": [
             "You may move a villain to an adjacent city space. If another Villain is already there, swap them."
           ]
@@ -1262,9 +1772,43 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-change-history.webp",
           "abilities": [
             "[team:x-men]: [keyword:Patrol any city space]: If it's empty, gain the hero in the HQ space under it. Put that hero on top of your deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-throw-over-the-railing.webp",
+          "sides": [
+            "throw-over-the-railing"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-bridge-to-a-better-future.webp",
+          "sides": [
+            "bridge-to-a-better-future"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-telekinesis.webp",
+          "sides": [
+            "telekinesis"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ssw2/ssw2-hr-time-traveling-jean-grey-change-history.webp",
+          "sides": [
+            "change-history"
           ]
         }
       ]

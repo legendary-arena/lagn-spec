@@ -22,6 +22,7 @@ import type {
   VillainCardSchema,
   SchemeSchema,
   CardQuerySchema,
+  PhysicalCardSchema,
 } from "../schema.js";
 
 // ── Domain types (Zod-inferred — do not hand-edit) ───────────────────────────
@@ -36,6 +37,7 @@ export type VillainGroup    = z.infer<typeof VillainGroupSchema>;
 export type VillainCard     = z.infer<typeof VillainCardSchema>;
 export type Scheme          = z.infer<typeof SchemeSchema>;
 export type CardQuery       = z.infer<typeof CardQuerySchema>;
+export type PhysicalCard    = z.infer<typeof PhysicalCardSchema>;
 
 // ── Flat "search result" card — useful for the viewer grid ───────────────────
 //
@@ -154,6 +156,22 @@ export interface CardRegistry {
 
   /** Validation report including any schema parse errors from loading. */
   validate(): HealthReport;
+
+  /**
+   * Look up the PhysicalCard that owns a given card-side under a hero.
+   *
+   * Solo cards resolve to their single-side physicalCard; split cards
+   * resolve to the physicalCard whose `sides[]` array includes the
+   * given `sideSlug`. Returns `undefined` when no match is found —
+   * callers must handle the miss path (typically via the legacy
+   * `cards[].imageUrl` field while Phase 2 consumer migration is
+   * pending).
+   *
+   * @param heroSlug - The hero slug (e.g., "falcon-winter-soldier").
+   * @param sideSlug - The card-side slug (e.g., "attune").
+   * @returns The owning PhysicalCard, or undefined on miss.
+   */
+  getPhysicalCardForSide(heroSlug: string, sideSlug: string): PhysicalCard | undefined;
 }
 
 // ── Factory options ──────────────────────────────────────────────────────────

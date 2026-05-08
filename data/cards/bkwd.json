@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-evasive-acrobatics.webp",
           "abilities": [
             "[keyword:Dodge]",
             "When you [keyword:Dodge] with or play this card, you may also [keyword:Dodge] with another card from your hand."
@@ -43,7 +43,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-widows-bite.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[keyword:Dark Memories]"
@@ -60,7 +60,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-weave-a-web-of-spies.webp",
           "abilities": [
             "[keyword:Dodge]",
             "If you drew any cards this turn, you may send one of your other Heroes [keyword:Undercover]."
@@ -77,10 +77,44 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-infiltrate-the-conspiracy.webp",
           "abilities": [
             "You may send one of your Heroes [keyword:Undercover].",
             "You get +3[icon:attack] if you have at least 4 Bystanders and/or Undercover Heroes in your Victory Pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-evasive-acrobatics.webp",
+          "sides": [
+            "evasive-acrobatics"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-widows-bite.webp",
+          "sides": [
+            "widows-bite"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-weave-a-web-of-spies.webp",
+          "sides": [
+            "weave-a-web-of-spies"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-infiltrate-the-conspiracy.webp",
+          "sides": [
+            "infiltrate-the-conspiracy"
           ]
         }
       ]
@@ -108,7 +142,7 @@
           "cost": 2,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-strike-and-fade.webp",
           "abilities": [
             "Send this [keyword:Undercover]."
           ]
@@ -124,7 +158,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-unveil-identity.webp",
           "abilities": [
             "[hc:instinct]: You may [keyword:Unleash] one of your Heroes from [keyword:Undercover]."
           ]
@@ -140,7 +174,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-twilight-ops.webp",
           "abilities": [
             "[keyword:Dodge]",
             "When you [keyword:Dodge] with this card, you may [keyword:Unleash] one of your Heroes from [keyword:Undercover].",
@@ -158,10 +192,44 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-destroy-the-red-room.webp",
           "abilities": [
             "You may [keyword:Unleash] one of your Heroes from [keyword:Undercover].",
             "You may send a Hero from your discard pile [keyword:Undercover]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-strike-and-fade.webp",
+          "sides": [
+            "strike-and-fade"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-unveil-identity.webp",
+          "sides": [
+            "unveil-identity"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-twilight-ops.webp",
+          "sides": [
+            "twilight-ops"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-destroy-the-red-room.webp",
+          "sides": [
+            "destroy-the-red-room"
           ]
         }
       ]
@@ -189,7 +257,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-sleeper-agent.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When you fight a Villain, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -207,7 +275,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-magnetic-shield.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When you recruit another [hc:covert] Hero, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -225,7 +293,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-death-was-only-a-ruse.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When a Master Strike is completed or any player fights the Mastermind, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -243,11 +311,45 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-champion-of-the-winter-guard.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When a Scheme Twist is completed or you play your third [hc:covert] Hero in a turn, you may [keyword:Unleash] this card from [keyword:Undercover].",
             "[hc:covert]: You get +2[icon:attack] for each other [hc:covert] Hero you played this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-sleeper-agent.webp",
+          "sides": [
+            "sleeper-agent"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-magnetic-shield.webp",
+          "sides": [
+            "magnetic-shield"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-death-was-only-a-ruse.webp",
+          "sides": [
+            "death-was-only-a-ruse"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-champion-of-the-winter-guard.webp",
+          "sides": [
+            "champion-of-the-winter-guard"
           ]
         }
       ]
@@ -275,7 +377,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-dark-influence-of-the-hand.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[keyword:Dark Memories]."
@@ -292,7 +394,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-amulets-of-the-tiger-god.webp",
           "abilities": [
             "Reveal the top two cards of your deck. Draw one of them that costs 0 and discard the rest."
           ]
@@ -308,7 +410,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-camouflaged-huntress.webp",
           "abilities": [
             "Whenever you defeat a Henchman this turn, you may KO one of your cards."
           ]
@@ -324,9 +426,43 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-shadowed-resurrection.webp",
           "abilities": [
             "[keyword:Dark Memories], drawing that many cards instead of gaining [icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-dark-influence-of-the-hand.webp",
+          "sides": [
+            "dark-influence-of-the-hand"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-amulets-of-the-tiger-god.webp",
+          "sides": [
+            "amulets-of-the-tiger-god"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-camouflaged-huntress.webp",
+          "sides": [
+            "camouflaged-huntress"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-shadowed-resurrection.webp",
+          "sides": [
+            "shadowed-resurrection"
           ]
         }
       ]
@@ -357,7 +493,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-attune.webp",
           "abilities": [
             "To play this side, you must discard a card."
           ]
@@ -373,7 +509,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-atone.webp",
           "abilities": [
             "[keyword:Dark Memories]."
           ]
@@ -389,7 +525,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-relocate.webp",
           "abilities": [
             "[keyword:Dodge].",
             "[hc:instinct]: You get +1[icon:attack]."
@@ -406,7 +542,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-reload.webp",
           "abilities": [
             "[hc:tech]: Draw a card."
           ]
@@ -422,7 +558,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-new-wings.webp",
           "abilities": [
             "If you discarded any cards this turn, you get +4[icon:attack]."
           ]
@@ -438,7 +574,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-new-plan.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -454,10 +590,47 @@
           "cost": 7,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-captain-americas-legacy.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero Class you have.",
             "[team:avengers]: [keyword:Dark Memories]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-atone-attune.webp",
+          "sides": [
+            "attune",
+            "atone"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-reload-relocate.webp",
+          "sides": [
+            "relocate",
+            "reload"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-new-plan-new-wings.webp",
+          "sides": [
+            "new-wings",
+            "new-plan"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-captain-americas-legacy.webp",
+          "sides": [
+            "captain-americas-legacy"
           ]
         }
       ]

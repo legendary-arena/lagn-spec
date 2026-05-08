@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-sniper-squad.webp",
           "abilities": [
             "[team:shield][team:shield][team:shield][team:shield]: [keyword:Woman Out of Time]"
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-paramilitary-ops.webp",
           "abilities": [
             "You get +1[icon:attack] for each other [team:shield] Hero you played this turn that costs 1 or more."
           ]
@@ -58,7 +58,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-spy-network.webp",
           "abilities": [
             "Choose one: Gain a S.H.I.E.L.D. Officer, or you get +2[icon:attack].",
             "[hc:covert]: [keyword:Woman Out of Time]"
@@ -75,10 +75,44 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-mobilize-for-war.webp",
           "abilities": [
             "KO up to two [team:shield] Heroes from your hand and/or discard pile.",
             "[keyword:Savior]: For each card KO'd this way, you get +1[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-sniper-squad.webp",
+          "sides": [
+            "sniper-squad"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-paramilitary-ops.webp",
+          "sides": [
+            "paramilitary-ops"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-spy-network.webp",
+          "sides": [
+            "spy-network"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-mobilize-for-war.webp",
+          "sides": [
+            "mobilize-for-war"
           ]
         }
       ]
@@ -106,7 +140,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-aerial-catch.webp",
           "abilities": [
             "[hc:instinct]: Rescue a Bystander."
           ]
@@ -122,7 +156,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-winged-salvation.webp",
           "abilities": [
             "[keyword:Savior]: You get +2[icon:attack]."
           ]
@@ -138,7 +172,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-flying-shield-block.webp",
           "abilities": [
             "Once per turn, if a player would gain a Wound, you may reveal this card and rescue a Bystander instead."
           ]
@@ -154,10 +188,44 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-star-spangled-hero.webp",
           "abilities": [
             "You get +2[icon:attack] for each Hero Class you have.",
             "[keyword:Savior]: You get +2[icon:recruit] for each Hero Class you have."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-aerial-catch.webp",
+          "sides": [
+            "aerial-catch"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-winged-salvation.webp",
+          "sides": [
+            "winged-salvation"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-flying-shield-block.webp",
+          "sides": [
+            "flying-shield-block"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-star-spangled-hero.webp",
+          "sides": [
+            "star-spangled-hero"
           ]
         }
       ]
@@ -185,7 +253,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-devoted-patriot.webp",
           "abilities": [
             "Draw a card.",
             "[hc:strength]: [keyword:Man Out of Time]"
@@ -202,7 +270,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-storm-the-beachhead.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero class you have.",
             "[keyword:Man Out of Time]"
@@ -219,7 +287,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-liberate-the-prisoners.webp",
           "abilities": [
             "[team:avengers]: Rescue a Bystander.",
             "[keyword:Savior]: Draw a Card."
@@ -236,9 +304,43 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-punch-evil-in-the-face.webp",
           "abilities": [
             "[keyword:Savior]: [keyword:Man Out of Time]"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-devoted-patriot.webp",
+          "sides": [
+            "devoted-patriot"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-storm-the-beachhead.webp",
+          "sides": [
+            "storm-the-beachhead"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-liberate-the-prisoners.webp",
+          "sides": [
+            "liberate-the-prisoners"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-punch-evil-in-the-face.webp",
+          "sides": [
+            "punch-evil-in-the-face"
           ]
         }
       ]
@@ -266,7 +368,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-international-strike-force.webp",
           "abilities": [
             "You get +1[icon:recruit] for each Hero Class you have.",
             "[keyword:Savior]: You get +1[icon:attack] for each Hero Class you have."
@@ -283,7 +385,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-reassign-to-civilian-duty.webp",
           "abilities": [
             "[team:shield][team:shield][team:shield]: You may KO a [team:shield] Hero that you played this turn. If you do, rescue a Bystander."
           ]
@@ -299,7 +401,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-shadow-of-wars-past.webp",
           "abilities": [
             "[keyword:Savior]: [keyword:Man Out of Time]"
           ]
@@ -315,10 +417,44 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-save-the-world.webp",
           "abilities": [
             "Rescue a Bystander.",
             "[keyword:Savior]: You get +3[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-international-strike-force.webp",
+          "sides": [
+            "international-strike-force"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-reassign-to-civilian-duty.webp",
+          "sides": [
+            "reassign-to-civilian-duty"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-shadow-of-wars-past.webp",
+          "sides": [
+            "shadow-of-wars-past"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-save-the-world.webp",
+          "sides": [
+            "save-the-world"
           ]
         }
       ]
@@ -346,7 +482,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-bionic-arm.webp",
           "abilities": [
             "[hc:tech]: [keyword:Man Out of Time]"
           ]
@@ -362,7 +498,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-sniper-nest.webp",
           "abilities": [
             "Draw a card.",
             "[hc:tech]: [keyword:Man Out of Time]"
@@ -379,7 +515,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-kgb-training.webp",
           "abilities": [
             "If you played at least 7 other cards this turn you get +2[icon:attack]."
           ]
@@ -395,10 +531,44 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-2-4.webp",
           "abilities": [
             "A Hero in your hand gains [keyword:Man Out of Time] this turn.",
             "[hc:tech]: Another Hero in your hand gains [keyword:Man Out of Time] this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-bionic-arm.webp",
+          "sides": [
+            "bionic-arm"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-sniper-nest.webp",
+          "sides": [
+            "sniper-nest"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-kgb-training.webp",
+          "sides": [
+            "kgb-training"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-2-4.webp",
+          "sides": [
+            "2-4"
           ]
         }
       ]

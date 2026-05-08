@@ -27,7 +27,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-northern-lights.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:Lightshow]: Draw a card."
@@ -44,7 +44,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-flare.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +2[icon:recruit]."
           ]
@@ -60,7 +60,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-fists.webp",
           "abilities": [
             "[keyword:Berserk]"
           ]
@@ -76,7 +76,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-twin-blast.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:Lightshow]: You get +3[icon:attack]."
@@ -93,11 +93,53 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-mach-10.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "All Heroes you recruit this turn have [keyword:Soaring Flight].",
             "[keyword:Lightshow]: You get +2[icon:attack]for each [keyword:Lightshow] card you played this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-northern-lights.webp",
+          "sides": [
+            "northern-lights"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-flare.webp",
+          "sides": [
+            "blazing-flare"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-fists.webp",
+          "sides": [
+            "blazing-fists"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-twin-blast.webp",
+          "sides": [
+            "twin-blast"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-mach-10.webp",
+          "sides": [
+            "mach-10"
           ]
         }
       ]
@@ -125,7 +167,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-sonar-detection.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Piercing Energy]",
@@ -143,7 +185,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-speed-of-sound.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:Piercing Energy]"
@@ -160,7 +202,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-sonic-blastwave.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[hc:ranged]: You may have this card produce [icon:6] instead of[icon:recruit]."
@@ -177,10 +219,44 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-bone-shattering-howl.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[hc:ranged][hc:covert]: You may use[icon:attack] as if it were [icon:6] this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-sonar-detection.webp",
+          "sides": [
+            "sonar-detection"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-speed-of-sound.webp",
+          "sides": [
+            "speed-of-sound"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-sonic-blastwave.webp",
+          "sides": [
+            "sonic-blastwave"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-bone-shattering-howl.webp",
+          "sides": [
+            "bone-shattering-howl"
           ]
         }
       ]
@@ -208,7 +284,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-captivating-conundrum.webp",
           "abilities": [
             "[keyword:X-Gene] [hc:tech]: Draw a card."
           ]
@@ -224,7 +300,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-furry-fury.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[keyword:X-Gene] [hc:strength]: [keyword:Berserk]"
@@ -241,7 +317,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-calculated-rage.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[keyword:Berserk]"
@@ -258,10 +334,44 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-recursive-pummeling.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[keyword:X-Gene] [team:x-men]: You may return a 0-cost, 3-cost, and 4-cost card from your discard pile to your hand."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-captivating-conundrum.webp",
+          "sides": [
+            "captivating-conundrum"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-furry-fury.webp",
+          "sides": [
+            "furry-fury"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-calculated-rage.webp",
+          "sides": [
+            "calculated-rage"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-recursive-pummeling.webp",
+          "sides": [
+            "recursive-pummeling"
           ]
         }
       ]
@@ -289,7 +399,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-kinetic-blast-field.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -306,7 +416,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-carry-to-the-air.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:strength]: The next Hero you recruit this turn has [keyword:Soaring Flight]."
@@ -323,7 +433,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-natural-leader.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:strength]: Return a [team:shield]Hero from your discard pile to your hand."
@@ -340,10 +450,44 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-human-cannon.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "If you played at least 6 other cards this turn, you get +2[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-kinetic-blast-field.webp",
+          "sides": [
+            "kinetic-blast-field"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-carry-to-the-air.webp",
+          "sides": [
+            "carry-to-the-air"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-natural-leader.webp",
+          "sides": [
+            "natural-leader"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-human-cannon.webp",
+          "sides": [
+            "human-cannon"
           ]
         }
       ]
@@ -372,7 +516,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-reliable.webp",
           "abilities": []
         },
         {
@@ -386,7 +530,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-unpredictable.webp",
           "abilities": [
             "[keyword:Berserk], [keyword:Berserk]"
           ]
@@ -402,7 +546,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-fastball-special.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:X-Gene] [hc:instinct]: [keyword:Berserk]"
@@ -419,7 +563,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-insane-disregard-for-danger.webp",
           "abilities": [
             "[keyword:Berserk]",
             "If you have a Wound in your hand or discard pile, KO it. Otherwise, gain a Wound."
@@ -436,10 +580,52 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-uncanny-x-men.webp",
           "abilities": [
             "[keyword:Berserk], [keyword:Berserk], [keyword:Berserk]",
             "Then, draw a card for each [team:x-men] card you Berserked."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-reliable.webp",
+          "sides": [
+            "reliable"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-unpredictable.webp",
+          "sides": [
+            "unpredictable"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-fastball-special.webp",
+          "sides": [
+            "fastball-special"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-insane-disregard-for-danger.webp",
+          "sides": [
+            "insane-disregard-for-danger"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-uncanny-x-men.webp",
+          "sides": [
+            "uncanny-x-men"
           ]
         }
       ]
@@ -467,7 +653,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-convert-sound-to-light.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[keyword:Lightshow]: You get +1[icon:6] for each Lightshow card you played this turn."
@@ -484,7 +670,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-dazzling-glamour.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +2[icon:attack]."
           ]
@@ -500,7 +686,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-citywide-mega-concert.webp",
           "abilities": [
             "[keyword:Lightshow]: When you draw a new hand of cards at the end of this turn, draw two extra cards."
           ]
@@ -516,9 +702,43 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-inspire-the-world.webp",
           "abilities": [
             "[keyword:Lightshow]: Put a Hero from the HQ on top of your deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-convert-sound-to-light.webp",
+          "sides": [
+            "convert-sound-to-light"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-dazzling-glamour.webp",
+          "sides": [
+            "dazzling-glamour"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-citywide-mega-concert.webp",
+          "sides": [
+            "citywide-mega-concert"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-inspire-the-world.webp",
+          "sides": [
+            "inspire-the-world"
           ]
         }
       ]
@@ -546,7 +766,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-blinding-burst.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +3[icon:attack] usable only against the Mastermind."
           ]
@@ -562,7 +782,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-unleash-havok.webp",
           "abilities": [
             "To play this card, you must discard a card from your hand.",
             "[keyword:Berserk], [keyword:Berserk]"
@@ -579,7 +799,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-concussive-plasma.webp",
           "abilities": [
             "[keyword:X-Gene] [hc:ranged]: You get +1[icon:attack]for each [hc:ranged] card in your discard pile."
           ]
@@ -595,10 +815,44 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-radiation-focus-array.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[keyword:X-Gene] [hc:ranged]: You get the total printed[icon:attack]of all the [hc:ranged] cards in your discard pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-blinding-burst.webp",
+          "sides": [
+            "blinding-burst"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-unleash-havok.webp",
+          "sides": [
+            "unleash-havok"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-concussive-plasma.webp",
+          "sides": [
+            "concussive-plasma"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-radiation-focus-array.webp",
+          "sides": [
+            "radiation-focus-array"
           ]
         }
       ]
@@ -626,7 +880,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-light-a-spark.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Lightshow]: You get +1[icon:recruit] for each Lightshow card you played this turn."
@@ -643,7 +897,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-blasting-fireworks.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Lightshow]: You get +1[icon:attack] for each Lightshow card you played this turn."
@@ -660,7 +914,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-unexpected-explosion.webp",
           "abilities": [
             "[keyword:Lightshow]: Look at the top card of your deck. If it costs 0, KO it."
           ]
@@ -676,9 +930,43 @@
           "cost": 7,
           "attack": "5+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-prismatic-cascade.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +1[icon:recruit]and +1[icon:attack]for each [keyword:Lightshow] card you played this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-light-a-spark.webp",
+          "sides": [
+            "light-a-spark"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-blasting-fireworks.webp",
+          "sides": [
+            "blasting-fireworks"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-unexpected-explosion.webp",
+          "sides": [
+            "unexpected-explosion"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-prismatic-cascade.webp",
+          "sides": [
+            "prismatic-cascade"
           ]
         }
       ]
@@ -706,7 +994,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-intangible-qualities.webp",
           "abilities": [
             "Put a card from the HQ on the bottom of the Hero deck. If that card had a [icon:recruit], get +2[icon:recruit]. If that card had an [icon:attack], you get +2[icon:attack]. (If both, get both.)"
           ]
@@ -722,7 +1010,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-going-through-a-phase.webp",
           "abilities": [
             "[keyword:X-Gene] [team:x-men]: Draw a card."
           ]
@@ -738,7 +1026,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-ghost-in-the-machine.webp",
           "abilities": [
             "You get +1[icon:attack]for each different cost among the Heroes in the HQ."
           ]
@@ -754,10 +1042,44 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-lockheed-kittys-dragon.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "Put a card from the HQ on the bottom of the Hero Deck. You get +[icon:attack] equal to its cost."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-intangible-qualities.webp",
+          "sides": [
+            "intangible-qualities"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-going-through-a-phase.webp",
+          "sides": [
+            "going-through-a-phase"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-ghost-in-the-machine.webp",
+          "sides": [
+            "ghost-in-the-machine"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-lockheed-kittys-dragon.webp",
+          "sides": [
+            "lockheed-kittys-dragon"
           ]
         }
       ]
@@ -788,7 +1110,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-steel.webp",
           "abilities": [
             "[keyword:Berserk]"
           ]
@@ -804,7 +1126,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-light.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +2[icon:recruit]."
           ]
@@ -820,7 +1142,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-3c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-personality.webp",
           "abilities": []
         },
         {
@@ -834,7 +1156,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-eardrums.webp",
           "abilities": [
             "[keyword:Piercing Energy]"
           ]
@@ -850,7 +1172,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-time.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -866,7 +1188,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-fire.webp",
           "abilities": [
             "You get +1[icon:attack]for each different Hero Class in your discard pile."
           ]
@@ -882,10 +1204,68 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-maelstrom-of-clashing-powers.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "Reveal the top three cards of the Hero Deck. You get their total printed [icon:attack]. Put them on the bottom of the Hero Deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-steel.webp",
+          "sides": [
+            "bend-steel"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-light.webp",
+          "sides": [
+            "bend-light"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-personality.webp",
+          "sides": [
+            "split-personality"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-eardrums.webp",
+          "sides": [
+            "split-eardrums"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-time.webp",
+          "sides": [
+            "channel-time"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-fire.webp",
+          "sides": [
+            "channel-fire"
+          ]
+        },
+        {
+          "id": "p7",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-maelstrom-of-clashing-powers.webp",
+          "sides": [
+            "maelstrom-of-clashing-powers"
           ]
         }
       ]
@@ -913,7 +1293,7 @@
           "cost": 3,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-fortune-favors-the-bold.webp",
           "abilities": [
             "To play this card, you must put a card from your hand on top of your deck."
           ]
@@ -929,7 +1309,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-flurry-of-blades.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[hc:tech]: [keyword:Berserk]"
@@ -946,7 +1326,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-make-my-own-luck.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[hc:covert]: You may KO the card you discarded this way."
@@ -963,10 +1343,44 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-escape-from-mojo-world.webp",
           "abilities": [
             "Reveal the top card of the Villain Deck. If it's a Villain, you may put it on the bottom of that Deck.",
             "[team:x-men]: You get +[icon:attack]equal to the printed Victory Points of the card you revealed."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-fortune-favors-the-bold.webp",
+          "sides": [
+            "fortune-favors-the-bold"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-flurry-of-blades.webp",
+          "sides": [
+            "flurry-of-blades"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-make-my-own-luck.webp",
+          "sides": [
+            "make-my-own-luck"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-escape-from-mojo-world.webp",
+          "sides": [
+            "escape-from-mojo-world"
           ]
         }
       ]
@@ -994,7 +1408,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-life-death-incarnate.webp",
           "abilities": [
             "KO this card.",
             "You may KO a card from your hand or discard pile."
@@ -1011,7 +1425,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-obliterating-fire.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:Piercing Energy]",
@@ -1029,7 +1443,7 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-reincarnating-phoenix.webp",
           "abilities": [
             "Draw two cards.",
             "You may put a Hero that was KO'd this turn into your discard pile."
@@ -1046,10 +1460,44 @@
           "cost": 9,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-9r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-driven-mad-by-power.webp",
           "abilities": [
             "[keyword:Berserk], [keyword:Berserk], [keyword:Berserk], [keyword:Berserk]",
             "KO all the cards you Berserked. If this card makes at least 13[icon:attack], then the Phoenix Force becomes corrupted by power and devours the Earth. You win, Evil wins, and all other players lose."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-life-death-incarnate.webp",
+          "sides": [
+            "life-death-incarnate"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-obliterating-fire.webp",
+          "sides": [
+            "obliterating-fire"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-reincarnating-phoenix.webp",
+          "sides": [
+            "reincarnating-phoenix"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-driven-mad-by-power.webp",
+          "sides": [
+            "driven-mad-by-power"
           ]
         }
       ]
@@ -1077,7 +1525,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-ride-the-magnetic-waves.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:covert]: When you draw a new hand of cards at the end of this turn, draw an extra card."
@@ -1094,7 +1542,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-electromagnetic-pulse.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[hc:ranged]: Draw a card."
@@ -1111,7 +1559,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-subtle-attunement.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:covert]: Look at the top two cards of your deck. You may KO one of them. Put the rest back in any order."
@@ -1128,10 +1576,44 @@
           "cost": 8,
           "attack": null,
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-reverse-polarity.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:X-Gene] [team:x-men]: You can use [icon:recruit] as [icon:attack] this turn, and vice versa."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-ride-the-magnetic-waves.webp",
+          "sides": [
+            "ride-the-magnetic-waves"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-electromagnetic-pulse.webp",
+          "sides": [
+            "electromagnetic-pulse"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-subtle-attunement.webp",
+          "sides": [
+            "subtle-attunement"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-reverse-polarity.webp",
+          "sides": [
+            "reverse-polarity"
           ]
         }
       ]
@@ -1159,7 +1641,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-psychic-knife.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Piercing Energy]",
@@ -1177,7 +1659,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-precognition.webp",
           "abilities": [
             "Reveal the top card of the Hero Deck. You may recruit it this turn. If you do, draw a card."
           ]
@@ -1193,7 +1675,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-butterfly-effect.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[keyword:X-Gene] [hc:covert]: You get +1[icon:6]."
@@ -1210,10 +1692,44 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-telepathic-ninjutsu.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "Reveal the top card of the Hero Deck. The player of your choice puts it in their hand."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-psychic-knife.webp",
+          "sides": [
+            "psychic-knife"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-precognition.webp",
+          "sides": [
+            "precognition"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-butterfly-effect.webp",
+          "sides": [
+            "butterfly-effect"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-telepathic-ninjutsu.webp",
+          "sides": [
+            "telepathic-ninjutsu"
           ]
         }
       ]
@@ -1236,7 +1752,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-adamantium-foot-claws.webp",
           "abilities": [
             "[keyword:X-Gene] [hc:instinct]: Draw a card."
           ]
@@ -1252,7 +1768,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-healing-factor-genome.webp",
           "abilities": [
             "[keyword:Berserk]",
             "You may KO a Wound from your hand or discard pile."
@@ -1269,7 +1785,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-bioengineered-assassin.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[keyword:X-Gene] [hc:instinct]: You may KO a card from your hand or discard pile."
@@ -1286,10 +1802,44 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-heir-to-wolverine.webp",
           "abilities": [
             "[keyword:Berserk], [keyword:Berserk]",
             "[keyword:X-Gene] [hc:instinct]: Count the[hc:instinct] cards in your discard pile. [keyword:Berserk] that many times."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-adamantium-foot-claws.webp",
+          "sides": [
+            "adamantium-foot-claws"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-healing-factor-genome.webp",
+          "sides": [
+            "healing-factor-genome"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-bioengineered-assassin.webp",
+          "sides": [
+            "bioengineered-assassin"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-heir-to-wolverine.webp",
+          "sides": [
+            "heir-to-wolverine"
           ]
         }
       ]

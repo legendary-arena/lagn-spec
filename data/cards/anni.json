@@ -17,7 +17,7 @@
         {
           "slug": "protege-of-dr-doom",
           "name": "Protege of Dr. Doom",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-8r.webp"
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp"
         },
         {
           "name": "Time Loop Experiments",
@@ -30,7 +30,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-time-loop-experiments.webp",
           "abilities": [
             "Draw a card. Then put a card from your hand on top of your deck.",
             "[hc:tech]: [keyword:Woman Out of Time]"
@@ -47,7 +47,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-borrow-from-the-future.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 2 or more, draw it. Otherwise, discard it or put it back.",
             "[hc:ranged]: [keyword:Woman Out of Time]"
@@ -64,7 +64,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-reprogram-doombot-legions.webp",
           "abilities": [
             "[team:fantastic-four]: You may look at the top two cards of your deck. If you do, KO one of them and put the other back."
           ]
@@ -80,10 +80,52 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-prot-g-of-dr-doom.webp",
           "abilities": [
             "Use one of Dr. Doom's Mastermind Tactics. You can't use any of them more than once per game. If you have already used them all, get +4[icon:attack] instead.",
             "(Take another turn; or draw three extra cards at end of turn; or you may recruit a [hc:tech] or [hc:ranged] Hero for free; or all other players draw a card or discard a card.)"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp",
+          "sides": [
+            "protege-of-dr-doom"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-time-loop-experiments.webp",
+          "sides": [
+            "time-loop-experiments"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-borrow-from-the-future.webp",
+          "sides": [
+            "borrow-from-the-future"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-reprogram-doombot-legions.webp",
+          "sides": [
+            "reprogram-doombot-legions"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-prot-g-of-dr-doom.webp",
+          "sides": [
+            "prot-g-of-dr-doom"
           ]
         }
       ]
@@ -111,7 +153,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-4c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-human-torch.webp",
           "abilities": [
             "[keyword:Focus] 2[icon:recruit] [icon:5] KO up to two Wounds from your hand and/or discard pile.",
             "[keyword:Focus] 6[icon:recruit] [icon:5] You get +6[icon:attack] and gain a Wound."
@@ -128,7 +170,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-thing.webp",
           "abilities": [
             "[team:fantastic-four]: You get +1[icon:recruit].",
             "[keyword:Focus] 3[icon:recruit] [icon:5] You get +2[icon:attack]."
@@ -145,7 +187,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-invisible-woman.webp",
           "abilities": [
             "If you played any other cards that cost 4 this turn, you get +2[icon:recruit].",
             "[keyword:Focus] 4[icon:recruit] [icon:5] Rescue a Bystander, then you may KO a card from your hand or discard pile."
@@ -162,10 +204,44 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-mr-fantastic.webp",
           "abilities": [
             "Draw two cards.",
             "[keyword:Focus] 5[icon:recruit] [icon:5] You get +7[icon:attack] usable only against the Mastermind."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-human-torch.webp",
+          "sides": [
+            "human-torch"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-thing.webp",
+          "sides": [
+            "thing"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-invisible-woman.webp",
+          "sides": [
+            "invisible-woman"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-mr-fantastic.webp",
+          "sides": [
+            "mr-fantastic"
           ]
         }
       ]
@@ -193,7 +269,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-firelord.webp",
           "abilities": [
             "This turn, your Heroes' Conqueror abilities also give you [icon:attack] if those city spaces have been destroyed.",
             "[hc:ranged]: [keyword:Bridge Conqueror 2]"
@@ -210,7 +286,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-silver-surfer.webp",
           "abilities": [
             "[keyword:Focus] 2[icon:recruit] [icon:5] Draw a card, then you may move a Villain to an adjacent city space. If another Villain is already there, swap them."
           ]
@@ -226,7 +302,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-stardust.webp",
           "abilities": [
             "[keyword:Focus] 4[icon:recruit] [icon:5][keyword:Conqueror]",
             "[keyword:Focus] 11[icon:recruit] [icon:5] Search the Hero Deck, HQ, or your deck or discard pile for “Galactus Hungers“ and put it on top of your deck. Shuffle any deck you searched."
@@ -243,9 +319,43 @@
           "cost": 10,
           "attack": "8+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-10r.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-galactus-hungers.webp",
           "abilities": [
             "If you have played another Herald of Galactus this turn, destroy the leftmost city space, defeat any Villain there, and then you get +2[icon:attack] for each destroyed city space. If this destroys the last city space, Galactus consumes the Earth. You Win, Evil Wins, and all other players lose."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-firelord.webp",
+          "sides": [
+            "firelord"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-silver-surfer.webp",
+          "sides": [
+            "silver-surfer"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-stardust.webp",
+          "sides": [
+            "stardust"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-galactus-hungers.webp",
+          "sides": [
+            "galactus-hungers"
           ]
         }
       ]
@@ -273,7 +383,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-avert-future-tragedy.webp",
           "abilities": [
             "[keyword:Focus] 2[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Master Strike, you get +3[icon:attack], KO it, and replace it with the top card from the Bystander Stack.",
             "[hc:instinct]: [keyword:Man/Woman Out of Time]"
@@ -290,7 +400,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-interdimensional-rescue.webp",
           "abilities": [
             "[keyword:Focus] 1[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Bystander, you get +2[icon:attack], rescue it, and shuffle the top card from the Bystander Stack into the Villain Deck.",
             "[hc:covert]: [keyword:Man/Woman Out of Time]"
@@ -307,7 +417,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-slip-the-timestream.webp",
           "abilities": [
             "[keyword:Focus] 1[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Villain, you get +1[icon:attack] and you may fight it this turn.",
             "[hc:instinct][hc:covert]: [keyword:Man/Woman Out of Time]"
@@ -324,10 +434,44 @@
           "cost": 7,
           "attack": "3+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-reshape-reality.webp",
           "abilities": [
             "[keyword:Focus] 3[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Scheme Twist, you get +4[icon:attack] and shuffle the Villain Deck.",
             "[team:fantastic-four][team:fantastic-four]: [keyword:Man/Woman Out of Time]"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-avert-future-tragedy.webp",
+          "sides": [
+            "avert-future-tragedy"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-interdimensional-rescue.webp",
+          "sides": [
+            "interdimensional-rescue"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-slip-the-timestream.webp",
+          "sides": [
+            "slip-the-timestream"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-reshape-reality.webp",
+          "sides": [
+            "reshape-reality"
           ]
         }
       ]
@@ -355,7 +499,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-stretching-credibility.webp",
           "abilities": [
             "[keyword:Focus] 2[icon:attack] [icon:5] When you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -371,7 +515,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-rock-solid.webp",
           "abilities": [
             "[hc:strength]: [keyword:Conqueror]",
             "[keyword:Focus] 3[icon:attack] [icon:5] You get +2[icon:recruit]."
@@ -388,7 +532,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-transparent-motives.webp",
           "abilities": [
             "[keyword:Conqueror]",
             "[keyword:Focus] 3[icon:attack] [icon:5] You may KO a card from your hand or discard pile."
@@ -405,11 +549,45 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-put-to-the-torch.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 1",
             "[keyword:Streets] [keyword:Conqueror] 1",
             "You may gain a Wound. If you do, get [keyword:Rooftops] [keyword:Conqueror] 4."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-stretching-credibility.webp",
+          "sides": [
+            "stretching-credibility"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-rock-solid.webp",
+          "sides": [
+            "rock-solid"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-transparent-motives.webp",
+          "sides": [
+            "transparent-motives"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-put-to-the-torch.webp",
+          "sides": [
+            "put-to-the-torch"
           ]
         }
       ]
