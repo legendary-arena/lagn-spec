@@ -190,8 +190,13 @@ If any of the above is false this packet is **BLOCKED**.
 - `.claude/rules/code-style.md §Drift Detection` — when adding a new
   schema concept, add a canonical readonly array (or equivalent invariant)
   and a drift-detection test pairing the type with the array.
-- `.claude/rules/persistence.md §Class 1 Runtime State` — the
-  `sideToPhysicalCard` Map is runtime-only; never persist or snapshot it.
+- `.claude/rules/persistence.md §Class 1 Runtime State` — read for
+  context on the runtime-state never-persist principle. Note: the
+  `sideToPhysicalCard` Map is **registry-internal cache, not literal
+  Class 1 `G`-state** (Class 1 enumerates `G`, `ctx`, etc.). The
+  never-persist constraint applies by the same principle — derived
+  indexes from immutable input are not state — not by literal Class 1
+  classification (D-13806 carries the explicit framing).
 - `packages/registry/src/schema.ts` — read end-to-end; understand the
   current `HeroSchema` and `HeroCardSchema` shapes before extending.
 - `packages/registry/src/impl/localRegistry.ts` and `httpRegistry.ts` —

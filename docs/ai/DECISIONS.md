@@ -15080,10 +15080,21 @@ persisted, never written to PostgreSQL, never snapshotted, never
 serialized into `G` or `ctx`.
 
 **Rationale:**
-- Per `.claude/rules/persistence.md §Class 1 Runtime State`, derived
-  indexes built from immutable inputs are runtime-only. This Map is
-  identical in shape to other registry-internal lookups (e.g., the
-  card-by-slug map) and follows the same persistence boundary.
+- The Map is **registry-internal cache, not `G`-state.**
+  `.claude/rules/persistence.md §Class 1 Runtime State` enumerates
+  the literal Class 1 surface as `G`, `ctx`, `ImplementationMap`,
+  in-flight `RuleEffect[]`, `G.hookRegistry`, `G.lobby`,
+  `G.currentStage`, and socket/session data — engine-runtime objects
+  the rules file polices directly. The `sideToPhysicalCard` Map is
+  outside that enumeration: it is an in-memory derived lookup
+  parallel to the existing card-by-slug map exposed by
+  `CardRegistry`, computed once at registry load from immutable
+  inputs and read by setup-time consumers. **The never-persist
+  constraint applies by the same principle — derived indexes from
+  immutable input are not state and cannot be the source of truth
+  for anything storable** — not by literal Class 1 classification.
+  The constraint is identical in shape; the categorization framing
+  is registry-internal cache rather than `G`-runtime state.
 - O(1) lookup cost at consumer call sites; zero-cost rebuild at registry
   load (typical card data is on the order of ~10K side entries across
   all 40 sets).
