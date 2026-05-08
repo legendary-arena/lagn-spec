@@ -14847,6 +14847,272 @@ Any other value (`0`, negative, non-integer float, `NaN`, string, object, etc.) 
 
 ---
 
+### D-13801 — `physicalCards[]` Is the Authoritative Deck-Composition Surface (WP-138)
+
+**Decision:** Deck composition for any hero is computed exclusively from
+`hero.physicalCards[].count`. Per-side `cardCounts` becomes a derived view
+that must equal the sum of physical-card counts for physical cards listing
+that side; drift between the two surfaces fails registry validation.
+
+**Rationale:**
+- Industry baseline: Scryfall's card data model treats one card as a
+  single object with a `card_faces[]` sub-collection for split / transform
+  / dual-faced layouts. Generic deck-engine designs (geeksforgeeks,
+  open-source card frameworks) treat a deck as a list of card objects,
+  not card fragments. Tabletop Simulator double-faced support uses one
+  object with multiple states, not multiple objects.
+- Physical reality: a Falcon / Winter Soldier deck holds 5 dual-faced
+  cards labeled Attune / Atone, not 10 cards. Summing per-side
+  cardCounts produces 10 — silently wrong for any consumer that needs
+  physical-card identity (deck size, hand zone, replay reconstruction).
+- Engine cleanliness: deck reservoir construction (WP-135 `buildHeroDeck`)
+  reads one number per physical card, not divided sums. Engine code
+  summing per-side counts to compute deck size is a bug under D-13801.
+
+**Rejected alternatives:**
+- Implicit pairing via `pairsWith` slug pointer (no parent object): keeps
+  the model lying about deck composition; engine has to infer grouping
+  everywhere; long-term coupling cost.
+- Restructure `cards[]` to embed `sides[]` (Scryfall-pure): correct if
+  starting fresh but invasive — every existing consumer reading per-side
+  fields would change. Deferred to a future WP if usage patterns warrant
+  consolidation.
+
+**Consequence:** every site that needs deck size reads
+`physicalCards[].count`. Sites that need per-side gameplay data
+(`cost`, `hc`, `abilities`, `attack`, `recruit`) keep reading `cards[]`.
+Side-to-physicalCard resolution is via the runtime index from D-13806.
+
+**Status:** Active.
+
+**Citation:** WP-138 §Goal + §Non-Negotiable Constraints (4); Scryfall layouts API; generic deck-as-list-of-cards engine design.
+
+---
+
+### D-13802 — `physicalCard.imageUrl` Is the Canonical Image; Card-Sides Carry No `imageUrl` (WP-138)
+
+**Decision:** `imageUrl` lives on `physicalCards[]` entries, not on
+individual card-side entries. The convert script emits no `imageUrl` on
+`hero.cards[N]`. The runtime index (D-13806) resolves a card-side to its
+owning physical card for image lookup at display time. The
+`HeroCardSchema.imageUrl` field is removed (with a transition window if
+needed during WP-138 execution).
+
+**Rationale:**
+- Image is a property of the physical artifact, not of the gameplay-side.
+  A dual-faced card has one image showing both faces (or two images, one
+  per face — a UI choice, not a data model choice). Either way, the
+  image-to-physical-card mapping is 1:1.
+- Storage parity: split cards no longer require duplicate uploads under
+  per-side names. Solo cards remain 1:1 (one physicalCard, one image).
+- Drift surface eliminated: with imageUrl on the side, two paired sides
+  could legally point at different image files — a class of bug the
+  schema can no longer express after D-13802.
+
+**Filename convention** (locked alongside D-13802):
+- Solo physicalCard (one side): `{setAbbr}-hr-{heroSlug}-{sideSlug}.webp`
+  (continues the v16 cardSlug convention from convert-cards-v15.mjs v16
+  changes, 2026-05-07).
+- Split physicalCard (two sides): `{setAbbr}-hr-{heroSlug}-{sortedA}-{sortedB}.webp`
+  where `sortedA` and `sortedB` are the two side slugs in lexicographic
+  order. Sort is locked so both sides resolve to identical URLs
+  regardless of declaration order in patches.
+
+**Sort comparator lock:** the lex sort is **ASCII / UTF-16 code-unit
+ordering** as produced by JavaScript's `Array.prototype.sort()` with no
+comparator argument (or equivalently, the `<` and `>` operators on
+strings). Implementations MUST NOT use `String.prototype.localeCompare`
+without an explicit `'en'` locale and `sensitivity: 'base'`, and MUST
+NOT rely on environment-dependent collation. Card slugs are kebab-case
+ASCII (`a-z`, `0-9`, `-`) for which UTF-16 ordering is stable across
+Node, browsers, and CI runners — locale-aware collators can vary
+(German `ä` sorts differently in `de-DE` vs `de-AT`); even though no
+current slug exercises that surface, the lock prevents future drift if
+non-ASCII characters ever appear in a slug.
+
+**Rejected alternatives:**
+- Keep `imageUrl` on the side; share by convention: leaves the drift
+  surface (paired sides pointing at different images) expressible.
+- Use the first-declared side as the canonical key: order-dependent;
+  reordering sides in a patch silently breaks the URL.
+
+**Status:** Active.
+
+**Citation:** WP-138 §Goal + §Scope (In) A/B + §Non-Negotiable Constraints (7).
+
+---
+
+### D-13803 — Solo Heroes Use Single-Side `physicalCards` Entries (Uniform Model) (WP-138)
+
+**Decision:** Every hero, including solo heroes (one side per physical
+card), declares a non-empty `physicalCards[]` array. Solo heroes have one
+`physicalCards` entry per `cards[]` entry, with `sides[]` of length 1.
+The schema rejects a hero with non-empty `cards[]` and empty
+`physicalCards[]`.
+
+**Rationale:**
+- Uniform model removes special-case branches in every consumer.
+  `getPhysicalCardForSide(...)` always resolves; deck reservoir always
+  iterates `physicalCards[]`. Solo and split heroes follow the same
+  code path.
+- Migration is mechanical for solo heroes: the convert script
+  auto-generates a single-side physicalCard for each cards entry with
+  `count` taken from `cardCounts` (or rarity-map fallback per WP-137
+  D-13501 unchanged).
+- Future-proofing: if a hero is later promoted from solo to split (or
+  the reverse) by an upstream errata, the consumer code does not change
+  — only the patch file's physicalCards block reshapes.
+
+**Rejected alternatives:**
+- Solo heroes skip `physicalCards[]` (consumers fall back to `cards[]`):
+  introduces a "two-mode" reading pattern; every consumer needs the
+  branch; a missed branch is a silent bug.
+- Solo heroes get `physicalCards: null`: same problem with extra null
+  handling.
+
+**Status:** Active.
+
+**Citation:** WP-138 §Goal + §Non-Negotiable Constraints (6).
+
+---
+
+### D-13804 — Card-Side ext_id Format Unchanged; Physical-Card Identity Is a Registry Concept (WP-138)
+
+**Decision:** The hero card-instance ext_id format locked under D-13502
+(`<setAbbr>/<heroSlug>/<cardSlug>` with WP-137's `#N` copy suffix
+appended at reservoir construction) is **unchanged**. Physical-card
+identity is a registry-layer concept exposed via the `physicalCards[]`
+collection and the runtime side-to-physicalCard index (D-13806). Engine
+ext_ids continue to identify per-side instances; physical-card grouping
+is resolved by the registry index, not by ext_id parsing.
+
+**Explicit clarification — replay / audit / zone implications:**
+
+- Replay records and audit-trail consumers MUST NOT assume that a
+  per-side ext_id uniquely identifies a *physical card instance*. For
+  split-side cards, two ext_ids (one per side) reference the same
+  physical card; switching sides on the same physical instance and
+  drawing two distinct physical instances of the same physical-card
+  type are not distinguishable through ext_id alone.
+- Runtime systems that need per-instance physical-card identity (a
+  future replay system that records `{ physicalInstanceId, sidePlayed }`,
+  an anti-cheat surface that traces a physical card across zones across
+  turns, etc.) MAY introduce a separate `physicalInstanceId` channel
+  alongside the ext_id. This channel is **not in scope for WP-138**
+  and is explicitly deferred to a future WP.
+- Zone bookkeeping (`packages/game-engine/src/zones/zoneOps.ts`) operates
+  on per-side ext_ids correctly under D-13502; nothing in zone movement
+  needs to change. The shape that *would* require a physicalInstanceId
+  is a replay or audit consumer, not the zone layer.
+
+**Rationale:**
+- D-13502 was locked recently (WP-135) and is consumed by
+  `checkNoCardInMultipleZones` and replay-hash invariants. Changing it
+  risks regressing both.
+- Physical-card identity matters for *deck composition*, not for
+  *zone movement*. The engine's per-zone bookkeeping operates on
+  per-side ext_ids correctly; what changes is how *deck size* is
+  computed at setup (D-13801).
+- A future WP for replay records may add a parallel "physical-card play
+  event" surface that stores `{ physicalCardId, sidePlayed }`; that
+  evolution does not require changing the per-side ext_id grammar.
+
+**Rejected alternatives:**
+- New ext_id format `<setAbbr>/<heroSlug>/<physicalCardId>/<sideSlug>#N`:
+  breaks D-13502; forces engine code to parse a longer grammar; widens
+  the surface for replay-hash regressions.
+- ext_id at the physical-card level only (no per-side ext_ids): collapses
+  the engine's ability to distinguish which side was played; loses
+  resolution that gameplay needs.
+
+**Status:** Active.
+
+**Citation:** WP-138 §Goal + §Scope (In) E; D-13502 (WP-135).
+
+---
+
+### D-13805 — Patch Format Is the Sole Source of Split-Pair Declarations (WP-138)
+
+**Decision:** Split-side hero pair groupings are declared exclusively in
+`scripts/convert-cards/inputs/patches/*.patch.json` files, via a per-hero
+`physicalCards: [{ id, count, sides }]` block. The convert script does
+not auto-detect pairs from `cardCounts` paired-equal-count patterns or
+any other heuristic. Heuristic detection is permitted only as a
+*conversion-time warning* listing candidate pairs that lack explicit
+patch declarations.
+
+**Rationale:**
+- Auto-detection from `cardCounts` paired-equal counts is suggestive
+  but not authoritative. False positives (a hero with two unrelated
+  commons that happen to share count) and false negatives (asymmetric
+  pair counts in unusual heroes) both exist; silently emitting either
+  produces wrong deck sizes and image URLs.
+- Patch declarations are auditable, version-controlled, and reviewable
+  per the established patch format (WP-003 + WP-082 governance). Pair
+  metadata fits the same trust model.
+- Conversion-time warnings surface candidates without committing to
+  them — a curator review step that scales with the data. The 25-ish
+  split-side heroes identified during the WP-138 Phase A audit cover
+  the known cases; warnings expose anything missed.
+
+**Rejected alternatives:**
+- Auto-detect via `cardCounts` paired-equal counts: silent-failure risk
+  too high for a foundational data primitive.
+- Add a `pairs` field to the npm source: outside our authority; npm
+  source is canonical for what it ships, patches are canonical for what
+  it doesn't.
+
+**Status:** Active.
+
+**Citation:** WP-138 §Scope (In) C + §Non-Negotiable Constraints (5);
+WP-003 patch governance precedent.
+
+---
+
+### D-13806 — Runtime `sideToPhysicalCard` Index Is Computed at Registry Load and Never Persisted (WP-138)
+
+**Decision:** The registry exposes a runtime read-only Map indexing every
+card-side slug to its owning physical card. The Map is built during
+registry load (in `createRegistryFromLocalFiles` and
+`createRegistryFromHttp`) by iterating `physicalCards[]` across every
+hero across every set. The Map lives in registry memory only — never
+persisted, never written to PostgreSQL, never snapshotted, never
+serialized into `G` or `ctx`.
+
+**Rationale:**
+- Per `.claude/rules/persistence.md §Class 1 Runtime State`, derived
+  indexes built from immutable inputs are runtime-only. This Map is
+  identical in shape to other registry-internal lookups (e.g., the
+  card-by-slug map) and follows the same persistence boundary.
+- O(1) lookup cost at consumer call sites; zero-cost rebuild at registry
+  load (typical card data is on the order of ~10K side entries across
+  all 40 sets).
+- Index keying: `<heroSlug>/<sideSlug>` to disambiguate a side slug
+  reused across heroes (rare but possible — the keying makes future
+  cross-hero sharing safe).
+
+**Index API** (locked alongside D-13806):
+- `CardRegistry.getPhysicalCardForSide(heroSlug: string, sideSlug: string): PhysicalCard | undefined`
+- Returns the physical card that owns the side, or `undefined` if not found.
+- `undefined` resolution is a registry validation failure at load — by
+  the time consumers call this, every side declared in `cards[]` has
+  resolved or load aborted.
+
+**Rejected alternatives:**
+- Inline `find(...)` at every consumer site: O(N) per lookup; brittle
+  when card data grows.
+- Persist the Map in a sidecar JSON: violates the runtime-only
+  classification; introduces a drift surface (sidecar vs. live data).
+- Map keyed by side slug alone (no hero qualifier): collision-prone for
+  any future split where two heroes share a side slug name.
+
+**Status:** Active.
+
+**Citation:** WP-138 §Scope (In) D + §Non-Negotiable Constraints (3);
+`.claude/rules/persistence.md §Class 1 Runtime State`.
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
