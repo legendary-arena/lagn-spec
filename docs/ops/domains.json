@@ -10,9 +10,9 @@
       "host": "Cloudflare Pages (redirect rule)",
       "source": "redirect rule -> www.legendary-arena.com",
       "expectedStatus": [301, 302, 308],
-      "state": "planned",
+      "state": "live",
       "anchor": "apex",
-      "notes": "Apex redirects to www. Direction (apex->www vs www->apex) must be picked once and locked."
+      "notes": "Apex redirects to www via a zone-level Cloudflare Redirect Rule on the legendary-arena.com zone (Rules -> Redirect Rules), NOT via Pages _redirects (CF Pages does not support full-URL source patterns in _redirects). Direction is locked: apex -> www. Live since 2026-05-09 (WP-006 lock)."
     },
     {
       "name": "Marketing (www)",
@@ -20,8 +20,9 @@
       "host": "Cloudflare Pages",
       "source": "External Hugo repo at C:\\www\\legendary-arena-com",
       "expectedStatus": 200,
-      "state": "planned",
-      "anchor": "www"
+      "state": "live",
+      "anchor": "www",
+      "notes": "Live since 2026-05-09 (WP-006 lock). CF Pages project: legendary-arena-website."
     },
     {
       "name": "Game client (play)",
