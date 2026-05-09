@@ -66,6 +66,12 @@
           "demolition-derby",
           "otherworldly-maul"
         ]
+      ],
+      "cards": [
+        {
+          "slug": "break-the-world",
+          "hc": "strength"
+        }
       ]
     },
     {

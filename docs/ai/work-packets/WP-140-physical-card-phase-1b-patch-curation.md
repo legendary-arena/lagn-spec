@@ -57,6 +57,44 @@ needs to migrate engine + viewer consumers to read `physicalCards[]`
 as authoritative deck composition without silently mis-tallying split
 heroes.
 
+### Worklist Freeze (mandatory)
+
+At execution-session start, before any patch authoring:
+
+1. Run the convert script and capture the audit-warning surface to a
+   frozen worklist artifact:
+
+   ```
+   node scripts/convert-cards/convert-cards-v15.mjs 2>&1 \
+     | grep -E "^  - Set" > docs/ai/session-context/wp-140-worklist.txt
+   ```
+
+2. Commit `wp-140-worklist.txt` as a session artifact under
+   `docs/ai/session-context/` (per `.claude/rules/work-packets.md`
+   §Invocation Artifacts — session-context files are committed).
+
+3. All subsequent curation MUST be performed against this frozen file.
+   The convert script MUST NOT emit any new warnings (relative to the
+   frozen snapshot) at any intermediate point during execution; new
+   warnings indicate either patch-authoring drift or upstream input
+   change and must be investigated before continuing.
+
+4. The frozen worklist is the audit surface that pairs with the
+   per-hero resolution log (§Acceptance Criteria → Completeness Gate
+   below).
+
+5. **Worklist freeze integrity (byte-identity check).** Until the
+   first patch is authored, re-running the convert command in step 1
+   MUST produce output that is byte-identical to `wp-140-worklist.txt`.
+   Any deviation (added, removed, or reordered lines) signals upstream
+   input drift — `inputs/cards/*.js`, the convert script itself, or
+   the apply-card-counts pipeline changed mid-session — and BLOCKS
+   execution until the cause is identified and the worklist is either
+   re-frozen or the upstream change reverted. After patch authoring
+   begins, the byte-identity invariant relaxes (added warnings caused
+   by the executor's own patch edits are expected); the no-new-warnings
+   rule in step 3 takes over.
+
 ---
 
 ## Goal
@@ -67,8 +105,8 @@ After this packet:
    surface is **resolved** — either by an explicit `physicalCards[]`
    block declaring the split pair, or by a `_skipPair` annotation
    declaring the false positive.
-2. The convert script exits 0 under `--strict` mode (zero remaining
-   audit warnings).
+2. The convert script exits 0 under `--strict` mode with **zero
+   emitted audit warnings** for paired-equal patterns.
 3. All 40 `data/cards/*.json` regenerated. Every previously-un-curated
    split hero now has correctly-grouped `physicalCards[]` entries
    (deck size matches the printed physical deck for that hero).
@@ -174,19 +212,81 @@ If any of the above is false this packet is **BLOCKED**.
 - **`_skipPair` annotation is the only false-positive escape hatch.**
   No silent suppression; every warning must produce either an
   explicit `physicalCards[]` block OR an explicit `_skipPair` entry.
+  `_skipPair` explicitly asserts that an equal-`cardCounts` coincidence
+  is NOT a physical pairing; encoding the assertion in the patch keeps
+  negative knowledge co-located with the data it qualifies, instead of
+  living as tribal memory in the convert script or executor's head.
 - **No other annotations introduced.** This WP locks `_skipPair` only;
   any future annotation grammar (e.g., for triple-face cards if D-13802
   ceiling is ever raised) is a separate WP.
 - **Drift validation continues to fire.** WP-138's `HeroSchema.superRefine`
   enforces the `sum(physicalCards counts) === cardCounts[sideName]`
   contract; every WP-140 `physicalCards[]` declaration must respect it.
+- **Paired-equal candidate cluster (definition).** A "cluster" is the
+  maximal set of two or more `cards[]` entries under the same hero
+  that share the same `cardCounts` value AND that the convert script
+  surfaces as candidate split-pair combinations. Clusters are
+  identified BEFORE `_skipPair` filtering (deterministic execution
+  order step 5 in §Scope B) and are treated as **atomic** for
+  resolution purposes: the no-partial-resolution rule and the cluster
+  coverage rule below both operate at cluster granularity, not at
+  individual-pair granularity.
+- **Cluster coverage rule (machine-enforced).** For each paired-equal
+  candidate cluster, every member slug MUST appear in **exactly one**
+  of: a `physicalCards[].sides` entry OR a `_skipPair` entry. Coverage
+  is evaluated over the union of all `physicalCards[].sides` and all
+  `_skipPair[]` entries for the hero. Any cluster member not covered
+  by either structure fails conversion (full-sentence error naming the
+  hero, the cluster's `cardCounts` value, and the uncovered slug).
+  - For clusters of size = 2: one `physicalCards[]` block declaring
+    the pair, OR one `_skipPair` entry. Either route fully covers the
+    cluster.
+  - For clusters of size > 2: the executor MAY split coverage across
+    multiple disjoint `physicalCards[].sides` pairs, multiple
+    `_skipPair` entries, or a mix — provided every cluster member is
+    covered exactly once. (Worked example: 4 cards with `cardCounts =
+    2` may resolve as 2 split pairs, OR 2 `_skipPair` entries covering
+    every pair relationship, OR 1 split pair + 1 `_skipPair` entry —
+    so long as all 4 slugs are accounted for under the cluster.)
+- **No partial hero resolution.** Restated as the per-hero corollary
+  of the cluster coverage rule: a hero with at least one cluster member
+  resolved AND at least one cluster member uncovered fails conversion.
+  Mixed states are rejected.
+- **Slug mutual exclusion.** A given `cards[].slug` under a hero
+  appears in `physicalCards[].sides` OR `_skipPair`, never both
+  (consequence of the "exactly one" coverage rule). Within
+  `_skipPair[]`, the same slug may participate in multiple pairs
+  only if the pairs are structurally disjoint (no duplicate unordered
+  2-set across entries); duplicate entries fail conversion.
+- **`_skipPair` idempotency (output-shape invariant).** `_skipPair`
+  affects audit-warning emission ONLY. It MUST NOT modify
+  `physicalCards[]` synthesis output. Specifically, `_skipPair` does
+  not influence `physicalCards[]` array structure, `physicalCard.id`
+  generation, `physicalCard.count` values, or `imageUrl` derivation.
+  Any output difference in `data/cards/*.json` between a run with
+  `_skipPair` populated and the same run with the annotation removed
+  (other than the warning suppression itself) is a conversion failure
+  — prevents future scope creep where `_skipPair` accrues "smart skip"
+  behaviour.
 
 ### Session protocol
 
 - If a candidate's resolution is unclear (e.g., the upstream npm data
   doesn't make it obvious whether two equal-count cards are split-side
-  faces or independent), **STOP** and document the candidate in the
-  execution summary. Do not guess.
+  faces or independent), **STOP** and record the candidate in the
+  execution summary using the structured form:
+
+  ```
+  UNRESOLVED — NEED SOURCE VERIFICATION
+    set:        <setAbbr>
+    hero:       <heroSlug>
+    candidate:  [<slugA>, <slugB>]
+    reason:     <one-line cause: e.g. "no printed deck reference available">
+  ```
+
+  Do not guess. Do not author either a `physicalCards[]` block or a
+  `_skipPair` entry on heuristic alone. The unresolved cluster blocks
+  Phase 1b completion until source verification arrives.
 
 ### Locked contract values (inherited from WP-138)
 
@@ -229,10 +329,33 @@ reads `_skipPair` after applying the patch and downgrades any matching
 audit warning from "candidate paired-equal pattern" to "skipped (false
 positive)." Skipped pairs do NOT emit a warning under `--strict`.
 
-Validation: every slug in `_skipPair[]` must resolve to an existing
-`cards[].slug` under the same hero. Unknown slugs fail conversion
-with a full-sentence error naming the hero and the missing slug —
-same posture as orphan-side rejection in WP-138 §8.
+#### `_skipPair` matching contract (D-13901 — normative)
+
+The following rules are part of D-13901 and are enforced by the
+convert script under §B below. They exist to remove every
+implementation-detail ambiguity from the annotation:
+
+- **Unordered 2-set semantics.** Each entry is treated as an unordered
+  pair: `["a","b"]` matches the same audit candidate as `["b","a"]`.
+- **Exact slug equality.** Matching is performed against literal
+  `cards[].slug` strings. No case folding, Unicode normalization,
+  whitespace stripping, or locale-aware comparison.
+- **Length lock.** Each entry MUST have exactly 2 elements. Length-1
+  or length-3+ entries fail conversion (full-sentence error naming
+  the hero and the offending entry).
+- **No duplicate entries.** Within a hero's `_skipPair[]`, no two
+  entries may be the same unordered 2-set. Duplicate entries fail
+  conversion (full-sentence error).
+- **Existing-slug requirement.** Every slug in `_skipPair[]` must
+  resolve to an existing `cards[].slug` under the same hero. Unknown
+  slugs fail conversion with a full-sentence error naming the hero
+  and the missing slug — same posture as orphan-side rejection in
+  WP-138 §8.
+- **Mutual exclusion with `physicalCards[]`.** A slug declared inside
+  any `physicalCards[].sides` entry for the hero MUST NOT also appear
+  in any `_skipPair` entry for the same hero. Violation fails
+  conversion. (Restated from §Packet-specific constraints for
+  proximity to the grammar definition.)
 
 ### B) Convert-script extension (`scripts/convert-cards/convert-cards-v15.mjs`)
 
@@ -241,16 +364,55 @@ same posture as orphan-side rejection in WP-138 §8.
   `buildPhysicalCards` function), filter audit warnings by
   `_skipPair`: if a candidate pair `(cardName_X, cardName_Y)` matches
   any `[slug_X, slug_Y]` entry in `_skipPair[]` (slug match against
-  `cards[].slug`), drop the warning.
+  `cards[].slug`, unordered 2-set semantics per §A), drop the warning.
+- Validate `_skipPair[]` per the §A matching contract before filtering:
+  length lock, no-duplicate, existing-slug, and mutual-exclusion-with-
+  `physicalCards[]` checks all run as hard failures. Any violation
+  fails conversion before any warning suppression occurs.
+- Enforce no-partial-resolution per §Packet-specific constraints: a
+  hero with at least one resolved candidate (via `physicalCards[]` or
+  `_skipPair`) and at least one unresolved candidate fails conversion.
 - Emit a per-hero summary line when `_skipPair` is consumed:
-  `📎 SkipPair: hero=<slug> count=<N>` so the convert log records
-  the false-positive declarations explicitly.
+  `📎 SkipPair: hero=<slug> pairs=<N> slugs=[(a,b),(c,d)]` so the
+  convert log records the false-positive declarations explicitly,
+  with the slug pairs inline for forensic audit (no need to re-open
+  the patch file to confirm what was suppressed).
+- Log line ordering MUST be deterministic to prevent noisy diffs
+  across re-runs:
+  - Within each pair, slugs are sorted by UTF-16 code-unit ordering
+    (the same posture as D-13802's split-pair filename sort — no
+    `localeCompare` without explicit `'en'` locale).
+  - Across pairs in the `slugs=[...]` list, the unordered 2-sets are
+    sorted by first element, then by second element (UTF-16
+    code-unit ordering). This applies to the log-emission ordering
+    only; it does NOT change the `_skipPair[]` literal ordering in
+    the patch file (which the executor controls).
+
+#### Deterministic execution order (per hero)
+
+The `_skipPair` interaction with the existing audit-warning pipeline
+is fully ordered to remove any implementation-detail ambiguity:
+
+1. Load patch (`patch.heroes[N]`).
+2. Validate `_skipPair[]` shape per §A matching contract.
+3. Build `physicalCards[]` via existing `buildPhysicalCards` synthesis.
+4. Validate slug mutual exclusion (`physicalCards[].sides` ∩
+   `_skipPair[]` flat-slugs === ∅).
+5. Identify the per-hero set of paired-equal candidate clusters.
+6. Apply `_skipPair` filtering (drop matched candidates).
+7. Validate no-partial-resolution (every cluster fully resolved or
+   the hero fails conversion).
+8. Emit remaining audit warnings (un-resolved candidates).
+9. Apply `--strict` failure condition (any remaining warning → exit 1).
 
 ### C) Per-set patch curation (the worklist)
 
 Iterate the 262-entry audit-warning worklist from WP-138 Phase 1a's
-convert run. For each candidate paired-equal pattern, the executor
-makes one of two authoring choices:
+convert run. For each paired-equal candidate cluster (canonical
+name per §Non-Negotiable Constraints — the maximal set of `cards[]`
+under a hero sharing the same `cardCounts` value, surfaced by the
+convert script as candidate split-pair combinations), the executor
+makes one of two authoring choices per cluster member:
 
 - **True split pair**: add a `physicalCards[]` block to the patch
   file with one or more 2-element `sides[]` entries grouping the
@@ -306,6 +468,25 @@ sources to authorize the grouping:
 Where source 1 is unavailable, the executor MUST stop and document
 the gap. Pair declarations cannot be authored on heuristic alone per
 D-13805.
+
+**Forbidden inference signals (explicit enumeration of D-13805's
+"heuristic alone").** The following signals MUST NOT, in isolation,
+justify a `physicalCards[]` pair declaration:
+
+- Card name similarity (shared prefix, shared keyword, alphabetical
+  adjacency).
+- Card type or subtype similarity (two Common-class cards, two
+  Strength-themed cards, etc.).
+- Artistic or thematic pairing assumptions ("these two clearly belong
+  together because the character has a transformation arc").
+- `cardCounts` value coincidence alone — this is the warning
+  signal, not a justification.
+
+Only the three sources above (printed deck list, upstream npm data
+that explicitly encodes a per-side relationship, or the existing R2
+split-pair filename pattern) may justify a declaration. If none of
+the three resolves the candidate, the cluster is `UNRESOLVED — NEED
+SOURCE VERIFICATION` per §Session protocol.
 
 ### F) Tests (Phase 1b only — locked count: 0 new tests in `packages/registry/`)
 
@@ -402,12 +583,19 @@ execution session by the worklist):
 **Governance ledgers**:
 
 - `docs/ai/DECISIONS.md` — D-13901 appended (`_skipPair` annotation
-  grammar).
+  grammar; matching contract per §Scope A).
 - `docs/ai/work-packets/WORK_INDEX.md` — WP-140 row Draft → Done on
   completion.
 - `docs/ai/execution-checklists/EC_INDEX.md` — corresponding EC slot
   (claimed at execution) Draft → Done.
 - `docs/ai/STATUS.md` — session-close block prepended.
+
+**Session artifact** (committed per `.claude/rules/work-packets.md`
+§Invocation Artifacts):
+
+- `docs/ai/session-context/wp-140-worklist.txt` — frozen audit-warning
+  surface captured at session start (per §Session Context →
+  Worklist Freeze).
 
 **Explicitly NOT modified**:
 
@@ -451,6 +639,25 @@ execution session by the worklist):
   validation passes for every curated hero.
 - Every `_skipPair` annotation references existing `cards[].slug`
   values under the hero (no orphan slugs).
+
+### Completeness gate
+
+- **Zero remaining paired-equal candidate clusters** across all heroes
+  in all 40 sets. Every cluster surfaced by the WP-138 Phase 1a
+  convert run is fully resolved.
+- No hero contains a paired-equal candidate cluster without every
+  member resolved via `physicalCards[]` grouping OR `_skipPair`
+  annotation. The frozen
+  worklist (`docs/ai/session-context/wp-140-worklist.txt`) is the
+  authoritative cross-check: every line in the worklist maps 1:1 to
+  either a `physicalCards[]` block declaration or a `_skipPair` entry
+  in the executed commit.
+- No hero is partially resolved (per §Packet-specific constraints —
+  the convert script enforces this; this criterion restates the
+  end-state expectation).
+- No `UNRESOLVED — NEED SOURCE VERIFICATION` cluster remains in the
+  execution summary at completion. If any does, the WP is BLOCKED
+  and may not be marked Done.
 
 ### Drift / invariant compliance
 
@@ -500,8 +707,9 @@ pnpm --filter @legendary-arena/game-engine test
 # Step 4 — convert pipeline exits 0 with zero remaining warnings
 node scripts/convert-cards/convert-cards-v15.mjs
 # Expected: zero audit warnings; per-hero `📎 Pair:` summary lines for
-# every curated split hero; `📎 SkipPair:` summary lines for every
-# false-positive declaration.
+# every curated split hero; `📎 SkipPair: hero=<slug> pairs=<N>
+# slugs=[(a,b),...]` summary lines for every false-positive declaration
+# (slug pairs inline for forensic audit).
 
 # Step 5 — strict mode exits 0 (CI green-state restored)
 LEGENDARY_CONVERT_STRICT=1 node scripts/convert-cards/convert-cards-v15.mjs
@@ -533,6 +741,20 @@ node -e "const r = require('./data/cards/3dtc.json'); const h = r.heroes.find(x 
 # Expected: physicalCards.length === cards.length; every entry sides.length === 1
 # (the false-positive hero remains solo-shaped after _skipPair suppresses
 # the warning).
+
+# Step 11 — unresolved-cluster sanity check (Completeness Gate)
+grep -n "UNRESOLVED — NEED SOURCE VERIFICATION" docs/ai/STATUS.md docs/ai/session-context/wp-140-worklist.txt
+# Expected: zero matches before marking WP complete. Any match BLOCKS
+# the WP per §Acceptance Criteria → Completeness Gate.
+
+# Step 12 — _skipPair idempotency sanity check (output-shape invariant)
+# Pick one hero with a curated _skipPair entry. Temporarily remove the
+# entry, re-run convert, and diff the resulting set's data file against
+# the executed-state version. The ONLY difference should be the audit
+# warning (re-)appearing in the convert log; the data/cards/<set>.json
+# file itself MUST be byte-identical.
+# Expected: empty diff under `git diff data/cards/<set>.json` after
+# restoring the _skipPair entry.
 ```
 
 ---
