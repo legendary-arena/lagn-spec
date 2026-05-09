@@ -184,6 +184,94 @@ Promote `draft` → `canonical` only when:
 
 ---
 
+## Authoring workflow
+
+The authoring surface is this directory (`wiki/`). The build pipeline
+(Hugo config, layouts, scripts) lives separately in
+[`apps/wiki-viewer/`](../apps/wiki-viewer/) and is not authored by
+hand — content is never edited under `apps/wiki-viewer/content/` or
+`apps/wiki-viewer/public/`, since both are regenerated from `wiki/`
+on every build (D-13810).
+
+### Edit and publish
+
+1. Edit a page in `wiki/<slug>.md` (or `wiki/INDEX.md` /
+   `wiki/SCHEMA.md` for reserved files).
+2. Commit using the `EC-142:` prefix that introduced the wiki-viewer
+   surface — the prefix is enforced by the project's commit-msg hook
+   for code paths and is the canonical lineage for this surface (see
+   [`.githooks/commit-msg`](../.githooks/commit-msg)):
+
+   ```
+   git add wiki/<slug>.md
+   git commit -m "EC-142: wiki <slug> — <one-line summary>"
+   ```
+
+3. Push to `main` (directly, or via PR — review is recommended for
+   non-trivial content changes):
+
+   ```
+   git push origin main
+   ```
+
+Render auto-rebuilds the `legendary-arena-wiki` static-site service
+on every push to `main` that touches `wiki/` or `apps/wiki-viewer/`,
+and the change lands at
+[`https://ewiki.legendary-arena.com/<slug>/`](https://ewiki.legendary-arena.com/)
+within ~1–2 minutes.
+
+### What runs on push
+
+The Render build invokes, in order:
+
+1. `pnpm wiki-viewer:project` — copies `wiki/*.md` into Hugo's
+   content tree under `apps/wiki-viewer/content/`. `INDEX.md` is
+   renamed to `_index.md` on the projected copy only; the source
+   under `wiki/` is never modified (D-13810 contract).
+2. `pnpm wiki-viewer:check-links` — case-sensitive validation of
+   every internal `<page>.md` → `<page>.md` link in the projected
+   tree. A broken link fails the build.
+3. `hugo --source apps/wiki-viewer --minify` — renders the site to
+   `apps/wiki-viewer/public/`. External `../X` links are rewritten
+   to GitHub blob URLs by the markdown render hook (D-13809).
+
+The CI workflow at
+[`.github/workflows/wiki-viewer.yml`](../.github/workflows/wiki-viewer.yml)
+runs the same pipeline on every PR and `main` push as a pre-deploy
+gate. CI also enforces the JS-free production invariant (no
+`<script>` tags in rendered output) and a determinism check (two
+consecutive builds produce byte-identical `*.html` + `*.css`).
+
+### Preview locally
+
+Before pushing, render the wiki on a local Hugo dev server:
+
+```
+pnpm wiki-viewer:dev
+```
+
+Hugo serves at `http://localhost:1313` with live-reload on source
+changes (live-reload is dev-only — production builds do not emit
+`<script>` tags).
+
+If `pnpm wiki-viewer:dev` errors before serving, the most common
+cause is `apps/wiki-viewer/.hugo-version` not matching the locally
+installed Hugo Extended binary. Re-install Hugo at the pinned
+version.
+
+### Sync with `main` first
+
+If your local `main` is behind `origin/main` (`git status` reports
+"Your branch is behind 'origin/main' by N commits"), pull before
+editing — otherwise the next push will reject as non-fast-forward,
+or your edits land on a stale tree:
+
+```
+git pull origin main
+```
+
+---
+
 ## Wiki vs other documentation
 
 | Document | Role | Authoritative? |
