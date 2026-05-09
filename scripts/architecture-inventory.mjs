@@ -1356,14 +1356,20 @@ async function renderReport({
   // workspace's own deps + descriptions; no hardcoded labels.
   lines.push(`## Application stacks`);
   lines.push('');
-  lines.push(`One entry per \`apps/*\` workspace. Each "Stack" line is`);
-  lines.push(`synthesised from that workspace's own \`package.json\` deps,`);
-  lines.push(`plus a few transitive facts confirmed against \`pnpm-lock.yaml\``);
-  lines.push(`(Socket.IO and Koa router both ship via \`boardgame.io\`,`);
-  lines.push(`not as direct deps). Descriptions come from each workspace's`);
-  lines.push(`\`package.json#description\`.`);
+  lines.push(`One entry per app under \`apps/*\`. Each "Stack" line is`);
+  lines.push(`synthesised from the app's own manifests:`);
   lines.push('');
-  lines.push(renderApplicationStacksSection(manifests, lockfilePackages));
+  lines.push(`- Node apps (\`apps/*/package.json\` present): \`dependencies\` /`);
+  lines.push(`  \`devDependencies\` versions, plus a few transitive facts`);
+  lines.push(`  confirmed against \`pnpm-lock.yaml\` (Socket.IO and Koa`);
+  lines.push(`  router both ship via \`boardgame.io\`, not as direct deps).`);
+  lines.push(`  Descriptions come from each workspace's \`package.json#description\`.`);
+  lines.push(`- Hugo apps (\`apps/*/hugo.toml\` present, no \`package.json\`):`);
+  lines.push(`  pinned binary version from \`apps/<name>/.hugo-version\`,`);
+  lines.push(`  source page count from the projection input directory, and`);
+  lines.push(`  deploy target verified against \`render.yaml\`.`);
+  lines.push('');
+  lines.push(await renderApplicationStacksSection(manifests, lockfilePackages));
   lines.push('');
 
   // why: surface internally-built subsystems that don't appear in the
@@ -1853,26 +1859,32 @@ function renderRuntimeSection(manifests, aggregate) {
 }
 
 /**
- * Render the "Application stacks" preamble: one entry per `apps/*`
- * workspace, narrating the stack synthesised from that workspace's
- * declared deps. Surfaces which UI framework, state library, router,
- * bundler, game framework, transport, and database the workspace
- * actually pulls in.
+ * Render the "Application stacks" preamble: one entry per app under
+ * `apps/*`, narrating the stack synthesised from that app's declared
+ * manifests. Surfaces which UI framework, state library, router,
+ * bundler, game framework, transport, and database each app actually
+ * pulls in. Includes non-Node apps (Hugo) by reading their
+ * framework-specific manifests.
  *
  * Synthesis rules (all evidence-driven, no hardcoded labels):
- * - Description text is each workspace's own `package.json#description`.
+ * - Description text is each Node workspace's own
+ *   `package.json#description`.
  * - Direct deps are read from the workspace's `dependencies` /
  *   `devDependencies` so version numbers stay in sync with the manifest.
  * - The Socket.IO transport line is gated on the lockfile actually
  *   containing `socket.io` (it ships transitively via `boardgame.io`,
  *   not as a direct dep), so the report stays accurate if upstream
  *   ever swaps transports.
+ * - Hugo apps (apps with no `package.json` but with `hugo.toml`) are
+ *   appended via `synthesizeWikiViewerEntry` — Hugo binary version is
+ *   read from `.hugo-version`, page count from the projection source,
+ *   deploy target verified against `render.yaml`.
  *
  * @param {Array<Awaited<ReturnType<typeof readManifest>>>} manifests
  * @param {Map<string, Set<string>>} lockfilePackages
- * @returns {string}
+ * @returns {Promise<string>}
  */
-function renderApplicationStacksSection(manifests, lockfilePackages) {
+async function renderApplicationStacksSection(manifests, lockfilePackages) {
   const apps = manifests.filter((manifest) =>
     manifest.relativePath.startsWith('apps/'),
   );
@@ -1944,6 +1956,112 @@ function renderApplicationStacksSection(manifests, lockfilePackages) {
     lines.push(`  - Stack: ${stackLine}.`);
   }
 
+  // why: append Hugo-built apps that have no `package.json` and so
+  // never appear in the manifests list. Today this is just
+  // `apps/wiki-viewer/`; if a second Hugo app ever lands, generalise
+  // by scanning `apps/*` for `hugo.toml` instead of hardcoding the
+  // single helper call.
+  const wikiViewerEntry = await synthesizeWikiViewerEntry();
+  if (wikiViewerEntry !== null) {
+    lines.push(wikiViewerEntry);
+  }
+
+  return lines.join('\n');
+}
+
+/**
+ * Synthesize a stack-line entry for the Hugo-built engineering wiki
+ * viewer at `apps/wiki-viewer/`. This app has no `package.json` (Hugo
+ * is a Go binary, not a Node dep), so the manifests-driven main loop
+ * in `renderApplicationStacksSection` doesn't see it. The entry is
+ * built from the app's own evidence: `.hugo-version` pin, the
+ * presence of `hugo.toml`, the count of `wiki/*.md` source pages it
+ * projects, and the Render service block in `render.yaml` that
+ * deploys it.
+ *
+ * Returns null if `apps/wiki-viewer/` is not present, so removing the
+ * wiki-viewer in the future degrades gracefully (the section just
+ * drops the entry rather than emitting a stale claim or an error).
+ *
+ * @returns {Promise<string | null>}
+ */
+async function synthesizeWikiViewerEntry() {
+  const appDirectory = join(REPO_ROOT, 'apps', 'wiki-viewer');
+  if (!existsSync(appDirectory)) {
+    return null;
+  }
+
+  // why: hugo.toml presence is what distinguishes this from a stray
+  // empty directory under apps/. If hugo.toml is gone, the app is
+  // effectively missing; surface that as a warning rather than emit
+  // a confident-looking entry.
+  const hugoConfigPath = join(appDirectory, 'hugo.toml');
+  if (!existsSync(hugoConfigPath)) {
+    return (
+      `- **\`apps/wiki-viewer\`** — ⚠ _directory exists but \`hugo.toml\` ` +
+      `not found; entry skipped to avoid emitting a stale stack claim._`
+    );
+  }
+
+  const stackFacts = [];
+
+  // why: Hugo version is pinned in `.hugo-version` per WP-139 / Open
+  // Decision C. Reading it directly keeps this report in sync with
+  // the binary CI installs and the value referenced in render.yaml's
+  // buildCommand.
+  const hugoVersionPath = join(appDirectory, '.hugo-version');
+  if (existsSync(hugoVersionPath)) {
+    const pinnedHugoVersion = (await readFile(hugoVersionPath, 'utf8')).trim();
+    stackFacts.push(
+      `Hugo Extended (\`hugo@${pinnedHugoVersion}\`, pinned in \`apps/wiki-viewer/.hugo-version\`)`,
+    );
+  } else {
+    stackFacts.push('Hugo Extended ⚠ _(`.hugo-version` not found)_');
+  }
+
+  // why: D-13812 relocated the source from `docs/wiki/` to top-level
+  // `wiki/`. Page count is informational; surfacing it lets a reviewer
+  // see the wiki's growth without having to grep.
+  const wikiSourceDirectory = join(REPO_ROOT, 'wiki');
+  if (existsSync(wikiSourceDirectory)) {
+    const sourceEntries = await readdir(wikiSourceDirectory, { withFileTypes: true });
+    const sourcePageCount = sourceEntries.filter(
+      (entry) => entry.isFile() && entry.name.endsWith('.md'),
+    ).length;
+    stackFacts.push(`${sourcePageCount} source pages projected from \`wiki/\``);
+  } else {
+    stackFacts.push('⚠ _`wiki/` source directory not found_');
+  }
+
+  // why: deployment target is locked under D-13811 (Render Static
+  // Site). Confirm against render.yaml so a future redeploy posture
+  // change surfaces here as drift rather than silent staleness.
+  const renderYamlPath = join(REPO_ROOT, 'render.yaml');
+  let deployFact;
+  if (existsSync(renderYamlPath)) {
+    const renderYamlContents = await readFile(renderYamlPath, 'utf8');
+    if (renderYamlContents.includes('legendary-arena-wiki')) {
+      deployFact = 'deployed as Render Static Site `legendary-arena-wiki`';
+    } else {
+      deployFact = '⚠ _no `legendary-arena-wiki` service block found in `render.yaml`_';
+    }
+  } else {
+    deployFact = '⚠ _`render.yaml` not found_';
+  }
+  stackFacts.push(deployFact);
+
+  const lines = [];
+  lines.push(
+    `- **\`apps/wiki-viewer\`** — Engineering wiki build pipeline. ` +
+      `Build-time, read-only Hugo projection of \`wiki/\` (no \`package.json\` ` +
+      `— Hugo is a Go binary, not a Node dep). Layer-boundary clean: zero ` +
+      `runtime imports of \`@legendary-arena/game-engine\`, ` +
+      `\`@legendary-arena/registry\`, or \`apps/server\`. Build pipeline is ` +
+      `\`pnpm wiki-viewer:project\` (copy \`wiki/*.md\` → ` +
+      `\`apps/wiki-viewer/content/\`) → \`pnpm wiki-viewer:check-links\` ` +
+      `(case-sensitive internal-link gate) → \`hugo --minify\`.`,
+  );
+  lines.push(`  - Stack: ${stackFacts.join(' + ')}.`);
   return lines.join('\n');
 }
 
