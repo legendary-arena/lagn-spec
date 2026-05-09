@@ -51,6 +51,20 @@ The wiki answers questions like:
 
 ---
 
+## Rendered viewer
+
+A Hugo-built static-site projection of this directory is deployed at
+[`https://legendary-arena-wiki.onrender.com/`](https://legendary-arena-wiki.onrender.com/)
+(Render `static_site` service `legendary-arena-wiki`, declared in
+[`render.yaml`](../../render.yaml); see WP-139 / D-13811). The rendered
+site is regenerated on every push to `main` that touches `docs/wiki/`
+or `apps/wiki-viewer/`; the publish target is read-only and is never
+hand-edited. Authoring stays in `docs/wiki/` per
+[SCHEMA.md § Publish / Sync Boundary](SCHEMA.md). Build pipeline lives
+in [`apps/wiki-viewer/`](../../apps/wiki-viewer/).
+
+---
+
 ## Authority hierarchy
 
 The wiki sits at position 7 in the project's authority hierarchy

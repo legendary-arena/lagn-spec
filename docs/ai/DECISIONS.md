@@ -15186,6 +15186,172 @@ closed by this decision.
 
 ---
 
+### D-13808 — Engineering Wiki Viewer: Framework Selection (Hugo Extended) (WP-139)
+
+**Decision:** Adopt **Hugo Extended** as the static-site generator for the
+engineering wiki viewer at `apps/wiki-viewer/`. Hugo Extended `0.135.0` is
+the locked version; the pin lives at `apps/wiki-viewer/.hugo-version` and
+is read by both the GitHub Actions workflow and the Render `static_site`
+service.
+
+**Options considered:**
+- **Hugo Extended.** Single statically-linked Go binary; renders pure
+  Markdown + YAML front-matter; no Node runtime; first-class markdown
+  render hooks; no MDX ecosystem.
+- **Docusaurus.** React-based static-site framework. Rejected — its core
+  value proposition is MDX, which is the strongest practical reason MDX
+  is forbidden by the wiki schema (MDX silently reopens the rejected path
+  of executable-content-in-markdown).
+- **Custom (hand-rolled remark/rehype pipeline).** Rejected — measurable
+  build cost vs zero feature lift over Hugo for a v1 read-only projection.
+
+**Five constraints encoded by the choice:**
+1. Static-output only; no runtime backend.
+2. Pure Markdown + YAML front-matter; no MDX, no content-side scripting.
+3. `docs/wiki/` is the source root; the viewer never edits it (publish/
+   sync boundary per `docs/wiki/SCHEMA.md`).
+4. External-link strategy is explicit per D-13809.
+5. Reserved-file handling is locked per D-13810.
+
+**Rationale for the version pin (`0.135.0`):**
+Reproducible builds across local dev and CI. Hugo's render-link hook output
+and markdown rendering have shifted between minor versions before; the pin
+prevents silent drift. Bumping the pin requires a new DECISIONS entry.
+
+**Future-pivot trigger conditions:**
+- A first-class need for MDX or React in markdown (would require revisiting
+  the schema's MDX prohibition first).
+- A concrete need for live-data injection at render time (would push
+  toward an SSG with build-time API support).
+- Multi-language wiki content (Hugo handles i18n natively; trigger is
+  tooling rather than framework).
+
+**Status:** Active.
+
+**Citation:** WP-139 §Decisions / D-13808; EC-142 §Locked Values; copilot
+finding #12 (Open Decision C tightened to a concrete pin).
+
+---
+
+### D-13809 — Engineering Wiki Viewer: External-Link Strategy (GitHub Blob Rewrite) (WP-139)
+
+**Decision:** Out-of-tree links in the wiki source (any Markdown link whose
+destination starts with `../`) rewrite at build time to GitHub blob URLs
+at `https://github.com/barefootbetters/legendary-arena/blob/main/<path>`.
+The rewrite is implemented inside Hugo's deterministic markdown rendering
+pipeline via the render hook
+`apps/wiki-viewer/layouts/_default/_markup/render-link.html`. Internal
+`(slug.md)` links continue to resolve to Hugo refs; in-page `#anchor`,
+`http://`, `https://`, and `mailto:` links pass through unchanged.
+
+**Rationale:**
+- The wiki cites code paths and governance docs (`../../packages/...`,
+  `../ai/ARCHITECTURE.md`) that live outside the published site. Without
+  a rewrite, those links render as broken anchors.
+- A render-hook rewrite stays inside Hugo's deterministic pipeline. A
+  post-build HTML walk would (a) introduce an HTML-parser dependency and
+  (b) introduce a non-determinism vector (DOM iteration order can vary
+  across parser versions), violating the byte-identical output lock.
+- The rewrite encodes the project's GitHub canonical URL once. Future
+  org/repo renames are a single-string update.
+
+**Implementation contract:**
+- `../X/Y.md` (one level up from `docs/wiki/`) → `docs/X/Y.md` →
+  `https://github.com/barefootbetters/legendary-arena/blob/main/docs/X/Y.md`.
+- `../../packages/foo/bar.ts` (two levels up = repo root) →
+  `https://github.com/barefootbetters/legendary-arena/blob/main/packages/foo/bar.ts`.
+- `INDEX.md` (post-projection, the source's `INDEX.md` ↔ Hugo's
+  `_index.md`) → `/wiki/` (section landing).
+
+**Status:** Active.
+
+**Citation:** WP-139 §Decisions / D-13809; EC-142 §Locked Values; render
+hook implementation at
+`apps/wiki-viewer/layouts/_default/_markup/render-link.html`.
+
+---
+
+### D-13810 — Engineering Wiki Viewer: Reserved-File Handling (Build-Time Content Projection) (WP-139)
+
+**Decision:** Hugo's section-landing convention (`_index.md`) and the wiki
+schema's reserved-file convention (`INDEX.md`) reconcile via a **build-time
+content projection** rather than a schema change. The projection script
+`apps/wiki-viewer/scripts/project-wiki.mjs` copies `docs/wiki/*.md` into
+`apps/wiki-viewer/content/wiki/` and renames **only the copy** of
+`INDEX.md` to `_index.md`. The source under `docs/wiki/` is never modified
+by the viewer.
+
+**Rationale:**
+- `docs/wiki/SCHEMA.md` § Reserved Filenames locks `INDEX.md` (uppercase)
+  as the wiki's index file; the schema pre-dates the viewer and is owned
+  by the wiki, not by Hugo.
+- Hugo's section-landing convention requires the file to be named
+  `_index.md`. A schema amendment to lowercase `INDEX.md` → `_index.md`
+  would (a) couple the wiki to a Hugo-specific naming, (b) force every
+  reader of the source repo to know that `_index.md` is "the index", and
+  (c) break the wiki's framework-neutral posture.
+- A build-time projection keeps the source authoritative and isolates
+  Hugo-specific concerns inside `apps/wiki-viewer/`.
+
+**Operational contract:**
+- The projection is implemented with `copyFileSync` (never `renameSync`).
+  Using `mv` semantics would silently delete the source `INDEX.md` and
+  break the read-only-on-source guarantee.
+- The script asserts the source `INDEX.md` exists before and after
+  projection (cheap regression guard against `mv`-vs-`cp` drift).
+- Filename comparison is case-sensitive even on Windows. CI runs on Linux
+  and would surface case mismatches that pass on Windows.
+- `SCHEMA.md` and `README.md` remain accessible in the rendered viewer
+  (URLs `/wiki/schema/` and `/wiki/readme/`) but are absent from the
+  entity sidebar (no front-matter `type` ⇒ excluded by the
+  `where ... "Params.type" "ne" nil` filter in `baseof.html`).
+
+**Status:** Active.
+
+**Citation:** WP-139 §Decisions / D-13810; EC-142 §Locked Values;
+projection implementation at `apps/wiki-viewer/scripts/project-wiki.mjs`.
+
+---
+
+### D-13811 — Engineering Wiki Viewer: Hosting Target (Render Static Site) (WP-139)
+
+**Decision:** Host the rendered wiki as a Render `static_site` service
+named `legendary-arena-wiki`, declared in `render.yaml`. Build-trigger CI
+is `.github/workflows/wiki-viewer.yml` (Open Decision G default), which
+runs on push to `main` whose paths touch `docs/wiki/` or
+`apps/wiki-viewer/`.
+
+**Rationale:**
+- The project's existing infrastructure surface is Render (the game
+  server is already a Render `web` service). A Render static site reuses
+  the same dashboard, deploy hooks, and credentialing model.
+- Render's static-site posture matches the wiki's posture exactly: HTML +
+  CSS only, no runtime backend, no environment-secret consumption beyond
+  build-time.
+- The CI workflow is the gate (link integrity + Hugo build + determinism
+  check + JS-free invariant); Render auto-deploys from `main` once the
+  workflow passes.
+
+**Operational contract:**
+- The Render `static_site` service's `buildCommand` installs Hugo
+  Extended at the version pinned in `apps/wiki-viewer/.hugo-version`,
+  installs Node dependencies, runs the projection step, runs the
+  link-integrity check, then invokes `hugo --minify`.
+- `staticPublishPath` is `apps/wiki-viewer/public`.
+- `pullRequestPreviewsEnabled` is `false` at v1 (the GitHub Actions
+  workflow is the PR-time gate; preview deploys cost build minutes
+  without adding signal).
+- Future moves (e.g., Cloudflare Pages, Vercel, GitHub Pages) require a
+  new DECISIONS entry that supersedes this lock.
+
+**Status:** Active.
+
+**Citation:** WP-139 §Decisions / D-13811; EC-142 §Locked Values;
+`render.yaml` `legendary-arena-wiki` service block;
+`.github/workflows/wiki-viewer.yml`.
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
