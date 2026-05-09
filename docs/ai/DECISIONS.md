@@ -15417,6 +15417,125 @@ relocation. D-13808 / D-13809 / D-13811 unchanged.
 
 ---
 
+### D-13901 — `_skipPair[]` Annotation Grammar (WP-140)
+
+**Decision:** A new optional patch field `heroes[]._skipPair[]` is the
+sole declarative escape hatch for paired-equal `cardCounts` audit
+warnings whose cluster members are NOT split-side dual-faced cards.
+Each entry is a 2-element array of `cards[].slug` values naming a
+coincidental pair under that hero. The convert script reads the
+annotation, validates its shape per the matching contract below,
+suppresses the corresponding audit warning, and never propagates the
+field to `data/cards/*.json` output (it is a build-time annotation,
+not registry data).
+
+**Matching contract** (locked alongside D-13901):
+
+- **Unordered 2-set semantics:** `["a","b"]` matches the same audit
+  candidate as `["b","a"]`.
+- **Exact slug equality:** literal string match against
+  `cards[].slug`. No case folding, Unicode normalization, whitespace
+  stripping, or locale-aware comparison (mirrors D-13802 sort
+  posture).
+- **Length lock:** each entry MUST have exactly 2 elements; length-1
+  or length-3+ entries fail conversion with a full-sentence error.
+- **No duplicate entries:** within a hero's `_skipPair[]`, no two
+  entries may be the same unordered 2-set. Cross-hero reuse is
+  permitted (a slug may recur under multiple heroes).
+- **Existing-slug requirement:** every slug must resolve to an
+  existing `cards[].slug` under the same hero.
+- **Mutual exclusion with `physicalCards[]`:** a slug declared in any
+  patch-declared `physicalCards[].sides` entry MUST NOT also appear
+  in any `_skipPair` entry for the same hero. The two structures are
+  alternative resolution paths; a slug uses exactly one.
+
+**Cluster coverage rule** (locked alongside D-13901): every member
+slug of every paired-equal candidate cluster MUST appear in **exactly
+one** of patch-declared `physicalCards[].sides` OR `_skipPair`.
+Heroes with no patch declaration preserve WP-138 Phase 1a's
+audit-warning-as-uncovered behavior so the extension is
+backward-compatible. Mixed coverage permitted for clusters of size
+greater than two via per-cluster-member 1-side `physicalCards`
+entries; `_skipPair` cannot cover 3+-clusters atomically because the
+"exactly one" rule forbids a slug appearing in multiple `_skipPair`
+entries.
+
+**Idempotency invariant** (locked alongside D-13901): `_skipPair`
+affects audit-warning emission ONLY. It MUST NOT modify
+`physicalCards[]` synthesis output (`id`, `count`, `sides`,
+`imageUrl`). Any `data/cards/*.json` difference between a run with
+`_skipPair` populated and the same run with the annotation removed
+(other than the warning suppression itself) is a conversion failure.
+Verified at WP-140 execution by spot-check on `3dtc/howard-the-duck`:
+SHA-256 of `data/cards/3dtc.json` byte-identical with and without the
+`_skipPair` entry restored.
+
+**Deterministic per-hero execution order** (locked alongside
+D-13901): the convert script's `buildPhysicalCards` follows nine
+steps per hero — (1) load patch, (2) validate `_skipPair[]` shape
+per the matching contract, (3) synthesize `physicalCards[]` (declared
++ auto-fill for solos under D-13803, OR solo-auto-path), (4) validate
+slug mutual exclusion, (5) identify paired-equal candidate clusters,
+(6) apply `_skipPair` filter, (7) validate no-partial-resolution /
+cluster coverage, (8) emit remaining audit warnings, (9) apply
+`--strict` failure condition. Re-arranging steps would either force
+the executor to author redundant declarations (e.g., declaring all
+hero cards in `physicalCards` just to suppress one audit warning) or
+hide errors behind implicit precedence (e.g., `_skipPair`
+suppressing a real drift failure).
+
+**Log emission format** (locked alongside D-13901):
+`📎 SkipPair: hero=<slug> pairs=<N> slugs=[(a,b),(c,d)]`. Within
+each pair: slugs sorted UTF-16 code-units (D-13802 posture). Across
+pairs: sorted by first element, then by second element. Slugs
+inline so the conversion log carries forensic audit data without
+re-opening the patch file.
+
+**Rationale:**
+- Phase 1a's 262-entry audit-warning surface contains both true
+  split-side pairs (the small minority) and false-positive
+  coincidences (the vast majority — Common 1 + Common 2 share count 5
+  in the standard 4-card hero rarity layout). A declarative
+  suppression mechanism is necessary so CI green-state can be restored
+  under `--strict` without forcing every hero's `cards[]` to be
+  declared in a `physicalCards[]` block.
+- The matching contract is auditable, version-controlled, and
+  reviewable per the established patch format. The mutual exclusion +
+  cluster coverage rules close the door on silent suppression.
+- The idempotency invariant ensures `_skipPair` never bleeds into
+  `data/cards/*.json` output — a class of bug that the convert script's
+  pre-WP-140 `applyPatch` field-copy loop introduced for any patch field
+  not explicitly excluded. The fix (underscore-prefix exclusion in
+  `applyPatch`) covers the entire family of patch-only annotations
+  (`_op`, `_slug`, `_abilityTokenRewrite`, `_skipPair`, future).
+
+**Rejected alternatives:**
+- Auto-detection of false-positive vs split via heuristics (name
+  similarity, type similarity, artistic pairing): forbidden by D-13805
+  for the same reasons split-pair declarations require explicit patch
+  authority.
+- Suppressing audit warnings unconditionally for clusters that don't
+  resolve to a `physicalCards[]` declaration: silent-failure surface;
+  the worklist's 262 candidates require human curation, not silent
+  side-stepping.
+- Embedding the suppression metadata in `cards[]` per-side fields:
+  changes the schema of registry data for an annotation that is
+  build-time only.
+- Authoring full `physicalCards[]` blocks for every false-positive
+  hero (listing all cards as 1-side entries): verbose; the executor
+  has to write 4-7 declarations per hero where a single `_skipPair`
+  entry conveys the same information for 2-clusters. (For 3+-clusters,
+  the full-declaration path is the only valid resolution under "exactly
+  one" coverage and is what WP-140 authored.)
+
+**Status:** Active.
+
+**Citation:** WP-140 §Scope (In) A + §Non-Negotiable Constraints +
+§Locked contract values; EC-143 §Locked Values §7.3..§7.7;
+patches/README.md v18 section.
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

@@ -87,5 +87,57 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "king-black-panther",
+      "_skipPair": [
+        [
+          "unseen-protector",
+          "vibranium-claws"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "queen-storm-of-wakanda",
+      "_skipPair": [
+        [
+          "hurricane-winds",
+          "torrential-downpour"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "princess-shuri",
+      "_skipPair": [
+        [
+          "kimoyo-beads",
+          "vibranium-experiments"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "general-okoye",
+      "_skipPair": [
+        [
+          "lead-the-dora-milaje",
+          "to-my-last-breath"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "white-wolf",
+      "_skipPair": [
+        [
+          "cloaking-tech-ambush",
+          "secret-assignment"
+        ]
+      ]
+    }
   ]
 }

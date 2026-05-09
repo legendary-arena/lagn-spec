@@ -48,5 +48,57 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "human-torch",
+      "_skipPair": [
+        [
+          "call-for-backup",
+          "hothead"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "invisible-woman",
+      "_skipPair": [
+        [
+          "disappearing-act",
+          "four-of-a-kind"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mr-fantastic",
+      "_skipPair": [
+        [
+          "twisting-equations",
+          "unstable-molecules"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "silver-surfer",
+      "_skipPair": [
+        [
+          "epic-destiny",
+          "warp-speed"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "thing",
+      "_skipPair": [
+        [
+          "it-started-on-yancy-street",
+          "knuckle-sandwich"
+        ]
+      ]
+    }
   ]
 }

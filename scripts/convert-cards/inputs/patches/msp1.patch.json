@@ -25,7 +25,13 @@
           "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-black-widow-7r.webp"
         }
       ],
-      "id": 1
+      "id": 1,
+      "_skipPair": [
+        [
+          "dangerous-rescue",
+          "mission-accomplished"
+        ]
+      ]
     },
     {
       "_op": "merge",
@@ -48,7 +54,13 @@
           "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-captain-america-7r.webp"
         }
       ],
-      "id": 2
+      "id": 2,
+      "_skipPair": [
+        [
+          "avengers-assemble",
+          "perfect-teamwork"
+        ]
+      ]
     },
     {
       "_op": "merge",
@@ -71,7 +83,13 @@
           "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hawkeye-7r.webp"
         }
       ],
-      "id": 7
+      "id": 7,
+      "_skipPair": [
+        [
+          "quick-draw",
+          "team-player"
+        ]
+      ]
     },
     {
       "_op": "merge",
@@ -94,7 +112,13 @@
           "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hulk-8r.webp"
         }
       ],
-      "id": 8
+      "id": 8,
+      "_skipPair": [
+        [
+          "growing-anger",
+          "unstoppable-hulk"
+        ]
+      ]
     },
     {
       "_op": "merge",
@@ -117,7 +141,13 @@
           "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-iron-man-7r.webp"
         }
       ],
-      "id": 9
+      "id": 9,
+      "_skipPair": [
+        [
+          "endless-invention",
+          "repulsor-rays"
+        ]
+      ]
     },
     {
       "_op": "merge",
@@ -140,7 +170,13 @@
           "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-nick-fury-8r.webp"
         }
       ],
-      "id": 10
+      "id": 10,
+      "_skipPair": [
+        [
+          "battlefield-promotion",
+          "high-tech-weaponry"
+        ]
+      ]
     },
     {
       "_op": "merge",
@@ -163,7 +199,13 @@
           "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-thor-8r.webp"
         }
       ],
-      "id": 14
+      "id": 14,
+      "_skipPair": [
+        [
+          "odinson",
+          "surge-of-power"
+        ]
+      ]
     }
   ],
   "masterminds": [

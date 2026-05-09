@@ -542,9 +542,9 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-hr-wonder-man-one-hit-wonder.webp",
+          "imageUrl": "https://images.barefootbetters.com/antm/antm-hr-wonder-man-absorb-ambient-power.webp",
           "sides": [
-            "one-hit-wonder"
+            "absorb-ambient-power"
           ]
         },
         {
@@ -558,9 +558,9 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/antm/antm-hr-wonder-man-absorb-ambient-power.webp",
+          "imageUrl": "https://images.barefootbetters.com/antm/antm-hr-wonder-man-one-hit-wonder.webp",
           "sides": [
-            "absorb-ambient-power"
+            "one-hit-wonder"
           ]
         },
         {

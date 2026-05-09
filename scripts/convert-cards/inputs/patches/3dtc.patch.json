@@ -16,6 +16,12 @@
             "[hc:covert]: You may move a Villain to another city space. If another Villain is already there, swap them."
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "burn-the-fearful",
+          "form-from-ooze"
+        ]
       ]
     },
     {
@@ -224,6 +230,16 @@
             "[hc:strength]: You get +5[icon:attack]."
           ]
         }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "howard-the-duck",
+      "_skipPair": [
+        [
+          "rebel-without-a-cause",
+          "traveling-companion"
+        ]
       ]
     }
   ]

@@ -121,9 +121,135 @@ per-set patch.
   at most one `physicalCard` within a given hero. Cross-hero reuse is
   permitted (a slug like `night-vision` can recur under multiple heroes).
 
-## Phase 1b worklist
+## v18 — `_skipPair[]` annotation (WP-140 Phase 1b)
 
-Heroes confirmed split-side from the 2026-05-07 v16 image migration audit
-(44 unmatched files): bkwd (other than falcon-winter-soldier), entire
-mgtg roster, and split heroes in msis, msmc, msp1, wpnx, wwhk, xmen.
-Phase 1b is a follow-up Work Packet after WP-138 lands.
+A `heroes[]._skipPair[]` block declares that a given pair of `cards[].slug`
+values share a coincidental matching `cardCounts` value but are NOT split-side
+faces of one physical card. The convert script reads the annotation, validates
+its shape per the matching contract below, and downgrades any audit warning
+whose cluster is fully covered by `_skipPair` entries (or by an explicit
+`physicalCards[]` declaration) from "candidate paired-equal pattern" to
+"explicitly skipped." Skipped clusters do NOT emit a warning under `--strict`
+mode.
+
+why: cross-references D-13901 + the WP-140 §Scope A worked example.
+The annotation grammar locks under D-13901 the false-positive escape hatch for
+heroes whose paired-equal `cardCounts` patterns are coincidences (Common 1
+and Common 2 in a 4-card hero both having count 5; Uncommon and Uncommon 2
+both having count 3; etc.), distinguishing them from true split-side dual-faced
+cards (e.g., the Falcon / Winter Soldier reference under v17 above).
+
+### Field semantics
+
+```jsonc
+{
+  "_op": "merge",
+  "slug": "howard-the-duck",
+  "_skipPair": [
+    ["traveling-companion", "rebel-without-a-cause"]
+  ],
+  "cards": [ /* ... per-side gameplay entries unchanged ... */ ]
+}
+```
+
+Each entry is a 2-element array of card slugs naming a coincidental pair
+under that hero. The slugs match `cards[].slug` literally — no case folding,
+Unicode normalization, whitespace stripping, or locale-aware comparison.
+
+### Matching contract (D-13901)
+
+- **Unordered 2-set semantics:** `["a","b"]` matches the same audit
+  candidate as `["b","a"]`.
+- **Exact slug equality:** literal string match against `cards[].slug`. No
+  case folding, Unicode normalization, whitespace stripping, or locale-aware
+  comparison.
+- **Length lock:** each entry MUST have exactly 2 elements; length-1 or
+  length-3+ entries fail conversion with a full-sentence error.
+- **No duplicate entries:** within a hero's `_skipPair[]`, no two entries
+  may be the same unordered 2-set. (Cross-hero reuse is permitted and
+  expected — a slug like `night-vision` may recur under multiple heroes.)
+- **Existing-slug requirement:** every slug must resolve to an existing
+  `cards[].slug` under the same hero. Unknown slugs fail conversion.
+- **Mutual exclusion with `physicalCards[]`:** a slug declared in any
+  `physicalCards[].sides` entry MUST NOT also appear in any `_skipPair`
+  entry for the same hero. The two structures are alternative resolution
+  paths; a slug uses exactly one.
+
+### Cluster coverage rule (D-13901 §7.4)
+
+A "paired-equal candidate cluster" is the maximal set of `cards[]` under a
+hero sharing the same `cardCounts` value. Clusters are identified BEFORE
+`_skipPair` filtering and treated as **atomic** for resolution: every
+member slug of every cluster MUST appear in **exactly one** of
+`physicalCards[].sides` OR `_skipPair`.
+
+For a hero with any patch declaration (either `physicalCards[]` or
+`_skipPair[]`), the convert script enforces this coverage rule and throws
+a full-sentence error naming the uncovered cluster member(s) on violation.
+Heroes with no patch declaration preserve WP-138 Phase 1a's
+audit-warning-as-uncovered behavior so the extension is backward-compatible
+with un-curated sets.
+
+For 2-clusters of false positives (the vast majority): a single
+`_skipPair[]` entry covers both members.
+
+For 3+-clusters of false positives (rare): `_skipPair` cannot cover the
+cluster atomically because `_skipPair` entries are 2-element and the
+"exactly one" rule forbids a slug appearing in multiple `_skipPair` entries.
+Resolution requires an explicit `physicalCards[]` declaration listing the
+cluster members as 1-side entries. The convert script's auto-fill then
+synthesizes 1-side `physicalCards` for the remaining hero cards under
+D-13803 uniform model.
+
+### Idempotency invariant (D-13901 §7.5)
+
+`_skipPair` affects audit-warning emission ONLY. It MUST NOT modify
+`physicalCards[]` synthesis output (`id`, `count`, `sides`, `imageUrl`).
+Any `data/cards/*.json` difference between a run with `_skipPair` populated
+and the same run with the annotation removed (other than the warning
+suppression itself) is a conversion failure. The convert script preserves
+this by applying `_skipPair` strictly as a warning filter, never as input
+to `synthesizePhysicalCards`.
+
+### Worked example
+
+Howard the Duck (`3dtc.patch.json`) has two cards both at `cardCounts === 5`
+— `Traveling Companion` and `Rebel Without a Cause`. They are not split-side
+faces; they are independent Common 1 and Common 2 cards whose count
+coincides under the standard rarity layout (5 / 5 / 3 / 1). Resolution:
+
+```jsonc
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "howard-the-duck",
+      "_skipPair": [
+        ["traveling-companion", "rebel-without-a-cause"]
+      ]
+    }
+  ]
+}
+```
+
+After Phase 1b lands, re-running `node scripts/convert-cards/convert-cards-v15.mjs`
+emits no `📎 Pair:` summary for `howard-the-duck` (no splits) and a single
+`📎 SkipPair: hero=howard-the-duck pairs=1 slugs=[(rebel-without-a-cause,traveling-companion)]`
+log line — pair sorted within (UTF-16 code-unit ordering per D-13802 sort
+posture) and surfaced inline for forensic audit. Under `--strict` mode the
+convert script exits 0 (the cluster is fully covered).
+
+## Phase 1b worklist (resolved)
+
+Heroes confirmed split-side via the npm-source `divided: 1` / `divided: 2`
+fields — paired across consecutive cards within a hero — were curated under
+WP-140 Phase 1b across `bkwd` (already done in WP-138), `cvwr`, `mgtg`,
+`msis`, and `xmen` (the five sets whose npm sources contain `divided:`
+entries). The remaining audit-warning candidates from WP-138 Phase 1a's
+262-entry worklist were resolved as false positives via `_skipPair`
+annotations (or via `physicalCards[]` 1-side declarations for 3+-clusters
+where `_skipPair` cannot cover atomically).
+
+After Phase 1b, `LEGENDARY_CONVERT_STRICT=1 node scripts/convert-cards/convert-cards-v15.mjs`
+exits **0** — the inverse of WP-138 Phase 1a's expected `--strict` exit-1
+posture. CI green-state restored.

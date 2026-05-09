@@ -107,21 +107,14 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-nation.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-man-inspire-a-nation.webp",
           "sides": [
+            "inspire-a-man",
             "inspire-a-nation"
           ]
         },
         {
           "id": "p3",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-man.webp",
-          "sides": [
-            "inspire-a-man"
-          ]
-        },
-        {
-          "id": "p4",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-secret-avengers-assemble.webp",
           "sides": [
@@ -129,7 +122,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-freedom-never-dies.webp",
           "sides": [
@@ -270,53 +263,32 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-above.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-above-below.webp",
           "sides": [
-            "above"
+            "above",
+            "below"
           ]
         },
         {
           "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-below.webp",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-darkness-light.webp",
           "sides": [
-            "below"
+            "darkness",
+            "light"
           ]
         },
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-flee.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-fight-flee.webp",
           "sides": [
+            "fight",
             "flee"
           ]
         },
         {
           "id": "p4",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-fight.webp",
-          "sides": [
-            "fight"
-          ]
-        },
-        {
-          "id": "p5",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-darkness.webp",
-          "sides": [
-            "darkness"
-          ]
-        },
-        {
-          "id": "p6",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-light.webp",
-          "sides": [
-            "light"
-          ]
-        },
-        {
-          "id": "p7",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-penumbra.webp",
           "sides": [
@@ -422,6 +394,15 @@
       "physicalCards": [
         {
           "id": "p1",
+          "count": 6,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-hidden-identity-revealed-identity.webp",
+          "sides": [
+            "hidden-identity",
+            "revealed-identity"
+          ]
+        },
+        {
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-dual-existence.webp",
           "sides": [
@@ -429,7 +410,7 @@
           ]
         },
         {
-          "id": "p2",
+          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-roundhouse-side-kick.webp",
           "sides": [
@@ -437,23 +418,7 @@
           ]
         },
         {
-          "id": "p3",
-          "count": 6,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-hidden-identity.webp",
-          "sides": [
-            "hidden-identity"
-          ]
-        },
-        {
           "id": "p4",
-          "count": 6,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-revealed-identity.webp",
-          "sides": [
-            "revealed-identity"
-          ]
-        },
-        {
-          "id": "p5",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-master-of-martial-arts.webp",
           "sides": [
@@ -569,21 +534,14 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-talk-with-birds.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-squawk-back-talk-with-birds.webp",
           "sides": [
+            "squawk-back",
             "talk-with-birds"
           ]
         },
         {
           "id": "p3",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-squawk-back.webp",
-          "sides": [
-            "squawk-back"
-          ]
-        },
-        {
-          "id": "p4",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-scout-the-battlefield.webp",
           "sides": [
@@ -591,7 +549,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-fly-in-a-friend.webp",
           "sides": [
@@ -701,21 +659,14 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-brilliant-biochemist.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-brilliant-biochemist-massive-warrior.webp",
           "sides": [
-            "brilliant-biochemist"
-          ]
-        },
-        {
-          "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-massive-warrior.webp",
-          "sides": [
+            "brilliant-biochemist",
             "massive-warrior"
           ]
         },
         {
-          "id": "p3",
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-growth-industry.webp",
           "sides": [
@@ -723,7 +674,7 @@
           ]
         },
         {
-          "id": "p4",
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-being-big-is-best.webp",
           "sides": [
@@ -731,7 +682,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-enormous-implications.webp",
           "sides": [
@@ -839,21 +790,14 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-manly-dullard.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-boy-genius-manly-dullard.webp",
           "sides": [
+            "boy-genius",
             "manly-dullard"
           ]
         },
         {
           "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-boy-genius.webp",
-          "sides": [
-            "boy-genius"
-          ]
-        },
-        {
-          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-crowd-favorite.webp",
           "sides": [
@@ -861,7 +805,7 @@
           ]
         },
         {
-          "id": "p4",
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-prince-of-power.webp",
           "sides": [
@@ -869,7 +813,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-son-of-zeus.webp",
           "sides": [
@@ -980,29 +924,22 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-half-kree.webp",
-          "sides": [
-            "half-kree"
-          ]
-        },
-        {
-          "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-half-skrull.webp",
-          "sides": [
-            "half-skrull"
-          ]
-        },
-        {
-          "id": "p3",
-          "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-cellular-regeneration.webp",
           "sides": [
             "cellular-regeneration"
           ]
         },
         {
-          "id": "p4",
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-half-kree-half-skrull.webp",
+          "sides": [
+            "half-kree",
+            "half-skrull"
+          ]
+        },
+        {
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-impersonate.webp",
           "sides": [
@@ -1010,7 +947,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-enormous-shapeshifter.webp",
           "sides": [
@@ -1115,21 +1052,14 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-cautious.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-cautious-reckless.webp",
           "sides": [
-            "cautious"
-          ]
-        },
-        {
-          "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-reckless.webp",
-          "sides": [
+            "cautious",
             "reckless"
           ]
         },
         {
-          "id": "p3",
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-take-a-bullet-for-the-team.webp",
           "sides": [
@@ -1137,7 +1067,7 @@
           ]
         },
         {
-          "id": "p4",
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-sweet-christmas.webp",
           "sides": [
@@ -1145,7 +1075,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-unbreakable-skin.webp",
           "sides": [
@@ -1249,6 +1179,15 @@
       "physicalCards": [
         {
           "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-effortless-incredible-effort.webp",
+          "sides": [
+            "effortless",
+            "incredible-effort"
+          ]
+        },
+        {
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-new-generation-of-heroes.webp",
           "sides": [
@@ -1256,7 +1195,7 @@
           ]
         },
         {
-          "id": "p2",
+          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-intuitive-tactician.webp",
           "sides": [
@@ -1264,23 +1203,7 @@
           ]
         },
         {
-          "id": "p3",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-incredible-effort.webp",
-          "sides": [
-            "incredible-effort"
-          ]
-        },
-        {
           "id": "p4",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-effortless.webp",
-          "sides": [
-            "effortless"
-          ]
-        },
-        {
-          "id": "p5",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-lead-the-young-avengers.webp",
           "sides": [
@@ -1387,6 +1310,15 @@
       "physicalCards": [
         {
           "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-hot-bowl-of-soup-protect-my-family.webp",
+          "sides": [
+            "hot-bowl-of-soup",
+            "protect-my-family"
+          ]
+        },
+        {
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-conflicted-loyalties.webp",
           "sides": [
@@ -1394,7 +1326,7 @@
           ]
         },
         {
-          "id": "p2",
+          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-spider-man-unmasked.webp",
           "sides": [
@@ -1402,23 +1334,7 @@
           ]
         },
         {
-          "id": "p3",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-protect-my-family.webp",
-          "sides": [
-            "protect-my-family"
-          ]
-        },
-        {
           "id": "p4",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-hot-bowl-of-soup.webp",
-          "sides": [
-            "hot-bowl-of-soup"
-          ]
-        },
-        {
-          "id": "p5",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-reluctant-celebrity.webp",
           "sides": [
@@ -1524,6 +1440,15 @@
       "physicalCards": [
         {
           "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-bubble-up-double-down.webp",
+          "sides": [
+            "bubble-up",
+            "double-down"
+          ]
+        },
+        {
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-reckless-rescue-attempt.webp",
           "sides": [
@@ -1531,7 +1456,7 @@
           ]
         },
         {
-          "id": "p2",
+          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-bounce-around.webp",
           "sides": [
@@ -1539,23 +1464,7 @@
           ]
         },
         {
-          "id": "p3",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-double-down.webp",
-          "sides": [
-            "double-down"
-          ]
-        },
-        {
           "id": "p4",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-bubble-up.webp",
-          "sides": [
-            "bubble-up"
-          ]
-        },
-        {
-          "id": "p5",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-kinetic-force-field.webp",
           "sides": [
@@ -1668,29 +1577,22 @@
         {
           "id": "p1",
           "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-crush-ants-crush-file-sizes.webp",
+          "sides": [
+            "crush-ants",
+            "crush-file-sizes"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-shrink-to-nothing.webp",
           "sides": [
             "shrink-to-nothing"
           ]
         },
         {
-          "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-crush-ants.webp",
-          "sides": [
-            "crush-ants"
-          ]
-        },
-        {
           "id": "p3",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-crush-file-sizes.webp",
-          "sides": [
-            "crush-file-sizes"
-          ]
-        },
-        {
-          "id": "p4",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-growing-confidence.webp",
           "sides": [
@@ -1698,7 +1600,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-trample-the-tiny.webp",
           "sides": [
@@ -1839,53 +1741,32 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-gathering-rain-clouds.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-gathering-clues-gathering-rain-clouds.webp",
           "sides": [
+            "gathering-clues",
             "gathering-rain-clouds"
           ]
         },
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-gathering-clues.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-lightning-strike-pouncing-strike.webp",
           "sides": [
-            "gathering-clues"
-          ]
-        },
-        {
-          "id": "p3",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-lightning-strike.webp",
-          "sides": [
-            "lightning-strike"
-          ]
-        },
-        {
-          "id": "p4",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-pouncing-strike.webp",
-          "sides": [
+            "lightning-strike",
             "pouncing-strike"
           ]
         },
         {
-          "id": "p5",
+          "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-water.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-justice-tsunami-of-water.webp",
           "sides": [
+            "tsunami-of-justice",
             "tsunami-of-water"
           ]
         },
         {
-          "id": "p6",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-justice.webp",
-          "sides": [
-            "tsunami-of-justice"
-          ]
-        },
-        {
-          "id": "p7",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-king-queen-of-wakanda.webp",
           "sides": [
@@ -1994,21 +1875,14 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-friendship.webp",
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-ferocity-friendship.webp",
           "sides": [
+            "ferocity",
             "friendship"
           ]
         },
         {
           "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-ferocity.webp",
-          "sides": [
-            "ferocity"
-          ]
-        },
-        {
-          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-supernatural-senses.webp",
           "sides": [
@@ -2016,7 +1890,7 @@
           ]
         },
         {
-          "id": "p4",
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-cant-surprise-a-cat.webp",
           "sides": [
@@ -2024,7 +1898,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-mystic-talisman.webp",
           "sides": [
@@ -2135,6 +2009,15 @@
       "physicalCards": [
         {
           "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-harder-than-diamond-lighter-than-air.webp",
+          "sides": [
+            "harder-than-diamond",
+            "lighter-than-air"
+          ]
+        },
+        {
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-solar-energy.webp",
           "sides": [
@@ -2142,7 +2025,7 @@
           ]
         },
         {
-          "id": "p2",
+          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-through-solid-objects.webp",
           "sides": [
@@ -2150,23 +2033,7 @@
           ]
         },
         {
-          "id": "p3",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-lighter-than-air.webp",
-          "sides": [
-            "lighter-than-air"
-          ]
-        },
-        {
           "id": "p4",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-harder-than-diamond.webp",
-          "sides": [
-            "harder-than-diamond"
-          ]
-        },
-        {
-          "id": "p5",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-insubstantial-accomplishments.webp",
           "sides": [
@@ -2275,6 +2142,15 @@
       "physicalCards": [
         {
           "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-supersonic-speed-supersonic-spells.webp",
+          "sides": [
+            "supersonic-speed",
+            "supersonic-spells"
+          ]
+        },
+        {
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-sorcerous-illusions.webp",
           "sides": [
@@ -2282,7 +2158,7 @@
           ]
         },
         {
-          "id": "p2",
+          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-astral-projection.webp",
           "sides": [
@@ -2290,23 +2166,7 @@
           ]
         },
         {
-          "id": "p3",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-supersonic-spells.webp",
-          "sides": [
-            "supersonic-spells"
-          ]
-        },
-        {
           "id": "p4",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-supersonic-speed.webp",
-          "sides": [
-            "supersonic-speed"
-          ]
-        },
-        {
-          "id": "p5",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-clairvoyance.webp",
           "sides": [

@@ -26,5 +26,67 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "greithoth-breaker-of-wills",
+      "_skipPair": [
+        [
+          "absorb-metal",
+          "mace-of-chains"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "kuurth-breaker-of-stone",
+      "_skipPair": [
+        [
+          "reach-for-power",
+          "unstoppable-sledge"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "nerkkod-breaker-of-oceans",
+      "_skipPair": [
+        [
+          "feed-my-undersea-legions",
+          "pull-of-the-tides"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "nul-breaker-of-worlds",
+      "_skipPair": [
+        [
+          "demolition-derby",
+          "otherworldly-maul"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "skadi",
+      "_skipPair": [
+        [
+          "ancient-oath-of-hydra",
+          "dark-prophecy"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "skirn-breaker-of-men",
+      "_skipPair": [
+        [
+          "towering-leader",
+          "underhanded-dealings"
+        ]
+      ]
+    }
   ]
 }

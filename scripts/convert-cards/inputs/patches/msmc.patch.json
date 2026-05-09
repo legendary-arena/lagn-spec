@@ -114,6 +114,29 @@
           ],
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-3r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 4,
+          "sides": [
+            "find-mutants-with-cerebro"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 4,
+          "sides": [
+            "shared-thoughts"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 4,
+          "sides": [
+            "telepathic-warning"
+          ]
+        }
       ]
     },
     {

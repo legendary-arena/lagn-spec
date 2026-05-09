@@ -96,5 +96,157 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "bullseye",
+      "_skipPair": [
+        [
+          "everythings-a-weapon",
+          "fulfill-the-contract"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "dr-octopus",
+      "_skipPair": [
+        [
+          "brilliant-research",
+          "crazed-experiments"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "electro",
+      "_skipPair": [
+        [
+          "electroshock-therapy",
+          "shocking-robbery"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "enchantress",
+      "_skipPair": [
+        [
+          "enchant-the-senses",
+          "soul-sacrifice"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "green-goblin",
+      "_skipPair": [
+        [
+          "goblin-glider",
+          "pumpkin-bombs"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "juggernaut",
+      "_skipPair": [
+        [
+          "crimson-gem-of-cyttorak",
+          "size-matters"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "kingpin",
+      "_skipPair": [
+        [
+          "pull-the-strings",
+          "recruitment-day"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "kraven",
+      "_skipPair": [
+        [
+          "ceaseless-tracker",
+          "corner-the-prey"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "loki",
+      "_skipPair": [
+        [
+          "all-humans-are-expendable",
+          "illusionary-bindings"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "magneto",
+      "_skipPair": [
+        [
+          "magnetic-levitation",
+          "mutants-will-rule"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mysterio",
+      "_skipPair": [
+        [
+          "psychedelic-mist",
+          "shifting-decoy"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "mystique",
+      "_skipPair": [
+        [
+          "hidden-weapons",
+          "show-your-true-colors"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "sabretooth",
+      "_skipPair": [
+        [
+          "leap-of-the-tiger",
+          "take-one-for-the-team"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ultron",
+      "_skipPair": [
+        [
+          "army-of-ultrons",
+          "encephalo-ray"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "venom",
+      "_skipPair": [
+        [
+          "devour",
+          "symbiote-takeover"
+        ]
+      ]
+    }
   ]
 }

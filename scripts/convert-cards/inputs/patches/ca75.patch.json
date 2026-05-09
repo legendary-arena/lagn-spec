@@ -44,5 +44,57 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "agent-x-13",
+      "_skipPair": [
+        [
+          "paramilitary-ops",
+          "sniper-squad"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "captain-america-falcon",
+      "_skipPair": [
+        [
+          "aerial-catch",
+          "winged-salvation"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "captain-america-1941",
+      "_skipPair": [
+        [
+          "devoted-patriot",
+          "storm-the-beachhead"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "steve-rogers-director-of-shield",
+      "_skipPair": [
+        [
+          "international-strike-force",
+          "reassign-to-civilian-duty"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "winter-soldier",
+      "_skipPair": [
+        [
+          "bionic-arm",
+          "sniper-nest"
+        ]
+      ]
+    }
   ]
 }

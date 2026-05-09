@@ -32,6 +32,12 @@
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "casual-bank-robbery",
+          "pickpocket"
+        ]
       ]
     },
     {
@@ -66,6 +72,42 @@
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "bioelectric-shock",
+          "radioactive-spider"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "moon-knight",
+      "_skipPair": [
+        [
+          "climbing-claws",
+          "lunar-communion"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "scarlet-spider",
+      "_skipPair": [
+        [
+          "flip-out",
+          "perfect-hunter"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "symbiote-spider-man",
+      "_skipPair": [
+        [
+          "dark-strength",
+          "spider-sense-tingling"
+        ]
       ]
     }
   ],

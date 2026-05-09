@@ -96,5 +96,137 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "black-bolt",
+      "_skipPair": [
+        [
+          "destructive-whisper",
+          "speak-no-words"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "black-panther",
+      "_skipPair": [
+        [
+          "catlike-reflexes",
+          "multifaceted-genius"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "captain-marvel",
+      "_skipPair": [
+        [
+          "absorb-energies",
+          "supersonic-flight"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "dr-strange",
+      "_skipPair": [
+        [
+          "cloak-of-levitation",
+          "trust-me-im-a-doctor"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "lady-thor",
+      "_skipPair": [
+        [
+          "chosen-by-asgard",
+          "mysterious-origin"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "magik",
+      "_skipPair": [
+        [
+          "rally-the-new-mutants",
+          "travel-through-limbo"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "maximus",
+      "_skipPair": [
+        [
+          "enslave-the-will",
+          "mental-domination"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "namor-the-sub-mariner",
+      "_skipPair": [
+        [
+          "lead-the-armies-of-atlantis",
+          "ruler-of-the-seas"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "old-man-logan",
+      "_skipPair": [
+        [
+          "last-survivor",
+          "loner"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "proxima-midnight",
+      "_skipPair": [
+        [
+          "inspiration-through-power",
+          "master-combatant"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "superior-iron-man",
+      "_skipPair": [
+        [
+          "armor-upgrades",
+          "optimized-technology"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "thanos",
+      "_skipPair": [
+        [
+          "revel-in-destruction",
+          "transdimensional-overlord"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ultimate-spider-man",
+      "_skipPair": [
+        [
+          "leaping-spider",
+          "marvel-team-up"
+        ]
+      ]
+    }
   ]
 }

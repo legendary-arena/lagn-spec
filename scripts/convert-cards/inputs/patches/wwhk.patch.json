@@ -27,6 +27,29 @@
           "slug": "visualize-the-variables",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-amadeus-cho-8r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "extrapolate"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "gamma-draining-nanites"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "like-totally-smart-hulk"
+          ]
+        }
       ]
     },
     {
@@ -55,6 +78,29 @@
         {
           "slug": "gamma-ray-experiment",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-7r.webp"
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "gamma-bomb-disaster"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "savage-hulk-unleashed"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "solve-the-impossible"
+          ]
         }
       ]
     },
@@ -85,6 +131,12 @@
           "transformOf": "dutiful-protector",
           "isTransform": true
         }
+      ],
+      "_skipPair": [
+        [
+          "shadow-queen",
+          "shadowforged-blade"
+        ]
       ]
     },
     {
@@ -113,6 +165,29 @@
         {
           "slug": "double-fisted-smashing",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-8r.webp"
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "dont-make-me-angry"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "hulk-is-king"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "seize-the-throne"
+          ]
         }
       ]
     },
@@ -143,6 +218,29 @@
           "slug": "blade-of-the-people",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-7r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "hiroim-redeemed"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "save-from-the-rubble"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "seek-redemption"
+          ]
+        }
       ]
     },
     {
@@ -169,6 +267,16 @@
           "slug": "final-battle",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hulkbuster-iron-man-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "attune-techtonic-transducer",
+          "pound-for-pound"
+        ],
+        [
+          "build-the-suit",
+          "ultra-massive-armor"
+        ]
       ]
     },
     {
@@ -198,6 +306,16 @@
           "slug": "hulk-runs-this-town",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "ambitious-enforcer",
+          "underworld-boss"
+        ],
+        [
+          "carefully-considered-smashing",
+          "threaten-and-bribe"
+        ]
       ]
     },
     {
@@ -227,6 +345,16 @@
           "slug": "kronan-tactician",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-korg-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "forged-by-fire",
+          "lord-of-granite"
+        ],
+        [
+          "move-mountains",
+          "nothing-beats-rock"
+        ]
       ]
     },
     {
@@ -256,6 +384,12 @@
           "transformOf": "metamorphosis",
           "isTransform": true
         }
+      ],
+      "_skipPair": [
+        [
+          "devouring-frenzy",
+          "this-bug-smashes-you"
+        ]
       ]
     },
     {
@@ -285,6 +419,16 @@
           "slug": "turning-the-tide",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-namora-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "crushing-tsunami",
+          "heart-of-the-ocean"
+        ],
+        [
+          "herculean-effort",
+          "master-of-depths"
+        ]
       ]
     },
     {
@@ -313,6 +457,29 @@
         {
           "slug": "world-spanning-hunger",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-8r.webp"
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "appetite-for-destruction"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "surprise-attack"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "torrent-of-broodlings"
+          ]
         }
       ]
     },
@@ -357,6 +524,35 @@
           "transformOf": "caught-in-kree-skrull-war",
           "isTransform": true
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "captain-marvel"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "hacktivist"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "seek-the-nega-bands"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "a-bomb",
+          "irradiated-blood"
+        ]
       ]
     },
     {
@@ -393,6 +589,35 @@
           "slug": "vast-unstable-power",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-sentry-8r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "agoraphobia"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "golden-guardian-of-good"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "rival-personalities"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "mournful-sentinel",
+          "the-void-unchained"
+        ]
       ]
     },
     {
@@ -421,6 +646,29 @@
         {
           "slug": "jade-giantess",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-she-hulk-8r.webp"
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "hurl-legal-objections"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "hurl-trucks"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "window-of-opportunity"
+          ]
         }
       ]
     },
@@ -451,6 +699,16 @@
           "slug": "planetary-level-revenge",
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-skaar-son-of-hulk-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "anger-management",
+          "scarred-past"
+        ],
+        [
+          "mood-swings",
+          "raging-savage"
+        ]
       ]
     }
   ],

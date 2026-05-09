@@ -126,5 +126,355 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "captain-america-secret-avenger",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "bold-leadership"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "inspire-a-man",
+            "inspire-a-nation"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "cloak-dagger",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "above",
+            "below"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "sides": [
+            "darkness",
+            "light"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "fight",
+            "flee"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "daredevil",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 6,
+          "sides": [
+            "hidden-identity",
+            "revealed-identity"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "dual-existence",
+          "roundhouse-side-kick"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "falcon",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "rapid-reinforcements"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "squawk-back",
+            "talk-with-birds"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "goliath",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "brilliant-biochemist",
+            "massive-warrior"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "growth-industry"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "hercules",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "boy-genius",
+            "manly-dullard"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "crowd-favorite"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "hulkling",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "cellular-regeneration"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "half-kree",
+            "half-skrull"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "luke-cage",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "cautious",
+            "reckless"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "take-a-bullet-for-the-team"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "patriot",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "sides": [
+            "effortless",
+            "incredible-effort"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "intuitive-tactician",
+          "new-generation-of-heroes"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "peter-parker",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "sides": [
+            "hot-bowl-of-soup",
+            "protect-my-family"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "conflicted-loyalties",
+          "spider-man-unmasked"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "speedball",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "sides": [
+            "bubble-up",
+            "double-down"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "bounce-around",
+          "reckless-rescue-attempt"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "stature",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "crush-ants",
+            "crush-file-sizes"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "shrink-to-nothing"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "storm-black-panther",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "gathering-clues",
+            "gathering-rain-clouds"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "lightning-strike",
+            "pouncing-strike"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "sides": [
+            "tsunami-of-justice",
+            "tsunami-of-water"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "tigra",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "ferocity",
+            "friendship"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "supernatural-senses"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "vision",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "sides": [
+            "harder-than-diamond",
+            "lighter-than-air"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "solar-energy",
+          "through-solid-objects"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "wiccan",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "sides": [
+            "supersonic-speed",
+            "supersonic-spells"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "astral-projection",
+          "sorcerous-illusions"
+        ]
+      ]
+    }
   ]
 }
