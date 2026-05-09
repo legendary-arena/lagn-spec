@@ -15124,6 +15124,68 @@ serialized into `G` or `ctx`.
 
 ---
 
+### D-13807 — `docs-app` Code Category for Documentation / Reference Viewer Apps (covers `apps/registry-viewer/` and `apps/wiki-viewer/`) (WP-139)
+
+**Decision:** Define a new `docs-app` code category in
+`docs/ai/REFERENCE/02-CODE-CATEGORIES.md` covering documentation and
+reference viewer applications. Classify both `apps/registry-viewer/`
+and `apps/wiki-viewer/` (introduced by WP-139) under this category.
+
+**Rationale:**
+- **Closes a long-standing classification gap.** `apps/registry-viewer/`
+  has shipped without a category since its introduction; the gap was
+  surfaced as WP-066 copilot finding #13, re-surfaced in WP-094 and
+  WP-096 pre-flights, and tracked in `WORK_INDEX.md` as a deferred
+  placeholder with two resolution options. WP-139's introduction of
+  `apps/wiki-viewer/` would have made this the fourth WP to inherit
+  the gap silently.
+- **Both apps share a common posture** — they are read-only viewers of
+  documentation/reference content, render no gameplay surface, and have
+  no authority to mutate engine state. Folding them under one category
+  is more accurate than stretching `client-app` (which is defined as
+  "browser-side applications that render gameplay UI") to cover doc
+  viewers.
+- **Layer-boundary safety.** The category's rules forbid runtime imports
+  of `@legendary-arena/game-engine`, `@legendary-arena/preplan`, and
+  `apps/server/**`. Type-only imports from `@legendary-arena/registry`
+  are permitted (registry-viewer's reason for existing); runtime
+  registry imports are permitted only when the viewer's purpose is to
+  display registry data (registry-viewer), not when the viewer's
+  content is in-tree text (wiki-viewer).
+- **Build-time vs runtime is a per-app concern.** wiki-viewer is
+  build-time only (Hugo static site); registry-viewer is a runtime
+  Vue SPA. The category accommodates both by enumerating allowed
+  build-time and runtime postures separately rather than picking one.
+
+**Category rules** (locked alongside D-13807; full definition lives in
+`02-CODE-CATEGORIES.md`):
+
+- **May:** Import documentation / data sources via permitted seams
+  (registry types for registry-viewer; in-tree markdown content for
+  wiki-viewer). Use a UI framework (Vue 3, or build-time templates
+  like Hugo). Read input files at build time. Render derived content
+  for human consumption. Be deployed as static or near-static sites.
+- **Must not:** Import `@legendary-arena/game-engine` (any). Import
+  `@legendary-arena/preplan`. Import `apps/server/**`. Import
+  `boardgame.io`. Mutate engine state. Implement gameplay rules.
+  Persist content beyond browser-local state. Use `Math.random()`,
+  `Date.now()`, or `performance.now()` in render paths.
+- **Failure mode:** Layer-boundary violations (engine runtime leaking
+  into a doc viewer). Static-build determinism breaks (timestamps,
+  git info embedded in output).
+
+**Directories:** `apps/registry-viewer/` and `apps/wiki-viewer/`
+(D-13807).
+
+**Status:** Active.
+
+**Citation:** WP-139 §Files Expected to Change (modifies
+`02-CODE-CATEGORIES.md`); pre-flight `preflight-wp139-engineering-wiki-viewer.md`
+PS-1; WORK_INDEX.md deferred placeholder (registry-viewer classification)
+closed by this decision.
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

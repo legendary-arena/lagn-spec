@@ -44,6 +44,7 @@ they are not real categories.
 | `server` | Server / Persistence | `apps/server/` | `.claude/rules/server.md`, `.claude/rules/persistence.md` |
 | `client-app` | Client App | `apps/arena-client/` | `docs/ai/ARCHITECTURE.md` §Layer Boundary (D-6511) |
 | `cli-producer-app` | CLI Producer App | `apps/replay-producer/` | `docs/ai/ARCHITECTURE.md` §Layer Boundary (D-6301) |
+| `docs-app` | Documentation / Reference Viewer App | `apps/registry-viewer/`, `apps/wiki-viewer/` | `docs/ai/DECISIONS.md` D-13807 |
 | `test` | Tests | `**/*.test.ts` | `.claude/rules/code-style.md` |
 | `infra` | Data Pipeline / Infra | `scripts/`, `.githooks/`, CI workflows | N/A (not shipped to players) |
 | `docs` | Documentation / Governance | `docs/`, `.claude/` | `.claude/rules/work-packets.md` |
@@ -301,6 +302,44 @@ with actionable messages. Sourcemap misconfiguration hiding the real
 crash site.
 
 **Directories:** `apps/replay-producer/` (D-6301)
+
+---
+
+### `docs-app` — Documentation / Reference Viewer App
+
+**What it is:** Read-only viewer applications for documentation and
+reference content. Render documentation (engineering wiki, registry
+card data) for human consumption. Two instances at introduction:
+`apps/registry-viewer/` (Vue 3 SPA visualizing card registry data) and
+`apps/wiki-viewer/` (Hugo-built static site rendering `docs/wiki/`).
+
+The category accommodates both build-time-only viewers (e.g., a Hugo
+static-site generator that emits HTML at build time and runs no
+JavaScript at runtime) and runtime SPAs that fetch / display reference
+data via the registry layer. Per-app build-time vs runtime posture is
+declared in the app's own README and config.
+
+**May:** Import `@legendary-arena/registry` (types and runtime, where
+the viewer's purpose is to display registry data). Use a UI framework
+(Vue 3, or build-time template engines like Hugo). Read input files at
+build time (e.g., `docs/wiki/*.md` for wiki-viewer). Render derived
+content for human consumption. Be deployed as static or near-static
+sites. Use `import.meta.env.DEV`-guarded dev harnesses.
+
+**Must not:** Import `@legendary-arena/game-engine` (any —
+runtime or type-only; doc viewers have no engine surface). Import
+`@legendary-arena/preplan`. Import `apps/server/**`. Import
+`boardgame.io`. Mutate engine state. Implement gameplay rules or
+compute game outcomes. Persist content beyond browser-local state
+(localStorage allowed for view preferences only). Use `Math.random()`,
+`Date.now()`, or `performance.now()` in render paths.
+
+**Failure mode:** Layer-boundary violations (engine runtime leaking
+into a doc viewer bundle). Static-build determinism breaks
+(timestamps, git info embedded in output). Doc-viewer evolving into a
+gameplay surface.
+
+**Directories:** `apps/registry-viewer/`, `apps/wiki-viewer/` (D-13807)
 
 ---
 
