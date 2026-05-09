@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "updated": "2026-05-08",
+  "runbook": "docs/ops/DOMAINS.md",
+  "comment": "Canonical list of legendary-arena.com subdomains. Read by scripts/check-subdomains.mjs. When adding or changing an entry, also update DOMAINS.md (one section per anchor). Field reference: see DOMAINS.md §Adding a new subdomain.",
+  "domains": [
+    {
+      "name": "Apex (legendary-arena.com)",
+      "url": "https://legendary-arena.com",
+      "host": "Cloudflare Pages (redirect rule)",
+      "source": "redirect rule -> www.legendary-arena.com",
+      "expectedStatus": [301, 302, 308],
+      "state": "planned",
+      "anchor": "apex",
+      "notes": "Apex redirects to www. Direction (apex->www vs www->apex) must be picked once and locked."
+    },
+    {
+      "name": "Marketing (www)",
+      "url": "https://www.legendary-arena.com",
+      "host": "Cloudflare Pages",
+      "source": "External Hugo repo at C:\\www\\legendary-arena-com",
+      "expectedStatus": 200,
+      "state": "planned",
+      "anchor": "www"
+    },
+    {
+      "name": "Game client (play)",
+      "url": "https://play.legendary-arena.com",
+      "host": "Cloudflare Pages",
+      "source": "apps/arena-client",
+      "expectedStatus": 200,
+      "state": "planned",
+      "anchor": "play"
+    },
+    {
+      "name": "Registry viewer (cards)",
+      "url": "https://cards.legendary-arena.com",
+      "host": "Cloudflare Pages",
+      "source": "apps/registry-viewer",
+      "expectedStatus": 200,
+      "state": "planned",
+      "anchor": "cards",
+      "notes": "Currently deployed under the Cloudflare project named 'legendary-arena'. Migrate the custom domain off the apex (or the legendary-arena.pages.dev placeholder) and onto cards.legendary-arena.com."
+    },
+    {
+      "name": "Public player wiki",
+      "url": "https://wiki.legendary-arena.com",
+      "host": "Cloudflare Pages",
+      "source": "TBD - separate Hugo site (not yet authored)",
+      "expectedStatus": 200,
+      "state": "planned",
+      "anchor": "wiki"
+    },
+    {
+      "name": "Engineering wiki (private, gated)",
+      "url": "https://ewiki.legendary-arena.com",
+      "host": "Cloudflare Pages + Cloudflare Access",
+      "source": "docs/wiki (renderer pending - WP-139)",
+      "expectedStatus": [302, 401, 403],
+      "state": "planned",
+      "anchor": "ewiki",
+      "notes": "Cloudflare Access redirects unauthenticated probes to login (302) or rejects them (401/403). A 200 here means the gate is misconfigured and the private wiki is publicly readable."
+    },
+    {
+      "name": "Legends scoreboard (public attract board)",
+      "url": "https://legends.legendary-arena.com",
+      "host": "Cloudflare Pages",
+      "source": "apps/legends-board (planned — see WP-143)",
+      "expectedStatus": 200,
+      "state": "planned",
+      "anchor": "legends",
+      "notes": "Public, no-auth. Reads leaderboard JSON snapshots from R2 (written by WP-142 publisher). Does NOT call the game-server API directly. A 200 here proves the SPA shell loads; the snapshot freshness is a separate concern verified by the publisher's own health check."
+    },
+    {
+      "name": "API (game server, friendly hostname)",
+      "url": "https://api.legendary-arena.com/health",
+      "host": "Render (legendary-arena-server)",
+      "source": "apps/server",
+      "expectedStatus": 200,
+      "state": "live",
+      "anchor": "api",
+      "notes": "CNAME api.legendary-arena.com -> legendary-arena-server.onrender.com (DNS only, not Cloudflare-proxied — Render needs direct origin access for Let's Encrypt cert renewal and websocket transport). Live since 2026-05-09. Both this hostname and the canonical onrender.com hostname stay healthy in parallel during the dual-running window. PUBLIC_BASE_URL is unrelated to this hostname — it is the CLIENT URL Stripe Checkout redirects users to after success/cancel (see apps/server/src/billing/billing.routes.ts) and is updated when play.legendary-arena.com is deployed, not now."
+    },
+    {
+      "name": "API (Render canonical hostname)",
+      "url": "https://legendary-arena-server.onrender.com/health",
+      "host": "Render",
+      "source": "apps/server",
+      "expectedStatus": 200,
+      "state": "live",
+      "anchor": "api"
+    },
+    {
+      "name": "Card images CDN",
+      "url": "https://images.barefootbetters.com/",
+      "host": "Cloudflare R2 + Cloudflare CDN",
+      "source": "external (BarefootBetters image bucket)",
+      "expectedStatus": [200, 403, 404],
+      "state": "live",
+      "anchor": "images",
+      "notes": "Bucket index commonly returns 403 or 404; specific keys return 200. Probe verifies DNS/TLS reachability, not bucket contents."
+    }
+  ]
+}
