@@ -117,6 +117,56 @@
             "(1+ is the same printed number as 1.)"
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-super-soldier-serum.webp",
+          "sides": [
+            "super-soldier-serum"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-wartime-logistics.webp",
+          "sides": [
+            "wartime-logistics"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-coordinated-assault.webp",
+          "sides": [
+            "coordinated-assault"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-the-shield-of-britain.webp",
+          "sides": [
+            "the-shield-of-britain"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-give-them-all-weve-got.webp",
+          "sides": [
+            "give-them-all-weve-got"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-icon-of-hope.webp",
+          "sides": [
+            "icon-of-hope"
+          ]
+        }
       ]
     },
     {
@@ -231,6 +281,56 @@
             "You get [keyword:Empowered] by multicolored cards."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-fight-or-flight.webp",
+          "sides": [
+            "fight-or-flight"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-interstellar-adventures.webp",
+          "sides": [
+            "interstellar-adventures"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-plan-the-heist.webp",
+          "sides": [
+            "plan-the-heist"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-unexpected-exit.webp",
+          "sides": [
+            "unexpected-exit"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-cross-the-multiverse.webp",
+          "sides": [
+            "cross-the-multiverse"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-colliding-dreams.webp",
+          "sides": [
+            "colliding-dreams"
+          ]
+        }
       ]
     },
     {
@@ -341,6 +441,56 @@
           "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-7r.webp",
           "abilities": [
             "Whenever you recruit a Hero that costs 5 or more this turn, you get +[icon:attack] equal to that Hero's cost."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-forecast-says-thunder.webp",
+          "sides": [
+            "forecast-says-thunder"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-worthy-challenge.webp",
+          "sides": [
+            "worthy-challenge"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-destructive-feast.webp",
+          "sides": [
+            "destructive-feast"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-asgardian-rager.webp",
+          "sides": [
+            "asgardian-rager"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-only-son.webp",
+          "sides": [
+            "only-son"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-worthy-of-the-lightning.webp",
+          "sides": [
+            "worthy-of-the-lightning"
           ]
         }
       ]
@@ -457,6 +607,56 @@
             "[hc:strength]: [keyword:Liberate 2] for each Mastermind Tactic in your Victory Pile."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-hunt-new-prey.webp",
+          "sides": [
+            "hunt-new-prey"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-hostage-rescue.webp",
+          "sides": [
+            "hostage-rescue"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-no-matter-the-price.webp",
+          "sides": [
+            "no-matter-the-price"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-violence-leaves-scars.webp",
+          "sides": [
+            "violence-leaves-scars"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-plot-a-betrayal.webp",
+          "sides": [
+            "plot-a-betrayal"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-im-the-king-baby.webp",
+          "sides": [
+            "im-the-king-baby"
+          ]
+        }
       ]
     },
     {
@@ -569,6 +769,56 @@
           "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-8r.webp",
           "abilities": [
             "[keyword:Liberate] equal to the number of Bystanders in your Victory Pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-relentless.webp",
+          "sides": [
+            "relentless"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-humanitys-final-hope.webp",
+          "sides": [
+            "humanitys-final-hope"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-plant-hidden-asset.webp",
+          "sides": [
+            "plant-hidden-asset"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-precision-strike.webp",
+          "sides": [
+            "precision-strike"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-the-last-avenger.webp",
+          "sides": [
+            "the-last-avenger"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-time-to-save-the-multiverse.webp",
+          "sides": [
+            "time-to-save-the-multiverse"
           ]
         }
       ]
@@ -684,6 +934,56 @@
             "[team:guardians-of-the-multiverse][keyword:Soulbind six Villains]: You get +∞[icon:attack], usable only for a single fight."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-assassins-stealth.webp",
+          "sides": [
+            "assassins-stealth"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-tactical-insight.webp",
+          "sides": [
+            "tactical-insight"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-wield-the-blade-of-thanos.webp",
+          "sides": [
+            "wield-the-blade-of-thanos"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-titanicide.webp",
+          "sides": [
+            "titanicide"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-destroy-an-infinity-stone.webp",
+          "sides": [
+            "destroy-an-infinity-stone"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-the-infinity-crusher.webp",
+          "sides": [
+            "the-infinity-crusher"
+          ]
+        }
       ]
     },
     {
@@ -797,6 +1097,56 @@
             "[hc:instinct][keyword:Soulbind]: Draw cards equal to that Villain's printed VP."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-to-save-christine.webp",
+          "sides": [
+            "to-save-christine"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-seize-infernal-power.webp",
+          "sides": [
+            "seize-infernal-power"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-summon-demon-minions.webp",
+          "sides": [
+            "summon-demon-minions"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-wards-of-the-vishanti.webp",
+          "sides": [
+            "wards-of-the-vishanti"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-break-the-absolute-point-in-time.webp",
+          "sides": [
+            "break-the-absolute-point-in-time"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-stygian-communion.webp",
+          "sides": [
+            "stygian-communion"
+          ]
+        }
       ]
     },
     {
@@ -908,6 +1258,56 @@
           "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-7r.webp",
           "abilities": [
             "[keyword:What If...?]: Choose a Team. (e.g. [team:guardians-of-the-multiverse], [team:x-men], [team:avengers]) You are [keyword:Empowered] by that Team."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-diverging-timestreams.webp",
+          "sides": [
+            "diverging-timestreams"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-another-dimension-crumbles.webp",
+          "sides": [
+            "another-dimension-crumbles"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-break-the-oath.webp",
+          "sides": [
+            "break-the-oath"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-anoint-a-champion.webp",
+          "sides": [
+            "anoint-a-champion"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-history-repeats.webp",
+          "sides": [
+            "history-repeats"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-convoke-the-guardians.webp",
+          "sides": [
+            "convoke-the-guardians"
           ]
         }
       ]

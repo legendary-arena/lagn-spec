@@ -28,7 +28,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-open-portals.webp",
           "abilities": [
             "[keyword:Phasing]",
             "[hc:ranged]: You get +2[icon:recruit]."
@@ -45,7 +45,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-defend-this-dimension.webp",
           "abilities": [
             "[hc:instinct]: Reveal the top card of the Villain Deck. If it's a Villain, you get +2[icon:attack]."
           ]
@@ -61,7 +61,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-sift-futures.webp",
           "abilities": [
             "[keyword:Phasing]",
             "Choose a Hero Class. Reveal the top card of your deck. If it's the Hero Class you named, draw it."
@@ -78,7 +78,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-invoke-the-time-stone.webp",
           "abilities": [
             "[keyword:Phasing]",
             "[hc:ranged] [keyword:Sacrifice]: Take another turn after this one. Don't play a card from the Villain Deck at the start of that turn."
@@ -95,7 +95,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-bind-evil.webp",
           "abilities": [
             "[hc:instinct]: Reveal the top card of the Villain Deck. If it's a Marster Strike, KO that Strike, you get +3[icon:attack], and put a card from the Bystander Deck on top of the Villain Deck."
           ]
@@ -111,9 +111,59 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-1-in-14-000-065.webp",
           "abilities": [
             "[hc:instinct] [keyword:Sacrifice]: Guess the name of the top card of the Villain Deck, then reveal it. If you guessed right, draw six cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-open-portals.webp",
+          "sides": [
+            "open-portals"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-defend-this-dimension.webp",
+          "sides": [
+            "defend-this-dimension"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-sift-futures.webp",
+          "sides": [
+            "sift-futures"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-invoke-the-time-stone.webp",
+          "sides": [
+            "invoke-the-time-stone"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-bind-evil.webp",
+          "sides": [
+            "bind-evil"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-1-in-14-000-065.webp",
+          "sides": [
+            "1-in-14-000-065"
           ]
         }
       ]
@@ -143,7 +193,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-wakanda-forever.webp",
           "abilities": [
             "[hc:covert]: Draw a card."
           ]
@@ -159,7 +209,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-avengers-reassembled.webp",
           "abilities": [
             "If you have all five Hero Classes, you get +3[icon:attack]."
           ]
@@ -175,7 +225,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-great-many-lives-lost.webp",
           "abilities": [
             "[hc:instinct] [keyword:Sacrifice]: KO up to two cards from your hand and/or discard pile."
           ]
@@ -191,7 +241,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "3+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-council-of-war.webp",
           "abilities": [
             "You get +1[icon:recruit] for each other [rule:multicolored] Hero you have.",
             "[hc:strength]: You may have this card make all [icon:attack] instead of [icon:recruit]."
@@ -208,7 +258,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-vibranium-nanites.webp",
           "abilities": [
             "Reveal the top card of your deck. If it's [rule:multicolored], draw it. Otherwise, put it back or discard it.",
             "[hc:tech]: You may KO that card."
@@ -225,9 +275,59 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-fateful-return.webp",
           "abilities": [
             "You get +2[icon:attack] for each Hero Class you have."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-wakanda-forever.webp",
+          "sides": [
+            "wakanda-forever"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-avengers-reassembled.webp",
+          "sides": [
+            "avengers-reassembled"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-great-many-lives-lost.webp",
+          "sides": [
+            "great-many-lives-lost"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-council-of-war.webp",
+          "sides": [
+            "council-of-war"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-vibranium-nanites.webp",
+          "sides": [
+            "vibranium-nanites"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-fateful-return.webp",
+          "sides": [
+            "fateful-return"
           ]
         }
       ]
@@ -257,7 +357,7 @@
           "cost": 1,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-1c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-burst-of-rage.webp",
           "abilities": [
             "[hc:strength] [keyword:Sacrifice]: You get +3[icon:attack]. You may KO a card from your hand or discard pile."
           ]
@@ -273,7 +373,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-brains-and-brawn.webp",
           "abilities": [
             "[hc:tech][hc:strength]: You get +2[icon:attack]."
           ]
@@ -289,7 +389,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-hulkbuster-armor.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:recruit]."
           ]
@@ -305,7 +405,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-hulk-gets-smashed.webp",
           "abilities": [
             "[hc:strength]: You main gain a Wound. If you do, KO up to two other cards from your hand and/or discard pile."
           ]
@@ -321,7 +421,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-crush-puny-weaklings.webp",
           "abilities": [
             "[hc:tech]: You get +1[icon:attack] for each Henchman in your Victory Pile."
           ]
@@ -337,9 +437,59 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-reverse-the-snap.webp",
           "abilities": [
             "[hc:tech] [keyword:Sacrifice]: Gain up to one other Hero from the KO pile. Then combine you deck and discard pile. Put all those cards that cost 0 into your discard pile. Shuffle the rest into a new deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-burst-of-rage.webp",
+          "sides": [
+            "burst-of-rage"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-brains-and-brawn.webp",
+          "sides": [
+            "brains-and-brawn"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-hulkbuster-armor.webp",
+          "sides": [
+            "hulkbuster-armor"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-hulk-gets-smashed.webp",
+          "sides": [
+            "hulk-gets-smashed"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-crush-puny-weaklings.webp",
+          "sides": [
+            "crush-puny-weaklings"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-reverse-the-snap.webp",
+          "sides": [
+            "reverse-the-snap"
           ]
         }
       ]
@@ -369,7 +519,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-dawning-hope.webp",
           "abilities": [
             "Draw a card.",
             "If you had already drawn any cards this turn, draw two cards instead."
@@ -386,7 +536,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-infused-by-the-tesseract.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Endgame]: This card makes [icon:attack] instead of [icon:recruit]."
@@ -403,7 +553,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-return-from-the-stars.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:recruit].",
             "[keyword:Endgame]: This card makes all [icon:attack] instead of [icon:recruit]."
@@ -420,7 +570,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-turning-point.webp",
           "abilities": [
             "For the rest of this turn, it is the [keyword:Endgame] for your Hero cards.",
             "If it was already the [keyword:Endgame], you get +2[icon:attack]."
@@ -437,7 +587,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-moment-of-destiny.webp",
           "abilities": [
             "[hc:ranged]: You get +2[icon:attack]."
           ]
@@ -453,10 +603,60 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-time-to-end-it.webp",
           "abilities": [
             "You get +1[icon:attack] for each other [hc:ranged] and/or [hc:strength] card you played this turn.",
             "[keyword:Endgame]: Instead, you get +2[icon:attack] for each."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-dawning-hope.webp",
+          "sides": [
+            "dawning-hope"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-infused-by-the-tesseract.webp",
+          "sides": [
+            "infused-by-the-tesseract"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-return-from-the-stars.webp",
+          "sides": [
+            "return-from-the-stars"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-turning-point.webp",
+          "sides": [
+            "turning-point"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-moment-of-destiny.webp",
+          "sides": [
+            "moment-of-destiny"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-time-to-end-it.webp",
+          "sides": [
+            "time-to-end-it"
           ]
         }
       ]
@@ -489,7 +689,7 @@
           "cost": 1,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-1c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-we-have-to-destroy-it.webp",
           "abilities": [
             "[hc:tech] [keyword:Sacrifice]: You get +3[icon:recruit]. You may KO a card from your hand or discard pile."
           ]
@@ -505,7 +705,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-witchcraft.webp",
           "abilities": [
             "Reveal the top card of your deck. If it has an odd-numbered cost, draw it. ( 0 is even.)"
           ]
@@ -521,7 +721,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-3c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-hold-on.webp",
           "abilities": [
             "[hc:covert]: You get +2[icon:attack]."
           ]
@@ -537,7 +737,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-3c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-let-go.webp",
           "abilities": [
             "[hc:ranged] [keyword:Sacrifice]: Draw 3 cards. You may KO a card from your hand or discard pile."
           ]
@@ -553,7 +753,7 @@
           "cost": 5,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-magic.webp",
           "abilities": [
             "You get +1[icon:attack] for each other Hero with an odd-numbered cost you played this turn."
           ]
@@ -569,7 +769,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-science.webp",
           "abilities": [
             "[hc:tech]: You get +2[icon:attack]."
           ]
@@ -585,7 +785,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-5u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-rage.webp",
           "abilities": [
             "If a Hero was put into the KO pile this turn you get +2[icon:attack]."
           ]
@@ -601,7 +801,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-5u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-grief.webp",
           "abilities": [
             "If a Master Strike was completed this turn, you get +2[icon:recruit]."
           ]
@@ -617,9 +817,83 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-odd-couple.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top five cards of the Hero Deck. You may put one of them with an odd-numbered cost into your hand. You may KO one of them. Put the rest back in any order."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-we-have-to-destroy-it.webp",
+          "sides": [
+            "we-have-to-destroy-it"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-witchcraft.webp",
+          "sides": [
+            "witchcraft"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-hold-on.webp",
+          "sides": [
+            "hold-on"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-let-go.webp",
+          "sides": [
+            "let-go"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-magic.webp",
+          "sides": [
+            "magic"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-science.webp",
+          "sides": [
+            "science"
+          ]
+        },
+        {
+          "id": "p7",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-rage.webp",
+          "sides": [
+            "rage"
+          ]
+        },
+        {
+          "id": "p8",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-grief.webp",
+          "sides": [
+            "grief"
+          ]
+        },
+        {
+          "id": "p9",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-odd-couple.webp",
+          "sides": [
+            "odd-couple"
           ]
         }
       ]

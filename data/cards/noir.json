@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-impetuous-dive.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:attack]."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-multitalented.webp",
           "abilities": [
             "Choose a Hero Class. [keyword:Investigate] for a card of that Hero Class."
           ]
@@ -58,7 +58,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-identical-twin-brother.webp",
           "abilities": [
             "You get the printed [icon:recruit] and [icon:attack] of a Hero in the HQ. Then put that Hero on the bottom of the Hero Deck."
           ]
@@ -74,9 +74,43 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-missing-person-case.webp",
           "abilities": [
             "[keyword:Investigate] the Hero Deck for any card and put that card in your hand."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-impetuous-dive.webp",
+          "sides": [
+            "impetuous-dive"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-multitalented.webp",
+          "sides": [
+            "multitalented"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-identical-twin-brother.webp",
+          "sides": [
+            "identical-twin-brother"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-missing-person-case.webp",
+          "sides": [
+            "missing-person-case"
           ]
         }
       ]
@@ -104,7 +138,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-balancing-act.webp",
           "abilities": [
             "The next Hero you recruit this turn goes on top of your deck."
           ]
@@ -120,7 +154,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-listen-for-heartbeats.webp",
           "abilities": [
             "Choose a number 1 or more. [keyword:Investigate] for a card of that cost."
           ]
@@ -136,7 +170,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-discover-the-bodies.webp",
           "abilities": [
             "[hc:covert]: [keyword:Investigate] for a card that costs 0. KO that card."
           ]
@@ -152,9 +186,43 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-hitting-rock-bottom.webp",
           "abilities": [
             "Discard a card from the top or bottom of your deck. If it costs 0, you get +1[icon:attack] and repeat this process. If your deck runs out, stop."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-balancing-act.webp",
+          "sides": [
+            "balancing-act"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-listen-for-heartbeats.webp",
+          "sides": [
+            "listen-for-heartbeats"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-discover-the-bodies.webp",
+          "sides": [
+            "discover-the-bodies"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-hitting-rock-bottom.webp",
+          "sides": [
+            "hitting-rock-bottom"
           ]
         }
       ]
@@ -182,7 +250,7 @@
           "cost": 3,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-steam-powered-arsenal.webp",
           "abilities": [
             "To play this, you must put another card from your hand on top of your deck."
           ]
@@ -198,7 +266,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-mechanized-plate-mail.webp",
           "abilities": [
             "[keyword:Investigate] for a [hc:tech] card."
           ]
@@ -214,7 +282,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-learn-from-enemies.webp",
           "abilities": [
             "[hc:tech]: You may use the “Fight“ ability of a Villain worth 1[icon:piercing] in your Victory Pile."
           ]
@@ -230,10 +298,44 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-adventurers-assemble.webp",
           "abilities": [
             "Whenever you [keyword:Investigate] this turn, look at three cards instead of two.",
             "Choose [icon:recruit] or [icon:attack]. [keyword:Investigate] for a card with that icon."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-steam-powered-arsenal.webp",
+          "sides": [
+            "steam-powered-arsenal"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-mechanized-plate-mail.webp",
+          "sides": [
+            "mechanized-plate-mail"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-learn-from-enemies.webp",
+          "sides": [
+            "learn-from-enemies"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-adventurers-assemble.webp",
+          "sides": [
+            "adventurers-assemble"
           ]
         }
       ]
@@ -261,7 +363,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-4c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-follow-big-leads.webp",
           "abilities": [
             "You get +1[icon:recruit] for each other card you played this turn that costs 4 or more."
           ]
@@ -277,7 +379,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-private-investigations.webp",
           "abilities": [
             "[keyword:Investigate] for a card that costs 4 or more."
           ]
@@ -293,7 +395,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-unbreakable-cage.webp",
           "abilities": [
             "Once per turn, if a player would gain a Wound, you may reveal this card and [keyword:Investigate] for any card instead."
           ]
@@ -309,9 +411,43 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-weight-of-the-world.webp",
           "abilities": [
             "You get +2[icon:attack] for each other card you played this turn that costs 4 or more."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-follow-big-leads.webp",
+          "sides": [
+            "follow-big-leads"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-private-investigations.webp",
+          "sides": [
+            "private-investigations"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-unbreakable-cage.webp",
+          "sides": [
+            "unbreakable-cage"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-weight-of-the-world.webp",
+          "sides": [
+            "weight-of-the-world"
           ]
         }
       ]
@@ -339,7 +475,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-gumshoes-revolver.webp",
           "abilities": [
             "[keyword:Investigate] for a card that costs 2 or less."
           ]
@@ -355,7 +491,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-2c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-webs-of-darkness.webp",
           "abilities": [
             "[hc:ranged]: You get +2[icon:attack]."
           ]
@@ -371,7 +507,7 @@
           "cost": 2,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-2u.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-solve-the-crime.webp",
           "abilities": [
             "[hc:instinct]: [keyword:Investigate] the Bystander Stack for a Bystander and rescue it."
           ]
@@ -387,9 +523,43 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-2r.webp",
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-spider-totems-chosen.webp",
           "abilities": [
             "[team:spider-friends]: [keyword:Investigate] each player's deck for a card that costs 2 or less, play a copy of that card, then put it into their discard pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-gumshoes-revolver.webp",
+          "sides": [
+            "gumshoes-revolver"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-webs-of-darkness.webp",
+          "sides": [
+            "webs-of-darkness"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-solve-the-crime.webp",
+          "sides": [
+            "solve-the-crime"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-spider-totems-chosen.webp",
+          "sides": [
+            "spider-totems-chosen"
           ]
         }
       ]

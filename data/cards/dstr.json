@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-wand-of-watoomb.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you drew a card, you may discard Wand of Watoomb to get +3[icon:attack]."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-keeper-of-the-sanctum.webp",
           "abilities": [
             "If you control an [keyword:Artifact], draw a card."
           ]
@@ -58,7 +58,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-2u.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-book-of-cagliostro.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you fought a Villain, you may discard Book of Cagliostro to get +[icon:recruit] equal to that enemy's VP."
           ]
@@ -74,9 +74,43 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-the-eye-of-agamotto.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you played another [keyword:Artifact] or three other cards of the same Hero Class, you may discard the Eye of Agamotto to get +7[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-wand-of-watoomb.webp",
+          "sides": [
+            "wand-of-watoomb"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-keeper-of-the-sanctum.webp",
+          "sides": [
+            "keeper-of-the-sanctum"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-book-of-cagliostro.webp",
+          "sides": [
+            "book-of-cagliostro"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-the-eye-of-agamotto.webp",
+          "sides": [
+            "the-eye-of-agamotto"
           ]
         }
       ]
@@ -104,7 +138,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-commune-with-the-spirit-world.webp",
           "abilities": [
             "You may discard an [keyword:Artifact] you control or three cards from your hand. If you do, KO a card from your hand or discard pile."
           ]
@@ -120,7 +154,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-medallion-of-many-loas.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you have at least three Hero Classes, you may discard Medallion of Many Loas to get +1[icon:attack] for each Hero Class you have, including this one."
           ]
@@ -136,7 +170,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-staff-of-legba.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you recruited a Hero, you may discard Staff of Legba to get +[icon:attack] equal to that Hero's cost."
           ]
@@ -152,9 +186,43 @@
           "cost": 7,
           "attack": "4+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-posessed-by-brothers-spirit.webp",
           "abilities": [
             "The first time that one of your Heroes or a Hero from your deck or discard pile is KO'd this turn, you get +4[icon:recruit] or +4[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-commune-with-the-spirit-world.webp",
+          "sides": [
+            "commune-with-the-spirit-world"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-medallion-of-many-loas.webp",
+          "sides": [
+            "medallion-of-many-loas"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-staff-of-legba.webp",
+          "sides": [
+            "staff-of-legba"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-posessed-by-brothers-spirit.webp",
+          "sides": [
+            "posessed-by-brothers-spirit"
           ]
         }
       ]
@@ -182,7 +250,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-prepare-dark-magic.webp",
           "abilities": [
             "Draw a card. Then put a card from your hand on top of your deck."
           ]
@@ -198,7 +266,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-demonic-descendant.webp",
           "abilities": [
             "You may make a [keyword:Demonic Bargain] to get +2[icon:recruit]."
           ]
@@ -214,7 +282,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-bind-the-dark-dimension.webp",
           "abilities": [
             "[hc:ranged]: You may choose a player to make a [keyword:Demonic Bargain] to KO up to one Hero of their choice from their hand or discard pile."
           ]
@@ -230,9 +298,43 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-the-purple-gem.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If any cards were “revealed“, “looked at“, or “discarded“ from any deck, you may discard the Purple Gem to get +6[icon:attack]. (Just drawing or playing a card from a deck doesn't count.)"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-prepare-dark-magic.webp",
+          "sides": [
+            "prepare-dark-magic"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-demonic-descendant.webp",
+          "sides": [
+            "demonic-descendant"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-bind-the-dark-dimension.webp",
+          "sides": [
+            "bind-the-dark-dimension"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-the-purple-gem.webp",
+          "sides": [
+            "the-purple-gem"
           ]
         }
       ]
@@ -260,7 +362,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-astral-confrontation.webp",
           "abilities": [
             "You may have a Villain from the city enter the [keyword:Astral Plane]."
           ]
@@ -276,7 +378,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-teachings-of-kamar-taj.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -292,7 +394,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-war-of-the-mind.webp",
           "abilities": [
             "You may fight the Mastermind using only [icon:recruit] instead of [icon:attack] this turn.",
             "[hc:covert]: You get +3[icon:recruit]."
@@ -309,9 +411,43 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-the-orb-of-agamotto.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you fought a Villain or Mastermind, you may set aside the Orb of Agamotto to reveal the top four cards of your deck. KO up to one of them, put two of them in your hand, and put the rest back on top in any order. Then discard the Orb of Agamotto."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-astral-confrontation.webp",
+          "sides": [
+            "astral-confrontation"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-teachings-of-kamar-taj.webp",
+          "sides": [
+            "teachings-of-kamar-taj"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-war-of-the-mind.webp",
+          "sides": [
+            "war-of-the-mind"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-the-orb-of-agamotto.webp",
+          "sides": [
+            "the-orb-of-agamotto"
           ]
         }
       ]
@@ -339,7 +475,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-oshtur.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, draw a card."
           ]
@@ -355,7 +491,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-hoggoth.webp",
           "abilities": [
             "You may make a [keyword:Demonic Bargain] to get +2[icon:attack]."
           ]
@@ -371,7 +507,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-agamotto.webp",
           "abilities": [
             "Reveal the top card of your deck. Discard it or put it back.",
             "[hc:ranged]: You may choose a player to make a [keyword:Demonic Bargain] to draw two extra cards at the end of this turn."
@@ -388,9 +524,43 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-the-book-of-the-vishanti.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If any player gained a Wound, you may set aside the Book of the Vishanti to KO up to one Wound from any player's discard pile, then draw three cards. Then discard the Book of the Vishanti. You can use this during any player's turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-oshtur.webp",
+          "sides": [
+            "oshtur"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-hoggoth.webp",
+          "sides": [
+            "hoggoth"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-agamotto.webp",
+          "sides": [
+            "agamotto"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-the-book-of-the-vishanti.webp",
+          "sides": [
+            "the-book-of-the-vishanti"
           ]
         }
       ]

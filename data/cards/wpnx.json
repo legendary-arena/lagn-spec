@@ -76,6 +76,40 @@
             "[hc:tech]: You may KO one of your cards that has the same cost as any of your other cards."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-fantomex-sentient-bullets.webp",
+          "sides": [
+            "sentient-bullets"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-fantomex-three-brains.webp",
+          "sides": [
+            "three-brains"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-fantomex-misdirection.webp",
+          "sides": [
+            "misdirection"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-fantomex-weapon-xiii.webp",
+          "sides": [
+            "weapon-xiii"
+          ]
+        }
       ]
     },
     {
@@ -149,6 +183,40 @@
           "abilities": [
             "[keyword:Weapon X Sequence]",
             "Reveal the top six cards of your deck. Discard all the ones that cost 0 and put the rest back in any order."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-marrow-bone-shards.webp",
+          "sides": [
+            "bone-shards"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-marrow-hyper-adaptive-skeleton.webp",
+          "sides": [
+            "hyper-adaptive-skeleton"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-marrow-osteogenesis.webp",
+          "sides": [
+            "osteogenesis"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-marrow-metabolic-overdrive.webp",
+          "sides": [
+            "metabolic-overdrive"
           ]
         }
       ]
@@ -234,6 +302,40 @@
             "[hc:strength]: Using the Wound Deck, [keyword:Berserk], [keyword:Berserk], [keyword:Berserk], [keyword:Berserk], [keyword:Berserk], [keyword:Berserk], putting those discarded Wounds on the bottom of the Wound Deck."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-h-evolving-abilities.webp",
+          "sides": [
+            "evolving-abilities"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-h-the-future-of-warfare.webp",
+          "sides": [
+            "the-future-of-warfare"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-h-slice-and-smash.webp",
+          "sides": [
+            "slice-and-smash"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-h-ultimate-killing-machine.webp",
+          "sides": [
+            "ultimate-killing-machine"
+          ]
+        }
       ]
     },
     {
@@ -314,6 +416,40 @@
             "[keyword:Weapon X Sequence]",
             "[hc:instinct]: You may reveal cards from the Wound Deck until you reveal an Enraging Wound. Gain that Enraging Wound to your hand. Put the other revealed cards back on the bottom.",
             "If you gain a Wound this way, [keyword:Berserk]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-x-wolverine-violent-conditioning.webp",
+          "sides": [
+            "violent-conditioning"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-x-wolverine-raging-regeneration.webp",
+          "sides": [
+            "raging-regeneration"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-x-wolverine-infuse-skeleton-with-adamantium.webp",
+          "sides": [
+            "infuse-skeleton-with-adamantium"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-weapon-x-wolverine-escape-the-weapon-x-lab.webp",
+          "sides": [
+            "escape-the-weapon-x-lab"
           ]
         }
       ]

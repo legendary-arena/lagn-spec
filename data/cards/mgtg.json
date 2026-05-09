@@ -29,7 +29,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-starship-sensors.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +1[icon:recruit]."
           ]
@@ -45,7 +45,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-borrowed-nova-blaster.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +1[icon:attack]."
           ]
@@ -61,7 +61,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-give.webp",
           "abilities": [
             "You may discard an [keyword:Artifact] you control to get +1[icon:recruit]."
           ]
@@ -77,7 +77,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-take.webp",
           "abilities": [
             "[team:guardians-of-the-galaxy]: Reveal the top card of your deck. If it's an [keyword:Artifact], draw it."
           ]
@@ -93,7 +93,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-expandable-helmet.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), draw a card."
           ]
@@ -109,7 +109,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-dont-need-that-stuff.webp",
           "abilities": [
             "You may discard an [keyword:Artifact] you control to get +1[icon:attack]."
           ]
@@ -125,9 +125,67 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-hadron-enforcer.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +3[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-starship-sensors.webp",
+          "sides": [
+            "starship-sensors"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-borrowed-nova-blaster.webp",
+          "sides": [
+            "borrowed-nova-blaster"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-give.webp",
+          "sides": [
+            "give"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-take.webp",
+          "sides": [
+            "take"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-expandable-helmet.webp",
+          "sides": [
+            "expandable-helmet"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-dont-need-that-stuff.webp",
+          "sides": [
+            "dont-need-that-stuff"
+          ]
+        },
+        {
+          "id": "p7",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-hadron-enforcer.webp",
+          "sides": [
+            "hadron-enforcer"
           ]
         }
       ]
@@ -158,7 +216,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-forgive.webp",
           "abilities": [
             "[hc:covert]: Draw a card."
           ]
@@ -174,7 +232,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-resent.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:attack]."
           ]
@@ -190,7 +248,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-sharpen-blades.webp",
           "abilities": [
             "If you control an [keyword:Artifact], draw a card."
           ]
@@ -206,7 +264,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-resourceful-fugitive.webp",
           "abilities": [
             "To play this, you must put a card from your hand on the bottom of  your deck.",
             "Draw two cards."
@@ -223,7 +281,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-retractable-sword.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you draw a card during your turn, you get +1[icon:attack]."
           ]
@@ -239,7 +297,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-stolen-necroblaster.webp",
           "abilities": [
             "If you drew at least two cards this turn, you may KO a card from your hand or discard pile."
           ]
@@ -255,9 +313,67 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-guardians-escape.webp",
           "abilities": [
             "If you drew at least two cards this turn, you get +2[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-forgive.webp",
+          "sides": [
+            "forgive"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-resent.webp",
+          "sides": [
+            "resent"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-sharpen-blades.webp",
+          "sides": [
+            "sharpen-blades"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-resourceful-fugitive.webp",
+          "sides": [
+            "resourceful-fugitive"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-retractable-sword.webp",
+          "sides": [
+            "retractable-sword"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-stolen-necroblaster.webp",
+          "sides": [
+            "stolen-necroblaster"
+          ]
+        },
+        {
+          "id": "p7",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-guardians-escape.webp",
+          "sides": [
+            "guardians-escape"
           ]
         }
       ]
@@ -290,7 +406,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-passion.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Draw a card."
           ]
@@ -306,7 +422,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-compassion.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Draw a card."
           ]
@@ -322,7 +438,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-baby-groot.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Rescue a Bystander."
           ]
@@ -338,7 +454,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-gravity-mines.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you use [keyword:Excessive Violence], draw a card."
           ]
@@ -354,7 +470,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-4u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-dont-press-this-button.webp",
           "abilities": [
             "[hc:ranged]: You get +1[icon:attack]."
           ]
@@ -370,7 +486,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-4u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-press-the-button.webp",
           "abilities": [
             "[hc:tech]: You may KO a card from your hand or dicard pile."
           ]
@@ -386,7 +502,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-5u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-tricky.webp",
           "abilities": [
             "If you have at least five different card names, you get +2[icon:recruit]."
           ]
@@ -402,7 +518,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-5u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-simple.webp",
           "abilities": []
         },
         {
@@ -416,10 +532,84 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-we-are-groot.webp",
           "abilities": [
             "Reveal your hand. You get +1[icon:attack] for each different card name in your hand.",
             "(Each [rule:Divided Card] has two different card names.)"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-passion.webp",
+          "sides": [
+            "passion"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-compassion.webp",
+          "sides": [
+            "compassion"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-baby-groot.webp",
+          "sides": [
+            "baby-groot"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-gravity-mines.webp",
+          "sides": [
+            "gravity-mines"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-dont-press-this-button.webp",
+          "sides": [
+            "dont-press-this-button"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-press-the-button.webp",
+          "sides": [
+            "press-the-button"
+          ]
+        },
+        {
+          "id": "p7",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-tricky.webp",
+          "sides": [
+            "tricky"
+          ]
+        },
+        {
+          "id": "p8",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-simple.webp",
+          "sides": [
+            "simple"
+          ]
+        },
+        {
+          "id": "p9",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-we-are-groot.webp",
+          "sides": [
+            "we-are-groot"
           ]
         }
       ]
@@ -451,7 +641,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-nothing-goes-over-my-head.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Look at the top two cards of your deck. Discard any number of them and put the rest back in any order."
           ]
@@ -467,7 +657,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-dual-knives.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you play another [hc:strength] or [hc:instinct] card, you get +1[icon:attack]."
           ]
@@ -483,7 +673,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-i-am-invisible.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. If it's [hc:strength] or [hc:instinct], draw it."
           ]
@@ -499,7 +689,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-xandar-is-invincible.webp",
           "abilities": [
             "If there are no Villains in the city, you get +1[icon:recruit]."
           ]
@@ -515,7 +705,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-prison-riot.webp",
           "abilities": [
             "[keyword:Excessive Violence]: You get +2[icon:recruit]."
           ]
@@ -531,7 +721,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-remove-his-spine.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. You may KO it."
           ]
@@ -547,7 +737,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-also-illegal.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:recruit]."
           ]
@@ -563,10 +753,76 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-revenge-for-my-family.webp",
           "abilities": [
             "Double the [icon:attack] you have.",
             "[keyword:Excessive Violence]: You may KO a Villain from your Victory Pile to do its Fight effect."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-nothing-goes-over-my-head.webp",
+          "sides": [
+            "nothing-goes-over-my-head"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-dual-knives.webp",
+          "sides": [
+            "dual-knives"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-i-am-invisible.webp",
+          "sides": [
+            "i-am-invisible"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-xandar-is-invincible.webp",
+          "sides": [
+            "xandar-is-invincible"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-prison-riot.webp",
+          "sides": [
+            "prison-riot"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-remove-his-spine.webp",
+          "sides": [
+            "remove-his-spine"
+          ]
+        },
+        {
+          "id": "p7",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-also-illegal.webp",
+          "sides": [
+            "also-illegal"
+          ]
+        },
+        {
+          "id": "p8",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-revenge-for-my-family.webp",
+          "sides": [
+            "revenge-for-my-family"
           ]
         }
       ]
@@ -597,7 +853,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-empathic-bond.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Put the hero you recruited this way on top of your deck."
           ]
@@ -613,7 +869,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-selfless.webp",
           "abilities": [
             "[hc:instinct]: Draw a card.",
             "Another player draws a card."
@@ -630,7 +886,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-5c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-selfish.webp",
           "abilities": [
             "[hc:ranged]: Draw a card.",
             "Another player discards a card."
@@ -647,7 +903,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-5u1.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-inspire-courage.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: You get +2[icon:attack]."
           ]
@@ -663,7 +919,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-5c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-sleep.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: You may KO one of your cards."
           ]
@@ -679,7 +935,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-6u2.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-emotional-wave.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: you get +[icon:attack] equal to total of all printed [icon:recruit] and [icon:attack] of the Hero you recruited this way."
           ]
@@ -695,9 +951,67 @@
           "cost": 7,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-discover-the-dead.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: you get +[icon:attack] equal to the cost of the Hero you recruited this way."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-empathic-bond.webp",
+          "sides": [
+            "empathic-bond"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-selfless.webp",
+          "sides": [
+            "selfless"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-selfish.webp",
+          "sides": [
+            "selfish"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-inspire-courage.webp",
+          "sides": [
+            "inspire-courage"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-sleep.webp",
+          "sides": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "p6",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-emotional-wave.webp",
+          "sides": [
+            "emotional-wave"
+          ]
+        },
+        {
+          "id": "p7",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-discover-the-dead.webp",
+          "sides": [
+            "discover-the-dead"
           ]
         }
       ]

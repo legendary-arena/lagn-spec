@@ -21,7 +21,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-4c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-finding-myself.webp",
           "abilities": [
             "[keyword:Investigate] for a card that has the same card name as any of your cards. (You don't need to choose a specific card name before you Investigate.)",
             "[hc:tech]: [keyword:Clone]"
@@ -38,7 +38,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-me-myself-and-i.webp",
           "abilities": [
             "[keyword:Tactical Formation] 444: Draw a card.",
             "[hc:instinct]: [keyword:Clone]"
@@ -55,7 +55,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-4c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-perfect-match.webp",
           "abilities": [
             "You get +1[icon:attack] for each card name that you played at least twice this turn.",
             "[hc:tech]: [keyword:Clone]"
@@ -72,10 +72,44 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-4r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-reabsorb-duplicates.webp",
           "abilities": [
             "[keyword:Tactical Formation] 44: You may KO a card from your hand or discard pile.",
             "[team:x-factor-investigations]: [keyword:Clone]"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-finding-myself.webp",
+          "sides": [
+            "finding-myself"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-me-myself-and-i.webp",
+          "sides": [
+            "me-myself-and-i"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-perfect-match.webp",
+          "sides": [
+            "perfect-match"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-reabsorb-duplicates.webp",
+          "sides": [
+            "reabsorb-duplicates"
           ]
         }
       ]
@@ -98,7 +132,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-strive-for-greatness.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:instinct]: [keyword:Clone]",
             "",
@@ -116,7 +150,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-bioelectric-surge.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:ranged]: [keyword:Clone]",
             "",
@@ -134,7 +168,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gladiators-blades.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:instinct]: [keyword:Clone]",
             "",
@@ -152,11 +186,45 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-5r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gene-spliced-creation.webp",
           "abilities": [
             "[keyword:When Recruited] [team:x-force]: [keyword:Clone]",
             "",
             "[hc:ranged][hc:instinct]: [keyword:Shatter] the Mastermind."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-strive-for-greatness.webp",
+          "sides": [
+            "strive-for-greatness"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-bioelectric-surge.webp",
+          "sides": [
+            "bioelectric-surge"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gladiators-blades.webp",
+          "sides": [
+            "gladiators-blades"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gene-spliced-creation.webp",
+          "sides": [
+            "gene-spliced-creation"
           ]
         }
       ]
@@ -184,7 +252,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-find-mutants-with-cerebro.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -202,7 +270,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-2c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-shared-thoughts.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -221,7 +289,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-3c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-telepathic-warning.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -240,11 +308,45 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-3r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-mind-wipe.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
             "[keyword:Tactical Formation] 223: Reveal the top card of the Villain Deck. If it's a Villain, you get +2[icon:attack] and you may fight it this turn. If you fight it, put a card from the Bystander stack on top of the Villain Deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 4,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-find-mutants-with-cerebro.webp",
+          "sides": [
+            "find-mutants-with-cerebro"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 4,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-shared-thoughts.webp",
+          "sides": [
+            "shared-thoughts"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 4,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-telepathic-warning.webp",
+          "sides": [
+            "telepathic-warning"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-mind-wipe.webp",
+          "sides": [
+            "mind-wipe"
           ]
         }
       ]
@@ -267,7 +369,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-penance-form.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:strength]: [keyword:Clone]",
             "",
@@ -285,7 +387,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-3c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-three-sisters-combined.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:strength]: [keyword:Clone]",
             "",
@@ -304,7 +406,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-3c3.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-uncover-family-secrets.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:covert]: [keyword:Clone]",
             "",
@@ -322,11 +424,45 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-3r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-interweaving-powers.webp",
           "abilities": [
             "[keyword:When Recruited] [team:x-factor-investigations]: [keyword:Clone]",
             "",
             "[keyword:Tactical Formation] 3333: You get +3[icon:attack]."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-penance-form.webp",
+          "sides": [
+            "penance-form"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-three-sisters-combined.webp",
+          "sides": [
+            "three-sisters-combined"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-uncover-family-secrets.webp",
+          "sides": [
+            "uncover-family-secrets"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-interweaving-powers.webp",
+          "sides": [
+            "interweaving-powers"
           ]
         }
       ]
@@ -349,7 +485,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-4c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-x-factor-investigations.webp",
           "abilities": [
             "[keyword:Investigate] for a card that's [hc:strength] and/or [team:x-factor-investigations]."
           ]
@@ -365,7 +501,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-absorb-kinetic-energy.webp",
           "abilities": [
             "If any player would gain a Wound, you may discard this card instead. If you do, draw two cards."
           ]
@@ -381,7 +517,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-go-big.webp",
           "abilities": [
             "[keyword:Tactical Formation] 445: You get +3[icon:attack]."
           ]
@@ -397,10 +533,44 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-treasure-hunt.webp",
           "abilities": [
             "[keyword:Investigate] for one of these options, then a different option, then a third different option:",
             "A [hc:strength] card. A [team:x-factor-investigations] card. A card that costs 4. A card that costs 5."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-x-factor-investigations.webp",
+          "sides": [
+            "x-factor-investigations"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-absorb-kinetic-energy.webp",
+          "sides": [
+            "absorb-kinetic-energy"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-go-big.webp",
+          "sides": [
+            "go-big"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-treasure-hunt.webp",
+          "sides": [
+            "treasure-hunt"
           ]
         }
       ]
@@ -423,7 +593,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-grim-tracker.webp",
           "abilities": [
             "Choose a number 1 or more. [keyword:Investigate] for a card of that cost."
           ]
@@ -439,7 +609,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-endless-endurance.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, draw two extra cards."
           ]
@@ -455,7 +625,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-2c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-dangerous-maneuver.webp",
           "abilities": [
             "[keyword:Tactical Formation] 225: You get +1[icon:attack]."
           ]
@@ -471,10 +641,44 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-superhuman-senses.webp",
           "abilities": [
             "Whenever you “reveal“ or “look at“ any number of cards from your deck this turn, you get +1[icon:attack]. (Just drawing or discarding a card from your deck doesn't count.)",
             "Choose a number 1 or more. [keyword:Investigate] for a card of that cost."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-grim-tracker.webp",
+          "sides": [
+            "grim-tracker"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-endless-endurance.webp",
+          "sides": [
+            "endless-endurance"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-dangerous-maneuver.webp",
+          "sides": [
+            "dangerous-maneuver"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-superhuman-senses.webp",
+          "sides": [
+            "superhuman-senses"
           ]
         }
       ]
@@ -497,7 +701,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-echolocation.webp",
           "abilities": [
             "Choose a Hero Class. [keyword:Investigate] for a card of that Hero Class."
           ]
@@ -513,7 +717,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-hypnotic-call.webp",
           "abilities": [
             "[hc:covert]: [keyword:Shatter] each Hero currently in the HQ whose printed cost is 2, 4, 6, and/or 8."
           ]
@@ -529,7 +733,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-three-octave-arpeggio.webp",
           "abilities": [
             "[keyword:Tactical Formation] 246: [keyword:Shatter] all Villains."
           ]
@@ -545,9 +749,43 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-splintering-shriek.webp",
           "abilities": [
             "[keyword:Shatter] the Mastermind. KO up to two cards from your hand and/or discard pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-echolocation.webp",
+          "sides": [
+            "echolocation"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-hypnotic-call.webp",
+          "sides": [
+            "hypnotic-call"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-three-octave-arpeggio.webp",
+          "sides": [
+            "three-octave-arpeggio"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-splintering-shriek.webp",
+          "sides": [
+            "splintering-shriek"
           ]
         }
       ]
@@ -570,7 +808,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-underground-cave-in.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Shatter] a Villain in the Sewers."
           ]
@@ -586,7 +824,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-5u.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-unearth-tectonic-power.webp",
           "abilities": [
             "[keyword:Investigate] for a card that's [hc:ranged] and/or [hc:instinct]."
           ]
@@ -602,7 +840,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-trace-the-fault-lines.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Investigate] for a card that costs 0. KO it or discard it."
           ]
@@ -618,9 +856,43 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-massive-earthquake.webp",
           "abilities": [
             "[keyword:Shatter] the Mastermind  or [keyword:Shatter] all Heroes currently in the HQ."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-underground-cave-in.webp",
+          "sides": [
+            "underground-cave-in"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-unearth-tectonic-power.webp",
+          "sides": [
+            "unearth-tectonic-power"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-trace-the-fault-lines.webp",
+          "sides": [
+            "trace-the-fault-lines"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-massive-earthquake.webp",
+          "sides": [
+            "massive-earthquake"
           ]
         }
       ]

@@ -26,7 +26,7 @@
           "cost": 1,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-1c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-hope-of-the-korbinites.webp",
           "abilities": [
             "To play this, you must discard a card.",
             "Then, if you are [keyword:Worthy], draw a card."
@@ -43,7 +43,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-bio-engineered-cyborg.webp",
           "abilities": [
             "You may discard a card. If you do, draw a card."
           ]
@@ -59,7 +59,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-stormbreaker.webp",
           "abilities": [
             "You cannot throw Stormbreaker unless you are [keyword:Worthy].",
             "[keyword:Thrown Artifact] — To throw this, you must discard a card from your hand. Then you get +2[icon:attack] for each card you discarded from your hand this turn."
@@ -76,9 +76,43 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-the-warship-skuttlebutt.webp",
           "abilities": [
             "You may discard a card. Then count the number of cards you discarded from your hand this turn. Draw that many cards."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-hope-of-the-korbinites.webp",
+          "sides": [
+            "hope-of-the-korbinites"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-bio-engineered-cyborg.webp",
+          "sides": [
+            "bio-engineered-cyborg"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-stormbreaker.webp",
+          "sides": [
+            "stormbreaker"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-the-warship-skuttlebutt.webp",
+          "sides": [
+            "the-warship-skuttlebutt"
           ]
         }
       ]
@@ -106,7 +140,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-2c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-dimensional-blade.webp",
           "abilities": [
             "[keyword:Thrown Artifact] — When you throw this you get +1[icon:recruit] and +1[icon:attack]."
           ]
@@ -122,7 +156,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-weapons-master.webp",
           "abilities": [
             "If you control any Artifacts, you get +2[icon:attack]."
           ]
@@ -138,7 +172,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-3u.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-winged-helm.webp",
           "abilities": [
             "[keyword:Thrown Artifact] — You may throw this to get +1[icon:attack].",
             "During any player's turn, if a player would gain a Wound, you may throw this to prevent that Wound and draw two cards instead."
@@ -155,9 +189,43 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-golden-apples-of-idunn.webp",
           "abilities": [
             "[keyword:Thrown Artifact] — When you throw this, you get +4[icon:attack] and you may KO a card from your hand or discard pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-dimensional-blade.webp",
+          "sides": [
+            "dimensional-blade"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-weapons-master.webp",
+          "sides": [
+            "weapons-master"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-winged-helm.webp",
+          "sides": [
+            "winged-helm"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-golden-apples-of-idunn.webp",
+          "sides": [
+            "golden-apples-of-idunn"
           ]
         }
       ]
@@ -185,7 +253,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-test-of-virtue.webp",
           "abilities": [
             "If you are [keyword:Worthy], you get +2[icon:attack]."
           ]
@@ -201,7 +269,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-5c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-divine-lightning.webp",
           "abilities": [
             "You get +1[icon:attack] for each other card you played this turn that makes you [keyword:Worthy]."
           ]
@@ -217,7 +285,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-4u.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-mjolnir.webp",
           "abilities": [
             "You cannot throw Mjolnir unless you are [keyword:Worthy].",
             "[keyword:Thrown Artifact] — When you throw this, you get +3[icon:attack], then you get +1[icon:attack] for each [hc:ranged] Hero you played this turn."
@@ -234,9 +302,43 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-royal-decree.webp",
           "abilities": [
             "[team:heroes-of-asgard]: Each player who is [keyword:Worthy] draws a card. Each Villain that isn't worth at least 5VP gets -1[icon:attack] this turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-test-of-virtue.webp",
+          "sides": [
+            "test-of-virtue"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-divine-lightning.webp",
+          "sides": [
+            "divine-lightning"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-mjolnir.webp",
+          "sides": [
+            "mjolnir"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-royal-decree.webp",
+          "sides": [
+            "royal-decree"
           ]
         }
       ]
@@ -264,7 +366,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-dragonfang.webp",
           "abilities": [
             "[keyword:Thrown Artifact] — When you throw this, you get [keyword:Sewers Conqueror 2]."
           ]
@@ -280,7 +382,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-flying-stallion.webp",
           "abilities": [
             "[keyword:Streets] [keyword:Conqueror] 1",
             "When an Ambush ability is played, before it takes effect, you may discard this card. If you do, draw two extra cards at the end of this turn."
@@ -297,7 +399,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-usher-to-valhalla.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 1",
             "[team:heroes-of-asgard]: The first time you defeat a Villain this turn, you may KO one of your cards or a card from your discard pile."
@@ -314,10 +416,44 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-7r.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-ride-of-the-valkyries.webp",
           "abilities": [
             "[keyword:Streets] [keyword:Conqueror] 1",
             "[hc:instinct]: You get +1[icon:attack] for every 4 Heroes in the KO pile."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-dragonfang.webp",
+          "sides": [
+            "dragonfang"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-flying-stallion.webp",
+          "sides": [
+            "flying-stallion"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-usher-to-valhalla.webp",
+          "sides": [
+            "usher-to-valhalla"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-ride-of-the-valkyries.webp",
+          "sides": [
+            "ride-of-the-valkyries"
           ]
         }
       ]
@@ -345,7 +481,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-3c1.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-fandral-the-dashing.webp",
           "abilities": [
             "You may move a Villain to an adjacent city space. If another Villain is already there, swap them.",
             "[hc:covert]: Draw a card."
@@ -362,7 +498,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-4c2.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-hogun-the-grim.webp",
           "abilities": [
             "[hc:strength]: You may KO a card from your hand or discard pile."
           ]
@@ -378,7 +514,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-6u.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-volstagg-the-valiant.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 1",
             "[hc:instinct]: Instead, [keyword:Conqueror]"
@@ -395,10 +531,44 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-8r.webp",
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-three-stand-as-one.webp",
           "abilities": [
             "If you played at least three other non-grey Heroes with different card names this turn, you get +3[icon:attack].",
             "[team:heroes-of-asgard]: [keyword:Streets Conqueror 3]"
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-fandral-the-dashing.webp",
+          "sides": [
+            "fandral-the-dashing"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-hogun-the-grim.webp",
+          "sides": [
+            "hogun-the-grim"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-volstagg-the-valiant.webp",
+          "sides": [
+            "volstagg-the-valiant"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-three-stand-as-one.webp",
+          "sides": [
+            "three-stand-as-one"
           ]
         }
       ]

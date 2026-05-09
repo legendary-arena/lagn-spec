@@ -82,6 +82,40 @@
             "[team:spider-friends]: You may play a copy of the card you sent [keyword:Undercover] this way."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-retractable-talons.webp",
+          "sides": [
+            "retractable-talons"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-venomous-fangs.webp",
+          "sides": [
+            "venomous-fangs"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-spider-silk-webbing.webp",
+          "sides": [
+            "spider-silk-webbing"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-spider-sense-telepathy.webp",
+          "sides": [
+            "spider-sense-telepathy"
+          ]
+        }
       ]
     },
     {
@@ -163,6 +197,40 @@
             "[keyword:Cyber-Mod][hc:tech]: [keyword:Fated Future] and you get +1[icon:attack] for each [hc:tech] card in your Victory Pile."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-cyber-specter.webp",
+          "sides": [
+            "cyber-specter"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-hell-ride.webp",
+          "sides": [
+            "hell-ride"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-death-beyond-death.webp",
+          "sides": [
+            "death-beyond-death"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-infernal-chainsaw.webp",
+          "sides": [
+            "infernal-chainsaw"
+          ]
+        }
       ]
     },
     {
@@ -242,6 +310,40 @@
             "You may send a card from your hand or discard pile [keyword:Undercover].",
             "[keyword:Fated Future]",
             "[keyword:Cyber-Mod][hc:ranged][hc:ranged]: If you haven't taken any extra turns this game, you may take another turn after this one. Don't play a card from the Villain Deck at the start of that turn."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-subvert-this-new-future.webp",
+          "sides": [
+            "subvert-this-new-future"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-doomblast.webp",
+          "sides": [
+            "doomblast"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-flesh-grafted-doombots.webp",
+          "sides": [
+            "flesh-grafted-doombots"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-tear-through-time-itself.webp",
+          "sides": [
+            "tear-through-time-itself"
           ]
         }
       ]
@@ -326,6 +428,40 @@
             "[keyword:Cyber-Mod Wound]: You get +1[icon:attack] for each Wound in your Victory Pile."
           ]
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-rage-incarnate.webp",
+          "sides": [
+            "rage-incarnate"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-push-pain-under-the-surface.webp",
+          "sides": [
+            "push-pain-under-the-surface"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-massive-gamma-detonation.webp",
+          "sides": [
+            "massive-gamma-detonation"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-cataclysmic-frenzy.webp",
+          "sides": [
+            "cataclysmic-frenzy"
+          ]
+        }
       ]
     },
     {
@@ -404,6 +540,40 @@
           "abilities": [
             "Reveal the top card of your deck. You get +[icon:attack] equal to that card's cost. Discard it or put it back.",
             "[team:marvel-knights]: Then do the same thing with the bottom card of your deck."
+          ]
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-down-in-the-dregs.webp",
+          "sides": [
+            "down-in-the-dregs"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-toxic-mutations.webp",
+          "sides": [
+            "toxic-mutations"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-detect-vibrations.webp",
+          "sides": [
+            "detect-vibrations"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-overhorns-and-underhorns.webp",
+          "sides": [
+            "overhorns-and-underhorns"
           ]
         }
       ]

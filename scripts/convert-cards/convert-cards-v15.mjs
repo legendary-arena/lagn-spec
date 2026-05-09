@@ -36,6 +36,14 @@
  *   - Card patches support "_slug" field to rename a card's slug during merge.
  *     The patch matches the card by its current "slug", then overwrites the slug
  *     with the "_slug" value. Useful for fixing misspellings in npm source slugs.
+ * v16 changes:
+ *   - Hero card imageUrls now use the card's slug instead of cost+rarity+slot.
+ *     Pattern: {setAbbr}-hr-{heroSlug}-{cardSlug}.webp
+ *     (was:    {setAbbr}-hr-{heroSlug}-{cost}{rarityCode}{slot}.webp)
+ *     Self-documenting filenames; survive slot/cost/rarity reordering in source
+ *     data. Eliminates the silent-swap risk that bit Wolfsbane's Night Vision
+ *     vs Wolf Out (both cost 3 common). Image migration on R2 driven by
+ *     scripts/convert-cards/generate-rename-scripts.mjs.
  */
 
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'fs';
@@ -57,6 +65,35 @@ const OUTPUT_DIR  = join(__dirname, '..', '..', 'data', 'cards');
 const DATA_DIR    = INPUTS_DIR;
 const PATCHES_DIR = join(INPUTS_DIR, 'patches');
 const R2_BASE_URL = 'https://images.barefootbetters.com';
+
+// why: WP-138 §B / executive review §⚠️4 — `--strict` (or env
+// LEGENDARY_CONVERT_STRICT=1) makes audit warnings for paired-equal
+// cardCounts patterns lacking explicit physicalCards declarations fail
+// conversion with a non-zero exit code (CI mode). Without --strict
+// (developer-iteration mode), the same patterns emit warnings to stderr
+// but the script still exits 0. CI green-state under Phase 1a expects
+// --strict to FAIL until Phase 1b lands every per-set patch; locally
+// dev iteration may run without --strict.
+const STRICT_MODE = process.argv.includes('--strict') ||
+                    process.env.LEGENDARY_CONVERT_STRICT === '1';
+
+// why: WP-135 D-13501 fallback map — when a hero has no cardCounts
+// entry for a given card, the physicalCard count derives from the
+// rarity label. This mirrors RARITY_COPY_COUNT in the engine so
+// solo-auto-path output matches engine reservoir expectations for
+// heroes that never gained explicit cardCounts data. Numbered Common /
+// Uncommon labels map to the same count as their unnumbered base
+// because rarity (not slot ordering) is what drives copy count.
+const RARITY_LABEL_FALLBACK_COUNT = {
+  'Common':     5,
+  'Common 1':   5,
+  'Common 2':   5,
+  'Common 3':   5,
+  'Common 4':   5,
+  'Uncommon':   3,
+  'Uncommon 2': 3,
+  'Rare':       1,
+};
 
 // ── Load keyword and rule lookup maps ─────────────────────────────────────────
 
@@ -238,31 +275,42 @@ function toSlug(name) {
 }
 
 /**
- * Builds the R2 image URL for a hero card using cost + rarity code.
- * Pattern: {set}-hr-{heroSlug}-{cost}{rarityCode}.webp
- * e.g. mdns-hr-blade-daywalker-3c1.webp
+ * Builds the R2 image URL for a hero card using the card's slug.
+ * Solo (single-side) pattern:  {setAbbr}-hr-{heroSlug}-{cardSlug}.webp
+ *   e.g. nmut-hr-wolfsbane-night-vision.webp
+ * Split (two-side) pattern:    {setAbbr}-hr-{heroSlug}-{sortedA}-{sortedB}.webp
+ *   e.g. bkwd-hr-falcon-winter-soldier-attune-atone.webp
  *
- * rarityLabel examples: "Common 1", "Common 2", "Uncommon", "Uncommon 2", "Uncommon 3", "Uncommon 4", "Rare"
- * rarityCode:           c1,         c2,         u,          u2,           u3,           u4,           r
- * Cost: numeric only — strip any trailing * (Size-Changing cards)
+ * why: cardSlug-based naming makes filenames self-documenting and survives
+ * any future slot/cost/rarity reordering in upstream source data. The previous
+ * {cost}{rarityCode}{slot} encoding was opaque — two cards in a hero's deck
+ * with the same cost and rarity (e.g. Wolfsbane's Night Vision and Wolf Out at
+ * cost 3 common 1/2) could be silently swapped on R2 if their slot ordering
+ * changed in source, with no way to detect the swap from the filename alone.
+ *
+ * why: D-13802 sort lock — the two-side filename uses
+ * `Array.prototype.sort()` with NO comparator argument (UTF-16 code-unit
+ * ordering). See D-13802 for the full forbidden list of locale-aware
+ * comparison APIs and the rationale: locale-dependent collation would
+ * produce non-deterministic URLs across environments (e.g., Turkish
+ * locale's dotless-i rule would reorder any side slug containing "i").
+ * The sort happens on a fresh slice so the caller's array order is never
+ * mutated.
+ *
+ * @param setAbbr - Set abbreviation (e.g., "bkwd").
+ * @param heroSlug - Hero slug (e.g., "falcon-winter-soldier").
+ * @param sides - Array of one or two card-side slugs (e.g., ["attune", "atone"]).
+ * @returns The full R2 image URL for the resulting physical card.
  */
-function heroImageUrl(setAbbr, heroSlug, cost, rarityLabel) {
-  const costStr = String(cost ?? 0).replace(/\*/g, '');
-  const label = (rarityLabel ?? '').toLowerCase().trim();
-  let code;
-  if (label === 'rare') {
-    code = 'r';
-  } else if (label.startsWith('uncommon')) {
-    const n = label.replace('uncommon', '').trim();
-    // Uncommon → u, Uncommon 2 → u2, Uncommon 3 → u3, etc.
-    code = n ? `u${n}` : 'u';
-  } else if (label.startsWith('common')) {
-    const n = label.replace('common', '').trim();
-    code = n ? `c${n}` : 'c';
-  } else {
-    code = label.replace(/\s+/g, '');
+function heroImageUrl(setAbbr, heroSlug, sides) {
+  if (!Array.isArray(sides) || sides.length < 1 || sides.length > 2) {
+    throw new Error(
+      `heroImageUrl(setAbbr="${setAbbr}", heroSlug="${heroSlug}"): sides must be ` +
+      `an array of length 1 or 2 (D-13802 ceiling lock); received ${JSON.stringify(sides)}.`
+    );
   }
-  const filename = `${setAbbr}-hr-${heroSlug}-${costStr}${code}.webp`;
+  const sortedSides = sides.slice().sort();
+  const filename = `${setAbbr}-hr-${heroSlug}-${sortedSides.join('-')}.webp`;
   return `${R2_BASE_URL}/${setAbbr}/${filename}`;
 }
 
@@ -455,7 +503,7 @@ function convertSet(jsFilePath, setAbbr) {
           cost: card.cost ?? null,
           attack: card.attack ?? null,
           recruit: card.recruit ?? null,
-          imageUrl: heroImageUrl(setAbbr, heroSlug, card.cost, rarityLabel),
+          imageUrl: heroImageUrl(setAbbr, heroSlug, [toSlug(card.name)]),
           abilities: parseAbilities(card.abilities),
         };
       });
@@ -706,10 +754,15 @@ function applyPatch(result, setAbbr) {
       if (op === 'append') {
         // Add a new entry that doesn't exist in npm data
         // Auto-generate imageUrl for hero cards missing one (skip if patch set it explicitly)
+        // Always regenerate hero card imageUrls under v16 cardSlug naming —
+        // any explicit imageUrl in the patch is from the v9-v15 era and uses
+        // the obsolete {cost}{rarityCode}{slot} pattern. Patch imageUrls for
+        // hero cards are now no-ops; remove them at convenience.
         if (section === 'heroes' && fields.cards) {
           for (const card of fields.cards) {
-            if (card.cost != null && card.rarityLabel && !card.imageUrl) {
-              card.imageUrl = heroImageUrl(setAbbr, fields.slug, card.cost, card.rarityLabel);
+            const cardSlug = card.slug ?? toSlug(card.name ?? '');
+            if (cardSlug) {
+              card.imageUrl = heroImageUrl(setAbbr, fields.slug, [cardSlug]);
             }
           }
         }
@@ -774,14 +827,16 @@ function applyPatch(result, setAbbr) {
           }
         }
 
-        // Regenerate imageUrl for ALL hero cards using final cost + rarityLabel
-        // This ensures slot/rarity corrections in the patch are reflected in URLs
-        // Skip regeneration if the patch explicitly set an imageUrl for this card
+        // Regenerate imageUrl for ALL hero cards using the card's slug.
+        // why: under v16 cardSlug naming, the URL is fully derivable from the
+        // card slug — patch-set imageUrls from the v9-v15 era used the
+        // {cost}{rarityCode}{slot} pattern and are now obsolete. Always
+        // regenerating supersedes those stale overrides; a card-slug rename
+        // via _slug also propagates to the imageUrl this way.
         if (section === 'heroes' && target.cards) {
           for (const card of target.cards) {
-            const patchCard = fields.cards?.find(pc => pc.slug === card.slug);
-            if (card.cost != null && card.rarityLabel && !patchCard?.imageUrl) {
-              card.imageUrl = heroImageUrl(setAbbr, target.slug, card.cost, card.rarityLabel);
+            if (card.slug) {
+              card.imageUrl = heroImageUrl(setAbbr, target.slug, [card.slug]);
             }
           }
         }
@@ -829,15 +884,179 @@ function applyPatch(result, setAbbr) {
   }
 }
 
+// ── Physical card synthesis (WP-138 Phase 1a) ────────────────────────────────
+
+/**
+ * Loads a set's patch JSON file or returns null if no patch exists.
+ * Mirrors applyPatch's loading; kept as a separate read so buildPhysicalCards
+ * can consume the patch's hero[].physicalCards declarations without coupling
+ * to applyPatch's internal mutation flow.
+ */
+function loadPatchFile(setAbbr) {
+  const patchPath = join(PATCHES_DIR, `${setAbbr}.patch.json`);
+  if (!existsSync(patchPath)) return null;
+  try {
+    return JSON.parse(readFileSync(patchPath, 'utf8'));
+  } catch (e) {
+    console.warn(`  ⚠ Could not load patch ${patchPath} for physicalCards: ${e.message}`);
+    return null;
+  }
+}
+
+/**
+ * Resolves the deck-instance count for a given hero card, in priority order:
+ *   1. hero.cardCounts[card.name] when populated (D-13701 — authoritative)
+ *   2. RARITY_LABEL_FALLBACK_COUNT[card.rarityLabel] (D-13501 fallback)
+ *   3. 1 (last-resort default; logged as a warning candidate)
+ *
+ * The function never throws; missing data yields a count of 1 with a
+ * subdued log line so callers can still produce structurally-valid output.
+ *
+ * @param hero - The hero object with optional cardCounts.
+ * @param card - The card object with optional rarityLabel.
+ * @returns A positive integer count for the card's deck instances.
+ */
+function resolveSoloCardCount(hero, card) {
+  if (hero.cardCounts && typeof hero.cardCounts[card.name] === 'number') {
+    return hero.cardCounts[card.name];
+  }
+  if (card.rarityLabel && RARITY_LABEL_FALLBACK_COUNT[card.rarityLabel]) {
+    return RARITY_LABEL_FALLBACK_COUNT[card.rarityLabel];
+  }
+  return 1;
+}
+
+/**
+ * Synthesises hero.physicalCards[] for every hero in a converted set.
+ *
+ * Two paths:
+ *   - Patch-declared (D-13805): the patch file lists hero.physicalCards[]
+ *     entries with explicit { count, sides } pairs. IDs are assigned in
+ *     declaration order (first declared = "p1") for byte-identical
+ *     re-conversion stability. Image URLs are computed from the (sorted)
+ *     sides via heroImageUrl per D-13802.
+ *   - Solo auto-path (D-13803): no patch declaration. Every cards[] entry
+ *     becomes a single-side physicalCard. IDs follow the cards[] array
+ *     order (first card = "p1"). Counts come from resolveSoloCardCount.
+ *
+ * Audit warnings are collected for each hero whose cardCounts contains a
+ * paired-equal pattern (two cards whose count matches and rarity matches)
+ * but for which no patch declaration exists — these are the Phase 1b
+ * worklist candidates per WP-138 §B.
+ *
+ * Drift validation: when a hero has both cardCounts AND patch-declared
+ * physicalCards, the sum of physicalCards[].count over physicalCards
+ * whose sides[] includes each side slug must equal cardCounts[displayName]
+ * for that side. Drift fails conversion with a full-sentence error.
+ *
+ * @param result - The converted set object (mutated in place).
+ * @param setAbbr - The set abbreviation.
+ * @param patch - The loaded patch JSON, or null if no patch exists.
+ * @param auditWarnings - Output array; warnings appended for paired-equal candidates.
+ * @throws If drift validation fails for any hero with both cardCounts and patch-declared physicalCards.
+ */
+function buildPhysicalCards(result, setAbbr, patch, auditWarnings) {
+  const patchHeroDeclarations = new Map();
+  if (patch && Array.isArray(patch.heroes)) {
+    for (const patchHero of patch.heroes) {
+      if (Array.isArray(patchHero.physicalCards) && patchHero.physicalCards.length > 0) {
+        patchHeroDeclarations.set(patchHero.slug, patchHero.physicalCards);
+      }
+    }
+  }
+
+  for (const hero of result.heroes) {
+    const declared = patchHeroDeclarations.get(hero.slug);
+
+    if (declared) {
+      hero.physicalCards = declared.map((entry, index) => {
+        const sides = entry.sides;
+        return {
+          id:       `p${index + 1}`,
+          count:    entry.count,
+          imageUrl: heroImageUrl(setAbbr, hero.slug, sides),
+          sides,
+        };
+      });
+
+      if (hero.cardCounts) {
+        for (const [sideName, expectedCount] of Object.entries(hero.cardCounts)) {
+          const card = (hero.cards || []).find(c => c.name === sideName);
+          if (!card) continue;
+          const sideSlug = card.slug;
+          let actualCount = 0;
+          for (const physicalCard of hero.physicalCards) {
+            if (physicalCard.sides.includes(sideSlug)) {
+              actualCount += physicalCard.count;
+            }
+          }
+          if (actualCount !== expectedCount) {
+            throw new Error(
+              `Drift validation failed for set "${setAbbr}" hero "${hero.slug}": ` +
+              `cardCounts["${sideName}"] = ${expectedCount} but physicalCards summing ` +
+              `for side slug "${sideSlug}" = ${actualCount}. ` +
+              `physicalCards[] is the authoritative deck-composition surface ` +
+              `(D-13801); the patch's physicalCards declarations must sum to ` +
+              `match cardCounts.`
+            );
+          }
+        }
+      }
+
+      console.log(`  📎 Pair: hero=${hero.slug} physicalCards=${hero.physicalCards.length} ` +
+                  `(${hero.physicalCards.filter(p => p.sides.length === 2).length} split, ` +
+                  `${hero.physicalCards.filter(p => p.sides.length === 1).length} solo)`);
+      continue;
+    }
+
+    hero.physicalCards = (hero.cards || []).map((card, index) => ({
+      id:       `p${index + 1}`,
+      count:    resolveSoloCardCount(hero, card),
+      imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug]),
+      sides:    [card.slug],
+    }));
+
+    if (hero.cardCounts) {
+      const countsByValue = new Map();
+      for (const [cardName, count] of Object.entries(hero.cardCounts)) {
+        const list = countsByValue.get(count) ?? [];
+        list.push(cardName);
+        countsByValue.set(count, list);
+      }
+      for (const [count, cardNames] of countsByValue) {
+        if (cardNames.length >= 2 && count >= 2) {
+          auditWarnings.push({
+            setAbbr,
+            heroSlug: hero.slug,
+            count,
+            candidateNames: cardNames,
+            message:
+              `Set "${setAbbr}" hero "${hero.slug}" has ${cardNames.length} cards ` +
+              `with cardCounts === ${count} (${cardNames.join(', ')}). ` +
+              `This is a candidate paired-equal pattern — if these are split-side ` +
+              `dual-faced cards (e.g., bkwd/falcon-winter-soldier Attune/Atone), ` +
+              `add an explicit physicalCards[] declaration to ` +
+              `scripts/convert-cards/inputs/patches/${setAbbr}.patch.json (Phase 1b worklist).`,
+          });
+        }
+      }
+    }
+  }
+}
+
 // ── Run ────────────────────────────────────────────────────────────────────────
 
 console.log('🃏 Converting master-strike-data JS files to JSON...\n');
+if (STRICT_MODE) {
+  console.log('🔒 STRICT mode: audit warnings will fail conversion (CI mode).\n');
+}
 
 mkdirSync(OUTPUT_DIR, { recursive: true });
 mkdirSync(PATCHES_DIR, { recursive: true });
 
 const files = readdirSync(CARDS_DIR).filter(f => f.endsWith('.js') && f !== 'index.js');
 let successCount = 0;
+const auditWarnings = [];
 
 for (const file of files) {
   const jsPath = join(CARDS_DIR, file);
@@ -861,6 +1080,8 @@ for (const file of files) {
 
   if (result) {
     applyPatch(result, setAbbr);
+    const patch = loadPatchFile(setAbbr);
+    buildPhysicalCards(result, setAbbr, patch, auditWarnings);
     const outputPath = join(OUTPUT_DIR, `${setAbbr}.json`);
     writeFileSync(outputPath, JSON.stringify(result, null, 2), 'utf8');
     console.log(`  ✅ Saved ${outputPath}`);
@@ -869,3 +1090,34 @@ for (const file of files) {
 }
 
 console.log(`\n✅ Done! Converted ${successCount} sets → ${OUTPUT_DIR}`);
+
+if (auditWarnings.length > 0) {
+  console.warn(`\n⚠ Audit warnings (${auditWarnings.length}) — paired-equal cardCounts patterns lacking explicit physicalCards declarations:\n`);
+  for (const warning of auditWarnings) {
+    console.warn(`  - ${warning.message}`);
+  }
+  console.warn(`\nThese candidates form the Phase 1b worklist for split-side hero patch curation.`);
+  if (STRICT_MODE) {
+    console.error(`\n❌ STRICT mode: ${auditWarnings.length} audit warning(s) — exiting non-zero (CI gate).`);
+    process.exit(1);
+  } else {
+    console.warn(`Run with --strict (or LEGENDARY_CONVERT_STRICT=1) to make these failures in CI.`);
+  }
+}
+
+// why: regenerated JSONs are local-only until pushed to R2. The registry
+// loader in production reads from R2 (https://images.barefootbetters.com/
+// metadata/<set>.json), so a conversion that doesn't sync leaves prod
+// unchanged. Print the canonical sync command so the operator doesn't
+// have to remember the path mapping (data/cards/ → r2:legendary-images/metadata).
+// Companion script: also re-run apply-card-counts.mjs if any of the four
+// outlier sets (2099, amwp, wpnx, wtif) had cardCounts edits.
+console.log('');
+console.log('📤 Next step — sync to R2 (production-canonical path):');
+console.log('');
+console.log('  do not use rclone sync as it deletes all files in the directory and then uploads ');
+console.log('  rclone copy C:\\pcloud\\BB\\DEV\\legendary-arena\\data\\cards r2:legendary-images/metadata --progress');
+console.log('  rclone copy C:\\pcloud\\BB\\DEV\\legendary-arena\\data\\metadata r2:legendary-images/metadata --progress');
+console.log('');
+console.log('   (Run apply-card-counts.mjs first if you edited cardCounts for 2099, amwp, wpnx, or wtif.)');
+console.log('   (Run node scripts/convert-cards/apply-card-counts.mjs)');

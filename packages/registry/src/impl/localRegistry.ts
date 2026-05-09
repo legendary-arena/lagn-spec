@@ -25,6 +25,7 @@ import type {
   CardQuery,
   RegistryInfo,
   HealthReport,
+  PhysicalCard,
 } from "../types/index.js";
 
 export interface LocalRegistryOptions {
@@ -133,6 +134,26 @@ export async function createRegistryFromLocalFiles(
     return all;
   }
 
+  // why: D-13806 — the sideToPhysicalCard map is a registry-internal cache
+  // built once at load time from immutable input data. It is never persisted,
+  // never serialized, and never written to PostgreSQL: regenerating it from
+  // the registry data is always cheaper than caching it across boundaries.
+  // why: namespaced compound key `<heroSlug>/<sideSlug>` is required, not
+  // cosmetic — global uniqueness of a card slug across heroes is NOT
+  // assumed (e.g., a slug like "night-vision" can recur under multiple
+  // heroes in different sets). Keying on `sideSlug` alone would silently
+  // collide.
+  const sideToPhysicalCard = new Map<string, PhysicalCard>();
+  for (const set of loadedSets.values()) {
+    for (const hero of set.heroes) {
+      for (const physicalCard of hero.physicalCards) {
+        for (const sideSlug of physicalCard.sides) {
+          sideToPhysicalCard.set(`${hero.slug}/${sideSlug}`, physicalCard);
+        }
+      }
+    }
+  }
+
   return {
     info(): RegistryInfo {
       return {
@@ -152,6 +173,10 @@ export async function createRegistryFromLocalFiles(
 
     validate(): HealthReport {
       return buildHealthReport(setIndex, [...loadedSets.values()], errors);
+    },
+
+    getPhysicalCardForSide(heroSlug: string, sideSlug: string): PhysicalCard | undefined {
+      return sideToPhysicalCard.get(`${heroSlug}/${sideSlug}`);
     },
   };
 }
