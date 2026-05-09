@@ -10,9 +10,36 @@
 ## Session Context
 
 WP-007a (`legendary-arena-website` repo's `play.legendary-arena.com`
-deploy) attempted execution on 2026-05-09 and surfaced a hard blocker
-at Step 1 pre-flight. The marketing-repo session prompt locked the CF
-Pages build command verbatim as:
+deploy) attempted execution on 2026-05-09 and surfaced **two
+independent gaps** at Step 1 pre-flight that this WP closes
+together:
+
+- **Blocker A (hard):** `pnpm --filter @legendary-arena/arena-client build`
+  on a fresh tree fails to resolve the `@legendary-arena/game-engine`
+  package entry because the single-package filter does not transitively
+  build workspace dependencies, and `packages/game-engine/dist/` is a
+  gitignored build artifact directory. Vite errors out, build exits
+  non-zero. **Fixed by topology filter** (`pnpm --filter "@legendary-arena/arena-client..." build`)
+  in WP-007a's amended build command.
+- **Blocker B (soft, but enforceable):** Node-IO setup-tooling code
+  (`scoringConfigLoader`) is reachable from the engine package's
+  runtime barrel, so Vite externalizes `node:*` modules in arena-client's
+  browser bundle and emits five `[plugin:vite:resolve] Module "node:..." has been externalized`
+  warnings per build. The bundle is functionally correct (tree-shaking
+  drops the dead loader code), but the runtime / setup-tooling
+  boundary is enforced implicitly rather than via the package's public
+  surface, and the warnings obscure any future genuine warning that
+  lands on the same surface. **Fixed by subpath exports** that move
+  setup-tooling behind `@legendary-arena/game-engine/setup`.
+
+Both fixes are needed for WP-007a to land cleanly: the topology filter
+without the subpath split would leave the warnings in place; the
+subpath split without the topology filter would still fail on a fresh
+tree because `dist/` is missing. WP-144 lands them together as one
+coordinated change.
+
+The marketing-repo session prompt locked the CF Pages build command
+verbatim as:
 
 ```
 pnpm install --frozen-lockfile && pnpm --filter @legendary-arena/arena-client build
@@ -35,7 +62,7 @@ The pnpm single-package filter (`--filter @legendary-arena/arena-client`)
 does NOT transitively build workspace dependencies, so on a fresh CF
 Pages clone (or any clean clone, including a fresh `git worktree add`)
 the `dist/` directory does not exist when Vite walks the import graph
-and tries to resolve [bgioClient.ts:16](packages/game-engine/src/client/bgioClient.ts:16)'s
+and tries to resolve [apps/arena-client/src/client/bgioClient.ts:16](apps/arena-client/src/client/bgioClient.ts:16)'s
 `import { LegendaryGame } from '@legendary-arena/game-engine'`.
 `pnpm -r build` recursively builds all workspace packages and then
 arena-client builds successfully — that is how the existing main
@@ -140,21 +167,36 @@ implicitly.
 
 ## Goal
 
-After this packet:
+WP-144 closes **two independent contracts** that together unblock
+WP-007a's CF Pages deploy of `apps/arena-client`:
+
+### Contract A — Fresh-tree CF-shaped build succeeds (hard blocker)
 
 - `pnpm install --frozen-lockfile && pnpm --filter "@legendary-arena/arena-client..." build`
-  succeeds from a fresh clone (or a fresh `git worktree add`) on the
-  engine monorepo, exiting 0, producing `apps/arena-client/dist/` with
-  byte-identical output across consecutive runs.
-- `apps/arena-client/dist/` no longer contains `__vite-browser-external`
-  warnings during build (zero externalized-Node-import warnings on the
-  production bundle).
-- `packages/game-engine/package.json` declares two subpath exports:
-  `.` (runtime) and `./setup` (setup-tooling, Node-IO).
-- `apps/arena-client/src/client/bgioClient.ts` and any other arena-client
-  files that import from `@legendary-arena/game-engine` continue to
-  resolve without source changes (the runtime barrel's public surface
-  for arena-client's needs is unchanged — only the loader exports move).
+  succeeds from a fresh clone or a fresh `git worktree add` on the
+  engine monorepo, exiting 0, producing `apps/arena-client/dist/`
+  with byte-identical output across consecutive runs.
+- The trailing-`...` topology filter (pnpm's transitive workspace
+  selector) is what makes Contract A mechanically achievable; the
+  subpath split below is unrelated to whether the build succeeds on
+  a fresh tree.
+- WP-007a (marketing repo) gets a one-line amendment to its locked
+  CF Pages build command incorporating the topology filter — see
+  Coordination Receipts.
+
+### Contract B — Runtime bundle is Node-IO clean (soft, enforceable boundary)
+
+- `pnpm --filter "@legendary-arena/arena-client..." build` emits
+  **zero** `[plugin:vite:resolve] Module "node:..." has been externalized`
+  warnings and zero `__vite-browser-external` references in any build
+  log line.
+- `packages/game-engine/package.json` declares subpath exports: `.`
+  (runtime, browser-bundle-safe) and `./setup` (setup-tooling, Node-IO).
+- `apps/arena-client/src/client/bgioClient.ts` and any other
+  arena-client files that import from `@legendary-arena/game-engine`
+  continue to resolve without source changes (the runtime barrel's
+  public surface for arena-client's needs is unchanged — only the
+  setup-tooling exports move).
 - `apps/server/` updates its import sites to use the new `./setup`
   subpath where it consumes `loadScoringConfigForScenario` /
   `loadAllScoringConfigs` (and any other setup-tooling-only export
@@ -163,24 +205,22 @@ After this packet:
   namespace-import workaround and uses standard named imports
   (`import { readFile } from 'node:fs/promises'`) — restoring
   consistency with the rest of the Node codebase.
-- A new architectural decision **D-14401** is recorded in
-  `docs/ai/DECISIONS.md` codifying the runtime / setup-tooling split
-  as a Layer Boundary contract: the engine package's runtime entry
-  must contain zero `node:*` imports anywhere reachable; setup-tooling
-  exports live behind the `./setup` subpath; arena-client and any
-  future browser SPA consumer imports only from the runtime entry.
+- New architectural decision **D-14401** in `docs/ai/DECISIONS.md`
+  codifies the runtime / setup-tooling split as a Layer Boundary
+  contract: the engine package's runtime entry must contain zero
+  `node:*` imports anywhere reachable; setup-tooling exports live
+  behind the `./setup` subpath; arena-client and any future browser
+  SPA consumer imports only from the runtime entry.
 - `docs/ai/ARCHITECTURE.md §Layer Boundary` per-package import-rules
   table for `apps/arena-client` is updated: the `@legendary-arena/game-engine`
   runtime entry remains a permitted runtime import (per D-5901);
   `@legendary-arena/game-engine/setup` is added to the explicit
-  forbidden-runtime-imports column.
-- WP-007a (marketing repo) gets a one-line amendment to its locked
-  CF Pages build command: `pnpm --filter "@legendary-arena/arena-client..." build`
-  (trailing `...` is pnpm's topological selector — builds the package
-  and its workspace dependencies in dependency order). The amendment
-  is in scope for WP-144's lock receipts because the engine-side
-  exports change makes the topology filter sufficient; both halves
-  are needed to land WP-007a cleanly.
+  forbidden-runtime-imports column. `apps/server` row gains both as
+  permitted.
+
+Both contracts must hold at lock. Contract A without B leaves the
+boundary implicit and the warnings in place; B without A leaves
+fresh trees broken. Lock requires both.
 
 ---
 
@@ -278,21 +318,34 @@ If any assumption is false, this packet is BLOCKED.
     just the two scoringConfigLoader exports based on current barrel
     inspection)
 - Update `packages/game-engine/package.json`:
-  - Replace single `exports` with subpath map:
+  - Replace single `exports` with subpath map. Each subpath includes
+    `types`, `import`, and `default` conditions for tooling
+    compatibility (Vite, Vitest, downstream consumers that probe
+    `default` when no other condition matches); `./package.json` is
+    exported so introspection tools can read it without hitting
+    "subpath not exported" errors:
     ```json
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
       },
       "./setup": {
         "types": "./dist/setup-tooling/index.d.ts",
-        "import": "./dist/setup-tooling/index.js"
-      }
+        "import": "./dist/setup-tooling/index.js",
+        "default": "./dist/setup-tooling/index.js"
+      },
+      "./package.json": "./package.json"
     }
     ```
-  - Add `"sideEffects": false` to enable Vite/Rollup tree-shaking with
-    the same posture the implicit setup currently relies on
+  - **Conditionally** add `"sideEffects": false` ONLY if a quick
+    import-side-effects audit passes for the engine package (no
+    module-load-time global registrations, prototype patches, logger
+    setup, or registry mutations). If any side effect is found, omit
+    the field and record the finding in D-14401. The exports split
+    is the load-bearing change; `"sideEffects": false` is an
+    optional bundle-size win that should not ship blindly.
 - Refactor `packages/game-engine/src/scoring/scoringConfigLoader.ts`:
   - Drop the namespace-import workaround (lines 33-42)
   - Replace with standard named imports: `import { readFile, readdir } from 'node:fs/promises'`,
@@ -371,6 +424,58 @@ If any assumption is false, this packet is BLOCKED.
 
 ---
 
+## Execution Plan (summary)
+
+The order matters: server-side import migration must land in the
+same commit as the engine barrel split, or `apps/server`'s tests
+break mid-flight.
+
+1. **Pre-flight greps** — capture the actual surface to migrate:
+   - `grep -rn "@legendary-arena/game-engine" apps/ packages/`
+     (every import site, used to verify nothing outside the listed
+     scope is touched)
+   - `grep -rn "loadScoringConfigForScenario\|loadAllScoringConfigs" .`
+     (server-side consumers of the loader exports — expected 1-3
+     files in `apps/server/src/par/`)
+   - `grep -rn "from 'node:" packages/game-engine/src/`
+     (every Node-IO surface in the engine package — expected to be
+     `scoringConfigLoader.ts` only at start; if there's more, the
+     setup-tooling barrel must re-export everything found)
+   - `grep -rn "@legendary-arena/game-engine" apps/arena-client/`
+     (verify arena-client does NOT consume the loader exports —
+     should return zero matches for `loadScoringConfigForScenario` /
+     `loadAllScoringConfigs`)
+2. **Capture pre-WP test baselines** to local files (do not commit;
+   used for post-WP comparison — see Verification Step 0).
+3. **Create new barrel** at `packages/game-engine/src/setup-tooling/index.ts`
+   re-exporting every Node-IO surface enumerated in Step 1.
+4. **Remove loader re-exports** from `packages/game-engine/src/index.ts`
+   (the runtime barrel) — drop lines 183-187.
+5. **Add subpath exports** in `packages/game-engine/package.json`
+   (per Goal Contract B); audit side-effects and conditionally add
+   `"sideEffects": false` per the gated rule above.
+6. **Update server import sites** identified in Step 1 to use
+   `@legendary-arena/game-engine/setup`.
+7. **Normalize `scoringConfigLoader.ts`** — drop the namespace-import
+   workaround (lines 33-42) and the explanatory preamble (lines
+   11-30); replace with standard named imports + a short `// why:`
+   pointer to D-14401.
+8. **Build verification** — `pnpm --filter @legendary-arena/game-engine build`
+   must produce both `dist/index.{js,d.ts}` and
+   `dist/setup-tooling/index.{js,d.ts}`.
+9. **Fresh-tree verify** — Verification Step 1 (the WP's primary
+   acceptance gate; runs the CF-shaped command in a clean worktree).
+10. **Determinism check** on `apps/arena-client/dist/` — Verification
+    Step 2.
+11. **Docs updates** — D-14401 in `DECISIONS.md`; Layer Boundary
+    table in `ARCHITECTURE.md`; mirror in `.claude/rules/architecture.md`;
+    post-mortem per 01.6.
+12. **Marketing repo** — amend WP-007a's locked CF Pages build
+    command in every site that quotes it verbatim (Locked Decisions,
+    Step 7 build configuration table, Failure conditions, Definition
+    of Done). Treated as Coordination Receipts, not a dependency
+    — see below.
+
 ## Files Expected to Change
 
 **Engine repo (`C:\pcloud\BB\DEV\legendary-arena\`):**
@@ -409,7 +514,16 @@ If any assumption is false, this packet is BLOCKED.
   — new — mandatory per 01.6 (new long-lived architectural contract;
   touches a registered package's `exports` surface)
 
-**Marketing repo (`C:\www\legendary-arena-com\`):**
+---
+
+## Coordination Receipts (Marketing Repo)
+
+WP-144 is an **engine-side WP**. Marketing-repo edits below are
+**coordination receipts** required to unpause WP-007a once WP-144
+lands — they are NOT dependencies of WP-144's lock. WP-144 can lock
+on engine-side acceptance criteria alone; the receipts land in a
+separate marketing-repo commit on the same day, in the
+`legendary-arena/legendary-arena-website` repo.
 
 - `docs/ai/work-packets/WP-007a-play-deploy.md` — modified — amend
   the locked CF Pages build command from
@@ -417,11 +531,14 @@ If any assumption is false, this packet is BLOCKED.
   to
   `pnpm install --frozen-lockfile && pnpm --filter "@legendary-arena/arena-client..." build`
   in the "Locked Decisions" block, the Step 7 build configuration
-  table, the Failure conditions list, and any other site that quotes
-  the command verbatim
-- `docs/01-VISION.md` — modified — Decisions log entry already drafted
-  (in coordination with WP-144); records the 2026-05-09 WP-007a pause
-  and WP-144 as the resolution path
+  table, the Failure conditions list, the Definition of Done, and
+  any other site that quotes the command verbatim
+- `docs/01-VISION.md` — Decisions log entry recording the 2026-05-09
+  WP-007a pause + WP-144 resolution path **already landed** in the
+  marketing repo at commit `e20d65b` (drafted alongside WP-144 on
+  2026-05-09, pushed before WP-144 execution began). The receipt
+  here is informational only — no further marketing-repo edit to
+  `01-VISION.md` is required by WP-144's execution.
 
 ---
 
@@ -446,106 +563,188 @@ If any assumption is false, this packet is BLOCKED.
 
 ## Acceptance Criteria
 
-- [ ] `packages/game-engine/package.json` declares two subpath
-      exports (`.`, `./setup`); `"sideEffects": false` is present
-- [ ] `packages/game-engine/src/setup-tooling/index.ts` exists and
-      re-exports `loadScoringConfigForScenario` and
-      `loadAllScoringConfigs`
-- [ ] `packages/game-engine/src/index.ts` no longer re-exports
-      `loadScoringConfigForScenario` or `loadAllScoringConfigs`
-      (`grep -E "scoringConfigLoader|loadScoringConfig" packages/game-engine/src/index.ts`
-      returns zero matches)
-- [ ] `packages/game-engine/src/scoring/scoringConfigLoader.ts`
-      uses standard named imports for `node:fs/promises` and `node:path`
-      (no `import * as` for either module); the namespace-import
-      explanatory preamble is replaced with a short `// why:` header
-      pointing at D-14401
-- [ ] `pnpm --filter @legendary-arena/game-engine build` produces both
-      `dist/index.js` and `dist/setup-tooling/index.js`
+Grouped to match the two-contract Goal structure: **A — Build** (the
+fresh-tree mechanical gate), **B — Boundary** (subpath exports +
+runtime purity), **C — Governance** (docs + decisions). Marketing-repo
+items are receipts (see Coordination Receipts above), not WP-144
+acceptance — they are listed last for completeness.
+
+### A. Fresh-tree build succeeds
+
 - [ ] `pnpm install --frozen-lockfile && pnpm --filter "@legendary-arena/arena-client..." build`
       from a fresh `git worktree add` (or fresh clone) exits 0
-- [ ] `apps/arena-client/dist/` build completes with **zero**
-      `[plugin:vite:resolve] Module "node:..." has been externalized`
-      warnings (compare to current 5 warnings; should drop to 0)
-- [ ] `apps/server/` typecheck (`pnpm --filter @legendary-arena/server typecheck`)
-      and tests (`pnpm --filter @legendary-arena/server test`) pass
-      with the migrated import paths
-- [ ] Engine test baseline unchanged in count
-      (`pnpm --filter @legendary-arena/game-engine test` produces the
-      same passing/failing/skipped counts as pre-WP — `698 / 150 / 0`
-      or whatever the current baseline is at execution time)
-- [ ] Repo-wide test baseline unchanged in count (`pnpm -r test`)
+- [ ] `pnpm --filter @legendary-arena/game-engine build` produces both
+      `dist/index.{js,d.ts}` and `dist/setup-tooling/index.{js,d.ts}`
 - [ ] Two consecutive `pnpm --filter "@legendary-arena/arena-client..." build`
       runs produce byte-identical `apps/arena-client/dist/`
       (`Compare-Object` over SHA-256 hashes returns empty)
 - [ ] `pnpm-lock.yaml` unchanged from pre-WP state
+
+### B. Runtime / setup-tooling boundary
+
+- [ ] `packages/game-engine/package.json` declares subpath exports
+      `.`, `./setup`, and `./package.json`; each non-`./package.json`
+      subpath includes `types`, `import`, and `default` conditions
+- [ ] `"sideEffects": false` is present **only if** the import-side-effects
+      audit recorded in D-14401 confirms the engine package has no
+      module-load-time side effects; if any side effect is found, the
+      field is omitted and the audit finding is recorded in D-14401
+- [ ] `packages/game-engine/src/setup-tooling/index.ts` exists and
+      re-exports `loadScoringConfigForScenario`, `loadAllScoringConfigs`,
+      and any other Node-IO surface enumerated in pre-flight Step 1
+- [ ] `packages/game-engine/src/index.ts` no longer re-exports any
+      surface from `scoring/scoringConfigLoader.js`
+      (`grep -E "scoringConfigLoader|loadScoringConfig" packages/game-engine/src/index.ts`
+      returns zero matches)
+- [ ] **Runtime purity grep gate (conservative):**
+      `grep -rn "from 'node:" packages/game-engine/src/` returns
+      matches **only** under `src/setup-tooling/` or other explicitly
+      Node-only subdirectories — never from any module reachable
+      through `src/index.ts`
+- [ ] `packages/game-engine/src/scoring/scoringConfigLoader.ts` uses
+      standard named imports for `node:fs/promises` and `node:path`
+      (no `import * as` for either module); the namespace-import
+      explanatory preamble is replaced with a short `// why:` header
+      pointing at D-14401
+- [ ] `apps/arena-client/dist/` build emits **zero** lines containing
+      `__vite-browser-external` or `externalized.*node:` (mechanical
+      grep on the build log; pinned in Verification)
+- [ ] `apps/server/` typecheck (`pnpm --filter @legendary-arena/server typecheck`)
+      and tests (`pnpm --filter @legendary-arena/server test`) pass
+      with the migrated import paths
+- [ ] Layer-boundary grep gate: `grep -rn "@legendary-arena/game-engine/setup" apps/arena-client/`
+      returns zero matches (arena-client must never import from the
+      setup subpath)
+- [ ] Engine test baseline unchanged in count
+      (compare against `pre-wp144-engine-tests.txt` captured in
+      Verification Step 0; passing/failing/skipped counts identical)
+- [ ] Server test baseline unchanged in count (compare against
+      `pre-wp144-server-tests.txt`)
+- [ ] Arena-client test baseline unchanged in count (compare against
+      `pre-wp144-client-tests.txt`)
+- [ ] Repo-wide test baseline unchanged in count (`pnpm -r test`)
+
+### C. Governance + docs
+
 - [ ] D-14401 added to `docs/ai/DECISIONS.md` with the runtime /
-      setup-tooling Layer Boundary contract
+      setup-tooling Layer Boundary contract; if `"sideEffects": false`
+      was added, the audit note explaining why it's safe is recorded
+      in the same entry
 - [ ] `docs/ai/ARCHITECTURE.md` Layer Boundary table reflects the new
       subpath in `apps/arena-client` (forbidden runtime import column)
       and `apps/server` (permitted) rows
 - [ ] `.claude/rules/architecture.md` per-package import-rules table
       mirrors the ARCHITECTURE.md update
-- [ ] Marketing-repo `WP-007a-play-deploy.md` build command amended in
-      every site that quotes it verbatim (Locked Decisions, Step 7
+- [ ] WP-144 registered in `docs/ai/work-packets/WORK_INDEX.md` and
+      checked off at lock with commit hash
+- [ ] `docs/ai/post-mortems/01.6-WP-144-*.md` written per 01.6
+      mandatory triggers
+- [ ] `docs/ai/STATUS.md` updated with what changed
+
+### Coordination receipts (marketing repo, not WP-144 acceptance)
+
+- [ ] Marketing-repo `WP-007a-play-deploy.md` build command amended
+      in every site that quotes it verbatim (Locked Decisions, Step 7
       table, Failure conditions, Definition of Done)
 - [ ] Marketing-repo `01-VISION.md` Decisions log entry for the
-      2026-05-09 WP-007a pause is committed (drafted separately;
-      coordinated with WP-144)
+      2026-05-09 WP-007a pause already landed at `e20d65b` —
+      no further edit required
 
 ---
 
 ## Verification Steps
 
-```pwsh
-# 1. Fresh-tree build (the WP's primary acceptance gate)
-git worktree add ../wp144-verify HEAD
-cd ../wp144-verify
-pnpm install --frozen-lockfile
-pnpm --filter "@legendary-arena/arena-client..." build
-# Expected: exits 0; apps/arena-client/dist/ populated; ZERO
-# `[plugin:vite:resolve] Module "node:..." has been externalized`
-# warnings in the build output
+All commands run from the engine repo root unless otherwise noted.
+Steps 0 and 11 are housekeeping (baseline capture + cleanup); the
+substantive gates are Steps 1-10.
 
-# 2. Determinism check
-Get-ChildItem -Recurse apps/arena-client/dist | Get-FileHash | `
+```pwsh
+# 0. Capture pre-WP test baselines (local-only, do NOT commit)
+pnpm --filter @legendary-arena/game-engine test 2>&1 |
+  Tee-Object pre-wp144-engine-tests.txt
+pnpm --filter @legendary-arena/server      test 2>&1 |
+  Tee-Object pre-wp144-server-tests.txt
+pnpm --filter @legendary-arena/arena-client test 2>&1 |
+  Tee-Object pre-wp144-client-tests.txt
+# These files are the comparison anchors for Steps 3-5 below; add to
+# .gitignore if not already covered by a wildcard.
+
+# 1. Fresh-tree build (the WP's primary acceptance gate)
+#    Run in a clean worktree to mirror what CF Pages will see.
+git worktree add ../wp144-verify HEAD
+Push-Location ../wp144-verify
+pnpm install --frozen-lockfile
+pnpm --filter "@legendary-arena/arena-client..." build 2>&1 |
+  Tee-Object wp144-build.log
+# Expected: exits 0; apps/arena-client/dist/ populated.
+# Mechanical warning gate (binary):
+Select-String -Path wp144-build.log `
+  -Pattern "__vite-browser-external|externalized.*node:" -Quiet `
+  | ForEach-Object { if ($_) { throw "Build emitted Node externalization warnings — Contract B failed." } }
+
+# 2. Determinism check (run from inside the verify worktree)
+Get-ChildItem -Recurse apps/arena-client/dist | Get-FileHash |
   Sort-Object Path > build1.txt
 pnpm --filter "@legendary-arena/arena-client..." build
-Get-ChildItem -Recurse apps/arena-client/dist | Get-FileHash | `
+Get-ChildItem -Recurse apps/arena-client/dist | Get-FileHash |
   Sort-Object Path > build2.txt
 $diff = Compare-Object (Get-Content build1.txt) (Get-Content build2.txt)
 if ($diff) { throw "Determinism violation: $($diff.Count) lines differ." }
 # Expected: empty diff
+Pop-Location
 
-# 3. Engine test baseline preserved
-pnpm --filter @legendary-arena/game-engine test
-# Expected: same passing/failing/skipped counts as pre-WP
+# 3. Engine test baseline preserved (compare against Step 0 capture)
+pnpm --filter @legendary-arena/game-engine test 2>&1 |
+  Tee-Object post-wp144-engine-tests.txt
+# Manually compare summary lines from pre-wp144-engine-tests.txt and
+# post-wp144-engine-tests.txt — passing/failing/skipped counts must match.
 
 # 4. Server import migration verified
 pnpm --filter @legendary-arena/server typecheck
-pnpm --filter @legendary-arena/server test
-# Expected: zero typecheck errors; test counts unchanged
+pnpm --filter @legendary-arena/server test 2>&1 |
+  Tee-Object post-wp144-server-tests.txt
+# Expected: zero typecheck errors; test counts unchanged vs Step 0 capture.
 
 # 5. Arena-client tests unchanged
-pnpm --filter @legendary-arena/arena-client test
-# Expected: counts unchanged from pre-WP baseline
+pnpm --filter @legendary-arena/arena-client test 2>&1 |
+  Tee-Object post-wp144-client-tests.txt
+# Expected: counts unchanged vs Step 0 capture.
 
 # 6. Repo-wide build + test sanity
 pnpm -r build
 pnpm -r test
-# Expected: both exit 0 with unchanged test counts
+# Expected: both exit 0 with unchanged test counts.
 
-# 7. Layer-boundary grep gate (no arena-client setup-subpath imports)
+# 7. Runtime purity grep gate (conservative)
+#    `node:` imports must live ONLY under setup-tooling (or other
+#    explicitly Node-only subtrees). The runtime barrel must not
+#    re-export anything that imports `node:*`.
+grep -rn "from 'node:" packages/game-engine/src/ | Sort-Object
+# Expected: every match is under packages/game-engine/src/setup-tooling/
+# or a path explicitly documented as Node-only. Any match under
+# src/index.ts's reachable graph is a Contract B violation.
+
+# 8. Layer-boundary grep gate (no arena-client setup-subpath imports)
 grep -rn "@legendary-arena/game-engine/setup" apps/arena-client/
-# Expected: zero matches (arena-client must never import from setup subpath)
+# Expected: zero matches.
 
-# 8. Lockfile clean
+# 9. Lockfile clean
 git status -- pnpm-lock.yaml
-# Expected: clean
+# Expected: clean.
 
-# 9. Cleanup
-cd ..
-git worktree remove wp144-verify
+# 10. Pre-flight surface confirmation (sanity)
+grep -rn "@legendary-arena/game-engine" apps/ packages/ |
+  Out-File post-wp144-engine-import-sites.txt
+# Spot-check: every import that previously pulled
+# loadScoringConfigForScenario / loadAllScoringConfigs from the runtime
+# barrel now imports from `@legendary-arena/game-engine/setup`.
+
+# 11. Cleanup
+#     Note: `git worktree remove` must run from inside a checkout of
+#     the engine repo, not from the worktree being removed. Use the
+#     main checkout's path or `git -C` to avoid cwd ambiguity.
+git -C "C:/pcloud/BB/DEV/legendary-arena" worktree remove ../wp144-verify
+Remove-Item pre-wp144-*.txt, post-wp144-*.txt, build1.txt, build2.txt -ErrorAction SilentlyContinue
 ```
 
 ---
@@ -578,8 +777,13 @@ WP-144 must NOT be locked if any of the following are true:
 
 - `pnpm install --frozen-lockfile && pnpm --filter "@legendary-arena/arena-client..." build`
   fails on a fresh tree
-- arena-client production build emits ANY `[plugin:vite:resolve]
-  Module "node:..." has been externalized` warning
+- arena-client production build log contains ANY line matching
+  `__vite-browser-external` or `externalized.*node:` (mechanical
+  grep gate per Verification Step 1; pinned strings — exact substrings
+  are the binary failure surface, not a paraphrase)
+- Runtime purity grep gate fails: `grep -rn "from 'node:" packages/game-engine/src/`
+  returns a match outside `src/setup-tooling/` (or other explicitly
+  Node-only subdirectory documented in D-14401)
 - Engine test baseline regresses (any count change in
   pass/fail/skip)
 - Server test baseline regresses
