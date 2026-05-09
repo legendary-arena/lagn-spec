@@ -24,7 +24,7 @@ define new architectural boundaries.
 | `play.legendary-arena.com` | Game client | Cloudflare Pages | [apps/arena-client](../../apps/arena-client) | planned |
 | `cards.legendary-arena.com` | Registry viewer | Cloudflare Pages | [apps/registry-viewer](../../apps/registry-viewer) | planned (currently on `legendary-arena` Pages project) |
 | `wiki.legendary-arena.com` | Public player wiki | Cloudflare Pages | TBD (separate Hugo site) | planned |
-| `ewiki.legendary-arena.com` | Private engineering wiki | Cloudflare Pages + Access | [docs/wiki](../wiki) (renderer: WP-139) | planned, gated |
+| `ewiki.legendary-arena.com` | Private engineering wiki | Render Static Site + Access | [apps/wiki-viewer](../../apps/wiki-viewer) (Hugo build of [docs/wiki](../wiki)) | live, gated |
 | `legends.legendary-arena.com` | Public scoreboard (attract board) | Cloudflare Pages | `apps/legends-board` (planned — WP-143) | planned |
 | `api.legendary-arena.com` | Game server REST + Socket.IO | Render (CNAME from Cloudflare) | [apps/server](../../apps/server) | planned |
 | `legendary-arena-server.onrender.com` | API canonical hostname | Render | [apps/server](../../apps/server) | live |
@@ -121,26 +121,47 @@ until there is something to deploy, otherwise the URL serves a 404 placeholder
 that confuses anyone who clicks it.
 
 ### ewiki
-**`ewiki.legendary-arena.com`** — private engineering wiki, gated.
+**`ewiki.legendary-arena.com`** — private engineering wiki, gated. Live since 2026-05-08.
 
 - **Source:** [docs/wiki](../wiki) markdown files
-- **Renderer:** pending (WP-139 — Engineering Wiki Viewer governance bundle)
-- **Gate:** Cloudflare Zero Trust Access policy
+- **Renderer:** [apps/wiki-viewer](../../apps/wiki-viewer) — Hugo build, deployed as the Render Static Site `legendary-arena-wiki` (see [render.yaml](../../render.yaml))
+- **Gate:** Cloudflare Zero Trust Access policy (Free tier, One-time PIN identity provider)
+- **DNS posture:** **proxied (orange cloud)**, NOT DNS-only. Access can only intercept traffic that flows through Cloudflare's edge; DNS-only would route the client directly to Render's IP and bypass the gate. (This is the opposite of the `api.` posture — see that section for why `api.` uses DNS-only.)
 
 **Healthy response (unauthenticated):** `302` to a `*.cloudflareaccess.com`
 login URL, or `401`/`403`. **A `200` here is a failure** — it means the
 Access policy is missing and the engineering wiki is publicly readable.
 
-**Do not create the Pages project before the Access policy is configured.**
-If the policy is created after the project, there is a window during which
-the eng wiki is on the public internet.
+**Configure the Cloudflare Access policy before attaching the custom domain.**
+If the custom domain is attached before the Access policy exists, there is a
+window during which the eng wiki is on the public internet.
 
-Configuration steps:
-1. Create the Cloudflare Pages project pointing at the WP-139 renderer build
-2. Before attaching the custom domain, create a Zero Trust Access application
-   for `ewiki.legendary-arena.com` with an email-OTP or SSO policy
-3. Attach the custom domain
-4. Verify a logged-out browser is redirected to the Access login
+Configuration steps (completed 2026-05-08):
+1. Verify Render auto-deployed the `legendary-arena-wiki` static-site service
+   from `render.yaml` (probe its `*.onrender.com` URL — content should serve
+   without a gate at this layer; the gate binds to the custom domain).
+2. Activate the Cloudflare Zero Trust **Free** plan on the account. Without
+   an active Zero Trust plan, no Access application can be created — the
+   dashboard's "Add an Application" button is gated behind plan activation.
+3. In Cloudflare Zero Trust → Access → Applications → Add an Application,
+   pick the **Self-hosted** tile (NOT "Connect a private web application",
+   which is the tunnel-based flow). Set Application domain to the full
+   FQDN `ewiki.legendary-arena.com`, attach an Allow policy on the
+   operator's email, accept all available identity providers (Email
+   One-time PIN is built-in and sufficient).
+4. In Render, attach `ewiki.legendary-arena.com` as a custom domain on the
+   **`legendary-arena-wiki`** service (NOT `legendary-arena-server`). Copy
+   that service's CNAME target.
+5. In Cloudflare DNS for the `legendary-arena.com` zone, add CNAME `ewiki`
+   → Render's wiki-service target, **proxied (orange cloud)**.
+6. Verify Cloudflare TLS mode for the zone is `Full` or `Full (strict)`,
+   not `Flexible` — required so Cloudflare's edge talks to Render over
+   HTTPS.
+7. From an incognito browser, visit `https://ewiki.legendary-arena.com`.
+   Expect a redirect to `*.cloudflareaccess.com/cdn-cgi/access/...`. After
+   email OTP, the wiki should render. **A 200 with content unauthenticated,
+   or Render's plain-text "Not Found" 404, is a failure — see the failure
+   runbook below.**
 
 ### legends
 **`legends.legendary-arena.com`** — public, no-auth scoreboard ("Hall of Legends" attract board).
@@ -229,8 +250,10 @@ Suggested sequence (for WP scoping):
    Hanko allowed origins to include `play.`, Stripe webhook redirect allowlist,
    and server CORS allowlist. Verify end-to-end before announcing.
 6. **`wiki.`** when the public Hugo wiki has content to serve.
-7. **`ewiki.`** when WP-139 lands. Configure Cloudflare Access *before*
-   attaching the custom domain.
+7. **`ewiki.`** Done 2026-05-08. Configured Cloudflare Access (Zero Trust
+   Free plan, Email One-time PIN, Allow policy on operator email) before
+   attaching the custom domain on the `legendary-arena-wiki` service. DNS
+   record proxied (orange cloud) so Cloudflare's edge can intercept.
 
 ---
 
@@ -250,6 +273,24 @@ is attached to that project (not a different one).
 **`ewiki` returns 200 unauthenticated.** Cloudflare Access policy is missing
 or disabled. **Treat as a security incident** until corrected. Add an
 Access application for the hostname and re-probe before continuing.
+
+**`ewiki` reaches Render directly without a Cloudflare Access redirect**
+(probe response includes `x-render-origin-server: Render` and `Server:
+cloudflare`, but no Access intercept). Either (a) the Cloudflare DNS
+record is set to "DNS only" (gray cloud) — flip to proxied (orange cloud)
+so Cloudflare's edge sees the traffic; or (b) the Access application's
+domain doesn't match `ewiki.legendary-arena.com` exactly; or (c) the
+Cloudflare Zero Trust plan is not active on the account (no Access app
+can be created without an active plan, even Free). Fix the misconfigured
+piece and re-probe.
+
+**`ewiki` shows the Cloudflare Access login redirect, but after auth
+returns plain "Not Found" with `x-render-origin-server: Render`.** The
+gate works; the Render binding is wrong. The custom domain
+`ewiki.legendary-arena.com` is either unattached or attached to the wrong
+Render service (typically `legendary-arena-server` instead of
+`legendary-arena-wiki`). In Render, detach from the wrong service and
+re-attach to `legendary-arena-wiki`, then re-probe.
 
 **`api.legendary-arena.com/health` returns DNS error.** CNAME hasn't been
 created yet, or hasn't propagated. Check Cloudflare DNS for the `api` record.

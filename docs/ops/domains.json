@@ -54,12 +54,12 @@
     {
       "name": "Engineering wiki (private, gated)",
       "url": "https://ewiki.legendary-arena.com",
-      "host": "Cloudflare Pages + Cloudflare Access",
-      "source": "docs/wiki (renderer pending - WP-139)",
+      "host": "Render Static Site + Cloudflare Access",
+      "source": "apps/wiki-viewer (Hugo build of docs/wiki/)",
       "expectedStatus": [302, 401, 403],
-      "state": "planned",
+      "state": "live",
       "anchor": "ewiki",
-      "notes": "Cloudflare Access redirects unauthenticated probes to login (302) or rejects them (401/403). A 200 here means the gate is misconfigured and the private wiki is publicly readable."
+      "notes": "Live since 2026-05-08. Cloudflare Access redirects unauthenticated probes to login (302) or rejects them (401/403). A 200 here means the gate is misconfigured and the private wiki is publicly readable."
     },
     {
       "name": "Legends scoreboard (public attract board)",
