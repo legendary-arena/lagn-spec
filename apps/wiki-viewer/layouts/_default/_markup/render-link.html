@@ -8,8 +8,8 @@ render hook (not as a post-build HTML walk) because:
       vector (DOM iteration order isn't guaranteed across parser versions);
   (b) the render hook stays inside Hugo's deterministic pipeline, so two
       consecutive builds produce byte-identical output (WP-139 §Determinism).
-Internal `slug.md` refs resolve to `/wiki/<slug>/`. `INDEX.md` resolves to the
-section landing `/wiki/` (the projected `_index.md`).
+Internal `slug.md` refs resolve to `/<slug>/`. `INDEX.md` resolves to the
+home `/` (the projected `_index.md`).
 */ -}}
 {{- $dest := .Destination -}}
 {{- $text := .Text -}}
@@ -31,9 +31,9 @@ section landing `/wiki/` (the projected `_index.md`).
   {{- $slug := strings.TrimSuffix ".md" $pathPart -}}
   {{- $href := "" -}}
   {{- if or (eq $slug "INDEX") (eq $slug "") -}}
-    {{- $href = "/wiki/" -}}
+    {{- $href = "/" -}}
   {{- else -}}
-    {{- $href = printf "/wiki/%s/" (lower $slug) -}}
+    {{- $href = printf "/%s/" (lower $slug) -}}
   {{- end -}}
   <a href="{{ printf "%s%s" $href $anchor | safeURL }}"{{ with $title }} title="{{ . }}"{{ end }}>{{ $text | safeHTML }}</a>
 {{- end -}}

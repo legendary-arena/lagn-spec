@@ -4,9 +4,9 @@
   <ul class="related-list">
     {{- range .items -}}
       {{- $slug := strings.TrimSuffix ".md" . -}}
-      {{- $href := printf "/wiki/%s/" (lower $slug) -}}
+      {{- $href := printf "/%s/" (lower $slug) -}}
       {{- $label := $slug -}}
-      {{- with $page.GetPage (printf "/wiki/%s" $slug) -}}
+      {{- with $page.GetPage $slug -}}
         {{- $label = .Title -}}
       {{- end -}}
       <li><a href="{{ $href | safeURL }}">{{ $label }}</a></li>

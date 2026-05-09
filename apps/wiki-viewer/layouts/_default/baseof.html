@@ -11,13 +11,13 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="site-title" href="/wiki/">Legendary Arena Engineering Wiki</a>
+    <a class="site-title" href="/">Legendary Arena Engineering Wiki</a>
   </header>
   <div class="layout">
     <aside class="sidebar">
       <nav>
-        <h2 class="sidebar-heading"><a href="/wiki/">Index</a></h2>
-        {{- $entityPages := where (where .Site.RegularPages "Section" "wiki") "Params.type" "ne" nil -}}
+        <h2 class="sidebar-heading"><a href="/">Index</a></h2>
+        {{- $entityPages := where .Site.RegularPages "Params.type" "ne" nil -}}
         {{- range ($entityPages.GroupByParam "type") -}}
           <h3 class="sidebar-section">{{ .Key }}</h3>
           <ul class="sidebar-list">

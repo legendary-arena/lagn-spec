@@ -10,7 +10,7 @@
         <li><a href="{{ $dest | safeURL }}"><code>{{ $dest }}</code></a></li>
       {{- else -}}
         {{- $slug := strings.TrimSuffix ".md" $dest -}}
-        <li><a href="/wiki/{{ lower $slug }}/"><code>{{ $dest }}</code></a></li>
+        <li><a href="/{{ lower $slug }}/"><code>{{ $dest }}</code></a></li>
       {{- end -}}
     {{- end -}}
   </ul>

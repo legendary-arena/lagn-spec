@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // why: build-time content projection per WP-139 §Locked Values / D-13810
-// default. Copies docs/wiki/*.md → apps/wiki-viewer/content/wiki/ and renames
-// ONLY THE COPY of INDEX.md to _index.md so Hugo treats it as the section
-// landing. The source under docs/wiki/ is read-only from the viewer's
+// default. Copies docs/wiki/*.md → apps/wiki-viewer/content/ and renames
+// ONLY THE COPY of INDEX.md to _index.md so Hugo treats it as the home
+// page. The source under docs/wiki/ is read-only from the viewer's
 // perspective; using mv/rename here would silently delete docs/wiki/INDEX.md
 // and break the SCHEMA.md "Publish / Sync Boundary" contract — every commit
 // would lose the canonical source of the wiki index. Cp + post-step assertion
@@ -18,15 +18,15 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..', '..', '..');
 const wikiSource = join(repoRoot, 'docs', 'wiki');
-const projectionTarget = join(here, '..', 'content', 'wiki');
+const projectionTarget = join(here, '..', 'content');
 
 /**
- * Project docs/wiki/*.md into apps/wiki-viewer/content/wiki/.
+ * Project docs/wiki/*.md into apps/wiki-viewer/content/.
  *
  * Contract:
  *   - Read-only on docs/wiki/ — never modifies source files.
  *   - Idempotent — clears the projection target before copying.
- *   - Renames only the copied INDEX.md → _index.md (Hugo section landing
+ *   - Renames only the copied INDEX.md → _index.md (Hugo home page
  *     convention). The source docs/wiki/INDEX.md is preserved.
  *   - Case-sensitive filename handling.
  */
