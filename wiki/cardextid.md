@@ -21,16 +21,16 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../.claude/rules/architecture.md
-  - ../../.claude/rules/registry.md
-  - ../../packages/game-engine/src/state/zones.types.ts
-  - ../../packages/game-engine/src/matchSetup.types.ts
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-006A-player-state-zones-contracts.md
-  - ../ai/work-packets/WP-113-engine-server-registry-wiring-and-validator-alignment.md
-  - ../ai/REFERENCE/00.2-data-requirements.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../.claude/rules/architecture.md
+  - ../.claude/rules/registry.md
+  - ../packages/game-engine/src/state/zones.types.ts
+  - ../packages/game-engine/src/matchSetup.types.ts
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-006A-player-state-zones-contracts.md
+  - ../docs/ai/work-packets/WP-113-engine-server-registry-wiring-and-validator-alignment.md
+  - ../docs/ai/REFERENCE/00.2-data-requirements.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -50,7 +50,7 @@ and database primary keys never enter `G`.
 ### The type alias
 
 The full definition lives in
-[`zones.types.ts:25`](../../packages/game-engine/src/state/zones.types.ts):
+[`zones.types.ts:25`](../packages/game-engine/src/state/zones.types.ts):
 
 ```ts
 export type CardExtId = string;
@@ -81,7 +81,7 @@ exact format:
 
 A helper `parseQualifiedId` (duplicated locally inside builders to
 avoid circular imports — see
-[`buildSchemeSetupInstructions.ts`](../../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts))
+[`buildSchemeSetupInstructions.ts`](../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts))
 returns `{ setAbbr, slug }` or `null`. The validator boundary
 (`validateMatchSetup`) is the authoritative format-error reporter;
 builders treat malformed IDs as graceful skips.
@@ -89,7 +89,7 @@ builders treat malformed IDs as graceful skips.
 ### The zone-storage invariant
 
 Every zone in `G` is typed `Zone = CardExtId[]`. The
-[`zones.types.ts`](../../packages/game-engine/src/state/zones.types.ts)
+[`zones.types.ts`](../packages/game-engine/src/state/zones.types.ts)
 header carries the rationale:
 
 > Zones store ext_id strings rather than full card objects because
@@ -100,7 +100,7 @@ header carries the rationale:
 > already owns.
 
 This is enforced by
-[`game-engine.md` "Zone Mutation Rules"](../../.claude/rules/game-engine.md):
+[`game-engine.md` "Zone Mutation Rules"](../.claude/rules/game-engine.md):
 
 - Zones contain `CardExtId` strings only — never card objects,
   metadata, or DB IDs
@@ -120,7 +120,7 @@ G.playerZones[id].deck[0] // top of a player's draw pile
 Removing the top card uses `slice(1)` to produce a new array
 (consistent with the no-`.reduce()`, no-mutate-inputs rule). This
 convention is locked by
-[WP-014A](../ai/work-packets/WP-014A-villain-reveal-pipeline.md) for
+[WP-014A](../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md) for
 the villain deck and applies uniformly across player decks.
 
 ### The resolution boundary
@@ -131,7 +131,7 @@ the villain deck and applies uniformly across player decks.
   never imports `@legendary-arena/registry` at runtime.
 - **The registry** resolves IDs to `FlatCard` records (see the
   Registry Layer in
-  [`architecture.md`](../../.claude/rules/architecture.md)).
+  [`architecture.md`](../.claude/rules/architecture.md)).
 - **The UI** calls the registry to render display data
   (image, name, abilities, cost) for any `CardExtId` it needs to
   show.
@@ -140,7 +140,7 @@ Setup-time builders receive the registry as a function argument and
 resolve IDs once, storing per-card maps like `G.cardStats` and
 `G.cardKeywords` that moves can read in O(1) without ever touching
 the registry again. Per
-[`game-engine.md` "Registry Boundary"](../../.claude/rules/game-engine.md):
+[`game-engine.md` "Registry Boundary"](../.claude/rules/game-engine.md):
 *"setup resolves, moves operate on resolved data."*
 
 ## Interactions
@@ -161,7 +161,7 @@ the registry again. Per
 - **Persistence.** Because `CardExtId` is `string`, every zone and
   card-keyed map serializes cleanly. The persistence boundary
   (`G` is runtime-only; only snapshots and configuration may be
-  persisted, per [10-GLOSSARY.md](../10-GLOSSARY.md) "Persistence &
+  persisted, per [10-GLOSSARY.md](../docs/10-GLOSSARY.md) "Persistence &
   Snapshots") relies on this.
 - **`PlayerId` distinction.** `PlayerId` is a separate alias
   (introduced by WP-087) used as the key type for
@@ -179,7 +179,7 @@ the registry again. Per
   re-reporting the format error — the validator is the
   authoritative reporter (D-10014).
 - **`CardExtId` is not a database primary key.** Per
-  [00.2 §Cross-service Identifiers](../ai/REFERENCE/00.2-data-requirements.md),
+  [00.2 §Cross-service Identifiers](../docs/ai/REFERENCE/00.2-data-requirements.md),
   PostgreSQL tables in the `legendary.*` namespace use `bigserial`
   PKs internally and `text ext_id` columns for cross-service
   identification. A `CardExtId` value is the `ext_id`, not the
@@ -204,14 +204,14 @@ the registry again. Per
 
 ## Code Touchpoints
 
-- [`packages/game-engine/src/state/zones.types.ts`](../../packages/game-engine/src/state/zones.types.ts)
+- [`packages/game-engine/src/state/zones.types.ts`](../packages/game-engine/src/state/zones.types.ts)
   — `CardExtId`, `Zone`, `PlayerZones`, `PlayerState`
-- [`packages/game-engine/src/matchSetup.types.ts`](../../packages/game-engine/src/matchSetup.types.ts)
+- [`packages/game-engine/src/matchSetup.types.ts`](../packages/game-engine/src/matchSetup.types.ts)
   — `MatchSetupConfig` (every card-identifier field is `CardExtId`)
-- [`packages/game-engine/src/moves/zoneOps.ts`](../../packages/game-engine/src/moves/zoneOps.ts)
+- [`packages/game-engine/src/moves/zoneOps.ts`](../packages/game-engine/src/moves/zoneOps.ts)
   — pure helpers for zone mutation (no `.reduce()`, no
   `boardgame.io` import)
-- [`packages/game-engine/src/setup/buildSchemeSetupInstructions.ts`](../../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts)
+- [`packages/game-engine/src/setup/buildSchemeSetupInstructions.ts`](../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts)
   — `parseQualifiedId` helper (locally duplicated to avoid circular
   imports)
 
@@ -224,18 +224,18 @@ the registry again. Per
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
   — Registry Boundary; Zone Mutation Rules
-- [`.claude/rules/architecture.md`](../../.claude/rules/architecture.md)
+- [`.claude/rules/architecture.md`](../.claude/rules/architecture.md)
   — Zone Contents (CardExtId-only invariant)
-- [`.claude/rules/registry.md`](../../.claude/rules/registry.md)
+- [`.claude/rules/registry.md`](../.claude/rules/registry.md)
   — Card Data Locations; Card Field Data Quality
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — Layer
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — Layer
   Boundary; Persistence Boundary; WP-006A / WP-113 review notes
-- [`docs/ai/REFERENCE/00.2-data-requirements.md`](../ai/REFERENCE/00.2-data-requirements.md)
+- [`docs/ai/REFERENCE/00.2-data-requirements.md`](../docs/ai/REFERENCE/00.2-data-requirements.md)
   — Cross-service identifiers (`ext_id text` columns); image URL
   hyphen rule
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) — `CardExtId`,
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) — `CardExtId`,
   `PlayerZones`, `GlobalPiles`, `slug`, `ext_id`
-- [WP-006A](../ai/work-packets/WP-006A-player-state-zones-contracts.md),
-  [WP-113](../ai/work-packets/WP-113-engine-server-registry-wiring-and-validator-alignment.md)
+- [WP-006A](../docs/ai/work-packets/WP-006A-player-state-zones-contracts.md),
+  [WP-113](../docs/ai/work-packets/WP-113-engine-server-registry-wiring-and-validator-alignment.md)

@@ -22,16 +22,16 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../packages/game-engine/src/rules/schemeHandlers.ts
-  - ../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
-  - ../../packages/game-engine/src/scheme/schemeSetup.types.ts
-  - ../../packages/game-engine/src/endgame/endgame.types.ts
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-009B-rule-execution-minimal-mvp.md
-  - ../ai/work-packets/WP-014A-villain-reveal-pipeline.md
-  - ../ai/work-packets/WP-024-scheme-mastermind-ability-execution.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../packages/game-engine/src/rules/schemeHandlers.ts
+  - ../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
+  - ../packages/game-engine/src/scheme/schemeSetup.types.ts
+  - ../packages/game-engine/src/endgame/endgame.types.ts
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-009B-rule-execution-minimal-mvp.md
+  - ../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md
+  - ../docs/ai/work-packets/WP-024-scheme-mastermind-ability-execution.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -61,7 +61,7 @@ It fires when the drawn card's classification in
 ### Default handler behaviour
 
 `schemeTwistHandler` in
-[`rules/schemeHandlers.ts`](../../packages/game-engine/src/rules/schemeHandlers.ts)
+[`rules/schemeHandlers.ts`](../packages/game-engine/src/rules/schemeHandlers.ts)
 is the registered `ImplementationMap` entry. Every fire produces two
 effects unconditionally:
 
@@ -138,7 +138,7 @@ the handler increments by exactly 1 on threshold cross.
   scheme.
 - **Scheme setup instructions.** A *separate* scheme-related
   mechanism: `SchemeSetupInstruction` (closed union of 4 types in
-  [`schemeSetup.types.ts`](../../packages/game-engine/src/scheme/schemeSetup.types.ts))
+  [`schemeSetup.types.ts`](../packages/game-engine/src/scheme/schemeSetup.types.ts))
   applies declarative changes at setup time per D-2601 (Representation
   Before Execution). These instructions never participate in the
   twist trigger and are not consulted by `schemeTwistHandler`. See
@@ -148,7 +148,7 @@ the handler increments by exactly 1 on threshold cross.
   `PenaltyEventType` values consumed by `buildScoreBreakdown`.
   Scheme-loss outcomes are additionally penalised per VISION §21;
   the formula and weights live in
-  [`12-SCORING-REFERENCE.md`](../12-SCORING-REFERENCE.md).
+  [`12-SCORING-REFERENCE.md`](../docs/12-SCORING-REFERENCE.md).
 
 ## Edge Cases
 
@@ -183,15 +183,15 @@ the handler increments by exactly 1 on threshold cross.
 
 ## Code Touchpoints
 
-- [`packages/game-engine/src/rules/schemeHandlers.ts`](../../packages/game-engine/src/rules/schemeHandlers.ts)
+- [`packages/game-engine/src/rules/schemeHandlers.ts`](../packages/game-engine/src/rules/schemeHandlers.ts)
   — `schemeTwistHandler` and `MVP_SCHEME_TWIST_THRESHOLD`
-- [`packages/game-engine/src/rules/schemeHandlers.test.ts`](../../packages/game-engine/src/rules/schemeHandlers.test.ts)
+- [`packages/game-engine/src/rules/schemeHandlers.test.ts`](../packages/game-engine/src/rules/schemeHandlers.test.ts)
   — handler tests
-- [`packages/game-engine/src/villainDeck/villainDeck.reveal.ts`](../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.reveal.ts`](../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
   — twist trigger emission point (Step 5)
-- [`packages/game-engine/src/endgame/endgame.types.ts`](../../packages/game-engine/src/endgame/endgame.types.ts)
+- [`packages/game-engine/src/endgame/endgame.types.ts`](../packages/game-engine/src/endgame/endgame.types.ts)
   — `ENDGAME_CONDITIONS.SCHEME_LOSS` constant
-- [`packages/game-engine/src/scheme/schemeSetup.types.ts`](../../packages/game-engine/src/scheme/schemeSetup.types.ts)
+- [`packages/game-engine/src/scheme/schemeSetup.types.ts`](../packages/game-engine/src/scheme/schemeSetup.types.ts)
   — `SchemeSetupInstruction` (separate scheme mechanism — listed for
   disambiguation, not because it participates in twist behaviour)
 
@@ -203,19 +203,19 @@ the handler increments by exactly 1 on threshold cross.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
   — Villain Deck & Reveal Pipeline (twist trigger emission contract);
   `G.counters` keys (`SCHEME_LOSS` constant)
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — WP-014, WP-024
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-014, WP-024
   review notes; rule execution pipeline contract
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) — `RuleTriggerName`,
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) — `RuleTriggerName`,
   `RuleEffectType`, `RevealedCardType`, `ENDGAME_CONDITIONS`,
   `evaluateEndgame`
-- [`docs/12-SCORING-REFERENCE.md`](../12-SCORING-REFERENCE.md) —
+- [`docs/12-SCORING-REFERENCE.md`](../docs/12-SCORING-REFERENCE.md) —
   scheme-loss penalty in scoring formula
-- [`docs/legendary-universal-rules-v23.md`](../legendary-universal-rules-v23.md)
+- [`docs/legendary-universal-rules-v23.md`](../docs/legendary-universal-rules-v23.md)
   — tabletop semantics for Scheme Twist cards and per-scheme loss
   conditions
-- [WP-009B](../ai/work-packets/WP-009B-rule-execution-minimal-mvp.md),
-  [WP-014A](../ai/work-packets/WP-014A-villain-reveal-pipeline.md),
-  [WP-024](../ai/work-packets/WP-024-scheme-mastermind-ability-execution.md)
+- [WP-009B](../docs/ai/work-packets/WP-009B-rule-execution-minimal-mvp.md),
+  [WP-014A](../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md),
+  [WP-024](../docs/ai/work-packets/WP-024-scheme-mastermind-ability-execution.md)

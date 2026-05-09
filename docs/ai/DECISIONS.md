@@ -15352,6 +15352,71 @@ runs on push to `main` whose paths touch `docs/wiki/` or
 
 ---
 
+### D-13812 — Engineering Wiki Source Relocated from `docs/wiki/` to `wiki/` (Amends D-13810)
+
+> **Date:** 2026-05-09. **Amends:** D-13810 (reserved-file handling /
+> projection source location). **Does not supersede** D-13808 (framework),
+> D-13809 (external-link strategy), or D-13811 (hosting target) — those
+> remain in force.
+
+**Decision:** The engineering wiki source moves from `docs/wiki/` to a
+top-level `wiki/` directory at the repo root. The build-time projection,
+read-only-on-source contract, and `INDEX.md → _index.md` rename rule from
+D-13810 are unchanged; only the source location changes.
+
+**Rationale:**
+
+- **Conceptual separation.** The engineering wiki is long-form reference
+  content for game-domain entities (mechanics, schemes, scoring rules);
+  it is not governance-style documentation (architecture, decisions,
+  vision, work packets). Placing it under `docs/` framed it as a sibling
+  of those governance artifacts when it belongs in its own concern.
+- **Authoring surface.** The wiki is expected to grow to 30+ entity pages.
+  Surfacing it as a top-level directory makes it discoverable and
+  signals its first-class status to authors.
+- **No layer-boundary impact.** The wiki is build-time content with zero
+  runtime imports across the engine / registry / server / preplan chain.
+  Moving the source affects only the build pipeline and cross-document
+  links, not architectural dependencies.
+
+**Implementation (commit landing this decision):**
+
+- Source files moved via `git mv docs/wiki/*.md wiki/` (13 files).
+- Wiki source `../` cross-tree links rewritten so they remain truthful
+  for the new location: every `../../X` (was repo-root from `docs/wiki/`)
+  becomes `../X`; every `../docs-thing/X` (was a docs/-sibling) becomes
+  `../docs/docs-thing/X`. Future authors writing new wiki pages follow
+  the new convention naturally — the rewrite is one-time, not a
+  permanent translation layer.
+- `apps/wiki-viewer/scripts/project-wiki.mjs` `wikiSource` updated.
+- `apps/wiki-viewer/scripts/check-links.mjs` error message updated.
+- `apps/wiki-viewer/layouts/_default/_markup/render-link.html` and
+  `apps/wiki-viewer/layouts/partials/source-citations.html` —
+  `path.Join "docs/wiki"` → `path.Join "wiki"` (the GitHub-blob URL
+  rewrite anchor follows the actual source location).
+- `.github/workflows/wiki-viewer.yml` path filter: `docs/wiki/**` →
+  `wiki/**`.
+- `apps/wiki-viewer/README.md`, `apps/wiki-viewer/hugo.toml`,
+  `apps/wiki-viewer/layouts/_default/single.html`, `render.yaml`,
+  `wiki/SCHEMA.md`, `wiki/README.md`, `docs/ops/DOMAINS.md` —
+  text references updated.
+- Closed governance archives (WP-139, EC-142, post-mortem) are
+  **not** modified — they remain accurate as historical record of the
+  state at the time WP-139 closed. Forward-looking documents reflect
+  the new location.
+
+**Verification:** `pnpm wiki-viewer:build` (project + check-links + Hugo)
+green locally with Hugo 0.135.0; CI workflow re-runs against the new
+path filter; the produced HTML's GitHub-blob external links resolve to
+correct repo paths under the new layout.
+
+**Status:** Active.
+
+**Citation:** This entry; `git mv` history; the commit landing this
+relocation. D-13808 / D-13809 / D-13811 unchanged.
+
+---
+
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

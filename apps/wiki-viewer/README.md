@@ -1,25 +1,25 @@
 # Legendary Arena Engineering Wiki Viewer
 
 > why: This app is a build-time, read-only projection of the engineering wiki
-> at [`docs/wiki/`](../../docs/wiki/). Hugo Extended is the static-site
-> generator (D-13808 — Docusaurus rejected for MDX risk; custom rejected for
-> build cost vs zero feature lift). The publish/sync contract — `docs/wiki/`
-> is the only authoring surface; the rendered site is regenerated on every
-> build and never hand-edited — is locked by [SCHEMA.md § Publish / Sync
-> Boundary](../../docs/wiki/SCHEMA.md). Any drift between source and rendered
-> output is resolved by re-projecting from `docs/wiki/`, never by editing
-> `apps/wiki-viewer/content/wiki/` or `apps/wiki-viewer/public/`.
+> at [`wiki/`](../../wiki/). Hugo Extended is the static-site generator
+> (D-13808 — Docusaurus rejected for MDX risk; custom rejected for build cost
+> vs zero feature lift). The publish/sync contract — `wiki/` is the only
+> authoring surface; the rendered site is regenerated on every build and
+> never hand-edited — is locked by [SCHEMA.md § Publish / Sync
+> Boundary](../../wiki/SCHEMA.md). Any drift between source and rendered
+> output is resolved by re-projecting from `wiki/`, never by editing
+> `apps/wiki-viewer/content/` or `apps/wiki-viewer/public/`.
 
 ## Overview
 
-The build pipeline projects `docs/wiki/*.md` into Hugo's content tree, runs a
+The build pipeline projects `wiki/*.md` into Hugo's content tree, runs a
 case-sensitive link-integrity check on the projected markdown, then invokes
 `hugo` to render 13 content routes (10 entity pages + 1 section landing +
 `SCHEMA.md` + `README.md`). The site is JS-free at v1 — no client-side search,
 no interactivity. External `../**` links in the wiki source are rewritten to
 GitHub blob URLs by the markdown render hook (D-13809). Reserved-file handling
 uses build-time content projection (D-13810): `INDEX.md` is renamed to
-`_index.md` only on the projected copy; the source under `docs/wiki/` is
+`_index.md` only on the projected copy; the source under `wiki/` is
 never modified.
 
 Layer-boundary posture: this app does not import
@@ -55,7 +55,7 @@ enabled in dev mode (and only in dev mode); production builds (`hugo` with no
 pnpm wiki-viewer:check-links
 ```
 
-Operates on the projected markdown tree (`apps/wiki-viewer/content/wiki/`),
+Operates on the projected markdown tree (`apps/wiki-viewer/content/`),
 not on rendered HTML. Internal markdown links must resolve case-sensitively
 (Windows is case-insensitive but CI on Linux is not — the check enforces the
 strict rule so local and CI agree). External URLs and `../**` out-of-tree
@@ -67,7 +67,7 @@ availability is not the wiki's responsibility).
 The site deploys as a Render static-site service named `legendary-arena-wiki`
 declared in [`render.yaml`](../../render.yaml) (D-13811). CI is
 [`.github/workflows/wiki-viewer.yml`](../../.github/workflows/wiki-viewer.yml),
-triggered on push to `main` touching `docs/wiki/` or `apps/wiki-viewer/`.
+triggered on push to `main` touching `wiki/` or `apps/wiki-viewer/`.
 
 ## Hugo version
 
@@ -93,6 +93,6 @@ must add a DECISIONS entry that supersedes the lock.
   three content partials.
 - `assets/css/style.css` — minimal hand-rolled theme styling.
 - `scripts/project-wiki.mjs` — build-time content projection (read-only on
-  `docs/wiki/`; copy + rename-only-on-the-copy per D-13810).
+  `wiki/`; copy + rename-only-on-the-copy per D-13810).
 - `scripts/check-links.mjs` — case-sensitive link-integrity check.
 - `.hugo-version` — Hugo version pin (`0.135.0`).

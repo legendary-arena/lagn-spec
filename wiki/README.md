@@ -27,11 +27,11 @@ The wiki answers questions like:
   lives outside this repo.
 - **Authoritative.** Every claim cites a higher-authority source
   (`.claude/CLAUDE.md`, `.claude/rules/*.md`,
-  [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md),
-  [`docs/01-VISION.md`](../01-VISION.md),
-  [`docs/ai/DECISIONS.md`](../ai/DECISIONS.md), Work Packets, code,
+  [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md),
+  [`docs/01-VISION.md`](../docs/01-VISION.md),
+  [`docs/ai/DECISIONS.md`](../docs/ai/DECISIONS.md), Work Packets, code,
   data). The wiki **explains**; the cited artifacts **govern**.
-- **A glossary.** [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) is the
+- **A glossary.** [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) is the
   one-line terminology lock. The wiki is the longer-form companion
   that points back at the glossary.
 - **A WP-governed effort.** Documentation work; lives alongside the
@@ -56,12 +56,12 @@ The wiki answers questions like:
 A Hugo-built static-site projection of this directory is deployed at
 [`https://legendary-arena-wiki.onrender.com/`](https://legendary-arena-wiki.onrender.com/)
 (Render `static_site` service `legendary-arena-wiki`, declared in
-[`render.yaml`](../../render.yaml); see WP-139 / D-13811). The rendered
-site is regenerated on every push to `main` that touches `docs/wiki/`
+[`render.yaml`](../render.yaml); see WP-139 / D-13811). The rendered
+site is regenerated on every push to `main` that touches `wiki/`
 or `apps/wiki-viewer/`; the publish target is read-only and is never
-hand-edited. Authoring stays in `docs/wiki/` per
+hand-edited. Authoring stays in `wiki/` per
 [SCHEMA.md § Publish / Sync Boundary](SCHEMA.md). Build pipeline lives
-in [`apps/wiki-viewer/`](../../apps/wiki-viewer/).
+in [`apps/wiki-viewer/`](../apps/wiki-viewer/).
 
 ---
 
@@ -69,8 +69,8 @@ in [`apps/wiki-viewer/`](../../apps/wiki-viewer/).
 
 The wiki sits at position 7 in the project's authority hierarchy
 (canonical statement in
-[`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) and
-[`.claude/CLAUDE.md`](../../.claude/CLAUDE.md)):
+[`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) and
+[`.claude/CLAUDE.md`](../.claude/CLAUDE.md)):
 
 ```
 1. .claude/CLAUDE.md
@@ -188,11 +188,11 @@ Promote `draft` → `canonical` only when:
 
 | Document | Role | Authoritative? |
 |---|---|---|
-| [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) | One-line terminology lock | Yes (terminology) |
-| [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) | System design, layer boundaries | Yes |
-| [`docs/01-VISION.md`](../01-VISION.md) | Vision goals, primary/secondary/non-goals | Yes |
-| [`.claude/rules/*.md`](../../.claude/rules/) | Enforcement rules derived from architecture | Yes |
-| [`docs/ai/DECISIONS.md`](../ai/DECISIONS.md) | Design / governance decisions, by ID | Yes |
+| [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) | One-line terminology lock | Yes (terminology) |
+| [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) | System design, layer boundaries | Yes |
+| [`docs/01-VISION.md`](../docs/01-VISION.md) | Vision goals, primary/secondary/non-goals | Yes |
+| [`.claude/rules/*.md`](../.claude/rules/) | Enforcement rules derived from architecture | Yes |
+| [`docs/ai/DECISIONS.md`](../docs/ai/DECISIONS.md) | Design / governance decisions, by ID | Yes |
 | `docs/ai/work-packets/WP-NNN-*.md` | Execution units; what changed and why | Yes (per-WP scope) |
 | `docs/ai/execution-checklists/EC-NNN-*.checklist.md` | Per-WP execution contracts | Yes (per-EC scope) |
 | **This wiki** | Explainers that cite the above | **No** |

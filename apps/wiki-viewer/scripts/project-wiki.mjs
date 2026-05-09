@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 // why: build-time content projection per WP-139 §Locked Values / D-13810
-// default. Copies docs/wiki/*.md → apps/wiki-viewer/content/ and renames
+// default (and the source-relocation amendment in DECISIONS — see latest
+// D-entry). Copies wiki/*.md → apps/wiki-viewer/content/ and renames
 // ONLY THE COPY of INDEX.md to _index.md so Hugo treats it as the home
-// page. The source under docs/wiki/ is read-only from the viewer's
-// perspective; using mv/rename here would silently delete docs/wiki/INDEX.md
-// and break the SCHEMA.md "Publish / Sync Boundary" contract — every commit
-// would lose the canonical source of the wiki index. Cp + post-step assertion
+// page. The source under wiki/ is read-only from the viewer's perspective;
+// using mv/rename here would silently delete wiki/INDEX.md and break the
+// SCHEMA.md "Publish / Sync Boundary" contract — every commit would lose
+// the canonical source of the wiki index. Cp + post-step assertion
 // (line: existsSync check) is the cheap guard against that regression.
 // why: case-sensitive filename handling — Windows is case-insensitive but CI
 // runs on Linux; a case-insensitive copy would let `INDEX.md` and `Index.md`
@@ -17,14 +18,14 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..', '..', '..');
-const wikiSource = join(repoRoot, 'docs', 'wiki');
+const wikiSource = join(repoRoot, 'wiki');
 const projectionTarget = join(here, '..', 'content');
 
 /**
- * Project docs/wiki/*.md into apps/wiki-viewer/content/.
+ * Project wiki/*.md into apps/wiki-viewer/content/.
  *
  * Contract:
- *   - Read-only on docs/wiki/ — never modifies source files.
+ *   - Read-only on wiki/ — never modifies source files.
  *   - Idempotent — clears the projection target before copying.
  *   - Renames only the copied INDEX.md → _index.md (Hugo home page
  *     convention). The source docs/wiki/INDEX.md is preserved.
@@ -33,7 +34,7 @@ const projectionTarget = join(here, '..', 'content');
 function projectWiki() {
   if (!existsSync(wikiSource)) {
     throw new Error(
-      `Wiki source directory not found at ${wikiSource}. The projection step requires docs/wiki/ to exist before it runs.`
+      `Wiki source directory not found at ${wikiSource}. The projection step requires wiki/ to exist before it runs.`
     );
   }
 
@@ -42,7 +43,7 @@ function projectWiki() {
   const sourceIndex = join(wikiSource, 'INDEX.md');
   if (!existsSync(sourceIndex)) {
     throw new Error(
-      `Source docs/wiki/INDEX.md not found before projection. The wiki source contract requires this file at ${sourceIndex}.`
+      `Source wiki/INDEX.md not found before projection. The wiki source contract requires this file at ${sourceIndex}.`
     );
   }
 
@@ -73,7 +74,7 @@ function projectWiki() {
   // swaps copyFileSync for renameSync would delete the source and trip this.
   if (!existsSync(sourceIndex)) {
     throw new Error(
-      `Projection step deleted source docs/wiki/INDEX.md — must be a copy, not a move. Restore from git and fix scripts/project-wiki.mjs to use copyFileSync.`
+      `Projection step deleted source wiki/INDEX.md — must be a copy, not a move. Restore from git and fix scripts/project-wiki.mjs to use copyFileSync.`
     );
   }
 

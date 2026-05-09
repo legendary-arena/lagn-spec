@@ -1,6 +1,6 @@
 name: wiki-viewer
 
-# why: trigger on docs/wiki/ or apps/wiki-viewer/ touches per WP-139 §Open
+# why: trigger on wiki/ or apps/wiki-viewer/ touches per WP-139 §Open
 # Decision G default. Render auto-deploys from the static_site service in
 # render.yaml on push to main; this workflow is the CI-side gate that runs
 # the link-integrity check + Hugo build BEFORE the deploy.
@@ -9,12 +9,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'docs/wiki/**'
+      - 'wiki/**'
       - 'apps/wiki-viewer/**'
       - '.github/workflows/wiki-viewer.yml'
   pull_request:
     paths:
-      - 'docs/wiki/**'
+      - 'wiki/**'
       - 'apps/wiki-viewer/**'
       - '.github/workflows/wiki-viewer.yml'
 

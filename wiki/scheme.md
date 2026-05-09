@@ -21,18 +21,18 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../packages/game-engine/src/scheme/schemeSetup.types.ts
-  - ../../packages/game-engine/src/scheme/schemeSetup.execute.ts
-  - ../../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts
-  - ../../packages/game-engine/src/matchSetup.types.ts
-  - ../../data/metadata/card-types.json
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-005A-match-setup-contracts.md
-  - ../ai/work-packets/WP-026-scheme-setup-instructions-city-modifiers.md
-  - ../ai/work-packets/WP-113-engine-server-registry-wiring-and-validator-alignment.md
-  - ../ai/REFERENCE/00.2-data-requirements.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../packages/game-engine/src/scheme/schemeSetup.types.ts
+  - ../packages/game-engine/src/scheme/schemeSetup.execute.ts
+  - ../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts
+  - ../packages/game-engine/src/matchSetup.types.ts
+  - ../data/metadata/card-types.json
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-005A-match-setup-contracts.md
+  - ../docs/ai/work-packets/WP-026-scheme-setup-instructions-city-modifiers.md
+  - ../docs/ai/work-packets/WP-113-engine-server-registry-wiring-and-validator-alignment.md
+  - ../docs/ai/REFERENCE/00.2-data-requirements.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -57,8 +57,8 @@ word *scheme* but are otherwise independent.
 ### Layer 1: configuration field
 
 `MatchSetupConfig.schemeId` is one of the 9 locked composition fields
-(see [00.2 §8.1](../ai/REFERENCE/00.2-data-requirements.md) and
-[`matchSetup.types.ts`](../../packages/game-engine/src/matchSetup.types.ts)).
+(see [00.2 §8.1](../docs/ai/REFERENCE/00.2-data-requirements.md) and
+[`matchSetup.types.ts`](../packages/game-engine/src/matchSetup.types.ts)).
 It is a [`CardExtId`](cardextid.md) whose format is
 `<setAbbr>/<slug>` per D-10014
 (locked by WP-113). The validator enforces this format; malformed
@@ -80,7 +80,7 @@ D-2601 (Representation Before Execution). The closed
 | `initialCityState` | Pre-populates a City space before the first villain-deck reveal |
 
 `buildSchemeSetupInstructions(schemeId, registry)` in
-[`buildSchemeSetupInstructions.ts`](../../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts)
+[`buildSchemeSetupInstructions.ts`](../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts)
 resolves these instructions at setup time. The MVP implementation
 returns `[]` for all schemes — the registry does not yet expose
 structured setup-instruction metadata. The builder skeleton, the
@@ -89,7 +89,7 @@ all exist so that a future Work Packet can populate real instructions
 without refactoring the call site.
 
 `executeSchemeSetup(state, instructions)` in
-[`schemeSetup.execute.ts`](../../packages/game-engine/src/scheme/schemeSetup.execute.ts)
+[`schemeSetup.execute.ts`](../packages/game-engine/src/scheme/schemeSetup.execute.ts)
 applies each instruction with a switch on `instruction.type`. It is a
 pure function — never mutates inputs, never throws. Unknown types log
 a warning and continue (graceful degradation per D-1234).
@@ -109,7 +109,7 @@ mechanics; this page does not duplicate that detail.
 ### Registry classification
 
 The [Card Type Taxonomy](card-type-taxonomy.md) — 13 entries in
-[`data/metadata/card-types.json`](../../data/metadata/card-types.json)
+[`data/metadata/card-types.json`](../data/metadata/card-types.json)
 — classifies schemes under
 `{ slug: 'scheme', label: 'Scheme', emoji: '📜', order: 50,
 parentType: null }`. This is registry-side metadata only, consumed
@@ -141,7 +141,7 @@ by match-setup validation or runtime logic.
   are scheme-defined.
 - **[Scoring](scoring.md).** PAR is computed per *scenario* — the
   combination of Scheme + Mastermind + Villain Groups (see VISION
-  §20 and [`12-SCORING-REFERENCE.md`](../12-SCORING-REFERENCE.md)).
+  §20 and [`12-SCORING-REFERENCE.md`](../docs/12-SCORING-REFERENCE.md)).
   The Scheme contributes one of three slugs that build the
   `ScenarioKey`; changing it changes PAR.
 
@@ -181,16 +181,16 @@ by match-setup validation or runtime logic.
 
 ## Code Touchpoints
 
-- [`packages/game-engine/src/matchSetup.types.ts`](../../packages/game-engine/src/matchSetup.types.ts)
+- [`packages/game-engine/src/matchSetup.types.ts`](../packages/game-engine/src/matchSetup.types.ts)
   — `MatchSetupConfig.schemeId` (Layer 1)
-- [`packages/game-engine/src/scheme/schemeSetup.types.ts`](../../packages/game-engine/src/scheme/schemeSetup.types.ts)
+- [`packages/game-engine/src/scheme/schemeSetup.types.ts`](../packages/game-engine/src/scheme/schemeSetup.types.ts)
   — `SchemeSetupInstruction` and `SchemeSetupType` (Layer 2 contract)
-- [`packages/game-engine/src/scheme/schemeSetup.execute.ts`](../../packages/game-engine/src/scheme/schemeSetup.execute.ts)
+- [`packages/game-engine/src/scheme/schemeSetup.execute.ts`](../packages/game-engine/src/scheme/schemeSetup.execute.ts)
   — `executeSchemeSetup` (Layer 2 executor)
-- [`packages/game-engine/src/setup/buildSchemeSetupInstructions.ts`](../../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts)
+- [`packages/game-engine/src/setup/buildSchemeSetupInstructions.ts`](../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts)
   — `buildSchemeSetupInstructions`, `isSchemeRegistryReader`,
   `listSchemeSlugsInSet`, `parseQualifiedId` (Layer 2 builder)
-- [`data/metadata/card-types.json`](../../data/metadata/card-types.json)
+- [`data/metadata/card-types.json`](../data/metadata/card-types.json)
   — registry-side `'scheme'` slug entry
 
 ## History
@@ -201,22 +201,22 @@ by match-setup validation or runtime logic.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
   — Move Validation Contract (validators only return — `Game.setup()`
   may throw); Endgame contract (loss conditions evaluated before
   victory)
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — WP-026
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-026
   scheme-setup-instructions review notes; D-2601 RBE formalisation
-- [`docs/ai/REFERENCE/00.2-data-requirements.md`](../ai/REFERENCE/00.2-data-requirements.md)
+- [`docs/ai/REFERENCE/00.2-data-requirements.md`](../docs/ai/REFERENCE/00.2-data-requirements.md)
   §8.1 — 9 locked composition fields
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) — `MatchSetupConfig`,
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) — `MatchSetupConfig`,
   `SchemeSetupInstruction`, `SchemeSetupType`, `executeSchemeSetup`,
   `buildSchemeSetupInstructions`, `ENDGAME_CONDITIONS`
-- [`docs/12-SCORING-REFERENCE.md`](../12-SCORING-REFERENCE.md) —
+- [`docs/12-SCORING-REFERENCE.md`](../docs/12-SCORING-REFERENCE.md) —
   scenario keys (Scheme + Mastermind + Villain Groups)
-- [`docs/legendary-universal-rules-v23.md`](../legendary-universal-rules-v23.md)
+- [`docs/legendary-universal-rules-v23.md`](../docs/legendary-universal-rules-v23.md)
   — tabletop semantics for Scheme cards, setup, twist behaviour, and
   loss conditions
-- [WP-005A](../ai/work-packets/WP-005A-match-setup-contracts.md),
-  [WP-026](../ai/work-packets/WP-026-scheme-setup-instructions-city-modifiers.md),
-  [WP-113](../ai/work-packets/WP-113-engine-server-registry-wiring-and-validator-alignment.md)
+- [WP-005A](../docs/ai/work-packets/WP-005A-match-setup-contracts.md),
+  [WP-026](../docs/ai/work-packets/WP-026-scheme-setup-instructions-city-modifiers.md),
+  [WP-113](../docs/ai/work-packets/WP-113-engine-server-registry-wiring-and-validator-alignment.md)

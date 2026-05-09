@@ -22,25 +22,25 @@ related:
   - board-keywords.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../packages/game-engine/src/scoring/scoring.types.ts
-  - ../../packages/game-engine/src/scoring/parScoring.types.ts
-  - ../../packages/game-engine/src/scoring/parScoring.keys.ts
-  - ../../packages/game-engine/src/scoring/parScoring.logic.ts
-  - ../../packages/game-engine/src/scoring/scoring.logic.ts
-  - ../../packages/game-engine/src/scoring/scoringConfigLoader.ts
-  - ../01-VISION.md
-  - ../12-SCORING-REFERENCE.md
-  - ../12.1-PAR-ARTIFACT-INTEGRITY.md
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-020-vp-scoring-win-summary-minimal-mvp.md
-  - ../ai/work-packets/WP-027-determinism-replay-verification-harness.md
-  - ../ai/work-packets/WP-048-par-scenario-scoring-leaderboards.md
-  - ../ai/work-packets/WP-049-par-simulation-engine.md
-  - ../ai/work-packets/WP-050-par-artifact-storage.md
-  - ../ai/work-packets/WP-051-par-publication-server-gate.md
-  - ../ai/work-packets/WP-053a-par-artifact-scoring-config.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../packages/game-engine/src/scoring/scoring.types.ts
+  - ../packages/game-engine/src/scoring/parScoring.types.ts
+  - ../packages/game-engine/src/scoring/parScoring.keys.ts
+  - ../packages/game-engine/src/scoring/parScoring.logic.ts
+  - ../packages/game-engine/src/scoring/scoring.logic.ts
+  - ../packages/game-engine/src/scoring/scoringConfigLoader.ts
+  - ../docs/01-VISION.md
+  - ../docs/12-SCORING-REFERENCE.md
+  - ../docs/12.1-PAR-ARTIFACT-INTEGRITY.md
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-020-vp-scoring-win-summary-minimal-mvp.md
+  - ../docs/ai/work-packets/WP-027-determinism-replay-verification-harness.md
+  - ../docs/ai/work-packets/WP-048-par-scenario-scoring-leaderboards.md
+  - ../docs/ai/work-packets/WP-049-par-simulation-engine.md
+  - ../docs/ai/work-packets/WP-050-par-artifact-storage.md
+  - ../docs/ai/work-packets/WP-051-par-publication-server-gate.md
+  - ../docs/ai/work-packets/WP-053a-par-artifact-scoring-config.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -63,7 +63,7 @@ surface.
 ### The two-layer model
 
 The system has two distinct measurement layers, mirroring the golf
-metaphor in [VISION §20](../01-VISION.md):
+metaphor in [VISION §20](../docs/01-VISION.md):
 
 - **Layer A — PAR (course rating).** Static per-scenario expected
   outcome for a competent team. Encoded as `ParBaseline` (rounds,
@@ -78,7 +78,7 @@ metaphor in [VISION §20](../01-VISION.md):
 This page documents the layer separation, the type contracts, the
 determinism invariants, and the persistence boundary. The numerical
 formula and worked weight values live in
-[`docs/12-SCORING-REFERENCE.md`](../12-SCORING-REFERENCE.md) and
+[`docs/12-SCORING-REFERENCE.md`](../docs/12-SCORING-REFERENCE.md) and
 are not duplicated here.
 
 ### Identity keys
@@ -87,7 +87,7 @@ Two canonical string keys identify a scoring context:
 
 - **`ScenarioKey`** — `"{schemeSlug}::{mastermindSlug}::{sorted-villainGroupSlugs-joined-by-+}"`,
   built by `buildScenarioKey` in
-  [`parScoring.keys.ts`](../../packages/game-engine/src/scoring/parScoring.keys.ts).
+  [`parScoring.keys.ts`](../packages/game-engine/src/scoring/parScoring.keys.ts).
 - **`TeamKey`** — `"{sorted-heroSlugs-joined-by-+}"`, built by
   `buildTeamKey`.
 
@@ -113,7 +113,7 @@ interface ScenarioScoringConfig {
 ```
 
 The reference defaults in
-[`12-SCORING-REFERENCE.md`](../12-SCORING-REFERENCE.md) are
+[`12-SCORING-REFERENCE.md`](../docs/12-SCORING-REFERENCE.md) are
 **authoring guidance, not runtime merge targets** — `validateScoringConfig`
 rejects any configuration missing any required field, including any
 `PenaltyEventType` key. A scenario config is either valid in full or
@@ -123,7 +123,7 @@ invalid in full; partial configs do not run.
 
 `ScoringWeights` and `PenaltyEventWeights` are **integers**, not
 floats. The
-[`parScoring.types.ts`](../../packages/game-engine/src/scoring/parScoring.types.ts)
+[`parScoring.types.ts`](../packages/game-engine/src/scoring/parScoring.types.ts)
 header is explicit: weights are stored at centesimal precision (×100)
 to avoid floating-point determinism issues; display layers divide by
 100 to render decimal values. The engine never sees fractional
@@ -208,7 +208,7 @@ deterministically across deploys.
 ### MVP VP table (Layer-A inputs only)
 
 The MVP victory-point inventory in
-[`scoring.types.ts`](../../packages/game-engine/src/scoring/scoring.types.ts)
+[`scoring.types.ts`](../packages/game-engine/src/scoring/scoring.types.ts)
 defines five named constants used to compute per-player VP from
 `G.playerZones[…].victory` and the wounds piles. These are inputs
 to Layer A's victory-point category — not the Final Score
@@ -235,13 +235,13 @@ future WPs per the source `// why:` comment.
   taxonomy that consumes it.
 - **Endgame.** Final scoring is end-of-match only and runs once
   `endIf` (per `evaluateEndgame` in
-  [`game-engine.md` Endgame](../../.claude/rules/game-engine.md))
+  [`game-engine.md` Endgame](../.claude/rules/game-engine.md))
   has resolved. `computeFinalScores` reads `G` without mutating it
   and never triggers endgame logic.
 - **Persistence.** `ScoreBreakdown` and `LeaderboardEntry` are the
   only scoring artifacts that cross the persistence boundary. `G`
   itself is never persisted (per
-  [`architecture.md` "G and ctx Are Runtime-Only"](../../.claude/rules/architecture.md));
+  [`architecture.md` "G and ctx Are Runtime-Only"](../.claude/rules/architecture.md));
   scoring summaries are derived records, not save-game state.
 - **Replay verification.** `replayHash` (WP-027) is the proof that a
   `LeaderboardEntry` is reproducible by re-running the replay
@@ -282,9 +282,9 @@ future WPs per the source `// why:` comment.
   validation results (`ScoringConfigValidationResult`) or push
   diagnostic messages — they do not throw. Only `Game.setup()` may
   throw per
-  [`game-engine.md` Throwing Convention](../../.claude/rules/game-engine.md).
+  [`game-engine.md` Throwing Convention](../.claude/rules/game-engine.md).
 - **`computeFinalScores` is read-only.** Per the
-  [10-GLOSSARY.md](../10-GLOSSARY.md) entry: "reads `G` without
+  [10-GLOSSARY.md](../docs/10-GLOSSARY.md) entry: "reads `G` without
   mutating it. Never triggers endgame logic. Never queries the
   registry." Calling it during a match for preview purposes is
   technically possible but violates D-4804 (end-of-match only) —
@@ -292,23 +292,23 @@ future WPs per the source `// why:` comment.
 
 ## Code Touchpoints
 
-- [`packages/game-engine/src/scoring/parScoring.types.ts`](../../packages/game-engine/src/scoring/parScoring.types.ts)
+- [`packages/game-engine/src/scoring/parScoring.types.ts`](../packages/game-engine/src/scoring/parScoring.types.ts)
   — `ScenarioKey`, `TeamKey`, `ScoringWeights`, `ScoringCaps`,
   `PenaltyEventType`, `PENALTY_EVENT_TYPES`, `PenaltyEventWeights`,
   `ParBaseline`, `ScenarioScoringConfig`, `ScoringInputs`,
   `ScoreBreakdown`, `LeaderboardEntry`,
   `ScoringConfigValidationResult`
-- [`packages/game-engine/src/scoring/parScoring.keys.ts`](../../packages/game-engine/src/scoring/parScoring.keys.ts)
+- [`packages/game-engine/src/scoring/parScoring.keys.ts`](../packages/game-engine/src/scoring/parScoring.keys.ts)
   — `buildScenarioKey`, `buildTeamKey` (canonical-form constructors)
-- [`packages/game-engine/src/scoring/parScoring.logic.ts`](../../packages/game-engine/src/scoring/parScoring.logic.ts)
+- [`packages/game-engine/src/scoring/parScoring.logic.ts`](../packages/game-engine/src/scoring/parScoring.logic.ts)
   — `deriveScoringInputs`, `buildScoreBreakdown`,
   `validateScoringConfig`
-- [`packages/game-engine/src/scoring/scoring.types.ts`](../../packages/game-engine/src/scoring/scoring.types.ts)
+- [`packages/game-engine/src/scoring/scoring.types.ts`](../packages/game-engine/src/scoring/scoring.types.ts)
   — VP table constants, `PlayerScoreBreakdown`, `FinalScoreSummary`;
   re-exports the PAR types
-- [`packages/game-engine/src/scoring/scoring.logic.ts`](../../packages/game-engine/src/scoring/scoring.logic.ts)
+- [`packages/game-engine/src/scoring/scoring.logic.ts`](../packages/game-engine/src/scoring/scoring.logic.ts)
   — `computeFinalScores` (per-player VP aggregation; pure read of `G`)
-- [`packages/game-engine/src/scoring/scoringConfigLoader.ts`](../../packages/game-engine/src/scoring/scoringConfigLoader.ts)
+- [`packages/game-engine/src/scoring/scoringConfigLoader.ts`](../packages/game-engine/src/scoring/scoringConfigLoader.ts)
   — config loader / validation entry point
 
 ## History
@@ -323,30 +323,30 @@ future WPs per the source `// why:` comment.
 
 ## References
 
-- [`docs/01-VISION.md`](../01-VISION.md) §20–26 — PAR-Based Scenario
+- [`docs/01-VISION.md`](../docs/01-VISION.md) §20–26 — PAR-Based Scenario
   Scoring; the two-layer model (Layer A / Layer B); deterministic
   evaluation; replay-verified competitive integrity; immutability of
   declared baselines
-- [`docs/12-SCORING-REFERENCE.md`](../12-SCORING-REFERENCE.md) —
+- [`docs/12-SCORING-REFERENCE.md`](../docs/12-SCORING-REFERENCE.md) —
   the formula, weights, caps, and worked examples (canonical home;
   not duplicated in the wiki)
-- [`docs/12.1-PAR-ARTIFACT-INTEGRITY.md`](../12.1-PAR-ARTIFACT-INTEGRITY.md)
+- [`docs/12.1-PAR-ARTIFACT-INTEGRITY.md`](../docs/12.1-PAR-ARTIFACT-INTEGRITY.md)
   — rationale for hashing PAR artifacts
-- [`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
   — Throwing Convention; Endgame `endIf` contract; Move Validation
   Contract (validators return — only `Game.setup()` may throw)
-- [`.claude/rules/architecture.md`](../../.claude/rules/architecture.md)
+- [`.claude/rules/architecture.md`](../.claude/rules/architecture.md)
   — Persistence boundary (`G` is runtime-only; snapshots are
   derived records)
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — WP-020 review
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-020 review
   notes; PAR pipeline summary
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) —
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) —
   `ENDGAME_CONDITIONS`, `evaluateEndgame`, `EndgameResult`,
   `computeFinalScores`
-- [WP-020](../ai/work-packets/WP-020-vp-scoring-win-summary-minimal-mvp.md),
-  [WP-027](../ai/work-packets/WP-027-determinism-replay-verification-harness.md),
-  [WP-048](../ai/work-packets/WP-048-par-scenario-scoring-leaderboards.md),
-  [WP-049](../ai/work-packets/WP-049-par-simulation-engine.md),
-  [WP-050](../ai/work-packets/WP-050-par-artifact-storage.md),
-  [WP-051](../ai/work-packets/WP-051-par-publication-server-gate.md),
-  [WP-053a](../ai/work-packets/WP-053a-par-artifact-scoring-config.md)
+- [WP-020](../docs/ai/work-packets/WP-020-vp-scoring-win-summary-minimal-mvp.md),
+  [WP-027](../docs/ai/work-packets/WP-027-determinism-replay-verification-harness.md),
+  [WP-048](../docs/ai/work-packets/WP-048-par-scenario-scoring-leaderboards.md),
+  [WP-049](../docs/ai/work-packets/WP-049-par-simulation-engine.md),
+  [WP-050](../docs/ai/work-packets/WP-050-par-artifact-storage.md),
+  [WP-051](../docs/ai/work-packets/WP-051-par-publication-server-gate.md),
+  [WP-053a](../docs/ai/work-packets/WP-053a-par-artifact-scoring-config.md)

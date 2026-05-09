@@ -89,7 +89,7 @@ try {
       );
     }
     process.stderr.write(
-      `Link-integrity check failed with ${broken.length} broken internal link(s). Fix the source under docs/wiki/ and re-run pnpm wiki-viewer:check-links.\n`
+      `Link-integrity check failed with ${broken.length} broken internal link(s). Fix the source under wiki/ and re-run pnpm wiki-viewer:check-links.\n`
     );
     process.exit(1);
   }

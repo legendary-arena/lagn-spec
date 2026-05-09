@@ -24,7 +24,7 @@ define new architectural boundaries.
 | `play.legendary-arena.com` | Game client | Cloudflare Pages | [apps/arena-client](../../apps/arena-client) | planned |
 | `cards.legendary-arena.com` | Registry viewer | Cloudflare Pages | [apps/registry-viewer](../../apps/registry-viewer) | planned (currently on `legendary-arena` Pages project) |
 | `wiki.legendary-arena.com` | Public player wiki | Cloudflare Pages | TBD (separate Hugo site) | planned |
-| `ewiki.legendary-arena.com` | Private engineering wiki | Render Static Site + Access | [apps/wiki-viewer](../../apps/wiki-viewer) (Hugo build of [docs/wiki](../wiki)) | live, gated |
+| `ewiki.legendary-arena.com` | Private engineering wiki | Render Static Site + Access | [apps/wiki-viewer](../../apps/wiki-viewer) (Hugo build of [wiki/](../../wiki)) | live, gated |
 | `legends.legendary-arena.com` | Public scoreboard (attract board) | Cloudflare Pages | `apps/legends-board` (planned — WP-143) | planned |
 | `api.legendary-arena.com` | Game server REST + Socket.IO | Render (CNAME from Cloudflare) | [apps/server](../../apps/server) | live |
 | `legendary-arena-server.onrender.com` | API canonical hostname | Render | [apps/server](../../apps/server) | live |
@@ -123,7 +123,7 @@ that confuses anyone who clicks it.
 ### ewiki
 **`ewiki.legendary-arena.com`** — private engineering wiki, gated. Live since 2026-05-08.
 
-- **Source:** [docs/wiki](../wiki) markdown files
+- **Source:** [wiki/](../../wiki) markdown files
 - **Renderer:** [apps/wiki-viewer](../../apps/wiki-viewer) — Hugo build, deployed as the Render Static Site `legendary-arena-wiki` (see [render.yaml](../../render.yaml))
 - **Gate:** Cloudflare Zero Trust Access policy (Free tier, One-time PIN identity provider)
 - **DNS posture:** **proxied (orange cloud)**, NOT DNS-only. Access can only intercept traffic that flows through Cloudflare's edge; DNS-only would route the client directly to Render's IP and bypass the gate. (This is the opposite of the `api.` posture — see that section for why `api.` uses DNS-only.)

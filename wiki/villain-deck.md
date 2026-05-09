@@ -19,16 +19,16 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../packages/game-engine/src/villainDeck/villainDeck.types.ts
-  - ../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
-  - ../../packages/game-engine/src/villainDeck/villainDeck.setup.ts
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-014A-villain-reveal-pipeline.md
-  - ../ai/work-packets/WP-014B-villain-deck-composition.md
-  - ../ai/work-packets/WP-015-city-hq-zones-villain-movement.md
-  - ../ai/work-packets/WP-015A-reveal-safety-fixes.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../packages/game-engine/src/villainDeck/villainDeck.types.ts
+  - ../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
+  - ../packages/game-engine/src/villainDeck/villainDeck.setup.ts
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md
+  - ../docs/ai/work-packets/WP-014B-villain-deck-composition.md
+  - ../docs/ai/work-packets/WP-015-city-hq-zones-villain-movement.md
+  - ../docs/ai/work-packets/WP-015A-reveal-safety-fixes.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -62,7 +62,7 @@ A second field, `G.villainDeckCardTypes: Record<CardExtId, RevealedCardType>`,
 holds the classification for every card in the deck. It is populated at
 **setup time** by `buildVillainDeck` from registry data, then read in
 O(1) at runtime — moves never query the registry. See
-[`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+[`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
 "Registry Boundary" for the rule.
 
 ### Classification: the 5-value closed set
@@ -78,14 +78,14 @@ O(1) at runtime — moves never query the registry. See
 | `mastermind-strike` | Discarded; fires `onMastermindStrikeRevealed` |
 
 The canonical array `REVEALED_CARD_TYPES` in
-[`villainDeck.types.ts`](../../packages/game-engine/src/villainDeck/villainDeck.types.ts)
+[`villainDeck.types.ts`](../packages/game-engine/src/villainDeck/villainDeck.types.ts)
 is the single source of truth and is asserted against the union by
 drift-detection tests.
 
 ### The reveal pipeline
 
 `revealVillainCard` in
-[`villainDeck.reveal.ts`](../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
+[`villainDeck.reveal.ts`](../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
 is the only authority for drawing from the deck. Step numbering
 mirrors the source comments exactly. The order is contractual — rule
 hooks must observe post-placement board state, so City routing
@@ -117,7 +117,7 @@ happens before triggers fire:
   `mastermind-strike` go to `G.villainDeck.discard`.
 
 The full step contract is also documented inline in
-[`game-engine.md` "Villain Deck & Reveal Pipeline"](../../.claude/rules/game-engine.md).
+[`game-engine.md` "Villain Deck & Reveal Pipeline"](../.claude/rules/game-engine.md).
 
 ## Interactions
 
@@ -147,7 +147,7 @@ The full step contract is also documented inline in
   is a strict subset of the broader registry-side taxonomy. Only the
   five values listed above ever appear in `G.villainDeckCardTypes`;
   the wider taxonomy (13 entries in
-  [`data/metadata/card-types.json`](../../data/metadata/card-types.json))
+  [`data/metadata/card-types.json`](../data/metadata/card-types.json))
   also includes hero, sidekick, S.H.I.E.L.D., and other types that
   never enter the villain deck.
 - **Endgame.** Escapes increment a counter consumed by
@@ -161,13 +161,13 @@ The full step contract is also documented inline in
   `'scheme-twist'` (hyphen) will not match the union and will silently
   prevent the trigger from firing. Drift-detection tests against
   `REVEALED_CARD_TYPES` exist specifically to catch this. See
-  [`game-engine.md` "RevealedCardType Conventions"](../../.claude/rules/game-engine.md).
+  [`game-engine.md` "RevealedCardType Conventions"](../.claude/rules/game-engine.md).
 - **Deferred deck removal (WP-015A).** Earlier versions of the move
   removed the drawn card before validating City placement. If the
   city was malformed, the card was lost permanently. The current
   pipeline keeps the card on top of the deck until placement
   succeeds, then removes it. See
-  [WP-015A](../ai/work-packets/WP-015A-reveal-safety-fixes.md).
+  [WP-015A](../docs/ai/work-packets/WP-015A-reveal-safety-fixes.md).
 - **Missing classification fails closed.** If
   `G.villainDeckCardTypes[cardId]` is undefined, the move logs a
   message and returns without modifying state — no removal, no
@@ -183,22 +183,22 @@ The full step contract is also documented inline in
 - **Reveal is start-stage only.** Calling `revealVillainCard` outside
   `G.currentStage === 'start'` returns silently — never throws.
   Moves never throw per
-  [`game-engine.md` "Move Validation Contract"](../../.claude/rules/game-engine.md).
+  [`game-engine.md` "Move Validation Contract"](../.claude/rules/game-engine.md).
 
 ## Code Touchpoints
 
-- [`packages/game-engine/src/villainDeck/villainDeck.types.ts`](../../packages/game-engine/src/villainDeck/villainDeck.types.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.types.ts`](../packages/game-engine/src/villainDeck/villainDeck.types.ts)
   — `RevealedCardType` union, `REVEALED_CARD_TYPES` array,
   `VillainDeckState` interface
-- [`packages/game-engine/src/villainDeck/villainDeck.setup.ts`](../../packages/game-engine/src/villainDeck/villainDeck.setup.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.setup.ts`](../packages/game-engine/src/villainDeck/villainDeck.setup.ts)
   — `buildVillainDeck` (setup-time composition + classification map)
-- [`packages/game-engine/src/villainDeck/villainDeck.reveal.ts`](../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.reveal.ts`](../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
   — `revealVillainCard` move (the 8-step pipeline)
-- [`packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts`](../../packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts`](../packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts)
   — reveal pipeline tests
-- [`packages/game-engine/src/villainDeck/villainDeck.city.integration.test.ts`](../../packages/game-engine/src/villainDeck/villainDeck.city.integration.test.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.city.integration.test.ts`](../packages/game-engine/src/villainDeck/villainDeck.city.integration.test.ts)
   — integration with city push / escape
-- [`packages/game-engine/src/villainDeck/villainDeck.types.test.ts`](../../packages/game-engine/src/villainDeck/villainDeck.types.test.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.types.test.ts`](../packages/game-engine/src/villainDeck/villainDeck.types.test.ts)
   — drift-detection: array-vs-union assertion
 
 ## History
@@ -210,14 +210,14 @@ The full step contract is also documented inline in
 
 ## References
 
-- [`.claude/rules/game-engine.md` "Villain Deck & Reveal Pipeline"](../../.claude/rules/game-engine.md)
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — WP-014 review
+- [`.claude/rules/game-engine.md` "Villain Deck & Reveal Pipeline"](../.claude/rules/game-engine.md)
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-014 review
   notes; villain-deck classification stored at setup
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) — `RevealedCardType`,
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) — `RevealedCardType`,
   `G.villainDeckCardTypes`, `REVEALED_CARD_TYPES`
-- [`docs/legendary-universal-rules-v23.md`](../legendary-universal-rules-v23.md)
+- [`docs/legendary-universal-rules-v23.md`](../docs/legendary-universal-rules-v23.md)
   — tabletop semantics for villain reveal, escape, and bystander capture
-- [WP-014A](../ai/work-packets/WP-014A-villain-reveal-pipeline.md),
-  [WP-014B](../ai/work-packets/WP-014B-villain-deck-composition.md),
-  [WP-015](../ai/work-packets/WP-015-city-hq-zones-villain-movement.md),
-  [WP-015A](../ai/work-packets/WP-015A-reveal-safety-fixes.md)
+- [WP-014A](../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md),
+  [WP-014B](../docs/ai/work-packets/WP-014B-villain-deck-composition.md),
+  [WP-015](../docs/ai/work-packets/WP-015-city-hq-zones-villain-movement.md),
+  [WP-015A](../docs/ai/work-packets/WP-015A-reveal-safety-fixes.md)

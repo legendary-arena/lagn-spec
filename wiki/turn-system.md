@@ -21,18 +21,18 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../.claude/rules/architecture.md
-  - ../../.claude/rules/code-style.md
-  - ../../packages/game-engine/src/turn/turnPhases.types.ts
-  - ../../packages/game-engine/src/turn/turnPhases.logic.ts
-  - ../../packages/game-engine/src/turn/turnLoop.ts
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-002-game-skeleton.md
-  - ../ai/work-packets/WP-007A-turn-structure-phases-contracts.md
-  - ../ai/work-packets/WP-007B-turn-loop-implementation.md
-  - ../ai/REFERENCE/00.2-data-requirements.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../.claude/rules/architecture.md
+  - ../.claude/rules/code-style.md
+  - ../packages/game-engine/src/turn/turnPhases.types.ts
+  - ../packages/game-engine/src/turn/turnPhases.logic.ts
+  - ../packages/game-engine/src/turn/turnLoop.ts
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-002-game-skeleton.md
+  - ../docs/ai/work-packets/WP-007A-turn-structure-phases-contracts.md
+  - ../docs/ai/work-packets/WP-007B-turn-loop-implementation.md
+  - ../docs/ai/REFERENCE/00.2-data-requirements.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -70,7 +70,7 @@ Stages exist *only inside* the `play` phase. Outside `play`,
 
 Both enums have a `readonly` canonical array as the single source of
 truth in
-[`turnPhases.types.ts`](../../packages/game-engine/src/turn/turnPhases.types.ts):
+[`turnPhases.types.ts`](../packages/game-engine/src/turn/turnPhases.types.ts):
 
 ```ts
 export const MATCH_PHASES: readonly MatchPhase[] = [
@@ -91,7 +91,7 @@ contract-level identifiers, not implementation details.
 ### Where state lives — and why
 
 `G.currentStage` is in `G`, not `ctx`. The `// why:` comment in
-[`turnLoop.ts`](../../packages/game-engine/src/turn/turnLoop.ts)
+[`turnLoop.ts`](../packages/game-engine/src/turn/turnLoop.ts)
 spells out the reason: boardgame.io's `ctx` does not expose the
 inner turn stage in a form move functions can read. Putting the
 stage in `G` makes it observable to moves (which need it for stage
@@ -105,7 +105,7 @@ via the `play` phase's `onBegin` hook. Mid-turn, only
 ### Stage ordering authority
 
 `getNextTurnStage(current)` in
-[`turnPhases.logic.ts`](../../packages/game-engine/src/turn/turnPhases.logic.ts)
+[`turnPhases.logic.ts`](../packages/game-engine/src/turn/turnPhases.logic.ts)
 is the **sole authority** on stage ordering. It derives the next
 stage from `TURN_STAGES.indexOf(current) + 1` — never a hardcoded
 mapping. No other file may re-encode the stage order.
@@ -136,7 +136,7 @@ transitions are all invalid.
 ### Turn-loop advancement
 
 `advanceTurnStage(G, ctx)` in
-[`turnLoop.ts`](../../packages/game-engine/src/turn/turnLoop.ts)
+[`turnLoop.ts`](../packages/game-engine/src/turn/turnLoop.ts)
 is the single helper that drives stage progression:
 
 - If `getNextTurnStage` returns a non-null stage → write it to
@@ -144,7 +144,7 @@ is the single helper that drives stage progression:
 - If it returns `null` → call `ctx.events.endTurn()`. boardgame.io
   rotates the player and fires its own turn-end lifecycle. **Manual
   player index rotation is forbidden** per
-  [`game-engine.md` "Turn Stage Cycle"](../../.claude/rules/game-engine.md).
+  [`game-engine.md` "Turn Stage Cycle"](../.claude/rules/game-engine.md).
 
 ### Transition discipline
 
@@ -156,8 +156,8 @@ Two transition primitives exist, both restricted:
   player rotation is forbidden.
 
 Every call site of either must include a `// why:` comment per
-[`code-style.md`](../../.claude/rules/code-style.md) and
-[`architecture.md`](../../.claude/rules/architecture.md). The
+[`code-style.md`](../.claude/rules/code-style.md) and
+[`architecture.md`](../.claude/rules/architecture.md). The
 comment is part of the contract, not a stylistic preference: it
 documents the lifecycle reason for each transition so reviewers can
 audit phase/turn flow without reconstructing intent.
@@ -182,7 +182,7 @@ they can never drift from the canonical arrays.
   in the same way [Villain Deck](villain-deck.md) is for the three
   reveal triggers.
 - **Move stage gating.** The `MOVE_ALLOWED_STAGES` mapping (per
-  [`game-engine.md` "Stage Gating"](../../.claude/rules/game-engine.md))
+  [`game-engine.md` "Stage Gating"](../.claude/rules/game-engine.md))
   is the canonical contract that links each move to the
   `TurnStage[]` values it accepts. Stage gating is Step 2 of the
   Move Validation Contract — checked after argument validation,
@@ -234,19 +234,19 @@ they can never drift from the canonical arrays.
 
 ## Code Touchpoints
 
-- [`turnPhases.types.ts`](../../packages/game-engine/src/turn/turnPhases.types.ts)
+- [`turnPhases.types.ts`](../packages/game-engine/src/turn/turnPhases.types.ts)
   — `MatchPhase`, `MATCH_PHASES`, `TurnStage`, `TURN_STAGES`,
   `TurnPhaseError`
-- [`turnPhases.logic.ts`](../../packages/game-engine/src/turn/turnPhases.logic.ts)
+- [`turnPhases.logic.ts`](../packages/game-engine/src/turn/turnPhases.logic.ts)
   — `getNextTurnStage`, `isValidTurnStageTransition`,
   `isValidMatchPhase`, `isValidTurnStage`
-- [`turnLoop.ts`](../../packages/game-engine/src/turn/turnLoop.ts)
+- [`turnLoop.ts`](../packages/game-engine/src/turn/turnLoop.ts)
   — `advanceTurnStage`, `TurnLoopContext`, `TurnLoopState`
-- [`turnPhases.contracts.test.ts`](../../packages/game-engine/src/turn/turnPhases.contracts.test.ts)
+- [`turnPhases.contracts.test.ts`](../packages/game-engine/src/turn/turnPhases.contracts.test.ts)
   — contract tests
-- [`turnLoop.integration.test.ts`](../../packages/game-engine/src/turn/turnLoop.integration.test.ts)
+- [`turnLoop.integration.test.ts`](../packages/game-engine/src/turn/turnLoop.integration.test.ts)
   — turn-loop integration tests
-- [`turnPhases.validate.ts`](../../packages/game-engine/src/turn/turnPhases.validate.ts)
+- [`turnPhases.validate.ts`](../packages/game-engine/src/turn/turnPhases.validate.ts)
   — validators
 
 ## History
@@ -257,21 +257,21 @@ they can never drift from the canonical arrays.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
   — Phases (locked names); Turn Stage Cycle; Stage Gating; Move
   Validation Contract
-- [`.claude/rules/architecture.md`](../../.claude/rules/architecture.md)
+- [`.claude/rules/architecture.md`](../.claude/rules/architecture.md)
   — Phase & Turn Transitions invariant (`// why:` requirement)
-- [`.claude/rules/code-style.md`](../../.claude/rules/code-style.md)
+- [`.claude/rules/code-style.md`](../.claude/rules/code-style.md)
   — Drift Detection (canonical readonly arrays); `// why:` comment
   rule
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — WP-007A/B
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-007A/B
   review notes; turn stage cycle
-- [`docs/ai/REFERENCE/00.2-data-requirements.md`](../ai/REFERENCE/00.2-data-requirements.md)
+- [`docs/ai/REFERENCE/00.2-data-requirements.md`](../docs/ai/REFERENCE/00.2-data-requirements.md)
   §8.2 — match lifecycle (the four phase names locked at this layer)
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) — `MATCH_PHASES`,
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) — `MATCH_PHASES`,
   `TURN_STAGES`, `getNextTurnStage`, `advanceTurnStage`,
   `startMatchIfReady`, `G.currentStage`
-- [WP-002](../ai/work-packets/WP-002-game-skeleton.md),
-  [WP-007A](../ai/work-packets/WP-007A-turn-structure-phases-contracts.md),
-  [WP-007B](../ai/work-packets/WP-007B-turn-loop-implementation.md)
+- [WP-002](../docs/ai/work-packets/WP-002-game-skeleton.md),
+  [WP-007A](../docs/ai/work-packets/WP-007A-turn-structure-phases-contracts.md),
+  [WP-007B](../docs/ai/work-packets/WP-007B-turn-loop-implementation.md)

@@ -20,15 +20,15 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../packages/game-engine/src/rules/mastermindHandlers.ts
-  - ../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
-  - ../../packages/game-engine/src/mastermind/mastermind.types.ts
-  - ../../packages/game-engine/src/mastermind/mastermind.logic.ts
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-014A-villain-reveal-pipeline.md
-  - ../ai/work-packets/WP-019-mastermind-tactics-boss-fight-minimal-mvp.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../packages/game-engine/src/rules/mastermindHandlers.ts
+  - ../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
+  - ../packages/game-engine/src/mastermind/mastermind.types.ts
+  - ../packages/game-engine/src/mastermind/mastermind.logic.ts
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md
+  - ../docs/ai/work-packets/WP-019-mastermind-tactics-boss-fight-minimal-mvp.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -57,7 +57,7 @@ is `{ cardId }`. Effects are collected alongside the always-emitted
 ### Default handler behaviour
 
 `mastermindStrikeHandler` in
-[`rules/mastermindHandlers.ts`](../../packages/game-engine/src/rules/mastermindHandlers.ts)
+[`rules/mastermindHandlers.ts`](../packages/game-engine/src/rules/mastermindHandlers.ts)
 is the registered `ImplementationMap` entry for the trigger. It
 returns two `RuleEffect` entries on every fire:
 
@@ -74,10 +74,10 @@ agnostic in MVP.
 
 `G.mastermind` is built at setup with the chosen mastermind's tactics
 deck and base card id (`MastermindState` in
-[`mastermind.types.ts`](../../packages/game-engine/src/mastermind/mastermind.types.ts)).
+[`mastermind.types.ts`](../packages/game-engine/src/mastermind/mastermind.types.ts)).
 Master Strike resolution **does not consume tactics** — tactic defeat
 is a combat path through `defeatTopTactic` in
-[`mastermind.logic.ts`](../../packages/game-engine/src/mastermind/mastermind.logic.ts),
+[`mastermind.logic.ts`](../packages/game-engine/src/mastermind/mastermind.logic.ts),
 fired during a successful fight against the mastermind. The strike
 trigger and the combat-side tactic defeat are separate mechanics that
 share the same Mastermind entity.
@@ -115,7 +115,7 @@ share the same Mastermind entity.
   fails to match the union and prevents the trigger from firing.
   Drift-detection tests against `REVEALED_CARD_TYPES` exist to catch
   this. See
-  [`game-engine.md` "RevealedCardType Conventions"](../../.claude/rules/game-engine.md).
+  [`game-engine.md` "RevealedCardType Conventions"](../.claude/rules/game-engine.md).
 - **Tabletop tactic effects do not fire in MVP.** Marvel Legendary's
   printed rules specify that the Mastermind plays its current tactic
   on a Strike (e.g., "Each player gains a Wound"). The MVP handler
@@ -140,15 +140,15 @@ share the same Mastermind entity.
 
 ## Code Touchpoints
 
-- [`packages/game-engine/src/rules/mastermindHandlers.ts`](../../packages/game-engine/src/rules/mastermindHandlers.ts)
+- [`packages/game-engine/src/rules/mastermindHandlers.ts`](../packages/game-engine/src/rules/mastermindHandlers.ts)
   — `mastermindStrikeHandler` (MVP default for the trigger)
-- [`packages/game-engine/src/rules/mastermindHandlers.test.ts`](../../packages/game-engine/src/rules/mastermindHandlers.test.ts)
+- [`packages/game-engine/src/rules/mastermindHandlers.test.ts`](../packages/game-engine/src/rules/mastermindHandlers.test.ts)
   — handler tests
-- [`packages/game-engine/src/villainDeck/villainDeck.reveal.ts`](../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.reveal.ts`](../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
   — strike trigger emission point (Step 5)
-- [`packages/game-engine/src/mastermind/mastermind.types.ts`](../../packages/game-engine/src/mastermind/mastermind.types.ts)
+- [`packages/game-engine/src/mastermind/mastermind.types.ts`](../packages/game-engine/src/mastermind/mastermind.types.ts)
   — `MastermindState` interface
-- [`packages/game-engine/src/mastermind/mastermind.logic.ts`](../../packages/game-engine/src/mastermind/mastermind.logic.ts)
+- [`packages/game-engine/src/mastermind/mastermind.logic.ts`](../packages/game-engine/src/mastermind/mastermind.logic.ts)
   — `defeatTopTactic`, `areAllTacticsDefeated` (combat path; unrelated
   to the strike trigger but shares the Mastermind entity)
 
@@ -159,18 +159,18 @@ share the same Mastermind entity.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
   — Villain Deck & Reveal Pipeline (strike trigger emission contract);
   `G.counters` keys (`MASTERMIND_DEFEATED` victory counter, distinct
   from strike count)
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — WP-014 / WP-019
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-014 / WP-019
   review notes
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) — `RuleTriggerName`
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) — `RuleTriggerName`
   (5-trigger union), `RuleEffectType` (4-effect union),
   `RevealedCardType` (5-classification union),
   `ENDGAME_CONDITIONS.MASTERMIND_DEFEATED`
-- [`docs/legendary-universal-rules-v23.md`](../legendary-universal-rules-v23.md)
+- [`docs/legendary-universal-rules-v23.md`](../docs/legendary-universal-rules-v23.md)
   — tabletop semantics for Mastermind Strike cards and per-tactic
   resolution
-- [WP-014A](../ai/work-packets/WP-014A-villain-reveal-pipeline.md),
-  [WP-019](../ai/work-packets/WP-019-mastermind-tactics-boss-fight-minimal-mvp.md)
+- [WP-014A](../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md),
+  [WP-019](../docs/ai/work-packets/WP-019-mastermind-tactics-boss-fight-minimal-mvp.md)

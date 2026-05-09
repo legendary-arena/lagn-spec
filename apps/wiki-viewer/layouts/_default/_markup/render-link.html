@@ -1,8 +1,8 @@
 {{- /*
 why: D-13809 default — out-of-tree links (`../**` from a wiki page) rewrite to
 GitHub blob URLs at build time. The wiki source paths are repo-root-relative
-when resolved from docs/wiki/, so `../ai/ARCHITECTURE.md` → `docs/ai/ARCHITECTURE.md`
-and `../../packages/foo/bar.ts` → `packages/foo/bar.ts`. Implemented in this
+when resolved from wiki/, so `../docs/ai/ARCHITECTURE.md` → `docs/ai/ARCHITECTURE.md`
+and `../packages/foo/bar.ts` → `packages/foo/bar.ts`. Implemented in this
 render hook (not as a post-build HTML walk) because:
   (a) post-build walking adds an HTML-parser dependency and a non-determinism
       vector (DOM iteration order isn't guaranteed across parser versions);
@@ -18,7 +18,7 @@ home `/` (the projected `_index.md`).
 {{- if or (hasPrefix $dest "http://") (hasPrefix $dest "https://") (hasPrefix $dest "mailto:") (hasPrefix $dest "#") -}}
   <a href="{{ $dest | safeURL }}"{{ with $title }} title="{{ . }}"{{ end }}>{{ $text | safeHTML }}</a>
 {{- else if hasPrefix $dest "../" -}}
-  {{- $abs := path.Join "docs/wiki" $dest -}}
+  {{- $abs := path.Join "wiki" $dest -}}
   {{- $githubBase := "https://github.com/barefootbetters/legendary-arena/blob/main/" -}}
   <a href="{{ printf "%s%s" $githubBase $abs | safeURL }}"{{ with $title }} title="{{ . }}"{{ end }}>{{ $text | safeHTML }}</a>
 {{- else -}}

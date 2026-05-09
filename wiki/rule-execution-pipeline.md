@@ -21,18 +21,18 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../packages/game-engine/src/rules/ruleHooks.types.ts
-  - ../../packages/game-engine/src/rules/ruleRuntime.execute.ts
-  - ../../packages/game-engine/src/rules/ruleRuntime.effects.ts
-  - ../../packages/game-engine/src/rules/ruleRuntime.impl.ts
-  - ../../packages/game-engine/src/rules/ruleHooks.registry.ts
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-009A-scheme-mastermind-rule-hooks-contracts.md
-  - ../ai/work-packets/WP-009B-rule-execution-minimal-mvp.md
-  - ../ai/work-packets/WP-014A-villain-reveal-pipeline.md
-  - ../ai/work-packets/WP-024-scheme-mastermind-ability-execution.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../packages/game-engine/src/rules/ruleHooks.types.ts
+  - ../packages/game-engine/src/rules/ruleRuntime.execute.ts
+  - ../packages/game-engine/src/rules/ruleRuntime.effects.ts
+  - ../packages/game-engine/src/rules/ruleRuntime.impl.ts
+  - ../packages/game-engine/src/rules/ruleHooks.registry.ts
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-009A-scheme-mastermind-rule-hooks-contracts.md
+  - ../docs/ai/work-packets/WP-009B-rule-execution-minimal-mvp.md
+  - ../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md
+  - ../docs/ai/work-packets/WP-024-scheme-mastermind-ability-execution.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -93,7 +93,7 @@ The pipeline never collects and applies in one pass. The split is
 contractual:
 
 **Phase 1 — `executeRuleHooks`** in
-[`ruleRuntime.execute.ts`](../../packages/game-engine/src/rules/ruleRuntime.execute.ts).
+[`ruleRuntime.execute.ts`](../packages/game-engine/src/rules/ruleRuntime.execute.ts).
 Reads `G` and the registry; looks up each hook's handler in the
 `ImplementationMap` by `id`; calls handlers in deterministic order;
 concatenates the returned `RuleEffect[]` into a single flat array.
@@ -101,11 +101,11 @@ concatenates the returned `RuleEffect[]` into a single flat array.
 *would* happen without committing the changes.
 
 **Phase 2 — `applyRuleEffects`** in
-[`ruleRuntime.effects.ts`](../../packages/game-engine/src/rules/ruleRuntime.effects.ts).
+[`ruleRuntime.effects.ts`](../packages/game-engine/src/rules/ruleRuntime.effects.ts).
 Iterates the collected effects with `for...of` and applies each via
 a dedicated per-effect-type applier. **This phase never throws and
 never uses `.reduce()`** (per
-[`game-engine.md` "Rule Execution Pipeline"](../../.claude/rules/game-engine.md)).
+[`game-engine.md` "Rule Execution Pipeline"](../.claude/rules/game-engine.md)).
 
 The split is what makes the pipeline replayable, testable, and safe
 to invoke from any move that emits a trigger.
@@ -113,12 +113,12 @@ to invoke from any move that emits a trigger.
 ### Determinism guarantees
 
 The pipeline meets the engine's determinism invariants
-([ARCHITECTURE.md](../ai/ARCHITECTURE.md) Architectural Principles
+([ARCHITECTURE.md](../docs/ai/ARCHITECTURE.md) Architectural Principles
 #1) by construction:
 
 - **Hook execution order is deterministic.** `getHooksForTrigger`
   in
-  [`ruleHooks.registry.ts`](../../packages/game-engine/src/rules/ruleHooks.registry.ts)
+  [`ruleHooks.registry.ts`](../packages/game-engine/src/rules/ruleHooks.registry.ts)
   is the sole authority on ordering: `priority` ascending, then `id`
   lexically. `executeRuleHooks` does not call `.sort()` itself —
   ordering is enforced upstream.
@@ -130,7 +130,7 @@ The pipeline meets the engine's determinism invariants
   `ctx.random.Shuffle` only — never `Math.random`.
 - **No `.reduce()`** in either phase. Effects are accumulated with
   `for…of` and `array.push` per
-  [code-style.md](../../.claude/rules/code-style.md) "Patterns to
+  [code-style.md](../.claude/rules/code-style.md) "Patterns to
   Avoid".
 - **Handlers are pure.** They take `(gameState, ctx, payload)` and
   return `RuleEffect[]`. They must not mutate `G` or `ctx`.
@@ -146,7 +146,7 @@ by drift-detection tests; adding a value to one without updating
 the other is a build-breaking inconsistency.
 
 **Triggers (5):** `RULE_TRIGGER_NAMES` in
-[`ruleHooks.types.ts`](../../packages/game-engine/src/rules/ruleHooks.types.ts):
+[`ruleHooks.types.ts`](../packages/game-engine/src/rules/ruleHooks.types.ts):
 
 ```
 onTurnStart · onTurnEnd · onCardRevealed
@@ -160,7 +160,7 @@ lifecycle hook that produces the event — see
 [Turn System](turn-system.md) for the two turn-lifecycle triggers.
 
 **Effect types (4):** `RULE_EFFECT_TYPES` in
-[`ruleHooks.types.ts`](../../packages/game-engine/src/rules/ruleHooks.types.ts):
+[`ruleHooks.types.ts`](../packages/game-engine/src/rules/ruleHooks.types.ts):
 
 ```
 queueMessage · modifyCounter · drawCards · discardHand
@@ -178,7 +178,7 @@ for the inline pattern).
 ### Default implementation map
 
 `DEFAULT_IMPLEMENTATION_MAP` in
-[`ruleRuntime.impl.ts`](../../packages/game-engine/src/rules/ruleRuntime.impl.ts)
+[`ruleRuntime.impl.ts`](../packages/game-engine/src/rules/ruleRuntime.impl.ts)
 is the canonical map passed by `revealVillainCard` and other
 trigger emitters. It binds the engine's default scheme and
 mastermind handlers to their hook ids. The map is constructed once
@@ -214,7 +214,7 @@ plumbing.
   Work Packet that adds replay or hot-reload must rebuild the
   implementation map from a versioned source, not deserialize it.
 - **Server.** The server does not participate in rule execution
-  ([`game-engine.md` Server Boundary](../../.claude/rules/game-engine.md)).
+  ([`game-engine.md` Server Boundary](../.claude/rules/game-engine.md)).
   All hook execution happens inside the game engine, on the
   authoritative `G`.
 
@@ -249,22 +249,22 @@ plumbing.
 
 ## Code Touchpoints
 
-- [`ruleHooks.types.ts`](../../packages/game-engine/src/rules/ruleHooks.types.ts)
+- [`ruleHooks.types.ts`](../packages/game-engine/src/rules/ruleHooks.types.ts)
   — `RuleTriggerName`, `RULE_TRIGGER_NAMES`, `TriggerPayloadMap`,
   `RuleEffect`, `RULE_EFFECT_TYPES`, `HookDefinition`, `HookRegistry`
-- [`ruleRuntime.execute.ts`](../../packages/game-engine/src/rules/ruleRuntime.execute.ts)
+- [`ruleRuntime.execute.ts`](../packages/game-engine/src/rules/ruleRuntime.execute.ts)
   — `executeRuleHooks` and the `ImplementationMap` type
-- [`ruleRuntime.effects.ts`](../../packages/game-engine/src/rules/ruleRuntime.effects.ts)
+- [`ruleRuntime.effects.ts`](../packages/game-engine/src/rules/ruleRuntime.effects.ts)
   — `applyRuleEffects` and the four per-effect appliers
-- [`ruleRuntime.impl.ts`](../../packages/game-engine/src/rules/ruleRuntime.impl.ts)
+- [`ruleRuntime.impl.ts`](../packages/game-engine/src/rules/ruleRuntime.impl.ts)
   — `DEFAULT_IMPLEMENTATION_MAP`
-- [`ruleHooks.registry.ts`](../../packages/game-engine/src/rules/ruleHooks.registry.ts)
+- [`ruleHooks.registry.ts`](../packages/game-engine/src/rules/ruleHooks.registry.ts)
   — `getHooksForTrigger` (sort + filter authority)
-- [`ruleRuntime.ordering.test.ts`](../../packages/game-engine/src/rules/ruleRuntime.ordering.test.ts)
+- [`ruleRuntime.ordering.test.ts`](../packages/game-engine/src/rules/ruleRuntime.ordering.test.ts)
   — ordering tests
-- [`ruleRuntime.integration.test.ts`](../../packages/game-engine/src/rules/ruleRuntime.integration.test.ts)
+- [`ruleRuntime.integration.test.ts`](../packages/game-engine/src/rules/ruleRuntime.integration.test.ts)
   — integration tests
-- [`ruleHooks.contracts.test.ts`](../../packages/game-engine/src/rules/ruleHooks.contracts.test.ts)
+- [`ruleHooks.contracts.test.ts`](../packages/game-engine/src/rules/ruleHooks.contracts.test.ts)
   — contract tests
 
 ## History
@@ -276,18 +276,18 @@ plumbing.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
   — Rule Execution Pipeline (the canonical invariant statement);
   Move Validation Contract; Throwing Convention
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — Architectural
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — Architectural
   Principles #1 (determinism); WP-009A/B review notes
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) —
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) —
   `HookDefinition`, `ImplementationMap`, `executeRuleHooks`,
   `applyRuleEffects`, `RuleTriggerName`, `RuleEffectType`,
   `G.hookRegistry`
-- [`.claude/rules/code-style.md`](../../.claude/rules/code-style.md)
+- [`.claude/rules/code-style.md`](../.claude/rules/code-style.md)
   — Patterns to Avoid (no `.reduce()` in zone or effect application)
-- [WP-009A](../ai/work-packets/WP-009A-scheme-mastermind-rule-hooks-contracts.md),
-  [WP-009B](../ai/work-packets/WP-009B-rule-execution-minimal-mvp.md),
-  [WP-014A](../ai/work-packets/WP-014A-villain-reveal-pipeline.md),
-  [WP-024](../ai/work-packets/WP-024-scheme-mastermind-ability-execution.md)
+- [WP-009A](../docs/ai/work-packets/WP-009A-scheme-mastermind-rule-hooks-contracts.md),
+  [WP-009B](../docs/ai/work-packets/WP-009B-rule-execution-minimal-mvp.md),
+  [WP-014A](../docs/ai/work-packets/WP-014A-villain-reveal-pipeline.md),
+  [WP-024](../docs/ai/work-packets/WP-024-scheme-mastermind-ability-execution.md)

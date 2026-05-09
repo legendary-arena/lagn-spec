@@ -20,13 +20,13 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../../.claude/rules/game-engine.md
-  - ../../packages/game-engine/src/board/boardKeywords.types.ts
-  - ../../packages/game-engine/src/board/boardKeywords.logic.ts
-  - ../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
-  - ../ai/ARCHITECTURE.md
-  - ../ai/work-packets/WP-025-keywords-patrol-ambush-guard.md
-  - ../10-GLOSSARY.md
+  - ../.claude/rules/game-engine.md
+  - ../packages/game-engine/src/board/boardKeywords.types.ts
+  - ../packages/game-engine/src/board/boardKeywords.logic.ts
+  - ../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
+  - ../docs/ai/ARCHITECTURE.md
+  - ../docs/ai/work-packets/WP-025-keywords-patrol-ambush-guard.md
+  - ../docs/10-GLOSSARY.md
 last-reviewed: 2026-05-07
 ---
 
@@ -48,7 +48,7 @@ dispatchers that read the keyword.
 ### The closed union
 
 `BoardKeyword` in
-[`boardKeywords.types.ts`](../../packages/game-engine/src/board/boardKeywords.types.ts)
+[`boardKeywords.types.ts`](../packages/game-engine/src/board/boardKeywords.types.ts)
 is a three-value union with a canonical readonly array:
 
 ```ts
@@ -81,7 +81,7 @@ array, depending on the source); `getCardKeywords` normalizes to
 
 ### The helper API
 
-[`boardKeywords.logic.ts`](../../packages/game-engine/src/board/boardKeywords.logic.ts)
+[`boardKeywords.logic.ts`](../packages/game-engine/src/board/boardKeywords.logic.ts)
 exposes four pure helpers — none mutate state, none import
 `boardgame.io`, none use `.reduce()`:
 
@@ -125,7 +125,7 @@ applier dispatch in `applyRuleEffects`. The MVP took the
 inline-effect path instead: `revealVillainCard` calls `gainWound`
 directly when `hasAmbush` returns true, the same pattern used for
 escape-induced wounds. See
-[`boardKeywords.logic.ts`](../../packages/game-engine/src/board/boardKeywords.logic.ts)
+[`boardKeywords.logic.ts`](../packages/game-engine/src/board/boardKeywords.logic.ts)
 `hasAmbush` for the engine-source citation; D-2403 records the
 intent to migrate to a `gainWound` `RuleEffect` in a future WP.
 
@@ -195,18 +195,18 @@ intent to migrate to a `gainWound` `RuleEffect` in a future WP.
 
 ## Code Touchpoints
 
-- [`packages/game-engine/src/board/boardKeywords.types.ts`](../../packages/game-engine/src/board/boardKeywords.types.ts)
+- [`packages/game-engine/src/board/boardKeywords.types.ts`](../packages/game-engine/src/board/boardKeywords.types.ts)
   — `BoardKeyword` union, `BOARD_KEYWORDS` array
-- [`packages/game-engine/src/board/boardKeywords.logic.ts`](../../packages/game-engine/src/board/boardKeywords.logic.ts)
+- [`packages/game-engine/src/board/boardKeywords.logic.ts`](../packages/game-engine/src/board/boardKeywords.logic.ts)
   — `getCardKeywords`, `getPatrolModifier`, `isGuardBlocking`,
   `hasAmbush`
-- [`packages/game-engine/src/board/boardKeywords.logic.test.ts`](../../packages/game-engine/src/board/boardKeywords.logic.test.ts)
+- [`packages/game-engine/src/board/boardKeywords.logic.test.ts`](../packages/game-engine/src/board/boardKeywords.logic.test.ts)
   — helper tests
-- [`packages/game-engine/src/board/boardKeywords.integration.test.ts`](../../packages/game-engine/src/board/boardKeywords.integration.test.ts)
+- [`packages/game-engine/src/board/boardKeywords.integration.test.ts`](../packages/game-engine/src/board/boardKeywords.integration.test.ts)
   — integration tests
-- [`packages/game-engine/src/villainDeck/villainDeck.reveal.ts`](../../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
+- [`packages/game-engine/src/villainDeck/villainDeck.reveal.ts`](../packages/game-engine/src/villainDeck/villainDeck.reveal.ts)
   — Ambush inline dispatcher (Step 4 of the reveal pipeline)
-- [`packages/game-engine/src/setup/buildCardKeywords.ts`](../../packages/game-engine/src/setup/buildCardKeywords.ts)
+- [`packages/game-engine/src/setup/buildCardKeywords.ts`](../packages/game-engine/src/setup/buildCardKeywords.ts)
   — setup-time builder that populates `G.cardKeywords`
 
 ## History
@@ -215,13 +215,13 @@ intent to migrate to a `gainWound` `RuleEffect` in a future WP.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../../.claude/rules/game-engine.md)
+- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
   — Rule Execution Pipeline (clarifies why Ambush is inline rather
   than effect-routed); Zone Mutation Rules
-- [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md) — WP-025 review
+- [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-025 review
   notes; `G.cardKeywords` field
-- [`docs/10-GLOSSARY.md`](../10-GLOSSARY.md) — `BoardKeyword`,
+- [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) — `BoardKeyword`,
   `BOARD_KEYWORDS`, `Patrol`, `Guard`, `Ambush`, `G.cardKeywords`
-- [`docs/legendary-universal-rules-v23.md`](../legendary-universal-rules-v23.md)
+- [`docs/legendary-universal-rules-v23.md`](../docs/legendary-universal-rules-v23.md)
   — tabletop semantics for Patrol, Guard, and Ambush
-- [WP-025](../ai/work-packets/WP-025-keywords-patrol-ambush-guard.md)
+- [WP-025](../docs/ai/work-packets/WP-025-keywords-patrol-ambush-guard.md)

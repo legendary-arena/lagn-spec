@@ -4,7 +4,7 @@
     {{- range .items -}}
       {{- $dest := . -}}
       {{- if hasPrefix $dest "../" -}}
-        {{- $abs := path.Join "docs/wiki" $dest -}}
+        {{- $abs := path.Join "wiki" $dest -}}
         <li><a href="https://github.com/barefootbetters/legendary-arena/blob/main/{{ $abs }}"><code>{{ $dest }}</code></a></li>
       {{- else if or (hasPrefix $dest "http://") (hasPrefix $dest "https://") -}}
         <li><a href="{{ $dest | safeURL }}"><code>{{ $dest }}</code></a></li>

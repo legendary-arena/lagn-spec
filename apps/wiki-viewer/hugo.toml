@@ -2,7 +2,7 @@
 # rejected for build cost vs zero feature lift). The five constraints in
 # WP-139 §Decisions / D-13808 are encoded as: pure markdown content (no MDX
 # extension enabled), build-time only (no runtime backend), in-tree source
-# (docs/wiki/ projection only), explicit external-link strategy via render
+# (wiki/ projection only), explicit external-link strategy via render
 # hook (D-13809), reserved-file handling via projection (D-13810).
 # why: determinism knobs — enableGitInfo=false stops Hugo from embedding
 # commit-derived `lastmod` fields into HTML (any HEAD move would break the

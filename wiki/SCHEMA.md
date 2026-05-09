@@ -1,6 +1,6 @@
 # Engineering Wiki — Schema
 
-> **The contract for every page under `docs/wiki/`.**
+> **The contract for every page under `wiki/`.**
 > If a page violates this schema, the page is wrong — not the schema.
 >
 > **Last updated:** 2026-05-07
@@ -22,8 +22,8 @@ The wiki exists to answer:
 - *"What does X interact with, and what edge cases bite?"*
 
 It is **not** a player-facing reference, a replacement for the
-[Glossary](../10-GLOSSARY.md), or a substitute for
-[ARCHITECTURE.md](../ai/ARCHITECTURE.md), [DECISIONS.md](../ai/DECISIONS.md),
+[Glossary](../docs/10-GLOSSARY.md), or a substitute for
+[ARCHITECTURE.md](../docs/ai/ARCHITECTURE.md), [DECISIONS.md](../docs/ai/DECISIONS.md),
 or Work Packets.
 
 ---
@@ -32,8 +32,8 @@ or Work Packets.
 
 The wiki is **documentation**. It cites authoritative sources; it does
 not redefine them. The full authority hierarchy is in
-[`.claude/CLAUDE.md`](../../.claude/CLAUDE.md) and
-[`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md):
+[`.claude/CLAUDE.md`](../.claude/CLAUDE.md) and
+[`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md):
 
 ```
 1. .claude/CLAUDE.md
@@ -53,7 +53,7 @@ rules, or decisions.
 ### Wiki vs Glossary
 
 - **Glossary entry** = one-line canonical definition (one row in a
-  table). Lives in [10-GLOSSARY.md](../10-GLOSSARY.md). Authoritative
+  table). Lives in [10-GLOSSARY.md](../docs/10-GLOSSARY.md). Authoritative
   for *terminology*.
 - **Wiki page** = multi-section article with mechanics, interactions,
   edge cases, and citations. Authoritative for *nothing* — it cites
@@ -79,11 +79,11 @@ it does not govern it.
 A wiki page MUST NOT:
 
 - **Redefine rules** from `.claude/CLAUDE.md`, `.claude/rules/*.md`,
-  [`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md), or
-  [`docs/01-VISION.md`](../01-VISION.md). The wiki cites these; they
+  [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md), or
+  [`docs/01-VISION.md`](../docs/01-VISION.md). The wiki cites these; they
   remain authoritative.
 - **Contain policy or design decisions.** All architectural / design /
-  governance decisions live in [DECISIONS.md](../ai/DECISIONS.md). The
+  governance decisions live in [DECISIONS.md](../docs/ai/DECISIONS.md). The
   wiki may *reference* a decision; it never *makes* one.
 - **Serve as execution instruction.** The wiki is not an Execution
   Checklist or Work Packet. No "run this command", no "do this then
@@ -102,7 +102,7 @@ doc and cite it from the wiki, or (b) delete it.
 ## File Layout
 
 ```
-docs/wiki/
+wiki/
 ├── SCHEMA.md           # this file — the contract
 ├── README.md           # purpose, conventions, authority
 ├── INDEX.md            # categorized list of all pages
@@ -110,7 +110,7 @@ docs/wiki/
 ```
 
 `SCHEMA.md`, `README.md`, and `INDEX.md` are reserved filenames. All
-other `*.md` files in `docs/wiki/` are entity pages and must conform to
+other `*.md` files in `wiki/` are entity pages and must conform to
 this schema.
 
 There are **no subdirectories**. Categorization is by `type` /
@@ -135,7 +135,7 @@ unmanageable directory.
   - `title: Master Strike` → `master-strike.md`
   - `title: HQ` → `hq.md`
     (abbreviations acceptable when canonical in
-    [10-GLOSSARY.md](../10-GLOSSARY.md))
+    [10-GLOSSARY.md](../docs/10-GLOSSARY.md))
   - `title: CardExtId` → `cardextid.md`
 - **Singular by default** — `master-strike.md`, not
   `master-strikes.md`.
@@ -143,7 +143,7 @@ unmanageable directory.
   the filesystem.
 - **No spaces, no underscores, no special characters** other than
   hyphens. This matches the project's `slug` rule
-  (see [10-GLOSSARY.md](../10-GLOSSARY.md) "Slugs use hyphens only")
+  (see [10-GLOSSARY.md](../docs/10-GLOSSARY.md) "Slugs use hyphens only")
   and avoids Windows shell quoting and URL-encoding hazards.
 - **Reserved files are ALL-CAPS** — `SCHEMA.md`, `README.md`,
   `INDEX.md` (matches `WORK_INDEX.md` / `DECISIONS.md` convention).
@@ -157,11 +157,11 @@ is the page's **machine-readable contract**: title, classification,
 relationships, and provenance.
 
 > **Wiki-only convention.** YAML front-matter is adopted *only* in
-> `docs/wiki/`. It is not the convention for other docs in this repo
+> `wiki/`. It is not the convention for other docs in this repo
 > and must not spread into governance documents
-> ([`docs/ai/ARCHITECTURE.md`](../ai/ARCHITECTURE.md),
-> [`docs/01-VISION.md`](../01-VISION.md),
-> [`docs/ai/DECISIONS.md`](../ai/DECISIONS.md), `.claude/rules/*.md`,
+> ([`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md),
+> [`docs/01-VISION.md`](../docs/01-VISION.md),
+> [`docs/ai/DECISIONS.md`](../docs/ai/DECISIONS.md), `.claude/rules/*.md`,
 > Work Packets, ECs). Those continue to use the existing
 > `# Title` + `> **Last updated:**` header pattern.
 
@@ -176,9 +176,9 @@ related:
   - rule-execution-pipeline.md
 status: canonical
 source:
-  - ../ai/ARCHITECTURE.md#section-2-data-flow
-  - ../10-GLOSSARY.md
-  - ../legendary-universal-rules-v23.md
+  - ../docs/ai/ARCHITECTURE.md#section-2-data-flow
+  - ../docs/10-GLOSSARY.md
+  - ../docs/legendary-universal-rules-v23.md
 last-reviewed: 2026-05-07
 ---
 ```
@@ -275,7 +275,7 @@ first.
 A page with **any uncited factual claim** about engine behaviour, data
 shape, or rules is `draft` until the claim is sourced. This is the
 most common reason to mark a page `draft`. *"It works this way"* is
-not a citation; *"per [ARCHITECTURE.md §Section 4](../ai/ARCHITECTURE.md#section-4--game-state-shape)"* is.
+not a citation; *"per [ARCHITECTURE.md §Section 4](../docs/ai/ARCHITECTURE.md#section-4--game-state-shape)"* is.
 
 ---
 
@@ -294,19 +294,20 @@ See [Master Strike](master-strike.md) for the trigger semantics.
 Use markdown relative paths from the wiki page to the artifact:
 
 ```markdown
-- [ARCHITECTURE.md §Layer Boundary](../ai/ARCHITECTURE.md#layer-boundary-authoritative)
-- [WP-026 — Scheme Setup](../ai/work-packets/WP-026-scheme-setup.md)
-- [DECISIONS.md D-2601](../ai/DECISIONS.md#d-2601)
-- [10-GLOSSARY.md](../10-GLOSSARY.md)
-- [zoneOps.ts](../../packages/game-engine/src/zones/zoneOps.ts)
-- [data/cards/mdns.json](../../data/cards/mdns.json)
+- [ARCHITECTURE.md §Layer Boundary](../docs/ai/ARCHITECTURE.md#layer-boundary-authoritative)
+- [WP-026 — Scheme Setup](../docs/ai/work-packets/WP-026-scheme-setup.md)
+- [DECISIONS.md D-2601](../docs/ai/DECISIONS.md#d-2601)
+- [10-GLOSSARY.md](../docs/10-GLOSSARY.md)
+- [zoneOps.ts](../packages/game-engine/src/zones/zoneOps.ts)
+- [data/cards/mdns.json](../data/cards/mdns.json)
 ```
 
 The path is relative to the *current page's* location
-(`docs/wiki/<slug>.md`), so:
+(`wiki/<slug>.md`), so:
 
-- Up one level → repo `docs/` (`../`)
-- Up two levels → repo root (`../../`)
+- Up one level → repo root (`../`)
+- For files that live under `docs/`, use `../docs/<…>` (e.g.,
+  `../docs/ai/ARCHITECTURE.md`, `../docs/10-GLOSSARY.md`)
 
 ### Forbidden link styles
 
@@ -430,7 +431,7 @@ relevant WP or code comment instead.
 
 - Single-use helpers or one-off implementation details
 - Card-specific text (cards live in `data/cards/*.json`)
-- Game design rationale (that's [DECISIONS.md](../ai/DECISIONS.md))
+- Game design rationale (that's [DECISIONS.md](../docs/ai/DECISIONS.md))
 - WIP features not yet landed in `main`
 
 ---
@@ -473,16 +474,16 @@ the replacement.
 
 ## Publish / Sync Boundary
 
-`docs/wiki/` is the **authoring location** and the only place where
+`wiki/` is the **authoring location** and the only place where
 wiki content is edited.
 
 If wiki content is ever published to a rendered site (Hugo,
 Docusaurus, hand-rolled, etc.), the published copy is a **read-only
-projection** of `docs/wiki/`:
+projection** of `wiki/`:
 
 - No edits in the published layer.
-- Any drift between `docs/wiki/` and the publish target is resolved
-  by re-projecting from `docs/wiki/`, never by hand-editing the
+- Any drift between `wiki/` and the publish target is resolved
+  by re-projecting from `wiki/`, never by hand-editing the
   publish target.
 - The publish pipeline is allowed to transform (slugify URLs,
   rewrite link targets, generate indexes); it is not allowed to
@@ -507,7 +508,7 @@ The schema is structured so that a future lint script could verify:
 - Filename equals the deterministic kebab-case transformation of the
   front-matter `title` (per [File Naming](#file-naming)).
 - If the front-matter `title` matches a row in
-  [10-GLOSSARY.md](../10-GLOSSARY.md), it matches verbatim
+  [10-GLOSSARY.md](../docs/10-GLOSSARY.md), it matches verbatim
   (case-sensitive).
 - All paths in `related` and `source` resolve to existing files.
 - All in-body markdown links resolve to existing files / anchors.
