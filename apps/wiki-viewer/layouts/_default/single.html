@@ -1,0 +1,25 @@
+{{ define "main" }}
+  {{- /*
+  why: front-matter field surface lock per WP-139 §Locked Values / EC-142
+  §Required `// why:` Comments anchor 6. The metadata-panel partial renders
+  exactly the six locked fields: type, status, tags, last-reviewed, related,
+  source. Adding new fields silently expands the schema's rendered surface
+  and risks drifting from docs/wiki/SCHEMA.md §Front-Matter Format. New
+  fields require a SCHEMA.md amendment first, never a template-side widening.
+  */ -}}
+  <article class="entity">
+    <h1>{{ .Title }}</h1>
+    {{- if .Params.type -}}
+      {{ partial "metadata-panel.html" . }}
+    {{- end -}}
+    <div class="body">
+      {{ .Content }}
+    </div>
+    {{- with .Params.related -}}
+      {{ partial "related.html" (dict "items" . "page" $.Page) }}
+    {{- end -}}
+    {{- with .Params.source -}}
+      {{ partial "source-citations.html" (dict "items" . "page" $.Page) }}
+    {{- end -}}
+  </article>
+{{ end }}

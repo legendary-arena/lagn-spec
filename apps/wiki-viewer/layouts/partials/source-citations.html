@@ -1,0 +1,17 @@
+<section class="sources">
+  <h2>Sources</h2>
+  <ul class="source-list">
+    {{- range .items -}}
+      {{- $dest := . -}}
+      {{- if hasPrefix $dest "../" -}}
+        {{- $abs := path.Join "docs/wiki" $dest -}}
+        <li><a href="https://github.com/barefootbetters/legendary-arena/blob/main/{{ $abs }}"><code>{{ $dest }}</code></a></li>
+      {{- else if or (hasPrefix $dest "http://") (hasPrefix $dest "https://") -}}
+        <li><a href="{{ $dest | safeURL }}"><code>{{ $dest }}</code></a></li>
+      {{- else -}}
+        {{- $slug := strings.TrimSuffix ".md" $dest -}}
+        <li><a href="/wiki/{{ lower $slug }}/"><code>{{ $dest }}</code></a></li>
+      {{- end -}}
+    {{- end -}}
+  </ul>
+</section>

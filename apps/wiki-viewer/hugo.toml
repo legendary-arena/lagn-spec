@@ -1,0 +1,46 @@
+# why: D-13808 selects Hugo Extended (Docusaurus rejected for MDX risk; custom
+# rejected for build cost vs zero feature lift). The five constraints in
+# WP-139 §Decisions / D-13808 are encoded as: pure markdown content (no MDX
+# extension enabled), build-time only (no runtime backend), in-tree source
+# (docs/wiki/ projection only), explicit external-link strategy via render
+# hook (D-13809), reserved-file handling via projection (D-13810).
+# why: determinism knobs — enableGitInfo=false stops Hugo from embedding
+# commit-derived `lastmod` fields into HTML (any HEAD move would break the
+# byte-identical output lock); disableKinds removes RSS / sitemap / taxonomy
+# outputs that can embed timestamps. Two consecutive `pnpm wiki-viewer:build`
+# invocations must produce identical *.html + *.css per WP-139 Verification
+# Step 2.
+
+baseURL = "https://legendary-arena-wiki.example.invalid/"
+title = "Legendary Arena Engineering Wiki"
+languageCode = "en-us"
+
+enableGitInfo = false
+disableKinds = ["RSS", "sitemap", "taxonomy", "term"]
+disableHugoGeneratorInject = true
+
+[markup]
+  # why: disable syntax highlighting on fenced code blocks — Chroma's inline
+  # CSS output is non-deterministic across consecutive builds (the
+  # `-webkit-text-size-adjust:none` rule and per-cell `style=text-align:left`
+  # for tables flip between identical builds). Plain `<pre><code>` blocks
+  # render the markdown ```ts``` content deterministically with zero loss of
+  # readability for an engineering reference. Re-enabling highlighting in a
+  # future WP requires a class-based theme + a stable Chroma config.
+  [markup.highlight]
+    codeFences = false
+    noClasses = true
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+    [markup.goldmark.parser]
+      autoHeadingID = true
+      autoHeadingIDType = "github"
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+
+[outputs]
+  home = ["HTML"]
+  section = ["HTML"]
+  page = ["HTML"]

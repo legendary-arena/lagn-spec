@@ -12,6 +12,11 @@
     "viewer:dev":           "pnpm --filter registry-viewer dev",
     "viewer:build":         "pnpm registry:build && pnpm --filter registry-viewer build",
 
+    "wiki-viewer:project":     "node apps/wiki-viewer/scripts/project-wiki.mjs",
+    "wiki-viewer:check-links": "node apps/wiki-viewer/scripts/check-links.mjs",
+    "wiki-viewer:build":       "pnpm run wiki-viewer:project && pnpm run wiki-viewer:check-links && hugo --source apps/wiki-viewer --minify",
+    "wiki-viewer:dev":         "pnpm run wiki-viewer:project && hugo server --source apps/wiki-viewer --port 1313",
+
     "migrate":              "node --env-file=.env scripts/migrate.mjs",
 
     "check":                "node --env-file=.env scripts/check-connections.mjs",

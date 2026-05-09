@@ -83,6 +83,28 @@ services:
       - key: PUBLIC_BASE_URL
         sync: false
 
+  # Engineering Wiki — Hugo-built read-only projection of docs/wiki/.
+  # why: Static-site posture per WP-139 / D-13811. Builds the wiki content
+  # projection + link integrity + Hugo render at deploy time. Layer-boundary
+  # clean — does not import or run any engine/registry/server code; the
+  # buildCommand only touches apps/wiki-viewer/ and docs/wiki/. Hugo version
+  # is pinned in apps/wiki-viewer/.hugo-version (D-13808 + Open Decision C).
+  - type: web
+    name: legendary-arena-wiki
+    runtime: static
+    buildCommand: |
+      curl -sL "https://github.com/gohugoio/hugo/releases/download/v$(cat apps/wiki-viewer/.hugo-version)/hugo_extended_$(cat apps/wiki-viewer/.hugo-version)_linux-amd64.tar.gz" | tar -xz hugo
+      ./hugo version
+      pnpm install --filter . --frozen-lockfile=false
+      node apps/wiki-viewer/scripts/project-wiki.mjs
+      node apps/wiki-viewer/scripts/check-links.mjs
+      ./hugo --source apps/wiki-viewer --minify
+    staticPublishPath: apps/wiki-viewer/public
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+
 databases:
   # Managed PostgreSQL — rules engine backing store
   - name: legendary-arena-db

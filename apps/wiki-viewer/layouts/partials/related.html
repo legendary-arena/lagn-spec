@@ -1,0 +1,15 @@
+{{- $page := .page -}}
+<section class="related">
+  <h2>Related</h2>
+  <ul class="related-list">
+    {{- range .items -}}
+      {{- $slug := strings.TrimSuffix ".md" . -}}
+      {{- $href := printf "/wiki/%s/" (lower $slug) -}}
+      {{- $label := $slug -}}
+      {{- with $page.GetPage (printf "/wiki/%s" $slug) -}}
+        {{- $label = .Title -}}
+      {{- end -}}
+      <li><a href="{{ $href | safeURL }}">{{ $label }}</a></li>
+    {{- end -}}
+  </ul>
+</section>

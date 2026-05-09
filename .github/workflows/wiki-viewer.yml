@@ -1,0 +1,91 @@
+name: wiki-viewer
+
+# why: trigger on docs/wiki/ or apps/wiki-viewer/ touches per WP-139 §Open
+# Decision G default. Render auto-deploys from the static_site service in
+# render.yaml on push to main; this workflow is the CI-side gate that runs
+# the link-integrity check + Hugo build BEFORE the deploy.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/wiki/**'
+      - 'apps/wiki-viewer/**'
+      - '.github/workflows/wiki-viewer.yml'
+  pull_request:
+    paths:
+      - 'docs/wiki/**'
+      - 'apps/wiki-viewer/**'
+      - '.github/workflows/wiki-viewer.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read pinned Hugo version
+        id: hugo
+        run: echo "version=$(cat apps/wiki-viewer/.hugo-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Install Hugo Extended
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ steps.hugo.outputs.version }}
+          extended: true
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Project wiki content
+        run: pnpm wiki-viewer:project
+
+      - name: Check internal links
+        run: pnpm wiki-viewer:check-links
+
+      - name: Build site
+        run: hugo --source apps/wiki-viewer --minify
+
+      - name: Determinism check (two consecutive builds byte-identical)
+        run: |
+          set -e
+          first_hash=$(find apps/wiki-viewer/public -type f \( -name '*.html' -o -name '*.css' \) -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}')
+          rm -rf apps/wiki-viewer/public
+          pnpm wiki-viewer:project
+          hugo --source apps/wiki-viewer --minify
+          second_hash=$(find apps/wiki-viewer/public -type f \( -name '*.html' -o -name '*.css' \) -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}')
+          if [ "$first_hash" != "$second_hash" ]; then
+            echo "Determinism check FAILED: byte-identical output not produced across two consecutive builds." >&2
+            echo "First hash:  $first_hash" >&2
+            echo "Second hash: $second_hash" >&2
+            exit 1
+          fi
+          echo "Determinism check passed: $first_hash"
+
+      - name: Production output is JS-free
+        run: |
+          set -e
+          if grep -RIl '<script' apps/wiki-viewer/public/ ; then
+            echo "Production output contains <script> tags — JS-free invariant violated." >&2
+            exit 1
+          fi
+          echo "Production output is JS-free."
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wiki-viewer-public
+          path: apps/wiki-viewer/public/
+          retention-days: 7

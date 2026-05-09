@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} — {{ end }}{{ .Site.Title }}{{ end }}</title>
+  {{- $css := resources.Get "css/style.css" -}}
+  {{- if $css -}}
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+  {{- end -}}
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/wiki/">Legendary Arena Engineering Wiki</a>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav>
+        <h2 class="sidebar-heading"><a href="/wiki/">Index</a></h2>
+        {{- $entityPages := where (where .Site.RegularPages "Section" "wiki") "Params.type" "ne" nil -}}
+        {{- range ($entityPages.GroupByParam "type") -}}
+          <h3 class="sidebar-section">{{ .Key }}</h3>
+          <ul class="sidebar-list">
+          {{- range sort .Pages "Title" -}}
+            <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+          {{- end -}}
+          </ul>
+        {{- end -}}
+      </nav>
+    </aside>
+    <main class="content">
+      {{ block "main" . }}{{ end }}
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<dl class="metadata-panel">
+  {{- with .Params.type -}}
+    <dt>Type</dt><dd>{{ . }}</dd>
+  {{- end -}}
+  {{- with .Params.status -}}
+    <dt>Status</dt><dd class="status status-{{ . }}">{{ . }}</dd>
+  {{- end -}}
+  {{- with .Params.tags -}}
+    <dt>Tags</dt>
+    <dd>
+      <ul class="tag-list">
+        {{- range . -}}
+          <li class="tag">{{ . }}</li>
+        {{- end -}}
+      </ul>
+    </dd>
+  {{- end -}}
+  {{- with .Params.last_reviewed -}}
+    <dt>Last reviewed</dt><dd>{{ . }}</dd>
+  {{- else -}}
+    {{- with index .Params "last-reviewed" -}}
+      <dt>Last reviewed</dt><dd>{{ . }}</dd>
+    {{- end -}}
+  {{- end -}}
+</dl>
