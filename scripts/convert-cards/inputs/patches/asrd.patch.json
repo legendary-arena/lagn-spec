@@ -25,6 +25,12 @@
             "[hc:instinct]: You get +1[icon:attack] for every 4 Heroes in the KO pile."
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "dragonfang",
+          "flying-stallion"
+        ]
       ]
     },
     {
@@ -38,6 +44,42 @@
             "[hc:instinct]: Instead, [keyword:Conqueror]"
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "fandral-the-dashing",
+          "hogun-the-grim"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "beta-ray-bill",
+      "_skipPair": [
+        [
+          "bio-engineered-cyborg",
+          "hope-of-the-korbinites"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "lady-sif",
+      "_skipPair": [
+        [
+          "dimensional-blade",
+          "weapons-master"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "thor",
+      "_skipPair": [
+        [
+          "divine-lightning",
+          "test-of-virtue"
+        ]
       ]
     }
   ],

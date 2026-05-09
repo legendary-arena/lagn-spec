@@ -20,6 +20,12 @@
           "slug": "the-eye-of-agamotto",
           "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "keeper-of-the-sanctum",
+          "wand-of-watoomb"
+        ]
       ]
     },
     {
@@ -42,6 +48,12 @@
           "slug": "posessed-by-brothers-spirit",
           "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "commune-with-the-spirit-world",
+          "medallion-of-many-loas"
+        ]
       ]
     },
     {
@@ -64,6 +76,12 @@
           "slug": "the-purple-gem",
           "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "demonic-descendant",
+          "prepare-dark-magic"
+        ]
       ]
     },
     {
@@ -86,6 +104,12 @@
           "slug": "the-orb-of-agamotto",
           "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "astral-confrontation",
+          "teachings-of-kamar-taj"
+        ]
       ]
     },
     {
@@ -108,6 +132,12 @@
           "slug": "the-book-of-the-vishanti",
           "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "hoggoth",
+          "oshtur"
+        ]
       ]
     }
   ],

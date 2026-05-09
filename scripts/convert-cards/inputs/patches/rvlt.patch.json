@@ -1,0 +1,94 @@
+{
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "captain-marvel-agent-of-shield",
+      "_skipPair": [
+        [
+          "radiant-blast",
+          "the-sword-of-shield"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "darkhawk",
+      "_skipPair": [
+        [
+          "balance-the-darkforce",
+          "hawk-dive"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "hellcat",
+      "_skipPair": [
+        [
+          "catlike-agility",
+          "part-time-pi"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "photon",
+      "_skipPair": [
+        [
+          "infrared-conversation",
+          "ultraviolet-radiation"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "quicksilver",
+      "_skipPair": [
+        [
+          "perpetual-motion",
+          "too-fast-to-see"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ronin",
+      "_skipPair": [
+        [
+          "mysterious-identity",
+          "storm-of-arrows"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "scarlet-witch",
+      "_skipPair": [
+        [
+          "alter-reality",
+          "hex-bolt"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "speed",
+      "_skipPair": [
+        [
+          "accelerate",
+          "speedy-delivery"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "war-machine",
+      "_skipPair": [
+        [
+          "military-industrial-complex",
+          "simulated-target-practice"
+        ]
+      ]
+    }
+  ]
+}

@@ -247,25 +247,25 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-solve-the-impossible.webp",
-          "sides": [
-            "solve-the-impossible"
-          ]
-        },
-        {
-          "id": "p2",
-          "count": 5,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-gamma-bomb-disaster.webp",
           "sides": [
             "gamma-bomb-disaster"
           ]
         },
         {
-          "id": "p3",
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-savage-hulk-unleashed.webp",
           "sides": [
             "savage-hulk-unleashed"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-bruce-banner-solve-the-impossible.webp",
+          "sides": [
+            "solve-the-impossible"
           ]
         },
         {
@@ -540,17 +540,17 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-seize-the-throne.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-hulk-is-king.webp",
           "sides": [
-            "seize-the-throne"
+            "hulk-is-king"
           ]
         },
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-hulk-is-king.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-gladiator-hulk-seize-the-throne.webp",
           "sides": [
-            "hulk-is-king"
+            "seize-the-throne"
           ]
         },
         {
@@ -673,9 +673,9 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-seek-redemption.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-hiroim-redeemed.webp",
           "sides": [
-            "seek-redemption"
+            "hiroim-redeemed"
           ]
         },
         {
@@ -689,9 +689,9 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-hiroim-redeemed.webp",
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-hiroim-seek-redemption.webp",
           "sides": [
-            "hiroim-redeemed"
+            "seek-redemption"
           ]
         },
         {
@@ -1518,33 +1518,33 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-surprise-attack.webp",
-          "sides": [
-            "surprise-attack"
-          ]
-        },
-        {
-          "id": "p2",
-          "count": 5,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-appetite-for-destruction.webp",
           "sides": [
             "appetite-for-destruction"
           ]
         },
         {
-          "id": "p3",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-bursting-with-life.webp",
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-surprise-attack.webp",
           "sides": [
-            "bursting-with-life"
+            "surprise-attack"
           ]
         },
         {
-          "id": "p4",
+          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-torrent-of-broodlings.webp",
           "sides": [
             "torrent-of-broodlings"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-no-name-brood-queen-bursting-with-life.webp",
+          "sides": [
+            "bursting-with-life"
           ]
         },
         {
@@ -1698,25 +1698,25 @@
         {
           "id": "p1",
           "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-captain-marvel.webp",
+          "sides": [
+            "captain-marvel"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-hacktivist.webp",
           "sides": [
             "hacktivist"
           ]
         },
         {
-          "id": "p2",
+          "id": "p3",
           "count": 5,
           "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-seek-the-nega-bands.webp",
           "sides": [
             "seek-the-nega-bands"
-          ]
-        },
-        {
-          "id": "p3",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/wwhk/wwhk-hr-rick-jones-captain-marvel.webp",
-          "sides": [
-            "captain-marvel"
           ]
         },
         {

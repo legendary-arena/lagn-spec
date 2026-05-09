@@ -154,6 +154,23 @@
           "slug": "blazing-fists",
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-4c2.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "blazing-fists",
+            "blazing-flare"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "northern-lights"
+          ]
+        }
       ]
     },
     {
@@ -167,6 +184,23 @@
         {
           "slug": "fastball-special",
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-4c2.webp"
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "fastball-special"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "reliable",
+            "unpredictable"
+          ]
         }
       ]
     },
@@ -190,6 +224,142 @@
           "slug": "channel-fire",
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-5u.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "bend-light",
+            "bend-steel"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "sides": [
+            "channel-fire",
+            "channel-time"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "split-eardrums",
+            "split-personality"
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "banshee",
+      "_skipPair": [
+        [
+          "sonar-detection",
+          "speed-of-sound"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "beast",
+      "_skipPair": [
+        [
+          "captivating-conundrum",
+          "furry-fury"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "cannonball",
+      "_skipPair": [
+        [
+          "carry-to-the-air",
+          "kinetic-blast-field"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "dazzler",
+      "_skipPair": [
+        [
+          "convert-sound-to-light",
+          "dazzling-glamour"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "havok",
+      "_skipPair": [
+        [
+          "blinding-burst",
+          "unleash-havok"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "jubilee",
+      "_skipPair": [
+        [
+          "blasting-fireworks",
+          "light-a-spark"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "kitty-pryde",
+      "_skipPair": [
+        [
+          "going-through-a-phase",
+          "intangible-qualities"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "longshot",
+      "_skipPair": [
+        [
+          "flurry-of-blades",
+          "fortune-favors-the-bold"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "phoenix",
+      "_skipPair": [
+        [
+          "life-death-incarnate",
+          "obliterating-fire"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "polaris",
+      "_skipPair": [
+        [
+          "electromagnetic-pulse",
+          "ride-the-magnetic-waves"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "psylocke",
+      "_skipPair": [
+        [
+          "precognition",
+          "psychic-knife"
+        ]
       ]
     }
   ]

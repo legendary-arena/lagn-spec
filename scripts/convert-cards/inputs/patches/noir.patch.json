@@ -61,5 +61,57 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "angel-noir",
+      "_skipPair": [
+        [
+          "impetuous-dive",
+          "multitalented"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "daredevil-noir",
+      "_skipPair": [
+        [
+          "balancing-act",
+          "listen-for-heartbeats"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "iron-man-noir",
+      "_skipPair": [
+        [
+          "mechanized-plate-mail",
+          "steam-powered-arsenal"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "luke-cage-noir",
+      "_skipPair": [
+        [
+          "follow-big-leads",
+          "private-investigations"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "spider-man-noir",
+      "_skipPair": [
+        [
+          "gumshoes-revolver",
+          "webs-of-darkness"
+        ]
+      ]
+    }
   ]
 }

@@ -105,29 +105,22 @@
         {
           "id": "p1",
           "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-fists-blazing-flare.webp",
+          "sides": [
+            "blazing-fists",
+            "blazing-flare"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-northern-lights.webp",
           "sides": [
             "northern-lights"
           ]
         },
         {
-          "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-flare.webp",
-          "sides": [
-            "blazing-flare"
-          ]
-        },
-        {
           "id": "p3",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-fists.webp",
-          "sides": [
-            "blazing-fists"
-          ]
-        },
-        {
-          "id": "p4",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-twin-blast.webp",
           "sides": [
@@ -135,7 +128,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-mach-10.webp",
           "sides": [
@@ -591,29 +584,22 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-reliable.webp",
-          "sides": [
-            "reliable"
-          ]
-        },
-        {
-          "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-unpredictable.webp",
-          "sides": [
-            "unpredictable"
-          ]
-        },
-        {
-          "id": "p3",
-          "count": 5,
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-fastball-special.webp",
           "sides": [
             "fastball-special"
           ]
         },
         {
-          "id": "p4",
+          "id": "p2",
+          "count": 5,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-reliable-unpredictable.webp",
+          "sides": [
+            "reliable",
+            "unpredictable"
+          ]
+        },
+        {
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-insane-disregard-for-danger.webp",
           "sides": [
@@ -621,7 +607,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-uncanny-x-men.webp",
           "sides": [
@@ -1215,53 +1201,32 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-steel.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-light-bend-steel.webp",
           "sides": [
+            "bend-light",
             "bend-steel"
           ]
         },
         {
           "id": "p2",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-light.webp",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-fire-channel-time.webp",
           "sides": [
-            "bend-light"
+            "channel-fire",
+            "channel-time"
           ]
         },
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-personality.webp",
+          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-eardrums-split-personality.webp",
           "sides": [
+            "split-eardrums",
             "split-personality"
           ]
         },
         {
           "id": "p4",
-          "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-eardrums.webp",
-          "sides": [
-            "split-eardrums"
-          ]
-        },
-        {
-          "id": "p5",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-time.webp",
-          "sides": [
-            "channel-time"
-          ]
-        },
-        {
-          "id": "p6",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-fire.webp",
-          "sides": [
-            "channel-fire"
-          ]
-        },
-        {
-          "id": "p7",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-maelstrom-of-clashing-powers.webp",
           "sides": [

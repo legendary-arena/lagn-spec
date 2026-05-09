@@ -26,6 +26,52 @@
           "slug": "i-am-groot",
           "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "prune-the-growths",
+          "surviving-sprig"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "drax-the-destroyer",
+      "_skipPair": [
+        [
+          "interstellar-tracker",
+          "knives-of-the-hunter"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "gamora",
+      "_skipPair": [
+        [
+          "bounty-hunter",
+          "deadliest-woman-in-the-universe"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "rocket-raccoon",
+      "_skipPair": [
+        [
+          "gritty-scavenger",
+          "trigger-happy"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "star-lord",
+      "_skipPair": [
+        [
+          "element-guns",
+          "legendary-outlaw"
+        ]
       ]
     }
   ],

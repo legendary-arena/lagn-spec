@@ -79,6 +79,12 @@
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to draw two cards."
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "queen-of-the-inhumans",
+          "splitting-hairs"
+        ]
       ]
     },
     {
@@ -116,6 +122,12 @@
             "Reveal the top four cards of your deck. Put a [hc:strength] Hero, a [hc:instinct] Hero, a [hc:covert] Hero, and a [hc:ranged] Hero from among them into your hand. Put the rest back in any order."
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "earth-air-fire-and-water",
+          "master-the-four-elements"
+        ]
       ]
     },
     {
@@ -154,6 +166,12 @@
             "Whenever you play a card this turn, including this one, you may first use that card's \"When Recruited\" ability."
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "brilliant-strategist",
+          "find-fatal-flaw"
+        ]
       ]
     },
     {
@@ -193,6 +211,12 @@
             "[team:inhumans]: [keyword:Abomination]"
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "lockjaw-inhumans-best-friend",
+          "stomping-shockwave"
+        ]
       ]
     }
   ],

@@ -52,5 +52,64 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "ant-man",
+      "_skipPair": [
+        [
+          "ride-the-ants",
+          "risky-science"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "black-knight",
+      "_skipPair": [
+        [
+          "amulet-of-avalon",
+          "defend-the-weak"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "jocasta",
+      "_skipPair": [
+        [
+          "creation-of-ultron",
+          "reprocess"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "wonder-man",
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "absorb-ambient-power"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "ionic-energy"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 5,
+          "sides": [
+            "one-hit-wonder"
+          ]
+        }
+      ]
+    }
   ]
 }

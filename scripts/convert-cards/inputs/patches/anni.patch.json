@@ -21,6 +21,12 @@
           "name": "Protege of Dr. Doom",
           "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "borrow-from-the-future",
+          "time-loop-experiments"
+        ]
       ]
     },
     {
@@ -59,6 +65,12 @@
             "[keyword:Focus] 5[icon:recruit] [icon:5] You get +7[icon:attack] usable only against the Mastermind."
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "human-torch",
+          "thing"
+        ]
       ]
     },
     {
@@ -88,6 +100,12 @@
           "slug": "galactus-hungers",
           "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-10r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "firelord",
+          "silver-surfer"
+        ]
       ]
     },
     {
@@ -126,6 +144,12 @@
             "[team:fantastic-four][team:fantastic-four]: [keyword:Man/Woman Out of Time]"
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "avert-future-tragedy",
+          "interdimensional-rescue"
+        ]
       ]
     },
     {
@@ -164,6 +188,12 @@
             "You may gain a Wound. If you do, get [keyword:Rooftops] [keyword:Conqueror] 4."
           ]
         }
+      ],
+      "_skipPair": [
+        [
+          "rock-solid",
+          "stretching-credibility"
+        ]
       ]
     }
   ],

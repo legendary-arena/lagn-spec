@@ -784,9 +784,14 @@ function applyPatch(result, setAbbr) {
           target.slug = fields._slug;
         }
 
-        // Merge top-level fields (except slug, _slug, cards — handle separately)
+        // Merge top-level fields (except slug, cards, and any underscore-prefixed
+        // meta-fields). The underscore-prefix exclusion covers _slug (handled above),
+        // _skipPair (consumed by buildPhysicalCards under D-13901), and any future
+        // patch-only annotations — these MUST NOT leak into the output JSON since
+        // they're authoring directives, not registry data. Real card-data fields
+        // never use the underscore-prefix convention.
         for (const [key, val] of Object.entries(fields)) {
-          if (key === 'slug' || key === '_slug' || key === 'cards') continue;
+          if (key === 'slug' || key === 'cards' || key.startsWith('_')) continue;
           target[key] = val;
         }
 
@@ -884,7 +889,7 @@ function applyPatch(result, setAbbr) {
   }
 }
 
-// ── Physical card synthesis (WP-138 Phase 1a) ────────────────────────────────
+// ── Physical card synthesis (WP-138 Phase 1a + WP-140 Phase 1b) ─────────────
 
 /**
  * Loads a set's patch JSON file or returns null if no patch exists.
@@ -927,119 +932,423 @@ function resolveSoloCardCount(hero, card) {
 }
 
 /**
- * Synthesises hero.physicalCards[] for every hero in a converted set.
+ * Validates a hero's `_skipPair[]` block against the D-13901 matching
+ * contract. Returns the validated array (possibly empty) or throws on any
+ * contract violation.
  *
- * Two paths:
- *   - Patch-declared (D-13805): the patch file lists hero.physicalCards[]
- *     entries with explicit { count, sides } pairs. IDs are assigned in
- *     declaration order (first declared = "p1") for byte-identical
- *     re-conversion stability. Image URLs are computed from the (sorted)
- *     sides via heroImageUrl per D-13802.
- *   - Solo auto-path (D-13803): no patch declaration. Every cards[] entry
- *     becomes a single-side physicalCard. IDs follow the cards[] array
- *     order (first card = "p1"). Counts come from resolveSoloCardCount.
+ * why: D-13901 matching contract — unordered 2-set semantics
+ * (`["a","b"]` matches the same audit candidate as `["b","a"]`); exact slug
+ * equality (literal string match against `cards[].slug`; no case folding,
+ * Unicode normalization, whitespace stripping, or locale-aware comparison);
+ * length lock = exactly 2 (length-1 or length-3+ entries fail conversion);
+ * no duplicate entries within a hero's `_skipPair[]` (no two unordered
+ * 2-sets matching); existing-slug requirement (every slug must resolve to
+ * an existing `cards[].slug` under the same hero); mutual exclusion with
+ * `physicalCards[].sides` (a slug declared in any `physicalCards[].sides`
+ * entry MUST NOT also appear in any `_skipPair` entry for the same hero).
  *
- * Audit warnings are collected for each hero whose cardCounts contains a
- * paired-equal pattern (two cards whose count matches and rarity matches)
- * but for which no patch declaration exists — these are the Phase 1b
- * worklist candidates per WP-138 §B.
+ * @param hero - The hero object with cards[] used to resolve slug existence.
+ * @param patchHero - The patch entry for this hero, or null if no patch.
+ * @returns The validated _skipPair array (possibly empty).
+ */
+function validateSkipPair(hero, patchHero) {
+  if (!patchHero || !Array.isArray(patchHero._skipPair)) return [];
+  const skipPair = patchHero._skipPair;
+
+  const validHeroSlugs = new Set();
+  for (const card of hero.cards || []) validHeroSlugs.add(card.slug);
+
+  const seenPairKeys = new Set();
+  const skipPairFlat = new Set();
+
+  for (let entryIndex = 0; entryIndex < skipPair.length; entryIndex++) {
+    const entry = skipPair[entryIndex];
+    if (!Array.isArray(entry) || entry.length !== 2) {
+      throw new Error(
+        `_skipPair entry ${entryIndex} for hero "${hero.slug}" must be an array of ` +
+        `exactly 2 string slugs (D-13901 length lock); received ${JSON.stringify(entry)}.`
+      );
+    }
+    const [slugA, slugB] = entry;
+    if (typeof slugA !== 'string' || typeof slugB !== 'string') {
+      throw new Error(
+        `_skipPair entry ${entryIndex} for hero "${hero.slug}" must contain two string slugs; ` +
+        `received ${JSON.stringify(entry)}.`
+      );
+    }
+    if (!validHeroSlugs.has(slugA)) {
+      throw new Error(
+        `_skipPair entry ${entryIndex} for hero "${hero.slug}" references slug "${slugA}" ` +
+        `which does not match any cards[].slug under this hero (D-13901 existing-slug requirement).`
+      );
+    }
+    if (!validHeroSlugs.has(slugB)) {
+      throw new Error(
+        `_skipPair entry ${entryIndex} for hero "${hero.slug}" references slug "${slugB}" ` +
+        `which does not match any cards[].slug under this hero (D-13901 existing-slug requirement).`
+      );
+    }
+    const sortedKey = [slugA, slugB].slice().sort().join('|');
+    if (seenPairKeys.has(sortedKey)) {
+      throw new Error(
+        `_skipPair for hero "${hero.slug}" has duplicate entry [${slugA}, ${slugB}] ` +
+        `at index ${entryIndex} (unordered 2-set match against an earlier entry; ` +
+        `D-13901 no-duplicate requirement).`
+      );
+    }
+    seenPairKeys.add(sortedKey);
+    skipPairFlat.add(slugA);
+    skipPairFlat.add(slugB);
+  }
+
+  // Mutual exclusion against patch-declared physicalCards.sides
+  const declaredSides = new Set();
+  if (Array.isArray(patchHero.physicalCards)) {
+    for (const physicalCard of patchHero.physicalCards) {
+      for (const sideSlug of physicalCard.sides || []) declaredSides.add(sideSlug);
+    }
+  }
+  for (const slug of skipPairFlat) {
+    if (declaredSides.has(slug)) {
+      throw new Error(
+        `Slug "${slug}" appears in both physicalCards[].sides and _skipPair[] for hero ` +
+        `"${hero.slug}". A slug must appear in exactly one resolution structure ` +
+        `(D-13901 mutual exclusion).`
+      );
+    }
+  }
+
+  return skipPair;
+}
+
+/**
+ * Identifies paired-equal candidate clusters under a hero — maximal sets of
+ * `cards[]` sharing the same `cardCounts` value where the cluster size is
+ * at least 2 and the count is at least 2. Each cluster is the audit-warning
+ * unit and is treated as atomic for resolution per D-13901 §7.4.
  *
- * Drift validation: when a hero has both cardCounts AND patch-declared
- * physicalCards, the sum of physicalCards[].count over physicalCards
- * whose sides[] includes each side slug must equal cardCounts[displayName]
+ * @param hero - The hero object with optional cardCounts.
+ * @returns Array of clusters, each with `count` and `cardNames`.
+ */
+function identifyClusters(hero) {
+  const clusters = [];
+  if (!hero.cardCounts) return clusters;
+
+  const countsByValue = new Map();
+  for (const [cardName, count] of Object.entries(hero.cardCounts)) {
+    const list = countsByValue.get(count) ?? [];
+    list.push(cardName);
+    countsByValue.set(count, list);
+  }
+  for (const [count, cardNames] of countsByValue) {
+    if (cardNames.length >= 2 && count >= 2) {
+      clusters.push({ count, cardNames });
+    }
+  }
+  return clusters;
+}
+
+/**
+ * Returns true if every member of `cluster.cardNames` is covered by either
+ * patch-declared `physicalCards[].sides` or patch-declared `_skipPair`
+ * entries (resolving each card name through its cards[].slug).
+ *
+ * why: D-13901 cluster-coverage enforcement (the "exactly one" check) —
+ * conceptually distinct from no-partial-resolution: the no-partial-resolution
+ * rule forbids a hero with mixed resolved + unresolved cluster members;
+ * cluster coverage additionally forbids any cluster member appearing in
+ * *zero* resolution structures (uncovered) OR in *both*
+ * `physicalCards[].sides` and `_skipPair` (over-covered, prevented separately
+ * by the mutual-exclusion check in `validateSkipPair`). The "exactly one"
+ * semantics is what makes the cluster construct atomic for resolution.
+ */
+function isClusterCovered(cluster, hero, patchHero) {
+  const nameToSlug = new Map();
+  for (const card of hero.cards || []) nameToSlug.set(card.name, card.slug);
+
+  const declaredSides = new Set();
+  if (patchHero && Array.isArray(patchHero.physicalCards)) {
+    for (const physicalCard of patchHero.physicalCards) {
+      for (const sideSlug of physicalCard.sides || []) declaredSides.add(sideSlug);
+    }
+  }
+
+  const skipPairFlat = new Set();
+  if (patchHero && Array.isArray(patchHero._skipPair)) {
+    for (const entry of patchHero._skipPair) {
+      for (const slug of entry) skipPairFlat.add(slug);
+    }
+  }
+
+  for (const cardName of cluster.cardNames) {
+    const cardSlug = nameToSlug.get(cardName);
+    if (!cardSlug) return false;
+    if (!declaredSides.has(cardSlug) && !skipPairFlat.has(cardSlug)) return false;
+  }
+  return true;
+}
+
+/**
+ * Synthesises a hero's physicalCards[] array. With patch-declared
+ * physicalCards, walks the declarations in array order and assigns IDs
+ * `p1`, `p2`, ... to declared entries first; auto-fills 1-side entries for
+ * any cards[] entry whose slug is not yet covered (preserves D-13803 uniform
+ * model — every cards[] entry gets at least one physicalCards entry).
+ * Without a patch declaration, falls through to solo-auto-path: every
+ * cards[] entry becomes a single-side physicalCard.
+ *
+ * Auto-fill IDs continue from `p${declaredCount + 1}` onward, so declared
+ * IDs are never renumbered when the executor curates a partial physicalCards
+ * block (e.g., a 3-cluster of false-positives where `physicalCards` lists
+ * only the cluster members and lets auto-fill handle the remaining solos).
+ *
+ * @param hero - The hero object whose physicalCards is being synthesized.
+ * @param setAbbr - The set abbreviation (used for image URL construction).
+ * @param declaredPhysicalCards - The patch's physicalCards array, or null/undefined for solo-auto-path.
+ * @returns The synthesized hero.physicalCards array.
+ */
+function synthesizePhysicalCards(hero, setAbbr, declaredPhysicalCards) {
+  if (Array.isArray(declaredPhysicalCards) && declaredPhysicalCards.length > 0) {
+    const physicalCards = declaredPhysicalCards.map((entry, index) => {
+      const sides = entry.sides;
+      return {
+        id: `p${index + 1}`,
+        count: entry.count,
+        imageUrl: heroImageUrl(setAbbr, hero.slug, sides),
+        sides,
+      };
+    });
+
+    const declaredSides = new Set();
+    for (const physicalCard of physicalCards) {
+      for (const sideSlug of physicalCard.sides) declaredSides.add(sideSlug);
+    }
+    let nextIdNumber = physicalCards.length + 1;
+    for (const card of hero.cards || []) {
+      if (!declaredSides.has(card.slug)) {
+        physicalCards.push({
+          id: `p${nextIdNumber}`,
+          count: resolveSoloCardCount(hero, card),
+          imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug]),
+          sides: [card.slug],
+        });
+        nextIdNumber++;
+      }
+    }
+    return physicalCards;
+  }
+
+  return (hero.cards || []).map((card, index) => ({
+    id: `p${index + 1}`,
+    count: resolveSoloCardCount(hero, card),
+    imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug]),
+    sides: [card.slug],
+  }));
+}
+
+/**
+ * Validates that `physicalCards[].count` summed per-side matches
+ * `hero.cardCounts[sideName]` for every populated cardCounts entry. Throws on
+ * any mismatch with a full-sentence error naming the hero, the side, the
+ * expected count, and the actual count. Skipped when the hero has no
+ * cardCounts data (legacy data shape).
+ */
+function validateDriftAgainstCardCounts(hero, setAbbr) {
+  if (!hero.cardCounts) return;
+  for (const [sideName, expectedCount] of Object.entries(hero.cardCounts)) {
+    const card = (hero.cards || []).find(c => c.name === sideName);
+    if (!card) continue;
+    const sideSlug = card.slug;
+    let actualCount = 0;
+    for (const physicalCard of hero.physicalCards) {
+      if (physicalCard.sides.includes(sideSlug)) actualCount += physicalCard.count;
+    }
+    if (actualCount !== expectedCount) {
+      throw new Error(
+        `Drift validation failed for set "${setAbbr}" hero "${hero.slug}": ` +
+        `cardCounts["${sideName}"] = ${expectedCount} but physicalCards summing ` +
+        `for side slug "${sideSlug}" = ${actualCount}. ` +
+        `physicalCards[] is the authoritative deck-composition surface ` +
+        `(D-13801); the patch's physicalCards declarations must sum to ` +
+        `match cardCounts.`
+      );
+    }
+  }
+}
+
+/**
+ * Synthesises hero.physicalCards[] for every hero in a converted set under
+ * the WP-138 Phase 1a contract extended by WP-140 Phase 1b's `_skipPair`
+ * annotation grammar (D-13901).
+ *
+ * Per-hero execution follows the locked 9-step order from D-13901 §7.6:
+ *
+ *   1. Load patch (caller responsibility — `loadPatchFile`).
+ *   2. Validate `_skipPair[]` shape per D-13901 matching contract
+ *      (`validateSkipPair`).
+ *   3. `buildPhysicalCards` synthesis: declared + auto-fill for solos
+ *      under D-13803 uniform model, OR solo-auto-path when no
+ *      `physicalCards` is patch-declared (`synthesizePhysicalCards`).
+ *   4. Validate slug mutual exclusion between `physicalCards[].sides`
+ *      flat and `_skipPair[]` flat (handled inside `validateSkipPair`).
+ *   5. Identify the per-hero set of paired-equal candidate clusters
+ *      (`identifyClusters`).
+ *   6. Apply `_skipPair` filter — clusters whose members are all in
+ *      patch-declared `physicalCards[].sides` OR `_skipPair` are
+ *      considered resolved and emit no audit warning.
+ *   7. Validate no-partial-resolution / cluster coverage — every cluster
+ *      member must be covered by exactly one of `physicalCards[].sides`
+ *      OR `_skipPair`; throws on uncovered members for heroes that have
+ *      any patch declaration.
+ *   8. Emit remaining audit warnings — heroes with no patch declaration
+ *      preserve WP-138 Phase 1a's audit-warning-as-uncovered behavior.
+ *   9. Apply `--strict` failure condition (caller responsibility).
+ *
+ * why: D-13901 deterministic per-hero execution order — fixing the order
+ * makes `_skipPair` filtering composable with declared `physicalCards[]`
+ * under the cluster-coverage rule. Re-arranging steps would either force
+ * the executor to author redundant declarations (e.g., declaring all hero
+ * cards in `physicalCards` just to suppress one audit warning) or hide
+ * errors behind implicit precedence (e.g., `_skipPair` suppressing a real
+ * drift failure).
+ *
+ * Drift validation: when a hero has both `cardCounts` AND patch-declared
+ * `physicalCards`, the sum of `physicalCards[].count` over `physicalCards`
+ * whose `sides[]` includes each side slug must equal `cardCounts[sideName]`
  * for that side. Drift fails conversion with a full-sentence error.
  *
  * @param result - The converted set object (mutated in place).
  * @param setAbbr - The set abbreviation.
  * @param patch - The loaded patch JSON, or null if no patch exists.
- * @param auditWarnings - Output array; warnings appended for paired-equal candidates.
- * @throws If drift validation fails for any hero with both cardCounts and patch-declared physicalCards.
+ * @param auditWarnings - Output array; warnings appended for uncovered clusters.
+ * @throws If `_skipPair` is malformed, drift validation fails, or any cluster member is uncovered for a hero with patch declarations.
  */
 function buildPhysicalCards(result, setAbbr, patch, auditWarnings) {
-  const patchHeroDeclarations = new Map();
+  const patchByHero = new Map();
   if (patch && Array.isArray(patch.heroes)) {
     for (const patchHero of patch.heroes) {
-      if (Array.isArray(patchHero.physicalCards) && patchHero.physicalCards.length > 0) {
-        patchHeroDeclarations.set(patchHero.slug, patchHero.physicalCards);
-      }
+      patchByHero.set(patchHero.slug, patchHero);
     }
   }
 
   for (const hero of result.heroes) {
-    const declared = patchHeroDeclarations.get(hero.slug);
+    const patchHero = patchByHero.get(hero.slug) || null;
 
-    if (declared) {
-      hero.physicalCards = declared.map((entry, index) => {
-        const sides = entry.sides;
-        return {
-          id:       `p${index + 1}`,
-          count:    entry.count,
-          imageUrl: heroImageUrl(setAbbr, hero.slug, sides),
-          sides,
-        };
-      });
+    // Step 2: validate _skipPair shape and mutual exclusion with declared sides
+    const skipPair = validateSkipPair(hero, patchHero);
 
-      if (hero.cardCounts) {
-        for (const [sideName, expectedCount] of Object.entries(hero.cardCounts)) {
-          const card = (hero.cards || []).find(c => c.name === sideName);
-          if (!card) continue;
-          const sideSlug = card.slug;
-          let actualCount = 0;
-          for (const physicalCard of hero.physicalCards) {
-            if (physicalCard.sides.includes(sideSlug)) {
-              actualCount += physicalCard.count;
-            }
-          }
-          if (actualCount !== expectedCount) {
-            throw new Error(
-              `Drift validation failed for set "${setAbbr}" hero "${hero.slug}": ` +
-              `cardCounts["${sideName}"] = ${expectedCount} but physicalCards summing ` +
-              `for side slug "${sideSlug}" = ${actualCount}. ` +
-              `physicalCards[] is the authoritative deck-composition surface ` +
-              `(D-13801); the patch's physicalCards declarations must sum to ` +
-              `match cardCounts.`
-            );
-          }
-        }
-      }
+    // Step 3: synthesize physicalCards (declared + auto-fill OR solo-auto-path)
+    hero.physicalCards = synthesizePhysicalCards(
+      hero,
+      setAbbr,
+      patchHero?.physicalCards
+    );
 
-      console.log(`  📎 Pair: hero=${hero.slug} physicalCards=${hero.physicalCards.length} ` +
-                  `(${hero.physicalCards.filter(p => p.sides.length === 2).length} split, ` +
-                  `${hero.physicalCards.filter(p => p.sides.length === 1).length} solo)`);
-      continue;
+    // Drift validation when patch declares physicalCards (existing WP-138 contract)
+    if (patchHero && Array.isArray(patchHero.physicalCards) && patchHero.physicalCards.length > 0) {
+      validateDriftAgainstCardCounts(hero, setAbbr);
     }
 
-    hero.physicalCards = (hero.cards || []).map((card, index) => ({
-      id:       `p${index + 1}`,
-      count:    resolveSoloCardCount(hero, card),
-      imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug]),
-      sides:    [card.slug],
-    }));
+    // Step 5: identify paired-equal candidate clusters
+    const clusters = identifyClusters(hero);
 
-    if (hero.cardCounts) {
-      const countsByValue = new Map();
-      for (const [cardName, count] of Object.entries(hero.cardCounts)) {
-        const list = countsByValue.get(count) ?? [];
-        list.push(cardName);
-        countsByValue.set(count, list);
-      }
-      for (const [count, cardNames] of countsByValue) {
-        if (cardNames.length >= 2 && count >= 2) {
-          auditWarnings.push({
-            setAbbr,
-            heroSlug: hero.slug,
-            count,
-            candidateNames: cardNames,
-            message:
-              `Set "${setAbbr}" hero "${hero.slug}" has ${cardNames.length} cards ` +
-              `with cardCounts === ${count} (${cardNames.join(', ')}). ` +
-              `This is a candidate paired-equal pattern — if these are split-side ` +
-              `dual-faced cards (e.g., bkwd/falcon-winter-soldier Attune/Atone), ` +
-              `add an explicit physicalCards[] declaration to ` +
-              `scripts/convert-cards/inputs/patches/${setAbbr}.patch.json (Phase 1b worklist).`,
-          });
+    // Step 7: cluster coverage — enforced when the hero has any patch declaration.
+    // Heroes without declarations preserve WP-138 Phase 1a's
+    // audit-warning-as-uncovered behavior so this extension is
+    // backward-compatible with un-curated sets.
+    const declarationCount =
+      (patchHero && Array.isArray(patchHero.physicalCards) ? patchHero.physicalCards.length : 0) +
+      skipPair.length;
+    if (declarationCount > 0) {
+      for (const cluster of clusters) {
+        if (isClusterCovered(cluster, hero, patchHero)) continue;
+
+        const nameToSlug = new Map();
+        for (const card of hero.cards || []) nameToSlug.set(card.name, card.slug);
+        const declaredSides = new Set();
+        if (patchHero && Array.isArray(patchHero.physicalCards)) {
+          for (const physicalCard of patchHero.physicalCards) {
+            for (const sideSlug of physicalCard.sides || []) declaredSides.add(sideSlug);
+          }
         }
+        const skipPairFlat = new Set();
+        for (const entry of skipPair) {
+          for (const slug of entry) skipPairFlat.add(slug);
+        }
+        const uncoveredNames = [];
+        for (const cardName of cluster.cardNames) {
+          const cardSlug = nameToSlug.get(cardName);
+          if (!cardSlug) {
+            uncoveredNames.push(cardName);
+            continue;
+          }
+          if (!declaredSides.has(cardSlug) && !skipPairFlat.has(cardSlug)) {
+            uncoveredNames.push(cardName);
+          }
+        }
+        throw new Error(
+          `Cluster coverage failure for set "${setAbbr}" hero "${hero.slug}": ` +
+          `cluster of ${cluster.cardNames.length} cards at cardCounts === ${cluster.count} ` +
+          `(${cluster.cardNames.join(', ')}) has uncovered member(s): ` +
+          `${uncoveredNames.join(', ')}. Every cluster member must be declared in ` +
+          `either physicalCards[].sides OR _skipPair[] (D-13901 cluster coverage rule).`
+        );
       }
+    }
+
+    // Steps 6 + 8: emit audit warnings for legacy heroes without patch declarations
+    if (declarationCount === 0) {
+      for (const cluster of clusters) {
+        const cardListPath = `scripts/convert-cards/inputs/patches/${setAbbr}.patch.json`;
+        auditWarnings.push({
+          setAbbr,
+          heroSlug: hero.slug,
+          count: cluster.count,
+          candidateNames: cluster.cardNames,
+          message:
+            `Set "${setAbbr}" hero "${hero.slug}" has ${cluster.cardNames.length} cards ` +
+            `with cardCounts === ${cluster.count} (${cluster.cardNames.join(', ')}). ` +
+            `This is a candidate paired-equal pattern — if these are split-side ` +
+            `dual-faced cards (e.g., bkwd/falcon-winter-soldier Attune/Atone), ` +
+            `add an explicit physicalCards[] declaration to ` +
+            `${cardListPath} (Phase 1b worklist).`,
+        });
+      }
+    }
+
+    // Pair-log: declared physicalCards (with auto-fill detail)
+    if (patchHero && Array.isArray(patchHero.physicalCards) && patchHero.physicalCards.length > 0) {
+      const splitCount = hero.physicalCards.filter(p => p.sides.length === 2).length;
+      const soloCount = hero.physicalCards.filter(p => p.sides.length === 1).length;
+      const declaredEntryCount = patchHero.physicalCards.length;
+      const autoFillCount = hero.physicalCards.length - declaredEntryCount;
+      console.log(
+        `  📎 Pair: hero=${hero.slug} physicalCards=${hero.physicalCards.length} ` +
+        `(${splitCount} split, ${soloCount} solo; ${declaredEntryCount} declared, ` +
+        `${autoFillCount} auto-fill)`
+      );
+    }
+
+    // why: `📎 SkipPair: ...` log line — slug pairs inline for forensic audit.
+    // Having the literal slugs in the conversion log lets the reviewer confirm
+    // which false-positive pairs the executor declared without re-opening the
+    // patch file. Deterministic pair ordering (within-pair UTF-16 +
+    // across-pair sort by first-then-second element) follows D-13802 sort
+    // posture (see D-13802 for the full forbidden list of locale-aware
+    // comparison APIs) so the log line is byte-identical across re-runs of
+    // identical input.
+    if (skipPair.length > 0) {
+      const sortedPairs = skipPair
+        .map(entry => entry.slice().sort())
+        .sort((pairA, pairB) => {
+          if (pairA[0] !== pairB[0]) return pairA[0] < pairB[0] ? -1 : 1;
+          if (pairA[1] === pairB[1]) return 0;
+          return pairA[1] < pairB[1] ? -1 : 1;
+        });
+      const slugsInline = sortedPairs.map(([a, b]) => `(${a},${b})`).join(',');
+      console.log(
+        `  📎 SkipPair: hero=${hero.slug} pairs=${skipPair.length} slugs=[${slugsInline}]`
+      );
     }
   }
 }

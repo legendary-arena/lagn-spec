@@ -96,6 +96,12 @@
           "rarityLabel": "Rare",
           "slot": 4
         }
+      ],
+      "_skipPair": [
+        [
+          "ride-by-moonlight",
+          "where-monsters-lurk"
+        ]
       ]
     },
     {
@@ -127,6 +133,42 @@
           "rarityLabel": "Rare",
           "slot": 4
         }
+      ],
+      "_skipPair": [
+        [
+          "insatiable-craving",
+          "mesmerize"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "elsa-bloodstone",
+      "_skipPair": [
+        [
+          "axe-of-the-slayer",
+          "silver-bullets"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "werewolf-by-night",
+      "_skipPair": [
+        [
+          "snarling-fangs",
+          "starlit-path"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "wong-master-of-the-mystic-arts",
+      "_skipPair": [
+        [
+          "bridge-between-dimensions",
+          "searing-shards-of-sunlight"
+        ]
       ]
     }
   ]

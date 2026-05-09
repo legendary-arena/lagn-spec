@@ -20,6 +20,12 @@
           "slug": "fake-but-inspiring-death",
           "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-agent-phil-coulson-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "build-the-strike-team",
+          "impeccable-planning"
+        ]
       ]
     },
     {
@@ -42,6 +48,12 @@
           "slug": "behind-enemy-lines",
           "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-deathlok-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "authorize-lethal-force",
+          "reanimate-into-service"
+        ]
       ]
     },
     {
@@ -64,6 +76,12 @@
           "slug": "infinity-formula",
           "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-mockingbird-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "battle-staves",
+          "take-cover"
+        ]
       ]
     },
     {
@@ -86,6 +104,12 @@
           "slug": "roil-the-earth",
           "imageUrl": "https://images.barefootbetters.com/shld/shld-hr-quake-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "aftershock",
+          "going-underground"
+        ]
       ]
     },
     {
@@ -167,7 +191,7 @@
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
           "imageUrl": "https://images.barefootbetters.com/shld/shld-sp-leo-fitz-and-jemma-simmons.webp",
           "abilities": [
-            "Choose one: You get +2[icon:recruit] \u2014 Or you get +1[icon:attack] and draw a card."
+            "Choose one: You get +2[icon:recruit] — Or you get +1[icon:attack] and draw a card."
           ]
         }
       ]

@@ -44,5 +44,57 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "happy-hogan",
+      "_skipPair": [
+        [
+          "head-of-security",
+          "watchful-eye"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "high-tech-spider-man",
+      "_skipPair": [
+        [
+          "advanced-targeting-system",
+          "recon-drone-connection"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "peter-parker-homecoming",
+      "_skipPair": [
+        [
+          "avenger-in-training",
+          "heightened-senses"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "peters-allies",
+      "_skipPair": [
+        [
+          "michelle",
+          "ned"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "tony-stark",
+      "_skipPair": [
+        [
+          "genius-billionaire",
+          "stay-out-of-trouble"
+        ]
+      ]
+    }
   ]
 }

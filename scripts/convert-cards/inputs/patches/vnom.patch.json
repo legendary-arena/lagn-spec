@@ -44,5 +44,57 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "carnage",
+      "_skipPair": [
+        [
+          "carnivore",
+          "rending-claws"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "venom",
+      "_skipPair": [
+        [
+          "devouring-drool",
+          "razor-teeth"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "venom-rocket",
+      "_skipPair": [
+        [
+          "hungry-for-action",
+          "spring-the-trap"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "venomized-dr-strange",
+      "_skipPair": [
+        [
+          "cauldron-of-the-cosmos",
+          "see-future-timelines"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "venompool",
+      "_skipPair": [
+        [
+          "digest-that-chimichanga",
+          "shenanigans"
+        ]
+      ]
+    }
   ]
 }

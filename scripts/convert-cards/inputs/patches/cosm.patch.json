@@ -20,6 +20,12 @@
           "slug": "manifest-the-soul-gem",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "regenerative-cocoon",
+          "transmute-matter"
+        ]
       ]
     },
     {
@@ -42,6 +48,12 @@
           "slug": "protector-of-the-universe",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "cosmic-awareness",
+          "kree-genetics"
+        ]
       ]
     },
     {
@@ -64,6 +76,12 @@
           "slug": "lunar-dragon-form",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "peaceful-meditation",
+          "psionic-warning"
+        ]
       ]
     },
     {
@@ -86,6 +104,12 @@
           "slug": "daring-raid",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "galactic-rogue",
+          "ruthless-cyborg"
+        ]
       ]
     },
     {
@@ -108,6 +132,12 @@
           "slug": "mobilize-the-nova-corps",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "draw-from-the-worldmind",
+          "electromagnetic-wave"
+        ]
       ]
     },
     {
@@ -130,6 +160,12 @@
           "slug": "avatar-of-oblivion",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "channel-cosmic-power",
+          "quantum-sword"
+        ]
       ]
     },
     {
@@ -152,6 +188,12 @@
           "slug": "the-star-brand",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "cosmic-champion",
+          "manipulate-gravitons"
+        ]
       ]
     },
     {
@@ -174,6 +216,12 @@
           "slug": "seek-the-infinity-gems",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "rally-kree-warriors",
+          "universal-weapon"
+        ]
       ]
     },
     {
@@ -196,6 +244,12 @@
           "slug": "space-pirate",
           "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "interstellar-hunter",
+          "whistling-arrow"
+        ]
       ]
     }
   ],

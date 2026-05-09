@@ -26,6 +26,12 @@
           "slug": "strength-of-spirit",
           "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "diving-catch",
+          "high-speed-chase"
+        ]
       ]
     },
     {
@@ -54,6 +60,12 @@
           "slug": "firepower-from-the-future",
           "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-7r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "absorb-energies",
+          "whatever-the-cost"
+        ]
       ]
     },
     {
@@ -116,6 +128,12 @@
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "hell-on-wheels",
+          "infernal-chains"
+        ]
       ]
     },
     {
@@ -150,6 +168,12 @@
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-9r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "focus-chi",
+          "wield-the-iron-fist"
+        ]
       ]
     },
     {
@@ -184,6 +208,72 @@
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "boom-goes-the-dynamite",
+          "hail-of-bullets"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "daredevil",
+      "_skipPair": [
+        [
+          "backflip",
+          "radar-sense"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "elektra",
+      "_skipPair": [
+        [
+          "first-strike",
+          "ninjitsu"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "iceman",
+      "_skipPair": [
+        [
+          "deep-freeze",
+          "ice-slide"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "jean-grey",
+      "_skipPair": [
+        [
+          "psychic-search",
+          "read-your-thoughts"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "nightcrawler",
+      "_skipPair": [
+        [
+          "bamf",
+          "blend-into-shadows"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "professor-x",
+      "_skipPair": [
+        [
+          "class-dismissed",
+          "psionic-astral-form"
+        ]
       ]
     }
   ],

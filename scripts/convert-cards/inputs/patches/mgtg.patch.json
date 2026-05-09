@@ -137,6 +137,44 @@
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-8r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "sides": [
+            "borrowed-nova-blaster"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 2,
+          "sides": [
+            "dont-need-that-stuff"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "sides": [
+            "expandable-helmet"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "sides": [
+            "give",
+            "take"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "sides": [
+            "starship-sensors"
+          ]
+        }
       ]
     },
     {
@@ -191,6 +229,44 @@
           "rarity": 3,
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-7r.webp"
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "sides": [
+            "forgive",
+            "resent"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "sides": [
+            "resourceful-fugitive"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "sides": [
+            "retractable-sword"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "sides": [
+            "sharpen-blades"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "sides": [
+            "stolen-necroblaster"
+          ]
         }
       ]
     },
@@ -261,6 +337,46 @@
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-7r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "sides": [
+            "baby-groot"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "sides": [
+            "compassion",
+            "passion"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "sides": [
+            "dont-press-this-button",
+            "press-the-button"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "sides": [
+            "gravity-mines"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 2,
+          "sides": [
+            "simple",
+            "tricky"
+          ]
+        }
       ]
     },
     {
@@ -323,6 +439,45 @@
           "rarityLabel": "Rare",
           "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-8r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 2,
+          "sides": [
+            "also-illegal",
+            "remove-his-spine"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 2,
+          "sides": [
+            "dual-knives"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "sides": [
+            "i-am-invisible",
+            "xandar-is-invincible"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 3,
+          "sides": [
+            "nothing-goes-over-my-head"
+          ]
+        },
+        {
+          "id": "p5",
+          "count": 3,
+          "sides": [
+            "prison-riot"
+          ]
+        }
       ]
     },
     {
@@ -364,6 +519,36 @@
           "slot": 7,
           "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-7r.webp"
         }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 3,
+          "sides": [
+            "empathic-bond"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "sides": [
+            "inspire-courage"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "sides": [
+            "selfish",
+            "selfless"
+          ]
+        }
+      ],
+      "_skipPair": [
+        [
+          "emotional-wave",
+          "sleep"
+        ]
       ]
     }
   ]

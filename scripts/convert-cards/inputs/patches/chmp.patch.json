@@ -52,5 +52,57 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "gwenpool",
+      "_skipPair": [
+        [
+          "come-on-nobody-reads-card-names",
+          "ill-rescue-you-if-i-feel-like-it"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ms-marvel",
+      "_skipPair": [
+        [
+          "big-impact",
+          "long-arm-of-the-law"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "nova",
+      "_skipPair": [
+        [
+          "interstellar-hero",
+          "space-cop"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "totally-awesome-hulk",
+      "_skipPair": [
+        [
+          "beloved-behemoth",
+          "incredible-mind-awesome-body"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "viv-vision",
+      "_skipPair": [
+        [
+          "expanding-neural-network",
+          "walking-wi-fi"
+        ]
+      ]
+    }
   ]
 }

@@ -102,6 +102,12 @@
           "rarityLabel": "Rare",
           "slot": 4
         }
+      ],
+      "_skipPair": [
+        [
+          "amulets-of-the-tiger-god",
+          "dark-influence-of-the-hand"
+        ]
       ]
     },
     {
@@ -153,16 +159,49 @@
           ],
           "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-8r.webp"
         }
+      ],
+      "_skipPair": [
+        [
+          "magnetic-shield",
+          "sleeper-agent"
+        ]
       ]
     },
     {
       "_op": "merge",
       "slug": "falcon-winter-soldier",
       "physicalCards": [
-        { "id": "p1", "count": 5, "sides": ["attune", "atone"] },
-        { "id": "p2", "count": 5, "sides": ["relocate", "reload"] },
-        { "id": "p3", "count": 3, "sides": ["new-wings", "new-plan"] },
-        { "id": "p4", "count": 1, "sides": ["captain-americas-legacy"] }
+        {
+          "id": "p1",
+          "count": 5,
+          "sides": [
+            "attune",
+            "atone"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 5,
+          "sides": [
+            "relocate",
+            "reload"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "sides": [
+            "new-wings",
+            "new-plan"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 1,
+          "sides": [
+            "captain-americas-legacy"
+          ]
+        }
       ],
       "cards": [
         {
@@ -224,6 +263,26 @@
           "slot": 7,
           "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-7r.webp"
         }
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "black-widow",
+      "_skipPair": [
+        [
+          "evasive-acrobatics",
+          "widows-bite"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "yelena-belova",
+      "_skipPair": [
+        [
+          "strike-and-fade",
+          "unveil-identity"
+        ]
       ]
     }
   ]

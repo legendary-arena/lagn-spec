@@ -121,17 +121,17 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-open-portals.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-defend-this-dimension.webp",
           "sides": [
-            "open-portals"
+            "defend-this-dimension"
           ]
         },
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-defend-this-dimension.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-open-portals.webp",
           "sides": [
-            "defend-this-dimension"
+            "open-portals"
           ]
         },
         {
@@ -285,25 +285,25 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-wakanda-forever.webp",
-          "sides": [
-            "wakanda-forever"
-          ]
-        },
-        {
-          "id": "p2",
-          "count": 3,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-avengers-reassembled.webp",
           "sides": [
             "avengers-reassembled"
           ]
         },
         {
-          "id": "p3",
+          "id": "p2",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-great-many-lives-lost.webp",
           "sides": [
             "great-many-lives-lost"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-wakanda-forever.webp",
+          "sides": [
+            "wakanda-forever"
           ]
         },
         {
@@ -447,17 +447,17 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-burst-of-rage.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-brains-and-brawn.webp",
           "sides": [
-            "burst-of-rage"
+            "brains-and-brawn"
           ]
         },
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-brains-and-brawn.webp",
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-burst-of-rage.webp",
           "sides": [
-            "brains-and-brawn"
+            "burst-of-rage"
           ]
         },
         {
@@ -613,14 +613,6 @@
       "physicalCards": [
         {
           "id": "p1",
-          "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-dawning-hope.webp",
-          "sides": [
-            "dawning-hope"
-          ]
-        },
-        {
-          "id": "p2",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-infused-by-the-tesseract.webp",
           "sides": [
@@ -628,7 +620,7 @@
           ]
         },
         {
-          "id": "p3",
+          "id": "p2",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-return-from-the-stars.webp",
           "sides": [
@@ -636,11 +628,19 @@
           ]
         },
         {
-          "id": "p4",
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-turning-point.webp",
           "sides": [
             "turning-point"
+          ]
+        },
+        {
+          "id": "p4",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-dawning-hope.webp",
+          "sides": [
+            "dawning-hope"
           ]
         },
         {
@@ -826,6 +826,33 @@
       "physicalCards": [
         {
           "id": "p1",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-grief-rage.webp",
+          "sides": [
+            "grief",
+            "rage"
+          ]
+        },
+        {
+          "id": "p2",
+          "count": 3,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-hold-on-let-go.webp",
+          "sides": [
+            "hold-on",
+            "let-go"
+          ]
+        },
+        {
+          "id": "p3",
+          "count": 2,
+          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-magic-science.webp",
+          "sides": [
+            "magic",
+            "science"
+          ]
+        },
+        {
+          "id": "p4",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-we-have-to-destroy-it.webp",
           "sides": [
@@ -833,7 +860,7 @@
           ]
         },
         {
-          "id": "p2",
+          "id": "p5",
           "count": 3,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-witchcraft.webp",
           "sides": [
@@ -841,55 +868,7 @@
           ]
         },
         {
-          "id": "p3",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-hold-on.webp",
-          "sides": [
-            "hold-on"
-          ]
-        },
-        {
-          "id": "p4",
-          "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-let-go.webp",
-          "sides": [
-            "let-go"
-          ]
-        },
-        {
-          "id": "p5",
-          "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-magic.webp",
-          "sides": [
-            "magic"
-          ]
-        },
-        {
           "id": "p6",
-          "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-science.webp",
-          "sides": [
-            "science"
-          ]
-        },
-        {
-          "id": "p7",
-          "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-rage.webp",
-          "sides": [
-            "rage"
-          ]
-        },
-        {
-          "id": "p8",
-          "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-grief.webp",
-          "sides": [
-            "grief"
-          ]
-        },
-        {
-          "id": "p9",
           "count": 1,
           "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-odd-couple.webp",
           "sides": [

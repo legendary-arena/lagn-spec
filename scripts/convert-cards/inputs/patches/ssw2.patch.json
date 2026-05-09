@@ -104,5 +104,167 @@
         }
       ]
     }
+  ],
+  "heroes": [
+    {
+      "_op": "merge",
+      "slug": "agent-venom",
+      "_skipPair": [
+        [
+          "government-payroll",
+          "multi-gun"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "arkon-the-magnificent",
+      "_skipPair": [
+        [
+          "all-terrain-barbarian",
+          "quiver-of-thunderbolts"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "beast",
+      "_skipPair": [
+        [
+          "balanced-attack",
+          "upside-down-thinking"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "black-swan",
+      "_skipPair": [
+        [
+          "apocalyptic-vision",
+          "witness-the-end"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "captain-and-the-devil-the",
+      "_skipPair": [
+        [
+          "jurassic-america",
+          "patriotic-chomp"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "captain-britain",
+      "_skipPair": [
+        [
+          "combined-strength",
+          "transatlantic-savior"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "corvus-glaive",
+      "_skipPair": [
+        [
+          "culling-blade",
+          "let-none-escape-you"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "dr-punisher-soldier-supreme",
+      "_skipPair": [
+        [
+          "sweep-the-streets-of-trash",
+          "youre-a-slow-learner"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "elsa-bloodstone",
+      "_skipPair": [
+        [
+          "bloodstone-pendant",
+          "monster-hunter"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "phoenix-force-cyclops",
+      "_skipPair": [
+        [
+          "burn-out",
+          "reincarnate"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ruby-summers",
+      "_skipPair": [
+        [
+          "guerrilla-warfare",
+          "heir-to-legends"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "shang-chi",
+      "_skipPair": [
+        [
+          "acrobatic-kung-fu",
+          "shuffling-footwork"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "silk",
+      "_skipPair": [
+        [
+          "cascading-maneuver",
+          "long-range-spider-sense"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "soulsword-colossus",
+      "_skipPair": [
+        [
+          "invade-the-inferno",
+          "steel-interception"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "spider-gwen",
+      "_skipPair": [
+        [
+          "fateful-bridge",
+          "save-the-day"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "time-traveling-jean-grey",
+      "_skipPair": [
+        [
+          "bridge-to-a-better-future",
+          "throw-over-the-railing"
+        ]
+      ]
+    }
   ]
 }

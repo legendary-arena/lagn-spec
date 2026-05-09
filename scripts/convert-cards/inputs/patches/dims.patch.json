@@ -137,6 +137,36 @@
           ]
         }
       ]
+    },
+    {
+      "_op": "merge",
+      "slug": "jessica-jones",
+      "_skipPair": [
+        [
+          "alias-investigations",
+          "alter-ego"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "ms-america",
+      "_skipPair": [
+        [
+          "search-parallel-dimensions",
+          "star-power"
+        ]
+      ]
+    },
+    {
+      "_op": "merge",
+      "slug": "squirrel-girl",
+      "_skipPair": [
+        [
+          "find-tiny-friends",
+          "nut-punch"
+        ]
+      ]
     }
   ],
   "henchmen": [
