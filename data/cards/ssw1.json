@@ -8,7 +8,12 @@
       "name": "Apocalyptic Kitty Pryde",
       "slug": "apocalyptic-kitty-pryde",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Phase Out": 5,
+        "Infiltrate HQ": 5,
+        "Disrupt Circuits": 3,
+        "Untouchable": 1
+      },
       "cards": [
         {
           "name": "Phase Out",

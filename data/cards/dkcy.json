@@ -234,7 +234,12 @@
       "name": "Blade",
       "slug": "blade",
       "team": "marvel-knights",
-      "cardCounts": null,
+      "cardCounts": {
+        "Night Hunter": 5,
+        "Stalk the Prey": 5,
+        "Nowhere to Hide": 3,
+        "Vampiric Surge": 1
+      },
       "cards": [
         {
           "name": "Stalk the Prey",
@@ -341,7 +346,12 @@
       "name": "Cable",
       "slug": "cable",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Disaster Survivalist": 5,
+        "Strike at the Heart of Evil": 5,
+        "Rapid Response Force": 3,
+        "Army of One": 1
+      },
       "cards": [
         {
           "name": "Disaster Survivalist",
@@ -449,7 +459,12 @@
       "name": "Colossus",
       "slug": "colossus",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Draw Their Fire": 5,
+        "Invulnerability": 5,
+        "Silent Statue": 3,
+        "Russian Heavy Tank": 1
+      },
       "cards": [
         {
           "name": "Draw Their Fire",
@@ -668,7 +683,12 @@
       "name": "Domino",
       "slug": "domino",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Lucky Break": 5,
+        "Ready for Anything": 5,
+        "Specialized Ammunition": 3,
+        "Against All Odds": 1
+      },
       "cards": [
         {
           "name": "Lucky Break",
@@ -891,7 +911,12 @@
       "name": "Forge",
       "slug": "forge",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Dirty Work": 5,
+        "Reboot": 5,
+        "Overdrive": 3,
+        "B.F.G.": 1
+      },
       "cards": [
         {
           "name": "Dirty Work",
@@ -1791,7 +1816,12 @@
       "name": "Wolverine",
       "slug": "wolverine",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Animal Instincts": 5,
+        "Sudden Ambush": 5,
+        "No Mercy": 3,
+        "Reckless Abandon": 1
+      },
       "cards": [
         {
           "name": "Animal Instincts",

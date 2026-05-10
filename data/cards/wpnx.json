@@ -8,7 +8,12 @@
       "name": "Fantomex",
       "slug": "fantomex",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Sentient Bullets": 5,
+        "Three Brains": 5,
+        "Misdirection": 3,
+        "Weapon XIII": 1
+      },
       "cards": [
         {
           "name": "Sentient Bullets",
@@ -96,7 +101,7 @@
         },
         {
           "id": "p3",
-          "count": 5,
+          "count": 3,
           "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-fantomex-misdirection.webp",
           "sides": [
             "misdirection"
@@ -104,7 +109,7 @@
         },
         {
           "id": "p4",
-          "count": 3,
+          "count": 1,
           "imageUrl": "https://images.barefootbetters.com/wpnx/wpnx-hr-fantomex-weapon-xiii.webp",
           "sides": [
             "weapon-xiii"
@@ -117,7 +122,12 @@
       "name": "Marrow",
       "slug": "marrow",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Hyper-Adaptive Skeleton": 5,
+        "Bone Shards": 5,
+        "Osteogenesis": 3,
+        "Metabolic Overdrive": 1
+      },
       "cards": [
         {
           "name": "Bone Shards",
