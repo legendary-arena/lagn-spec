@@ -21,7 +21,7 @@ define new architectural boundaries.
 |---|---|---|---|---|
 | `legendary-arena.com` (apex) | Redirect to `www.` | Cloudflare Pages (redirect) | redirect rule | planned |
 | `www.legendary-arena.com` | Marketing site | Cloudflare Pages | `C:\www\legendary-arena-com` (Hugo) | planned |
-| `play.legendary-arena.com` | Game client | Cloudflare Pages | [apps/arena-client](../../apps/arena-client) | planned |
+| `play.legendary-arena.com` | Game client | Cloudflare Pages | [apps/arena-client](../../apps/arena-client) | live |
 | `cards.legendary-arena.com` | Registry viewer | Cloudflare Pages | [apps/registry-viewer](../../apps/registry-viewer) | planned (currently on `legendary-arena` Pages project) |
 | `wiki.legendary-arena.com` | Public player wiki | Cloudflare Pages | TBD (separate Hugo site) | planned |
 | `ewiki.legendary-arena.com` | Private engineering wiki | Render Static Site + Access | [apps/wiki-viewer](../../apps/wiki-viewer) (Hugo build of [wiki/](../../wiki)) | live, gated |
@@ -74,11 +74,24 @@ Healthy response: `200` with `text/html` body.
 Depends on: nothing. Pure static content; no API calls from marketing pages.
 
 ### play
-**`play.legendary-arena.com`** — game client SPA.
+**`play.legendary-arena.com`** — game client SPA. Live since 2026-05-10
+(WP-007a lock).
 
-- **Build:** `pnpm install && pnpm -r build && pnpm --filter @legendary-arena/arena-client build`
+- **CF Pages project:** `legendary-arena-play`
+- **Build:** `pnpm install --frozen-lockfile && pnpm --filter "@legendary-arena/arena-client..." build`
+  (verbatim; the trailing `...` is pnpm's topology selector that
+  builds workspace dependencies in dependency order — locked under
+  WP-144 / D-14401 because the single-package filter does not build
+  workspace deps and `packages/game-engine/dist/` is gitignored)
 - **Output dir:** `apps/arena-client/dist/`
-- **Env:** `VITE_API_BASE_URL` (set to `https://api.legendary-arena.com` in Cloudflare Pages env vars)
+- **Env:** `VITE_SERVER_URL` (set to `https://api.legendary-arena.com`
+  in Cloudflare Pages env vars, Production scope). Required: the
+  arena-client bundles `import.meta.env.VITE_SERVER_URL` at build
+  time per `apps/arena-client/src/lobby/lobbyApi.ts:14-21`; the
+  `http://localhost:8000` fallback string in that file must never
+  reach production. `NODE_VERSION = 22` is the only other env var
+  pinned (pnpm version auto-detected from root `package.json`'s
+  `packageManager: pnpm@10.32.1` field).
 
 Healthy response: `200` with the SPA shell.
 
@@ -86,6 +99,19 @@ Depends on:
 - `api.legendary-arena.com` (Socket.IO transport, REST endpoints under `/api/*`)
 - `images.barefootbetters.com` (card images)
 - The server's CORS allowlist must include `https://play.legendary-arena.com`
+  AND `https://legendary-arena-play.pages.dev` (the `*.pages.dev`
+  hostname is needed for build-parity verification before the custom
+  domain binds, and as a stable preview-target). Both origins were
+  added under EC-147 (WP-007a Step 9 errata).
+- Cross-origin brand-tokens contract: arena-client consumes
+  `https://www.legendary-arena.com/brand-tokens.css` cross-origin
+  via `<link rel="stylesheet">` in `index.html`; bundled local
+  fallback at `apps/arena-client/public/brand-tokens.local.css`
+  ships byte-identical to the live URL (SHA-256 parity gate at WP
+  lock time). The cascade contract is local-fallback first,
+  cross-origin live URL second; live wins when reachable, fallback
+  takes over invisibly under outage. Documented in
+  `apps/arena-client/index.html` `<head>` comment block.
 
 ### cards
 **`cards.legendary-arena.com`** — registry viewer SPA.
@@ -204,7 +230,7 @@ Depends on (server-side runtime):
 
 **Updates that are NOT part of the `api.` cutover** (despite being on a previous draft of this runbook — that was wrong):
 
-- **`PUBLIC_BASE_URL`** points at the **client**, not the API. It controls Stripe Checkout success/cancel redirects, which need to land on a page the user can see — i.e., the future `play.legendary-arena.com` (or `app.` per the original WP-133 plan; `.env.example` and the test fixtures still say `app.`). Update this when `play.` is deployed, not when `api.` is renamed.
+- **`PUBLIC_BASE_URL`** points at the **client**, not the API. It controls Stripe Checkout success/cancel redirects, which need to land on a page the user can see. **Updated 2026-05-10** from `https://legendary-arena-server.onrender.com` to `https://play.legendary-arena.com` once WP-007a locked the `play.` deploy (see Render dashboard env vars; redeploy completed cleanly with all startup probes green). Stripe Checkout success/cancel redirects now land on the live arena-client SPA per `apps/server/src/billing/billing.routes.ts:339-340`. Note: `.env.example` and test fixtures still reference `app.` per the original WP-133 plan; refresh those in a future cleanup pass when convenient.
 - **Stripe webhook endpoint URL** points at the API and CAN be updated to `https://api.legendary-arena.com/<webhook-path>` now. It's optional — both hostnames serve the same routes during the dual-running window. Prefer the friendly hostname for any new webhook configs.
 - **Hanko allowed origins / audience** — only matters when a client at a new origin calls Hanko. Update when adding new client origins (e.g., `play.`), not when the API hostname changes.
 - **Server CORS allowlist** — update when adding new client origins, same reason.
@@ -245,10 +271,19 @@ Suggested sequence (for WP scoping):
    Attach `cards.legendary-arena.com` to the same project. Smoke-test.
 4. **`www.` and apex.** New Pages project for the Hugo marketing repo. Apex
    redirect rule (apex → www, or vice versa — pick one).
-5. **`play.` Pages project.** New project for `apps/arena-client`. **At this
-   step**, update on Render: `PUBLIC_BASE_URL` → `https://play.legendary-arena.com`,
-   Hanko allowed origins to include `play.`, Stripe webhook redirect allowlist,
-   and server CORS allowlist. Verify end-to-end before announcing.
+5. **`play.` Pages project.** New project for `apps/arena-client`. WP-007a
+   landed the brand-integration + Pages deploy + custom domain bind on
+   2026-05-10. **Server CORS allowlist** updated under EC-147 to include
+   `https://play.legendary-arena.com` and `https://legendary-arena-play.pages.dev`.
+   **`PUBLIC_BASE_URL`** updated 2026-05-10 to `https://play.legendary-arena.com`
+   on the Render `legendary-arena-server` env (one-key dashboard change;
+   triggered an auto-redeploy that completed cleanly). Stripe Checkout
+   success/cancel redirects now land on the live arena-client SPA.
+   **Still pending separate follow-up tasks**: Hanko allowed origins to
+   include `play.` (only matters when arena-client adds Hanko-authenticated
+   flows), Stripe webhook redirect allowlist if the Stripe dashboard webhook
+   URL needs an update. Both are owned by a future server-config or
+   billing-flow WP.
 6. **`wiki.`** when the public Hugo wiki has content to serve.
 7. **`ewiki.`** Done 2026-05-08. Configured Cloudflare Access (Zero Trust
    Free plan, Email One-time PIN, Allow policy on operator email) before

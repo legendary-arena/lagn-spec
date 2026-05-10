@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-05-08",
+  "updated": "2026-05-10",
   "runbook": "docs/ops/DOMAINS.md",
   "comment": "Canonical list of legendary-arena.com subdomains. Read by scripts/check-subdomains.mjs. When adding or changing an entry, also update DOMAINS.md (one section per anchor). Field reference: see DOMAINS.md §Adding a new subdomain.",
   "domains": [
@@ -30,8 +30,9 @@
       "host": "Cloudflare Pages",
       "source": "apps/arena-client",
       "expectedStatus": 200,
-      "state": "planned",
-      "anchor": "play"
+      "state": "live",
+      "anchor": "play",
+      "notes": "Live since 2026-05-10 (WP-007a lock). CF Pages project: legendary-arena-play. Cross-origin brand-tokens contract verified against https://www.legendary-arena.com/brand-tokens.css; bundled local fallback at /brand-tokens.local.css verified byte-identical to live URL (SHA-256 70C11CEB...). Server CORS allowlist updated under EC-147 to include https://play.legendary-arena.com and https://legendary-arena-play.pages.dev."
     },
     {
       "name": "Registry viewer (cards)",
