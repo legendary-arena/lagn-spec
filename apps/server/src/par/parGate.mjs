@@ -21,7 +21,7 @@ import {
   loadParIndex,
   lookupParFromIndex,
   ParStoreReadError,
-} from '@legendary-arena/game-engine';
+} from '@legendary-arena/game-engine/setup';
 
 /** @typedef {import('@legendary-arena/game-engine').ParIndex} ParIndex */
 /** @typedef {import('@legendary-arena/game-engine').ParArtifactSource} ParArtifactSource */

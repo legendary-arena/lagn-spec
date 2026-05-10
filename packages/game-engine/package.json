@@ -5,11 +5,19 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
+      "default": "./dist/index.js"
+    },
+    "./setup": {
+      "types": "./dist/setup-tooling/index.d.ts",
+      "import": "./dist/setup-tooling/index.js",
+      "default": "./dist/setup-tooling/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"

@@ -13,7 +13,18 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "types": ["vite/client", "node"],
-    "noEmit": true
+    "noEmit": true,
+    // why: D-14401 ("Boundary Leakage" failure class) — arena-client must
+    // NEVER import from `@legendary-arena/game-engine/setup` (the Setup-Tooling
+    // Surface; Node-only). This path mapping points the subpath at a
+    // non-existent stub directory so any arena-client source file that imports
+    // from it fails at typecheck before the build sees it. The stub directory
+    // intentionally does NOT exist — do not create it. This is one of three
+    // independent enforcement layers (subpath exports + Vite onwarn hard-fail
+    // + this TS path guard).
+    "paths": {
+      "@legendary-arena/game-engine/setup": ["./src/__do-not-import-setup__"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

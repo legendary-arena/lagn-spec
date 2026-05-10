@@ -180,11 +180,10 @@ export {
   validateScoringConfig,
 } from './scoring/parScoring.logic.js';
 
-// ScenarioScoringConfig loader (WP-053a / D-5306a)
-export {
-  loadScoringConfigForScenario,
-  loadAllScoringConfigs,
-} from './scoring/scoringConfigLoader.js';
+// why: scoringConfigLoader value exports were moved to the Setup-Tooling
+// Surface under WP-144 / D-14401 (subpath `./setup` = src/setup-tooling/index.ts).
+// Importers reach them via `@legendary-arena/game-engine/setup`. arena-client
+// never imports from `/setup`; apps/server is the sole sanctioned consumer.
 export type { MastermindState } from './mastermind/mastermind.types.js';
 export { buildMastermindState } from './mastermind/mastermind.setup.js';
 export { defeatTopTactic, areAllTacticsDefeated } from './mastermind/mastermind.logic.js';
@@ -417,25 +416,12 @@ export type {
   ChangeClassification,
 } from './governance/governance.types.js';
 
-// PAR artifact storage (WP-050 / D-5001)
-export {
-  scenarioKeyToFilename,
-  scenarioKeyToShard,
-  sourceClassRoot,
-  computeArtifactHash,
-  writeSimulationParArtifact,
-  readSimulationParArtifact,
-  writeSeedParArtifact,
-  readSeedParArtifact,
-  buildParIndex,
-  lookupParFromIndex,
-  loadParIndex,
-  resolveParForScenario,
-  validateParStore,
-  validateParStoreCoverage,
-  ParStoreReadError,
-  PAR_ARTIFACT_SOURCES,
-} from './simulation/par.storage.js';
+// why: par.storage value exports were moved to the Setup-Tooling Surface
+// under WP-144 / D-14401 (subpath `./setup` = src/setup-tooling/index.ts).
+// Importers reach them via `@legendary-arena/game-engine/setup`. arena-client
+// never imports from `/setup`; apps/server is the sole sanctioned consumer.
+// The pure-type re-exports below stay in the runtime barrel — they are
+// compile-time-only and produce no runtime imports.
 export type {
   ParArtifactSource,
   SeedParArtifact,

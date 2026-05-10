@@ -28,8 +28,8 @@ import { join } from 'node:path';
 
 // @ts-ignore — importing .mjs from .ts; tsx resolves this at runtime.
 import { checkParPublished, createParGate } from './parGate.mjs';
-// @ts-ignore — loadParIndex is re-exported from the engine package root.
-import { loadParIndex } from '@legendary-arena/game-engine';
+// @ts-ignore — loadParIndex now lives behind the Setup-Tooling Surface (WP-144 / D-14401).
+import { loadParIndex } from '@legendary-arena/game-engine/setup';
 import type { ScenarioScoringConfig } from '@legendary-arena/game-engine';
 
 type ParArtifactSource = 'seed' | 'simulation';

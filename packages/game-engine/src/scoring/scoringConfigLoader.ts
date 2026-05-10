@@ -1,47 +1,26 @@
 /**
- * ScenarioScoringConfig loader (WP-053a / D-5306a).
+ * ScenarioScoringConfig loader (WP-053a / D-5306a; relocated under WP-144 / D-14401).
+ *
+ * // why: lives behind the Setup-Tooling Surface (`./setup` subpath = src/setup-tooling/index.ts)
+ * because it does filesystem IO (`node:fs/promises`). D-5306a permits this
+ * IO at calibration / authoring time only; D-5001 is the analogous carve-out
+ * for par.storage. D-14401 closed-list quarantine: arena-client never
+ * reaches the runtime-bound code in this file (subpath split + Vite onwarn
+ * hard-fail + arena-client tsconfig path guard reject any import).
  *
  * Reads `ScenarioScoringConfig` instances from the canonical authoring
- * origin under `data/scoring-configs/<encoded-scenario-key>.json`. Exists
- * to feed the PAR aggregator at calibration time and the seed-artifact
- * authoring pipeline; the resulting config is then embedded verbatim into
- * every PAR artifact via `writeSimulationParArtifact` /
- * `writeSeedParArtifact`.
+ * origin under `data/scoring-configs/<encoded-scenario-key>.json`. The
+ * config is embedded verbatim into every PAR artifact via
+ * `writeSimulationParArtifact` / `writeSeedParArtifact`. Filename encoding
+ * reuses `scenarioKeyToFilename` from par.storage byte-for-byte so the
+ * on-disk layout matches the PAR storage layer exactly.
  *
- * // why: this loader does filesystem IO (`node:fs/promises`) and is
- * therefore NOT a "pure helper" in the engine-wide pure-helper sense. The
- * pure-helper rule (no IO inside moves / phases / hooks) applies to
- * gameplay-time code paths. This loader is called only at PAR aggregator
- * calibration time and at authoring time — never inside a move, never
- * inside a phase hook, never from `boardgame.io` lifecycle code. Its IO
- * profile mirrors the `par.storage.ts` writers (which also do startup-time
- * IO under D-5001's simulation IO carve-out).
- *
- * // why: async signatures match the existing `par.storage.ts` IO
- * conventions (`writeSimulationParArtifact`, `readSeedParArtifact`,
- * `buildParIndex`, `loadParIndex` — all return `Promise<…>`). The future
- * authoring pipeline composes these writers and the loader in the same
- * async layer; a synchronous loader would force `readFileSync` (forbidden
- * in production) or block the async chain.
- *
- * Engine layer only. No `boardgame.io` import. No `apps/server/**`
- * import. No engine-runtime gameplay imports. Filename encoding reuses
- * `scenarioKeyToFilename` from `par.storage.ts` byte-for-byte (PS-4) so
- * the on-disk layout matches the PAR artifact storage layer exactly.
+ * Engine layer only. No `boardgame.io` import. No `apps/server/**` import.
+ * No engine-runtime gameplay imports.
  */
 
-// why: namespace imports (rather than named imports) for `node:*` modules
-// keep this file static-analysis-friendly under Vite's browser bundling.
-// Arena-client (browser) re-exports through the engine barrel and Vite
-// externalizes `node:*` to a stub module that exposes no named bindings;
-// named imports like `{ readFile, readdir }` fail at bundle time, while
-// namespace bindings resolve to the empty stub object and are dropped by
-// tree-shaking unless actually called. The functions in this file are
-// never called from browser code paths (server / authoring CLI / engine
-// aggregator only), so the runtime-bound accesses below are dead code in
-// the browser bundle and Rollup eliminates them.
-import * as fsPromises from 'node:fs/promises';
-import * as nodePath from 'node:path';
+import { readFile, readdir } from 'node:fs/promises';
+import { join } from 'node:path';
 
 import type { ScenarioKey, ScenarioScoringConfig } from './parScoring.types.js';
 import { validateScoringConfig } from './parScoring.logic.js';
@@ -80,11 +59,11 @@ export async function loadScoringConfigForScenario(
   // matches PAR artifact storage layout byte-for-byte. A second encoding
   // helper would create drift surface; the choke-point stays at one site.
   const filename = scenarioKeyToFilename(scenarioKey);
-  const filePath = nodePath.join(basePath, filename);
+  const filePath = join(basePath, filename);
 
   let raw: string;
   try {
-    raw = await fsPromises.readFile(filePath, 'utf-8');
+    raw = await readFile(filePath, 'utf-8');
   } catch (readError) {
     const detail =
       readError instanceof Error ? readError.message : 'Unknown read failure.';
@@ -156,7 +135,7 @@ export async function loadAllScoringConfigs(
 ): Promise<Record<ScenarioKey, ScenarioScoringConfig>> {
   let entries: string[];
   try {
-    entries = await fsPromises.readdir(basePath);
+    entries = await readdir(basePath);
   } catch (readdirError) {
     const detail =
       readdirError instanceof Error ? readdirError.message : 'Unknown readdir failure.';
@@ -175,8 +154,8 @@ export async function loadAllScoringConfigs(
 
   const result: Record<ScenarioKey, ScenarioScoringConfig> = {};
   for (const filename of sortedJsonFiles) {
-    const filePath = nodePath.join(basePath, filename);
-    const raw = await fsPromises.readFile(filePath, 'utf-8');
+    const filePath = join(basePath, filename);
+    const raw = await readFile(filePath, 'utf-8');
     let parsed: unknown;
     try {
       parsed = JSON.parse(raw);

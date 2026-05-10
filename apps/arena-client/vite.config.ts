@@ -1,4 +1,3 @@
-import type { Plugin } from 'vite';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
@@ -7,56 +6,52 @@ import vue from '@vitejs/plugin-vue';
 // minified bundle. Revisit in a future packet once the app grows and the
 // sourcemap size becomes a production concern.
 
-// why: the game-engine barrel (`packages/game-engine/dist/index.js`) re-
-// exports from `./simulation/par.storage.js`, which imports Node-only
-// modules (`node:crypto`, `node:fs/promises`, `node:path`) for PAR artifact
-// storage on the server. Vite externalizes `node:*` for browser builds but
-// its stub does not expose the named bindings (`mkdir`, `access`, …) that
-// par.storage destructures, so Rollup's pre-bundle analysis fails before
-// tree-shaking can drop the module. arena-client never uses any
-// par.storage export at runtime (WP-090 consumes LegendaryGame only), so
-// this plugin replaces the module's contents with an inert stub that still
-// advertises the same export names. Arena-client code paths do not call
-// any of them; if a future packet does, the stubbed implementations throw
-// a loud descriptive error rather than corrupt browser state.
-const stubParStoragePlugin: Plugin = {
-  name: 'wp-090-stub-par-storage',
-  enforce: 'pre',
-  load(id) {
-    if (!id.includes('par.storage')) {
-      return null;
-    }
-    const message =
-      'par.storage is a Node-only server module and must not be called ' +
-      'from the browser bundle. If you need this functionality, reach it ' +
-      'through a server endpoint, not a direct runtime import.';
-    const throwSource = `() => { throw new Error(${JSON.stringify(message)}); }`;
-    return [
-      'export class ParStoreReadError extends Error {}',
-      'export const PAR_ARTIFACT_SOURCES = [];',
-      `export const scenarioKeyToFilename = ${throwSource};`,
-      `export const scenarioKeyToShard = ${throwSource};`,
-      `export const sourceClassRoot = ${throwSource};`,
-      `export const computeArtifactHash = ${throwSource};`,
-      `export const writeSimulationParArtifact = ${throwSource};`,
-      `export const readSimulationParArtifact = ${throwSource};`,
-      `export const writeSeedParArtifact = ${throwSource};`,
-      `export const readSeedParArtifact = ${throwSource};`,
-      `export const buildParIndex = ${throwSource};`,
-      `export const lookupParFromIndex = ${throwSource};`,
-      `export const loadParIndex = ${throwSource};`,
-      `export const resolveParForScenario = ${throwSource};`,
-      `export const validateParStore = ${throwSource};`,
-      `export const validateParStoreCoverage = ${throwSource};`,
-    ].join('\n');
-  },
-};
+// why: D-14401 ("Boundary Leakage" failure class) — the engine package
+// runtime entry (`@legendary-arena/game-engine` = `.` subpath) is the
+// Runtime-Safe Engine Surface and contains zero `node:*` imports
+// transitively reachable. The Setup-Tooling Surface (`./setup` subpath)
+// holds every Node-IO module (scoringConfigLoader + par.storage) and is
+// Node-only. arena-client must NEVER import from
+// `@legendary-arena/game-engine/setup`. This `onwarn` handler is one of
+// three independent enforcement layers (subpath exports + this hard-fail
+// + arena-client tsconfig path guard); it converts any silent
+// `node:*` externalization regression into a build failure. The handler
+// MUST `throw`, not `console.warn` — silent regressions defeat structural
+// enforcement and were exactly what the pre-WP `stubParStoragePlugin`
+// workaround masked.
+function failOnNodeExternalization(warning: { code?: string; message?: string; source?: string; id?: string }): void {
+  const message = warning.message ?? '';
+  const source = warning.source ?? '';
+  const isNodeUnresolved =
+    warning.code === 'UNRESOLVED_IMPORT' && source.startsWith('node:');
+  const isNodeExternalized =
+    message.includes('__vite-browser-external') ||
+    /externalized.*node:/.test(message);
+  if (isNodeUnresolved || isNodeExternalized) {
+    throw new Error(
+      'Boundary Leakage detected (D-14401): arena-client production build ' +
+      'tried to bundle a `node:*` import. The Runtime-Safe Engine Surface ' +
+      '(`@legendary-arena/game-engine`) must not transitively reach Node-IO ' +
+      'modules. If a new Node-IO surface was added to the engine, author it ' +
+      'under `packages/game-engine/src/setup-tooling/` and consume it via ' +
+      '`@legendary-arena/game-engine/setup` from server / CLI code only. ' +
+      `Original Rollup warning: code=${warning.code ?? 'n/a'} ` +
+      `source=${source || 'n/a'} message=${message}`,
+    );
+  }
+}
 
 export default defineConfig({
-  plugins: [stubParStoragePlugin, vue()],
+  plugins: [vue()],
   build: {
     outDir: 'dist',
     target: 'es2022',
     sourcemap: true,
+    rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        failOnNodeExternalization(warning);
+        defaultHandler(warning);
+      },
+    },
   },
 });
