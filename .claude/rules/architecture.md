@@ -162,9 +162,9 @@ that chain may import from it.
 | `registry` | Node built-ins, `zod` | `game-engine`, `preplan`, `server`, `vue-sfc-loader`, any `apps/*`, `pg` |
 | `preplan` | `game-engine` — type-only imports at compile time; reads engine state via projections passed in by the host app. Node built-ins. | `game-engine` (runtime), `registry`, `server`, `vue-sfc-loader`, any `apps/*`, `pg`, `boardgame.io` |
 | `vue-sfc-loader` (WP-065) | `@vue/compiler-sfc` (peer), `vue` (peer), `typescript` (optional, test-only), Node built-ins | `game-engine`, `registry`, `preplan`, `server`, any `apps/*`, `pg`, `boardgame.io`, any runtime UI code |
-| `apps/server` | `game-engine`, `registry`, `pg`, Node built-ins | `preplan`, `vue-sfc-loader`, UI packages, browser APIs |
+| `apps/server` | `@legendary-arena/game-engine` (Runtime-Safe Engine Surface; `.` subpath), `@legendary-arena/game-engine/setup` (Setup-Tooling Surface; per D-14401), `registry`, `pg`, Node built-ins | `preplan`, `vue-sfc-loader`, UI packages, browser APIs |
 | `apps/registry-viewer` | `registry`, UI framework, `vue-sfc-loader` (devDep only, test scripts) | `game-engine`, `preplan`, `server`, `pg`, `vue-sfc-loader` at runtime |
-| `apps/arena-client` (WP-061+) | UI framework, `vue-sfc-loader` (devDep only, test scripts), `@legendary-arena/preplan` (runtime — per D-5901) | `game-engine` (runtime), `registry` (runtime), `server`, `pg`, `vue-sfc-loader` at runtime |
+| `apps/arena-client` (WP-061+) | UI framework, `vue-sfc-loader` (devDep only, test scripts), `@legendary-arena/preplan` (runtime — per D-5901), `@legendary-arena/game-engine` (Runtime-Safe Engine Surface only, `.` subpath, per WP-090) | `@legendary-arena/game-engine/setup` (Setup-Tooling Surface; Boundary Leakage class violation per D-14401), `registry` (runtime), `server`, `pg`, `vue-sfc-loader` at runtime |
 
 Pure helpers must NOT import boardgame.io. The `vue-sfc-loader` row is
 additionally enforced at packaging time: it appears only in apps'

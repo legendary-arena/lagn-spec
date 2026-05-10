@@ -15536,6 +15536,146 @@ patches/README.md v18 section.
 
 ---
 
+### D-14401 — Engine Package Subpath Split + Layer Boundary Contract (WP-144)
+
+**Decision:** Split `@legendary-arena/game-engine`'s package surface into
+two subpaths via `package.json` `exports`: `.` (the **Runtime-Safe Engine
+Surface**, browser-bundle-safe) and `./setup` (the **Setup-Tooling
+Surface**, Node-only). The Runtime-Safe Engine Surface is the runtime
+entry consumed by `apps/arena-client/` (via the WP-090-locked import line
+at `apps/arena-client/src/client/bgioClient.ts:16`). The Setup-Tooling
+Surface holds every Node-IO module the engine package owns and is
+consumed exclusively by `apps/server/` and engine-side authoring CLIs.
+
+**Six required clauses** (codified verbatim per the WP §Goal Contract B):
+
+1. **Doctrine (one-line):** layer boundaries between the engine package
+   and arena-client must be enforced *structurally* (package exports,
+   build config, compiler config) and **not** *heuristically*
+   (tree-shaking, warnings, best practices, code-review vigilance). The
+   pre-WP state relied on tree-shaking via a namespace-import
+   workaround in `scoringConfigLoader.ts` AND a `stubParStoragePlugin`
+   in arena-client's `vite.config.ts`. Both retired by this decision.
+
+2. **Naming lock:** *Runtime-Safe Engine Surface* = `.` subpath =
+   `./dist/index.js`. *Setup-Tooling Surface* = `./setup` subpath =
+   `./dist/setup-tooling/index.js`. Future WPs use these names without
+   re-derivation.
+
+3. **Runtime purity invariant:** the engine package's runtime entry
+   (`packages/game-engine/src/index.ts` and every module transitively
+   reachable from it via static `import`) must contain zero `node:*`
+   imports. The pure-type re-exports of `par.storage` types in the
+   runtime barrel and `types.ts` are exempt because `export type` is
+   compile-time only and produces no runtime imports.
+
+4. **Future-proof rule (closed-list quarantine):** any **new** Node-IO
+   surface added to the engine package MUST be authored under one of
+   the closed list of explicitly Node-only subdirectories enumerated
+   in this decision. The list at lock is exactly:
+   `packages/game-engine/src/setup-tooling/`. No other implicit
+   Node-only directories permitted. Existing Node-IO source files at
+   `packages/game-engine/src/scoring/scoringConfigLoader.ts` and
+   `packages/game-engine/src/simulation/par.storage.ts` are
+   grandfathered at their current locations per WP-144 §Scope (In)
+   (which kept the source files in place and only relocated the
+   re-export blocks); the closed-list quarantine applies to NEW
+   surfaces going forward.
+
+5. **Prohibited pattern (codified) + failure-class label:**
+   tree-shaking MUST NOT be relied upon as a layer-boundary
+   enforcement mechanism. Pre-WP-144 TWO workarounds exploited
+   tree-shaking (the namespace-import shape in `scoringConfigLoader.ts`
+   AND the `stubParStoragePlugin` in `apps/arena-client/vite.config.ts`);
+   both retired. The failure-class label for any state in which a
+   Node-IO module becomes statically reachable from the Runtime-Safe
+   Engine Surface is **Boundary Leakage**. Three independent structural
+   enforcement layers reject Boundary Leakage: (a) subpath exports +
+   `"sideEffects": false` ensures unused node:* imports are
+   tree-shaken before they reach the resolver; (b) the
+   `build.rollupOptions.onwarn` hard-fail handler in arena-client's
+   `vite.config.ts` throws on Rollup `UNRESOLVED_IMPORT` for `node:*`
+   sources OR warning messages containing `__vite-browser-external` /
+   `externalized.*node:`; (c) `apps/arena-client/tsconfig.json`
+   `compilerOptions.paths` maps `@legendary-arena/game-engine/setup`
+   to a non-existent stub directory. **Known limitation:** vue-tsc
+   2.x with `moduleResolution: Bundler` resolves
+   `@legendary-arena/game-engine/setup` via the package `exports`
+   field, bypassing `paths` mapping; the path guard is documented
+   best-effort, with the verify-time grep gate
+   (`grep -rn "@legendary-arena/game-engine/setup" apps/arena-client/`)
+   as the backstop.
+
+6. **Side-effects audit (one-time, recorded here):** the binary audit
+   per WP §7.5 was performed against the runtime barrel's transitively
+   reachable graph and **passed all six categories**. Modules audited:
+   97 `*.ts` files under `packages/game-engine/src/` (the strict
+   superset of the transitive closure from `src/index.ts`, excluding
+   `*.test.ts`). All six categories — module-load-time global state
+   mutation, top-level `console.*`/logger emission, top-level
+   `process.env.*` reads influencing module behavior, top-level
+   registry/cache bootstrap loops, singleton instantiation with side
+   effects, top-level `await` performing IO — confirmed absent. One
+   benign top-level expression noted (not a finding):
+   `packages/game-engine/src/simulation/ai.legalMoves.ts:42` contains
+   `void (0 as unknown as SimulationMoveName);` — a pure no-op type
+   cast erased at compile time. One literal-initialized
+   `new Set([...])` at `packages/game-engine/src/hero/heroEffects.execute.ts:33`
+   is a literal `new Set(['draw', 'attack', 'recruit', 'ko'])` (no
+   top-level loop populating it; per the audit's stated rule,
+   literal-initialized constructors are FINE). Result: `"sideEffects":
+   false` added to `packages/game-engine/package.json`.
+
+**Rationale:**
+- The pre-WP arena-client production build emitted Vite's
+  `Module "node:fs/promises" has been externalized for browser
+  compatibility` warnings on every fresh-tree CF Pages build because
+  the Runtime-Safe Engine Surface re-exported `loadScoringConfigForScenario`
+  (which imports `node:fs/promises` + `node:path`) and the runtime
+  exports of `par.storage` (which imports `node:crypto` +
+  `node:fs/promises` + `node:path`). The two workarounds (namespace
+  imports + stub plugin) papered over the symptom but didn't address
+  the cause: Node-IO and gameplay-runtime APIs were sharing the same
+  package surface.
+- Subpath exports are the standard Node.js / npm mechanism for
+  splitting a package's public API by audience. Each consumer
+  (`apps/arena-client/`, `apps/server/`, future tooling) gets exactly
+  the surface it should see. Vite, Rollup, and TypeScript all honor
+  the `exports` map natively — no toolchain workarounds required.
+- Three independent enforcement layers (structural exports, build-time
+  fail, compile-time guard) defend in depth. The previous single-layer
+  enforcement (tree-shaking heuristics) silently broke whenever a new
+  Node-IO surface was added to the runtime barrel; the new contract
+  requires NEW Node-IO surfaces to be authored under
+  `setup-tooling/` (closed-list quarantine) so the existing layers
+  continue to work without per-surface refactors.
+
+**Rejected alternatives:**
+- Relying on `"sideEffects": false` alone without subpath split: works
+  for unused imports but fails the moment any binding is referenced;
+  the structural fix is to remove the import from the surface entirely.
+- Continuing the `stubParStoragePlugin` pattern for new Node-IO
+  surfaces: forbidden going forward (D-14401 clause 5).
+- Splitting the package by physical directory only (move all Node-IO
+  to `setup-tooling/` directly without subpath exports): would still
+  let arena-client transitively reach those modules via the runtime
+  barrel; the subpath split is what makes the API surface explicit.
+- Adding a third subpath (e.g., `./types` for type-only re-exports):
+  out of scope for WP-144; pure-type re-exports stay in the runtime
+  barrel because `export type` produces no runtime imports.
+- Migrating other workspace packages (`registry/`, `preplan/`) to
+  subpath exports concurrently: out of scope; D-14401 establishes the
+  precedent that future workspace packages CAN follow if their public
+  surface needs splitting.
+
+**Status:** Active.
+
+**Citation:** WP-144 §Goal Contract A + §Goal Contract B + §Scope (In) +
+§Acceptance Criteria; EC-144 §Locked Values + §Guardrails; session
+prompt at `docs/ai/invocations/session-wp144-arena-client-production-bundle-isolation.md`
+§7 (Locked Values) + §11 (Forbidden Imports / Grep Gates).
+
+---
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
