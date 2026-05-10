@@ -8,7 +8,12 @@
       "name": "Bob, Agent of HYDRA",
       "slug": "bob-agent-of-hydra",
       "team": "hydra",
-      "cardCounts": null,
+      "cardCounts": {
+        "Bullets Flying, Bob Hiding": 5,
+        "HYDRA Half-Wit": 5,
+        "How Do I Get Out of Here??": 3,
+        "Epic Middle Manager": 1
+      },
       "cards": [
         {
           "name": "Bullets Flying, Bob Hiding",
@@ -115,7 +120,12 @@
       "name": "Deadpool",
       "slug": "deadpool",
       "team": "mercs-for-money",
-      "cardCounts": null,
+      "cardCounts": {
+        "Nighttime Is the Right Time": 5,
+        "It'll Grow Back": 5,
+        "Running Commentary": 3,
+        "Deadpool Rage!": 1
+      },
       "cards": [
         {
           "name": "Nighttime Is the Right Time",
@@ -223,7 +233,12 @@
       "name": "Slapstick",
       "slug": "slapstick",
       "team": "mercs-for-money",
-      "cardCounts": null,
+      "cardCounts": {
+        "Napoleon Complex": 5,
+        "Saturday Morning Harpoons": 5,
+        "Surprise Chainsaw": 3,
+        "Electroplasmic Insanity": 1
+      },
       "cards": [
         {
           "name": "Napoleon Complex",
@@ -330,7 +345,12 @@
       "name": "Solo",
       "slug": "solo",
       "team": "mercs-for-money",
-      "cardCounts": null,
+      "cardCounts": {
+        "Half-Cocked": 5,
+        "Merc's Gotta Get Paid": 5,
+        "Guns on My Guns": 3,
+        "Cut in Half": 1
+      },
       "cards": [
         {
           "name": "Half-Cocked",
@@ -436,7 +456,12 @@
       "name": "Stingray",
       "slug": "stingray",
       "team": "mercs-for-money",
-      "cardCounts": null,
+      "cardCounts": {
+        "Deck Chairs on the Titanic": 5,
+        "Superpowered Swimsuit": 5,
+        "Sting of the Stingray's Sting": 3,
+        "PhD in Oceanography": 1
+      },
       "cards": [
         {
           "name": "Deck Chairs on the Titanic",

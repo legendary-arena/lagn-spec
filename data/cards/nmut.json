@@ -8,7 +8,12 @@
       "name": "Karma",
       "slug": "karma",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Sow Rivalry": 5,
+        "Temporary Possession": 5,
+        "Karmic Balance": 3,
+        "Control Like a Puppet": 1
+      },
       "cards": [
         {
           "name": "Sow Rivalry",
@@ -115,7 +120,12 @@
       "name": "Mirage",
       "slug": "mirage",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Dreams Made Real": 5,
+        "Empathic Link": 5,
+        "Nightmare Wolves": 3,
+        "Haunted By the Demon Bear": 1
+      },
       "cards": [
         {
           "name": "Dreams Made Real",
@@ -223,7 +233,12 @@
       "name": "Sunspot",
       "slug": "sunspot",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Absorb Radiation": 5,
+        "Solar-Powered": 5,
+        "Thermokinetic Fury": 3,
+        "Empyreal Force": 1
+      },
       "cards": [
         {
           "name": "Absorb Radiation",
@@ -333,7 +348,12 @@
       "name": "Warlock",
       "slug": "warlock",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Earthling Choices": 5,
+        "Analyze Planetary Rotation": 5,
+        "Techno-Organic Adaptation": 3,
+        "Nanite Shapeshifter": 1
+      },
       "cards": [
         {
           "name": "Earthling Choices",
@@ -444,7 +464,12 @@
       "name": "Wolfsbane",
       "slug": "wolfsbane",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Night Vision": 5,
+        "Wolf Out": 5,
+        "Howl at the Moon": 3,
+        "Nocturnal Savagery": 1
+      },
       "cards": [
         {
           "name": "Night Vision",

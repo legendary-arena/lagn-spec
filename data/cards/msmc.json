@@ -8,7 +8,12 @@
       "name": "Multiple Man",
       "slug": "multiple-man",
       "team": "x-factor-investigations",
-      "cardCounts": null,
+      "cardCounts": {
+        "Finding Myself": 4,
+        "Me, Myself, and I": 4,
+        "Perfect Match": 4,
+        "Reabsorb Duplicates": 2
+      },
       "cards": [
         {
           "name": "Finding Myself",
@@ -82,7 +87,7 @@
       "physicalCards": [
         {
           "id": "p1",
-          "count": 5,
+          "count": 4,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-finding-myself.webp",
           "sides": [
             "finding-myself"
@@ -90,7 +95,7 @@
         },
         {
           "id": "p2",
-          "count": 5,
+          "count": 4,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-me-myself-and-i.webp",
           "sides": [
             "me-myself-and-i"
@@ -98,7 +103,7 @@
         },
         {
           "id": "p3",
-          "count": 5,
+          "count": 4,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-perfect-match.webp",
           "sides": [
             "perfect-match"
@@ -106,7 +111,7 @@
         },
         {
           "id": "p4",
-          "count": 1,
+          "count": 2,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-reabsorb-duplicates.webp",
           "sides": [
             "reabsorb-duplicates"
@@ -119,7 +124,12 @@
       "name": "Shatterstar",
       "slug": "shatterstar",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Strive for Greatness": 3,
+        "Bioelectric Surge": 4,
+        "Gladiator's Blades": 5,
+        "Gene-Spliced Creation": 2
+      },
       "cards": [
         {
           "name": "Strive for Greatness",
@@ -197,7 +207,7 @@
       "physicalCards": [
         {
           "id": "p1",
-          "count": 5,
+          "count": 3,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-strive-for-greatness.webp",
           "sides": [
             "strive-for-greatness"
@@ -205,7 +215,7 @@
         },
         {
           "id": "p2",
-          "count": 5,
+          "count": 4,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-bioelectric-surge.webp",
           "sides": [
             "bioelectric-surge"
@@ -221,7 +231,7 @@
         },
         {
           "id": "p4",
-          "count": 1,
+          "count": 2,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gene-spliced-creation.webp",
           "sides": [
             "gene-spliced-creation"
@@ -356,7 +366,12 @@
       "name": "M",
       "slug": "m",
       "team": "x-factor-investigations",
-      "cardCounts": null,
+      "cardCounts": {
+        "Penance Form": 4,
+        "Three Sisters Combined": 4,
+        "Uncover Family Secrets": 4,
+        "Interweaving Powers": 2
+      },
       "cards": [
         {
           "name": "Penance Form",
@@ -435,7 +450,7 @@
       "physicalCards": [
         {
           "id": "p1",
-          "count": 5,
+          "count": 4,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-penance-form.webp",
           "sides": [
             "penance-form"
@@ -443,7 +458,7 @@
         },
         {
           "id": "p2",
-          "count": 5,
+          "count": 4,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-three-sisters-combined.webp",
           "sides": [
             "three-sisters-combined"
@@ -451,7 +466,7 @@
         },
         {
           "id": "p3",
-          "count": 5,
+          "count": 4,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-uncover-family-secrets.webp",
           "sides": [
             "uncover-family-secrets"
@@ -459,7 +474,7 @@
         },
         {
           "id": "p4",
-          "count": 1,
+          "count": 2,
           "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-interweaving-powers.webp",
           "sides": [
             "interweaving-powers"
@@ -472,7 +487,12 @@
       "name": "Strong Guy",
       "slug": "strong-guy",
       "team": "x-factor-investigations",
-      "cardCounts": null,
+      "cardCounts": {
+        "X-Factor Investigations": 5,
+        "Absorb Kinetic Energy": 5,
+        "Go Big": 3,
+        "Treasure Hunt": 1
+      },
       "cards": [
         {
           "name": "X-Factor Investigations",
@@ -580,7 +600,12 @@
       "name": "Warpath",
       "slug": "warpath",
       "team": "x-force",
-      "cardCounts": null,
+      "cardCounts": {
+        "Grim Tracker": 5,
+        "Endless Endurance": 5,
+        "Dangerous Maneuver": 3,
+        "Superhuman Senses": 1
+      },
       "cards": [
         {
           "name": "Grim Tracker",
@@ -688,7 +713,12 @@
       "name": "Siryn",
       "slug": "siryn",
       "team": "x-factor-investigations",
-      "cardCounts": null,
+      "cardCounts": {
+        "Echolocation": 5,
+        "Hypnotic Call": 5,
+        "Three-Octave Arpeggio": 3,
+        "Splintering Shriek": 1
+      },
       "cards": [
         {
           "name": "Echolocation",
@@ -795,7 +825,12 @@
       "name": "Rictor",
       "slug": "rictor",
       "team": "x-factor-investigations",
-      "cardCounts": null,
+      "cardCounts": {
+        "Underground Cave-In": 5,
+        "Unearth Tectonic Power": 5,
+        "Trace the Fault Lines": 3,
+        "Massive Earthquake": 1
+      },
       "cards": [
         {
           "name": "Underground Cave-In",

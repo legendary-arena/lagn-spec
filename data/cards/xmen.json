@@ -1704,7 +1704,12 @@
       "name": "X-23",
       "slug": "x-23",
       "team": "x-men",
-      "cardCounts": null,
+      "cardCounts": {
+        "Adamantium Foot Claws": 5,
+        "Healing Factor Genome": 5,
+        "Bioengineered Assassin": 3,
+        "Heir to Wolverine": 1
+      },
       "cards": [
         {
           "name": "Adamantium Foot Claws",
