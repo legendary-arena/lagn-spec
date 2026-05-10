@@ -1,9 +1,19 @@
 /*
  * Base styles for the Legendary Arena gameplay client.
  *
- * Minimal reset + a tiny palette of color tokens with documented contrast
- * ratios. No component styles, no framework, no theming system beyond
- * prefers-color-scheme. Component styling is scoped to each .vue file.
+ * Minimal reset + a small palette of token aliases that map gameplay-
+ * semantic names to the cross-site brand tokens defined in
+ * brand-tokens.css (loaded in index.html). Component styling is scoped
+ * to each .vue file.
+ *
+ * why: the existing arena-client tokens (--color-foreground, etc.)
+ * are kept as aliases rather than rewritten at every call site so
+ * the WP-007a brand integration is a one-file change here. The
+ * substance — the actual color values — comes from the brand-tokens
+ * v1 contract; this file is now strictly an indirection layer.
+ *
+ * No raw hex values appear below. Adding one is a WP-009 audit
+ * failure and a WP-007a Step 5 violation.
  */
 
 *,
@@ -13,48 +23,38 @@
 }
 
 :root {
-  /* contrast 17.8:1 (#111111 on #f9f9f9) — WCAG AAA for normal and large text */
-  --color-foreground: #111111;
-  --color-background: #f9f9f9;
-  /* contrast 4.8:1 (#005fcc on #f9f9f9) — WCAG AA for normal text */
-  --color-focus-ring: #005fcc;
-  /* contrast 7.4:1 (#0a5d2b on #f9f9f9) — WCAG AAA — bystanders-rescued emphasis */
-  --color-emphasis: #0a5d2b;
-  /* contrast 5.9:1 (#8a1f1f on #f9f9f9) — WCAG AA — penalty counters */
-  --color-penalty: #8a1f1f;
-  /* contrast 4.7:1 (#005fcc on #f9f9f9) — WCAG AA — active-player indicator */
-  --color-active-player: #005fcc;
-  /* contrast 7.4:1 (#0a5d2b on #f9f9f9) — WCAG AAA — PAR under-par (positive cooperative outcome) */
-  --color-par-positive: #0a5d2b;
-  /* contrast 5.9:1 (#8a1f1f on #f9f9f9) — WCAG AA — PAR over-par (negative cooperative outcome) */
-  --color-par-negative: #8a1f1f;
+  --color-foreground: var(--la-color-text-primary);
+  --color-background: var(--la-color-bg-primary);
+  --color-focus-ring: var(--la-color-blue-bright);
+  /* why: --color-emphasis / --color-par-positive surface "good" gameplay
+     outcomes (bystanders rescued, PAR under-par); they map to the
+     semantic-success token, not to the brand-gold or class-color
+     tokens, per palette.md §10 (class colors must not double as
+     semantic-state indicators). */
+  --color-emphasis: var(--la-color-success);
+  --color-par-positive: var(--la-color-success);
+  /* why: --color-penalty / --color-par-negative surface "bad" gameplay
+     outcomes (penalty counters, PAR over-par); they map to
+     semantic-error, distinct from --la-color-red / --la-color-cta
+     per palette.md §5.3 (CTA red ≠ error red). */
+  --color-penalty: var(--la-color-error);
+  --color-par-negative: var(--la-color-error);
+  --color-active-player: var(--la-color-blue-bright);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* contrast 15.6:1 (#f1f1f1 on #101015) — WCAG AAA for normal and large text */
-    --color-foreground: #f1f1f1;
-    --color-background: #101015;
-    /* contrast 6.5:1 (#8ab4f8 on #101015) — WCAG AA for normal text */
-    --color-focus-ring: #8ab4f8;
-    /* contrast 9.3:1 (#7ad89b on #101015) — WCAG AAA — bystanders-rescued emphasis */
-    --color-emphasis: #7ad89b;
-    /* contrast 6.7:1 (#f5a0a0 on #101015) — WCAG AA — penalty counters */
-    --color-penalty: #f5a0a0;
-    /* contrast 6.5:1 (#8ab4f8 on #101015) — WCAG AA — active-player indicator */
-    --color-active-player: #8ab4f8;
-    /* contrast 9.3:1 (#7ad89b on #101015) — WCAG AAA — PAR under-par */
-    --color-par-positive: #7ad89b;
-    /* contrast 6.7:1 (#f5a0a0 on #101015) — WCAG AA — PAR over-par */
-    --color-par-negative: #f5a0a0;
-  }
-}
+/* why: no @media (prefers-color-scheme: dark) override here. Brand
+   tokens v1 are mode-stable on :root and only switch under
+   html[data-theme="dark"], which arena-client v1 does not toggle.
+   Adding a prefers-color-scheme override would either duplicate brand
+   token values (a v1 contract violation) or reintroduce raw hex
+   (a WP-007a Step 5 + WP-009 audit violation). Theme-toggle UX is
+   deferred to a future WP. */
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
+  font-family: var(--la-font-body);
+  font-size: var(--la-font-size-body);
+  line-height: var(--la-line-height-body);
   color: var(--color-foreground);
   background: var(--color-background);
 }
