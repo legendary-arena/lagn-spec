@@ -14,9 +14,15 @@
 
 ## Locked Values (do not re-derive)
 
-- Recommended Execution Profile: **A3 (CI-scheduled cron) + B1 (`wiki/architecture-inventory.md`) + C1 (reserved-file accommodation) + D1 (PR-on-diff)**
-- A3 default cron: **`0 6 * * 1`** (Mondays 06:00 UTC) unless explicitly overridden in D-14501
-- B1 output path: **`wiki/architecture-inventory.md`** — generator is sole writer; hand-edits silently overwritten
+**Default execution path (Recommended Execution Profile):**
+
+- **Cadence:** A3 — CI-scheduled cron, default `0 6 * * 1` (Mondays 06:00 UTC) unless overridden in D-14501
+- **Location:** B1 — `wiki/architecture-inventory.md` (generator is sole writer; hand-edits silently overwritten)
+- **Schema:** C1 — reserved-file accommodation (SCHEMA amendment landed via D-14503)
+- **Diff policy:** D1 — PR-on-diff
+
+**Non-negotiables:**
+
 - D-block claim: **`D-14501..D-14503`** in numeric order; D-14502 amends D-13810 (single-file generator exception); D-14503 amends `wiki/SCHEMA.md` (C1: reserved-file list + lint-target exception)
 - Script immutability: `scripts/architecture-inventory.mjs` is **byte-identical** pre/post-execution. Capture SHA-256 before first run; assert post-execution.
 - Determinism: existing `.github/workflows/wiki-viewer.yml` byte-identical-output check (`*.html` + `*.css`) **still passes** unchanged

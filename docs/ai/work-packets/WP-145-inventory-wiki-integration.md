@@ -21,6 +21,12 @@ are introduced.
 
 **Supersedes:** none.
 
+**Purpose (one-line):** surface the deterministic architecture
+inventory report as a first-class, automatically-refreshed page on
+the engineering wiki without violating wiki-source-readonly or
+build-determinism contracts, and without modifying the inventory
+script itself.
+
 ---
 
 ## Session Context
@@ -313,6 +319,13 @@ default; the matrix after this section shows valid alternatives.
 
 ### A — Generation cadence
 
+> ⚠️ **A2 is CONDITIONALLY BLOCKED under this WP.** The script's
+> UTC-date header makes per-build invocation non-deterministic
+> across midnight, and hardening the script's date input is out
+> of scope (script-immutability rule). A2 cannot be selected
+> unless a sibling WP that lands the date-input hardening is on
+> `main` first. See A2 below for the full constraint chain.
+
 The inventory's freshness is bounded by how often the script runs.
 Three options:
 
@@ -473,10 +486,15 @@ Notes:
 
 ## Scope (In)
 
-Scope below is **conditional on Open Decisions A / B / C / D**. The
-list enumerates everything that could land under any combination of
+**Scope model:** this WP defines *all possible integration paths*,
+but **only the locked option set executes**. The list below
+enumerates everything that could land under any combination of
 the lockable choices; the executing agent narrows it to the actual
-selected combination at session start.
+selected combination at session start. Items not reached by the
+locked combination are out of scope **for that execution**, not
+out of scope for the WP as written.
+
+Scope below is **conditional on Open Decisions A / B / C / D**.
 
 ### A) Inventory invocation harness (always in scope)
 
