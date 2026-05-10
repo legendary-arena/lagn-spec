@@ -123,12 +123,13 @@ for whichever sub-option is selected.
   `pnpm --filter @legendary-arena/game-engine test` exit 0 at session
   start (the integration introduces no engine or registry change but
   WP discipline requires baseline-clean state).
-- `docs/ai/DECISIONS.md` highest landed entry is D-13901 (WP-140) at
-  the time of drafting; WP-144 is in-flight on a sibling worktree and
-  claims D-14401; WP-145 therefore claims `D-14501..D-14503` (the next
-  contiguous free block above WP-144's claim). The executing agent
-  must verify the next-free `D-NNNN` at session start and retarget if
-  claims have shifted.
+- `docs/ai/DECISIONS.md` highest landed entry was D-13901 (WP-140) at
+  WP-145's initial draft on 2026-05-09; WP-144 has since landed via
+  `bb0493c` + `8a0621a`, claiming D-14401. The next-free contiguous
+  block above is D-14501; WP-145 claims `D-14501..D-14503` accordingly.
+  The executing agent must re-verify the next-free `D-NNNN` at session
+  start and retarget if any sibling WP has consumed the block in the
+  interim.
 - A working Node 22+ runtime is available on the development host (the
   inventory script uses built-in `fetch` via Node 22; matches the rest
   of the repo's Node version assumption per `.claude/CLAUDE.md`
@@ -1024,6 +1025,20 @@ The pattern's invariants:
 5. **Non-gating posture preserved.** The generator's failure
    must not block unrelated pipelines unless explicitly
    elevated in a future WP with its own DECISIONS amendment.
+6. **Upgrade / deprecation posture.** Removing a generated
+   artifact requires a sibling WP that (a) reverses the
+   relevant DECISIONS amendment that named the file as a
+   single-writer exception under the source-readonly rule,
+   (b) deletes the artifact's file in the same commit, and
+   (c) removes any SCHEMA reserved-file row added when the
+   artifact landed. Replacement (e.g., a script-format change
+   that produces a structurally different report) routes
+   through a sibling WP that updates the script under its
+   own immutability-rule waiver, then re-runs the generator
+   at execution time. Hand-cleanup of generated artifacts is
+   forbidden — any cleanup goes through the same single-
+   writer + DECISIONS-amendment chain that created the
+   artifact.
 
 Future WPs introducing generated artifacts SHOULD conform to this
 pattern. Deviations require their own DECISIONS entries and
