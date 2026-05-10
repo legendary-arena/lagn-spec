@@ -230,7 +230,7 @@ Depends on (server-side runtime):
 
 **Updates that are NOT part of the `api.` cutover** (despite being on a previous draft of this runbook — that was wrong):
 
-- **`PUBLIC_BASE_URL`** points at the **client**, not the API. It controls Stripe Checkout success/cancel redirects, which need to land on a page the user can see — i.e., the future `play.legendary-arena.com` (or `app.` per the original WP-133 plan; `.env.example` and the test fixtures still say `app.`). Update this when `play.` is deployed, not when `api.` is renamed.
+- **`PUBLIC_BASE_URL`** points at the **client**, not the API. It controls Stripe Checkout success/cancel redirects, which need to land on a page the user can see. **Updated 2026-05-10** from `https://legendary-arena-server.onrender.com` to `https://play.legendary-arena.com` once WP-007a locked the `play.` deploy (see Render dashboard env vars; redeploy completed cleanly with all startup probes green). Stripe Checkout success/cancel redirects now land on the live arena-client SPA per `apps/server/src/billing/billing.routes.ts:339-340`. Note: `.env.example` and test fixtures still reference `app.` per the original WP-133 plan; refresh those in a future cleanup pass when convenient.
 - **Stripe webhook endpoint URL** points at the API and CAN be updated to `https://api.legendary-arena.com/<webhook-path>` now. It's optional — both hostnames serve the same routes during the dual-running window. Prefer the friendly hostname for any new webhook configs.
 - **Hanko allowed origins / audience** — only matters when a client at a new origin calls Hanko. Update when adding new client origins (e.g., `play.`), not when the API hostname changes.
 - **Server CORS allowlist** — update when adding new client origins, same reason.
@@ -275,11 +275,14 @@ Suggested sequence (for WP scoping):
    landed the brand-integration + Pages deploy + custom domain bind on
    2026-05-10. **Server CORS allowlist** updated under EC-147 to include
    `https://play.legendary-arena.com` and `https://legendary-arena-play.pages.dev`.
-   **Still pending separate follow-up tasks** (intentionally OUT of WP-007a
-   scope per the WP body Step 12.4 follow-up note): `PUBLIC_BASE_URL` →
-   `https://play.legendary-arena.com` on Render (Stripe Checkout success/cancel
-   redirects), Hanko allowed origins to include `play.`, Stripe webhook redirect
-   allowlist if any. Track these under a separate server-config or
+   **`PUBLIC_BASE_URL`** updated 2026-05-10 to `https://play.legendary-arena.com`
+   on the Render `legendary-arena-server` env (one-key dashboard change;
+   triggered an auto-redeploy that completed cleanly). Stripe Checkout
+   success/cancel redirects now land on the live arena-client SPA.
+   **Still pending separate follow-up tasks**: Hanko allowed origins to
+   include `play.` (only matters when arena-client adds Hanko-authenticated
+   flows), Stripe webhook redirect allowlist if the Stripe dashboard webhook
+   URL needs an update. Both are owned by a future server-config or
    billing-flow WP.
 6. **`wiki.`** when the public Hugo wiki has content to serve.
 7. **`ewiki.`** Done 2026-05-08. Configured Cloudflare Access (Zero Trust
