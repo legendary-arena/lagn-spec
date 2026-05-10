@@ -1,0 +1,317 @@
+/* SNAPSHOT - do not edit here. Canonical source:
+ * https://www.legendary-arena.com/brand-tokens.css
+ * Refreshed under WP-007a on 2026-05-09; future v1 -> v2 bump must
+ * also refresh this file per 01-VISION.md cross-site contract. */
+/*
+ * Legendary Arena Brand Tokens
+ * Version: v1
+ * Date: 2026-05-07
+ *
+ * Locked for www.legendary-arena.com on 2026-05-07 (WP-002 + WP-003).
+ * Cross-site consumption by play.legendary-arena.com and the registry
+ * viewer (cards.barefootbetters.com today; future
+ * registry.legendary-arena.com) is verified separately under WP-007a
+ * and WP-007b and is explicitly carved out of the www lock.
+ *
+ * Treat this file as a public API. Breaking changes require a major
+ * version bump (v2) AND coordinated updates to consumers per WP-007a
+ * and WP-007b BEFORE the new version publishes.
+ *
+ * Source:    docs/brand/strategy.md (Phase A directions)
+ * Changelog: docs/brand/CHANGELOG.md (token version history)
+ */
+
+
+/* =========================================================
+   MODE-INDEPENDENT TOKENS
+   These values do not change between light and dark modes.
+   ========================================================= */
+
+:root {
+
+  /* --- TYPOGRAPHY: FAMILIES --- */
+  --la-font-display: "Bebas Neue", "Anton", "Oswald", system-ui, sans-serif;
+  --la-font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --la-font-mono: "JetBrains Mono", "IBM Plex Mono", Consolas, monospace;
+
+  /* --- TYPOGRAPHY: SIZE SCALE --- */
+  --la-font-size-hero: 3.5rem;    /* 56px — above-the-fold hero only */
+  --la-font-size-h1: 3rem;        /* 48px */
+  --la-font-size-h2: 2.25rem;     /* 36px */
+  --la-font-size-h3: 1.75rem;     /* 28px */
+  --la-font-size-h4: 1.375rem;    /* 22px */
+  --la-font-size-h5: 1.125rem;    /* 18px */
+  --la-font-size-h6: 1rem;        /* 16px */
+  --la-font-size-body: 1rem;      /* 16px */
+  --la-font-size-small: 0.875rem; /* 14px */
+
+  /* --- TYPOGRAPHY: LINE HEIGHTS (per role) --- */
+  --la-line-height-hero: 1.05;
+  --la-line-height-h1: 1.1;
+  --la-line-height-h2: 1.15;
+  --la-line-height-h3: 1.2;
+  --la-line-height-h4: 1.3;
+  --la-line-height-h5: 1.4;
+  --la-line-height-h6: 1.5;
+  --la-line-height-body: 1.6;
+  --la-line-height-small: 1.5;
+
+  /* --- TYPOGRAPHY: LINE HEIGHTS (generic) --- */
+  --la-line-height-tight: 1.1;
+  --la-line-height-normal: 1.4;
+  --la-line-height-relaxed: 1.6;
+
+  /* --- TYPOGRAPHY: WEIGHTS (per role) --- */
+  --la-font-weight-h1: 700;
+  --la-font-weight-h2: 700;
+  --la-font-weight-h3: 600;
+  --la-font-weight-h4: 600;
+  --la-font-weight-h5: 500;
+  --la-font-weight-h6: 500;
+  --la-font-weight-body: 400;
+  --la-font-weight-small: 400;
+
+  /* --- TYPOGRAPHY: WEIGHTS (generic) --- */
+  --la-font-weight-regular: 400;
+  --la-font-weight-medium: 500;
+  --la-font-weight-semibold: 600;
+  --la-font-weight-bold: 700;
+
+  /* --- TYPOGRAPHY: LETTER-SPACING --- */
+  --la-letter-spacing-tight: -0.01em;
+  --la-letter-spacing-normal: 0;
+  --la-letter-spacing-wide: 0.04em;
+  --la-letter-spacing-display: 0.04em;
+  /* why: condensed display fonts read better with slight tracking */
+
+  /* --- SPACING SCALE (8-point system, 9 steps) --- */
+  --la-space-1: 4px;
+  --la-space-2: 8px;
+  --la-space-3: 12px;
+  --la-space-4: 16px;
+  --la-space-5: 24px;
+  --la-space-6: 32px;
+  --la-space-7: 48px;
+  --la-space-8: 64px;
+  --la-space-9: 96px;
+
+  /* --- BORDER RADIUS --- */
+  --la-radius-sm: 4px;
+  --la-radius-md: 8px;
+  --la-radius-lg: 16px;
+  --la-radius-xl: 24px;
+  --la-radius-pill: 9999px;
+
+  /* --- Z-INDEX LAYERS --- */
+  --la-z-base: 0;
+  --la-z-dropdown: 5;
+  --la-z-sticky: 10;
+  --la-z-overlay: 50;
+  --la-z-modal: 100;
+  --la-z-toast: 200;
+
+  /* --- TRANSITIONS --- */
+  --la-transition-fast: 120ms ease-in-out;
+  --la-transition-base: 180ms ease-in-out;
+  --la-transition-slow: 280ms ease;
+}
+
+
+/* =========================================================
+   MODE-STABLE COLOR TOKENS
+   Class colors (per palette.md §4.4) identify gameplay class,
+   not brand identity. They are mode-stable: same value in light
+   and dark. NOT overridden in html[data-theme="dark"] below.
+
+   Non-role constraint: class colors MUST NOT be used for brand
+   identity, CTA elements, system semantics, or marketing visuals.
+   See palette.md §4.4 + §10 failure mode (class color used as
+   brand identity).
+   ========================================================= */
+
+:root {
+
+  /* --- CLASS COLORS (per-hero-class identity) ---
+     Source: barefootbetters-legendary-setup/public/img/icons/
+              hero-classes/class-{strength,covert,instinct,ranged,tech}.svg
+     Mode-stable: same hex in light and dark. */
+  --la-color-class-strength: #40b93c;
+  --la-color-class-strength-muted: #164b33;
+  --la-color-class-covert: #ee2223;
+  --la-color-class-covert-muted: #ae2136;
+  --la-color-class-instinct: #f9b00b;
+  --la-color-class-instinct-muted: #92400e;       /* derived — icon has no shadow source */
+  --la-color-class-ranged: #31a5d6;
+  --la-color-class-ranged-muted: #155e75;         /* derived — icon has no shadow source */
+  --la-color-class-tech: #a7a5a6;
+  --la-color-class-tech-muted: #666666;
+}
+
+
+/* =========================================================
+   LIGHT MODE (default)
+   PaperMod resolves the active theme via <html data-theme="...">,
+   set by its head/footer scripts to "light" or "dark" (never "auto"
+   after JS runs). We define light as the :root default, then
+   override under html[data-theme="dark"] below.
+   ========================================================= */
+
+:root {
+
+  /* --- BACKGROUNDS --- */
+  --la-color-bg-primary: #fdfcf8;     /* warm off-white */
+  --la-color-bg-secondary: #f3f1ea;   /* elevated panels */
+  --la-color-bg-tertiary: #e8e5db;    /* deeper sections */
+
+  /* --- SURFACES --- */
+  --la-color-surface: #ffffff;        /* cards on light bg */
+  --la-color-surface-hover: #f8f6f0;
+
+  /* --- TEXT --- */
+  --la-color-text-primary: #1a1d2e;   /* near-black with warm tint */
+  --la-color-text-secondary: #4a5168;
+  --la-color-text-muted: #767e94;
+
+  /* --- BORDERS --- */
+  --la-color-border-subtle: #d8d3c5;
+  --la-color-border-strong: #b8b3a4;
+
+  /* --- BRAND COLORS (light mode tuning) --- */
+  /* why: gold/red/blue darkened for contrast on light backgrounds.
+     Red sits in the deep maroon family (not cherry), blue in the
+     deep navy family (not royal blue) — see palette.md §4.2 / §4.3
+     tonal-direction notes (2026-05-08 brand iteration). */
+  --la-color-gold: #b8901f;
+  --la-color-gold-bright: #d4af37;
+  --la-color-gold-muted: #856710;
+
+  --la-color-red: #7a1d1f;
+  --la-color-red-bright: #a83034;
+  --la-color-red-muted: #4d0d10;
+
+  /* CTA button background — pinned across modes to satisfy palette.md
+     §8 contrast pair "white on red (button bg) — AA, both modes."
+     Following the 2026-05-08 brand shift, CTA pins to the new maroon
+     scale (cohesive with brand red). White text on `#7a1d1f` is
+     ~10.4:1 in both modes (AAA, well above the 4.5:1 AA threshold).
+     Non-button red usages (gradients, attack semantic, accents) still
+     route through `--la-color-red`. */
+  --la-color-cta: #7a1d1f;
+  --la-color-cta-bright: #a83034;
+  --la-color-cta-muted: #4d0d10;
+
+  --la-color-blue: #1e3a8a;
+  --la-color-blue-bright: #1d4ed8;
+  --la-color-blue-muted: #172554;
+
+  /* --- SEMANTIC --- */
+  --la-color-success: #15803d;
+  --la-color-warning: #b45309;
+  --la-color-error: #991b1b;
+  /* why: distinct hex from --la-color-red per strategy.md §4 +
+     palette.md §5.3 (CTA red ≠ error red constraint) */
+
+  /* --- GAMEPLAY MAPPING --- */
+  --la-color-attack: var(--la-color-red);
+  --la-color-recruit: var(--la-color-blue);
+  --la-color-victory: var(--la-color-gold);
+
+  /* --- EFFECTS --- */
+  --la-gradient-gold: linear-gradient(
+    90deg,
+    var(--la-color-gold-muted),
+    var(--la-color-gold-bright)
+  );
+
+  --la-gradient-hero: linear-gradient(
+    135deg,
+    var(--la-color-blue),
+    var(--la-color-red)
+  );
+
+  --la-shadow-soft: 0 2px 8px rgba(26, 29, 46, 0.08);
+  --la-shadow-strong: 0 8px 24px rgba(26, 29, 46, 0.15);
+}
+
+
+/* =========================================================
+   DARK MODE
+   PaperMod sets <html data-theme="dark"> when the user picks dark
+   (via the sun/moon toggle) or when prefers-color-scheme is dark and
+   no explicit preference is stored. The selector below MUST match
+   exactly that — using `.dark` (a different theme convention) would
+   leave LA dark tokens unapplied while PaperMod's own --theme vars
+   masked the regression. See WP-003 verification 2026-05-07.
+   ========================================================= */
+
+html[data-theme="dark"] {
+
+  /* --- BACKGROUNDS --- */
+  --la-color-bg-primary: #0b0f19;     /* deep navy-black, cinematic base */
+  --la-color-bg-secondary: #121826;   /* elevated panels */
+  --la-color-bg-tertiary: #1a2234;    /* cards / overlays */
+
+  /* --- SURFACES --- */
+  --la-color-surface: #1c2438;
+  --la-color-surface-hover: #242f4a;
+
+  /* --- TEXT --- */
+  --la-color-text-primary: #f5f7fb;
+  --la-color-text-secondary: #a7b0c5;
+  --la-color-text-muted: #6e7893;
+
+  /* --- BORDERS --- */
+  --la-color-border-subtle: #2a3550;
+  --la-color-border-strong: #3a4668;
+
+  /* --- BRAND COLORS (dark mode tuning) --- */
+  /* why: lifted saturation reads correctly against dark backgrounds while
+     preserving the deep-maroon and deep-navy tonal direction set in light
+     mode. Brand iteration 2026-05-08 — see palette.md §12 changelog. */
+  --la-color-gold: #d4af37;
+  --la-color-gold-bright: #f0c94a;
+  --la-color-gold-muted: #9e7c1c;
+
+  --la-color-red: #a83034;
+  --la-color-red-bright: #c44248;
+  --la-color-red-muted: #7a1d1f;
+
+  /* CTA button background — same value across modes (see :root block).
+     Pinned to the maroon `#7a1d1f` for ~10.4:1 contrast on white text
+     (AAA) in both modes. Brand iteration 2026-05-08. */
+  --la-color-cta: #7a1d1f;
+  --la-color-cta-bright: #a83034;
+  --la-color-cta-muted: #4d0d10;
+
+  --la-color-blue: #3753b8;
+  --la-color-blue-bright: #3b82f6;
+  --la-color-blue-muted: #172554;
+
+  /* --- SEMANTIC --- */
+  --la-color-success: #22c55e;
+  --la-color-warning: #f59e0b;
+  --la-color-error: #dc2626;
+  /* why: distinct hex from --la-color-red per strategy.md §4 +
+     palette.md §5.3 (CTA red ≠ error red constraint) */
+
+  /* --- GAMEPLAY MAPPING --- */
+  --la-color-attack: var(--la-color-red);
+  --la-color-recruit: var(--la-color-blue);
+  --la-color-victory: var(--la-color-gold);
+
+  /* --- EFFECTS --- */
+  --la-gradient-gold: linear-gradient(
+    90deg,
+    var(--la-color-gold-muted),
+    var(--la-color-gold-bright)
+  );
+
+  --la-gradient-hero: linear-gradient(
+    135deg,
+    var(--la-color-blue),
+    var(--la-color-red)
+  );
+
+  --la-shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --la-shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.6);
+}

@@ -4,6 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Legendary Arena</title>
+    <!-- WP-007a brand-token consumption.
+         Cascade contract: both stylesheets set the same CSS custom
+         properties on :root at equal specificity. Per CSS spec, equal-
+         specificity declarations resolve by source order — the later
+         declaration wins. The cross-origin <link> is listed AFTER the
+         local fallback BY DESIGN:
+           (1) cross-origin fetch succeeds → live v1 declarations apply
+               (live contract is authoritative);
+           (2) cross-origin fetch fails (network failure, CORS
+               regression, www outage) → fallback's v1 declarations
+               apply (bundled snapshot is the safety net).
+         Both files MUST share byte-identical contents; SHA-256 parity
+         is verified at WP lock and at every WP that touches either
+         side of the contract (see WP-007a Step 4 "Snapshot integrity
+         check" + DoD).
+         The crossorigin attribute is intentionally OMITTED: the live
+         URL responds with Access-Control-Allow-Origin: *, so the link
+         works without an explicit CORS mode declaration; omitting it
+         also lets the browser fall back to a non-CORS fetch if a
+         middlebox blocks strict CORS, which slightly widens the
+         reachability window without weakening the fallback path. -->
+    <link rel="stylesheet" href="/brand-tokens.local.css" />
+    <link rel="stylesheet" href="https://www.legendary-arena.com/brand-tokens.css" />
   </head>
   <body>
     <div id="app"></div>

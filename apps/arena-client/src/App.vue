@@ -8,6 +8,7 @@ import {
 } from 'vue';
 
 import ArenaHud from './components/hud/ArenaHud.vue';
+import AppShell from './components/branding/AppShell.vue';
 import LobbyView from './lobby/LobbyView.vue';
 import PlayViewport from './pages/PlayViewport.vue';
 import {
@@ -127,7 +128,7 @@ function selectRoute(parsed: ParsedQuery): AppRoute {
 
 export default defineComponent({
   name: 'App',
-  components: { ArenaHud, LobbyView, PlayViewport, PlayerProfilePage, MyProfilePage },
+  components: { AppShell, ArenaHud, LobbyView, PlayViewport, PlayerProfilePage, MyProfilePage },
   props: {
     // why: `searchOverride` is a testing seam. Production callers never pass
     // it — `null` means "read from window.location.search at setup time".
@@ -200,31 +201,33 @@ export default defineComponent({
 </script>
 
 <template>
-  <main data-testid="app-root" :data-route="route">
-    <template v-if="route === 'me'">
-      <MyProfilePage />
-    </template>
-    <template v-else-if="route === 'profile'">
-      <PlayerProfilePage :handle="profileHandle" />
-    </template>
-    <template v-else-if="route === 'fixture'">
-      <ArenaHud />
-    </template>
-    <template v-else-if="route === 'live'">
-      <PlayViewport :submit-move="submitMove" />
-      <footer
-        v-if="isDev"
-        class="live-diagnostics"
-        data-testid="app-live-diagnostics"
-      >
-        <span>match: {{ matchID }}</span>
-        <span>player: {{ playerID }}</span>
-      </footer>
-    </template>
-    <template v-else>
-      <LobbyView />
-    </template>
-  </main>
+  <AppShell>
+    <main data-testid="app-root" :data-route="route">
+      <template v-if="route === 'me'">
+        <MyProfilePage />
+      </template>
+      <template v-else-if="route === 'profile'">
+        <PlayerProfilePage :handle="profileHandle" />
+      </template>
+      <template v-else-if="route === 'fixture'">
+        <ArenaHud />
+      </template>
+      <template v-else-if="route === 'live'">
+        <PlayViewport :submit-move="submitMove" />
+        <footer
+          v-if="isDev"
+          class="live-diagnostics"
+          data-testid="app-live-diagnostics"
+        >
+          <span>match: {{ matchID }}</span>
+          <span>player: {{ playerID }}</span>
+        </footer>
+      </template>
+      <template v-else>
+        <LobbyView />
+      </template>
+    </main>
+  </AppShell>
 </template>
 
 <style scoped>
