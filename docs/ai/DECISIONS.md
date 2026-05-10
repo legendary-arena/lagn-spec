@@ -15862,6 +15862,71 @@ prompt at
 §Locked Values.
 
 ---
+
+### D-14601 — Dual-Running Retention of `cards.barefootbetters.com` During Custom-Domain Cutover (WP-146)
+
+**Type:** Infrastructure / CORS Allowlist Lock
+**Packet:** WP-146 / EC-149
+**Date:** 2026-05-10
+
+**Decision:** During the operator-driven Cloudflare Pages dashboard
+cutover that detaches `cards.barefootbetters.com` and attaches
+`cards.legendary-arena.com` as the registry-viewer SPA's custom domain,
+the boardgame.io `Server({ origins: [...] })` allowlist in
+`apps/server/src/server.mjs` retains both hostnames byte-identical.
+The legacy entry is removed only by a separate post-cutover cleanup
+SPEC commit, after smoke-tests confirm no traffic remains on the
+legacy hostname.
+
+**Rationale:**
+- **Zero gap-window risk.** The cors-package allowlist match is
+  exact-string. Removing the legacy entry before the dashboard swap
+  completes would CORS-reject any in-flight request from the legacy
+  hostname during the operator's swap window.
+- **Mirrors WP-007a precedent.** EC-146/147 dual-listed
+  `https://play.legendary-arena.com` and
+  `https://legendary-arena-play.pages.dev` for the same reason —
+  the production custom domain and the CF Pages auto-generated
+  hostname both required allowlist entries during the play.* deploy.
+- **No unit-test coverage of allowlist matching.** The boardgame.io
+  `Server` cors-package match is upstream-tested. EC-149 §Guardrails
+  locks this rationale: Step 7 post-deploy curl is the canonical
+  verification surface for any future CORS-allowlist EC.
+
+**Rejected alternatives:**
+- **Remove the legacy entry in this packet.** Creates a gap window
+  where the legacy hostname returns 200 from CF Pages but is
+  CORS-rejected by the game-server. Even seconds of mis-CORS would
+  surface as user-visible errors during the dashboard swap.
+- **Switch to env-var-driven origin lists.** Out of scope; would
+  break the code-style Rule 7 literal-array contract and force a
+  Render env-var change on top of the cutover. EC-149 §Locked Values
+  defers this as a structural refactor.
+- **Add a wildcard origin for `*.legendary-arena.com`.** The
+  cors-package allowlist does not support wildcard hostname matching;
+  exact-string only.
+
+**Consequence:** the registry-viewer SPA continues to authenticate
+cross-origin against `api.legendary-arena.com` from either hostname
+during the dual-running window. Removal of the legacy entry is
+deferred to a named follow-up SPEC commit, owned by the same operator
+who runs the dashboard swap.
+
+**Scope:** server CORS allowlist only. Does not affect `domains.json`
+state (handled by the cutover-lock SPEC commit, mirroring WP-007a's
+`2276224`), nor any prose update in `DOMAINS.md`,
+`apps/registry-viewer/CLAUDE.md`, or `.env.example` (all owned by the
+lock-time SPEC commit).
+
+**Status:** Active.
+
+**Citation:** WP-146 §Non-Negotiable Constraints / Out of Scope;
+EC-149 §Locked Values + §Guardrails (no-unit-test rationale lock);
+session prompt at
+`docs/ai/invocations/session-wp146-cards-domain-cutover-cors-prep.md`
+§11.
+
+---
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

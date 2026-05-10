@@ -232,16 +232,22 @@ export async function startServer() {
     //     build-parity check before the custom domain binds, and as the
     //     stable preview-target in environments where the custom domain is
     //     unbound.
-    //   - https://cards.barefootbetters.com — the registry-viewer SPA. Kept
-    //     in the allowlist for backward compatibility; it does not call
-    //     /games/* today but historically did during the WP-090 lobby
-    //     contract verification.
+    //   - https://cards.barefootbetters.com — the legacy registry-viewer
+    //     hostname. Retained byte-identical for the dual-running window
+    //     during the operator-driven Cloudflare Pages dashboard custom-domain
+    //     swap (per WP-146 / D-14601). Removal is owned by a separate
+    //     post-cutover cleanup commit, not this packet.
+    //   - https://cards.legendary-arena.com — the registry-viewer SPA at the
+    //     new hostname; needed once the Cloudflare Pages dashboard cutover
+    //     detaches cards.barefootbetters.com and attaches this domain to the
+    //     legendary-arena Pages project (WP-146).
     //   - http://localhost:5173 — Vite dev server default for local dev
     //     work against this server.
     origins: [
       'https://play.legendary-arena.com',
       'https://legendary-arena-play.pages.dev',
       'https://cards.barefootbetters.com',
+      'https://cards.legendary-arena.com',
       'http://localhost:5173',
     ],
   });

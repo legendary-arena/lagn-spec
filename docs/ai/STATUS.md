@@ -7,6 +7,38 @@
 
 ## Current State
 
+### WP-146 / EC-149 Executed — `cards.legendary-arena.com` Cutover Prep — Server CORS (2026-05-10)
+
+**Server CORS allowlist now accepts the new registry-viewer hostname.**
+Commit A `5999d10` (`EC-149:`): one-entry insertion into the
+`Server({ origins: [...] })` literal in `apps/server/src/server.mjs` adjacent
+to the existing `cards.barefootbetters.com` entry. Pre-existing four entries
+retain relative order. Final array length: 5. The legacy
+`cards.barefootbetters.com` entry is preserved byte-identical for the
+dual-running window; removal owned by a separate post-cutover cleanup SPEC
+commit.
+
+Server baseline `250 / 184 / 66 / 0` UNCHANGED. Engine baseline `698 / 150 / 0`
+UNCHANGED. No engine, registry, preplan, or UI change. No new runtime npm
+dependencies. No `render.yaml` change (Render auto-redeploys from `main`).
+
+D-14601 records the dual-running retention rationale, mirroring WP-007a's
+dual-listing of `play.legendary-arena.com` + `legendary-arena-play.pages.dev`.
+
+**Cutover sequencing gate (operator):** the Cloudflare Pages dashboard
+custom-domain swap (detach `cards.barefootbetters.com`, attach
+`cards.legendary-arena.com`) proceeds only after Render confirms successful
+redeploy with this commit's hash. Verified post-deploy via:
+`curl -I -H "Origin: https://cards.legendary-arena.com" https://api.legendary-arena.com/games/legendary-arena`
+returning HTTP/200 with `Access-Control-Allow-Origin` set.
+
+01.5 NOT INVOKED. 01.6 post-mortem SKIPPED — mechanical CORS allowlist
+addition with no design tension surfaced; the no-unit-test rationale
+documented in EC-149 §Guardrails (per copilot check FIX) is the only
+notable governance lock and is captured in D-14601's scope clause.
+
+---
+
 ### WP-145 / EC-145 Executed — Architecture Inventory Wiki Integration (2026-05-10, EC-145)
 
 📚 **WP-145 complete (`EC-145:`).** Locked options A3 + B1 + C1 + D1 (Recommended Execution Profile). Surfaces the deterministic monorepo architecture inventory at `wiki/architecture-inventory.md` — committed under B1; sole writer is `scripts/architecture-inventory.mjs`; rendered through the existing wiki-viewer projection pipeline at `ewiki.legendary-arena.com/architecture-inventory/`. New CI workflow `.github/workflows/architecture-inventory.yml` regenerates on cron `0 6 * * 1` (Mondays 06:00 UTC) and opens a PR via `peter-evans/create-pull-request@v6` on output diff. Inventory step uses `continue-on-error: true` so a script crash leaves the step visibly red in the GitHub UI but does not cascade into the wiki deploy (visible-failure invariant per EC-145 §Guardrails; `|| true` and other exit-code-swallowing shell tricks forbidden).
