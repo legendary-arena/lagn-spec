@@ -45,22 +45,22 @@
       "Eternity of Solitude": 1
     },
     "black-widow": {
-      "Mission Accomplished": null,
-      "Dangerous Rescue": null,
-      "Covert Operation": null,
-      "Silent Sniper": null
+      "Mission Accomplished": 5,
+      "Dangerous Rescue": 5,
+      "Covert Operation": 3,
+      "Silent Sniper": 1
     },
     "deadpool": {
-      "Here, Hold This for a Second": null,
-      "Hey, Can I Get a Do-over?": null,
-      "Oddball": null,
-      "Random Acts of Unkindness": null
+      "Here, Hold This for a Second": 5,
+      "Hey, Can I Get a Do-over?": 3,
+      "Oddball": 5,
+      "Random Acts of Unkindness": 1
     },
     "hulk": {
-      "Growing Anger": null,
-      "Unstoppable Hulk": null,
-      "Crazed Rampage": null,
-      "Hulk Smash": null
+      "Growing Anger": 5,
+      "Unstoppable Hulk": 5,
+      "Crazed Rampage": 3,
+      "Hulk Smash": 1
     }
   },
   "amwp": {
@@ -182,7 +182,7 @@
     },
     "wasp": {
       "Bio-Electric Sting": 5,
-      "Tiny Winged Justice": null,
+      "Tiny Winged Justice": 5,
       "Swarm Tactics": 3,
       "Founding Avenger": 1
     },
@@ -358,10 +358,10 @@
   },
   "core": {
     "black-widow": {
-      "Dangerous Rescue": null,
-      "Mission Accomplished": null,
-      "Covert Operation": null,
-      "Silent Sniper": null
+      "Dangerous Rescue": 5,
+      "Mission Accomplished": 5,
+      "Covert Operation": 3,
+      "Silent Sniper": 1
     },
     "captain-america": {
       "Avengers Assemble!": 5,
@@ -376,10 +376,10 @@
       "X-Men United": 1
     },
     "deadpool": {
-      "Here, Hold This for a Second": null,
-      "Oddball": null,
-      "Hey, Can I Get a Do-Over?": null,
-      "Random Acts of Unkindness": null
+      "Here, Hold This for a Second": 5,
+      "Oddball": 5,
+      "Hey, Can I Get a Do-Over?": 3,
+      "Random Acts of Unkindness": 1
     },
     "emma-frost": {
       "Mental Discipline": 5,
@@ -394,22 +394,22 @@
       "High Stakes Jackpot": 1
     },
     "hawkeye": {
-      "Quick Draw": null,
-      "Team Player": null,
-      "Covering Fire": null,
-      "Impossible Trick Shot": null
+      "Quick Draw": 5,
+      "Team Player": 5,
+      "Covering Fire": 3,
+      "Impossible Trick Shot": 1
     },
     "hulk": {
-      "Growing Anger": null,
-      "Unstoppable Hulk": null,
-      "Crazed Rampage": null,
-      "Hulk Smash!": null
+      "Growing Anger": 5,
+      "Unstoppable Hulk": 5,
+      "Crazed Rampage": 3,
+      "Hulk Smash!": 1
     },
     "iron-man": {
-      "Endless Invention": null,
-      "Repulsor Rays": null,
-      "Arc Reactor": null,
-      "Quantum Breakthrough": null
+      "Endless Invention": 5,
+      "Repulsor Rays": 5,
+      "Arc Reactor": 3,
+      "Quantum Breakthrough": 1
     },
     "nick-fury": {
       "Battlefield Promotion": 5,
@@ -436,16 +436,16 @@
       "Tidal Wave": 1
     },
     "thor": {
-      "Odinson": null,
-      "Surge of Power": null,
-      "Call Lightning": null,
-      "God of Thunder": null
+      "Odinson": 5,
+      "Surge of Power": 5,
+      "Call Lightning": 3,
+      "God of Thunder": 1
     },
     "wolverine": {
-      "Keen Senses": null,
-      "Healing Factor": null,
-      "Frenzied Slashing": null,
-      "Berserker Rage": null
+      "Keen Senses": 5,
+      "Healing Factor": 5,
+      "Frenzied Slashing": 3,
+      "Berserker Rage": 1
     }
   },
   "cosm": {
@@ -624,34 +624,34 @@
   },
   "dead": {
     "bob-agent-of-hydra": {
-      "Bullets Flying, Bob Hiding": null,
-      "HYDRA Half-Wit": null,
-      "How Do I Get Out of Here??": null,
-      "Epic Middle Manager": null
+      "Bullets Flying, Bob Hiding": 5,
+      "HYDRA Half-Wit": 5,
+      "How Do I Get Out of Here??": 3,
+      "Epic Middle Manager": 1
     },
     "deadpool": {
-      "Nighttime Is the Right Time": null,
-      "It'll Grow Back": null,
-      "Running Commentary": null,
-      "Deadpool Rage!": null
+      "Nighttime Is the Right Time": 5,
+      "It'll Grow Back": 5,
+      "Running Commentary": 3,
+      "Deadpool Rage!": 1
     },
     "slapstick": {
-      "Napoleon Complex": null,
-      "Saturday Morning Harpoons": null,
-      "Surprise Chainsaw": null,
-      "Electroplasmic Insanity": null
+      "Napoleon Complex": 5,
+      "Saturday Morning Harpoons": 5,
+      "Surprise Chainsaw": 3,
+      "Electroplasmic Insanity": 1
     },
     "solo": {
-      "Half-Cocked": null,
-      "Merc's Gotta Get Paid": null,
-      "Guns on My Guns": null,
-      "Cut in Half": null
+      "Half-Cocked": 5,
+      "Merc's Gotta Get Paid": 5,
+      "Guns on My Guns": 3,
+      "Cut in Half": 1
     },
     "stingray": {
-      "Deck Chairs on the Titanic": null,
-      "Superpowered Swimsuit": null,
-      "Sting of the Stingray's Sting": null,
-      "PhD in Oceanography": null
+      "Deck Chairs on the Titanic": 5,
+      "Superpowered Swimsuit": 5,
+      "Sting of the Stingray's Sting": 3,
+      "PhD in Oceanography": 1
     }
   },
   "dims": {
@@ -688,22 +688,22 @@
       "Firepower from the Future": 1
     },
     "blade": {
-      "Night Hunter": null,
-      "Stalk the Prey": null,
-      "Nowhere to Hide": null,
-      "Vampiric Surge": null
+      "Night Hunter": 5,
+      "Stalk the Prey": 5,
+      "Nowhere to Hide": 3,
+      "Vampiric Surge": 1
     },
     "cable": {
-      "Disaster Survivalist": null,
-      "Strike at the Heart of Evil": null,
-      "Rapid Response Force": null,
-      "Army of One": null
+      "Disaster Survivalist": 5,
+      "Strike at the Heart of Evil": 5,
+      "Rapid Response Force": 3,
+      "Army of One": 1
     },
     "colossus": {
-      "Draw Their Fire": null,
-      "Invulnerability": null,
-      "Silent Statue": null,
-      "Russian Heavy Tank": null
+      "Draw Their Fire": 5,
+      "Invulnerability": 5,
+      "Silent Statue": 3,
+      "Russian Heavy Tank": 1
     },
     "daredevil": {
       "Backflip": 5,
@@ -712,10 +712,10 @@
       "The Man Without Fear": 1
     },
     "domino": {
-      "Lucky Break": null,
-      "Ready for Anything": null,
-      "Specialized Ammunition": null,
-      "Against All Odds": null
+      "Lucky Break": 5,
+      "Ready for Anything": 5,
+      "Specialized Ammunition": 3,
+      "Against All Odds": 1
     },
     "elektra": {
       "First Strike": 5,
@@ -724,10 +724,10 @@
       "Silent Meditation": 1
     },
     "forge": {
-      "Dirty Work": null,
-      "Reboot": null,
-      "Overdrive": null,
-      "B.F.G.": null
+      "Dirty Work": 5,
+      "Reboot": 5,
+      "Overdrive": 3,
+      "B.F.G.": 1
     },
     "ghost-rider": {
       "Blazing Hellfire": 3,
@@ -772,10 +772,10 @@
       "The Punisher": 1
     },
     "wolverine": {
-      "Animal Instincts": null,
-      "Sudden Ambush": null,
-      "No Mercy": null,
-      "Reckless Abandon": null
+      "Animal Instincts": 5,
+      "Sudden Ambush": 5,
+      "No Mercy": 3,
+      "Reckless Abandon": 1
     }
   },
   "dstr": {
@@ -1041,16 +1041,16 @@
   },
   "msmc": {
     "multiple-man": {
-      "Finding Myself": null,
-      "Me, Myself, and I": null,
-      "Perfect Match": null,
-      "Reabsorb Duplicates": null
+      "Finding Myself": 4,
+      "Me, Myself, and I": 4,
+      "Perfect Match": 4,
+      "Reabsorb Duplicates": 2
     },
     "shatterstar": {
-      "Strive for Greatness": null,
-      "Bioelectric Surge": null,
-      "Gladiator's Blades": null,
-      "Gene-Spliced Creation": null
+      "Strive for Greatness": 3,
+      "Bioelectric Surge": 4,
+      "Gladiator's Blades": 5,
+      "Gene-Spliced Creation": 2
     },
     "stepford-cuckoos": {
       "Find Mutants with Cerebro": 4,
@@ -1059,34 +1059,34 @@
       "Mind Wipe": 2
     },
     "m": {
-      "Penance Form": null,
-      "Three Sisters Combined": null,
-      "Uncover Family Secrets": null,
-      "Interweaving Powers": null
+      "Penance Form": 4,
+      "Three Sisters Combined": 4,
+      "Uncover Family Secrets": 4,
+      "Interweaving Powers": 2
     },
     "strong-guy": {
-      "X-Factor Investigations": null,
-      "Absorb Kinetic Energy": null,
-      "Go Big": null,
-      "Treasure Hunt": null
+      "X-Factor Investigations": 5,
+      "Absorb Kinetic Energy": 5,
+      "Go Big": 3,
+      "Treasure Hunt": 1
     },
     "warpath": {
-      "Grim Tracker": null,
-      "Endless Endurance": null,
-      "Dangerous Maneuver": null,
-      "Superhuman Senses": null
+      "Grim Tracker": 5,
+      "Endless Endurance": 5,
+      "Dangerous Maneuver": 3,
+      "Superhuman Senses": 1
     },
     "siryn": {
-      "Echolocation": null,
-      "Hypnotic Call": null,
-      "Three-Octave Arpeggio": null,
-      "Splintering Shriek": null
+      "Echolocation": 5,
+      "Hypnotic Call": 5,
+      "Three-Octave Arpeggio": 3,
+      "Splintering Shriek": 1
     },
     "rictor": {
-      "Underground Cave-In": null,
-      "Unearth Tectonic Power": null,
-      "Trace the Fault Lines": null,
-      "Massive Earthquake": null
+      "Underground Cave-In": 5,
+      "Unearth Tectonic Power": 5,
+      "Trace the Fault Lines": 3,
+      "Massive Earthquake": 1
     }
   },
   "msp1": {
@@ -1135,34 +1135,34 @@
   },
   "nmut": {
     "karma": {
-      "Sow Rivalry": null,
-      "Temporary Possession": null,
-      "Karmic Balance": null,
-      "Control Like a Puppet": null
+      "Sow Rivalry": 5,
+      "Temporary Possession": 5,
+      "Karmic Balance": 3,
+      "Control Like a Puppet": 1
     },
     "mirage": {
-      "Dreams Made Real": null,
-      "Empathic Link": null,
-      "Nightmare Wolves": null,
-      "Haunted By the Demon Bear": null
+      "Dreams Made Real": 5,
+      "Empathic Link": 5,
+      "Nightmare Wolves": 3,
+      "Haunted By the Demon Bear": 1
     },
     "sunspot": {
-      "Absorb Radiation": null,
-      "Solar-Powered": null,
-      "Thermokinetic Fury": null,
-      "Empyreal Force": null
+      "Absorb Radiation": 5,
+      "Solar-Powered": 5,
+      "Thermokinetic Fury": 3,
+      "Empyreal Force": 1
     },
     "warlock": {
-      "Earthling Choices": null,
-      "Analyze Planetary Rotation": null,
-      "Techno-Organic Adaptation": null,
-      "Nanite Shapeshifter": null
+      "Earthling Choices": 5,
+      "Analyze Planetary Rotation": 5,
+      "Techno-Organic Adaptation": 3,
+      "Nanite Shapeshifter": 1
     },
     "wolfsbane": {
-      "Night Vision": null,
-      "Wolf Out": null,
-      "Howl at the Moon": null,
-      "Nocturnal Savagery": null
+      "Night Vision": 5,
+      "Wolf Out": 5,
+      "Howl at the Moon": 3,
+      "Nocturnal Savagery": 1
     }
   },
   "noir": {
@@ -1377,10 +1377,10 @@
   },
   "ssw1": {
     "apocalyptic-kitty-pryde": {
-      "Phase Out": null,
-      "Infiltrate HQ": null,
-      "Disrupt Circuits": null,
-      "Untouchable": null
+      "Phase Out": 5,
+      "Infiltrate HQ": 5,
+      "Disrupt Circuits": 3,
+      "Untouchable": 1
     },
     "black-bolt": {
       "Destructive Whisper": 5,
@@ -1684,16 +1684,16 @@
   },
   "wpnx": {
     "fantomex": {
-      "Sentient Bullets": null,
-      "Three Brains": null,
-      "Misdirection": null,
-      "Weapon XIII": null
+      "Sentient Bullets": 5,
+      "Three Brains": 5,
+      "Misdirection": 3,
+      "Weapon XIII": 1
     },
     "marrow": {
-      "Bone Shards": null,
-      "Hyper-Adaptive Skeleton": null,
-      "Osteogenesis": null,
-      "Metabolic Overdrive": null
+      "Hyper-Adaptive Skeleton": 5,
+      "Bone Shards": 5,
+      "Osteogenesis": 3,
+      "Metabolic Overdrive": 1
     },
     "weapon-h": {
       "Evolving Abilities": 5,
@@ -1975,10 +1975,10 @@
       "Telepathic Ninjutsu": 1
     },
     "x-23": {
-      "Adamantium Foot Claws": null,
-      "Healing Factor Genome": null,
-      "Bioengineered Assassin": null,
-      "Heir to Wolverine": null
+      "Adamantium Foot Claws": 5,
+      "Healing Factor Genome": 5,
+      "Bioengineered Assassin": 3,
+      "Heir to Wolverine": 1
     }
   }
 }
