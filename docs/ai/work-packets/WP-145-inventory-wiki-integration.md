@@ -59,7 +59,7 @@ that enum. The schema accommodates `SCHEMA.md`, `README.md`, `INDEX.md`
 as reserved files that bypass the entity contract. Whether
 `architecture-inventory.md` should be treated similarly, treated as a
 new entity-page subtype, or live entirely outside `wiki/` is a
-sub-decision this WP surfaces and routes to its author at execution.
+sub-decision this WP surfaces and locks via D-14503 at execution.
 
 ---
 
@@ -204,6 +204,29 @@ These are hard rules. Violations are blockers; refactor instead.
   is required, but the projection script's contract assertion must
   be updated to permit additional files in `content/` that did not
   originate in `wiki/`.
+- **(B1-specific governance for `wiki/architecture-inventory.md`):**
+  - The file is treated as **generated content**, never
+    hand-authored.
+  - Any manual edits are **non-authoritative** and will be silently
+    overwritten by the next regeneration run.
+  - The inventory script is the **sole writer** of this file; this
+    is the binding invariant that justifies the D-13810 amendment.
+  - A future lint rule MAY assert that the committed file matches
+    the script's current output exactly (drift detection). This WP
+    does not introduce that lint, but **reserves the right** under
+    a follow-up WP without re-amending D-13810.
+
+### Script non-gating posture
+
+- The inventory script header is explicit: it is a reporting tool,
+  not a gate (always exit 0 unless the script itself crashes). The
+  integration must **preserve this non-gating property**: an
+  inventory failure must not block unrelated pipelines (the wiki
+  deploy, engine tests, registry tests, etc.).
+- Elevating the script to a gate (e.g., failing the wiki-viewer
+  workflow on inventory regression) is explicitly **out of scope**
+  for this WP and must be its own follow-up WP with its own
+  DECISIONS amendment.
 
 ### Build determinism (D-13808)
 
@@ -252,11 +275,41 @@ These are hard rules. Violations are blockers; refactor instead.
 
 ---
 
+## Recommended Execution Profile (Non-Binding)
+
+To reduce execution variance and minimize contract pressure, the
+recommended path is:
+
+- **A3** — CI-scheduled regeneration (weekly cron)
+- **B1** — `wiki/architecture-inventory.md`
+- **C1** — Reserved-file accommodation
+- **D1** — PR-on-diff
+
+Rationale:
+
+- Preserves D-13810 with minimal amendment surface (single-file
+  exception, explicitly named in D-14502).
+- Avoids the build-determinism risk tied to UTC-date drift (A2 is
+  conditionally blocked on a sibling script-hardening WP — see
+  Open Decision A below).
+- Maintains auditability via git history (each regeneration is a
+  PR or commit, reviewable in retrospect).
+- Aligns with the project's existing governance bias toward review
+  gates over silent automation.
+
+The executing agent may override this profile, but any deviation
+must be explicitly justified in `D-14501..D-14503`. The
+Compatibility Matrix below enumerates which deviations remain
+valid and which are blocked.
+
+---
+
 ## Open Decisions (the WP author locks each before execution)
 
 These decisions are unbound at draft time. Each must be locked in
 this WP's body or in a dedicated DECISIONS entry before execution
-starts.
+starts. The Recommended Execution Profile above suggests one
+default; the matrix after this section shows valid alternatives.
 
 ### A — Generation cadence
 
@@ -268,15 +321,26 @@ Three options:
   reflects the most recent manual run. Pros: zero CI cost; the
   human is the gate, so review is implicit. Cons: stale by default;
   freshness depends on memory.
-- **(A2) Build-pipeline integration.** The script runs as a step
-  in `.github/workflows/wiki-viewer.yml` before `project-wiki.mjs`,
-  writing output into the projected content tree. Pros: every
-  deploy is automatically fresh. Cons: directly conflicts with
-  the read-only `wiki/` rule (D-13810) unless routed through a
-  staging path; introduces the determinism risk listed in
-  § Non-Negotiable Constraints / Build determinism (UTC date
-  drift across midnight); turns a "reporting tool" into a deploy
-  gate (script crash blocks deploy).
+- **(A2) Build-pipeline integration — CONDITIONALLY BLOCKED.**
+  The script runs as a step in
+  `.github/workflows/wiki-viewer.yml` before `project-wiki.mjs`,
+  writing output into the projected content tree.
+  Constraint escalation:
+  - The inventory script's UTC-date header introduces a
+    non-deterministic input across day boundaries, which
+    violates D-13808 unless the date source is stabilized.
+  - Stabilizing the date requires modifying the script, which
+    is **out of scope for this WP** per § Non-Negotiable
+    Constraints / Inventory script immutability.
+  - In addition, A2 turns a "reporting tool" into a deploy
+    gate (a script crash would block the wiki deploy), which
+    contradicts the script header's "not a gate" contract.
+  Therefore:
+  - **(A2) MUST NOT be selected** unless a sibling WP lands
+    first that hardens the inventory script's date input to
+    a commit-derived deterministic value.
+  - Without that prerequisite, selecting (A2) under WP-145 is
+    a **BLOCKER**; the executing agent must reject the lock.
 - **(A3) CI-scheduled regeneration.** A separate workflow
   (`.github/workflows/architecture-inventory.yml`) runs the
   script on a cron schedule (weekly is the conservative
@@ -374,6 +438,36 @@ If cadence is (A3), the workflow needs a policy for how to handle
   passes.** Hybrid; review window without manual merge.
 
 If cadence is (A1) or (A2), this decision is moot.
+
+---
+
+## Decision Compatibility Matrix
+
+| A (Cadence) | B (Location) | C (Schema) | Status |
+|---|---|---|---|
+| A1 | B1 | C1 / C2 | ✅ Valid |
+| A1 | B2 | C1 / C2 / C3 | ✅ Valid |
+| A1 | B3 | C1 / C2 | ⚠️ High schema cost (B3 needs SCHEMA flat-structure amendment) |
+| A2 | any | any | ❌ BLOCKED — see § Open Decisions / A2 constraint escalation |
+| A3 | B1 | C1 / C2 | ✅ **Preferred** (Recommended Execution Profile) |
+| A3 | B2 | C1 / C2 / C3 | ✅ Valid |
+| A3 | B3 | C1 / C2 | ⚠️ High schema cost (as A1+B3) |
+
+Notes:
+
+- **B3 is high-friction.** It requires a SCHEMA.md amendment to
+  the flat-structure rule (§ File Layout: "There are no
+  subdirectories"). Treat as a deliberate trade-off, not a
+  default.
+- **C3 is a divergence from wiki-first philosophy.** Routing the
+  inventory through a separate Hugo `reports/` section means it
+  no longer participates in the wiki's authoring discipline at
+  all. Valid, but reserve for cases where C1 / C2 are
+  unworkable.
+- **C3 ↔ B1 / B3 are not co-selectable.** If the inventory does
+  not enter `wiki/` (C3), B1 and B3 are nonsensical (they put
+  the file *in* `wiki/`). The matrix above already excludes
+  those rows.
 
 ---
 
@@ -681,14 +775,19 @@ prefixed with **(always)** apply to every combination.
 ## Verification Steps
 
 ```pwsh
-# Step 1 — inventory script runs deterministically
+# Step 1 — inventory script runs deterministically (same execution window)
 node scripts/architecture-inventory.mjs --out -
 # Expected: exits 0; non-empty markdown stdout with UTC-date header.
 
 node scripts/architecture-inventory.mjs --out tmp-inventory-1.md
+Start-Sleep -Seconds 1
 node scripts/architecture-inventory.mjs --out tmp-inventory-2.md
+# why: this test assumes both invocations occur within the same UTC day.
+# The script's header includes TODAY_UTC; a midnight-UTC straddle would
+# produce a one-line header diff and trip Compare-Object falsely. If the
+# test fires near midnight UTC, rerun outside the boundary.
 $diff = Compare-Object (Get-Content tmp-inventory-1.md) (Get-Content tmp-inventory-2.md)
-if ($diff) { throw "Inventory script is non-deterministic across consecutive runs" }
+if ($diff) { throw "Inventory script is non-deterministic within same UTC window" }
 Remove-Item tmp-inventory-1.md, tmp-inventory-2.md
 # Expected: no throw.
 
@@ -696,8 +795,12 @@ Remove-Item tmp-inventory-1.md, tmp-inventory-2.md
 # B1:
 Test-Path wiki/architecture-inventory.md
 # Expected: True.
-# B2:
-pnpm wiki-viewer:project; pnpm wiki-viewer:inventory; Test-Path apps/wiki-viewer/content/architecture-inventory.md
+# B2: ordering matters — inventory MUST run after projection so the
+# generated file is not clobbered by the projection target's
+# clear-and-recreate step in apps/wiki-viewer/scripts/project-wiki.mjs.
+pnpm wiki-viewer:project
+pnpm wiki-viewer:inventory
+Test-Path apps/wiki-viewer/content/architecture-inventory.md
 # Expected: True.
 # B3:
 Test-Path wiki/_generated/architecture-inventory.md
@@ -868,6 +971,48 @@ change is confined to `scripts/`, `apps/wiki-viewer/`,
 
 ---
 
+## Pattern: Generated Artifacts in the Engineering Wiki
+
+This WP implicitly establishes a reusable pattern for integrating
+**generated, non-entity artifacts** into the engineering wiki
+pipeline. The pattern is captured here so future WPs introducing
+similar artifacts (drift reports, decision-coverage matrices,
+test-baseline snapshots, badge files, etc.) can conform without
+re-deriving the rules.
+
+The pattern's invariants:
+
+1. **Single-writer invariant.** A generated artifact has exactly
+   one authoritative writer (a script in `scripts/`). Any
+   committed copy of the artifact is governed by that writer; no
+   hand-edits are authoritative.
+2. **Deterministic generation.** The writer must produce
+   byte-identical output across consecutive runs against the
+   same filesystem state and the same time-of-day window. Any
+   intentional time-dependence (e.g., a `TODAY_UTC` header) must
+   be documented explicitly in the script header and must not
+   trip the consuming pipeline's determinism checks.
+3. **Explicit DECISIONS amendment when crossing the source
+   boundary.** If the artifact lands under `wiki/` (or any other
+   read-only-source location), the WP that introduces it must
+   amend the relevant boundary-locking decision (here: D-13810)
+   to name the file as the single permitted exception. Silent
+   crossings are forbidden.
+4. **Optional CI-driven refresh with diff gating.** When CI
+   regenerates the artifact, the diff policy (PR vs direct
+   commit vs auto-merge) must be locked in a DECISIONS entry
+   alongside the cadence. Cron schedule must be explicit, not
+   derived.
+5. **Non-gating posture preserved.** The generator's failure
+   must not block unrelated pipelines unless explicitly
+   elevated in a future WP with its own DECISIONS amendment.
+
+Future WPs introducing generated artifacts SHOULD conform to this
+pattern. Deviations require their own DECISIONS entries and
+should cite this section explicitly.
+
+---
+
 ## Lint Gate Status (DRAFT — not yet invoked)
 
 This WP is a **draft**. The Prompt Lint Gate
@@ -888,9 +1033,12 @@ execution:
   sections cited specifically: ✓
 - **§5 Output Completeness** — Files Expected to Change is
   conditional on Open Decisions A / B / C / D and enumerates every
-  combination's deltas. The list resolves to a concrete subset
-  only after the Open Decisions lock; **Author must finalize Open
-  Decisions before formal lint pass.**
+  combination's deltas. The Recommended Execution Profile
+  (A3+B1+C1+D1) defines a concrete default subset; the
+  Compatibility Matrix bounds valid alternatives. **If the
+  executor accepts the recommended profile, §5 resolves
+  immediately at session start; otherwise the executor must
+  finalize the Open Decisions before formal lint pass.**
 - **§6 Naming Consistency** — `wiki-viewer:inventory` script alias
   matches the existing `wiki-viewer:project` / `wiki-viewer:build`
   naming convention: ✓
@@ -909,8 +1057,10 @@ execution:
   ewiki.legendary-arena.com is publicly readable)
 - **§12 Test Quality** — smoke + determinism checks defined for
   every option combination; the script-determinism re-check
-  guards against script regressions. **Author must confirm these
-  are sufficient before execution.**
+  guards against script regressions. The Verification Steps
+  explicitly handle the UTC-day-straddle false-positive case in
+  Step 1 and the projection-ordering hazard in Step 2 (B2 path).
+  **Author must confirm these are sufficient before execution.**
 - **§13 Commands and Verification** — present and PowerShell-
   formatted: ✓
 - **§14 Acceptance Criteria Quality** — concrete and verifiable;
@@ -936,7 +1086,9 @@ execution:
   static site only)
 
 **Net status:** Draft passes structural lint (§1–§4, §6–§9,
-§13–§15, §17–§19) at draft time. **§5 and §12 require Open
-Decision lock before formal Final Gate.** §10, §11, §16, §20,
-§21 are N/A or deferred-to-execution per their own trigger
-conditions.
+§13–§15, §17–§19) at draft time. **§5 and §12 resolve cleanly
+under the Recommended Execution Profile (A3+B1+C1+D1)**; if the
+executor selects a non-default combination, those two items
+require explicit lock before the formal Final Gate. §10, §11,
+§16, §20, §21 are N/A or deferred-to-execution per their own
+trigger conditions.
