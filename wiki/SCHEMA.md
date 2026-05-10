@@ -3,7 +3,7 @@
 > **The contract for every page under `wiki/`.**
 > If a page violates this schema, the page is wrong — not the schema.
 >
-> **Last updated:** 2026-05-07
+> **Last updated:** 2026-05-10
 
 ---
 
@@ -103,15 +103,16 @@ doc and cite it from the wiki, or (b) delete it.
 
 ```
 wiki/
-├── SCHEMA.md           # this file — the contract
-├── README.md           # purpose, conventions, authority
-├── INDEX.md            # categorized list of all pages
-└── <slug>.md           # entity pages (one per entity)
+├── SCHEMA.md                     # this file — the contract
+├── README.md                     # purpose, conventions, authority
+├── INDEX.md                      # categorized list of all pages
+├── architecture-inventory.md     # generated; sole writer is scripts/architecture-inventory.mjs
+└── <slug>.md                     # entity pages (one per entity)
 ```
 
-`SCHEMA.md`, `README.md`, and `INDEX.md` are reserved filenames. All
-other `*.md` files in `wiki/` are entity pages and must conform to
-this schema.
+`SCHEMA.md`, `README.md`, `INDEX.md`, and `architecture-inventory.md`
+are reserved filenames. All other `*.md` files in `wiki/` are entity
+pages and must conform to this schema.
 
 There are **no subdirectories**. Categorization is by `type` /
 front-matter and surfaced in `INDEX.md`. Flat structure prevents
@@ -498,8 +499,11 @@ publish step cannot accidentally become a second authoring surface.
 
 The schema is structured so that a future lint script could verify:
 
-- Every `*.md` (excluding `SCHEMA`/`README`/`INDEX`) has front-matter
-  with all required fields.
+- Every `*.md` (excluding `SCHEMA`/`README`/`INDEX`/`architecture-inventory`)
+  has front-matter with all required fields. The `architecture-inventory.md`
+  page is generated content (sole writer `scripts/architecture-inventory.mjs`,
+  per D-14502) and is exempt from front-matter and required-section
+  conformance.
 - `type` ∈ `{ Mechanic, System, Card-Type, Keyword, Concept }`.
 - `status` ∈ `{ canonical, draft, deprecated }`.
 - `canonical` pages have non-empty `source`.
@@ -526,5 +530,6 @@ No such tool exists at v1. The schema is human-enforced.
 | `SCHEMA.md` | This file — the contract. |
 | `README.md` | Purpose, conventions, authority hierarchy, contribution guide. |
 | `INDEX.md` | Categorized list of every page in the wiki. |
+| `architecture-inventory.md` | Generated; sole writer is `scripts/architecture-inventory.mjs`; hand-edits silently overwritten. |
 
 These filenames are reserved and must not be used as entity slugs.

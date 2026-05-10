@@ -52,6 +52,17 @@ function checkLinks() {
   const broken = [];
 
   for (const fileName of sourceFiles) {
+    // why: D-14503 — the architecture-inventory page is generated content
+    // (sole writer scripts/architecture-inventory.mjs per D-14502, amends
+    // D-13810). Its body emits repo-rooted paths (docs/..., packages/...)
+    // that resolve to GitHub-blob URLs at Hugo render time via the same
+    // path the render-link.html hook applies to `../`-prefixed links
+    // elsewhere. Excluding the file from this check is the lint-target
+    // exception SCHEMA.md grants; without it, every cron regeneration
+    // would trip the link-integrity gate by design.
+    if (fileName === 'architecture-inventory.md') {
+      continue;
+    }
     const filePath = join(projectedRoot, fileName);
     const body = readFileSync(filePath, 'utf8');
     const matches = body.matchAll(MARKDOWN_LINK_PATTERN);

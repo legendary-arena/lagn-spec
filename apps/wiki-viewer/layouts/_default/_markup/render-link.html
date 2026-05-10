@@ -11,16 +11,28 @@ render hook (not as a post-build HTML walk) because:
 Internal `slug.md` refs resolve to `/<slug>/`. `INDEX.md` resolves to the
 home `/` (the projected `_index.md`).
 */ -}}
+{{- /*
+why: D-14503 — the architecture-inventory page is generated content (sole
+writer scripts/architecture-inventory.mjs per D-14502). Its body emits
+repo-rooted paths (docs/..., packages/...) rather than wiki-relative paths,
+so on this one page every non-external, non-anchor link is treated as
+out-of-tree and rewritten to a GitHub-blob URL — the same shape applied
+to `../`-prefixed links elsewhere. The bare path is the absolute repo
+path; no `path.Join "wiki"` is needed.
+*/ -}}
 {{- $dest := .Destination -}}
 {{- $text := .Text -}}
 {{- $title := "" -}}
 {{- with .Title -}}{{- $title = . -}}{{- end -}}
+{{- $isInventoryPage := eq .Page.File.LogicalName "architecture-inventory.md" -}}
+{{- $githubBase := "https://github.com/barefootbetters/legendary-arena/blob/main/" -}}
 {{- if or (hasPrefix $dest "http://") (hasPrefix $dest "https://") (hasPrefix $dest "mailto:") (hasPrefix $dest "#") -}}
   <a href="{{ $dest | safeURL }}"{{ with $title }} title="{{ . }}"{{ end }}>{{ $text | safeHTML }}</a>
 {{- else if hasPrefix $dest "../" -}}
   {{- $abs := path.Join "wiki" $dest -}}
-  {{- $githubBase := "https://github.com/barefootbetters/legendary-arena/blob/main/" -}}
   <a href="{{ printf "%s%s" $githubBase $abs | safeURL }}"{{ with $title }} title="{{ . }}"{{ end }}>{{ $text | safeHTML }}</a>
+{{- else if $isInventoryPage -}}
+  <a href="{{ printf "%s%s" $githubBase $dest | safeURL }}"{{ with $title }} title="{{ . }}"{{ end }}>{{ $text | safeHTML }}</a>
 {{- else -}}
   {{- $parts := split $dest "#" -}}
   {{- $pathPart := index $parts 0 -}}

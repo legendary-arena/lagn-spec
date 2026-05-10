@@ -1,0 +1,86 @@
+name: architecture-inventory
+
+# why: (a) cron schedule lock per D-14501 — Mondays 06:00 UTC. The
+# inventory is a low-velocity engineering artifact; weekly cadence
+# bounds staleness without burning CI on no-op runs. (b) diff/PR
+# policy lock per D-14501 (D1 — PR-on-diff): on regenerated output
+# diff, open a PR for human review; on no-diff, no-op. Direct commit
+# to main (D2) and auto-merge (D3) were rejected for v1 — review is
+# the gate. (c) non-gating posture: the inventory step uses
+# `continue-on-error: true` so a script crash does not cascade into
+# the rest of the workflow or unrelated pipelines. The step itself
+# remains visibly red in the GitHub UI; `|| true` and other
+# exit-code-swallowing shell tricks are forbidden (visible-failure
+# invariant per EC-145 §Guardrails).
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Regenerate architecture inventory
+        # why: continue-on-error keeps the workflow alive when the
+        # inventory script itself crashes (the script is a reporting
+        # tool, not a gate, per its own header contract). The step
+        # still shows red in the GitHub UI; downstream steps decide
+        # what to do when the file did not change.
+        continue-on-error: true
+        run: pnpm wiki-viewer:inventory
+
+      - name: Detect diff against committed copy
+        id: diff
+        run: |
+          set -e
+          if git diff --quiet -- wiki/architecture-inventory.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Inventory output is unchanged — no PR needed."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Inventory output changed — opening PR."
+          fi
+
+      - name: Open PR on diff
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'INFRA: regenerate wiki/architecture-inventory.md (cron)'
+          title: 'INFRA: regenerate wiki/architecture-inventory.md (cron)'
+          body: |
+            Automated regeneration of `wiki/architecture-inventory.md` by
+            `.github/workflows/architecture-inventory.yml` (D-14501 cron;
+            cadence `0 6 * * 1`).
+
+            The committed `wiki/architecture-inventory.md` is generated
+            content; the sole writer is `scripts/architecture-inventory.mjs`
+            (D-14502 — amends D-13810). Hand-edits to this file are
+            non-authoritative and will be silently overwritten by the next
+            cron run. Review the diff for unexpected dependency or
+            stack drift; merge to publish the refresh through the
+            existing wiki-viewer deploy pipeline.
+          branch: bot/architecture-inventory-refresh
+          delete-branch: true

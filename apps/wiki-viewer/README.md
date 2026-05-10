@@ -82,6 +82,26 @@ Hand-rolled minimal theme inside this app (Open Decision B, locked). No
 third-party theme dependency. A future WP that wants Docsy / Hextra / etc.
 must add a DECISIONS entry that supersedes the lock.
 
+## Generated content
+
+`wiki/architecture-inventory.md` is generated content. Its sole writer is
+[`scripts/architecture-inventory.mjs`](../../scripts/architecture-inventory.mjs)
+(D-14502 — amends D-13810). Hand-edits to the file are non-authoritative
+and are silently overwritten on the next regeneration run. The page is
+exempt from the SCHEMA front-matter and required-section conformance per
+[SCHEMA.md § Lint Targets](../../wiki/SCHEMA.md) (D-14503).
+
+```bash
+pnpm wiki-viewer:inventory
+```
+
+Wraps `node scripts/architecture-inventory.mjs --out wiki/architecture-inventory.md`.
+Use it locally before a manual rebuild; the file is also refreshed automatically
+by [`.github/workflows/architecture-inventory.yml`](../../.github/workflows/architecture-inventory.yml)
+on a Mondays-06:00-UTC cron (`0 6 * * 1`, D-14501). The cron job opens a PR
+on diff (D1) and is non-gating: a script crash leaves the step visibly red in
+the GitHub UI but does not block the wiki deploy.
+
 ## Files
 
 - `hugo.toml` — site config + determinism knobs.
