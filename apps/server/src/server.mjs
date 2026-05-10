@@ -224,8 +224,23 @@ export async function startServer() {
   const server = Server({
     games: [LegendaryGame],
     // why: CORS origins are written as a literal array per code style Rule 7.
-    // Only the production SPA and local Vite dev server are allowed.
+    // Authorized cross-origin consumers of the boardgame.io lobby + match API:
+    //   - https://play.legendary-arena.com — the production arena-client SPA
+    //     deployed under WP-007a (CF Pages project legendary-arena-play).
+    //   - https://legendary-arena-play.pages.dev — the same project's CF
+    //     Pages auto-generated hostname; needed for the WP-007a Step 9
+    //     build-parity check before the custom domain binds, and as the
+    //     stable preview-target in environments where the custom domain is
+    //     unbound.
+    //   - https://cards.barefootbetters.com — the registry-viewer SPA. Kept
+    //     in the allowlist for backward compatibility; it does not call
+    //     /games/* today but historically did during the WP-090 lobby
+    //     contract verification.
+    //   - http://localhost:5173 — Vite dev server default for local dev
+    //     work against this server.
     origins: [
+      'https://play.legendary-arena.com',
+      'https://legendary-arena-play.pages.dev',
       'https://cards.barefootbetters.com',
       'http://localhost:5173',
     ],
