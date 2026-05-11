@@ -26,7 +26,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-gwenpool-come-on-nobody-reads-card-names.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-come-on-nobody-reads-card-names.webp",
           "abilities": [
             "[keyword:Versatile 1]",
             "[hc:covert]: Instead, [keyword:Versatile 3]."
@@ -43,7 +43,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-gwenpool-ill-rescue-you-if-i-feel-like-it.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-ill-rescue-you-if-i-feel-like-it.webp",
           "abilities": [
             "Reveal the top card of the Bystander Deck. If it's a Special Bystander, rescue it. Otherwise, put it on the bottom of that deck."
           ]
@@ -59,7 +59,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-gwenpool-i-heard-keywords-are-powerful.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-i-heard-keywords-are-powerful.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:instinct]",
             "[hc:instinct]: Draw a card.",
@@ -77,7 +77,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-gwenpool-im-the-best-at-board-games.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-im-the-best-at-board-games.webp",
           "abilities": [
             "[keyword:Demolish] each other player. For each player that discards a card this way, draw a card."
           ]
@@ -87,7 +87,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-gwenpool-come-on-nobody-reads-card-names.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-come-on-nobody-reads-card-names.webp",
           "sides": [
             "come-on-nobody-reads-card-names"
           ]
@@ -95,7 +95,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-gwenpool-ill-rescue-you-if-i-feel-like-it.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-ill-rescue-you-if-i-feel-like-it.webp",
           "sides": [
             "ill-rescue-you-if-i-feel-like-it"
           ]
@@ -103,7 +103,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-gwenpool-i-heard-keywords-are-powerful.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-i-heard-keywords-are-powerful.webp",
           "sides": [
             "i-heard-keywords-are-powerful"
           ]
@@ -111,7 +111,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-gwenpool-im-the-best-at-board-games.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-im-the-best-at-board-games.webp",
           "sides": [
             "im-the-best-at-board-games"
           ]
@@ -141,7 +141,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-ms-marvel-long-arm-of-the-law.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-long-arm-of-the-law.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "Draw a card.",
@@ -159,7 +159,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-ms-marvel-big-impact.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-big-impact.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "[keyword:Versatile 2]"
@@ -176,7 +176,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-ms-marvel-need-to-stretch-my-legs.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-need-to-stretch-my-legs.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "[team:champions]: You may KO a card from your hand or discard pile.",
@@ -194,7 +194,7 @@
           "cost": 9,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-ms-marvel-rising-hope.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-rising-hope.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength], [hc:covert]",
             "[keyword:Versatile 4]",
@@ -206,7 +206,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-ms-marvel-long-arm-of-the-law.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-long-arm-of-the-law.webp",
           "sides": [
             "long-arm-of-the-law"
           ]
@@ -214,7 +214,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-ms-marvel-big-impact.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-big-impact.webp",
           "sides": [
             "big-impact"
           ]
@@ -222,7 +222,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-ms-marvel-need-to-stretch-my-legs.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-need-to-stretch-my-legs.webp",
           "sides": [
             "need-to-stretch-my-legs"
           ]
@@ -230,7 +230,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-ms-marvel-rising-hope.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-rising-hope.webp",
           "sides": [
             "rising-hope"
           ]
@@ -260,7 +260,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-nova-space-cop.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-space-cop.webp",
           "abilities": [
             "[keyword:Versatile 1]",
             "[team:champions]: Rescue a Bystander."
@@ -277,7 +277,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-nova-interstellar-hero.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-interstellar-hero.webp",
           "abilities": [
             "[keyword:Versatile 2]",
             "[keyword:Cheering Crowds]"
@@ -294,7 +294,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-nova-holographic-projection.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-holographic-projection.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Versatile 3]."
           ]
@@ -310,7 +310,7 @@
           "cost": 9,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-nova-growing-nova-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-growing-nova-force.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:ranged], [hc:strength]",
             "For each other card you played this turn with a [icon:recruit] icon, you get +1[icon:recruit]. For each other card you played this turn with an [icon:attack] icon, you get +1[icon:attack]."
@@ -321,7 +321,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-nova-space-cop.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-space-cop.webp",
           "sides": [
             "space-cop"
           ]
@@ -329,7 +329,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-nova-interstellar-hero.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-interstellar-hero.webp",
           "sides": [
             "interstellar-hero"
           ]
@@ -337,7 +337,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-nova-holographic-projection.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-holographic-projection.webp",
           "sides": [
             "holographic-projection"
           ]
@@ -345,7 +345,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-nova-growing-nova-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-growing-nova-force.webp",
           "sides": [
             "growing-nova-force"
           ]
@@ -375,7 +375,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-totally-awesome-hulk-beloved-behemoth.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-beloved-behemoth.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "[hc:strength]: The first time you defeat a Villain this turn, rescue a Bystander."
@@ -392,7 +392,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-totally-awesome-hulk-incredible-mind-awesome-body.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-incredible-mind-awesome-body.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "Draw a card.",
@@ -410,7 +410,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-totally-awesome-hulk-growing-pains.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-growing-pains.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "If you have a Wound in your hand or discard pile, KO it and you get +2[icon:attack]. Otherwise, gain a Wound."
@@ -427,7 +427,7 @@
           "cost": 9,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-totally-awesome-hulk-7th-smartest-man-in-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-7th-smartest-man-in-the-world.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech], [hc:strength]",
             "You get +1[icon:attack] for each extra card you drew this turn."
@@ -438,7 +438,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-totally-awesome-hulk-beloved-behemoth.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-beloved-behemoth.webp",
           "sides": [
             "beloved-behemoth"
           ]
@@ -446,7 +446,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-totally-awesome-hulk-incredible-mind-awesome-body.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-incredible-mind-awesome-body.webp",
           "sides": [
             "incredible-mind-awesome-body"
           ]
@@ -454,7 +454,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-totally-awesome-hulk-growing-pains.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-growing-pains.webp",
           "sides": [
             "growing-pains"
           ]
@@ -462,7 +462,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-totally-awesome-hulk-7th-smartest-man-in-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-7th-smartest-man-in-the-world.webp",
           "sides": [
             "7th-smartest-man-in-the-world"
           ]
@@ -492,7 +492,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-viv-vision-walking-wi-fi.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-walking-wi-fi.webp",
           "abilities": [
             "[hc:tech]: Whenever you recruit a Hero from the HQ this turn, rescue a Bystander."
           ]
@@ -508,7 +508,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-viv-vision-expanding-neural-network.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-expanding-neural-network.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "[hc:tech]: When you draw a new hand of cards at the end of this turn, draw an extra card."
@@ -525,7 +525,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-viv-vision-crowdsourcing.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-crowdsourcing.webp",
           "abilities": [
             "[keyword:Versatile 3]",
             "[keyword:Cheering Crowds]"
@@ -542,7 +542,7 @@
           "cost": 9,
           "attack": "0+",
           "recruit": "5",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-viv-vision-alter-molecular-density.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-alter-molecular-density.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech], [hc:ranged]",
             "Whenever you recruit a Hero this turn, you get +2[icon:attack]."
@@ -553,7 +553,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-viv-vision-walking-wi-fi.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-walking-wi-fi.webp",
           "sides": [
             "walking-wi-fi"
           ]
@@ -561,7 +561,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-viv-vision-expanding-neural-network.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-expanding-neural-network.webp",
           "sides": [
             "expanding-neural-network"
           ]
@@ -569,7 +569,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-viv-vision-crowdsourcing.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-crowdsourcing.webp",
           "sides": [
             "crowdsourcing"
           ]
@@ -577,7 +577,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-hr-viv-vision-alter-molecular-density.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-alter-molecular-density.webp",
           "sides": [
             "alter-molecular-density"
           ]
@@ -598,7 +598,7 @@
           "slug": "fin-fang-foom",
           "tactic": false,
           "vAttack": "20*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/fin-fang-foom-01.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mm-fin-fang-foom.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength],[hc:instinct],[hc:covert],[hc:tech],[hc:ranged]",
             "Always Leads: Monsters Unleashed",
@@ -610,7 +610,7 @@
           "slug": "epic-fin-fang-foom",
           "tactic": false,
           "vAttack": "24",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/fin-fang-foom-02.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-me-fin-fang-foom.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength],[hc:instinct],[hc:covert],[hc:tech],[hc:ranged]",
             "Always Leads: Monsters Unleashed",
@@ -622,7 +622,7 @@
           "slug": "alien-dragon-technology",
           "tactic": true,
           "vAttack": 20,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/fin-fang-foom-04.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mt-fin-fang-foom-alien-dragon-technology.webp",
           "abilities": [
             "Fight: A Hero in the HQ gets [keyword:Size-Changing]: [hc:strength],[hc:instinct],[hc:covert],[hc:tech],[hc:ranged] this turn."
           ]
@@ -632,7 +632,7 @@
           "slug": "flammable-acid-breath",
           "tactic": true,
           "vAttack": 20,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/fin-fang-foom-03.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mt-fin-fang-foom-flammable-acid-breath.webp",
           "abilities": [
             "Fight: KO the top card of the Hero Deck. Then each other player KOs a Hero of that Hero class from their discard pile ([hc:strength],[hc:instinct],[hc:covert],[hc:tech],[hc:ranged])."
           ]
@@ -642,7 +642,7 @@
           "slug": "multipronged-assault",
           "tactic": true,
           "vAttack": 20,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/fin-fang-foom-05.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mt-fin-fang-foom-multipronged-assault.webp",
           "abilities": [
             "Fight: Each other player reveals at least 3 Hero Classes ([hc:strength],[hc:instinct],[hc:covert],[hc:tech],[hc:ranged]) or gains a Wound."
           ]
@@ -652,7 +652,7 @@
           "slug": "supersonic-dive-attack",
           "tactic": true,
           "vAttack": 20,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/fin-fang-foom-06.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mt-fin-fang-foom-supersonic-dive-attack.webp",
           "abilities": [
             "Fight: KO the top card of the Hero Deck. Then each other player reveals their hand and discards a Hero of that Hero Class ([hc:strength],[hc:instinct],[hc:covert],[hc:tech],[hc:ranged])."
           ]
@@ -671,7 +671,7 @@
           "slug": "pagliacci",
           "tactic": false,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/pagliacci-01.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mm-pagliacci.webp",
           "abilities": [
             "Always Leads: Wrecking Crew",
             "Master Strike 1, 5: This card becomes a Scheme Twist that takes effect immediately.",
@@ -683,7 +683,7 @@
           "slug": "epic-pagliacci",
           "tactic": false,
           "vAttack": "11",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/pagliacci-02.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-me-pagliacci.webp",
           "abilities": [
             "Always Leads: Wrecking Crew",
             "Master Strike 1, 3, 5: This card becomes a Scheme Twist that takes effect immediately.",
@@ -695,7 +695,7 @@
           "slug": "commedia-dellmorte",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/pagliacci-06.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mt-pagliacci-commedia-dellmorte.webp",
           "abilities": [
             "Fight: Each other player may gain two Wounds. [keyword:Demolish] each of those players who does not."
           ]
@@ -705,7 +705,7 @@
           "slug": "creative-assassin",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/pagliacci-05.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mt-pagliacci-creative-assassin.webp",
           "abilities": [
             "Fight: You get [keyword:Versatile 3]."
           ]
@@ -715,7 +715,7 @@
           "slug": "insane-clown-has-a-posse",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/pagliacci-04.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mt-pagliacci-insane-clown-has-a-posse.webp",
           "abilities": [
             "Fight: Each other player may KO a Wrecking Crew Villain from their Victory Pile. [keyword:Demolish] each of those players who does not."
           ]
@@ -725,7 +725,7 @@
           "slug": "jester-of-a-twisted-opera",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/pagliacci-03.png",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-mt-pagliacci-jester-of-a-twisted-opera.webp",
           "abilities": [
             "Fight: Each other player may KO a card from their discard pile that costs 1 or more. [keyword:Demolish] each of those players who does not."
           ]
@@ -745,7 +745,7 @@
           "slug": "goom",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-monsters-unleashed-goom.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-goom.webp",
           "abilities": [
             "Ambush: Goom captures a Bystander.",
             "Fight: KO one of your Heroes."
@@ -756,7 +756,7 @@
           "slug": "groot-from-planet-x",
           "vp": "2",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-monsters-unleashed-groot-from-planet-x.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-groot-from-planet-x.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength], [hc:covert]",
             "Fight: Two Bystanders from the Bystander Stack enter the city as 3[icon:attack] “Splintered Half-Groot“ Villains. When you fight one, rescue it as a Bystander."
@@ -767,7 +767,7 @@
           "slug": "monsteroso",
           "vp": "2",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-monsters-unleashed-monsteroso.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-monsteroso.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength], [hc:instinct]",
             "Fight: When you draw a new hand of cards at the end of this turn, draw an extra card."
@@ -778,7 +778,7 @@
           "slug": "orrgo",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-monsters-unleashed-orrgo.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-orrgo.webp",
           "abilities": [
             "You can't fight Orrgo unless you have already defeated another Villain this turn."
           ]
@@ -788,7 +788,7 @@
           "slug": "sporr",
           "vp": "3",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-monsters-unleashed-sporr.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-sporr.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech], [hc:ranged]",
             "Fight: A Hero in the HQ gains [keyword:Size-Changing]: [hc:tech], [hc:ranged] this turn."
@@ -799,7 +799,7 @@
           "slug": "tim-boo-ba",
           "vp": "5",
           "vAttack": "12",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-monsters-unleashed-tim-boo-ba.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-tim-boo-ba.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength], [hc:instinct], [hc:covert], [hc:tech], [hc:ranged]",
             "Fight: All Heroes currently in the HQ cost 1 less this turn."
@@ -810,7 +810,7 @@
           "slug": "trull-the-unhuman",
           "vp": "4",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-monsters-unleashed-trull-the-unhuman.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-trull-the-unhuman.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert], [hc:tech]",
             "Ambush: Trull captures a Bystander. Then [keyword:Demolish] each player."
@@ -821,7 +821,7 @@
           "slug": "zzutak",
           "vp": "5",
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-monsters-unleashed-zzutak.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-zzutak.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:ranged], [hc:instinct]",
             "Escape: [keyword:Demolish] each player."
@@ -840,7 +840,7 @@
           "slug": "bulldozer",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-wrecking-crew-bulldozer.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-wrecking-crew-bulldozer.webp",
           "abilities": [
             "Ambush: Bulldozer moves an extra space forward. If this pushes any Villains forward, [keyword:Demolish] each player."
           ]
@@ -850,7 +850,7 @@
           "slug": "piledriver",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-wrecking-crew-piledriver.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-wrecking-crew-piledriver.webp",
           "abilities": [
             "Fight: KO one of your Heroes.",
             "Escape: [keyword:Demolish] each player."
@@ -861,7 +861,7 @@
           "slug": "thunderball",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-wrecking-crew-thunderball.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-wrecking-crew-thunderball.webp",
           "abilities": [
             "Fight: If you fight Thunderball in the Sewers or Bank, [keyword:Demolish] each other player."
           ]
@@ -871,7 +871,7 @@
           "slug": "the-wrecker",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/chmp/chmp-vi-wrecking-crew-the-wrecker.webp",
+          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-wrecking-crew-the-wrecker.webp",
           "abilities": [
             "Ambush: For each Wrecking Crew Villain in the city (including this one), [keyword:Demolish] each player."
           ]
@@ -885,7 +885,7 @@
       "id": 88,
       "name": "Clash of the Monsters Unleashed",
       "slug": "clash-of-the-monsters-unleashed",
-      "imageUrl": "https://images.barefootbetters.com/chmp/chmp-sc-clash-of-the-monsters-unleashed.webp",
+      "imageUrl": "https://images.legendary-arena.com/chmp/chmp-sc-clash-of-the-monsters-unleashed.webp",
       "cards": [
         {
           "abilities": [
@@ -900,7 +900,7 @@
       "id": 89,
       "name": "Divide and Conquer",
       "slug": "divide-and-conquer",
-      "imageUrl": "https://images.barefootbetters.com/chmp/chmp-sc-divide-and-conquer.webp",
+      "imageUrl": "https://images.legendary-arena.com/chmp/chmp-sc-divide-and-conquer.webp",
       "cards": [
         {
           "abilities": [
@@ -917,7 +917,7 @@
       "id": 90,
       "name": "Hypnotize Every Human",
       "slug": "hypnotize-every-human",
-      "imageUrl": "https://images.barefootbetters.com/chmp/chmp-sc-hypnotize-every-human.webp",
+      "imageUrl": "https://images.legendary-arena.com/chmp/chmp-sc-hypnotize-every-human.webp",
       "cards": [
         {
           "abilities": [
@@ -933,7 +933,7 @@
       "id": 91,
       "name": "Steal All Oxygen on Earth",
       "slug": "steal-all-oxygen-on-earth",
-      "imageUrl": "https://images.barefootbetters.com/chmp/chmp-sc-steal-all-oxygen-on-earth.webp",
+      "imageUrl": "https://images.legendary-arena.com/chmp/chmp-sc-steal-all-oxygen-on-earth.webp",
       "cards": [
         {
           "abilities": [

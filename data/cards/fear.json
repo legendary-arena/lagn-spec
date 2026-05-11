@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-greithoth-breaker-of-wills-absorb-metal.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-absorb-metal.webp",
           "abilities": [
             "If you control an [keyword:Artifact], you get +2[icon:attack]."
           ]
@@ -42,7 +42,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-greithoth-breaker-of-wills-mace-of-chains.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-mace-of-chains.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +2[icon:recruit]."
@@ -59,7 +59,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-greithoth-breaker-of-wills-break-the-will-to-resist.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-break-the-will-to-resist.webp",
           "abilities": [
             "[hc:covert]: Each player discards the bottom card of their deck. For each non-grey card discard this way, you get +1[icon:attack]."
           ]
@@ -75,7 +75,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-greithoth-breaker-of-wills-body-of-uru.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-body-of-uru.webp",
           "abilities": [
             "You get +[icon:attack] equal to the total number of [keyword:Artifacts] controlled by players and [keyword:Artifacts] the Lair."
           ]
@@ -85,7 +85,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-greithoth-breaker-of-wills-absorb-metal.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-absorb-metal.webp",
           "sides": [
             "absorb-metal"
           ]
@@ -93,7 +93,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-greithoth-breaker-of-wills-mace-of-chains.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-mace-of-chains.webp",
           "sides": [
             "mace-of-chains"
           ]
@@ -101,7 +101,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-greithoth-breaker-of-wills-break-the-will-to-resist.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-break-the-will-to-resist.webp",
           "sides": [
             "break-the-will-to-resist"
           ]
@@ -109,7 +109,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-greithoth-breaker-of-wills-body-of-uru.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-body-of-uru.webp",
           "sides": [
             "body-of-uru"
           ]
@@ -139,7 +139,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-kuurth-breaker-of-stone-reach-for-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-reach-for-power.webp",
           "abilities": [
             "Reveal the top or bottom card of your deck. If it costs 4 or more, you get +2[icon:recruit]."
           ]
@@ -155,7 +155,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-kuurth-breaker-of-stone-unstoppable-sledge.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-unstoppable-sledge.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +2[icon:attack]."
@@ -172,7 +172,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-kuurth-breaker-of-stone-contest-of-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-contest-of-strength.webp",
           "abilities": [
             "[team:foes-of-asgard]: Discard the top card of any player's deck. Then reveal the top or bottom card of your deck. If the card you revealed has an equal or higher cost, you get +2[icon:attack]."
           ]
@@ -188,7 +188,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-kuurth-breaker-of-stone-break-every-bone.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-break-every-bone.webp",
           "abilities": [
             "Reveal a card from your hand, the top card of your deck, and the bottom card of your deck. You get +[icon:attack] equal to their total costs."
           ]
@@ -198,7 +198,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-kuurth-breaker-of-stone-reach-for-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-reach-for-power.webp",
           "sides": [
             "reach-for-power"
           ]
@@ -206,7 +206,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-kuurth-breaker-of-stone-unstoppable-sledge.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-unstoppable-sledge.webp",
           "sides": [
             "unstoppable-sledge"
           ]
@@ -214,7 +214,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-kuurth-breaker-of-stone-contest-of-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-contest-of-strength.webp",
           "sides": [
             "contest-of-strength"
           ]
@@ -222,7 +222,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-kuurth-breaker-of-stone-break-every-bone.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-break-every-bone.webp",
           "sides": [
             "break-every-bone"
           ]
@@ -252,7 +252,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nerkkod-breaker-of-oceans-pull-of-the-tides.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-pull-of-the-tides.webp",
           "abilities": [
             "You may move an Adversary to an adjacent city space. If another Adversary is already there, swap them."
           ]
@@ -268,7 +268,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nerkkod-breaker-of-oceans-feed-my-undersea-legions.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-feed-my-undersea-legions.webp",
           "abilities": [
             "Whenever you defeat an Adversary on the Bridge this turn, you may KO one of your cards or a card from your discard pile. If you do, gain a New Recruit."
           ]
@@ -284,7 +284,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nerkkod-breaker-of-oceans-cudgel-of-the-deep.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-cudgel-of-the-deep.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +3[icon:attack], usable only against Adversaries on the Bridge or the Commander."
@@ -301,7 +301,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nerkkod-breaker-of-oceans-break-their-loyalties.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-break-their-loyalties.webp",
           "abilities": [
             "[team:foes-of-asgard]: Each other player reveals their hand. Choose a New Recruit or Madame HYDRA from each of those players' hands and put them into your hand."
           ]
@@ -311,7 +311,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nerkkod-breaker-of-oceans-pull-of-the-tides.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-pull-of-the-tides.webp",
           "sides": [
             "pull-of-the-tides"
           ]
@@ -319,7 +319,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nerkkod-breaker-of-oceans-feed-my-undersea-legions.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-feed-my-undersea-legions.webp",
           "sides": [
             "feed-my-undersea-legions"
           ]
@@ -327,7 +327,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nerkkod-breaker-of-oceans-cudgel-of-the-deep.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-cudgel-of-the-deep.webp",
           "sides": [
             "cudgel-of-the-deep"
           ]
@@ -335,7 +335,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nerkkod-breaker-of-oceans-break-their-loyalties.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-break-their-loyalties.webp",
           "sides": [
             "break-their-loyalties"
           ]
@@ -365,7 +365,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nul-breaker-of-worlds-demolition-derby.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-demolition-derby.webp",
           "abilities": [
             "[hc:strength]: Choose a player and [keyword:Demolish] them. If that player discards a card this way, draw a card."
           ]
@@ -381,7 +381,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nul-breaker-of-worlds-otherworldly-maul.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-otherworldly-maul.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +2[icon:attack] for each [hc:strength] Ally you played this turn."
@@ -398,7 +398,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nul-breaker-of-worlds-nul-smash.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-nul-smash.webp",
           "abilities": [
             "Say “NUL SMASH!“ Then each player slaps a palm on the table. The last other player to slap a palm on the table gains a Bindings."
           ]
@@ -414,7 +414,7 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nul-breaker-of-worlds-break-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-break-the-world.webp",
           "abilities": [
             "KO up to two cards from your hand and/or discard pile. For each Bindings you KO this way, [keyword:demolish] each other player."
           ]
@@ -424,7 +424,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nul-breaker-of-worlds-demolition-derby.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-demolition-derby.webp",
           "sides": [
             "demolition-derby"
           ]
@@ -432,7 +432,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nul-breaker-of-worlds-otherworldly-maul.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-otherworldly-maul.webp",
           "sides": [
             "otherworldly-maul"
           ]
@@ -440,7 +440,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nul-breaker-of-worlds-nul-smash.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-nul-smash.webp",
           "sides": [
             "nul-smash"
           ]
@@ -448,7 +448,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-nul-breaker-of-worlds-break-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-break-the-world.webp",
           "sides": [
             "break-the-world"
           ]
@@ -478,7 +478,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skadi-dark-prophecy.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-dark-prophecy.webp",
           "abilities": [
             "[hc:tech]: Gain a Madame HYDRA."
           ]
@@ -494,7 +494,7 @@
           "cost": 5,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skadi-ancient-oath-of-hydra.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-ancient-oath-of-hydra.webp",
           "abilities": [
             "You may discard a[team:hydra] Ally. If you do, draw two cards."
           ]
@@ -510,7 +510,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skadi-hammer-of-the-serpent.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-hammer-of-the-serpent.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +2[icon:attack] for each card you discarded this turn.",
@@ -528,7 +528,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skadi-war-banner-of-hydra.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-war-banner-of-hydra.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +1[icon:attack] for each other[team:hydra] Ally you played this turn."
@@ -539,7 +539,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skadi-dark-prophecy.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-dark-prophecy.webp",
           "sides": [
             "dark-prophecy"
           ]
@@ -547,7 +547,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skadi-ancient-oath-of-hydra.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-ancient-oath-of-hydra.webp",
           "sides": [
             "ancient-oath-of-hydra"
           ]
@@ -555,7 +555,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skadi-hammer-of-the-serpent.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-hammer-of-the-serpent.webp",
           "sides": [
             "hammer-of-the-serpent"
           ]
@@ -563,7 +563,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skadi-war-banner-of-hydra.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-war-banner-of-hydra.webp",
           "sides": [
             "war-banner-of-hydra"
           ]
@@ -593,7 +593,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skirn-breaker-of-men-towering-leader.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-towering-leader.webp",
           "abilities": [
             "Gain two New Recruits.",
             "[hc:instinct]: Gain a third New Recruit."
@@ -610,7 +610,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skirn-breaker-of-men-underhanded-dealings.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-underhanded-dealings.webp",
           "abilities": [
             "Look at the bottom card of your deck. Discard it or put it back.",
             "[hc:covert]: Draw a card from the bottom of your deck."
@@ -627,7 +627,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skirn-breaker-of-men-titanic-bludgeon.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-titanic-bludgeon.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +1[icon:attack] for each card you've drawn this turn. (This doesn't count the six cards you draw at the end of your turn.)"
@@ -644,7 +644,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skirn-breaker-of-men-break-your-hopes.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-break-your-hopes.webp",
           "abilities": [
             "Each player reveals a [hc:covert] Ally or discards a card. For each card discarded this way, you draw a card."
           ]
@@ -654,7 +654,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skirn-breaker-of-men-towering-leader.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-towering-leader.webp",
           "sides": [
             "towering-leader"
           ]
@@ -662,7 +662,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skirn-breaker-of-men-underhanded-dealings.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-underhanded-dealings.webp",
           "sides": [
             "underhanded-dealings"
           ]
@@ -670,7 +670,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skirn-breaker-of-men-titanic-bludgeon.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-titanic-bludgeon.webp",
           "sides": [
             "titanic-bludgeon"
           ]
@@ -678,7 +678,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-hr-skirn-breaker-of-men-break-your-hopes.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-break-your-hopes.webp",
           "sides": [
             "break-your-hopes"
           ]
@@ -699,7 +699,7 @@
           "slug": "uru-enchanted-iron-man",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-01-1.png",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-mm-uru-enchanted-iron-man.webp",
           "abilities": [
             "Always Leads: The Mighty",
             "Command Strike: [keyword:Demolish] each player. Then stack this Strike next to Iron Man. Uru-Enchanted Iron Man has an [keyword:Uru-Enchanted Weapon] for each Strike stacked here."
@@ -710,7 +710,7 @@
           "slug": "armor-of-the-destroyer",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-02.png",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-mt-uru-enchanted-iron-man-armor-of-the-destroyer.webp",
           "abilities": [
             "Fight: For each [hc:tech] Ally you have, [keyword:demolish] each other player."
           ]
@@ -720,7 +720,7 @@
           "slug": "pepper-potts-in-rescue-armor",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-03.png",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-mt-uru-enchanted-iron-man-pepper-potts-in-rescue-armor.webp",
           "abilities": [
             "Fight: A Bystander from the Bystander Stack becomes a Command Strike that takes effect immediately."
           ]
@@ -730,7 +730,7 @@
           "slug": "quantum-inventions",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-04.png",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-mt-uru-enchanted-iron-man-quantum-inventions.webp",
           "abilities": [
             "Fight: Draw two cards. Then, if you reveal a [hc:tech] card, draw two more cards."
           ]
@@ -740,7 +740,7 @@
           "slug": "repulsor-coils",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/uru-enchanted-iron-man-05.png",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-mt-uru-enchanted-iron-man-repulsor-coils.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Ally or gains a Bindings."
           ]
@@ -760,7 +760,7 @@
           "slug": "black-widow",
           "vp": "4",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-black-widow.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-vi-mighty-the-black-widow.webp",
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
             "Fight or Fail: If her Uru-Enchanted Weapons revealed any Bystanders, kidnap them."
@@ -771,7 +771,7 @@
           "slug": "dr-strange",
           "vp": "4",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-dr-strange.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-vi-mighty-the-dr-strange.webp",
           "abilities": [
             "Ambush: Reveal the top three cards of the Adversary Deck. Put the Adversary you revealed with the highest printed VP on top of that deck. Put the rest on the bottom of that deck in random order.",
             "[keyword:Uru-Enchanted Weapon]",
@@ -783,7 +783,7 @@
           "slug": "hawkeye",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-hawkeye.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-vi-mighty-the-hawkeye.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: Choose one: Each other player draws a card, or each other player discards a card."
@@ -794,7 +794,7 @@
           "slug": "iron-fist",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-iron-fist.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-vi-mighty-the-iron-fist.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: If his Uru-Enchanted Weapon revealed an Adversary, KO one of your Allies."
@@ -805,7 +805,7 @@
           "slug": "ms-marvel",
           "vp": "3",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-ms-marvel.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-vi-mighty-the-ms-marvel.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: If her Uru-Enchanted Weapon revealed a Command Strike or Plot Twist, play it.",
@@ -817,7 +817,7 @@
           "slug": "red-she-hulk",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-red-she-hulk.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-vi-mighty-the-red-she-hulk.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: If her Uru-Enchanted Weapon revealed an Adversary, put that Adversary into your Victory Pile."
@@ -828,7 +828,7 @@
           "slug": "spider-man",
           "vp": "3",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-spider-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-vi-mighty-the-spider-man.webp",
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
             "Fight or Fail: Play all the cards revealed by his Uru-Enchanted Weapon that are worth 2 VP or less.",
@@ -840,7 +840,7 @@
           "slug": "wolverine",
           "vp": "6",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/fear/fear-vi-mighty-the-wolverine.webp",
+          "imageUrl": "https://images.legendary-arena.com/fear/fear-vi-mighty-the-wolverine.webp",
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
             "Fight or Fail: Draw two cards.",
@@ -856,7 +856,7 @@
       "id": 37,
       "name": "Fear Itself",
       "slug": "fear-itself",
-      "imageUrl": "https://images.barefootbetters.com/fear/fear-sc-fear-itself.webp",
+      "imageUrl": "https://images.legendary-arena.com/fear/fear-sc-fear-itself.webp",
       "cards": [
         {
           "abilities": [
@@ -872,7 +872,7 @@
       "id": 38,
       "name": "Last Stand at Avengers Tower",
       "slug": "last-stand-at-avengers-tower",
-      "imageUrl": "https://images.barefootbetters.com/fear/fear-sc-last-stand-at-avengers-tower.webp",
+      "imageUrl": "https://images.legendary-arena.com/fear/fear-sc-last-stand-at-avengers-tower.webp",
       "cards": [
         {
           "abilities": [
@@ -888,7 +888,7 @@
       "id": 39,
       "name": "Traitor, The",
       "slug": "traitor-the",
-      "imageUrl": "https://images.barefootbetters.com/fear/fear-sc-traitor-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/fear/fear-sc-traitor-the.webp",
       "cards": [
         {
           "abilities": [

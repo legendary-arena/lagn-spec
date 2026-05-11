@@ -25,31 +25,31 @@
       "cards": [
         {
           "slug": "a-scar-for-every-kill",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-a-scar-for-every-kill.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mt-killmonger-a-scar-for-every-kill.webp",
           "vAttack": 5
         },
         {
           "slug": "altar-of-resurrection",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-altar-of-resurrection.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mt-killmonger-altar-of-resurrection.webp",
           "vAttack": 5
         },
         {
           "slug": "rite-of-challenge",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-rite-of-challenge.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mt-killmonger-rite-of-challenge.webp",
           "vAttack": 5
         },
         {
           "slug": "throw-from-the-waterfall",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-killmonger-throw-from-the-waterfall.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mt-killmonger-throw-from-the-waterfall.webp",
           "vAttack": 5
         },
         {
           "slug": "killmonger",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mm-killmonger.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mm-killmonger.webp"
         },
         {
           "slug": "epic-killmonger",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-me-killmonger.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-me-killmonger.webp"
         }
       ]
     },
@@ -59,31 +59,31 @@
       "cards": [
         {
           "slug": "cohesive-sound-construct",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-klaw-cohesive-sound-construct.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mt-klaw-cohesive-sound-construct.webp",
           "vAttack": 8
         },
         {
           "slug": "convert-matter-to-sound",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-klaw-convert-matter-to-sound.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mt-klaw-convert-matter-to-sound.webp",
           "vAttack": 8
         },
         {
           "slug": "cruelty-provokes-resistance",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-klaw-cruelty-provokes-resistance.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mt-klaw-cruelty-provokes-resistance.webp",
           "vAttack": 8
         },
         {
           "slug": "ultrasonic-boom",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mt-klaw-ultrasonic-boom.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mt-klaw-ultrasonic-boom.webp",
           "vAttack": 8
         },
         {
           "slug": "klaw",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-mm-klaw.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-mm-klaw.webp"
         },
         {
           "slug": "epic-klaw",
-          "imageUrl": "https://images.barefootbetters.com/bkpt/bkpt-me-klaw.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-me-klaw.webp"
         }
       ]
     }

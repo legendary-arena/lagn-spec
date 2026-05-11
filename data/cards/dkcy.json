@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-high-speed-chase.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-high-speed-chase.webp",
           "abilities": [
             "Draw two cards, then discard a card."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-diving-catch.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-diving-catch.webp",
           "abilities": [
             "When a card effect causes you to discard this card, rescue a Bystander and draw two cards."
           ]
@@ -58,7 +58,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-drop-off-a-friend.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-drop-off-a-friend.webp",
           "abilities": [
             "You may discard a card. You get +[icon:attack] equal to that card's [icon:vp]."
           ]
@@ -74,7 +74,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-strength-of-spirit.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-strength-of-spirit.webp",
           "abilities": [
             "Discard any number of cards. Draw that many cards."
           ]
@@ -84,7 +84,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-high-speed-chase.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-high-speed-chase.webp",
           "sides": [
             "high-speed-chase"
           ]
@@ -92,7 +92,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-diving-catch.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-diving-catch.webp",
           "sides": [
             "diving-catch"
           ]
@@ -100,7 +100,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-drop-off-a-friend.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-drop-off-a-friend.webp",
           "sides": [
             "drop-off-a-friend"
           ]
@@ -108,7 +108,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-angel-strength-of-spirit.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-strength-of-spirit.webp",
           "sides": [
             "strength-of-spirit"
           ]
@@ -138,7 +138,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-whatever-the-cost.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-whatever-the-cost.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: You may KO a card from your hand or discard pile."
@@ -155,7 +155,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-absorb-energies.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-absorb-energies.webp",
           "abilities": [
             "Whenever a card you own is KO'd this turn, you get +2[icon:recruit]."
           ]
@@ -171,7 +171,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-concussive-blast.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-concussive-blast.webp",
           "abilities": [
             "[hc:ranged][hc:ranged]: You get +3[icon:attack]."
           ]
@@ -187,7 +187,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-firepower-from-the-future.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-firepower-from-the-future.webp",
           "abilities": [
             "Discard the top four cards of your deck. You get +[icon:attack] equal to those cards' printed [icon:attack].",
             "[team:x-men]: KO any number of those cards."
@@ -198,7 +198,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-whatever-the-cost.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-whatever-the-cost.webp",
           "sides": [
             "whatever-the-cost"
           ]
@@ -206,7 +206,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-absorb-energies.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-absorb-energies.webp",
           "sides": [
             "absorb-energies"
           ]
@@ -214,7 +214,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-concussive-blast.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-concussive-blast.webp",
           "sides": [
             "concussive-blast"
           ]
@@ -222,7 +222,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-bishop-firepower-from-the-future.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-firepower-from-the-future.webp",
           "sides": [
             "firepower-from-the-future"
           ]
@@ -252,7 +252,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-stalk-the-prey.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-stalk-the-prey.webp",
           "abilities": [
             "You may move a Villain to an adjacent city space. If another Villain is already there, swap them."
           ]
@@ -268,7 +268,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-night-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-night-hunter.webp",
           "abilities": [
             "Whenever you defeat a Villain in the Sewers or Rooftops this turn, you get +2[icon:recruit]."
           ]
@@ -284,7 +284,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-nowhere-to-hide.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-nowhere-to-hide.webp",
           "abilities": [
             "Whenever you defeat a Villain in the Sewers or Rooftops this turn, draw two cards."
           ]
@@ -300,7 +300,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-vampiric-surge.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-vampiric-surge.webp",
           "abilities": [
             "You get +1[icon:attack] for each Villain in your Victory Pile."
           ]
@@ -310,7 +310,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-stalk-the-prey.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-stalk-the-prey.webp",
           "sides": [
             "stalk-the-prey"
           ]
@@ -318,7 +318,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-night-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-night-hunter.webp",
           "sides": [
             "night-hunter"
           ]
@@ -326,7 +326,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-nowhere-to-hide.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-nowhere-to-hide.webp",
           "sides": [
             "nowhere-to-hide"
           ]
@@ -334,7 +334,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-blade-vampiric-surge.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-vampiric-surge.webp",
           "sides": [
             "vampiric-surge"
           ]
@@ -364,7 +364,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-cable-disaster-survivalist.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-disaster-survivalist.webp",
           "abilities": [
             "When a Master Strike is played, before it takes effect, you may discard this card. If you do, draw three extra cards at the end of this turn."
           ]
@@ -380,7 +380,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-cable-strike-at-the-heart-of-evil.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-strike-at-the-heart-of-evil.webp",
           "abilities": [
             "You get +2[icon:attack] only when fighting Masterminds."
           ]
@@ -396,7 +396,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-cable-rapid-response-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-rapid-response-force.webp",
           "abilities": [
             "[keyword:Teleport]",
             "[team:x-force]: You get +1[icon:attack] for each other [team:x-force] Hero you played this turn."
@@ -413,7 +413,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-cable-army-of-one.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-army-of-one.webp",
           "abilities": [
             "KO any number of cards from your hand. You get +1[icon:attack] for each card KO'd this way."
           ]
@@ -423,7 +423,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-cable-disaster-survivalist.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-disaster-survivalist.webp",
           "sides": [
             "disaster-survivalist"
           ]
@@ -431,7 +431,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-cable-strike-at-the-heart-of-evil.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-strike-at-the-heart-of-evil.webp",
           "sides": [
             "strike-at-the-heart-of-evil"
           ]
@@ -439,7 +439,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-cable-rapid-response-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-rapid-response-force.webp",
           "sides": [
             "rapid-response-force"
           ]
@@ -447,7 +447,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-cable-army-of-one.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-army-of-one.webp",
           "sides": [
             "army-of-one"
           ]
@@ -477,7 +477,7 @@
           "cost": 1,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-colossus-draw-their-fire.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-draw-their-fire.webp",
           "abilities": [
             "You gain a Wound."
           ]
@@ -493,7 +493,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-colossus-invulnerability.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-invulnerability.webp",
           "abilities": [
             "If you would gain a Wound, you may discard this card instead. If you do, draw two cards."
           ]
@@ -509,7 +509,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-colossus-silent-statue.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-silent-statue.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:attack]."
           ]
@@ -525,7 +525,7 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-colossus-russian-heavy-tank.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-russian-heavy-tank.webp",
           "abilities": [
             "If another player would gain a Wound, you may reveal this card to gain that Wound and draw a card."
           ]
@@ -535,7 +535,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-colossus-draw-their-fire.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-draw-their-fire.webp",
           "sides": [
             "draw-their-fire"
           ]
@@ -543,7 +543,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-colossus-invulnerability.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-invulnerability.webp",
           "sides": [
             "invulnerability"
           ]
@@ -551,7 +551,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-colossus-silent-statue.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-silent-statue.webp",
           "sides": [
             "silent-statue"
           ]
@@ -559,7 +559,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-colossus-russian-heavy-tank.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-russian-heavy-tank.webp",
           "sides": [
             "russian-heavy-tank"
           ]
@@ -589,7 +589,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-daredevil-backflip.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-backflip.webp",
           "abilities": [
             "When you play Backflip, the next Hero you recruit this turn goes on top of your deck."
           ]
@@ -605,7 +605,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-daredevil-radar-sense.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-radar-sense.webp",
           "abilities": [
             "Choose a number, then reveal the top card of your deck. If the card is that [icon:vp], you get +2[icon:attack]."
           ]
@@ -621,7 +621,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-daredevil-blind-justice.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-blind-justice.webp",
           "abilities": [
             "Choose a number, then reveal the top card of your deck. If the card is that [icon:vp], draw it."
           ]
@@ -637,7 +637,7 @@
           "cost": 8,
           "attack": "7",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-daredevil-the-man-without-fear.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-the-man-without-fear.webp",
           "abilities": [
             "Choose a number, then reveal the top card of your deck. If the card is that [icon:vp], draw it and repeat this process."
           ]
@@ -647,7 +647,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-daredevil-backflip.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-backflip.webp",
           "sides": [
             "backflip"
           ]
@@ -655,7 +655,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-daredevil-radar-sense.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-radar-sense.webp",
           "sides": [
             "radar-sense"
           ]
@@ -663,7 +663,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-daredevil-blind-justice.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-blind-justice.webp",
           "sides": [
             "blind-justice"
           ]
@@ -671,7 +671,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-daredevil-the-man-without-fear.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-the-man-without-fear.webp",
           "sides": [
             "the-man-without-fear"
           ]
@@ -701,7 +701,7 @@
           "cost": 1,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-domino-lucky-break.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-lucky-break.webp",
           "abilities": [
             "Draw a card.",
             "[team:x-force]: [keyword:Versatile 1]"
@@ -718,7 +718,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-domino-ready-for-anything.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-ready-for-anything.webp",
           "abilities": [
             "[keyword:Versatile 2]"
           ]
@@ -734,7 +734,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-domino-specialized-ammunition.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-specialized-ammunition.webp",
           "abilities": [
             "You may discard a card from your hand. If that card had a [icon:recruit] icon, you get +4[icon:recruit]. If that card had an [icon:attack] icon, you get +4[icon:attack]."
           ]
@@ -750,7 +750,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-domino-against-all-odds.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-against-all-odds.webp",
           "abilities": [
             "[keyword:Versatile 5]",
             "[team:x-force]: This card and each other Versatile ability you use for the rest of this turn produces both [icon:recruit] and [icon:attack]."
@@ -761,7 +761,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-domino-lucky-break.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-lucky-break.webp",
           "sides": [
             "lucky-break"
           ]
@@ -769,7 +769,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-domino-ready-for-anything.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-ready-for-anything.webp",
           "sides": [
             "ready-for-anything"
           ]
@@ -777,7 +777,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-domino-specialized-ammunition.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-specialized-ammunition.webp",
           "sides": [
             "specialized-ammunition"
           ]
@@ -785,7 +785,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-domino-against-all-odds.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-against-all-odds.webp",
           "sides": [
             "against-all-odds"
           ]
@@ -815,7 +815,7 @@
           "cost": 1,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-elektra-first-strike.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-first-strike.webp",
           "abilities": [
             "If this is the first card you played this turn, you get +1[icon:attack]."
           ]
@@ -831,7 +831,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-elektra-ninjitsu.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-ninjitsu.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: You get +2[icon:recruit]."
@@ -848,7 +848,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-elektra-sai-blades.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-sai-blades.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero you played this turn that costs 1[icon:vp] or 2[icon:vp]."
           ]
@@ -864,7 +864,7 @@
           "cost": 7,
           "attack": null,
           "recruit": "5+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-elektra-silent-meditation.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-silent-meditation.webp",
           "abilities": [
             "When you play Silent Meditation, the next Hero you recruit this turn goes into your hand.",
             "[team:marvel-knights]: You get +2[icon:recruit]."
@@ -875,7 +875,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-elektra-first-strike.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-first-strike.webp",
           "sides": [
             "first-strike"
           ]
@@ -883,7 +883,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-elektra-ninjitsu.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-ninjitsu.webp",
           "sides": [
             "ninjitsu"
           ]
@@ -891,7 +891,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-elektra-sai-blades.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-sai-blades.webp",
           "sides": [
             "sai-blades"
           ]
@@ -899,7 +899,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-elektra-silent-meditation.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-silent-meditation.webp",
           "sides": [
             "silent-meditation"
           ]
@@ -929,7 +929,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-forge-dirty-work.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-dirty-work.webp",
           "abilities": [
             "[hc:tech]: Any Villain you fight in the Sewers this turn gets -2[icon:attack]."
           ]
@@ -945,7 +945,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-forge-reboot.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-reboot.webp",
           "abilities": [
             "[hc:tech]: You may discard a card. If you do, draw two cards."
           ]
@@ -961,7 +961,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-forge-overdrive.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-overdrive.webp",
           "abilities": [
             "[keyword:Versatile 3]"
           ]
@@ -977,7 +977,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-forge-b-f-g.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-b-f-g.webp",
           "abilities": [
             "[hc:tech][hc:tech]: Defeat the Mastermind once for free."
           ]
@@ -987,7 +987,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-forge-dirty-work.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-dirty-work.webp",
           "sides": [
             "dirty-work"
           ]
@@ -995,7 +995,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-forge-reboot.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-reboot.webp",
           "sides": [
             "reboot"
           ]
@@ -1003,7 +1003,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-forge-overdrive.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-overdrive.webp",
           "sides": [
             "overdrive"
           ]
@@ -1011,7 +1011,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-forge-b-f-g.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-b-f-g.webp",
           "sides": [
             "b-f-g"
           ]
@@ -1041,7 +1041,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-infernal-chains.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-infernal-chains.webp",
           "abilities": [
             "Draw a card.",
             "[hc:strength]: Defeat a Villain of 3[icon:attack] or less for free."
@@ -1058,7 +1058,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-hell-on-wheels.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-hell-on-wheels.webp",
           "abilities": [
             "[team:marvel-knights]: You get +2[icon:recruit]."
           ]
@@ -1074,7 +1074,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-blazing-hellfire.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-blazing-hellfire.webp",
           "abilities": [
             "You may KO a Villain from your Victory Pile. If you do, you get +3[icon:attack]."
           ]
@@ -1090,7 +1090,7 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-penance-stare.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-penance-stare.webp",
           "abilities": [
             "Each player KOs a Villain from their Victory Pile. You get +1[icon:attack] for each Villain KO'd this way.",
             "[team:marvel-knights]: Put one of those Villains into your Victory Pile."
@@ -1101,7 +1101,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-infernal-chains.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-infernal-chains.webp",
           "sides": [
             "infernal-chains"
           ]
@@ -1109,7 +1109,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-hell-on-wheels.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-hell-on-wheels.webp",
           "sides": [
             "hell-on-wheels"
           ]
@@ -1117,7 +1117,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-blazing-hellfire.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-blazing-hellfire.webp",
           "sides": [
             "blazing-hellfire"
           ]
@@ -1125,7 +1125,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-ghost-rider-penance-stare.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-penance-stare.webp",
           "sides": [
             "penance-stare"
           ]
@@ -1155,7 +1155,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iceman-deep-freeze.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-deep-freeze.webp",
           "abilities": [
             "Draw a card.",
             "[hc:ranged]: You get +1[icon:recruit] for each other [hc:ranged] Hero you played this turn."
@@ -1172,7 +1172,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iceman-ice-slide.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-ice-slide.webp",
           "abilities": [
             "[hc:ranged]: You get +1[icon:attack] for each other [hc:ranged] Hero you played this turn."
           ]
@@ -1188,7 +1188,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iceman-frost-spike-armor.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-frost-spike-armor.webp",
           "abilities": [
             "[hc:ranged]: Draw a card for each [hc:ranged] Hero you played this turn."
           ]
@@ -1204,7 +1204,7 @@
           "cost": 8,
           "attack": "7",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iceman-impenetrable-ice-wall.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-impenetrable-ice-wall.webp",
           "abilities": [
             "If a Villain, Master Strike, or Mastermind Tactic would cause you to gain any Wounds or discard any cards, you may reveal this card instead."
           ]
@@ -1214,7 +1214,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iceman-deep-freeze.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-deep-freeze.webp",
           "sides": [
             "deep-freeze"
           ]
@@ -1222,7 +1222,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iceman-ice-slide.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-ice-slide.webp",
           "sides": [
             "ice-slide"
           ]
@@ -1230,7 +1230,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iceman-frost-spike-armor.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-frost-spike-armor.webp",
           "sides": [
             "frost-spike-armor"
           ]
@@ -1238,7 +1238,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iceman-impenetrable-ice-wall.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-impenetrable-ice-wall.webp",
           "sides": [
             "impenetrable-ice-wall"
           ]
@@ -1268,7 +1268,7 @@
           "cost": 1,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-ancient-legacy.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-ancient-legacy.webp",
           "abilities": [
             "Draw a card.",
             "[hc:strength][hc:strength]: [keyword:Versatile 2]"
@@ -1285,7 +1285,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-focus-chi.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-focus-chi.webp",
           "abilities": [
             "You get +1[icon:recruit] for each Hero with a different [icon:vp] you have."
           ]
@@ -1301,7 +1301,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-wield-the-iron-fist.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-wield-the-iron-fist.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero with a different [icon:vp] you have."
           ]
@@ -1317,7 +1317,7 @@
           "cost": 9,
           "attack": "8",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-living-weapon.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-living-weapon.webp",
           "abilities": [
             "Reveal cards from your deck until you have revealed two cards with the same [icon:vp]. Draw all the cards you revealed."
           ]
@@ -1327,7 +1327,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-ancient-legacy.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-ancient-legacy.webp",
           "sides": [
             "ancient-legacy"
           ]
@@ -1335,7 +1335,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-focus-chi.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-focus-chi.webp",
           "sides": [
             "focus-chi"
           ]
@@ -1343,7 +1343,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-wield-the-iron-fist.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-wield-the-iron-fist.webp",
           "sides": [
             "wield-the-iron-fist"
           ]
@@ -1351,7 +1351,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-iron-fist-living-weapon.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-living-weapon.webp",
           "sides": [
             "living-weapon"
           ]
@@ -1381,7 +1381,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-jean-grey-psychic-search.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-psychic-search.webp",
           "abilities": [
             "[team:x-men]: Rescue a Bystander."
           ]
@@ -1397,7 +1397,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-jean-grey-read-your-thoughts.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-read-your-thoughts.webp",
           "abilities": [
             "Whenever you rescue a Bystander this turn, you get +1[icon:recruit]."
           ]
@@ -1413,7 +1413,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-jean-grey-mind-over-matter.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-mind-over-matter.webp",
           "abilities": [
             "Whenever you rescue a Bystander this turn, draw a card."
           ]
@@ -1429,7 +1429,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-jean-grey-telekinetic-mastery.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-telekinetic-mastery.webp",
           "abilities": [
             "Whenever you rescue a Bystander this turn, you get +1[icon:attack].",
             "[team:x-men]: Rescue a Bystander for each other [team:x-men] Hero you played this turn."
@@ -1440,7 +1440,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-jean-grey-psychic-search.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-psychic-search.webp",
           "sides": [
             "psychic-search"
           ]
@@ -1448,7 +1448,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-jean-grey-read-your-thoughts.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-read-your-thoughts.webp",
           "sides": [
             "read-your-thoughts"
           ]
@@ -1456,7 +1456,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-jean-grey-mind-over-matter.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-mind-over-matter.webp",
           "sides": [
             "mind-over-matter"
           ]
@@ -1464,7 +1464,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-jean-grey-telekinetic-mastery.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-telekinetic-mastery.webp",
           "sides": [
             "telekinetic-mastery"
           ]
@@ -1494,7 +1494,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-nightcrawler-bamf.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-bamf.webp",
           "abilities": [
             "[keyword:Teleport]"
           ]
@@ -1510,7 +1510,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-nightcrawler-blend-into-shadows.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-blend-into-shadows.webp",
           "abilities": [
             "[keyword:Teleport]"
           ]
@@ -1526,7 +1526,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-nightcrawler-swashbuckler.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-swashbuckler.webp",
           "abilities": [
             "[hc:instinct][hc:covert]: You get +3[icon:attack]."
           ]
@@ -1542,7 +1542,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-nightcrawler-along-for-the-ride.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-along-for-the-ride.webp",
           "abilities": [
             "[keyword:Teleport]",
             "When you play or [keyword:Teleport] this card, you may also [keyword:Teleport] up to three other cards from your hand."
@@ -1553,7 +1553,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-nightcrawler-bamf.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-bamf.webp",
           "sides": [
             "bamf"
           ]
@@ -1561,7 +1561,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-nightcrawler-blend-into-shadows.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-blend-into-shadows.webp",
           "sides": [
             "blend-into-shadows"
           ]
@@ -1569,7 +1569,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-nightcrawler-swashbuckler.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-swashbuckler.webp",
           "sides": [
             "swashbuckler"
           ]
@@ -1577,7 +1577,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-nightcrawler-along-for-the-ride.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-along-for-the-ride.webp",
           "sides": [
             "along-for-the-ride"
           ]
@@ -1607,7 +1607,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-professor-x-psionic-astral-form.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-psionic-astral-form.webp",
           "abilities": [
             "[team:x-men]: You get +2[icon:attack]."
           ]
@@ -1623,7 +1623,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-professor-x-class-dismissed.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-class-dismissed.webp",
           "abilities": [
             "You may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[hc:instinct]: You may KO a card from your hand or discard pile."
@@ -1640,7 +1640,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-professor-x-telepathic-probe.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-telepathic-probe.webp",
           "abilities": [
             "Reveal the top card of the Villain Deck. If it's a Bystander, you may rescue it. If it's a Villain, you may fight it this turn."
           ]
@@ -1656,7 +1656,7 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-professor-x-mind-control.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-mind-control.webp",
           "abilities": [
             "Whenever you defeat a Villain this turn, you may gain it. It becomes a grey Hero with no text that gives +[icon:attack] equal to its [icon:attack]. ( You still get its [icon:piercing].)"
           ]
@@ -1666,7 +1666,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-professor-x-psionic-astral-form.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-psionic-astral-form.webp",
           "sides": [
             "psionic-astral-form"
           ]
@@ -1674,7 +1674,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-professor-x-class-dismissed.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-class-dismissed.webp",
           "sides": [
             "class-dismissed"
           ]
@@ -1682,7 +1682,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-professor-x-telepathic-probe.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-telepathic-probe.webp",
           "sides": [
             "telepathic-probe"
           ]
@@ -1690,7 +1690,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-professor-x-mind-control.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-mind-control.webp",
           "sides": [
             "mind-control"
           ]
@@ -1720,7 +1720,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-boom-goes-the-dynamite.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-boom-goes-the-dynamite.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 0[icon:vp], KO it.",
             "[hc:tech]: Draw a card."
@@ -1737,7 +1737,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-hostile-interrogation.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-hostile-interrogation.webp",
           "abilities": [
             "[hc:strength]: Each other player reveals the top card of their deck. If that card costs 4[icon:vp] or more, discard it. You get +1[icon:recruit] for each card discarded this way."
           ]
@@ -1753,7 +1753,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-hail-of-bullets.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-hail-of-bullets.webp",
           "abilities": [
             "Reveal the top card of the Villain Deck. If it's a Villain, you get +[icon:attack] equal to its printed [icon:piercing].",
             "[hc:tech][hc:tech]: You may defeat that Villain for free."
@@ -1770,7 +1770,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-the-punisher.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-the-punisher.webp",
           "abilities": [
             "Reveal cards from the Hero Deck until you have revealed two cards with the same [icon:vp]. You get +1[icon:attack] for each card revealed this way. Put them on the bottom of the Hero Deck in random order."
           ]
@@ -1780,7 +1780,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-boom-goes-the-dynamite.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-boom-goes-the-dynamite.webp",
           "sides": [
             "boom-goes-the-dynamite"
           ]
@@ -1788,7 +1788,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-hostile-interrogation.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-hostile-interrogation.webp",
           "sides": [
             "hostile-interrogation"
           ]
@@ -1796,7 +1796,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-hail-of-bullets.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-hail-of-bullets.webp",
           "sides": [
             "hail-of-bullets"
           ]
@@ -1804,7 +1804,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-punisher-the-punisher.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-the-punisher.webp",
           "sides": [
             "the-punisher"
           ]
@@ -1834,7 +1834,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-wolverine-animal-instincts.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-animal-instincts.webp",
           "abilities": [
             "Draw a card.",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -1851,7 +1851,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-wolverine-sudden-ambush.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-sudden-ambush.webp",
           "abilities": [
             "If you drew any extra cards this turn, you get +2[icon:attack]."
           ]
@@ -1867,7 +1867,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-wolverine-no-mercy.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-no-mercy.webp",
           "abilities": [
             "Draw a card.",
             "You may KO a card from your hand or discard pile."
@@ -1884,7 +1884,7 @@
           "cost": 7,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-wolverine-reckless-abandon.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-reckless-abandon.webp",
           "abilities": [
             "Count the number of extra cards you drew this turn. Draw that many cards."
           ]
@@ -1894,7 +1894,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-wolverine-animal-instincts.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-animal-instincts.webp",
           "sides": [
             "animal-instincts"
           ]
@@ -1902,7 +1902,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-wolverine-sudden-ambush.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-sudden-ambush.webp",
           "sides": [
             "sudden-ambush"
           ]
@@ -1910,7 +1910,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-wolverine-no-mercy.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-no-mercy.webp",
           "sides": [
             "no-mercy"
           ]
@@ -1918,7 +1918,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hr-wolverine-reckless-abandon.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-reckless-abandon.webp",
           "sides": [
             "reckless-abandon"
           ]
@@ -1939,7 +1939,7 @@
           "slug": "apocalypse",
           "tactic": false,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/apocalypse-01.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mm-apocalypse.webp",
           "abilities": [
             "Always Leads: Four Horsemen",
             "Four Horsemen Villains get +2[icon:attack].",
@@ -1952,7 +1952,7 @@
           "slug": "apocalyptic-destruction",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/apocalypse-02.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-apocalypse-apocalyptic-destruction.webp",
           "abilities": [
             "Fight: Each other player KOs two Heroes from their discard pile that each cost 1[icon:vp] or more."
           ]
@@ -1962,7 +1962,7 @@
           "slug": "the-end-of-all-things",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/apocalypse-05.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-apocalypse-the-end-of-all-things.webp",
           "abilities": [
             "Fight: Each other player reveals the top three cards of their deck, KOs each one of those cards that cost 1 [icon:vp] or more, and puts the rest back in any order."
           ]
@@ -1972,7 +1972,7 @@
           "slug": "horsemen-are-drawing-nearer",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/apocalypse-03.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-apocalypse-horsemen-are-drawing-nearer.webp",
           "abilities": [
             "Fight: Each other player plays a Four Horsemen Villain from their Victory Pile as if playing it from the Villain Deck."
           ]
@@ -1982,7 +1982,7 @@
           "slug": "immortal-and-undefeated",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/apocalypse-04.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-apocalypse-immortal-and-undefeated.webp",
           "abilities": [
             "Fight: If this is not the final Tactic, rescue six Bystanders and shuffle this Tactic back into the other Tactics."
           ]
@@ -2001,7 +2001,7 @@
           "slug": "kingpin",
           "tactic": false,
           "vAttack": "13*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/kingpin-01.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mm-kingpin.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Always Leads: Streets of New York",
@@ -2013,7 +2013,7 @@
           "slug": "call-a-hit",
           "tactic": true,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/kingpin-02.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-kingpin-call-a-hit.webp",
           "abilities": [
             "Fight: Choose a Hero from each player's discard pile and KO it."
           ]
@@ -2023,7 +2023,7 @@
           "slug": "criminal-empire",
           "tactic": true,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/kingpin-03.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-kingpin-criminal-empire.webp",
           "abilities": [
             "Fight: If this is not the final Tactic, reveal the top three cards of the Villain Deck. Play all the Villains you revealed. Put the rest back in random order."
           ]
@@ -2033,7 +2033,7 @@
           "slug": "dirty-cops",
           "tactic": true,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/kingpin-04.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-kingpin-dirty-cops.webp",
           "abilities": [
             "Fight: Put a 0 [icon:vp] Hero from the KO pile on top of each other player's deck."
           ]
@@ -2043,7 +2043,7 @@
           "slug": "mob-war",
           "tactic": true,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/kingpin-05.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-kingpin-mob-war.webp",
           "abilities": [
             "Fight: Each other player plays a Henchman Villain from their Victory Pile as if playing it from the Villain Deck."
           ]
@@ -2062,7 +2062,7 @@
           "slug": "mephisto",
           "tactic": false,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mephisto-01.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mm-mephisto.webp",
           "abilities": [
             "Whenever a player gains a Wound, put it on top of that player's deck.",
             "Always Leads: Underworld",
@@ -2074,7 +2074,7 @@
           "slug": "damned-if-you-do",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mephisto-02.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-mephisto-damned-if-you-do.webp",
           "abilities": [
             "Fight: Each other player KOs a Bystander from their Victory Pile or gains a Wound."
           ]
@@ -2084,7 +2084,7 @@
           "slug": "devilish-torment",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mephisto-03.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-mephisto-devilish-torment.webp",
           "abilities": [
             "Fight: Each other player puts all 0 [icon:vp] cards from their discard pile on top of their deck in any order."
           ]
@@ -2094,7 +2094,7 @@
           "slug": "pain-begets-pain",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mephisto-04.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-mephisto-pain-begets-pain.webp",
           "abilities": [
             "Fight: Choose any number of Wounds from your hand and discard pile. The player to your right gains them."
           ]
@@ -2104,7 +2104,7 @@
           "slug": "the-price-of-failure",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mephisto-05.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-mephisto-the-price-of-failure.webp",
           "abilities": [
             "Fight: Each other player without a Mastermind Tactic in their Victory Pile gains a Wound."
           ]
@@ -2123,7 +2123,7 @@
           "slug": "mr-sinister",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mr-sinister-01.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mm-mr-sinister.webp",
           "abilities": [
             "Mr. Sinister gets +1[icon:attack] for each Bystander he has.",
             "Always Leads: Marauders",
@@ -2135,7 +2135,7 @@
           "slug": "human-experimentation",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mr-sinister-02.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-mr-sinister-human-experimentation.webp",
           "abilities": [
             "Fight: Mr. Sinister captures Bystanders equal to the number of Villains in the city."
           ]
@@ -2145,7 +2145,7 @@
           "slug": "master-geneticist",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mr-sinister-03.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-mr-sinister-master-geneticist.webp",
           "abilities": [
             "Fight: Reveal the top seven cards of the Villain Deck. Mr. Sinister captures all of the Bystanders you revealed. Put the rest back in random order."
           ]
@@ -2155,7 +2155,7 @@
           "slug": "plans-within-plans",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mr-sinister-04.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-mr-sinister-plans-within-plans.webp",
           "abilities": [
             "Fight: Mr. Sinister captures a Bystander for each Mr. Sinister Tactic in players' Victory Piles, including this Tactic."
           ]
@@ -2165,7 +2165,7 @@
           "slug": "telepathic-manipulation",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mr-sinister-05.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-mr-sinister-telepathic-manipulation.webp",
           "abilities": [
             "Fight: Mr. Sinister captures a Bystander from each other player's Victory Pile."
           ]
@@ -2184,7 +2184,7 @@
           "slug": "stryfe",
           "tactic": false,
           "vAttack": "7+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/stryfe-01.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mm-stryfe.webp",
           "abilities": [
             "Always Leads: MLF",
             "Master Strike: Stack this Master Strike next to Stryfe. Stryfe gets +1[icon:attack] for each Master Strike stacked next to him. Each player reveals a [team:x-force] Hero or discards a card at random."
@@ -2195,7 +2195,7 @@
           "slug": "furious-wrath",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/stryfe-03.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-stryfe-furious-wrath.webp",
           "abilities": [
             "Fight: Reveal the top six cards of the Villain Deck. Play all the Master Strikes you revealed. Put the rest back in random order."
           ]
@@ -2205,7 +2205,7 @@
           "slug": "psychic-torment",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/stryfe-02.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-stryfe-psychic-torment.webp",
           "abilities": [
             "Fight: Look at the top five cards of your deck. Put one into your hand and discard the rest."
           ]
@@ -2215,7 +2215,7 @@
           "slug": "swift-vengeance",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/stryfe-05.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-stryfe-swift-vengeance.webp",
           "abilities": [
             "Fight: A Wound from the Wound Stack becomes a Master Strike that takes effect immediately."
           ]
@@ -2225,7 +2225,7 @@
           "slug": "tide-of-retribution",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/stryfe-04.png",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-mt-stryfe-tide-of-retribution.webp",
           "abilities": [
             "Fight: Each other player reveals an [team:x-force] Hero or gains a Wound."
           ]
@@ -2245,7 +2245,7 @@
           "slug": "egghead",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-emissaries-of-evil-egghead.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-emissaries-of-evil-egghead.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, play it."
           ]
@@ -2255,7 +2255,7 @@
           "slug": "electro",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-emissaries-of-evil-electro.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-emissaries-of-evil-electro.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Scheme Twist, play it."
           ]
@@ -2265,7 +2265,7 @@
           "slug": "gladiator",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-emissaries-of-evil-gladiator.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-emissaries-of-evil-gladiator.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Bystander, Gladiator captures it."
           ]
@@ -2275,7 +2275,7 @@
           "slug": "rhino",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-emissaries-of-evil-rhino.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-emissaries-of-evil-rhino.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Master Strike, each player gains a Wound.",
             "Escape: Each player gains a Wound."
@@ -2294,7 +2294,7 @@
           "slug": "death",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-four-horsemen-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-four-horsemen-death.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and KOs one of their Heroes that costs 1[icon:vp] or more.",
             "Escape: Each player does that same effect."
@@ -2305,7 +2305,7 @@
           "slug": "famine",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-four-horsemen-famine.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-four-horsemen-famine.webp",
           "abilities": [
             "Fight: Each other player reveals an [hc:instinct] Hero or discards a card.",
             "Escape: Each player does that same effect."
@@ -2316,7 +2316,7 @@
           "slug": "pestilence",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-four-horsemen-pestilence.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-four-horsemen-pestilence.webp",
           "abilities": [
             "Fight: Each other player reveals the top three cards of their deck, discards each of those cards that costs 1[icon:vp] or more, and puts the rest back in any order.",
             "Escape: Each player does that same effect."
@@ -2327,7 +2327,7 @@
           "slug": "war",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-four-horsemen-war.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-four-horsemen-war.webp",
           "abilities": [
             "Fight: Each other player reveals an [hc:instinct] Hero or gains a Wound.",
             "Escape: Each player does that same effect."
@@ -2346,7 +2346,7 @@
           "slug": "blockbuster",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-marauders-blockbuster.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-marauders-blockbuster.webp",
           "abilities": [
             "Blockbuster gets +2[icon:attack] for each Bystander he has.",
             "Ambush: If there is a Villain in the Bank that Villain and Blockbuster each capture a Bystander."
@@ -2357,7 +2357,7 @@
           "slug": "chimera",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-marauders-chimera.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-marauders-chimera.webp",
           "abilities": [
             "Chimera gets +3[icon:attack] for each Bystander she has.",
             "Ambush: Reveal the top three cards of the Villain Deck. Chimera captures all the Bystander cards you revealed. Put the rest back in random order."
@@ -2368,7 +2368,7 @@
           "slug": "scalphunter",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-marauders-scalphunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-marauders-scalphunter.webp",
           "abilities": [
             "Scalphunter gets +1[icon:attack] for each Bystander he has.",
             "Ambush: Each player chooses a Bystander from their Victory Pile. Scalphunter captures those Bystanders."
@@ -2379,7 +2379,7 @@
           "slug": "vertigo",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-marauders-vertigo.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-marauders-vertigo.webp",
           "abilities": [
             "Fight: Each player discards all the cards in their hand, then draws as many cards as they discarded."
           ]
@@ -2397,7 +2397,7 @@
           "slug": "forearm",
           "vp": "4",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-mlf-forearm.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-mlf-forearm.webp",
           "abilities": [
             "To fight Forearm, you must also reveal four Hero cards with different card names."
           ]
@@ -2407,7 +2407,7 @@
           "slug": "reignfire",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-mlf-reignfire.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-mlf-reignfire.webp",
           "abilities": [
             "Escape: Reignfire becomes a Master Strike that takes effect immediately."
           ]
@@ -2417,7 +2417,7 @@
           "slug": "wildside",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-mlf-wildside.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-mlf-wildside.webp",
           "abilities": [
             "Fight: If you fight Wildside in the Sewers or Bank, KO two of your Heroes."
           ]
@@ -2427,7 +2427,7 @@
           "slug": "zero",
           "vp": "2",
           "vAttack": "0",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-mlf-zero.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-mlf-zero.webp",
           "abilities": [
             "To fight Zero, you must also discard three cards that cost 0[icon:vp]."
           ]
@@ -2445,7 +2445,7 @@
           "slug": "bullseye",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-streets-of-new-york-bullseye.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-streets-of-new-york-bullseye.webp",
           "abilities": [
             "Fight: KO one of your Heroes with a [icon:recruit] icon and one of your Heroes with an [icon:attack] icon."
           ]
@@ -2455,7 +2455,7 @@
           "slug": "hammerhead",
           "vp": "2",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-streets-of-new-york-hammerhead.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-streets-of-new-york-hammerhead.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Fight: KO one of your Heroes with a [icon:recruit] icon."
@@ -2466,7 +2466,7 @@
           "slug": "jigsaw",
           "vp": "5",
           "vAttack": "11",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-streets-of-new-york-jigsaw.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-streets-of-new-york-jigsaw.webp",
           "abilities": [
             "Ambush: Each player discards three cards, then draws two cards.",
             "[keyword:Bribe]"
@@ -2477,7 +2477,7 @@
           "slug": "tombstone",
           "vp": "4",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-streets-of-new-york-tombstone.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-streets-of-new-york-tombstone.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Escape: Each player reveals a [hc:strength] Hero or gains a Wound."
@@ -2496,7 +2496,7 @@
           "slug": "azazel",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-underworld-azazel.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-underworld-azazel.webp",
           "abilities": [
             "Fight: A card in your hand gains [keyword:Teleport] this turn."
           ]
@@ -2506,7 +2506,7 @@
           "slug": "blackheart",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-underworld-blackheart.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-underworld-blackheart.webp",
           "abilities": [
             "Ambush: The player to your right reveals a [team:marvel-knights] Hero or gains a Wound.",
             "Fight: Same effect.",
@@ -2518,7 +2518,7 @@
           "slug": "dracula",
           "vp": "4",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-underworld-dracula.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-underworld-dracula.webp",
           "abilities": [
             "Ambush: Dracula captures the top card of the Hero Deck. Dracula gets +[icon:attack] equal to that card's Cost.",
             "Fight: Gain that card."
@@ -2529,7 +2529,7 @@
           "slug": "lilith-daughter-of-dracula",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-vi-underworld-lilith-daughter-of-dracula.webp",
+          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-underworld-lilith-daughter-of-dracula.webp",
           "abilities": [
             "Escape: Each player without Dracula in their Victory Pile gains a Wound."
           ]
@@ -2542,7 +2542,7 @@
       "id": 5,
       "name": "Maggia Goons",
       "slug": "maggia-goons",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hm-maggia-goons.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hm-maggia-goons.webp",
       "abilities": [
         "[keyword:Bribe]",
         "Fight: KO one of your Heroes."
@@ -2552,7 +2552,7 @@
       "id": 6,
       "name": "Phalanx",
       "slug": "phalanx",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-hm-phalanx.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hm-phalanx.webp",
       "abilities": [
         "Fight: Reveal a [hc:tech] Hero or KO one of your Heroes with a [icon:attack] icon."
       ]
@@ -2563,7 +2563,7 @@
       "id": 9,
       "name": "Capture Baby Hope",
       "slug": "capture-baby-hope",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-sc-capture-baby-hope.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-sc-capture-baby-hope.webp",
       "cards": [
         {
           "abilities": [
@@ -2579,7 +2579,7 @@
       "id": 10,
       "name": "Detonate the Helicarrier",
       "slug": "detonate-the-helicarrier",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-sc-detonate-the-helicarrier.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-sc-detonate-the-helicarrier.webp",
       "cards": [
         {
           "abilities": [
@@ -2595,7 +2595,7 @@
       "id": 11,
       "name": "Massive Earthquake Generator",
       "slug": "massive-earthquake-generator",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-sc-massive-earthquake-generator.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-sc-massive-earthquake-generator.webp",
       "cards": [
         {
           "abilities": [
@@ -2610,7 +2610,7 @@
       "id": 12,
       "name": "Organized Crime Wave",
       "slug": "organized-crime-wave",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-sc-organized-crime-wave.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-sc-organized-crime-wave.webp",
       "cards": [
         {
           "abilities": [
@@ -2626,7 +2626,7 @@
       "id": 13,
       "name": "Save Humanity",
       "slug": "save-humanity",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-sc-save-humanity.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-sc-save-humanity.webp",
       "cards": [
         {
           "abilities": [
@@ -2642,7 +2642,7 @@
       "id": 14,
       "name": "Steal the Weaponized Plutonium",
       "slug": "steal-the-weaponized-plutonium",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-sc-steal-the-weaponized-plutonium.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-sc-steal-the-weaponized-plutonium.webp",
       "cards": [
         {
           "abilities": [
@@ -2658,7 +2658,7 @@
       "id": 15,
       "name": "Transform Citizens Into Demons",
       "slug": "transform-citizens-into-demons",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-sc-transform-citizens-into-demons.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-sc-transform-citizens-into-demons.webp",
       "cards": [
         {
           "abilities": [
@@ -2674,7 +2674,7 @@
       "id": 16,
       "name": "X-Cutioner's Song",
       "slug": "x-cutioners-song",
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-sc-x-cutioners-song.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-sc-x-cutioners-song.webp",
       "cards": [
         {
           "abilities": [
@@ -2693,7 +2693,7 @@
       "name": "News Reporter",
       "slug": "news-reporter",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-by-news-reporter.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-by-news-reporter.webp",
       "cards": [
         {
           "qtd": 4,
@@ -2708,7 +2708,7 @@
       "name": "Paramedic",
       "slug": "paramedic",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-by-paramedic.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-by-paramedic.webp",
       "cards": [
         {
           "qtd": 3,
@@ -2723,7 +2723,7 @@
       "name": "Radiation Scientist",
       "slug": "radiation-scientist",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/dkcy/dkcy-by-radiation-scientist.webp",
+      "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-by-radiation-scientist.webp",
       "cards": [
         {
           "qtd": 4,

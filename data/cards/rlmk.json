@@ -25,7 +25,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-break-the-silence.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-break-the-silence.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may KO one of your cards with no rules text.",
             "—",
@@ -43,7 +43,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-worldess-murmur.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-worldess-murmur.webp",
           "abilities": []
         },
         {
@@ -57,14 +57,14 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-declaration-of-war.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-declaration-of-war.webp",
           "abilities": [
             "[team:inhumans]: Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to reveal the top two cards of your deck. Put each of those cards with no rules text into your hand and put the rest back in any order."
           ]
         },
         {
           "slug": "wordless-murmur",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-wordless-murmur.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-wordless-murmur.webp",
           "abilities": [],
           "rarityLabel": "Uncommon",
           "slot": 3
@@ -80,7 +80,7 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-the-kings-speech.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-the-kings-speech.webp",
           "abilities": [
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to choose \"Speak\" or \"Don't Speak\" then reveal the top 3 cards of your deck:",
             "[keyword:Speak]: Put all of them with rules text into your hand.",
@@ -93,7 +93,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-break-the-silence.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-break-the-silence.webp",
           "sides": [
             "break-the-silence"
           ]
@@ -101,7 +101,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-worldess-murmur.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-worldess-murmur.webp",
           "sides": [
             "worldess-murmur"
           ]
@@ -109,7 +109,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-declaration-of-war.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-declaration-of-war.webp",
           "sides": [
             "declaration-of-war"
           ]
@@ -117,7 +117,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-wordless-murmur.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-wordless-murmur.webp",
           "sides": [
             "wordless-murmur"
           ]
@@ -125,7 +125,7 @@
         {
           "id": "p5",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-black-bolt-the-kings-speech.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-the-kings-speech.webp",
           "sides": [
             "the-kings-speech"
           ]
@@ -155,7 +155,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-queen-of-the-inhumans.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-medusa-queen-of-the-inhumans.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: Gain the [keyword:Thrones Favor].",
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to get +2[icon:attack]."
@@ -172,7 +172,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-splitting-hairs.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-medusa-splitting-hairs.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: Draw a card and gain the [keyword:Thrones Favor].",
             "[hc:instinct]: Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to draw a card."
@@ -189,7 +189,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-royal-command.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-medusa-royal-command.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: Gain the [keyword:Thrones Favor].",
             "[team:inhumans]: Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to KO one of your cards."
@@ -206,7 +206,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-headstrong.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-medusa-headstrong.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: Draw two cards and gain the [keyword:Thrones Favor].",
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to draw two cards."
@@ -217,7 +217,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-queen-of-the-inhumans.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-medusa-queen-of-the-inhumans.webp",
           "sides": [
             "queen-of-the-inhumans"
           ]
@@ -225,7 +225,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-splitting-hairs.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-medusa-splitting-hairs.webp",
           "sides": [
             "splitting-hairs"
           ]
@@ -233,7 +233,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-royal-command.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-medusa-royal-command.webp",
           "sides": [
             "royal-command"
           ]
@@ -241,7 +241,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-medusa-headstrong.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-medusa-headstrong.webp",
           "sides": [
             "headstrong"
           ]
@@ -271,7 +271,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-earth-air-fire-and-water.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-crystal-earth-air-fire-and-water.webp",
           "abilities": [
             "[hc:strength][hc:instinct][hc:covert][hc:ranged]: You get +3[icon:attack]."
           ]
@@ -287,7 +287,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-master-the-four-elements.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-crystal-master-the-four-elements.webp",
           "abilities": [
             "Choose [hc:strength], [hc:instinct], [hc:covert], or [hc:ranged]. This card is only that Hero Class this turn.",
             "Draw a card."
@@ -304,7 +304,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-elemental-princess.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-crystal-elemental-princess.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may KO one of your cards that isn't [hc:strength], [hc:instinct], [hc:covert], or [hc:ranged].",
             "Gain the [keyword:Thrones Favor]. If you already have it, you may spend it to make this card [hc:strength], [hc:instinct], [hc:covert], and [hc:ranged] this turn."
@@ -321,7 +321,7 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-weave-four-into-one.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-crystal-weave-four-into-one.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may gain a [hc:strength], [hc:instinct], [hc:covert], or [hc:ranged] Hero from the HQ.",
             "Reveal the top four cards of your deck. Put a [hc:strength] Hero, a [hc:instinct] Hero, a [hc:covert] Hero, and a [hc:ranged] Hero from among them into your hand. Put the rest back in any order."
@@ -332,7 +332,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-earth-air-fire-and-water.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-crystal-earth-air-fire-and-water.webp",
           "sides": [
             "earth-air-fire-and-water"
           ]
@@ -340,7 +340,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-master-the-four-elements.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-crystal-master-the-four-elements.webp",
           "sides": [
             "master-the-four-elements"
           ]
@@ -348,7 +348,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-elemental-princess.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-crystal-elemental-princess.webp",
           "sides": [
             "elemental-princess"
           ]
@@ -356,7 +356,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-crystal-weave-four-into-one.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-crystal-weave-four-into-one.webp",
           "sides": [
             "weave-four-into-one"
           ]
@@ -386,7 +386,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-brilliant-strategist.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-karnak-brilliant-strategist.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You get +1[icon:attack].",
             "[hc:covert]: When you draw a new hand of cards at the end of this turn, draw an extra card."
@@ -403,7 +403,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-find-fatal-flaw.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-karnak-find-fatal-flaw.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You get +2[icon:attack].",
             "[rule:Choose a Villain Group]. You get +1[icon:recruit] for each Villain in your Victory Pile from that Group."
@@ -420,7 +420,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-shatter-the-weak-point.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-karnak-shatter-the-weak-point.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You get +3[icon:attack].",
             "[rule:Choose a Villain Group]. You get +1[icon:attack] for each Villain in your Victory Pile from that Group."
@@ -437,7 +437,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-seek-the-center.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-karnak-seek-the-center.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You get +4[icon:attack].",
             "Whenever you play a card this turn, including this one, you may first use that card's \"When Recruited\" ability."
@@ -448,7 +448,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-brilliant-strategist.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-karnak-brilliant-strategist.webp",
           "sides": [
             "brilliant-strategist"
           ]
@@ -456,7 +456,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-find-fatal-flaw.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-karnak-find-fatal-flaw.webp",
           "sides": [
             "find-fatal-flaw"
           ]
@@ -464,7 +464,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-shatter-the-weak-point.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-karnak-shatter-the-weak-point.webp",
           "sides": [
             "shatter-the-weak-point"
           ]
@@ -472,7 +472,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-karnak-seek-the-center.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-karnak-seek-the-center.webp",
           "sides": [
             "seek-the-center"
           ]
@@ -502,7 +502,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-lockjaw-inhumans-best-friend.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-gorgon-lockjaw-inhumans-best-friend.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may [keyword:Teleport] a 0-cost Hero from your hand.",
             "[hc:covert]: You may [keyword:Teleport] another card from your hand."
@@ -519,7 +519,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-stomping-shockwave.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-gorgon-stomping-shockwave.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: [keyword:Abomination] (after refilling HQ)",
             "[hc:strength]: [keyword:Streets Abomination]"
@@ -536,7 +536,7 @@
           "cost": 6,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-trample-underhoof.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-gorgon-trample-underhoof.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: You may KO one of your cards with no [icon:attack] icon.",
             "[keyword:Highest Abomination]"
@@ -553,7 +553,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-lead-the-inhuman-elite.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-gorgon-lead-the-inhuman-elite.webp",
           "abilities": [
             "[keyword:\"When Recruited\" Abilities]: [keyword:Abomination] (after refilling HQ)",
             "[keyword:Teleport] [team:inhumans]: [keyword:Rooftops Abomination]",
@@ -565,7 +565,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-lockjaw-inhumans-best-friend.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-gorgon-lockjaw-inhumans-best-friend.webp",
           "sides": [
             "lockjaw-inhumans-best-friend"
           ]
@@ -573,7 +573,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-stomping-shockwave.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-gorgon-stomping-shockwave.webp",
           "sides": [
             "stomping-shockwave"
           ]
@@ -581,7 +581,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-trample-underhoof.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-gorgon-trample-underhoof.webp",
           "sides": [
             "trample-underhoof"
           ]
@@ -589,7 +589,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-hr-gorgon-lead-the-inhuman-elite.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-gorgon-lead-the-inhuman-elite.webp",
           "sides": [
             "lead-the-inhuman-elite"
           ]
@@ -610,7 +610,7 @@
           "slug": "maximus-the-mad",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mm-maximus-the-mad.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mm-maximus-the-mad.webp",
           "abilities": [
             "[keyword:Double Highest Abomination]",
             "Always Leads: Inhuman Rebellion",
@@ -622,7 +622,7 @@
           "slug": "epic-maximus-the-mad",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-me-maximus-the-mad.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-me-maximus-the-mad.webp",
           "abilities": [
             "[keyword:Double Highest Abomination]",
             "Always Leads: Inhuman Rebellion",
@@ -634,7 +634,7 @@
           "slug": "echo-tech-chorus-sentries",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mt-maximus-the-mad-echo-tech-chorus-sentries.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mt-maximus-the-mad-echo-tech-chorus-sentries.webp",
           "abilities": [
             "Fight: Each player KOs one of their [hc:tech] or [team:inhumans] Heroes or gains a Wound."
           ]
@@ -644,7 +644,7 @@
           "slug": "sieve-of-secrets",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mt-maximus-the-mad-sieve-of-secrets.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mt-maximus-the-mad-sieve-of-secrets.webp",
           "abilities": [
             "Fight: Each player reveals the top 6 cards of their deck, discards all the non-grey Heroes revealed, and puts the rest back in any order."
           ]
@@ -654,7 +654,7 @@
           "slug": "seize-the-inhuman-throne",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mt-maximus-the-mad-seize-the-inhuman-throne.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mt-maximus-the-mad-seize-the-inhuman-throne.webp",
           "abilities": [
             "Fight: Each player discards down to 4 cards. Maximus gains the [keyword:Thrones Favor]. If he already has it, he spends it and each player discards down to 3 cards."
           ]
@@ -664,7 +664,7 @@
           "slug": "terrigen-bomb",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mt-maximus-the-mad-terrigen-bomb.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mt-maximus-the-mad-terrigen-bomb.webp",
           "abilities": [
             "Fight: Put each Hero from the HQ that doesn't have a printed [icon:attack] of 2 or more on the bottom of the Hero Deck. Maximus gains the [keyword:Thrones Favor]. If he already had it, he spends it and each player KOs one of their non-grey Heroes with an [icon:attack] icon."
           ]
@@ -683,7 +683,7 @@
           "slug": "emperor-vulcan-of-the-shiar",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mm-emperor-vulcan-of-the-shiar.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mm-emperor-vulcan-of-the-shiar.webp",
           "abilities": [
             "Vulcan gets +3[icon:attack] while he has the [keyword:Thrones Favor].",
             "Always Leads: Shi'ar Imperial Elite",
@@ -695,7 +695,7 @@
           "slug": "epic-emperor-vulcan",
           "tactic": false,
           "vAttack": "12+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-me-emperor-vulcan-of-the-shiar.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-me-emperor-vulcan-of-the-shiar.webp",
           "abilities": [
             "Vulcan gets +5[icon:attack] while he has the [keyword:Thrones Favor]. He starts with the [keyword:Thrones Favor].",
             "Always Leads: Shi'ar Imperial Elite",
@@ -707,7 +707,7 @@
           "slug": "blast-every-form-of-energy",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mt-emperor-vulcan-of-the-shiar-blast-every-form-of-energy.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mt-emperor-vulcan-of-the-shiar-blast-every-form-of-energy.webp",
           "abilities": [
             "Fight: If you have the [keyword:Thrones Favor], you may KO a card you played this turn, and you may KO a card from your discard pile.",
             "Then Vulcan gains the [keyword:Thrones Favor]."
@@ -718,7 +718,7 @@
           "slug": "vast-wealth-of-the-shiar",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mt-emperor-vulcan-of-the-shiar-vast-wealth-of-the-shiar.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mt-emperor-vulcan-of-the-shiar-vast-wealth-of-the-shiar.webp",
           "abilities": [
             "Fight: If you have the [keyword:Thrones Favor], you get +4[icon:recruit].",
             "Then Vulcan gains the [keyword:Thrones Favor]."
@@ -729,7 +729,7 @@
           "slug": "contempt-for-weakness",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mt-emperor-vulcan-of-the-shiar-contempt-for-weakness.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mt-emperor-vulcan-of-the-shiar-contempt-for-weakness.webp",
           "abilities": [
             "Fight: If Vulcan has the [keyword:Thrones Favor], each other player discards each of their cards that costs 2 or less.",
             "Then you gain the [keyword:Thrones Favor]."
@@ -740,7 +740,7 @@
           "slug": "solar-cage",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-mt-emperor-vulcan-of-the-shiar-solar-cage.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-mt-emperor-vulcan-of-the-shiar-solar-cage.webp",
           "abilities": [
             "Fight: If Vulcan has the [keyword:Thrones Favor], each other player shuffles a Wound from the Wound Stack and a non-grey Hero from their hand into their deck.",
             "Then you gain the [keyword:Thrones Favor]."
@@ -761,7 +761,7 @@
           "slug": "lineage",
           "vp": "2",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-vi-inhuman-rebellion-lineage.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-vi-inhuman-rebellion-lineage.webp",
           "abilities": [
             "[keyword:Abomination]",
             "Fight: Rescue Bystanders equal to the printed [icon:attack] of the Hero in the HQ space under Lineage."
@@ -772,7 +772,7 @@
           "slug": "omega",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-vi-inhuman-rebellion-omega.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-vi-inhuman-rebellion-omega.webp",
           "abilities": [
             "[keyword:Abomination]",
             "Fight: Choose \"Alpha\" or \"Omega.\" Then reveal the top card of your deck:",
@@ -784,7 +784,7 @@
           "slug": "lash",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-vi-inhuman-rebellion-lash.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-vi-inhuman-rebellion-lash.webp",
           "abilities": [
             "[keyword:Abomination]",
             "Ambush: Choose a Hero from the HQ that doesn't have a printed [icon:attack] of 2 or more. Put it on the bottom of the HQ.",
@@ -796,7 +796,7 @@
           "slug": "the-unspoken",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-vi-inhuman-rebellion-the-unspoken.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-vi-inhuman-rebellion-the-unspoken.webp",
           "abilities": [
             "[keyword:Double Abomination]",
             "Ambush: Choose a Hero from the HQ that doesn't have a printed [icon:attack] of 2 or more. Put it on the bottom of the HQ.",
@@ -816,7 +816,7 @@
           "slug": "plutonia",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-vi-shiar-imperial-elite-plutonia.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-vi-shiar-imperial-elite-plutonia.webp",
           "abilities": [
             "While the Mastermind has the [keyword:Thrones Favor], you must spend [icon:recruit] to fight Plutonia instead of [icon:attack].",
             "Ambush: The Mastermind gains the [keyword:Thrones Favor].",
@@ -828,7 +828,7 @@
           "slug": "starbolt",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-vi-shiar-imperial-elite-starbolt.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-vi-shiar-imperial-elite-starbolt.webp",
           "abilities": [
             "While the Mastermind has the [keyword:Thrones Favor], Starbolt gets +2[icon:attack].",
             "Ambush: The Mastermind gains the [keyword:Thrones Favor].",
@@ -840,7 +840,7 @@
           "slug": "mentor",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-vi-shiar-imperial-elite-mentor.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-vi-shiar-imperial-elite-mentor.webp",
           "abilities": [
             "Ambush: The Mastermind gains the [keyword:Thrones Favor]. If they already have it, each player discards a card.",
             "Fight: You gain the [keyword:Thrones Favor]. If you already have it, draw two cards."
@@ -851,7 +851,7 @@
           "slug": "gladiator",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-vi-shiar-imperial-elite-gladiator.webp",
+          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-vi-shiar-imperial-elite-gladiator.webp",
           "abilities": [
             "Ambush: The Mastermind gains the [keyword:Thrones Favor]. If they already have it, each player gains a Wound.",
             "Fight: You gain the [keyword:Thrones Favor]. If you already have it, you may KO a card from your discard pile.",
@@ -867,7 +867,7 @@
       "id": 134,
       "name": "Ruin the Perfect Wedding",
       "slug": "ruin-the-perfect-wedding",
-      "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-sc-ruin-the-perfect-wedding.webp",
+      "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-sc-ruin-the-perfect-wedding.webp",
       "cards": [
         {
           "abilities": [
@@ -885,7 +885,7 @@
       "id": 135,
       "name": "War of Kings",
       "slug": "war-of-kings",
-      "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-sc-war-of-kings.webp",
+      "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-sc-war-of-kings.webp",
       "cards": [
         {
           "abilities": [
@@ -902,7 +902,7 @@
       "id": 136,
       "name": "Tornado of Terrigen Mists",
       "slug": "tornado-of-terrigen-mists",
-      "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-sc-tornado-of-terrigen-mists.webp",
+      "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-sc-tornado-of-terrigen-mists.webp",
       "cards": [
         {
           "abilities": [
@@ -920,7 +920,7 @@
       "id": 137,
       "name": "Devolve with Xerogen Crystals",
       "slug": "devolve-with-xerogen-crystals",
-      "imageUrl": "https://images.barefootbetters.com/rlmk/rlmk-sc-devolve-with-xerogen-crystals.webp",
+      "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-sc-devolve-with-xerogen-crystals.webp",
       "cards": [
         {
           "abilities": [

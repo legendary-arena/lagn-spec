@@ -25,7 +25,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-bullseye-fulfill-the-contract.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-bullseye-fulfill-the-contract.webp",
           "abilities": [
             "[keyword:Dodge]",
             "Choose an Adversary Group. You get +1[icon:recruit] for each Adversary in your Victory Pile from that Adversary Group."
@@ -42,7 +42,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-bullseye-everythings-a-weapon.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-bullseye-everythings-a-weapon.webp",
           "abilities": [
             "[hc:instinct]: Draw a card."
           ]
@@ -58,7 +58,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-bullseye-specialist-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-bullseye-specialist-assassin.webp",
           "abilities": [
             "Choose an Adversary. It gets -1[icon:attack] for each Adversary in your Victory Pile from that Adversary Group."
           ]
@@ -74,7 +74,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-bullseye-perfect-aim.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-bullseye-perfect-aim.webp",
           "abilities": [
             "You get +5[icon:attack] for each Commander Tactic in your Victory Pile."
           ]
@@ -84,7 +84,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-bullseye-fulfill-the-contract.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-bullseye-fulfill-the-contract.webp",
           "sides": [
             "fulfill-the-contract"
           ]
@@ -92,7 +92,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-bullseye-everythings-a-weapon.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-bullseye-everythings-a-weapon.webp",
           "sides": [
             "everythings-a-weapon"
           ]
@@ -100,7 +100,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-bullseye-specialist-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-bullseye-specialist-assassin.webp",
           "sides": [
             "specialist-assassin"
           ]
@@ -108,7 +108,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-bullseye-perfect-aim.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-bullseye-perfect-aim.webp",
           "sides": [
             "perfect-aim"
           ]
@@ -138,7 +138,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-dr-octopus-brilliant-research.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-dr-octopus-brilliant-research.webp",
           "abilities": [
             "[hc:tech]: When you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -154,7 +154,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-dr-octopus-crazed-experiments.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-dr-octopus-crazed-experiments.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -170,7 +170,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-dr-octopus-eighth-times-a-charm.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-dr-octopus-eighth-times-a-charm.webp",
           "abilities": [
             "If this is the eighth card you played this turn, you get +2[icon:attack]."
           ]
@@ -186,7 +186,7 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-dr-octopus-octo-pulverize.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-dr-octopus-octo-pulverize.webp",
           "abilities": [
             "Discard cards from the top of your deck until your deck runs out or you have discarded 8 cards (don't shuffle). Then you get +1[icon:attack] for each card you discarded this turn."
           ]
@@ -196,7 +196,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-dr-octopus-brilliant-research.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-dr-octopus-brilliant-research.webp",
           "sides": [
             "brilliant-research"
           ]
@@ -204,7 +204,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-dr-octopus-crazed-experiments.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-dr-octopus-crazed-experiments.webp",
           "sides": [
             "crazed-experiments"
           ]
@@ -212,7 +212,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-dr-octopus-eighth-times-a-charm.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-dr-octopus-eighth-times-a-charm.webp",
           "sides": [
             "eighth-times-a-charm"
           ]
@@ -220,7 +220,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-dr-octopus-octo-pulverize.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-dr-octopus-octo-pulverize.webp",
           "sides": [
             "octo-pulverize"
           ]
@@ -250,7 +250,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-electro-electroshock-therapy.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-electro-electroshock-therapy.webp",
           "abilities": [
             "[keyword:Dodge]",
             "Reveal the top card of your deck. You may KO it."
@@ -267,7 +267,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-electro-shocking-robbery.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-electro-shocking-robbery.webp",
           "abilities": [
             "[keyword:Dodge]",
             "You get +3[icon:attack] usable only against Adversaries in the Bank.",
@@ -285,7 +285,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-electro-supercharge.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-electro-supercharge.webp",
           "abilities": [
             "You get +1[icon:attack] for each card you discarded this turn."
           ]
@@ -301,7 +301,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-electro-anti-matter.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-electro-anti-matter.webp",
           "abilities": [
             "All Adversaries and the Commander get -1[icon:attack] this turn.",
             "[team:sinister-six][team:sinister-six]: Same Effect."
@@ -312,7 +312,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-electro-electroshock-therapy.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-electro-electroshock-therapy.webp",
           "sides": [
             "electroshock-therapy"
           ]
@@ -320,7 +320,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-electro-shocking-robbery.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-electro-shocking-robbery.webp",
           "sides": [
             "shocking-robbery"
           ]
@@ -328,7 +328,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-electro-supercharge.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-electro-supercharge.webp",
           "sides": [
             "supercharge"
           ]
@@ -336,7 +336,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-electro-anti-matter.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-electro-anti-matter.webp",
           "sides": [
             "anti-matter"
           ]
@@ -366,7 +366,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-enchantress-enchant-the-senses.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-enchantress-enchant-the-senses.webp",
           "abilities": [
             "[hc:ranged]: Whenever you defeat an Adversary this turn, you gain a New Recruit."
           ]
@@ -382,7 +382,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-enchantress-soul-sacrifice.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-enchantress-soul-sacrifice.webp",
           "abilities": [
             "You may KO a card from your hand or discard pile. You get +[icon:recruit] equal to that card's cost."
           ]
@@ -398,7 +398,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-enchantress-irresistible-bribe.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-enchantress-irresistible-bribe.webp",
           "abilities": [
             "Choose an Adversary. You can spend any combination of [icon:recruit] and [icon:attack] to fight that Adversary this turn.",
             "[hc:covert][hc:covert]: You can also spend any combination of [icon:recruit] and [icon:attack] to fight the Commander this turn."
@@ -415,7 +415,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-enchantress-unending-anguish.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-enchantress-unending-anguish.webp",
           "abilities": [
             "Draw three cards.",
             "[team:foes-of-asgard]: Then put Unending Anguish on the bottom of your deck."
@@ -426,7 +426,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-enchantress-enchant-the-senses.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-enchantress-enchant-the-senses.webp",
           "sides": [
             "enchant-the-senses"
           ]
@@ -434,7 +434,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-enchantress-soul-sacrifice.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-enchantress-soul-sacrifice.webp",
           "sides": [
             "soul-sacrifice"
           ]
@@ -442,7 +442,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-enchantress-irresistible-bribe.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-enchantress-irresistible-bribe.webp",
           "sides": [
             "irresistible-bribe"
           ]
@@ -450,7 +450,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-enchantress-unending-anguish.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-enchantress-unending-anguish.webp",
           "sides": [
             "unending-anguish"
           ]
@@ -480,7 +480,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-green-goblin-pumpkin-bombs.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-green-goblin-pumpkin-bombs.webp",
           "abilities": [
             "[keyword:Dodge]",
             "If you discarded any cards this turn, you get +2[icon:attack]."
@@ -497,7 +497,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-green-goblin-goblin-glider.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-green-goblin-goblin-glider.webp",
           "abilities": [
             "[keyword:Dodge]",
             "When you play or [keyword:Dodge] with this card, another [team:hydra] Ally in your hand gains [keyword:Dodge] this turn."
@@ -514,7 +514,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-green-goblin-unstable-kidnapper.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-green-goblin-unstable-kidnapper.webp",
           "abilities": [
             "[keyword:Dodge]",
             "If you discarded any cards this turn, kidnap a Bystander."
@@ -531,7 +531,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-green-goblin-experimental-goblin-serum.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-green-goblin-experimental-goblin-serum.webp",
           "abilities": [
             "Return from your discard pile to your hand all the cards you discarded this turn."
           ]
@@ -541,7 +541,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-green-goblin-pumpkin-bombs.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-green-goblin-pumpkin-bombs.webp",
           "sides": [
             "pumpkin-bombs"
           ]
@@ -549,7 +549,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-green-goblin-goblin-glider.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-green-goblin-goblin-glider.webp",
           "sides": [
             "goblin-glider"
           ]
@@ -557,7 +557,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-green-goblin-unstable-kidnapper.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-green-goblin-unstable-kidnapper.webp",
           "sides": [
             "unstable-kidnapper"
           ]
@@ -565,7 +565,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-green-goblin-experimental-goblin-serum.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-green-goblin-experimental-goblin-serum.webp",
           "sides": [
             "experimental-goblin-serum"
           ]
@@ -595,7 +595,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-juggernaut-crimson-gem-of-cyttorak.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-juggernaut-crimson-gem-of-cyttorak.webp",
           "abilities": [
             "[hc:strength]: Each other player reveals the top card of their deck, and if it costs 1[icon:vp], 2[icon:vp], or 3[icon:vp], discards it. You get +1[icon:recruit] for each card discarded this way."
           ]
@@ -611,7 +611,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-juggernaut-size-matters.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-juggernaut-size-matters.webp",
           "abilities": [
             "You get +1[icon:attack] for each other card you played this turn that costs 4[icon:vp] or more."
           ]
@@ -627,7 +627,7 @@
           "cost": 5,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-juggernaut-runaway-train.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-juggernaut-runaway-train.webp",
           "abilities": [
             "To play this card, you must discard a card from your hand."
           ]
@@ -643,7 +643,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-juggernaut-unstoppable-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-juggernaut-unstoppable-force.webp",
           "abilities": [
             "Choose one: Each player KOs two cards from their hand, or each player KOs two cards from their discard pile. Then you get +1[icon:attack] for each non-grey Ally KO'd this turn."
           ]
@@ -653,7 +653,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-juggernaut-crimson-gem-of-cyttorak.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-juggernaut-crimson-gem-of-cyttorak.webp",
           "sides": [
             "crimson-gem-of-cyttorak"
           ]
@@ -661,7 +661,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-juggernaut-size-matters.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-juggernaut-size-matters.webp",
           "sides": [
             "size-matters"
           ]
@@ -669,7 +669,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-juggernaut-runaway-train.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-juggernaut-runaway-train.webp",
           "sides": [
             "runaway-train"
           ]
@@ -677,7 +677,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-juggernaut-unstoppable-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-juggernaut-unstoppable-force.webp",
           "sides": [
             "unstoppable-force"
           ]
@@ -707,7 +707,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kingpin-pull-the-strings.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kingpin-pull-the-strings.webp",
           "abilities": [
             "Whenever a card effect causes you to gain a New Recruit this turn, put that New Recruit into your hand.",
             "Gain a New Recruit."
@@ -724,7 +724,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kingpin-recruitment-day.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kingpin-recruitment-day.webp",
           "abilities": [
             "[hc:strength]: Gain a New Recruit."
           ]
@@ -740,7 +740,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kingpin-import-illegal-weapons.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kingpin-import-illegal-weapons.webp",
           "abilities": [
             "You get +1[icon:attack] for each New Recruit you played this turn."
           ]
@@ -756,7 +756,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kingpin-endless-underlings.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kingpin-endless-underlings.webp",
           "abilities": [
             "Gain three New Recruits.",
             "[team:crime-syndicate][team:crime-syndicate]: If you would return a New Recruit to the New Recruit Stack this turn, put it on the bottom of your deck instead."
@@ -767,7 +767,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kingpin-pull-the-strings.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kingpin-pull-the-strings.webp",
           "sides": [
             "pull-the-strings"
           ]
@@ -775,7 +775,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kingpin-recruitment-day.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kingpin-recruitment-day.webp",
           "sides": [
             "recruitment-day"
           ]
@@ -783,7 +783,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kingpin-import-illegal-weapons.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kingpin-import-illegal-weapons.webp",
           "sides": [
             "import-illegal-weapons"
           ]
@@ -791,7 +791,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kingpin-endless-underlings.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kingpin-endless-underlings.webp",
           "sides": [
             "endless-underlings"
           ]
@@ -821,7 +821,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kraven-ceaseless-tracker.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kraven-ceaseless-tracker.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[team:sinister-six]: You get +2[icon:recruit]."
@@ -838,7 +838,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kraven-corner-the-prey.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kraven-corner-the-prey.webp",
           "abilities": [
             "Choose an Adversary. If there are no empty city spaces adjacent to that Adversary, it gets -1[icon:attack] this turn."
           ]
@@ -854,7 +854,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kraven-hunt-down.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kraven-hunt-down.webp",
           "abilities": [
             "Choose an Adversary and a direction. Move that Adversary as many adjacent, empty spaces as you can in that direction. You get +1[icon:attack] for each space it moved."
           ]
@@ -870,7 +870,7 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kraven-hes-the-best-around.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kraven-hes-the-best-around.webp",
           "abilities": [
             "You get +[icon:attack] equal to the Cost of the highest-cost Ally in the Lair."
           ]
@@ -880,7 +880,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kraven-ceaseless-tracker.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kraven-ceaseless-tracker.webp",
           "sides": [
             "ceaseless-tracker"
           ]
@@ -888,7 +888,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kraven-corner-the-prey.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kraven-corner-the-prey.webp",
           "sides": [
             "corner-the-prey"
           ]
@@ -896,7 +896,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kraven-hunt-down.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kraven-hunt-down.webp",
           "sides": [
             "hunt-down"
           ]
@@ -904,7 +904,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-kraven-hes-the-best-around.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-kraven-hes-the-best-around.webp",
           "sides": [
             "hes-the-best-around"
           ]
@@ -934,7 +934,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-loki-all-humans-are-expendable.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-loki-all-humans-are-expendable.webp",
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile. If you do, gain a New Recruit."
           ]
@@ -950,7 +950,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-loki-illusionary-bindings.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-loki-illusionary-bindings.webp",
           "abilities": [
             "[hc:ranged]: Each other player reveals a [hc:ranged] Ally or gains a Bindings. If any number of players gained a Bindings this way, you get +1[icon:recruit]."
           ]
@@ -966,7 +966,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-loki-father-of-lies.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-loki-father-of-lies.webp",
           "abilities": [
             "Look at the top two cards of another player's deck. Without revealing those cards, call one of them ”Good” and one ”Bad.” That player puts one of those cards into their discard pile and the other into your discard pile."
           ]
@@ -982,7 +982,7 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-loki-god-of-mischief.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-loki-god-of-mischief.webp",
           "abilities": [
             "Each player reveals a [team:foes-of-asgard] Ally or reveals their hand. For each player that revealed their hand, you may swap a card from that hand with a card in the Lair of the same cost."
           ]
@@ -992,7 +992,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-loki-all-humans-are-expendable.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-loki-all-humans-are-expendable.webp",
           "sides": [
             "all-humans-are-expendable"
           ]
@@ -1000,7 +1000,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-loki-illusionary-bindings.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-loki-illusionary-bindings.webp",
           "sides": [
             "illusionary-bindings"
           ]
@@ -1008,7 +1008,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-loki-father-of-lies.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-loki-father-of-lies.webp",
           "sides": [
             "father-of-lies"
           ]
@@ -1016,7 +1016,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-loki-god-of-mischief.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-loki-god-of-mischief.webp",
           "sides": [
             "god-of-mischief"
           ]
@@ -1046,7 +1046,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-magneto-magnetic-levitation.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-magneto-magnetic-levitation.webp",
           "abilities": [
             "[keyword:Dodge]",
             "You may choose a Bindings from your hand or discard pile and have another player gain that Bindings. If you do, you get +2[icon:attack]."
@@ -1063,7 +1063,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-magneto-mutants-will-rule.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-magneto-mutants-will-rule.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[hc:strength]: Choose a player. That player reveals a [team:brotherhood] Ally or gains a Bindings. If a Bindings is gained this way, you get +1[icon:recruit]."
@@ -1080,7 +1080,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-magneto-weapons-from-scrap-metal.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-magneto-weapons-from-scrap-metal.webp",
           "abilities": [
             "If you discarded any cards this turn, draw a card."
           ]
@@ -1096,7 +1096,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-magneto-master-of-magnetism.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-magneto-master-of-magnetism.webp",
           "abilities": [
             "[team:brotherhood]: For each other [team:brotherhood] Ally you played this turn, choose a player to gain a Bindings. Then you get +2[icon:attack] for each Bindings gained this turn."
           ]
@@ -1106,7 +1106,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-magneto-magnetic-levitation.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-magneto-magnetic-levitation.webp",
           "sides": [
             "magnetic-levitation"
           ]
@@ -1114,7 +1114,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-magneto-mutants-will-rule.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-magneto-mutants-will-rule.webp",
           "sides": [
             "mutants-will-rule"
           ]
@@ -1122,7 +1122,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-magneto-weapons-from-scrap-metal.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-magneto-weapons-from-scrap-metal.webp",
           "sides": [
             "weapons-from-scrap-metal"
           ]
@@ -1130,7 +1130,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-magneto-master-of-magnetism.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-magneto-master-of-magnetism.webp",
           "sides": [
             "master-of-magnetism"
           ]
@@ -1160,7 +1160,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mysterio-psychedelic-mist.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mysterio-psychedelic-mist.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[hc:covert]: You get +2[icon:attack]."
@@ -1177,7 +1177,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mysterio-shifting-decoy.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mysterio-shifting-decoy.webp",
           "abilities": [
             "Put a card from the lair on the bottom of the Ally Deck. If that card had a [icon:recruit] icon, you get +2[icon:recruit]. If that card had an [icon:attack] icon, you get +2[icon:attack]."
           ]
@@ -1193,7 +1193,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mysterio-holographic-illusion.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mysterio-holographic-illusion.webp",
           "abilities": [
             "You get +1[icon:attack] for each color of Ally in the Lair."
           ]
@@ -1209,7 +1209,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mysterio-false-reflection.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mysterio-false-reflection.webp",
           "abilities": [
             "Put a card from the Lair on the bottom of the Ally Deck. You get +[icon:recruit] equal to that card's printed [icon:recruit] and +[icon:attack] equal to that card's printed [icon:attack].",
             "[team:sinister-six]: Then, for each other [team:sinister-six] Ally you played this turn, do the same effect. (Use a different Ally from the Lair each time.)"
@@ -1220,7 +1220,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mysterio-psychedelic-mist.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mysterio-psychedelic-mist.webp",
           "sides": [
             "psychedelic-mist"
           ]
@@ -1228,7 +1228,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mysterio-shifting-decoy.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mysterio-shifting-decoy.webp",
           "sides": [
             "shifting-decoy"
           ]
@@ -1236,7 +1236,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mysterio-holographic-illusion.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mysterio-holographic-illusion.webp",
           "sides": [
             "holographic-illusion"
           ]
@@ -1244,7 +1244,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mysterio-false-reflection.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mysterio-false-reflection.webp",
           "sides": [
             "false-reflection"
           ]
@@ -1274,7 +1274,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mystique-show-your-true-colors.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mystique-show-your-true-colors.webp",
           "abilities": [
             "[keyword:Dodge]",
             "As you play this card, you may choose a class. This card is that class instead of [hc:covert] this turn."
@@ -1291,7 +1291,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mystique-hidden-weapons.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mystique-hidden-weapons.webp",
           "abilities": [
             "[hc:instinct][hc:tech]: You get +3[icon:attack]."
           ]
@@ -1307,7 +1307,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mystique-turn-the-tide.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mystique-turn-the-tide.webp",
           "abilities": [
             "Reveal the top card of the Ally Deck. You may play a copy of that card this turn. When you do, put that card on the bottom of the Ally Deck."
           ]
@@ -1323,7 +1323,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mystique-spy-games.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mystique-spy-games.webp",
           "abilities": [
             "Reveal the top five cards of the Ally Deck. You get +[icon:attack] equal to their total printed [icon:attack]. Then put them back in any order."
           ]
@@ -1333,7 +1333,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mystique-show-your-true-colors.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mystique-show-your-true-colors.webp",
           "sides": [
             "show-your-true-colors"
           ]
@@ -1341,7 +1341,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mystique-hidden-weapons.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mystique-hidden-weapons.webp",
           "sides": [
             "hidden-weapons"
           ]
@@ -1349,7 +1349,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mystique-turn-the-tide.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mystique-turn-the-tide.webp",
           "sides": [
             "turn-the-tide"
           ]
@@ -1357,7 +1357,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-mystique-spy-games.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-mystique-spy-games.webp",
           "sides": [
             "spy-games"
           ]
@@ -1387,7 +1387,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-sabretooth-leap-of-the-tiger.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-sabretooth-leap-of-the-tiger.webp",
           "abilities": [
             "Reveal the top card of your deck, then put it back on top of your deck or into your discard pile. If that card was an [hc:instinct] Ally, you get +2[icon:attack]."
           ]
@@ -1403,7 +1403,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-sabretooth-take-one-for-the-team.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-sabretooth-take-one-for-the-team.webp",
           "abilities": [
             "Reveal the top card of your deck. If it's a [team:brotherhood] Ally, you may draw it. Otherwise, you may KO it."
           ]
@@ -1419,7 +1419,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-sabretooth-stealthy-predator.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-sabretooth-stealthy-predator.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, discard one, and put the other back on top of your deck."
           ]
@@ -1435,7 +1435,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-sabretooth-upper-hand.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-sabretooth-upper-hand.webp",
           "abilities": [
             "Each player reveals a [hc:instinct] Ally or reveals the top card of their deck. Choose any number of those revealed top cards to be KO'd.",
             "[hc:instinct]: You get +1[icon:attack] for each card KO'd this turn."
@@ -1446,7 +1446,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-sabretooth-leap-of-the-tiger.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-sabretooth-leap-of-the-tiger.webp",
           "sides": [
             "leap-of-the-tiger"
           ]
@@ -1454,7 +1454,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-sabretooth-take-one-for-the-team.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-sabretooth-take-one-for-the-team.webp",
           "sides": [
             "take-one-for-the-team"
           ]
@@ -1462,7 +1462,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-sabretooth-stealthy-predator.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-sabretooth-stealthy-predator.webp",
           "sides": [
             "stealthy-predator"
           ]
@@ -1470,7 +1470,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-sabretooth-upper-hand.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-sabretooth-upper-hand.webp",
           "sides": [
             "upper-hand"
           ]
@@ -1500,7 +1500,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-ultron-encephalo-ray.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-ultron-encephalo-ray.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[hc:tech]: You get +1[icon:attack] for each other [hc:tech] Ally you played this turn."
@@ -1517,7 +1517,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-ultron-army-of-ultrons.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-ultron-army-of-ultrons.webp",
           "abilities": [
             "[keyword:Dodge]",
             "Reveal a [team:hydra] card from your hand. That card is [hc:tech] instead of its normal color this turn."
@@ -1534,7 +1534,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-ultron-genetic-experimentation.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-ultron-genetic-experimentation.webp",
           "abilities": [
             "[hc:tech]: Kidnap a Bystander for each other [hc:tech] Ally you played this turn."
           ]
@@ -1550,7 +1550,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-ultron-molecular-rearrangement.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-ultron-molecular-rearrangement.webp",
           "abilities": [
             "Each other player reveals a [hc:tech] Ally or discards their hand. Each player who discarded their hand this way draws 5 cards.",
             "[hc:tech]: You get +3[icon:attack] for each Ally discarded this way that costs 7[icon:vp] or more."
@@ -1561,7 +1561,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-ultron-encephalo-ray.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-ultron-encephalo-ray.webp",
           "sides": [
             "encephalo-ray"
           ]
@@ -1569,7 +1569,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-ultron-army-of-ultrons.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-ultron-army-of-ultrons.webp",
           "sides": [
             "army-of-ultrons"
           ]
@@ -1577,7 +1577,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-ultron-genetic-experimentation.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-ultron-genetic-experimentation.webp",
           "sides": [
             "genetic-experimentation"
           ]
@@ -1585,7 +1585,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-ultron-molecular-rearrangement.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-ultron-molecular-rearrangement.webp",
           "sides": [
             "molecular-rearrangement"
           ]
@@ -1615,7 +1615,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-venom-symbiote-takeover.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-venom-symbiote-takeover.webp",
           "abilities": [
             "[hc:strength]: Kidnap a Bystander."
           ]
@@ -1631,7 +1631,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-venom-devour.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-venom-devour.webp",
           "abilities": [
             "You may KO a Bystander from your Victory Pile. If you do, you get +2[icon:attack]."
           ]
@@ -1647,7 +1647,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-venom-horrify-the-populace.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-venom-horrify-the-populace.webp",
           "abilities": [
             "Each Adversary with a 4[icon:attack] or more guards a Bystander."
           ]
@@ -1663,7 +1663,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-venom-ravenous-greed.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-venom-ravenous-greed.webp",
           "abilities": [
             "Each other player reveals an [hc:instinct] Ally or KOs a Bystander from their Victory Pile.",
             "[hc:instinct]: Kidnap all Bystanders that were KO'd this turn. Then you get +1[icon:recruit] for each Bystander you kidnapped this turn."
@@ -1674,7 +1674,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-venom-symbiote-takeover.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-venom-symbiote-takeover.webp",
           "sides": [
             "symbiote-takeover"
           ]
@@ -1682,7 +1682,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-venom-devour.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-venom-devour.webp",
           "sides": [
             "devour"
           ]
@@ -1690,7 +1690,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-venom-horrify-the-populace.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-venom-horrify-the-populace.webp",
           "sides": [
             "horrify-the-populace"
           ]
@@ -1698,7 +1698,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-hr-venom-ravenous-greed.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-hr-venom-ravenous-greed.webp",
           "sides": [
             "ravenous-greed"
           ]
@@ -1719,7 +1719,7 @@
           "slug": "dr-strange",
           "tactic": false,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-01.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mm-dr-strange.webp",
           "abilities": [
             "Always Leads: Defenders",
             "Command Strike: Reveal the top three cards of the Adversary Deck. Put the Adversary you revealed with the highest printed [icon:attack] on top of that deck. Then play a Plot Twist from among the cards you revealed. Then put the rest of those cards on the bottom of that deck in random order."
@@ -1730,7 +1730,7 @@
           "slug": "book-of-the-vishanti",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-05.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-dr-strange-book-of-the-vishanti.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:covert] Ally or discards all the cards in their hand, then draws as many cards as they discarded."
           ]
@@ -1740,7 +1740,7 @@
           "slug": "crimson-bands-of-cyttorak",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-03.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-dr-strange-crimson-bands-of-cyttorak.webp",
           "abilities": [
             "Fight: Each other player reveals their hand, then gains a Bindings for each non-grey Ally that player has."
           ]
@@ -1750,7 +1750,7 @@
           "slug": "eye-of-agamotto",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-04.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-dr-strange-eye-of-agamotto.webp",
           "abilities": [
             "Fight: Reveal cards from the Ally Deck equal to the number of players. Put one of those cards into each player's discard pile."
           ]
@@ -1760,7 +1760,7 @@
           "slug": "winds-of-watoomb",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/dr-strange-02.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-dr-strange-winds-of-watoomb.webp",
           "abilities": [
             "Fight: After you draw a new hand of cards at the end of this turn, each player simultaneously passes a non-grey Ally from their hand to the hand of the player on their left."
           ]
@@ -1779,7 +1779,7 @@
           "slug": "nick-fury",
           "tactic": false,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-01-1.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mm-nick-fury.webp",
           "abilities": [
             "Always Leads: Avengers",
             "Command Strike: Stack this Strike next to Nick Fury. Then [keyword:demolish] each player once for each Strike stacked here."
@@ -1790,7 +1790,7 @@
           "slug": "bounty-on-furys-head",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-03-1.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-nick-fury-bounty-on-furys-head.webp",
           "abilities": [
             "Fight: KO any number of your [team:hydra] Allies. For each Ally you KO'd this way, you may gain a Madame HYDRA."
           ]
@@ -1800,7 +1800,7 @@
           "slug": "purge-hydra",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-05.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-nick-fury-purge-hydra.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards two [team:hydra] Allies."
           ]
@@ -1810,7 +1810,7 @@
           "slug": "the-avengers-initiative",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-02-1.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-nick-fury-the-avengers-initiative.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Ally or chooses an Avengers Adversary from their Victory Pile and it enters the Bridge."
           ]
@@ -1820,7 +1820,7 @@
           "slug": "total-fury",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nick-fury-04-1.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-nick-fury-total-fury.webp",
           "abilities": [
             "Fight: Defeat an Adversary whose [icon:attack] is less than the number of [team:hydra] Allies in the KO pile."
           ]
@@ -1839,7 +1839,7 @@
           "slug": "odin",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-01.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mm-odin.webp",
           "abilities": [
             "Always Leads: Asgardian Warriors",
             "Odin gets +1[icon:attack] for each Asgardian Warrior in the city and in the Overrun Pile.",
@@ -1851,7 +1851,7 @@
           "slug": "divine-justice",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-02.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-odin-divine-justice.webp",
           "abilities": [
             "Fight: Each other player with a Bindings in their discard pile gains another Bindings."
           ]
@@ -1861,7 +1861,7 @@
           "slug": "might-of-valhalla",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-03.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-odin-might-of-valhalla.webp",
           "abilities": [
             "Fight: Draw a card for each Asgardian Warrior in your Victory Pile."
           ]
@@ -1871,7 +1871,7 @@
           "slug": "riches-of-asgard",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-04.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-odin-riches-of-asgard.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Asgardian Warrior in your Victory Pile."
           ]
@@ -1881,7 +1881,7 @@
           "slug": "ride-of-the-valkyries",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/odin-05.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-odin-ride-of-the-valkyries.webp",
           "abilities": [
             "Fight: Each other player reveals a [team:foes-of-asgard] Ally or discards a card for each Asgardian Warrior in the Overrun Pile."
           ]
@@ -1900,7 +1900,7 @@
           "slug": "professor-x",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-01-1.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mm-professor-x.webp",
           "abilities": [
             "Always Leads: X-men First Class",
             "Command Strike: Choose the two highest-cost Allies in the Lair. Stack them next to Professor X as “Telepathic Pawns.“ Professor X gets +1[icon:attack] for each Ally stacked next to him. Players can recrut the top Ally in the stack next to Professor X."
@@ -1911,7 +1911,7 @@
           "slug": "cerebro-device",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-05.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-professor-x-cerebro-device.webp",
           "abilities": [
             "Fight: Reveal the top three cards of the Adversary Deck. Play any Adversaries you revealed that have “[keyword:X-Treme Attack]“. Put the rest back in random order."
           ]
@@ -1921,7 +1921,7 @@
           "slug": "mental-dominance",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-03-1.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-professor-x-mental-dominance.webp",
           "abilities": [
             "Fight: Stack the top three cards of the Ally Deck next to Professor X in random order as “Telepathic Pawns.“"
           ]
@@ -1931,7 +1931,7 @@
           "slug": "mightiest-mutant-mind",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-04-1.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-professor-x-mightiest-mutant-mind.webp",
           "abilities": [
             "Fight: Each other player reveals a [team:brotherhood] Ally or stacks a non-grey Ally from their hand next to Professor X as a “Telepathic Pawn.“"
           ]
@@ -1941,7 +1941,7 @@
           "slug": "telepathic-imprisonment",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/professor-x-02-1.png",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-mt-professor-x-telepathic-imprisonment.webp",
           "abilities": [
             "Fight: Each other player reveals a [team:brotherhood] Ally or gains a Bindings."
           ]
@@ -1961,7 +1961,7 @@
           "slug": "ant-man",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-avengers-ant-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-avengers-ant-man.webp",
           "abilities": [
             "[keyword:Elusive 4]"
           ]
@@ -1971,7 +1971,7 @@
           "slug": "captain-america",
           "vp": "5",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-avengers-captain-america.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-avengers-captain-america.webp",
           "abilities": [
             "Ambush: Each player reveals three colors of Allies or gains a Bindings. (Grey is a color.)",
             "Fight: Same effect.",
@@ -1984,7 +1984,7 @@
           "slug": "hulk",
           "vp": "6",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-avengers-hulk.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-avengers-hulk.webp",
           "abilities": [
             "Ambush: [keyword:Demolish] each player twice.",
             "Fight: Same effect.",
@@ -1996,7 +1996,7 @@
           "slug": "iron-man",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-avengers-iron-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-avengers-iron-man.webp",
           "abilities": [
             "Ambush: Each player reveals a [hc:tech] Ally or gains a Bindings.",
             "Fight: Same effect.",
@@ -2008,7 +2008,7 @@
           "slug": "thor",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-avengers-thor.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-avengers-thor.webp",
           "abilities": [
             "Ambush: KO each Ally from the Lair that costs 7[icon:vp] or more.",
             "Fight: Same effect.",
@@ -2020,7 +2020,7 @@
           "slug": "wasp",
           "vp": "4",
           "vAttack": "1",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-avengers-wasp.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-avengers-wasp.webp",
           "abilities": [
             "[keyword:Elusive 7]"
           ]
@@ -2038,7 +2038,7 @@
           "slug": "daredevil",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-defenders-daredevil.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-defenders-daredevil.webp",
           "abilities": [
             "Fight: The next Ally you recruit this turn goes on top of your deck.",
             "Overrun: Each player reveals the top card of their deck and if it costs 1[icon:vp] or more, discards it."
@@ -2049,7 +2049,7 @@
           "slug": "iron-fist",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-defenders-iron-fist.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-defenders-iron-fist.webp",
           "abilities": [
             "To fight Iron Fist, you must also reveal three Allies with different costs."
           ]
@@ -2059,7 +2059,7 @@
           "slug": "namor-the-sub-mariner",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-defenders-namor-the-sub-mariner.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-defenders-namor-the-sub-mariner.webp",
           "abilities": [
             "Ambush: If any other Defenders Adversaries are in the city, each player gains a Bindings.",
             "Fight: Same Effect.",
@@ -2071,7 +2071,7 @@
           "slug": "luke-cage",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-defenders-luke-cage.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-defenders-luke-cage.webp",
           "abilities": [
             "Fight: Each player reveals the top three cards of their deck. You choose which players discard them and which players put them back on top in the order of their choice."
           ]
@@ -2089,7 +2089,7 @@
           "slug": "black-panther",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-marvel-knights-black-panther.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-marvel-knights-black-panther.webp",
           "abilities": [
             "Fight: Each player draws a card."
           ]
@@ -2099,7 +2099,7 @@
           "slug": "elektra",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-marvel-knights-elektra.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-marvel-knights-elektra.webp",
           "abilities": [
             "Fight: KO one of your Allies. Then KO a Bindings from your hand or discard pile."
           ]
@@ -2109,7 +2109,7 @@
           "slug": "punisher",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-marvel-knights-punisher.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-marvel-knights-punisher.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. If it costs 0[icon:vp], KO it.",
             "Overrun: Each player reveals the top card of their deck and if it costs 1[icon:vp] or more, KOs it."
@@ -2120,7 +2120,7 @@
           "slug": "ghost-rider",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-marvel-knights-ghost-rider.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-marvel-knights-ghost-rider.webp",
           "abilities": [
             "Fight: You may KO another Adversary from your Victory Pile. If you do, you get +3[icon:recruit].",
             "Overrun: Each player may KO an Adversary from their Victory Pile. Any player who does not do so gains a Bindings."
@@ -2139,7 +2139,7 @@
           "slug": "black-cat",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-spider-friends-black-cat.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-spider-friends-black-cat.webp",
           "abilities": [
             "[keyword:Elusive 6]",
             "Fight: Each player reveals the top card of their deck. Choose any number of those cards to be discarded."
@@ -2150,7 +2150,7 @@
           "slug": "firestar",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-spider-friends-firestar.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-spider-friends-firestar.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. If it has a [icon:recruit] icon, KO it.",
             "Overrun: Each player reveals the top card of their deck, and if it has an [icon:attack] icon, KO it."
@@ -2161,7 +2161,7 @@
           "slug": "moon-knight",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-spider-friends-moon-knight.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-spider-friends-moon-knight.webp",
           "abilities": [
             "Fight: KO one of your Allies. Then, if you fought Moon Knight on the Rooftops, KO another of your Allies."
           ]
@@ -2171,7 +2171,7 @@
           "slug": "spider-man",
           "vp": "3",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-spider-friends-spider-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-spider-friends-spider-man.webp",
           "abilities": [
             "Fight: Reveal the top card of the Adversary Deck. If that card is worth 2[icon:piercing] or less, play it. If you play a card from the Adversary Deck this way, put Spider-Man back on top of the Adversary Deck.",
             "Overrun: Each player gains a Bindings."
@@ -2190,7 +2190,7 @@
           "slug": "havok",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-uncanny-avengers-havok.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-avengers-havok.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Ambush: Each player who does not reveal a [hc:ranged] Ally discards two cards, then draws a card."
@@ -2201,7 +2201,7 @@
           "slug": "rogue",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-uncanny-avengers-rogue.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-avengers-rogue.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: Each other player discards the top card of their deck. Play a copy of one of those Allies."
@@ -2212,7 +2212,7 @@
           "slug": "scarlet-witch",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-uncanny-avengers-scarlet-witch.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-avengers-scarlet-witch.webp",
           "abilities": [
             "Fight: Reveal the top three cards of your deck. Put any that have odd-numbered costs into your hand and discard the rest. (0 is even.)"
           ]
@@ -2222,7 +2222,7 @@
           "slug": "wolverine",
           "vp": "5",
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-uncanny-avengers-wolverine.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-avengers-wolverine.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Wolverine gets +1[icon:attack] for each card you've drawn this turn.",
@@ -2242,7 +2242,7 @@
           "slug": "colossus",
           "vp": "3",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-uncanny-x-men-colossus.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-x-men-colossus.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: You may KO a Bindings from your hand or discard pile. If you don't, each other player gains a Bindings."
@@ -2253,7 +2253,7 @@
           "slug": "nightcrawler",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-uncanny-x-men-nightcrawler.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-x-men-nightcrawler.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: Choose an Ally you played this turn. When you draw a new hand of cards at the end of this turn, add that Ally to your new hand as an extra card."
@@ -2264,7 +2264,7 @@
           "slug": "shadowcat",
           "vp": "2",
           "vAttack": "2*+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-uncanny-x-men-shadowcat.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-x-men-shadowcat.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "[keyword:Elusive 5]"
@@ -2275,7 +2275,7 @@
           "slug": "storm",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-uncanny-x-men-storm.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-x-men-storm.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Ambush: (After Storm enters the city). Move Storm to the Rooftops. If another Adversary is already there, swap them.",
@@ -2295,7 +2295,7 @@
           "slug": "angel",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-x-men-first-class-angel.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-x-men-first-class-angel.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: Draws two cards, then discard a card."
@@ -2306,7 +2306,7 @@
           "slug": "iceman",
           "vp": "3",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-x-men-first-class-iceman.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-x-men-first-class-iceman.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: Draw a card for each [hc:ranged] Ally you played this turn."
@@ -2317,7 +2317,7 @@
           "slug": "jean-grey",
           "vp": "4",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-x-men-first-class-jean-grey.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-x-men-first-class-jean-grey.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Ambush: Jean Grey guards a Bystander for each Adversary in the city with X-Treme Attack (including Jean).",
@@ -2329,7 +2329,7 @@
           "slug": "beast",
           "vp": "3",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-x-men-first-class-beast.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-x-men-first-class-beast.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: KO one of your Allies. Then KO another of your Allies if there are any other Adversaries in the city with X-Treme Attack."
@@ -2340,7 +2340,7 @@
           "slug": "cyclops",
           "vp": "4",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/vill/vill-vi-x-men-first-class-cyclops.webp",
+          "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-x-men-first-class-cyclops.webp",
           "abilities": [
             "[keyword:X-Treme Attack]",
             "To Fight Cyclops, you must also discard a card.",
@@ -2355,7 +2355,7 @@
       "id": 7,
       "name": "Asgardian Warriors",
       "slug": "asgardian-warriors",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-hm-asgardian-warriors.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-hm-asgardian-warriors.webp",
       "abilities": [
         "Fight: Draw a card."
       ]
@@ -2364,7 +2364,7 @@
       "id": 8,
       "name": "Cops",
       "slug": "cops",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-hm-cops.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-hm-cops.webp",
       "abilities": [
         "Fight: Gain a New Recruit."
       ]
@@ -2373,7 +2373,7 @@
       "id": 9,
       "name": "Multiple Man",
       "slug": "multiple-man",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-hm-multiple-man.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-hm-multiple-man.webp",
       "abilities": [
         "Fight: KO one of your Allies for each other Multiple Man in your Victory Pile."
       ]
@@ -2382,7 +2382,7 @@
       "id": 10,
       "name": "S.H.I.E.L.D. Assault Squad",
       "slug": "shield-assault-squad",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-hm-shield-assault-squad.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-hm-shield-assault-squad.webp",
       "abilities": [
         "Fight: Discard the top card of your deck. Then KO an Ally from your discard pile."
       ]
@@ -2393,7 +2393,7 @@
       "id": 25,
       "name": "Build an Underground MegaVault Prison",
       "slug": "build-an-underground-megavault-prison",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-sc-build-an-underground-megavault-prison.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sc-build-an-underground-megavault-prison.webp",
       "cards": [
         {
           "abilities": [
@@ -2408,7 +2408,7 @@
       "id": 26,
       "name": "Cage Villains in Power-Suppressing Cells",
       "slug": "cage-villains-in-power-suppressing-cells",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-sc-cage-villains-in-power-suppressing-cells.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sc-cage-villains-in-power-suppressing-cells.webp",
       "cards": [
         {
           "abilities": [
@@ -2424,7 +2424,7 @@
       "id": 27,
       "name": "Crown Thor King of Asgard",
       "slug": "crown-thor-king-of-asgard",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-sc-crown-thor-king-of-asgard.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sc-crown-thor-king-of-asgard.webp",
       "cards": [
         {
           "abilities": [
@@ -2440,7 +2440,7 @@
       "id": 28,
       "name": "Crush HYDRA",
       "slug": "crush-hydra",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-sc-crush-hydra.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sc-crush-hydra.webp",
       "cards": [
         {
           "abilities": [
@@ -2457,7 +2457,7 @@
       "id": 29,
       "name": "Graduation at Xavier's X-Academy",
       "slug": "graduation-at-xaviers-x-academy",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-sc-graduation-at-xaviers-x-academy.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sc-graduation-at-xaviers-x-academy.webp",
       "cards": [
         {
           "abilities": [
@@ -2472,7 +2472,7 @@
       "id": 30,
       "name": "Infiltrate the Lair with Spies",
       "slug": "infiltrate-the-lair-with-spies",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-sc-infiltrate-the-lair-with-spies.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sc-infiltrate-the-lair-with-spies.webp",
       "cards": [
         {
           "abilities": [
@@ -2488,7 +2488,7 @@
       "id": 31,
       "name": "Mass Produce War Machine Armor",
       "slug": "mass-produce-war-machine-armor",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-sc-mass-produce-war-machine-armor.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sc-mass-produce-war-machine-armor.webp",
       "cards": [
         {
           "abilities": [
@@ -2504,7 +2504,7 @@
       "id": 32,
       "name": "Resurrect Heroes with Norn Stones",
       "slug": "resurrect-heroes-with-norn-stones",
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-sc-resurrect-heroes-with-norn-stones.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sc-resurrect-heroes-with-norn-stones.webp",
       "cards": [
         {
           "abilities": [
@@ -2523,7 +2523,7 @@
       "name": "Bystander",
       "slug": "bystander",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-by-bystander.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-by-bystander.webp",
       "cards": [
         {
           "qtd": 30,
@@ -2536,7 +2536,7 @@
       "name": "Computer Hacker",
       "slug": "computer-hacker",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-by-computer-hacker.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-by-computer-hacker.webp",
       "cards": [
         {
           "qtd": 3,
@@ -2551,7 +2551,7 @@
       "name": "Engineer",
       "slug": "engineer",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-by-engineer.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-by-engineer.webp",
       "cards": [
         {
           "qtd": 3,
@@ -2566,7 +2566,7 @@
       "name": "Public Speaker",
       "slug": "public-speaker",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-by-public-speaker.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-by-public-speaker.webp",
       "cards": [
         {
           "qtd": 3,
@@ -2581,7 +2581,7 @@
       "name": "Rock Star",
       "slug": "rock-star",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/vill/vill-by-rock-star.webp",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-by-rock-star.webp",
       "cards": [
         {
           "qtd": 3,

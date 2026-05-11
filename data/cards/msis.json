@@ -28,7 +28,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-open-portals.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-open-portals.webp",
           "abilities": [
             "[keyword:Phasing]",
             "[hc:ranged]: You get +2[icon:recruit]."
@@ -45,7 +45,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-defend-this-dimension.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-defend-this-dimension.webp",
           "abilities": [
             "[hc:instinct]: Reveal the top card of the Villain Deck. If it's a Villain, you get +2[icon:attack]."
           ]
@@ -61,7 +61,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-sift-futures.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-sift-futures.webp",
           "abilities": [
             "[keyword:Phasing]",
             "Choose a Hero Class. Reveal the top card of your deck. If it's the Hero Class you named, draw it."
@@ -78,7 +78,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-invoke-the-time-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-invoke-the-time-stone.webp",
           "abilities": [
             "[keyword:Phasing]",
             "[hc:ranged] [keyword:Sacrifice]: Take another turn after this one. Don't play a card from the Villain Deck at the start of that turn."
@@ -95,7 +95,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-bind-evil.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-bind-evil.webp",
           "abilities": [
             "[hc:instinct]: Reveal the top card of the Villain Deck. If it's a Marster Strike, KO that Strike, you get +3[icon:attack], and put a card from the Bystander Deck on top of the Villain Deck."
           ]
@@ -111,7 +111,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-1-in-14-000-065.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-1-in-14-000-065.webp",
           "abilities": [
             "[hc:instinct] [keyword:Sacrifice]: Guess the name of the top card of the Villain Deck, then reveal it. If you guessed right, draw six cards."
           ]
@@ -121,7 +121,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-defend-this-dimension.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-defend-this-dimension.webp",
           "sides": [
             "defend-this-dimension"
           ]
@@ -129,7 +129,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-open-portals.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-open-portals.webp",
           "sides": [
             "open-portals"
           ]
@@ -137,7 +137,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-sift-futures.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-sift-futures.webp",
           "sides": [
             "sift-futures"
           ]
@@ -145,7 +145,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-invoke-the-time-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-invoke-the-time-stone.webp",
           "sides": [
             "invoke-the-time-stone"
           ]
@@ -153,7 +153,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-bind-evil.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-bind-evil.webp",
           "sides": [
             "bind-evil"
           ]
@@ -161,7 +161,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-doctor-strange-1-in-14-000-065.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-doctor-strange-1-in-14-000-065.webp",
           "sides": [
             "1-in-14-000-065"
           ]
@@ -193,7 +193,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-wakanda-forever.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-wakanda-forever.webp",
           "abilities": [
             "[hc:covert]: Draw a card."
           ]
@@ -209,7 +209,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-avengers-reassembled.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-avengers-reassembled.webp",
           "abilities": [
             "If you have all five Hero Classes, you get +3[icon:attack]."
           ]
@@ -225,7 +225,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-great-many-lives-lost.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-great-many-lives-lost.webp",
           "abilities": [
             "[hc:instinct] [keyword:Sacrifice]: KO up to two cards from your hand and/or discard pile."
           ]
@@ -241,7 +241,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "3+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-council-of-war.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-council-of-war.webp",
           "abilities": [
             "You get +1[icon:recruit] for each other [rule:multicolored] Hero you have.",
             "[hc:strength]: You may have this card make all [icon:attack] instead of [icon:recruit]."
@@ -258,7 +258,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-vibranium-nanites.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-vibranium-nanites.webp",
           "abilities": [
             "Reveal the top card of your deck. If it's [rule:multicolored], draw it. Otherwise, put it back or discard it.",
             "[hc:tech]: You may KO that card."
@@ -275,7 +275,7 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-fateful-return.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-fateful-return.webp",
           "abilities": [
             "You get +2[icon:attack] for each Hero Class you have."
           ]
@@ -285,7 +285,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-avengers-reassembled.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-avengers-reassembled.webp",
           "sides": [
             "avengers-reassembled"
           ]
@@ -293,7 +293,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-great-many-lives-lost.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-great-many-lives-lost.webp",
           "sides": [
             "great-many-lives-lost"
           ]
@@ -301,7 +301,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-wakanda-forever.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-wakanda-forever.webp",
           "sides": [
             "wakanda-forever"
           ]
@@ -309,7 +309,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-council-of-war.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-council-of-war.webp",
           "sides": [
             "council-of-war"
           ]
@@ -317,7 +317,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-vibranium-nanites.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-vibranium-nanites.webp",
           "sides": [
             "vibranium-nanites"
           ]
@@ -325,7 +325,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-black-panther-fateful-return.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-black-panther-fateful-return.webp",
           "sides": [
             "fateful-return"
           ]
@@ -357,7 +357,7 @@
           "cost": 1,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-burst-of-rage.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-burst-of-rage.webp",
           "abilities": [
             "[hc:strength] [keyword:Sacrifice]: You get +3[icon:attack]. You may KO a card from your hand or discard pile."
           ]
@@ -373,7 +373,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-brains-and-brawn.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-brains-and-brawn.webp",
           "abilities": [
             "[hc:tech][hc:strength]: You get +2[icon:attack]."
           ]
@@ -389,7 +389,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-hulkbuster-armor.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-hulkbuster-armor.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:recruit]."
           ]
@@ -405,7 +405,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-hulk-gets-smashed.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-hulk-gets-smashed.webp",
           "abilities": [
             "[hc:strength]: You main gain a Wound. If you do, KO up to two other cards from your hand and/or discard pile."
           ]
@@ -421,7 +421,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-crush-puny-weaklings.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-crush-puny-weaklings.webp",
           "abilities": [
             "[hc:tech]: You get +1[icon:attack] for each Henchman in your Victory Pile."
           ]
@@ -437,7 +437,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-reverse-the-snap.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-reverse-the-snap.webp",
           "abilities": [
             "[hc:tech] [keyword:Sacrifice]: Gain up to one other Hero from the KO pile. Then combine you deck and discard pile. Put all those cards that cost 0 into your discard pile. Shuffle the rest into a new deck."
           ]
@@ -447,7 +447,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-brains-and-brawn.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-brains-and-brawn.webp",
           "sides": [
             "brains-and-brawn"
           ]
@@ -455,7 +455,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-burst-of-rage.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-burst-of-rage.webp",
           "sides": [
             "burst-of-rage"
           ]
@@ -463,7 +463,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-hulkbuster-armor.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-hulkbuster-armor.webp",
           "sides": [
             "hulkbuster-armor"
           ]
@@ -471,7 +471,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-hulk-gets-smashed.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-hulk-gets-smashed.webp",
           "sides": [
             "hulk-gets-smashed"
           ]
@@ -479,7 +479,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-crush-puny-weaklings.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-crush-puny-weaklings.webp",
           "sides": [
             "crush-puny-weaklings"
           ]
@@ -487,7 +487,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-bruce-banner-reverse-the-snap.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-bruce-banner-reverse-the-snap.webp",
           "sides": [
             "reverse-the-snap"
           ]
@@ -519,7 +519,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-dawning-hope.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-dawning-hope.webp",
           "abilities": [
             "Draw a card.",
             "If you had already drawn any cards this turn, draw two cards instead."
@@ -536,7 +536,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-infused-by-the-tesseract.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-infused-by-the-tesseract.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Endgame]: This card makes [icon:attack] instead of [icon:recruit]."
@@ -553,7 +553,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-return-from-the-stars.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-return-from-the-stars.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:recruit].",
             "[keyword:Endgame]: This card makes all [icon:attack] instead of [icon:recruit]."
@@ -570,7 +570,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-turning-point.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-turning-point.webp",
           "abilities": [
             "For the rest of this turn, it is the [keyword:Endgame] for your Hero cards.",
             "If it was already the [keyword:Endgame], you get +2[icon:attack]."
@@ -587,7 +587,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-moment-of-destiny.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-moment-of-destiny.webp",
           "abilities": [
             "[hc:ranged]: You get +2[icon:attack]."
           ]
@@ -603,7 +603,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-time-to-end-it.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-time-to-end-it.webp",
           "abilities": [
             "You get +1[icon:attack] for each other [hc:ranged] and/or [hc:strength] card you played this turn.",
             "[keyword:Endgame]: Instead, you get +2[icon:attack] for each."
@@ -614,7 +614,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-infused-by-the-tesseract.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-infused-by-the-tesseract.webp",
           "sides": [
             "infused-by-the-tesseract"
           ]
@@ -622,7 +622,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-return-from-the-stars.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-return-from-the-stars.webp",
           "sides": [
             "return-from-the-stars"
           ]
@@ -630,7 +630,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-turning-point.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-turning-point.webp",
           "sides": [
             "turning-point"
           ]
@@ -638,7 +638,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-dawning-hope.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-dawning-hope.webp",
           "sides": [
             "dawning-hope"
           ]
@@ -646,7 +646,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-moment-of-destiny.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-moment-of-destiny.webp",
           "sides": [
             "moment-of-destiny"
           ]
@@ -654,7 +654,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-captain-marvel-time-to-end-it.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-captain-marvel-time-to-end-it.webp",
           "sides": [
             "time-to-end-it"
           ]
@@ -689,7 +689,7 @@
           "cost": 1,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-we-have-to-destroy-it.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-we-have-to-destroy-it.webp",
           "abilities": [
             "[hc:tech] [keyword:Sacrifice]: You get +3[icon:recruit]. You may KO a card from your hand or discard pile."
           ]
@@ -705,7 +705,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-witchcraft.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-witchcraft.webp",
           "abilities": [
             "Reveal the top card of your deck. If it has an odd-numbered cost, draw it. ( 0 is even.)"
           ]
@@ -721,7 +721,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-hold-on.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-hold-on.webp",
           "abilities": [
             "[hc:covert]: You get +2[icon:attack]."
           ]
@@ -737,7 +737,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-let-go.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-let-go.webp",
           "abilities": [
             "[hc:ranged] [keyword:Sacrifice]: Draw 3 cards. You may KO a card from your hand or discard pile."
           ]
@@ -753,7 +753,7 @@
           "cost": 5,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-magic.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-magic.webp",
           "abilities": [
             "You get +1[icon:attack] for each other Hero with an odd-numbered cost you played this turn."
           ]
@@ -769,7 +769,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-science.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-science.webp",
           "abilities": [
             "[hc:tech]: You get +2[icon:attack]."
           ]
@@ -785,7 +785,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-rage.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-rage.webp",
           "abilities": [
             "If a Hero was put into the KO pile this turn you get +2[icon:attack]."
           ]
@@ -801,7 +801,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-grief.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-grief.webp",
           "abilities": [
             "If a Master Strike was completed this turn, you get +2[icon:recruit]."
           ]
@@ -817,7 +817,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-odd-couple.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-odd-couple.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top five cards of the Hero Deck. You may put one of them with an odd-numbered cost into your hand. You may KO one of them. Put the rest back in any order."
           ]
@@ -827,7 +827,7 @@
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-grief-rage.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-grief-rage.webp",
           "sides": [
             "grief",
             "rage"
@@ -836,7 +836,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-hold-on-let-go.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-hold-on-let-go.webp",
           "sides": [
             "hold-on",
             "let-go"
@@ -845,7 +845,7 @@
         {
           "id": "p3",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-magic-science.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-magic-science.webp",
           "sides": [
             "magic",
             "science"
@@ -854,7 +854,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-we-have-to-destroy-it.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-we-have-to-destroy-it.webp",
           "sides": [
             "we-have-to-destroy-it"
           ]
@@ -862,7 +862,7 @@
         {
           "id": "p5",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-witchcraft.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-witchcraft.webp",
           "sides": [
             "witchcraft"
           ]
@@ -870,7 +870,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-hr-wanda-vision-odd-couple.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-hr-wanda-vision-odd-couple.webp",
           "sides": [
             "odd-couple"
           ]
@@ -891,7 +891,7 @@
           "slug": "thanos",
           "tactic": false,
           "vAttack": "11+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mm-thanos.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mm-thanos.webp",
           "abilities": [
             "Thanos get +1[icon:attack] for each Infinity Stone in the city and/or Escape Pile.",
             "Always Leads: Infinity Stones",
@@ -904,7 +904,7 @@
           "slug": "epic-thanos",
           "tactic": false,
           "vAttack": "13+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-me-thanos.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-me-thanos.webp",
           "abilities": [
             "Thanos get +2[icon:attack] for each Infinity Stone in the city and/or Escape Pile.",
             "Always Leads: Infinity Stones",
@@ -917,7 +917,7 @@
           "slug": "the-snap",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mt-thanos-the-snap.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mt-thanos-the-snap.webp",
           "abilities": [
             "Fight: Each other player discards half of their cards. Destroy half of the HQ spaces. (Round down the losses.) Turn the Heroes there face down to mark the destroyed spaces. Don't refill those spaces."
           ]
@@ -927,7 +927,7 @@
           "slug": "destiny-arrives-all-the-same",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mt-thanos-destiny-arrives-all-the-same.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mt-thanos-destiny-arrives-all-the-same.webp",
           "abilities": [
             "Fight: Each other player reveals a Hero that costs 7 or more or gains a Wound."
           ]
@@ -937,7 +937,7 @@
           "slug": "price-to-pay",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mt-thanos-price-to-pay.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mt-thanos-price-to-pay.webp",
           "abilities": [
             "Fight: Each other player discards cards equal to the number of Infinity Stones in the city and/or Escape Pile or gains a Wound."
           ]
@@ -947,7 +947,7 @@
           "slug": "you-should-have-gone-for-the-head",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mt-thanos-you-should-have-gone-for-the-head.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mt-thanos-you-should-have-gone-for-the-head.webp",
           "abilities": [
             "Fight: KO one of your Heroes.",
             "If this is the last Mastermind Tactic: You do not win the game. Players must fight Thanos one more time to put the Mastermind card in their Victory Pile and win the game."
@@ -967,7 +967,7 @@
           "slug": "ebony-maw",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mm-ebony-maw.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mm-ebony-maw.webp",
           "abilities": [
             "[keyword:Endgame]: +4[icon:attack]",
             "Always Leads: Children of Thanos",
@@ -979,7 +979,7 @@
           "slug": "epic-ebony-maw",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-me-ebony-maw.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-me-ebony-maw.webp",
           "abilities": [
             "[keyword:Endgame]: +5[icon:attack]",
             "Always Leads: Children of Thanos",
@@ -991,7 +991,7 @@
           "slug": "your-powers-are-quaint",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mt-ebony-maw-your-powers-are-quaint.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mt-ebony-maw-your-powers-are-quaint.webp",
           "abilities": [
             "Fight: Each other player chooses a Hero Class, then reveals their hand and discards all non-grey Heroes that aren't that Hero Class.",
             "[keyword:Endgame]: Then they also discard all grey Heroes."
@@ -1002,7 +1002,7 @@
           "slug": "hear-me-and-rejoice",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mt-ebony-maw-hear-me-and-rejoice.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mt-ebony-maw-hear-me-and-rejoice.webp",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw two extra cards.",
             "[keyword:Endgame]: Same effect, but three cards instead."
@@ -1013,7 +1013,7 @@
           "slug": "smile-even-in-death",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mt-ebony-maw-smile-even-in-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mt-ebony-maw-smile-even-in-death.webp",
           "abilities": [
             "Fight: KO up to two of your Heroes.",
             "[keyword:Endgame]: Then KO up to one Hero from your discard pile."
@@ -1024,7 +1024,7 @@
           "slug": "you-may-think-this-is-suffering",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-mt-ebony-maw-you-may-think-this-is-suffering.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-mt-ebony-maw-you-may-think-this-is-suffering.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:covert] Hero or gains a Wound.",
             "[keyword:Endgame]: Then each other player reveals a [hc:ranged] Hero or gains a Wound."
@@ -1045,7 +1045,7 @@
           "slug": "endless-armies-of-chitauri",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-children-of-thanos-endless-armies-of-chitauri.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-endless-armies-of-chitauri.webp",
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: KO one of your Heroes. Then reveal the top card of the Villain Deck. If it's a Children of Thanos Villain, Endless Armies of Chitauri reenters the Sewers."
@@ -1056,7 +1056,7 @@
           "slug": "outriders",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-children-of-thanos-outriders.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-outriders.webp",
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: You may KO a card from your discard pile."
@@ -1067,7 +1067,7 @@
           "slug": "outrider-dropships",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-children-of-thanos-outrider-dropships.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-outrider-dropships.webp",
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Ambush: A Villain worth 2VP, 3VP, or 4VP from any player's Victory Pile enters the city."
@@ -1078,7 +1078,7 @@
           "slug": "outrider-threshers",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-children-of-thanos-outrider-threshers.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-outrider-threshers.webp",
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: KO one of your Heroes. Then choose any number of Heroes from the HQ. Put them on the bottom of the Hero Deck."
@@ -1089,7 +1089,7 @@
           "slug": "cull-obsidian",
           "vp": "5",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-children-of-thanos-cull-obsidian.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-cull-obsidian.webp",
           "abilities": [
             "[keyword:Endgame]: +3[icon:attack]",
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player reveals a Hero that costs 6 or more or gains a Wound.",
@@ -1101,7 +1101,7 @@
           "slug": "corvus-glaive",
           "vp": "5",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-children-of-thanos-corvus-glaive.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-corvus-glaive.webp",
           "abilities": [
             "[keyword:Endgame]: +3[icon:attack]",
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player KOs a Bystander from their Victory Pile or gains a Wound.",
@@ -1113,7 +1113,7 @@
           "slug": "chitauri-gorilla",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-children-of-thanos-chitauri-gorilla.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-chitauri-gorilla.webp",
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Ambush: Chitauri Gorilla captures a Bystander."
@@ -1124,7 +1124,7 @@
           "slug": "proxima-midnight",
           "vp": "5",
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-children-of-thanos-proxima-midnight.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-proxima-midnight.webp",
           "abilities": [
             "[keyword:Endgame]: +3[icon:attack]",
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player reveals an [hc:instinct] Hero or gains a Wound.",
@@ -1144,7 +1144,7 @@
           "slug": "the-power-stone",
           "vp": "5",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-infinity-stones-the-power-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-the-power-stone.webp",
           "abilities": [
             "The Power Stone gets +1[icon:attack] for each other Infinity Stone in the city and/or Escape Pile.",
             "Ambush: Each player without an Infinity Stone in their Victory Pile gains a Wound.",
@@ -1156,7 +1156,7 @@
           "slug": "the-space-stone",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-infinity-stones-the-space-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-the-space-stone.webp",
           "abilities": [
             "The Space Stone gets +1[icon:attack] for each empty space in the city.",
             "Ambush: The Space Stone captures three Bystanders. Then move an Infinity Stone from any city space to the Bridge. If there's already a Villain there, swap them.",
@@ -1168,7 +1168,7 @@
           "slug": "the-reality-stone",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-infinity-stones-the-reality-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-the-reality-stone.webp",
           "abilities": [
             "The Reality Stone gets +1[icon:attack] for each Master Strike in the KO pile and/or stacked next to the Mastermind.",
             "Ambush: Reveal the top three cards of the Villain Deck. Play a Master Strike from among them. Put the rest back in any order.",
@@ -1180,7 +1180,7 @@
           "slug": "the-time-stone",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-infinity-stones-the-time-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-the-time-stone.webp",
           "abilities": [
             "[keyword:Endgame]: +4[icon:attack]",
             "Ambush: Play another card from the Villain Deck.",
@@ -1192,7 +1192,7 @@
           "slug": "the-soul-stone",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-infinity-stones-the-soul-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-the-soul-stone.webp",
           "abilities": [
             "The Soul Stone gets +1[icon:attack] for each other Villain in the city.",
             "Ambush: Each player without an Infinity Stone in their Victory Pile KOs a non-grey Hero from their discard pile.",
@@ -1204,7 +1204,7 @@
           "slug": "the-mind-stone",
           "vp": "5",
           "vAttack": "1+",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-infinity-stones-the-mind-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-the-mind-stone.webp",
           "abilities": [
             "The Mind Stone gets +[icon:attack] equal to the highest cost of Hero in the HQ.",
             "Ambush: All Heroes currently in the HQ cost 2 more this turn.",
@@ -1216,7 +1216,7 @@
           "slug": "nebula-stone-seeker",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-infinity-stones-nebula-stone-seeker.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-nebula-stone-seeker.webp",
           "abilities": [
             "Ambush: Nebula captures a Hero from the Officer Deck or HQ that costs 4 or less.",
             "Fight: Either KO that Hero or choose a player to gain it.",
@@ -1228,7 +1228,7 @@
           "slug": "stonekeeper",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/msis/msis-vi-infinity-stones-stonekeeper.webp",
+          "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-stonekeeper.webp",
           "abilities": [
             "Ambush: If the Soul Stone is in the city or Escape Pile, each player discards a card. If it's in a player's Victory Pile, that player draws two cards.",
             "Fight: Each player KOs one of their Heroes.",
@@ -1244,7 +1244,7 @@
       "id": 166,
       "name": "Sacrifice for the Soul Stone",
       "slug": "sacrifice-for-the-soul-stone",
-      "imageUrl": "https://images.barefootbetters.com/msis/msis-sc-sacrifice-for-the-soul-stone.webp",
+      "imageUrl": "https://images.legendary-arena.com/msis/msis-sc-sacrifice-for-the-soul-stone.webp",
       "cards": [
         {
           "abilities": [
@@ -1259,7 +1259,7 @@
       "id": 167,
       "name": "Halve All Life in the Universe",
       "slug": "halve-all-life-in-the-universe",
-      "imageUrl": "https://images.barefootbetters.com/msis/msis-sc-halve-all-life-in-the-universe.webp",
+      "imageUrl": "https://images.legendary-arena.com/msis/msis-sc-halve-all-life-in-the-universe.webp",
       "cards": [
         {
           "abilities": [
@@ -1275,7 +1275,7 @@
       "id": 168,
       "name": "Warp Reality into a TV Show",
       "slug": "warp-reality-into-a-tv-show",
-      "imageUrl": "https://images.barefootbetters.com/msis/msis-sc-warp-reality-into-a-tv-show.webp",
+      "imageUrl": "https://images.legendary-arena.com/msis/msis-sc-warp-reality-into-a-tv-show.webp",
       "cards": [
         {
           "abilities": [
@@ -1291,7 +1291,7 @@
       "id": 169,
       "name": "The Time Heist",
       "slug": "the-time-heist",
-      "imageUrl": "https://images.barefootbetters.com/msis/msis-sc-the-time-heist.webp",
+      "imageUrl": "https://images.legendary-arena.com/msis/msis-sc-the-time-heist.webp",
       "cards": [
         {
           "abilities": [

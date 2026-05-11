@@ -26,7 +26,7 @@
           "cost": 1,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-hope-of-the-korbinites.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-beta-ray-bill-hope-of-the-korbinites.webp",
           "abilities": [
             "To play this, you must discard a card.",
             "Then, if you are [keyword:Worthy], draw a card."
@@ -43,7 +43,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-bio-engineered-cyborg.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-beta-ray-bill-bio-engineered-cyborg.webp",
           "abilities": [
             "You may discard a card. If you do, draw a card."
           ]
@@ -59,7 +59,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-stormbreaker.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-beta-ray-bill-stormbreaker.webp",
           "abilities": [
             "You cannot throw Stormbreaker unless you are [keyword:Worthy].",
             "[keyword:Thrown Artifact] — To throw this, you must discard a card from your hand. Then you get +2[icon:attack] for each card you discarded from your hand this turn."
@@ -76,7 +76,7 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-the-warship-skuttlebutt.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-beta-ray-bill-the-warship-skuttlebutt.webp",
           "abilities": [
             "You may discard a card. Then count the number of cards you discarded from your hand this turn. Draw that many cards."
           ]
@@ -86,7 +86,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-hope-of-the-korbinites.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-beta-ray-bill-hope-of-the-korbinites.webp",
           "sides": [
             "hope-of-the-korbinites"
           ]
@@ -94,7 +94,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-bio-engineered-cyborg.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-beta-ray-bill-bio-engineered-cyborg.webp",
           "sides": [
             "bio-engineered-cyborg"
           ]
@@ -102,7 +102,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-stormbreaker.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-beta-ray-bill-stormbreaker.webp",
           "sides": [
             "stormbreaker"
           ]
@@ -110,7 +110,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-beta-ray-bill-the-warship-skuttlebutt.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-beta-ray-bill-the-warship-skuttlebutt.webp",
           "sides": [
             "the-warship-skuttlebutt"
           ]
@@ -140,7 +140,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-dimensional-blade.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-lady-sif-dimensional-blade.webp",
           "abilities": [
             "[keyword:Thrown Artifact] — When you throw this you get +1[icon:recruit] and +1[icon:attack]."
           ]
@@ -156,7 +156,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-weapons-master.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-lady-sif-weapons-master.webp",
           "abilities": [
             "If you control any Artifacts, you get +2[icon:attack]."
           ]
@@ -172,7 +172,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-winged-helm.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-lady-sif-winged-helm.webp",
           "abilities": [
             "[keyword:Thrown Artifact] — You may throw this to get +1[icon:attack].",
             "During any player's turn, if a player would gain a Wound, you may throw this to prevent that Wound and draw two cards instead."
@@ -189,7 +189,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-golden-apples-of-idunn.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-lady-sif-golden-apples-of-idunn.webp",
           "abilities": [
             "[keyword:Thrown Artifact] — When you throw this, you get +4[icon:attack] and you may KO a card from your hand or discard pile."
           ]
@@ -199,7 +199,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-dimensional-blade.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-lady-sif-dimensional-blade.webp",
           "sides": [
             "dimensional-blade"
           ]
@@ -207,7 +207,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-weapons-master.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-lady-sif-weapons-master.webp",
           "sides": [
             "weapons-master"
           ]
@@ -215,7 +215,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-winged-helm.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-lady-sif-winged-helm.webp",
           "sides": [
             "winged-helm"
           ]
@@ -223,7 +223,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-lady-sif-golden-apples-of-idunn.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-lady-sif-golden-apples-of-idunn.webp",
           "sides": [
             "golden-apples-of-idunn"
           ]
@@ -253,7 +253,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-test-of-virtue.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-thor-test-of-virtue.webp",
           "abilities": [
             "If you are [keyword:Worthy], you get +2[icon:attack]."
           ]
@@ -269,7 +269,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-divine-lightning.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-thor-divine-lightning.webp",
           "abilities": [
             "You get +1[icon:attack] for each other card you played this turn that makes you [keyword:Worthy]."
           ]
@@ -285,7 +285,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-mjolnir.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-thor-mjolnir.webp",
           "abilities": [
             "You cannot throw Mjolnir unless you are [keyword:Worthy].",
             "[keyword:Thrown Artifact] — When you throw this, you get +3[icon:attack], then you get +1[icon:attack] for each [hc:ranged] Hero you played this turn."
@@ -302,7 +302,7 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-royal-decree.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-thor-royal-decree.webp",
           "abilities": [
             "[team:heroes-of-asgard]: Each player who is [keyword:Worthy] draws a card. Each Villain that isn't worth at least 5VP gets -1[icon:attack] this turn."
           ]
@@ -312,7 +312,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-test-of-virtue.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-thor-test-of-virtue.webp",
           "sides": [
             "test-of-virtue"
           ]
@@ -320,7 +320,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-divine-lightning.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-thor-divine-lightning.webp",
           "sides": [
             "divine-lightning"
           ]
@@ -328,7 +328,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-mjolnir.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-thor-mjolnir.webp",
           "sides": [
             "mjolnir"
           ]
@@ -336,7 +336,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-thor-royal-decree.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-thor-royal-decree.webp",
           "sides": [
             "royal-decree"
           ]
@@ -366,7 +366,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-dragonfang.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-valkyrie-dragonfang.webp",
           "abilities": [
             "[keyword:Thrown Artifact] — When you throw this, you get [keyword:Sewers Conqueror 2]."
           ]
@@ -382,7 +382,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-flying-stallion.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-valkyrie-flying-stallion.webp",
           "abilities": [
             "[keyword:Streets] [keyword:Conqueror] 1",
             "When an Ambush ability is played, before it takes effect, you may discard this card. If you do, draw two extra cards at the end of this turn."
@@ -399,7 +399,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-usher-to-valhalla.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-valkyrie-usher-to-valhalla.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 1",
             "[team:heroes-of-asgard]: The first time you defeat a Villain this turn, you may KO one of your cards or a card from your discard pile."
@@ -416,7 +416,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-ride-of-the-valkyries.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-valkyrie-ride-of-the-valkyries.webp",
           "abilities": [
             "[keyword:Streets] [keyword:Conqueror] 1",
             "[hc:instinct]: You get +1[icon:attack] for every 4 Heroes in the KO pile."
@@ -427,7 +427,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-dragonfang.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-valkyrie-dragonfang.webp",
           "sides": [
             "dragonfang"
           ]
@@ -435,7 +435,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-flying-stallion.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-valkyrie-flying-stallion.webp",
           "sides": [
             "flying-stallion"
           ]
@@ -443,7 +443,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-usher-to-valhalla.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-valkyrie-usher-to-valhalla.webp",
           "sides": [
             "usher-to-valhalla"
           ]
@@ -451,7 +451,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-valkyrie-ride-of-the-valkyries.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-valkyrie-ride-of-the-valkyries.webp",
           "sides": [
             "ride-of-the-valkyries"
           ]
@@ -481,7 +481,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-fandral-the-dashing.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-warriors-three-the-fandral-the-dashing.webp",
           "abilities": [
             "You may move a Villain to an adjacent city space. If another Villain is already there, swap them.",
             "[hc:covert]: Draw a card."
@@ -498,7 +498,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-hogun-the-grim.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-warriors-three-the-hogun-the-grim.webp",
           "abilities": [
             "[hc:strength]: You may KO a card from your hand or discard pile."
           ]
@@ -514,7 +514,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-volstagg-the-valiant.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-warriors-three-the-volstagg-the-valiant.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 1",
             "[hc:instinct]: Instead, [keyword:Conqueror]"
@@ -531,7 +531,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-three-stand-as-one.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-warriors-three-the-three-stand-as-one.webp",
           "abilities": [
             "If you played at least three other non-grey Heroes with different card names this turn, you get +3[icon:attack].",
             "[team:heroes-of-asgard]: [keyword:Streets Conqueror 3]"
@@ -542,7 +542,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-fandral-the-dashing.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-warriors-three-the-fandral-the-dashing.webp",
           "sides": [
             "fandral-the-dashing"
           ]
@@ -550,7 +550,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-hogun-the-grim.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-warriors-three-the-hogun-the-grim.webp",
           "sides": [
             "hogun-the-grim"
           ]
@@ -558,7 +558,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-volstagg-the-valiant.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-warriors-three-the-volstagg-the-valiant.webp",
           "sides": [
             "volstagg-the-valiant"
           ]
@@ -566,7 +566,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-hr-warriors-three-the-three-stand-as-one.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-hr-warriors-three-the-three-stand-as-one.webp",
           "sides": [
             "three-stand-as-one"
           ]
@@ -587,7 +587,7 @@
           "slug": "hela-goddess-of-death",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mm-hela-goddess-of-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mm-hela-goddess-of-death.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 5 [keyword:Streets] [keyword:Conqueror] 5",
             "Always Leads: Omens of Ragnarok",
@@ -599,7 +599,7 @@
           "slug": "epic-hela-goddess-of-death",
           "tactic": false,
           "vAttack": "12+",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-me-hela-goddess-of-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-me-hela-goddess-of-death.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 6 [keyword:Streets] [keyword:Conqueror] 6",
             "Always Leads: Omens of Ragnarok",
@@ -611,7 +611,7 @@
           "slug": "helas-cloak",
           "tactic": true,
           "vAttack": "+2",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-helas-cloak.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-hela-goddess-of-death-helas-cloak.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. Hela captures this card as a [keyword:Villainous Weapons].",
             "",
@@ -623,7 +623,7 @@
           "slug": "the-nightsword",
           "tactic": true,
           "vAttack": "+3",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-the-nightsword.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-hela-goddess-of-death-the-nightsword.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. Hela captures this card as a [keyword:Villainous Weapons].",
             "",
@@ -635,7 +635,7 @@
           "slug": "seize-bifrost-the-rainbow-bridge",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-seize-bifrost-the-rainbow-bridge.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-hela-goddess-of-death-seize-bifrost-the-rainbow-bridge.webp",
           "abilities": [
             "Fight: Reveal the top card of the Villain Deck. If it's a Villain, that Villain enters the Bridge or Streets, if one of those spaces is empty."
           ]
@@ -645,7 +645,7 @@
           "slug": "naglfar-longship-of-fingernails",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-naglfar-longship-of-fingernails.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-hela-goddess-of-death-naglfar-longship-of-fingernails.webp",
           "abilities": [
             "Fight: The player on your right reveals the Villain from their Victory Pile that's worth the most VP. That Villain enters the Bridge or Streets, if one of those spaces is empty."
           ]
@@ -664,7 +664,7 @@
           "slug": "malekith-the-accursed",
           "tactic": false,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mm-malekith-the-accursed.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mm-malekith-the-accursed.webp",
           "abilities": [
             "Always Leads: Dark Council",
             "Master Strike: Malekith captures a [keyword:Villainous Weapon] from the city or from any player's control or discard pile. Then this Master Strike enters the city as a [keyword:Villainous Weapon] called “Darkspear“ that gives +2[icon:attack]. When you gain a Darkspear, it becomes a [keyword:Thrown Artifact] that gives +2[icon:attack] when thrown."
@@ -675,7 +675,7 @@
           "slug": "epic-malekith-the-accursed",
           "tactic": false,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-me-malekith-the-accursed.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-me-malekith-the-accursed.webp",
           "abilities": [
             "Always Leads: Dark Council",
             "Master Strike: Malekith captures a [keyword:Villainous Weapon] from the city, then captures one from any player's control or discard pile. Then this Master Strike enters the city as a [keyword:Villainous Weapon] called “Darkspear“ that gives +3[icon:attack]. When you gain a Darkspear, it becomes a [keyword:Thrown Artifact] that gives +2[icon:attack] when thrown."
@@ -686,7 +686,7 @@
           "slug": "black-hammer-of-the-accursed",
           "tactic": true,
           "vAttack": "+4",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-black-hammer-of-the-accursed.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-malekith-the-accursed-black-hammer-of-the-accursed.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. Malekith captures a [keyword:Villainous Weapons] from the city or from any player's control or discard pile. Then this Tactic enters the city as a [keyword:Villainous Weapons].",
             "",
@@ -698,7 +698,7 @@
           "slug": "dagger-of-living-abyss",
           "tactic": true,
           "vAttack": "+2",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-dagger-of-living-abyss.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-malekith-the-accursed-dagger-of-living-abyss.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. Malekith captures a [keyword:Villainous Weapons] from the city or from any player's control or discard pile. Then this Tactic enters the city as a [keyword:Villainous Weapons].",
             "",
@@ -710,7 +710,7 @@
           "slug": "the-hunting-horn-of-faerie",
           "tactic": true,
           "vAttack": "+3",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-the-hunting-horn-of-faerie.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-malekith-the-accursed-the-hunting-horn-of-faerie.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. Malekith captures a [keyword:Villainous Weapons] from the city or from any player's control or discard pile. Then this Tactic enters the city as a [keyword:Villainous Weapons].",
             "",
@@ -722,7 +722,7 @@
           "slug": "vulnerable-to-cold-iron",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-vulnerable-to-cold-iron.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-malekith-the-accursed-vulnerable-to-cold-iron.webp",
           "abilities": [
             "Fight: You get +2[icon:recruit] for each [hc:tech] Hero you have."
           ]
@@ -742,7 +742,7 @@
           "slug": "laufey-father-of-loki",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-dark-council-laufey-father-of-loki.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-dark-council-laufey-father-of-loki.webp",
           "abilities": [
             "Ambush: Laufey captures The Casket of Ancient Winters from any Villain, Mastermind, player's control, or discard pile.",
             "Escape: If Laufey holds The Casket of Ancient Winters, say “Fimbulwinter has come,“ and each player discards down to 3 cards."
@@ -753,7 +753,7 @@
           "slug": "the-mangog",
           "vp": "4",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-dark-council-the-mangog.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-dark-council-the-mangog.webp",
           "abilities": [
             "The Mangog gets +1[icon:attack] for each Villain in the Victory Pile of the player on your right.",
             "Escape: Each player who is not [keyword:Worthy] gains a Wound."
@@ -764,7 +764,7 @@
           "slug": "ulik-the-troll",
           "vp": "2",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-dark-council-ulik-the-troll.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-dark-council-ulik-the-troll.webp",
           "abilities": [
             "Ulik gets +2[icon:attack] if you are not [keyword:Worthy].",
             "Fight: KO one of your Heroes."
@@ -775,7 +775,7 @@
           "slug": "sindr-fire-giant-queen",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-dark-council-sindr-fire-giant-queen.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-dark-council-sindr-fire-giant-queen.webp",
           "abilities": [
             "Fight: If you are [keyword:Worthy], you get +2[icon:recruit]."
           ]
@@ -785,7 +785,7 @@
           "slug": "jarnbjorn-first-axe-of-thor",
           "vp": null,
           "vAttack": "+3",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-dark-council-jarnbjorn-first-axe-of-thor.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-dark-council-jarnbjorn-first-axe-of-thor.webp",
           "abilities": [
             "[keyword:Villainous Weapons]",
             "",
@@ -797,7 +797,7 @@
           "slug": "the-casket-of-ancient-winters",
           "vp": null,
           "vAttack": "+4",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-dark-council-the-casket-of-ancient-winters.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-dark-council-the-casket-of-ancient-winters.webp",
           "abilities": [
             "[keyword:Villainous Weapons]",
             "",
@@ -817,7 +817,7 @@
           "slug": "the-eternal-flame",
           "vp": null,
           "vAttack": "+4",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-omens-of-ragnarok-the-eternal-flame.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-omens-of-ragnarok-the-eternal-flame.webp",
           "abilities": [
             "[keyword:Villainous Weapons]",
             "Ambush: If Surtur is in the city, he captures The Eternal Flame. If a player controls \"Surtur's Crown\", that card enters the city as the Villain Surtur and captures The Eternal Flame.",
@@ -829,7 +829,7 @@
           "slug": "the-hel-crown",
           "vp": null,
           "vAttack": "+3",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-omens-of-ragnarok-the-hel-crown.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-omens-of-ragnarok-the-hel-crown.webp",
           "abilities": [
             "[keyword:Villainous Weapons]",
             "",
@@ -841,7 +841,7 @@
           "slug": "skurge-the-executioner",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-omens-of-ragnarok-skurge-the-executioner.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-omens-of-ragnarok-skurge-the-executioner.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 3",
             "Fight: KO one of your Heroes."
@@ -852,7 +852,7 @@
           "slug": "surtur-fire-giant-king",
           "vp": null,
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-omens-of-ragnarok-surtur-fire-giant-king.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-omens-of-ragnarok-surtur-fire-giant-king.webp",
           "abilities": [
             "Fight: Put this into your discard pile as a \"Surtur's Crown\" Artifact.",
             "Escape: If Surtur was holding The Eternal Flame, say \"Ragnarok has come\", KO each [team:heroes-of-asgard] Hero from the HQ, and each player gains two Wounds.",
@@ -865,7 +865,7 @@
           "slug": "jormungand-the-world-serpent",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-omens-of-ragnarok-jormungand-the-world-serpent.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-omens-of-ragnarok-jormungand-the-world-serpent.webp",
           "abilities": [
             "[keyword:Sewers] [keyword:Conqueror] 1",
             "[keyword:Bank] [keyword:Conqueror] 1",
@@ -880,7 +880,7 @@
           "slug": "the-fenris-wolf",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-vi-omens-of-ragnarok-the-fenris-wolf.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-omens-of-ragnarok-the-fenris-wolf.webp",
           "abilities": [
             "[keyword:Streets] [keyword:Conqueror] 2",
             "Ambush: The Fenris Wolf moves forward to the Rooftops, pushing other Villains forward as normal."
@@ -895,7 +895,7 @@
       "id": 122,
       "name": "Asgardian Test of Worth",
       "slug": "asgardian-test-of-worth",
-      "imageUrl": "https://images.barefootbetters.com/asrd/asrd-sc-asgardian-test-of-worth.webp",
+      "imageUrl": "https://images.legendary-arena.com/asrd/asrd-sc-asgardian-test-of-worth.webp",
       "cards": [
         {
           "abilities": [
@@ -911,7 +911,7 @@
       "id": 123,
       "name": "Dark World of Svartalfheim, The",
       "slug": "dark-world-of-svartalfheim-the",
-      "imageUrl": "https://images.barefootbetters.com/asrd/asrd-sc-dark-world-of-svartalfheim-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/asrd/asrd-sc-dark-world-of-svartalfheim-the.webp",
       "cards": [
         {
           "abilities": [
@@ -927,7 +927,7 @@
       "id": 124,
       "name": "War of the Frost Giants",
       "slug": "war-of-the-frost-giants",
-      "imageUrl": "https://images.barefootbetters.com/asrd/asrd-sc-war-of-the-frost-giants.webp",
+      "imageUrl": "https://images.legendary-arena.com/asrd/asrd-sc-war-of-the-frost-giants.webp",
       "cards": [
         {
           "abilities": [
@@ -943,7 +943,7 @@
       "id": 125,
       "name": "Ragnarok, Twilight of the Gods",
       "slug": "ragnarok-twilight-of-the-gods",
-      "imageUrl": "https://images.barefootbetters.com/asrd/asrd-sc-ragnarok-twilight-of-the-gods.webp",
+      "imageUrl": "https://images.legendary-arena.com/asrd/asrd-sc-ragnarok-twilight-of-the-gods.webp",
       "cards": [
         {
           "abilities": [

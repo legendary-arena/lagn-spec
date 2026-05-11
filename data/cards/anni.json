@@ -17,7 +17,7 @@
         {
           "slug": "protege-of-dr-doom",
           "name": "Protege of Dr. Doom",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp"
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp"
         },
         {
           "name": "Time Loop Experiments",
@@ -30,7 +30,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-time-loop-experiments.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-time-loop-experiments.webp",
           "abilities": [
             "Draw a card. Then put a card from your hand on top of your deck.",
             "[hc:tech]: [keyword:Woman Out of Time]"
@@ -47,7 +47,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-borrow-from-the-future.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-borrow-from-the-future.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 2 or more, draw it. Otherwise, discard it or put it back.",
             "[hc:ranged]: [keyword:Woman Out of Time]"
@@ -64,7 +64,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-reprogram-doombot-legions.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-reprogram-doombot-legions.webp",
           "abilities": [
             "[team:fantastic-four]: You may look at the top two cards of your deck. If you do, KO one of them and put the other back."
           ]
@@ -80,7 +80,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-prot-g-of-dr-doom.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-prot-g-of-dr-doom.webp",
           "abilities": [
             "Use one of Dr. Doom's Mastermind Tactics. You can't use any of them more than once per game. If you have already used them all, get +4[icon:attack] instead.",
             "(Take another turn; or draw three extra cards at end of turn; or you may recruit a [hc:tech] or [hc:ranged] Hero for free; or all other players draw a card or discard a card.)"
@@ -91,7 +91,7 @@
         {
           "id": "p1",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp",
           "sides": [
             "protege-of-dr-doom"
           ]
@@ -99,7 +99,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-time-loop-experiments.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-time-loop-experiments.webp",
           "sides": [
             "time-loop-experiments"
           ]
@@ -107,7 +107,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-borrow-from-the-future.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-borrow-from-the-future.webp",
           "sides": [
             "borrow-from-the-future"
           ]
@@ -115,7 +115,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-reprogram-doombot-legions.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-reprogram-doombot-legions.webp",
           "sides": [
             "reprogram-doombot-legions"
           ]
@@ -123,7 +123,7 @@
         {
           "id": "p5",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-brainstorm-prot-g-of-dr-doom.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-prot-g-of-dr-doom.webp",
           "sides": [
             "prot-g-of-dr-doom"
           ]
@@ -153,7 +153,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-human-torch.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-fantastic-four-united-human-torch.webp",
           "abilities": [
             "[keyword:Focus] 2[icon:recruit] [icon:5] KO up to two Wounds from your hand and/or discard pile.",
             "[keyword:Focus] 6[icon:recruit] [icon:5] You get +6[icon:attack] and gain a Wound."
@@ -170,7 +170,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-thing.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-fantastic-four-united-thing.webp",
           "abilities": [
             "[team:fantastic-four]: You get +1[icon:recruit].",
             "[keyword:Focus] 3[icon:recruit] [icon:5] You get +2[icon:attack]."
@@ -187,7 +187,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-invisible-woman.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-fantastic-four-united-invisible-woman.webp",
           "abilities": [
             "If you played any other cards that cost 4 this turn, you get +2[icon:recruit].",
             "[keyword:Focus] 4[icon:recruit] [icon:5] Rescue a Bystander, then you may KO a card from your hand or discard pile."
@@ -204,7 +204,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-mr-fantastic.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-fantastic-four-united-mr-fantastic.webp",
           "abilities": [
             "Draw two cards.",
             "[keyword:Focus] 5[icon:recruit] [icon:5] You get +7[icon:attack] usable only against the Mastermind."
@@ -215,7 +215,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-human-torch.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-fantastic-four-united-human-torch.webp",
           "sides": [
             "human-torch"
           ]
@@ -223,7 +223,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-thing.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-fantastic-four-united-thing.webp",
           "sides": [
             "thing"
           ]
@@ -231,7 +231,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-invisible-woman.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-fantastic-four-united-invisible-woman.webp",
           "sides": [
             "invisible-woman"
           ]
@@ -239,7 +239,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-fantastic-four-united-mr-fantastic.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-fantastic-four-united-mr-fantastic.webp",
           "sides": [
             "mr-fantastic"
           ]
@@ -269,7 +269,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-firelord.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-heralds-of-galactus-firelord.webp",
           "abilities": [
             "This turn, your Heroes' Conqueror abilities also give you [icon:attack] if those city spaces have been destroyed.",
             "[hc:ranged]: [keyword:Bridge Conqueror 2]"
@@ -286,7 +286,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-silver-surfer.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-heralds-of-galactus-silver-surfer.webp",
           "abilities": [
             "[keyword:Focus] 2[icon:recruit] [icon:5] Draw a card, then you may move a Villain to an adjacent city space. If another Villain is already there, swap them."
           ]
@@ -302,7 +302,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-stardust.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-heralds-of-galactus-stardust.webp",
           "abilities": [
             "[keyword:Focus] 4[icon:recruit] [icon:5][keyword:Conqueror]",
             "[keyword:Focus] 11[icon:recruit] [icon:5] Search the Hero Deck, HQ, or your deck or discard pile for “Galactus Hungers“ and put it on top of your deck. Shuffle any deck you searched."
@@ -319,7 +319,7 @@
           "cost": 10,
           "attack": "8+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-galactus-hungers.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-heralds-of-galactus-galactus-hungers.webp",
           "abilities": [
             "If you have played another Herald of Galactus this turn, destroy the leftmost city space, defeat any Villain there, and then you get +2[icon:attack] for each destroyed city space. If this destroys the last city space, Galactus consumes the Earth. You Win, Evil Wins, and all other players lose."
           ]
@@ -329,7 +329,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-firelord.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-heralds-of-galactus-firelord.webp",
           "sides": [
             "firelord"
           ]
@@ -337,7 +337,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-silver-surfer.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-heralds-of-galactus-silver-surfer.webp",
           "sides": [
             "silver-surfer"
           ]
@@ -345,7 +345,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-stardust.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-heralds-of-galactus-stardust.webp",
           "sides": [
             "stardust"
           ]
@@ -353,7 +353,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-heralds-of-galactus-galactus-hungers.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-heralds-of-galactus-galactus-hungers.webp",
           "sides": [
             "galactus-hungers"
           ]
@@ -383,7 +383,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-avert-future-tragedy.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-psi-lord-avert-future-tragedy.webp",
           "abilities": [
             "[keyword:Focus] 2[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Master Strike, you get +3[icon:attack], KO it, and replace it with the top card from the Bystander Stack.",
             "[hc:instinct]: [keyword:Man/Woman Out of Time]"
@@ -400,7 +400,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-interdimensional-rescue.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-psi-lord-interdimensional-rescue.webp",
           "abilities": [
             "[keyword:Focus] 1[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Bystander, you get +2[icon:attack], rescue it, and shuffle the top card from the Bystander Stack into the Villain Deck.",
             "[hc:covert]: [keyword:Man/Woman Out of Time]"
@@ -417,7 +417,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-slip-the-timestream.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-psi-lord-slip-the-timestream.webp",
           "abilities": [
             "[keyword:Focus] 1[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Villain, you get +1[icon:attack] and you may fight it this turn.",
             "[hc:instinct][hc:covert]: [keyword:Man/Woman Out of Time]"
@@ -434,7 +434,7 @@
           "cost": 7,
           "attack": "3+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-reshape-reality.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-psi-lord-reshape-reality.webp",
           "abilities": [
             "[keyword:Focus] 3[icon:recruit] [icon:5] Reveal the top card of the Villain Deck. If it's a Scheme Twist, you get +4[icon:attack] and shuffle the Villain Deck.",
             "[team:fantastic-four][team:fantastic-four]: [keyword:Man/Woman Out of Time]"
@@ -445,7 +445,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-avert-future-tragedy.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-psi-lord-avert-future-tragedy.webp",
           "sides": [
             "avert-future-tragedy"
           ]
@@ -453,7 +453,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-interdimensional-rescue.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-psi-lord-interdimensional-rescue.webp",
           "sides": [
             "interdimensional-rescue"
           ]
@@ -461,7 +461,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-slip-the-timestream.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-psi-lord-slip-the-timestream.webp",
           "sides": [
             "slip-the-timestream"
           ]
@@ -469,7 +469,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-psi-lord-reshape-reality.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-psi-lord-reshape-reality.webp",
           "sides": [
             "reshape-reality"
           ]
@@ -499,7 +499,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-stretching-credibility.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-super-skrull-stretching-credibility.webp",
           "abilities": [
             "[keyword:Focus] 2[icon:attack] [icon:5] When you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -515,7 +515,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-rock-solid.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-super-skrull-rock-solid.webp",
           "abilities": [
             "[hc:strength]: [keyword:Conqueror]",
             "[keyword:Focus] 3[icon:attack] [icon:5] You get +2[icon:recruit]."
@@ -532,7 +532,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-transparent-motives.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-super-skrull-transparent-motives.webp",
           "abilities": [
             "[keyword:Conqueror]",
             "[keyword:Focus] 3[icon:attack] [icon:5] You may KO a card from your hand or discard pile."
@@ -549,7 +549,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-put-to-the-torch.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-super-skrull-put-to-the-torch.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 1",
             "[keyword:Streets] [keyword:Conqueror] 1",
@@ -561,7 +561,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-stretching-credibility.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-super-skrull-stretching-credibility.webp",
           "sides": [
             "stretching-credibility"
           ]
@@ -569,7 +569,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-rock-solid.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-super-skrull-rock-solid.webp",
           "sides": [
             "rock-solid"
           ]
@@ -577,7 +577,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-transparent-motives.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-super-skrull-transparent-motives.webp",
           "sides": [
             "transparent-motives"
           ]
@@ -585,7 +585,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-hr-super-skrull-put-to-the-torch.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-super-skrull-put-to-the-torch.webp",
           "sides": [
             "put-to-the-torch"
           ]
@@ -606,7 +606,7 @@
           "slug": "annihilus",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mm-annihilus.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mm-annihilus.webp",
           "abilities": [
             "Always Leads: Annihilation Wave (1 player: Use 6 Henchmen.)",
             "Master Strike: Reveal the top card of the Villain Deck. If it's a Bystander, Annihilus captures it. If it's a Villain, it enters the city, captures a Bystander, and moves forward an extra space (before doing any Ambush ability)."
@@ -617,7 +617,7 @@
           "slug": "epic-annihilus",
           "tactic": false,
           "vAttack": "12+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-me-annihilus.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-me-annihilus.webp",
           "abilities": [
             "Always Leads: Annihilation Wave. Add an extra Villain Group (even for 1 player.)",
             "Master Strike: Play a card from the Villain Deck. If it's a Villain, play a second card from the Villain Deck."
@@ -628,7 +628,7 @@
           "slug": "the-cosmic-control-rod",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-annihilus-the-cosmic-control-rod.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mt-annihilus-the-cosmic-control-rod.webp",
           "abilities": [
             "Fight: Each other player reveals the top three cards of their deck, KOs the highest-cost Hero that is revealed this way and puts the rest back in any order."
           ]
@@ -638,7 +638,7 @@
           "slug": "surging-annihilation",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-annihilus-surging-annihilation.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mt-annihilus-surging-annihilation.webp",
           "abilities": [
             "Fight: Check all Annihilation Wave villains from each other player's victory pile. The one worth the most VP enters the city, and that player rescues bystanders equal to that villain's VP."
           ]
@@ -648,7 +648,7 @@
           "slug": "deploy-the-planet-killer",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-annihilus-deploy-the-planet-killer.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mt-annihilus-deploy-the-planet-killer.webp",
           "abilities": [
             "Fight: If this is not the final tactic: if Weaponized Galactus is in the city, he escapes. If Weaponized Galactus wasn't in the city and wasn't in any victory pile, then he enters the city from the Villain Deck and you shuffle the Villain Deck."
           ]
@@ -658,7 +658,7 @@
           "slug": "pull-into-the-negative-zone",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-annihilus-pull-into-the-negative-zone.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mt-annihilus-pull-into-the-negative-zone.webp",
           "abilities": [
             "Fight: The cost of each hero currently in the HQ gets -2 this turn."
           ]
@@ -677,7 +677,7 @@
           "slug": "kang-the-conqueror",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mm-kang-the-conqueror.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mm-kang-the-conqueror.webp",
           "abilities": [
             "Kang has [keyword:Conqueror 2] for each city space under a Time Incursion. (He benefits from Villains there.) Villains under a Time Incursion get +2[icon:attack].",
             "Always Leads: Timelines of Kang",
@@ -689,7 +689,7 @@
           "slug": "epic-kang-the-conqueror",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-me-kang-the-conqueror.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-me-kang-the-conqueror.webp",
           "abilities": [
             "Kang has [keyword:Conqueror 3] for each city space under a Time Incursion. Villains under a Time Incursion get +3[icon:attack].",
             "Always Leads: Timelines of Kang",
@@ -701,7 +701,7 @@
           "slug": "iron-lad-grows-up-to-become-kang",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-kang-the-conqueror-iron-lad-grows-up-to-become-kang.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mt-kang-the-conqueror-iron-lad-grows-up-to-become-kang.webp",
           "abilities": [
             "Fight: If this is not the final Tactic: Each player reveals their hand. You choose a card named “Iron Lad“ from the Escape Pile, or from [keyword:Man Out of Time], or from any player's hand or discard pile or that you played this turn. Shuffle Iron Lad into Kang's Tactics as a Mastermind Tactic that says “Fight: Gain this as a Hero.“"
           ]
@@ -711,7 +711,7 @@
           "slug": "leap-into-the-timestream",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-kang-the-conqueror-leap-into-the-timestream.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mt-kang-the-conqueror-leap-into-the-timestream.webp",
           "abilities": [
             "Fight: If this is not the final Tactic: Take another turn after this one. Don't play a card from the Villain Deck at the start of that turn."
           ]
@@ -721,7 +721,7 @@
           "slug": "pull-from-the-future",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-kang-the-conqueror-pull-from-the-future.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mt-kang-the-conqueror-pull-from-the-future.webp",
           "abilities": [
             "Fight: Reveal the top two cards of the Villain Deck. Choose a Villain revealed this way to enter an empty city space under a Time Incursion. Put the rest back in any order."
           ]
@@ -731,7 +731,7 @@
           "slug": "savior-from-another-timeline",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-mt-kang-the-conqueror-savior-from-another-timeline.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-mt-kang-the-conqueror-savior-from-another-timeline.webp",
           "abilities": [
             "Fight: You may gain a Hero from any HQ space under a Time Incurion. Send it as a [keyword:Man or Woman Out of Time]."
           ]
@@ -751,7 +751,7 @@
           "slug": "annihilation-armada",
           "vp": "2",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-vi-annihilation-wave-annihilation-armada.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-annihilation-wave-annihilation-armada.webp",
           "abilities": [
             "Ambush: A Henchmen Villain from your Victory Pile enters the city."
           ]
@@ -761,7 +761,7 @@
           "slug": "queens-of-annihilation",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-vi-annihilation-wave-queens-of-annihilation.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-annihilation-wave-queens-of-annihilation.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, play it.",
             "Fight: KO one of your Heroes."
@@ -772,7 +772,7 @@
           "slug": "ravenous",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-vi-annihilation-wave-ravenous.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-annihilation-wave-ravenous.webp",
           "abilities": [
             "Ambush: Ravenous swaps places with an Annihilation Wave Villain that isn't Weaponized Galactus.",
             "Escape: Each player reveals a [hc:strength] Hero or gains a wound."
@@ -783,7 +783,7 @@
           "slug": "weaponized-galactus",
           "vp": "7",
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-vi-annihilation-wave-weaponized-galactus.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-annihilation-wave-weaponized-galactus.webp",
           "abilities": [
             "Ambush: Weaponized Galactus swaps places with the leftmost Villain in the city.",
             "Escape: Destroy the leftmost city space. If this destroys the last city space, Evil Wins. Otherwise, each player gains a Wound, and you shuffle Weaponized Galactus back into the Villain Deck. Any Villain from the destroyed city space escapes."
@@ -802,7 +802,7 @@
           "slug": "immortus",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-vi-timelines-of-kang-immortus.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-timelines-of-kang-immortus.webp",
           "abilities": [
             "Fight: Reveal a [hc:ranged] Hero or reveal the top card of the Villain Deck. If it's a Villain worth 4VP or less, defeat it (do its Fight effect) and put Immortus in its place.",
             "Escape: Each player reveals a [hc:ranged] Hero or gains a Wound. Shuffle Immortus back into the Villain Deck."
@@ -813,7 +813,7 @@
           "slug": "iron-lad",
           "vp": null,
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-vi-timelines-of-kang-iron-lad.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-timelines-of-kang-iron-lad.webp",
           "abilities": [
             "Fight: The player of your choice gains this as a Hero.",
             "[hc:tech]: [keyword:Man/Woman Out of Time]"
@@ -824,7 +824,7 @@
           "slug": "pharaoh-rama-tut",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-vi-timelines-of-kang-pharaoh-rama-tut.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-timelines-of-kang-pharaoh-rama-tut.webp",
           "abilities": [
             "Ambush: If the Bridge is empty, move a Villain to the Bridge.",
             "Fight: Send a [hc:strength] or [hc:instinct] Hero you played this turn as a [keyword:Man/Woman Out of Time]."
@@ -835,7 +835,7 @@
           "slug": "scarlet-centurion",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/anni/anni-vi-timelines-of-kang-scarlet-centurion.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-timelines-of-kang-scarlet-centurion.webp",
           "abilities": [
             "Ambush: Reveal your hand and send your highest-cost Hero as a [keyword:Man/Woman Out of Time].",
             "Fight: If you played a [hc:covert] Hero this turn, KO one of your Heroes."
@@ -850,7 +850,7 @@
       "id": 138,
       "name": "Pulse Waves From the Negative Zone",
       "slug": "pulse-waves-from-the-negative-zone",
-      "imageUrl": "https://images.barefootbetters.com/anni/anni-sc-pulse-waves-from-the-negative-zone.webp",
+      "imageUrl": "https://images.legendary-arena.com/anni/anni-sc-pulse-waves-from-the-negative-zone.webp",
       "cards": [
         {
           "abilities": [
@@ -866,7 +866,7 @@
       "id": 139,
       "name": "Sneak Attack the Heroes' Homes",
       "slug": "sneak-attack-the-heroes-homes",
-      "imageUrl": "https://images.barefootbetters.com/anni/anni-sc-sneak-attack-the-heroes-homes.webp",
+      "imageUrl": "https://images.legendary-arena.com/anni/anni-sc-sneak-attack-the-heroes-homes.webp",
       "cards": [
         {
           "abilities": [
@@ -881,7 +881,7 @@
       "id": 140,
       "name": "Put Humanity on Trial",
       "slug": "put-humanity-on-trial",
-      "imageUrl": "https://images.barefootbetters.com/anni/anni-sc-put-humanity-on-trial.webp",
+      "imageUrl": "https://images.legendary-arena.com/anni/anni-sc-put-humanity-on-trial.webp",
       "cards": [
         {
           "abilities": [
@@ -900,7 +900,7 @@
       "id": 141,
       "name": "Breach Parallel Dimensions",
       "slug": "breach-parallel-dimensions",
-      "imageUrl": "https://images.barefootbetters.com/anni/anni-sc-breach-parallel-dimensions.webp",
+      "imageUrl": "https://images.legendary-arena.com/anni/anni-sc-breach-parallel-dimensions.webp",
       "cards": [
         {
           "abilities": [

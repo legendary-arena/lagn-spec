@@ -26,7 +26,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-phase-out.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-phase-out.webp",
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile. If you do, you get +1[icon:attack]."
           ]
@@ -42,7 +42,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-infiltrate-hq.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-infiltrate-hq.webp",
           "abilities": [
             "You may put a Hero from the HQ on the bottom of the Hero Deck. The Hero that replaces it in the HQ costs 1 less during this turn."
           ]
@@ -58,7 +58,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-disrupt-circuits.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-disrupt-circuits.webp",
           "abilities": [
             "You get +1 [icon:attack] for each [hc:tech] Hero in the HQ."
           ]
@@ -74,7 +74,7 @@
           "cost": 7,
           "attack": null,
           "recruit": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-untouchable.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-untouchable.webp",
           "abilities": [
             "When any player defeats a Villain or Mastermind with a “Fight“ effect, you may discard this card to cancel that fight effect. If you do, draw three cards."
           ]
@@ -84,7 +84,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-phase-out.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-phase-out.webp",
           "sides": [
             "phase-out"
           ]
@@ -92,7 +92,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-infiltrate-hq.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-infiltrate-hq.webp",
           "sides": [
             "infiltrate-hq"
           ]
@@ -100,7 +100,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-disrupt-circuits.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-disrupt-circuits.webp",
           "sides": [
             "disrupt-circuits"
           ]
@@ -108,7 +108,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-untouchable.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-untouchable.webp",
           "sides": [
             "untouchable"
           ]
@@ -138,7 +138,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-bolt-destructive-whisper.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-destructive-whisper.webp",
           "abilities": [
             "You get +1[icon:attack] if you reveal four cards with no rules text."
           ]
@@ -154,7 +154,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-bolt-speak-no-words.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-speak-no-words.webp",
           "abilities": []
         },
         {
@@ -168,7 +168,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-bolt-silence-is-golden.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-silence-is-golden.webp",
           "abilities": [
             "Choose a card you played this turn with no rules text. You get its [icon:recruit] and [icon:attack] again."
           ]
@@ -184,7 +184,7 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-bolt-hypersonic-scream.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-hypersonic-scream.webp",
           "abilities": [
             "For each card with no rules text you played this turn, draw a card."
           ]
@@ -194,7 +194,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-bolt-destructive-whisper.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-destructive-whisper.webp",
           "sides": [
             "destructive-whisper"
           ]
@@ -202,7 +202,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-bolt-speak-no-words.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-speak-no-words.webp",
           "sides": [
             "speak-no-words"
           ]
@@ -210,7 +210,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-bolt-silence-is-golden.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-silence-is-golden.webp",
           "sides": [
             "silence-is-golden"
           ]
@@ -218,7 +218,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-bolt-hypersonic-scream.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-hypersonic-scream.webp",
           "sides": [
             "hypersonic-scream"
           ]
@@ -248,7 +248,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-panther-catlike-reflexes.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-catlike-reflexes.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -264,7 +264,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-panther-multifaceted-genius.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-multifaceted-genius.webp",
           "abilities": [
             "You get +1[icon:attack] for each other multicolored card you played this turn."
           ]
@@ -280,7 +280,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-panther-stalk-the-urban-jungle.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-stalk-the-urban-jungle.webp",
           "abilities": [
             "Whenever you defeat a Villain on the Rooftops or Streets this turn, you may KO one of your cards or a card from your discard pile."
           ]
@@ -296,7 +296,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-panther-king-of-wakanda.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-king-of-wakanda.webp",
           "abilities": [
             "Gain three [rule:Sidekicks].",
             "[team:illuminati]: Put them on top of your deck."
@@ -307,7 +307,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-panther-catlike-reflexes.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-catlike-reflexes.webp",
           "sides": [
             "catlike-reflexes"
           ]
@@ -315,7 +315,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-panther-multifaceted-genius.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-multifaceted-genius.webp",
           "sides": [
             "multifaceted-genius"
           ]
@@ -323,7 +323,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-panther-stalk-the-urban-jungle.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-stalk-the-urban-jungle.webp",
           "sides": [
             "stalk-the-urban-jungle"
           ]
@@ -331,7 +331,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-black-panther-king-of-wakanda.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-king-of-wakanda.webp",
           "sides": [
             "king-of-wakanda"
           ]
@@ -361,7 +361,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-captain-marvel-absorb-energies.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-absorb-energies.webp",
           "abilities": [
             "[hc:ranged]: For each other [hc:ranged] Hero you have played this turn, you get+1[icon:recruit]."
           ]
@@ -377,7 +377,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-captain-marvel-supersonic-flight.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-supersonic-flight.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -393,7 +393,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-captain-marvel-marvelous-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-marvelous-strength.webp",
           "abilities": [
             "[hc:strength]: For each other [hc:strength] Hero you have played this turn, you get +1[icon:attack]."
           ]
@@ -409,7 +409,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-captain-marvel-cosmic-energies.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-cosmic-energies.webp",
           "abilities": [
             "[hc:strength][hc:strength][hc:ranged][hc:ranged]: You get +6[icon:attack]."
           ]
@@ -419,7 +419,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-captain-marvel-absorb-energies.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-absorb-energies.webp",
           "sides": [
             "absorb-energies"
           ]
@@ -427,7 +427,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-captain-marvel-supersonic-flight.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-supersonic-flight.webp",
           "sides": [
             "supersonic-flight"
           ]
@@ -435,7 +435,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-captain-marvel-marvelous-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-marvelous-strength.webp",
           "sides": [
             "marvelous-strength"
           ]
@@ -443,7 +443,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-captain-marvel-cosmic-energies.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-cosmic-energies.webp",
           "sides": [
             "cosmic-energies"
           ]
@@ -473,7 +473,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-dr-strange-cloak-of-levitation.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-cloak-of-levitation.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top card of your deck. Draw it or [keyword:Teleport] it."
           ]
@@ -489,7 +489,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-dr-strange-trust-me-im-a-doctor.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-trust-me-im-a-doctor.webp",
           "abilities": [
             "[team:illuminati]: You may KO a card from your hand or discard pile. If you do, you get +1[icon:recruit]."
           ]
@@ -505,7 +505,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-dr-strange-fight-the-future.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-fight-the-future.webp",
           "abilities": [
             "[hc:instinct]: Reveal the top card of the Villain Deck. If it's a Villain, you get +2[icon:attack] and may fight that Villain this turn."
           ]
@@ -521,7 +521,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-dr-strange-sorcerer-supreme.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-sorcerer-supreme.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw any number of them and [keyword:Teleport] the rest."
           ]
@@ -531,7 +531,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-dr-strange-cloak-of-levitation.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-cloak-of-levitation.webp",
           "sides": [
             "cloak-of-levitation"
           ]
@@ -539,7 +539,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-dr-strange-trust-me-im-a-doctor.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-trust-me-im-a-doctor.webp",
           "sides": [
             "trust-me-im-a-doctor"
           ]
@@ -547,7 +547,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-dr-strange-fight-the-future.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-fight-the-future.webp",
           "sides": [
             "fight-the-future"
           ]
@@ -555,7 +555,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-dr-strange-sorcerer-supreme.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-sorcerer-supreme.webp",
           "sides": [
             "sorcerer-supreme"
           ]
@@ -585,7 +585,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-lady-thor-mysterious-origin.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-mysterious-origin.webp",
           "abilities": [
             "Once per turn, if you made at least 6[icon:recruit] this turn, draw a card."
           ]
@@ -601,7 +601,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-lady-thor-chosen-by-asgard.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-chosen-by-asgard.webp",
           "abilities": [
             "Once per turn, if you made at least 6[icon:recruit] this turn, you get +2[icon:attack]."
           ]
@@ -617,7 +617,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-lady-thor-heir-to-the-hammer.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-heir-to-the-hammer.webp",
           "abilities": [
             "[hc:strength][hc:ranged]: You get +2[icon:attack]."
           ]
@@ -633,7 +633,7 @@
           "cost": 8,
           "attack": "0+",
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-lady-thor-living-thunderstorm.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-living-thunderstorm.webp",
           "abilities": [
             "Once per turn, if you made at least 6[icon:recruit] this turn, you get +6[icon:attack]."
           ]
@@ -643,7 +643,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-lady-thor-mysterious-origin.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-mysterious-origin.webp",
           "sides": [
             "mysterious-origin"
           ]
@@ -651,7 +651,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-lady-thor-chosen-by-asgard.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-chosen-by-asgard.webp",
           "sides": [
             "chosen-by-asgard"
           ]
@@ -659,7 +659,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-lady-thor-heir-to-the-hammer.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-heir-to-the-hammer.webp",
           "sides": [
             "heir-to-the-hammer"
           ]
@@ -667,7 +667,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-lady-thor-living-thunderstorm.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-living-thunderstorm.webp",
           "sides": [
             "living-thunderstorm"
           ]
@@ -697,7 +697,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-magik-rally-the-new-mutants.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-rally-the-new-mutants.webp",
           "abilities": [
             "Gain a [rule:Sidekick].",
             "[hc:covert]: Gain another [rule:Sidekick]."
@@ -714,7 +714,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-magik-travel-through-limbo.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-travel-through-limbo.webp",
           "abilities": [
             "[keyword:Teleport]",
             "[hc:ranged]: You get +2[icon:attack]."
@@ -731,7 +731,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-magik-dimensional-portal.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-dimensional-portal.webp",
           "abilities": [
             "[keyword:Teleport]",
             "For each [rule:Sidekick] you played this turn, you get +1[icon:attack]."
@@ -748,7 +748,7 @@
           "cost": 7,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-magik-wield-the-soulsword.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-wield-the-soulsword.webp",
           "abilities": [
             "[keyword:Teleport]",
             "Choose a Villain or Mastermind in your Victory Pile. You get +[icon:attack] equal to its printed VP."
@@ -759,7 +759,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-magik-rally-the-new-mutants.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-rally-the-new-mutants.webp",
           "sides": [
             "rally-the-new-mutants"
           ]
@@ -767,7 +767,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-magik-travel-through-limbo.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-travel-through-limbo.webp",
           "sides": [
             "travel-through-limbo"
           ]
@@ -775,7 +775,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-magik-dimensional-portal.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-dimensional-portal.webp",
           "sides": [
             "dimensional-portal"
           ]
@@ -783,7 +783,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-magik-wield-the-soulsword.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-wield-the-soulsword.webp",
           "sides": [
             "wield-the-soulsword"
           ]
@@ -813,7 +813,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-maximus-mental-domination.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-mental-domination.webp",
           "abilities": [
             "[hc:covert]: Defeat a Henchman Villain for free"
           ]
@@ -829,7 +829,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-maximus-enslave-the-will.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-enslave-the-will.webp",
           "abilities": [
             "[hc:tech]: Whenever you defeat a Villain this turn, you gain a [rule:Sidekick]."
           ]
@@ -845,7 +845,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-maximus-pieces-on-a-chessboard.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-pieces-on-a-chessboard.webp",
           "abilities": [
             "You may have a Henchman Villain from your Victory Pile enter the city. If you do, draw a card."
           ]
@@ -861,7 +861,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-maximus-inhuman-mastery.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-inhuman-mastery.webp",
           "abilities": [
             "Each other player reveals a[hc:tech] hero or chooses a Henchman Villain from their Victory Pile. You defeat all those Henchmen for free.",
             "[team:cabal]: You get +1[icon:attack]for each Henchman you defeated this turn."
@@ -872,7 +872,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-maximus-mental-domination.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-mental-domination.webp",
           "sides": [
             "mental-domination"
           ]
@@ -880,7 +880,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-maximus-enslave-the-will.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-enslave-the-will.webp",
           "sides": [
             "enslave-the-will"
           ]
@@ -888,7 +888,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-maximus-pieces-on-a-chessboard.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-pieces-on-a-chessboard.webp",
           "sides": [
             "pieces-on-a-chessboard"
           ]
@@ -896,7 +896,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-maximus-inhuman-mastery.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-inhuman-mastery.webp",
           "sides": [
             "inhuman-mastery"
           ]
@@ -926,7 +926,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-namor-the-sub-mariner-lead-the-armies-of-atlantis.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-lead-the-armies-of-atlantis.webp",
           "abilities": [
             "[hc:instinct]: Gain a [rule:Sidekick]."
           ]
@@ -942,7 +942,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-namor-the-sub-mariner-ruler-of-the-seas.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-ruler-of-the-seas.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:attack], usable only against Villains on the Bridge or the Mastermind."
           ]
@@ -958,7 +958,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-namor-the-sub-mariner-feed-the-sharks.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-feed-the-sharks.webp",
           "abilities": [
             "You may KO a card from your hand or discard pile. If you do, draw a card."
           ]
@@ -974,7 +974,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-namor-the-sub-mariner-imperius-rex.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-imperius-rex.webp",
           "abilities": [
             "Defeat a Villain for free.",
             "[hc:strength][hc:strength][hc:instinct][hc:instinct]: Instead, defeat the Mastermind once for free."
@@ -985,7 +985,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-namor-the-sub-mariner-lead-the-armies-of-atlantis.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-lead-the-armies-of-atlantis.webp",
           "sides": [
             "lead-the-armies-of-atlantis"
           ]
@@ -993,7 +993,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-namor-the-sub-mariner-ruler-of-the-seas.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-ruler-of-the-seas.webp",
           "sides": [
             "ruler-of-the-seas"
           ]
@@ -1001,7 +1001,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-namor-the-sub-mariner-feed-the-sharks.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-feed-the-sharks.webp",
           "sides": [
             "feed-the-sharks"
           ]
@@ -1009,7 +1009,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-namor-the-sub-mariner-imperius-rex.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-imperius-rex.webp",
           "sides": [
             "imperius-rex"
           ]
@@ -1039,7 +1039,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-old-man-logan-last-survivor.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-last-survivor.webp",
           "abilities": [
             "[hc:instinct]: You may KO a card from your hand or discard pile. If you KO a wound this way, draw a card."
           ]
@@ -1055,7 +1055,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-old-man-logan-loner.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-loner.webp",
           "abilities": [
             "If you don't recruit any heroes this turn, you get .+2[icon:attack]."
           ]
@@ -1071,7 +1071,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-old-man-logan-rage-out.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-rage-out.webp",
           "abilities": [
             "[hc:instinct][keyword:: Cross-Dimensional Wolverine Rampage.] For each other player who gained a Wound this way, you get +1[icon:attack]."
           ]
@@ -1087,7 +1087,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-old-man-logan-no-more-heroes.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-no-more-heroes.webp",
           "abilities": [
             "Reveal your hand. You get +5[icon:attack] if you haven't played any [team:shield] or [team:hydra] cards this turn and don't have any in your hand."
           ]
@@ -1097,7 +1097,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-old-man-logan-last-survivor.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-last-survivor.webp",
           "sides": [
             "last-survivor"
           ]
@@ -1105,7 +1105,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-old-man-logan-loner.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-loner.webp",
           "sides": [
             "loner"
           ]
@@ -1113,7 +1113,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-old-man-logan-rage-out.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-rage-out.webp",
           "sides": [
             "rage-out"
           ]
@@ -1121,7 +1121,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-old-man-logan-no-more-heroes.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-no-more-heroes.webp",
           "sides": [
             "no-more-heroes"
           ]
@@ -1151,7 +1151,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-proxima-midnight-inspiration-through-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-inspiration-through-power.webp",
           "abilities": []
         },
         {
@@ -1165,7 +1165,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-proxima-midnight-master-combatant.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-master-combatant.webp",
           "abilities": [
             "If the most recent Hero you have played this turn has a [icon:recruit] icon, you get +2[icon:recruit]. If it has an [icon:attack] icon, you get +2[icon:attack]."
           ]
@@ -1181,7 +1181,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-proxima-midnight-general-of-the-black-order.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-general-of-the-black-order.webp",
           "abilities": [
             "[hc:instinct]: You get +3[icon:recruit]."
           ]
@@ -1197,7 +1197,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": "4+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-proxima-midnight-supernova-spear.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-supernova-spear.webp",
           "abilities": [
             "[hc:covert]: You get +4[icon:recruit] and +4[icon:attack]."
           ]
@@ -1207,7 +1207,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-proxima-midnight-inspiration-through-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-inspiration-through-power.webp",
           "sides": [
             "inspiration-through-power"
           ]
@@ -1215,7 +1215,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-proxima-midnight-master-combatant.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-master-combatant.webp",
           "sides": [
             "master-combatant"
           ]
@@ -1223,7 +1223,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-proxima-midnight-general-of-the-black-order.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-general-of-the-black-order.webp",
           "sides": [
             "general-of-the-black-order"
           ]
@@ -1231,7 +1231,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-proxima-midnight-supernova-spear.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-supernova-spear.webp",
           "sides": [
             "supernova-spear"
           ]
@@ -1261,7 +1261,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-superior-iron-man-armor-upgrades.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-armor-upgrades.webp",
           "abilities": [
             "[hc:tech]: You get +2[icon:attack]."
           ]
@@ -1277,7 +1277,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-superior-iron-man-optimized-technology.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-optimized-technology.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -1293,7 +1293,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-superior-iron-man-superior-to-others.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-superior-to-others.webp",
           "abilities": [
             "[hc:ranged]: Look at the top two cards of your deck. If one of them has a higher cost than the other, draw it. Put the rest back in any order."
           ]
@@ -1309,7 +1309,7 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-superior-iron-man-humblebrag.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-humblebrag.webp",
           "abilities": [
             "Draw a card for each other player who has fewer cards in their Victory Pile than you."
           ]
@@ -1319,7 +1319,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-superior-iron-man-armor-upgrades.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-armor-upgrades.webp",
           "sides": [
             "armor-upgrades"
           ]
@@ -1327,7 +1327,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-superior-iron-man-optimized-technology.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-optimized-technology.webp",
           "sides": [
             "optimized-technology"
           ]
@@ -1335,7 +1335,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-superior-iron-man-superior-to-others.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-superior-to-others.webp",
           "sides": [
             "superior-to-others"
           ]
@@ -1343,7 +1343,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-superior-iron-man-humblebrag.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-humblebrag.webp",
           "sides": [
             "humblebrag"
           ]
@@ -1373,7 +1373,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-thanos-transdimensional-overlord.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-transdimensional-overlord.webp",
           "abilities": [
             "[keyword:Teleport]",
             "You may KO a Bystander from your Victory Pile. If you do, you get +2[icon:attack]."
@@ -1390,7 +1390,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-thanos-revel-in-destruction.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-revel-in-destruction.webp",
           "abilities": [
             "[team:cabal]: KO a Bystander from the Bystander Stack. Then, you get +1[icon:recruit] for every three Bystanders in the KO pile."
           ]
@@ -1406,7 +1406,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-thanos-galactic-domination.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-galactic-domination.webp",
           "abilities": [
             "[hc:ranged]: Each other player reveals a [hc:ranged] Hero or chooses a Bystander from their Victory Pile. You “rescue“ those bystanders."
           ]
@@ -1422,7 +1422,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-thanos-utter-annihilation.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-utter-annihilation.webp",
           "abilities": [
             "KO six Bystanders from the Bystander Stack. Then, defeat any Villain or Mastermind whose [icon:attack] is less than the number of Bystanders in the KO pile."
           ]
@@ -1432,7 +1432,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-thanos-transdimensional-overlord.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-transdimensional-overlord.webp",
           "sides": [
             "transdimensional-overlord"
           ]
@@ -1440,7 +1440,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-thanos-revel-in-destruction.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-revel-in-destruction.webp",
           "sides": [
             "revel-in-destruction"
           ]
@@ -1448,7 +1448,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-thanos-galactic-domination.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-galactic-domination.webp",
           "sides": [
             "galactic-domination"
           ]
@@ -1456,7 +1456,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-thanos-utter-annihilation.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-utter-annihilation.webp",
           "sides": [
             "utter-annihilation"
           ]
@@ -1486,7 +1486,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-ultimate-spider-man-leaping-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-leaping-spider.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 2 or less, draw it.",
             "[hc:strength]: You get +2[icon:attack]."
@@ -1503,7 +1503,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-ultimate-spider-man-marvel-team-up.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-marvel-team-up.webp",
           "abilities": [
             "Gain a [rule:Sidekick].",
             "Reveal the top card of your deck. If it costs 2 or less, draw it."
@@ -1520,7 +1520,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-ultimate-spider-man-web-slinger.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-web-slinger.webp",
           "abilities": [
             "You get +2[icon:attack], usable only against the Mastermind or Villains on the Rooftops or Bridge.",
             "Reveal the top card of your deck. If it costs 2 or less, draw it."
@@ -1537,7 +1537,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-ultimate-spider-man-hero-from-another-dimension.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-hero-from-another-dimension.webp",
           "abilities": [
             "You get +2[icon:attack] for each other card you have played this turn that costs 1 or 2."
           ]
@@ -1547,7 +1547,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-ultimate-spider-man-leaping-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-leaping-spider.webp",
           "sides": [
             "leaping-spider"
           ]
@@ -1555,7 +1555,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-ultimate-spider-man-marvel-team-up.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-marvel-team-up.webp",
           "sides": [
             "marvel-team-up"
           ]
@@ -1563,7 +1563,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-ultimate-spider-man-web-slinger.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-web-slinger.webp",
           "sides": [
             "web-slinger"
           ]
@@ -1571,7 +1571,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hr-ultimate-spider-man-hero-from-another-dimension.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-hero-from-another-dimension.webp",
           "sides": [
             "hero-from-another-dimension"
           ]
@@ -1592,7 +1592,7 @@
           "slug": "madelyne-pryor-goblin-queen",
           "tactic": false,
           "vAttack": "10*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-01.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mm-madelyne-pryor-goblin-queen.webp",
           "abilities": [
             "Bystanders captured by Madelyne are “Demon Goblin“ Villains with 2[icon:attack]. You can fight them to rescue them as Bystanders. You can't fight her while she has any Demon Goblins.",
             "Always Leads: Limbo",
@@ -1604,7 +1604,7 @@
           "slug": "city-of-demon-goblins",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-02.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-madelyne-pryor-goblin-queen-city-of-demon-goblins.webp",
           "abilities": [
             "Fight: Madelyne captures five Bystanders."
           ]
@@ -1614,7 +1614,7 @@
           "slug": "corrupted-clone-of-jean-grey",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-03.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-madelyne-pryor-goblin-queen-corrupted-clone-of-jean-grey.webp",
           "abilities": [
             "Fight: Each other player reveals an [team:x-men] Hero or gains a Wound."
           ]
@@ -1624,7 +1624,7 @@
           "slug": "everyones-a-demon-on-the-inside",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-04.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-madelyne-pryor-goblin-queen-everyones-a-demon-on-the-inside.webp",
           "abilities": [
             "Fight: Madelyne captures a Bystander from each other player's Victory Pile."
           ]
@@ -1634,7 +1634,7 @@
           "slug": "gather-the-harvest",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/madelyne-pryor-05.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-madelyne-pryor-goblin-queen-gather-the-harvest.webp",
           "abilities": [
             "Fight: For each Limbo Villain in the city and/or Escape Pile, Madelyne captures a Bystander."
           ]
@@ -1653,7 +1653,7 @@
           "slug": "nimrod-super-sentinel",
           "tactic": false,
           "vAttack": "6*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-01.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mm-nimrod-super-sentinel.webp",
           "abilities": [
             "You can't fight Nimrod unless you made at least 6[icon:recruit] this turn.",
             "Always Leads: Sentinel Territories",
@@ -1665,7 +1665,7 @@
           "slug": "adapt-and-destroy",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-02.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-nimrod-super-sentinel-adapt-and-destroy.webp",
           "abilities": [
             "Fight:  Choose [icon:recruit] or [icon:attack]. Each other player reveals their hand and discards a card with that icon."
           ]
@@ -1675,7 +1675,7 @@
           "slug": "detect-mutation",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-03.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-nimrod-super-sentinel-detect-mutation.webp",
           "abilities": [
             "Fight:  Choose [icon:recruit] or [icon:attack]. Then, reveal the top card of your deck. If that card has that icon, draw it and repeat this process."
           ]
@@ -1685,7 +1685,7 @@
           "slug": "scatter-the-mutants",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-04.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-nimrod-super-sentinel-scatter-the-mutants.webp",
           "abilities": [
             "Fight:  Choose [icon:recruit] or [icon:attack]. Put all Heroes from the HQ with that icon on the bottom of the Hero Deck."
           ]
@@ -1695,7 +1695,7 @@
           "slug": "teleport-and-incarcerate",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/nimrod-05.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-nimrod-super-sentinel-teleport-and-incarcerate.webp",
           "abilities": [
             "Fight:  Choose [icon:recruit] or [icon:attack]. Then, reveal the top card of that Hero Deck. If that card has that icon, gain that card, and [keyword:Teleport] it."
           ]
@@ -1714,7 +1714,7 @@
           "slug": "wasteland-hulk",
           "tactic": false,
           "vAttack": "7+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-01.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mm-wasteland-hulk.webp",
           "abilities": [
             "Wasteland Hulk gets +3[icon:attack] for each of his Mastermind Tactics among all players' Victory Piles.",
             "Always Leads: Wasteland",
@@ -1726,7 +1726,7 @@
           "slug": "brutal-beating",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-02.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-wasteland-hulk-brutal-beating.webp",
           "abilities": [
             "Fight: Each other player counts the number of Wounds in their discard pile, then discards that many cards."
           ]
@@ -1736,7 +1736,7 @@
           "slug": "memories-of-pain",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-03.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-wasteland-hulk-memories-of-pain.webp",
           "abilities": [
             "Fight: Each other player puts two Wounds from their discard pile on top of their deck."
           ]
@@ -1746,7 +1746,7 @@
           "slug": "radioactive-regeneration",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-04.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-wasteland-hulk-radioactive-regeneration.webp",
           "abilities": [
             "Fight: KO up to two Wounds from your hand and/or discard pile."
           ]
@@ -1756,7 +1756,7 @@
           "slug": "revert-to-bruce-banner",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/wasteland-hulk-05.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-wasteland-hulk-revert-to-bruce-banner.webp",
           "abilities": [
             "Fight: You gain a [hc:tech]Hero from the HQ for free."
           ]
@@ -1775,7 +1775,7 @@
           "slug": "zombie-green-goblin",
           "tactic": false,
           "vAttack": "11+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-01.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mm-zombie-green-goblin.webp",
           "abilities": [
             "Zombie Green Goblin gets +1[icon:attack] for each Hero in the KO pile that costs 7 or more.",
             "Always Leads: The Deadlands",
@@ -1787,7 +1787,7 @@
           "slug": "army-of-cadavers",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-03.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-zombie-green-goblin-army-of-cadavers.webp",
           "abilities": [
             "Fight: [keyword:Rise of The Living Dead] (this effect never makes Mastermind Tactics return.) Then, each other player discards a card for each Villain in the city that has “[keyword:Rise of The Living Dead].“"
           ]
@@ -1797,7 +1797,7 @@
           "slug": "the-hungry-dead",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-05.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-zombie-green-goblin-the-hungry-dead.webp",
           "abilities": [
             "Fight: [keyword:Rise of The Living Dead] (this effect never makes Mastermind Tactics return.) Then, each other player gains a Wound if there are any Villains in the city with “[keyword:Rise of The Living Dead].“"
           ]
@@ -1807,7 +1807,7 @@
           "slug": "love-to-have-you-for-dinner",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-02.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-zombie-green-goblin-love-to-have-you-for-dinner.webp",
           "abilities": [
             "Fight: [keyword:Rise of The Living Dead] (this effect never makes Mastermind Tactics return.) Then, reveal the top 5 cards of the Hero Deck. KO all those Heroes that cost 7 or more. Put the rest on the bottom of the Hero Deck in random order."
           ]
@@ -1817,7 +1817,7 @@
           "slug": "reign-of-terror",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/zombie-green-goblin-04.png",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-mt-zombie-green-goblin-reign-of-terror.webp",
           "abilities": [
             "Fight: [keyword:Rise of The Living Dead] (this effect never makes Mastermind Tactics return.) Then, put all Heroes from the HQ that cost 6 or less on the bottom of the Hero Deck."
           ]
@@ -1837,7 +1837,7 @@
           "slug": "zombie-baron-zemo",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-deadlands-the-zombie-baron-zemo.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-deadlands-the-zombie-baron-zemo.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: For each of your [team:avengers] Heroes, rescue a Bystander."
@@ -1848,7 +1848,7 @@
           "slug": "zombie-loki",
           "vp": "6",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-deadlands-the-zombie-loki.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-deadlands-the-zombie-loki.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Loki ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals a [hc:strength] Hero or gains a Wound.“"
@@ -1859,7 +1859,7 @@
           "slug": "zombie-madame-hydra",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-deadlands-the-zombie-madame-hydra.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-deadlands-the-zombie-madame-hydra.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: KO one of your [team:shield] Heroes or [team:hydra] Allies."
@@ -1870,7 +1870,7 @@
           "slug": "zombie-mr-sinister",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-deadlands-the-zombie-mr-sinister.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-deadlands-the-zombie-mr-sinister.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Sinister ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Sinister captures a Bystander. Then, each player with exactly 6 cards reveals a [hc:covert] Hero or discards cards equal to the number of Bystanders Sinister has.“"
@@ -1881,7 +1881,7 @@
           "slug": "zombie-m-o-d-o-k",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-deadlands-the-zombie-m-o-d-o-k.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-deadlands-the-zombie-m-o-d-o-k.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: KO one of your heroes with a [icon:recruit] icon."
@@ -1892,7 +1892,7 @@
           "slug": "zombie-mysterio",
           "vp": "6",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-deadlands-the-zombie-mysterio.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-deadlands-the-zombie-mysterio.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Shuffle this card into the Mastermind's face-down Mastermind Tactics. It becomes a Mastermind Tactic that says “Fight: Draw two cards.“"
@@ -1903,7 +1903,7 @@
           "slug": "zombie-thanos",
           "vp": "6",
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-deadlands-the-zombie-thanos.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-deadlands-the-zombie-thanos.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Thanos ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals their hand and KOs one of their non-grey Heroes.“"
@@ -1914,7 +1914,7 @@
           "slug": "zombie-venom",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-deadlands-the-zombie-venom.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-deadlands-the-zombie-venom.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "You can't defeat Zombie Venom unless you have a [hc:covert] Hero.",
@@ -1934,7 +1934,7 @@
           "slug": "apocalyptic-blink",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-blink.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-blink.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. Draw it or [keyword:Teleport] it."
           ]
@@ -1944,7 +1944,7 @@
           "slug": "apocalyptic-magneto",
           "vp": "6",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-magneto.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-magneto.webp",
           "abilities": [
             "Fight: Gain an [team:x-men] Hero from the HQ for free.",
             "Escape: Magneto ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals an [team:x-men] Hero or discards down to 4 cards.“"
@@ -1955,7 +1955,7 @@
           "slug": "apocalyptic-rogue",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-rogue.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-rogue.webp",
           "abilities": [
             "Fight: Reveal the top card of the Hero deck. The player of your choice gains it.",
             "Escape: Reveal the top card of the Hero deck. Each player reveals their hand and discards a card of that class."
@@ -1966,7 +1966,7 @@
           "slug": "apocalyptic-weapon-x",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-weapon-x.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-weapon-x.webp",
           "abilities": [
             "Fight: KO one of your heroes.",
             "Escape: [keyword:Cross-Dimensional Wolverine Rampage]"
@@ -1985,7 +1985,7 @@
           "slug": "inferno-colossus",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-limbo-inferno-colossus.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-limbo-inferno-colossus.webp",
           "abilities": [
             "Ambush: The Mastermind captures a Bystander.",
             "Fight: KO one of your Heroes."
@@ -1996,7 +1996,7 @@
           "slug": "inferno-cyclops",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-limbo-inferno-cyclops.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-limbo-inferno-cyclops.webp",
           "abilities": [
             "Ambush: Inferno Cyclops captures a Bystander.",
             "Escape: The Mastermind captures all the Bystanders this Villain had.",
@@ -2008,7 +2008,7 @@
           "slug": "inferno-darkchilde",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-limbo-inferno-darkchilde.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-limbo-inferno-darkchilde.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. KO it or [keyword:Teleport] it.",
             "Escape: Each player [keyword:Teleports] a random card from their hand."
@@ -2019,7 +2019,7 @@
           "slug": "inferno-nightcrawler",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-limbo-inferno-nightcrawler.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-limbo-inferno-nightcrawler.webp",
           "abilities": [
             "Fight: Up to two cards in your hand that have a [icon:recruit] icon gain [keyword:Teleport] this turn."
           ]
@@ -2037,7 +2037,7 @@
           "slug": "ultimate-captain-america",
           "vp": null,
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-manhattan-earth-1610-ultimate-captain-america.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-manhattan-earth-1610-ultimate-captain-america.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "You get +1[icon:attack] for each color of Hero you have. (including [hc:strength] and grey)"
@@ -2048,7 +2048,7 @@
           "slug": "ultimate-captain-marvel",
           "vp": null,
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-manhattan-earth-1610-ultimate-captain-marvel.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-manhattan-earth-1610-ultimate-captain-marvel.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:Teleport]"
@@ -2059,7 +2059,7 @@
           "slug": "ultimate-thor",
           "vp": null,
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-manhattan-earth-1610-ultimate-thor.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-manhattan-earth-1610-ultimate-thor.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "Escape: [keyword:Cross-Dimensional Thor Rampage]",
@@ -2071,7 +2071,7 @@
           "slug": "ultimate-wasp",
           "vp": null,
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-manhattan-earth-1610-ultimate-wasp.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-manhattan-earth-1610-ultimate-wasp.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[hc:covert]: You get +2[icon:attack]."
@@ -2090,7 +2090,7 @@
           "slug": "colossus-of-future-past",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-sentinel-territories-colossus-of-future-past.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-sentinel-territories-colossus-of-future-past.webp",
           "abilities": [
             "Fight: Colossus alters the future: Don't play a Villain card at the beginning of next turn."
           ]
@@ -2100,7 +2100,7 @@
           "slug": "kate-pryde-of-future-past",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-sentinel-territories-kate-pryde-of-future-past.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-sentinel-territories-kate-pryde-of-future-past.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit]. Then, Kate Pryde alters the future: At the beginning of the next player's turn, that player gets +1[icon:recruit]."
           ]
@@ -2110,7 +2110,7 @@
           "slug": "rachel-summers-of-future-past",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-sentinel-territories-rachel-summers-of-future-past.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-sentinel-territories-rachel-summers-of-future-past.webp",
           "abilities": [
             "Fight: Rachel Summers alters the future: During the next player's turn, all Villains and the Mastermind get -1[icon:attack].",
             "Escape: This turn, all Villains and the Mastermind get +1[icon:attack]."
@@ -2121,7 +2121,7 @@
           "slug": "wolverine-of-future-past",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-sentinel-territories-wolverine-of-future-past.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-sentinel-territories-wolverine-of-future-past.webp",
           "abilities": [
             "Fight: Wolverine alters the future: At the start of the next player's turn, you draw a card, and that player draws a card.",
             "Escape: [keyword:Cross-Dimensional Wolverine Rampage]"
@@ -2140,7 +2140,7 @@
           "slug": "the-hulk-gang",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-wasteland-the-hulk-gang.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-wasteland-the-hulk-gang.webp",
           "abilities": [
             "Fight: [keyword:Cross-Dimensional Hulk Rampage]",
             "Escape: Same effect."
@@ -2151,7 +2151,7 @@
           "slug": "wasteland-kingpin",
           "vp": "6",
           "vAttack": "11",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-wasteland-wasteland-kingpin.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-wasteland-wasteland-kingpin.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Escape: Kingpin ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals an [hc:instinct] Hero or discards their hand and draws 5 cards.“"
@@ -2162,7 +2162,7 @@
           "slug": "wasteland-hawkeye",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-wasteland-wasteland-hawkeye.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-wasteland-wasteland-hawkeye.webp",
           "abilities": [
             "Ambush: Wasteland Hawkeye captures a Bystander.",
             "Fight: Each other player draws a card, or each other player discards a card."
@@ -2173,7 +2173,7 @@
           "slug": "wasteland-spider-girl",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-vi-wasteland-wasteland-spider-girl.webp",
+          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-wasteland-wasteland-spider-girl.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. If it costs 2 or less, KO it."
           ]
@@ -2186,7 +2186,7 @@
       "id": 13,
       "name": "Ghost Racers",
       "slug": "ghost-racers",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hm-ghost-racers.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hm-ghost-racers.webp",
       "abilities": [
         "Ambush: [keyword:Rise of The Living Dead]",
         "Fight: Reveal a [hc:covert] Hero or KO one of your Heroes with an [icon:attack] icon."
@@ -2196,7 +2196,7 @@
       "id": 14,
       "name": "M.O.D.O.K.s",
       "slug": "m-o-d-o-k-s",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hm-m-o-d-o-k-s.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hm-m-o-d-o-k-s.webp",
       "abilities": [
         "Fight: KO a Hero from your discard pile or the HQ. If that Hero has a [icon:recruit] icon, you get +1[icon:recruit]."
       ]
@@ -2205,7 +2205,7 @@
       "id": 15,
       "name": "Thor Corps",
       "slug": "thor-corps",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-hm-thor-corps.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hm-thor-corps.webp",
       "abilities": [
         "Fight: Gain this as a Hero.",
         "[hc:strength][hc:ranged]: You get +1[icon:recruit]."
@@ -2217,7 +2217,7 @@
       "id": 40,
       "name": "Build an Army of Annihilation",
       "slug": "build-an-army-of-annihilation",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-sc-build-an-army-of-annihilation.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sc-build-an-army-of-annihilation.webp",
       "cards": [
         {
           "abilities": [
@@ -2232,7 +2232,7 @@
       "id": 41,
       "name": "Corrupt the Next Generation of Heroes",
       "slug": "corrupt-the-next-generation-of-heroes",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-sc-corrupt-the-next-generation-of-heroes.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sc-corrupt-the-next-generation-of-heroes.webp",
       "cards": [
         {
           "abilities": [
@@ -2249,7 +2249,7 @@
       "id": 42,
       "name": "Crush Them With My Bare Hands",
       "slug": "crush-them-with-my-bare-hands",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-sc-crush-them-with-my-bare-hands.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sc-crush-them-with-my-bare-hands.webp",
       "cards": [
         {
           "abilities": [
@@ -2264,7 +2264,7 @@
       "id": 43,
       "name": "Dark Alliance",
       "slug": "dark-alliance",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-sc-dark-alliance.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sc-dark-alliance.webp",
       "cards": [
         {
           "abilities": [
@@ -2281,7 +2281,7 @@
       "id": 44,
       "name": "Fragmented Realities",
       "slug": "fragmented-realities",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-sc-fragmented-realities.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sc-fragmented-realities.webp",
       "cards": [
         {
           "abilities": [
@@ -2297,7 +2297,7 @@
       "id": 45,
       "name": "Master of Tyrants",
       "slug": "master-of-tyrants",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-sc-master-of-tyrants.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sc-master-of-tyrants.webp",
       "cards": [
         {
           "abilities": [
@@ -2313,7 +2313,7 @@
       "id": 46,
       "name": "Pan-Dimensional Plague",
       "slug": "pan-dimensional-plague",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-sc-pan-dimensional-plague.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sc-pan-dimensional-plague.webp",
       "cards": [
         {
           "abilities": [
@@ -2329,7 +2329,7 @@
       "id": 47,
       "name": "Smash Two Dimensions Together",
       "slug": "smash-two-dimensions-together",
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-sc-smash-two-dimensions-together.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sc-smash-two-dimensions-together.webp",
       "cards": [
         {
           "abilities": [
@@ -2349,7 +2349,7 @@
       "name": "Banker",
       "slug": "banker",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/ssw1/ssw1-by-banker.webp",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-by-banker.webp",
       "cards": [
         {
           "qtd": 3,

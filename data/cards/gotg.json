@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-drax-the-destroyer-knives-of-the-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-knives-of-the-hunter.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, you get +1[icon:attack]."
@@ -43,7 +43,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-drax-the-destroyer-interstellar-tracker.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-interstellar-tracker.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[hc:instinct]: You may KO the card you discarded this way."
@@ -60,7 +60,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-drax-the-destroyer-the-destroyer.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-the-destroyer.webp",
           "abilities": [
             "[team:guardians-of-the-galaxy]: Each other player reveals an [hc:instinct] Hero or discards an Artifact they control. For each Artifact discarded this way, you gain a [rule:Shard]."
           ]
@@ -76,7 +76,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-drax-the-destroyer-avatar-of-destruction.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-avatar-of-destruction.webp",
           "abilities": [
             "Double the [icon:attack] you have."
           ]
@@ -86,7 +86,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-drax-the-destroyer-knives-of-the-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-knives-of-the-hunter.webp",
           "sides": [
             "knives-of-the-hunter"
           ]
@@ -94,7 +94,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-drax-the-destroyer-interstellar-tracker.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-interstellar-tracker.webp",
           "sides": [
             "interstellar-tracker"
           ]
@@ -102,7 +102,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-drax-the-destroyer-the-destroyer.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-the-destroyer.webp",
           "sides": [
             "the-destroyer"
           ]
@@ -110,7 +110,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-drax-the-destroyer-avatar-of-destruction.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-avatar-of-destruction.webp",
           "sides": [
             "avatar-of-destruction"
           ]
@@ -140,7 +140,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-gamora-bounty-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-bounty-hunter.webp",
           "abilities": [
             "A Villain gains a [rule:Shard]."
           ]
@@ -156,7 +156,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-gamora-deadliest-woman-in-the-universe.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-deadliest-woman-in-the-universe.webp",
           "abilities": [
             "Gain two [rule:Shards].",
             "[hc:covert]: Gain another [rule:Shard]."
@@ -173,7 +173,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-gamora-galactic-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-galactic-assassin.webp",
           "abilities": [
             "A Villain of your choice gets no [icon:attack] from [rule:Shards] this turn.",
             "[hc:covert][hc:covert]: The Mastermind gets no [icon:attack] from [rule:Shards] this turn."
@@ -190,7 +190,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-gamora-godslayer-blade.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-godslayer-blade.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, gain two [rule:Shards].",
@@ -202,7 +202,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-gamora-bounty-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-bounty-hunter.webp",
           "sides": [
             "bounty-hunter"
           ]
@@ -210,7 +210,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-gamora-deadliest-woman-in-the-universe.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-deadliest-woman-in-the-universe.webp",
           "sides": [
             "deadliest-woman-in-the-universe"
           ]
@@ -218,7 +218,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-gamora-galactic-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-galactic-assassin.webp",
           "sides": [
             "galactic-assassin"
           ]
@@ -226,7 +226,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-gamora-godslayer-blade.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-godslayer-blade.webp",
           "sides": [
             "godslayer-blade"
           ]
@@ -256,7 +256,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-surviving-sprig.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-surviving-sprig.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -272,7 +272,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-prune-the-growths.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-prune-the-growths.webp",
           "abilities": [
             "[hc:strength]: You may KO a card from your hand or discard pile. If you do, gain a [rule:Shard]."
           ]
@@ -288,7 +288,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-groot-and-branches.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-groot-and-branches.webp",
           "abilities": [
             "Gain two [rule:Shards]. You may spend Shards to get [icon:recruit] this turn.",
             "[hc:covert]: You may choose another player. That player gains a [rule:Shard]."
@@ -305,7 +305,7 @@
           "cost": 8,
           "attack": null,
           "recruit": "5",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-i-am-groot.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-i-am-groot.webp",
           "abilities": [
             "When you recruit your next Hero this turn, you gain [rule:Shards] equal to that Hero's cost."
           ]
@@ -315,7 +315,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-surviving-sprig.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-surviving-sprig.webp",
           "sides": [
             "surviving-sprig"
           ]
@@ -323,7 +323,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-prune-the-growths.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-prune-the-growths.webp",
           "sides": [
             "prune-the-growths"
           ]
@@ -331,7 +331,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-groot-and-branches.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-groot-and-branches.webp",
           "sides": [
             "groot-and-branches"
           ]
@@ -339,7 +339,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-i-am-groot.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-i-am-groot.webp",
           "sides": [
             "i-am-groot"
           ]
@@ -369,7 +369,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-rocket-raccoon-gritty-scavenger.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-gritty-scavenger.webp",
           "abilities": [
             "You may discard a card. If you do, draw a card."
           ]
@@ -385,7 +385,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-rocket-raccoon-trigger-happy.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-trigger-happy.webp",
           "abilities": [
             "[team:guardians-of-the-galaxy]: You gain a [rule:Shard] for each other [team:guardians-of-the-galaxy] Hero you played this turn."
           ]
@@ -401,7 +401,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-rocket-raccoon-incoming-detector.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-incoming-detector.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Whenever a Master Strike or Villain's Ambush ability is completed, you may gain a [rule:Shard]."
@@ -418,7 +418,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-rocket-raccoon-vengeance-is-rocket.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-vengeance-is-rocket.webp",
           "abilities": [
             "[hc:tech]: You get +1[icon:attack] for each Master Strike in the KO pile and/or stacked next to the Mastermind."
           ]
@@ -428,7 +428,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-rocket-raccoon-gritty-scavenger.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-gritty-scavenger.webp",
           "sides": [
             "gritty-scavenger"
           ]
@@ -436,7 +436,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-rocket-raccoon-trigger-happy.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-trigger-happy.webp",
           "sides": [
             "trigger-happy"
           ]
@@ -444,7 +444,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-rocket-raccoon-incoming-detector.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-incoming-detector.webp",
           "sides": [
             "incoming-detector"
           ]
@@ -452,7 +452,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-rocket-raccoon-vengeance-is-rocket.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-vengeance-is-rocket.webp",
           "sides": [
             "vengeance-is-rocket"
           ]
@@ -482,7 +482,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-star-lord-element-guns.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-element-guns.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, gain a [rule:Shard]."
@@ -499,7 +499,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-star-lord-legendary-outlaw.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-legendary-outlaw.webp",
           "abilities": [
             "Choose an Artifact any player controls with a “once per turn“ ability. Play a copy of one of those abilities."
           ]
@@ -515,7 +515,7 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-star-lord-implanted-memory-chip.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-implanted-memory-chip.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, draw a card."
@@ -532,7 +532,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-star-lord-sentient-starship.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-sentient-starship.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, gain a [rule:Shard] for each Artifact you control."
@@ -543,7 +543,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-star-lord-element-guns.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-element-guns.webp",
           "sides": [
             "element-guns"
           ]
@@ -551,7 +551,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-star-lord-legendary-outlaw.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-legendary-outlaw.webp",
           "sides": [
             "legendary-outlaw"
           ]
@@ -559,7 +559,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-star-lord-implanted-memory-chip.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-implanted-memory-chip.webp",
           "sides": [
             "implanted-memory-chip"
           ]
@@ -567,7 +567,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-star-lord-sentient-starship.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-sentient-starship.webp",
           "sides": [
             "sentient-starship"
           ]
@@ -588,7 +588,7 @@
           "slug": "supreme-intelligence-of-the-kree",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-01.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mm-supreme-intelligence-of-the-kree.webp",
           "abilities": [
             "Always Leads: Kree Starforce",
             "Master Strike: The Supreme Intelligence gains a [rule:Shard]. Then each player reveals their hand and discards each with cost equal to, and cost one higher than, the number of Shards on the Supreme Intelligence."
@@ -599,7 +599,7 @@
           "slug": "combined-knowledge-of-all-kree",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-05.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mt-supreme-intelligence-of-the-kree-combined-knowledge-of-all-kree.webp",
           "abilities": [
             "Fight: The Supreme Intelligence gains a [rule:Shard] for each Kree Villain in the city and/or the Escape Pile."
           ]
@@ -609,7 +609,7 @@
           "slug": "cosmic-omniscience",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-04.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mt-supreme-intelligence-of-the-kree-cosmic-omniscience.webp",
           "abilities": [
             "Fight: The Supreme Intelligence gains a [rule:Shard] for each Master Strike in the KO pile."
           ]
@@ -619,7 +619,7 @@
           "slug": "countermeasure-protocols",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-03.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mt-supreme-intelligence-of-the-kree-countermeasure-protocols.webp",
           "abilities": [
             "Fight: The Supreme Intelligence gains a [rule:Shard] for each Mastermind Tactic (including this one) in any player's Victory Pile."
           ]
@@ -629,7 +629,7 @@
           "slug": "guide-kree-evolution",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/supreme-intelligence-of-the-kree-02.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mt-supreme-intelligence-of-the-kree-guide-kree-evolution.webp",
           "abilities": [
             "Fight: The Supreme Intelligence and Kree Villains in the city each gain a [rule:Shard]."
           ]
@@ -648,7 +648,7 @@
           "slug": "thanos",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-01.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mm-thanos.webp",
           "abilities": [
             "Always Leads: Infinity Gems",
             "Thanos gets -2[icon:attack] for each Infinity Gem Artifact card controlled by any player.",
@@ -660,7 +660,7 @@
           "slug": "centuries-of-envy",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-05.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mt-thanos-centuries-of-envy.webp",
           "abilities": [
             "Fight: Each other player discards an Infinity Gem Artifact card they control."
           ]
@@ -670,7 +670,7 @@
           "slug": "god-of-death",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-02.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mt-thanos-god-of-death.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and gains a Wound for each card that player has with the same card name as any card in Thanos' Bound Souls pile."
           ]
@@ -680,7 +680,7 @@
           "slug": "keeper-of-souls",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-04.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mt-thanos-keeper-of-souls.webp",
           "abilities": [
             "Fight: Gain a Hero from Thanos' Bound Souls pile. Then each other player puts a non-grey Hero from their discard pile into Thanos' Bound Souls pile."
           ]
@@ -690,7 +690,7 @@
           "slug": "the-mad-titan",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/thanos-03.png",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-mt-thanos-the-mad-titan.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards all cards with the same card name as any card in Thanos' Bound Souls pile."
           ]
@@ -710,7 +710,7 @@
           "slug": "captain-atlas",
           "vp": "4",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-kree-starforce-captain-atlas.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-captain-atlas.webp",
           "abilities": [
             "Captain Atlas gets +1[icon:attack] for each [rule:Shard] on the Mastermind.",
             "Escape: Each player loses a [rule:Shard]. Each player that cannot do so gains a Wound."
@@ -721,7 +721,7 @@
           "slug": "demon-druid",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-kree-starforce-demon-druid.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-demon-druid.webp",
           "abilities": [
             "Ambush: Another Villain in the city gains two [rule:Shards]."
           ]
@@ -731,7 +731,7 @@
           "slug": "dr-minerva",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-kree-starforce-dr-minerva.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-dr-minerva.webp",
           "abilities": [
             "Ambush: Each Kree Villain in the city gains a [rule:Shard] (including this Villain)."
           ]
@@ -741,7 +741,7 @@
           "slug": "korath-the-pursuer",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-kree-starforce-korath-the-pursuer.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-korath-the-pursuer.webp",
           "abilities": [
             "Ambush: Each player may draw a card. Korath gains a [rule:Shard] for each card drawn this way.",
             "Escape: If Korath had any [rule:Shards], each player gains a Wound."
@@ -752,7 +752,7 @@
           "slug": "ronan-the-accuser",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-kree-starforce-ronan-the-accuser.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-ronan-the-accuser.webp",
           "abilities": [
             "Ambush: Each player simultaneously points their finger to accuse another player. Each player who was accused the most gains a Wound.",
             "Escape: Same effect."
@@ -763,7 +763,7 @@
           "slug": "shatterax",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-kree-starforce-shatterax.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-shatterax.webp",
           "abilities": [
             "Fight: Put a [rule:Shard] on each Hero in the HQ. When a player gains that Hero, they gain that [rule:Shard]. If that Hero leaves the HQ some other way, return that [rule:Shard] to the supply."
           ]
@@ -773,7 +773,7 @@
           "slug": "supremor",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-kree-starforce-supremor.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-supremor.webp",
           "abilities": [
             "Ambush: Supremor and the Mastermind each gain a [rule:Shard]."
           ]
@@ -791,7 +791,7 @@
           "slug": "mind-gem",
           "vp": "0",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-infinity-gems-mind-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-infinity-gems-mind-gem.webp",
           "abilities": [
             "Ambush: Mind Gem gains a [rule:Shard] for each Scheme Twist in the KO pile and/or stacked next to the Scheme.",
             "Fight: Put this into your discard pile as an Artifact.",
@@ -803,7 +803,7 @@
           "slug": "power-gem",
           "vp": "0",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-infinity-gems-power-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-infinity-gems-power-gem.webp",
           "abilities": [
             "Ambush: Power Gem gains a [rule:Shard] for each Master Strike in the KO pile and/or stacked next to the Mastermind.",
             "Fight: Put this into your discard pile as an Artifact.",
@@ -815,7 +815,7 @@
           "slug": "reality-gem",
           "vp": "0",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-infinity-gems-reality-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-infinity-gems-reality-gem.webp",
           "abilities": [
             "Ambush: Reality Gem gains a [rule:Shard] for each Infinity Gem Villain card in the city and/or Escape pile.",
             "Fight: Put this into your discard pile as an Artifact.",
@@ -827,7 +827,7 @@
           "slug": "soul-gem",
           "vp": "0",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-infinity-gems-soul-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-infinity-gems-soul-gem.webp",
           "abilities": [
             "Ambush: Soul Gem gains a [rule:Shard] for each Villain in the city.",
             "Fight: Put this into your discard pile as an Artifact.",
@@ -839,7 +839,7 @@
           "slug": "space-gem",
           "vp": "0",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-infinity-gems-space-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-infinity-gems-space-gem.webp",
           "abilities": [
             "Ambush: Space Gem gains a [rule:Shard] for each empty space in the city.",
             "Fight: Put this into your discard pile as an Artifact.",
@@ -851,7 +851,7 @@
           "slug": "time-gem",
           "vp": "0",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-vi-infinity-gems-time-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-infinity-gems-time-gem.webp",
           "abilities": [
             "Ambush: Play another card from the Villain Deck. Time Gem gains [rule:Shards] equal to that card's printed Victory Points.",
             "Fight: Put this into your discard pile as an Artifact.",
@@ -867,7 +867,7 @@
       "id": 33,
       "name": "Forge the Infinity Gauntlet",
       "slug": "forge-the-infinity-gauntlet",
-      "imageUrl": "https://images.barefootbetters.com/gotg/gotg-sc-forge-the-infinity-gauntlet.webp",
+      "imageUrl": "https://images.legendary-arena.com/gotg/gotg-sc-forge-the-infinity-gauntlet.webp",
       "cards": [
         {
           "abilities": [
@@ -883,7 +883,7 @@
       "id": 34,
       "name": "Intergalactic Kree Nega-Bomb",
       "slug": "intergalactic-kree-nega-bomb",
-      "imageUrl": "https://images.barefootbetters.com/gotg/gotg-sc-intergalactic-kree-nega-bomb.webp",
+      "imageUrl": "https://images.legendary-arena.com/gotg/gotg-sc-intergalactic-kree-nega-bomb.webp",
       "cards": [
         {
           "abilities": [
@@ -898,7 +898,7 @@
       "id": 35,
       "name": "Kree-Skrull War, The",
       "slug": "kree-skrull-war-the",
-      "imageUrl": "https://images.barefootbetters.com/gotg/gotg-sc-kree-skrull-war-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/gotg/gotg-sc-kree-skrull-war-the.webp",
       "cards": [
         {
           "abilities": [
@@ -914,7 +914,7 @@
       "id": 36,
       "name": "Unite the Shards",
       "slug": "unite-the-shards",
-      "imageUrl": "https://images.barefootbetters.com/gotg/gotg-sc-unite-the-shards.webp",
+      "imageUrl": "https://images.legendary-arena.com/gotg/gotg-sc-unite-the-shards.webp",
       "cards": [
         {
           "abilities": [

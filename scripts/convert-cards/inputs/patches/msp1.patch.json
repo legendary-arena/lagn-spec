@@ -6,23 +6,23 @@
       "cards": [
         {
           "slug": "dangerous-rescue",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-black-widow-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-black-widow-2c1.webp",
           "slot": 1,
           "rarityLabel": "Common 1"
         },
         {
           "slug": "mission-accomplished",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-black-widow-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-black-widow-3c2.webp",
           "slot": 2,
           "rarityLabel": "Common 2"
         },
         {
           "slug": "covert-operation",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-black-widow-4u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-black-widow-4u.webp"
         },
         {
           "slug": "silent-sniper",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-black-widow-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-black-widow-7r.webp"
         }
       ],
       "id": 1,
@@ -39,19 +39,19 @@
       "cards": [
         {
           "slug": "avengers-assemble",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-captain-america-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-captain-america-3c1.webp"
         },
         {
           "slug": "perfect-teamwork",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-captain-america-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-captain-america-4c2.webp"
         },
         {
           "slug": "diving-block",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-captain-america-6u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-captain-america-6u.webp"
         },
         {
           "slug": "a-day-unlike-any-other",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-captain-america-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-captain-america-7r.webp"
         }
       ],
       "id": 2,
@@ -68,19 +68,19 @@
       "cards": [
         {
           "slug": "quick-draw",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hawkeye-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hawkeye-3c1.webp"
         },
         {
           "slug": "team-player",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hawkeye-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hawkeye-4c2.webp"
         },
         {
           "slug": "covering-fire",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hawkeye-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hawkeye-5u.webp"
         },
         {
           "slug": "impossible-trick-shot",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hawkeye-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hawkeye-7r.webp"
         }
       ],
       "id": 7,
@@ -97,19 +97,19 @@
       "cards": [
         {
           "slug": "growing-anger",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hulk-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hulk-3c1.webp"
         },
         {
           "slug": "unstoppable-hulk",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hulk-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hulk-4c2.webp"
         },
         {
           "slug": "crazed-rampage",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hulk-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hulk-5u.webp"
         },
         {
           "slug": "hulk-smash",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-hulk-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hulk-8r.webp"
         }
       ],
       "id": 8,
@@ -126,19 +126,19 @@
       "cards": [
         {
           "slug": "endless-invention",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-iron-man-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-iron-man-3c1.webp"
         },
         {
           "slug": "repulsor-rays",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-iron-man-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-iron-man-3c2.webp"
         },
         {
           "slug": "arc-reactor",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-iron-man-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-iron-man-5u.webp"
         },
         {
           "slug": "quantum-breakthrough",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-iron-man-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-iron-man-7r.webp"
         }
       ],
       "id": 9,
@@ -155,19 +155,19 @@
       "cards": [
         {
           "slug": "battlefield-promotion",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-nick-fury-4c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-nick-fury-4c1.webp"
         },
         {
           "slug": "high-tech-weaponry",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-nick-fury-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-nick-fury-3c2.webp"
         },
         {
           "slug": "legendary-commander",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-nick-fury-6u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-nick-fury-6u.webp"
         },
         {
           "slug": "pure-fury",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-nick-fury-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-nick-fury-8r.webp"
         }
       ],
       "id": 10,
@@ -184,19 +184,19 @@
       "cards": [
         {
           "slug": "odinson",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-thor-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-thor-3c1.webp"
         },
         {
           "slug": "surge-of-power",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-thor-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-thor-4c2.webp"
         },
         {
           "slug": "call-lightning",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-thor-6u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-thor-6u.webp"
         },
         {
           "slug": "god-of-thunder",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-hr-thor-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-thor-8r.webp"
         }
       ],
       "id": 14,
@@ -215,27 +215,27 @@
       "cards": [
         {
           "slug": "iron-monger",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mm-iron-monger.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mm-iron-monger.webp",
           "vAttack": "9+"
         },
         {
           "slug": "hostile-takeover",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-iron-monger-hostile-takeover.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-iron-monger-hostile-takeover.webp",
           "vAttack": 9
         },
         {
           "slug": "overloaded-arsenal",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-iron-monger-overloaded-arsenal.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-iron-monger-overloaded-arsenal.webp",
           "vAttack": 9
         },
         {
           "slug": "unexpected-betrayal",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-iron-monger-unexpected-betrayal.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-iron-monger-unexpected-betrayal.webp",
           "vAttack": 9
         },
         {
           "slug": "sonic-stunner",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-iron-monger-sonic-stunner.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-iron-monger-sonic-stunner.webp",
           "vAttack": 9
         }
       ]
@@ -246,27 +246,27 @@
       "cards": [
         {
           "slug": "loki",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mm-loki.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mm-loki.webp",
           "vAttack": 10
         },
         {
           "slug": "cruel-ruler",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-loki-cruel-ruler.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-loki-cruel-ruler.webp",
           "vAttack": 10
         },
         {
           "slug": "maniacal-tyrant",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-loki-maniacal-tyrant.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-loki-maniacal-tyrant.webp",
           "vAttack": 10
         },
         {
           "slug": "vanishing-illusions",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-loki-vanishing-illusions.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-loki-vanishing-illusions.webp",
           "vAttack": 10
         },
         {
           "slug": "whispers-and-lies",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-loki-whispers-and-lies.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-loki-whispers-and-lies.webp",
           "vAttack": 10
         }
       ],
@@ -278,27 +278,27 @@
       "cards": [
         {
           "slug": "red-skull",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mm-red-skull.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mm-red-skull.webp",
           "vAttack": 7
         },
         {
           "slug": "endless-resources",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-red-skull-endless-resources.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-red-skull-endless-resources.webp",
           "vAttack": 7
         },
         {
           "slug": "hydra-conspiracy",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-red-skull-hydra-conspiracy.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-red-skull-hydra-conspiracy.webp",
           "vAttack": 7
         },
         {
           "slug": "negablast-grenades",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-red-skull-negablast-grenades.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-red-skull-negablast-grenades.webp",
           "vAttack": 7
         },
         {
           "slug": "ruthless-dictator",
-          "imageUrl": "https://images.barefootbetters.com/msp1/msp1-mt-red-skull-ruthless-dictator.webp",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-mt-red-skull-ruthless-dictator.webp",
           "vAttack": 7
         }
       ],
@@ -347,7 +347,7 @@
     {
       "_op": "merge",
       "slug": "bystander",
-      "imageUrl": "https://images.barefootbetters.com/msp1/msp1-by.webp"
+      "imageUrl": "https://images.legendary-arena.com/msp1/msp1-by.webp"
     }
   ],
   "wounds": [
@@ -355,7 +355,7 @@
       "_op": "merge",
       "slug": "wound-ms",
       "_slug": "wound-msp1",
-      "imageUrl": "https://images.barefootbetters.com/msp1/msp1-wd.webp"
+      "imageUrl": "https://images.legendary-arena.com/msp1/msp1-wd.webp"
     }
   ],
   "schemes": [

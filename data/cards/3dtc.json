@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-howard-the-duck-traveling-companion.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-traveling-companion.webp",
           "abilities": [
             "Reveal the top card of the Bystander Deck. If it's a special Bystander, rescue it. Otherwise, put it on the bottom of that deck."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-howard-the-duck-rebel-without-a-cause.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-rebel-without-a-cause.webp",
           "abilities": [
             "Reveal the top card of your deck if it Costs 0[icon:vp] or has no team icon, draw it."
           ]
@@ -58,7 +58,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-howard-the-duck-right-place-wrong-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-right-place-wrong-time.webp",
           "abilities": [
             "You get +1[icon:attack] for each other Hero you played this turn with no team icon."
           ]
@@ -74,7 +74,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-howard-the-duck-interplanetary-visitor.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-interplanetary-visitor.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, discard one, and KO one."
           ]
@@ -84,7 +84,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-howard-the-duck-traveling-companion.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-traveling-companion.webp",
           "sides": [
             "traveling-companion"
           ]
@@ -92,7 +92,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-howard-the-duck-rebel-without-a-cause.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-rebel-without-a-cause.webp",
           "sides": [
             "rebel-without-a-cause"
           ]
@@ -100,7 +100,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-howard-the-duck-right-place-wrong-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-right-place-wrong-time.webp",
           "sides": [
             "right-place-wrong-time"
           ]
@@ -108,7 +108,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-howard-the-duck-interplanetary-visitor.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-interplanetary-visitor.webp",
           "sides": [
             "interplanetary-visitor"
           ]
@@ -138,7 +138,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-man-thing-form-from-ooze.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-form-from-ooze.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:attack] usable only against villains in the Sewers or the Mastermind."
           ]
@@ -154,7 +154,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-man-thing-burn-the-fearful.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-burn-the-fearful.webp",
           "abilities": [
             "Choose a Villain or Mastermind. If there are no other Villains adjacent to it, it gets -1[icon:attack] this turn."
           ]
@@ -170,7 +170,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-man-thing-travel-the-nexus-of-realities.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-travel-the-nexus-of-realities.webp",
           "abilities": [
             "[hc:covert]: You may move a Villain to another city space. If another Villain is already there, swap them."
           ]
@@ -186,7 +186,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-man-thing-eternity-of-solitude.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-eternity-of-solitude.webp",
           "abilities": [
             "[hc:strength]: You get +1[icon:attack] for each empty city space."
           ]
@@ -196,7 +196,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-man-thing-form-from-ooze.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-form-from-ooze.webp",
           "sides": [
             "form-from-ooze"
           ]
@@ -204,7 +204,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-man-thing-burn-the-fearful.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-burn-the-fearful.webp",
           "sides": [
             "burn-the-fearful"
           ]
@@ -212,7 +212,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-man-thing-travel-the-nexus-of-realities.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-travel-the-nexus-of-realities.webp",
           "sides": [
             "travel-the-nexus-of-realities"
           ]
@@ -220,7 +220,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-man-thing-eternity-of-solitude.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-eternity-of-solitude.webp",
           "sides": [
             "eternity-of-solitude"
           ]
@@ -248,7 +248,7 @@
             "Draw a card.",
             "[hc:tech]: Rescue a Bystander."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-black-widow-mission-accomplished.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-mission-accomplished.webp"
         },
         {
           "name": "Dangerous Rescue",
@@ -264,7 +264,7 @@
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-black-widow-dangerous-rescue.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-dangerous-rescue.webp"
         },
         {
           "name": "Covert Operation",
@@ -280,7 +280,7 @@
           "abilities": [
             "You get +1[icon:attack] for each Bystander in your Victory Pile."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-black-widow-covert-operation.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-covert-operation.webp"
         },
         {
           "name": "Silent Sniper",
@@ -296,14 +296,14 @@
           "abilities": [
             "Defeat a Villain or Mastermind that has a Bystander."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-black-widow-silent-sniper.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-silent-sniper.webp"
         }
       ],
       "physicalCards": [
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-black-widow-mission-accomplished.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-mission-accomplished.webp",
           "sides": [
             "mission-accomplished"
           ]
@@ -311,7 +311,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-black-widow-dangerous-rescue.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-dangerous-rescue.webp",
           "sides": [
             "dangerous-rescue"
           ]
@@ -319,7 +319,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-black-widow-covert-operation.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-covert-operation.webp",
           "sides": [
             "covert-operation"
           ]
@@ -327,7 +327,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-black-widow-silent-sniper.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-silent-sniper.webp",
           "sides": [
             "silent-sniper"
           ]
@@ -354,7 +354,7 @@
           "abilities": [
             "A Villain of your choice captures a Bystander."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-deadpool-here-hold-this-for-a-second.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-here-hold-this-for-a-second.webp"
         },
         {
           "name": "Hey, Can I Get a Do-over?",
@@ -370,7 +370,7 @@
           "abilities": [
             "If this is the first Hero you played this turn, you may discard the rest of your hand and draw four cards."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-deadpool-hey-can-i-get-a-do-over.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-hey-can-i-get-a-do-over.webp"
         },
         {
           "name": "Oddball",
@@ -386,7 +386,7 @@
           "abilities": [
             "You get +1[icon:attack] for each other Hero with an odd-number [icon:recruit] you played this turn."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-deadpool-oddball.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-oddball.webp"
         },
         {
           "name": "Random Acts of Unkindness",
@@ -402,14 +402,14 @@
           "abilities": [
             "You may gain a Wound to your hand. Then each player passes a card from their hand to the player on their left."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-deadpool-random-acts-of-unkindness.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-random-acts-of-unkindness.webp"
         }
       ],
       "physicalCards": [
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-deadpool-here-hold-this-for-a-second.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-here-hold-this-for-a-second.webp",
           "sides": [
             "here-hold-this-for-a-second"
           ]
@@ -417,7 +417,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-deadpool-hey-can-i-get-a-do-over.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-hey-can-i-get-a-do-over.webp",
           "sides": [
             "hey-can-i-get-a-do-over"
           ]
@@ -425,7 +425,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-deadpool-oddball.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-oddball.webp",
           "sides": [
             "oddball"
           ]
@@ -433,7 +433,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-deadpool-random-acts-of-unkindness.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-random-acts-of-unkindness.webp",
           "sides": [
             "random-acts-of-unkindness"
           ]
@@ -460,7 +460,7 @@
           "abilities": [
             "[hc:strength]: You get +1[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-hulk-growing-anger.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-growing-anger.webp"
         },
         {
           "name": "Unstoppable Hulk",
@@ -476,7 +476,7 @@
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-hulk-unstoppable-hulk.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-unstoppable-hulk.webp"
         },
         {
           "name": "Crazed Rampage",
@@ -492,7 +492,7 @@
           "abilities": [
             "Each player gains a Wound."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-hulk-crazed-rampage.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-crazed-rampage.webp"
         },
         {
           "name": "Hulk Smash",
@@ -508,14 +508,14 @@
           "abilities": [
             "[hc:strength]: You get +5[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-hulk-hulk-smash.webp"
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-hulk-smash.webp"
         }
       ],
       "physicalCards": [
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-hulk-growing-anger.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-growing-anger.webp",
           "sides": [
             "growing-anger"
           ]
@@ -523,7 +523,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-hulk-unstoppable-hulk.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-unstoppable-hulk.webp",
           "sides": [
             "unstoppable-hulk"
           ]
@@ -531,7 +531,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-hulk-crazed-rampage.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-crazed-rampage.webp",
           "sides": [
             "crazed-rampage"
           ]
@@ -539,7 +539,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hr-hulk-hulk-smash.webp",
+          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-hulk-smash.webp",
           "sides": [
             "hulk-smash"
           ]
@@ -554,7 +554,7 @@
       "id": 11,
       "name": "Circus of Crime",
       "slug": "circus-of-crime",
-      "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hm-circus-of-crime.webp",
+      "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hm-circus-of-crime.webp",
       "abilities": [
         "Fight: Reveal the top card of your deck. If it costs 0[icon:vp], KO it. Otherwise, draw it."
       ]
@@ -563,7 +563,7 @@
       "id": 12,
       "name": "Spider-Slayer",
       "slug": "spider-slayer",
-      "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-hm-spider-slayer.webp",
+      "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hm-spider-slayer.webp",
       "abilities": [
         "Fight: Reveal the top two cards of your deck. Put any that cost 2[icon:vp] or less into your hand. Put the rest back in any order."
       ]
@@ -576,7 +576,7 @@
       "name": "Bulldozer Driver",
       "slug": "bulldozer-driver",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-by-bulldozer-driver.webp",
+      "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-by-bulldozer-driver.webp",
       "cards": [
         {
           "qtd": 1,
@@ -591,7 +591,7 @@
       "name": "Double Agent of S.H.I.E.L.D.",
       "slug": "double-agent-of-shield",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-by-double-agent-of-shield.webp",
+      "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-by-double-agent-of-shield.webp",
       "cards": [
         {
           "qtd": 1,
@@ -606,7 +606,7 @@
       "name": "Fortune Teller",
       "slug": "fortune-teller",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-by-fortune-teller.webp",
+      "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-by-fortune-teller.webp",
       "cards": [
         {
           "qtd": 1,
@@ -621,7 +621,7 @@
       "name": "Photographer",
       "slug": "photographer",
       "vp": "1*",
-      "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-by-photographer.webp",
+      "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-by-photographer.webp",
       "cards": [
         {
           "qtd": 1,
@@ -636,7 +636,7 @@
       "name": "Stan Lee",
       "slug": "stan-lee",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/3dtc/3dtc-by-stan-lee.webp",
+      "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-by-stan-lee.webp",
       "cards": [
         {
           "qtd": 1,

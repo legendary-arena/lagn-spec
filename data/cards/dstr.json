@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-wand-of-watoomb.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-strange-wand-of-watoomb.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you drew a card, you may discard Wand of Watoomb to get +3[icon:attack]."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-keeper-of-the-sanctum.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-strange-keeper-of-the-sanctum.webp",
           "abilities": [
             "If you control an [keyword:Artifact], draw a card."
           ]
@@ -58,7 +58,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-book-of-cagliostro.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-strange-book-of-cagliostro.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you fought a Villain, you may discard Book of Cagliostro to get +[icon:recruit] equal to that enemy's VP."
           ]
@@ -74,7 +74,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-the-eye-of-agamotto.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-strange-the-eye-of-agamotto.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you played another [keyword:Artifact] or three other cards of the same Hero Class, you may discard the Eye of Agamotto to get +7[icon:attack]."
           ]
@@ -84,7 +84,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-wand-of-watoomb.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-strange-wand-of-watoomb.webp",
           "sides": [
             "wand-of-watoomb"
           ]
@@ -92,7 +92,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-keeper-of-the-sanctum.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-strange-keeper-of-the-sanctum.webp",
           "sides": [
             "keeper-of-the-sanctum"
           ]
@@ -100,7 +100,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-book-of-cagliostro.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-strange-book-of-cagliostro.webp",
           "sides": [
             "book-of-cagliostro"
           ]
@@ -108,7 +108,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-strange-the-eye-of-agamotto.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-strange-the-eye-of-agamotto.webp",
           "sides": [
             "the-eye-of-agamotto"
           ]
@@ -138,7 +138,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-commune-with-the-spirit-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-voodoo-commune-with-the-spirit-world.webp",
           "abilities": [
             "You may discard an [keyword:Artifact] you control or three cards from your hand. If you do, KO a card from your hand or discard pile."
           ]
@@ -154,7 +154,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-medallion-of-many-loas.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-voodoo-medallion-of-many-loas.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you have at least three Hero Classes, you may discard Medallion of Many Loas to get +1[icon:attack] for each Hero Class you have, including this one."
           ]
@@ -170,7 +170,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-staff-of-legba.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-voodoo-staff-of-legba.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you recruited a Hero, you may discard Staff of Legba to get +[icon:attack] equal to that Hero's cost."
           ]
@@ -186,7 +186,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-posessed-by-brothers-spirit.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-voodoo-posessed-by-brothers-spirit.webp",
           "abilities": [
             "The first time that one of your Heroes or a Hero from your deck or discard pile is KO'd this turn, you get +4[icon:recruit] or +4[icon:attack]."
           ]
@@ -196,7 +196,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-commune-with-the-spirit-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-voodoo-commune-with-the-spirit-world.webp",
           "sides": [
             "commune-with-the-spirit-world"
           ]
@@ -204,7 +204,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-medallion-of-many-loas.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-voodoo-medallion-of-many-loas.webp",
           "sides": [
             "medallion-of-many-loas"
           ]
@@ -212,7 +212,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-staff-of-legba.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-voodoo-staff-of-legba.webp",
           "sides": [
             "staff-of-legba"
           ]
@@ -220,7 +220,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-doctor-voodoo-posessed-by-brothers-spirit.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-doctor-voodoo-posessed-by-brothers-spirit.webp",
           "sides": [
             "posessed-by-brothers-spirit"
           ]
@@ -250,7 +250,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-prepare-dark-magic.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-clea-prepare-dark-magic.webp",
           "abilities": [
             "Draw a card. Then put a card from your hand on top of your deck."
           ]
@@ -266,7 +266,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-demonic-descendant.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-clea-demonic-descendant.webp",
           "abilities": [
             "You may make a [keyword:Demonic Bargain] to get +2[icon:recruit]."
           ]
@@ -282,7 +282,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-bind-the-dark-dimension.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-clea-bind-the-dark-dimension.webp",
           "abilities": [
             "[hc:ranged]: You may choose a player to make a [keyword:Demonic Bargain] to KO up to one Hero of their choice from their hand or discard pile."
           ]
@@ -298,7 +298,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-the-purple-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-clea-the-purple-gem.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If any cards were “revealed“, “looked at“, or “discarded“ from any deck, you may discard the Purple Gem to get +6[icon:attack]. (Just drawing or playing a card from a deck doesn't count.)"
           ]
@@ -308,7 +308,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-prepare-dark-magic.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-clea-prepare-dark-magic.webp",
           "sides": [
             "prepare-dark-magic"
           ]
@@ -316,7 +316,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-demonic-descendant.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-clea-demonic-descendant.webp",
           "sides": [
             "demonic-descendant"
           ]
@@ -324,7 +324,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-bind-the-dark-dimension.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-clea-bind-the-dark-dimension.webp",
           "sides": [
             "bind-the-dark-dimension"
           ]
@@ -332,7 +332,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-clea-the-purple-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-clea-the-purple-gem.webp",
           "sides": [
             "the-purple-gem"
           ]
@@ -362,7 +362,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-astral-confrontation.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-ancient-one-the-astral-confrontation.webp",
           "abilities": [
             "You may have a Villain from the city enter the [keyword:Astral Plane]."
           ]
@@ -378,7 +378,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-teachings-of-kamar-taj.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-ancient-one-the-teachings-of-kamar-taj.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -394,7 +394,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-war-of-the-mind.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-ancient-one-the-war-of-the-mind.webp",
           "abilities": [
             "You may fight the Mastermind using only [icon:recruit] instead of [icon:attack] this turn.",
             "[hc:covert]: You get +3[icon:recruit]."
@@ -411,7 +411,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-the-orb-of-agamotto.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-ancient-one-the-the-orb-of-agamotto.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If you fought a Villain or Mastermind, you may set aside the Orb of Agamotto to reveal the top four cards of your deck. KO up to one of them, put two of them in your hand, and put the rest back on top in any order. Then discard the Orb of Agamotto."
           ]
@@ -421,7 +421,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-astral-confrontation.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-ancient-one-the-astral-confrontation.webp",
           "sides": [
             "astral-confrontation"
           ]
@@ -429,7 +429,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-teachings-of-kamar-taj.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-ancient-one-the-teachings-of-kamar-taj.webp",
           "sides": [
             "teachings-of-kamar-taj"
           ]
@@ -437,7 +437,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-war-of-the-mind.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-ancient-one-the-war-of-the-mind.webp",
           "sides": [
             "war-of-the-mind"
           ]
@@ -445,7 +445,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-ancient-one-the-the-orb-of-agamotto.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-ancient-one-the-the-orb-of-agamotto.webp",
           "sides": [
             "the-orb-of-agamotto"
           ]
@@ -475,7 +475,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-oshtur.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-vishanti-the-oshtur.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, draw a card."
           ]
@@ -491,7 +491,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-hoggoth.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-vishanti-the-hoggoth.webp",
           "abilities": [
             "You may make a [keyword:Demonic Bargain] to get +2[icon:attack]."
           ]
@@ -507,7 +507,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-agamotto.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-vishanti-the-agamotto.webp",
           "abilities": [
             "Reveal the top card of your deck. Discard it or put it back.",
             "[hc:ranged]: You may choose a player to make a [keyword:Demonic Bargain] to draw two extra cards at the end of this turn."
@@ -524,7 +524,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-the-book-of-the-vishanti.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-vishanti-the-the-book-of-the-vishanti.webp",
           "abilities": [
             "[keyword:Ritual Artifact] — If any player gained a Wound, you may set aside the Book of the Vishanti to KO up to one Wound from any player's discard pile, then draw three cards. Then discard the Book of the Vishanti. You can use this during any player's turn."
           ]
@@ -534,7 +534,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-oshtur.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-vishanti-the-oshtur.webp",
           "sides": [
             "oshtur"
           ]
@@ -542,7 +542,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-hoggoth.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-vishanti-the-hoggoth.webp",
           "sides": [
             "hoggoth"
           ]
@@ -550,7 +550,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-agamotto.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-vishanti-the-agamotto.webp",
           "sides": [
             "agamotto"
           ]
@@ -558,7 +558,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-hr-vishanti-the-the-book-of-the-vishanti.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-hr-vishanti-the-the-book-of-the-vishanti.webp",
           "sides": [
             "the-book-of-the-vishanti"
           ]
@@ -579,7 +579,7 @@
           "slug": "nightmare",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mm-nightmare.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mm-nightmare.webp",
           "abilities": [
             "When you fight Nightmare in the [keyword:Astral Plane], instead of revealing a Tactic, KO one of your Heroes and Nightmare moves to the Mastermind Space.",
             "Always Leads: Fear Lords",
@@ -592,7 +592,7 @@
           "slug": "epic-nightmare",
           "tactic": false,
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-me-nightmare.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-me-nightmare.webp",
           "abilities": [
             "When you fight Nightmare in the [keyword:Astral Plane], instead of revealing a Tactic, KO one of your Heroes and Nightmare moves to the Mastermind Space.",
             "Always Leads: Fear Lords",
@@ -605,7 +605,7 @@
           "slug": "dont-fall-asleep",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-nightmare-dont-fall-asleep.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mt-nightmare-dont-fall-asleep.webp",
           "abilities": [
             "Fight: Each other player discards two cards with [icon:recruit] icons. Nightmare enters the [keyword:Astral Plane]."
           ]
@@ -615,7 +615,7 @@
           "slug": "dream-weaver",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-nightmare-dream-weaver.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mt-nightmare-dream-weaver.webp",
           "abilities": [
             "Fight: For each of your [hc:ranged] Heroes, rescue a Bystander. Nightmare enters the [keyword:Astral Plane]."
           ]
@@ -625,7 +625,7 @@
           "slug": "night-terrors",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-nightmare-night-terrors.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mt-nightmare-night-terrors.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:covert] Hero or gains a Wound. Nightmare enters the [keyword:Astral Plane]."
           ]
@@ -635,7 +635,7 @@
           "slug": "deadly-waking-nightmares",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-nightmare-deadly-waking-nightmares.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mt-nightmare-deadly-waking-nightmares.webp",
           "abilities": [
             "Fight: Each other player KOs one of their non-grey Heroes. Each player who KO'd a Hero this way draws a card. Nightmare enters the [keyword:Astral Plane]."
           ]
@@ -654,7 +654,7 @@
           "slug": "dormammu",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mm-dormammu.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mm-dormammu.webp",
           "abilities": [
             "Always Leads: Lords of the Netherworld",
             "Master Strike: Each player makes a [keyword:Demonic Bargain] with Dormammu to discard down to four cards."
@@ -665,7 +665,7 @@
           "slug": "epic-dormammu",
           "tactic": false,
           "vAttack": "13",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-me-dormammu.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-me-dormammu.webp",
           "abilities": [
             "Always Leads: Lords of the Netherworld",
             "Master Strike: Each player reveals the top card of their deck and discards it if it costs 0. Then each player makes a [keyword:Demonic Bargain] with Dormammu to discard down to three cards."
@@ -676,7 +676,7 @@
           "slug": "demonic-hellfire",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-dormammu-demonic-hellfire.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mt-dormammu-demonic-hellfire.webp",
           "abilities": [
             "Fight: Each other player makes a [keyword:Demonic Bargain] with Dormammu to KO a non-grey Hero from their discard pile."
           ]
@@ -686,7 +686,7 @@
           "slug": "flames-of-regency",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-dormammu-flames-of-regency.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mt-dormammu-flames-of-regency.webp",
           "abilities": [
             "Fight: Each other player makes a [keyword:Demonic Bargain] with Dormammu to discard a card with an [icon:attack] icon."
           ]
@@ -696,7 +696,7 @@
           "slug": "barter-for-souls",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-dormammu-barter-for-souls.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mt-dormammu-barter-for-souls.webp",
           "abilities": [
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with Dormammu to gain a Hero from the HQ that costs 6 or less."
           ]
@@ -706,7 +706,7 @@
           "slug": "torments-of-the-dark-dimension",
           "tactic": true,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-mt-dormammu-torments-of-the-dark-dimension.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-mt-dormammu-torments-of-the-dark-dimension.webp",
           "abilities": [
             "Fight: Each other player makes a [keyword:Demonic Bargain] with Dormammu to gain a 0-cost Hero from the KO pile."
           ]
@@ -726,7 +726,7 @@
           "slug": "nox",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-fear-lords-nox.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-fear-lords-nox.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Then, if Nox was in the city, she enters the [keyword:Astral Plane] and captures a Bystander."
           ]
@@ -736,7 +736,7 @@
           "slug": "dspayre",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-fear-lords-dspayre.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-fear-lords-dspayre.webp",
           "abilities": [
             "Ambush: D'Spayre enters the [keyword:Astral Plane] and captures a Bystander.",
             "Fight: KO a Hero. Then, if D'Spayre was in the [keyword:Astral Plane], he enters the city, ignoring his Ambush ability."
@@ -747,7 +747,7 @@
           "slug": "dreamstalker",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-fear-lords-dreamstalker.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-fear-lords-dreamstalker.webp",
           "abilities": [
             "Fight: Draw two cards. Then, if Dreamstalker was in the city, it enters the [keyword:Astral Plane].",
             "Escape: Each player discards down to four cards."
@@ -758,7 +758,7 @@
           "slug": "the-lurking-unknown",
           "vp": "3",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-fear-lords-the-lurking-unknown.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-fear-lords-the-lurking-unknown.webp",
           "abilities": [
             "Fight: Reveal the top card of the Hero Deck. You may spend [icon:recruit] equal to that card's cost to have the player of your choice gain that Hero. If you don't, the Lurking Unknown enters the [keyword:Astral Plane] (even if it was already there).",
             "Escape: Reveal the top card of the Hero Deck. Each player reveals their hand and KOs a Hero with that cost."
@@ -777,7 +777,7 @@
           "slug": "mindless-ones",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-lords-of-the-netherworld-mindless-ones.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-lords-of-the-netherworld-mindless-ones.webp",
           "abilities": [
             "Ambush: Mindless Ones capture the rightmost Hero in the HQ that costs 4 or less.",
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with the Lords of the Netherworld to gain that Hero."
@@ -788,7 +788,7 @@
           "slug": "baron-mordo",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-lords-of-the-netherworld-baron-mordo.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-lords-of-the-netherworld-baron-mordo.webp",
           "abilities": [
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with Baron Mordo to draw two extra cards at the end of this turn."
           ]
@@ -798,7 +798,7 @@
           "slug": "satana-hellstrom",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-lords-of-the-netherworld-satana-hellstrom.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-lords-of-the-netherworld-satana-hellstrom.webp",
           "abilities": [
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with Satana Hellstrom to rescue three Bystanders."
           ]
@@ -808,7 +808,7 @@
           "slug": "satannish",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-lords-of-the-netherworld-satannish.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-lords-of-the-netherworld-satannish.webp",
           "abilities": [
             "Ambush: Choose a player to make a [keyword:Demonic Bargain] with Satannish to reveal the top card of the Hero Deck and gain it if it costs 4 or less.",
             "Fight: Same effect, but cost 6 or less.",
@@ -820,7 +820,7 @@
           "slug": "umar",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/dstr/dstr-vi-lords-of-the-netherworld-umar.webp",
+          "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-lords-of-the-netherworld-umar.webp",
           "abilities": [
             "Ambush: Choose a player to make a [keyword:Demonic Bargain] with Umar to KO a Hero of their choice from the HQ.",
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with Umar to gain a Hero of their choice that costs 6 or less from the KO pile.",
@@ -836,7 +836,7 @@
       "id": 150,
       "name": "War for the Dream Dimension",
       "slug": "war-for-the-dream-dimension",
-      "imageUrl": "https://images.barefootbetters.com/dstr/dstr-sc-war-for-the-dream-dimension.webp",
+      "imageUrl": "https://images.legendary-arena.com/dstr/dstr-sc-war-for-the-dream-dimension.webp",
       "cards": [
         {
           "abilities": [
@@ -851,7 +851,7 @@
       "id": 151,
       "name": "Claim Souls for Demons",
       "slug": "claim-souls-for-demons",
-      "imageUrl": "https://images.barefootbetters.com/dstr/dstr-sc-claim-souls-for-demons.webp",
+      "imageUrl": "https://images.legendary-arena.com/dstr/dstr-sc-claim-souls-for-demons.webp",
       "cards": [
         {
           "abilities": [
@@ -867,7 +867,7 @@
       "id": 152,
       "name": "Cursed Pages of the Darkhold Tome",
       "slug": "cursed-pages-of-the-darkhold-tome",
-      "imageUrl": "https://images.barefootbetters.com/dstr/dstr-sc-cursed-pages-of-the-darkhold-tome.webp",
+      "imageUrl": "https://images.legendary-arena.com/dstr/dstr-sc-cursed-pages-of-the-darkhold-tome.webp",
       "cards": [
         {
           "abilities": [
@@ -883,7 +883,7 @@
       "id": 153,
       "name": "Duels of Science and Magic",
       "slug": "duels-of-science-and-magic",
-      "imageUrl": "https://images.barefootbetters.com/dstr/dstr-sc-duels-of-science-and-magic.webp",
+      "imageUrl": "https://images.legendary-arena.com/dstr/dstr-sc-duels-of-science-and-magic.webp",
       "cards": [
         {
           "abilities": [

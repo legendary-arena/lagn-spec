@@ -6,31 +6,31 @@
       "cards": [
         {
           "slug": "shield-initiative-trainer",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-shield-initiative-trainer.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-taskmaster-shield-initiative-trainer.webp",
           "vAttack": 5
         },
         {
           "slug": "photographic-reflexes",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-photographic-reflexes.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-taskmaster-photographic-reflexes.webp",
           "vAttack": 5
         },
         {
           "slug": "teacher-and-assassin",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-teacher-and-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-taskmaster-teacher-and-assassin.webp",
           "vAttack": 5
         },
         {
           "slug": "henchman-instructor",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-henchman-instructor.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-taskmaster-henchman-instructor.webp",
           "vAttack": 5
         },
         {
           "slug": "taskmaster",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mm-taskmaster.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mm-taskmaster.webp"
         },
         {
           "slug": "epic-taskmaster",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-me-taskmaster.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-me-taskmaster.webp"
         }
       ]
     },
@@ -40,31 +40,31 @@
       "cards": [
         {
           "slug": "manipulate-murderous-mad-monk",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-manipulate-murderous-mad-monk.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-indestructible-man-manipulate-murderous-mad-monk.webp",
           "vAttack": 8
         },
         {
           "slug": "secrets-of-indestructibility",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-secrets-of-indestructibility.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-indestructible-man-secrets-of-indestructibility.webp",
           "vAttack": "*"
         },
         {
           "slug": "international-arms-dealer",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-international-arms-dealer.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-indestructible-man-international-arms-dealer.webp",
           "vAttack": "*"
         },
         {
           "slug": "unveil-project-four",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-unveil-project-four.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-indestructible-man-unveil-project-four.webp",
           "vAttack": "*"
         },
         {
           "slug": "indestructible-man",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mm-indestructible-man.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mm-indestructible-man.webp"
         },
         {
           "slug": "epic-indestructible-man",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-me-indestructible-man.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-me-indestructible-man.webp"
         }
       ]
     }
@@ -157,7 +157,7 @@
             "When a Scheme Twist is completed or you play your third [hc:covert] Hero in a turn, you may [keyword:Unleash] this card from [keyword:Undercover].",
             "[hc:covert]: You get +2[icon:attack] for each other [hc:covert] Hero you played this turn."
           ],
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-8r.webp"
         }
       ],
       "_skipPair": [
@@ -212,7 +212,7 @@
           "abilities": [
             "To play this side, you must discard a card."
           ],
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-3c1.webp"
         },
         {
           "slug": "atone",
@@ -222,7 +222,7 @@
           "abilities": [
             "[keyword:Dark Memories]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-3c1.webp"
         },
         {
           "slug": "relocate",
@@ -233,35 +233,35 @@
             "[keyword:Dodge].",
             "[hc:instinct]: You get +1[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-4c2.webp"
         },
         {
           "slug": "reload",
           "rarity": 1,
           "rarityLabel": "Common 4",
           "slot": 4,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-4c2.webp"
         },
         {
           "slug": "new-wings",
           "rarity": 2,
           "rarityLabel": "Uncommon",
           "slot": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-5u.webp"
         },
         {
           "slug": "new-plan",
           "rarity": 2,
           "rarityLabel": "Uncommon 2",
           "slot": 6,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-5u.webp"
         },
         {
           "slug": "captain-americas-legacy",
           "rarity": 3,
           "rarityLabel": "Rare",
           "slot": 7,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-7r.webp"
         }
       ]
     },

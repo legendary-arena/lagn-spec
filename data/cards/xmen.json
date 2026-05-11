@@ -27,7 +27,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-northern-lights.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-northern-lights.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:Lightshow]: Draw a card."
@@ -44,7 +44,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-flare.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-blazing-flare.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +2[icon:recruit]."
           ]
@@ -60,7 +60,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-fists.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-blazing-fists.webp",
           "abilities": [
             "[keyword:Berserk]"
           ]
@@ -76,7 +76,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-twin-blast.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-twin-blast.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:Lightshow]: You get +3[icon:attack]."
@@ -93,7 +93,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-mach-10.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-mach-10.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "All Heroes you recruit this turn have [keyword:Soaring Flight].",
@@ -105,7 +105,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-blazing-fists-blazing-flare.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-blazing-fists-blazing-flare.webp",
           "sides": [
             "blazing-fists",
             "blazing-flare"
@@ -114,7 +114,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-northern-lights.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-northern-lights.webp",
           "sides": [
             "northern-lights"
           ]
@@ -122,7 +122,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-twin-blast.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-twin-blast.webp",
           "sides": [
             "twin-blast"
           ]
@@ -130,7 +130,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-aurora-northstar-mach-10.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-mach-10.webp",
           "sides": [
             "mach-10"
           ]
@@ -160,7 +160,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-sonar-detection.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-banshee-sonar-detection.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Piercing Energy]",
@@ -178,7 +178,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-speed-of-sound.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-banshee-speed-of-sound.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:Piercing Energy]"
@@ -195,7 +195,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-sonic-blastwave.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-banshee-sonic-blastwave.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[hc:ranged]: You may have this card produce [icon:6] instead of[icon:recruit]."
@@ -212,7 +212,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-bone-shattering-howl.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-banshee-bone-shattering-howl.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[hc:ranged][hc:covert]: You may use[icon:attack] as if it were [icon:6] this turn."
@@ -223,7 +223,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-sonar-detection.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-banshee-sonar-detection.webp",
           "sides": [
             "sonar-detection"
           ]
@@ -231,7 +231,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-speed-of-sound.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-banshee-speed-of-sound.webp",
           "sides": [
             "speed-of-sound"
           ]
@@ -239,7 +239,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-sonic-blastwave.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-banshee-sonic-blastwave.webp",
           "sides": [
             "sonic-blastwave"
           ]
@@ -247,7 +247,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-banshee-bone-shattering-howl.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-banshee-bone-shattering-howl.webp",
           "sides": [
             "bone-shattering-howl"
           ]
@@ -277,7 +277,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-captivating-conundrum.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-beast-captivating-conundrum.webp",
           "abilities": [
             "[keyword:X-Gene] [hc:tech]: Draw a card."
           ]
@@ -293,7 +293,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-furry-fury.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-beast-furry-fury.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[keyword:X-Gene] [hc:strength]: [keyword:Berserk]"
@@ -310,7 +310,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-calculated-rage.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-beast-calculated-rage.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[keyword:Berserk]"
@@ -327,7 +327,7 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-recursive-pummeling.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-beast-recursive-pummeling.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[keyword:X-Gene] [team:x-men]: You may return a 0-cost, 3-cost, and 4-cost card from your discard pile to your hand."
@@ -338,7 +338,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-captivating-conundrum.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-beast-captivating-conundrum.webp",
           "sides": [
             "captivating-conundrum"
           ]
@@ -346,7 +346,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-furry-fury.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-beast-furry-fury.webp",
           "sides": [
             "furry-fury"
           ]
@@ -354,7 +354,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-calculated-rage.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-beast-calculated-rage.webp",
           "sides": [
             "calculated-rage"
           ]
@@ -362,7 +362,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-beast-recursive-pummeling.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-beast-recursive-pummeling.webp",
           "sides": [
             "recursive-pummeling"
           ]
@@ -392,7 +392,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-kinetic-blast-field.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-cannonball-kinetic-blast-field.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -409,7 +409,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-carry-to-the-air.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-cannonball-carry-to-the-air.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:strength]: The next Hero you recruit this turn has [keyword:Soaring Flight]."
@@ -426,7 +426,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-natural-leader.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-cannonball-natural-leader.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:strength]: Return a [team:shield]Hero from your discard pile to your hand."
@@ -443,7 +443,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-human-cannon.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-cannonball-human-cannon.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "If you played at least 6 other cards this turn, you get +2[icon:attack]."
@@ -454,7 +454,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-kinetic-blast-field.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-cannonball-kinetic-blast-field.webp",
           "sides": [
             "kinetic-blast-field"
           ]
@@ -462,7 +462,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-carry-to-the-air.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-cannonball-carry-to-the-air.webp",
           "sides": [
             "carry-to-the-air"
           ]
@@ -470,7 +470,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-natural-leader.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-cannonball-natural-leader.webp",
           "sides": [
             "natural-leader"
           ]
@@ -478,7 +478,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-cannonball-human-cannon.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-cannonball-human-cannon.webp",
           "sides": [
             "human-cannon"
           ]
@@ -509,7 +509,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-reliable.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-reliable.webp",
           "abilities": []
         },
         {
@@ -523,7 +523,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-unpredictable.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-unpredictable.webp",
           "abilities": [
             "[keyword:Berserk], [keyword:Berserk]"
           ]
@@ -539,7 +539,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-fastball-special.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-fastball-special.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:X-Gene] [hc:instinct]: [keyword:Berserk]"
@@ -556,7 +556,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-insane-disregard-for-danger.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-insane-disregard-for-danger.webp",
           "abilities": [
             "[keyword:Berserk]",
             "If you have a Wound in your hand or discard pile, KO it. Otherwise, gain a Wound."
@@ -573,7 +573,7 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-uncanny-x-men.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-uncanny-x-men.webp",
           "abilities": [
             "[keyword:Berserk], [keyword:Berserk], [keyword:Berserk]",
             "Then, draw a card for each [team:x-men] card you Berserked."
@@ -584,7 +584,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-fastball-special.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-fastball-special.webp",
           "sides": [
             "fastball-special"
           ]
@@ -592,7 +592,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-reliable-unpredictable.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-reliable-unpredictable.webp",
           "sides": [
             "reliable",
             "unpredictable"
@@ -601,7 +601,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-insane-disregard-for-danger.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-insane-disregard-for-danger.webp",
           "sides": [
             "insane-disregard-for-danger"
           ]
@@ -609,7 +609,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-colossus-wolverine-uncanny-x-men.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-colossus-wolverine-uncanny-x-men.webp",
           "sides": [
             "uncanny-x-men"
           ]
@@ -639,7 +639,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-convert-sound-to-light.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-dazzler-convert-sound-to-light.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[keyword:Lightshow]: You get +1[icon:6] for each Lightshow card you played this turn."
@@ -656,7 +656,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-dazzling-glamour.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-dazzler-dazzling-glamour.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +2[icon:attack]."
           ]
@@ -672,7 +672,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-citywide-mega-concert.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-dazzler-citywide-mega-concert.webp",
           "abilities": [
             "[keyword:Lightshow]: When you draw a new hand of cards at the end of this turn, draw two extra cards."
           ]
@@ -688,7 +688,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-inspire-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-dazzler-inspire-the-world.webp",
           "abilities": [
             "[keyword:Lightshow]: Put a Hero from the HQ on top of your deck."
           ]
@@ -698,7 +698,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-convert-sound-to-light.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-dazzler-convert-sound-to-light.webp",
           "sides": [
             "convert-sound-to-light"
           ]
@@ -706,7 +706,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-dazzling-glamour.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-dazzler-dazzling-glamour.webp",
           "sides": [
             "dazzling-glamour"
           ]
@@ -714,7 +714,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-citywide-mega-concert.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-dazzler-citywide-mega-concert.webp",
           "sides": [
             "citywide-mega-concert"
           ]
@@ -722,7 +722,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-dazzler-inspire-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-dazzler-inspire-the-world.webp",
           "sides": [
             "inspire-the-world"
           ]
@@ -752,7 +752,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-blinding-burst.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-havok-blinding-burst.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +3[icon:attack] usable only against the Mastermind."
           ]
@@ -768,7 +768,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-unleash-havok.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-havok-unleash-havok.webp",
           "abilities": [
             "To play this card, you must discard a card from your hand.",
             "[keyword:Berserk], [keyword:Berserk]"
@@ -785,7 +785,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-concussive-plasma.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-havok-concussive-plasma.webp",
           "abilities": [
             "[keyword:X-Gene] [hc:ranged]: You get +1[icon:attack]for each [hc:ranged] card in your discard pile."
           ]
@@ -801,7 +801,7 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-radiation-focus-array.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-havok-radiation-focus-array.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[keyword:X-Gene] [hc:ranged]: You get the total printed[icon:attack]of all the [hc:ranged] cards in your discard pile."
@@ -812,7 +812,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-blinding-burst.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-havok-blinding-burst.webp",
           "sides": [
             "blinding-burst"
           ]
@@ -820,7 +820,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-unleash-havok.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-havok-unleash-havok.webp",
           "sides": [
             "unleash-havok"
           ]
@@ -828,7 +828,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-concussive-plasma.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-havok-concussive-plasma.webp",
           "sides": [
             "concussive-plasma"
           ]
@@ -836,7 +836,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-havok-radiation-focus-array.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-havok-radiation-focus-array.webp",
           "sides": [
             "radiation-focus-array"
           ]
@@ -866,7 +866,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-light-a-spark.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-jubilee-light-a-spark.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Lightshow]: You get +1[icon:recruit] for each Lightshow card you played this turn."
@@ -883,7 +883,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-blasting-fireworks.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-jubilee-blasting-fireworks.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Lightshow]: You get +1[icon:attack] for each Lightshow card you played this turn."
@@ -900,7 +900,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-unexpected-explosion.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-jubilee-unexpected-explosion.webp",
           "abilities": [
             "[keyword:Lightshow]: Look at the top card of your deck. If it costs 0, KO it."
           ]
@@ -916,7 +916,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-prismatic-cascade.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-jubilee-prismatic-cascade.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +1[icon:recruit]and +1[icon:attack]for each [keyword:Lightshow] card you played this turn."
           ]
@@ -926,7 +926,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-light-a-spark.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-jubilee-light-a-spark.webp",
           "sides": [
             "light-a-spark"
           ]
@@ -934,7 +934,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-blasting-fireworks.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-jubilee-blasting-fireworks.webp",
           "sides": [
             "blasting-fireworks"
           ]
@@ -942,7 +942,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-unexpected-explosion.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-jubilee-unexpected-explosion.webp",
           "sides": [
             "unexpected-explosion"
           ]
@@ -950,7 +950,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-jubilee-prismatic-cascade.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-jubilee-prismatic-cascade.webp",
           "sides": [
             "prismatic-cascade"
           ]
@@ -980,7 +980,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-intangible-qualities.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-kitty-pryde-intangible-qualities.webp",
           "abilities": [
             "Put a card from the HQ on the bottom of the Hero deck. If that card had a [icon:recruit], get +2[icon:recruit]. If that card had an [icon:attack], you get +2[icon:attack]. (If both, get both.)"
           ]
@@ -996,7 +996,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-going-through-a-phase.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-kitty-pryde-going-through-a-phase.webp",
           "abilities": [
             "[keyword:X-Gene] [team:x-men]: Draw a card."
           ]
@@ -1012,7 +1012,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-ghost-in-the-machine.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-kitty-pryde-ghost-in-the-machine.webp",
           "abilities": [
             "You get +1[icon:attack]for each different cost among the Heroes in the HQ."
           ]
@@ -1028,7 +1028,7 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-lockheed-kittys-dragon.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-kitty-pryde-lockheed-kittys-dragon.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "Put a card from the HQ on the bottom of the Hero Deck. You get +[icon:attack] equal to its cost."
@@ -1039,7 +1039,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-intangible-qualities.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-kitty-pryde-intangible-qualities.webp",
           "sides": [
             "intangible-qualities"
           ]
@@ -1047,7 +1047,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-going-through-a-phase.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-kitty-pryde-going-through-a-phase.webp",
           "sides": [
             "going-through-a-phase"
           ]
@@ -1055,7 +1055,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-ghost-in-the-machine.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-kitty-pryde-ghost-in-the-machine.webp",
           "sides": [
             "ghost-in-the-machine"
           ]
@@ -1063,7 +1063,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-kitty-pryde-lockheed-kittys-dragon.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-kitty-pryde-lockheed-kittys-dragon.webp",
           "sides": [
             "lockheed-kittys-dragon"
           ]
@@ -1096,7 +1096,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-steel.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-bend-steel.webp",
           "abilities": [
             "[keyword:Berserk]"
           ]
@@ -1112,7 +1112,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-light.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-bend-light.webp",
           "abilities": [
             "[keyword:Lightshow]: You get +2[icon:recruit]."
           ]
@@ -1128,7 +1128,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-personality.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-split-personality.webp",
           "abilities": []
         },
         {
@@ -1142,7 +1142,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-eardrums.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-split-eardrums.webp",
           "abilities": [
             "[keyword:Piercing Energy]"
           ]
@@ -1158,7 +1158,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-channel-time.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -1174,7 +1174,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-fire.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-channel-fire.webp",
           "abilities": [
             "You get +1[icon:attack]for each different Hero Class in your discard pile."
           ]
@@ -1190,7 +1190,7 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-maelstrom-of-clashing-powers.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-maelstrom-of-clashing-powers.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "Reveal the top three cards of the Hero Deck. You get their total printed [icon:attack]. Put them on the bottom of the Hero Deck."
@@ -1201,7 +1201,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-bend-light-bend-steel.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-bend-light-bend-steel.webp",
           "sides": [
             "bend-light",
             "bend-steel"
@@ -1210,7 +1210,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-channel-fire-channel-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-channel-fire-channel-time.webp",
           "sides": [
             "channel-fire",
             "channel-time"
@@ -1219,7 +1219,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-split-eardrums-split-personality.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-split-eardrums-split-personality.webp",
           "sides": [
             "split-eardrums",
             "split-personality"
@@ -1228,7 +1228,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-legion-maelstrom-of-clashing-powers.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-legion-maelstrom-of-clashing-powers.webp",
           "sides": [
             "maelstrom-of-clashing-powers"
           ]
@@ -1258,7 +1258,7 @@
           "cost": 3,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-fortune-favors-the-bold.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-longshot-fortune-favors-the-bold.webp",
           "abilities": [
             "To play this card, you must put a card from your hand on top of your deck."
           ]
@@ -1274,7 +1274,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-flurry-of-blades.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-longshot-flurry-of-blades.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[hc:tech]: [keyword:Berserk]"
@@ -1291,7 +1291,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-make-my-own-luck.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-longshot-make-my-own-luck.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[hc:covert]: You may KO the card you discarded this way."
@@ -1308,7 +1308,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-escape-from-mojo-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-longshot-escape-from-mojo-world.webp",
           "abilities": [
             "Reveal the top card of the Villain Deck. If it's a Villain, you may put it on the bottom of that Deck.",
             "[team:x-men]: You get +[icon:attack]equal to the printed Victory Points of the card you revealed."
@@ -1319,7 +1319,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-fortune-favors-the-bold.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-longshot-fortune-favors-the-bold.webp",
           "sides": [
             "fortune-favors-the-bold"
           ]
@@ -1327,7 +1327,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-flurry-of-blades.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-longshot-flurry-of-blades.webp",
           "sides": [
             "flurry-of-blades"
           ]
@@ -1335,7 +1335,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-make-my-own-luck.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-longshot-make-my-own-luck.webp",
           "sides": [
             "make-my-own-luck"
           ]
@@ -1343,7 +1343,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-longshot-escape-from-mojo-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-longshot-escape-from-mojo-world.webp",
           "sides": [
             "escape-from-mojo-world"
           ]
@@ -1373,7 +1373,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-life-death-incarnate.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-phoenix-life-death-incarnate.webp",
           "abilities": [
             "KO this card.",
             "You may KO a card from your hand or discard pile."
@@ -1390,7 +1390,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-obliterating-fire.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-phoenix-obliterating-fire.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:Piercing Energy]",
@@ -1408,7 +1408,7 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-reincarnating-phoenix.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-phoenix-reincarnating-phoenix.webp",
           "abilities": [
             "Draw two cards.",
             "You may put a Hero that was KO'd this turn into your discard pile."
@@ -1425,7 +1425,7 @@
           "cost": 9,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-driven-mad-by-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-phoenix-driven-mad-by-power.webp",
           "abilities": [
             "[keyword:Berserk], [keyword:Berserk], [keyword:Berserk], [keyword:Berserk]",
             "KO all the cards you Berserked. If this card makes at least 13[icon:attack], then the Phoenix Force becomes corrupted by power and devours the Earth. You win, Evil wins, and all other players lose."
@@ -1436,7 +1436,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-life-death-incarnate.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-phoenix-life-death-incarnate.webp",
           "sides": [
             "life-death-incarnate"
           ]
@@ -1444,7 +1444,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-obliterating-fire.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-phoenix-obliterating-fire.webp",
           "sides": [
             "obliterating-fire"
           ]
@@ -1452,7 +1452,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-reincarnating-phoenix.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-phoenix-reincarnating-phoenix.webp",
           "sides": [
             "reincarnating-phoenix"
           ]
@@ -1460,7 +1460,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-phoenix-driven-mad-by-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-phoenix-driven-mad-by-power.webp",
           "sides": [
             "driven-mad-by-power"
           ]
@@ -1490,7 +1490,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-ride-the-magnetic-waves.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-polaris-ride-the-magnetic-waves.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:covert]: When you draw a new hand of cards at the end of this turn, draw an extra card."
@@ -1507,7 +1507,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-electromagnetic-pulse.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-polaris-electromagnetic-pulse.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[hc:ranged]: Draw a card."
@@ -1524,7 +1524,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-subtle-attunement.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-polaris-subtle-attunement.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[hc:covert]: Look at the top two cards of your deck. You may KO one of them. Put the rest back in any order."
@@ -1541,7 +1541,7 @@
           "cost": 8,
           "attack": null,
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-reverse-polarity.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-polaris-reverse-polarity.webp",
           "abilities": [
             "[keyword:Soaring Flight]",
             "[keyword:X-Gene] [team:x-men]: You can use [icon:recruit] as [icon:attack] this turn, and vice versa."
@@ -1552,7 +1552,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-ride-the-magnetic-waves.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-polaris-ride-the-magnetic-waves.webp",
           "sides": [
             "ride-the-magnetic-waves"
           ]
@@ -1560,7 +1560,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-electromagnetic-pulse.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-polaris-electromagnetic-pulse.webp",
           "sides": [
             "electromagnetic-pulse"
           ]
@@ -1568,7 +1568,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-subtle-attunement.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-polaris-subtle-attunement.webp",
           "sides": [
             "subtle-attunement"
           ]
@@ -1576,7 +1576,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-polaris-reverse-polarity.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-polaris-reverse-polarity.webp",
           "sides": [
             "reverse-polarity"
           ]
@@ -1606,7 +1606,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-psychic-knife.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-psylocke-psychic-knife.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Piercing Energy]",
@@ -1624,7 +1624,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-precognition.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-psylocke-precognition.webp",
           "abilities": [
             "Reveal the top card of the Hero Deck. You may recruit it this turn. If you do, draw a card."
           ]
@@ -1640,7 +1640,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-butterfly-effect.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-psylocke-butterfly-effect.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "[keyword:X-Gene] [hc:covert]: You get +1[icon:6]."
@@ -1657,7 +1657,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-telepathic-ninjutsu.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-psylocke-telepathic-ninjutsu.webp",
           "abilities": [
             "[keyword:Piercing Energy]",
             "Reveal the top card of the Hero Deck. The player of your choice puts it in their hand."
@@ -1668,7 +1668,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-psychic-knife.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-psylocke-psychic-knife.webp",
           "sides": [
             "psychic-knife"
           ]
@@ -1676,7 +1676,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-precognition.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-psylocke-precognition.webp",
           "sides": [
             "precognition"
           ]
@@ -1684,7 +1684,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-butterfly-effect.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-psylocke-butterfly-effect.webp",
           "sides": [
             "butterfly-effect"
           ]
@@ -1692,7 +1692,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-psylocke-telepathic-ninjutsu.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-psylocke-telepathic-ninjutsu.webp",
           "sides": [
             "telepathic-ninjutsu"
           ]
@@ -1722,7 +1722,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-adamantium-foot-claws.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-x-23-adamantium-foot-claws.webp",
           "abilities": [
             "[keyword:X-Gene] [hc:instinct]: Draw a card."
           ]
@@ -1738,7 +1738,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-healing-factor-genome.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-x-23-healing-factor-genome.webp",
           "abilities": [
             "[keyword:Berserk]",
             "You may KO a Wound from your hand or discard pile."
@@ -1755,7 +1755,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-bioengineered-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-x-23-bioengineered-assassin.webp",
           "abilities": [
             "[keyword:Berserk]",
             "[keyword:X-Gene] [hc:instinct]: You may KO a card from your hand or discard pile."
@@ -1772,7 +1772,7 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-heir-to-wolverine.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-x-23-heir-to-wolverine.webp",
           "abilities": [
             "[keyword:Berserk], [keyword:Berserk]",
             "[keyword:X-Gene] [hc:instinct]: Count the[hc:instinct] cards in your discard pile. [keyword:Berserk] that many times."
@@ -1783,7 +1783,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-adamantium-foot-claws.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-x-23-adamantium-foot-claws.webp",
           "sides": [
             "adamantium-foot-claws"
           ]
@@ -1791,7 +1791,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-healing-factor-genome.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-x-23-healing-factor-genome.webp",
           "sides": [
             "healing-factor-genome"
           ]
@@ -1799,7 +1799,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-bioengineered-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-x-23-bioengineered-assassin.webp",
           "sides": [
             "bioengineered-assassin"
           ]
@@ -1807,7 +1807,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hr-x-23-heir-to-wolverine.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-x-23-heir-to-wolverine.webp",
           "sides": [
             "heir-to-wolverine"
           ]
@@ -1828,7 +1828,7 @@
           "slug": "arcade",
           "tactic": false,
           "vAttack": "3*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arcade-01.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mm-arcade.webp",
           "abilities": [
             "Start of Game: Arcade captures 5 [keyword:Human Shields].",
             "Always Leads: Murderworld",
@@ -1840,7 +1840,7 @@
           "slug": "epic-arcade",
           "tactic": false,
           "vAttack": "4",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arcade-01a.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-me-arcade.webp",
           "abilities": [
             "Start of Game: Arcade captures 8 [keyword:Human Shields]. Play a random Horror.",
             "Always Leads: Murderworld",
@@ -1852,7 +1852,7 @@
           "slug": "i-love-a-parade",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arcade-04.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-arcade-i-love-a-parade.webp",
           "abilities": [
             "Fight: Arcade captures two [keyword:Human Shields]. Play an extra card from the Villain Deck next turn."
           ]
@@ -1862,7 +1862,7 @@
           "slug": "i-need-an-audience",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arcade-05.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-arcade-i-need-an-audience.webp",
           "abilities": [
             "Fight: Arcade captures [keyword:Human Shields] equal to the number of Villains in the city."
           ]
@@ -1872,7 +1872,7 @@
           "slug": "roulette-wheel-of-death",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arcade-03.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-arcade-roulette-wheel-of-death.webp",
           "abilities": [
             "Fight: Arcade captures a random Bystander as a [keyword:Human Shield] from each of these places: The Bystander Stack, the Escape Pile, each city space, and each other player's Victory Pile."
           ]
@@ -1882,7 +1882,7 @@
           "slug": "welcome-to-my-theme-park",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arcade-02.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-arcade-welcome-to-my-theme-park.webp",
           "abilities": [
             "Fight: Arcade and each Murderworld Villain in the city capture two [keyword:Human Shields]."
           ]
@@ -1901,7 +1901,7 @@
           "slug": "dark-phoenix",
           "tactic": false,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/darak-phoenix-01.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mm-dark-phoenix.webp",
           "abilities": [
             "Always Leads: Hellfire Club",
             "Master Strike: KO the top card of the Hero Deck and each card in the Hero Deck that shares a color with it. Shuffle the Hero Deck.",
@@ -1913,7 +1913,7 @@
           "slug": "epic-dark-phoenix",
           "tactic": false,
           "vAttack": "15",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/darak-phoenix-01a.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-me-dark-phoenix.webp",
           "abilities": [
             "Always Leads: Hellfire Club",
             "Master Strike: KO the top card of the Hero Deck and each card in the Hero Deck that shares a color with it. Shuffle the Hero Deck. Then, each player plays a Hellfire Club card from their Victory Pile. Next, play a random Horror.",
@@ -1925,7 +1925,7 @@
           "slug": "burn-the-world-to-ashes",
           "tactic": true,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/darak-phoenix-04.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-dark-phoenix-burn-the-world-to-ashes.webp",
           "abilities": [
             "Fight: Each other player discards each card from their hand that has the same name as any card in the KO pile."
           ]
@@ -1935,7 +1935,7 @@
           "slug": "consume-an-entire-galaxy",
           "tactic": true,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/darak-phoenix-03.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-dark-phoenix-consume-an-entire-galaxy.webp",
           "abilities": [
             "Fight: Each other player chooses a card from their discard pile that costs 1 or more and KOs it."
           ]
@@ -1945,7 +1945,7 @@
           "slug": "fiery-reincarnation",
           "tactic": true,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/darak-phoenix-02.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-dark-phoenix-fiery-reincarnation.webp",
           "abilities": [
             "Fight: Gain a Hero from the KO pile that costs 7 or more."
           ]
@@ -1955,7 +1955,7 @@
           "slug": "worship-me-as-a-god",
           "tactic": true,
           "vAttack": 13,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/darak-phoenix-05.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-dark-phoenix-worship-me-as-a-god.webp",
           "abilities": [
             "Fight: Each other player gains two 0-cost cards from the KO pile."
           ]
@@ -1974,7 +1974,7 @@
           "slug": "deathbird",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/deathbird_01.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mm-deathbird.webp",
           "abilities": [
             "Deathbird gets +1[icon:attack] for each Shi'ar Villain in the city and Escape Pile.",
             "Always Leads: Shi'ar Imperial Guard and a Shi'ar Henchmen Group.",
@@ -1986,7 +1986,7 @@
           "slug": "epic-deathbird",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/deathbird_01a.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-me-deathbird.webp",
           "abilities": [
             "Deathbird gets +2[icon:attack] for each Shi'ar Villain in the city and Escape Pile.",
             "Always Leads: Shi'ar Imperial Guard and a Shi'ar Henchmen Group.",
@@ -1998,7 +1998,7 @@
           "slug": "shiar-elite-bodyguards",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/deathbird_05.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-deathbird-shiar-elite-bodyguards.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. This Tactic enters the city as a Villain whose only ability is “Escape: Shuffle this card back into Deathbird's Mastermind Tactics as another Tactic.“"
           ]
@@ -2008,7 +2008,7 @@
           "slug": "shiar-extermination-legion",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/deathbird_04.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-deathbird-shiar-extermination-legion.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. This Tactic enters the city as a Villain whose only ability is “Escape: Each player discards two cards.“"
           ]
@@ -2018,7 +2018,7 @@
           "slug": "shiar-hovertake-battalion",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/deathbird_03.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-deathbird-shiar-hovertake-battalion.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. This Tactic enters the city as a Villain whose only ability is “Escape: Each player gains a Wound.“"
           ]
@@ -2028,7 +2028,7 @@
           "slug": "shiar-master-spies",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/deathbird_02.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-deathbird-shiar-master-spies.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. This Tactic enters the city as a Villain whose only ability is “Escape: This card becomes a Scheme Twist that takes effect immediately.“"
           ]
@@ -2047,7 +2047,7 @@
           "slug": "mojo",
           "tactic": false,
           "vAttack": "6*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mojo-01.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mm-mojo.webp",
           "abilities": [
             "Start of Game: Mojo captures 3 [keyword:Human Shields].",
             "All Bystanders in Victory Piles are worth 3 [icon:piercing].",
@@ -2060,7 +2060,7 @@
           "slug": "epic-mojo",
           "tactic": false,
           "vAttack": "7",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mojo-01a.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-me-mojo.webp",
           "abilities": [
             "Start of Game: Mojo captures 6 [keyword:Human Shields]. Play a random Horror.",
             "All Bystanders in Victory Piles are worth 4 [icon:piercing].",
@@ -2073,7 +2073,7 @@
           "slug": "billions-of-tv-viewers",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mojo-04.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-mojo-billions-of-tv-viewers.webp",
           "abilities": [
             "Fight: Each player reveals a [hc:tech] Hero or chooses a random Bystander from their Victory Pile. Mojo captures those Bystanders as [keyword:Human Shields]."
           ]
@@ -2083,7 +2083,7 @@
           "slug": "brain-melting-tv-marathon",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mojo-05.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-mojo-brain-melting-tv-marathon.webp",
           "abilities": [
             "Fight: Each other player without a Mojo Tactic in their Victory Pile gains a Wound."
           ]
@@ -2093,7 +2093,7 @@
           "slug": "cross-dimensional-marketing",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mojo-02.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-mojo-cross-dimensional-marketing.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Bystander in your Victory Pile. Mojo captures a [keyword:Human Shield]."
           ]
@@ -2103,7 +2103,7 @@
           "slug": "mojo-branding-opportunity",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mojo-03.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-mojo-mojo-branding-opportunity.webp",
           "abilities": [
             "Fight: Draw a card for each Mojoverse Villain in your Victory Pile. Mojo captures a [keyword:Human Shield]."
           ]
@@ -2122,7 +2122,7 @@
           "slug": "onslaught",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/onslaught-01.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mm-onslaught.webp",
           "abilities": [
             "Each player's hand size is 1 less.",
             "Always Leads: Dark Descendants",
@@ -2134,7 +2134,7 @@
           "slug": "epic-onslaught",
           "tactic": false,
           "vAttack": "12+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/onslaught-01a.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-me-onslaught.webp",
           "abilities": [
             "Each player's hand size is 1 less.",
             "Always Leads: Dark Descendants",
@@ -2146,7 +2146,7 @@
           "slug": "godlike-psionic-entity",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/onslaught-05.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-onslaught-godlike-psionic-entity.webp",
           "abilities": [
             "Fight: Onslaught [keyword:Dominates] all five Heroes from the HQ."
           ]
@@ -2156,7 +2156,7 @@
           "slug": "sins-of-x-men-past",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/onslaught-02.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-onslaught-sins-of-x-men-past.webp",
           "abilities": [
             "Fight: Each other player reveals the top six cards of their deck and chooses an [team:x-men] Hero revealed this way. Onslaught [keyword:Dominates] those Heroes. Put the rest back in random order."
           ]
@@ -2166,7 +2166,7 @@
           "slug": "xavier-and-magneto-combined",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/onslaught-04.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-onslaught-xavier-and-magneto-combined.webp",
           "abilities": [
             "Fight: Reveal the top three cards of the Hero Deck. Onslaught [keyword:Dominates] all the [team:x-men] and [team:brotherhood] Heroes you revealed. Put the rest back in random order."
           ]
@@ -2176,7 +2176,7 @@
           "slug": "worldwide-mental-control",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/onslaught-03.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-onslaught-worldwide-mental-control.webp",
           "abilities": [
             "Fight: Onslaught [keyword:Dominates] four 0-cost Heroes from the KO pile. The next time a player fights Onslaught, KO those 0-cost Heroes."
           ]
@@ -2195,7 +2195,7 @@
           "slug": "shadow-king",
           "tactic": false,
           "vAttack": "7+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shadow-king-01.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mm-shadow-king.webp",
           "abilities": [
             "Always Leads: Shadow-X",
             "Master Strike: KO all Heroes [keyword:Dominated] by Shadow King. Then each player chooses a non-grey Hero from their discard pile. Shadow King [keyword:Dominates] those Heroes."
@@ -2206,7 +2206,7 @@
           "slug": "epic-shadow-king",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shadow-king-01a.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-me-shadow-king.webp",
           "abilities": [
             "Start of Game: Play two random Horrors.",
             "Always Leads: Shadow-X",
@@ -2218,7 +2218,7 @@
           "slug": "fiend-of-the-astral-plane",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shadow-king-05.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-shadow-king-fiend-of-the-astral-plane.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and shuffles two cards with [icon:recruit] icons from their hand back into their deck."
           ]
@@ -2228,7 +2228,7 @@
           "slug": "poison-their-minds",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shadow-king-02.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-shadow-king-poison-their-minds.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and chooses one of their non-grey Heroes. Shadow King [keyword:Dominates] those Heroes."
           ]
@@ -2238,7 +2238,7 @@
           "slug": "psychic-seduction",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shadow-king-03.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-shadow-king-psychic-seduction.webp",
           "abilities": [
             "Fight: Shadow King [keyword:Dominates] each Hero that costs 5 or less from the HQ."
           ]
@@ -2248,7 +2248,7 @@
           "slug": "telepathic-betrayal",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/shadow-king-04.png",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-mt-shadow-king-telepathic-betrayal.webp",
           "abilities": [
             "Fight: If the “Betrayal of the Shadow“ Trap is in any Victory Pile or the KO pile, put it on top of the Villain Deck."
           ]
@@ -2268,7 +2268,7 @@
           "slug": "fatale",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-dark-descendants-fatale.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-dark-descendants-fatale.webp",
           "abilities": [
             "Fight: KO one of your Heroes.",
             "Escape: The Mastermind [keyword:Dominates] the top card of the Hero Deck."
@@ -2279,7 +2279,7 @@
           "slug": "havok-brainwashed",
           "vp": null,
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-dark-descendants-havok-brainwashed.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-dark-descendants-havok-brainwashed.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "Escape: Havok becomes a Hero [keyword:Dominated] by the Mastermind.",
@@ -2291,7 +2291,7 @@
           "slug": "nemesis",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-dark-descendants-nemesis.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-dark-descendants-nemesis.webp",
           "abilities": [
             "Ambush: Each player reveals their hand and chooses one of their non-grey Heroes. Nemesis [keyword:Dominates] those Heroes."
           ]
@@ -2301,7 +2301,7 @@
           "slug": "psychic-subjugation",
           "vp": "3",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-dark-descendants-psychic-subjugation.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-dark-descendants-psychic-subjugation.webp",
           "abilities": [
             "By End of Turn: Recruit the left-most and right-most Heroes in the HQ.",
             "Or Suffer: Each of those Heroes you didn't recruit enters the city as a Villain with [icon:attack] equal to that Hero's cost. When you fight one, you gain it."
@@ -2312,7 +2312,7 @@
           "slug": "random",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-dark-descendants-random.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-dark-descendants-random.webp",
           "abilities": [
             "Ambush: Random [keyword:Dominates] the top card of the Hero Deck. Then, each player reveals their hand and chooses one of their Heroes with that same cost. Random [keyword:Dominates] those Heroes."
           ]
@@ -2330,7 +2330,7 @@
           "slug": "corrupt-the-phoenix-force",
           "vp": "3",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-hellfire-club-corrupt-the-phoenix-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-hellfire-club-corrupt-the-phoenix-force.webp",
           "abilities": [
             "By End of Turn: Have no Hellfire Villains in the city.",
             "Or Suffer: This Trap becomes a 6[icon:attack] “Phoenix Force“ [icon:7] Villain that enters the city and [keyword:Dominates] all the Heroes in the HQ that cost 6 or less."
@@ -2341,7 +2341,7 @@
           "slug": "emma-frost-white-queen",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-hellfire-club-emma-frost-white-queen.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-hellfire-club-emma-frost-white-queen.webp",
           "abilities": [
             "Ambush: Each player chooses an [team:x-men] Hero from their discard pile. Emma Frost [keyword:Dominates] those Heroes."
           ]
@@ -2351,7 +2351,7 @@
           "slug": "harry-leland-black-bishop",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-hellfire-club-harry-leland-black-bishop.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-hellfire-club-harry-leland-black-bishop.webp",
           "abilities": [
             "Ambush: Heroes cost 1 more to recruit this turn.",
             "Escape: Same effect."
@@ -2362,7 +2362,7 @@
           "slug": "mastermind-jason-wyngarde",
           "vp": "6",
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-hellfire-club-mastermind-jason-wyngarde.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-hellfire-club-mastermind-jason-wyngarde.webp",
           "abilities": [
             "Ambush: This Villain ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player simultaneously reveals a non-grey Hero.“ Mastermind [keyword:Dominates] the revealed Hero with the highest cost (and tied for highest)."
           ]
@@ -2372,7 +2372,7 @@
           "slug": "sebastian-shaw-black-king",
           "vp": "4",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-hellfire-club-sebastian-shaw-black-king.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-hellfire-club-sebastian-shaw-black-king.webp",
           "abilities": [
             "Sebastian Shaw has +1[icon:attack] for each card you've played from your hand this turn.",
             "Escape: Each player gains a Wound."
@@ -2391,7 +2391,7 @@
           "slug": "mindwarping-tv-broadcast",
           "vp": "3",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-mojoverse-mindwarping-tv-broadcast.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-mojoverse-mindwarping-tv-broadcast.webp",
           "abilities": [
             "Ambush: A Villain captures a Bystander.",
             "By End of Turn: Have no Bystanders in the city captured by Villains.",
@@ -2403,7 +2403,7 @@
           "slug": "minor-domo",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-mojoverse-minor-domo.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-mojoverse-minor-domo.webp",
           "abilities": [
             "Ambush: Minor Domo captures 2 [keyword:Human Shields].",
             "Escape: Each player simultaneously reveals a card from their hand. Whoever revealed the lowest cost card (or tied for lowest) gains a Wound."
@@ -2414,7 +2414,7 @@
           "slug": "major-domo",
           "vp": "3",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-mojoverse-major-domo.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-mojoverse-major-domo.webp",
           "abilities": [
             "Ambush: Major Domo captures a [keyword:Human Shield].",
             "Escape: Each player simultaneously reveals a card from their hand. Whoever reveals the highest-costing card (or tied for highest) gains a Wound."
@@ -2425,7 +2425,7 @@
           "slug": "spiral",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-mojoverse-spiral.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-mojoverse-spiral.webp",
           "abilities": [
             "Ambush: Each player reveals a [hc:covert] Hero or discards their hand. Each player who discarded their hand this way draws 5 cards.",
             "Escape: Same effect."
@@ -2436,7 +2436,7 @@
           "slug": "warwolves",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-mojoverse-warwolves.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-mojoverse-warwolves.webp",
           "abilities": [
             "Ambush: These Warwolves capture a [keyword:Human Shield].",
             "Fight: KO one of your Heroes."
@@ -2455,7 +2455,7 @@
           "slug": "animatronic-killer-clowns",
           "vp": "2",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-murderworld-animatronic-killer-clowns.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-murderworld-animatronic-killer-clowns.webp",
           "abilities": [
             "By End of Turn: Recruit two Heroes.",
             "Or Suffer: This Trap enters the city as a 3[icon:attack] “Animatronic Killer Clown“ [icon:7] Villain that captures a [keyword:Human Shield]."
@@ -2466,7 +2466,7 @@
           "slug": "guillotine-rollercoaster",
           "vp": "3",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-murderworld-guillotine-rollercoaster.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-murderworld-guillotine-rollercoaster.webp",
           "abilities": [
             "By End of Turn: Have at least four different costs of Heroes in the HQ.",
             "Or Suffer: After you draw your new hand at the end of this turn, each palyer reveals their hand and discards each card with the same cost as the cards in the HQ."
@@ -2477,7 +2477,7 @@
           "slug": "miss-locke",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-murderworld-miss-locke.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-murderworld-miss-locke.webp",
           "abilities": [
             "Ambush: Miss Locke captures 2 [keyword:Human Shields]. Then reveal the top card of the Villain Deck. If it's a [rule:Trap] or Master Strike, play it."
           ]
@@ -2487,7 +2487,7 @@
           "slug": "monstrous-pinball-machine",
           "vp": "3",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-murderworld-monstrous-pinball-machine.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-murderworld-monstrous-pinball-machine.webp",
           "abilities": [
             "By End of Turn: Pay any amount of [icon:recruit]. Then you must reveal the top card of the Hero Deck. If you paid enough, recruit that Hero and put this Trap in your Victory Pile.",
             "Or Suffer: KO that Hero. Play two extra cards from the Villain Deck next turn."
@@ -2498,7 +2498,7 @@
           "slug": "sulfuric-acid-water-slide",
           "vp": "2",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-murderworld-sulfuric-acid-water-slide.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-murderworld-sulfuric-acid-water-slide.webp",
           "abilities": [
             "Ambush: Play another card from the Villain Deck.",
             "By End of Turn: Have no Villains in the Sewers.",
@@ -2518,7 +2518,7 @@
           "slug": "betrayal-of-the-shadow",
           "vp": "4",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shadow-x-betrayal-of-the-shadow.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shadow-x-betrayal-of-the-shadow.webp",
           "abilities": [
             "By End of Turn: You may pay 6[icon:recruit].",
             "Or Suffer: Each player reveals their hand. Then, each player chooses a Shadow-X card from their hand or discard pile to enter the city as a Villain."
@@ -2529,7 +2529,7 @@
           "slug": "dark-angel",
           "vp": null,
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shadow-x-dark-angel.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shadow-x-dark-angel.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:instinct]: The next Hero you recruit from the HQ has [keyword:Soaring Flight]."
@@ -2540,7 +2540,7 @@
           "slug": "dark-beast",
           "vp": null,
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shadow-x-dark-beast.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shadow-x-dark-beast.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:tech]: You may KO a card from your hand or discard pile."
@@ -2551,7 +2551,7 @@
           "slug": "dark-cyclops",
           "vp": null,
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shadow-x-dark-cyclops.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shadow-x-dark-cyclops.webp",
           "abilities": [
             "Ambush: Each player reveals a [hc:ranged] Hero or discards a card.",
             "Fight: Gain this as a Hero.",
@@ -2563,7 +2563,7 @@
           "slug": "dark-iceman",
           "vp": null,
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shadow-x-dark-iceman.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shadow-x-dark-iceman.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:strength]: Draw a card."
@@ -2574,7 +2574,7 @@
           "slug": "dark-marvel-girl",
           "vp": null,
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shadow-x-dark-marvel-girl.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shadow-x-dark-marvel-girl.webp",
           "abilities": [
             "Ambush: Dark Marvel Girl [keyword:Dominates] each [team:x-men] Hero that costs 4 or less from the HQ.",
             "Fight: Gain this as a Hero.",
@@ -2594,7 +2594,7 @@
           "slug": "blackthorn",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shiar-imperial-guard-blackthorn.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shiar-imperial-guard-blackthorn.webp",
           "abilities": [
             "Fight: If you fought Blackthorn in the Sewers or Streets, each other player gains a Wound.",
             "Escape: Each player gains a Wound."
@@ -2605,7 +2605,7 @@
           "slug": "gladiator",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shiar-imperial-guard-gladiator.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shiar-imperial-guard-gladiator.webp",
           "abilities": [
             "Ambush: Each player discards an [team:x-men] Hero or gains a Wound.",
             "Escape: Same effect."
@@ -2616,7 +2616,7 @@
           "slug": "oracle",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shiar-imperial-guard-oracle.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shiar-imperial-guard-oracle.webp",
           "abilities": [
             "Ambush: Each player discards the top four cards of their deck and chooses one of those cards that costs 1 to 4. Oracle [keyword:Dominates] those Heroes."
           ]
@@ -2626,7 +2626,7 @@
           "slug": "shiar-trial-by-combat",
           "vp": "2",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shiar-imperial-guard-shiar-trial-by-combat.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shiar-imperial-guard-shiar-trial-by-combat.webp",
           "abilities": [
             "Ambush: If the Bridge is empty, reveal the top card of the Villain Deck. If it's a Villain, put it on the Bridge.",
             "By End of Turn: Have no Villains on the Bridge.",
@@ -2638,7 +2638,7 @@
           "slug": "smasher",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-shiar-imperial-guard-smasher.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shiar-imperial-guard-smasher.webp",
           "abilities": [
             "Ambush: Each player reveals a [hc:strength] Hero or discards a card.",
             "Fight: KO a card from your discard pile."
@@ -2657,7 +2657,7 @@
           "slug": "lady-deathstrike",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-sisterhood-of-mutants-lady-deathstrike.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-sisterhood-of-mutants-lady-deathstrike.webp",
           "abilities": [
             "Fight: KO one of your Heroes.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
@@ -2668,7 +2668,7 @@
           "slug": "lady-mastermind",
           "vp": "5",
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-sisterhood-of-mutants-lady-mastermind.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-sisterhood-of-mutants-lady-mastermind.webp",
           "abilities": [
             "Ambush: This Villain ascends to become a [rule:new Mastermind]. She gains the ability “Master Strike: Each player simultaneously reveals a non-grey Hero.“ Lady Mastermind [keyword:Dominates] the revealed Hero with the lowest cost (and tied for lowest)."
           ]
@@ -2678,7 +2678,7 @@
           "slug": "resurrect-madelyne-pryor",
           "vp": null,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-sisterhood-of-mutants-resurrect-madelyne-pryor.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-sisterhood-of-mutants-resurrect-madelyne-pryor.webp",
           "abilities": [
             "By End of Turn: You may pay 3[icon:recruit]. If you do, shuffle this Trap back into the Villain Deck, then play a card from the Villain Deck.",
             "Or Suffer: This Trap becomes a Scheme Twist that takes effect immediately."
@@ -2689,7 +2689,7 @@
           "slug": "selene",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-sisterhood-of-mutants-selene.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-sisterhood-of-mutants-selene.webp",
           "abilities": [
             "Ambush: Selene [keyword:Dominates] all of the 0-cost Heroes from the KO pile.",
             "Fight: KO all the Heroes Dominated by Selene.",
@@ -2701,7 +2701,7 @@
           "slug": "typhoid-mary",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/xmen/xmen-vi-sisterhood-of-mutants-typhoid-mary.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-sisterhood-of-mutants-typhoid-mary.webp",
           "abilities": [
             "Ambush: Each player reveals their hand and chooses a 3-cost Hero from it. Typhoid Mary [keyword:Dominates] those Heroes."
           ]
@@ -2714,7 +2714,7 @@
       "id": 21,
       "name": "Brood, The",
       "slug": "brood-the",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hm-brood-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hm-brood-the.webp",
       "abilities": [
         "This Villain gets +1[icon:attack] for each Bystander in the KO pile.",
         "Fight: KO one of your Heroes. Then KO a Bystander from the Bystander Stack."
@@ -2724,7 +2724,7 @@
       "id": 22,
       "name": "Hellfire Cult",
       "slug": "hellfire-cult",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hm-hellfire-cult.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hm-hellfire-cult.webp",
       "abilities": [
         "Fight: Reveal the top card of your deck. If it costs 0, KO it. Otherwise, you get +1[icon:recruit]."
       ]
@@ -2733,7 +2733,7 @@
       "id": 23,
       "name": "Sapien League",
       "slug": "sapien-league",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hm-sapien-league.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hm-sapien-league.webp",
       "abilities": [
         "Fight: KO one of your Heroes. Then, reveal the top card of the Villain Deck. If it's a Henchman Villain, play it."
       ]
@@ -2742,7 +2742,7 @@
       "id": 24,
       "name": "Shi'ar Death Commandos",
       "slug": "shiar-death-commandos",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hm-shiar-death-commandos.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hm-shiar-death-commandos.webp",
       "abilities": [
         "Ambush: This Villain captures a [keyword:Human Shield].",
         "Fight: KO one of your Heroes."
@@ -2752,7 +2752,7 @@
       "id": 25,
       "name": "Shi'ar Patrol Craft",
       "slug": "shiar-patrol-craft",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-hm-shiar-patrol-craft.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hm-shiar-patrol-craft.webp",
       "abilities": [
         "Fight: The next Hero you recruit this turn has [keyword:Soaring Flight]."
       ]
@@ -2763,7 +2763,7 @@
       "id": 76,
       "name": "Alien Brood Encounters",
       "slug": "alien-brood-encounters",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-sc-alien-brood-encounters.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-sc-alien-brood-encounters.webp",
       "cards": [
         {
           "abilities": [
@@ -2779,7 +2779,7 @@
       "id": 77,
       "name": "Anti-Mutant Hatred",
       "slug": "anti-mutant-hatred",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-sc-anti-mutant-hatred.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-sc-anti-mutant-hatred.webp",
       "cards": [
         {
           "abilities": [
@@ -2795,7 +2795,7 @@
       "id": 78,
       "name": "Dark Phoenix Saga, The",
       "slug": "dark-phoenix-saga-the",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-sc-dark-phoenix-saga-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-sc-dark-phoenix-saga-the.webp",
       "cards": [
         {
           "abilities": [
@@ -2811,7 +2811,7 @@
       "id": 79,
       "name": "Horror of Horrors",
       "slug": "horror-of-horrors",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-sc-horror-of-horrors.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-sc-horror-of-horrors.webp",
       "cards": [
         {
           "abilities": [
@@ -2826,7 +2826,7 @@
       "id": 80,
       "name": "Mutant-Hunting Super Sentinels",
       "slug": "mutant-hunting-super-sentinels",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-sc-mutant-hunting-super-sentinels.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-sc-mutant-hunting-super-sentinels.webp",
       "cards": [
         {
           "abilities": [
@@ -2842,7 +2842,7 @@
       "id": 81,
       "name": "Nuclear Armageddon",
       "slug": "nuclear-armageddon",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-sc-nuclear-armageddon.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-sc-nuclear-armageddon.webp",
       "cards": [
         {
           "abilities": [
@@ -2857,7 +2857,7 @@
       "id": 82,
       "name": "Televised Deathtraps of Mojoworld",
       "slug": "televised-deathtraps-of-mojoworld",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-sc-televised-deathtraps-of-mojoworld.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-sc-televised-deathtraps-of-mojoworld.webp",
       "cards": [
         {
           "abilities": [
@@ -2872,7 +2872,7 @@
       "id": 83,
       "name": "X-Men Danger Room Goes Berserk",
       "slug": "x-men-danger-room-goes-berserk",
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-sc-x-men-danger-room-goes-berserk.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-sc-x-men-danger-room-goes-berserk.webp",
       "cards": [
         {
           "abilities": [
@@ -2890,7 +2890,7 @@
       "name": "Cypher",
       "slug": "cypher",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-cypher.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-cypher.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2906,7 +2906,7 @@
       "name": "Heartless Computer Scientist",
       "slug": "heartless-computer-scientist",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-heartless-computer-scientist.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-heartless-computer-scientist.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2922,7 +2922,7 @@
       "name": "Karma",
       "slug": "karma",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-karma.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-karma.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2938,7 +2938,7 @@
       "name": "Magik",
       "slug": "magik",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-magik.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-magik.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2954,7 +2954,7 @@
       "name": "Magma",
       "slug": "magma",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-magma.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-magma.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2970,7 +2970,7 @@
       "name": "Martial Arts Master",
       "slug": "martial-arts-master",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-martial-arts-master.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-martial-arts-master.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2986,7 +2986,7 @@
       "name": "Mirage",
       "slug": "mirage",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-mirage.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-mirage.webp",
       "cards": [
         {
           "qtd": 1,
@@ -3002,7 +3002,7 @@
       "name": "Sunspot",
       "slug": "sunspot",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-sunspot.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-sunspot.webp",
       "cards": [
         {
           "qtd": 1,
@@ -3018,7 +3018,7 @@
       "name": "Warlock",
       "slug": "warlock",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-warlock.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-warlock.webp",
       "cards": [
         {
           "qtd": 1,
@@ -3034,7 +3034,7 @@
       "name": "Wolfsbane",
       "slug": "wolfsbane",
       "vp": null,
-      "imageUrl": "https://images.barefootbetters.com/xmen/xmen-by-wolfsbane.webp",
+      "imageUrl": "https://images.legendary-arena.com/xmen/xmen-by-wolfsbane.webp",
       "cards": [
         {
           "qtd": 1,

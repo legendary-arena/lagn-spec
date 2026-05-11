@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-carnage-rending-claws.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-rending-claws.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Draw a card."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-carnage-carnivore.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-carnivore.webp",
           "abilities": [
             "[keyword:Digest 4]: Draw two cards.",
             "[keyword:Indigestion]: You get +2[icon:recruit]."
@@ -59,7 +59,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-carnage-gruesome-feast.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-gruesome-feast.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. You may KO it."
           ]
@@ -75,7 +75,7 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-carnage-feast-or-famine.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-feast-or-famine.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. If it costs 0, KO it and you may repeat this process."
           ]
@@ -85,7 +85,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-carnage-rending-claws.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-rending-claws.webp",
           "sides": [
             "rending-claws"
           ]
@@ -93,7 +93,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-carnage-carnivore.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-carnivore.webp",
           "sides": [
             "carnivore"
           ]
@@ -101,7 +101,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-carnage-gruesome-feast.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-gruesome-feast.webp",
           "sides": [
             "gruesome-feast"
           ]
@@ -109,7 +109,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-carnage-feast-or-famine.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-feast-or-famine.webp",
           "sides": [
             "feast-or-famine"
           ]
@@ -139,7 +139,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-devouring-drool.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-devouring-drool.webp",
           "abilities": [
             "[keyword:Digest 3]: You get +2[icon:attack].",
             "[keyword:Indigestion]: You get +2[icon:recruit].",
@@ -157,7 +157,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-razor-teeth.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-razor-teeth.webp",
           "abilities": [
             "[keyword:Excessive Violence]: You get +2[icon:recruit]."
           ]
@@ -173,7 +173,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-symbiotic-adaptation.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-symbiotic-adaptation.webp",
           "abilities": [
             "Choose one:",
             "- You get +1[icon:recruit] for each other card you played this turn with a [icon:recruit] icon.",
@@ -191,7 +191,7 @@
           "cost": 8,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-insatiable-hunger.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-insatiable-hunger.webp",
           "abilities": [
             "[keyword:Digest 8]: KO a card from your Victory Pile. You get +6[icon:attack].",
             "[keyword:Indigestion]: KO a card from your hand or discard pile. You get +6[icon:recruit].",
@@ -203,7 +203,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-devouring-drool.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-devouring-drool.webp",
           "sides": [
             "devouring-drool"
           ]
@@ -211,7 +211,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-razor-teeth.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-razor-teeth.webp",
           "sides": [
             "razor-teeth"
           ]
@@ -219,7 +219,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-symbiotic-adaptation.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-symbiotic-adaptation.webp",
           "sides": [
             "symbiotic-adaptation"
           ]
@@ -227,7 +227,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-insatiable-hunger.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-insatiable-hunger.webp",
           "sides": [
             "insatiable-hunger"
           ]
@@ -257,7 +257,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-rocket-hungry-for-action.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-hungry-for-action.webp",
           "abilities": [
             "[keyword:Digest 3]: You may discard a card. If you do, draw a card."
           ]
@@ -273,7 +273,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-rocket-spring-the-trap.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-spring-the-trap.webp",
           "abilities": [
             "If a Master Strike or Villain that has an Ambush ability was played this turn, you get +1[icon:attack]."
           ]
@@ -289,7 +289,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-rocket-serious-overkill.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-serious-overkill.webp",
           "abilities": [
             "[keyword:Excessive Violence]: You may KO a card from your hand or discard pile."
           ]
@@ -305,7 +305,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-rocket-ultimate-survivor.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-ultimate-survivor.webp",
           "abilities": [
             "When a Master Strike is played, before it takes effect, you may put Ultimate Survivor from your hand on top of your deck. If you do, you may put any card from the HQ into your hand."
           ]
@@ -315,7 +315,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-rocket-hungry-for-action.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-hungry-for-action.webp",
           "sides": [
             "hungry-for-action"
           ]
@@ -323,7 +323,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-rocket-spring-the-trap.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-spring-the-trap.webp",
           "sides": [
             "spring-the-trap"
           ]
@@ -331,7 +331,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-rocket-serious-overkill.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-serious-overkill.webp",
           "sides": [
             "serious-overkill"
           ]
@@ -339,7 +339,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venom-rocket-ultimate-survivor.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-ultimate-survivor.webp",
           "sides": [
             "ultimate-survivor"
           ]
@@ -369,7 +369,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venomized-dr-strange-cauldron-of-the-cosmos.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-cauldron-of-the-cosmos.webp",
           "abilities": [
             "[keyword:Digest 2]: Draw a card."
           ]
@@ -385,7 +385,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venomized-dr-strange-see-future-timelines.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-see-future-timelines.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top card of your deck. If it costs 0, discard it and you get +2[icon:attack]."
           ]
@@ -401,7 +401,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venomized-dr-strange-complete-the-grand-ritual.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-complete-the-grand-ritual.webp",
           "abilities": [
             "If you played a 4-cost card and a 2-cost card this turn, you get +2[icon:attack]."
           ]
@@ -417,7 +417,7 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venomized-dr-strange-crystal-of-kadavus.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-crystal-of-kadavus.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, discard one, and KO one.",
             "[team:venomverse][team:venomverse]: Do this ability again."
@@ -428,7 +428,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venomized-dr-strange-cauldron-of-the-cosmos.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-cauldron-of-the-cosmos.webp",
           "sides": [
             "cauldron-of-the-cosmos"
           ]
@@ -436,7 +436,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venomized-dr-strange-see-future-timelines.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-see-future-timelines.webp",
           "sides": [
             "see-future-timelines"
           ]
@@ -444,7 +444,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venomized-dr-strange-complete-the-grand-ritual.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-complete-the-grand-ritual.webp",
           "sides": [
             "complete-the-grand-ritual"
           ]
@@ -452,7 +452,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venomized-dr-strange-crystal-of-kadavus.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-crystal-of-kadavus.webp",
           "sides": [
             "crystal-of-kadavus"
           ]
@@ -482,7 +482,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venompool-digest-that-chimichanga.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-digest-that-chimichanga.webp",
           "abilities": [
             "[keyword:Digest 2]: You get +2[icon:attack].",
             "[keyword:Indigestion]: “Rescue“ a Bystander.",
@@ -500,7 +500,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venompool-shenanigans.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-shenanigans.webp",
           "abilities": [
             "Draw two cards. But you can't draw any more cards until the end of this turn."
           ]
@@ -516,7 +516,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venompool-can-i-get-a-little-gratitude.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-can-i-get-a-little-gratitude.webp",
           "abilities": [
             "Whenever you Rescue a Bystander this turn, do any “rescue“ ability on it an extra time.",
             "[keyword:Excessive Violence]: “Rescue“ a Bystander."
@@ -533,7 +533,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venompool-play-to-the-crowd.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-play-to-the-crowd.webp",
           "abilities": [
             "[keyword:Digest 7]: You get +1[icon:attack] for each two Bystanders in your Victory Pile.",
             "[keyword:Indigestion]: “Rescue“ two Bystanders.",
@@ -545,7 +545,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venompool-digest-that-chimichanga.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-digest-that-chimichanga.webp",
           "sides": [
             "digest-that-chimichanga"
           ]
@@ -553,7 +553,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venompool-shenanigans.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-shenanigans.webp",
           "sides": [
             "shenanigans"
           ]
@@ -561,7 +561,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venompool-can-i-get-a-little-gratitude.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-can-i-get-a-little-gratitude.webp",
           "sides": [
             "can-i-get-a-little-gratitude"
           ]
@@ -569,7 +569,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-hr-venompool-play-to-the-crowd.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-play-to-the-crowd.webp",
           "sides": [
             "play-to-the-crowd"
           ]
@@ -590,7 +590,7 @@
           "slug": "hybrid",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/hybrid-01.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mm-hybrid.webp",
           "abilities": [
             "If you fight Hybrid while he's bonded to a Villain, defeat that Villain and rescue three Bystanders instead of taking a Tactic.",
             "Always Leads: Life Foundation",
@@ -602,7 +602,7 @@
           "slug": "epic-hybrid",
           "tactic": false,
           "vAttack": "8",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/hybrid-02.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-me-hybrid.webp",
           "abilities": [
             "If you fight Hybrid while he's bonded to a Villain, defeat that Villain and rescue three Bystanders instead of taking a Tactic.",
             "Always Leads: Life Foundation",
@@ -614,7 +614,7 @@
           "slug": "alien-awakening",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/hybrid-03.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mt-hybrid-alien-awakening.webp",
           "abilities": [
             "Fight: If this is not the final tactic, a Henchman Villain from any Victory Pile [keyword:Symbiote Bonds] with Hybrid."
           ]
@@ -624,7 +624,7 @@
           "slug": "escaped-monstrosity",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/hybrid-04.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mt-hybrid-escaped-monstrosity.webp",
           "abilities": [
             "Fight: If this is not the final Tactic, a Villain from the city or Escape Pile [keyword:Symbiote Bonds] with Hybrid."
           ]
@@ -634,7 +634,7 @@
           "slug": "life-foundation-research",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/hybrid-05.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mt-hybrid-life-foundation-research.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Life Foundation Villain in your Victory Pile."
           ]
@@ -644,7 +644,7 @@
           "slug": "symbiotic-call",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/hybrid-06.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mt-hybrid-symbiotic-call.webp",
           "abilities": [
             "Fight: If this is not the final Tactic, reveal the top four cards of the Villain Deck. A Henchman Villain you revealed [keyword:Symbiote Bonds] with Hybrid. Put the rest back in any order."
           ]
@@ -663,7 +663,7 @@
           "slug": "poison-thanos",
           "tactic": false,
           "vAttack": "12+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/poison-thanos-01.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mm-poison-thanos.webp",
           "abilities": [
             "Poison Thanos gets +1[icon:attack] for each different cost among cards in his “Poisoned Souls“ pile.",
             "Always Leads: Poisons",
@@ -675,7 +675,7 @@
           "slug": "epic-poison-thanos",
           "tactic": false,
           "vAttack": "13+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/poison-thanos-02.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-me-poison-thanos.webp",
           "abilities": [
             "Poison Thanos gets +2[icon:attack] for each different cost among cards in his “Poisoned Souls“ pile.",
             "Always Leads: Poisons",
@@ -687,7 +687,7 @@
           "slug": "desperate-rescue",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/poison-thanos-06.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mt-poison-thanos-desperate-rescue.webp",
           "abilities": [
             "Fight: You may gain a Hero from Poison Thanos' “Poisoned Souls“ pile."
           ]
@@ -697,7 +697,7 @@
           "slug": "poisoned-loyalties",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/poison-thanos-03.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mt-poison-thanos-poisoned-loyalties.webp",
           "abilities": [
             "Fight: Each other player puts a Poisons card from their discard pile into Poison Thanos' “Poisoned Souls“ pile."
           ]
@@ -707,7 +707,7 @@
           "slug": "searing-poisons",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/poison-thanos-05.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mt-poison-thanos-searing-poisons.webp",
           "abilities": [
             "Fight: Each other player discards a Poisons card from their hand or gains a Wound."
           ]
@@ -717,7 +717,7 @@
           "slug": "soul-seize",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/poison-thanos-04.png",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-mt-poison-thanos-soul-seize.webp",
           "abilities": [
             "Fight: Put all Heroes that cost 5 or more from the HQ into Poison Thanos' “Poisoned Souls“ pile."
           ]
@@ -737,7 +737,7 @@
           "slug": "agony",
           "vp": "3",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-life-foundation-agony.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-life-foundation-agony.webp",
           "abilities": [
             "Ambush: Reveal the top three cards of the Villain Deck. A Villain you revealed [keyword:Symbiote Bonds] with Agony. Put the rest back in any order.",
             "Escape: Each player reveals a [hc:covert] Hero or gains a Wound."
@@ -748,7 +748,7 @@
           "slug": "dr-carlton-drake",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-life-foundation-dr-carlton-drake.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-life-foundation-dr-carlton-drake.webp",
           "abilities": [
             "Fight: Each [hc:instinct] and [hc:tech] Hero currently in the HQ costs 1 less this turn."
           ]
@@ -758,7 +758,7 @@
           "slug": "lasher",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-life-foundation-lasher.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-life-foundation-lasher.webp",
           "abilities": [
             "Ambush: A Henchman Villain from your Victory Pile [keyword:Symbiote Bonds] with Lasher."
           ]
@@ -768,7 +768,7 @@
           "slug": "phage",
           "vp": "3",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-life-foundation-phage.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-life-foundation-phage.webp",
           "abilities": [
             "Ambush: A Villain from the Escape Pile or your Victory Pile [keyword:Symbiote Bonds] with Phage."
           ]
@@ -778,7 +778,7 @@
           "slug": "riot",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-life-foundation-riot.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-life-foundation-riot.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, it [keyword:Symbiote Bonds] with Riot.",
             "Fight: KO one of your Heroes."
@@ -789,7 +789,7 @@
           "slug": "scream",
           "vp": "4",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-life-foundation-scream.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-life-foundation-scream.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Henchman or Life Foundation Villain, it [keyword:Symbiote Bonds] with Scream."
           ]
@@ -807,7 +807,7 @@
           "slug": "poison-captain-america",
           "vp": null,
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-poisons-poison-captain-america.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-poisons-poison-captain-america.webp",
           "abilities": [
             "Fight: This [keyword:Symbiote Bonds] with another Villain in the city. If already bonded or unable to bond, gain this as a Hero instead.",
             "You get +1[icon:attack] for each color of Hero you have. (including [hc:instinct] and grey)"
@@ -818,7 +818,7 @@
           "slug": "poison-dr-octopus",
           "vp": null,
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-poisons-poison-dr-octopus.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-poisons-poison-dr-octopus.webp",
           "abilities": [
             "Fight: This [keyword:Symbiote Bonds] with a Villain in the Bank. If already bonded or unable to bond, gain this as a Hero instead.",
             "Draw a card."
@@ -829,7 +829,7 @@
           "slug": "poison-hulk",
           "vp": null,
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-poisons-poison-hulk.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-poisons-poison-hulk.webp",
           "abilities": [
             "Fight: This [keyword:Symbiote Bonds] with a Henchman Villain in the city. If already bonded or unable to bond, gain this as a Hero instead.",
             "[hc:strength]: You get +2[icon:attack]."
@@ -840,7 +840,7 @@
           "slug": "poison-sabretooth",
           "vp": null,
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-poisons-poison-sabretooth.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-poisons-poison-sabretooth.webp",
           "abilities": [
             "Fight: This [keyword:Symbiote Bonds] with a Villain in the Streets. If already bonded or unable to bond, gain this as a Hero instead.",
             "[hc:instinct]: Look at the top card of your deck. You may KO it."
@@ -851,7 +851,7 @@
           "slug": "poison-scarlet-witch",
           "vp": null,
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-poisons-poison-scarlet-witch.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-poisons-poison-scarlet-witch.webp",
           "abilities": [
             "Fight: This [keyword:Symbiote Bonds] with another Villain in the city with an odd-numbered [icon:attack]. If already bonded or unable to bond, gain this as a Hero instead.",
             "Reveal the top card of your deck. If it has an odd-numbered cost, draw it. (0 is even.)"
@@ -862,7 +862,7 @@
           "slug": "poison-spider-man",
           "vp": null,
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-poisons-poison-spider-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-poisons-poison-spider-man.webp",
           "abilities": [
             "Fight: This [keyword:Symbiote Bonds] with another Villain in the city. If already bonded or unable to bond, gain this as a Hero instead.",
             "Reveal the top card of your deck. If it costs 2 or less, draw it."
@@ -873,7 +873,7 @@
           "slug": "poison-storm",
           "vp": null,
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-poisons-poison-storm.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-poisons-poison-storm.webp",
           "abilities": [
             "Fight: This [keyword:Symbiote Bonds] with a Villain on the Rooftops or Bridge. If already bonded or unable to bond, gain this as a Hero instead.",
             "[hc:ranged]: You get +2[icon:attack] usable only against the Mastermind."
@@ -884,7 +884,7 @@
           "slug": "symbiotic-armor",
           "vp": "6",
           "vAttack": "1",
-          "imageUrl": "https://images.barefootbetters.com/vnom/vnom-vi-poisons-symbiotic-armor.webp",
+          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-poisons-symbiotic-armor.webp",
           "abilities": [
             "Ambush: This [keyword:Symbiote Bonds] with the Mastermind. When you fight the Mastermind, defeat Symbiotic Armor and KO one of your Heroes instead of taking a Tactic."
           ]
@@ -898,7 +898,7 @@
       "id": 110,
       "name": "Invasion of the Venom Symbiotes",
       "slug": "invasion-of-the-venom-symbiotes",
-      "imageUrl": "https://images.barefootbetters.com/vnom/vnom-sc-invasion-of-the-venom-symbiotes.webp",
+      "imageUrl": "https://images.legendary-arena.com/vnom/vnom-sc-invasion-of-the-venom-symbiotes.webp",
       "cards": [
         {
           "abilities": [
@@ -913,7 +913,7 @@
       "id": 111,
       "name": "Maximum Carnage",
       "slug": "maximum-carnage",
-      "imageUrl": "https://images.barefootbetters.com/vnom/vnom-sc-maximum-carnage.webp",
+      "imageUrl": "https://images.legendary-arena.com/vnom/vnom-sc-maximum-carnage.webp",
       "cards": [
         {
           "abilities": [
@@ -929,7 +929,7 @@
       "id": 112,
       "name": "Paralyzing Venom",
       "slug": "paralyzing-venom",
-      "imageUrl": "https://images.barefootbetters.com/vnom/vnom-sc-paralyzing-venom.webp",
+      "imageUrl": "https://images.legendary-arena.com/vnom/vnom-sc-paralyzing-venom.webp",
       "cards": [
         {
           "abilities": [
@@ -944,7 +944,7 @@
       "id": 113,
       "name": "Symbiotic Absorption",
       "slug": "symbiotic-absorption",
-      "imageUrl": "https://images.barefootbetters.com/vnom/vnom-sc-symbiotic-absorption.webp",
+      "imageUrl": "https://images.legendary-arena.com/vnom/vnom-sc-symbiotic-absorption.webp",
       "cards": [
         {
           "abilities": [

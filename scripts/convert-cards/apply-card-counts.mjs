@@ -26,7 +26,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const INPUTS_DIR = join(__dirname, 'inputs');
 const OUTPUT_DIR = join(__dirname, '..', '..', 'data', 'cards');
 const PATCH_PATH = join(INPUTS_DIR, 'hero-card-counts.json');
-const R2_BASE_URL = 'https://images.barefootbetters.com';
+const R2_BASE_URL = 'https://images.legendary-arena.com';
 
 // why: WP-135 D-13501 fallback map — kept in lockstep with the same map
 // in convert-cards-v15.mjs so outlier-set heroes that lack cardCounts

@@ -26,7 +26,7 @@
           "cost": 1,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-pickpocket.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-pickpocket.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top card of any player's deck. You get +[icon:attack] equal to that card's printed [icon:recruit] plus its printed [icon:attack]."
@@ -43,7 +43,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-casual-bank-robbery.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-casual-bank-robbery.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "You get another +1[icon:recruit]usable only to recruit the Hero in the HQ Space under the Bank."
@@ -60,7 +60,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-jinx.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-jinx.webp",
           "abilities": [
             "Each player reveals the top card of their deck. Choose any number of those cards to be discarded."
           ]
@@ -76,7 +76,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-cat-burglar.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-cat-burglar.webp",
           "abilities": [
             "Each other player reveals a [hc:covert] Hero or chooses a Bystander from their Victory Pile. You rescue those Bystanders.",
             "[team:spider-friends]: You get +1[icon:attack] for each Bystander you rescued this turn."
@@ -87,7 +87,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-pickpocket.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-pickpocket.webp",
           "sides": [
             "pickpocket"
           ]
@@ -95,7 +95,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-casual-bank-robbery.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-casual-bank-robbery.webp",
           "sides": [
             "casual-bank-robbery"
           ]
@@ -103,7 +103,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-jinx.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-jinx.webp",
           "sides": [
             "jinx"
           ]
@@ -111,7 +111,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-cat-burglar.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-cat-burglar.webp",
           "sides": [
             "cat-burglar"
           ]
@@ -141,7 +141,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-climbing-claws.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-moon-knight-climbing-claws.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[hc:instinct]: You get +1[icon:recruit]."
@@ -158,7 +158,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-lunar-communion.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-moon-knight-lunar-communion.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Whenever you defeat a Villain on the Rooftops this turn, you may KO one of your cards or a card from your discard pile."
@@ -175,7 +175,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-crescent-moon-darts.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-moon-knight-crescent-moon-darts.webp",
           "abilities": [
             "Reveal the top card of your deck. If it's [hc:instinct] or [hc:tech], draw it."
           ]
@@ -191,7 +191,7 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-golden-ankh-of-khonshu.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-moon-knight-golden-ankh-of-khonshu.webp",
           "abilities": [
             "Whenever you defeat a Villain on the Rooftops this turn, rescue Bystanders equal to that Villain's printed [icon:piercing].",
             "[hc:tech]: You may move a Villain to the Rooftops. If another Villain is already there, swap them."
@@ -202,7 +202,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-climbing-claws.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-moon-knight-climbing-claws.webp",
           "sides": [
             "climbing-claws"
           ]
@@ -210,7 +210,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-lunar-communion.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-moon-knight-lunar-communion.webp",
           "sides": [
             "lunar-communion"
           ]
@@ -218,7 +218,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-crescent-moon-darts.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-moon-knight-crescent-moon-darts.webp",
           "sides": [
             "crescent-moon-darts"
           ]
@@ -226,7 +226,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-moon-knight-golden-ankh-of-khonshu.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-moon-knight-golden-ankh-of-khonshu.webp",
           "sides": [
             "golden-ankh-of-khonshu"
           ]
@@ -256,7 +256,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-flip-out.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-scarlet-spider-flip-out.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[team:spider-friends]: Draw a card."
@@ -273,7 +273,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-perfect-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-scarlet-spider-perfect-hunter.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Draw a card."
@@ -290,7 +290,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-leap-from-above.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-scarlet-spider-leap-from-above.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -307,7 +307,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-sting-of-the-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-scarlet-spider-sting-of-the-spider.webp",
           "abilities": [
             "Whenever you put a card on top of your deck this turn, you may draw that card."
           ]
@@ -317,7 +317,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-flip-out.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-scarlet-spider-flip-out.webp",
           "sides": [
             "flip-out"
           ]
@@ -325,7 +325,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-perfect-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-scarlet-spider-perfect-hunter.webp",
           "sides": [
             "perfect-hunter"
           ]
@@ -333,7 +333,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-leap-from-above.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-scarlet-spider-leap-from-above.webp",
           "sides": [
             "leap-from-above"
           ]
@@ -341,7 +341,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-scarlet-spider-sting-of-the-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-scarlet-spider-sting-of-the-spider.webp",
           "sides": [
             "sting-of-the-spider"
           ]
@@ -371,7 +371,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-radioactive-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-radioactive-spider.webp",
           "abilities": [
             "To play this card, you must put a card from your hand on top of your deck."
           ]
@@ -387,7 +387,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-bioelectric-shock.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-bioelectric-shock.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top card of your deck. If that card has an [icon:attack] icon, draw it."
@@ -404,7 +404,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-venom-blast.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-venom-blast.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top card of your deck. If that card has a [icon:recruit] icon, draw it."
@@ -421,7 +421,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-arachno-pheromones.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-arachno-pheromones.webp",
           "abilities": [
             "Recruit a Hero from the HQ for free.",
             "[team:spider-friends]: Put that Hero on top of your deck."
@@ -432,7 +432,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-radioactive-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-radioactive-spider.webp",
           "sides": [
             "radioactive-spider"
           ]
@@ -440,7 +440,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-bioelectric-shock.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-bioelectric-shock.webp",
           "sides": [
             "bioelectric-shock"
           ]
@@ -448,7 +448,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-venom-blast.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-venom-blast.webp",
           "sides": [
             "venom-blast"
           ]
@@ -456,7 +456,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-arachno-pheromones.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-arachno-pheromones.webp",
           "sides": [
             "arachno-pheromones"
           ]
@@ -486,7 +486,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-dark-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-symbiote-spider-man-dark-strength.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "Reveal the top card of your deck. If it costs 1 [icon:vp] or 2 [icon:vp], you get +2[icon:attack]."
@@ -503,7 +503,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-spider-sense-tingling.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-symbiote-spider-man-spider-sense-tingling.webp",
           "abilities": [
             "Reveal the top two cards of your deck. Put any that cost 2 [icon:vp] or less into your hand. Put the rest back in any order."
           ]
@@ -519,7 +519,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-shadowed-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-symbiote-spider-man-shadowed-spider.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "You get +1[icon:attack] for each other Hero you played this turn that costs 1 [icon:vp] or 2 [icon:vp]."
@@ -536,7 +536,7 @@
           "cost": 2,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-thwip.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-symbiote-spider-man-thwip.webp",
           "abilities": [
             "To play this card, you must put two cards from your hand on top of your deck."
           ]
@@ -546,7 +546,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-dark-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-symbiote-spider-man-dark-strength.webp",
           "sides": [
             "dark-strength"
           ]
@@ -554,7 +554,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-spider-sense-tingling.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-symbiote-spider-man-spider-sense-tingling.webp",
           "sides": [
             "spider-sense-tingling"
           ]
@@ -562,7 +562,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-shadowed-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-symbiote-spider-man-shadowed-spider.webp",
           "sides": [
             "shadowed-spider"
           ]
@@ -570,7 +570,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-symbiote-spider-man-thwip.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-symbiote-spider-man-thwip.webp",
           "sides": [
             "thwip"
           ]
@@ -591,7 +591,7 @@
           "slug": "carnage",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/carnage-01.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mm-carnage.webp",
           "abilities": [
             "Always Leads: Maximum Carnage",
             "Master Strike: [keyword:Feast] on each player. Whenever this Master Strike feasts on a player's 0-cost Hero, that player gains a Wound."
@@ -602,7 +602,7 @@
           "slug": "drooling-jaws",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/carnage-02.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mt-carnage-drooling-jaws.webp",
           "abilities": [
             "Fight: Each player reveals the top card of their deck. Then Carnage [keyword:feasts] on the player of your choice."
           ]
@@ -612,7 +612,7 @@
           "slug": "endless-hunger",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/carnage-03.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mt-carnage-endless-hunger.webp",
           "abilities": [
             "[keyword:Feast]",
             "If Carnage feasts on a 0-cost Hero this way, repeat this process."
@@ -623,7 +623,7 @@
           "slug": "feed-me",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/carnage-04.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mt-carnage-feed-me.webp",
           "abilities": [
             "[keyword:Feast]",
             "You get +[icon:recruit] equal to the [icon:vp]  of the card Carnage feasts on."
@@ -634,7 +634,7 @@
           "slug": "om-nom-nom",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/carnage-05.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mt-carnage-om-nom-nom.webp",
           "abilities": [
             "[keyword:Feast]",
             "If Carnage feasts on a 0-cost Hero this way, each other player KOs a Bystander from their Victory Pile."
@@ -654,7 +654,7 @@
           "slug": "mysterio",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mysterio-01-1.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mm-mysterio.webp",
           "abilities": [
             "Always Leads: Sinister Six",
             "Master Strike: Shuffle this Master Strike into Mysterio's face down Mastermind Tactics. That card becomes a Mastermind Tactic worth 6[icon:piercing]."
@@ -665,7 +665,7 @@
           "slug": "blurring-images",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mysterio-02-1.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mt-mysterio-blurring-images.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Mastermind Tactic Mysterio has left after this one."
           ]
@@ -675,7 +675,7 @@
           "slug": "captive-audience",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mysterio-03-1.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mt-mysterio-captive-audience.webp",
           "abilities": [
             "Fight: Rescue a Bystander for each Mastermind Tactic Mysterio has left after this one."
           ]
@@ -685,7 +685,7 @@
           "slug": "master-of-illusions",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mysterio-04-1.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mt-mysterio-master-of-illusions.webp",
           "abilities": [
             "Fight: If this is not the final Tactic, shuffle a Master Strike Tactic from each other player's Victory Pile back into Mysterio's Mastermind Tactics."
           ]
@@ -695,7 +695,7 @@
           "slug": "mists-of-deception",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/mysterio-05.png",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-mt-mysterio-mists-of-deception.webp",
           "abilities": [
             "Fight: If this is not the final Tactic, reveal the top five cards of the Villain Deck. Play all the Master Strikes you revealed. Put the rest on the bottom of that deck in random order."
           ]
@@ -715,7 +715,7 @@
           "slug": "carrion",
           "vp": "3",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-maximum-carnage-carrion.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-maximum-carnage-carrion.webp",
           "abilities": [
             "[keyword:Feast]",
             "Whenever Carrion feasts on a Hero that costs 1[icon:vp] or more, put Carrion back in the city space where he was."
@@ -726,7 +726,7 @@
           "slug": "demogoblin",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-maximum-carnage-demogoblin.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-maximum-carnage-demogoblin.webp",
           "abilities": [
             "Ambush: Demogoblin captures a Bystander.",
             "[keyword:Feast]"
@@ -737,7 +737,7 @@
           "slug": "doppelganger",
           "vp": "3",
           "vAttack": "",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-maximum-carnage-doppelganger.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-maximum-carnage-doppelganger.webp",
           "abilities": [
             "Doppelganger's [icon:attack] is equal to the [icon:vp] of the Hero in the HQ space under him.",
             "[keyword:Feast]"
@@ -748,7 +748,7 @@
           "slug": "shriek",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-maximum-carnage-shriek.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-maximum-carnage-shriek.webp",
           "abilities": [
             "[keyword:Feast]",
             "When Shriek feasts on a 0-cost Hero, each other player gains a Wound.",
@@ -768,7 +768,7 @@
           "slug": "chameleon",
           "vp": "2",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-sinister-six-chameleon.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-chameleon.webp",
           "abilities": [
             "Fight: Copy the effects of the Hero in the HQ space under Chameleon, including its [icon:recruit] and [icon:attack]."
           ]
@@ -778,7 +778,7 @@
           "slug": "hobgoblin",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-sinister-six-hobgoblin.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-hobgoblin.webp",
           "abilities": [
             "Ambush: Each Sinister Six Villain captures a Bystander."
           ]
@@ -788,7 +788,7 @@
           "slug": "kraven-the-hunter",
           "vp": "4",
           "vAttack": "",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-sinister-six-kraven-the-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-kraven-the-hunter.webp",
           "abilities": [
             "Kraven's [icon:attack] is equal to the [icon:vp] of the highest-cost Hero in the HQ.",
             "Escape: (After you do the normal escape KO) KO a Hero from the HQ with the highest cost."
@@ -799,7 +799,7 @@
           "slug": "sandman",
           "vp": "4",
           "vAttack": "",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-sinister-six-sandman.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-sandman.webp",
           "abilities": [
             "Sandman's [icon:attack] is twice the number of Villains in the city.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
@@ -810,7 +810,7 @@
           "slug": "shocker",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-sinister-six-shocker.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-shocker.webp",
           "abilities": [
             "Ambush: Each player reveals an [hc:instinct] Hero or discards a card."
           ]
@@ -820,7 +820,7 @@
           "slug": "vulture",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-vi-sinister-six-vulture.webp",
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-vulture.webp",
           "abilities": [
             "Ambush: (After Vulture enters the city) If there is a Villain on the Rooftops or Bridge, swap Vulture with one of those Villains.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
@@ -835,7 +835,7 @@
       "id": 21,
       "name": "Clone Saga, The",
       "slug": "clone-saga-the",
-      "imageUrl": "https://images.barefootbetters.com/pttr/pttr-sc-clone-saga-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/pttr/pttr-sc-clone-saga-the.webp",
       "cards": [
         {
           "abilities": [
@@ -850,7 +850,7 @@
       "id": 22,
       "name": "Invade the Daily Bugle News HQ",
       "slug": "invade-the-daily-bugle-news-hq",
-      "imageUrl": "https://images.barefootbetters.com/pttr/pttr-sc-invade-the-daily-bugle-news-hq.webp",
+      "imageUrl": "https://images.legendary-arena.com/pttr/pttr-sc-invade-the-daily-bugle-news-hq.webp",
       "cards": [
         {
           "abilities": [
@@ -866,7 +866,7 @@
       "id": 23,
       "name": "Splice Humans with Spider DNA",
       "slug": "splice-humans-with-spider-dna",
-      "imageUrl": "https://images.barefootbetters.com/pttr/pttr-sc-splice-humans-with-spider-dna.webp",
+      "imageUrl": "https://images.legendary-arena.com/pttr/pttr-sc-splice-humans-with-spider-dna.webp",
       "cards": [
         {
           "abilities": [
@@ -882,7 +882,7 @@
       "id": 24,
       "name": "Weave a Web of Lies",
       "slug": "weave-a-web-of-lies",
-      "imageUrl": "https://images.barefootbetters.com/pttr/pttr-sc-weave-a-web-of-lies.webp",
+      "imageUrl": "https://images.legendary-arena.com/pttr/pttr-sc-weave-a-web-of-lies.webp",
       "cards": [
         {
           "abilities": [

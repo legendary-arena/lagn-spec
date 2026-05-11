@@ -28,7 +28,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-2c1.webp",
           "abilities": [
             "[keyword:What If...?]: You get +2[icon:recruit] and +2[icon:attack]."
           ]
@@ -44,7 +44,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-3c2.webp",
           "abilities": [
             "You get +1[icon:recruit] for each different printed [icon:recruit] number among all your Heroes. ",
             "(1+ is the same printed number as 1.)"
@@ -61,7 +61,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-4c3.webp",
           "abilities": [
             "You get +1[icon:attack] for each different printed [icon:attack] number among all your Heroes. ",
             "(1+ is the same printed number as 1.)"
@@ -78,7 +78,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-5u.webp",
           "abilities": [
             "Once per turn, when a player gains a Wound, you may reveal this card to return that Wound to the Wound Stack. If you do, the player whose turn it is gets [keyword:Liberate 3]."
           ]
@@ -94,7 +94,7 @@
           "cost": 6,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-6u2.webp",
           "abilities": [
             "To play this, you must put another card from your hand on top of your deck."
           ]
@@ -110,7 +110,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-8r.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-8r.webp",
           "abilities": [
             "You get +1[icon:recruit] for each different printed [icon:recruit] number among all your Heroes.",
             "You get +1[icon:attack] for each different printed [icon:attack] number among all your Heroes.",
@@ -122,7 +122,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-super-soldier-serum.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-super-soldier-serum.webp",
           "sides": [
             "super-soldier-serum"
           ]
@@ -130,7 +130,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-wartime-logistics.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-wartime-logistics.webp",
           "sides": [
             "wartime-logistics"
           ]
@@ -138,7 +138,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-coordinated-assault.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-coordinated-assault.webp",
           "sides": [
             "coordinated-assault"
           ]
@@ -146,7 +146,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-the-shield-of-britain.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-the-shield-of-britain.webp",
           "sides": [
             "the-shield-of-britain"
           ]
@@ -154,7 +154,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-give-them-all-weve-got.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-give-them-all-weve-got.webp",
           "sides": [
             "give-them-all-weve-got"
           ]
@@ -162,7 +162,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-captain-carter-icon-of-hope.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-icon-of-hope.webp",
           "sides": [
             "icon-of-hope"
           ]
@@ -194,7 +194,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-2c1.webp",
           "abilities": [
             "Choose one: You get [keyword:Empowered] by [hc:strength], or you get [keyword:Empowered] by [hc:covert].",
             "[hc:strength][hc:covert]: Draw a card."
@@ -211,7 +211,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-3c2.webp",
           "abilities": [
             "[keyword:What If...?]: You get +3[icon:recruit]."
           ]
@@ -227,7 +227,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-4c3.webp",
           "abilities": [
             "Look at the top two cards of your deck. Discard any number of them and put the rest back in any order."
           ]
@@ -243,7 +243,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-5u.webp",
           "abilities": [
             "[keyword:What If...?]: You may KO a card from your hand or discard pile."
           ]
@@ -259,7 +259,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-6u2.webp",
           "abilities": [
             "[keyword:What If...?]: You get [keyword:Empowered] by the Hero Classes of the card you revealed this way."
           ]
@@ -275,7 +275,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-7r.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-7r.webp",
           "abilities": [
             "Choose any number of Heroes in the HQ. Put them on the bottom of the Hero Deck.",
             "You get [keyword:Empowered] by multicolored cards."
@@ -286,7 +286,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-fight-or-flight.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-fight-or-flight.webp",
           "sides": [
             "fight-or-flight"
           ]
@@ -294,7 +294,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-interstellar-adventures.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-interstellar-adventures.webp",
           "sides": [
             "interstellar-adventures"
           ]
@@ -302,7 +302,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-plan-the-heist.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-plan-the-heist.webp",
           "sides": [
             "plan-the-heist"
           ]
@@ -310,7 +310,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-unexpected-exit.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-unexpected-exit.webp",
           "sides": [
             "unexpected-exit"
           ]
@@ -318,7 +318,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-cross-the-multiverse.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-cross-the-multiverse.webp",
           "sides": [
             "cross-the-multiverse"
           ]
@@ -326,7 +326,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-star-lord-tchalla-colliding-dreams.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-colliding-dreams.webp",
           "sides": [
             "colliding-dreams"
           ]
@@ -358,7 +358,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-2c1.webp",
           "abilities": [
             "To play this, you must put another card from your hand on top of your deck."
           ]
@@ -374,7 +374,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-3c2.webp",
           "abilities": [
             "Whenever you recruit a Hero that costs 5 or more this turn, you get +3[icon:attack]."
           ]
@@ -390,7 +390,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-5c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-5c3.webp",
           "abilities": [
             "Whenever you recruit a Hero that costs 5 or more this turn, reveal the top card of your deck and you may KO it."
           ]
@@ -406,7 +406,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-5u.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Cross-Dimensional Party Rampage]. If any players gained a Wound this way, you get +3[icon:attack]."
           ]
@@ -422,7 +422,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-6u2.webp",
           "abilities": [
             "[keyword:What If...?]: You get +[icon:attack] equal to the cost of the Hero you revealed this way."
           ]
@@ -438,7 +438,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "5",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-7r.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-7r.webp",
           "abilities": [
             "Whenever you recruit a Hero that costs 5 or more this turn, you get +[icon:attack] equal to that Hero's cost."
           ]
@@ -448,7 +448,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-forecast-says-thunder.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-forecast-says-thunder.webp",
           "sides": [
             "forecast-says-thunder"
           ]
@@ -456,7 +456,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-worthy-challenge.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-worthy-challenge.webp",
           "sides": [
             "worthy-challenge"
           ]
@@ -464,7 +464,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-destructive-feast.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-destructive-feast.webp",
           "sides": [
             "destructive-feast"
           ]
@@ -472,7 +472,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-asgardian-rager.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-asgardian-rager.webp",
           "sides": [
             "asgardian-rager"
           ]
@@ -480,7 +480,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-only-son.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-only-son.webp",
           "sides": [
             "only-son"
           ]
@@ -488,7 +488,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-party-thor-worthy-of-the-lightning.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-worthy-of-the-lightning.webp",
           "sides": [
             "worthy-of-the-lightning"
           ]
@@ -520,7 +520,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-2c1.webp",
           "abilities": [
             "You get +1[icon:recruit] for each different Villain Group in your Victory Pile."
           ]
@@ -536,7 +536,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-3c2.webp",
           "abilities": [
             "[keyword:What If...?]: [keyword:Liberate 3]"
           ]
@@ -552,7 +552,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-4c3.webp",
           "abilities": [
             "[hc:tech][hc:strength]: You get +3[icon:attack]."
           ]
@@ -568,7 +568,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-5u.webp",
           "abilities": [
             "[hc:strength]: You get +1[icon:attack] for each different Villain Group in your Victory Pile."
           ]
@@ -584,7 +584,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-6u2.webp",
           "abilities": [
             "Each Villain worth 3 VP or more captures a Bystander.",
             "[hc:tech]: [keyword:Liberate 2]"
@@ -601,7 +601,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-7r.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-7r.webp",
           "abilities": [
             "You get +1[icon:attack] for each different Villain Group in your Victory Pile.",
             "[hc:strength]: [keyword:Liberate 2] for each Mastermind Tactic in your Victory Pile."
@@ -612,7 +612,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-hunt-new-prey.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-hunt-new-prey.webp",
           "sides": [
             "hunt-new-prey"
           ]
@@ -620,7 +620,7 @@
         {
           "id": "p2",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-hostage-rescue.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-hostage-rescue.webp",
           "sides": [
             "hostage-rescue"
           ]
@@ -628,7 +628,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-no-matter-the-price.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-no-matter-the-price.webp",
           "sides": [
             "no-matter-the-price"
           ]
@@ -636,7 +636,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-violence-leaves-scars.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-violence-leaves-scars.webp",
           "sides": [
             "violence-leaves-scars"
           ]
@@ -644,7 +644,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-plot-a-betrayal.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-plot-a-betrayal.webp",
           "sides": [
             "plot-a-betrayal"
           ]
@@ -652,7 +652,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-killmonger-spec-ops-im-the-king-baby.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-im-the-king-baby.webp",
           "sides": [
             "im-the-king-baby"
           ]
@@ -684,7 +684,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-2c1.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: [keyword:Liberate 3]"
@@ -701,7 +701,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-3c2.webp",
           "abilities": [
             "If you have at least 4 Bystanders in your Victory Pile, you get +2[icon:recruit]."
           ]
@@ -717,7 +717,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-4c3.webp",
           "abilities": [
             "Draw a card.",
             "You may have a Villain capture a Bystander."
@@ -734,7 +734,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-5u.webp",
           "abilities": [
             "[hc:tech]: You get +2[icon:attack]."
           ]
@@ -750,7 +750,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-6u2.webp",
           "abilities": [
             "[keyword:What If...?]: [keyword:Liberate 4]"
           ]
@@ -766,7 +766,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-8r.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-8r.webp",
           "abilities": [
             "[keyword:Liberate] equal to the number of Bystanders in your Victory Pile."
           ]
@@ -776,7 +776,7 @@
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-relentless.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-relentless.webp",
           "sides": [
             "relentless"
           ]
@@ -784,7 +784,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-humanitys-final-hope.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-humanitys-final-hope.webp",
           "sides": [
             "humanitys-final-hope"
           ]
@@ -792,7 +792,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-plant-hidden-asset.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-plant-hidden-asset.webp",
           "sides": [
             "plant-hidden-asset"
           ]
@@ -800,7 +800,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-precision-strike.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-precision-strike.webp",
           "sides": [
             "precision-strike"
           ]
@@ -808,7 +808,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-the-last-avenger.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-the-last-avenger.webp",
           "sides": [
             "the-last-avenger"
           ]
@@ -816,7 +816,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-apocalyptic-black-widow-time-to-save-the-multiverse.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-time-to-save-the-multiverse.webp",
           "sides": [
             "time-to-save-the-multiverse"
           ]
@@ -848,7 +848,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-2c1.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: You get +2[icon:recruit]."
@@ -865,7 +865,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-3c2.webp",
           "abilities": [
             "Draw two cards. Then put a card from your hand on top of your deck."
           ]
@@ -881,7 +881,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-4c3.webp",
           "abilities": [
             "You get +1[icon:attack] for each card you drew this turn."
           ]
@@ -897,7 +897,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-5u.webp",
           "abilities": [
             "[keyword:What If...?]: Draw two cards."
           ]
@@ -913,7 +913,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-6u2.webp",
           "abilities": [
             "[hc:instinct][keyword:Soulbind]: KO a card from your hand or discard pile."
           ]
@@ -929,7 +929,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-8r.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-8r.webp",
           "abilities": [
             "[team:guardians-of-the-multiverse][keyword:Soulbind six Villains]: You get +∞[icon:attack], usable only for a single fight."
           ]
@@ -939,7 +939,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-assassins-stealth.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-assassins-stealth.webp",
           "sides": [
             "assassins-stealth"
           ]
@@ -947,7 +947,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-tactical-insight.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-tactical-insight.webp",
           "sides": [
             "tactical-insight"
           ]
@@ -955,7 +955,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-wield-the-blade-of-thanos.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-wield-the-blade-of-thanos.webp",
           "sides": [
             "wield-the-blade-of-thanos"
           ]
@@ -963,7 +963,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-titanicide.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-titanicide.webp",
           "sides": [
             "titanicide"
           ]
@@ -971,7 +971,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-destroy-an-infinity-stone.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-destroy-an-infinity-stone.webp",
           "sides": [
             "destroy-an-infinity-stone"
           ]
@@ -979,7 +979,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-gamora-destroyer-of-thanos-the-infinity-crusher.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-the-infinity-crusher.webp",
           "sides": [
             "the-infinity-crusher"
           ]
@@ -1011,7 +1011,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-2c1.webp",
           "abilities": [
             "Draw a card.",
             "[hc:instinct][keyword:Soulbind a Bystander or Villain]: You get +2[icon:attack]. If it's Special Bystander, you may do its Rescue effect."
@@ -1028,7 +1028,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-3c2.webp",
           "abilities": [
             "[hc:instinct][keyword:Soulbind]: You get +[icon:recruit] equal to that Villain's printed VP."
           ]
@@ -1044,7 +1044,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-4c3.webp",
           "abilities": [
             "[hc:ranged][keyword:Soulbind]: You get +[icon:attack] equal to that Villain's printed VP."
           ]
@@ -1060,7 +1060,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-5u.webp",
           "abilities": [
             "[keyword:What If...?]: You get +2[icon:attack] and you may KO a Wound from your hand or from any player's discard pile."
           ]
@@ -1076,7 +1076,7 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-6u2.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, KO one, and put one back."
           ]
@@ -1092,7 +1092,7 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-8r.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-8r.webp",
           "abilities": [
             "[hc:instinct][keyword:Soulbind]: Draw cards equal to that Villain's printed VP."
           ]
@@ -1102,7 +1102,7 @@
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-to-save-christine.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-to-save-christine.webp",
           "sides": [
             "to-save-christine"
           ]
@@ -1110,7 +1110,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-seize-infernal-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-seize-infernal-power.webp",
           "sides": [
             "seize-infernal-power"
           ]
@@ -1118,7 +1118,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-summon-demon-minions.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-summon-demon-minions.webp",
           "sides": [
             "summon-demon-minions"
           ]
@@ -1126,7 +1126,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-wards-of-the-vishanti.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-wards-of-the-vishanti.webp",
           "sides": [
             "wards-of-the-vishanti"
           ]
@@ -1134,7 +1134,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-break-the-absolute-point-in-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-break-the-absolute-point-in-time.webp",
           "sides": [
             "break-the-absolute-point-in-time"
           ]
@@ -1142,7 +1142,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-doctor-strange-supreme-stygian-communion.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-stygian-communion.webp",
           "sides": [
             "stygian-communion"
           ]
@@ -1174,7 +1174,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-2c1.webp",
           "abilities": [
             "Draw a card. Then put a card from your hand on top of your deck.",
             "[hc:covert]: You get +1[icon:recruit]."
@@ -1191,7 +1191,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-3c2.webp",
           "abilities": [
             "[keyword:What If...?]: You may KO a card from your hand or discard pile."
           ]
@@ -1207,7 +1207,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-4c3.webp",
           "abilities": [
             "[keyword:What If...?]: You get +2[icon:attack]."
           ]
@@ -1223,7 +1223,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-5u.webp",
           "abilities": [
             "[hc:covert]: Choose a Hero Name. You are [keyword:Empowered] by that Hero Name."
           ]
@@ -1239,7 +1239,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-6u2.webp",
           "abilities": [
             "[hc:ranged][keyword:Soulbind]: You get +2[icon:attack] and you may do that Villain's Fight effect."
           ]
@@ -1255,7 +1255,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-7r.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-7r.webp",
           "abilities": [
             "[keyword:What If...?]: Choose a Team. (e.g. [team:guardians-of-the-multiverse], [team:x-men], [team:avengers]) You are [keyword:Empowered] by that Team."
           ]
@@ -1265,7 +1265,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-diverging-timestreams.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-diverging-timestreams.webp",
           "sides": [
             "diverging-timestreams"
           ]
@@ -1273,7 +1273,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-another-dimension-crumbles.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-another-dimension-crumbles.webp",
           "sides": [
             "another-dimension-crumbles"
           ]
@@ -1281,7 +1281,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-break-the-oath.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-break-the-oath.webp",
           "sides": [
             "break-the-oath"
           ]
@@ -1289,7 +1289,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-anoint-a-champion.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-anoint-a-champion.webp",
           "sides": [
             "anoint-a-champion"
           ]
@@ -1297,7 +1297,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-history-repeats.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-history-repeats.webp",
           "sides": [
             "history-repeats"
           ]
@@ -1305,7 +1305,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hr-uatu-the-watcher-convoke-the-guardians.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-convoke-the-guardians.webp",
           "sides": [
             "convoke-the-guardians"
           ]
@@ -1326,7 +1326,7 @@
           "slug": "hank-pym-yellowjacket",
           "tactic": false,
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mm-hank-pym-yellowjacket.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mm-hank-pym-yellowjacket.webp",
           "abilities": [
             "Before each time you fight Hank Pym, you must “track him down“ by discarding the top 6 cards of your deck, they paying 2[icon:attack] for each card you discarded that costs 0. If you don't pay this total, gain a Wound and your turn ends.",
             "Always Leads: Any Villain Group",
@@ -1338,7 +1338,7 @@
           "slug": "epic-hank-pym-yellowjacket",
           "tactic": false,
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-me-hank-pym-yellowjacket.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-me-hank-pym-yellowjacket.webp",
           "abilities": [
             "Before each time you fight Hank Pym, you must “track him down“ by discarding the top 6 cards of your deck, they paying 3[icon:attack] for each card you discarded that costs 0. If you don't pay this total, gain a Wound and your turn ends.",
             "Always Leads: Any Villain Group",
@@ -1350,7 +1350,7 @@
           "slug": "microscopic-research",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-hank-pym-yellowjacket-microscopic-research.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-hank-pym-yellowjacket-microscopic-research.webp",
           "abilities": [
             "Fight: You may gain a Hero from the HQ that costs 2 or less."
           ]
@@ -1360,7 +1360,7 @@
           "slug": "revenge-for-ancient-grievance",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-hank-pym-yellowjacket-revenge-for-ancient-grievance.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-hank-pym-yellowjacket-revenge-for-ancient-grievance.webp",
           "abilities": [
             "Fight: The player with the most Villains in their Victory Pile (and/or tied for most) gains a Wound."
           ]
@@ -1370,7 +1370,7 @@
           "slug": "save-from-assassination",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-hank-pym-yellowjacket-save-from-assassination.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-hank-pym-yellowjacket-save-from-assassination.webp",
           "abilities": [
             "Fight: Choose a card from your discard pile that was discarded from your deck this turn. You may put that card into your hand."
           ]
@@ -1380,7 +1380,7 @@
           "slug": "vengeful-sting",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-hank-pym-yellowjacket-vengeful-sting.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-hank-pym-yellowjacket-vengeful-sting.webp",
           "abilities": [
             "Fight: Each other player reveals the top three cards of their deck, discards all those cards that cost 1 or more, and puts the rest back in any order."
           ]
@@ -1399,7 +1399,7 @@
           "slug": "zombie-scarlet-witch",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mm-zombie-scarlet-witch.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mm-zombie-scarlet-witch.webp",
           "abilities": [
             "Zombie Scarlet Witch gets +1[icon:attack] for each Hero with an odd-numbered cost you played this turn.",
             "Always Leads: Zombie Avengers (in solo mode, if using another Villain Group, add “Zombie“ to their card names and they all get Ambush: [keyword:Rise of The Living Dead].)",
@@ -1411,7 +1411,7 @@
           "slug": "epic-zombie-scarlet-witch",
           "tactic": false,
           "vAttack": "13+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-me-zombie-scarlet-witch.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-me-zombie-scarlet-witch.webp",
           "abilities": [
             "Zombie Scarlet Witch gets +1[icon:attack] for each Hero with an odd-numbered cost you played this turn.",
             "Always Leads: Zombie Avengers (in solo mode, if using another Villain Group, add “Zombie“ to their card names and they all get Ambush: [keyword:Rise of The Living Dead].)",
@@ -1423,7 +1423,7 @@
           "slug": "chaos-hex",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-zombie-scarlet-witch-chaos-hex.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-zombie-scarlet-witch-chaos-hex.webp",
           "abilities": [
             "Fight: Before putting this Tactic in your Victory Pile, [keyword:Rise of The Living Dead]. (This ability never makes Mastermind Tactics return.)",
             "Each other player discards a card with an odd-numbered cost or gains a Wound."
@@ -1434,7 +1434,7 @@
           "slug": "even-the-odds",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-zombie-scarlet-witch-even-the-odds.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-zombie-scarlet-witch-even-the-odds.webp",
           "abilities": [
             "Fight: Before putting this Tactic in your Victory Pile, [keyword:Rise of The Living Dead]. (This ability never makes Mastermind Tactics return.)",
             "Each other player reveals the top six cards of their deck, discards all those cards that cost 2,4,6, or 8 and puts the rest back in any order."
@@ -1445,7 +1445,7 @@
           "slug": "refuse-to-accept-death",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-zombie-scarlet-witch-refuse-to-accept-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-zombie-scarlet-witch-refuse-to-accept-death.webp",
           "abilities": [
             "Fight: Before putting this Tactic in your Victory Pile, [keyword:Rise of The Living Dead]. (This ability never makes Mastermind Tactics return.)",
             "You may gain a Hero from the KO pile."
@@ -1456,7 +1456,7 @@
           "slug": "wistful-illusion",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-zombie-scarlet-witch-wistful-illusion.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-zombie-scarlet-witch-wistful-illusion.webp",
           "abilities": [
             "Fight: Before putting this Tactic in your Victory Pile, [keyword:Rise of The Living Dead]. (This ability never makes Mastermind Tactics return.)",
             "Reveal the top card of the Hero Deck then put it on the bottom of the Hero Deck. You may play a copy of that card this turn."
@@ -1476,7 +1476,7 @@
           "slug": "killmonger-the-betrayer",
           "tactic": false,
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mm-killmonger-the-betrayer.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mm-killmonger-the-betrayer.webp",
           "abilities": [
             "Always Include: Killmonger as one of the Heroes",
             "Always Leads: Vibranium Liberator Drones",
@@ -1488,7 +1488,7 @@
           "slug": "epic-killmonger-the-betrayer",
           "tactic": false,
           "vAttack": "12",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-me-killmonger-the-betrayer.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-me-killmonger-the-betrayer.webp",
           "abilities": [
             "Always Include: Killmonger as one of the Heroes",
             "Always Leads: Vibranium Liberator Drones",
@@ -1500,7 +1500,7 @@
           "slug": "change-in-loyalties",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-killmonger-the-betrayer-change-in-loyalties.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-killmonger-the-betrayer-change-in-loyalties.webp",
           "abilities": [
             "Fight: Gain a Killmonger card from the city, HQ, or another player's discard pile."
           ]
@@ -1510,7 +1510,7 @@
           "slug": "pulling-the-strings",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-killmonger-the-betrayer-pulling-the-strings.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-killmonger-the-betrayer-pulling-the-strings.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each different Villain Group in your Victory Pile."
           ]
@@ -1520,7 +1520,7 @@
           "slug": "see-you-on-the-flip-side",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-killmonger-the-betrayer-see-you-on-the-flip-side.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-killmonger-the-betrayer-see-you-on-the-flip-side.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards a Killmonger card."
           ]
@@ -1530,7 +1530,7 @@
           "slug": "sunset-over-wakanda",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-killmonger-the-betrayer-sunset-over-wakanda.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-killmonger-the-betrayer-sunset-over-wakanda.webp",
           "abilities": [
             "Fight: From left to right, each Killmonger Hero in the HQ enters the city as a Villain as described on the Mastermind card. Then refill all the empty HQ spaces."
           ]
@@ -1549,7 +1549,7 @@
           "slug": "ultron-infinity",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mm-ultron-infinity.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mm-ultron-infinity.webp",
           "abilities": [
             "Ultron Infinity has all the [keyword:Empowered] abilities of all Ultron Sentries in the city, the Escape Pile, and stacked next to him.",
             "Always Leads: Ultron Sentries (even in solo mode)",
@@ -1561,7 +1561,7 @@
           "slug": "epic-ultron-infinity",
           "tactic": false,
           "vAttack": "12+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-me-ultron-infinity.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-me-ultron-infinity.webp",
           "abilities": [
             "Ultron Infinity has all the [keyword:Empowered] abilities of all Ultron Sentries in the city, the Escape Pile, and stacked next to him.",
             "Always Leads: Ultron Sentries (even in solo mode)",
@@ -1574,7 +1574,7 @@
           "slug": "infinity-of-minions",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-ultron-infinity-infinity-of-minions.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-ultron-infinity-infinity-of-minions.webp",
           "abilities": [
             "Fight: Stack an Ultron Sentry from the city next to Ultron. Then each other player chooses an Ultron Sentry from their Victory Pile to enter the city."
           ]
@@ -1584,7 +1584,7 @@
           "slug": "struggle-for-the-infinity-stones",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-ultron-infinity-struggle-for-the-infinity-stones.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-ultron-infinity-struggle-for-the-infinity-stones.webp",
           "abilities": [
             "Fight: Gain a Hero from the HQ that has one of the Hero Classes that is [keyword:Empowering] Ultron."
           ]
@@ -1594,7 +1594,7 @@
           "slug": "transcend-mortality",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-ultron-infinity-transcend-mortality.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-ultron-infinity-transcend-mortality.webp",
           "abilities": [
             "Fight: Search the Villain Deck and stack the first Ultron Sentry you find next to Ultron. Shuffle the Villain Deck."
           ]
@@ -1604,7 +1604,7 @@
           "slug": "unfettered-annihilation",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-mt-ultron-infinity-unfettered-annihilation.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-mt-ultron-infinity-unfettered-annihilation.webp",
           "abilities": [
             "Fight: For each Ultron Sentry in your Victory Pile, you may KO a Hero from your hand or discard pile."
           ]
@@ -1624,7 +1624,7 @@
           "slug": "captain-marvel-end-of-the-party",
           "vp": "5",
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-intergalactic-party-animals-captain-marvel-end-of-the-party.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-captain-marvel-end-of-the-party.webp",
           "abilities": [
             "Captain Marvel gets +1[icon:attack] for each other Intergalactic Party Animal in the city and/or Escape Pile.",
             "Ambush: Each player reveals a [hc:strength] Hero or gains a Wound.",
@@ -1636,7 +1636,7 @@
           "slug": "frigga-mother-of-thor",
           "vp": "6",
           "vAttack": "12",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-intergalactic-party-animals-frigga-mother-of-thor.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-frigga-mother-of-thor.webp",
           "abilities": [
             "During your turn, you may discard a card that costs 5 or more to “hide the party“ and shuffle Frigga into the Villain Deck. If you do, you may KO one of your Heroes, then you must play a card from the Villain Deck.",
             "Ambush: Frigga ascends to become a [rule:new Mastermind]. She gains the ability “Master Strike: If there are any Intergalactic Party Animals in the city, each player discards a card.“"
@@ -1647,7 +1647,7 @@
           "slug": "party-korg",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-intergalactic-party-animals-party-korg.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-party-korg.webp",
           "abilities": [
             "Fight: KO one of your Heroes.",
             "Escape: [keyword:Cross-Dimensional Party Rampage]"
@@ -1658,7 +1658,7 @@
           "slug": "party-nebula",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-intergalactic-party-animals-party-nebula.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-party-nebula.webp",
           "abilities": [
             "Ambush: If there are any other Intergalactic Party Animals in the city, each player discards a card.",
             "Escape: Same effect."
@@ -1669,7 +1669,7 @@
           "slug": "party-kraglin",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-intergalactic-party-animals-party-kraglin.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-party-kraglin.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Intergalactic Party Animal in your Victory Pile (including this one)."
           ]
@@ -1679,7 +1679,7 @@
           "slug": "party-korath",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-intergalactic-party-animals-party-korath.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-party-korath.webp",
           "abilities": [
             "Party Korath gets +[icon:attack] for each Bystander held among all Intergalactic Party Animals.",
             "Ambush: Each player may draw a card. Korath captures a Bystander for each card drawn this way."
@@ -1690,7 +1690,7 @@
           "slug": "party-skrull",
           "vp": "3",
           "vAttack": "2+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-intergalactic-party-animals-party-skrull.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-party-skrull.webp",
           "abilities": [
             "Ambush: Party Skrull captures the highest-cost Hero from all the HQ spaces under Intergalactic Party Animals. Party Skrull gets +[icon:attack] equal to that Hero's cost.",
             "Fight: Either KO that Hero or choose a player to gain it."
@@ -1701,7 +1701,7 @@
           "slug": "party-surtur",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-intergalactic-party-animals-party-surtur.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-party-surtur.webp",
           "abilities": [
             "Ambush: [keyword:Cross-Dimensional Party Rampage]",
             "Fight: You may KO a grey Hero from your discard pile."
@@ -1720,7 +1720,7 @@
           "slug": "thanos",
           "vp": "6",
           "vAttack": "12",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-rival-overlords-thanos.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-thanos.webp",
           "abilities": [
             "Thanos gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Thanos ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player discards half of their cards (round down the discards).“"
@@ -1731,7 +1731,7 @@
           "slug": "dormammu",
           "vp": "6",
           "vAttack": "11",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-rival-overlords-dormammu.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-dormammu.webp",
           "abilities": [
             "Dormammu gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Dormammu ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player reveals the top of their deck. If it costs 1 or more, that player gains a Wound.“"
@@ -1742,7 +1742,7 @@
           "slug": "ego",
           "vp": "5",
           "vAttack": "10",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-rival-overlords-ego.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-ego.webp",
           "abilities": [
             "Ego gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Ego ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Reveal the top card of the Villain Deck. If it's a Master Strike, play it.“"
@@ -1753,7 +1753,7 @@
           "slug": "loki",
           "vp": "5",
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-rival-overlords-loki.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-loki.webp",
           "abilities": [
             "Loki gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Loki ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player discards a [hc:ranged] Hero or KOs one of their non-grey Heroes.“"
@@ -1764,7 +1764,7 @@
           "slug": "red-skull-hydra-occultist",
           "vp": "4",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-rival-overlords-red-skull-hydra-occultist.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-red-skull-hydra-occultist.webp",
           "abilities": [
             "Red Skull gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Red Skull ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player discards a [hc:covert] Hero or discards down to 4 cards.“"
@@ -1775,7 +1775,7 @@
           "slug": "yondu",
           "vp": "3",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-rival-overlords-yondu.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-yondu.webp",
           "abilities": [
             "Yondu gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Ambush: Yondu captures a Bystander.",
@@ -1787,7 +1787,7 @@
           "slug": "arnim-zola-hydra-scientist",
           "vp": "2",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-rival-overlords-arnim-zola-hydra-scientist.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-arnim-zola-hydra-scientist.webp",
           "abilities": [
             "Arnim Zola gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Fight: During one of your turns, you may [keyword:Soulbind Arnim Zola] to give a Mastermind -2[icon:attack] for one fight."
@@ -1798,7 +1798,7 @@
           "slug": "ulysses-klaue",
           "vp": "2",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-rival-overlords-ulysses-klaue.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-ulysses-klaue.webp",
           "abilities": [
             "Ulysses Klaue gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Ambush: A Villain in the city with an “ascend“ ability ascends to become a [rule:new Mastermind].",
@@ -1818,7 +1818,7 @@
           "slug": "cull-obsidian",
           "vp": "2",
           "vAttack": "2+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-black-order-guards-cull-obsidian.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-black-order-guards-cull-obsidian.webp",
           "abilities": [
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Fight: For each Hero in the HQ that costs 5 or more, you get +1[icon:recruit]."
@@ -1829,7 +1829,7 @@
           "slug": "corvus-glaive",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-black-order-guards-corvus-glaive.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-black-order-guards-corvus-glaive.webp",
           "abilities": [
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Ambush: For each Hero in the HQ that costs 5 or more, Corvus Glaive captures a Bystander."
@@ -1840,7 +1840,7 @@
           "slug": "proxima-midnight",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-black-order-guards-proxima-midnight.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-black-order-guards-proxima-midnight.webp",
           "abilities": [
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Ambush: Each player discards a card that costs 5 or more or gains a Wound.",
@@ -1852,7 +1852,7 @@
           "slug": "ebony-maw",
           "vp": "6",
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-black-order-guards-ebony-maw.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-black-order-guards-ebony-maw.webp",
           "abilities": [
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Ambush: Each player discards a card that costs 5 or more.",
@@ -1872,7 +1872,7 @@
           "slug": "zombie-wong",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-zombie-avengers-zombie-wong.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-zombie-avengers-zombie-wong.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: Look at the top two cards of your deck. Draw one of them and put the other back."
@@ -1883,7 +1883,7 @@
           "slug": "zombie-hawkeye",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-zombie-avengers-zombie-hawkeye.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-zombie-avengers-zombie-hawkeye.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: Each player draws a card."
@@ -1894,7 +1894,7 @@
           "slug": "zombie-wasp",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-zombie-avengers-zombie-wasp.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-zombie-avengers-zombie-wasp.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "While in the Sewers, Rooftops, or Bridge, Zombie Wasp is “giant-size“ and gets +2[icon:attack].",
@@ -1906,7 +1906,7 @@
           "slug": "zombie-doctor-strange",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-zombie-avengers-zombie-doctor-strange.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-zombie-avengers-zombie-doctor-strange.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: Look at the top three cards of your deck. Draw one of them, KO one, and put one back.",
@@ -1918,7 +1918,7 @@
           "slug": "zombie-iron-man",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-zombie-avengers-zombie-iron-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-zombie-avengers-zombie-iron-man.webp",
           "abilities": [
             "Ambush: Each player reveals a [hc:tech] card or gains a Wound. Then [keyword:Rise of The Living Dead]",
             "Escape: Zombie Iron Man ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Repeat his Ambush effect.“"
@@ -1929,7 +1929,7 @@
           "slug": "zombie-captain-america",
           "vp": "4",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-zombie-avengers-zombie-captain-america.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-zombie-avengers-zombie-captain-america.webp",
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Zombie Captain America gets -1[icon:attack] for each Hero Class you have.",
@@ -1949,7 +1949,7 @@
           "slug": "wolf-demon",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-stranges-demons-wolf-demon.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-wolf-demon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind another Villain]: KO one of your Heroes."
           ]
@@ -1959,7 +1959,7 @@
           "slug": "moose-demon",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-stranges-demons-moose-demon.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-moose-demon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind a Henchman]: Draw two cards. You may do that Henchman's Fight effect."
           ]
@@ -1969,7 +1969,7 @@
           "slug": "two-headed-ram-demon",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-stranges-demons-two-headed-ram-demon.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-two-headed-ram-demon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind two other Villains]: KO up to two cards from your discard pile."
           ]
@@ -1979,7 +1979,7 @@
           "slug": "skull-demon",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-stranges-demons-skull-demon.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-skull-demon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind a Bystander]: Draw two cards. Then if it's a Special Bystander, you may do its Rescue effect."
           ]
@@ -1989,7 +1989,7 @@
           "slug": "demon-dragon",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-stranges-demons-demon-dragon.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-demon-dragon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind another Villain]: You get +[icon:recruit] equal to that Villain's VP.",
             "Escape: [keyword:Cross-Dimensional Demon Rampage]."
@@ -2000,7 +2000,7 @@
           "slug": "demonbound-doctor-strange",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-stranges-demons-demonbound-doctor-strange.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-demonbound-doctor-strange.webp",
           "abilities": [
             "Ambush: Each player must [keyword:Soulbind a Strange's Demon Villain] or discard a card.",
             "Escape: Demonbound Doctor Strange ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Repeat his Ambush effect.“"
@@ -2011,7 +2011,7 @@
           "slug": "demon-champion-of-hydra",
           "vp": "6",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-vi-stranges-demons-demon-champion-of-hydra.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-demon-champion-of-hydra.webp",
           "abilities": [
             "Ambush: [keyword:Cross-Dimensional Demon Rampage] Then each player must [keyword:Soulbind a Strange's Demon Villain].",
             "Escape: Demon Champion of Hydra ascends to become a [rule:new Mastermind]. It gains the ability “Master Strike: Repeat its Ambush effect.“"
@@ -2025,7 +2025,7 @@
       "id": 38,
       "name": "Giants of Jotunheim",
       "slug": "giants-of-jotunheim",
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-giants-of-jotunheim.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hm-giants-of-jotunheim.webp",
       "abilities": [
         "Ambush: Each player discards the top three cards of their deck.",
         "Fight: You may KO a grey Hero from your discard pile."
@@ -2035,7 +2035,7 @@
       "id": 39,
       "name": "Vibranium Liberator Drones",
       "slug": "vibranium-liberator-drones",
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-vibranium-liberator-drones.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hm-vibranium-liberator-drones.webp",
       "abilities": [
         "Ambush: Another Villain captures a Bystander. ",
         "Fight: [keyword:Liberate 3]. The next time you rescue a Bystander this turn (Including from this Henchmen), KO one of your Heroes."
@@ -2045,13 +2045,13 @@
       "id": 40,
       "name": "Ultron Sentries",
       "slug": "ultron-sentries",
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-covert.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-covert.webp",
       "abilities": [],
       "cards": [
         {
           "name": "Ultron Sentries (Covert)",
           "slug": "ultron-sentries-covert",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-covert.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-covert.webp",
           "abilities": [
             "[keyword:Empowered] by [hc:covert]",
             "Fight: KO one of your Heroes."
@@ -2060,7 +2060,7 @@
         {
           "name": "Ultron Sentries (Instinct)",
           "slug": "ultron-sentries-instinct",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-instinct.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-instinct.webp",
           "abilities": [
             "[keyword:Empowered] by [hc:instinct]",
             "Fight: KO one of your Heroes."
@@ -2069,7 +2069,7 @@
         {
           "name": "Ultron Sentries (Ranged)",
           "slug": "ultron-sentries-ranged",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-ranged.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-ranged.webp",
           "abilities": [
             "[keyword:Empowered] by [hc:ranged]",
             "Fight: KO one of your Heroes."
@@ -2078,7 +2078,7 @@
         {
           "name": "Ultron Sentries (Strength)",
           "slug": "ultron-sentries-strength",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-strength.webp",
           "abilities": [
             "[keyword:Empowered] by [hc:strength]",
             "Fight: KO one of your Heroes."
@@ -2087,7 +2087,7 @@
         {
           "name": "Ultron Sentries (Tech)",
           "slug": "ultron-sentries-tech",
-          "imageUrl": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-tech.webp",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-tech.webp",
           "abilities": [
             "[keyword:Empowered] by [hc:tech]",
             "Fight: KO one of your Heroes."
@@ -2095,11 +2095,11 @@
         }
       ],
       "imageUrlByClass": {
-        "covert": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-covert.webp",
-        "instinct": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-instinct.webp",
-        "ranged": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-ranged.webp",
-        "strength": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-strength.webp",
-        "tech": "https://images.barefootbetters.com/wtif/wtif-hm-ultron-sentries-tech.webp"
+        "covert": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-covert.webp",
+        "instinct": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-instinct.webp",
+        "ranged": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-ranged.webp",
+        "strength": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-strength.webp",
+        "tech": "https://images.legendary-arena.com/wtif/wtif-hm-ultron-sentries-tech.webp"
       }
     }
   ],
@@ -2108,7 +2108,7 @@
       "id": 174,
       "name": "Trash Earth with Hugest Party Ever",
       "slug": "trash-earth-with-hugest-party-ever",
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-sc-trash-earth-with-hugest-party-ever.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-sc-trash-earth-with-hugest-party-ever.webp",
       "cards": [
         {
           "abilities": [
@@ -2124,7 +2124,7 @@
       "id": 175,
       "name": "Marvel Zombies",
       "slug": "marvel-zombies",
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-sc-marvel-zombies.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-sc-marvel-zombies.webp",
       "cards": [
         {
           "abilities": [
@@ -2140,7 +2140,7 @@
       "id": 176,
       "name": "Collect an Interstellar Zoo",
       "slug": "collect-an-interstellar-zoo",
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-sc-collect-an-interstellar-zoo.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-sc-collect-an-interstellar-zoo.webp",
       "cards": [
         {
           "abilities": [
@@ -2156,7 +2156,7 @@
       "id": 177,
       "name": "Breach the Nexus of All Realities",
       "slug": "breach-the-nexus-of-all-realities",
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-sc-breach-the-nexus-of-all-realities.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-sc-breach-the-nexus-of-all-realities.webp",
       "cards": [
         {
           "abilities": [
@@ -2175,7 +2175,7 @@
       "name": "Bystander",
       "slug": "bystander",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-by-bystander.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-by-bystander.webp",
       "cards": [
         {
           "qtd": 25,
@@ -2188,7 +2188,7 @@
       "name": "Happy Hogan",
       "slug": "happy-hogan",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-by-happy-hogan.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-by-happy-hogan.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2203,7 +2203,7 @@
       "name": "Howard Stark",
       "slug": "howard-stark",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-by-howard-stark.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-by-howard-stark.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2218,7 +2218,7 @@
       "name": "Howard the Duck",
       "slug": "howard-the-duck",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-by-howard-the-duck.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-by-howard-the-duck.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2233,7 +2233,7 @@
       "name": "Pepper Potts",
       "slug": "pepper-potts",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-by-pepper-potts.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-by-pepper-potts.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2248,7 +2248,7 @@
       "name": "Scott Lang's Head",
       "slug": "scott-langs-head",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-by-scott-langs-head.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-by-scott-langs-head.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2265,7 +2265,7 @@
       "name": "Wound",
       "filterName": "Wound (What If...)",
       "slug": "wound-what-if",
-      "imageUrl": "https://images.barefootbetters.com/wtif/wtif-wd-wound-what-if.webp",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-wd-wound-what-if.webp",
       "cards": [
         {
           "qtd": 30,

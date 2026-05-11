@@ -26,7 +26,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-2c1.webp",
           "abilities": [
             "You may send this [keyword:Undercover].",
             "[keyword:Cyber-Mod][hc:covert]: Draw a card."
@@ -43,7 +43,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-3c2.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:covert][hc:covert]: Draw a card."
           ]
@@ -59,7 +59,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-5u.webp",
           "abilities": [
             "The next Hero you recruit this turn goes on top of your deck.",
             "[hc:strength]: [keyword:Fated Future]"
@@ -76,7 +76,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-7r.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-7r.webp",
           "abilities": [
             "Reveal the top three cards of the Hero Deck. You may send one of them [keyword:Undercover]. Put the rest back in any order.",
             "[team:spider-friends]: You may play a copy of the card you sent [keyword:Undercover] this way."
@@ -87,7 +87,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-retractable-talons.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-retractable-talons.webp",
           "sides": [
             "retractable-talons"
           ]
@@ -95,7 +95,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-venomous-fangs.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-venomous-fangs.webp",
           "sides": [
             "venomous-fangs"
           ]
@@ -103,7 +103,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-spider-silk-webbing.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-spider-silk-webbing.webp",
           "sides": [
             "spider-silk-webbing"
           ]
@@ -111,7 +111,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-spider-man-2099-spider-sense-telepathy.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-spider-sense-telepathy.webp",
           "sides": [
             "spider-sense-telepathy"
           ]
@@ -141,7 +141,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-3c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-3c1.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:tech]: You get +1[icon:recruit].",
             "[keyword:Cyber-Mod][hc:tech][hc:tech]: Draw a card."
@@ -158,7 +158,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-4c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-4c2.webp",
           "abilities": [
             "You may send this and a card from the HQ [keyword:Undercover]. If you do, you get +2[icon:attack].",
             "[keyword:Cyber-Mod][hc:tech][hc:tech][hc:tech]: You get +2[icon:attack]."
@@ -175,7 +175,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-5u.webp",
           "abilities": [
             "[team:marvel-knights]: You may KO a Henchman from your Victory Pile. If you do, you get +2[icon:attack] and you may do that Henchman's Fight effect."
           ]
@@ -191,7 +191,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-7r.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-7r.webp",
           "abilities": [
             "You may send a card from the HQ [keyword:Undercover].",
             "[keyword:Cyber-Mod][hc:tech]: [keyword:Fated Future] and you get +1[icon:attack] for each [hc:tech] card in your Victory Pile."
@@ -202,7 +202,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-cyber-specter.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-cyber-specter.webp",
           "sides": [
             "cyber-specter"
           ]
@@ -210,7 +210,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-hell-ride.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-hell-ride.webp",
           "sides": [
             "hell-ride"
           ]
@@ -218,7 +218,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-death-beyond-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-death-beyond-death.webp",
           "sides": [
             "death-beyond-death"
           ]
@@ -226,7 +226,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ghost-rider-2099-infernal-chainsaw.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-infernal-chainsaw.webp",
           "sides": [
             "infernal-chainsaw"
           ]
@@ -256,7 +256,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-3c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-3c1.webp",
           "abilities": [
             "You may send this and a card from your hand or discard pile [keyword:Undercover]. If you do, you get +1[icon:recruit]."
           ]
@@ -272,7 +272,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-3c2.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:ranged]: You get +1[icon:attack].",
             "[keyword:Cyber-Mod][hc:ranged][hc:ranged][hc:ranged]: Instead you get +3[icon:attack]."
@@ -289,7 +289,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-6u.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-6u.webp",
           "abilities": [
             "[hc:tech]: You may look at the top three cards of your deck. If you do, send one of them [keyword:Undercover] and put the rest back in any order."
           ]
@@ -305,7 +305,7 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-8r.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-8r.webp",
           "abilities": [
             "You may send a card from your hand or discard pile [keyword:Undercover].",
             "[keyword:Fated Future]",
@@ -317,7 +317,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-subvert-this-new-future.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-subvert-this-new-future.webp",
           "sides": [
             "subvert-this-new-future"
           ]
@@ -325,7 +325,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-doomblast.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-doomblast.webp",
           "sides": [
             "doomblast"
           ]
@@ -333,7 +333,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-flesh-grafted-doombots.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-flesh-grafted-doombots.webp",
           "sides": [
             "flesh-grafted-doombots"
           ]
@@ -341,7 +341,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-doctor-doom-2099-tear-through-time-itself.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-tear-through-time-itself.webp",
           "sides": [
             "tear-through-time-itself"
           ]
@@ -371,7 +371,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-3c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-3c1.webp",
           "abilities": [
             "[keyword:Cyber-Mod Wound]: You get +1[icon:attack].",
             "[keyword:Cyber-Mod 4 Wounds]: Instead you get +2[icon:attack]."
@@ -388,7 +388,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-4c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-4c2.webp",
           "abilities": [
             "You may send a Wound from your hand or discard pile [keyword:Undercover].",
             "[hc:strength]: You may send a Hero from your hand or discard pile [keyword:Undercover] instead."
@@ -405,7 +405,7 @@
           "cost": 6,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-6u.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-6u.webp",
           "abilities": [
             "To play this, you must discard two cards or gain a Wound.",
             "[hc:tech]: [keyword:Fated Future]"
@@ -422,7 +422,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-8r.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-8r.webp",
           "abilities": [
             "For each player, either send a Wound from that player's discard pile [keyword:Undercover] into your own Victory Pile, or that player gains a Wound.",
             "[keyword:Cyber-Mod Wound]: You get +1[icon:attack] for each Wound in your Victory Pile."
@@ -433,7 +433,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-rage-incarnate.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-rage-incarnate.webp",
           "sides": [
             "rage-incarnate"
           ]
@@ -441,7 +441,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-push-pain-under-the-surface.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-push-pain-under-the-surface.webp",
           "sides": [
             "push-pain-under-the-surface"
           ]
@@ -449,7 +449,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-massive-gamma-detonation.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-massive-gamma-detonation.webp",
           "sides": [
             "massive-gamma-detonation"
           ]
@@ -457,7 +457,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-hulk-2099-cataclysmic-frenzy.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-cataclysmic-frenzy.webp",
           "sides": [
             "cataclysmic-frenzy"
           ]
@@ -487,7 +487,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-3c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-3c1.webp",
           "abilities": [
             "[hc:instinct]: Draw a card from the bottom of your deck."
           ]
@@ -503,7 +503,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-5c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-5c2.webp",
           "abilities": [
             "[hc:strength]You get +2[icon:attack] and [keyword:Fated Future]."
           ]
@@ -519,7 +519,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-6u.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-6u.webp",
           "abilities": [
             "Reveal the top two cards of the Villain Deck and put them back in any order.",
             "[keyword:Fated Future]"
@@ -536,7 +536,7 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-8r.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-8r.webp",
           "abilities": [
             "Reveal the top card of your deck. You get +[icon:attack] equal to that card's cost. Discard it or put it back.",
             "[team:marvel-knights]: Then do the same thing with the bottom card of your deck."
@@ -547,7 +547,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-down-in-the-dregs.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-down-in-the-dregs.webp",
           "sides": [
             "down-in-the-dregs"
           ]
@@ -555,7 +555,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-toxic-mutations.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-toxic-mutations.webp",
           "sides": [
             "toxic-mutations"
           ]
@@ -563,7 +563,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-detect-vibrations.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-detect-vibrations.webp",
           "sides": [
             "detect-vibrations"
           ]
@@ -571,7 +571,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-hr-ravage-2099-overhorns-and-underhorns.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-overhorns-and-underhorns.webp",
           "sides": [
             "overhorns-and-underhorns"
           ]
@@ -592,7 +592,7 @@
           "slug": "electro-2099",
           "tactic": true,
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-sinister-six-2099-electro-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-sinister-six-2099-electro-2099.webp",
           "abilities": [
             "Always Leads: Any “Alchemax“ or “Sinister“ Villain Group",
             "Setup: [rule:Adapt].",
@@ -605,7 +605,7 @@
           "slug": "epic-electro-2099",
           "tactic": true,
           "vAttack": "12",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-sinister-six-2099-electro-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-sinister-six-2099-electro-2099.webp",
           "abilities": [
             "Always Leads: Any “Alchemax“ or “Sinister“ Villain Group",
             "Setup: [rule:Adapt].",
@@ -618,7 +618,7 @@
           "slug": "sandwoman-2099",
           "tactic": true,
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-sinister-six-2099-sandwoman-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-sinister-six-2099-sandwoman-2099.webp",
           "abilities": [
             "Sandwoman 2099 gets +2[icon:attack] for each Villain in the city.",
             "Master Strike: You may either recruit or attack this turn, but not both. [rule:Adapt].",
@@ -630,7 +630,7 @@
           "slug": "epic-sandwoman-2099",
           "tactic": true,
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-sinister-six-2099-sandwoman-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-sinister-six-2099-sandwoman-2099.webp",
           "abilities": [
             "Sandwoman 2099 gets +3[icon:attack] for each Villain in the city.",
             "Master Strike: You may either recruit or attack this turn, but not both. [rule:Adapt].",
@@ -642,7 +642,7 @@
           "slug": "vulture-2099",
           "tactic": true,
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-sinister-six-2099-vulture-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-sinister-six-2099-vulture-2099.webp",
           "abilities": [
             "Vulture 2099 gets +[icon:attack] equal to the highest [icon:piercing] value of any Villain in the Escape Pile, Rooftops, or Bridge.",
             "Master Strike: If there are any Villains on the Rooftops or Birdge, one of them escapes and each player gains a Wound. [rule:Adapt].",
@@ -654,7 +654,7 @@
           "slug": "epic-vulture-2099",
           "tactic": true,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-sinister-six-2099-vulture-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-sinister-six-2099-vulture-2099.webp",
           "abilities": [
             "Vulture 2099 gets +[icon:attack] equal to the highest two [icon:piercing] values among Villains in the Escape Pile, Rooftops, and Bridge.",
             "Master Strike: If there are any Villains on the Rooftops or Birdge, each of them escapes and each player gains a Wound. [rule:Adapt].",
@@ -666,7 +666,7 @@
           "slug": "doctor-octopus-2099",
           "tactic": true,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-sinister-six-2099-doctor-octopus-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-sinister-six-2099-doctor-octopus-2099.webp",
           "abilities": [
             "Doctor Octopus 2099 gets +4[icon:attack] unless you played at least 8 cards or a Hero that costs 8 this turn.",
             "Master Strike: Each player discards cards whose total cost is at least 8 (for that player) or gains a Wound. [rule:Adapt].",
@@ -678,7 +678,7 @@
           "slug": "epic-doctor-octopus-2099",
           "tactic": true,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-sinister-six-2099-doctor-octopus-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-sinister-six-2099-doctor-octopus-2099.webp",
           "abilities": [
             "Doctor Octopus 2099 gets +8[icon:attack] unless you played at least 8 cards or a Hero that costs 8 this turn.",
             "Master Strike: Each player discards cards whose total cost is exactly 8 (for that player) or gains a Wound. [rule:Adapt].",
@@ -690,7 +690,7 @@
           "slug": "venom-2099",
           "tactic": true,
           "vAttack": "10",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-sinister-six-2099-venom-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-sinister-six-2099-venom-2099.webp",
           "abilities": [
             "Venom 2099 gets -1[icon:attack] for each card you have that costs 2.",
             "Master Strike: Each player KOs a card that costs 2 from their hand or discard pile or gains a Wound. [rule:Adapt].",
@@ -702,7 +702,7 @@
           "slug": "epic-venom-2099",
           "tactic": true,
           "vAttack": "13",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-sinister-six-2099-venom-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-sinister-six-2099-venom-2099.webp",
           "abilities": [
             "Venom 2099 gets -1[icon:attack] for each card you have that costs 2.",
             "Master Strike: Each player KOs a card that costs 2 from their hand or gains a Wound. [rule:Adapt].",
@@ -714,7 +714,7 @@
           "slug": "goblin-2099",
           "tactic": true,
           "vAttack": "11",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-sinister-six-2099-goblin-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-sinister-six-2099-goblin-2099.webp",
           "abilities": [
             "Goblin 2099 gets -1[icon:attack] for each Bystander in your Victory Pile.",
             "Master Strike: Each player puts a Bystander from their Victory Pile into the Escape Pile or gains a Wound. [rule:Adapt].",
@@ -726,7 +726,7 @@
           "slug": "epic-goblin-2099",
           "tactic": true,
           "vAttack": "14",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-sinister-six-2099-goblin-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-sinister-six-2099-goblin-2099.webp",
           "abilities": [
             "Goblin 2099 gets -1[icon:attack] for each Bystander in your Victory Pile.",
             "Master Strike: Each player puts two Bystanders from their Victory Pile into the Escape Pile or gains a Wound. [rule:Adapt].",
@@ -747,7 +747,7 @@
           "slug": "avatarr-ceo-of-alchemax",
           "tactic": true,
           "vAttack": "10",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-alchemax-executives-avatarr-ceo-of-alchemax.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-alchemax-executives-avatarr-ceo-of-alchemax.webp",
           "abilities": [
             "Always Leads: Alchemax Enforcers",
             "Setup: Add an extra Hero to the Hero Deck. [rule:Adapt].",
@@ -760,7 +760,7 @@
           "slug": "epic-avatarr",
           "tactic": true,
           "vAttack": "13",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-alchemax-executives-avatarr.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-alchemax-executives-avatarr.webp",
           "abilities": [
             "Always Leads: Alchemax Enforcers",
             "Setup: Add an extra Hero to the Hero Deck. [rule:Adapt].",
@@ -773,7 +773,7 @@
           "slug": "fearmaster-vp-of-the-public-eye",
           "tactic": true,
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-alchemax-executives-fearmaster-vp-of-the-public-eye.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-alchemax-executives-fearmaster-vp-of-the-public-eye.webp",
           "abilities": [
             "Fearmaster gets +1[icon:attack] for each grey Hero you have.",
             "Master Strike: Put the two lowest-cost Heroes from the HQ into the Escape Pile. Then [keyword:Cyber-Mod][hc:instinct]: Count the number of [hc:instinct] cards in the Escape Pile. Each player discards that many non-grey Heroes, then draws a card for each card they discarded this way. [rule:Adapt].",
@@ -785,7 +785,7 @@
           "slug": "epic-fearmaster",
           "tactic": true,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-alchemax-executives-fearmaster.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-alchemax-executives-fearmaster.webp",
           "abilities": [
             "Fearmaster gets +2[icon:attack] for each grey Hero you have.",
             "Master Strike: Put the three lowest-cost Heroes from the HQ into the Escape Pile. Then [keyword:Cyber-Mod][hc:instinct]: Count the number of [hc:instinct] cards in the Escape Pile. Each player discards that many non-grey Heroes, then draws two cards. [rule:Adapt].",
@@ -797,7 +797,7 @@
           "slug": "john-herod-executive-vp",
           "tactic": true,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-alchemax-executives-john-herod-executive-vp.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-alchemax-executives-john-herod-executive-vp.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:covert][hc:covert]: John Herod gets +5[icon:attack].",
             "Master Strike: Put the two rightmost Heroes from the HQ into the Escape Pile. Then [keyword:Cyber-Mod][hc:covert]: You may pay 5[icon:attack] this turn to “expose Fake Captain America.“ If you do, KO one of your Heroes. If you don't by the end of this turn, each player gains a Wound (after you draw your new hand.) [rule:Adapt].",
@@ -809,7 +809,7 @@
           "slug": "epic-john-herod",
           "tactic": true,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-alchemax-executives-john-herod.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-alchemax-executives-john-herod.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:covert][hc:covert]: John Herod gets +7[icon:attack].",
             "Master Strike: Put the three rightmost Heroes from the HQ into the Escape Pile. Then [keyword:Cyber-Mod][hc:covert]: You may pay 7[icon:attack] this turn to “expose Fake Captain America.“ If you do, KO one of your Heroes. If you don't by the end of this turn, each player gains a Wound (after you draw your new hand.) [rule:Adapt].",
@@ -821,7 +821,7 @@
           "slug": "tiger-wylde-general-of-alchemax-elite",
           "tactic": true,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mt-alchemax-executives-tiger-wylde.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mt-alchemax-executives-tiger-wylde.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:strength]: Tiger Wylde gets +1[icon:attack] for each [hc:strength] card in the Escape Pile.",
             "Master Strike: Put the two leftmost Heroes from the HQ into the Escape Pile. Then [keyword:Cyber-Mod][hc:tech]: Each player reveals a [hc:tech] card or discards a card. [rule:Adapt].",
@@ -833,7 +833,7 @@
           "slug": "epic-tiger-wylde",
           "tactic": true,
           "vAttack": "11+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-mc-alchemax-executives-tiger-wylde.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-mc-alchemax-executives-tiger-wylde.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:strength]: Tiger Wylde gets +1[icon:attack] for each [hc:strength] card in the Escape Pile.",
             "Master Strike: Put the three leftmost Heroes from the HQ into the Escape Pile. Then [keyword:Cyber-Mod][hc:tech]: Each player discards a card at random. [rule:Adapt].",
@@ -855,7 +855,7 @@
           "slug": "heimdall-2099",
           "vp": "2",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-vi-false-aesir-of-alchemax-heimdall-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-false-aesir-of-alchemax-heimdall-2099.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Ambush: Heimdall 2099 captures a Bystander.",
@@ -867,7 +867,7 @@
           "slug": "hela-2099",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-vi-false-aesir-of-alchemax-hela-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-false-aesir-of-alchemax-hela-2099.webp",
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
             "[keyword:Fight or Fail]: A Henchman Villain from any player's Victory Pile enters the city.",
@@ -879,7 +879,7 @@
           "slug": "loki-2099",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-vi-false-aesir-of-alchemax-loki-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-false-aesir-of-alchemax-loki-2099.webp",
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
             "Ambush: Shuffle a Master Strike from the KO pile back into the Villain Deck.",
@@ -892,7 +892,7 @@
           "slug": "thor-2099",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-vi-false-aesir-of-alchemax-thor-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-false-aesir-of-alchemax-thor-2099.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Ambush: Each player discards a card that costs 5 or more or gains a Wound.",
@@ -913,7 +913,7 @@
           "slug": "cyber-nostra",
           "vp": "2",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-vi-alchemax-enforcers-cyber-nostra.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-alchemax-enforcers-cyber-nostra.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:tech]: Cyber-Nostra gets +1[icon:attack] for each [hc:tech] card in the Escape Pile.",
             "Ambush: Put the top card of the Hero Deck into the Escape Pile.",
@@ -925,7 +925,7 @@
           "slug": "whackoid",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-vi-alchemax-enforcers-whackoid.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-alchemax-enforcers-whackoid.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:instinct]: Whackoid gets +1[icon:attack].",
             "[keyword:Cyber-Mod][hc:covert][hc:covert][hc:covert]: Whackoid gets +3[icon:attack].",
@@ -937,7 +937,7 @@
           "slug": "venture",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-vi-alchemax-enforcers-venture.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-alchemax-enforcers-venture.webp",
           "abilities": [
             "Ambush: Put the top card of the Hero Deck into the Escape Pile. Venture captures a Bystander. [keyword:Cyber-Mod][hc:ranged]: Venture also captures a non-grey Hero from your discard pile.",
             "Fight: Either KO that captured Hero or choose a player to gain it."
@@ -948,7 +948,7 @@
           "slug": "jigsaw-2099",
           "vp": "5",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/2099/2099-vi-alchemax-enforcers-jigsaw-2099.webp",
+          "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-alchemax-enforcers-jigsaw-2099.webp",
           "abilities": [
             "Jigsaw 2099 gets +1[icon:attack] for each Bystander he has.",
             "Ambush: Put the top card of the Hero Deck into the Escape Pile.",
@@ -965,7 +965,7 @@
       "id": 182,
       "name": "Pull Reality Into Cyberspace",
       "slug": "pull-reality-into-cyberspace",
-      "imageUrl": "https://images.barefootbetters.com/2099/2099-sc-pull-reality-into-cyberspace.webp",
+      "imageUrl": "https://images.legendary-arena.com/2099/2099-sc-pull-reality-into-cyberspace.webp",
       "cards": [
         {
           "abilities": [
@@ -982,7 +982,7 @@
       "id": 183,
       "name": "Become President of the United States",
       "slug": "become-president-of-the-united-states",
-      "imageUrl": "https://images.barefootbetters.com/2099/2099-sc-become-president-of-the-united-states.webp",
+      "imageUrl": "https://images.legendary-arena.com/2099/2099-sc-become-president-of-the-united-states.webp",
       "cards": [
         {
           "abilities": [
@@ -998,7 +998,7 @@
       "id": 184,
       "name": "Subjugate Earth with Mega-Corporations",
       "slug": "subjugate-earth-with-mega-corporations",
-      "imageUrl": "https://images.barefootbetters.com/2099/2099-sc-subjugate-earth-with-mega-corporations.webp",
+      "imageUrl": "https://images.legendary-arena.com/2099/2099-sc-subjugate-earth-with-mega-corporations.webp",
       "cards": [
         {
           "abilities": [
@@ -1018,7 +1018,7 @@
       "id": 185,
       "name": "Befoul Earth Into a Polluted Wasteland",
       "slug": "befoul-earth-into-a-polluted-wasteland",
-      "imageUrl": "https://images.barefootbetters.com/2099/2099-sc-befoul-earth-into-a-polluted-wasteland.webp",
+      "imageUrl": "https://images.legendary-arena.com/2099/2099-sc-befoul-earth-into-a-polluted-wasteland.webp",
       "cards": [
         {
           "abilities": [

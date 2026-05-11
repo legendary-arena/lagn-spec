@@ -9,28 +9,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-1c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-1c1.webp"
         },
         {
           "slug": "casual-bank-robbery",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-4c2.webp"
         },
         {
           "slug": "jinx",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-5u.webp"
         },
         {
           "slug": "cat-burglar",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-black-cat-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-black-cat-8r.webp"
         }
       ],
       "_skipPair": [
@@ -49,28 +49,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-2c1.webp"
         },
         {
           "slug": "bioelectric-shock",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-4c2.webp"
         },
         {
           "slug": "venom-blast",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-6u.webp"
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-6u.webp"
         },
         {
           "slug": "arachno-pheromones",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/pttr/pttr-hr-spider-woman-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/pttr/pttr-hr-spider-woman-7r.webp"
         }
       ],
       "_skipPair": [

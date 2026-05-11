@@ -26,7 +26,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-finding-myself.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-finding-myself.webp",
           "abilities": [
             "[keyword:Investigate] for a card that has the same card name as any of your cards. (You don't need to choose a specific card name before you Investigate.)",
             "[hc:tech]: [keyword:Clone]"
@@ -43,7 +43,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-me-myself-and-i.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-me-myself-and-i.webp",
           "abilities": [
             "[keyword:Tactical Formation] 444: Draw a card.",
             "[hc:instinct]: [keyword:Clone]"
@@ -60,7 +60,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-perfect-match.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-perfect-match.webp",
           "abilities": [
             "You get +1[icon:attack] for each card name that you played at least twice this turn.",
             "[hc:tech]: [keyword:Clone]"
@@ -77,7 +77,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-reabsorb-duplicates.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-reabsorb-duplicates.webp",
           "abilities": [
             "[keyword:Tactical Formation] 44: You may KO a card from your hand or discard pile.",
             "[team:x-factor-investigations]: [keyword:Clone]"
@@ -88,7 +88,7 @@
         {
           "id": "p1",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-finding-myself.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-finding-myself.webp",
           "sides": [
             "finding-myself"
           ]
@@ -96,7 +96,7 @@
         {
           "id": "p2",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-me-myself-and-i.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-me-myself-and-i.webp",
           "sides": [
             "me-myself-and-i"
           ]
@@ -104,7 +104,7 @@
         {
           "id": "p3",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-perfect-match.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-perfect-match.webp",
           "sides": [
             "perfect-match"
           ]
@@ -112,7 +112,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-reabsorb-duplicates.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-reabsorb-duplicates.webp",
           "sides": [
             "reabsorb-duplicates"
           ]
@@ -142,7 +142,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-strive-for-greatness.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-strive-for-greatness.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:instinct]: [keyword:Clone]",
             "",
@@ -160,7 +160,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-bioelectric-surge.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-bioelectric-surge.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:ranged]: [keyword:Clone]",
             "",
@@ -178,7 +178,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gladiators-blades.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-gladiators-blades.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:instinct]: [keyword:Clone]",
             "",
@@ -196,7 +196,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gene-spliced-creation.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-gene-spliced-creation.webp",
           "abilities": [
             "[keyword:When Recruited] [team:x-force]: [keyword:Clone]",
             "",
@@ -208,7 +208,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-strive-for-greatness.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-strive-for-greatness.webp",
           "sides": [
             "strive-for-greatness"
           ]
@@ -216,7 +216,7 @@
         {
           "id": "p2",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-bioelectric-surge.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-bioelectric-surge.webp",
           "sides": [
             "bioelectric-surge"
           ]
@@ -224,7 +224,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gladiators-blades.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-gladiators-blades.webp",
           "sides": [
             "gladiators-blades"
           ]
@@ -232,7 +232,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-gene-spliced-creation.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-gene-spliced-creation.webp",
           "sides": [
             "gene-spliced-creation"
           ]
@@ -262,7 +262,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-find-mutants-with-cerebro.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-find-mutants-with-cerebro.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -280,7 +280,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-shared-thoughts.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-shared-thoughts.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -299,7 +299,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-telepathic-warning.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-telepathic-warning.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -318,7 +318,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-mind-wipe.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-mind-wipe.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -330,7 +330,7 @@
         {
           "id": "p1",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-find-mutants-with-cerebro.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-find-mutants-with-cerebro.webp",
           "sides": [
             "find-mutants-with-cerebro"
           ]
@@ -338,7 +338,7 @@
         {
           "id": "p2",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-shared-thoughts.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-shared-thoughts.webp",
           "sides": [
             "shared-thoughts"
           ]
@@ -346,7 +346,7 @@
         {
           "id": "p3",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-telepathic-warning.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-telepathic-warning.webp",
           "sides": [
             "telepathic-warning"
           ]
@@ -354,7 +354,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-mind-wipe.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-mind-wipe.webp",
           "sides": [
             "mind-wipe"
           ]
@@ -384,7 +384,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-penance-form.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-penance-form.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:strength]: [keyword:Clone]",
             "",
@@ -402,7 +402,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-three-sisters-combined.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-three-sisters-combined.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:strength]: [keyword:Clone]",
             "",
@@ -421,7 +421,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-uncover-family-secrets.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-uncover-family-secrets.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:covert]: [keyword:Clone]",
             "",
@@ -439,7 +439,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-interweaving-powers.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-interweaving-powers.webp",
           "abilities": [
             "[keyword:When Recruited] [team:x-factor-investigations]: [keyword:Clone]",
             "",
@@ -451,7 +451,7 @@
         {
           "id": "p1",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-penance-form.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-penance-form.webp",
           "sides": [
             "penance-form"
           ]
@@ -459,7 +459,7 @@
         {
           "id": "p2",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-three-sisters-combined.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-three-sisters-combined.webp",
           "sides": [
             "three-sisters-combined"
           ]
@@ -467,7 +467,7 @@
         {
           "id": "p3",
           "count": 4,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-uncover-family-secrets.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-uncover-family-secrets.webp",
           "sides": [
             "uncover-family-secrets"
           ]
@@ -475,7 +475,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-interweaving-powers.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-interweaving-powers.webp",
           "sides": [
             "interweaving-powers"
           ]
@@ -505,7 +505,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-x-factor-investigations.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-x-factor-investigations.webp",
           "abilities": [
             "[keyword:Investigate] for a card that's [hc:strength] and/or [team:x-factor-investigations]."
           ]
@@ -521,7 +521,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-absorb-kinetic-energy.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-absorb-kinetic-energy.webp",
           "abilities": [
             "If any player would gain a Wound, you may discard this card instead. If you do, draw two cards."
           ]
@@ -537,7 +537,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-go-big.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-go-big.webp",
           "abilities": [
             "[keyword:Tactical Formation] 445: You get +3[icon:attack]."
           ]
@@ -553,7 +553,7 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-treasure-hunt.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-treasure-hunt.webp",
           "abilities": [
             "[keyword:Investigate] for one of these options, then a different option, then a third different option:",
             "A [hc:strength] card. A [team:x-factor-investigations] card. A card that costs 4. A card that costs 5."
@@ -564,7 +564,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-x-factor-investigations.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-x-factor-investigations.webp",
           "sides": [
             "x-factor-investigations"
           ]
@@ -572,7 +572,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-absorb-kinetic-energy.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-absorb-kinetic-energy.webp",
           "sides": [
             "absorb-kinetic-energy"
           ]
@@ -580,7 +580,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-go-big.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-go-big.webp",
           "sides": [
             "go-big"
           ]
@@ -588,7 +588,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-treasure-hunt.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-treasure-hunt.webp",
           "sides": [
             "treasure-hunt"
           ]
@@ -618,7 +618,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-grim-tracker.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-grim-tracker.webp",
           "abilities": [
             "Choose a number 1 or more. [keyword:Investigate] for a card of that cost."
           ]
@@ -634,7 +634,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-endless-endurance.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-endless-endurance.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, draw two extra cards."
           ]
@@ -650,7 +650,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-dangerous-maneuver.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-dangerous-maneuver.webp",
           "abilities": [
             "[keyword:Tactical Formation] 225: You get +1[icon:attack]."
           ]
@@ -666,7 +666,7 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-superhuman-senses.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-superhuman-senses.webp",
           "abilities": [
             "Whenever you “reveal“ or “look at“ any number of cards from your deck this turn, you get +1[icon:attack]. (Just drawing or discarding a card from your deck doesn't count.)",
             "Choose a number 1 or more. [keyword:Investigate] for a card of that cost."
@@ -677,7 +677,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-grim-tracker.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-grim-tracker.webp",
           "sides": [
             "grim-tracker"
           ]
@@ -685,7 +685,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-endless-endurance.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-endless-endurance.webp",
           "sides": [
             "endless-endurance"
           ]
@@ -693,7 +693,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-dangerous-maneuver.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-dangerous-maneuver.webp",
           "sides": [
             "dangerous-maneuver"
           ]
@@ -701,7 +701,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-superhuman-senses.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-superhuman-senses.webp",
           "sides": [
             "superhuman-senses"
           ]
@@ -731,7 +731,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-echolocation.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-echolocation.webp",
           "abilities": [
             "Choose a Hero Class. [keyword:Investigate] for a card of that Hero Class."
           ]
@@ -747,7 +747,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-hypnotic-call.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-hypnotic-call.webp",
           "abilities": [
             "[hc:covert]: [keyword:Shatter] each Hero currently in the HQ whose printed cost is 2, 4, 6, and/or 8."
           ]
@@ -763,7 +763,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-three-octave-arpeggio.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-three-octave-arpeggio.webp",
           "abilities": [
             "[keyword:Tactical Formation] 246: [keyword:Shatter] all Villains."
           ]
@@ -779,7 +779,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-splintering-shriek.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-splintering-shriek.webp",
           "abilities": [
             "[keyword:Shatter] the Mastermind. KO up to two cards from your hand and/or discard pile."
           ]
@@ -789,7 +789,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-echolocation.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-echolocation.webp",
           "sides": [
             "echolocation"
           ]
@@ -797,7 +797,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-hypnotic-call.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-hypnotic-call.webp",
           "sides": [
             "hypnotic-call"
           ]
@@ -805,7 +805,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-three-octave-arpeggio.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-three-octave-arpeggio.webp",
           "sides": [
             "three-octave-arpeggio"
           ]
@@ -813,7 +813,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-splintering-shriek.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-splintering-shriek.webp",
           "sides": [
             "splintering-shriek"
           ]
@@ -843,7 +843,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-underground-cave-in.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-underground-cave-in.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Shatter] a Villain in the Sewers."
           ]
@@ -859,7 +859,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-unearth-tectonic-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-unearth-tectonic-power.webp",
           "abilities": [
             "[keyword:Investigate] for a card that's [hc:ranged] and/or [hc:instinct]."
           ]
@@ -875,7 +875,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-trace-the-fault-lines.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-trace-the-fault-lines.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Investigate] for a card that costs 0. KO it or discard it."
           ]
@@ -891,7 +891,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-massive-earthquake.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-massive-earthquake.webp",
           "abilities": [
             "[keyword:Shatter] the Mastermind  or [keyword:Shatter] all Heroes currently in the HQ."
           ]
@@ -901,7 +901,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-underground-cave-in.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-underground-cave-in.webp",
           "sides": [
             "underground-cave-in"
           ]
@@ -909,7 +909,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-unearth-tectonic-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-unearth-tectonic-power.webp",
           "sides": [
             "unearth-tectonic-power"
           ]
@@ -917,7 +917,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-trace-the-fault-lines.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-trace-the-fault-lines.webp",
           "sides": [
             "trace-the-fault-lines"
           ]
@@ -925,7 +925,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-massive-earthquake.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-massive-earthquake.webp",
           "sides": [
             "massive-earthquake"
           ]
@@ -946,7 +946,7 @@
           "slug": "lady-deathstrike",
           "tactic": false,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mm-lady-deathstrike.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mm-lady-deathstrike.webp",
           "abilities": [
             "Always Leads: Reavers",
             "Master Strike: If she is [keyword:Preying] on a player, [keyword:Finish the Prey]. Otherwise, [keyword:Prey] on the fewest [hc:instinct].",
@@ -958,7 +958,7 @@
           "slug": "epic-lady-deathstrike",
           "tactic": false,
           "vAttack": "11",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-me-lady-deathstrike.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-me-lady-deathstrike.webp",
           "abilities": [
             "Always Leads: Reavers",
             "Master Strike: If she is [keyword:Preying] on a player, [keyword:Finish the Prey]. Then, whether she was preying or not, [keyword:Prey] on the fewest [hc:instinct].",
@@ -970,7 +970,7 @@
           "slug": "cybernetic-healing-factor",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-lady-deathstrike-cybernetic-healing-factor.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-lady-deathstrike-cybernetic-healing-factor.webp",
           "abilities": [
             "Fight: If this is not the final Tactic, and if Lady Deathstrike was not [keyword:Preying] on a player: KO up to two of your Heroes, rescue 4 Bystanders, and shuffle this Tactic back into her remaining Tactics."
           ]
@@ -980,7 +980,7 @@
           "slug": "prey-on-the-weak",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-lady-deathstrike-prey-on-the-weak.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-lady-deathstrike-prey-on-the-weak.webp",
           "abilities": [
             "Fight: Each Villain that's [keyword:Preying] on a player [keyword:Finishes the Prey]. After those have all entered the city, then each Villain in the city with a “[keyword:Prey]“ Ambush does that Ambush, starting from the Sewers."
           ]
@@ -990,7 +990,7 @@
           "slug": "relentless-assassin",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-lady-deathstrike-relentless-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-lady-deathstrike-relentless-assassin.webp",
           "abilities": [
             "Fight: If Lady Deathstrike was not [keyword:Preying] on a player, each other player reveals their hand. She [keyword:Preys] on the one of those players with the fewest non-grey Heroes."
           ]
@@ -1000,7 +1000,7 @@
           "slug": "stretching-adamantium-claws",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-lady-deathstrike-stretching-adamantium-claws.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-lady-deathstrike-stretching-adamantium-claws.webp",
           "abilities": [
             "Fight: You may KO one of your Heroes. If you have a [hc:instinct] Hero, you may instead KO up to two of your Heroes."
           ]
@@ -1019,7 +1019,7 @@
           "slug": "bastion-fused-sentinel",
           "tactic": false,
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mm-bastion-fused-sentinel.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mm-bastion-fused-sentinel.webp",
           "abilities": [
             "All Sentinel Masterminds get +1[icon:attack] for each Master Strike in the KO pile, even after Bastion is defeated.",
             "Always Leads: Purifiers and any Sentinel Henchmen Group.",
@@ -1031,7 +1031,7 @@
           "slug": "epic-bastion-fused-sentinel",
           "tactic": false,
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-me-bastion-fused-sentinel.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-me-bastion-fused-sentinel.webp",
           "abilities": [
             "All Sentinel enemies get +1[icon:attack] for each Master Strike in the KO pile, even after Bastion is defeated.",
             "Always Leads: Purifiers and any Sentinel Henchmen Group.",
@@ -1043,7 +1043,7 @@
           "slug": "master-mold-sentinel-factory",
           "tactic": true,
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-bastion-fused-sentinel-master-mold-sentinel-factory.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-bastion-fused-sentinel-master-mold-sentinel-factory.webp",
           "abilities": [
             "Fight: Rescue three Bystanders. KO one of your Heroes. Master Mold ascends to become an [rule:additional Mastermind] whose only ability is:",
             "Master Strike: A Sentinel Henchmen from the Villain Deck enters the city. Shuffle the Villain Deck."
@@ -1054,7 +1054,7 @@
           "slug": "template-infected-sentinel",
           "tactic": true,
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-bastion-fused-sentinel-template-infected-sentinel.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-bastion-fused-sentinel-template-infected-sentinel.webp",
           "abilities": [
             "Fight: Rescue three Bystanders. KO one of your Heroes. Template ascends to become an [rule:additional Mastermind] whose only ability is:",
             "Master Strike: Each player reveals a [hc:covert] Hero or discards one of their non-grey Heroes."
@@ -1065,7 +1065,7 @@
           "slug": "nimrod-future-sentinel",
           "tactic": true,
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-bastion-fused-sentinel-nimrod-future-sentinel.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-bastion-fused-sentinel-nimrod-future-sentinel.webp",
           "abilities": [
             "Fight: Rescue three Bystanders. KO one of your Heroes. Nimrod ascends to become an [rule:additional Mastermind] whose only abilities are:",
             "Master Strike: Choose [icon:recruit] or [icon:attack]. Each player discards a card with the chosen icon."
@@ -1076,7 +1076,7 @@
           "slug": "machine-man-sentinel-supereme",
           "tactic": true,
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-bastion-fused-sentinel-machine-man-sentinel-supereme.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-bastion-fused-sentinel-machine-man-sentinel-supereme.webp",
           "abilities": [
             "Fight: Rescue three Bystanders. KO one of your Heroes. Machine Man ascends to become an [rule:additional Mastermind] whose only ability is:",
             "Master Strike: Each player reveals a [hc:tech] Hero or gains a Wound."
@@ -1096,7 +1096,7 @@
           "slug": "exodus",
           "tactic": false,
           "vAttack": 32,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mm-exodus.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mm-exodus.webp",
           "abilities": [
             "You may pay 3[icon:recruit] any number of times to [keyword:Shatter] Exodus.",
             "Always Leads: Acolytes",
@@ -1108,7 +1108,7 @@
           "slug": "epic-exodus",
           "tactic": false,
           "vAttack": "36",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-me-exodus.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-me-exodus.webp",
           "abilities": [
             "Any number of times, you may [keyword:Shatter] Exodus by spending  2[icon:recruit] plus 1[icon:recruit] for each Immortality stacked here.",
             "Always Leads: Acolytes",
@@ -1120,7 +1120,7 @@
           "slug": "unite-all-mutantkind",
           "tactic": true,
           "vAttack": 32,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-exodus-unite-all-mutantkind.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-exodus-unite-all-mutantkind.webp",
           "abilities": [
             "Fight: Each other player chooses one of their [team:x-men], [team:x-force], [team:x-factor-investigations], or [team:brotherhood] Heroes to enter the city as a Villain with [icon:attack] equal to its cost and “Fight: Gain this as a Hero.“ If no card enters the city this way, then each player gains a Wound."
           ]
@@ -1130,7 +1130,7 @@
           "slug": "omega-level-mutant",
           "tactic": true,
           "vAttack": 32,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-exodus-omega-level-mutant.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-exodus-omega-level-mutant.webp",
           "abilities": [
             "Fight: Each other player reveals their hand, discards all their cards that cost 1 or more, then draws that many cards."
           ]
@@ -1140,7 +1140,7 @@
           "slug": "avalon-asteroid-haven",
           "tactic": true,
           "vAttack": 32,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-exodus-avalon-asteroid-haven.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-exodus-avalon-asteroid-haven.webp",
           "abilities": [
             "Fight: You may gain a [team:x-men], [team:x-force], [team:x-factor-investigations], or [team:brotherhood] Hero from the HQ. Each other player discards two cards that aren't any of those teams."
           ]
@@ -1150,7 +1150,7 @@
           "slug": "resurrect-the-dead",
           "tactic": true,
           "vAttack": 32,
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-exodus-resurrect-the-dead.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-exodus-resurrect-the-dead.webp",
           "abilities": [
             "Fight: Choose a player. That player gains a [team:x-men], [team:x-force], [team:x-factor-investigations], or [team:brotherhood] Hero from the KO pile, then chooses a Non-Henchmen Villain from their Victory Pile to enter the city."
           ]
@@ -1170,7 +1170,7 @@
           "slug": "donald-pierce",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-reavers-donald-pierce.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-reavers-donald-pierce.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the fewest [hc:tech].",
             "[keyword:Finish the Prey]: KO one of that player's non-grey Heroes.",
@@ -1182,7 +1182,7 @@
           "slug": "bonebreaker",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-reavers-bonebreaker.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-reavers-bonebreaker.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the fewest [hc:strength].",
             "[keyword:Finish the Prey]: That player gains a Wound to the top of their deck.",
@@ -1194,7 +1194,7 @@
           "slug": "skullbuster",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-reavers-skullbuster.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-reavers-skullbuster.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the fewest [hc:ranged]. Skullbuster captures one Bystander from the Bystander Stack and two Bystanders from that player's Victory Pile of their choice.",
             "[keyword:Finish the Prey]: KO the captured Bystanders, and each player discards a card."
@@ -1205,7 +1205,7 @@
           "slug": "pretty-boy",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-reavers-pretty-boy.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-reavers-pretty-boy.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the fewest [hc:covert].",
             "[keyword:Finish the Prey]: That player discards a card.",
@@ -1225,7 +1225,7 @@
           "slug": "predator-x-ranged",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-purifiers-predator-x-ranged.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-purifiers-predator-x-ranged.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:ranged]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:ranged] Hero. If they can't, they discard any non-grey Hero instead."
@@ -1236,7 +1236,7 @@
           "slug": "predator-x-tech",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-purifiers-predator-x-tech.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-purifiers-predator-x-tech.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:tech]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:tech] Hero. If they can't, they discard any non-grey Hero instead."
@@ -1247,7 +1247,7 @@
           "slug": "predator-x-covert",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-purifiers-predator-x-covert.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-purifiers-predator-x-covert.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:covert]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:covert] Hero. If they can't, they discard any non-grey Hero instead."
@@ -1258,7 +1258,7 @@
           "slug": "predator-x-instinct",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-purifiers-predator-x-instinct.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-purifiers-predator-x-instinct.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:instinct]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:instinct] Hero. If they can't, they discard any non-grey Hero instead."
@@ -1269,7 +1269,7 @@
           "slug": "predator-x-strength",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-purifiers-predator-x-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-purifiers-predator-x-strength.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:strength]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:strength] Hero. If they can't, they discard any non-grey Hero instead."
@@ -1280,7 +1280,7 @@
           "slug": "leper-queen",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-purifiers-leper-queen.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-purifiers-leper-queen.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the most [team:x-men]+[team:x-force]+[team:x-factor-investigations]+[team:brotherhood].",
             "[keyword:Finish the Prey]: That player gains a Wound and KOs two Bystanders from their Victory Pile.",
@@ -1292,7 +1292,7 @@
           "slug": "reverend-william-stryker",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-purifiers-reverend-william-stryker.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-purifiers-reverend-william-stryker.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the most [team:x-men]+[team:x-force]+[team:x-factor-investigations]+[team:brotherhood]. Stryker captures one [rule:Sidekick] from the [rule:Sidekick] Stack and two [rule:Sidekicks] from that player's hand and/or discard pile of their choice.",
             "[keyword:Finish the Prey]: KO the captured [rule:Sidekicks].",
@@ -1304,7 +1304,7 @@
           "slug": "cameron-hodge",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-purifiers-cameron-hodge.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-purifiers-cameron-hodge.webp",
           "abilities": [
             "Ambush: [keyword:Prey] on the most [team:x-men]+[team:x-force]+[team:x-factor-investigations]+[team:brotherhood]. Cameron Hodge captures one of that player's non-grey Heroes of their choice.",
             "[keyword:Finish the Prey]: KO the captured Hero.",
@@ -1324,7 +1324,7 @@
           "slug": "unuscione",
           "vp": "4",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-acolytes-unuscione.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-acolytes-unuscione.webp",
           "abilities": [
             "You may pay 2[icon:recruit] any number of times to [keyword:Shatter] Unuscione.",
             "Ambush: Unuscione captures a Bystander."
@@ -1335,7 +1335,7 @@
           "slug": "tempo",
           "vp": "2",
           "vAttack": "16",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-acolytes-tempo.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-acolytes-tempo.webp",
           "abilities": [
             "You may [keyword:Shatter] Tempo any number of times. Each time you do this, draw one fewer card when you draw a new hand of cards at the end of this turn.",
             "Fight: Draw two cards."
@@ -1346,7 +1346,7 @@
           "slug": "frenzy",
           "vp": "3",
           "vAttack": "12",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-acolytes-frenzy.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-acolytes-frenzy.webp",
           "abilities": [
             "You may pay 1[icon:recruit] any number of times to [keyword:Shatter] Frenzy. Each time you do, reveal the top card of the Hero Deck and put it on the bottom of that deck. If it's [hc:strength], gain a Wound. If it's [hc:instinct], the player on your right gains a Wound.",
             "Fight: KO one of your heroes."
@@ -1357,7 +1357,7 @@
           "slug": "random",
           "vp": "4",
           "vAttack": "10",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-acolytes-random.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-acolytes-random.webp",
           "abilities": [
             "You may pay 1[icon:recruit] any number of times to [keyword:Shatter] Random. Each time you do, reveal the top card of the Hero Deck and put it on the bottom of that deck. If it's [hc:covert], [hc:tech], or [hc:ranged], Random then gets +[icon:attack] equal to that card's cost.",
             "Escape: Each player discards a card at random."
@@ -1376,7 +1376,7 @@
           "slug": "silver-samurai",
           "vp": "3",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-clan-yashida-silver-samurai.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-clan-yashida-silver-samurai.webp",
           "abilities": [
             "Ambush: The Villain in the city worth the most VP captures a Bystander.",
             "Fight: KO a card from your discard pile."
@@ -1387,7 +1387,7 @@
           "slug": "scarlet-samurai",
           "vp": null,
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-clan-yashida-scarlet-samurai.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-clan-yashida-scarlet-samurai.webp",
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[hc:instinct]: Draw a card."
@@ -1398,7 +1398,7 @@
           "slug": "lord-shingen",
           "vp": "5",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-clan-yashida-lord-shingen.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-clan-yashida-lord-shingen.webp",
           "abilities": [
             "Ambush: Lord Shingen captures a Bystander.",
             "Bystanders held by Lord Shingen are \"Samurai Bodyguards.\" You can't fight Lord Shingen while he has any Bodyguards. You can fight them as if they were 3[icon:attack] Villains with \"[keyword:Chivalrous Duel]. Fight: Rescue this as a Bystander.\""
@@ -1409,7 +1409,7 @@
           "slug": "gorgon",
           "vp": "4",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-vi-clan-yashida-gorgon.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-clan-yashida-gorgon.webp",
           "abilities": [
             "Ambush: Choose a Hero Name. You can't play Heroes this turn unless they are that Hero Name or grey Heroes.",
             "Fight: KO one of your Heroes."
@@ -1423,7 +1423,7 @@
       "id": 37,
       "name": "Mr. Sinister Clones",
       "slug": "mr-sinister-clones",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hm-mr-sinister-clones.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hm-mr-sinister-clones.webp",
       "abilities": [
         "[keyword:Ambush]: [keyword:Clone]. When the cloned copy enters the city, shuffle a Bystander into the Villain Deck.",
         "[keyword:Fight]: [keyword:Clone] the next Hero you recruit this turn that has printed cost 4 or less."
@@ -1435,7 +1435,7 @@
       "id": 38,
       "name": "Sentinel Squad O∗N∗E∗",
       "slug": "sentinel-squad-o-n-e",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hm-sentinel-squad-o-n-e.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hm-sentinel-squad-o-n-e.webp",
       "abilities": [
         "[keyword:Ambush]: If there are no other Sentinel Squad O*N*E*s in the city, [keyword:Clone].",
         "[keyword:Fight]: If there are no other Sentinel Squad O*N*E*s in the city, KO one of your Heroes and put this Villain on the bottom of the Villain Deck."
@@ -1449,7 +1449,7 @@
       "id": 142,
       "name": "Hack Cerebro Servers To...",
       "slug": "hack-cerebro-servers-to",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-sc-hack-cerebro-servers-to.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-sc-hack-cerebro-servers-to.webp",
       "cards": [
         {
           "abilities": [
@@ -1464,7 +1464,7 @@
       "id": 143,
       "name": "...Control the Mutant Messiah",
       "slug": "control-the-mutant-messiah",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-sc-control-the-mutant-messiah.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-sc-control-the-mutant-messiah.webp",
       "cards": [
         {
           "abilities": [
@@ -1479,7 +1479,7 @@
       "id": 144,
       "name": "Drain Mutant Powers To...",
       "slug": "drain-mutant-powers-to",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-sc-drain-mutant-powers-to.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-sc-drain-mutant-powers-to.webp",
       "cards": [
         {
           "abilities": [
@@ -1495,7 +1495,7 @@
       "id": 145,
       "name": "...Open Rifts to Future Timelines",
       "slug": "open-rifts-to-future-timelines",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-sc-open-rifts-to-future-timelines.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-sc-open-rifts-to-future-timelines.webp",
       "cards": [
         {
           "abilities": [
@@ -1510,7 +1510,7 @@
       "id": 146,
       "name": "Hire Singularity Investigations To...",
       "slug": "hire-singularity-investigations-to",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-sc-hire-singularity-investigations-to.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-sc-hire-singularity-investigations-to.webp",
       "cards": [
         {
           "abilities": [
@@ -1525,7 +1525,7 @@
       "id": 147,
       "name": "...Reveal The Heroes' Evil Clones",
       "slug": "reveal-the-heroes-evil-clones",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-sc-reveal-the-heroes-evil-clones.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-sc-reveal-the-heroes-evil-clones.webp",
       "cards": [
         {
           "abilities": [
@@ -1541,7 +1541,7 @@
       "id": 148,
       "name": "Raid Gene Banks To...",
       "slug": "raid-gene-banks-to",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-sc-raid-gene-banks-to.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-sc-raid-gene-banks-to.webp",
       "cards": [
         {
           "abilities": [
@@ -1556,7 +1556,7 @@
       "id": 149,
       "name": "...Unleash an Anti-Mutant Bioweapon",
       "slug": "unleash-an-anti-mutant-bioweapon",
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-sc-unleash-an-anti-mutant-bioweapon.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-sc-unleash-an-anti-mutant-bioweapon.webp",
       "cards": [
         {
           "abilities": [
@@ -1574,7 +1574,7 @@
       "name": "Cloning Technician",
       "slug": "cloning-technician",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-by-cloning-technician.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-by-cloning-technician.webp",
       "cards": [
         {
           "qtd": 1,
@@ -1589,7 +1589,7 @@
       "name": "Opera Singer",
       "slug": "opera-singer",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-by-opera-singer.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-by-opera-singer.webp",
       "cards": [
         {
           "qtd": 1,
@@ -1604,7 +1604,7 @@
       "name": "Private Investigator",
       "slug": "private-investigator",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/msmc/msmc-by-private-investigator.webp",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-by-private-investigator.webp",
       "cards": [
         {
           "qtd": 1,

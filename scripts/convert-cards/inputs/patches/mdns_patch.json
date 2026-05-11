@@ -8,7 +8,7 @@
       "cardType": "scheme-transform",
       "prefix": "sx",
       "note": "Double-sided card \u2014 Scheme (Ritual Sacrifice to Summon Chthon) on reverse. Transforms into this Mastermind when the Scheme is completed.",
-      "imageUrl": "https://images.barefootbetters.com/mdns/mdns-sx-great-old-one-chthon.webp",
+      "imageUrl": "https://images.legendary-arena.com/mdns/mdns-sx-great-old-one-chthon.webp",
       "cards": [
         {
           "abilities": [
@@ -27,31 +27,31 @@
       "cards": [
         {
           "slug": "lilith-mother-of-demons",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mm-lilith-mother-of-demons.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mm-lilith-mother-of-demons.webp"
         },
         {
           "slug": "epic-lilith",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-me-lilith-mother-of-demons.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-me-lilith-mother-of-demons.webp"
         },
         {
           "slug": "connoisseur-of-souls",
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-lilith-mother-of-demons-connoisseur-of-souls.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-lilith-mother-of-demons-connoisseur-of-souls.webp"
         },
         {
           "slug": "offer-of-corruption",
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-lilith-mother-of-demons-offer-of-corruption.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-lilith-mother-of-demons-offer-of-corruption.webp"
         },
         {
           "slug": "mesopotamian-demon-goddess",
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-lilith-mother-of-demons-mesopotamian-demon-goddess.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-lilith-mother-of-demons-mesopotamian-demon-goddess.webp"
         },
         {
           "slug": "respawn-demonic-offspring",
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-lilith-mother-of-demons-respawn-demonic-offspring.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-lilith-mother-of-demons-respawn-demonic-offspring.webp"
         }
       ]
     },
@@ -61,31 +61,31 @@
       "cards": [
         {
           "slug": "zarathos",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mm-zarathos.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mm-zarathos.webp"
         },
         {
           "slug": "epic-zarathos",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-me-zarathos.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-me-zarathos.webp"
         },
         {
           "slug": "eruption-of-hellfire",
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-zarathos-eruption-of-hellfire.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-zarathos-eruption-of-hellfire.webp"
         },
         {
           "slug": "corrupted-spirit-of-vengeance",
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-zarathos-corrupted-spirit-of-vengeance.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-zarathos-corrupted-spirit-of-vengeance.webp"
         },
         {
           "slug": "imprison-in-the-soul-crystal",
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-zarathos-imprison-in-the-soul-crystal.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-zarathos-imprison-in-the-soul-crystal.webp"
         },
         {
           "slug": "demonic-essence-of-ghost-rider",
           "vAttack": 7,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-mt-zarathos-demonic-essence-of-ghost-rider.webp"
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-zarathos-demonic-essence-of-ghost-rider.webp"
         }
       ]
     }

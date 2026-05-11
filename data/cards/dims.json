@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-jessica-jones-alter-ego.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-alter-ego.webp",
           "abilities": [
             "[keyword:Switcheroo 4]"
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-jessica-jones-alias-investigations.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-alias-investigations.webp",
           "abilities": [
             "[keyword:Switcheroo 5]",
             "[keyword:Investigate] for a card with an [icon:attack] icon."
@@ -59,7 +59,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-jessica-jones-crack-the-case.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-crack-the-case.webp",
           "abilities": [
             "[keyword:Switcheroo 6]",
             "[keyword:Investigate] for a card with an [icon:recruit] icon. You may draw that card or KO it."
@@ -76,7 +76,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-jessica-jones-uncover-hidden-evil.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-uncover-hidden-evil.webp",
           "abilities": [
             "[hc:covert]: [keyword:Investigate] the Villain Deck for a Villain. You may put it into your Victory Pile and do its Fight effect. Otherwise, put it back on the top or bottom of that deck."
           ]
@@ -86,7 +86,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-jessica-jones-alter-ego.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-alter-ego.webp",
           "sides": [
             "alter-ego"
           ]
@@ -94,7 +94,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-jessica-jones-alias-investigations.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-alias-investigations.webp",
           "sides": [
             "alias-investigations"
           ]
@@ -102,7 +102,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-jessica-jones-crack-the-case.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-crack-the-case.webp",
           "sides": [
             "crack-the-case"
           ]
@@ -110,7 +110,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-jessica-jones-uncover-hidden-evil.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-uncover-hidden-evil.webp",
           "sides": [
             "uncover-hidden-evil"
           ]
@@ -140,7 +140,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-ms-america-star-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-star-power.webp",
           "abilities": [
             "[keyword:Teleport]",
             "[hc:strength]: You get +2[icon:attack]."
@@ -157,7 +157,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-ms-america-search-parallel-dimensions.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-search-parallel-dimensions.webp",
           "abilities": [
             "[keyword:Investigate] for an [team:avengers] card and [keyword:Teleport] that card."
           ]
@@ -173,7 +173,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-ms-america-kick-a-hole-in-reality.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-kick-a-hole-in-reality.webp",
           "abilities": [
             "[hc:strength]: Reveal the top card of your deck. KO it or [keyword:Teleport] it."
           ]
@@ -189,7 +189,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-ms-america-hyper-cosmic-awareness.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-hyper-cosmic-awareness.webp",
           "abilities": [
             "You get +1[icon:attack] for each other card in your hand."
           ]
@@ -199,7 +199,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-ms-america-star-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-star-power.webp",
           "sides": [
             "star-power"
           ]
@@ -207,7 +207,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-ms-america-search-parallel-dimensions.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-search-parallel-dimensions.webp",
           "sides": [
             "search-parallel-dimensions"
           ]
@@ -215,7 +215,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-ms-america-kick-a-hole-in-reality.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-kick-a-hole-in-reality.webp",
           "sides": [
             "kick-a-hole-in-reality"
           ]
@@ -223,7 +223,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-ms-america-hyper-cosmic-awareness.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-hyper-cosmic-awareness.webp",
           "sides": [
             "hyper-cosmic-awareness"
           ]
@@ -253,7 +253,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-squirrel-girl-find-tiny-friends.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-find-tiny-friends.webp",
           "abilities": [
             "[keyword:Switcheroo 3]",
             "[keyword:Investigate] for a card that costs 3 or less."
@@ -270,7 +270,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-squirrel-girl-nut-punch.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-nut-punch.webp",
           "abilities": [
             "[keyword:Switcheroo 4]",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -287,7 +287,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-squirrel-girl-squirrelgility.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-squirrelgility.webp",
           "abilities": [
             "[keyword:Switcheroo 5]",
             "You get +2[icon:attack] if at least 2 cards entered the HQ this turn."
@@ -304,7 +304,7 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-squirrel-girl-unbeatable-squirrel-girl.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-unbeatable-squirrel-girl.webp",
           "abilities": [
             "You may choose a number from 1 to 5. A Hero in your hand gains [keyword:Switcheroo] for that number.",
             "[hc:instinct][hc:instinct]: You may choose a number from 1 to 8 instead."
@@ -315,7 +315,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-squirrel-girl-find-tiny-friends.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-find-tiny-friends.webp",
           "sides": [
             "find-tiny-friends"
           ]
@@ -323,7 +323,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-squirrel-girl-nut-punch.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-nut-punch.webp",
           "sides": [
             "nut-punch"
           ]
@@ -331,7 +331,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-squirrel-girl-squirrelgility.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-squirrelgility.webp",
           "sides": [
             "squirrelgility"
           ]
@@ -339,7 +339,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-squirrel-girl-unbeatable-squirrel-girl.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-unbeatable-squirrel-girl.webp",
           "sides": [
             "unbeatable-squirrel-girl"
           ]
@@ -361,7 +361,7 @@
           "rarity": 1,
           "rarityLabel": "Common 1",
           "slot": 1,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-traveling-companion.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-traveling-companion.webp",
           "abilities": [
             "Reveal the top card of the Bystander Deck. If it's a Special Bystander, rescue it. Otherwise, put it on the bottom of that deck."
           ]
@@ -376,7 +376,7 @@
           "rarity": 1,
           "rarityLabel": "Common 2",
           "slot": 2,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-rebel-without-a-cause.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-rebel-without-a-cause.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 0[icon:recruit] or has no team icon, draw it."
           ]
@@ -391,7 +391,7 @@
           "rarity": 2,
           "rarityLabel": "Uncommon",
           "slot": 3,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-right-place-wrong-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-right-place-wrong-time.webp",
           "abilities": [
             "You get +1[icon:attack] for each other Hero you played this turn with no team icon."
           ]
@@ -406,7 +406,7 @@
           "rarity": 3,
           "rarityLabel": "Rare",
           "slot": 4,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-interplanetary-visitor.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-interplanetary-visitor.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, discard one, and KO one."
           ]
@@ -416,7 +416,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-traveling-companion.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-traveling-companion.webp",
           "sides": [
             "traveling-companion"
           ]
@@ -424,7 +424,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-rebel-without-a-cause.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-rebel-without-a-cause.webp",
           "sides": [
             "rebel-without-a-cause"
           ]
@@ -432,7 +432,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-right-place-wrong-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-right-place-wrong-time.webp",
           "sides": [
             "right-place-wrong-time"
           ]
@@ -440,7 +440,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-howard-the-duck-interplanetary-visitor.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-interplanetary-visitor.webp",
           "sides": [
             "interplanetary-visitor"
           ]
@@ -462,7 +462,7 @@
           "rarity": 1,
           "rarityLabel": "Common 1",
           "slot": 1,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-form-from-ooze.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-form-from-ooze.webp",
           "abilities": [
             "[keyword:Teleport]",
             "You get +2[icon:attack], usable only against Villains in the Sewers or the Mastermind."
@@ -478,7 +478,7 @@
           "rarity": 1,
           "rarityLabel": "Common 2",
           "slot": 2,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-burn-the-fearful.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-burn-the-fearful.webp",
           "abilities": [
             "Choose a Villain or Mastermind. If there are no other Villains adjacent to it, it gets -1[icon:attack] this turn."
           ]
@@ -493,7 +493,7 @@
           "rarity": 2,
           "rarityLabel": "Uncommon",
           "slot": 3,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-travel-the-nexus-of-realities.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-travel-the-nexus-of-realities.webp",
           "abilities": [
             "[keyword:Teleport]",
             "You may move a Villain to another city space. If another Villain is already there, swap them."
@@ -509,7 +509,7 @@
           "rarity": 3,
           "rarityLabel": "Rare",
           "slot": 4,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-eternity-of-solitude.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-eternity-of-solitude.webp",
           "abilities": [
             "[hc:strength]: You get +1[icon:attack] for each empty city space."
           ]
@@ -519,7 +519,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-form-from-ooze.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-form-from-ooze.webp",
           "sides": [
             "form-from-ooze"
           ]
@@ -527,7 +527,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-burn-the-fearful.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-burn-the-fearful.webp",
           "sides": [
             "burn-the-fearful"
           ]
@@ -535,7 +535,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-travel-the-nexus-of-realities.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-travel-the-nexus-of-realities.webp",
           "sides": [
             "travel-the-nexus-of-realities"
           ]
@@ -543,7 +543,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/dims/dims-hr-man-thing-eternity-of-solitude.webp",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-eternity-of-solitude.webp",
           "sides": [
             "eternity-of-solitude"
           ]
@@ -564,7 +564,7 @@
           "slug": "j-jonah-jameson",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/jameson_01.png",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-mm-j-jonah-jameson.webp",
           "abilities": [
             "Start of Game: Put 2 S.H.I.E.L.D. Officers per player into a face down “Angry Mobs“ stack.",
             "Special Rules: You can spend 4[icon:attack] to reveal a random Angry Mob and put it into any player's discard pile. You can't fight J. Jonah Jameson while he has Angry Mobs.",
@@ -577,7 +577,7 @@
           "slug": "epic-j-jonah-jameson",
           "tactic": false,
           "vAttack": "5",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/jameson_02.png",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-me-j-jonah-jameson.webp",
           "abilities": [
             "Start of Game: Put 3 S.H.I.E.L.D. Officers per player into a face down “Angry Mobs“ stack.",
             "Special Rules: You can spend 5[icon:attack] to reveal a random Angry Mob and put it into any player's discard pile. You can't fight J. Jonah Jameson while he has Angry Mobs.",
@@ -590,7 +590,7 @@
           "slug": "incite-violent-riots",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/jameson_04.png",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-mt-j-jonah-jameson-incite-violent-riots.webp",
           "abilities": [
             "Fight: Each player puts a Wound from the Wound Stack into the Angry Mobs stack."
           ]
@@ -600,7 +600,7 @@
           "slug": "promote-spider-slayer-security",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/jameson_05.png",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-mt-j-jonah-jameson-promote-spider-slayer-security.webp",
           "abilities": [
             "Fight: Each other player puts a Spider-Slayer from their Victory Pile into the Angry Mobs stack. When a Spider-Slayer is revealed from the Angry Mobs, it enters the city."
           ]
@@ -610,7 +610,7 @@
           "slug": "slanderous-editorial",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/jameson_03.png",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-mt-j-jonah-jameson-slanderous-editorial.webp",
           "abilities": [
             "Fight: Each other player [keyword:Investigates] their deck for a non-grey Hero and puts it into the Angry Mobs stack. Players reveal all the cards they investigated."
           ]
@@ -620,7 +620,7 @@
           "slug": "that-menace-spider-man",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/jameson_06.png",
+          "imageUrl": "https://images.legendary-arena.com/dims/dims-mt-j-jonah-jameson-that-menace-spider-man.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discard a [team:spider-friends] Hero. Any player who cannot must instead put a non-grey card from their hand into the Angry Mobs stack."
           ]
@@ -635,7 +635,7 @@
       "slug": "circus-of-crime",
       "vp": 1,
       "vAttack": 3,
-      "imageUrl": "https://images.barefootbetters.com/dims/dims-hm-circus-of-crime.webp",
+      "imageUrl": "https://images.legendary-arena.com/dims/dims-hm-circus-of-crime.webp",
       "abilities": [
         "[keyword:Fight]: Reveal the top card of your deck. If it costs 0[icon:recruit], KO it. Otherwise, draw it."
       ]
@@ -645,7 +645,7 @@
       "slug": "spider-slayer",
       "vp": 1,
       "vAttack": 3,
-      "imageUrl": "https://images.barefootbetters.com/dims/dims-hm-spider-slayer.webp",
+      "imageUrl": "https://images.legendary-arena.com/dims/dims-hm-spider-slayer.webp",
       "abilities": [
         "[keyword:Fight]: Reveal the top two cards of your deck. Put any that cost 2[icon:recruit] or less into your hand. Put the rest back in any order."
       ]
@@ -658,7 +658,7 @@
       "name": "Forklift Driver",
       "slug": "forklift-driver",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-forklift-driver.webp",
+      "imageUrl": "https://images.legendary-arena.com/dims/dims-by-forklift-driver.webp",
       "cards": [
         {
           "qtd": 1,
@@ -672,7 +672,7 @@
       "name": "Bulldozer Driver",
       "slug": "bulldozer-driver",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-bulldozer-driver.webp",
+      "imageUrl": "https://images.legendary-arena.com/dims/dims-by-bulldozer-driver.webp",
       "cards": [
         {
           "qtd": 1,
@@ -686,7 +686,7 @@
       "name": "Double Agent of S.H.I.E.L.D.",
       "slug": "double-agent-of-shield",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-double-agent-of-shield.webp",
+      "imageUrl": "https://images.legendary-arena.com/dims/dims-by-double-agent-of-shield.webp",
       "cards": [
         {
           "qtd": 1,
@@ -700,7 +700,7 @@
       "name": "Fortune Teller",
       "slug": "fortune-teller",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-fortune-teller.webp",
+      "imageUrl": "https://images.legendary-arena.com/dims/dims-by-fortune-teller.webp",
       "cards": [
         {
           "qtd": 1,
@@ -714,7 +714,7 @@
       "name": "Photographer",
       "slug": "photographer",
       "vp": "1*",
-      "imageUrl": "https://images.barefootbetters.com/dims/dims-by-photographer.webp",
+      "imageUrl": "https://images.legendary-arena.com/dims/dims-by-photographer.webp",
       "cards": [
         {
           "qtd": 1,

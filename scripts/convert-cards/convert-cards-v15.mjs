@@ -44,6 +44,18 @@
  *     data. Eliminates the silent-swap risk that bit Wolfsbane's Night Vision
  *     vs Wolf Out (both cost 3 common). Image migration on R2 driven by
  *     scripts/convert-cards/generate-rename-scripts.mjs.
+ * v17 changes:
+ *   - Reversed v14: mastermind imageUrls are no longer preserved from npm source
+ *     even when they start with "http". The legacy URLs were
+ *     nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/* on a third-
+ *     party bucket that returns 403; the project owns its own R2 bucket. Always
+ *     synthesize R2 URLs ({set}-mm-{slug}.webp / {set}-me-{slug}.webp /
+ *     {set}-mt-{slug}-{cardSlug}.webp) and let the rclone upload step supply
+ *     any missing image objects.
+ *   - R2_BASE_URL switched from images.barefootbetters.com to
+ *     images.legendary-arena.com. Both hostnames currently point at the same
+ *     R2 bucket (legendary-images); the rebrand follows the cards./play./www.
+ *     migration to the legendary-arena.com domain.
  */
 
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'fs';
@@ -64,7 +76,7 @@ const CARDS_DIR   = join(INPUTS_DIR, 'cards');
 const OUTPUT_DIR  = join(__dirname, '..', '..', 'data', 'cards');
 const DATA_DIR    = INPUTS_DIR;
 const PATCHES_DIR = join(INPUTS_DIR, 'patches');
-const R2_BASE_URL = 'https://images.barefootbetters.com';
+const R2_BASE_URL = 'https://images.legendary-arena.com';
 
 // why: WP-138 §B / executive review §⚠️4 — `--strict` (or env
 // LEGENDARY_CONVERT_STRICT=1) makes audit warnings for paired-equal
@@ -554,9 +566,11 @@ function convertSet(jsFilePath, setAbbr) {
           // Tactic: {set}-mt-{mmSlug}-{cardSlug}.webp
           mmImageUrl = groupCardImageUrl(setAbbr, 'mt', mmSlug, cardSlug);
         }
-        // Only preserve imageUrl from source if it is a valid R2 URL (ignore legacy /CardImages/ paths)
-        if (card.imageUrl && card.imageUrl.startsWith('http')) mmImageUrl = card.imageUrl;
-
+        // why: v17 reversed the v14 "preserve any http imageUrl from source" branch.
+        // The npm source carried legacy nyc3.digitaloceanspaces.com/bageltop/... URLs
+        // for older masterminds; that bucket returns 403 and the project owns its own
+        // R2 bucket, so always synthesize an R2 URL and let the upload step (rclone
+        // copy ... r2:legendary-images/{abbr}/) supply any missing image objects.
         return {
           name: card.name ?? mm.name,
           slug: cardSlug,
@@ -1415,7 +1429,7 @@ if (auditWarnings.length > 0) {
 }
 
 // why: regenerated JSONs are local-only until pushed to R2. The registry
-// loader in production reads from R2 (https://images.barefootbetters.com/
+// loader in production reads from R2 (https://images.legendary-arena.com/
 // metadata/<set>.json), so a conversion that doesn't sync leaves prod
 // unchanged. Print the canonical sync command so the operator doesn't
 // have to remember the path mapping (data/cards/ → r2:legendary-images/metadata).

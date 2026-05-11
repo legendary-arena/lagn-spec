@@ -95,7 +95,7 @@
             "Always Leads: Omens of Ragnarok",
             "Master Strike: This Strike enters the city as a 5[icon:attack] \"Army of the Dead\" Villain worth 3VP. Then choose a Villain worth 3VP or more from your Victory Pile (including an Army of the Dead) to enter the city. If you didn't have any, each player gains a Wound."
           ],
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mm-hela-goddess-of-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mm-hela-goddess-of-death.webp",
           "vAttack": "10+"
         },
         {
@@ -105,7 +105,7 @@
             "Always Leads: Omens of Ragnarok",
             "Master Strike: This Strike enters the city as a 6[icon:attack] \"Army of the Dead\" Villain worth 4VP. Then choose a Villain worth 4VP or more from your Victory Pile (including an Army of the Dead) to enter the city. If you didn't have any, each player gains a Wound."
           ],
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-me-hela-goddess-of-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-me-hela-goddess-of-death.webp",
           "vAttack": "12+"
         },
         {
@@ -115,7 +115,7 @@
             "",
             "[keyword:Artifact] - Once during each player's turn, if you would gain a Wound, you may draw a card instead."
           ],
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-helas-cloak.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-hela-goddess-of-death-helas-cloak.webp",
           "vAttack": "+2"
         },
         {
@@ -125,17 +125,17 @@
             "",
             "[keyword:Thrown Artifact] - When you throw this, you get [keyword:Conqueror]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-the-nightsword.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-hela-goddess-of-death-the-nightsword.webp",
           "vAttack": "+3"
         },
         {
           "slug": "naglfar-longship-of-fingernails",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-naglfar-longship-of-fingernails.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-hela-goddess-of-death-naglfar-longship-of-fingernails.webp",
           "vAttack": 10
         },
         {
           "slug": "seize-bifrost-the-rainbow-bridge",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-hela-goddess-of-death-seize-bifrost-the-rainbow-bridge.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-hela-goddess-of-death-seize-bifrost-the-rainbow-bridge.webp",
           "vAttack": 10
         }
       ]
@@ -146,12 +146,12 @@
       "cards": [
         {
           "slug": "malekith-the-accursed",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mm-malekith-the-accursed.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mm-malekith-the-accursed.webp",
           "vAttack": 8
         },
         {
           "slug": "epic-malekith-the-accursed",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-me-malekith-the-accursed.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-me-malekith-the-accursed.webp",
           "vAttack": 10
         },
         {
@@ -161,7 +161,7 @@
             "",
             "[keyword:Artifact] - Once per turn, you may KO a Hero from your discard pile."
           ],
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-black-hammer-of-the-accursed.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-malekith-the-accursed-black-hammer-of-the-accursed.webp",
           "vAttack": "+4"
         },
         {
@@ -171,7 +171,7 @@
             "",
             "[keyword:Artifact] - Once per turn, you may defeat a Villain worth 2VP or less."
           ],
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-dagger-of-living-abyss.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-malekith-the-accursed-dagger-of-living-abyss.webp",
           "vAttack": "+2"
         },
         {
@@ -181,12 +181,12 @@
             "",
             "[keyword:Artifact] - Once per turn, draw a card."
           ],
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-the-hunting-horn-of-faerie.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-malekith-the-accursed-the-hunting-horn-of-faerie.webp",
           "vAttack": "+3"
         },
         {
           "slug": "vulnerable-to-cold-iron",
-          "imageUrl": "https://images.barefootbetters.com/asrd/asrd-mt-malekith-the-accursed-vulnerable-to-cold-iron.webp",
+          "imageUrl": "https://images.legendary-arena.com/asrd/asrd-mt-malekith-the-accursed-vulnerable-to-cold-iron.webp",
           "vAttack": 8
         }
       ]

@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-evasive-acrobatics.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-evasive-acrobatics.webp",
           "abilities": [
             "[keyword:Dodge]",
             "When you [keyword:Dodge] with or play this card, you may also [keyword:Dodge] with another card from your hand."
@@ -43,7 +43,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-widows-bite.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-widows-bite.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[keyword:Dark Memories]"
@@ -60,7 +60,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-weave-a-web-of-spies.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-weave-a-web-of-spies.webp",
           "abilities": [
             "[keyword:Dodge]",
             "If you drew any cards this turn, you may send one of your other Heroes [keyword:Undercover]."
@@ -77,7 +77,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-infiltrate-the-conspiracy.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-infiltrate-the-conspiracy.webp",
           "abilities": [
             "You may send one of your Heroes [keyword:Undercover].",
             "You get +3[icon:attack] if you have at least 4 Bystanders and/or Undercover Heroes in your Victory Pile."
@@ -88,7 +88,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-evasive-acrobatics.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-evasive-acrobatics.webp",
           "sides": [
             "evasive-acrobatics"
           ]
@@ -96,7 +96,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-widows-bite.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-widows-bite.webp",
           "sides": [
             "widows-bite"
           ]
@@ -104,7 +104,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-weave-a-web-of-spies.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-weave-a-web-of-spies.webp",
           "sides": [
             "weave-a-web-of-spies"
           ]
@@ -112,7 +112,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-black-widow-infiltrate-the-conspiracy.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-infiltrate-the-conspiracy.webp",
           "sides": [
             "infiltrate-the-conspiracy"
           ]
@@ -142,7 +142,7 @@
           "cost": 2,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-strike-and-fade.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-strike-and-fade.webp",
           "abilities": [
             "Send this [keyword:Undercover]."
           ]
@@ -158,7 +158,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-unveil-identity.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-unveil-identity.webp",
           "abilities": [
             "[hc:instinct]: You may [keyword:Unleash] one of your Heroes from [keyword:Undercover]."
           ]
@@ -174,7 +174,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-twilight-ops.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-twilight-ops.webp",
           "abilities": [
             "[keyword:Dodge]",
             "When you [keyword:Dodge] with this card, you may [keyword:Unleash] one of your Heroes from [keyword:Undercover].",
@@ -192,7 +192,7 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-destroy-the-red-room.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-destroy-the-red-room.webp",
           "abilities": [
             "You may [keyword:Unleash] one of your Heroes from [keyword:Undercover].",
             "You may send a Hero from your discard pile [keyword:Undercover]."
@@ -203,7 +203,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-strike-and-fade.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-strike-and-fade.webp",
           "sides": [
             "strike-and-fade"
           ]
@@ -211,7 +211,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-unveil-identity.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-unveil-identity.webp",
           "sides": [
             "unveil-identity"
           ]
@@ -219,7 +219,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-twilight-ops.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-twilight-ops.webp",
           "sides": [
             "twilight-ops"
           ]
@@ -227,7 +227,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-yelena-belova-destroy-the-red-room.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-destroy-the-red-room.webp",
           "sides": [
             "destroy-the-red-room"
           ]
@@ -257,7 +257,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-sleeper-agent.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-sleeper-agent.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When you fight a Villain, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -275,7 +275,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-magnetic-shield.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-magnetic-shield.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When you recruit another [hc:covert] Hero, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -293,7 +293,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-death-was-only-a-ruse.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-death-was-only-a-ruse.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When a Master Strike is completed or any player fights the Mastermind, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -311,7 +311,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-champion-of-the-winter-guard.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-champion-of-the-winter-guard.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When a Scheme Twist is completed or you play your third [hc:covert] Hero in a turn, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -323,7 +323,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-sleeper-agent.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-sleeper-agent.webp",
           "sides": [
             "sleeper-agent"
           ]
@@ -331,7 +331,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-magnetic-shield.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-magnetic-shield.webp",
           "sides": [
             "magnetic-shield"
           ]
@@ -339,7 +339,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-death-was-only-a-ruse.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-death-was-only-a-ruse.webp",
           "sides": [
             "death-was-only-a-ruse"
           ]
@@ -347,7 +347,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-red-guardian-champion-of-the-winter-guard.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-champion-of-the-winter-guard.webp",
           "sides": [
             "champion-of-the-winter-guard"
           ]
@@ -377,7 +377,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-dark-influence-of-the-hand.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-dark-influence-of-the-hand.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[keyword:Dark Memories]."
@@ -394,7 +394,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-amulets-of-the-tiger-god.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-amulets-of-the-tiger-god.webp",
           "abilities": [
             "Reveal the top two cards of your deck. Draw one of them that costs 0 and discard the rest."
           ]
@@ -410,7 +410,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-camouflaged-huntress.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-camouflaged-huntress.webp",
           "abilities": [
             "Whenever you defeat a Henchman this turn, you may KO one of your cards."
           ]
@@ -426,7 +426,7 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-shadowed-resurrection.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-shadowed-resurrection.webp",
           "abilities": [
             "[keyword:Dark Memories], drawing that many cards instead of gaining [icon:attack]."
           ]
@@ -436,7 +436,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-dark-influence-of-the-hand.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-dark-influence-of-the-hand.webp",
           "sides": [
             "dark-influence-of-the-hand"
           ]
@@ -444,7 +444,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-amulets-of-the-tiger-god.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-amulets-of-the-tiger-god.webp",
           "sides": [
             "amulets-of-the-tiger-god"
           ]
@@ -452,7 +452,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-camouflaged-huntress.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-camouflaged-huntress.webp",
           "sides": [
             "camouflaged-huntress"
           ]
@@ -460,7 +460,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-white-tiger-shadowed-resurrection.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-shadowed-resurrection.webp",
           "sides": [
             "shadowed-resurrection"
           ]
@@ -493,7 +493,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-attune.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-attune.webp",
           "abilities": [
             "To play this side, you must discard a card."
           ]
@@ -509,7 +509,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-atone.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-atone.webp",
           "abilities": [
             "[keyword:Dark Memories]."
           ]
@@ -525,7 +525,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-relocate.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-relocate.webp",
           "abilities": [
             "[keyword:Dodge].",
             "[hc:instinct]: You get +1[icon:attack]."
@@ -542,7 +542,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-reload.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-reload.webp",
           "abilities": [
             "[hc:tech]: Draw a card."
           ]
@@ -558,7 +558,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-new-wings.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-new-wings.webp",
           "abilities": [
             "If you discarded any cards this turn, you get +4[icon:attack]."
           ]
@@ -574,7 +574,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-new-plan.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-new-plan.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -590,7 +590,7 @@
           "cost": 7,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-captain-americas-legacy.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-captain-americas-legacy.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero Class you have.",
             "[team:avengers]: [keyword:Dark Memories]."
@@ -601,7 +601,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-atone-attune.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-atone-attune.webp",
           "sides": [
             "attune",
             "atone"
@@ -610,7 +610,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-reload-relocate.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-reload-relocate.webp",
           "sides": [
             "relocate",
             "reload"
@@ -619,7 +619,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-new-plan-new-wings.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-new-plan-new-wings.webp",
           "sides": [
             "new-wings",
             "new-plan"
@@ -628,7 +628,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-hr-falcon-winter-soldier-captain-americas-legacy.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-captain-americas-legacy.webp",
           "sides": [
             "captain-americas-legacy"
           ]
@@ -649,7 +649,7 @@
           "slug": "taskmaster",
           "tactic": false,
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mm-taskmaster.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mm-taskmaster.webp",
           "abilities": [
             "Henchmen get +1[icon:attack] for each “Henchman Training“ stacked here.",
             "During your turn, Taskmaster gets +[icon:attack] equal to the highest cost Hero you played this turn.",
@@ -662,7 +662,7 @@
           "slug": "epic-taskmaster",
           "tactic": false,
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-me-taskmaster.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-me-taskmaster.webp",
           "abilities": [
             "Henchmen get +2[icon:attack] for each “Henchman Training“ stacked here.",
             "During your turn, Taskmaster gets +[icon:attack] equal to double the highest cost Hero you played this turn.",
@@ -675,7 +675,7 @@
           "slug": "shield-initiative-trainer",
           "tactic": true,
           "vAttack": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-shield-initiative-trainer.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-taskmaster-shield-initiative-trainer.webp",
           "abilities": [
             "Fight: Choose a Henchman from any player's Victory Pile to enter the city.",
             "KO any number of S.H.I.E.L.D. Agents and/or Troopers. Gain that many S.H.I.E.L.D. Officers."
@@ -686,7 +686,7 @@
           "slug": "photographic-reflexes",
           "tactic": true,
           "vAttack": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-photographic-reflexes.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-taskmaster-photographic-reflexes.webp",
           "abilities": [
             "Fight: Choose a Henchman from any player's Victory Pile to enter the city.",
             "Play a copy of a Hero in the HQ that costs 6 or less."
@@ -697,7 +697,7 @@
           "slug": "teacher-and-assassin",
           "tactic": true,
           "vAttack": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-teacher-and-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-taskmaster-teacher-and-assassin.webp",
           "abilities": [
             "Fight: Choose a Henchman from any player's Victory Pile to enter the city.",
             "Each other player reveals their hand and puts one of their non-grey Heroes on the bottom of the Hero Deck."
@@ -708,7 +708,7 @@
           "slug": "henchman-instructor",
           "tactic": true,
           "vAttack": 5,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-taskmaster-henchman-instructor.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-taskmaster-henchman-instructor.webp",
           "abilities": [
             "Fight: Choose a Henchman from any player's Victory Pile to enter the city.",
             "Then each other player discards a card for each Henchman in the city and/or Escape Pile."
@@ -728,7 +728,7 @@
           "slug": "indestructible-man",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mm-indestructible-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mm-indestructible-man.webp",
           "abilities": [
             "You can't use [icon:attack] to fight Indestructible Man.",
             "Once during each of your turns, you may shuffle two Elite Assassins from your Victory Pile into the Villain Deck. If you do, fight Indestructible Man.",
@@ -741,7 +741,7 @@
           "slug": "epic-indestructible-man",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-me-indestructible-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-me-indestructible-man.webp",
           "abilities": [
             "You can't use [icon:attack] to fight Indestructible Man.",
             "Once during each of your turns, you may shuffle three Elite Assassins from your Victory Pile into the Villain Deck. If you do, fight Indestructible Man.",
@@ -754,7 +754,7 @@
           "slug": "manipulate-murderous-mad-monk",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-manipulate-murderous-mad-monk.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-indestructible-man-manipulate-murderous-mad-monk.webp",
           "abilities": [
             "Fight: If this is not the last Tactic, rescue four Bystanders and this Tactic enters the city as a “Molot Boga“ Villain whose abilities are:",
             "“Ambush: Play two cards from the Villain Deck.",
@@ -767,7 +767,7 @@
           "slug": "secrets-of-indestructibility",
           "tactic": true,
           "vAttack": "*",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-secrets-of-indestructibility.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-indestructible-man-secrets-of-indestructibility.webp",
           "abilities": [
             "Fight: KO up to two Wounds from your hand and/or discard pile.",
             "If this is not the last Tactic, play two cards from the Villain Deck."
@@ -778,7 +778,7 @@
           "slug": "international-arms-dealer",
           "tactic": true,
           "vAttack": "*",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-international-arms-dealer.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-indestructible-man-international-arms-dealer.webp",
           "abilities": [
             "Fight: Gain a [hc:tech] Hero from the HQ. Each other player reveals a [hc:tech] Hero or gains a Wound.",
             "If this is not the last Tactic, play two cards from the Villain Deck."
@@ -789,7 +789,7 @@
           "slug": "unveil-project-four",
           "tactic": true,
           "vAttack": "*",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-mt-indestructible-man-unveil-project-four.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-mt-indestructible-man-unveil-project-four.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards each card with a “4“ printed anywhere on it. (The copyright date line doesn't count.)",
             "If this is not the last Tactic, play two cards from the Villain Deck."
@@ -810,7 +810,7 @@
           "slug": "jester",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-vi-taskmasters-thunderbolts-jester.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-taskmasters-thunderbolts-jester.webp",
           "abilities": [
             "Ambush: Jester captures a Bystander.",
             "Fight: Reveal the top four cards of the Villain Deck. Play all the Henchmen you find. Put the rest back in any order."
@@ -821,7 +821,7 @@
           "slug": "joystick",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-vi-taskmasters-thunderbolts-joystick.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-taskmasters-thunderbolts-joystick.webp",
           "abilities": [
             "Ambush: Choose a Henchman from any player's Victory Pile to enter the city."
           ]
@@ -831,7 +831,7 @@
           "slug": "jack-olantern",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-vi-taskmasters-thunderbolts-jack-olantern.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-taskmasters-thunderbolts-jack-olantern.webp",
           "abilities": [
             "Fight: Choose a Henchman from any player's Victory Pile to enter the city.",
             "Escape: Each player with fewer than two Henchmen in their Victory Pile gains a Wound."
@@ -842,7 +842,7 @@
           "slug": "bullseye",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-vi-taskmasters-thunderbolts-bullseye.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-taskmasters-thunderbolts-bullseye.webp",
           "abilities": [
             "Ambush: Choose [icon:recruit] or [icon:attack], then reveal the top card of the Hero Deck. If it has that icon, Bullseye captures it and gets +[icon:attack] equal to that Hero's cost.",
             "Fight: The player of your choice gains the captured Hero.",
@@ -862,7 +862,7 @@
           "slug": "blue-talon",
           "vp": "2",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-vi-elite-assassins-blue-talon.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-elite-assassins-blue-talon.webp",
           "abilities": [
             "[keyword:Dark Memories]",
             "Ambush: Each player reveals a [hc:ranged] Hero or gains a Wound.",
@@ -874,7 +874,7 @@
           "slug": "iron-maiden",
           "vp": "2",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-vi-elite-assassins-iron-maiden.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-elite-assassins-iron-maiden.webp",
           "abilities": [
             "[keyword:Dark Memories]",
             "Ambush: Each player must send one of their non-grey Heroes [keyword:Undercover].",
@@ -886,7 +886,7 @@
           "slug": "snapdragon",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-vi-elite-assassins-snapdragon.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-elite-assassins-snapdragon.webp",
           "abilities": [
             "Ambush: Each player discards a non-grey Hero. Then each player draws a card.",
             "Fight: You may send one of your Heroes [keyword:Undercover]."
@@ -897,7 +897,7 @@
           "slug": "black-lotus",
           "vp": "3",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-vi-elite-assassins-black-lotus.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-elite-assassins-black-lotus.webp",
           "abilities": [
             "Ambush: Each player discards a card that costs 0.",
             "Fight: You get +3[icon:recruit]."
@@ -912,7 +912,7 @@
       "id": 162,
       "name": "Corrupt the Spy Agencies",
       "slug": "corrupt-the-spy-agencies",
-      "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-sc-corrupt-the-spy-agencies.webp",
+      "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-sc-corrupt-the-spy-agencies.webp",
       "cards": [
         {
           "abilities": [
@@ -927,7 +927,7 @@
       "id": 163,
       "name": "Train Black Widows in the Red Room",
       "slug": "train-black-widows-in-the-red-room",
-      "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-sc-train-black-widows-in-the-red-room.webp",
+      "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-sc-train-black-widows-in-the-red-room.webp",
       "cards": [
         {
           "abilities": [
@@ -943,7 +943,7 @@
       "id": 164,
       "name": "Sniper Rifle Assassins",
       "slug": "sniper-rifle-assassins",
-      "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-sc-sniper-rifle-assassins.webp",
+      "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-sc-sniper-rifle-assassins.webp",
       "cards": [
         {
           "abilities": [
@@ -958,7 +958,7 @@
       "id": 165,
       "name": "Frame Heroes for Murder",
       "slug": "frame-heroes-for-murder",
-      "imageUrl": "https://images.barefootbetters.com/bkwd/bkwd-sc-frame-heroes-for-murder.webp",
+      "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-sc-frame-heroes-for-murder.webp",
       "cards": [
         {
           "abilities": [

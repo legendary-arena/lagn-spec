@@ -6,11 +6,11 @@
       "cards": [
         {
           "slug": "finding-myself",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-4c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-4c1.webp"
         },
         {
           "slug": "me-myself-and-i",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-4c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-4c2.webp",
           "abilities": [
             "[keyword:Tactical Formation] 444: Draw a card.",
             "[hc:instinct]: [keyword:Clone]"
@@ -18,11 +18,11 @@
         },
         {
           "slug": "perfect-match",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-4c3.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-4c3.webp"
         },
         {
           "slug": "reabsorb-duplicates",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-multiple-man-4r.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-4r.webp",
           "abilities": [
             "[keyword:Tactical Formation] 44: You may KO a card from your hand or discard pile.",
             "[team:x-factor-investigations]: [keyword:Clone]"
@@ -41,7 +41,7 @@
             "",
             "[hc:instinct]: You get another +2[icon:recruit] usable only to recruit Heroes that cost 5 or more."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-3c1.webp"
         },
         {
           "slug": "bioelectric-surge",
@@ -50,7 +50,7 @@
             "",
             "[keyword:Tactical Formation] 55: You get +1[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-5c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-5c2.webp"
         },
         {
           "slug": "gladiators-blades",
@@ -59,7 +59,7 @@
             "",
             "[hc:instinct]: Draw a card."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-5u.webp"
         },
         {
           "slug": "gene-spliced-creation",
@@ -68,7 +68,7 @@
             "",
             "[hc:ranged][hc:instinct]: [keyword:Shatter] the Mastermind."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-shatterstar-5r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-5r.webp"
         }
       ]
     },
@@ -83,7 +83,7 @@
             "",
             "[hc:tech]: [keyword:Investigate] the Sidekick Stack for a card and put it in your discard pile."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-2c1.webp"
         },
         {
           "slug": "shared-thoughts",
@@ -93,7 +93,7 @@
             "[keyword:Tactical Formation] 22: You get +1[icon:attack].",
             "[keyword:Tactical Formation] 33: [keyword:Investigate] for a card with an [icon:attack] icon."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-2c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-2c2.webp"
         },
         {
           "slug": "telepathic-warning",
@@ -103,7 +103,7 @@
             "[keyword:Tactical Formation] 22: You get +1[icon:attack].",
             "[keyword:Tactical Formation] 33: Reveal the top card of the Villain Deck. If it's a Master Strike, you get +3[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-3c3.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-3c3.webp"
         },
         {
           "slug": "mind-wipe",
@@ -112,7 +112,7 @@
             "",
             "[keyword:Tactical Formation] 223: Reveal the top card of the Villain Deck. If it's a Villain, you get +2[icon:attack] and you may fight it this turn. If you fight it, put a card from the Bystander stack on top of the Villain Deck."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-stepford-cuckoos-3r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-3r.webp"
         }
       ],
       "physicalCards": [
@@ -150,7 +150,7 @@
             "",
             "If you have a Wound in your hand or discard pile, KO it and you get +1[icon:attack]. Otherwise, gain a Wound."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-3c1.webp"
         },
         {
           "slug": "three-sisters-combined",
@@ -160,7 +160,7 @@
             "Draw a card.",
             "[keyword:Tactical Formation] 333: You get +2[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-3c2.webp"
         },
         {
           "slug": "uncover-family-secrets",
@@ -169,7 +169,7 @@
             "",
             "[keyword:Investigate] for a card that costs 3."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-3c3.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-3c3.webp"
         },
         {
           "slug": "interweaving-powers",
@@ -178,7 +178,7 @@
             "",
             "[keyword:Tactical Formation] 3333: You get +3[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-m-3r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-3r.webp"
         }
       ]
     },
@@ -188,22 +188,22 @@
       "cards": [
         {
           "slug": "x-factor-investigations",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-4c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-4c1.webp"
         },
         {
           "slug": "absorb-kinetic-energy",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-5u.webp"
         },
         {
           "slug": "go-big",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-4c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-4c2.webp",
           "abilities": [
             "[keyword:Tactical Formation] 445: You get +3[icon:attack]."
           ]
         },
         {
           "slug": "treasure-hunt",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-strong-guy-8r.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-8r.webp",
           "abilities": [
             "[keyword:Investigate] for one of these options, then a different option, then a third different option:",
             "A [hc:strength] card. A [team:x-factor-investigations] card. A card that costs 4. A card that costs 5."
@@ -217,22 +217,22 @@
       "cards": [
         {
           "slug": "grim-tracker",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-2c1.webp"
         },
         {
           "slug": "endless-endurance",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-5u.webp"
         },
         {
           "slug": "dangerous-maneuver",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-2c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-2c2.webp",
           "abilities": [
             "[keyword:Tactical Formation] 225: You get +1[icon:attack]."
           ]
         },
         {
           "slug": "superhuman-senses",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-warpath-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-7r.webp"
         }
       ]
     },
@@ -242,22 +242,22 @@
       "cards": [
         {
           "slug": "echolocation",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-2c1.webp"
         },
         {
           "slug": "hypnotic-call",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-4c2.webp"
         },
         {
           "slug": "three-octave-arpeggio",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-6u.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-6u.webp",
           "abilities": [
             "[keyword:Tactical Formation] 246: [keyword:Shatter] all Villains."
           ]
         },
         {
           "slug": "splintering-shriek",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-siryn-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-8r.webp"
         }
       ]
     },
@@ -267,19 +267,19 @@
       "cards": [
         {
           "slug": "underground-cave-in",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-3c1.webp"
         },
         {
           "slug": "unearth-tectonic-power",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-5u.webp"
         },
         {
           "slug": "trace-the-fault-lines",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-4c2.webp"
         },
         {
           "slug": "massive-earthquake",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-hr-rictor-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-7r.webp"
         }
       ]
     }
@@ -291,31 +291,31 @@
       "cards": [
         {
           "slug": "lady-deathstrike",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mm-lady-deathstrike.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mm-lady-deathstrike.webp",
           "vAttack": 8
         },
         {
           "slug": "epic-lady-deathstrike",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-me-lady-deathstrike.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-me-lady-deathstrike.webp"
         },
         {
           "slug": "cybernetic-healing-factor",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-lady-deathstrike-cybernetic-healing-factor.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-lady-deathstrike-cybernetic-healing-factor.webp",
           "vAttack": 8
         },
         {
           "slug": "prey-on-the-weak",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-lady-deathstrike-prey-on-the-weak.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-lady-deathstrike-prey-on-the-weak.webp",
           "vAttack": 8
         },
         {
           "slug": "relentless-assassin",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-lady-deathstrike-relentless-assassin.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-lady-deathstrike-relentless-assassin.webp",
           "vAttack": 8
         },
         {
           "slug": "stretching-adamantium-claws",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-lady-deathstrike-stretching-adamantium-claws.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-lady-deathstrike-stretching-adamantium-claws.webp",
           "vAttack": 8
         }
       ]
@@ -326,16 +326,16 @@
       "cards": [
         {
           "slug": "bastion-fused-sentinel",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mm-bastion-fused-sentinel.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mm-bastion-fused-sentinel.webp",
           "vAttack": "4+"
         },
         {
           "slug": "epic-bastion-fused-sentinel",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-me-bastion-fused-sentinel.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-me-bastion-fused-sentinel.webp"
         },
         {
           "slug": "machine-man-sentinel-supereme",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-bastion-fused-sentinel-machine-man-sentinel-supereme.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-bastion-fused-sentinel-machine-man-sentinel-supereme.webp",
           "vAttack": "7+",
           "abilities": [
             "Fight: Rescue three Bystanders. KO one of your Heroes. Machine Man ascends to become an [rule:additional Mastermind] whose only ability is:",
@@ -344,7 +344,7 @@
         },
         {
           "slug": "master-mold-sentinel-factory",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-bastion-fused-sentinel-master-mold-sentinel-factory.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-bastion-fused-sentinel-master-mold-sentinel-factory.webp",
           "vAttack": "4+",
           "abilities": [
             "Fight: Rescue three Bystanders. KO one of your Heroes. Master Mold ascends to become an [rule:additional Mastermind] whose only ability is:",
@@ -353,7 +353,7 @@
         },
         {
           "slug": "nimrod-future-sentinel",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-bastion-fused-sentinel-nimrod-future-sentinel.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-bastion-fused-sentinel-nimrod-future-sentinel.webp",
           "vAttack": "6+",
           "abilities": [
             "Fight: Rescue three Bystanders. KO one of your Heroes. Nimrod ascends to become an [rule:additional Mastermind] whose only abilities are:",
@@ -362,7 +362,7 @@
         },
         {
           "slug": "template-infected-sentinel",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-bastion-fused-sentinel-template-infected-sentinel.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-bastion-fused-sentinel-template-infected-sentinel.webp",
           "vAttack": "5+",
           "abilities": [
             "Fight: Rescue three Bystanders. KO one of your Heroes. Template ascends to become an [rule:additional Mastermind] whose only ability is:",
@@ -377,31 +377,31 @@
       "cards": [
         {
           "slug": "exodus",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mm-exodus.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mm-exodus.webp",
           "vAttack": 32
         },
         {
           "slug": "epic-exodus",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-me-exodus.webp"
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-me-exodus.webp"
         },
         {
           "slug": "avalon-asteroid-haven",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-exodus-avalon-asteroid-haven.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-exodus-avalon-asteroid-haven.webp",
           "vAttack": 32
         },
         {
           "slug": "omega-level-mutant",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-exodus-omega-level-mutant.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-exodus-omega-level-mutant.webp",
           "vAttack": 32
         },
         {
           "slug": "resurrect-the-dead",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-exodus-resurrect-the-dead.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-exodus-resurrect-the-dead.webp",
           "vAttack": 32
         },
         {
           "slug": "unite-all-mutantkind",
-          "imageUrl": "https://images.barefootbetters.com/msmc/msmc-mt-exodus-unite-all-mutantkind.webp",
+          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-mt-exodus-unite-all-mutantkind.webp",
           "vAttack": 32
         }
       ]

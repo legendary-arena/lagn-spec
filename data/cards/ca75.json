@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-sniper-squad.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-agent-x-13-sniper-squad.webp",
           "abilities": [
             "[team:shield][team:shield][team:shield][team:shield]: [keyword:Woman Out of Time]"
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-paramilitary-ops.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-agent-x-13-paramilitary-ops.webp",
           "abilities": [
             "You get +1[icon:attack] for each other [team:shield] Hero you played this turn that costs 1 or more."
           ]
@@ -58,7 +58,7 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-spy-network.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-agent-x-13-spy-network.webp",
           "abilities": [
             "Choose one: Gain a S.H.I.E.L.D. Officer, or you get +2[icon:attack].",
             "[hc:covert]: [keyword:Woman Out of Time]"
@@ -75,7 +75,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-mobilize-for-war.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-agent-x-13-mobilize-for-war.webp",
           "abilities": [
             "KO up to two [team:shield] Heroes from your hand and/or discard pile.",
             "[keyword:Savior]: For each card KO'd this way, you get +1[icon:attack]."
@@ -86,7 +86,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-sniper-squad.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-agent-x-13-sniper-squad.webp",
           "sides": [
             "sniper-squad"
           ]
@@ -94,7 +94,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-paramilitary-ops.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-agent-x-13-paramilitary-ops.webp",
           "sides": [
             "paramilitary-ops"
           ]
@@ -102,7 +102,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-spy-network.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-agent-x-13-spy-network.webp",
           "sides": [
             "spy-network"
           ]
@@ -110,7 +110,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-agent-x-13-mobilize-for-war.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-agent-x-13-mobilize-for-war.webp",
           "sides": [
             "mobilize-for-war"
           ]
@@ -140,7 +140,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-aerial-catch.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-falcon-aerial-catch.webp",
           "abilities": [
             "[hc:instinct]: Rescue a Bystander."
           ]
@@ -156,7 +156,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-winged-salvation.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-falcon-winged-salvation.webp",
           "abilities": [
             "[keyword:Savior]: You get +2[icon:attack]."
           ]
@@ -172,7 +172,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-flying-shield-block.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-falcon-flying-shield-block.webp",
           "abilities": [
             "Once per turn, if a player would gain a Wound, you may reveal this card and rescue a Bystander instead."
           ]
@@ -188,7 +188,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-star-spangled-hero.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-falcon-star-spangled-hero.webp",
           "abilities": [
             "You get +2[icon:attack] for each Hero Class you have.",
             "[keyword:Savior]: You get +2[icon:recruit] for each Hero Class you have."
@@ -199,7 +199,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-aerial-catch.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-falcon-aerial-catch.webp",
           "sides": [
             "aerial-catch"
           ]
@@ -207,7 +207,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-winged-salvation.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-falcon-winged-salvation.webp",
           "sides": [
             "winged-salvation"
           ]
@@ -215,7 +215,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-flying-shield-block.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-falcon-flying-shield-block.webp",
           "sides": [
             "flying-shield-block"
           ]
@@ -223,7 +223,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-falcon-star-spangled-hero.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-falcon-star-spangled-hero.webp",
           "sides": [
             "star-spangled-hero"
           ]
@@ -253,7 +253,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-devoted-patriot.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-1941-devoted-patriot.webp",
           "abilities": [
             "Draw a card.",
             "[hc:strength]: [keyword:Man Out of Time]"
@@ -270,7 +270,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-storm-the-beachhead.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-1941-storm-the-beachhead.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero class you have.",
             "[keyword:Man Out of Time]"
@@ -287,7 +287,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-liberate-the-prisoners.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-1941-liberate-the-prisoners.webp",
           "abilities": [
             "[team:avengers]: Rescue a Bystander.",
             "[keyword:Savior]: Draw a Card."
@@ -304,7 +304,7 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-punch-evil-in-the-face.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-1941-punch-evil-in-the-face.webp",
           "abilities": [
             "[keyword:Savior]: [keyword:Man Out of Time]"
           ]
@@ -314,7 +314,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-devoted-patriot.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-1941-devoted-patriot.webp",
           "sides": [
             "devoted-patriot"
           ]
@@ -322,7 +322,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-storm-the-beachhead.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-1941-storm-the-beachhead.webp",
           "sides": [
             "storm-the-beachhead"
           ]
@@ -330,7 +330,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-liberate-the-prisoners.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-1941-liberate-the-prisoners.webp",
           "sides": [
             "liberate-the-prisoners"
           ]
@@ -338,7 +338,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-captain-america-1941-punch-evil-in-the-face.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-captain-america-1941-punch-evil-in-the-face.webp",
           "sides": [
             "punch-evil-in-the-face"
           ]
@@ -368,7 +368,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-international-strike-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-steve-rogers-director-of-shield-international-strike-force.webp",
           "abilities": [
             "You get +1[icon:recruit] for each Hero Class you have.",
             "[keyword:Savior]: You get +1[icon:attack] for each Hero Class you have."
@@ -385,7 +385,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-reassign-to-civilian-duty.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-steve-rogers-director-of-shield-reassign-to-civilian-duty.webp",
           "abilities": [
             "[team:shield][team:shield][team:shield]: You may KO a [team:shield] Hero that you played this turn. If you do, rescue a Bystander."
           ]
@@ -401,7 +401,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-shadow-of-wars-past.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-steve-rogers-director-of-shield-shadow-of-wars-past.webp",
           "abilities": [
             "[keyword:Savior]: [keyword:Man Out of Time]"
           ]
@@ -417,7 +417,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-save-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-steve-rogers-director-of-shield-save-the-world.webp",
           "abilities": [
             "Rescue a Bystander.",
             "[keyword:Savior]: You get +3[icon:attack]."
@@ -428,7 +428,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-international-strike-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-steve-rogers-director-of-shield-international-strike-force.webp",
           "sides": [
             "international-strike-force"
           ]
@@ -436,7 +436,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-reassign-to-civilian-duty.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-steve-rogers-director-of-shield-reassign-to-civilian-duty.webp",
           "sides": [
             "reassign-to-civilian-duty"
           ]
@@ -444,7 +444,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-shadow-of-wars-past.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-steve-rogers-director-of-shield-shadow-of-wars-past.webp",
           "sides": [
             "shadow-of-wars-past"
           ]
@@ -452,7 +452,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-steve-rogers-director-of-shield-save-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-steve-rogers-director-of-shield-save-the-world.webp",
           "sides": [
             "save-the-world"
           ]
@@ -482,7 +482,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-bionic-arm.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-winter-soldier-bionic-arm.webp",
           "abilities": [
             "[hc:tech]: [keyword:Man Out of Time]"
           ]
@@ -498,7 +498,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-sniper-nest.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-winter-soldier-sniper-nest.webp",
           "abilities": [
             "Draw a card.",
             "[hc:tech]: [keyword:Man Out of Time]"
@@ -515,7 +515,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-kgb-training.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-winter-soldier-kgb-training.webp",
           "abilities": [
             "If you played at least 7 other cards this turn you get +2[icon:attack]."
           ]
@@ -531,7 +531,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-2-4.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-winter-soldier-2-4.webp",
           "abilities": [
             "A Hero in your hand gains [keyword:Man Out of Time] this turn.",
             "[hc:tech]: Another Hero in your hand gains [keyword:Man Out of Time] this turn."
@@ -542,7 +542,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-bionic-arm.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-winter-soldier-bionic-arm.webp",
           "sides": [
             "bionic-arm"
           ]
@@ -550,7 +550,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-sniper-nest.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-winter-soldier-sniper-nest.webp",
           "sides": [
             "sniper-nest"
           ]
@@ -558,7 +558,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-kgb-training.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-winter-soldier-kgb-training.webp",
           "sides": [
             "kgb-training"
           ]
@@ -566,7 +566,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-hr-winter-soldier-2-4.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-hr-winter-soldier-2-4.webp",
           "sides": [
             "2-4"
           ]
@@ -587,7 +587,7 @@
           "slug": "arnim-zola",
           "tactic": false,
           "vAttack": "6+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arnim-zola-01.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mm-arnim-zola.webp",
           "abilities": [
             "[keyword:Ultimate Abomination]",
             "Always Leads: Zola's Creations",
@@ -599,7 +599,7 @@
           "slug": "dominate-the-weak",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arnim-zola-02.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mt-arnim-zola-dominate-the-weak.webp",
           "abilities": [
             "Fight: The player of your choice gains a Hero from the HQ that has less than 2 printed [icon:attack]."
           ]
@@ -609,7 +609,7 @@
           "slug": "computer-uploaded-genius",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arnim-zola-05.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mt-arnim-zola-computer-uploaded-genius.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Hero or discards a card."
           ]
@@ -619,7 +619,7 @@
           "slug": "pet-projects",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arnim-zola-04.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mt-arnim-zola-pet-projects.webp",
           "abilities": [
             "Fight: Each other player reveals a Zola's Creations Villain from their Victory Pile or gains a Wound."
           ]
@@ -629,7 +629,7 @@
           "slug": "crush-pacifist-resistance",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/arnim-zola-03.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mt-arnim-zola-crush-pacifist-resistance.webp",
           "abilities": [
             "Fight: KO up to two of your Heroes that have less than 2 printed [icon:attack]."
           ]
@@ -648,7 +648,7 @@
           "slug": "baron-heinrich-zemo",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-zemo-01.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mm-baron-heinrich-zemo.webp",
           "abilities": [
             "Whenever you fight a Villain, you may use 2[icon:recruit] to rescue a Bystander. Baron Zemo gets +9[icon:attack] unless you are a [keyword:Savior].",
             "Always Leads: Masters of Evil (WWII)",
@@ -660,7 +660,7 @@
           "slug": "fallen-idols",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-zemo-02.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mt-baron-heinrich-zemo-fallen-idols.webp",
           "abilities": [
             "Fight: Each other player that is not a [keyword:Savior] discards a card."
           ]
@@ -670,7 +670,7 @@
           "slug": "finding-zemo",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-zemo-03.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mt-baron-heinrich-zemo-finding-zemo.webp",
           "abilities": [
             "Fight: Reveal the top five cards of the Villain Deck. If you revealed any Bystanders, KO them and each other player gains a Wound. Put the rest back in random order."
           ]
@@ -680,7 +680,7 @@
           "slug": "hatred-for-the-avengers",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-zemo-05.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mt-baron-heinrich-zemo-hatred-for-the-avengers.webp",
           "abilities": [
             "Fight: For each of your [team:avengers] Heroes, rescue a Bystander."
           ]
@@ -690,7 +690,7 @@
           "slug": "prisoners-of-war",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-zemo-04.png",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-mt-baron-heinrich-zemo-prisoners-of-war.webp",
           "abilities": [
             "Fight: Each other player reveals an [team:avengers] Hero or chooses a Bystander from their Victory Pile, and you rescue that Bystander."
           ]
@@ -710,7 +710,7 @@
           "slug": "captain-zolandia",
           "vp": "5",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-vi-zolas-creations-captain-zolandia.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-zolas-creations-captain-zolandia.webp",
           "abilities": [
             "[keyword:Abomination]",
             "Fight: You get +1[icon:recruit] for each Hero Class you have."
@@ -721,7 +721,7 @@
           "slug": "doughboy",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-vi-zolas-creations-doughboy.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-zolas-creations-doughboy.webp",
           "abilities": [
             "[keyword:Abomination]",
             "Fight: KO one of your Heroes."
@@ -732,7 +732,7 @@
           "slug": "man-fish",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-vi-zolas-creations-man-fish.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-zolas-creations-man-fish.webp",
           "abilities": [
             "[keyword:Abomination]",
             "Fight: If you fought Man-Fish in the Sewers or Bridge, then each other player gains a Wound.",
@@ -744,7 +744,7 @@
           "slug": "primus",
           "vp": "3",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-vi-zolas-creations-primus.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-zolas-creations-primus.webp",
           "abilities": [
             "To fight Primus, you must also discard a card that costs 2, 3, 5, or 7.",
             "Escape: each player discards a Hero that costs 2, 3, 5, or 7."
@@ -763,7 +763,7 @@
           "slug": "black-knight",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-vi-masters-of-evil-wwii-black-knight.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-masters-of-evil-wwii-black-knight.webp",
           "abilities": [
             "Ambush: Black Knight captures a Bystander.",
             "Fight: [keyword:Savior]: KO one of your Heroes."
@@ -774,7 +774,7 @@
           "slug": "executioner",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-vi-masters-of-evil-wwii-executioner.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-masters-of-evil-wwii-executioner.webp",
           "abilities": [
             "Ambush: Executioner captures a Bystander.",
             "Fight: [keyword:Savior]: Draw a card.",
@@ -786,7 +786,7 @@
           "slug": "melter-wwii",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-vi-masters-of-evil-wwii-melter-wwii.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-masters-of-evil-wwii-melter-wwii.webp",
           "abilities": [
             "Ambush: Melter captures a Bystander.",
             "Fight: [keyword:Savior]: Each player reveals the top card of their deck. For each card, you choose to KO it or put it back."
@@ -797,7 +797,7 @@
           "slug": "radioactive-man",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/ca75/ca75-vi-masters-of-evil-wwii-radioactive-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-masters-of-evil-wwii-radioactive-man.webp",
           "abilities": [
             "Ambush: Radioactive Man captures a Bystander.",
             "Fight: Each player who is not a [keyword:Savior] gains a Wound.",
@@ -813,7 +813,7 @@
       "id": 56,
       "name": "Brainwash the Military",
       "slug": "brainwash-the-military",
-      "imageUrl": "https://images.barefootbetters.com/ca75/ca75-sc-brainwash-the-military.webp",
+      "imageUrl": "https://images.legendary-arena.com/ca75/ca75-sc-brainwash-the-military.webp",
       "cards": [
         {
           "abilities": [
@@ -830,7 +830,7 @@
       "id": 57,
       "name": "Change the Outcome of WWII",
       "slug": "change-the-outcome-of-wwii",
-      "imageUrl": "https://images.barefootbetters.com/ca75/ca75-sc-change-the-outcome-of-wwii.webp",
+      "imageUrl": "https://images.legendary-arena.com/ca75/ca75-sc-change-the-outcome-of-wwii.webp",
       "cards": [
         {
           "abilities": [
@@ -852,7 +852,7 @@
       "id": 58,
       "name": "Go Back in Time to Slay Heroes' Ancestors",
       "slug": "go-back-in-time-to-slay-heroes-ancestors",
-      "imageUrl": "https://images.barefootbetters.com/ca75/ca75-sc-go-back-in-time-to-slay-heroes-ancestors.webp",
+      "imageUrl": "https://images.legendary-arena.com/ca75/ca75-sc-go-back-in-time-to-slay-heroes-ancestors.webp",
       "cards": [
         {
           "abilities": [
@@ -868,7 +868,7 @@
       "id": 59,
       "name": "Unbreakable Enigma Code, The",
       "slug": "unbreakable-enigma-code-the",
-      "imageUrl": "https://images.barefootbetters.com/ca75/ca75-sc-unbreakable-enigma-code-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/ca75/ca75-sc-unbreakable-enigma-code-the.webp",
       "cards": [
         {
           "abilities": [

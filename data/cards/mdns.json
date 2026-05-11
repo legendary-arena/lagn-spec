@@ -25,7 +25,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-blade-daywalker-hunt-high-and-low.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-hunt-high-and-low.webp",
           "abilities": [
             "[keyword:Patrol the Rooftops]: If it's empty, reveal the top card of your deck. You may KO it.",
             "[keyword:Patrol the Sewers]: If it's empty, reveal the bottom card of your deck. You may KO it."
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-blade-daywalker-where-monsters-lurk.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-where-monsters-lurk.webp",
           "abilities": [
             "[keyword:Patrol the Rooftops]: If it's empty, draw a card.",
             "[keyword:Patrol the Sewers]: If it's empty, you get +1[icon:recruit]."
@@ -59,7 +59,7 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-blade-daywalker-ride-by-moonlight.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-ride-by-moonlight.webp",
           "abilities": [
             "You may move a Villain to another city space. If another Villain is already there, swap them.",
             "[keyword:Moonlight]: You get +1[icon:attack]."
@@ -76,7 +76,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-blade-daywalker-creature-of-dawn-and-dusk.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-creature-of-dawn-and-dusk.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +2[icon:attack] and you may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[keyword:Moonlight]: [keyword:Blood Frenzy]"
@@ -87,7 +87,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-blade-daywalker-hunt-high-and-low.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-hunt-high-and-low.webp",
           "sides": [
             "hunt-high-and-low"
           ]
@@ -95,7 +95,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-blade-daywalker-where-monsters-lurk.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-where-monsters-lurk.webp",
           "sides": [
             "where-monsters-lurk"
           ]
@@ -103,7 +103,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-blade-daywalker-ride-by-moonlight.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-ride-by-moonlight.webp",
           "sides": [
             "ride-by-moonlight"
           ]
@@ -111,7 +111,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-blade-daywalker-creature-of-dawn-and-dusk.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-creature-of-dawn-and-dusk.webp",
           "sides": [
             "creature-of-dawn-and-dusk"
           ]
@@ -141,7 +141,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-elsa-bloodstone-axe-of-the-slayer.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-axe-of-the-slayer.webp",
           "abilities": [
             "[keyword:Patrol the Streets]: If it's empty, you get +2[icon:recruit]. If it's not, you get +2[icon:attack].",
             "[hc:instinct]: Instead, you get both."
@@ -158,7 +158,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-elsa-bloodstone-silver-bullets.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-silver-bullets.webp",
           "abilities": [
             "[keyword:Patrol the Streets]: If it's empty, you get +1[icon:attack].",
             "[hc:tech]: You get +1[icon:attack]."
@@ -175,7 +175,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-elsa-bloodstone-stalk-the-night-stalkers.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-stalk-the-night-stalkers.webp",
           "abilities": [
             "You may have a Vilain or Mastermind [keyword:Hunt for Victims]. If it KOs a Bystander this way, you may KO a Hero from your hand or discard pile.",
             "[hc:tech]: If a Bystander is KO'd this way, you may also rescue that Bystander instead of putting it in the KO pile."
@@ -192,7 +192,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-elsa-bloodstone-vengeance-of-the-bloodstone-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-vengeance-of-the-bloodstone-gem.webp",
           "abilities": [
             "[keyword:Patrol any city space]: If it's empty, you get the printed [icon:recruit] and [icon:attack] of the Hero in the HQ space under that city space. ",
             "[team:marvel-knights][team:marvel-knights]: [keyword:Blood Frenzy]"
@@ -203,7 +203,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-elsa-bloodstone-axe-of-the-slayer.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-axe-of-the-slayer.webp",
           "sides": [
             "axe-of-the-slayer"
           ]
@@ -211,7 +211,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-elsa-bloodstone-silver-bullets.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-silver-bullets.webp",
           "sides": [
             "silver-bullets"
           ]
@@ -219,7 +219,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-elsa-bloodstone-stalk-the-night-stalkers.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-stalk-the-night-stalkers.webp",
           "sides": [
             "stalk-the-night-stalkers"
           ]
@@ -227,7 +227,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-elsa-bloodstone-vengeance-of-the-bloodstone-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-vengeance-of-the-bloodstone-gem.webp",
           "sides": [
             "vengeance-of-the-bloodstone-gem"
           ]
@@ -257,7 +257,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-morbius-mesmerize.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-mesmerize.webp",
           "abilities": [
             "[keyword:Moonlight]: [keyword:Blood Frenzy], gaining [icon:recruit] instead of [icon:attack]."
           ]
@@ -273,7 +273,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-morbius-scalded-by-sunlight.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-scalded-by-sunlight.webp",
           "abilities": [
             "[keyword:Sunlight]: You may gain a Wound. If you do, you get +2[icon:attack].",
             "[keyword:Moonlight]: You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:attack]."
@@ -290,7 +290,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-morbius-insatiable-craving.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-insatiable-craving.webp",
           "abilities": [
             "[hc:covert]: [keyword:Blood Frenzy]"
           ]
@@ -306,7 +306,7 @@
           "cost": 7,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-morbius-its-morbin-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-its-morbin-time.webp",
           "abilities": [
             "[hc:covert]: [keyword:Blood Frenzy], drawing that many cards instead of gaining [icon:attack]."
           ]
@@ -316,7 +316,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-morbius-mesmerize.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-mesmerize.webp",
           "sides": [
             "mesmerize"
           ]
@@ -324,7 +324,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-morbius-scalded-by-sunlight.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-scalded-by-sunlight.webp",
           "sides": [
             "scalded-by-sunlight"
           ]
@@ -332,7 +332,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-morbius-insatiable-craving.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-insatiable-craving.webp",
           "sides": [
             "insatiable-craving"
           ]
@@ -340,7 +340,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-morbius-its-morbin-time.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-its-morbin-time.webp",
           "sides": [
             "its-morbin-time"
           ]
@@ -370,7 +370,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-werewolf-by-night-starlit-path.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-starlit-path.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +1[icon:attack].",
             "[keyword:Moonlight]: Draw a card."
@@ -387,7 +387,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-werewolf-by-night-snarling-fangs.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-snarling-fangs.webp",
           "abilities": [
             "[keyword:Sunlight]: You may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[keyword:Moonlight]: Whenever you defeat a Villain or Mastermind this turn, you may KO one of your Heroes."
@@ -404,7 +404,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-werewolf-by-night-release-the-beast.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-release-the-beast.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +3[icon:recruit].",
             "[keyword:Moonlight]: [keyword:Blood Frenzy]",
@@ -422,7 +422,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-werewolf-by-night-track-the-captives.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-track-the-captives.webp",
           "abilities": [
             "[keyword:Moonlight]: Whenever you defeat a Vilain or Mastermind this turn, you may rescue a Bystander or gain a Hero from the HQ or Sidekick Deck whose cost is less than that Enemy's [icon:attack].",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -433,7 +433,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-werewolf-by-night-starlit-path.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-starlit-path.webp",
           "sides": [
             "starlit-path"
           ]
@@ -441,7 +441,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-werewolf-by-night-snarling-fangs.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-snarling-fangs.webp",
           "sides": [
             "snarling-fangs"
           ]
@@ -449,7 +449,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-werewolf-by-night-release-the-beast.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-release-the-beast.webp",
           "sides": [
             "release-the-beast"
           ]
@@ -457,7 +457,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-werewolf-by-night-track-the-captives.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-track-the-captives.webp",
           "sides": [
             "track-the-captives"
           ]
@@ -487,7 +487,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-bridge-between-dimensions.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-bridge-between-dimensions.webp",
           "abilities": [
             "[keyword:Patrol the Bridge]: If it's empty, draw a card."
           ]
@@ -503,7 +503,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-searing-shards-of-sunlight.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-searing-shards-of-sunlight.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +1[icon:attack].",
             "[hc:ranged]: You get +1[icon:attack]."
@@ -520,7 +520,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-seal-the-rift.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-seal-the-rift.webp",
           "abilities": [
             "[keyword:Patrol the Bridge]: If it's empty, draw two cards. If it's not, you get +5[icon:attack] usable only to fight Villains on the Bridge."
           ]
@@ -536,7 +536,7 @@
           "cost": 8,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-face-your-demons.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-face-your-demons.webp",
           "abilities": [
             "Once this turn, you may fight the top card of the Bystander Deck as if it were a 4[icon:attack] “Darkhold Demon” Vilan with “Fight: KO up to two of your Heroes. Rescue this card as a Bystander.”",
             "[keyword:Sunlight]: You get +2[icon:attack]."
@@ -547,7 +547,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-bridge-between-dimensions.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-bridge-between-dimensions.webp",
           "sides": [
             "bridge-between-dimensions"
           ]
@@ -555,7 +555,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-searing-shards-of-sunlight.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-searing-shards-of-sunlight.webp",
           "sides": [
             "searing-shards-of-sunlight"
           ]
@@ -563,7 +563,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-seal-the-rift.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-seal-the-rift.webp",
           "sides": [
             "seal-the-rift"
           ]
@@ -571,7 +571,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-face-your-demons.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-face-your-demons.webp",
           "sides": [
             "face-your-demons"
           ]
@@ -592,7 +592,7 @@
           "slug": "lilith-mother-of-demons",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemons.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mm-lilith-mother-of-demons.webp",
           "abilities": [
             "Lilith gets +1[icon:attack] for each Bystander in the KO pile.",
             "Always Leads: Lilin",
@@ -604,7 +604,7 @@
           "slug": "epic-lilith",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemons_Epic.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-me-lilith-mother-of-demons.webp",
           "abilities": [
             "Lilith gets +2[icon:attack] for each Bystander in the KO pile.",
             "Always Leads: Lilin",
@@ -616,7 +616,7 @@
           "slug": "connoisseur-of-souls",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemonsTactic1.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-lilith-mother-of-demons-connoisseur-of-souls.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Bystander in the KO pile.",
             "Then Lilith [keyword:Hunts for Victims]."
@@ -627,7 +627,7 @@
           "slug": "offer-of-corruption",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemonsTactic3.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-lilith-mother-of-demons-offer-of-corruption.webp",
           "abilities": [
             "Fight: Choose one:",
             "{\"points\":[[\"Gain a Wound and each other player KOs one of their Heroes, or\"],[\"KO one of your Heroes and each other player gains a Wound.\"]]}",
@@ -639,7 +639,7 @@
           "slug": "mesopotamian-demon-goddess",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemonsTactic2.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-lilith-mother-of-demons-mesopotamian-demon-goddess.webp",
           "abilities": [
             "Fight: Each other player may discard a card for each Bystander in the KO pile. Each of those players who didn't must gain a Wound instead.",
             "Then Lilith [keyword:Hunts for Victims]."
@@ -650,7 +650,7 @@
           "slug": "respawn-demonic-offspring",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/LilithMotherofDemonsTactic4.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-lilith-mother-of-demons-respawn-demonic-offspring.webp",
           "abilities": [
             "Fight: The highest VP Lilin Villain from among all Victory Piles reenters the city. The player who had that Villain rescues three Bystanders.",
             "Then Lilith [keyword:Hunts for Victims].",
@@ -671,7 +671,7 @@
           "slug": "zarathos",
           "tactic": false,
           "vAttack": "7",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/Zarathos.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mm-zarathos.webp",
           "abilities": [
             "Always Leads: The Fallen",
             "Master Strike: If any Heroes in the HQ are haunted, each player gains a Wound. Then if Zarathos is not already haunting, he [keyword:Haunts] the highest-cost unhaunted Hero in the HQ."
@@ -682,7 +682,7 @@
           "slug": "epic-zarathos",
           "tactic": false,
           "vAttack": "9",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/Zarathos_Epic.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-me-zarathos.webp",
           "abilities": [
             "Always Leads: The Fallen",
             "Master Strike: If any Heroes in the HQ are haunted, each player gains a Wound. Then if Zarathos is not already haunting, he [keyword:Haunts] the highest-cost unhaunted Hero in the HQ. Then reveal the top card of the Villain Deck. If it's a Villain, it Haunts the highest cost unhaunted Hero in the HQ."
@@ -693,7 +693,7 @@
           "slug": "eruption-of-hellfire",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ZarathosTactic3.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-zarathos-eruption-of-hellfire.webp",
           "abilities": [
             "Fight: Zarathos [keyword:Haunts] the highest-cost unhaunted [hc:covert] and/or [hc:ranged] Hero in the HQ.",
             "Each other player discards a [hc:covert] or [hc:ranged] Hero or gains a Wound."
@@ -704,7 +704,7 @@
           "slug": "corrupted-spirit-of-vengeance",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ZarathosTactic2.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-zarathos-corrupted-spirit-of-vengeance.webp",
           "abilities": [
             "Fight: Zarathos [keyword:Haunts] the highest-cost unhaunted [hc:instinct] and/or [hc:covert] Hero in the HQ.",
             "Each other player discards a [hc:instinct] or [hc:covert] Hero or discards down to 3 cards."
@@ -715,7 +715,7 @@
           "slug": "imprison-in-the-soul-crystal",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ZarathosTactic4.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-zarathos-imprison-in-the-soul-crystal.webp",
           "abilities": [
             "Fight: Zarathos [keyword:Haunts] the highest-cost unhaunted [hc:strength] and/or [hc:instinct] Hero in the HQ.",
             "If you have a [hc:strength] or [hc:instinct] Hero, you may KO a Villain from your Victory Pile. If you do, draw cards equal to that Villain's VP."
@@ -726,7 +726,7 @@
           "slug": "demonic-essence-of-ghost-rider",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ZarathosTactic1.png",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-mt-zarathos-demonic-essence-of-ghost-rider.webp",
           "abilities": [
             "Fight: Zarathos [keyword:Haunts] the highest-cost unhaunted [hc:ranged] and/or [hc:strength] Hero in the HQ.",
             "If you have a [hc:ranged] Hero, you may KO one of your Heroes.",
@@ -748,7 +748,7 @@
           "slug": "meatmarket",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-lilin-meatmarket.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-lilin-meatmarket.webp",
           "abilities": [
             "Meatmarket gets +1[icon:attack] for each Bystander in the KO pile.",
             "Ambush: [keyword:Hunt for Victims]",
@@ -760,7 +760,7 @@
           "slug": "outcast",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-lilin-outcast.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-lilin-outcast.webp",
           "abilities": [
             "Ambush: [keyword:Hunt for Victims]. Then each player reveals a random card from their hand. If that card costs less than the number of Bystanders in the KO pile, that player discards that card."
           ]
@@ -770,7 +770,7 @@
           "slug": "sister-nil",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-lilin-sister-nil.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-lilin-sister-nil.webp",
           "abilities": [
             "[keyword:Moonlight]: Sister Nil gets +2[icon:attack].",
             "Ambush: [keyword:Hunt for Victims]. Then each player reveals more non-grey Heroes than the number of Bystanders in the KO pile or gains a Wound.",
@@ -782,7 +782,7 @@
           "slug": "skinner",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-lilin-skinner.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-lilin-skinner.webp",
           "abilities": [
             "Skinner gets +2[icon:attack] if there are at least four Bystanders in the KO pile.",
             "Ambush: [keyword:Hunt for Victims]",
@@ -794,7 +794,7 @@
           "slug": "blackout",
           "vp": "5",
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-lilin-blackout.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-lilin-blackout.webp",
           "abilities": [
             "[keyword:Moonlight]: Blackout gets +1[icon:attack] for each Bystander in the KO pile.",
             "Ambush: [keyword:Hunt for Victims]. If it's Moonlight, [keyword:Hunt for Victims] again.",
@@ -814,7 +814,7 @@
           "slug": "metarchus",
           "vp": "4",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-fallen-metarchus.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-fallen-metarchus.webp",
           "abilities": [
             "[keyword:Blood Frenzy]",
             "Ambush: [keyword:Haunt] the rightmost unhaunted Hero in the HQ.",
@@ -826,7 +826,7 @@
           "slug": "atrocity",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-fallen-atrocity.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-fallen-atrocity.webp",
           "abilities": [
             "Ambush: [keyword:Haunt] the leftmost unhaunted Hero in the HQ.",
             "Fight: Rescue a Bystander."
@@ -837,7 +837,7 @@
           "slug": "patriarch",
           "vp": "3",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-fallen-patriarch.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-fallen-patriarch.webp",
           "abilities": [
             "Ambush: [keyword:Haunt] an unhaunted Hero in the HQ that costs 3 or less.",
             "Fight: Reveal the top card of your deck. If it costs 3 or less, draw it."
@@ -848,7 +848,7 @@
           "slug": "salom-sorceress-supreme",
           "vp": "5",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/mdns/mdns-vi-fallen-salom-sorceress-supreme.webp",
+          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-fallen-salom-sorceress-supreme.webp",
           "abilities": [
             "[keyword:Blood Frenzy]",
             "Fight: KO up to two cards from your discard pile.",
@@ -864,7 +864,7 @@
       "id": 170,
       "name": "Sire Vampires at the Blood Bank",
       "slug": "sire-vampires-at-the-blood-bank",
-      "imageUrl": "https://images.barefootbetters.com/mdns/mdns-sc-sire-vampires-at-the-blood-bank.webp",
+      "imageUrl": "https://images.legendary-arena.com/mdns/mdns-sc-sire-vampires-at-the-blood-bank.webp",
       "cards": [
         {
           "abilities": [
@@ -880,7 +880,7 @@
       "id": 171,
       "name": "Ritual Sacrifice to Summon Chthon",
       "slug": "ritual-sacrifice-to-summon-chthon",
-      "imageUrl": "https://images.barefootbetters.com/mdns/mdns-sc-ritual-sacrifice-to-summon-chthon.webp",
+      "imageUrl": "https://images.legendary-arena.com/mdns/mdns-sc-ritual-sacrifice-to-summon-chthon.webp",
       "cards": [
         {
           "abilities": [
@@ -903,7 +903,7 @@
       "id": 172,
       "name": "Midnight Massacre",
       "slug": "midnight-massacre",
-      "imageUrl": "https://images.barefootbetters.com/mdns/mdns-sc-midnight-massacre.webp",
+      "imageUrl": "https://images.legendary-arena.com/mdns/mdns-sc-midnight-massacre.webp",
       "cards": [
         {
           "abilities": [
@@ -919,7 +919,7 @@
       "id": 173,
       "name": "Wager at Blackjack for Heroes' Souls",
       "slug": "wager-at-blackjack-for-heroes-souls",
-      "imageUrl": "https://images.barefootbetters.com/mdns/mdns-sc-wager-at-blackjack-for-heroes-souls.webp",
+      "imageUrl": "https://images.legendary-arena.com/mdns/mdns-sc-wager-at-blackjack-for-heroes-souls.webp",
       "cards": [
         {
           "abilities": [
@@ -938,7 +938,7 @@
       "cardType": "scheme-transform",
       "prefix": "sx",
       "note": "Double-sided card — Scheme (Ritual Sacrifice to Summon Chthon) on reverse. Transforms into this Mastermind when the Scheme is completed.",
-      "imageUrl": "https://images.barefootbetters.com/mdns/mdns-sx-great-old-one-chthon.webp",
+      "imageUrl": "https://images.legendary-arena.com/mdns/mdns-sx-great-old-one-chthon.webp",
       "cards": [
         {
           "abilities": [

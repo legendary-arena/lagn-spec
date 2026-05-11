@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-impetuous-dive.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-angel-noir-impetuous-dive.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:attack]."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-multitalented.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-angel-noir-multitalented.webp",
           "abilities": [
             "Choose a Hero Class. [keyword:Investigate] for a card of that Hero Class."
           ]
@@ -58,7 +58,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-identical-twin-brother.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-angel-noir-identical-twin-brother.webp",
           "abilities": [
             "You get the printed [icon:recruit] and [icon:attack] of a Hero in the HQ. Then put that Hero on the bottom of the Hero Deck."
           ]
@@ -74,7 +74,7 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-missing-person-case.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-angel-noir-missing-person-case.webp",
           "abilities": [
             "[keyword:Investigate] the Hero Deck for any card and put that card in your hand."
           ]
@@ -84,7 +84,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-impetuous-dive.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-angel-noir-impetuous-dive.webp",
           "sides": [
             "impetuous-dive"
           ]
@@ -92,7 +92,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-multitalented.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-angel-noir-multitalented.webp",
           "sides": [
             "multitalented"
           ]
@@ -100,7 +100,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-identical-twin-brother.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-angel-noir-identical-twin-brother.webp",
           "sides": [
             "identical-twin-brother"
           ]
@@ -108,7 +108,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-angel-noir-missing-person-case.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-angel-noir-missing-person-case.webp",
           "sides": [
             "missing-person-case"
           ]
@@ -138,7 +138,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-balancing-act.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-daredevil-noir-balancing-act.webp",
           "abilities": [
             "The next Hero you recruit this turn goes on top of your deck."
           ]
@@ -154,7 +154,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-listen-for-heartbeats.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-daredevil-noir-listen-for-heartbeats.webp",
           "abilities": [
             "Choose a number 1 or more. [keyword:Investigate] for a card of that cost."
           ]
@@ -170,7 +170,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-discover-the-bodies.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-daredevil-noir-discover-the-bodies.webp",
           "abilities": [
             "[hc:covert]: [keyword:Investigate] for a card that costs 0. KO that card."
           ]
@@ -186,7 +186,7 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-hitting-rock-bottom.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-daredevil-noir-hitting-rock-bottom.webp",
           "abilities": [
             "Discard a card from the top or bottom of your deck. If it costs 0, you get +1[icon:attack] and repeat this process. If your deck runs out, stop."
           ]
@@ -196,7 +196,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-balancing-act.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-daredevil-noir-balancing-act.webp",
           "sides": [
             "balancing-act"
           ]
@@ -204,7 +204,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-listen-for-heartbeats.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-daredevil-noir-listen-for-heartbeats.webp",
           "sides": [
             "listen-for-heartbeats"
           ]
@@ -212,7 +212,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-discover-the-bodies.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-daredevil-noir-discover-the-bodies.webp",
           "sides": [
             "discover-the-bodies"
           ]
@@ -220,7 +220,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-daredevil-noir-hitting-rock-bottom.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-daredevil-noir-hitting-rock-bottom.webp",
           "sides": [
             "hitting-rock-bottom"
           ]
@@ -250,7 +250,7 @@
           "cost": 3,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-steam-powered-arsenal.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-iron-man-noir-steam-powered-arsenal.webp",
           "abilities": [
             "To play this, you must put another card from your hand on top of your deck."
           ]
@@ -266,7 +266,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-mechanized-plate-mail.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-iron-man-noir-mechanized-plate-mail.webp",
           "abilities": [
             "[keyword:Investigate] for a [hc:tech] card."
           ]
@@ -282,7 +282,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-learn-from-enemies.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-iron-man-noir-learn-from-enemies.webp",
           "abilities": [
             "[hc:tech]: You may use the “Fight“ ability of a Villain worth 1[icon:piercing] in your Victory Pile."
           ]
@@ -298,7 +298,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-adventurers-assemble.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-iron-man-noir-adventurers-assemble.webp",
           "abilities": [
             "Whenever you [keyword:Investigate] this turn, look at three cards instead of two.",
             "Choose [icon:recruit] or [icon:attack]. [keyword:Investigate] for a card with that icon."
@@ -309,7 +309,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-steam-powered-arsenal.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-iron-man-noir-steam-powered-arsenal.webp",
           "sides": [
             "steam-powered-arsenal"
           ]
@@ -317,7 +317,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-mechanized-plate-mail.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-iron-man-noir-mechanized-plate-mail.webp",
           "sides": [
             "mechanized-plate-mail"
           ]
@@ -325,7 +325,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-learn-from-enemies.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-iron-man-noir-learn-from-enemies.webp",
           "sides": [
             "learn-from-enemies"
           ]
@@ -333,7 +333,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-iron-man-noir-adventurers-assemble.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-iron-man-noir-adventurers-assemble.webp",
           "sides": [
             "adventurers-assemble"
           ]
@@ -363,7 +363,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-follow-big-leads.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-luke-cage-noir-follow-big-leads.webp",
           "abilities": [
             "You get +1[icon:recruit] for each other card you played this turn that costs 4 or more."
           ]
@@ -379,7 +379,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-private-investigations.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-luke-cage-noir-private-investigations.webp",
           "abilities": [
             "[keyword:Investigate] for a card that costs 4 or more."
           ]
@@ -395,7 +395,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-unbreakable-cage.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-luke-cage-noir-unbreakable-cage.webp",
           "abilities": [
             "Once per turn, if a player would gain a Wound, you may reveal this card and [keyword:Investigate] for any card instead."
           ]
@@ -411,7 +411,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-weight-of-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-luke-cage-noir-weight-of-the-world.webp",
           "abilities": [
             "You get +2[icon:attack] for each other card you played this turn that costs 4 or more."
           ]
@@ -421,7 +421,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-follow-big-leads.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-luke-cage-noir-follow-big-leads.webp",
           "sides": [
             "follow-big-leads"
           ]
@@ -429,7 +429,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-private-investigations.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-luke-cage-noir-private-investigations.webp",
           "sides": [
             "private-investigations"
           ]
@@ -437,7 +437,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-unbreakable-cage.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-luke-cage-noir-unbreakable-cage.webp",
           "sides": [
             "unbreakable-cage"
           ]
@@ -445,7 +445,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-luke-cage-noir-weight-of-the-world.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-luke-cage-noir-weight-of-the-world.webp",
           "sides": [
             "weight-of-the-world"
           ]
@@ -475,7 +475,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-gumshoes-revolver.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-spider-man-noir-gumshoes-revolver.webp",
           "abilities": [
             "[keyword:Investigate] for a card that costs 2 or less."
           ]
@@ -491,7 +491,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-webs-of-darkness.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-spider-man-noir-webs-of-darkness.webp",
           "abilities": [
             "[hc:ranged]: You get +2[icon:attack]."
           ]
@@ -507,7 +507,7 @@
           "cost": 2,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-solve-the-crime.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-spider-man-noir-solve-the-crime.webp",
           "abilities": [
             "[hc:instinct]: [keyword:Investigate] the Bystander Stack for a Bystander and rescue it."
           ]
@@ -523,7 +523,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-spider-totems-chosen.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-spider-man-noir-spider-totems-chosen.webp",
           "abilities": [
             "[team:spider-friends]: [keyword:Investigate] each player's deck for a card that costs 2 or less, play a copy of that card, then put it into their discard pile."
           ]
@@ -533,7 +533,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-gumshoes-revolver.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-spider-man-noir-gumshoes-revolver.webp",
           "sides": [
             "gumshoes-revolver"
           ]
@@ -541,7 +541,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-webs-of-darkness.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-spider-man-noir-webs-of-darkness.webp",
           "sides": [
             "webs-of-darkness"
           ]
@@ -549,7 +549,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-solve-the-crime.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-spider-man-noir-solve-the-crime.webp",
           "sides": [
             "solve-the-crime"
           ]
@@ -557,7 +557,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-hr-spider-man-noir-spider-totems-chosen.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-hr-spider-man-noir-spider-totems-chosen.webp",
           "sides": [
             "spider-totems-chosen"
           ]
@@ -578,7 +578,7 @@
           "slug": "charles-xavier-professor-of-crime",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-01.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mm-charles-xavier-professor-of-crime.webp",
           "abilities": [
             "Charles Xavier gets +1[icon:attack] for each Bystander in the HQ and city.",
             "Always Leads: X-Men Noir",
@@ -590,7 +590,7 @@
           "slug": "commit-to-the-asylum",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-02.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mt-charles-xavier-professor-of-crime-commit-to-the-asylum.webp",
           "abilities": [
             "Fight: Each other player [keyword:Investigates] their deck for a card with an [icon:attack] icon and KOs it. Players reveal all the cards they [keyword:Investigated]."
           ]
@@ -600,7 +600,7 @@
           "slug": "master-manipulator",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-04.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mt-charles-xavier-professor-of-crime-master-manipulator.webp",
           "abilities": [
             "Fight: [keyword:Investigate] the Hero Deck for an [team:x-men] card and put it into your discard pile."
           ]
@@ -610,7 +610,7 @@
           "slug": "corrupt-weak-minds",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-03.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mt-charles-xavier-professor-of-crime-corrupt-weak-minds.webp",
           "abilities": [
             "Fight: Each other player puts a random Bystander from their Victory Pile onto a Hero in the HQ as a [keyword:Hidden Witness]."
           ]
@@ -620,7 +620,7 @@
           "slug": "x-con-men",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/charles-xavier-05.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mt-charles-xavier-professor-of-crime-x-con-men.webp",
           "abilities": [
             "Fight: Each other player reveals an [team:x-men] Hero or gains a Wound."
           ]
@@ -640,7 +640,7 @@
           "slug": "the-goblin-underworld-boss",
           "tactic": false,
           "vAttack": "10*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-01.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mm-the-goblin-underworld-boss.webp",
           "abilities": [
             "Start of Game: The Goblin captures 2 [keyword:Hidden Witness].",
             "Always Leads: Goblin's Freak Show",
@@ -652,7 +652,7 @@
           "slug": "sinister-dreams",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-05.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mt-the-goblin-underworld-boss-sinister-dreams.webp",
           "abilities": [
             "Fight: Each other player reveals a [team:sinister-six] or [team:spider-friends] Hero or gains a Wound."
           ]
@@ -662,7 +662,7 @@
           "slug": "blackmail-the-judges",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-02.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mt-the-goblin-underworld-boss-blackmail-the-judges.webp",
           "abilities": [
             "Fight: For each Goblin's Freak Show Villain in the city, The Goblin captures 2 [keyword:Hidden Witness]."
           ]
@@ -672,7 +672,7 @@
           "slug": "carnival-of-carnage",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-04.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mt-the-goblin-underworld-boss-carnival-of-carnage.webp",
           "abilities": [
             "Fight: For each Goblin's Freak Show Villain in the city, each other player discards a card."
           ]
@@ -682,7 +682,7 @@
           "slug": "blind-loyalty",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/goblin-underworld-boss-03.png",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-mt-the-goblin-underworld-boss-blind-loyalty.webp",
           "abilities": [
             "Fight: [keyword:Investigate] the Villain Deck for a Goblin's Freak Show Villain and put it into your Victory Pile."
           ]
@@ -702,7 +702,7 @@
           "slug": "vulture-carnival-cannibal",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-goblins-freak-show-vulture-carnival-cannibal.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-goblins-freak-show-vulture-carnival-cannibal.webp",
           "abilities": [
             "Ambush: The Vulture captures 2 [keyword:Hidden Witnesses].",
             "Fight: Each other player KOs a Bystander from their Victory Pile or gains a Wound.",
@@ -714,7 +714,7 @@
           "slug": "the-chameleon",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-goblins-freak-show-the-chameleon.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-goblins-freak-show-the-chameleon.webp",
           "abilities": [
             "Ambush: Chameleon captures a [keyword:Hidden Witness].",
             "Fight: Reveal the top card of the Villain Deck. If it's a Villain, it enters the city space where The Chameleon was."
@@ -725,7 +725,7 @@
           "slug": "kraven-animal-trainer",
           "vp": "4",
           "vAttack": "*",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-goblins-freak-show-kraven-animal-trainer.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-goblins-freak-show-kraven-animal-trainer.webp",
           "abilities": [
             "Ambush: For each Hero in the HQ that costs 7 or more, Kraven captures a [keyword:Hidden Witness]. Kraven's [icon:attack] is equal to the cost of the highest-cost card in the HQ."
           ]
@@ -735,7 +735,7 @@
           "slug": "ox",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-goblins-freak-show-ox.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-goblins-freak-show-ox.webp",
           "abilities": [
             "Ambush: Each other player reveals a [hc:strength] Hero or Ox captures a random Bystander from their Victory Pile as a [keyword:Hidden Witness]."
           ]
@@ -745,7 +745,7 @@
           "slug": "montana",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-goblins-freak-show-montana.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-goblins-freak-show-montana.webp",
           "abilities": [
             "Ambush: Each Goblin's Freak Show Villain captures a [keyword:Hidden Witness]."
           ]
@@ -755,7 +755,7 @@
           "slug": "fancy-dan",
           "vp": "2",
           "vAttack": "1",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-goblins-freak-show-fancy-dan.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-goblins-freak-show-fancy-dan.webp",
           "abilities": [
             "Ambush: Fancy Dan captures 3 [keyword:Hidden Witnesses].",
             "Fight: KO one of your Heroes."
@@ -774,7 +774,7 @@
           "slug": "bobby-iceman-drake",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-x-men-noir-bobby-iceman-drake.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-x-men-noir-bobby-iceman-drake.webp",
           "abilities": [
             "Fight: [keyword:Investigate] for a card with a [icon:recruit] icon."
           ]
@@ -784,7 +784,7 @@
           "slug": "comrade-rasputin-steel-wall",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-x-men-noir-comrade-rasputin-steel-wall.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-x-men-noir-comrade-rasputin-steel-wall.webp",
           "abilities": [
             "Fight: [keyword:Investigate] for a Hero that costs 0 and KO it."
           ]
@@ -794,7 +794,7 @@
           "slug": "henry-beast-mccoy",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-x-men-noir-henry-beast-mccoy.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-x-men-noir-henry-beast-mccoy.webp",
           "abilities": [
             "Fight: [keyword:Investigate] for any card that's [hc:tech] or [hc:strength]."
           ]
@@ -804,7 +804,7 @@
           "slug": "jean-grey-noir",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-x-men-noir-jean-grey-noir.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-x-men-noir-jean-grey-noir.webp",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of your turn, [keyword:Investigate] for an extra card."
           ]
@@ -814,7 +814,7 @@
           "slug": "scott-cyclops-summers",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-x-men-noir-scott-cyclops-summers.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-x-men-noir-scott-cyclops-summers.webp",
           "abilities": [
             "Escape: Each player [keyword:Investigates] their deck for a card that costs 1 or more and KOs it. Players reveal the cards they [keyword:Investigated]."
           ]
@@ -824,7 +824,7 @@
           "slug": "warden-emma-frost",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-x-men-noir-warden-emma-frost.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-x-men-noir-warden-emma-frost.webp",
           "abilities": [
             "Escape: [keyword:Investigate] the Villain Deck for a Scheme Twist and play it. Reveal all the cards you [keyword:Investigated]."
           ]
@@ -834,7 +834,7 @@
           "slug": "ororo-munroe-storm-tossed",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/noir/noir-vi-x-men-noir-ororo-munroe-storm-tossed.webp",
+          "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-x-men-noir-ororo-munroe-storm-tossed.webp",
           "abilities": [
             "Fight: KO a Hero from the HQ. [keyword:Investigate] the Hero Deck for a card to put in that emptied HQ space."
           ]
@@ -848,7 +848,7 @@
       "id": 72,
       "name": "Find the Split Personality Killer",
       "slug": "find-the-split-personality-killer",
-      "imageUrl": "https://images.barefootbetters.com/noir/noir-sc-find-the-split-personality-killer.webp",
+      "imageUrl": "https://images.legendary-arena.com/noir/noir-sc-find-the-split-personality-killer.webp",
       "cards": [
         {
           "abilities": [
@@ -864,7 +864,7 @@
       "id": 73,
       "name": "Silence the Witnesses",
       "slug": "silence-the-witnesses",
-      "imageUrl": "https://images.barefootbetters.com/noir/noir-sc-silence-the-witnesses.webp",
+      "imageUrl": "https://images.legendary-arena.com/noir/noir-sc-silence-the-witnesses.webp",
       "cards": [
         {
           "abilities": [
@@ -879,7 +879,7 @@
       "id": 74,
       "name": "Five Families of Crime",
       "slug": "five-families-of-crime",
-      "imageUrl": "https://images.barefootbetters.com/noir/noir-sc-five-families-of-crime.webp",
+      "imageUrl": "https://images.legendary-arena.com/noir/noir-sc-five-families-of-crime.webp",
       "cards": [
         {
           "abilities": [
@@ -895,7 +895,7 @@
       "id": 75,
       "name": "Hidden Heart of Darkness",
       "slug": "hidden-heart-of-darkness",
-      "imageUrl": "https://images.barefootbetters.com/noir/noir-sc-hidden-heart-of-darkness.webp",
+      "imageUrl": "https://images.legendary-arena.com/noir/noir-sc-hidden-heart-of-darkness.webp",
       "cards": [
         {
           "abilities": [
@@ -914,7 +914,7 @@
       "name": "Detective Wolverine",
       "slug": "detective-wolverine",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/noir/noir-by-detective-wolverine.webp",
+      "imageUrl": "https://images.legendary-arena.com/noir/noir-by-detective-wolverine.webp",
       "cards": [
         {
           "qtd": 1,

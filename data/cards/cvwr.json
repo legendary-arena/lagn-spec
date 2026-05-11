@@ -27,7 +27,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-bold-leadership.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-bold-leadership.webp",
           "abilities": [
             "You get +1[icon:recruit] for each Hero Class you have."
           ]
@@ -43,7 +43,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-nation.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-nation.webp",
           "abilities": [
             "Gain a [rule:Sidekick]."
           ]
@@ -59,7 +59,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-man.webp",
           "abilities": []
         },
         {
@@ -73,7 +73,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-secret-avengers-assemble.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-secret-avengers-assemble.webp",
           "abilities": [
             "You get +1[icon:attack] for each [rule:Sidekick] and other [team:avengers] Hero you played this turn."
           ]
@@ -89,7 +89,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-freedom-never-dies.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-freedom-never-dies.webp",
           "abilities": [
             "Whenever you play a [rule:Sidekick] or another [team:avengers] Hero this turn set that card aside. At the end of your turn, put those cards on the bottom of your deck in random order before you draw your new hand."
           ]
@@ -99,7 +99,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-bold-leadership.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-bold-leadership.webp",
           "sides": [
             "bold-leadership"
           ]
@@ -107,7 +107,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-man-inspire-a-nation.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-inspire-a-man-inspire-a-nation.webp",
           "sides": [
             "inspire-a-man",
             "inspire-a-nation"
@@ -116,7 +116,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-secret-avengers-assemble.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-secret-avengers-assemble.webp",
           "sides": [
             "secret-avengers-assemble"
           ]
@@ -124,7 +124,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-captain-america-secret-avenger-freedom-never-dies.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-captain-america-secret-avenger-freedom-never-dies.webp",
           "sides": [
             "freedom-never-dies"
           ]
@@ -157,7 +157,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-above.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-above.webp",
           "abilities": []
         },
         {
@@ -171,7 +171,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-below.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-below.webp",
           "abilities": [
             "You get +3[icon:recruit] usable only to recruit Heroes in the HQ space under the Sewers."
           ]
@@ -187,7 +187,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-flee.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-flee.webp",
           "abilities": [
             "[keyword:Phasing]",
             "[hc:covert]: You get +1[icon:recruit]."
@@ -204,7 +204,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-fight.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-fight.webp",
           "abilities": [
             "[keyword:Phasing]",
             "[hc:ranged] You get +1[icon:attack]."
@@ -221,7 +221,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-darkness.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-darkness.webp",
           "abilities": [
             "[hc:covert]: Reveal the top card of your deck. If it costs 0, KO it."
           ]
@@ -237,7 +237,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-light.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-light.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top card of your deck. If it costs 1 or more, draw it."
           ]
@@ -253,7 +253,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-penumbra.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-penumbra.webp",
           "abilities": [
             "Whenever you play a [rule:Divided Card] card this turn, play both sides as if they were two different cards."
           ]
@@ -263,7 +263,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-above-below.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-above-below.webp",
           "sides": [
             "above",
             "below"
@@ -272,7 +272,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-darkness-light.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-darkness-light.webp",
           "sides": [
             "darkness",
             "light"
@@ -281,7 +281,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-fight-flee.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-fight-flee.webp",
           "sides": [
             "fight",
             "flee"
@@ -290,7 +290,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-cloak-dagger-penumbra.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-cloak-dagger-penumbra.webp",
           "sides": [
             "penumbra"
           ]
@@ -321,7 +321,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-dual-existence.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-dual-existence.webp",
           "abilities": [
             "Look at the top two cards of your deck. Draw one and put the other back."
           ]
@@ -337,7 +337,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-roundhouse-side-kick.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-roundhouse-side-kick.webp",
           "abilities": [
             "Choose a number, then reveal the top card of your deck. If that card is that cost, gain a [rule:Sidekick]."
           ]
@@ -353,7 +353,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-hidden-identity.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-hidden-identity.webp",
           "abilities": [
             "The next Hero you recruit this turn goes on top of your deck."
           ]
@@ -369,7 +369,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-revealed-identity.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-revealed-identity.webp",
           "abilities": [
             "You get +1[icon:attack] for each different cost of Hero you have."
           ]
@@ -385,7 +385,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-master-of-martial-arts.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-master-of-martial-arts.webp",
           "abilities": [
             "[team:avengers]: Discard the top two cards of your deck. If they have different costs, you get +2[icon:attack], then repeat this process."
           ]
@@ -395,7 +395,7 @@
         {
           "id": "p1",
           "count": 6,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-hidden-identity-revealed-identity.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-hidden-identity-revealed-identity.webp",
           "sides": [
             "hidden-identity",
             "revealed-identity"
@@ -404,7 +404,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-dual-existence.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-dual-existence.webp",
           "sides": [
             "dual-existence"
           ]
@@ -412,7 +412,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-roundhouse-side-kick.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-roundhouse-side-kick.webp",
           "sides": [
             "roundhouse-side-kick"
           ]
@@ -420,7 +420,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-daredevil-master-of-martial-arts.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-daredevil-master-of-martial-arts.webp",
           "sides": [
             "master-of-martial-arts"
           ]
@@ -451,7 +451,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-rapid-reinforcements.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-rapid-reinforcements.webp",
           "abilities": [
             "Put a Hero from the HQ on the bottom of the Hero Deck.",
             "[hc:tech]: If that Hero had a [icon:recruit] icon, you get +1[icon:recruit]."
@@ -468,7 +468,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-talk-with-birds.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-talk-with-birds.webp",
           "abilities": [
             "[hc:ranged]: Gain a [rule:Sidekick]."
           ]
@@ -484,7 +484,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-squawk-back.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-squawk-back.webp",
           "abilities": [
             "Look at the top three cards of your deck. Draw one. Put the rest back in any order."
           ]
@@ -500,7 +500,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-scout-the-battlefield.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-scout-the-battlefield.webp",
           "abilities": [
             "You get +1[icon:attack] for each card in the HQ with an [icon:attack] icon."
           ]
@@ -516,7 +516,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-fly-in-a-friend.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-fly-in-a-friend.webp",
           "abilities": [
             "[team:avengers]: You get +[icon:attack] equal to the printed [icon:attack] of a Hero in the HQ."
           ]
@@ -526,7 +526,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-rapid-reinforcements.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-rapid-reinforcements.webp",
           "sides": [
             "rapid-reinforcements"
           ]
@@ -534,7 +534,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-squawk-back-talk-with-birds.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-squawk-back-talk-with-birds.webp",
           "sides": [
             "squawk-back",
             "talk-with-birds"
@@ -543,7 +543,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-scout-the-battlefield.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-scout-the-battlefield.webp",
           "sides": [
             "scout-the-battlefield"
           ]
@@ -551,7 +551,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-falcon-fly-in-a-friend.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-falcon-fly-in-a-friend.webp",
           "sides": [
             "fly-in-a-friend"
           ]
@@ -582,7 +582,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-brilliant-biochemist.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-brilliant-biochemist.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]"
           ]
@@ -598,7 +598,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-massive-warrior.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-massive-warrior.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]"
           ]
@@ -614,7 +614,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-growth-industry.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-growth-industry.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "[hc:tech]: Draw a card."
@@ -631,7 +631,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-being-big-is-best.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-being-big-is-best.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "You get +1[icon:attack] for each other card you played this turn that costs 4 or more."
@@ -648,7 +648,7 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-enormous-implications.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-enormous-implications.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "You get +[icon:attack] equal to the cost of another card you played this turn."
@@ -659,7 +659,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-brilliant-biochemist-massive-warrior.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-brilliant-biochemist-massive-warrior.webp",
           "sides": [
             "brilliant-biochemist",
             "massive-warrior"
@@ -668,7 +668,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-growth-industry.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-growth-industry.webp",
           "sides": [
             "growth-industry"
           ]
@@ -676,7 +676,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-being-big-is-best.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-being-big-is-best.webp",
           "sides": [
             "being-big-is-best"
           ]
@@ -684,7 +684,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-goliath-enormous-implications.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-goliath-enormous-implications.webp",
           "sides": [
             "enormous-implications"
           ]
@@ -715,7 +715,7 @@
           "cost": 3,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-manly-dullard.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-manly-dullard.webp",
           "abilities": [
             "To play this, you must discard a card from your hand."
           ]
@@ -731,7 +731,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-boy-genius.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-boy-genius.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -747,7 +747,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-crowd-favorite.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-crowd-favorite.webp",
           "abilities": [
             "[hc:instinct]: Whenever you defeat a Villain this turn, rescue a Bystander."
           ]
@@ -763,7 +763,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-prince-of-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-prince-of-power.webp",
           "abilities": [
             "[hc:strength]: Reveal the top card of your deck. If it costs 0, KO it."
           ]
@@ -779,7 +779,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-son-of-zeus.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-son-of-zeus.webp",
           "abilities": [
             "Rescue a Bystander. Then, you get +1[icon:attack] for each Bystander in your Victory Pile.",
             "[team:avengers]: You get +1[icon:recruit] for each Bystander in your Victory Pile."
@@ -790,7 +790,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-boy-genius-manly-dullard.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-boy-genius-manly-dullard.webp",
           "sides": [
             "boy-genius",
             "manly-dullard"
@@ -799,7 +799,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-crowd-favorite.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-crowd-favorite.webp",
           "sides": [
             "crowd-favorite"
           ]
@@ -807,7 +807,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-prince-of-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-prince-of-power.webp",
           "sides": [
             "prince-of-power"
           ]
@@ -815,7 +815,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hercules-son-of-zeus.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hercules-son-of-zeus.webp",
           "sides": [
             "son-of-zeus"
           ]
@@ -846,7 +846,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-half-kree.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-half-kree.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "Gain a Wound."
@@ -863,7 +863,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-half-skrull.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-half-skrull.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]"
           ]
@@ -879,7 +879,7 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-cellular-regeneration.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-cellular-regeneration.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "You may KO a Wound from your hand or discard pile. If you do, you get +1[icon:attack]."
@@ -896,7 +896,7 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-impersonate.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-impersonate.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "Play this card as a copy of another Hero you played this turn. This card is both [hc:covert] and the class and color you copy."
@@ -913,7 +913,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-enormous-shapeshifter.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-enormous-shapeshifter.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "[hc:covert]: You get +4[icon:attack]."
@@ -924,7 +924,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-cellular-regeneration.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-cellular-regeneration.webp",
           "sides": [
             "cellular-regeneration"
           ]
@@ -932,7 +932,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-half-kree-half-skrull.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-half-kree-half-skrull.webp",
           "sides": [
             "half-kree",
             "half-skrull"
@@ -941,7 +941,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-impersonate.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-impersonate.webp",
           "sides": [
             "impersonate"
           ]
@@ -949,7 +949,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-hulkling-enormous-shapeshifter.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-hulkling-enormous-shapeshifter.webp",
           "sides": [
             "enormous-shapeshifter"
           ]
@@ -980,7 +980,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-cautious.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-cautious.webp",
           "abilities": []
         },
         {
@@ -994,7 +994,7 @@
           "cost": 3,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-reckless.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-reckless.webp",
           "abilities": [
             "Gain a Wound."
           ]
@@ -1010,7 +1010,7 @@
           "cost": 4,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-take-a-bullet-for-the-team.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-take-a-bullet-for-the-team.webp",
           "abilities": [
             "If any player would gain a Wound, you may discard this card instead. If you do, draw two cards."
           ]
@@ -1026,7 +1026,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-sweet-christmas.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-sweet-christmas.webp",
           "abilities": [
             "[hc:instinct]: Look at the top three cards of your deck. Discard them all or put them back in any order."
           ]
@@ -1042,7 +1042,7 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-unbreakable-skin.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-unbreakable-skin.webp",
           "abilities": [
             "[team:avengers]: [keyword:Fortify] the Wound Stack. While it's fortified, players can't gain Wounds. At the beginning of your next turn, put this card in your discard pile."
           ]
@@ -1052,7 +1052,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-cautious-reckless.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-cautious-reckless.webp",
           "sides": [
             "cautious",
             "reckless"
@@ -1061,7 +1061,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-take-a-bullet-for-the-team.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-take-a-bullet-for-the-team.webp",
           "sides": [
             "take-a-bullet-for-the-team"
           ]
@@ -1069,7 +1069,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-sweet-christmas.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-sweet-christmas.webp",
           "sides": [
             "sweet-christmas"
           ]
@@ -1077,7 +1077,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-luke-cage-unbreakable-skin.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-luke-cage-unbreakable-skin.webp",
           "sides": [
             "unbreakable-skin"
           ]
@@ -1108,7 +1108,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-new-generation-of-heroes.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-new-generation-of-heroes.webp",
           "abilities": [
             "You get +1[icon:recruit] for each Hero Name among your non-[team:shield] Heroes."
           ]
@@ -1124,7 +1124,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-intuitive-tactician.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-intuitive-tactician.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero Name among your non-[team:shield] Heroes."
           ]
@@ -1140,7 +1140,7 @@
           "cost": 5,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-incredible-effort.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-incredible-effort.webp",
           "abilities": [
             "[hc:covert]: You get +3[icon:attack]."
           ]
@@ -1156,7 +1156,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-effortless.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-effortless.webp",
           "abilities": []
         },
         {
@@ -1170,7 +1170,7 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-lead-the-young-avengers.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-lead-the-young-avengers.webp",
           "abilities": [
             "Reveal the top three cards of your deck. If you revealed at least three different Hero Names this way, draw those three cards. Otherwise, put them back in any order."
           ]
@@ -1180,7 +1180,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-effortless-incredible-effort.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-effortless-incredible-effort.webp",
           "sides": [
             "effortless",
             "incredible-effort"
@@ -1189,7 +1189,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-new-generation-of-heroes.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-new-generation-of-heroes.webp",
           "sides": [
             "new-generation-of-heroes"
           ]
@@ -1197,7 +1197,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-intuitive-tactician.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-intuitive-tactician.webp",
           "sides": [
             "intuitive-tactician"
           ]
@@ -1205,7 +1205,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-patriot-lead-the-young-avengers.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-patriot-lead-the-young-avengers.webp",
           "sides": [
             "lead-the-young-avengers"
           ]
@@ -1236,7 +1236,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-conflicted-loyalties.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-conflicted-loyalties.webp",
           "abilities": [
             "[hc:tech]: Reveal the top card of your deck. If it costs 2 or less, draw it."
           ]
@@ -1252,7 +1252,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-spider-man-unmasked.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-spider-man-unmasked.webp",
           "abilities": [
             "Gain a [rule:Sidekick].",
             "[hc:instinct]: Put that [rule:Sidekick] on top of your deck."
@@ -1269,7 +1269,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-protect-my-family.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-protect-my-family.webp",
           "abilities": [
             "Rescue a Bystander."
           ]
@@ -1285,7 +1285,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-hot-bowl-of-soup.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-hot-bowl-of-soup.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile."
           ]
@@ -1301,7 +1301,7 @@
           "cost": 2,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-reluctant-celebrity.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-reluctant-celebrity.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:attack] for each extra card you've drawn this turn."
           ]
@@ -1311,7 +1311,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-hot-bowl-of-soup-protect-my-family.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-hot-bowl-of-soup-protect-my-family.webp",
           "sides": [
             "hot-bowl-of-soup",
             "protect-my-family"
@@ -1320,7 +1320,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-conflicted-loyalties.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-conflicted-loyalties.webp",
           "sides": [
             "conflicted-loyalties"
           ]
@@ -1328,7 +1328,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-spider-man-unmasked.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-spider-man-unmasked.webp",
           "sides": [
             "spider-man-unmasked"
           ]
@@ -1336,7 +1336,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-peter-parker-reluctant-celebrity.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-peter-parker-reluctant-celebrity.webp",
           "sides": [
             "reluctant-celebrity"
           ]
@@ -1367,7 +1367,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-reckless-rescue-attempt.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-reckless-rescue-attempt.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top card of the Villain Deck. If it's a Villain, rescue a Bystander. Otherwise, KO a Bystander from the Bystander Deck."
           ]
@@ -1383,7 +1383,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-bounce-around.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-bounce-around.webp",
           "abilities": [
             "[hc:covert]: If there are any Bystanders in the city or KO pile, you get +2[icon:attack]."
           ]
@@ -1399,7 +1399,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-double-down.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-double-down.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -1415,7 +1415,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-bubble-up.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-bubble-up.webp",
           "abilities": [
             "You get +3[icon:attack] usable only against Villains on the Bridge or against the Mastermind."
           ]
@@ -1431,7 +1431,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-kinetic-force-field.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-kinetic-force-field.webp",
           "abilities": [
             "If a Master Strike would occur, you may reveal this card to KO that Master Strike, cancel its effects, and draw a card."
           ]
@@ -1441,7 +1441,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-bubble-up-double-down.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-bubble-up-double-down.webp",
           "sides": [
             "bubble-up",
             "double-down"
@@ -1450,7 +1450,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-reckless-rescue-attempt.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-reckless-rescue-attempt.webp",
           "sides": [
             "reckless-rescue-attempt"
           ]
@@ -1458,7 +1458,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-bounce-around.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-bounce-around.webp",
           "sides": [
             "bounce-around"
           ]
@@ -1466,7 +1466,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-speedball-kinetic-force-field.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-speedball-kinetic-force-field.webp",
           "sides": [
             "kinetic-force-field"
           ]
@@ -1497,7 +1497,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-shrink-to-nothing.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-shrink-to-nothing.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "Draw a card.",
@@ -1515,7 +1515,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-crush-ants.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-crush-ants.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "[hc:strength]: Defeat a Villain that has 3[icon:attack] or less."
@@ -1532,7 +1532,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-crush-file-sizes.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-crush-file-sizes.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "[hc:tech]: Draw a card."
@@ -1549,7 +1549,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-growing-confidence.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-growing-confidence.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "[hc:strength]: You get +1[icon:attack] for each Villain in your Victory Pile that has a printed [icon:attack] 3 or less."
@@ -1566,7 +1566,7 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-trample-the-tiny.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-trample-the-tiny.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "[hc:strength]: Defeat each Villain that has 4 [icon:attack] or less."
@@ -1577,7 +1577,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-crush-ants-crush-file-sizes.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-crush-ants-crush-file-sizes.webp",
           "sides": [
             "crush-ants",
             "crush-file-sizes"
@@ -1586,7 +1586,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-shrink-to-nothing.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-shrink-to-nothing.webp",
           "sides": [
             "shrink-to-nothing"
           ]
@@ -1594,7 +1594,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-growing-confidence.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-growing-confidence.webp",
           "sides": [
             "growing-confidence"
           ]
@@ -1602,7 +1602,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-stature-trample-the-tiny.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-stature-trample-the-tiny.webp",
           "sides": [
             "trample-the-tiny"
           ]
@@ -1635,7 +1635,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-gathering-rain-clouds.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-gathering-rain-clouds.webp",
           "abilities": [
             "[hc:ranged]: Draw a card."
           ]
@@ -1651,7 +1651,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-gathering-clues.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-gathering-clues.webp",
           "abilities": [
             "[hc:instinct]: Draw a card."
           ]
@@ -1667,7 +1667,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-lightning-strike.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-lightning-strike.webp",
           "abilities": [
             "Any Villain you fight on the Rooftops this turn gets -1[icon:attack]."
           ]
@@ -1683,7 +1683,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-pouncing-strike.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-pouncing-strike.webp",
           "abilities": [
             "You may move a Villain to an adjacent empty city space."
           ]
@@ -1699,7 +1699,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-water.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-water.webp",
           "abilities": [
             "[hc:ranged]: You get +2[icon:attack] usable only against the Mastermind."
           ]
@@ -1715,7 +1715,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-justice.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-justice.webp",
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile."
           ]
@@ -1731,7 +1731,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-king-queen-of-wakanda.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-king-queen-of-wakanda.webp",
           "abilities": [
             "Reveal any number of multi-class cards from your hand. Gain that many [rule:Sidekicks]."
           ]
@@ -1741,7 +1741,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-gathering-clues-gathering-rain-clouds.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-gathering-clues-gathering-rain-clouds.webp",
           "sides": [
             "gathering-clues",
             "gathering-rain-clouds"
@@ -1750,7 +1750,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-lightning-strike-pouncing-strike.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-lightning-strike-pouncing-strike.webp",
           "sides": [
             "lightning-strike",
             "pouncing-strike"
@@ -1759,7 +1759,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-justice-tsunami-of-water.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-tsunami-of-justice-tsunami-of-water.webp",
           "sides": [
             "tsunami-of-justice",
             "tsunami-of-water"
@@ -1768,7 +1768,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-storm-black-panther-king-queen-of-wakanda.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-storm-black-panther-king-queen-of-wakanda.webp",
           "sides": [
             "king-queen-of-wakanda"
           ]
@@ -1799,7 +1799,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-friendship.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-friendship.webp",
           "abilities": [
             "[hc:covert]: Gain a [rule:Sidekick]."
           ]
@@ -1815,7 +1815,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-ferocity.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-ferocity.webp",
           "abilities": [
             "[hc:instinct]: Draw a card."
           ]
@@ -1831,7 +1831,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-supernatural-senses.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-supernatural-senses.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[hc:instinct][hc:instinct]: You may KO the card you discarded this way."
@@ -1848,7 +1848,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-cant-surprise-a-cat.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-cant-surprise-a-cat.webp",
           "abilities": [
             "If an Ambush effect would occur, you may discard this card to cancel that effect and draw two cards."
           ]
@@ -1864,7 +1864,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-mystic-talisman.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-mystic-talisman.webp",
           "abilities": [
             "Recruit a Hero from the HQ for free.",
             "[team:avengers]: You get that Hero's printed [icon:recruit] and [icon:attack]."
@@ -1875,7 +1875,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-ferocity-friendship.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-ferocity-friendship.webp",
           "sides": [
             "ferocity",
             "friendship"
@@ -1884,7 +1884,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-supernatural-senses.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-supernatural-senses.webp",
           "sides": [
             "supernatural-senses"
           ]
@@ -1892,7 +1892,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-cant-surprise-a-cat.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-cant-surprise-a-cat.webp",
           "sides": [
             "cant-surprise-a-cat"
           ]
@@ -1900,7 +1900,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-tigra-mystic-talisman.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-tigra-mystic-talisman.webp",
           "sides": [
             "mystic-talisman"
           ]
@@ -1931,7 +1931,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-solar-energy.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-solar-energy.webp",
           "abilities": [
             "[keyword:Phasing]",
             "[hc:ranged]: You get +2[icon:attack]."
@@ -1948,7 +1948,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-through-solid-objects.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-through-solid-objects.webp",
           "abilities": [
             "[keyword:Phasing]",
             "Choose a Hero Class. Reveal the top card of your deck. If it's the Hero Class you named, then draw it."
@@ -1965,7 +1965,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-lighter-than-air.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-lighter-than-air.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:ranged]",
             "[keyword:Phasing]"
@@ -1982,7 +1982,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-harder-than-diamond.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-harder-than-diamond.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "[keyword:Phasing]"
@@ -1999,7 +1999,7 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-insubstantial-accomplishments.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-insubstantial-accomplishments.webp",
           "abilities": [
             "[keyword:Phasing]",
             "When you play this, you may swap a card from your hand with the top two cards of your deck."
@@ -2010,7 +2010,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-harder-than-diamond-lighter-than-air.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-harder-than-diamond-lighter-than-air.webp",
           "sides": [
             "harder-than-diamond",
             "lighter-than-air"
@@ -2019,7 +2019,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-solar-energy.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-solar-energy.webp",
           "sides": [
             "solar-energy"
           ]
@@ -2027,7 +2027,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-through-solid-objects.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-through-solid-objects.webp",
           "sides": [
             "through-solid-objects"
           ]
@@ -2035,7 +2035,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-vision-insubstantial-accomplishments.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-vision-insubstantial-accomplishments.webp",
           "sides": [
             "insubstantial-accomplishments"
           ]
@@ -2066,7 +2066,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-sorcerous-illusions.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-sorcerous-illusions.webp",
           "abilities": [
             "[keyword:Phasing]",
             "[hc:covert]: You get +2[icon:recruit]."
@@ -2083,7 +2083,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-astral-projection.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-astral-projection.webp",
           "abilities": [
             "[keyword:Phasing]",
             "Choose a number, and then reveal the top card of your deck. If that card is that cost, then you get +1[icon:attack]."
@@ -2100,7 +2100,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-supersonic-spells.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-supersonic-spells.webp",
           "abilities": [
             "[hc:ranged]: Draw a card."
           ]
@@ -2116,7 +2116,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-supersonic-speed.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-supersonic-speed.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: Draw another card."
@@ -2133,7 +2133,7 @@
           "cost": 7,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-clairvoyance.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-clairvoyance.webp",
           "abilities": [
             "Choose a number, and then reveal the top card of your deck. If that card is that cost, draw it and draw another card."
           ]
@@ -2143,7 +2143,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-supersonic-speed-supersonic-spells.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-supersonic-speed-supersonic-spells.webp",
           "sides": [
             "supersonic-speed",
             "supersonic-spells"
@@ -2152,7 +2152,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-sorcerous-illusions.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-sorcerous-illusions.webp",
           "sides": [
             "sorcerous-illusions"
           ]
@@ -2160,7 +2160,7 @@
         {
           "id": "p3",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-astral-projection.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-astral-projection.webp",
           "sides": [
             "astral-projection"
           ]
@@ -2168,7 +2168,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hr-wiccan-clairvoyance.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hr-wiccan-clairvoyance.webp",
           "sides": [
             "clairvoyance"
           ]
@@ -2189,7 +2189,7 @@
           "slug": "authoritarian-iron-man",
           "tactic": false,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-01.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mm-authoritarian-iron-man.webp",
           "abilities": [
             "Always Leads: Superhuman Registration Act",
             "Master Strike: Authoritarian Iron Man [keyword:fortifies] the next city space to his right, starting with the Bridge. You can't fight him while there's a Villain in that space. Villains in that space get +3[icon:attack]."
@@ -2200,7 +2200,7 @@
           "slug": "armada-of-armors",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-02.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-authoritarian-iron-man-armada-of-armors.webp",
           "abilities": [
             "Fight: You get +6[icon:recruit] usable only to recruit [hc:ranged] and/or [hc:tech] Heroes."
           ]
@@ -2210,7 +2210,7 @@
           "slug": "freeze-domestic-assets",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-03.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-authoritarian-iron-man-freeze-domestic-assets.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards all their cards with [icon:recruit] icons."
           ]
@@ -2220,7 +2220,7 @@
           "slug": "man-the-fortifications",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-04.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-authoritarian-iron-man-man-the-fortifications.webp",
           "abilities": [
             "Fight: Reveal the top card of the Villain Deck. If it's a Villain, it enters the city space that Authoritarian Iron Man is fortifying."
           ]
@@ -2230,7 +2230,7 @@
           "slug": "recall-to-service",
           "tactic": true,
           "vAttack": 12,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/authoritarian-iron-man-05.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-authoritarian-iron-man-recall-to-service.webp",
           "abilities": [
             "Fight: The Villain with the highest printed [icon:attack] in the Escape Pile enters the city space that Authoritarian Iron Man is fortifying."
           ]
@@ -2249,7 +2249,7 @@
           "slug": "baron-helmut-zemo",
           "tactic": false,
           "vAttack": "16*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-01.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mm-baron-helmut-zemo.webp",
           "abilities": [
             "Baron Zemo gets -1[icon:attack] for each Villain in your Victory Pile.",
             "Always Leads: Thunderbolts",
@@ -2261,7 +2261,7 @@
           "slug": "blasted-henchmen",
           "tactic": true,
           "vAttack": 16,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-02.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-baron-helmut-zemo-blasted-henchmen.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Hero or KOs a Villain from their Victory Pile."
           ]
@@ -2271,7 +2271,7 @@
           "slug": "cursed-dynasty",
           "tactic": true,
           "vAttack": 16,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-03.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-baron-helmut-zemo-cursed-dynasty.webp",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw two extra cards."
           ]
@@ -2281,7 +2281,7 @@
           "slug": "endless-minions",
           "tactic": true,
           "vAttack": 16,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-04.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-baron-helmut-zemo-endless-minions.webp",
           "abilities": [
             "Fight: Each other player reveals a [hc:tech] Hero or chooses a Villain from their Victory Pile and it enters the city."
           ]
@@ -2291,7 +2291,7 @@
           "slug": "revenge-for-my-father",
           "tactic": true,
           "vAttack": 16,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/baron-helmut-zemo-05.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-baron-helmut-zemo-revenge-for-my-father.webp",
           "abilities": [
             "Fight: Each other player reveals their hand. Each player who revealed an [team:avengers] Hero gains a Wound."
           ]
@@ -2310,7 +2310,7 @@
           "slug": "maria-hill-director-of-shield",
           "tactic": false,
           "vAttack": "7*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-01.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mm-maria-hill-director-of-shield.webp",
           "abilities": [
             "[keyword:Double S.H.I.E.L.D. Clearance]. You can't fight Maria Hill while there are any S.H.I.E.L.D. Elite or Officers in the city.",
             "Always Leads: S.H.I.E.L.D. Elite",
@@ -2322,7 +2322,7 @@
           "slug": "crash-the-helicarrier",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-02.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-maria-hill-director-of-shield-crash-the-helicarrier.webp",
           "abilities": [
             "Fight: KO any number of your [team:shield] Heroes."
           ]
@@ -2332,7 +2332,7 @@
           "slug": "declare-martial-law",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-03.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-maria-hill-director-of-shield-declare-martial-law.webp",
           "abilities": [
             "Fight: Put a S.H.I.E.L.D. Officer into each empty city space as 3[icon:attack] Villains. When you fight them, gain them as Heroes."
           ]
@@ -2342,7 +2342,7 @@
           "slug": "evacuation-code-epsilon",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-04.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-maria-hill-director-of-shield-evacuation-code-epsilon.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and discards a [team:shield] card."
           ]
@@ -2352,7 +2352,7 @@
           "slug": "rapid-response-team",
           "tactic": true,
           "vAttack": 7,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/maria-hill-05.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-maria-hill-director-of-shield-rapid-response-team.webp",
           "abilities": [
             "Fight: Two S.H.I.E.L.D. Officers enter the city as 3[icon:attack] Villains. When you fight them, gain them as Heroes."
           ]
@@ -2371,7 +2371,7 @@
           "slug": "misty-knight",
           "tactic": false,
           "vAttack": "14*",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-01.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mm-misty-knight.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Always Leads: Heroes for Hire",
@@ -2383,7 +2383,7 @@
           "slug": "bionic-repulsor-field",
           "tactic": true,
           "vAttack": 14,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-02.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-misty-knight-bionic-repulsor-field.webp",
           "abilities": [
             "Fight: Each other player reveals a [team:marvel-knights] Hero or puts two cards from their hand on top of the deck."
           ]
@@ -2393,7 +2393,7 @@
           "slug": "cyborg-detective",
           "tactic": true,
           "vAttack": 14,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-03.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-misty-knight-cyborg-detective.webp",
           "abilities": [
             "Fight: Reveal the top three cards of the Villain Deck. Put them back in any order."
           ]
@@ -2403,7 +2403,7 @@
           "slug": "trusted-bodyguard",
           "tactic": true,
           "vAttack": 14,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-04.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-misty-knight-trusted-bodyguard.webp",
           "abilities": [
             "Fight: Going clockwise, the first other player with Colleen Wing in their Victory Pile rescues 5 Bystanders and returns Colleen Wing to play [keyword:fortifying] Misty Knight."
           ]
@@ -2413,7 +2413,7 @@
           "slug": "vibranium-cyber-arm",
           "tactic": true,
           "vAttack": 14,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/misty-knight-05.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-misty-knight-vibranium-cyber-arm.webp",
           "abilities": [
             "Fight: Each other player reveals a [team:marvel-knights] Hero or gains a Wound."
           ]
@@ -2432,7 +2432,7 @@
           "slug": "ragnarok",
           "tactic": false,
           "vAttack": "6+",
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-01.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mm-ragnarok.webp",
           "abilities": [
             "Ragnarok gets +2[icon:attack] for each Hero Class among Heroes in the HQ.",
             "Always Leads: Registration Enforcers",
@@ -2444,7 +2444,7 @@
           "slug": "electrical-charge",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-02.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-ragnarok-electrical-charge.webp",
           "abilities": [
             "Fight: Count how many [hc:ranged] Heroes you have. Draw that many cards."
           ]
@@ -2454,7 +2454,7 @@
           "slug": "god-of-cyborg-thunder",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-03.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-ragnarok-god-of-cyborg-thunder.webp",
           "abilities": [
             "Fight: You can spend [icon:recruit] as [icon:attack] this turn."
           ]
@@ -2464,7 +2464,7 @@
           "slug": "hammer-goliath",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-04.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-ragnarok-hammer-goliath.webp",
           "abilities": [
             "Fight: KO each Hero from the HQ that costs 7 or more."
           ]
@@ -2474,7 +2474,7 @@
           "slug": "unnatural-storm-clouds",
           "tactic": true,
           "vAttack": 6,
-          "imageUrl": "https://nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/ragnarok-05.png",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-mt-ragnarok-unnatural-storm-clouds.webp",
           "abilities": [
             "Fight: Put all Heroes from the HQ on the bottom of the Hero Deck in random order."
           ]
@@ -2494,7 +2494,7 @@
           "slug": "bullseye",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-csa-special-marshals-bullseye.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-csa-special-marshals-bullseye.webp",
           "abilities": [
             "Fight: KO one of your heroes with a [icon:recruit] icon.",
             "Escape: Each player KOs one of their Heroes that has printed [icon:attack] of 2 or more."
@@ -2505,7 +2505,7 @@
           "slug": "moonstone",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-csa-special-marshals-moonstone.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-csa-special-marshals-moonstone.webp",
           "abilities": [
             "Fight: Each other player discards two cards, and then draws a card."
           ]
@@ -2515,7 +2515,7 @@
           "slug": "penance",
           "vp": "3",
           "vAttack": "2+",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-csa-special-marshals-penance.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-csa-special-marshals-penance.webp",
           "abilities": [
             "Penance gets +1[icon:attack] for each Villain in your Victory Pile."
           ]
@@ -2525,7 +2525,7 @@
           "slug": "venom",
           "vp": "4",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-csa-special-marshals-venom.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-csa-special-marshals-venom.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "Escape: [keyword:Fortify] the Bystander Stack. While it's fortified, if a Bystander would be rescued from there, KO that Bystander instead."
@@ -2544,7 +2544,7 @@
           "slug": "big-bertha",
           "vp": "4",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-great-lakes-avengers-big-bertha.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-great-lakes-avengers-big-bertha.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "Fight: Each player reveals a [hc:strength] Hero or gains a Wound.",
@@ -2556,7 +2556,7 @@
           "slug": "flatman",
           "vp": "2",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-great-lakes-avengers-flatman.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-great-lakes-avengers-flatman.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "Fight: KO a card from your discard pile."
@@ -2567,7 +2567,7 @@
           "slug": "mr-immortal",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-great-lakes-avengers-mr-immortal.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-great-lakes-avengers-mr-immortal.webp",
           "abilities": [
             "Fight: Reveal the top card of the Villain Deck. If it's a Villain or Bystander, Mr. Immortal reenters the Sewers."
           ]
@@ -2577,7 +2577,7 @@
           "slug": "squirrel-girl",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-great-lakes-avengers-squirrel-girl.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-great-lakes-avengers-squirrel-girl.webp",
           "abilities": [
             "You can't fight Squirrel Girl if you played more than one card this turn.",
             "Escape: [keyword:Fortify] the Sidekick Stack. While it's fortified, [rule:Sidekicks] can't be recruited or gained."
@@ -2596,7 +2596,7 @@
           "slug": "colleen-wing",
           "vp": "5",
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-heroes-for-hire-colleen-wing.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-heroes-for-hire-colleen-wing.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Escape: [keyword:Fortify] the Mastermind. While it's fortified, the Mastermind can't be fought."
@@ -2607,7 +2607,7 @@
           "slug": "humbug",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-heroes-for-hire-humbug.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-heroes-for-hire-humbug.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Fight: KO one of your Heroes."
@@ -2618,7 +2618,7 @@
           "slug": "shang-chi",
           "vp": "2",
           "vAttack": "3",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-heroes-for-hire-shang-chi.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-heroes-for-hire-shang-chi.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Fight: If you have any cards in your discard pile, then shuffle them into your deck, and Shang-Chi reenters the Sewers."
@@ -2629,7 +2629,7 @@
           "slug": "tarantula",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-heroes-for-hire-tarantula.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-heroes-for-hire-tarantula.webp",
           "abilities": [
             "[keyword:Bribe]",
             "Fight: Each player discards two cards or gains a Wound.",
@@ -2649,7 +2649,7 @@
           "slug": "blade",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-registration-enforcers-blade.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-registration-enforcers-blade.webp",
           "abilities": [
             "Fight: If you fight Blade in the Sewers or Rooftops, you get +2[icon:recruit]."
           ]
@@ -2659,7 +2659,7 @@
           "slug": "captain-marvel",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-registration-enforcers-captain-marvel.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-registration-enforcers-captain-marvel.webp",
           "abilities": [
             "Fight: Each player swaps a card from their hand with the top card of their deck.",
             "Escape: Each player swaps their hand with the top four cards of their deck."
@@ -2670,7 +2670,7 @@
           "slug": "deadpool",
           "vp": "5",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-registration-enforcers-deadpool.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-registration-enforcers-deadpool.webp",
           "abilities": [
             "Ambush: Each player reveals a card that costs 5 or discards down to 5 cards.",
             "Fight: Same effect.",
@@ -2682,7 +2682,7 @@
           "slug": "micromax",
           "vp": "3",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-registration-enforcers-micromax.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-registration-enforcers-micromax.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:instinct]",
             "Fight: KO one of your Heroes."
@@ -2701,7 +2701,7 @@
           "slug": "agent-eric-marshall",
           "vp": "2",
           "vAttack": "1",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-shield-elite-agent-eric-marshall.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-shield-elite-agent-eric-marshall.webp",
           "abilities": [
             "[keyword:S.H.I.E.L.D. Clearance]",
             "Ambush: A S.H.I.E.L.D. Officer enters the city as a 3[icon:attack] Villain. When you fight it, gain it as a Hero."
@@ -2712,7 +2712,7 @@
           "slug": "agent-gabe-jones",
           "vp": "2",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-shield-elite-agent-gabe-jones.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-shield-elite-agent-gabe-jones.webp",
           "abilities": [
             "[keyword:S.H.I.E.L.D. Clearance]",
             "Fight: A S.H.I.E.L.D. Officer enters the city as a 3[icon:attack] Villain. When you fight it, gain it as a Hero."
@@ -2723,7 +2723,7 @@
           "slug": "dum-dum-dugan",
           "vp": "3",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-shield-elite-dum-dum-dugan.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-shield-elite-dum-dum-dugan.webp",
           "abilities": [
             "[keyword:S.H.I.E.L.D. Clearance]",
             "Fight: Each player with no S.H.I.E.L.D. Officers in their discard pile gains a Wound.",
@@ -2735,7 +2735,7 @@
           "slug": "sharon-carter-agent-13",
           "vp": "5",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-shield-elite-sharon-carter-agent-13.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-shield-elite-sharon-carter-agent-13.webp",
           "abilities": [
             "[keyword:S.H.I.E.L.D. Clearance]",
             "Escape: [keyword:Fortify] the S.H.I.E.L.D. Officer stack. While it's fortified, whenever any number of S.H.I.E.L.D. Officers become Villains, an extra one becomes a Villain."
@@ -2754,7 +2754,7 @@
           "slug": "iron-spider",
           "vp": "3",
           "vAttack": "2",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-superhuman-registration-act-iron-spider.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-superhuman-registration-act-iron-spider.webp",
           "abilities": [
             "Ambush: [keyword:Fortify] your deck. While Iron Spider fortifies a players deck, that player draws one fewer card at the end of their turn.",
             "Fight: Reveal the top card of the Villain Deck. If that card is worth 2VP or less, Iron Spider fortifies the deck of the player on your left."
@@ -2765,7 +2765,7 @@
           "slug": "ms-marvel",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-superhuman-registration-act-ms-marvel.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-superhuman-registration-act-ms-marvel.webp",
           "abilities": [
             "Escape: [keyword:Fortify] an HQ space. While its fortified, Heroes can't be gained from that space."
           ]
@@ -2775,7 +2775,7 @@
           "slug": "she-hulk",
           "vp": "5",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-superhuman-registration-act-she-hulk.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-superhuman-registration-act-she-hulk.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "Escape: [keyword:Fortify] the Villain deck. When a Master Strike is completed from that deck, each player gains a Wound and She-Hulk enters the Sewers."
@@ -2786,7 +2786,7 @@
           "slug": "yellowjacket",
           "vp": "4",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-superhuman-registration-act-yellowjacket.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-superhuman-registration-act-yellowjacket.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "Escape: [keyword:Fortify] the Hero Deck. While it's fortified, whenever a Hero in the HQ costs 7 or more, KO that Hero."
@@ -2805,7 +2805,7 @@
           "slug": "fixer",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-thunderbolts-fixer.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-thunderbolts-fixer.webp",
           "abilities": [
             "Fight: Look at the top three cards of your deck. KO one and put the rest back in any order."
           ]
@@ -2815,7 +2815,7 @@
           "slug": "mach-iv",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-thunderbolts-mach-iv.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-thunderbolts-mach-iv.webp",
           "abilities": [
             "Fight: Each player reveals a [hc:tech] Hero or gains a Wound.",
             "Escape: Same effect."
@@ -2826,7 +2826,7 @@
           "slug": "radioactive-man",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-thunderbolts-radioactive-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-thunderbolts-radioactive-man.webp",
           "abilities": [
             "Escape: [keyword:Fortify] the Wound Stack. While it's fortified, whenever a player gains a Wound, that player gains an extra Wound."
           ]
@@ -2836,7 +2836,7 @@
           "slug": "songbird",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-vi-thunderbolts-songbird.webp",
+          "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-thunderbolts-songbird.webp",
           "abilities": [
             "Fight: Each player without another Thunderbolts Villain in their Victory Pile gains a Wound.",
             "Escape: Same effect."
@@ -2850,7 +2850,7 @@
       "id": 19,
       "name": "Mandroid",
       "slug": "mandroid",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hm-mandroid.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hm-mandroid.webp",
       "abilities": [
         "This gets +1[icon:attack] for each other Mandroid in your Victory Pile.",
         "Fight: KO one of your Heroes."
@@ -2860,7 +2860,7 @@
       "id": 20,
       "name": "Cape-Killers",
       "slug": "cape-killers",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-hm-cape-killers.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hm-cape-killers.webp",
       "abilities": [
         "[keyword:S.H.I.E.L.D. Clearance]",
         "Fight: KO a card from your discard pile."
@@ -2872,7 +2872,7 @@
       "id": 60,
       "name": "Avengers vs. X-Men",
       "slug": "avengers-vs-x-men",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-sc-avengers-vs-x-men.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-sc-avengers-vs-x-men.webp",
       "cards": [
         {
           "abilities": [
@@ -2887,7 +2887,7 @@
       "id": 61,
       "name": "Dark Reign of H.A.M.M.E.R. Officers",
       "slug": "dark-reign-of-h-a-m-m-e-r-officers",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-sc-dark-reign-of-h-a-m-m-e-r-officers.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-sc-dark-reign-of-h-a-m-m-e-r-officers.webp",
       "cards": [
         {
           "abilities": [
@@ -2902,7 +2902,7 @@
       "id": 62,
       "name": "Epic Super Hero Civil War",
       "slug": "epic-super-hero-civil-war",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-sc-epic-super-hero-civil-war.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-sc-epic-super-hero-civil-war.webp",
       "cards": [
         {
           "abilities": [
@@ -2917,7 +2917,7 @@
       "id": 63,
       "name": "Imprison Unregistered Superhumans",
       "slug": "imprison-unregistered-superhumans",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-sc-imprison-unregistered-superhumans.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-sc-imprison-unregistered-superhumans.webp",
       "cards": [
         {
           "abilities": [
@@ -2933,7 +2933,7 @@
       "id": 64,
       "name": "Nitro the Supervillain Threatens Crowds",
       "slug": "nitro-the-supervillain-threatens-crowds",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-sc-nitro-the-supervillain-threatens-crowds.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-sc-nitro-the-supervillain-threatens-crowds.webp",
       "cards": [
         {
           "abilities": [
@@ -2948,7 +2948,7 @@
       "id": 65,
       "name": "Predict Future Crime",
       "slug": "predict-future-crime",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-sc-predict-future-crime.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-sc-predict-future-crime.webp",
       "cards": [
         {
           "abilities": [
@@ -2963,7 +2963,7 @@
       "id": 66,
       "name": "Reveal Heroes' Secret Identities",
       "slug": "reveal-heroes-secret-identities",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-sc-reveal-heroes-secret-identities.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-sc-reveal-heroes-secret-identities.webp",
       "cards": [
         {
           "abilities": [
@@ -2978,7 +2978,7 @@
       "id": 67,
       "name": "United States Split by Civil War",
       "slug": "united-states-split-by-civil-war",
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-sc-united-states-split-by-civil-war.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-sc-united-states-split-by-civil-war.webp",
       "cards": [
         {
           "abilities": [
@@ -2996,7 +2996,7 @@
       "name": "Aspiring Hero",
       "slug": "aspiring-hero",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-by-aspiring-hero.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-by-aspiring-hero.webp",
       "cards": [
         {
           "qtd": 4,
@@ -3011,7 +3011,7 @@
       "name": "Comic Shop Keeper",
       "slug": "comic-shop-keeper",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/cvwr/cvwr-by-comic-shop-keeper.webp",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-by-comic-shop-keeper.webp",
       "cards": [
         {
           "qtd": 3,

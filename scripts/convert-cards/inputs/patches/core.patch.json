@@ -9,28 +9,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-black-widow-2c1.webp"
         },
         {
           "slug": "dangerous-rescue",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-black-widow-3c2.webp"
         },
         {
           "slug": "covert-operation",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-4u.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-black-widow-4u.webp"
         },
         {
           "slug": "silent-sniper",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-black-widow-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-black-widow-7r.webp"
         }
       ]
     },
@@ -43,28 +43,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-deadpool-3c1.webp"
         },
         {
           "slug": "hey-can-i-get-a-do-over",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-deadpool-3c2.webp"
         },
         {
           "slug": "oddball",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-deadpool-5u.webp"
         },
         {
           "slug": "random-acts-of-unkindness",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-deadpool-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-deadpool-7r.webp"
         }
       ]
     },
@@ -77,28 +77,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-gambit-2c1.webp"
         },
         {
           "slug": "hypnotic-charm",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-gambit-3c2.webp"
         },
         {
           "slug": "card-shark",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-4u.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-gambit-4u.webp"
         },
         {
           "slug": "high-stakes-jackpot",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-gambit-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-gambit-7r.webp"
         }
       ],
       "_skipPair": [
@@ -117,28 +117,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-iron-man-3c1.webp"
         },
         {
           "slug": "repulsor-rays",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-iron-man-3c2.webp"
         },
         {
           "slug": "arc-reactor",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-iron-man-5u.webp"
         },
         {
           "slug": "quantum-breakthrough",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-iron-man-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-iron-man-7r.webp"
         }
       ]
     },
@@ -151,28 +151,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-nick-fury-3c1.webp"
         },
         {
           "slug": "battlefield-promotion",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-nick-fury-4c2.webp"
         },
         {
           "slug": "legendary-commander",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-6u.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-nick-fury-6u.webp"
         },
         {
           "slug": "pure-fury",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-nick-fury-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-nick-fury-8r.webp"
         }
       ],
       "_skipPair": [
@@ -191,28 +191,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-rogue-3c1.webp"
         },
         {
           "slug": "borrowed-brawn",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-rogue-4c2.webp"
         },
         {
           "slug": "copy-powers",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-rogue-5u.webp"
         },
         {
           "slug": "steal-abilities",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-rogue-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-rogue-8r.webp"
         }
       ],
       "_skipPair": [
@@ -231,28 +231,28 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-spider-man-2c1.webp"
         },
         {
           "slug": "great-responsibility",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-spider-man-2c2.webp"
         },
         {
           "slug": "web-shooters",
           "slot": 3,
           "rarity": 2,
           "rarityLabel": "Uncommon",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2u.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-spider-man-2u.webp"
         },
         {
           "slug": "the-amazing-spider-man",
           "slot": 4,
           "rarity": 3,
           "rarityLabel": "Rare",
-          "imageUrl": "https://images.barefootbetters.com/core/core-hr-spider-man-2r.webp"
+          "imageUrl": "https://images.legendary-arena.com/core/core-hr-spider-man-2r.webp"
         }
       ],
       "_skipPair": [

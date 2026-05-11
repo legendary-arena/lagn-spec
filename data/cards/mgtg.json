@@ -29,7 +29,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-starship-sensors.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-starship-sensors.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +1[icon:recruit]."
           ]
@@ -45,7 +45,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-borrowed-nova-blaster.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-borrowed-nova-blaster.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +1[icon:attack]."
           ]
@@ -61,7 +61,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-give.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-give.webp",
           "abilities": [
             "You may discard an [keyword:Artifact] you control to get +1[icon:recruit]."
           ]
@@ -77,7 +77,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-take.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-take.webp",
           "abilities": [
             "[team:guardians-of-the-galaxy]: Reveal the top card of your deck. If it's an [keyword:Artifact], draw it."
           ]
@@ -93,7 +93,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-expandable-helmet.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-expandable-helmet.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), draw a card."
           ]
@@ -109,7 +109,7 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-dont-need-that-stuff.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-dont-need-that-stuff.webp",
           "abilities": [
             "You may discard an [keyword:Artifact] you control to get +1[icon:attack]."
           ]
@@ -125,7 +125,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-hadron-enforcer.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-hadron-enforcer.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +3[icon:attack]."
           ]
@@ -135,7 +135,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-borrowed-nova-blaster.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-borrowed-nova-blaster.webp",
           "sides": [
             "borrowed-nova-blaster"
           ]
@@ -143,7 +143,7 @@
         {
           "id": "p2",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-dont-need-that-stuff.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-dont-need-that-stuff.webp",
           "sides": [
             "dont-need-that-stuff"
           ]
@@ -151,7 +151,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-expandable-helmet.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-expandable-helmet.webp",
           "sides": [
             "expandable-helmet"
           ]
@@ -159,7 +159,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-give-take.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-give-take.webp",
           "sides": [
             "give",
             "take"
@@ -168,7 +168,7 @@
         {
           "id": "p5",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-starship-sensors.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-starship-sensors.webp",
           "sides": [
             "starship-sensors"
           ]
@@ -176,7 +176,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-star-lord-hadron-enforcer.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-hadron-enforcer.webp",
           "sides": [
             "hadron-enforcer"
           ]
@@ -209,7 +209,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-forgive.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-forgive.webp",
           "abilities": [
             "[hc:covert]: Draw a card."
           ]
@@ -225,7 +225,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-resent.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-resent.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:attack]."
           ]
@@ -241,7 +241,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-sharpen-blades.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-sharpen-blades.webp",
           "abilities": [
             "If you control an [keyword:Artifact], draw a card."
           ]
@@ -257,7 +257,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-resourceful-fugitive.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-resourceful-fugitive.webp",
           "abilities": [
             "To play this, you must put a card from your hand on the bottom of  your deck.",
             "Draw two cards."
@@ -274,7 +274,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-retractable-sword.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-retractable-sword.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you draw a card during your turn, you get +1[icon:attack]."
           ]
@@ -290,7 +290,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-stolen-necroblaster.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-stolen-necroblaster.webp",
           "abilities": [
             "If you drew at least two cards this turn, you may KO a card from your hand or discard pile."
           ]
@@ -306,7 +306,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-guardians-escape.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-guardians-escape.webp",
           "abilities": [
             "If you drew at least two cards this turn, you get +2[icon:attack]."
           ]
@@ -316,7 +316,7 @@
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-forgive-resent.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-forgive-resent.webp",
           "sides": [
             "forgive",
             "resent"
@@ -325,7 +325,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-resourceful-fugitive.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-resourceful-fugitive.webp",
           "sides": [
             "resourceful-fugitive"
           ]
@@ -333,7 +333,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-retractable-sword.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-retractable-sword.webp",
           "sides": [
             "retractable-sword"
           ]
@@ -341,7 +341,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-sharpen-blades.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-sharpen-blades.webp",
           "sides": [
             "sharpen-blades"
           ]
@@ -349,7 +349,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-stolen-necroblaster.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-stolen-necroblaster.webp",
           "sides": [
             "stolen-necroblaster"
           ]
@@ -357,7 +357,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-gamora-guardians-escape.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-guardians-escape.webp",
           "sides": [
             "guardians-escape"
           ]
@@ -392,7 +392,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-passion.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-passion.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Draw a card."
           ]
@@ -408,7 +408,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-compassion.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-compassion.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Draw a card."
           ]
@@ -424,7 +424,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-baby-groot.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-baby-groot.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Rescue a Bystander."
           ]
@@ -440,7 +440,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-gravity-mines.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-gravity-mines.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you use [keyword:Excessive Violence], draw a card."
           ]
@@ -456,7 +456,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-dont-press-this-button.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-dont-press-this-button.webp",
           "abilities": [
             "[hc:ranged]: You get +1[icon:attack]."
           ]
@@ -472,7 +472,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-press-the-button.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-press-the-button.webp",
           "abilities": [
             "[hc:tech]: You may KO a card from your hand or dicard pile."
           ]
@@ -488,7 +488,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-tricky.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-tricky.webp",
           "abilities": [
             "If you have at least five different card names, you get +2[icon:recruit]."
           ]
@@ -504,7 +504,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-simple.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-simple.webp",
           "abilities": []
         },
         {
@@ -518,7 +518,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-we-are-groot.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-we-are-groot.webp",
           "abilities": [
             "Reveal your hand. You get +1[icon:attack] for each different card name in your hand.",
             "(Each [rule:Divided Card] has two different card names.)"
@@ -529,7 +529,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-baby-groot.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-baby-groot.webp",
           "sides": [
             "baby-groot"
           ]
@@ -537,7 +537,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-compassion-passion.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-compassion-passion.webp",
           "sides": [
             "compassion",
             "passion"
@@ -546,7 +546,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-dont-press-this-button-press-the-button.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-dont-press-this-button-press-the-button.webp",
           "sides": [
             "dont-press-this-button",
             "press-the-button"
@@ -555,7 +555,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-gravity-mines.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-gravity-mines.webp",
           "sides": [
             "gravity-mines"
           ]
@@ -563,7 +563,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-simple-tricky.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-simple-tricky.webp",
           "sides": [
             "simple",
             "tricky"
@@ -572,7 +572,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-rocket-groot-we-are-groot.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-we-are-groot.webp",
           "sides": [
             "we-are-groot"
           ]
@@ -606,7 +606,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-nothing-goes-over-my-head.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-nothing-goes-over-my-head.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Look at the top two cards of your deck. Discard any number of them and put the rest back in any order."
           ]
@@ -622,7 +622,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-dual-knives.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-dual-knives.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you play another [hc:strength] or [hc:instinct] card, you get +1[icon:attack]."
           ]
@@ -638,7 +638,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-i-am-invisible.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-i-am-invisible.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. If it's [hc:strength] or [hc:instinct], draw it."
           ]
@@ -654,7 +654,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-xandar-is-invincible.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-xandar-is-invincible.webp",
           "abilities": [
             "If there are no Villains in the city, you get +1[icon:recruit]."
           ]
@@ -670,7 +670,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-prison-riot.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-prison-riot.webp",
           "abilities": [
             "[keyword:Excessive Violence]: You get +2[icon:recruit]."
           ]
@@ -686,7 +686,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-remove-his-spine.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-remove-his-spine.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. You may KO it."
           ]
@@ -702,7 +702,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-also-illegal.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-also-illegal.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:recruit]."
           ]
@@ -718,7 +718,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-revenge-for-my-family.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-revenge-for-my-family.webp",
           "abilities": [
             "Double the [icon:attack] you have.",
             "[keyword:Excessive Violence]: You may KO a Villain from your Victory Pile to do its Fight effect."
@@ -729,7 +729,7 @@
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-also-illegal-remove-his-spine.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-also-illegal-remove-his-spine.webp",
           "sides": [
             "also-illegal",
             "remove-his-spine"
@@ -738,7 +738,7 @@
         {
           "id": "p2",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-dual-knives.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-dual-knives.webp",
           "sides": [
             "dual-knives"
           ]
@@ -746,7 +746,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-i-am-invisible-xandar-is-invincible.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-i-am-invisible-xandar-is-invincible.webp",
           "sides": [
             "i-am-invisible",
             "xandar-is-invincible"
@@ -755,7 +755,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-nothing-goes-over-my-head.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-nothing-goes-over-my-head.webp",
           "sides": [
             "nothing-goes-over-my-head"
           ]
@@ -763,7 +763,7 @@
         {
           "id": "p5",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-prison-riot.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-prison-riot.webp",
           "sides": [
             "prison-riot"
           ]
@@ -771,7 +771,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-drax-revenge-for-my-family.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-revenge-for-my-family.webp",
           "sides": [
             "revenge-for-my-family"
           ]
@@ -804,7 +804,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-empathic-bond.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-empathic-bond.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Put the hero you recruited this way on top of your deck."
           ]
@@ -820,7 +820,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-selfless.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-selfless.webp",
           "abilities": [
             "[hc:instinct]: Draw a card.",
             "Another player draws a card."
@@ -837,7 +837,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-selfish.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-selfish.webp",
           "abilities": [
             "[hc:ranged]: Draw a card.",
             "Another player discards a card."
@@ -854,7 +854,7 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-inspire-courage.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-inspire-courage.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: You get +2[icon:attack]."
           ]
@@ -870,7 +870,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-sleep.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-sleep.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: You may KO one of your cards."
           ]
@@ -886,7 +886,7 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-emotional-wave.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-emotional-wave.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: you get +[icon:attack] equal to total of all printed [icon:recruit] and [icon:attack] of the Hero you recruited this way."
           ]
@@ -902,7 +902,7 @@
           "cost": 7,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-discover-the-dead.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-discover-the-dead.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: you get +[icon:attack] equal to the cost of the Hero you recruited this way."
           ]
@@ -912,7 +912,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-empathic-bond.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-empathic-bond.webp",
           "sides": [
             "empathic-bond"
           ]
@@ -920,7 +920,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-inspire-courage.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-inspire-courage.webp",
           "sides": [
             "inspire-courage"
           ]
@@ -928,7 +928,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-selfish-selfless.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-selfish-selfless.webp",
           "sides": [
             "selfish",
             "selfless"
@@ -937,7 +937,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-sleep.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-sleep.webp",
           "sides": [
             "sleep"
           ]
@@ -945,7 +945,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-emotional-wave.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-emotional-wave.webp",
           "sides": [
             "emotional-wave"
           ]
@@ -953,7 +953,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-hr-mantis-discover-the-dead.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-discover-the-dead.webp",
           "sides": [
             "discover-the-dead"
           ]
@@ -974,7 +974,7 @@
           "slug": "ronan-the-accuser",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mm-ronan-the-accuser.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mm-ronan-the-accuser.webp",
           "abilities": [
             "Always Leads: Followers of Ronan",
             "Master Strike: Each player discards a card at random. Ronan captures this Strike as a “Necrocraft Ship“ [keyword:Villainous Weapon] that gives +1[icon:attack]. When you gain a Necrocraft Ship, it becomes a [keyword:Triggered Artifact] that says “Whenever a Master Strike is completed, draw a card.“"
@@ -985,7 +985,7 @@
           "slug": "epic-ronan-the-accuser",
           "tactic": false,
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-me-ronan-the-accuser.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-me-ronan-the-accuser.webp",
           "abilities": [
             "Always Leads: Followers of Ronan",
             "Master Strike: Each player with six or more cards in hand discards two cards at random. Ronan captures this Strike as a “Necrocraft Ship“ [keyword:Villainous Weapon] that gives +2[icon:attack]. When you gain a Necrocraft Ship, it becomes a [keyword:Triggered Artifact] that says “Whenever a Master Strike is completed, draw a card.“"
@@ -996,7 +996,7 @@
           "slug": "ronans-throne",
           "tactic": true,
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-ronans-throne.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mt-ronan-ronans-throne.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Rescue 2 Bystanders. Ronan captures this card as a [keyword:Villainous Weapon].",
             "[keyword:Triggered Artifact] — Whenever a Scheme Twist is completed, draw two cards."
@@ -1007,7 +1007,7 @@
           "slug": "hood-of-the-accuser",
           "tactic": true,
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-hood-of-the-accuser.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mt-ronan-hood-of-the-accuser.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Rescue 2 Bystanders. Ronan captures this card as a [keyword:Villainous Weapon].",
             "[keyword:Triggered Artifact] — Whenever a Master Strike is completed, you may KO one of your cards."
@@ -1018,7 +1018,7 @@
           "slug": "ancient-kree-armor",
           "tactic": true,
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-ancient-kree-armor.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mt-ronan-ancient-kree-armor.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Rescue 2 Bystanders. Ronan captures this card as a [keyword:Villainous Weapon].",
             "[keyword:Triggered Artifact] — Whenever you gain your first Wound in any turn, you may KO it."
@@ -1029,7 +1029,7 @@
           "slug": "the-cosmi-rod-warhammer",
           "tactic": true,
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ronan-the-cosmi-rod-warhammer.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mt-ronan-the-cosmi-rod-warhammer.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Rescue 2 Bystanders. Ronan captures this card as a [keyword:Villainous Weapon].",
             "[keyword:Triggered Artifact] — Whenever you recruit a Hero from the HQ, you get +2[icon:attack]."
@@ -1049,7 +1049,7 @@
           "slug": "ego-the-living-planet",
           "tactic": false,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mm-ego-the-living-planet.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mm-ego-the-living-planet.webp",
           "abilities": [
             "Ego gets +1[icon:attack] for each city space. When there are no more city spaces, Good Wins.",
             "Always Leads: Any Villain Group, plus add an additional Villain Group (even for 1 player).",
@@ -1061,7 +1061,7 @@
           "slug": "epic-ego-the-living-planet",
           "tactic": false,
           "vAttack": "1+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-me-ego-the-living-planet.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-me-ego-the-living-planet.webp",
           "abilities": [
             "Ego gets +2[icon:attack] for each city space. When there are no more city spaces, Good Wins.",
             "Always Leads: Any Villain Group, plus add two additional Villain Groups (even for 1 player).",
@@ -1073,7 +1073,7 @@
           "slug": "im-a-celestial-sweetheart",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-im-a-celestial-sweetheart.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mt-ego-im-a-celestial-sweetheart.webp",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw two extra cards.",
             "Destroy the leftmost city space. Any Villain there escapes. Shuffle this Tactic back into Ego's Tactics."
@@ -1084,7 +1084,7 @@
           "slug": "cover-all-that-exists",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-cover-all-that-exists.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mt-ego-cover-all-that-exists.webp",
           "abilities": [
             "Fight: You may KO one of your Heroes. Choose a Henchman from any Victory Pile to enter the city.",
             "Destroy the leftmost city space. Any Villain there escapes. Shuffle this Tactic back into Ego's Tactics."
@@ -1095,7 +1095,7 @@
           "slug": "the-expansion-is-my-purpose",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-the-expansion-is-my-purpose.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mt-ego-the-expansion-is-my-purpose.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each empty city space.",
             "Destroy the leftmost city space. Any Villain there escapes. Shuffle this Tactic back into Ego's Tactics."
@@ -1106,7 +1106,7 @@
           "slug": "until-everything-is-me",
           "tactic": true,
           "vAttack": 3,
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-mt-ego-until-everything-is-me.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-mt-ego-until-everything-is-me.webp",
           "abilities": [
             "Fight: Rescue three Bystanders.",
             "Destroy the leftmost city space. Any Villain there escapes. Shuffle this Tactic back into Ego's Tactics."
@@ -1127,7 +1127,7 @@
           "slug": "exolon-attendants",
           "vp": "2",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-followers-of-ronan-exolon-attendants.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-exolon-attendants.webp",
           "abilities": [
             "Exolon Attendants gets +2[icon:attack] while another Villain is [keyword:Commanding] the Followers of Ronan.",
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, it enters an empty city space."
@@ -1138,7 +1138,7 @@
           "slug": "exolon-monks",
           "vp": "2",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-followers-of-ronan-exolon-monks.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-exolon-monks.webp",
           "abilities": [
             "Exolon Monks get +2[icon:attack] while another Villain is [keyword:Commanding] the Followers of Ronan.",
             "Fight: KO one of your Heroes."
@@ -1149,7 +1149,7 @@
           "slug": "sakaaran-mercenaries",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-followers-of-ronan-sakaaran-mercenaries.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-sakaaran-mercenaries.webp",
           "abilities": [
             "Sakaaran Mercenaries get +2[icon:attack] while another Villain is [keyword:Commanding] the Followers of Ronan.",
             "Ambush: If another Villain is [keyword:Commanding] the Followers of Ronan, each player gains a Wound."
@@ -1160,7 +1160,7 @@
           "slug": "korath-the-pursuer",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-followers-of-ronan-korath-the-pursuer.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-korath-the-pursuer.webp",
           "abilities": [
             "Korath gets +2[icon:attack] while he [keyword:Commands] the Followers of Ronan.",
             "Ambush: Each player may draw a card. For each player that did, reveal a card from the Villain Deck. Play a Followers of Ronan card from among the cards you revealed this way. Put the rest back in any order.",
@@ -1172,7 +1172,7 @@
           "slug": "nebula",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-followers-of-ronan-nebula.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-nebula.webp",
           "abilities": [
             "Nebula gets +2[icon:attack] while she [keyword:Commands] the Followers of Ronan.",
             "Ambush: Nebula captures a [keyword:Villainous Weapon] from another Villain in the city or captures an [keyword:Artifact] from a player's control as a [keyword:Villainous Weapon]. If it doesn't already give a [keyword:Villainous Weapon] bonus, it gives +2[icon:attack]."
@@ -1183,7 +1183,7 @@
           "slug": "koraths-disrupter-rifle",
           "vp": "-1",
           "vAttack": "+3",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-followers-of-ronan-koraths-disrupter-rifle.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-koraths-disrupter-rifle.webp",
           "abilities": [
             "[keyword:Villainous Weapon]",
             "Ambush: If Korath is in the city, he captures this.",
@@ -1195,7 +1195,7 @@
           "slug": "the-dark-aster-flagship",
           "vp": "-1",
           "vAttack": "+4",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-followers-of-ronan-the-dark-aster-flagship.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-the-dark-aster-flagship.webp",
           "abilities": [
             "[keyword:Villainous Weapon]",
             "Ambush: If a Follower of Ronan captures this, each player gains a Wound.",
@@ -1207,7 +1207,7 @@
           "slug": "the-orb",
           "vp": "-1",
           "vAttack": "+6",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-followers-of-ronan-the-orb.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-the-orb.webp",
           "abilities": [
             "[keyword:Villainous Weapon]",
             "Ambush: Put all Heroes from the HQ on the bottom of the Hero Deck.",
@@ -1227,7 +1227,7 @@
           "slug": "gef",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-gef.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-ravagers-gef.webp",
           "abilities": [
             "Gef gets +2[icon:attack] while he [keyword:Commands] the Ravagers.",
             "Ambush: Swap Gef with the leftmost Ravager in the city.",
@@ -1239,7 +1239,7 @@
           "slug": "tullk",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-tullk.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-ravagers-tullk.webp",
           "abilities": [
             "Tullk gets +2[icon:attack] while he [keyword:Commands] the Ravagers.",
             "Ambush: Swap Tullk with the leftmost Ravager in the city.",
@@ -1251,7 +1251,7 @@
           "slug": "kraglin-obfonteri",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-kraglin-obfonteri.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-ravagers-kraglin-obfonteri.webp",
           "abilities": [
             "Kraglin gets +2[icon:attack] while he [keyword:Commands] the Ravagers.",
             "Ambush: Swap Kraglin with the leftmost Ravager in the city.",
@@ -1263,7 +1263,7 @@
           "slug": "taserface",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-taserface.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-ravagers-taserface.webp",
           "abilities": [
             "Taserface gets +2[icon:attack] while he [keyword:Commands] the Ravagers.",
             "Ambush: Swap Taserface with the leftmost Ravager in the city.",
@@ -1275,7 +1275,7 @@
           "slug": "yondu-udonta",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-yondu-udonta.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-ravagers-yondu-udonta.webp",
           "abilities": [
             "Yondu gets +2[icon:attack] while he [keyword:Commands] the Ravagers.",
             "Ambush: Swap Yondu with the leftmost Ravager in the city.",
@@ -1287,7 +1287,7 @@
           "slug": "scavenged-blade",
           "vp": "-1",
           "vAttack": "+2",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-scavenged-blade.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-ravagers-scavenged-blade.webp",
           "abilities": [
             "[keyword:Villainous Weapon]",
             "Ambush: Play another card from the Villain Deck.",
@@ -1299,7 +1299,7 @@
           "slug": "ravager-starship-eclector",
           "vp": "-1",
           "vAttack": "+3",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-ravager-starship-eclector.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-ravagers-ravager-starship-eclector.webp",
           "abilities": [
             "[keyword:Villainous Weapon]",
             "Ambush: If a Ravager captures this, that Ravager swaps spaces with the leftmost Ravager in the city.",
@@ -1311,7 +1311,7 @@
           "slug": "yaka-arrow",
           "vp": "-1",
           "vAttack": "+4",
-          "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-vi-ravagers-yaka-arrow.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-ravagers-yaka-arrow.webp",
           "abilities": [
             "[keyword:Villainous Weapon]",
             "Ambush: If Yondu is in the city, he captures this. If he is in any player's Victory Pile, he enters an empty city space, then captures this.",
@@ -1327,7 +1327,7 @@
       "id": 154,
       "name": "Inescapable “Kyln“ Space Prison",
       "slug": "inescapable-kyln-space-prison",
-      "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-sc-inescapable-kyln-space-prison.webp",
+      "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-sc-inescapable-kyln-space-prison.webp",
       "cards": [
         {
           "abilities": [
@@ -1347,7 +1347,7 @@
       "id": 155,
       "name": "Provoke the Sovereign War Fleet",
       "slug": "provoke-the-sovereign-war-fleet",
-      "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-sc-provoke-the-sovereign-war-fleet.webp",
+      "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-sc-provoke-the-sovereign-war-fleet.webp",
       "cards": [
         {
           "abilities": [
@@ -1362,7 +1362,7 @@
       "id": 156,
       "name": "Star-Lord's Awesome Mix Tape",
       "slug": "star-lords-awesome-mix-tape",
-      "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-sc-star-lords-awesome-mix-tape.webp",
+      "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-sc-star-lords-awesome-mix-tape.webp",
       "cards": [
         {
           "abilities": [
@@ -1377,7 +1377,7 @@
       "id": 157,
       "name": "Unleash the Abilisk Space Monster",
       "slug": "unleash-the-abilisk-space-monster",
-      "imageUrl": "https://images.barefootbetters.com/mgtg/mgtg-sc-unleash-the-abilisk-space-monster.webp",
+      "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-sc-unleash-the-abilisk-space-monster.webp",
       "cards": [
         {
           "abilities": [

@@ -30,7 +30,7 @@
           "abilities": [
             "Heist: You get +2[icon:recruit]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-1c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-1c1.webp"
         },
         {
           "slug": "anything-for-cassie",
@@ -46,7 +46,7 @@
             "Whenever you gain a Wound this turn, return that Wound to the Wound Deck.",
             "Heist: Rescue a Bystander."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-2c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-2c2.webp"
         },
         {
           "slug": "shocking-support",
@@ -61,7 +61,7 @@
           "abilities": [
             "Heist: You get +2[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-4c3.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-4c3.webp"
         },
         {
           "slug": "x-con-security-van",
@@ -76,7 +76,7 @@
           "abilities": [
             "Heist: You may move a Villain to an empty city space. If you do, KO one of your Heroes."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-5u.webp"
         },
         {
           "slug": "putting-a-crew-together",
@@ -91,7 +91,7 @@
           "abilities": [
             "Heist: You get +1[icon:attack] for each different cost card you have."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-6u2.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-6u2.webp"
         },
         {
           "slug": "the-big-score",
@@ -106,14 +106,14 @@
           "abilities": [
             "Heist: You get +4[icon:attack]. If the card revealed from the Villain Deck is a Master Strike, KO it and put a card from the Bystander Deck on top of the Villain Deck."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-8r.webp"
         }
       ],
       "physicalCards": [
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-petty-larceny.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-petty-larceny.webp",
           "sides": [
             "petty-larceny"
           ]
@@ -121,7 +121,7 @@
         {
           "id": "p2",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-anything-for-cassie.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-anything-for-cassie.webp",
           "sides": [
             "anything-for-cassie"
           ]
@@ -129,7 +129,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-shocking-support.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-shocking-support.webp",
           "sides": [
             "shocking-support"
           ]
@@ -137,7 +137,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-x-con-security-van.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-x-con-security-van.webp",
           "sides": [
             "x-con-security-van"
           ]
@@ -145,7 +145,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-putting-a-crew-together.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-putting-a-crew-together.webp",
           "sides": [
             "putting-a-crew-together"
           ]
@@ -153,7 +153,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-scott-lang-cat-burglar-the-big-score.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-the-big-score.webp",
           "sides": [
             "the-big-score"
           ]
@@ -185,7 +185,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-2c1.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:covert]",
             "[keyword:Antics]: You get +2[icon:recruit]."
@@ -202,7 +202,7 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-3c2.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:strength]",
             "Reveal the top card of your deck. If it's [hc:strength] or has [keyword:Size-Changing] draw it."
@@ -219,7 +219,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-4c3.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:covert]",
             "[hc:covert]: All Villains and the Mastermind get -1[icon:attack] this turn."
@@ -236,7 +236,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-5u.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength]",
             "[keyword:Antics]: You may KO a card from your hand or discard pile."
@@ -253,7 +253,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-6u2.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:covert][hc:covert][hc:covert]",
             "[keyword:Heist]: Draw two cards."
@@ -270,7 +270,7 @@
           "cost": 9,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-9r.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-9r.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength][hc:strength][hc:strength]",
             "You get +1[icon:attack] for each card you played this turn that's [hc:strength] and/or has Size-Changing."
@@ -281,7 +281,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-hitch-a-ride.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-hitch-a-ride.webp",
           "sides": [
             "hitch-a-ride"
           ]
@@ -289,7 +289,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-look-out-for-the-little-guy.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-look-out-for-the-little-guy.webp",
           "sides": [
             "look-out-for-the-little-guy"
           ]
@@ -297,7 +297,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-shrink-away.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-shrink-away.webp",
           "sides": [
             "shrink-away"
           ]
@@ -305,7 +305,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-bug-swarm.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-bug-swarm.webp",
           "sides": [
             "bug-swarm"
           ]
@@ -313,7 +313,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-tiny-little-risk.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-tiny-little-risk.webp",
           "sides": [
             "tiny-little-risk"
           ]
@@ -321,7 +321,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-man-giant-man.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-giant-man.webp",
           "sides": [
             "giant-man"
           ]
@@ -356,7 +356,7 @@
             "Size-Changing [hc:ranged]",
             "If this is the first card you played this turn, you get +1[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-2c1.webp"
         },
         {
           "slug": "flitting-sting",
@@ -372,7 +372,7 @@
             "Size-Changing [hc:ranged]",
             "[hc:ranged]: You get +1[icon:recruit] and +1[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-3c2.webp"
         },
         {
           "slug": "master-physicist",
@@ -388,7 +388,7 @@
             "Size-Changing [hc:tech]",
             "You get +1[icon:recruit] for each other card you have with a \"+\" symbol in its recruit icon."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-4c3.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-4c3.webp"
         },
         {
           "slug": "positive-ions",
@@ -404,7 +404,7 @@
             "Size-Changing [hc:ranged]",
             "You get +1[icon:attack] for each other card you have with a \"+\" symbol in its attack icon."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-5u.webp"
         },
         {
           "slug": "infiltrate",
@@ -421,7 +421,7 @@
             "When you draw a new hand this turn, draw an extra card.",
             "Heist: You get +3[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-6u2.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-6u2.webp"
         },
         {
           "slug": "hope-returns",
@@ -438,14 +438,14 @@
             "You get +1[icon:recruit] for each other card you have with a \"+\" symbol in its recruit icon.",
             "You get +1[icon:attack] for each other card you have with a \"+\" symbol in its attack icon."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-9r.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-9r.webp"
         }
       ],
       "physicalCards": [
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-follow-my-lead.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-follow-my-lead.webp",
           "sides": [
             "follow-my-lead"
           ]
@@ -453,7 +453,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-flitting-sting.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-flitting-sting.webp",
           "sides": [
             "flitting-sting"
           ]
@@ -461,7 +461,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-master-physicist.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-master-physicist.webp",
           "sides": [
             "master-physicist"
           ]
@@ -469,7 +469,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-positive-ions.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-positive-ions.webp",
           "sides": [
             "positive-ions"
           ]
@@ -477,7 +477,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-infiltrate.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-infiltrate.webp",
           "sides": [
             "infiltrate"
           ]
@@ -485,7 +485,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-wasp-hope-returns.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-hope-returns.webp",
           "sides": [
             "hope-returns"
           ]
@@ -517,7 +517,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-2c1.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
             "To play this, you must discard a card. Then, if you have a Villain in your Victory Pile worth 2[icon:piercing] or less, draw a card."
@@ -534,7 +534,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-4c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-4c2.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:strength]",
             "Choose a player. If that player reveals a card that costs 5 or more, that player draws a card."
@@ -551,7 +551,7 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-5c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-5c3.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:strength]",
             "[hc:strength]: You may defeat a Villain worth 2[icon:piercing] or less."
@@ -568,7 +568,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-5u.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
             "[hc:tech]: Reveal the top card of the Villain Deck. If it's a Bystander, rescue it. If it's a Vilain worth 2[icon:piercing] or less, you may fight it this turn. If you rescue or defeat that card, don't play a card from the Vilain Deck next turn."
@@ -585,7 +585,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-6u2.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength]",
             "[hc:strength]: You may do the Fight effect of a Villain in your Victory Pile worth 2[icon:piercing] or less."
@@ -602,7 +602,7 @@
           "cost": 9,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-9r.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-9r.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength][hc:strength][hc:strength]",
             "You get +1[icon:attack] for each Villain worth 2[icon:piercing] or less in your Victory Pile."
@@ -613,7 +613,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-start-small.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-start-small.webp",
           "sides": [
             "start-small"
           ]
@@ -621,7 +621,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-giant-hug.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-giant-hug.webp",
           "sides": [
             "giant-hug"
           ]
@@ -629,7 +629,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-colossal-stomp.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-colossal-stomp.webp",
           "sides": [
             "colossal-stomp"
           ]
@@ -637,7 +637,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-quantum-beacon.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-quantum-beacon.webp",
           "sides": [
             "quantum-beacon"
           ]
@@ -645,7 +645,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-learn-from-the-past.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-learn-from-the-past.webp",
           "sides": [
             "learn-from-the-past"
           ]
@@ -653,7 +653,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-cassie-lang-inspire-revolution.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-inspire-revolution.webp",
           "sides": [
             "inspire-revolution"
           ]
@@ -689,7 +689,7 @@
             "Draw a card.",
             "[hc:covert][hc:covert]: You get +2[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-2c1.webp"
         },
         {
           "slug": "search-for-peace",
@@ -704,7 +704,7 @@
           "abilities": [
             "[hc:covert]: Explore. You get +[icon:recruit] equal to the Found Hero's printed recruit."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-3c2.webp"
         },
         {
           "slug": "prepare-for-war",
@@ -719,7 +719,7 @@
           "abilities": [
             "[hc:ranged]: Explore. You get +[icon:attack] equal to the Found Hero's printed attack."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-4c3.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-4c3.webp"
         },
         {
           "slug": "wasp-of-another-generation",
@@ -735,7 +735,7 @@
             "Size-Changing [hc:covert]",
             "[hc:covert]: Explore. Then you get +1[icon:attack] for each time you explored this turn."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-5u.webp"
         },
         {
           "slug": "quantum-contradiction",
@@ -750,7 +750,7 @@
           "abilities": [
             "When you play this, put it on top of the Hero Deck or KO it."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-6u2.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-6u2.webp"
         },
         {
           "slug": "finally-found-you",
@@ -766,14 +766,14 @@
             "Explore.",
             "[hc:covert]: You get +[icon:recruit] equal to the Found Hero's printed recruit and +[icon:attack] equal to its printed attack."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-8r.webp"
         }
       ],
       "physicalCards": [
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-subatomic-size.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-subatomic-size.webp",
           "sides": [
             "subatomic-size"
           ]
@@ -781,7 +781,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-search-for-peace.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-search-for-peace.webp",
           "sides": [
             "search-for-peace"
           ]
@@ -789,7 +789,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-prepare-for-war.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-prepare-for-war.webp",
           "sides": [
             "prepare-for-war"
           ]
@@ -797,7 +797,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-wasp-of-another-generation.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-wasp-of-another-generation.webp",
           "sides": [
             "wasp-of-another-generation"
           ]
@@ -805,7 +805,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-quantum-contradiction.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-quantum-contradiction.webp",
           "sides": [
             "quantum-contradiction"
           ]
@@ -813,7 +813,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-janet-van-dyne-finally-found-you.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-finally-found-you.webp",
           "sides": [
             "finally-found-you"
           ]
@@ -848,7 +848,7 @@
             "Reveal the top card of your deck. If that card has any \"holes\" printed inside any of its icons (0, 4, 6, 8, or 9), draw it.",
             "[hc:instinct]: You may KO the card you drew this way."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-2c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-2c1.webp"
         },
         {
           "slug": "mystics",
@@ -863,7 +863,7 @@
           "abilities": [
             "When you draw a new hand this turn, draw an extra card."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-3c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-3c2.webp"
         },
         {
           "slug": "steel-warrior",
@@ -879,7 +879,7 @@
             "Streets Conqueror 1",
             "Draw a card."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-4c3.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-4c3.webp"
         },
         {
           "slug": "xolum",
@@ -895,7 +895,7 @@
             "Bridge Conqueror 1",
             "[hc:ranged]: You get +2[icon:attack]."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-5u.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-5u.webp"
         },
         {
           "slug": "quaz",
@@ -910,7 +910,7 @@
           "abilities": [
             "[hc:ranged]: Choose recruit or attack. Then Explore. You get the printed value of the icon you chose on the Found Hero."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-6u2.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-6u2.webp"
         },
         {
           "slug": "freedom-forever",
@@ -926,14 +926,14 @@
             "Explore.",
             "[hc:instinct]: You may choose a player to gain the Found Hero."
           ],
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-7r.webp"
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-7r.webp"
         }
       ],
       "physicalCards": [
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-veb.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-veb.webp",
           "sides": [
             "veb"
           ]
@@ -941,7 +941,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-mystics.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-mystics.webp",
           "sides": [
             "mystics"
           ]
@@ -949,7 +949,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-steel-warrior.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-steel-warrior.webp",
           "sides": [
             "steel-warrior"
           ]
@@ -957,7 +957,7 @@
         {
           "id": "p4",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-xolum.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-xolum.webp",
           "sides": [
             "xolum"
           ]
@@ -965,7 +965,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-quaz.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-quaz.webp",
           "sides": [
             "quaz"
           ]
@@ -973,7 +973,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-freedom-fighters-freedom-forever.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-freedom-forever.webp",
           "sides": [
             "freedom-forever"
           ]
@@ -1005,7 +1005,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-2c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-2c1.webp",
           "abilities": [
             "[keyword:Bridge Conqueror 1]",
             "If there are no Villains on the Rooftops, draw a card."
@@ -1022,7 +1022,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-3c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-3c2.webp",
           "abilities": [
             "You may move a Villain to an adjacent city space. If another Villain is already there, swap them.",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -1039,7 +1039,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-4c3.webp",
           "abilities": [
             "[hc:strength]: [keyword:Sewers Conqueror 2]"
           ]
@@ -1055,7 +1055,7 @@
           "cost": 5,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-5u.webp",
           "abilities": [
             "[hc:instinct]: [keyword:Explore]. If the Found Hero is [hc:instinct] or has no team icon, you get +2[icon:recruit]."
           ]
@@ -1071,7 +1071,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-6u2.webp",
           "abilities": [
             "[hc:strength]: [keyword:Explore]. You get +[icon:attack] equal to the Found Hero's cost."
           ]
@@ -1087,7 +1087,7 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-7r.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-7r.webp",
           "abilities": [
             "[keyword:Bridge Conqueror 1]",
             "You get +1[icon:attack] for each Villain worth, 4[icon:piercing] or more and each Mastermind Tactic in your Victory Pile."
@@ -1098,7 +1098,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-take-the-high-ground.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-take-the-high-ground.webp",
           "sides": [
             "take-the-high-ground"
           ]
@@ -1106,7 +1106,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-hit-and-run.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-hit-and-run.webp",
           "sides": [
             "hit-and-run"
           ]
@@ -1114,7 +1114,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-unite-the-oppressed.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-unite-the-oppressed.webp",
           "sides": [
             "unite-the-oppressed"
           ]
@@ -1122,7 +1122,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-find-your-courage.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-find-your-courage.webp",
           "sides": [
             "find-your-courage"
           ]
@@ -1130,7 +1130,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-lead-powerful-allies.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-lead-powerful-allies.webp",
           "sides": [
             "lead-powerful-allies"
           ]
@@ -1138,7 +1138,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-jentorra-conquer-the-conqueror.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-conquer-the-conqueror.webp",
           "sides": [
             "conquer-the-conqueror"
           ]
@@ -1170,7 +1170,7 @@
           "cost": 1,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-1c1.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-1c1.webp",
           "abilities": [
             "[keyword:Heist]: Draw a card."
           ]
@@ -1186,7 +1186,7 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-2c2.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-2c2.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:instinct]",
             "[keyword:Antics]: You get +2[icon:attack]."
@@ -1203,7 +1203,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-4c3.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-4c3.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
             "[keyword:Antics]: Draw a card."
@@ -1220,7 +1220,7 @@
           "cost": 5,
           "attack": "1+",
           "recruit": "1+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-5u.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-5u.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
             "[keyword:Antics]: You get +2[icon:recruit] and +2[icon:attack]."
@@ -1237,7 +1237,7 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-6u2.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-6u2.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
             "[hc:tech]: You get +3[icon:attack]."
@@ -1254,7 +1254,7 @@
           "cost": 9,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-9r.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-9r.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech][hc:tech][hc:tech]",
             "[keyword:Antics]: You get +2[icon:attack].",
@@ -1266,7 +1266,7 @@
         {
           "id": "p1",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-up-the-ante.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-up-the-ante.webp",
           "sides": [
             "up-the-ante"
           ]
@@ -1274,7 +1274,7 @@
         {
           "id": "p2",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-antagonize.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-antagonize.webp",
           "sides": [
             "antagonize"
           ]
@@ -1282,7 +1282,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-anticipate.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-anticipate.webp",
           "sides": [
             "anticipate"
           ]
@@ -1290,7 +1290,7 @@
         {
           "id": "p4",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-antiproton-experiments.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-antiproton-experiments.webp",
           "sides": [
             "antiproton-experiments"
           ]
@@ -1298,7 +1298,7 @@
         {
           "id": "p5",
           "count": 2,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-anti-tank-weapons.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-anti-tank-weapons.webp",
           "sides": [
             "anti-tank-weapons"
           ]
@@ -1306,7 +1306,7 @@
         {
           "id": "p6",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hr-ant-army-revolutionary-anthem.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-revolutionary-anthem.webp",
           "sides": [
             "revolutionary-anthem"
           ]
@@ -1327,7 +1327,7 @@
           "slug": "darren-cross",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mm-darren-cross.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mm-darren-cross.webp",
           "abilities": [
             "[keyword:Bank Conqueror 6]",
             "Always Leads: Cross Technologies",
@@ -1339,7 +1339,7 @@
           "slug": "yellowjacket",
           "tactic": false,
           "vAttack": "12",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-ma-darren-cross-yellowjacket.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-ma-darren-cross-yellowjacket.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech]",
             "Master Strike: Each player discards a [hc:instinct] Hero or [keyword:Size-Changing] Hero or gains a Wound. Yellowjacket [keyword:Transforms]."
@@ -1350,7 +1350,7 @@
           "slug": "corporate-raider",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-darren-cross-corporate-raider.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-darren-cross-corporate-raider.webp",
           "abilities": [
             "Fight: KO one of your Heroes with a [icon:recruit] icon. If the Bank is empty, move a Villain to the Bank.",
             "This Mastermind [keyword:Transforms]."
@@ -1361,7 +1361,7 @@
           "slug": "protect-my-investments",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-darren-cross-protect-my-investments.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-darren-cross-protect-my-investments.webp",
           "abilities": [
             "Fight: If the Bank is empty, each other player chooses a Villain worth 2[icon:piercing] or more from their Victory Pile. You choose one of those Villains to enter the Bank.",
             "This Mastermind [keyword:Transforms]."
@@ -1372,7 +1372,7 @@
           "slug": "shrinking-research-budget",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-darren-cross-shrinking-research-budget.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-darren-cross-shrinking-research-budget.webp",
           "abilities": [
             "Fight: Each Hero currently in the HQ that has no [keyword:Size-Changing] abilities gains [keyword:Size-Changing] for one of its Hero Classes.",
             "This Mastermind [keyword:Transforms]."
@@ -1383,7 +1383,7 @@
           "slug": "steal-pym-particles",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-darren-cross-steal-pym-particles.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-darren-cross-steal-pym-particles.webp",
           "abilities": [
             "Fight: Each other player shuffles a [hc:covert], [hc:tech], or [keyword:Size-Changing] card from their hand or discard pile into the Hero Deck.",
             "This Mastermind [keyword:Transforms]."
@@ -1403,7 +1403,7 @@
           "slug": "ghost-master-thief",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mm-ghost-master-thief.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mm-ghost-master-thief.webp",
           "abilities": [
             "Ghost gets +1[icon:attack] for each different cost among her “Kidnapped Victimis.“ While this side is face up, you may recruit cards from her Kidnapped Victims (in any order), spending 2[icon:recruit] extra for each.",
             "Always Leads: Ghost Chasers",
@@ -1415,7 +1415,7 @@
           "slug": "ghost-intangible",
           "tactic": false,
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-ma-ghost-master-thief-ghost-intangible.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-ma-ghost-master-thief-ghost-intangible.webp",
           "abilities": [
             "You can't fight Ghost unless you made at least 6[icon:recruit] this turn.",
             "Master Strike: Each player discards a [hc:covert] Hero or puts a non-grey Hero from their hand or discard pile next to Ghost as a “Kidnapped Victim.“ Ghost [keyword:Transforms]."
@@ -1426,7 +1426,7 @@
           "slug": "elaborate-rescue-plan",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-ghost-master-thief-elaborate-rescue-plan.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-ghost-master-thief-elaborate-rescue-plan.webp",
           "abilities": [
             "Fight: You may choose a player to gain one of Ghost's Kidnapped Victims.",
             "Ghost [keyword:Transforms]."
@@ -1437,7 +1437,7 @@
           "slug": "nightmarish-wraith",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-ghost-master-thief-nightmarish-wraith.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-ghost-master-thief-nightmarish-wraith.webp",
           "abilities": [
             "Fight: Each other player puts a non-grey Hero from their discard pile next to Ghost as a Kidnapped Victim.",
             "Ghost [keyword:Transforms]."
@@ -1448,7 +1448,7 @@
           "slug": "shadowy-abduction",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-ghost-master-thief-shadowy-abduction.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-ghost-master-thief-shadowy-abduction.webp",
           "abilities": [
             "Fight: Put the highest cost Hero from the HQ next to Ghost as a Kidnapped Victim.",
             "Ghost [keyword:Transforms]."
@@ -1459,7 +1459,7 @@
           "slug": "draining-quantum-energy-chamber",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-ghost-master-thief-draining-quantum-energy-chamber.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-ghost-master-thief-draining-quantum-energy-chamber.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and KOs one of their cards that shares a Hero Class with any of Ghost's Kidnapped Victims.",
             "Ghost [keyword:Transforms]."
@@ -1479,7 +1479,7 @@
           "slug": "kang-quantum-conqueror",
           "tactic": false,
           "vAttack": "11+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mm-kang-quantum-conqueror.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mm-kang-quantum-conqueror.webp",
           "abilities": [
             "[keyword:Rooftops Conqueror 3, Streets Conqueror 3, Bridge Conqueror 3]",
             "Always Leads: Armada of Kang. Set aside the Villains from an extra Villain Group as “Timeline Variants.“",
@@ -1491,7 +1491,7 @@
           "slug": "kang-multiverse-conqueror",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-ma-kang-quantum-conqueror-kang-multiverse-conqueror.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-ma-kang-quantum-conqueror-kang-multiverse-conqueror.webp",
           "abilities": [
             "[keyword:Multiverse Conqueror 8]",
             "While either side of Kang is face up, the “Multiverse“ is a space to his left that can hold multiple Villains. You can fight them (in any order) only while this side is face up.",
@@ -1503,7 +1503,7 @@
           "slug": "conquerors-wrath",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-kang-quantum-conqueror-conquerors-wrath.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-kang-quantum-conqueror-conquerors-wrath.webp",
           "abilities": [
             "Fight: If there are any Villains in the Rooftops, Streets, and/or Bridge, each player gains a Wound. If there are any Villains in the Multiverse, each player gains a Wound.",
             "Kang [keyword:Transforms]."
@@ -1514,7 +1514,7 @@
           "slug": "kangs-defiance",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-kang-quantum-conqueror-kangs-defiance.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-kang-quantum-conqueror-kangs-defiance.webp",
           "abilities": [
             "Fight: If any of the Rooftops, Streets, or Bridge are empty, reveal the top card of the Villain Deck. If it's a Villain, it enters one of those spaces.",
             "Put a random Timeline Variant Villain face up in the “Multiverse“ space.",
@@ -1526,7 +1526,7 @@
           "slug": "multiversal-engine-core",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-kang-quantum-conqueror-multiversal-engine-core.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-kang-quantum-conqueror-multiversal-engine-core.webp",
           "abilities": [
             "Fight: Kang [keyword:Double-Crosses] each other player.",
             "Put a random Timeline Variant Villain face up in the “Multiverse“ space.",
@@ -1538,7 +1538,7 @@
           "slug": "the-time-sphere",
           "tactic": true,
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-mt-kang-quantum-conqueror-the-time-sphere.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-mt-kang-quantum-conqueror-the-time-sphere.webp",
           "abilities": [
             "Fight: Each other player puts two cards from their hand on the bottom of their deck. You draw two cards.",
             "Kang [keyword:Transforms]."
@@ -1559,7 +1559,7 @@
           "slug": "hydra-arms-dealer",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-cross-technologies-hydra-arms-dealer.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-cross-technologies-hydra-arms-dealer.webp",
           "abilities": [
             "Fight: You get +2[icon:recruit], usable only to recruit Heroes with an [icon:attack] icon."
           ]
@@ -1569,7 +1569,7 @@
           "slug": "cross-security-detail",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-cross-technologies-cross-security-detail.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-cross-technologies-cross-security-detail.webp",
           "abilities": [
             "While the back side of a Mastermind card is face up, this Villain gets +2[icon:attack] and “Escape: Each player discards a card.“",
             "Fight: KO one of your Heroes."
@@ -1580,7 +1580,7 @@
           "slug": "shrinksperiments",
           "vp": "3",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-cross-technologies-shrinksperiments.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-cross-technologies-shrinksperiments.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
             "Fight: A Hero in the HQ loses all [keyword:Size-Changing] abilities, then gains [keyword:Size-Changing] [hc:tech] this turn."
@@ -1591,7 +1591,7 @@
           "slug": "yellowjacket-prototype",
           "vp": "5",
           "vAttack": "9",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-cross-technologies-yellowjacket-prototype.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-cross-technologies-yellowjacket-prototype.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:instinct][hc:instinct][hc:instinct][hc:instinct]",
             "Ambush: Each player reveals a [hc:instinct] Hero or gains a Wound.",
@@ -1603,7 +1603,7 @@
           "slug": "take-over-pym-technologies",
           "vp": "2",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-cross-technologies-take-over-pym-technologies.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-cross-technologies-take-over-pym-technologies.webp",
           "abilities": [
             "Ambush: This Scheme captures Bystanders equal to the number of players plus 1, as “Pym Tech Scientists.“",
             "Special Rules: Once per turn, you may pay 3[icon:recruit] or discard a card with [keyword:Size-Changing]. If you do, rescue a Pym Tech Scientist and draw a card. If you rescue the last Scientist, defeat this Scheme.",
@@ -1623,7 +1623,7 @@
           "slug": "sonny-burchs-goons",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-ghost-chasers-sonny-burchs-goons.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-ghost-chasers-sonny-burchs-goons.webp",
           "abilities": [
             "Fight: [keyword:Heist]: You get +2[icon:recruit]."
           ]
@@ -1633,7 +1633,7 @@
           "slug": "anitolov",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-ghost-chasers-anitolov.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-ghost-chasers-anitolov.webp",
           "abilities": [
             "Fight: [keyword:Heist]: You may KO up to two of your Heroes."
           ]
@@ -1643,7 +1643,7 @@
           "slug": "corrupted-government-agents",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-ghost-chasers-corrupted-government-agents.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-ghost-chasers-corrupted-government-agents.webp",
           "abilities": [
             "Ambush: Corrupted Government Agents [keyword:Double-Cross] each player.",
             "Fight: You may look at the top three cards of any deck and put them back in any order."
@@ -1654,7 +1654,7 @@
           "slug": "uzman-with-truth-serum",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-ghost-chasers-uzman-with-truth-serum.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-ghost-chasers-uzman-with-truth-serum.webp",
           "abilities": [
             "Fight: Look at the top card of the Hero Deck and claim a Hero Class it has. Choose another player to guess “Truth“ or “Lie.“ If they guessed right, they either KO that Hero or choose a player to gain it. If they guessed wrong, you decide what to do with that Hero Instead. (In solo, you just decide.)"
           ]
@@ -1664,7 +1664,7 @@
           "slug": "sonny-burch",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-ghost-chasers-sonny-burch.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-ghost-chasers-sonny-burch.webp",
           "abilities": [
             "Ambush: Sonny Burch [keyword:Double-Crosses] each player.",
             "Fight: [keyword:Heist]: You may choose a player to gain a [hc:tech] or [hc:ranged] Hero from the HQ."
@@ -1675,7 +1675,7 @@
           "slug": "dr-bill-foster",
           "vp": "4",
           "vAttack": "0",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-ghost-chasers-dr-bill-foster.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-ghost-chasers-dr-bill-foster.webp",
           "abilities": [
             "To fight Dr. Bill Foster, you must solve a math equation: Discard three cards such that the costs of two of them add up to the cost of the third. They can't all cost 0.",
             "Escape: Each player discards a card that costs 0."
@@ -1686,7 +1686,7 @@
           "slug": "goliath",
           "vp": "5",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-ghost-chasers-goliath.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-ghost-chasers-goliath.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:strength]",
             "Ambush: Goliath [keyword:Double-Crosses] each player.",
@@ -1698,7 +1698,7 @@
           "slug": "high-speed-car-chase",
           "vp": "3",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-ghost-chasers-high-speed-car-chase.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-ghost-chasers-high-speed-car-chase.webp",
           "abilities": [
             "Ambush: Stack 2 cards from the Wound Deck next to this Scheme as “Dangerous Stunts.“",
             "Twist: If there is a Villain in the Streets: Add 2 Dangerous Stunts. Then if there are at least 5 Stunts, there is a “car crash“: Each player gains one of the Stunts as a Wound. KO the rest of the Stunts and this Scheme.",
@@ -1718,7 +1718,7 @@
           "slug": "quantumnaut-elite",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-armada-of-kang-quantumnaut-elite.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-armada-of-kang-quantumnaut-elite.webp",
           "abilities": [
             "[keyword:Rooftops Conqueror 2]",
             "[keyword:Streets Conqueror 2]",
@@ -1730,7 +1730,7 @@
           "slug": "troop-ships-of-kang",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-armada-of-kang-troop-ships-of-kang.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-armada-of-kang-troop-ships-of-kang.webp",
           "abilities": [
             "[keyword:Rooftops Conqueror 2]",
             "Ambush: A Villain worth 2[icon:piercing] or 3[icon:piercing] from any player's Victory Pile enters the city."
@@ -1741,7 +1741,7 @@
           "slug": "city-defense-system",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-armada-of-kang-city-defense-system.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-armada-of-kang-city-defense-system.webp",
           "abilities": [
             "[keyword:Streets Conqueror 2]",
             "Ambush: Each player reveals a [hc:ranged] Hero or gains a Wound.",
@@ -1753,7 +1753,7 @@
           "slug": "lord-krylars-yacht",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-armada-of-kang-lord-krylars-yacht.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-armada-of-kang-lord-krylars-yacht.webp",
           "abilities": [
             "Ambush: You may say “I'm sure we can trust Lord Krylar...“ If you do: Draw a card, reveal it, and if it has an odd numbered cost, Lord Krylar [keyword:Double-Crosses] each player. ",
             "Fight: Same effect.",
@@ -1765,7 +1765,7 @@
           "slug": "energy-shield",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-armada-of-kang-energy-shield.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-armada-of-kang-energy-shield.webp",
           "abilities": [
             "[keyword:Streets Conqueror 2]",
             "Ambush: Put this Energy Shield above the Mastermind space. While it's there, you can't fight the Mastermind. (You can still fight the Energy Shield.)"
@@ -1776,7 +1776,7 @@
           "slug": "pursuit-craft",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-armada-of-kang-pursuit-craft.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-armada-of-kang-pursuit-craft.webp",
           "abilities": [
             "[keyword:Rooftops Conqueror 2]",
             "Ambush: (After this enters the city) If other Villains or the Mastermind have Conqueror abilities naming any empty city spaces, Pursuit Craft moves to one of those city spaces."
@@ -1787,7 +1787,7 @@
           "slug": "m-o-d-o-k",
           "vp": "5",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-armada-of-kang-m-o-d-o-k.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-armada-of-kang-m-o-d-o-k.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:ranged][hc:ranged][hc:ranged][hc:ranged]",
             "Ambush: M.O.D.O.K. [keyword:Double-Crosses] each player.",
@@ -1799,7 +1799,7 @@
           "slug": "build-a-conquering-army",
           "vp": "4",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-armada-of-kang-build-a-conquering-army.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-armada-of-kang-build-a-conquering-army.webp",
           "abilities": [
             "Ambush: If the Bridge is empty, move a Villain to the Bridge. Choose an unused Henchman Group and stack Henchmen from it next to this Scheme equal to the number of players.",
             "Special Rules: Players may fight Henchmen stacked here. While here, those Henchmen also have “[keyword:Bridge Conqueror 1].“ If you defeat the last Henchman here, defeat this Scheme.",
@@ -1819,7 +1819,7 @@
           "slug": "axian-bartender",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-quantum-realm-axian-bartender.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-axian-bartender.webp",
           "abilities": [
             "Ambush: Any number of times this turn, you may pay 2[icon:recruit] to “buy a refreshment“ and KO a Wound from your hand or from any player's discard pile.",
             "Fight: Same effect."
@@ -1830,7 +1830,7 @@
           "slug": "axiam-maitre-d",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-quantum-realm-axiam-maitre-d.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-axiam-maitre-d.webp",
           "abilities": [
             "Fight: [keyword:Explore]. The Found Hero costs 2 less to recruit this turn."
           ]
@@ -1840,7 +1840,7 @@
           "slug": "lord-krylars-valet",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-quantum-realm-lord-krylars-valet.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-lord-krylars-valet.webp",
           "abilities": [
             "Fight: [keyword:Explore]. You get +[icon:recruit] equal to the Found Hero's printed [icon:recruit]."
           ]
@@ -1850,7 +1850,7 @@
           "slug": "sky-manta",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-quantum-realm-sky-manta.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-sky-manta.webp",
           "abilities": [
             "Fight: [keyword:Explore]. If you recruit the Found Hero this turn, set it aside. When you draw a new hand this turn, add that card to your hand."
           ]
@@ -1860,7 +1860,7 @@
           "slug": "lord-krylars-appetizer",
           "vp": "3",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-quantum-realm-lord-krylars-appetizer.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-lord-krylars-appetizer.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:covert][hc:covert][hc:covert][hc:covert]",
             "Fight: Choose a player to “eat the appetizer“ and KO a card of their choice from their discard pile."
@@ -1871,7 +1871,7 @@
           "slug": "hungering-energy",
           "vp": "4",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-quantum-realm-hungering-energy.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-hungering-energy.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech][hc:tech]",
             "Fight: KO one of your Heroes."
@@ -1882,7 +1882,7 @@
           "slug": "quantumoeba",
           "vp": "5",
           "vAttack": "8",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-quantum-realm-quantumoeba.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-quantumoeba.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength][hc:strength]",
             "Ambush: Quantumoeba “eats“ a Henchman from any player's Victory Pile, capturing it and gaining its printed [icon:attack].",
@@ -1894,7 +1894,7 @@
           "slug": "quantumania",
           "vp": "2",
           "vAttack": null,
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-vi-quantum-realm-quantumania.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-quantumania.webp",
           "abilities": [
             "Ambush: Each player puts a non-grey Hero from their hand or discard pile next to this Scheme as a “Quantum Duplicate.“ Then do the Twist effect below.",
             "Twist: The top card of the Hero Deck becomes another Quantum Duplicate. Each player reveals their hand and discards all their cards that have the same name as any Quantum Duplicate.",
@@ -1909,7 +1909,7 @@
       "id": 41,
       "name": "Quantumnauts",
       "slug": "quantumnauts",
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-quantumnauts.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hm-quantumnauts.webp",
       "abilities": [
         "[keyword:Rooftops Conqueror 1]",
         "[keyword:Streets Conqueror 1]",
@@ -1920,7 +1920,7 @@
       "id": 42,
       "name": "Quantum Hound",
       "slug": "quantum-hound",
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-quantum-hound.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hm-quantum-hound.webp",
       "abilities": [
         "Fight: Choose [icon:recruit] or [icon:attack]. Then [keyword:Explore]. If the Found Hero has the icon you chose, KO one of your Heroes."
       ]
@@ -1929,13 +1929,13 @@
       "id": 43,
       "name": "Tardigrade",
       "slug": "tardigrade",
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-covert.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-covert.webp",
       "abilities": [],
       "cards": [
         {
           "name": "Tardigrade (Covert)",
           "slug": "tardigrade-covert",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-covert.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-covert.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:covert][hc:covert][hc:covert]",
             "Fight: KO one of your Heroes."
@@ -1944,7 +1944,7 @@
         {
           "name": "Tardigrade (Instinct)",
           "slug": "tardigrade-instinct",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-instinct.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-instinct.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:instinct][hc:instinct][hc:instinct]",
             "Fight: KO one of your Heroes."
@@ -1953,7 +1953,7 @@
         {
           "name": "Tardigrade (Ranged)",
           "slug": "tardigrade-ranged",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-ranged.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-ranged.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:ranged][hc:ranged][hc:ranged]",
             "Fight: KO one of your Heroes."
@@ -1962,7 +1962,7 @@
         {
           "name": "Tardigrade (Strength)",
           "slug": "tardigrade-strength",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-strength.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-strength.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength]",
             "Fight: KO one of your Heroes."
@@ -1971,7 +1971,7 @@
         {
           "name": "Tardigrade (Tech)",
           "slug": "tardigrade-tech",
-          "imageUrl": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-tech.webp",
+          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-tech.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
             "Fight: KO one of your Heroes."
@@ -1979,11 +1979,11 @@
         }
       ],
       "imageUrlByClass": {
-        "covert": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-covert.webp",
-        "instinct": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-instinct.webp",
-        "ranged": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-ranged.webp",
-        "strength": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-strength.webp",
-        "tech": "https://images.barefootbetters.com/amwp/amwp-hm-tardigrade-tech.webp"
+        "covert": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-covert.webp",
+        "instinct": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-instinct.webp",
+        "ranged": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-ranged.webp",
+        "strength": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-strength.webp",
+        "tech": "https://images.legendary-arena.com/amwp/amwp-hm-tardigrade-tech.webp"
       }
     }
   ],
@@ -1992,7 +1992,7 @@
       "id": 178,
       "name": "Auction Shrink Tech to Highest Bidder",
       "slug": "auction-shrink-tech-to-highest-bidder",
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-sc-auction-shrink-tech-to-highest-bidder.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-sc-auction-shrink-tech-to-highest-bidder.webp",
       "cards": [
         {
           "abilities": [
@@ -2007,7 +2007,7 @@
       "id": 179,
       "name": "Safeguard Dark Secrets",
       "slug": "safeguard-dark-secrets",
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-sc-safeguard-dark-secrets.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-sc-safeguard-dark-secrets.webp",
       "cards": [
         {
           "abilities": [
@@ -2023,7 +2023,7 @@
       "id": 180,
       "name": "Escape an Imprisoning Dimension",
       "slug": "escape-an-imprisoning-dimension",
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-sc-escape-an-imprisoning-dimension.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-sc-escape-an-imprisoning-dimension.webp",
       "cards": [
         {
           "abilities": [
@@ -2039,7 +2039,7 @@
       "id": 181,
       "name": "Siphon Energy from the Quantum Realm",
       "slug": "siphon-energy-from-the-quantum-realm",
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-sc-siphon-energy-from-the-quantum-realm.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-sc-siphon-energy-from-the-quantum-realm.webp",
       "cards": [
         {
           "abilities": [
@@ -2058,7 +2058,7 @@
       "name": "Agent Jimmy Woo",
       "slug": "agent-jimmy-woo",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-by-agent-jimmy-woo.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-by-agent-jimmy-woo.webp",
       "cards": [
         {
           "qtd": 2,
@@ -2073,7 +2073,7 @@
       "name": "Maggie Lang",
       "slug": "maggie-lang",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-by-maggie-lang.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-by-maggie-lang.webp",
       "cards": [
         {
           "qtd": 2,
@@ -2088,7 +2088,7 @@
       "name": "Officer Jim Paxton",
       "slug": "officer-jim-paxton",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-by-officer-jim-paxton.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-by-officer-jim-paxton.webp",
       "cards": [
         {
           "qtd": 1,
@@ -2103,7 +2103,7 @@
       "name": "Young Cassie Lang",
       "slug": "young-cassie-lang",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/amwp/amwp-by-young-cassie-lang.webp",
+      "imageUrl": "https://images.legendary-arena.com/amwp/amwp-by-young-cassie-lang.webp",
       "cards": [
         {
           "qtd": 2,

@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-sow-rivalry.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-karma-sow-rivalry.webp",
           "abilities": [
             "[hc:covert]: Choose a Villain. You get +1[icon:attack] for each Villain adjacent to it."
           ]
@@ -42,7 +42,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-temporary-possession.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-karma-temporary-possession.webp",
           "abilities": [
             "Guess a color. Then reveal the top card of the Hero Deck and put it back on the top or bottom of that deck. If you guessed right, you get +2[icon:attack]."
           ]
@@ -58,7 +58,7 @@
           "cost": 6,
           "attack": null,
           "recruit": "4",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-karmic-balance.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-karma-karmic-balance.webp",
           "abilities": [
             "Reveal the top card of the Hero Deck. You may recruit it this turn. If you do, you may KO one of your cards or a card from your discard pile."
           ]
@@ -74,7 +74,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-control-like-a-puppet.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-karma-control-like-a-puppet.webp",
           "abilities": [
             "[team:x-men]: Choose a Villain in the city. You get +[icon:attack] equal to its VP, usable only against other Villains or the Mastermind."
           ]
@@ -84,7 +84,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-sow-rivalry.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-karma-sow-rivalry.webp",
           "sides": [
             "sow-rivalry"
           ]
@@ -92,7 +92,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-temporary-possession.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-karma-temporary-possession.webp",
           "sides": [
             "temporary-possession"
           ]
@@ -100,7 +100,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-karmic-balance.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-karma-karmic-balance.webp",
           "sides": [
             "karmic-balance"
           ]
@@ -108,7 +108,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-karma-control-like-a-puppet.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-karma-control-like-a-puppet.webp",
           "sides": [
             "control-like-a-puppet"
           ]
@@ -138,7 +138,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-dreams-made-real.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-mirage-dreams-made-real.webp",
           "abilities": [
             "[keyword:Moonlight]: You may discard a card. If you do, draw a card."
           ]
@@ -154,7 +154,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-empathic-link.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-mirage-empathic-link.webp",
           "abilities": [
             "When a card effect causes you to discard this card, set it aside. At the end of this turn, add it to your hand as an extra card."
           ]
@@ -170,7 +170,7 @@
           "cost": 6,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-nightmare-wolves.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-mirage-nightmare-wolves.webp",
           "abilities": [
             "You may have a [keyword:Waking Nightmare]. You get +[icon:attack] equal to the cost of the card you discarded this way."
           ]
@@ -186,7 +186,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-haunted-by-the-demon-bear.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-mirage-haunted-by-the-demon-bear.webp",
           "abilities": [
             "Whenever a card effect causes you to discard a card from your hand this turn, you get +2[icon:attack].",
             "[keyword:Moonlight]: You may have a [keyword:Waking Nightmare]."
@@ -197,7 +197,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-dreams-made-real.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-mirage-dreams-made-real.webp",
           "sides": [
             "dreams-made-real"
           ]
@@ -205,7 +205,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-empathic-link.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-mirage-empathic-link.webp",
           "sides": [
             "empathic-link"
           ]
@@ -213,7 +213,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-nightmare-wolves.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-mirage-nightmare-wolves.webp",
           "sides": [
             "nightmare-wolves"
           ]
@@ -221,7 +221,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-mirage-haunted-by-the-demon-bear.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-mirage-haunted-by-the-demon-bear.webp",
           "sides": [
             "haunted-by-the-demon-bear"
           ]
@@ -251,7 +251,7 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-absorb-radiation.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-sunspot-absorb-radiation.webp",
           "abilities": [
             "[keyword:Moonlight]: You may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[keyword:Sunlight]: Draw a card."
@@ -268,7 +268,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-solar-powered.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-sunspot-solar-powered.webp",
           "abilities": [
             "[keyword:Sunlight]: You may put a card from your hand on the bottom of you deck. If you do, you get +2[icon:attack]."
           ]
@@ -284,7 +284,7 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-thermokinetic-fury.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-sunspot-thermokinetic-fury.webp",
           "abilities": [
             "To play this, you must put a card from your hand on the bottom of your deck.",
             "[keyword:Sunlight]: You get +1[icon:attack] for each other [team:x-men] card you played this turn."
@@ -301,7 +301,7 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-empyreal-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-sunspot-empyreal-force.webp",
           "abilities": [
             "Choose any number of Heroes in the HQ. Put them on the bottom of the Hero Deck.",
             "[keyword:Sunlight]: You get +1[icon:attack] for each Hero in the HQ with an even-numbered cost."
@@ -312,7 +312,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-absorb-radiation.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-sunspot-absorb-radiation.webp",
           "sides": [
             "absorb-radiation"
           ]
@@ -320,7 +320,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-solar-powered.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-sunspot-solar-powered.webp",
           "sides": [
             "solar-powered"
           ]
@@ -328,7 +328,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-thermokinetic-fury.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-sunspot-thermokinetic-fury.webp",
           "sides": [
             "thermokinetic-fury"
           ]
@@ -336,7 +336,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-sunspot-empyreal-force.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-sunspot-empyreal-force.webp",
           "sides": [
             "empyreal-force"
           ]
@@ -366,7 +366,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-earthling-choices.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-warlock-earthling-choices.webp",
           "abilities": [
             "Look at the top two cards of your deck. Draw one and discard the other."
           ]
@@ -382,7 +382,7 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-analyze-planetary-rotation.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-warlock-analyze-planetary-rotation.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +2[icon:recruit].",
             "[keyword:Moonlight]: You get +2[icon:attack].",
@@ -400,7 +400,7 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-techno-organic-adaptation.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-warlock-techno-organic-adaptation.webp",
           "abilities": [
             "[hc:tech]: The first time you defeat a Villain this turn, you may KO one of your cards or a card from your discard pile."
           ]
@@ -416,7 +416,7 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-nanite-shapeshifter.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-warlock-nanite-shapeshifter.webp",
           "abilities": [
             "[keyword:Sunlight]: Draw 3 cards.",
             "[keyword:Moonlight]: You get +3[icon:recruit] and +3[icon:attack].",
@@ -428,7 +428,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-earthling-choices.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-warlock-earthling-choices.webp",
           "sides": [
             "earthling-choices"
           ]
@@ -436,7 +436,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-analyze-planetary-rotation.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-warlock-analyze-planetary-rotation.webp",
           "sides": [
             "analyze-planetary-rotation"
           ]
@@ -444,7 +444,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-techno-organic-adaptation.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-warlock-techno-organic-adaptation.webp",
           "sides": [
             "techno-organic-adaptation"
           ]
@@ -452,7 +452,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-warlock-nanite-shapeshifter.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-warlock-nanite-shapeshifter.webp",
           "sides": [
             "nanite-shapeshifter"
           ]
@@ -482,7 +482,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-night-vision.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-wolfsbane-night-vision.webp",
           "abilities": [
             "[keyword:Moonlight]: Look at the top two cards of your deck. Discard any number of them and put the rest back in any order."
           ]
@@ -498,7 +498,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-wolf-out.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-wolfsbane-wolf-out.webp",
           "abilities": [
             "[keyword:Sunlight]: You may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[keyword:Moonlight]: Draw a card."
@@ -515,7 +515,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-howl-at-the-moon.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-wolfsbane-howl-at-the-moon.webp",
           "abilities": [
             "[keyword:Moonlight]: Look at the top card of your deck. KO it or put it back."
           ]
@@ -531,7 +531,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-nocturnal-savagery.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-wolfsbane-nocturnal-savagery.webp",
           "abilities": [
             "Look at the top three cards of your deck. Discard any number of them and put the rest back in any order.",
             "[keyword:Moonlight]: You get the total printed [icon:attack] of all the cards you discarded from your deck this turn."
@@ -542,7 +542,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-night-vision.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-wolfsbane-night-vision.webp",
           "sides": [
             "night-vision"
           ]
@@ -550,7 +550,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-wolf-out.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-wolfsbane-wolf-out.webp",
           "sides": [
             "wolf-out"
           ]
@@ -558,7 +558,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-howl-at-the-moon.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-wolfsbane-howl-at-the-moon.webp",
           "sides": [
             "howl-at-the-moon"
           ]
@@ -566,7 +566,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-hr-wolfsbane-nocturnal-savagery.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-hr-wolfsbane-nocturnal-savagery.webp",
           "sides": [
             "nocturnal-savagery"
           ]
@@ -587,7 +587,7 @@
           "slug": "belasco-demon-lord-of-limbo",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mm-belasco-demon-lord-of-limbo.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mm-belasco-demon-lord-of-limbo.webp",
           "abilities": [
             "Belasco gets +[icon:attack] equal to the number of non-grey Heroes in the KO pile, divided by the number of players (round down).",
             "Always Leads: Demons of Limbo",
@@ -599,7 +599,7 @@
           "slug": "epic-belasco",
           "tactic": false,
           "vAttack": "10+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-me-belasco-demon-lord-of-limbo.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-me-belasco-demon-lord-of-limbo.webp",
           "abilities": [
             "Belasco gets +[icon:attack] equal to the number of non-grey Heroes in the KO pile, divided by the number of players (round down).",
             "Always Leads: Demons of Limbo",
@@ -611,7 +611,7 @@
           "slug": "a-demons-mercy",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mt-belasco-demon-lord-of-limbo-a-demons-mercy.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mt-belasco-demon-lord-of-limbo-a-demons-mercy.webp",
           "abilities": [
             "Fight: Each other player KOs a non-grey Hero from their hand or discard pile."
           ]
@@ -621,7 +621,7 @@
           "slug": "bargain-for-souls",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mt-belasco-demon-lord-of-limbo-bargain-for-souls.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mt-belasco-demon-lord-of-limbo-bargain-for-souls.webp",
           "abilities": [
             "Fight: Reveal cards from the Hero Deck equal to the number of players. Gain one of them and KO the rest."
           ]
@@ -631,7 +631,7 @@
           "slug": "rescue-from-limbo",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mt-belasco-demon-lord-of-limbo-rescue-from-limbo.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mt-belasco-demon-lord-of-limbo-rescue-from-limbo.webp",
           "abilities": [
             "Fight: You may KO one of your non-grey Heroes or a non-grey Hero from your discard pile. If you do, gain a Hero from the KO pile."
           ]
@@ -641,7 +641,7 @@
           "slug": "cleaving-demonblade",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mt-belasco-demon-lord-of-limbo-cleaving-demonblade.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mt-belasco-demon-lord-of-limbo-cleaving-demonblade.webp",
           "abilities": [
             "Fight: Each player chooses a different card in the HQ. Then KO all chosen cards."
           ]
@@ -660,7 +660,7 @@
           "slug": "emma-frost-the-white-queen",
           "tactic": false,
           "vAttack": "8+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mm-emma-frost-the-white-queen.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mm-emma-frost-the-white-queen.webp",
           "abilities": [
             "During your turn, Emma Frost gets +1[icon:attack] for each grey Hero you have.",
             "Always Leads: Hellions",
@@ -672,7 +672,7 @@
           "slug": "epic-emma-frost",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-me-emma-frost-the-white-queen.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-me-emma-frost-the-white-queen.webp",
           "abilities": [
             "During your turn, Emma Frost gets +2[icon:attack] for each grey Hero you have.",
             "Always Leads: Hellions",
@@ -684,7 +684,7 @@
           "slug": "tempting-bargain",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mt-emma-frost-the-white-queen-tempting-bargain.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mt-emma-frost-the-white-queen-tempting-bargain.webp",
           "abilities": [
             "Fight: You may play the top card of the Villain Deck. If you do, you get +5[icon:recruit]."
           ]
@@ -694,7 +694,7 @@
           "slug": "psychic-x-men-link",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mt-emma-frost-the-white-queen-psychic-x-men-link.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mt-emma-frost-the-white-queen-psychic-x-men-link.webp",
           "abilities": [
             "Fight: Each other player has a [keyword:Waking Nightmare]. Each of those players who did not discard an [team:x-men] Hero this way gains a Wound."
           ]
@@ -704,7 +704,7 @@
           "slug": "assume-diamond-form",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mt-emma-frost-the-white-queen-assume-diamond-form.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mt-emma-frost-the-white-queen-assume-diamond-form.webp",
           "abilities": [
             "Fight: Emma Frost cannot be fought again until the start of your next turn."
           ]
@@ -714,7 +714,7 @@
           "slug": "contempt-for-weaklings",
           "tactic": true,
           "vAttack": 8,
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-mt-emma-frost-the-white-queen-contempt-for-weaklings.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-mt-emma-frost-the-white-queen-contempt-for-weaklings.webp",
           "abilities": [
             "Fight: Put a 0-cost Hero from the KO pile on top of each other player's deck."
           ]
@@ -734,7 +734,7 @@
           "slug": "crotus",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-demons-of-limbo-crotus.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-demons-of-limbo-crotus.webp",
           "abilities": [
             "Ambush: Crotus captures a Bystander. Put an even-numbered Hero on the bottom of the Hero Deck.",
             "[keyword:Moonlight]: Crotus gets +4[icon:attack]."
@@ -745,7 +745,7 @@
           "slug": "nastirh",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-demons-of-limbo-nastirh.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-demons-of-limbo-nastirh.webp",
           "abilities": [
             "[keyword:Sunlight]: To fight N'astirh, you must also spend 3[icon:recruit].",
             "[keyword:Moonlight]: N'astirh gets +3[icon:attack].",
@@ -757,7 +757,7 @@
           "slug": "sym",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-demons-of-limbo-sym.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-demons-of-limbo-sym.webp",
           "abilities": [
             "Ambush: [keyword:Sunlight]: Each player reveals a [hc:strength] Hero or gains a Wound. [keyword:Moonlight]: Each player has a [keyword:Waking Nightmare].",
             "Escape: Same effect."
@@ -768,7 +768,7 @@
           "slug": "demon-bear",
           "vp": "5",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-demons-of-limbo-demon-bear.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-demons-of-limbo-demon-bear.webp",
           "abilities": [
             "Ambush: Each player has a [keyword:Waking Nightmare]. The Demon Bear captures one of the Heroes discarded this way that has the lowest cost. The Demon Bear gets +[icon:attack] equal to that Hero's cost.",
             "Fight: The player of your choice gains that Hero.",
@@ -780,7 +780,7 @@
           "slug": "witchfire",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-demons-of-limbo-witchfire.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-demons-of-limbo-witchfire.webp",
           "abilities": [
             "Ambush: Witchfire captures a Hero from the HQ with the lowest odd-numbered cost. [keyword:Sunlight]: Witchfire gets +2[icon:attack].",
             "Fight: The player of your choice gains that Hero.",
@@ -800,7 +800,7 @@
           "slug": "catseye",
           "vp": "3",
           "vAttack": "3+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-hellions-catseye.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-hellions-catseye.webp",
           "abilities": [
             "[keyword:Moonlight]: Catseye gets +2[icon:attack].",
             "Fight: KO one of your Heroes."
@@ -811,7 +811,7 @@
           "slug": "thunderbird",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-hellions-thunderbird.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-hellions-thunderbird.webp",
           "abilities": [
             "[keyword:Sunlight]: Thunderbird gets +2[icon:attack].",
             "Fight: KO one of your Heroes."
@@ -822,7 +822,7 @@
           "slug": "tarot",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-hellions-tarot.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-hellions-tarot.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a...",
             "Bystander: Rescue it.",
@@ -836,7 +836,7 @@
           "slug": "roulette",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-hellions-roulette.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-hellions-roulette.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Hero Deck. If it's [hc:tech] each player gains a Wound. If it's [hc:covert], you draw a card.",
             "Fight: Same Effect.",
@@ -848,7 +848,7 @@
           "slug": "empath",
           "vp": "4",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-hellions-empath.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-hellions-empath.webp",
           "abilities": [
             "During your turn, Empath gets +1[icon:attack] for each grey Hero you have.",
             "Ambush: Each player reveals a [hc:covert] Hero or has a [keyword:Waking Nightmare].",
@@ -860,7 +860,7 @@
           "slug": "jetstream",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/nmut/nmut-vi-hellions-jetstream.webp",
+          "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-hellions-jetstream.webp",
           "abilities": [
             "Ambush: (After this enters the Sewers) Put Jetstream on the Bridge. If there's another Villain there, swap them.",
             "Escape: Each player discards an [team:x-men] Hero or gains a Wound."
@@ -875,7 +875,7 @@
       "id": 126,
       "name": "Demon Bear Saga, The",
       "slug": "demon-bear-saga-the",
-      "imageUrl": "https://images.barefootbetters.com/nmut/nmut-sc-demon-bear-saga-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/nmut/nmut-sc-demon-bear-saga-the.webp",
       "cards": [
         {
           "abilities": [
@@ -891,7 +891,7 @@
       "id": 127,
       "name": "Crash the Moon into the Sun",
       "slug": "crash-the-moon-into-the-sun",
-      "imageUrl": "https://images.barefootbetters.com/nmut/nmut-sc-crash-the-moon-into-the-sun.webp",
+      "imageUrl": "https://images.legendary-arena.com/nmut/nmut-sc-crash-the-moon-into-the-sun.webp",
       "cards": [
         {
           "abilities": [
@@ -908,7 +908,7 @@
       "id": 128,
       "name": "Trapped in the Insane Asylum",
       "slug": "trapped-in-the-insane-asylum",
-      "imageUrl": "https://images.barefootbetters.com/nmut/nmut-sc-trapped-in-the-insane-asylum.webp",
+      "imageUrl": "https://images.legendary-arena.com/nmut/nmut-sc-trapped-in-the-insane-asylum.webp",
       "cards": [
         {
           "abilities": [
@@ -924,7 +924,7 @@
       "id": 129,
       "name": "Superhuman Baseball Game",
       "slug": "superhuman-baseball-game",
-      "imageUrl": "https://images.barefootbetters.com/nmut/nmut-sc-superhuman-baseball-game.webp",
+      "imageUrl": "https://images.legendary-arena.com/nmut/nmut-sc-superhuman-baseball-game.webp",
       "cards": [
         {
           "abilities": [

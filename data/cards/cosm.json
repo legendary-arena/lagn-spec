@@ -26,7 +26,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-transmute-matter.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-adam-warlock-transmute-matter.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[keyword:Burn 2 Shards]: Halve the cost of a Hero in the HQ this turn. (Round the cost up.)"
@@ -43,7 +43,7 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-regenerative-cocoon.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-adam-warlock-regenerative-cocoon.webp",
           "abilities": [
             "To play this, you must discard a card.",
             "When you draw a new hand of cards at the end of this turn, draw two extra cards."
@@ -60,7 +60,7 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-soulblast.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-adam-warlock-soulblast.webp",
           "abilities": [
             "Gain 2 [rule:Shards].",
             "[hc:covert]: [keyword:Burn 4 Shards]: Defeat a Villain."
@@ -77,7 +77,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-manifest-the-soul-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-adam-warlock-manifest-the-soul-gem.webp",
           "abilities": [
             "Gain 4 [rule:Shards].",
             "[team:avengers][team:avengers]: [keyword:Burn 8 Shards]: Defeat the Mastermind once. Then reveal the top card of the Villain Deck. If it's a Master Strike, then Adam Warlock is corrupted by power. At the start of next turn, add the [rule:Magus Mastermind] to the game with one random Tactic. (If he has never been in this game.)"
@@ -88,7 +88,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-transmute-matter.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-adam-warlock-transmute-matter.webp",
           "sides": [
             "transmute-matter"
           ]
@@ -96,7 +96,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-regenerative-cocoon.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-adam-warlock-regenerative-cocoon.webp",
           "sides": [
             "regenerative-cocoon"
           ]
@@ -104,7 +104,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-soulblast.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-adam-warlock-soulblast.webp",
           "sides": [
             "soulblast"
           ]
@@ -112,7 +112,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-adam-warlock-manifest-the-soul-gem.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-adam-warlock-manifest-the-soul-gem.webp",
           "sides": [
             "manifest-the-soul-gem"
           ]
@@ -142,7 +142,7 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-cosmic-awareness.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-captain-mar-vell-cosmic-awareness.webp",
           "abilities": [
             "If you would get [icon:attack] from [keyword:Danger Sense] this turn, gain that many [rule:Shards] instead.",
             "[keyword:Danger Sense 1]",
@@ -160,7 +160,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-kree-genetics.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-captain-mar-vell-kree-genetics.webp",
           "abilities": [
             "If you gained any [rule:Shards] this turn, draw a card."
           ]
@@ -176,7 +176,7 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-channel-the-nega-bands.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-captain-mar-vell-channel-the-nega-bands.webp",
           "abilities": [
             "[team:avengers]: Reveal the top card of your deck. If it costs 1 or more, gain a [rule:Shard]. If it costs 0, KO it."
           ]
@@ -192,7 +192,7 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-protector-of-the-universe.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-captain-mar-vell-protector-of-the-universe.webp",
           "abilities": [
             "[keyword:Danger Sense 4]",
             "If you gained any [rule:Shards] this turn before playing this card, [keyword:Danger Sense 7] instead."
@@ -203,7 +203,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-cosmic-awareness.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-captain-mar-vell-cosmic-awareness.webp",
           "sides": [
             "cosmic-awareness"
           ]
@@ -211,7 +211,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-kree-genetics.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-captain-mar-vell-kree-genetics.webp",
           "sides": [
             "kree-genetics"
           ]
@@ -219,7 +219,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-channel-the-nega-bands.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-captain-mar-vell-channel-the-nega-bands.webp",
           "sides": [
             "channel-the-nega-bands"
           ]
@@ -227,7 +227,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-captain-mar-vell-protector-of-the-universe.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-captain-mar-vell-protector-of-the-universe.webp",
           "sides": [
             "protector-of-the-universe"
           ]
@@ -257,7 +257,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-peaceful-meditation.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-moondragon-peaceful-meditation.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, if you didn't fight anything this turn, draw an extra card."
           ]
@@ -273,7 +273,7 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-psionic-warning.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-moondragon-psionic-warning.webp",
           "abilities": [
             "[keyword:Danger Sense 2]",
             "[hc:instinct]: If this revealed any Scheme Twists, gain a [rule:Shard]."
@@ -290,7 +290,7 @@
           "cost": 6,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-psychokinetic-blast.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-moondragon-psychokinetic-blast.webp",
           "abilities": [
             "[keyword:Danger Sense 4]",
             "[team:avengers]: If this revealed at least two Master Strikes, you may shuffle the Villain Deck."
@@ -307,7 +307,7 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-lunar-dragon-form.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-moondragon-lunar-dragon-form.webp",
           "abilities": [
             "[keyword:Danger Sense 1]",
             "If this revealed a Scheme Twist, you get +3[icon:attack] and you may shuffle the Villain Deck."
@@ -318,7 +318,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-peaceful-meditation.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-moondragon-peaceful-meditation.webp",
           "sides": [
             "peaceful-meditation"
           ]
@@ -326,7 +326,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-psionic-warning.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-moondragon-psionic-warning.webp",
           "sides": [
             "psionic-warning"
           ]
@@ -334,7 +334,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-psychokinetic-blast.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-moondragon-psychokinetic-blast.webp",
           "sides": [
             "psychokinetic-blast"
           ]
@@ -342,7 +342,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-moondragon-lunar-dragon-form.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-moondragon-lunar-dragon-form.webp",
           "sides": [
             "lunar-dragon-form"
           ]
@@ -372,7 +372,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-ruthless-cyborg.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nebula-ruthless-cyborg.webp",
           "abilities": [
             "Whenever you take any number of [rule:Shards] from a Villain, Mastermind, or other player this turn, you may KO one of your cards or a card from your discard pile."
           ]
@@ -388,7 +388,7 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-galactic-rogue.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nebula-galactic-rogue.webp",
           "abilities": [
             "A Villain gains a [rule:Shard].",
             "[hc:instinct][hc:tech]: Take a [rule:Shard] from a Villain."
@@ -405,7 +405,7 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-illusion-device.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nebula-illusion-device.webp",
           "abilities": [
             "[hc:tech]: Choose another player. Unless that player reveals a [hc:covert] Hero, take one of their [rule:Shards] or “rescue“ a Bystander from their Victory Pile."
           ]
@@ -421,7 +421,7 @@
           "cost": 7,
           "attack": "5",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-daring-raid.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nebula-daring-raid.webp",
           "abilities": [
             "Whenever you take any number of [rule:Shards] from a Villain, Mastermind, or other player this turn, you get +3[icon:recruit]."
           ]
@@ -431,7 +431,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-ruthless-cyborg.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nebula-ruthless-cyborg.webp",
           "sides": [
             "ruthless-cyborg"
           ]
@@ -439,7 +439,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-galactic-rogue.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nebula-galactic-rogue.webp",
           "sides": [
             "galactic-rogue"
           ]
@@ -447,7 +447,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-illusion-device.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nebula-illusion-device.webp",
           "sides": [
             "illusion-device"
           ]
@@ -455,7 +455,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nebula-daring-raid.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nebula-daring-raid.webp",
           "sides": [
             "daring-raid"
           ]
@@ -485,7 +485,7 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-draw-from-the-worldmind.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nova-draw-from-the-worldmind.webp",
           "abilities": [
             "Draw a card.",
             "[hc:tech]: You get +1[icon:recruit] or +1[icon:attack]."
@@ -502,7 +502,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-electromagnetic-wave.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nova-electromagnetic-wave.webp",
           "abilities": [
             "Choose one: You get +2[icon:recruit], or you gain a [rule:Shard].",
             "[hc:ranged]: Instead, do both."
@@ -519,7 +519,7 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-declare-galactic-threat.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nova-declare-galactic-threat.webp",
           "abilities": [
             "A Villain gains [keyword:Cosmic Threat] [hc:tech] this turn. (It loses any previous Cosmic Threat abilities and penalties it had.)",
             "If there were no Villains in the city, draw two cards instead."
@@ -536,7 +536,7 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-mobilize-the-nova-corps.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nova-mobilize-the-nova-corps.webp",
           "abilities": [
             "Choose one: Draw three cards or a Mastermind gains [keyword:Cosmic Threat] [hc:ranged] this turn. (It loses any previous Cosmic Threat abilities and penalties it had.)"
           ]
@@ -546,7 +546,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-draw-from-the-worldmind.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nova-draw-from-the-worldmind.webp",
           "sides": [
             "draw-from-the-worldmind"
           ]
@@ -554,7 +554,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-electromagnetic-wave.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nova-electromagnetic-wave.webp",
           "sides": [
             "electromagnetic-wave"
           ]
@@ -562,7 +562,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-declare-galactic-threat.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nova-declare-galactic-threat.webp",
           "sides": [
             "declare-galactic-threat"
           ]
@@ -570,7 +570,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-nova-mobilize-the-nova-corps.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-nova-mobilize-the-nova-corps.webp",
           "sides": [
             "mobilize-the-nova-corps"
           ]
@@ -600,7 +600,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-channel-cosmic-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-phyla-vell-channel-cosmic-power.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[hc:instinct]: Draw a card."
@@ -617,7 +617,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-quantum-sword.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-phyla-vell-quantum-sword.webp",
           "abilities": [
             "If you have at least 4 [rule:Shards], you get +2[icon:attack]."
           ]
@@ -633,7 +633,7 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-martyr.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-phyla-vell-martyr.webp",
           "abilities": [
             "If any player would gain a Wound, you may discard this card and gain 2 [rule:Shards] instead."
           ]
@@ -649,7 +649,7 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-avatar-of-oblivion.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-phyla-vell-avatar-of-oblivion.webp",
           "abilities": [
             "You may KO a card from your hand or discard pile. If you do, gain 2 [rule:Shards].",
             "Then, if you have at least 8 [rule:Shards], you get +3[icon:attack]."
@@ -660,7 +660,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-channel-cosmic-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-phyla-vell-channel-cosmic-power.webp",
           "sides": [
             "channel-cosmic-power"
           ]
@@ -668,7 +668,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-quantum-sword.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-phyla-vell-quantum-sword.webp",
           "sides": [
             "quantum-sword"
           ]
@@ -676,7 +676,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-martyr.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-phyla-vell-martyr.webp",
           "sides": [
             "martyr"
           ]
@@ -684,7 +684,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-phyla-vell-avatar-of-oblivion.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-phyla-vell-avatar-of-oblivion.webp",
           "sides": [
             "avatar-of-oblivion"
           ]
@@ -714,7 +714,7 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-manipulate-gravitons.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-quasar-manipulate-gravitons.webp",
           "abilities": [
             "[hc:covert]: Whenever you recruit a Hero from the HQ this turn, gain a [rule:Shard]."
           ]
@@ -730,7 +730,7 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-cosmic-champion.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-quasar-cosmic-champion.webp",
           "abilities": [
             "[keyword:Burn a Shards]: You get +3[icon:attack]."
           ]
@@ -746,7 +746,7 @@
           "cost": 5,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-the-quantum-bands.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-quasar-the-quantum-bands.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[keyword:Burn 2 Shards]: You man KO a card from your hand or discard pile."
@@ -763,7 +763,7 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-the-star-brand.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-quasar-the-star-brand.webp",
           "abilities": [
             "Whenever you defeat a Villain or Mastermind this turn, gain a [rule:Shard].",
             "[keyword:Burn 4 Shards]: You get +7[icon:attack]."
@@ -774,7 +774,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-manipulate-gravitons.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-quasar-manipulate-gravitons.webp",
           "sides": [
             "manipulate-gravitons"
           ]
@@ -782,7 +782,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-cosmic-champion.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-quasar-cosmic-champion.webp",
           "sides": [
             "cosmic-champion"
           ]
@@ -790,7 +790,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-the-quantum-bands.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-quasar-the-quantum-bands.webp",
           "sides": [
             "the-quantum-bands"
           ]
@@ -798,7 +798,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-quasar-the-star-brand.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-quasar-the-star-brand.webp",
           "sides": [
             "the-star-brand"
           ]
@@ -828,7 +828,7 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-universal-weapon.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-ronan-the-accuser-universal-weapon.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[keyword:Burn 2 Shards]: Draw two cards."
@@ -845,7 +845,7 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-rally-kree-warriors.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-ronan-the-accuser-rally-kree-warriors.webp",
           "abilities": [
             "Whenever you rescue a Bystander this turn, gain a [rule:Shard].",
             "[hc:strength]: Rescue a Bystander."
@@ -862,7 +862,7 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-accuse-enemies-of-the-empire.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-ronan-the-accuser-accuse-enemies-of-the-empire.webp",
           "abilities": [
             "[keyword:Contest of Champions][hc:tech]. Each player that wins rescues a Bystander. If the Mastermind wins, it captures a Bystander."
           ]
@@ -878,7 +878,7 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-seek-the-infinity-gems.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-ronan-the-accuser-seek-the-infinity-gems.webp",
           "abilities": [
             "[keyword:Contest of Champions][hc:strength]. Each other player that loses must lose a [rule:Shard]. Each player that wins gains 2 [rule:Shards]. If the Mastermind wins, a Villain gains 2 [rule:Shards]."
           ]
@@ -888,7 +888,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-universal-weapon.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-ronan-the-accuser-universal-weapon.webp",
           "sides": [
             "universal-weapon"
           ]
@@ -896,7 +896,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-rally-kree-warriors.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-ronan-the-accuser-rally-kree-warriors.webp",
           "sides": [
             "rally-kree-warriors"
           ]
@@ -904,7 +904,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-accuse-enemies-of-the-empire.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-ronan-the-accuser-accuse-enemies-of-the-empire.webp",
           "sides": [
             "accuse-enemies-of-the-empire"
           ]
@@ -912,7 +912,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-ronan-the-accuser-seek-the-infinity-gems.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-ronan-the-accuser-seek-the-infinity-gems.webp",
           "sides": [
             "seek-the-infinity-gems"
           ]
@@ -942,7 +942,7 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-whistling-arrow.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-yondu-whistling-arrow.webp",
           "abilities": [
             "Gain a [rule:Shard].",
             "[hc:ranged]: [keyword:Burn any number of Shards]: Defeat a Villain with printed VP equal to the number of Shards you burned. (This can't affect a Villain with 0 VP or no printed VP.)"
@@ -959,7 +959,7 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-interstellar-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-yondu-interstellar-hunter.webp",
           "abilities": [
             "[keyword:Danger Sense 2]",
             "[hc:covert]: If this revealed any Master Strikes, draw a card."
@@ -976,7 +976,7 @@
           "cost": 5,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-anticipate-their-movements.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-yondu-anticipate-their-movements.webp",
           "abilities": [
             "[keyword:Danger Sense 3]",
             "[team:guardians-of-the-galaxy]: You may do the Fight effect of a Henchman Villain revealed this way. (Don't defeat it.)"
@@ -993,7 +993,7 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-space-pirate.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-yondu-space-pirate.webp",
           "abilities": [
             "Choose one: Gain a Hero from the HQ for free, or gain a [rule:Shard] for each empty city space.",
             "[team:guardians-of-the-galaxy][team:guardians-of-the-galaxy][team:guardians-of-the-galaxy]: Do both."
@@ -1004,7 +1004,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-whistling-arrow.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-yondu-whistling-arrow.webp",
           "sides": [
             "whistling-arrow"
           ]
@@ -1012,7 +1012,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-interstellar-hunter.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-yondu-interstellar-hunter.webp",
           "sides": [
             "interstellar-hunter"
           ]
@@ -1020,7 +1020,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-anticipate-their-movements.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-yondu-anticipate-their-movements.webp",
           "sides": [
             "anticipate-their-movements"
           ]
@@ -1028,7 +1028,7 @@
         {
           "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hr-yondu-space-pirate.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hr-yondu-space-pirate.webp",
           "sides": [
             "space-pirate"
           ]
@@ -1049,7 +1049,7 @@
           "slug": "the-beyonder",
           "tactic": false,
           "vAttack": "21*",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mm-beyonder-the.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mm-beyonder-the.webp",
           "abilities": [
             "[keyword:Cosmic Threat] for cards that cost 5 or more.",
             "Always Leads: From Beyond",
@@ -1061,7 +1061,7 @@
           "slug": "epic-beyonder",
           "tactic": false,
           "vAttack": "24*",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-me-beyonder-the.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-me-beyonder-the.webp",
           "abilities": [
             "[keyword:Cosmic Threat] for cards that cost 6 or more.",
             "Always Leads: From Beyond",
@@ -1073,7 +1073,7 @@
           "slug": "playthings-of-a-petulant-god",
           "tactic": true,
           "vAttack": 21,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-beyonder-the-playthings-of-a-petulant-god.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-beyonder-the-playthings-of-a-petulant-god.webp",
           "abilities": [
             "Fight: Each other player reveals their hand and KOs a card from their hand or discard pile with the same card name as any card in a Pocket Dimension."
           ]
@@ -1083,7 +1083,7 @@
           "slug": "dimensional-collapse",
           "tactic": true,
           "vAttack": 21,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-beyonder-the-dimensional-collapse.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-beyonder-the-dimensional-collapse.webp",
           "abilities": [
             "Fight: Destroy an HQ space that's in a Pocket Dimension. (That space doesn't refill.) To mark this, turn the Hero there face down. The Pocket Dimension card stays in play."
           ]
@@ -1093,7 +1093,7 @@
           "slug": "pull-earth-into-the-beyond",
           "tactic": true,
           "vAttack": 21,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-beyonder-the-pull-earth-into-the-beyond.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-beyonder-the-pull-earth-into-the-beyond.webp",
           "abilities": [
             "Fight: Rescue four Bystanders. Put this card above the Sewers, pulling it into a Pocket Dimension. To fight a Villain there, you must also pay 1[icon:attack] for each Pocket Dimension in play."
           ]
@@ -1103,7 +1103,7 @@
           "slug": "create-the-secret-wars",
           "tactic": true,
           "vAttack": 21,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-beyonder-the-create-the-secret-wars.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-beyonder-the-create-the-secret-wars.webp",
           "abilities": [
             "Fight: Choose a team (e.g. [team:shield],[team:avengers],[team:x-men],[team:guardians-of-the-galaxy], etc.). [keyword:Contest of Champions] for that team icon, with Evil selecting from 4 cards from the Hero Deck. Each other player that loses gains a Wound. If you win, the player of your choice gains a Hero from a Pocket Dimension."
           ]
@@ -1122,7 +1122,7 @@
           "slug": "the-grandmaster",
           "tactic": false,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mm-grandmaster-the.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mm-grandmaster-the.webp",
           "abilities": [
             "Always Leads: Elders of the Universe",
             "Master Strike: Reveal the top card of the Hero Deck then put it back. [keyword:Contest of Champions] for that card's color(s). Each player that loses gains a Wound. If the Grandmaster wins, he gains a [rule:Shard]."
@@ -1133,7 +1133,7 @@
           "slug": "epic-grandmaster",
           "tactic": false,
           "vAttack": 11,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-me-grandmaster-the.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-me-grandmaster-the.webp",
           "abilities": [
             "Evil adds +2 to its final total in every [keyword:Contest of Champions] caused by any card.",
             "Always Leads: Elders of the Universe",
@@ -1145,7 +1145,7 @@
           "slug": "deal-with-death",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-grandmaster-the-deal-with-death.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-grandmaster-the-deal-with-death.webp",
           "abilities": [
             "Fight: [keyword:Contest of Champions] [hc:covert], with Evil selecting from 4 cards from the Hero Deck. Each other player that loses must KO a non-grey Hero from their discard pile. If you win, you may gain a non-grey Hero from the KO pile. If the Grandmaster wins, he gains a [rule:Shard]."
           ]
@@ -1155,7 +1155,7 @@
           "slug": "galactic-marathon",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-grandmaster-the-galactic-marathon.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-grandmaster-the-galactic-marathon.webp",
           "abilities": [
             "Fight: [keyword:Contest of Champions] [hc:instinct], with Evil selecting from 4 cards from the Hero Deck. Each other player that loses must discard down to four cards. If you win, draw two cards. If the Grandmaster wins, he gains 2 [rule:Shards]."
           ]
@@ -1165,7 +1165,7 @@
           "slug": "cheat-against-thanos",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-grandmaster-the-cheat-against-thanos.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-grandmaster-the-cheat-against-thanos.webp",
           "abilities": [
             "Fight: [keyword:Contest of Champions] [hc:ranged], with Evil selecting from 4 cards from the Hero Deck. Each other player that loses must KO half the Bystanders (round up) from their Victory Pile. If you win, rescue three Bystanders. If the Grandmaster Wins, he gains 3 [rule:Shards]."
           ]
@@ -1175,7 +1175,7 @@
           "slug": "match-offenders-vs-defenders",
           "tactic": true,
           "vAttack": 10,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-grandmaster-the-match-offenders-vs-defenders.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-grandmaster-the-match-offenders-vs-defenders.webp",
           "abilities": [
             "Fight: [keyword:Contest of Champions] [hc:strength], with Evil selecting from 4 cards from the Hero Deck. Each other player that loses must gain a 0-cost card from the KO pile. If you win, reveal the top four cards of your deck, KO any number of them, and put the rest back in any order. If the Grandmaster wins, he gains 4 [rule:Shards]."
           ]
@@ -1194,7 +1194,7 @@
           "slug": "magus",
           "tactic": false,
           "vAttack": "9+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mm-magus.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mm-magus.webp",
           "abilities": [
             "Magus gets +1[icon:attack] for each Villain in the city that has any [rule:Shards].",
             "Always Leads: Universal Church of Truth",
@@ -1206,7 +1206,7 @@
           "slug": "epic-magus",
           "tactic": false,
           "vAttack": "11+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-me-magus.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-me-magus.webp",
           "abilities": [
             "Magus gets +2[icon:attack] for each Villain in the city that has any [rule:Shards].",
             "Always Leads: Universal Church of Truth",
@@ -1218,7 +1218,7 @@
           "slug": "dark-side-of-adam-warlock",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-magus-dark-side-of-adam-warlock.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-magus-dark-side-of-adam-warlock.webp",
           "abilities": [
             "Fight: Magus gains a [rule:Shard]. Then Magus takes a [rule:Shard] from each other player that does not reveal a [hc:covert] Hero."
           ]
@@ -1228,7 +1228,7 @@
           "slug": "seize-cosmic-power",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-magus-seize-cosmic-power.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-magus-seize-cosmic-power.webp",
           "abilities": [
             "Fight: Magus takes a [rule:Shard] from each Villain in the city. Then the Villain with the highest [icon:attack] gains a [rule:Shard]."
           ]
@@ -1238,7 +1238,7 @@
           "slug": "conjured-shade-of-thanos",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-magus-conjured-shade-of-thanos.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-magus-conjured-shade-of-thanos.webp",
           "abilities": [
             "Fight: Rescue 4 Bystanders. This Tactic enters the city as a Villain. Then each Villain in the city gains a [rule:Shard]. (You win when the Mastermind has no more Tactics stacked under it.)"
           ]
@@ -1248,7 +1248,7 @@
           "slug": "resurrected-as-the-child-magus",
           "tactic": true,
           "vAttack": 9,
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-mt-magus-resurrected-as-the-child-magus.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-mt-magus-resurrected-as-the-child-magus.webp",
           "abilities": [
             "Fight: Until the start of your next turn, Magus can only be fought with [icon:recruit] instead of [icon:attack]."
           ]
@@ -1268,7 +1268,7 @@
           "slug": "the-runner",
           "vp": "3",
           "vAttack": "5",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-elders-of-the-universe-the-runner.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-elders-of-the-universe-the-runner.webp",
           "abilities": [
             "Ambush: [keyword:Contest of Champions] [hc:instinct]. Each player that loses must discard a card. If Evil wins, the Runner gains a [rule:Shard] for each card discarded this way, and he pushes forward two extra spaces."
           ]
@@ -1278,7 +1278,7 @@
           "slug": "the-trader",
           "vp": "2",
           "vAttack": "4",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-elders-of-the-universe-the-trader.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-elders-of-the-universe-the-trader.webp",
           "abilities": [
             "Ambush: [keyword:Contest of Champions] [hc:tech]. Each player that loses must reveal their hand and trade a non-grey card from their hand with a card in the HQ that costs the same or less. If Evil wins, the Trader gains a [rule:Shard] for each trade that occurred."
           ]
@@ -1288,7 +1288,7 @@
           "slug": "the-champion-of-the-universe",
           "vp": "5",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-elders-of-the-universe-the-champion-of-the-universe.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-elders-of-the-universe-the-champion-of-the-universe.webp",
           "abilities": [
             "Ambush: [keyword:Contest of Champions] [hc:strength]. Each player that loses must give this Villain one of their [rule:Shards] or gain a Wound.",
             "Fight: KO one of your Heroes."
@@ -1299,7 +1299,7 @@
           "slug": "the-collector",
           "vp": "4",
           "vAttack": "6",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-elders-of-the-universe-the-collector.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-elders-of-the-universe-the-collector.webp",
           "abilities": [
             "Ambush: [keyword:Contest of Champions] [hc:covert]. Each player that loses gives the Collector one of these things that he doesn't have yet: A [rule:Shard], a Bystander from their Victory Pile, a [hc:strength] Hero, a [hc:instinct] Hero, a [hc:covert] Hero, a [hc:tech] Hero, or a [hc:ranged] Hero (from hand or discard pile).",
             "Fight: The player of your choice gains one of the captured Heroes. Put the rest on the bottom of the Hero Deck."
@@ -1318,7 +1318,7 @@
           "slug": "nezarr-the-calculator",
           "vp": "4",
           "vAttack": "11",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-celestials-nezarr-the-calculator.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-celestials-nezarr-the-calculator.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:covert] or [hc:tech]",
             "Fight: Nezarr grants you a [keyword:Celestial Boon]: For the rest of the game, while it's your turn, the Mastermind gets -[icon:attack] equal to a fifth of its printed [icon:attack]. (round down the loss)",
@@ -1330,7 +1330,7 @@
           "slug": "gammenon-the-gatherer",
           "vp": "3",
           "vAttack": "10",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-celestials-gammenon-the-gatherer.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-celestials-gammenon-the-gatherer.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:strength] or [hc:instinct]",
             "Fight: Gammenon grants you a [keyword:Celestial Boon]: For the rest of the game, whenever you fight a Villain, rescue a Bystander.",
@@ -1342,7 +1342,7 @@
           "slug": "exitar-the-exterminator",
           "vp": "5",
           "vAttack": "12",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-celestials-exitar-the-exterminator.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-celestials-exitar-the-exterminator.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:tech] or [hc:ranged]",
             "Fight: Exitar grants you a [keyword:Celestial Boon]: For the rest of the game, once during each of your turns, you may fight a Henchman from your Victory Pile. Spend the normal [icon:attack] then do the Henchman's Fight effect, KO it, and rescue a Bystander.",
@@ -1354,7 +1354,7 @@
           "slug": "arishem-the-judge",
           "vp": "5",
           "vAttack": "13",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-celestials-arishem-the-judge.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-celestials-arishem-the-judge.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:ranged] or [hc:strength]",
             "Fight: Arishem grants you a [keyword:Celestial Boon]: For the rest of the game, once during each of your turns, you may put a card from the HQ on the bottom of the Hero Deck.",
@@ -1366,7 +1366,7 @@
           "slug": "tiamut-the-dreaming-celestial",
           "vp": "6",
           "vAttack": "14",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-celestials-tiamut-the-dreaming-celestial.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-celestials-tiamut-the-dreaming-celestial.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:instinct] or [hc:covert]",
             "Fight: Tiamut grants you a [keyword:Celestial Boon]: Your hand size is one more for the rest of the game.",
@@ -1386,7 +1386,7 @@
           "slug": "the-mapmakers",
           "vp": "3",
           "vAttack": "7",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-from-beyond-the-mapmakers.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-from-beyond-the-mapmakers.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:tech]",
             "Fight: KO one of your Heroes."
@@ -1397,7 +1397,7 @@
           "slug": "the-shaper-of-worlds",
           "vp": "5",
           "vAttack": "10",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-from-beyond-the-shaper-of-worlds.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-from-beyond-the-shaper-of-worlds.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:ranged]",
             "Ambush: Create a “New Reality“ space that stays above the Shaper of Worlds. It always contains a Hero, like an HQ space. Players can recruit from it.",
@@ -1410,7 +1410,7 @@
           "slug": "kubik",
           "vp": "5",
           "vAttack": "11",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-from-beyond-kubik.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-from-beyond-kubik.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:instinct]",
             "Ambush: Each player must reveal two cards with the same non-zero cost or gain a Wound.",
@@ -1422,7 +1422,7 @@
           "slug": "kosmos",
           "vp": "6",
           "vAttack": "13",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-from-beyond-kosmos.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-from-beyond-kosmos.webp",
           "abilities": [
             "[keyword:Cosmic Threat] [hc:covert]",
             "Fight: Take another turn after this one. Don't play a card from the Villain Deck at the start of that turn. For the rest of the game, players take turns in the opposite order around the table."
@@ -1441,7 +1441,7 @@
           "slug": "corvus-glaive",
           "vp": "4",
           "vAttack": "5+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-black-order-of-thanos-corvus-glaive.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-black-order-of-thanos-corvus-glaive.webp",
           "abilities": [
             "Ambush: [keyword:Danger Sense 3], helping all Black Order Villains and the Mastermind. Corvus Glaive captures a Bystander revealed this way."
           ]
@@ -1451,7 +1451,7 @@
           "slug": "black-dwarf",
           "vp": "3",
           "vAttack": "4+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-black-order-of-thanos-black-dwarf.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-black-order-of-thanos-black-dwarf.webp",
           "abilities": [
             "Ambush: [keyword:Danger Sense 2], helping all Black Order Villains and the Mastermind. Play a Master Strike revealed this way.",
             "Fight: KO one of your Heroes."
@@ -1462,7 +1462,7 @@
           "slug": "supergiant",
           "vp": "5",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-black-order-of-thanos-supergiant.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-black-order-of-thanos-supergiant.webp",
           "abilities": [
             "Ambush: [keyword:Danger Sense 1], helping all Black Order Villains and the Mastermind. Play a Villain revealed this way.",
             "Fight: You may KO a card from your discard pile."
@@ -1473,7 +1473,7 @@
           "slug": "proxima-midnight",
           "vp": "5",
           "vAttack": "7+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-black-order-of-thanos-proxima-midnight.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-black-order-of-thanos-proxima-midnight.webp",
           "abilities": [
             "Ambush: [keyword:Danger Sense 2], helping all Black Order Villains and the Mastermind. Play a Scheme Twist revealed this way.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
@@ -1484,7 +1484,7 @@
           "slug": "ebony-maw",
           "vp": "5",
           "vAttack": "6+",
-          "imageUrl": "https://images.barefootbetters.com/cosm/cosm-vi-black-order-of-thanos-ebony-maw.webp",
+          "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-black-order-of-thanos-ebony-maw.webp",
           "abilities": [
             "Ambush: Choose Villain, Master Strike, or Scheme Twist. Then [keyword:Danger Sense 3], helping all Black Order Villains and the Mastermind. Play all the cards you revealed this way of the type you chose."
           ]
@@ -1497,7 +1497,7 @@
       "id": 35,
       "name": "Sidera Maris, Bridge Builders",
       "slug": "sidera-maris-bridge-builders",
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hm-sidera-maris-bridge-builders.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hm-sidera-maris-bridge-builders.webp",
       "abilities": [
         "[keyword:Ambush]: If there's a Villain on the Bridge, that Villain and this Henchman each gain a Shard. Otherwise, move this to the Bridge.",
         "[keyword:Fight]: KO one of your Heroes."
@@ -1509,7 +1509,7 @@
       "id": 36,
       "name": "Universal Church of Truth",
       "slug": "universal-church-of-truth",
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-hm-universal-church-of-truth.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-hm-universal-church-of-truth.webp",
       "abilities": [
         "[keyword:Ambush]: Each Henchman Villain in the city gains a Shard. If Magus is the Mastermind, one Cosmic Wraith also gains a Shard.",
         "[keyword:Fight]: Burn 2 Shards: KO one of your Heroes."
@@ -1523,7 +1523,7 @@
       "id": 130,
       "name": "Contest of Champions, The",
       "slug": "contest-of-champions-the",
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-sc-contest-of-champions-the.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-sc-contest-of-champions-the.webp",
       "cards": [
         {
           "abilities": [
@@ -1540,7 +1540,7 @@
       "id": 131,
       "name": "Turn the Soul of Adam Warlock",
       "slug": "turn-the-soul-of-adam-warlock",
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-sc-turn-the-soul-of-adam-warlock.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-sc-turn-the-soul-of-adam-warlock.webp",
       "cards": [
         {
           "abilities": [
@@ -1555,7 +1555,7 @@
       "id": 132,
       "name": "Destroy the Nova Corps",
       "slug": "destroy-the-nova-corps",
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-sc-destroy-the-nova-corps.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-sc-destroy-the-nova-corps.webp",
       "cards": [
         {
           "abilities": [
@@ -1572,7 +1572,7 @@
       "id": 133,
       "name": "Annihilation: Conquest",
       "slug": "annihilation-conquest",
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-sc-annihilation-conquest.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-sc-annihilation-conquest.webp",
       "cards": [
         {
           "abilities": [
@@ -1591,7 +1591,7 @@
       "name": "Board Gamer",
       "slug": "board-gamer",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-by-board-gamer.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-by-board-gamer.webp",
       "cards": [
         {
           "qtd": 1,
@@ -1606,7 +1606,7 @@
       "name": "Legendary Game Designer",
       "slug": "legendary-game-designer",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-by-legendary-game-designer.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-by-legendary-game-designer.webp",
       "cards": [
         {
           "qtd": 1,
@@ -1621,7 +1621,7 @@
       "name": "Pizza Delivery Guy",
       "slug": "pizza-delivery-guy",
       "vp": 1,
-      "imageUrl": "https://images.barefootbetters.com/cosm/cosm-by-pizza-delivery-guy.webp",
+      "imageUrl": "https://images.legendary-arena.com/cosm/cosm-by-pizza-delivery-guy.webp",
       "cards": [
         {
           "qtd": 1,

@@ -119,7 +119,7 @@ const REQUIRED_VARS = {
     'PORT',               // local dev only — Render sets this automatically
   ],
   'Cloudflare': [
-    'R2_PUBLIC_URL',      // e.g. https://images.barefootbetters.com
+    'R2_PUBLIC_URL',      // e.g. https://images.legendary-arena.com
     'CF_PAGES_URL',       // e.g. https://cards.barefootbetters.com
   ],
   'Frontend (Vite)': [

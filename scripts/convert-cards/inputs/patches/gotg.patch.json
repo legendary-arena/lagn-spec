@@ -9,22 +9,22 @@
           "slot": 1,
           "rarity": 1,
           "rarityLabel": "Common 1",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-3c1.webp"
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-3c1.webp"
         },
         {
           "slug": "prune-the-growths",
           "slot": 2,
           "rarity": 1,
           "rarityLabel": "Common 2",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-4c2.webp"
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-4c2.webp"
         },
         {
           "slug": "groot-and-branches",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-4u.webp"
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-4u.webp"
         },
         {
           "slug": "i-am-groot",
-          "imageUrl": "https://images.barefootbetters.com/gotg/gotg-hr-groot-8r.webp"
+          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-8r.webp"
         }
       ],
       "_skipPair": [

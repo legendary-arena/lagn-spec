@@ -9,7 +9,7 @@
  * Exit code 0 = clean or warnings only. Exit code 1 = errors found.
  */
 
-const R2_BASE_URL = 'https://images.barefootbetters.com';
+const R2_BASE_URL = 'https://images.legendary-arena.com';
 
 const DELAY_BETWEEN_SETS_MS = 50;
 // why: R2 rate-limits aggressive parallel fetches. A 50ms pause between
