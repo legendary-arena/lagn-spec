@@ -7,6 +7,32 @@
 
 ## Current State
 
+### WP-148 / EC-151 Executed — `legendary-arena.com` + `www` Cutover Prep — Server CORS (2026-05-11)
+
+**Server CORS allowlist now accepts the marketing-site root + www hostnames.**
+Commit A `6a4276c` (`EC-151:`): two-entry insertion into the
+`Server({ origins: [...] })` literal in `apps/server/src/server.mjs` adjacent
+to the existing `play.legendary-arena.com` entry. Pre-existing five entries
+retain relative order. Final array length: 7. Unblocks WP-149's
+marketing-site public-leaderboard page for cross-origin calls to
+`api.legendary-arena.com`.
+
+Server baseline `250 / 184 / 66 / 0` UNCHANGED. Engine baseline `698 / 150 / 0`
+UNCHANGED. No engine, registry, preplan, or UI change. No new runtime npm
+dependencies. No `render.yaml` change (Render auto-redeploys from `main`).
+
+01.5 NOT INVOKED. 01.6 post-mortem SKIPPED — mechanical CORS allowlist
+addition with no design tension surfaced. D-14601 (WP-146 / EC-149) covers
+the dual-running retention pattern at the family level; no new D-NNNNN
+required at WP-148 execution.
+
+**Verification:** `curl -I -H "Origin: https://legendary-arena.com" https://api.legendary-arena.com/api/leaderboards/scenarios`
+returning HTTP/200 with `Access-Control-Allow-Origin` set; same from
+`https://www.legendary-arena.com` Origin. Both run post-Render-redeploy
+once Render shows the deployment serving Commit A's hash.
+
+---
+
 ### WP-147 / EC-150 Executed — PhysicalCard `companionSlug` + Physical-Side Order (2026-05-10)
 
 **Registry can now express hero-plus-companion artwork on physical cards;
