@@ -4,17 +4,23 @@
 // Hygiene check for accumulated `claude/*` worktree+branch leftovers
 // produced by Claude Code's per-session auto-spawn behavior.
 //
-// Two modes:
+// Three modes:
 //
 //   --report  (default; safe to run from any hook)
-//     Read-only audit. Counts prunable branches; prints a one-line
-//     recommendation only when count exceeds REPORT_THRESHOLD.
+//     Read-only audit across all claude/* branches. Counts prunable
+//     branches; prints a one-line recommendation only when count
+//     exceeds REPORT_THRESHOLD.
 //
 //   --execute (operator-driven; never fired by a hook)
 //     Deletes each prunable branch and its worktree. Skips anything
 //     that fails the safety contract.
 //
-// Safety contract (ALL must hold to prune):
+//   --verify-current (operator-driven; pre-delete safety gate)
+//     Verifies that the CURRENT branch (where the script is invoked
+//     from) is safe to delete. Exits 0 on PASS, 1 on FAIL. Use after
+//     a PR merges, before `git branch -D`.
+//
+// Safety contract for --report / --execute (ALL must hold to prune):
 //
 //   1. Branch name matches /^claude\//
 //   2. Branch is 0 commits ahead of origin/main
@@ -22,9 +28,18 @@
 //   4. Worktree (if attached) has no uncommitted changes other than a
 //      modification to .claude/settings.local.json (harness state)
 //
-// Intentionally narrow. This script will NOT prune:
-//   - branches with real commits (even merged-via-squash; that's a
-//     separate audit using file-content equivalence)
+// Safety contract for --verify-current (ALL must hold to PASS):
+//
+//   1. Current branch name matches /^claude\//
+//   2. Working tree has no uncommitted changes (except harness state)
+//   3. Branch is in a "merged" state, defined as EITHER:
+//      a. 0 commits ahead of origin/main (true merge / fast-forward), OR
+//      b. A merged PR exists on origin with this branch as head
+//         (the squash-merge case; queried via `gh pr list`)
+//
+// Intentionally narrow. The bulk-prune modes do NOT prune:
+//   - branches with real commits (even merged-via-squash — left for
+//     the operator to handle with --verify-current + manual delete)
 //   - branches with a remote tracking branch (might be in PR review)
 //   - worktrees with untracked files or any tracked-file modification
 //     besides settings.local.json
@@ -33,7 +48,9 @@ import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
 const REPORT_THRESHOLD = 5;
-const mode = process.argv.includes('--execute') ? 'execute' : 'report';
+const mode = process.argv.includes('--verify-current') ? 'verify'
+  : process.argv.includes('--execute') ? 'execute'
+  : 'report';
 
 function git(args, cwd) {
   return execSync(`git ${args}`, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
@@ -175,5 +192,72 @@ function execute({ repo, prunable, blocked }) {
   return failed === 0 ? 0 : 1;
 }
 
-const result = audit();
-process.exit(mode === 'execute' ? execute(result) : report(result));
+/**
+ * Returns true if origin has a merged PR with the given branch as head.
+ * Requires `gh` CLI to be installed and authenticated. Returns null if
+ * `gh` is unavailable so the caller can degrade gracefully.
+ */
+function hasMergedPR(branch) {
+  try {
+    const out = execSync(
+      `gh pr list --state merged --search "head:${branch}" --json number --jq "length"`,
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }
+    ).trim();
+    return Number(out) > 0;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Verifies the current branch is safe to delete. Output is single-line
+ * PASS/FAIL with operator-actionable diagnosis on failure.
+ */
+function verifyCurrent() {
+  const branch = git('rev-parse --abbrev-ref HEAD');
+
+  if (!branch.startsWith('claude/')) {
+    console.log(`VERIFY FAIL: Current branch "${branch}" is not a claude/* branch. --verify-current is only meant for ephemeral session branches.`);
+    return 1;
+  }
+
+  if (!isWorktreeDirtOnly(process.cwd())) {
+    console.log(`VERIFY FAIL: Working tree has uncommitted changes other than .claude/settings.local.json. Commit, stash, or discard before verification.`);
+    return 1;
+  }
+
+  const ahead = commitsAheadOfMain(undefined, branch);
+
+  if (ahead === 0) {
+    console.log(`VERIFY PASS: Branch "${branch}" is fully merged (0 commits ahead of origin/main). Safe to delete.`);
+    return 0;
+  }
+
+  if (ahead < 0) {
+    console.log(`VERIFY FAIL: Could not compute commits ahead of origin/main. Ensure 'origin/main' ref is present (try: git fetch origin main).`);
+    return 1;
+  }
+
+  // Has commits ahead — could be a squash-merge survivor. Check gh.
+  const mergedPR = hasMergedPR(branch);
+
+  if (mergedPR === true) {
+    console.log(`VERIFY PASS: Branch "${branch}" has ${ahead} commit(s) ahead of origin/main but a merged PR is recorded on origin. Safe to delete (squash-merge pattern).`);
+    return 0;
+  }
+
+  if (mergedPR === null) {
+    console.log(`VERIFY FAIL: Branch "${branch}" has ${ahead} commit(s) ahead of origin/main, and gh CLI is unavailable to check for a squash-merged PR. Either (a) merge the PR first, (b) install/authenticate the gh CLI, or (c) confirm manually that the work is on main and use git branch -D directly.`);
+    return 1;
+  }
+
+  console.log(`VERIFY FAIL: Branch "${branch}" has ${ahead} commit(s) ahead of origin/main and no merged PR exists. The branch carries unmerged work — either merge it or discard before deletion.`);
+  return 1;
+}
+
+if (mode === 'verify') {
+  process.exit(verifyCurrent());
+} else {
+  const result = audit();
+  process.exit(mode === 'execute' ? execute(result) : report(result));
+}
