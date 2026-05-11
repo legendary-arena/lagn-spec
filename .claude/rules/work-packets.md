@@ -155,9 +155,9 @@ artifacts separable from working memory.
 | File pattern | Disposition |
 |---|---|
 | `docs/ai/session-context/session-context-wp*.md` | **Committed** governance artifact. Captures the reconciled state at session start; future sessions read it. |
-| `docs/ai/invocations/preflight-wp*.md` | **Scratchpad by default. Not committed** unless an EC or WP explicitly cites it as a normative input or output. |
-| `docs/ai/invocations/copilot-wp*.md` | **Scratchpad by default. Not committed** (same reason). |
-| `docs/ai/invocations/session-wp*.md` | **Scratchpad by default. Not committed** unless cited normatively (e.g., as the canonical session-prompt artifact for an EC). |
+| `docs/ai/invocations/preflight-*.md` | **Scratchpad by default. Not committed** unless an EC or WP explicitly cites it as a normative input or output. |
+| `docs/ai/invocations/copilot-*.md` | **Scratchpad by default. Not committed** (same reason). |
+| `docs/ai/invocations/session-*.md` | **Scratchpad by default. Not committed** unless cited normatively (e.g., as the canonical session-prompt artifact for an EC). Applies to both WP-scoped sessions (`session-wp137-...md`) and ad-hoc operator sessions (`session-claude-branch-cleanup.md`). |
 
 **Why scratchpad-by-default:** preflight, copilot, and session-prompt
 invocation files behave like REPL transcripts and compiler logs — they

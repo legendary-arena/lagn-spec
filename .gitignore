@@ -20,9 +20,9 @@ apps/registry-viewer/dist/
 # remain committed as governance artifacts. Override: `git add -f <path>` if
 # a WP or EC cites a specific file normatively. See .claude/rules/work-packets.md
 # §Invocation Artifacts (Commit Policy).
-docs/ai/invocations/preflight-wp*.md
-docs/ai/invocations/copilot-wp*.md
-docs/ai/invocations/session-wp*.md
+docs/ai/invocations/preflight-*.md
+docs/ai/invocations/copilot-*.md
+docs/ai/invocations/session-*.md
 
 # Images after standardization (large binary files)
 # Commit images/raw/ as source of truth; images/standard/ is generated
