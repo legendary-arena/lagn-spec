@@ -7,6 +7,79 @@
 
 ## Current State
 
+### WP-150 / EC-152 Executed — Leaderboard Theme + Global Aggregation Endpoints (2026-05-11)
+
+**The public-leaderboard surface now exposes theme-grouped and
+global Top-N PAR aggregations.** Commit A `3ab2451` (`EC-152:`)
+adds two public, anonymous, read-only HTTP endpoints under
+`/api/leaderboards/themes/:themeId` and `/api/leaderboards/top`,
+extending the existing WP-054 + WP-115 library + thin-Koa-adapter
+pattern. Commit B (`SPEC:`) closes governance.
+
+**Endpoints.** `GET /api/leaderboards/themes/:themeId` returns
+`{ themeId, entries: PublicLeaderboardEntry[], totalEligibleEntries }`
+ranked by `final_score ASC, created_at ASC`, paginated by `limit`
+(default 25, range 1..100) + `offset` (default 0, range 0..10000);
+404 with `{ error: 'theme_not_found' }` for unknown themeId; 200
+with empty entries for a known theme whose scenarios have no
+PAR-published scores. `GET /api/leaderboards/top` returns
+`{ entries: PublicLeaderboardEntry[], totalEligibleEntries }` over
+every PAR-published scenario, same comparator, same pagination
+bounds; no 404 surface (200 with empty entries when no PAR data
+exists). Both endpoints reuse the locked `Cache-Control: no-store`
+first-statement discipline and the `{ error: 'invalid_query', message }`
+(400) / `{ error: 'internal_error' }` (500) envelopes.
+
+**Three D-150NN entries land.** D-15001 locks the themeId →
+scenarioKey projection via the engine's `buildScenarioKey` helper
+over `setupIntent.{schemeId, mastermindId, villainGroupIds}`; each
+theme produces exactly one scenarioKey. D-15002 locks the
+dep-injection shape as Option (a) — extending
+`LeaderboardDependencies` with `getScenarioKeysForTheme?` in a
+single deps bundle (preserving the existing 3-arg
+`registerLeaderboardRoutes` call shape). D-15003 locks the
+PAR-eligibility derivation for the global Top-N as
+`listScenarioKeys` → `checkParPublished` filter →
+`cs.scenario_key = ANY($1)`.
+
+**Layer boundary preserved.** `apps/server/src/leaderboards/**`
+continues to import nothing from `@legendary-arena/registry`,
+`@legendary-arena/preplan`, `@legendary-arena/vue-sfc-loader`, or
+`boardgame.io`. The themeId → scenarioKey[] map is built at
+startup in `server.mjs` from the 70 `content/themes/*.json` files
+using the registry's `validateThemeFile` validator + the engine's
+`buildScenarioKey` helper; the map is frozen for the process
+lifetime; missing-dir / invalid-file paths fail soft (warn + skip,
+never block startup). The bound `getScenarioKeysForTheme` reaches
+the logic functions only as a function reference inside the
+existing parGate deps bundle.
+
+**Test delta.** Server baseline `250 / 184 / 66 / 0` →
+**`263 / 197 / 66 / 0`** (+13 tests / +13 pass, suites unchanged
+at 31). +13 lies within the locked +10..+18 projection. New tests
+cover: 200/400/404/500 paths for both new routes; fail-closed
+paths when `getScenarioKeysForTheme` is omitted or returns null;
+empty-PAR short-circuit semantics for the theme route (200 with
+empty entries, NOT 404); Cache-Control discipline preserved
+through throw paths. Engine baseline `698 / 150 / 0` UNCHANGED.
+
+**API catalog updated.** Two new rows in
+`docs/ai/REFERENCE/api-endpoints.md` for the two new endpoints
+(`Status: Wired`, `Auth: guest`, `Authorizing WP: WP-150`). The
+new envelope value `'theme_not_found'` is documented in the theme
+route's response schema column.
+
+**Out of scope (preserved):** no engine package change, no
+registry package change, no preplan touch, no UI / arena-client /
+replay-producer / wiki-viewer / registry-viewer change, no
+`render.yaml` change, no `pnpm-lock.yaml` change, no new runtime
+npm deps, no `legendary.*` schema change, no change to the three
+existing WP-054 / WP-115 endpoints beyond the
+`LeaderboardDependencies` extension. WP-149 (marketing-site
+public-leaderboard page) is now unblocked from this side.
+
+---
+
 ### WP-148 / EC-151 Executed — `legendary-arena.com` + `www` Cutover Prep — Server CORS (2026-05-11)
 
 **Server CORS allowlist now accepts the marketing-site root + www hostnames.**
