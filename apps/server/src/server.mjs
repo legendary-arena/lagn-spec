@@ -227,6 +227,13 @@ export async function startServer() {
     // Authorized cross-origin consumers of the boardgame.io lobby + match API:
     //   - https://play.legendary-arena.com — the production arena-client SPA
     //     deployed under WP-007a (CF Pages project legendary-arena-play).
+    //   - https://legendary-arena.com — the marketing-site Hugo bundle root
+    //     (apex hostname). Needed for the WP-149 public-leaderboard page to
+    //     call api.legendary-arena.com cross-origin.
+    //   - https://www.legendary-arena.com — the www-canonical alternate.
+    //     Hugo's baseURL resolves to www.*, but some browsers send the apex
+    //     Origin even when the user typed www, and vice versa; both must be
+    //     allowlisted for the leaderboard page to load on either form.
     //   - https://legendary-arena-play.pages.dev — the same project's CF
     //     Pages auto-generated hostname; needed for the WP-007a Step 9
     //     build-parity check before the custom domain binds, and as the
@@ -245,6 +252,8 @@ export async function startServer() {
     //     work against this server.
     origins: [
       'https://play.legendary-arena.com',
+      'https://legendary-arena.com',
+      'https://www.legendary-arena.com',
       'https://legendary-arena-play.pages.dev',
       'https://cards.barefootbetters.com',
       'https://cards.legendary-arena.com',
