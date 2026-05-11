@@ -306,6 +306,92 @@ describe("physicalCards (WP-138 Phase 1a)", () => {
     }
   });
 
+  // why: WP-147 D-14701 — PhysicalCardSchema.companionSlug is optional. The
+  // four tests below cover the three direct schema cases (valid slug, invalid
+  // empty/whitespace string, absent field — backward-compatible) plus the
+  // Drax mgtg data shape, which is the first registry application of the
+  // new field.
+  it("WP-147: PhysicalCardSchema accepts companionSlug when valid", () => {
+    const result = PhysicalCardSchema.safeParse({
+      id:            "p1",
+      count:         3,
+      imageUrl:      "https://images.barefootbetters.com/test/test-hr-test-hero-companion-a-b.webp",
+      sides:         ["a", "b"],
+      companionSlug: "irani-rael",
+    });
+    assert.equal(result.success, true, "PhysicalCardSchema must accept a valid companionSlug");
+  });
+
+  it("WP-147: PhysicalCardSchema rejects companionSlug with whitespace or empty value", () => {
+    const emptyResult = PhysicalCardSchema.safeParse({
+      id:            "p1",
+      count:         3,
+      imageUrl:      "https://images.barefootbetters.com/test/test-hr-test-hero.webp",
+      sides:         ["a"],
+      companionSlug: "",
+    });
+    assert.equal(emptyResult.success, false, "Empty companionSlug must fail PhysicalCardSchema");
+    if (!emptyResult.success) {
+      const message = emptyResult.error.issues.map((i) => i.message).join("; ");
+      assert.ok(
+        /companionSlug/.test(message) && /non-empty|slug regex/.test(message),
+        `Expected empty-companionSlug error to name the field; got: ${message}`,
+      );
+    }
+
+    const whitespaceResult = PhysicalCardSchema.safeParse({
+      id:            "p1",
+      count:         3,
+      imageUrl:      "https://images.barefootbetters.com/test/test-hr-test-hero.webp",
+      sides:         ["a"],
+      companionSlug: "has spaces",
+    });
+    assert.equal(whitespaceResult.success, false, "Whitespace companionSlug must fail PhysicalCardSchema");
+    if (!whitespaceResult.success) {
+      const message = whitespaceResult.error.issues.map((i) => i.message).join("; ");
+      assert.ok(
+        /companionSlug/.test(message) && /slug regex/.test(message),
+        `Expected whitespace-companionSlug error to name the field and slug regex; got: ${message}`,
+      );
+    }
+  });
+
+  it("WP-147: PhysicalCardSchema validates physicalCard without companionSlug (backward-compatible)", () => {
+    const result = PhysicalCardSchema.safeParse({
+      id:       "p1",
+      count:    1,
+      imageUrl: "https://images.barefootbetters.com/test/test-hr-test-hero-card-a.webp",
+      sides:    ["card-a"],
+    });
+    assert.equal(result.success, true, "PhysicalCardSchema must accept physicalCard without companionSlug (optional field)");
+  });
+
+  it("WP-147: Drax mgtg physicalCards p1 + p3 have correct companion slugs and physical-side order", async () => {
+    const registry = await createRegistryFromLocalFiles({ metadataDir, cardsDir });
+    const mgtg = registry.getSet("mgtg");
+    assert.ok(mgtg, "mgtg set must load — WP-147 Drax companionSlug fix depends on it");
+    const drax = mgtg.heroes.find((hero) => hero.slug === "drax");
+    assert.ok(drax, "mgtg/drax hero must be present (WP-147 fix target)");
+
+    const p1 = drax.physicalCards.find((p) => p.id === "p1");
+    assert.ok(p1, "Drax p1 physicalCard must be present");
+    assert.equal(p1.companionSlug, "rhomann-dey", "Drax p1 companionSlug must be 'rhomann-dey'");
+    assert.deepEqual(
+      p1.sides,
+      ["remove-his-spine", "also-illegal"],
+      "Drax p1 sides[] must be in physical-side order: remove-his-spine (left/top), also-illegal (right/bottom)",
+    );
+
+    const p3 = drax.physicalCards.find((p) => p.id === "p3");
+    assert.ok(p3, "Drax p3 physicalCard must be present");
+    assert.equal(p3.companionSlug, "irani-rael", "Drax p3 companionSlug must be 'irani-rael'");
+    assert.deepEqual(
+      p3.sides,
+      ["i-am-invisible", "xandar-is-invincible"],
+      "Drax p3 sides[] must be in physical-side order: i-am-invisible (left), xandar-is-invincible (right)",
+    );
+  });
+
   // why: end-to-end validation of the canonical reference patch — this is
   // the only Phase 1a curated split-hero declaration. The 3 split + 1 solo
   // shape and 14-instance deck size are the locked acceptance values.

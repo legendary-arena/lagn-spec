@@ -107,14 +107,28 @@ export const HeroCardSchema = z.object({
 // a single Zod-check change rather than a TypeScript-type migration
 // across every consumer. The `<= 2` ceiling is locked for this WP;
 // raising it requires its own DECISIONS entry.
+// why: D-14701 — physicalCard depicts hero plus a named non-hero companion
+// character on the printed artwork (e.g., Drax/Irani Rael, Drax/Rhomann Dey
+// in mgtg). The slug appears in the imageUrl between heroSlug and side
+// slugs. Field is optional: most physicalCards have no companion (the
+// printed art shows the hero alone or with only side slugs). The slug
+// regex matches the slug grammar used elsewhere across the schema (lower-
+// case alphanumerics and hyphens). PhysicalCardSchema is primary
+// enforcement; heroImageUrl() has a defense-in-depth guard at the module
+// boundary so direct callers also surface bad input loudly.
 export const PhysicalCardSchema = z
   .object({
-    id:       z.string().regex(/^p\d+$/, "physicalCard id must match ^p\\d+$ (e.g., p1, p2)"),
-    count:    z.number().int().min(1),
-    imageUrl: z.string().url(),
-    sides:    z.array(z.string().min(1))
-                .min(1, "physicalCard.sides[] must contain at least one side slug")
-                .max(2, "physicalCard.sides[] must contain at most two side slugs (D-13802 ceiling lock; raising requires a new DECISIONS entry)"),
+    id:            z.string().regex(/^p\d+$/, "physicalCard id must match ^p\\d+$ (e.g., p1, p2)"),
+    count:         z.number().int().min(1),
+    imageUrl:      z.string().url(),
+    sides:         z.array(z.string().min(1))
+                     .min(1, "physicalCard.sides[] must contain at least one side slug")
+                     .max(2, "physicalCard.sides[] must contain at most two side slugs (D-13802 ceiling lock; raising requires a new DECISIONS entry)"),
+    companionSlug: z
+                     .string()
+                     .min(1, "physicalCard.companionSlug must be a non-empty slug; check the patch entry or remove the field if no companion appears on the printed artwork")
+                     .regex(/^[a-z0-9-]+$/, "physicalCard.companionSlug must match the slug regex ^[a-z0-9-]+$ (lowercase alphanumerics and hyphens only); check the patch entry for stray whitespace, uppercase, or punctuation")
+                     .optional(),
   });
 
 // ── Hero (a named hero deck with 3-7 cards) ───────────────────────────────────

@@ -729,11 +729,12 @@
         {
           "id": "p1",
           "count": 2,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-also-illegal-remove-his-spine.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-rhomann-dey-remove-his-spine-also-illegal.webp",
           "sides": [
-            "also-illegal",
-            "remove-his-spine"
-          ]
+            "remove-his-spine",
+            "also-illegal"
+          ],
+          "companionSlug": "rhomann-dey"
         },
         {
           "id": "p2",
@@ -746,11 +747,12 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-i-am-invisible-xandar-is-invincible.webp",
+          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-irani-rael-i-am-invisible-xandar-is-invincible.webp",
           "sides": [
             "i-am-invisible",
             "xandar-is-invincible"
-          ]
+          ],
+          "companionSlug": "irani-rael"
         },
         {
           "id": "p4",

@@ -44,23 +44,20 @@
  *     data. Eliminates the silent-swap risk that bit Wolfsbane's Night Vision
  *     vs Wolf Out (both cost 3 common). Image migration on R2 driven by
  *     scripts/convert-cards/generate-rename-scripts.mjs.
- * v17 changes:
- *   - Reversed v14: mastermind imageUrls are no longer preserved from npm source
- *     even when they start with "http". The legacy URLs were
- *     nyc3.digitaloceanspaces.com/bageltop/CardImages/Masterminds/* on a third-
- *     party bucket that returns 403; the project owns its own R2 bucket. Always
- *     synthesize R2 URLs ({set}-mm-{slug}.webp / {set}-me-{slug}.webp /
- *     {set}-mt-{slug}-{cardSlug}.webp) and let the rclone upload step supply
- *     any missing image objects.
- *   - R2_BASE_URL switched from images.barefootbetters.com to
- *     images.legendary-arena.com. Both hostnames currently point at the same
- *     R2 bucket (legendary-images); the rebrand follows the cards./play./www.
- *     migration to the legendary-arena.com domain.
  */
 
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+// why: reach into the registry's built dist/ rather than the workspace
+// export — scripts/convert-cards/ is not a workspace package, and adding it
+// to the workspaces array for one function's import is more plumbing than
+// the value justifies. The script's existing operational contract already
+// requires `pnpm --filter @legendary-arena/registry build` to have run
+// first (registry inputs and the convert script live in the same monorepo).
+// Failure mode is a clear Node module-resolution error naming the missing
+// file, which is a useful operator pre-flight signal.
+import { heroImageUrl, R2_BASE_URL } from '../../packages/registry/dist/heroImageUrl.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -76,7 +73,6 @@ const CARDS_DIR   = join(INPUTS_DIR, 'cards');
 const OUTPUT_DIR  = join(__dirname, '..', '..', 'data', 'cards');
 const DATA_DIR    = INPUTS_DIR;
 const PATCHES_DIR = join(INPUTS_DIR, 'patches');
-const R2_BASE_URL = 'https://images.legendary-arena.com';
 
 // why: WP-138 §B / executive review §⚠️4 — `--strict` (or env
 // LEGENDARY_CONVERT_STRICT=1) makes audit warnings for paired-equal
@@ -287,46 +283,6 @@ function toSlug(name) {
 }
 
 /**
- * Builds the R2 image URL for a hero card using the card's slug.
- * Solo (single-side) pattern:  {setAbbr}-hr-{heroSlug}-{cardSlug}.webp
- *   e.g. nmut-hr-wolfsbane-night-vision.webp
- * Split (two-side) pattern:    {setAbbr}-hr-{heroSlug}-{sortedA}-{sortedB}.webp
- *   e.g. bkwd-hr-falcon-winter-soldier-attune-atone.webp
- *
- * why: cardSlug-based naming makes filenames self-documenting and survives
- * any future slot/cost/rarity reordering in upstream source data. The previous
- * {cost}{rarityCode}{slot} encoding was opaque — two cards in a hero's deck
- * with the same cost and rarity (e.g. Wolfsbane's Night Vision and Wolf Out at
- * cost 3 common 1/2) could be silently swapped on R2 if their slot ordering
- * changed in source, with no way to detect the swap from the filename alone.
- *
- * why: D-13802 sort lock — the two-side filename uses
- * `Array.prototype.sort()` with NO comparator argument (UTF-16 code-unit
- * ordering). See D-13802 for the full forbidden list of locale-aware
- * comparison APIs and the rationale: locale-dependent collation would
- * produce non-deterministic URLs across environments (e.g., Turkish
- * locale's dotless-i rule would reorder any side slug containing "i").
- * The sort happens on a fresh slice so the caller's array order is never
- * mutated.
- *
- * @param setAbbr - Set abbreviation (e.g., "bkwd").
- * @param heroSlug - Hero slug (e.g., "falcon-winter-soldier").
- * @param sides - Array of one or two card-side slugs (e.g., ["attune", "atone"]).
- * @returns The full R2 image URL for the resulting physical card.
- */
-function heroImageUrl(setAbbr, heroSlug, sides) {
-  if (!Array.isArray(sides) || sides.length < 1 || sides.length > 2) {
-    throw new Error(
-      `heroImageUrl(setAbbr="${setAbbr}", heroSlug="${heroSlug}"): sides must be ` +
-      `an array of length 1 or 2 (D-13802 ceiling lock); received ${JSON.stringify(sides)}.`
-    );
-  }
-  const sortedSides = sides.slice().sort();
-  const filename = `${setAbbr}-hr-${heroSlug}-${sortedSides.join('-')}.webp`;
-  return `${R2_BASE_URL}/${setAbbr}/${filename}`;
-}
-
-/**
  * Builds the R2 image URL for non-hero cards using group + card slug.
  * Pattern: {setAbbr}-{prefix}-{groupSlug}-{cardSlug}.webp
  *
@@ -515,7 +471,7 @@ function convertSet(jsFilePath, setAbbr) {
           cost: card.cost ?? null,
           attack: card.attack ?? null,
           recruit: card.recruit ?? null,
-          imageUrl: heroImageUrl(setAbbr, heroSlug, [toSlug(card.name)]),
+          imageUrl: heroImageUrl(setAbbr, heroSlug, [toSlug(card.name)], undefined),
           abilities: parseAbilities(card.abilities),
         };
       });
@@ -566,11 +522,9 @@ function convertSet(jsFilePath, setAbbr) {
           // Tactic: {set}-mt-{mmSlug}-{cardSlug}.webp
           mmImageUrl = groupCardImageUrl(setAbbr, 'mt', mmSlug, cardSlug);
         }
-        // why: v17 reversed the v14 "preserve any http imageUrl from source" branch.
-        // The npm source carried legacy nyc3.digitaloceanspaces.com/bageltop/... URLs
-        // for older masterminds; that bucket returns 403 and the project owns its own
-        // R2 bucket, so always synthesize an R2 URL and let the upload step (rclone
-        // copy ... r2:legendary-images/{abbr}/) supply any missing image objects.
+        // Only preserve imageUrl from source if it is a valid R2 URL (ignore legacy /CardImages/ paths)
+        if (card.imageUrl && card.imageUrl.startsWith('http')) mmImageUrl = card.imageUrl;
+
         return {
           name: card.name ?? mm.name,
           slug: cardSlug,
@@ -776,7 +730,7 @@ function applyPatch(result, setAbbr) {
           for (const card of fields.cards) {
             const cardSlug = card.slug ?? toSlug(card.name ?? '');
             if (cardSlug) {
-              card.imageUrl = heroImageUrl(setAbbr, fields.slug, [cardSlug]);
+              card.imageUrl = heroImageUrl(setAbbr, fields.slug, [cardSlug], undefined);
             }
           }
         }
@@ -855,7 +809,7 @@ function applyPatch(result, setAbbr) {
         if (section === 'heroes' && target.cards) {
           for (const card of target.cards) {
             if (card.slug) {
-              card.imageUrl = heroImageUrl(setAbbr, target.slug, [card.slug]);
+              card.imageUrl = heroImageUrl(setAbbr, target.slug, [card.slug], undefined);
             }
           }
         }
@@ -1125,12 +1079,23 @@ function synthesizePhysicalCards(hero, setAbbr, declaredPhysicalCards) {
   if (Array.isArray(declaredPhysicalCards) && declaredPhysicalCards.length > 0) {
     const physicalCards = declaredPhysicalCards.map((entry, index) => {
       const sides = entry.sides;
-      return {
+      // why: D-14701 — when a patch declares physicalCards with a
+      // companionSlug, propagate the field through to the output JSON and
+      // pass it to heroImageUrl so the generated filename carries the
+      // companion segment. Entries without companionSlug emit no companion
+      // segment and the field is omitted from the output object so the
+      // existing 39 declared two-side physicalCards remain byte-identical.
+      const companionSlug = entry.companionSlug;
+      const built = {
         id: `p${index + 1}`,
         count: entry.count,
-        imageUrl: heroImageUrl(setAbbr, hero.slug, sides),
+        imageUrl: heroImageUrl(setAbbr, hero.slug, sides, companionSlug),
         sides,
       };
+      if (companionSlug !== undefined) {
+        built.companionSlug = companionSlug;
+      }
+      return built;
     });
 
     const declaredSides = new Set();
@@ -1143,7 +1108,7 @@ function synthesizePhysicalCards(hero, setAbbr, declaredPhysicalCards) {
         physicalCards.push({
           id: `p${nextIdNumber}`,
           count: resolveSoloCardCount(hero, card),
-          imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug]),
+          imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug], undefined),
           sides: [card.slug],
         });
         nextIdNumber++;
@@ -1155,7 +1120,7 @@ function synthesizePhysicalCards(hero, setAbbr, declaredPhysicalCards) {
   return (hero.cards || []).map((card, index) => ({
     id: `p${index + 1}`,
     count: resolveSoloCardCount(hero, card),
-    imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug]),
+    imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug], undefined),
     sides: [card.slug],
   }));
 }
@@ -1429,7 +1394,7 @@ if (auditWarnings.length > 0) {
 }
 
 // why: regenerated JSONs are local-only until pushed to R2. The registry
-// loader in production reads from R2 (https://images.legendary-arena.com/
+// loader in production reads from R2 (https://images.barefootbetters.com/
 // metadata/<set>.json), so a conversion that doesn't sync leaves prod
 // unchanged. Print the canonical sync command so the operator doesn't
 // have to remember the path mapping (data/cards/ → r2:legendary-images/metadata).

@@ -7,6 +7,109 @@
 
 ## Current State
 
+### WP-147 / EC-150 Executed — PhysicalCard `companionSlug` + Physical-Side Order (2026-05-10)
+
+**Registry can now express hero-plus-companion artwork on physical cards;
+Drax in `mgtg` is the first application.** Commit A `adf62db` (`EC-150:`)
+implements the schema field + new module + tests + convert-script call-site
+audit + single data fix. Commit B (`SPEC:`) closes governance.
+
+**Schema change.** `PhysicalCardSchema` (in `packages/registry/src/schema.ts`)
+gains an optional `companionSlug?: string` field with slug regex
+`^[a-z0-9-]+$`, minimum length 1, and full-sentence Zod error message.
+The 1245 existing single-side and 39 existing two-side `physicalCards[]`
+entries validate without modification.
+
+**Module relocation.** `heroImageUrl()` and `R2_BASE_URL` relocate from
+`scripts/convert-cards/convert-cards-v15.mjs` (local definitions deleted)
+into a new `packages/registry/src/heroImageUrl.ts` with a fourth optional
+`companionSlug` parameter. The convert script imports both via
+`../../packages/registry/dist/heroImageUrl.js`; every call site passes 4
+positional arguments (explicit `undefined` when no companion source
+exists). The `synthesizePhysicalCards()` helper now propagates a patch
+entry's `companionSlug` into both the generated `imageUrl` and the output
+JSON object.
+
+**Two DECISIONS land:** **D-14701** introduces `companionSlug`
+(Vision §2 Content Authenticity — the printed card can now be expressed
+faithfully when its artwork depicts hero plus a named non-hero
+companion). **D-14702** narrowly overrides D-13802's
+`Array.prototype.sort()` lock for `sides.length === 2` only: two-side
+filenames now use source-data `sides[]` order (physical-side order:
+side A on the left/top of the printed card is first in the array).
+D-13802's UTF-16 sort lock **remains in effect** for single-side
+filenames and for any future automatic ordering operation;
+D-14702 is scoped narrowly.
+
+**Drax data fix in `data/cards/mgtg.json`** (only file under
+`data/cards/` modified):
+- p1 (cost 6 split): `sides: ["remove-his-spine", "also-illegal"]`,
+  `companionSlug: "rhomann-dey"`,
+  `imageUrl: "…mgtg/mgtg-hr-drax-rhomann-dey-remove-his-spine-also-illegal.webp"`.
+- p3 (cost 4 split): `sides: ["i-am-invisible", "xandar-is-invincible"]`,
+  `companionSlug: "irani-rael"`,
+  `imageUrl: "…mgtg/mgtg-hr-drax-irani-rael-i-am-invisible-xandar-is-invincible.webp"`.
+
+p2 / p4 / p5 / p6 byte-identical to pre-WP. Drax `hero.slug` stays
+`"drax"`; `hero.name` stays `"Drax"`; `hero.cards[]` and `cardCounts`
+unchanged. No other hero in `mgtg.json` touched. No other set's JSON
+touched.
+
+**Bit-identity invariant preserved.** The 1245 existing single-side
+`imageUrl` values remain bit-identical (single-side path semantically
+unchanged). The 39 existing two-side `imageUrl` values remain
+bit-identical because their current `sides[]` arrays are alphabetical
+by construction (a property the audit-follow-up WP will verify
+card-by-card against physical-side order).
+
+**Test-count delta: +14 tests / +1 suite** in registry:
+- 4 new in `packages/registry/src/registry.smoke.test.ts` (companionSlug
+  accept valid / reject empty + whitespace / absent / Drax data shape).
+- 10 new in the new `packages/registry/src/heroImageUrl.test.ts`
+  (single-side, two-side preserve alphabetical input, two-side preserve
+  non-alphabetical input — explicit D-14702 coverage, companion 2-side,
+  companion 1-side, length floor throw, length ceiling throw,
+  companionSlug regex throw, empty-string throw, determinism duplicate-call).
+
+Registry baseline `39 / 4 / 0` → **`53 / 5 / 0`** (exactly the locked
+delta). **Engine baseline `698 / 150 / 0` UNCHANGED** (proves zero
+engine-side impact; WP-147 is registry / tooling / single data file
+only).
+
+**Audit follow-up queued (out of scope for WP-147):** the 37 non-Drax
+existing two-side `physicalCards[]` entries across `bkwd`, `cvwr`,
+`msis`, `xmen`, and the rest of `mgtg` need a per-card audit confirming
+`sides[]` order matches the printed card's physical-side order. Cards
+where the order is wrong require `sides[]` reordering and `imageUrl`
+regeneration; the corresponding R2 files need rename. Separate WP.
+
+**R2 image rename for the two new Drax filenames** is operational
+follow-up, not in this WP.
+
+**Host migration from `images.barefootbetters.com` to
+`images.legendary-arena.com`** is orthogonal. `R2_BASE_URL` relocates
+to `packages/registry/src/heroImageUrl.ts` specifically to make that
+future change a single-point edit.
+
+01.5 NOT INVOKED — registry-layer change, no `LegendaryGameState` shape
+change, no move added, no phase hook, no replay-hash cascade. 01.6
+post-mortem advisory at execution discretion; no triggers fired
+(additive optional schema field, narrowly-scoped DECISIONS override,
+single hero data fix).
+
+**Pre-session governance bundle gap** documented mid-execution: the
+WP-147 + EC-150 + preflight + session-prompt artifacts existed in the
+main repo's working tree but were not committed to any branch reachable
+from this worktree's execution branch. User authorized a `SPEC: draft
+WP-147 + EC-150` commit (`73e031c`) to land the WP + EC files + WORK_INDEX
+row + EC_INDEX row on the execution branch before the `EC-150:` Commit A
+could pass the commit-msg hook. WP-146 row + EC-149 row preserved
+byte-identical during the insertion (the main repo's working tree had
+unintentionally overwritten both rows; the worktree insertions corrected
+this by inserting above rather than replacing).
+
+---
+
 ### WP-146 / EC-149 Executed — `cards.legendary-arena.com` Cutover Prep — Server CORS (2026-05-10)
 
 **Server CORS allowlist now accepts the new registry-viewer hostname.**

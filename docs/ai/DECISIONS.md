@@ -15927,6 +15927,198 @@ session prompt at
 §11.
 
 ---
+
+### D-14701 — Introduce physicalCard.companionSlug (WP-147)
+
+**Type:** Registry / Schema Field Addition
+**Packet:** WP-147 / EC-150
+**Date:** 2026-05-10
+
+**Context:** WP-138 (D-13801..D-13804) established `hero.physicalCards[]`
+as the authoritative deck-composition surface, with each entry carrying
+`id`, `count`, `imageUrl`, and `sides` (length 1 or 2). The pre-WP-147
+schema could not express the case where a physical card's printed
+artwork depicts the hero alongside a named non-hero companion
+character — e.g., Drax's two split-side cards in the `mgtg` set, where
+the cost-4 card shows Drax with Irani Rael and the cost-6 card shows
+Drax with Rhomann Dey. The companion is a per-physicalCard property
+of the printed artifact, not a hero-deck-level pairing; Drax's
+`hero.slug` and `hero.name` remain `"drax"` / `"Drax"`.
+
+**Decision:** `PhysicalCardSchema` (in `packages/registry/src/schema.ts`)
+gains a new optional field `companionSlug?: string` with the slug
+regex `^[a-z0-9-]+$`, minimum length 1, and a full-sentence Zod error
+message naming the field. The 1245 existing single-side and 39 existing
+two-side physical cards across all 40 sets validate without
+modification (the field is genuinely optional via Zod `.optional()`).
+
+The `heroImageUrl()` builder (relocated to
+`packages/registry/src/heroImageUrl.ts` under this WP) accepts an
+optional `companionSlug` fourth parameter. When provided, the filename
+inserts `{companionSlug}` between `{heroSlug}` and the side segment:
+`{setAbbr}-hr-{heroSlug}-{companionSlug}-{sides.join('-')}.webp`. The
+function applies module-boundary defense-in-depth on `companionSlug`
+(same regex + non-empty check) so direct callers also surface bad
+input loudly; `PhysicalCardSchema` remains the primary enforcement
+for registry data.
+
+**Rationale:**
+- **Vision §2 Content Authenticity.** The registry must be able to
+  express the printed card faithfully. The pre-WP-147 schema treated
+  every two-side card as hero-only artwork; cards depicting a hero
+  with a named companion (a property of the physical artifact)
+  could not be represented. Splitting `imageUrl` into derived form
+  (computed from `setAbbr` / `heroSlug` / `sides` / `companionSlug`)
+  keeps the canonical filename pattern as code, not as opaque strings.
+- **Optional, not required.** Most physical cards have no companion.
+  Forcing the field on all 1284 existing entries would be a migration
+  with no semantic value. `.optional()` keeps the change additive.
+- **Slug grammar matches existing fields.** The same `^[a-z0-9-]+$`
+  regex used elsewhere across the schema (hero slugs, card slugs,
+  side slugs) keeps slug-handling code uniform.
+
+**Rejected alternatives:**
+- **Per-side companion fields.** Would require `sides[]` to carry
+  objects instead of strings, breaking D-13801's "sides[] stores
+  slug strings only" contract and forcing a TypeScript-type migration
+  across every consumer.
+- **A separate `companions[]` array under `hero`.** Would put
+  companion data at the wrong layer (hero-deck vs physical-card)
+  and force consumers to cross-reference companions to physicalCards
+  by id. Per-physicalCard placement is local and self-describing.
+- **A hero-pairing field instead.** Conflates "this hero deck pairs
+  with another hero" (a Legendary hero-pair mechanic, not in scope)
+  with "this physical card's artwork includes a companion character".
+  Drax stays a solo hero with `hero.slug === "drax"`.
+
+**Consequence:** Drax in `mgtg` is the first registry application —
+p1 (cost 6 split) carries `companionSlug: "rhomann-dey"`; p3 (cost 4
+split) carries `companionSlug: "irani-rael"`. The imageUrl for both
+cards now includes the companion segment. Future split or companion
+cards across the registry follow the same pattern: declare
+`companionSlug` in the source patch entry, let the convert script
+propagate it into the synthesized `physicalCards[]` array and the
+generated `imageUrl`. Audit of physical-side correctness for the 37
+non-Drax existing two-side `physicalCards[]` entries across other
+sets is queued as a separate follow-up WP.
+
+**Scope:** `PhysicalCardSchema` field addition + new
+`heroImageUrl.ts` module + 10 unit tests + 4 schema smoke tests +
+convert-script call-site audit + single data fix in `mgtg.json`
+(Drax p1 + p3 only). No engine / server / apps / preplan touch
+points. No new runtime npm dependencies.
+
+**Status:** Active.
+
+**Citation:** WP-147 §Scope (In) §A + §Non-Negotiable Constraints /
+Locked contract values; EC-150 §Locked Values + §Required `// why:`
+Comments (`packages/registry/src/schema.ts companionSlug`); session
+prompt at
+`docs/ai/invocations/session-wp147-physical-card-companion-slug-and-side-order.md`
+§Locked Values.
+
+---
+
+### D-14702 — Two-Side Filenames Use Physical-Side Order (Overrides D-13802 for sides.length === 2) (WP-147)
+
+**Type:** Registry / Naming Convention Override (Narrow)
+**Packet:** WP-147 / EC-150
+**Date:** 2026-05-10
+
+**Context:** D-13802 (WP-138) locked the two-side hero card filename
+pattern to alphabetical order via `Array.prototype.sort()` with no
+comparator (UTF-16 code-unit ordering), explicitly forbidding
+locale-aware comparison APIs. The rationale was determinism: a
+locale-aware sort would reorder filenames depending on environment
+(Turkish locale's dotless-i rule, for example), producing different
+URLs on Windows / Linux / CI. Alphabetical sort was the mechanically
+simplest way to get a deterministic ordering.
+
+The two-side cards introduced by WP-138 Phase 1a and WP-140 Phase 1b
+(39 entries across `bkwd`, `mgtg`, `cvwr`, `msis`, `xmen`) all happen
+to have `sides[]` arrays in alphabetical order by construction —
+either because the patch authors entered them alphabetically or
+because the convert-script's previous `.sort()` re-ordered them
+before computing the imageUrl. With WP-147's introduction of
+`companionSlug`, the filename now needs to convey more than just
+"which two sides are on this card" — it needs to convey **which side
+is on the left/top of the printed card** (physical-side order). The
+alphabetical-sort lock conflicts with that semantic: e.g., Drax's
+cost-6 split shows "Remove His Spine" on the left/top and "Also
+Illegal" on the right/bottom, but alphabetical sort would emit
+`also-illegal-remove-his-spine`, reversing the physical order.
+
+**Decision:** For `sides.length === 2`, the `heroImageUrl()` builder
+uses `sides.join('-')` directly — **NO `Array.prototype.sort()`**.
+The source-data `sides[]` order is authoritative: side A on the
+left/top of the printed card is first in the array, side B on the
+right/bottom is second. D-13802's UTF-16 sort lock **REMAINS in
+effect** for single-side filenames and for any future automatic
+ordering operation introduced by a different code path; D-14702 is
+scoped narrowly to the two-side filename emission in `heroImageUrl()`.
+
+**Rationale:**
+- **Source-data ordering is also deterministic.** A JSON file is
+  byte-identical across Windows / Linux / CI. The `sides[]` array in
+  `data/cards/*.json` is the same on every machine that reads it.
+  Replacing the mechanical UTF-16 sort with a literal pass-through
+  preserves D-13802's determinism guarantee — only the source of
+  the ordering changes, not the determinism of the result.
+- **Semantic value outweighs mechanical-sort convenience.** A
+  filename that matches the printed card's left-to-right side order
+  is self-documenting: a maintainer or operator looking at the R2
+  asset list sees `drax-rhomann-dey-remove-his-spine-also-illegal.webp`
+  and immediately knows which character is on the left of the card.
+  Alphabetical sort hides that information.
+- **Narrow scope prevents drift.** D-14702 explicitly preserves
+  D-13802 for every case it was designed for — single-side
+  filenames (no ordering question), any future automatic ordering
+  operation (e.g., if a sort is needed for a different data
+  structure). The override applies only where source data is the
+  authoritative ordering signal.
+
+**Rejected alternatives:**
+- **Remove D-13802 entirely.** Would re-open the locale-aware
+  comparison question for every future code path. D-13802's UTF-16
+  sort lock is the right contract for any case where the code
+  must derive ordering on its own.
+- **Add a `companionSlug`-aware sort that puts the companion's
+  side first.** Adds derived ordering on top of the source data;
+  fragile when the source-data semantics change.
+- **Keep alphabetical sort and document the divergence from
+  physical order separately.** Forces operators to mentally map
+  alphabetical filename order to physical-side order every time
+  they audit R2 assets. Loses self-documenting property.
+
+**Consequence:** The 39 existing two-side `imageUrl` values remain
+**bit-identical** after the change because their current `sides[]`
+arrays are alphabetical by construction (audit of physical-side
+correctness for the 37 non-Drax entries is explicit out-of-scope
+follow-up). Drax's two split-side cards are the first registry
+application of physical-side ordering: p1.sides =
+`["remove-his-spine","also-illegal"]`, p3.sides =
+`["i-am-invisible","xandar-is-invincible"]`. Future split-side
+patch authoring must enter `sides[]` in physical-side order
+(left/top first). The convert script's
+`synthesizePhysicalCards()` no longer applies `.sort()` to declared
+`sides[]`, preserving the patch-author intent verbatim.
+
+**Scope:** `heroImageUrl()` two-side filename emission only. Does
+not affect any other ordering operation in the convert script
+(e.g., the `📎 SkipPair` log line's deterministic pair ordering
+still follows D-13802's UTF-16 sort posture).
+
+**Status:** Active. Narrow override of D-13802 for
+`sides.length === 2` only.
+
+**Citation:** WP-147 §Locked Contract Values "Two-side ordering rule";
+EC-150 §Guardrails (D-13802 sort lock remains in effect for
+single-side filenames and any future automatic ordering); session
+prompt at
+`docs/ai/invocations/session-wp147-physical-card-companion-slug-and-side-order.md`
+§Locked Values "Two-side ordering rule (D-14702)".
+
+---
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
