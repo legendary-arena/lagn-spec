@@ -4,13 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Legendary Arena — Registry Viewer</title>
+    <!-- WP-007b brand-token consumption.
+         Cascade contract: both stylesheets set the same CSS custom
+         properties on :root at equal specificity. Per CSS spec, equal-
+         specificity declarations resolve by source order — the later
+         declaration wins. The cross-origin <link> is listed AFTER the
+         local fallback BY DESIGN:
+           (1) cross-origin fetch succeeds → live v1 declarations apply
+               (live contract is authoritative);
+           (2) cross-origin fetch fails (network failure, CORS
+               regression, www outage) → fallback's v1 declarations
+               apply (bundled snapshot is the safety net).
+         Both files MUST share byte-identical contents (after stripping
+         the SNAPSHOT comment header from the local file); SHA-256
+         parity is verified at WP lock and at every WP that touches
+         either side of the contract (see Step 4 "Snapshot integrity
+         check" + DoD).
+         The crossorigin attribute is intentionally OMITTED for the
+         same reason as WP-007a: the live URL responds with
+         Access-Control-Allow-Origin: *, so the link works without an
+         explicit CORS mode declaration. -->
+    <link rel="stylesheet" href="/brand-tokens.local.css" />
+    <link rel="stylesheet" href="https://www.legendary-arena.com/brand-tokens.css" />
     <style>
+      /* Minimal reset only — all colors and fonts route through brand
+         tokens loaded above. No raw hex here. */
       *, *::before, *::after { box-sizing: border-box; }
       body {
         margin: 0;
-        font-family: system-ui, -apple-system, sans-serif;
-        background: #0f0f13;
-        color: #e8e8ee;
+        font-family: var(--la-font-body, system-ui, -apple-system, sans-serif);
+        background: var(--la-color-bg-primary);
+        color: var(--la-color-text-primary);
       }
     </style>
   </head>

@@ -26,6 +26,7 @@ import ViewModeToggle from "./components/ViewModeToggle.vue";
 import LoadoutBuilder from "./components/LoadoutBuilder.vue";
 import LoadoutPreview from "./components/LoadoutPreview.vue";
 import AbilityEffectFilter from "./components/AbilityEffectFilter.vue";
+import AppShell from "./components/branding/AppShell.vue";
 import { useSetupFromUrl } from "./composables/useSetupFromUrl";
 import type {
   MatchSetupDocument,
@@ -476,7 +477,8 @@ function navigateToCard(slug: string, cardType: string) {
 </script>
 
 <template>
-  <div class="app">
+  <AppShell>
+    <div class="app">
     <header class="header">
       <h1 class="logo">⚔️ Legendary Arena <span class="sub">Registry Viewer</span></h1>
       <div class="header-actions">
@@ -681,11 +683,16 @@ function navigateToCard(slug: string, cardType: string) {
         </template>
       </div>
     </template>
-  </div>
+    </div>
+  </AppShell>
 </template>
 
 <style scoped>
-.app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; background: #0f0f13; color: #e8e8ee; }
+/* why: WP-007b mount-layout — .app is now a flex child of
+   <AppShell>'s main slot. flex: 1 + min-height: 0 (vs the prior
+   height: 100vh) lets the shell's BrandHeader and BrandFooter
+   consume the viewport edges while .app fills the remainder. */
+.app { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; background: var(--la-color-bg-primary); color: var(--la-color-text-primary); }
 
 .header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; background: #1a1a24; border-bottom: 1px solid #2e2e42; flex-shrink: 0; }
 .logo  { margin: 0; font-size: 1.1rem; font-weight: 700; color: #fff; }

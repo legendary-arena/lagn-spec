@@ -22,13 +22,25 @@ export const TYPE_COLOR: Record<string, string> = {
   other:      "#6b7280",
 };
 
-/** Hero class (superpower) colors */
+/**
+ * Hero class (superpower) colors.
+ *
+ * why: per WP-007b §Step 5, class-color identity routes through the
+ * v1 brand-tokens contract (--la-color-class-*, palette.md §4.4).
+ * Values here are CSS `var(...)` references, not bare hex; consumers
+ * (CardGrid, CardDetail, etc.) bind these strings to inline `:style`
+ * properties — Vue passes them through to the DOM unmodified, and
+ * the CSS engine resolves them against the cascade. This makes the
+ * registry-viewer's class-badge color routing inherit any v1 → v2
+ * brand-tokens evolution automatically via the cross-origin link
+ * + bundled fallback in index.html.
+ */
 export const HC_COLOR: Record<string, string> = {
-  covert:   "#34d399",
-  instinct: "#f472b6",
-  ranged:   "#60a5fa",
-  strength: "#f87171",
-  tech:     "#fbbf24",
+  covert:   "var(--la-color-class-covert)",
+  instinct: "var(--la-color-class-instinct)",
+  ranged:   "var(--la-color-class-ranged)",
+  strength: "var(--la-color-class-strength)",
+  tech:     "var(--la-color-class-tech)",
 };
 
 /** Rarity indicator dot colors */
