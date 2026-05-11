@@ -26,12 +26,15 @@ import assert from 'node:assert/strict';
 
 import {
   PRODUCTION_DEPENDENCIES,
+  getGlobalTopLeaderboard,
   getPublicScoreByReplayHash,
   getScenarioLeaderboard,
+  getThemeLeaderboard,
   listScenarioKeys,
 } from './leaderboard.logic.js';
 
 import type {
+  DatabaseClient,
   LeaderboardDependencies,
   PublicLeaderboardEntry,
 } from './leaderboard.types.js';
@@ -854,5 +857,141 @@ describe('leaderboard logic (WP-054)', () => {
     assert.strictEqual(typeof PRODUCTION_DEPENDENCIES.checkParPublished, 'function');
     assert.strictEqual(PRODUCTION_DEPENDENCIES.checkParPublished('any-scenario'), null);
     assert.strictEqual(typeof listScenarioKeys, 'function');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 10 — LOGIC-PURE: getThemeLeaderboard fail-closes when dep omitted
+  // -------------------------------------------------------------------------
+
+  test('getThemeLeaderboard returns null when getScenarioKeysForTheme dep is omitted (D-15002 fail-closed)', async () => {
+    // why: no DB needed — the fail-closed path short-circuits
+    // before any SQL is issued. A sentinel DatabaseClient that
+    // would crash if its query() was invoked proves the
+    // short-circuit by construction.
+    const crashingDatabase: DatabaseClient = {
+      query: async () => {
+        throw new Error('database must not be touched on dep-missing path');
+      },
+    } as unknown as DatabaseClient;
+    const depsWithoutTheme: LeaderboardDependencies = {
+      checkParPublished: () => null,
+    };
+    const result = await getThemeLeaderboard(
+      { themeId: 'dark-reign', limit: 25, offset: 0 },
+      crashingDatabase,
+      depsWithoutTheme,
+    );
+    assert.strictEqual(result, null);
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 11 — LOGIC-PURE: getThemeLeaderboard returns null for unknown themeId
+  // -------------------------------------------------------------------------
+
+  test('getThemeLeaderboard returns null when getScenarioKeysForTheme returns null (unknown themeId)', async () => {
+    const crashingDatabase: DatabaseClient = {
+      query: async () => {
+        throw new Error('database must not be touched on unknown-theme path');
+      },
+    } as unknown as DatabaseClient;
+    const deps: LeaderboardDependencies = {
+      checkParPublished: () => null,
+      getScenarioKeysForTheme: () => null,
+    };
+    const result = await getThemeLeaderboard(
+      { themeId: 'no-such-theme', limit: 25, offset: 0 },
+      crashingDatabase,
+      deps,
+    );
+    assert.strictEqual(result, null);
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 12 — LOGIC-PURE: getThemeLeaderboard returns empty (NOT null) when
+  // theme known but no scenarios have published PAR
+  // -------------------------------------------------------------------------
+
+  test('getThemeLeaderboard returns empty entries with totalEligibleEntries=0 when theme has no PAR-published scenarios', async () => {
+    // why: this is the load-bearing distinction between 404 and
+    // 200-empty — a known theme whose scenarios have not had PAR
+    // published yet must surface 200 with an empty entries[] (the
+    // theme exists but has no leaderboard data yet). The
+    // crashingDatabase asserts no SQL is issued in this branch
+    // because the all-filter-out path short-circuits before the
+    // SELECT (per D-15003 step 3 mirror behavior for the theme route).
+    const crashingDatabase: DatabaseClient = {
+      query: async () => {
+        throw new Error('database must not be touched on empty-PAR path');
+      },
+    } as unknown as DatabaseClient;
+    const deps: LeaderboardDependencies = {
+      checkParPublished: () => null,
+      getScenarioKeysForTheme: (themeId) =>
+        themeId === 'dark-reign' ? ['scheme::mm::vg'] : null,
+    };
+    const result = await getThemeLeaderboard(
+      { themeId: 'dark-reign', limit: 25, offset: 0 },
+      crashingDatabase,
+      deps,
+    );
+    assert.ok(result !== null);
+    assert.strictEqual(result.themeId, 'dark-reign');
+    assert.deepStrictEqual(result.entries, []);
+    assert.strictEqual(result.totalEligibleEntries, 0);
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 13 — LOGIC-PURE: getGlobalTopLeaderboard returns empty when no
+  // PAR-published scenarios exist
+  // -------------------------------------------------------------------------
+
+  test('getGlobalTopLeaderboard returns empty entries when listScenarioKeys yields no PAR-published scenarios', async () => {
+    // why: stub database whose listScenarioKeys SELECT returns
+    // zero rows. The PAR-eligibility filter empties immediately;
+    // the second SELECT must not fire (short-circuit branch). The
+    // crashing-after-first-query database proves the short-circuit.
+    let queryCallCount = 0;
+    const stubDatabase: DatabaseClient = {
+      query: async (sql: unknown) => {
+        queryCallCount = queryCallCount + 1;
+        const sqlText = typeof sql === 'string' ? sql : String(sql);
+        if (sqlText.includes('DISTINCT cs.scenario_key')) {
+          return { rows: [] };
+        }
+        throw new Error(
+          `unexpected query after empty listScenarioKeys: ${sqlText}`,
+        );
+      },
+    } as unknown as DatabaseClient;
+    const deps: LeaderboardDependencies = {
+      checkParPublished: () => null,
+    };
+    const result = await getGlobalTopLeaderboard(
+      { limit: 25, offset: 0 },
+      stubDatabase,
+      deps,
+    );
+    assert.deepStrictEqual(result.entries, []);
+    assert.strictEqual(result.totalEligibleEntries, 0);
+    assert.strictEqual(queryCallCount, 1);
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 14 — LOGIC-PURE: PRODUCTION_DEPENDENCIES.getScenarioKeysForTheme
+  // default fail-closes to null
+  // -------------------------------------------------------------------------
+
+  test('PRODUCTION_DEPENDENCIES.getScenarioKeysForTheme returns null for every input (fail-closed default)', () => {
+    assert.strictEqual(
+      typeof PRODUCTION_DEPENDENCIES.getScenarioKeysForTheme,
+      'function',
+    );
+    // why: TypeScript narrows the optional method via the
+    // typeof-function guard above; runtime call is then safe.
+    const fn = PRODUCTION_DEPENDENCIES.getScenarioKeysForTheme;
+    assert.ok(fn !== undefined);
+    assert.strictEqual(fn('any-theme'), null);
+    assert.strictEqual(fn(''), null);
+    assert.strictEqual(fn('dark-reign'), null);
   });
 });

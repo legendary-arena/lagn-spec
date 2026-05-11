@@ -33,8 +33,10 @@ import type { Pool } from 'pg';
 import { registerLeaderboardRoutes } from './leaderboard.routes.js';
 import type { LeaderboardLogic } from './leaderboard.routes.js';
 import type {
+  GlobalTopLeaderboard,
   PublicLeaderboardEntry,
   ScenarioLeaderboard,
+  ThemeLeaderboard,
 } from './leaderboard.types.js';
 
 // ---------------------------------------------------------------------------
@@ -49,7 +51,7 @@ interface RegisteredRoute {
 }
 
 interface MockKoaContext {
-  params: { scenarioKey?: string; replayHash?: string };
+  params: { scenarioKey?: string; replayHash?: string; themeId?: string };
   query: Record<string, string | string[] | undefined>;
   status: number;
   body: unknown;
@@ -91,7 +93,7 @@ function makeMockRouter(): {
  * precedes every status / body assignment in every handler.
  */
 function makeMockContext(
-  params: { scenarioKey?: string; replayHash?: string } = {},
+  params: { scenarioKey?: string; replayHash?: string; themeId?: string } = {},
   query: Record<string, string | string[] | undefined> = {},
 ): MockKoaContext {
   const headerCalls: { field: string; value: string }[] = [];
@@ -142,6 +144,18 @@ const SENTINEL_PAR_GATE = {
   checkParPublished: (_scenarioKey: string) => null,
 } as const;
 
+// why: SENTINEL_PAR_GATE_WITH_THEME carries both deps for the new
+// theme + global routes (WP-150 / D-15002). The reference identity
+// is asserted by test 11 (deps wiring) — production wiring binds
+// both functions; tests must mirror that.
+const SENTINEL_GET_SCENARIO_KEYS_FOR_THEME = (
+  _themeId: string,
+): readonly string[] | null => null;
+const SENTINEL_PAR_GATE_WITH_THEME = {
+  checkParPublished: (_scenarioKey: string) => null,
+  getScenarioKeysForTheme: SENTINEL_GET_SCENARIO_KEYS_FOR_THEME,
+} as const;
+
 const SAMPLE_ENTRY: PublicLeaderboardEntry = {
   rank: 1,
   replayHash: 'replay-abc',
@@ -166,13 +180,41 @@ const EMPTY_LEADERBOARD: ScenarioLeaderboard = {
   totalEligibleEntries: 0,
 };
 
+const SAMPLE_THEME_LEADERBOARD: ThemeLeaderboard = {
+  themeId: 'dark-reign',
+  entries: [SAMPLE_ENTRY],
+  totalEligibleEntries: 1,
+};
+
+const EMPTY_THEME_LEADERBOARD: ThemeLeaderboard = {
+  themeId: 'dark-reign',
+  entries: [],
+  totalEligibleEntries: 0,
+};
+
+const SAMPLE_GLOBAL_LEADERBOARD: GlobalTopLeaderboard = {
+  entries: [SAMPLE_ENTRY],
+  totalEligibleEntries: 1,
+};
+
+const EMPTY_GLOBAL_LEADERBOARD: GlobalTopLeaderboard = {
+  entries: [],
+  totalEligibleEntries: 0,
+};
+
 type ParGateCheck = (scenarioKey: string) => unknown;
 
 interface FakeCalls {
   listScenarioKeys: number;
   getScenarioLeaderboard: number;
   getPublicScoreByReplayHash: number;
+  getThemeLeaderboard: number;
+  getGlobalTopLeaderboard: number;
   lastDepsCheckParPublished: ParGateCheck | null;
+  lastDepsGetScenarioKeysForTheme:
+    | ((themeId: string) => readonly string[] | null)
+    | null;
+  lastThemeIdRequested: string | null;
 }
 
 /**
@@ -187,14 +229,22 @@ function makeFakeLogic(
     scenarioKeys?: string[];
     leaderboard?: ScenarioLeaderboard;
     entry?: PublicLeaderboardEntry | null;
+    themeLeaderboard?: ThemeLeaderboard | null;
+    globalLeaderboard?: GlobalTopLeaderboard;
     throwOnListScenarioKeys?: boolean;
+    throwOnGetThemeLeaderboard?: boolean;
+    throwOnGetGlobalTopLeaderboard?: boolean;
   } = {},
 ): { logic: LeaderboardLogic; calls: FakeCalls } {
   const calls: FakeCalls = {
     listScenarioKeys: 0,
     getScenarioLeaderboard: 0,
     getPublicScoreByReplayHash: 0,
+    getThemeLeaderboard: 0,
+    getGlobalTopLeaderboard: 0,
     lastDepsCheckParPublished: null,
+    lastDepsGetScenarioKeysForTheme: null,
+    lastThemeIdRequested: null,
   };
   const logic: LeaderboardLogic = {
     async listScenarioKeys(_database) {
@@ -216,6 +266,35 @@ function makeFakeLogic(
       calls.getPublicScoreByReplayHash = calls.getPublicScoreByReplayHash + 1;
       return config.entry ?? null;
     },
+    async getThemeLeaderboard(options, _database, deps) {
+      calls.getThemeLeaderboard = calls.getThemeLeaderboard + 1;
+      calls.lastThemeIdRequested = options.themeId;
+      calls.lastDepsCheckParPublished =
+        deps === undefined
+          ? null
+          : (deps.checkParPublished as unknown as ParGateCheck);
+      calls.lastDepsGetScenarioKeysForTheme =
+        deps === undefined || deps.getScenarioKeysForTheme === undefined
+          ? null
+          : deps.getScenarioKeysForTheme;
+      if (config.throwOnGetThemeLeaderboard === true) {
+        throw new Error('simulated theme-leaderboard failure');
+      }
+      return config.themeLeaderboard === undefined
+        ? EMPTY_THEME_LEADERBOARD
+        : config.themeLeaderboard;
+    },
+    async getGlobalTopLeaderboard(_options, _database, deps) {
+      calls.getGlobalTopLeaderboard = calls.getGlobalTopLeaderboard + 1;
+      calls.lastDepsCheckParPublished =
+        deps === undefined
+          ? null
+          : (deps.checkParPublished as unknown as ParGateCheck);
+      if (config.throwOnGetGlobalTopLeaderboard === true) {
+        throw new Error('simulated global-top failure');
+      }
+      return config.globalLeaderboard ?? EMPTY_GLOBAL_LEADERBOARD;
+    },
   };
   return { logic, calls };
 }
@@ -225,14 +304,16 @@ function makeFakeLogic(
 // ---------------------------------------------------------------------------
 
 describe('leaderboard routes (WP-115)', () => {
-  test('1 — registers exactly three GET handlers at the locked paths in the locked order', () => {
+  test('1 — registers exactly five GET handlers at the locked paths in the locked order', () => {
     const { router, routes } = makeMockRouter();
     const { logic } = makeFakeLogic();
     registerLeaderboardRoutes(router, SENTINEL_DATABASE, SENTINEL_PAR_GATE, logic);
-    assert.equal(routes.length, 3);
+    assert.equal(routes.length, 5);
     assert.equal(routes[0].path, '/api/leaderboards/scenarios');
     assert.equal(routes[1].path, '/api/leaderboards/scenarios/:scenarioKey');
     assert.equal(routes[2].path, '/api/leaderboards/scores/:replayHash');
+    assert.equal(routes[3].path, '/api/leaderboards/themes/:themeId');
+    assert.equal(routes[4].path, '/api/leaderboards/top');
   });
 
   test('2 — GET /api/leaderboards/scenarios returns 200 with non-empty scenarioKeys', async () => {
@@ -457,5 +538,199 @@ describe('leaderboard routes (WP-115)', () => {
     assert.equal(throwContext.callOrder[0], 'set:Cache-Control');
     assert.equal(throwContext.status, 500);
     assert.deepEqual(throwContext.body, { error: 'internal_error' });
+  });
+
+  test('9 — GET /api/leaderboards/themes/:themeId returns 200 with the theme leaderboard on hit', async () => {
+    const { router, routes } = makeMockRouter();
+    const { logic, calls } = makeFakeLogic({
+      themeLeaderboard: SAMPLE_THEME_LEADERBOARD,
+    });
+    registerLeaderboardRoutes(
+      router,
+      SENTINEL_DATABASE,
+      SENTINEL_PAR_GATE_WITH_THEME,
+      logic,
+    );
+    const koaContext = makeMockContext(
+      { themeId: 'dark-reign' },
+      { limit: '10', offset: '0' },
+    );
+    await routes[3].handler(koaContext);
+    assert.equal(koaContext.status, 200);
+    assert.deepEqual(koaContext.body, SAMPLE_THEME_LEADERBOARD);
+    assert.equal(calls.getThemeLeaderboard, 1);
+    assert.equal(calls.lastThemeIdRequested, 'dark-reign');
+    // why: the load-bearing wiring assertion — both deps must reach
+    // the logic call as the SAME references the wiring layer bound,
+    // not the WP-054 PRODUCTION_DEPENDENCIES defaults.
+    assert.equal(
+      calls.lastDepsCheckParPublished,
+      SENTINEL_PAR_GATE_WITH_THEME.checkParPublished,
+    );
+    assert.equal(
+      calls.lastDepsGetScenarioKeysForTheme,
+      SENTINEL_GET_SCENARIO_KEYS_FOR_THEME,
+    );
+  });
+
+  test('10 — GET /api/leaderboards/themes/:themeId returns 404 theme_not_found on null logic return', async () => {
+    const { router, routes } = makeMockRouter();
+    const { logic } = makeFakeLogic({ themeLeaderboard: null });
+    registerLeaderboardRoutes(
+      router,
+      SENTINEL_DATABASE,
+      SENTINEL_PAR_GATE_WITH_THEME,
+      logic,
+    );
+    const koaContext = makeMockContext({ themeId: 'no-such-theme' });
+    await routes[3].handler(koaContext);
+    assert.equal(koaContext.status, 404);
+    assert.deepEqual(koaContext.body, { error: 'theme_not_found' });
+  });
+
+  test('11 — GET /api/leaderboards/themes/:themeId rejects missing path param + invalid pagination with 400 invalid_query', async () => {
+    const { router, routes } = makeMockRouter();
+    const { logic } = makeFakeLogic({ themeLeaderboard: SAMPLE_THEME_LEADERBOARD });
+    registerLeaderboardRoutes(
+      router,
+      SENTINEL_DATABASE,
+      SENTINEL_PAR_GATE_WITH_THEME,
+      logic,
+    );
+
+    // (a) missing :themeId → 400
+    const ctxMissing = makeMockContext({});
+    await routes[3].handler(ctxMissing);
+    assert.equal(ctxMissing.status, 400);
+    assert.equal(
+      (ctxMissing.body as { error: string }).error,
+      'invalid_query',
+    );
+    assert.equal(
+      (ctxMissing.body as { message: string }).message,
+      'Theme id is required.',
+    );
+
+    // (b) limit=banana → 400
+    const ctxBadLimit = makeMockContext(
+      { themeId: 'dark-reign' },
+      { limit: 'banana' },
+    );
+    await routes[3].handler(ctxBadLimit);
+    assert.equal(ctxBadLimit.status, 400);
+    assert.equal(
+      (ctxBadLimit.body as { error: string }).error,
+      'invalid_query',
+    );
+
+    // (c) offset=10001 → 400 (above max)
+    const ctxBadOffset = makeMockContext(
+      { themeId: 'dark-reign' },
+      { offset: '10001' },
+    );
+    await routes[3].handler(ctxBadOffset);
+    assert.equal(ctxBadOffset.status, 400);
+    assert.equal(
+      (ctxBadOffset.body as { error: string }).error,
+      'invalid_query',
+    );
+  });
+
+  test('12 — GET /api/leaderboards/themes/:themeId returns 500 internal_error on logic throw', async () => {
+    const { router, routes } = makeMockRouter();
+    const { logic } = makeFakeLogic({ throwOnGetThemeLeaderboard: true });
+    registerLeaderboardRoutes(
+      router,
+      SENTINEL_DATABASE,
+      SENTINEL_PAR_GATE_WITH_THEME,
+      logic,
+    );
+    const koaContext = makeMockContext({ themeId: 'dark-reign' });
+    await routes[3].handler(koaContext);
+    assert.equal(koaContext.status, 500);
+    assert.deepEqual(koaContext.body, { error: 'internal_error' });
+    // Cache-Control still set despite throw (Patch 8 discipline).
+    assert.equal(koaContext.headerCalls.length, 1);
+    assert.equal(koaContext.headerCalls[0].field, 'Cache-Control');
+    assert.equal(koaContext.headerCalls[0].value, 'no-store');
+    assert.equal(koaContext.callOrder[0], 'set:Cache-Control');
+  });
+
+  test('13 — GET /api/leaderboards/top returns 200 with the global leaderboard on hit', async () => {
+    const { router, routes } = makeMockRouter();
+    const { logic, calls } = makeFakeLogic({
+      globalLeaderboard: SAMPLE_GLOBAL_LEADERBOARD,
+    });
+    registerLeaderboardRoutes(
+      router,
+      SENTINEL_DATABASE,
+      SENTINEL_PAR_GATE_WITH_THEME,
+      logic,
+    );
+    const koaContext = makeMockContext({}, { limit: '25', offset: '0' });
+    await routes[4].handler(koaContext);
+    assert.equal(koaContext.status, 200);
+    assert.deepEqual(koaContext.body, SAMPLE_GLOBAL_LEADERBOARD);
+    assert.equal(calls.getGlobalTopLeaderboard, 1);
+    assert.equal(
+      calls.lastDepsCheckParPublished,
+      SENTINEL_PAR_GATE_WITH_THEME.checkParPublished,
+    );
+  });
+
+  test('14 — GET /api/leaderboards/top returns 200 with empty entries when no PAR-published scenarios exist', async () => {
+    const { router, routes } = makeMockRouter();
+    const { logic } = makeFakeLogic({
+      globalLeaderboard: EMPTY_GLOBAL_LEADERBOARD,
+    });
+    registerLeaderboardRoutes(
+      router,
+      SENTINEL_DATABASE,
+      SENTINEL_PAR_GATE_WITH_THEME,
+      logic,
+    );
+    const koaContext = makeMockContext();
+    await routes[4].handler(koaContext);
+    assert.equal(koaContext.status, 200);
+    assert.deepEqual(koaContext.body, EMPTY_GLOBAL_LEADERBOARD);
+  });
+
+  test('15 — GET /api/leaderboards/top rejects invalid pagination with 400 invalid_query', async () => {
+    const { router, routes } = makeMockRouter();
+    const { logic } = makeFakeLogic({
+      globalLeaderboard: SAMPLE_GLOBAL_LEADERBOARD,
+    });
+    registerLeaderboardRoutes(
+      router,
+      SENTINEL_DATABASE,
+      SENTINEL_PAR_GATE_WITH_THEME,
+      logic,
+    );
+    const koaContext = makeMockContext({}, { limit: '101' });
+    await routes[4].handler(koaContext);
+    assert.equal(koaContext.status, 400);
+    assert.equal(
+      (koaContext.body as { error: string }).error,
+      'invalid_query',
+    );
+  });
+
+  test('16 — GET /api/leaderboards/top returns 500 internal_error on logic throw with Cache-Control still set', async () => {
+    const { router, routes } = makeMockRouter();
+    const { logic } = makeFakeLogic({ throwOnGetGlobalTopLeaderboard: true });
+    registerLeaderboardRoutes(
+      router,
+      SENTINEL_DATABASE,
+      SENTINEL_PAR_GATE_WITH_THEME,
+      logic,
+    );
+    const koaContext = makeMockContext();
+    await routes[4].handler(koaContext);
+    assert.equal(koaContext.status, 500);
+    assert.deepEqual(koaContext.body, { error: 'internal_error' });
+    assert.equal(koaContext.headerCalls.length, 1);
+    assert.equal(koaContext.headerCalls[0].field, 'Cache-Control');
+    assert.equal(koaContext.headerCalls[0].value, 'no-store');
+    assert.equal(koaContext.callOrder[0], 'set:Cache-Control');
   });
 });

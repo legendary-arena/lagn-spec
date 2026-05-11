@@ -40,10 +40,14 @@
 
 import type {
   DatabaseClient,
+  GlobalTopLeaderboard,
+  GlobalTopLeaderboardQueryOptions,
   LeaderboardDependencies,
   LeaderboardQueryOptions,
   PublicLeaderboardEntry,
   ScenarioLeaderboard,
+  ThemeLeaderboard,
+  ThemeLeaderboardQueryOptions,
 } from './leaderboard.types.js';
 
 // ---------------------------------------------------------------------------
@@ -59,8 +63,16 @@ import type {
 // colocated test file, which passes its own stub `deps`. Mirrors
 // the WP-053 PRODUCTION_DEPENDENCIES pattern at
 // apps/server/src/competition/competition.logic.ts:156.
+// why: getScenarioKeysForTheme defaults to () => null (fail-closed
+// per D-15002). Until server.mjs binds the real function built from
+// the startup-loaded content/themes/*.json set, every theme route
+// resolves to a 404 by construction. The route layer translates the
+// null return into the locked 404 envelope — production callers
+// MUST inject the real binding for the endpoint to surface non-404
+// responses. Same fail-closed posture as checkParPublished.
 export const PRODUCTION_DEPENDENCIES: LeaderboardDependencies = {
   checkParPublished: () => null,
+  getScenarioKeysForTheme: () => null,
 };
 
 // ---------------------------------------------------------------------------
@@ -302,4 +314,229 @@ export async function listScenarioKeys(
     scenarioKeys.push((row as { scenario_key: string }).scenario_key);
   }
   return scenarioKeys;
+}
+
+/**
+ * Return a paginated public leaderboard across every scenario that
+ * belongs to a given theme (per WP-055 `ThemeDefinition.themeId` and
+ * the curated `setupIntent` projection locked under D-15001).
+ *
+ * Steps:
+ *   1. Resolve `themeId → scenarioKey[]` via `deps.getScenarioKeysForTheme`.
+ *      If the dep is omitted (production wiring forgot the binding) or
+ *      returns `null` (unknown themeId), return `null` — the route
+ *      surface translates to the locked `theme_not_found` 404. This
+ *      is the fail-closed posture per D-15002.
+ *   2. Filter the resolved scenarioKey list to PAR-published only by
+ *      calling `deps.checkParPublished(scenarioKey)` per key (the
+ *      same fail-closed gate the per-scenario surface already uses
+ *      per D-5306 Option A). Scenarios without published PAR
+ *      contribute zero rows.
+ *   3. If every scenarioKey filtered out (PAR not published for any
+ *      of the theme's scenarios), return a fresh `ThemeLeaderboard`
+ *      with empty entries and `totalEligibleEntries: 0`. The themeId
+ *      itself was valid — the route returns 200 with the empty
+ *      payload, never 404.
+ *   4. Issue the locked SELECT against `legendary.competitive_scores`,
+ *      INNER-joined to `legendary.players` (display name) + to
+ *      `legendary.replay_ownership` (visibility), filtered to
+ *      `cs.scenario_key = ANY($1)` + `ro.visibility IN ('link', 'public')`,
+ *      ordered by `final_score ASC, created_at ASC` (byte-identical
+ *      comparator to `getScenarioLeaderboard` — determinism shared
+ *      across the family), with LIMIT/OFFSET pagination.
+ *   5. Issue a parallel COUNT(*) using the SAME WHERE clause so
+ *      `totalEligibleEntries` reflects the filtered universe.
+ *   6. Map each row to a fresh `PublicLeaderboardEntry` (aliasing
+ *      defense — never alias the pg rowset reference); compute
+ *      `rank = options.offset + i + 1` so rank reflects the global
+ *      position within eligible results, not the page-local index.
+ *   7. Return a fresh `ThemeLeaderboard` literal.
+ *
+ * Never throws for any expected condition (missing dep, unknown
+ * themeId, empty PAR filter, no eligible scores all return either
+ * `null` or an empty leaderboard). Only infrastructure-level errors
+ * (connection lost, malformed SQL) propagate as exceptions.
+ */
+export async function getThemeLeaderboard(
+  options: ThemeLeaderboardQueryOptions,
+  database: DatabaseClient,
+  deps: LeaderboardDependencies = PRODUCTION_DEPENDENCIES,
+): Promise<ThemeLeaderboard | null> {
+  // why: dep-missing returns null (route → 404), not an empty
+  // leaderboard. The distinction matters: an unknown themeId must
+  // be observably different from "known themeId, no PAR-published
+  // scenarios" — the former is 404 (client error), the latter is
+  // 200 with empty entries (no data yet). Per D-15002, production
+  // wiring binds the real function; tests pass inline stubs; the
+  // PRODUCTION_DEPENDENCIES default fail-closes to null so a
+  // wiring omission surfaces as 404 by construction.
+  if (deps.getScenarioKeysForTheme === undefined) {
+    return null;
+  }
+  const themeScenarioKeys = deps.getScenarioKeysForTheme(options.themeId);
+  if (themeScenarioKeys === null) {
+    return null;
+  }
+
+  // why: PAR-eligibility filter applied in application code rather
+  // than SQL because checkParPublished is an in-memory Map.get per
+  // scenario (parGate is loaded at startup per WP-051 / D-5101) —
+  // a JOIN against the PAR table would be slower AND the PAR
+  // surface is intentionally not a SQL table (the PAR artifact set
+  // is files-on-disk per D-5101). for...of over scenarios per
+  // .claude/rules/code-style.md (no .reduce() for branching logic).
+  const eligibleScenarioKeys: string[] = [];
+  for (const scenarioKey of themeScenarioKeys) {
+    const parGateHit = deps.checkParPublished(scenarioKey);
+    if (parGateHit !== null) {
+      eligibleScenarioKeys.push(scenarioKey);
+    }
+  }
+
+  if (eligibleScenarioKeys.length === 0) {
+    return {
+      themeId: options.themeId,
+      entries: [],
+      totalEligibleEntries: 0,
+    };
+  }
+
+  const pageResult = await database.query(
+    'SELECT cs.replay_hash, p.display_name AS player_display_name, ' +
+      'cs.scenario_key, cs.final_score, cs.raw_score, ' +
+      'cs.par_version, cs.scoring_config_version, cs.created_at ' +
+      'FROM legendary.competitive_scores cs ' +
+      'INNER JOIN legendary.players p ON cs.player_id = p.player_id ' +
+      'INNER JOIN legendary.replay_ownership ro ' +
+      '  ON ro.player_id = cs.player_id AND ro.replay_hash = cs.replay_hash ' +
+      'WHERE cs.scenario_key = ANY($1) ' +
+      "  AND ro.visibility IN ('link', 'public') " +
+      'ORDER BY cs.final_score ASC, cs.created_at ASC ' +
+      'LIMIT $2 OFFSET $3',
+    [eligibleScenarioKeys, options.limit, options.offset],
+  );
+
+  const countResult = await database.query(
+    'SELECT COUNT(*) AS total ' +
+      'FROM legendary.competitive_scores cs ' +
+      'INNER JOIN legendary.players p ON cs.player_id = p.player_id ' +
+      'INNER JOIN legendary.replay_ownership ro ' +
+      '  ON ro.player_id = cs.player_id AND ro.replay_hash = cs.replay_hash ' +
+      'WHERE cs.scenario_key = ANY($1) ' +
+      "  AND ro.visibility IN ('link', 'public')",
+    [eligibleScenarioKeys],
+  );
+
+  const entries: PublicLeaderboardEntry[] = [];
+  for (let rowIndex = 0; rowIndex < pageResult.rows.length; rowIndex = rowIndex + 1) {
+    const rank = options.offset + rowIndex + 1;
+    entries.push(mapRowToEntry(pageResult.rows[rowIndex] as LeaderboardRow, rank));
+  }
+
+  const totalRaw = countResult.rows[0]?.total;
+  const totalEligibleEntries =
+    typeof totalRaw === 'string' ? Number(totalRaw) : (totalRaw ?? 0);
+
+  return {
+    themeId: options.themeId,
+    entries,
+    totalEligibleEntries,
+  };
+}
+
+/**
+ * Return the paginated global Top-N leaderboard across every
+ * PAR-published scenario (per D-15003). Used by the marketing-site
+ * public-leaderboard page to surface the lowest `final_score`
+ * entries regardless of scenario or theme.
+ *
+ * Steps:
+ *   1. Discover the eligible scenario universe via `listScenarioKeys`
+ *      (already exported by WP-054). The returned list is every
+ *      scenario with at least one publicly visible verified score.
+ *   2. Filter to PAR-published only via `deps.checkParPublished`
+ *      per scenario (D-5306 fail-closed). Scenarios without PAR
+ *      contribute zero rows.
+ *   3. If no scenario survives the PAR filter, return a fresh
+ *      `GlobalTopLeaderboard` with empty entries and
+ *      `totalEligibleEntries: 0` (200 with empty payload, never
+ *      404 — there is no "not found" semantic on the global route).
+ *   4. Issue the locked paginated SELECT with
+ *      `cs.scenario_key = ANY($1)` + visibility filter, ordered by
+ *      `final_score ASC, created_at ASC` (byte-identical comparator
+ *      to `getScenarioLeaderboard` / `getThemeLeaderboard`).
+ *   5. Issue a parallel COUNT(*) under the SAME WHERE clause.
+ *   6. Map each row to a fresh `PublicLeaderboardEntry` (aliasing
+ *      defense); compute `rank = options.offset + i + 1`.
+ *   7. Return a fresh `GlobalTopLeaderboard` literal.
+ *
+ * Never throws for any expected condition (no PAR-published
+ * scenarios, no eligible scores both return an empty leaderboard).
+ * Only infrastructure-level errors propagate as exceptions.
+ */
+export async function getGlobalTopLeaderboard(
+  options: GlobalTopLeaderboardQueryOptions,
+  database: DatabaseClient,
+  deps: LeaderboardDependencies = PRODUCTION_DEPENDENCIES,
+): Promise<GlobalTopLeaderboard> {
+  const allScenarioKeys = await listScenarioKeys(database);
+
+  // why: PAR-eligibility filter in application code, identical
+  // posture to getThemeLeaderboard. for...of per
+  // .claude/rules/code-style.md.
+  const eligibleScenarioKeys: string[] = [];
+  for (const scenarioKey of allScenarioKeys) {
+    const parGateHit = deps.checkParPublished(scenarioKey);
+    if (parGateHit !== null) {
+      eligibleScenarioKeys.push(scenarioKey);
+    }
+  }
+
+  if (eligibleScenarioKeys.length === 0) {
+    return {
+      entries: [],
+      totalEligibleEntries: 0,
+    };
+  }
+
+  const pageResult = await database.query(
+    'SELECT cs.replay_hash, p.display_name AS player_display_name, ' +
+      'cs.scenario_key, cs.final_score, cs.raw_score, ' +
+      'cs.par_version, cs.scoring_config_version, cs.created_at ' +
+      'FROM legendary.competitive_scores cs ' +
+      'INNER JOIN legendary.players p ON cs.player_id = p.player_id ' +
+      'INNER JOIN legendary.replay_ownership ro ' +
+      '  ON ro.player_id = cs.player_id AND ro.replay_hash = cs.replay_hash ' +
+      'WHERE cs.scenario_key = ANY($1) ' +
+      "  AND ro.visibility IN ('link', 'public') " +
+      'ORDER BY cs.final_score ASC, cs.created_at ASC ' +
+      'LIMIT $2 OFFSET $3',
+    [eligibleScenarioKeys, options.limit, options.offset],
+  );
+
+  const countResult = await database.query(
+    'SELECT COUNT(*) AS total ' +
+      'FROM legendary.competitive_scores cs ' +
+      'INNER JOIN legendary.players p ON cs.player_id = p.player_id ' +
+      'INNER JOIN legendary.replay_ownership ro ' +
+      '  ON ro.player_id = cs.player_id AND ro.replay_hash = cs.replay_hash ' +
+      'WHERE cs.scenario_key = ANY($1) ' +
+      "  AND ro.visibility IN ('link', 'public')",
+    [eligibleScenarioKeys],
+  );
+
+  const entries: PublicLeaderboardEntry[] = [];
+  for (let rowIndex = 0; rowIndex < pageResult.rows.length; rowIndex = rowIndex + 1) {
+    const rank = options.offset + rowIndex + 1;
+    entries.push(mapRowToEntry(pageResult.rows[rowIndex] as LeaderboardRow, rank));
+  }
+
+  const totalRaw = countResult.rows[0]?.total;
+  const totalEligibleEntries =
+    typeof totalRaw === 'string' ? Number(totalRaw) : (totalRaw ?? 0);
+
+  return {
+    entries,
+    totalEligibleEntries,
+  };
 }

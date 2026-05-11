@@ -32,14 +32,20 @@
 
 import type { Pool } from 'pg';
 import {
+  getGlobalTopLeaderboard,
   getPublicScoreByReplayHash,
   getScenarioLeaderboard,
+  getThemeLeaderboard,
   listScenarioKeys,
 } from './leaderboard.logic.js';
 import type {
+  GlobalTopLeaderboard,
+  GlobalTopLeaderboardQueryOptions,
   LeaderboardQueryOptions,
   PublicLeaderboardEntry,
   ScenarioLeaderboard,
+  ThemeLeaderboard,
+  ThemeLeaderboardQueryOptions,
 } from './leaderboard.types.js';
 
 /**
@@ -59,8 +65,20 @@ interface ParGateHit {
   readonly scoringConfig: unknown;
 }
 
+// why: the route layer accepts the bound parGate plus an optional
+// `getScenarioKeysForTheme` binding alongside it (per D-15002 —
+// single deps bundle, not a separate fourth `themeGate` parameter).
+// Production wiring in `server.mjs` constructs the themeId →
+// scenarioKey[] map from the startup-loaded `content/themes/*.json`
+// set using the engine's `buildScenarioKey` helper (D-15001) and
+// passes the bound function here. When the binding is omitted
+// (test fixtures, future callers that wire only the per-scenario
+// routes), the theme route surfaces the locked 404 by construction.
 interface ParGate {
   readonly checkParPublished: (scenarioKey: string) => ParGateHit | null;
+  readonly getScenarioKeysForTheme?: (
+    themeId: string,
+  ) => readonly string[] | null;
 }
 
 /**
@@ -75,7 +93,7 @@ interface ParGate {
  * `apps/server/src/profile/profile.routes.ts:45-49`.
  */
 interface KoaLeaderboardContext {
-  params: { scenarioKey?: string; replayHash?: string };
+  params: { scenarioKey?: string; replayHash?: string; themeId?: string };
   query: Record<string, string | string[] | undefined>;
   status: number;
   body: unknown;
@@ -107,12 +125,16 @@ export interface LeaderboardLogic {
   readonly listScenarioKeys: typeof listScenarioKeys;
   readonly getScenarioLeaderboard: typeof getScenarioLeaderboard;
   readonly getPublicScoreByReplayHash: typeof getPublicScoreByReplayHash;
+  readonly getThemeLeaderboard: typeof getThemeLeaderboard;
+  readonly getGlobalTopLeaderboard: typeof getGlobalTopLeaderboard;
 }
 
 const PRODUCTION_LEADERBOARD_LOGIC: LeaderboardLogic = {
   listScenarioKeys,
   getScenarioLeaderboard,
   getPublicScoreByReplayHash,
+  getThemeLeaderboard,
+  getGlobalTopLeaderboard,
 };
 
 /**
@@ -420,6 +442,117 @@ export function registerLeaderboardRoutes(
         }
         koaContext.status = 200;
         koaContext.body = entry;
+      } catch (caughtError) {
+        void caughtError;
+        koaContext.status = 500;
+        koaContext.body = { error: 'internal_error' };
+      }
+    },
+  );
+
+  router.get(
+    '/api/leaderboards/themes/:themeId',
+    async (koaContext) => {
+      // why: Cache-Control MUST be the first statement in every
+      // handler body (per WP-115 v1.1 Patch 8) so a thrown
+      // exception in the logic call still leaves the header set on
+      // the eventual 500 — the caching contract is "no-store on
+      // every response, including error paths."
+      koaContext.set('Cache-Control', 'no-store');
+      const themeId = koaContext.params.themeId;
+      // why: path-parameter validation is a transport-level shape
+      // check (mirrors the WP-115 Patch 4 precedent at the
+      // per-scenario route). Routing a missing or empty `:themeId`
+      // to the logic helper would surface a 404 instead of the
+      // locked 400 envelope; validation here keeps the error
+      // surface deterministic.
+      if (themeId === undefined || themeId === '') {
+        koaContext.status = 400;
+        koaContext.body = {
+          error: 'invalid_query',
+          message: 'Theme id is required.',
+        };
+        return;
+      }
+
+      const pagination = parsePaginationQuery(koaContext.query);
+      if (pagination.ok === false) {
+        koaContext.status = 400;
+        koaContext.body = {
+          error: 'invalid_query',
+          message: pagination.message,
+        };
+        return;
+      }
+
+      try {
+        const options: ThemeLeaderboardQueryOptions = {
+          themeId,
+          limit: pagination.limit,
+          offset: pagination.offset,
+        };
+        // why: explicit deps injection forwards BOTH the bound
+        // checkParPublished AND the bound getScenarioKeysForTheme
+        // per D-15002. Relying on the logic-layer
+        // PRODUCTION_DEPENDENCIES default fail-closes every theme
+        // response to 404 (its `getScenarioKeysForTheme` returns
+        // `null`); the wiring layer must bind both functions at
+        // every call site.
+        const themeLeaderboard: ThemeLeaderboard | null =
+          await leaderboardLogic.getThemeLeaderboard(options, database, {
+            checkParPublished: parGate.checkParPublished,
+            getScenarioKeysForTheme: parGate.getScenarioKeysForTheme,
+          });
+        if (themeLeaderboard === null) {
+          koaContext.status = 404;
+          koaContext.body = { error: 'theme_not_found' };
+          return;
+        }
+        koaContext.status = 200;
+        koaContext.body = themeLeaderboard;
+      } catch (caughtError) {
+        // why: discard the caught value — the 500 envelope is
+        // locked at `{ error: 'internal_error' }`; no stack
+        // trace, no SQL state, no exception text per D-5201.
+        // Mirrors the per-scenario handler at lines 389-393.
+        void caughtError;
+        koaContext.status = 500;
+        koaContext.body = { error: 'internal_error' };
+      }
+    },
+  );
+
+  router.get(
+    '/api/leaderboards/top',
+    async (koaContext) => {
+      koaContext.set('Cache-Control', 'no-store');
+      const pagination = parsePaginationQuery(koaContext.query);
+      if (pagination.ok === false) {
+        koaContext.status = 400;
+        koaContext.body = {
+          error: 'invalid_query',
+          message: pagination.message,
+        };
+        return;
+      }
+
+      try {
+        const options: GlobalTopLeaderboardQueryOptions = {
+          limit: pagination.limit,
+          offset: pagination.offset,
+        };
+        // why: same deps wiring as the theme route — the global
+        // Top-N derives PAR-eligibility per scenario via the same
+        // injected `checkParPublished` (D-15003 step 2). The
+        // `getScenarioKeysForTheme` field is included for shape
+        // uniformity even though this endpoint does not consult it.
+        const globalTopLeaderboard: GlobalTopLeaderboard =
+          await leaderboardLogic.getGlobalTopLeaderboard(options, database, {
+            checkParPublished: parGate.checkParPublished,
+            getScenarioKeysForTheme: parGate.getScenarioKeysForTheme,
+          });
+        koaContext.status = 200;
+        koaContext.body = globalTopLeaderboard;
       } catch (caughtError) {
         void caughtError;
         koaContext.status = 500;

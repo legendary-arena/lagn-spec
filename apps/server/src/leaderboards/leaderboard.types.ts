@@ -56,8 +56,24 @@ interface ParGateHit {
 // by extending `PRODUCTION_DEPENDENCIES`; until then the default
 // fail-closes by returning `null` from `checkParPublished` per the
 // Lifecycle Prohibition.
+// why: `getScenarioKeysForTheme?` (WP-150 / D-15002) is the
+// optional dep-injection seam that resolves a themeId to its
+// scenarioKey set. Production wiring binds the real function in
+// `server.mjs` from the startup-loaded `content/themes/*.json` set
+// using the engine's `buildScenarioKey` helper (D-15001); tests
+// pass inline stubs. Optional + default `() => null` in
+// `PRODUCTION_DEPENDENCIES` so the existing per-scenario routes
+// stay unaffected when this dep is omitted, and so the theme route
+// surfaces 404 by construction in any wiring path that forgets to
+// inject the real binding (identical fail-closed posture to
+// `checkParPublished`). The leaderboards module never imports the
+// registry directly — the themeId mapping is built outside this
+// layer and reaches the logic functions only through this dep.
 export interface LeaderboardDependencies {
   readonly checkParPublished: (scenarioKey: string) => ParGateHit | null;
+  readonly getScenarioKeysForTheme?: (
+    themeId: string,
+  ) => readonly string[] | null;
 }
 
 // why: PublicLeaderboardEntry contains only derived, safe-to-expose
@@ -117,6 +133,59 @@ export interface ScenarioLeaderboard {
 // caller threading a cursor.
 export interface LeaderboardQueryOptions {
   readonly scenarioKey: string;
+  readonly limit: number;
+  readonly offset: number;
+}
+
+// why: ThemeLeaderboard mirrors ScenarioLeaderboard's shape (entries
+// + totalEligibleEntries) with `themeId` as the disambiguator the UI
+// uses to label the response. Reusing `PublicLeaderboardEntry`
+// verbatim preserves the 9-field D-5201 lock — every never-expose
+// field stays stripped at the WP-054 type boundary, and the new
+// theme endpoint cannot accidentally re-introduce one. `entries[]`
+// is freshly constructed on every call (one fresh literal per row,
+// mirroring `ScenarioLeaderboard`'s aliasing-defense pattern). Sort
+// order is byte-identical to `ScenarioLeaderboard` (final_score ASC,
+// created_at ASC) — the comparator is reused by reference, not
+// re-derived.
+export interface ThemeLeaderboard {
+  readonly themeId: string;
+  readonly entries: readonly PublicLeaderboardEntry[];
+  readonly totalEligibleEntries: number;
+}
+
+// why: GlobalTopLeaderboard has no themeId / scenarioKey
+// disambiguator at the top level — the response is a single global
+// Top-N over every PAR-published scenario. Each entry's
+// `scenarioKey` field (already part of PublicLeaderboardEntry)
+// remains the per-row disambiguator the UI uses to group / filter
+// downstream. Same `entries[]` freshness + same comparator-by-reuse
+// discipline as `ThemeLeaderboard`.
+export interface GlobalTopLeaderboard {
+  readonly entries: readonly PublicLeaderboardEntry[];
+  readonly totalEligibleEntries: number;
+}
+
+// why: ThemeLeaderboardQueryOptions carries `themeId` instead of
+// `scenarioKey` (the dep-injection seam translates themeId →
+// scenarioKey[] at request time per D-15001). Pagination bounds
+// match `LeaderboardQueryOptions` byte-identically so the route
+// layer's `parsePaginationQuery` helper is reused without
+// modification.
+export interface ThemeLeaderboardQueryOptions {
+  readonly themeId: string;
+  readonly limit: number;
+  readonly offset: number;
+}
+
+// why: GlobalTopLeaderboardQueryOptions has no scoping key —
+// pagination only. Kept as a named interface (rather than inlining
+// `{ limit; offset }`) so the logic-layer signature stays uniform
+// with the other three query-options shapes and so future fields
+// (e.g., a `parVersion` filter, deliberately out of scope here)
+// can land via a single interface extension rather than a signature
+// change.
+export interface GlobalTopLeaderboardQueryOptions {
   readonly limit: number;
   readonly offset: number;
 }

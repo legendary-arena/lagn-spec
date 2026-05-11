@@ -16119,6 +16119,194 @@ prompt at
 §Locked Values "Two-side ordering rule (D-14702)".
 
 ---
+### D-15001 — themeId → scenarioKey[] Mapping Rule (WP-150)
+
+**Decision:** For every `ThemeDefinition` loaded at server startup, the
+themeId-to-scenarioKey projection is performed by the engine's
+`buildScenarioKey` helper (`@legendary-arena/game-engine` →
+`packages/game-engine/src/scoring/parScoring.keys.ts:30`) applied to the
+three locked `setupIntent` fields:
+
+```
+buildScenarioKey(
+  theme.setupIntent.schemeId,
+  theme.setupIntent.mastermindId,
+  theme.setupIntent.villainGroupIds,
+)
+```
+
+This yields exactly **one** scenarioKey per theme, so the
+`getScenarioKeysForTheme(themeId)` injection returns a singleton
+`readonly string[]` on hit and `null` on miss (unknown themeId).
+`setupIntent.henchmanGroupIds` and `setupIntent.heroDeckIds` are
+deliberately **not** part of the key — they do not participate in
+the engine's canonical scenario identity (`buildScenarioKey` takes
+only scheme + mastermind + villain groups, with villain groups
+sorted internally to make the key order-independent).
+
+**Theme source-of-truth for the mapping:** the 70 JSON files under
+`content/themes/*.json`. The server reads them at startup using the
+registry's exported `validateThemeFile` validator
+(`packages/registry/src/theme.validate.ts:81`); invalid files are
+logged and skipped (fail-soft per the registry's structured-result
+contract — only `Game.setup()` may throw). The mapping is built
+once and frozen for the process lifetime.
+
+**Case discipline:** `themeId` strings are kebab-case by Zod
+construction (`theme.schema.ts:108` — `regex /^[a-z0-9]+(-[a-z0-9]+)*$/`);
+`buildScenarioKey` consumes the slug fields verbatim with no
+case-folding. Lookup is exact-string match; clients submitting a
+mixed-case themeId get `null` and the route surfaces 404.
+
+**Why these specific values:**
+
+- **`buildScenarioKey` is the canonical engine helper.** Two
+  alternatives existed: (1) a server-local re-implementation of the
+  format string, (2) hand-rolled per-route key construction. Both
+  would duplicate the `scheme::mastermind::sorted-villains+joined`
+  contract and silently drift if the engine ever changed the
+  separator or the sort order. Reusing the exported helper
+  collapses one decision into zero (the engine already locked it
+  under WP-048 / D-4801-equivalent).
+- **Singleton array, not multi-key.** A `ThemeDefinition` carries
+  exactly one `setupIntent`; the schema does not permit alternate
+  setups under one themeId. Modeling the return type as
+  `readonly string[] | null` rather than `string | null` keeps the
+  injection shape forward-compatible if a future theme variant ever
+  enumerates multiple setups — the route layer already iterates the
+  returned array, so a length-1 today and length-N later is a
+  zero-churn extension.
+- **`content/themes/*.json` over a future registry-side theme
+  loader.** Adding a `listThemes()` accessor to the registry
+  package was rejected for WP-150 scope: WP-150's file allowlist
+  excludes `packages/registry/**` (`.claude/rules/registry.md`
+  immutability of `schema.ts` / loader files; widening the
+  allowlist would require a separate WP). Reading the JSON files
+  directly in `server.mjs` (which already imports
+  `@legendary-arena/registry` for `validateThemeFile`) keeps the
+  modification surface inside WP-150's allowlist.
+
+**Status:** Active. Locked at WP-150 execution start (2026-05-11)
+per session-prompt §2 HARD GATE.
+
+**Citation:** WP-150 §Open Decisions #1; EC-152 §Before Starting
+(Open Decision lock); session prompt at
+`docs/ai/invocations/session-wp150-leaderboard-theme-and-global-aggregation-endpoints.md`
+§2 D-15001; engine helper at
+`packages/game-engine/src/scoring/parScoring.keys.ts:30`; theme
+schema at `packages/registry/src/theme.schema.ts:103`.
+
+---
+### D-15002 — Leaderboard Dependency-Injection Shape for Theme Mapping (WP-150)
+
+**Decision:** Option (a) — extend `LeaderboardDependencies` with one
+new optional field:
+
+```ts
+readonly getScenarioKeysForTheme?: (themeId: string) => readonly string[] | null;
+```
+
+`PRODUCTION_DEPENDENCIES.getScenarioKeysForTheme` defaults to
+`() => null` (fail-closed). `registerLeaderboardRoutes` retains its
+existing 3-argument call shape
+`(router, pool, parGate, leaderboardLogic?)` — the new dep flows
+through the existing single deps bundle that already carries
+`checkParPublished`, not as a fourth `themeGate` parameter.
+
+**Why this specific shape:**
+
+- **Single deps bundle preserves call-site readability.** Two
+  alternatives existed: (a) extend the existing bundle (this
+  decision), (b) add a fourth `themeGate: { getScenarioKeysForTheme }`
+  parameter to `registerLeaderboardRoutes`. Option (b) would
+  introduce a second deps namespace and force every test fixture
+  to construct two bundles instead of one; the existing
+  `parGate`-only bundle pattern (introduced in WP-115) is the
+  established precedent and the 3-arg shape is documented across
+  six existing API-catalog rows.
+- **Optional + null default is the same fail-closed posture as
+  `checkParPublished`.** Production wiring binds the real function
+  in `server.mjs`; tests pass inline stubs. When the dep is omitted
+  (e.g., a future caller that wires only the per-scenario routes),
+  every theme lookup returns `null` and the route surfaces 404 —
+  identical fail-closed semantics to `checkParPublished`'s
+  PAR-missing → empty-leaderboard branch.
+- **Default lock vs. operator override.** The session prompt §2
+  declares Option (a) the default lock unless explicitly
+  overridden at session start. Execution proceeded with Option (a);
+  no override was issued.
+
+**Status:** Active. Locked at WP-150 execution start (2026-05-11)
+per session-prompt §2 HARD GATE.
+
+**Citation:** WP-150 §Open Decisions #2; EC-152 §Before Starting
+(Open Decision lock); session prompt at
+`docs/ai/invocations/session-wp150-leaderboard-theme-and-global-aggregation-endpoints.md`
+§2 D-15002; WP-115 deps-injection precedent at
+`apps/server/src/leaderboards/leaderboard.routes.ts:293-298`.
+
+---
+### D-15003 — PAR-Eligibility Derivation for Global Top-N Leaderboard (WP-150)
+
+**Decision:** The global Top-N endpoint
+(`GET /api/leaderboards/top`) derives the PAR-eligible scenario list
+at request time via:
+
+1. `listScenarioKeys(database)` — already exported by WP-054 at
+   `apps/server/src/leaderboards/leaderboard.logic.ts:281`;
+   returns the alphabetically sorted set of scenario keys with at
+   least one publicly visible verified score.
+2. Per-scenario filter through `deps.checkParPublished(scenarioKey)`
+   in a `for...of` loop; scenarios whose PAR is `null` are dropped
+   (fail-closed per D-5306 Option A).
+3. The retained list is passed to the SELECT as
+   `cs.scenario_key = ANY($1)`; the same WHERE clause feeds the
+   parallel `COUNT(*)` so `totalEligibleEntries` reflects the
+   filtered universe.
+
+**Why this specific derivation:**
+
+- **Reuses two WP-054 primitives byte-identically.**
+  `listScenarioKeys` already exists; `checkParPublished` already
+  exists. The global endpoint is a thin compose of those two
+  exports plus an `= ANY($1)` filter — no new SQL primitive, no
+  schema change, no materialized view.
+- **Alternatives rejected.** A LATERAL join against a hypothetical
+  `legendary.par_published_scenarios` view would push the
+  PAR-eligibility filter into SQL but adds a new persistence
+  surface (the view) that WP-150 explicitly excludes from scope
+  (no `legendary.*` schema change). A pre-materialized
+  in-memory PAR-allowlist refreshed at startup would skip the
+  per-request `listScenarioKeys` call but would silently drift
+  whenever a PAR file is republished without a server restart —
+  the per-request derivation is correct-by-construction.
+- **Performance posture.** The SELECT runtime stays in the same
+  order-of-magnitude as the per-scenario endpoint: `listScenarioKeys`
+  is one indexed DISTINCT scan and `checkParPublished` is an
+  in-memory `Map.get` per scenario (parGate is loaded into memory
+  at startup per WP-051 / D-5101). The ANY($1) filter pushes
+  pagination + ordering to the SQL layer; no application-side
+  re-sort runs.
+
+**Locked envelope addition:** a new error-envelope value
+`{ error: 'theme_not_found' }` (404) is introduced on the theme
+route only; the global Top-N route reuses the existing
+`{ error: 'invalid_query' }` (400) and `{ error: 'internal_error' }`
+(500) envelopes without addition. Status-code domain locked:
+themes route ∈ `{200, 400, 404, 500}`; global Top-N route ∈
+`{200, 400, 500}`.
+
+**Status:** Active. Locked at WP-150 execution start (2026-05-11)
+per session-prompt §2 HARD GATE.
+
+**Citation:** WP-150 §Open Decisions #3; EC-152 §Before Starting
+(Open Decision lock); session prompt at
+`docs/ai/invocations/session-wp150-leaderboard-theme-and-global-aggregation-endpoints.md`
+§2 D-15003; WP-054 `listScenarioKeys` export at
+`apps/server/src/leaderboards/leaderboard.logic.ts:281`; D-5306
+fail-closed posture for `checkParPublished`.
+
+---
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

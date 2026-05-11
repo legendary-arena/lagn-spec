@@ -10,7 +10,13 @@
  */
 
 import { createRequire } from 'node:module';
-import { createRegistryFromLocalFiles } from '@legendary-arena/registry';
+import { readdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import {
+  createRegistryFromLocalFiles,
+  validateThemeFile,
+} from '@legendary-arena/registry';
+import { buildScenarioKey } from '@legendary-arena/game-engine';
 import { loadRules, getRules } from './rules/loader.mjs';
 import { createParGate } from './par/parGate.mjs';
 import { createPool } from './db/database.js';
@@ -41,6 +47,89 @@ function registerHealthRoute(router) {
   router.get('/health', (koaContext) => {
     koaContext.body = { status: 'ok' };
   });
+}
+
+// why: WP-150 / D-15001 — build the themeId → scenarioKey[] map at
+// startup from the 70 JSON files under `content/themes/*.json`,
+// using the registry's exported `validateThemeFile` validator
+// (never-throw structured-result contract) and the engine's
+// canonical `buildScenarioKey` helper. The leaderboards module
+// (`apps/server/src/leaderboards/**`) is layer-boundary-pure: it
+// never imports `@legendary-arena/registry` or
+// `@legendary-arena/game-engine`. The mapping is built in this
+// wiring layer and injected into `registerLeaderboardRoutes` as a
+// bound function, mirroring the `checkParPublished` precedent.
+// Mapping is pure and read-only — the returned Map is frozen for
+// the process lifetime. Each theme produces exactly one
+// scenarioKey (singleton array) because a `ThemeDefinition` carries
+// exactly one `setupIntent`; the singleton-array shape keeps the
+// dep contract forward-compatible with future multi-setup themes.
+// Invalid theme files are logged and skipped (fail-soft) — the
+// startup never blocks on a single bad file.
+/**
+ * Builds the themeId → scenarioKey[] mapping from
+ * `content/themes/*.json` at startup. Returns a read-only map keyed
+ * by kebab-case themeId. Skipped + reported on per-file validation
+ * failure; the loader never throws.
+ *
+ * @returns {Promise<ReadonlyMap<string, readonly string[]>>}
+ */
+async function buildThemeScenarioKeyMap() {
+  const themesDirectory = 'content/themes';
+  const mapping = new Map();
+
+  let entries;
+  try {
+    entries = await readdir(themesDirectory);
+  } catch (error) {
+    // why: missing directory is not fatal — the server runs without
+    // any theme mapping (theme route surfaces 404 by construction)
+    // so local-dev workflows without `content/themes/` keep working.
+    // Production deploys always carry the directory; absence there
+    // would be a separate failure surfaced via the 404 rate.
+    console.warn(
+      `[server] theme directory not readable at "${themesDirectory}"; ` +
+        `theme leaderboard endpoint will surface 404 for every themeId. ` +
+        `Error: ${error.message}`,
+    );
+    return mapping;
+  }
+
+  const themeFiles = entries.filter((name) => name.endsWith('.json'));
+  let loaded = 0;
+  let skipped = 0;
+  for (const fileName of themeFiles) {
+    const filePath = join(themesDirectory, fileName);
+    const result = await validateThemeFile(filePath);
+    if (result.success === false) {
+      skipped = skipped + 1;
+      const firstError = result.errors[0];
+      console.warn(
+        `[server] theme file "${filePath}" failed validation (${firstError.path}): ` +
+          `${firstError.message} — skipped`,
+      );
+      continue;
+    }
+    const theme = result.theme;
+    const scenarioKey = buildScenarioKey(
+      theme.setupIntent.schemeId,
+      theme.setupIntent.mastermindId,
+      theme.setupIntent.villainGroupIds,
+    );
+    // why: singleton array per D-15001 — a ThemeDefinition has
+    // exactly one setupIntent, so the projection is 1:1. The
+    // injection shape `readonly string[] | null` keeps room for
+    // future multi-setup theme variants without breaking the
+    // contract.
+    mapping.set(theme.themeId, Object.freeze([scenarioKey]));
+    loaded = loaded + 1;
+  }
+
+  console.log(
+    `[server] themes loaded: ${loaded} mapped, ${skipped} skipped ` +
+      `(theme → scenarioKey via buildScenarioKey per D-15001)`,
+  );
+  return mapping;
 }
 
 /**
@@ -276,7 +365,30 @@ export async function startServer() {
   const pool = createPool();
   console.log('[server] pg.Pool constructed (max=10)');
   const verifier = tryConstructHankoVerifier();
-  registerLeaderboardRoutes(server.router, pool, parGate);
+
+  // why: WP-150 / D-15001 + D-15002 — build the themeId →
+  // scenarioKey[] map at startup (registry loaded, mapping
+  // computed once, frozen for process lifetime) and inject a
+  // bound `getScenarioKeysForTheme` alongside `parGate.checkParPublished`
+  // in the same deps bundle. The leaderboards module never imports
+  // the registry directly — it consumes a function reference only,
+  // preserving the apps/server/src/leaderboards/** layer boundary
+  // (registry-agnostic by design; layer boundary §2 authority).
+  // Mapping is pure and read-only; theme files are loaded at
+  // startup, not at request time. Injection pattern mirrors the
+  // existing `checkParPublished` precedent at line 270 below.
+  // Citations: D-15001 (themeId mapping rule), D-15002 (single
+  // deps bundle), D-15003 (PAR-eligibility derivation for the
+  // global Top-N endpoint that shares the same deps).
+  const themeScenarioKeyMap = await buildThemeScenarioKeyMap();
+  const getScenarioKeysForTheme = (themeId) => {
+    const keys = themeScenarioKeyMap.get(themeId);
+    return keys === undefined ? null : keys;
+  };
+  registerLeaderboardRoutes(server.router, pool, {
+    checkParPublished: parGate.checkParPublished,
+    getScenarioKeysForTheme,
+  });
 
   // why: WP-104 / D-10408 — register the three owner-only routes
   // (/api/me/profile GET + PATCH, /api/me/links PUT) on the same
