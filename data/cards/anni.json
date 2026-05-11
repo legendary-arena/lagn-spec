@@ -15,11 +15,6 @@
       },
       "cards": [
         {
-          "slug": "protege-of-dr-doom",
-          "name": "Protege of Dr. Doom",
-          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp"
-        },
-        {
           "name": "Time Loop Experiments",
           "displayName": "Time Loop Experiments",
           "slug": "time-loop-experiments",
@@ -70,9 +65,9 @@
           ]
         },
         {
-          "name": "Protégé of Dr. Doom",
+          "name": "Protege of Dr. Doom",
           "displayName": "Protégé of Dr. Doom",
-          "slug": "prot-g-of-dr-doom",
+          "slug": "protege-of-dr-doom",
           "rarity": 3,
           "rarityLabel": "Rare",
           "slot": 4,
@@ -80,7 +75,7 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-prot-g-of-dr-doom.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp",
           "abilities": [
             "Use one of Dr. Doom's Mastermind Tactics. You can't use any of them more than once per game. If you have already used them all, get +4[icon:attack] instead.",
             "(Take another turn; or draw three extra cards at end of turn; or you may recruit a [hc:tech] or [hc:ranged] Hero for free; or all other players draw a card or discard a card.)"
@@ -90,14 +85,6 @@
       "physicalCards": [
         {
           "id": "p1",
-          "count": 1,
-          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp",
-          "sides": [
-            "protege-of-dr-doom"
-          ]
-        },
-        {
-          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-time-loop-experiments.webp",
           "sides": [
@@ -105,7 +92,7 @@
           ]
         },
         {
-          "id": "p3",
+          "id": "p2",
           "count": 5,
           "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-borrow-from-the-future.webp",
           "sides": [
@@ -113,7 +100,7 @@
           ]
         },
         {
-          "id": "p4",
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-reprogram-doombot-legions.webp",
           "sides": [
@@ -121,11 +108,11 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
-          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-prot-g-of-dr-doom.webp",
+          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-protege-of-dr-doom.webp",
           "sides": [
-            "prot-g-of-dr-doom"
+            "protege-of-dr-doom"
           ]
         }
       ]

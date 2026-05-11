@@ -17,9 +17,9 @@
           "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-6u.webp"
         },
         {
-          "slug": "protege-of-dr-doom",
-          "name": "Protege of Dr. Doom",
-          "imageUrl": "https://images.legendary-arena.com/anni/anni-hr-brainstorm-8r.webp"
+          "slug": "prot-g-of-dr-doom",
+          "_slug": "protege-of-dr-doom",
+          "name": "Protege of Dr. Doom"
         }
       ],
       "_skipPair": [
