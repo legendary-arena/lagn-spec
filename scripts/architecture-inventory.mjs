@@ -55,6 +55,57 @@ const SKIP_DIRECTORIES = new Set([
   '.nuxt',
 ]);
 
+// ---------------------------------------------------------------------------
+// Language footprint — extension and marker-file inventory configuration.
+// Distinct from SOURCE_EXTENSIONS (which scopes the import scanner to
+// files that can declare imports of installed packages); this set is
+// broader because the goal is "what languages does this repo author,"
+// not "what files import npm packages."
+// ---------------------------------------------------------------------------
+
+// why: extension -> language label map. Adding an extension here
+// automatically classifies every file with that extension under the
+// named language in the report. Keep labels human-readable; they
+// surface verbatim in the markdown table.
+const LANGUAGE_EXTENSIONS = new Map([
+  ['TypeScript', ['.ts', '.tsx', '.d.ts']],
+  ['JavaScript', ['.js', '.mjs', '.cjs']],
+  ['Vue SFC', ['.vue']],
+  ['CSS', ['.css']],
+  ['Sass/SCSS', ['.sass', '.scss']],
+  ['HTML', ['.html']],
+  ['Markdown', ['.md', '.mdx']],
+  ['JSON', ['.json']],
+  ['YAML', ['.yml', '.yaml']],
+  ['TOML', ['.toml']],
+  ['SQL', ['.sql']],
+  ['Shell', ['.sh']],
+  ['PowerShell', ['.ps1']],
+]);
+
+// why: presence-probes for languages whose toolchain or source-file
+// extensions wouldn't surface in the extension scan alone. Hugo is the
+// motivating case: the repo runs a Hugo binary as a build step, but no
+// `.go` source files exist. The report needs to be able to say "Go
+// toolchain present (via Hugo), Go source absent" without conflating
+// the two. Same logic for Docker (Dockerfiles exist, no Go-style source
+// to count).
+const LANGUAGE_MARKER_PROBES = [
+  { language: 'Go', toolchainMarkers: ['go.mod', 'go.sum'], sourceExtensions: ['.go'] },
+  { language: 'Python', toolchainMarkers: ['requirements.txt', 'pyproject.toml', 'Pipfile'], sourceExtensions: ['.py'] },
+  { language: 'Rust', toolchainMarkers: ['Cargo.toml'], sourceExtensions: ['.rs'] },
+  { language: 'Ruby', toolchainMarkers: ['Gemfile'], sourceExtensions: ['.rb'] },
+  { language: 'Java/Kotlin', toolchainMarkers: ['pom.xml', 'build.gradle', 'build.gradle.kts'], sourceExtensions: ['.java', '.kt'] },
+  { language: 'Docker', toolchainMarkers: ['Dockerfile', 'docker-compose.yml', 'docker-compose.yaml'], sourceExtensions: [] },
+  { language: 'Hugo (Go binary)', toolchainMarkers: ['hugo.toml', 'hugo.yaml', 'hugo.yml'], sourceExtensions: [] },
+];
+
+// why: the language inventory walks a slightly broader set of trees
+// than the import scanner. `wiki/` is project-authored markdown for the
+// Hugo site and belongs in the language footprint, even though it has
+// no installed packages and is irrelevant to the import scan.
+const LANGUAGE_SCAN_ROOTS = ['apps', 'packages', 'scripts', 'wiki'];
+
 // why: anchor REPO_ROOT to this script's own location so the inventory
 // works regardless of the caller's working directory. The script lives
 // in `<repo>/scripts/`, so the parent of `__dirname` is always the
@@ -703,6 +754,151 @@ async function collectSourceFiles(directory, accumulator) {
 }
 
 // ---------------------------------------------------------------------------
+// Language footprint scan — extension and marker-file inventory
+// ---------------------------------------------------------------------------
+
+/**
+ * Walk a directory tree and accumulate every regular file path,
+ * skipping vendored / generated trees. Extension-blind counterpart to
+ * `collectSourceFiles`, used by the Language Footprint scan.
+ *
+ * @param {string} directory
+ * @param {string[]} accumulator
+ * @returns {Promise<void>}
+ */
+async function collectAllFiles(directory, accumulator) {
+  const stack = [directory];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    let entries;
+    try {
+      entries = await readdir(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        if (SKIP_DIRECTORIES.has(entry.name)) {
+          continue;
+        }
+        stack.push(join(current, entry.name));
+        continue;
+      }
+      if (entry.isFile()) {
+        accumulator.push(join(current, entry.name));
+      }
+    }
+  }
+}
+
+/**
+ * Walk the language scan roots and produce the three cuts the
+ * Language Footprint section needs:
+ *   - byLanguage: extension-classified counts (TypeScript, Vue SFC, …)
+ *   - byExtension: raw extension counts (every distinct extension seen)
+ *   - markers: toolchain-vs-source presence probes for non-Node
+ *     languages whose mere extension count would mislead (e.g. Hugo
+ *     ships a Go binary but the repo has no `.go` source).
+ *
+ * @returns {Promise<{
+ *   byLanguage: Map<string, number>,
+ *   byExtension: Map<string, number>,
+ *   markers: Array<{ language: string, toolchainPresent: boolean, sourcePresent: boolean }>,
+ * }>}
+ */
+async function scanLanguageFootprint() {
+  const scanRoots = LANGUAGE_SCAN_ROOTS.map((directory) =>
+    join(REPO_ROOT, directory),
+  );
+  const allFiles = [];
+  for (const root of scanRoots) {
+    if (!existsSync(root)) {
+      continue;
+    }
+    await collectAllFiles(root, allFiles);
+  }
+
+  // why: build a flat extension -> language lookup once so per-file
+  // classification is O(1). Adding a row to LANGUAGE_EXTENSIONS
+  // automatically lands here without touching the loop.
+  const extensionToLanguage = new Map();
+  for (const [language, extensions] of LANGUAGE_EXTENSIONS) {
+    for (const extension of extensions) {
+      extensionToLanguage.set(extension, language);
+    }
+  }
+
+  const byLanguage = new Map();
+  const byExtension = new Map();
+  const presentBasenames = new Set();
+  const presentExtensions = new Set();
+
+  for (const filePath of allFiles) {
+    const baseName = filePath.split(sep).pop();
+    presentBasenames.add(baseName);
+
+    // why: detect `.d.ts` ahead of the generic last-dot extraction.
+    // Otherwise `lastIndexOf('.')` yields `.ts` for `foo.d.ts` and
+    // declaration files silently fold into the regular TypeScript
+    // bucket, hiding them from the raw extension table.
+    let extension;
+    if (baseName.endsWith('.d.ts')) {
+      extension = '.d.ts';
+    } else {
+      const dotIndex = baseName.lastIndexOf('.');
+      extension = dotIndex === -1 ? '' : baseName.slice(dotIndex);
+    }
+
+    if (extension === '') {
+      continue;
+    }
+    presentExtensions.add(extension);
+    byExtension.set(extension, (byExtension.get(extension) ?? 0) + 1);
+
+    const language = extensionToLanguage.get(extension);
+    if (language !== undefined) {
+      byLanguage.set(language, (byLanguage.get(language) ?? 0) + 1);
+    }
+  }
+
+  // why: the marker-probe pass distinguishes "toolchain in use" from
+  // "source code in this language exists" — a distinction the
+  // extension count alone can't express. Toolchain markers are
+  // matched both as basenames anywhere in the scanned tree (to catch
+  // per-app `Dockerfile` / `hugo.toml`) and at the repo root (to
+  // catch root-level `go.mod` / `pyproject.toml` that wouldn't fall
+  // under the scan roots).
+  const markers = [];
+  for (const probe of LANGUAGE_MARKER_PROBES) {
+    let toolchainPresent = false;
+    for (const markerName of probe.toolchainMarkers) {
+      if (presentBasenames.has(markerName)) {
+        toolchainPresent = true;
+        break;
+      }
+      if (existsSync(join(REPO_ROOT, markerName))) {
+        toolchainPresent = true;
+        break;
+      }
+    }
+    let sourcePresent = false;
+    for (const sourceExtension of probe.sourceExtensions) {
+      if (presentExtensions.has(sourceExtension)) {
+        sourcePresent = true;
+        break;
+      }
+    }
+    markers.push({
+      language: probe.language,
+      toolchainPresent,
+      sourcePresent,
+    });
+  }
+
+  return { byLanguage, byExtension, markers };
+}
+
+// ---------------------------------------------------------------------------
 // Config-file scan — count package references inside JSON / YAML configs
 // that the source-file walker misses (tsconfig, pnpm-workspace, etc.)
 // ---------------------------------------------------------------------------
@@ -1324,6 +1520,7 @@ async function extractMentionedPackages(docPath) {
  * @param {Map<string, Set<string>>} input.tsconfigReferences
  * @param {Map<string, Set<string>>} input.eslintConfigReferences
  * @param {Map<string, Set<string>>} input.lockfilePackages
+ * @param {Awaited<ReturnType<typeof scanLanguageFootprint>>} input.languageFootprint
  * @param {Set<string>} input.docMentionsArch
  * @param {Set<string>} input.docMentionsArch02
  * @returns {Promise<string>}
@@ -1335,6 +1532,7 @@ async function renderReport({
   tsconfigReferences,
   eslintConfigReferences,
   lockfilePackages,
+  languageFootprint,
   docMentionsArch,
   docMentionsArch02,
 }) {
@@ -1390,6 +1588,16 @@ async function renderReport({
   lines.push(`## Runtime & toolchain`);
   lines.push('');
   lines.push(renderRuntimeSection(manifests, aggregate));
+  lines.push('');
+
+  // why: language footprint pairs naturally with runtime / toolchain
+  // — both answer "what does this repo run on" — but cuts a different
+  // axis (file extensions and marker probes vs declared engines and
+  // pinned versions). Place it directly after so a reviewer can read
+  // both halves in sequence.
+  lines.push(`## Language footprint`);
+  lines.push('');
+  lines.push(renderLanguageFootprintSection(languageFootprint));
   lines.push('');
 
   lines.push(`## Workspace`);
@@ -1853,6 +2061,87 @@ function renderRuntimeSection(manifests, aggregate) {
       lines.push(`| ${label} | \`${packageName}\` | ${versionList} |`);
     }
     lines.push('');
+  }
+
+  return lines.join('\n').trimEnd();
+}
+
+/**
+ * Render the Language Footprint section: extension-classified language
+ * counts, raw extension counts, and toolchain-vs-source presence
+ * probes for non-Node languages. Facts only — no recommendations.
+ *
+ * @param {Awaited<ReturnType<typeof scanLanguageFootprint>>} languageFootprint
+ * @returns {string}
+ */
+function renderLanguageFootprintSection(languageFootprint) {
+  const { byLanguage, byExtension, markers } = languageFootprint;
+  const lines = [];
+
+  const scanRootsText = LANGUAGE_SCAN_ROOTS.map((root) => `\`${root}/\``).join(', ');
+  lines.push(
+    `Counts derived from on-disk file extensions under ${scanRootsText}` +
+      ` (vendored / generated trees like \`node_modules\` and \`dist\` excluded).` +
+      ` Extension-blind walk; \`package.json\` parsing not involved.`,
+  );
+  lines.push('');
+
+  // why: sort by file count desc, then alphabetical for stable
+  // output across runs when two languages tie. Both tables share
+  // this comparator.
+  const compareCountThenName = (a, b) => {
+    if (b[1] !== a[1]) {
+      return b[1] - a[1];
+    }
+    return a[0].localeCompare(b[0]);
+  };
+
+  lines.push(`### By language (extension-classified)`);
+  lines.push('');
+  const languageRows = [...byLanguage.entries()].sort(compareCountThenName);
+  if (languageRows.length === 0) {
+    lines.push(`_No language-classified files detected._`);
+    lines.push('');
+  } else {
+    lines.push(`| Language | Files |`);
+    lines.push(`|---|---:|`);
+    for (const [language, count] of languageRows) {
+      lines.push(`| ${language} | ${count} |`);
+    }
+    lines.push('');
+  }
+
+  lines.push(`### By extension (raw)`);
+  lines.push('');
+  const extensionRows = [...byExtension.entries()].sort(compareCountThenName);
+  if (extensionRows.length === 0) {
+    lines.push(`_No files with extensions detected._`);
+    lines.push('');
+  } else {
+    lines.push(`| Extension | Files |`);
+    lines.push(`|---|---:|`);
+    for (const [extension, count] of extensionRows) {
+      lines.push(`| \`${extension}\` | ${count} |`);
+    }
+    lines.push('');
+  }
+
+  lines.push(`### Toolchain vs source probes`);
+  lines.push('');
+  lines.push(
+    `Whether each non-Node language's toolchain marker files and source-file` +
+      ` extensions are present anywhere in the scanned tree (or at the repo root` +
+      ` for markers like \`go.mod\`). "Toolchain present + source absent" means` +
+      ` the build pipeline depends on this language but no source code in this` +
+      ` repo is written in it (e.g. Hugo is a Go binary).`,
+  );
+  lines.push('');
+  lines.push(`| Language | Toolchain marker present | Source files present |`);
+  lines.push(`|---|---|---|`);
+  for (const row of markers) {
+    const toolchain = row.toolchainPresent ? 'yes' : 'no';
+    const source = row.sourcePresent ? 'yes' : 'no';
+    lines.push(`| ${row.language} | ${toolchain} | ${source} |`);
   }
 
   return lines.join('\n').trimEnd();
@@ -2503,6 +2792,11 @@ async function main() {
     join(REPO_ROOT, 'pnpm-lock.yaml'),
   );
 
+  // why: extension-blind walk of `apps/`, `packages/`, `scripts/`, and
+  // `wiki/` to count files per language. Independent of the import
+  // scan; runs in well under a second.
+  const languageFootprint = await scanLanguageFootprint();
+
   // why: bump the import counts for any package referenced by a
   // config file so the per-category usage badge is accurate. Without
   // this, `@vue/tsconfig` and `eslint-plugin-vue` etc. would still
@@ -2533,6 +2827,7 @@ async function main() {
     tsconfigReferences,
     eslintConfigReferences,
     lockfilePackages,
+    languageFootprint,
     docMentionsArch,
     docMentionsArch02,
   });
