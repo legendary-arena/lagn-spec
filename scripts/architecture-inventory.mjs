@@ -1580,6 +1580,14 @@ async function renderReport({
   lines.push(await renderApplicationStacksSection(manifests, lockfilePackages));
   lines.push('');
 
+  // why: deployment topology bridges "what each app is" (Application
+  // stacks) and "what's inside each package" (First-party subsystems).
+  // Source is docs/ops/domains.json — same file ops tooling reads.
+  lines.push(`## Deployment topology`);
+  lines.push('');
+  lines.push(await renderDeploymentTopologySection());
+  lines.push('');
+
   // why: surface internally-built subsystems that don't appear in the
   // dep tables (because they aren't libraries) or the per-app stacks
   // (because they live inside `packages/*`). Curated list lives at
@@ -2155,6 +2163,59 @@ function renderLanguageFootprintSection(languageFootprint) {
   }
 
   return lines.join('\n').trimEnd();
+}
+
+// ─── Deployment topology (reads docs/ops/domains.json) ──────────────
+
+/**
+ * Render the "Deployment topology" section: one row per subdomain from
+ * `docs/ops/domains.json`, preserving the file's curated order.
+ *
+ * @returns {Promise<string>}
+ */
+async function renderDeploymentTopologySection() {
+  const domainsPath = join(REPO_ROOT, 'docs', 'ops', 'domains.json');
+  let domainsRaw;
+  try {
+    domainsRaw = await readFile(domainsPath, 'utf8');
+  } catch (readError) {
+    throw new Error(
+      `Could not read domains manifest at ${domainsPath}: ${readError.message}. ` +
+        `Ensure docs/ops/domains.json exists and is readable.`,
+    );
+  }
+
+  let domainsData;
+  try {
+    domainsData = JSON.parse(domainsRaw);
+  } catch (parseError) {
+    throw new Error(
+      `Failed to parse domains manifest at ${domainsPath}: ${parseError.message}. ` +
+        `Ensure the file contains valid JSON.`,
+    );
+  }
+
+  const entries = domainsData.domains;
+  const lines = [];
+
+  lines.push(
+    `Canonical source: \`docs/ops/domains.json\`. ` +
+      `Ops runbook: \`docs/ops/DOMAINS.md\`.`,
+  );
+  lines.push('');
+  lines.push(`| Subdomain | App / Source | Host | State |`);
+  lines.push(`|---|---|---|---|`);
+
+  for (const entry of entries) {
+    // why: URL constructor gives us the hostname reliably without
+    // fragile regex — handles ports, paths, and protocol variants.
+    const subdomain = new URL(entry.url).hostname;
+    lines.push(
+      `| \`${subdomain}\` | ${entry.source} | ${entry.host} | ${entry.state} |`,
+    );
+  }
+
+  return lines.join('\n');
 }
 
 /**
