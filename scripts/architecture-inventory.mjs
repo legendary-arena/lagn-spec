@@ -1537,6 +1537,16 @@ async function renderReport({
   docMentionsArch02,
 }) {
   const lines = [];
+  lines.push(`---`);
+  lines.push(`title: Architecture & Library Adoption Inventory`);
+  lines.push(`type: Generated`);
+  lines.push(`status: evergreen`);
+  lines.push(`tags:`);
+  lines.push(`  - generated`);
+  lines.push(`  - architecture`);
+  lines.push(`  - inventory`);
+  lines.push(`---`);
+  lines.push('');
   lines.push(`# Architecture & Library Adoption Inventory`);
   lines.push('');
   lines.push(`_Generated ${TODAY_UTC} by \`scripts/architecture-inventory.mjs\`._`);

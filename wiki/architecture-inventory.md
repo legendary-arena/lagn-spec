@@ -1,6 +1,16 @@
+---
+title: Architecture & Library Adoption Inventory
+type: Generated
+status: evergreen
+tags:
+  - generated
+  - architecture
+  - inventory
+---
+
 # Architecture & Library Adoption Inventory
 
-_Generated 2026-05-10 by `scripts/architecture-inventory.mjs`._
+_Generated 2026-05-12 by `scripts/architecture-inventory.mjs`._
 
 This is a deterministic snapshot of installed dependencies and
 their actual import usage across the workspace. It does **not**
@@ -94,6 +104,59 @@ AI-policy-driven calibration pipeline. T0 RandomPolicy and T2 CompetentHeuristic
 | node-postgres | `pg` | ^8.13.0 |
 | @vue/test-utils | `@vue/test-utils` | ^2.4.6 |
 
+## Language footprint
+
+Counts derived from on-disk file extensions under `apps/`, `packages/`, `scripts/`, `wiki/` (vendored / generated trees like `node_modules` and `dist` excluded). Extension-blind walk; `package.json` parsing not involved.
+
+### By language (extension-classified)
+
+| Language | Files |
+|---|---:|
+| TypeScript | 395 |
+| JSON | 80 |
+| JavaScript | 69 |
+| Vue SFC | 62 |
+| Markdown | 23 |
+| HTML | 9 |
+| CSS | 7 |
+| PowerShell | 7 |
+| TOML | 1 |
+
+### By extension (raw)
+
+| Extension | Files |
+|---|---:|
+| `.ts` | 395 |
+| `.json` | 80 |
+| `.vue` | 62 |
+| `.js` | 37 |
+| `.mjs` | 31 |
+| `.md` | 23 |
+| `.html` | 9 |
+| `.css` | 7 |
+| `.ps1` | 7 |
+| `.png` | 6 |
+| `.txt` | 4 |
+| `.example` | 2 |
+| `.cjs` | 1 |
+| `.gitignore` | 1 |
+| `.hugo-version` | 1 |
+| `.toml` | 1 |
+
+### Toolchain vs source probes
+
+Whether each non-Node language's toolchain marker files and source-file extensions are present anywhere in the scanned tree (or at the repo root for markers like `go.mod`). "Toolchain present + source absent" means the build pipeline depends on this language but no source code in this repo is written in it (e.g. Hugo is a Go binary).
+
+| Language | Toolchain marker present | Source files present |
+|---|---|---|
+| Go | no | no |
+| Python | no | no |
+| Rust | no | no |
+| Ruby | no | no |
+| Java/Kotlin | no | no |
+| Docker | no | no |
+| Hugo (Go binary) | yes | no |
+
 ## Workspace
 
 | Manifest | Name | Role | deps | devDeps | peerDeps |
@@ -118,7 +181,7 @@ AI-policy-driven calibration pipeline. T0 RandomPolicy and T2 CompetentHeuristic
 | `@vue/compiler-sfc` | ^3.4.27 | 1 _(minimal)_ | `packages/vue-sfc-loader/package.json` (dev); `packages/vue-sfc-loader/package.json` (peer) |
 | `pinia` | ^2.1.7 | 26 _(comprehensive)_ | `apps/arena-client/package.json` (dep) |
 | `vite` | ^5.3.1 | 4 _(partial)_ | `apps/arena-client/package.json` (dev); `apps/registry-viewer/package.json` (dev) |
-| `vue` | ^3.4.27 | 58 _(comprehensive)_ | `apps/arena-client/package.json` (dep); `apps/registry-viewer/package.json` (dep); `packages/vue-sfc-loader/package.json` (dev); `packages/vue-sfc-loader/package.json` (peer) |
+| `vue` | ^3.4.27 | 61 _(comprehensive)_ | `apps/arena-client/package.json` (dep); `apps/registry-viewer/package.json` (dep); `packages/vue-sfc-loader/package.json` (dev); `packages/vue-sfc-loader/package.json` (peer) |
 
 _Other candidates in this category not currently installed:_ `vue-router`, `@vue/runtime-core`
 
@@ -431,7 +494,7 @@ installed but not yet placed surfaces under "Not yet classified".
 | `socket.io` | 3.1.2, 4.8.3 | transitive via `boardgame.io` | _(transitive)_ |
 | `socket.io-client` | 4.8.3 | transitive via `boardgame.io` | _(transitive)_ |
 | `vite` | ^5.3.1 | direct dep — `apps/arena-client/package.json`, `apps/registry-viewer/package.json` | 4 _(partial)_ |
-| `vue` | ^3.4.27 | direct dep — `apps/arena-client/package.json`, `apps/registry-viewer/package.json`, `packages/vue-sfc-loader/package.json` | 58 _(comprehensive)_ |
+| `vue` | ^3.4.27 | direct dep — `apps/arena-client/package.json`, `apps/registry-viewer/package.json`, `packages/vue-sfc-loader/package.json` | 61 _(comprehensive)_ |
 
 ### Tooling
 
