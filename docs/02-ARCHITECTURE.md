@@ -123,6 +123,37 @@ orthogonal and test-only. No layer may reach upward or sideways.
 
 ---
 
+## Deployment Topology
+
+Where each app runs and which subdomain it serves. The canonical
+machine-readable list is [`docs/ops/domains.json`](ops/domains.json);
+the ops runbook is [`docs/ops/DOMAINS.md`](ops/DOMAINS.md). This table
+is a human summary — if it conflicts with `domains.json`, `domains.json`
+wins.
+
+| Subdomain | App / Source | Host | State | Notes |
+|---|---|---|---|---|
+| `www.legendary-arena.com` | External Hugo repo (`C:\www\legendary-arena-com`) | Cloudflare Pages | live | Apex redirects here (CF Redirect Rule) |
+| `play.legendary-arena.com` | `apps/arena-client` | Cloudflare Pages | live | Vue 3 SPA; CORS origin in server allowlist |
+| `cards.legendary-arena.com` | `apps/registry-viewer` | Cloudflare Pages | planned | Currently on `cards.barefootbetters.com`; domain migration pending |
+| `ewiki.legendary-arena.com` | `apps/wiki-viewer` | Render Static Site | live | Gated behind Cloudflare Access (302/401/403 expected) |
+| `api.legendary-arena.com` | `apps/server` | Render | live | CNAME to `legendary-arena-server.onrender.com` (not CF-proxied — Render needs direct origin for TLS + WebSocket) |
+| `wiki.legendary-arena.com` | TBD (separate Hugo site) | Cloudflare Pages | planned | Public player wiki; not yet authored |
+| `legends.legendary-arena.com` | `apps/legends-board` (WP-143) | Cloudflare Pages | planned | Public scoreboard; reads R2 snapshots, no server API calls |
+| `images.barefootbetters.com` | R2 bucket (external) | Cloudflare R2 + CDN | live | Card images; bucket index returns 403/404, individual keys return 200 |
+
+**Hosting model:** Cloudflare Pages for static SPAs and Hugo sites;
+Render for the Node.js game server and the Hugo engineering wiki.
+The split is intentional — CF Pages gives free global CDN and instant
+rollbacks for static assets; Render provides managed PostgreSQL and
+persistent-process support for the server.
+
+**DNS posture:** All CF Pages subdomains are Cloudflare-proxied (orange
+cloud). The `api` CNAME is DNS-only (grey cloud) so Render can
+terminate TLS and handle WebSocket upgrade directly.
+
+---
+
 ## Server Startup (implemented in WP-004)
 
 Two independent tasks must both succeed before the server accepts requests:
