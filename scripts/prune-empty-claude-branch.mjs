@@ -4,16 +4,25 @@
 // Hygiene check for accumulated `claude/*` worktree+branch leftovers
 // produced by Claude Code's per-session auto-spawn behavior.
 //
-// Three modes:
+// Four modes:
 //
 //   --report  (default; safe to run from any hook)
 //     Read-only audit across all claude/* branches. Counts prunable
 //     branches; prints a one-line recommendation only when count
-//     exceeds REPORT_THRESHOLD.
+//     exceeds REPORT_THRESHOLD. Add --verbose to see per-branch
+//     detail regardless of threshold.
 //
 //   --execute (operator-driven; never fired by a hook)
-//     Deletes each prunable branch and its worktree. Skips anything
-//     that fails the safety contract.
+//     Deletes each prunable branch (0 commits ahead, no remote)
+//     and its worktree. Skips anything that fails the safety contract.
+//     Does NOT handle squash-merged branches — use --cleanup-orphans
+//     for those.
+//
+//   --cleanup-orphans (operator-driven; broader than --execute)
+//     Like --execute, plus also prunes claude/* branches whose work
+//     IS on main via squash-merge (commits ahead of origin/main but
+//     a merged PR exists on origin with this branch as head). Catches
+//     branches that --execute leaves as "blocked" but are actually safe.
 //
 //   --verify-current (operator-driven; pre-delete safety gate)
 //     Verifies that the CURRENT branch (where the script is invoked
@@ -28,6 +37,14 @@
 //   4. Worktree (if attached) has no uncommitted changes other than a
 //      modification to .claude/settings.local.json (harness state)
 //
+// Safety contract for --cleanup-orphans (extends --execute):
+//
+//   Conditions 1 + 4 still apply, PLUS the branch must satisfy ONE OF:
+//   (a) Conditions 2 + 3 (the original --execute contract: auto-spawn
+//       orphan with no commits ahead and no remote), OR
+//   (b) Branch has commits ahead AND a merged PR exists on origin with
+//       this branch as head (the squash-merge case).
+//
 // Safety contract for --verify-current (ALL must hold to PASS):
 //
 //   1. Current branch name matches /^claude\//
@@ -36,21 +53,16 @@
 //      a. 0 commits ahead of origin/main (true merge / fast-forward), OR
 //      b. A merged PR exists on origin with this branch as head
 //         (the squash-merge case; queried via `gh pr list`)
-//
-// Intentionally narrow. The bulk-prune modes do NOT prune:
-//   - branches with real commits (even merged-via-squash — left for
-//     the operator to handle with --verify-current + manual delete)
-//   - branches with a remote tracking branch (might be in PR review)
-//   - worktrees with untracked files or any tracked-file modification
-//     besides settings.local.json
 
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
 const REPORT_THRESHOLD = 5;
 const mode = process.argv.includes('--verify-current') ? 'verify'
+  : process.argv.includes('--cleanup-orphans') ? 'cleanup-orphans'
   : process.argv.includes('--execute') ? 'execute'
   : 'report';
+const verbose = process.argv.includes('--verbose');
 
 function git(args, cwd) {
   return execSync(`git ${args}`, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
@@ -147,14 +159,32 @@ function audit() {
 }
 
 function report({ prunable, blocked }) {
-  if (prunable.length < REPORT_THRESHOLD) return 0;
+  const underThreshold = prunable.length < REPORT_THRESHOLD;
+  if (underThreshold && !verbose) return 0;
+
   console.log('');
-  console.log(`⚠  ${prunable.length} prunable claude/* branches detected.`);
-  console.log(`   To clean up: node scripts/prune-empty-claude-branch.mjs --execute`);
-  console.log(`   Reference:   docs/ai/REFERENCE/01.8-claude-code-hooks.md`);
-  if (blocked.length > 0) {
-    console.log(`   (${blocked.length} additional claude/* branches have real work — review separately.)`);
+  if (underThreshold) {
+    console.log(`${prunable.length} prunable claude/* branch(es) (under threshold ${REPORT_THRESHOLD}; would be silent without --verbose).`);
+  } else {
+    console.log(`!  ${prunable.length} prunable claude/* branches detected.`);
   }
+
+  if (verbose) {
+    if (prunable.length > 0) {
+      console.log(`   Prunable (auto-spawn orphans):`);
+      for (const { branch } of prunable) console.log(`     ${branch}`);
+    }
+    if (blocked.length > 0) {
+      console.log(`   Blocked (need review; some may be squash-merge candidates):`);
+      for (const { branch, reason } of blocked) console.log(`     ${branch} — ${reason}`);
+    }
+  } else if (blocked.length > 0) {
+    console.log(`   (${blocked.length} additional claude/* branches have real work — review separately. Run with --verbose for per-branch detail.)`);
+  }
+
+  console.log(`   To clean up: node scripts/prune-empty-claude-branch.mjs --execute`);
+  console.log(`                 (or --cleanup-orphans to also prune squash-merged claude/* branches)`);
+  console.log(`   Reference:   docs/ai/REFERENCE/01.8-claude-code-hooks.md`);
   console.log('');
   return 0;
 }
@@ -188,6 +218,91 @@ function execute({ repo, prunable, blocked }) {
   if (blocked.length > 0) {
     console.log(`\n${blocked.length} branch(es) skipped (real work present):`);
     for (const { branch, reason } of blocked) console.log(`  ${branch} — ${reason}`);
+  }
+  return failed === 0 ? 0 : 1;
+}
+
+/**
+ * --cleanup-orphans mode: like --execute, plus also prunes claude/* branches
+ * whose work IS on main via squash-merge. Iterates the blocked list from
+ * audit(), checks each "commits ahead" branch for a merged PR on origin,
+ * and prunes if found. Branches with real uncommitted work in their worktree
+ * remain blocked even if a merged PR exists (workspace state precedes
+ * remote state).
+ */
+function cleanupOrphans({ repo, prunable, blocked }) {
+  // Pre-classify: start with the prunable list (auto-spawn orphans, the
+  // original --execute scope), then promote squash-merge candidates from
+  // the blocked list.
+  const toDelete = prunable.map(p => ({ ...p, reason: '0 ahead, no remote' }));
+  const stillBlocked = [];
+  let ghUnavailable = false;
+
+  for (const { branch, reason } of blocked) {
+    // Only "commits ahead" entries are squash-merge candidates.
+    if (!/commit\(s\) ahead/.test(reason)) {
+      stillBlocked.push({ branch, reason });
+      continue;
+    }
+
+    // worktree-dirt check: real uncommitted work overrides any merged-PR signal
+    const worktree = findWorktree(repo, branch);
+    if (worktree && !isWorktreeDirtOnly(worktree)) {
+      stillBlocked.push({ branch, reason: `${reason}; worktree has uncommitted work` });
+      continue;
+    }
+
+    const merged = hasMergedPR(branch);
+    if (merged === true) {
+      toDelete.push({ branch, worktree, reason: `squash-merged via gh PR (${reason})` });
+    } else if (merged === null) {
+      ghUnavailable = true;
+      stillBlocked.push({ branch, reason: `${reason}; gh unavailable (can't verify squash-merge)` });
+    } else {
+      stillBlocked.push({ branch, reason });
+    }
+  }
+
+  if (ghUnavailable) {
+    console.log('Warning: gh CLI unavailable. Some squash-merge candidates could not be verified and remain blocked.\n');
+  }
+
+  if (toDelete.length === 0) {
+    console.log('Nothing to prune (no auto-spawn orphans, no squash-merged claude/* branches).');
+    if (stillBlocked.length > 0) {
+      console.log(`\n${stillBlocked.length} branch(es) blocked (review separately):`);
+      for (const { branch, reason } of stillBlocked) console.log(`  ${branch} — ${reason}`);
+    }
+    return 0;
+  }
+
+  console.log(`Pruning ${toDelete.length} claude/* branch(es) + worktree(s):\n`);
+  let removed = 0;
+  let failed = 0;
+  for (const { branch, worktree, reason } of toDelete) {
+    try {
+      if (worktree) {
+        execSync(`git -C "${repo}" worktree remove --force "${worktree}"`, { stdio: 'pipe' });
+      }
+      execSync(`git -C "${repo}" branch -D "${branch}"`, { stdio: 'pipe' });
+      // Also try remote delete — may fail silently if no remote ref exists,
+      // which is expected for auto-spawn orphans. We swallow that case.
+      try {
+        execSync(`git -C "${repo}" push origin --delete "${branch}"`, { stdio: 'pipe' });
+      } catch {
+        // Remote ref didn't exist — fine.
+      }
+      console.log(`  removed: ${branch} (${reason})`);
+      removed++;
+    } catch (err) {
+      console.log(`  FAILED:  ${branch} — ${err.message.split('\n')[0]}`);
+      failed++;
+    }
+  }
+  console.log(`\nRemoved: ${removed}. Failed: ${failed}.`);
+  if (stillBlocked.length > 0) {
+    console.log(`\n${stillBlocked.length} branch(es) still blocked (need operator review):`);
+    for (const { branch, reason } of stillBlocked) console.log(`  ${branch} — ${reason}`);
   }
   return failed === 0 ? 0 : 1;
 }
@@ -259,5 +374,11 @@ if (mode === 'verify') {
   process.exit(verifyCurrent());
 } else {
   const result = audit();
-  process.exit(mode === 'execute' ? execute(result) : report(result));
+  if (mode === 'execute') {
+    process.exit(execute(result));
+  } else if (mode === 'cleanup-orphans') {
+    process.exit(cleanupOrphans(result));
+  } else {
+    process.exit(report(result));
+  }
 }
