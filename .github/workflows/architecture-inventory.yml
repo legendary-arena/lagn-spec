@@ -43,6 +43,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # why: the SaaS / embedded services detector scans the marketing
+      # website repo for Brevo, Snipcart, and other non-package
+      # integrations that are invisible to the npm-based inventory.
+      # Checked out as a sibling directory so the `--external` flag
+      # can point at it. Shallow clone is sufficient — the scan only
+      # reads current file contents, not history.
+      - name: Checkout website repo (for SaaS detection)
+        uses: actions/checkout@v4
+        with:
+          repository: legendary-arena/legendary-arena-website
+          path: legendary-arena-website
+          fetch-depth: 1
+
       - name: Regenerate architecture inventory
         # why: continue-on-error keeps the workflow alive when the
         # inventory script itself crashes (the script is a reporting
@@ -50,7 +63,10 @@ jobs:
         # still shows red in the GitHub UI; downstream steps decide
         # what to do when the file did not change.
         continue-on-error: true
-        run: pnpm wiki-viewer:inventory
+        run: >-
+          node scripts/architecture-inventory.mjs
+          --out wiki/architecture-inventory.md
+          --external legendary-arena-website
 
       - name: Detect diff against committed copy
         id: diff

@@ -14,6 +14,10 @@
  *   node scripts/architecture-inventory.mjs                # stdout
  *   node scripts/architecture-inventory.mjs --out FILE     # write file
  *   node scripts/architecture-inventory.mjs --out -        # explicit stdout
+ *   node scripts/architecture-inventory.mjs --external ../legendary-arena-com
+ *                                                          # include SaaS
+ *                                                          # detections from
+ *                                                          # an external repo
  *
  * Exit code is always 0 unless the script itself crashes; this is a
  * reporting tool, not a gate.
@@ -331,6 +335,65 @@ for (const [categoryLabel, packageNames] of CATEGORY_DEFINITIONS) {
 }
 
 // ---------------------------------------------------------------------------
+// SaaS / embedded services — non-package tools detected via static analysis
+// of source files (HTML, JS, Vue templates, config).  These never appear in
+// package.json and would otherwise be invisible to dependency-based inventory.
+// ---------------------------------------------------------------------------
+
+// why: the architecture inventory is strong on npm deps + import graphs
+// but blind to SaaS integrations embedded via CDN scripts, HTML data
+// attributes, or SMTP config strings. This registry enables a parallel
+// detection pass that surfaces Brevo, Snipcart, Stripe Elements, etc.
+// alongside libraries in the same report.
+//
+// Each entry is keyed by a short canonical name. `patterns` are
+// RegExps tested against full file contents (case-insensitive where
+// appropriate). `category` is a human-readable label for the report
+// table. `description` is a brief note for the detail section.
+//
+// Extension point: add a new entry to surface a new SaaS tool in the
+// next inventory run. No other code changes needed.
+const SAAS_DETECTORS = {
+  brevo: {
+    patterns: [
+      /sibforms\.com/i,
+      /sib-form/i,
+      /sendinblue/i,
+      /brevo\.com/i,
+      /smtp-relay\.brevo\.com/i,
+      /api\.brevo\.com/i,
+    ],
+    category: 'marketing / email',
+    description: 'Transactional + marketing email, newsletter forms, SMTP relay.',
+  },
+  snipcart: {
+    patterns: [
+      /cdn\.snipcart\.com/i,
+      /snipcart\.js/i,
+      /class\s*=\s*["'][^"']*snipcart/i,
+    ],
+    category: 'ecommerce',
+    description: 'Cart overlay via CDN script + HTML data attributes.',
+  },
+  stripe: {
+    patterns: [
+      /js\.stripe\.com/i,
+      /stripe\.elements/i,
+    ],
+    category: 'payments',
+    description: 'Client-side payment elements via CDN script.',
+  },
+};
+
+// why: SaaS embeds live in HTML, config, and template files that the
+// npm-import scanner ignores. This broader extension set covers the
+// file types where CDN scripts, SMTP endpoints, and API keys appear.
+const SAAS_SCAN_EXTENSIONS = new Set([
+  '.html', '.htm', '.vue', '.js', '.mjs', '.cjs', '.ts', '.tsx',
+  '.yaml', '.yml', '.toml', '.json', '.md', '.css', '.env',
+]);
+
+// ---------------------------------------------------------------------------
 // First-party subsystems — internally-built modules of architectural
 // significance that don't surface in the dep / category tables because
 // they aren't libraries.
@@ -497,6 +560,30 @@ function parseOutputTarget(args) {
     return null;
   }
   return resolve(cwd(), value);
+}
+
+/**
+ * Parse repeatable `--external <path>` flags from argv. Returns an
+ * array of `{ root, label }` objects where `root` is the resolved
+ * absolute path and `label` is the directory's basename (used in the
+ * report to identify which repo a file came from).
+ *
+ * @param {string[]} args
+ * @returns {Array<{ root: string, label: string }>}
+ */
+function parseExternalRoots(args) {
+  const roots = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--external' && args[i + 1]) {
+      const resolved = resolve(cwd(), args[i + 1]);
+      roots.push({
+        root: resolved,
+        label: resolved.split(sep).pop(),
+      });
+      i++; // skip the value
+    }
+  }
+  return roots;
 }
 
 // ---------------------------------------------------------------------------
@@ -751,6 +838,102 @@ async function collectSourceFiles(directory, accumulator) {
       }
     }
   }
+}
+
+// ---------------------------------------------------------------------------
+// SaaS / embedded services scan — detect non-package tool usage via
+// string-pattern matching across source, HTML, and config files.
+// ---------------------------------------------------------------------------
+
+/**
+ * Scan one or more directory trees for SaaS tool usage defined by
+ * `SAAS_DETECTORS`. Returns a Map<toolName, { files: string[] }>
+ * where each `files` entry is the repo-relative (or label-prefixed)
+ * path where a match was found.
+ *
+ * The scan is intentionally broad: it reads every text file matching
+ * `SAAS_SCAN_EXTENSIONS`, not just the narrower `SOURCE_EXTENSIONS`
+ * the import scanner uses. SaaS embeds live in HTML, YAML, and env
+ * files that the import scanner rightly ignores.
+ *
+ * @param {Array<{ root: string, label: string | null }>} scanTargets
+ *   Each target specifies a directory root and an optional label. When
+ *   `label` is non-null the file paths in the output are prefixed with
+ *   `[label]` so external repos are visually distinct from the home repo.
+ * @returns {Promise<Map<string, { files: string[], category: string, description: string }>>}
+ */
+async function scanForSaas(scanTargets) {
+  // why: accumulate hits across all scan targets into one map so the
+  // report shows a unified view. Files from external repos carry a
+  // label prefix for traceability.
+  const saasUsage = new Map();
+
+  for (const { root, label } of scanTargets) {
+    if (!existsSync(root)) {
+      continue;
+    }
+    const allFiles = [];
+    await collectAllFiles(root, allFiles);
+
+    // why: filter to text-readable extensions up front rather than
+    // attempting to read binary blobs (images, fonts, compiled assets).
+    const textFiles = allFiles.filter((filePath) => {
+      const baseName = filePath.split(sep).pop();
+      const dotIndex = baseName.lastIndexOf('.');
+      if (dotIndex === -1) {
+        // why: extensionless files like `.env` need special handling.
+        // The filename *is* the extension for dotfiles.
+        return SAAS_SCAN_EXTENSIONS.has(baseName);
+      }
+      return SAAS_SCAN_EXTENSIONS.has(baseName.slice(dotIndex));
+    });
+
+    // why: this script defines detector patterns as string literals,
+    // which would match themselves and create a false positive (the
+    // script "uses brevo" because it contains `/brevo\.com/i`).
+    // Exclude it by resolved path.
+    const selfPath = resolve(SCRIPT_DIRECTORY, 'architecture-inventory.mjs');
+
+    for (const filePath of textFiles) {
+      if (resolve(filePath) === selfPath) {
+        continue;
+      }
+      let contents;
+      try {
+        contents = await readFile(filePath, 'utf8');
+      } catch {
+        continue;
+      }
+
+      for (const [toolName, detector] of Object.entries(SAAS_DETECTORS)) {
+        if (detector.patterns.some((pattern) => pattern.test(contents))) {
+          if (!saasUsage.has(toolName)) {
+            saasUsage.set(toolName, {
+              files: [],
+              category: detector.category,
+              description: detector.description,
+            });
+          }
+          // why: prefix external-repo files so the reader knows at a
+          // glance which repo the hit came from. Home-repo files use
+          // bare relative paths for consistency with the rest of the report.
+          const relativePath = relative(root, filePath).split(sep).join('/');
+          const displayPath = label !== null
+            ? `[${label}] ${relativePath}`
+            : relativePath;
+          saasUsage.get(toolName).files.push(displayPath);
+        }
+      }
+    }
+  }
+
+  // why: sort files within each tool and sort tools alphabetically so
+  // output is stable across runs (determinism contract).
+  for (const [, data] of saasUsage) {
+    data.files.sort();
+  }
+
+  return new Map([...saasUsage.entries()].sort(([a], [b]) => a.localeCompare(b)));
 }
 
 // ---------------------------------------------------------------------------
@@ -1523,6 +1706,7 @@ async function extractMentionedPackages(docPath) {
  * @param {Awaited<ReturnType<typeof scanLanguageFootprint>>} input.languageFootprint
  * @param {Set<string>} input.docMentionsArch
  * @param {Set<string>} input.docMentionsArch02
+ * @param {Map<string, { files: string[], category: string, description: string }>} input.saasUsage
  * @returns {Promise<string>}
  */
 async function renderReport({
@@ -1535,6 +1719,7 @@ async function renderReport({
   languageFootprint,
   docMentionsArch,
   docMentionsArch02,
+  saasUsage,
 }) {
   const lines = [];
   lines.push(`---`);
@@ -1551,11 +1736,12 @@ async function renderReport({
   lines.push('');
   lines.push(`_Generated ${TODAY_UTC} by \`scripts/architecture-inventory.mjs\`._`);
   lines.push('');
-  lines.push(`This is a deterministic snapshot of installed dependencies and`);
-  lines.push(`their actual import usage across the workspace. It does **not**`);
-  lines.push(`make recommendations — feed it into the gap-analysis prompt`);
-  lines.push(`alongside \`docs/02-ARCHITECTURE.md\` and \`docs/ai/ARCHITECTURE.md\``);
-  lines.push(`for prioritized advice.`);
+  lines.push(`This is a deterministic snapshot of installed dependencies,`);
+  lines.push(`their actual import usage across the workspace, and SaaS /`);
+  lines.push(`embedded service integrations detected via static analysis.`);
+  lines.push(`It does **not** make recommendations — feed it into the`);
+  lines.push(`gap-analysis prompt alongside \`docs/02-ARCHITECTURE.md\` and`);
+  lines.push(`\`docs/ai/ARCHITECTURE.md\` for prioritized advice.`);
   lines.push('');
 
   // why: lead with a per-app stack narrative so a reviewer can orient
@@ -1586,6 +1772,16 @@ async function renderReport({
   lines.push(`## Deployment topology`);
   lines.push('');
   lines.push(await renderDeploymentTopologySection());
+  lines.push('');
+
+  // why: infrastructure services is the "where does it run" companion to
+  // deployment topology's "what domain points where." Derived from
+  // render.yaml (Render services + databases) and docs/ops/domains.json
+  // (Cloudflare services). Answers the question a new engineer asks:
+  // "what vendor accounts and managed services does this project depend on?"
+  lines.push(`## Infrastructure services`);
+  lines.push('');
+  lines.push(await renderInfrastructureServicesSection());
   lines.push('');
 
   // why: surface internally-built subsystems that don't appear in the
@@ -1731,6 +1927,17 @@ async function renderReport({
         `| \`${packageName}\` | ${versionList} | ${usageCell} | ${locationCell} |`,
       );
     }
+    lines.push('');
+  }
+
+  // why: SaaS / embedded services are the third signal source alongside
+  // package.json deps and import-graph usage. Placed after the library
+  // category tables because it answers the same question ("what tools
+  // does this project use?") but for non-package integrations.
+  if (saasUsage.size > 0) {
+    lines.push(`## SaaS / embedded services`);
+    lines.push('');
+    lines.push(renderSaasSection(saasUsage));
     lines.push('');
   }
 
@@ -1988,6 +2195,44 @@ async function renderReport({
   lines.push(`   highest-signal section — it surfaces deferred work and`);
   lines.push(`   accidental dependencies in seconds.`);
   lines.push('');
+  lines.push(`### Running the script`);
+  lines.push('');
+  lines.push('```bash');
+  lines.push(`# Baseline — npm deps + import graph only (no SaaS detection):`);
+  lines.push(`node scripts/architecture-inventory.mjs --out wiki/architecture-inventory.md`);
+  lines.push('');
+  lines.push(`# With marketing website repo — includes SaaS / embedded service detections`);
+  lines.push(`# (Brevo, Snipcart, etc.) from the legendary-arena-com repo:`);
+  lines.push(`node scripts/architecture-inventory.mjs --out wiki/architecture-inventory.md \\`);
+  lines.push(`  --external C:\\www\\legendary-arena-com`);
+  lines.push('```');
+  lines.push('');
+  lines.push(`The \`--external <path>\` flag is repeatable — add as many`);
+  lines.push(`sibling repos as needed. Each external repo's files appear`);
+  lines.push(`prefixed with \`[repo-name]\` in the SaaS detail section`);
+  lines.push(`so you can tell at a glance which repo a detection came from.`);
+  lines.push('');
+  lines.push(`### Automated updates`);
+  lines.push('');
+  lines.push(`This report is regenerated automatically by`);
+  lines.push(`\`.github/workflows/architecture-inventory.yml\` on a weekly`);
+  lines.push(`cron schedule (Mondays 06:00 UTC). The workflow:`);
+  lines.push('');
+  lines.push(`1. Checks out both this repo and`);
+  lines.push(`   \`legendary-arena/legendary-arena-website\` (for SaaS`);
+  lines.push(`   detection).`);
+  lines.push(`2. Runs the inventory script with \`--external\` pointed at`);
+  lines.push(`   the website checkout.`);
+  lines.push(`3. If the output differs from the committed copy, opens a PR`);
+  lines.push(`   on the \`bot/architecture-inventory-refresh\` branch for`);
+  lines.push(`   human review.`);
+  lines.push(`4. If no diff, no-ops silently.`);
+  lines.push('');
+  lines.push(`The workflow can also be triggered manually via`);
+  lines.push(`\`workflow_dispatch\` in the GitHub Actions UI. Hand-edits to`);
+  lines.push(`this file are non-authoritative and will be overwritten by`);
+  lines.push(`the next cron run.`);
+  lines.push('');
   return lines.join('\n');
 }
 
@@ -2165,6 +2410,59 @@ function renderLanguageFootprintSection(languageFootprint) {
   return lines.join('\n').trimEnd();
 }
 
+/**
+ * Render the "SaaS / embedded services" section: a summary table plus
+ * a per-tool file-list detail block for audit-grade traceability.
+ *
+ * @param {Map<string, { files: string[], category: string, description: string }>} saasUsage
+ * @returns {string}
+ */
+function renderSaasSection(saasUsage) {
+  const lines = [];
+
+  if (saasUsage.size === 0) {
+    lines.push(`_No SaaS or embedded service usage detected._`);
+    lines.push('');
+    lines.push(`Detectors are defined in \`SAAS_DETECTORS\` at the top of`);
+    lines.push(`\`scripts/architecture-inventory.mjs\`. Add patterns for new`);
+    lines.push(`services to surface them here.`);
+    return lines.join('\n');
+  }
+
+  lines.push(`Tools detected via static pattern-matching of source files`);
+  lines.push(`(HTML, JS, Vue templates, config). These do not appear in`);
+  lines.push(`\`package.json\` and would otherwise be invisible to`);
+  lines.push(`dependency-based inventory.`);
+  lines.push('');
+
+  lines.push(`| Service | Category | Detected in | Description |`);
+  lines.push(`|---|---|---:|---|`);
+  for (const [toolName, data] of saasUsage) {
+    const fileCount = data.files.length;
+    const countLabel = fileCount === 1 ? '1 file' : `${fileCount} files`;
+    lines.push(
+      `| \`${toolName}\` | ${data.category} | ${countLabel} | ${data.description} |`,
+    );
+  }
+  lines.push('');
+
+  // why: the summary table tells a reviewer what's used; the detail
+  // section tells them exactly where to look. Parallel to the
+  // "Declared but no source imports" section's per-package breakdown.
+  lines.push(`### SaaS usage detail`);
+  lines.push('');
+  for (const [toolName, data] of saasUsage) {
+    lines.push(`#### ${toolName}`);
+    lines.push('');
+    for (const filePath of data.files) {
+      lines.push(`- \`${filePath}\``);
+    }
+    lines.push('');
+  }
+
+  return lines.join('\n').trimEnd();
+}
+
 // ─── Deployment topology (reads docs/ops/domains.json) ──────────────
 
 /**
@@ -2216,6 +2514,193 @@ async function renderDeploymentTopologySection() {
   }
 
   return lines.join('\n');
+}
+
+/**
+ * Render the "Infrastructure services" section: managed services the
+ * project depends on, derived from `render.yaml` (Render web services
+ * + databases) and `docs/ops/domains.json` (Cloudflare services).
+ *
+ * This is the "where does it run" companion to Deployment topology's
+ * "what domain points where." The two tables share source data but cut
+ * different questions: topology answers "what URL maps to what app,"
+ * infrastructure answers "what vendor accounts and managed services
+ * does this project pay for."
+ *
+ * @returns {Promise<string>}
+ */
+async function renderInfrastructureServicesSection() {
+  const lines = [];
+  const services = [];
+
+  // ── Render services (from render.yaml) ──────────────────────────────
+  const renderYamlPath = join(REPO_ROOT, 'render.yaml');
+  if (existsSync(renderYamlPath)) {
+    const renderRaw = await readFile(renderYamlPath, 'utf8');
+
+    // why: full YAML parsing without a dependency would be its own
+    // project. render.yaml has a stable, shallow structure — regex
+    // extraction of service names, types, and database names is
+    // reliable for this file and avoids adding a YAML parser dep.
+    // If render.yaml ever becomes complex enough to defeat this,
+    // switch to a proper parser.
+
+    // Extract web/worker services: `- type: web` or `- type: worker`
+    // followed by `name: <value>`.
+    const servicePattern = /- type:\s*(web|worker|static)\s*\n\s*name:\s*(.+)/g;
+    let match;
+    while ((match = servicePattern.exec(renderRaw)) !== null) {
+      const serviceType = match[1].trim();
+      const serviceName = match[2].trim();
+
+      // why: derive the public URL from the service name. Render's
+      // convention is `<name>.onrender.com` for web/worker services.
+      // Static sites follow the same pattern but may have a custom
+      // domain (handled by the domains.json cross-reference).
+      const renderUrl = `https://${serviceName}.onrender.com`;
+
+      // why: detect the runtime from the YAML to label the service
+      // accurately. Node web services, static sites, and worker
+      // services have different operational profiles.
+      const runtimeLabel = serviceType === 'static'
+        ? 'Render Static Site'
+        : `Render Web Service`;
+
+      services.push({
+        name: serviceName,
+        provider: 'Render',
+        kind: runtimeLabel,
+        url: renderUrl,
+      });
+    }
+
+    // Extract databases: `- name: <value>` under `databases:` block,
+    // followed by `plan: <value>` (possibly separated by comment lines).
+    // why: normalise line endings first — pCloud-synced repos on Windows
+    // store CRLF, and the regex anchors depend on `\n`-only endings.
+    const renderNormalised = renderRaw.replace(/\r\n/g, '\n');
+    const dbBlockIndex = renderNormalised.indexOf('\ndatabases:');
+    if (dbBlockIndex !== -1) {
+      const dbBlock = renderNormalised.slice(dbBlockIndex);
+      const dbPattern = /-\s*name:\s*(.+)\n(?:\s*(?:#[^\n]*)?\n)*\s*plan:\s*(.+)/g;
+      let dbMatch;
+      while ((dbMatch = dbPattern.exec(dbBlock)) !== null) {
+        const dbName = dbMatch[1].trim();
+        const dbPlan = dbMatch[2].trim();
+        services.push({
+          name: dbName,
+          provider: 'Render',
+          kind: `Managed PostgreSQL (${dbPlan})`,
+          url: '_internal (connection string via env)_',
+        });
+      }
+    }
+  }
+
+  // ── Cloudflare services (from domains.json) ─────────────────────────
+  // why: domains.json is the canonical record of which subdomains map
+  // to which Cloudflare service. Rather than duplicating that data, we
+  // normalise the host strings into canonical Cloudflare service types
+  // (Pages, R2, Access) and list the domains each one serves. Individual
+  // domain mappings remain in the Deployment topology table.
+  const domainsPath = join(REPO_ROOT, 'docs', 'ops', 'domains.json');
+  if (existsSync(domainsPath)) {
+    try {
+      const domainsData = JSON.parse(await readFile(domainsPath, 'utf8'));
+      // why: normalise host strings into canonical service types so
+      // "Cloudflare Pages", "Cloudflare Pages (redirect rule)", and
+      // "Render Static Site + Cloudflare Access" each surface as the
+      // Cloudflare product they represent, not as raw host-field dupes.
+      const cfBuckets = new Map(); // canonical type -> domains[]
+      for (const entry of domainsData.domains ?? []) {
+        const host = (entry.host ?? '').toLowerCase();
+        if (!host.includes('cloudflare')) {
+          continue;
+        }
+        const hostname = new URL(entry.url).hostname;
+        // Determine the canonical Cloudflare product.
+        let product;
+        if (host.includes('r2')) {
+          product = 'Cloudflare R2 (object storage + CDN)';
+        } else if (host.includes('access')) {
+          product = 'Cloudflare Access (zero-trust gate)';
+        } else {
+          product = 'Cloudflare Pages (static hosting)';
+        }
+        if (!cfBuckets.has(product)) {
+          cfBuckets.set(product, []);
+        }
+        cfBuckets.get(product).push(hostname);
+      }
+
+      for (const [product, domains] of [...cfBuckets.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+        domains.sort();
+        const scope = domains.length === 1
+          ? `\`${domains[0]}\``
+          : domains.map((d) => `\`${d}\``).join(', ');
+        // why: extract a short kind label from the product name for the
+        // Kind column (e.g. "object storage + CDN" from
+        // "Cloudflare R2 (object storage + CDN)"). The Service column
+        // gets the full product name; repeating it in Kind would be
+        // redundant.
+        const kindMatch = product.match(/\((.+)\)/);
+        const kindLabel = kindMatch ? kindMatch[1] : product;
+        services.push({
+          name: product,
+          provider: 'Cloudflare',
+          kind: kindLabel,
+          url: scope,
+        });
+      }
+    } catch {
+      // why: non-fatal — domains.json issues are already caught by
+      // renderDeploymentTopologySection. Don't mask that error.
+    }
+  }
+
+  // ── Render table ────────────────────────────────────────────────────
+  lines.push(`Managed services the project depends on, derived from`);
+  lines.push(`\`render.yaml\` and \`docs/ops/domains.json\`. Answers "what`);
+  lines.push(`vendor accounts and managed services does this project`);
+  lines.push(`depend on?" — distinct from Deployment topology, which`);
+  lines.push(`answers "what URL maps to what app."`);
+  lines.push('');
+
+  if (services.length === 0) {
+    lines.push(`_No infrastructure services detected._`);
+    return lines.join('\n');
+  }
+
+  // why: group by provider so the table reads as a per-vendor summary.
+  // Sort within each provider alphabetically by name for stable output.
+  const byProvider = new Map();
+  for (const svc of services) {
+    if (!byProvider.has(svc.provider)) {
+      byProvider.set(svc.provider, []);
+    }
+    byProvider.get(svc.provider).push(svc);
+  }
+
+  for (const [provider, providerServices] of [...byProvider.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+    lines.push(`### ${provider}`);
+    lines.push('');
+    lines.push(`| Service | Kind | URL / Scope |`);
+    lines.push(`|---|---|---|`);
+    providerServices.sort((a, b) => a.name.localeCompare(b.name));
+    for (const svc of providerServices) {
+      // why: for Render services the name is the instance identifier
+      // (e.g. `legendary-arena-server`) and kind is the service type.
+      // For Cloudflare the name IS the product type, so show the
+      // domain scope in the URL column.
+      const nameCell = svc.provider === 'Render'
+        ? `\`${svc.name}\``
+        : svc.name;
+      lines.push(`| ${nameCell} | ${svc.kind} | ${svc.url} |`);
+    }
+    lines.push('');
+  }
+
+  return lines.join('\n').trimEnd();
 }
 
 /**
@@ -2835,6 +3320,7 @@ function renderDocSection(docLabel, mentioned, installed) {
 
 async function main() {
   const outputTarget = parseOutputTarget(argv.slice(2));
+  const externalRoots = parseExternalRoots(argv.slice(2));
 
   const manifestPaths = await discoverWorkspaceManifests();
   const manifests = [];
@@ -2867,6 +3353,19 @@ async function main() {
   // `wiki/` to count files per language. Independent of the import
   // scan; runs in well under a second.
   const languageFootprint = await scanLanguageFootprint();
+
+  // why: SaaS detection is the third signal source alongside package.json
+  // deps and import-graph usage. The home repo is always scanned (using
+  // the full repo root, not just workspace globs, because SaaS embeds
+  // can live in HTML files outside `apps/` and `packages/`). External
+  // repos are added via `--external <path>` CLI flags so cross-repo
+  // marketing integrations (Brevo, Snipcart, etc.) surface in the same
+  // inventory.
+  const saasTargets = [
+    { root: REPO_ROOT, label: null },
+    ...externalRoots,
+  ];
+  const saasUsage = await scanForSaas(saasTargets);
 
   // why: bump the import counts for any package referenced by a
   // config file so the per-category usage badge is accurate. Without
@@ -2901,6 +3400,7 @@ async function main() {
     languageFootprint,
     docMentionsArch,
     docMentionsArch02,
+    saasUsage,
   });
 
   if (outputTarget === null) {

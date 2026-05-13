@@ -10,13 +10,14 @@ tags:
 
 # Architecture & Library Adoption Inventory
 
-_Generated 2026-05-12 by `scripts/architecture-inventory.mjs`._
+_Generated 2026-05-13 by `scripts/architecture-inventory.mjs`._
 
-This is a deterministic snapshot of installed dependencies and
-their actual import usage across the workspace. It does **not**
-make recommendations — feed it into the gap-analysis prompt
-alongside `docs/02-ARCHITECTURE.md` and `docs/ai/ARCHITECTURE.md`
-for prioritized advice.
+This is a deterministic snapshot of installed dependencies,
+their actual import usage across the workspace, and SaaS /
+embedded service integrations detected via static analysis.
+It does **not** make recommendations — feed it into the
+gap-analysis prompt alongside `docs/02-ARCHITECTURE.md` and
+`docs/ai/ARCHITECTURE.md` for prioritized advice.
 
 ## Application stacks
 
@@ -42,7 +43,48 @@ synthesised from the app's own manifests:
 - **`apps/server`** — Legendary Arena boardgame.io game server — wiring layer only
   - Stack: boardgame.io (`boardgame.io@^0.50.0`) over Socket.IO (transitive via `boardgame.io`) + HTTP routes via Koa router (`@koa/router@10.1.1` + `koa@2.16.4`, both transitive via `boardgame.io`) + PostgreSQL via `pg@^8.13.0`.
 - **`apps/wiki-viewer`** — Engineering wiki build pipeline. Build-time, read-only Hugo projection of `wiki/` (no `package.json` — Hugo is a Go binary, not a Node dep). Layer-boundary clean: zero runtime imports of `@legendary-arena/game-engine`, `@legendary-arena/registry`, or `apps/server`. Build pipeline is `pnpm wiki-viewer:project` (copy `wiki/*.md` → `apps/wiki-viewer/content/`) → `pnpm wiki-viewer:check-links` (case-sensitive internal-link gate) → `hugo --minify`.
-  - Stack: Hugo Extended (`hugo@0.135.0`, pinned in `apps/wiki-viewer/.hugo-version`) + 14 source pages projected from `wiki/` + deployed as Render Static Site `legendary-arena-wiki`.
+  - Stack: Hugo Extended (`hugo@0.135.0`, pinned in `apps/wiki-viewer/.hugo-version`) + 15 source pages projected from `wiki/` + deployed as Render Static Site `legendary-arena-wiki`.
+
+## Deployment topology
+
+Canonical source: `docs/ops/domains.json`. Ops runbook: `docs/ops/DOMAINS.md`.
+
+| Subdomain | App / Source | Host | State |
+|---|---|---|---|
+| `legendary-arena.com` | redirect rule -> www.legendary-arena.com | Cloudflare Pages (redirect rule) | live |
+| `www.legendary-arena.com` | External Hugo repo at C:\www\legendary-arena-com | Cloudflare Pages | live |
+| `play.legendary-arena.com` | apps/arena-client | Cloudflare Pages | live |
+| `cards.legendary-arena.com` | apps/registry-viewer | Cloudflare Pages | planned |
+| `wiki.legendary-arena.com` | TBD - separate Hugo site (not yet authored) | Cloudflare Pages | planned |
+| `ewiki.legendary-arena.com` | apps/wiki-viewer (Hugo build of docs/wiki/) | Render Static Site + Cloudflare Access | live |
+| `legends.legendary-arena.com` | apps/legends-board (planned — see WP-143) | Cloudflare Pages | planned |
+| `api.legendary-arena.com` | apps/server | Render (legendary-arena-server) | live |
+| `legendary-arena-server.onrender.com` | apps/server | Render | live |
+| `images.barefootbetters.com` | external (BarefootBetters image bucket) | Cloudflare R2 + Cloudflare CDN | live |
+
+## Infrastructure services
+
+Managed services the project depends on, derived from
+`render.yaml` and `docs/ops/domains.json`. Answers "what
+vendor accounts and managed services does this project
+depend on?" — distinct from Deployment topology, which
+answers "what URL maps to what app."
+
+### Cloudflare
+
+| Service | Kind | URL / Scope |
+|---|---|---|
+| Cloudflare Access (zero-trust gate) | zero-trust gate | `ewiki.legendary-arena.com` |
+| Cloudflare Pages (static hosting) | static hosting | `cards.legendary-arena.com`, `legendary-arena.com`, `legends.legendary-arena.com`, `play.legendary-arena.com`, `wiki.legendary-arena.com`, `www.legendary-arena.com` |
+| Cloudflare R2 (object storage + CDN) | object storage + CDN | `images.barefootbetters.com` |
+
+### Render
+
+| Service | Kind | URL / Scope |
+|---|---|---|
+| `legendary-arena-db` | Managed PostgreSQL (basic-256mb) | _internal (connection string via env)_ |
+| `legendary-arena-server` | Render Web Service | https://legendary-arena-server.onrender.com |
+| `legendary-arena-wiki` | Render Web Service | https://legendary-arena-wiki.onrender.com |
 
 ## First-party subsystems
 
@@ -116,7 +158,7 @@ Counts derived from on-disk file extensions under `apps/`, `packages/`, `scripts
 | JSON | 80 |
 | JavaScript | 69 |
 | Vue SFC | 62 |
-| Markdown | 23 |
+| Markdown | 24 |
 | HTML | 9 |
 | CSS | 7 |
 | PowerShell | 7 |
@@ -131,7 +173,7 @@ Counts derived from on-disk file extensions under `apps/`, `packages/`, `scripts
 | `.vue` | 62 |
 | `.js` | 37 |
 | `.mjs` | 31 |
-| `.md` | 23 |
+| `.md` | 24 |
 | `.html` | 9 |
 | `.css` | 7 |
 | `.ps1` | 7 |
@@ -458,6 +500,32 @@ become load-bearing.
 | `fast-glob` | ^3.3.2 | 0 ⚠ | `packages/registry/package.json` (dev) |
 | `stripe` | 22.1.0 | 5 _(partial)_ | `apps/server/package.json` (dep) |
 
+## SaaS / embedded services
+
+Tools detected via static pattern-matching of source files
+(HTML, JS, Vue templates, config). These do not appear in
+`package.json` and would otherwise be invisible to
+dependency-based inventory.
+
+| Service | Category | Detected in | Description |
+|---|---|---:|---|
+| `brevo` | marketing / email | 2 files | Transactional + marketing email, newsletter forms, SMTP relay. |
+| `snipcart` | ecommerce | 4 files | Cart overlay via CDN script + HTML data attributes. |
+
+### SaaS usage detail
+
+#### brevo
+
+- `[legendary-arena-com] docs/ai/work-packets/WP-015-newsletter-brevo.md`
+- `[legendary-arena-com] functions/api/subscribe.js`
+
+#### snipcart
+
+- `[legendary-arena-com] docs/01-VISION.md`
+- `[legendary-arena-com] docs/ai/invocations/session-wp019.md`
+- `[legendary-arena-com] docs/ai/pre-flights/pre-flight-WP-019.md`
+- `[legendary-arena-com] docs/ai/work-packets/WP-019-snipcart-commerce.md`
+
 ## Importance tiering
 
 Same packages as the category tables above, pivoted by **blast
@@ -682,3 +750,41 @@ a reviewer's eye.
 3. The "Declared but no source imports" table is the
    highest-signal section — it surfaces deferred work and
    accidental dependencies in seconds.
+
+### Running the script
+
+```bash
+# Baseline — npm deps + import graph only (no SaaS detection):
+node scripts/architecture-inventory.mjs --out wiki/architecture-inventory.md
+
+# With marketing website repo — includes SaaS / embedded service detections
+# (Brevo, Snipcart, etc.) from the legendary-arena-com repo:
+node scripts/architecture-inventory.mjs --out wiki/architecture-inventory.md \
+  --external C:\www\legendary-arena-com
+```
+
+The `--external <path>` flag is repeatable — add as many
+sibling repos as needed. Each external repo's files appear
+prefixed with `[repo-name]` in the SaaS detail section
+so you can tell at a glance which repo a detection came from.
+
+### Automated updates
+
+This report is regenerated automatically by
+`.github/workflows/architecture-inventory.yml` on a weekly
+cron schedule (Mondays 06:00 UTC). The workflow:
+
+1. Checks out both this repo and
+   `legendary-arena/legendary-arena-website` (for SaaS
+   detection).
+2. Runs the inventory script with `--external` pointed at
+   the website checkout.
+3. If the output differs from the committed copy, opens a PR
+   on the `bot/architecture-inventory-refresh` branch for
+   human review.
+4. If no diff, no-ops silently.
+
+The workflow can also be triggered manually via
+`workflow_dispatch` in the GitHub Actions UI. Hand-edits to
+this file are non-authoritative and will be overwritten by
+the next cron run.
