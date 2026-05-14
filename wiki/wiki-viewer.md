@@ -16,12 +16,24 @@ source:
 last-reviewed: 2026-05-13
 ---
 
+## Repository base URLs
+
+| Repo | Base URL (local) | Site |
+|---|---|---|
+| Engine | `C:\pcloud\BB\DEV\legendary-arena\` | `ewiki.legendary-arena.com` |
+| Marketing | `C:\www\legendary-arena-com\` | `www.legendary-arena.com` |
+
+All file paths in this tutorial are relative to the **Engine** base URL
+unless noted otherwise.
+
 ## Summary
 
-The wiki viewer is the Hugo static site that renders `wiki/*.md` pages
-into the browsable site at `ewiki.legendary-arena.com`. Content is
-authored exclusively in `wiki/`, projected into the Hugo content tree at
-build time, and deployed automatically on every push to `main`.
+The wiki viewer is the Hugo static site that renders
+`C:\pcloud\BB\DEV\legendary-arena\wiki\*.md` pages into the browsable
+site at `ewiki.legendary-arena.com`. Content is authored exclusively in
+`C:\pcloud\BB\DEV\legendary-arena\wiki\`, projected into the Hugo
+content tree at build time, and deployed automatically on every push to
+`main`.
 
 ## Mechanics
 
