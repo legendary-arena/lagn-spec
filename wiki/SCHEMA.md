@@ -252,6 +252,8 @@ don't invent.
 
 `type` must be exactly one of:
 
+### Engine types
+
 | Type | Definition | Examples |
 |---|---|---|
 | `Mechanic` | A discrete in-game mechanic with a specific trigger and effect | Master Strike, Scheme Twist, Bystander Rescue |
@@ -259,6 +261,21 @@ don't invent.
 | `Card-Type` | A high-level card categorization recognised by the engine | Mastermind, Scheme, Hero, Villain, Henchman, Bystander |
 | `Keyword` | A named ability label — board keyword or hero keyword | Recruit, Attack, Patrol, Guard, Ambush, Draw |
 | `Concept` | An abstract data shape, contract, or design concept | `CardExtId`, `MatchSetupConfig`, Move Validation Contract, Determinism |
+
+### Web and design types
+
+These types cover content needed by engineers and web designers
+building `www.legendary-arena.com` and related sites. Pages using
+these types follow the same required sections (`Summary`,
+`Mechanics`, `Interactions`, `Edge Cases`, `References`) as engine
+types.
+
+| Type | Definition | Examples |
+|---|---|---|
+| `Tutorial` | A step-by-step walkthrough for completing a specific task | Figma Logo Design, Wiki Viewer (authoring guide) |
+| `Guide` | A reference document explaining conventions, standards, or workflows | Commit Hygiene, Content Conventions, Brand Guidelines |
+| `Tool` | A software tool or service used in development or design | Figma, Hugo, Pagefind, Cloudflare Pages |
+| `Brand` | A brand asset, token, or design system element | Brand Tokens, Color Palette, Typography System |
 
 This set is **closed**. Adding a new type requires updating SCHEMA.md
 first.

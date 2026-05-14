@@ -1,6 +1,6 @@
 ---
 title: Wiki Viewer
-type: System
+type: Tutorial
 tags:
   - hugo
   - governance

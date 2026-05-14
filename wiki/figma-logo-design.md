@@ -1,6 +1,6 @@
 ---
 title: Figma Logo Design
-type: Concept
+type: Tutorial
 tags:
   - design
   - brand
