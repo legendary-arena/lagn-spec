@@ -1,0 +1,331 @@
+---
+title: Brevo Email Pipeline
+type: Guide
+tags:
+  - email
+  - brevo
+  - newsletter
+  - brand
+  - marketing
+related:
+  - wiki-viewer.md
+  - hugo-web-system.md
+status: draft
+source:
+  - ../docs/email-automation.md
+last-reviewed: 2026-05-13
+---
+
+## Repository base URLs
+
+| Repo | Base URL (local) | Site |
+|---|---|---|
+| Engine | `C:\pcloud\BB\DEV\legendary-arena\` | `ewiki.legendary-arena.com` |
+| Marketing | `C:\www\legendary-arena-com\` | `www.legendary-arena.com` |
+| Research / Notes | `C:\pcloud\LA\ewiki\` | (not published) |
+
+The email pipeline source doc lives at
+`C:\www\legendary-arena-com\docs\email-automation.md`. This wiki page
+is a companion reference — the marketing repo doc is authoritative.
+
+## Summary
+
+The Brevo email engagement pipeline converts site visitors into active
+players through a linear funnel: signup, double opt-in confirmation,
+welcome email, weekly newsletter broadcasts, and conversion CTAs. The
+pipeline uses Brevo for automation and campaign delivery, Cloudflare
+Pages Functions for the subscribe API, and UTM-tagged links for
+attribution tracking.
+
+## Mechanics
+
+### Pipeline architecture
+
+```
+Visitor submits signup form
+  -> CF Pages Function (functions/api/subscribe.js)
+  -> Brevo API adds contact to newsletter list
+  -> Brevo sends double opt-in confirmation email
+  -> Subscriber confirms
+  -> Welcome automation fires (1 trigger, 1 action, no delay)
+  -> Weekly newsletter broadcasts (manual campaigns)
+  -> Conversion via CTA clicks (play / shop / tournament)
+```
+
+### Brevo account configuration
+
+| Setting | Value |
+|---|---|
+| Account | Brevo (Legendary Arena) |
+| Sender | Legendary Arena `<newsletter@legendary-arena.com>` |
+| List ID | `<BREVO_LIST_ID>` (stored in CF Pages env vars) |
+| Template ID | `<TEMPLATE_ID>` (v2 10-section structure, WP-020) |
+| Welcome workflow ID | `<WORKFLOW_ID>` |
+| Domain auth | SPF + DKIM + DMARC verified for legendary-arena.com |
+
+Placeholder IDs (`<BREVO_LIST_ID>`, `<TEMPLATE_ID>`, `<WORKFLOW_ID>`)
+must be replaced with real values from the Brevo dashboard after setup.
+
+### API integration
+
+The CF Pages Function at
+`C:\www\legendary-arena-com\functions\api\subscribe.js` adds contacts
+via `POST https://api.brevo.com/v3/contacts` with:
+
+- `listIds: [<BREVO_LIST_ID>]`
+- `updateEnabled: true`
+- Double opt-in is configured at the Brevo list level, not in the API
+  call body.
+
+The API key (`BREVO_API_KEY`) lives in CF Pages environment variables
+only. It must never appear in committed code, email content, or
+client-side assets.
+
+### Subscriber state model
+
+| State | Definition | Transition trigger |
+|---|---|---|
+| Pending | Submitted form, not confirmed | Form submission |
+| Confirmed | Double opt-in complete | Clicked confirmation link |
+| Welcomed | Received welcome email | Welcome automation fires |
+| Active | Receiving weekly broadcasts | First broadcast sent |
+| Unsubscribed | Opted out | Clicked unsubscribe link |
+
+Transitions are linear. Re-entry from Unsubscribed requires a new
+opt-in submission (form submit, then double opt-in). Manual
+re-addition without opt-in is prohibited.
+
+### Funnel stages and metrics
+
+| Stage | Trigger | Metric | Target |
+|---|---|---|---|
+| Capture | Visitor submits signup form | Signup rate | Track via form submissions |
+| Confirm | Brevo sends double opt-in | Confirmation rate | >70% of signups confirm |
+| Activate | Welcome email sends | Open rate | >50% open rate |
+| Engage | Weekly newsletter broadcast | Click-through rate | >5% CTR |
+| Convert | CTA click to play/shop/tournament | Conversion rate | Track via UTM params |
+| Retain | Continued engagement | Churn rate | <5% monthly unsubscribe |
+
+### Welcome email
+
+**Content:**
+- Subject: "Welcome to Legendary Arena"
+- Header: LA logo linking to `https://www.legendary-arena.com/`
+- Body: 2-3 paragraphs setting expectations (weekly strategy tips,
+  deck-building guides, tournament news), links to week 1 blog post
+- Primary CTA: "Play now" linking to
+  `https://play.legendary-arena.com/` (always — no rotation)
+- Featured from the Shop: single product spotlight with UTM link
+- Footer: unsubscribe link, org identity
+
+**Automation workflow:**
+- Trigger: "A contact is added to a list" (newsletter list)
+- Action: Send welcome email (immediately, no delay)
+- Structure: Exactly 1 trigger, 1 action. No branching, no delays.
+
+**Invariants:**
+- Welcome CTA is always "Play now" — no variation.
+- Exactly 1 active welcome workflow. No duplicates or disabled legacy
+  workflows.
+- Workflow bound to the newsletter list only.
+- Template must not be modified after activation without updating
+  `C:\www\legendary-arena-com\docs\email-automation.md` and re-running
+  the pipeline test.
+
+### CTA hierarchy
+
+**Primary CTA** (one per email, from `cta` front-matter value):
+- Rotation per 4-week batch: 2x `play`, 1x `newsletter`,
+  1x `tournament`
+- Rendered as a button (`#7a1d1f` background, white text)
+
+**Secondary CTAs** (always present, never dominant):
+
+| CTA | Format | Count per email |
+|---|---|---|
+| Shop | Text link to `/shop/` with UTM params | Exactly 1 |
+| Share/Forward | Text link to companion blog post canonical URL | Exactly 1 |
+| Read more | Text link to companion blog post | Exactly 1 |
+
+Maximum deep-links per email body: 4 (Read more + CTA + Shop + Share).
+Footer links (social, unsubscribe) are not counted.
+
+### UTM conventions
+
+All newsletter links use this pattern:
+
+```
+https://www.legendary-arena.com/shop/?utm_source=newsletter&utm_medium=email&utm_campaign=<newsletter_slug>&utm_content=featured-product
+```
+
+| Parameter | Value | Notes |
+|---|---|---|
+| `utm_source` | `newsletter` | Origin surface |
+| `utm_medium` | `email` | Delivery channel |
+| `utm_campaign` | `<newsletter_slug>` or `welcome` | Edition identifier |
+| `utm_content` | `featured-product` | Link purpose (fixed) |
+
+**Slug coupling invariant:** `newsletter_slug`, blog post slug, and
+`utm_campaign` value must be identical strings.
+
+### Weekly send procedure
+
+Weekly newsletters are manual Brevo campaigns, not automated drip
+sequences. Each edition has unique content and must pass QA before
+every send.
+
+1. Create newsletter edition draft per WP-017 content requirements.
+2. Transfer draft content to the Brevo template
+   (template ID: `<TEMPLATE_ID>`).
+3. Run pre-send QA checklist (8 items, below).
+4. Run funnel integrity check (5 items, below).
+5. Create Brevo Campaign:
+   - Campaign name: `Newsletter -- <newsletter_slug>`
+   - Select template, select list, set subject line.
+   - Schedule or send immediately.
+6. Record QA results in
+   `C:\www\legendary-arena-com\docs\newsletter-drafts\qa-log.md`.
+
+**Campaign naming convention:** `Newsletter -- <newsletter_slug>`
+(e.g., `Newsletter -- week-01-deck-checklist`).
+
+**Recommended schedule:** Tuesday or Wednesday, 10:00 AM ET, weekly.
+
+### Pre-send QA checklist
+
+Every item must pass before sending to the production list:
+
+| # | Check |
+|---|---|
+| 1 | Test send to developer inbox (Gmail) + one alternate client (Outlook or Apple Mail) |
+| 2 | All URLs resolve: blog link, CTA target, shop link, unsubscribe |
+| 3 | All images load, alt text present, email comprehensible with images blocked |
+| 4 | Layout verified on desktop and mobile (Brevo preview + real inbox) |
+| 5 | Personalization preview: fallback values render correctly |
+| 6 | Funnel validation: click email -> blog post -> CTA -> target (each hop resolves) |
+| 7 | Deliverability: test email lands in inbox (not spam), sender identity matches |
+| 8 | Subject line aligns with email content |
+
+### Funnel integrity check
+
+From a Brevo test email sent to a real inbox (not Brevo preview mode):
+
+| # | Check |
+|---|---|
+| 1 | Read more link resolves to correct blog post |
+| 2 | Blog CTA button navigates to target (play/newsletter/tournament) |
+| 3 | Newsletter shop link resolves to `/shop/` with UTM params in URL bar |
+| 4 | Blog shop link resolves to `/shop/` with UTM params |
+| 5 | Share link resolves to blog post canonical URL |
+
+All items must pass. Failed items block the send.
+
+### Email design constraints
+
+| Property | Value |
+|---|---|
+| Background | `#fdfcf8` (light-mode bg-primary) |
+| Text | `#1a1d2e` (light-mode text-primary) |
+| Secondary text | `#4a5168` (light-mode text-secondary) |
+| Primary CTA button | `#7a1d1f` background, white text (10.4:1 contrast, AAA) |
+| Link color | `#1d4ed8` (light-mode blue-bright) |
+| Font | System stack: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif` |
+| Max content width | 600px |
+| Mobile | Single-column on viewports < 480px |
+| HTML size | < 100KB (Gmail clips at ~102KB) |
+| Plain-text fallback | Required, includes CTA link + unsubscribe link |
+| Images | Alt text required, email must be comprehensible with images blocked |
+| Logo format | PNG (not SVG), max 200px wide |
+
+### Brand voice rules for email copy
+
+All email copy must follow the brand voice from
+`C:\www\legendary-arena-com\docs\brand\strategy.md`:
+
+- Direct, confident, heroic tone.
+- No emoji in any email copy.
+- No exclamation marks in brand copy.
+- No hedging verbs: `get`, `try`, `enjoy`, `perhaps`, `maybe`.
+- Verb palette: `assemble`, `build`, `recruit`, `fight`, `master`,
+  `defeat`, `earn`, `become`.
+- CTA contract: 2 words max, single verb, maps to user action.
+
+### Compliance
+
+| Requirement | How it's met |
+|---|---|
+| Double opt-in | Enforced at Brevo list level |
+| Unsubscribe | Brevo-native `{{ unsubscribe }}` placeholder in every footer |
+| CAN-SPAM | Organizational identity in footer of every email |
+| SPF/DKIM/DMARC | Domain authentication verified for legendary-arena.com |
+| API key security | `BREVO_API_KEY` in CF Pages env vars only, never committed |
+| Test isolation | All test sends use controlled test addresses only |
+
+### Brevo dashboard setup steps (remaining)
+
+These steps must be completed in the Brevo dashboard:
+
+1. **Create branded email template** — build the v2 10-section
+   template in Brevo matching
+   `C:\www\legendary-arena-com\docs\newsletter-template.md`.
+2. **Create welcome email + automation workflow** — trigger: contact
+   added to newsletter list, action: send welcome email, no delay.
+3. **End-to-end pipeline test** — add a test contact, verify welcome
+   email arrives, verify all links resolve, document re-trigger
+   behavior for re-subscribers.
+4. **Update placeholder IDs** — replace `<BREVO_LIST_ID>`,
+   `<TEMPLATE_ID>`, and `<WORKFLOW_ID>` in
+   `C:\www\legendary-arena-com\docs\email-automation.md` with real
+   values from Brevo.
+
+## Interactions
+
+- [Hugo Web System](hugo-web-system.md) — the marketing site hosts
+  the signup form, blog posts linked from newsletters, and the
+  `/shop/` page that newsletter CTAs drive traffic to.
+- [Wiki Viewer](wiki-viewer.md) — this page documents the pipeline
+  for internal engineering reference.
+- **CF Pages Functions** — the subscribe endpoint at
+  `C:\www\legendary-arena-com\functions\api\subscribe.js` bridges the
+  site form to the Brevo API.
+- **Brand tokens** — email design colors reference the same token
+  values defined in
+  `C:\www\legendary-arena-com\static\brand-tokens.css`.
+
+## Edge Cases
+
+- **Gmail clipping.** Gmail clips emails larger than ~102KB. The HTML
+  size constraint (< 100KB) prevents this, but heavy inline CSS or
+  large image data URIs can push past the limit. Always check rendered
+  size in Brevo before sending.
+- **Welcome re-trigger.** If a contact unsubscribes and re-subscribes,
+  Brevo may re-fire the welcome workflow. Observed behavior should be
+  documented after the pipeline test (Step 3 above).
+- **Placeholder IDs in docs.** Until the Brevo dashboard setup is
+  complete, `<BREVO_LIST_ID>`, `<TEMPLATE_ID>`, and `<WORKFLOW_ID>`
+  appear as placeholders in
+  `C:\www\legendary-arena-com\docs\email-automation.md`. These must
+  be replaced before the first production send.
+- **Slug coupling.** The `newsletter_slug`, blog post slug, and UTM
+  `utm_campaign` value must be identical. A mismatch breaks attribution
+  tracking silently — no error is raised, but analytics data becomes
+  unreliable.
+- **Double opt-in configuration.** Double opt-in is set at the Brevo
+  list level, not in the API call. If a new list is created without
+  enabling double opt-in, contacts will be added without confirmation,
+  violating compliance requirements.
+
+## References
+
+- `C:\www\legendary-arena-com\docs\email-automation.md` — authoritative
+  pipeline doc (marketing repo)
+- `C:\www\legendary-arena-com\docs\newsletter-template.md` — v2
+  10-section template spec
+- `C:\www\legendary-arena-com\docs\brand\strategy.md` — brand voice
+  and CTA rules
+- `C:\www\legendary-arena-com\functions\api\subscribe.js` — Brevo API
+  integration
+- `C:\www\legendary-arena-com\static\brand-tokens.css` — design tokens
+  referenced by email colors
+- [Brevo API docs](https://developers.brevo.com/) — contacts and
+  campaigns API reference
