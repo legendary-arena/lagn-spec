@@ -27,13 +27,16 @@ last-reviewed: 2026-05-13
 | Marketing | `C:\www\legendary-arena-com\` | `www.legendary-arena.com` |
 | Research / Notes | `C:\pcloud\LA\ewiki\` | (not published) |
 
-### Source file locations
+### Where files are drafted and where they get published
 
-The Brevo email pipeline spans two repos. All source files live in
-the **marketing repo** — this wiki page (in the engine repo) is a
-companion reference only.
+The Brevo email pipeline spans two repos. All working files are
+drafted in the **marketing repo** — this wiki page (in the engine
+repo) is a companion reference only.
 
-| File | Repo | Full path |
+**Drafting locations** — where you edit files locally before
+committing:
+
+| File | Repo | Draft location (local) |
 |---|---|---|
 | Pipeline doc (authoritative) | Marketing | `C:\www\legendary-arena-com\docs\email-automation.md` |
 | Newsletter template spec | Marketing | `C:\www\legendary-arena-com\docs\newsletter-template.md` |
@@ -43,6 +46,15 @@ companion reference only.
 | QA log | Marketing | `C:\www\legendary-arena-com\docs\newsletter-drafts\qa-log.md` |
 | This wiki page | Engine | `C:\pcloud\BB\DEV\legendary-arena\wiki\brevo-email-pipeline.md` |
 | Screenshots for this page | Engine | `C:\pcloud\BB\DEV\legendary-arena\ewiki\brevo-email-pipeline\` |
+
+**Published locations** — where files end up after `git push` and
+deploy:
+
+| File | Published at |
+|---|---|
+| Marketing repo files | Deployed to `www.legendary-arena.com` via Cloudflare Pages |
+| This wiki page | Published to `ewiki.legendary-arena.com/brevo-email-pipeline/` via Render |
+| Screenshots | Published to `ewiki.legendary-arena.com/ewiki/brevo-email-pipeline/` via Render |
 
 If this wiki page and `C:\www\legendary-arena-com\docs\email-automation.md`
 disagree, the marketing repo doc is authoritative.
