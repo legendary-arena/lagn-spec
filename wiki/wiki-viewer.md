@@ -123,7 +123,7 @@ or absolute paths (`C:\...`).
 under `C:\pcloud\BB\DEV\legendary-arena\ewiki\` named by the wiki
 page's slug. The projection script copies the entire `ewiki/` tree
 into Hugo's static tree at build time. They are served at
-`/ewiki/<slug>/` on `ewiki.legendary-arena.com`.
+`/<slug>/` on `ewiki.legendary-arena.com`.
 
 ```
 C:\pcloud\BB\DEV\legendary-arena\ewiki\
@@ -136,7 +136,7 @@ C:\pcloud\BB\DEV\legendary-arena\ewiki\
 Reference in markdown:
 
 ```markdown
-![Description](/ewiki/brevo-email-pipeline/brevo-welcome-workflow.png)
+![Description](/brevo-email-pipeline/brevo-welcome-workflow.png)
 ```
 
 **Marketing site images:** Save to
@@ -159,10 +159,10 @@ site.
 Ewiki images are stored at
 `C:\pcloud\BB\DEV\legendary-arena\ewiki\<page-slug>\`. The projection
 script copies them into Hugo's static tree at build time, served at
-`/ewiki/<page-slug>/` on the rendered site:
+`/<page-slug>/` on the rendered site:
 
 ```markdown
-![Alt text describing the image](/ewiki/brevo-email-pipeline/my-screenshot.png)
+![Alt text describing the image](/brevo-email-pipeline/my-screenshot.png)
 ```
 
 For marketing site images (stored at

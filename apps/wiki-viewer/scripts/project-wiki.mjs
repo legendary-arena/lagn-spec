@@ -21,7 +21,7 @@ const repoRoot = join(here, '..', '..', '..');
 const wikiSource = join(repoRoot, 'wiki');
 const ewikiAssets = join(repoRoot, 'ewiki');
 const projectionTarget = join(here, '..', 'content');
-const staticTarget = join(here, '..', 'static', 'ewiki');
+const staticTarget = join(here, '..', 'static');
 
 /**
  * Project wiki/*.md into apps/wiki-viewer/content/.
@@ -81,14 +81,14 @@ function projectWiki() {
   }
 
   // Project ewiki/<slug>/ asset directories into
-  // apps/wiki-viewer/static/ewiki/<slug>/ so Hugo serves them at
-  // /ewiki/<slug>/ on the rendered site. Each wiki page gets its own
-  // subdirectory matching its filename slug. Optional — ewiki/ may not
-  // exist yet if no assets have been added.
+  // apps/wiki-viewer/static/<slug>/ so Hugo serves them at /<slug>/
+  // on the rendered site. Each wiki page gets its own subdirectory
+  // matching its filename slug. Optional — ewiki/ may not exist yet
+  // if no assets have been added.
+  //
+  // Only slug subdirectories from ewiki/ are cleaned and re-copied.
+  // Other contents of static/ (if any) are left untouched.
   if (existsSync(ewikiAssets)) {
-    if (existsSync(staticTarget)) {
-      rmSync(staticTarget, { recursive: true, force: true });
-    }
     mkdirSync(staticTarget, { recursive: true });
     const slugDirs = readdirSync(ewikiAssets, { withFileTypes: true });
     let assetCount = 0;
@@ -98,6 +98,9 @@ function projectWiki() {
       }
       const sourceDir = join(ewikiAssets, dir.name);
       const targetDir = join(staticTarget, dir.name);
+      if (existsSync(targetDir)) {
+        rmSync(targetDir, { recursive: true, force: true });
+      }
       mkdirSync(targetDir, { recursive: true });
       const files = readdirSync(sourceDir, { withFileTypes: true });
       for (const file of files) {

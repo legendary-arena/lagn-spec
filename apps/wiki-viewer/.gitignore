@@ -5,7 +5,8 @@
 content/
 public/
 resources/
-static/ewiki/
+# Projected ewiki asset directories (ewiki/<slug>/ → static/<slug>/)
+static/*/
 
 # Hugo's transient build-state lock — created during `hugo` / `hugo server`
 # and removed on clean exit, but lingers if a build is interrupted. Never
