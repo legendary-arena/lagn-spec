@@ -130,6 +130,79 @@ This is the working directory for drafts, reference material, and
 scratch notes that support wiki content but are not published to the
 site.
 
+### Markdown syntax reference
+
+**1. Adding an image**
+
+Images are stored at `C:\www\legendary-arena-com\static\images\`. In
+markdown, reference them with a path relative to `static/`:
+
+```markdown
+![Alt text describing the image](/images/my-screenshot.png)
+```
+
+Hugo serves everything under `static/` at the site root, so
+`static/images/foo.png` becomes `/images/foo.png` in the URL.
+
+**2. External URL link**
+
+```markdown
+[Legendary Arena](https://www.legendary-arena.com/)
+```
+
+Renders as: a clickable link with "Legendary Arena" as the visible text.
+
+**3. Link to a file inside the repo (internal document)**
+
+Use a relative path from the wiki page's location
+(`C:\pcloud\BB\DEV\legendary-arena\wiki\`) up one level to the repo
+root:
+
+```markdown
+[ARCHITECTURE.md](../docs/ai/ARCHITECTURE.md)
+[WP-020](../docs/ai/work-packets/WP-020-vp-scoring-win-summary-minimal-mvp.md)
+[scoring.logic.ts](../packages/game-engine/src/scoring/scoring.logic.ts)
+```
+
+The build pipeline rewrites `../` paths to GitHub blob URLs in the
+rendered site so they resolve for readers who don't have the repo
+locally.
+
+**4. Link to another wiki page**
+
+Use the filename directly (no directory prefix):
+
+```markdown
+[Master Strike](master-strike.md)
+[Scoring](scoring.md)
+[Turn System](turn-system.md)
+```
+
+The render hook converts `scoring.md` to `/scoring/` in the built site.
+
+**5. Creating a table**
+
+```markdown
+| Column A | Column B | Column C |
+|----------|----------|----------|
+| row 1    | data     | data     |
+| row 2    | data     | data     |
+```
+
+Rules:
+- The header row and separator row (`|---|---|---|`) are required.
+- Pipes (`|`) on the left and right edges are required.
+- Alignment: `:---` left, `:---:` center, `---:` right.
+
+Example with alignment:
+
+```markdown
+| Name           | Type    | Status    |
+|:---------------|:-------:|----------:|
+| Master Strike  | Mechanic| canonical |
+| Wiki Viewer    | System  | draft     |
+```
+
 ### How to preview locally
 
 Run the Hugo dev server from the repo root:
