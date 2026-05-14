@@ -361,6 +361,99 @@ These steps must be completed in the Brevo dashboard:
    `C:\www\legendary-arena-com\docs\email-automation.md` with real
    values from Brevo.
 
+### Claude Code
+
+Claude Code has persistent memory and a reusable session prompt for
+Brevo work. These are optional aids — most Claude Code sessions
+don't need Brevo context, so the knowledge is stored where you
+pull it in only when relevant.
+
+**Reusable session prompt**
+
+Saved at `C:\pcloud\LA\ewiki\brevo-session-prompt.md`. Paste this at
+the start of a Claude Code session when doing Brevo-related work. It
+gives Claude all the key file locations, account config, pipeline
+architecture, and conventions without warmup.
+
+Contents:
+
+```
+## Context
+
+I'm working on the Brevo email engagement pipeline for Legendary
+Arena. The pipeline spans two repos with different commit conventions.
+
+## Key file locations
+
+Marketing repo (authoritative for Brevo config):
+- Pipeline doc: C:\www\legendary-arena-com\docs\email-automation.md
+- Newsletter template spec: C:\www\legendary-arena-com\docs\newsletter-template.md
+- Brand voice / CTA rules: C:\www\legendary-arena-com\docs\brand\strategy.md
+- Subscribe API function: C:\www\legendary-arena-com\functions\api\subscribe.js
+- Brand tokens CSS: C:\www\legendary-arena-com\static\brand-tokens.css
+- QA log: C:\www\legendary-arena-com\docs\newsletter-drafts\qa-log.md
+- Commit prefixes: WP-NNN: (site changes), FIX: (content edits),
+  POST: (blog posts), INFRA: / SPEC: / ROADMAP: (non-site)
+
+Engine repo (ewiki companion page):
+- Wiki page: C:\pcloud\BB\DEV\legendary-arena\wiki\brevo-email-pipeline.md
+- Screenshots: C:\pcloud\BB\DEV\legendary-arena\ewiki\brevo-email-pipeline\
+- Published at: https://ewiki.legendary-arena.com/brevo-email-pipeline/
+- Commit prefix for wiki edits: EC-142:
+
+## Brevo account
+
+- Sender: Legendary Arena <newsletter@legendary-arena.com>
+- Domain: legendary-arena.com (SPF + DKIM + DMARC verified)
+- API key: BREVO_API_KEY in CF Pages env vars (never in code)
+- Placeholder IDs in docs: <BREVO_LIST_ID>, <TEMPLATE_ID>,
+  <WORKFLOW_ID> (replace with real values after dashboard setup)
+
+## Pipeline architecture
+
+Signup form -> CF Pages Function (subscribe.js) -> Brevo API
+  -> double opt-in (list-level)
+  -> welcome automation (1 trigger, 1 action, no delay)
+  -> weekly manual campaigns
+  -> conversion via CTA clicks
+
+## Conventions
+
+- Always use full absolute file paths, never relative
+- Use "drafting location" and "published location" not "source files"
+- If updating the ewiki page, follow the template format: base URL
+  table, drafting/published tables, full paths throughout
+- Marketing repo doc (email-automation.md) is authoritative
+- Brand voice: direct/heroic tone, no emoji, no exclamation marks,
+  no hedging verbs, CTA is 2 words max
+
+## What I need help with today
+
+[Describe your task here]
+```
+
+Fill in the last section with your specific task before pasting.
+
+**Claude Code memory**
+
+Brevo pipeline knowledge is saved to Claude Code's project memory at
+`C:\Users\jjensen\.claude\projects\C--www-legendary-arena-com\memory\`.
+Two relevant memory files:
+
+| File | What it contains |
+|---|---|
+| `reference_brevo_pipeline.md` | Account config, API integration, key file locations, remaining setup steps |
+| `project_ewiki_conventions.md` | Page template, directory layout, asset pipeline, commit prefixes |
+
+This memory is project-scoped — Claude Code loads it automatically
+when working in the `C:\www\legendary-arena-com\` project directory.
+It is not loaded in sessions for other projects. To access it from a
+different project, paste the session prompt above instead.
+
+To update the memory (e.g., after replacing placeholder IDs with real
+Brevo values), tell Claude Code: "update the Brevo memory with the
+real list ID / template ID / workflow ID."
+
 ## Interactions
 
 - [Hugo Web System](hugo-web-system.md) — the marketing site hosts
