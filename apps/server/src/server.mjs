@@ -26,6 +26,7 @@ import { registerTeamRoutes } from './teams/team.routes.js';
 import { registerEntitlementRoutes } from './entitlements/entitlements.routes.js';
 import { registerBillingRoutes } from './billing/billing.routes.js';
 import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
+import { registerLegendsPublisherRoutes } from './legends/legends.routes.js';
 import { requireAuthenticatedSession } from './auth/sessionToken.logic.js';
 import { createHankoSessionVerifier } from './auth/hanko/hankoVerifier.logic.js';
 import { productionAccountResolver } from './auth/accountResolver.logic.js';
@@ -276,9 +277,10 @@ export function tryConstructHankoVerifier() {
  * from PostgreSQL. Both startup tasks must succeed before the server accepts
  * requests. On failure, logs a full-sentence error and exits.
  *
- * @returns {Promise<{ appServer: import('http').Server, pool: import('pg').Pool }>}
- *   The running HTTP server instance and the long-lived `pg.Pool`. The
- *   caller (`apps/server/src/index.mjs`) closes the pool from the SIGTERM
+ * @returns {Promise<{ appServer: import('http').Server, leaderboardDeps: import('./leaderboards/leaderboard.types.js').LeaderboardDependencies, pool: import('pg').Pool }>}
+ *   The running HTTP server instance, the leaderboard deps bundle (for
+ *   the legends publisher), and the long-lived `pg.Pool`. The caller
+ *   (`apps/server/src/index.mjs`) closes the pool from the SIGTERM
  *   path after the HTTP server's graceful-shutdown step resolves.
  */
 export async function startServer() {
@@ -351,6 +353,7 @@ export async function startServer() {
   });
 
   registerHealthRoute(server.router);
+  registerLegendsPublisherRoutes(server.router);
 
   // why: WP-115 — construct the long-lived pg.Pool exactly once
   // here. Lifetime is the process lifetime; close-on-SIGTERM is
@@ -497,5 +500,12 @@ export async function startServer() {
     `(${rulesCount} rules loaded, NODE_ENV=${process.env.NODE_ENV ?? 'development'})`
   );
 
-  return { appServer, pool };
+  return {
+    appServer,
+    leaderboardDeps: {
+      checkParPublished: parGate.checkParPublished,
+      getScenarioKeysForTheme,
+    },
+    pool,
+  };
 }

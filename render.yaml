@@ -82,6 +82,26 @@ services:
       # manipulation.
       - key: PUBLIC_BASE_URL
         sync: false
+      # Legends Snapshot Publisher (WP-142 / D-14201..D-14207).
+      # R2 credentials for the S3-compatible API. sync: false because
+      # these are secrets provisioned manually in the Render dashboard.
+      - key: R2_LEGENDS_BUCKET
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_ACCOUNT_ID
+        sync: false
+      # why: kill switch per D-14202 — default "false" so test/dev/staging
+      # runs do not write to prod R2. Set to "true" in the production
+      # Render dashboard to enable the publisher.
+      - key: LEGENDS_PUBLISHER_ENABLED
+        value: "false"
+      # why: cadence override per D-14201. Default 300000 (5 min).
+      # Override only for debugging or burst-catch-up scenarios.
+      - key: LEGENDS_PUBLISHER_INTERVAL_MS
+        value: "300000"
 
   # Engineering Wiki — Hugo-built read-only projection of wiki/.
   # why: Static-site posture per WP-139 / D-13811. Builds the wiki content

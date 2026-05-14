@@ -7,6 +7,29 @@
 
 ## Current State
 
+### WP-142 / EC-157 Executed — Legends Snapshot Publisher (2026-05-14)
+
+**The server now publishes public JSON leaderboard snapshots to R2 on a
+5-minute cadence.** Eight new files in `apps/server/src/legends/` implement
+a background publisher that writes deterministic, no-PII snapshot boards
+to Cloudflare R2 at `legends/v1/`. The publisher runs inside `BEGIN; SET
+TRANSACTION READ ONLY; ... COMMIT;` for consistent point-in-time data,
+writes boards in sorted order, then the manifest LAST (D-14204). A health
+endpoint at `GET /health/legends-publisher` (no auth) exposes operational
+state. The publisher is gated behind `LEGENDS_PUBLISHER_ENABLED=true`
+(default off, D-14202) and survives transient R2 errors without crashing
+the server. Archive writes once per UTC day under `legends/v1/archive/`.
+
+**Seven D-142NN entries land.** D-14201 (5-min cadence), D-14202 (kill
+switch), D-14203 (inline-service), D-14204 (manifest-last), D-14205
+(payload fields), D-14206 (no-auth health), D-14207 (30-day archive).
+
+**Test baselines.** Server: 289 tests / 34 suites / 223 pass / 0 fail /
+66 skipped (+26 tests, +3 suites over WP-150). Engine: 698 / 150 / 0
+UNCHANGED. Registry: UNCHANGED.
+
+---
+
 ### WP-150 / EC-152 Executed — Leaderboard Theme + Global Aggregation Endpoints (2026-05-11)
 
 **The public-leaderboard surface now exposes theme-grouped and

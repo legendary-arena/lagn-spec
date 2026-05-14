@@ -12787,6 +12787,69 @@ Per `.claude/rules/code-style.md §"Abstraction & Control Flow"`: *"Duplicate fi
 
 **Future supersession:** any future WP that wants to change the taxonomy file path, schema names, matcher type lock, slug regex, fetcher exports, component contract, mount point, or filter composition semantics MUST cite D-12501 explicitly and either supersede it (with rationale) or scope-bound the change. A future WP that introduces a third taxonomy fetcher MAY cite D-8601 + D-12501 together to authorize abstraction into a shared base. A future WP that adds a second matcher type MUST cite D-12501 and supersede the single-literal lock by extending both the schema and the apply-time switch in `buildAbilityTagIndex` deliberately. Operator iteration of the regex matchers in `card-abilities.json` post-merge is permitted (R2 publish is independent of code change) and does not require a D-12501 supersession.
 
+---
+
+### D-14201 — Legends Publisher Default Cadence: 300,000 ms (5 Minutes) (WP-142)
+
+**Decision:** The legends snapshot publisher runs on a default interval of `LEGENDS_PUBLISHER_INTERVAL_MS = 300_000` (5 minutes), overridable via environment variable.
+**Rationale:** Shorter interval → fresher scoreboard but more DB load; 5 min is well under the cache-TTL threshold for casual viewers and well over the publish-time budget. The CDN-cached public scoreboard (WP-143) tolerates up to 5 minutes of staleness without user-visible impact.
+**Introduced:** WP-142
+**Status:** Active
+
+---
+
+### D-14202 — Legends Publisher Kill Switch: `LEGENDS_PUBLISHER_ENABLED` Default Off (WP-142)
+
+**Decision:** The publisher is gated behind `LEGENDS_PUBLISHER_ENABLED=true` (exact string match). Default is off so test, dev, and staging environments do not write to production R2.
+**Rationale:** Fail-closed posture. A forgotten or misconfigured environment must never accidentally publish to the public bucket. The operator explicitly enables the publisher in the production Render dashboard.
+**Introduced:** WP-142
+**Status:** Active
+
+---
+
+### D-14203 — Legends Publisher Runs Inline in Existing Render Web Service (WP-142)
+
+**Decision:** The publisher runs as a background `setInterval` timer inside the existing `apps/server` Render web service, not as a separate worker service.
+**Rationale:** Simpler ops, shared health/restart lifecycle, no additional Render service cost. The 5-minute cadence and small payloads (< 100 KB per publish run) do not contend meaningfully with HTTP handler CPU. If publish load grows, a separate worker WP can extract the timer without changing the publisher logic.
+**Introduced:** WP-142
+**Status:** Active
+
+---
+
+### D-14204 — Manifest Is the Transactional Commit Point (WP-142)
+
+**Decision:** Board files are written to R2 first; the manifest (`legends/v1/manifest.json`) is written LAST. If any board PUT fails, the manifest is NOT updated. Consumers reading a stale manifest see a consistent prior snapshot, never a half-written one.
+**Rationale:** The manifest lists which boards are available. Writing it only after all boards succeed ensures consumers never reference a board file that failed to upload. This is the same "write data first, commit pointer last" pattern used in database WAL and atomic file replacement.
+**Introduced:** WP-142
+**Status:** Active
+
+---
+
+### D-14205 — Public Snapshot Payload Contains Only handle, score, rank, and Minimal Context (WP-142)
+
+**Decision:** Snapshot entries contain only `handle` (from `playerDisplayName`), `score` (from `finalScore`), `rank` (from `rank`, strict trust — copied as-is), and per-board minimal context (e.g., `scenarioKey` for global-top boards). Email, Hanko subject ID, internal user ID, replay hash, raw score, PAR version, and scoring config version are never written to R2.
+**Rationale:** The public scoreboard surface must contain no PII beyond the already-public player handle. The existing leaderboard privacy boundary (D-5201 `PublicLeaderboardEntry` 9-field lock) is further narrowed at the snapshot boundary to the minimal fields needed for display.
+**Introduced:** WP-142
+**Status:** Active
+
+---
+
+### D-14206 — Health Endpoint `/health/legends-publisher` Requires No Auth (WP-142)
+
+**Decision:** `GET /health/legends-publisher` is a public, unauthenticated endpoint. It returns operational metrics only: `status`, `lastSuccessAt`, `lastErrorAt`, `lastErrorMessage`, `intervalMs`.
+**Rationale:** Identical posture to `GET /health`. Health endpoints return infrastructure status, not user data. Requiring auth would prevent external monitoring systems (UptimeRobot, Render health checks, Grafana) from polling the endpoint without token management.
+**Introduced:** WP-142
+**Status:** Active
+
+---
+
+### D-14207 — Snapshot Retention: Latest Plus 30 Days of Daily Archives (WP-142)
+
+**Decision:** The publisher retains the latest snapshot of each board at `legends/v1/<board>.json` plus daily archives at `legends/v1/archive/YYYY-MM-DD/<board>.json`. Archive writes happen once per UTC day (tracked via `lastArchivedDate` module state). Older archives are deleted by a separate housekeeping mechanism (R2 lifecycle rule or future cleanup WP — decision deferred).
+**Rationale:** 30 days of daily snapshots support historical scoreboard views, trend analysis, and debugging of score anomalies without unbounded storage growth. The archive-once-per-day logic avoids redundant writes on the 5-minute cadence.
+**Introduced:** WP-142
+**Status:** Active
+
 **Introduced:** WP-125 (drafted 2026-05-01; executed 2026-05-01 at Commit A `EC-127:`)
 **Reinforces:** WP-086 D-8601 (card-types taxonomy reintroduction shape — line-for-line precedent for the second metadata-driven taxonomy); WP-003 D-1203 (silent failure mode if a metadata file is fetched at the wrong seam — the `// why:` discipline at the cardTypes fetch site that this WP inherits); WP-082 / WP-083 (singleton + non-blocking + `safeParse`-at-the-boundary precedent at one remove); `.claude/rules/code-style.md §"Abstraction & Control Flow"` (*duplicate first* rule — second taxonomy fetcher duplicates rather than abstracts); 00.6 Rule 4 (no abbreviations — drives `getCardAbilities` / `buildAbilityTagIndex` / `selectedEffectSlugs`); 00.6 Rule 6 (`// why:` comments where reason is non-obvious — drives the twelve-clause block across the new files); 00.6 Rule 8 (no `.reduce()` for branching logic — drives explicit `for...of` loops in `buildAbilityTagIndex`); 00.6 Rule 11 (full-sentence error messages — drives the `[CardAbilities] Rejected …` warning shape and the duplicate-slug warn); `.claude/rules/registry.md §"Schema Authority"` (DECISIONS.md entry required for `schema.ts` modification — satisfied by this entry); `.claude/rules/architecture.md` §Layer Boundary (Registry-Viewer is Client-UI; this affordance stays entirely inside the Client-UI layer; registry-package schema additions stay within the data-input-layer responsibility).
 **Status:** Active

@@ -11,8 +11,14 @@
 // registry, and middleware. Separating the two keeps server.mjs testable
 // without triggering process-level side effects.
 
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { startServer } from './server.mjs';
 import { closePool } from './db/database.js';
+import {
+  isLegendsPublisherEnabled,
+  getLegendsPublisherIntervalMs,
+  startLegendsPublisher,
+} from './legends/legends.scheduler.js';
 
 /**
  * Initialises the server and registers the shutdown handler.
@@ -20,11 +26,57 @@ import { closePool } from './db/database.js';
 async function main() {
   let httpServer;
   let pool;
+  let legendsPublisherHandle;
 
   try {
     const started = await startServer();
     httpServer = started.appServer;
     pool = started.pool;
+
+    // why: conditionally start the legends publisher only when
+    // LEGENDS_PUBLISHER_ENABLED=true (kill switch per D-14202).
+    // If pool is unavailable or undefined, the scheduler MUST NOT
+    // start (fail closed). The R2 client is constructed here as
+    // the S3Client → LegendsR2Client adapter.
+    if (isLegendsPublisherEnabled() && pool !== undefined) {
+      const s3Client = new S3Client({
+        region: 'auto',
+        endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID ?? '',
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? '',
+        },
+      });
+
+      /** @type {import('./legends/legends.types.js').LegendsR2Client} */
+      const r2Client = {
+        async putObject(params) {
+          const command = new PutObjectCommand({
+            Bucket: params.bucket,
+            Key: params.key,
+            Body: params.body,
+            ContentType: params.contentType,
+          });
+          await s3Client.send(command, { abortSignal: params.signal });
+        },
+      };
+
+      legendsPublisherHandle = startLegendsPublisher({
+        bucket: process.env.R2_LEGENDS_BUCKET ?? '',
+        database: pool,
+        intervalMs: getLegendsPublisherIntervalMs(),
+        leaderboardDeps: started.leaderboardDeps,
+        r2Client,
+      });
+    } else if (isLegendsPublisherEnabled() && pool === undefined) {
+      console.warn(
+        '[legends-publisher] LEGENDS_PUBLISHER_ENABLED=true but pool is unavailable. Publisher not started.',
+      );
+    } else {
+      console.log(
+        '[legends-publisher] Disabled (set LEGENDS_PUBLISHER_ENABLED=true to enable).',
+      );
+    }
   } catch (error) {
     // why: startServer() may throw non-Error values (e.g. from boardgame.io
     // or pg internals). Coercing to String avoids logging "undefined".
@@ -48,6 +100,9 @@ async function main() {
   // client, defeating the graceful-shutdown contract).
   process.on('SIGTERM', () => {
     console.log('[server] SIGTERM received -- shutting down gracefully.');
+    if (legendsPublisherHandle !== undefined) {
+      legendsPublisherHandle.stop();
+    }
     httpServer.close(async () => {
       console.log('[server] HTTP server closed. Closing pg.Pool.');
       try {

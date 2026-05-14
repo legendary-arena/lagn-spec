@@ -134,6 +134,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.600.0
+        version: 3.1015.0
       '@legendary-arena/game-engine':
         specifier: workspace:*
         version: link:../../packages/game-engine
