@@ -31,9 +31,17 @@ interface MockHeroCard {
   name?: string;
 }
 
+interface MockPhysicalCard {
+  id: string;
+  count: number;
+  imageUrl?: string;
+  sides: string[];
+}
+
 interface MockHero {
   slug: string;
   cards: MockHeroCard[];
+  physicalCards?: MockPhysicalCard[];
   cardCounts?: Record<string, number> | null;
 }
 
@@ -596,5 +604,93 @@ describe('buildHeroDeck — WP-137 cardCounts resolution + per-copy distinctness
     assert.equal(buildCardCountsNameLookup(null).size, 0);
     assert.equal(buildCardCountsNameLookup('not an object').size, 0);
     assert.equal(buildCardCountsNameLookup(42).size, 0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// physicalCards D-14101 / D-14102 migration tests
+// ---------------------------------------------------------------------------
+
+describe('buildHeroDeckCards — physicalCards (D-14101 / D-14102)', () => {
+  it('split hero: emits sum(physicalCards[].count) ext_ids using sides[0] as canonical slug', () => {
+    const hero: MockHero = {
+      slug: 'falcon-winter-soldier',
+      cards: [
+        { slug: 'attune', rarityLabel: 'Common 1' },
+        { slug: 'atone', rarityLabel: 'Common 1' },
+        { slug: 'relocate', rarityLabel: 'Common 2' },
+        { slug: 'reload', rarityLabel: 'Common 2' },
+        { slug: 'new-wings', rarityLabel: 'Uncommon' },
+        { slug: 'new-plan', rarityLabel: 'Uncommon' },
+        { slug: 'solo-card', rarityLabel: 'Rare' },
+      ],
+      physicalCards: [
+        { id: 'p1', count: 5, sides: ['attune', 'atone'] },
+        { id: 'p2', count: 5, sides: ['relocate', 'reload'] },
+        { id: 'p3', count: 3, sides: ['new-wings', 'new-plan'] },
+        { id: 'p4', count: 1, sides: ['solo-card'] },
+      ],
+    };
+    const registry = buildMockRegistry('bkwd', [hero]);
+    const cards = buildHeroDeckCards(['bkwd/falcon-winter-soldier'], registry);
+
+    assert.equal(cards.length, 14, 'Split hero must produce 14 ext_ids (5+5+3+1)');
+
+    // why: D-14101 — each ext_id uses sides[0] as the canonical face slug
+    const attuneCards = cards.filter((c) => c.startsWith('bkwd/falcon-winter-soldier/attune#'));
+    assert.equal(attuneCards.length, 5, 'physicalCard p1 (sides: attune/atone) must emit 5 attune ext_ids');
+
+    const relocateCards = cards.filter((c) => c.startsWith('bkwd/falcon-winter-soldier/relocate#'));
+    assert.equal(relocateCards.length, 5, 'physicalCard p2 (sides: relocate/reload) must emit 5 relocate ext_ids');
+
+    const newWingsCards = cards.filter((c) => c.startsWith('bkwd/falcon-winter-soldier/new-wings#'));
+    assert.equal(newWingsCards.length, 3, 'physicalCard p3 (sides: new-wings/new-plan) must emit 3 new-wings ext_ids');
+
+    const soloCards = cards.filter((c) => c.startsWith('bkwd/falcon-winter-soldier/solo-card#'));
+    assert.equal(soloCards.length, 1, 'physicalCard p4 (solo) must emit 1 solo-card ext_id');
+
+    // why: no atone, reload, or new-plan ext_ids — those are back-sides
+    const backSideCards = cards.filter((c) =>
+      c.includes('/atone#') || c.includes('/reload#') || c.includes('/new-plan#'),
+    );
+    assert.equal(backSideCards.length, 0, 'Back-side slugs must not appear as ext_ids');
+  });
+
+  it('solo hero with physicalCards: emits identical output to rarity fallback', () => {
+    const hero: MockHero = {
+      slug: 'spider-man',
+      cards: [
+        { slug: 'card-c1', rarityLabel: 'Common 1' },
+        { slug: 'card-c2', rarityLabel: 'Common 2' },
+        { slug: 'card-uncommon', rarityLabel: 'Uncommon' },
+        { slug: 'card-rare', rarityLabel: 'Rare' },
+      ],
+      physicalCards: [
+        { id: 'p1', count: 5, sides: ['card-c1'] },
+        { id: 'p2', count: 3, sides: ['card-c2'] },
+        { id: 'p3', count: 3, sides: ['card-uncommon'] },
+        { id: 'p4', count: 3, sides: ['card-rare'] },
+      ],
+    };
+    const registry = buildMockRegistry('core', [hero]);
+    const cards = buildHeroDeckCards(['core/spider-man'], registry);
+
+    assert.equal(cards.length, 14, 'Solo hero with physicalCards must produce 14 ext_ids');
+  });
+
+  it('falls back to rarity map when physicalCards is absent', () => {
+    const hero: MockHero = {
+      slug: 'test-hero',
+      cards: [
+        { slug: 'card-c1', rarityLabel: 'Common 1' },
+        { slug: 'card-c2', rarityLabel: 'Common 2' },
+        { slug: 'card-uncommon', rarityLabel: 'Uncommon' },
+        { slug: 'card-rare', rarityLabel: 'Rare' },
+      ],
+    };
+    const registry = buildMockRegistry('core', [hero]);
+    const cards = buildHeroDeckCards(['core/test-hero'], registry);
+
+    assert.equal(cards.length, 14, 'Fallback to rarity map must produce 14 ext_ids');
   });
 });

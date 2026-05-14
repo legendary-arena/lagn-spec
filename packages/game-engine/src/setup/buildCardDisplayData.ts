@@ -129,6 +129,24 @@ interface DisplayDataHeroCardEntry {
 }
 
 /**
+ * Minimal structural type for one physical card in SetData.heroes[i].physicalCards[j].
+ *
+ * Introduced by WP-138 Phase 1a (D-13801). Used by the D-14102 deck-size
+ * migration to read count and imageUrl from the physical card rather than
+ * per-side card entries.
+ */
+interface DisplayDataPhysicalCardEntry {
+  /** Physical card identifier within the hero (e.g., 'p1'). */
+  id: string;
+  /** Number of copies of this physical card in the deck. */
+  count: number;
+  /** Canonical image URL for this physical card. */
+  imageUrl: string;
+  /** Ordered side slugs. sides[0] is the canonical face per D-14101. */
+  sides: string[];
+}
+
+/**
  * Minimal structural type for a hero entry in SetData.heroes[i].
  *
  * The optional `cardCounts` field is the WP-137 data-driven copy-count
@@ -138,6 +156,11 @@ interface DisplayDataHeroCardEntry {
 interface DisplayDataHeroEntry {
   slug: string;
   cards: DisplayDataHeroCardEntry[];
+  /**
+   * Per-physical-card deck-composition data (D-13801). The D-14102
+   * migration reads count, imageUrl, and sides from this array.
+   */
+  physicalCards?: unknown;
   /** Optional name-keyed copy-count map (WP-137; see HeroSchema.cardCounts). */
   cardCounts?: unknown;
 }
@@ -316,31 +339,25 @@ export function buildCardDisplayData(
       parsed.slug,
     );
 
-    for (const card of deckCards) {
-      const extId = card.key as CardExtId;
+    for (const heroFlatCard of deckCards) {
+      const extId = heroFlatCard.key as CardExtId;
       result[extId] = {
         extId,
-        name: card.name,
-        imageUrl: card.imageUrl,
-        cost: parseCostNullable(card.cost),
+        name: heroFlatCard.name,
+        imageUrl: heroFlatCard.imageUrl,
+        cost: parseCostNullable(heroFlatCard.cost),
       };
     }
   }
 
   // --- 1b. Hero card instances (WP-135 / WP-137 — slash-format ext_id with #<copyIndex>) ---
-  // why: WP-137 D-13702 — extends the display walk to per-copy keys.
-  // Every physical copy of a hero card receives a distinct ext_id
-  // <setAbbr>/<heroSlug>/<cardSlug>#<copyIndex>; G.cardDisplayData keys
-  // must form a superset of the hero deck reservoir so per-copy display
-  // payloads (name, imageUrl, cost) resolve identically across all
-  // copies. The shared helpers resolveHeroCardCopyCount +
-  // buildCardCountsNameLookup imported from setup/buildHeroDeck.js
-  // enforce byte-for-byte parity with buildHeroDeckCards by
-  // construction — divergence would cause silent display lookup misses
-  // for HQ slot rendering and hand display under specific RNG seeds.
-  // Per RS-4 lock, this branch treats null from resolveHeroCardCopyCount
-  // as silent fall-through (the throw surface is reserved for
-  // Game.setup() proper, owned by buildHeroDeckCards).
+  // why: D-14102 — the per-copy fan-out now iterates physicalCards[].count
+  // instead of summing per-side cardCounts via resolveHeroCardCopyCount.
+  // Each physicalCard carries count, imageUrl, and ordered sides[];
+  // sides[0] is the canonical face slug per D-14101. Card data (name,
+  // cost) is resolved from heroEntry.cards by matching sides[0] to
+  // card.slug. Falls back to the old per-card resolveHeroCardCopyCount
+  // path when physicalCards is absent (defense-in-depth).
   for (const heroDeckId of matchConfig.heroDeckIds) {
     const parsed = parseQualifiedIdForSetup(heroDeckId);
     if (parsed === null) continue;
@@ -349,31 +366,56 @@ export function buildCardDisplayData(
     const heroEntry = findHeroEntryForDisplay(setData, parsed.slug);
     if (heroEntry === null) continue;
 
-    const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
+    const physicalCards = parseDisplayDataPhysicalCards(heroEntry.physicalCards);
+    if (physicalCards.length > 0) {
+      for (const physicalCard of physicalCards) {
+        const canonicalSlug = physicalCard.sides[0] as string;
+        const cardEntry = findCardEntryBySlug(heroEntry.cards, canonicalSlug);
+        const name = cardEntry !== null && typeof cardEntry.name === 'string' ? cardEntry.name : '';
+        const cost = cardEntry !== null ? parseCostNullable(cardEntry.cost ?? null) : null;
+        const imageUrl = physicalCard.imageUrl;
+        const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${canonicalSlug}`;
+        for (let copyIndex = 0; copyIndex < physicalCard.count; copyIndex++) {
+          const extId = `${baseExtId}#${copyIndex}` as CardExtId;
+          // why: per-copy fresh object literal — no aliasing across keys
+          // (WP-028 D-2802 aliasing prevention extended to setup-time
+          // sibling-snapshot fan-out).
+          result[extId] = {
+            extId,
+            name,
+            imageUrl,
+            cost,
+          };
+        }
+      }
+    } else {
+      // why: fallback to per-card resolveHeroCardCopyCount when
+      // physicalCards is absent or empty — preserves backward
+      // compatibility with data that has not been curated yet.
+      const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
 
-    for (const card of heroEntry.cards) {
-      if (!card || typeof card !== 'object') continue;
-      if (typeof card.slug !== 'string') continue;
+      for (const heroCardEntry of heroEntry.cards) {
+        if (!heroCardEntry || typeof heroCardEntry !== 'object') continue;
+        if (typeof heroCardEntry.slug !== 'string') continue;
 
-      const rarityLabel = typeof card.rarityLabel === 'string' ? card.rarityLabel : '';
-      const copyCount = resolveHeroCardCopyCount({ name: card.name, rarityLabel }, nameLookup);
-      if (copyCount === null) continue;
+        const rarityLabel = typeof heroCardEntry.rarityLabel === 'string' ? heroCardEntry.rarityLabel : '';
+        const copyCount = resolveHeroCardCopyCount({ name: heroCardEntry.name, rarityLabel }, nameLookup);
+        if (copyCount === null) continue;
 
-      const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}`;
-      const name = typeof card.name === 'string' ? card.name : '';
-      const imageUrl = typeof card.imageUrl === 'string' ? card.imageUrl : '';
-      const cost = parseCostNullable(card.cost ?? null);
-      for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
-        const extId = `${baseExtId}#${copyIndex}` as CardExtId;
-        // why: per-copy fresh object literal — no aliasing across keys
-        // (WP-028 D-2802 aliasing prevention extended to setup-time
-        // sibling-snapshot fan-out).
-        result[extId] = {
-          extId,
-          name,
-          imageUrl,
-          cost,
-        };
+        const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${heroCardEntry.slug}`;
+        const name = typeof heroCardEntry.name === 'string' ? heroCardEntry.name : '';
+        const imageUrl = typeof heroCardEntry.imageUrl === 'string' ? heroCardEntry.imageUrl : '';
+        const cost = parseCostNullable(heroCardEntry.cost ?? null);
+        for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+          const extId = `${baseExtId}#${copyIndex}` as CardExtId;
+          // why: per-copy fresh object literal — no aliasing across keys
+          result[extId] = {
+            extId,
+            name,
+            imageUrl,
+            cost,
+          };
+        }
       }
     }
   }
@@ -674,8 +716,67 @@ function findFlatCardByKey(
   allFlatCards: DisplayDataFlatCard[],
   key: string,
 ): DisplayDataFlatCard | undefined {
-  for (const card of allFlatCards) {
-    if (card.key === key) return card;
+  for (const flatCard of allFlatCards) {
+    if (flatCard.key === key) return flatCard;
   }
   return undefined;
+}
+
+// ---------------------------------------------------------------------------
+// Physical card helpers (D-14102 migration)
+// ---------------------------------------------------------------------------
+
+/**
+ * Defensively parses raw physicalCards data into typed entries.
+ *
+ * Mirrors parsePhysicalCards in buildHeroDeck.ts but also validates and
+ * extracts the imageUrl field needed by the display data builder.
+ * Malformed entries are silently skipped (defense-in-depth).
+ */
+function parseDisplayDataPhysicalCards(raw: unknown): DisplayDataPhysicalCardEntry[] {
+  if (!Array.isArray(raw)) return [];
+
+  const result: DisplayDataPhysicalCardEntry[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== 'object') continue;
+    const candidate = entry as Record<string, unknown>;
+    if (typeof candidate.id !== 'string' || candidate.id.length === 0) continue;
+    if (typeof candidate.count !== 'number' || !Number.isInteger(candidate.count) || candidate.count < 1) continue;
+    if (typeof candidate.imageUrl !== 'string') continue;
+    if (!Array.isArray(candidate.sides) || candidate.sides.length === 0) continue;
+
+    let sidesValid = true;
+    for (const side of candidate.sides) {
+      if (typeof side !== 'string' || side.length === 0) {
+        sidesValid = false;
+        break;
+      }
+    }
+    if (!sidesValid) continue;
+
+    result.push({
+      id: candidate.id,
+      count: candidate.count,
+      imageUrl: candidate.imageUrl,
+      sides: candidate.sides as string[],
+    });
+  }
+  return result;
+}
+
+/**
+ * Finds a hero card entry by slug within the cards array.
+ *
+ * Used by the physicalCards migration to resolve name and cost for the
+ * canonical face slug (sides[0] per D-14101).
+ */
+function findCardEntryBySlug(
+  cards: DisplayDataHeroCardEntry[],
+  slug: string,
+): DisplayDataHeroCardEntry | null {
+  for (const cardEntry of cards) {
+    if (!cardEntry || typeof cardEntry !== 'object') continue;
+    if (cardEntry.slug === slug) return cardEntry;
+  }
+  return null;
 }

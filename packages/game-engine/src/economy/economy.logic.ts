@@ -71,8 +71,28 @@ interface HeroInstanceEntry {
   slug: string;
   /** Per-card data. */
   cards: HeroCardInstanceEntry[];
+  /**
+   * Per-physical-card deck-composition data (D-13801). The D-14102
+   * migration reads count and sides from this array.
+   */
+  physicalCards?: unknown;
   /** Optional name-keyed copy-count map (WP-137; see HeroSchema.cardCounts). */
   cardCounts?: unknown;
+}
+
+/**
+ * Minimal structural type for one physical card in SetData.heroes[i].physicalCards[j].
+ *
+ * Introduced by WP-138 Phase 1a (D-13801). Used by the D-14102 deck-size
+ * migration to read count from the physical card.
+ */
+interface EconomyPhysicalCardEntry {
+  /** Physical card identifier within the hero (e.g., 'p1'). */
+  id: string;
+  /** Number of copies of this physical card in the deck. */
+  count: number;
+  /** Ordered side slugs. sides[0] is the canonical face per D-14101. */
+  sides: string[];
 }
 
 /**
@@ -255,18 +275,13 @@ export function buildCardStats(
   }
 
   // --- 1b. Hero card instances (WP-135 / WP-137 — slash-format ext_id with #<copyIndex>) ---
-  // why: WP-137 D-13702 — extends the cardStats walk to per-copy keys.
-  // Every physical copy of a hero card receives a distinct ext_id
-  // <setAbbr>/<heroSlug>/<cardSlug>#<copyIndex>; G.cardStats keys must
-  // form a superset of the hero deck reservoir so per-copy stat lookups
-  // resolve identically across all copies. The shared helpers
-  // resolveHeroCardCopyCount + buildCardCountsNameLookup imported from
-  // setup/buildHeroDeck.js enforce byte-for-byte parity with
-  // buildHeroDeckCards by construction — divergence would cause silent
-  // lookup misses across G.cardStats under specific RNG seeds. Per
-  // RS-4 lock, this branch treats null from resolveHeroCardCopyCount
-  // as silent fall-through (the throw surface is reserved for
-  // Game.setup() proper, owned by buildHeroDeckCards).
+  // why: D-14102 — the per-copy fan-out now iterates physicalCards[].count
+  // instead of summing per-side cardCounts via resolveHeroCardCopyCount.
+  // Each physicalCard carries count and ordered sides[]; sides[0] is the
+  // canonical face slug per D-14101. Card stat fields (attack, recruit,
+  // cost) are resolved from heroEntry.cards by matching sides[0] to
+  // card.slug. Falls back to the old per-card resolveHeroCardCopyCount
+  // path when physicalCards is absent (defense-in-depth).
   for (const heroDeckId of matchConfig.heroDeckIds) {
     const parsed = parseQualifiedIdForSetup(heroDeckId);
     if (parsed === null) continue;
@@ -277,33 +292,58 @@ export function buildCardStats(
     const heroEntry = findHeroEntry(setData, parsed.slug);
     if (heroEntry === null) continue;
 
-    const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
+    const physicalCards = parseEconomyPhysicalCards(heroEntry.physicalCards);
+    if (physicalCards.length > 0) {
+      for (const physicalCard of physicalCards) {
+        const canonicalSlug = physicalCard.sides[0] as string;
+        const cardEntry = findEconomyCardEntryBySlug(heroEntry.cards, canonicalSlug);
+        const attack = cardEntry !== null ? parseCardStatValue(cardEntry.attack) : 0;
+        const recruit = cardEntry !== null ? parseCardStatValue(cardEntry.recruit) : 0;
+        const cost = cardEntry !== null ? parseCardStatValue(cardEntry.cost) : 0;
+        const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${canonicalSlug}`;
+        for (let copyIndex = 0; copyIndex < physicalCard.count; copyIndex++) {
+          const extId = `${baseExtId}#${copyIndex}` as CardExtId;
+          // why: per-copy fresh object literal — no aliasing across keys
+          // (WP-028 D-2802 aliasing prevention extended to setup-time
+          // sibling-snapshot fan-out).
+          stats[extId] = {
+            attack,
+            recruit,
+            cost,
+            // why: heroes are never fought; fightCost is for villains only.
+            fightCost: 0,
+          };
+        }
+      }
+    } else {
+      // why: fallback to per-card resolveHeroCardCopyCount when
+      // physicalCards is absent or empty — preserves backward
+      // compatibility with data that has not been curated yet.
+      const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
 
-    for (const card of heroEntry.cards) {
-      if (!card || typeof card !== 'object') continue;
-      if (typeof card.slug !== 'string') continue;
+      for (const heroCardEntry of heroEntry.cards) {
+        if (!heroCardEntry || typeof heroCardEntry !== 'object') continue;
+        if (typeof heroCardEntry.slug !== 'string') continue;
 
-      const rarityLabel = typeof card.rarityLabel === 'string' ? card.rarityLabel : '';
-      const copyCount = resolveHeroCardCopyCount({ name: card.name, rarityLabel }, nameLookup);
-      if (copyCount === null) continue;
+        const rarityLabel = typeof heroCardEntry.rarityLabel === 'string' ? heroCardEntry.rarityLabel : '';
+        const copyCount = resolveHeroCardCopyCount({ name: heroCardEntry.name, rarityLabel }, nameLookup);
+        if (copyCount === null) continue;
 
-      const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}`;
-      const attack = parseCardStatValue(card.attack);
-      const recruit = parseCardStatValue(card.recruit);
-      const cost = parseCardStatValue(card.cost);
-      for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
-        const extId = `${baseExtId}#${copyIndex}` as CardExtId;
-        // why: per-copy fresh object literal — no aliasing across keys
-        // (WP-028 D-2802 aliasing prevention extended to setup-time
-        // sibling-snapshot fan-out). Numerics are scalar copies, not
-        // shared references.
-        stats[extId] = {
-          attack,
-          recruit,
-          cost,
-          // why: heroes are never fought; fightCost is for villains only.
-          fightCost: 0,
-        };
+        const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${heroCardEntry.slug}`;
+        const attack = parseCardStatValue(heroCardEntry.attack);
+        const recruit = parseCardStatValue(heroCardEntry.recruit);
+        const cost = parseCardStatValue(heroCardEntry.cost);
+        for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+          const extId = `${baseExtId}#${copyIndex}` as CardExtId;
+          // why: per-copy fresh object literal — no aliasing across keys
+          stats[extId] = {
+            attack,
+            recruit,
+            cost,
+            // why: heroes are never fought; fightCost is for villains only.
+            fightCost: 0,
+          };
+        }
       }
     }
   }
@@ -603,6 +643,59 @@ function findHeroEntry(
     if (heroEntry.slug !== heroSlug) continue;
     if (!Array.isArray(heroEntry.cards)) continue;
     return heroEntry;
+  }
+  return null;
+}
+
+/**
+ * Defensively parses raw physicalCards data into typed entries.
+ *
+ * Mirrors parsePhysicalCards in buildHeroDeck.ts. No imageUrl needed here
+ * — economy stats use count and sides only. Malformed entries are silently
+ * skipped (defense-in-depth).
+ */
+function parseEconomyPhysicalCards(raw: unknown): EconomyPhysicalCardEntry[] {
+  if (!Array.isArray(raw)) return [];
+
+  const result: EconomyPhysicalCardEntry[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== 'object') continue;
+    const candidate = entry as Record<string, unknown>;
+    if (typeof candidate.id !== 'string' || candidate.id.length === 0) continue;
+    if (typeof candidate.count !== 'number' || !Number.isInteger(candidate.count) || candidate.count < 1) continue;
+    if (!Array.isArray(candidate.sides) || candidate.sides.length === 0) continue;
+
+    let sidesValid = true;
+    for (const side of candidate.sides) {
+      if (typeof side !== 'string' || side.length === 0) {
+        sidesValid = false;
+        break;
+      }
+    }
+    if (!sidesValid) continue;
+
+    result.push({
+      id: candidate.id,
+      count: candidate.count,
+      sides: candidate.sides as string[],
+    });
+  }
+  return result;
+}
+
+/**
+ * Finds a hero card entry by slug within the cards array.
+ *
+ * Used by the physicalCards migration to resolve stat fields for the
+ * canonical face slug (sides[0] per D-14101).
+ */
+function findEconomyCardEntryBySlug(
+  cards: HeroCardInstanceEntry[],
+  slug: string,
+): HeroCardInstanceEntry | null {
+  for (const cardEntry of cards) {
+    if (!cardEntry || typeof cardEntry !== 'object') continue;
+    if (cardEntry.slug === slug) return cardEntry;
   }
   return null;
 }

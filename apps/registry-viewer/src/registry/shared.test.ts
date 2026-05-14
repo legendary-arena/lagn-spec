@@ -316,3 +316,77 @@ describe("flattenSet other-block cardType dispatch (WP-123)", () => {
     assert.equal(result.length, 0);
   });
 });
+
+// ===========================================================================
+// D-14103 — physicalCards hero-card imageUrl migration
+// ===========================================================================
+
+describe("flattenSet hero physicalCardImageUrl (D-14103)", () => {
+  it("populates physicalCardImageUrl from physicalCards[] for hero cards", () => {
+    const setData = {
+      id: 1,
+      abbr: "bkwd",
+      heroes: [
+        {
+          name: "Falcon/Winter Soldier",
+          slug: "falcon-winter-soldier",
+          cards: [
+            { slug: "attune", name: "Attune", imageUrl: "https://img/old-attune.webp", abilities: [] },
+            { slug: "atone", name: "Atone", imageUrl: "https://img/old-atone.webp", abilities: [] },
+          ],
+          physicalCards: [
+            { id: "p1", count: 5, imageUrl: "https://img/attune-atone.webp", sides: ["attune", "atone"] },
+          ],
+        },
+      ],
+      masterminds: [],
+      villains: [],
+      henchmen: [],
+      schemes: [],
+      bystanders: [],
+      wounds: [],
+      other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "BKWD Set");
+    const attune = result.find((c) => c.slug === "attune");
+    const atone = result.find((c) => c.slug === "atone");
+
+    assert.ok(attune, "attune card must exist");
+    assert.equal(attune.physicalCardImageUrl, "https://img/attune-atone.webp", "physicalCardImageUrl from physicalCards");
+    assert.equal(attune.imageUrl, "https://img/attune-atone.webp", "imageUrl prefers physicalCards source");
+
+    assert.ok(atone, "atone card must exist");
+    assert.equal(atone.physicalCardImageUrl, "https://img/attune-atone.webp", "back-side also gets physicalCardImageUrl");
+  });
+
+  it("falls back to card.imageUrl when physicalCards is absent", () => {
+    const setData = {
+      id: 1,
+      abbr: "core",
+      heroes: [
+        {
+          name: "Spider-Man",
+          slug: "spider-man",
+          cards: [
+            { slug: "web", name: "Web", imageUrl: "https://img/web.webp", abilities: [] },
+          ],
+        },
+      ],
+      masterminds: [],
+      villains: [],
+      henchmen: [],
+      schemes: [],
+      bystanders: [],
+      wounds: [],
+      other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    const web = result.find((c) => c.slug === "web");
+
+    assert.ok(web, "web card must exist");
+    assert.equal(web.imageUrl, "https://img/web.webp", "imageUrl falls back to card.imageUrl");
+    assert.equal(web.physicalCardImageUrl, undefined, "physicalCardImageUrl undefined when no physicalCards");
+  });
+});

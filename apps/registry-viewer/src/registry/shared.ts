@@ -11,6 +11,22 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
 
   // Heroes
   for (const hero of set.heroes) {
+    // why: D-14103 — build side-to-physicalCard lookup so hero-card
+    // imageUrl comes from physicalCards[] rather than per-side card.imageUrl.
+    const sideToImageUrl = new Map<string, string>();
+    if (Array.isArray(hero.physicalCards)) {
+      for (const physicalCard of hero.physicalCards) {
+        if (!physicalCard || typeof physicalCard !== 'object') continue;
+        if (typeof physicalCard.imageUrl !== 'string') continue;
+        if (!Array.isArray(physicalCard.sides)) continue;
+        for (const sideSlug of physicalCard.sides) {
+          if (typeof sideSlug === 'string') {
+            sideToImageUrl.set(sideSlug, physicalCard.imageUrl);
+          }
+        }
+      }
+    }
+
     for (const card of hero.cards) {
       cards.push({
         // why: use card.slug (not card.slot) — a few heroes (wwhk Caiera,
@@ -25,7 +41,8 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
         setName,
         name:        card.name ?? "",
         slug:        card.slug,
-        imageUrl:    card.imageUrl ?? "",
+        imageUrl:    sideToImageUrl.get(card.slug) ?? card.imageUrl ?? "",
+        physicalCardImageUrl: sideToImageUrl.get(card.slug),
         heroName:    hero.name,
         team:        hero.team ?? undefined,
         hc:          card.hc ?? undefined,

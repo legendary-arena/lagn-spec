@@ -129,11 +129,11 @@ function tokenLabel(token: AbilityToken): string {
         v-if="viewMode === 'image'"
         type="button"
         class="img-wrap"
-        @click="openLightbox(card.imageUrl, card.name)"
+        @click="openLightbox(card.physicalCardImageUrl ?? card.imageUrl, card.name)"
         title="Click to view full size"
         :aria-label="`View ${card.name} full size`"
       >
-        <img :src="card.imageUrl" :alt="card.name" />
+        <img :src="card.physicalCardImageUrl ?? card.imageUrl" :alt="card.name" />
       </button>
 
       <template v-if="viewMode === 'image'">

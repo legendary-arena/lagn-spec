@@ -83,8 +83,8 @@ watch(() => props.selectedKey, (newKey) => {
         -->
         <div class="img-wrap" :class="{ 'data-expanded': viewMode === 'data' && cardSize >= ABILITY_THRESHOLD_PX }">
           <template v-if="viewMode === 'image'">
-            <img :src="card.imageUrl" :alt="card.name" loading="lazy"
-              @error="($event.target as HTMLImageElement).style.opacity = '0.2'; devLog('render', 'image load failed', { card: card.name, url: card.imageUrl })" />
+            <img :src="card.physicalCardImageUrl ?? card.imageUrl" :alt="card.name" loading="lazy"
+              @error="($event.target as HTMLImageElement).style.opacity = '0.2'; devLog('render', 'image load failed', { card: card.name, url: card.physicalCardImageUrl ?? card.imageUrl })" />
             <span class="type-badge" :style="{ background: TYPE_COLOR[card.cardType] + '22', color: TYPE_COLOR[card.cardType] }">
               {{ card.cardType }}
             </span>

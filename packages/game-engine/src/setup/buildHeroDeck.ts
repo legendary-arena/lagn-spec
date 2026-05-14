@@ -58,6 +58,22 @@ interface HeroCardEntry {
 }
 
 /**
+ * Minimal structural type for one physical card in SetData.heroes[i].physicalCards[j].
+ *
+ * Introduced by WP-138 Phase 1a (D-13801). Each physicalCard represents
+ * one printable card in the deck. Split-side heroes have physicalCards
+ * with two sides; solo heroes have one side per physicalCard.
+ */
+interface PhysicalCardEntry {
+  /** Physical card identifier within the hero (e.g., 'p1'). */
+  id: string;
+  /** Number of copies of this physical card in the deck. */
+  count: number;
+  /** Ordered side slugs. sides[0] is the canonical face per D-14101. */
+  sides: string[];
+}
+
+/**
  * Minimal structural type for a hero entry in SetData.heroes[i].
  *
  * The optional `cardCounts` field is the WP-137 data-driven copy-count
@@ -70,6 +86,13 @@ interface HeroEntry {
   slug: string;
   /** Per-card data; one entry per distinct hero card template. */
   cards: HeroCardEntry[];
+  /**
+   * Per-physical-card deck-composition data (D-13801). Each entry
+   * carries a count and ordered side slugs. The deck reservoir
+   * iterates this array (D-14102) instead of summing per-side
+   * cardCounts.
+   */
+  physicalCards?: unknown;
   /**
    * Optional name-keyed copy-count map populated by the upstream
    * conversion pipeline. Read by buildCardCountsNameLookup at the top
@@ -278,6 +301,52 @@ function isRegistryReader(registry: unknown): registry is RegistryReader {
 }
 
 // ---------------------------------------------------------------------------
+// parsePhysicalCards — defensive structural parser
+// ---------------------------------------------------------------------------
+
+/**
+ * Parses the raw `physicalCards` field from a hero entry into validated
+ * PhysicalCardEntry objects.
+ *
+ * Returns an empty array when the input is absent, null, not an array,
+ * or contains no valid entries. Each entry must have a non-empty string
+ * `id`, a positive integer `count`, and a non-empty `sides` array of
+ * strings. Malformed entries are silently skipped (defense-in-depth;
+ * the registry's Zod validation is the primary gate).
+ *
+ * @param raw - Raw `physicalCards` value from a hero entry.
+ * @returns Array of validated PhysicalCardEntry objects.
+ */
+function parsePhysicalCards(raw: unknown): PhysicalCardEntry[] {
+  if (!Array.isArray(raw)) return [];
+
+  const result: PhysicalCardEntry[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== 'object') continue;
+    const candidate = entry as Record<string, unknown>;
+    if (typeof candidate.id !== 'string' || candidate.id.length === 0) continue;
+    if (typeof candidate.count !== 'number' || !Number.isInteger(candidate.count) || candidate.count < 1) continue;
+    if (!Array.isArray(candidate.sides) || candidate.sides.length === 0) continue;
+
+    let sidesValid = true;
+    for (const side of candidate.sides) {
+      if (typeof side !== 'string' || side.length === 0) {
+        sidesValid = false;
+        break;
+      }
+    }
+    if (!sidesValid) continue;
+
+    result.push({
+      id: candidate.id,
+      count: candidate.count,
+      sides: candidate.sides as string[],
+    });
+  }
+  return result;
+}
+
+// ---------------------------------------------------------------------------
 // buildHeroDeckCards — pure registry walk
 // ---------------------------------------------------------------------------
 
@@ -329,51 +398,58 @@ export function buildHeroDeckCards(
     if (heroEntry === null) continue;
     if (!Array.isArray(heroEntry.cards)) continue;
 
-    // why: per-hero name-keyed lookup is built once at the top of the hero
-    // loop so the name → count resolution happens in O(1) per card. Fresh
-    // per hero — never cached across heroes — because two heroes in
-    // different sets could share a card display name (e.g., a generic
-    // "Strike" entry); a hero-scoped lookup avoids cross-hero pollution.
-    const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
+    // why: D-14102 — the deck reservoir now iterates physicalCards[].count
+    // instead of summing per-side cardCounts via resolveHeroCardCopyCount.
+    // Each physicalCard carries a `count` and ordered `sides[]`; the
+    // canonical face is sides[0] per D-14101. For solo heroes (D-13803
+    // uniform model), each physicalCard has one side and count matches the
+    // rarity-derived value. For split heroes (e.g., Falcon/Winter Soldier),
+    // physicalCards group paired sides into one entry with the combined count.
+    const physicalCards = parsePhysicalCards(heroEntry.physicalCards);
+    if (physicalCards.length === 0) {
+      // why: fallback to per-card resolveHeroCardCopyCount when
+      // physicalCards is absent or empty — preserves backward
+      // compatibility with data that has not been curated yet
+      // (should not occur after WP-140 Phase 1b, but defense-in-depth).
+      const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
 
-    for (const card of heroEntry.cards) {
-      if (!card || typeof card !== 'object') continue;
-      if (typeof card.slug !== 'string' || typeof card.rarityLabel !== 'string') {
-        continue;
+      for (const card of heroEntry.cards) {
+        if (!card || typeof card !== 'object') continue;
+        if (typeof card.slug !== 'string' || typeof card.rarityLabel !== 'string') {
+          continue;
+        }
+
+        const copyCount = resolveHeroCardCopyCount(card, nameLookup);
+        if (copyCount === null) {
+          const supportedList = SUPPORTED_RARITY_LABELS.map((label) => `'${label}'`).join(', ');
+          const cardNameDisplay = typeof card.name === 'string' && card.name.length > 0 ? card.name : '<unnamed>';
+          throw new Error(
+            `buildHeroDeck refused to build hero '${parsed.setAbbr}/${parsed.slug}': ` +
+              `card '${card.slug}' (display name '${cardNameDisplay}') has no resolvable copy count — ` +
+              `the per-hero cardCounts map has no positive integer entry for display name '${cardNameDisplay}', ` +
+              `and the card's rarityLabel '${card.rarityLabel}' is not in the supported four-label set ${supportedList}. ` +
+              `Either populate cardCounts in the hero entry of data/cards/${parsed.setAbbr}.json with a positive integer keyed by '${cardNameDisplay}', ` +
+              `or correct the card's rarityLabel to one of the supported labels.`,
+          );
+        }
+
+        const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}`;
+        for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+          cards.push(`${baseExtId}#${copyIndex}` as CardExtId);
+        }
       }
+      continue;
+    }
 
-      const copyCount = resolveHeroCardCopyCount(card, nameLookup);
-      if (copyCount === null) {
-        // why: D-13701 softens D-13501 Option A — the loud-fail throw
-        // fires only when BOTH copy-count sources fail (cardCounts entry
-        // absent/malformed AND rarityLabel unrecognized). The error
-        // message enumerates both attempted paths (the missing card
-        // display name and the unrecognized rarity label) so the
-        // operator can fix the patch file or extend the rarity map as
-        // appropriate. Game.setup() is the canonical throw site
-        // (.claude/rules/game-engine.md §Throwing Convention).
-        const supportedList = SUPPORTED_RARITY_LABELS.map((label) => `'${label}'`).join(', ');
-        const cardNameDisplay = typeof card.name === 'string' && card.name.length > 0 ? card.name : '<unnamed>';
-        throw new Error(
-          `buildHeroDeck refused to build hero '${parsed.setAbbr}/${parsed.slug}': ` +
-            `card '${card.slug}' (display name '${cardNameDisplay}') has no resolvable copy count — ` +
-            `the per-hero cardCounts map has no positive integer entry for display name '${cardNameDisplay}', ` +
-            `and the card's rarityLabel '${card.rarityLabel}' is not in the supported four-label set ${supportedList}. ` +
-            `Either populate cardCounts in the hero entry of data/cards/${parsed.setAbbr}.json with a positive integer keyed by '${cardNameDisplay}', ` +
-            `or correct the card's rarityLabel to one of the supported labels.`,
-        );
-      }
-
-      // why: D-13702 — extends D-13502 hero card-instance ext_id grammar
-      // with `#<copyIndex>` (decimal, zero-indexed, contiguous) so every
-      // physical copy of a hero card receives a distinct ext_id.
-      // Establishes the `Set.size === Array.length` invariant tested in
-      // the WP-137 distinctness test, which in turn satisfies
-      // checkNoCardInMultipleZones deterministically across all RNG
-      // seeds. The `#` separator never appears inside MatchSetupConfig
-      // field values — it is internal to setup-derived ext_ids only.
-      const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}`;
-      for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+    // why: D-14101 — for each physicalCard, emit `count` ext_ids using
+    // sides[0] (declaration order) as the canonical face slug. D-13702
+    // #<copyIndex> suffix preserved. Split heroes (2 sides) get one
+    // ext_id per physical copy using the first side; solo heroes
+    // (1 side) are unchanged because sides[0] === the only card slug.
+    for (const physicalCard of physicalCards) {
+      const canonicalSlug = physicalCard.sides[0];
+      const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${canonicalSlug}`;
+      for (let copyIndex = 0; copyIndex < physicalCard.count; copyIndex++) {
         cards.push(`${baseExtId}#${copyIndex}` as CardExtId);
       }
     }

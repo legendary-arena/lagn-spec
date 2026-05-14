@@ -15536,6 +15536,85 @@ patches/README.md v18 section.
 
 ---
 
+### D-14101 — Single-Side ext_id Stand-In for Split Heroes (WP-141)
+
+**Decision:** `G.heroDeck` carries one ext_id per physical card
+instance using `physicalCard.sides[0]` (declaration order) as the
+canonical face slug. For split heroes (e.g., Falcon/Winter Soldier),
+each physical card has two sides but emits one ext_id using the first
+side. For solo heroes, `sides[0]` equals the only card slug — the
+output is unchanged. The per-side ext_id grammar (D-13502,
+`<setAbbr>/<heroSlug>/<cardSlug>#<copyIndex>`) is preserved; only the
+slug selection source changes.
+
+**Rationale:** Option A from the D-13804 three-option deferral. Using
+declaration order (sides[0]) as the tie-breaker is deterministic,
+requires no additional metadata, and is consistent across all data
+files. The per-side `card.imageUrl` fields are not consumed by the
+engine (the engine reads `physicalCard.imageUrl` via D-14103 at the
+viewer layer). The ext_id stand-in is a registry-resolved concept;
+`G.heroDeck` stores `CardExtId` strings only per zone rules.
+
+**Status:** Active. Locked at WP-141 execution.
+
+**Citation:** WP-141 §Open Decisions #1; WP-138 D-13804 three-option
+deferral.
+
+---
+
+### D-14102 — Deck-Size Arithmetic Source = `physicalCards[].count` (WP-141)
+
+**Decision:** The three engine fan-out sites (`buildHeroDeck.ts`,
+`buildCardDisplayData.ts`, `economy.logic.ts:buildCardStats`) read
+deck copy counts from `physicalCards[].count` instead of summing
+per-side `cardCounts` via `resolveHeroCardCopyCount`. Each site has
+a defense-in-depth fallback to the old `resolveHeroCardCopyCount`
+path when `physicalCards` is absent or empty. The `resolveHeroCardCopyCount`
+helper continues to exist for the rarity-fallback path.
+
+**Effect on split heroes:** Falcon/Winter Soldier deck reservoir
+changes from 27 ext_ids (7 cards × rarity counts) to 14 ext_ids
+(sum of 4 physicalCards[].count: 5+5+3+1). Solo heroes are unchanged.
+
+**Rationale:** `physicalCards[]` is the authoritative deck-composition
+surface (D-13801). Summing per-side `cardCounts` double-counted split
+heroes because each physical card had two sides, each carrying the
+same count.
+
+**Status:** Active. Locked at WP-141 execution.
+
+**Citation:** WP-141 §Open Decisions #2; D-13801 (authoritative
+surface); D-13803 (uniform model).
+
+---
+
+### D-14103 — Viewer Hero-Card `imageUrl` = `physicalCard.imageUrl` (WP-141)
+
+**Decision:** The hero-card projection site in
+`apps/registry-viewer/src/registry/shared.ts` (inside the `// Heroes`
+loop) resolves `imageUrl` from `hero.physicalCards[]` via a
+side-to-physicalCard lookup, falling back to the per-side
+`card.imageUrl` when `physicalCards` is absent. The 8 non-hero
+card-type `imageUrl` reads (mastermind, villain, henchman, scheme,
+bystander, wound, other) are retained unchanged — those card types
+have no `physicalCards[]` entries. A new `physicalCardImageUrl`
+optional field is added to `FlatCard` for hero cards; Vue components
+(`CardGrid.vue`, `CardDetail.vue`) prefer `physicalCardImageUrl` when
+present, falling back to `imageUrl`.
+
+**Rationale:** D-13802 established that `physicalCard.imageUrl` is the
+canonical image source. The viewer migration is hero-specific because
+only hero cards have `physicalCards[]` in the registry schema. The
+per-side `HeroCardSchema.imageUrl` field is preserved until Phase 3
+(WP-142) removes it after this WP's grep gate clears.
+
+**Status:** Active. Locked at WP-141 execution.
+
+**Citation:** WP-141 §Scope (In) E + F; D-13802 (canonical image
+source); D-13806 (runtime sideToPhysicalCard index).
+
+---
+
 ### D-14401 — Engine Package Subpath Split + Layer Boundary Contract (WP-144)
 
 **Decision:** Split `@legendary-arena/game-engine`'s package surface into

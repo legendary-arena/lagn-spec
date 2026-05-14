@@ -22,10 +22,12 @@ authoritative deck-composition primitive (D-13801) without migrating
 any consumer. WP-140 Phase 1b will land patches for every remaining
 split-side hero, making `physicalCards[]` semantically correct
 end-to-end. WP-141 Phase 2 is the consumer-migration boundary — engine
-and viewer code switch from reading per-side `cards[].imageUrl` and
-summed-side `cardCounts` to reading the new `physicalCards[]` primitive
-via the runtime `getPhysicalCardForSide(heroSlug, sideSlug)` lookup
-(D-13806).
+code switches from reading per-side `cards[].imageUrl` and
+summed-side `cardCounts` to reading the new `physicalCards[]` primitive,
+and the viewer's hero-card projection switches to the runtime
+`getPhysicalCardForSide(heroSlug, sideSlug)` lookup (D-13806).
+Non-hero card types in the viewer retain `card.imageUrl` (those types
+have no `physicalCards[]` entries).
 
 The defect WP-138 Phase 1a left visible: deck size for split-side
 heroes is still wrong at the engine layer. Falcon/Winter Soldier's
@@ -49,7 +51,7 @@ candidates from the WP-138 §Out of Scope deferral list:
   `G.heroDeck` carries `instanceId` values; per-side ext_id resolves
   to a side at play time.
 
-The WP-141 lock is **(A)** under D-13807. Reasoning:
+The WP-141 lock is **(A)** under D-14101. Reasoning:
 
 1. Per-side ext_id grammar (D-13502, preserved by D-13804) is already
    the canonical game-record identifier — no new channel needed.
@@ -96,22 +98,26 @@ After this packet:
    Falcon/Winter Soldier reservoir = 14 ext_ids (was 27). Solo heroes
    are unchanged (count of per-side ext_ids === count of physicalCards
    under the D-13803 uniform model).
-4. Every viewer site reading per-side `card.imageUrl` switches to
+4. The hero-card viewer projection site reading per-side
+   `card.imageUrl` (line 28 of `shared.ts`) switches to
    `getPhysicalCardForSide()` lookup at registry-projection time.
-   The `grep -rn 'card\.imageUrl' apps/registry-viewer/src/`
-   acceptance gate returns zero matches outside test fixtures.
-5. **D-13807 locked**: `G.heroDeck` split-side instances use Option A
+   Non-hero card types (mastermind, villain, henchman, scheme,
+   bystander, wound, other) retain `card.imageUrl` — those card
+   types have no `physicalCards[]` entries and cannot use the
+   hero-specific lookup.
+5. **D-14101 locked**: `G.heroDeck` split-side instances use Option A
    (single-side ext_id stand-in); per-side ext_id grammar D-13502
    unchanged.
-6. **D-13808 locked**: Deck-size arithmetic source switches to
+6. **D-14102 locked**: Deck-size arithmetic source switches to
    `physicalCards[].count`. The three former fan-out sites
    (`buildHeroDeck.ts`, `economy.logic.ts:buildCardStats`,
    `buildCardDisplayData.ts`) read `physicalCards[]` instead of
    summing per-side `cardCounts`.
-7. **D-13810 locked**: Viewer imageUrl lookup pattern uses
-   `getPhysicalCardForSide()` at projection time in
-   `apps/registry-viewer/src/registry/shared.ts`; per-side
-   `card.imageUrl` reads removed.
+7. **D-14103 locked**: Viewer **hero-card** imageUrl lookup pattern
+   uses `getPhysicalCardForSide()` at projection time in
+   `apps/registry-viewer/src/registry/shared.ts`; the hero-card
+   per-side `card.imageUrl` read replaced. Non-hero card types
+   retain `card.imageUrl`.
 8. The replay-hash regeneration cascade is captured: pre-edit
    `PRE_WP080_HASH` recorded; post-edit value installed; literal
    updated in lockstep. The WP-138 §3 determinism preservation
@@ -132,15 +138,14 @@ After this packet:
 - All 40 `data/cards/*.json` carry semantically-correct
   `physicalCards[]` (no solo-auto-path output for split heroes).
 - `pnpm --filter @legendary-arena/registry test` exits 0 with the
-  WP-138 baseline `39 / 4 / 0` UNCHANGED.
+  WP-138 baseline `53 / 5 / 0` UNCHANGED.
 - `pnpm --filter @legendary-arena/game-engine test` exits 0 with the
   WP-138 baseline `698 / 150 / 0` UNCHANGED.
-- `docs/ai/DECISIONS.md` most recent decision is at minimum D-13901
-  (WP-140's `_skipPair` annotation grammar) before this WP appends
-  D-13807 / D-13808 / D-13810. (Numbering is non-contiguous because
-  WP-140 lands D-139xx-class entries between WP-138's D-13801..D-13806
-  and this WP's D-13807..D-13810 — the gap is acceptable per
-  the project's locked DECISIONS append-only convention.)
+- `docs/ai/DECISIONS.md` most recent decision is at minimum D-15003
+  (WP-150) before this WP appends D-14101 / D-14102 / D-14103.
+  (WP-141 decision IDs use the D-141xx convention per the WP-number-
+  based ID scheme. The IDs are appended in numeric order at execution
+  per the project's locked DECISIONS append-only convention.)
 
 If any of the above is false this packet is **BLOCKED**.
 
@@ -178,11 +183,15 @@ If any of the above is false this packet is **BLOCKED**.
   `buildCardStats` consumes `resolveHeroCardCopyCount`. Read end-to-end.
 - `packages/game-engine/src/replay/replay.execute.test.ts:54` — the
   `PRE_WP080_HASH = '2baeecc3'` literal regenerated under this WP.
-- `apps/registry-viewer/src/registry/shared.ts` — 9 production read
-  sites for per-side `card.imageUrl` across henchman / mastermind /
-  scheme / villain / sidekick projection branches.
+- `apps/registry-viewer/src/registry/shared.ts` — 1 hero-card
+  production read site for per-side `card.imageUrl` (line 28). The
+  remaining 8 `imageUrl` reads (mastermind, villain, henchman, scheme,
+  bystander, wound, other) are NOT hero-card projections and cannot
+  use `getPhysicalCardForSide()` — those card types have no
+  `physicalCards[]` entries in the registry schema.
 - `apps/registry-viewer/src/components/CardDetail.vue` and
-  `CardGrid.vue` — Vue components reading per-side `card.imageUrl`.
+  `CardGrid.vue` — Vue components that may read hero-card `imageUrl`
+  from the projection output.
 
 ---
 
@@ -199,7 +208,7 @@ If any of the above is false this packet is **BLOCKED**.
   or environment access in moves, phases, or effects.
 - Zone storage rule preserved: `G.heroDeck` and every other zone
   stores `CardExtId` strings only. The single-side ext_id stand-in
-  per D-13807 keeps this rule literal.
+  per D-14101 keeps this rule literal.
 - Layer-boundary preserved per `.claude/rules/architecture.md`.
 - No `.reduce()` for multi-step branching logic in zone operations or
   effect application.
@@ -212,14 +221,14 @@ If any of the above is false this packet is **BLOCKED**.
 - **Per-side ext_id grammar D-13502 unchanged.** `<setAbbr>/<heroSlug>/<cardSlug>`
   plus the `#<copyIndex>` suffix from WP-137 D-13702 is the canonical
   identifier. WP-141 does NOT introduce a `physicalInstanceId` channel.
-- **Single-side ext_id stand-in per D-13807** (the new decision locked
+- **Single-side ext_id stand-in per D-14101** (the new decision locked
   at execution). `G.heroDeck` carries one ext_id per physicalCard
   instance; for split heroes that ext_id corresponds to one of the two
-  faces (canonically the first side per D-13807's tie-breaker rule —
+  faces (canonically the first side per D-14101's tie-breaker rule —
   to be explicitly locked at execution; recommendation: alphabetical
   side-slug ordering or `physicalCard.sides[0]` order).
 - **Deck-size arithmetic source switches to `physicalCards[].count`
-  (D-13808).** The three former fan-out sites read `physicalCards[]`.
+  (D-14102).** The three former fan-out sites read `physicalCards[]`.
   `resolveHeroCardCopyCount` continues to exist for per-card copy
   counts within a single physicalCard (the rarity-fallback path) but
   is no longer the deck-reservoir source.
@@ -249,20 +258,20 @@ If any of the above is false this packet is **BLOCKED**.
 
 ### Locked contract values
 
-- D-13807 (to be locked at execution): `G.heroDeck` split-hero
+- D-14101 (to be locked at execution): `G.heroDeck` split-hero
   representation = single-side ext_id stand-in (Option A from D-13804
   three-option deferral); recommendation: use `physicalCard.sides[0]`
   (declaration order) as the canonical face. Tie-breaker rule frozen at
   execution session start.
-- D-13808 (to be locked at execution): Deck-size arithmetic source
+- D-14102 (to be locked at execution): Deck-size arithmetic source
   = `physicalCards[].count`. The three fan-out sites
   (`buildHeroDeck.ts`, `economy.logic.ts:buildCardStats`,
   `buildCardDisplayData.ts`) read `physicalCards[]`.
-- D-13810 (to be locked at execution): Viewer imageUrl lookup pattern
-  = `getPhysicalCardForSide()` at projection time in
-  `apps/registry-viewer/src/registry/shared.ts`. Per-side
-  `card.imageUrl` reads removed; the schema field stays (Phase 3
-  removes it).
+- D-14103 (to be locked at execution): Viewer **hero-card** imageUrl
+  lookup pattern = `getPhysicalCardForSide()` at projection time in
+  `apps/registry-viewer/src/registry/shared.ts`. The hero-card
+  per-side `card.imageUrl` read replaced; non-hero card types retain
+  `card.imageUrl`. The schema field stays (Phase 3 removes it).
 
 ---
 
@@ -273,7 +282,7 @@ If any of the above is false this packet is **BLOCKED**.
 - Replace the per-side `cardCounts` summation loop with a per-physicalCard
   `physicalCards[].count` summation loop.
 - For each physicalCard: emit `count` ext_ids using
-  `physicalCard.sides[0]` as the canonical face slug per D-13807;
+  `physicalCard.sides[0]` as the canonical face slug per D-14101;
   attach the `#<copyIndex>` suffix per D-13702 (preserved).
 - `resolveHeroCardCopyCount` continues to exist for per-card copy
   count fallback (rarity → count map per D-13501) — but is no longer
@@ -316,41 +325,51 @@ If any of the above is false this packet is **BLOCKED**.
 - Run engine tests; capture the post-edit hash from the failure
   message.
 - Update the literal at line 54 to the post-edit hash. Add a `// why:`
-  comment citing D-13807 + D-13808 + WP-141 commit hash.
+  comment citing D-14101 + D-14102 + WP-141 commit hash.
 - Confirm the test passes.
 - Pre/post pair recorded in WP §Verification Steps Step 7 (this WP)
   and in the 01.6 post-mortem § Replay-Hash Cascade.
 
-### E) Viewer: `apps/registry-viewer/src/registry/shared.ts` migration
+### E) Viewer: `apps/registry-viewer/src/registry/shared.ts` hero-card migration
 
-- The 9 production read sites for `card.imageUrl` (across henchman,
-  mastermind, scheme, villain, sidekick projection branches) switch
-  to `getPhysicalCardForSide(heroSlug, card.slug).imageUrl`.
+- The **1 hero-card** production read site for `card.imageUrl`
+  (line 28 of `shared.ts`, inside the `// Heroes` loop) switches to
+  `getPhysicalCardForSide(heroSlug, card.slug).imageUrl`.
+- The remaining 8 `imageUrl` reads (mastermind line 56, villain
+  line 72, henchman lines 131/145, scheme line 159, bystander
+  line 176, wound line 193, other line 229) are **NOT migrated** —
+  those card types have no `physicalCards[]` entries in the registry
+  schema, and `getPhysicalCardForSide()` takes `(heroSlug, sideSlug)`
+  parameters that are hero-specific. Non-hero card types retain
+  `card.imageUrl`.
 - The viewer-side projection has access to the registry's
   `getPhysicalCardForSide` via the existing `CardRegistry` injection
   point (no new prop required; it's a method on the registry the
   viewer already consumes per WP-082 / WP-083).
+- Viewer migration is in the static projection function only — no
+  Vue lifecycle hooks, watchers, or computed properties modified.
 
-### F) Viewer: `CardDetail.vue` + `CardGrid.vue` migration
+### F) Viewer: `CardDetail.vue` + `CardGrid.vue` hero-card migration
 
-- The two Vue components reading `card.imageUrl` switch to consuming
-  the projected `physicalCardImageUrl` field added to the projection
-  output by `shared.ts` — keeps the Vue components ignorant of the
-  registry lookup surface.
+- For hero-card rendering, the two Vue components switch to consuming
+  the projected `physicalCardImageUrl` field added to the hero-card
+  projection output by `shared.ts` — keeps the Vue components
+  ignorant of the registry lookup surface. Non-hero card rendering
+  paths continue to use the existing `imageUrl` projection field.
 - Component-level test fixtures updated to provide the projection's
-  new field rather than the per-side `card.imageUrl` field. The
-  fixtures' raw card-side data continues to carry `imageUrl` (the
-  field still exists in `HeroCardSchema` until Phase 3) — only the
-  consumption pattern changes.
+  new field for hero cards. The fixtures' raw card-side data continues
+  to carry `imageUrl` (the field still exists in `HeroCardSchema`
+  until Phase 3) — only the hero-card consumption pattern changes.
 
-### G) D-13807 / D-13808 / D-13810 locked at execution
+### G) D-14101 / D-14102 / D-14103 locked at execution
 
-- D-13807: single-side ext_id stand-in; `physicalCard.sides[0]` (or
+- D-14101: single-side ext_id stand-in; `physicalCard.sides[0]` (or
   alphabetically-first side slug — locked at session start) is the
   canonical face. Per-side ext_id grammar D-13502 unchanged.
-- D-13808: deck-size arithmetic source = `physicalCards[].count`.
-- D-13810: viewer imageUrl lookup pattern = `getPhysicalCardForSide()`
-  at projection time.
+- D-14102: deck-size arithmetic source = `physicalCards[].count`.
+- D-14103: viewer **hero-card** imageUrl lookup pattern =
+  `getPhysicalCardForSide()` at projection time. Non-hero card types
+  retain `card.imageUrl`.
 
 ### H) Tests
 
@@ -388,7 +407,7 @@ Total engine baseline shift: `698 / 150 / 0` → projected
 `710-718 / 151-153 / 0` (+12-20 tests / +1-3 suites — exact at session
 freeze).
 
-Registry baseline `39 / 4 / 0` UNCHANGED (no schema change).
+Registry baseline `53 / 5 / 0` UNCHANGED (no schema change).
 
 ---
 
@@ -426,7 +445,7 @@ Registry baseline `39 / 4 / 0` UNCHANGED (no schema change).
 
 - `packages/game-engine/src/setup/buildHeroDeck.ts` — modified —
   deck-reservoir loop reads `physicalCards[].count`; ext_id emission
-  uses `physicalCard.sides[0]` per D-13807.
+  uses `physicalCard.sides[0]` per D-14101.
 - `packages/game-engine/src/setup/buildHeroDeck.test.ts` — modified —
   +5 to +8 new assertions for split-hero deck size.
 - `packages/game-engine/src/setup/buildCardDisplayData.ts` — modified
@@ -439,8 +458,9 @@ Registry baseline `39 / 4 / 0` UNCHANGED (no schema change).
   — +2 new assertions for split-hero `cardStats` count.
 - `packages/game-engine/src/replay/replay.execute.test.ts` — modified
   — `PRE_WP080_HASH` literal regenerated per the cascade procedure.
-- `apps/registry-viewer/src/registry/shared.ts` — modified — 9
-  read-site migrations to `getPhysicalCardForSide()`.
+- `apps/registry-viewer/src/registry/shared.ts` — modified — 1
+  hero-card read-site migration to `getPhysicalCardForSide()`;
+  8 non-hero card-type `imageUrl` reads retained.
 - `apps/registry-viewer/src/registry/shared.test.ts` — modified —
   +1 to +3 new assertions.
 - `apps/registry-viewer/src/components/CardDetail.vue` — modified —
@@ -450,7 +470,7 @@ Registry baseline `39 / 4 / 0` UNCHANGED (no schema change).
 
 **Governance ledgers**:
 
-- `docs/ai/DECISIONS.md` — D-13807 / D-13808 / D-13810 appended at
+- `docs/ai/DECISIONS.md` — D-14101 / D-14102 / D-14103 appended at
   execution.
 - `docs/ai/work-packets/WORK_INDEX.md` — WP-141 row Draft → Done on
   completion.
@@ -479,8 +499,11 @@ Registry baseline `39 / 4 / 0` UNCHANGED (no schema change).
 
 - `grep -rn 'card\.imageUrl' packages/game-engine/src/`
   returns **zero matches outside test fixtures**.
-- `grep -rn 'card\.imageUrl' apps/registry-viewer/src/`
-  returns **zero matches outside test fixtures**.
+- In `apps/registry-viewer/src/registry/shared.ts`, the hero-card
+  projection branch (inside the `// Heroes` loop) no longer reads
+  `card.imageUrl` — it uses `getPhysicalCardForSide()`. The 8
+  non-hero `imageUrl` reads are retained (those card types have no
+  `physicalCards[]` entries).
 
 ### Engine deck reservoir
 
@@ -492,7 +515,7 @@ Registry baseline `39 / 4 / 0` UNCHANGED (no schema change).
 - For at least one mgtg split-hero (curated by WP-140):
   `G.heroDeck.filter(...).length` matches that hero's
   `sum(physicalCards[].count)`.
-- The single-side ext_id stand-in per D-13807 is consistent: every
+- The single-side ext_id stand-in per D-14101 is consistent: every
   ext_id in `G.heroDeck` corresponds to a physicalCard's first side
   slug; no ext_id corresponds to the second side of a split pair.
 
@@ -505,13 +528,16 @@ Registry baseline `39 / 4 / 0` UNCHANGED (no schema change).
   registry) emits a deterministic full-sentence `console.warn` and
   returns the empty string — no throw.
 
-### Viewer imageUrl migration
+### Viewer hero-card imageUrl migration
 
-- Every projection branch in `shared.ts` (9 sites) consumes
-  `getPhysicalCardForSide()` for hero card image resolution.
+- The hero-card projection branch in `shared.ts` (1 site, line 28)
+  consumes `getPhysicalCardForSide()` for hero card image resolution.
+  The 8 non-hero `imageUrl` reads (mastermind, villain, henchman,
+  scheme, bystander, wound, other) are retained — those card types
+  have no `physicalCards[]` entries.
 - `CardDetail.vue` and `CardGrid.vue` read the projected
-  `physicalCardImageUrl` field; no per-side `card.imageUrl` reference
-  survives in either component.
+  `physicalCardImageUrl` field for hero cards; non-hero cards
+  continue to use the existing `imageUrl` projection path.
 
 ### Replay-hash regeneration
 
@@ -523,7 +549,7 @@ Registry baseline `39 / 4 / 0` UNCHANGED (no schema change).
 
 - Engine baseline shifts by `+12 to +20 tests / +1 to +3 suites`
   (locked exactly at session start).
-- Registry baseline `39 / 4 / 0` UNCHANGED.
+- Registry baseline `53 / 5 / 0` UNCHANGED.
 - Viewer test surface tracked separately (project's existing viewer
   test runner; baseline shift recorded in the post-mortem).
 
@@ -546,7 +572,7 @@ pnpm --filter @legendary-arena/registry build
 
 # Step 2 — registry tests UNCHANGED
 pnpm --filter @legendary-arena/registry test
-# Expected: 39 / 4 / 0; matches WP-138 Phase 1a baseline exactly.
+# Expected: 53 / 5 / 0; matches WP-138 Phase 1a baseline exactly.
 
 # Step 3 — engine build green
 pnpm --filter @legendary-arena/game-engine build
@@ -561,9 +587,12 @@ pnpm --filter @legendary-arena/game-engine test
 grep -rn 'card\.imageUrl' packages/game-engine/src/
 # Expected: matches inside test fixtures only (zero production reads).
 
-# Step 6 — viewer grep gate clears
-grep -rn 'card\.imageUrl' apps/registry-viewer/src/
-# Expected: matches inside test fixtures only (zero production reads).
+# Step 6 — viewer hero-card grep gate clears
+grep -n 'card\.imageUrl' apps/registry-viewer/src/registry/shared.ts
+# Expected: zero matches inside the `// Heroes` loop (line 28 area).
+# The 8 non-hero card-type imageUrl reads (mastermind, villain,
+# henchman, scheme, bystander, wound, other) remain — those card
+# types have no physicalCards[] entries.
 
 # Step 7 — replay-hash cascade pre/post pair
 # Pre-edit: capture via temporary console print in replay.execute.test.ts
@@ -598,8 +627,8 @@ pnpm --filter @legendary-arena/registry-viewer test
 git diff --stat packages/registry/src/ scripts/convert-cards/ data/cards/
 # Expected: empty.
 
-# Step 12 — D-13807 / D-13808 / D-13810 cited in source
-grep -c "D-1380[78]\|D-13810" packages/game-engine/src/ -r
+# Step 12 — D-14101 / D-14102 / D-14103 cited in source
+grep -c "D-1410[123]" packages/game-engine/src/ -r
 # Expected: at least 6 (one per decision; multiple anchors per
 # decision are fine).
 ```
@@ -612,16 +641,17 @@ grep -c "D-1380[78]\|D-13810" packages/game-engine/src/ -r
    executing commit hash.
 2. EC slot row in `EC_INDEX.md` flipped to **Done** (slot claimed at
    execution).
-3. **D-13807 / D-13808 / D-13810 appended** to
-   `docs/ai/DECISIONS.md` in numeric order (D-13901 from WP-140
-   precedes them; the gap is acceptable per the project's locked
-   append-only convention).
+3. **D-14101 / D-14102 / D-14103 appended** to
+   `docs/ai/DECISIONS.md` in numeric order per the project's locked
+   append-only convention.
 4. Acceptance grep gates clear:
-   `grep -rn 'card\.imageUrl' packages/game-engine/src/ apps/registry-viewer/src/`
-   returns zero matches outside test fixtures.
+   `grep -rn 'card\.imageUrl' packages/game-engine/src/` returns zero
+   matches outside test fixtures. In `shared.ts`, the hero-card
+   projection branch uses `getPhysicalCardForSide()` instead of
+   `card.imageUrl`; non-hero card-type `imageUrl` reads are retained.
 5. Engine baseline shifts by `+12 to +20 tests / +1 to +3 suites`
    (exact lock at session start).
-6. **Registry baseline UNCHANGED** at `39 / 4 / 0`.
+6. **Registry baseline UNCHANGED** at `53 / 5 / 0`.
 7. **Schema UNTOUCHED** — `packages/registry/src/schema.ts` not in
    diff. `HeroCardSchema.imageUrl` preserved (Phase 3 removes it).
 8. Replay-hash literal regenerated; pre/post pair recorded in the
@@ -667,7 +697,7 @@ grep -c "D-1380[78]\|D-13810" packages/game-engine/src/ -r
   surface, persuasive copy, competitive-ranking surface, or
   social/social-graph affordance.
 - **Determinism preservation:** Confirmed. The single-side ext_id
-  stand-in per D-13807 uses `physicalCard.sides[0]` (declaration
+  stand-in per D-14101 uses `physicalCard.sides[0]` (declaration
   order — locked deterministic across re-runs of identical input data
   per WP-138 ID determinism rule). The `getPhysicalCardForSide()`
   lookup is deterministic (Map lookup against immutable input). The
@@ -705,7 +735,7 @@ change is confined to `packages/game-engine` and
 
 This document is a **draft**. Per `.claude/CLAUDE.md §Lint Gate`,
 executing WP-141 — landing the engine + viewer consumer migration,
-locking D-13807 / D-13808 / D-13810, regenerating the replay-hash
+locking D-14101 / D-14102 / D-14103, regenerating the replay-hash
 literal — requires the Prompt Lint Gate
 (`docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`) to be satisfied
 first. The lint gate is not invoked at draft-time; it is invoked at

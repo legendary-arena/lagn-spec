@@ -385,3 +385,104 @@ describe('buildCardStats — WP-135 / WP-137 hero card-instance walk (slash-form
     }
   });
 });
+
+// ===========================================================================
+// D-14102 — physicalCards migration tests
+// ===========================================================================
+
+describe('buildCardStats — physicalCards (D-14102)', () => {
+  it('split hero: cardStats entry count matches sum(physicalCards[].count)', () => {
+    const setData = {
+      abbr: 'bkwd',
+      villains: [],
+      henchmen: [],
+      masterminds: [],
+      heroes: [
+        {
+          slug: 'falcon-winter-soldier',
+          cards: [
+            { slug: 'attune', name: 'Attune', rarityLabel: 'Common 1', attack: 2, recruit: 0, cost: 2 },
+            { slug: 'atone', name: 'Atone', rarityLabel: 'Common 1', attack: 0, recruit: 2, cost: 3 },
+            { slug: 'solo-card', name: 'Solo Card', rarityLabel: 'Rare', attack: 4, recruit: 0, cost: 6 },
+          ],
+          physicalCards: [
+            { id: 'p1', count: 5, sides: ['attune', 'atone'] },
+            { id: 'p2', count: 1, sides: ['solo-card'] },
+          ],
+        },
+      ],
+    };
+
+    const registry = {
+      listCards: () => [],
+      listSets: () => [],
+      getSet: (abbr: string) => (abbr === 'bkwd' ? setData : undefined),
+    };
+
+    const config = {
+      schemeId: 'bkwd/s',
+      mastermindId: 'bkwd/mm',
+      villainGroupIds: [] as string[],
+      henchmanGroupIds: [] as string[],
+      heroDeckIds: ['bkwd/falcon-winter-soldier'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+
+    // why: D-14102 — 5 copies of p1 (attune) + 1 copy of p2 (solo-card) = 6
+    const slashKeys = Object.keys(stats).filter((k) => k.startsWith('bkwd/falcon-winter-soldier/'));
+    assert.equal(slashKeys.length, 6, 'split hero: 5 attune + 1 solo-card = 6 cardStats entries');
+
+    // why: stat values come from card entry for sides[0]
+    const attuneEntry = stats['bkwd/falcon-winter-soldier/attune#0'];
+    assert.ok(attuneEntry, 'attune#0 must exist');
+    assert.equal(attuneEntry.attack, 2, 'attack from card entry for sides[0]');
+    assert.equal(attuneEntry.cost, 2, 'cost from card entry for sides[0]');
+  });
+
+  it('falls back to rarity map when physicalCards is absent', () => {
+    const setData = {
+      abbr: 'core',
+      villains: [],
+      henchmen: [],
+      masterminds: [],
+      heroes: [
+        {
+          slug: 'test-hero',
+          cards: [
+            { slug: 'card-c1', name: 'Card C1', rarityLabel: 'Common 1', attack: 1, recruit: 0, cost: 2 },
+            { slug: 'card-rare', name: 'Card Rare', rarityLabel: 'Rare', attack: 3, recruit: 0, cost: 5 },
+          ],
+        },
+      ],
+    };
+
+    const registry = {
+      listCards: () => [],
+      listSets: () => [],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+
+    const config = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [] as string[],
+      henchmanGroupIds: [] as string[],
+      heroDeckIds: ['core/test-hero'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+
+    // Common 1 (5) + Rare (3) = 8 via rarity fallback
+    const slashKeys = Object.keys(stats).filter((k) => k.startsWith('core/test-hero/'));
+    assert.equal(slashKeys.length, 8, 'fallback: 5 c1 + 3 rare = 8 entries');
+  });
+});

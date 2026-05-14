@@ -40,6 +40,11 @@ export const HeroCardSchema = z.object({
 });
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
+// why: D-14103 — physicalCards[] is passed through so flattenSet can
+// resolve hero-card imageUrl from the physical card rather than the
+// per-side card entry. The schema is permissive (z.unknown passthrough)
+// because the registry package's PhysicalCardSchema is the authoritative
+// validator; the viewer only reads id, imageUrl, and sides from entries.
 export const HeroSchema = z.object({
   // id: optional — some sets omit it entirely, others use null
   id:    z.number().int().optional().nullable(),
@@ -47,6 +52,12 @@ export const HeroSchema = z.object({
   slug:  z.string(),
   team:  z.string().optional().nullable(),
   cards: z.array(HeroCardSchema),
+  physicalCards: z.array(z.object({
+    id:       z.string(),
+    count:    z.number().int().min(1),
+    imageUrl: z.string(),
+    sides:    z.array(z.string()),
+  })).optional().default([]),
 });
 
 // ── Mastermind card — vAttack can be string, number, or null ──────────────────

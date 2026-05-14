@@ -40,6 +40,8 @@ export interface FlatCard {
   name:      string;
   slug:      string;
   imageUrl:  string;
+  /** Hero-only: image URL resolved from physicalCards[] (D-14103). */
+  physicalCardImageUrl?: string;
   /** Hero-only fields */
   heroName?:  string;
   team?:      string;

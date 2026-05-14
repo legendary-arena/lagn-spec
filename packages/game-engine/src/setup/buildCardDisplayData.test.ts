@@ -581,3 +581,106 @@ describe('buildCardDisplayData — WP-135 / WP-137 hero card-instance walk (slas
     }
   });
 });
+
+// ===========================================================================
+// D-14102 / D-14103 — physicalCards migration tests
+// ===========================================================================
+
+describe('buildCardDisplayData — physicalCards (D-14102 / D-14103)', () => {
+  it('split hero: uses physicalCard.imageUrl and sides[0] as canonical slug', () => {
+    const setData = {
+      abbr: 'bkwd',
+      villains: [],
+      henchmen: [],
+      masterminds: [],
+      heroes: [
+        {
+          slug: 'falcon-winter-soldier',
+          cards: [
+            { slug: 'attune', name: 'Attune', rarityLabel: 'Common 1', cost: 2 },
+            { slug: 'atone', name: 'Atone', rarityLabel: 'Common 1', cost: 3 },
+            { slug: 'solo-card', name: 'Solo Card', rarityLabel: 'Rare', cost: 6 },
+          ],
+          physicalCards: [
+            { id: 'p1', count: 5, imageUrl: 'https://img/attune-atone.webp', sides: ['attune', 'atone'] },
+            { id: 'p2', count: 1, imageUrl: 'https://img/solo-card.webp', sides: ['solo-card'] },
+          ],
+        },
+      ],
+    };
+
+    const registry = {
+      listCards: () => [],
+      getSet: (abbr: string) => (abbr === 'bkwd' ? setData : undefined),
+    };
+
+    const config: MatchSetupConfig = {
+      schemeId: 'bkwd/s',
+      mastermindId: 'bkwd/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['bkwd/falcon-winter-soldier'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config);
+
+    // why: D-14103 — imageUrl comes from physicalCard, not card entry
+    const entry0 = result['bkwd/falcon-winter-soldier/attune#0'];
+    assert.ok(entry0, 'attune#0 must exist');
+    assert.equal(entry0.imageUrl, 'https://img/attune-atone.webp', 'imageUrl from physicalCard');
+    assert.equal(entry0.name, 'Attune', 'name from card entry via sides[0] lookup');
+    assert.equal(entry0.cost, 2, 'cost from card entry via sides[0] lookup');
+
+    // why: 5 copies of p1 + 1 copy of p2 = 6 total
+    const allKeys = Object.keys(result).filter((k) => k.startsWith('bkwd/falcon-winter-soldier/'));
+    assert.equal(allKeys.length, 6, 'split hero: 5 attune + 1 solo-card = 6 entries');
+
+    const soloEntry = result['bkwd/falcon-winter-soldier/solo-card#0'];
+    assert.ok(soloEntry, 'solo-card#0 must exist');
+    assert.equal(soloEntry.imageUrl, 'https://img/solo-card.webp', 'solo imageUrl from physicalCard');
+  });
+
+  it('falls back to card.imageUrl when physicalCards is absent', () => {
+    const setData = {
+      abbr: 'core',
+      villains: [],
+      henchmen: [],
+      masterminds: [],
+      heroes: [
+        {
+          slug: 'test-hero',
+          cards: [
+            { slug: 'card-c1', name: 'Card C1', rarityLabel: 'Common 1', imageUrl: 'https://img/fallback.webp', cost: 2 },
+          ],
+        },
+      ],
+    };
+
+    const registry = {
+      listCards: () => [],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: ['core/test-hero'],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config);
+
+    const entry = result['core/test-hero/card-c1#0'];
+    assert.ok(entry, 'card-c1#0 must exist via fallback path');
+    assert.equal(entry.imageUrl, 'https://img/fallback.webp', 'imageUrl from card entry fallback');
+  });
+});
