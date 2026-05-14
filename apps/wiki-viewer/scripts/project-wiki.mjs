@@ -80,22 +80,33 @@ function projectWiki() {
     );
   }
 
-  // Project ewiki/ assets into apps/wiki-viewer/static/ewiki/ so Hugo
-  // serves them at /ewiki/ on the rendered site. Optional — ewiki/ may
-  // not exist yet if no assets have been added.
+  // Project ewiki/<slug>/ asset directories into
+  // apps/wiki-viewer/static/ewiki/<slug>/ so Hugo serves them at
+  // /ewiki/<slug>/ on the rendered site. Each wiki page gets its own
+  // subdirectory matching its filename slug. Optional — ewiki/ may not
+  // exist yet if no assets have been added.
   if (existsSync(ewikiAssets)) {
     if (existsSync(staticTarget)) {
       rmSync(staticTarget, { recursive: true, force: true });
     }
     mkdirSync(staticTarget, { recursive: true });
-    const assetEntries = readdirSync(ewikiAssets, { withFileTypes: true });
+    const slugDirs = readdirSync(ewikiAssets, { withFileTypes: true });
     let assetCount = 0;
-    for (const entry of assetEntries) {
-      if (!entry.isFile()) {
+    for (const dir of slugDirs) {
+      if (!dir.isDirectory()) {
         continue;
       }
-      copyFileSync(join(ewikiAssets, entry.name), join(staticTarget, entry.name));
-      assetCount += 1;
+      const sourceDir = join(ewikiAssets, dir.name);
+      const targetDir = join(staticTarget, dir.name);
+      mkdirSync(targetDir, { recursive: true });
+      const files = readdirSync(sourceDir, { withFileTypes: true });
+      for (const file of files) {
+        if (!file.isFile()) {
+          continue;
+        }
+        copyFileSync(join(sourceDir, file.name), join(targetDir, file.name));
+        assetCount += 1;
+      }
     }
     process.stdout.write(`Projected ${assetCount} ewiki assets to ${staticTarget}\n`);
   }
