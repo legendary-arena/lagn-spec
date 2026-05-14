@@ -144,9 +144,37 @@ git push origin main
 Render auto-deploys the static site within 1-2 minutes. The page
 appears at `https://ewiki.legendary-arena.com/<slug>/`.
 
+### How to get the repo onto your computer
+
+Git is the source of truth. Before you can create, edit, or preview
+pages you need a local copy of the repository.
+
+**First time (clone):**
+
+```
+git clone https://github.com/barefootbetters/legendary-arena.git C:\pcloud\BB\DEV\legendary-arena
+```
+
+This downloads the full repo including `wiki/` to
+`C:\pcloud\BB\DEV\legendary-arena\`.
+
+**Returning to work (pull latest):**
+
+Before editing, always pull to make sure you have the latest version:
+
+```
+cd C:\pcloud\BB\DEV\legendary-arena
+git pull origin main
+```
+
+If you skip this step, your push may be rejected because someone else
+pushed changes while you were working.
+
 ### How to edit an existing page
 
-Open the page in `wiki/<slug>.md`, make your changes, then:
+Pull the latest from git first (see above), then open the page at
+`C:\pcloud\BB\DEV\legendary-arena\wiki\<slug>.md`, make your changes,
+and commit:
 
 ```
 git add wiki/<slug>.md
