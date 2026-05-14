@@ -19,7 +19,9 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..', '..', '..');
 const wikiSource = join(repoRoot, 'wiki');
+const ewikiAssets = join(repoRoot, 'ewiki');
 const projectionTarget = join(here, '..', 'content');
+const staticTarget = join(here, '..', 'static', 'ewiki');
 
 /**
  * Project wiki/*.md into apps/wiki-viewer/content/.
@@ -76,6 +78,26 @@ function projectWiki() {
     throw new Error(
       `Projection step deleted source wiki/INDEX.md — must be a copy, not a move. Restore from git and fix scripts/project-wiki.mjs to use copyFileSync.`
     );
+  }
+
+  // Project ewiki/ assets into apps/wiki-viewer/static/ewiki/ so Hugo
+  // serves them at /ewiki/ on the rendered site. Optional — ewiki/ may
+  // not exist yet if no assets have been added.
+  if (existsSync(ewikiAssets)) {
+    if (existsSync(staticTarget)) {
+      rmSync(staticTarget, { recursive: true, force: true });
+    }
+    mkdirSync(staticTarget, { recursive: true });
+    const assetEntries = readdirSync(ewikiAssets, { withFileTypes: true });
+    let assetCount = 0;
+    for (const entry of assetEntries) {
+      if (!entry.isFile()) {
+        continue;
+      }
+      copyFileSync(join(ewikiAssets, entry.name), join(staticTarget, entry.name));
+      assetCount += 1;
+    }
+    process.stdout.write(`Projected ${assetCount} ewiki assets to ${staticTarget}\n`);
   }
 
   return copiedCount;

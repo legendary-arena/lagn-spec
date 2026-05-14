@@ -119,11 +119,22 @@ or absolute paths (`C:\...`).
 
 ### Where to save files
 
-**Images:** Save to `C:\www\legendary-arena-com\static\images\`.
-Never save images to `C:\www\legendary-arena-com\public\images\` —
-`public\` is Hugo's build output directory and is wiped and regenerated
-from scratch on every `hugo` build. Anything placed in `public\` will
-be silently deleted on the next build.
+**Ewiki images (screenshots, diagrams):** Save to
+`C:\pcloud\BB\DEV\legendary-arena\ewiki\`. The projection script
+copies these into Hugo's static tree at build time. They are served
+at `/ewiki/` on `ewiki.legendary-arena.com`. Reference in markdown:
+
+```markdown
+![Description](/ewiki/my-screenshot.png)
+```
+
+**Marketing site images:** Save to
+`C:\www\legendary-arena-com\static\images\`. Served at `/images/` on
+`www.legendary-arena.com`.
+
+**Never save images to `public/` or `apps/wiki-viewer/static/`** —
+both are build output directories wiped and regenerated on every
+build. Anything placed there is silently deleted.
 
 **Research files and notes:** Save to `C:\pcloud\LA\ewiki\`.
 This is the working directory for drafts, reference material, and
@@ -134,8 +145,16 @@ site.
 
 **1. Adding an image**
 
-Images are stored at `C:\www\legendary-arena-com\static\images\`. In
-markdown, reference them with a path relative to `static/`:
+Ewiki images are stored at `C:\pcloud\BB\DEV\legendary-arena\ewiki\`.
+The projection script copies them into Hugo's static tree at build
+time, served at `/ewiki/` on the rendered site:
+
+```markdown
+![Alt text describing the image](/ewiki/my-screenshot.png)
+```
+
+For marketing site images (stored at
+`C:\www\legendary-arena-com\static\images\`):
 
 ```markdown
 ![Alt text describing the image](/images/my-screenshot.png)
