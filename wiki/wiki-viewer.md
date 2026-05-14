@@ -105,6 +105,18 @@ To repo artifacts:  [ARCHITECTURE.md](../docs/ai/ARCHITECTURE.md)
 Do not use Obsidian wiki-links (`[[Page]]`), bare URLs in body text,
 or absolute paths (`C:\...`).
 
+### Where to save files
+
+**Images** go in `static/images/` within the site repo
+(`C:\www\legendary-arena-com\static\images\`). Never save images to
+`C:\www\legendary-arena-com\public\images\` — the `public/` directory
+is Hugo's build output and is regenerated from scratch on every build.
+Anything saved there will be silently deleted on the next `hugo` run.
+
+**Research files and notes** go in `C:\pcloud\LA\ewiki\`. This is the
+working directory for drafts, reference material, and scratch notes
+that support wiki content but are not published to the site.
+
 ### How to preview locally
 
 Run the Hugo dev server from the repo root:
@@ -130,6 +142,30 @@ git push origin main
 
 Render auto-deploys the static site within 1-2 minutes. The page
 appears at `https://ewiki.legendary-arena.com/<slug>/`.
+
+### How to edit an existing page
+
+Open the page in `wiki/<slug>.md`, make your changes, then:
+
+```
+git add wiki/<slug>.md
+git commit -m "EC-142: wiki <slug> — <one-line summary of change>"
+git push origin main
+```
+
+If you edited multiple pages in one pass:
+
+```
+git add wiki/scoring.md wiki/turn-system.md
+git commit -m "EC-142: wiki scoring, turn-system — update interactions after WP-048"
+git push origin main
+```
+
+Update `last-reviewed` in the front-matter whenever you verify the
+page against current code or docs (not needed for typo fixes).
+
+If the edit changes a page's `type`, `status`, or filename, also
+regenerate `INDEX.md` in the same commit.
 
 ### Build pipeline (what runs on push)
 
