@@ -12,7 +12,10 @@ related:
   - hugo-web-system.md
 status: draft
 source:
-  - ../docs/email-automation.md
+  - C:\www\legendary-arena-com\docs\email-automation.md
+  - C:\www\legendary-arena-com\docs\newsletter-template.md
+  - C:\www\legendary-arena-com\docs\brand\strategy.md
+  - C:\www\legendary-arena-com\functions\api\subscribe.js
 last-reviewed: 2026-05-13
 ---
 
@@ -24,9 +27,25 @@ last-reviewed: 2026-05-13
 | Marketing | `C:\www\legendary-arena-com\` | `www.legendary-arena.com` |
 | Research / Notes | `C:\pcloud\LA\ewiki\` | (not published) |
 
-The email pipeline source doc lives at
-`C:\www\legendary-arena-com\docs\email-automation.md`. This wiki page
-is a companion reference — the marketing repo doc is authoritative.
+### Source file locations
+
+The Brevo email pipeline spans two repos. All source files live in
+the **marketing repo** — this wiki page (in the engine repo) is a
+companion reference only.
+
+| File | Repo | Full path |
+|---|---|---|
+| Pipeline doc (authoritative) | Marketing | `C:\www\legendary-arena-com\docs\email-automation.md` |
+| Newsletter template spec | Marketing | `C:\www\legendary-arena-com\docs\newsletter-template.md` |
+| Brand voice / CTA rules | Marketing | `C:\www\legendary-arena-com\docs\brand\strategy.md` |
+| Subscribe API function | Marketing | `C:\www\legendary-arena-com\functions\api\subscribe.js` |
+| Brand tokens CSS | Marketing | `C:\www\legendary-arena-com\static\brand-tokens.css` |
+| QA log | Marketing | `C:\www\legendary-arena-com\docs\newsletter-drafts\qa-log.md` |
+| This wiki page | Engine | `C:\pcloud\BB\DEV\legendary-arena\wiki\brevo-email-pipeline.md` |
+| Screenshots for this page | Engine | `C:\pcloud\BB\DEV\legendary-arena\ewiki\brevo-email-pipeline\` |
+
+If this wiki page and `C:\www\legendary-arena-com\docs\email-automation.md`
+disagree, the marketing repo doc is authoritative.
 
 ### Where to save images for this wiki
 
