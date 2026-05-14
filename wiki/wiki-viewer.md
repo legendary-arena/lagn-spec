@@ -107,15 +107,16 @@ or absolute paths (`C:\...`).
 
 ### Where to save files
 
-**Images** go in `static/images/` within the site repo
-(`C:\www\legendary-arena-com\static\images\`). Never save images to
-`C:\www\legendary-arena-com\public\images\` — the `public/` directory
-is Hugo's build output and is regenerated from scratch on every build.
-Anything saved there will be silently deleted on the next `hugo` run.
+**Images:** Save to `C:\www\legendary-arena-com\static\images\`.
+Never save images to `C:\www\legendary-arena-com\public\images\` —
+`public\` is Hugo's build output directory and is wiped and regenerated
+from scratch on every `hugo` build. Anything placed in `public\` will
+be silently deleted on the next build.
 
-**Research files and notes** go in `C:\pcloud\LA\ewiki\`. This is the
-working directory for drafts, reference material, and scratch notes
-that support wiki content but are not published to the site.
+**Research files and notes:** Save to `C:\pcloud\LA\ewiki\`.
+This is the working directory for drafts, reference material, and
+scratch notes that support wiki content but are not published to the
+site.
 
 ### How to preview locally
 
