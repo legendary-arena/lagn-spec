@@ -133,6 +133,34 @@ source files reload automatically.
 If the command errors, check that your local Hugo Extended version
 matches `apps/wiki-viewer/.hugo-version` (currently 0.135.0).
 
+### Commit prefix conventions
+
+The two repos use different commit prefixes enforced by git hooks.
+Using the wrong prefix will block your commit.
+
+**Engine repo** (`C:\pcloud\BB\DEV\legendary-arena\`) — where wiki
+pages live:
+
+| Prefix | When |
+|---|---|
+| `EC-NNN:` | Code changes under an Execution Checklist (wiki edits use `EC-142:`) |
+| `SPEC:` | Governance doc corrections (WPs, ECs, ARCHITECTURE.md, DECISIONS.md) |
+| `INFRA:` | Tooling, scripts, CI, hooks, repo config |
+
+**Marketing repo** (`C:\www\legendary-arena-com\`) — where the
+marketing site lives:
+
+| Prefix | When |
+|---|---|
+| `WP-NNN:` | Site-affecting changes (layouts, config, templates) |
+| `FIX:` | Content-lane edits — typo, copy tweak, broken link (only `content/**` + `static/images/**`) |
+| `POST:` | New blog post (same content-lane allowlist as `FIX:`) |
+| `ROADMAP:` | Roadmap-only doc changes |
+| `INFRA:` | Tooling, hooks, CI, scripts |
+| `SPEC:` | Governance doc corrections |
+
+Full details: `docs/ai/REFERENCE/01.3-commit-hygiene.md` in each repo.
+
 ### How to publish
 
 ```
