@@ -12,8 +12,8 @@ related:
   - hugo-web-system.md
 status: draft
 source:
-  - C:\www\legendary-arena-com\docs\email-automation.md
-  - C:\www\legendary-arena-com\docs\newsletter-template.md
+  - C:\www\legendary-arena-com\docs\brevo\email-automation.md
+  - C:\www\legendary-arena-com\docs\brevo\newsletter-template.md
   - C:\www\legendary-arena-com\docs\brand\strategy.md
   - C:\www\legendary-arena-com\functions\api\subscribe.js
 last-reviewed: 2026-05-13
@@ -38,12 +38,13 @@ committing:
 
 | File | Repo | Draft location (local) |
 |---|---|---|
-| Pipeline doc (authoritative) | Marketing | `C:\www\legendary-arena-com\docs\email-automation.md` |
-| Newsletter template spec | Marketing | `C:\www\legendary-arena-com\docs\newsletter-template.md` |
+| Pipeline doc (authoritative) | Marketing | `C:\www\legendary-arena-com\docs\brevo\email-automation.md` |
+| Newsletter template spec | Marketing | `C:\www\legendary-arena-com\docs\brevo\newsletter-template.md` |
 | Brand voice / CTA rules | Marketing | `C:\www\legendary-arena-com\docs\brand\strategy.md` |
 | Subscribe API function | Marketing | `C:\www\legendary-arena-com\functions\api\subscribe.js` |
 | Brand tokens CSS | Marketing | `C:\www\legendary-arena-com\static\brand-tokens.css` |
-| QA log | Marketing | `C:\www\legendary-arena-com\docs\newsletter-drafts\qa-log.md` |
+| Newsletter drafts | Marketing | `C:\www\legendary-arena-com\docs\brevo\newsletter-drafts\` |
+| QA log | Marketing | `C:\www\legendary-arena-com\docs\brevo\newsletter-drafts\qa-log.md` |
 | This wiki page | Engine | `C:\pcloud\BB\DEV\legendary-arena\wiki\brevo-email-pipeline.md` |
 | Screenshots for this page | Engine | `C:\pcloud\BB\DEV\legendary-arena\ewiki\brevo-email-pipeline\` |
 
@@ -56,7 +57,7 @@ deploy:
 | This wiki page | Published to `ewiki.legendary-arena.com/brevo-email-pipeline/` via Render |
 | Screenshots | Published to `ewiki.legendary-arena.com/brevo-email-pipeline/` via Render |
 
-If this wiki page and `C:\www\legendary-arena-com\docs\email-automation.md`
+If this wiki page and `C:\www\legendary-arena-com\docs\brevo\email-automation.md`
 disagree, the marketing repo doc is authoritative.
 
 ### Where to save images for this wiki
@@ -212,7 +213,7 @@ re-addition without opt-in is prohibited.
   workflows.
 - Workflow bound to the newsletter list only.
 - Template must not be modified after activation without updating
-  `C:\www\legendary-arena-com\docs\email-automation.md` and re-running
+  `C:\www\legendary-arena-com\docs\brevo\email-automation.md` and re-running
   the pipeline test.
 
 ### CTA hierarchy
@@ -232,6 +233,122 @@ re-addition without opt-in is prohibited.
 
 Maximum deep-links per email body: 4 (Read more + CTA + Shop + Share).
 Footer links (social, unsubscribe) are not counted.
+
+**Hidden CTA prohibition:** no additional promotional links may appear
+inside paragraph text, image links, or headings. Only the defined 4
+links are allowed in the email body. Any link beyond these is a
+contract violation.
+
+### Newsletter template structure (v2, 10 sections)
+
+Every newsletter follows this structure in order. The template spec
+is authoritative at
+`C:\www\legendary-arena-com\docs\brevo\newsletter-template.md`.
+
+| # | Section | Content |
+|---|---|---|
+| 1 | Header | LA wordmark/logo linking to `https://www.legendary-arena.com/` |
+| 2 | Hook | 1-2 sentence teaser summarizing the issue |
+| 3 | Tip / Strategy | Main value block: 2-3 paragraphs of actionable content (deck-building, meta analysis, scenario strategy) |
+| 4 | Challenge | A specific in-game challenge for the week, tied to the tip content |
+| 5 | Read more | Link to companion blog post at `/posts/<slug>/` (slug must match `newsletter_slug`) |
+| 6 | CTA | Primary action button: Play, Newsletter, or Tournament (one per email, from `cta` front-matter) |
+| 8 | Featured from the Shop | Single product spotlight with UTM-tagged link to `/shop/` — text link, not button, below the primary CTA |
+| 9 | Share / Forward | One-line prompt to forward the email or share the companion blog post canonical URL |
+| 10 | Footer | Unsubscribe (`{{ unsubscribe }}`), social links, org identity, CAN-SPAM address |
+
+**Placement constraints:**
+- Featured from the Shop must appear below the CTA, above Share/Forward,
+  above the footer.
+- Share/Forward must appear after Shop, before the footer.
+- Any deviation is a layout violation.
+
+### Newsletter draft format
+
+Newsletter drafts are stored at
+`C:\www\legendary-arena-com\docs\brevo\newsletter-drafts\week-NN.md`.
+Each draft uses YAML front-matter:
+
+| Field | Purpose |
+|---|---|
+| `newsletter_slug` | Edition identifier — must match blog post slug and UTM `utm_campaign` value |
+| `subject` | Email subject line |
+| `companion_post` | Blog post slug for the Read more link |
+| `cta` | Primary CTA type: `play`, `newsletter`, or `tournament` |
+| `cta_url` | Target URL for the primary CTA button |
+| `shop_product` | Product name for the Featured from the Shop module |
+| `shop_url` | UTM-tagged URL for the shop link |
+
+The draft body contains the content for sections 2-5 (Hook, Tip/Strategy,
+Challenge, Read more) as markdown. Sections 1, 6, 8-10 are handled by
+the Brevo template.
+
+### Blog-to-email-to-CTA workflow
+
+The content pipeline produces a matched pair for each edition: one blog
+post and one newsletter. Each step feeds the next.
+
+```
+1. Write blog post -> content/posts/<slug>.md
+   - Includes: hero image, CTA block, shop link, internal cross-links
+   - Front-matter: series, cta, newsletter_week, newsletter_slug
+
+2. Write newsletter draft -> docs/brevo/newsletter-drafts/week-NN.md
+   - Hook, Tip/Strategy, Challenge sections drawn from blog content
+   - Read more link points to the blog post
+   - CTA matches blog post cta front-matter value
+
+3. Transfer to Brevo template (template ID: <TEMPLATE_ID>)
+   - Paste draft content into template sections
+   - Set subject line, verify links
+
+4. Pre-send QA + funnel integrity check (13 items total)
+
+5. Create Brevo Campaign: Newsletter -- <newsletter_slug>
+   - Schedule Tuesday or Wednesday, 10:00 AM ET
+
+6. Subscriber clicks through:
+   Email CTA -> play.legendary-arena.com (or tournament)
+   Email Read more -> blog post -> blog CTA -> play/shop/tournament
+   Email Shop link -> /shop/ (UTM-tagged)
+   Email Share -> blog post canonical URL -> social sharing
+```
+
+**Slug coupling invariant:** `newsletter_slug`, blog post slug, and
+UTM `utm_campaign` value must be identical. A mismatch breaks
+attribution tracking silently.
+
+**CTA rotation:** per 4-week batch, rotate 2x `play`, 1x `newsletter`,
+1x `tournament`. The welcome email always uses "Play now".
+
+### Image requirements
+
+Newsletter images reuse production URLs from the marketing site:
+
+```
+https://www.legendary-arena.com/images/posts/<slug>/hero.webp
+```
+
+Images must exist in the marketing repo at
+`C:\www\legendary-arena-com\static\images\posts\<slug>\` and be
+deployed before the newsletter send.
+
+- Alt text required on all images.
+- Email must remain comprehensible with images blocked.
+- Logo format: PNG (not SVG), max 200px wide.
+- No images in the Featured from the Shop section (keeps email
+  weight low and avoids rendering issues).
+
+### Linking requirements
+
+| Link | Points to | Format |
+|---|---|---|
+| Read more | `/posts/<slug>/` (canonical blog URL) | Text link |
+| Primary CTA | `play.legendary-arena.com` or tournament URL | Button (`#7a1d1f` bg, white text) |
+| Shop | `/shop/?utm_source=newsletter&utm_medium=email&utm_campaign=<slug>&utm_content=featured-product` | Text link |
+| Share | `/posts/<slug>/` (canonical blog URL) | Text link |
+
+All links must point to production URLs, never preview or localhost.
 
 ### UTM conventions
 
@@ -267,7 +384,7 @@ every send.
    - Select template, select list, set subject line.
    - Schedule or send immediately.
 6. Record QA results in
-   `C:\www\legendary-arena-com\docs\newsletter-drafts\qa-log.md`.
+   `C:\www\legendary-arena-com\docs\brevo\newsletter-drafts\qa-log.md`.
 
 **Campaign naming convention:** `Newsletter -- <newsletter_slug>`
 (e.g., `Newsletter -- week-01-deck-checklist`).
@@ -350,7 +467,7 @@ These steps must be completed in the Brevo dashboard:
 
 1. **Create branded email template** — build the v2 10-section
    template in Brevo matching
-   `C:\www\legendary-arena-com\docs\newsletter-template.md`.
+   `C:\www\legendary-arena-com\docs\brevo\newsletter-template.md`.
 2. **Create welcome email + automation workflow** — trigger: contact
    added to newsletter list, action: send welcome email, no delay.
 3. **End-to-end pipeline test** — add a test contact, verify welcome
@@ -358,7 +475,7 @@ These steps must be completed in the Brevo dashboard:
    behavior for re-subscribers.
 4. **Update placeholder IDs** — replace `<BREVO_LIST_ID>`,
    `<TEMPLATE_ID>`, and `<WORKFLOW_ID>` in
-   `C:\www\legendary-arena-com\docs\email-automation.md` with real
+   `C:\www\legendary-arena-com\docs\brevo\email-automation.md` with real
    values from Brevo.
 
 ### Claude Code
@@ -386,12 +503,13 @@ Arena. The pipeline spans two repos with different commit conventions.
 ## Key file locations
 
 Marketing repo (authoritative for Brevo config):
-- Pipeline doc: C:\www\legendary-arena-com\docs\email-automation.md
-- Newsletter template spec: C:\www\legendary-arena-com\docs\newsletter-template.md
+- Pipeline doc: C:\www\legendary-arena-com\docs\brevo\email-automation.md
+- Newsletter template spec: C:\www\legendary-arena-com\docs\brevo\newsletter-template.md
+- Newsletter drafts: C:\www\legendary-arena-com\docs\brevo\newsletter-drafts\
 - Brand voice / CTA rules: C:\www\legendary-arena-com\docs\brand\strategy.md
 - Subscribe API function: C:\www\legendary-arena-com\functions\api\subscribe.js
 - Brand tokens CSS: C:\www\legendary-arena-com\static\brand-tokens.css
-- QA log: C:\www\legendary-arena-com\docs\newsletter-drafts\qa-log.md
+- QA log: C:\www\legendary-arena-com\docs\brevo\newsletter-drafts\qa-log.md
 - Commit prefixes: WP-NNN: (site changes), FIX: (content edits),
   POST: (blog posts), INFRA: / SPEC: / ROADMAP: (non-site)
 
@@ -480,7 +598,7 @@ real list ID / template ID / workflow ID."
 - **Placeholder IDs in docs.** Until the Brevo dashboard setup is
   complete, `<BREVO_LIST_ID>`, `<TEMPLATE_ID>`, and `<WORKFLOW_ID>`
   appear as placeholders in
-  `C:\www\legendary-arena-com\docs\email-automation.md`. These must
+  `C:\www\legendary-arena-com\docs\brevo\email-automation.md`. These must
   be replaced before the first production send.
 - **Slug coupling.** The `newsletter_slug`, blog post slug, and UTM
   `utm_campaign` value must be identical. A mismatch breaks attribution
@@ -493,9 +611,9 @@ real list ID / template ID / workflow ID."
 
 ## References
 
-- `C:\www\legendary-arena-com\docs\email-automation.md` — authoritative
+- `C:\www\legendary-arena-com\docs\brevo\email-automation.md` — authoritative
   pipeline doc (marketing repo)
-- `C:\www\legendary-arena-com\docs\newsletter-template.md` — v2
+- `C:\www\legendary-arena-com\docs\brevo\newsletter-template.md` — v2
   10-section template spec
 - `C:\www\legendary-arena-com\docs\brand\strategy.md` — brand voice
   and CTA rules
