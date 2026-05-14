@@ -28,6 +28,38 @@ The email pipeline source doc lives at
 `C:\www\legendary-arena-com\docs\email-automation.md`. This wiki page
 is a companion reference — the marketing repo doc is authoritative.
 
+### Where to save images for this wiki
+
+The two sites have separate image directories:
+
+| Site | Save images to | Hugo serves them at |
+|---|---|---|
+| `ewiki.legendary-arena.com` | `C:\pcloud\BB\DEV\legendary-arena\apps\wiki-viewer\static\images\` | `/images/` |
+| `www.legendary-arena.com` | `C:\www\legendary-arena-com\static\images\` | `/images/` |
+
+**How it works:** Hugo copies everything in `static/` to the build
+output directory (`public/`) as-is during every build. A file saved
+at `C:\pcloud\BB\DEV\legendary-arena\apps\wiki-viewer\static\images\brevo-welcome-workflow.png`
+becomes `https://ewiki.legendary-arena.com/images/brevo-welcome-workflow.png`
+after deploy.
+
+**Never save images to `public/`** in either repo. Hugo wipes and
+regenerates `public/` on every build — anything placed there is
+silently deleted.
+
+**For Brevo screenshots:** save them to
+`C:\pcloud\BB\DEV\legendary-arena\apps\wiki-viewer\static\images\`.
+Use lowercase kebab-case filenames (e.g.,
+`brevo-welcome-workflow.png`, `brevo-campaign-setup.png`). Then
+reference them in markdown:
+
+```markdown
+![Brevo welcome workflow](/images/brevo-welcome-workflow.png)
+```
+
+**For research files and working drafts** that should not be published:
+save to `C:\pcloud\LA\ewiki\`.
+
 ## Summary
 
 The Brevo email engagement pipeline converts site visitors into active
