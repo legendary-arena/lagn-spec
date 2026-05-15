@@ -22,6 +22,7 @@ import { createParGate } from './par/parGate.mjs';
 import { createPool } from './db/database.js';
 import { registerLeaderboardRoutes } from './leaderboards/leaderboard.routes.js';
 import { registerOwnerProfileRoutes } from './profile/ownerProfile.routes.js';
+import { registerProfileRoutes } from './profile/profile.routes.js';
 import { registerTeamRoutes } from './teams/team.routes.js';
 import { registerEntitlementRoutes } from './entitlements/entitlements.routes.js';
 import { registerBillingRoutes } from './billing/billing.routes.js';
@@ -407,6 +408,10 @@ export async function startServer() {
     verifier,
     accountResolver: verifier === undefined ? undefined : productionAccountResolver,
   });
+
+  // why: WP-152 / D-10202 / D-11505 — wire the public profile route.
+  // Guest endpoint, no auth injection. Closes the D-10202 deferral.
+  registerProfileRoutes(server.router, pool);
 
   // why: WP-109 / D-10408 — register the eight team-affiliation
   // routes (/api/teams + 7 team-scoped endpoints) on the same

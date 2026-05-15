@@ -11574,7 +11574,7 @@ This decision codifies the same discipline for `apps/server/src/profile/`. It in
 
 **Lint / typecheck safety during the deferral window:** verified at execution time that neither `apps/server/` (no `tsconfig.json`; runs via `tsx`) nor `apps/arena-client/tsconfig.json` (no `noUnusedExports` / `noUnusedLocals`) enforces unused-export checks. The only project ESLint config is `apps/registry-viewer/.eslintrc.cjs` (out of WP-102 scope). The deferred `registerProfileRoutes` export survives without a `// @ts-expect-error` suppression. A future WP that introduces stricter unused-export checks must inspect `apps/server/src/profile/profile.routes.ts` and either suppress with a `// why:` deferral comment or land alongside the future request-handler WP that consumes it.
 
-**Status:** `Active` until the future request-handler WP lands the deferred wiring. Once that WP ships, this decision flips to `Resolved` with a citation to that WP's commit hash and the date.
+**Status:** Resolved at WP-152 close (2026-05-15). `registerProfileRoutes(server.router, pool)` wired in `apps/server/src/server.mjs`; catalog row graduated to `Wired`; D-11505 reaffirmation also resolved. See D-15201.
 
 **Citation:** `docs/ai/work-packets/WP-102-public-profile-page.md §H` (amended 2026-04-28); `docs/ai/execution-checklists/EC-117-public-profile-page.checklist.md §Files to Produce` (amended 2026-04-28); `docs/ai/post-mortems/01.6-WP-102-public-profile-page.md §1`; `docs/ai/work-packets/WORK_INDEX.md` (WP-053 `submitCompetitiveScore` shipped-but-unwired precedent — structural twin); `D-3103` (mid-execution amendment precedent — pattern, not subject-matter); `D-10014` (citation chain naming D-3103 as the inline-amendment precedent); `D-10201` (paired directory classification — `apps/server/src/profile/` server-layer); `apps/server/src/server.mjs:120` (the unchanged `registerHealthRoute(server.router)` call site that the future WP will follow); `apps/server/src/rules/loader.mjs:111-145` (the short-lived rules-loader pool that motivated the deferral by demonstrating the absence of long-lived pool lifecycle).
 
@@ -12277,7 +12277,7 @@ and graduate the WP-102 row in `api-endpoints.md` from
 **Reinforces:** WP-102 D-10202 (profile-route wiring deferral);
 WP-115 §Out of Scope; WP-115 §Acceptance Criteria
 ("registerProfileRoutes is **not** called from `server.mjs`").
-**Status:** Active
+**Status:** Resolved at WP-152 close (2026-05-15). The deferral this entry reaffirmed is now closed — `registerProfileRoutes(server.router, pool)` is wired in `server.mjs`. See D-15201.
 
 ---
 
@@ -16582,6 +16582,31 @@ is reproducible; manual source matching from `rclone ls` is the safest
 approach given the deterministic-mapping constraint.
 **Introduced:** WP-151
 **Status:** Active
+
+---
+
+### D-15201 — WP-152 Wires Public Profile Route in server.mjs
+
+**Decision:** WP-152 wires `registerProfileRoutes(server.router, pool)`
+in `apps/server/src/server.mjs`, closing the D-10202 deferral and
+D-11505 reaffirmation. The route is `guest` — no auth middleware, no
+`requireAuthenticatedSession`, no `verifier`, no `accountResolver`.
+The call site is placed immediately after `registerOwnerProfileRoutes`
+in the route registration block. The `api-endpoints.md` catalog row
+for `GET /api/players/:handle/profile` graduates from
+`Shipped-but-unwired` to `Wired` per D-11804 whole-row replace
+semantics.
+
+**Rationale:** D-10202 reserved a ~10-line follow-up WP for the wiring
+once a long-lived `pg.Pool` existed. WP-115 introduced that pool
+(D-11501); D-11505 reaffirmed the deferral at WP-115 close. WP-152 is
+the reserved follow-up. Handler code (`profile.routes.ts`,
+`profile.logic.ts`, `profile.types.ts`) is unchanged — zero-byte diff
+on all three files.
+
+**Introduced:** WP-152 (executed 2026-05-15)
+**Resolves:** D-10202, D-11505
+**Status:** Immutable
 
 ---
 
