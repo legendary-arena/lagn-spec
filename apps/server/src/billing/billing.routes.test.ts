@@ -85,6 +85,12 @@ class FakeRouter {
     this.routes.push({ path, handlers });
     return undefined;
   }
+  get(
+    _path: string,
+    _handler: (ctx: FakeBillingContext) => Promise<void> | void,
+  ): unknown {
+    return undefined;
+  }
   routeFor(path: string): RegisteredRoute {
     const found = this.routes.find((route) => route.path === path);
     assert.ok(found !== undefined, `expected route ${path} to be registered`);

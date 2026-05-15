@@ -7,6 +7,27 @@
 
 ## Current State
 
+### WP-108 / EC-158 Executed — Profile Billing & Funding History UI (2026-05-15)
+
+**The authenticated owner can now view their entitlements, purchase
+history, and community funding links from their profile page.** A new
+`GET /api/me/billing/history` endpoint returns `BillingHistoryEntry[]`
+(checkout sessions ordered newest-first, capped at 100). The
+`BillingSection.vue` component renders three panels inside
+`MyProfilePage.vue`: (a) Active Benefits (entitlements via WP-132),
+(b) Purchase History (billing history via WP-108), (c) Community
+Funding (verbatim Public Blurb from `TOURNAMENT-FUNDING.md` per
+D-9701, Open Collective link as a normal text anchor per WP-097
+neutral tone). All panels have deterministic `data-testid` attributes
+and loading / error / empty / ready states. `BillingErrorCode` union
+extended to 9 members (`history_lookup_failed` added). Two D-entries
+land: D-10801 (two-query pattern), D-10802 (three-panel integration).
+
+**Test baselines.** Server: 298 tests / 232 pass / 0 fail / 66
+skipped (+9 tests over WP-142). Engine: 705 / 0 UNCHANGED.
+
+---
+
 ### WP-149 / EC-153 Executed — Public Leaderboard Marketing-Site Hugo Page (2026-05-14)
 
 **The public leaderboard is now live at `https://www.legendary-arena.com/leaderboard/`.** Marketing-repo commit `045fe87` on `legendary-arena-website` adds three files: Hugo section content (`content/leaderboard/_index.md`), section layout (`layouts/leaderboard/list.html`), and client-side script (`assets/js/leaderboard.js`). The page renders three views: (a) Top-N global PAR (default), (b) theme-grouped via `?themeId=<id>`, (c) scheme-mastermind placeholder via `?view=scheme-mastermind`. All data comes from existing WP-150 endpoints (`/api/leaderboards/top`, `/api/leaderboards/themes/:themeId`) via cross-origin fetch enabled by WP-148 CORS allowlist. Client-side only — no engine-repo source touch, no new npm deps, no funding affordance in v1. `data-pagefind-ignore` excludes dynamic scores from search indexing.

@@ -62,6 +62,7 @@ import {
   createCheckoutSession,
   recordStripeEvent,
 } from './billing.logic.js';
+import { getBillingHistoryForAccount } from './billingHistory.logic.js';
 import { processStripeEvent } from './processStripeEvent.logic.js';
 
 /**
@@ -138,6 +139,10 @@ interface KoaRouter {
         next: () => Promise<void>,
       ) => Promise<void> | void
     >
+  ): unknown;
+  get(
+    path: string,
+    handler: (koaContext: KoaBillingContext) => Promise<void> | void,
   ): unknown;
 }
 
@@ -536,4 +541,47 @@ export function registerBillingRoutes(
       }
     },
   );
+
+  router.get('/api/me/billing/history', async (koaContext) => {
+    // why: D-11504 — Cache-Control first-statement lock; billing
+    // responses must never be cached by an intermediate proxy.
+    koaContext.set('Cache-Control', 'no-store');
+    try {
+      const sessionResult = await deps.requireAuthenticatedSession(
+        koaContext.request,
+        { verifier: deps.verifier, accountResolver: deps.accountResolver, database },
+      );
+      if (sessionResult.ok === false) {
+        const status = statusForSessionValidationCode(sessionResult.code);
+        koaContext.status = status;
+        if (status === 401) {
+          koaContext.body = { code: 'unauthorized' };
+          return;
+        }
+        if (sessionResult.code === 'session_verifier_not_configured') {
+          koaContext.body = { code: 'session_verifier_not_configured' };
+          return;
+        }
+        koaContext.body = { error: 'internal_error' };
+        return;
+      }
+      // why: D-11802 = (C) envelope split — helper ok:false maps to
+      // operational-fault 500 with { error: 'internal_error' }
+      const result = await getBillingHistoryForAccount(
+        sessionResult.value,
+        database,
+      );
+      if (result.ok === true) {
+        koaContext.status = 200;
+        koaContext.body = { history: result.value };
+        return;
+      }
+      koaContext.status = 500;
+      koaContext.body = { error: 'internal_error' };
+    } catch (caughtError) {
+      void caughtError;
+      koaContext.status = 500;
+      koaContext.body = { error: 'internal_error' };
+    }
+  });
 }

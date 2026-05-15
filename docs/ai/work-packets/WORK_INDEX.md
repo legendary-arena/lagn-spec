@@ -222,7 +222,7 @@ These packets ship the game and keep it running.
 - [ ] **(deferred)** WP-105 — Player Badges Data Model & Display. Deps: WP-104 ✅. Tier 1 only (6 gameplay + 4 veteran badges per D-1004). See `PROPOSAL-BADGES.md` §3.
 - [ ] **(deferred)** WP-106 — Avatar Upload Pipeline (R2 + MIME/size validation). Deps: WP-104 ✅. Blocked on R2 user-upload governance decision.
 - [ ] **(deferred)** WP-107 — Profile Integrity / Anti-Cheat Surface. Blocked on a future admin-auth WP (no RBAC mechanism exists yet).
-- [ ] **(deferred)** WP-108 — Profile Billing & Funding History UI. Reframed 2026-05-03: UI consumer only (monetization plumbing moved to WP-132/133/134). Three sections: benefits (WP-132), purchase history (WP-133), donations (WP-097). Deps: WP-097 ✅, WP-098 ✅, WP-132 ✅, WP-133 ✅, WP-134 ✅. Adds `GET /api/me/billing/history`.
+- [x] WP-108 — Profile Billing & Funding History UI — Done 2026-05-15. Three-panel BillingSection (benefits, purchase history, community funding) inside MyProfilePage.vue; `GET /api/me/billing/history` endpoint; D-10801, D-10802.
 
 - [x] WP-109 — Team Affiliation (Profile-Level Cooperative Cohorts) — Done 2026-05-03 (commit `cea9108`)
 - [x] WP-112 — Session Token Validation Middleware — Done 2026-05-02

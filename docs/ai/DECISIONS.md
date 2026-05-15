@@ -16449,6 +16449,51 @@ per session-prompt §2 HARD GATE.
 fail-closed posture for `checkParPublished`.
 
 ---
+
+### D-10801 — Billing History Two-Query Pattern: Existence Check + SELECT by account_id (WP-108)
+
+**Decision:** `getBillingHistoryForAccount` reads
+`legendary.stripe_checkout_sessions` via a two-query pattern:
+Step 1 existence check (`SELECT player_id FROM legendary.players
+WHERE ext_id = $1 LIMIT 1`), Step 2 history SELECT (`SELECT ... FROM
+legendary.stripe_checkout_sessions WHERE account_id = $1 ORDER BY
+created_at DESC LIMIT 100`). The `account_id` column stores
+`ext_id text` per D-13302 Option A; no join through `player_id`.
+
+**Rationale:** Mirrors `getEntitlementsForAccount` from WP-132 verbatim.
+Step 1 distinguishes "account deleted" (operational fault) from "no
+checkout sessions" (empty array), preserving the same diagnostic
+granularity the entitlements surface offers.
+
+**Status:** Active. Locked at WP-108 execution (2026-05-15).
+
+**Citation:** WP-108; EC-158 §4; D-13302 Option A; WP-132
+`getEntitlementsForAccount` precedent.
+
+---
+
+### D-10802 — Three-Panel Profile Integration (Benefits + History + Funding) (WP-108)
+
+**Decision:** Billing and funding surfaces render as a three-panel
+`BillingSection.vue` component inside `MyProfilePage.vue`, not as a
+standalone billing page with its own client-router entry. Panel 1:
+active entitlements (WP-132 `GET /api/me/entitlements`). Panel 2:
+purchase history (WP-108 `GET /api/me/billing/history`). Panel 3:
+community funding (static text from `TOURNAMENT-FUNDING.md` Public
+Blurb verbatim per D-9701; Open Collective link as a normal text
+anchor, not a primary button, per WP-097 neutral tone).
+
+**Rationale:** Keeps the billing surface discoverable on the existing
+profile page without adding a new route to the client router. The
+community funding panel uses the TOURNAMENT-FUNDING.md Public Blurb
+verbatim to avoid disclosure-drift across surfaces.
+
+**Status:** Active. Locked at WP-108 execution (2026-05-15).
+
+**Citation:** WP-108; EC-158 §7; D-9701 (verbatim blurb);
+WP-097 (neutral tone).
+
+---
 ## Final Note
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.

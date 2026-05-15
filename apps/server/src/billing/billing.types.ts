@@ -122,7 +122,8 @@ export type BillingErrorCode =
   | 'stripe_error'
   | 'invalid_signature'
   | 'billing_not_configured'
-  | 'internal_error';
+  | 'internal_error'
+  | 'history_lookup_failed';
 
 /**
  * Canonical readonly array mirroring the `BillingErrorCode` union.
@@ -139,6 +140,7 @@ export const BILLING_ERROR_CODES: readonly BillingErrorCode[] = [
   'invalid_signature',
   'billing_not_configured',
   'internal_error',
+  'history_lookup_failed',
 ] as const;
 
 /**
@@ -201,6 +203,24 @@ export interface BillingConfig {
  *   - `processError`  ← `process_error` (always `null` at WP-133
  *     close — WP-134 owns the writer)
  */
+/**
+ * One row from `legendary.stripe_checkout_sessions` projected for the
+ * billing history read surface (`GET /api/me/billing/history`).
+ */
+export interface BillingHistoryEntry {
+  readonly entitlementKey: string;
+  readonly intentStatus: 'open' | 'completed' | 'expired' | 'canceled';
+  readonly createdAt: string;
+  readonly completedAt: string | null;
+}
+
+/**
+ * Wire shape returned by `GET /api/me/billing/history` on success.
+ */
+export interface BillingHistoryResponse {
+  readonly history: readonly BillingHistoryEntry[];
+}
+
 export interface StripeEventRecord {
   readonly id: bigint;
   readonly eventId: string;

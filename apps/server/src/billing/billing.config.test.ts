@@ -163,6 +163,7 @@ describe('BILLING_ERROR_CODES drift detection (WP-133)', () => {
       'invalid_signature',
       'billing_not_configured',
       'internal_error',
+      'history_lookup_failed',
     ];
     for (const code of expected) {
       assert.ok(
@@ -173,7 +174,7 @@ describe('BILLING_ERROR_CODES drift detection (WP-133)', () => {
     assert.equal(BILLING_ERROR_CODES.length, expected.length);
   });
 
-  test('canonical array length matches the locked 8-member count', () => {
-    assert.equal(BILLING_ERROR_CODES.length, 8);
+  test('canonical array length matches the locked 9-member count', () => {
+    assert.equal(BILLING_ERROR_CODES.length, 9);
   });
 });

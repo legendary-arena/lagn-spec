@@ -8,6 +8,7 @@ import {
   type OwnerProfileLink,
   type OwnerProfileView,
 } from '../lib/api/ownerProfileApi';
+import BillingSection from '../components/BillingSection.vue';
 
 // why: defineComponent({ setup() { return {...} } }) is required (NOT
 // <script setup>) because the template references non-prop bindings
@@ -99,6 +100,7 @@ function bannerCopyForCode(code: string | null): string {
 
 export default defineComponent({
   name: 'MyProfilePage',
+  components: { BillingSection },
   setup() {
     const state = ref<LoadState>('loading');
     // why: cast to the locally-extended view type so the template can
@@ -223,6 +225,7 @@ export default defineComponent({
       formatTeamSizeLabel,
       formatRoleLabel,
       formatJoinedDate,
+      readAuthToken,
     };
   },
 });
@@ -412,6 +415,10 @@ export default defineComponent({
             >until {{ formatJoinedDate(affiliation.leftAt) }}</span>
           </li>
         </ul>
+      </section>
+
+      <section class="profile-billing">
+        <BillingSection :auth-token="readAuthToken()" />
       </section>
     </template>
   </article>
