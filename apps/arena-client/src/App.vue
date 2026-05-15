@@ -39,7 +39,14 @@ const MyProfilePage = defineAsyncComponent(
   () => import('./pages/MyProfilePage.vue'),
 );
 
-type AppRoute = 'fixture' | 'live' | 'lobby' | 'profile' | 'me';
+// why: WP-110 — AdminBillingPage is the admin billing visibility surface
+// at ?route=admin-billing. Lazy-loaded for the same bundle-size reason
+// as the other routed pages.
+const AdminBillingPage = defineAsyncComponent(
+  () => import('./pages/AdminBillingPage.vue'),
+);
+
+type AppRoute = 'fixture' | 'live' | 'lobby' | 'profile' | 'me' | 'admin-billing';
 
 interface LiveRouteParams {
   matchID: string;
@@ -52,6 +59,7 @@ interface ParsedQuery {
   live: LiveRouteParams | null;
   profileHandle: string | null;
   meRoute: boolean;
+  adminBillingRoute: boolean;
 }
 
 // why: defineComponent({ setup() { return {...} } }) is required (NOT
@@ -94,18 +102,23 @@ function parseQuery(search: string): ParsedQuery {
   // closed set here rather than introducing per-feature query keys.
   const routeParam = readQueryParam(params, 'route');
   const meRoute = routeParam === 'me';
+  const adminBillingRoute = routeParam === 'admin-billing';
 
-  return { fixtureName, live, profileHandle, meRoute };
+  return { fixtureName, live, profileHandle, meRoute, adminBillingRoute };
 }
 
 function selectRoute(parsed: ParsedQuery): AppRoute {
-  // why: route discriminator precedence is `me > profile > fixture > live > lobby`.
-  // Presence of `?route=me` takes priority over every other query
-  // param so the owner-edit surface always wins when the user has
+  // why: route discriminator precedence is
+  // `admin-billing > me > profile > fixture > live > lobby`.
+  // Explicit `?route=` values take priority over every other query
+  // param so the targeted surface always wins when the user has
   // navigated to it (e.g., a stale `?match=` left over from a past
-  // session must not shadow the explicit `?route=me`). The
+  // session must not shadow the explicit route). The
   // `profile > fixture > live > lobby` ordering below remains
   // unchanged from WP-102.
+  if (parsed.adminBillingRoute === true) {
+    return 'admin-billing';
+  }
   if (parsed.meRoute === true) {
     return 'me';
   }
@@ -128,7 +141,7 @@ function selectRoute(parsed: ParsedQuery): AppRoute {
 
 export default defineComponent({
   name: 'App',
-  components: { AppShell, ArenaHud, LobbyView, PlayViewport, PlayerProfilePage, MyProfilePage },
+  components: { AppShell, ArenaHud, LobbyView, PlayViewport, PlayerProfilePage, MyProfilePage, AdminBillingPage },
   props: {
     // why: `searchOverride` is a testing seam. Production callers never pass
     // it — `null` means "read from window.location.search at setup time".
@@ -203,7 +216,10 @@ export default defineComponent({
 <template>
   <AppShell>
     <main data-testid="app-root" :data-route="route">
-      <template v-if="route === 'me'">
+      <template v-if="route === 'admin-billing'">
+        <AdminBillingPage />
+      </template>
+      <template v-else-if="route === 'me'">
         <MyProfilePage />
       </template>
       <template v-else-if="route === 'profile'">

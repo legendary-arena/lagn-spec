@@ -16610,4 +16610,50 @@ on all three files.
 
 ---
 
+### D-11001 — WP-110 Admin Gate Uses Shared-Secret Header
+
+**Decision:** Admin billing visibility uses a shared-secret header gate
+(`X-Admin-Secret` header checked against the `ADMIN_SECRET` env var)
+rather than session-based RBAC. The gate uses `node:crypto.timingSafeEqual`
+for timing-attack prevention and is fail-closed when `ADMIN_SECRET` is not
+configured.
+
+**Rationale:** No RBAC infrastructure exists (WP-107 deferred). The
+shared-secret pattern is the minimum viable admin gate that is
+(a) trivial to replace when RBAC ships — isolated in a single file
+(`apps/server/src/auth/adminGate.ts`, single function), (b) fail-closed
+when unconfigured, (c) timing-safe against brute-force. The Auth Taxonomy
+in `api-endpoints.md` is extended from 3 to 4 values with `admin-secret`
+as a new tier, distinguishing from `guest` / `handle-required` /
+`authenticated-session-required`. Auth closed set is now:
+`{ guest, handle-required, authenticated-session-required, admin-secret }`.
+
+**Introduced:** WP-110 (executed 2026-05-15)
+**Status:** Active (temporary — replaced by future RBAC WP)
+
+---
+
+### D-11002 — WP-110 Admin Billing Surface Separate from Owner Surface
+
+**Decision:** Admin billing surface (`GET /api/admin/billing/history`)
+does not reuse the owner billing endpoint
+(`GET /api/me/billing/history`) to maintain separation of concerns. The
+admin type (`AdminBillingEntry`) is a superset of the owner type
+(`BillingHistoryEntry`), adding `accountId` and `sessionId`. The types
+are declared independently (no `extends`) so that changes to the owner
+surface do not ripple into the admin surface. `price_id` is deliberately
+excluded from the admin response — Stripe dashboard lookup via
+`sessionId` is sufficient for dispute correlation.
+
+**Rationale:** Mixing admin and owner surfaces in the same endpoint
+would require role-based response shaping, which is premature without
+RBAC infrastructure. Separate endpoints allow independent auth
+mechanisms (session-based for owners, shared-secret for admins) and
+independent evolution.
+
+**Introduced:** WP-110 (executed 2026-05-15)
+**Status:** Immutable
+
+---
+
 Protect this file.

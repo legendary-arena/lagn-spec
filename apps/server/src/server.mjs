@@ -26,6 +26,7 @@ import { registerProfileRoutes } from './profile/profile.routes.js';
 import { registerTeamRoutes } from './teams/team.routes.js';
 import { registerEntitlementRoutes } from './entitlements/entitlements.routes.js';
 import { registerBillingRoutes } from './billing/billing.routes.js';
+import { registerAdminBillingRoutes } from './billing/adminBilling.routes.js';
 import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
 import { registerLegendsPublisherRoutes } from './legends/legends.routes.js';
 import { requireAuthenticatedSession } from './auth/sessionToken.logic.js';
@@ -492,6 +493,11 @@ export async function startServer() {
         : null;
     },
   });
+
+  // why: WP-110, D-11001 — admin billing visibility uses a shared-secret
+  // header gate (X-Admin-Secret) rather than session-based auth. The gate
+  // is isolated in adminGate.ts for future RBAC replacement.
+  registerAdminBillingRoutes(server.router, pool);
 
   // why: Render.com injects PORT automatically. The fallback 8000 is for
   // local development only. Do not set PORT in the Render dashboard --

@@ -225,7 +225,7 @@ These packets ship the game and keep it running.
 - [x] WP-108 — Profile Billing & Funding History UI — Done 2026-05-15. Three-panel BillingSection (benefits, purchase history, community funding) inside MyProfilePage.vue; `GET /api/me/billing/history` endpoint; D-10801, D-10802.
 
 - [x] WP-109 — Team Affiliation (Profile-Level Cooperative Cohorts) — Done 2026-05-03 (commit `cea9108`)
-- [ ] WP-110 — Admin Billing Visibility (Read-Only Backoffice Surface). Admin-gated read-only surface over `stripe_checkout_sessions`. Deps: WP-132 ✅, WP-133 ✅, WP-134 ✅, WP-112 ✅. Ships minimal shared-secret admin gate (`adminGate.ts`) pending future RBAC WP. EC-163. D-11001, D-11002.
+- [x] WP-110 — Admin Billing Visibility (Read-Only Backoffice Surface) — Done 2026-05-15. Admin-gated read-only surface over `stripe_checkout_sessions`. Ships minimal shared-secret admin gate (`adminGate.ts`) pending future RBAC WP. EC-163. D-11001, D-11002.
 - [x] WP-152 — Wire Public Profile Route in server.mjs — Done 2026-05-15. Closes D-10202 + D-11505. Wires `registerProfileRoutes(server.router, pool)` in `server.mjs`; graduates catalog row to `Wired`. D-15201.
 - [x] WP-112 — Session Token Validation Middleware — Done 2026-05-02
 - [x] WP-126 — External Authentication Integration (Hanko Session Verifier) — Done 2026-05-03 (commit `e35dd00`)

@@ -7,6 +7,25 @@
 
 ## Current State
 
+### WP-110 / EC-163 Executed — Admin Billing Visibility (2026-05-15)
+
+**Admin-gated read-only billing inspection surface is live.** New
+`GET /api/admin/billing/history` endpoint returns cross-account
+`AdminBillingEntry[]` from `legendary.stripe_checkout_sessions`. Auth
+via shared-secret header (`X-Admin-Secret` + `ADMIN_SECRET` env var)
+with `node:crypto.timingSafeEqual` and fail-closed posture. Admin gate
+isolated in `apps/server/src/auth/adminGate.ts` for future RBAC
+replacement. Client: `AdminBillingPage.vue` at `?route=admin-billing`
+with 4-state UI (loading/error/empty/ready). Auth Taxonomy extended
+from 3 to 4 values (`admin-secret`). Zero mutation (read-only SQL),
+zero Stripe SDK imports, zero modifications to existing billing files.
+D-11001 (shared-secret gate), D-11002 (separate from owner surface).
+
+**Test baselines.** Engine: 705 / 0 UNCHANGED. Server: 278 pass / 0
+fail (new: adminGate 7, adminBilling.logic 3, adminBilling.routes 6).
+
+---
+
 ### WP-151 / EC-162 Executed — Physical Card Phase 3: HeroCardSchema.imageUrl Removal (2026-05-15)
 
 **`HeroCardSchema.imageUrl` is removed; `physicalCards[].imageUrl` is the
