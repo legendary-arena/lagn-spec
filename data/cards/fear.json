@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-absorb-metal.webp",
           "abilities": [
             "If you control an [keyword:Artifact], you get +2[icon:attack]."
           ]
@@ -42,7 +41,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-mace-of-chains.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +2[icon:recruit]."
@@ -59,7 +57,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-break-the-will-to-resist.webp",
           "abilities": [
             "[hc:covert]: Each player discards the bottom card of their deck. For each non-grey card discard this way, you get +1[icon:attack]."
           ]
@@ -75,7 +72,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-greithoth-breaker-of-wills-body-of-uru.webp",
           "abilities": [
             "You get +[icon:attack] equal to the total number of [keyword:Artifacts] controlled by players and [keyword:Artifacts] the Lair."
           ]
@@ -139,7 +135,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-reach-for-power.webp",
           "abilities": [
             "Reveal the top or bottom card of your deck. If it costs 4 or more, you get +2[icon:recruit]."
           ]
@@ -155,7 +150,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-unstoppable-sledge.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +2[icon:attack]."
@@ -172,7 +166,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-contest-of-strength.webp",
           "abilities": [
             "[team:foes-of-asgard]: Discard the top card of any player's deck. Then reveal the top or bottom card of your deck. If the card you revealed has an equal or higher cost, you get +2[icon:attack]."
           ]
@@ -188,7 +181,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-kuurth-breaker-of-stone-break-every-bone.webp",
           "abilities": [
             "Reveal a card from your hand, the top card of your deck, and the bottom card of your deck. You get +[icon:attack] equal to their total costs."
           ]
@@ -252,7 +244,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-pull-of-the-tides.webp",
           "abilities": [
             "You may move an Adversary to an adjacent city space. If another Adversary is already there, swap them."
           ]
@@ -268,7 +259,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-feed-my-undersea-legions.webp",
           "abilities": [
             "Whenever you defeat an Adversary on the Bridge this turn, you may KO one of your cards or a card from your discard pile. If you do, gain a New Recruit."
           ]
@@ -284,7 +274,6 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-cudgel-of-the-deep.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +3[icon:attack], usable only against Adversaries on the Bridge or the Commander."
@@ -301,7 +290,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nerkkod-breaker-of-oceans-break-their-loyalties.webp",
           "abilities": [
             "[team:foes-of-asgard]: Each other player reveals their hand. Choose a New Recruit or Madame HYDRA from each of those players' hands and put them into your hand."
           ]
@@ -365,7 +353,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-demolition-derby.webp",
           "abilities": [
             "[hc:strength]: Choose a player and [keyword:Demolish] them. If that player discards a card this way, draw a card."
           ]
@@ -381,7 +368,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-otherworldly-maul.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +2[icon:attack] for each [hc:strength] Ally you played this turn."
@@ -398,7 +384,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-nul-smash.webp",
           "abilities": [
             "Say “NUL SMASH!“ Then each player slaps a palm on the table. The last other player to slap a palm on the table gains a Bindings."
           ]
@@ -414,7 +399,6 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-nul-breaker-of-worlds-break-the-world.webp",
           "abilities": [
             "KO up to two cards from your hand and/or discard pile. For each Bindings you KO this way, [keyword:demolish] each other player."
           ]
@@ -478,7 +462,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-dark-prophecy.webp",
           "abilities": [
             "[hc:tech]: Gain a Madame HYDRA."
           ]
@@ -494,7 +477,6 @@
           "cost": 5,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-ancient-oath-of-hydra.webp",
           "abilities": [
             "You may discard a[team:hydra] Ally. If you do, draw two cards."
           ]
@@ -510,7 +492,6 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-hammer-of-the-serpent.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +2[icon:attack] for each card you discarded this turn.",
@@ -528,7 +509,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skadi-war-banner-of-hydra.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +1[icon:attack] for each other[team:hydra] Ally you played this turn."
@@ -593,7 +573,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-towering-leader.webp",
           "abilities": [
             "Gain two New Recruits.",
             "[hc:instinct]: Gain a third New Recruit."
@@ -610,7 +589,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-underhanded-dealings.webp",
           "abilities": [
             "Look at the bottom card of your deck. Discard it or put it back.",
             "[hc:covert]: Draw a card from the bottom of your deck."
@@ -627,7 +605,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-titanic-bludgeon.webp",
           "abilities": [
             "[keyword:Thrown Artifact]",
             "When you throw this, you get +1[icon:attack] for each card you've drawn this turn. (This doesn't count the six cards you draw at the end of your turn.)"
@@ -644,7 +621,6 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/fear/fear-hr-skirn-breaker-of-men-break-your-hopes.webp",
           "abilities": [
             "Each player reveals a [hc:covert] Ally or discards a card. For each card discarded this way, you draw a card."
           ]

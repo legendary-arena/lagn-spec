@@ -25,7 +25,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-hunt-high-and-low.webp",
           "abilities": [
             "[keyword:Patrol the Rooftops]: If it's empty, reveal the top card of your deck. You may KO it.",
             "[keyword:Patrol the Sewers]: If it's empty, reveal the bottom card of your deck. You may KO it."
@@ -42,7 +41,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-where-monsters-lurk.webp",
           "abilities": [
             "[keyword:Patrol the Rooftops]: If it's empty, draw a card.",
             "[keyword:Patrol the Sewers]: If it's empty, you get +1[icon:recruit]."
@@ -59,7 +57,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-ride-by-moonlight.webp",
           "abilities": [
             "You may move a Villain to another city space. If another Villain is already there, swap them.",
             "[keyword:Moonlight]: You get +1[icon:attack]."
@@ -76,7 +73,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-blade-daywalker-creature-of-dawn-and-dusk.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +2[icon:attack] and you may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[keyword:Moonlight]: [keyword:Blood Frenzy]"
@@ -141,7 +137,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-axe-of-the-slayer.webp",
           "abilities": [
             "[keyword:Patrol the Streets]: If it's empty, you get +2[icon:recruit]. If it's not, you get +2[icon:attack].",
             "[hc:instinct]: Instead, you get both."
@@ -158,7 +153,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-silver-bullets.webp",
           "abilities": [
             "[keyword:Patrol the Streets]: If it's empty, you get +1[icon:attack].",
             "[hc:tech]: You get +1[icon:attack]."
@@ -175,7 +169,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-stalk-the-night-stalkers.webp",
           "abilities": [
             "You may have a Vilain or Mastermind [keyword:Hunt for Victims]. If it KOs a Bystander this way, you may KO a Hero from your hand or discard pile.",
             "[hc:tech]: If a Bystander is KO'd this way, you may also rescue that Bystander instead of putting it in the KO pile."
@@ -192,7 +185,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-elsa-bloodstone-vengeance-of-the-bloodstone-gem.webp",
           "abilities": [
             "[keyword:Patrol any city space]: If it's empty, you get the printed [icon:recruit] and [icon:attack] of the Hero in the HQ space under that city space. ",
             "[team:marvel-knights][team:marvel-knights]: [keyword:Blood Frenzy]"
@@ -257,7 +249,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-mesmerize.webp",
           "abilities": [
             "[keyword:Moonlight]: [keyword:Blood Frenzy], gaining [icon:recruit] instead of [icon:attack]."
           ]
@@ -273,7 +264,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-scalded-by-sunlight.webp",
           "abilities": [
             "[keyword:Sunlight]: You may gain a Wound. If you do, you get +2[icon:attack].",
             "[keyword:Moonlight]: You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:attack]."
@@ -290,7 +280,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-insatiable-craving.webp",
           "abilities": [
             "[hc:covert]: [keyword:Blood Frenzy]"
           ]
@@ -306,7 +295,6 @@
           "cost": 7,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-morbius-its-morbin-time.webp",
           "abilities": [
             "[hc:covert]: [keyword:Blood Frenzy], drawing that many cards instead of gaining [icon:attack]."
           ]
@@ -370,7 +358,6 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-starlit-path.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +1[icon:attack].",
             "[keyword:Moonlight]: Draw a card."
@@ -387,7 +374,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-snarling-fangs.webp",
           "abilities": [
             "[keyword:Sunlight]: You may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[keyword:Moonlight]: Whenever you defeat a Villain or Mastermind this turn, you may KO one of your Heroes."
@@ -404,7 +390,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-release-the-beast.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +3[icon:recruit].",
             "[keyword:Moonlight]: [keyword:Blood Frenzy]",
@@ -422,7 +407,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-werewolf-by-night-track-the-captives.webp",
           "abilities": [
             "[keyword:Moonlight]: Whenever you defeat a Vilain or Mastermind this turn, you may rescue a Bystander or gain a Hero from the HQ or Sidekick Deck whose cost is less than that Enemy's [icon:attack].",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -487,7 +471,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-bridge-between-dimensions.webp",
           "abilities": [
             "[keyword:Patrol the Bridge]: If it's empty, draw a card."
           ]
@@ -503,7 +486,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-searing-shards-of-sunlight.webp",
           "abilities": [
             "[keyword:Sunlight]: You get +1[icon:attack].",
             "[hc:ranged]: You get +1[icon:attack]."
@@ -520,7 +502,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-seal-the-rift.webp",
           "abilities": [
             "[keyword:Patrol the Bridge]: If it's empty, draw two cards. If it's not, you get +5[icon:attack] usable only to fight Villains on the Bridge."
           ]
@@ -536,7 +517,6 @@
           "cost": 8,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mdns/mdns-hr-wong-master-of-the-mystic-arts-face-your-demons.webp",
           "abilities": [
             "Once this turn, you may fight the top card of the Bystander Deck as if it were a 4[icon:attack] “Darkhold Demon” Vilan with “Fight: KO up to two of your Heroes. Rescue this card as a Bystander.”",
             "[keyword:Sunlight]: You get +2[icon:attack]."

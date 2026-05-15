@@ -253,7 +253,7 @@ These packets ship the game and keep it running.
 - [x] WP-140 — Physical Card Phase 1b — Done 2026-05-09 (commit `d51a7ac`)
 
 - [x] WP-141 — Physical Card Phase 2 — Done 2026-05-14
-- [ ] WP-151 — Physical Card Phase 3 — `HeroCardSchema.imageUrl` Removal + R2 Image Rename. **Deferred; not yet drafted.** Hard-dep: WP-141 ✅. Removes `imageUrl` from `HeroCardSchema`, regenerates all 40 `data/cards/*.json`, renames R2 split-pair files to combined-name pattern. Closes the 44-unmatched-files surface from v16 migration.
+- [x] WP-151 — Physical Card Phase 3 — Done 2026-05-15 (EC-162). Removed `imageUrl` from `HeroCardSchema`; both `flattenSet()` use `sideToImageUrl` from `physicalCards[]`; all 40 JSONs regenerated; R2 rename mapping script produced (39 targets). D-15101, D-15102. See [WP-151](WP-151-physical-card-phase-3-imageurl-removal.md). Baselines: registry 53/0/0, engine 705/0/0, viewer 33/0/0.
 
 - [ ] WP-142 — Legends Snapshot Publisher. **Draft; lint gate pending.** Background publisher writes public JSON snapshots to R2 at `legends/v1/*` on 5-min cadence. Runs inline in Render web service. Deps: WP-115 ✅, WP-150 ✅. See [WP-142](WP-142-legends-snapshot-publisher.md).
 - [ ] WP-143 — Legends Attract Board (public scoreboard SPA). **Draft; lint gate pending.** Vue 3 + Vite SPA at `legends.legendary-arena.com` (Cloudflare Pages). Reads snapshots from R2 directly. Kiosk mode for big-screen / Twitch. Dep: WP-142. See [WP-143](WP-143-legends-attract-board.md).

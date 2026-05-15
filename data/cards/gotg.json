@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-knives-of-the-hunter.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, you get +1[icon:attack]."
@@ -43,7 +42,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-interstellar-tracker.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[hc:instinct]: You may KO the card you discarded this way."
@@ -60,7 +58,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-the-destroyer.webp",
           "abilities": [
             "[team:guardians-of-the-galaxy]: Each other player reveals an [hc:instinct] Hero or discards an Artifact they control. For each Artifact discarded this way, you gain a [rule:Shard]."
           ]
@@ -76,7 +73,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-drax-the-destroyer-avatar-of-destruction.webp",
           "abilities": [
             "Double the [icon:attack] you have."
           ]
@@ -140,7 +136,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-bounty-hunter.webp",
           "abilities": [
             "A Villain gains a [rule:Shard]."
           ]
@@ -156,7 +151,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-deadliest-woman-in-the-universe.webp",
           "abilities": [
             "Gain two [rule:Shards].",
             "[hc:covert]: Gain another [rule:Shard]."
@@ -173,7 +167,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-galactic-assassin.webp",
           "abilities": [
             "A Villain of your choice gets no [icon:attack] from [rule:Shards] this turn.",
             "[hc:covert][hc:covert]: The Mastermind gets no [icon:attack] from [rule:Shards] this turn."
@@ -190,7 +183,6 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-gamora-godslayer-blade.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, gain two [rule:Shards].",
@@ -256,7 +248,6 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-surviving-sprig.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -272,7 +263,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-prune-the-growths.webp",
           "abilities": [
             "[hc:strength]: You may KO a card from your hand or discard pile. If you do, gain a [rule:Shard]."
           ]
@@ -288,7 +278,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-groot-and-branches.webp",
           "abilities": [
             "Gain two [rule:Shards]. You may spend Shards to get [icon:recruit] this turn.",
             "[hc:covert]: You may choose another player. That player gains a [rule:Shard]."
@@ -305,7 +294,6 @@
           "cost": 8,
           "attack": null,
           "recruit": "5",
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-groot-i-am-groot.webp",
           "abilities": [
             "When you recruit your next Hero this turn, you gain [rule:Shards] equal to that Hero's cost."
           ]
@@ -369,7 +357,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-gritty-scavenger.webp",
           "abilities": [
             "You may discard a card. If you do, draw a card."
           ]
@@ -385,7 +372,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-trigger-happy.webp",
           "abilities": [
             "[team:guardians-of-the-galaxy]: You gain a [rule:Shard] for each other [team:guardians-of-the-galaxy] Hero you played this turn."
           ]
@@ -401,7 +387,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-incoming-detector.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Whenever a Master Strike or Villain's Ambush ability is completed, you may gain a [rule:Shard]."
@@ -418,7 +403,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-rocket-raccoon-vengeance-is-rocket.webp",
           "abilities": [
             "[hc:tech]: You get +1[icon:attack] for each Master Strike in the KO pile and/or stacked next to the Mastermind."
           ]
@@ -482,7 +466,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-element-guns.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, gain a [rule:Shard]."
@@ -499,7 +482,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-legendary-outlaw.webp",
           "abilities": [
             "Choose an Artifact any player controls with a “once per turn“ ability. Play a copy of one of those abilities."
           ]
@@ -515,7 +497,6 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-implanted-memory-chip.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, draw a card."
@@ -532,7 +513,6 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/gotg/gotg-hr-star-lord-sentient-starship.webp",
           "abilities": [
             "[keyword:Artifact -]",
             "Once per turn, gain a [rule:Shard] for each Artifact you control."

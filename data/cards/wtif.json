@@ -28,7 +28,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-2c1.webp",
           "abilities": [
             "[keyword:What If...?]: You get +2[icon:recruit] and +2[icon:attack]."
           ]
@@ -44,7 +43,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-3c2.webp",
           "abilities": [
             "You get +1[icon:recruit] for each different printed [icon:recruit] number among all your Heroes. ",
             "(1+ is the same printed number as 1.)"
@@ -61,7 +59,6 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-4c3.webp",
           "abilities": [
             "You get +1[icon:attack] for each different printed [icon:attack] number among all your Heroes. ",
             "(1+ is the same printed number as 1.)"
@@ -78,7 +75,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-5u.webp",
           "abilities": [
             "Once per turn, when a player gains a Wound, you may reveal this card to return that Wound to the Wound Stack. If you do, the player whose turn it is gets [keyword:Liberate 3]."
           ]
@@ -94,7 +90,6 @@
           "cost": 6,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-6u2.webp",
           "abilities": [
             "To play this, you must put another card from your hand on top of your deck."
           ]
@@ -110,7 +105,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-captain-carter-8r.webp",
           "abilities": [
             "You get +1[icon:recruit] for each different printed [icon:recruit] number among all your Heroes.",
             "You get +1[icon:attack] for each different printed [icon:attack] number among all your Heroes.",
@@ -194,7 +188,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-2c1.webp",
           "abilities": [
             "Choose one: You get [keyword:Empowered] by [hc:strength], or you get [keyword:Empowered] by [hc:covert].",
             "[hc:strength][hc:covert]: Draw a card."
@@ -211,7 +204,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-3c2.webp",
           "abilities": [
             "[keyword:What If...?]: You get +3[icon:recruit]."
           ]
@@ -227,7 +219,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-4c3.webp",
           "abilities": [
             "Look at the top two cards of your deck. Discard any number of them and put the rest back in any order."
           ]
@@ -243,7 +234,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-5u.webp",
           "abilities": [
             "[keyword:What If...?]: You may KO a card from your hand or discard pile."
           ]
@@ -259,7 +249,6 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-6u2.webp",
           "abilities": [
             "[keyword:What If...?]: You get [keyword:Empowered] by the Hero Classes of the card you revealed this way."
           ]
@@ -275,7 +264,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-star-lord-tchalla-7r.webp",
           "abilities": [
             "Choose any number of Heroes in the HQ. Put them on the bottom of the Hero Deck.",
             "You get [keyword:Empowered] by multicolored cards."
@@ -358,7 +346,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-2c1.webp",
           "abilities": [
             "To play this, you must put another card from your hand on top of your deck."
           ]
@@ -374,7 +361,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-3c2.webp",
           "abilities": [
             "Whenever you recruit a Hero that costs 5 or more this turn, you get +3[icon:attack]."
           ]
@@ -390,7 +376,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-5c3.webp",
           "abilities": [
             "Whenever you recruit a Hero that costs 5 or more this turn, reveal the top card of your deck and you may KO it."
           ]
@@ -406,7 +391,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-5u.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Cross-Dimensional Party Rampage]. If any players gained a Wound this way, you get +3[icon:attack]."
           ]
@@ -422,7 +406,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-6u2.webp",
           "abilities": [
             "[keyword:What If...?]: You get +[icon:attack] equal to the cost of the Hero you revealed this way."
           ]
@@ -438,7 +421,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "5",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-party-thor-7r.webp",
           "abilities": [
             "Whenever you recruit a Hero that costs 5 or more this turn, you get +[icon:attack] equal to that Hero's cost."
           ]
@@ -520,7 +502,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-2c1.webp",
           "abilities": [
             "You get +1[icon:recruit] for each different Villain Group in your Victory Pile."
           ]
@@ -536,7 +517,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-3c2.webp",
           "abilities": [
             "[keyword:What If...?]: [keyword:Liberate 3]"
           ]
@@ -552,7 +532,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-4c3.webp",
           "abilities": [
             "[hc:tech][hc:strength]: You get +3[icon:attack]."
           ]
@@ -568,7 +547,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-5u.webp",
           "abilities": [
             "[hc:strength]: You get +1[icon:attack] for each different Villain Group in your Victory Pile."
           ]
@@ -584,7 +562,6 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-6u2.webp",
           "abilities": [
             "Each Villain worth 3 VP or more captures a Bystander.",
             "[hc:tech]: [keyword:Liberate 2]"
@@ -601,7 +578,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-killmonger-spec-ops-7r.webp",
           "abilities": [
             "You get +1[icon:attack] for each different Villain Group in your Victory Pile.",
             "[hc:strength]: [keyword:Liberate 2] for each Mastermind Tactic in your Victory Pile."
@@ -684,7 +660,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-2c1.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: [keyword:Liberate 3]"
@@ -701,7 +676,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-3c2.webp",
           "abilities": [
             "If you have at least 4 Bystanders in your Victory Pile, you get +2[icon:recruit]."
           ]
@@ -717,7 +691,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-4c3.webp",
           "abilities": [
             "Draw a card.",
             "You may have a Villain capture a Bystander."
@@ -734,7 +707,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-5u.webp",
           "abilities": [
             "[hc:tech]: You get +2[icon:attack]."
           ]
@@ -750,7 +722,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-6u2.webp",
           "abilities": [
             "[keyword:What If...?]: [keyword:Liberate 4]"
           ]
@@ -766,7 +737,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-apocalyptic-black-widow-8r.webp",
           "abilities": [
             "[keyword:Liberate] equal to the number of Bystanders in your Victory Pile."
           ]
@@ -848,7 +818,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-2c1.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: You get +2[icon:recruit]."
@@ -865,7 +834,6 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-3c2.webp",
           "abilities": [
             "Draw two cards. Then put a card from your hand on top of your deck."
           ]
@@ -881,7 +849,6 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-4c3.webp",
           "abilities": [
             "You get +1[icon:attack] for each card you drew this turn."
           ]
@@ -897,7 +864,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-5u.webp",
           "abilities": [
             "[keyword:What If...?]: Draw two cards."
           ]
@@ -913,7 +879,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-6u2.webp",
           "abilities": [
             "[hc:instinct][keyword:Soulbind]: KO a card from your hand or discard pile."
           ]
@@ -929,7 +894,6 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-gamora-destroyer-of-thanos-8r.webp",
           "abilities": [
             "[team:guardians-of-the-multiverse][keyword:Soulbind six Villains]: You get +∞[icon:attack], usable only for a single fight."
           ]
@@ -1011,7 +975,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-2c1.webp",
           "abilities": [
             "Draw a card.",
             "[hc:instinct][keyword:Soulbind a Bystander or Villain]: You get +2[icon:attack]. If it's Special Bystander, you may do its Rescue effect."
@@ -1028,7 +991,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-3c2.webp",
           "abilities": [
             "[hc:instinct][keyword:Soulbind]: You get +[icon:recruit] equal to that Villain's printed VP."
           ]
@@ -1044,7 +1006,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-4c3.webp",
           "abilities": [
             "[hc:ranged][keyword:Soulbind]: You get +[icon:attack] equal to that Villain's printed VP."
           ]
@@ -1060,7 +1021,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-5u.webp",
           "abilities": [
             "[keyword:What If...?]: You get +2[icon:attack] and you may KO a Wound from your hand or from any player's discard pile."
           ]
@@ -1076,7 +1036,6 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-6u2.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, KO one, and put one back."
           ]
@@ -1092,7 +1051,6 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-doctor-strange-supreme-8r.webp",
           "abilities": [
             "[hc:instinct][keyword:Soulbind]: Draw cards equal to that Villain's printed VP."
           ]
@@ -1174,7 +1132,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-2c1.webp",
           "abilities": [
             "Draw a card. Then put a card from your hand on top of your deck.",
             "[hc:covert]: You get +1[icon:recruit]."
@@ -1191,7 +1148,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-3c2.webp",
           "abilities": [
             "[keyword:What If...?]: You may KO a card from your hand or discard pile."
           ]
@@ -1207,7 +1163,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-4c3.webp",
           "abilities": [
             "[keyword:What If...?]: You get +2[icon:attack]."
           ]
@@ -1223,7 +1178,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-5u.webp",
           "abilities": [
             "[hc:covert]: Choose a Hero Name. You are [keyword:Empowered] by that Hero Name."
           ]
@@ -1239,7 +1193,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-6u2.webp",
           "abilities": [
             "[hc:ranged][keyword:Soulbind]: You get +2[icon:attack] and you may do that Villain's Fight effect."
           ]
@@ -1255,7 +1208,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-hr-uatu-the-watcher-7r.webp",
           "abilities": [
             "[keyword:What If...?]: Choose a Team. (e.g. [team:guardians-of-the-multiverse], [team:x-men], [team:avengers]) You are [keyword:Empowered] by that Team."
           ]

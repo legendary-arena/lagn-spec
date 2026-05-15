@@ -29,7 +29,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-starship-sensors.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +1[icon:recruit]."
           ]
@@ -45,7 +44,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-borrowed-nova-blaster.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +1[icon:attack]."
           ]
@@ -61,7 +59,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-give.webp",
           "abilities": [
             "You may discard an [keyword:Artifact] you control to get +1[icon:recruit]."
           ]
@@ -77,7 +74,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-take.webp",
           "abilities": [
             "[team:guardians-of-the-galaxy]: Reveal the top card of your deck. If it's an [keyword:Artifact], draw it."
           ]
@@ -93,7 +89,6 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-expandable-helmet.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), draw a card."
           ]
@@ -109,7 +104,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-dont-need-that-stuff.webp",
           "abilities": [
             "You may discard an [keyword:Artifact] you control to get +1[icon:attack]."
           ]
@@ -125,7 +119,6 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-star-lord-hadron-enforcer.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — The first time you play an [keyword:Artifact] each turn (including this one), you get +3[icon:attack]."
           ]
@@ -209,7 +202,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-forgive.webp",
           "abilities": [
             "[hc:covert]: Draw a card."
           ]
@@ -225,7 +217,6 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-resent.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:attack]."
           ]
@@ -241,7 +232,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-sharpen-blades.webp",
           "abilities": [
             "If you control an [keyword:Artifact], draw a card."
           ]
@@ -257,7 +247,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-resourceful-fugitive.webp",
           "abilities": [
             "To play this, you must put a card from your hand on the bottom of  your deck.",
             "Draw two cards."
@@ -274,7 +263,6 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-retractable-sword.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you draw a card during your turn, you get +1[icon:attack]."
           ]
@@ -290,7 +278,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-stolen-necroblaster.webp",
           "abilities": [
             "If you drew at least two cards this turn, you may KO a card from your hand or discard pile."
           ]
@@ -306,7 +293,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-gamora-guardians-escape.webp",
           "abilities": [
             "If you drew at least two cards this turn, you get +2[icon:attack]."
           ]
@@ -392,7 +378,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-passion.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Draw a card."
           ]
@@ -408,7 +393,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-compassion.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Draw a card."
           ]
@@ -424,7 +408,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-baby-groot.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Rescue a Bystander."
           ]
@@ -440,7 +423,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-gravity-mines.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you use [keyword:Excessive Violence], draw a card."
           ]
@@ -456,7 +438,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-dont-press-this-button.webp",
           "abilities": [
             "[hc:ranged]: You get +1[icon:attack]."
           ]
@@ -472,7 +453,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-press-the-button.webp",
           "abilities": [
             "[hc:tech]: You may KO a card from your hand or dicard pile."
           ]
@@ -488,7 +468,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-tricky.webp",
           "abilities": [
             "If you have at least five different card names, you get +2[icon:recruit]."
           ]
@@ -504,7 +483,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-simple.webp",
           "abilities": []
         },
         {
@@ -518,7 +496,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-rocket-groot-we-are-groot.webp",
           "abilities": [
             "Reveal your hand. You get +1[icon:attack] for each different card name in your hand.",
             "(Each [rule:Divided Card] has two different card names.)"
@@ -606,7 +583,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-nothing-goes-over-my-head.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Look at the top two cards of your deck. Discard any number of them and put the rest back in any order."
           ]
@@ -622,7 +598,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-dual-knives.webp",
           "abilities": [
             "[keyword:Triggered Artifact] — Whenever you play another [hc:strength] or [hc:instinct] card, you get +1[icon:attack]."
           ]
@@ -638,7 +613,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-i-am-invisible.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. If it's [hc:strength] or [hc:instinct], draw it."
           ]
@@ -654,7 +628,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-xandar-is-invincible.webp",
           "abilities": [
             "If there are no Villains in the city, you get +1[icon:recruit]."
           ]
@@ -670,7 +643,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-prison-riot.webp",
           "abilities": [
             "[keyword:Excessive Violence]: You get +2[icon:recruit]."
           ]
@@ -686,7 +658,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-remove-his-spine.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. You may KO it."
           ]
@@ -702,7 +673,6 @@
           "cost": 6,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-also-illegal.webp",
           "abilities": [
             "[hc:instinct]: You get +1[icon:recruit]."
           ]
@@ -718,7 +688,6 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-drax-revenge-for-my-family.webp",
           "abilities": [
             "Double the [icon:attack] you have.",
             "[keyword:Excessive Violence]: You may KO a Villain from your Victory Pile to do its Fight effect."
@@ -806,7 +775,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-empathic-bond.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: Put the hero you recruited this way on top of your deck."
           ]
@@ -822,7 +790,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-selfless.webp",
           "abilities": [
             "[hc:instinct]: Draw a card.",
             "Another player draws a card."
@@ -839,7 +806,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-selfish.webp",
           "abilities": [
             "[hc:ranged]: Draw a card.",
             "Another player discards a card."
@@ -856,7 +822,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-inspire-courage.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: You get +2[icon:attack]."
           ]
@@ -872,7 +837,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-sleep.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: You may KO one of your cards."
           ]
@@ -888,7 +852,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-emotional-wave.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: you get +[icon:attack] equal to total of all printed [icon:recruit] and [icon:attack] of the Hero you recruited this way."
           ]
@@ -904,7 +867,6 @@
           "cost": 7,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-hr-mantis-discover-the-dead.webp",
           "abilities": [
             "[keyword:Excessive Kindness]: you get +[icon:attack] equal to the cost of the Hero you recruited this way."
           ]

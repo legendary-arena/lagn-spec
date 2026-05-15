@@ -27,7 +27,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-amadeus-cho-extrapolate.webp",
           "abilities": [
             "[keyword:Outwit]: Draw a card."
           ]
@@ -43,7 +42,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-amadeus-cho-gamma-draining-nanites.webp",
           "abilities": [
             "Draw a card.",
             "Then, if you drew two cards this turn, [keyword:Transform] this into Like Totally Smart Hulk."
@@ -61,7 +59,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-amadeus-cho-like-totally-smart-hulk.webp",
           "abilities": [
             "[keyword:Outwit]: You get +2[icon:attack]."
           ],
@@ -79,7 +76,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-amadeus-cho-renegade-genius.webp",
           "abilities": [
             "You get +1[icon:attack] for each different cost of Hero you have.",
             "[keyword:Outwit]: Draw a card."
@@ -96,7 +92,6 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-amadeus-cho-visualize-the-variables.webp",
           "abilities": [
             "Whenever you use an [keyword:Outwit] ability this turn, you may use it an extra time. ",
             "[keyword:Outwit]: Look at the top card of your deck. KO it or put it back."
@@ -170,7 +165,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-bruce-banner-solve-the-impossible.webp",
           "abilities": [
             "[keyword:Outwit]: When you draw a new hand of cards at the end of this turn, draw an extra card."
           ]
@@ -186,7 +180,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-bruce-banner-gamma-bomb-disaster.webp",
           "abilities": [
             "[keyword:Outwit]: [keyword:Transform] this into Savage Hulk Unleashed."
           ],
@@ -203,7 +196,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-bruce-banner-savage-hulk-unleashed.webp",
           "abilities": [
             "[keyword:Smash 4]"
           ],
@@ -221,7 +213,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-bruce-banner-dangerous-testing.webp",
           "abilities": [
             "[hc:tech]: Reveal the top card of your deck. If it costs 0, KO it."
           ]
@@ -237,7 +228,6 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-bruce-banner-gamma-ray-experiment.webp",
           "abilities": [
             "[keyword:Outwit]: Look at the top three cards of your deck. Draw one of them, KO one, and put one back."
           ]
@@ -310,7 +300,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-caiera-shadow-queen.webp",
           "abilities": [
             "[keyword:Outwit]: Draw a card."
           ]
@@ -326,7 +315,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-caiera-shadowforged-blade.webp",
           "abilities": [
             "[hc:covert]: [keyword:Smash 2]"
           ]
@@ -342,7 +330,6 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-caiera-focus-the-old-power.webp",
           "abilities": [
             "[keyword:Outwit]: You may KO a card from your hand or discard pile."
           ]
@@ -358,7 +345,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-caiera-dutiful-protector.webp",
           "abilities": [
             "Double the [icon:recruit] you have.",
             "If there are at least 3 Heroes per player in the KO pile, [keyword:Transform] this into Vengeful Destructor."
@@ -376,7 +362,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-caiera-vengeful-destructor.webp",
           "abilities": [
             "Double the [icon:attack] you have."
           ],
@@ -451,7 +436,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-gladiator-hulk-dont-make-me-angry.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Smash 2]"
@@ -468,7 +452,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-gladiator-hulk-seize-the-throne.webp",
           "abilities": [
             "[keyword:Smash 3]",
             "Then, if you discarded at least two cards this turn, [keyword:Transform] this into Hulk Is King and put it on top of your deck."
@@ -486,7 +469,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-gladiator-hulk-hulk-is-king.webp",
           "abilities": [
             "When a card effect causes you to discard this card, you may return this card to your hand."
           ],
@@ -504,7 +486,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-gladiator-hulk-the-green-scar.webp",
           "abilities": [
             "[hc:strength]: [keyword:Cross-Dimensional Hulk Rampage.]",
             "If any players gained a Wound this way, you get [keyword:Wounded Fury]."
@@ -521,7 +502,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-gladiator-hulk-double-fisted-smashing.webp",
           "abilities": [
             "You get double[icon:attack] from each Smash this turn.",
             "[keyword:Smash 3]"
@@ -595,7 +575,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hiroim-seek-redemption.webp",
           "abilities": [
             "[hc:covert]: The first time you defeat a Villain this turn, rescue a Bystander."
           ]
@@ -611,7 +590,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hiroim-save-from-the-rubble.webp",
           "abilities": [
             "Draw a card.",
             "If there are at least 2 Bystanders in your Victory Pile, [keyword:Transform] this into Hiroim Redeemed."
@@ -629,7 +607,6 @@
           "cost": 5,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hiroim-hiroim-redeemed.webp",
           "abilities": [
             "You get +1[icon:attack]for every two Bystanders in your Victory Pile."
           ],
@@ -647,7 +624,6 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hiroim-mystic-shadow-priest.webp",
           "abilities": [
             "[team:warbound]: You may KO a 0-cost card from any player's discard pile. If you KO a Wound this way, rescue a Bystander."
           ]
@@ -663,7 +639,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hiroim-blade-of-the-people.webp",
           "abilities": [
             "Choose one: Rescue three Bystanders, or defeat any Villain or Mastermind whose [icon:attack] is less than the number of Bystanders in your Victory Pile."
           ]
@@ -736,7 +711,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hulkbuster-iron-man-pound-for-pound.webp",
           "abilities": [
             "Draw a card.",
             "[hc:tech]: You get +2[icon:attack]."
@@ -753,7 +727,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hulkbuster-iron-man-attune-techtonic-transducer.webp",
           "abilities": [
             "[keyword:Outwit]: [keyword:Smash 2]"
           ]
@@ -769,7 +742,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hulkbuster-iron-man-build-the-suit.webp",
           "abilities": [
             "[hc:tech][hc:strength]: [keyword:Transform] this into Ultra-Massive Armor."
           ]
@@ -785,7 +757,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hulkbuster-iron-man-ultra-massive-armor.webp",
           "abilities": [
             "Draw two cards.",
             "[keyword:Smash 2]"
@@ -802,7 +773,6 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-hulkbuster-iron-man-final-battle.webp",
           "abilities": [
             "You get +2[icon:attack] for each other [hc:tech] and/or [hc:strength] card you played this turn."
           ]
@@ -875,7 +845,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-carefully-considered-smashing.webp",
           "abilities": [
             "[hc:strength]: [keyword:Smash 2]"
           ]
@@ -891,7 +860,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-threaten-and-bribe.webp",
           "abilities": [
             "Choose a Villain. You can spend any combination of[icon:recruit]and[icon:attack]to fight it this turn."
           ]
@@ -907,7 +875,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-ambitious-enforcer.webp",
           "abilities": [
             "When you defeat a Villain this turn that has 6[icon:attack] or more, [keyword:Transform] this into Underworld Boss and put it on top of your deck."
           ],
@@ -924,7 +891,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-underworld-boss.webp",
           "abilities": [
             "Choose a Villain in your Victory Pile, You get +[icon:attack] equal to it's printed VP."
           ],
@@ -942,7 +908,6 @@
           "cost": 7,
           "attack": null,
           "recruit": "4",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-joe-fixit-grey-hulk-hulk-runs-this-town.webp",
           "abilities": [
             "You can spend any combination of[icon:recruit]and[icon:attack]to fight the Mastermind this turn."
           ]
@@ -1015,7 +980,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-korg-nothing-beats-rock.webp",
           "abilities": [
             "Draw a card.",
             "[hc:strength]: [keyword:Smash 2]. If you [keyword:Smash] a Wound this way, KO it."
@@ -1032,7 +996,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-korg-move-mountains.webp",
           "abilities": [
             "[keyword:Outwit]: Draw a card."
           ]
@@ -1048,7 +1011,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-korg-forged-by-fire.webp",
           "abilities": [
             "[hc:strength][hc:strength]: [keyword:Transform] this into Lord of Granite."
           ],
@@ -1065,7 +1027,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-korg-lord-of-granite.webp",
           "abilities": [
             "Draw a card.",
             "[keyword:Smash 3]"
@@ -1084,7 +1045,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-korg-kronan-tactician.webp",
           "abilities": [
             "Put all cards from the HQ on the bottom of the Hero Deck in random order. You get their total printed[icon:attack]."
           ]
@@ -1157,7 +1117,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-miek-the-unhived-this-bug-smashes-you.webp",
           "abilities": [
             "[keyword:Smash 1]"
           ]
@@ -1173,7 +1132,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-miek-the-unhived-devouring-frenzy.webp",
           "abilities": [
             "Look at the top card of your deck. Put it back on the top or bottom.",
             "[hc:instinct]: You may [keyword:Feast]."
@@ -1190,7 +1148,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-miek-the-unhived-endless-appetite.webp",
           "abilities": [
             "Whenever a card is KO'd from your deck this turn, you may draw a card."
           ]
@@ -1206,7 +1163,6 @@
           "cost": 7,
           "attack": null,
           "recruit": "5",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-miek-the-unhived-metamorphosis.webp",
           "abilities": [
             "You may [keyword:Feast]. Then, if a card with an[icon:attack] icon was KO'd from your deck this turn, [keyword:Transform] this into Hive King Miek."
           ],
@@ -1223,7 +1179,6 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-miek-the-unhived-hive-king-miek.webp",
           "abilities": [
             "Look at the top three cards of your deck and put them back in any order. Then you may [keyword:Feast]."
           ],
@@ -1298,7 +1253,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-namora-crushing-tsunami.webp",
           "abilities": [
             "Draw a card.",
             "[hc:ranged]: [keyword:Smash 3]"
@@ -1315,7 +1269,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-namora-heart-of-the-ocean.webp",
           "abilities": [
             "You get +1[icon:attack], usable only against Villains in the Sewers or Bridge or the Mastermind."
           ]
@@ -1331,7 +1284,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-namora-herculean-effort.webp",
           "abilities": [
             "When you defeat a Villain in the Sewers or Bridge, [keyword:Transform] this into Master of Depths and put it on top of your deck."
           ],
@@ -1348,7 +1300,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-namora-master-of-depths.webp",
           "abilities": [
             "[keyword:Smash 3]",
             "If you [keyword:Smash] a 0-cost Hero this way, KO it."
@@ -1367,7 +1318,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-namora-turning-the-tide.webp",
           "abilities": [
             "[hc:covert]: If the Bridge is empty, you may move a Villain there from another city space. A Villain moved this way gets -3[icon:attack] this turn."
           ]
@@ -1440,7 +1390,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-no-name-brood-queen-surprise-attack.webp",
           "abilities": [
             "If this is the first card you played this turn, draw a card."
           ]
@@ -1456,7 +1405,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-no-name-brood-queen-appetite-for-destruction.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[hc:covert]: You may [keyword:Feast]."
@@ -1473,7 +1421,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-no-name-brood-queen-bursting-with-life.webp",
           "abilities": [
             "You may [keyword:Feast]. Then, if a non-grey Hero was KO'd from your deck this turn, [keyword:Transform] this into Torrent of Broodlings."
           ],
@@ -1490,7 +1437,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-no-name-brood-queen-torrent-of-broodlings.webp",
           "abilities": [
             "Draw a card."
           ],
@@ -1508,7 +1454,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-no-name-brood-queen-world-spanning-hunger.webp",
           "abilities": [
             "Look at the top card of your deck. Then [keyword:Feast] up to three times. You get +2[icon:attack] for each non-grey Hero that was KO'd from your deck this turn."
           ]
@@ -1583,7 +1528,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-rick-jones-hacktivist.webp",
           "abilities": [
             "[hc:tech]: Reveal the top card of your deck. If it's a[team:shield], draw it."
           ]
@@ -1599,7 +1543,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-rick-jones-seek-the-nega-bands.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 3 or more, [keyword:Transform] this into Captain Marvel."
           ],
@@ -1616,7 +1559,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-rick-jones-captain-marvel.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 3 or more, draw it."
           ],
@@ -1634,7 +1576,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-rick-jones-irradiated-blood.webp",
           "abilities": [
             "If you have at least 5 Villains in your Victory Pile, [keyword:Transform] this into A-Bomb and put it on top of your deck."
           ],
@@ -1651,7 +1592,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-rick-jones-a-bomb.webp",
           "abilities": [
             "[keyword:Smash 5]"
           ],
@@ -1669,7 +1609,6 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-rick-jones-caught-in-kree-skrull-war.webp",
           "abilities": [
             "If you defeat two Villains this turn, [keyword:Transform] this into The Destiny Force and put it on top of your deck."
           ],
@@ -1686,7 +1625,6 @@
           "cost": 9,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-rick-jones-the-destiny-force.webp",
           "abilities": [
             "Count the number of different printed VP values in your Victory Pile. Draw that many cards."
           ],
@@ -1778,7 +1716,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-sentry-agoraphobia.webp",
           "abilities": [
             "[keyword:Transform] this into Golden Guardian of Good and put it in your discard pile."
           ],
@@ -1795,7 +1732,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-sentry-golden-guardian-of-good.webp",
           "abilities": [
             "You may [keyword:Transform] this into Agoraphobia and put it in your discard pile. If you do, you get +4[icon:attack]."
           ],
@@ -1813,7 +1749,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-sentry-rival-personalities.webp",
           "abilities": [
             "You get +1[icon:attack]for each card that [keyword:Transformed] this turn."
           ]
@@ -1829,7 +1764,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-sentry-mournful-sentinel.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 1 or more, [keyword:Transform] this into The Void Unchained and put it on top of your deck."
           ],
@@ -1846,7 +1780,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-sentry-the-void-unchained.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 0, then [keyword:Feast]. Otherwise, [keyword:Transform] this into Mournful Sentinel and put it in your discard pile."
           ],
@@ -1864,7 +1797,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-sentry-vast-unstable-power.webp",
           "abilities": [
             "Reveal the top five cards of the Hero Deck, gain their total printed[icon:attack], and put them on the bottom of that deck. If this card makes 12[icon:attack] or more, then [keyword:Transform] this card into [rule:The Void Mastermind] and add it to the game at the start of the next turn with one random Tactic."
           ]
@@ -1945,7 +1877,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-she-hulk-hurl-legal-objections.webp",
           "abilities": [
             "Once this turn, if you made at least 6[icon:recruit]this turn, [keyword:Transform] this into Hurl Trucks."
           ],
@@ -1962,7 +1893,6 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-she-hulk-hurl-trucks.webp",
           "abilities": [
             "[keyword:Smash 2]",
             "[keyword:Smash 2]"
@@ -1981,7 +1911,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-she-hulk-window-of-opportunity.webp",
           "abilities": [
             "[keyword:Outwit]: Draw a card."
           ]
@@ -1997,7 +1926,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-she-hulk-radioactive-riot.webp",
           "abilities": [
             "Once this turn, if you made at least 6[icon:recruit]this turn, you may KO a card from your hand or discard pile."
           ]
@@ -2013,7 +1941,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": "4",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-she-hulk-jade-giantess.webp",
           "abilities": [
             "For every 2[icon:recruit]you made this turn, Reveal the top card of the Hero Deck, put it on the bottom of that deck, and you get that card's printed[icon:attack]."
           ]
@@ -2086,7 +2013,6 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-skaar-son-of-hulk-anger-management.webp",
           "abilities": [
             "[hc:strength]: [keyword:Smash 3]"
           ]
@@ -2102,7 +2028,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-skaar-son-of-hulk-scarred-past.webp",
           "abilities": [
             "[hc:instinct]: [keyword:Wounded Fury]."
           ]
@@ -2118,7 +2043,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-skaar-son-of-hulk-mood-swings.webp",
           "abilities": [
             "[hc:instinct]: You may gain a Wound. If you do, [keyword:Transform] this into Raging Savage."
           ],
@@ -2135,7 +2059,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-skaar-son-of-hulk-raging-savage.webp",
           "abilities": [
             "[keyword:Wounded Fury]"
           ],
@@ -2153,7 +2076,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-hr-skaar-son-of-hulk-planetary-level-revenge.webp",
           "abilities": [
             "[keyword:Wounded Fury]",
             "Then, you may KO any number of Wounds from your hand and/or discard pile, then draw that many cards."

@@ -29,8 +29,7 @@
           "recruit": "1+",
           "abilities": [
             "Heist: You get +2[icon:recruit]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-1c1.webp"
+          ]
         },
         {
           "slug": "anything-for-cassie",
@@ -45,8 +44,7 @@
           "abilities": [
             "Whenever you gain a Wound this turn, return that Wound to the Wound Deck.",
             "Heist: Rescue a Bystander."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-2c2.webp"
+          ]
         },
         {
           "slug": "shocking-support",
@@ -60,8 +58,7 @@
           "recruit": null,
           "abilities": [
             "Heist: You get +2[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-4c3.webp"
+          ]
         },
         {
           "slug": "x-con-security-van",
@@ -75,8 +72,7 @@
           "recruit": null,
           "abilities": [
             "Heist: You may move a Villain to an empty city space. If you do, KO one of your Heroes."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-5u.webp"
+          ]
         },
         {
           "slug": "putting-a-crew-together",
@@ -90,8 +86,7 @@
           "recruit": null,
           "abilities": [
             "Heist: You get +1[icon:attack] for each different cost card you have."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-6u2.webp"
+          ]
         },
         {
           "slug": "the-big-score",
@@ -105,8 +100,7 @@
           "recruit": null,
           "abilities": [
             "Heist: You get +4[icon:attack]. If the card revealed from the Villain Deck is a Master Strike, KO it and put a card from the Bystander Deck on top of the Villain Deck."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-scott-lang-cat-burglar-8r.webp"
+          ]
         }
       ],
       "physicalCards": [
@@ -185,7 +179,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-2c1.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:covert]",
             "[keyword:Antics]: You get +2[icon:recruit]."
@@ -202,7 +195,6 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-3c2.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:strength]",
             "Reveal the top card of your deck. If it's [hc:strength] or has [keyword:Size-Changing] draw it."
@@ -219,7 +211,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-4c3.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:covert]",
             "[hc:covert]: All Villains and the Mastermind get -1[icon:attack] this turn."
@@ -236,7 +227,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-5u.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength]",
             "[keyword:Antics]: You may KO a card from your hand or discard pile."
@@ -253,7 +243,6 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-6u2.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:covert][hc:covert][hc:covert]",
             "[keyword:Heist]: Draw two cards."
@@ -270,7 +259,6 @@
           "cost": 9,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-man-9r.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength][hc:strength][hc:strength]",
             "You get +1[icon:attack] for each card you played this turn that's [hc:strength] and/or has Size-Changing."
@@ -355,8 +343,7 @@
           "abilities": [
             "Size-Changing [hc:ranged]",
             "If this is the first card you played this turn, you get +1[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-2c1.webp"
+          ]
         },
         {
           "slug": "flitting-sting",
@@ -371,8 +358,7 @@
           "abilities": [
             "Size-Changing [hc:ranged]",
             "[hc:ranged]: You get +1[icon:recruit] and +1[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-3c2.webp"
+          ]
         },
         {
           "slug": "master-physicist",
@@ -387,8 +373,7 @@
           "abilities": [
             "Size-Changing [hc:tech]",
             "You get +1[icon:recruit] for each other card you have with a \"+\" symbol in its recruit icon."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-4c3.webp"
+          ]
         },
         {
           "slug": "positive-ions",
@@ -403,8 +388,7 @@
           "abilities": [
             "Size-Changing [hc:ranged]",
             "You get +1[icon:attack] for each other card you have with a \"+\" symbol in its attack icon."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-5u.webp"
+          ]
         },
         {
           "slug": "infiltrate",
@@ -420,8 +404,7 @@
             "Microscopic Size-Changing [hc:tech][hc:tech][hc:tech]",
             "When you draw a new hand this turn, draw an extra card.",
             "Heist: You get +3[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-6u2.webp"
+          ]
         },
         {
           "slug": "hope-returns",
@@ -437,8 +420,7 @@
             "Microscopic Size-Changing [hc:ranged][hc:ranged][hc:ranged][hc:ranged][hc:ranged]",
             "You get +1[icon:recruit] for each other card you have with a \"+\" symbol in its recruit icon.",
             "You get +1[icon:attack] for each other card you have with a \"+\" symbol in its attack icon."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-wasp-9r.webp"
+          ]
         }
       ],
       "physicalCards": [
@@ -517,7 +499,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-2c1.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
             "To play this, you must discard a card. Then, if you have a Villain in your Victory Pile worth 2[icon:piercing] or less, draw a card."
@@ -534,7 +515,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-4c2.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:strength]",
             "Choose a player. If that player reveals a card that costs 5 or more, that player draws a card."
@@ -551,7 +531,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-5c3.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:strength]",
             "[hc:strength]: You may defeat a Villain worth 2[icon:piercing] or less."
@@ -568,7 +547,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-5u.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
             "[hc:tech]: Reveal the top card of the Villain Deck. If it's a Bystander, rescue it. If it's a Vilain worth 2[icon:piercing] or less, you may fight it this turn. If you rescue or defeat that card, don't play a card from the Vilain Deck next turn."
@@ -585,7 +563,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-6u2.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength]",
             "[hc:strength]: You may do the Fight effect of a Villain in your Victory Pile worth 2[icon:piercing] or less."
@@ -602,7 +579,6 @@
           "cost": 9,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-cassie-lang-9r.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength][hc:strength][hc:strength]",
             "You get +1[icon:attack] for each Villain worth 2[icon:piercing] or less in your Victory Pile."
@@ -688,8 +664,7 @@
             "Microscopic Size-Changing [hc:covert][hc:covert]",
             "Draw a card.",
             "[hc:covert][hc:covert]: You get +2[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-2c1.webp"
+          ]
         },
         {
           "slug": "search-for-peace",
@@ -703,8 +678,7 @@
           "recruit": "2+",
           "abilities": [
             "[hc:covert]: Explore. You get +[icon:recruit] equal to the Found Hero's printed recruit."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-3c2.webp"
+          ]
         },
         {
           "slug": "prepare-for-war",
@@ -718,8 +692,7 @@
           "recruit": null,
           "abilities": [
             "[hc:ranged]: Explore. You get +[icon:attack] equal to the Found Hero's printed attack."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-4c3.webp"
+          ]
         },
         {
           "slug": "wasp-of-another-generation",
@@ -734,8 +707,7 @@
           "abilities": [
             "Size-Changing [hc:covert]",
             "[hc:covert]: Explore. Then you get +1[icon:attack] for each time you explored this turn."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-5u.webp"
+          ]
         },
         {
           "slug": "quantum-contradiction",
@@ -749,8 +721,7 @@
           "recruit": "4",
           "abilities": [
             "When you play this, put it on top of the Hero Deck or KO it."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-6u2.webp"
+          ]
         },
         {
           "slug": "finally-found-you",
@@ -765,8 +736,7 @@
           "abilities": [
             "Explore.",
             "[hc:covert]: You get +[icon:recruit] equal to the Found Hero's printed recruit and +[icon:attack] equal to its printed attack."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-janet-van-dyne-8r.webp"
+          ]
         }
       ],
       "physicalCards": [
@@ -847,8 +817,7 @@
           "abilities": [
             "Reveal the top card of your deck. If that card has any \"holes\" printed inside any of its icons (0, 4, 6, 8, or 9), draw it.",
             "[hc:instinct]: You may KO the card you drew this way."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-2c1.webp"
+          ]
         },
         {
           "slug": "mystics",
@@ -862,8 +831,7 @@
           "recruit": "1",
           "abilities": [
             "When you draw a new hand this turn, draw an extra card."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-3c2.webp"
+          ]
         },
         {
           "slug": "steel-warrior",
@@ -878,8 +846,7 @@
           "abilities": [
             "Streets Conqueror 1",
             "Draw a card."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-4c3.webp"
+          ]
         },
         {
           "slug": "xolum",
@@ -894,8 +861,7 @@
           "abilities": [
             "Bridge Conqueror 1",
             "[hc:ranged]: You get +2[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-5u.webp"
+          ]
         },
         {
           "slug": "quaz",
@@ -909,8 +875,7 @@
           "recruit": "2+",
           "abilities": [
             "[hc:ranged]: Choose recruit or attack. Then Explore. You get the printed value of the icon you chose on the Found Hero."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-6u2.webp"
+          ]
         },
         {
           "slug": "freedom-forever",
@@ -925,8 +890,7 @@
           "abilities": [
             "Explore.",
             "[hc:instinct]: You may choose a player to gain the Found Hero."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-freedom-fighters-7r.webp"
+          ]
         }
       ],
       "physicalCards": [
@@ -1005,7 +969,6 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-2c1.webp",
           "abilities": [
             "[keyword:Bridge Conqueror 1]",
             "If there are no Villains on the Rooftops, draw a card."
@@ -1022,7 +985,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-3c2.webp",
           "abilities": [
             "You may move a Villain to an adjacent city space. If another Villain is already there, swap them.",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -1039,7 +1001,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-4c3.webp",
           "abilities": [
             "[hc:strength]: [keyword:Sewers Conqueror 2]"
           ]
@@ -1055,7 +1016,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-5u.webp",
           "abilities": [
             "[hc:instinct]: [keyword:Explore]. If the Found Hero is [hc:instinct] or has no team icon, you get +2[icon:recruit]."
           ]
@@ -1071,7 +1031,6 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-6u2.webp",
           "abilities": [
             "[hc:strength]: [keyword:Explore]. You get +[icon:attack] equal to the Found Hero's cost."
           ]
@@ -1087,7 +1046,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-jentorra-7r.webp",
           "abilities": [
             "[keyword:Bridge Conqueror 1]",
             "You get +1[icon:attack] for each Villain worth, 4[icon:piercing] or more and each Mastermind Tactic in your Victory Pile."
@@ -1170,7 +1128,6 @@
           "cost": 1,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-1c1.webp",
           "abilities": [
             "[keyword:Heist]: Draw a card."
           ]
@@ -1186,7 +1143,6 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-2c2.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:instinct]",
             "[keyword:Antics]: You get +2[icon:attack]."
@@ -1203,7 +1159,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-4c3.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
             "[keyword:Antics]: Draw a card."
@@ -1220,7 +1175,6 @@
           "cost": 5,
           "attack": "1+",
           "recruit": "1+",
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-5u.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
             "[keyword:Antics]: You get +2[icon:recruit] and +2[icon:attack]."
@@ -1237,7 +1191,6 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-6u2.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
             "[hc:tech]: You get +3[icon:attack]."
@@ -1254,7 +1207,6 @@
           "cost": 9,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/amwp/amwp-hr-ant-army-9r.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech][hc:tech][hc:tech]",
             "[keyword:Antics]: You get +2[icon:attack].",

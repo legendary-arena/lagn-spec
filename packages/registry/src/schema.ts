@@ -72,7 +72,6 @@ export const HeroCardSchema = z.object({
   cost:        z.union([z.number().int().min(0), z.string()]).optional(),
   attack:      z.string().nullable().optional(),
   recruit:     z.string().nullable().optional(),
-  imageUrl:    z.string().url(),
   abilities:   z.array(z.string()).optional(),
 });
 

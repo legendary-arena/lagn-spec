@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-alter-ego.webp",
           "abilities": [
             "[keyword:Switcheroo 4]"
           ]
@@ -42,7 +41,6 @@
           "cost": 4,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-alias-investigations.webp",
           "abilities": [
             "[keyword:Switcheroo 5]",
             "[keyword:Investigate] for a card with an [icon:attack] icon."
@@ -59,7 +57,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-crack-the-case.webp",
           "abilities": [
             "[keyword:Switcheroo 6]",
             "[keyword:Investigate] for a card with an [icon:recruit] icon. You may draw that card or KO it."
@@ -76,7 +73,6 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-jessica-jones-uncover-hidden-evil.webp",
           "abilities": [
             "[hc:covert]: [keyword:Investigate] the Villain Deck for a Villain. You may put it into your Victory Pile and do its Fight effect. Otherwise, put it back on the top or bottom of that deck."
           ]
@@ -140,7 +136,6 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-star-power.webp",
           "abilities": [
             "[keyword:Teleport]",
             "[hc:strength]: You get +2[icon:attack]."
@@ -157,7 +152,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-search-parallel-dimensions.webp",
           "abilities": [
             "[keyword:Investigate] for an [team:avengers] card and [keyword:Teleport] that card."
           ]
@@ -173,7 +167,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-kick-a-hole-in-reality.webp",
           "abilities": [
             "[hc:strength]: Reveal the top card of your deck. KO it or [keyword:Teleport] it."
           ]
@@ -189,7 +182,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-ms-america-hyper-cosmic-awareness.webp",
           "abilities": [
             "You get +1[icon:attack] for each other card in your hand."
           ]
@@ -253,7 +245,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-find-tiny-friends.webp",
           "abilities": [
             "[keyword:Switcheroo 3]",
             "[keyword:Investigate] for a card that costs 3 or less."
@@ -270,7 +261,6 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-nut-punch.webp",
           "abilities": [
             "[keyword:Switcheroo 4]",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -287,7 +277,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-squirrelgility.webp",
           "abilities": [
             "[keyword:Switcheroo 5]",
             "You get +2[icon:attack] if at least 2 cards entered the HQ this turn."
@@ -304,7 +293,6 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-squirrel-girl-unbeatable-squirrel-girl.webp",
           "abilities": [
             "You may choose a number from 1 to 5. A Hero in your hand gains [keyword:Switcheroo] for that number.",
             "[hc:instinct][hc:instinct]: You may choose a number from 1 to 8 instead."
@@ -361,7 +349,6 @@
           "rarity": 1,
           "rarityLabel": "Common 1",
           "slot": 1,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-traveling-companion.webp",
           "abilities": [
             "Reveal the top card of the Bystander Deck. If it's a Special Bystander, rescue it. Otherwise, put it on the bottom of that deck."
           ]
@@ -376,7 +363,6 @@
           "rarity": 1,
           "rarityLabel": "Common 2",
           "slot": 2,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-rebel-without-a-cause.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 0[icon:recruit] or has no team icon, draw it."
           ]
@@ -391,7 +377,6 @@
           "rarity": 2,
           "rarityLabel": "Uncommon",
           "slot": 3,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-right-place-wrong-time.webp",
           "abilities": [
             "You get +1[icon:attack] for each other Hero you played this turn with no team icon."
           ]
@@ -406,7 +391,6 @@
           "rarity": 3,
           "rarityLabel": "Rare",
           "slot": 4,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-howard-the-duck-interplanetary-visitor.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, discard one, and KO one."
           ]
@@ -462,7 +446,6 @@
           "rarity": 1,
           "rarityLabel": "Common 1",
           "slot": 1,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-form-from-ooze.webp",
           "abilities": [
             "[keyword:Teleport]",
             "You get +2[icon:attack], usable only against Villains in the Sewers or the Mastermind."
@@ -478,7 +461,6 @@
           "rarity": 1,
           "rarityLabel": "Common 2",
           "slot": 2,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-burn-the-fearful.webp",
           "abilities": [
             "Choose a Villain or Mastermind. If there are no other Villains adjacent to it, it gets -1[icon:attack] this turn."
           ]
@@ -493,7 +475,6 @@
           "rarity": 2,
           "rarityLabel": "Uncommon",
           "slot": 3,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-travel-the-nexus-of-realities.webp",
           "abilities": [
             "[keyword:Teleport]",
             "You may move a Villain to another city space. If another Villain is already there, swap them."
@@ -509,7 +490,6 @@
           "rarity": 3,
           "rarityLabel": "Rare",
           "slot": 4,
-          "imageUrl": "https://images.legendary-arena.com/dims/dims-hr-man-thing-eternity-of-solitude.webp",
           "abilities": [
             "[hc:strength]: You get +1[icon:attack] for each empty city space."
           ]

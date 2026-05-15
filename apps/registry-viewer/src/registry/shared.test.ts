@@ -360,7 +360,7 @@ describe("flattenSet hero physicalCardImageUrl (D-14103)", () => {
     assert.equal(atone.physicalCardImageUrl, "https://img/attune-atone.webp", "back-side also gets physicalCardImageUrl");
   });
 
-  it("falls back to card.imageUrl when physicalCards is absent", () => {
+  it("yields empty imageUrl when physicalCards is absent (D-15101)", () => {
     const setData = {
       id: 1,
       abbr: "core",
@@ -369,7 +369,7 @@ describe("flattenSet hero physicalCardImageUrl (D-14103)", () => {
           name: "Spider-Man",
           slug: "spider-man",
           cards: [
-            { slug: "web", name: "Web", imageUrl: "https://img/web.webp", abilities: [] },
+            { slug: "web", name: "Web", abilities: [] },
           ],
         },
       ],
@@ -386,7 +386,7 @@ describe("flattenSet hero physicalCardImageUrl (D-14103)", () => {
     const web = result.find((c) => c.slug === "web");
 
     assert.ok(web, "web card must exist");
-    assert.equal(web.imageUrl, "https://img/web.webp", "imageUrl falls back to card.imageUrl");
+    assert.equal(web.imageUrl, "", "imageUrl is empty when physicalCards absent");
     assert.equal(web.physicalCardImageUrl, undefined, "physicalCardImageUrl undefined when no physicalCards");
   });
 });

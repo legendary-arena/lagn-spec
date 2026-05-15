@@ -444,9 +444,10 @@
         {
           "id": "p1",
           "count": 2,
+          "companionSlug": "rhomann-dey",
           "sides": [
-            "also-illegal",
-            "remove-his-spine"
+            "remove-his-spine",
+            "also-illegal"
           ]
         },
         {
@@ -459,6 +460,7 @@
         {
           "id": "p3",
           "count": 3,
+          "companionSlug": "irani-rael",
           "sides": [
             "i-am-invisible",
             "xandar-is-invincible"

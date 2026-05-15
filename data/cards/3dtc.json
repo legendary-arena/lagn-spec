@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-traveling-companion.webp",
           "abilities": [
             "Reveal the top card of the Bystander Deck. If it's a special Bystander, rescue it. Otherwise, put it on the bottom of that deck."
           ]
@@ -42,7 +41,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-rebel-without-a-cause.webp",
           "abilities": [
             "Reveal the top card of your deck if it Costs 0[icon:vp] or has no team icon, draw it."
           ]
@@ -58,7 +56,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-right-place-wrong-time.webp",
           "abilities": [
             "You get +1[icon:attack] for each other Hero you played this turn with no team icon."
           ]
@@ -74,7 +71,6 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-howard-the-duck-interplanetary-visitor.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, discard one, and KO one."
           ]
@@ -138,7 +134,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-form-from-ooze.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:attack] usable only against villains in the Sewers or the Mastermind."
           ]
@@ -154,7 +149,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-burn-the-fearful.webp",
           "abilities": [
             "Choose a Villain or Mastermind. If there are no other Villains adjacent to it, it gets -1[icon:attack] this turn."
           ]
@@ -170,7 +164,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-travel-the-nexus-of-realities.webp",
           "abilities": [
             "[hc:covert]: You may move a Villain to another city space. If another Villain is already there, swap them."
           ]
@@ -186,7 +179,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-man-thing-eternity-of-solitude.webp",
           "abilities": [
             "[hc:strength]: You get +1[icon:attack] for each empty city space."
           ]
@@ -247,8 +239,7 @@
           "abilities": [
             "Draw a card.",
             "[hc:tech]: Rescue a Bystander."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-mission-accomplished.webp"
+          ]
         },
         {
           "name": "Dangerous Rescue",
@@ -263,8 +254,7 @@
           "recruit": null,
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-dangerous-rescue.webp"
+          ]
         },
         {
           "name": "Covert Operation",
@@ -279,8 +269,7 @@
           "recruit": null,
           "abilities": [
             "You get +1[icon:attack] for each Bystander in your Victory Pile."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-covert-operation.webp"
+          ]
         },
         {
           "name": "Silent Sniper",
@@ -295,8 +284,7 @@
           "recruit": null,
           "abilities": [
             "Defeat a Villain or Mastermind that has a Bystander."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-black-widow-silent-sniper.webp"
+          ]
         }
       ],
       "physicalCards": [
@@ -353,8 +341,7 @@
           "recruit": "2",
           "abilities": [
             "A Villain of your choice captures a Bystander."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-here-hold-this-for-a-second.webp"
+          ]
         },
         {
           "name": "Hey, Can I Get a Do-over?",
@@ -369,8 +356,7 @@
           "recruit": null,
           "abilities": [
             "If this is the first Hero you played this turn, you may discard the rest of your hand and draw four cards."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-hey-can-i-get-a-do-over.webp"
+          ]
         },
         {
           "name": "Oddball",
@@ -385,8 +371,7 @@
           "recruit": null,
           "abilities": [
             "You get +1[icon:attack] for each other Hero with an odd-number [icon:recruit] you played this turn."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-oddball.webp"
+          ]
         },
         {
           "name": "Random Acts of Unkindness",
@@ -401,8 +386,7 @@
           "recruit": null,
           "abilities": [
             "You may gain a Wound to your hand. Then each player passes a card from their hand to the player on their left."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-deadpool-random-acts-of-unkindness.webp"
+          ]
         }
       ],
       "physicalCards": [
@@ -459,8 +443,7 @@
           "recruit": null,
           "abilities": [
             "[hc:strength]: You get +1[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-growing-anger.webp"
+          ]
         },
         {
           "name": "Unstoppable Hulk",
@@ -475,8 +458,7 @@
           "recruit": null,
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-unstoppable-hulk.webp"
+          ]
         },
         {
           "name": "Crazed Rampage",
@@ -491,8 +473,7 @@
           "recruit": null,
           "abilities": [
             "Each player gains a Wound."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-crazed-rampage.webp"
+          ]
         },
         {
           "name": "Hulk Smash",
@@ -507,8 +488,7 @@
           "recruit": null,
           "abilities": [
             "[hc:strength]: You get +5[icon:attack]."
-          ],
-          "imageUrl": "https://images.legendary-arena.com/3dtc/3dtc-hr-hulk-hulk-smash.webp"
+          ]
         }
       ],
       "physicalCards": [

@@ -26,7 +26,6 @@
           "cost": 4,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-ant-man-ride-the-ants.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
             "Draw a card."
@@ -43,7 +42,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-ant-man-risky-science.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
             "[hc:tech]: You may discard a card. If you do, draw a card."
@@ -60,7 +58,6 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-ant-man-giant-ego.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
             "You get +1[icon:attack] for each extra card you drew this turn."
@@ -77,7 +74,6 @@
           "cost": 9,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-ant-man-pym-particles.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech][hc:tech][hc:tech]",
             "A hero in the HQ with no Size-Changing abilities gain [keyword:Size-Changing] [hc:tech] this turn."
@@ -142,7 +138,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-black-knight-amulet-of-avalon.webp",
           "abilities": [
             "You get [keyword:Empowered] by the color of your choice."
           ]
@@ -158,7 +153,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-black-knight-defend-the-weak.webp",
           "abilities": [
             "[hc:strength]: Return a 0-cost card from your discard pile to your hand."
           ]
@@ -174,7 +168,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-black-knight-flying-steed.webp",
           "abilities": [
             "When a Master Strike is played, before it takes effect, you may discard this card. If you do, draw three extra cards at the end of this turn."
           ]
@@ -190,7 +183,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-black-knight-the-ebony-blade.webp",
           "abilities": [
             "You get +[icon:attack] equal to the printed [icon:attack] of a Villain in your Victory Pile. (Mastermind tactics aren't Villains.)"
           ]
@@ -254,7 +246,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-jocasta-creation-of-ultron.webp",
           "abilities": [
             "[hc:tech]: You get [keyword:Empowered] by [hc:tech]."
           ]
@@ -270,7 +261,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-jocasta-reprocess.webp",
           "abilities": [
             "If your discard pile is empty, you get +2[icon:recruit]. Otherwise, shuffle your discard pile into your deck."
           ]
@@ -286,7 +276,6 @@
           "cost": 6,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-jocasta-holographic-image-inducer.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
             "Draw two cards."
@@ -303,7 +292,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-jocasta-electromagnetic-eyebeams.webp",
           "abilities": [
             "If your discard pile is empty, you get +2[icon:attack]. Otherwise shuffle your discard pile into your deck."
           ]
@@ -367,7 +355,6 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-wasp-bio-electric-sting.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:covert][hc:covert]",
             "[hc:covert]: You get +2[icon:attack]."
@@ -384,7 +371,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-wasp-tiny-winged-justice.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:covert]",
             "[hc:covert]: Draw a card."
@@ -401,7 +387,6 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-wasp-swarm-tactics.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:covert]",
             "You get +1[icon:attack] for each card you recruited this turn."
@@ -418,7 +403,6 @@
           "cost": 9,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-wasp-founding-avenger.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:covert][hc:covert][hc:covert][hc:covert][hc:covert]",
             "[team:avengers]: You get +1[icon:attack] for each other [team:avengers] card you played this turn."
@@ -483,7 +467,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-wonder-man-one-hit-wonder.webp",
           "abilities": [
             "Chose one: Draw a card, or you get [keyword:Empowered] by [hc:strength]."
           ]
@@ -499,7 +482,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-wonder-man-ionic-energy.webp",
           "abilities": [
             "You may put a card from the HQ on the bottom of the Hero Deck.",
             "[hc:ranged]: You get [keyword:Empowered] by [hc:ranged]."
@@ -516,7 +498,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-wonder-man-absorb-ambient-power.webp",
           "abilities": [
             "Put a card from the HQ on the bottom of the Hero Deck. If that card had a [icon:recruit] icon, you get +3[icon:recruit]. If that card had an [icon:attack] icon, you get +3[icon:attack]. (if both, get both.)"
           ]
@@ -532,7 +513,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/antm/antm-hr-wonder-man-8th-wonder-of-the-world.webp",
           "abilities": [
             "[keyword:Size-Changing] [hc:strength]",
             "Choose any number of cards from the HQ. Put them on the bottom of the Hero Deck. Then you get [keyword:Empowered] by [hc:ranged] and [hc:strength]."

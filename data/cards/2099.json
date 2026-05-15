@@ -26,7 +26,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-2c1.webp",
           "abilities": [
             "You may send this [keyword:Undercover].",
             "[keyword:Cyber-Mod][hc:covert]: Draw a card."
@@ -43,7 +42,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-3c2.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:covert][hc:covert]: Draw a card."
           ]
@@ -59,7 +57,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-5u.webp",
           "abilities": [
             "The next Hero you recruit this turn goes on top of your deck.",
             "[hc:strength]: [keyword:Fated Future]"
@@ -76,7 +73,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-spider-man-2099-7r.webp",
           "abilities": [
             "Reveal the top three cards of the Hero Deck. You may send one of them [keyword:Undercover]. Put the rest back in any order.",
             "[team:spider-friends]: You may play a copy of the card you sent [keyword:Undercover] this way."
@@ -141,7 +137,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-3c1.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:tech]: You get +1[icon:recruit].",
             "[keyword:Cyber-Mod][hc:tech][hc:tech]: Draw a card."
@@ -158,7 +153,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-4c2.webp",
           "abilities": [
             "You may send this and a card from the HQ [keyword:Undercover]. If you do, you get +2[icon:attack].",
             "[keyword:Cyber-Mod][hc:tech][hc:tech][hc:tech]: You get +2[icon:attack]."
@@ -175,7 +169,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-5u.webp",
           "abilities": [
             "[team:marvel-knights]: You may KO a Henchman from your Victory Pile. If you do, you get +2[icon:attack] and you may do that Henchman's Fight effect."
           ]
@@ -191,7 +184,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ghost-rider-2099-7r.webp",
           "abilities": [
             "You may send a card from the HQ [keyword:Undercover].",
             "[keyword:Cyber-Mod][hc:tech]: [keyword:Fated Future] and you get +1[icon:attack] for each [hc:tech] card in your Victory Pile."
@@ -256,7 +248,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-3c1.webp",
           "abilities": [
             "You may send this and a card from your hand or discard pile [keyword:Undercover]. If you do, you get +1[icon:recruit]."
           ]
@@ -272,7 +263,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-3c2.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:ranged]: You get +1[icon:attack].",
             "[keyword:Cyber-Mod][hc:ranged][hc:ranged][hc:ranged]: Instead you get +3[icon:attack]."
@@ -289,7 +279,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-6u.webp",
           "abilities": [
             "[hc:tech]: You may look at the top three cards of your deck. If you do, send one of them [keyword:Undercover] and put the rest back in any order."
           ]
@@ -305,7 +294,6 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-doctor-doom-2099-8r.webp",
           "abilities": [
             "You may send a card from your hand or discard pile [keyword:Undercover].",
             "[keyword:Fated Future]",
@@ -371,7 +359,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-3c1.webp",
           "abilities": [
             "[keyword:Cyber-Mod Wound]: You get +1[icon:attack].",
             "[keyword:Cyber-Mod 4 Wounds]: Instead you get +2[icon:attack]."
@@ -388,7 +375,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-4c2.webp",
           "abilities": [
             "You may send a Wound from your hand or discard pile [keyword:Undercover].",
             "[hc:strength]: You may send a Hero from your hand or discard pile [keyword:Undercover] instead."
@@ -405,7 +391,6 @@
           "cost": 6,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-6u.webp",
           "abilities": [
             "To play this, you must discard two cards or gain a Wound.",
             "[hc:tech]: [keyword:Fated Future]"
@@ -422,7 +407,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-hulk-2099-8r.webp",
           "abilities": [
             "For each player, either send a Wound from that player's discard pile [keyword:Undercover] into your own Victory Pile, or that player gains a Wound.",
             "[keyword:Cyber-Mod Wound]: You get +1[icon:attack] for each Wound in your Victory Pile."
@@ -487,7 +471,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-3c1.webp",
           "abilities": [
             "[hc:instinct]: Draw a card from the bottom of your deck."
           ]
@@ -503,7 +486,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-5c2.webp",
           "abilities": [
             "[hc:strength]You get +2[icon:attack] and [keyword:Fated Future]."
           ]
@@ -519,7 +501,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-6u.webp",
           "abilities": [
             "Reveal the top two cards of the Villain Deck and put them back in any order.",
             "[keyword:Fated Future]"
@@ -536,7 +517,6 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/2099/2099-hr-ravage-2099-8r.webp",
           "abilities": [
             "Reveal the top card of your deck. You get +[icon:attack] equal to that card's cost. Discard it or put it back.",
             "[team:marvel-knights]: Then do the same thing with the bottom card of your deck."

@@ -11,8 +11,8 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
 
   // Heroes
   for (const hero of set.heroes) {
-    // why: D-14103 — build side-to-physicalCard lookup so hero-card
-    // imageUrl comes from physicalCards[] rather than per-side card.imageUrl.
+    // why: D-15101 — physicalCards[] is the sole hero image source now that
+    // HeroCardSchema.imageUrl has been removed (D-14103 transition closed).
     const sideToImageUrl = new Map<string, string>();
     if (Array.isArray(hero.physicalCards)) {
       for (const physicalCard of hero.physicalCards) {
@@ -41,7 +41,7 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
         setName,
         name:        card.name ?? "",
         slug:        card.slug,
-        imageUrl:    sideToImageUrl.get(card.slug) ?? card.imageUrl ?? "",
+        imageUrl:    sideToImageUrl.get(card.slug) ?? "",
         physicalCardImageUrl: sideToImageUrl.get(card.slug),
         heroName:    hero.name,
         team:        hero.team ?? undefined,

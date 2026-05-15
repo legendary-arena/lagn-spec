@@ -471,7 +471,6 @@ function convertSet(jsFilePath, setAbbr) {
           cost: card.cost ?? null,
           attack: card.attack ?? null,
           recruit: card.recruit ?? null,
-          imageUrl: heroImageUrl(setAbbr, heroSlug, [toSlug(card.name)], undefined),
           abilities: parseAbilities(card.abilities),
         };
       });
@@ -522,8 +521,9 @@ function convertSet(jsFilePath, setAbbr) {
           // Tactic: {set}-mt-{mmSlug}-{cardSlug}.webp
           mmImageUrl = groupCardImageUrl(setAbbr, 'mt', mmSlug, cardSlug);
         }
-        // Only preserve imageUrl from source if it is a valid R2 URL (ignore legacy /CardImages/ paths)
-        if (card.imageUrl && card.imageUrl.startsWith('http')) mmImageUrl = card.imageUrl;
+        // why: npm source mastermind imageUrls are legacy DigitalOcean/bageltop
+        // paths (403). Always use synthesized R2 URLs. Line was removed in
+        // 0d962f3, re-introduced by WP-147 regression, removed again by WP-151.
 
         return {
           name: card.name ?? mm.name,
@@ -720,18 +720,12 @@ function applyPatch(result, setAbbr) {
       const { _op, ...fields } = patchEntry;
 
       if (op === 'append') {
-        // Add a new entry that doesn't exist in npm data
-        // Auto-generate imageUrl for hero cards missing one (skip if patch set it explicitly)
-        // Always regenerate hero card imageUrls under v16 cardSlug naming —
-        // any explicit imageUrl in the patch is from the v9-v15 era and uses
-        // the obsolete {cost}{rarityCode}{slot} pattern. Patch imageUrls for
-        // hero cards are now no-ops; remove them at convenience.
+        // Strip any stale imageUrl from appended hero cards — hero card
+        // imageUrl was removed in WP-151 (D-15101); physicalCards[].imageUrl
+        // is the sole hero image source.
         if (section === 'heroes' && fields.cards) {
           for (const card of fields.cards) {
-            const cardSlug = card.slug ?? toSlug(card.name ?? '');
-            if (cardSlug) {
-              card.imageUrl = heroImageUrl(setAbbr, fields.slug, [cardSlug], undefined);
-            }
+            delete card.imageUrl;
           }
         }
         result[section].push(fields);
@@ -800,17 +794,10 @@ function applyPatch(result, setAbbr) {
           }
         }
 
-        // Regenerate imageUrl for ALL hero cards using the card's slug.
-        // why: under v16 cardSlug naming, the URL is fully derivable from the
-        // card slug — patch-set imageUrls from the v9-v15 era used the
-        // {cost}{rarityCode}{slot} pattern and are now obsolete. Always
-        // regenerating supersedes those stale overrides; a card-slug rename
-        // via _slug also propagates to the imageUrl this way.
+        // Strip any stale imageUrl from merged hero cards (D-15101).
         if (section === 'heroes' && target.cards) {
           for (const card of target.cards) {
-            if (card.slug) {
-              card.imageUrl = heroImageUrl(setAbbr, target.slug, [card.slug], undefined);
-            }
+            delete card.imageUrl;
           }
         }
 

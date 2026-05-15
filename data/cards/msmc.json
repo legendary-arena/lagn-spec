@@ -26,7 +26,6 @@
           "cost": 4,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-finding-myself.webp",
           "abilities": [
             "[keyword:Investigate] for a card that has the same card name as any of your cards. (You don't need to choose a specific card name before you Investigate.)",
             "[hc:tech]: [keyword:Clone]"
@@ -43,7 +42,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-me-myself-and-i.webp",
           "abilities": [
             "[keyword:Tactical Formation] 444: Draw a card.",
             "[hc:instinct]: [keyword:Clone]"
@@ -60,7 +58,6 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-perfect-match.webp",
           "abilities": [
             "You get +1[icon:attack] for each card name that you played at least twice this turn.",
             "[hc:tech]: [keyword:Clone]"
@@ -77,7 +74,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-multiple-man-reabsorb-duplicates.webp",
           "abilities": [
             "[keyword:Tactical Formation] 44: You may KO a card from your hand or discard pile.",
             "[team:x-factor-investigations]: [keyword:Clone]"
@@ -142,7 +138,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-strive-for-greatness.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:instinct]: [keyword:Clone]",
             "",
@@ -160,7 +155,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-bioelectric-surge.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:ranged]: [keyword:Clone]",
             "",
@@ -178,7 +172,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-gladiators-blades.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:instinct]: [keyword:Clone]",
             "",
@@ -196,7 +189,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-shatterstar-gene-spliced-creation.webp",
           "abilities": [
             "[keyword:When Recruited] [team:x-force]: [keyword:Clone]",
             "",
@@ -262,7 +254,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-find-mutants-with-cerebro.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -280,7 +271,6 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-shared-thoughts.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -299,7 +289,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-telepathic-warning.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -318,7 +307,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-stepford-cuckoos-mind-wipe.webp",
           "abilities": [
             "[keyword:When Recruited]: [keyword:Clone]",
             "",
@@ -384,7 +372,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-penance-form.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:strength]: [keyword:Clone]",
             "",
@@ -402,7 +389,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-three-sisters-combined.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:strength]: [keyword:Clone]",
             "",
@@ -421,7 +407,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-uncover-family-secrets.webp",
           "abilities": [
             "[keyword:When Recruited] [hc:covert]: [keyword:Clone]",
             "",
@@ -439,7 +424,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-m-interweaving-powers.webp",
           "abilities": [
             "[keyword:When Recruited] [team:x-factor-investigations]: [keyword:Clone]",
             "",
@@ -505,7 +489,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-x-factor-investigations.webp",
           "abilities": [
             "[keyword:Investigate] for a card that's [hc:strength] and/or [team:x-factor-investigations]."
           ]
@@ -521,7 +504,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-absorb-kinetic-energy.webp",
           "abilities": [
             "If any player would gain a Wound, you may discard this card instead. If you do, draw two cards."
           ]
@@ -537,7 +519,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-go-big.webp",
           "abilities": [
             "[keyword:Tactical Formation] 445: You get +3[icon:attack]."
           ]
@@ -553,7 +534,6 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-strong-guy-treasure-hunt.webp",
           "abilities": [
             "[keyword:Investigate] for one of these options, then a different option, then a third different option:",
             "A [hc:strength] card. A [team:x-factor-investigations] card. A card that costs 4. A card that costs 5."
@@ -618,7 +598,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-grim-tracker.webp",
           "abilities": [
             "Choose a number 1 or more. [keyword:Investigate] for a card of that cost."
           ]
@@ -634,7 +613,6 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-endless-endurance.webp",
           "abilities": [
             "When you draw a new hand of cards at the end of this turn, draw two extra cards."
           ]
@@ -650,7 +628,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-dangerous-maneuver.webp",
           "abilities": [
             "[keyword:Tactical Formation] 225: You get +1[icon:attack]."
           ]
@@ -666,7 +643,6 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-warpath-superhuman-senses.webp",
           "abilities": [
             "Whenever you “reveal“ or “look at“ any number of cards from your deck this turn, you get +1[icon:attack]. (Just drawing or discarding a card from your deck doesn't count.)",
             "Choose a number 1 or more. [keyword:Investigate] for a card of that cost."
@@ -731,7 +707,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-echolocation.webp",
           "abilities": [
             "Choose a Hero Class. [keyword:Investigate] for a card of that Hero Class."
           ]
@@ -747,7 +722,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-hypnotic-call.webp",
           "abilities": [
             "[hc:covert]: [keyword:Shatter] each Hero currently in the HQ whose printed cost is 2, 4, 6, and/or 8."
           ]
@@ -763,7 +737,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-three-octave-arpeggio.webp",
           "abilities": [
             "[keyword:Tactical Formation] 246: [keyword:Shatter] all Villains."
           ]
@@ -779,7 +752,6 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-siryn-splintering-shriek.webp",
           "abilities": [
             "[keyword:Shatter] the Mastermind. KO up to two cards from your hand and/or discard pile."
           ]
@@ -843,7 +815,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-underground-cave-in.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Shatter] a Villain in the Sewers."
           ]
@@ -859,7 +830,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-unearth-tectonic-power.webp",
           "abilities": [
             "[keyword:Investigate] for a card that's [hc:ranged] and/or [hc:instinct]."
           ]
@@ -875,7 +845,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-trace-the-fault-lines.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Investigate] for a card that costs 0. KO it or discard it."
           ]
@@ -891,7 +860,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msmc/msmc-hr-rictor-massive-earthquake.webp",
           "abilities": [
             "[keyword:Shatter] the Mastermind  or [keyword:Shatter] all Heroes currently in the HQ."
           ]

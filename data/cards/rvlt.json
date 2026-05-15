@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-captain-marvel-agent-of-shield-the-sword-of-shield.webp",
           "abilities": [
             "[team:shield][team:shield][team:shield][team:shield]: Draw a card."
           ]
@@ -42,7 +41,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-captain-marvel-agent-of-shield-radiant-blast.webp",
           "abilities": [
             "If you drew any extra cards this turn, you get +1[icon:attack]."
           ]
@@ -58,7 +56,6 @@
           "cost": 6,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-captain-marvel-agent-of-shield-dominate-the-battlefield.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Last Stand]"
           ]
@@ -74,7 +71,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-captain-marvel-agent-of-shield-higher-further-faster.webp",
           "abilities": [
             "Choose one: Draw three cards or [keyword:Last Stand].",
             "[hc:strength][hc:strength]: Instead, do both."
@@ -139,7 +135,6 @@
           "cost": 3,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-darkhawk-balance-the-darkforce.webp",
           "abilities": [
             "[hc:tech]: Draw a card."
           ]
@@ -155,7 +150,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-darkhawk-hawk-dive.webp",
           "abilities": [
             "Choose [icon:recruit] or [icon:attack]. Then [keyword:Hyperspeed 4] for that icon."
           ]
@@ -171,7 +165,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-darkhawk-travel-to-nullspace.webp",
           "abilities": [
             "If the most recent Hero you played this turn has a [icon:recruit] icon, you get +3[icon:recruit]. If it has an [icon:attack] icon, you get +3[icon:attack]. (If both, you get both.)"
           ]
@@ -187,7 +180,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-darkhawk-warflight.webp",
           "abilities": [
             "Whenever you [keyword:Hyperspeed] this turn, you get both [icon:recruit] from [icon:recruit] icons and [icon:attack] from [icon:attack] icons.",
             "[keyword:Hyperspeed 7]",
@@ -253,7 +245,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-hellcat-catlike-agility.webp",
           "abilities": [
             "[hc:instinct]: Choose one - Draw a card or you get +1[icon:attack]."
           ]
@@ -269,7 +260,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-hellcat-part-time-pi.webp",
           "abilities": [
             "Reveal the top card of any deck. If it's not a Scheme Twist, you may put it on the bottom of that deck.",
             "[hc:instinct]: Choose one - Draw a card or you get +1[icon:recruit]."
@@ -286,7 +276,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-hellcat-demon-sight.webp",
           "abilities": [
             "Guess Villain, Bystander, Strike, or Twist. Then reveal the top card of the Villain Deck. If you guessed right, you get +2[icon:attack].",
             "[team:avengers]: If it was a Villain, you may fight it this turn."
@@ -303,7 +292,6 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-hellcat-second-chance-at-life.webp",
           "abilities": [
             "If a Master Strike or Scheme Twist would occur, you may discard this card from your hand instead. If you do, draw three cards, then shuffle that Strike or Twist back into the Villain Deck."
           ]
@@ -367,7 +355,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-photon-infrared-conversation.webp",
           "abilities": [
             "To play this, you must discard a card. Draw two cards."
           ]
@@ -383,7 +370,6 @@
           "cost": 4,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-photon-ultraviolet-radiation.webp",
           "abilities": [
             "To play this, you must discard a card.",
             "[hc:ranged]: [keyword:Hyperspeed 3]"
@@ -400,7 +386,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-photon-light-the-way.webp",
           "abilities": [
             "You get +1[icon:attack] for each card you discarded from your hand this turn."
           ]
@@ -416,7 +401,6 @@
           "cost": 8,
           "attack": "6+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-photon-coruscating-vengeance.webp",
           "abilities": [
             "[team:avengers][team:avengers]: [keyword:Last Stand]"
           ]
@@ -480,7 +464,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-quicksilver-too-fast-to-see.webp",
           "abilities": [
             "[keyword:Hyperspeed 3] for[icon:recruit].",
             "[hc:instinct]: Instead, [keyword:Hyperspeed 3] for [icon:recruit] and [icon:attack]."
@@ -497,7 +480,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-quicksilver-perpetual-motion.webp",
           "abilities": [
             "[hc:strength]: [keyword:Hyperspeed 4]"
           ]
@@ -513,7 +495,6 @@
           "cost": 6,
           "attack": "2",
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-quicksilver-jittery-impatience.webp",
           "abilities": [
             "Look at the top card of your deck. Discard it or put it back.",
             "[hc:instinct]: You may KO the card you discarded this way."
@@ -530,7 +511,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-quicksilver-around-the-world-punch.webp",
           "abilities": [
             "[keyword:Hyperspeed] your entire remaining deck. (Don't reshuffle.)",
             "[team:avengers][team:avengers][team:avengers][team:avengers]: Before you do that, put your discard pile on top of your deck."
@@ -595,7 +575,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-ronin-mysterious-identity.webp",
           "abilities": [
             "As you play this card, you may choose a color and/or a team icon. This card is that color and team icon this turn. (instead of [hc:covert] and [team:avengers])"
           ]
@@ -611,7 +590,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-ronin-storm-of-arrows.webp",
           "abilities": [
             "[keyword:Hyperspeed 4]",
             "[hc:ranged]: Draw a card."
@@ -628,7 +606,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-ronin-haunted-by-loss.webp",
           "abilities": [
             "[hc:instinct]: [keyword:Dark Memories]"
           ]
@@ -644,7 +621,6 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-ronin-brooding-fury.webp",
           "abilities": [
             "[keyword:Dark Memories]",
             "[hc:strength]: [keyword:Dark Memories] again."
@@ -709,7 +685,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-scarlet-witch-hex-bolt.webp",
           "abilities": [
             "[hc:ranged]: Discard the top card of any player's deck. You may play a copy of that card this turn."
           ]
@@ -725,7 +700,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-scarlet-witch-alter-reality.webp",
           "abilities": [
             "Reveal the top card of your deck. Discard it or put it back.",
             "[hc:covert]: [keyword:Dark Memories]"
@@ -742,7 +716,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-scarlet-witch-chaos-magic.webp",
           "abilities": [
             "Reveal the top card of the Hero Deck. You may play a copy of that card this turn. When you do, put that card on the bottom of the Hero Deck."
           ]
@@ -758,7 +731,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-scarlet-witch-warp-time-and-space.webp",
           "abilities": [
             "Reveal the top three cards of the Hero Deck. Put one of them in your hand. Put the rest on the top or bottom of the Hero Deck in any order.",
             "[hc:covert][hc:covert][hc:covert]: [keyword:Dark Memories]"
@@ -823,7 +795,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-speed-accelerate.webp",
           "abilities": [
             "[keyword:Hyperspeed 2]",
             "[hc:instinct]: Instead, [keyword:Hyperspeed 6]"
@@ -840,7 +811,6 @@
           "cost": 4,
           "attack": "1",
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-speed-speedy-delivery.webp",
           "abilities": [
             "The next Hero you recruit this turn goes on top of your deck."
           ]
@@ -856,7 +826,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-speed-race-to-the-rescue.webp",
           "abilities": [
             "Choose a Hero Class. ([hc:strength],[hc:instinct],[hc:covert],[hc:tech] or [hc:ranged]) Reveal the top card of your deck. If it's the Hero Class you named, draw it. Otherwise, put it back on the top or bottom."
           ]
@@ -872,7 +841,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-speed-break-the-sound-barrier.webp",
           "abilities": [
             "Look at the top six cards of your deck, draw two of them, and put the rest back on the top or bottom in any order.",
             "[hc:covert]: [keyword:Hyperspeed 6]"
@@ -937,7 +905,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-war-machine-simulated-target-practice.webp",
           "abilities": [
             "[hc:tech]: You may fight a Henchman from your Victory Pile this turn. If you do, KO it and rescue a Bystander. (Do that Henchman's Fight effect too.)"
           ]
@@ -953,7 +920,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-war-machine-military-industrial-complex.webp",
           "abilities": [
             "Whenever you defeat a Villain this turn, you get +1[icon:recruit]."
           ]
@@ -969,7 +935,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-war-machine-hypersonic-cannon.webp",
           "abilities": [
             "[keyword:Hyperspeed 5]",
             "[hc:ranged]: You may KO a card from your discard pile."
@@ -986,7 +951,6 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hr-war-machine-overwhelming-firepower.webp",
           "abilities": [
             "Whenever you defeat a Villain or Mastermind this turn, draw a card and rescue a Bystander."
           ]

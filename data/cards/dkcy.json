@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-high-speed-chase.webp",
           "abilities": [
             "Draw two cards, then discard a card."
           ]
@@ -42,7 +41,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-diving-catch.webp",
           "abilities": [
             "When a card effect causes you to discard this card, rescue a Bystander and draw two cards."
           ]
@@ -58,7 +56,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-drop-off-a-friend.webp",
           "abilities": [
             "You may discard a card. You get +[icon:attack] equal to that card's [icon:vp]."
           ]
@@ -74,7 +71,6 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-angel-strength-of-spirit.webp",
           "abilities": [
             "Discard any number of cards. Draw that many cards."
           ]
@@ -138,7 +134,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-whatever-the-cost.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: You may KO a card from your hand or discard pile."
@@ -155,7 +150,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-absorb-energies.webp",
           "abilities": [
             "Whenever a card you own is KO'd this turn, you get +2[icon:recruit]."
           ]
@@ -171,7 +165,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-concussive-blast.webp",
           "abilities": [
             "[hc:ranged][hc:ranged]: You get +3[icon:attack]."
           ]
@@ -187,7 +180,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-bishop-firepower-from-the-future.webp",
           "abilities": [
             "Discard the top four cards of your deck. You get +[icon:attack] equal to those cards' printed [icon:attack].",
             "[team:x-men]: KO any number of those cards."
@@ -252,7 +244,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-stalk-the-prey.webp",
           "abilities": [
             "You may move a Villain to an adjacent city space. If another Villain is already there, swap them."
           ]
@@ -268,7 +259,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-night-hunter.webp",
           "abilities": [
             "Whenever you defeat a Villain in the Sewers or Rooftops this turn, you get +2[icon:recruit]."
           ]
@@ -284,7 +274,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-nowhere-to-hide.webp",
           "abilities": [
             "Whenever you defeat a Villain in the Sewers or Rooftops this turn, draw two cards."
           ]
@@ -300,7 +289,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-blade-vampiric-surge.webp",
           "abilities": [
             "You get +1[icon:attack] for each Villain in your Victory Pile."
           ]
@@ -364,7 +352,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-disaster-survivalist.webp",
           "abilities": [
             "When a Master Strike is played, before it takes effect, you may discard this card. If you do, draw three extra cards at the end of this turn."
           ]
@@ -380,7 +367,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-strike-at-the-heart-of-evil.webp",
           "abilities": [
             "You get +2[icon:attack] only when fighting Masterminds."
           ]
@@ -396,7 +382,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-rapid-response-force.webp",
           "abilities": [
             "[keyword:Teleport]",
             "[team:x-force]: You get +1[icon:attack] for each other [team:x-force] Hero you played this turn."
@@ -413,7 +398,6 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-cable-army-of-one.webp",
           "abilities": [
             "KO any number of cards from your hand. You get +1[icon:attack] for each card KO'd this way."
           ]
@@ -477,7 +461,6 @@
           "cost": 1,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-draw-their-fire.webp",
           "abilities": [
             "You gain a Wound."
           ]
@@ -493,7 +476,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-invulnerability.webp",
           "abilities": [
             "If you would gain a Wound, you may discard this card instead. If you do, draw two cards."
           ]
@@ -509,7 +491,6 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-silent-statue.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:attack]."
           ]
@@ -525,7 +506,6 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-colossus-russian-heavy-tank.webp",
           "abilities": [
             "If another player would gain a Wound, you may reveal this card to gain that Wound and draw a card."
           ]
@@ -589,7 +569,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-backflip.webp",
           "abilities": [
             "When you play Backflip, the next Hero you recruit this turn goes on top of your deck."
           ]
@@ -605,7 +584,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-radar-sense.webp",
           "abilities": [
             "Choose a number, then reveal the top card of your deck. If the card is that [icon:vp], you get +2[icon:attack]."
           ]
@@ -621,7 +599,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-blind-justice.webp",
           "abilities": [
             "Choose a number, then reveal the top card of your deck. If the card is that [icon:vp], draw it."
           ]
@@ -637,7 +614,6 @@
           "cost": 8,
           "attack": "7",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-daredevil-the-man-without-fear.webp",
           "abilities": [
             "Choose a number, then reveal the top card of your deck. If the card is that [icon:vp], draw it and repeat this process."
           ]
@@ -701,7 +677,6 @@
           "cost": 1,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-lucky-break.webp",
           "abilities": [
             "Draw a card.",
             "[team:x-force]: [keyword:Versatile 1]"
@@ -718,7 +693,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-ready-for-anything.webp",
           "abilities": [
             "[keyword:Versatile 2]"
           ]
@@ -734,7 +708,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-specialized-ammunition.webp",
           "abilities": [
             "You may discard a card from your hand. If that card had a [icon:recruit] icon, you get +4[icon:recruit]. If that card had an [icon:attack] icon, you get +4[icon:attack]."
           ]
@@ -750,7 +723,6 @@
           "cost": 7,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-domino-against-all-odds.webp",
           "abilities": [
             "[keyword:Versatile 5]",
             "[team:x-force]: This card and each other Versatile ability you use for the rest of this turn produces both [icon:recruit] and [icon:attack]."
@@ -815,7 +787,6 @@
           "cost": 1,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-first-strike.webp",
           "abilities": [
             "If this is the first card you played this turn, you get +1[icon:attack]."
           ]
@@ -831,7 +802,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-ninjitsu.webp",
           "abilities": [
             "Draw a card.",
             "[hc:covert]: You get +2[icon:recruit]."
@@ -848,7 +818,6 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-sai-blades.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero you played this turn that costs 1[icon:vp] or 2[icon:vp]."
           ]
@@ -864,7 +833,6 @@
           "cost": 7,
           "attack": null,
           "recruit": "5+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-elektra-silent-meditation.webp",
           "abilities": [
             "When you play Silent Meditation, the next Hero you recruit this turn goes into your hand.",
             "[team:marvel-knights]: You get +2[icon:recruit]."
@@ -929,7 +897,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-dirty-work.webp",
           "abilities": [
             "[hc:tech]: Any Villain you fight in the Sewers this turn gets -2[icon:attack]."
           ]
@@ -945,7 +912,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-reboot.webp",
           "abilities": [
             "[hc:tech]: You may discard a card. If you do, draw two cards."
           ]
@@ -961,7 +927,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-overdrive.webp",
           "abilities": [
             "[keyword:Versatile 3]"
           ]
@@ -977,7 +942,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-forge-b-f-g.webp",
           "abilities": [
             "[hc:tech][hc:tech]: Defeat the Mastermind once for free."
           ]
@@ -1041,7 +1005,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-infernal-chains.webp",
           "abilities": [
             "Draw a card.",
             "[hc:strength]: Defeat a Villain of 3[icon:attack] or less for free."
@@ -1058,7 +1021,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-hell-on-wheels.webp",
           "abilities": [
             "[team:marvel-knights]: You get +2[icon:recruit]."
           ]
@@ -1074,7 +1036,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-blazing-hellfire.webp",
           "abilities": [
             "You may KO a Villain from your Victory Pile. If you do, you get +3[icon:attack]."
           ]
@@ -1090,7 +1051,6 @@
           "cost": 8,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-ghost-rider-penance-stare.webp",
           "abilities": [
             "Each player KOs a Villain from their Victory Pile. You get +1[icon:attack] for each Villain KO'd this way.",
             "[team:marvel-knights]: Put one of those Villains into your Victory Pile."
@@ -1155,7 +1115,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-deep-freeze.webp",
           "abilities": [
             "Draw a card.",
             "[hc:ranged]: You get +1[icon:recruit] for each other [hc:ranged] Hero you played this turn."
@@ -1172,7 +1131,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-ice-slide.webp",
           "abilities": [
             "[hc:ranged]: You get +1[icon:attack] for each other [hc:ranged] Hero you played this turn."
           ]
@@ -1188,7 +1146,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-frost-spike-armor.webp",
           "abilities": [
             "[hc:ranged]: Draw a card for each [hc:ranged] Hero you played this turn."
           ]
@@ -1204,7 +1161,6 @@
           "cost": 8,
           "attack": "7",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iceman-impenetrable-ice-wall.webp",
           "abilities": [
             "If a Villain, Master Strike, or Mastermind Tactic would cause you to gain any Wounds or discard any cards, you may reveal this card instead."
           ]
@@ -1268,7 +1224,6 @@
           "cost": 1,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-ancient-legacy.webp",
           "abilities": [
             "Draw a card.",
             "[hc:strength][hc:strength]: [keyword:Versatile 2]"
@@ -1285,7 +1240,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-focus-chi.webp",
           "abilities": [
             "You get +1[icon:recruit] for each Hero with a different [icon:vp] you have."
           ]
@@ -1301,7 +1255,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-wield-the-iron-fist.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero with a different [icon:vp] you have."
           ]
@@ -1317,7 +1270,6 @@
           "cost": 9,
           "attack": "8",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-iron-fist-living-weapon.webp",
           "abilities": [
             "Reveal cards from your deck until you have revealed two cards with the same [icon:vp]. Draw all the cards you revealed."
           ]
@@ -1381,7 +1333,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-psychic-search.webp",
           "abilities": [
             "[team:x-men]: Rescue a Bystander."
           ]
@@ -1397,7 +1348,6 @@
           "cost": 5,
           "attack": null,
           "recruit": "3+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-read-your-thoughts.webp",
           "abilities": [
             "Whenever you rescue a Bystander this turn, you get +1[icon:recruit]."
           ]
@@ -1413,7 +1363,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-mind-over-matter.webp",
           "abilities": [
             "Whenever you rescue a Bystander this turn, draw a card."
           ]
@@ -1429,7 +1378,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-jean-grey-telekinetic-mastery.webp",
           "abilities": [
             "Whenever you rescue a Bystander this turn, you get +1[icon:attack].",
             "[team:x-men]: Rescue a Bystander for each other [team:x-men] Hero you played this turn."
@@ -1494,7 +1442,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-bamf.webp",
           "abilities": [
             "[keyword:Teleport]"
           ]
@@ -1510,7 +1457,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-blend-into-shadows.webp",
           "abilities": [
             "[keyword:Teleport]"
           ]
@@ -1526,7 +1472,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-swashbuckler.webp",
           "abilities": [
             "[hc:instinct][hc:covert]: You get +3[icon:attack]."
           ]
@@ -1542,7 +1487,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-nightcrawler-along-for-the-ride.webp",
           "abilities": [
             "[keyword:Teleport]",
             "When you play or [keyword:Teleport] this card, you may also [keyword:Teleport] up to three other cards from your hand."
@@ -1607,7 +1551,6 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-psionic-astral-form.webp",
           "abilities": [
             "[team:x-men]: You get +2[icon:attack]."
           ]
@@ -1623,7 +1566,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-class-dismissed.webp",
           "abilities": [
             "You may put a Hero from the HQ on the bottom of the Hero Deck.",
             "[hc:instinct]: You may KO a card from your hand or discard pile."
@@ -1640,7 +1582,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-telepathic-probe.webp",
           "abilities": [
             "Reveal the top card of the Villain Deck. If it's a Bystander, you may rescue it. If it's a Villain, you may fight it this turn."
           ]
@@ -1656,7 +1597,6 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-professor-x-mind-control.webp",
           "abilities": [
             "Whenever you defeat a Villain this turn, you may gain it. It becomes a grey Hero with no text that gives +[icon:attack] equal to its [icon:attack]. ( You still get its [icon:piercing].)"
           ]
@@ -1720,7 +1660,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-boom-goes-the-dynamite.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 0[icon:vp], KO it.",
             "[hc:tech]: Draw a card."
@@ -1737,7 +1676,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-hostile-interrogation.webp",
           "abilities": [
             "[hc:strength]: Each other player reveals the top card of their deck. If that card costs 4[icon:vp] or more, discard it. You get +1[icon:recruit] for each card discarded this way."
           ]
@@ -1753,7 +1691,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-hail-of-bullets.webp",
           "abilities": [
             "Reveal the top card of the Villain Deck. If it's a Villain, you get +[icon:attack] equal to its printed [icon:piercing].",
             "[hc:tech][hc:tech]: You may defeat that Villain for free."
@@ -1770,7 +1707,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-punisher-the-punisher.webp",
           "abilities": [
             "Reveal cards from the Hero Deck until you have revealed two cards with the same [icon:vp]. You get +1[icon:attack] for each card revealed this way. Put them on the bottom of the Hero Deck in random order."
           ]
@@ -1834,7 +1770,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-animal-instincts.webp",
           "abilities": [
             "Draw a card.",
             "[hc:instinct]: You get +2[icon:attack]."
@@ -1851,7 +1786,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-sudden-ambush.webp",
           "abilities": [
             "If you drew any extra cards this turn, you get +2[icon:attack]."
           ]
@@ -1867,7 +1801,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-no-mercy.webp",
           "abilities": [
             "Draw a card.",
             "You may KO a card from your hand or discard pile."
@@ -1884,7 +1817,6 @@
           "cost": 7,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hr-wolverine-reckless-abandon.webp",
           "abilities": [
             "Count the number of extra cards you drew this turn. Draw that many cards."
           ]

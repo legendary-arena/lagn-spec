@@ -16546,4 +16546,43 @@ critical competitive-score path cannot be blocked by badge issues.
 
 ---
 
+### D-15101 — `HeroCardSchema.imageUrl` Removal
+
+**Decision:** Remove `imageUrl` from `HeroCardSchema`. The D-13802 /
+D-14103 transition window is now closed. `physicalCards[].imageUrl`
+(via `heroImageUrl()`) is the sole hero image source across the entire
+stack. Both registry and viewer `flattenSet()` implementations build a
+`sideToImageUrl` map from `hero.physicalCards[]` to resolve hero card
+image URLs. No `card.imageUrl` fallback exists for heroes.
+**Rationale:** WP-141 completed the consumer migration. All engine and
+viewer consumers read hero image URLs from `physicalCards[]`. The
+per-side `HeroCardSchema.imageUrl` field was dead data — retaining it
+adds schema noise and misleads future consumers. Non-hero schemas
+(`MastermindCardSchema`, `VillainCardSchema`, `SchemeSchema`,
+`PhysicalCardSchema`) retain `imageUrl` unchanged.
+**Introduced:** WP-151
+**Status:** Active
+
+---
+
+### D-15102 — R2 Split-Pair Rename Mapping
+
+**Decision:** The split-pair hero image files on R2 that don't match
+the `heroImageUrl()` combined-name pattern are identified
+programmatically from the card JSON data. The rename mapping script
+(`scripts/rename-r2-split-pairs.mjs`) emits 39 target keys; operator
+matches against R2 bucket listing and executes rclone `moveto` commands
+manually. Source filenames are not deterministically derivable from card
+data alone (old cost-based pattern), so only targets are emitted.
+**Rationale:** Split-pair hero images on R2 still use filenames from
+the pre-v16 era. The combined-name pattern (e.g.,
+`bkwd-hr-falcon-winter-soldier-attune-atone.webp`) is now the canonical
+convention. Programmatic target derivation from card data + `heroImageUrl()`
+is reproducible; manual source matching from `rclone ls` is the safest
+approach given the deterministic-mapping constraint.
+**Introduced:** WP-151
+**Status:** Active
+
+---
+
 Protect this file.

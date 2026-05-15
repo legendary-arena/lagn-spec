@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-black-widow-dangerous-rescue.webp",
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander."
           ]
@@ -42,7 +41,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-black-widow-mission-accomplished.webp",
           "abilities": [
             "Draw a Card.",
             "[hc:tech]: Rescue a Bystander."
@@ -59,7 +57,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-black-widow-covert-operation.webp",
           "abilities": [
             "You get +1[icon:attack] for each Bystander in your Victory Pile."
           ]
@@ -75,7 +72,6 @@
           "cost": 7,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-black-widow-silent-sniper.webp",
           "abilities": [
             "Defeat a Villain or Mastermind that has a Bystander."
           ]
@@ -139,7 +135,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-captain-america-avengers-assemble.webp",
           "abilities": [
             "You get +1[icon:recruit] for each color of Hero you have."
           ]
@@ -155,7 +150,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-captain-america-perfect-teamwork.webp",
           "abilities": [
             "You get +1[icon:attack] for each color of Hero you have."
           ]
@@ -171,7 +165,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-captain-america-diving-block.webp",
           "abilities": [
             "If you would gain a Wound, you may reveal this card and draw a card instead."
           ]
@@ -187,7 +180,6 @@
           "cost": 7,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-captain-america-a-day-unlike-any-other.webp",
           "abilities": [
             "[team:avengers]: You get +3[icon:attack] for each other [team:avengers] you played this turn."
           ]
@@ -251,7 +243,6 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hawkeye-quick-draw.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -267,7 +258,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hawkeye-team-player.webp",
           "abilities": [
             "[team:avengers]: You get +1[icon:attack]."
           ]
@@ -283,7 +273,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hawkeye-covering-fire.webp",
           "abilities": [
             "[hc:tech]: Choose one: each other player draws a card or each other player discards a card."
           ]
@@ -299,7 +288,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hawkeye-impossible-trick-shot.webp",
           "abilities": [
             "Whenever you defeat a Villain or Mastermind this turn, rescue three Bystanders."
           ]
@@ -363,7 +351,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hulk-growing-anger.webp",
           "abilities": [
             "[hc:strength]: You get +1[icon:attack]."
           ]
@@ -379,7 +366,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hulk-unstoppable-hulk.webp",
           "abilities": [
             "You may KO a Wound from your hand or discard pile. If you do, you get +2[icon:attack]."
           ]
@@ -395,7 +381,6 @@
           "cost": 5,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hulk-crazed-rampage.webp",
           "abilities": [
             "Each player gains a Wound."
           ]
@@ -411,7 +396,6 @@
           "cost": 8,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-hulk-hulk-smash.webp",
           "abilities": [
             "[hc:strength]: You get +5[icon:attack]."
           ]
@@ -475,7 +459,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-iron-man-endless-invention.webp",
           "abilities": [
             "Draw a card.",
             "[hc:tech]: Draw another card."
@@ -492,7 +475,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-iron-man-repulsor-rays.webp",
           "abilities": [
             "[hc:ranged]: You get +1[icon:attack]."
           ]
@@ -508,7 +490,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-iron-man-arc-reactor.webp",
           "abilities": [
             "[hc:tech]: You get +1[icon:attack] for each other[hc:tech] Hero you played this turn."
           ]
@@ -524,7 +505,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-iron-man-quantum-breakthrough.webp",
           "abilities": [
             "Draw two cards.",
             "[hc:tech]: Draw two more cards."
@@ -589,7 +569,6 @@
           "cost": 4,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-nick-fury-battlefield-promotion.webp",
           "abilities": [
             "You may KO a [team:shield] Hero from your hand or discard pile. If you do, you may gain a S.H.I.E.L.D. Officer to your hand."
           ]
@@ -605,7 +584,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-nick-fury-high-tech-weaponry.webp",
           "abilities": [
             "[hc:tech]: You get +1[icon:attack]."
           ]
@@ -621,7 +599,6 @@
           "cost": 6,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-nick-fury-legendary-commander.webp",
           "abilities": [
             "You get +1[icon:attack] for each other[team:shield] Hero you played this turn."
           ]
@@ -637,7 +614,6 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-nick-fury-pure-fury.webp",
           "abilities": [
             "Defeat any Villain or Mastermind whose [icon:attack] is less than the number of [team:shield] Heroes in the KO pile."
           ]
@@ -701,7 +677,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-thor-odinson.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:recruit]."
           ]
@@ -717,7 +692,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-thor-surge-of-power.webp",
           "abilities": [
             "If you made 8 or more [icon:recruit] this turn, you get +3[icon:attack]."
           ]
@@ -733,7 +707,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-thor-call-lightning.webp",
           "abilities": [
             "[hc:ranged]: You get +3[icon:attack]."
           ]
@@ -749,7 +722,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": "5",
-          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-hr-thor-god-of-thunder.webp",
           "abilities": [
             "You can use [icon:recruit] as [icon:attack] this turn."
           ]

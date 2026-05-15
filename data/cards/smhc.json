@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-happy-hogan-head-of-security.webp",
           "abilities": [
             "[keyword:Coordinate]",
             "KO all Wounds you gained this turn."
@@ -43,7 +42,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-happy-hogan-watchful-eye.webp",
           "abilities": [
             "[hc:instinct]: [keyword:Danger Sense 2]. If this revealed any Master Strikes, KO those Strikes, then you may KO a card from your hand or discard pile."
           ]
@@ -59,7 +57,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-happy-hogan-loyal-friend.webp",
           "abilities": [
             "[keyword:Coordinate]",
             "[keyword:Striker]"
@@ -76,7 +73,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-happy-hogan-asset-management.webp",
           "abilities": [
             "[keyword:Double Striker]"
           ]
@@ -140,7 +136,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-high-tech-spider-man-advanced-targeting-system.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 2 or less, draw it.",
             "[hc:covert]: Draw a card."
@@ -157,7 +152,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-high-tech-spider-man-recon-drone-connection.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Danger Sense 3]"
@@ -174,7 +168,6 @@
           "cost": 2,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-high-tech-spider-man-spider-grip.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[hc:tech]: Choose two Villains in adjacent city spaces. Each of them gets -1[icon:attack] this turn."
@@ -191,7 +184,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-high-tech-spider-man-friendly-neighborhood.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Coordinate]",
@@ -257,7 +249,6 @@
           "cost": 2,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-peter-parker-homecoming-avenger-in-training.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[hc:instinct]: [keyword:Danger Sense 1]. If this revealed a Villain, you may fight it."
@@ -274,7 +265,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-peter-parker-homecoming-heightened-senses.webp",
           "abilities": [
             "[keyword:Danger Sense 2]",
             "Reveal the top card of your deck. If it costs 2 or less, draw it."
@@ -291,7 +281,6 @@
           "cost": 2,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-peter-parker-homecoming-homemade-web-shooters.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[hc:tech]: [keyword:Danger Sense 1]. If this revealed a Bystander, rescue it."
@@ -308,7 +297,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-peter-parker-homecoming-something-is-happening.webp",
           "abilities": [
             "[keyword:Wall-Crawl]",
             "[keyword:Coordinate]",
@@ -374,7 +362,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-peters-allies-ned.webp",
           "abilities": [
             "[keyword:Coordinate]",
             "[hc:covert]: You get +2[icon:recruit]."
@@ -391,7 +378,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-peters-allies-michelle.webp",
           "abilities": [
             "You may choose a Villain or Mastermind. You can fight it using only [icon:recruit] this turn."
           ]
@@ -407,7 +393,6 @@
           "cost": 6,
           "attack": null,
           "recruit": "4",
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-peters-allies-liz.webp",
           "abilities": [
             "Whenever you [keyword:Coordinate] a card to another player, you may reveal this to draw two cards instead of one."
           ]
@@ -423,7 +408,6 @@
           "cost": 7,
           "attack": null,
           "recruit": "5",
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-peters-allies-may-parker.webp",
           "abilities": [
             "[keyword:Coordinate]",
             "[team:spider-friends]: Each Villain gets -2[icon:attack] this turn. The next time you fight the Mastermind this turn, it gets -2[icon:attack]."
@@ -488,7 +472,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-tony-stark-genius-billionaire.webp",
           "abilities": [
             "[keyword:Coordinate]"
           ]
@@ -504,7 +487,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-tony-stark-stay-out-of-trouble.webp",
           "abilities": [
             "[keyword:Coordinate]",
             "[hc:tech]: [keyword:Danger Sense 2]"
@@ -521,7 +503,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-tony-stark-little-grey-area.webp",
           "abilities": [
             "[team:avengers]: [keyword:Danger Sense 1]. If this revealed a Villain, then Villains from that same Villain Group get -1[icon:attack] this turn."
           ]
@@ -537,7 +518,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/smhc/smhc-hr-tony-stark-as-usual-i-did-all-the-work.webp",
           "abilities": [
             "[keyword:Coordinate]",
             "If another player accepts this [keyword:Coordinate], then at the end of this turn, move all cards that entered that player's Victory Pile this turn into your Victory Pile."

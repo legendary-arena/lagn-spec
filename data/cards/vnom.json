@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-rending-claws.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Draw a card."
           ]
@@ -42,7 +41,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-carnivore.webp",
           "abilities": [
             "[keyword:Digest 4]: Draw two cards.",
             "[keyword:Indigestion]: You get +2[icon:recruit]."
@@ -59,7 +57,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-gruesome-feast.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. You may KO it."
           ]
@@ -75,7 +72,6 @@
           "cost": 8,
           "attack": "6",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-carnage-feast-or-famine.webp",
           "abilities": [
             "[keyword:Excessive Violence]: Reveal the top card of your deck. If it costs 0, KO it and you may repeat this process."
           ]
@@ -139,7 +135,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-devouring-drool.webp",
           "abilities": [
             "[keyword:Digest 3]: You get +2[icon:attack].",
             "[keyword:Indigestion]: You get +2[icon:recruit].",
@@ -157,7 +152,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-razor-teeth.webp",
           "abilities": [
             "[keyword:Excessive Violence]: You get +2[icon:recruit]."
           ]
@@ -173,7 +167,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-symbiotic-adaptation.webp",
           "abilities": [
             "Choose one:",
             "- You get +1[icon:recruit] for each other card you played this turn with a [icon:recruit] icon.",
@@ -191,7 +184,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-insatiable-hunger.webp",
           "abilities": [
             "[keyword:Digest 8]: KO a card from your Victory Pile. You get +6[icon:attack].",
             "[keyword:Indigestion]: KO a card from your hand or discard pile. You get +6[icon:recruit].",
@@ -257,7 +249,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-hungry-for-action.webp",
           "abilities": [
             "[keyword:Digest 3]: You may discard a card. If you do, draw a card."
           ]
@@ -273,7 +264,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-spring-the-trap.webp",
           "abilities": [
             "If a Master Strike or Villain that has an Ambush ability was played this turn, you get +1[icon:attack]."
           ]
@@ -289,7 +279,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-serious-overkill.webp",
           "abilities": [
             "[keyword:Excessive Violence]: You may KO a card from your hand or discard pile."
           ]
@@ -305,7 +294,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venom-rocket-ultimate-survivor.webp",
           "abilities": [
             "When a Master Strike is played, before it takes effect, you may put Ultimate Survivor from your hand on top of your deck. If you do, you may put any card from the HQ into your hand."
           ]
@@ -369,7 +357,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-cauldron-of-the-cosmos.webp",
           "abilities": [
             "[keyword:Digest 2]: Draw a card."
           ]
@@ -385,7 +372,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-see-future-timelines.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top card of your deck. If it costs 0, discard it and you get +2[icon:attack]."
           ]
@@ -401,7 +387,6 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-complete-the-grand-ritual.webp",
           "abilities": [
             "If you played a 4-cost card and a 2-cost card this turn, you get +2[icon:attack]."
           ]
@@ -417,7 +402,6 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venomized-dr-strange-crystal-of-kadavus.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw one of them, discard one, and KO one.",
             "[team:venomverse][team:venomverse]: Do this ability again."
@@ -482,7 +466,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-digest-that-chimichanga.webp",
           "abilities": [
             "[keyword:Digest 2]: You get +2[icon:attack].",
             "[keyword:Indigestion]: “Rescue“ a Bystander.",
@@ -500,7 +483,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-shenanigans.webp",
           "abilities": [
             "Draw two cards. But you can't draw any more cards until the end of this turn."
           ]
@@ -516,7 +498,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-can-i-get-a-little-gratitude.webp",
           "abilities": [
             "Whenever you Rescue a Bystander this turn, do any “rescue“ ability on it an extra time.",
             "[keyword:Excessive Violence]: “Rescue“ a Bystander."
@@ -533,7 +514,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/vnom/vnom-hr-venompool-play-to-the-crowd.webp",
           "abilities": [
             "[keyword:Digest 7]: You get +1[icon:attack] for each two Bystanders in your Victory Pile.",
             "[keyword:Indigestion]: “Rescue“ two Bystanders.",

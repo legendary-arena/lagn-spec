@@ -162,6 +162,12 @@ for (const setAbbr of TARGET_SETS) {
       heroesSkipped++;
     }
 
+    // why: D-15101 — hero card imageUrl removed; physicalCards[].imageUrl
+    // is the sole hero image source. Strip any stale imageUrl from hero cards.
+    for (const card of hero.cards ?? []) {
+      delete card.imageUrl;
+    }
+
     // why: WP-138 Phase 1a — every hero in every outlier set must carry a
     // physicalCards[] (D-13803 uniform model). Phase 1a runs solo-auto-path
     // here because no Phase 1b per-set patches are authored yet for the 4

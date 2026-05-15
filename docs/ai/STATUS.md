@@ -7,6 +7,30 @@
 
 ## Current State
 
+### WP-151 / EC-162 Executed — Physical Card Phase 3: HeroCardSchema.imageUrl Removal (2026-05-15)
+
+**`HeroCardSchema.imageUrl` is removed; `physicalCards[].imageUrl` is the
+sole canonical hero image source.** The D-13802 / D-14103 transition
+window is now closed. Engine-side registry `flattenSet()` hero block
+sources `imageUrl` from a `sideToImageUrl` map built from
+`physicalCards[]` (same algorithm already in viewer since WP-141).
+Dead `card.imageUrl` fallback removed from viewer `flattenSet()`.
+Convert script (`convert-cards-v15.mjs`) no longer emits `imageUrl`
+on hero cards; `apply-card-counts.mjs` strips it from the 4 outlier
+sets. All 40 `data/cards/*.json` regenerated (1322 hero cards lose
+`imageUrl`; non-hero cards + `physicalCards[]` byte-identical except
+1 side-order alignment in bkwd). Operator-facing R2 rename script
+(`rename-r2-split-pairs.mjs`) emits 39 split-pair targets for manual
+rclone execution. `heroImageUrl.ts` and `buildCardDisplayData.ts`
+byte-identical. WP-147 regression fixed: stale line in convert script
+was reverting 315 mastermind imageUrls to legacy DigitalOcean URLs.
+mgtg patch updated with missing `companionSlug` fields and corrected
+sides order. D-15101, D-15102 land.
+
+**Test baselines.** Engine: 705 / 0 UNCHANGED. Registry viewer: UNCHANGED.
+
+---
+
 ### WP-070 / EC-161 Executed — Live Mutation Middleware (2026-05-15)
 
 **Pre-plan disruption now fires automatically when game state changes

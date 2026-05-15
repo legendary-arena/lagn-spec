@@ -26,7 +26,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-come-on-nobody-reads-card-names.webp",
           "abilities": [
             "[keyword:Versatile 1]",
             "[hc:covert]: Instead, [keyword:Versatile 3]."
@@ -43,7 +42,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-ill-rescue-you-if-i-feel-like-it.webp",
           "abilities": [
             "Reveal the top card of the Bystander Deck. If it's a Special Bystander, rescue it. Otherwise, put it on the bottom of that deck."
           ]
@@ -59,7 +57,6 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-i-heard-keywords-are-powerful.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:instinct]",
             "[hc:instinct]: Draw a card.",
@@ -77,7 +74,6 @@
           "cost": 7,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-gwenpool-im-the-best-at-board-games.webp",
           "abilities": [
             "[keyword:Demolish] each other player. For each player that discards a card this way, draw a card."
           ]
@@ -141,7 +137,6 @@
           "cost": 3,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-long-arm-of-the-law.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "Draw a card.",
@@ -159,7 +154,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-big-impact.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "[keyword:Versatile 2]"
@@ -176,7 +170,6 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-need-to-stretch-my-legs.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "[team:champions]: You may KO a card from your hand or discard pile.",
@@ -194,7 +187,6 @@
           "cost": 9,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-ms-marvel-rising-hope.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength], [hc:covert]",
             "[keyword:Versatile 4]",
@@ -260,7 +252,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-space-cop.webp",
           "abilities": [
             "[keyword:Versatile 1]",
             "[team:champions]: Rescue a Bystander."
@@ -277,7 +268,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-interstellar-hero.webp",
           "abilities": [
             "[keyword:Versatile 2]",
             "[keyword:Cheering Crowds]"
@@ -294,7 +284,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-holographic-projection.webp",
           "abilities": [
             "[hc:ranged]: [keyword:Versatile 3]."
           ]
@@ -310,7 +299,6 @@
           "cost": 9,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-nova-growing-nova-force.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:ranged], [hc:strength]",
             "For each other card you played this turn with a [icon:recruit] icon, you get +1[icon:recruit]. For each other card you played this turn with an [icon:attack] icon, you get +1[icon:attack]."
@@ -375,7 +363,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-beloved-behemoth.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "[hc:strength]: The first time you defeat a Villain this turn, rescue a Bystander."
@@ -392,7 +379,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-incredible-mind-awesome-body.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "Draw a card.",
@@ -410,7 +396,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-growing-pains.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "If you have a Wound in your hand or discard pile, KO it and you get +2[icon:attack]. Otherwise, gain a Wound."
@@ -427,7 +412,6 @@
           "cost": 9,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-totally-awesome-hulk-7th-smartest-man-in-the-world.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech], [hc:strength]",
             "You get +1[icon:attack] for each extra card you drew this turn."
@@ -492,7 +476,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-walking-wi-fi.webp",
           "abilities": [
             "[hc:tech]: Whenever you recruit a Hero from the HQ this turn, rescue a Bystander."
           ]
@@ -508,7 +491,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-expanding-neural-network.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "[hc:tech]: When you draw a new hand of cards at the end of this turn, draw an extra card."
@@ -525,7 +507,6 @@
           "cost": 6,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-crowdsourcing.webp",
           "abilities": [
             "[keyword:Versatile 3]",
             "[keyword:Cheering Crowds]"
@@ -542,7 +523,6 @@
           "cost": 9,
           "attack": "0+",
           "recruit": "5",
-          "imageUrl": "https://images.legendary-arena.com/chmp/chmp-hr-viv-vision-alter-molecular-density.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech], [hc:ranged]",
             "Whenever you recruit a Hero this turn, you get +2[icon:attack]."

@@ -26,7 +26,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-evasive-acrobatics.webp",
           "abilities": [
             "[keyword:Dodge]",
             "When you [keyword:Dodge] with or play this card, you may also [keyword:Dodge] with another card from your hand."
@@ -43,7 +42,6 @@
           "cost": 4,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-widows-bite.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[keyword:Dark Memories]"
@@ -60,7 +58,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-weave-a-web-of-spies.webp",
           "abilities": [
             "[keyword:Dodge]",
             "If you drew any cards this turn, you may send one of your other Heroes [keyword:Undercover]."
@@ -77,7 +74,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-black-widow-infiltrate-the-conspiracy.webp",
           "abilities": [
             "You may send one of your Heroes [keyword:Undercover].",
             "You get +3[icon:attack] if you have at least 4 Bystanders and/or Undercover Heroes in your Victory Pile."
@@ -142,7 +138,6 @@
           "cost": 2,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-strike-and-fade.webp",
           "abilities": [
             "Send this [keyword:Undercover]."
           ]
@@ -158,7 +153,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-unveil-identity.webp",
           "abilities": [
             "[hc:instinct]: You may [keyword:Unleash] one of your Heroes from [keyword:Undercover]."
           ]
@@ -174,7 +168,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-twilight-ops.webp",
           "abilities": [
             "[keyword:Dodge]",
             "When you [keyword:Dodge] with this card, you may [keyword:Unleash] one of your Heroes from [keyword:Undercover].",
@@ -192,7 +185,6 @@
           "cost": 8,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-yelena-belova-destroy-the-red-room.webp",
           "abilities": [
             "You may [keyword:Unleash] one of your Heroes from [keyword:Undercover].",
             "You may send a Hero from your discard pile [keyword:Undercover]."
@@ -257,7 +249,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-sleeper-agent.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When you fight a Villain, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -275,7 +266,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-magnetic-shield.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When you recruit another [hc:covert] Hero, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -293,7 +283,6 @@
           "cost": 6,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-death-was-only-a-ruse.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When a Master Strike is completed or any player fights the Mastermind, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -311,7 +300,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-red-guardian-champion-of-the-winter-guard.webp",
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When a Scheme Twist is completed or you play your third [hc:covert] Hero in a turn, you may [keyword:Unleash] this card from [keyword:Undercover].",
@@ -377,7 +365,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-dark-influence-of-the-hand.webp",
           "abilities": [
             "[keyword:Dodge]",
             "[keyword:Dark Memories]."
@@ -394,7 +381,6 @@
           "cost": 4,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-amulets-of-the-tiger-god.webp",
           "abilities": [
             "Reveal the top two cards of your deck. Draw one of them that costs 0 and discard the rest."
           ]
@@ -410,7 +396,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-camouflaged-huntress.webp",
           "abilities": [
             "Whenever you defeat a Henchman this turn, you may KO one of your cards."
           ]
@@ -426,7 +411,6 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-white-tiger-shadowed-resurrection.webp",
           "abilities": [
             "[keyword:Dark Memories], drawing that many cards instead of gaining [icon:attack]."
           ]
@@ -493,7 +477,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "3",
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-attune.webp",
           "abilities": [
             "To play this side, you must discard a card."
           ]
@@ -509,7 +492,6 @@
           "cost": 3,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-atone.webp",
           "abilities": [
             "[keyword:Dark Memories]."
           ]
@@ -525,7 +507,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-relocate.webp",
           "abilities": [
             "[keyword:Dodge].",
             "[hc:instinct]: You get +1[icon:attack]."
@@ -542,7 +523,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-reload.webp",
           "abilities": [
             "[hc:tech]: Draw a card."
           ]
@@ -558,7 +538,6 @@
           "cost": 5,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-new-wings.webp",
           "abilities": [
             "If you discarded any cards this turn, you get +4[icon:attack]."
           ]
@@ -574,7 +553,6 @@
           "cost": 5,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-new-plan.webp",
           "abilities": [
             "Draw two cards."
           ]
@@ -590,7 +568,6 @@
           "cost": 7,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-captain-americas-legacy.webp",
           "abilities": [
             "You get +1[icon:attack] for each Hero Class you have.",
             "[team:avengers]: [keyword:Dark Memories]."
@@ -601,7 +578,7 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-atone-attune.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-attune-atone.webp",
           "sides": [
             "attune",
             "atone"
@@ -610,7 +587,7 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-reload-relocate.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-relocate-reload.webp",
           "sides": [
             "relocate",
             "reload"
@@ -619,7 +596,7 @@
         {
           "id": "p3",
           "count": 3,
-          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-new-plan-new-wings.webp",
+          "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-hr-falcon-winter-soldier-new-wings-new-plan.webp",
           "sides": [
             "new-wings",
             "new-plan"

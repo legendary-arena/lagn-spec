@@ -26,7 +26,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-phase-out.webp",
           "abilities": [
             "[hc:covert]: You may KO a card from your hand or discard pile. If you do, you get +1[icon:attack]."
           ]
@@ -42,7 +41,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-infiltrate-hq.webp",
           "abilities": [
             "You may put a Hero from the HQ on the bottom of the Hero Deck. The Hero that replaces it in the HQ costs 1 less during this turn."
           ]
@@ -58,7 +56,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-disrupt-circuits.webp",
           "abilities": [
             "You get +1 [icon:attack] for each [hc:tech] Hero in the HQ."
           ]
@@ -74,7 +71,6 @@
           "cost": 7,
           "attack": null,
           "recruit": "5",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-apocalyptic-kitty-pryde-untouchable.webp",
           "abilities": [
             "When any player defeats a Villain or Mastermind with a “Fight“ effect, you may discard this card to cancel that fight effect. If you do, draw three cards."
           ]
@@ -138,7 +134,6 @@
           "cost": 3,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-destructive-whisper.webp",
           "abilities": [
             "You get +1[icon:attack] if you reveal four cards with no rules text."
           ]
@@ -154,7 +149,6 @@
           "cost": 4,
           "attack": "1",
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-speak-no-words.webp",
           "abilities": []
         },
         {
@@ -168,7 +162,6 @@
           "cost": 6,
           "attack": "4+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-silence-is-golden.webp",
           "abilities": [
             "Choose a card you played this turn with no rules text. You get its [icon:recruit] and [icon:attack] again."
           ]
@@ -184,7 +177,6 @@
           "cost": 8,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-bolt-hypersonic-scream.webp",
           "abilities": [
             "For each card with no rules text you played this turn, draw a card."
           ]
@@ -248,7 +240,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-catlike-reflexes.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -264,7 +255,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-multifaceted-genius.webp",
           "abilities": [
             "You get +1[icon:attack] for each other multicolored card you played this turn."
           ]
@@ -280,7 +270,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-stalk-the-urban-jungle.webp",
           "abilities": [
             "Whenever you defeat a Villain on the Rooftops or Streets this turn, you may KO one of your cards or a card from your discard pile."
           ]
@@ -296,7 +285,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-black-panther-king-of-wakanda.webp",
           "abilities": [
             "Gain three [rule:Sidekicks].",
             "[team:illuminati]: Put them on top of your deck."
@@ -361,7 +349,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-absorb-energies.webp",
           "abilities": [
             "[hc:ranged]: For each other [hc:ranged] Hero you have played this turn, you get+1[icon:recruit]."
           ]
@@ -377,7 +364,6 @@
           "cost": 3,
           "attack": "1",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-supersonic-flight.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -393,7 +379,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-marvelous-strength.webp",
           "abilities": [
             "[hc:strength]: For each other [hc:strength] Hero you have played this turn, you get +1[icon:attack]."
           ]
@@ -409,7 +394,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-captain-marvel-cosmic-energies.webp",
           "abilities": [
             "[hc:strength][hc:strength][hc:ranged][hc:ranged]: You get +6[icon:attack]."
           ]
@@ -473,7 +457,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-cloak-of-levitation.webp",
           "abilities": [
             "[hc:ranged]: Reveal the top card of your deck. Draw it or [keyword:Teleport] it."
           ]
@@ -489,7 +472,6 @@
           "cost": 2,
           "attack": null,
           "recruit": "1+",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-trust-me-im-a-doctor.webp",
           "abilities": [
             "[team:illuminati]: You may KO a card from your hand or discard pile. If you do, you get +1[icon:recruit]."
           ]
@@ -505,7 +487,6 @@
           "cost": 5,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-fight-the-future.webp",
           "abilities": [
             "[hc:instinct]: Reveal the top card of the Villain Deck. If it's a Villain, you get +2[icon:attack] and may fight that Villain this turn."
           ]
@@ -521,7 +502,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-dr-strange-sorcerer-supreme.webp",
           "abilities": [
             "Reveal the top three cards of your deck. Draw any number of them and [keyword:Teleport] the rest."
           ]
@@ -585,7 +565,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-mysterious-origin.webp",
           "abilities": [
             "Once per turn, if you made at least 6[icon:recruit] this turn, draw a card."
           ]
@@ -601,7 +580,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-chosen-by-asgard.webp",
           "abilities": [
             "Once per turn, if you made at least 6[icon:recruit] this turn, you get +2[icon:attack]."
           ]
@@ -617,7 +595,6 @@
           "cost": 6,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-heir-to-the-hammer.webp",
           "abilities": [
             "[hc:strength][hc:ranged]: You get +2[icon:attack]."
           ]
@@ -633,7 +610,6 @@
           "cost": 8,
           "attack": "0+",
           "recruit": "4",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-lady-thor-living-thunderstorm.webp",
           "abilities": [
             "Once per turn, if you made at least 6[icon:recruit] this turn, you get +6[icon:attack]."
           ]
@@ -697,7 +673,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-rally-the-new-mutants.webp",
           "abilities": [
             "Gain a [rule:Sidekick].",
             "[hc:covert]: Gain another [rule:Sidekick]."
@@ -714,7 +689,6 @@
           "cost": 3,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-travel-through-limbo.webp",
           "abilities": [
             "[keyword:Teleport]",
             "[hc:ranged]: You get +2[icon:attack]."
@@ -731,7 +705,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-dimensional-portal.webp",
           "abilities": [
             "[keyword:Teleport]",
             "For each [rule:Sidekick] you played this turn, you get +1[icon:attack]."
@@ -748,7 +721,6 @@
           "cost": 7,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-magik-wield-the-soulsword.webp",
           "abilities": [
             "[keyword:Teleport]",
             "Choose a Villain or Mastermind in your Victory Pile. You get +[icon:attack] equal to its printed VP."
@@ -813,7 +785,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-mental-domination.webp",
           "abilities": [
             "[hc:covert]: Defeat a Henchman Villain for free"
           ]
@@ -829,7 +800,6 @@
           "cost": 4,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-enslave-the-will.webp",
           "abilities": [
             "[hc:tech]: Whenever you defeat a Villain this turn, you gain a [rule:Sidekick]."
           ]
@@ -845,7 +815,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-pieces-on-a-chessboard.webp",
           "abilities": [
             "You may have a Henchman Villain from your Victory Pile enter the city. If you do, draw a card."
           ]
@@ -861,7 +830,6 @@
           "cost": 7,
           "attack": "4+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-maximus-inhuman-mastery.webp",
           "abilities": [
             "Each other player reveals a[hc:tech] hero or chooses a Henchman Villain from their Victory Pile. You defeat all those Henchmen for free.",
             "[team:cabal]: You get +1[icon:attack]for each Henchman you defeated this turn."
@@ -926,7 +894,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-lead-the-armies-of-atlantis.webp",
           "abilities": [
             "[hc:instinct]: Gain a [rule:Sidekick]."
           ]
@@ -942,7 +909,6 @@
           "cost": 4,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-ruler-of-the-seas.webp",
           "abilities": [
             "[hc:strength]: You get +2[icon:attack], usable only against Villains on the Bridge or the Mastermind."
           ]
@@ -958,7 +924,6 @@
           "cost": 6,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-feed-the-sharks.webp",
           "abilities": [
             "You may KO a card from your hand or discard pile. If you do, draw a card."
           ]
@@ -974,7 +939,6 @@
           "cost": 7,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-namor-the-sub-mariner-imperius-rex.webp",
           "abilities": [
             "Defeat a Villain for free.",
             "[hc:strength][hc:strength][hc:instinct][hc:instinct]: Instead, defeat the Mastermind once for free."
@@ -1039,7 +1003,6 @@
           "cost": 3,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-last-survivor.webp",
           "abilities": [
             "[hc:instinct]: You may KO a card from your hand or discard pile. If you KO a wound this way, draw a card."
           ]
@@ -1055,7 +1018,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-loner.webp",
           "abilities": [
             "If you don't recruit any heroes this turn, you get .+2[icon:attack]."
           ]
@@ -1071,7 +1033,6 @@
           "cost": 6,
           "attack": "3+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-rage-out.webp",
           "abilities": [
             "[hc:instinct][keyword:: Cross-Dimensional Wolverine Rampage.] For each other player who gained a Wound this way, you get +1[icon:attack]."
           ]
@@ -1087,7 +1048,6 @@
           "cost": 7,
           "attack": "5+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-old-man-logan-no-more-heroes.webp",
           "abilities": [
             "Reveal your hand. You get +5[icon:attack] if you haven't played any [team:shield] or [team:hydra] cards this turn and don't have any in your hand."
           ]
@@ -1151,7 +1111,6 @@
           "cost": 2,
           "attack": "1",
           "recruit": "1",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-inspiration-through-power.webp",
           "abilities": []
         },
         {
@@ -1165,7 +1124,6 @@
           "cost": 4,
           "attack": "0+",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-master-combatant.webp",
           "abilities": [
             "If the most recent Hero you have played this turn has a [icon:recruit] icon, you get +2[icon:recruit]. If it has an [icon:attack] icon, you get +2[icon:attack]."
           ]
@@ -1181,7 +1139,6 @@
           "cost": 5,
           "attack": "3",
           "recruit": "0+",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-general-of-the-black-order.webp",
           "abilities": [
             "[hc:instinct]: You get +3[icon:recruit]."
           ]
@@ -1197,7 +1154,6 @@
           "cost": 8,
           "attack": "4+",
           "recruit": "4+",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-proxima-midnight-supernova-spear.webp",
           "abilities": [
             "[hc:covert]: You get +4[icon:recruit] and +4[icon:attack]."
           ]
@@ -1261,7 +1217,6 @@
           "cost": 2,
           "attack": "1+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-armor-upgrades.webp",
           "abilities": [
             "[hc:tech]: You get +2[icon:attack]."
           ]
@@ -1277,7 +1232,6 @@
           "cost": 5,
           "attack": "2",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-optimized-technology.webp",
           "abilities": [
             "Draw a card."
           ]
@@ -1293,7 +1247,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-superior-to-others.webp",
           "abilities": [
             "[hc:ranged]: Look at the top two cards of your deck. If one of them has a higher cost than the other, draw it. Put the rest back in any order."
           ]
@@ -1309,7 +1262,6 @@
           "cost": 8,
           "attack": "5",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-superior-iron-man-humblebrag.webp",
           "abilities": [
             "Draw a card for each other player who has fewer cards in their Victory Pile than you."
           ]
@@ -1373,7 +1325,6 @@
           "cost": 5,
           "attack": "2+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-transdimensional-overlord.webp",
           "abilities": [
             "[keyword:Teleport]",
             "You may KO a Bystander from your Victory Pile. If you do, you get +2[icon:attack]."
@@ -1390,7 +1341,6 @@
           "cost": 3,
           "attack": null,
           "recruit": "2+",
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-revel-in-destruction.webp",
           "abilities": [
             "[team:cabal]: KO a Bystander from the Bystander Stack. Then, you get +1[icon:recruit] for every three Bystanders in the KO pile."
           ]
@@ -1406,7 +1356,6 @@
           "cost": 6,
           "attack": "4",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-galactic-domination.webp",
           "abilities": [
             "[hc:ranged]: Each other player reveals a [hc:ranged] Hero or chooses a Bystander from their Victory Pile. You “rescue“ those bystanders."
           ]
@@ -1422,7 +1371,6 @@
           "cost": 8,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-thanos-utter-annihilation.webp",
           "abilities": [
             "KO six Bystanders from the Bystander Stack. Then, defeat any Villain or Mastermind whose [icon:attack] is less than the number of Bystanders in the KO pile."
           ]
@@ -1486,7 +1434,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-leaping-spider.webp",
           "abilities": [
             "Reveal the top card of your deck. If it costs 2 or less, draw it.",
             "[hc:strength]: You get +2[icon:attack]."
@@ -1503,7 +1450,6 @@
           "cost": 2,
           "attack": null,
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-marvel-team-up.webp",
           "abilities": [
             "Gain a [rule:Sidekick].",
             "Reveal the top card of your deck. If it costs 2 or less, draw it."
@@ -1520,7 +1466,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-web-slinger.webp",
           "abilities": [
             "You get +2[icon:attack], usable only against the Mastermind or Villains on the Rooftops or Bridge.",
             "Reveal the top card of your deck. If it costs 2 or less, draw it."
@@ -1537,7 +1482,6 @@
           "cost": 2,
           "attack": "0+",
           "recruit": null,
-          "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-hr-ultimate-spider-man-hero-from-another-dimension.webp",
           "abilities": [
             "You get +2[icon:attack] for each other card you have played this turn that costs 1 or 2."
           ]
