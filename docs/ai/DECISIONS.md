@@ -16493,6 +16493,34 @@ verbatim to avoid disclosure-drift across surfaces.
 **Citation:** WP-108; EC-158 §7; D-9701 (verbatim blurb);
 WP-097 (neutral tone).
 
+### D-7001 — Middleware Ordering Invariant: After UIState Store Write (WP-070)
+**Decision:** The live mutation middleware runs AFTER `useUiStateStore().setSnapshot()`
+writes the current UIState frame, not before. Detection, pipeline invocation, and
+store notification all execute synchronously within the same subscription callback,
+after the store write.
+**Rationale:** Components must see the causal state change (the new UIState) before
+seeing the disruption notification. If the middleware ran first, a component could
+observe "your plan was invalidated because a villain escaped" while the city still
+showed the pre-escape state. The store-first ordering ensures causal consistency
+between the game state display and the disruption notification.
+**Introduced:** WP-070
+**Status:** Active
+
+---
+
+### D-7002 — Turn-Change Is Consumption, Not Disruption (WP-070)
+**Decision:** When `game.activePlayerId` changes from another player to the viewer's
+own player ID, the mutation detector returns an empty array — no disruption is
+fired. The plan transitions to `'consumed'` status via separate turn-consumption
+logic, not through the disruption pipeline.
+**Rationale:** A turn change to the viewer means the viewer's pre-plan is about to
+be executed (consumed), not invalidated. Firing a disruption would incorrectly
+mark the plan as `'invalidated'` when the player is about to act on it. The two
+lifecycle paths are semantically distinct: disruption = external interference that
+voids the plan; consumption = the plan's intended use.
+**Introduced:** WP-070
+**Status:** Active
+
 ---
 ## Final Note
 Legendary Arena’s strength is not just its code.

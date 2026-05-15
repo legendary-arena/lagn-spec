@@ -82,6 +82,7 @@ describe('createLiveClient', () => {
       playerID: '0',
       credentials: 'secret',
       serverUrl: 'http://localhost:8000',
+      viewerPlayerId: '0',
     });
 
     const keys = Object.keys(handle).sort();
@@ -100,6 +101,7 @@ describe('createLiveClient', () => {
       playerID: '0',
       credentials: 'secret',
       serverUrl: 'http://localhost:8000',
+      viewerPlayerId: '0',
     });
 
     handle.submitMove('drawCards', 2, { reason: 'start-of-turn' });
@@ -121,6 +123,7 @@ describe('createLiveClient', () => {
       playerID: '0',
       credentials: 'secret',
       serverUrl: 'http://localhost:8000',
+      viewerPlayerId: '0',
     });
 
     const stub = lastClient();

@@ -7,6 +7,27 @@
 
 ## Current State
 
+### WP-070 / EC-161 Executed — Live Mutation Middleware (2026-05-15)
+
+**Pre-plan disruption now fires automatically when game state changes
+affect a waiting player's active plan.** The `mutationDetector.ts` module
+diffs previous/current UIState projections across a closed set of 12
+anchored fields (city spaces, escaped pile, HQ slots, per-player
+wound/hand counts, shared piles, mastermind tactics/bystanders, scheme
+twist pile, escaped villain counter). Detected mutations route through
+`executeDisruptionPipeline` → `applyDisruptionToStore`, causing the
+preplan store's status to flip to `'invalidated'` with a structured
+causal notification. Turn-change to the viewer is correctly excluded
+(consumption, not disruption — D-7002). Middleware runs after UIState
+store write for causal consistency (D-7001). First-disruption-wins:
+only one pipeline result per frame. Reference-equality fast-path skips
+detection on no-op re-emissions.
+
+**Test baselines.** Arena-client: 311 tests / 37 suites / 0 fail (+25
+tests, +2 suites over WP-105 baseline). Engine: 705 / 0 UNCHANGED.
+
+---
+
 ### WP-105 / EC-160 Executed — Player Badges Data Model & Display (2026-05-15)
 
 **Tier 1 gameplay badges now ship end-to-end.** Migration 013 creates

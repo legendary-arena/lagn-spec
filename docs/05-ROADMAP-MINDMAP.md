@@ -92,7 +92,7 @@ mindmap
         ["WP-057 ✅ Sandbox execution"]
         ["WP-058 ✅ Disruption pipeline"]
         ["WP-059 ✅ UI integration"]
-        ["WP-070 📦 Queued — live mutation middleware"]
+        ["WP-070 ✅ Done — live mutation middleware"]
 
       Post-Phase-6 Hygiene
         ["WP-081 ✅ Registry build pipeline cleanup"]
@@ -217,7 +217,7 @@ mindmap
 | Phase 6 | 15/15 | — |
 | UI Implementation Chain | 5/5 | — |
 | Content Layer | 2/2 | — |
-| Pre-Planning System | 4/4 | 1 📦 (WP-070) |
+| Pre-Planning System | 5/5 | — |
 | Post-Phase-6 Hygiene | 5/5 | — |
 | Phase 7 | 6/6 | — |
 | Scoring & PAR Pipeline | 4/4 | — |
@@ -256,7 +256,7 @@ mindmap
 1. **WP-108** — newly unblocked 2026-05-07 (WP-132/133/134 deps cleared today); WP file not yet authored. Profile billing & funding history UI; user-facing realization of the closed-loop monetization that just shipped server-side. Strongest "next step" candidate because it converts the live backend loop into something customers can see.
 2. **Captain-America cardCounts data fix** — known anomaly logged under WP-137 RS-1 (`core.captain-america.cardCounts` sum 20 vs canonical 14); spawned-task scope; investigates `scripts/convert-cards/convert-cards-v15.mjs` and re-runs the pipeline. Unblocks a real gameplay regression for that hero loadout.
 3. **WP-105** — queued (WP-104 dep cleared 2026-05-02); WP file not yet authored.
-4. **WP-070** — queued (WP-059 ✅ + WP-090 ✅); WP file + EC not yet authored.
+4. ~~**WP-070**~~ — Done 2026-05-15.
 5. **WP-097 → WP-098** — pre-flight bundles pending; WP-098 blocked on WP-097 execution.
 6. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
 7. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.

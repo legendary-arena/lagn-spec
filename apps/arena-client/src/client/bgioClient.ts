@@ -73,6 +73,10 @@ const Client: ClientCtor = resolvedClient;
 const SocketIO: SocketIOCtor = resolvedSocketIO;
 
 import { useUiStateStore } from '../stores/uiState.js';
+import { usePreplanStore } from '../stores/preplan.js';
+import { detectPlayerAffectingMutations } from '../preplan/mutationDetector.js';
+import { executeDisruptionPipeline } from '@legendary-arena/preplan';
+import { applyDisruptionToStore } from '../preplan/preplanLifecycle.js';
 
 /**
  * The minimal subset of boardgame.io's Client object that this module uses.
@@ -101,6 +105,12 @@ export interface CreateLiveClientOptions {
   playerID: string;
   credentials: string;
   serverUrl: string;
+  // why: viewerPlayerId is needed by the mutation detector to distinguish
+  // mutations affecting the viewer's pre-plan from irrelevant changes to
+  // other players' state. Optional today because App.vue's caller site is
+  // outside the WP-070 allowlist — the middleware gracefully skips when
+  // the field is absent.
+  viewerPlayerId?: string;
 }
 
 export interface LiveClientHandle {
@@ -165,6 +175,8 @@ export function createLiveClient(
     credentials: options.credentials,
   });
 
+  let previousUIState: UIState | null = null;
+
   client.subscribe((state) => {
     const projection = state?.G;
     if (projection !== null && projection !== undefined && typeof projection !== 'object') {
@@ -181,7 +193,51 @@ export function createLiveClient(
     // why: WP-089's playerView reshapes the client-visible G to the exact
     // UIState contract consumed by the HUD. The server enforces that
     // reshape; the client only trusts the projection.
-    useUiStateStore().setSnapshot((projection ?? null) as UIState | null);
+    const currentUIState = (projection ?? null) as UIState | null;
+    useUiStateStore().setSnapshot(currentUIState);
+
+    // why: middleware runs after the UIState store write so that components
+    // see the causal state change before the disruption notification. The
+    // store must reflect the new state before disruption processing.
+    if (currentUIState === null) {
+      return;
+    }
+
+    if (previousUIState === null) {
+      previousUIState = currentUIState;
+      return;
+    }
+
+    if (previousUIState === currentUIState) {
+      return;
+    }
+
+    if (options.viewerPlayerId === undefined) {
+      previousUIState = currentUIState;
+      return;
+    }
+
+    const preplanStore = usePreplanStore();
+    if (!preplanStore.isActive) {
+      previousUIState = currentUIState;
+      return;
+    }
+
+    const mutations = detectPlayerAffectingMutations(
+      previousUIState,
+      currentUIState,
+      options.viewerPlayerId,
+    );
+
+    for (const mutation of mutations) {
+      const result = executeDisruptionPipeline(preplanStore.current!, mutation);
+      if (result !== null && result.requiresImmediateNotification === true) {
+        applyDisruptionToStore({ store: preplanStore, result });
+        break;
+      }
+    }
+
+    previousUIState = currentUIState;
   });
 
   return {
