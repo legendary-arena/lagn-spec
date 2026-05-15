@@ -225,6 +225,7 @@ These packets ship the game and keep it running.
 - [x] WP-108 — Profile Billing & Funding History UI — Done 2026-05-15. Three-panel BillingSection (benefits, purchase history, community funding) inside MyProfilePage.vue; `GET /api/me/billing/history` endpoint; D-10801, D-10802.
 
 - [x] WP-109 — Team Affiliation (Profile-Level Cooperative Cohorts) — Done 2026-05-03 (commit `cea9108`)
+- [ ] WP-152 — Wire Public Profile Route in server.mjs. Closes D-10202 + D-11505. Wires `registerProfileRoutes(server.router, pool)` in `server.mjs`; graduates catalog row to `Wired`. Deps: WP-102 ✅, WP-115 ✅. EC-159.
 - [x] WP-112 — Session Token Validation Middleware — Done 2026-05-02
 - [x] WP-126 — External Authentication Integration (Hanko Session Verifier) — Done 2026-05-03 (commit `e35dd00`)
 - [x] WP-128 — UIState Projection Extensions for Board Layout — Done 2026-05-04 (commit `c44f539`)
