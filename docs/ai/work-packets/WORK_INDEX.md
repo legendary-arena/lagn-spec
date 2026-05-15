@@ -299,7 +299,7 @@ code, never `boardgame.io`).
 - [x] WP-057 — Pre-Plan Sandbox Execution — Done 2026-04-20 (commit `8a324f0`)
 - [x] WP-058 — Pre-Plan Disruption Pipeline — Done 2026-04-20 (commit `bae70e7`)
 - [x] WP-059 — Pre-Plan UI Integration (Store, Notification, Step Display) — Done 2026-04-26 (commit `5c5fc1e`)
-- [ ] **(deferred)** WP-070 — Live Mutation Middleware (Pre-Plan ↔ Engine Disruption Wiring). Deps: WP-059 ✅, WP-090 ✅. Subscribes to bgio client state-update stream, diffs G per-player, calls `executeDisruptionPipeline`. Target ≤6 files under `apps/arena-client/src/preplan/` + `src/client/`. WP file + EC not yet drafted.
+- [ ] WP-070 — Live Mutation Middleware (Pre-Plan ↔ Engine Disruption Wiring). Deps: WP-059 ✅, WP-090 ✅. Subscribes to bgio client state-update stream, diffs UIState per-player, calls `executeDisruptionPipeline`. 5 files under `apps/arena-client/src/preplan/` + `src/client/`. EC-161.
 
 
 ---
