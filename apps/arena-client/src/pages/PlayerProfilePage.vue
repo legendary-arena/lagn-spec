@@ -30,8 +30,19 @@ interface TeamAffiliationDisplay {
   readonly leftAt: string | null;
 }
 
-interface PublicProfileViewWithTeams extends PublicProfileView {
+// why: WP-105 — PlayerBadgeSummary shape declared locally per the same
+// engine/server isolation rule that governs TeamAffiliationDisplay above.
+// Mirrors apps/server/src/profile/profile.types.ts#PlayerBadgeSummary.
+interface PlayerBadgeSummaryDisplay {
+  readonly badgeKey: string;
+  readonly label: string;
+  readonly description: string;
+  readonly awardedAt: string;
+}
+
+interface PublicProfileViewWithExtras extends PublicProfileView {
   readonly teamAffiliations: readonly TeamAffiliationDisplay[];
+  readonly badges: readonly PlayerBadgeSummaryDisplay[];
 }
 
 type LoadState = 'loading' | 'ready' | 'not_found' | 'error';
@@ -83,7 +94,7 @@ export default defineComponent({
     // profileApi.ts contract. The server's wire shape carries the
     // additional field per WP-109; the client's structural-typing
     // upgrade is local to this page.
-    const view = ref<PublicProfileViewWithTeams | null>(null);
+    const view = ref<PublicProfileViewWithExtras | null>(null);
     const errorStatus = ref<number>(0);
 
     async function load(handle: string): Promise<void> {
@@ -92,7 +103,7 @@ export default defineComponent({
       errorStatus.value = 0;
       const result = await fetchPublicProfile(handle);
       if (result.ok === true) {
-        view.value = result.value as PublicProfileViewWithTeams;
+        view.value = result.value as PublicProfileViewWithExtras;
         state.value = 'ready';
         return;
       }
@@ -229,11 +240,28 @@ export default defineComponent({
         class="profile-tab profile-tab-badges"
         data-testid="player-profile-tab-badges"
       >
-        <!-- why: badge data model and issuance pipeline are WP-105 scope.
-             Until that WP lands the tab is inert text; no fetch path
-             exists to call. Wiring this tab live in WP-102 would
-             violate the WP-102 lifecycle prohibition. -->
-        <h3>Badges — coming soon (WP-105)</h3>
+        <h3>Badges</h3>
+        <ul
+          v-if="view && view.badges && view.badges.length > 0"
+          class="badge-list"
+          data-testid="player-profile-badge-list"
+        >
+          <li
+            v-for="badge in view.badges"
+            :key="badge.badgeKey"
+            class="badge-item"
+            data-testid="player-profile-badge-item"
+          >
+            <span class="badge-label">{{ badge.label }}</span>
+            <span class="badge-description">{{ badge.description }}</span>
+            <span class="badge-awarded-at">{{ formatCreatedAt(badge.awardedAt) }}</span>
+          </li>
+        </ul>
+        <p
+          v-else
+          class="badge-empty"
+          data-testid="player-profile-badge-empty"
+        >No badges earned yet.</p>
       </section>
 
       <section

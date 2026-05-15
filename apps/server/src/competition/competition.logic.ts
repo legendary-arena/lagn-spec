@@ -60,6 +60,8 @@ import type {
   ScoreBreakdown,
 } from '@legendary-arena/game-engine';
 
+import { issueTier1BadgesForSubmission } from '../badges/badge.issuance.js';
+
 // why: WP-103's loadReplay is the only sanctioned replay-by-hash
 // entry point. Imported at runtime (not type-only) because the
 // production submission flow calls it during step 7. The deps seam
@@ -530,7 +532,7 @@ export async function submitCompetitiveScoreImpl(
       'SELECT i.submission_id, p.ext_id AS account_id, i.replay_hash, ' +
       'i.scenario_key, i.raw_score, i.final_score, i.score_breakdown, ' +
       'i.par_version, i.scoring_config_version, i.state_hash, ' +
-      'i.created_at, i.was_inserted ' +
+      'i.created_at, i.was_inserted, i.player_id ' +
       'FROM inserted i ' +
       'JOIN legendary.players p ON i.player_id = p.player_id',
     [
@@ -556,9 +558,38 @@ export async function submitCompetitiveScoreImpl(
     return { ok: false, reason: 'replay_not_found' };
   }
 
-  const row: CompetitiveScoreRow & { was_inserted: boolean } =
+  const row: CompetitiveScoreRow & { was_inserted: boolean; player_id: number | string } =
     insertResult.rows[0];
   const record = mapCompetitiveScoreRow(row);
+
+  // why: badge issuance is fire-and-forget relative to the submission
+  // pipeline. The competitive submission is the authoritative record;
+  // badges are derived. Badge issuance failure MUST NOT fail the
+  // submission — the try/catch ensures a badge error degrades gracefully
+  // to a warning log. The caller's transaction context is passed through
+  // so badge rows participate in the same commit.
+  const resolvedPlayerId =
+    typeof row.player_id === 'string'
+      ? Number(row.player_id)
+      : row.player_id;
+  try {
+    await issueTier1BadgesForSubmission(
+      resolvedPlayerId,
+      record.submissionId,
+      record.scoreBreakdown,
+      record.scenarioKey,
+      record.scoringConfigVersion,
+      database,
+    );
+  } catch (badgeError) {
+    console.warn(
+      '[badges] Tier 1 badge issuance failed for submission ' +
+        String(record.submissionId) +
+        '; competitive record is unaffected.',
+      badgeError,
+    );
+  }
+
   return {
     ok: true,
     record,

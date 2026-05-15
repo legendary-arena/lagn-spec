@@ -16498,4 +16498,24 @@ WP-097 (neutral tone).
 Legendary Arena’s strength is not just its code.
 It is the **discipline encoded in these decisions**.
 
+### D-10501 — Tier 1 Badge Data Model and Issuance Pipeline (WP-105)
+**Decision:** Tier 1 gameplay badges ship as an append-only
+`legendary.player_badges` table with two uniqueness constraints
+(composite `UNIQUE(player_id, badge_key, source_ref)` for per-run badges
++ partial index `(player_id, badge_key) WHERE source_ref IS NULL` for
+veteran/history badges). Issuance uses `ON CONFLICT DO NOTHING` with
+constraint inference (no explicit conflict target). 7 badge keys ship;
+3 are deferred (master-strike-ironwall, bystander-guardian, steady-crew).
+Badge issuance is fire-and-forget — failure must not fail the
+competitive-submission pipeline. History badges are breadth-gated
+(distinct sub-PAR scenarios), not volume-gated, per D-0005.
+**Rationale:** Append-only follows D-5302 precedent. Constraint inference
+with `ON CONFLICT DO NOTHING` lets both uniqueness constraints suppress
+duplicates without naming either. Fire-and-forget isolation ensures the
+critical competitive-score path cannot be blocked by badge issues.
+**Introduced:** WP-105
+**Status:** Active
+
+---
+
 Protect this file.

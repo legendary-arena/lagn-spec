@@ -7,6 +7,26 @@
 
 ## Current State
 
+### WP-105 / EC-160 Executed — Player Badges Data Model & Display (2026-05-15)
+
+**Tier 1 gameplay badges now ship end-to-end.** Migration 013 creates
+the append-only `legendary.player_badges` table with dual uniqueness
+constraints (composite for per-run, partial index for veteran/history).
+Seven badge keys ship across two categories: 2 per-run (`sub-par-run`,
+`pristine-defense`) and 5 history-evaluated (`multiverse-mastery` +
+4 veteran thresholds at 10/25/50/100 distinct sub-PAR scenarios). Three
+badges are deferred with documented `// why:` stubs. Badge issuance is
+fire-and-forget in the competitive submission pipeline — failure logs a
+warning but never fails the submission. Both public and owner profile
+views now include `badges: PlayerBadgeSummary[]`. The Vue
+`PlayerProfilePage.vue` badge stub is replaced with live rendering.
+D-10501 lands.
+
+**Test baselines.** Server: 328 tests / 262 pass / 0 fail / 66
+skipped (+30 tests over WP-108). Engine: 705 / 0 UNCHANGED.
+
+---
+
 ### WP-108 / EC-158 Executed — Profile Billing & Funding History UI (2026-05-15)
 
 **The authenticated owner can now view their entitlements, purchase

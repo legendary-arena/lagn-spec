@@ -48,11 +48,40 @@ import type {
 import { findAccountByHandle, getHandleForAccount } from '../identity/handle.logic.js';
 
 import type {
+  PlayerBadgeSummary,
   ProfileResult,
   PublicProfileView,
   PublicReplaySummary,
 } from './profile.types.js';
+import { getPlayerBadges } from '../badges/badge.read.js';
+import { BADGE_DEFINITIONS } from '../badges/badge.types.js';
 import { composeTeamAffiliationsForProfile } from '../teams/team.logic.js';
+
+/**
+ * Map `PlayerBadge[]` rows to `PlayerBadgeSummary[]` using the
+ * `BADGE_DEFINITIONS` Map for O(1) lookup. Badges with unrecognized
+ * `badge_key` (from future tiers) are silently omitted — forward-
+ * compatible; unknown keys MUST NOT cause errors in profile rendering.
+ * Preserves input ordering (most recent first, by `awarded_at DESC`).
+ */
+export function composeBadgeSummaries(
+  badges: ReadonlyArray<{ badgeKey: string; awardedAt: string }>,
+): PlayerBadgeSummary[] {
+  const summaries: PlayerBadgeSummary[] = [];
+  for (const badge of badges) {
+    const definition = BADGE_DEFINITIONS.get(badge.badgeKey);
+    if (definition === undefined) {
+      continue;
+    }
+    summaries.push({
+      badgeKey: badge.badgeKey,
+      label: definition.label,
+      description: definition.description,
+      awardedAt: badge.awardedAt,
+    });
+  }
+  return summaries;
+}
 
 /**
  * Internal shape returned by the locked replay-filter SELECT. The
@@ -223,6 +252,8 @@ export async function getPublicProfileByHandle(
     null,
     undefined,
   );
+  const badgeRows = await getPlayerBadges(playerId, database);
+  const badges = composeBadgeSummaries(badgeRows);
   return {
     ok: true,
     value: {
@@ -231,6 +262,7 @@ export async function getPublicProfileByHandle(
       displayName: playerAccount.displayName,
       publicReplays,
       teamAffiliations: [...teamAffiliations],
+      badges,
     },
   };
 }

@@ -53,6 +53,8 @@ import type {
   OwnerProfileView,
 } from './ownerProfile.types.js';
 import { composeTeamAffiliationsForProfile } from '../teams/team.logic.js';
+import { getPlayerBadges } from '../badges/badge.read.js';
+import { composeBadgeSummaries } from './profile.logic.js';
 
 /**
  * Locked closed-set allowlist for `legendary.player_links.provider`
@@ -402,6 +404,8 @@ function synthesizeDefaultOwnerProfileView(): OwnerProfileView {
     linksVisibility: 'private',
     links: [],
     updatedAt: null,
+    teamAffiliations: [],
+    badges: [],
   };
 }
 
@@ -495,6 +499,8 @@ export async function getOwnerProfile(
     String(playerId),
     undefined,
   );
+  const badgeRows = await getPlayerBadges(playerId, database);
+  const badges = composeBadgeSummaries(badgeRows);
 
   if (profileResult.rows.length === 0) {
     // why: read-no-mutate invariant per WP-104 §Scope (In) §C —
@@ -506,7 +512,7 @@ export async function getOwnerProfile(
     // a dangling state that should not exist in practice but the
     // read path tolerates by overlaying the synthesized profile
     // defaults onto whatever links are present. teamAffiliations
-    // is composed identically regardless of whether the
+    // and badges are composed identically regardless of whether the
     // legendary.player_profiles row exists, so the synthesized-
     // default branch returns the same shape as the normal branch.
     const view = synthesizeDefaultOwnerProfileView();
@@ -520,6 +526,7 @@ export async function getOwnerProfile(
         ...view,
         links,
         teamAffiliations: [...teamAffiliations],
+        badges,
       },
     };
   }
@@ -531,7 +538,7 @@ export async function getOwnerProfile(
   );
   return {
     ok: true,
-    value: { ...view, teamAffiliations: [...teamAffiliations] },
+    value: { ...view, teamAffiliations: [...teamAffiliations], badges },
   };
 }
 
@@ -744,23 +751,26 @@ export async function upsertOwnerProfile(
   );
 
   // why: WP-109 / D-10904 (PS-3 = YES) — upsertOwnerProfile
-  // returns the full OwnerProfileView (8 keys) so clients re-render
-  // without an extra GET. teamAffiliations are observational and
-  // unaffected by the PATCH; composing them here keeps the wire
-  // shape consistent across getOwnerProfile / upsertOwnerProfile /
-  // replaceOwnerLinks return paths.
+  // returns the full OwnerProfileView (9 keys) so clients re-render
+  // without an extra GET. teamAffiliations and badges are
+  // observational and unaffected by the PATCH; composing them here
+  // keeps the wire shape consistent across getOwnerProfile /
+  // upsertOwnerProfile / replaceOwnerLinks return paths.
   const teamAffiliations = await composeTeamAffiliationsForProfile(
     database,
     String(playerId),
     String(playerId),
     undefined,
   );
+  const badgeRows = await getPlayerBadges(playerId, database);
+  const badges = composeBadgeSummaries(badgeRows);
 
   return {
     ok: true,
     value: {
       ...composeOwnerProfileView(profileRow, linkResult.rows as PlayerLinkRow[]),
       teamAffiliations: [...teamAffiliations],
+      badges,
     },
   };
 }

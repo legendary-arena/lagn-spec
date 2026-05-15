@@ -219,7 +219,7 @@ These packets ship the game and keep it running.
 - [x] WP-101 — Handle Claim Flow & Global Uniqueness — Done 2026-04-28 (commit `fb1ca2b`)
 - [x] WP-102 — Public Player Profile Page (Read-Only) — Done 2026-04-28 (commit `369c0a4`)
 - [x] WP-104 — Owner Profile Data Model & `/me` Edit — Done 2026-05-02
-- [ ] **(deferred)** WP-105 — Player Badges Data Model & Display. Deps: WP-104 ✅. Tier 1 only (6 gameplay + 4 veteran badges per D-1004). See `PROPOSAL-BADGES.md` §3.
+- [x] WP-105 — Player Badges Data Model & Display — Done 2026-05-15. Tier 1 gameplay badges (7 keys); migration 013; append-only `legendary.player_badges`; predicates/veteran/issuance/read modules; fire-and-forget hook in competition pipeline; profile integration (public + owner); D-10501.
 - [ ] **(deferred)** WP-106 — Avatar Upload Pipeline (R2 + MIME/size validation). Deps: WP-104 ✅. Blocked on R2 user-upload governance decision.
 - [ ] **(deferred)** WP-107 — Profile Integrity / Anti-Cheat Surface. Blocked on a future admin-auth WP (no RBAC mechanism exists yet).
 - [x] WP-108 — Profile Billing & Funding History UI — Done 2026-05-15. Three-panel BillingSection (benefits, purchase history, community funding) inside MyProfilePage.vue; `GET /api/me/billing/history` endpoint; D-10801, D-10802.

@@ -36,8 +36,8 @@ import type { TeamAffiliation } from '../teams/team.types.js';
 // preserving the single import boundary documented above.
 export type { AccountId, DatabaseClient, PlayerAccount };
 
-// why: 5-field shape — extended by WP-109 from the original WP-102
-// 4-field set with `teamAffiliations: TeamAffiliation[]`. Rename or
+// why: 6-field shape — extended by WP-109 (teamAffiliations) and
+// WP-105 (badges) from the original WP-102 4-field set. Rename or
 // further addition requires a `DECISIONS.md` entry. `accountId` is
 // intentionally absent — handle is the public identifier on this
 // surface and exposing the server-internal stable ID per WP-052
@@ -61,6 +61,20 @@ export interface PublicProfileView {
   readonly displayName: string;
   readonly publicReplays: PublicReplaySummary[];
   readonly teamAffiliations: TeamAffiliation[];
+  readonly badges: PlayerBadgeSummary[];
+}
+
+/**
+ * Public-facing badge summary projected from `PlayerBadge` rows via
+ * `BadgeDefinition` lookup. Excludes server-internal fields (badgeId,
+ * tier, sourceKind, sourceRef, isRevoked). `awardedAt` is rendered as
+ * a locale-aware date string (no time component) by the client.
+ */
+export interface PlayerBadgeSummary {
+  readonly badgeKey: string;
+  readonly label: string;
+  readonly description: string;
+  readonly awardedAt: string;
 }
 
 // why: `'private'` is intentionally absent from the visibility union.

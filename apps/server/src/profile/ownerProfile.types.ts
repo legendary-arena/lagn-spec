@@ -51,6 +51,7 @@ import type {
   SessionVerifier,
 } from '../auth/sessionToken.types.js';
 import type { TeamAffiliation } from '../teams/team.types.js';
+import type { PlayerBadgeSummary } from './profile.types.js';
 
 // why: re-exported so other modules in this layer (and tests) can
 // reference the identity-layer + auth-layer aliases through
@@ -62,6 +63,7 @@ export type {
   AccountResolver,
   DatabaseClient,
   PlayerAccount,
+  PlayerBadgeSummary,
   RequireAuthenticatedSessionOptions,
   SessionTokenRequest,
   SessionVerifier,
@@ -107,11 +109,11 @@ export interface OwnerProfileLink {
  *
  * `Object.keys(view).sort()` MUST equal exactly:
  *   `['aboutMe','aboutMeVisibility','avatarUrl','avatarVisibility',
- *     'links','linksVisibility','teamAffiliations','updatedAt']`
+ *     'badges','links','linksVisibility','teamAffiliations','updatedAt']`
  * — drift-detection test in `ownerProfile.logic.test.ts` enforces
- * this. WP-109 / D-10904 (PS-3 = YES user pre-lock 2026-05-03)
- * extended the locked field set from 7 to 8 keys with the
- * read-only `teamAffiliations[]` listing — composed by the same
+ * this. WP-109 / D-10904 extended from 7 to 8 keys with
+ * `teamAffiliations[]`; WP-105 / D-10501 extended from 8 to 9 keys
+ * with `badges[]` — composed by the same
  * shared helper that powers the public profile per pre-flight
  * PS-3. `email`, `authProvider`, `authProviderId`, `createdAt`
  * from `legendary.players` are deliberately absent: they are
@@ -147,6 +149,7 @@ export interface OwnerProfileView {
   // through /api/teams/* and never through MyProfilePage.vue or
   // /api/me endpoints.
   readonly teamAffiliations: TeamAffiliation[];
+  readonly badges: PlayerBadgeSummary[];
 }
 
 /**
