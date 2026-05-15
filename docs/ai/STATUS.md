@@ -7,6 +7,16 @@
 
 ## Current State
 
+### WP-149 / EC-153 Executed — Public Leaderboard Marketing-Site Hugo Page (2026-05-14)
+
+**The public leaderboard is now live at `https://www.legendary-arena.com/leaderboard/`.** Marketing-repo commit `045fe87` on `legendary-arena-website` adds three files: Hugo section content (`content/leaderboard/_index.md`), section layout (`layouts/leaderboard/list.html`), and client-side script (`assets/js/leaderboard.js`). The page renders three views: (a) Top-N global PAR (default), (b) theme-grouped via `?themeId=<id>`, (c) scheme-mastermind placeholder via `?view=scheme-mastermind`. All data comes from existing WP-150 endpoints (`/api/leaderboards/top`, `/api/leaderboards/themes/:themeId`) via cross-origin fetch enabled by WP-148 CORS allowlist. Client-side only — no engine-repo source touch, no new npm deps, no funding affordance in v1. `data-pagefind-ignore` excludes dynamic scores from search indexing.
+
+**01.5 NOT INVOKED** (no engine-repo source file modified; marketing-repo Hugo page is outside the engine's 01.5 taxonomy entirely).
+
+**01.6 post-mortem SKIPPED** (no triggers fire — read-only consumer of existing API endpoints; no new engine contracts, no new abstractions, no new canonical arrays).
+
+---
+
 ### WP-142 / EC-157 Executed — Legends Snapshot Publisher (2026-05-14)
 
 **The server now publishes public JSON leaderboard snapshots to R2 on a
