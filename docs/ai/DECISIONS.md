@@ -13091,6 +13091,83 @@ Per `.claude/rules/code-style.md §"Abstraction & Control Flow"`: *"Duplicate fi
 
 ---
 
+### D-10601 — R2 User-Upload Validation Policy: Closed MIME Set + 256x256 WebP + EXIF Strip (WP-106)
+
+**Type:** Upload Validation & Storage Policy
+**Packet:** WP-106
+**Date:** 2026-05-16
+
+**Decision:** Avatar uploads to `POST /api/me/avatar` are validated and transformed server-side before R2 storage. The complete policy:
+
+- **Accepted MIME types (closed set):** `image/jpeg`, `image/png`, `image/webp`. Any other Content-Type is rejected with `code: 'invalid_mime_type'`.
+- **Maximum file size:** 5 MB (measured before server-side processing). Exceeding this returns `code: 'file_too_large'`.
+- **EXIF stripping:** All EXIF/XMP/IPTC metadata is stripped before storage (privacy — prevents geolocation and device info leakage).
+- **Resize:** Server normalizes to 256x256 square crop (center-weighted) before storage. The original upload is never persisted.
+- **Output format:** Always stored as `.webp` (quality 80) regardless of upload format. Consistent CDN caching, smallest file size at acceptable visual quality.
+- **R2 path:** `avatars/{accountId}.webp` — single file per user. Re-upload overwrites the existing object. No versioning, no accumulation, no per-upload unique keys.
+- **Rate limit:** 1 upload per user per 60 seconds (server-enforced via in-memory timestamp map; no DB round-trip for rate check). Returns `code: 'rate_limited'` on violation.
+- **Origin policy (supersedes D-10405 for `avatar_url`):** After WP-106 ships, `avatar_url` in `PATCH /api/me/profile` becomes a **closed-origin allowlist** — only URLs matching `https://images.barefootbetters.com/avatars/*` are accepted. The D-10405 "HTTPS-only any host" policy is superseded for `avatar_url` specifically. `player_links.url` retains D-10405's open policy unchanged.
+- **Image processing library:** `sharp` (libvips-based). Added to `apps/server/package.json` as a production dependency.
+
+**Rationale.**
+
+- **Closed MIME set minimizes attack surface.** Only three well-understood image formats are accepted; no SVG (script injection), no GIF (animation complexity), no TIFF/BMP (rare legitimate use, large parsing surface).
+- **EXIF strip is privacy-critical.** Phone photos embed GPS coordinates, device serial numbers, and timestamps. Users uploading selfies don't expect that metadata to persist on a CDN.
+- **256x256 square simplifies downstream consumers.** Every UI surface (profile page, leaderboard, team roster) can assume a square avatar without layout-time aspect ratio negotiation. Center-weighted crop is the standard heuristic for face-containing images.
+- **Single-file overwrite prevents storage accumulation.** A user who re-uploads 50 times stores exactly one 256x256 webp (~10-30 KB), not 50. R2 storage cost stays bounded per-user.
+- **Closed-origin allowlist (R2-only) closes the hotlink vector.** With open URLs, `avatar_url` could point at ephemeral, offensive, or tracking-pixel URLs that change after profile save. R2-only URLs are under project control.
+- **In-memory rate limit is acceptable for MVP.** The rate map grows linearly with active users (one timestamp per user). At MVP scale (<10K users), memory cost is negligible.
+
+**Rejected alternatives.**
+
+- **Option (b) include GIF (static frame only):** adds complexity for a format rarely used as avatars. Deferred.
+- **Option (c) preserve original format:** loses the CDN caching benefit of a single format.
+- **Option (d) keep "any HTTPS" origin policy:** leaves the hotlink/tracking-pixel vector open.
+
+**Status:** Active.
+
+**Citation:** WP-106 §Scope (In); EC-171 Locked Values; D-10405 (superseded for `avatar_url` only).
+
+---
+
+### D-10602 — Avatar Upload Endpoint Contract: `POST /api/me/avatar` (WP-106)
+
+**Type:** Wire Contract / Endpoint Semantics
+**Packet:** WP-106
+**Date:** 2026-05-16
+
+**Decision:** The avatar upload endpoint contract:
+
+- **Route:** `POST /api/me/avatar`
+- **Auth:** `authenticated-session-required` (per D-9905)
+- **Content-Type:** `multipart/form-data` (single file field named `avatar`)
+- **Success response (200):** `{ avatarUrl: string }` — the new CDN URL (`https://images.barefootbetters.com/avatars/{accountId}.webp`)
+- **Error responses (4xx/5xx):** Project-owned error shape `{ code: string, message: string }`
+  - `400` with `code: 'invalid_mime_type'` — upload is not jpeg/png/webp
+  - `400` with `code: 'file_too_large'` — upload exceeds 5 MB
+  - `429` with `code: 'rate_limited'` — user exceeded 1 upload per 60 seconds
+  - `500` with `code: 'upload_failed'` — R2 PUT or DB update failed
+  - `401` with `code: 'unauthorized'` — session validation failed
+- **Side effect on success:** Updates `legendary.player_profiles.avatar_url` for the authenticated user. Pseudo-atomic: if DB update fails after R2 PUT succeeds, the R2 object is deleted (compensating action). If R2 PUT fails, no DB update is attempted.
+- **Multipart parsing:** `@koa/multer` with `limits: { fileSize: 5 * 1024 * 1024, files: 1 }`.
+
+**Rationale.**
+
+- **`POST` (not `PUT`) because the server transforms the payload.** The stored artifact is not byte-equal to the upload.
+- **Single file field `avatar` simplifies client code.** No metadata fields alongside the file.
+- **Compensating delete on DB failure prevents orphaned R2 objects.**
+
+**Rejected alternatives.**
+
+- **Option (b) presigned-URL upload (client to R2 direct):** removes server-side validation opportunity.
+- **Option (c) `PUT /api/me/avatar`:** misleading verb.
+
+**Status:** Active.
+
+**Citation:** WP-106 §Scope (In); `docs/ai/REFERENCE/api-endpoints.md` (row added at WP-106 execution); D-9905 (auth level); D-11802 (error contract shape).
+
+---
+
 ### D-10901 — WP-109 OQ-1: `'friends'` Visibility Falls Back to `'private'` Server-Side When No Friend Graph (WP-109)
 
 **Type:** Pre-Session Open Question Resolution (user pre-lock 2026-05-03)
