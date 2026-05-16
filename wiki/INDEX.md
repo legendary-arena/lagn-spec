@@ -1,6 +1,6 @@
 # Wiki Index
 
-> **11 / 50** entity pages.
+> **14 / 50** entity pages.
 > Last regenerated: 2026-05-15.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
@@ -69,6 +69,15 @@ Cross-cutting governance, methodology, and readiness assessments.
 - [Homepage Marketing Scorecard](homepage-marketing-scorecard.md) —
   SB7 + Player Needs Pyramid graded assessment of the homepage;
   tracks readiness across three questions (Problem / Product / Results).
+- [Homepage Spec](homepage-spec.md) — Build document for the homepage:
+  hero copy, Problem → Product → Result sections, Final Homepage
+  Output, readiness checklist, severity-tiered GO / NO-GO.
+- [Homepage Appendix](homepage-appendix.md) — Strategy reference:
+  Player Needs Pyramid, 20-problem catalog, badge architecture,
+  L2→L4 dependency, content framework (Sales / Narrative / Authority).
+- ~~[Homepage Review Template](homepage-review-template.md)~~ —
+  **Deprecated.** Original monolithic template; superseded by
+  Homepage Spec + Homepage Appendix.
 
 ## Keyword
 
@@ -106,7 +115,10 @@ following are useful entry points:
 - **`layer-engine`** — Pages anchored in the engine layer (most
   pages — see individual front-matter for the full set).
 - **`layer-marketing`** — Pages anchored in the marketing layer:
-  [Homepage Marketing Scorecard](homepage-marketing-scorecard.md)
+  [Homepage Marketing Scorecard](homepage-marketing-scorecard.md),
+  [Homepage Spec](homepage-spec.md),
+  [Homepage Appendix](homepage-appendix.md),
+  [Homepage Review Template](homepage-review-template.md)
 - **`layer-registry`** — Pages anchored in the registry layer:
   [Card Type Taxonomy](card-type-taxonomy.md),
   [CardExtId](cardextid.md) (cross-cuts engine + registry).

@@ -8,6 +8,9 @@ tags:
   - scoring
   - governance
 related:
+  - homepage-spec.md
+  - homepage-appendix.md
+  - homepage-review-template.md
   - scoring.md
   - hugo-web-system.md
   - brevo-email-pipeline.md
