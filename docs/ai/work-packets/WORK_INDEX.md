@@ -268,7 +268,7 @@ These packets ship the game and keep it running.
 
 - [x] WP-157 — Dashboard Scaffold: Monorepo Integration + PrimeVue. Done 2026-05-16. Closes EC-168 (`EC-168:` commit `fc325bc`). New `apps/dashboard/` SPA (Vue 3 + PrimeVue 4 + Pinia + Axios + ECharts). Deploys to `dashboard.legendary-arena.com` (Cloudflare Pages). 5 pages + debug, mock data, 4-state widgets, service envelope, polling composable, role guards, URL-state date range, feature flags. No engine/server/registry imports. No deps (parallel-safe). D-15701..D-15707. See [WP-157](WP-157-dashboard-scaffold.md).
 
-- [ ] **(deferred)** Fix CLI credentials field drift in `apps/server/scripts/join-match.mjs` (D-9001). Missing `playerID` + wrong `result.credentials` field name. CLI-only; no deps.
+- [x] **(deferred)** Fix CLI credentials field drift in `apps/server/scripts/join-match.mjs` (D-9001). Missing `playerID` + wrong `result.credentials` field name. CLI-only; no deps. Done 2026-05-16.
 
 - [x] **(deferred placeholder closed by WP-139 / D-13807 — 2026-05-08)** Classify `apps/registry-viewer/` in `docs/ai/REFERENCE/02-CODE-CATEGORIES.md` → resolved by D-13807, which defines a new `docs-app` category covering both `apps/registry-viewer/` and `apps/wiki-viewer/` (introduced by WP-139). The new category is documented in `02-CODE-CATEGORIES.md` Category Summary table + Definitions section; D-13807 is appended to `DECISIONS.md`. Closure happened in the same governance pass that drafted WP-139 to avoid re-inheriting the gap a fourth time.
 - [x] WP-139 — Engineering Wiki Viewer (Hugo, Build-Time Projection). **Executed 2026-05-08 — Done 2026-05-08 (commit `5a47da2`)

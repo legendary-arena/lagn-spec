@@ -274,21 +274,24 @@ mindmap
 
 - **Phase 3 Gate:** Closed (D-1320)
 - **Phase 6 Gate:** Closed 2026-04-19 — tag `phase-6-complete` at `c376467`
-- **Engine test baseline:** `705 / 0 / 0` (post-WP-151)
+- **Engine test baseline:** `730 / 0 / 0` (post-WP-156)
 - **Registry test baseline:** `53 / 0 / 0` (post-WP-151)
 - **Server test baseline:** `184 / 0 / 66 / 31` (post-WP-134)
 - **arena-client test baseline:** `286 / 35 / 0` (post-WP-130; preserved by WP-136)
-- **DECISIONS.md range:** `D-4801..D-15201` (extends through WP-152)
-- **EC range:** `EC-001..EC-164` (extends through WP-143)
+- **DECISIONS.md range:** `D-4801..D-15601` (extends through WP-156)
+- **EC range:** `EC-001..EC-170` (extends through WP-156)
 
 ---
 
 ## Next Unblocked (ordered)
 
-1. ✅ **G-state sub-WPs** (all `// SAFE-SKIP-WP128` assignment sites graduated) — Done: `G.mastermind.strikePile` (WP-153), `G.scheme.twistPile` (WP-153), `G.escapedPile` (WP-153), `G.mastermind.attachedBystanders` (WP-154), `G.turnEconomy.piercing` (WP-155), `G.turnEconomy.woundsDrawn` (WP-155), `G.piles.horrors` (WP-156).
-2. **CLI credentials field drift** (D-9001) — `apps/server/scripts/join-match.mjs` has wrong `playerID` + `result.credentials` field name. Tiny fix, no deps, no WP needed.
-3. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
-4. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+1. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
+2. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+
+**Recently completed:**
+- ✅ **G-state sub-WPs** (all `// SAFE-SKIP-WP128` assignment sites graduated 2026-05-16) — WP-153, WP-154, WP-155, WP-156.
+- ✅ **Dashboard scaffold** (WP-157, 2026-05-16) — `apps/dashboard/` SPA live.
+- ✅ **CLI credentials field drift** (D-9001, 2026-05-16) — `join-match.mjs` fixed.
 
 **Blocked (cannot start):**
 - **WP-106** — avatar upload pipeline; blocked on R2 user-upload governance decision.
