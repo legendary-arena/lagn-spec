@@ -1,6 +1,6 @@
 # Wiki Index
 
-> **19 / 50** entity pages.
+> **20 / 50** entity pages.
 > Last regenerated: 2026-05-16.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
@@ -97,6 +97,10 @@ Step-by-step walkthroughs for completing specific tasks.
   pipeline, markdown syntax, and local dev server.
 - [Figma Logo Design](figma-logo-design.md) — Deterministic
   pipeline for building production-grade SVG logo systems in Figma.
+- [Blog Post Authoring](blog-post-authoring.md) — Writing and
+  styling blog posts on `www.legendary-arena.com`: Mode C content
+  framework, 28-problem catalog mapping, brand tokens, CTA system,
+  image conventions, and annotated template.
 
 ## Keyword
 
