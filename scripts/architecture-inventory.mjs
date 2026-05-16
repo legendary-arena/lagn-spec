@@ -200,6 +200,8 @@ const CATEGORY_DEFINITIONS = [
   ]],
   ['UI component libraries', [
     'primevue',
+    '@primevue/themes',
+    'primeicons',
     'vuetify',
     'naive-ui',
     'element-plus',
@@ -207,6 +209,15 @@ const CATEGORY_DEFINITIONS = [
     'radix-vue',
     'reka-ui',
     'shadcn-vue',
+  ]],
+  ['Charts / data viz', [
+    'echarts',
+    'vue-echarts',
+    'chart.js',
+    'vue-chartjs',
+    'd3',
+    'apexcharts',
+    'vue3-apexcharts',
   ]],
   ['Icons', [
     '@iconify/vue',
@@ -478,7 +489,11 @@ const IMPORTANCE_DEFINITIONS = [
   ['Adopted', [
     'vue',
     'pinia',
+    'vue-router',
     'vite',
+    'primevue',
+    'axios',
+    'echarts',
     { name: 'socket.io', transitiveVia: 'boardgame.io' },
     { name: 'socket.io-client', transitiveVia: 'boardgame.io' },
     { name: '@koa/router', transitiveVia: 'boardgame.io' },
@@ -2786,6 +2801,16 @@ async function renderApplicationStacksSection(manifests, lockfilePackages) {
       stackFacts.push(
         `HTTP routes via Koa router (\`@koa/router@${koaRouterVersions}\`${koaVersionNote}, both transitive via \`boardgame.io\`)`,
       );
+    }
+    if (directDeps.primevue !== undefined) {
+      stackFacts.push(`PrimeVue (\`primevue@${directDeps.primevue}\`)`);
+    }
+    if (directDeps.axios !== undefined) {
+      stackFacts.push(`Axios (\`axios@${directDeps.axios}\`)`);
+    }
+    if (directDeps.echarts !== undefined || directDeps['vue-echarts'] !== undefined) {
+      const echartsVersion = directDeps.echarts ?? directDeps['vue-echarts'];
+      stackFacts.push(`ECharts (\`echarts@${echartsVersion}\`)`);
     }
     if (directDeps.pg !== undefined) {
       stackFacts.push(`PostgreSQL via \`pg@${directDeps.pg}\``);
