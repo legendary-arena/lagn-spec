@@ -4,7 +4,7 @@
  * CLI script to join an existing match on the running Legendary Arena server.
  *
  * Usage:
- *   node apps/server/scripts/join-match.mjs --match <matchID> --name <playerName> [--server <url>]
+ *   node apps/server/scripts/join-match.mjs --match <matchID> --player <playerID> --name <playerName> [--server <url>]
  *
  * POSTs to the boardgame.io lobby join endpoint. On success, prints a JSON
  * object with matchID, playerID, and credentials to stdout. The caller is
@@ -23,13 +23,14 @@ const DEFAULT_SERVER_URL = 'http://localhost:8000';
  * Parses CLI arguments for the join-match script.
  *
  * @param {string[]} [args] - Argument array; defaults to process.argv.slice(2).
- * @returns {{ serverUrl: string, matchIdentifier: string, playerName: string }}
+ * @returns {{ serverUrl: string, matchIdentifier: string, playerIdentifier: string, playerName: string }}
  * @throws {Error} If required arguments are missing.
  */
 export function parseJoinMatchArguments(args = process.argv.slice(2)) {
   const { values } = parseArgs({
     options: {
       match: { type: 'string' },
+      player: { type: 'string' },
       name: { type: 'string' },
       server: { type: 'string' },
     },
@@ -42,6 +43,12 @@ export function parseJoinMatchArguments(args = process.argv.slice(2)) {
     );
   }
 
+  if (!values.player) {
+    throw new Error(
+      'Missing required argument: --player <playerID>. Provide the seat index to claim (e.g. "0", "1").'
+    );
+  }
+
   if (!values.name) {
     throw new Error(
       'Missing required argument: --name <playerName>. Provide the display name for this player.'
@@ -51,6 +58,7 @@ export function parseJoinMatchArguments(args = process.argv.slice(2)) {
   return {
     serverUrl: values.server || DEFAULT_SERVER_URL,
     matchIdentifier: values.match,
+    playerIdentifier: values.player,
     playerName: values.name,
   };
 }
@@ -60,17 +68,18 @@ export function parseJoinMatchArguments(args = process.argv.slice(2)) {
  *
  * @param {string} serverUrl - Base URL of the boardgame.io server.
  * @param {string} matchIdentifier - The matchID to join.
+ * @param {string} playerIdentifier - Seat index to claim (e.g. "0", "1").
  * @param {string} playerName - Display name for the joining player.
- * @returns {Promise<{ matchID: string, playerID: string, credentials: string }>}
+ * @returns {Promise<{ matchID: string, playerID: string, playerCredentials: string }>}
  */
-export async function joinMatch(serverUrl, matchIdentifier, playerName) {
+export async function joinMatch(serverUrl, matchIdentifier, playerIdentifier, playerName) {
   // why: boardgame.io exposes match joining at POST /games/<gameName>/<matchID>/join by default
   const joinUrl = `${serverUrl}/games/legendary-arena/${matchIdentifier}/join`;
 
   const response = await fetch(joinUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ playerName }),
+    body: JSON.stringify({ playerID: playerIdentifier, playerName }),
   });
 
   if (!response.ok) {
@@ -87,20 +96,14 @@ export async function joinMatch(serverUrl, matchIdentifier, playerName) {
     );
   }
 
+  // why: boardgame.io 0.50.x join response is { playerCredentials: string } per D-9001
   const result = await response.json();
 
-  const output = {
+  return {
     matchID: matchIdentifier,
-    playerID: result.playerID,
-    credentials: result.credentials,
+    playerID: playerIdentifier,
+    playerCredentials: result.playerCredentials,
   };
-
-  // why: some boardgame.io versions include matchID in the join response — preserve it if present
-  if (result.matchID) {
-    output.matchID = result.matchID;
-  }
-
-  return output;
 }
 
 // ── Main ───────────────────────────────────────────────────────────────────
@@ -117,10 +120,10 @@ if (isMainModule) {
     process.exit(1);
   }
 
-  const { serverUrl, matchIdentifier, playerName } = parsed;
+  const { serverUrl, matchIdentifier, playerIdentifier, playerName } = parsed;
 
   try {
-    const result = await joinMatch(serverUrl, matchIdentifier, playerName);
+    const result = await joinMatch(serverUrl, matchIdentifier, playerIdentifier, playerName);
     console.log(JSON.stringify(result, null, 2));
   } catch (error) {
     console.error(
