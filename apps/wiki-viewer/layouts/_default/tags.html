@@ -1,0 +1,29 @@
+{{ define "main" }}
+  <section class="tags-index">
+    <h1>Tags</h1>
+    {{- $.Scratch.Set "tags" slice -}}
+    {{- range where .Site.RegularPages "Params.type" "ne" nil -}}
+      {{- $page := . -}}
+      {{- with .Params.tags -}}
+        {{- range . -}}
+          {{- $.Scratch.Add . (slice $page) -}}
+          {{- $allTags := $.Scratch.Get "tags" -}}
+          {{- if not (in $allTags .) -}}
+            {{- $.Scratch.Add "tags" (slice .) -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $allTags := sort ($.Scratch.Get "tags") -}}
+    {{- range $allTags -}}
+      {{- $tag := . -}}
+      {{- $pages := $.Scratch.Get $tag -}}
+      <h2 id="{{ $tag }}" class="tag-heading"><span class="tag">{{ $tag }}</span> <small class="tag-count">({{ len $pages }})</small></h2>
+      <ul class="tag-page-list">
+        {{- range sort $pages "Title" -}}
+          <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+        {{- end -}}
+      </ul>
+    {{- end -}}
+  </section>
+{{ end }}

@@ -10,7 +10,7 @@
     <dd>
       <ul class="tag-list">
         {{- range . -}}
-          <li class="tag">{{ . }}</li>
+          <li class="tag"><a href="/tags/#{{ . }}">{{ . }}</a></li>
         {{- end -}}
       </ul>
     </dd>
