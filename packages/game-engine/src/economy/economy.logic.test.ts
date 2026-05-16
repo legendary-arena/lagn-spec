@@ -50,7 +50,7 @@ describe('parseCardStatValue', () => {
 
 describe('addResources', () => {
   it('returns new object with correct totals', () => {
-    const before = { attack: 1, recruit: 2, spentAttack: 0, spentRecruit: 0 };
+    const before = { attack: 1, recruit: 2, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 };
     const after = addResources(before, 3, 4);
 
     assert.strictEqual(after.attack, 4);
@@ -66,13 +66,16 @@ describe('addResources', () => {
 });
 
 describe('resetTurnEconomy', () => {
-  it('returns all zeros', () => {
+  it('returns all six fields at zero', () => {
     const economy = resetTurnEconomy();
 
     assert.strictEqual(economy.attack, 0);
     assert.strictEqual(economy.recruit, 0);
     assert.strictEqual(economy.spentAttack, 0);
     assert.strictEqual(economy.spentRecruit, 0);
+    assert.strictEqual(economy.piercing, 0);
+    assert.strictEqual(economy.woundsDrawn, 0);
+    assert.strictEqual(Object.keys(economy).length, 6, 'resetTurnEconomy must return exactly 6 fields');
   });
 });
 

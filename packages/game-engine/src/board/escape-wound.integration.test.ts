@@ -80,7 +80,7 @@ function createMockGameState(options?: {
     villainDeckCardTypes: options?.cardTypes ?? {},
     ko: [],
     attachedBystanders: options?.attachedBystanders ?? {},
-    turnEconomy: { attack: 0, recruit: 0, spentAttack: 0, spentRecruit: 0 },
+    turnEconomy: { attack: 0, recruit: 0, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 },
     cardStats: {},
     mastermind: {
       id: 'test-mastermind',

@@ -285,7 +285,7 @@ mindmap
 
 ## Next Unblocked (ordered)
 
-1. **G-state sub-WPs** (fill 3 remaining `// SAFE-SKIP-WP128` sites) — add missing `G` fields (`G.turnEconomy.piercing`, `G.turnEconomy.woundsDrawn`, `G.piles.horrors`) so the WP-128 projections stop returning `[]`/`0`. Each cluster can land independently. WP-135 is the template. ✅ Done: `G.mastermind.strikePile` (WP-153), `G.scheme.twistPile` (WP-153), `G.escapedPile` (WP-153), `G.mastermind.attachedBystanders` (WP-154).
+1. **G-state sub-WPs** (fill 1 remaining `// SAFE-SKIP-WP128` site) — add missing `G` field (`G.piles.horrors`) so the WP-128 projection stops returning `0`. WP-135 is the template. ✅ Done: `G.mastermind.strikePile` (WP-153), `G.scheme.twistPile` (WP-153), `G.escapedPile` (WP-153), `G.mastermind.attachedBystanders` (WP-154), `G.turnEconomy.piercing` (WP-155), `G.turnEconomy.woundsDrawn` (WP-155).
 2. **CLI credentials field drift** (D-9001) — `apps/server/scripts/join-match.mjs` has wrong `playerID` + `result.credentials` field name. Tiny fix, no deps, no WP needed.
 3. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
 4. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.

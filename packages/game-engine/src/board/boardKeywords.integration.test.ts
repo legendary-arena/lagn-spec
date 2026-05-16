@@ -91,6 +91,8 @@ function makeTestGameState(overrides?: {
       recruit: 0,
       spentAttack: 0,
       spentRecruit: 0,
+      piercing: 0,
+      woundsDrawn: 0,
     },
     cardStats: (overrides?.cardStats ?? {}) as Record<CardExtId, never>,
     cardKeywords: overrides?.cardKeywords ?? {},

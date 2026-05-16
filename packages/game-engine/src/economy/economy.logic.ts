@@ -478,6 +478,8 @@ export function addResources(
     recruit: economy.recruit + recruit,
     spentAttack: economy.spentAttack,
     spentRecruit: economy.spentRecruit,
+    piercing: economy.piercing,
+    woundsDrawn: economy.woundsDrawn,
   };
 }
 
@@ -497,6 +499,8 @@ export function spendAttack(
     recruit: economy.recruit,
     spentAttack: economy.spentAttack + amount,
     spentRecruit: economy.spentRecruit,
+    piercing: economy.piercing,
+    woundsDrawn: economy.woundsDrawn,
   };
 }
 
@@ -516,6 +520,8 @@ export function spendRecruit(
     recruit: economy.recruit,
     spentAttack: economy.spentAttack,
     spentRecruit: economy.spentRecruit + amount,
+    piercing: economy.piercing,
+    woundsDrawn: economy.woundsDrawn,
   };
 }
 
@@ -527,7 +533,7 @@ export function spendRecruit(
  * @returns TurnEconomy with all fields set to 0.
  */
 export function resetTurnEconomy(): TurnEconomy {
-  return { attack: 0, recruit: 0, spentAttack: 0, spentRecruit: 0 };
+  return { attack: 0, recruit: 0, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 };
 }
 
 // ---------------------------------------------------------------------------

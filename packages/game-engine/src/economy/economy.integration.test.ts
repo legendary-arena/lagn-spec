@@ -79,6 +79,8 @@ function createMockGameState(options?: {
     villainDeck: options?.villainDeck ?? { deck: [], discard: [] },
     villainDeckCardTypes: options?.villainDeckCardTypes ?? {},
     ko: [],
+    escapedPile: [],
+    cardKeywords: {},
     attachedBystanders: {},
     turnEconomy: options?.turnEconomy ?? resetTurnEconomy(),
     cardStats: options?.cardStats ?? {},
@@ -87,6 +89,8 @@ function createMockGameState(options?: {
       baseCardId: 'test-mastermind-base',
       tacticsDeck: [],
       tacticsDefeated: [],
+      strikePile: [],
+      attachedBystanders: [],
     },
     city: options?.city ?? initializeCity(),
     hq: options?.hq ?? initializeHq(),
@@ -152,7 +156,7 @@ describe('economy integration', () => {
   it('fight with sufficient attack succeeds and increments spentAttack', () => {
     const gameState = createMockGameState({
       city: ['villain-x', null, null, null, null],
-      turnEconomy: { attack: 5, recruit: 0, spentAttack: 0, spentRecruit: 0 },
+      turnEconomy: { attack: 5, recruit: 0, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 },
       cardStats: {
         'villain-x': { attack: 0, recruit: 0, cost: 0, fightCost: 3 },
       },
@@ -180,7 +184,7 @@ describe('economy integration', () => {
   it('fight with insufficient attack: no G mutation', () => {
     const gameState = createMockGameState({
       city: ['villain-y', null, null, null, null],
-      turnEconomy: { attack: 2, recruit: 0, spentAttack: 0, spentRecruit: 0 },
+      turnEconomy: { attack: 2, recruit: 0, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 },
       cardStats: {
         'villain-y': { attack: 0, recruit: 0, cost: 0, fightCost: 5 },
       },
@@ -215,7 +219,7 @@ describe('economy integration', () => {
   it('recruit with sufficient recruit succeeds and increments spentRecruit', () => {
     const gameState = createMockGameState({
       hq: ['hero-b', null, null, null, null],
-      turnEconomy: { attack: 0, recruit: 6, spentAttack: 0, spentRecruit: 0 },
+      turnEconomy: { attack: 0, recruit: 6, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 },
       cardStats: {
         'hero-b': { attack: 2, recruit: 1, cost: 4, fightCost: 0 },
       },
@@ -243,7 +247,7 @@ describe('economy integration', () => {
   it('recruit with insufficient recruit: no G mutation', () => {
     const gameState = createMockGameState({
       hq: ['hero-c', null, null, null, null],
-      turnEconomy: { attack: 0, recruit: 1, spentAttack: 0, spentRecruit: 0 },
+      turnEconomy: { attack: 0, recruit: 1, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 },
       cardStats: {
         'hero-c': { attack: 1, recruit: 0, cost: 5, fightCost: 0 },
       },
@@ -282,13 +286,16 @@ describe('economy integration', () => {
     assert.strictEqual(economy.recruit, 0);
     assert.strictEqual(economy.spentAttack, 0);
     assert.strictEqual(economy.spentRecruit, 0);
+    assert.strictEqual(economy.piercing, 0);
+    assert.strictEqual(economy.woundsDrawn, 0);
 
     // Verify it also works as a reset from non-zero values
-    const modified = { attack: 5, recruit: 3, spentAttack: 2, spentRecruit: 1 };
+    const modified = { attack: 5, recruit: 3, spentAttack: 2, spentRecruit: 1, piercing: 0, woundsDrawn: 3 };
     const reset = resetTurnEconomy();
     assert.notDeepStrictEqual(reset, modified);
     assert.strictEqual(reset.attack, 0);
     assert.strictEqual(reset.spentAttack, 0);
+    assert.strictEqual(reset.woundsDrawn, 0);
   });
 
   it('JSON.stringify(G) succeeds after play + fight + recruit cycle', () => {
@@ -296,7 +303,7 @@ describe('economy integration', () => {
       hand: ['hero-d'],
       city: ['villain-z', null, null, null, null],
       hq: ['hero-e', null, null, null, null],
-      turnEconomy: { attack: 0, recruit: 0, spentAttack: 0, spentRecruit: 0 },
+      turnEconomy: { attack: 0, recruit: 0, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 },
       cardStats: {
         'hero-d': { attack: 5, recruit: 4, cost: 3, fightCost: 0 },
         'villain-z': { attack: 0, recruit: 0, cost: 0, fightCost: 3 },
@@ -320,7 +327,7 @@ describe('economy integration', () => {
 
   it('reveal does not mutate economy', () => {
     const gameState = createMockGameState({
-      turnEconomy: { attack: 7, recruit: 3, spentAttack: 2, spentRecruit: 1 },
+      turnEconomy: { attack: 7, recruit: 3, spentAttack: 2, spentRecruit: 1, piercing: 0, woundsDrawn: 0 },
       villainDeck: { deck: ['reveal-villain-a'], discard: [] },
       villainDeckCardTypes: { 'reveal-villain-a': 'villain' },
     });
@@ -356,6 +363,69 @@ describe('economy integration', () => {
       economyBefore,
       'Reveal must not mutate turnEconomy',
     );
+  });
+
+  it('escape increments woundsDrawn for current player', () => {
+    const gameState = createMockGameState({
+      villainDeck: { deck: ['escape-villain'], discard: [] },
+      villainDeckCardTypes: { 'escape-villain': 'villain' },
+    });
+    gameState.currentStage = 'start';
+    gameState.piles.wounds = ['wound-01', 'wound-02', 'wound-03'];
+    gameState.city = ['city-v1', 'city-v2', 'city-v3', 'city-v4', 'city-v5'];
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    assert.strictEqual(
+      moveContext.G.turnEconomy.woundsDrawn,
+      1,
+      'Escape wound must increment woundsDrawn for current player',
+    );
+  });
+
+  it('Ambush increments woundsDrawn only for current player', () => {
+    const gameState = createMockGameState({
+      villainDeck: { deck: ['ambush-villain'], discard: [] },
+      villainDeckCardTypes: { 'ambush-villain': 'villain' },
+    });
+    gameState.currentStage = 'start';
+    gameState.piles.wounds = ['wound-01', 'wound-02', 'wound-03', 'wound-04'];
+    gameState.playerZones['1'] = { deck: [], hand: [], discard: [], inPlay: [], victory: [] };
+    (gameState as Record<string, unknown>).cardKeywords = { 'ambush-villain': ['ambush'] };
+
+    const mockCtx = makeMockCtx({ numPlayers: 2 });
+    const moveContext = {
+      G: gameState,
+      ctx: {
+        ...mockCtx.ctx,
+        currentPlayer: '0',
+        phase: 'play',
+        turn: 1,
+        numMoves: 0,
+        playOrder: ['0', '1'],
+        playOrderPos: 0,
+        activePlayers: null,
+      },
+      random: mockCtx.random,
+      events: { endTurn: () => {}, setPhase: () => {}, endGame: () => {} },
+      playerID: '0' as string,
+      log: { setMetadata: () => {} },
+    };
+
+    revealVillainCard(moveContext);
+
+    assert.strictEqual(
+      moveContext.G.turnEconomy.woundsDrawn,
+      1,
+      'woundsDrawn must increment only for current player, not for all Ambush targets',
+    );
+  });
+
+  it('turn reset clears woundsDrawn to 0', () => {
+    const economy = resetTurnEconomy();
+    assert.strictEqual(economy.woundsDrawn, 0, 'woundsDrawn must be 0 after reset');
+    assert.strictEqual(economy.piercing, 0, 'piercing must be 0 after reset');
   });
 
   it('playing a card not in G.cardStats contributes 0/0', () => {

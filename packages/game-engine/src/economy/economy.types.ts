@@ -22,6 +22,10 @@ export interface TurnEconomy {
   spentAttack: number;
   /** Recruit points spent this turn on recruiting heroes. */
   spentRecruit: number;
+  /** Piercing damage accumulated this turn. No MVP producer — always 0 until a future hero ability WP. */
+  piercing: number;
+  /** Number of wound cards drawn by the current player this turn. */
+  woundsDrawn: number;
 }
 
 // why: stats resolved at setup time from registry so moves never query

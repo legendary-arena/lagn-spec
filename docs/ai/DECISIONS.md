@@ -16787,6 +16787,47 @@ not release captured bystanders in MVP — a future WP may model release.
 
 ---
 
+### D-15501 — woundsDrawn Scoped to Current Player Only
+
+**Decision:** `G.turnEconomy.woundsDrawn` tracks wound cards drawn by
+the **current player only** during their turn. In the Ambush handler
+(where all players gain wounds), only the current player's wound
+increments the counter; other players' Ambush wounds are not counted.
+The counter resets to `0` at the start of each turn via
+`resetTurnEconomy()`.
+
+**Rationale:** The economy projection (`UITurnEconomyState.woundsDrawn`)
+is a per-turn, per-active-player stat for the HUD. Tracking all
+players' wounds would conflate turn-owner actions with ambient damage,
+producing a number the active player cannot interpret. Ambush wounds
+dealt to non-active players are still deterministically applied to their
+discard zones — they are simply not counted in the turn economy
+projection.
+
+**Introduced:** WP-155 (executed 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15502 — Piercing Field Reserved, No MVP Producer
+
+**Decision:** `G.turnEconomy.piercing` is added to `TurnEconomy` and
+reset to `0` each turn, but **no code increments it** in this WP. The
+field exists solely to satisfy the `UITurnEconomyState.piercing`
+projection contract locked by WP-128. A future hero-ability WP will
+add piercing-producing card effects that increment this field.
+
+**Rationale:** The UI projection type was locked by WP-128 with
+`piercing: number`. Adding the field now (always `0`) fulfills the
+contract without inventing game mechanics that don't yet exist. The
+alternative — leaving the safe-skip marker — would block downstream
+UI work that reads the projection shape.
+
+**Introduced:** WP-155 (executed 2026-05-16)
+**Status:** Immutable
+
+---
+
 ### D-15701 — Dashboard uses PrimeVue 4 (Aura theme preset)
 
 **Decision:** The internal admin dashboard (`apps/dashboard`) uses PrimeVue 4

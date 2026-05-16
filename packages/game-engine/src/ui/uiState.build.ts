@@ -467,18 +467,8 @@ export function buildUIState(
   // why: available amounts computed via engine helpers, not raw
   // subtraction, to stay consistent with move validation logic
   //
-  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
-  // PS-3. Gap (piercing): `TurnEconomy` has only `attack` / `recruit` /
-  // `spentAttack` / `spentRecruit`; no `piercing` field. Future WP-NNN
-  // will resolve `G.turnEconomy.piercing` and the move logic that
-  // increments it.
-  //
-  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
-  // PS-3. Gap (woundsDrawn): same — `woundsDrawn` field doesn't exist
-  // on `TurnEconomy`. Future WP-NNN will resolve `G.turnEconomy.woundsDrawn`
-  // and the wound-draw tracking logic that produces it.
-  const piercing = 0; // SAFE-SKIP-WP128
-  const woundsDrawn = 0; // SAFE-SKIP-WP128
+  const piercing = gameState.turnEconomy.piercing;
+  const woundsDrawn = gameState.turnEconomy.woundsDrawn;
   const economy = {
     attack: gameState.turnEconomy.attack,
     recruit: gameState.turnEconomy.recruit,

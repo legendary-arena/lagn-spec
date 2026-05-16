@@ -55,7 +55,8 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // serialization includes them in computeStateHash input. Pre-edit hash:
 // '2baeecc3'. Post-edit hash: '52c42094'. Literal-only update per 01.5.
 // why: WP-154 adds G.mastermind.attachedBystanders (01.5 cascade)
-const PRE_WP080_HASH = '1bcbbab3';
+// why: WP-155 adds TurnEconomy.piercing and .woundsDrawn (01.5 cascade)
+const PRE_WP080_HASH = '3007ab4';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

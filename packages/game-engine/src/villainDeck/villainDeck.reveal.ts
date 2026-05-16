@@ -138,6 +138,8 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
       G.piles.wounds = woundResult.woundsPile;
       G.playerZones[ctx.currentPlayer]!.discard = woundResult.playerDiscard;
       if (woundPileBefore > 0) {
+        // why: track current player wound for UI economy projection
+        G.turnEconomy.woundsDrawn += 1;
         G.messages.push(
           `Player ${ctx.currentPlayer} gained a wound from villain escape.`,
         );
@@ -176,6 +178,10 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
           );
           G.piles.wounds = ambushWoundResult.woundsPile;
           G.playerZones[playerId]!.discard = ambushWoundResult.playerDiscard;
+          // why: woundsDrawn tracks current player only — other players' Ambush wounds are not projected
+          if (playerId === ctx.currentPlayer) {
+            G.turnEconomy.woundsDrawn += 1;
+          }
           G.messages.push(
             `Player ${playerId} gained a wound from Ambush on "${cardId}".`,
           );

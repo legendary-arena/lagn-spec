@@ -7,6 +7,21 @@
 
 ## Current State
 
+### WP-155 / EC-169 Executed — Turn Economy: Piercing and Wounds Drawn (2026-05-16)
+
+**Two WP-128 safe-skip sites graduated.** Added `piercing: number` and
+`woundsDrawn: number` to `TurnEconomy` (6 fields total). `woundsDrawn`
+increments at escape and Ambush wound sites (current player only, per
+D-15501). `piercing` has no producer in MVP (always `0`, per D-15502).
+`uiState.build.ts` projects real values from `G.turnEconomy`. `SAFE-SKIP-WP128`
+markers reduced from 4 to 2 (remaining: `horrorsCount` + comment-only
+line-14 mention).
+
+**Test baselines.** Engine: 720 pass / 0 fail (+3 new wound-tracking
+tests). Replay hash: `'1bcbbab3'` → `'3007ab4'` (01.5 cascade).
+
+---
+
 ### WP-154 / EC-167 Executed — Mastermind Attached Bystanders (2026-05-16)
 
 **One WP-128 safe-skip site graduated.** Master Strike now captures the
