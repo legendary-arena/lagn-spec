@@ -3,10 +3,10 @@
 ## Goal
 
 Graduate three WP-128 safe-skip sites (`mastermind.strikePile`,
-`scheme.twistPile`, `city.escapedPile`) by adding three new `CardExtId[]`
+`scheme.twistPile`, `escapedPile`) by adding three new `CardExtId[]`
 destination piles to `G` and wiring the existing reveal/escape handlers to
-divert resolved cards into them instead of (or in addition to) the villain
-deck discard. Removes three `// SAFE-SKIP-WP128` markers from
+divert resolved cards into them instead of the villain deck discard
+(strike/twist) or in addition to the existing counter increment (escaped). Removes three `// SAFE-SKIP-WP128` markers from
 `uiState.build.ts` and replaces their hardcoded `[]` with real projections.
 
 ## Assumes
@@ -48,13 +48,17 @@ deck discard. Removes three `// SAFE-SKIP-WP128` markers from
 
 - Add `strikePile: CardExtId[]` field to `MastermindState` in
   `mastermind.types.ts`
-- Add `twistPile: CardExtId[]` field to a new `SchemeState` interface
-  (or extend `LegendaryGameState` with `G.scheme.twistPile` — executor
-  decides representation; see Non-Negotiable Constraints for the shape
-  contract)
-- Add `escapedPile: CardExtId[]` to `CityZone`-adjacent state (e.g.,
-  `G.city` becomes a richer type, or a top-level `G.escapedPile` — executor
-  decides; see Non-Negotiable Constraints)
+- Add `twistPile: CardExtId[]` field to a new `G.scheme` object (new
+  `SchemeState` interface: `{ twistPile: CardExtId[] }`). The existing
+  top-level `G.schemeSetupInstructions` field is NOT migrated into this
+  object — it stays at top-level unchanged. `G.scheme` is a new
+  single-field namespace for scheme-owned resolved-card state.
+- Add `escapedPile: CardExtId[]` as a top-level field on
+  `LegendaryGameState` (`G.escapedPile`). Rationale: `G.city` is a
+  fixed `CityZone` 5-tuple and cannot be extended without converting it
+  to an object (massive ripple outside this WP's scope). The escaped
+  pile is city-adjacent in game logic but structurally lives at G
+  top-level.
 - Initialize all three piles as `[]` in `Game.setup()` /
   `buildInitialGameState`
 - Modify `revealVillainCard` to route `'scheme-twist'` cards to the twist
@@ -67,9 +71,17 @@ deck discard. Removes three `// SAFE-SKIP-WP128` markers from
 - Graduate three `uiState.build.ts` projections: replace hardcoded `[]`
   with real derivations from the new `G` fields, remove three
   `// SAFE-SKIP-WP128` markers
-- Add/update tests for the three new G fields and their projections
+- Add/update tests for the three new G fields and their projections:
+  - Routing test: reveal twist → assert NOT in discard, present in twist pile
+  - Routing test: reveal strike → assert NOT in discard, present in strike pile
+  - Escape test: with card → present in escapedPile; null → not present
+  - Ordering test: multiple reveals → order preserved
+  - Replay test: hash changes when piles change (01.5 validation)
 - 01.5 cascade: update `computeStateHash` replay fixture literal
-- DECISIONS.md entries for each design choice (G field placement)
+- DECISIONS.md entries documenting the rationale for the locked G field
+  placement (no alternative placements permitted)
+- All three piles require inline `// invariant:` comments explaining:
+  append-only, order significance, no reshuffle behavior (MVP constraint)
 
 ## Out of Scope
 
@@ -88,8 +100,9 @@ deck discard. Removes three `// SAFE-SKIP-WP128` markers from
 
 - `packages/game-engine/src/mastermind/mastermind.types.ts` — modified —
   add `strikePile: CardExtId[]` field to `MastermindState`
-- `packages/game-engine/src/types.ts` — modified — add scheme twist pile
-  and escaped pile G fields (exact shape per executor design choice)
+- `packages/game-engine/src/types.ts` — modified — add `SchemeState`
+  interface + `scheme: SchemeState` field + `escapedPile: CardExtId[]`
+  top-level field on `LegendaryGameState`
 - `packages/game-engine/src/setup/buildInitialGameState.ts` (or
   equivalent setup file) — modified — initialize three new piles as `[]`
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — modified
@@ -126,14 +139,78 @@ deck discard. Removes three `// SAFE-SKIP-WP128` markers from
 - The three new piles are `CardExtId[]` — never full card objects
 - Strike pile lives on `MastermindState` (the mastermind owns its
   resolved strikes)
-- Scheme-twist and mastermind-strike cards are diverted FROM
-  `G.villainDeck.discard` — they no longer go to discard after this WP
-- Escaped villain cards are pushed to the escaped pile IN ADDITION to
-  incrementing `G.counters[ESCAPED_VILLAINS]` — the counter is unchanged
 - All three piles initialized as `[]` at setup
 - UIState projection uses `resolveDisplay` per WP-111 D-11105
   aliasing-defense (per-entry shallow copy)
 - 01.5 IS INVOKED — new G fields change `computeStateHash`
+- All destination piles use suffix `Pile` — no `Deck`, `Zone`, or
+  `Collection` alternatives permitted
+- It is a violation for any `'scheme-twist'` or `'mastermind-strike'`
+  card to appear in `G.villainDeck.discard` after this WP — tests MUST
+  fail if such cards are detected in discard
+
+**Locked Data Placement (WP-153):**
+- `G.mastermind.strikePile: CardExtId[]` (REQUIRED)
+- `G.scheme.twistPile: CardExtId[]` (REQUIRED — `G.scheme` is a NEW
+  single-field `SchemeState` object: `{ twistPile: CardExtId[] }`.
+  Existing `G.schemeSetupInstructions` stays at top-level, unchanged.)
+- `G.escapedPile: CardExtId[]` (REQUIRED — top-level on G. `G.city` is
+  a fixed `CityZone` 5-tuple that cannot be extended; escaped pile is
+  city-adjacent in game logic but structurally top-level.)
+
+No alternative placements are permitted.
+
+**Routing Contract (authoritative):**
+- `'scheme-twist'` cards:
+  → MUST be pushed to `G.scheme.twistPile`
+  → MUST NOT be added to `G.villainDeck.discard`
+- `'mastermind-strike'` cards:
+  → MUST be pushed to `G.mastermind.strikePile`
+  → MUST NOT be added to `G.villainDeck.discard`
+- Escaped villains:
+  → MUST be pushed to `G.escapedPile`
+  → MUST ALSO increment `G.counters[ESCAPED_VILLAINS]`
+
+**Escape Handler Contract:**
+- If `escapedCard !== null`: push to `G.escapedPile`
+- If `escapedCard === null`: DO NOTHING (no push)
+- Counter increment MUST occur regardless of null state (existing
+  behavior preserved)
+
+**Pile Ordering Invariant:**
+- All destination piles (`strikePile`, `twistPile`, `escapedPile`) are
+  append-only
+- New entries are pushed to the end (`array.push`)
+- Order reflects chronological resolution order from the reveal pipeline
+- No sorting or reordering is permitted
+
+**Setup Invariant:**
+- All three piles MUST exist on G at setup:
+  - `G.mastermind.strikePile = []`
+  - `G.scheme = { twistPile: [] }`
+  - `G.escapedPile = []`
+- Absence of any of these keys is a hard failure condition
+
+**UI Projection Contract:**
+- Projections MUST preserve underlying G array order (index-stable)
+- `resolveDisplay` must be applied per entry with shallow copy semantics
+  (WP-111 D-11105)
+- No filtering, sorting, or transformation beyond mapping is permitted
+- Each projected entry MUST be a new object instance (no reference reuse
+  from prior frames)
+
+**Single Write Path Constraint:**
+- Destination pile mutation MUST occur only within `revealVillainCard`
+- No other function may push to `G.mastermind.strikePile`,
+  `G.scheme.twistPile`, or `G.escapedPile`
+
+**Replay Hash Coverage (01.5):**
+- `computeStateHash` MUST include all three new piles explicitly
+- Adding/removing entries from any of the three piles MUST change the hash
+
+**Setup Type Safety:**
+- All three piles MUST be present on the fully typed
+  `LegendaryGameState` (not conditionally added or optional)
 
 **Session protocol:**
 - Stop and ask on unclear items — never guess
@@ -157,8 +234,16 @@ deck discard. Removes three `// SAFE-SKIP-WP128` markers from
 - [ ] Escaped villain cards are pushed to the escaped pile (counter increment unchanged)
 - [ ] `uiState.build.ts` projects `mastermind.strikePile` from real G data with `resolveDisplay`
 - [ ] `uiState.build.ts` projects `scheme.twistPile` from real G data with `resolveDisplay`
-- [ ] `uiState.build.ts` projects `city.escapedPile` from real G data with `resolveDisplay`
+- [ ] `uiState.build.ts` projects `escapedPile` from real G data with `resolveDisplay`
 - [ ] Three `// SAFE-SKIP-WP128` markers removed from `uiState.build.ts`
+- [ ] `'scheme-twist'` cards never appear in `G.villainDeck.discard` after routing
+- [ ] `'mastermind-strike'` cards never appear in `G.villainDeck.discard` after routing
+- [ ] Destination piles preserve insertion order (verified via test)
+- [ ] Escaped pile only contains non-null `CardExtId` values
+- [ ] All projection arrays match G arrays 1:1 in length and order
+- [ ] `computeStateHash` changes when any destination pile changes
+- [ ] No function outside `revealVillainCard` mutates destination piles (verified by test or code inspection)
+- [ ] UI projection entries are fresh object instances (no reference reuse)
 - [ ] `pnpm --filter game-engine test` passes with no failures
 
 ## Vision Alignment
@@ -195,10 +280,11 @@ pnpm --filter game-engine test
 # Expected: all tests pass, no failures
 
 # Verify safe-skip markers reduced by 3
-# (from 7 to 4 — the remaining are mastermind.attachedBystanders,
-# economy.piercing, economy.woundsDrawn, piles.horrorsCount)
+# (from 8 to 5 — remaining: docstring reference on line 14,
+# mastermind.attachedBystanders, economy.piercing, economy.woundsDrawn,
+# piles.horrorsCount)
 rg "SAFE-SKIP-WP128" packages/game-engine/src/ui/uiState.build.ts --count
-# Expected: 4
+# Expected: 5 (1 docstring + 4 code markers)
 ```
 
 ## Definition of Done
