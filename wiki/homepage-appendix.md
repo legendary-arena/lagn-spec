@@ -709,22 +709,22 @@ direct L2 (Trust) requirement.
 
 | Dimension | Physical Cards (Tabletop) | Digital (Legendary Arena) |
 |-----------|--------------------------|--------------------------|
-| Tactile experience | Real cards, shuffling, physical presence | No tactile interaction |
-| Social presence | Face-to-face interaction, shared table energy | Remote play (voice/video optional, but not physical) |
-| Immersion / Ritual | Setup, handling cards, table presence creates ritual | Faster, but less ceremonial |
-| Rules enforcement | Manual — requires knowledge, lookup, consensus | Automatic — enforced instantly and correctly |
-| Complex interactions | Slows gameplay, requires interruption | Resolved instantly with no ambiguity |
-| Ease of play (setup/teardown) | Time-consuming (setup, sorting, cleanup) | Instant start, no teardown |
-| Accessibility / convenience | Requires physical location, space, materials | Play anywhere, any time |
-| Multiplayer access | Limited to same room | Remote play with anyone |
-| Card durability | Wear, damage, loss over time | No degradation |
-| Cost scaling | Must purchase expansions, out-of-print issues | Full content accessible (no scarcity) |
-| Verification / competitive integrity | No way to prove outcomes | Replay + deterministic verification |
-| Learning / improvement | No structured review or analytics | Replay analysis + benchmarks |
-| Game state tracking | Manual tracking (errors possible) | Precise, automatic tracking |
-| Collection / ownership feeling | Physical ownership, collectible value | Digital ownership (functional, not physical) |
-| Spontaneity | Requires planning/logistics | Immediate play |
-| Mental load | Rules + tracking + memory burden | Focus on decisions only |
+| Tactile experience | ✅ Real cards, shuffling, physical presence | ❌ No tactile interaction |
+| Social presence | ✅ Face-to-face interaction, shared table energy | ⚠️ Remote play (voice/video optional, but not physical) |
+| Immersion / Ritual | ✅ Setup, handling cards, table presence creates ritual | ⚠️ Faster, but less ceremonial |
+| Rules enforcement | ❌ Manual — requires knowledge, lookup, consensus | ✅ Automatic — enforced instantly and correctly |
+| Complex interactions | ❌ Slows gameplay, requires interruption | ✅ Resolved instantly with no ambiguity |
+| Ease of play (setup/teardown) | ❌ Time-consuming (setup, sorting, cleanup) | ✅ Instant start, no teardown |
+| Accessibility / convenience | ❌ Requires physical location, space, materials | ✅ Play anywhere, any time |
+| Multiplayer access | ❌ Limited to same room | ✅ Remote play with anyone |
+| Card durability | ❌ Wear, damage, loss over time | ✅ No degradation |
+| Cost scaling | ❌ Must purchase expansions, out-of-print issues | ✅ Full content accessible (no scarcity) |
+| Verification / competitive integrity | ❌ No way to prove outcomes | ✅ Replay + deterministic verification |
+| Learning / improvement | ❌ No structured review or analytics | ✅ Replay analysis + benchmarks |
+| Game state tracking | ❌ Manual tracking (errors possible) | ✅ Precise, automatic tracking |
+| Collection / ownership feeling | ✅ Physical ownership, collectible value | ⚠️ Digital ownership (functional, not physical) |
+| Spontaneity | ❌ Requires planning/logistics | ✅ Immediate play |
+| Mental load | ❌ Rules + tracking + memory burden | ✅ Focus on decisions only |
 
 **What physical cards do better** (use explicitly for credibility):
 - Tangible, tactile experience
