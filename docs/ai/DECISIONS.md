@@ -12856,6 +12856,62 @@ Per `.claude/rules/code-style.md §"Abstraction & Control Flow"`: *"Duplicate fi
 
 ---
 
+## Legends Attract Board Decisions (WP-143)
+
+### D-14301 — Legends SPA Reads R2 Directly; Forbidden from Calling Game-Server API (WP-143)
+
+**Decision:** The legends SPA reads from R2 directly and is forbidden from calling the game-server API. Zero requests to `api.legendary-arena.com` or `*.onrender.com`.
+**Rationale:** Locks the public scoreboard's blast radius — a viral surge cannot crash the game server. Trade-off: cache-driven freshness staleness, mitigated by D-14302 cadence + D-14303 visible staleness UX.
+**Introduced:** WP-143
+**Status:** Active
+
+---
+
+### D-14302 — Default Attract-Mode Cycle Interval: 15 Seconds (WP-143)
+
+**Decision:** Default attract-mode cycle interval: 15 seconds per panel.
+**Rationale:** Long enough to read top 10 entries; short enough that a kiosk display feels alive.
+**Introduced:** WP-143
+**Status:** Active
+
+---
+
+### D-14303 — Stale-Snapshot Threshold: 30 Minutes (WP-143)
+
+**Decision:** Stale-snapshot threshold: 30 minutes. Past this, the freshness badge degrades visibly.
+**Rationale:** The publisher's default cadence is 5 min (D-14201); 30 min represents 6 missed cycles, a meaningful failure signal.
+**Introduced:** WP-143
+**Status:** Active
+
+---
+
+### D-14304 — No Auth, No Cookies, No localStorage Tokens (WP-143)
+
+**Decision:** No auth, no cookies, no localStorage tokens. Public attract board has no concept of a user session.
+**Rationale:** Any future "claim your handle" flow lives in `play.legendary-arena.com`, never here. Zero persistent storage keeps the SPA stateless and privacy-clean.
+**Introduced:** WP-143
+**Status:** Active
+
+---
+
+### D-14305 — Kiosk Mode Is URL-Flag Only, Not Build-Time Mode (WP-143)
+
+**Decision:** Kiosk mode is a `?kiosk=1` URL-flag concern only, not a build-time mode. The same artifact serves both ordinary visitors and kiosk displays.
+**Rationale:** Avoids a build matrix. A single deploy handles all use cases; kiosk behavior is CSS + JS runtime only.
+**Introduced:** WP-143
+**Status:** Active
+
+---
+
+### D-14306 — Manifest Poll Interval: 60 Seconds (WP-143)
+
+**Decision:** Manifest poll interval: 60 seconds (configurable via `VITE_LEGENDS_POLL_INTERVAL_MS`).
+**Rationale:** Frequent enough that a publisher recovery is visible within ~1 min; infrequent enough that a viral page doesn't generate excessive R2 GETs (one manifest request per visitor per minute).
+**Introduced:** WP-143
+**Status:** Active
+
+---
+
 ### D-10401 — WP-104 Module Path: Extend `apps/server/src/profile/` (Not New `apps/server/src/account/`)
 
 **Type:** Architectural Boundary

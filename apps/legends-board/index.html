@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hall of Legends — Legendary Arena</title>
+    <style>
+      body {
+        margin: 0;
+        background: #0a0a0f;
+        color: #e0e0e0;
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      }
+      .static-fallback {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+        padding: 2rem;
+      }
+      .static-fallback h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #ffd700, #ff8c00);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .static-fallback p {
+        font-size: 1.1rem;
+        color: #888;
+        max-width: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="static-fallback">
+        <h1>Hall of Legends</h1>
+        <p>Live scoreboard requires JavaScript. Enable JavaScript to view the latest rankings and achievements.</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

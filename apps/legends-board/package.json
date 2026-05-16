@@ -1,0 +1,26 @@
+{
+  "name": "@legendary-arena/legends-board",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Public Legends Attract Board — read-only scoreboard SPA for legends.legendary-arena.com",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "vue": "^3.4.27"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.17",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/tsconfig": "^0.5.1",
+    "tsx": "^4.15.7",
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1",
+    "vue-tsc": "^2.0.19"
+  }
+}

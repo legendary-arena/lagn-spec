@@ -122,6 +122,31 @@ skipped (+9 tests over WP-142). Engine: 705 / 0 UNCHANGED.
 
 ---
 
+### WP-143 / EC-164 Executed — Legends Attract Board (2026-05-15)
+
+**Public scoreboard SPA now exists at `apps/legends-board/`.** Vue 3 + Vite
+SPA reading pre-computed leaderboard JSON snapshots from R2 at
+`legends/v1/*`. Deployed to `legends.legendary-arena.com` via Cloudflare
+Pages. Zero API calls to the game server (D-14301), zero auth, zero
+persistent storage (D-14304). Five panel components (overall, weekly,
+by-scheme, recent-achievements, now-playing) rendered in
+`manifest.boards` order. AttractCycler auto-cycles every 15s (D-14302),
+respects `prefers-reduced-motion`. Kiosk mode (`?kiosk=1`) hides chrome
+and disables hover-pause (D-14305). FreshnessBadge degrades visually past
+30-min staleness threshold (D-14303). Manifest polled every 60s (D-14306);
+boards invalidated only on `manifest.generatedAt` change. Debug mode
+(`?debug=1`) exposes R2 URL, manifest state, force refresh. Static
+fallback in `index.html` renders heading + JS-required message without JS.
+
+**Six D-143NN entries land.** D-14301 (R2-only, no API), D-14302 (15s
+cycle), D-14303 (30-min stale), D-14304 (no auth/storage), D-14305
+(URL-flag kiosk), D-14306 (60s poll).
+
+**Test baselines.** Legends-board: 23 tests / 4 suites / 23 pass / 0 fail.
+Engine: UNCHANGED. Registry: UNCHANGED. Server: UNCHANGED.
+
+---
+
 ### WP-142 / EC-157 Executed — Legends Snapshot Publisher (2026-05-14)
 
 **The server now publishes public JSON leaderboard snapshots to R2 on a
