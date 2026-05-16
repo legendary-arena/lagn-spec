@@ -384,12 +384,10 @@ export function buildUIState(
     }
   }
 
-  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
-  // PS-3. Gap: `CityZone` is a 5-tuple; escapes increment
-  // `G.counters[ESCAPED_VILLAINS]` but the cards themselves aren't
-  // preserved. Future WP-NNN will resolve `G.city.escapedPile` so escaped
-  // villain cards are preserved post-escape.
-  const escapedPile: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
+  const escapedPile: UIDisplayEntry[] = buildDisplayEntries(
+    gameState.escapedPile,
+    gameState,
+  );
 
   // --- 4. Project HQ ---
   // why: HQ slots expose ext_ids for registry display lookup; no
@@ -429,13 +427,11 @@ export function buildUIState(
   // on the city row, not on the mastermind tile. Future WP-NNN will
   // resolve `G.mastermind.attachedBystanders` for Master Strike captures.
   //
-  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
-  // PS-3. Gap (strikePile): `G.mastermind.strikePile` does not exist;
-  // mastermind-strike cards live in `G.villainDeck.discard` filtered by
-  // type. Future WP-NNN will resolve `G.mastermind.strikePile` so
-  // resolved Master Strike cards are preserved for replay.
   const mastermindAttachedBystanders: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
-  const mastermindStrikePile: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
+  const mastermindStrikePile: UIDisplayEntry[] = buildDisplayEntries(
+    gameState.mastermind.strikePile,
+    gameState,
+  );
   const mastermind = {
     id: gameState.mastermind.id,
     tacticsRemaining: gameState.mastermind.tacticsDeck.length,
@@ -454,12 +450,10 @@ export function buildUIState(
       twistCount += 1;
     }
   }
-  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
-  // PS-3. Gap: no `G.scheme` object; resolved Scheme Twist cards live
-  // in `G.villainDeck.discard`. Future WP-NNN will resolve
-  // `G.scheme.twistPile` so revealed twist cards are preserved as
-  // first-class state for replay.
-  const schemeTwistPile: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
+  const schemeTwistPile: UIDisplayEntry[] = buildDisplayEntries(
+    gameState.scheme.twistPile,
+    gameState,
+  );
   const scheme = {
     id: gameState.selection.schemeId,
     twistCount,

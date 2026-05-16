@@ -7,6 +7,23 @@
 
 ## Current State
 
+### WP-153 / EC-165 Executed — Destination Piles: Strike, Twist, Escaped (2026-05-16)
+
+**Three WP-128 safe-skip sites graduated.** Resolved mastermind-strike
+cards now route to `G.mastermind.strikePile`, scheme-twist cards to
+`G.scheme.twistPile` (new `SchemeState` interface), and escaped villains
+to `G.escapedPile` (top-level, since `CityZone` is a fixed 5-tuple).
+All three piles are `CardExtId[]`, append-only, chronological order.
+`uiState.build.ts` projects real values via `buildDisplayEntries`.
+`SAFE-SKIP-WP128` markers reduced from 8 to 5 (remaining:
+`mastermindAttachedBystanders`, `piercing`, `woundsDrawn`,
+`horrorsCount`). D-15301/D-15302/D-15303 lock field placements.
+
+**Test baselines.** Engine: 711 pass / 0 fail (+6 new routing/ordering
+tests). Replay hash: `'2baeecc3'` → `'52c42094'` (01.5 cascade).
+
+---
+
 ### WP-110 / EC-163 Executed — Admin Billing Visibility (2026-05-15)
 
 **Admin-gated read-only billing inspection surface is live.** New

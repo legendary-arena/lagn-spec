@@ -48,10 +48,13 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // (`Player {playerId} recruited "{cardId}" from HQ slot {hqIndex}.`)
 // to the WP-135 byte-locked format (`Player {playerId} recruited
 // {heroExtId}; HQ slot {hqIndex} refilled from heroDeck (heroDeck.length:
-// {N})`). Pre-edit hash: '46f7863c'. Post-edit hash: '2baeecc3'. No
-// behavioral or logic change to this test — literal-only update at
-// exactly one site per the binary cascade procedure.
-const PRE_WP080_HASH = '2baeecc3';
+// {N})`). Pre-edit hash: '46f7863c'. Post-edit hash: '2baeecc3'.
+// why: WP-153 / EC-165 — three new G fields added to LegendaryGameState:
+// G.mastermind.strikePile (CardExtId[]), G.scheme.twistPile (CardExtId[]),
+// G.escapedPile (CardExtId[]). All initialize as [] at setup so JSON
+// serialization includes them in computeStateHash input. Pre-edit hash:
+// '2baeecc3'. Post-edit hash: '52c42094'. Literal-only update per 01.5.
+const PRE_WP080_HASH = '52c42094';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

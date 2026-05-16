@@ -34,6 +34,7 @@ export function defeatTopTactic(
     baseCardId: mastermindState.baseCardId,
     tacticsDeck: remainingDeck,
     tacticsDefeated: updatedDefeated,
+    strikePile: mastermindState.strikePile,
   };
 }
 

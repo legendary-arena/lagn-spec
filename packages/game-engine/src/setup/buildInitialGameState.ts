@@ -339,6 +339,12 @@ export function buildInitialGameState(
     // why: mastermind state built at setup from registry; tactics deck
     // shuffled deterministically; base card fightCost in G.cardStats
     mastermind: mastermindState,
+    // why: scheme runtime state holds the twist pile for resolved
+    // scheme-twist cards. Separate from schemeSetupInstructions (D-2601).
+    scheme: { twistPile: [] },
+    // why: escaped pile is top-level because CityZone is a fixed 5-tuple
+    // that cannot host named fields. Append-only, chronological order.
+    escapedPile: [],
     // why: card stats resolved at setup from registry so moves never query
     // registry at runtime — same pattern as G.villainDeckCardTypes (WP-014).
     // Read-only after setup (mastermind base card added by buildMastermindState).

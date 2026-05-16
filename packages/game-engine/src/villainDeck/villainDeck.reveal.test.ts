@@ -138,6 +138,15 @@ function createMockGameState(options: {
     attachedBystanders: {},
     city: initializeCity(),
     hq: initializeHq(),
+    mastermind: {
+      id: 'test-mastermind' as CardExtId,
+      baseCardId: 'test-mastermind-base' as CardExtId,
+      tacticsDeck: [],
+      tacticsDefeated: [],
+      strikePile: [],
+    },
+    scheme: { twistPile: [] },
+    escapedPile: [],
     lobby: {
       requiredPlayers: 1,
       ready: {},
@@ -482,6 +491,139 @@ describe('revealVillainCard', () => {
       moveContext.G.messages.length,
       messagesBefore,
       'No messages appended when stage gate blocks (silent return)',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-153: Destination pile routing tests
+// ---------------------------------------------------------------------------
+
+describe('revealVillainCard — destination pile routing (WP-153)', () => {
+  it('routes scheme-twist to G.scheme.twistPile, not discard', () => {
+    const gameState = createMockGameState({
+      deck: ['twist-001'],
+      discard: [],
+      cardTypes: { 'twist-001': 'scheme-twist' },
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    assert.ok(
+      moveContext.G.scheme.twistPile.includes('twist-001'),
+      'scheme-twist card must be in G.scheme.twistPile',
+    );
+    assert.ok(
+      !moveContext.G.villainDeck.discard.includes('twist-001'),
+      'scheme-twist card must NOT be in villainDeck.discard',
+    );
+  });
+
+  it('routes mastermind-strike to G.mastermind.strikePile, not discard', () => {
+    const gameState = createMockGameState({
+      deck: ['strike-001'],
+      discard: [],
+      cardTypes: { 'strike-001': 'mastermind-strike' },
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    assert.ok(
+      moveContext.G.mastermind.strikePile.includes('strike-001'),
+      'mastermind-strike card must be in G.mastermind.strikePile',
+    );
+    assert.ok(
+      !moveContext.G.villainDeck.discard.includes('strike-001'),
+      'mastermind-strike card must NOT be in villainDeck.discard',
+    );
+  });
+
+  it('pushes escaped villain to G.escapedPile when escapedCard is non-null', () => {
+    const gameState = createMockGameState({
+      deck: ['new-villain'],
+      discard: [],
+      cardTypes: { 'new-villain': 'villain' },
+    });
+    gameState.city = [
+      'city-0' as CardExtId,
+      'city-1' as CardExtId,
+      'city-2' as CardExtId,
+      'city-3' as CardExtId,
+      'city-4' as CardExtId,
+    ];
+    gameState.playerZones = { '0': { deck: [], hand: [], discard: [], inPlay: [], victory: [] } };
+    gameState.piles.wounds = ['wound-1' as CardExtId];
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    assert.ok(
+      moveContext.G.escapedPile.includes('city-4'),
+      'Escaped villain (city-4) must be in G.escapedPile',
+    );
+  });
+
+  it('does not push to escapedPile when no villain is displaced (empty city)', () => {
+    const gameState = createMockGameState({
+      deck: ['new-villain'],
+      discard: [],
+      cardTypes: { 'new-villain': 'villain' },
+    });
+    gameState.playerZones = { '0': { deck: [], hand: [], discard: [], inPlay: [], victory: [] } };
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    assert.equal(
+      moveContext.G.escapedPile.length,
+      0,
+      'escapedPile must remain empty when no card is displaced',
+    );
+  });
+
+  it('preserves insertion order across multiple scheme-twist reveals', () => {
+    const gameState = createMockGameState({
+      deck: ['twist-a', 'twist-b', 'twist-c'],
+      discard: [],
+      cardTypes: {
+        'twist-a': 'scheme-twist',
+        'twist-b': 'scheme-twist',
+        'twist-c': 'scheme-twist',
+      },
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+    revealVillainCard(moveContext);
+    revealVillainCard(moveContext);
+
+    assert.deepStrictEqual(
+      moveContext.G.scheme.twistPile,
+      ['twist-a', 'twist-b', 'twist-c'],
+      'twistPile must preserve chronological insertion order',
+    );
+  });
+
+  it('preserves insertion order across multiple mastermind-strike reveals', () => {
+    const gameState = createMockGameState({
+      deck: ['strike-a', 'strike-b'],
+      discard: [],
+      cardTypes: {
+        'strike-a': 'mastermind-strike',
+        'strike-b': 'mastermind-strike',
+      },
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+    revealVillainCard(moveContext);
+
+    assert.deepStrictEqual(
+      moveContext.G.mastermind.strikePile,
+      ['strike-a', 'strike-b'],
+      'strikePile must preserve chronological insertion order',
     );
   });
 });

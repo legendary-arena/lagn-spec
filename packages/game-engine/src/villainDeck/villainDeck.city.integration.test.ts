@@ -87,6 +87,15 @@ function createMockGameState(options: {
     villainDeckCardTypes: options.cardTypes,
     ko: [],
     attachedBystanders: {},
+    mastermind: {
+      id: 'test-mastermind' as CardExtId,
+      baseCardId: 'test-mastermind-base' as CardExtId,
+      tacticsDeck: [],
+      tacticsDefeated: [],
+      strikePile: [],
+    },
+    scheme: { twistPile: [] },
+    escapedPile: [],
     city: options.city ?? initializeCity(),
     hq: initializeHq(),
     lobby: {
@@ -188,8 +197,12 @@ describe('revealVillainCard — City integration', () => {
       'City must NOT be modified by scheme-twist reveal',
     );
     assert.ok(
-      moveContext.G.villainDeck.discard.includes('twist-card-001'),
-      'Scheme-twist must go to discard',
+      moveContext.G.scheme.twistPile.includes('twist-card-001'),
+      'Scheme-twist must go to G.scheme.twistPile',
+    );
+    assert.ok(
+      !moveContext.G.villainDeck.discard.includes('twist-card-001'),
+      'Scheme-twist must NOT go to discard',
     );
   });
 
@@ -210,8 +223,12 @@ describe('revealVillainCard — City integration', () => {
       'City must NOT be modified by mastermind-strike reveal',
     );
     assert.ok(
-      moveContext.G.villainDeck.discard.includes('strike-card-001'),
-      'Mastermind-strike must go to discard',
+      moveContext.G.mastermind.strikePile.includes('strike-card-001'),
+      'Mastermind-strike must go to G.mastermind.strikePile',
+    );
+    assert.ok(
+      !moveContext.G.villainDeck.discard.includes('strike-card-001'),
+      'Mastermind-strike must NOT go to discard',
     );
   });
 

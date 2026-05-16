@@ -16712,4 +16712,58 @@ independent evolution.
 
 ---
 
+### D-15301 — Strike Pile Placement: G.mastermind.strikePile
+
+**Decision:** Resolved mastermind-strike cards are stored at
+`G.mastermind.strikePile: CardExtId[]` as a field on `MastermindState`.
+The mastermind owns its resolved strikes. Append-only, chronological
+order, no reshuffle in MVP.
+
+**Rationale:** The mastermind is the logical owner of strike outcomes.
+Storing on `MastermindState` maintains cohesion with `tacticsDeck` and
+`tacticsDefeated` — all three are mastermind-scoped card collections.
+Alternatives (`G.strikePile` top-level, `G.villainDeck.strikePile`)
+would break ownership locality.
+
+**Introduced:** WP-153 (executed 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15302 — Twist Pile Placement: G.scheme.twistPile via SchemeState
+
+**Decision:** Resolved scheme-twist cards are stored at
+`G.scheme.twistPile: CardExtId[]` inside a new `SchemeState` interface.
+`G.schemeSetupInstructions` remains top-level unchanged (it is
+setup-only per D-2601). `SchemeState` holds runtime scheme state.
+
+**Rationale:** A dedicated `SchemeState` object provides a natural
+namespace for future scheme runtime fields (twist count thresholds,
+scheme-specific counters) without polluting the top-level G interface.
+The `twistPile` field is append-only, chronological, no reshuffle in MVP.
+
+**Introduced:** WP-153 (executed 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15303 — Escaped Pile Placement: G.escapedPile (Top-Level)
+
+**Decision:** Escaped villain cards are stored at
+`G.escapedPile: CardExtId[]` as a top-level field on
+`LegendaryGameState`. Not on `CityZone` or `G.city`.
+
+**Rationale:** `CityZone` is a fixed 5-tuple
+(`[CitySpace, CitySpace, CitySpace, CitySpace, CitySpace]`) that cannot
+host named fields without a structural type change. Top-level placement
+is the minimal additive change. The pile is append-only, chronological,
+no reshuffle in MVP. The escape counter
+(`G.counters[ESCAPED_VILLAINS]`) is unchanged — it tracks events; the
+pile tracks card identity.
+
+**Introduced:** WP-153 (executed 2026-05-16)
+**Status:** Immutable
+
+---
+
 Protect this file.

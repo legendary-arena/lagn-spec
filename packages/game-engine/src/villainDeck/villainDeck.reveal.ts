@@ -118,6 +118,12 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
       // scheme-wins loss condition.
       const currentEscaped = G.counters[ENDGAME_CONDITIONS.ESCAPED_VILLAINS] ?? 0;
       G.counters[ENDGAME_CONDITIONS.ESCAPED_VILLAINS] = currentEscaped + 1;
+
+      // why: escaped card pushed to G.escapedPile only when non-null (null
+      // means no card was displaced). Counter increments regardless — the
+      // counter tracks escape events, the pile tracks card identity.
+      G.escapedPile = [...G.escapedPile, pushResult.escapedCard];
+
       G.messages.push(
         `Villain "${pushResult.escapedCard}" escaped from the city.`,
       );
@@ -253,8 +259,14 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
     G.messages.push(
       `Bystander "${cardId}" revealed and placed in villain deck discard.`,
     );
-  } else {
-    // scheme-twist and mastermind-strike go to discard (existing behavior)
-    G.villainDeck.discard = [...G.villainDeck.discard, cardId];
+  } else if (cardType === 'scheme-twist') {
+    // why: scheme-twist cards route to G.scheme.twistPile (not discard)
+    // so the game tracks resolved twists for UI projection and future
+    // scheme-loss evaluation
+    G.scheme.twistPile = [...G.scheme.twistPile, cardId];
+  } else if (cardType === 'mastermind-strike') {
+    // why: mastermind-strike cards route to G.mastermind.strikePile (not
+    // discard) so the game tracks resolved strikes for UI projection
+    G.mastermind.strikePile = [...G.mastermind.strikePile, cardId];
   }
 }

@@ -179,6 +179,7 @@ export type {
 export type { BoardKeyword } from './board/boardKeywords.types.js';
 export { BOARD_KEYWORDS } from './board/boardKeywords.types.js';
 export type { SchemeSetupInstruction, SchemeSetupType } from './scheme/schemeSetup.types.js';
+export type { SchemeState } from './scheme/schemeState.types.js';
 export { SCHEME_SETUP_TYPES } from './scheme/schemeSetup.types.js';
 
 // Replay types (WP-027)
@@ -320,6 +321,7 @@ import type { TurnStage } from './turn/turnPhases.types.js';
 import type { CardExtId, PlayerZones, GlobalPiles } from './state/zones.types.js';
 import type { TurnEconomy, CardStatEntry } from './economy/economy.types.js';
 import type { MastermindState } from './mastermind/mastermind.types.js';
+import type { SchemeState } from './scheme/schemeState.types.js';
 import type { HookDefinition } from './rules/ruleHooks.types.js';
 import type { HeroAbilityHook } from './rules/heroAbility.types.js';
 import type { LobbyState } from './lobby/lobby.types.js';
@@ -507,6 +509,17 @@ export interface LegendaryGameState {
   // tacticsDefeated append-only. All fields are CardExtId or CardExtId[].
   /** Mastermind state for boss fight resolution. */
   mastermind: MastermindState;
+
+  // why: scheme runtime state holds the twist pile destination for resolved
+  // scheme-twist cards. Separate from G.schemeSetupInstructions (D-2601).
+  /** Scheme runtime state (twist pile for resolved scheme-twist cards). */
+  scheme: SchemeState;
+
+  // why: append-only destination pile for villains that escaped the City.
+  // Top-level on G because CityZone is a fixed 5-tuple that cannot host
+  // named fields. Order is chronological (insertion order); no reshuffle in MVP.
+  /** Escaped villain cards — append-only, chronological. */
+  escapedPile: CardExtId[];
 
   // why: per-turn attack/recruit point accumulation and spend tracking.
   // Reset at start of each player turn. Values are integers >= 0.

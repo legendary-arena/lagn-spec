@@ -33,4 +33,9 @@ export interface MastermindState {
   tacticsDeck: CardExtId[];
   /** Defeated tactics — append-only. */
   tacticsDefeated: CardExtId[];
+
+  // why: append-only destination pile for resolved mastermind-strike cards.
+  // Order is chronological (insertion order); no reshuffle in MVP.
+  /** Resolved mastermind-strike cards — append-only, chronological. */
+  strikePile: CardExtId[];
 }

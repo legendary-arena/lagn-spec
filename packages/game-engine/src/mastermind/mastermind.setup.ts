@@ -178,6 +178,7 @@ export function buildMastermindState(
       baseCardId: mastermindId,
       tacticsDeck: [],
       tacticsDefeated: [],
+      strikePile: [],
     };
   }
 
@@ -191,6 +192,7 @@ export function buildMastermindState(
       baseCardId: mastermindId,
       tacticsDeck: [],
       tacticsDefeated: [],
+      strikePile: [],
     };
   }
 
@@ -202,6 +204,7 @@ export function buildMastermindState(
       baseCardId: mastermindId,
       tacticsDeck: [],
       tacticsDefeated: [],
+      strikePile: [],
     };
   }
 
@@ -241,6 +244,7 @@ export function buildMastermindState(
     baseCardId,
     tacticsDeck: shuffledTactics,
     tacticsDefeated: [],
+    strikePile: [],
   };
 }
 

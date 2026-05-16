@@ -87,7 +87,10 @@ function createMockGameState(options?: {
       baseCardId: 'test-mastermind-base',
       tacticsDeck: [],
       tacticsDefeated: [],
+      strikePile: [],
     },
+    scheme: { twistPile: [] },
+    escapedPile: [],
     city: options?.city ?? initializeCity(),
     hq: initializeHq(),
     lobby: {
