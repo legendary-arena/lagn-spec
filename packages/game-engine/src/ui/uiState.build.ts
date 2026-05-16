@@ -506,12 +506,7 @@ export function buildUIState(
   };
 
   // --- 11. Project shared piles (counts only) ---
-  // why: WP-128 / D-12806 — Option A safe-skip per pre-flight 2026-05-03
-  // PS-3. Gap (horrorsCount): `GlobalPiles` has no `horrors` field;
-  // D-12802 default is `0` when no scenario uses Horrors. Future
-  // scenario WP-NNN will resolve `G.piles.horrors` when a Horrors-using
-  // scenario lands.
-  const horrorsCount = 0; // SAFE-SKIP-WP128
+  const horrorsCount = gameState.piles.horrors.length;
   const piles: UISharedPilesState = {
     bystandersCount: gameState.piles.bystanders.length,
     woundsCount: gameState.piles.wounds.length,

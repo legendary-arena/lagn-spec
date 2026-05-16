@@ -7,6 +7,22 @@
 
 ## Current State
 
+### WP-156 / EC-170 Executed — Horrors Pile (2026-05-16)
+
+**One WP-128 safe-skip site graduated.** Added `horrors: Zone` to
+`GlobalPiles` — initialized as `[]` in `buildGlobalPiles` (MVP: no scheme
+populates it). `uiState.build.ts` projects `horrorsCount` from
+`gameState.piles.horrors.length` instead of hardcoded `0`. Zone validation
+updated to require the 5th pile field. Pile is inert — no move or effect
+references it.
+
+**Test baselines.** Engine: 730 pass / 0 fail (+10 new: zone validation +
+projection tests). Replay hash: `'3007ab4'` → `'c530f405'` (01.5 cascade).
+`SAFE-SKIP-WP128` assignment-site markers reduced from 2 to 1 (remaining:
+comment-only line-14 JSDoc mention — not an assignment site).
+
+---
+
 ### WP-155 / EC-169 Executed — Turn Economy: Piercing and Wounds Drawn (2026-05-16)
 
 **Two WP-128 safe-skip sites graduated.** Added `piercing: number` and

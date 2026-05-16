@@ -29,6 +29,7 @@ describe('validateGameStateShape', () => {
         wounds: ['pile-wound'],
         officers: ['pile-shield-officer'],
         sidekicks: ['pile-sidekick'],
+        horrors: [],
       },
     };
 
@@ -44,6 +45,7 @@ describe('validateGameStateShape', () => {
         wounds: [],
         officers: [],
         sidekicks: [],
+        horrors: [],
       },
     };
 

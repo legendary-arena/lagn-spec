@@ -21,7 +21,7 @@ import type { ZoneValidationError } from './zones.types.js';
 const PLAYER_ZONE_KEYS = ['deck', 'hand', 'discard', 'inPlay', 'victory'] as const;
 
 /** Canonical keys that must be present in every GlobalPiles object. */
-const GLOBAL_PILE_KEYS = ['bystanders', 'wounds', 'officers', 'sidekicks'] as const;
+const GLOBAL_PILE_KEYS = ['bystanders', 'wounds', 'officers', 'sidekicks', 'horrors'] as const;
 
 /**
  * Checks whether a value is a non-null object (not an array).

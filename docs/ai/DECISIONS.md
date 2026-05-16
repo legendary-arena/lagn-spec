@@ -16828,6 +16828,28 @@ UI work that reads the projection shape.
 
 ---
 
+### D-15601 — Horrors Pile Placement and MVP-Empty Rationale
+
+**Decision:** `G.piles.horrors: Zone` (i.e., `CardExtId[]`) is added to
+`GlobalPiles` and initialized as `[]` in `buildGlobalPiles`. The pile is
+**inert in MVP** — no move, effect, or scheme setup logic reads or
+mutates it. It exists solely to satisfy the `UISharedPilesState.horrorsCount`
+projection contract locked by WP-128 (D-12802). A future scheme WP will
+add population logic for schemes that use the Horrors mechanic.
+
+**Rationale:** The UI projection type was locked by WP-128 with
+`horrorsCount: number` (always-present, default `0` per D-12802). Adding
+the field now (always `[]`) fulfills the contract without inventing scheme
+mechanics that don't yet exist. The projection derives the count via
+`gameState.piles.horrors.length` — never a separate counter. The
+alternative — leaving the safe-skip marker — would block downstream UI
+work that renders shared pile counts.
+
+**Introduced:** WP-156 (executed 2026-05-16)
+**Status:** Immutable
+
+---
+
 ### D-15701 — Dashboard uses PrimeVue 4 (Aura theme preset)
 
 **Decision:** The internal admin dashboard (`apps/dashboard`) uses PrimeVue 4

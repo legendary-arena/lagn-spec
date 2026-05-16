@@ -689,3 +689,33 @@ describe('buildUIState — mastermind.attachedBystanders projection (WP-154)', (
     );
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-156 — piles.horrorsCount projection
+// ---------------------------------------------------------------------------
+
+describe('buildUIState — piles.horrorsCount projection (WP-156)', () => {
+  it('projects horrorsCount as 0 for empty horrors pile', () => {
+    const gameState = createTestGameState();
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      ui.piles.horrorsCount,
+      0,
+      'horrorsCount must be 0 when piles.horrors is empty',
+    );
+  });
+
+  it('projects horrorsCount from gameState.piles.horrors.length', () => {
+    const gameState = createTestGameState();
+    gameState.piles.horrors = ['horror-card-001', 'horror-card-002'];
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      ui.piles.horrorsCount,
+      2,
+      'horrorsCount must equal piles.horrors.length',
+    );
+  });
+});

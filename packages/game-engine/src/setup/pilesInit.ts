@@ -81,5 +81,8 @@ export function buildGlobalPiles(
       createPileCards(SIDEKICK_EXT_ID, config.sidekicksCount),
       context,
     ),
+    // why: empty — no scheme currently populates the Horrors pile. Future
+    // scheme WPs will add population logic for schemes that use Horrors.
+    horrors: [],
   };
 }

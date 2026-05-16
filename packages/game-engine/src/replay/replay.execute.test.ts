@@ -56,7 +56,9 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // '2baeecc3'. Post-edit hash: '52c42094'. Literal-only update per 01.5.
 // why: WP-154 adds G.mastermind.attachedBystanders (01.5 cascade)
 // why: WP-155 adds TurnEconomy.piercing and .woundsDrawn (01.5 cascade)
-const PRE_WP080_HASH = '3007ab4';
+// why: WP-156 adds G.piles.horrors (01.5 cascade) — new GlobalPiles field
+// initialized as [] changes the JSON-encoded structure hash.
+const PRE_WP080_HASH = 'c530f405';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

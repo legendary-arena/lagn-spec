@@ -74,6 +74,11 @@ export interface GlobalPiles {
   officers: Zone;
   /** Sidekick cards. Size equals config.sidekicksCount. */
   sidekicks: Zone;
+  // why: non-player-owned, scheme-controlled, read-only in MVP. No scheme
+  // currently populates this pile; it exists for the projection contract
+  // (UISharedPilesState.horrorsCount per D-12802) and future scheme WPs.
+  /** Horror cards. Scheme-controlled; empty in MVP. */
+  horrors: Zone;
 }
 
 /**
