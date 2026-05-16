@@ -38,4 +38,10 @@ export interface MastermindState {
   // Order is chronological (insertion order); no reshuffle in MVP.
   /** Resolved mastermind-strike cards — append-only, chronological. */
   strikePile: CardExtId[];
+
+  // why: D-15401 — mastermind-side bystander captures only (D-12805
+  // Interpretation B separates from city-villain G.attachedBystanders).
+  // Append-only during strike resolution; no removal in MVP.
+  /** Bystanders captured by mastermind strikes — append-only. */
+  attachedBystanders: CardExtId[];
 }

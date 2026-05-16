@@ -427,7 +427,10 @@ export function buildUIState(
   // on the city row, not on the mastermind tile. Future WP-NNN will
   // resolve `G.mastermind.attachedBystanders` for Master Strike captures.
   //
-  const mastermindAttachedBystanders: UIDisplayEntry[] = []; // SAFE-SKIP-WP128
+  const mastermindAttachedBystanders: UIDisplayEntry[] = buildDisplayEntries(
+    gameState.mastermind.attachedBystanders,
+    gameState,
+  );
   const mastermindStrikePile: UIDisplayEntry[] = buildDisplayEntries(
     gameState.mastermind.strikePile,
     gameState,

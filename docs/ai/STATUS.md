@@ -7,6 +7,21 @@
 
 ## Current State
 
+### WP-154 / EC-167 Executed — Mastermind Attached Bystanders (2026-05-16)
+
+**One WP-128 safe-skip site graduated.** Master Strike now captures the
+top bystander (index 0) from `G.piles.bystanders` onto
+`G.mastermind.attachedBystanders: CardExtId[]` (D-15401). Empty supply
+logs a `[Master Strike]` message and skips capture. `uiState.build.ts`
+projects real values via `buildDisplayEntries` with aliasing-defense.
+`SAFE-SKIP-WP128` markers reduced from 5 to 4 (remaining: `piercing`,
+`woundsDrawn`, `horrorsCount`, plus the comment-only line-14 mention).
+
+**Test baselines.** Engine: 717 pass / 0 fail (+6 new capture/projection
+tests). Replay hash: `'52c42094'` → `'1bcbbab3'` (01.5 cascade).
+
+---
+
 ### WP-153 / EC-165 Executed — Destination Piles: Strike, Twist, Escaped (2026-05-16)
 
 **Three WP-128 safe-skip sites graduated.** Resolved mastermind-strike

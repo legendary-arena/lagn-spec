@@ -1,7 +1,8 @@
 /**
- * Tests for mastermind strike handler (WP-024).
+ * Tests for mastermind strike handler (WP-024, WP-154).
  *
- * Verifies strike counter effects, read-only G invariant, and
+ * Verifies bystander capture on strike, empty-supply logging,
+ * negative assertions on city-villain attachedBystanders, and
  * serialization.
  *
  * No boardgame.io imports. Uses node:test and node:assert only.
@@ -19,7 +20,7 @@ import type { LegendaryGameState } from '../types.js';
 /**
  * Creates a minimal LegendaryGameState for mastermind handler testing.
  *
- * @returns A minimal LegendaryGameState.
+ * @returns A minimal LegendaryGameState with populated bystander supply.
  */
 function makeTestState(): LegendaryGameState {
   return {
@@ -52,7 +53,7 @@ function makeTestState(): LegendaryGameState {
       },
     },
     piles: {
-      bystanders: [],
+      bystanders: ['bystander-001', 'bystander-002', 'bystander-003'],
       wounds: [],
       officers: [],
       sidekicks: [],
@@ -76,6 +77,8 @@ function makeTestState(): LegendaryGameState {
       baseCardId: 'test-mastermind-base',
       tacticsDeck: [],
       tacticsDefeated: [],
+      strikePile: [],
+      attachedBystanders: [],
     },
     city: [null, null, null, null, null],
     hq: [null, null, null, null, null],
@@ -97,7 +100,7 @@ describe('mastermindStrikeHandler', () => {
   });
 
   // -------------------------------------------------------------------------
-  // Test 2: produces wound-related effects (counter increment)
+  // Test 2: produces counter increment effect
   // -------------------------------------------------------------------------
   it('produces modifyCounter effect for masterStrikeCount', () => {
     const gameState = makeTestState();
@@ -119,19 +122,97 @@ describe('mastermindStrikeHandler', () => {
   });
 
   // -------------------------------------------------------------------------
-  // Test 3: handler does not mutate G
+  // Test 3: captures top bystander (index 0) from non-empty supply
   // -------------------------------------------------------------------------
-  it('does not mutate G', () => {
+  it('captures top bystander from supply onto mastermind.attachedBystanders', () => {
     const gameState = makeTestState();
-    const snapshot = JSON.parse(JSON.stringify(gameState));
+    const originalBystanderCount = gameState.piles.bystanders.length;
+    const topBystander = gameState.piles.bystanders[0];
 
     mastermindStrikeHandler(gameState, {}, { cardId: 'test-strike' });
 
-    assert.deepStrictEqual(gameState, snapshot, 'G must not be mutated by handler');
+    assert.equal(
+      gameState.mastermind.attachedBystanders.length,
+      1,
+      'mastermind.attachedBystanders must have exactly 1 entry after capture',
+    );
+    assert.equal(
+      gameState.mastermind.attachedBystanders[0],
+      topBystander,
+      'captured bystander must be the former index-0 card',
+    );
+    assert.equal(
+      gameState.piles.bystanders.length,
+      originalBystanderCount - 1,
+      'bystander pile must shrink by exactly 1',
+    );
+    assert.equal(
+      gameState.piles.bystanders[0],
+      'bystander-002',
+      'new top of pile must be the former index-1 card',
+    );
   });
 
   // -------------------------------------------------------------------------
-  // Test 4: JSON.stringify(effects) succeeds (serialization proof)
+  // Test 4: empty supply — no capture, message appended
+  // -------------------------------------------------------------------------
+  it('skips capture and appends message when bystander supply is empty', () => {
+    const gameState = makeTestState();
+    gameState.piles.bystanders = [];
+    const messagesBefore = gameState.messages.length;
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'test-strike' });
+
+    assert.equal(
+      gameState.mastermind.attachedBystanders.length,
+      0,
+      'no bystander captured when supply is empty',
+    );
+    assert.equal(
+      gameState.messages.length,
+      messagesBefore + 1,
+      'exactly one message appended on empty supply',
+    );
+    assert.ok(
+      gameState.messages[gameState.messages.length - 1]!.startsWith('[Master Strike]'),
+      'empty-supply message must begin with [Master Strike] prefix',
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 5: city-villain attachedBystanders unchanged (negative assertion)
+  // -------------------------------------------------------------------------
+  it('does not modify G.attachedBystanders (city-villain captures)', () => {
+    const gameState = makeTestState();
+    const cityBystandersBefore = JSON.parse(JSON.stringify(gameState.attachedBystanders));
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'test-strike' });
+
+    assert.deepStrictEqual(
+      gameState.attachedBystanders,
+      cityBystandersBefore,
+      'G.attachedBystanders (city-villain) must not be modified by mastermind strike',
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 6: bystander pile length unchanged when supply is empty
+  // -------------------------------------------------------------------------
+  it('bystander pile length remains 0 when supply is already empty', () => {
+    const gameState = makeTestState();
+    gameState.piles.bystanders = [];
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'test-strike' });
+
+    assert.equal(
+      gameState.piles.bystanders.length,
+      0,
+      'empty pile must remain at length 0',
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 7: effects are JSON-serializable
   // -------------------------------------------------------------------------
   it('effects are JSON-serializable', () => {
     const gameState = makeTestState();

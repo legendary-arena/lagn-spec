@@ -632,3 +632,60 @@ describe('buildUIState — WP-128 board-layout projections', () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-154 / EC-167 — mastermind attached bystanders projection
+// ---------------------------------------------------------------------------
+
+describe('buildUIState — mastermind.attachedBystanders projection (WP-154)', () => {
+  it('projects mastermind.attachedBystanders with correct length and extId values', () => {
+    const gameState = makeGameStateWithDisplayData();
+    const bystanderExtId = 'core-hero-black-widow-1' as CardExtId;
+    gameState.mastermind.attachedBystanders = [bystanderExtId, bystanderExtId];
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      ui.mastermind.attachedBystanders.length,
+      2,
+      'projected array length must match source',
+    );
+    assert.equal(
+      ui.mastermind.attachedBystanders[0]!.extId,
+      bystanderExtId,
+      'first entry extId must match source index 0',
+    );
+    assert.equal(
+      ui.mastermind.attachedBystanders[1]!.extId,
+      bystanderExtId,
+      'second entry extId must match source index 1',
+    );
+  });
+
+  it('projected array is aliasing-safe (new array, new entry objects)', () => {
+    const gameState = makeGameStateWithDisplayData();
+    const bystanderExtId = 'core-hero-black-widow-1' as CardExtId;
+    gameState.mastermind.attachedBystanders = [bystanderExtId];
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.notStrictEqual(
+      ui.mastermind.attachedBystanders,
+      gameState.mastermind.attachedBystanders,
+      'projected array must not be the same reference as G source',
+    );
+  });
+
+  it('empty attachedBystanders projects as empty array', () => {
+    const gameState = makeGameStateWithDisplayData();
+    gameState.mastermind.attachedBystanders = [];
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      ui.mastermind.attachedBystanders.length,
+      0,
+      'empty source must project as empty array',
+    );
+  });
+});

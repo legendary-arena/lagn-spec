@@ -54,7 +54,8 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // G.escapedPile (CardExtId[]). All initialize as [] at setup so JSON
 // serialization includes them in computeStateHash input. Pre-edit hash:
 // '2baeecc3'. Post-edit hash: '52c42094'. Literal-only update per 01.5.
-const PRE_WP080_HASH = '52c42094';
+// why: WP-154 adds G.mastermind.attachedBystanders (01.5 cascade)
+const PRE_WP080_HASH = '1bcbbab3';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

@@ -179,6 +179,7 @@ export function buildMastermindState(
       tacticsDeck: [],
       tacticsDefeated: [],
       strikePile: [],
+      attachedBystanders: [],
     };
   }
 
@@ -193,6 +194,7 @@ export function buildMastermindState(
       tacticsDeck: [],
       tacticsDefeated: [],
       strikePile: [],
+      attachedBystanders: [],
     };
   }
 
@@ -205,6 +207,7 @@ export function buildMastermindState(
       tacticsDeck: [],
       tacticsDefeated: [],
       strikePile: [],
+      attachedBystanders: [],
     };
   }
 
@@ -245,6 +248,7 @@ export function buildMastermindState(
     tacticsDeck: shuffledTactics,
     tacticsDefeated: [],
     strikePile: [],
+    attachedBystanders: [],
   };
 }
 

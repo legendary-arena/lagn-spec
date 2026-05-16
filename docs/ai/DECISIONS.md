@@ -16766,4 +16766,25 @@ pile tracks card identity.
 
 ---
 
+### D-15401 — MVP Master Strike Captures 1 Bystander onto Mastermind
+
+**Decision:** Each Master Strike attempts to capture exactly one bystander
+from `G.piles.bystanders` (index 0 = top). If the bystander supply is
+empty, capture is skipped and a plain string message beginning with
+`[Master Strike]` is appended to `G.messages`. Captured bystanders are
+stored at `G.mastermind.attachedBystanders: CardExtId[]` (append-only,
+no removal in MVP). This field is semantically distinct from
+`G.attachedBystanders` (city-villain captures) per D-12805
+Interpretation B.
+
+**Rationale:** Minimal deterministic modeling that unblocks projection
+graduation (WP-128 safe-skip resolution) and replay faithfulness. No
+new randomness source; no new `RuleEffectType`. Mastermind defeat does
+not release captured bystanders in MVP — a future WP may model release.
+
+**Introduced:** WP-154 (executed 2026-05-16)
+**Status:** Immutable
+
+---
+
 Protect this file.

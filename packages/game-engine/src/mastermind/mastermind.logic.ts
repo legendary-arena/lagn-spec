@@ -35,6 +35,7 @@ export function defeatTopTactic(
     tacticsDeck: remainingDeck,
     tacticsDefeated: updatedDefeated,
     strikePile: mastermindState.strikePile,
+    attachedBystanders: mastermindState.attachedBystanders,
   };
 }
 
