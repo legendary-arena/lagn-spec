@@ -698,6 +698,63 @@ feel tension using my own cards because I don't want to ruin them") +
 Philosophical ("you shouldn't have to choose between using the game
 and preserving it")
 
+#### Physical Cards vs Digital Play — Truth Table
+
+Positioning rule: do NOT position digital as "better" than tabletop.
+Position it as: *"Everything you love about the game — without the
+friction that stops you from playing."* This respects the hero's
+current world (they already love the physical game), removes barriers
+without replacing identity, and avoids triggering defensiveness — a
+direct L2 (Trust) requirement.
+
+| Dimension | Physical Cards (Tabletop) | Digital (Legendary Arena) |
+|-----------|--------------------------|--------------------------|
+| Tactile experience | Real cards, shuffling, physical presence | No tactile interaction |
+| Social presence | Face-to-face interaction, shared table energy | Remote play (voice/video optional, but not physical) |
+| Immersion / Ritual | Setup, handling cards, table presence creates ritual | Faster, but less ceremonial |
+| Rules enforcement | Manual — requires knowledge, lookup, consensus | Automatic — enforced instantly and correctly |
+| Complex interactions | Slows gameplay, requires interruption | Resolved instantly with no ambiguity |
+| Ease of play (setup/teardown) | Time-consuming (setup, sorting, cleanup) | Instant start, no teardown |
+| Accessibility / convenience | Requires physical location, space, materials | Play anywhere, any time |
+| Multiplayer access | Limited to same room | Remote play with anyone |
+| Card durability | Wear, damage, loss over time | No degradation |
+| Cost scaling | Must purchase expansions, out-of-print issues | Full content accessible (no scarcity) |
+| Verification / competitive integrity | No way to prove outcomes | Replay + deterministic verification |
+| Learning / improvement | No structured review or analytics | Replay analysis + benchmarks |
+| Game state tracking | Manual tracking (errors possible) | Precise, automatic tracking |
+| Collection / ownership feeling | Physical ownership, collectible value | Digital ownership (functional, not physical) |
+| Spontaneity | Requires planning/logistics | Immediate play |
+| Mental load | Rules + tracking + memory burden | Focus on decisions only |
+
+**What physical cards do better** (use explicitly for credibility):
+- Tangible, tactile experience
+- In-person social bonding
+- Collectible ownership and pride
+- Ritual and immersion of setup/play
+- "Unplugged" experience (no screens)
+
+**What digital solves** (tied to #21-28):
+- No rule lookups → fluid gameplay (#26)
+- No location constraint → play anytime (#27)
+- No card wear → no loss from playing (#28)
+- No setup → instant engagement (#22-23)
+- Determinism → trust + verifiability (#24)
+- Replay → learning + mastery (#25)
+
+**Homepage-ready synthesis** (use AFTER the problem section to close
+the gap):
+
+> You love the physical game.
+> The cards, the table, the experience — that's not the problem.
+>
+> The problem is everything that gets in the way of actually playing.
+>
+> - Stopping to look up rules
+> - Waiting to get everyone in the same room
+> - Watching your cards wear out over time
+>
+> Legendary Arena keeps the strategy — and removes the friction.
+
 #### Strategic Summary
 
 The 28 problems collapse into four dominant themes for homepage messaging:
