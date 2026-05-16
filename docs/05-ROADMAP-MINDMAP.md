@@ -174,6 +174,10 @@ mindmap
         ["WP-136 ✅ JSDOM opaque-origin storage fix"]
         ["WP-137 ✅ Hero card-instance distinctness + data-driven cardCounts"]
 
+      Legends Public Scoreboard
+        ["WP-142 ✅ Legends snapshot publisher"]
+        ["WP-143 ✅ Legends attract board (public scoreboard SPA)"]
+
       Phase 9 — Profile Surface Follow-ups
         ["WP-105 📦 Queued — player badges"]
         ["WP-106 ⏸ Blocked — avatar upload pipeline"]
@@ -230,10 +234,11 @@ mindmap
 | Phase 8 — Interactive Board Layout | 3/3 | — |
 | Monetization Stack | 3/3 | — |
 | Engine & Test-Harness Cleanup | 3/3 | — |
+| Legends Public Scoreboard | 2/2 | — |
 | Phase 9 — Profile Surface Follow-ups | 0/4 | 2 📦, 2 ⏸ |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 0/3 | 1 📝, 2 ⏸ |
-| **Total** | **133/138 ✅** | 8 📝 placeholders + 3 📦 + 4 ⏸ |
+| **Total** | **135/140 ✅** | 8 📝 placeholders + 3 📦 + 4 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 
