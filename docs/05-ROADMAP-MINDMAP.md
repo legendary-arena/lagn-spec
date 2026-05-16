@@ -174,15 +174,37 @@ mindmap
         ["WP-136 ✅ JSDOM opaque-origin storage fix"]
         ["WP-137 ✅ Hero card-instance distinctness + data-driven cardCounts"]
 
+      Physical Card Pipeline
+        ["WP-138 ✅ Physical card abstraction layer"]
+        ["WP-140 ✅ Physical card phase 1b"]
+        ["WP-141 ✅ Physical card phase 2"]
+        ["WP-147 ✅ PhysicalCard companionSlug + physical-side order"]
+        ["WP-151 ✅ Physical card phase 3 (imageUrl removal)"]
+
+      Domain Cutover & Infrastructure
+        ["WP-139 ✅ Engineering wiki viewer"]
+        ["WP-144 ✅ Arena-client production bundle isolation"]
+        ["WP-145 ✅ Architecture inventory ↔ wiki integration"]
+        ["WP-146 ✅ cards.legendary-arena.com cutover prep"]
+        ["WP-148 ✅ legendary-arena.com + www cutover prep"]
+
+      Public Leaderboard (Marketing)
+        ["WP-149 ✅ Public leaderboard Hugo page"]
+        ["WP-150 ✅ Leaderboard theme + global aggregation endpoints"]
+
       Legends Public Scoreboard
         ["WP-142 ✅ Legends snapshot publisher"]
         ["WP-143 ✅ Legends attract board (public scoreboard SPA)"]
 
+      Admin & Route Wiring
+        ["WP-110 ✅ Admin billing visibility"]
+        ["WP-152 ✅ Wire public profile route in server.mjs"]
+
       Phase 9 — Profile Surface Follow-ups
-        ["WP-105 📦 Queued — player badges"]
+        ["WP-105 ✅ Player badges"]
         ["WP-106 ⏸ Blocked — avatar upload pipeline"]
         ["WP-107 ⏸ Blocked — integrity / anti-cheat surface"]
-        ["WP-108 📦 Queued — profile billing & funding history UI (WP-132/133/134 deps cleared 2026-05-07)"]
+        ["WP-108 ✅ Profile billing & funding history UI"]
 
       Phase 10 — Debugging, Testing & Troubleshooting
         ["Future-WP-A 📝 Placeholder — replay diff tool"]
@@ -195,8 +217,8 @@ mindmap
         ["Future-WP-H 📝 Placeholder — synthetic load generator"]
 
       Governance Drafts
-        ["WP-097 📝 Drafted — tournament funding policy"]
-        ["WP-098 ⏸ Blocked — funding surface lint gate"]
+        ["WP-097 ✅ Tournament funding policy"]
+        ["WP-098 ✅ Funding surface lint gate"]
         ["WP-042.1 ⏸ Blocked — PostgreSQL seeding checklists"]
 
       Reference (one-line pointers)
@@ -205,7 +227,7 @@ mindmap
         ["cards.barefootbetters.com — registry viewer (public)"]
         [".claude/CLAUDE.md — root coordination"]
         [".claude/rules/ — 7 rule files"]
-        ["EC_INDEX.md — execution checklists EC-001..EC-140"]
+        ["EC_INDEX.md — execution checklists EC-001..EC-164"]
         ["DECISIONS.md — D-NNNN ledger (range in Project Baselines)"]
         ["WORK_INDEX.md — authoritative per-WP audit log"]
 ```
@@ -234,11 +256,15 @@ mindmap
 | Phase 8 — Interactive Board Layout | 3/3 | — |
 | Monetization Stack | 3/3 | — |
 | Engine & Test-Harness Cleanup | 3/3 | — |
+| Physical Card Pipeline | 5/5 | — |
+| Domain Cutover & Infrastructure | 5/5 | — |
+| Public Leaderboard (Marketing) | 2/2 | — |
 | Legends Public Scoreboard | 2/2 | — |
-| Phase 9 — Profile Surface Follow-ups | 0/4 | 2 📦, 2 ⏸ |
+| Admin & Route Wiring | 2/2 | — |
+| Phase 9 — Profile Surface Follow-ups | 2/4 | 2 ⏸ |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
-| Governance Drafts | 0/3 | 1 📝, 2 ⏸ |
-| **Total** | **135/140 ✅** | 8 📝 placeholders + 3 📦 + 4 ⏸ |
+| Governance Drafts | 2/3 | 1 ⏸ |
+| **Total** | **151/157 ✅** | 8 📝 placeholders + 3 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 
@@ -248,23 +274,25 @@ mindmap
 
 - **Phase 3 Gate:** Closed (D-1320)
 - **Phase 6 Gate:** Closed 2026-04-19 — tag `phase-6-complete` at `c376467`
-- **Engine test baseline:** `698 / 0 / 0 / 150` (post-WP-137)
+- **Engine test baseline:** `705 / 0 / 0` (post-WP-151)
+- **Registry test baseline:** `53 / 0 / 0` (post-WP-151)
 - **Server test baseline:** `184 / 0 / 66 / 31` (post-WP-134)
 - **arena-client test baseline:** `286 / 35 / 0` (post-WP-130; preserved by WP-136)
-- **DECISIONS.md range:** `D-4801..D-13703` (WP-097 → D-9701; WP-098 → D-9801; WP-131 → D-13101..D-13104; WP-132 → D-13201..D-13206; WP-133 → D-13301..D-13309; WP-134 → D-13401..D-13405; WP-135 → D-13501..D-13503; WP-136 → D-13601; WP-137 → D-13701..D-13703)
-- **EC range:** `EC-001..EC-140` (EC-131/132/133 = WP-128/129/130; EC-134 = WP-131; EC-135/136 = WP-132/133; EC-137 = WP-137; EC-138 = WP-135; EC-139 = WP-136; EC-140 = WP-134)
+- **DECISIONS.md range:** `D-4801..D-15201` (extends through WP-152)
+- **EC range:** `EC-001..EC-164` (extends through WP-143)
 
 ---
 
 ## Next Unblocked (ordered)
 
-1. **WP-108** — newly unblocked 2026-05-07 (WP-132/133/134 deps cleared today); WP file not yet authored. Profile billing & funding history UI; user-facing realization of the closed-loop monetization that just shipped server-side. Strongest "next step" candidate because it converts the live backend loop into something customers can see.
-2. **Captain-America cardCounts data fix** — known anomaly logged under WP-137 RS-1 (`core.captain-america.cardCounts` sum 20 vs canonical 14); spawned-task scope; investigates `scripts/convert-cards/convert-cards-v15.mjs` and re-runs the pipeline. Unblocks a real gameplay regression for that hero loadout.
-3. **WP-105** — queued (WP-104 dep cleared 2026-05-02); WP file not yet authored.
-4. ~~**WP-070**~~ — Done 2026-05-15.
-5. **WP-097 → WP-098** — pre-flight bundles pending; WP-098 blocked on WP-097 execution.
-6. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
-7. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+1. **G-state sub-WPs** (fill 7 remaining `// SAFE-SKIP-WP128` sites) — add missing `G` fields (`G.mastermind.strikePile`, `G.scheme.twistPile`, `G.city.escapedPile`, `G.turnEconomy.piercing`, `G.turnEconomy.woundsDrawn`, `G.piles.horrors`, `G.mastermind.attachedBystanders`) so the WP-128 projections stop returning `[]`/`0`. Each cluster can land independently. WP-135 is the template.
+2. **CLI credentials field drift** (D-9001) — `apps/server/scripts/join-match.mjs` has wrong `playerID` + `result.credentials` field name. Tiny fix, no deps, no WP needed.
+3. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
+4. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+
+**Blocked (cannot start):**
+- **WP-106** — avatar upload pipeline; blocked on R2 user-upload governance decision.
+- **WP-107** — integrity / anti-cheat surface; blocked on a future RBAC / admin-auth WP.
 
 ---
 
@@ -287,4 +315,4 @@ mindmap
 
 ---
 
-*Last updated: 2026-05-07 (review-pass 5: WP-128/129/130 → ✅; WP-131 → ✅; Monetization Stack WP-132/133/134 all → ✅ — closed-loop cosmetic-SKU monetization is LIVE; new "Engine & Test-Harness Cleanup" cluster captures WP-135/136/137; WP-108 flipped ⏸ → 📦 (deps cleared today); DECISIONS.md range extended to D-13703; EC range extended to EC-140; engine baseline `604/132/0` → `698/0/0`; server baseline `124/0/54` → `184/0/66`; arena-client baseline `286/35/0` added).*
+*Last updated: 2026-05-15 (review-pass 6: 16 new WPs completed since last update; 5 new clusters added (Physical Card Pipeline, Domain Cutover & Infrastructure, Public Leaderboard Marketing, Legends Public Scoreboard, Admin & Route Wiring); Phase 9 WP-105/108 → ✅; Governance WP-097/098 → ✅; WP-070 → ✅; Captain-America cardCounts anomaly confirmed resolved by pipeline; stale Next Unblocked items cleared; DECISIONS.md range extended to D-15201; EC range extended to EC-164; engine baseline → `705/0/0` post-WP-151; registry baseline `53/0/0` added; total 151/157 ✅).*
