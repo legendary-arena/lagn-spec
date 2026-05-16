@@ -1,6 +1,6 @@
 # Wiki Index
 
-> **20 / 50** entity pages.
+> **21 / 50** entity pages.
 > Last regenerated: 2026-05-16.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
@@ -101,6 +101,10 @@ Step-by-step walkthroughs for completing specific tasks.
   styling blog posts on `www.legendary-arena.com`: Mode C content
   framework, 28-problem catalog mapping, brand tokens, CTA system,
   image conventions, and annotated template.
+- [Newsletter Authoring](newsletter-authoring.md) — Writing and
+  sending weekly email newsletters via Brevo: Mode B content
+  framework, 10-section email structure, CTA rotation, UTM tracking,
+  pre-send QA checklist, and annotated template.
 
 ## Keyword
 
