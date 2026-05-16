@@ -19,6 +19,21 @@ last-reviewed: 2026-05-15
 
 # Homepage Review Template
 
+> **Editing this page**
+>
+> This ewiki page describes the marketing review template. The full
+> source document lives at
+> `C:\www\legendary-arena-com\docs\marketing\homepage-review-template.md`
+> (in the `legendary-arena-website` repo, not this repo).
+>
+> - **To edit the source document:** edit the file in the marketing repo,
+>   commit with `SPEC:` prefix, push to `main`.
+> - **To edit this ewiki page:** edit
+>   `C:\pcloud\BB\DEV\legendary-arena\wiki\homepage-review-template.md`,
+>   commit with `SPEC:` prefix, push to `main` in the `legendary-arena` repo.
+> - **Keep both in sync.** If the source document's scope or structure
+>   changes, update this ewiki page too.
+
 ## Summary
 
 The original comprehensive marketing review of
