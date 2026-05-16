@@ -42,7 +42,7 @@ The strategy reference companion to [Homepage Spec](homepage-spec.md).
 Contains the full theoretical foundation, research, and architecture
 that supports the homepage build document: the Player Needs Pyramid
 (game-specific Maslow hierarchy with five levels), the complete
-25-problem catalog organized under four themes (Fairness, Skill
+28-problem catalog organized under four themes (Fairness, Skill
 Measurement, Authenticity, Scalability), the badge system architecture, the L2→L4
 trust-to-recognition dependency analysis, and the content framework
 for applying Problem → Product → Result across newsletters, blogs,
@@ -376,7 +376,7 @@ before higher ones:
 
 ### Problems Legendary Arena Solves (Full Catalog)
 
-The 25 problems below are derived from the Vision & Direction document,
+The 28 problems below are derived from the Vision & Direction document,
 work packets, and engine architecture. They are written in customer-facing
 language and organized under three dominant themes. Each problem maps to
 one of the SB7 problem levels (external, internal, or philosophical) and
@@ -659,16 +659,55 @@ SB7 level: External + Internal ("I want to get better, but there's
 nowhere to grow") + Philosophical ("mastery requires a system for
 sharing knowledge")
 
+**26. Complex card interactions force you to stop and look up rules.**
+Schemes, Masterminds, and edge-case combos create constant rule
+ambiguity. Players stop mid-turn to check FAQs, search Discord, or
+debate interpretations. The cognitive load turns a strategy game into
+a rules-lawyering exercise.
+Solved by: The engine enforces every rule automatically — no lookups,
+no ambiguity, no debates. Players make strategic decisions; the system
+handles the rest. Complex interactions resolve instantly and correctly.
+(Vision §3, §4)
+SB7 level: External ("I have to stop playing to figure out the rules")
++ Internal ("I feel mentally exhausted when I just want a relaxing
+game") + Philosophical ("a game shouldn't require constant rule lookup
+just to play correctly")
+
+**27. You can only play with others if you're in the same room.**
+Coordinating schedules, locations, and physical setups limits how often
+you actually play. Friends who love the game drift apart because getting
+together is too hard. The game's social value is hostage to geography.
+Solved by: Play with anyone, anywhere, anytime — real-time multiplayer
+with reliable sync, reconnection, and late-joining support. No
+scheduling logistics, no location constraints.
+(Vision §4)
+SB7 level: External ("I can't find anyone to play with") + Internal
+("I feel disconnected from friends who love this game") + Philosophical
+("a great game shouldn't be limited by physical proximity")
+
+**28. Your cards wear out the more you play.**
+Cards degrade over time — even with sleeves. Shuffling, handling, and
+repeated play damage components. Players feel tension between using
+their cards and preserving them, especially for rare or expensive sets.
+The more you invest, the more fragile the investment becomes.
+Solved by: Digital cards never degrade. Every card is pristine, every
+time. No sleeves, no wear, no anxiety about handling your collection.
+Play as much as you want — nothing wears out.
+SB7 level: External ("my cards are getting damaged") + Internal ("I
+feel tension using my own cards because I don't want to ruin them") +
+Philosophical ("you shouldn't have to choose between using the game
+and preserving it")
+
 #### Strategic Summary
 
-The 25 problems collapse into four dominant themes for homepage messaging:
+The 28 problems collapse into four dominant themes for homepage messaging:
 
 | Theme | Villain | Core Emotion | Key Problems |
 |-------|---------|-------------|--------------|
 | **Fairness** | The pay-to-win model | "It's rigged" | 1, 2, 3, 4, 5, 6 |
 | **Skill Measurement** | Opaque/unverifiable systems | "I can't prove I'm good" | 7, 8, 9, 10 |
 | **Authenticity** | Unfaithful digital adaptations | "This isn't the real game" | 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 |
-| **Scalability** | The physical game doesn't scale | "The more I invest, the harder it gets" | 21, 22, 23, 24, 25 |
+| **Scalability** | The physical game doesn't scale | "The more I invest, the harder it gets" | 21, 22, 23, 24, 25, 26, 27, 28 |
 
 The strongest anchoring villain for the homepage is **the pay-to-win
 system** — it's universally understood, emotionally resonant, and
@@ -805,7 +844,7 @@ This applies across all three modes:
 
 ---
 
-### 25 Problems: Problem → Product → Result
+### 28 Problems: Problem → Product → Result
 
 | # | Problem (What's wrong?) | Product (How LA fixes it) | Result (What changes?) |
 |---|------------------------|--------------------------|----------------------|
@@ -834,6 +873,9 @@ This applies across all three modes:
 | 23 | Taking the game anywhere is a chore | Play instantly in any browser, any device, no setup | Spontaneous play is the default |
 | 24 | No way to prove what happened in a physical game | Automatic recording, replay-verified, deterministic results (§3, §18, §24) | No manual tracking, no trust required |
 | 25 | Everything you learn disappears when the game ends | Replay analysis, JSON export, PAR benchmarks, public leaderboard (§18-19, §22, WP-149) | Shared knowledge layer — review, compare, learn |
+| 26 | Complex interactions force you to stop and look up rules | Engine enforces every rule automatically — no lookups, no ambiguity (§3, §4) | Players make strategic decisions; the system handles the rest |
+| 27 | You can only play with others if you're in the same room | Real-time multiplayer anywhere, reliable sync and reconnection (§4) | Play with anyone, anytime — no location constraints |
+| 28 | Your cards wear out the more you play | Digital cards never degrade — pristine every time | Play as much as you want — nothing wears out |
 
 ## Interactions
 
@@ -858,7 +900,7 @@ This applies across all three modes:
   player psychology and messaging priority. It does not govern engine
   architecture or feature prioritization — those are driven by work
   packets and the Vision document.
-- **Problem catalog is customer-facing language.** The 25 problems
+- **Problem catalog is customer-facing language.** The 28 problems
   are written for marketing consumption, not engineering precision.
   The "Solved by" descriptions are simplified; the source references
   point to the precise specifications.
