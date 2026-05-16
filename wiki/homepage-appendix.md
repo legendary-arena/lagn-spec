@@ -723,6 +723,33 @@ This applies across all three modes:
 - **Authority:** Lead with the systemic problem. The product is the
   proof that a better way exists.
 
+---
+
+### 20 Problems: Problem → Product → Result
+
+| # | Problem (What's wrong?) | Product (How LA fixes it) | Result (What changes?) |
+|---|------------------------|--------------------------|----------------------|
+| 1 | Pay-to-win systems make skill irrelevant | No purchasable power — absolute fairness (NG-1, NG-3) | Winning means you outplayed everyone, not outspent them |
+| 2 | Grind walls and time-gates replace gameplay | No timers, no energy systems, no artificial friction (NG-4) | Every session is real gameplay, not a treadmill |
+| 3 | Balance patches destroy your learned strategy | Deterministic, stable ruleset with explicit change governance (§14) | The deck you master today still works tomorrow |
+| 4 | Hidden modifiers and opaque mechanics erode trust | No hidden modifiers, verifiably fair RNG, replay verification (§3) | You can prove every outcome is legitimate |
+| 5 | Leaderboards and ranks can be gamed | Replay-verified, immutable rankings with cryptographic hashes (§24) | Your rank means something — no one can cheat their way up |
+| 6 | Competition rewards repetition over mastery | PAR-based scoring rewards quality, not volume (§25) | Fewer, better sessions beat grinding |
+| 7 | Skill is hard to measure objectively | PAR-based scenario scoring with full transparency (§20-24) | You know exactly how good you are — and can prove it |
+| 8 | No meaningful post-game insight | Replay logs with step-by-step playback and JSON export (§18-19) | You can review, learn from, and share every game |
+| 9 | Performance perception doesn't match reality | PAR benchmarks + AI-generated baselines per scenario (§22) | Objective feedback replaces guesswork |
+| 10 | Game results can't be independently verified | Deterministic replay engine — re-execute any game from seed (§3, §18) | Disputes are settled by proof, not trust |
+| 11 | Digital adaptations alter the original game | Exact rules and content authenticity — every edge case matches (§1-2) | It plays like the real game because it is the real game |
+| 12 | Digital cards don't match physical counterparts | Same images, names, text, and semantics as physical cards (§2) | The cards you know are the cards you play |
+| 13 | The system makes decisions players should make | Engine enforces rules but never replaces player judgment (§3-4) | Every decision point from the tabletop exists here |
+| 14 | Multiplayer cooperation doesn't match tabletop | Turn order, cooperation, and shared responsibility preserved exactly (§4) | Playing with friends feels like the table |
+| 15 | Multiplayer sessions are fragile and unreliable | Reliable sync, reconnection, and late-joining support (§4) | A dropped connection doesn't mean a lost game |
+| 16 | New expansions break existing content | Content-as-data architecture — JSON registry, no engine rewrites (§5, §10) | New content adds to the game, never breaks it |
+| 17 | Game history is lost after you finish | Every game saved as replayable, shareable log (§18) | Great moments are preserved — reviewable and shareable |
+| 18 | Spectating is a second-class experience | Same replay engine for live spectation and post-game viewing (§18) | Watching is as faithful as playing |
+| 19 | Accessibility is an afterthought | Full keyboard nav, screen-reader support, color-blind indicators (§17) | Every player can play |
+| 20 | Player identity controlled by third parties | Identity keyed by stable internal account IDs, auth-provider-independent (§3, §7a) | You own your history — no platform can take it |
+
 ## Interactions
 
 - **[Homepage Spec](homepage-spec.md)** — The spec is the build
