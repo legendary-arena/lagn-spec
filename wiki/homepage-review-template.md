@@ -58,9 +58,9 @@ mapped to specific SB7 elements:
 1. **What is the problem?** (Character, Problem, Guide empathy) —
    Names the villain (pay-to-win), states external, internal, and
    philosophical problem levels, provides an empathy statement.
-   Includes the full 20-problem catalog under three themes (Fairness,
-   Skill Measurement, Authenticity) with SB7 level mappings and source
-   references.
+   Includes the full 25-problem catalog under four themes (Fairness,
+   Skill Measurement, Authenticity, Scalability) with SB7 level
+   mappings and source references.
 
 2. **What is the product?** (Guide authority, Plan, Call to Action) —
    Category + benefit label, three locked pillars (Skill decides /

@@ -42,8 +42,8 @@ The strategy reference companion to [Homepage Spec](homepage-spec.md).
 Contains the full theoretical foundation, research, and architecture
 that supports the homepage build document: the Player Needs Pyramid
 (game-specific Maslow hierarchy with five levels), the complete
-20-problem catalog organized under three themes (Fairness, Skill
-Measurement, Authenticity), the badge system architecture, the L2→L4
+25-problem catalog organized under four themes (Fairness, Skill
+Measurement, Authenticity, Scalability), the badge system architecture, the L2→L4
 trust-to-recognition dependency analysis, and the content framework
 for applying Problem → Product → Result across newsletters, blogs,
 and emails. Designers and developers work from the spec; this appendix
@@ -376,7 +376,7 @@ before higher ones:
 
 ### Problems Legendary Arena Solves (Full Catalog)
 
-The 20 problems below are derived from the Vision & Direction document,
+The 25 problems below are derived from the Vision & Direction document,
 work packets, and engine architecture. They are written in customer-facing
 language and organized under three dominant themes. Each problem maps to
 one of the SB7 problem levels (external, internal, or philosophical) and
@@ -596,19 +596,85 @@ IDs. Swapping auth providers loses no player data.
 SB7 level: Internal ("I don't own my own gaming identity") +
 Philosophical ("players should own their history")
 
+#### Theme 4: Scalability (The Barrier: The Physical Game Doesn't Scale)
+
+The umbrella villain for this theme: *the game you love becomes harder
+to use the more you invest in it.* These problems hit players who are
+deeply committed to the physical game — and feel the friction growing
+with every expansion they buy.
+
+**21. You can't access the full game — older sets are out of print.**
+New players are locked out of older sets that are no longer available.
+The "complete experience" depends on what you managed to buy, not what
+exists. The game's depth becomes a function of supply, not interest.
+Solved by: Every card, hero, and expansion is available digitally from
+day one. Content-as-data architecture means nothing goes "out of print."
+The full game is always accessible to every player.
+(Vision §5, §10)
+SB7 level: External + Internal ("I'm missing part of the game, and
+it's not my fault") + Philosophical ("a game shouldn't disappear just
+because products go out of print")
+
+**22. The game takes over your space.**
+Dozens of expansions mean shelves of boxes, playmats, tokens, and
+binders. Playing the full game requires dedicating real physical space.
+The more you invest, the more impractical it becomes — especially in
+small apartments, dorms, or shared spaces.
+Solved by: The entire game lives in your browser. No boxes, no storage,
+no physical footprint. Every expansion, every card, zero shelf space.
+SB7 level: External + Internal ("I love this game, but it's becoming
+impractical")
+
+**23. Taking the game anywhere is a chore.**
+Want to play at a friend's house or a family gathering? Now you're
+carrying boxes, organizing decks, and hoping nothing gets lost or
+damaged. The friction kills spontaneous play — you don't play because
+it's too much effort to set up.
+Solved by: Play instantly in your browser, anywhere, on any device. No
+cards to carry, no setup, no teardown. Spontaneous play is the default.
+SB7 level: External + Internal ("this is too much effort just to play")
+
+**24. There's no way to prove what actually happened in a physical game.**
+Tracking results manually is slow, inconsistent, and error-prone. When
+someone claims a high score or a perfect run, you just have to trust
+them. Competition without verification isn't real competition.
+Solved by: Every game is automatically recorded, replay-verified, and
+publishable. Results are deterministic and independently verifiable.
+No manual tracking, no trust required.
+(Vision §3, §18, §24)
+SB7 level: External + Internal ("does this even mean anything?") +
+Philosophical ("competition without verification isn't real competition")
+
+**25. Everything you learn disappears when the game ends.**
+There's no shared system for strategies, results, or analysis. No place
+to contribute knowledge. No way to build on others' discoveries. Every
+insight stays locked in the player's head or scattered across forums
+with no structure.
+Solved by: Replay analysis, structured JSON export, PAR benchmarks, and
+a public leaderboard create a shared knowledge layer. Players can
+review their own games, compare against baselines, and learn from the
+community's collective performance.
+(Vision §18-19, §22, WP-149)
+SB7 level: External + Internal ("I want to get better, but there's
+nowhere to grow") + Philosophical ("mastery requires a system for
+sharing knowledge")
+
 #### Strategic Summary
 
-The 20 problems collapse into three dominant themes:
+The 25 problems collapse into four dominant themes for homepage messaging:
 
 | Theme | Villain | Core Emotion | Key Problems |
 |-------|---------|-------------|--------------|
 | **Fairness** | The pay-to-win model | "It's rigged" | 1, 2, 3, 4, 5, 6 |
 | **Skill Measurement** | Opaque/unverifiable systems | "I can't prove I'm good" | 7, 8, 9, 10 |
-| **Authenticity** | Unfaithful digital adaptations | "This isn't the real game" | 11-20 |
+| **Authenticity** | Unfaithful digital adaptations | "This isn't the real game" | 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 |
+| **Scalability** | The physical game doesn't scale | "The more I invest, the harder it gets" | 21, 22, 23, 24, 25 |
 
 The strongest anchoring villain for the homepage is **the pay-to-win
 system** — it's universally understood, emotionally resonant, and
-immediately positions Legendary Arena as the alternative.
+immediately positions Legendary Arena as the alternative. The
+scalability theme (#21-25) is a powerful secondary hook for players
+who already love the physical game and feel the friction growing.
 
 ---
 
@@ -739,7 +805,7 @@ This applies across all three modes:
 
 ---
 
-### 20 Problems: Problem → Product → Result
+### 25 Problems: Problem → Product → Result
 
 | # | Problem (What's wrong?) | Product (How LA fixes it) | Result (What changes?) |
 |---|------------------------|--------------------------|----------------------|
@@ -763,6 +829,11 @@ This applies across all three modes:
 | 18 | Spectating is a second-class experience | Same replay engine for live spectation and post-game viewing (§18) | Watching is as faithful as playing |
 | 19 | Accessibility is an afterthought | Full keyboard nav, screen-reader support, color-blind indicators (§17) | Every player can play |
 | 20 | Player identity controlled by third parties | Identity keyed by stable internal account IDs, auth-provider-independent (§3, §7a) | You own your history — no platform can take it |
+| 21 | Older sets are out of print — can't access the full game | Every card and expansion available digitally, content-as-data (§5, §10) | The full game is always accessible to every player |
+| 22 | The game takes over your space — shelves of boxes | Entire game lives in your browser, zero physical footprint | Every expansion, every card, zero shelf space |
+| 23 | Taking the game anywhere is a chore | Play instantly in any browser, any device, no setup | Spontaneous play is the default |
+| 24 | No way to prove what happened in a physical game | Automatic recording, replay-verified, deterministic results (§3, §18, §24) | No manual tracking, no trust required |
+| 25 | Everything you learn disappears when the game ends | Replay analysis, JSON export, PAR benchmarks, public leaderboard (§18-19, §22, WP-149) | Shared knowledge layer — review, compare, learn |
 
 ## Interactions
 
@@ -775,7 +846,7 @@ This applies across all three modes:
   the pyramid analysis in this appendix.
 - **[Scoring](scoring.md)** — PAR scoring is the foundation of the
   Level 4 (Recognition) analysis. The 20-problem catalog references
-  PAR in problems #5, #6, #7, and #9.
+  PAR in problems #5, #6, #7, #9, and #25.
 - **[Brevo Email Pipeline](brevo-email-pipeline.md)** — The content
   framework's Mode B (Narrative) applies directly to Brevo nurture
   sequences. The newsletter example in the content framework is
@@ -787,7 +858,7 @@ This applies across all three modes:
   player psychology and messaging priority. It does not govern engine
   architecture or feature prioritization — those are driven by work
   packets and the Vision document.
-- **Problem catalog is customer-facing language.** The 20 problems
+- **Problem catalog is customer-facing language.** The 25 problems
   are written for marketing consumption, not engineering precision.
   The "Solved by" descriptions are simplified; the source references
   point to the precise specifications.
