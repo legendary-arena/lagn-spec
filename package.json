@@ -30,6 +30,9 @@
     "validate:r2":          "pwsh scripts/Validate-R2.ps1 -R2Mode",
     "validate:r2:fast":     "pwsh scripts/Validate-R2.ps1 -R2Mode -SkipImages",
 
+    "dash:dev":             "pnpm --filter @legendary-arena/dashboard dev",
+    "dash:build":           "pnpm --filter @legendary-arena/dashboard build",
+
     "arch:inventory":       "node scripts/architecture-inventory.mjs",
     "arch:inventory:save":  "node scripts/architecture-inventory.mjs --out docs/ai/audits/architecture-inventory-latest.md"
   },

@@ -28,6 +28,7 @@ define new architectural boundaries.
 | `legends.legendary-arena.com` | Public scoreboard (attract board) | Cloudflare Pages | `apps/legends-board` (planned — WP-143) | planned |
 | `api.legendary-arena.com` | Game server REST + Socket.IO | Render (CNAME from Cloudflare) | [apps/server](../../apps/server) | live |
 | `legendary-arena-server.onrender.com` | API canonical hostname | Render | [apps/server](../../apps/server) | live |
+| `dashboard.legendary-arena.com` | Internal admin dashboard | Cloudflare Pages | [apps/dashboard](../../apps/dashboard) | planned |
 | `images.barefootbetters.com` | Card image CDN | Cloudflare R2 | external | live |
 
 `state` legend: `live` = deployed and probed for health; `planned` = not yet

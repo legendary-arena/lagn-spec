@@ -16787,4 +16787,118 @@ not release captured bystanders in MVP — a future WP may model release.
 
 ---
 
+### D-15701 — Dashboard uses PrimeVue 4 (Aura theme preset)
+
+**Decision:** The internal admin dashboard (`apps/dashboard`) uses PrimeVue 4
+with the Aura theme preset as its sole component library. No Vuestic UI,
+Vuetify, or Element Plus.
+
+**Rationale:** Best-in-class DataTable (sort, filter, pagination, row
+expansion out of box); design-token system with unstyled escape hatch;
+tree-shaking; active maintenance by PrimeTek (since 2008); large
+community. Reviewed against Vuestic (limited DataTable, smaller community),
+Naive UI (bus-factor risk), Vuetify (heavy bundle, slow iteration).
+
+**Introduced:** WP-157 (drafted 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15702 — Analytics architecture: event pipeline + aggregate tables
+
+**Decision:** Dashboard analytics reads from pre-computed aggregate tables
+(`daily_metrics`, `kpi_snapshots`), not raw PostgreSQL queries against
+match history. The event pipeline and aggregate schema are designed in a
+future WP (WP-158 provisional).
+
+**Rationale:** Dashboard is time-series analytics, not CRUD. Raw
+match-history queries will not scale as match volume grows. Aggregates
+serve dashboard reads with O(1) latency per widget.
+
+**Introduced:** WP-157 (drafted 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15703 — Real-time strategy: polling-first; WS reserved for alerts + live matches
+
+**Decision:** Default data refresh strategy is HTTP polling at 30-second
+intervals. WebSocket is reserved exclusively for alert push and live match
+state (future WP-161). No widget uses WS for general metric refresh.
+
+**Rationale:** Reduces backend complexity, simplifies debugging, avoids
+auth edge cases (token expiry mid-connection). Polling composables for
+most widgets; targeted WS for alert push only.
+
+**Introduced:** WP-157 (drafted 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15704 — Dashboard types local until contract extraction (WP-159)
+
+**Decision:** All TypeScript interfaces for the dashboard live in
+`apps/dashboard/src/types/index.ts` until a future WP extracts them to
+`packages/contracts/`. No shared contracts package is created in WP-157.
+
+**Rationale:** Avoids blocking frontend scaffold on contract-package design.
+Real contract shape emerges after the analytics data model is proven in
+WP-158.
+
+**Introduced:** WP-157 (drafted 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15705 — Every widget renders a data-freshness indicator
+
+**Decision:** Every dashboard widget displays a freshness badge showing
+the `ServiceResponse.source` value (LIVE | CACHED | MOCK) and a relative
+timestamp derived from `ServiceResponse.updatedAt`. The
+`useDataFreshness()` composable owns this rendering contract.
+
+**Rationale:** Ops tooling trust requirement — operators must know whether
+displayed data is live, cached, or mocked, and how stale it is. Without
+visible freshness, operators cannot distinguish between "system is healthy"
+and "dashboard is showing stale cached data."
+
+**Introduced:** WP-157 (drafted 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15706 — URL state for date range (`?range=7d`)
+
+**Decision:** Dashboard date range is stored as URL query parameter
+`?range=7d|14d|30d|90d`. Default is `7d`. Invalid values silently fall
+back to `7d`. The `useDateRange()` composable reads/writes this param
+reactively.
+
+**Rationale:** Dashboards must be shareable and bookmarkable. URL state
+enables operators to share filtered views via link without additional
+communication.
+
+**Introduced:** WP-157 (drafted 2026-05-16)
+**Status:** Immutable
+
+---
+
+### D-15707 — Route role meta supports admin, operator, finance, support
+
+**Decision:** Vue Router route meta `roles` field accepts an array of
+`('admin' | 'operator' | 'finance' | 'support')[]`. Route guard denies
+access if the authenticated user holds none of the required roles. Only
+`admin` and a subset of roles are wired in WP-157; the full set
+future-proofs role expansion without route restructuring.
+
+**Rationale:** Four-role granularity covers anticipated access patterns:
+admin (full access), operator (gameplay + system), finance (monetization),
+support (players + overview). Adding roles later requires only route meta
+changes, not router restructuring.
+
+**Introduced:** WP-157 (drafted 2026-05-16)
+**Status:** Immutable
+
+---
+
 Protect this file.
