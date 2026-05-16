@@ -1,7 +1,7 @@
 # Wiki Index
 
-> **14 / 50** entity pages.
-> Last regenerated: 2026-05-15.
+> **19 / 50** entity pages.
+> Last regenerated: 2026-05-16.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
 
@@ -73,11 +73,30 @@ Cross-cutting governance, methodology, and readiness assessments.
   hero copy, Problem → Product → Result sections, Final Homepage
   Output, readiness checklist, severity-tiered GO / NO-GO.
 - [Homepage Appendix](homepage-appendix.md) — Strategy reference:
-  Player Needs Pyramid, 20-problem catalog, badge architecture,
+  Player Needs Pyramid, 28-problem catalog, badge architecture,
   L2→L4 dependency, content framework (Sales / Narrative / Authority).
 - [Homepage Review Template](homepage-review-template.md) —
-  Original unified SB7 review: full 20-problem catalog, Player Needs
+  Original unified SB7 review: full 28-problem catalog, Player Needs
   Pyramid, badge architecture, and readiness checklist in one document.
+- [Brevo Email Pipeline](brevo-email-pipeline.md) — Brevo email
+  engagement pipeline: signup, double opt-in, welcome sequence,
+  nurture drip, and re-engagement flows.
+- [Hugo Web System](hugo-web-system.md) — Marketing site Hugo
+  architecture: PaperMod theme overrides, template hierarchy,
+  partials pipeline, brand tokens, Pagefind search integration.
+- [Ewiki Authoring](ewiki-authoring.md) — Style and formatting
+  reference for writing ewiki content: blockquotes, tables, code
+  blocks, emoji, CSS variables, and two-repo editing procedures.
+
+## Tutorial
+
+Step-by-step walkthroughs for completing specific tasks.
+
+- [Wiki Viewer](wiki-viewer.md) — How to create, edit, preview,
+  and publish ewiki pages: page template, commit prefixes, build
+  pipeline, markdown syntax, and local dev server.
+- [Figma Logo Design](figma-logo-design.md) — Deterministic
+  pipeline for building production-grade SVG logo systems in Figma.
 
 ## Keyword
 
@@ -114,6 +133,10 @@ following are useful entry points:
   [Turn System](turn-system.md)
 - **`layer-engine`** — Pages anchored in the engine layer (most
   pages — see individual front-matter for the full set).
+- **`hugo`** — Pages covering Hugo site infrastructure:
+  [Wiki Viewer](wiki-viewer.md),
+  [Hugo Web System](hugo-web-system.md),
+  [Ewiki Authoring](ewiki-authoring.md)
 - **`layer-marketing`** — Pages anchored in the marketing layer:
   [Homepage Marketing Scorecard](homepage-marketing-scorecard.md),
   [Homepage Spec](homepage-spec.md),
