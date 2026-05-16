@@ -75,9 +75,9 @@ Cross-cutting governance, methodology, and readiness assessments.
 - [Homepage Appendix](homepage-appendix.md) — Strategy reference:
   Player Needs Pyramid, 20-problem catalog, badge architecture,
   L2→L4 dependency, content framework (Sales / Narrative / Authority).
-- ~~[Homepage Review Template](homepage-review-template.md)~~ —
-  **Deprecated.** Original monolithic template; superseded by
-  Homepage Spec + Homepage Appendix.
+- [Homepage Review Template](homepage-review-template.md) —
+  Original unified SB7 review: full 20-problem catalog, Player Needs
+  Pyramid, badge architecture, and readiness checklist in one document.
 
 ## Keyword
 
