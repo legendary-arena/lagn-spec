@@ -162,6 +162,18 @@ article.entity h1, .section-landing h1 {
   margin: 0.4rem 0;
 }
 
+blockquote {
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: 4px;
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+}
+
+blockquote > p:first-child { margin-top: 0; }
+blockquote > p:last-child { margin-bottom: 0; }
+
 .body table {
   border-collapse: collapse;
   margin: 1rem 0;
