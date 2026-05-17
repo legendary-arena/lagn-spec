@@ -58,7 +58,9 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // why: WP-155 adds TurnEconomy.piercing and .woundsDrawn (01.5 cascade)
 // why: WP-156 adds G.piles.horrors (01.5 cascade) — new GlobalPiles field
 // initialized as [] changes the JSON-encoded structure hash.
-const PRE_WP080_HASH = 'c530f405';
+// why: adding cardStats entries for starting-shield-agent and
+// starting-shield-trooper changed the initial state hash (01.5 cascade).
+const PRE_WP080_HASH = '6228d103';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

@@ -284,6 +284,15 @@ export function buildInitialGameState(
     setupMessages.push(completenessMessage);
   }
 
+  // why: starting cards are not set-specific registry entries — they are
+  // well-known game components absent from buildCardStats' registry walk.
+  // Without explicit entries, playCard falls back to 0/0 attack/recruit.
+  // Per tabletop rules: Agents give 1 recruit, Troopers give 1 attack.
+  // Placed after the completeness audit so the audit only checks
+  // registry-derived cards (starting cards have no cardDisplayData entry).
+  cardStats[SHIELD_AGENT_EXT_ID] = { attack: 0, recruit: 1, cost: 0, fightCost: 0 };
+  cardStats[SHIELD_TROOPER_EXT_ID] = { attack: 1, recruit: 0, cost: 0, fightCost: 0 };
+
   // why: WP-135 — build the per-match hero deck reservoir from
   // MatchSetupConfig.heroDeckIds via the locked rarity → copy-count map
   // (D-13501; 5/3/3/3 = 14 cards per hero across the four-label set).
