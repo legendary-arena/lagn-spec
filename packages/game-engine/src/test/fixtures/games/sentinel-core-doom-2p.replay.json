@@ -1,0 +1,202 @@
+{
+  "expected": {
+    "finalStateHash": "e248d2e5658b42fdb10af76a1fb2a50681b02ef89a2ec3c6a203135c8f121881",
+    "messages": [
+      "Bystander \"bystander-villain-deck-01\" revealed and captured by \"core/dr-doom\".",
+      "Bystander \"bystander-villain-deck-00\" revealed and captured by \"core/dr-doom\"."
+    ],
+    "outcome": {
+      "counters": {},
+      "winner": null
+    },
+    "snapshotPerTurn": [
+      {
+        "activePlayer": "1",
+        "counters": {},
+        "matchId": "sentinel-core-doom-2p",
+        "messages": [
+          "Bystander \"bystander-villain-deck-01\" revealed and captured by \"core/dr-doom\"."
+        ],
+        "phase": "play",
+        "players": [
+          {
+            "deckCount": 6,
+            "discardCount": 6,
+            "handCount": 0,
+            "inPlayCount": 0,
+            "playerId": "0",
+            "victoryCount": 0
+          },
+          {
+            "deckCount": 12,
+            "discardCount": 0,
+            "handCount": 0,
+            "inPlayCount": 0,
+            "playerId": "1",
+            "victoryCount": 0
+          }
+        ],
+        "snapshotAt": "2026-05-16T12:00:00Z",
+        "turn": 2
+      },
+      {
+        "activePlayer": "0",
+        "counters": {},
+        "matchId": "sentinel-core-doom-2p",
+        "messages": [
+          "Bystander \"bystander-villain-deck-01\" revealed and captured by \"core/dr-doom\".",
+          "Bystander \"bystander-villain-deck-00\" revealed and captured by \"core/dr-doom\"."
+        ],
+        "phase": "play",
+        "players": [
+          {
+            "deckCount": 6,
+            "discardCount": 6,
+            "handCount": 0,
+            "inPlayCount": 0,
+            "playerId": "0",
+            "victoryCount": 0
+          },
+          {
+            "deckCount": 6,
+            "discardCount": 6,
+            "handCount": 0,
+            "inPlayCount": 0,
+            "playerId": "1",
+            "victoryCount": 0
+          }
+        ],
+        "snapshotAt": "2026-05-16T12:00:00Z",
+        "turn": 3
+      }
+    ]
+  },
+  "input": {
+    "moves": [
+      {
+        "args": {
+          "ready": true
+        },
+        "moveName": "setPlayerReady",
+        "playerId": "0"
+      },
+      {
+        "args": {
+          "ready": true
+        },
+        "moveName": "setPlayerReady",
+        "playerId": "1"
+      },
+      {
+        "args": null,
+        "moveName": "startMatchIfReady",
+        "playerId": "0"
+      },
+      {
+        "args": null,
+        "moveName": "revealVillainCard",
+        "playerId": "0"
+      },
+      {
+        "args": {
+          "count": 6
+        },
+        "moveName": "drawCards",
+        "playerId": "0"
+      },
+      {
+        "args": null,
+        "moveName": "advanceStage",
+        "playerId": "0"
+      },
+      {
+        "args": {
+          "cardId": "starting-shield-trooper"
+        },
+        "moveName": "playCard",
+        "playerId": "0"
+      },
+      {
+        "args": {
+          "cardId": "starting-shield-agent"
+        },
+        "moveName": "playCard",
+        "playerId": "0"
+      },
+      {
+        "args": null,
+        "moveName": "advanceStage",
+        "playerId": "0"
+      },
+      {
+        "args": null,
+        "moveName": "endTurn",
+        "playerId": "0"
+      },
+      {
+        "args": null,
+        "moveName": "revealVillainCard",
+        "playerId": "1"
+      },
+      {
+        "args": {
+          "count": 6
+        },
+        "moveName": "drawCards",
+        "playerId": "1"
+      },
+      {
+        "args": null,
+        "moveName": "advanceStage",
+        "playerId": "1"
+      },
+      {
+        "args": {
+          "cardId": "starting-shield-trooper"
+        },
+        "moveName": "playCard",
+        "playerId": "1"
+      },
+      {
+        "args": null,
+        "moveName": "advanceStage",
+        "playerId": "1"
+      },
+      {
+        "args": null,
+        "moveName": "endTurn",
+        "playerId": "1"
+      }
+    ],
+    "playerCount": 2,
+    "playerOrder": [
+      "0",
+      "1"
+    ],
+    "seed": "sentinel-core-doom-2p-v1",
+    "setupConfig": {
+      "bystandersCount": 12,
+      "henchmanGroupIds": [
+        "core/savage-land-mutates"
+      ],
+      "heroDeckIds": [
+        "core/black-widow",
+        "core/captain-america"
+      ],
+      "mastermindId": "core/dr-doom",
+      "officersCount": 16,
+      "schemeId": "core/legacy-virus-the",
+      "sidekicksCount": 16,
+      "villainGroupIds": [
+        "core/brotherhood"
+      ],
+      "woundsCount": 30
+    }
+  },
+  "meta": {
+    "createdAt": "2026-05-16T12:00:00Z",
+    "engineVersion": "wp158-sentinel-v1",
+    "version": 1
+  },
+  "name": "sentinel-core-doom-2p"
+}

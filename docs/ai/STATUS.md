@@ -7,6 +7,53 @@
 
 ## Current State
 
+### WP-158 / EC-172 Executed — Complete-Game Regression Tests (2026-05-17)
+
+**Engine-only fixture harness shipped.** Seed-faithful mulberry32
+pipeline at `packages/game-engine/src/test/fixtures/` (4 new files +
+1 sentinel fixture), CLI recorder at `scripts/record-game-fixture.mjs`,
+operator docs at `docs/ai/REFERENCE/complete-game-tests.md`. Three
+oracle layers asserted in order: `outcome` → `messages` →
+`finalStateHash` (first failing layer pins the diff grain).
+
+**Sentinel fixture proves the pipeline.** `sentinel-core-doom-2p`
+(core/dr-doom mastermind + minimal core selection) — 2 players, 2
+completed turns, no endgame. Used as the deliberate-mutation smoke
+test: changing `args.count` to `args.count - 1` in `drawCards`
+triggered the sentinel's SNAPSHOT oracle (revert returned tests to
+green).
+
+**Separate from `replay.execute.ts`.** D-0205 stands; the new
+harness is the seed-faithful separate pipeline D-0205 anticipated.
+No file under `packages/game-engine/src/replay/**` or
+`packages/game-engine/src/simulation/**` was modified
+(`git diff main -- packages/game-engine/src/replay/` is empty).
+
+**Recorder `--policy` mode deferred.** CLI accepts `--policy
+random|heuristic` for forward compatibility but throws a
+"deferred to follow-up WP" error on invocation (fold-inline
+amendment). Implementing functional policy mode requires either
+exporting harness internals or duplicating the dispatch loop, both
+of which the EC-172 guardrails reject. Sentinel + near-term
+fixtures use `--input` mode. Documented in
+`docs/ai/REFERENCE/complete-game-tests.md §Documented limitations`.
+
+**Test baselines.** Engine: 748 pre-existing pass → 749 pass
+(driver adds 1 test) / 0 fail / 0 skipped. Build: `pnpm -r build`
+exit 0. Forbidden-pattern greps (`boardgame\.io`,
+`Math\.random|Date\.now|performance\.now|new Date\(`) return zero
+matches under `packages/game-engine/src/test/fixtures/` and
+`scripts/record-game-fixture.mjs`.
+
+**Baseline drift note.** WP-158 §Assumes locked the engine test
+baseline at 705 per WP-151; execution-time baseline was 748 due to
+WPs 152-157 adding tests since WP-151. Operator confirmed treating
+748 as the new baseline at session start.
+
+D-15801 appended.
+
+---
+
 ### WP-106 / EC-171 Executed — Avatar Upload Pipeline (2026-05-16)
 
 **New `POST /api/me/avatar` endpoint.** Accepts multipart image upload

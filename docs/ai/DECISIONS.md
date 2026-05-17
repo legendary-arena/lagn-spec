@@ -17046,4 +17046,63 @@ changes, not router restructuring.
 
 ---
 
+### D-15801 — Seed-Faithful Fixture Harness as a Separate Pipeline from replay.execute.ts
+
+**Decision:** The complete-game regression harness shipped by WP-158
+lives at `packages/game-engine/src/test/fixtures/**` and uses a
+seed-faithful mulberry32 PRNG bound to each fixture's seed string. It
+is a **separate pipeline** from `packages/game-engine/src/replay/replay.execute.ts`,
+which remains contract-locked under D-0205 as the determinism-only
+forensic harness. The two pipelines coexist with distinct contracts:
+the new harness asserts trajectory equivalence against pinned
+fixtures; `replay.execute.ts` proves engine-reducer determinism under
+a fixed reverse-shuffle. Neither modifies the other. The new harness
+is engine-only — no upstream framework `Server()` instance, no
+Socket.IO transport, no live registry reads.
+
+**Rationale:** D-0205 explicitly anticipated this separation. Its own
+docstring says "a future feature that reconstructs the
+`ctx.random.*` sequence ... must therefore be built on a separate
+pipeline gated on D-0203; this function cannot substitute for one."
+WP-158 IS that separate pipeline, scoped to engine-only regression
+testing (not production replay reconstruction, which remains a
+future feature). Mirroring `simulation.runner.ts`'s mulberry32 +
+MOVE_MAP precedent locally — per the WP-036 Scope Lock convention —
+keeps both pipelines small and tightly scoped. Modifying
+`replay.execute.ts` to add seed-faithfulness would have either
+required widening its contract (defeating D-0205) or shipping two
+modes inside one function (defeating its single-purpose discipline).
+
+**Alternatives rejected:**
+- **Extend `replay.execute.ts` with a seed-faithful mode.** Rejected
+  because D-0205 contract-locks it as determinism-only; widening it
+  would silently defeat its single-purpose claim and force every
+  consumer to specify which mode they wanted.
+- **Build a full-stack fixture harness driving the upstream framework
+  `Server()` + Socket.IO transport.** Rejected because the engine
+  surface is where 100% of gameplay logic lives, the transport layer
+  adds flakiness without proportionate coverage, and a future WP can
+  add a sibling full-stack harness if/when the transport layer
+  accrues enough bugs to justify it.
+- **Implement production replay of live `ctx.random.*` sequences.**
+  Rejected because that path is gated on D-0203 (Replay Tooling
+  Goals) and remains a future feature. The fixture harness is for
+  developer-facing regression testing; production replay is a
+  different surface for a different audience.
+- **Share the `hashSeedString` / `createMulberry32` / `shuffleWithPrng`
+  helpers with `simulation.runner.ts` via a new module.** Rejected
+  because the WP-036 Scope Lock convention duplicates the four
+  ~20-line PRNG helpers locally to keep simulation's file count
+  small. WP-158 mirrors the same convention; extracting a shared
+  module would add a fifth helper file with three callers and no
+  clear ownership.
+
+**Packet:** WP-158 (Complete-Game Regression Tests, Seed-Faithful
+Fixture Harness).
+
+**Introduced:** WP-158 (drafted 2026-05-16, executed 2026-05-17)
+**Status:** Immutable
+
+---
+
 Protect this file.
