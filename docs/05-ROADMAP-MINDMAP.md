@@ -202,7 +202,7 @@ mindmap
 
       Phase 9 — Profile Surface Follow-ups
         ["WP-105 ✅ Player badges"]
-        ["WP-106 📝 Drafted — avatar upload pipeline"]
+        ["WP-106 ✅ Done — avatar upload pipeline"]
         ["WP-107 ⏸ Blocked — integrity / anti-cheat surface"]
         ["WP-108 ✅ Profile billing & funding history UI"]
 

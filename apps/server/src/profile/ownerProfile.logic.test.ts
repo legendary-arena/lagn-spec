@@ -176,29 +176,47 @@ describe('owner profile logic (WP-104)', () => {
     ]);
   });
 
-  test('validateAvatarUrl accepts an HTTPS URL, rejects HTTP, rejects non-URL strings', () => {
-    const accepted = validateAvatarUrl('https://example.com/avatar.png');
+  test('validateAvatarUrl enforces closed-origin allowlist per D-10601', () => {
+    const testAccountId = 'test-acct-owner-profile-drift';
+    const canonicalUrl = `https://images.barefootbetters.com/avatars/${testAccountId}.webp`;
+
+    const accepted = validateAvatarUrl(canonicalUrl, testAccountId);
     assert.ok(accepted.ok === true);
-    assert.equal(accepted.value, 'https://example.com/avatar.png');
+    assert.equal(accepted.value, canonicalUrl);
 
-    const rejectedHttp = validateAvatarUrl('http://example.com/avatar.png');
-    assert.ok(rejectedHttp.ok === false);
+    const rejectedExternal = validateAvatarUrl('https://example.com/avatar.png', testAccountId);
+    assert.ok(rejectedExternal.ok === false);
     assert.equal(
-      (rejectedHttp as { code: string }).code,
+      (rejectedExternal as { code: string }).code,
       'invalid_avatar_url',
     );
 
-    const rejectedGarbage = validateAvatarUrl('not-a-url');
-    assert.ok(rejectedGarbage.ok === false);
+    const rejectedOtherUser = validateAvatarUrl(
+      'https://images.barefootbetters.com/avatars/other-user.webp',
+      testAccountId,
+    );
+    assert.ok(rejectedOtherUser.ok === false);
     assert.equal(
-      (rejectedGarbage as { code: string }).code,
+      (rejectedOtherUser as { code: string }).code,
       'invalid_avatar_url',
     );
 
-    const rejectedEmpty = validateAvatarUrl('');
+    const rejectedEmpty = validateAvatarUrl('', testAccountId);
     assert.ok(rejectedEmpty.ok === false);
     assert.equal(
       (rejectedEmpty as { code: string }).code,
+      'invalid_avatar_url',
+    );
+
+    // Without accountId, prefix-only check accepts any R2 URL
+    const acceptedPrefix = validateAvatarUrl('https://images.barefootbetters.com/avatars/any.webp');
+    assert.ok(acceptedPrefix.ok === true);
+
+    // Without accountId, rejects non-R2 URLs
+    const rejectedNonR2 = validateAvatarUrl('https://example.com/avatar.png');
+    assert.ok(rejectedNonR2.ok === false);
+    assert.equal(
+      (rejectedNonR2 as { code: string }).code,
       'invalid_avatar_url',
     );
   });

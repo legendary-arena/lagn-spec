@@ -9,6 +9,7 @@
  * decide what happens in the game.
  */
 
+import { S3Client } from '@aws-sdk/client-s3';
 import { createRequire } from 'node:module';
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -22,6 +23,7 @@ import { createParGate } from './par/parGate.mjs';
 import { createPool } from './db/database.js';
 import { registerLeaderboardRoutes } from './leaderboards/leaderboard.routes.js';
 import { registerOwnerProfileRoutes } from './profile/ownerProfile.routes.js';
+import { registerAvatarUploadRoutes } from './profile/avatarUpload.routes.js';
 import { registerProfileRoutes } from './profile/profile.routes.js';
 import { registerTeamRoutes } from './teams/team.routes.js';
 import { registerEntitlementRoutes } from './entitlements/entitlements.routes.js';
@@ -408,6 +410,48 @@ export async function startServer() {
     requireAuthenticatedSession,
     verifier,
     accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+  });
+
+  // why: WP-106 / D-10602 — register the avatar upload route
+  // (POST /api/me/avatar) on the same long-lived pool. The R2
+  // client is constructed identically to the legends publisher
+  // pattern in index.mjs; the S3Client is reused for both PutObject
+  // and DeleteObject (compensating action on DB failure). Same
+  // caller-injected auth deps as registerOwnerProfileRoutes.
+  const avatarS3Client = new S3Client({
+    region: 'auto',
+    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: process.env.R2_ACCESS_KEY_ID ?? '',
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? '',
+    },
+  });
+  registerAvatarUploadRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+    r2Client: {
+      async putObject(params) {
+        const { PutObjectCommand } = await import('@aws-sdk/client-s3');
+        const command = new PutObjectCommand({
+          Bucket: params.bucket,
+          Key: params.key,
+          Body: params.body,
+          ContentType: params.contentType,
+          CacheControl: params.cacheControl,
+        });
+        await avatarS3Client.send(command);
+      },
+      async deleteObject(params) {
+        const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
+        const command = new DeleteObjectCommand({
+          Bucket: params.bucket,
+          Key: params.key,
+        });
+        await avatarS3Client.send(command);
+      },
+    },
+    r2BucketName: process.env.R2_BUCKET_NAME ?? 'legendary-images',
   });
 
   // why: WP-152 / D-10202 / D-11505 — wire the public profile route.

@@ -7,6 +7,26 @@
 
 ## Current State
 
+### WP-106 / EC-171 Executed — Avatar Upload Pipeline (2026-05-16)
+
+**New `POST /api/me/avatar` endpoint.** Accepts multipart image upload
+(jpeg/png/webp, 5 MB cap), validates MIME via magic-byte sniffing, checks
+in-memory rate limit (1 per 60s per user), processes via sharp (EXIF strip,
+256x256 center-crop, webp q80), PUTs to R2 at `avatars/{accountId}.webp`,
+updates `legendary.player_profiles.avatar_url`. Compensating R2 DELETE on
+DB failure.
+
+**Closed-origin allowlist.** `validateAvatarUrl` now enforces D-10601:
+only the user's own canonical R2 URL is accepted via `PATCH /api/me/profile`.
+Supersedes D-10405 for `avatar_url` (links retain open HTTPS policy).
+
+**Dependencies added.** `sharp` ^0.33.0, `@koa/multer` ^3.0.2 (production).
+
+**Test baselines.** Server: 304 pass / 1 pre-existing fail (join-match
+script test unrelated to WP-106) / 66 skipped (DB-required).
+
+---
+
 ### WP-156 / EC-170 Executed — Horrors Pile (2026-05-16)
 
 **One WP-128 safe-skip site graduated.** Added `horrors: Zone` to

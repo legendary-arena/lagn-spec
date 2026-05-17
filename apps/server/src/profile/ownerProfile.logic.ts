@@ -133,18 +133,21 @@ async function loadPlayerIdByAccountId(
 }
 
 /**
- * Pure validator for an `avatar_url` candidate. Returns a typed
- * `OwnerProfileResult<string>` carrying either the validated URL
- * verbatim or a `Result.fail` with code `'invalid_avatar_url'`.
- * Rejects empty strings, non-HTTPS URLs, and strings that fail
- * the WHATWG `URL` parser.
+ * Pure validator for an `avatar_url` candidate. Enforces the
+ * closed-origin allowlist per D-10601: only the authenticated
+ * user's canonical R2 avatar URL is accepted. The `accountId`
+ * parameter is required so the validator can confirm the URL
+ * belongs to the requesting user (prevents avatar impersonation).
  *
- * No network call (no HEAD / GET on the URL) — the validator is
- * synchronous and side-effect-free per the layer-boundary
- * read-only-against-runtime-state discipline.
+ * Accepts `null` (clear avatar) via the `upsertOwnerProfile`
+ * three-state logic above this call site — this function is only
+ * invoked when the candidate is a non-null string.
+ *
+ * No network call — synchronous and side-effect-free.
  */
 export function validateAvatarUrl(
   candidate: string,
+  accountId?: AccountId,
 ): OwnerProfileResult<string> {
   if (typeof candidate !== 'string' || candidate.length === 0) {
     return {
@@ -154,29 +157,31 @@ export function validateAvatarUrl(
       code: 'invalid_avatar_url',
     };
   }
-  if (candidate.startsWith('https://') === false) {
-    return {
-      ok: false,
-      reason:
-        'avatarUrl must use the https:// scheme; HTTP and other schemes are rejected per D-10405 defense-in-depth.',
-      code: 'invalid_avatar_url',
-    };
-  }
-  try {
-    const parsed = new URL(candidate);
-    if (parsed.protocol !== 'https:') {
+
+  // why: per-user canonical URL check prevents avatar impersonation
+  // (cite D-10601). Without the accountId check, a user could point
+  // their avatar_url at another user's R2 object. The per-user form
+  // is `https://images.barefootbetters.com/avatars/{accountId}.webp`.
+  if (accountId !== undefined) {
+    const canonicalUrl = `https://images.barefootbetters.com/avatars/${accountId}.webp`;
+    if (candidate !== canonicalUrl) {
       return {
         ok: false,
         reason:
-          'avatarUrl must use the https:// scheme; the parsed URL protocol did not match.',
+          'avatarUrl must be the canonical R2 avatar URL for the authenticated user; external URLs and other users\' avatar URLs are rejected per D-10601 closed-origin allowlist.',
         code: 'invalid_avatar_url',
       };
     }
-  } catch {
+    return { ok: true, value: candidate };
+  }
+
+  // Fallback for callers without accountId context: enforce R2 prefix only
+  const allowedPrefix = 'https://images.barefootbetters.com/avatars/';
+  if (candidate.startsWith(allowedPrefix) === false) {
     return {
       ok: false,
       reason:
-        'avatarUrl must be a parseable URL string; WHATWG URL parsing rejected the input.',
+        'avatarUrl must be a URL under the https://images.barefootbetters.com/avatars/ origin; external URLs are rejected per D-10601 closed-origin allowlist.',
       code: 'invalid_avatar_url',
     };
   }
@@ -593,7 +598,7 @@ export async function upsertOwnerProfile(
     if (patch.avatarUrl === null) {
       validatedFields.set('avatar_url', { kind: 'null' });
     } else if (typeof patch.avatarUrl === 'string') {
-      const validation = validateAvatarUrl(patch.avatarUrl);
+      const validation = validateAvatarUrl(patch.avatarUrl, accountId);
       if (validation.ok === false) {
         return validation;
       }
