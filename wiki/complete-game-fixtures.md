@@ -24,7 +24,7 @@ source:
   - ../packages/game-engine/src/test/fixtures/fixtureSchema.ts
   - ../packages/game-engine/src/test/fixtures/replayFixtures.test.ts
   - ../scripts/record-game-fixture.mjs
-last-reviewed: 2026-05-17
+last-reviewed: 2026-05-18
 ---
 
 # Complete-Game Fixtures
@@ -127,6 +127,81 @@ The 9 `setupConfig` fields are locked by
 §8.1; entity IDs use the `<setAbbr>/<slug>` qualified form per
 [CardExtId](cardextid.md).
 
+### Minimal valid fixture
+
+A fixture passes validation if it satisfies the schema in
+§Fixture file format. The smallest valid fixture has:
+
+- A non-empty `name` field matching its filename basename
+- A `meta` block with `version: 1`, an ISO 8601 `createdAt`, and
+  a non-empty `engineVersion` string
+- An `input` block with a non-empty `seed`, a positive integer
+  `playerCount` matching `playerOrder.length`, a 9-field
+  `setupConfig`, and a (possibly empty) `moves[]` array
+- An `expected` block with a 64-char lowercase hex
+  `finalStateHash`, a string-array `messages` (may be empty), a
+  `snapshotPerTurn` array (may be empty), and an `outcome` object
+  with `winner ∈ { null, "heroes-win", "scheme-wins" }` and a
+  `counters` record (may be `{}`)
+
+**Empty arrays are valid.** Zero moves means the dispatch loop
+exits immediately; the fixture pins only the
+`buildInitialGameState` output (setup determinism). Zero
+snapshots correspond to zero completed turns (no `endTurn`
+dispatched). Empty `messages` is rare in practice —
+`buildInitialGameState` typically emits diagnostic warnings
+against the empty `CardRegistryReader` stub — but is
+theoretically valid.
+
+**The smallest fixture you would actually commit** has a move
+list that exercises at least one turn rotation, so the
+`snapshotPerTurn` oracle has data to assert against. Anything
+less is a setup-only fixture and provides no in-play regression
+coverage.
+
+**Copy-paste template.** Recorder fills in `expected.*`; never
+hand-edit:
+
+```
+{
+  "name": "minimal-example",
+  "meta": {
+    "version": 1,
+    "createdAt": "2026-01-01T00:00:00Z",
+    "engineVersion": "abc1234"
+  },
+  "input": {
+    "seed": "minimal-example-v1",
+    "playerCount": 2,
+    "playerOrder": ["0", "1"],
+    "setupConfig": {
+      "schemeId":        "core/legacy-virus-the",
+      "mastermindId":    "core/dr-doom",
+      "villainGroupIds": ["core/brotherhood"],
+      "henchmanGroupIds":["core/savage-land-mutates"],
+      "heroDeckIds":     ["core/black-widow"],
+      "bystandersCount": 0,
+      "woundsCount":     0,
+      "officersCount":   0,
+      "sidekicksCount":  0
+    },
+    "moves": []
+  },
+  "expected": {
+    "finalStateHash":  "<recorder fills this in>",
+    "messages":        [],
+    "snapshotPerTurn": [],
+    "outcome":         { "winner": null, "counters": {} }
+  }
+}
+```
+
+To use this template: save as
+`scripts/_my-fixture-input.tmp.json`, run the recorder per
+§Adding a new fixture step 3 — the recorder reads `input` +
+`meta`, produces `expected`, writes the full fixture under
+`packages/game-engine/src/test/fixtures/games/`.
+
 ### The three oracle layers
 
 The driver asserts the trajectory in **order**, surfacing the first
@@ -141,6 +216,33 @@ failing layer so the diff lands at the right grain.
 A passing fixture passes all three layers. A failing fixture is
 reported at the **first** layer that mismatches — fixing that
 layer often resolves the others automatically.
+
+### Failure classification (debug vs re-record)
+
+When a fixture fails, the right response depends on **why** the
+oracle mismatched. The harness does not classify failures — it
+detects and reports them; PR review classifies and decides.
+Use this table:
+
+| Failure pattern | Classification | Action |
+|---|---|---|
+| `outcome.winner` flipped (e.g. heroes-win → scheme-wins) | Behaviour change | If PR sanctions a rule change: re-record. Otherwise: debug. |
+| `outcome.counters` drifted (e.g. `escapedVillains 3 → 4`) | Endgame-counter drift | Review PR intent first; same disposition as above. |
+| `messages` differs at index N — text only, no length change | Wording change | Almost always intentional (rule text, error message, log refactor). Re-record. Surface in PR description. |
+| `messages` differs at index N — different action sequence | Behaviour change at turn N | Compare expected/actual at the divergence index to identify which move's effect changed. Debug or re-record per PR intent. |
+| `messages` length changed | Different effect-count per move | Debug first — extra/missing messages usually indicate a rule-pipeline change (hook firing more or fewer times). |
+| `snapshotPerTurn` differs but `messages` matches | Silent state drift | High-signal: a move mutated state without emitting a message. Debug first; may be a silent regression. |
+| `finalStateHash` differs but `messages` + `snapshotPerTurn` match | Subtle G-shape change | Almost always 01.5 wiring (new `G` field, default-value change, shape tweak). Re-record. |
+| Hash differs across machines on the same checkout | Determinism bug | **STOP.** Do not commit. Fix the nondeterminism source (PRNG state leak, wall-clock leak, Set/Map serialization order) before any further fixture work. |
+| `input` block differs between expected fixture and PR-modified version | Fixture re-scoping | **REJECT** the PR. Re-recording must preserve the `input` block exactly — only `expected` may change. Re-scoping is a different scenario and needs a separate fixture. |
+| `Fixture <name> has N moves past endgame at turn T` (thrown) | Fixture corruption | The move list extends past the endgame-triggering move. Trim the list and re-record, OR fix the engine if endgame fired too early. |
+| `validateFixture` throws (`name` ≠ filename, missing meta, etc.) | Schema violation | Fix the fixture file — never the validator. |
+
+**Message drift is never automatically ignored.** Every drift
+surfaces as a test failure. The operator decides at PR time
+whether it's an intentional re-record or a regression. There
+is no "ignore-by-default" message-allowlist; introducing one
+would defeat the messages oracle's role.
 
 ### Adding a new fixture: step-by-step
 
@@ -226,6 +328,62 @@ Delete the temp input file (it should not be committed). Run
 the new fixture passes, then commit the fixture file alongside the
 source change it pins.
 
+### Authoring decision matrix
+
+When in doubt, consult this table before opening a
+fixture-touching PR. It removes ambiguity at review time and
+keeps fixture intent aligned with PR intent:
+
+| You are doing this | What the fixtures should look like |
+|---|---|
+| Fixing a bug that changes player-visible behaviour | One new fixture pins the bug-fix scenario; re-record any existing fixtures the fix legitimately changes |
+| Implementing a new mechanic (scheme / mastermind tactic / hero ability / board keyword) | One new fixture per scenario the mechanic activates — see Fixture granularity below |
+| Refactoring with zero behavioural change | **Zero** fixtures change. If any fixture fails, the refactor was not behaviour-preserving — debug. |
+| Changing a message string (rule text, error wording, log format) | Existing fixtures' `messages` oracles fail; re-record affected fixtures; surface the wording change in the PR description |
+| Adding a new `G` field via 01.5 wiring | Existing fixtures' `finalStateHash` oracles fail; re-record affected fixtures (the new field changes the canonical-JSON shape) |
+| Adding a new move to `LegendaryGame.moves` | Add the move to `MOVE_MAP` in [`runFixture.ts`](../packages/game-engine/src/test/fixtures/runFixture.ts) in the same PR; existing fixtures unaffected unless the new move replaces a path the existing fixtures exercise |
+| Bumping `meta.version` from 1 to 2 | Out of scope for any current WP — see Schema versioning and migration below |
+
+### Fixture granularity
+
+There is no hard limit on fixture size, but these conventions
+keep the corpus useful and the signal-to-noise ratio high:
+
+**Prefer one fixture per scenario, not per assertion.** A
+fixture that pins *"Black Widow's Stealth ability draws a card
+when played alongside a Tech card"* is a single scenario, even
+though three oracles assert against it. Splitting that into
+three fixtures (one per oracle) creates redundant setup cost
+and weakens the readability of the corpus.
+
+**Keep fixtures small enough to read.** A 200-move fixture
+becomes hard to triage when it fails. If a single scenario
+genuinely needs that many moves, consider splitting on
+narrative seams (one fixture per major turn or phase
+transition). Recommended soft cap: **≈ 50 moves** for
+hand-crafted fixtures. Beyond that, the `--policy` autoplay
+mode (deferred — see Edge Cases) is the better fit when it
+lands.
+
+**One mechanic per fixture, plus the minimum scaffolding to
+reach it.** A fixture for Master Strike should not also
+exercise hero recruitment unless the test scenario specifically
+requires both. Cross-mechanic fixtures are valuable for
+integration coverage but should be intentional, not accidental.
+
+**Bug-fix fixtures are the most valuable kind.** A reproducer
+fixture filed at bug-discovery time, then pinned to the bug-fix
+PR, becomes a permanent regression net for that exact bug. This
+is the snapshot-test pattern's strongest use case — capture the
+exact move sequence that reproduces the bug, then pin the
+post-fix trajectory.
+
+The committed corpus starts at **one sentinel fixture**. The
+broader corpus is a follow-up WP whose scope is exactly *"grow
+the corpus"*. At that point, this guidance solidifies into
+explicit per-category quotas (e.g. *"one fixture per scheme,
+one per mastermind, one per hero ability tier"*).
+
 ### Recorder CLI reference
 
 | Flag | Required? | Notes |
@@ -279,6 +437,105 @@ of truth — if the recorder produces different values than the
 committed fixture, the file is wrong and the recorder is
 authoritative.
 
+### Debugging a failed fixture
+
+When `pnpm --filter @legendary-arena/game-engine test` reports
+a fixture failure, work through these steps in order:
+
+**Step 1 — Read the failure header.** The driver reports the
+fixture name, the failing oracle layer
+(`outcome` / `messages` / `finalStateHash`), and the first
+divergence index for array oracles, with expected/actual
+truncated to 200 chars per side:
+
+```
+Fixture "sentinel-core-doom-2p" — MESSAGES oracle mismatch at index 3.
+Expected: "Player 0 drew 6 cards."
+Actual:   "Player 0 drew 5 cards."
+```
+
+**Step 2 — Classify the failure** using the table in §Failure
+classification.
+
+**Step 3 — Locate the offending move.** For `messages` /
+`snapshotPerTurn` divergence at index N: open the committed
+fixture file, scroll to the corresponding entry, and identify
+which move dispatched immediately before. Convention:
+`snapshotPerTurn[k]` is the state after the (k+1)-th `endTurn`
+completed.
+
+**Step 4 — Reproduce locally** with the smallest possible
+scope:
+
+```
+pnpm --filter @legendary-arena/game-engine test --test-name-pattern "complete-game fixture"
+```
+
+This runs only the fixture driver, skipping the rest of the
+~750-test engine suite.
+
+**Step 5 — Diff against a clean checkout.** Stash your changes
+(`git stash`), re-run the fixture suite on `origin/main`,
+observe the hash + messages + snapshots. Restore your changes
+(`git stash pop`), re-run, and diff. The delta narrows the
+fault to your changes.
+
+**Step 6 — Decide.** Based on step 2's classification:
+
+- **Intentional change with PR sanction** → re-record the
+  fixture per §Re-recording after intentional engine changes,
+  surface the trajectory delta in the PR description.
+- **Unintended regression** → fix the engine, leave the
+  fixture untouched, re-run.
+- **Determinism bug (hash differs across machines on the same
+  checkout)** → **STOP** fixture work entirely. Fix the source
+  of nondeterminism (PRNG state leak, wall-clock leak, Set
+  serialization order) before any further fixture commits.
+
+**Step 7 — Verify the fix.** Run the full engine test suite
+(`pnpm --filter @legendary-arena/game-engine test`); confirm
+the fixture is green plus all pre-existing tests are still
+green; commit.
+
+### Schema versioning and migration
+
+`meta.version` is currently locked to **1**. The validator
+rejects any other value with a full-sentence error naming the
+file and version number.
+
+**There is no migration tooling at v1.** All committed
+fixtures share the same schema; nothing migrates between
+versions because no other versions exist.
+
+**The v2 story (when it arrives):** A future WP whose specific
+scope is *"bump fixture schema to v2"* will:
+
+1. Define the v2 shape and the v1 → v2 mapping in its
+   §Contract block
+2. Update `validateFixture` to accept both versions during a
+   transition window (or only v2, if migration is mechanical
+   and one-shot)
+3. Author a migration script under `scripts/` that reads each
+   committed v1 fixture, applies the mapping, and writes the
+   v2 form
+4. Run the script, regenerate all `expected` blocks via the
+   recorder, commit the v2 fixtures in a single PR
+5. Drop v1 acceptance after the transition window closes
+
+**Until that WP lands:**
+
+- Do not hand-bump `meta.version`
+- Do not commit fixtures with `meta.version != 1`
+- Do not mix a hypothetical schema upgrade with a behaviour
+  change in the same PR — the trajectory delta becomes
+  impossible to attribute
+
+The schema is intentionally narrow at v1. The first concrete
+v2 trigger (e.g. needing to record cross-process replay seeds,
+adding per-snapshot custom metadata, persisting policy
+identifiers from autoplay mode) is what motivates v2 — not a
+speculative upgrade.
+
 ### Snapshot timing and determinism
 
 Per-turn snapshots are captured **after** the move that triggered
@@ -305,6 +562,57 @@ the fixture's `expected` block. Catches hidden mutable state
 leakage between dispatches: if a move accidentally mutates
 module-level state, or if the PRNG instance is shared across
 invocations, the second run diverges and the harness throws.
+
+### Anti-patterns
+
+Each of these makes the harness less useful or unreliable.
+Catch them at PR review:
+
+- **Hand-editing the `expected` block.** The recorder is the
+  source of truth. If the recorder produces different values
+  than the committed file, the file is wrong — not the
+  recorder.
+- **Using fixtures for fuzz testing.** Fixtures pin specific
+  scenarios; they are not a property-based testing surface.
+  Property tests belong in their own `*.test.ts` files using
+  `node:test` directly.
+- **Encoding multiple unrelated mechanics in one fixture.** A
+  fixture that fails because of an unrelated mechanic in the
+  same move list creates triage cost and weakens the failure
+  signal. Keep fixtures narrow per §Fixture granularity.
+- **Relying on real registry data.** The harness uses a
+  minimal empty-result `CardRegistryReader` stub. Setup-time
+  builders produce empty villain decks, empty hero decks, and
+  empty mastermind tactics. Fixtures that assume real card
+  data populated via the registry will not work until a future
+  WP extends the harness.
+- **Ignoring stage gating.** Moves dispatched in the wrong
+  stage silently no-op (per the engine's
+  [move validation contract](../.claude/rules/game-engine.md)).
+  The fixture parses fine and runs; the trajectory oracle
+  catches the missing effect later. Always sequence
+  `advanceStage` correctly:
+  `start → main → cleanup → endTurn`.
+- **Adding scratch input files to the fixtures directory.**
+  The test driver globs `*.replay.json` from
+  `packages/game-engine/src/test/fixtures/games/`. Any
+  malformed file in that directory breaks the driver. Keep
+  temp input blocks outside this directory (e.g. under
+  `scripts/_my-input.tmp.json`).
+- **Re-scoping a fixture during regeneration.** Re-recording
+  must preserve the `input` block exactly. Changing the seed,
+  player count, setup config, or move list is **not**
+  re-recording — it is a new fixture and should be committed
+  as one.
+- **Setting `meta.version != 1`.** v2 is not defined yet; see
+  §Schema versioning and migration.
+- **Hand-crafting `finalStateHash` values.** The hash is a
+  canonical-JSON sha256 of `G`. You cannot compute it by hand
+  reliably. Let the recorder generate it.
+- **Wrapping `validateFixture` in `try/catch` inside the
+  driver.** The driver MUST surface validator throws via
+  `assert.fail`; silently swallowing them lets malformed
+  fixtures register as passes.
 
 ## Interactions
 
@@ -389,6 +697,63 @@ invocations, the second run diverges and the harness throws.
   `runFixture`'s public API) or duplicating the dispatch loop
   (forbidden by the EC-172 guardrails). Use `--input` mode with
   hand-crafted move lists until the follow-up WP lands.
+
+### Common failure smells
+
+Pattern-match these to their usual root causes before diving
+into the full §Debugging a failed fixture playbook. Lifted from
+[EC-172 §Common Failure Smells](../docs/ai/execution-checklists/EC-172-complete-game-regression-tests.checklist.md):
+
+- **"Recorder says pass, test says fail"** → recorder and
+  runner have diverged dispatch loops; the recorder is
+  reimplementing instead of calling `runFixture`. Should be
+  caught at code review; if it slips through, the fix is
+  always to consolidate behind `runFixture`, never to special-
+  case the recorder.
+- **Hash differs across machines / Node versions** →
+  canonical-JSON rule violated (number formatting, key sort,
+  or arrays accidentally sorted somewhere). Audit
+  [`hashGameState.ts`](../packages/game-engine/src/test/fixtures/hashGameState.ts)
+  and any state-shaping code introduced since the last
+  passing fixture.
+- **Off-by-one snapshot count** → captured before / during
+  `endTurn` instead of after stage reset + player rotation; OR
+  the `snapshotPerTurn.length !== completedTurnCount`
+  invariant assertion is missing.
+- **`messages` carries "unknown move name" warnings** →
+  `MOVE_MAP` is missing an entry. The harness should **throw**
+  for this case (not warn) per the validator-strictness
+  guardrail — if you see a warning instead, the strictness was
+  loosened accidentally.
+- **Test passes once then fails on rerun** → mulberry32
+  instance shared across fixture invocations; each
+  `runFixture` call must instantiate a fresh PRNG. Per-fixture
+  isolation is broken.
+- **Tests interfere with each other** → per-fixture isolation
+  broken; check that the test driver constructs a fresh `G` +
+  PRNG per fixture, not at module load time.
+- **Driver silently skips a fixture** → `validateFixture`
+  failure swallowed. The driver MUST surface validator throws
+  via `assert.fail`; never wrap in `try/catch`. Listed as an
+  anti-pattern above.
+- **`name` / filename drift** → fixture was renamed on disk
+  but the `name` field wasn't updated (or vice versa). The
+  validator catches this at load with a full-sentence error.
+- **Message drift at index 0** → likely a setup-config or
+  registry-stub change; the first message is almost always a
+  setup-time diagnostic. Audit changes to
+  [`buildInitialGameState`](../packages/game-engine/src/setup/buildInitialGameState.ts)
+  or the empty-registry stub before treating this as a
+  gameplay regression.
+- **Snapshot count mismatch with no message divergence** →
+  harness bug, not a fixture bug. The dispatch loop captured a
+  snapshot at the wrong boundary, or skipped one. File an
+  issue against the harness rather than patching the fixture.
+- **`Fixture <name> has N moves past endgame at turn T`** →
+  the recorder over-captured (autoplay policy returned moves
+  after endgame triggered, when `--policy` lands) OR a
+  hand-written fixture's move list extends past the
+  `evaluateEndgame` trigger. Trim the move list, re-record.
 
 ## Code Touchpoints
 
