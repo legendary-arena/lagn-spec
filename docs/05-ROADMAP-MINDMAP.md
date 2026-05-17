@@ -202,7 +202,7 @@ mindmap
 
       Phase 9 — Profile Surface Follow-ups
         ["WP-105 ✅ Player badges"]
-        ["WP-106 ⏸ Blocked — avatar upload pipeline"]
+        ["WP-106 📝 Drafted — avatar upload pipeline"]
         ["WP-107 ⏸ Blocked — integrity / anti-cheat surface"]
         ["WP-108 ✅ Profile billing & funding history UI"]
 
@@ -294,8 +294,10 @@ mindmap
 - ✅ **CLI credentials field drift** (D-9001, 2026-05-16) — `join-match.mjs` fixed.
 
 **Blocked (cannot start):**
-- **WP-106** — avatar upload pipeline; blocked on R2 user-upload governance decision.
 - **WP-107** — integrity / anti-cheat surface; blocked on a future RBAC / admin-auth WP.
+
+**Drafted (ready for execution):**
+- **WP-106** — avatar upload pipeline (D-10601/D-10602 locked; EC-171 ready).
 
 ---
 
