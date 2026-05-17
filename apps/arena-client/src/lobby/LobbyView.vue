@@ -247,6 +247,22 @@ export default defineComponent({
       applyParseResult(pasteText.value);
     }
 
+    async function loadSampleLoadout(): Promise<void> {
+      try {
+        const response = await fetch('/loadout-test.json');
+        if (!response.ok) {
+          errorMessage.value = `Failed to fetch sample loadout: ${response.status} ${response.statusText}`;
+          return;
+        }
+        const text = await response.text();
+        applyParseResult(text);
+      } catch (fetchError) {
+        const cause =
+          fetchError instanceof Error ? fetchError.message : String(fetchError);
+        errorMessage.value = `Failed to load sample loadout. ${cause}`;
+      }
+    }
+
     async function submitFromJson(): Promise<void> {
       if (isSubmitting.value) {
         return;
@@ -317,6 +333,7 @@ export default defineComponent({
       handleFileUpload,
       parsePasted,
       submitFromJson,
+      loadSampleLoadout,
       refreshMatches,
       submitCreate,
       joinExisting,
@@ -368,6 +385,14 @@ export default defineComponent({
         data-testid="lobby-loadout-file"
         @change="handleFileUpload"
       />
+
+      <button
+        type="button"
+        data-testid="lobby-load-sample"
+        @click="loadSampleLoadout"
+      >
+        Load sample loadout (test)
+      </button>
 
       <details class="loadout-paste">
         <summary>Paste loadout JSON instead</summary>
