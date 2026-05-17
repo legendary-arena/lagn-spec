@@ -5,6 +5,7 @@ import {
   createMatch,
   joinMatch,
   listMatches,
+  serverUrl,
 } from './lobbyApi';
 import type { LobbyMatchSummary } from './lobbyApi';
 import { parseLoadoutJson } from './parseLoadoutJson';
@@ -71,6 +72,10 @@ export default defineComponent({
     const matches = ref<LobbyMatchSummary[]>([]);
     const errorMessage = ref<string | null>(null);
     const isSubmitting = ref(false);
+
+    const autoplayPlayerCount = ref('1');
+    const autoplayPolicy = ref('competent');
+    const autoplayDelay = ref('800');
 
     // why: JSON-first layout per WP-092. The Registry Viewer loadout
     // builder (WP-091) is the expected authoring path; users export a
@@ -308,6 +313,43 @@ export default defineComponent({
       }
     }
 
+    async function startAutoplay(): Promise<void> {
+      if (isSubmitting.value) {
+        return;
+      }
+      isSubmitting.value = true;
+      try {
+        const response = await fetch(`${serverUrl}/api/match/autoplay`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            playerCount: Number(autoplayPlayerCount.value) || 1,
+            policy: autoplayPolicy.value,
+            delayMs: Number(autoplayDelay.value) || 800,
+          }),
+        });
+        if (!response.ok) {
+          const errorBody = await response.text();
+          errorMessage.value = `Autoplay failed: ${errorBody}`;
+          return;
+        }
+        const result = await response.json();
+        const query =
+          `?match=${encodeURIComponent(result.matchId)}` +
+          `&player=0` +
+          `&credentials=${encodeURIComponent(result.credentials['0'])}`;
+        window.location.search = query;
+      } catch (autoplayError) {
+        const cause =
+          autoplayError instanceof Error
+            ? autoplayError.message
+            : String(autoplayError);
+        errorMessage.value = `Autoplay request failed. ${cause}`;
+      } finally {
+        isSubmitting.value = false;
+      }
+    }
+
     onMounted(() => {
       void refreshMatches();
     });
@@ -338,6 +380,10 @@ export default defineComponent({
       submitCreate,
       joinExisting,
       isOpenSeat,
+      autoplayPlayerCount,
+      autoplayPolicy,
+      autoplayDelay,
+      startAutoplay,
     };
   },
 });
@@ -366,6 +412,54 @@ export default defineComponent({
         autocomplete="off"
         aria-label="Display name for this player"
       />
+    </section>
+
+    <section
+      class="watch-bot-play"
+      aria-labelledby="watch-bot-heading"
+      data-testid="lobby-watch-bot"
+    >
+      <h2 id="watch-bot-heading">Watch Bot Play</h2>
+
+      <label for="autoplayPlayerCount">Players (1-5)</label>
+      <input
+        id="autoplayPlayerCount"
+        v-model="autoplayPlayerCount"
+        type="number"
+        min="1"
+        max="5"
+        aria-label="Number of bot players"
+      />
+
+      <label for="autoplayPolicy">AI Policy</label>
+      <select
+        id="autoplayPolicy"
+        v-model="autoplayPolicy"
+        aria-label="AI policy"
+      >
+        <option value="competent">Competent (heuristic)</option>
+        <option value="random">Random</option>
+      </select>
+
+      <label for="autoplayDelay">Delay between moves (ms)</label>
+      <input
+        id="autoplayDelay"
+        v-model="autoplayDelay"
+        type="number"
+        min="100"
+        max="5000"
+        step="100"
+        aria-label="Delay between moves in milliseconds"
+      />
+
+      <button
+        type="button"
+        :disabled="isSubmitting"
+        data-testid="lobby-start-autoplay"
+        @click="startAutoplay"
+      >
+        Watch Bot Play
+      </button>
     </section>
 
     <section
@@ -595,7 +689,8 @@ export default defineComponent({
 .create-match,
 .join-existing,
 .player-identity,
-.create-from-json {
+.create-from-json,
+.watch-bot-play {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;

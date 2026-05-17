@@ -31,6 +31,7 @@ import { registerBillingRoutes } from './billing/billing.routes.js';
 import { registerAdminBillingRoutes } from './billing/adminBilling.routes.js';
 import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
 import { registerLegendsPublisherRoutes } from './legends/legends.routes.js';
+import { registerAutoplayRoutes } from './autoplay/autoplay.mjs';
 import { requireAuthenticatedSession } from './auth/sessionToken.logic.js';
 import { createHankoSessionVerifier } from './auth/hanko/hankoVerifier.logic.js';
 import { productionAccountResolver } from './auth/accountResolver.logic.js';
@@ -358,6 +359,17 @@ export async function startServer() {
 
   registerHealthRoute(server.router);
   registerLegendsPublisherRoutes(server.router);
+
+  // why: "Watch Bot Play" feature — server-side autoplay loop using
+  // engine AI policies. No game logic here; the autoplay module dispatches
+  // moves through boardgame.io's Master class using existing policies.
+  const autoplayServerUrl = `http://localhost:${process.env.PORT ?? '8000'}`;
+  registerAutoplayRoutes(server.router, {
+    db: server.db,
+    transport: server.transport,
+    auth: server.auth,
+    serverUrl: autoplayServerUrl,
+  });
 
   // why: WP-115 — construct the long-lived pg.Pool exactly once
   // here. Lifetime is the process lifetime; close-on-SIGTERM is
