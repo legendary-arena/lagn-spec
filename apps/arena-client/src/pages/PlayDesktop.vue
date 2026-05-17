@@ -3,6 +3,7 @@ import { computed, defineComponent, type PropType } from 'vue';
 import { storeToRefs } from 'pinia';
 import type { UIPlayerState } from '@legendary-arena/game-engine';
 import { useUiStateStore } from '../stores/uiState';
+import { useRevealDetector } from '../composables/useRevealDetector';
 
 import TopHudBar from '../components/play/TopHudBar.vue';
 import OpponentPanel from '../components/play/OpponentPanel.vue';
@@ -20,6 +21,7 @@ import YourDeckDiscardZone from '../components/play/YourDeckDiscardZone.vue';
 import YourVictoryPile from '../components/play/YourVictoryPile.vue';
 import TurnActionBar from '../components/play/TurnActionBar.vue';
 import LobbyControls from '../components/play/LobbyControls.vue';
+import RevealOverlay from '../components/play/RevealOverlay.vue';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
 
 /**
@@ -57,6 +59,7 @@ export default defineComponent({
     YourVictoryPile,
     TurnActionBar,
     LobbyControls,
+    RevealOverlay,
   },
   props: {
     submitMove: {
@@ -67,6 +70,7 @@ export default defineComponent({
   setup() {
     const store = useUiStateStore();
     const { snapshot } = storeToRefs(store);
+    const { currentReveal, dismiss: dismissReveal } = useRevealDetector(snapshot);
 
     const viewer = computed<UIPlayerState | null>(() => {
       const current = snapshot.value;
@@ -101,7 +105,7 @@ export default defineComponent({
       () => snapshot.value?.game.phase === 'play',
     );
 
-    return { snapshot, viewer, opponents, isLobbyPhase, isPlayPhase };
+    return { snapshot, viewer, opponents, isLobbyPhase, isPlayPhase, currentReveal, dismissReveal };
   },
 });
 </script>
@@ -124,6 +128,11 @@ export default defineComponent({
       />
       <LobbyControls v-if="isLobbyPhase" :submit-move="submitMove" />
       <template v-if="isPlayPhase && viewer !== null">
+        <RevealOverlay
+          :reveal="currentReveal"
+          :duration-ms="2000"
+          @dismiss="dismissReveal"
+        />
         <section class="play-desktop__opponents" data-testid="play-desktop-opponents">
           <OpponentPanel
             v-for="opponent in opponents"
@@ -200,6 +209,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  position: relative;
 }
 
 .play-desktop__opponents {
