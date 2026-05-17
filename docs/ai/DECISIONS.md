@@ -17105,4 +17105,165 @@ Fixture Harness).
 
 ---
 
+### D-15901 — Admin authorization composes the WP-112 session orchestrator with a single boolean admin column (WP-159)
+
+**Decision:** Admin authorization for `/api/admin/*` routes is
+implemented by composing two existing seams: WP-112's
+`requireAuthenticatedSession(req, options): Promise<Result<AccountId>>`
+orchestrator and a new boolean admin authorization flag column added
+to `legendary.players` by migration 014 (per D-15902). The composition
+ships as a single function — `requireAdminSession(request, options):
+Promise<AdminSessionResult>` — isolated in
+`apps/server/src/auth/adminSession.ts` (single-file isolation mirrors
+the WP-110 `adminGate.ts` precedent). The function's success branch
+carries `{ ok: true; accountId }`; its failure branch carries a
+closed-union code (`'unauthorized' | 'forbidden' | 'lookup_failed'`)
+plus a deterministic static `reason` string per the five canonical
+sentences enumerated in WP-159 §A.
+
+`apps/server/src/auth/adminSession.ts` extends the existing
+server-auth classification per `02-CODE-CATEGORIES.md` (no new code
+category needed).
+
+**Rationale:** WP-107 (profile integrity / anti-cheat surface) needs
+per-admin attribution so suspend / unsuspend actions can be recorded
+in an audit log with the acting admin's `AccountId`. WP-110's
+shared-secret gate (`requireAdminSecret`, marked deprecated by
+D-11001) cannot satisfy this — it has no user identity attached to a
+request. Composing the WP-112 orchestrator preserves WP-112's
+locked invariants (D-11202 bearer-header-only token extraction,
+D-11204 fail-closed default when production wiring hasn't called
+`configureSessionValidation`) by construction, since
+`requireAdminSession` exercises the orchestrator through its public
+interface rather than re-implementing token extraction or verifier
+invocation. The closed-union failure surface (three codes) is
+intentionally narrower than the orchestrator's six-code surface —
+admin-route dispatch never needs to know the orchestrator's
+internal taxonomy, so the upstream code collapses to a single
+`'unauthorized'` value at the admin-gate boundary.
+
+The composition shape is forward-compatible with a future
+role/permission system: callers see an `AdminSessionResult` whose
+success branch carries an `AccountId` regardless of whether
+authorization is decided by a boolean column or a multi-row join
+against a future `legendary.player_roles` table. The repo-wide grep
+gate enforced by WP-159 §Verification Steps — `is_admin` MUST NOT
+appear anywhere outside `adminSession.{ts,test.ts}` + migration 014
+— is the load-bearing seam invariant that protects the
+forward-compat migration.
+
+**Alternatives rejected:**
+- **Extend WP-110's shared-secret gate with per-admin secrets.**
+  Rejected because rotating shared secrets per administrator
+  recreates every problem the session-based approach solves
+  (no per-user attribution at the auth layer, no integration with
+  the existing Hanko broker, doubles the operator burden of secret
+  management). Fails §22 (Auditability) for admin-mutation surfaces.
+- **Ship a full roles + permissions + audit table system in this
+  WP.** Rejected because no concrete caller needs the
+  discrimination yet — WP-107 needs `admin vs not-admin`, not
+  `admin vs moderator vs billing-admin`. A granular system touches
+  ~15+ files, multiplies the §17 vision alignment + §21 catalog
+  obligations across many surfaces, and would block WP-107 on
+  speculative scope. The single-column shape can later be
+  superseded by a join against a `legendary.player_roles` table
+  without breaking `requireAdminSession` callers — the success
+  branch contract is identical under either backing storage.
+- **Cut over WP-110's `/api/admin/billing/history` route in the
+  same WP.** Rejected to keep the gate-introduction WP small and
+  reversible. The cutover is a deliberately separate follow-up WP
+  so the swap can be reviewed, verified, and rolled back
+  independently of the gate's introduction. WP-110's
+  `requireAdminSecret` continues to ship unchanged; the
+  `admin-secret` Auth taxonomy value remains in the catalog
+  alongside the new `admin-session-required` value (extended to
+  five total per this WP).
+- **Place the helper in the WP-110 `adminGate.ts` file.** Rejected
+  because the file-isolation precedent (mirrored from WP-110
+  itself) supports the future RBAC swap: a single file change can
+  evolve the broker without touching caller routes. Mixing the
+  shared-secret and session-based gates in one file defeats that
+  property and complicates the deprecation path for
+  `requireAdminSecret`.
+
+**Packet:** WP-159 (Admin Session Gate — Session-Based Admin
+Authentication).
+
+**Introduced:** WP-159 (drafted 2026-05-17, executed 2026-05-17)
+**Status:** Immutable
+
+---
+
+### D-15902 — Single-column admin authorization on `legendary.players` (WP-159)
+
+**Decision:** Admin authorization is stored as a single
+`is_admin BOOLEAN NOT NULL DEFAULT FALSE` column on
+`legendary.players`, added by migration 014 (additive,
+`ADD COLUMN IF NOT EXISTS`, idempotent, with a
+`COMMENT ON COLUMN legendary.players.is_admin` documenting the WP
+authority and the `requireAdminSession` read path). The first
+admin is granted via direct operator SQL
+(`UPDATE legendary.players SET is_admin = TRUE WHERE ext_id =
+'<uuid>';`); subsequent grants come from a future admin-CLI WP.
+
+No roles table, no permissions table, no role-permission join, no
+audit log of role changes, no bootstrap-first-admin UI in WP-159.
+All of those are deliberately out of scope and may motivate future
+WPs once concrete callers exist.
+
+**Rationale:** WP-107 needs binary `admin vs not-admin`
+discrimination only. A single boolean column is the smallest
+forward-compatible shape that satisfies that requirement. The cost
+of a future migration to a `legendary.player_roles` join is real
+but bounded — `adminSession.ts` is the single file in the
+repository that reads the admin authorization flag (enforced by
+the repo-wide grep gate in WP-159 §Verification Steps), so the
+migration's surface area is exactly one file plus the table
+schema.
+
+The operator-only grant flow (no admin-grant UI, no admin-CLI in
+this WP) sidesteps the chicken-and-egg problem of "who can grant
+the first admin?" — the operator with direct DB access bootstraps
+the first row, and subsequent grants can be UI-driven once the
+first admin exists. This pattern is intentional even though it
+defers the admin-CLI to a follow-up WP; introducing the CLI in
+WP-159 would expand scope into UI / auth-flow territory the WP
+isn't shaped to handle.
+
+The migration's `COMMENT ON COLUMN` is the documentation seam —
+schema introspection tools (psql `\d+`, pgAdmin, automated
+catalog dumps) surface the comment, keeping the authorization
+story attached to the data rather than buried in migration
+history.
+
+**Alternatives rejected:**
+- **Store the flag in a separate `legendary.player_roles` table
+  with a single 'admin' role.** Rejected because the table costs
+  the same as the column at zero callers; the additional indirection
+  (JOIN, FK) buys nothing until a second role exists. The future
+  migration adds the table and lookup code at that point — and
+  removes the boolean column — in a single locked file change.
+- **Use an enum (`'none' | 'admin'`) instead of a boolean.**
+  Rejected because the binary semantics fit cleanly into
+  `BOOLEAN NOT NULL DEFAULT FALSE` with no enum-type migration
+  cost. If finer-grained levels ever ship, the future role table
+  carries the enumeration — adding it to a boolean column today
+  would lock in a one-way migration before the discrimination
+  exists.
+- **Surface the grant flow via API (`POST /api/admin/grant`) in
+  this WP.** Rejected because (a) the first admin grant is a
+  bootstrap problem the API cannot solve, and (b) every grant
+  endpoint must itself be gated — recursive admin-auth without
+  an existing admin is an operational dead end. Direct operator
+  SQL for the first admin breaks the cycle; a CLI for subsequent
+  grants is a clean follow-up WP scope.
+
+**Packet:** WP-159 (Admin Session Gate — Session-Based Admin
+Authentication).
+
+**Introduced:** WP-159 (drafted 2026-05-17, executed 2026-05-17)
+**Status:** Immutable
+
+---
+
 Protect this file.

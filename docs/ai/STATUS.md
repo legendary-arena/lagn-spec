@@ -7,6 +7,90 @@
 
 ## Current State
 
+### WP-159 / EC-173 Executed — Admin Session Gate (2026-05-17)
+
+**Session-based admin authentication seam shipped.** New helper
+`requireAdminSession(request, options): Promise<AdminSessionResult>`
+at `apps/server/src/auth/adminSession.ts` composes WP-112's
+`requireAuthenticatedSession` orchestrator with a fresh single-column
+SELECT of the new admin authorization flag on `legendary.players`
+(migration 014). Three-value closed-union failure surface
+(`'unauthorized' | 'forbidden' | 'lookup_failed'`) with 5 canonical
+static `reason` strings exact-string asserted in tests. Strict
+triple-equals on the boolean flag; row-schema typeof guard precedes
+the boolean check; non-boolean / zero-row / multi-row / DB-throw all
+route to `'lookup_failed'` (fail-closed in every direction).
+
+**File isolation = forward-compat seam.** The helper lives in its
+own file, mirroring the WP-110 `adminGate.ts` precedent. Repo-wide
+grep gate enforces that `adminSession.ts` is the ONLY file issuing
+`SELECT ... is_admin` against `legendary.players` — the
+load-bearing invariant that protects the future role/permission
+migration (the function's success shape `{ ok: true; accountId }`
+stays identical under either backing storage).
+
+**Migration 014 additive + idempotent.** `ALTER TABLE
+legendary.players ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT
+NULL DEFAULT FALSE` plus a `COMMENT ON COLUMN` documenting the WP
+authority and the locked read path. All existing rows default to
+`is_admin = FALSE`. Re-running succeeds without error.
+
+**WP-110 / WP-112 / WP-126 / `identity.types.ts` byte-identical.**
+`git diff --stat -- apps/server/src/auth/adminGate.ts
+apps/server/src/auth/sessionToken.{logic,types}.ts
+apps/server/src/auth/hanko/
+apps/server/src/identity/identity.types.ts` is empty. No locked
+file was modified.
+
+**API catalog updated per §21 / D-11804.** Auth taxonomy extended
+from 4 to 5 values (`admin-session-required` added). New
+`Library-only` row for `requireAdminSession` adjacent to the existing
+auth-cluster rows. WP-110's `admin-secret` taxonomy value remains
+in place pending a separate cutover WP.
+
+**Test baselines.** Server: 304 pass → 313 pass (+9 new
+`adminSession.test.ts` tests) / 1 fail (pre-existing
+`join-match.test.ts` "missing --name flag" carried since WP-106 per
+prior STATUS entry, unrelated to WP-159 scope) / 66 skipped
+(DB-required) / 0 todo. All 9 new tests pass on first run.
+Pre-execution baseline drift (`184/0/66/31` from WP-159 §Assumes →
+actual `304/1/66/0`) confirmed by operator at session start (WP-158
+precedent: stale spec baseline; treat current as new authority).
+
+**01.5 NOT INVOKED.** No engine, registry, scoring, or replay
+surface touched. The change is a server-only library addition +
+additive DB migration + governance docs.
+
+**01.6 post-mortem.** `requireAdminSession` is a new long-lived
+abstraction — the canonical admin-authorization seam for every
+future admin-only route. Post-mortem at
+`docs/ai/post-mortems/WP-159-admin-session-gate.post-mortem.md`.
+
+**PS-1 follow-through (OPERATOR ACTION).** Migration 014 grants
+no admin by default; every admin route returns `'forbidden'` until
+the operator runs:
+```sql
+UPDATE legendary.players SET is_admin = TRUE WHERE ext_id = '<uuid>';
+```
+substituting the chosen first-admin's `ext_id` UUID. No first-admin
+UUID was identified at session start; the grant is pending operator
+action post-merge.
+
+**Verification-step inconsistency noted.** WP-159 §Verification
+Steps expected `Select-String -Path adminSession.ts -Pattern
+ADMIN_SESSION_ERROR_CODES` to return ≥ 2 matches ("declaration +
+usage in drift test"). The drift-test usage is in
+`adminSession.test.ts`, not `adminSession.ts`; the helper file
+contains 1 declaration, and the test file contains 3 references
+(import + 2 inside test 9). The spirit of the gate (drift array
+exists in the helper + drift test uses it) is satisfied.
+Inconsistency noted for a future WP-159 spec touch-up.
+
+D-15901 (gate composition) + D-15902 (single-column authorization)
+appended.
+
+---
+
 ### WP-158 / EC-172 Executed — Complete-Game Regression Tests (2026-05-17)
 
 **Engine-only fixture harness shipped.** Seed-faithful mulberry32

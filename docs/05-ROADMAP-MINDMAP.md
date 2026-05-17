@@ -199,11 +199,12 @@ mindmap
       Admin & Route Wiring
         ["WP-110 ✅ Admin billing visibility"]
         ["WP-152 ✅ Wire public profile route in server.mjs"]
+        ["WP-159 ✅ Admin session gate (session-based admin auth)"]
 
       Phase 9 — Profile Surface Follow-ups
         ["WP-105 ✅ Player badges"]
         ["WP-106 ✅ Done — avatar upload pipeline"]
-        ["WP-107 ⏸ Blocked — integrity / anti-cheat surface"]
+        ["WP-107 📝 Drafted — integrity / anti-cheat surface (ready for execution post-WP-159)"]
         ["WP-108 ✅ Profile billing & funding history UI"]
 
       Phase 10 — Debugging, Testing & Troubleshooting
@@ -260,11 +261,11 @@ mindmap
 | Domain Cutover & Infrastructure | 5/5 | — |
 | Public Leaderboard (Marketing) | 2/2 | — |
 | Legends Public Scoreboard | 2/2 | — |
-| Admin & Route Wiring | 2/2 | — |
-| Phase 9 — Profile Surface Follow-ups | 2/4 | 2 ⏸ |
+| Admin & Route Wiring | 3/3 | — |
+| Phase 9 — Profile Surface Follow-ups | 3/4 | 1 📝 |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **151/157 ✅** | 8 📝 placeholders + 3 ⏸ |
+| **Total** | **152/158 ✅** | 8 📝 placeholders + 1 📝 + 2 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 
@@ -274,12 +275,12 @@ mindmap
 
 - **Phase 3 Gate:** Closed (D-1320)
 - **Phase 6 Gate:** Closed 2026-04-19 — tag `phase-6-complete` at `c376467`
-- **Engine test baseline:** `730 / 0 / 0` (post-WP-156)
+- **Engine test baseline:** `749 / 0 / 0` (post-WP-158)
 - **Registry test baseline:** `53 / 0 / 0` (post-WP-151)
-- **Server test baseline:** `184 / 0 / 66 / 31` (post-WP-134)
+- **Server test baseline:** `313 / 1 / 66 / 0` (post-WP-159; the 1 fail is the pre-existing `join-match.test.ts` "missing --name flag" carried since WP-106 per STATUS.md)
 - **arena-client test baseline:** `286 / 35 / 0` (post-WP-130; preserved by WP-136)
-- **DECISIONS.md range:** `D-4801..D-15601` (extends through WP-156)
-- **EC range:** `EC-001..EC-170` (extends through WP-156)
+- **DECISIONS.md range:** `D-4801..D-15902` (extends through WP-159)
+- **EC range:** `EC-001..EC-173` (extends through WP-159)
 
 ---
 
@@ -294,10 +295,10 @@ mindmap
 - ✅ **CLI credentials field drift** (D-9001, 2026-05-16) — `join-match.mjs` fixed.
 
 **Blocked (cannot start):**
-- **WP-107** — integrity / anti-cheat surface; blocked on a future RBAC / admin-auth WP.
+- (none in Phase 9 — WP-107 unblocked by WP-159 admin-session gate landing 2026-05-17)
 
 **Drafted (ready for execution):**
-- **WP-106** — avatar upload pipeline (D-10601/D-10602 locked; EC-171 ready).
+- **WP-107** — profile integrity / anti-cheat surface (D-10701..D-10703 drafted; admin-session gate dependency satisfied; EC pending).
 
 ---
 
@@ -320,4 +321,4 @@ mindmap
 
 ---
 
-*Last updated: 2026-05-15 (review-pass 6: 16 new WPs completed since last update; 5 new clusters added (Physical Card Pipeline, Domain Cutover & Infrastructure, Public Leaderboard Marketing, Legends Public Scoreboard, Admin & Route Wiring); Phase 9 WP-105/108 → ✅; Governance WP-097/098 → ✅; WP-070 → ✅; Captain-America cardCounts anomaly confirmed resolved by pipeline; stale Next Unblocked items cleared; DECISIONS.md range extended to D-15201; EC range extended to EC-164; engine baseline → `705/0/0` post-WP-151; registry baseline `53/0/0` added; total 151/157 ✅).*
+*Last updated: 2026-05-17 (WP-159 admin-session gate executed: added to Admin & Route Wiring cluster; WP-107 unblocked and flipped to 📝 Drafted ready-for-execution; Server baseline refreshed to `313/1/66/0` post-WP-159 — the 1 fail is pre-existing `join-match.test.ts` carried since WP-106; DECISIONS.md range extended to D-15902; EC range extended to EC-173; engine baseline updated to `749/0/0` post-WP-158; total 152/158 ✅. Previous update 2026-05-15: 16 new WPs since prior update; 5 new clusters; Phase 9 WP-105/108 → ✅; Governance WP-097/098 → ✅; WP-070 → ✅; stale Next Unblocked items cleared.)*
