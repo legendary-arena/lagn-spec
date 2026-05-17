@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "playerCount": 2,
+  "playerCount": 1,
   "heroSelectionMode": "GROUP_STANDARD",
   "composition": {
     "schemeId": "core/midtown-bank-robbery",
