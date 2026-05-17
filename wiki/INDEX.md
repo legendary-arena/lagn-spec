@@ -1,6 +1,6 @@
 # Wiki Index
 
-> **22 / 50** entity pages.
+> **23 / 50** entity pages.
 > Last regenerated: 2026-05-17.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
@@ -110,6 +110,12 @@ Step-by-step walkthroughs for completing specific tasks.
   oracle layers, recorder CLI walkthrough, re-recording workflow
   after intentional engine changes, and constraints. Pairs with
   the operator reference at `docs/ai/REFERENCE/complete-game-tests.md`.
+- [After Effects Stop-Motion Hero Loop](after-effects-stop-motion-hero-loop.md)
+  — Producing a 5-7 second seamlessly-looping stop-motion hero
+  video for muted-autoplay marketing slots: PNG-sequence workflow
+  for per-frame control, Posterize Time fast fallback, loop-boundary
+  technique, Media Encoder handoff, and the UI-overlay layer that
+  makes a generic clip read as a digital card game.
 
 ## Keyword
 
