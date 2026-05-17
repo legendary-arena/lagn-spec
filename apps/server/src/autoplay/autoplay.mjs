@@ -239,8 +239,20 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
 
     const currentPlayer = state.ctx.currentPlayer;
 
-    // --- Start stage: reveal one villain card, then advance ---
+    // --- Start stage: draw hand, reveal one villain card, then advance ---
     if (state.G.currentStage === 'start') {
+      // Draw cards if hand is empty (start of game or after previous cleanup)
+      const playerZones = state.G.playerZones[currentPlayer];
+      if (playerZones && playerZones.hand.length === 0) {
+        await submitMove({
+          ...moveParams,
+          playerId: currentPlayer,
+          moveName: 'drawCards',
+          moveArgs: { count: 6 },
+        });
+        await delay(delayMs);
+      }
+
       await submitMove({
         ...moveParams,
         playerId: currentPlayer,
