@@ -274,47 +274,105 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
       await delay(delayMs);
     }
 
-    // --- Main stage: let the policy make decisions until it advances ---
-    let mainMoves = 0;
-    const maxMainMoves = 100;
+    // --- Main stage: play cards, then recruit/fight, then advance ---
+    ({ state } = await db.fetch(matchId, { state: true }));
+    if (!state || state.ctx.gameover !== undefined) continue;
 
-    while (mainMoves < maxMainMoves) {
+    if (state.G.currentStage === 'main') {
+      const player = state.ctx.currentPlayer;
+
+      // Step 1: Play all cards from hand (generates attack/recruit)
+      let playAttempts = 0;
+      while (playAttempts < 30) {
+        ({ state } = await db.fetch(matchId, { state: true }));
+        if (!state || state.ctx.gameover !== undefined) break;
+        const hand = state.G.playerZones[player]?.hand ?? [];
+        if (hand.length === 0) break;
+
+        const prevStateId = state._stateID;
+        await submitMove({
+          ...moveParams,
+          playerId: player,
+          moveName: 'playCard',
+          moveArgs: { cardId: hand[0] },
+        });
+
+        // Detect silent rejection — if stateID didn't change, the move failed
+        const afterFetch = await db.fetch(matchId, { state: true });
+        if (afterFetch.state && afterFetch.state._stateID === prevStateId) {
+          console.error(`[autoplay] match ${matchId} playCard silently rejected for card ${hand[0]}`);
+          break;
+        }
+
+        playAttempts++;
+        await delay(delayMs);
+      }
+
+      // Log economy after playing cards
       ({ state } = await db.fetch(matchId, { state: true }));
-      if (!state || state.ctx.gameover !== undefined) break;
-      if (state.G.currentStage !== 'main') break;
+      if (state) {
+        const economy = state.G.turnEconomy;
+        console.log(`[autoplay] match ${matchId} turn ${turnCount} player ${player}: played ${playAttempts} cards, economy: attack=${economy.attack} recruit=${economy.recruit}`);
+      }
 
-      const lifecycleContext = {
-        phase: state.ctx.phase,
-        turn: state.ctx.turn,
-        currentPlayer: state.ctx.currentPlayer,
-        numPlayers: state.ctx.numPlayers,
-      };
+      // Step 2: Spend resources — recruit heroes and fight villains
+      let spendAttempts = 0;
+      while (spendAttempts < 20) {
+        ({ state } = await db.fetch(matchId, { state: true }));
+        if (!state || state.ctx.gameover !== undefined) break;
+        if (state.G.currentStage !== 'main') break;
 
-      const legalMoves = getLegalMoves(state.G, lifecycleContext);
-      if (legalMoves.length === 0) break;
+        const lifecycleContext = {
+          phase: state.ctx.phase,
+          turn: state.ctx.turn,
+          currentPlayer: player,
+          numPlayers: state.ctx.numPlayers,
+        };
 
-      const uiBuildContext = {
-        phase: state.ctx.phase,
-        turn: state.ctx.turn,
-        currentPlayer: state.ctx.currentPlayer,
-      };
-      const fullUIState = buildUIState(state.G, uiBuildContext);
-      const filteredView = filterUIStateForAudience(fullUIState, {
-        kind: 'player',
-        playerId: state.ctx.currentPlayer,
-      });
+        const legalMoves = getLegalMoves(state.G, lifecycleContext);
+        // Filter to only spend moves (recruit/fight) and advanceStage
+        const spendMoves = legalMoves.filter(
+          (m) => m.name === 'recruitHero' || m.name === 'fightVillain' ||
+                 m.name === 'fightMastermind' || m.name === 'advanceStage'
+        );
 
-      const intent = policy.decideTurn(filteredView, legalMoves);
+        if (spendMoves.length === 0) break;
 
-      await submitMove({
-        ...moveParams,
-        playerId: state.ctx.currentPlayer,
-        moveName: intent.move.name,
-        moveArgs: intent.move.args,
-      });
+        // If only advanceStage remains, advance and exit
+        if (spendMoves.length === 1 && spendMoves[0].name === 'advanceStage') {
+          await submitMove({
+            ...moveParams,
+            playerId: player,
+            moveName: 'advanceStage',
+            moveArgs: undefined,
+          });
+          await delay(delayMs);
+          break;
+        }
 
-      mainMoves++;
-      await delay(delayMs);
+        const uiBuildContext = {
+          phase: state.ctx.phase,
+          turn: state.ctx.turn,
+          currentPlayer: player,
+        };
+        const fullUIState = buildUIState(state.G, uiBuildContext);
+        const filteredView = filterUIStateForAudience(fullUIState, {
+          kind: 'player',
+          playerId: player,
+        });
+
+        const intent = policy.decideTurn(filteredView, spendMoves);
+        console.log(`[autoplay] match ${matchId} turn ${turnCount}: spending → ${intent.move.name} ${JSON.stringify(intent.move.args)}`);
+
+        await submitMove({
+          ...moveParams,
+          playerId: player,
+          moveName: intent.move.name,
+          moveArgs: intent.move.args,
+        });
+        spendAttempts++;
+        await delay(delayMs);
+      }
     }
 
     // --- Cleanup stage: end the turn ---
