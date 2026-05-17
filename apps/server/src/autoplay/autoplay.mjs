@@ -216,76 +216,114 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
     ? createRandomPolicy(seed)
     : createCompetentHeuristicPolicy(seed);
 
-  // Play phase: loop until game over
-  let stuckCounter = 0;
-  const maxStuckMoves = 2000;
+  // Play phase: drive the turn stage cycle explicitly.
+  // Each turn: reveal villain (start) → advance to main → policy decisions → end turn.
+  // The policy is only consulted for main-stage decisions (play/recruit/fight).
+  let turnCount = 0;
+  const maxTurns = 400;
 
-  while (stuckCounter < maxStuckMoves) {
-    const { state } = await db.fetch(matchId, { state: true });
+  while (turnCount < maxTurns) {
+    let { state } = await db.fetch(matchId, { state: true });
     if (!state) {
       console.error(`[autoplay] match ${matchId} not found in storage.`);
       break;
     }
-
     if (state.ctx.gameover !== undefined) {
       console.log(`[autoplay] match ${matchId} ended: ${JSON.stringify(state.ctx.gameover)}`);
       break;
     }
-
     if (state.ctx.phase !== 'play') {
       console.log(`[autoplay] match ${matchId} in unexpected phase: ${state.ctx.phase}`);
       break;
     }
 
     const currentPlayer = state.ctx.currentPlayer;
-    const lifecycleContext = {
-      phase: state.ctx.phase,
-      turn: state.ctx.turn,
-      currentPlayer,
-      numPlayers: state.ctx.numPlayers,
-    };
 
-    const legalMoves = getLegalMoves(state.G, lifecycleContext);
-    if (legalMoves.length === 0) {
-      console.error(`[autoplay] match ${matchId} stuck — no legal moves for player ${currentPlayer}.`);
-      break;
+    // --- Start stage: reveal one villain card, then advance ---
+    if (state.G.currentStage === 'start') {
+      await submitMove({
+        ...moveParams,
+        playerId: currentPlayer,
+        moveName: 'revealVillainCard',
+        moveArgs: undefined,
+      });
+      await delay(delayMs);
+
+      // Check for gameover after reveal (villains may have escaped)
+      ({ state } = await db.fetch(matchId, { state: true }));
+      if (!state || state.ctx.gameover !== undefined) continue;
+
+      await submitMove({
+        ...moveParams,
+        playerId: currentPlayer,
+        moveName: 'advanceStage',
+        moveArgs: undefined,
+      });
+      await delay(delayMs);
     }
 
-    // Build filtered UIState for the policy
-    const uiBuildContext = {
-      phase: state.ctx.phase,
-      turn: state.ctx.turn,
-      currentPlayer,
-    };
-    const fullUIState = buildUIState(state.G, uiBuildContext);
-    const filteredView = filterUIStateForAudience(fullUIState, {
-      kind: 'player',
-      playerId: currentPlayer,
-    });
+    // --- Main stage: let the policy make decisions until it advances ---
+    let mainMoves = 0;
+    const maxMainMoves = 100;
 
-    // Run AI policy
-    const intent = policy.decideTurn(filteredView, legalMoves);
+    while (mainMoves < maxMainMoves) {
+      ({ state } = await db.fetch(matchId, { state: true }));
+      if (!state || state.ctx.gameover !== undefined) break;
+      if (state.G.currentStage !== 'main') break;
 
-    // Submit the chosen move
-    const result = await submitMove({
-      ...moveParams,
-      playerId: currentPlayer,
-      moveName: intent.move.name,
-      moveArgs: intent.move.args,
-    });
+      const lifecycleContext = {
+        phase: state.ctx.phase,
+        turn: state.ctx.turn,
+        currentPlayer: state.ctx.currentPlayer,
+        numPlayers: state.ctx.numPlayers,
+      };
 
-    if (result && result.error) {
-      console.error(`[autoplay] match ${matchId} move rejected: ${result.error}`);
-      stuckCounter++;
-      continue;
+      const legalMoves = getLegalMoves(state.G, lifecycleContext);
+      if (legalMoves.length === 0) break;
+
+      const uiBuildContext = {
+        phase: state.ctx.phase,
+        turn: state.ctx.turn,
+        currentPlayer: state.ctx.currentPlayer,
+      };
+      const fullUIState = buildUIState(state.G, uiBuildContext);
+      const filteredView = filterUIStateForAudience(fullUIState, {
+        kind: 'player',
+        playerId: state.ctx.currentPlayer,
+      });
+
+      const intent = policy.decideTurn(filteredView, legalMoves);
+
+      await submitMove({
+        ...moveParams,
+        playerId: state.ctx.currentPlayer,
+        moveName: intent.move.name,
+        moveArgs: intent.move.args,
+      });
+
+      mainMoves++;
+      await delay(delayMs);
     }
 
-    stuckCounter++;
-    await delay(delayMs);
+    // --- Cleanup stage: end the turn ---
+    ({ state } = await db.fetch(matchId, { state: true }));
+    if (!state || state.ctx.gameover !== undefined) continue;
+
+    if (state.G.currentStage === 'cleanup') {
+      await submitMove({
+        ...moveParams,
+        playerId: state.ctx.currentPlayer,
+        moveName: 'endTurn',
+        moveArgs: undefined,
+      });
+      await delay(delayMs);
+    }
+
+    turnCount++;
   }
 
-  if (stuckCounter >= maxStuckMoves) {
-    console.warn(`[autoplay] match ${matchId} hit move limit (${maxStuckMoves}).`);
+  if (turnCount >= maxTurns) {
+    console.warn(`[autoplay] match ${matchId} hit turn limit (${maxTurns}).`);
   }
 }
 
