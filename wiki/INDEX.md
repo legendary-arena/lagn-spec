@@ -1,7 +1,7 @@
 # Wiki Index
 
-> **21 / 50** entity pages.
-> Last regenerated: 2026-05-16.
+> **22 / 50** entity pages.
+> Last regenerated: 2026-05-17.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
 
@@ -105,6 +105,11 @@ Step-by-step walkthroughs for completing specific tasks.
   sending weekly email newsletters via Brevo: Mode B content
   framework, 10-section email structure, CTA rotation, UTM tracking,
   pre-send QA checklist, and annotated template.
+- [Complete-Game Fixtures](complete-game-fixtures.md) — Authoring
+  complete-game regression tests: fixture file format, the three
+  oracle layers, recorder CLI walkthrough, re-recording workflow
+  after intentional engine changes, and constraints. Pairs with
+  the operator reference at `docs/ai/REFERENCE/complete-game-tests.md`.
 
 ## Keyword
 
@@ -126,13 +131,15 @@ following are useful entry points:
   [Turn System](turn-system.md),
   [Card Type Taxonomy](card-type-taxonomy.md),
   [Board Keywords](board-keywords.md),
-  [Scoring](scoring.md)
+  [Scoring](scoring.md),
+  [Complete-Game Fixtures](complete-game-fixtures.md)
 - **`determinism`** — Pages where the engine's determinism invariant
   is the load-bearing concern:
   [Rule Execution Pipeline](rule-execution-pipeline.md),
   [Turn System](turn-system.md),
   [CardExtId](cardextid.md),
-  [Scoring](scoring.md)
+  [Scoring](scoring.md),
+  [Complete-Game Fixtures](complete-game-fixtures.md)
 - **`trigger`** — Pages that emit or consume rule triggers:
   [Villain Deck](villain-deck.md),
   [Master Strike](master-strike.md),
