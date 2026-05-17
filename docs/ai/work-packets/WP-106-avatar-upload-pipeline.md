@@ -91,11 +91,15 @@ user's `avatar_url` in the database, and enforces a closed-origin allowlist on
 ### Upload Validation (D-10601)
 
 - MIME allowlist: `['image/jpeg', 'image/png', 'image/webp']` (closed set)
+- File signature (magic bytes) MUST match allowlist; do not trust multer `mimetype` alone
 - Max file size: `5 * 1024 * 1024` bytes (5 MB)
-- EXIF/XMP/IPTC metadata stripped before storage
+- Decode safety: `sharp({ limitInputPixels: 20_000_000 })` — reject images exceeding 20 megapixels
+- EXIF/XMP/IPTC metadata stripped before storage; do NOT call `.withMetadata()`
 - Output: 256x256 center-crop, webp quality 80
 - R2 key: `avatars/{accountId}.webp`
-- Rate limit: 1 upload per 60 seconds per user (in-memory)
+- R2 object headers: `Content-Type: image/webp`, `Cache-Control: public, max-age=300`
+- Rate limit: 1 upload per 60 seconds per user (in-memory `Map<string, number>`, keyed by `accountId`, cleared on process restart)
+- All errors conform to D-11802 shape (`code` + full-sentence `message`)
 
 ### Endpoint Contract (D-10602)
 
@@ -109,34 +113,41 @@ user's `avatar_url` in the database, and enforces a closed-origin allowlist on
 
 ### Origin Policy (supersedes D-10405 for `avatar_url`)
 
-- `validateAvatarUrl` accepts ONLY URLs matching:
-  `https://images.barefootbetters.com/avatars/` prefix
-- `null` (clear avatar) remains accepted
-- All other URLs rejected with `code: 'invalid_avatar_url'`
+- `validateAvatarUrl` accepts ONLY:
+  - `null` (clear avatar), OR
+  - the authenticated user's canonical avatar URL:
+    `https://images.barefootbetters.com/avatars/{accountId}.webp`
+    (where `{accountId}` matches the session's authenticated user)
+- Any other URL is rejected with `code: 'invalid_avatar_url'`
+- This prevents users from pointing `avatar_url` at another account's avatar object
 
 ### Processing Pipeline Order
 
-1. Validate MIME type (reject early, no processing)
+1. Validate MIME type via magic-byte sniffing (reject early, no processing)
 2. Check rate limit (reject early, no processing)
 3. Read buffer from multer
-4. `sharp(buffer).rotate().resize(256, 256, { fit: 'cover', position: 'centre' }).webp({ quality: 80 }).toBuffer()`
-5. PUT to R2
+4. `sharp(buffer, { limitInputPixels: 20_000_000 }).rotate().resize(256, 256, { fit: 'cover', position: 'centre' }).webp({ quality: 80 }).toBuffer()`
+5. PUT to R2 with headers: `Content-Type: image/webp`, `Cache-Control: public, max-age=300`
 6. UPDATE `legendary.player_profiles` SET `avatar_url` WHERE `account_id`
-7. On DB failure: DELETE from R2 (compensating action)
+7. On DB failure: DELETE from R2 (compensating action); if DELETE also fails, log structured error and still return 500
 8. Return `{ avatarUrl }` on success
 
 ## Acceptance Criteria
 
 - [ ] `POST /api/me/avatar` with a valid jpeg returns `200 { avatarUrl: "https://images.barefootbetters.com/avatars/{accountId}.webp" }`
 - [ ] Upload with `image/gif` MIME type returns `400 { code: 'invalid_mime_type' }`
+- [ ] Upload with a spoofed `mimetype` header but invalid file signature returns `400 { code: 'invalid_mime_type' }`
 - [ ] Upload exceeding 5 MB returns `400 { code: 'file_too_large' }`
+- [ ] Oversized pixel-count image (>20MP) is rejected with `400 { code: 'file_too_large' }`
 - [ ] Second upload within 60 seconds returns `429 { code: 'rate_limited' }`
 - [ ] `PATCH /api/me/profile` with `avatar_url: "https://example.com/pic.jpg"` returns `400 { code: 'invalid_avatar_url' }`
 - [ ] `PATCH /api/me/profile` with `avatar_url: null` succeeds (clears avatar)
-- [ ] `PATCH /api/me/profile` with `avatar_url: "https://images.barefootbetters.com/avatars/abc123.webp"` succeeds
+- [ ] `PATCH /api/me/profile` with another user's canonical avatar URL returns `400 { code: 'invalid_avatar_url' }`
+- [ ] Stored R2 object has `Content-Type: image/webp` and `Cache-Control: public, max-age=300`
 - [ ] R2 object is deleted if DB update fails (compensating action tested)
 - [ ] `api-endpoints.md` contains the new `POST /api/me/avatar` row with correct schema
 - [ ] `pnpm --filter server test` passes with new tests covering all error codes
+- [ ] Rate-limit tests use fake timers (no wall-clock sleeps)
 
 ## Verification Steps
 
@@ -148,6 +159,11 @@ pnpm --filter server test
 ```pwsh
 node -e "import('sharp').then(s => console.log('sharp OK', s.default.versions))"
 # Expected: sharp OK { ... vips: '8.x.x' ... }
+```
+
+```pwsh
+pnpm --filter server test -t validateAvatarUrl
+# Expected: non-canonical allowlisted URLs are rejected (per-user check)
 ```
 
 ## Definition of Done
@@ -166,8 +182,11 @@ node -e "import('sharp').then(s => console.log('sharp OK', s.default.versions))"
 
 ## Failure Conditions
 
-- Any upload bypasses MIME validation (security failure)
+- Any upload bypasses MIME validation or signature sniffing (security failure)
 - EXIF data persists in stored webp (privacy failure)
 - Orphaned R2 objects accumulate on DB failure (compensating delete missing)
 - `avatar_url` accepts non-R2 URLs after WP-106 ships (origin policy not enforced)
+- `avatar_url` accepts another user's canonical URL (impersonation vector)
 - Rate limit state leaks between users or resets on unrelated requests
+- Decompression bomb expands without limit (pixel-count guard missing)
+- R2 object missing `Cache-Control` header (stale avatar on re-upload)

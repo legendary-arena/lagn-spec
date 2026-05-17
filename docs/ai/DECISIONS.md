@@ -13100,14 +13100,18 @@ Per `.claude/rules/code-style.md §"Abstraction & Control Flow"`: *"Duplicate fi
 **Decision:** Avatar uploads to `POST /api/me/avatar` are validated and transformed server-side before R2 storage. The complete policy:
 
 - **Accepted MIME types (closed set):** `image/jpeg`, `image/png`, `image/webp`. Any other Content-Type is rejected with `code: 'invalid_mime_type'`.
+- **Magic-byte signature verification:** Do not trust multer's `file.mimetype` (client-provided). Verify file signature (magic bytes) matches the MIME allowlist before handing the buffer to `sharp`. Mismatch returns `code: 'invalid_mime_type'` (same code — no separate oracle). Use `file-type` library or minimal signature checks for JPEG (`FF D8 FF`), PNG (`89 50 4E 47`), WebP (`52 49 46 46...57 45 42 50`).
 - **Maximum file size:** 5 MB (measured before server-side processing). Exceeding this returns `code: 'file_too_large'`.
-- **EXIF stripping:** All EXIF/XMP/IPTC metadata is stripped before storage (privacy — prevents geolocation and device info leakage).
+- **Decode safety (pixel-count limit):** Reject images exceeding 20 megapixels (`sharp({ limitInputPixels: 20_000_000 })`) before processing. Prevents decompression bombs that expand enormously on decode despite passing the 5 MB file-size cap. Returns `code: 'file_too_large'` (generic resource-limit failure — no separate code).
+- **EXIF stripping:** All EXIF/XMP/IPTC metadata is stripped before storage (privacy — prevents geolocation and device info leakage). Implementation: do NOT call `.withMetadata()`. Output must have no metadata chunks. Tests verify `sharp(output).metadata()` reports no EXIF/XMP/IPTC fields.
 - **Resize:** Server normalizes to 256x256 square crop (center-weighted) before storage. The original upload is never persisted.
 - **Output format:** Always stored as `.webp` (quality 80) regardless of upload format. Consistent CDN caching, smallest file size at acceptable visual quality.
 - **R2 path:** `avatars/{accountId}.webp` — single file per user. Re-upload overwrites the existing object. No versioning, no accumulation, no per-upload unique keys.
-- **Rate limit:** 1 upload per user per 60 seconds (server-enforced via in-memory timestamp map; no DB round-trip for rate check). Returns `code: 'rate_limited'` on violation.
-- **Origin policy (supersedes D-10405 for `avatar_url`):** After WP-106 ships, `avatar_url` in `PATCH /api/me/profile` becomes a **closed-origin allowlist** — only URLs matching `https://images.barefootbetters.com/avatars/*` are accepted. The D-10405 "HTTPS-only any host" policy is superseded for `avatar_url` specifically. `player_links.url` retains D-10405's open policy unchanged.
+- **R2 object headers:** `Content-Type: image/webp`, `Cache-Control: public, max-age=300`. Short max-age (5 min) prevents stale avatars when overwriting a stable key. A longer cache or cache-busting query param is a future optimization.
+- **Rate limit:** 1 upload per user per 60 seconds. Keyed by `accountId`. Server-enforced via module-global in-memory `Map<string, number>` (timestamp of last upload per user). Map is cleared on process restart (explicitly accepted for MVP). No DB round-trip for rate check. Returns `code: 'rate_limited'` on violation.
+- **Origin policy (supersedes D-10405 for `avatar_url`):** After WP-106 ships, `avatar_url` in `PATCH /api/me/profile` accepts ONLY the authenticated user's own canonical URL: `https://images.barefootbetters.com/avatars/{accountId}.webp` (where `{accountId}` matches the session's authenticated user). This prevents users from pointing `avatar_url` at another account's avatar object (impersonation vector). `null` (clear avatar) remains accepted. The D-10405 "HTTPS-only any host" policy is superseded for `avatar_url` specifically. `player_links.url` retains D-10405's open policy unchanged.
 - **Image processing library:** `sharp` (libvips-based). Added to `apps/server/package.json` as a production dependency.
+- **Compensating delete failure:** If the compensating DELETE (R2 object cleanup after DB failure) itself fails, the request still returns `500 upload_failed` and logs a structured error. Orphan object risk is acknowledged and accepted at MVP scale.
 
 **Rationale.**
 
@@ -13149,7 +13153,8 @@ Per `.claude/rules/code-style.md §"Abstraction & Control Flow"`: *"Duplicate fi
   - `500` with `code: 'upload_failed'` — R2 PUT or DB update failed
   - `401` with `code: 'unauthorized'` — session validation failed
 - **Side effect on success:** Updates `legendary.player_profiles.avatar_url` for the authenticated user. Pseudo-atomic: if DB update fails after R2 PUT succeeds, the R2 object is deleted (compensating action). If R2 PUT fails, no DB update is attempted.
-- **Multipart parsing:** `@koa/multer` with `limits: { fileSize: 5 * 1024 * 1024, files: 1 }`.
+- **Multipart parsing:** `@koa/multer` with `limits: { fileSize: 5 * 1024 * 1024, files: 1, fields: 0 }`.
+- **Compensating delete failure:** If the compensating DELETE itself fails, the request still returns `500 upload_failed` and logs a structured error (orphan object risk acknowledged).
 
 **Rationale.**
 
