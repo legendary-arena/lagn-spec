@@ -373,19 +373,25 @@ describe('revealVillainCard', () => {
     revealVillainCard(moveContext);
 
     // makeMockCtx reverses arrays, so deck becomes ['card-z','card-y','card-x'].
-    // Top card 'card-z' is a bystander and goes to discard. Villain/henchman
-    // would go to City. Total cards across deck + discard + city must equal 3.
+    // Top card 'card-z' is a bystander; with the empty City, it attaches to
+    // the Mastermind. Villain/henchman would go to City. Total cards across
+    // deck + discard + city + attachedBystanders must equal 3.
     const cityCards = moveContext.G.city.filter(
       (space: string | null) => space !== null,
     ).length;
+    let attachedCount = 0;
+    for (const attached of Object.values(moveContext.G.attachedBystanders)) {
+      attachedCount += attached.length;
+    }
     const totalCards =
       moveContext.G.villainDeck.deck.length +
       moveContext.G.villainDeck.discard.length +
-      cityCards;
+      cityCards +
+      attachedCount;
     assert.equal(
       totalCards,
       3,
-      'Total cards across deck + discard + city must remain 3 after reshuffle + reveal',
+      'Total cards across deck + discard + city + attachedBystanders must remain 3 after reshuffle + reveal',
     );
   });
 
@@ -625,6 +631,128 @@ describe('revealVillainCard — destination pile routing (WP-153)', () => {
       moveContext.G.mastermind.strikePile,
       ['strike-a', 'strike-b'],
       'strikePile must preserve chronological insertion order',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Bystander capture routing — frontmost villain or mastermind
+// ---------------------------------------------------------------------------
+
+describe('revealVillainCard — bystander capture routing', () => {
+  it('attaches bystander to frontmost villain (highest occupied city index)', () => {
+    const gameState = createMockGameState({
+      deck: ['bystander-001'],
+      discard: [],
+      cardTypes: { 'bystander-001': 'bystander' },
+    });
+    // city[3] is the frontmost occupied slot (closest to escape edge at 4)
+    gameState.city = [
+      'villain-back' as CardExtId,
+      null,
+      'villain-middle' as CardExtId,
+      'villain-front' as CardExtId,
+      null,
+    ];
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    assert.deepStrictEqual(
+      moveContext.G.attachedBystanders['villain-front'],
+      ['bystander-001'],
+      'Bystander must be attached to the frontmost villain (city[3])',
+    );
+    assert.ok(
+      !moveContext.G.villainDeck.discard.includes('bystander-001'),
+      'Bystander must NOT be routed to villain deck discard',
+    );
+    assert.equal(
+      moveContext.G.attachedBystanders['villain-middle'],
+      undefined,
+      'No bystander should attach to villain-middle',
+    );
+    assert.equal(
+      moveContext.G.attachedBystanders['villain-back'],
+      undefined,
+      'No bystander should attach to villain-back',
+    );
+  });
+
+  it('attaches bystander to mastermind when city is empty', () => {
+    const gameState = createMockGameState({
+      deck: ['bystander-001'],
+      discard: [],
+      cardTypes: { 'bystander-001': 'bystander' },
+    });
+    // City stays empty (initializeCity returns all nulls)
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    assert.deepStrictEqual(
+      moveContext.G.attachedBystanders['test-mastermind-base'],
+      ['bystander-001'],
+      'Bystander must attach to G.mastermind.baseCardId when city is empty',
+    );
+    assert.ok(
+      !moveContext.G.villainDeck.discard.includes('bystander-001'),
+      'Bystander must NOT be routed to villain deck discard',
+    );
+  });
+
+  it('appends to existing attached bystanders without overwriting', () => {
+    const gameState = createMockGameState({
+      deck: ['bystander-002'],
+      discard: [],
+      cardTypes: { 'bystander-002': 'bystander' },
+    });
+    gameState.city = [
+      null,
+      null,
+      null,
+      null,
+      'villain-frontmost' as CardExtId,
+    ];
+    gameState.attachedBystanders = {
+      'villain-frontmost': ['bystander-existing' as CardExtId],
+    };
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    assert.deepStrictEqual(
+      moveContext.G.attachedBystanders['villain-frontmost'],
+      ['bystander-existing', 'bystander-002'],
+      'New bystander must be appended to existing attached list',
+    );
+  });
+
+  it('logs a G.messages entry naming the captor', () => {
+    const gameState = createMockGameState({
+      deck: ['bystander-001'],
+      discard: [],
+      cardTypes: { 'bystander-001': 'bystander' },
+    });
+    gameState.city = [
+      null,
+      null,
+      null,
+      null,
+      'villain-frontmost' as CardExtId,
+    ];
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    const captureMessage = moveContext.G.messages.find(
+      (message) =>
+        message.includes('bystander-001') &&
+        message.includes('villain-frontmost'),
+    );
+    assert.ok(
+      captureMessage,
+      'G.messages must contain an entry naming both the bystander and captor',
     );
   });
 });

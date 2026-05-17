@@ -260,10 +260,27 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
   if (cardType === 'villain' || cardType === 'henchman') {
     // Already placed in City in step 4b — do not also place in discard
   } else if (cardType === 'bystander') {
-    // why: bystander capture rules are WP-017; MVP discards
-    G.villainDeck.discard = [...G.villainDeck.discard, cardId];
+    // why: per Legendary tabletop rules, a bystander revealed from the
+    // villain deck is captured by the frontmost villain in the City (the
+    // one that will escape next — highest occupied index, since index 4
+    // is the escape edge per pushVillainIntoCity). If the City has no
+    // villains, the Mastermind captures the bystander instead. The
+    // bystander is NOT routed to villainDeck.discard.
+    let captorCardId = G.mastermind.baseCardId;
+    for (let cityIndex = G.city.length - 1; cityIndex >= 0; cityIndex--) {
+      const occupant = G.city[cityIndex];
+      if (occupant !== null && occupant !== undefined) {
+        captorCardId = occupant;
+        break;
+      }
+    }
+    const existingAttached = G.attachedBystanders[captorCardId] ?? [];
+    G.attachedBystanders = {
+      ...G.attachedBystanders,
+      [captorCardId]: [...existingAttached, cardId],
+    };
     G.messages.push(
-      `Bystander "${cardId}" revealed and placed in villain deck discard.`,
+      `Bystander "${cardId}" revealed and captured by "${captorCardId}".`,
     );
   } else if (cardType === 'scheme-twist') {
     // why: scheme-twist cards route to G.scheme.twistPile (not discard)
