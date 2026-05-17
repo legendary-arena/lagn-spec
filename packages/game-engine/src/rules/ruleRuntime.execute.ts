@@ -21,16 +21,28 @@ import { getHooksForTrigger } from './ruleHooks.registry.js';
 /**
  * Maps hook definition ids to their handler functions.
  *
- * Handler functions receive the current game state, a context object, and
- * a trigger payload. They return an array of RuleEffect descriptions that
- * will be applied separately by applyRuleEffects.
+ * Handler functions receive the current game state, a context object, a
+ * trigger payload, and the implementation map itself. They return an array
+ * of RuleEffect descriptions that will be applied separately by
+ * applyRuleEffects.
  *
  * The ctx parameter uses `unknown` to avoid importing boardgame.io in
  * rules files. Default stub implementations do not use ctx.
+ *
+ * why: the 4th `implementationMap` parameter lets handlers that need to
+ * chain another hook-driven action (e.g., the Midtown Bank Robbery twist
+ * chaining an extra villain-deck reveal via performVillainReveal) thread
+ * the map through without importing DEFAULT_IMPLEMENTATION_MAP, which
+ * would create a rules ↔ villainDeck import cycle.
  */
 export type ImplementationMap = Record<
   string,
-  (gameState: LegendaryGameState, ctx: unknown, payload: unknown) => RuleEffect[]
+  (
+    gameState: LegendaryGameState,
+    ctx: unknown,
+    payload: unknown,
+    implementationMap: ImplementationMap,
+  ) => RuleEffect[]
 >;
 
 // why: executeRuleHooks returns effects without applying them. This lets
@@ -73,7 +85,7 @@ export function executeRuleHooks(
       continue;
     }
 
-    const effects = handler(gameState, ctx, payload);
+    const effects = handler(gameState, ctx, payload, implementationMap);
 
     for (const effect of effects) {
       allEffects.push(effect);

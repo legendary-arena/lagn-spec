@@ -222,3 +222,194 @@ describe('mastermindStrikeHandler', () => {
     assert.ok(serialized, 'JSON.stringify(effects) must produce a non-empty string');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Magneto Master Strike dispatcher tests
+// ---------------------------------------------------------------------------
+
+describe('mastermindStrikeHandler — Magneto Master Strike', () => {
+  /**
+   * Creates a Magneto-shaped state with configurable hand sizes per player.
+   * `hands` is keyed by player id; each value is an array of CardExtId
+   * strings representing the player's hand from top (index 0) to bottom.
+   */
+  function makeMagnetoState(hands: Record<string, string[]>): LegendaryGameState {
+    const gameState = makeTestState();
+    gameState.selection = {
+      ...gameState.selection,
+      mastermindId: 'core/magneto',
+    };
+    gameState.playerZones = {};
+    for (const [playerId, hand] of Object.entries(hands)) {
+      gameState.playerZones[playerId] = {
+        deck: [],
+        hand: [...hand],
+        discard: [],
+        inPlay: [],
+        victory: [],
+      };
+    }
+    return gameState;
+  }
+
+  it('discards a 7-card hand down to 4', () => {
+    const gameState = makeMagnetoState({
+      '0': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7'],
+    });
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-card' }, {});
+
+    assert.equal(
+      gameState.playerZones['0']!.hand.length,
+      4,
+      'Hand must shrink to 4 cards after Magneto strike',
+    );
+    assert.equal(
+      gameState.playerZones['0']!.discard.length,
+      3,
+      'Discarded cards must be appended to the discard pile',
+    );
+    // why: the kept cards are the bottom 4 (most recently drawn) so
+    // discarded cards are h1..h3 from the top.
+    assert.deepStrictEqual(
+      gameState.playerZones['0']!.discard,
+      ['h1', 'h2', 'h3'],
+      'Top-of-hand cards must be discarded first',
+    );
+    assert.deepStrictEqual(
+      gameState.playerZones['0']!.hand,
+      ['h4', 'h5', 'h6', 'h7'],
+      'Bottom-of-hand cards must remain',
+    );
+  });
+
+  it('leaves a 4-card hand untouched', () => {
+    const gameState = makeMagnetoState({
+      '0': ['h1', 'h2', 'h3', 'h4'],
+    });
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-card' }, {});
+
+    assert.equal(
+      gameState.playerZones['0']!.hand.length,
+      4,
+      'Hand size already at the limit must not change',
+    );
+    assert.equal(
+      gameState.playerZones['0']!.discard.length,
+      0,
+      'No cards discarded when hand size <= 4',
+    );
+  });
+
+  it('leaves a hand smaller than 4 untouched', () => {
+    const gameState = makeMagnetoState({
+      '0': ['h1', 'h2'],
+    });
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-card' }, {});
+
+    assert.deepStrictEqual(
+      gameState.playerZones['0']!.hand,
+      ['h1', 'h2'],
+      'A 2-card hand must remain at 2 cards',
+    );
+    assert.equal(gameState.playerZones['0']!.discard.length, 0);
+  });
+
+  it('applies the discard rule to every player independently', () => {
+    const gameState = makeMagnetoState({
+      '0': ['a1', 'a2', 'a3', 'a4', 'a5', 'a6'],
+      '1': ['b1', 'b2', 'b3'],
+      '2': ['c1', 'c2', 'c3', 'c4', 'c5'],
+    });
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-card' }, {});
+
+    assert.equal(gameState.playerZones['0']!.hand.length, 4, 'Player 0: 6 → 4');
+    assert.equal(gameState.playerZones['0']!.discard.length, 2);
+
+    assert.equal(gameState.playerZones['1']!.hand.length, 3, 'Player 1: 3 → 3 (no change)');
+    assert.equal(gameState.playerZones['1']!.discard.length, 0);
+
+    assert.equal(gameState.playerZones['2']!.hand.length, 4, 'Player 2: 5 → 4');
+    assert.equal(gameState.playerZones['2']!.discard.length, 1);
+  });
+
+  it('still captures one bystander onto the mastermind (generic strike effect)', () => {
+    const gameState = makeMagnetoState({
+      '0': ['h1', 'h2', 'h3', 'h4', 'h5'],
+    });
+    gameState.piles.bystanders = ['bystander-001', 'bystander-002'];
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-card' }, {});
+
+    assert.equal(
+      gameState.mastermind.attachedBystanders.length,
+      1,
+      'Generic D-15401 bystander capture must still run on the Magneto path',
+    );
+    assert.equal(gameState.piles.bystanders.length, 1);
+  });
+
+  it('still returns the generic masterStrikeCount counter effect', () => {
+    const gameState = makeMagnetoState({
+      '0': ['h1', 'h2', 'h3', 'h4', 'h5'],
+    });
+
+    const effects = mastermindStrikeHandler(
+      gameState,
+      {},
+      { cardId: 'strike-card' },
+      {},
+    );
+
+    const counterEffect = effects.find(
+      (effect) =>
+        effect.type === 'modifyCounter' &&
+        'counter' in effect &&
+        (effect as { counter: string }).counter === 'masterStrikeCount',
+    );
+    assert.ok(counterEffect, 'Magneto dispatch must still return masterStrikeCount');
+  });
+
+  it('logs a per-player message for both discard and no-discard outcomes', () => {
+    const gameState = makeMagnetoState({
+      '0': ['h1', 'h2', 'h3', 'h4', 'h5'],
+      '1': ['x1'],
+    });
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-card' }, {});
+
+    const player0Message = gameState.messages.find(
+      (message) => message.includes('Magneto') && message.includes('Player 0'),
+    );
+    const player1Message = gameState.messages.find(
+      (message) => message.includes('Magneto') && message.includes('Player 1'),
+    );
+
+    assert.ok(player0Message, 'Player 0 (discarded) must have a Magneto log line');
+    assert.ok(player1Message, 'Player 1 (no discard) must have a Magneto log line');
+  });
+
+  it('does NOT run the Magneto branch for a non-Magneto mastermind', () => {
+    const gameState = makeMagnetoState({
+      '0': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+    });
+    gameState.selection = { ...gameState.selection, mastermindId: 'core/other-boss' };
+    gameState.piles.bystanders = ['bystander-001'];
+
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-card' }, {});
+
+    assert.equal(
+      gameState.playerZones['0']!.hand.length,
+      6,
+      'Non-Magneto mastermind must not trigger the hand-discard effect',
+    );
+    assert.equal(
+      gameState.mastermind.attachedBystanders.length,
+      1,
+      'Generic bystander capture still runs for any mastermind',
+    );
+  });
+});

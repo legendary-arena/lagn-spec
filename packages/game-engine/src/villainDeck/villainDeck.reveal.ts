@@ -15,6 +15,7 @@
 import type { FnContext, PlayerID } from 'boardgame.io';
 import type { LegendaryGameState } from '../types.js';
 import type { RuleEffect } from '../rules/ruleHooks.types.js';
+import type { ImplementationMap } from '../rules/ruleRuntime.execute.js';
 import { executeRuleHooks } from '../rules/ruleRuntime.execute.js';
 import { applyRuleEffects } from '../rules/ruleRuntime.effects.js';
 import { DEFAULT_IMPLEMENTATION_MAP } from '../rules/ruleRuntime.impl.js';
@@ -32,8 +33,42 @@ import { hasAmbush } from '../board/boardKeywords.logic.js';
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
 
+// why: narrow context interface for performVillainReveal so rule handlers
+// can chain a reveal without importing boardgame.io. The real boardgame.io
+// FnContext is structurally assignable to RevealContext.
+/** Minimum context the inner reveal needs: deterministic shuffle + active player. */
+export interface RevealContext {
+  /** Deterministic RNG for villain-deck reshuffle. */
+  random: { Shuffle: <T>(deck: T[]) => T[] };
+  /** boardgame.io ctx fragment carrying the active player id. */
+  ctx: { currentPlayer: string };
+}
+
 /**
- * Reveals the top card from the villain deck.
+ * Reveals the top card from the villain deck (boardgame.io move wrapper).
+ *
+ * Thin wrapper around performVillainReveal. The wrapper applies the
+ * start-stage gate; performVillainReveal owns the draw → classify → route →
+ * trigger → apply pipeline. Splitting the gate from the pipeline lets rule
+ * handlers (e.g., Midtown Bank Robbery twist) chain another reveal without
+ * re-asserting the stage gate or duplicating the body.
+ *
+ * @param context - boardgame.io move context with G, ctx, random, playerID.
+ */
+export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
+  // Step 0: Stage gate (non-core move contract)
+  // why: villain reveal is a start-of-turn action per tabletop Legendary
+  if (G.currentStage !== 'start') return;
+
+  performVillainReveal(
+    G,
+    { random: context.random, ctx: { currentPlayer: ctx.currentPlayer } },
+    DEFAULT_IMPLEMENTATION_MAP,
+  );
+}
+
+/**
+ * Reveals the top card from the villain deck and runs the full trigger pipeline.
  *
  * Pipeline: draw → classify → City routing (villain/henchman) → trigger →
  * apply effects → discard routing (bystander/scheme-twist/mastermind-strike).
@@ -43,13 +78,16 @@ type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
  * - Empty deck + empty discard: logs a message and returns.
  * - Missing card type: fail-closed — logs a message, card stays in deck.
  *
- * @param context - boardgame.io move context with G, ctx, random, playerID.
+ * @param G - The game state to mutate.
+ * @param context - Narrow context with random + ctx.currentPlayer.
+ * @param implementationMap - Handler map used by executeRuleHooks.
  */
-export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
-  // Step 0: Stage gate (non-core move contract)
-  // why: villain reveal is a start-of-turn action per tabletop Legendary
-  if (G.currentStage !== 'start') return;
-
+export function performVillainReveal(
+  G: LegendaryGameState,
+  context: RevealContext,
+  implementationMap: ImplementationMap,
+): void {
+  const ctx = context.ctx;
   const deck = G.villainDeck.deck;
   const discard = G.villainDeck.discard;
 
@@ -204,16 +242,20 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
   }
 
   // Step 5: Collect rule effects via the WP-009B pipeline
+  // why: pass the full RevealContext (not just ctx) to executeRuleHooks /
+  // applyRuleEffects so handlers/applicators that need `random` (e.g., the
+  // Midtown Bank Robbery twist chaining another reveal, or the drawCards
+  // effect's reshuffle path) can reach it via `context.random.Shuffle`.
   const allEffects: RuleEffect[] = [];
 
   // Always emit onCardRevealed
   const cardRevealedEffects = executeRuleHooks(
     G,
-    ctx,
+    context,
     'onCardRevealed',
     { cardId, cardTypeSlug: cardType },
     G.hookRegistry,
-    DEFAULT_IMPLEMENTATION_MAP,
+    implementationMap,
   );
 
   for (const effect of cardRevealedEffects) {
@@ -224,11 +266,11 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
   if (cardType === 'scheme-twist') {
     const schemeTwistEffects = executeRuleHooks(
       G,
-      ctx,
+      context,
       'onSchemeTwistRevealed',
       { cardId },
       G.hookRegistry,
-      DEFAULT_IMPLEMENTATION_MAP,
+      implementationMap,
     );
 
     for (const effect of schemeTwistEffects) {
@@ -239,11 +281,11 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
   if (cardType === 'mastermind-strike') {
     const mastermindStrikeEffects = executeRuleHooks(
       G,
-      ctx,
+      context,
       'onMastermindStrikeRevealed',
       { cardId },
       G.hookRegistry,
-      DEFAULT_IMPLEMENTATION_MAP,
+      implementationMap,
     );
 
     for (const effect of mastermindStrikeEffects) {
@@ -252,7 +294,7 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
   }
 
   // Step 6: Apply all collected effects
-  applyRuleEffects(G, ctx, allEffects);
+  applyRuleEffects(G, context, allEffects);
 
   // Step 7: Route card to final destination based on type
   // Villain and henchman cards are already in the City (step 4b above).
