@@ -73,7 +73,7 @@ const REQUIRED_VARS = {
   ],
   'Cloudflare': [
     'R2_PUBLIC_URL',      // e.g. https://images.legendary-arena.com
-    'CF_PAGES_URL',       // e.g. https://cards.barefootbetters.com
+    'CF_PAGES_URL',       // e.g. https://cards.barefootbetters.com — registry-viewer Pages project
   ],
   'Frontend (Vite)': [
     'VITE_GAME_SERVER_URL', // exposed to browser bundle — must match GAME_SERVER_URL
@@ -798,6 +798,316 @@ async function checkCloudflarePages() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Auth-stack operational checks (WP-160 / WP-161 smoke-verification gaps)
+// ---------------------------------------------------------------------------
+
+// why: surfaced during the 2026-05-18 WP-160 / WP-161 smoke-verification
+// session. Several operational misconfigurations across the auth stack
+// (broker tenant CORS, server CORS, Vite env-var inlining, lockfile vs
+// manifest specifier drift) cost ~half a day each to diagnose; each is
+// structurally easy to probe from outside but had no automated detection
+// until now. Each new check below is keyed to a specific failure observed
+// live in production that day, and the remediation strings name the exact
+// dashboard surface to edit. The companion lockfile check lives in the
+// TOOLS section above with the other tool checks.
+
+/**
+ * Resolves the gameplay-client (arena-client) Pages URL from env, falling
+ * back to the published production hostname. Distinct from CF_PAGES_URL
+ * which is the registry-viewer Pages project. Used by all checks below
+ * that probe the gameplay-client's deployment surface or the broker's
+ * CORS allowlist for that origin.
+ *
+ * @returns {string} The arena-client Pages URL (no trailing slash).
+ */
+function resolveArenaClientUrl() {
+  // why: ARENA_CLIENT_URL lets operators override the default for staging
+  // or branch-preview testing. The fallback matches the production CF Pages
+  // project hostname (`legendary-arena-play`) declared in EC-147 and the
+  // server's `Server({ origins })` allowlist at apps/server/src/server.mjs.
+  return env.ARENA_CLIENT_URL || 'https://legendary-arena-play.pages.dev';
+}
+
+/**
+ * Probes the Hanko tenant's CORS allowlist from the arena-client's
+ * origin. The Hanko Cloud dashboard's "Allowed origins" list is operator
+ * configured per tenant; drift between that list and the deployed SPA's
+ * origin causes the `<hanko-auth>` widget to surface a generic "An error
+ * has occurred" UI without any actionable detail (the broker's API
+ * preflight returns 204 with no Access-Control-Allow-Origin header, the
+ * browser blocks the request, and the widget catches the block). This
+ * check fires an OPTIONS preflight against `/me` (a representative
+ * authenticated endpoint) and asserts the response echoes the configured
+ * origin or `*`.
+ */
+async function checkHankoTenantCors() {
+  const tenantBaseUrl = env.HANKO_TENANT_BASE_URL;
+  const arenaClientUrl = resolveArenaClientUrl();
+
+  if (!tenantBaseUrl) {
+    recordResult('CONNECTIONS', 'Hanko tenant CORS', false,
+      'HANKO_TENANT_BASE_URL is not set; cannot test broker CORS allowlist.',
+      'Add HANKO_TENANT_BASE_URL to .env. See .env.example.');
+    return;
+  }
+
+  const preflightUrl = `${tenantBaseUrl}/me`;
+  let response;
+  let elapsedMilliseconds;
+  try {
+    const startTime = Date.now();
+    response = await fetch(preflightUrl, {
+      method: 'OPTIONS',
+      signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Origin': arenaClientUrl,
+        'Access-Control-Request-Method': 'GET',
+        'Access-Control-Request-Headers': 'content-type',
+      },
+    });
+    elapsedMilliseconds = Date.now() - startTime;
+  } catch (fetchError) {
+    recordResult('CONNECTIONS', 'Hanko tenant CORS', false,
+      `OPTIONS preflight to ${preflightUrl} failed: ${fetchError.message}`,
+      'Check network connectivity to the Hanko tenant.');
+    return;
+  }
+
+  // why: a CORS-permissive preflight typically returns 200 or 204. Anything
+  // else is unusual — we still inspect the Access-Control-Allow-Origin
+  // header because Hanko returns 204 with the header (or its absence)
+  // regardless of status semantics.
+  const allowOrigin = response.headers.get('access-control-allow-origin');
+  const isAllowed = allowOrigin === arenaClientUrl || allowOrigin === '*';
+
+  if (!isAllowed) {
+    recordResult('CONNECTIONS', 'Hanko tenant CORS', false,
+      `${preflightUrl} preflight from Origin=${arenaClientUrl} returned HTTP ${response.status} but Access-Control-Allow-Origin was ${allowOrigin === null ? 'absent' : JSON.stringify(allowOrigin)}.`,
+      `Add ${arenaClientUrl} to the Hanko Cloud tenant's "Allowed origins" list (Dashboard → tenant → Settings → URLs → Allowed origins). The <hanko-auth> widget will surface a generic "An error has occurred" UI until this is fixed.`);
+    return;
+  }
+
+  recordResult('CONNECTIONS', 'Hanko tenant CORS', true,
+    `${preflightUrl} allows Origin=${arenaClientUrl}  (HTTP ${response.status}, ${elapsedMilliseconds}ms)`);
+}
+
+/**
+ * Probes the HTTP API server's CORS allowlist from the arena-client's
+ * origin. The server's `Server({ origins })` allowlist at
+ * apps/server/src/server.mjs is the gate; drift between that list and
+ * the deployed SPA's origin causes every `/api/me/*` call from the SPA
+ * to be CORS-rejected pre-flight, surfacing as a network error in the
+ * console with no useful response body. This check fires an OPTIONS
+ * preflight against `/api/me/profile` (the canonical authenticated
+ * endpoint) and asserts the response echoes the configured origin
+ * or `*`.
+ */
+async function checkApiServerCors() {
+  const gameServerUrl = env.GAME_SERVER_URL;
+  const arenaClientUrl = resolveArenaClientUrl();
+
+  if (!gameServerUrl) {
+    recordResult('CONNECTIONS', 'API server CORS', false,
+      'GAME_SERVER_URL is not set; cannot test API CORS allowlist.',
+      'Add GAME_SERVER_URL to .env. See .env.example.');
+    return;
+  }
+
+  const preflightUrl = `${gameServerUrl}/api/me/profile`;
+  let response;
+  let elapsedMilliseconds;
+  try {
+    const startTime = Date.now();
+    response = await fetch(preflightUrl, {
+      method: 'OPTIONS',
+      signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Origin': arenaClientUrl,
+        'Access-Control-Request-Method': 'GET',
+        'Access-Control-Request-Headers': 'authorization',
+      },
+    });
+    elapsedMilliseconds = Date.now() - startTime;
+  } catch (fetchError) {
+    recordResult('CONNECTIONS', 'API server CORS', false,
+      `OPTIONS preflight to ${preflightUrl} failed: ${fetchError.message}`,
+      'Check network connectivity to the API server.');
+    return;
+  }
+
+  const allowOrigin = response.headers.get('access-control-allow-origin');
+  const isAllowed = allowOrigin === arenaClientUrl || allowOrigin === '*';
+
+  if (!isAllowed) {
+    recordResult('CONNECTIONS', 'API server CORS', false,
+      `${preflightUrl} preflight from Origin=${arenaClientUrl} returned HTTP ${response.status} but Access-Control-Allow-Origin was ${allowOrigin === null ? 'absent' : JSON.stringify(allowOrigin)}.`,
+      `Add '${arenaClientUrl}' to the Server({ origins: [...] }) array in apps/server/src/server.mjs and redeploy. See EC-147 for the canonical add pattern.`);
+    return;
+  }
+
+  recordResult('CONNECTIONS', 'API server CORS', true,
+    `${preflightUrl} allows Origin=${arenaClientUrl}  (HTTP ${response.status}, ${elapsedMilliseconds}ms)`);
+}
+
+/**
+ * Verifies that Vite inlined the required `VITE_*` env vars into the
+ * deployed SPA's main bundle. If an env var is missing at build time,
+ * Vite leaves the lookup as a runtime `import.meta.env?.NAME ?? ''`
+ * expression in the bundle — the bundle ends up with the literal env
+ * var name as a string, and at runtime the lookup returns undefined.
+ * This was the exact failure mode that surfaced both my Hanko tenant
+ * URL miss and my API base URL miss during the 2026-05-18 smoke
+ * verification: CF Pages doesn't auto-rebuild on env-var changes, so
+ * setting a var after a build kicked off leaves the deployed bundle
+ * stale. This check fetches the deployed SPA, extracts the main JS
+ * bundle URL, fetches that bundle, and asserts neither
+ * `VITE_HANKO_TENANT_BASE_URL` nor `VITE_API_BASE_URL` appear as
+ * literal strings (presence means the lookup wasn't inlined).
+ */
+async function checkArenaClientBundleEnvInlining() {
+  const arenaClientUrl = resolveArenaClientUrl();
+
+  // Step 1: fetch the SPA HTML and extract the main bundle URL.
+  let htmlBody;
+  try {
+    const indexResponse = await fetch(arenaClientUrl, {
+      signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: { 'User-Agent': USER_AGENT },
+    });
+    if (!indexResponse.ok) {
+      recordWarning('CONNECTIONS', 'Arena-client bundle env',
+        `${arenaClientUrl} returned HTTP ${indexResponse.status}; cannot extract bundle URL.`,
+        'Verify the arena-client Pages deployment is live before retrying this check.');
+      return;
+    }
+    htmlBody = await indexResponse.text();
+  } catch (fetchError) {
+    recordWarning('CONNECTIONS', 'Arena-client bundle env',
+      `Could not fetch ${arenaClientUrl}: ${fetchError.message}`,
+      'Verify network connectivity to the arena-client deployment.');
+    return;
+  }
+
+  // why: Vite's production output names bundles `assets/index-<hash>.js`.
+  // The hash is content-derived; matching `assets/index-` followed by
+  // any non-quote characters and `.js` finds the main entry chunk
+  // regardless of hash. We take the first match (Vite emits the main
+  // entry first in index.html).
+  const bundleMatch = htmlBody.match(/assets\/index-[^"]+\.js/);
+  if (!bundleMatch) {
+    recordWarning('CONNECTIONS', 'Arena-client bundle env',
+      `Could not locate the main JS bundle in ${arenaClientUrl} HTML.`,
+      'The deployed SPA may use a non-standard bundle naming convention; this check may need adjustment.');
+    return;
+  }
+  const bundleUrl = `${arenaClientUrl}/${bundleMatch[0]}`;
+
+  // Step 2: fetch the bundle and grep for literal env var names.
+  let bundleBody;
+  try {
+    const bundleResponse = await fetch(bundleUrl, {
+      signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: { 'User-Agent': USER_AGENT },
+    });
+    if (!bundleResponse.ok) {
+      recordWarning('CONNECTIONS', 'Arena-client bundle env',
+        `${bundleUrl} returned HTTP ${bundleResponse.status}; cannot inspect bundle.`,
+        'Verify the deployed bundle is reachable.');
+      return;
+    }
+    bundleBody = await bundleResponse.text();
+  } catch (fetchError) {
+    recordWarning('CONNECTIONS', 'Arena-client bundle env',
+      `Could not fetch ${bundleUrl}: ${fetchError.message}`,
+      'Verify network connectivity to the arena-client deployment.');
+    return;
+  }
+
+  // why: the literal env var name appearing in the bundle indicates Vite
+  // could not statically replace the expression and left it as a runtime
+  // lookup against an `import.meta.env` object that does not contain the
+  // key. This happens when the env var is unset at build time. The
+  // remediation is operator-side: set the var in CF Pages, retry the
+  // deployment.
+  const expectedClientEnvVars = [
+    'VITE_HANKO_TENANT_BASE_URL',
+    'VITE_API_BASE_URL',
+  ];
+  const missingEnvVars = expectedClientEnvVars.filter((envVarName) =>
+    bundleBody.includes(envVarName),
+  );
+
+  if (missingEnvVars.length > 0) {
+    recordResult('CONNECTIONS', 'Arena-client bundle env', false,
+      `The deployed bundle ${bundleUrl} contains literal env-var name(s) ${JSON.stringify(missingEnvVars)} — Vite did not inline a value, meaning the env var(s) were unset at build time.`,
+      `Set ${missingEnvVars.join(' and ')} in the Cloudflare Pages project's Production scope (Settings → Variables and Secrets), then retry the deployment so Vite inlines the value into the next build. CF Pages does NOT auto-rebuild on env-var changes — you must trigger a new build.`);
+    return;
+  }
+
+  recordResult('CONNECTIONS', 'Arena-client bundle env', true,
+    `${bundleUrl} has all required VITE_* env vars inlined.`);
+}
+
+/**
+ * Verifies the pnpm lockfile is consistent with all package.json
+ * specifiers — the same check CI / CF Pages runs with
+ * `pnpm install --frozen-lockfile`. Drift between a package.json
+ * specifier and the lockfile's recorded specifier causes the install to
+ * fail with `ERR_PNPM_OUTDATED_LOCKFILE`, which is the exact failure
+ * that broke the first WP-160 production deploy. The check runs the
+ * same command against the offline store so it completes in <1s when
+ * the lockfile is consistent.
+ */
+function checkPnpmLockfileFrozen() {
+  // why: --offline forces pnpm to use the local store only (no network).
+  // --frozen-lockfile makes pnpm exit non-zero on specifier drift.
+  // Combined, this validates the lockfile without performing an install
+  // and without requiring network access. Falls back to a clear failure
+  // message if the store is missing required packages (which would
+  // happen on a fresh checkout where `pnpm install` has not yet run).
+  try {
+    execSync('pnpm install --frozen-lockfile --offline', {
+      stdio: 'pipe',
+      timeout: 30000,
+    });
+    recordResult('TOOLS', 'pnpm lockfile', true,
+      'pnpm-lock.yaml specifiers match every package.json manifest.');
+  } catch (lockfileError) {
+    const stderr = (lockfileError.stderr || Buffer.from('')).toString();
+    const stdout = (lockfileError.stdout || Buffer.from('')).toString();
+    const combined = `${stdout}${stderr}`;
+
+    // why: distinguish the two common failure shapes so the remediation
+    // string points at the right fix. ERR_PNPM_OUTDATED_LOCKFILE is the
+    // CI-failing drift we're trying to catch; other errors (missing
+    // store entries, etc.) indicate a different problem unrelated to
+    // this check's intent.
+    if (combined.includes('ERR_PNPM_OUTDATED_LOCKFILE')) {
+      const driftLine = combined.split('\n').find((line) =>
+        line.includes('lockfile:') && line.includes('manifest:'),
+      );
+      recordResult('TOOLS', 'pnpm lockfile', false,
+        `pnpm-lock.yaml is out of sync with at least one package.json manifest.${driftLine ? ` Drift detected: ${driftLine.trim()}.` : ''}`,
+        'Run `pnpm install` (without --frozen-lockfile) to regenerate the lockfile, then commit the updated pnpm-lock.yaml. This drift will fail every CI install (CF Pages, GitHub Actions).');
+      return;
+    }
+
+    if (combined.includes('ERR_PNPM_NO_OFFLINE_TARBALL') || combined.includes('not found in')) {
+      recordWarning('TOOLS', 'pnpm lockfile',
+        'Cannot validate lockfile offline — local pnpm store is missing required packages.',
+        'Run `pnpm install` once with network access, then re-run this check.');
+      return;
+    }
+
+    recordWarning('TOOLS', 'pnpm lockfile',
+      `pnpm install --frozen-lockfile --offline exited non-zero: ${lockfileError.message.split('\n')[0]}`,
+      'Run `pnpm install --frozen-lockfile --offline` manually to see the full error.');
+  }
+}
+
 /**
  * Checks GitHub API reachability and local Git remote configuration.
  */
@@ -942,6 +1252,7 @@ async function main() {
   checkDotenvCli();
   checkBoardgameioPackage();
   checkZodPackage();
+  checkPnpmLockfileFrozen();
   console.log('');
 
   // Phase 3: Connections (concurrent where possible)
@@ -953,7 +1264,10 @@ async function main() {
     checkBoardgameioServer(),
     checkCloudflareR2(),
     checkHankoJwks(),
+    checkHankoTenantCors(),
     checkCloudflarePages(),
+    checkArenaClientBundleEnvInlining(),
+    checkApiServerCors(),
     checkGithubReachability(),
   ]);
 
