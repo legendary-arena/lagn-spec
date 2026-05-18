@@ -21,7 +21,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/preplan
       '@teamhanko/hanko-elements':
-        specifier: ^2.6.0
+        specifier: ^2.4.0
         version: 2.6.0
       boardgame.io:
         specifier: ^0.50.0
