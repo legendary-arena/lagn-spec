@@ -7,6 +7,94 @@
 
 ## Current State
 
+### WP-161 / EC-175 Executed — Arena Client API Base URL Surfacing (2026-05-18)
+
+**Surfaced during WP-160 smoke verification.** First end-to-end
+authenticated sign-in worked through the Hanko widget; full reload to
+`?route=me` rendered `MyProfilePage`; the page mounted and fired
+`GET /api/me/profile` via the existing `ownerProfileApi.ts`
+wrapper — which issues `fetch('/api/me/profile', …)` against a
+**relative URL**. On the deployed
+`https://legendary-arena-play.pages.dev` host, the relative path
+resolved to `pages.dev/api/me/profile`. Cloudflare Pages has no
+`/api/*` rewrite/proxy, so the SPA fallback returned
+`HTTP 200, Content-Type: text/html` (the SPA's `index.html`). The
+fetch wrapper's `await response.json()` threw `SyntaxError` on the
+HTML body, the rejection propagated through `void load()` in
+`MyProfilePage.onMounted` (silently swallowed by the void), and the
+page state stayed at `'loading'` indefinitely — "Loading your profile…"
+hung forever.
+
+This bug was structurally invisible until WP-160 introduced the first
+end-to-end authenticated client flow. Every authenticated WP
+(WP-104 / WP-106 / WP-108 / WP-110 / WP-132 / WP-133) inherited the
+same relative-URL assumption from the WP-104 / WP-108 / WP-110 / WP-102
+contracts — but none had a sign-in flow to actually exercise it.
+
+**Fix.** New helper `apps/arena-client/src/lib/api/apiBaseUrl.ts`
+(5 lines of real code) exports:
+
+```ts
+export const apiBaseUrl: string =
+  import.meta.env?.VITE_API_BASE_URL ?? 'http://localhost:8000';
+
+export function buildApiUrl(path: string): string {
+  return `${apiBaseUrl}${path}`;
+}
+```
+
+All 7 fetch sites across the 4 API client files (`ownerProfileApi.ts`
+×3, `billingApi.ts` ×2, `adminBillingApi.ts` ×1, `profileApi.ts` ×1)
+rewritten from `fetch('/api/...', …)` to
+`fetch(buildApiUrl('/api/...'), …)`. Wire shapes, function signatures,
+error handling, and JSDoc preserved byte-identical — only the URL
+string differs.
+
+New build-time env var `VITE_API_BASE_URL` documented in
+`.env.example` with the same per-environment-source pattern as
+`VITE_SERVER_URL` and `VITE_HANKO_TENANT_BASE_URL`. Local-dev fallback
+is `http://localhost:8000` (matches the boardgame.io server's default
+port + `VITE_SERVER_URL`'s fallback precedent); the fallback fails
+loudly in production if the operator forgets to set the var, which is
+the intended diagnostic surface.
+
+**Rejected: CF Pages `_redirects` proxy.** Could have shipped a
+1-line `apps/arena-client/public/_redirects` file containing
+`/api/* https://api.legendary-arena.com/api/:splat 200`. Smaller
+blast radius but architecturally wrong-shape — hardcodes the API
+hostname into the SPA repo, doesn't generalize across environments,
+breaks the `VITE_SERVER_URL` precedent. Documented in D-16101
+Rationale.
+
+**No wire-shape change. No test count change.** arena-client test
+baseline `326 / 0 / 0 / 0` preserved (no fetch-mock tests added —
+ceremonial for a URL-prefix change; smoke verification is the
+load-bearing test). No new npm dep. No `apps/server/src/**` /
+`packages/**` / `data/**` / `docs/ai/REFERENCE/api-endpoints.md` touch.
+D-14401 still green (broker bundle stays in its own lazy chunk;
+helper is plain ES code).
+
+**Single-session draft+execute pattern.** Deviation from the standard
+one-WP-per-session rule, justified by: (a) WP-161 surfaced as a hard
+prerequisite for closing WP-160's smoke verification loop;
+(b) the change is mechanical and 10 files total including governance;
+(c) splitting into a separate session would lose the diagnostic
+context that surfaced the bug. Documented in the commit body and the
+WP body's "Notes for Execution Session" footer.
+
+**Operator post-merge.** Set `VITE_API_BASE_URL=https://api.legendary-arena.com`
+in CF Pages **Production** scope → retry the deployment → re-run the
+WP-160 smoke (`https://legendary-arena-play.pages.dev/?route=me` in
+incognito → sign in → `GET /api/me/profile` should now return 200 →
+profile form renders → click "Sign out" → land on lobby with cleared
+cookie). This closes the WP-099 → WP-112 → WP-126 → WP-131 → WP-160 →
+WP-161 stack at the smoke-verification boundary.
+
+01.5 NOT INVOKED (no engine surface touched). 01.6 SKIPPED (mechanical
+URL-prefix change; no new long-lived abstraction; helper is 5 lines).
+
+---
+
 ### WP-160 / EC-174 Executed — Hanko Client UI (2026-05-18)
 
 **First end-to-end authenticated path lives in `apps/arena-client/`.**

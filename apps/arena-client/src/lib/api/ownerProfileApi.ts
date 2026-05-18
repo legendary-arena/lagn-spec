@@ -17,7 +17,13 @@
  * `profileApi.ts` precedent verbatim.
  *
  * Authority: WP-104 §Scope (In) §G; EC-128 §1.
+ * WP-161 update: fetch URLs now prefixed via `buildApiUrl(...)` so the
+ * SPA can target the API host configured via `VITE_API_BASE_URL` at
+ * build time. Wire shapes, function signatures, and error handling
+ * are byte-identical to WP-104; only the URL string differs.
  */
+
+import { buildApiUrl } from './apiBaseUrl';
 
 /**
  * Owner-curated profile link wire shape. Mirrors
@@ -109,7 +115,7 @@ export async function fetchOwnerProfile(
 ): Promise<OwnerProfileApiResult> {
   let response: Response;
   try {
-    response = await fetch('/api/me/profile', {
+    response = await fetch(buildApiUrl('/api/me/profile'), {
       method: 'GET',
       headers:
         authToken === null ? {} : { Authorization: `Bearer ${authToken}` },
@@ -134,7 +140,7 @@ export async function updateOwnerProfile(
 ): Promise<OwnerProfileApiResult> {
   let response: Response;
   try {
-    response = await fetch('/api/me/profile', {
+    response = await fetch(buildApiUrl('/api/me/profile'), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -164,7 +170,7 @@ export async function replaceOwnerLinks(
 ): Promise<OwnerProfileApiResult> {
   let response: Response;
   try {
-    response = await fetch('/api/me/links', {
+    response = await fetch(buildApiUrl('/api/me/links'), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

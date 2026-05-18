@@ -11,7 +11,13 @@
  * compatibility with their server-side counterparts.
  *
  * Authority: WP-108 §Scope; EC-158 §6.
+ * WP-161 update: fetch URLs now prefixed via `buildApiUrl(...)` so the
+ * SPA can target the API host configured via `VITE_API_BASE_URL` at
+ * build time. Wire shapes, function signatures, and error handling
+ * are byte-identical to WP-108; only the URL string differs.
  */
+
+import { buildApiUrl } from './apiBaseUrl';
 
 /**
  * One row from the billing history response, mirroring the server's
@@ -70,7 +76,7 @@ export async function fetchBillingHistory(
 ): Promise<BillingApiResult<BillingHistoryEntry[]>> {
   let response: Response;
   try {
-    response = await fetch('/api/me/billing/history', {
+    response = await fetch(buildApiUrl('/api/me/billing/history'), {
       method: 'GET',
       headers:
         authToken === null ? {} : { Authorization: `Bearer ${authToken}` },
@@ -95,7 +101,7 @@ export async function fetchEntitlements(
 ): Promise<BillingApiResult<EntitlementDisplay[]>> {
   let response: Response;
   try {
-    response = await fetch('/api/me/entitlements', {
+    response = await fetch(buildApiUrl('/api/me/entitlements'), {
       method: 'GET',
       headers:
         authToken === null ? {} : { Authorization: `Bearer ${authToken}` },

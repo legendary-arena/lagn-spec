@@ -15,7 +15,13 @@
  * client from importing server-layer types directly.
  *
  * Authority: WP-102 §Scope (In) §G; EC-117 §Files to Produce.
+ * WP-161 update: fetch URL now prefixed via `buildApiUrl(...)` so the
+ * SPA can target the API host configured via `VITE_API_BASE_URL` at
+ * build time. Wire shape, function signature, and error handling are
+ * byte-identical to WP-102; only the URL string differs.
  */
+
+import { buildApiUrl } from './apiBaseUrl';
 
 /**
  * Public-facing replay summary shape returned by
@@ -78,7 +84,7 @@ export type FetchPublicProfileResult =
 export async function fetchPublicProfile(
   handle: string,
 ): Promise<FetchPublicProfileResult> {
-  const url = `/api/players/${encodeURIComponent(handle)}/profile`;
+  const url = buildApiUrl(`/api/players/${encodeURIComponent(handle)}/profile`);
   let response: Response;
   try {
     response = await fetch(url);

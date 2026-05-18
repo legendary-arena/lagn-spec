@@ -17500,4 +17500,28 @@ Authentication).
 
 ---
 
+### D-16101 — Arena-client API base URL surfaced via build-time env var (WP-161)
+
+**Decision:** All `apps/arena-client/src/lib/api/**` fetch sites construct absolute URLs via a new helper `apps/arena-client/src/lib/api/apiBaseUrl.ts` that exports `apiBaseUrl: string` and `buildApiUrl(path: string): string`. The helper reads `import.meta.env?.VITE_API_BASE_URL ?? 'http://localhost:8000'` — a new build-time env var Vite inlines at build time, with a local-dev fallback that mirrors the boardgame.io server's default port and the `VITE_SERVER_URL` precedent at `apps/arena-client/src/lobby/lobbyApi.ts:21`. Every previously-relative `fetch('/api/...', …)` call (7 sites across 4 files) is rewritten to `fetch(buildApiUrl('/api/...'), …)`. Wire shapes, function signatures, error handling, and JSDoc are byte-identical to the originating WP-104 / WP-108 / WP-110 / WP-102 contracts — only the URL string differs.
+
+**Rationale.**
+- **Loud-failure-by-default beats silent SPA fallback.** Pre-WP-161, a relative `/api/me/profile` from `https://legendary-arena-play.pages.dev` resolved to `pages.dev/api/me/profile`, which Cloudflare Pages handled via SPA fallback (`HTTP 200, Content-Type: text/html, body: <!DOCTYPE html>...`). The fetch wrapper's `await response.json()` threw on the HTML, the rejection silently propagated through `void load()` in `MyProfilePage.onMounted`, and the page hung indefinitely on "Loading…". Post-WP-161, a missing env var produces a clearly broken `http://localhost:8000/api/me/profile` URL that fails visibly in the browser (CORS error or network failure) — operator-diagnosable in seconds rather than minutes of head-scratching.
+- **Mirrors the existing `VITE_SERVER_URL` precedent.** The boardgame.io WS transport already uses this pattern; an operator who knows how to set one env var on CF Pages already knows the protocol for the new one. Cognitive load is minimized.
+- **Per-environment configuration is the contract shape that generalizes.** Local dev, staging, and production all need different API targets. An env-var-per-environment scales; a single hardcoded string doesn't.
+- **No `apps/server/src/**` touch.** WP-161 is purely a client-side configuration change. The server has CORS allowlists for `https://legendary-arena-play.pages.dev` already (per EC-147), so an absolute URL from the SPA reaches the API cleanly.
+- **Helper is 5 lines.** No abstraction debt; `buildApiUrl` is pure string concatenation. Junior-readable, no validation, no encoding, no trailing-slash normalization — caller-trusted per WP-161 §Locked Values.
+
+**Rejected alternatives:**
+- **CF Pages `_redirects` rewrite (`/api/* → https://api.legendary-arena.com/api/:splat 200`).** Rejected because (a) it hardcodes the API hostname into the SPA repo, coupling deployment topologies that should be independently configurable; (b) it doesn't generalize — local dev and staging would need different rewrite strings; (c) it routes around the env-var-per-environment precedent already established by `VITE_SERVER_URL`. Operationally smaller (1 file, 1 line, no code change) but architecturally wrong-shape.
+- **Inline `import.meta.env` reads at every fetch site.** Rejected — 7 duplicated env-var-read expressions across 4 files invite drift when the next API client is added. The single helper centralizes the read and the fallback.
+- **Runtime configuration fetch from a `/config` endpoint.** Rejected — extra round-trip on every page load; requires a new public endpoint with its own contract; doesn't compose with Vite's build-time inlining for environments where this works fine.
+- **Hardcoded absolute URL in source (`'https://api.legendary-arena.com/api/me/profile'`).** Rejected — per-environment override impossible without a code change; breaks local dev; defeats the WP-104 / WP-108 / WP-110 layer-boundary discipline that kept API clients hostname-agnostic.
+
+**Packet:** WP-161.
+
+**Introduced:** WP-161 (drafted 2026-05-18; executed 2026-05-18)
+**Status:** Active
+
+---
+
 Protect this file.

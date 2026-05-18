@@ -10,7 +10,13 @@
  * compatibility with their server-side counterparts.
  *
  * Authority: WP-110 §F; EC-163 §Files to Produce.
+ * WP-161 update: fetch URL now prefixed via `buildApiUrl(...)` so the
+ * SPA can target the API host configured via `VITE_API_BASE_URL` at
+ * build time. Wire shape, function signature, and error handling are
+ * byte-identical to WP-110; only the URL string differs.
  */
+
+import { buildApiUrl } from './apiBaseUrl';
 
 /**
  * One row from the admin billing history response, mirroring the
@@ -43,7 +49,7 @@ export async function fetchAdminBillingHistory(
 ): Promise<AdminBillingApiResult> {
   let response: Response;
   try {
-    response = await fetch('/api/admin/billing/history', {
+    response = await fetch(buildApiUrl('/api/admin/billing/history'), {
       method: 'GET',
       headers: { 'X-Admin-Secret': adminSecret },
     });

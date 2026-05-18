@@ -146,6 +146,7 @@ mindmap
         ["WP-126 ✅ Hanko session verifier"]
         ["WP-131 ✅ Authenticated route production wiring"]
         ["WP-160 ✅ Hanko client UI (production sign-in surface)"]
+        ["WP-161 ✅ Arena client API base URL surfacing (VITE_API_BASE_URL)"]
 
       Engine + Server Wiring & Leaderboard HTTP
         ["WP-113 ✅ Engine-server registry wiring"]
@@ -252,7 +253,7 @@ mindmap
 | Beta-Launch Pillar | 5/5 | — |
 | Engine Hardening | 2/2 | — |
 | Client Integration Cluster | 7/7 | — |
-| Auth Stack & Profile Surface | 10/10 | — |
+| Auth Stack & Profile Surface | 11/11 | — |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
 | Registry Viewer Enhancements | 6/6 | — |
 | Phase 8 — Interactive Board Layout | 3/3 | — |
@@ -266,7 +267,7 @@ mindmap
 | Phase 9 — Profile Surface Follow-ups | 3/4 | 1 📝 |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **153/159 ✅** | 8 📝 placeholders + 1 📝 + 2 ⏸ |
+| **Total** | **154/160 ✅** | 8 📝 placeholders + 1 📝 + 2 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 
@@ -279,9 +280,9 @@ mindmap
 - **Engine test baseline:** `749 / 0 / 0` (post-WP-158)
 - **Registry test baseline:** `53 / 0 / 0` (post-WP-151)
 - **Server test baseline:** `313 / 1 / 66 / 0` (post-WP-159; the 1 fail is the pre-existing `join-match.test.ts` "missing --name flag" carried since WP-106 per STATUS.md)
-- **arena-client test baseline:** `326 / 0 / 0` (post-WP-160; +15 new from WP-160 — 8 wrapper + 7 store; supersedes WP-130's `286 / 35 / 0` snapshot)
-- **DECISIONS.md range:** `D-4801..D-16011` (extends through WP-160)
-- **EC range:** `EC-001..EC-174` (extends through WP-160)
+- **arena-client test baseline:** `326 / 0 / 0` (post-WP-161; preserved from WP-160; WP-161 adds no tests — mechanical URL-prefix change)
+- **DECISIONS.md range:** `D-4801..D-16101` (extends through WP-161)
+- **EC range:** `EC-001..EC-175` (extends through WP-161)
 
 ---
 
@@ -291,6 +292,7 @@ mindmap
 2. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
 
 **Recently completed:**
+- ✅ **Arena client API base URL surfacing** (WP-161, 2026-05-18) — `VITE_API_BASE_URL` + `buildApiUrl(...)` helper; surfaced during WP-160 smoke as the unblocker for end-to-end authenticated `/api/me/*` paths.
 - ✅ **Hanko client UI** (WP-160, 2026-05-18) — production sign-in surface; closes the WP-099/112/126/131 stack at the client boundary; D-16001..D-16011 Active.
 - ✅ **Admin session gate** (WP-159, 2026-05-17) — `requireAdminSession` library; D-15901, D-15902.
 - ✅ **G-state sub-WPs** (all `// SAFE-SKIP-WP128` assignment sites graduated 2026-05-16) — WP-153, WP-154, WP-155, WP-156.
@@ -323,4 +325,4 @@ mindmap
 
 ---
 
-*Last updated: 2026-05-18 (WP-160 Hanko Client UI executed: flipped 📝 → ✅ on Auth Stack & Profile Surface cluster, which now closes at 10/10 ✅; total now 153/159 ✅ with 1 📝 Drafted ready-for-execution — WP-107. D-16001..D-16011 flipped to Active; D-16004 Decision text corrected during execution to reflect the SDK API drift `hanko.user.logout()` → `hanko.logout()` folded inline. arena-client baseline refreshed to `326 / 0 / 0` post-WP-160 (+15 new tests: 8 wrapper + 7 store, all passing); DECISIONS.md range extended to D-16011; EC range extended to EC-174. Previous update 2026-05-17: WP-160 drafted; total was 152/159 ✅ with 2 📝 Drafted — WP-107 + WP-160.)*
+*Last updated: 2026-05-18 (WP-161 Arena Client API Base URL Surfacing executed: VITE_API_BASE_URL env var + buildApiUrl helper unblock end-to-end /api/me/* paths from production; surfaced during WP-160 smoke; total now 154/160 ✅. Previous: 2026-05-18 — WP-160 Hanko Client UI executed: flipped 📝 → ✅ on Auth Stack & Profile Surface cluster, which now closes at 10/10 ✅; total now 153/159 ✅ with 1 📝 Drafted ready-for-execution — WP-107. D-16001..D-16011 flipped to Active; D-16004 Decision text corrected during execution to reflect the SDK API drift `hanko.user.logout()` → `hanko.logout()` folded inline. arena-client baseline refreshed to `326 / 0 / 0` post-WP-160 (+15 new tests: 8 wrapper + 7 store, all passing); DECISIONS.md range extended to D-16011; EC range extended to EC-174. Previous update 2026-05-17: WP-160 drafted; total was 152/159 ✅ with 2 📝 Drafted — WP-107 + WP-160.)*
