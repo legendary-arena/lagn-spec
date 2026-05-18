@@ -7,6 +7,146 @@
 
 ## Current State
 
+### WP-160 / EC-174 Executed — Hanko Client UI (2026-05-18)
+
+**First end-to-end authenticated path lives in `apps/arena-client/`.**
+Five new files ship the production sign-in flow:
+
+- `apps/arena-client/src/auth/hankoClient.ts` — broker SDK wrapper, the
+  only file allowed to import `@teamhanko/*` at runtime (F-2 extended to
+  the client; mirrors the server-side `apps/server/src/auth/hanko/`
+  D-9904 module-path lock). 9 exports: 4 functions
+  (`initializeHankoClient`, `getCurrentTokenFromHandle`,
+  `signOutCurrentSession`, `subscribeToSessionEvents`) + 4 interfaces
+  (`HankoClientInitOptions`, `HankoClientHandle`, `HankoSessionListeners`,
+  `HankoLike`) + 1 error class (`HankoInitializationFailed`). Dynamic
+  `await import('@teamhanko/hanko-elements')` inside the production
+  factory keeps the broker bundle out of the node:test runner; the
+  `__hankoFactory` test seam lets unit tests inject a fake broker
+  without loading the real SDK.
+- `apps/arena-client/src/auth/hankoClient.test.ts` — 8 unit tests
+  exercising init success, init rejection (typed error with no detail
+  leak), null/empty-string token normalization, logout invocation count,
+  logout rejection propagation, three-listener registration, and the
+  re-read-getSessionToken-at-fire-time discipline.
+- `apps/arena-client/src/stores/auth.ts` — Pinia auth store
+  (`defineStore('auth', () => …)`, Composition API). Closed state
+  `{ token: string | null, accountId: string | null }` plus derived
+  `isAuthenticated: ComputedRef<boolean> = computed(() => token.value !== null)`.
+  Three actions: `setSession(token, accountId)`, `clearSession()`,
+  `bootstrapFromCachedToken(cachedToken)` (no-op on null — does not
+  clobber an in-flight sign-in handshake). Broker-agnostic: zero
+  `hanko` / `@teamhanko` substrings anywhere in the file.
+- `apps/arena-client/src/stores/auth.test.ts` — 7 unit tests covering
+  initial state, `setSession` with non-null and null `accountId`,
+  `clearSession` reset, `bootstrapFromCachedToken` happy path,
+  null-no-op on a fresh store, and null-no-op on a populated store.
+- `apps/arena-client/src/pages/LoginPage.vue` — sign-in surface at
+  `?route=login`. Four-state visual lifecycle
+  (`'initializing' | 'ready' | 'unavailable' | 'signing-out'`). Mounts
+  exactly one `<hanko-auth>` element when `state === 'ready'`. Verbatim
+  failure-banner copy `"Sign-in is temporarily unavailable. Please try
+  again later."` Validates the `returnTo` prop against the closed-set
+  `'me' | 'admin-billing'` (stale / attacker-supplied values fall back
+  to lobby). Navigates via `window.location.assign(...)` on sign-in
+  success — full reload re-runs App.vue setup with the now-cached
+  broker cookie.
+
+Four files modified:
+
+- `apps/arena-client/package.json` — `@teamhanko/hanko-elements ^2.4.0`
+  added under `dependencies` (NOT `devDependencies` — it ships in the
+  production bundle).
+- `apps/arena-client/.env.example` — `VITE_HANKO_TENANT_BASE_URL`
+  block added (Vite inlines at build time; mirrors server
+  `HANKO_TENANT_BASE_URL` per WP-126 / D-12602; both MUST point at the
+  same tenant).
+- `apps/arena-client/src/App.vue` — `AppRoute` closed-set extended with
+  `'login'` (precedence: `admin-billing > me > login > profile >
+  fixture > live > lobby`); `loginRoute` + `returnTo` added to
+  `ParsedQuery`; route-guard logic for `me` + `admin-billing` —
+  one-shot at setup time, gated by `isAuthBootstrapping` ref so the
+  render is held until the broker init resolves (no flash of the
+  guarded page with an empty auth store); `LoginPage` lazy-loaded via
+  `defineAsyncComponent`; `<template v-else-if="route === 'login'">`
+  slot added.
+- `apps/arena-client/src/pages/MyProfilePage.vue` — `readAuthToken()`
+  cutover from `window.localStorage.getItem('authToken')` placeholder
+  to `useAuthStore().token` (cited `// why:` updated from WP-126
+  deferred-placeholder to WP-160 / D-16003). New "Sign out" button in
+  the page header (verbatim label `"Sign out"`); `signOut()` handler
+  invokes `signOutCurrentSession(handle)` → catches and ignores broker
+  rejection (fail-safe — documented `// why:`) → `clearSession()` →
+  `window.location.assign('?route=')`. New `ensureHankoHandle()`
+  module-scoped lazy initializer — the only acceptable in-app
+  memoization per WP-160 §H point 4.
+
+`apps/arena-client/src/main.ts` byte-identical: the Pinia auth store
+lazy-initializes on first `useAuthStore()` call, so no bootstrap
+re-order is needed.
+
+**SDK API drift folded inline.** WP body referenced `hanko.user.logout()`
+(twice: §A point 3 of the WP scope, and D-16004's Decision text). In
+the actual `@teamhanko/hanko-frontend-sdk` (both 2.4.0 and 2.6.0), the
+`Hanko` class declares `private readonly user` — the public sign-out
+method is `hanko.logout()` directly. The wrapper now calls
+`handle.hanko.logout()`; D-16004's Decision text was corrected during
+execution to reflect the reality. Documented in the wrapper's `// why:`
+block, in the corresponding test name, and in the 01.6 post-mortem
+under "What was harder than expected".
+
+**Broker invisibility (F-1 / F-2) gates pass repo-wide.** Zero
+`'hanko'` quoted strings under `apps/arena-client/src`. Zero static
+`from '@teamhanko/'` imports outside `auth/hankoClient.ts` (the wrapper
+uses dynamic `import()` to keep the SDK out of the test bundle). Zero
+`localStorage.getItem('authToken')` matches. Zero `hanko` substrings
+in `stores/auth.ts`. Zero clock/RNG reads in auth code.
+
+**D-14401 boundary gate still green.** `pnpm --filter
+@legendary-arena/arena-client build` succeeds with no `Boundary
+Leakage detected (D-14401)` thrown. The broker bundle splits into its
+own 167 kB lazy chunk (`elements-*.js`); the main `index.js` stays at
+~369 kB (was 367 kB pre-WP).
+
+**Test baseline.** arena-client `311 / 0 / 0 / 0` → `326 / 0 / 0 / 0`
+(+15 new: 8 in `hankoClient.test.ts` + 7 in `auth.test.ts`; zero
+failures, zero unintended skips). Initial run surfaced a flaky
+`ReplayFileLoader.test.ts` failure that re-ran clean — pre-existing
+intermittency unrelated to WP-160 scope (noted in the post-mortem).
+
+**D-16001..D-16011 flipped to Active.** Decision / Rationale /
+Alternatives Rejected entries were populated at draft time (commit
+`985e8b2`); execution flipped the Status line and corrected D-16004's
+Decision text for the SDK call.
+
+**Unblocks the deployed-but-blocked authenticated WPs.** WP-101 (handle
+claim), WP-104 (owner profile + `/me` edit), WP-106 (avatar upload),
+WP-108 (billing UI), WP-132 (entitlements read), WP-133 (Stripe
+checkout) — all shipped server-side, all functionally inert until
+today, all now end-to-end exercisable on a Cloudflare Pages preview
+with `VITE_HANKO_TENANT_BASE_URL` set. The future WP-159 / WP-107
+admin-session client cutover also becomes feasible once the first
+admin grant lands.
+
+**Open question for the next router-related WP.** LoginPage uses
+`window.location.assign(...)` for a full reload on sign-in success
+(D-16008). Correct for D-16006 (post-reload App.vue bootstrap re-reads
+the broker cookie and instantiates the auth store fresh), but loses
+in-memory Vue app state. A future WP that introduces `vue-router` may
+want to revisit this with SPA-style routing once auth is stable.
+
+**Manual smoke verification (operator).** Per EC-174 §After Completing:
+deploy to a Cloudflare Pages preview with `VITE_HANKO_TENANT_BASE_URL`
+set; navigate to `?route=me` without a session → land on LoginPage;
+complete Hanko flow → land back on `?route=me` with `/api/me/profile`
+returning the owner-profile view; click "Sign out" → land on lobby with
+cleared store. This is an operational verification, not a CI gate.
+
+01.5 NOT INVOKED (no engine surface). 01.6 post-mortem authored at
+`docs/ai/post-mortems/01.6-WP-160-hanko-client-ui.md`.
+
+---
+
 ### WP-159 / EC-173 Executed — Admin Session Gate (2026-05-17)
 
 **Session-based admin authentication seam shipped.** New helper

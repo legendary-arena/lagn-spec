@@ -20,6 +20,12 @@ import type {
   SubmitMove,
   UiMoveName,
 } from './components/play/uiMoveName.types';
+import {
+  getCurrentTokenFromHandle,
+  initializeHankoClient,
+  subscribeToSessionEvents,
+} from './auth/hankoClient';
+import { useAuthStore } from './stores/auth';
 
 // why: PlayerProfilePage is lazy-loaded via defineAsyncComponent so the
 // public-profile branch (?profile=<handle>) does not increase the
@@ -46,7 +52,22 @@ const AdminBillingPage = defineAsyncComponent(
   () => import('./pages/AdminBillingPage.vue'),
 );
 
-type AppRoute = 'fixture' | 'live' | 'lobby' | 'profile' | 'me' | 'admin-billing';
+// why: WP-160 — LoginPage is the production sign-in surface at
+// ?route=login. Lazy-loaded for the same bundle-size reason as the
+// other routed pages; the broker SDK bundle is only fetched when the
+// LoginPage (or a guarded-route bootstrap) needs it.
+const LoginPage = defineAsyncComponent(
+  () => import('./pages/LoginPage.vue'),
+);
+
+type AppRoute =
+  | 'fixture'
+  | 'live'
+  | 'lobby'
+  | 'profile'
+  | 'me'
+  | 'admin-billing'
+  | 'login';
 
 interface LiveRouteParams {
   matchID: string;
@@ -60,6 +81,8 @@ interface ParsedQuery {
   profileHandle: string | null;
   meRoute: boolean;
   adminBillingRoute: boolean;
+  loginRoute: boolean;
+  returnTo: string | null;
 }
 
 // why: defineComponent({ setup() { return {...} } }) is required (NOT
@@ -100,27 +123,44 @@ function parseQuery(search: string): ParsedQuery {
   // literal `me` value to avoid false-positive matches on stale `?route=`
   // values left over from past sessions; future surfaces will extend the
   // closed set here rather than introducing per-feature query keys.
+  // WP-160 — `?route=login` is the sign-in surface (D-16008); the
+  // companion `?returnTo=<route>` carries the originally-requested
+  // guarded route so the LoginPage can navigate back on sign-in success.
   const routeParam = readQueryParam(params, 'route');
   const meRoute = routeParam === 'me';
   const adminBillingRoute = routeParam === 'admin-billing';
+  const loginRoute = routeParam === 'login';
+  const returnTo = readQueryParam(params, 'returnTo');
 
-  return { fixtureName, live, profileHandle, meRoute, adminBillingRoute };
+  return {
+    fixtureName,
+    live,
+    profileHandle,
+    meRoute,
+    adminBillingRoute,
+    loginRoute,
+    returnTo,
+  };
 }
 
 function selectRoute(parsed: ParsedQuery): AppRoute {
   // why: route discriminator precedence is
-  // `admin-billing > me > profile > fixture > live > lobby`.
+  // `admin-billing > me > login > profile > fixture > live > lobby`.
   // Explicit `?route=` values take priority over every other query
   // param so the targeted surface always wins when the user has
   // navigated to it (e.g., a stale `?match=` left over from a past
-  // session must not shadow the explicit route). The
-  // `profile > fixture > live > lobby` ordering below remains
-  // unchanged from WP-102.
+  // session must not shadow the explicit route). `login` slots in
+  // between `me` and `profile` so an explicit `?route=login` always
+  // wins over a leftover `?profile=` from a past navigation
+  // (WP-160 §F + Locked Values precedence).
   if (parsed.adminBillingRoute === true) {
     return 'admin-billing';
   }
   if (parsed.meRoute === true) {
     return 'me';
+  }
+  if (parsed.loginRoute === true) {
+    return 'login';
   }
   if (parsed.profileHandle !== null) {
     return 'profile';
@@ -139,9 +179,27 @@ function selectRoute(parsed: ParsedQuery): AppRoute {
   return 'lobby';
 }
 
+function readTenantBaseUrl(): string {
+  // why: import.meta.env is Vite-provided; under the node:test runner
+  // there is no Vite transform, so the property may be undefined.
+  // Optional chaining keeps this safe; the empty-string default below
+  // routes guarded-route bootstraps directly to the LoginPage's
+  // 'unavailable' branch without attempting a broker call.
+  return (import.meta.env?.VITE_HANKO_TENANT_BASE_URL ?? '') as string;
+}
+
 export default defineComponent({
   name: 'App',
-  components: { AppShell, ArenaHud, LobbyView, PlayViewport, PlayerProfilePage, MyProfilePage, AdminBillingPage },
+  components: {
+    AppShell,
+    ArenaHud,
+    LobbyView,
+    PlayViewport,
+    PlayerProfilePage,
+    MyProfilePage,
+    AdminBillingPage,
+    LoginPage,
+  },
   props: {
     // why: `searchOverride` is a testing seam. Production callers never pass
     // it — `null` means "read from window.location.search at setup time".
@@ -157,7 +215,9 @@ export default defineComponent({
       props.searchOverride ??
       (typeof window !== 'undefined' ? window.location.search : '');
     const parsed = parseQuery(rawSearch);
-    const route: AppRoute = selectRoute(parsed);
+    const initialRoute = selectRoute(parsed);
+    const route = ref<AppRoute>(initialRoute);
+    const returnTo = ref<string | null>(parsed.returnTo);
     const liveParams = parsed.live;
 
     const matchID = liveParams?.matchID ?? '';
@@ -170,8 +230,70 @@ export default defineComponent({
     // keeps tests (and any non-Vite consumer) from crashing at setup time.
     const isDev = Boolean(import.meta.env?.DEV);
 
+    // why: WP-160 — guarded-route bootstrap. When the user lands on a
+    // guarded route (`me`, `admin-billing`), App.vue must check for a
+    // cached broker session before rendering the page. If no session,
+    // mutate the local route to `'login'` (one-shot — NOT a reactive
+    // watch) and pass the original route to LoginPage via `returnTo` so
+    // sign-in success can navigate back. The render is gated on
+    // `isAuthBootstrapping` so the user never sees a flash of the
+    // guarded page with an empty auth store. The URL bar stays at the
+    // original `?route=me`; only the rendered component differs until
+    // the LoginPage's full-reload navigation re-runs this setup with
+    // the cached cookie populated.
+    const isAuthBootstrapping = ref(
+      initialRoute === 'me' || initialRoute === 'admin-billing',
+    );
+
+    if (isAuthBootstrapping.value === true) {
+      const tenantBaseUrl = readTenantBaseUrl();
+      if (tenantBaseUrl === '') {
+        // No tenant configured (test runs, missing build-time env);
+        // route immediately to the LoginPage's 'unavailable' state.
+        returnTo.value = initialRoute;
+        route.value = 'login';
+        isAuthBootstrapping.value = false;
+      } else {
+        void (async () => {
+          try {
+            const handle = await initializeHankoClient({ tenantBaseUrl });
+            const token = getCurrentTokenFromHandle(handle);
+            if (token === null) {
+              returnTo.value = initialRoute;
+              route.value = 'login';
+              return;
+            }
+            useAuthStore().bootstrapFromCachedToken(token);
+            subscribeToSessionEvents(handle, {
+              onSessionCreated: () => {
+                // why: sign-in already happened on the LoginPage's
+                // navigation back to this guarded route; App.vue's
+                // subscription only cares about the expiry/logout
+                // side. Re-firing setSession here would be redundant.
+              },
+              onSessionExpired: () => {
+                useAuthStore().clearSession();
+              },
+              onUserLoggedOut: () => {
+                useAuthStore().clearSession();
+              },
+            });
+          } catch {
+            // Broker initialization failed (network, bundle load,
+            // tenant unreachable) — fall back to the LoginPage's
+            // 'unavailable' surface. The underlying error is swallowed
+            // inside the wrapper per D-16009.
+            returnTo.value = initialRoute;
+            route.value = 'login';
+          } finally {
+            isAuthBootstrapping.value = false;
+          }
+        })();
+      }
+    }
+
     onMounted(() => {
-      if (route === 'live' && liveParams !== null) {
+      if (route.value === 'live' && liveParams !== null) {
         const handle = createLiveClient({
           matchID: liveParams.matchID,
           playerID: liveParams.playerID,
@@ -203,6 +325,8 @@ export default defineComponent({
 
     return {
       route,
+      returnTo,
+      isAuthBootstrapping,
       matchID,
       playerID,
       profileHandle,
@@ -216,11 +340,22 @@ export default defineComponent({
 <template>
   <AppShell>
     <main data-testid="app-root" :data-route="route">
-      <template v-if="route === 'admin-billing'">
+      <template v-if="isAuthBootstrapping">
+        <p
+          class="app-auth-bootstrapping"
+          data-testid="app-auth-bootstrapping"
+        >
+          Preparing sign-in…
+        </p>
+      </template>
+      <template v-else-if="route === 'admin-billing'">
         <AdminBillingPage />
       </template>
       <template v-else-if="route === 'me'">
         <MyProfilePage />
+      </template>
+      <template v-else-if="route === 'login'">
+        <LoginPage :return-to="returnTo" />
       </template>
       <template v-else-if="route === 'profile'">
         <PlayerProfilePage :handle="profileHandle" />
@@ -253,5 +388,12 @@ export default defineComponent({
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
   opacity: 0.65;
+}
+
+.app-auth-bootstrapping {
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  opacity: 0.75;
 }
 </style>

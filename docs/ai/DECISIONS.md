@@ -17283,8 +17283,8 @@ Authentication).
 
 **Packet:** WP-160 (Hanko Client UI).
 
-**Introduced:** WP-160 (drafted 2026-05-17; not yet landed — flips to "Active" at execution close)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17304,8 +17304,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17327,14 +17327,14 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
 ### D-16004 — Sign-Out Semantics: Broker Logout + Local Clear + Navigate to Lobby (WP-160)
 
-**Decision:** Sign-out is invoked from a button on `MyProfilePage.vue`. The handler calls (in this order): `signOutCurrentSession(handle)` (which internally calls `hanko.user.logout()`), then `useAuthStore().clearSession()`, then `window.location.assign('?route=')`. If the broker logout call rejects, the local clear + navigate still happen (fail-safe — a stuck sign-in state is worse than a stale-cookie state); the rejection is silenced in a `try/catch` documented with a `// why:` comment.
+**Decision:** Sign-out is invoked from a button on `MyProfilePage.vue`. The handler calls (in this order): `signOutCurrentSession(handle)` (which internally calls `hanko.logout()` — the WP body originally referenced `hanko.user.logout()`, but `user` is `private readonly` on the SDK's `Hanko` class; the public sign-out method is `hanko.logout()` directly, both in 2.4.0 and 2.6.0; folded inline at execution time per `01.0b §Common deviations`), then `useAuthStore().clearSession()`, then `window.location.assign('?route=')`. If the broker logout call rejects, the local clear + navigate still happen (fail-safe — a stuck sign-in state is worse than a stale-cookie state); the rejection is silenced in a `try/catch` documented with a `// why:` comment.
 
 **Rationale.**
 - **Symmetry with sign-in.** Sign-in establishes both the broker session (cookie) and the local Pinia state. Sign-out clears both. A half-cleared state (broker session present, local state cleared) would silently re-authenticate on the next reload.
@@ -17347,8 +17347,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17368,8 +17368,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17389,8 +17389,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17411,8 +17411,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17433,8 +17433,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17454,8 +17454,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17475,8 +17475,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 
@@ -17495,8 +17495,8 @@ Authentication).
 
 **Packet:** WP-160.
 
-**Introduced:** WP-160 (drafted 2026-05-17)
-**Status:** Drafted
+**Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
+**Status:** Active
 
 ---
 

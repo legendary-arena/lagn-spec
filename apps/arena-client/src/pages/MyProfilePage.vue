@@ -9,6 +9,12 @@ import {
   type OwnerProfileView,
 } from '../lib/api/ownerProfileApi';
 import BillingSection from '../components/BillingSection.vue';
+import {
+  initializeHankoClient,
+  signOutCurrentSession,
+  type HankoClientHandle,
+} from '../auth/hankoClient';
+import { useAuthStore } from '../stores/auth';
 
 // why: defineComponent({ setup() { return {...} } }) is required (NOT
 // <script setup>) because the template references non-prop bindings
@@ -81,6 +87,24 @@ function formatJoinedDate(raw: string): string {
   }).format(parsed);
 }
 
+// why: WP-160 — module-scoped lazy initializer for the broker SDK
+// handle used by this page's sign-out flow. The Hanko SDK initialization
+// is expensive and idempotent; memoizing per page-instance keeps the
+// handle stable across multiple sign-out clicks (none expected in
+// practice, but defensive) and avoids racing with App.vue's bootstrap
+// which may have already initialized a separate handle. This is the
+// only acceptable in-app memoization in this WP — the wrapper itself
+// is stateless beyond the handle it returns.
+let cachedHankoHandle: Promise<HankoClientHandle> | null = null;
+function ensureHankoHandle(): Promise<HankoClientHandle> {
+  if (cachedHankoHandle === null) {
+    const tenantBaseUrl =
+      (import.meta.env?.VITE_HANKO_TENANT_BASE_URL ?? '') as string;
+    cachedHankoHandle = initializeHankoClient({ tenantBaseUrl });
+  }
+  return cachedHankoHandle;
+}
+
 function bannerCopyForCode(code: string | null): string {
   // why: locked verbatim banner copy per WP-104 §Scope (In) §H.
   if (code === 'session_verifier_not_configured') {
@@ -119,16 +143,39 @@ export default defineComponent({
     const draftLinks = ref<DraftLink[]>([]);
 
     function readAuthToken(): string | null {
-      // why: the auth-store integration is paired with WP-126's broker
-      // integration; until then the page reads any token a developer
-      // pasted into localStorage manually. The server-side fail-closed
-      // posture (D-11204) means a missing or stale token surfaces as
-      // a 500 with `code: 'session_verifier_not_configured'`, which
-      // the banner copy above translates into user-friendly text.
-      if (typeof window === 'undefined') {
-        return null;
+      // why: WP-160 / D-16003 — the auth token is held in the Pinia
+      // auth store, populated by the broker SDK wrapper at app
+      // bootstrap (App.vue setup-time guarded-route check) or at
+      // sign-in (LoginPage.vue's onSessionCreated handler). Reading
+      // from the store keeps the token's source of truth in one
+      // place; previously this function read from localStorage as a
+      // placeholder pending WP-126's broker integration (now landed
+      // via WP-160). The server-side fail-closed posture (D-11204)
+      // still applies — a missing or stale token surfaces as a 500
+      // with `code: 'session_verifier_not_configured'` (or a 401 with
+      // a token-specific code), which the banner copy above
+      // translates into user-friendly text.
+      return useAuthStore().token;
+    }
+
+    async function signOut(): Promise<void> {
+      try {
+        const handle = await ensureHankoHandle();
+        await signOutCurrentSession(handle);
+      } catch {
+        // why: if the broker logout call fails (network down, broker
+        // unreachable, SDK initialization failure), clear the local
+        // store and navigate to lobby anyway. A stuck sign-in state is
+        // worse than a stale-cookie state: the cookie may persist on
+        // the client, but the next page load will re-detect it via
+        // App.vue's guarded-route bootstrap and re-route through
+        // sign-in if the session has actually been invalidated
+        // server-side. This is the fail-safe path (D-16004).
       }
-      return window.localStorage.getItem('authToken');
+      useAuthStore().clearSession();
+      if (typeof window !== 'undefined') {
+        window.location.assign('?route=');
+      }
     }
 
     function applyView(loaded: OwnerProfileView): void {
@@ -226,6 +273,7 @@ export default defineComponent({
       formatRoleLabel,
       formatJoinedDate,
       readAuthToken,
+      signOut,
     };
   },
 });
@@ -247,7 +295,17 @@ export default defineComponent({
       </p>
 
       <header class="profile-header" data-testid="my-profile-header">
-        <h1>Your profile</h1>
+        <div class="profile-header-row">
+          <h1>Your profile</h1>
+          <button
+            type="button"
+            class="profile-sign-out"
+            data-testid="my-profile-sign-out"
+            @click="signOut"
+          >
+            Sign out
+          </button>
+        </div>
         <p class="profile-help">
           Edit your owner-only profile details below. Privacy toggles default to
           <em>private</em>; flip to <em>public</em> only when you want a section
@@ -451,6 +509,20 @@ export default defineComponent({
 .profile-header h1 {
   font-size: 1.5rem;
   margin: 0 0 0.25rem 0;
+}
+
+.profile-header-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.profile-sign-out {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
 }
 
 .profile-help {
