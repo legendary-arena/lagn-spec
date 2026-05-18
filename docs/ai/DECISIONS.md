@@ -17266,4 +17266,238 @@ Authentication).
 
 ---
 
+### D-16001 — Client Sign-In Widget: `@teamhanko/hanko-elements` Web Component (WP-160)
+
+**Decision:** The arena-client production sign-in surface uses the `@teamhanko/hanko-elements` web component package at version range `^2.4.0` (under `dependencies`, not `devDependencies`). The sign-in flow mounts the `<hanko-auth>` custom element on the new `LoginPage.vue` at the `?route=login` route discriminator. `<hanko-profile>` and `<hanko-events>` are OUT OF SCOPE for this WP; future surfaces may consume them under their own WPs.
+
+**Rationale.**
+- **Hanko owns the UI surface.** Replacing the broker later means swapping one custom-element tag + one npm dep + the wrapper implementation. Visual flows (passkey, OTP, federation) are never our code surface.
+- **Framework-agnostic.** Custom elements work in Vue, React, Svelte, and plain HTML. We don't maintain a Vue-specific wrapper that ages every time `@vue/runtime-dom` ships a breaking change.
+- **Smaller code surface than SDK-only.** `@teamhanko/hanko-frontend-sdk` requires us to own every error state, every visual transition, and every accessibility concern; the web component packages all of that.
+- **Matches the official starter.** `teamhanko/hanko-vue-express-starter`'s `vue-frontend/package.json` lists `@teamhanko/hanko-elements ^2.1.0` as the sole `@teamhanko/*` runtime dep — the supported integration pattern.
+
+**Rejected alternatives:**
+- **`@teamhanko/hanko-frontend-sdk` only.** Rejected — much larger code surface (we own every error path and visual state). The starter project's surface confirms `@teamhanko/hanko-elements` as the supported integration.
+- **Custom Vue UI calling a non-Hanko broker SDK (Auth0, Clerk, Stytch).** Rejected — forbidden by D-9901 (broker selection locked to Hanko).
+- **No widget; build sign-in from scratch using only OIDC primitives.** Rejected — re-implements passkey, OTP, and federation flows the broker has already shipped; multiplies the §3 (Player Trust & Fairness) attack surface for zero functional gain.
+
+**Packet:** WP-160 (Hanko Client UI).
+
+**Introduced:** WP-160 (drafted 2026-05-17; not yet landed — flips to "Active" at execution close)
+**Status:** Drafted
+
+---
+
+### D-16002 — Token Storage: Hanko Default Cookie, JS-Accessible (WP-160)
+
+**Decision:** The Hanko SDK is configured with its default `storageKey: 'cookie'` setting (i.e., the wrapper does NOT override the SDK's default). The bearer token is stored in a cookie named `hanko` (the broker's default storage key) that is **JS-accessible** (NOT httpOnly). The wrapper reads the token via `hanko.getSessionToken()` and exposes it to the Pinia auth store; the auth store exposes it to the existing API clients which attach it as `Authorization: Bearer <token>`.
+
+**Rationale.**
+- **Persists across reloads.** A cookie outlives a page reload, so a returning player isn't forced to re-sign-in on every navigation.
+- **Bearer-header attachment requires JS access.** D-11202 locks the server to bearer-header-only token extraction (cookies are explicitly rejected as a carrier). Tokens MUST therefore be readable from JS to be transformed into a header — httpOnly cookies are incompatible with this contract.
+- **The broker owns cookie attribute decisions.** SameSite, Secure, domain scoping, etc. are decided by the Hanko SDK's `cookieSameSite` / `cookieDomain` options; we adopt defaults rather than re-deriving security choices we don't have the field telemetry to inform.
+
+**Rejected alternatives:**
+- **`sessionStorage`.** Rejected — loses the token on tab close; returning-player friction. The Hanko SDK supports it via `storageKey: 'sessionStorage'`, but the loss of persistence outweighs any cross-tab-isolation benefit at this scale.
+- **Custom in-memory only.** Rejected — loses the token on reload; every navigation forces a re-sign-in, an unacceptable UX regression.
+- **httpOnly cookie + server-side bearer extraction.** Rejected — incompatible with D-11202 (server extracts from `Authorization` header only). Would require either (a) coordinating a D-11202 amendment that introduces cookie extraction (a server-side WP) plus CSRF middleware (the D-11202 rationale explicitly defers cookie support to "a paired WP that introduces both together"); or (b) a server-side cookie-to-header proxy (extra hop). Neither warranted for the first client sign-in WP.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16003 — Token Attachment: Pinia Store Read at Call Time (WP-160)
+
+**Decision:** The bearer token is held in a new Pinia store at `apps/arena-client/src/stores/auth.ts` (store id `'auth'`). The store exposes reactive `token: string | null`, `accountId: string | null`, and derived `isAuthenticated: ComputedRef<boolean>` (`= computed(() => token.value !== null)`). The Hanko SDK wrapper populates the store via `setSession(token, accountId)`; consumers (`MyProfilePage.vue`, `BillingSection.vue`) read the token from the store at call time and pass it through the existing `authToken: string | null` parameter on the existing API client functions (`fetchOwnerProfile`, `fetchBillingHistory`, etc.). The API clients themselves are byte-identical pre/post this WP — they already accept the parameter; the change is in the source of the value.
+
+**Rationale.**
+- **Single canonical source of truth for the token.** Today's pre-WP state has the token sourced from `window.localStorage.getItem('authToken')` (a placeholder noted in `MyProfilePage.vue:121-132`). Multiple call sites reading from localStorage independently is a drift hazard. The Pinia store centralizes the source.
+- **Preserves D-11202.** Bearer header attachment is unchanged — the API clients keep their `Authorization: Bearer ${authToken}` shape; only the token's origin changes.
+- **No coupling between API clients and the broker.** The API clients still accept `string | null`; they don't import the auth store or `@teamhanko/*`. A future broker swap touches the auth store + wrapper but not the API clients.
+- **Reactive store ⇒ UI naturally re-renders on sign-out.** Components that derive UI state from `isAuthenticated` auto-update without explicit subscriptions.
+
+**Rejected alternatives:**
+- **Global `fetch` wrapper that auto-attaches the token.** Rejected — opaque to call sites; harder to test (every test must stub the wrapper); silent coupling between every `fetch` and the broker. The existing API clients are explicit; we preserve that.
+- **Per-call-site `hanko.getSessionToken()` read.** Rejected — couples every consumer to the broker (F-2 violation); a broker swap would touch every API client + page.
+- **Keep `localStorage.getItem('authToken')` as the canonical source.** Rejected — the Hanko cookie is the broker's authoritative storage; keeping localStorage means writing the token to a second location at sign-in time and reconciling on every read. That's drift.
+- **Vuex / a custom reactive object / a module-level singleton.** Rejected — Pinia is already bootstrapped (`main.ts:9`), and the project's only other store (`stores/uiState.ts`) uses Pinia. New stores follow the precedent.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16004 — Sign-Out Semantics: Broker Logout + Local Clear + Navigate to Lobby (WP-160)
+
+**Decision:** Sign-out is invoked from a button on `MyProfilePage.vue`. The handler calls (in this order): `signOutCurrentSession(handle)` (which internally calls `hanko.user.logout()`), then `useAuthStore().clearSession()`, then `window.location.assign('?route=')`. If the broker logout call rejects, the local clear + navigate still happen (fail-safe — a stuck sign-in state is worse than a stale-cookie state); the rejection is silenced in a `try/catch` documented with a `// why:` comment.
+
+**Rationale.**
+- **Symmetry with sign-in.** Sign-in establishes both the broker session (cookie) and the local Pinia state. Sign-out clears both. A half-cleared state (broker session present, local state cleared) would silently re-authenticate on the next reload.
+- **Fail-safe is the right posture.** If the broker is unreachable at sign-out time, the user has already chosen to leave. Honoring that intent locally (clear the store, navigate away) is better than blocking on a network call that may not return.
+
+**Rejected alternatives:**
+- **Local-only clear.** Rejected — the Hanko cookie persists; next page reload silently re-authenticates the user, defeating the sign-out gesture.
+- **Broker-only call.** Rejected — the Pinia store would hold the stale token until the next page load, and in-flight API calls would attach the stale token to a server that has already invalidated the session.
+- **Modal confirmation before sign-out.** Rejected — adds friction for no security benefit; the broker's session is the security boundary, not the click count.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16005 — Token Expiry: Broker Event → Pinia Clear; No Auto-Redirect (WP-160)
+
+**Decision:** Token expiry mid-session is detected by Hanko's polling-based `sessionCheckInterval` (SDK default 30000ms; unset in this WP, deferred to broker default). On expiry, the SDK fires `onSessionExpired`; the wrapper's `subscribeToSessionEvents` callback (registered at App.vue bootstrap on guarded routes) calls `useAuthStore().clearSession()`. The user's next API call attaches `null` as the token (now-null store read), receives a 401 (or `code: 'session_verifier_not_configured'` if the verifier is down), and surfaces the existing error banner in `MyProfilePage.vue`'s `bannerCopyForCode()` mapping. No automatic redirect. The user finishes their current interaction, sees the banner, and re-signs in on their next guarded-route navigation.
+
+**Rationale.**
+- **Detection is broker-owned; response is application-owned.** Cleanly separable. The broker knows when the token expires; we know what the page should display.
+- **Surprise-navigation is worse than a banner.** A mid-form-fill redirect destroys user input. The existing banner is non-destructive.
+- **Silent refresh is not yet stable enough to commit to.** Hanko's documented refresh-endpoint API surface is in flux at this WP's draft time; a future hardening WP can layer in silent refresh if/when the API stabilizes.
+
+**Rejected alternatives:**
+- **Silent token refresh via Hanko's refresh endpoint.** Rejected at this WP's draft time — Hanko's refresh API is not yet stable enough for a contract commit. A future hardening WP can add it once the broker freezes the API.
+- **Force-redirect to login on expiry.** Rejected — surprise navigation in the middle of a user interaction is hostile UX.
+- **Block the page until re-auth completes.** Rejected — denies the user the chance to copy unsaved input out of the page.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16006 — First-Sign-In Account Provisioning: Piggyback on First Authenticated Call (WP-160)
+
+**Decision:** The arena-client sign-in flow does NOT call a dedicated bootstrap endpoint after sign-in. The first authenticated request to any existing `/api/me/*` route (typically `GET /api/me/profile`, called by `MyProfilePage.vue` when the user lands on `?route=me` post-sign-in) triggers WP-131's `productionAccountResolver`, which inserts the new `legendary.players` row on no-match. The Pinia store's `accountId` field remains `null` at sign-in time and may be populated later by a future consumer that reads the resolved `ext_id` from the `/api/me/profile` response.
+
+**Rationale.**
+- **Zero new server surface.** WP-131 already provisions accounts on first authenticated call; this WP doesn't introduce a bootstrap endpoint that duplicates that path.
+- **Zero extra round-trip.** The user is about to load `/api/me/profile` anyway (the typical sign-in destination); an explicit `/api/me/bootstrap` call would add a round-trip for no benefit.
+- **`accountId` lag is acceptable on day one.** No current consumer reads `accountId` from the auth store. Keeping the field present-but-null avoids a follow-up store-shape change when the first consumer arrives.
+
+**Rejected alternatives:**
+- **New `POST /api/me/bootstrap` endpoint.** Rejected — duplicates WP-131's `productionAccountResolver` flow with a new HTTP surface that adds an `apps/server/src/**` touch (would expand WP-160's scope into the server layer).
+- **Server-side `account_id` returned in the sign-in response.** Rejected — Hanko doesn't surface `legendary.players.ext_id` (the broker doesn't know our table); we'd need a server-side post-sign-in call anyway.
+- **Populate `accountId` on every `/api/me/*` response synchronously.** Rejected at this WP — overfitting to a consumer that doesn't exist; can be added when the first consumer needs it.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16007 — Route Guard Scope: Only `'me'` and `'admin-billing'` Are Guarded (WP-160)
+
+**Decision:** App.vue's route-guard logic applies to exactly two route values: `'me'` (owner profile + edit) and `'admin-billing'` (admin billing surface). The other route values — `'fixture' | 'live' | 'lobby' | 'profile' | 'login'` — are unguarded and remain accessible without a Hanko session. When a user navigates to a guarded route without a session, App.vue's setup mutates the local `route` value to `'login'` (one-shot at setup; the URL bar is unchanged) and the LoginPage's `returnTo` parameter is populated with the originally-requested route.
+
+**Rationale.**
+- **`live` uses boardgame.io credentials, not Hanko.** The `?match=…&player=…&credentials=…` query string is the WS-transport auth surface; guarding it with Hanko would require coordinating with WP-090's transport layer (out of scope).
+- **`profile` is intentionally public-readable.** WP-102 ships the public profile page; guarding it would break that contract.
+- **`lobby` is the default landing surface.** Players must be able to land on the app without an account.
+- **`fixture` is the developer-only debug surface.** Guarding it would require dev-mode bypass logic.
+
+**Rejected alternatives:**
+- **Guard everything by default.** Rejected — breaks `?route=profile` public-readable contract; locks players out of the lobby; blocks dev fixture debugging.
+- **Guard `live`.** Rejected — out of scope; requires WP-090 coordination on the WS transport.
+- **No route guard; rely on server 401.** Rejected — the user lands on the requested page, the page calls `/api/me/profile`, receives 401, then displays an error banner. The route guard surfaces the sign-in prompt at the natural URL boundary instead.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16008 — Sign-In Surface Placement: Dedicated `?route=login` Route (WP-160)
+
+**Decision:** The sign-in surface lives at the new `?route=login` route discriminator, hosted by a new `LoginPage.vue`. The route accepts an optional `?returnTo=<route-value>` parameter (validated against the closed-set `'me' | 'admin-billing'`). On successful sign-in, the page navigates to `?route=${returnTo}` (or `?route=` lobby fallback). The route value `'login'` is added to App.vue's `AppRoute` closed-set union; the discrimination precedence places it between `me` and `profile`: `admin-billing > me > login > profile > fixture > live > lobby`.
+
+**Rationale.**
+- **Matches the existing closed-set route discipline.** App.vue already uses `?route=` query-string discrimination with a closed-set enumeration (verified at `App.vue:49`). Adding one value is the smallest possible architectural change.
+- **`returnTo` preserves UX after sign-in.** A player who clicked "My Profile" while signed-out lands on `?route=login&returnTo=me`, signs in, and lands on `?route=me` — never on the lobby with the original intent lost.
+- **Deep-linking, share-this-page, and bookmarking are sensible.** A dedicated route URL means a player can paste a "sign in to view this" link and it works.
+
+**Rejected alternatives:**
+- **Always-present modal on every page.** Rejected — clutters the gameplay UI; the modal would be present on `?route=live` where it has no relevance.
+- **Triggered on first 401.** Rejected — delayed UX feedback; the user has already attempted an action by the time the modal appears.
+- **Landing-page banner on the lobby.** Rejected — poor discoverability for players who navigate directly to `?route=me` (they would never see the lobby's banner).
+- **Push-routing (`history.pushState`) instead of query-string.** Rejected — would require introducing `vue-router` (an additional dep + a larger architectural change). The query-string discipline is sufficient for the current page count.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16009 — Failure-Mode Disclosure: Static Banner + `[auth]` Tagged Logs (WP-160)
+
+**Decision:** When the Hanko SDK's `register()` call fails (tenant unreachable, JWKS down, transport error), `LoginPage.vue` renders a static banner with verbatim copy `"Sign-in is temporarily unavailable. Please try again later."` and emits one `console.warn('[auth]', 'init')` log line. The Hanko widget's own internal error states (invalid email, OTP failed, network blip mid-flow) are owned by the widget and displayed by it. The wrapper's `HankoInitializationFailed` error class wraps the underlying error; the underlying error message is intentionally NOT surfaced in the banner or in the console (no tenant URL leak, no payload leak). Production logs use the `[auth]` prefix for grep-ability; no PII (email, token, account ID) is logged.
+
+**Rationale.**
+- **Player Trust & Fairness (§3).** Operational failure should be honest with the player, not hidden. A static banner is honest.
+- **No PII leakage.** Tokens, emails, and account IDs are never logged. The category (init failure) is logged; the detail is not.
+- **Operator diagnosability is preserved.** The `[auth]` prefix lets ops `grep '\[auth\]'` to find auth-related events without trawling the full log.
+
+**Rejected alternatives:**
+- **Detailed error display ("Failed to reach the authentication provider; the tenant URL is X").** Rejected — leaks operational details to the player; a §3 violation; gives an attacker reconnaissance information.
+- **Silent failure (blank page).** Rejected — worse UX than the banner; the player has no recourse.
+- **Toast notification.** Rejected — the LoginPage IS the failure surface; a toast outside the page context is the wrong affordance.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16010 — Build-Time Client Config: `VITE_HANKO_TENANT_BASE_URL` (WP-160)
+
+**Decision:** The Hanko tenant URL is supplied to the client via the Vite build-time env var `VITE_HANKO_TENANT_BASE_URL`, mirroring the existing `VITE_SERVER_URL` precedent (`apps/arena-client/.env.example`, consumed at `apps/arena-client/src/lobby/lobbyApi.ts:21`). The var is set in the Cloudflare Pages project's build-time environment and inlined by Vite into the production bundle. The server-side counterpart `HANKO_TENANT_BASE_URL` (per WP-126 / D-12602) is set in `render.yaml` + the Render dashboard. Both MUST point at the same Hanko tenant.
+
+**Rationale.**
+- **Symmetric with `VITE_SERVER_URL`.** The existing client-env precedent already documents Vite build-time inlining for `VITE_*` vars; matching the pattern keeps the operational model uniform.
+- **Tenant URL is operator-fixed.** A given deployment targets a given tenant; the URL doesn't change between requests within a deployment.
+- **No runtime config-fetch overhead.** Avoids an extra round-trip on every page load to fetch `/config` (which would itself need to be unauthenticated, adding a public surface).
+
+**Rejected alternatives:**
+- **Runtime fetch from a `/config` endpoint.** Rejected — extra round-trip on every page load; introduces a new public endpoint that needs its own contract.
+- **Hardcoded URL in source.** Rejected — per-environment override impossible without a code change; dev/staging/prod can't differ.
+- **Read from a separate `tenant-config.json` deployed alongside the SPA.** Rejected — adds a separately-cached resource with no flexibility benefit over Vite inlining; introduces a JSON-fetch race against the initial render.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
+### D-16011 — Cross-Repo Boundary: Marketing Site Out of Scope (WP-160)
+
+**Decision:** WP-160 does NOT modify the marketing repository at `C:\www\legendary-arena-com`. The arena-client SPA is the sole sign-in surface today; the marketing site continues to link players to the SPA's lobby without itself hosting any sign-in affordance. A separate cross-repo WP can add a "Sign in" link to the marketing navigation if/when that's desired.
+
+**Rationale.**
+- **Keeps WP scope bounded.** Cross-repo touches expand both the file count and the governance surface (the marketing repo has its own Co-Authored-By trailer per `reference_dual_repo_layout.md`; its own commit cadence; its own deployment trigger).
+- **The marketing site is currently an unauthenticated read-only surface.** Introducing sign-in there is a separable concern; the sign-in flow itself lives on the SPA regardless of where the link lives.
+- **Discoverability is not blocked.** Players reach the SPA from the marketing site's existing "Play" / lobby link; once on the SPA, the sign-in surface is reachable via `?route=login` directly or via the route-guard redirect from `?route=me`.
+
+**Rejected alternatives:**
+- **Bundle a marketing-site sign-in link into this WP.** Rejected — expands scope across two repos with two governance ledgers; the SPA-side work is already at the upper file-count bound.
+- **Mirror the SPA sign-in surface on the marketing site.** Rejected — duplicates the LoginPage in a second repo with no UX benefit; the marketing site would just iframe or redirect to the SPA anyway.
+
+**Packet:** WP-160.
+
+**Introduced:** WP-160 (drafted 2026-05-17)
+**Status:** Drafted
+
+---
+
 Protect this file.

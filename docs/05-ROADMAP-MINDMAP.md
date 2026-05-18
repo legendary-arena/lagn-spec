@@ -145,6 +145,7 @@ mindmap
         ["WP-112 ✅ Session token validation middleware"]
         ["WP-126 ✅ Hanko session verifier"]
         ["WP-131 ✅ Authenticated route production wiring"]
+        ["WP-160 📝 Drafted — Hanko client UI (production sign-in surface)"]
 
       Engine + Server Wiring & Leaderboard HTTP
         ["WP-113 ✅ Engine-server registry wiring"]
@@ -251,7 +252,7 @@ mindmap
 | Beta-Launch Pillar | 5/5 | — |
 | Engine Hardening | 2/2 | — |
 | Client Integration Cluster | 7/7 | — |
-| Auth Stack & Profile Surface | 9/9 | — |
+| Auth Stack & Profile Surface | 9/10 | 1 📝 (WP-160) |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
 | Registry Viewer Enhancements | 6/6 | — |
 | Phase 8 — Interactive Board Layout | 3/3 | — |
@@ -265,7 +266,7 @@ mindmap
 | Phase 9 — Profile Surface Follow-ups | 3/4 | 1 📝 |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **152/158 ✅** | 8 📝 placeholders + 1 📝 + 2 ⏸ |
+| **Total** | **152/159 ✅** | 8 📝 placeholders + 2 📝 + 2 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 
@@ -299,6 +300,7 @@ mindmap
 
 **Drafted (ready for execution):**
 - **WP-107** — profile integrity / anti-cheat surface (D-10701..D-10703 drafted; admin-session gate dependency satisfied; EC pending).
+- **WP-160** — Hanko client UI (D-16001..D-16011 drafted; closes the WP-099/112/126/131 stack at the client; first end-to-end authenticated path on production; EC-174 drafted; all hard-deps ✅).
 
 ---
 
@@ -321,4 +323,4 @@ mindmap
 
 ---
 
-*Last updated: 2026-05-17 (WP-159 admin-session gate executed: added to Admin & Route Wiring cluster; WP-107 unblocked and flipped to 📝 Drafted ready-for-execution; Server baseline refreshed to `313/1/66/0` post-WP-159 — the 1 fail is pre-existing `join-match.test.ts` carried since WP-106; DECISIONS.md range extended to D-15902; EC range extended to EC-173; engine baseline updated to `749/0/0` post-WP-158; total 152/158 ✅. Previous update 2026-05-15: 16 new WPs since prior update; 5 new clusters; Phase 9 WP-105/108 → ✅; Governance WP-097/098 → ✅; WP-070 → ✅; stale Next Unblocked items cleared.)*
+*Last updated: 2026-05-17 (WP-160 Hanko Client UI drafted: added 📝 to Auth Stack & Profile Surface cluster as the client-side counterpart to WP-099/112/126/131; EC-174 drafted; D-16001..D-16011 reserved; total now 152/159 ✅ with 2 📝 Drafted ready-for-execution items — WP-107 + WP-160. Counts unchanged for Done; new Drafted item added. Previous update 2026-05-17: WP-159 admin-session gate executed: added to Admin & Route Wiring cluster; WP-107 unblocked and flipped to 📝 Drafted ready-for-execution; Server baseline refreshed to `313/1/66/0` post-WP-159 — the 1 fail is pre-existing `join-match.test.ts` carried since WP-106; DECISIONS.md range extended to D-15902; EC range extended to EC-173; engine baseline updated to `749/0/0` post-WP-158.)*
