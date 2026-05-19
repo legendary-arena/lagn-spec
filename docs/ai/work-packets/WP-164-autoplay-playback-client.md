@@ -106,10 +106,12 @@ distinct from `mode` (which is still read directly, never recomputed, D-16304).
   disabled matrix; REWIND toggles with `isRewound`; each button calls the
   matching service function; component never calls `setSnapshot`.
 - **`apps/arena-client/src/pages/PlayDesktop.vue`** (modified) — on mount, when
-  `matchID` is present, call `getStatus(matchID)`; mount
-  `<AutoplayControls :matchId="matchID" :initialStatus="status" />` only when
-  the probe resolves `200` (non-null). Seed the bar's initial `paused` /
-  `cursor` / `historyLength` / `mode` from the status response.
+  `matchID` is present, call `getStatus(matchID)`; on an initial `null` (404),
+  retry once after `STATUS_RETRY_DELAY_MS` (1000 ms) before deciding. Mount
+  `<AutoplayControls :matchId="matchID" :initialStatus="status" />` only when a
+  probe resolves `200` (non-null); a persistent `null` keeps the bar hidden.
+  Seed the bar's initial `paused` / `cursor` / `historyLength` / `mode` from the
+  status response.
 - **Governance:** `docs/ai/STATUS.md`, `docs/ai/work-packets/WORK_INDEX.md`
   (WP-164 row), `docs/ai/execution-checklists/EC_INDEX.md` (EC-181 row),
   `docs/05-ROADMAP-MINDMAP.md`.
@@ -163,6 +165,22 @@ pause / resume / stepForward / stepBack / restart / goToEnd(matchId: string): Pr
 - **`isRewound = cursor < historyLength - 1`** — drives the REWIND affordance
   (the spectator is viewing a historical frame, not the live edge). Distinct
   from `mode`.
+
+### Status-probe gating + retry (D-16501 / WP-165 transient-404 caveat)
+
+- On mount with a `matchID`, call `getStatus(matchID)`.
+- A `200` (non-null) result ⇒ autoplay match: show the bar and seed initial
+  state.
+- A `null` (`404`) result on the **first** probe ⇒ retry **once** after
+  `STATUS_RETRY_DELAY_MS = 1000` ms. Only a **second** `null` is treated as "not
+  an autoplay match" (the bar stays hidden). `getStatus` itself stays a single
+  request; the retry lives in the mount/gating logic.
+- This single retry is a **defensive guard**: WP-163 registers the controller
+  before the autoplay-create response returns, so a stable `404` normally means
+  "not autoplay" — but the retry prevents a false-negative if controller
+  registration timing ever shifts. The bar defaults hidden until a `200`, so a
+  normal match never flickers (the retry runs in the background; the bar was
+  never shown).
 
 ### Disabled-when matrix (verbatim)
 
@@ -254,6 +272,8 @@ WP-164 introduces no new `D-NNNNN` entries; it consumes:
 ## Anti-Patterns to Avoid
 
 - Do NOT render the bar based on `?match` presence — gate on `getStatus` 200.
+- Do NOT treat the first `404` as definitive — retry once after
+  `STATUS_RETRY_DELAY_MS` before hiding the bar (transient-init guard).
 - Do NOT key the REWIND affordance on `mode === 'rewind'` — that value does not
   exist; use `isRewound = cursor < historyLength - 1`.
 - Do NOT recompute `mode` from `cursor`/`historyLength`.
@@ -271,6 +291,7 @@ WP-164 introduces no new `D-NNNNN` entries; it consumes:
 | Symptom | Likely cause |
 |---|---|
 | Bar appears in a normal PvP match | Gated on `?match` instead of the `getStatus` probe |
+| Bar never appears for a valid autoplay match | Treated the first transient `404` as definitive — no single retry |
 | REWIND indicator never shows | Keyed on the non-existent `mode === 'rewind'` instead of `isRewound` |
 | Rewind state flickers back to live mid-step | Client added merge/reconciliation instead of letting the broadcast win (D-16301) |
 | `setSnapshot` called with null/undefined | Injection branch missing the truthiness guard |

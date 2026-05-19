@@ -19,6 +19,7 @@
 - All paths built via `buildApiUrl(...)` (D-16101) — no relative / hardcoded URLs
 - Envelope: `{ ok, paused, historyLength, cursor, mode, uiState?, error? }` (D-16304); `mode` read DIRECTLY, never recomputed
 - `getStatus` resolves the envelope on `200`, `null` on `404`
+- `STATUS_RETRY_DELAY_MS = 1000` — on an INITIAL `getStatus` `null` (404), retry ONCE after this delay; only a persistent `null` hides the bar (WP-165 transient-404 guard, D-16501)
 - REWIND affordance keyed on `isRewound = cursor < historyLength - 1` (NOT `mode === 'rewind'` — that value does not exist)
 - Glyphs: `⏮ ⏪ ⏸/▶ ⏩ ⏭` (five buttons + one pause/resume toggle)
 - Disabled-when (verbatim): `step-back` ↔ `cursor === 0` OR `!paused`; `step-forward` ↔ `!paused`; `restart` ↔ `!paused` OR `historyLength === 0`; `go-to-end` ↔ game over (from the live store snapshot)
@@ -27,6 +28,7 @@
 
 ## Guardrails
 - Bar renders ONLY when `getStatus(matchId)` resolves non-null (`200`) — NOT on `?match` presence; no PvP render
+- First `404` is NOT definitive: retry the probe once after `STATUS_RETRY_DELAY_MS` before hiding; `getStatus` stays a single request (retry lives in the `PlayDesktop.vue` mount logic)
 - No `?autoplay` URL marker; `LobbyView.vue` / `App.vue` are NOT modified (D-16501 — the status probe is the gate)
 - Single ingestion path: the service is the ONLY new non-test caller of `setSnapshot`; no component / page calls it directly
 - Live broadcast wins (D-16301): a Socket.IO broadcast after a rewind unconditionally overwrites injected state — NO merge, NO reconciliation
@@ -46,7 +48,7 @@
 - `apps/arena-client/src/services/autoplayPlayback.test.ts` — **new** — setter iff `uiState`; `mode` pass-through; `getStatus` null-on-404; correct paths
 - `apps/arena-client/src/components/AutoplayControls.vue` — **new** — 5 buttons + toggle; disabled matrix; `isRewound` affordance; no `fetch`, no store import
 - `apps/arena-client/src/components/AutoplayControls.test.ts` — **new** — disabled matrix; REWIND toggles with `isRewound`; button→service; no `setSnapshot`
-- `apps/arena-client/src/pages/PlayDesktop.vue` — **modified** — call `getStatus(matchID)`; mount `<AutoplayControls>` only when it resolves non-null; seed initial state
+- `apps/arena-client/src/pages/PlayDesktop.vue` — **modified** — call `getStatus(matchID)` (retry once on an initial 404 after `STATUS_RETRY_DELAY_MS`); mount `<AutoplayControls>` only when a probe resolves non-null; seed initial state
 - `docs/ai/STATUS.md` / `docs/ai/work-packets/WORK_INDEX.md` / `docs/ai/execution-checklists/EC_INDEX.md` / `docs/05-ROADMAP-MINDMAP.md` — **modified** — close WP-164 / EC-181
 
 ## After Completing
@@ -60,6 +62,7 @@
 
 ## Common Failure Smells
 - Bar visible in a normal PvP match → gated on `?match` instead of the `getStatus` probe
+- Bar never appears for a valid autoplay match → first transient `404` treated as definitive (missing the single retry)
 - REWIND never shows → keyed on `mode === 'rewind'` (nonexistent) instead of `isRewound = cursor < historyLength - 1`
 - Rewind state flickers back to live mid-step → client added merge/reconciliation instead of letting the broadcast win (D-16301)
 - `setSnapshot` called with null/undefined → injection branch missing the truthiness guard
