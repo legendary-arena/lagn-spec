@@ -16,7 +16,7 @@
  * Loud-fail surface (D-13501 Option A): when a hero card carries a
  * rarityLabel outside the four-label set, buildHeroDeck throws a
  * full-sentence Error inside Game.setup() (the canonical loud-fail surface
- * per .claude/rules/game-engine.md §Throwing Convention). Cross-set rarity
+ * per .claude/skills/legendary-game-engine/SKILL.md §Throwing Convention). Cross-set rarity
  * support (e.g., 'Common 3' / 'Uncommon 2' observed in amwp.json) is
  * deferred to the Pending follow-up WP recorded in WORK_INDEX.md.
  */

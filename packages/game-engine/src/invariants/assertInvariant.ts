@@ -6,7 +6,7 @@
  * invariant is violated. This is the ONE throwing path outside of
  * Game.setup() direct throws, and it is only reached from inside
  * Game.setup() per D-3102 Option B (setup-only wiring) — so the
- * existing `.claude/rules/game-engine.md §Throwing Convention` row
+ * existing `.claude/skills/legendary-game-engine/SKILL.md §Throwing Convention` row
  * for "Game.setup() may throw" already covers this case without a
  * new rule exception.
  */
@@ -47,7 +47,7 @@ export class InvariantViolationError extends Error {
  * @throws {InvariantViolationError} if condition is false.
  */
 // why: throwing from the setup return path is permitted by the
-// existing `.claude/rules/game-engine.md §Throwing Convention` row 1
+// existing `.claude/skills/legendary-game-engine/SKILL.md §Throwing Convention` row 1
 // ("Game.setup() — Throws Error — Match creation must abort early").
 // Moves never throw per the three-step move contract (D-0102); only
 // Game.setup() throws, and runAllInvariantChecks is called from

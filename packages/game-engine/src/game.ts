@@ -225,7 +225,7 @@ export const LegendaryGame: Game<LegendaryGameState, Record<string, unknown>, Ma
     // why: runAllInvariantChecks enforces structural, gameRules,
     // determinism, and lifecycle invariants after buildInitialGameState
     // constructs G. Setup is the one engine-wide call site permitted to
-    // throw per .claude/rules/game-engine.md §Throwing Convention row 1,
+    // throw per .claude/skills/legendary-game-engine/SKILL.md §Throwing Convention row 1,
     // so assertInvariant's throw is safe here. Per D-3102, per-move
     // wiring is deferred to a follow-up WP.
     const initialState = buildInitialGameState(
