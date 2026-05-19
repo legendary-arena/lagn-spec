@@ -18,7 +18,13 @@ pnpm -r build         # build all packages
 pnpm test             # run all tests
 ```
 
-## Architecture Rules (see .claude/rules/ for details)
+## Architecture Rules (see .claude/rules/ and .claude/skills/ for details)
+
+> Cross-cutting rules (architecture, code-style, work-packets) load every
+> session from `.claude/rules/`. Layer-specific rules (game-engine,
+> registry, persistence, server) load on-demand via
+> `.claude/skills/legendary-*/SKILL.md` and retain full authority when
+> triggered.
 
 - Determinism is non-negotiable: all randomness via `ctx.random.*`, never `Math.random()`
 - The engine owns truth: clients submit intents, not outcomes
