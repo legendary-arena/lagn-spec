@@ -162,7 +162,7 @@ incomplete and must not be closed until they do.
    answering; everything else is context.
 2. **Invariant violated (if applicable).** The specific engine
    invariant (from `.claude/rules/architecture.md`,
-   `.claude/rules/game-engine.md`, `ARCHITECTURE.md` §MVP Gameplay
+   `.claude/skills/legendary-game-engine/SKILL.md`, `ARCHITECTURE.md` §MVP Gameplay
    Invariants, or a named D-entry) that the incident breaks. If the
    incident does not break any invariant, this field is `n/a` with a
    one-sentence explanation of why — not left blank.

@@ -1,4 +1,8 @@
 ---
+name: legendary-game-engine
+description: Authoritative enforcement rules for the Game Engine layer. Apply when editing packages/game-engine/**, defining moves/phases/turn-stages/rule-hooks, mutating G, using ctx.random, or questions about determinism, zone ops, or the move validation contract.
+---
+---
 paths:
   - "packages/game-engine/**"
 ---

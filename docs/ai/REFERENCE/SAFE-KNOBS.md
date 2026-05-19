@@ -214,7 +214,7 @@ Themes must **never**:
 The following may **not** be adjusted via customer configuration.
 Changes to these require an engine modification and a `DECISIONS.md` entry.
 
-- Turn structure (`start` -> `main` -> `cleanup`; per `.claude/rules/game-engine.md`)
+- Turn structure (`start` -> `main` -> `cleanup`; per `.claude/skills/legendary-game-engine/SKILL.md`)
 - Rule execution order (priority ascending, then id lexical; per D-1231)
 - Keyword behavior (card text interpretation)
 - Scoring formulas (frozen per `12-SCORING-REFERENCE.md`)
@@ -284,5 +284,5 @@ Safe knobs allow Legendary Arena to:
 - `THEME-SCHEMA.md` -- theme intent and constraints
 - `DECISIONS.md` -- D-1244 (composition alignment), D-1247 (two-layer
   structure), D-1248 (seed wiring gap)
-- `.claude/rules/game-engine.md` -- engine invariants
+- `.claude/skills/legendary-game-engine/SKILL.md` -- engine invariants
 - `12-SCORING-REFERENCE.md` -- frozen scoring surface

@@ -21,7 +21,7 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../packages/game-engine/src/scheme/schemeSetup.types.ts
   - ../packages/game-engine/src/scheme/schemeSetup.execute.ts
   - ../packages/game-engine/src/setup/buildSchemeSetupInstructions.ts
@@ -201,7 +201,7 @@ by match-setup validation or runtime logic.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
   — Move Validation Contract (validators only return — `Game.setup()`
   may throw); Endgame contract (loss conditions evaluated before
   victory)

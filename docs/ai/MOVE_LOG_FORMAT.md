@@ -34,7 +34,7 @@ Scoping guard-rails for this document and any downstream Work Packet:
 - Guaranteeing replay across engine code changes without an explicit
   schema / engine-version strategy (none exists today — see Gap #6).
 - Redefining the `MatchSnapshot` contract. Per
-  `.claude/rules/persistence.md §Class 3`, snapshots store counts only
+  `.claude/skills/legendary-persistence/SKILL.md §Class 3`, snapshots store counts only
   and are Derived — they are not a replacement for a move log.
 
 ## Decision Points (Not decided here)
@@ -153,7 +153,7 @@ persisted move log exists.
   `packages/game-engine/src/persistence/persistence.types.ts`, derived by
   `createSnapshot(G, ctx, matchId)` in
   `packages/game-engine/src/persistence/snapshot.create.ts`.
-- **Classification:** **Derived** by design (per `.claude/rules/persistence.md`
+- **Classification:** **Derived** by design (per `.claude/skills/legendary-persistence/SKILL.md`
   — "zone counts only, never zone contents; safe to delete without
   affecting game integrity"). **Not wired into any persistence path.**
 - **Write trigger / frequency:** None. `createSnapshot` has zero callers
@@ -204,7 +204,7 @@ repo's source.
 
 `MatchSnapshot` shape lives in
 `packages/game-engine/src/persistence/persistence.types.ts` and is
-summarised in `.claude/rules/persistence.md §Class 3`. Top-level keys:
+summarised in `.claude/skills/legendary-persistence/SKILL.md §Class 3`. Top-level keys:
 `matchId`, `snapshotAt`, `turn`, `phase`, `activePlayer`, `players[]`
 (per-player `deckCount` / `handCount` / `discardCount` / `inPlayCount` /
 `victoryCount` — counts only), `counters`, `messages`, optional

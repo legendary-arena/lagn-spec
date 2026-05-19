@@ -20,7 +20,7 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../packages/game-engine/src/board/boardKeywords.types.ts
   - ../packages/game-engine/src/board/boardKeywords.logic.ts
   - ../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
@@ -215,7 +215,7 @@ intent to migrate to a `gainWound` `RuleEffect` in a future WP.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
   — Rule Execution Pipeline (clarifies why Ambush is inline rather
   than effect-routed); Zone Mutation Rules
 - [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-025 review

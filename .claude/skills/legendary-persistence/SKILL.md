@@ -1,4 +1,8 @@
 ---
+name: legendary-persistence
+description: Authoritative enforcement rules for the Persistence boundary. Apply when adding or modifying snapshots, database writes, or save/load logic, or answering what may be persisted (snapshots = derived counts only; G and ctx are runtime-only).
+---
+---
 paths:
   - "packages/game-engine/src/persistence/**"
   - "apps/server/**"

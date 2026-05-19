@@ -181,7 +181,7 @@ may become an implicit dependency of engine logic.
       (CLI scripts call boardgame.io lobby endpoints only; server wires
       `LegendaryGame` into `Server()` and does nothing else)
 - [x] Server never mutates or patches `G`
-      (confirmed by `.claude/rules/server.md` enforcement and code review;
+      (confirmed by `.claude/skills/legendary-server/SKILL.md` enforcement and code review;
       no `G` access in `apps/server/`)
 - [x] Engine remains unaware of users, sessions, sockets, or persistence
       (engine imports no server code; `game-engine` has no `apps/server`
@@ -247,7 +247,7 @@ Boundaries & Snapshots) was the final blocker. It delivered:
 `PERSISTENCE_CLASSES` constants, `MatchSnapshot` type (zone counts only),
 `PersistableMatchConfig`, `createSnapshot` (pure, frozen),
 `validateSnapshotShape`, and persistence boundary governance in
-`.claude/rules/persistence.md`.
+`.claude/skills/legendary-persistence/SKILL.md`.
 
 All five exit criteria now pass. Phase 3 exit gate is closed.
 Phase 4 (Core Gameplay Loop) may proceed.
@@ -261,9 +261,9 @@ Phase 4 (Core Gameplay Loop) may proceed.
 | `ARCHITECTURE.md` | Determinism, layer boundaries, persistence rules |
 | `DECISIONS.md` | D-0001 (Correctness), D-0002 (Determinism), D-0703 (PAR), D-1244–D-1248 (Match Setup alignment) |
 | `WORK_INDEX.md` | Phase 3 WP dependency chain |
-| `.claude/rules/server.md` | Server is wiring-only |
-| `.claude/rules/game-engine.md` | Engine owns all gameplay authority |
-| `.claude/rules/persistence.md` | G is runtime-only, snapshot rules (WP-013) |
+| `.claude/skills/legendary-server/SKILL.md` | Server is wiring-only |
+| `.claude/skills/legendary-game-engine/SKILL.md` | Engine owns all gameplay authority |
+| `.claude/skills/legendary-persistence/SKILL.md` | G is runtime-only, snapshot rules (WP-013) |
 | `MATCH-SETUP-SCHEMA.md` | Setup is configuration, not rules (D-1244) |
 | `MATCH-SETUP-VALIDATION.md` | Validation stages and enforcement boundaries |
 | `12-SCORING-REFERENCE.md` | Scoring is a frozen trust surface |

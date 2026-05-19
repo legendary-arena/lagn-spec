@@ -21,7 +21,7 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../.claude/rules/architecture.md
   - ../.claude/rules/code-style.md
   - ../packages/game-engine/src/turn/turnPhases.types.ts
@@ -144,7 +144,7 @@ is the single helper that drives stage progression:
 - If it returns `null` → call `ctx.events.endTurn()`. boardgame.io
   rotates the player and fires its own turn-end lifecycle. **Manual
   player index rotation is forbidden** per
-  [`game-engine.md` "Turn Stage Cycle"](../.claude/rules/game-engine.md).
+  [`game-engine.md` "Turn Stage Cycle"](../.claude/skills/legendary-game-engine/SKILL.md).
 
 ### Transition discipline
 
@@ -182,7 +182,7 @@ they can never drift from the canonical arrays.
   in the same way [Villain Deck](villain-deck.md) is for the three
   reveal triggers.
 - **Move stage gating.** The `MOVE_ALLOWED_STAGES` mapping (per
-  [`game-engine.md` "Stage Gating"](../.claude/rules/game-engine.md))
+  [`game-engine.md` "Stage Gating"](../.claude/skills/legendary-game-engine/SKILL.md))
   is the canonical contract that links each move to the
   `TurnStage[]` values it accepts. Stage gating is Step 2 of the
   Move Validation Contract — checked after argument validation,
@@ -257,7 +257,7 @@ they can never drift from the canonical arrays.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
   — Phases (locked names); Turn Stage Cycle; Stage Gating; Move
   Validation Contract
 - [`.claude/rules/architecture.md`](../.claude/rules/architecture.md)

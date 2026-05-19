@@ -258,8 +258,8 @@ If any item is false, Phase 7 is **NOT READY**.
 | `ARCHITECTURE.md` | Layer boundaries, persistence rules, engine authority |
 | `DECISIONS.md` | Identity, ownership, scoring, and verification decisions |
 | `WORK_INDEX.md` | Phase 7 WP dependency chain |
-| `.claude/rules/server.md` | Server is wiring-only — enforcer, not calculator |
-| `.claude/rules/game-engine.md` | Engine owns all gameplay and scoring authority |
+| `.claude/skills/legendary-server/SKILL.md` | Server is wiring-only — enforcer, not calculator |
+| `.claude/skills/legendary-game-engine/SKILL.md` | Engine owns all gameplay and scoring authority |
 | `12-SCORING-REFERENCE.md` | Scoring formula and PAR model (frozen) |
 | `13-REPLAYS-REFERENCE.md` | Replay governance, identity policy, privacy controls |
 

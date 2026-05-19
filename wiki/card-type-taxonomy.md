@@ -20,7 +20,7 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/registry.md
+  - ../.claude/skills/legendary-registry/SKILL.md
   - ../packages/registry/src/schema.ts
   - ../data/metadata/card-types.json
   - ../docs/ai/ARCHITECTURE.md
@@ -87,7 +87,7 @@ invariants between entries are not expressible in Zod.)
 
 The taxonomy file is consumed exclusively by the Registry Viewer's
 ribbon generator. Per
-[`registry.md` "Critical Metadata Distinction"](../.claude/rules/registry.md):
+[`registry.md` "Critical Metadata Distinction"](../.claude/skills/legendary-registry/SKILL.md):
 
 - **`createRegistryFromLocalFiles` and `createRegistryFromHttp`
   never read this file.** They read `sets.json` only.
@@ -143,7 +143,7 @@ Packet decision.
   site is preserved across WP-084 deletion + WP-086 reintroduction
   because the failure mode is independent of which auxiliary file
   is involved. See
-  [`registry.md` "The Silent Failure Mode"](../.claude/rules/registry.md).
+  [`registry.md` "The Silent Failure Mode"](../.claude/skills/legendary-registry/SKILL.md).
 - **Pre-WP-084 vs post-WP-086 shape incompatibility.** Before
   2026-04-21, `card-types.json` had 37 entries with the shape
   `{ id, slug, name, displayName, prefix }`. WP-084 deleted the
@@ -163,7 +163,7 @@ Packet decision.
   `order` are sorted by `slug` lexically as a tie-breaker (viewer-
   side convention).
 - **Engine code MUST NOT read this file.** Per
-  [`registry.md` "Prohibited Behaviors"](../.claude/rules/registry.md),
+  [`registry.md` "Prohibited Behaviors"](../.claude/skills/legendary-registry/SKILL.md),
   game logic, move logic, or persistence in the registry package is
   forbidden. The taxonomy lives at the registry layer; engine
   decisions about classification (e.g.,
@@ -188,7 +188,7 @@ Packet decision.
 
 ## References
 
-- [`.claude/rules/registry.md`](../.claude/rules/registry.md)
+- [`.claude/skills/legendary-registry/SKILL.md`](../.claude/skills/legendary-registry/SKILL.md)
   — Critical Metadata Distinction; The Silent Failure Mode;
   Prohibited Behaviors
 - [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — Registry

@@ -45,7 +45,7 @@ It exists to:
 
 This is a **design specification**, not engine code. Implementation must follow
 the architecture rules in `.claude/rules/architecture.md` and
-`.claude/rules/game-engine.md`.
+`.claude/skills/legendary-game-engine/SKILL.md`.
 
 ---
 

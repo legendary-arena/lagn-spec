@@ -227,7 +227,7 @@ The following files must never import `boardgame.io`:
 
 For architectural constraints (G serialization, persistence, determinism,
 phase/turn transitions), see `.claude/rules/architecture.md` and
-`.claude/rules/game-engine.md`.
+`.claude/skills/legendary-game-engine/SKILL.md`.
 
 
 ---

@@ -84,7 +84,7 @@ be accepted only if **all** of the following hold:
 
 1. The warning is explicitly classified as **non-invariant** — it
    does not break any rule in `.claude/rules/architecture.md`,
-   `.claude/rules/game-engine.md`, or `ARCHITECTURE.md` §MVP
+   `.claude/skills/legendary-game-engine/SKILL.md`, or `ARCHITECTURE.md` §MVP
    Gameplay Invariants.
 2. The warning is explicitly classified as **non-competitive** — it
    does not affect win conditions, scoring, or any signal that

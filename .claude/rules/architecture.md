@@ -141,12 +141,12 @@ If any text here contradicts ARCHITECTURE.md, ARCHITECTURE.md wins.
 
 | Layer | Package / Path | Role | Claude Enforcement |
 |---|---|---|---|
-| Registry | `packages/registry/**` | Card data loading & validation | `.claude/rules/registry.md` |
-| Game Engine | `packages/game-engine/**` | Gameplay rules & state transitions | `.claude/rules/game-engine.md` |
+| Registry | `packages/registry/**` | Card data loading & validation | `.claude/skills/legendary-registry/SKILL.md` |
+| Game Engine | `packages/game-engine/**` | Gameplay rules & state transitions | `.claude/skills/legendary-game-engine/SKILL.md` |
 | Pre-Planning | `packages/preplan/**` | Speculative planning for waiting players (non-authoritative) | `DESIGN-PREPLANNING.md` |
-| Server | `apps/server/**` | Wiring, startup, networking | `.claude/rules/server.md` |
+| Server | `apps/server/**` | Wiring, startup, networking | `.claude/skills/legendary-server/SKILL.md` |
 | Shared Tooling (cross-cutting, test/build only) | `packages/vue-sfc-loader/**` (and future test/build packages) | Dev- and test-time transforms consumed only by `apps/*` test scripts or local tooling; never imported by production code | (a dedicated `.claude/rules/shared-tooling.md` may be added later when a second tooling package lands; until then, the rules in this section apply) |
-| Persistence (cross-cutting) | engine / app boundary | Data lifecycle & storage rules | `.claude/rules/persistence.md` |
+| Persistence (cross-cutting) | engine / app boundary | Data lifecycle & storage rules | `.claude/skills/legendary-persistence/SKILL.md` |
 
 Each layer depends **only downward**.
 No layer may reach upward or sideways.
@@ -195,7 +195,7 @@ layer violation.
 Registry feeds data **once**.
 The engine never queries the registry at runtime.
 
-Enforcement: `.claude/rules/registry.md`
+Enforcement: `.claude/skills/legendary-registry/SKILL.md`
 
 ### Game Engine Layer (Gameplay Authority)
 
@@ -222,7 +222,7 @@ Enforcement: `.claude/rules/registry.md`
 The engine **decides outcomes**.
 The server never does.
 
-Enforcement: `.claude/rules/game-engine.md`
+Enforcement: `.claude/skills/legendary-game-engine/SKILL.md`
 
 <!-- canonical phrasing per WP-119 / D-11901; if you edit this section, sync the other two files: docs/ai/ARCHITECTURE.md, docs/02-ARCHITECTURE.md -->
 ### Pre-Planning Layer (Non-Authoritative, Per-Client)
@@ -282,7 +282,7 @@ Design docs: `docs/ai/DESIGN-CONSTRAINTS-PREPLANNING.md`,
 The server **connects pieces**.
 It does not decide what happens in the game.
 
-Enforcement: `.claude/rules/server.md`
+Enforcement: `.claude/skills/legendary-server/SKILL.md`
 
 ### Dependency Direction (Non-Negotiable)
 
@@ -315,7 +315,7 @@ Forbidden examples:
 
 This applies across **all layers**.
 
-Enforcement: `.claude/rules/persistence.md`
+Enforcement: `.claude/skills/legendary-persistence/SKILL.md`
 
 ### Enforcement Rule
 

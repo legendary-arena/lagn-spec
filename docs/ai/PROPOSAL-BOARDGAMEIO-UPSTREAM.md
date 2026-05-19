@@ -4,7 +4,7 @@
 
 **Date:** 2026-05-05
 **Informs:** any future Work Packet that proposes filing a PR or design issue against `boardgameio/boardgame.io`; any decision to upgrade off `boardgame.io ^0.50.0`.
-**Authority chain:** `docs/ai/ARCHITECTURE.md` (locks `boardgame.io ^0.50.0`) → `.claude/rules/game-engine.md` (LOCKED note on the version) → this proposal.
+**Authority chain:** `docs/ai/ARCHITECTURE.md` (locks `boardgame.io ^0.50.0`) → `.claude/skills/legendary-game-engine/SKILL.md` (LOCKED note on the version) → this proposal.
 
 This proposal does **not** amend ARCHITECTURE.md, VISION.md, or any rules file. It captures a strategic posture toward an external dependency and proposes a future DECISIONS entry to record that posture.
 
@@ -12,7 +12,7 @@ This proposal does **not** amend ARCHITECTURE.md, VISION.md, or any rules file. 
 
 ## 1. Why this proposal exists
 
-Legendary Arena is built on `boardgame.io ^0.50.0` (locked across `packages/game-engine`, `apps/server`, and `apps/arena-client`). The dependency is load-bearing: the engine's `Game()`, `Ctx`, `FnContext`, the Immer mutation model, and the Server() integration are all version-specific and named in `.claude/rules/game-engine.md`.
+Legendary Arena is built on `boardgame.io ^0.50.0` (locked across `packages/game-engine`, `apps/server`, and `apps/arena-client`). The dependency is load-bearing: the engine's `Game()`, `Ctx`, `FnContext`, the Immer mutation model, and the Server() integration are all version-specific and named in `.claude/skills/legendary-game-engine/SKILL.md`.
 
 Two questions surfaced in a 2026-05-04 strategy discussion:
 
@@ -62,7 +62,7 @@ The data behind both questions points the same direction: contribute selectively
 - One real interop wart: [`apps/arena-client/src/client/bgioClient.ts:33,36`](apps/arena-client/src/client/bgioClient.ts:33) reaches into `boardgame.io/dist/cjs/client.js` and `.../multiplayer.js` because the package's ESM `exports` map doesn't expose those entrypoints cleanly to a Vue/ESM consumer.
 - `.claude/rules/code-style.md` explicitly bans `boardgame.io/testing`; LA wrote its own [`makeMockCtx`](packages/game-engine/src/test/mockCtx.ts) used in 20+ test files.
 - Pre-planning layer is type-only-import-at-compile-time per `.claude/rules/architecture.md` — LA already treats the dependency as something to insulate from, not extend.
-- LA does **not** persist `G` to PostgreSQL. `.claude/rules/persistence.md` forbids it. `pg` is used for application tables only (identities, profiles, leaderboards, replays, competitions). No `StorageAPI.Async` adapter exists or is wanted.
+- LA does **not** persist `G` to PostgreSQL. `.claude/skills/legendary-persistence/SKILL.md` forbids it. `pg` is used for application tables only (identities, profiles, leaderboards, replays, competitions). No `StorageAPI.Async` adapter exists or is wanted.
 
 ---
 
@@ -156,7 +156,7 @@ Concretely:
 - **Will the docs PR get traction?** A reasonable test of upstream responsiveness. 4–8 weeks is the watch window.
 - **Did benbot ever get commit rights?** [#1188](https://github.com/boardgameio/boardgame.io/issues/1188) was closed but it's not visible whether that closure granted rights or simply ended the discussion. Could be inferred by whether his name appears on any future merge.
 - **Is `@fladrif` a third option?** They authored [#1217](https://github.com/boardgameio/boardgame.io/pull/1217) (the only feature-shaped PR with movement in 2025) and the 2024-11-04 banner-removal commit. Possibly more active than benbot. Worth noting in any tagged PR comment.
-- **What does v1.0 look like?** The roadmap is titled "Roadmap to v1.0" but `v0.50` is the current line and there is no public timeline. If v1.0 lands, the locked-version constraint in `.claude/rules/game-engine.md` becomes a question.
+- **What does v1.0 look like?** The roadmap is titled "Roadmap to v1.0" but `v0.50` is the current line and there is no public timeline. If v1.0 lands, the locked-version constraint in `.claude/skills/legendary-game-engine/SKILL.md` becomes a question.
 - **Marvel-IP concerns from contributing?** Contribution would be to a generic framework, not to LA's card content. No Marvel surface area exposed. Confirmed not blocking, but flagged for completeness.
 
 ---
@@ -182,13 +182,13 @@ Concretely:
 
 **Implementation:**
 
-- No change required to `.claude/rules/architecture.md` or `.claude/rules/game-engine.md`; this decision codifies the existing posture.
+- No change required to `.claude/rules/architecture.md` or `.claude/skills/legendary-game-engine/SKILL.md`; this decision codifies the existing posture.
 - Goodwill PRs filed under this decision should be linked from this proposal's "Citations" section as they appear, with their current upstream status noted.
 - Re-evaluation triggers (§5 signals): each is sufficient on its own to reopen the question.
 
 **Status:** Draft (proposed 2026-05-05). On acceptance: Active until superseded by a framework-migration decision or a maintainer-revival signal.
 
-**Citation:** boardgame.io [roadmap.md @ 4f3c90d](https://github.com/boardgameio/boardgame.io/blob/4f3c90df0d891f2e17f2bfafbed1bd4f4b804256/roadmap.md); [PR #1226](https://github.com/boardgameio/boardgame.io/pull/1226) (delucis comment 2025-06-21); [issue #1188](https://github.com/boardgameio/boardgame.io/issues/1188); [issue #1185](https://github.com/boardgameio/boardgame.io/issues/1185); `.claude/rules/architecture.md` (Pre-Planning Layer + Layer Boundary sections); `.claude/rules/game-engine.md` (boardgame.io Version invariant).
+**Citation:** boardgame.io [roadmap.md @ 4f3c90d](https://github.com/boardgameio/boardgame.io/blob/4f3c90df0d891f2e17f2bfafbed1bd4f4b804256/roadmap.md); [PR #1226](https://github.com/boardgameio/boardgame.io/pull/1226) (delucis comment 2025-06-21); [issue #1188](https://github.com/boardgameio/boardgame.io/issues/1188); [issue #1185](https://github.com/boardgameio/boardgame.io/issues/1185); `.claude/rules/architecture.md` (Pre-Planning Layer + Layer Boundary sections); `.claude/skills/legendary-game-engine/SKILL.md` (boardgame.io Version invariant).
 
 ---
 
@@ -199,5 +199,5 @@ Concretely:
 - Funding routes: GitHub Sponsors `https://github.com/sponsors/boardgameio` (org), OpenCollective `https://opencollective.com/boardgameio`
 - delucis profile: `https://chrisswithinbank.net/`, company `@withastro`
 - benbot profile: GitHub `@benbot`, Florida, no Sponsors page
-- LA touchpoint files: [`apps/arena-client/src/client/bgioClient.ts:33`](apps/arena-client/src/client/bgioClient.ts:33), [`packages/game-engine/src/game.ts:1`](packages/game-engine/src/game.ts:1), [`packages/game-engine/src/simulation/simulation.runner.ts`](packages/game-engine/src/simulation/simulation.runner.ts), `.claude/rules/architecture.md`, `.claude/rules/code-style.md`, `.claude/rules/persistence.md`, `.claude/rules/game-engine.md`.
+- LA touchpoint files: [`apps/arena-client/src/client/bgioClient.ts:33`](apps/arena-client/src/client/bgioClient.ts:33), [`packages/game-engine/src/game.ts:1`](packages/game-engine/src/game.ts:1), [`packages/game-engine/src/simulation/simulation.runner.ts`](packages/game-engine/src/simulation/simulation.runner.ts), `.claude/rules/architecture.md`, `.claude/rules/code-style.md`, `.claude/skills/legendary-persistence/SKILL.md`, `.claude/skills/legendary-game-engine/SKILL.md`.
 - Bounty platforms surveyed (2026-05-05): Algora (active, bounties + jobs); Polar (pivoted to AI/SaaS billing — no longer applicable); IssueHunt (active, classic GitHub-issue bounty model); GitHub Sponsors (recurring/one-time, requires sponsoree to have a profile set up).

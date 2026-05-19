@@ -22,7 +22,7 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../packages/game-engine/src/rules/schemeHandlers.ts
   - ../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
   - ../packages/game-engine/src/scheme/schemeSetup.types.ts
@@ -203,7 +203,7 @@ the handler increments by exactly 1 on threshold cross.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
   — Villain Deck & Reveal Pipeline (twist trigger emission contract);
   `G.counters` keys (`SCHEME_LOSS` constant)
 - [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-014, WP-024

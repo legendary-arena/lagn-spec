@@ -19,7 +19,7 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../packages/game-engine/src/villainDeck/villainDeck.types.ts
   - ../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
   - ../packages/game-engine/src/villainDeck/villainDeck.setup.ts
@@ -62,7 +62,7 @@ A second field, `G.villainDeckCardTypes: Record<CardExtId, RevealedCardType>`,
 holds the classification for every card in the deck. It is populated at
 **setup time** by `buildVillainDeck` from registry data, then read in
 O(1) at runtime — moves never query the registry. See
-[`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+[`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
 "Registry Boundary" for the rule.
 
 ### Classification: the 5-value closed set
@@ -117,7 +117,7 @@ happens before triggers fire:
   `mastermind-strike` go to `G.villainDeck.discard`.
 
 The full step contract is also documented inline in
-[`game-engine.md` "Villain Deck & Reveal Pipeline"](../.claude/rules/game-engine.md).
+[`game-engine.md` "Villain Deck & Reveal Pipeline"](../.claude/skills/legendary-game-engine/SKILL.md).
 
 ## Interactions
 
@@ -161,7 +161,7 @@ The full step contract is also documented inline in
   `'scheme-twist'` (hyphen) will not match the union and will silently
   prevent the trigger from firing. Drift-detection tests against
   `REVEALED_CARD_TYPES` exist specifically to catch this. See
-  [`game-engine.md` "RevealedCardType Conventions"](../.claude/rules/game-engine.md).
+  [`game-engine.md` "RevealedCardType Conventions"](../.claude/skills/legendary-game-engine/SKILL.md).
 - **Deferred deck removal (WP-015A).** Earlier versions of the move
   removed the drawn card before validating City placement. If the
   city was malformed, the card was lost permanently. The current
@@ -183,7 +183,7 @@ The full step contract is also documented inline in
 - **Reveal is start-stage only.** Calling `revealVillainCard` outside
   `G.currentStage === 'start'` returns silently — never throws.
   Moves never throw per
-  [`game-engine.md` "Move Validation Contract"](../.claude/rules/game-engine.md).
+  [`game-engine.md` "Move Validation Contract"](../.claude/skills/legendary-game-engine/SKILL.md).
 
 ## Code Touchpoints
 
@@ -210,7 +210,7 @@ The full step contract is also documented inline in
 
 ## References
 
-- [`.claude/rules/game-engine.md` "Villain Deck & Reveal Pipeline"](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md` "Villain Deck & Reveal Pipeline"](../.claude/skills/legendary-game-engine/SKILL.md)
 - [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — WP-014 review
   notes; villain-deck classification stored at setup
 - [`docs/10-GLOSSARY.md`](../docs/10-GLOSSARY.md) — `RevealedCardType`,

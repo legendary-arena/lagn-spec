@@ -150,7 +150,7 @@ These endpoints are registered by `Server({games:[LegendaryGame]})` at
 Their request and response shapes are owned by the upstream `boardgame.io`
 framework; this catalog documents them descriptively only. The CLI clients
 under `apps/server/scripts/{create-match,list-matches,join-match}.mjs` are
-the de-facto contract today (per `.claude/rules/server.md` §"CLI Scripts" —
+the de-facto contract today (per `.claude/skills/legendary-server/SKILL.md` §"CLI Scripts" —
 they are clients of the catalog, not catalog entries).
 
 | Status | Method | Path | Auth | Request Schema (file ref) | Response Schema (file ref) | Authorizing WP | Notes |
