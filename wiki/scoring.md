@@ -22,7 +22,7 @@ related:
   - board-keywords.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../packages/game-engine/src/scoring/scoring.types.ts
   - ../packages/game-engine/src/scoring/parScoring.types.ts
   - ../packages/game-engine/src/scoring/parScoring.keys.ts
@@ -235,7 +235,7 @@ future WPs per the source `// why:` comment.
   taxonomy that consumes it.
 - **Endgame.** Final scoring is end-of-match only and runs once
   `endIf` (per `evaluateEndgame` in
-  [`game-engine.md` Endgame](../.claude/rules/game-engine.md))
+  [`game-engine.md` Endgame](../.claude/skills/legendary-game-engine/SKILL.md))
   has resolved. `computeFinalScores` reads `G` without mutating it
   and never triggers endgame logic.
 - **Persistence.** `ScoreBreakdown` and `LeaderboardEntry` are the
@@ -282,7 +282,7 @@ future WPs per the source `// why:` comment.
   validation results (`ScoringConfigValidationResult`) or push
   diagnostic messages — they do not throw. Only `Game.setup()` may
   throw per
-  [`game-engine.md` Throwing Convention](../.claude/rules/game-engine.md).
+  [`game-engine.md` Throwing Convention](../.claude/skills/legendary-game-engine/SKILL.md).
 - **`computeFinalScores` is read-only.** Per the
   [10-GLOSSARY.md](../docs/10-GLOSSARY.md) entry: "reads `G` without
   mutating it. Never triggers endgame logic. Never queries the
@@ -332,7 +332,7 @@ future WPs per the source `// why:` comment.
   not duplicated in the wiki)
 - [`docs/12.1-PAR-ARTIFACT-INTEGRITY.md`](../docs/12.1-PAR-ARTIFACT-INTEGRITY.md)
   — rationale for hashing PAR artifacts
-- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
   — Throwing Convention; Endgame `endIf` contract; Move Validation
   Contract (validators return — only `Game.setup()` may throw)
 - [`.claude/rules/architecture.md`](../.claude/rules/architecture.md)

@@ -1,4 +1,8 @@
 ---
+name: legendary-server
+description: Authoritative enforcement rules for the Server layer. Apply when editing apps/server/**, wiring boardgame.io Server(), loading registry/rules at startup, defining endpoints, or questions about server-vs-engine responsibility (server wires; engine decides).
+---
+---
 paths:
   - "apps/server/**"
 ---

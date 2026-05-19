@@ -21,7 +21,7 @@
 > Migrations operate on the `legendary.*` PostgreSQL schema — they must not
 > contain game logic or modify engine state.
 > See `docs/ai/ARCHITECTURE.md — "Layer Boundary (Authoritative)"` and
-> `.claude/rules/server.md` for server-layer enforcement rules.
+> `.claude/skills/legendary-server/SKILL.md` for server-layer enforcement rules.
 
 ---
 

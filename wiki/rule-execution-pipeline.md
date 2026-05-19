@@ -21,7 +21,7 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../packages/game-engine/src/rules/ruleHooks.types.ts
   - ../packages/game-engine/src/rules/ruleRuntime.execute.ts
   - ../packages/game-engine/src/rules/ruleRuntime.effects.ts
@@ -105,7 +105,7 @@ concatenates the returned `RuleEffect[]` into a single flat array.
 Iterates the collected effects with `for...of` and applies each via
 a dedicated per-effect-type applier. **This phase never throws and
 never uses `.reduce()`** (per
-[`game-engine.md` "Rule Execution Pipeline"](../.claude/rules/game-engine.md)).
+[`game-engine.md` "Rule Execution Pipeline"](../.claude/skills/legendary-game-engine/SKILL.md)).
 
 The split is what makes the pipeline replayable, testable, and safe
 to invoke from any move that emits a trigger.
@@ -214,7 +214,7 @@ plumbing.
   Work Packet that adds replay or hot-reload must rebuild the
   implementation map from a versioned source, not deserialize it.
 - **Server.** The server does not participate in rule execution
-  ([`game-engine.md` Server Boundary](../.claude/rules/game-engine.md)).
+  ([`game-engine.md` Server Boundary](../.claude/skills/legendary-game-engine/SKILL.md)).
   All hook execution happens inside the game engine, on the
   authoritative `G`.
 
@@ -276,7 +276,7 @@ plumbing.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
   — Rule Execution Pipeline (the canonical invariant statement);
   Move Validation Contract; Throwing Convention
 - [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — Architectural

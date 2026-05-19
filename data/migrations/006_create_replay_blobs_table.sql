@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS legendary.replay_blobs (
 
     -- why: replay_input is jsonb (not bytea, text, or json).
     -- ReplayInput is JSON-serializable by contract (Class 2
-    -- Configuration per .claude/rules/persistence.md); jsonb
+    -- Configuration per .claude/skills/legendary-persistence/SKILL.md); jsonb
     -- preserves shape queryability for future audit / analytics
     -- use cases without manual parsing overhead. bytea would lose
     -- shape; text would require a manual deserialization call on

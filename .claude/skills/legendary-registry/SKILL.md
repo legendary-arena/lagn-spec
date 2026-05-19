@@ -1,4 +1,8 @@
 ---
+name: legendary-registry
+description: Authoritative enforcement rules for the Registry layer. Apply when editing packages/registry/**, loading or validating card/metadata JSON, defining Zod schemas, exposing CardRegistry, or questions about registry→engine data flow at setup time.
+---
+---
 paths:
   - "packages/registry/**"
   - "data/**"

@@ -122,7 +122,7 @@ For each WP:
 - Verify `.claude/CLAUDE.md` Lint Gate references are accurate
 - Verify the Debuggability invariant is enforced across three layers:
   - `docs/ai/ARCHITECTURE.md` (invariant)
-  - `.claude/rules/game-engine.md` (runtime enforcement)
+  - `.claude/skills/legendary-game-engine/SKILL.md` (runtime enforcement)
   - `docs/ai/work-packets/PACKET-TEMPLATE.md` (template section)
 - Identify any drift between rules files and WP content
 

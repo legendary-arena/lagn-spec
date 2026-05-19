@@ -21,7 +21,7 @@
 > This prompt produces **server-layer** code only (wiring, startup, process
 > lifecycle). It must not contain game logic, define moves, or mutate `G`.
 > See `docs/ai/ARCHITECTURE.md — "Layer Boundary (Authoritative)"` and
-> `.claude/rules/server.md` for server-layer enforcement rules.
+> `.claude/skills/legendary-server/SKILL.md` for server-layer enforcement rules.
 
 ---
 

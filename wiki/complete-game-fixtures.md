@@ -588,7 +588,7 @@ Catch them at PR review:
   WP extends the harness.
 - **Ignoring stage gating.** Moves dispatched in the wrong
   stage silently no-op (per the engine's
-  [move validation contract](../.claude/rules/game-engine.md)).
+  [move validation contract](../.claude/skills/legendary-game-engine/SKILL.md)).
   The fixture parses fine and runs; the trajectory oracle
   catches the missing effect later. Always sequence
   `advanceStage` correctly:

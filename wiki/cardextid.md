@@ -21,9 +21,9 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../.claude/rules/architecture.md
-  - ../.claude/rules/registry.md
+  - ../.claude/skills/legendary-registry/SKILL.md
   - ../packages/game-engine/src/state/zones.types.ts
   - ../packages/game-engine/src/matchSetup.types.ts
   - ../docs/ai/ARCHITECTURE.md
@@ -100,7 +100,7 @@ header carries the rationale:
 > already owns.
 
 This is enforced by
-[`game-engine.md` "Zone Mutation Rules"](../.claude/rules/game-engine.md):
+[`game-engine.md` "Zone Mutation Rules"](../.claude/skills/legendary-game-engine/SKILL.md):
 
 - Zones contain `CardExtId` strings only — never card objects,
   metadata, or DB IDs
@@ -140,7 +140,7 @@ Setup-time builders receive the registry as a function argument and
 resolve IDs once, storing per-card maps like `G.cardStats` and
 `G.cardKeywords` that moves can read in O(1) without ever touching
 the registry again. Per
-[`game-engine.md` "Registry Boundary"](../.claude/rules/game-engine.md):
+[`game-engine.md` "Registry Boundary"](../.claude/skills/legendary-game-engine/SKILL.md):
 *"setup resolves, moves operate on resolved data."*
 
 ## Interactions
@@ -224,11 +224,11 @@ the registry again. Per
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
   — Registry Boundary; Zone Mutation Rules
 - [`.claude/rules/architecture.md`](../.claude/rules/architecture.md)
   — Zone Contents (CardExtId-only invariant)
-- [`.claude/rules/registry.md`](../.claude/rules/registry.md)
+- [`.claude/skills/legendary-registry/SKILL.md`](../.claude/skills/legendary-registry/SKILL.md)
   — Card Data Locations; Card Field Data Quality
 - [`docs/ai/ARCHITECTURE.md`](../docs/ai/ARCHITECTURE.md) — Layer
   Boundary; Persistence Boundary; WP-006A / WP-113 review notes

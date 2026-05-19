@@ -238,12 +238,12 @@ corresponding `.claude/rules/*.md` files.
 
 | Layer | Package / Path | Role | Claude Enforcement |
 |---|---|---|---|
-| Registry | `packages/registry/**` | Card data loading & validation | `.claude/rules/registry.md` |
-| Game Engine | `packages/game-engine/**` | Gameplay rules & state transitions | `.claude/rules/game-engine.md` |
+| Registry | `packages/registry/**` | Card data loading & validation | `.claude/skills/legendary-registry/SKILL.md` |
+| Game Engine | `packages/game-engine/**` | Gameplay rules & state transitions | `.claude/skills/legendary-game-engine/SKILL.md` |
 | Pre-Planning | `packages/preplan/**` | Speculative planning for waiting players (non-authoritative) | `DESIGN-PREPLANNING.md` |
-| Server | `apps/server/**` | Wiring, startup, networking | `.claude/rules/server.md` |
+| Server | `apps/server/**` | Wiring, startup, networking | `.claude/skills/legendary-server/SKILL.md` |
 | Shared Tooling (cross-cutting, test/build only) | `packages/vue-sfc-loader/**` (and future test/build packages) | Dev- and test-time transforms consumed only by `apps/*` test scripts or local tooling; never imported by production code | (enforcement follows the rules in this section; a dedicated `.claude/rules/shared-tooling.md` may be added later when a second tooling package lands) |
-| Persistence (cross-cutting) | engine / app boundary | Data lifecycle & storage rules | `.claude/rules/persistence.md` |
+| Persistence (cross-cutting) | engine / app boundary | Data lifecycle & storage rules | `.claude/skills/legendary-persistence/SKILL.md` |
 
 Each layer depends **only downward**. No layer may reach upward or sideways.
 The Shared Tooling layer is **orthogonal** to the main dependency chain —

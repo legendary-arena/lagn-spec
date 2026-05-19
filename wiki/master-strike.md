@@ -20,7 +20,7 @@ related:
   - scoring.md
 status: canonical
 source:
-  - ../.claude/rules/game-engine.md
+  - ../.claude/skills/legendary-game-engine/SKILL.md
   - ../packages/game-engine/src/rules/mastermindHandlers.ts
   - ../packages/game-engine/src/villainDeck/villainDeck.reveal.ts
   - ../packages/game-engine/src/mastermind/mastermind.types.ts
@@ -115,7 +115,7 @@ share the same Mastermind entity.
   fails to match the union and prevents the trigger from firing.
   Drift-detection tests against `REVEALED_CARD_TYPES` exist to catch
   this. See
-  [`game-engine.md` "RevealedCardType Conventions"](../.claude/rules/game-engine.md).
+  [`game-engine.md` "RevealedCardType Conventions"](../.claude/skills/legendary-game-engine/SKILL.md).
 - **Tabletop tactic effects do not fire in MVP.** Marvel Legendary's
   printed rules specify that the Mastermind plays its current tactic
   on a Strike (e.g., "Each player gains a Wound"). The MVP handler
@@ -159,7 +159,7 @@ share the same Mastermind entity.
 
 ## References
 
-- [`.claude/rules/game-engine.md`](../.claude/rules/game-engine.md)
+- [`.claude/skills/legendary-game-engine/SKILL.md`](../.claude/skills/legendary-game-engine/SKILL.md)
   — Villain Deck & Reveal Pipeline (strike trigger emission contract);
   `G.counters` keys (`MASTERMIND_DEFEATED` victory counter, distinct
   from strike count)

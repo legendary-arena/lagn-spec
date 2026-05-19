@@ -35,13 +35,13 @@ they are not real categories.
 
 | ID | Category | Primary location | Enforcement |
 |---|---|---|---|
-| `framework` | Framework / Orchestration | `game.ts`, phase hooks, move map | `.claude/rules/game-engine.md` |
-| `engine` | Game Engine / Rules Core | `packages/game-engine/src/rules/`, `src/hero/`, `src/economy/`, `src/board/` | `.claude/rules/game-engine.md` |
-| `setup` | Setup-Time Builders | `packages/game-engine/src/setup/` | `.claude/rules/game-engine.md` |
-| `moves` | Move Implementations | `packages/game-engine/src/moves/` | `.claude/rules/game-engine.md` |
-| `data-input` | Data Input / Registry | `packages/registry/`, `data/` | `.claude/rules/registry.md` |
+| `framework` | Framework / Orchestration | `game.ts`, phase hooks, move map | `.claude/skills/legendary-game-engine/SKILL.md` |
+| `engine` | Game Engine / Rules Core | `packages/game-engine/src/rules/`, `src/hero/`, `src/economy/`, `src/board/` | `.claude/skills/legendary-game-engine/SKILL.md` |
+| `setup` | Setup-Time Builders | `packages/game-engine/src/setup/` | `.claude/skills/legendary-game-engine/SKILL.md` |
+| `moves` | Move Implementations | `packages/game-engine/src/moves/` | `.claude/skills/legendary-game-engine/SKILL.md` |
+| `data-input` | Data Input / Registry | `packages/registry/`, `data/` | `.claude/skills/legendary-registry/SKILL.md` |
 | `preplan` | Pre-Planning (Non-Authoritative, Per-Client) | `packages/preplan/` | `docs/ai/DESIGN-PREPLANNING.md`, `.claude/rules/architecture.md` §Pre-Planning Layer |
-| `server` | Server / Persistence | `apps/server/` | `.claude/rules/server.md`, `.claude/rules/persistence.md` |
+| `server` | Server / Persistence | `apps/server/` | `.claude/skills/legendary-server/SKILL.md`, `.claude/skills/legendary-persistence/SKILL.md` |
 | `client-app` | Client App | `apps/arena-client/` | `docs/ai/ARCHITECTURE.md` §Layer Boundary (D-6511) |
 | `cli-producer-app` | CLI Producer App | `apps/replay-producer/` | `docs/ai/ARCHITECTURE.md` §Layer Boundary (D-6301) |
 | `docs-app` | Documentation / Reference Viewer App | `apps/registry-viewer/`, `apps/wiki-viewer/` | `docs/ai/DECISIONS.md` D-13807 |
