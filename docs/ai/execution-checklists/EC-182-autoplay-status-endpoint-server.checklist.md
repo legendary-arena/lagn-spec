@@ -14,7 +14,9 @@
 - Handler reuses `handlePlaybackRequest(koaContext, (controller) => { koaContext.body = buildResponse(controller); })`
 - `200` envelope: `{ ok: true, paused, historyLength, cursor, mode }` — NO `uiState` (status is metadata only)
 - `404` envelope: the not-found shape `handlePlaybackRequest` already returns (`{ ok: false, paused: false, historyLength: 0, cursor: -1, mode: 'live', error }`)
-- `mode` read only from `controller.getMode()` (D-16304)
+- `mode` read only from `controller.getMode()` (D-16304); closed set `'live' | 'paused'` — there is NO `'rewind'` value (rewound = client-side `cursor < historyLength - 1`, owned by WP-164)
+- `error` is a full sentence (00.6 Rule 11), e.g. `'No autoplay match is running for the requested match id.'`
+- Fresh controller (registered, no snapshot yet) → `{ historyLength: 0, cursor: -1, mode: 'live' }`; after the first snapshot `historyLength >= 1`. `200` ⇒ autoplay match regardless of `historyLength`
 - API catalog row: `Status: Wired`, `Auth: guest` (D-11804)
 
 ## Guardrails
@@ -24,13 +26,14 @@
 - No new controller state, no persistence, no `uiState` on the status response
 - The six POST control routes are NOT modified (WP-163 surface unchanged)
 - Controller-not-found (incl. a torn-down post-game controller, D-16308) → `404`, never a fabricated envelope
+- Exposes controller state only — no client-specific logic; bar gating, rewound-ness, and the transient-404 retry are owned by WP-164
 
 ## Required `// why:` Comments
 - `handleAutoplayStatusRequest` — read-only status probe; reuses the POST handlers' 404/500 wrapper but performs no mutation (D-16501)
 
 ## Files to Produce
 - `apps/server/src/autoplay/autoplay.mjs` — **modified** — export `handleAutoplayStatusRequest`; register `router.get('/api/match/autoplay/:matchId/status', …)`
-- `apps/server/src/autoplay/autoplayStatus.test.ts` — **new** — `200` envelope (no `uiState`); `404` on unknown matchId; no-mutation invariant (cursor/paused unchanged across a status call)
+- `apps/server/src/autoplay/autoplayStatus.test.ts` — **new** — covers: `200` envelope (no `uiState`); `404` on unknown matchId; **no-mutation** (`cursor`, `paused`, `historyLength`, `getActiveDelay()`, and `mode` all unchanged across a status call); status reflects `pause()` (`paused === true`); status after `stepBack()` (`paused === true` AND `cursor < historyLength - 1`); status after `resume()` (`mode === 'live'`); **lifecycle** — a controller removed from the map (match end) returns `404`
 - `docs/ai/REFERENCE/api-endpoints.md` — **modified** — one new whole row (D-11804), `Wired` / `guest`
 - `docs/ai/DECISIONS.md` — **modified** — flip D-16501 Drafted → Active
 - `docs/ai/STATUS.md` / `docs/ai/work-packets/WORK_INDEX.md` / `docs/ai/execution-checklists/EC_INDEX.md` / `docs/05-ROADMAP-MINDMAP.md` — **modified** — close WP-165 / EC-182
@@ -47,4 +50,5 @@
 - Status call changes cursor/paused → handler is not read-only (called a mutating method)
 - `404` returns a fabricated `paused:true`/non-zero envelope → not reusing `handlePlaybackRequest`'s not-found shape
 - `uiState` present on a status response → status must be metadata only
+- `mode` is a value other than `'live'` / `'paused'` (e.g. `'rewind'`) → recomputed or invented instead of read from `getMode()`
 - POST count drifts from 6 → a control route was accidentally touched

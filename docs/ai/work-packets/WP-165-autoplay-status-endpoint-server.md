@@ -110,12 +110,56 @@ boundary, and a new server endpoint belongs in a server WP.
   status carries metadata only). `mode` is read only from `controller.getMode()`
   (D-16304).
 - **`404`** when no controller is registered: returns `{ ok: false, paused:
-  false, historyLength: 0, cursor: -1, mode: 'live', error: <sentence> }` — the
-  same not-found envelope the POST handlers return via `handlePlaybackRequest`.
+  false, historyLength: 0, cursor: -1, mode: 'live', error: 'No autoplay match
+  is running for the requested match id.' }` — the same not-found envelope the
+  POST handlers return via `handlePlaybackRequest`. `error` is a full sentence
+  (00.6 Rule 11).
 - **`500`** on unexpected fault: the standardized error envelope.
 - **Read-only:** the handler never calls `pause` / `resume` / `step*` /
   `restart` / `goToEnd` / `pushState`; controller state is identical before and
   after a status call.
+
+### Response type
+
+```ts
+type AutoplayStatusResponse = {
+  ok: boolean;
+  paused: boolean;
+  historyLength: number;
+  cursor: number;
+  mode: 'live' | 'paused';   // closed set — see Mode Semantics
+  error?: string;            // full-sentence message on non-200 (00.6 Rule 11)
+};
+```
+
+The status response carries **no `uiState`** — it is metadata only (the control
+endpoints, not status, deliver rewind frames).
+
+### Mode Semantics (Locked)
+
+- `mode` is a closed set: **`'live' | 'paused'`** (D-16304, as built by WP-163).
+  There is **no `'rewind'` mode value.**
+  - `'paused'` ⇔ the bot loop is gated (`controller.isPaused()`).
+  - `'live'` ⇔ the loop is free-running.
+- `mode` is computed inside `PlaybackController.getMode()` and exposed verbatim;
+  the status endpoint MUST NOT recompute or reinterpret it.
+- "Viewing history" (rewound) is **not** a `mode` value — it is the client-side
+  derived predicate `cursor < historyLength - 1` (owned by WP-164). The server
+  reports `cursor` / `historyLength`; the client derives rewound-ness.
+
+<!-- why: locks the cross-WP contract so WP-163 (producer), WP-165 (reporter),
+and WP-164 (consumer) cannot drift on what `mode` means. -->
+
+### Fresh-controller / empty-history semantics
+
+- A controller is registered the instant `runBotMatch` starts, **before** its
+  first snapshot. A status call in that window returns `{ ok: true, paused:
+  false, historyLength: 0, cursor: -1, mode: 'live' }` — a valid "autoplay match
+  exists, no snapshot yet" state, **not** a broken match.
+- After the first recorded snapshot (D-16302 corollary — taken before the first
+  pause gate) `historyLength >= 1` and `cursor === historyLength - 1`.
+- `200` means "this is an autoplay match" **regardless of `historyLength`**; the
+  client shows the bar (controls disabled until history accrues).
 
 ### Client gating contract (consumed by WP-164)
 
@@ -123,6 +167,12 @@ boundary, and a new server endpoint belongs in a server WP.
   initial `paused` / `cursor` / `historyLength` / `mode` from this response.
 - `404` ⇒ not an autoplay match (or the match has ended and the controller was
   torn down per D-16308): WP-164 hides the control bar.
+- **Transient 404 during init:** `runBotMatch` registers the controller
+  asynchronously *after* the autoplay-create endpoint returns the `matchId`, so a
+  status call issued immediately after navigation MAY `404` before the controller
+  exists. The client (WP-164) MUST retry once after a short delay and treat only
+  a **persistent** `404` as "not an autoplay match." WP-165 itself reports
+  current state only — it does not retry, block, or pre-create a controller.
 
 ### API Catalog row (D-11804)
 
@@ -141,6 +191,10 @@ One new whole row in `docs/ai/REFERENCE/api-endpoints.md`: `Status: Wired`,
   do not duplicate the 404/500 logic.
 - `mode` is read only from `controller.getMode()` — never recomputed.
 - No persistence; status reads the in-memory controller only.
+- The endpoint exposes controller state only; it MUST NOT infer, embed, or
+  branch on client-specific logic. Interpretation (bar gating, rewound-ness,
+  the transient-404 retry) is owned by WP-164. // why: the server is a state
+  provider, not a UI coordinator.
 
 ---
 
@@ -163,9 +217,10 @@ pnpm -r build
 pnpm --filter @legendary-arena/server test
 #    → autoplayStatus.test.ts passes (200 envelope, 404, read-only invariant)
 
-# 2. Exactly one GET status route
+# 2. Exactly one GET status route registration (matches the router.get(...)
+#    call, not a comment or a bare path string elsewhere)
 rg -n "router\.get\('/api/match/autoplay/:matchId/status'" apps/server/src/autoplay/autoplay.mjs
-#    → exactly 1 match
+#    → exactly 1 match (the route registration)
 
 # 3. Six POST control routes still present (WP-163 unchanged)
 rg -c "router\.post\('/api/match/autoplay/:matchId/" apps/server/src/autoplay/autoplay.mjs
