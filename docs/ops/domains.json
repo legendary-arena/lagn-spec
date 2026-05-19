@@ -10,6 +10,7 @@
       "host": "Cloudflare Pages (redirect rule)",
       "source": "redirect rule -> www.legendary-arena.com",
       "expectedStatus": [301, 302, 308],
+      "expectedLocation": "https://www.legendary-arena.com/",
       "state": "live",
       "anchor": "apex",
       "notes": "Apex redirects to www via a zone-level Cloudflare Redirect Rule on the legendary-arena.com zone (Rules -> Redirect Rules), NOT via Pages _redirects (CF Pages does not support full-URL source patterns in _redirects). Direction is locked: apex -> www. Live since 2026-05-09 (WP-006 lock)."
@@ -59,9 +60,10 @@
       "host": "Render Static Site + Cloudflare Access",
       "source": "apps/wiki-viewer (Hugo build of docs/wiki/)",
       "expectedStatus": [302, 401, 403],
+      "expectedLocation": "https://legendary-arena.cloudflareaccess.com/",
       "state": "live",
       "anchor": "ewiki",
-      "notes": "Live since 2026-05-08. Cloudflare Access redirects unauthenticated probes to login (302) or rejects them (401/403). A 200 here means the gate is misconfigured and the private wiki is publicly readable."
+      "notes": "Live since 2026-05-08. Cloudflare Access redirects unauthenticated probes to login (302) or rejects them (401/403). A 200 here means the gate is misconfigured and the private wiki is publicly readable. expectedLocation is a prefix; the Access login URL appends a long JWT in the query string that varies per request."
     },
     {
       "name": "Legends scoreboard (public attract board)",

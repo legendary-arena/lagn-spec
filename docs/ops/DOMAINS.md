@@ -59,6 +59,10 @@ a Pages-hosted marketing site is apex → www, with the apex configured as a
 Cloudflare redirect rule rather than a separate Pages project.
 
 Healthy response: `301`, `302`, or `308` to `https://www.legendary-arena.com/`.
+The redirect target is enforced by the probe via `expectedLocation` in
+[domains.json](./domains.json) — a redirect to anywhere else (wrong host,
+HTTP downgrade, redirect loop) fails the row even when the status code is
+in range.
 
 Depends on: nothing. No app config consumes the apex hostname.
 
@@ -158,6 +162,10 @@ that confuses anyone who clicks it.
 **Healthy response (unauthenticated):** `302` to a `*.cloudflareaccess.com`
 login URL, or `401`/`403`. **A `200` here is a failure** — it means the
 Access policy is missing and the engineering wiki is publicly readable.
+The redirect target is enforced by the probe via `expectedLocation:
+"https://legendary-arena.cloudflareaccess.com/"` in
+[domains.json](./domains.json) — a `302` to anywhere else (e.g., the
+Render origin's default page, or a misconfigured proxy) fails the row.
 
 **Configure the Cloudflare Access policy before attaching the custom domain.**
 If the custom domain is attached before the Access policy exists, there is a
@@ -352,7 +360,14 @@ escalate to the BarefootBetters image-bucket owner.
 
 1. Add an entry to [`domains.json`](./domains.json) with all required fields:
    `name`, `url`, `host`, `source`, `expectedStatus`, `state`, `anchor`. Add
-   `notes` if anything is non-obvious.
+   `notes` if anything is non-obvious. Optional fields:
+   - `expectedLocation` — string, validated as a **prefix** against the
+     response's `Location` header on any 30x response. Use when the
+     entry's correctness depends on *where* the redirect points (apex
+     canonicalization, Cloudflare Access gates), not just the status
+     code. A mismatch downgrades the verdict from `OK` to `FAIL` and
+     prints `redirect mismatch: expected prefix "…", got "…"` inline.
+     Omit when the redirect target is informational only.
 2. Add a section to this file with the matching anchor (lowercase, hyphenated).
 3. If the new subdomain is consumed by `apps/server` (e.g., a new client
    origin), add it to the server's CORS allowlist in the same change.

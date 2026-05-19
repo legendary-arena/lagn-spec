@@ -585,8 +585,29 @@ async function checkBoardgameioServer() {
       return;
     }
 
+    // why: a status-only health check accepts a CDN cache page, a reverse-
+    // proxy default page, or a half-booted process returning a stale 200.
+    // The real /health route in apps/server returns JSON ({"status":"ok"})
+    // so a non-JSON or empty body indicates we are not hitting the service
+    // we think we are. Tolerant content-type prefix match — Express may
+    // emit `application/json; charset=utf-8`.
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.startsWith('application/json')) {
+      recordResult('CONNECTIONS', 'boardgame.io server', false,
+        `${HEALTH_CHECK_PATH} returned HTTP ${response.status} but Content-Type was "${contentType}" (expected application/json). A CDN cache page or reverse-proxy default page may be intercepting the request.`,
+        `Verify GAME_SERVER_URL points at the Render service origin, not a CDN edge. Check ${RENDER_DASHBOARD_URL}`);
+      return;
+    }
+    const bodyText = await response.text();
+    if (bodyText.length === 0) {
+      recordResult('CONNECTIONS', 'boardgame.io server', false,
+        `${HEALTH_CHECK_PATH} returned HTTP ${response.status} with Content-Type "${contentType}" but an empty body. The service may be half-booted or fronted by a misconfigured proxy.`,
+        `Check ${RENDER_DASHBOARD_URL} for the service's recent boot logs.`);
+      return;
+    }
+
     recordResult('CONNECTIONS', 'boardgame.io server', true,
-      `${HEALTH_CHECK_PATH} → ${response.status} OK  (${elapsedMilliseconds}ms)`);
+      `${HEALTH_CHECK_PATH} → ${response.status} ${contentType.split(';')[0]} ${bodyText.length}B  (${elapsedMilliseconds}ms)`);
   } catch (fetchError) {
     recordResult('CONNECTIONS', 'boardgame.io server', false,
       `Connection failed: ${fetchError.message}`,

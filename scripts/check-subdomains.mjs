@@ -276,23 +276,55 @@ function formatDiagnosisLines(diagnosis) {
 }
 
 /**
+ * Decide whether a 30x response's Location matches the entry's
+ * `expectedLocation` prefix. Used to catch apex-canonicalization
+ * misroutes (wrong host, wrong scheme, redirect loops).
+ *
+ * Semantics:
+ * - If the entry does not declare `expectedLocation`, the redirect target
+ *   is informational only and any Location passes.
+ * - If `expectedLocation` is present, the response's `Location` header
+ *   must start with that string (prefix match). Prefix instead of exact
+ *   lets a 302 to `…/` pass even if the origin returns `…/some-path`,
+ *   while still catching wrong host or wrong scheme.
+ * - If `expectedLocation` is present but the response has no `Location`,
+ *   the redirect-target check fails.
+ *
+ * @param {object} entry - manifest entry
+ * @param {{ status: number | null, location: string | null }} probeResult
+ * @returns {boolean} true if there is no declared expectation, OR the
+ *   expectation is satisfied.
+ */
+function isLocationHealthy(entry, probeResult) {
+  if (typeof entry.expectedLocation !== 'string') {
+    return true;
+  }
+  if (probeResult.location === null) {
+    return false;
+  }
+  return probeResult.location.startsWith(entry.expectedLocation);
+}
+
+/**
  * Classify a probe result against the entry's declared state.
  *
  * @param {object} entry - manifest entry
- * @param {{ status: number | null, errorMessage: string | null }} probeResult
+ * @param {{ status: number | null, errorMessage: string | null, location: string | null }} probeResult
  * @returns {'OK' | 'PENDING' | 'READY' | 'FAIL'}
  */
 function classifyVerdict(entry, probeResult) {
   const isNetworkFailure = probeResult.status === null;
   const isStatusMatch = !isNetworkFailure && isStatusHealthy(probeResult.status, entry.expectedStatus);
+  const isLocationMatch = isLocationHealthy(entry, probeResult);
+  const isHealthy = isStatusMatch && isLocationMatch;
 
   if (entry.state === 'live') {
-    return isStatusMatch ? 'OK' : 'FAIL';
+    return isHealthy ? 'OK' : 'FAIL';
   }
 
   // state === 'planned' (or any non-live state — planned is the only one defined today)
   if (isNetworkFailure) return 'PENDING';
-  if (isStatusMatch) return 'READY';
+  if (isHealthy) return 'READY';
   return 'FAIL';
 }
 
@@ -382,6 +414,19 @@ async function probeAllEntries(entries, liveOnly) {
       readyCount += 1;
       console.log(`        hint:    DNS resolves and probe is healthy. Flip "state" to "live" in ${MANIFEST_RELATIVE_PATH}.`);
     } else if (verdict === 'FAIL') {
+      // why: redirect-target mismatch is the cheapest failure to diagnose
+      // — print the expected vs actual prefix before the runbook anchor so
+      // the operator does not have to chase a misroute through DOMAINS.md.
+      if (
+        typeof entry.expectedLocation === 'string'
+        && probeResult.status !== null
+        && !isLocationHealthy(entry, probeResult)
+      ) {
+        const actualText = probeResult.location === null
+          ? '[no Location header]'
+          : probeResult.location;
+        console.log(`        redirect mismatch: expected prefix "${entry.expectedLocation}", got "${actualText}"`);
+      }
       console.log(`        runbook: ${RUNBOOK_RELATIVE_PATH}#${entry.anchor}`);
       if (entry.notes) {
         console.log(`        note:    ${entry.notes}`);
