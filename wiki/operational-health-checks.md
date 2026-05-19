@@ -57,7 +57,7 @@ that fixes it.
 | TOOLS | `zod` | Installed in some workspace's `node_modules` |
 | TOOLS | `pnpm lockfile` | `pnpm install --frozen-lockfile --offline` succeeds — catches the `ERR_PNPM_OUTDATED_LOCKFILE` drift that breaks CF Pages deploys |
 | CONNECTIONS | `PostgreSQL` | `DATABASE_URL` resolves; `SELECT current_database(), version()` returns; optional `EXPECTED_DB_NAME` match |
-| CONNECTIONS | `boardgame.io server` | `GAME_SERVER_URL/health` returns HTTP 200 |
+| CONNECTIONS | `boardgame.io server` | `GAME_SERVER_URL/health` returns HTTP 200 AND `Content-Type` starts with `application/json` AND body is non-empty. Catches a CDN cache page or reverse-proxy default page returning a stale 200 in place of the real route. |
 | CONNECTIONS | `Cloudflare R2` | `R2_PUBLIC_URL/metadata/sets.json` returns HTTP 200; 403s are diagnosed by header inspection (edge bot rule vs Super Bot Fight Mode vs R2 backend) |
 | CONNECTIONS | `Cloudflare R2 CORS` | `OPTIONS R2_PUBLIC_URL/metadata/sets.json` from the arena-client origin returns an allow-origin header that matches. Recorded as a **warning**, not a failure — the SPA currently consumes R2 assets via `<img>` (which bypasses CORS); promote to failure when any code path `fetch()`es an R2 asset |
 | CONNECTIONS | `Cloudflare Pages` | `CF_PAGES_URL` (registry-viewer project) returns HTTP 200; same three-layer 403 diagnosis as R2 |
@@ -139,6 +139,18 @@ error (manifest unreadable, JSON parse failure).
   `location:` sub-line with the redirect target. This catches
   apex-canonicalization misroutes (wrong host, wrong scheme,
   redirect loops) that are invisible if you only check status.
+- **`expectedLocation` enforcement.** When a manifest entry declares
+  an optional `expectedLocation` string, the probe asserts the
+  response's `Location` header **starts with** that value. A
+  mismatch downgrades the verdict from `OK` to `FAIL` and prints
+  `redirect mismatch: expected prefix "…", got "…"` inline. Used
+  today on the apex entry (target `https://www.legendary-arena.com/`)
+  and the ewiki entry (target `https://legendary-arena.cloudflareaccess.com/`).
+  Prefix-match keeps the field robust against query-string variation
+  (the Cloudflare Access login URL embeds a per-request JWT) while
+  still catching wrong host, HTTP downgrade, or redirect-to-default-
+  page misconfigurations. Documented in
+  [`docs/ops/DOMAINS.md §Adding a new subdomain`](../docs/ops/DOMAINS.md#adding-a-new-subdomain).
 - **DNS + TLS diagnosis on FAIL and PENDING.** Failed and pending
   rows trigger a parallel DNS (`A` + `AAAA` via `node:dns/promises`)
   and TLS handshake (`node:tls` with SNI set to the probed
@@ -164,9 +176,14 @@ Both scripts were run from
 [`C:\pcloud\BB\DEV\legendary-arena\`](../) (the only checkout with a
 populated `.env`) against the worktree's copy of each script
 (`claude/nostalgic-bouman-bab6e8`), which now contains the
-2026-05-19 enhancements (R2 CORS warning, SPA origin defaulted to
-`play.legendary-arena.com`, structured error codes, Location header
-on every 30x row, DNS + TLS diagnosis on FAIL / PENDING rows).
+2026-05-19 enhancements:
+- R2 CORS warning row
+- SPA origin defaulted to `play.legendary-arena.com`
+- Structured error codes in probe failures
+- Location header on every 30x row
+- `expectedLocation` prefix enforcement (apex + ewiki)
+- DNS + TLS diagnosis on FAIL / PENDING rows
+- `/health` content-type + body-length validation
 
 `pnpm check`:
 
@@ -199,7 +216,7 @@ CONNECTIONS (concurrent)
   ✓ Cloudflare R2 CORS : https://data.barefootbetters.com/metadata/sets.json allows Origin=https://play.legendary-arena.com  (HTTP 204, 138ms)
   ✓ PostgreSQL : legendary_arena — PostgreSQL 18.3  (232ms)
   ✓ Cloudflare R2 : metadata/sets.json → 200 application/json  (197ms)
-  ✓ boardgame.io server : /health → 200 OK  (293ms)
+  ✓ boardgame.io server : /health → 200 application/json 15B  (310ms)
   ✓ Cloudflare Pages : https://cards.barefootbetters.com → 200  (301ms)
   ✓ API server CORS : https://legendary-arena-server.onrender.com/api/me/profile allows Origin=https://play.legendary-arena.com  (HTTP 204, 335ms)
   ✓ Arena-client bundle env : https://play.legendary-arena.com/assets/index-BaZEBP-t.js has all required VITE_* env vars inlined.
@@ -355,7 +372,17 @@ fails the same way, ruling out half-provisioned states.
   string. The script prints the full URL — that's the right
   default for diagnostics (the JWT is short-lived and reveals no
   secrets), but it dominates the output line. Don't conflate this
-  with a probe failure; the verdict tag is `[OK]`.
+  with a probe failure; the verdict tag is `[OK]`. The
+  `expectedLocation: "https://legendary-arena.cloudflareaccess.com/"`
+  prefix in the manifest deliberately stops short of the JWT so
+  every per-request token matches.
+- **`expectedLocation` is opt-in per entry.** Most manifest rows do
+  not declare `expectedLocation`, so the script's `Location` print
+  is purely informational on those rows. Add `expectedLocation` to
+  any entry whose correctness depends on *where* the redirect points
+  (not just the status code). See
+  [`docs/ops/DOMAINS.md §Adding a new subdomain`](../docs/ops/DOMAINS.md#adding-a-new-subdomain)
+  for the schema.
 
 ## Code Touchpoints
 
