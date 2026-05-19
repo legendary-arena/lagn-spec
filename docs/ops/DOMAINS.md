@@ -243,7 +243,7 @@ Depends on (server-side runtime):
 - **Stripe webhook endpoint URL** points at the API and CAN be updated to `https://api.legendary-arena.com/<webhook-path>` now. It's optional — both hostnames serve the same routes during the dual-running window. Prefer the friendly hostname for any new webhook configs.
 - **Hanko allowed origins / audience** — only matters when a client at a new origin calls Hanko. Update when adding new client origins (e.g., `play.`), not when the API hostname changes.
 - **Server CORS allowlist** — update when adding new client origins, same reason.
-- **arena-client's `VITE_API_BASE_URL`** — there is no arena-client deploy yet, so nothing to update.
+- **arena-client's `VITE_API_BASE_URL`** — **shipped by WP-161 (2026-05-18).** Must be set to `https://api.legendary-arena.com` in the CF Pages `legendary-arena-play` project's Production env vars. Without it, all `/api/me/*` fetches resolve to `pages.dev/api/…` and hang. Validated post-deploy by `pnpm check` → "Arena-client bundle env" probe.
 
 ### images
 **`images.barefootbetters.com`** — card image CDN.
