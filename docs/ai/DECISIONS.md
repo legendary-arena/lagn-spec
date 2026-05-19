@@ -17524,4 +17524,148 @@ Authentication).
 
 ---
 
+### D-16301 — Single cursor-write site; live broadcast wins (WP-163)
+
+**Decision:** In the autoplay playback controller (`apps/server/src/autoplay/playbackController.mjs`), `pushState()` is the sole writer of the `cursor` field. Every real-move boundary in `runBotMatch` calls `pushState()`, which appends the new `PlaybackStateSnapshot` and resets `cursor` to the live edge (`stateHistory.length - 1`). No endpoint handler and no external caller writes `cursor` directly. The live Socket.IO broadcast always wins over a REST rewind response — a rewind is a transient client-side overlay, not a competing source of truth.
+
+**Rationale.** A single reconciliation site is the cheapest possible guarantee against cursor/history drift: if only `pushState` moves the live edge, the cursor can never point past the buffer or disagree with the broadcast. Spreading cursor writes across the six endpoints would create six places to keep consistent.
+
+**Rejected alternatives:**
+- **Let each endpoint set `cursor` directly.** Rejected — N writers means N drift sources; reconciling them needs invariants that one write-site makes unnecessary.
+- **Make rewind a second broadcast that mutates shared state.** Rejected — see D-16303; that path desyncs spectators.
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
+### D-16302 — Cursor-based history, capped at 100; StepForwardResult union (WP-163)
+
+**Decision:** Playback history is **cursor-based**, not pop-based: snapshots accumulate in `stateHistory` (capped at `maxHistory = 100`, oldest dropped) and a `cursor` index selects the currently-viewed entry. `stepForward()` returns a `StepForwardResult` discriminated union — `{ type: 'cursor'; snapshot }` when the cursor is behind the live edge (advance cursor, no real move), or `{ type: 'live-move' }` when the cursor is at the live edge (release the pause gate for exactly one real move; the branch does not itself call `submitMove`). An initial `pushState` is taken before the first `waitIfPaused()` gate, so history length is `>= 1` before any pause is possible.
+
+**Rationale.** Cursor-based history lets a viewer scrub backward and forward without destroying buffered states (pop-based history loses everything past the cursor). The discriminated union cleanly separates the two meanings of "forward": move the view over already-captured history versus let the bot produce one new move. The initial-push rule removes the empty-history edge case from every endpoint.
+
+**Rejected alternatives:**
+- **Pop-based history (discard on rewind).** Rejected at first review — re-stepping forward after a rewind would have nothing to show.
+- **A boolean `stepForward()` return.** Rejected — callers could not distinguish "showed a buffered snapshot" from "advanced the live game," which drive different client behavior (overlay vs. await broadcast).
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
+### D-16303 — Rewind is REST-only and audience-filtered (WP-163)
+
+**Decision:** Rewind delivers its `uiState` via the REST endpoint response only — never through `transport.pubSub`. The rewind responses (`step-back`, `restart`, and the `step-forward` cursor branch) compute `uiState` as `filterUIStateForAudience(buildUIState(snapshot.G, syntheticCtx), audience)`, matching the existing spectator broadcast pattern in `autoplay.mjs`. The audience filter is mandatory on every rewind response.
+
+**Rationale.** A rewind is per-requester: only the spectator who scrubbed back should see the historical frame, and they should see it painted over their own view, not pushed to every connected client. Routing rewind through the shared `pubSub` channel would desync other spectators and the live broadcast. Skipping `filterUIStateForAudience` would leak hidden information (hands, decks) that the live projection correctly hides.
+
+**Rejected alternatives:**
+- **Broadcast the rewound state via `transport.pubSub`.** Rejected — dual-path desync; every spectator would jump backward.
+- **Return the raw, unfiltered `UIState`.** Rejected — hidden-information leak.
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
+### D-16304 — Standardized response envelope with an always-present `mode` (WP-163)
+
+**Decision:** Every playback endpoint, on every status code (200 and error), returns the `AutoplayControlResponse` envelope: `{ ok, paused, historyLength, cursor, mode, uiState?, error? }`. The `mode` field is a closed set `'live' | 'paused'`, computed **only** by `controller.getMode()`; endpoint handlers never recompute the live/paused predicate inline. The Endpoint Behavior Matrix (which endpoints return `uiState`, and the `mode` each yields on success) is a closed set: pause(no/`paused`), resume(no/`live`), step-forward cursor(yes/`paused`), step-forward live-move(no/`paused`), step-back(yes/`paused`), restart(yes/`paused`), go-to-end(no/`live`).
+
+**Rationale.** A single authoritative `mode` field means the client never has to derive playback state from a combination of `paused`, `cursor`, and `historyLength` — which is exactly where client/server drift creeps in. Putting `mode` on error responses too lets the client recover its control-bar state even when a transition is rejected.
+
+**Rejected alternatives:**
+- **Omit `mode`; let the client compute it.** Rejected at second review — the client predicate would duplicate server logic and drift.
+- **Per-endpoint ad-hoc response shapes.** Rejected — a uniform envelope is simpler to consume and test.
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
+### D-16305 — Minimal, immutable PlaybackStateSnapshot (WP-163)
+
+**Decision:** A `PlaybackStateSnapshot` carries `G` plus a strict three-key `ctx` (`{ phase, turn, currentPlayer }`) — exactly the fields `buildUIState` needs to project a frame. Snapshots are treated as immutable after `pushState()`; the controller performs no deep mutation of buffered entries.
+
+**Rationale.** Capturing the full `ctx` would bloat the buffer and tempt callers to depend on fields that have no role in projection. Immutability guarantees that a buffered frame renders identically however many times it is replayed, and prevents a rewind from accidentally corrupting history.
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
+### D-16306 — Playback buffer is Class 1 Runtime State (never persisted) (WP-163)
+
+**Decision:** The per-match playback buffer (the controller's `stateHistory`, including the captured `G` of each snapshot) is **Class 1 Runtime State**. It is never written to PostgreSQL, Redis, the filesystem, or any log. It lives only in the `autoplayControllers` map for the duration of the match.
+
+**Rationale.** `G` and derived runtime state are runtime-only per `ARCHITECTURE.md §Persistence Boundaries`; snapshots are derived records, not save-games. A playback buffer is a presentation convenience for a live spectator — persisting it would both violate the boundary and imply a replay-from-storage capability this WP explicitly does not provide (seed-accurate rewind is out of scope per `MOVE_LOG_FORMAT.md` Gap #4).
+
+**Rejected alternatives:**
+- **Persist the buffer so spectators can rejoin mid-rewind.** Rejected — out of scope, and a persistence path for `G` is a boundary violation; reconnection replays the live broadcast instead.
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
+### D-16307 — go-to-end fast-forwards via playbackDelayOverride (WP-163)
+
+**Decision:** The `go-to-end` endpoint resumes the bot loop and switches its inter-move delay to `playbackDelayOverride = 10` ms (substituted for the match's configured `delayMs` via `controller.getActiveDelay()`). A subsequent `resume()` restores the original `delayMs`.
+
+**Rationale.** A viewer who scrubbed back and then hits "go to end" wants to catch up to the action quickly, not be dropped back into slow per-move playback. A 10 ms override drains the gap rapidly while still yielding to the event loop. Keeping the override readable through `getActiveDelay()` (rather than mutating `delayMs` in place) keeps the bot loop's delay source single and explicit.
+
+**Rejected alternatives:**
+- **Instantly jump with zero delay.** Rejected — a tight zero-delay loop starves the event loop and the Socket.IO broadcast; 10 ms preserves cooperative scheduling.
+- **Leave cadence unchanged after go-to-end.** Rejected — defeats the purpose of the control.
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
+### D-16308 — Controller lifecycle bound to runBotMatch (WP-163)
+
+**Decision:** A playback controller is created at match init inside `runBotMatch` and registered in the module-level `autoplayControllers` map keyed by `matchId`. It is removed from the map on **every** exit path of `runBotMatch` — gameover, error, turn-limit, and unexpected-phase bailout.
+
+**Rationale.** Without explicit teardown the map leaks one controller (and its buffered `G` snapshots) per match, indefinitely, for the life of the server process. Tying creation and deletion to the single function that owns the match loop keeps the lifecycle auditable and is verified by the N=10 sequential-match lifecycle-leak test.
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
+### D-16309 — Single-consumer / last-write-wins concurrency (no mutex) (WP-163)
+
+**Decision:** The controller uses a single-consumer / last-write-wins concurrency model: at most one in-flight `waitIfPaused()` Promise (the bot loop is the only consumer), and concurrent state-mutating HTTP calls simply take last-write-wins. No mutex, no queue, no debounce.
+
+**Rationale.** The only `waitIfPaused()` consumer is the bot loop, and human-paced HTTP control clicks are rare relative to move cadence. Adding a mutex or request queue would be premature optimization against contention that the single-writer loop cannot actually produce. Last-write-wins is the correct, predictable behavior for a viewer mashing controls — the most recent intent applies.
+
+**Rejected alternatives:**
+- **Per-controller mutex / serialized request queue.** Rejected — guards against contention that does not exist with one loop consumer; adds latency and code for no benefit.
+- **Debounce control calls on the server.** Rejected — debouncing belongs to the client if anywhere; the server should honor each call deterministically.
+
+**Packet:** WP-163.
+
+**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
 Protect this file.
