@@ -17670,4 +17670,22 @@ Authentication).
 
 ---
 
+### D-16501 — Autoplay-match detection via a side-effect-free status endpoint (WP-165)
+
+**Decision:** Add `GET /api/match/autoplay/:matchId/status` (WP-165) as the gate the WP-164 client uses to decide whether to render the playback control bar. A `200` (a playback controller is registered for the match) means "autoplay match — show the bar and seed its initial state from the response"; a `404` (no controller, or the controller was torn down post-game per D-16308) means "not an autoplay match — hide the bar." The endpoint is strictly read-only and reuses WP-163's `getController` + `buildResponse` + `handlePlaybackRequest`.
+
+**Rationale.** The autoplay spectator URL (`?match=…&player=0&credentials=…`) is structurally identical to a normal live-match URL, so `?match` presence cannot distinguish them. A `GET` probe is safe and idempotent, returns the metadata the bar needs to seed itself, and keeps the lobby/app routing layer (`LobbyView.vue`, `App.vue` `parseQuery`) free of a feature-specific query key. It also avoids the alternative of probing a POST control endpoint, which would mutate playback state merely to detect a match.
+
+**Rejected alternatives:**
+- **`?autoplay=1` URL marker.** Rejected — couples `LobbyView.vue` + `App.vue` `parseQuery` to the feature and adds another query key to the routing contract; the status probe gates the bar without touching the routing layer.
+- **Probe a POST control (e.g., a no-op pause/resume) to detect the match.** Rejected — side-effectful; detection must not change playback state.
+- **Render the bar whenever `?match` is present.** Rejected — would show pause/rewind controls in normal PvP matches, which is incorrect UX.
+
+**Packet:** WP-165 (consumed by WP-164).
+
+**Introduced:** WP-165 (drafted 2026-05-19; not yet executed)
+**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+
+---
+
 Protect this file.
