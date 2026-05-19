@@ -656,6 +656,69 @@ async function checkCloudflareR2() {
 }
 
 /**
+ * Probes the Cloudflare R2 public bucket's CORS allowlist from the
+ * arena-client's origin. R2 serves card images via plain `<img>` tags
+ * which are exempt from CORS, but any `fetch()` of an R2-hosted asset
+ * (metadata, JSON manifests, prefetched card data) requires the bucket
+ * to echo `Access-Control-Allow-Origin` for the SPA origin. R2 CORS is
+ * configured per-bucket in the Cloudflare dashboard (R2 → bucket →
+ * Settings → CORS Policy); drift between that policy and the deployed
+ * SPA origin causes silent fetch failures with no useful console error.
+ *
+ * Recorded as a warning rather than a failure: the current SPA consumes
+ * card images via `<img>` only, so R2 CORS misconfiguration does not
+ * break today's user flow. Promote to a hard failure once any code path
+ * `fetch()`es an R2 asset from the browser.
+ */
+async function checkCloudflareR2Cors() {
+  const publicUrl = env.R2_PUBLIC_URL;
+  const arenaClientUrl = resolveArenaClientUrl();
+
+  if (!publicUrl) {
+    recordWarning('CONNECTIONS', 'Cloudflare R2 CORS',
+      'R2_PUBLIC_URL is not set; cannot test R2 CORS allowlist.',
+      'Add R2_PUBLIC_URL to .env. See .env.example.');
+    return;
+  }
+
+  const preflightUrl = `${publicUrl}/metadata/sets.json`;
+  let response;
+  let elapsedMilliseconds;
+  try {
+    const startTime = Date.now();
+    response = await fetch(preflightUrl, {
+      method: 'OPTIONS',
+      signal: createTimeoutSignal(CONNECTION_TIMEOUT_MS),
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Origin': arenaClientUrl,
+        'Access-Control-Request-Method': 'GET',
+        'Access-Control-Request-Headers': 'content-type',
+      },
+    });
+    elapsedMilliseconds = Date.now() - startTime;
+  } catch (fetchError) {
+    recordWarning('CONNECTIONS', 'Cloudflare R2 CORS',
+      `OPTIONS preflight to ${preflightUrl} failed: ${fetchError.message}`,
+      'Check network connectivity to R2.');
+    return;
+  }
+
+  const allowOrigin = response.headers.get('access-control-allow-origin');
+  const isAllowed = allowOrigin === arenaClientUrl || allowOrigin === '*';
+
+  if (!isAllowed) {
+    recordWarning('CONNECTIONS', 'Cloudflare R2 CORS',
+      `${preflightUrl} preflight from Origin=${arenaClientUrl} returned HTTP ${response.status} but Access-Control-Allow-Origin was ${allowOrigin === null ? 'absent' : JSON.stringify(allowOrigin)}.`,
+      `Add ${arenaClientUrl} (and any other SPA origins) to the R2 bucket's CORS policy: Cloudflare dashboard → R2 → bucket → Settings → CORS Policy. Only required if/when the SPA fetches R2-hosted assets via fetch() rather than <img>.`);
+    return;
+  }
+
+  recordResult('CONNECTIONS', 'Cloudflare R2 CORS', true,
+    `${preflightUrl} allows Origin=${arenaClientUrl}  (HTTP ${response.status}, ${elapsedMilliseconds}ms)`);
+}
+
+/**
  * Checks the Hanko Cloud tenant JWKS endpoint for reachability and a
  * well-formed JWKS document. Mirrors the production verifier's URL
  * resolution: reads HANKO_TENANT_BASE_URL and appends /.well-known/jwks.json.
@@ -823,10 +886,13 @@ async function checkCloudflarePages() {
  */
 function resolveArenaClientUrl() {
   // why: ARENA_CLIENT_URL lets operators override the default for staging
-  // or branch-preview testing. The fallback matches the production CF Pages
-  // project hostname (`legendary-arena-play`) declared in EC-147 and the
-  // server's `Server({ origins })` allowlist at apps/server/src/server.mjs.
-  return env.ARENA_CLIENT_URL || 'https://legendary-arena-play.pages.dev';
+  // or branch-preview testing. The fallback is the production custom-domain
+  // hostname (declared `live` in docs/ops/domains.json under anchor `play`);
+  // the underlying CF Pages hostname `legendary-arena-play.pages.dev` is in
+  // the same `Server({ origins })` allowlist (EC-147) and is exercised by
+  // check-subdomains.mjs separately. Testing the custom domain by default
+  // catches stale-deploy and DNS-binding misroutes that pages.dev hides.
+  return env.ARENA_CLIENT_URL || 'https://play.legendary-arena.com';
 }
 
 /**
@@ -1263,6 +1329,7 @@ async function main() {
     checkPostgresConnection(),
     checkBoardgameioServer(),
     checkCloudflareR2(),
+    checkCloudflareR2Cors(),
     checkHankoJwks(),
     checkHankoTenantCors(),
     checkCloudflarePages(),

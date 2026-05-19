@@ -24,6 +24,7 @@
     "check:ec":             "node --env-file=.env scripts/ec/health-check.ec.mjs",
     "check:env":            "pwsh scripts/Check-Env.ps1",
     "check:domains":        "node scripts/check-subdomains.mjs",
+    "check:incident":       "node --env-file=.env scripts/check-connections.mjs && node scripts/check-subdomains.mjs --live-only",
 
     "validate":             "node scripts/validate-r2.mjs",
     "validate:ps":          "pwsh scripts/Validate-R2.ps1",

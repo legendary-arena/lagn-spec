@@ -24,11 +24,17 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import dnsPromises from 'node:dns/promises';
+import tls from 'node:tls';
 
 // why: 10 seconds is generous for a health probe but short enough that a fully
 // dead host doesn't stall the whole script. Cloudflare and Render normally
 // respond in well under 1s.
 const REQUEST_TIMEOUT_MS = 10_000;
+
+// why: DNS and TLS diagnostics are only run on FAIL or PENDING rows, so a
+// shorter timeout is fine — we are already in a slow-path failure branch.
+const DIAGNOSTIC_TIMEOUT_MS = 5_000;
 
 const RUNBOOK_RELATIVE_PATH = 'docs/ops/DOMAINS.md';
 const MANIFEST_RELATIVE_PATH = 'docs/ops/domains.json';
@@ -65,8 +71,22 @@ async function loadDomainsManifest() {
  * code, or null if the request errored before producing a response (DNS
  * failure, connection refused, timeout).
  *
+ * On 30x responses, the Location header is captured so the caller can verify
+ * the redirect target (apex canonicalization, scheme upgrade, etc.) instead
+ * of trusting status alone.
+ *
+ * On failures, both the top-level error code and any nested cause code are
+ * captured so the caller can distinguish DNS (`ENOTFOUND`), TCP refusal
+ * (`ECONNREFUSED`), timeout (`ETIMEDOUT`/`ERR_ABORTED`), and TLS errors
+ * (`ERR_TLS_CERT_ALTNAME_INVALID`, etc.).
+ *
  * @param {string} url
- * @returns {Promise<{ status: number | null, errorMessage: string | null }>}
+ * @returns {Promise<{
+ *   status: number | null,
+ *   errorMessage: string | null,
+ *   errorCode: string | null,
+ *   location: string | null,
+ * }>}
  */
 async function probeUrl(url) {
   const abortController = new AbortController();
@@ -84,9 +104,27 @@ async function probeUrl(url) {
         'user-agent': 'legendary-arena-subdomain-check/1.0',
       },
     });
-    return { status: response.status, errorMessage: null };
+    return {
+      status: response.status,
+      errorMessage: null,
+      errorCode: null,
+      location: response.headers.get('location'),
+    };
   } catch (probeError) {
-    return { status: null, errorMessage: probeError.message };
+    // why: undici wraps low-level Node errors as `error.cause`. The top-level
+    // `error.code` is often missing on fetch failures while the cause carries
+    // `ENOTFOUND` / `ECONNREFUSED` / `ETIMEDOUT`. Prefer the most specific
+    // code we can find; fall back to the AbortError shape when the timeout
+    // fired (`error.name === 'AbortError'`).
+    const causeCode = probeError.cause?.code ?? null;
+    const topLevelCode = probeError.code ?? null;
+    const inferredCode = probeError.name === 'AbortError' ? 'ETIMEDOUT' : null;
+    return {
+      status: null,
+      errorMessage: probeError.message,
+      errorCode: causeCode ?? topLevelCode ?? inferredCode,
+      location: null,
+    };
   } finally {
     clearTimeout(timeoutHandle);
   }
@@ -105,6 +143,136 @@ function isStatusHealthy(actualStatus, expectedStatus) {
     return expectedStatus.includes(actualStatus);
   }
   return actualStatus === expectedStatus;
+}
+
+/**
+ * Resolve A and AAAA records for a hostname. Both lookups are independent —
+ * AAAA absence is normal (many CF-fronted hostnames are A-only) and not an
+ * error on its own. Errors are returned as the record-set value so the
+ * caller can render `[ENOTFOUND]` instead of an empty list.
+ *
+ * @param {string} hostname
+ * @returns {Promise<{ ipv4: string[] | string, ipv6: string[] | string }>}
+ */
+async function resolveDnsRecords(hostname) {
+  let ipv4;
+  try {
+    ipv4 = await dnsPromises.resolve4(hostname);
+  } catch (resolveError) {
+    ipv4 = `[${resolveError.code ?? 'DNS-ERROR'}]`;
+  }
+  let ipv6;
+  try {
+    ipv6 = await dnsPromises.resolve6(hostname);
+  } catch (resolveError) {
+    ipv6 = `[${resolveError.code ?? 'DNS-ERROR'}]`;
+  }
+  return { ipv4, ipv6 };
+}
+
+/**
+ * Perform a TLS handshake against `hostname:443` with SNI set to the
+ * hostname, and capture the peer certificate. Returns either a structured
+ * cert summary or an error code. Does not validate that the negotiated
+ * SAN matches — Node's tls module already verifies this and surfaces a
+ * cert-name-mismatch as `ERR_TLS_CERT_ALTNAME_INVALID` before resolving
+ * the socket. The `authorized` flag captures whether the chain validated.
+ *
+ * @param {string} hostname
+ * @returns {Promise<{
+ *   authorized: boolean,
+ *   subject: string | null,
+ *   issuer: string | null,
+ *   validFrom: string | null,
+ *   validTo: string | null,
+ *   subjectAltName: string | null,
+ * } | { error: string }>}
+ */
+function resolveTlsCertificate(hostname) {
+  return new Promise((resolve) => {
+    const socket = tls.connect({
+      host: hostname,
+      port: 443,
+      servername: hostname,
+      timeout: DIAGNOSTIC_TIMEOUT_MS,
+    });
+
+    let settled = false;
+    const settle = (value) => {
+      if (settled) return;
+      settled = true;
+      socket.destroy();
+      resolve(value);
+    };
+
+    socket.once('secureConnect', () => {
+      const certificate = socket.getPeerCertificate();
+      if (!certificate || Object.keys(certificate).length === 0) {
+        settle({ error: 'NO-PEER-CERT' });
+        return;
+      }
+      settle({
+        authorized: socket.authorized,
+        subject: certificate.subject?.CN ?? null,
+        issuer: certificate.issuer?.O ?? certificate.issuer?.CN ?? null,
+        validFrom: certificate.valid_from ?? null,
+        validTo: certificate.valid_to ?? null,
+        subjectAltName: certificate.subjectaltname ?? null,
+      });
+    });
+
+    socket.once('error', (tlsError) => {
+      settle({ error: tlsError.code ?? tlsError.message ?? 'TLS-ERROR' });
+    });
+
+    socket.once('timeout', () => {
+      settle({ error: 'TLS-TIMEOUT' });
+    });
+  });
+}
+
+/**
+ * For a failed or pending row, run DNS + TLS diagnostics and return them in
+ * a shape suitable for printing as indented sub-lines under the row.
+ *
+ * @param {string} url
+ * @returns {Promise<{ dns: { ipv4: any, ipv6: any }, tls: any }>}
+ */
+async function diagnoseConnectivityFailure(url) {
+  const { hostname } = new URL(url);
+  const [dnsResult, tlsResult] = await Promise.all([
+    resolveDnsRecords(hostname),
+    resolveTlsCertificate(hostname),
+  ]);
+  return { dns: dnsResult, tls: tlsResult };
+}
+
+/**
+ * Format the diagnosis block produced by `diagnoseConnectivityFailure` as
+ * indented sub-lines.
+ *
+ * @param {{ dns: { ipv4: any, ipv6: any }, tls: any }} diagnosis
+ * @returns {string[]}
+ */
+function formatDiagnosisLines(diagnosis) {
+  const ipv4Text = Array.isArray(diagnosis.dns.ipv4)
+    ? (diagnosis.dns.ipv4.length > 0 ? diagnosis.dns.ipv4.join(', ') : '[empty]')
+    : diagnosis.dns.ipv4;
+  const ipv6Text = Array.isArray(diagnosis.dns.ipv6)
+    ? (diagnosis.dns.ipv6.length > 0 ? diagnosis.dns.ipv6.join(', ') : '[empty]')
+    : diagnosis.dns.ipv6;
+
+  const lines = [`        dns:     A=${ipv4Text}  AAAA=${ipv6Text}`];
+
+  if ('error' in diagnosis.tls) {
+    lines.push(`        tls:     ${diagnosis.tls.error}`);
+  } else {
+    const chainText = diagnosis.tls.authorized ? 'authorized' : 'UNAUTHORIZED';
+    lines.push(
+      `        tls:     ${chainText}  issuer="${diagnosis.tls.issuer ?? '?'}"  valid_to=${diagnosis.tls.validTo ?? '?'}`,
+    );
+  }
+  return lines;
 }
 
 /**
@@ -133,18 +301,28 @@ function classifyVerdict(entry, probeResult) {
  *
  * @param {'OK' | 'PENDING' | 'READY' | 'FAIL' | 'SKIP'} verdict
  * @param {object} entry - manifest entry
- * @param {{ status: number | null, errorMessage: string | null }} probeResult
+ * @param {{ status: number | null, errorMessage: string | null, errorCode: string | null, location: string | null }} probeResult
  * @returns {string}
  */
 function formatResultLine(verdict, entry, probeResult) {
-  const statusText = probeResult.status !== null
-    ? `HTTP ${probeResult.status}`
-    : `error: ${probeResult.errorMessage ?? 'no response'}`;
+  let statusText;
+  if (probeResult.status !== null) {
+    statusText = `HTTP ${probeResult.status}`;
+  } else if (probeResult.errorCode !== null) {
+    // why: the structured code (e.g. ENOTFOUND, ECONNREFUSED, ETIMEDOUT,
+    // ERR_TLS_CERT_ALTNAME_INVALID) is the actionable signal — much more
+    // useful at-a-glance than the wrapped fetch() message. Show the code
+    // first; the prose message follows in parens for readability.
+    statusText = `error: ${probeResult.errorCode} (${probeResult.errorMessage ?? 'no response'})`;
+  } else {
+    statusText = `error: ${probeResult.errorMessage ?? 'no response'}`;
+  }
+
   const expectedText = Array.isArray(entry.expectedStatus)
     ? entry.expectedStatus.join('|')
     : String(entry.expectedStatus);
   const verdictTag = verdict.padEnd(7);
-  return `[${verdictTag}] ${entry.name.padEnd(40)} ${entry.url.padEnd(55)} ${statusText.padEnd(28)} expected=${expectedText} state=${entry.state}`;
+  return `[${verdictTag}] ${entry.name.padEnd(40)} ${entry.url.padEnd(55)} ${statusText.padEnd(40)} expected=${expectedText} state=${entry.state}`;
 }
 
 /**
@@ -163,7 +341,12 @@ async function probeAllEntries(entries, liveOnly) {
 
   for (const entry of entries) {
     if (liveOnly && entry.state !== 'live') {
-      console.log(formatResultLine('SKIP', entry, { status: null, errorMessage: '--live-only flag set' }));
+      console.log(formatResultLine('SKIP', entry, {
+        status: null,
+        errorMessage: '--live-only flag set',
+        errorCode: null,
+        location: null,
+      }));
       skippedCount += 1;
       continue;
     }
@@ -173,10 +356,28 @@ async function probeAllEntries(entries, liveOnly) {
 
     console.log(formatResultLine(verdict, entry, probeResult));
 
+    // why: any 30x response carries a Location header pointing at the
+    // canonical target. Surface it on every row (not just failures) so a
+    // misroute — apex → wrong host, http instead of https, redirect loop
+    // — is obvious without re-running curl by hand. Quiet (no print) when
+    // there is no Location.
+    if (probeResult.location !== null) {
+      console.log(`        location: ${probeResult.location}`);
+    }
+
     if (verdict === 'OK') {
       okCount += 1;
     } else if (verdict === 'PENDING') {
       pendingCount += 1;
+      // why: PENDING means the planned entry failed to connect. The DNS +
+      // TLS diagnosis disambiguates "not yet deployed" (NXDOMAIN) from
+      // "DNS is up but TLS isn't" (cert misconfig on a half-provisioned
+      // domain). Printing the diagnosis here is informational, not a
+      // failure trigger.
+      const diagnosis = await diagnoseConnectivityFailure(entry.url);
+      for (const diagnosticLine of formatDiagnosisLines(diagnosis)) {
+        console.log(diagnosticLine);
+      }
     } else if (verdict === 'READY') {
       readyCount += 1;
       console.log(`        hint:    DNS resolves and probe is healthy. Flip "state" to "live" in ${MANIFEST_RELATIVE_PATH}.`);
@@ -184,6 +385,14 @@ async function probeAllEntries(entries, liveOnly) {
       console.log(`        runbook: ${RUNBOOK_RELATIVE_PATH}#${entry.anchor}`);
       if (entry.notes) {
         console.log(`        note:    ${entry.notes}`);
+      }
+      // why: failure on a live entry deserves the full DNS + TLS diagnosis
+      // inline so the operator can immediately see whether the issue is
+      // DNS (ENOTFOUND), connectivity (ECONNREFUSED / ETIMEDOUT), cert
+      // (ERR_TLS_CERT_ALTNAME_INVALID), or backend (4xx / 5xx).
+      const diagnosis = await diagnoseConnectivityFailure(entry.url);
+      for (const diagnosticLine of formatDiagnosisLines(diagnosis)) {
+        console.log(diagnosticLine);
       }
       failedCount += 1;
     }
