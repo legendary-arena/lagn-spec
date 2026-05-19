@@ -293,9 +293,11 @@ function checkImageUrlDomains(setData: SetData, setAbbr: string, phase: string, 
   const wrongDomainUrls: string[] = [];
 
   for (const hero of setData.heroes) {
-    for (const card of hero.cards) {
-      if (!card.imageUrl.includes(R2_DOMAIN)) {
-        wrongDomainUrls.push(card.imageUrl);
+    // why: D-15101 — HeroCardSchema.imageUrl was removed (EC-162). Hero image
+    // URLs now live on physicalCards[].imageUrl; iterate that surface instead.
+    for (const physicalCard of hero.physicalCards) {
+      if (!physicalCard.imageUrl.includes(R2_DOMAIN)) {
+        wrongDomainUrls.push(physicalCard.imageUrl);
       }
     }
   }
@@ -546,9 +548,11 @@ function collectSpotCheckUrls(allSets: Map<string, SetData>): string[] {
     if (firstVillainCard?.imageUrl) {
       imageUrls.push(firstVillainCard.imageUrl);
     }
-    const firstHeroCard = setData.heroes[0]?.cards[0];
-    if (firstHeroCard?.imageUrl) {
-      imageUrls.push(firstHeroCard.imageUrl);
+    // why: D-15101 — HeroCardSchema.imageUrl was removed (EC-162). Spot-check
+    // the first hero's first physicalCard.imageUrl instead.
+    const firstHeroPhysicalCard = setData.heroes[0]?.physicalCards[0];
+    if (firstHeroPhysicalCard?.imageUrl) {
+      imageUrls.push(firstHeroPhysicalCard.imageUrl);
     }
   }
 
