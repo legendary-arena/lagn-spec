@@ -1,7 +1,7 @@
 # Wiki Index
 
-> **23 / 50** entity pages.
-> Last regenerated: 2026-05-17.
+> **24 / 50** entity pages.
+> Last regenerated: 2026-05-18.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
 
@@ -116,6 +116,18 @@ Step-by-step walkthroughs for completing specific tasks.
   for per-frame control, Posterize Time fast fallback, loop-boundary
   technique, Media Encoder handoff, and the UI-overlay layer that
   makes a generic clip read as a digital card game.
+
+## Tool
+
+Software tools and services used in development or operations.
+
+- [Operational Health Checks](operational-health-checks.md) — Two
+  operator probes: `pnpm check` walks the environment, toolchain,
+  and external-service connectivity (PostgreSQL, R2, Pages, Hanko
+  JWKS / CORS, API server CORS, arena-client bundle env inlining,
+  GitHub, rclone); `pnpm check:domains` walks the canonical
+  subdomain manifest and classifies each entry against its declared
+  `live` / `planned` state.
 
 ## Keyword
 
