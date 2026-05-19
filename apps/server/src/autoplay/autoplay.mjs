@@ -21,6 +21,16 @@ import {
   buildUIState,
   filterUIStateForAudience,
 } from '@legendary-arena/game-engine';
+import { createPlaybackController } from './playbackController.mjs';
+
+/**
+ * Per-match playback controllers, keyed by match id. A controller is
+ * registered while its bot loop runs and removed on every exit path.
+ *
+ * // why: D-16306 — this buffer is Class 1 Runtime State; it lives only in
+ * this in-process map and is never persisted to any store.
+ */
+export const autoplayControllers = new Map();
 
 // why: boardgame.io v0.50 only ships CJS bundles for /master and /internal.
 // createRequire bridges ESM → CJS for these subpackage imports.
@@ -45,7 +55,115 @@ async function loadDefaultLoadout() {
 }
 
 /**
- * Registers the POST /api/match/autoplay route.
+ * Resolves the playback controller for a request's :matchId path parameter.
+ *
+ * @param {object} koaContext - The koa request context.
+ * @returns {object | null} The controller, or null when no match is running.
+ */
+function getController(koaContext) {
+  const matchId = koaContext.params.matchId;
+  return autoplayControllers.get(matchId) ?? null;
+}
+
+/**
+ * Builds the standardized AutoplayControlResponse success envelope.
+ *
+ * // why: D-16304 — `mode` is always read from `controller.getMode()`; handlers
+ * never recompute the live/paused predicate inline, so the client never has to
+ * derive playback state from a combination of fields.
+ *
+ * @param {object} controller - The playback controller.
+ * @param {{ uiState?: object }} [options] - Optional rewind projection.
+ * @returns {object} The response envelope.
+ */
+export function buildResponse(controller, options = {}) {
+  const response = {
+    ok: true,
+    paused: controller.isPaused(),
+    historyLength: controller.getHistoryLength(),
+    cursor: controller.getCursor(),
+    mode: controller.getMode(),
+  };
+  if (options.uiState !== undefined) {
+    response.uiState = options.uiState;
+  }
+  return response;
+}
+
+/**
+ * Builds a non-200 envelope carrying the same fields as the success envelope.
+ *
+ * @param {object} controller - The playback controller.
+ * @param {string} message - A full-sentence error message.
+ * @returns {object} The error envelope.
+ */
+function errorEnvelope(controller, message) {
+  return {
+    ok: false,
+    paused: controller.isPaused(),
+    historyLength: controller.getHistoryLength(),
+    cursor: controller.getCursor(),
+    mode: controller.getMode(),
+    error: message,
+  };
+}
+
+/**
+ * Projects a captured snapshot into a spectator-filtered UIState for a rewind
+ * response.
+ *
+ * // why: D-16303 — rewind frames must be audience-filtered (spectator) or they
+ * leak hidden information (hands, decks) that the live spectator view hides.
+ *
+ * @param {{ G: unknown, ctx: { phase: string, turn: number, currentPlayer: string } }} snapshot
+ * @returns {object} The spectator-filtered UIState.
+ */
+function rewindUIState(snapshot) {
+  const fullUIState = buildUIState(snapshot.G, {
+    phase: snapshot.ctx.phase,
+    turn: snapshot.ctx.turn,
+    currentPlayer: snapshot.ctx.currentPlayer,
+  });
+  return filterUIStateForAudience(fullUIState, { kind: 'spectator' });
+}
+
+/**
+ * Resolves the controller, runs a playback action, and maps faults to the
+ * standardized envelope: 404 when no match is running, 500 on unexpected error.
+ *
+ * @param {object} koaContext - The koa request context.
+ * @param {(controller: object) => void} core - The per-endpoint action.
+ * @returns {Promise<void>}
+ */
+async function handlePlaybackRequest(koaContext, core) {
+  const controller = getController(koaContext);
+  if (controller === null) {
+    koaContext.status = 404;
+    // why: no controller exists for this match id, so the envelope falls back
+    // to neutral defaults; mode is 'live' because there is no gated loop.
+    koaContext.body = {
+      ok: false,
+      paused: false,
+      historyLength: 0,
+      cursor: -1,
+      mode: 'live',
+      error: 'No autoplay match is running for the requested match id.',
+    };
+    return;
+  }
+  try {
+    core(controller);
+  } catch (playbackError) {
+    koaContext.status = 500;
+    koaContext.body = errorEnvelope(
+      controller,
+      `The playback control failed unexpectedly: ${playbackError.message}`,
+    );
+  }
+}
+
+/**
+ * Registers the POST /api/match/autoplay route plus the six playback controls.
  *
  * @param {import('@koa/router')} router - The boardgame.io server's koa router.
  * @param {object} context - Server context for bot operation.
@@ -148,6 +266,67 @@ export function registerAutoplayRoutes(router, context) {
       credentials,
     };
   });
+
+  // Playback controls (WP-163). All six are bodyless — no koaBody() — and
+  // return the standardized AutoplayControlResponse envelope (D-16304).
+  router.post('/api/match/autoplay/:matchId/pause', async (koaContext) => {
+    await handlePlaybackRequest(koaContext, (controller) => {
+      controller.pause();
+      koaContext.body = buildResponse(controller);
+    });
+  });
+
+  router.post('/api/match/autoplay/:matchId/resume', async (koaContext) => {
+    await handlePlaybackRequest(koaContext, (controller) => {
+      controller.resume();
+      koaContext.body = buildResponse(controller);
+    });
+  });
+
+  router.post('/api/match/autoplay/:matchId/step-forward', async (koaContext) => {
+    await handlePlaybackRequest(koaContext, (controller) => {
+      const result = controller.stepForward();
+      // why: D-16304/D-16302 — uiState is returned only on the 'cursor' branch;
+      // the 'live-move' branch released the gate and the client awaits the live
+      // broadcast rather than a rewind overlay.
+      if (result.type === 'cursor') {
+        koaContext.body = buildResponse(controller, { uiState: rewindUIState(result.snapshot) });
+      } else {
+        koaContext.body = buildResponse(controller);
+      }
+    });
+  });
+
+  router.post('/api/match/autoplay/:matchId/step-back', async (koaContext) => {
+    await handlePlaybackRequest(koaContext, (controller) => {
+      const snapshot = controller.stepBack();
+      if (snapshot === null) {
+        koaContext.status = 409;
+        koaContext.body = errorEnvelope(controller, 'Cannot step back: already at the first captured state.');
+        return;
+      }
+      koaContext.body = buildResponse(controller, { uiState: rewindUIState(snapshot) });
+    });
+  });
+
+  router.post('/api/match/autoplay/:matchId/restart', async (koaContext) => {
+    await handlePlaybackRequest(koaContext, (controller) => {
+      const snapshot = controller.restart();
+      if (snapshot === null) {
+        koaContext.status = 409;
+        koaContext.body = errorEnvelope(controller, 'Cannot restart: no playback history has been captured yet.');
+        return;
+      }
+      koaContext.body = buildResponse(controller, { uiState: rewindUIState(snapshot) });
+    });
+  });
+
+  router.post('/api/match/autoplay/:matchId/go-to-end', async (koaContext) => {
+    await handlePlaybackRequest(koaContext, (controller) => {
+      controller.goToEnd();
+      koaContext.body = buildResponse(controller);
+    });
+  });
 }
 
 /**
@@ -184,11 +363,77 @@ async function submitMove({ processedGame, db, transport, auth, matchId, playerI
 }
 
 /**
- * Runs the full bot match: lobby ready-up, then play phase until game over.
+ * Registers a playback controller for the duration of `body`, then removes it.
+ *
+ * @param {string} matchId - The match id key.
+ * @param {number} baseDelay - The match's configured inter-move delay (ms).
+ * @param {(controller: object) => Promise<void>} body - The work to run.
+ * @returns {Promise<void>}
+ */
+export async function withRegisteredController(matchId, baseDelay, body) {
+  const controller = createPlaybackController(baseDelay);
+  autoplayControllers.set(matchId, controller);
+  try {
+    await body(controller);
+  } finally {
+    // why: D-16308 — release the controller on every exit path (normal,
+    // break/return, or throw) so the map never leaks one entry per match.
+    autoplayControllers.delete(matchId);
+  }
+}
+
+/**
+ * Captures the current match state, gates on pause, then waits the active
+ * inter-move delay. Replaces the bare per-move delay so a viewer can pause or
+ * step at each move boundary.
+ *
+ * // why: pushState runs before waitIfPaused, so history length is >= 1 before
+ * the first gate can block (D-16302 corollary). The delay reads
+ * getActiveDelay() so go-to-end's fast-forward (D-16307) takes effect.
+ *
+ * @param {object} controller - The playback controller.
+ * @param {object} db - boardgame.io storage backend.
+ * @param {string} matchId - The match id.
+ * @returns {Promise<void>}
+ */
+async function recordAndPace(controller, db, matchId) {
+  const { state: pacedState } = await db.fetch(matchId, { state: true });
+  if (pacedState) {
+    controller.pushState({
+      G: pacedState.G,
+      ctx: {
+        phase: pacedState.ctx.phase,
+        turn: pacedState.ctx.turn,
+        currentPlayer: pacedState.ctx.currentPlayer,
+      },
+    });
+  }
+  await controller.waitIfPaused();
+  await delay(controller.getActiveDelay());
+}
+
+/**
+ * Runs a bot match under a registered playback controller.
  *
  * @param {object} params - All parameters for the bot match.
+ * @returns {Promise<void>}
  */
-async function runBotMatch({ matchId, playerCount, credentials, db, transport, auth, processedGame, policyName, delayMs, seed }) {
+async function runBotMatch(params) {
+  try {
+    await withRegisteredController(params.matchId, params.delayMs, (controller) =>
+      runBotMatchLoop({ ...params, controller }),
+    );
+  } catch (botMatchError) {
+    console.error(`[autoplay] match ${params.matchId} bot loop failed: ${botMatchError.message}`);
+  }
+}
+
+/**
+ * Runs the full bot match loop: lobby ready-up, then play phase until game over.
+ *
+ * @param {object} params - All parameters for the bot match, plus the controller.
+ */
+async function runBotMatchLoop({ matchId, playerCount, credentials, db, transport, auth, processedGame, policyName, seed, controller }) {
   const moveParams = { processedGame, db, transport, auth, matchId, credentials };
 
   // Lobby phase: mark all players ready, then start
@@ -209,7 +454,7 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
   });
 
   // Brief pause to let the client connect before play begins
-  await delay(delayMs);
+  await recordAndPace(controller, db, matchId);
 
   // Create AI policy
   const policy = policyName === 'random'
@@ -250,7 +495,7 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
           moveName: 'drawCards',
           moveArgs: { count: 6 },
         });
-        await delay(delayMs);
+        await recordAndPace(controller, db, matchId);
       }
 
       await submitMove({
@@ -259,7 +504,7 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
         moveName: 'revealVillainCard',
         moveArgs: undefined,
       });
-      await delay(delayMs);
+      await recordAndPace(controller, db, matchId);
 
       // Check for gameover after reveal (villains may have escaped)
       ({ state } = await db.fetch(matchId, { state: true }));
@@ -271,7 +516,7 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
         moveName: 'advanceStage',
         moveArgs: undefined,
       });
-      await delay(delayMs);
+      await recordAndPace(controller, db, matchId);
     }
 
     // --- Main stage: play cards, then recruit/fight, then advance ---
@@ -305,7 +550,7 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
         }
 
         playAttempts++;
-        await delay(delayMs);
+        await recordAndPace(controller, db, matchId);
       }
 
       // Log economy after playing cards
@@ -346,7 +591,7 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
             moveName: 'advanceStage',
             moveArgs: undefined,
           });
-          await delay(delayMs);
+          await recordAndPace(controller, db, matchId);
           break;
         }
 
@@ -371,7 +616,7 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
           moveArgs: intent.move.args,
         });
         spendAttempts++;
-        await delay(delayMs);
+        await recordAndPace(controller, db, matchId);
       }
     }
 
@@ -386,7 +631,7 @@ async function runBotMatch({ matchId, playerCount, credentials, db, transport, a
         moveName: 'endTurn',
         moveArgs: undefined,
       });
-      await delay(delayMs);
+      await recordAndPace(controller, db, matchId);
     }
 
     turnCount++;

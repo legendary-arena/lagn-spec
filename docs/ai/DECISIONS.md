@@ -17526,7 +17526,9 @@ Authentication).
 
 ### D-16301 — Single cursor-write site; live broadcast wins (WP-163)
 
-**Decision:** In the autoplay playback controller (`apps/server/src/autoplay/playbackController.mjs`), `pushState()` is the sole writer of the `cursor` field. Every real-move boundary in `runBotMatch` calls `pushState()`, which appends the new `PlaybackStateSnapshot` and resets `cursor` to the live edge (`stateHistory.length - 1`). No endpoint handler and no external caller writes `cursor` directly. The live Socket.IO broadcast always wins over a REST rewind response — a rewind is a transient client-side overlay, not a competing source of truth.
+**Decision:** In the autoplay playback controller (`apps/server/src/autoplay/playbackController.mjs`), `cursor` is a **private closure variable** owned entirely by the controller — no wiring-layer code in `autoplay.mjs` reads or writes it (handlers only call controller methods and `getCursor()`). `pushState()` is the sole site that drives the cursor **forward to the live edge** (`stateHistory.length - 1`); every real-move boundary in the bot loop calls `pushState()`, so a rewound cursor can never persist across a real move. The rewind methods (`stepBack`, `stepForward` cursor branch, `restart`, `goToEnd`) move the cursor within the captured-history window only. The live Socket.IO broadcast always wins over a REST rewind response — a rewind is a transient per-requester overlay, not a competing source of truth.
+
+**Amended at execution (WP-163 A2, 2026-05-19):** the draft phrased this as "`pushState` is the sole *writer* of `cursor`," which contradicted the rewind methods moving the cursor. The load-bearing invariant is the one above — `pushState` is the sole **forward reconciler** to the live edge, and the cursor is private to the controller. The verification grep was retargeted from "`.cursor =` only in `pushState`" to "zero cursor writes in `autoplay.mjs`."
 
 **Rationale.** A single reconciliation site is the cheapest possible guarantee against cursor/history drift: if only `pushState` moves the live edge, the cursor can never point past the buffer or disagree with the broadcast. Spreading cursor writes across the six endpoints would create six places to keep consistent.
 
@@ -17536,8 +17538,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 
@@ -17553,8 +17555,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 
@@ -17570,8 +17572,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 
@@ -17587,8 +17589,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 
@@ -17600,8 +17602,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 
@@ -17616,8 +17618,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 
@@ -17633,8 +17635,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 
@@ -17646,8 +17648,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 
@@ -17663,8 +17665,8 @@ Authentication).
 
 **Packet:** WP-163.
 
-**Introduced:** WP-163 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active
 
 ---
 

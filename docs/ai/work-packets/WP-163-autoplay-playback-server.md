@@ -136,7 +136,7 @@ from `:matchId`; `404` envelope if absent) and `buildResponse(controller,
 options)` (assembles the standardized envelope; always reads `mode` from
 `controller.getMode()`).
 
-### D. Tests (`playbackController.test.mjs`, new)
+### D. Tests (`playbackController.test.ts`, new)
 
 `node:test`, `.test.mjs`. Covers: state-machine transitions (pause/resume/step
 in every order), race-edge (concurrent state-mutating calls → last-write-wins,
@@ -328,7 +328,7 @@ Six new whole rows in `docs/ai/REFERENCE/api-endpoints.md`, each with
 - [ ] Controller map is empty after a match ends (lifecycle-leak test, N=10).
 - [ ] `cursor` is written only by `pushState()` (single-site grep).
 - [ ] API catalog has six new whole rows, `Status: Wired`, `Auth: guest`.
-- [ ] `pnpm --filter @legendary-arena/server build` exits 0.
+- [ ] `pnpm -r build` exits 0.
 - [ ] `pnpm --filter @legendary-arena/server test` passes (one pre-existing
       `join-match.test.ts` failure may persist per WP-159 STATUS note; not this
       WP's regression).
@@ -339,11 +339,11 @@ Six new whole rows in `docs/ai/REFERENCE/api-endpoints.md`, each with
 
 ```bash
 # 1. Build
-pnpm install && pnpm --filter @legendary-arena/server build
+pnpm install && pnpm -r build
 
 # 2. Controller + endpoint tests
 pnpm --filter @legendary-arena/server test
-#    → playbackController.test.mjs passes (state-machine, race-edge,
+#    → playbackController.test.ts passes (state-machine, race-edge,
 #      cursor-boundary, fast-forward, lifecycle-leak N=10, mode-drift)
 
 # 3. Single cursor-write site
@@ -374,8 +374,8 @@ rg -n "/api/match/autoplay/:matchId/" docs/ai/REFERENCE/api-endpoints.md
 
 ## Definition of Done
 
-1. `pnpm --filter @legendary-arena/server build` exits 0.
-2. `playbackController.mjs` + `playbackController.test.mjs` created; tests pass.
+1. `pnpm -r build` exits 0.
+2. `playbackController.mjs` + `playbackController.test.ts` created; tests pass.
 3. `autoplay.mjs` modified: controller map, initial push, per-move push + gate,
    `getActiveDelay()` delay substitution, six bodyless endpoints, `getController`
    + `buildResponse` helpers, cleanup on every exit path.
@@ -486,3 +486,37 @@ unresolved RISK. Full record:
 | 19 | Replay safety | PASS — explicitly out of scope; `replayGame()` untouched |
 | 20 | Funding surface gate | N/A — no money-flow surface |
 | 21 | API catalog (D-11804) | PASS — six new whole rows committed with the code |
+
+---
+
+## Execution Amendments (EC-180, 2026-05-19)
+
+Three spec-vs-reality corrections folded inline at execution (within the
+`01.0b` ≤5 fold-inline budget). None expand scope or the external contract.
+
+- **A1 — test file extension `.test.mjs` → `.test.ts`.** CLAUDE.md mandates
+  `.test.ts` (never `.test.mjs`), and the server test runner globs
+  `src/**/*.test.ts` (a `.test.mjs` would never be discovered). CLAUDE.md is
+  the highest authority, so the test ships as
+  `apps/server/src/autoplay/playbackController.test.ts` (it imports the `.mjs`
+  controller). Every `.test.mjs` reference in this WP and EC-180 is corrected.
+- **A2 — D-16301 wording.** "pushState is the *sole writer* of cursor"
+  contradicted step-back/restart/go-to-end moving the cursor. The implemented
+  invariant: `cursor` is a private closure variable in the controller, and
+  `pushState` forces it to the live edge on every real-move boundary (so a
+  rewound cursor never persists past a real move; the live broadcast wins).
+  The verification grep is retargeted from "`.cursor =` only in pushState" to
+  "zero cursor writes in `autoplay.mjs`" (the wiring layer never touches
+  cursor; the controller owns it). D-16301's DECISIONS text is updated to
+  match at execution close.
+- **A3 — verification command.** `apps/server` has no `build` script (it runs
+  via `tsx`), so `pnpm -r build` cannot work.
+  Verification uses `pnpm -r build` (builds the `game-engine` dependency the
+  server imports) + `pnpm --filter @legendary-arena/server test`.
+
+**Result:** server test baseline `313 / 1 / 66` → `323 / 1 / 66` (+10 new
+controller tests; the 1 fail is the pre-existing `join-match.test.ts` "missing
+--name flag" carried since WP-106 per STATUS.md, unrelated to this WP). All
+verification greps pass. RS-1 resolved to the `{ kind: 'spectator' }` audience
+(`packages/game-engine/src/ui/uiAudience.types.ts`); RS-2 resolved to
+`koaContext.params.matchId` on the boardgame.io `server.router`.

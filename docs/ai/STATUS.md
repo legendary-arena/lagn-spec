@@ -7,6 +7,39 @@
 
 ## Current State
 
+### WP-163 / EC-180 Executed — Autoplay Playback Controls (Server) (2026-05-19)
+
+**Media-player controls for "Watch Bot Play."** New pure helper
+`apps/server/src/autoplay/playbackController.mjs` (`createPlaybackController`)
+holds a per-match cursor-based snapshot history (`maxHistory=100`) and a
+single-consumer pause gate; six bodyless REST endpoints
+`POST /api/match/autoplay/:matchId/{pause,resume,step-forward,step-back,restart,go-to-end}`
+return the standardized `{ ok, paused, historyLength, cursor, mode, uiState?, error? }`
+envelope (`mode` always from `controller.getMode()`, D-16304). `autoplay.mjs`'s
+`runBotMatch` now registers a controller via a `withRegisteredController`
+try/finally wrapper (cleanup on every exit path, D-16308) and paces each move
+through `recordAndPace` (snapshot push → pause gate → `getActiveDelay()` delay).
+Rewind is REST-only and visual-only — no boardgame.io mutation, no persistence
+(buffer = Class 1 Runtime State, D-16306); rewind `uiState` is spectator-filtered
+(D-16303). Six new whole API-catalog rows (D-11804, `Wired` / `guest`).
+
+Three execution amendments folded inline: **A1** test extension `.test.mjs` →
+`.test.ts` (CLAUDE.md + the `src/**/*.test.ts` runner — a `.test.mjs` would
+never run); **A2** D-16301 reworded (cursor is controller-private; `pushState`
+is the forward reconciler to the live edge; grep retargeted to "zero cursor
+writes in `autoplay.mjs`"); **A3** verification `server build` → `pnpm -r build`
+(the server runs via tsx and has no build script). RS-1 resolved to the
+`{ kind: 'spectator' }` audience; RS-2 to `koaContext.params.matchId`.
+
+Server test baseline **313 / 1 / 66 → 323 / 1 / 66** (+10 controller tests; the
+1 fail is the pre-existing `join-match.test.ts` "missing --name flag" carried
+since WP-106, unrelated to this WP). D-16301..D-16309 Active. Paired client work
+is WP-164 (server endpoints are its hard-dep; not yet drafted). 01.5 NOT
+INVOKED. 01.6 SKIPPED (self-contained in-process state machine; no new
+long-lived cross-layer abstraction).
+
+---
+
 ### WP-161 / EC-175 Executed — Arena Client API Base URL Surfacing (2026-05-18)
 
 **Surfaced during WP-160 smoke verification.** First end-to-end

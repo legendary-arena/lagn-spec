@@ -9,7 +9,7 @@
 - [ ] `autoplay.mjs` imports `buildUIState` + `filterUIStateForAudience` (line 16-23)
 - [ ] `koa-body` loaded via `createRequire`, applied per-route (line 30, 62)
 - [ ] WP-163 §Pre-Flight Verdict = READY; §Copilot Check Verdict = PASS
-- [ ] `pnpm --filter @legendary-arena/server build` exits 0
+- [ ] `pnpm -r build` exits 0 (the server has no build script; this builds the game-engine dep)
 - [ ] `pnpm --filter @legendary-arena/server test` runs (pre-existing `join-match.test.ts` fail may persist per WP-159 STATUS; not blocking)
 - [ ] RS-1: confirm rewind `audience` matches the existing spectator broadcast in `autoplay.mjs`
 - [ ] RS-2: confirm `:matchId` accessor (`koaContext.params`) against installed `@koa/router`
@@ -49,7 +49,7 @@
 
 ## Files to Produce
 - `apps/server/src/autoplay/playbackController.mjs` — **new** — controller factory (pure helper)
-- `apps/server/src/autoplay/playbackController.test.mjs` — **new** — state-machine / race / cursor-boundary / lifecycle-leak (N=10) / mode-drift
+- `apps/server/src/autoplay/playbackController.test.ts` — **new** — state-machine / race / cursor-boundary / lifecycle-leak (N=10) / mode-drift
 - `apps/server/src/autoplay/autoplay.mjs` — **modified** — controller map, initial + per-move push, gate, `getActiveDelay()`, six bodyless endpoints, `getController`/`buildResponse`, exit cleanup
 - `docs/ai/REFERENCE/api-endpoints.md` — **modified** — six new whole rows (D-11804)
 - `docs/ai/DECISIONS.md` — **modified** — flip D-16301..D-16309 Drafted → Active
@@ -58,9 +58,9 @@
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — mark EC-180 Done
 
 ## After Completing
-- [ ] `pnpm --filter @legendary-arena/server build` exits 0
-- [ ] `playbackController.test.mjs` passes (incl. N=10 lifecycle-leak, mode-drift)
-- [ ] `rg "\.cursor\s*=" playbackController.mjs` → only the `pushState` write
+- [ ] `pnpm -r build` exits 0 (the server has no build script; this builds the game-engine dep)
+- [ ] `playbackController.test.ts` passes (incl. N=10 lifecycle-leak, mode-drift)
+- [ ] `rg "cursor\s*=" autoplay.mjs` → zero (A2: the wiring layer never writes cursor; the controller owns it)
 - [ ] `rg "router\.post\('/api/match/autoplay/:matchId/" autoplay.mjs` → exactly 6
 - [ ] `rg "boardgame\.io" playbackController.mjs` → zero
 - [ ] `api-endpoints.md` has 6 new rows, `Status: Wired`, `Auth: guest`
