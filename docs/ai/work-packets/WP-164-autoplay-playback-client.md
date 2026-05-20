@@ -2,12 +2,13 @@
 
 **Status:** Draft
 **Primary Layer:** Client (`apps/arena-client/src/`)
-**Dependencies:** WP-163 (autoplay server controls) — Done 2026-05-19; **WP-165
-(autoplay status endpoint) — hard-dep, must land on `main` first**; WP-161
+**Dependencies:** WP-163 (autoplay server controls) — Done 2026-05-19; WP-165
+(autoplay status endpoint) — Done 2026-05-19 (`b39f17b`); WP-161
 (`apiBaseUrl` / `buildApiUrl` helper, D-16101) — Done; WP-061 (UIState store) — Done
 **Paired with:** WP-165 (server status endpoint).
 **EC:** EC-181
-**Baseline:** `origin/main` at `39c06c2` (drafted 2026-05-19); verify HEAD at execution.
+**Baseline:** `origin/main` at `b39f17b` (drafted 2026-05-19; baseline refreshed
+2026-05-19 after WP-165 landed); verify HEAD at execution.
 
 ---
 
@@ -28,9 +29,8 @@ matches, gated on WP-165's `GET …/status` probe — never in normal multiplaye
 ## Assumes
 
 - **WP-165** is Done: `GET /api/match/autoplay/:matchId/status` is live on
-  `main` and returns the `{ ok, paused, historyLength, cursor, mode }` envelope
-  (`200`) or the not-found envelope (`404`). **WP-164 is BLOCKED until WP-165
-  merges.**
+  `main` (`b39f17b`) and returns the `{ ok, paused, historyLength, cursor, mode }`
+  envelope (`200`) or the not-found envelope (`404`).
 - WP-163 is Done: the six `POST /api/match/autoplay/:matchId/*` endpoints exist
   with the `{ ok, paused, historyLength, cursor, mode, uiState?, error? }`
   envelope and `mode ∈ { 'live', 'paused' }` (D-16304 as-built — there is **no**
@@ -41,8 +41,18 @@ matches, gated on WP-165's `GET …/status` probe — never in normal multiplaye
 - `useUiStateStore().setSnapshot(next: UIState | null): void` exists in
   `apps/arena-client/src/stores/uiState.ts` (reused unchanged).
 - `App.vue` `parseQuery` already parses `match` → `live.matchID`; the autoplay
-  URL is `?match=…&player=0&credentials=…` (`LobbyView.startAutoplay`), so the
-  live route mounts with `matchID` available.
+  URL is `?match=…&player=0&credentials=…` (`LobbyView.startAutoplay`), so
+  `App.vue` holds `matchID` for the live route.
+- **`matchID` is NOT yet available inside `PlayDesktop.vue`.** As-built, the live
+  route mounts `App.vue:367 <PlayViewport :submit-move>` →
+  `PlayViewport.vue:55 <PlayDesktop :submit-move>`; `PlayDesktop.vue`'s only prop
+  is `submitMove`, and no store/composable carries `matchID` (`stores/**` has
+  zero `matchId` references). Delivering `matchID` to the bar therefore requires
+  an **additive prop pass-through**: `App.vue` binds `matchID` onto
+  `<PlayViewport>`, `PlayViewport.vue` forwards it to `<PlayDesktop>`, and
+  `PlayDesktop.vue` gains a `matchId` prop. This is a prop pass-through of an
+  **already-parsed** value — **no** `parseQuery` change and **no** `?autoplay`
+  query key, so D-16501 is intact.
 
 If any of the above is false, this packet is **BLOCKED**.
 
@@ -94,24 +104,39 @@ distinct from `mode` (which is still read directly, never recomputed, D-16304).
   control response carries a truthy `uiState`, the service calls
   `useUiStateStore().setSnapshot(response.uiState)` — the **only** new non-test
   caller of `setSnapshot`.
-- **`apps/arena-client/src/services/autoplayPlayback.test.ts`** (new) — setter
-  invoked iff `uiState` present; `mode` passed through unchanged; each function
-  posts/gets the correct path via `buildApiUrl`; `getStatus` returns `null` on
-  `404`.
+- **`apps/arena-client/src/services/autoplayPlayback.test.ts`** (new) —
+  `getStatus`: `200` → returns the parsed object, `404` → returns `null`, any
+  other status (`500`) / network error → **throws** (not coerced to `null`);
+  control responses: `uiState` present → `setSnapshot` called with that value
+  exactly, `uiState` absent → `setSnapshot` NOT called; `mode` passed through
+  unchanged; each function posts/gets the correct path via `buildApiUrl`.
 - **`apps/arena-client/src/components/AutoplayControls.vue`** (new) — five
   buttons + one pause/resume toggle (glyphs `⏮ ⏪ ⏸/▶ ⏩ ⏭`); disabled-when
   matrix (below); visible REWIND affordance when `isRewound`; NO direct `fetch`;
   NO `useUiStateStore` import.
 - **`apps/arena-client/src/components/AutoplayControls.test.ts`** (new) —
-  disabled matrix; REWIND toggles with `isRewound`; each button calls the
-  matching service function; component never calls `setSnapshot`.
-- **`apps/arena-client/src/pages/PlayDesktop.vue`** (modified) — on mount, when
-  `matchID` is present, call `getStatus(matchID)`; on an initial `null` (404),
-  retry once after `STATUS_RETRY_DELAY_MS` (1000 ms) before deciding. Mount
-  `<AutoplayControls :matchId="matchID" :initialStatus="status" />` only when a
-  probe resolves `200` (non-null); a persistent `null` keeps the bar hidden.
-  Seed the bar's initial `paused` / `cursor` / `historyLength` / `mode` from the
-  status response.
+  disabled matrix; each button calls the matching service function; component
+  never calls `setSnapshot`; REWIND affordance transitions: `stepBack` →
+  `isRewound` becomes `true`; stepping forward to the live edge →
+  `isRewound` becomes `false`; pause while rewound → REWIND still indicated
+  (`paused === true` AND `isRewound === true`); a control response updates local
+  `paused` / `cursor` / `historyLength` / `mode` correctly.
+- **`apps/arena-client/src/pages/PlayDesktop.vue`** (modified) — add a `matchId`
+  prop (string; the value drilled from `App.vue` via `PlayViewport.vue`). On
+  mount, when `matchId` is present, call `getStatus(matchId)`; on an initial
+  `null` (404), retry once after `STATUS_RETRY_DELAY_MS` (1000 ms) before
+  deciding. Mount `<AutoplayControls :matchId="matchId" :initialStatus="status" />`
+  only when a probe resolves `200` (non-null); a persistent `null` keeps the bar
+  hidden. Seed the bar's initial `paused` / `cursor` / `historyLength` / `mode`
+  from the status response.
+- **`apps/arena-client/src/pages/PlayViewport.vue`** (modified) — add a `matchId`
+  prop and forward it to `<PlayDesktop :match-id="matchId">` (alongside the
+  existing `:submit-move`). `PlayMobile` is out of scope (desktop-only bar); the
+  prop need not be forwarded to `<PlayMobile>`.
+- **`apps/arena-client/src/App.vue`** (modified — **additive prop bind only**) —
+  bind the already-parsed `liveParams.matchID` onto
+  `<PlayViewport :match-id="…">` for the `live` route. **No** `parseQuery` change,
+  **no** `?autoplay` query key, no new route state (D-16501 intact).
 - **Governance:** `docs/ai/STATUS.md`, `docs/ai/work-packets/WORK_INDEX.md`
   (WP-164 row), `docs/ai/execution-checklists/EC_INDEX.md` (EC-181 row),
   `docs/05-ROADMAP-MINDMAP.md`.
@@ -119,10 +144,17 @@ distinct from `mode` (which is still read directly, never recomputed, D-16304).
 ## Scope (Out)
 
 - **Server code** — WP-163 / WP-165.
-- **`LobbyView.vue` / `App.vue`** — unchanged; the status probe gates the bar,
-  so no `?autoplay` URL marker and no `parseQuery` change is needed (D-16501).
+- **`LobbyView.vue`** — unchanged; the status probe gates the bar, so no
+  `?autoplay` URL marker is needed (D-16501).
+- **`App.vue` `parseQuery` / routing logic** — unchanged. The only `App.vue`
+  edit permitted is the **additive `:match-id` prop bind** in Scope (In); the
+  query parsing, route discriminator, and live-client wiring are NOT touched
+  (D-16501 — no new query key, no parseQuery change).
 - **`uiState.ts` or any Pinia store** — reuse `setSnapshot`; no new store, no
   store edit. `uiState.ts` must NOT appear in `git diff --name-only`.
+- **`client/bgioClient.ts`** — the existing live ingestion path that calls
+  `setSnapshot` on each broadcast (D-16301 overwrite site); reused unchanged. It
+  must NOT appear in `git diff --name-only`.
 - **`game-engine/setup` import** — forbidden on the client (D-14401).
 - **Debounce / throttle** on button events — the server is last-write-wins
   (D-16309); the client does not police rate.
@@ -153,10 +185,41 @@ pause / resume / stepForward / stepBack / restart / goToEnd(matchId: string): Pr
 - Paths: `getStatus` → `GET buildApiUrl('/api/match/autoplay/${matchId}/status')`;
   controls → `POST buildApiUrl('/api/match/autoplay/${matchId}/{action}')`
   (`step-forward` / `step-back` / `go-to-end` use the hyphenated route spellings).
-- After any control response, if `response.uiState` is truthy, call
-  `useUiStateStore().setSnapshot(response.uiState)`. When absent, do **not** call
-  the setter.
 - `mode` is read directly from the response; never recomputed.
+
+#### `getStatus` resolution contract (Locked)
+
+- On `200` → resolve the parsed `AutoplayControlResponse` envelope.
+- On `404` → resolve `null` (the sole "not an autoplay match" signal).
+- On **any other status (e.g. `500`) or a network/parse error** → **throw** a
+  full-sentence error (00.6 Rule 11). A non-404 failure MUST NOT be coerced to
+  `null`. // why: a `null` means "not autoplay" and hides the bar; silently
+  mapping a `500`/network fault to `null` would mask a real outage as a normal
+  PvP match. The mount logic distinguishes `null` (hide) from a thrown error
+  (a real fault it does not swallow into the gating decision).
+
+#### `setSnapshot` injection rule (Locked)
+
+- After any **control** response, call `useUiStateStore().setSnapshot(...)` **iff
+  `response.uiState` is truthy**, passing `response.uiState` **exactly** — no
+  transformation, no merge, no partial patch.
+- Never call `setSnapshot` with `null` or `undefined`, and never from the
+  `getStatus` path (status carries no `uiState`; it is metadata only per WP-165).
+- // why: overwrite semantics must stay total — the injected frame fully
+  replaces the store snapshot, mirroring the live-broadcast write so the two
+  paths never disagree on shape.
+
+#### Service state ownership (Locked)
+
+- The service is **stateless with respect to playback state**: it issues
+  requests and returns responses (and performs the `setSnapshot` side effect on a
+  truthy `uiState`); it stores **no** `paused` / `cursor` / `historyLength` /
+  `mode`, holds no cache, and exposes no shared mutable module state.
+- The **component** (`AutoplayControls.vue`, seeded by `PlayDesktop.vue`) owns
+  `paused` / `cursor` / `historyLength` / `mode` and MUST update them from (a) the
+  initial `getStatus` probe and (b) each control response.
+- // why: prevents the service from drifting into a de-facto store and creating
+  a second source of truth for playback state alongside the component.
 
 ### Control bar state + display predicates
 
@@ -166,15 +229,53 @@ pause / resume / stepForward / stepBack / restart / goToEnd(matchId: string): Pr
   (the spectator is viewing a historical frame, not the live edge). Distinct
   from `mode`.
 
+#### `mode` vs `isRewound` (Locked Semantics)
+
+`mode` and `isRewound` are **independent axes** and MUST NOT be conflated —
+`mode` is *control* state (server-owned); `isRewound` is *view/timeline* state
+(client-derived).
+
+- `mode` = CONTROL state, read directly from the response (D-16304):
+  - `'live'` → autoplay loop is running.
+  - `'paused'` → autoplay loop is gated.
+- `isRewound` = VIEW state, derived client-side:
+  - `true` → `cursor < historyLength - 1` (viewing a historical frame).
+  - `false` → `cursor === historyLength - 1` (at the live edge).
+- The four combinations are all valid (the client must not assume any are
+  impossible):
+
+  | `mode` | `isRewound` | Meaning |
+  |---|---|---|
+  | `paused` | `false` | paused at the live edge |
+  | `paused` | `true` | paused while viewing history (the typical rewind state) |
+  | `live` | `false` | normal autoplay |
+  | `live` | `true` | transient only — the next live broadcast resets the cursor to the live edge (D-16301) |
+
+<!-- why: prevents conflating playback control (mode) with timeline position
+(isRewound) — e.g. assuming `mode === 'paused'` implies rewound, or that `mode`
+encodes view state. The REWIND affordance keys on isRewound alone. -->
+
+`mode` is **never** a value other than `'live' | 'paused'` — there is no
+`'rewind'` mode (WP-163 D-16304 as-built). REWIND is presentation derived from
+`isRewound`, never from `mode`.
+
 ### Status-probe gating + retry (D-16501 / WP-165 transient-404 caveat)
 
-- On mount with a `matchID`, call `getStatus(matchID)`.
+- On mount with a `matchId` prop, call `getStatus(matchId)`.
 - A `200` (non-null) result ⇒ autoplay match: show the bar and seed initial
   state.
-- A `null` (`404`) result on the **first** probe ⇒ retry **once** after
-  `STATUS_RETRY_DELAY_MS = 1000` ms. Only a **second** `null` is treated as "not
-  an autoplay match" (the bar stays hidden). `getStatus` itself stays a single
-  request; the retry lives in the mount/gating logic.
+- A `null` (`404`) result on the **first** probe ⇒ retry **exactly once** after
+  `STATUS_RETRY_DELAY_MS = 1000` ms. The retry is bounded:
+  - If the second attempt resolves a `200` (non-null) ⇒ autoplay match: show the
+    bar and seed state (recovered from a transient init `404`).
+  - If the second attempt also resolves `null` ⇒ autoplay is considered
+    **absent**: the bar **remains hidden**. **No further retries are allowed.**
+  - A thrown error (non-404 / network — see the `getStatus` resolution contract)
+    is **not** a `null`: it does not count as the bounded retry outcome and is
+    not swallowed into "not autoplay" (surface/log it; leave the bar hidden).
+- `getStatus` itself stays a single request; the retry lives in the mount/gating
+  logic. // why: a fixed single retry prevents an unbounded retry loop or
+  oscillating bar visibility while still absorbing the WP-165 transient-init 404.
 - This single retry is a **defensive guard**: WP-163 registers the controller
   before the autoplay-create response returns, so a stable `404` normally means
   "not autoplay" — but the retry prevents a false-negative if controller
@@ -192,11 +293,27 @@ pause / resume / stepForward / stepBack / restart / goToEnd(matchId: string): Pr
 | `go-to-end` | game is over (from the live `useUiStateStore` snapshot) |
 | pause/resume toggle | shows `pause` when `!paused`; `resume` when `paused` |
 
+- **Game-over source (Locked):** game-over MUST be read from the
+  `useUiStateStore` snapshot (the engine-derived live state). The component reads
+  it **passively** — it MUST NOT compute, infer, or re-derive game-over from any
+  other field. // why: game-over is engine truth; duplicating that logic on the
+  client would create a second, drift-prone definition.
+
 ### Live-broadcast-wins (D-16301)
 
 A Socket.IO broadcast arriving after a rewind unconditionally overwrites the
-injected snapshot through the existing transport ingestion path. No merge, no
-reconciliation on the client.
+injected snapshot. No merge, no reconciliation on the client.
+
+- **Overwrite mechanism (Locked):** the overwrite happens in the **existing**
+  live ingestion path — `apps/arena-client/src/client/bgioClient.ts` calls
+  `useUiStateStore().setSnapshot(currentUIState)` on every board update. This WP
+  **MUST NOT** modify that path (`bgioClient.ts` is out of scope and must not
+  appear in `git diff --name-only`).
+- Injected rewind snapshots are therefore **temporary**: the next live broadcast
+  always replaces them via the same `setSnapshot` store seam the autoplay service
+  writes to, so both paths share one ingestion surface and cannot disagree on
+  shape. // why: makes the "live wins" behavior traceable to the concrete
+  existing write site rather than an abstract "transport path."
 
 ---
 
@@ -222,9 +339,17 @@ reconciliation on the client.
 - [ ] `AutoplayControls.vue` renders 5 buttons + pause/resume toggle with the
       disabled matrix; REWIND affordance visible iff `isRewound`; no `fetch`, no
       store import.
-- [ ] `PlayDesktop.vue` mounts the bar only when `getStatus` resolves non-null;
-      seeds initial state from the probe.
-- [ ] Live broadcast overwrites rewound state (no client merge).
+- [ ] `matchId` is drilled `App.vue` → `PlayViewport.vue` → `PlayDesktop.vue`
+      (additive prop only; `App.vue` `parseQuery` / routing unchanged).
+- [ ] `PlayDesktop.vue` mounts the bar only when `getStatus(matchId)` resolves
+      non-null; seeds initial state from the probe.
+- [ ] Bounded-retry gating is covered by a test: initial `null` → retry → `null`
+      ⇒ bar hidden (no third attempt); initial `null` → retry → `200` ⇒ bar
+      shown. (Extract the gating decision into a testable unit if mounting the
+      full page is impractical.)
+- [ ] Live broadcast overwrites rewound state (no client merge): an injected
+      rewind snapshot is replaced when `bgioClient.ts` next calls `setSnapshot`
+      — `bgioClient.ts` is unchanged.
 - [ ] `rg "game-engine/setup" apps/arena-client/src` → zero.
 - [ ] `setSnapshot` called from exactly one new non-test site
       (`autoplayPlayback.ts`); `uiState.ts` not in the diff.
@@ -237,9 +362,14 @@ reconciliation on the client.
 pnpm -r build
 pnpm --filter @legendary-arena/arena-client test
 rg -n "game-engine/setup" apps/arena-client/src                       # → zero
-rg -n "setSnapshot" apps/arena-client/src --glob '!**/*.test.ts'      # → uiState.ts def + 1 new site (autoplayPlayback.ts)
+# setSnapshot: the ONE new non-test caller is autoplayPlayback.ts. Pre-existing
+# callers (client/bgioClient.ts, main.ts, components/replay/ReplayInspector.vue)
+# + the uiState.ts definition are unchanged — none added or removed by this WP.
+rg -n "setSnapshot" apps/arena-client/src/services/autoplayPlayback.ts   # → ≥1 (the sole new invocation site)
 rg -n "fetch\(" apps/arena-client/src/components/AutoplayControls.vue # → zero
-git diff --name-only | rg "uiState.ts"                                # → no match
+git diff --name-only | rg "uiState.ts|client/bgioClient.ts"           # → no match (both unchanged)
+git diff --name-only | rg "App.vue|PlayViewport.vue"                  # → both present (additive matchId prop drill)
+rg -n "parseQuery" apps/arena-client/src/App.vue                      # → unchanged count vs main (no parseQuery edit)
 rg -n "buildApiUrl\(" apps/arena-client/src/services/autoplayPlayback.ts  # → 7 (status + 6 controls)
 ```
 
@@ -247,10 +377,13 @@ rg -n "buildApiUrl\(" apps/arena-client/src/services/autoplayPlayback.ts  # → 
 
 1. `pnpm -r build` exits 0; `pnpm --filter @legendary-arena/arena-client test`
    passes.
-2. Service, component, and `PlayDesktop.vue` mount implemented per Scope (In).
-3. Bar gated on `getStatus` 200; REWIND affordance keyed on `isRewound`.
-4. Single `setSnapshot` new site; `uiState.ts` unchanged; no
-   `game-engine/setup` import; no direct `fetch` in the component.
+2. Service, component, `matchId` prop-drill (`App.vue` → `PlayViewport.vue` →
+   `PlayDesktop.vue`), and `PlayDesktop.vue` mount implemented per Scope (In).
+3. Bar gated on `getStatus(matchId)` 200; REWIND affordance keyed on `isRewound`.
+4. Single `setSnapshot` new site (`autoplayPlayback.ts`); `uiState.ts` and
+   `client/bgioClient.ts` unchanged; `App.vue` change is the additive prop bind
+   only (no `parseQuery` change); no `game-engine/setup` import; no direct
+   `fetch` in the component.
 5. `docs/ai/STATUS.md`, `WORK_INDEX.md` (WP-164 `[x]`), `EC_INDEX.md` (EC-181
    Done), `05-ROADMAP-MINDMAP.md` updated.
 
@@ -274,15 +407,31 @@ WP-164 introduces no new `D-NNNNN` entries; it consumes:
 - Do NOT render the bar based on `?match` presence — gate on `getStatus` 200.
 - Do NOT treat the first `404` as definitive — retry once after
   `STATUS_RETRY_DELAY_MS` before hiding the bar (transient-init guard).
+- Do NOT retry more than once, and do NOT loop the probe — the retry is bounded
+  to exactly one attempt; a second `null` is final.
+- Do NOT coerce a non-404 `getStatus` failure (`500` / network) to `null` — that
+  would mask a real fault as "not autoplay"; let it throw.
 - Do NOT key the REWIND affordance on `mode === 'rewind'` — that value does not
   exist; use `isRewound = cursor < historyLength - 1`.
-- Do NOT recompute `mode` from `cursor`/`historyLength`.
+- Do NOT recompute `mode` from `cursor`/`historyLength`, or assume `mode` and
+  `isRewound` are linked (they are independent axes).
+- Do NOT compute / infer game-over on the client — read it passively from the
+  `useUiStateStore` snapshot.
+- Do NOT store playback state (`paused`/`cursor`/`historyLength`/`mode`) in the
+  service — the component owns it; the service is stateless.
 - Do NOT call `setSnapshot` from a component/page, with `null`, or when
-  `uiState` is absent.
-- Do NOT add merge/reconciliation for rewound vs. live state.
+  `uiState` is absent; do NOT transform/merge the injected `uiState`.
+- Do NOT add merge/reconciliation for rewound vs. live state, or modify
+  `client/bgioClient.ts` (the existing live overwrite path).
 - Do NOT import `useUiStateStore` into `AutoplayControls.vue`, or `fetch`
   directly from it.
 - Do NOT edit `uiState.ts`, add a Pinia store, or import `game-engine/setup`.
+- Do NOT add a `parseQuery` change, a `?autoplay` query key, or new route state
+  to `App.vue` — the only permitted `App.vue` edit is the additive `:match-id`
+  prop bind (D-16501).
+- Do NOT read `matchId` from a store/composable in `PlayDesktop.vue` — it is
+  prop-drilled `App.vue` → `PlayViewport.vue` → `PlayDesktop.vue` (no store
+  carries it).
 
 ---
 
@@ -296,27 +445,42 @@ WP-164 introduces no new `D-NNNNN` entries; it consumes:
 | Rewind state flickers back to live mid-step | Client added merge/reconciliation instead of letting the broadcast win (D-16301) |
 | `setSnapshot` called with null/undefined | Injection branch missing the truthiness guard |
 | Build fails on a forbidden import | `game-engine/setup` pulled in for a type (D-14401) |
+| `matchId` is `undefined` in `PlayDesktop.vue` (bar never probes) | Prop not drilled through `PlayViewport.vue`, or `App.vue` `:match-id` bind omitted |
+| Bar hidden during a real server outage / never recovers | A non-404 `getStatus` fault (`500`/network) coerced to `null` instead of thrown |
+| Probe retries indefinitely / bar visibility oscillates | Retry not bounded to exactly one attempt |
+| REWIND shows/clears at the wrong time | `mode` and `isRewound` conflated instead of treated as independent axes |
+| `go-to-end` enable state wrong at game end | Game-over computed on the client instead of read from the `useUiStateStore` snapshot |
 
 ---
 
 ## Pre-Flight Verdict
 
-**NOT READY (BLOCKED on WP-165).** Scope, contract, and locked values are
-resolved and consistent with the as-built WP-163 surface. The single hard
-blocker is WP-165 (the status endpoint) not yet on `main`. Once WP-165 merges,
-re-run pre-flight; the verdict flips to READY (no other open items). One item
-to confirm at execution: how `PlayDesktop.vue` receives `matchID` (App.vue live
-route props vs. a direct `parseQuery` read) — `match` is parsed in
-`App.vue:parseQuery` today.
+**READY TO EXECUTE** (re-run 2026-05-19 against `origin/main = b39f17b`,
+post-WP-165). All dependencies are Done on `main` (WP-061, WP-163, WP-165,
+WP-161). All cited symbols verified present: `buildApiUrl` (`apiBaseUrl.ts:44`),
+`setSnapshot(next: UIState | null)` (`uiState.ts:35`), the status route
+(`autoplay.mjs:352`), the live-overwrite site (`bgioClient.ts:197`). Contract
+fidelity confirmed: `200` envelope `{ ok, paused, historyLength, cursor, mode }`
+(no `uiState`), `404` not-found envelope, `mode ∈ { 'live', 'paused' }`.
+
+**Resolved blocker (was the prior NOT-READY):** the original draft assumed
+`PlayDesktop.vue` already had `matchID`. It does not — the live tree is
+`App.vue → PlayViewport.vue → PlayDesktop.vue` and only `submit-move` is passed
+down, with no store carrying `matchID`. The fix is an **additive `matchId`
+prop-drill** through both intermediate layers (Scope (In)); `App.vue`'s
+`parseQuery` / routing stays unchanged, so D-16501 is intact. Scope (Out),
+the file allowlist, and the EC were corrected to match. No open items remain.
 
 ## Copilot Check Verdict
 
-**PASS (pending the WP-165 dependency).** High-risk modes are mitigated:
-hidden-info leak (server-side `filterUIStateForAudience`, WP-163 D-16303 — the
-client only paints what the server returns); dual-path desync (D-16301 live
-broadcast wins, single ingestion path through `setSnapshot`); layer leak
-(D-14401 grep gate); store erosion (`uiState.ts` excluded from the diff). No new
-RISK beyond the WP-165 sequencing dependency.
+**PASS.** High-risk modes are mitigated: hidden-info leak (server-side
+`filterUIStateForAudience`, WP-163 D-16303 — the client only paints what the
+server returns); dual-path desync (D-16301 live broadcast wins, single ingestion
+path through `setSnapshot`); layer leak (D-14401 grep gate); store erosion
+(`uiState.ts` + `bgioClient.ts` excluded from the diff). The `matchId` prop-drill
+is the one watch-item — bounded to an additive prop on `App.vue` /
+`PlayViewport.vue` / `PlayDesktop.vue` with no `parseQuery` change, verified by
+the `parseQuery`-unchanged grep gate.
 
 ---
 
@@ -325,10 +489,10 @@ RISK beyond the WP-165 sequencing dependency.
 | § | Item | Verdict |
 |---|------|---------|
 | 1 | Single WP per session | PASS (paired-draft with WP-165; one execution session each) |
-| 2 | Dependency discipline | BLOCKED — hard-dep WP-165 must land first (parked accordingly) |
+| 2 | Dependency discipline | PASS — hard-deps WP-163 / WP-165 / WP-161 / WP-061 all Done on `main` (`b39f17b`) |
 | 3 | Review gate | N/A — draft |
 | 4 | Layer boundary | PASS — `apps/arena-client/**` only |
-| 5 | File count | PASS — 3 source (2 new + 1 mod) + 2 tests + governance |
+| 5 | File count | PASS — 5 source (2 new + 3 mod: `PlayDesktop.vue`, `PlayViewport.vue`, `App.vue` additive prop) + 2 tests + governance |
 | 6 | Contract stability | PASS — consumes WP-163/165; no contract redefinition |
 | 7 | Auth posture | N/A — consumes `guest` endpoints |
 | 8 | Determinism | N/A — no engine code |
