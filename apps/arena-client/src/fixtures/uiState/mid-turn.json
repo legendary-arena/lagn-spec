@@ -34,12 +34,43 @@
   ],
   "city": {
     "spaces": [
-      { "extId": "sinister-six-shocker", "type": "villain", "keywords": ["ranged"] },
-      { "extId": "sinister-six-electro", "type": "villain", "keywords": ["ranged"] },
+      {
+        "extId": "sinister-six-shocker",
+        "type": "villain",
+        "keywords": ["ranged"],
+        "display": {
+          "extId": "sinister-six-shocker",
+          "name": "Shocker",
+          "imageUrl": "https://images.barefootbetters.com/sinister-six-shocker.png",
+          "cost": null
+        }
+      },
+      {
+        "extId": "sinister-six-electro",
+        "type": "villain",
+        "keywords": ["ranged"],
+        "display": {
+          "extId": "sinister-six-electro",
+          "name": "Electro",
+          "imageUrl": "https://images.barefootbetters.com/sinister-six-electro.png",
+          "cost": null
+        }
+      },
       null,
-      { "extId": "sinister-six-vulture", "type": "villain", "keywords": ["ranged"] },
+      {
+        "extId": "sinister-six-vulture",
+        "type": "villain",
+        "keywords": ["ranged"],
+        "display": {
+          "extId": "sinister-six-vulture",
+          "name": "Vulture",
+          "imageUrl": "https://images.barefootbetters.com/sinister-six-vulture.png",
+          "cost": null
+        }
+      },
       null
-    ]
+    ],
+    "escapedPile": []
   },
   "hq": {
     "slots": [
@@ -53,22 +84,42 @@
   "mastermind": {
     "id": "mastermind-doctor-octopus",
     "tacticsRemaining": 3,
-    "tacticsDefeated": 1
+    "tacticsDefeated": 1,
+    "display": {
+      "extId": "mastermind-doctor-octopus",
+      "name": "Doctor Octopus",
+      "imageUrl": "https://images.barefootbetters.com/mastermind-doctor-octopus.png",
+      "cost": null
+    },
+    "attachedBystanders": [],
+    "strikePile": []
   },
   "scheme": {
     "id": "scheme-midtown-bank-robbery",
-    "twistCount": 2
+    "twistCount": 2,
+    "twistPile": []
   },
   "economy": {
     "attack": 4,
     "recruit": 3,
     "availableAttack": 4,
-    "availableRecruit": 3
+    "availableRecruit": 3,
+    "piercing": 0,
+    "woundsDrawn": 0
   },
   "log": [
     "Turn 1: Player 0 recruited sm-shield-agent",
     "Turn 2: Villain Electro entered the city",
     "Turn 3: Player 1 defeated Shocker"
   ],
-  "progress": { "bystandersRescued": 4, "escapedVillains": 1 }
+  "progress": { "bystandersRescued": 4, "escapedVillains": 1 },
+  "decks": { "villainDeckCount": 28, "heroDeckCount": 42 },
+  "piles": {
+    "bystandersCount": 8,
+    "woundsCount": 24,
+    "horrorsCount": 0,
+    "officersCount": 22,
+    "sidekicksCount": 13
+  },
+  "koPile": { "count": 0, "topCard": null, "cards": [] }
 }

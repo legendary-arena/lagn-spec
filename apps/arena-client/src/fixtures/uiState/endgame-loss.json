@@ -27,12 +27,63 @@
   ],
   "city": {
     "spaces": [
-      { "extId": "sinister-six-vulture", "type": "villain", "keywords": ["ranged"] },
-      { "extId": "sinister-six-shocker", "type": "villain", "keywords": ["ranged"] },
-      { "extId": "sinister-six-electro", "type": "villain", "keywords": ["ranged"] },
-      { "extId": "sinister-six-mysterio", "type": "villain", "keywords": ["ranged"] },
-      { "extId": "sinister-six-kraven", "type": "villain", "keywords": ["ranged"] }
-    ]
+      {
+        "extId": "sinister-six-vulture",
+        "type": "villain",
+        "keywords": ["ranged"],
+        "display": {
+          "extId": "sinister-six-vulture",
+          "name": "Vulture",
+          "imageUrl": "https://images.barefootbetters.com/sinister-six-vulture.png",
+          "cost": null
+        }
+      },
+      {
+        "extId": "sinister-six-shocker",
+        "type": "villain",
+        "keywords": ["ranged"],
+        "display": {
+          "extId": "sinister-six-shocker",
+          "name": "Shocker",
+          "imageUrl": "https://images.barefootbetters.com/sinister-six-shocker.png",
+          "cost": null
+        }
+      },
+      {
+        "extId": "sinister-six-electro",
+        "type": "villain",
+        "keywords": ["ranged"],
+        "display": {
+          "extId": "sinister-six-electro",
+          "name": "Electro",
+          "imageUrl": "https://images.barefootbetters.com/sinister-six-electro.png",
+          "cost": null
+        }
+      },
+      {
+        "extId": "sinister-six-mysterio",
+        "type": "villain",
+        "keywords": ["ranged"],
+        "display": {
+          "extId": "sinister-six-mysterio",
+          "name": "Mysterio",
+          "imageUrl": "https://images.barefootbetters.com/sinister-six-mysterio.png",
+          "cost": null
+        }
+      },
+      {
+        "extId": "sinister-six-kraven",
+        "type": "villain",
+        "keywords": ["ranged"],
+        "display": {
+          "extId": "sinister-six-kraven",
+          "name": "Kraven",
+          "imageUrl": "https://images.barefootbetters.com/sinister-six-kraven.png",
+          "cost": null
+        }
+      }
+    ],
+    "escapedPile": []
   },
   "hq": {
     "slots": [
@@ -46,23 +97,43 @@
   "mastermind": {
     "id": "mastermind-doctor-octopus",
     "tacticsRemaining": 4,
-    "tacticsDefeated": 0
+    "tacticsDefeated": 0,
+    "display": {
+      "extId": "mastermind-doctor-octopus",
+      "name": "Doctor Octopus",
+      "imageUrl": "https://images.barefootbetters.com/mastermind-doctor-octopus.png",
+      "cost": null
+    },
+    "attachedBystanders": [],
+    "strikePile": []
   },
   "scheme": {
     "id": "scheme-midtown-bank-robbery",
-    "twistCount": 8
+    "twistCount": 8,
+    "twistPile": []
   },
   "economy": {
     "attack": 0,
     "recruit": 0,
     "availableAttack": 0,
-    "availableRecruit": 0
+    "availableRecruit": 0,
+    "piercing": 0,
+    "woundsDrawn": 0
   },
   "log": [
     "Turn 10: Scheme twist 8 drawn",
     "Turn 11: Scheme advances — heroes lose."
   ],
   "progress": { "bystandersRescued": 1, "escapedVillains": 8 },
+  "decks": { "villainDeckCount": 0, "heroDeckCount": 42 },
+  "piles": {
+    "bystandersCount": 0,
+    "woundsCount": 4,
+    "horrorsCount": 0,
+    "officersCount": 14,
+    "sidekicksCount": 7
+  },
+  "koPile": { "count": 0, "topCard": null, "cards": [] },
   "gameOver": {
     "outcome": "loss",
     "reason": "Scheme Midtown Bank Robbery reached its final twist.",

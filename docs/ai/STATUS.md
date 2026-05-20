@@ -7,6 +7,46 @@
 
 ## Current State
 
+### WP-166 / EC-184 Executed — arena-client `vue-tsc` Green + CI Gate (2026-05-19)
+
+**The arena-client typecheck is green and now gated in CI.** Cleared ~40
+pre-existing `vue-tsc` errors that were invisible on the green path (Vite uses
+esbuild; tests run under `tsx`; CI gated only `registry-viewer`). (A) The engine
+public barrel `packages/game-engine/src/index.ts` now re-exports the six WP-128
+`UIState` projection sub-types it had never published — `UICardDisplay`,
+`UIHQCard`, `UIDisplayEntry`, `UIDecksState`, `UISharedPilesState`,
+`UIKoPileState` — additive, type-only (D-16502 Active). `uiState.types.ts` (the
+locked contract) is untouched. (B) The three `UIState` fixtures and the
+`SharedScoreboard.test.ts` literals were raised to the current WP-128 shape.
+(C) `OpponentPanel.test.ts` now omits the `undefined`-valued optional keys (via
+object-rest) instead of assigning `undefined` under repo-wide
+`exactOptionalPropertyTypes` — the flag is **not** relaxed. (D) `PlayMobile.vue`
+guards the viewer-dependent `TurnActionBar` on `viewer !== null` to match the
+`<main>` guard (a minimal type-safety guard; mobile gets no rewind frame per
+D-16501, so this is **not** the EC-183 board-ungating). (F) `ci.yml` gains a
+`typecheck-arena-client` job so the surface can't silently re-drift.
+
+arena-client baseline **362 / 0 / 0 preserved**; `pnpm -r build` exits 0;
+`pnpm --filter @legendary-arena/arena-client typecheck` exits 0.
+
+**Two execution reconciliations folded inline** (both because the draft was
+written against the short-circuited `vue-tsc` output, which only reports the
+first missing-prop layer): **R1** — the three `UIState` fixtures live in
+`fixtures/uiState/{mid-turn,endgame-win,endgame-loss}.json`, not the
+`index.ts`/`typed.ts` wrappers the draft listed; edits landed in the JSON and the
+`.ts` wrappers are byte-unchanged. **R2** — reaching green required the full
+WP-128 shape (`city.escapedPile` + `city.spaces[].display`,
+`mastermind.{display,attachedBystanders,strikePile}`, `scheme.twistPile`,
+`economy.{piercing,woundsDrawn}`), not only the itemized `decks`/`piles`/`koPile`
+— consistent with the WP Goal §B ("up to the current WP-128 shape"); fixtures
+were raised to the type, never the reverse. The CI gate landed as its own
+`typecheck-arena-client` job (the WP §F "step or job" allowance) because
+`build-viewer` doesn't build the engine/preplan deps arena-client resolves
+against. 01.5 NOT INVOKED (no engine runtime wiring; barrel edit is additive
+type-only). 01.6 SKIPPED (no new long-lived cross-layer abstraction).
+
+---
+
 ### WP-164 / EC-181 Executed — Autoplay Playback Controls (Client) (2026-05-19)
 
 **Spectator "Watch Bot Play" media-player control bar.** The client half of

@@ -191,7 +191,14 @@ export default defineComponent({
         class="play-mobile__sticky-bottom"
         data-testid="play-mobile-sticky-bottom"
       >
+        <!-- why: WP-166 — viewer is typed nullable; the turn-action bar needs an
+             identified viewer to read handCount, matching the <main> guard above.
+             Mobile never produces a viewer-less play frame (PlayViewport forwards
+             matchId to PlayDesktop only, D-16501), so this is a type-safety guard,
+             not the EC-183 board-ungating restructure (which deliberately scoped
+             mobile out). The footer and preplan-affordance slot stay on isPlayPhase. -->
         <TurnActionBar
+          v-if="viewer !== null"
           :current-stage="snapshot.game.currentStage"
           :hand-count="viewer.handCount"
           :submit-move="submitMove"

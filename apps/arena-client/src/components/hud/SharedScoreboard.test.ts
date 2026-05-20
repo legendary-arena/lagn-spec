@@ -8,11 +8,19 @@ import SharedScoreboard from './SharedScoreboard.vue';
 test('SharedScoreboard renders five counters with the literal leaf-name aria-labels', () => {
   const wrapper = mount(SharedScoreboard, {
     props: {
-      scheme: { id: 'scheme-midtown-bank-robbery', twistCount: 2 },
+      scheme: { id: 'scheme-midtown-bank-robbery', twistCount: 2, twistPile: [] },
       mastermind: {
         id: 'mastermind-doctor-octopus',
         tacticsRemaining: 3,
         tacticsDefeated: 1,
+        display: {
+          extId: 'mastermind-doctor-octopus',
+          name: 'Doctor Octopus',
+          imageUrl: '',
+          cost: null,
+        },
+        attachedBystanders: [],
+        strikePile: [],
       },
       progress: { bystandersRescued: 4, escapedVillains: 1 },
     },
@@ -40,11 +48,19 @@ test('SharedScoreboard renders five counters with the literal leaf-name aria-lab
 test('SharedScoreboard carries data-emphasis="primary" exactly once (on bystandersRescued)', () => {
   const wrapper = mount(SharedScoreboard, {
     props: {
-      scheme: { id: 'scheme-midtown-bank-robbery', twistCount: 2 },
+      scheme: { id: 'scheme-midtown-bank-robbery', twistCount: 2, twistPile: [] },
       mastermind: {
         id: 'mastermind-doctor-octopus',
         tacticsRemaining: 3,
         tacticsDefeated: 1,
+        display: {
+          extId: 'mastermind-doctor-octopus',
+          name: 'Doctor Octopus',
+          imageUrl: '',
+          cost: null,
+        },
+        attachedBystanders: [],
+        strikePile: [],
       },
       progress: { bystandersRescued: 4, escapedVillains: 1 },
     },
@@ -68,11 +84,19 @@ test('SharedScoreboard carries data-emphasis="primary" exactly once (on bystande
 test('SharedScoreboard renders all five counters at lobby with zero values (no phase gating)', () => {
   const wrapper = mount(SharedScoreboard, {
     props: {
-      scheme: { id: 'scheme-placeholder', twistCount: 0 },
+      scheme: { id: 'scheme-placeholder', twistCount: 0, twistPile: [] },
       mastermind: {
         id: 'mastermind-placeholder',
         tacticsRemaining: 0,
         tacticsDefeated: 0,
+        display: {
+          extId: 'mastermind-placeholder',
+          name: 'Mastermind',
+          imageUrl: '',
+          cost: null,
+        },
+        attachedBystanders: [],
+        strikePile: [],
       },
       progress: { bystandersRescued: 0, escapedVillains: 0 },
     },

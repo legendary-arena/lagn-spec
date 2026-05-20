@@ -30,12 +30,11 @@
 
 ## Files to Produce
 - `packages/game-engine/src/index.ts` — **modified** — +6 type-only re-exports.
-- `apps/arena-client/src/fixtures/uiState/index.ts` — **modified** — add `decks`/`piles`/`koPile` to 3 `UIState` fixtures.
-- `apps/arena-client/src/fixtures/uiState/typed.ts` — **modified** — same three additions.
+- `apps/arena-client/src/fixtures/uiState/mid-turn.json` + `endgame-win.json` + `endgame-loss.json` — **modified** — the three `UIState` fixtures raised to the full WP-128 shape. **(Reconciliation R1/R2:** the data lives in these `.json` files, not the `index.ts`/`typed.ts` wrappers the draft named — those are unchanged; and the full shape, not only `decks`/`piles`/`koPile`, was required: also `city.escapedPile` + `city.spaces[].display`, `mastermind.{display,attachedBystanders,strikePile}`, `scheme.twistPile`, `economy.{piercing,woundsDrawn}`. The baseline `vue-tsc` hid the deeper layers via short-circuit. Fixtures rose to the type; the type was untouched.)
 - `apps/arena-client/src/components/hud/SharedScoreboard.test.ts` — **modified** — add `twistPile` + mastermind `display`/`attachedBystanders`/`strikePile`.
 - `apps/arena-client/src/components/play/OpponentPanel.test.ts` — **modified** — omit the `undefined`-valued optional keys (~line 56).
 - `apps/arena-client/src/pages/PlayMobile.vue` — **modified** — guard `TurnActionBar` on `viewer !== null`.
-- `.github/workflows/ci.yml` — **modified** — add `pnpm --filter @legendary-arena/arena-client typecheck` step.
+- `.github/workflows/ci.yml` — **modified** — add `pnpm --filter @legendary-arena/arena-client typecheck`. **(Reconciliation:** landed as its own `typecheck-arena-client` job — the §F "step or job" allowance — running `pnpm -r build` first, because arena-client resolves game-engine/preplan via built `dist/*.d.ts` that `build-viewer` doesn't compile.)
 
 ## After Completing
 - [ ] `pnpm -r build` exits 0.

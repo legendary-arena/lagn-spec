@@ -52,8 +52,13 @@ describe('OpponentPanel (WP-129)', () => {
   });
 
   test('victory button does not crash when victoryVP is redacted', () => {
+    // why: redaction means the optional keys are ABSENT, not present-with-undefined.
+    // Under exactOptionalPropertyTypes a literal `victoryVP: undefined` is a type
+    // error; object-rest omits the keys, matching the audience-filtered shape
+    // buildUIState produces for a spectator/opponent.
+    const { victoryVP, victoryCards, ...redactedOpponent } = opponent();
     const wrapper = mount(OpponentPanel, {
-      props: { player: opponent({ victoryVP: undefined, victoryCards: undefined }) },
+      props: { player: redactedOpponent },
     });
     const button = wrapper.find('[data-testid="play-opponent-victory-button"]');
     assert.match(button.text(), /Victory: 4/);

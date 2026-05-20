@@ -268,10 +268,19 @@ is introduced; no `G`/`ctx` field changes.
 
 - `packages/game-engine/src/index.ts` — **modified** — +6 type-only re-exports
   in the existing UI block.
-- `apps/arena-client/src/fixtures/uiState/index.ts` — **modified** — add
-  `decks`/`piles`/`koPile` to 3 `UIState` fixtures.
-- `apps/arena-client/src/fixtures/uiState/typed.ts` — **modified** — same three
-  additions for the `satisfies` checks.
+- `apps/arena-client/src/fixtures/uiState/mid-turn.json`,
+  `apps/arena-client/src/fixtures/uiState/endgame-win.json`,
+  `apps/arena-client/src/fixtures/uiState/endgame-loss.json` — **modified** —
+  the three `UIState` fixtures raised to the full WP-128 shape. **(Execution
+  reconciliation R1/R2, 2026-05-19:** the draft listed `fixtures/uiState/index.ts`
+  + `typed.ts`, but those are TS wrappers — the `UIState` *data* lives in these
+  three `.json` files, so the edits landed here and the `.ts` wrappers are
+  byte-unchanged. And the shape refresh required the full WP-128 shape, not only
+  `decks`/`piles`/`koPile`: also `city.escapedPile` + `city.spaces[].display`,
+  `mastermind.{display,attachedBystanders,strikePile}`, `scheme.twistPile`,
+  `economy.{piercing,woundsDrawn}` — per the Goal §B "up to the current WP-128
+  shape". The baseline `vue-tsc` only surfaced the top-level missing props
+  because TS short-circuits at the first incomplete layer.)
 - `apps/arena-client/src/components/hud/SharedScoreboard.test.ts` — **modified**
   — add `twistPile` + mastermind `display`/`attachedBystanders`/`strikePile`.
 - `apps/arena-client/src/components/play/OpponentPanel.test.ts` — **modified** —
@@ -279,7 +288,13 @@ is introduced; no `G`/`ctx` field changes.
 - `apps/arena-client/src/pages/PlayMobile.vue` — **modified** — guard
   `TurnActionBar` on `viewer !== null`.
 - `.github/workflows/ci.yml` — **modified** — add the arena-client typecheck
-  step.
+  gate. **(Execution reconciliation, 2026-05-19:** landed as its own
+  `typecheck-arena-client` job — the §F "step **or job**" allowance — that runs
+  `pnpm -r build` then `pnpm --filter @legendary-arena/arena-client typecheck`.
+  A step inside `build-viewer` would fail at CI runtime: that job only downloads
+  the registry dist, but arena-client resolves `@legendary-arena/game-engine` and
+  `@legendary-arena/preplan` via their built `dist/*.d.ts`, which must be compiled
+  first.)
 - `docs/ai/STATUS.md` — **modified** — record the restored gate.
 - `docs/ai/DECISIONS.md` — **modified** — land D-16502 (barrel widening).
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — check off WP-166.

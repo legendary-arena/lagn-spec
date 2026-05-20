@@ -34,7 +34,8 @@
     }
   ],
   "city": {
-    "spaces": [null, null, null, null, null]
+    "spaces": [null, null, null, null, null],
+    "escapedPile": []
   },
   "hq": {
     "slots": [
@@ -48,23 +49,43 @@
   "mastermind": {
     "id": "mastermind-doctor-octopus",
     "tacticsRemaining": 0,
-    "tacticsDefeated": 4
+    "tacticsDefeated": 4,
+    "display": {
+      "extId": "mastermind-doctor-octopus",
+      "name": "Doctor Octopus",
+      "imageUrl": "https://images.barefootbetters.com/mastermind-doctor-octopus.png",
+      "cost": null
+    },
+    "attachedBystanders": [],
+    "strikePile": []
   },
   "scheme": {
     "id": "scheme-midtown-bank-robbery",
-    "twistCount": 6
+    "twistCount": 6,
+    "twistPile": []
   },
   "economy": {
     "attack": 0,
     "recruit": 0,
     "availableAttack": 0,
-    "availableRecruit": 0
+    "availableRecruit": 0,
+    "piercing": 0,
+    "woundsDrawn": 0
   },
   "log": [
     "Turn 13: Player 0 defeated the last tactic of Doctor Octopus",
     "Turn 14: Heroes win — mastermind defeated."
   ],
   "progress": { "bystandersRescued": 9, "escapedVillains": 2 },
+  "decks": { "villainDeckCount": 2, "heroDeckCount": 42 },
+  "piles": {
+    "bystandersCount": 0,
+    "woundsCount": 10,
+    "horrorsCount": 0,
+    "officersCount": 14,
+    "sidekicksCount": 7
+  },
+  "koPile": { "count": 0, "topCard": null, "cards": [] },
   "gameOver": {
     "outcome": "win",
     "reason": "Mastermind Doctor Octopus has been defeated.",

@@ -241,6 +241,11 @@ export type { BuildSnapshotSequenceParams } from './replay/buildSnapshotSequence
 export { buildSnapshotSequence } from './replay/buildSnapshotSequence.js';
 
 // UI state contract (WP-028; progress + PAR breakdown added WP-067)
+// why: WP-166 / D-16502 — the six sub-types below complete the WP-128 UI
+// projection surface the client consumes. They were authored in WP-128 on
+// uiState.types.ts and made required on UIState (decks/piles/koPile), but
+// never published from this barrel, so arena-client could not import them by
+// name and vue-tsc went red. Additive, type-only re-export — no value export.
 export type {
   UIState,
   UIPlayerState,
@@ -253,6 +258,12 @@ export type {
   UIGameOverState,
   UIProgressCounters,
   UIParBreakdown,
+  UICardDisplay,
+  UIHQCard,
+  UIDisplayEntry,
+  UIDecksState,
+  UISharedPilesState,
+  UIKoPileState,
 } from './ui/uiState.types.js';
 export { buildUIState } from './ui/uiState.build.js';
 

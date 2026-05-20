@@ -17703,8 +17703,8 @@ Authentication).
 
 **Packet:** WP-166.
 
-**Introduced:** WP-166 (drafted 2026-05-19; not yet landed).
-**Status:** Drafted 2026-05-19; lands at WP-166 execution (flip to Active via WP-166 / EC-184).
+**Introduced:** WP-166 (drafted 2026-05-19; executed 2026-05-19).
+**Status:** Active (landed 2026-05-19 via WP-166 / EC-184).
 
 ---
 
