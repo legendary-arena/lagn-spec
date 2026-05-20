@@ -29,11 +29,14 @@
 - `setSnapshot` called via `useUiStateStore().setSnapshot(response.uiState)` ONLY when `response.uiState` is truthy, passing the value EXACTLY (no transformation / merge / partial patch); NEVER with `null`/`undefined` and NEVER from the `getStatus` path
 - Live-overwrite site (Locked): the existing live ingestion path `apps/arena-client/src/client/bgioClient.ts` calls `setSnapshot(currentUIState)` per broadcast — this WP MUST NOT modify it; injected rewind snapshots are temporary and replaced by the next broadcast (D-16301)
 - `matchId` delivery (Locked): additive prop-drill `App.vue :match-id` → `PlayViewport.vue` (forward to `<PlayDesktop>`, NOT `<PlayMobile>`) → `PlayDesktop.vue matchId` prop. No `parseQuery` change, no `?autoplay` key, no store read (D-16501)
+- `matchId` required (Locked): if the prop is `undefined`/`null`/empty, `getStatus` MUST NOT be called and the bar MUST NOT render (defensive boundary guard)
+- Control response handling (Locked): each control response FULLY REPLACES the component's local `paused`/`cursor`/`historyLength`/`mode` — no partial update, no merge; last-write-wins (no debounce, D-16309)
 
 ## Guardrails
 - Bar renders ONLY when `getStatus(matchId)` resolves non-null (`200`) — NOT on `?match` presence; no PvP render
 - First `404` is NOT definitive: retry the probe EXACTLY ONCE after `STATUS_RETRY_DELAY_MS` before hiding; bounded — no third attempt, no loop; `getStatus` stays a single request (retry lives in the `PlayDesktop.vue` mount logic)
-- A non-404 `getStatus` failure (`500` / network) THROWS — do NOT coerce it to `null` (that would mask a real fault as "not autoplay")
+- A non-404 `getStatus` failure (`500` / network) THROWS — do NOT coerce it to `null`; on a throw the bar STAYS HIDDEN and the error is surfaced (console / test harness), NEVER treated as "not autoplay" (only a `404`/`null` means "not autoplay")
+- `matchId` missing (`undefined`/`null`/empty) → do NOT call `getStatus`, do NOT render the bar
 - `mode` and `isRewound` are independent — do NOT conflate them; REWIND keys on `isRewound` only; `mode` is never recomputed and never a value other than `'live' | 'paused'`
 - Game-over is read PASSIVELY from the `useUiStateStore` snapshot — the component never computes/infers it
 - Service is STATELESS for playback state; the component owns `paused`/`cursor`/`historyLength`/`mode` — do NOT let the service become a store
@@ -58,7 +61,7 @@
 - `apps/arena-client/src/services/autoplayPlayback.test.ts` — **new** — `getStatus`: `200` → object, `404` → `null`, `500`/network → THROWS; control responses: `uiState` present → `setSnapshot` called with that value exactly, absent → NOT called; `mode` pass-through; correct `buildApiUrl` paths
 - `apps/arena-client/src/components/AutoplayControls.vue` — **new** — 5 buttons + toggle; disabled matrix; `isRewound` affordance; no `fetch`, no store import
 - `apps/arena-client/src/components/AutoplayControls.test.ts` — **new** — disabled matrix; button→service; component never calls `setSnapshot`; REWIND transitions (`stepBack` → `isRewound` true; forward-to-live → `isRewound` false); pause-while-rewound still indicates REWIND; a control response updates local `paused`/`cursor`/`historyLength`/`mode`
-- `apps/arena-client/src/pages/PlayDesktop.vue` — **modified** — add a `matchId` prop; call `getStatus(matchId)` (retry once on an initial 404 after `STATUS_RETRY_DELAY_MS`, bounded); mount `<AutoplayControls>` only when a probe resolves non-null; seed initial state. Cover the bounded-retry gating (null→retry→null ⇒ hidden; null→retry→200 ⇒ shown) with a test — extract a pure gating helper if mounting the full page is impractical
+- `apps/arena-client/src/pages/PlayDesktop.vue` — **modified** — add a `matchId` prop; call `getStatus(matchId)` (retry once on an initial 404 after `STATUS_RETRY_DELAY_MS`, bounded); mount `<AutoplayControls>` only when a probe resolves non-null; seed initial state. Cover the gating with tests — bounded retry (null→retry→null ⇒ hidden; null→retry→200 ⇒ shown), `getStatus` throws ⇒ bar stays hidden (NOT treated as null), `matchId` absent ⇒ `getStatus` not called + bar not rendered; extract a pure gating helper if mounting the full page is impractical
 - `apps/arena-client/src/pages/PlayViewport.vue` — **modified** — add a `matchId` prop and forward it to `<PlayDesktop :match-id>` (NOT `<PlayMobile>`)
 - `apps/arena-client/src/App.vue` — **modified (additive only)** — bind `liveParams.matchID` onto `<PlayViewport :match-id>` for the `live` route; NO `parseQuery` / route change
 - `docs/ai/STATUS.md` / `docs/ai/work-packets/WORK_INDEX.md` / `docs/ai/execution-checklists/EC_INDEX.md` / `docs/05-ROADMAP-MINDMAP.md` — **modified** — close WP-164 / EC-181

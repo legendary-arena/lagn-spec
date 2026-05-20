@@ -218,8 +218,14 @@ pause / resume / stepForward / stepBack / restart / goToEnd(matchId: string): Pr
 - The **component** (`AutoplayControls.vue`, seeded by `PlayDesktop.vue`) owns
   `paused` / `cursor` / `historyLength` / `mode` and MUST update them from (a) the
   initial `getStatus` probe and (b) each control response.
+- **Full-replace (Locked):** each control response **fully replaces** the
+  component's local `paused` / `cursor` / `historyLength` / `mode` — no partial
+  update, no merge with prior state. Combined with the client's last-write-wins
+  posture (no debounce, D-16309), the UI always reflects the latest response
+  received.
 - // why: prevents the service from drifting into a de-facto store and creating
-  a second source of truth for playback state alongside the component.
+  a second source of truth for playback state alongside the component; full-replace
+  keeps the bar deterministic and avoids drift from incremental patching.
 
 ### Control bar state + display predicates
 
@@ -261,9 +267,18 @@ encodes view state. The REWIND affordance keys on isRewound alone. -->
 
 ### Status-probe gating + retry (D-16501 / WP-165 transient-404 caveat)
 
-- On mount with a `matchId` prop, call `getStatus(matchId)`.
+- **`matchId` required (Locked):** `matchId` is required for autoplay behavior.
+  If the prop is `undefined` / `null` / empty, `getStatus` MUST NOT be called and
+  the bar MUST NOT render. // why: avoids an invalid `…/undefined/status` request
+  and an inconsistent gating state (the live route always supplies `matchID`, so
+  this is a defensive boundary guard).
+- On mount with a present `matchId` prop, call `getStatus(matchId)`.
 - A `200` (non-null) result ⇒ autoplay match: show the bar and seed initial
   state.
+- **A thrown `getStatus` error (non-404 / network — see the resolution
+  contract) ⇒ the bar remains hidden and the error is surfaced (console / test
+  harness); it is NEVER treated as "not an autoplay match."** A thrown error is
+  distinct from a `null` result.
 - A `null` (`404`) result on the **first** probe ⇒ retry **exactly once** after
   `STATUS_RETRY_DELAY_MS = 1000` ms. The retry is bounded:
   - If the second attempt resolves a `200` (non-null) ⇒ autoplay match: show the
@@ -343,10 +358,11 @@ injected snapshot. No merge, no reconciliation on the client.
       (additive prop only; `App.vue` `parseQuery` / routing unchanged).
 - [ ] `PlayDesktop.vue` mounts the bar only when `getStatus(matchId)` resolves
       non-null; seeds initial state from the probe.
-- [ ] Bounded-retry gating is covered by a test: initial `null` → retry → `null`
-      ⇒ bar hidden (no third attempt); initial `null` → retry → `200` ⇒ bar
-      shown. (Extract the gating decision into a testable unit if mounting the
-      full page is impractical.)
+- [ ] Gating is covered by tests: bounded retry (initial `null` → retry → `null`
+      ⇒ bar hidden, no third attempt; initial `null` → retry → `200` ⇒ bar shown);
+      `getStatus` throws ⇒ bar stays hidden (NOT coerced to "not autoplay");
+      `matchId` absent ⇒ `getStatus` not called + bar not rendered. (Extract the
+      gating decision into a testable unit if mounting the full page is impractical.)
 - [ ] Live broadcast overwrites rewound state (no client merge): an injected
       rewind snapshot is replaced when `bgioClient.ts` next calls `setSnapshot`
       — `bgioClient.ts` is unchanged.
@@ -432,6 +448,12 @@ WP-164 introduces no new `D-NNNNN` entries; it consumes:
 - Do NOT read `matchId` from a store/composable in `PlayDesktop.vue` — it is
   prop-drilled `App.vue` → `PlayViewport.vue` → `PlayDesktop.vue` (no store
   carries it).
+- Do NOT call `getStatus` or render the bar when `matchId` is missing
+  (`undefined` / `null` / empty) — guard first.
+- Do NOT partial-update or merge the bar's local `paused`/`cursor`/
+  `historyLength`/`mode` — each control response fully replaces them.
+- Do NOT surface a thrown `getStatus` error as "not an autoplay match" — keep the
+  bar hidden and surface the error; only a `null` (404) means "not autoplay."
 
 ---
 
