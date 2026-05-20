@@ -17683,8 +17683,8 @@ Authentication).
 
 **Packet:** WP-165 (consumed by WP-164).
 
-**Introduced:** WP-165 (drafted 2026-05-19; not yet executed)
-**Status:** Drafted 2026-05-19; not yet landed (flips to Active at execution).
+**Introduced:** WP-165 (drafted 2026-05-19; executed 2026-05-19)
+**Status:** Active (landed 2026-05-19 via WP-165 / EC-182).
 
 ---
 

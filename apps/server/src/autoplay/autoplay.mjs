@@ -163,6 +163,24 @@ async function handlePlaybackRequest(koaContext, core) {
 }
 
 /**
+ * Reports the current playback envelope for an autoplay match, or a 404
+ * not-found envelope when no controller is registered for the match id.
+ *
+ * // why: read-only status probe (D-16501) — it reuses the POST handlers'
+ * 404/500 wrapper for an identical not-found envelope but performs no mutation;
+ * the WP-164 client probes this once to tell an autoplay match (200) from a
+ * normal live match (404) without a side-effectful POST or a URL marker.
+ *
+ * @param {object} koaContext - The koa request context.
+ * @returns {Promise<void>}
+ */
+export async function handleAutoplayStatusRequest(koaContext) {
+  await handlePlaybackRequest(koaContext, (controller) => {
+    koaContext.body = buildResponse(controller);
+  });
+}
+
+/**
  * Registers the POST /api/match/autoplay route plus the six playback controls.
  *
  * @param {import('@koa/router')} router - The boardgame.io server's koa router.
@@ -327,6 +345,11 @@ export function registerAutoplayRoutes(router, context) {
       koaContext.body = buildResponse(controller);
     });
   });
+
+  // Status probe (WP-165). GET, bodyless — no koaBody() — and strictly
+  // read-only: 200 with the metadata envelope (no uiState) when a controller is
+  // registered, 404 otherwise (D-16501).
+  router.get('/api/match/autoplay/:matchId/status', handleAutoplayStatusRequest);
 }
 
 /**

@@ -135,6 +135,7 @@ mindmap
         ["WP-094 ✅ Viewer hero key uniqueness"]
         ["WP-100 ✅ Interactive gameplay surface"]
         ["WP-163 ✅ Autoplay playback controls (server: pause/step/rewind endpoints)"]
+        ["WP-165 ✅ Autoplay status endpoint (server: GET .../status read-only probe)"]
 
       Auth Stack & Profile Surface
         ["WP-099 ✅ Auth provider selection (Hanko)"]
@@ -280,10 +281,10 @@ mindmap
 - **Phase 6 Gate:** Closed 2026-04-19 — tag `phase-6-complete` at `c376467`
 - **Engine test baseline:** `749 / 0 / 0` (post-WP-158)
 - **Registry test baseline:** `53 / 0 / 0` (post-WP-151)
-- **Server test baseline:** `323 / 1 / 66 / 0` (post-WP-163; +10 playback-controller tests over the WP-159 baseline; the 1 fail is the pre-existing `join-match.test.ts` "missing --name flag" carried since WP-106 per STATUS.md)
+- **Server test baseline:** `330 / 1 / 66 / 0` (post-WP-165; +7 autoplay-status tests over the WP-163 baseline; the 1 fail is the pre-existing `join-match.test.ts` "missing --name flag" carried since WP-106 per STATUS.md)
 - **arena-client test baseline:** `326 / 0 / 0` (post-WP-161; preserved from WP-160; WP-161 adds no tests — mechanical URL-prefix change)
-- **DECISIONS.md range:** `D-4801..D-16309` (extends through WP-163)
-- **EC range:** `EC-001..EC-180` (extends through WP-163)
+- **DECISIONS.md range:** `D-4801..D-16501` (extends through WP-165)
+- **EC range:** `EC-001..EC-182` (extends through WP-165)
 
 ---
 
@@ -293,6 +294,7 @@ mindmap
 2. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
 
 **Recently completed:**
+- ✅ **Autoplay status endpoint (server)** (WP-165, 2026-05-19) — one side-effect-free `GET /api/match/autoplay/:matchId/status` read probe so the WP-164 client tells an autoplay match (200) from a normal live match (404) without a URL marker; reuses WP-163's `getController` + `buildResponse` + `handlePlaybackRequest`; strictly read-only. D-16501 Active. Unblocks WP-164.
 - ✅ **Autoplay playback controls (server)** (WP-163, 2026-05-19) — six `POST /api/match/autoplay/:matchId/*` endpoints + cursor-based snapshot history + pause-gated bot loop; rewind is REST-only / visual-only (no `G` mutation, no persistence). D-16301..D-16309 Active. Paired client WP-164 not yet drafted.
 - ✅ **Arena client API base URL surfacing** (WP-161, 2026-05-18) — `VITE_API_BASE_URL` + `buildApiUrl(...)` helper; surfaced during WP-160 smoke as the unblocker for end-to-end authenticated `/api/me/*` paths.
 - ✅ **Hanko client UI** (WP-160, 2026-05-18) — production sign-in surface; closes the WP-099/112/126/131 stack at the client boundary; D-16001..D-16011 Active.

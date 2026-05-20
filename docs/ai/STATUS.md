@@ -7,6 +7,40 @@
 
 ## Current State
 
+### WP-165 / EC-182 Executed — Autoplay Status Endpoint (Server) (2026-05-19)
+
+**Read-only autoplay-match detection for the WP-164 client.** Adds one
+side-effect-free endpoint `GET /api/match/autoplay/:matchId/status` to
+`apps/server/src/autoplay/autoplay.mjs`: a new exported handler
+`handleAutoplayStatusRequest` plus the `router.get(...)` registration. The
+handler reuses WP-163's `handlePlaybackRequest` 404/500 wrapper with a core that
+sets `koaContext.body = buildResponse(controller)` — `200`
+`{ ok, paused, historyLength, cursor, mode }` (no `uiState`; status is metadata
+only) when a controller is registered for `:matchId`, the same `404` not-found
+envelope the POST controls return otherwise. `mode` is read only from
+`controller.getMode()` (D-16304); the handler is strictly read-only — it never
+calls a mutating controller method. The WP-164 client probes this once on mount
+to tell an autoplay match (`200` → show the playback bar + seed state) from a
+normal live match (`404` → hide the bar) without a URL marker or a side-effectful
+POST (D-16501). One new whole API-catalog row (D-11804, `Wired` / `guest`); the
+six WP-163 POST routes are unchanged.
+
+New `autoplayStatus.test.ts` (7 tests): the 200 metadata envelope (mode present,
+no `uiState`), the 404 not-found envelope on an unknown match id, the no-mutation
+invariant (cursor / paused / historyLength / `getActiveDelay()` / mode all
+unchanged across a status call), the pause / step-back-rewound / resume
+reflections, and the match-end lifecycle (a controller removed from the map
+returns `404`, D-16308).
+
+Server test baseline **323 / 1 / 66 → 330 / 1 / 66** (+7 status tests; the 1 fail
+is the pre-existing `join-match.test.ts` "missing --name flag" carried since
+WP-106, unrelated to this WP). D-16501 Active. Unblocks WP-164. No execution
+amendments. 01.5 NOT INVOKED (autoplay-only; no engine-surface wiring). 01.6
+SKIPPED (thin read-only composition of existing tested helpers; no new
+abstraction).
+
+---
+
 ### WP-163 / EC-180 Executed — Autoplay Playback Controls (Server) (2026-05-19)
 
 **Media-player controls for "Watch Bot Play."** New pure helper
