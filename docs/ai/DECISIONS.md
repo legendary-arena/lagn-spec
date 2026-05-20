@@ -17688,4 +17688,24 @@ Authentication).
 
 ---
 
+### D-16502 — Engine public barrel publishes the six WP-128 UIState projection sub-types (WP-166)
+
+**Decision:** `packages/game-engine/src/index.ts` re-exports the six `UIState` projection sub-types authored by WP-128 — `UICardDisplay`, `UIHQCard`, `UIDisplayEntry`, `UIDecksState`, `UISharedPilesState`, `UIKoPileState` — adding them to the existing `export type { … } from './ui/uiState.types.js'` block (the WP-028/WP-067 UI block). The re-exports are additive and type-only (no value export, no runtime import). `apps/arena-client` consumes them by name via the Runtime-Safe Engine Surface (the `.` subpath of `@legendary-arena/game-engine`, per WP-090).
+
+**Rationale.** WP-128 declared these sub-types in `uiState.types.ts` and made `decks`/`piles`/`koPile` required on `UIState`, but the barrel UI block (last touched by WP-067) was never extended to publish them. The client always imported them by name, but no green-path tool type-checks the client (Vite uses esbuild; tests run under `tsx`; CI gated only `registry-viewer`), so the `TS2305 has no exported member` failures accrued silently. Publishing the sub-types is the intended completion of the WP-128 UI projection surface, not a new public-API commitment — the client already depends on them; the barrel simply makes that dependency type-resolvable. The companion CI gate (WP-166 §F) runs `vue-tsc` so the surface cannot silently re-drift.
+
+**Rejected alternatives:**
+- **Client re-declares the sub-types structurally** (the `profileApi.ts`-style local mirror of a server type). Rejected — duplicates the engine contract in the client, creating a drift surface where the mirror and the engine `UIState` can diverge silently.
+- **Narrow the engine public surface and have the client import from a deep subpath.** Rejected — deep-subpath imports into engine internals are a layer-boundary smell; the curated `.` barrel is the sanctioned client surface (WP-090).
+- **Leave the barrel as-is and suppress the client errors.** Rejected — suppression hides a real contract gap and defeats the CI gate's purpose.
+
+**Layer/contract note.** `index.ts` is the engine barrel, not a `.types.ts`/`.validate.ts`/`.gating.ts` locked contract file, so an additive re-export is not a contract-file modification. `uiState.types.ts` (the actual contract) is untouched. No `UIState` field is renamed, added, or removed.
+
+**Packet:** WP-166.
+
+**Introduced:** WP-166 (drafted 2026-05-19; not yet landed).
+**Status:** Drafted 2026-05-19; lands at WP-166 execution (flip to Active via WP-166 / EC-184).
+
+---
+
 Protect this file.
