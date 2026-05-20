@@ -198,7 +198,13 @@ export default defineComponent({
         :scheme-twist-threshold="8"
       />
       <LobbyControls v-if="isLobbyPhase" :submit-move="submitMove" />
-      <template v-if="isPlayPhase && viewer !== null">
+      <!-- why: the shared board renders for the whole play phase regardless of
+           viewer. A spectator or rewound-autoplay frame is audience-filtered
+           (D-16303) and exposes no own hand, so `viewer` is null; gating the
+           board on `viewer !== null` (the prior behavior) blanked the screen on
+           rewind (WP-163/164). Only the personal "your" zone below depends on a
+           viewer. -->
+      <template v-if="isPlayPhase">
         <RevealOverlay
           :reveal="currentReveal"
           :duration-ms="2000"
@@ -243,29 +249,35 @@ export default defineComponent({
         />
         <SharedDecks :piles="snapshot.piles" />
         <KOPile :ko-pile="snapshot.koPile" />
-        <section class="play-desktop__player-zone">
-          <HandRow
-            :hand-cards="viewer.handCards ?? []"
-            :hand-display="viewer.handDisplay"
+        <!-- why: the personal zone (own hand / economy / deck / victory) and the
+             turn-action bar require an identified viewer. They are hidden for a
+             spectator or rewound-autoplay frame (viewer null) while the shared
+             board above stays visible. -->
+        <template v-if="viewer !== null">
+          <section class="play-desktop__player-zone">
+            <HandRow
+              :hand-cards="viewer.handCards ?? []"
+              :hand-display="viewer.handDisplay"
+              :current-stage="snapshot.game.currentStage"
+              :submit-move="submitMove"
+            />
+            <EconomyBar :economy="snapshot.economy" />
+            <YourDeckDiscardZone
+              :deck-count="viewer.deckCount"
+              :discard-count="viewer.discardCount"
+              :discard-top-card="viewer.discardTopCard"
+            />
+            <YourVictoryPile
+              :victory-cards="viewer.victoryCards ?? []"
+              :victory-vp="viewer.victoryVP ?? 0"
+            />
+          </section>
+          <TurnActionBar
             :current-stage="snapshot.game.currentStage"
+            :hand-count="viewer.handCount"
             :submit-move="submitMove"
           />
-          <EconomyBar :economy="snapshot.economy" />
-          <YourDeckDiscardZone
-            :deck-count="viewer.deckCount"
-            :discard-count="viewer.discardCount"
-            :discard-top-card="viewer.discardTopCard"
-          />
-          <YourVictoryPile
-            :victory-cards="viewer.victoryCards ?? []"
-            :victory-vp="viewer.victoryVP ?? 0"
-          />
-        </section>
-        <TurnActionBar
-          :current-stage="snapshot.game.currentStage"
-          :hand-count="viewer.handCount"
-          :submit-move="submitMove"
-        />
+        </template>
         <!-- why: D-12908 — pre-plan affordance slot reserved for WP-059;
              this page declares the slot only. WP-059 owns the integration
              shape. -->

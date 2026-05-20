@@ -153,6 +153,41 @@ describe('PlayDesktop (WP-129)', () => {
     const ids = panels.map((p) => p.attributes('data-player-id'));
     assert.deepEqual(ids.sort(), ['bob', 'cara']);
   });
+
+  // why: a spectator / rewound-autoplay frame is audience-filtered (D-16303),
+  // so NO player exposes handCards and `viewer` resolves to null. The shared
+  // board MUST still render (the rewind blank-screen bug); only the personal
+  // "your" zone is hidden.
+  test('renders the shared board (no personal zone) for a viewer-less spectator frame', () => {
+    setActivePinia(createPinia());
+    const spectatorFrame = snapshot();
+    for (const player of spectatorFrame.players) {
+      delete player.handCards;
+      delete player.handDisplay;
+    }
+    const store = useUiStateStore();
+    store.setSnapshot(spectatorFrame);
+    const wrapper = mount(PlayDesktop, {
+      props: { submitMove: noopSubmitMove },
+    });
+
+    // Shared board renders.
+    assert.equal(wrapper.find('[data-testid="play-top-hud-bar"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-mastermind-tile"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-scheme-tile"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-city-row"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-hq-row"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-shared-decks"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-ko-pile"]').exists(), true);
+    // All three players appear as opponent panels (no viewer to exclude).
+    assert.equal(wrapper.findAll('[data-testid="play-opponent-panel"]').length, 3);
+
+    // Personal "your" zone is hidden (no viewer).
+    assert.equal(wrapper.find('[data-testid="play-hand-row"]').exists(), false);
+    assert.equal(wrapper.find('[data-testid="play-turn-action-bar"]').exists(), false);
+    assert.equal(wrapper.find('[data-testid="play-your-deck-discard"]').exists(), false);
+    assert.equal(wrapper.find('[data-testid="play-your-victory-pile"]').exists(), false);
+  });
 });
 
 describe('PlayDesktop autoplay-bar gating (WP-164)', () => {
