@@ -364,7 +364,10 @@ export default defineComponent({
         <ArenaHud />
       </template>
       <template v-else-if="route === 'live'">
-        <PlayViewport :submit-move="submitMove" />
+        <!-- why: additive matchId prop-drill (D-16501) — binds the
+             already-parsed live matchID so PlayDesktop can probe autoplay
+             status. No query-parsing / route change, no ?autoplay key. -->
+        <PlayViewport :submit-move="submitMove" :match-id="matchID" />
         <footer
           v-if="isDev"
           class="live-diagnostics"

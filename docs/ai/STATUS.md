@@ -7,6 +7,48 @@
 
 ## Current State
 
+### WP-164 / EC-181 Executed — Autoplay Playback Controls (Client) (2026-05-19)
+
+**Spectator "Watch Bot Play" media-player control bar.** The client half of
+autoplay playback, consuming WP-163's six control endpoints + WP-165's status
+probe. New service `apps/arena-client/src/services/autoplayPlayback.ts`:
+`getStatus(matchId)` (GET; parsed envelope on `200`, `null` on `404`, **throws**
+on any other status / network / parse fault — a non-404 fault is never coerced
+to `null`) plus the six controls `pause` / `resume` / `stepForward` / `stepBack`
+/ `restart` / `goToEnd` (POST), all seven paths built via `buildApiUrl`
+(D-16101). A control response injects `useUiStateStore().setSnapshot(uiState)`
+**iff** `uiState` is truthy, passed exactly — the sole new non-test
+`setSnapshot` site (single ingestion path; the next live broadcast overwrites it
+via the existing `client/bgioClient.ts` write, D-16301). The module also exports
+`resolveAutoplayGating` (the pure, testable mount/gating helper with the bounded
+single retry) + `STATUS_RETRY_DELAY_MS = 1000`.
+
+New `AutoplayControls.vue` (5 buttons + pause/resume toggle, glyphs
+`⏮ ⏪ ⏸/▶ ⏩ ⏭`; disabled-when matrix verbatim; REWIND affordance keyed on
+`isRewound = cursor < historyLength - 1` — distinct from `mode`, which is read
+directly and is only ever `'live' | 'paused'`, D-16304; no direct `fetch`, no
+store import — game-over arrives as the `isGameOver` prop, read passively from
+the live snapshot by the page). `PlayDesktop.vue` gains a `matchId` prop, probes
+`getStatus` on mount via `resolveAutoplayGating` (one bounded retry absorbs the
+WP-165 transient-init 404), and mounts the bar **only** when the probe resolves
+non-null (D-16501) — so it never appears in a normal PvP match. `matchId` is
+prop-drilled `App.vue` (additive `:match-id` bind on the `live` route, no
+`parseQuery` / route change, D-16501) → `PlayViewport.vue` (forwarded to
+`<PlayDesktop>` only, not `<PlayMobile>`) → `PlayDesktop.vue`.
+
+arena-client test baseline **326 / 0 / 0 → 361 / 0 / 0** (+35: 19 service + 14
+component + 2 page-gating). `pnpm -r build` exits 0. Verification gates:
+`game-engine/setup` grep zero (D-14401); `buildApiUrl` ×7; no `fetch` / no
+`useUiStateStore` import in `AutoplayControls.vue`; `uiState.ts` /
+`client/bgioClient.ts` / `LobbyView.vue` absent from the diff; `App.vue` +
+`PlayViewport.vue` present (additive prop drill); `parseQuery` count unchanged.
+Consumes D-16101 / 16301 / 16304 / 16309 / 16501 / 14401 — no new decisions. No
+execution amendments. 01.5 NOT INVOKED (`apps/arena-client/src/**` only; no
+engine-surface wiring). 01.6 SKIPPED (UI consumer of existing tested contracts;
+no new long-lived cross-layer abstraction).
+
+---
+
 ### WP-165 / EC-182 Executed — Autoplay Status Endpoint (Server) (2026-05-19)
 
 **Read-only autoplay-match detection for the WP-164 client.** Adds one

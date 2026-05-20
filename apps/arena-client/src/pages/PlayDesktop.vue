@@ -1,10 +1,17 @@
 <script lang="ts">
-import { computed, defineComponent, type PropType } from 'vue';
+import { computed, defineComponent, onMounted, ref, type PropType } from 'vue';
 import { storeToRefs } from 'pinia';
 import type { UIPlayerState } from '@legendary-arena/game-engine';
 import { useUiStateStore } from '../stores/uiState';
 import { useRevealDetector } from '../composables/useRevealDetector';
+import {
+  getStatus,
+  resolveAutoplayGating,
+  STATUS_RETRY_DELAY_MS,
+  type AutoplayControlResponse,
+} from '../services/autoplayPlayback';
 
+import AutoplayControls from '../components/AutoplayControls.vue';
 import TopHudBar from '../components/play/TopHudBar.vue';
 import OpponentPanel from '../components/play/OpponentPanel.vue';
 import MastermindTile from '../components/play/MastermindTile.vue';
@@ -43,6 +50,7 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
 export default defineComponent({
   name: 'PlayDesktop',
   components: {
+    AutoplayControls,
     TopHudBar,
     OpponentPanel,
     MastermindTile,
@@ -66,11 +74,54 @@ export default defineComponent({
       type: Function as PropType<SubmitMove>,
       required: true,
     },
+    // why: matchId is prop-drilled App.vue → PlayViewport.vue → here (no store
+    // carries it); it gates the autoplay status probe (D-16501). Defaults to ''
+    // so non-live mounts (fixtures, tests) probe nothing and render no bar.
+    matchId: {
+      type: String,
+      default: '',
+    },
   },
-  setup() {
+  setup(props) {
     const store = useUiStateStore();
     const { snapshot } = storeToRefs(store);
     const { currentReveal, dismiss: dismissReveal } = useRevealDetector(snapshot);
+
+    // why: the autoplay control bar renders ONLY when the WP-165 status probe
+    // confirms an autoplay match (D-16501); a normal PvP match returns 404 and
+    // leaves this null so the bar stays hidden.
+    const autoplayStatus = ref<AutoplayControlResponse | null>(null);
+
+    // why: game-over is engine truth, read PASSIVELY from the live snapshot and
+    // passed to the control bar as a prop; never computed/inferred here.
+    const isGameOver = computed<boolean>(
+      () => snapshot.value?.gameOver !== undefined,
+    );
+
+    onMounted(() => {
+      // why: bounded single retry — an initial 404 may be the WP-165
+      // transient-init race (controller momentarily unregistered after
+      // autoplay-create); one retry after STATUS_RETRY_DELAY_MS absorbs it, a
+      // second null is final (no loop). A thrown non-404 fault is surfaced and
+      // leaves the bar hidden — it is never read as "not an autoplay match".
+      void (async () => {
+        try {
+          const resolved = await resolveAutoplayGating(
+            props.matchId,
+            getStatus,
+            () =>
+              new Promise<void>((resolve) => {
+                setTimeout(resolve, STATUS_RETRY_DELAY_MS);
+              }),
+          );
+          if (resolved !== null) {
+            autoplayStatus.value = resolved;
+          }
+        } catch (statusError) {
+          console.error('Autoplay status probe failed; bar stays hidden.', statusError);
+        }
+      })();
+    });
 
     const viewer = computed<UIPlayerState | null>(() => {
       const current = snapshot.value;
@@ -105,13 +156,33 @@ export default defineComponent({
       () => snapshot.value?.game.phase === 'play',
     );
 
-    return { snapshot, viewer, opponents, isLobbyPhase, isPlayPhase, currentReveal, dismissReveal };
+    return {
+      snapshot,
+      viewer,
+      opponents,
+      isLobbyPhase,
+      isPlayPhase,
+      currentReveal,
+      dismissReveal,
+      matchId: props.matchId,
+      autoplayStatus,
+      isGameOver,
+    };
   },
 });
 </script>
 
 <template>
   <div class="play-desktop" data-testid="play-desktop">
+    <!-- why: D-16501 — the bar mounts only after the getStatus probe confirms
+         an autoplay match (autoplayStatus non-null); a normal PvP match never
+         renders it. -->
+    <AutoplayControls
+      v-if="autoplayStatus !== null"
+      :match-id="matchId"
+      :initial-status="autoplayStatus"
+      :is-game-over="isGameOver"
+    />
     <p
       v-if="snapshot === null"
       class="play-empty-match"

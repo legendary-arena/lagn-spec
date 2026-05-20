@@ -39,12 +39,20 @@ export default defineComponent({
       type: Function as PropType<SubmitMove>,
       required: true,
     },
+    // why: forwarded to <PlayDesktop> only (the autoplay bar is desktop-only);
+    // part of the additive App.vue → PlayViewport.vue → PlayDesktop.vue
+    // matchId prop-drill (D-16501). Defaults to '' so non-live mounts forward
+    // an empty value that probes nothing.
+    matchId: {
+      type: String,
+      default: '',
+    },
   },
-  setup() {
+  setup(props) {
     const { isMobile } = useViewport();
     const viewportRoot = ref<HTMLElement | null>(null);
     useSkinApplier(viewportRoot);
-    return { isMobile, viewportRoot };
+    return { isMobile, viewportRoot, matchId: props.matchId };
   },
 });
 </script>
@@ -52,7 +60,7 @@ export default defineComponent({
 <template>
   <div ref="viewportRoot" class="play-viewport">
     <PlayMobile v-if="isMobile" :submit-move="submitMove" />
-    <PlayDesktop v-else :submit-move="submitMove" />
+    <PlayDesktop v-else :submit-move="submitMove" :match-id="matchId" />
   </div>
 </template>
 

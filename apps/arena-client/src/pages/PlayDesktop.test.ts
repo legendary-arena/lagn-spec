@@ -1,9 +1,9 @@
 import '../testing/jsdom-setup';
 
-import { describe, test } from 'node:test';
+import { describe, test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { setActivePinia, createPinia } from 'pinia';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import type { UIState } from '@legendary-arena/game-engine';
 import PlayDesktop from './PlayDesktop.vue';
 import { useUiStateStore } from '../stores/uiState';
@@ -153,4 +153,68 @@ describe('PlayDesktop (WP-129)', () => {
     const ids = panels.map((p) => p.attributes('data-player-id'));
     assert.deepEqual(ids.sort(), ['bob', 'cara']);
   });
+});
+
+describe('PlayDesktop autoplay-bar gating (WP-164)', () => {
+  let originalFetch: typeof globalThis.fetch | undefined;
+
+  afterEach(() => {
+    if (originalFetch !== undefined) {
+      globalThis.fetch = originalFetch;
+      originalFetch = undefined;
+    }
+  });
+
+  test('absent matchId: getStatus is not called and the bar is not rendered', async () => {
+    setActivePinia(createPinia());
+    let fetchCalls = 0;
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      fetchCalls += 1;
+      return new Response('{}', { status: 200 });
+    }) as typeof globalThis.fetch;
+
+    const wrapper = mount(PlayDesktop, {
+      props: { submitMove: noopSubmitMove, matchId: '' },
+    });
+    await flushPromises();
+
+    assert.equal(fetchCalls, 0);
+    assert.equal(
+      wrapper.find('[data-testid="autoplay-controls"]').exists(),
+      false,
+    );
+  });
+
+  test('present matchId + status 200: the bar renders (autoplay match)', async () => {
+    setActivePinia(createPinia());
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(
+        JSON.stringify({
+          ok: true,
+          paused: true,
+          historyLength: 5,
+          cursor: 4,
+          mode: 'paused',
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      )) as typeof globalThis.fetch;
+
+    const wrapper = mount(PlayDesktop, {
+      props: { submitMove: noopSubmitMove, matchId: 'match-auto' },
+    });
+    await flushPromises();
+
+    assert.equal(
+      wrapper.find('[data-testid="autoplay-controls"]').exists(),
+      true,
+    );
+  });
+
+  // why: the persistent-404 path (null → retry → null ⇒ bar hidden) and the
+  // transient-404 recovery (null → retry → 200 ⇒ bar shown) are covered
+  // deterministically in autoplayPlayback.test.ts against resolveAutoplayGating
+  // with an injected (timer-free) retry delay; mounting the page for those
+  // would require a real STATUS_RETRY_DELAY_MS timer (flaky / slow).
 });
