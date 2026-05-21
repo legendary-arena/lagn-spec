@@ -100,10 +100,10 @@
         {
           "id": "p1",
           "count": 5,
-          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-blazing-fists-blazing-flare.webp",
+          "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hr-aurora-northstar-blazing-flare-blazing-fists.webp",
           "sides": [
-            "blazing-fists",
-            "blazing-flare"
+            "blazing-flare",
+            "blazing-fists"
           ]
         },
         {
