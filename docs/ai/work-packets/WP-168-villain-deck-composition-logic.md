@@ -1,0 +1,374 @@
+# WP-168 — Villain Deck Composition Logic (Engine)
+
+**Status:** Draft — BLOCKED on WP-167 and the SPEC commit (D-16801, D-16802); requires human review
+**Primary Layer:** Game Engine / Implementation
+**Dependencies:** WP-167 (registry data + schema). Supersedes D-1413 (and the count *application* in D-1411 / D-1412).
+
+---
+
+## Session Context
+
+WP-014B built `buildVillainDeck` and locked its composition under D-1410..D-1413:
+henchmen and scheme twists are virtual instanced cards; villain cards are pushed
+once each from their registry `FlatCard` key; scheme-twist count is a hardcoded
+`8`; villain-deck bystanders equal `numPlayers`; and "mastermind strikes" are
+the mastermind's non-tactic cards. WP-167 added registry data so twist and
+bystander counts can come from the scheme and villains can declare copy counts;
+this packet rewires `buildVillainDeck` to consume that data and to add
+tabletop-accurate generic Master Strikes.
+
+---
+
+## Goal
+
+After this session, `buildVillainDeck` produces a tabletop-accurate villain deck:
+each villain card is instanced `copies` times (from WP-167 data, default 1); the
+scheme-twist count comes from the scheme's `villainDeckTwistCount` (fallback 8);
+the villain-deck bystander count comes from the scheme's
+`villainDeckBystanderCount` (fallback `numPlayers`); and a fixed number of
+**generic** Master Strikes (`MASTER_STRIKE_COUNT = 5`) are added as virtual
+instanced cards. The mastermind's own cards are no longer pushed into the villain
+deck. For the "watch bot play" loadout (Midtown Bank Robbery / Magneto /
+Brotherhood / Hand Ninjas) the deck grows from 24 cards to the correct total
+(8 twists + 12 bystanders + 5 Master Strikes + Brotherhood copies + 10 Hand Ninjas).
+
+---
+
+## Assumes
+
+- WP-167 complete. Specifically:
+  - `VillainCardSchema` exposes optional `copies` (integer ≥ 1).
+  - `SchemeSchema` exposes optional `villainDeckTwistCount` and
+    `villainDeckBystanderCount`.
+  - `data/cards/core.json` Brotherhood villains carry `copies`; Midtown Bank
+    Robbery carries `villainDeckTwistCount: 8`, `villainDeckBystanderCount: 12`.
+- `packages/game-engine/src/villainDeck/villainDeck.setup.ts` exports
+  `buildVillainDeck`, `VillainDeckRegistryReader`, `VillainDeckFlatCard`,
+  `extractVillainGroupSlug`, `isVillainDeckRegistryReader` (WP-014B, WP-113).
+- `packages/game-engine/src/villainDeck/villainDeck.types.ts` exports
+  `RevealedCardType` including `'mastermind-strike'`.
+- `packages/game-engine/src/test/mockCtx.ts` exports `makeMockCtx`.
+- `pnpm --filter @legendary-arena/game-engine build` and `test` exit 0.
+- `docs/ai/DECISIONS.md` exists; highest decision id is D-16802 (after this SPEC).
+- The SPEC commit recording D-16801 and D-16802 has landed.
+
+If any of the above is false, this packet is **BLOCKED** and must not proceed.
+
+---
+
+## Context (Read First)
+
+Before writing a single line:
+
+- `docs/ai/ARCHITECTURE.md §Layer Boundary (Authoritative)` — Game Engine layer:
+  the engine decides outcomes and derives counts deterministically. Read the
+  determinism principle — all ordering must be reproducible from setup + seed.
+- `packages/game-engine/src/villainDeck/villainDeck.setup.ts` — read entirely.
+  This packet rewrites sections 1 (villains), 3 (scheme twists), 4 (bystanders),
+  and 5 (mastermind strikes) of `buildVillainDeck`, and adds a Master Strikes
+  section. The lexical sort + `shuffleDeck` tail (sections 6–7) must be preserved.
+- `packages/game-engine/src/villainDeck/villainDeck.types.ts` — confirm
+  `RevealedCardType` already contains `'mastermind-strike'`; this packet reuses
+  it for generic Master Strikes (no new type, no drift-array change).
+- `docs/ai/DECISIONS.md` — read D-1410..D-1413 (the conventions being amended)
+  and the new D-16701 / D-16702 (WP-167).
+- `docs/ai/REFERENCE/00.2-data-requirements.md §1.4, §1.5` — the `copies`,
+  `villainDeckTwistCount`, `villainDeckBystanderCount` fields added by WP-167.
+- `docs/ai/REFERENCE/00.6-code-style.md` — Rule 4 (no abbreviations), Rule 6
+  (`// why:`), Rule 7 (no `.reduce()` with branching), Rule 8 (no dynamic
+  property access), Rule 14 (field names match contract).
+
+---
+
+## Vision Alignment
+
+Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md §17`. Clause numbers
+reference `docs/01-VISION.md`. Triggered by §17.1 "Determinism guarantees or
+RNG sourcing" and "Card data, card images, or content semantics."
+
+**Vision clauses touched:** §1 (Rules Authenticity — produces the exact
+Legendary villain-deck composition: scheme-driven twists and bystanders,
+per-villain copies, and 5 generic Master Strikes), §3 (Player Trust & Fairness —
+the seeded, reproducible shuffle is preserved; no hidden modifiers), §8
+(Deterministic Game Engine — identical setup config plus identical seed produce
+identical decks), §10 (Content as Data — counts now flow from registry data
+instead of engine constants), §14 (Explicit Decisions, No Silent Drift —
+D-16801 and D-16802 explicitly supersede D-1413's "non-tactic mastermind card =
+strike" rule), §18 (Replayability & Spectation — deck composition is part of
+the replayable game state), §22 (Deterministic & Reproducible Evaluation — deck
+composition feeds replay verification).
+
+**Conflict assertion:** No conflict: this WP preserves all touched clauses. It
+advances §1 authenticity (correct composition) and §10 (data-driven counts)
+without weakening §3/§8 determinism.
+
+**Non-Goal proximity (NG-1..7):** This packet changes engine setup logic only.
+It introduces no user-facing, paid, persuasive, or competitive surface; no card
+is gated, sold, or varied by ownership or payer status. None of NG-1 through
+NG-7 are crossed.
+
+**Determinism preservation (§3, §8, §22):** The lexical pre-shuffle sort and the
+`ctx.random.Shuffle`-based `shuffleDeck(...)` call are preserved unchanged.
+Villain-copy instancing, scheme-driven counts, and generic Master Strikes are
+all deterministic functions of setup config plus registry data — no wall-clock
+reads, no `Math.random()` (enforced by the Verification Steps grep). Identical
+setup config plus identical seed therefore produce a bit-identical villain deck,
+so replays and replay verification remain faithful. The golden composition test
+locks the per-type counts so any future replay-breaking change is caught.
+
+---
+
+## Non-Negotiable Constraints
+
+**Engine-wide (always apply — do not remove):**
+- Never use `Math.random()` — all randomness uses `ctx.random.*` only
+- Never throw inside boardgame.io move functions — `buildVillainDeck` runs at
+  setup time and may surface malformed-data errors, but moves never throw
+- Never persist `G`, `ctx`, or any runtime state
+- `G` must be JSON-serializable at all times — villain-deck entries are
+  `CardExtId` strings only, never objects
+- ESM only, Node v22+; `node:` prefix on built-in imports
+- Test files use `.test.ts` — never `.test.mjs`
+- No database, network, or filesystem access in `buildVillainDeck` or its helpers
+- `villainDeck.setup.ts` must not import `boardgame.io` or
+  `@legendary-arena/registry` (structural `VillainDeckRegistryReader` only)
+- Full file contents for every new or modified file — no diffs, no snippets
+- Human-style code per `docs/ai/REFERENCE/00.6-code-style.md`
+
+**Packet-specific:**
+- All zone entries remain `CardExtId` strings (`G.villainDeck.deck`).
+- `MASTER_STRIKE_COUNT = 5` is a named game-engine constant with a `// why:`
+  comment citing the standard Legendary rule and D-16801.
+- Master Strikes are **generic** virtual instanced cards — they carry no
+  mastermind identity in their ext_id. Master Strike *effect resolution* (which
+  reads the active mastermind) is **not** in this packet's scope.
+- The non-tactic mastermind cards are **no longer** added to the villain deck.
+- No `.reduce()` in deck assembly — use explicit `for` / `for...of` loops.
+- The lexical pre-shuffle sort and `shuffleDeck(...)` call must be preserved so
+  replays stay deterministic.
+
+**Session protocol:**
+- If the villain-copy ext_id format or any count source is unclear, stop and ask
+  before proceeding — never guess an ext_id grammar or a count.
+
+**Locked contract values (relevant subset):**
+- **RevealedCardType values:** `'villain' | 'henchman' | 'bystander' |
+  'scheme-twist' | 'mastermind-strike'` — unchanged; generic Master Strikes
+  reuse `'mastermind-strike'`.
+- **Existing ext_id conventions:** henchman `henchman-{groupSlug}-{NN}`; scheme
+  twist `scheme-twist-{schemeSlug}-{NN}`; villain-deck bystander
+  `bystander-villain-deck-{NN}`; mastermind card
+  `{setAbbr}-mastermind-{mastermindSlug}-{cardSlug}`.
+
+---
+
+## Debuggability & Diagnostics
+
+- The villain deck must be fully reproducible from identical setup config +
+  identical RNG seed: same `copies`, same scheme counts ⇒ identical pre-shuffle
+  sequence ⇒ identical shuffled deck.
+- A golden composition test (see Scope C) asserts exact per-type counts for the
+  Midtown loadout so any future change to the assembly algorithm is caught.
+- When a scheme omits twist/bystander metadata and the engine falls back to the
+  default, append a human-readable note to `G.messages` so replay inspection can
+  see that a fallback (not scheme data) drove the count.
+
+---
+
+## Scope (In)
+
+### A) `buildVillainDeck` — `src/villainDeck/villainDeck.setup.ts` (modified)
+
+1. **Villain copies (section 1 rewrite).** For each villain card matched to a
+   selected group, read `copies` from the set data for that card (default 1 when
+   absent). Push that many instanced ext_ids:
+   `{setAbbr}-villain-{groupSlug}-{cardSlug}-{copyIndex}` with `copyIndex`
+   zero-padded to two digits. Each instance gets `cardTypes[extId] = 'villain'`.
+   - Add a `// why:` comment: copies are instanced (not duplicate keys) so each
+     villain card moves independently and escapes/KOs stay attributable (D-16802,
+     mirroring the D-1410 henchman rationale).
+   - Reading `copies` requires per-set card data (the `FlatCard` key carries no
+     copy count), so resolve villain cards through `getSet(setAbbr)` like the
+     henchman/scheme/mastermind helpers, not through `listCards()` alone.
+
+2. **Scheme twist count (section 3 rewrite).** Resolve the scheme's
+   `villainDeckTwistCount` from set data; if absent, fall back to
+   `SCHEME_TWIST_COUNT = 8`. Generate `scheme-twist-{schemeSlug}-{NN}` for that
+   many twists (unchanged ext_id format).
+
+3. **Bystander count (section 4 rewrite).** Resolve the scheme's
+   `villainDeckBystanderCount`; if absent, fall back to `context.ctx.numPlayers`.
+   Generate `bystander-villain-deck-{NN}` for that many bystanders (unchanged
+   ext_id format).
+
+4. **Master Strikes (new section).** Add `MASTER_STRIKE_COUNT = 5` generic
+   virtual instanced cards with ext_id `master-strike-{NN}` (zero-padded) and
+   `cardTypes[extId] = 'mastermind-strike'`.
+
+5. **Remove mastermind-card inclusion (section 5 deletion).** Delete the logic
+   that pushed non-tactic mastermind cards into the villain deck. The mastermind
+   card and its tactics are not villain-deck cards (D-16801).
+
+6. Preserve the lexical sort and `shuffleDeck(...)` tail unchanged.
+
+### B) Helpers (same file, modified/new)
+- A small helper to read a villain card's `copies` from set data, returning 1
+  when absent. JSDoc + `// why:` for the default.
+- Helpers to read `villainDeckTwistCount` / `villainDeckBystanderCount` from a
+  scheme record, returning `null` when absent so the caller applies the default.
+- Each helper ≤ 30 lines, descriptive names, no `.reduce()` with branching.
+
+### C) Tests — `src/villainDeck/villainDeck.setup.test.ts` (modified)
+Add `node:test` cases (keep existing cases green):
+- **Golden composition (Midtown loadout).** With a mock registry mirroring
+  `core.json` (Brotherhood copies, Midtown twist=8 / bystander=12, Hand Ninjas,
+  Magneto) and `numPlayers: 2`, assert exact counts by `RevealedCardType`:
+  `scheme-twist` = 8, `bystander` = 12, `mastermind-strike` = 5, `henchman` = 10,
+  and `villain` = sum of Brotherhood `copies` (= 8, i.e. 4 villains × `copies: 2`;
+  deck total = 43). Add a `// why:` comment: failure means a replay-breaking
+  change to deck composition.
+- **Twist fallback.** A scheme with no `villainDeckTwistCount` yields 8 twists.
+- **Bystander fallback.** A scheme with no `villainDeckBystanderCount` yields
+  `numPlayers` bystanders.
+- **Copies default.** A villain card with no `copies` yields exactly 1 instance.
+- **No mastermind card in deck.** No deck entry matches
+  `{setAbbr}-mastermind-{mastermindSlug}-...`.
+- **Determinism.** Two builds with the same mock ctx produce identical decks.
+- `JSON.stringify(state)` succeeds. Uses `makeMockCtx`; no `boardgame.io` import.
+
+---
+
+## Out of Scope
+
+- No registry schema or `data/cards/*.json` changes — that is WP-167.
+- No Master Strike **effect resolution** (the reveal-time effect that reads the
+  active mastermind) — only deck composition. Reveal/effect logic is the
+  existing reveal pipeline / WP-153 destination piles.
+- No mastermind-card or tactics-deck placement — where the mastermind card and
+  its 4 tactics live is a separate concern (D-1413's inverse / WP-019 territory).
+- No display-layer resolution of the new instanced villain ext_ids (stripping
+  the `-{copyIndex}` suffix for card art) — flag as a follow-up to verify in
+  arena-client / registry-viewer; do not change UI here.
+- No `MatchSetupConfig` changes; no henchman copy-count changes (stays 10).
+- Refactors or cleanups beyond the sections listed in Scope (In).
+
+---
+
+## Files Expected to Change
+
+- `packages/game-engine/src/villainDeck/villainDeck.setup.ts` — **modified** —
+  copies instancing, scheme-driven twist/bystander counts, generic Master
+  Strikes, remove mastermind-card inclusion.
+- `packages/game-engine/src/villainDeck/villainDeck.setup.test.ts` — **modified** —
+  golden composition + fallback + determinism cases.
+- `docs/ai/DECISIONS.md` — **modified** — D-16801, D-16802.
+- `docs/ai/STATUS.md` — **modified** — record corrected villain-deck composition.
+- `docs/ai/work-packets/WORK_INDEX.md` — **modified** — check off WP-168.
+
+No other files may be modified.
+
+---
+
+## Acceptance Criteria
+
+### Composition
+- [ ] Each villain card is instanced `copies` times with ext_id
+      `{setAbbr}-villain-{groupSlug}-{cardSlug}-{NN}`; a card with no `copies`
+      yields exactly one instance.
+- [ ] Scheme-twist count equals the scheme's `villainDeckTwistCount`, falling
+      back to `8` when absent.
+- [ ] Villain-deck bystander count equals the scheme's
+      `villainDeckBystanderCount`, falling back to `numPlayers` when absent.
+- [ ] Exactly `MASTER_STRIKE_COUNT` (5) generic `master-strike-{NN}` cards are
+      added, typed `'mastermind-strike'`.
+- [ ] No mastermind card (`{setAbbr}-mastermind-...`) appears in the deck.
+
+### Golden / determinism
+- [ ] The Midtown golden test asserts `scheme-twist`=8, `bystander`=12,
+      `mastermind-strike`=5, `henchman`=10, `villain`=8 (4 × `copies:2`); total=43.
+- [ ] Two builds with identical mock ctx produce identical decks.
+- [ ] `JSON.stringify(state)` succeeds.
+
+### Boundaries
+- [ ] No `boardgame.io` import in `villainDeck.setup.ts`
+      (confirmed with `Select-String`).
+- [ ] No `Math.random` in any modified file (confirmed with `Select-String`).
+- [ ] No `.reduce(` in `villainDeck.setup.ts` (confirmed with `Select-String`).
+
+### Tests / Scope
+- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0.
+- [ ] Test uses `node:test` + `makeMockCtx`; no `boardgame.io` import.
+- [ ] No files outside `## Files Expected to Change` were modified
+      (confirmed with `git diff --name-only`).
+
+---
+
+## Verification Steps
+
+```pwsh
+# Step 1 — build after all changes
+pnpm --filter @legendary-arena/game-engine build
+# Expected: exits 0, no TypeScript errors
+
+# Step 2 — run all tests
+pnpm --filter @legendary-arena/game-engine test
+# Expected: TAP output — all tests passing, 0 failing
+
+# Step 3 — confirm no boardgame.io import in the builder
+Select-String -Path "packages\game-engine\src\villainDeck\villainDeck.setup.ts" -Pattern "boardgame.io"
+# Expected: no output
+
+# Step 4 — confirm no Math.random in the builder
+Select-String -Path "packages\game-engine\src\villainDeck\villainDeck.setup.ts" -Pattern "Math.random"
+# Expected: no output
+
+# Step 5 — confirm no .reduce in the builder
+Select-String -Path "packages\game-engine\src\villainDeck\villainDeck.setup.ts" -Pattern "\.reduce\("
+# Expected: no output
+
+# Step 6 — confirm the master strike constant exists
+Select-String -Path "packages\game-engine\src\villainDeck\villainDeck.setup.ts" -Pattern "MASTER_STRIKE_COUNT"
+# Expected: at least one match
+
+# Step 7 — confirm no files outside scope changed
+git diff --name-only
+# Expected: only files listed in ## Files Expected to Change
+```
+
+---
+
+## Decisions to Record
+
+- **D-16801 — Master Strikes are generic virtual instanced cards; the
+  mastermind card is not a villain-deck card.** The villain deck contains
+  `MASTER_STRIKE_COUNT = 5` generic Master Strikes (ext_id `master-strike-{NN}`,
+  type `'mastermind-strike'`), matching the standard Legendary rule. This
+  supersedes D-1413's rule that the mastermind's non-tactic cards are shuffled
+  into the villain deck as strikes. The mastermind card and its tactics are not
+  villain-deck cards; their placement is governed elsewhere. Master Strike
+  effect resolution (reading the active mastermind) is unchanged and out of
+  this packet's scope.
+- **D-16802 — Villain copies are virtual-instanced with a copy-index suffix.**
+  A villain card with `copies: N` produces N ext_ids of the form
+  `{setAbbr}-villain-{groupSlug}-{cardSlug}-{NN}`. Distinct ext_ids preserve
+  independent movement and replay attribution (same rationale as D-1410 for
+  henchmen). Display resolution must strip the trailing `-{NN}` to find the base
+  card; that UI follow-up is tracked separately.
+
+---
+
+## Definition of Done
+
+This packet is complete when ALL of the following are true:
+
+- [ ] All acceptance criteria above pass
+- [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
+- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0
+- [ ] No `boardgame.io` import, no `Math.random`, no `.reduce(` in
+      `villainDeck.setup.ts` (confirmed with `Select-String`)
+- [ ] No files outside `## Files Expected to Change` were modified
+      (confirmed with `git diff --name-only`)
+- [ ] `docs/ai/STATUS.md` updated — villain deck now composes from scheme
+      metadata + villain copies + generic Master Strikes
+- [ ] `docs/ai/DECISIONS.md` updated — D-16801, D-16802 recorded
+- [ ] `docs/ai/work-packets/WORK_INDEX.md` has WP-168 checked off with today's date

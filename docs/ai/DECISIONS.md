@@ -2201,7 +2201,9 @@ emission, and scheme-specific replay auditing.
 off the ext_id shape beyond type classification.
 
 **Introduced:** WP-014B
-**Status:** Accepted
+**Status:** Accepted (twist-count *source* superseded by D-16702 — the count is
+read from the scheme's `villainDeckTwistCount`, with the default of 8 retained
+only as a fallback for schemes that omit the field).
 
 ---
 
@@ -2237,7 +2239,11 @@ mastermind definition, and fixed constants. Any future rule that modifies deck
 counts must be recorded as a new decision, not silently modify setup config.
 
 **Introduced:** WP-014B
-**Status:** Accepted
+**Status:** Accepted (count *sources* amended by later decisions: villain copies
+per D-16701; scheme-driven twist/bystander counts per D-16702; generic Master
+Strikes per D-16801. The D-1412 defaults — 8 twists, `numPlayers` bystanders —
+are retained as fallbacks. The principle that counts are rules-driven, not in
+`MatchSetupConfig`, still stands).
 
 ---
 
@@ -2268,7 +2274,11 @@ future registry change adds richer strike/tactic metadata, a new decision
 supersedes this one.
 
 **Introduced:** WP-014B
-**Status:** Accepted
+**Status:** Accepted, then superseded by D-16801 for villain-deck composition —
+the villain deck now receives 5 generic Master Strikes, and the mastermind's own
+non-tactic cards are no longer added to it. The `tactic !== true` field contract
+itself still holds for any code that must distinguish strikes from tactics
+(e.g., the tactics-deck scope).
 
 ---
 
@@ -17705,6 +17715,181 @@ Authentication).
 
 **Introduced:** WP-166 (drafted 2026-05-19; executed 2026-05-19).
 **Status:** Active (landed 2026-05-19 via WP-166 / EC-184).
+
+---
+
+### D-16701 — Villain Cards Carry an Optional `copies` Field (WP-167)
+
+**Unlocks:** `buildVillainDeck` villain instancing (WP-168)
+
+**Decision:** A villain group contributes multiple identical physical copies of
+each of its villain cards to the villain deck. The registry records this as an
+optional `copies` integer (`z.number().int().min(1).optional()`) on
+`VillainCardSchema`. When `copies` is absent, the engine treats the card as a
+single copy. `copies` is additive and optional, so the 39 set files that do not
+yet carry copy data validate and resolve unchanged.
+
+**Rationale:** Physical Legendary villain groups contain several copies of each
+villain (e.g., the Brotherhood is roughly 14 cards across 4 named villains), but
+the registry previously modelled each villain as exactly one `FlatCard`, so
+`buildVillainDeck` added only one of each — producing a villain deck far smaller
+than the printed game. The copy count is authentic card content (Vision §1, §2),
+so it belongs in registry data, not in engine logic (Vision §10). Per-card
+copies must come from the authoritative dataset, never be invented.
+
+**Consequences:** `VillainCardSchema` gains `copies`. The value is produced at
+convert time per D-16703 (default 2 per villain card; outliers curated). The
+engine (WP-168) reads `copies` from per-set data and instances that many
+distinct ext_ids per villain card (D-16802). This refines the implicit
+one-copy-per-`FlatCard` assumption that D-1410 left in place for villains;
+D-1410's henchman handling (a fixed 10 per group) is unchanged and needs no
+copy data.
+
+**Introduced:** WP-167 (SPEC).
+**Status:** Accepted (SPEC — drafted alongside WP-167; effective on WP-167
+execution).
+
+---
+
+### D-16702 — Villain-Deck Twist and Bystander Counts Come From Scheme Metadata (WP-167)
+
+**Unlocks:** `buildVillainDeck` count resolution (WP-168)
+
+**Decision:** The number of scheme twists and the number of bystanders shuffled
+into the villain deck are properties of the active scheme. The registry records
+them as optional integers on `SchemeSchema`: `villainDeckTwistCount`
+(`z.number().int().min(0).optional()`) and `villainDeckBystanderCount`
+(`z.number().int().min(0).optional()`). When a scheme omits a field, the engine
+falls back to its existing default — 8 twists, or `numPlayers` bystanders — so
+unannotated schemes keep their current behavior.
+
+**Rationale:** D-1411 hardcoded the twist count at 8 and D-1412 derived
+villain-deck bystanders from `numPlayers`. Both are scheme-specific in the
+printed game: Midtown Bank Robbery, for example, prints "Setup: 8 Twists. 12
+total Bystanders in the Villain Deck." Encoding these counts as scheme data
+(Vision §10) lets schemes vary without engine changes and makes the deck match
+the printed rules (Vision §1).
+
+**Consequences:** `SchemeSchema` gains the two optional fields. This supersedes
+D-1411 and D-1412 as the *source* of the twist and bystander counts; the engine
+(WP-168) reads scheme metadata first and applies the D-1411/D-1412 defaults only
+as fallbacks. `config.bystandersCount` (the bystander supply pile) is unaffected
+and remains separate.
+
+**Introduced:** WP-167 (SPEC).
+**Status:** Accepted (SPEC — drafted alongside WP-167; effective on WP-167
+execution). Supersedes the count *source* in D-1411 and D-1412 (defaults
+retained as fallbacks).
+
+---
+
+### D-16703 — Villain Copies and Always-Leads Are Populated by the Card Converter (WP-167)
+
+**Unlocks:** D-16701 villain `copies` data; non-empty `alwaysLeads` / `ledBy`
+
+**Decision:** The `data/cards/*.json` files are generated output, so the
+villain `copies` (D-16701) and the mastermind↔group Always-Leads relationship
+are produced by the converter, not hand-edited:
+
+- **Villain copies.** `convert-cards-v15.mjs` writes `copies` on each villain
+  card. The default is **2 copies per villain card** — the common Legendary
+  villain group is 4 villains × 2 cards = 8 cards. Per-card outliers (the ~10%
+  of groups that differ) are curated in a new
+  `scripts/convert-cards/inputs/villain-card-counts.json`, modelled on
+  `inputs/hero-card-counts.json` (`{ setAbbr: { groupSlug: { cardSlug_or_name:
+  copies } } }`). The applier loud-fails on a counts entry that matches no
+  villain card, mirroring the hero-counts applier.
+- **Always-Leads.** The converter populates `mastermind.alwaysLeads[]` and
+  `villainGroup.ledBy[]` from the existing `inputs/leads.json`. Today the
+  converter hardcodes both as `[]`, so the relationship data already present in
+  `leads.json` (e.g. `core` → `magneto` → `brotherhood`) never reaches the
+  output. Wiring it through fixes the empty arrays across all sets.
+
+After the converter changes, `data/cards/*.json` is regenerated; the additive
+`copies` field and the now-populated `alwaysLeads` / `ledBy` arrays are the only
+gameplay-relevant deltas.
+
+**Rationale:** Counts and relationships are authentic card content (Vision §1,
+§2) and belong in the data pipeline (Vision §10), not in hand-edits to
+generated files that the next regeneration would clobber. A default of 2 keeps
+the curated outlier file small. Henchmen need no counts data — they remain a
+fixed 10 per group as an engine constant (D-1410).
+
+**Consequences:** WP-167 adds `inputs/villain-card-counts.json`, extends
+`convert-cards-v15.mjs` (and, for the 4 outlier sets, the companion applier) to
+write `copies` and to source `alwaysLeads` / `ledBy` from `leads.json`, then
+regenerates all 40 `data/cards/*.json`. The regeneration diff is large but
+mechanical; the only behavior change is additive villain `copies` and populated
+lead arrays.
+
+**Introduced:** WP-167 (SPEC).
+**Status:** Accepted (SPEC — drafted alongside WP-167; effective on WP-167
+execution).
+
+---
+
+### D-16801 — Master Strikes Are Generic Virtual Instanced Cards; the Mastermind Card Is Not a Villain-Deck Card (WP-168)
+
+**Unlocks:** tabletop-accurate villain deck composition (WP-168)
+
+**Decision:** The villain deck contains a fixed number of **generic** Master
+Strikes — `MASTER_STRIKE_COUNT = 5`, a game-engine constant — added as virtual
+instanced cards with ext_id `master-strike-{index}` (zero-padded) and
+`RevealedCardType = 'mastermind-strike'`. The non-tactic cards of the selected
+mastermind are **no longer** added to the villain deck. This supersedes D-1413's
+rule that "a mastermind card is a strike when `tactic !== true`" as the source
+of villain-deck strikes.
+
+**Rationale:** In Legendary the 5 Master Strikes are generic cards shuffled into
+the villain deck; their effect text lives on the Mastermind card but the strikes
+themselves carry no mastermind identity. The registry has no generic
+Master-Strike data and the mastermind's own card is not a villain-deck card —
+the Mastermind sits in its own space leading a group, with its tactics set aside.
+D-1413's "non-tactic mastermind card = strike" rule put the Mastermind card
+itself into the villain deck (e.g., the lone Magneto card as the only "strike"),
+which is not how the printed game works (Vision §1). Modelling Master Strikes as
+generic virtual instanced cards mirrors the henchman/scheme-twist instancing
+pattern (D-1410, D-1411) and needs no registry data.
+
+**Consequences:** `buildVillainDeck` adds 5 `master-strike-{index}` cards and
+removes the mastermind-card branch. `RevealedCardType` is unchanged — generic
+Master Strikes reuse `'mastermind-strike'`, so no drift-detection array changes.
+Master Strike **effect resolution** (the reveal-time effect that reads the
+active mastermind) is out of scope here and unchanged. Where the mastermind card
+and its tactics live remains governed elsewhere (D-1413's inverse / tactics-deck
+scope).
+
+**Introduced:** WP-168 (SPEC).
+**Status:** Accepted (SPEC — drafted alongside WP-168; effective on WP-168
+execution). Supersedes the villain-deck inclusion rule in D-1413.
+
+---
+
+### D-16802 — Villain Copies Are Virtual-Instanced With a Copy-Index Suffix (WP-168)
+
+**Unlocks:** independent villain-card tracking and replay attribution (WP-168)
+
+**Decision:** A villain card with `copies: N` (D-16701) produces N distinct
+ext_ids of the form `{setAbbr}-villain-{groupSlug}-{cardSlug}-{copyIndex}`, with
+`copyIndex` zero-padded to two digits. Copies are distinct instances, not
+repeated identical keys.
+
+**Rationale:** Distinct ext_ids are required so each villain copy moves
+independently and escapes / KOs stay attributable in replays — the same
+rationale D-1410 gives for instancing henchmen. Reusing the same key N times
+would make the copies indistinguishable in `G` and break lossless replay.
+Appending a zero-padded copy index to the existing villain `FlatCard` key
+keeps the grammar consistent with the henchman (`henchman-{groupSlug}-{NN}`)
+and scheme-twist (`scheme-twist-{schemeSlug}-{NN}`) instancing conventions.
+
+**Consequences:** `buildVillainDeck` emits the suffixed ext_ids. Display
+resolution must strip the trailing `-{copyIndex}` to resolve the base card art;
+that UI follow-up (arena-client / registry-viewer) is tracked separately and is
+not part of WP-168.
+
+**Introduced:** WP-168 (SPEC).
+**Status:** Accepted (SPEC — drafted alongside WP-168; effective on WP-168
+execution).
 
 ---
 
