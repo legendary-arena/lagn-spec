@@ -50,7 +50,11 @@ additive and optional, so every set file still validates.
   and the equivalent entries for the other sets.
 - `scripts/convert-cards/inputs/hero-card-counts.json` exists; its
   `{ setAbbr: { entitySlug: { "Card Name": count } } }` shape is the model for
-  the new villain counts file.
+  the villain counts file.
+- `scripts/convert-cards/inputs/villain-card-counts.json` **already exists**
+  (scaffolded by commit 308ecab, default 2 per card with the outlier sets
+  pre-enumerated); this packet populates/curates it and wires the converter to
+  read it. It must not be recreated from scratch.
 - All 40 `data/cards/*.json` validate today against `SetDataSchema`.
 - `pnpm --filter @legendary-arena/registry build` and `test` exit 0.
 - `docs/ai/DECISIONS.md` exists; highest decision id is D-16703 (after this SPEC).
@@ -150,6 +154,49 @@ decks.
 - Henchmen are unchanged — a fixed 10 per group is an engine constant (D-1410);
   no henchman counts data is added.
 
+**Tightening invariants (WP-167):**
+- **Copies coverage:** the converter MUST emit `copies` on every villain card in
+  every set it produces (default 2; outliers only from
+  `villain-card-counts.json`). Missing `copies` in generated data is a defect,
+  not a valid state. D-16701's "absent ⇒ 1" is a schema-robustness fallback for
+  legacy or malformed input, never a converter output path. Because the 4
+  outlier sets (`2099`, `amwp`, `wpnx`, `wtif`) are produced **only** by
+  `apply-card-counts.mjs`, that script MUST gain the same villain-`copies`
+  overlay (and the same leads wiring below) — otherwise outlier-set villains
+  silently lack `copies` and break this invariant.
+- **Leads relationship (villain groups only):** for every `leads.json` entry
+  that lists a villain group, the mastermind's `alwaysLeads[]` includes that
+  group slug AND the group's `ledBy[]` includes that mastermind slug (symmetric).
+  Both arrays are deduplicated. A villain group may be led by more than one
+  mastermind (e.g., `wpnx` `berserkers` ← `omega-red` + `sabretooth`), and a
+  mastermind may lead more than one group (e.g., `amwp` `kang-quantum-conqueror`
+  → `armada-of-kang` + `quantum-realm`) — neither is an error. A villain group
+  with no `leads.json` entry keeps an empty `ledBy[]` (e.g., the `ssw1`
+  unassigned groups) — empty is valid, not a failure. The converter skips
+  non-data rows (the `PLACEHOLDER_DELETE_THIS` row and comment-only
+  `{ "_set": … }` / `_note` markers) and does NOT enumerate `_anyVillainGroup`
+  wildcard masterminds (e.g., `wtif` `hank-pym`) into `alwaysLeads[]`.
+  Henchmen-lead wiring is out of scope — this packet populates villain-group
+  leads only.
+- **Loud-fail contract:** matching is exact slug equality (villain counts →
+  `groupSlug` + `cardSlug`; scheme counts → `schemeSlug`; leads → mastermind
+  slug + group slug), never fuzzy or name-normalized. Any input entry matching
+  no card / scheme / mastermind / group throws a full-sentence error naming the
+  set, entity, and key, and exits non-zero — mirroring `apply-card-counts.mjs`.
+  The throw happens **before** the affected set's output is written
+  (validate-then-write per set, as the existing applier does at
+  `apply-card-counts.mjs:141`), so a mismatched set is never partially
+  overwritten.
+- **Clean-diff / determinism:** new fields are appended in a fixed position;
+  existing keys are NOT reordered, re-sorted, or rewritten. Do NOT introduce
+  key-sorting — it would churn all 40 files and violate the no-unintended-mutation
+  rule. Regenerating twice yields zero diff (idempotent).
+- **No unintended mutation:** the only deltas in regenerated `data/cards/*.json`
+  are the additive villain `copies`, populated `alwaysLeads[]` / `ledBy[]`, and
+  the scheme `villainDeckTwistCount` / `villainDeckBystanderCount` where
+  supplied. Hero cards, keywords, image URLs, abilities, henchmen, and
+  `physicalCards[]` are unchanged.
+
 **Session protocol:**
 - If any field name, default, or scheme count is unclear, stop and ask before
   proceeding — never guess counts or invent field names.
@@ -190,14 +237,21 @@ decks.
 - Apply `villainDeckTwistCount` / `villainDeckBystanderCount` to schemes from
   `inputs/scheme-deck-counts.json`; omit the fields when the scheme is absent
   from the file. Loud-fail on any input entry matching no card/scheme/group.
-- If the 4 outlier sets need the same villain `copies` overlay, extend
-  `apply-card-counts.mjs` the same way (mirror its loud-fail pattern).
+- Extend `apply-card-counts.mjs` to apply the same villain-`copies` overlay AND
+  the same `alwaysLeads[]` / `ledBy[]` wiring for the 4 outlier sets (`2099`,
+  `amwp`, `wpnx`, `wtif`), mirroring its loud-fail pattern. This is required
+  (not conditional): those sets contain villain groups and have `leads.json`
+  entries, and `apply-card-counts.mjs` is the only producer for them, so the
+  copies-coverage and leads invariants cannot hold for all 40 sets otherwise.
 
-### C) Pipeline inputs (new)
-- `scripts/convert-cards/inputs/villain-card-counts.json` — outlier per-villain
-  copy counts, shape `{ setAbbr: { groupSlug: { cardSlug: copies } } }`.
-- `scripts/convert-cards/inputs/scheme-deck-counts.json` — per-scheme villain-deck
-  counts, shape `{ setAbbr: { schemeSlug: { villainDeckTwistCount,
+### C) Pipeline inputs
+- `scripts/convert-cards/inputs/villain-card-counts.json` — **already exists**
+  (scaffolded by commit 308ecab; default 2 per card, outlier sets pre-enumerated),
+  shape `{ setAbbr: { groupSlug: { cardSlug: copies } } }`. Populate / curate it —
+  do NOT recreate or overwrite the scaffold. The converter reads it; cards absent
+  from it default to 2.
+- `scripts/convert-cards/inputs/scheme-deck-counts.json` — **new** — per-scheme
+  villain-deck counts, shape `{ setAbbr: { schemeSlug: { villainDeckTwistCount,
   villainDeckBystanderCount } } }`. Populate at least
   `core.midtown-bank-robbery: { 8, 12 }`.
 
@@ -213,10 +267,14 @@ decks.
 ### F) Tests — `packages/registry/src/schema.villainDeckComposition.test.ts` (new)
 - `VillainCardSchema` accepts `copies: 3` and a card with no `copies`; rejects
   `copies: 0` and `copies: -1`.
-- `SchemeSchema` accepts both new fields and a scheme with neither.
+- `SchemeSchema` accepts both new fields. Negative case: a scheme omitting both
+  fields validates AND the parsed object has neither key present (proves the
+  fields are genuinely optional, not silently defaulted).
 - Regenerated `core.json` parses against `SetDataSchema`; Brotherhood villains
   each have `copies: 2`; Midtown resolves twist 8 / bystander 12; Magneto
   `alwaysLeads` includes `"brotherhood"`; Brotherhood `ledBy` includes `"magneto"`.
+- Round-trip stability: re-stringifying then re-parsing the regenerated
+  `core.json` validates again and is structurally unchanged.
 - Does not import `boardgame.io` or `@legendary-arena/game-engine`.
 
 ---
@@ -240,10 +298,11 @@ decks.
   `villainDeckTwistCount`, `villainDeckBystanderCount`.
 - `scripts/convert-cards/convert-cards-v15.mjs` — **modified** — write villain
   `copies`, source `alwaysLeads`/`ledBy` from `leads.json`, apply scheme counts.
-- `scripts/convert-cards/apply-card-counts.mjs` — **modified (if needed)** — same
-  villain `copies` overlay for the 4 outlier sets.
-- `scripts/convert-cards/inputs/villain-card-counts.json` — **new** — outlier
-  villain copy counts.
+- `scripts/convert-cards/apply-card-counts.mjs` — **modified** — villain `copies`
+  overlay and `alwaysLeads` / `ledBy` wiring for the 4 outlier sets.
+- `scripts/convert-cards/inputs/villain-card-counts.json` — **modified
+  (already exists; scaffolded by 308ecab)** — populate/curate villain copy
+  counts; do not recreate.
 - `scripts/convert-cards/inputs/scheme-deck-counts.json` — **new** — per-scheme
   villain-deck twist/bystander counts.
 - `data/cards/*.json` — **regenerated** — additive `copies`, populated leads,
@@ -269,16 +328,28 @@ No other files may be modified.
 - [ ] A villain card with no `copies` and a scheme with neither field validate.
 
 ### Pipeline + data
-- [ ] The converter writes `copies` on every villain card (default 2; outliers
-      from `villain-card-counts.json`).
-- [ ] The converter sources `alwaysLeads` / `ledBy` from `leads.json` (no
-      hardcoded `[]` remains for sets that have a lead entry).
+- [ ] Every villain card in all 40 regenerated set files has a `copies` value
+      (default 2; outliers from `villain-card-counts.json`) — no omissions in
+      generated data.
+- [ ] Leads are symmetric: every mastermind that leads a villain group has that
+      group in `alwaysLeads[]`, and every led group has its mastermind(s) in
+      `ledBy[]`. Masterminds that lead only henchmen, `_anyVillainGroup`
+      wildcards, and groups with no `leads.json` entry correctly keep empty
+      arrays. Both arrays are deduplicated.
 - [ ] Regenerated `core.json`: each Brotherhood villain has `copies: 2`; Midtown
       Bank Robbery has `villainDeckTwistCount: 8` / `villainDeckBystanderCount: 12`;
       Magneto `alwaysLeads` includes `"brotherhood"`; Brotherhood `ledBy`
       includes `"magneto"`.
 - [ ] All 40 `data/cards/*.json` validate against `SetDataSchema`.
-- [ ] The counts/leads appliers loud-fail on an input entry matching no card.
+- [ ] No unintended mutation: the only deltas across all 40 files are villain
+      `copies`, populated `alwaysLeads[]` / `ledBy[]`, and scheme counts where
+      supplied. Hero cards, keywords, image URLs, abilities, henchmen, and
+      `physicalCards[]` are unchanged.
+- [ ] Regenerating a second time produces zero diff (idempotent; no key
+      reordering introduced).
+- [ ] The counts/leads appliers loud-fail (full-sentence error, non-zero exit,
+      no partial write of the affected set) on an input entry matching no
+      card / scheme / mastermind / group.
 
 ### Tests
 - [ ] `pnpm --filter @legendary-arena/registry test` exits 0.
@@ -317,6 +388,17 @@ Select-String -Path "data\cards\core.json" -Pattern "brotherhood"
 # Step 6 — confirm only expected files changed
 git diff --name-only
 # Expected: schema.ts, converter scripts, two new input files, data/cards/*.json, 00.2, test, governance
+
+# Step 7 — idempotency: a second regen must produce zero diff
+node scripts/convert-cards/convert-cards-v15.mjs
+node scripts/convert-cards/apply-card-counts.mjs
+git diff --name-only -- data/cards/
+# Expected: empty output (no files changed by the second run)
+
+# Step 8 — loud-fail (manual): temporarily add a bogus entry to one input file
+#   (e.g. a fake cardSlug in villain-card-counts.json), run the converter,
+#   confirm it exits non-zero with a full-sentence error naming the set/entity/key,
+#   then revert the edit. Do NOT commit the bogus entry.
 ```
 
 ---
@@ -347,7 +429,10 @@ This packet is complete when ALL of the following are true:
 - [ ] `pnpm --filter @legendary-arena/registry build` exits 0
 - [ ] `pnpm --filter @legendary-arena/registry test` exits 0
 - [ ] All 40 `data/cards/*.json` validate against `SetDataSchema`
+- [ ] Every villain card across all 40 sets has a `copies` value (no omissions)
+- [ ] Leads are symmetric across all 40 sets (`alwaysLeads[]` ↔ `ledBy[]`)
 - [ ] Regenerating the data a second time produces no diff (converter is idempotent)
+- [ ] No unintended mutation: only `copies`, lead arrays, and scheme counts changed
 - [ ] No files outside `## Files Expected to Change` were modified
       (confirmed with `git diff --name-only`)
 - [ ] `docs/ai/STATUS.md` updated — registry expresses villain copies, scheme
