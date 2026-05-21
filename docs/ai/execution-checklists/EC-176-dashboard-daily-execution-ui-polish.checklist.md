@@ -15,8 +15,8 @@
 - Theme key: `la-dashboard-theme`; default: `dark`
 - Stale key pruning: consider only keys where `key.startsWith('la-dashboard-checklist-')` (exact prefix); delete if date > 30 days old; runs once on composable init; non-matching keys (incl. `la-dashboard-theme`) are never parsed or deleted
 - `toggle(id)` with unknown ID: no mutation, no throw (silent no-op)
-- Date: boundary = browser local midnight (resets first load after local date change); `dateString` from local `getFullYear`/`getMonth`+1/`getDate`, zero-padded `YYYY-MM-DD` — never `toISOString()`/`toLocaleDateString()`. Composable takes optional `{ now?: () => Date }` (default `() => new Date()`); ALL date reads go through `now()` — tests inject `now`, never mock global `Date`
-- State restoration: merge persisted value ONTO static config — iterate static array only; missing id → unchecked; persisted ids not in static config → ignored; rendered count always === static array length
+- Date: boundary = browser local midnight (resets first load after local date change); `dateString` from local `getFullYear`/`getMonth`+1/`getDate`, zero-padded `YYYY-MM-DD` — never `toISOString()`/`toLocaleDateString()`. Composable takes optional `{ now?: () => Date }` resolved as `options?.now ?? (() => new Date())` (`exactOptionalPropertyTypes: true` — never typed `|undefined`, never passed explicit `undefined`); ALL date reads go through `now()` — tests inject `now`, never mock global `Date`
+- State restoration: merge persisted value ONTO static config — iterate static array only; missing id → unchecked; persisted ids not in static config → ignored; a persisted entry is applied only if shape-valid (`completed`:boolean, `completedAt`:number\|null) — malformed/wrong-typed → unchecked, never coerced (distinct from `JSON.parse` throw → error state); rendered count always === static array length
 - Design tokens: `--p-surface-card`, `--p-surface-border`, `--p-text-color`, `--p-text-muted-color`, `--p-primary-color`; hard-coded hex forbidden for structural elements (tokens only)
 - Sidebar breakpoints: full at >= 1200px; collapsed (60px, icons) at 768-1199px; hidden at < 768px
 - Completion badge: `"Daily: N/M complete"` in panel header, right-aligned
@@ -39,7 +39,7 @@
 **New (3):**
 - `src/widgets/DailyExecutionPanel.vue` — 4-state widget (loading/error/empty/data) + freshness badge; renders category headers ("Content", "Community", "Growth")
 - `src/composables/useDailyChecklist.ts` — composable: items, toggle, reset, localStorage persistence
-- `src/composables/useDailyChecklist.test.ts` — 8 tests: (1) 9 items with correct category distribution, (2) toggle flips completed + sets/clears completedAt, (3) completedCount accurate after multiple toggles, (4) state survives localStorage round-trip, (5) new date (injected `now`) → fresh unchecked list, (6) prunes keys > 30 days (injected `now`), (7) toggle("invalid") → no mutation, (8) persisted id absent from static config ignored on restore + missing static item → unchecked
+- `src/composables/useDailyChecklist.test.ts` — 9 tests: (1) 9 items with correct category distribution, (2) toggle flips completed + sets/clears completedAt, (3) completedCount accurate after multiple toggles, (4) state survives localStorage round-trip, (5) new date (injected `now`) → fresh unchecked list, (6) prunes keys > 30 days (injected `now`), (7) toggle("invalid") → no mutation, (8) persisted id absent from static config ignored on restore + missing static item → unchecked, (9) shape-invalid persisted entry (non-boolean `completed` / non-object) → unchecked, no throw
 
 **Modified (~8):**
 - `src/main.ts` — configure Aura light/dark presets; apply initial theme from localStorage before mount
@@ -55,7 +55,7 @@
 
 ## After Completing
 - [ ] `pnpm -r build` and `pnpm --filter @legendary-arena/dashboard build` both exit 0
-- [ ] `pnpm --filter @legendary-arena/dashboard test` — 8 checklist tests pass
+- [ ] `pnpm --filter @legendary-arena/dashboard test` — 9 checklist tests pass
 - [ ] Overview renders: 4 KPIs + 2 charts + alerts + Daily Execution Panel (9 items, 3 categories)
 - [ ] Checklist: toggle persists across navigation; survives browser refresh; resets on new day
 - [ ] Badge: `"Daily: N/M complete"` updates reactively on toggle

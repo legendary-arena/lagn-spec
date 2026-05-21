@@ -178,6 +178,17 @@ the composable. All date-string construction and stale-key pruning read
 from `now()`, never from `new Date()` directly. This allows tests to
 inject a deterministic date without globally mocking `Date`.
 
+The dashboard `tsconfig` runs `exactOptionalPropertyTypes: true`, so the
+options object must be resolved with a default and never internally typed
+as `(() => Date) | undefined`:
+
+```ts
+const now = options?.now ?? (() => new Date());
+```
+
+Callers must not pass an explicit `{ now: undefined }` — omit the key
+instead. The internal `now` is always a defined `() => Date`.
+
 ### resetAll Confirmation
 
 `resetAll()` clears all completion state for the current day. Because it
@@ -241,6 +252,13 @@ config**, never the reverse:
 - For each static item: if a persisted entry exists for its `id`, apply
   the persisted `completed` / `completedAt`; if none exists, initialize
   it as unchecked (`completed: false`, `completedAt: null`)
+- A persisted entry is applied only if it is **shape-valid** — `completed`
+  is a `boolean` and `completedAt` is a `number | null`. The value read
+  back from `JSON.parse` is untrusted (`exactOptionalPropertyTypes` makes
+  this a real widening boundary): narrow each entry before applying. A
+  malformed or wrong-typed entry is treated as unchecked, never coerced
+  and never applied as-is. (This is distinct from a `JSON.parse` throw,
+  which routes to the panel's `error` state.)
 - Persisted entries whose `id` is **not** present in the static config
   MUST be ignored (forward-compatibility when the config changes); they
   are never rendered and never re-written
@@ -398,6 +416,9 @@ The composable must have the following test coverage:
 8. A persisted entry whose `id` is not in the static config is ignored
    on restore, and a static item missing from the persisted value is
    initialized as unchecked (State Restoration Rules)
+9. A shape-invalid persisted entry (e.g. `completed` not a boolean, or a
+   non-object value) restores as unchecked without throwing — the
+   parsed-but-malformed case, distinct from a `JSON.parse` throw
 
 Tests must not mock `Date` globally. Date control is provided through
 the composable's `now` option (`useDailyChecklist({ now })`), never by
@@ -467,7 +488,7 @@ overwriting the global `Date`.
 - [ ] DataTable on Players page has striped rows and sticky header
 - [ ] DailyExecutionPanel conforms to Widget Contract (4-state
       rendering + freshness badge) per WP-157
-- [ ] `useDailyChecklist.test.ts` passes all 8 required tests
+- [ ] `useDailyChecklist.test.ts` passes all 9 required tests
 - [ ] `pnpm -r build` exits 0
 - [ ] Zero imports from `@legendary-arena/*` workspace packages
 
@@ -507,7 +528,7 @@ pnpm dash:dev
 
 # 10. Run checklist composable tests
 pnpm --filter @legendary-arena/dashboard test
-#    → 8 tests pass
+#    → 9 tests pass
 
 # 11. Grep for forbidden imports
 rg "@legendary-arena/(game-engine|registry|preplan|server)" apps/dashboard/
@@ -540,7 +561,7 @@ pnpm -r build
 13. DataTable: striped rows, sticky header, visible filter row
 14. DailyExecutionPanel conforms to Widget Contract (4-state +
     freshness)
-15. `useDailyChecklist.test.ts` passes all 8 required tests
+15. `useDailyChecklist.test.ts` passes all 9 required tests
 16. Zero imports from `@legendary-arena/*` workspace packages
 17. `docs/ai/DECISIONS.md` updated (D-16201 through D-16203)
 18. `docs/ai/work-packets/WORK_INDEX.md` updated with WP-162 row
