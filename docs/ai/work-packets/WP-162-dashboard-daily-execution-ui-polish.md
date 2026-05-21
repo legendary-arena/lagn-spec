@@ -155,6 +155,7 @@ The initial set matches `DASHBOARD-REQUIREMENTS.md §11`:
 
 ```ts
 const checklist = useDailyChecklist();
+// or, for tests: useDailyChecklist({ now: () => new Date(2026, 4, 21) });
 
 checklist.items        // Ref<DailyChecklistItem[]>
 checklist.completedCount  // ComputedRef<number>
@@ -162,6 +163,28 @@ checklist.totalCount      // ComputedRef<number>
 checklist.toggle(id)      // (id: string) => void
 checklist.resetAll()      // () => void
 ```
+
+The composable accepts a single optional options object with a `now`
+date provider:
+
+```ts
+interface UseDailyChecklistOptions {
+  now?: () => Date; // defaults to () => new Date()
+}
+```
+
+The `now` provider is the **only** source of the current date inside
+the composable. All date-string construction and stale-key pruning read
+from `now()`, never from `new Date()` directly. This allows tests to
+inject a deterministic date without globally mocking `Date`.
+
+### resetAll Confirmation
+
+`resetAll()` clears all completion state for the current day. Because it
+is destructive, the UI control that invokes it MUST first request user
+confirmation (a simple `confirm()` dialog is sufficient — no custom modal
+required). `resetAll()` itself does not prompt; the confirmation lives in
+the panel's click handler so the composable stays free of UI concerns.
 
 ### Checklist Ordering
 
@@ -185,12 +208,55 @@ checklist.resetAll()      // () => void
 - Date boundary: browser local midnight (00:00). No server time
   synchronization. The checklist resets on first load after the
   local date changes.
-- Stale key pruning: on composable initialization, enumerate all
-  `localStorage` keys matching `la-dashboard-checklist-*`, parse
-  the `dateString`, and delete any where date < (today - 30 days).
-  Runs once per session (lazy init pattern acceptable).
 - Persistence writes occur explicitly inside `toggle()` and
   `resetAll()` — not via deep watchers on checklist state.
+
+### Date String Construction (mandatory)
+
+`dateString` MUST be built from **local** date parts taken from the
+injected `now()` provider — never from `toISOString()` (which is
+UTC-based and drifts across the local-midnight boundary), and never
+from locale-dependent formatters:
+
+```ts
+const today = now();
+const year = today.getFullYear();
+const month = String(today.getMonth() + 1).padStart(2, '0');
+const day = String(today.getDate()).padStart(2, '0');
+const dateString = `${year}-${month}-${day}`; // stable YYYY-MM-DD, local time
+```
+
+- MUST NOT use `toISOString()` or `toLocaleDateString()`
+- MUST produce a zero-padded `YYYY-MM-DD` string
+- The same construction is reused for both the storage key and the
+  stale-key pruning comparison so the two never disagree
+
+### State Restoration Rules
+
+On initialization, the persisted value is **merged onto the static
+config**, never the reverse:
+
+- Iterate the static checklist array as the sole source of which items
+  exist
+- For each static item: if a persisted entry exists for its `id`, apply
+  the persisted `completed` / `completedAt`; if none exists, initialize
+  it as unchecked (`completed: false`, `completedAt: null`)
+- Persisted entries whose `id` is **not** present in the static config
+  MUST be ignored (forward-compatibility when the config changes); they
+  are never rendered and never re-written
+- The rendered item count therefore always equals the static array
+  length, regardless of what is in `localStorage`
+
+### Stale Key Pruning
+
+- On composable initialization, enumerate `localStorage` keys and
+  consider **only** those matching the exact prefix
+  `la-dashboard-checklist-` (use `key.startsWith('la-dashboard-checklist-')`)
+- Keys that do not match the prefix MUST NOT be parsed, inspected, or
+  deleted — pruning never touches the theme key or any unrelated key
+- For matching keys, parse the trailing `dateString` and delete any
+  whose date is more than 30 days older than today (`now()`-derived)
+- Runs once per session (lazy init pattern acceptable)
 
 ### Completion Badge
 
@@ -206,8 +272,19 @@ checklist.resetAll()      // () => void
 - Preference stored in `localStorage` key `la-dashboard-theme`
 - Default: `dark` (ops tools benefit from dark mode for extended use)
 - Toggle button in the AppLayout header bar
-- Theme must be read from `localStorage` before first mount to
-  prevent a light→dark flash on load
+- Theme MUST be resolved **synchronously in `main.ts` before
+  `createApp(...).mount(...)`** so the correct preset is applied on the
+  very first paint and there is no light→dark flash:
+
+  ```ts
+  const theme = localStorage.getItem('la-dashboard-theme') ?? 'dark';
+  // apply `theme` to the PrimeVue preset config here …
+  createApp(App).use(/* PrimeVue with resolved preset */).mount('#app');
+  ```
+
+  The Vue app MUST NOT mount before the stored theme has been applied.
+  Resolving the theme inside a component lifecycle hook (e.g. `onMounted`)
+  is forbidden — by then the flash has already occurred.
 
 ### Responsive Breakpoints
 
@@ -231,6 +308,41 @@ Every widget card follows:
 │ Footer: trend or action     │  ← optional; omit if no action
 └─────────────────────────────┘
 ```
+
+### DailyExecutionPanel Widget States
+
+The panel conforms to the WP-157 Widget Contract. For checklist data the
+four states resolve as:
+
+| State | Condition | Render |
+|---|---|---|
+| `loading` | initial render before the composable has resolved persisted state | skeleton / spinner placeholder |
+| `error` | `localStorage` read or `JSON.parse` failure | fallback message (full sentence), no crash; treat checklist as empty-but-recoverable |
+| `empty` | static checklist array length === 0 (should not occur with the locked 9-item set, but the branch must exist) | "No checklist items configured." |
+| `data` | normal case | the 9 items grouped by category |
+
+A `localStorage` read failure must be caught and surfaced as the `error`
+state — it must never throw out of the composable or blank the page.
+
+### Freshness Badge Behavior
+
+- Right-aligned in each widget card header
+- Shows `MOCK` while data is mock-sourced (current state of this WP)
+- A future real-data WP will swap this to `Updated {relative time}`
+  when the widget consumes live data; that behavior is out of scope here
+  and must not be pre-built
+
+### Accessibility Baseline (mandatory)
+
+- Each checklist item MUST render a real checkbox input paired with a
+  visible text label (PrimeVue `Checkbox` + label), and MUST be operable
+  by keyboard (tab to focus, space/enter to toggle)
+- Completed items MAY use a muted text style but MUST remain visible —
+  never collapsed or hidden
+- Every alert MUST carry a text severity label **and** a PrimeVue
+  severity icon — color is never the sole status indicator
+- This baseline restates and tightens the engine-wide "color never sole
+  status indicator" constraint for this WP's surfaces
 
 ### Design Token Lock
 
@@ -260,24 +372,36 @@ Sidebar responsive behavior is controlled by reactive state in
 - `isHidden: boolean` — true when viewport is < 768px
 
 Breakpoint transitions are driven by a `resize` event listener
-(throttled) or a `useBreakpoints` composable — not by CSS media
-queries on `body` or `html`.
+or a `useBreakpoints` composable — not by CSS media queries on `body`
+or `html`. To prevent flicker:
+
+- The `resize` handler MUST be throttled (100–200ms)
+- `isCollapsed` / `isHidden` MUST only be reassigned when a breakpoint
+  boundary (768px / 1200px) is actually crossed — not on every resize
+  tick. Compute the target state from the current width and write it
+  only if it differs from the present state.
+- Any `resize` listener added in `onMounted` MUST be removed in
+  `onUnmounted`.
 
 ### Required Tests (`useDailyChecklist.test.ts`)
 
 The composable must have the following test coverage:
 
 1. Initializes with 9 items in 3 categories
-2. `toggle(id)` flips `completed` state and sets `completedAt`
-3. `completedCount` updates correctly after toggle
+2. `toggle(id)` flips `completed` state and sets/clears `completedAt`
+3. `completedCount` updates correctly after multiple toggles
 4. State persists to `localStorage` and restores on re-init
-5. New date string produces a fresh (unchecked) checklist
-6. Keys older than 30 days are pruned on initialization
+5. New date (via injected `now`) produces a fresh (unchecked) checklist
+6. Keys older than 30 days are pruned on initialization (drive the date
+   via the injected `now` provider)
 7. Unknown item IDs passed to `toggle()` are silently ignored
+8. A persisted entry whose `id` is not in the static config is ignored
+   on restore, and a static item missing from the persisted value is
+   initialized as unchecked (State Restoration Rules)
 
-Tests must not mock `Date` globally. If date control is needed,
-inject the current date as a parameter or use a controlled date
-provider.
+Tests must not mock `Date` globally. Date control is provided through
+the composable's `now` option (`useDailyChecklist({ now })`), never by
+overwriting the global `Date`.
 
 ---
 
@@ -343,7 +467,7 @@ provider.
 - [ ] DataTable on Players page has striped rows and sticky header
 - [ ] DailyExecutionPanel conforms to Widget Contract (4-state
       rendering + freshness badge) per WP-157
-- [ ] `useDailyChecklist.test.ts` passes all 7 required tests
+- [ ] `useDailyChecklist.test.ts` passes all 8 required tests
 - [ ] `pnpm -r build` exits 0
 - [ ] Zero imports from `@legendary-arena/*` workspace packages
 
@@ -383,7 +507,7 @@ pnpm dash:dev
 
 # 10. Run checklist composable tests
 pnpm --filter @legendary-arena/dashboard test
-#    → 7 tests pass
+#    → 8 tests pass
 
 # 11. Grep for forbidden imports
 rg "@legendary-arena/(game-engine|registry|preplan|server)" apps/dashboard/
@@ -416,7 +540,7 @@ pnpm -r build
 13. DataTable: striped rows, sticky header, visible filter row
 14. DailyExecutionPanel conforms to Widget Contract (4-state +
     freshness)
-15. `useDailyChecklist.test.ts` passes all 7 required tests
+15. `useDailyChecklist.test.ts` passes all 8 required tests
 16. Zero imports from `@legendary-arena/*` workspace packages
 17. `docs/ai/DECISIONS.md` updated (D-16201 through D-16203)
 18. `docs/ai/work-packets/WORK_INDEX.md` updated with WP-162 row
