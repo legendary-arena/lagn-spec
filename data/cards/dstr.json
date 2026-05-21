@@ -551,7 +551,9 @@
       "id": 81,
       "name": "Nightmare",
       "slug": "nightmare",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "fear-lords"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -626,7 +628,9 @@
       "id": 82,
       "name": "Dormammu",
       "slug": "dormammu",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "lords-of-the-netherworld"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -699,7 +703,9 @@
       "id": 102,
       "name": "Fear Lords",
       "slug": "fear-lords",
-      "ledBy": [],
+      "ledBy": [
+        "nightmare"
+      ],
       "cards": [
         {
           "name": "Nox",
@@ -709,7 +715,8 @@
           "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-fear-lords-nox.webp",
           "abilities": [
             "Fight: KO one of your Heroes. Then, if Nox was in the city, she enters the [keyword:Astral Plane] and captures a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "D'Spayre",
@@ -720,7 +727,8 @@
           "abilities": [
             "Ambush: D'Spayre enters the [keyword:Astral Plane] and captures a Bystander.",
             "Fight: KO a Hero. Then, if D'Spayre was in the [keyword:Astral Plane], he enters the city, ignoring his Ambush ability."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dreamstalker",
@@ -731,7 +739,8 @@
           "abilities": [
             "Fight: Draw two cards. Then, if Dreamstalker was in the city, it enters the [keyword:Astral Plane].",
             "Escape: Each player discards down to four cards."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Lurking Unknown",
@@ -742,7 +751,8 @@
           "abilities": [
             "Fight: Reveal the top card of the Hero Deck. You may spend [icon:recruit] equal to that card's cost to have the player of your choice gain that Hero. If you don't, the Lurking Unknown enters the [keyword:Astral Plane] (even if it was already there).",
             "Escape: Reveal the top card of the Hero Deck. Each player reveals their hand and KOs a Hero with that cost."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -750,7 +760,9 @@
       "id": 103,
       "name": "Lords of the Netherworld",
       "slug": "lords-of-the-netherworld",
-      "ledBy": [],
+      "ledBy": [
+        "dormammu"
+      ],
       "cards": [
         {
           "name": "Mindless Ones",
@@ -761,7 +773,8 @@
           "abilities": [
             "Ambush: Mindless Ones capture the rightmost Hero in the HQ that costs 4 or less.",
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with the Lords of the Netherworld to gain that Hero."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Baron Mordo",
@@ -771,7 +784,8 @@
           "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-lords-of-the-netherworld-baron-mordo.webp",
           "abilities": [
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with Baron Mordo to draw two extra cards at the end of this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Satana Hellstrom",
@@ -781,7 +795,8 @@
           "imageUrl": "https://images.legendary-arena.com/dstr/dstr-vi-lords-of-the-netherworld-satana-hellstrom.webp",
           "abilities": [
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with Satana Hellstrom to rescue three Bystanders."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Satannish",
@@ -793,7 +808,8 @@
             "Ambush: Choose a player to make a [keyword:Demonic Bargain] with Satannish to reveal the top card of the Hero Deck and gain it if it costs 4 or less.",
             "Fight: Same effect, but cost 6 or less.",
             "Escape: Same effect, but cost 2 or less."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Umar",
@@ -805,7 +821,8 @@
             "Ambush: Choose a player to make a [keyword:Demonic Bargain] with Umar to KO a Hero of their choice from the HQ.",
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with Umar to gain a Hero of their choice that costs 6 or less from the KO pile.",
             "Escape: Same as Fight effect, but cost 0."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

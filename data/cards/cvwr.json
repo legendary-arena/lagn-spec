@@ -2097,7 +2097,9 @@
       "id": 31,
       "name": "Authoritarian Iron Man",
       "slug": "authoritarian-iron-man",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "superhuman-registration-act"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2157,7 +2159,9 @@
       "id": 32,
       "name": "Baron Helmut Zemo",
       "slug": "baron-helmut-zemo",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "thunderbolts"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2218,7 +2222,9 @@
       "id": 33,
       "name": "Maria Hill, Director of S.H.I.E.L.D.",
       "slug": "maria-hill-director-of-shield",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "shield-elite"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2279,7 +2285,9 @@
       "id": 34,
       "name": "Misty Knight",
       "slug": "misty-knight",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "heroes-for-hire"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2340,7 +2348,9 @@
       "id": 35,
       "name": "Ragnarok",
       "slug": "ragnarok",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "registration-enforcers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2414,7 +2424,8 @@
           "abilities": [
             "Fight: KO one of your heroes with a [icon:recruit] icon.",
             "Escape: Each player KOs one of their Heroes that has printed [icon:attack] of 2 or more."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Moonstone",
@@ -2424,7 +2435,8 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-csa-special-marshals-moonstone.webp",
           "abilities": [
             "Fight: Each other player discards two cards, and then draws a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Penance",
@@ -2434,7 +2446,8 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-csa-special-marshals-penance.webp",
           "abilities": [
             "Penance gets +1[icon:attack] for each Villain in your Victory Pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Venom",
@@ -2445,7 +2458,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "Escape: [keyword:Fortify] the Bystander Stack. While it's fortified, if a Bystander would be rescued from there, KO that Bystander instead."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2465,7 +2479,8 @@
             "[keyword:Size-Changing]: [hc:strength]",
             "Fight: Each player reveals a [hc:strength] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Flatman",
@@ -2476,7 +2491,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "Fight: KO a card from your discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Mr. Immortal",
@@ -2486,7 +2502,8 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-great-lakes-avengers-mr-immortal.webp",
           "abilities": [
             "Fight: Reveal the top card of the Villain Deck. If it's a Villain or Bystander, Mr. Immortal reenters the Sewers."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Squirrel Girl",
@@ -2497,7 +2514,8 @@
           "abilities": [
             "You can't fight Squirrel Girl if you played more than one card this turn.",
             "Escape: [keyword:Fortify] the Sidekick Stack. While it's fortified, [rule:Sidekicks] can't be recruited or gained."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2505,7 +2523,9 @@
       "id": 44,
       "name": "Heroes for Hire",
       "slug": "heroes-for-hire",
-      "ledBy": [],
+      "ledBy": [
+        "misty-knight"
+      ],
       "cards": [
         {
           "name": "Colleen Wing",
@@ -2516,7 +2536,8 @@
           "abilities": [
             "[keyword:Bribe]",
             "Escape: [keyword:Fortify] the Mastermind. While it's fortified, the Mastermind can't be fought."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Humbug",
@@ -2527,7 +2548,8 @@
           "abilities": [
             "[keyword:Bribe]",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shang-Chi",
@@ -2538,7 +2560,8 @@
           "abilities": [
             "[keyword:Bribe]",
             "Fight: If you have any cards in your discard pile, then shuffle them into your deck, and Shang-Chi reenters the Sewers."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Tarantula",
@@ -2550,7 +2573,8 @@
             "[keyword:Bribe]",
             "Fight: Each player discards two cards or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2558,7 +2582,9 @@
       "id": 45,
       "name": "Registration Enforcers",
       "slug": "registration-enforcers",
-      "ledBy": [],
+      "ledBy": [
+        "ragnarok"
+      ],
       "cards": [
         {
           "name": "Blade",
@@ -2568,7 +2594,8 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-registration-enforcers-blade.webp",
           "abilities": [
             "Fight: If you fight Blade in the Sewers or Rooftops, you get +2[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Captain Marvel",
@@ -2579,7 +2606,8 @@
           "abilities": [
             "Fight: Each player swaps a card from their hand with the top card of their deck.",
             "Escape: Each player swaps their hand with the top four cards of their deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Deadpool",
@@ -2591,7 +2619,8 @@
             "Ambush: Each player reveals a card that costs 5 or discards down to 5 cards.",
             "Fight: Same effect.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Micromax",
@@ -2602,7 +2631,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:instinct]",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2610,7 +2640,9 @@
       "id": 46,
       "name": "S.H.I.E.L.D. Elite",
       "slug": "shield-elite",
-      "ledBy": [],
+      "ledBy": [
+        "maria-hill-director-of-shield"
+      ],
       "cards": [
         {
           "name": "Agent Eric Marshall",
@@ -2621,7 +2653,8 @@
           "abilities": [
             "[keyword:S.H.I.E.L.D. Clearance]",
             "Ambush: A S.H.I.E.L.D. Officer enters the city as a 3[icon:attack] Villain. When you fight it, gain it as a Hero."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Agent Gabe Jones",
@@ -2632,7 +2665,8 @@
           "abilities": [
             "[keyword:S.H.I.E.L.D. Clearance]",
             "Fight: A S.H.I.E.L.D. Officer enters the city as a 3[icon:attack] Villain. When you fight it, gain it as a Hero."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dum Dum Dugan",
@@ -2644,7 +2678,8 @@
             "[keyword:S.H.I.E.L.D. Clearance]",
             "Fight: Each player with no S.H.I.E.L.D. Officers in their discard pile gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sharon Carter, Agent 13",
@@ -2655,7 +2690,8 @@
           "abilities": [
             "[keyword:S.H.I.E.L.D. Clearance]",
             "Escape: [keyword:Fortify] the S.H.I.E.L.D. Officer stack. While it's fortified, whenever any number of S.H.I.E.L.D. Officers become Villains, an extra one becomes a Villain."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2663,7 +2699,9 @@
       "id": 47,
       "name": "Superhuman Registration Act",
       "slug": "superhuman-registration-act",
-      "ledBy": [],
+      "ledBy": [
+        "authoritarian-iron-man"
+      ],
       "cards": [
         {
           "name": "Iron Spider",
@@ -2674,7 +2712,8 @@
           "abilities": [
             "Ambush: [keyword:Fortify] your deck. While Iron Spider fortifies a players deck, that player draws one fewer card at the end of their turn.",
             "Fight: Reveal the top card of the Villain Deck. If that card is worth 2VP or less, Iron Spider fortifies the deck of the player on your left."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ms. Marvel",
@@ -2684,7 +2723,8 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-superhuman-registration-act-ms-marvel.webp",
           "abilities": [
             "Escape: [keyword:Fortify] an HQ space. While its fortified, Heroes can't be gained from that space."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "She-Hulk",
@@ -2695,7 +2735,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength]",
             "Escape: [keyword:Fortify] the Villain deck. When a Master Strike is completed from that deck, each player gains a Wound and She-Hulk enters the Sewers."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Yellowjacket",
@@ -2706,7 +2747,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
             "Escape: [keyword:Fortify] the Hero Deck. While it's fortified, whenever a Hero in the HQ costs 7 or more, KO that Hero."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2714,7 +2756,9 @@
       "id": 48,
       "name": "Thunderbolts",
       "slug": "thunderbolts",
-      "ledBy": [],
+      "ledBy": [
+        "baron-helmut-zemo"
+      ],
       "cards": [
         {
           "name": "Fixer",
@@ -2724,7 +2768,8 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-thunderbolts-fixer.webp",
           "abilities": [
             "Fight: Look at the top three cards of your deck. KO one and put the rest back in any order."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Mach-IV",
@@ -2735,7 +2780,8 @@
           "abilities": [
             "Fight: Each player reveals a [hc:tech] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Radioactive Man",
@@ -2745,7 +2791,8 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-thunderbolts-radioactive-man.webp",
           "abilities": [
             "Escape: [keyword:Fortify] the Wound Stack. While it's fortified, whenever a player gains a Wound, that player gains an extra Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Songbird",
@@ -2756,7 +2803,8 @@
           "abilities": [
             "Fight: Each player without another Thunderbolts Villain in their Victory Pile gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

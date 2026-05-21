@@ -26,7 +26,148 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const INPUTS_DIR = join(__dirname, 'inputs');
 const OUTPUT_DIR = join(__dirname, '..', '..', 'data', 'cards');
 const PATCH_PATH = join(INPUTS_DIR, 'hero-card-counts.json');
+const VILLAIN_COUNTS_PATH = join(INPUTS_DIR, 'villain-card-counts.json');
+const LEADS_PATH = join(INPUTS_DIR, 'leads.json');
 const R2_BASE_URL = 'https://images.legendary-arena.com';
+
+// why: WP-167 / D-16703 — the four outlier sets are produced only by this
+// script, so it must apply the same villain `copies` overlay and the same
+// alwaysLeads/ledBy wiring as convert-cards-v15.mjs; otherwise outlier-set
+// villains silently lack `copies` and outlier leads stay empty.
+const VILLAIN_CARD_COUNTS = JSON.parse(readFileSync(VILLAIN_COUNTS_PATH, 'utf8'));
+const LEADS = JSON.parse(readFileSync(LEADS_PATH, 'utf8'));
+
+/**
+ * Builds a per-set list of villain-group lead rows from the raw leads.json
+ * array, skipping the PLACEHOLDER_DELETE_THIS row and the comment-only markers
+ * ({ "_set": ... }, { "_unassigned": ... }) that carry no usable "set" string.
+ * Only villainGroups[] is read; henchmen leads and the "_anyVillainGroup"
+ * wildcard are out of scope for villain-group wiring.
+ *
+ * @param leadsArray - The parsed leads.json array.
+ * @returns Map of setAbbr → array of { mastermind, villainGroups } rows.
+ */
+function buildLeadsBySet(leadsArray) {
+  const leadsBySet = new Map();
+  for (const row of leadsArray) {
+    if (typeof row.set !== 'string' || row.set === 'PLACEHOLDER_DELETE_THIS') {
+      continue;
+    }
+    const groups = Array.isArray(row.villainGroups) ? row.villainGroups : [];
+    const existing = leadsBySet.get(row.set) ?? [];
+    existing.push({ mastermind: row.mastermind, villainGroups: groups });
+    leadsBySet.set(row.set, existing);
+  }
+  return leadsBySet;
+}
+
+const LEADS_BY_SET = buildLeadsBySet(LEADS);
+
+/**
+ * Appends a value to an array only when not already present, keeping the
+ * alwaysLeads[] / ledBy[] arrays deduplicated and the script idempotent.
+ */
+function pushUnique(targetArray, value) {
+  if (!targetArray.includes(value)) targetArray.push(value);
+}
+
+/**
+ * Writes the optional `copies` field onto every villain card in an outlier set,
+ * sourced from villain-card-counts.json (setAbbr → groupSlug → cardSlug) or
+ * defaulting to 2. Loud-fails if a count-file entry names a group/card that does
+ * not exist in the set.
+ *
+ * @param setData - The outlier set object (mutated in place).
+ * @param setAbbr - The set abbreviation being processed.
+ * @throws If a villain-card-counts.json entry matches no group/card in the set.
+ */
+function applyVillainCopies(setData, setAbbr) {
+  const villainGroups = Array.isArray(setData.villains) ? setData.villains : [];
+  const setCounts = VILLAIN_CARD_COUNTS[setAbbr];
+
+  for (const villainGroup of villainGroups) {
+    const groupCounts = setCounts?.[villainGroup.slug];
+    for (const card of villainGroup.cards ?? []) {
+      const declaredCopies = groupCounts?.[card.slug];
+      // why: default 2 is the common 4-villain × 2 villain-group composition
+      // (D-16703); per-card outliers come only from villain-card-counts.json.
+      card.copies = typeof declaredCopies === 'number' ? declaredCopies : 2;
+    }
+  }
+
+  if (!setCounts) return;
+
+  const groupBySlug = new Map();
+  for (const villainGroup of villainGroups) groupBySlug.set(villainGroup.slug, villainGroup);
+  for (const [groupSlug, cardCounts] of Object.entries(setCounts)) {
+    const villainGroup = groupBySlug.get(groupSlug);
+    if (!villainGroup) {
+      throw new Error(
+        `villain-card-counts.json entry for set "${setAbbr}" names villain group ` +
+          `"${groupSlug}", which does not match any villain group in ${setAbbr}.json. ` +
+          `Fix the group slug in villain-card-counts.json or update the source data.`,
+      );
+    }
+    const cardSlugsInGroup = new Set((villainGroup.cards ?? []).map((card) => card.slug));
+    for (const cardSlug of Object.keys(cardCounts)) {
+      if (!cardSlugsInGroup.has(cardSlug)) {
+        throw new Error(
+          `villain-card-counts.json entry for set "${setAbbr}" group "${groupSlug}" ` +
+            `names villain card "${cardSlug}", which does not match any card in that ` +
+            `group. Group "${groupSlug}" has cards: ` +
+            `[${[...cardSlugsInGroup].map((slug) => `"${slug}"`).join(', ')}]. ` +
+            `Fix the card slug in villain-card-counts.json or update the source data.`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Populates mastermind.alwaysLeads[] and villainGroup.ledBy[] for an outlier set
+ * from leads.json (D-16703), symmetric and deduplicated. Loud-fails if a lead
+ * row names a mastermind or villain group absent from the set.
+ *
+ * @param setData - The outlier set object (mutated in place).
+ * @param setAbbr - The set abbreviation being processed.
+ * @throws If a leads.json row names a mastermind/group absent from the set.
+ */
+function applyLeadsRelationships(setData, setAbbr) {
+  const leadRows = LEADS_BY_SET.get(setAbbr) ?? [];
+
+  const mastermindBySlug = new Map();
+  for (const mastermind of setData.masterminds ?? []) {
+    mastermindBySlug.set(mastermind.slug, mastermind);
+  }
+  const groupBySlug = new Map();
+  for (const villainGroup of setData.villains ?? []) {
+    groupBySlug.set(villainGroup.slug, villainGroup);
+  }
+
+  for (const leadRow of leadRows) {
+    const mastermind = mastermindBySlug.get(leadRow.mastermind);
+    if (!mastermind) {
+      throw new Error(
+        `leads.json names mastermind "${leadRow.mastermind}" for set "${setAbbr}", ` +
+          `which does not match any mastermind in ${setAbbr}.json. Fix the mastermind ` +
+          `slug in leads.json or update the source data.`,
+      );
+    }
+    for (const groupSlug of leadRow.villainGroups) {
+      const villainGroup = groupBySlug.get(groupSlug);
+      if (!villainGroup) {
+        throw new Error(
+          `leads.json names villain group "${groupSlug}" led by mastermind ` +
+            `"${leadRow.mastermind}" for set "${setAbbr}", which does not match any ` +
+            `villain group in ${setAbbr}.json. Fix the group slug in leads.json or ` +
+            `update the source data.`,
+        );
+      }
+      pushUnique(mastermind.alwaysLeads, groupSlug);
+      pushUnique(villainGroup.ledBy, leadRow.mastermind);
+    }
+  }
+}
 
 // why: WP-135 D-13501 fallback map — kept in lockstep with the same map
 // in convert-cards-v15.mjs so outlier-set heroes that lack cardCounts
@@ -178,6 +319,12 @@ for (const setAbbr of TARGET_SETS) {
       hero.physicalCards = [];
     }
   }
+
+  // WP-167: villain deck composition overlay for the outlier sets — copies on
+  // every villain card plus the alwaysLeads/ledBy relationship. Throws before
+  // writeFileSync so a mismatched set is never partially overwritten.
+  applyVillainCopies(setData, setAbbr);
+  applyLeadsRelationships(setData, setAbbr);
 
   writeFileSync(targetPath, JSON.stringify(setData, null, 2), 'utf8');
   console.log(`  ✅ Saved ${targetPath}\n`);

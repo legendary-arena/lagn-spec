@@ -559,7 +559,9 @@
       "id": 67,
       "name": "Hela, Goddess of Death",
       "slug": "hela-goddess-of-death",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "dark-council"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -636,7 +638,9 @@
       "id": 68,
       "name": "Malekith the Accursed",
       "slug": "malekith-the-accursed",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "omens-of-ragnarok"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -715,7 +719,9 @@
       "id": 86,
       "name": "Dark Council",
       "slug": "dark-council",
-      "ledBy": [],
+      "ledBy": [
+        "hela-goddess-of-death"
+      ],
       "cards": [
         {
           "name": "Laufey, Father Of Loki",
@@ -726,7 +732,8 @@
           "abilities": [
             "Ambush: Laufey captures The Casket of Ancient Winters from any Villain, Mastermind, player's control, or discard pile.",
             "Escape: If Laufey holds The Casket of Ancient Winters, say “Fimbulwinter has come,“ and each player discards down to 3 cards."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Mangog",
@@ -737,7 +744,8 @@
           "abilities": [
             "The Mangog gets +1[icon:attack] for each Villain in the Victory Pile of the player on your right.",
             "Escape: Each player who is not [keyword:Worthy] gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ulik, The Troll",
@@ -748,7 +756,8 @@
           "abilities": [
             "Ulik gets +2[icon:attack] if you are not [keyword:Worthy].",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sindr, Fire Giant Queen",
@@ -758,7 +767,8 @@
           "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-dark-council-sindr-fire-giant-queen.webp",
           "abilities": [
             "Fight: If you are [keyword:Worthy], you get +2[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Jarnbjorn, First Axe of Thor",
@@ -770,7 +780,8 @@
             "[keyword:Villainous Weapons]",
             "",
             "[keyword:Thrown Artifact] When you throw this, you get +3[icon:attack]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Casket of Ancient Winters",
@@ -782,7 +793,8 @@
             "[keyword:Villainous Weapons]",
             "",
             "[keyword:Artifact] Once per turn, if you are [keyword:Worthy], you get +2[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -790,7 +802,9 @@
       "id": 87,
       "name": "Omens of Ragnarok",
       "slug": "omens-of-ragnarok",
-      "ledBy": [],
+      "ledBy": [
+        "malekith-the-accursed"
+      ],
       "cards": [
         {
           "name": "The Eternal Flame",
@@ -802,7 +816,8 @@
             "[keyword:Villainous Weapons]",
             "Ambush: If Surtur is in the city, he captures The Eternal Flame. If a player controls \"Surtur's Crown\", that card enters the city as the Villain Surtur and captures The Eternal Flame.",
             "[keyword:Artifact] Once per turn, return a 0-cost card from your discard pile to your hand."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Hel-Crown",
@@ -814,7 +829,8 @@
             "[keyword:Villainous Weapons]",
             "",
             "[keyword:Artifact] Once per turn, you get [keyword:Conqueror]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Skurge, The Executioner",
@@ -825,7 +841,8 @@
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 3",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Surtur, Fire Giant King",
@@ -838,7 +855,8 @@
             "Escape: If Surtur was holding The Eternal Flame, say \"Ragnarok has come\", KO each [team:heroes-of-asgard] Hero from the HQ, and each player gains two Wounds.",
             "",
             "[keyword:Artifact] Once per turn, you get [keyword:Conqueror]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Jormungand, The World-Serpent",
@@ -853,7 +871,8 @@
             "[keyword:Streets] [keyword:Conqueror] 1",
             "[keyword:Bridge] [keyword:Conqueror] 1",
             "Fight: Each Hero currently in the HQ costs 1 less this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Fenris Wolf",
@@ -864,7 +883,8 @@
           "abilities": [
             "[keyword:Streets] [keyword:Conqueror] 2",
             "Ambush: The Fenris Wolf moves forward to the Rooftops, pushing other Villains forward as normal."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

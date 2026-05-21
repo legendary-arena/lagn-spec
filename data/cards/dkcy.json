@@ -1863,7 +1863,9 @@
       "id": 5,
       "name": "Apocalypse",
       "slug": "apocalypse",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "four-horsemen"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1925,7 +1927,9 @@
       "id": 6,
       "name": "Kingpin",
       "slug": "kingpin",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "streets-of-new-york"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1986,7 +1990,9 @@
       "id": 7,
       "name": "Mephisto",
       "slug": "mephisto",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "emissaries-of-evil"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2047,7 +2053,9 @@
       "id": 8,
       "name": "Mr. Sinister",
       "slug": "mr-sinister",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "marauders"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2108,7 +2116,9 @@
       "id": 9,
       "name": "Stryfe",
       "slug": "stryfe",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "mutant-liberation-front"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2170,7 +2180,9 @@
       "id": 8,
       "name": "Emissaries of Evil",
       "slug": "emissaries-of-evil",
-      "ledBy": [],
+      "ledBy": [
+        "mephisto"
+      ],
       "cards": [
         {
           "name": "Egghead",
@@ -2180,7 +2192,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-emissaries-of-evil-egghead.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, play it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Electro",
@@ -2190,7 +2203,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-emissaries-of-evil-electro.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Scheme Twist, play it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Gladiator",
@@ -2200,7 +2214,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-emissaries-of-evil-gladiator.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Bystander, Gladiator captures it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Rhino",
@@ -2211,7 +2226,8 @@
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Master Strike, each player gains a Wound.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2219,7 +2235,9 @@
       "id": 9,
       "name": "Four Horsemen",
       "slug": "four-horsemen",
-      "ledBy": [],
+      "ledBy": [
+        "apocalypse"
+      ],
       "cards": [
         {
           "name": "Death",
@@ -2230,7 +2248,8 @@
           "abilities": [
             "Fight: Each other player reveals their hand and KOs one of their Heroes that costs 1[icon:vp] or more.",
             "Escape: Each player does that same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Famine",
@@ -2241,7 +2260,8 @@
           "abilities": [
             "Fight: Each other player reveals an [hc:instinct] Hero or discards a card.",
             "Escape: Each player does that same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Pestilence",
@@ -2252,7 +2272,8 @@
           "abilities": [
             "Fight: Each other player reveals the top three cards of their deck, discards each of those cards that costs 1[icon:vp] or more, and puts the rest back in any order.",
             "Escape: Each player does that same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "War",
@@ -2263,7 +2284,8 @@
           "abilities": [
             "Fight: Each other player reveals an [hc:instinct] Hero or gains a Wound.",
             "Escape: Each player does that same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2271,7 +2293,9 @@
       "id": 10,
       "name": "Marauders",
       "slug": "marauders",
-      "ledBy": [],
+      "ledBy": [
+        "mr-sinister"
+      ],
       "cards": [
         {
           "name": "Blockbuster",
@@ -2282,7 +2306,8 @@
           "abilities": [
             "Blockbuster gets +2[icon:attack] for each Bystander he has.",
             "Ambush: If there is a Villain in the Bank that Villain and Blockbuster each capture a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Chimera",
@@ -2293,7 +2318,8 @@
           "abilities": [
             "Chimera gets +3[icon:attack] for each Bystander she has.",
             "Ambush: Reveal the top three cards of the Villain Deck. Chimera captures all the Bystander cards you revealed. Put the rest back in random order."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Scalphunter",
@@ -2304,7 +2330,8 @@
           "abilities": [
             "Scalphunter gets +1[icon:attack] for each Bystander he has.",
             "Ambush: Each player chooses a Bystander from their Victory Pile. Scalphunter captures those Bystanders."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Vertigo",
@@ -2314,7 +2341,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-marauders-vertigo.webp",
           "abilities": [
             "Fight: Each player discards all the cards in their hand, then draws as many cards as they discarded."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2322,7 +2350,9 @@
       "id": 11,
       "name": "Mutant Liberation Front",
       "slug": "mutant-liberation-front",
-      "ledBy": [],
+      "ledBy": [
+        "stryfe"
+      ],
       "cards": [
         {
           "name": "Forearm",
@@ -2332,7 +2362,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-mlf-forearm.webp",
           "abilities": [
             "To fight Forearm, you must also reveal four Hero cards with different card names."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Reignfire",
@@ -2342,7 +2373,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-mlf-reignfire.webp",
           "abilities": [
             "Escape: Reignfire becomes a Master Strike that takes effect immediately."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wildside",
@@ -2352,7 +2384,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-mlf-wildside.webp",
           "abilities": [
             "Fight: If you fight Wildside in the Sewers or Bank, KO two of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zero",
@@ -2362,7 +2395,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-mlf-zero.webp",
           "abilities": [
             "To fight Zero, you must also discard three cards that cost 0[icon:vp]."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2370,7 +2404,9 @@
       "id": 12,
       "name": "Streets of New York",
       "slug": "streets-of-new-york",
-      "ledBy": [],
+      "ledBy": [
+        "kingpin"
+      ],
       "cards": [
         {
           "name": "Bullseye",
@@ -2380,7 +2416,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-streets-of-new-york-bullseye.webp",
           "abilities": [
             "Fight: KO one of your Heroes with a [icon:recruit] icon and one of your Heroes with an [icon:attack] icon."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Hammerhead",
@@ -2391,7 +2428,8 @@
           "abilities": [
             "[keyword:Bribe]",
             "Fight: KO one of your Heroes with a [icon:recruit] icon."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Jigsaw",
@@ -2402,7 +2440,8 @@
           "abilities": [
             "Ambush: Each player discards three cards, then draws two cards.",
             "[keyword:Bribe]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Tombstone",
@@ -2413,7 +2452,8 @@
           "abilities": [
             "[keyword:Bribe]",
             "Escape: Each player reveals a [hc:strength] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2431,7 +2471,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-underworld-azazel.webp",
           "abilities": [
             "Fight: A card in your hand gains [keyword:Teleport] this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Blackheart",
@@ -2443,7 +2484,8 @@
             "Ambush: The player to your right reveals a [team:marvel-knights] Hero or gains a Wound.",
             "Fight: Same effect.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dracula",
@@ -2454,7 +2496,8 @@
           "abilities": [
             "Ambush: Dracula captures the top card of the Hero Deck. Dracula gets +[icon:attack] equal to that card's Cost.",
             "Fight: Gain that card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Lilith, Daughter of Dracula",
@@ -2464,7 +2507,8 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-underworld-lilith-daughter-of-dracula.webp",
           "abilities": [
             "Escape: Each player without Dracula in their Victory Pile gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

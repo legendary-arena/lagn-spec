@@ -1651,7 +1651,9 @@
       "id": 14,
       "name": "Dr. Strange",
       "slug": "dr-strange",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "defenders"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1711,7 +1713,9 @@
       "id": 15,
       "name": "Nick Fury",
       "slug": "nick-fury",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "avengers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1832,7 +1836,9 @@
       "id": 17,
       "name": "Professor X",
       "slug": "professor-x",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "x-men-first-class"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1894,7 +1900,9 @@
       "id": 18,
       "name": "Avengers",
       "slug": "avengers",
-      "ledBy": [],
+      "ledBy": [
+        "nick-fury"
+      ],
       "cards": [
         {
           "name": "Ant-Man",
@@ -1904,7 +1912,8 @@
           "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-avengers-ant-man.webp",
           "abilities": [
             "[keyword:Elusive 4]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Captain America",
@@ -1917,7 +1926,8 @@
             "Fight: Same effect.",
             "Captain America gets +1[icon:attack] for each color of Ally in the Lair.",
             "Overrun: [keyword:Demolish] each player."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Hulk",
@@ -1929,7 +1939,8 @@
             "Ambush: [keyword:Demolish] each player twice.",
             "Fight: Same effect.",
             "Overrun: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Iron Man",
@@ -1941,7 +1952,8 @@
             "Ambush: Each player reveals a [hc:tech] Ally or gains a Bindings.",
             "Fight: Same effect.",
             "Overrun: [keyword:Demolish] each player."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Thor",
@@ -1953,7 +1965,8 @@
             "Ambush: KO each Ally from the Lair that costs 7[icon:vp] or more.",
             "Fight: Same effect.",
             "Overrun: [keyword:Demolish] each player."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wasp",
@@ -1963,7 +1976,8 @@
           "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-avengers-wasp.webp",
           "abilities": [
             "[keyword:Elusive 7]"
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1971,7 +1985,9 @@
       "id": 19,
       "name": "Defenders",
       "slug": "defenders",
-      "ledBy": [],
+      "ledBy": [
+        "dr-strange"
+      ],
       "cards": [
         {
           "name": "Daredevil",
@@ -1982,7 +1998,8 @@
           "abilities": [
             "Fight: The next Ally you recruit this turn goes on top of your deck.",
             "Overrun: Each player reveals the top card of their deck and if it costs 1[icon:vp] or more, discards it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Iron Fist",
@@ -1992,7 +2009,8 @@
           "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-defenders-iron-fist.webp",
           "abilities": [
             "To fight Iron Fist, you must also reveal three Allies with different costs."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Namor, The Sub-Mariner",
@@ -2004,7 +2022,8 @@
             "Ambush: If any other Defenders Adversaries are in the city, each player gains a Bindings.",
             "Fight: Same Effect.",
             "Overrun: Same Effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Luke Cage",
@@ -2014,7 +2033,8 @@
           "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-defenders-luke-cage.webp",
           "abilities": [
             "Fight: Each player reveals the top three cards of their deck. You choose which players discard them and which players put them back on top in the order of their choice."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2032,7 +2052,8 @@
           "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-marvel-knights-black-panther.webp",
           "abilities": [
             "Fight: Each player draws a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Elektra",
@@ -2042,7 +2063,8 @@
           "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-marvel-knights-elektra.webp",
           "abilities": [
             "Fight: KO one of your Allies. Then KO a Bindings from your hand or discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Punisher",
@@ -2053,7 +2075,8 @@
           "abilities": [
             "Fight: Reveal the top card of your deck. If it costs 0[icon:vp], KO it.",
             "Overrun: Each player reveals the top card of their deck and if it costs 1[icon:vp] or more, KOs it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ghost Rider",
@@ -2064,7 +2087,8 @@
           "abilities": [
             "Fight: You may KO another Adversary from your Victory Pile. If you do, you get +3[icon:recruit].",
             "Overrun: Each player may KO an Adversary from their Victory Pile. Any player who does not do so gains a Bindings."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2083,7 +2107,8 @@
           "abilities": [
             "[keyword:Elusive 6]",
             "Fight: Each player reveals the top card of their deck. Choose any number of those cards to be discarded."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Firestar",
@@ -2094,7 +2119,8 @@
           "abilities": [
             "Fight: Reveal the top card of your deck. If it has a [icon:recruit] icon, KO it.",
             "Overrun: Each player reveals the top card of their deck, and if it has an [icon:attack] icon, KO it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Moon Knight",
@@ -2104,7 +2130,8 @@
           "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-spider-friends-moon-knight.webp",
           "abilities": [
             "Fight: KO one of your Allies. Then, if you fought Moon Knight on the Rooftops, KO another of your Allies."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Spider-Man",
@@ -2115,7 +2142,8 @@
           "abilities": [
             "Fight: Reveal the top card of the Adversary Deck. If that card is worth 2[icon:piercing] or less, play it. If you play a card from the Adversary Deck this way, put Spider-Man back on top of the Adversary Deck.",
             "Overrun: Each player gains a Bindings."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2134,7 +2162,8 @@
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Ambush: Each player who does not reveal a [hc:ranged] Ally discards two cards, then draws a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Rogue",
@@ -2145,7 +2174,8 @@
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: Each other player discards the top card of their deck. Play a copy of one of those Allies."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Scarlet Witch",
@@ -2155,7 +2185,8 @@
           "imageUrl": "https://images.legendary-arena.com/vill/vill-vi-uncanny-avengers-scarlet-witch.webp",
           "abilities": [
             "Fight: Reveal the top three cards of your deck. Put any that have odd-numbered costs into your hand and discard the rest. (0 is even.)"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wolverine",
@@ -2167,7 +2198,8 @@
             "[keyword:X-Treme Attack]",
             "Wolverine gets +1[icon:attack] for each card you've drawn this turn.",
             "Overrun: Each player reveals an [hc:instinct] Ally or gains a Bindings. Then shuffle Wolverine back into the Adversary deck."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2186,7 +2218,8 @@
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: You may KO a Bindings from your hand or discard pile. If you don't, each other player gains a Bindings."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Nightcrawler",
@@ -2197,7 +2230,8 @@
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: Choose an Ally you played this turn. When you draw a new hand of cards at the end of this turn, add that Ally to your new hand as an extra card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shadowcat",
@@ -2208,7 +2242,8 @@
           "abilities": [
             "[keyword:X-Treme Attack]",
             "[keyword:Elusive 5]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Storm",
@@ -2220,7 +2255,8 @@
             "[keyword:X-Treme Attack]",
             "Ambush: (After Storm enters the city). Move Storm to the Rooftops. If another Adversary is already there, swap them.",
             "Fight: If you fight Storm on the Rooftops, each other player gains a Bindings."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2228,7 +2264,9 @@
       "id": 24,
       "name": "X-Men First Class",
       "slug": "x-men-first-class",
-      "ledBy": [],
+      "ledBy": [
+        "professor-x"
+      ],
       "cards": [
         {
           "name": "Angel",
@@ -2239,7 +2277,8 @@
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: Draws two cards, then discard a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Iceman",
@@ -2250,7 +2289,8 @@
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: Draw a card for each [hc:ranged] Ally you played this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Jean Grey",
@@ -2262,7 +2302,8 @@
             "[keyword:X-Treme Attack]",
             "Ambush: Jean Grey guards a Bystander for each Adversary in the city with X-Treme Attack (including Jean).",
             "Fight: You get +1[icon:recruit] for each Bystander you kidnapped this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Beast",
@@ -2273,7 +2314,8 @@
           "abilities": [
             "[keyword:X-Treme Attack]",
             "Fight: KO one of your Allies. Then KO another of your Allies if there are any other Adversaries in the city with X-Treme Attack."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Cyclops",
@@ -2285,7 +2327,8 @@
             "[keyword:X-Treme Attack]",
             "To Fight Cyclops, you must also discard a card.",
             "Overrun: Each player reveals a [team:brotherhood] Ally or discards a card."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

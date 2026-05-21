@@ -564,7 +564,9 @@
       "id": 91,
       "name": "Lilith, Mother of Demons",
       "slug": "lilith-mother-of-demons",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "lilin"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -643,7 +645,9 @@
       "id": 92,
       "name": "Zarathos",
       "slug": "zarathos",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "fallen"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -721,7 +725,9 @@
       "id": 112,
       "name": "Lilin",
       "slug": "lilin",
-      "ledBy": [],
+      "ledBy": [
+        "lilith-mother-of-demons"
+      ],
       "cards": [
         {
           "name": "Meatmarket",
@@ -733,7 +739,8 @@
             "Meatmarket gets +1[icon:attack] for each Bystander in the KO pile.",
             "Ambush: [keyword:Hunt for Victims]",
             "Fight: You may KO a card from your discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Outcast",
@@ -743,7 +750,8 @@
           "imageUrl": "https://images.legendary-arena.com/mdns/mdns-vi-lilin-outcast.webp",
           "abilities": [
             "Ambush: [keyword:Hunt for Victims]. Then each player reveals a random card from their hand. If that card costs less than the number of Bystanders in the KO pile, that player discards that card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sister Nil",
@@ -755,7 +763,8 @@
             "[keyword:Moonlight]: Sister Nil gets +2[icon:attack].",
             "Ambush: [keyword:Hunt for Victims]. Then each player reveals more non-grey Heroes than the number of Bystanders in the KO pile or gains a Wound.",
             "Escape: Each player discards a Hero with an odd-numbered cost."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Skinner",
@@ -767,7 +776,8 @@
             "Skinner gets +2[icon:attack] if there are at least four Bystanders in the KO pile.",
             "Ambush: [keyword:Hunt for Victims]",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Blackout",
@@ -779,7 +789,8 @@
             "[keyword:Moonlight]: Blackout gets +1[icon:attack] for each Bystander in the KO pile.",
             "Ambush: [keyword:Hunt for Victims]. If it's Moonlight, [keyword:Hunt for Victims] again.",
             "Escape: (After the normal Escape KO) If it's Moonlight, each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -787,7 +798,9 @@
       "id": 113,
       "name": "Fallen",
       "slug": "fallen",
-      "ledBy": [],
+      "ledBy": [
+        "zarathos"
+      ],
       "cards": [
         {
           "name": "Metarchus",
@@ -799,7 +812,8 @@
             "[keyword:Blood Frenzy]",
             "Ambush: [keyword:Haunt] the rightmost unhaunted Hero in the HQ.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Atrocity",
@@ -810,7 +824,8 @@
           "abilities": [
             "Ambush: [keyword:Haunt] the leftmost unhaunted Hero in the HQ.",
             "Fight: Rescue a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Patriarch",
@@ -821,7 +836,8 @@
           "abilities": [
             "Ambush: [keyword:Haunt] an unhaunted Hero in the HQ that costs 3 or less.",
             "Fight: Reveal the top card of your deck. If it costs 3 or less, draw it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Salomé, Sorceress Supreme",
@@ -833,7 +849,8 @@
             "[keyword:Blood Frenzy]",
             "Fight: KO up to two cards from your discard pile.",
             "Escape: Salomé ascends to become an additional Mastermind. She gains the ability “Master Strike: Each player discards a [team:marvel-knights] Hero or gains a Wound.“"
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

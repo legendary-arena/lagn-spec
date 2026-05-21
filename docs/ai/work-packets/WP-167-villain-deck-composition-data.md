@@ -439,3 +439,34 @@ This packet is complete when ALL of the following are true:
       villain-deck counts, and populated Always-Leads
 - [ ] `docs/ai/DECISIONS.md` updated — D-16701, D-16702, D-16703 recorded
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` has WP-167 checked off with today's date
+
+---
+
+## Lint Gate Self-Review
+
+Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`. All 21 sections PASS or
+are N/A with a stated reason.
+
+| § | Section | Result |
+|---|---|---|
+| 1 | Work Packet Structure | PASS — all 10 required sections present |
+| 2 | Non-Negotiable Constraints block | PASS — engine-wide + packet-specific + tightening invariants + session protocol + locked contract values |
+| 3 | Prerequisites (`## Assumes`) | PASS — WP-013+, schema exports, `leads.json`, the `villain-card-counts.json` scaffold (308ecab), and the SPEC landing are all listed explicitly |
+| 4 | Context References | PASS — specific docs/sections incl. `00.2 §1.4/§1.5`, schema line refs, converter emit-path line refs, DECISIONS D-1410..13 / D-13501 / D-16701..3 |
+| 5 | Files Expected to Change | PASS — each entry marked new/modified with a one-line description. Breadth (~12) is inherent to a 40-file data-regen WP; the set is enumerated and the `data/cards/*.json` regen is a single glob entry, gated by the §Scope-Enforcement `git diff --name-only` check |
+| 6 | Naming Consistency | PASS — `copies` / `villainDeckTwistCount` / `villainDeckBystanderCount` locked; `MatchSetupConfig` composition fields untouched |
+| 7 | Dependency Discipline | PASS — no new npm dependencies; registry imports `zod` + `node:` only |
+| 8 | Architectural Boundaries | PASS — registry imports no `game-engine` / `apps/server` / `pg`; `G` never persisted; converter is build tooling |
+| 9 | Windows Compatibility | PASS — verification uses `pwsh` `Select-String` with `\` paths |
+| 10 | Environment Variable Hygiene | N/A — introduces and consumes no environment variables |
+| 11 | Authentication Clarity | N/A — no identity or endpoint surface |
+| 12 | Test Quality | PASS — `node:test` / `node:assert`; no `boardgame.io/testing`; negative-scheme + round-trip + regenerated-`core.json` regression |
+| 13 | Commands and Verification | PASS — `pnpm --filter` build/test, exact converter `node` commands, inline expected output, idempotency + manual loud-fail steps |
+| 14 | Acceptance Criteria Quality | PASS — 12 binary, observable, specific items aligned to deliverables |
+| 15 | Definition of Done | PASS — includes acceptance, STATUS.md, DECISIONS.md, WORK_INDEX.md, and the no-out-of-scope-files check |
+| 16 | Code Style | PASS — mandates human-style code, JSDoc, required `// why:` comments, full-sentence errors |
+| 17 | Vision Alignment | PASS — triggered by §17.1 (card data); `## Vision Alignment` block present with clauses §1/§2/§10/§14, no-conflict assertion, NG-1..7 check, determinism line |
+| 18 | Prose-vs-Grep Discipline | PASS — verification greps `schema.ts` / `core.json` for non-forbidden tokens; WP prose is not under those grep paths, so no false-positive hits |
+| 19 | Bridge-vs-HEAD Staleness | N/A — the WP is not a repo-state-summarizing artifact |
+| 20 | Funding Surface Gate | N/A — schema + data-pipeline + docs only; no global-nav / viewer / profile funding affordances, no user-visible funding copy, no funding-channel integration |
+| 21 | API Catalog Update | N/A — touches no `apps/server` HTTP endpoint and no `apps/server`-reachable library function recorded in `api-endpoints.md`; registry schema + converter only |

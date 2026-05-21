@@ -565,7 +565,9 @@
       "id": 76,
       "name": "Annihilus",
       "slug": "annihilus",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "annihilation-wave"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -636,7 +638,9 @@
       "id": 77,
       "name": "Kang the Conqueror",
       "slug": "kang-the-conqueror",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "timelines-of-kang"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -711,7 +715,9 @@
       "id": 96,
       "name": "Annihilation Wave",
       "slug": "annihilation-wave",
-      "ledBy": [],
+      "ledBy": [
+        "annihilus"
+      ],
       "cards": [
         {
           "name": "Annihilation Armada",
@@ -721,7 +727,8 @@
           "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-annihilation-wave-annihilation-armada.webp",
           "abilities": [
             "Ambush: A Henchmen Villain from your Victory Pile enters the city."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Queens of Annihilation",
@@ -732,7 +739,8 @@
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, play it.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ravenous",
@@ -743,7 +751,8 @@
           "abilities": [
             "Ambush: Ravenous swaps places with an Annihilation Wave Villain that isn't Weaponized Galactus.",
             "Escape: Each player reveals a [hc:strength] Hero or gains a wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Weaponized Galactus",
@@ -754,7 +763,8 @@
           "abilities": [
             "Ambush: Weaponized Galactus swaps places with the leftmost Villain in the city.",
             "Escape: Destroy the leftmost city space. If this destroys the last city space, Evil Wins. Otherwise, each player gains a Wound, and you shuffle Weaponized Galactus back into the Villain Deck. Any Villain from the destroyed city space escapes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -762,7 +772,9 @@
       "id": 97,
       "name": "Timelines of Kang",
       "slug": "timelines-of-kang",
-      "ledBy": [],
+      "ledBy": [
+        "kang-the-conqueror"
+      ],
       "cards": [
         {
           "name": "Immortus",
@@ -773,7 +785,8 @@
           "abilities": [
             "Fight: Reveal a [hc:ranged] Hero or reveal the top card of the Villain Deck. If it's a Villain worth 4VP or less, defeat it (do its Fight effect) and put Immortus in its place.",
             "Escape: Each player reveals a [hc:ranged] Hero or gains a Wound. Shuffle Immortus back into the Villain Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Iron Lad",
@@ -784,7 +797,8 @@
           "abilities": [
             "Fight: The player of your choice gains this as a Hero.",
             "[hc:tech]: [keyword:Man/Woman Out of Time]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Pharaoh Rama-Tut",
@@ -795,7 +809,8 @@
           "abilities": [
             "Ambush: If the Bridge is empty, move a Villain to the Bridge.",
             "Fight: Send a [hc:strength] or [hc:instinct] Hero you played this turn as a [keyword:Man/Woman Out of Time]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Scarlet Centurion",
@@ -806,7 +821,8 @@
           "abilities": [
             "Ambush: Reveal your hand and send your highest-cost Hero as a [keyword:Man/Woman Out of Time].",
             "Fight: If you played a [hc:covert] Hero this turn, KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

@@ -167,6 +167,200 @@ function loadCardCounts(filePath) {
 
 const CARD_COUNTS = loadCardCounts(join(DATA_DIR, 'hero-card-counts.json'));
 
+// ── Load villain deck composition inputs (WP-167 / D-16703) ───────────────────
+
+// why: per-villain-card copy counts. setAbbr → groupSlug → cardSlug → copies.
+// Cards absent here default to 2 (the common 4-villain × 2 group). The top-level
+// "_note" documentation key is ignored when looking up per-set counts.
+const VILLAIN_CARD_COUNTS = JSON.parse(
+  readFileSync(join(DATA_DIR, 'villain-card-counts.json'), 'utf8'),
+);
+
+// why: per-scheme villain-deck twist/bystander counts. setAbbr → schemeSlug →
+// { villainDeckTwistCount, villainDeckBystanderCount }. Schemes absent here emit
+// neither field. The top-level "_note" documentation key is ignored.
+const SCHEME_DECK_COUNTS = JSON.parse(
+  readFileSync(join(DATA_DIR, 'scheme-deck-counts.json'), 'utf8'),
+);
+
+// why: mastermind → villain-group "Always Leads" relationship. The relationship
+// already lived in leads.json but the converter never read it (D-16703); it
+// previously wrote alwaysLeads/ledBy as hardcoded empty arrays.
+const LEADS = JSON.parse(readFileSync(join(DATA_DIR, 'leads.json'), 'utf8'));
+
+/**
+ * Builds a per-set list of villain-group lead rows from the raw leads.json
+ * array. Skips non-data rows: the PLACEHOLDER_DELETE_THIS row and the
+ * comment-only markers ({ "_set": ... }, { "_unassigned": ... }) which carry
+ * no usable "set" string. Henchmen leads and the "_anyVillainGroup" wildcard
+ * are out of scope for villain-group wiring; only the villainGroups[] array is
+ * read, so wildcard rows (with empty villainGroups[]) contribute nothing.
+ *
+ * @param leadsArray - The parsed leads.json array.
+ * @returns Map of setAbbr → array of { mastermind, villainGroups } rows.
+ */
+function buildLeadsBySet(leadsArray) {
+  const leadsBySet = new Map();
+  for (const row of leadsArray) {
+    if (typeof row.set !== 'string' || row.set === 'PLACEHOLDER_DELETE_THIS') {
+      continue;
+    }
+    const groups = Array.isArray(row.villainGroups) ? row.villainGroups : [];
+    const existing = leadsBySet.get(row.set) ?? [];
+    existing.push({ mastermind: row.mastermind, villainGroups: groups });
+    leadsBySet.set(row.set, existing);
+  }
+  return leadsBySet;
+}
+
+const LEADS_BY_SET = buildLeadsBySet(LEADS);
+
+/**
+ * Appends a value to an array only when it is not already present, so the
+ * alwaysLeads[] / ledBy[] arrays stay deduplicated while preserving the order
+ * in which masterminds/groups first appear in leads.json (deterministic).
+ */
+function pushUnique(targetArray, value) {
+  if (!targetArray.includes(value)) targetArray.push(value);
+}
+
+/**
+ * Writes the optional `copies` field onto every villain card in a converted
+ * set. Each card's count comes from villain-card-counts.json
+ * (setAbbr → groupSlug → cardSlug) when present; otherwise it defaults to 2.
+ * Then loud-fails if any count-file entry for this set names a group or card
+ * that does not exist in the converted output, mirroring the validate-then-write
+ * contract in apply-card-counts.mjs.
+ *
+ * @param result - The converted set object (mutated in place).
+ * @param setAbbr - The set abbreviation being converted.
+ * @throws If a villain-card-counts.json entry matches no group/card in the set.
+ */
+function applyVillainCopies(result, setAbbr) {
+  const setCounts = VILLAIN_CARD_COUNTS[setAbbr];
+
+  for (const villainGroup of result.villains) {
+    const groupCounts = setCounts?.[villainGroup.slug];
+    for (const card of villainGroup.cards) {
+      const declaredCopies = groupCounts?.[card.slug];
+      // why: default 2 is the common 4-villain × 2 villain-group composition
+      // (D-16703); per-card outliers come only from villain-card-counts.json.
+      card.copies = typeof declaredCopies === 'number' ? declaredCopies : 2;
+    }
+  }
+
+  if (!setCounts) return;
+
+  const groupBySlug = new Map();
+  for (const villainGroup of result.villains) {
+    groupBySlug.set(villainGroup.slug, villainGroup);
+  }
+  for (const [groupSlug, cardCounts] of Object.entries(setCounts)) {
+    const villainGroup = groupBySlug.get(groupSlug);
+    if (!villainGroup) {
+      throw new Error(
+        `villain-card-counts.json entry for set "${setAbbr}" names villain group ` +
+          `"${groupSlug}", which does not match any villain group in the converted ` +
+          `set. Fix the group slug in villain-card-counts.json or update the source data.`,
+      );
+    }
+    const cardSlugsInGroup = new Set(villainGroup.cards.map((card) => card.slug));
+    for (const cardSlug of Object.keys(cardCounts)) {
+      if (!cardSlugsInGroup.has(cardSlug)) {
+        throw new Error(
+          `villain-card-counts.json entry for set "${setAbbr}" group "${groupSlug}" ` +
+            `names villain card "${cardSlug}", which does not match any card in that ` +
+            `group. Group "${groupSlug}" has cards: ` +
+            `[${[...cardSlugsInGroup].map((slug) => `"${slug}"`).join(', ')}]. ` +
+            `Fix the card slug in villain-card-counts.json or update the source data.`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Populates mastermind.alwaysLeads[] and villainGroup.ledBy[] from leads.json
+ * (D-16703), replacing the hardcoded empty arrays. The relationship is
+ * symmetric and deduplicated: a mastermind that leads a group lists that group
+ * in alwaysLeads[], and the group lists that mastermind in ledBy[]. A group may
+ * be led by more than one mastermind and a mastermind may lead more than one
+ * group. Loud-fails if a lead row names a mastermind or villain group that does
+ * not exist in the converted set, before the set's output is written.
+ *
+ * @param result - The converted set object (mutated in place).
+ * @param setAbbr - The set abbreviation being converted.
+ * @throws If a leads.json row names a mastermind/group absent from the set.
+ */
+function applyLeadsRelationships(result, setAbbr) {
+  const leadRows = LEADS_BY_SET.get(setAbbr) ?? [];
+
+  const mastermindBySlug = new Map();
+  for (const mastermind of result.masterminds) {
+    mastermindBySlug.set(mastermind.slug, mastermind);
+  }
+  const groupBySlug = new Map();
+  for (const villainGroup of result.villains) {
+    groupBySlug.set(villainGroup.slug, villainGroup);
+  }
+
+  for (const leadRow of leadRows) {
+    const mastermind = mastermindBySlug.get(leadRow.mastermind);
+    if (!mastermind) {
+      throw new Error(
+        `leads.json names mastermind "${leadRow.mastermind}" for set "${setAbbr}", ` +
+          `which does not match any mastermind in the converted set. Fix the ` +
+          `mastermind slug in leads.json or update the source data.`,
+      );
+    }
+    for (const groupSlug of leadRow.villainGroups) {
+      const villainGroup = groupBySlug.get(groupSlug);
+      if (!villainGroup) {
+        throw new Error(
+          `leads.json names villain group "${groupSlug}" led by mastermind ` +
+            `"${leadRow.mastermind}" for set "${setAbbr}", which does not match any ` +
+            `villain group in the converted set. Fix the group slug in leads.json ` +
+            `or update the source data.`,
+        );
+      }
+      pushUnique(mastermind.alwaysLeads, groupSlug);
+      pushUnique(villainGroup.ledBy, leadRow.mastermind);
+    }
+  }
+}
+
+/**
+ * Applies optional villainDeckTwistCount / villainDeckBystanderCount onto
+ * schemes from scheme-deck-counts.json (D-16702). Schemes absent from the file
+ * keep neither field. Loud-fails if a scheme slug in the file matches no scheme
+ * in the converted set, before the set's output is written.
+ *
+ * @param result - The converted set object (mutated in place).
+ * @param setAbbr - The set abbreviation being converted.
+ * @throws If a scheme-deck-counts.json entry matches no scheme in the set.
+ */
+function applySchemeDeckCounts(result, setAbbr) {
+  const setSchemeCounts = SCHEME_DECK_COUNTS[setAbbr];
+  if (!setSchemeCounts) return;
+
+  const schemeBySlug = new Map();
+  for (const scheme of result.schemes) {
+    schemeBySlug.set(scheme.slug, scheme);
+  }
+  for (const [schemeSlug, counts] of Object.entries(setSchemeCounts)) {
+    const scheme = schemeBySlug.get(schemeSlug);
+    if (!scheme) {
+      throw new Error(
+        `scheme-deck-counts.json entry for set "${setAbbr}" names scheme ` +
+          `"${schemeSlug}", which does not match any scheme in the converted set. ` +
+          `Fix the scheme slug in scheme-deck-counts.json or update the source data.`,
+      );
+    }
+    scheme.villainDeckTwistCount = counts.villainDeckTwistCount;
+    scheme.villainDeckBystanderCount = counts.villainDeckBystanderCount;
+  }
+}
+
 // ── Set abbreviation map ───────────────────────────────────────────────────────
 
 const SET_ABBR_MAP = {
@@ -1357,6 +1551,11 @@ for (const file of files) {
     applyPatch(result, setAbbr);
     const patch = loadPatchFile(setAbbr);
     buildPhysicalCards(result, setAbbr, patch, auditWarnings);
+    // WP-167: villain deck composition data. Runs after applyPatch so the
+    // copies/leads/scheme overlays key off the final (post-patch) slugs.
+    applyVillainCopies(result, setAbbr);
+    applyLeadsRelationships(result, setAbbr);
+    applySchemeDeckCounts(result, setAbbr);
     const outputPath = join(OUTPUT_DIR, `${setAbbr}.json`);
     writeFileSync(outputPath, JSON.stringify(result, null, 2), 'utf8');
     console.log(`  ✅ Saved ${outputPath}`);

@@ -564,7 +564,9 @@
       "id": 100,
       "name": "Sinister Six 2099",
       "slug": "sinister-six-2099",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "alchemax-enforcers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -719,7 +721,9 @@
       "id": 101,
       "name": "Alchemax Executives",
       "slug": "alchemax-executives",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "false-aesir-of-alchemax"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -828,7 +832,9 @@
       "id": 123,
       "name": "False Aesir of Alchemax",
       "slug": "false-aesir-of-alchemax",
-      "ledBy": [],
+      "ledBy": [
+        "alchemax-executives"
+      ],
       "cards": [
         {
           "name": "Heimdall 2099",
@@ -840,7 +846,8 @@
             "[keyword:Uru-Enchanted Weapon]",
             "Ambush: Heimdall 2099 captures a Bystander.",
             "[keyword:Fight or Fail]: If the (Rainbow) Bridge is empty and Heimdall's [keyword:Uru-Enchanted Weapon] revealed a Villain, that Villain enters the Bridge. When a Villain enters this way, shuffle a card from the Bystander Deck into the Villain Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Hela 2099",
@@ -852,7 +859,8 @@
             "[keyword:2 Uru-Enchanted Weapons]",
             "[keyword:Fight or Fail]: A Henchman Villain from any player's Victory Pile enters the city.",
             "Escape: Each player KOs two Henchmen from their Victory Pile or gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Loki 2099",
@@ -865,7 +873,8 @@
             "Ambush: Shuffle a Master Strike from the KO pile back into the Villain Deck.",
             "[keyword:Fight or Fail]: If his [keyword:Uru-Enchanted Weapon] revealed any Master Strikes, play one of them.",
             "Escape: Search the Villain Deck for a Master Strike, shuffle the Villain Deck, and play that Master Strike."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Thor 2099",
@@ -878,7 +887,8 @@
             "Ambush: Each player discards a card that costs 5 or more or gains a Wound.",
             "[keyword:Fight or Fail]: Put a card that costs 5 or more from your discard pile on the bottom of your deck.",
             "Escape: Repeat the Ambush effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -886,7 +896,9 @@
       "id": 124,
       "name": "Alchemax Enforcers",
       "slug": "alchemax-enforcers",
-      "ledBy": [],
+      "ledBy": [
+        "sinister-six-2099"
+      ],
       "cards": [
         {
           "name": "Cyber-Nostra",
@@ -898,7 +910,8 @@
             "[keyword:Cyber-Mod][hc:tech]: Cyber-Nostra gets +1[icon:attack] for each [hc:tech] card in the Escape Pile.",
             "Ambush: Put the top card of the Hero Deck into the Escape Pile.",
             "Fight: [keyword:Cyber-Mod][hc:tech]: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Whackoid",
@@ -910,7 +923,8 @@
             "[keyword:Cyber-Mod][hc:instinct]: Whackoid gets +1[icon:attack].",
             "[keyword:Cyber-Mod][hc:covert][hc:covert][hc:covert]: Whackoid gets +3[icon:attack].",
             "Ambush: Put the top card of the Hero Deck into the Escape Pile. Whackoid captures all Bystanders from other Villains in the city. If he captures any Bystanders this way, each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Venture",
@@ -921,7 +935,8 @@
           "abilities": [
             "Ambush: Put the top card of the Hero Deck into the Escape Pile. Venture captures a Bystander. [keyword:Cyber-Mod][hc:ranged]: Venture also captures a non-grey Hero from your discard pile.",
             "Fight: Either KO that captured Hero or choose a player to gain it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Jigsaw 2099",
@@ -934,7 +949,8 @@
             "Ambush: Put the top card of the Hero Deck into the Escape Pile.",
             "Fight: KO one of your Heroes. [keyword:Cyber-Mod][hc:strength]: If Jigsaw 2099 had no Bystanders, he reenters the city and captures a Bystander for each [hc:strength] card in the Escape Pile.",
             "Escape: [keyword:Cyber-Mod][hc:strength]: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

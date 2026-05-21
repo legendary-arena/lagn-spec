@@ -7,6 +7,14 @@
 
 ## Current State
 
+### WP-167 / EC-185 Executed — Villain Deck Composition Data (Registry + Card Data Pipeline) (2026-05-20)
+
+**The registry can now express villain copies, scheme villain-deck counts, and the populated Always-Leads relationship — all converter-produced.** Three additive-optional schema fields shipped: `VillainCardSchema.copies` (`z.number().int().min(1).optional()`, D-16701) and `SchemeSchema.villainDeckTwistCount` / `villainDeckBystanderCount` (`z.number().int().min(0).optional()`, D-16702). The card data pipeline (D-16703) was wired to produce them: `convert-cards-v15.mjs` (36 npm sets) and `apply-card-counts.mjs` (the 4 outlier sets `2099`/`amwp`/`wpnx`/`wtif`) both write `copies` on every villain card (default **2**; outliers from `inputs/villain-card-counts.json`), source `mastermind.alwaysLeads[]` / `villainGroup.ledBy[]` from the existing `inputs/leads.json` (previously hardcoded `[]`), and apply scheme counts from a new `inputs/scheme-deck-counts.json`. All 40 `data/cards/*.json` were regenerated.
+
+Verified: every villain card across all 40 sets carries `copies` (632 cards, 0 omissions); leads symmetric across the 38 sets that have lead rules; `core.json` resolves Brotherhood `copies: 2`, Magneto `alwaysLeads ⊇ ["brotherhood"]`, Brotherhood `ledBy ⊇ ["magneto"]`, Midtown Bank Robbery `8` / `12`. No unintended mutation — the only deltas across the 40 files are `copies`, the lead arrays, and the scheme counts (hero cards, keywords, image URLs, abilities, henchmen, `physicalCards[]` unchanged). A second regeneration produces zero diff (idempotent; no key reordering). Loud-fail confirmed for villain / scheme / leads / outlier mismatches (full-sentence error, non-zero exit, no partial write). No engine, server, or UI changes — the matching engine work is WP-168.
+
+Registry baseline **53 → 65 tests / 0 fail**; `pnpm --filter @legendary-arena/registry build` exits 0.
+
 ### WP-166 / EC-184 Executed — arena-client `vue-tsc` Green + CI Gate (2026-05-19)
 
 **The arena-client typecheck is green and now gated in CI.** Cleared ~40

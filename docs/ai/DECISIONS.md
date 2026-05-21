@@ -17746,8 +17746,8 @@ D-1410's henchman handling (a fixed 10 per group) is unchanged and needs no
 copy data.
 
 **Introduced:** WP-167 (SPEC).
-**Status:** Accepted (SPEC — drafted alongside WP-167; effective on WP-167
-execution).
+**Status:** Active (WP-167 executed — `VillainCardSchema.copies` shipped; the
+converter writes `copies` on every villain card across all 40 sets).
 
 ---
 
@@ -17777,8 +17777,9 @@ as fallbacks. `config.bystandersCount` (the bystander supply pile) is unaffected
 and remains separate.
 
 **Introduced:** WP-167 (SPEC).
-**Status:** Accepted (SPEC — drafted alongside WP-167; effective on WP-167
-execution). Supersedes the count *source* in D-1411 and D-1412 (defaults
+**Status:** Active (WP-167 executed — `villainDeckTwistCount` /
+`villainDeckBystanderCount` shipped on `SchemeSchema`; Midtown Bank Robbery
+resolves 8 / 12). Supersedes the count *source* in D-1411 and D-1412 (defaults
 retained as fallbacks).
 
 ---
@@ -17823,8 +17824,8 @@ mechanical; the only behavior change is additive villain `copies` and populated
 lead arrays.
 
 **Introduced:** WP-167 (SPEC).
-**Status:** Accepted (SPEC — drafted alongside WP-167; effective on WP-167
-execution).
+**Status:** Active (WP-167 executed — both converters write `copies` and source
+`alwaysLeads` / `ledBy` from `leads.json`; all 40 set files regenerated).
 
 ---
 

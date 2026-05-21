@@ -559,7 +559,9 @@
       "id": 69,
       "name": "Belasco, Demon Lord of Limbo",
       "slug": "belasco-demon-lord-of-limbo",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "demons-of-limbo"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -632,7 +634,9 @@
       "id": 70,
       "name": "Emma Frost, The White Queen",
       "slug": "emma-frost-the-white-queen",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "hellions"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -707,7 +711,9 @@
       "id": 88,
       "name": "Demons of Limbo",
       "slug": "demons-of-limbo",
-      "ledBy": [],
+      "ledBy": [
+        "belasco-demon-lord-of-limbo"
+      ],
       "cards": [
         {
           "name": "Crotus",
@@ -718,7 +724,8 @@
           "abilities": [
             "Ambush: Crotus captures a Bystander. Put an even-numbered Hero on the bottom of the Hero Deck.",
             "[keyword:Moonlight]: Crotus gets +4[icon:attack]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "N'astirh",
@@ -730,7 +737,8 @@
             "[keyword:Sunlight]: To fight N'astirh, you must also spend 3[icon:recruit].",
             "[keyword:Moonlight]: N'astirh gets +3[icon:attack].",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "S'ym",
@@ -741,7 +749,8 @@
           "abilities": [
             "Ambush: [keyword:Sunlight]: Each player reveals a [hc:strength] Hero or gains a Wound. [keyword:Moonlight]: Each player has a [keyword:Waking Nightmare].",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Demon Bear",
@@ -753,7 +762,8 @@
             "Ambush: Each player has a [keyword:Waking Nightmare]. The Demon Bear captures one of the Heroes discarded this way that has the lowest cost. The Demon Bear gets +[icon:attack] equal to that Hero's cost.",
             "Fight: The player of your choice gains that Hero.",
             "Escape: KO the captured Hero."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Witchfire",
@@ -765,7 +775,8 @@
             "Ambush: Witchfire captures a Hero from the HQ with the lowest odd-numbered cost. [keyword:Sunlight]: Witchfire gets +2[icon:attack].",
             "Fight: The player of your choice gains that Hero.",
             "Escape: KO the captured Hero."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -773,7 +784,9 @@
       "id": 89,
       "name": "Hellions",
       "slug": "hellions",
-      "ledBy": [],
+      "ledBy": [
+        "emma-frost-the-white-queen"
+      ],
       "cards": [
         {
           "name": "Catseye",
@@ -784,7 +797,8 @@
           "abilities": [
             "[keyword:Moonlight]: Catseye gets +2[icon:attack].",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Thunderbird",
@@ -795,7 +809,8 @@
           "abilities": [
             "[keyword:Sunlight]: Thunderbird gets +2[icon:attack].",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Tarot",
@@ -809,7 +824,8 @@
             "Scheme Twist: Play it.",
             "Master Strike: Each player gains a Wound.",
             "Villain: Each player has a [keyword:Waking Nightmare]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Roulette",
@@ -821,7 +837,8 @@
             "Ambush: Reveal the top card of the Hero Deck. If it's [hc:tech] each player gains a Wound. If it's [hc:covert], you draw a card.",
             "Fight: Same Effect.",
             "Escape: Same Effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Empath",
@@ -833,7 +850,8 @@
             "During your turn, Empath gets +1[icon:attack] for each grey Hero you have.",
             "Ambush: Each player reveals a [hc:covert] Hero or has a [keyword:Waking Nightmare].",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Jetstream",
@@ -844,7 +862,8 @@
           "abilities": [
             "Ambush: (After this enters the Sewers) Put Jetstream on the Bridge. If there's another Villain there, swap them.",
             "Escape: Each player discards an [team:x-men] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

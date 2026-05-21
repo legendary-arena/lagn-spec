@@ -552,7 +552,9 @@
       "id": 36,
       "name": "Evil Deadpool",
       "slug": "evil-deadpool",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "evil-deadpool-corpse"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -613,7 +615,9 @@
       "id": 37,
       "name": "Macho Gomez",
       "slug": "macho-gomez",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "deadpools-friends"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -676,7 +680,9 @@
       "id": 49,
       "name": "Deadpool's “Friends“",
       "slug": "deadpools-friends",
-      "ledBy": [],
+      "ledBy": [
+        "macho-gomez"
+      ],
       "cards": [
         {
           "name": "Blind Al and Deuce",
@@ -688,7 +694,8 @@
             "[keyword:Revenge for Deadpool's “Friends“]",
             "To fight Blind Al, you also gotta drop a Deuce (discard a card with a “2“ printed anywhere on it). Deuce is her dog, obviously.",
             "Escape: Everybody drop a Deuce."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sluggo",
@@ -700,7 +707,8 @@
             "[keyword:Revenge for Deadpool's “Friends“]",
             "Fight: [keyword:Excessive Violence]: Gain the Hero from the HQ with the lowest cost (or tied for lowest).",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Taskmaster",
@@ -711,7 +719,8 @@
           "abilities": [
             "Ambush: Taskmaster captures a Bystander.",
             "During your turn, Taskmaster gets +[icon:attack] equal to the cost of the highest cost Hero you played this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Weasel",
@@ -723,7 +732,8 @@
             "[keyword:Revenge for Deadpool's “Friends“]",
             "Ambush: Each player simultaneously passes a card from their hand to the player on their left.",
             "Fight: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -731,7 +741,9 @@
       "id": 50,
       "name": "Evil Deadpool Corpse",
       "slug": "evil-deadpool-corpse",
-      "ledBy": [],
+      "ledBy": [
+        "evil-deadpool"
+      ],
       "cards": [
         {
           "name": "D.E.A.D.P.O.O.L.",
@@ -742,7 +754,8 @@
           "abilities": [
             "[keyword:Revenge for Evil Deadpool Corpse]",
             "Fight: [keyword:Excessive Violence]: KO one of your Heroes. Remind them that if they were better at hero-ing, these accidents wouldn't happen."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Deadpool Kid",
@@ -753,7 +766,8 @@
           "abilities": [
             "[keyword:Revenge for Evil Deadpool Corpse]",
             "Escape: Old West Shootout. Each player reveals the top card of their deck. KO the card with the highest cost (or tied for highest)."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ultimate Deadpool",
@@ -765,7 +779,8 @@
             "[keyword:Revenge for Evil Deadpool Corpse]",
             "Fight: [keyword:Excessive Violence]: Draw a card for each “Ultimate“ in the HQ. You know, those totally kickass cards that cost 7 or more.",
             "Escape: KO all Ultimates from the HQ."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wolverinepool",
@@ -778,7 +793,8 @@
             "Ambush: Each player reveals a card with an odd-numbered cost or gains a Wound. Ya know, the number 0 is pretty weird, but it's not odd.",
             "Fight: Same effect.",
             "Escape: Same effect. Then, shuffle me back into the Villain Deck so I can kick your ass again!"
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

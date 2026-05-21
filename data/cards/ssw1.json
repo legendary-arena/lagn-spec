@@ -1528,7 +1528,9 @@
       "id": 21,
       "name": "Madelyne Pryor, Goblin Queen",
       "slug": "madelyne-pryor-goblin-queen",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "limbo"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1589,7 +1591,9 @@
       "id": 22,
       "name": "Nimrod, Super Sentinel",
       "slug": "nimrod-super-sentinel",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "sentinel-territories"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1650,7 +1654,9 @@
       "id": 23,
       "name": "Wasteland Hulk",
       "slug": "wasteland-hulk",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "wasteland"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1711,7 +1717,9 @@
       "id": 24,
       "name": "Zombie Green Goblin",
       "slug": "zombie-green-goblin",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "deadlands-the"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1774,7 +1782,9 @@
       "id": 28,
       "name": "Deadlands, The",
       "slug": "deadlands-the",
-      "ledBy": [],
+      "ledBy": [
+        "zombie-green-goblin"
+      ],
       "cards": [
         {
           "name": "Zombie Baron Zemo",
@@ -1785,7 +1795,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: For each of your [team:avengers] Heroes, rescue a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Loki",
@@ -1796,7 +1807,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Loki ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals a [hc:strength] Hero or gains a Wound.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Madame Hydra",
@@ -1807,7 +1819,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: KO one of your [team:shield] Heroes or [team:hydra] Allies."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Mr. Sinister",
@@ -1818,7 +1831,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Sinister ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Sinister captures a Bystander. Then, each player with exactly 6 cards reveals a [hc:covert] Hero or discards cards equal to the number of Bystanders Sinister has.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie M.O.D.O.K.",
@@ -1829,7 +1843,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: KO one of your heroes with a [icon:recruit] icon."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Mysterio",
@@ -1840,7 +1855,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Shuffle this card into the Mastermind's face-down Mastermind Tactics. It becomes a Mastermind Tactic that says “Fight: Draw two cards.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Thanos",
@@ -1851,7 +1867,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Thanos ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals their hand and KOs one of their non-grey Heroes.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Venom",
@@ -1863,7 +1880,8 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "You can't defeat Zombie Venom unless you have a [hc:covert] Hero.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1881,7 +1899,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-blink.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. Draw it or [keyword:Teleport] it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Apocalyptic Magneto",
@@ -1892,7 +1911,8 @@
           "abilities": [
             "Fight: Gain an [team:x-men] Hero from the HQ for free.",
             "Escape: Magneto ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals an [team:x-men] Hero or discards down to 4 cards.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Apocalyptic Rogue",
@@ -1903,7 +1923,8 @@
           "abilities": [
             "Fight: Reveal the top card of the Hero deck. The player of your choice gains it.",
             "Escape: Reveal the top card of the Hero deck. Each player reveals their hand and discards a card of that class."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Apocalyptic Weapon X",
@@ -1914,7 +1935,8 @@
           "abilities": [
             "Fight: KO one of your heroes.",
             "Escape: [keyword:Cross-Dimensional Wolverine Rampage]"
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1922,7 +1944,9 @@
       "id": 30,
       "name": "Limbo",
       "slug": "limbo",
-      "ledBy": [],
+      "ledBy": [
+        "madelyne-pryor-goblin-queen"
+      ],
       "cards": [
         {
           "name": "Inferno Colossus",
@@ -1933,7 +1957,8 @@
           "abilities": [
             "Ambush: The Mastermind captures a Bystander.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Inferno Cyclops",
@@ -1945,7 +1970,8 @@
             "Ambush: Inferno Cyclops captures a Bystander.",
             "Escape: The Mastermind captures all the Bystanders this Villain had.",
             "(Players still discard for the Bystander being carried away.)"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Inferno Darkchilde",
@@ -1956,7 +1982,8 @@
           "abilities": [
             "Fight: Reveal the top card of your deck. KO it or [keyword:Teleport] it.",
             "Escape: Each player [keyword:Teleports] a random card from their hand."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Inferno Nightcrawler",
@@ -1966,7 +1993,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-limbo-inferno-nightcrawler.webp",
           "abilities": [
             "Fight: Up to two cards in your hand that have a [icon:recruit] icon gain [keyword:Teleport] this turn."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1985,7 +2013,8 @@
           "abilities": [
             "Fight: Gain this as a Hero.",
             "You get +1[icon:attack] for each color of Hero you have. (including [hc:strength] and grey)"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ultimate Captain Marvel",
@@ -1996,7 +2025,8 @@
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:Teleport]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ultimate Thor",
@@ -2008,7 +2038,8 @@
             "Fight: Gain this as a Hero.",
             "Escape: [keyword:Cross-Dimensional Thor Rampage]",
             "[hc:ranged]: You get +3[icon:attack]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ultimate Wasp",
@@ -2019,7 +2050,8 @@
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[hc:covert]: You get +2[icon:attack]."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2027,7 +2059,9 @@
       "id": 32,
       "name": "Sentinel Territories",
       "slug": "sentinel-territories",
-      "ledBy": [],
+      "ledBy": [
+        "nimrod-super-sentinel"
+      ],
       "cards": [
         {
           "name": "Colossus of Future Past",
@@ -2037,7 +2071,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-sentinel-territories-colossus-of-future-past.webp",
           "abilities": [
             "Fight: Colossus alters the future: Don't play a Villain card at the beginning of next turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Kate Pryde of Future Past",
@@ -2047,7 +2082,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-sentinel-territories-kate-pryde-of-future-past.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit]. Then, Kate Pryde alters the future: At the beginning of the next player's turn, that player gets +1[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Rachel Summers of Future Past",
@@ -2058,7 +2094,8 @@
           "abilities": [
             "Fight: Rachel Summers alters the future: During the next player's turn, all Villains and the Mastermind get -1[icon:attack].",
             "Escape: This turn, all Villains and the Mastermind get +1[icon:attack]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wolverine of Future Past",
@@ -2069,7 +2106,8 @@
           "abilities": [
             "Fight: Wolverine alters the future: At the start of the next player's turn, you draw a card, and that player draws a card.",
             "Escape: [keyword:Cross-Dimensional Wolverine Rampage]"
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2077,7 +2115,9 @@
       "id": 33,
       "name": "Wasteland",
       "slug": "wasteland",
-      "ledBy": [],
+      "ledBy": [
+        "wasteland-hulk"
+      ],
       "cards": [
         {
           "name": "The Hulk Gang",
@@ -2088,7 +2128,8 @@
           "abilities": [
             "Fight: [keyword:Cross-Dimensional Hulk Rampage]",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wasteland Kingpin",
@@ -2099,7 +2140,8 @@
           "abilities": [
             "[keyword:Bribe]",
             "Escape: Kingpin ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals an [hc:instinct] Hero or discards their hand and draws 5 cards.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wasteland Hawkeye",
@@ -2110,7 +2152,8 @@
           "abilities": [
             "Ambush: Wasteland Hawkeye captures a Bystander.",
             "Fight: Each other player draws a card, or each other player discards a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wasteland Spider-Girl",
@@ -2120,7 +2163,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-wasteland-wasteland-spider-girl.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. If it costs 2 or less, KO it."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

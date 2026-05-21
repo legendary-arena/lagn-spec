@@ -551,7 +551,9 @@
       "id": 10,
       "name": "Galactus",
       "slug": "galactus",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "heralds-of-galactus"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -613,7 +615,9 @@
       "id": 11,
       "name": "Mole Man",
       "slug": "mole-man",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "subterranea"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -676,7 +680,9 @@
       "id": 14,
       "name": "Heralds of Galactus",
       "slug": "heralds-of-galactus",
-      "ledBy": [],
+      "ledBy": [
+        "galactus"
+      ],
       "cards": [
         {
           "name": "Firelord",
@@ -688,7 +694,8 @@
             "[keyword:Cosmic Threat]: [hc:ranged]",
             "Fight: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Morg",
@@ -699,7 +706,8 @@
           "abilities": [
             "[keyword:Cosmic Threat]: [hc:instinct]",
             "Ambush: Put each non-[hc:instinct] Hero from the HQ on the bottom of the Hero Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Stardust",
@@ -710,7 +718,8 @@
           "abilities": [
             "[keyword:Cosmic Threat]: [hc:covert]",
             "Fight: Choose one of your [hc:covert] Heroes. When you draw a new hand of cards at the end of this turn, add that Hero to your hand as a seventh card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Terrax the Tamer",
@@ -721,7 +730,8 @@
           "abilities": [
             "[keyword:Cosmic Threat]: [hc:strength]",
             "Ambush: For each [hc:strength] Hero in the HQ, Terrax captures a Bystander."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -729,7 +739,9 @@
       "id": 15,
       "name": "Subterranea",
       "slug": "subterranea",
-      "ledBy": [],
+      "ledBy": [
+        "mole-man"
+      ],
       "cards": [
         {
           "name": "Giganto",
@@ -740,7 +752,8 @@
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw two extra cards.",
             "[keyword:Burrow]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Megataur",
@@ -751,7 +764,8 @@
           "abilities": [
             "Ambush: Megataur captures two Bystanders.",
             "[keyword:Burrow]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Moloids",
@@ -762,7 +776,8 @@
           "abilities": [
             "Fight: KO one of your Heroes.",
             "[keyword:Burrow]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ra'ktar the Molan King",
@@ -773,7 +788,8 @@
           "abilities": [
             "Ambush: Any Villain in the Streets moves to the Bridge, pushing any Villain already there to escape.",
             "[keyword:Burrow]"
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

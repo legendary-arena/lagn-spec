@@ -570,7 +570,9 @@
       "id": 48,
       "name": "Fin Fang Foom",
       "slug": "fin-fang-foom",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "monsters-unleashed"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -643,7 +645,9 @@
       "id": 49,
       "name": "Pagliacci",
       "slug": "pagliacci",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "wrecking-crew"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -718,7 +722,9 @@
       "id": 62,
       "name": "Monsters Unleashed",
       "slug": "monsters-unleashed",
-      "ledBy": [],
+      "ledBy": [
+        "fin-fang-foom"
+      ],
       "cards": [
         {
           "name": "Goom",
@@ -729,7 +735,8 @@
           "abilities": [
             "Ambush: Goom captures a Bystander.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Groot from Planet X",
@@ -740,7 +747,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength], [hc:covert]",
             "Fight: Two Bystanders from the Bystander Stack enter the city as 3[icon:attack] “Splintered Half-Groot“ Villains. When you fight one, rescue it as a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Monsteroso",
@@ -751,7 +759,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength], [hc:instinct]",
             "Fight: When you draw a new hand of cards at the end of this turn, draw an extra card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Orrgo",
@@ -761,7 +770,8 @@
           "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-monsters-unleashed-orrgo.webp",
           "abilities": [
             "You can't fight Orrgo unless you have already defeated another Villain this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sporr",
@@ -772,7 +782,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech], [hc:ranged]",
             "Fight: A Hero in the HQ gains [keyword:Size-Changing]: [hc:tech], [hc:ranged] this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Tim Boo Ba",
@@ -783,7 +794,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:strength], [hc:instinct], [hc:covert], [hc:tech], [hc:ranged]",
             "Fight: All Heroes currently in the HQ cost 1 less this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Trull the Unhuman",
@@ -794,7 +806,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert], [hc:tech]",
             "Ambush: Trull captures a Bystander. Then [keyword:Demolish] each player."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zzutak",
@@ -805,7 +818,8 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:ranged], [hc:instinct]",
             "Escape: [keyword:Demolish] each player."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -813,7 +827,9 @@
       "id": 63,
       "name": "Wrecking Crew",
       "slug": "wrecking-crew",
-      "ledBy": [],
+      "ledBy": [
+        "pagliacci"
+      ],
       "cards": [
         {
           "name": "Bulldozer",
@@ -823,7 +839,8 @@
           "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-wrecking-crew-bulldozer.webp",
           "abilities": [
             "Ambush: Bulldozer moves an extra space forward. If this pushes any Villains forward, [keyword:Demolish] each player."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Piledriver",
@@ -834,7 +851,8 @@
           "abilities": [
             "Fight: KO one of your Heroes.",
             "Escape: [keyword:Demolish] each player."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Thunderball",
@@ -844,7 +862,8 @@
           "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-wrecking-crew-thunderball.webp",
           "abilities": [
             "Fight: If you fight Thunderball in the Sewers or Bank, [keyword:Demolish] each other player."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Wrecker",
@@ -854,7 +873,8 @@
           "imageUrl": "https://images.legendary-arena.com/chmp/chmp-vi-wrecking-crew-the-wrecker.webp",
           "abilities": [
             "Ambush: For each Wrecking Crew Villain in the city (including this one), [keyword:Demolish] each player."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

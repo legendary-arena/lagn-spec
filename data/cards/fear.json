@@ -667,7 +667,9 @@
       "id": 20,
       "name": "Uru-Enchanted Iron Man",
       "slug": "uru-enchanted-iron-man",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "mighty-the"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -729,7 +731,9 @@
       "id": 27,
       "name": "Mighty, The",
       "slug": "mighty-the",
-      "ledBy": [],
+      "ledBy": [
+        "uru-enchanted-iron-man"
+      ],
       "cards": [
         {
           "name": "Black Widow",
@@ -740,7 +744,8 @@
           "abilities": [
             "[keyword:2 Uru-Enchanted Weapons]",
             "Fight or Fail: If her Uru-Enchanted Weapons revealed any Bystanders, kidnap them."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dr. Strange",
@@ -752,7 +757,8 @@
             "Ambush: Reveal the top three cards of the Adversary Deck. Put the Adversary you revealed with the highest printed VP on top of that deck. Put the rest on the bottom of that deck in random order.",
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: You get +2[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Hawkeye",
@@ -763,7 +769,8 @@
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: Choose one: Each other player draws a card, or each other player discards a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Iron Fist",
@@ -774,7 +781,8 @@
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: If his Uru-Enchanted Weapon revealed an Adversary, KO one of your Allies."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ms. Marvel",
@@ -786,7 +794,8 @@
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: If her Uru-Enchanted Weapon revealed a Command Strike or Plot Twist, play it.",
             "Overrun: Each player reveals a [hc:ranged] Ally or gains a Bindings."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Red She-Hulk",
@@ -797,7 +806,8 @@
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: If her Uru-Enchanted Weapon revealed an Adversary, put that Adversary into your Victory Pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Spider-Man",
@@ -809,7 +819,8 @@
             "[keyword:2 Uru-Enchanted Weapons]",
             "Fight or Fail: Play all the cards revealed by his Uru-Enchanted Weapon that are worth 2 VP or less.",
             "Overrun: Each player gains a Bindings."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wolverine",
@@ -821,7 +832,8 @@
             "[keyword:2 Uru-Enchanted Weapons]",
             "Fight or Fail: Draw two cards.",
             "Overrun: Each player reveals an [hc:instinct] Ally or gains a Bindings. Then put Wolverine on top of the Adversary Deck."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

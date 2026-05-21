@@ -565,7 +565,9 @@
       "id": 46,
       "name": "Adrian Toomes",
       "slug": "adrian-toomes",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "salvagers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -638,7 +640,9 @@
       "id": 47,
       "name": "Vulture",
       "slug": "vulture",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "vulture-tech"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -713,7 +717,9 @@
       "id": 60,
       "name": "Salvagers",
       "slug": "salvagers",
-      "ledBy": [],
+      "ledBy": [
+        "adrian-toomes"
+      ],
       "cards": [
         {
           "name": "Hybrid Alien Tech",
@@ -725,7 +731,8 @@
             "[keyword:Striker]",
             "Fight: KO one of your 0-cost Heroes.",
             "Escape: The current player reveals a [hc:ranged] Hero or gains a 0-cost Hero from the KO pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shocker #1",
@@ -736,7 +743,8 @@
           "abilities": [
             "[keyword:Striker]",
             "Escape: Each player reveals an [hc:instinct] Hero or discards a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shocker #2",
@@ -747,7 +755,8 @@
           "abilities": [
             "Ambush: Each player reveals their hand and discards all cards with the same card name as a card in the HQ.",
             "Escape: (After the normal HQ KO for this escaping) Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Tinkerer",
@@ -758,7 +767,8 @@
           "abilities": [
             "Fight: You get +1[icon:recruit] for each [hc:tech] Hero in the HQ.",
             "Escape: Each player reveals a [hc:tech] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -766,7 +776,9 @@
       "id": 61,
       "name": "Vulture Tech",
       "slug": "vulture-tech",
-      "ledBy": [],
+      "ledBy": [
+        "vulture"
+      ],
       "cards": [
         {
           "name": "Chitauri Weapon Assault",
@@ -778,7 +790,8 @@
             "[keyword:Striker]",
             "Fight: KO one of your Heroes with a [icon:recruit] icon.",
             "Escape: Each player discards a card with a [icon:recruit] icon."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "High Tech Helmet",
@@ -789,7 +802,8 @@
           "abilities": [
             "[keyword:Striker]",
             "Fight: [keyword:Danger Sense 3]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Razor Talons",
@@ -800,7 +814,8 @@
           "abilities": [
             "[keyword:Striker]",
             "Fight: The next Hero you gain this turn has [keyword:Wall-Crawl]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Turbine Powered",
@@ -811,7 +826,8 @@
           "abilities": [
             "[keyword:Striker]",
             "Ambush: Turbine Powered captures a Bystander. Then move this Villain to the Rooftops. If there's already a Villain there, swap them."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

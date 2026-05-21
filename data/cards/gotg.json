@@ -560,7 +560,9 @@
       "id": 18,
       "name": "Supreme Intelligence of the Kree",
       "slug": "supreme-intelligence-of-the-kree",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "kree-starforce"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -620,7 +622,9 @@
       "id": 19,
       "name": "Thanos",
       "slug": "thanos",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "infinity-gems"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -683,7 +687,9 @@
       "id": 25,
       "name": "Kree Starforce",
       "slug": "kree-starforce",
-      "ledBy": [],
+      "ledBy": [
+        "supreme-intelligence-of-the-kree"
+      ],
       "cards": [
         {
           "name": "Captain Atlas",
@@ -694,7 +700,8 @@
           "abilities": [
             "Captain Atlas gets +1[icon:attack] for each [rule:Shard] on the Mastermind.",
             "Escape: Each player loses a [rule:Shard]. Each player that cannot do so gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Demon Druid",
@@ -704,7 +711,8 @@
           "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-demon-druid.webp",
           "abilities": [
             "Ambush: Another Villain in the city gains two [rule:Shards]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dr. Minerva",
@@ -714,7 +722,8 @@
           "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-dr-minerva.webp",
           "abilities": [
             "Ambush: Each Kree Villain in the city gains a [rule:Shard] (including this Villain)."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Korath the Pursuer",
@@ -725,7 +734,8 @@
           "abilities": [
             "Ambush: Each player may draw a card. Korath gains a [rule:Shard] for each card drawn this way.",
             "Escape: If Korath had any [rule:Shards], each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ronan the Accuser",
@@ -736,7 +746,8 @@
           "abilities": [
             "Ambush: Each player simultaneously points their finger to accuse another player. Each player who was accused the most gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shatterax",
@@ -746,7 +757,8 @@
           "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-shatterax.webp",
           "abilities": [
             "Fight: Put a [rule:Shard] on each Hero in the HQ. When a player gains that Hero, they gain that [rule:Shard]. If that Hero leaves the HQ some other way, return that [rule:Shard] to the supply."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Supremor",
@@ -756,7 +768,8 @@
           "imageUrl": "https://images.legendary-arena.com/gotg/gotg-vi-kree-starforce-supremor.webp",
           "abilities": [
             "Ambush: Supremor and the Mastermind each gain a [rule:Shard]."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -764,7 +777,9 @@
       "id": 26,
       "name": "Infinity Gems",
       "slug": "infinity-gems",
-      "ledBy": [],
+      "ledBy": [
+        "thanos"
+      ],
       "cards": [
         {
           "name": "Mind Gem",
@@ -776,7 +791,8 @@
             "Ambush: Mind Gem gains a [rule:Shard] for each Scheme Twist in the KO pile and/or stacked next to the Scheme.",
             "Fight: Put this into your discard pile as an Artifact.",
             "[keyword:Artifact -] Once per turn, you get +2[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Power Gem",
@@ -788,7 +804,8 @@
             "Ambush: Power Gem gains a [rule:Shard] for each Master Strike in the KO pile and/or stacked next to the Mastermind.",
             "Fight: Put this into your discard pile as an Artifact.",
             "[keyword:Artifact -] Once per turn, you get +2[icon:attack]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Reality Gem",
@@ -800,7 +817,8 @@
             "Ambush: Reality Gem gains a [rule:Shard] for each Infinity Gem Villain card in the city and/or Escape pile.",
             "Fight: Put this into your discard pile as an Artifact.",
             "[keyword:Artifact -] Before you play a card from the Villain Deck, you may first reveal the top card of the Villain Deck. If it's not a Scheme Twist, you may put it on the bottom of the Villain Deck. If you do, gain a [rule:Shard]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Soul Gem",
@@ -812,7 +830,8 @@
             "Ambush: Soul Gem gains a [rule:Shard] for each Villain in the city.",
             "Fight: Put this into your discard pile as an Artifact.",
             "[keyword:Artifact -] Whenever you defeat a Villain, put a [rule:Shard] on Soul Gem from the supply. Once per turn, you get +[icon:attack] equal to the number of Shards on Soul Gem."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Space Gem",
@@ -824,7 +843,8 @@
             "Ambush: Space Gem gains a [rule:Shard] for each empty space in the city.",
             "Fight: Put this into your discard pile as an Artifact.",
             "[keyword:Artifact -] Once per turn, you may move a Villain to another city space. If another Villain is already there, swap them. If you moved any Villains this way, gain a [rule:Shard]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Time Gem",
@@ -836,7 +856,8 @@
             "Ambush: Play another card from the Villain Deck. Time Gem gains [rule:Shards] equal to that card's printed Victory Points.",
             "Fight: Put this into your discard pile as an Artifact.",
             "[keyword:Artifact -] When you play this Artifact, take another turn after this one. Use this ability only if this is the fist time any player has played the Time Gem this game."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

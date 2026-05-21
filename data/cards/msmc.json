@@ -906,7 +906,9 @@
       "id": 78,
       "name": "Lady Deathstrike",
       "slug": "lady-deathstrike",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "reavers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -979,7 +981,9 @@
       "id": 79,
       "name": "Bastion, Fused Sentinel",
       "slug": "bastion-fused-sentinel",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "purifiers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1056,7 +1060,9 @@
       "id": 80,
       "name": "Exodus",
       "slug": "exodus",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "acolytes"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -1131,7 +1137,9 @@
       "id": 98,
       "name": "Reavers",
       "slug": "reavers",
-      "ledBy": [],
+      "ledBy": [
+        "lady-deathstrike"
+      ],
       "cards": [
         {
           "name": "Donald Pierce",
@@ -1143,7 +1151,8 @@
             "Ambush: [keyword:Prey] on the fewest [hc:tech].",
             "[keyword:Finish the Prey]: KO one of that player's non-grey Heroes.",
             "Fight: KO one of your grey Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Bonebreaker",
@@ -1155,7 +1164,8 @@
             "Ambush: [keyword:Prey] on the fewest [hc:strength].",
             "[keyword:Finish the Prey]: That player gains a Wound to the top of their deck.",
             "Fight: Reveal the top card of your deck. KO it or draw it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Skullbuster",
@@ -1166,7 +1176,8 @@
           "abilities": [
             "Ambush: [keyword:Prey] on the fewest [hc:ranged]. Skullbuster captures one Bystander from the Bystander Stack and two Bystanders from that player's Victory Pile of their choice.",
             "[keyword:Finish the Prey]: KO the captured Bystanders, and each player discards a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Pretty Boy",
@@ -1178,7 +1189,8 @@
             "Ambush: [keyword:Prey] on the fewest [hc:covert].",
             "[keyword:Finish the Prey]: That player discards a card.",
             "Fight: Discard the top card of your deck. If it has a [icon:recruit] icon, you get +1[icon:recruit]  and this Villain [keyword:Preys] on the fewest [hc:covert]."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1186,7 +1198,9 @@
       "id": 99,
       "name": "Purifiers",
       "slug": "purifiers",
-      "ledBy": [],
+      "ledBy": [
+        "bastion-fused-sentinel"
+      ],
       "cards": [
         {
           "name": "Predator X (Ranged)",
@@ -1197,7 +1211,8 @@
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:ranged]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:ranged] Hero. If they can't, they discard any non-grey Hero instead."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Predator X (Tech)",
@@ -1208,7 +1223,8 @@
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:tech]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:tech] Hero. If they can't, they discard any non-grey Hero instead."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Predator X (Covert)",
@@ -1219,7 +1235,8 @@
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:covert]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:covert] Hero. If they can't, they discard any non-grey Hero instead."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Predator X (Instinct)",
@@ -1230,7 +1247,8 @@
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:instinct]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:instinct] Hero. If they can't, they discard any non-grey Hero instead."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Predator X (Strength)",
@@ -1241,7 +1259,8 @@
           "abilities": [
             "Ambush: [keyword:Prey] on the most [hc:strength]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:strength] Hero. If they can't, they discard any non-grey Hero instead."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Leper Queen",
@@ -1253,7 +1272,8 @@
             "Ambush: [keyword:Prey] on the most [team:x-men]+[team:x-force]+[team:x-factor-investigations]+[team:brotherhood].",
             "[keyword:Finish the Prey]: That player gains a Wound and KOs two Bystanders from their Victory Pile.",
             "Fight: Shuffle two cards from the Bystander Stack into the Villain Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Reverend William Stryker",
@@ -1265,7 +1285,8 @@
             "Ambush: [keyword:Prey] on the most [team:x-men]+[team:x-force]+[team:x-factor-investigations]+[team:brotherhood]. Stryker captures one [rule:Sidekick] from the [rule:Sidekick] Stack and two [rule:Sidekicks] from that player's hand and/or discard pile of their choice.",
             "[keyword:Finish the Prey]: KO the captured [rule:Sidekicks].",
             "Fight: Gain the captured [rule:Sidekicks]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Cameron Hodge",
@@ -1277,7 +1298,8 @@
             "Ambush: [keyword:Prey] on the most [team:x-men]+[team:x-force]+[team:x-factor-investigations]+[team:brotherhood]. Cameron Hodge captures one of that player's non-grey Heroes of their choice.",
             "[keyword:Finish the Prey]: KO the captured Hero.",
             "Fight: Choose a player to gain the captured Hero."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1285,7 +1307,9 @@
       "id": 100,
       "name": "Acolytes",
       "slug": "acolytes",
-      "ledBy": [],
+      "ledBy": [
+        "exodus"
+      ],
       "cards": [
         {
           "name": "Unuscione",
@@ -1296,7 +1320,8 @@
           "abilities": [
             "You may pay 2[icon:recruit] any number of times to [keyword:Shatter] Unuscione.",
             "Ambush: Unuscione captures a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Tempo",
@@ -1307,7 +1332,8 @@
           "abilities": [
             "You may [keyword:Shatter] Tempo any number of times. Each time you do this, draw one fewer card when you draw a new hand of cards at the end of this turn.",
             "Fight: Draw two cards."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Frenzy",
@@ -1318,7 +1344,8 @@
           "abilities": [
             "You may pay 1[icon:recruit] any number of times to [keyword:Shatter] Frenzy. Each time you do, reveal the top card of the Hero Deck and put it on the bottom of that deck. If it's [hc:strength], gain a Wound. If it's [hc:instinct], the player on your right gains a Wound.",
             "Fight: KO one of your heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Random",
@@ -1329,7 +1356,8 @@
           "abilities": [
             "You may pay 1[icon:recruit] any number of times to [keyword:Shatter] Random. Each time you do, reveal the top card of the Hero Deck and put it on the bottom of that deck. If it's [hc:covert], [hc:tech], or [hc:ranged], Random then gets +[icon:attack] equal to that card's cost.",
             "Escape: Each player discards a card at random."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1348,7 +1376,8 @@
           "abilities": [
             "Ambush: The Villain in the city worth the most VP captures a Bystander.",
             "Fight: KO a card from your discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Scarlet Samurai",
@@ -1359,7 +1388,8 @@
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[hc:instinct]: Draw a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Lord Shingen",
@@ -1370,7 +1400,8 @@
           "abilities": [
             "Ambush: Lord Shingen captures a Bystander.",
             "Bystanders held by Lord Shingen are \"Samurai Bodyguards.\" You can't fight Lord Shingen while he has any Bodyguards. You can fight them as if they were 3[icon:attack] Villains with \"[keyword:Chivalrous Duel]. Fight: Rescue this as a Bystander.\""
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Gorgon",
@@ -1381,7 +1412,8 @@
           "abilities": [
             "Ambush: Choose a Hero Name. You can't play Heroes this turn unless they are that Hero Name or grey Heroes.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

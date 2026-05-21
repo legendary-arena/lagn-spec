@@ -1755,7 +1755,9 @@
       "id": 25,
       "name": "Immortal Emperor Zheng-Zhu",
       "slug": "immortal-emperor-zheng-zhu",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "kun-lun"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -1816,7 +1818,9 @@
       "id": 26,
       "name": "King Hyperion",
       "slug": "king-hyperion",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "utopolis"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1877,7 +1881,9 @@
       "id": 27,
       "name": "Shiklah, the Demon Bride",
       "slug": "shiklah-the-demon-bride",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "monster-metropolis"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2013,7 +2019,8 @@
             "[keyword:5th Circle of Kung-Fu]",
             "Fight: [keyword:Fateful Resurrection]",
             "Escape: Deadpool ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals a Hero with an odd-numbered cost or gains a Wound.“ (0 is even.)"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Doop",
@@ -2023,7 +2030,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-vi-deadpools-secret-secret-wars-doop.webp",
           "abilities": [
             "You can't fight Doop if there is a Villain in an adjacent city space."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Howard the Duck",
@@ -2034,7 +2042,8 @@
           "abilities": [
             "Ambush: Howard the Duck captures (the heart of) a Bystander.",
             "[keyword:7th Circle of Quack-Fu]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Pink Sphinx",
@@ -2044,7 +2053,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-vi-deadpools-secret-secret-wars-pink-sphinx.webp",
           "abilities": [
             "Fight: [keyword:Spectrum]: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2063,7 +2073,8 @@
           "abilities": [
             "Fight: [keyword:Fateful Resurrection]",
             "Escape: Angela ascends to become a [rule:new Mastermind]. She gains the ability, “Master Strike: Each player KOs a Hero from their discard pile that costs 1 or more.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Drax the Destroyer",
@@ -2073,7 +2084,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-vi-guardians-of-knowhere-drax-the-destroyer.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. KO it or put it back. [keyword:Fateful Resurrection]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Gamora",
@@ -2085,7 +2097,8 @@
             "Ambush: [keyword:Charge] one space.",
             "Fight: (After this goes to your Victory Pile) [keyword:Patrol the Sewers]: If it's empty, each other player gains a Wound.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Groot",
@@ -2095,7 +2108,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-vi-guardians-of-knowhere-groot.webp",
           "abilities": [
             "Fight: [keyword:Fateful Resurrection]. If Groot resurrects this way, then he becomes Tiny Dancing Groot with 1[icon:attack] and no abilities for the rest of the turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Rocket Raccoon",
@@ -2105,7 +2119,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-vi-guardians-of-knowhere-rocket-raccoon.webp",
           "abilities": [
             "Fight: (After this goes to your Victory Pile) [keyword:Patrol the Bank]: If it's empty, draw a card. If it's not empty, KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2113,7 +2128,9 @@
       "id": 36,
       "name": "K'un-Lun",
       "slug": "kun-lun",
-      "ledBy": [],
+      "ledBy": [
+        "immortal-emperor-zheng-zhu"
+      ],
       "cards": [
         {
           "name": "Laughing Skull",
@@ -2124,7 +2141,8 @@
           "abilities": [
             "[keyword:5th Circle of Kung-Fu]",
             "Escape: Each player reveals a Hero that costs 5 or more, or they discard a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Rand K'ai",
@@ -2135,7 +2153,8 @@
           "abilities": [
             "[keyword:6th Circle of Kung-Fu]",
             "Escape: Each player reveals a Hero that costs 6 or more, or they gain a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Razor Fist",
@@ -2146,7 +2165,8 @@
           "abilities": [
             "[keyword:3rd Circle of Kung-Fu]",
             "Fight: For each of your Heroes that costs 3, KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Red Sai",
@@ -2157,7 +2177,8 @@
           "abilities": [
             "[keyword:4th Circle of Kung-Fu]",
             "Fight: Draw a card for each of your Heroes that costs 4."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2165,7 +2186,9 @@
       "id": 37,
       "name": "Monster Metropolis",
       "slug": "monster-metropolis",
-      "ledBy": [],
+      "ledBy": [
+        "shiklah-the-demon-bride"
+      ],
       "cards": [
         {
           "name": "Bug, Shiklah's Dragon",
@@ -2176,7 +2199,8 @@
           "abilities": [
             "Fight: KO a card from your discard pile.",
             "[keyword:Fateful Resurrection]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ghost Deadpool",
@@ -2187,7 +2211,8 @@
           "abilities": [
             "Fight: [keyword:Fateful Resurrection]. Then, [keyword:Cross-Dimensional Deadpool Rampage].",
             "Escape: [keyword:Cross-Dimensional Deadpool Rampage]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Man-Thing",
@@ -2198,7 +2223,8 @@
           "abilities": [
             "Ambush: Each Monster Metropolis Villain captures a Bystander.",
             "Fight: [keyword:Fateful Resurrection]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Marcus Symbiote Centaur",
@@ -2209,7 +2235,8 @@
           "abilities": [
             "Ambush: [keyword:Charge] two spaces.",
             "When in the Sewers, Rooftops or Bridge, he is in “wolf form“ and gets +3[icon:attack]."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2217,7 +2244,9 @@
       "id": 38,
       "name": "Utopolis",
       "slug": "utopolis",
-      "ledBy": [],
+      "ledBy": [
+        "king-hyperion"
+      ],
       "cards": [
         {
           "name": "Doctor Spectrum",
@@ -2229,7 +2258,8 @@
             "Ambush: [keyword:Charge] one space.",
             "Fight: [keyword:Spectrum]: KO a card from your discard pile.",
             "Escape: Each player who doesn't have [keyword:Spectrum] discards a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Nighthawk",
@@ -2240,7 +2270,8 @@
           "abilities": [
             "While in the Sewers, Rooftops or Bridge, Nighthawk gains +4[icon:attack].",
             "Escape: Nighthawk becomes a Scheme Twist that takes effect immediately."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Warrior Woman",
@@ -2251,7 +2282,8 @@
           "abilities": [
             "Ambush: [keyword:Charge] one space.",
             "Escape: Warrior Woman ascends to become a [rule:new Mastermind]. She gains the ability, “Master Strike: [keyword:Patrol the Bank]: If there's a Villain there, each player discards a card with a [icon:recruit] icon.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Whizzer",
@@ -2263,7 +2295,8 @@
             "Ambush: [keyword:Charge] three spaces.",
             "Fight: (After this goes to your Victory Pile) [keyword:Patrol the Bridge]: If there's a Villain there, each other player gains a Wound.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2283,7 +2316,8 @@
             "Ambush: [keyword:Charge] one space.",
             "Fight: Gain this as a Hero.",
             "[hc:tech]: Draw a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "'92 Jubilee",
@@ -2294,7 +2328,8 @@
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:Spectrum]: You get +2[icon:attack]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "'92 Professor X",
@@ -2304,7 +2339,8 @@
           "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-vi-x-men-92-92-professor-x.webp",
           "abilities": [
             "Escape: '92 Professor X ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Stack the two Heroes from the HQ with the highest cost next to '92 Professor X. He gets +1[icon:attack] for each Hero stacked there. Players can recruit the top card of the stack.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "'92 Wolverine",
@@ -2316,7 +2352,8 @@
             "Fight: Gain this as a Hero.",
             "Escape: [keyword:Cross-Dimensional Wolverine Rampage]",
             "[hc:instinct]: Draw two cards."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

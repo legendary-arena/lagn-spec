@@ -2131,7 +2131,9 @@
       "id": 50,
       "name": "General “Thunderbolt” Ross",
       "slug": "general-thunderbolt-ross",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "code-red"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2208,7 +2210,9 @@
       "id": 51,
       "name": "Illuminati, Secret Society",
       "slug": "illuminati-secret-society",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "illuminati"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -2284,7 +2288,9 @@
       "id": 52,
       "name": "King Hulk, Sakaarson",
       "slug": "king-hulk-sakaarson",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "warbound"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2360,7 +2366,9 @@
       "id": 53,
       "name": "M.O.D.O.K.",
       "slug": "m-o-d-o-k",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "intelligencia"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2436,7 +2444,9 @@
       "id": 54,
       "name": "Red King, The",
       "slug": "red-king-the",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "sakaar-imperial-guard"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2511,7 +2521,9 @@
       "id": 55,
       "name": "Sentry, The",
       "slug": "sentry-the",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "aspects-of-the-void"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2589,7 +2601,9 @@
       "id": 64,
       "name": "Aspects of the Void",
       "slug": "aspects-of-the-void",
-      "ledBy": [],
+      "ledBy": [
+        "sentry-the"
+      ],
       "cards": [
         {
           "name": "Black Anti-Hurricane",
@@ -2600,7 +2614,8 @@
           "abilities": [
             "Fight: Each player simultaneously puts a card from their discard pile into the discard pile of the player to their right.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Demonform",
@@ -2610,7 +2625,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-aspects-of-the-void-demonform.webp",
           "abilities": [
             "Fight: [keyword:Feast]. If Demonform feasts on a non-grey Hero, gain a Hero from the HQ of that cost or less."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Infini-Tendrils",
@@ -2621,7 +2637,8 @@
           "abilities": [
             "[keyword:Wounded Fury]",
             "Ambush: Infini-Tendrils captures a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Psychotic Break",
@@ -2633,7 +2650,8 @@
             "Ambush: Play another card from the Villain Deck.",
             "By End of Turn: Defeat a Villain.",
             "Or Suffer: (After you draw your new hand) Psychotic Break becomes a Master Strike that takes effect immediately."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shadow Man",
@@ -2643,7 +2661,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-aspects-of-the-void-shadow-man.webp",
           "abilities": [
             "Fight: You get +2[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2651,7 +2670,9 @@
       "id": 65,
       "name": "Code Red",
       "slug": "code-red",
-      "ledBy": [],
+      "ledBy": [
+        "general-thunderbolt-ross"
+      ],
       "cards": [
         {
           "name": "Caught Red-Handed",
@@ -2662,7 +2683,8 @@
           "abilities": [
             "By End of Turn: Recruit a [hc:covert] Hero or recruit any two Heroes.",
             "Or Suffer: (After you draw your new hand) Each player reveals a [hc:covert] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Crimson Dynamo",
@@ -2672,7 +2694,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-code-red-crimson-dynamo.webp",
           "abilities": [
             "Fight: Choose a [hc:covert] Hero in the HQ. It costs 2 less this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Elektra, Red Blades",
@@ -2682,7 +2705,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-code-red-elektra-red-blades.webp",
           "abilities": [
             "Fight: If you played a [hc:covert] Hero this turn, KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Punisher, Red Dot Sniper",
@@ -2692,7 +2716,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-code-red-punisher-red-dot-sniper.webp",
           "abilities": [
             "Fight: Reveal the top card of your deck. If it costs 0, KO it. If it's [hc:covert], draw it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Red She-Hulk",
@@ -2704,7 +2729,8 @@
             "[keyword:Wounded Fury]",
             "Fight: Each player reveals a [hc:covert] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Thundra",
@@ -2715,7 +2741,8 @@
           "abilities": [
             "Thundra gets +2[icon:attack] if there are any number of [hc:covert] Heroes in the HQ.",
             "Ambush: Put each non-[hc:covert] Hero from the HQ on the bottom of the Hero Deck."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2723,7 +2750,9 @@
       "id": 66,
       "name": "Illuminati",
       "slug": "illuminati",
-      "ledBy": [],
+      "ledBy": [
+        "illuminati-secret-society"
+      ],
       "cards": [
         {
           "name": "Black Bolt",
@@ -2734,7 +2763,8 @@
           "abilities": [
             "During your turn, any number of times, you may discard a card that has no rules text to give Black Bolt -2[icon:attack] this turn.",
             "Escape: Each player discards a card with no rules text."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dr. Strange",
@@ -2744,7 +2774,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-illuminati-dr-strange.webp",
           "abilities": [
             "Ambush: Each player who can't [keyword:Outwit] Dr. Strange discards a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dr. Strange, Possessed by Zom",
@@ -2755,7 +2786,8 @@
           "abilities": [
             "This Villain gets +1[icon:attack] for each Bystander in the city.",
             "Ambush: This Villain captures 3 Bystanders."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Enchain the Hulk",
@@ -2766,7 +2798,8 @@
           "abilities": [
             "By End of Turn: Discard two cards of the same Hero Class or recruit two cards of the same Hero Class. ([hc:strength], [hc:instinct], [hc:covert], [hc:tech], [hc:ranged], but not grey)",
             "Or Suffer: (After you draw your new hand) [keyword:Cross-Dimensional Hulk Rampage]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Hulkbuster Iron Man",
@@ -2777,7 +2810,8 @@
           "abilities": [
             "Hulkbuster Iron Man gets +3[icon:attack] unless you [keyword:Outwit] him.",
             "Escape: [keyword:Cross-Dimensional Illuminati Rampage]"
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2785,7 +2819,9 @@
       "id": 67,
       "name": "Intelligencia",
       "slug": "intelligencia",
-      "ledBy": [],
+      "ledBy": [
+        "m-o-d-o-k"
+      ],
       "cards": [
         {
           "name": "Battle of Wits",
@@ -2796,7 +2832,8 @@
           "abilities": [
             "By End of Turn: [keyword:Outwit] this trap.",
             "Or Suffer: (After you draw your new hand) Each player discards down to 4 cards."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Cosmic Hulk Robot",
@@ -2808,7 +2845,8 @@
             "[keyword:Wounded Fury]",
             "Ambush: Each player who can't [keyword:Outwit] Cosmic Hulk Robot gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Doc Samson",
@@ -2819,7 +2857,8 @@
           "abilities": [
             "Doc Samson has +4[icon:attack] unless you [keyword:Outwit] him.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Leader, Gamma Fiend",
@@ -2830,7 +2869,8 @@
           "abilities": [
             "Ambush: If you can't [keyword:Outwit] the Leader, play the top card of the Villain Deck.",
             "Fight: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2838,7 +2878,9 @@
       "id": 68,
       "name": "Sakaar Imperial Guard",
       "slug": "sakaar-imperial-guard",
-      "ledBy": [],
+      "ledBy": [
+        "red-king-the"
+      ],
       "cards": [
         {
           "name": "Gladiators' Colosseum",
@@ -2849,7 +2891,8 @@
           "abilities": [
             "By End of Turn: Only play cards from a single Team of your choice this turn (e.g. [team:shield], [team:avengers], [team:x-men], [team:warbound], etc.)",
             "Or Suffer: (After you draw your new hand) Each player reveals their hand, chooses a Team, and discards all cards that don't belong to that Team."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Great Devil Corker",
@@ -2859,7 +2902,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-sakaar-imperial-guard-great-devil-corker.webp",
           "abilities": [
             "Fight: Look at the top three cards of your deck. Put them back in any order. Then [keyword:Feast]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Headman Charr",
@@ -2870,7 +2914,8 @@
           "abilities": [
             "During your turn, Headman Charr gets +1[icon:attack] for each Villain in your Victory Pile.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Lieutenant Caiera",
@@ -2880,7 +2925,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-sakaar-imperial-guard-lieutenant-caiera.webp",
           "abilities": [
             "Fight: If you [keyword:Outwit] Lieutenant Caiera draw two cards."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Primus Vand",
@@ -2891,7 +2937,8 @@
           "abilities": [
             "Primus Vand gets +1[icon:attack] for each Villain adjacent to him.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2910,7 +2957,8 @@
           "abilities": [
             "Fight: Each player reveals a [hc:strength] Hero or KO's a Hero that costs 1 or more from their discard pile.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Vapor",
@@ -2921,7 +2969,8 @@
           "abilities": [
             "Fight: Each player reveals a [hc:covert] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Vector",
@@ -2931,7 +2980,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-u-foes-vector.webp",
           "abilities": [
             "Fight: Each player who reveals an [hc:instinct] Hero draws a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Unidentified Flying U-Foes",
@@ -2942,7 +2992,8 @@
           "abilities": [
             "By End of Turn: Discard a [hc:tech] Hero or discard three cards.",
             "Or Suffer: Play two extra cards from the Villain Deck next turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "X-Ray",
@@ -2952,7 +3003,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-u-foes-x-ray.webp",
           "abilities": [
             "Fight: Each player who reveals a [hc:ranged] Hero may KO a card from their discard pile."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2960,7 +3012,9 @@
       "id": 70,
       "name": "Warbound",
       "slug": "warbound",
-      "ledBy": [],
+      "ledBy": [
+        "king-hulk-sakaarson"
+      ],
       "cards": [
         {
           "name": "Elloe Kaifi",
@@ -2970,7 +3024,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-warbound-elloe-kaifi.webp",
           "abilities": [
             "Fight: Draw a card. Another player of your choice also draws a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Hiroim",
@@ -2981,7 +3036,8 @@
           "abilities": [
             "Fight: KO a card from the HQ. Each player reveals their hand and KO's a card with that same cost.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Korg",
@@ -2992,7 +3048,8 @@
           "abilities": [
             "Ambush: KO a Hero from the HQ. Each player reveals their hand and discards a card with that same cost.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Miek The Unhived",
@@ -3002,7 +3059,8 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-warbound-miek-the-unhived.webp",
           "abilities": [
             "Fight: Look at the top two cards of your deck. Put them back on the top and/or bottom. Then [keyword:Feast]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "No-Name, Brood Queen",
@@ -3013,7 +3071,8 @@
           "abilities": [
             "[keyword:Wounded Fury]",
             "Fight: [keyword:Feast]. If this feasts on a non-grey Hero, draw two cards."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Warbound Rescue",
@@ -3024,7 +3083,8 @@
           "abilities": [
             "By End of Turn: Put a Warbound Villain and Henchman Villain from your Victory Pile back into the city.",
             "Or Suffer: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

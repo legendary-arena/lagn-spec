@@ -850,7 +850,9 @@
       "id": 89,
       "name": "Thanos",
       "slug": "thanos",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "children-of-thanos"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -926,7 +928,9 @@
       "id": 90,
       "name": "Ebony Maw",
       "slug": "ebony-maw",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "infinity-stones"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1005,7 +1009,9 @@
       "id": 110,
       "name": "Children of Thanos",
       "slug": "children-of-thanos",
-      "ledBy": [],
+      "ledBy": [
+        "thanos"
+      ],
       "cards": [
         {
           "name": "Endless Armies of Chitauri",
@@ -1016,7 +1022,8 @@
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: KO one of your Heroes. Then reveal the top card of the Villain Deck. If it's a Children of Thanos Villain, Endless Armies of Chitauri reenters the Sewers."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Outriders",
@@ -1027,7 +1034,8 @@
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: You may KO a card from your discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Outrider Dropships",
@@ -1038,7 +1046,8 @@
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Ambush: A Villain worth 2VP, 3VP, or 4VP from any player's Victory Pile enters the city."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Outrider Threshers",
@@ -1049,7 +1058,8 @@
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: KO one of your Heroes. Then choose any number of Heroes from the HQ. Put them on the bottom of the Hero Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Cull Obsidian",
@@ -1061,7 +1071,8 @@
             "[keyword:Endgame]: +3[icon:attack]",
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player reveals a Hero that costs 6 or more or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Corvus Glaive",
@@ -1073,7 +1084,8 @@
             "[keyword:Endgame]: +3[icon:attack]",
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player KOs a Bystander from their Victory Pile or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Chitauri Gorilla",
@@ -1084,7 +1096,8 @@
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
             "Ambush: Chitauri Gorilla captures a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Proxima Midnight",
@@ -1096,7 +1109,8 @@
             "[keyword:Endgame]: +3[icon:attack]",
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player reveals an [hc:instinct] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1104,7 +1118,9 @@
       "id": 111,
       "name": "Infinity Stones",
       "slug": "infinity-stones",
-      "ledBy": [],
+      "ledBy": [
+        "ebony-maw"
+      ],
       "cards": [
         {
           "name": "The Power Stone",
@@ -1116,7 +1132,8 @@
             "The Power Stone gets +1[icon:attack] for each other Infinity Stone in the city and/or Escape Pile.",
             "Ambush: Each player without an Infinity Stone in their Victory Pile gains a Wound.",
             "Fight: KO one of your Heroes. Then KO a Wound from your hand or discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Space Stone",
@@ -1128,7 +1145,8 @@
             "The Space Stone gets +1[icon:attack] for each empty space in the city.",
             "Ambush: The Space Stone captures three Bystanders. Then move an Infinity Stone from any city space to the Bridge. If there's already a Villain there, swap them.",
             "Fight: Move and/or swap any number of Villains to other city spaces."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Reality Stone",
@@ -1140,7 +1158,8 @@
             "The Reality Stone gets +1[icon:attack] for each Master Strike in the KO pile and/or stacked next to the Mastermind.",
             "Ambush: Reveal the top three cards of the Villain Deck. Play a Master Strike from among them. Put the rest back in any order.",
             "Fight: Same effect, but KO the Master Strike instead of playing it. Then, whether you KO or not, put a card from the Bystander Deck on top of the Villain Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Time Stone",
@@ -1152,7 +1171,8 @@
             "[keyword:Endgame]: +4[icon:attack]",
             "Ambush: Play another card from the Villain Deck.",
             "Fight: Take another turn after this one. Don't play a card from the Villain Deck at the start of that turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Soul Stone",
@@ -1164,7 +1184,8 @@
             "The Soul Stone gets +1[icon:attack] for each other Villain in the city.",
             "Ambush: Each player without an Infinity Stone in their Victory Pile KOs a non-grey Hero from their discard pile.",
             "Fight: Reveal the top two cards of your deck, KO one of them and draw the other."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Mind Stone",
@@ -1176,7 +1197,8 @@
             "The Mind Stone gets +[icon:attack] equal to the highest cost of Hero in the HQ.",
             "Ambush: All Heroes currently in the HQ cost 2 more this turn.",
             "Fight: Gain a Hero from the HQ."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Nebula, Stone Seeker",
@@ -1188,7 +1210,8 @@
             "Ambush: Nebula captures a Hero from the Officer Deck or HQ that costs 4 or less.",
             "Fight: Either KO that Hero or choose a player to gain it.",
             "(This card counts as ”an Infinity Stone.”)"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Stonekeeper",
@@ -1200,7 +1223,8 @@
             "Ambush: If the Soul Stone is in the city or Escape Pile, each player discards a card. If it's in a player's Victory Pile, that player draws two cards.",
             "Fight: Each player KOs one of their Heroes.",
             "(This card counts as ”an Infinity Stone.”)"
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

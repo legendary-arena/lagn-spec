@@ -1005,7 +1005,9 @@
       "id": 71,
       "name": "Beyonder, The",
       "slug": "beyonder-the",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "from-beyond"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -1078,7 +1080,9 @@
       "id": 72,
       "name": "Grandmaster, The",
       "slug": "grandmaster-the",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "elders-of-the-universe"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1225,7 +1229,9 @@
       "id": 90,
       "name": "Elders of the Universe",
       "slug": "elders-of-the-universe",
-      "ledBy": [],
+      "ledBy": [
+        "grandmaster-the"
+      ],
       "cards": [
         {
           "name": "The Runner",
@@ -1235,7 +1241,8 @@
           "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-elders-of-the-universe-the-runner.webp",
           "abilities": [
             "Ambush: [keyword:Contest of Champions] [hc:instinct]. Each player that loses must discard a card. If Evil wins, the Runner gains a [rule:Shard] for each card discarded this way, and he pushes forward two extra spaces."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Trader",
@@ -1245,7 +1252,8 @@
           "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-elders-of-the-universe-the-trader.webp",
           "abilities": [
             "Ambush: [keyword:Contest of Champions] [hc:tech]. Each player that loses must reveal their hand and trade a non-grey card from their hand with a card in the HQ that costs the same or less. If Evil wins, the Trader gains a [rule:Shard] for each trade that occurred."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Champion of the Universe",
@@ -1256,7 +1264,8 @@
           "abilities": [
             "Ambush: [keyword:Contest of Champions] [hc:strength]. Each player that loses must give this Villain one of their [rule:Shards] or gain a Wound.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Collector",
@@ -1267,7 +1276,8 @@
           "abilities": [
             "Ambush: [keyword:Contest of Champions] [hc:covert]. Each player that loses gives the Collector one of these things that he doesn't have yet: A [rule:Shard], a Bystander from their Victory Pile, a [hc:strength] Hero, a [hc:instinct] Hero, a [hc:covert] Hero, a [hc:tech] Hero, or a [hc:ranged] Hero (from hand or discard pile).",
             "Fight: The player of your choice gains one of the captured Heroes. Put the rest on the bottom of the Hero Deck."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1287,7 +1297,8 @@
             "[keyword:Cosmic Threat] [hc:covert] or [hc:tech]",
             "Fight: Nezarr grants you a [keyword:Celestial Boon]: For the rest of the game, while it's your turn, the Mastermind gets -[icon:attack] equal to a fifth of its printed [icon:attack]. (round down the loss)",
             "Escape: The Mastermind gains [rule:Shards] equal to a fifth of its printed [icon:attack] (rounded down)."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Gammenon, The Gatherer",
@@ -1299,7 +1310,8 @@
             "[keyword:Cosmic Threat] [hc:strength] or [hc:instinct]",
             "Fight: Gammenon grants you a [keyword:Celestial Boon]: For the rest of the game, whenever you fight a Villain, rescue a Bystander.",
             "Escape: Three Villains in the city each capture a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Exitar, The Exterminator",
@@ -1311,7 +1323,8 @@
             "[keyword:Cosmic Threat] [hc:tech] or [hc:ranged]",
             "Fight: Exitar grants you a [keyword:Celestial Boon]: For the rest of the game, once during each of your turns, you may fight a Henchman from your Victory Pile. Spend the normal [icon:attack] then do the Henchman's Fight effect, KO it, and rescue a Bystander.",
             "Escape: KO 5 Henchmen from the Villain Deck then shuffle it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Arishem, The Judge",
@@ -1323,7 +1336,8 @@
             "[keyword:Cosmic Threat] [hc:ranged] or [hc:strength]",
             "Fight: Arishem grants you a [keyword:Celestial Boon]: For the rest of the game, once during each of your turns, you may put a card from the HQ on the bottom of the Hero Deck.",
             "Escape: (After the normal Escape KO) Put each Hero that costs 5 or more from the HQ on the bottom of the Hero Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Tiamut, The Dreaming Celestial",
@@ -1335,7 +1349,8 @@
             "[keyword:Cosmic Threat] [hc:instinct] or [hc:covert]",
             "Fight: Tiamut grants you a [keyword:Celestial Boon]: Your hand size is one more for the rest of the game.",
             "Escape: Each player's hand size is one less for the rest of the game."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1343,7 +1358,9 @@
       "id": 92,
       "name": "From Beyond",
       "slug": "from-beyond",
-      "ledBy": [],
+      "ledBy": [
+        "beyonder-the"
+      ],
       "cards": [
         {
           "name": "The Mapmakers",
@@ -1354,7 +1371,8 @@
           "abilities": [
             "[keyword:Cosmic Threat] [hc:tech]",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Shaper of Worlds",
@@ -1367,7 +1385,8 @@
             "Ambush: Create a “New Reality“ space that stays above the Shaper of Worlds. It always contains a Hero, like an HQ space. Players can recruit from it.",
             "Fight: Choose a player to gain that Hero.",
             "Escape: After the normal Escape KO, destroy the New Reality space and destroy an HQ space. KO those Heroes. (It doesn't refill. Any “Pocket Dimension“ stays in play.)"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Kubik",
@@ -1379,7 +1398,8 @@
             "[keyword:Cosmic Threat] [hc:instinct]",
             "Ambush: Each player must reveal two cards with the same non-zero cost or gain a Wound.",
             "Fight: Reveal the top card of your deck. If it costs 0, KO it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Kosmos",
@@ -1390,7 +1410,8 @@
           "abilities": [
             "[keyword:Cosmic Threat] [hc:covert]",
             "Fight: Take another turn after this one. Don't play a card from the Villain Deck at the start of that turn. For the rest of the game, players take turns in the opposite order around the table."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1408,7 +1429,8 @@
           "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-black-order-of-thanos-corvus-glaive.webp",
           "abilities": [
             "Ambush: [keyword:Danger Sense 3], helping all Black Order Villains and the Mastermind. Corvus Glaive captures a Bystander revealed this way."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Black Dwarf",
@@ -1419,7 +1441,8 @@
           "abilities": [
             "Ambush: [keyword:Danger Sense 2], helping all Black Order Villains and the Mastermind. Play a Master Strike revealed this way.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Supergiant",
@@ -1430,7 +1453,8 @@
           "abilities": [
             "Ambush: [keyword:Danger Sense 1], helping all Black Order Villains and the Mastermind. Play a Villain revealed this way.",
             "Fight: You may KO a card from your discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Proxima Midnight",
@@ -1441,7 +1465,8 @@
           "abilities": [
             "Ambush: [keyword:Danger Sense 2], helping all Black Order Villains and the Mastermind. Play a Scheme Twist revealed this way.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ebony Maw",
@@ -1451,7 +1476,8 @@
           "imageUrl": "https://images.legendary-arena.com/cosm/cosm-vi-black-order-of-thanos-ebony-maw.webp",
           "abilities": [
             "Ambush: Choose Villain, Master Strike, or Scheme Twist. Then [keyword:Danger Sense 3], helping all Black Order Villains and the Mastermind. Play all the cards you revealed this way of the type you chose."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

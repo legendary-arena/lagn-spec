@@ -688,7 +688,9 @@
       "id": 65,
       "name": "Hydra High Council",
       "slug": "hydra-high-council",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "hydra-elite"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -747,7 +749,9 @@
       "id": 66,
       "name": "Hydra Super-Adaptoid",
       "slug": "hydra-super-adaptoid",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "a-i-m-hydra-offshoot"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -804,7 +808,9 @@
       "id": 84,
       "name": "A.I.M., Hydra Offshoot",
       "slug": "a-i-m-hydra-offshoot",
-      "ledBy": [],
+      "ledBy": [
+        "hydra-super-adaptoid"
+      ],
       "cards": [
         {
           "name": "Taskmaster",
@@ -816,7 +822,8 @@
             "Ambush: Put a card from the S.H.I.E.L.D. Officer Stack into the Escape Pile.",
             "Fight: Each player must reveal as many Hero colors (including grey) as the [keyword:Hydra Level] or gain a Wound.",
             "Escape: Same Effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Superia",
@@ -826,7 +833,8 @@
           "imageUrl": "https://images.legendary-arena.com/shld/shld-vi-aim-hydra-offshoot-superia.webp",
           "abilities": [
             "Ambush: Put a card from the S.H.I.E.L.D. Officer Stack into the Escape Pile. Then each player reveals a random card from their hand. If the [keyword:Hydra Level] is higher than that card's cost, that player discards that card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Graviton",
@@ -836,7 +844,8 @@
           "imageUrl": "https://images.legendary-arena.com/shld/shld-vi-aim-hydra-offshoot-graviton.webp",
           "abilities": [
             "Ambush: Put a card from the S.H.I.E.L.D. Officer Stack into the Escape Pile.  Then, for each 2 [keyword:Hydra Levels], Heroes currently in the HQ cost 1 more to recruit this turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Mentallo",
@@ -848,7 +857,8 @@
             "Mentallo gets +1[icon:attack] for each Officer he has.",
             "Ambush: Put a card from the S.H.I.E.L.D. Officer Stack into the Escape Pile.  Then Mentallo vaptures a S.H.I.E.L.D. Officer for each 2 [keyword:Hydra Levels].",
             "Fight: Gain an Officer captured by Mentallo or send it [keyword:Undercover].  KO the rest."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -856,7 +866,9 @@
       "id": 85,
       "name": "Hydra Elite",
       "slug": "hydra-elite",
-      "ledBy": [],
+      "ledBy": [
+        "hydra-high-council"
+      ],
       "cards": [
         {
           "name": "Growing Man",
@@ -867,7 +879,8 @@
           "abilities": [
             "Growing Man gets +[icon:attack] equal to the Mastermind's [keyword:Hydra Level].",
             "Ambush: Put a card from the S.H.I.E.L.D. Officer Stack into the Escape Pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Crossbones",
@@ -877,7 +890,8 @@
           "imageUrl": "https://images.legendary-arena.com/shld/shld-vi-hydra-elite-crossbones.webp",
           "abilities": [
             "Ambush: Put a card from the S.H.I.E.L.D. Officer Stack into the Escape Pile. Then each player gains a Wound unless that player reveals at least as many [team:shield] Heroes as the [keyword:Hydra Level]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Hive",
@@ -887,7 +901,8 @@
           "imageUrl": "https://images.legendary-arena.com/shld/shld-vi-hydra-elite-hive.webp",
           "abilities": [
             "Ambush: Put a card form the S.H.I.E.L.D. Officer Stack into the Escape Pile. Then each player reveals their hand and discards a card with cost equal to the [keyword:Hydra Level]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Gorgon",
@@ -897,7 +912,8 @@
           "imageUrl": "https://images.legendary-arena.com/shld/shld-vi-hydra-elite-gorgon.webp",
           "abilities": [
             "Ambush: Put a card from the S.H.I.E.L.D. Officer Stack into the Escape Pile. Then check the [keyword:Hydra Level].  You can't play Heroes of that cost this turn."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

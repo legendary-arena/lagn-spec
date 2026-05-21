@@ -618,7 +618,9 @@
       "id": 87,
       "name": "Taskmaster",
       "slug": "taskmaster",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "taskmasters-thunderbolts"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -697,7 +699,9 @@
       "id": 88,
       "name": "Indestructible Man",
       "slug": "indestructible-man",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "elite-assassins"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -780,7 +784,9 @@
       "id": 108,
       "name": "Taskmaster's Thunderbolts",
       "slug": "taskmasters-thunderbolts",
-      "ledBy": [],
+      "ledBy": [
+        "taskmaster"
+      ],
       "cards": [
         {
           "name": "Jester",
@@ -791,7 +797,8 @@
           "abilities": [
             "Ambush: Jester captures a Bystander.",
             "Fight: Reveal the top four cards of the Villain Deck. Play all the Henchmen you find. Put the rest back in any order."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Joystick",
@@ -801,7 +808,8 @@
           "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-taskmasters-thunderbolts-joystick.webp",
           "abilities": [
             "Ambush: Choose a Henchman from any player's Victory Pile to enter the city."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Jack O'Lantern",
@@ -812,7 +820,8 @@
           "abilities": [
             "Fight: Choose a Henchman from any player's Victory Pile to enter the city.",
             "Escape: Each player with fewer than two Henchmen in their Victory Pile gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Bullseye",
@@ -824,7 +833,8 @@
             "Ambush: Choose [icon:recruit] or [icon:attack], then reveal the top card of the Hero Deck. If it has that icon, Bullseye captures it and gets +[icon:attack] equal to that Hero's cost.",
             "Fight: The player of your choice gains the captured Hero.",
             "Escape: KO that Hero."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -832,7 +842,9 @@
       "id": 109,
       "name": "Elite Assassins",
       "slug": "elite-assassins",
-      "ledBy": [],
+      "ledBy": [
+        "indestructible-man"
+      ],
       "cards": [
         {
           "name": "Blue Talon",
@@ -844,7 +856,8 @@
             "[keyword:Dark Memories]",
             "Ambush: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Fight: You may send a Hero from your discard pile [keyword:Undercover]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Iron Maiden",
@@ -856,7 +869,8 @@
             "[keyword:Dark Memories]",
             "Ambush: Each player must send one of their non-grey Heroes [keyword:Undercover].",
             "Fight: Each player may [keyword:Unleash] one of their Heroes from [keyword:Undercover]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Snapdragon",
@@ -867,7 +881,8 @@
           "abilities": [
             "Ambush: Each player discards a non-grey Hero. Then each player draws a card.",
             "Fight: You may send one of your Heroes [keyword:Undercover]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Black Lotus",
@@ -878,7 +893,8 @@
           "abilities": [
             "Ambush: Each player discards a card that costs 0.",
             "Fight: You get +3[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

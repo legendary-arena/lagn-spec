@@ -768,7 +768,9 @@
       "id": 56,
       "name": "Iron Monger",
       "slug": "iron-monger",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "iron-foes"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -829,7 +831,10 @@
       "id": 2,
       "name": "Loki",
       "slug": "loki",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "enemies-of-asgard",
+        "chitauri"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -889,7 +894,9 @@
       "id": 4,
       "name": "Red Skull",
       "slug": "red-skull",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "hydra"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -951,7 +958,9 @@
       "id": 71,
       "name": "Chitauri",
       "slug": "chitauri",
-      "ledBy": [],
+      "ledBy": [
+        "loki"
+      ],
       "cards": [
         {
           "name": "Chitauri Soldier",
@@ -962,7 +971,8 @@
           "abilities": [
             "[keyword:Rooftops Conqueror 2]",
             "Ambush: Chitauri Soldier captures a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Chitauri Commander",
@@ -973,7 +983,8 @@
           "abilities": [
             "[keyword:Rooftops Conqueror 2]",
             "Ambush: (After this enters the city) If the Rooftops are empty, reveal the top card of the Villain Deck. If it's a Villain, that Villain enters the Rooftops."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Chitauri Leviathan",
@@ -985,7 +996,8 @@
             "[keyword:Rooftops Conqueror 2]",
             "Fight: Each player with no Bystanders in their Victory Pile gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Chitauri Chariot",
@@ -996,7 +1008,8 @@
           "abilities": [
             "[keyword:Rooftops Conqueror 2]",
             "Ambush: (After this enters the city) If the Rooftops are empty, move this Villain there."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1015,7 +1028,8 @@
           "abilities": [
             "Ambush: Each Player discards two cards, then draws a card.",
             "Escape: Same Effect"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Lt. Gen “Thunderbolt“ Ross",
@@ -1026,7 +1040,8 @@
           "abilities": [
             "Ambush: Each Player reveals their hand. Each player with any [hc:strength] cards must discard one of them or gain a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Abomination, Raging Monster",
@@ -1037,7 +1052,8 @@
           "abilities": [
             "[keyword:Streets Conqueror 3]",
             "Ambush: (After this enters the city) If the Streets are empty, move another Villain from any city space to the Streets."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Fighter Jet",
@@ -1048,7 +1064,8 @@
           "abilities": [
             "[keyword:Streets Conqueror 2]",
             "Fight: KO one of your heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1056,7 +1073,9 @@
       "id": 73,
       "name": "Enemies of Asgard",
       "slug": "enemies-of-asgard",
-      "ledBy": [],
+      "ledBy": [
+        "loki"
+      ],
       "cards": [
         {
           "name": "Destroyer",
@@ -1067,7 +1086,8 @@
           "abilities": [
             "Fight: KO all your [team:shield] Heroes.",
             "Escape: Each player KOs two of their Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Enslaved Hawkeye",
@@ -1077,7 +1097,8 @@
           "imageUrl": "https://images.legendary-arena.com/msp1/msp1-vi-enemies-of-asgard-enslaved-hawkeye.webp",
           "abilities": [
             "Fight: Draw three cards"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Frost Giant",
@@ -1088,7 +1109,8 @@
           "abilities": [
             "Fight: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Laufey, Frost Giant King",
@@ -1099,7 +1121,8 @@
           "abilities": [
             "Ambush: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Fight: Choose a player. That player KOs any number of Wounds from their hand and discard pile."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1107,7 +1130,9 @@
       "id": 74,
       "name": "HYDRA",
       "slug": "hydra",
-      "ledBy": [],
+      "ledBy": [
+        "red-skull"
+      ],
       "cards": [
         {
           "name": "Endless Armies of HYDRA",
@@ -1117,7 +1142,8 @@
           "imageUrl": "https://images.legendary-arena.com/msp1/msp1-vi-hydra-endless-armies-of-hydra.webp",
           "abilities": [
             "Fight: Play the top two cards of the Villain Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "HYDRA Motorcycle Squad",
@@ -1127,7 +1153,8 @@
           "imageUrl": "https://images.legendary-arena.com/msp1/msp1-vi-hydra-hydra-motorcycle-squad.webp",
           "abilities": [
             "Fight: You may gain a S.H.I.E.L.D. Officer."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Arnim Zola",
@@ -1137,7 +1164,8 @@
           "imageUrl": "https://images.legendary-arena.com/msp1/msp1-vi-hydra-arnim-zola.webp",
           "abilities": [
             "Arnim Zola is worth +3[icon:piercing] for each other HYDRA Villain in your Victory Pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "HYDRA Tank",
@@ -1148,7 +1176,8 @@
           "abilities": [
             "Fight: Each player without another HYDRA Villain in their Victory Pile gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1156,7 +1185,9 @@
       "id": 75,
       "name": "Iron Foes",
       "slug": "iron-foes",
-      "ledBy": [],
+      "ledBy": [
+        "iron-monger"
+      ],
       "cards": [
         {
           "name": "Hammer Drone Marine",
@@ -1166,7 +1197,8 @@
           "imageUrl": "https://images.legendary-arena.com/msp1/msp1-vi-iron-foes-hammer-drone-marine.webp",
           "abilities": [
             "Fight: Look at the top three cards of your deck. KO one of them and put the rest back in any order."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Raza, Ten Rings Leader",
@@ -1177,7 +1209,8 @@
           "abilities": [
             "Raza gets +1[icon:attack] for each Bystander he has.",
             "Ambush: Raza captures a Bystander from the Bystander Stack and a random Bystander from each player's Victory Pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Whiplash",
@@ -1188,7 +1221,8 @@
           "abilities": [
             "Fight: Each player reveals a [hc:tech] hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Justin Hammer",
@@ -1199,7 +1233,8 @@
           "abilities": [
             "[keyword:Bank Conqueror 2]",
             "Fight: You get +2[icon:recruit] usable only to recruit heroes in the HQ space under the Bank."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

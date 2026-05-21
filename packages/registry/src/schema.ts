@@ -283,6 +283,11 @@ export const VillainCardSchema = z.object({
   vAttack:   z.union([z.string(), z.number()]).nullable(),
   imageUrl:  z.string().url(),
   abilities: z.array(z.string()),
+  // why: optional + additive (D-16701). When absent the engine treats the
+  // card as a single copy; the card converter normally writes a value
+  // (default 2), so absence is a legacy/malformed-input fallback, not a
+  // converter output path.
+  copies:    z.number().int().min(1).optional(),
 });
 
 // ── Villain group (a named collection of villain cards) ───────────────────────
@@ -302,6 +307,11 @@ export const SchemeSchema = z.object({
   slug:     z.string(),
   imageUrl: z.string().url(),
   cards:    z.array(z.object({ abilities: z.array(z.string()) })),
+  // why: optional + additive (D-16702). Both omitted on schemes that carry
+  // no villain-deck setup metadata, so the engine falls back to its defaults
+  // (8 scheme twists; numPlayers-derived bystanders).
+  villainDeckTwistCount:     z.number().int().min(0).optional(),
+  villainDeckBystanderCount: z.number().int().min(0).optional(),
 });
 
 // ── Full per-set file ({abbr}.json) ───────────────────────────────────────────

@@ -1755,7 +1755,9 @@
       "id": 40,
       "name": "Arcade",
       "slug": "arcade",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "murderworld"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -1828,7 +1830,9 @@
       "id": 41,
       "name": "Dark Phoenix",
       "slug": "dark-phoenix",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "hellfire-club"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -1901,7 +1905,9 @@
       "id": 42,
       "name": "Deathbird",
       "slug": "deathbird",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "shiar-imperial-guard"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1974,7 +1980,9 @@
       "id": 43,
       "name": "Mojo",
       "slug": "mojo",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "mojoverse"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -2049,7 +2057,9 @@
       "id": 44,
       "name": "Onslaught",
       "slug": "onslaught",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "dark-descendants"
+      ],
       "vp": 7,
       "cards": [
         {
@@ -2122,7 +2132,9 @@
       "id": 45,
       "name": "Shadow King",
       "slug": "shadow-king",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "shadow-x"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -2196,7 +2208,9 @@
       "id": 53,
       "name": "Dark Descendants",
       "slug": "dark-descendants",
-      "ledBy": [],
+      "ledBy": [
+        "onslaught"
+      ],
       "cards": [
         {
           "name": "Fatale",
@@ -2207,7 +2221,8 @@
           "abilities": [
             "Fight: KO one of your Heroes.",
             "Escape: The Mastermind [keyword:Dominates] the top card of the Hero Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Havok, Brainwashed",
@@ -2219,7 +2234,8 @@
             "Fight: Gain this as a Hero.",
             "Escape: Havok becomes a Hero [keyword:Dominated] by the Mastermind.",
             "[keyword:X-Gene] [hc:ranged]: You get +2[icon:attack]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Nemesis",
@@ -2229,7 +2245,8 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-dark-descendants-nemesis.webp",
           "abilities": [
             "Ambush: Each player reveals their hand and chooses one of their non-grey Heroes. Nemesis [keyword:Dominates] those Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Psychic Subjugation",
@@ -2240,7 +2257,8 @@
           "abilities": [
             "By End of Turn: Recruit the left-most and right-most Heroes in the HQ.",
             "Or Suffer: Each of those Heroes you didn't recruit enters the city as a Villain with [icon:attack] equal to that Hero's cost. When you fight one, you gain it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Random",
@@ -2250,7 +2268,8 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-dark-descendants-random.webp",
           "abilities": [
             "Ambush: Random [keyword:Dominates] the top card of the Hero Deck. Then, each player reveals their hand and chooses one of their Heroes with that same cost. Random [keyword:Dominates] those Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2258,7 +2277,9 @@
       "id": 54,
       "name": "Hellfire Club",
       "slug": "hellfire-club",
-      "ledBy": [],
+      "ledBy": [
+        "dark-phoenix"
+      ],
       "cards": [
         {
           "name": "Corrupt the Phoenix Force",
@@ -2269,7 +2290,8 @@
           "abilities": [
             "By End of Turn: Have no Hellfire Villains in the city.",
             "Or Suffer: This Trap becomes a 6[icon:attack] “Phoenix Force“ [icon:7] Villain that enters the city and [keyword:Dominates] all the Heroes in the HQ that cost 6 or less."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Emma Frost (White Queen)",
@@ -2279,7 +2301,8 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-hellfire-club-emma-frost-white-queen.webp",
           "abilities": [
             "Ambush: Each player chooses an [team:x-men] Hero from their discard pile. Emma Frost [keyword:Dominates] those Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Harry Leland (Black Bishop)",
@@ -2290,7 +2313,8 @@
           "abilities": [
             "Ambush: Heroes cost 1 more to recruit this turn.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Mastermind (Jason Wyngarde)",
@@ -2300,7 +2324,8 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-hellfire-club-mastermind-jason-wyngarde.webp",
           "abilities": [
             "Ambush: This Villain ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player simultaneously reveals a non-grey Hero.“ Mastermind [keyword:Dominates] the revealed Hero with the highest cost (and tied for highest)."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sebastian Shaw (Black King)",
@@ -2311,7 +2336,8 @@
           "abilities": [
             "Sebastian Shaw has +1[icon:attack] for each card you've played from your hand this turn.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2319,7 +2345,9 @@
       "id": 55,
       "name": "Mojoverse",
       "slug": "mojoverse",
-      "ledBy": [],
+      "ledBy": [
+        "mojo"
+      ],
       "cards": [
         {
           "name": "Mindwarping TV Broadcast",
@@ -2331,7 +2359,8 @@
             "Ambush: A Villain captures a Bystander.",
             "By End of Turn: Have no Bystanders in the city captured by Villains.",
             "Or Suffer: After you draw your new hand at end of turn, each player discards down to four cards in hand."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Minor Domo",
@@ -2342,7 +2371,8 @@
           "abilities": [
             "Ambush: Minor Domo captures 2 [keyword:Human Shields].",
             "Escape: Each player simultaneously reveals a card from their hand. Whoever revealed the lowest cost card (or tied for lowest) gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Major Domo",
@@ -2353,7 +2383,8 @@
           "abilities": [
             "Ambush: Major Domo captures a [keyword:Human Shield].",
             "Escape: Each player simultaneously reveals a card from their hand. Whoever reveals the highest-costing card (or tied for highest) gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Spiral",
@@ -2364,7 +2395,8 @@
           "abilities": [
             "Ambush: Each player reveals a [hc:covert] Hero or discards their hand. Each player who discarded their hand this way draws 5 cards.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Warwolves",
@@ -2375,7 +2407,8 @@
           "abilities": [
             "Ambush: These Warwolves capture a [keyword:Human Shield].",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2383,7 +2416,9 @@
       "id": 56,
       "name": "Murderworld",
       "slug": "murderworld",
-      "ledBy": [],
+      "ledBy": [
+        "arcade"
+      ],
       "cards": [
         {
           "name": "Animatronic Killer Clowns",
@@ -2394,7 +2429,8 @@
           "abilities": [
             "By End of Turn: Recruit two Heroes.",
             "Or Suffer: This Trap enters the city as a 3[icon:attack] “Animatronic Killer Clown“ [icon:7] Villain that captures a [keyword:Human Shield]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Guillotine Rollercoaster",
@@ -2405,7 +2441,8 @@
           "abilities": [
             "By End of Turn: Have at least four different costs of Heroes in the HQ.",
             "Or Suffer: After you draw your new hand at the end of this turn, each palyer reveals their hand and discards each card with the same cost as the cards in the HQ."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Miss Locke",
@@ -2415,7 +2452,8 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-murderworld-miss-locke.webp",
           "abilities": [
             "Ambush: Miss Locke captures 2 [keyword:Human Shields]. Then reveal the top card of the Villain Deck. If it's a [rule:Trap] or Master Strike, play it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Monstrous Pinball Machine",
@@ -2426,7 +2464,8 @@
           "abilities": [
             "By End of Turn: Pay any amount of [icon:recruit]. Then you must reveal the top card of the Hero Deck. If you paid enough, recruit that Hero and put this Trap in your Victory Pile.",
             "Or Suffer: KO that Hero. Play two extra cards from the Villain Deck next turn."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sulfuric Acid Water Slide",
@@ -2438,7 +2477,8 @@
             "Ambush: Play another card from the Villain Deck.",
             "By End of Turn: Have no Villains in the Sewers.",
             "Or Suffer: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2446,7 +2486,9 @@
       "id": 57,
       "name": "Shadow-X",
       "slug": "shadow-x",
-      "ledBy": [],
+      "ledBy": [
+        "shadow-king"
+      ],
       "cards": [
         {
           "name": "Betrayal of the Shadow",
@@ -2457,7 +2499,8 @@
           "abilities": [
             "By End of Turn: You may pay 6[icon:recruit].",
             "Or Suffer: Each player reveals their hand. Then, each player chooses a Shadow-X card from their hand or discard pile to enter the city as a Villain."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dark Angel",
@@ -2468,7 +2511,8 @@
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:instinct]: The next Hero you recruit from the HQ has [keyword:Soaring Flight]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dark Beast",
@@ -2479,7 +2523,8 @@
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:tech]: You may KO a card from your hand or discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dark Cyclops",
@@ -2491,7 +2536,8 @@
             "Ambush: Each player reveals a [hc:ranged] Hero or discards a card.",
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:ranged]: Return a [hc:ranged] Hero from your discard pile to your hand."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dark Iceman",
@@ -2502,7 +2548,8 @@
           "abilities": [
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:strength]: Draw a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dark Marvel Girl",
@@ -2514,7 +2561,8 @@
             "Ambush: Dark Marvel Girl [keyword:Dominates] each [team:x-men] Hero that costs 4 or less from the HQ.",
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:covert]: Rescue a Bystander."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2522,7 +2570,9 @@
       "id": 58,
       "name": "Shi'ar Imperial Guard",
       "slug": "shiar-imperial-guard",
-      "ledBy": [],
+      "ledBy": [
+        "deathbird"
+      ],
       "cards": [
         {
           "name": "Blackthorn",
@@ -2533,7 +2583,8 @@
           "abilities": [
             "Fight: If you fought Blackthorn in the Sewers or Streets, each other player gains a Wound.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Gladiator",
@@ -2544,7 +2595,8 @@
           "abilities": [
             "Ambush: Each player discards an [team:x-men] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Oracle",
@@ -2554,7 +2606,8 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shiar-imperial-guard-oracle.webp",
           "abilities": [
             "Ambush: Each player discards the top four cards of their deck and chooses one of those cards that costs 1 to 4. Oracle [keyword:Dominates] those Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shi'ar Trial by Combat",
@@ -2566,7 +2619,8 @@
             "Ambush: If the Bridge is empty, reveal the top card of the Villain Deck. If it's a Villain, put it on the Bridge.",
             "By End of Turn: Have no Villains on the Bridge.",
             "Or Suffer: After you draw a new hand at end of turn, each player KOs a non-grey Hero from their discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Smasher",
@@ -2577,7 +2631,8 @@
           "abilities": [
             "Ambush: Each player reveals a [hc:strength] Hero or discards a card.",
             "Fight: KO a card from your discard pile."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2596,7 +2651,8 @@
           "abilities": [
             "Fight: KO one of your Heroes.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Lady Mastermind",
@@ -2606,7 +2662,8 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-sisterhood-of-mutants-lady-mastermind.webp",
           "abilities": [
             "Ambush: This Villain ascends to become a [rule:new Mastermind]. She gains the ability “Master Strike: Each player simultaneously reveals a non-grey Hero.“ Lady Mastermind [keyword:Dominates] the revealed Hero with the lowest cost (and tied for lowest)."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Resurrect Madelyne Pryor",
@@ -2617,7 +2674,8 @@
           "abilities": [
             "By End of Turn: You may pay 3[icon:recruit]. If you do, shuffle this Trap back into the Villain Deck, then play a card from the Villain Deck.",
             "Or Suffer: This Trap becomes a Scheme Twist that takes effect immediately."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Selene",
@@ -2629,7 +2687,8 @@
             "Ambush: Selene [keyword:Dominates] all of the 0-cost Heroes from the KO pile.",
             "Fight: KO all the Heroes Dominated by Selene.",
             "Escape: Put one Hero Dominated by Selene into each player's discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Typhoid Mary",
@@ -2639,7 +2698,8 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-sisterhood-of-mutants-typhoid-mary.webp",
           "abilities": [
             "Ambush: Each player reveals their hand and chooses a 3-cost Hero from it. Typhoid Mary [keyword:Dominates] those Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

@@ -454,7 +454,9 @@
       "id": 102,
       "name": "Omega Red",
       "slug": "omega-red",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "berserkers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -529,7 +531,9 @@
       "id": 103,
       "name": "Romulus",
       "slug": "romulus",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "weapon-plus"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -603,7 +607,9 @@
       "id": 104,
       "name": "Sabretooth",
       "slug": "sabretooth",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "berserkers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -680,7 +686,10 @@
       "id": 125,
       "name": "Berserkers",
       "slug": "berserkers",
-      "ledBy": [],
+      "ledBy": [
+        "omega-red",
+        "sabretooth"
+      ],
       "cards": [
         {
           "name": "Cyber",
@@ -693,7 +702,8 @@
             "Fight: KO one your Heroes. If any of the cards you Berserked were [hc:instinct] or [hc:tech], shuffle Cyber into the Villain Deck, then play another card from the Villain Deck.",
             "[keyword:Fail]: Each player discards a [hc:instinct] or [hc:tech] Hero or gains a Wound.",
             "Escape: Do the Fail effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Feral",
@@ -707,7 +717,8 @@
             "[keyword:Fail]: KO a non-grey Hero from your discard pile.",
             "Escape: Each player discards a non-grey Hero.",
             "[hc:instinct]: [keyword:Berserk], [keyword:Berserk]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Thornn",
@@ -720,7 +731,8 @@
             "Ambush: Choose a card named “Feral“ from any player's discard pile to enter the city as a Villain.",
             "Fight: Draw the card you Berserked.",
             "[keyword:Fail]: When you draw a new hand at the end of this turn, discard a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Wild Child",
@@ -732,7 +744,8 @@
             "[keyword:Berserk], [keyword:Berserk], [keyword:Berserk]",
             "Fight: KO one of the cards you Berserked this way that costs 0.",
             "[keyword:Fail]: KO a card discarded by Wild Child's Berserking that costs 1 or more. (You can't KO cards you shuffled into your deck during the Berserking.)"
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -740,7 +753,9 @@
       "id": 126,
       "name": "Weapon Plus",
       "slug": "weapon-plus",
-      "ledBy": [],
+      "ledBy": [
+        "romulus"
+      ],
       "cards": [
         {
           "name": "Daken",
@@ -753,7 +768,8 @@
             "[keyword:Berserk]",
             "Fight: KO one of your Heroes.",
             "[keyword:Fail]: You gain a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Huntsman (Weapon XII)",
@@ -765,7 +781,8 @@
             "[keyword:Weapon X Sequence]",
             "Ambush: Reveal the top 3 cards of the Hero Deck. Huntsman captures each that costs 4 or less. Put the rest on the bottom of the Hero Deck.",
             "Fight: If Huntsman has any captured Heroes, choose a player to gain one of them and return Huntsman to his city space with the rest of them. (Ignore his Ambush.)"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Nuke (Weapon VII)",
@@ -780,7 +797,8 @@
             "[hc:instinct]: “Balance“ — Draw a card.",
             "[hc:ranged]: “Relax“ — You get +2[icon:recruit].",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Skinless Man (Weapon III)",
@@ -791,7 +809,8 @@
           "abilities": [
             "[keyword:Weapon X Sequence]",
             "Ambush: Skinless Man captures a Bystander of your choice from your Victory Pile. If you don't have one, gain a Wound and he captures one from the Bystander Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Typhoid Mary (Weapon IX)",
@@ -808,7 +827,8 @@
             "[hc:tech]: “Mutant Zero“ — KO one of your cards that costs 0.",
             "[hc:ranged]: “Walker“ — Put a card you played ",
             "this turn on top of your deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ultimaton (Weapon XV)",
@@ -821,7 +841,8 @@
             "Ambush: Each player discards a non-grey Hero.",
             "Fight: Each player KOs one of their grey Heroes.",
             "Escape: Each player KOs one of their non-grey Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

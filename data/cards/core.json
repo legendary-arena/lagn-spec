@@ -1637,7 +1637,9 @@
       "id": 1,
       "name": "Dr. Doom",
       "slug": "dr-doom",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "masters-of-evil"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -1697,7 +1699,9 @@
       "id": 2,
       "name": "Loki",
       "slug": "loki",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "enemies-of-asgard"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -1757,7 +1761,9 @@
       "id": 3,
       "name": "Magneto",
       "slug": "magneto",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "brotherhood"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -1817,7 +1823,9 @@
       "id": 4,
       "name": "Red Skull",
       "slug": "red-skull",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "hydra"
+      ],
       "vp": 5,
       "cards": [
         {
@@ -1879,7 +1887,9 @@
       "id": 1,
       "name": "Brotherhood",
       "slug": "brotherhood",
-      "ledBy": [],
+      "ledBy": [
+        "magneto"
+      ],
       "cards": [
         {
           "name": "Blob",
@@ -1889,7 +1899,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-brotherhood-blob.webp",
           "abilities": [
             "You can't defeat Blob unless you have an [team:x-men] Hero."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Juggernaut",
@@ -1900,7 +1911,8 @@
           "abilities": [
             "Ambush: Each player KOs two Heroes from their discard pile.",
             "Escape: Each player KOs two Heroes from their hand."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Mystique",
@@ -1910,7 +1922,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-brotherhood-mystique.webp",
           "abilities": [
             "Escape: Mystique becomes a Scheme Twist that takes effect immediately."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sabretooth",
@@ -1921,7 +1934,8 @@
           "abilities": [
             "Fight: Each player reveals an [team:x-men] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1929,7 +1943,9 @@
       "id": 2,
       "name": "Enemies of Asgard",
       "slug": "enemies-of-asgard",
-      "ledBy": [],
+      "ledBy": [
+        "loki"
+      ],
       "cards": [
         {
           "name": "Destroyer",
@@ -1940,7 +1956,8 @@
           "abilities": [
             "Fight: KO all your [team:shield] Heroes.",
             "Escape: Each player KOs two of their Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Enchantress",
@@ -1950,7 +1967,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-enemies-of-asgard-enchantress.webp",
           "abilities": [
             "Fight: Draw three cards."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Frost Giant",
@@ -1961,7 +1979,8 @@
           "abilities": [
             "Fight: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ymir, Frost Giant King",
@@ -1972,7 +1991,8 @@
           "abilities": [
             "Ambush: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Fight: Choose a player. That player KOs any number of Wounds from their hand and discard pile."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1980,7 +2000,9 @@
       "id": 3,
       "name": "HYDRA",
       "slug": "hydra",
-      "ledBy": [],
+      "ledBy": [
+        "red-skull"
+      ],
       "cards": [
         {
           "name": "Endless Armies of HYDRA",
@@ -1990,7 +2012,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-hydra-endless-armies-of-hydra.webp",
           "abilities": [
             "Fight: Play the top two cards of the Villain Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "HYDRA Kidnappers",
@@ -2000,7 +2023,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-hydra-hydra-kidnappers.webp",
           "abilities": [
             "Fight: You may gain a S.H.I.E.L.D. Officer."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Supreme HYDRA",
@@ -2010,7 +2034,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-hydra-supreme-hydra.webp",
           "abilities": [
             "Supreme HYDRA is worth +3[icon:piercing] for each other HYDRA Villain in your Victory Pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Viper",
@@ -2021,7 +2046,8 @@
           "abilities": [
             "Fight: Each player without another HYDRA Villain in their Victory Pile gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2029,7 +2055,9 @@
       "id": 4,
       "name": "Masters of Evil",
       "slug": "masters-of-evil",
-      "ledBy": [],
+      "ledBy": [
+        "dr-doom"
+      ],
       "cards": [
         {
           "name": "Baron Zemo",
@@ -2039,7 +2067,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-masters-of-evil-baron-zemo.webp",
           "abilities": [
             "Fight: For each of your [team:avengers] Heroes, rescue a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Melter",
@@ -2049,7 +2078,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-masters-of-evil-melter.webp",
           "abilities": [
             "Fight: Each player reveals the top card of their deck. For each card, you choose to KO it or put it back."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ultron",
@@ -2060,7 +2090,8 @@
           "abilities": [
             "Ultron is worth +1[icon:piercing] for each [hc:tech] Hero you have among all your cards at the end of the game.",
             "Escape: Each player reveals a [hc:tech] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Whirlwind",
@@ -2070,7 +2101,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-masters-of-evil-whirlwind.webp",
           "abilities": [
             "Fight: If you fight Whirlwind on the Rooftops or Bridge, KO two of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2088,7 +2120,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-radiation-abomination.webp",
           "abilities": [
             "Fight: If you fight Abomination on the Streets or Bridge, rescue three Bystanders."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Leader",
@@ -2098,7 +2131,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-radiation-the-leader.webp",
           "abilities": [
             "Ambush: Play the top card of the Villain Deck."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Maestro",
@@ -2108,7 +2142,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-radiation-maestro.webp",
           "abilities": [
             "Fight: For each of your [hc:strength] Heroes, KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zzzax",
@@ -2119,7 +2154,8 @@
           "abilities": [
             "Fight: Each player reveals a [hc:strength] Hero or gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2137,7 +2173,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-skrulls-paibok-the-power-skrull.webp",
           "abilities": [
             "Fight: Choose a Hero in the HQ for each player. Each player gains that Hero."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Skrull Queen Veranke",
@@ -2148,7 +2185,8 @@
           "abilities": [
             "Ambush: Put the highest-cost Hero from the HQ under this Villain. This Villain's [icon:attack] is equal to that Hero's [icon:vp].",
             "Fight: Gain that Hero."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Skrull Shapeshifters",
@@ -2159,7 +2197,8 @@
           "abilities": [
             "Ambush: Put the rightmost Hero from the HQ under this Villain. This Villain's [icon:attack] is equal to that Hero's [icon:vp].",
             "Fight: Gain that Hero"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Super-Skrull",
@@ -2169,7 +2208,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-skrulls-super-skrull.webp",
           "abilities": [
             "Fight: Each player KOs one of their Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -2187,7 +2227,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-spider-foes-doctor-octopus.webp",
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of this turn, draw eight cards instead of six."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Green Goblin",
@@ -2197,7 +2238,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-spider-foes-green-goblin.webp",
           "abilities": [
             "Ambush: Green Goblin captures a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "The Lizard",
@@ -2207,7 +2249,8 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-spider-foes-the-lizard.webp",
           "abilities": [
             "Fight: If you fight the Lizard in the Sewers, each other player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Venom",
@@ -2218,7 +2261,8 @@
           "abilities": [
             "You can't defeat Venom unless you have a [hc:covert] Hero.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }
@@ -2284,7 +2328,9 @@
             "Evil Wins: When 8 Bystanders are carried away by escaping Villains."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 8,
+      "villainDeckBystanderCount": 12
     },
     {
       "id": 2,

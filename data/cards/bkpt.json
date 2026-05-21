@@ -566,7 +566,9 @@
       "id": 85,
       "name": "Killmonger",
       "slug": "killmonger",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "killmongers-league"
+      ],
       "vp": 4,
       "cards": [
         {
@@ -639,7 +641,9 @@
       "id": 86,
       "name": "Klaw",
       "slug": "klaw",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "enemies-of-wakanda"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -714,7 +718,9 @@
       "id": 106,
       "name": "Killmonger's League",
       "slug": "killmongers-league",
-      "ledBy": [],
+      "ledBy": [
+        "killmonger"
+      ],
       "cards": [
         {
           "name": "Preyy",
@@ -725,7 +731,8 @@
           "abilities": [
             "Ambush: Each player reveals an [hc:instinct] Hero or gains a [keyword:Wound that was on a Mastermind or Villain].",
             "While Preyy has more than 0[icon:attack], you cannot fight him. Instead, you may spend [icon:attack] equal to his [icon:attack] to [keyword:Wound him] and draw a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Malice",
@@ -736,7 +743,8 @@
           "abilities": [
             "Ambush: Return a [keyword:Wound from the Mastermind and from each Villain] to the Wound Stack.",
             "While Malice has more than 0[icon:attack], you cannot fight her. Instead, you may spend [icon:attack] equal to her [icon:attack] to [keyword:Wound her] and rescue a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Baron Macabre",
@@ -746,7 +754,8 @@
           "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-vi-killmongers-league-baron-macabre.webp",
           "abilities": [
             "Ambush: A Villain from your Victory Pile enters the city. [keyword:Wound that Villain]. Then [keyword:Wound Baron Macabre] a number of times equal to that Villain's VP."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Venomm",
@@ -757,7 +766,8 @@
           "abilities": [
             "Ambush: [keyword:Wound Venomm]. Each player may discard a card to [keyword:Wound Venomm] again.",
             "Escape: Choose which players gain each of [keyword:Venomm's Wounds], dividing them as evenly as possible."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -765,7 +775,9 @@
       "id": 107,
       "name": "Enemies of Wakanda",
       "slug": "enemies-of-wakanda",
-      "ledBy": [],
+      "ledBy": [
+        "klaw"
+      ],
       "cards": [
         {
           "name": "Nightshade",
@@ -776,7 +788,8 @@
           "abilities": [
             "[keyword:Empowered] by [hc:tech].",
             "Fight: You get +1[icon:recruit] for each [hc:tech] Hero in the HQ."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Jakarra",
@@ -787,7 +800,8 @@
           "abilities": [
             "[keyword:Empowered] by [hc:strength].",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Tetu",
@@ -799,7 +813,8 @@
             "[keyword:Empowered] by [hc:ranged].",
             "Ambush: Put a Hero from the HQ that isn't [keyword:Empowering] any Enemies of Wakanda on the bottom of the Hero Deck.",
             "Fight: Same effect. (Tetu isn't in the city.)"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zenzi",
@@ -810,7 +825,8 @@
           "abilities": [
             "[keyword:Empowered] by [hc:instinct].",
             "Ambush: Zenzi captures a Bystander for each [hc:instinct] Hero in the HQ."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Reverend Achebe",
@@ -821,7 +837,8 @@
           "abilities": [
             "[keyword:Empowered] by [hc:covert].",
             "Escape: Reverend Achebe becomes a Scheme Twist that takes effect immediately."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

@@ -1,0 +1,9 @@
+{
+  "_note": "Per-scheme villain-deck composition counts (WP-167 / D-16702). convert-cards-v15.mjs (npm sets) and apply-card-counts.mjs (outlier sets 2099/amwp/wpnx/wtif) apply these to SchemeSchema.villainDeckTwistCount / villainDeckBystanderCount. Schemes absent here emit neither field and fall back to engine defaults (8 twists; numPlayers bystanders). Keys: setAbbr -> schemeSlug -> { villainDeckTwistCount, villainDeckBystanderCount }. Both counts are required when a scheme is listed. Loud-fails if a schemeSlug matches no scheme in the set.",
+  "core": {
+    "midtown-bank-robbery": {
+      "villainDeckTwistCount": 8,
+      "villainDeckBystanderCount": 12
+    }
+  }
+}

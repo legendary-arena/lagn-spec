@@ -1343,7 +1343,9 @@
       "id": 94,
       "name": "Zombie Scarlet Witch",
       "slug": "zombie-scarlet-witch",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "zombie-avengers"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -1581,7 +1583,8 @@
             "Captain Marvel gets +1[icon:attack] for each other Intergalactic Party Animal in the city and/or Escape Pile.",
             "Ambush: Each player reveals a [hc:strength] Hero or gains a Wound.",
             "Escape: Captain Marvel ascends to become a [rule:new Mastermind]. She gains the ability “Master Strike: Repeat her Ambush effect.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Frigga, Mother of Thor",
@@ -1592,7 +1595,8 @@
           "abilities": [
             "During your turn, you may discard a card that costs 5 or more to “hide the party“ and shuffle Frigga into the Villain Deck. If you do, you may KO one of your Heroes, then you must play a card from the Villain Deck.",
             "Ambush: Frigga ascends to become a [rule:new Mastermind]. She gains the ability “Master Strike: If there are any Intergalactic Party Animals in the city, each player discards a card.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Party Korg",
@@ -1603,7 +1607,8 @@
           "abilities": [
             "Fight: KO one of your Heroes.",
             "Escape: [keyword:Cross-Dimensional Party Rampage]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Party Nebula",
@@ -1614,7 +1619,8 @@
           "abilities": [
             "Ambush: If there are any other Intergalactic Party Animals in the city, each player discards a card.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Party Kraglin",
@@ -1624,7 +1630,8 @@
           "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-party-kraglin.webp",
           "abilities": [
             "Fight: You get +1[icon:recruit] for each Intergalactic Party Animal in your Victory Pile (including this one)."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Party Korath",
@@ -1635,7 +1642,8 @@
           "abilities": [
             "Party Korath gets +[icon:attack] for each Bystander held among all Intergalactic Party Animals.",
             "Ambush: Each player may draw a card. Korath captures a Bystander for each card drawn this way."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Party Skrull",
@@ -1646,7 +1654,8 @@
           "abilities": [
             "Ambush: Party Skrull captures the highest-cost Hero from all the HQ spaces under Intergalactic Party Animals. Party Skrull gets +[icon:attack] equal to that Hero's cost.",
             "Fight: Either KO that Hero or choose a player to gain it."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Party Surtur",
@@ -1657,7 +1666,8 @@
           "abilities": [
             "Ambush: [keyword:Cross-Dimensional Party Rampage]",
             "Fight: You may KO a grey Hero from your discard pile."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1676,7 +1686,8 @@
           "abilities": [
             "Thanos gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Thanos ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player discards half of their cards (round down the discards).“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Dormammu",
@@ -1687,7 +1698,8 @@
           "abilities": [
             "Dormammu gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Dormammu ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player reveals the top of their deck. If it costs 1 or more, that player gains a Wound.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ego",
@@ -1698,7 +1710,8 @@
           "abilities": [
             "Ego gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Ego ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Reveal the top card of the Villain Deck. If it's a Master Strike, play it.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Loki",
@@ -1709,7 +1722,8 @@
           "abilities": [
             "Loki gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Loki ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player discards a [hc:ranged] Hero or KOs one of their non-grey Heroes.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Red Skull, HYDRA Occultist",
@@ -1720,7 +1734,8 @@
           "abilities": [
             "Red Skull gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Escape: Red Skull ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player discards a [hc:covert] Hero or discards down to 4 cards.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Yondu",
@@ -1732,7 +1747,8 @@
             "Yondu gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Ambush: Yondu captures a Bystander.",
             "Fight: Each player KOs one of their Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Arnim Zola, HYDRA Scientist",
@@ -1743,7 +1759,8 @@
           "abilities": [
             "Arnim Zola gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Fight: During one of your turns, you may [keyword:Soulbind Arnim Zola] to give a Mastermind -2[icon:attack] for one fight."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ulysses Klaue",
@@ -1755,7 +1772,8 @@
             "Ulysses Klaue gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Ambush: A Villain in the city with an “ascend“ ability ascends to become a [rule:new Mastermind].",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1774,7 +1792,8 @@
           "abilities": [
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Fight: For each Hero in the HQ that costs 5 or more, you get +1[icon:recruit]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Corvus Glaive",
@@ -1785,7 +1804,8 @@
           "abilities": [
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Ambush: For each Hero in the HQ that costs 5 or more, Corvus Glaive captures a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Proxima Midnight",
@@ -1797,7 +1817,8 @@
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Ambush: Each player discards a card that costs 5 or more or gains a Wound.",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Ebony Maw",
@@ -1809,7 +1830,8 @@
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Ambush: Each player discards a card that costs 5 or more.",
             "Escape: Ebony Maw ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Repeat his Ambush effect.“"
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1817,7 +1839,9 @@
       "id": 117,
       "name": "Zombie Avengers",
       "slug": "zombie-avengers",
-      "ledBy": [],
+      "ledBy": [
+        "zombie-scarlet-witch"
+      ],
       "cards": [
         {
           "name": "Zombie Wong",
@@ -1828,7 +1852,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: Look at the top two cards of your deck. Draw one of them and put the other back."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Hawkeye",
@@ -1839,7 +1864,8 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: Each player draws a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Wasp",
@@ -1851,7 +1877,8 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "While in the Sewers, Rooftops, or Bridge, Zombie Wasp is “giant-size“ and gets +2[icon:attack].",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Doctor Strange",
@@ -1863,7 +1890,8 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: Look at the top three cards of your deck. Draw one of them, KO one, and put one back.",
             "Escape: [keyword:Cross-Dimensional Zombie Rampage]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Iron Man",
@@ -1874,7 +1902,8 @@
           "abilities": [
             "Ambush: Each player reveals a [hc:tech] card or gains a Wound. Then [keyword:Rise of The Living Dead]",
             "Escape: Zombie Iron Man ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Repeat his Ambush effect.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Zombie Captain America",
@@ -1886,7 +1915,8 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Zombie Captain America gets -1[icon:attack] for each Hero Class you have.",
             "Escape: Each player reveals three Hero Classes or gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -1904,7 +1934,8 @@
           "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-wolf-demon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind another Villain]: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Moose Demon",
@@ -1914,7 +1945,8 @@
           "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-moose-demon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind a Henchman]: Draw two cards. You may do that Henchman's Fight effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Two-Headed Ram Demon",
@@ -1924,7 +1956,8 @@
           "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-two-headed-ram-demon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind two other Villains]: KO up to two cards from your discard pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Skull Demon",
@@ -1934,7 +1967,8 @@
           "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-stranges-demons-skull-demon.webp",
           "abilities": [
             "Fight: [keyword:Soulbind a Bystander]: Draw two cards. Then if it's a Special Bystander, you may do its Rescue effect."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Demon Dragon",
@@ -1945,7 +1979,8 @@
           "abilities": [
             "Fight: [keyword:Soulbind another Villain]: You get +[icon:recruit] equal to that Villain's VP.",
             "Escape: [keyword:Cross-Dimensional Demon Rampage]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Demonbound Doctor Strange",
@@ -1956,7 +1991,8 @@
           "abilities": [
             "Ambush: Each player must [keyword:Soulbind a Strange's Demon Villain] or discard a card.",
             "Escape: Demonbound Doctor Strange ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Repeat his Ambush effect.“"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Demon Champion of Hydra",
@@ -1967,7 +2003,8 @@
           "abilities": [
             "Ambush: [keyword:Cross-Dimensional Demon Rampage] Then each player must [keyword:Soulbind a Strange's Demon Villain].",
             "Escape: Demon Champion of Hydra ascends to become a [rule:new Mastermind]. It gains the ability “Master Strike: Repeat its Ambush effect.“"
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

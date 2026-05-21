@@ -559,7 +559,9 @@
       "id": 29,
       "name": "Arnim Zola",
       "slug": "arnim-zola",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "zolas-creations"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -620,7 +622,9 @@
       "id": 30,
       "name": "Baron Heinrich Zemo",
       "slug": "baron-heinrich-zemo",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "masters-of-evil-wwii"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -683,7 +687,9 @@
       "id": 40,
       "name": "Zola's Creations",
       "slug": "zolas-creations",
-      "ledBy": [],
+      "ledBy": [
+        "arnim-zola"
+      ],
       "cards": [
         {
           "name": "Captain Zolandia",
@@ -694,7 +700,8 @@
           "abilities": [
             "[keyword:Abomination]",
             "Fight: You get +1[icon:recruit] for each Hero Class you have."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Doughboy",
@@ -705,7 +712,8 @@
           "abilities": [
             "[keyword:Abomination]",
             "Fight: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Man-Fish",
@@ -717,7 +725,8 @@
             "[keyword:Abomination]",
             "Fight: If you fought Man-Fish in the Sewers or Bridge, then each other player gains a Wound.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Primus",
@@ -728,7 +737,8 @@
           "abilities": [
             "To fight Primus, you must also discard a card that costs 2, 3, 5, or 7.",
             "Escape: each player discards a Hero that costs 2, 3, 5, or 7."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -736,7 +746,9 @@
       "id": 41,
       "name": "Masters of Evil (WWII)",
       "slug": "masters-of-evil-wwii",
-      "ledBy": [],
+      "ledBy": [
+        "baron-heinrich-zemo"
+      ],
       "cards": [
         {
           "name": "Black Knight",
@@ -747,7 +759,8 @@
           "abilities": [
             "Ambush: Black Knight captures a Bystander.",
             "Fight: [keyword:Savior]: KO one of your Heroes."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Executioner",
@@ -759,7 +772,8 @@
             "Ambush: Executioner captures a Bystander.",
             "Fight: [keyword:Savior]: Draw a card.",
             "Escape: KO a Bystander from each player's Victory Pile."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Melter (WWII)",
@@ -770,7 +784,8 @@
           "abilities": [
             "Ambush: Melter captures a Bystander.",
             "Fight: [keyword:Savior]: Each player reveals the top card of their deck. For each card, you choose to KO it or put it back."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Radioactive Man",
@@ -782,7 +797,8 @@
             "Ambush: Radioactive Man captures a Bystander.",
             "Fight: Each player who is not a [keyword:Savior] gains a Wound.",
             "Escape: Same effect."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }

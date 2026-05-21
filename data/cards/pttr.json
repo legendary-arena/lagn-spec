@@ -563,7 +563,9 @@
       "id": 12,
       "name": "Carnage",
       "slug": "carnage",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "maximum-carnage"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -626,7 +628,9 @@
       "id": 13,
       "name": "Mysterio",
       "slug": "mysterio",
-      "alwaysLeads": [],
+      "alwaysLeads": [
+        "sinister-six"
+      ],
       "vp": 6,
       "cards": [
         {
@@ -688,7 +692,9 @@
       "id": 16,
       "name": "Maximum Carnage",
       "slug": "maximum-carnage",
-      "ledBy": [],
+      "ledBy": [
+        "carnage"
+      ],
       "cards": [
         {
           "name": "Carrion",
@@ -699,7 +705,8 @@
           "abilities": [
             "[keyword:Feast]",
             "Whenever Carrion feasts on a Hero that costs 1[icon:vp] or more, put Carrion back in the city space where he was."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Demogoblin",
@@ -710,7 +717,8 @@
           "abilities": [
             "Ambush: Demogoblin captures a Bystander.",
             "[keyword:Feast]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Doppelganger",
@@ -721,7 +729,8 @@
           "abilities": [
             "Doppelganger's [icon:attack] is equal to the [icon:vp] of the Hero in the HQ space under him.",
             "[keyword:Feast]"
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shriek",
@@ -733,7 +742,8 @@
             "[keyword:Feast]",
             "When Shriek feasts on a 0-cost Hero, each other player gains a Wound.",
             "Escape: Each player gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     },
@@ -741,7 +751,9 @@
       "id": 17,
       "name": "Sinister Six",
       "slug": "sinister-six",
-      "ledBy": [],
+      "ledBy": [
+        "mysterio"
+      ],
       "cards": [
         {
           "name": "Chameleon",
@@ -751,7 +763,8 @@
           "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-chameleon.webp",
           "abilities": [
             "Fight: Copy the effects of the Hero in the HQ space under Chameleon, including its [icon:recruit] and [icon:attack]."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Hobgoblin",
@@ -761,7 +774,8 @@
           "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-hobgoblin.webp",
           "abilities": [
             "Ambush: Each Sinister Six Villain captures a Bystander."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Kraven the Hunter",
@@ -772,7 +786,8 @@
           "abilities": [
             "Kraven's [icon:attack] is equal to the [icon:vp] of the highest-cost Hero in the HQ.",
             "Escape: (After you do the normal escape KO) KO a Hero from the HQ with the highest cost."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Sandman",
@@ -783,7 +798,8 @@
           "abilities": [
             "Sandman's [icon:attack] is twice the number of Villains in the city.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Shocker",
@@ -793,7 +809,8 @@
           "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-sinister-six-shocker.webp",
           "abilities": [
             "Ambush: Each player reveals an [hc:instinct] Hero or discards a card."
-          ]
+          ],
+          "copies": 2
         },
         {
           "name": "Vulture",
@@ -804,7 +821,8 @@
           "abilities": [
             "Ambush: (After Vulture enters the city) If there is a Villain on the Rooftops or Bridge, swap Vulture with one of those Villains.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
-          ]
+          ],
+          "copies": 2
         }
       ]
     }
