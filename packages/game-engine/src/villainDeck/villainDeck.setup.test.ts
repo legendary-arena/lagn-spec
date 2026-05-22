@@ -1,9 +1,9 @@
 /**
- * Villain deck composition tests for WP-014B.
+ * Villain deck composition tests for WP-014B + WP-168.
  *
- * Verifies that buildVillainDeck correctly resolves cards from the registry,
- * generates virtual card instances, classifies all cards, and produces a
- * deterministically shuffled deck.
+ * Verifies that buildVillainDeck instances villain copies, generates virtual
+ * henchman/scheme-twist/bystander cards, adds generic Master Strikes,
+ * classifies all cards, and produces a deterministically shuffled deck.
  *
  * Uses node:test and node:assert only. Uses makeMockCtx. No boardgame.io
  * imports. Mock registry satisfies VillainDeckRegistryReader structurally.
@@ -14,7 +14,9 @@ import assert from 'node:assert/strict';
 import { buildVillainDeck } from './villainDeck.setup.js';
 import type { VillainDeckRegistryReader, VillainDeckFlatCard } from './villainDeck.setup.js';
 import { REVEALED_CARD_TYPES } from './villainDeck.types.js';
+import type { RevealedCardType } from './villainDeck.types.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
+import type { BuildVillainDeckResult } from './villainDeck.setup.js';
 import { makeMockCtx } from '../test/mockCtx.js';
 
 // ---------------------------------------------------------------------------
@@ -118,6 +120,84 @@ function createTestConfig(): MatchSetupConfig {
     officersCount: 5,
     sidekicksCount: 5,
   };
+}
+
+/**
+ * Creates a mock registry mirroring the "watch bot play" core.json loadout:
+ * Brotherhood (4 villains, each `copies: 2`), Hand Ninjas henchmen, Magneto
+ * mastermind, and Midtown Bank Robbery (twist=8, bystander=12).
+ */
+function createMidtownMockRegistry(): VillainDeckRegistryReader {
+  const setAbbr = 'core';
+
+  const coreSetData = {
+    abbr: setAbbr,
+    henchmen: [
+      { id: 1, slug: 'hand-ninjas', name: 'Hand Ninjas', imageUrl: 'https://example.com/hn.webp', abilities: [] },
+    ],
+    masterminds: [
+      {
+        id: 1, slug: 'magneto', name: 'Magneto', alwaysLeads: ['brotherhood'], vp: 12,
+        cards: [
+          { name: 'Magneto', slug: 'magneto', vAttack: 11, imageUrl: 'https://example.com/mag.webp', abilities: [] },
+          { name: 'Tactic A', slug: 'tactic-a', tactic: true, vAttack: 7, imageUrl: 'https://example.com/ta.webp', abilities: [] },
+        ],
+      },
+    ],
+    villains: [
+      {
+        id: 1, slug: 'brotherhood', name: 'Brotherhood', ledBy: ['magneto'],
+        cards: [
+          { name: 'Blob', slug: 'blob', copies: 2, vp: 3, vAttack: 6, imageUrl: 'https://example.com/blob.webp', abilities: [] },
+          { name: 'Juggernaut', slug: 'juggernaut', copies: 2, vp: 3, vAttack: 7, imageUrl: 'https://example.com/jug.webp', abilities: [] },
+          { name: 'Mystique', slug: 'mystique', copies: 2, vp: 3, vAttack: 5, imageUrl: 'https://example.com/mys.webp', abilities: [] },
+          { name: 'Quicksilver', slug: 'quicksilver', copies: 2, vp: 3, vAttack: 6, imageUrl: 'https://example.com/qs.webp', abilities: [] },
+        ],
+      },
+    ],
+    schemes: [
+      {
+        id: 1, slug: 'midtown-bank-robbery', name: 'Midtown Bank Robbery',
+        villainDeckTwistCount: 8, villainDeckBystanderCount: 12,
+        imageUrl: 'https://example.com/midtown.webp', cards: [],
+      },
+    ],
+    heroes: [],
+    bystanders: [],
+    wounds: [],
+    other: [],
+  };
+
+  return {
+    listCards: () => [],
+    listSets: () => [{ abbr: setAbbr }],
+    getSet: (abbr: string) => (abbr === setAbbr ? coreSetData : undefined),
+  };
+}
+
+/**
+ * Creates the Midtown Bank Robbery / Magneto / Brotherhood / Hand Ninjas
+ * loadout config for the golden composition test.
+ */
+function createMidtownConfig(): MatchSetupConfig {
+  return {
+    schemeId: 'core/midtown-bank-robbery',
+    mastermindId: 'core/magneto',
+    villainGroupIds: ['core/brotherhood'],
+    henchmanGroupIds: ['core/hand-ninjas'],
+    heroDeckIds: ['core/spider-man'],
+    bystandersCount: 5,
+    woundsCount: 5,
+    officersCount: 5,
+    sidekicksCount: 5,
+  };
+}
+
+/**
+ * Counts deck entries classified as the given RevealedCardType.
+ */
+function countByType(result: BuildVillainDeckResult, cardType: RevealedCardType): number {
+  return result.state.deck.filter((id) => result.cardTypes[id] === cardType).length;
 }
 
 // ---------------------------------------------------------------------------
@@ -300,7 +380,33 @@ describe('buildVillainDeck', () => {
     }
   });
 
-  it('mastermind strikes: only non-tactic cards included', () => {
+  it('villain copies: cards with no copies field yield exactly one instance', () => {
+    const registry = createMockRegistry();
+    const config = createTestConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const result = buildVillainDeck(config, registry, context);
+
+    // test-group-alpha has card-a and card-b, neither declaring `copies`.
+    const villainCards = result.state.deck.filter((id) =>
+      result.cardTypes[id] === 'villain',
+    );
+    assert.equal(
+      villainCards.length,
+      2,
+      'Two villain cards with no copies field must yield exactly two instances',
+    );
+    assert.ok(
+      result.state.deck.includes('test-villain-test-group-alpha-card-a-00'),
+      'Deck must contain the zero-based copy-0 instance of card-a',
+    );
+    assert.ok(
+      !result.state.deck.includes('test-villain-test-group-alpha-card-a-01'),
+      'A card with no copies field must not produce a copy-1 instance',
+    );
+  });
+
+  it('Master Strikes: exactly MASTER_STRIKE_COUNT generic master-strike-{NN} cards', () => {
     const registry = createMockRegistry();
     const config = createTestConfig();
     const context = makeMockCtx({ numPlayers: 2 });
@@ -310,32 +416,132 @@ describe('buildVillainDeck', () => {
     const strikeCards = result.state.deck.filter((id) =>
       result.cardTypes[id] === 'mastermind-strike',
     );
-
-    // Test mastermind has 2 non-tactic cards (main: tactic=false, epic: tactic=undefined)
-    // and 2 tactic cards (tactic=true)
     assert.equal(
       strikeCards.length,
-      2,
-      'Must have exactly 2 mastermind strike cards (non-tactic only)',
+      5,
+      'Must have exactly 5 generic Master Strikes',
     );
 
-    // Verify tactic cards are excluded
-    const tacticInDeck = result.state.deck.some(
-      (id) => id.includes('tactic-one') || id.includes('tactic-two'),
+    // Verify ext_id format: master-strike-{00..04}, zero-based.
+    for (let i = 0; i < 5; i++) {
+      const paddedIndex = String(i).padStart(2, '0');
+      const expectedId = `master-strike-${paddedIndex}`;
+      assert.ok(
+        result.state.deck.includes(expectedId),
+        `Deck must contain "${expectedId}"`,
+      );
+      assert.equal(
+        result.cardTypes[expectedId],
+        'mastermind-strike',
+        `"${expectedId}" must be classified as mastermind-strike`,
+      );
+    }
+  });
+
+  it('no mastermind card appears in the deck (D-16801)', () => {
+    const registry = createMockRegistry();
+    const config = createTestConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const result = buildVillainDeck(config, registry, context);
+
+    // The removed branch would have pushed {setAbbr}-mastermind-{slug}-... cards.
+    const mastermindCard = result.state.deck.find((id) =>
+      id.startsWith('test-mastermind-'),
     );
-    assert.ok(
-      !tacticInDeck,
-      'Tactic cards must NOT appear in the villain deck',
+    assert.equal(
+      mastermindCard,
+      undefined,
+      'No {setAbbr}-mastermind-... card may appear in the villain deck',
     );
 
-    // Verify ext_id format: {setAbbr}-mastermind-{mastermindSlug}-{cardSlug}
-    assert.ok(
-      result.state.deck.includes('test-mastermind-test-mm-main'),
-      'Deck must contain the main mastermind strike card',
+    // Every 'mastermind-strike'-typed entry must be a generic Master Strike;
+    // this proves the removed mastermind-card branch cannot reappear under the
+    // same type via a different ext_id.
+    for (const id of result.state.deck) {
+      if (result.cardTypes[id] === 'mastermind-strike') {
+        assert.ok(
+          id.startsWith('master-strike-'),
+          `mastermind-strike entry "${id}" must have a master-strike- prefix`,
+        );
+      }
+    }
+  });
+
+  it('twist fallback: a scheme with no villainDeckTwistCount yields 8 twists', () => {
+    // test-scheme declares no villainDeckTwistCount, so the SCHEME_TWIST_COUNT
+    // default (8) applies.
+    const registry = createMockRegistry();
+    const config = createTestConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const result = buildVillainDeck(config, registry, context);
+
+    assert.equal(
+      countByType(result, 'scheme-twist'),
+      8,
+      'Absent villainDeckTwistCount must fall back to 8 twists',
     );
-    assert.ok(
-      result.state.deck.includes('test-mastermind-test-mm-epic'),
-      'Deck must contain the epic mastermind strike card',
+  });
+
+  it('bystander fallback: a scheme with no villainDeckBystanderCount yields numPlayers bystanders', () => {
+    // test-scheme declares no villainDeckBystanderCount, so the count falls
+    // back to numPlayers.
+    const registry = createMockRegistry();
+    const config = createTestConfig();
+    const context = makeMockCtx({ numPlayers: 4 });
+
+    const result = buildVillainDeck(config, registry, context);
+
+    assert.equal(
+      countByType(result, 'bystander'),
+      4,
+      'Absent villainDeckBystanderCount must fall back to numPlayers',
+    );
+  });
+
+  it('golden composition (Midtown loadout): exact per-type counts and total', () => {
+    // why: this golden test locks the per-type counts and the whole-deck total
+    // for the watch-bot-play loadout. A failure here means a replay-breaking
+    // change to villain-deck composition.
+    const registry = createMidtownMockRegistry();
+    const config = createMidtownConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const result = buildVillainDeck(config, registry, context);
+
+    assert.equal(countByType(result, 'scheme-twist'), 8, 'scheme-twist count');
+    assert.equal(countByType(result, 'bystander'), 12, 'bystander count');
+    assert.equal(countByType(result, 'mastermind-strike'), 5, 'master-strike count');
+    assert.equal(countByType(result, 'henchman'), 10, 'henchman count');
+    // Brotherhood: 4 villains × copies: 2 = 8 instances.
+    assert.equal(countByType(result, 'villain'), 8, 'villain count (4 × copies:2)');
+    assert.equal(result.state.deck.length, 43, 'total deck size must be 43');
+  });
+
+  it('determinism: two builds with an identical mock ctx produce identical decks', () => {
+    const config = createMidtownConfig();
+
+    const first = buildVillainDeck(
+      config,
+      createMidtownMockRegistry(),
+      makeMockCtx({ numPlayers: 2 }),
+    );
+    const second = buildVillainDeck(
+      config,
+      createMidtownMockRegistry(),
+      makeMockCtx({ numPlayers: 2 }),
+    );
+
+    assert.deepStrictEqual(
+      second.state.deck,
+      first.state.deck,
+      'Identical setup + identical seed must produce identical decks',
+    );
+    assert.deepStrictEqual(
+      second.cardTypes,
+      first.cardTypes,
+      'Identical setup + identical seed must produce identical cardTypes',
     );
   });
 

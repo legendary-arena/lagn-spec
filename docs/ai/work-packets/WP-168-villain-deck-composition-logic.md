@@ -321,6 +321,28 @@ other existing cases stay green. Add `node:test` cases (keep existing cases gree
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — check off WP-168.
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — flip EC-186 to Done.
 
+**Dependency-driven cascade re-baselines (allowlist amended at execution, 2026-05-22):**
+
+The villain-deck composition change is replay-affecting by design (see §Vision
+Alignment §22). Two pre-existing replay regression guards pin the *old*
+composition and therefore must be re-baselined as a strict cascade of this WP's
+change. Both were absent from the original allowlist; added at execution time
+with operator approval (the change reverts cleanly by undoing the composition
+change, in the spirit of `01.5-runtime-wiring-allowance.md`):
+
+- `packages/game-engine/src/replay/replay.execute.test.ts` — **modified** —
+  value-only update of the `PRE_WP080_HASH` byte-identity literal
+  (`6228d103` → `35fbe2fc`). The empty mock registry now yields the 5
+  data-independent generic Master Strikes, changing `G.villainDeck.deck`
+  contents and the JSON-encoded state hash. No logic change to the test.
+- `packages/game-engine/src/test/fixtures/games/sentinel-core-doom-2p.replay.json`
+  — **modified** — regenerated via `scripts/record-game-fixture.mjs` (meta
+  block unchanged; only the `expected` block re-recorded). The replay now
+  reveals generic Master Strikes that increment `masterStrikeCount`
+  (`outcome.counters: {} → {masterStrikeCount: 2}`) and the
+  `finalStateHash` / per-turn snapshots shift accordingly — the correct new
+  behavior under D-16801.
+
 No other files may be modified.
 
 ---

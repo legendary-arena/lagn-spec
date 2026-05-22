@@ -11,7 +11,8 @@
  * `<setAbbr>/<slug>` strings. Builders parse the qualified form, then
  * iterate ONLY the named set's data — no cross-set fallback exists.
  *
- * No @legendary-arena/registry imports. No .reduce(). Setup-time only.
+ * No @legendary-arena/registry imports. No array-reduce in deck assembly
+ * (00.6 Rule 7). Setup-time only.
  */
 
 import type { CardExtId } from '../state/zones.types.js';
@@ -52,26 +53,35 @@ interface HenchmanGroupEntry {
 }
 
 /**
- * Minimal structural type for a mastermind card entry in SetData.
+ * Minimal structural type for a single villain card within a group.
+ *
+ * `copies` (WP-167 / D-16701) is the number of identical copies of this
+ * card in the villain deck; absent means a single instance.
  */
-interface MastermindCardEntry {
+interface VillainCardEntry {
   slug: string;
-  tactic?: boolean;
+  copies?: number;
 }
 
 /**
- * Minimal structural type for a mastermind entry in SetData.
+ * Minimal structural type for a villain group entry in SetData.
  */
-interface MastermindEntry {
+interface VillainGroupEntry {
   slug: string;
-  cards: MastermindCardEntry[];
+  cards: VillainCardEntry[];
 }
 
 /**
  * Minimal structural type for a scheme entry in SetData.
+ *
+ * `villainDeckTwistCount` / `villainDeckBystanderCount` (WP-167) drive the
+ * scheme-twist and villain-deck-bystander counts; absent means the engine
+ * default applies (see SCHEME_TWIST_COUNT and context.ctx.numPlayers).
  */
 interface SchemeEntry {
   slug: string;
+  villainDeckTwistCount?: number;
+  villainDeckBystanderCount?: number;
 }
 
 /**
@@ -81,7 +91,7 @@ interface SchemeEntry {
 interface SetDataSubset {
   abbr: string;
   henchmen: unknown[];
-  masterminds: MastermindEntry[];
+  villains: VillainGroupEntry[];
   schemes: SchemeEntry[];
 }
 
@@ -110,10 +120,16 @@ export interface VillainDeckRegistryReader {
 /** Number of identical copies per henchman group in the villain deck. */
 const HENCHMAN_COPIES_PER_GROUP = 10;
 
-/** Number of scheme twist cards added to the villain deck. */
+/** Default scheme twist count when the scheme omits villainDeckTwistCount. */
 const SCHEME_TWIST_COUNT = 8;
 
-// Bystander count = context.ctx.numPlayers (derived, not a constant)
+// why: standard Marvel Legendary core rule — exactly 5 generic Master Strikes
+// are shuffled into the villain deck (D-16801). This is a rule invariant, not
+// a tuning knob, and carries no mastermind identity.
+/** Number of generic Master Strikes added to the villain deck. */
+const MASTER_STRIKE_COUNT = 5;
+
+// Bystander count = scheme villainDeckBystanderCount, else context.ctx.numPlayers
 
 // ---------------------------------------------------------------------------
 // buildVillainDeck
@@ -132,9 +148,9 @@ export interface BuildVillainDeckResult {
 /**
  * Builds the villain deck from registry data at setup time.
  *
- * Resolves villain cards, generates virtual henchman/scheme-twist/bystander
- * instances, filters mastermind strike cards, shuffles the combined deck,
- * and returns the deck state with type classifications.
+ * Instances villain copies, generates virtual henchman/scheme-twist/bystander
+ * cards, adds generic Master Strikes, sorts lexically, shuffles the combined
+ * deck, and returns the deck state with type classifications.
  *
  * @param config - The match setup config providing entity IDs.
  * @param registry - Setup-time registry reader. Accepts unknown to support
@@ -143,8 +159,6 @@ export interface BuildVillainDeckResult {
  *   listCards), returns an empty deck gracefully.
  * @param context - Setup context providing numPlayers and random.Shuffle.
  * @returns The villain deck state and card type classifications.
- * @throws {Error} If required registry data is missing or malformed when the
- *   registry DOES satisfy VillainDeckRegistryReader.
  */
 export function buildVillainDeck(
   config: MatchSetupConfig,
@@ -161,37 +175,35 @@ export function buildVillainDeck(
   const deck: CardExtId[] = [];
   const cardTypes: Record<CardExtId, RevealedCardType> = {};
 
-  // --- 1. Villain cards (from listCards — FlatCard.key is the canonical ext_id) ---
-  // why: config.villainGroupIds values match SetData.villains[].slug. FlatCard
-  // keys encode this as {setAbbr}-villain-{groupSlug}-{cardSlug}. We use
-  // listCards() because FlatCard.key is already the canonical ext_id format.
-  const allFlatCards = registry.listCards();
-  const villainFlatCards = filterFlatCardsByType(allFlatCards, 'villain');
-
+  // --- 1. Villain cards (from getSet — copies live in per-set card data) ---
   // why: D-10014 — Builder Filtering Order — iterate named set only.
-  // Each villainGroupIds entry is `<setAbbr>/<groupSlug>`. We parse the
-  // qualified form, filter villain cards to that setAbbr first, then match
-  // by groupSlug within that set's cards only. No cross-set fallback.
+  // Each villainGroupIds entry is `<setAbbr>/<groupSlug>`. We resolve the
+  // group through getSet(setAbbr) (not listCards) because the FlatCard key
+  // carries no copy count; copies live on the per-set villain card data.
   //
   // Soft-skip on missing data per the validator-is-authoritative model:
-  // when validateMatchSetup passes, the data IS present; when tests
-  // bypass the validator with empty mocks, the builder produces an
-  // empty deck (defense-in-depth). The validator emits format and
-  // existence errors with full remediation guidance; the builder
-  // never duplicates that responsibility.
+  // when validateMatchSetup passes, the data IS present; when tests bypass
+  // the validator with empty mocks, the builder produces an empty deck
+  // (defense-in-depth). The validator emits format and existence errors with
+  // full remediation guidance; the builder never duplicates that.
   for (const villainGroupId of config.villainGroupIds) {
     const parsed = parseQualifiedId(villainGroupId);
     if (parsed === null) continue;
-    const groupCards = filterVillainCardsByGroupSlug(
-      villainFlatCards,
-      parsed.setAbbr,
-      parsed.slug,
-    );
+    const groupCards = findVillainGroupCards(registry, parsed.setAbbr, parsed.slug);
+    if (groupCards === null) continue;
 
     for (const card of groupCards) {
-      const extId = card.key as CardExtId;
-      deck.push(extId);
-      cardTypes[extId] = 'villain';
+      if (typeof card.slug !== 'string') continue;
+      const copyCount = readVillainCopyCount(card);
+      // why: each copy is a distinct virtual instance with its own ext_id so
+      // copies move independently and escapes/KOs stay attributable in replays
+      // (D-16802, mirroring the henchman instancing rationale in D-1410).
+      for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+        const paddedIndex = String(copyIndex).padStart(2, '0');
+        const extId = `${parsed.setAbbr}-villain-${parsed.slug}-${card.slug}-${paddedIndex}` as CardExtId;
+        deck.push(extId);
+        cardTypes[extId] = 'villain';
+      }
     }
   }
 
@@ -214,19 +226,25 @@ export function buildVillainDeck(
     }
   }
 
-  // --- 3. Scheme twist virtual cards ---
+  // Resolve the scheme once; sections 3 and 4 read its counts.
   // why: D-10014 — Builder Filtering Order — iterate named set only.
   // Soft-skip on missing data per the validator-is-authoritative model.
   const parsedScheme = parseQualifiedId(config.schemeId);
-  const schemeSlug =
+  const scheme =
     parsedScheme === null
       ? null
-      : findSchemeSlug(registry, parsedScheme.setAbbr, parsedScheme.slug);
+      : findSchemeInSet(registry, parsedScheme.setAbbr, parsedScheme.slug);
 
-  if (schemeSlug !== null) {
-    for (let twistIndex = 0; twistIndex < SCHEME_TWIST_COUNT; twistIndex++) {
+  // --- 3. Scheme twist virtual cards ---
+  if (scheme !== null) {
+    // why: the twist count comes from the scheme's villainDeckTwistCount; the
+    // SCHEME_TWIST_COUNT default applies only when the scheme omits the field.
+    const twistFromScheme = readSchemeTwistCount(scheme);
+    const twistCount = twistFromScheme === null ? SCHEME_TWIST_COUNT : twistFromScheme;
+
+    for (let twistIndex = 0; twistIndex < twistCount; twistIndex++) {
       const paddedIndex = String(twistIndex).padStart(2, '0');
-      const extId = `scheme-twist-${schemeSlug}-${paddedIndex}` as CardExtId;
+      const extId = `scheme-twist-${scheme.slug}-${paddedIndex}` as CardExtId;
       deck.push(extId);
       cardTypes[extId] = 'scheme-twist';
     }
@@ -235,9 +253,13 @@ export function buildVillainDeck(
   // --- 4. Bystander virtual cards ---
   // why: bystander-villain-deck-{index} format chosen for consistency with
   // henchman and scheme twist patterns. Enables replay targeting of individual
-  // bystander reveal events. Count = 1 per player (D-1412). This is separate
-  // from config.bystandersCount which sizes the bystander pile (supply).
-  const bystanderCount = context.ctx.numPlayers;
+  // bystander reveal events. The count comes from the scheme's
+  // villainDeckBystanderCount; the numPlayers default applies only when the
+  // scheme omits the field (or no scheme resolved). This is separate from
+  // config.bystandersCount which sizes the bystander pile (supply).
+  const bystanderFromScheme = scheme === null ? null : readSchemeBystanderCount(scheme);
+  const bystanderCount =
+    bystanderFromScheme === null ? context.ctx.numPlayers : bystanderFromScheme;
 
   for (let bystanderIndex = 0; bystanderIndex < bystanderCount; bystanderIndex++) {
     const paddedIndex = String(bystanderIndex).padStart(2, '0');
@@ -246,25 +268,17 @@ export function buildVillainDeck(
     cardTypes[extId] = 'bystander';
   }
 
-  // --- 5. Mastermind strike cards (from getSet — need tactic field) ---
-  // why: D-10014 — Builder Filtering Order — iterate named set only.
-  // config.mastermindId is `<setAbbr>/<mastermindSlug>`; tactic !== true
-  // identifies strikes (registry schema contract D-1413). FlatCard.cardType
-  // is "mastermind" for all mastermind cards — the strike vs tactic
-  // distinction comes from the tactic boolean field in the per-set data.
-  // Soft-skip on missing data per the validator-is-authoritative model.
-  const parsedMastermind = parseQualifiedId(config.mastermindId);
-  const mastermindResult =
-    parsedMastermind === null
-      ? null
-      : findMastermindStrikes(registry, parsedMastermind.setAbbr, parsedMastermind.slug);
-
-  if (mastermindResult !== null) {
-    for (const strike of mastermindResult.strikes) {
-      const extId = `${mastermindResult.setAbbr}-mastermind-${mastermindResult.mastermindSlug}-${strike.cardSlug}` as CardExtId;
-      deck.push(extId);
-      cardTypes[extId] = 'mastermind-strike';
-    }
+  // --- 5. Master Strikes (generic virtual instanced cards) ---
+  // why: the villain deck contains MASTER_STRIKE_COUNT generic Master Strikes
+  // (D-16801). They carry no mastermind identity in their ext_id; the
+  // mastermind's own cards are no longer added to the villain deck. Index is
+  // zero-based and zero-padded to two digits, matching the henchman / twist /
+  // bystander instancing grammar so every instanced ext_id shares one form.
+  for (let strikeIndex = 0; strikeIndex < MASTER_STRIKE_COUNT; strikeIndex++) {
+    const paddedIndex = String(strikeIndex).padStart(2, '0');
+    const extId = `master-strike-${paddedIndex}` as CardExtId;
+    deck.push(extId);
+    cardTypes[extId] = 'mastermind-strike';
   }
 
   // --- 6. Sort lexically for deterministic pre-shuffle ordering ---
@@ -274,8 +288,8 @@ export function buildVillainDeck(
   const sortedDeck = [...deck].sort();
 
   // --- 7. Shuffle ---
-  // why: ctx.random.Shuffle provides deterministic shuffling seeded by
-  // boardgame.io's PRNG, ensuring replay reproducibility.
+  // why: ctx.random.Shuffle provides deterministic shuffling seeded by the
+  // framework PRNG via context.random, ensuring replay reproducibility.
   const shuffledDeck = shuffleDeck(sortedDeck, context);
 
   return {
@@ -340,46 +354,43 @@ function parseQualifiedId(input: string): { setAbbr: string; slug: string } | nu
 }
 
 /**
- * Filters flat cards to only those with the given cardType.
+ * Finds the villain cards for one group within the named set's villains[].
+ *
+ * Returns null if the named set is not loaded or the group slug is not
+ * present in it — no cross-set fallback exists. The validator emits
+ * actionable errors upfront; this helper soft-skips so test paths bypassing
+ * the validator can produce empty decks rather than throwing.
  */
-function filterFlatCardsByType(
-  cards: VillainDeckFlatCard[],
-  cardType: string,
-): VillainDeckFlatCard[] {
-  const result: VillainDeckFlatCard[] = [];
-  for (const card of cards) {
-    if (card.cardType === cardType) {
-      result.push(card);
-    }
+// why: D-10014 — Builder Filtering Order — iterate named set only.
+function findVillainGroupCards(
+  registry: VillainDeckRegistryReader,
+  setAbbr: string,
+  villainGroupSlug: string,
+): VillainCardEntry[] | null {
+  const setData = registry.getSet(setAbbr) as SetDataSubset | undefined;
+  if (!setData || !Array.isArray(setData.villains)) return null;
+
+  for (const group of setData.villains) {
+    if (typeof group.slug !== 'string') continue;
+    if (group.slug !== villainGroupSlug) continue;
+    if (!Array.isArray(group.cards)) return null;
+    return group.cards;
   }
-  return result;
+
+  return null;
 }
 
 /**
- * Filters villain flat cards by setAbbr first, then by group slug.
- *
- * Per WP-113 D-10014 Builder Filtering Order: parse `<setAbbr>/<slug>` →
- * filter cards by `setAbbr` first → match by `<slug>` within that set's
- * cards only. Builders that match across all sets are in violation of the
- * determinism contract (hero slugs and others collide across sets).
+ * Reads a villain card's copy count, defaulting to 1 when absent.
  */
-// why: D-10014 — Builder Filtering Order — iterate named set only.
-function filterVillainCardsByGroupSlug(
-  villainCards: VillainDeckFlatCard[],
-  targetSetAbbr: string,
-  targetGroupSlug: string,
-): VillainDeckFlatCard[] {
-  const result: VillainDeckFlatCard[] = [];
-
-  for (const card of villainCards) {
-    if (card.setAbbr !== targetSetAbbr) continue;
-    const groupSlug = extractVillainGroupSlug(card);
-    if (groupSlug === targetGroupSlug) {
-      result.push(card);
-    }
+// why: a villain card with no `copies` field is a single-instance card
+// (D-16802 / D-16701 default). Returning 1 keeps the section-1 loop uniform
+// whether or not the card declares a copy count.
+function readVillainCopyCount(card: VillainCardEntry): number {
+  if (typeof card.copies === 'number' && card.copies >= 1) {
+    return card.copies;
   }
-
-  return result;
+  return 1;
 }
 
 /**
@@ -461,24 +472,25 @@ function findHenchmanGroupSlug(
 }
 
 /**
- * Finds a scheme slug within the named set's schemes[].
+ * Finds a scheme entry within the named set's schemes[].
  *
  * Returns null if the named set is not loaded or the slug is not present
- * in it — no cross-set fallback exists.
+ * in it — no cross-set fallback exists. The returned entry carries the
+ * optional villainDeckTwistCount / villainDeckBystanderCount counts.
  */
 // why: D-10014 — Builder Filtering Order — iterate named set only.
-function findSchemeSlug(
+function findSchemeInSet(
   registry: VillainDeckRegistryReader,
   setAbbr: string,
   schemeSlug: string,
-): string | null {
+): SchemeEntry | null {
   const setData = registry.getSet(setAbbr) as SetDataSubset | undefined;
   if (!setData || !Array.isArray(setData.schemes)) return null;
 
   for (const scheme of setData.schemes) {
     if (typeof scheme.slug !== 'string') continue;
     if (scheme.slug === schemeSlug) {
-      return scheme.slug;
+      return scheme;
     }
   }
 
@@ -486,43 +498,23 @@ function findSchemeSlug(
 }
 
 /**
- * Finds mastermind strike cards (tactic !== true) within the named set's
- * masterminds[].
- *
- * Returns null if the named set is not loaded or the mastermind slug is
- * not present in it — no cross-set fallback exists.
+ * Reads a scheme's villainDeckTwistCount, returning null when absent so the
+ * caller applies the SCHEME_TWIST_COUNT default.
  */
-// why: D-10014 — Builder Filtering Order — iterate named set only.
-function findMastermindStrikes(
-  registry: VillainDeckRegistryReader,
-  setAbbr: string,
-  mastermindSlug: string,
-): { setAbbr: string; mastermindSlug: string; strikes: Array<{ cardSlug: string }> } | null {
-  const setData = registry.getSet(setAbbr) as SetDataSubset | undefined;
-  if (!setData || !Array.isArray(setData.masterminds)) return null;
-
-  for (const mastermind of setData.masterminds) {
-    if (typeof mastermind.slug !== 'string') continue;
-    if (mastermind.slug !== mastermindSlug) continue;
-    if (!Array.isArray(mastermind.cards)) return null;
-
-    const strikes: Array<{ cardSlug: string }> = [];
-
-    for (const card of mastermind.cards) {
-      // why: tactic !== true identifies strikes; this is a registry schema
-      // contract (D-1413), not a heuristic.
-      if (card.tactic !== true) {
-        if (typeof card.slug !== 'string') continue;
-        strikes.push({ cardSlug: card.slug });
-      }
-    }
-
-    return {
-      setAbbr,
-      mastermindSlug: mastermind.slug,
-      strikes,
-    };
+function readSchemeTwistCount(scheme: SchemeEntry): number | null {
+  if (typeof scheme.villainDeckTwistCount === 'number') {
+    return scheme.villainDeckTwistCount;
   }
+  return null;
+}
 
+/**
+ * Reads a scheme's villainDeckBystanderCount, returning null when absent so
+ * the caller falls back to context.ctx.numPlayers.
+ */
+function readSchemeBystanderCount(scheme: SchemeEntry): number | null {
+  if (typeof scheme.villainDeckBystanderCount === 'number') {
+    return scheme.villainDeckBystanderCount;
+  }
   return null;
 }

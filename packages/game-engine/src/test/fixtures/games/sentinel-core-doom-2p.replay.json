@@ -1,21 +1,25 @@
 {
   "expected": {
-    "finalStateHash": "e248d2e5658b42fdb10af76a1fb2a50681b02ef89a2ec3c6a203135c8f121881",
+    "finalStateHash": "925cd7a2b598ceb81d15e1963231c0d4cec15633836886c2f45fb5cd6bbdc2e4",
     "messages": [
-      "Bystander \"bystander-villain-deck-01\" revealed and captured by \"core/dr-doom\".",
-      "Bystander \"bystander-villain-deck-00\" revealed and captured by \"core/dr-doom\"."
+      "Mastermind strike revealed — strike count incremented.",
+      "Mastermind strike revealed — strike count incremented."
     ],
     "outcome": {
-      "counters": {},
+      "counters": {
+        "masterStrikeCount": 2
+      },
       "winner": null
     },
     "snapshotPerTurn": [
       {
         "activePlayer": "1",
-        "counters": {},
+        "counters": {
+          "masterStrikeCount": 1
+        },
         "matchId": "sentinel-core-doom-2p",
         "messages": [
-          "Bystander \"bystander-villain-deck-01\" revealed and captured by \"core/dr-doom\"."
+          "Mastermind strike revealed — strike count incremented."
         ],
         "phase": "play",
         "players": [
@@ -41,11 +45,13 @@
       },
       {
         "activePlayer": "0",
-        "counters": {},
+        "counters": {
+          "masterStrikeCount": 2
+        },
         "matchId": "sentinel-core-doom-2p",
         "messages": [
-          "Bystander \"bystander-villain-deck-01\" revealed and captured by \"core/dr-doom\".",
-          "Bystander \"bystander-villain-deck-00\" revealed and captured by \"core/dr-doom\"."
+          "Mastermind strike revealed — strike count incremented.",
+          "Mastermind strike revealed — strike count incremented."
         ],
         "phase": "play",
         "players": [

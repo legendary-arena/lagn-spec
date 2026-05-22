@@ -44,6 +44,10 @@
 - `packages/game-engine/src/villainDeck/villainDeck.setup.ts` — **modified** — copies instancing, scheme-driven counts, generic Master Strikes, remove mastermind-card branch
 - `packages/game-engine/src/villainDeck/villainDeck.setup.test.ts` — **modified** — golden + fallback + determinism cases
 
+**Dependency-driven cascade re-baselines (allowlist amended at execution 2026-05-22, operator-approved):** the composition change is replay-affecting by design, so two pre-existing replay regression guards must be re-baselined:
+- `packages/game-engine/src/replay/replay.execute.test.ts` — **modified** — value-only `PRE_WP080_HASH` update (`6228d103` → `35fbe2fc`); the empty mock registry now yields the 5 data-independent generic Master Strikes. No logic change.
+- `packages/game-engine/src/test/fixtures/games/sentinel-core-doom-2p.replay.json` — **modified** — regenerated via `scripts/record-game-fixture.mjs` (meta unchanged; `expected` block re-recorded). `outcome.counters` `{} → {masterStrikeCount: 2}` is the correct new behavior under D-16801.
+
 ## After Completing
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0

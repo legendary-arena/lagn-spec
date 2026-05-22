@@ -17916,8 +17916,8 @@ and its tactics live remains governed elsewhere (D-1413's inverse / tactics-deck
 scope).
 
 **Introduced:** WP-168 (SPEC).
-**Status:** Accepted (SPEC — drafted alongside WP-168; effective on WP-168
-execution). Supersedes the villain-deck inclusion rule in D-1413.
+**Status:** Effective (WP-168 executed 2026-05-22). Supersedes the villain-deck
+inclusion rule in D-1413.
 
 ---
 
@@ -17944,8 +17944,7 @@ that UI follow-up (arena-client / registry-viewer) is tracked separately and is
 not part of WP-168.
 
 **Introduced:** WP-168 (SPEC).
-**Status:** Accepted (SPEC — drafted alongside WP-168; effective on WP-168
-execution).
+**Status:** Effective (WP-168 executed 2026-05-22).
 
 ---
 

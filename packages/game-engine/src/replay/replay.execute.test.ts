@@ -60,7 +60,14 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // initialized as [] changes the JSON-encoded structure hash.
 // why: adding cardStats entries for starting-shield-agent and
 // starting-shield-trooper changed the initial state hash (01.5 cascade).
-const PRE_WP080_HASH = '6228d103';
+// why: WP-168 / EC-186 — value-only update. buildVillainDeck now always adds
+// MASTER_STRIKE_COUNT (5) generic master-strike-{NN} cards (D-16801), which
+// are data-independent and therefore present even for this empty mock
+// registry, changing G.villainDeck.deck contents and the JSON-encoded state
+// hash. Dependency-driven cascade (revert by undoing the WP-168 composition
+// change with no remaining diff); no logic change to this test. Pre-edit
+// hash: '6228d103'. Post-edit hash: '35fbe2fc'.
+const PRE_WP080_HASH = '35fbe2fc';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.
