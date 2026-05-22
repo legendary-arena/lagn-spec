@@ -1599,7 +1599,7 @@ if (auditWarnings.length > 0) {
 }
 
 // why: regenerated JSONs are local-only until pushed to R2. The registry
-// loader in production reads from R2 (https://images.barefootbetters.com/
+// loader in production reads from R2 (https://images.legendary-arena.com/
 // metadata/<set>.json), so a conversion that doesn't sync leaves prod
 // unchanged. Print the canonical sync command so the operator doesn't
 // have to remember the path mapping (data/cards/ → r2:legendary-images/metadata).

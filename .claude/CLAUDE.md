@@ -37,7 +37,7 @@ pnpm test             # run all tests
 ## External Data
 
 - Card JSON data: `C:\Users\jjensen\bbcode\modern-master-strike\src\data\cards\` (40 sets)
-- Card images hosted at: `https://images.barefootbetters.com/`
+- Card images hosted at: `https://images.legendary-arena.com/`
 - Image URLs use hyphens, not underscores
 
 ## Documentation
