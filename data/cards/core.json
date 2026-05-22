@@ -1957,7 +1957,7 @@
             "Fight: KO all your [team:shield] Heroes.",
             "Escape: Each player KOs two of their Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Enchantress",
@@ -1980,7 +1980,7 @@
             "Fight: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Ymir, Frost Giant King",
@@ -2013,7 +2013,7 @@
           "abilities": [
             "Fight: Play the top two cards of the Villain Deck."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "HYDRA Kidnappers",
@@ -2024,7 +2024,7 @@
           "abilities": [
             "Fight: You may gain a S.H.I.E.L.D. Officer."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Supreme HYDRA",
@@ -2035,7 +2035,7 @@
           "abilities": [
             "Supreme HYDRA is worth +3[icon:piercing] for each other HYDRA Villain in your Victory Pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Viper",
@@ -2047,7 +2047,7 @@
             "Fight: Each player without another HYDRA Villain in their Victory Pile gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -2174,7 +2174,7 @@
           "abilities": [
             "Fight: Choose a Hero in the HQ for each player. Each player gains that Hero."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Skrull Queen Veranke",
@@ -2186,7 +2186,7 @@
             "Ambush: Put the highest-cost Hero from the HQ under this Villain. This Villain's [icon:attack] is equal to that Hero's [icon:vp].",
             "Fight: Gain that Hero."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Skrull Shapeshifters",
@@ -2198,7 +2198,7 @@
             "Ambush: Put the rightmost Hero from the HQ under this Villain. This Villain's [icon:attack] is equal to that Hero's [icon:vp].",
             "Fight: Gain that Hero"
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Super-Skrull",
@@ -2209,7 +2209,7 @@
           "abilities": [
             "Fight: Each player KOs one of their Heroes."
           ],
-          "copies": 2
+          "copies": 3
         }
       ]
     },
@@ -2262,7 +2262,7 @@
             "You can't defeat Venom unless you have a [hc:covert] Hero.",
             "Escape: Each player gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

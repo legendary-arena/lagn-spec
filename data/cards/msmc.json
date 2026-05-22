@@ -1212,7 +1212,7 @@
             "Ambush: [keyword:Prey] on the most [hc:ranged]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:ranged] Hero. If they can't, they discard any non-grey Hero instead."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Predator X (Tech)",
@@ -1224,7 +1224,7 @@
             "Ambush: [keyword:Prey] on the most [hc:tech]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:tech] Hero. If they can't, they discard any non-grey Hero instead."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Predator X (Covert)",
@@ -1236,7 +1236,7 @@
             "Ambush: [keyword:Prey] on the most [hc:covert]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:covert] Hero. If they can't, they discard any non-grey Hero instead."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Predator X (Instinct)",
@@ -1248,7 +1248,7 @@
             "Ambush: [keyword:Prey] on the most [hc:instinct]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:instinct] Hero. If they can't, they discard any non-grey Hero instead."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Predator X (Strength)",
@@ -1260,7 +1260,7 @@
             "Ambush: [keyword:Prey] on the most [hc:strength]. [keyword:Clone].",
             "[keyword:Finish the Prey]: That player discards a [hc:strength] Hero. If they can't, they discard any non-grey Hero instead."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Leper Queen",
@@ -1273,7 +1273,7 @@
             "[keyword:Finish the Prey]: That player gains a Wound and KOs two Bystanders from their Victory Pile.",
             "Fight: Shuffle two cards from the Bystander Stack into the Villain Deck."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Reverend William Stryker",
@@ -1286,7 +1286,7 @@
             "[keyword:Finish the Prey]: KO the captured [rule:Sidekicks].",
             "Fight: Gain the captured [rule:Sidekicks]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Cameron Hodge",
@@ -1299,7 +1299,7 @@
             "[keyword:Finish the Prey]: KO the captured Hero.",
             "Fight: Choose a player to gain the captured Hero."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },

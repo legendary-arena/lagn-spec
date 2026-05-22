@@ -8,10 +8,10 @@
       "thor-2099": 2
     },
     "alchemax-enforcers": {
-      "cyber-nostra": 2,
+      "cyber-nostra": 3,
       "whackoid": 2,
       "venture": 2,
-      "jigsaw-2099": 2
+      "jigsaw-2099": 1
     }
   },
   "amwp": {
@@ -19,46 +19,46 @@
       "hydra-arms-dealer": 2,
       "cross-security-detail": 2,
       "shrinksperiments": 2,
-      "yellowjacket-prototype": 2,
-      "take-over-pym-technologies": 2
+      "yellowjacket-prototype": 1,
+      "take-over-pym-technologies": 1
     },
     "ghost-chasers": {
-      "sonny-burchs-goons": 2,
-      "anitolov": 2,
-      "corrupted-government-agents": 2,
-      "uzman-with-truth-serum": 2,
-      "sonny-burch": 2,
-      "dr-bill-foster": 2,
-      "goliath": 2,
-      "high-speed-car-chase": 2
+      "sonny-burchs-goons": 1,
+      "anitolov": 1,
+      "corrupted-government-agents": 1,
+      "uzman-with-truth-serum": 1,
+      "sonny-burch": 1,
+      "dr-bill-foster": 1,
+      "goliath": 1,
+      "high-speed-car-chase": 1
     },
     "armada-of-kang": {
-      "quantumnaut-elite": 2,
-      "troop-ships-of-kang": 2,
-      "city-defense-system": 2,
-      "lord-krylars-yacht": 2,
-      "energy-shield": 2,
-      "pursuit-craft": 2,
-      "m-o-d-o-k": 2,
-      "build-a-conquering-army": 2
+      "quantumnaut-elite": 1,
+      "troop-ships-of-kang": 1,
+      "city-defense-system": 1,
+      "lord-krylars-yacht": 1,
+      "energy-shield": 1,
+      "pursuit-craft": 1,
+      "m-o-d-o-k": 1,
+      "build-a-conquering-army": 1
     },
     "quantum-realm": {
-      "axian-bartender": 2,
-      "axiam-maitre-d": 2,
-      "lord-krylars-valet": 2,
-      "sky-manta": 2,
-      "lord-krylars-appetizer": 2,
-      "hungering-energy": 2,
-      "quantumoeba": 2,
-      "quantumania": 2
+      "axian-bartender": 1,
+      "axiam-maitre-d": 1,
+      "lord-krylars-valet": 1,
+      "sky-manta": 1,
+      "lord-krylars-appetizer": 1,
+      "hungering-energy": 1,
+      "quantumoeba": 1,
+      "quantumania": 1
     }
   },
   "anni": {
     "annihilation-wave": {
       "annihilation-armada": 2,
-      "queens-of-annihilation": 2,
+      "queens-of-annihilation": 3,
       "ravenous": 2,
-      "weaponized-galactus": 2
+      "weaponized-galactus": 1
     },
     "timelines-of-kang": {
       "immortus": 2,
@@ -69,41 +69,41 @@
   },
   "antm": {
     "ultrons-legacy": {
-      "ultron-roboticks": 2,
-      "original-ultron-1": 2,
-      "legions-of-ultron": 2,
-      "alkhema": 2,
-      "ultron-pym": 2,
-      "future-ultron-prime": 2,
-      "brutish-ultron-14": 2,
-      "crimson-cowl": 2
+      "ultron-roboticks": 1,
+      "original-ultron-1": 1,
+      "legions-of-ultron": 1,
+      "alkhema": 1,
+      "ultron-pym": 1,
+      "future-ultron-prime": 1,
+      "brutish-ultron-14": 1,
+      "crimson-cowl": 1
     },
     "queens-vengeance": {
-      "daystar": 2,
-      "blackbird": 2,
-      "gigantus": 2,
-      "iron-knight": 2,
-      "yeoman-america": 2,
-      "star-knight": 2,
-      "pixie": 2,
-      "mordred-the-evil": 2
+      "daystar": 1,
+      "blackbird": 1,
+      "gigantus": 1,
+      "iron-knight": 1,
+      "yeoman-america": 1,
+      "star-knight": 1,
+      "pixie": 1,
+      "mordred-the-evil": 1
     }
   },
   "asrd": {
     "dark-council": {
-      "laufey-father-of-loki": 2,
-      "the-mangog": 2,
+      "laufey-father-of-loki": 1,
+      "the-mangog": 1,
       "ulik-the-troll": 2,
       "sindr-fire-giant-queen": 2,
-      "jarnbjorn-first-axe-of-thor": 2,
-      "the-casket-of-ancient-winters": 2
+      "jarnbjorn-first-axe-of-thor": 1,
+      "the-casket-of-ancient-winters": 1
     },
     "omens-of-ragnarok": {
-      "the-eternal-flame": 2,
-      "the-hel-crown": 2,
+      "the-eternal-flame": 1,
+      "the-hel-crown": 1,
       "skurge-the-executioner": 2,
-      "surtur-fire-giant-king": 2,
-      "jormungand-the-world-serpent": 2,
+      "surtur-fire-giant-king": 1,
+      "jormungand-the-world-serpent": 1,
       "the-fenris-wolf": 2
     }
   },
@@ -118,8 +118,8 @@
       "nightshade": 2,
       "jakarra": 2,
       "tetu": 2,
-      "zenzi": 2,
-      "reverend-achebe": 2
+      "zenzi": 1,
+      "reverend-achebe": 1
     }
   },
   "bkwd": {
@@ -152,14 +152,14 @@
   },
   "chmp": {
     "monsters-unleashed": {
-      "goom": 2,
-      "groot-from-planet-x": 2,
-      "monsteroso": 2,
-      "orrgo": 2,
-      "sporr": 2,
-      "tim-boo-ba": 2,
-      "trull-the-unhuman": 2,
-      "zzutak": 2
+      "goom": 1,
+      "groot-from-planet-x": 1,
+      "monsteroso": 1,
+      "orrgo": 1,
+      "sporr": 1,
+      "tim-boo-ba": 1,
+      "trull-the-unhuman": 1,
+      "zzutak": 1
     },
     "wrecking-crew": {
       "bulldozer": 2,
@@ -176,16 +176,16 @@
       "sabretooth": 2
     },
     "enemies-of-asgard": {
-      "destroyer": 2,
+      "destroyer": 1,
       "enchantress": 2,
-      "frost-giant": 2,
+      "frost-giant": 3,
       "ymir-frost-giant-king": 2
     },
     "hydra": {
-      "endless-armies-of-hydra": 2,
-      "hydra-kidnappers": 2,
-      "supreme-hydra": 2,
-      "viper": 2
+      "endless-armies-of-hydra": 3,
+      "hydra-kidnappers": 3,
+      "supreme-hydra": 1,
+      "viper": 1
     },
     "masters-of-evil": {
       "baron-zemo": 2,
@@ -200,16 +200,16 @@
       "zzzax": 2
     },
     "skrulls": {
-      "paibok-the-power-skrull": 2,
-      "skrull-queen-veranke": 2,
-      "skrull-shapeshifters": 2,
-      "super-skrull": 2
+      "paibok-the-power-skrull": 1,
+      "skrull-queen-veranke": 1,
+      "skrull-shapeshifters": 3,
+      "super-skrull": 3
     },
     "spider-foes": {
       "doctor-octopus": 2,
       "green-goblin": 2,
       "the-lizard": 2,
-      "venom": 2
+      "venom": 1
     }
   },
   "cosm": {
@@ -223,21 +223,21 @@
       "nezarr-the-calculator": 2,
       "gammenon-the-gatherer": 2,
       "exitar-the-exterminator": 2,
-      "arishem-the-judge": 2,
-      "tiamut-the-dreaming-celestial": 2
+      "arishem-the-judge": 1,
+      "tiamut-the-dreaming-celestial": 1
     },
     "from-beyond": {
-      "the-mapmakers": 2,
+      "the-mapmakers": 3,
       "the-shaper-of-worlds": 2,
       "kubik": 2,
-      "kosmos": 2
+      "kosmos": 1
     },
     "black-order-of-thanos": {
       "corvus-glaive": 2,
       "black-dwarf": 2,
       "supergiant": 2,
-      "proxima-midnight": 2,
-      "ebony-maw": 2
+      "proxima-midnight": 1,
+      "ebony-maw": 1
     }
   },
   "cvwr": {
@@ -347,20 +347,20 @@
       "mindless-ones": 2,
       "baron-mordo": 2,
       "satana-hellstrom": 2,
-      "satannish": 2,
-      "umar": 2
+      "satannish": 1,
+      "umar": 1
     }
   },
   "fear": {
     "mighty-the": {
-      "black-widow": 2,
-      "dr-strange": 2,
-      "hawkeye": 2,
-      "iron-fist": 2,
-      "ms-marvel": 2,
-      "red-she-hulk": 2,
-      "spider-man": 2,
-      "wolverine": 2
+      "black-widow": 1,
+      "dr-strange": 1,
+      "hawkeye": 1,
+      "iron-fist": 1,
+      "ms-marvel": 1,
+      "red-she-hulk": 1,
+      "spider-man": 1,
+      "wolverine": 1
     }
   },
   "ff04": {
@@ -379,80 +379,80 @@
   },
   "gotg": {
     "kree-starforce": {
-      "captain-atlas": 2,
-      "demon-druid": 2,
-      "dr-minerva": 2,
-      "korath-the-pursuer": 2,
-      "ronan-the-accuser": 2,
-      "shatterax": 2,
+      "captain-atlas": 1,
+      "demon-druid": 1,
+      "dr-minerva": 1,
+      "korath-the-pursuer": 1,
+      "ronan-the-accuser": 1,
+      "shatterax": 1,
       "supremor": 2
     },
     "infinity-gems": {
-      "mind-gem": 2,
-      "power-gem": 2,
+      "mind-gem": 1,
+      "power-gem": 1,
       "reality-gem": 2,
-      "soul-gem": 2,
+      "soul-gem": 1,
       "space-gem": 2,
-      "time-gem": 2
+      "time-gem": 1
     }
   },
   "mdns": {
     "lilin": {
       "meatmarket": 2,
       "outcast": 2,
-      "sister-nil": 2,
+      "sister-nil": 1,
       "skinner": 2,
-      "blackout": 2
+      "blackout": 1
     },
     "fallen": {
       "metarchus": 2,
       "atrocity": 2,
-      "patriarch": 2,
-      "salom-sorceress-supreme": 2
+      "patriarch": 3,
+      "salom-sorceress-supreme": 1
     }
   },
   "mgtg": {
     "followers-of-ronan": {
-      "exolon-attendants": 2,
-      "exolon-monks": 2,
-      "sakaaran-mercenaries": 2,
-      "korath-the-pursuer": 2,
-      "nebula": 2,
-      "koraths-disrupter-rifle": 2,
-      "the-dark-aster-flagship": 2,
-      "the-orb": 2
+      "exolon-attendants": 1,
+      "exolon-monks": 1,
+      "sakaaran-mercenaries": 1,
+      "korath-the-pursuer": 1,
+      "nebula": 1,
+      "koraths-disrupter-rifle": 1,
+      "the-dark-aster-flagship": 1,
+      "the-orb": 1
     },
     "ravagers": {
-      "gef": 2,
-      "tullk": 2,
-      "kraglin-obfonteri": 2,
-      "taserface": 2,
-      "yondu-udonta": 2,
-      "scavenged-blade": 2,
-      "ravager-starship-eclector": 2,
-      "yaka-arrow": 2
+      "gef": 1,
+      "tullk": 1,
+      "kraglin-obfonteri": 1,
+      "taserface": 1,
+      "yondu-udonta": 1,
+      "scavenged-blade": 1,
+      "ravager-starship-eclector": 1,
+      "yaka-arrow": 1
     }
   },
   "msis": {
     "children-of-thanos": {
-      "endless-armies-of-chitauri": 2,
-      "outriders": 2,
-      "outrider-dropships": 2,
-      "outrider-threshers": 2,
-      "cull-obsidian": 2,
-      "corvus-glaive": 2,
-      "chitauri-gorilla": 2,
-      "proxima-midnight": 2
+      "endless-armies-of-chitauri": 1,
+      "outriders": 1,
+      "outrider-dropships": 1,
+      "outrider-threshers": 1,
+      "cull-obsidian": 1,
+      "corvus-glaive": 1,
+      "chitauri-gorilla": 1,
+      "proxima-midnight": 1
     },
     "infinity-stones": {
-      "the-power-stone": 2,
-      "the-space-stone": 2,
-      "the-reality-stone": 2,
-      "the-time-stone": 2,
-      "the-soul-stone": 2,
-      "the-mind-stone": 2,
-      "nebula-stone-seeker": 2,
-      "stonekeeper": 2
+      "the-power-stone": 1,
+      "the-space-stone": 1,
+      "the-reality-stone": 1,
+      "the-time-stone": 1,
+      "the-soul-stone": 1,
+      "the-mind-stone": 1,
+      "nebula-stone-seeker": 1,
+      "stonekeeper": 1
     }
   },
   "msmc": {
@@ -463,14 +463,14 @@
       "pretty-boy": 2
     },
     "purifiers": {
-      "predator-x-ranged": 2,
-      "predator-x-tech": 2,
-      "predator-x-covert": 2,
-      "predator-x-instinct": 2,
-      "predator-x-strength": 2,
-      "leper-queen": 2,
-      "reverend-william-stryker": 2,
-      "cameron-hodge": 2
+      "predator-x-ranged": 1,
+      "predator-x-tech": 1,
+      "predator-x-covert": 1,
+      "predator-x-instinct": 1,
+      "predator-x-strength": 1,
+      "leper-queen": 1,
+      "reverend-william-stryker": 1,
+      "cameron-hodge": 1
     },
     "acolytes": {
       "unuscione": 2,
@@ -505,10 +505,10 @@
       "laufey-frost-giant-king": 2
     },
     "hydra": {
-      "endless-armies-of-hydra": 2,
-      "hydra-motorcycle-squad": 2,
-      "arnim-zola": 2,
-      "hydra-tank": 2
+      "endless-armies-of-hydra": 3,
+      "hydra-motorcycle-squad": 3,
+      "arnim-zola": 1,
+      "hydra-tank": 1
     },
     "iron-foes": {
       "hammer-drone-marine": 2,
@@ -521,36 +521,36 @@
     "demons-of-limbo": {
       "crotus": 2,
       "nastirh": 2,
-      "sym": 2,
-      "demon-bear": 2,
+      "sym": 1,
+      "demon-bear": 1,
       "witchfire": 2
     },
     "hellions": {
-      "catseye": 2,
+      "catseye": 1,
       "thunderbird": 2,
-      "tarot": 2,
-      "roulette": 2,
-      "empath": 2,
-      "jetstream": 2
+      "tarot": 1,
+      "roulette": 1,
+      "empath": 1,
+      "jetstream": 1
     }
   },
   "noir": {
     "goblins-freak-show": {
       "vulture-carnival-cannibal": 2,
       "the-chameleon": 2,
-      "kraven-animal-trainer": 2,
-      "ox": 2,
-      "montana": 2,
-      "fancy-dan": 2
+      "kraven-animal-trainer": 1,
+      "ox": 1,
+      "montana": 1,
+      "fancy-dan": 1
     },
     "x-men-noir": {
-      "bobby-iceman-drake": 2,
+      "bobby-iceman-drake": 1,
       "comrade-rasputin-steel-wall": 2,
-      "henry-beast-mccoy": 2,
-      "jean-grey-noir": 2,
-      "scott-cyclops-summers": 2,
-      "warden-emma-frost": 2,
-      "ororo-munroe-storm-tossed": 2
+      "henry-beast-mccoy": 1,
+      "jean-grey-noir": 1,
+      "scott-cyclops-summers": 1,
+      "warden-emma-frost": 1,
+      "ororo-munroe-storm-tossed": 1
     }
   },
   "pttr": {
@@ -561,10 +561,10 @@
       "shriek": 2
     },
     "sinister-six": {
-      "chameleon": 2,
-      "hobgoblin": 2,
-      "kraven-the-hunter": 2,
-      "sandman": 2,
+      "chameleon": 1,
+      "hobgoblin": 1,
+      "kraven-the-hunter": 1,
+      "sandman": 1,
       "shocker": 2,
       "vulture": 2
     }
@@ -587,36 +587,36 @@
     "army-of-evil": {
       "mister-hyde": 2,
       "klaw": 2,
-      "dome-of-darkforce": 2,
-      "count-nefaria": 2,
+      "dome-of-darkforce": 1,
+      "count-nefaria": 1,
       "blackout": 2
     },
     "dark-avengers": {
-      "ares": 2,
-      "captain-marvel-noh-varr": 2,
-      "dark-hawkeye-bullseye": 2,
-      "dark-ms-marvel-moonnstone": 2,
-      "dark-spider-man-scorpion": 2,
-      "dark-wolverine-daken": 2,
-      "sentry": 2,
-      "sentrys-watchtower": 2
+      "ares": 1,
+      "captain-marvel-noh-varr": 1,
+      "dark-hawkeye-bullseye": 1,
+      "dark-ms-marvel-moonnstone": 1,
+      "dark-spider-man-scorpion": 1,
+      "dark-wolverine-daken": 1,
+      "sentry": 1,
+      "sentrys-watchtower": 1
     },
     "hoods-gang": {
       "cancer": 2,
       "chemistro": 2,
       "madam-masque": 2,
-      "the-brothers-grimm": 2,
-      "the-dark-dimension": 2
+      "the-brothers-grimm": 1,
+      "the-dark-dimension": 1
     },
     "lethal-legion": {
-      "carnival-of-wonders": 2,
-      "laser-maze": 2,
-      "living-laser": 2,
-      "mbaku": 2,
-      "power-man-erik-josten": 2,
-      "swordsman": 2,
-      "the-raft-prison": 2,
-      "white-gorilla-cult": 2
+      "carnival-of-wonders": 1,
+      "laser-maze": 1,
+      "living-laser": 1,
+      "mbaku": 1,
+      "power-man-erik-josten": 1,
+      "swordsman": 1,
+      "the-raft-prison": 1,
+      "white-gorilla-cult": 1
     }
   },
   "shld": {
@@ -649,18 +649,18 @@
   },
   "ssw1": {
     "deadlands-the": {
-      "zombie-baron-zemo": 2,
-      "zombie-loki": 2,
-      "zombie-madame-hydra": 2,
-      "zombie-mr-sinister": 2,
-      "zombie-m-o-d-o-k": 2,
-      "zombie-mysterio": 2,
-      "zombie-thanos": 2,
-      "zombie-venom": 2
+      "zombie-baron-zemo": 1,
+      "zombie-loki": 1,
+      "zombie-madame-hydra": 1,
+      "zombie-mr-sinister": 1,
+      "zombie-m-o-d-o-k": 1,
+      "zombie-mysterio": 1,
+      "zombie-thanos": 1,
+      "zombie-venom": 1
     },
     "domain-of-apocalypse": {
-      "apocalyptic-blink": 2,
-      "apocalyptic-magneto": 2,
+      "apocalyptic-blink": 3,
+      "apocalyptic-magneto": 1,
       "apocalyptic-rogue": 2,
       "apocalyptic-weapon-x": 2
     },
@@ -683,23 +683,23 @@
       "wolverine-of-future-past": 2
     },
     "wasteland": {
-      "the-hulk-gang": 2,
-      "wasteland-kingpin": 2,
+      "the-hulk-gang": 3,
+      "wasteland-kingpin": 1,
       "wasteland-hawkeye": 2,
       "wasteland-spider-girl": 2
     }
   },
   "ssw2": {
     "deadpools-secret-secret-wars": {
-      "deadpool": 2,
+      "deadpool": 1,
       "doop": 2,
       "howard-the-duck": 2,
-      "pink-sphinx": 2
+      "pink-sphinx": 3
     },
     "guardians-of-knowhere": {
-      "angela": 2,
+      "angela": 1,
       "drax-the-destroyer": 2,
-      "gamora": 2,
+      "gamora": 1,
       "groot": 2,
       "rocket-raccoon": 2
     },
@@ -716,25 +716,25 @@
       "marcus-symbiote-centaur": 2
     },
     "utopolis": {
-      "doctor-spectrum": 2,
+      "doctor-spectrum": 3,
       "nighthawk": 2,
-      "warrior-woman": 2,
+      "warrior-woman": 1,
       "whizzer": 2
     },
     "x-men-92": {
       "92-beast": 2,
-      "92-jubilee": 2,
-      "92-professor-x": 2,
+      "92-jubilee": 3,
+      "92-professor-x": 1,
       "92-wolverine": 2
     }
   },
   "vill": {
     "avengers": {
       "ant-man": 2,
-      "captain-america": 2,
-      "hulk": 2,
-      "iron-man": 2,
-      "thor": 2,
+      "captain-america": 1,
+      "hulk": 1,
+      "iron-man": 1,
+      "thor": 1,
       "wasp": 2
     },
     "defenders": {
@@ -770,113 +770,113 @@
     "x-men-first-class": {
       "angel": 2,
       "iceman": 2,
-      "jean-grey": 2,
+      "jean-grey": 1,
       "beast": 2,
-      "cyclops": 2
+      "cyclops": 1
     }
   },
   "vnom": {
     "life-foundation": {
-      "agony": 2,
-      "dr-carlton-drake": 2,
+      "agony": 1,
+      "dr-carlton-drake": 1,
       "lasher": 2,
-      "phage": 2,
+      "phage": 1,
       "riot": 2,
-      "scream": 2
+      "scream": 1
     },
     "poisons": {
-      "poison-captain-america": 2,
-      "poison-dr-octopus": 2,
-      "poison-hulk": 2,
-      "poison-sabretooth": 2,
-      "poison-scarlet-witch": 2,
-      "poison-spider-man": 2,
-      "poison-storm": 2,
-      "symbiotic-armor": 2
+      "poison-captain-america": 1,
+      "poison-dr-octopus": 1,
+      "poison-hulk": 1,
+      "poison-sabretooth": 1,
+      "poison-scarlet-witch": 1,
+      "poison-spider-man": 1,
+      "poison-storm": 1,
+      "symbiotic-armor": 1
     }
   },
   "wpnx": {
     "berserkers": {
-      "cyber": 2,
-      "feral": 2,
+      "cyber": 1,
+      "feral": 3,
       "thornn": 2,
       "wild-child": 2
     },
     "weapon-plus": {
-      "daken": 2,
-      "huntsman-weapon-xii": 2,
+      "daken": 1,
+      "huntsman-weapon-xii": 1,
       "nuke-weapon-vii": 2,
-      "skinless-man-weapon-iii": 2,
+      "skinless-man-weapon-iii": 1,
       "typhoid-mary-weapon-ix": 2,
-      "ultimaton-weapon-xv": 2
+      "ultimaton-weapon-xv": 1
     }
   },
   "wtif": {
     "intergalactic-party-animals": {
-      "captain-marvel-end-of-the-party": 2,
-      "frigga-mother-of-thor": 2,
-      "party-korg": 2,
-      "party-nebula": 2,
-      "party-kraglin": 2,
-      "party-korath": 2,
-      "party-skrull": 2,
-      "party-surtur": 2
+      "captain-marvel-end-of-the-party": 1,
+      "frigga-mother-of-thor": 1,
+      "party-korg": 1,
+      "party-nebula": 1,
+      "party-kraglin": 1,
+      "party-korath": 1,
+      "party-skrull": 1,
+      "party-surtur": 1
     },
     "rival-overlords": {
-      "thanos": 2,
-      "dormammu": 2,
-      "ego": 2,
-      "loki": 2,
-      "red-skull-hydra-occultist": 2,
-      "yondu": 2,
-      "arnim-zola-hydra-scientist": 2,
-      "ulysses-klaue": 2
+      "thanos": 1,
+      "dormammu": 1,
+      "ego": 1,
+      "loki": 1,
+      "red-skull-hydra-occultist": 1,
+      "yondu": 1,
+      "arnim-zola-hydra-scientist": 1,
+      "ulysses-klaue": 1
     },
     "black-order-guards": {
-      "cull-obsidian": 2,
+      "cull-obsidian": 3,
       "corvus-glaive": 2,
       "proxima-midnight": 2,
-      "ebony-maw": 2
+      "ebony-maw": 1
     },
     "zombie-avengers": {
       "zombie-wong": 2,
       "zombie-hawkeye": 2,
-      "zombie-wasp": 2,
-      "zombie-doctor-strange": 2,
-      "zombie-iron-man": 2,
-      "zombie-captain-america": 2
+      "zombie-wasp": 1,
+      "zombie-doctor-strange": 1,
+      "zombie-iron-man": 1,
+      "zombie-captain-america": 1
     },
     "stranges-demons": {
       "wolf-demon": 2,
-      "moose-demon": 2,
-      "two-headed-ram-demon": 2,
-      "skull-demon": 2,
-      "demon-dragon": 2,
-      "demonbound-doctor-strange": 2,
-      "demon-champion-of-hydra": 2
+      "moose-demon": 1,
+      "two-headed-ram-demon": 1,
+      "skull-demon": 1,
+      "demon-dragon": 1,
+      "demonbound-doctor-strange": 1,
+      "demon-champion-of-hydra": 1
     }
   },
   "wwhk": {
     "aspects-of-the-void": {
       "black-anti-hurricane": 2,
-      "demonform": 2,
+      "demonform": 1,
       "infini-tendrils": 2,
-      "psychotic-break": 2,
+      "psychotic-break": 1,
       "shadow-man": 2
     },
     "code-red": {
-      "caught-red-handed": 2,
+      "caught-red-handed": 1,
       "crimson-dynamo": 2,
       "elektra-red-blades": 2,
-      "punisher-red-dot-sniper": 2,
-      "red-she-hulk": 2,
-      "thundra": 2
+      "punisher-red-dot-sniper": 1,
+      "red-she-hulk": 1,
+      "thundra": 1
     },
     "illuminati": {
       "black-bolt": 2,
       "dr-strange": 2,
-      "dr-strange-possessed-by-zom": 2,
-      "enchain-the-hulk": 2,
+      "dr-strange-possessed-by-zom": 1,
+      "enchain-the-hulk": 1,
       "hulkbuster-iron-man": 2
     },
     "intelligencia": {
@@ -887,75 +887,75 @@
     },
     "sakaar-imperial-guard": {
       "gladiators-colosseum": 2,
-      "great-devil-corker": 2,
+      "great-devil-corker": 1,
       "headman-charr": 2,
-      "lieutenant-caiera": 2,
+      "lieutenant-caiera": 1,
       "primus-vand": 2
     },
     "u-foes": {
-      "ironclad": 2,
+      "ironclad": 1,
       "vapor": 2,
       "vector": 2,
-      "unidentified-flying-u-foes": 2,
+      "unidentified-flying-u-foes": 1,
       "x-ray": 2
     },
     "warbound": {
-      "elloe-kaifi": 2,
-      "hiroim": 2,
-      "korg": 2,
+      "elloe-kaifi": 1,
+      "hiroim": 1,
+      "korg": 1,
       "miek-the-unhived": 2,
       "no-name-brood-queen": 2,
-      "warbound-rescue": 2
+      "warbound-rescue": 1
     }
   },
   "xmen": {
     "dark-descendants": {
       "fatale": 2,
       "havok-brainwashed": 2,
-      "nemesis": 2,
-      "psychic-subjugation": 2,
+      "nemesis": 1,
+      "psychic-subjugation": 1,
       "random": 2
     },
     "hellfire-club": {
       "corrupt-the-phoenix-force": 2,
       "emma-frost-white-queen": 2,
       "harry-leland-black-bishop": 2,
-      "mastermind-jason-wyngarde": 2,
+      "mastermind-jason-wyngarde": 1,
       "sebastian-shaw-black-king": 2
     },
     "mojoverse": {
-      "mindwarping-tv-broadcast": 2,
+      "mindwarping-tv-broadcast": 1,
       "minor-domo": 2,
       "major-domo": 2,
-      "spiral": 2,
+      "spiral": 1,
       "warwolves": 2
     },
     "murderworld": {
       "animatronic-killer-clowns": 2,
-      "guillotine-rollercoaster": 2,
+      "guillotine-rollercoaster": 1,
       "miss-locke": 2,
-      "monstrous-pinball-machine": 2,
+      "monstrous-pinball-machine": 1,
       "sulfuric-acid-water-slide": 2
     },
     "shadow-x": {
-      "betrayal-of-the-shadow": 2,
+      "betrayal-of-the-shadow": 1,
       "dark-angel": 2,
-      "dark-beast": 2,
-      "dark-cyclops": 2,
+      "dark-beast": 1,
+      "dark-cyclops": 1,
       "dark-iceman": 2,
-      "dark-marvel-girl": 2
+      "dark-marvel-girl": 1
     },
     "shiar-imperial-guard": {
       "blackthorn": 2,
-      "gladiator": 2,
+      "gladiator": 1,
       "oracle": 2,
-      "shiar-trial-by-combat": 2,
+      "shiar-trial-by-combat": 1,
       "smasher": 2
     },
     "sisterhood-of-mutants": {
       "lady-deathstrike": 2,
-      "lady-mastermind": 2,
-      "resurrect-madelyne-pryor": 2,
+      "lady-mastermind": 1,
+      "resurrect-madelyne-pryor": 1,
       "selene": 2,
       "typhoid-mary": 2
     }

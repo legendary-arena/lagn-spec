@@ -703,7 +703,7 @@
             "[keyword:Fail]: Each player discards a [hc:instinct] or [hc:tech] Hero or gains a Wound.",
             "Escape: Do the Fail effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Feral",
@@ -718,7 +718,7 @@
             "Escape: Each player discards a non-grey Hero.",
             "[hc:instinct]: [keyword:Berserk], [keyword:Berserk]"
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Thornn",
@@ -769,7 +769,7 @@
             "Fight: KO one of your Heroes.",
             "[keyword:Fail]: You gain a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Huntsman (Weapon XII)",
@@ -782,7 +782,7 @@
             "Ambush: Reveal the top 3 cards of the Hero Deck. Huntsman captures each that costs 4 or less. Put the rest on the bottom of the Hero Deck.",
             "Fight: If Huntsman has any captured Heroes, choose a player to gain one of them and return Huntsman to his city space with the rest of them. (Ignore his Ambush.)"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Nuke (Weapon VII)",
@@ -810,7 +810,7 @@
             "[keyword:Weapon X Sequence]",
             "Ambush: Skinless Man captures a Bystander of your choice from your Victory Pile. If you don't have one, gain a Wound and he captures one from the Bystander Deck."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Typhoid Mary (Weapon IX)",
@@ -842,7 +842,7 @@
             "Fight: Each player KOs one of their grey Heroes.",
             "Escape: Each player KOs one of their non-grey Heroes."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

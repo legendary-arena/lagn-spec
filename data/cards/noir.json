@@ -717,7 +717,7 @@
           "abilities": [
             "Ambush: For each Hero in the HQ that costs 7 or more, Kraven captures a [keyword:Hidden Witness]. Kraven's [icon:attack] is equal to the cost of the highest-cost card in the HQ."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Ox",
@@ -728,7 +728,7 @@
           "abilities": [
             "Ambush: Each other player reveals a [hc:strength] Hero or Ox captures a random Bystander from their Victory Pile as a [keyword:Hidden Witness]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Montana",
@@ -739,7 +739,7 @@
           "abilities": [
             "Ambush: Each Goblin's Freak Show Villain captures a [keyword:Hidden Witness]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Fancy Dan",
@@ -751,7 +751,7 @@
             "Ambush: Fancy Dan captures 3 [keyword:Hidden Witnesses].",
             "Fight: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -772,7 +772,7 @@
           "abilities": [
             "Fight: [keyword:Investigate] for a card with a [icon:recruit] icon."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Comrade Rasputin, Steel Wall",
@@ -794,7 +794,7 @@
           "abilities": [
             "Fight: [keyword:Investigate] for any card that's [hc:tech] or [hc:strength]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Jean Grey Noir",
@@ -805,7 +805,7 @@
           "abilities": [
             "Fight: When you draw a new hand of cards at the end of your turn, [keyword:Investigate] for an extra card."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Scott “Cyclops“ Summers",
@@ -816,7 +816,7 @@
           "abilities": [
             "Escape: Each player [keyword:Investigates] their deck for a card that costs 1 or more and KOs it. Players reveal the cards they [keyword:Investigated]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Warden Emma Frost",
@@ -827,7 +827,7 @@
           "abilities": [
             "Escape: [keyword:Investigate] the Villain Deck for a Scheme Twist and play it. Reveal all the cards you [keyword:Investigated]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Ororo Munroe, Storm-Tossed",
@@ -838,7 +838,7 @@
           "abilities": [
             "Fight: KO a Hero from the HQ. [keyword:Investigate] the Hero Deck for a card to put in that emptied HQ space."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

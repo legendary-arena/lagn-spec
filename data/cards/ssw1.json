@@ -1796,7 +1796,7 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: For each of your [team:avengers] Heroes, rescue a Bystander."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Zombie Loki",
@@ -1808,7 +1808,7 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Loki ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals a [hc:strength] Hero or gains a Wound.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Zombie Madame Hydra",
@@ -1820,7 +1820,7 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: KO one of your [team:shield] Heroes or [team:hydra] Allies."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Zombie Mr. Sinister",
@@ -1832,7 +1832,7 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Sinister ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Sinister captures a Bystander. Then, each player with exactly 6 cards reveals a [hc:covert] Hero or discards cards equal to the number of Bystanders Sinister has.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Zombie M.O.D.O.K.",
@@ -1844,7 +1844,7 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Fight: KO one of your heroes with a [icon:recruit] icon."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Zombie Mysterio",
@@ -1856,7 +1856,7 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Shuffle this card into the Mastermind's face-down Mastermind Tactics. It becomes a Mastermind Tactic that says “Fight: Draw two cards.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Zombie Thanos",
@@ -1868,7 +1868,7 @@
             "Ambush: [keyword:Rise of The Living Dead]",
             "Escape: Thanos ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals their hand and KOs one of their non-grey Heroes.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Zombie Venom",
@@ -1881,7 +1881,7 @@
             "You can't defeat Zombie Venom unless you have a [hc:covert] Hero.",
             "Escape: Each player gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1900,7 +1900,7 @@
           "abilities": [
             "Fight: Reveal the top card of your deck. Draw it or [keyword:Teleport] it."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Apocalyptic Magneto",
@@ -1912,7 +1912,7 @@
             "Fight: Gain an [team:x-men] Hero from the HQ for free.",
             "Escape: Magneto ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals an [team:x-men] Hero or discards down to 4 cards.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Apocalyptic Rogue",
@@ -2129,7 +2129,7 @@
             "Fight: [keyword:Cross-Dimensional Hulk Rampage]",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Wasteland Kingpin",
@@ -2141,7 +2141,7 @@
             "[keyword:Bribe]",
             "Escape: Kingpin ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals an [hc:instinct] Hero or discards their hand and draws 5 cards.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Wasteland Hawkeye",

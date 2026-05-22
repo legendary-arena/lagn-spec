@@ -1927,7 +1927,7 @@
             "Captain America gets +1[icon:attack] for each color of Ally in the Lair.",
             "Overrun: [keyword:Demolish] each player."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Hulk",
@@ -1940,7 +1940,7 @@
             "Fight: Same effect.",
             "Overrun: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Iron Man",
@@ -1953,7 +1953,7 @@
             "Fight: Same effect.",
             "Overrun: [keyword:Demolish] each player."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Thor",
@@ -1966,7 +1966,7 @@
             "Fight: Same effect.",
             "Overrun: [keyword:Demolish] each player."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Wasp",
@@ -2303,7 +2303,7 @@
             "Ambush: Jean Grey guards a Bystander for each Adversary in the city with X-Treme Attack (including Jean).",
             "Fight: You get +1[icon:recruit] for each Bystander you kidnapped this turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Beast",
@@ -2328,7 +2328,7 @@
             "To Fight Cyclops, you must also discard a card.",
             "Overrun: Each player reveals a [team:brotherhood] Ally or discards a card."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

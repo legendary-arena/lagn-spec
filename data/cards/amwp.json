@@ -1561,7 +1561,7 @@
             "Ambush: Each player reveals a [hc:instinct] Hero or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Take Over Pym Technologies",
@@ -1574,7 +1574,7 @@
             "Special Rules: Once per turn, you may pay 3[icon:recruit] or discard a card with [keyword:Size-Changing]. If you do, rescue a Pym Tech Scientist and draw a card. If you rescue the last Scientist, defeat this Scheme.",
             "Twist: This captures another Pym Tech Scientist. Then, if it has 3 or more Scientists, each player discards a card."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1595,7 +1595,7 @@
           "abilities": [
             "Fight: [keyword:Heist]: You get +2[icon:recruit]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Anitolov",
@@ -1606,7 +1606,7 @@
           "abilities": [
             "Fight: [keyword:Heist]: You may KO up to two of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Corrupted Government Agents",
@@ -1618,7 +1618,7 @@
             "Ambush: Corrupted Government Agents [keyword:Double-Cross] each player.",
             "Fight: You may look at the top three cards of any deck and put them back in any order."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Uzman, with Truth Serum",
@@ -1629,7 +1629,7 @@
           "abilities": [
             "Fight: Look at the top card of the Hero Deck and claim a Hero Class it has. Choose another player to guess “Truth“ or “Lie.“ If they guessed right, they either KO that Hero or choose a player to gain it. If they guessed wrong, you decide what to do with that Hero Instead. (In solo, you just decide.)"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sonny Burch",
@@ -1641,7 +1641,7 @@
             "Ambush: Sonny Burch [keyword:Double-Crosses] each player.",
             "Fight: [keyword:Heist]: You may choose a player to gain a [hc:tech] or [hc:ranged] Hero from the HQ."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dr. Bill Foster",
@@ -1653,7 +1653,7 @@
             "To fight Dr. Bill Foster, you must solve a math equation: Discard three cards such that the costs of two of them add up to the cost of the third. They can't all cost 0.",
             "Escape: Each player discards a card that costs 0."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Goliath",
@@ -1666,7 +1666,7 @@
             "Ambush: Goliath [keyword:Double-Crosses] each player.",
             "Fight: Goliath topples over, crushing another Villain. You may defeat a Villain that has 4[icon:attack] or less in an adjacent city space."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "High-Speed Car Chase",
@@ -1679,7 +1679,7 @@
             "Twist: If there is a Villain in the Streets: Add 2 Dangerous Stunts. Then if there are at least 5 Stunts, there is a “car crash“: Each player gains one of the Stunts as a Wound. KO the rest of the Stunts and this Scheme.",
             "Otherwise: Return a Dangerous Stunt to the Wound Deck. If there are still Stunts here, move a Villain to the Streets. If there aren't any Stunts, defeat this Scheme."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1702,7 +1702,7 @@
             "[keyword:Streets Conqueror 2]",
             "Fight: KO two of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Troop Ships of Kang",
@@ -1714,7 +1714,7 @@
             "[keyword:Rooftops Conqueror 2]",
             "Ambush: A Villain worth 2[icon:piercing] or 3[icon:piercing] from any player's Victory Pile enters the city."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "City Defense System",
@@ -1727,7 +1727,7 @@
             "Ambush: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Lord Krylar's Yacht",
@@ -1740,7 +1740,7 @@
             "Fight: Same effect.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Energy Shield",
@@ -1752,7 +1752,7 @@
             "[keyword:Streets Conqueror 2]",
             "Ambush: Put this Energy Shield above the Mastermind space. While it's there, you can't fight the Mastermind. (You can still fight the Energy Shield.)"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Pursuit Craft",
@@ -1764,7 +1764,7 @@
             "[keyword:Rooftops Conqueror 2]",
             "Ambush: (After this enters the city) If other Villains or the Mastermind have Conqueror abilities naming any empty city spaces, Pursuit Craft moves to one of those city spaces."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "M.O.D.O.K.",
@@ -1777,7 +1777,7 @@
             "Ambush: M.O.D.O.K. [keyword:Double-Crosses] each player.",
             "Fight: Each player KOs one of their Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Build a Conquering Army",
@@ -1790,7 +1790,7 @@
             "Special Rules: Players may fight Henchmen stacked here. While here, those Henchmen also have “[keyword:Bridge Conqueror 1].“ If you defeat the last Henchman here, defeat this Scheme.",
             "Twist: Stack another of those Henchmen next to this Scheme (from a Victory Pile if necessary). Then, if there are two more Henchmen here than the number of players: Each player gains a Wound, 3 of those Henchmen enter the city, and you KO this Scheme and the rest of those Henchmen."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1812,7 +1812,7 @@
             "Ambush: Any number of times this turn, you may pay 2[icon:recruit] to “buy a refreshment“ and KO a Wound from your hand or from any player's discard pile.",
             "Fight: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Axiam Maitre D'",
@@ -1823,7 +1823,7 @@
           "abilities": [
             "Fight: [keyword:Explore]. The Found Hero costs 2 less to recruit this turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Lord Krylar's Valet",
@@ -1834,7 +1834,7 @@
           "abilities": [
             "Fight: [keyword:Explore]. You get +[icon:recruit] equal to the Found Hero's printed [icon:recruit]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sky Manta",
@@ -1845,7 +1845,7 @@
           "abilities": [
             "Fight: [keyword:Explore]. If you recruit the Found Hero this turn, set it aside. When you draw a new hand this turn, add that card to your hand."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Lord Krylar's Appetizer",
@@ -1857,7 +1857,7 @@
             "[keyword:Microscopic Size-Changing] [hc:covert][hc:covert][hc:covert][hc:covert]",
             "Fight: Choose a player to “eat the appetizer“ and KO a card of their choice from their discard pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Hungering Energy",
@@ -1869,7 +1869,7 @@
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech][hc:tech]",
             "Fight: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Quantumoeba",
@@ -1882,7 +1882,7 @@
             "Ambush: Quantumoeba “eats“ a Henchman from any player's Victory Pile, capturing it and gaining its printed [icon:attack].",
             "Fight: Put the eaten Henchman in your Victory Pile and do its Fight effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Quantumania",
@@ -1895,7 +1895,7 @@
             "Twist: The top card of the Hero Deck becomes another Quantum Duplicate. Each player reveals their hand and discards all their cards that have the same name as any Quantum Duplicate.",
             "Special Rules: Players may spend [icon:attack] equal to a Quantum Duplicate's printed cost to KO that Hero or choose a player to gain it. When there are no more Quantum Duplicates, defeat this Scheme."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

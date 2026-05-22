@@ -728,7 +728,7 @@
             "Ambush: Reveal the top three cards of the Villain Deck. A Villain you revealed [keyword:Symbiote Bonds] with Agony. Put the rest back in any order.",
             "Escape: Each player reveals a [hc:covert] Hero or gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dr. Carlton Drake",
@@ -739,7 +739,7 @@
           "abilities": [
             "Fight: Each [hc:instinct] and [hc:tech] Hero currently in the HQ costs 1 less this turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Lasher",
@@ -761,7 +761,7 @@
           "abilities": [
             "Ambush: A Villain from the Escape Pile or your Victory Pile [keyword:Symbiote Bonds] with Phage."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Riot",
@@ -784,7 +784,7 @@
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Henchman or Life Foundation Villain, it [keyword:Symbiote Bonds] with Scream."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -806,7 +806,7 @@
             "Fight: This [keyword:Symbiote Bonds] with another Villain in the city. If already bonded or unable to bond, gain this as a Hero instead.",
             "You get +1[icon:attack] for each color of Hero you have. (including [hc:instinct] and grey)"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Poison Dr. Octopus",
@@ -818,7 +818,7 @@
             "Fight: This [keyword:Symbiote Bonds] with a Villain in the Bank. If already bonded or unable to bond, gain this as a Hero instead.",
             "Draw a card."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Poison Hulk",
@@ -830,7 +830,7 @@
             "Fight: This [keyword:Symbiote Bonds] with a Henchman Villain in the city. If already bonded or unable to bond, gain this as a Hero instead.",
             "[hc:strength]: You get +2[icon:attack]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Poison Sabretooth",
@@ -842,7 +842,7 @@
             "Fight: This [keyword:Symbiote Bonds] with a Villain in the Streets. If already bonded or unable to bond, gain this as a Hero instead.",
             "[hc:instinct]: Look at the top card of your deck. You may KO it."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Poison Scarlet Witch",
@@ -854,7 +854,7 @@
             "Fight: This [keyword:Symbiote Bonds] with another Villain in the city with an odd-numbered [icon:attack]. If already bonded or unable to bond, gain this as a Hero instead.",
             "Reveal the top card of your deck. If it has an odd-numbered cost, draw it. (0 is even.)"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Poison Spider-Man",
@@ -866,7 +866,7 @@
             "Fight: This [keyword:Symbiote Bonds] with another Villain in the city. If already bonded or unable to bond, gain this as a Hero instead.",
             "Reveal the top card of your deck. If it costs 2 or less, draw it."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Poison Storm",
@@ -878,7 +878,7 @@
             "Fight: This [keyword:Symbiote Bonds] with a Villain on the Rooftops or Bridge. If already bonded or unable to bond, gain this as a Hero instead.",
             "[hc:ranged]: You get +2[icon:attack] usable only against the Mastermind."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Symbiotic Armor",
@@ -889,7 +889,7 @@
           "abilities": [
             "Ambush: This [keyword:Symbiote Bonds] with the Mastermind. When you fight the Mastermind, defeat Symbiotic Armor and KO one of your Heroes instead of taking a Tactic."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

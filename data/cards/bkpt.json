@@ -826,7 +826,7 @@
             "[keyword:Empowered] by [hc:instinct].",
             "Ambush: Zenzi captures a Bystander for each [hc:instinct] Hero in the HQ."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Reverend Achebe",
@@ -838,7 +838,7 @@
             "[keyword:Empowered] by [hc:covert].",
             "Escape: Reverend Achebe becomes a Scheme Twist that takes effect immediately."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

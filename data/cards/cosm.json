@@ -1337,7 +1337,7 @@
             "Fight: Arishem grants you a [keyword:Celestial Boon]: For the rest of the game, once during each of your turns, you may put a card from the HQ on the bottom of the Hero Deck.",
             "Escape: (After the normal Escape KO) Put each Hero that costs 5 or more from the HQ on the bottom of the Hero Deck."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Tiamut, The Dreaming Celestial",
@@ -1350,7 +1350,7 @@
             "Fight: Tiamut grants you a [keyword:Celestial Boon]: Your hand size is one more for the rest of the game.",
             "Escape: Each player's hand size is one less for the rest of the game."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1372,7 +1372,7 @@
             "[keyword:Cosmic Threat] [hc:tech]",
             "Fight: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "The Shaper of Worlds",
@@ -1411,7 +1411,7 @@
             "[keyword:Cosmic Threat] [hc:covert]",
             "Fight: Take another turn after this one. Don't play a card from the Villain Deck at the start of that turn. For the rest of the game, players take turns in the opposite order around the table."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1466,7 +1466,7 @@
             "Ambush: [keyword:Danger Sense 2], helping all Black Order Villains and the Mastermind. Play a Scheme Twist revealed this way.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Ebony Maw",
@@ -1477,7 +1477,7 @@
           "abilities": [
             "Ambush: Choose Villain, Master Strike, or Scheme Twist. Then [keyword:Danger Sense 3], helping all Black Order Villains and the Mastermind. Play all the cards you revealed this way of the type you chose."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

@@ -740,7 +740,7 @@
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, play it.",
             "Fight: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Ravenous",
@@ -764,7 +764,7 @@
             "Ambush: Weaponized Galactus swaps places with the leftmost Villain in the city.",
             "Escape: Destroy the leftmost city space. If this destroys the last city space, Evil Wins. Otherwise, each player gains a Wound, and you shuffle Weaponized Galactus back into the Villain Deck. Any Villain from the destroyed city space escapes."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },

@@ -1102,7 +1102,7 @@
             "Exolon Attendants gets +2[icon:attack] while another Villain is [keyword:Commanding] the Followers of Ronan.",
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, it enters an empty city space."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Exolon Monks",
@@ -1114,7 +1114,7 @@
             "Exolon Monks get +2[icon:attack] while another Villain is [keyword:Commanding] the Followers of Ronan.",
             "Fight: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sakaaran Mercenaries",
@@ -1126,7 +1126,7 @@
             "Sakaaran Mercenaries get +2[icon:attack] while another Villain is [keyword:Commanding] the Followers of Ronan.",
             "Ambush: If another Villain is [keyword:Commanding] the Followers of Ronan, each player gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Korath the Pursuer",
@@ -1139,7 +1139,7 @@
             "Ambush: Each player may draw a card. For each player that did, reveal a card from the Villain Deck. Play a Followers of Ronan card from among the cards you revealed this way. Put the rest back in any order.",
             "Fight: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Nebula",
@@ -1151,7 +1151,7 @@
             "Nebula gets +2[icon:attack] while she [keyword:Commands] the Followers of Ronan.",
             "Ambush: Nebula captures a [keyword:Villainous Weapon] from another Villain in the city or captures an [keyword:Artifact] from a player's control as a [keyword:Villainous Weapon]. If it doesn't already give a [keyword:Villainous Weapon] bonus, it gives +2[icon:attack]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Korath's Disrupter Rifle",
@@ -1164,7 +1164,7 @@
             "Ambush: If Korath is in the city, he captures this.",
             "[keyword:Triggered Artifact] — Whenever you play a card that costs 6 or more, you get +1[icon:attack]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "“The Dark Aster“ Flagship",
@@ -1177,7 +1177,7 @@
             "Ambush: If a Follower of Ronan captures this, each player gains a Wound.",
             "[keyword:Triggered Artifact] — Whenever you defeat a Villain, you get +1[icon:recruit]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Orb",
@@ -1190,7 +1190,7 @@
             "Ambush: Put all Heroes from the HQ on the bottom of the Hero Deck.",
             "[keyword:Triggered Artifact] — When you fight the Mastermind, take another turn after this one. Don't play a card from the Villain Deck at the start of that turn. This ability can only be used once per game."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1213,7 +1213,7 @@
             "Ambush: Swap Gef with the leftmost Ravager in the city.",
             "Fight: If Gef was [keyword:Commanding] the Ravagers, draw a card."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Tullk",
@@ -1226,7 +1226,7 @@
             "Ambush: Swap Tullk with the leftmost Ravager in the city.",
             "Fight: If Tullk was [keyword:Commanding] the Ravagers, KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Kraglin Obfonteri",
@@ -1239,7 +1239,7 @@
             "Ambush: Swap Kraglin with the leftmost Ravager in the city.",
             "Fight: If Kraglin was [keyword:Commanding] the Ravagers, draw two cards."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Taserface",
@@ -1252,7 +1252,7 @@
             "Ambush: Swap Taserface with the leftmost Ravager in the city.",
             "Fight: If Taserface was [keyword:Commanding] the Ravagers, you get +2[icon:recruit]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Yondu Udonta",
@@ -1265,7 +1265,7 @@
             "Ambush: Swap Yondu with the leftmost Ravager in the city.",
             "Fight: If Yondu was [keyword:Commanding] the Ravagers, KO up to two of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Scavenged Blade",
@@ -1278,7 +1278,7 @@
             "Ambush: Play another card from the Villain Deck.",
             "[keyword:Triggered Artifact] — When you play a [hc:strength] or [hc:instinct] card, you may get +2[icon:attack]. If you do, shuffle this into the Villain Deck."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Ravager Starship “Eclector“",
@@ -1291,7 +1291,7 @@
             "Ambush: If a Ravager captures this, that Ravager swaps spaces with the leftmost Ravager in the city.",
             "[keyword:Triggered Artifact] — Whenever you play a [hc:tech] card, you get +1[icon:attack]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Yaka Arrow",
@@ -1304,7 +1304,7 @@
             "Ambush: If Yondu is in the city, he captures this. If he is in any player's Victory Pile, he enters an empty city space, then captures this.",
             "[keyword:Triggered Artifact] — Whenever you play a [hc:covert] or [hc:ranged] card, you get +1[icon:attack]."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

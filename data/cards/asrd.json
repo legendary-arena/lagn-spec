@@ -733,7 +733,7 @@
             "Ambush: Laufey captures The Casket of Ancient Winters from any Villain, Mastermind, player's control, or discard pile.",
             "Escape: If Laufey holds The Casket of Ancient Winters, say “Fimbulwinter has come,“ and each player discards down to 3 cards."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Mangog",
@@ -745,7 +745,7 @@
             "The Mangog gets +1[icon:attack] for each Villain in the Victory Pile of the player on your right.",
             "Escape: Each player who is not [keyword:Worthy] gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Ulik, The Troll",
@@ -781,7 +781,7 @@
             "",
             "[keyword:Thrown Artifact] When you throw this, you get +3[icon:attack]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Casket of Ancient Winters",
@@ -794,7 +794,7 @@
             "",
             "[keyword:Artifact] Once per turn, if you are [keyword:Worthy], you get +2[icon:recruit]."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -817,7 +817,7 @@
             "Ambush: If Surtur is in the city, he captures The Eternal Flame. If a player controls \"Surtur's Crown\", that card enters the city as the Villain Surtur and captures The Eternal Flame.",
             "[keyword:Artifact] Once per turn, return a 0-cost card from your discard pile to your hand."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Hel-Crown",
@@ -830,7 +830,7 @@
             "",
             "[keyword:Artifact] Once per turn, you get [keyword:Conqueror]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Skurge, The Executioner",
@@ -856,7 +856,7 @@
             "",
             "[keyword:Artifact] Once per turn, you get [keyword:Conqueror]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Jormungand, The World-Serpent",
@@ -872,7 +872,7 @@
             "[keyword:Bridge] [keyword:Conqueror] 1",
             "Fight: Each Hero currently in the HQ costs 1 less this turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Fenris Wolf",

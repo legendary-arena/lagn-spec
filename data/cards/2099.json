@@ -911,7 +911,7 @@
             "Ambush: Put the top card of the Hero Deck into the Escape Pile.",
             "Fight: [keyword:Cyber-Mod][hc:tech]: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Whackoid",
@@ -950,7 +950,7 @@
             "Fight: KO one of your Heroes. [keyword:Cyber-Mod][hc:strength]: If Jigsaw 2099 had no Bystanders, he reenters the city and captures a Bystander for each [hc:strength] card in the Escape Pile.",
             "Escape: [keyword:Cyber-Mod][hc:strength]: Each player gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

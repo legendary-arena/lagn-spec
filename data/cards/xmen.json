@@ -2246,7 +2246,7 @@
           "abilities": [
             "Ambush: Each player reveals their hand and chooses one of their non-grey Heroes. Nemesis [keyword:Dominates] those Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Psychic Subjugation",
@@ -2258,7 +2258,7 @@
             "By End of Turn: Recruit the left-most and right-most Heroes in the HQ.",
             "Or Suffer: Each of those Heroes you didn't recruit enters the city as a Villain with [icon:attack] equal to that Hero's cost. When you fight one, you gain it."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Random",
@@ -2325,7 +2325,7 @@
           "abilities": [
             "Ambush: This Villain ascends to become a [rule:new Mastermind]. He gains the ability “Master Strike: Each player simultaneously reveals a non-grey Hero.“ Mastermind [keyword:Dominates] the revealed Hero with the highest cost (and tied for highest)."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sebastian Shaw (Black King)",
@@ -2360,7 +2360,7 @@
             "By End of Turn: Have no Bystanders in the city captured by Villains.",
             "Or Suffer: After you draw your new hand at end of turn, each player discards down to four cards in hand."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Minor Domo",
@@ -2396,7 +2396,7 @@
             "Ambush: Each player reveals a [hc:covert] Hero or discards their hand. Each player who discarded their hand this way draws 5 cards.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Warwolves",
@@ -2442,7 +2442,7 @@
             "By End of Turn: Have at least four different costs of Heroes in the HQ.",
             "Or Suffer: After you draw your new hand at the end of this turn, each palyer reveals their hand and discards each card with the same cost as the cards in the HQ."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Miss Locke",
@@ -2465,7 +2465,7 @@
             "By End of Turn: Pay any amount of [icon:recruit]. Then you must reveal the top card of the Hero Deck. If you paid enough, recruit that Hero and put this Trap in your Victory Pile.",
             "Or Suffer: KO that Hero. Play two extra cards from the Villain Deck next turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sulfuric Acid Water Slide",
@@ -2500,7 +2500,7 @@
             "By End of Turn: You may pay 6[icon:recruit].",
             "Or Suffer: Each player reveals their hand. Then, each player chooses a Shadow-X card from their hand or discard pile to enter the city as a Villain."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dark Angel",
@@ -2524,7 +2524,7 @@
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:tech]: You may KO a card from your hand or discard pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dark Cyclops",
@@ -2537,7 +2537,7 @@
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:ranged]: Return a [hc:ranged] Hero from your discard pile to your hand."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dark Iceman",
@@ -2562,7 +2562,7 @@
             "Fight: Gain this as a Hero.",
             "[keyword:X-Gene] [hc:covert]: Rescue a Bystander."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -2596,7 +2596,7 @@
             "Ambush: Each player discards an [team:x-men] Hero or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Oracle",
@@ -2620,7 +2620,7 @@
             "By End of Turn: Have no Villains on the Bridge.",
             "Or Suffer: After you draw a new hand at end of turn, each player KOs a non-grey Hero from their discard pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Smasher",
@@ -2663,7 +2663,7 @@
           "abilities": [
             "Ambush: This Villain ascends to become a [rule:new Mastermind]. She gains the ability “Master Strike: Each player simultaneously reveals a non-grey Hero.“ Lady Mastermind [keyword:Dominates] the revealed Hero with the lowest cost (and tied for lowest)."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Resurrect Madelyne Pryor",
@@ -2675,7 +2675,7 @@
             "By End of Turn: You may pay 3[icon:recruit]. If you do, shuffle this Trap back into the Villain Deck, then play a card from the Villain Deck.",
             "Or Suffer: This Trap becomes a Scheme Twist that takes effect immediately."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Selene",

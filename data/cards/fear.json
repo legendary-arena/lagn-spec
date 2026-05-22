@@ -745,7 +745,7 @@
             "[keyword:2 Uru-Enchanted Weapons]",
             "Fight or Fail: If her Uru-Enchanted Weapons revealed any Bystanders, kidnap them."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dr. Strange",
@@ -758,7 +758,7 @@
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: You get +2[icon:recruit]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Hawkeye",
@@ -770,7 +770,7 @@
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: Choose one: Each other player draws a card, or each other player discards a card."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Iron Fist",
@@ -782,7 +782,7 @@
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: If his Uru-Enchanted Weapon revealed an Adversary, KO one of your Allies."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Ms. Marvel",
@@ -795,7 +795,7 @@
             "Fight or Fail: If her Uru-Enchanted Weapon revealed a Command Strike or Plot Twist, play it.",
             "Overrun: Each player reveals a [hc:ranged] Ally or gains a Bindings."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Red She-Hulk",
@@ -807,7 +807,7 @@
             "[keyword:Uru-Enchanted Weapon]",
             "Fight or Fail: If her Uru-Enchanted Weapon revealed an Adversary, put that Adversary into your Victory Pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Spider-Man",
@@ -820,7 +820,7 @@
             "Fight or Fail: Play all the cards revealed by his Uru-Enchanted Weapon that are worth 2 VP or less.",
             "Overrun: Each player gains a Bindings."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Wolverine",
@@ -833,7 +833,7 @@
             "Fight or Fail: Draw two cards.",
             "Overrun: Each player reveals an [hc:instinct] Ally or gains a Bindings. Then put Wolverine on top of the Adversary Deck."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

@@ -2020,7 +2020,7 @@
             "Fight: [keyword:Fateful Resurrection]",
             "Escape: Deadpool ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Each player reveals a Hero with an odd-numbered cost or gains a Wound.“ (0 is even.)"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Doop",
@@ -2054,7 +2054,7 @@
           "abilities": [
             "Fight: [keyword:Spectrum]: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 3
         }
       ]
     },
@@ -2074,7 +2074,7 @@
             "Fight: [keyword:Fateful Resurrection]",
             "Escape: Angela ascends to become a [rule:new Mastermind]. She gains the ability, “Master Strike: Each player KOs a Hero from their discard pile that costs 1 or more.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Drax the Destroyer",
@@ -2098,7 +2098,7 @@
             "Fight: (After this goes to your Victory Pile) [keyword:Patrol the Sewers]: If it's empty, each other player gains a Wound.",
             "Escape: Each player gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Groot",
@@ -2259,7 +2259,7 @@
             "Fight: [keyword:Spectrum]: KO a card from your discard pile.",
             "Escape: Each player who doesn't have [keyword:Spectrum] discards a card."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Nighthawk",
@@ -2283,7 +2283,7 @@
             "Ambush: [keyword:Charge] one space.",
             "Escape: Warrior Woman ascends to become a [rule:new Mastermind]. She gains the ability, “Master Strike: [keyword:Patrol the Bank]: If there's a Villain there, each player discards a card with a [icon:recruit] icon.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Whizzer",
@@ -2329,7 +2329,7 @@
             "Fight: Gain this as a Hero.",
             "[keyword:Spectrum]: You get +2[icon:attack]."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "'92 Professor X",
@@ -2340,7 +2340,7 @@
           "abilities": [
             "Escape: '92 Professor X ascends to become a [rule:new Mastermind]. He gains the ability, “Master Strike: Stack the two Heroes from the HQ with the highest cost next to '92 Professor X. He gets +1[icon:attack] for each Hero stacked there. Players can recruit the top card of the stack.“"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "'92 Wolverine",

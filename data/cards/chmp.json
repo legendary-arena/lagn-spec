@@ -736,7 +736,7 @@
             "Ambush: Goom captures a Bystander.",
             "Fight: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Groot from Planet X",
@@ -748,7 +748,7 @@
             "[keyword:Size-Changing]: [hc:strength], [hc:covert]",
             "Fight: Two Bystanders from the Bystander Stack enter the city as 3[icon:attack] “Splintered Half-Groot“ Villains. When you fight one, rescue it as a Bystander."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Monsteroso",
@@ -760,7 +760,7 @@
             "[keyword:Size-Changing]: [hc:strength], [hc:instinct]",
             "Fight: When you draw a new hand of cards at the end of this turn, draw an extra card."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Orrgo",
@@ -771,7 +771,7 @@
           "abilities": [
             "You can't fight Orrgo unless you have already defeated another Villain this turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sporr",
@@ -783,7 +783,7 @@
             "[keyword:Size-Changing]: [hc:tech], [hc:ranged]",
             "Fight: A Hero in the HQ gains [keyword:Size-Changing]: [hc:tech], [hc:ranged] this turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Tim Boo Ba",
@@ -795,7 +795,7 @@
             "[keyword:Size-Changing]: [hc:strength], [hc:instinct], [hc:covert], [hc:tech], [hc:ranged]",
             "Fight: All Heroes currently in the HQ cost 1 less this turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Trull the Unhuman",
@@ -807,7 +807,7 @@
             "[keyword:Size-Changing]: [hc:covert], [hc:tech]",
             "Ambush: Trull captures a Bystander. Then [keyword:Demolish] each player."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Zzutak",
@@ -819,7 +819,7 @@
             "[keyword:Size-Changing]: [hc:ranged], [hc:instinct]",
             "Escape: [keyword:Demolish] each player."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },

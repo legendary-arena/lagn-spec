@@ -764,7 +764,7 @@
           "abilities": [
             "Fight: Copy the effects of the Hero in the HQ space under Chameleon, including its [icon:recruit] and [icon:attack]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Hobgoblin",
@@ -775,7 +775,7 @@
           "abilities": [
             "Ambush: Each Sinister Six Villain captures a Bystander."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Kraven the Hunter",
@@ -787,7 +787,7 @@
             "Kraven's [icon:attack] is equal to the [icon:vp] of the highest-cost Hero in the HQ.",
             "Escape: (After you do the normal escape KO) KO a Hero from the HQ with the highest cost."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sandman",
@@ -799,7 +799,7 @@
             "Sandman's [icon:attack] is twice the number of Villains in the city.",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Shocker",

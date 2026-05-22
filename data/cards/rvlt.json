@@ -1268,7 +1268,7 @@
             "Whenever you fight a Villain here, each other player reveals a [hc:ranged] Hero or discards a card.",
             "Fight: Draw two cards."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Count Nefaria",
@@ -1280,7 +1280,7 @@
             "Ambush: All players reveal their hands.  Unless all those revealed cards together include [hc:strength], [hc:instinct], [hc:covert], [hc:tech], and [hc:ranged] Heroes, each player gains a Wound.",
             "Escape: Same Effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Blackout",
@@ -1312,7 +1312,7 @@
             "[keyword:Last Stand]",
             "Fight: KO one of your Heroes."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Captain Marvel (Noh-Varr)",
@@ -1325,7 +1325,7 @@
             "Ambush: If any other Dark Avengers are in the city, each player gains a Wound.",
             "Escape: Same Effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dark Hawkeye (Bullseye)",
@@ -1339,7 +1339,7 @@
             "- Each other player KOs one of their Heroes.",
             "- Each other player gains a 0-cost Hero from the KO pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dark Ms. Marvel (Moonnstone)",
@@ -1351,7 +1351,7 @@
             "[keyword:Last Stand]",
             "Fight: Each other plasyer discards two cards, then draws a card."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dark Spider-Man (Scorpion)",
@@ -1363,7 +1363,7 @@
             "[keyword:Double Last Stand]",
             "Fight: Reveal the top two cards of your deck.  KO one of them that costs 2 or less.  Put the rest back in any order."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Dark Wolverine (Daken)",
@@ -1376,7 +1376,7 @@
             "Ambush: Each player reveals an [hc:instinct] Hero or gains a Wound.",
             "Escape: Same Effect, then shuffle Dark Wolverine back into the Villain Deck."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sentry",
@@ -1388,7 +1388,7 @@
             "While in the Bank or Streets, this card's name is “The Void“, it gets +5[icon:attack], and it gets “Fight: KO up to two cards from your discard pile.“",
             "Escape: Each player gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Sentry's Watchtower",
@@ -1400,7 +1400,7 @@
             "Villains here get [keyword:Last Stand]. (Villains who already have it get the bonus again.)",
             "Fight: You gain the Hero on the HQ space under this."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1460,7 +1460,7 @@
             "To fight The Brothers Grimm, you must also discard two identical cards.",
             "Fight: You may KO a card from your discard pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Dark Dimension",
@@ -1472,7 +1472,7 @@
             "Villains here get [keyword:Dark Memories]. (Villains who already have it get the bonus again.)",
             "Fight: Take another turn after this one."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1493,7 +1493,7 @@
           "abilities": [
             "Whenever you fight a Villain here, each other player chooses a Bystander from their Victory Pile to be captured by Carnival of Wonders."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Laser Maze",
@@ -1504,7 +1504,7 @@
           "abilities": [
             "Whenever you fight a Villain here, each other players reveals a [hc:ranged] Hero or gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Living Laser",
@@ -1517,7 +1517,7 @@
             "Fight: Each player reveals a [hc:ranged] Hero or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "M'Baku",
@@ -1530,7 +1530,7 @@
             "Fight: Each player reveals their hand and discards a [hc:tech] card.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Power Man (Erik Josten)",
@@ -1542,7 +1542,7 @@
             "Power Man gets +3[icon:attack] while there's a “Prison“ [rule:Location] in the city.",
             "Escape: Each player puts a Villain from their Victory Pile into the Escape Pile or gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Swordsman",
@@ -1554,7 +1554,7 @@
             "Swordsman gets +3[icon:attack] while there's a “Carnival“ [rule:Location] in the city.",
             "Ambush: Swordsman and each [rule:Location] in the city capture a Bystander."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "“The Raft“ Prison",
@@ -1565,7 +1565,7 @@
           "abilities": [
             "Whenever you fight a Villain here, each other player puts a Villain from their Victory Pile into the Escape Pile or gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "White Gorilla Cult",
@@ -1576,7 +1576,7 @@
           "abilities": [
             "Whenever you fight a Villain here, each other player reveals their hand and discards a [hc:tech] card."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

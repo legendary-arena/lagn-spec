@@ -1023,7 +1023,7 @@
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: KO one of your Heroes. Then reveal the top card of the Villain Deck. If it's a Children of Thanos Villain, Endless Armies of Chitauri reenters the Sewers."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Outriders",
@@ -1035,7 +1035,7 @@
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: You may KO a card from your discard pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Outrider Dropships",
@@ -1047,7 +1047,7 @@
             "[keyword:Endgame]: +2[icon:attack]",
             "Ambush: A Villain worth 2VP, 3VP, or 4VP from any player's Victory Pile enters the city."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Outrider Threshers",
@@ -1059,7 +1059,7 @@
             "[keyword:Endgame]: +2[icon:attack]",
             "Fight: KO one of your Heroes. Then choose any number of Heroes from the HQ. Put them on the bottom of the Hero Deck."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Cull Obsidian",
@@ -1072,7 +1072,7 @@
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player reveals a Hero that costs 6 or more or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Corvus Glaive",
@@ -1085,7 +1085,7 @@
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player KOs a Bystander from their Victory Pile or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Chitauri Gorilla",
@@ -1097,7 +1097,7 @@
             "[keyword:Endgame]: +2[icon:attack]",
             "Ambush: Chitauri Gorilla captures a Bystander."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Proxima Midnight",
@@ -1110,7 +1110,7 @@
             "Ambush: It is the [keyword:Endgame] this turn. If it was already the [keyword:Endgame], each player reveals an [hc:instinct] Hero or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -1133,7 +1133,7 @@
             "Ambush: Each player without an Infinity Stone in their Victory Pile gains a Wound.",
             "Fight: KO one of your Heroes. Then KO a Wound from your hand or discard pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Space Stone",
@@ -1146,7 +1146,7 @@
             "Ambush: The Space Stone captures three Bystanders. Then move an Infinity Stone from any city space to the Bridge. If there's already a Villain there, swap them.",
             "Fight: Move and/or swap any number of Villains to other city spaces."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Reality Stone",
@@ -1159,7 +1159,7 @@
             "Ambush: Reveal the top three cards of the Villain Deck. Play a Master Strike from among them. Put the rest back in any order.",
             "Fight: Same effect, but KO the Master Strike instead of playing it. Then, whether you KO or not, put a card from the Bystander Deck on top of the Villain Deck."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Time Stone",
@@ -1172,7 +1172,7 @@
             "Ambush: Play another card from the Villain Deck.",
             "Fight: Take another turn after this one. Don't play a card from the Villain Deck at the start of that turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Soul Stone",
@@ -1185,7 +1185,7 @@
             "Ambush: Each player without an Infinity Stone in their Victory Pile KOs a non-grey Hero from their discard pile.",
             "Fight: Reveal the top two cards of your deck, KO one of them and draw the other."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "The Mind Stone",
@@ -1198,7 +1198,7 @@
             "Ambush: All Heroes currently in the HQ cost 2 more this turn.",
             "Fight: Gain a Hero from the HQ."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Nebula, Stone Seeker",
@@ -1211,7 +1211,7 @@
             "Fight: Either KO that Hero or choose a player to gain it.",
             "(This card counts as ”an Infinity Stone.”)"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Stonekeeper",
@@ -1224,7 +1224,7 @@
             "Fight: Each player KOs one of their Heroes.",
             "(This card counts as ”an Infinity Stone.”)"
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

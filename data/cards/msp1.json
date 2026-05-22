@@ -1143,7 +1143,7 @@
           "abilities": [
             "Fight: Play the top two cards of the Villain Deck."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "HYDRA Motorcycle Squad",
@@ -1154,7 +1154,7 @@
           "abilities": [
             "Fight: You may gain a S.H.I.E.L.D. Officer."
           ],
-          "copies": 2
+          "copies": 3
         },
         {
           "name": "Arnim Zola",
@@ -1165,7 +1165,7 @@
           "abilities": [
             "Arnim Zola is worth +3[icon:piercing] for each other HYDRA Villain in your Victory Pile."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "HYDRA Tank",
@@ -1177,7 +1177,7 @@
             "Fight: Each player without another HYDRA Villain in their Victory Pile gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },

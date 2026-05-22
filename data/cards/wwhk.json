@@ -2626,7 +2626,7 @@
           "abilities": [
             "Fight: [keyword:Feast]. If Demonform feasts on a non-grey Hero, gain a Hero from the HQ of that cost or less."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Infini-Tendrils",
@@ -2651,7 +2651,7 @@
             "By End of Turn: Defeat a Villain.",
             "Or Suffer: (After you draw your new hand) Psychotic Break becomes a Master Strike that takes effect immediately."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Shadow Man",
@@ -2684,7 +2684,7 @@
             "By End of Turn: Recruit a [hc:covert] Hero or recruit any two Heroes.",
             "Or Suffer: (After you draw your new hand) Each player reveals a [hc:covert] Hero or gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Crimson Dynamo",
@@ -2717,7 +2717,7 @@
           "abilities": [
             "Fight: Reveal the top card of your deck. If it costs 0, KO it. If it's [hc:covert], draw it."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Red She-Hulk",
@@ -2730,7 +2730,7 @@
             "Fight: Each player reveals a [hc:covert] Hero or gains a Wound.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Thundra",
@@ -2742,7 +2742,7 @@
             "Thundra gets +2[icon:attack] if there are any number of [hc:covert] Heroes in the HQ.",
             "Ambush: Put each non-[hc:covert] Hero from the HQ on the bottom of the Hero Deck."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     },
@@ -2787,7 +2787,7 @@
             "This Villain gets +1[icon:attack] for each Bystander in the city.",
             "Ambush: This Villain captures 3 Bystanders."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Enchain the Hulk",
@@ -2799,7 +2799,7 @@
             "By End of Turn: Discard two cards of the same Hero Class or recruit two cards of the same Hero Class. ([hc:strength], [hc:instinct], [hc:covert], [hc:tech], [hc:ranged], but not grey)",
             "Or Suffer: (After you draw your new hand) [keyword:Cross-Dimensional Hulk Rampage]"
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Hulkbuster Iron Man",
@@ -2903,7 +2903,7 @@
           "abilities": [
             "Fight: Look at the top three cards of your deck. Put them back in any order. Then [keyword:Feast]."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Headman Charr",
@@ -2926,7 +2926,7 @@
           "abilities": [
             "Fight: If you [keyword:Outwit] Lieutenant Caiera draw two cards."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Primus Vand",
@@ -2958,7 +2958,7 @@
             "Fight: Each player reveals a [hc:strength] Hero or KO's a Hero that costs 1 or more from their discard pile.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Vapor",
@@ -2993,7 +2993,7 @@
             "By End of Turn: Discard a [hc:tech] Hero or discard three cards.",
             "Or Suffer: Play two extra cards from the Villain Deck next turn."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "X-Ray",
@@ -3025,7 +3025,7 @@
           "abilities": [
             "Fight: Draw a card. Another player of your choice also draws a card."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Hiroim",
@@ -3037,7 +3037,7 @@
             "Fight: KO a card from the HQ. Each player reveals their hand and KO's a card with that same cost.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Korg",
@@ -3049,7 +3049,7 @@
             "Ambush: KO a Hero from the HQ. Each player reveals their hand and discards a card with that same cost.",
             "Escape: Same effect."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Miek The Unhived",
@@ -3084,7 +3084,7 @@
             "By End of Turn: Put a Warbound Villain and Henchman Villain from your Victory Pile back into the city.",
             "Or Suffer: Each player gains a Wound."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }

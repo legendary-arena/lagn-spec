@@ -809,7 +809,7 @@
             "Fight: Same effect, but cost 6 or less.",
             "Escape: Same effect, but cost 2 or less."
           ],
-          "copies": 2
+          "copies": 1
         },
         {
           "name": "Umar",
@@ -822,7 +822,7 @@
             "Fight: Choose a player to make a [keyword:Demonic Bargain] with Umar to gain a Hero of their choice that costs 6 or less from the KO pile.",
             "Escape: Same as Fight effect, but cost 0."
           ],
-          "copies": 2
+          "copies": 1
         }
       ]
     }
