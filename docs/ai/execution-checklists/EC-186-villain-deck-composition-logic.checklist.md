@@ -8,7 +8,7 @@
 - [ ] D-16801 + D-16802 present in DECISIONS.md, Accepted (status "effective on WP-168 execution") — verify present; this packet flips that status to effective, it does not re-record.
 - [ ] `villainDeck.setup.ts` exports `buildVillainDeck`; `villainDeck.types.ts` `RevealedCardType` includes `'mastermind-strike'`.
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
-- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0
+- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0 — **baseline 749 tests / 162 suites, 0 fail** (captured 2026-05-22 on `main`). After this WP the count rises: the obsolete `'mastermind strikes...'` case is replaced and the golden/fallback/copies-default/no-mastermind/determinism cases are added (net positive delta; never fewer than 749).
 
 ## Locked Values (do not re-derive)
 - New constant: `MASTER_STRIKE_COUNT = 5` (standard Marvel Legendary core rule)
