@@ -1,9 +1,392 @@
 {
-  "_note": "Per-scheme villain-deck composition counts (WP-167 / D-16702). convert-cards-v15.mjs (npm sets) and apply-card-counts.mjs (outlier sets 2099/amwp/wpnx/wtif) apply these to SchemeSchema.villainDeckTwistCount / villainDeckBystanderCount. Schemes absent here emit neither field and fall back to engine defaults (8 twists; numPlayers bystanders). Keys: setAbbr -> schemeSlug -> { villainDeckTwistCount, villainDeckBystanderCount }. Both counts are required when a scheme is listed. Loud-fails if a schemeSlug matches no scheme in the set.",
+  "_note": "Per-scheme villain-deck composition counts (WP-167 / WP-169 / D-16702 / D-16803). Keys: setAbbr -> schemeSlug -> { villainDeckTwistCount?, villainDeckBystanderCount? }. (i) Each entry must carry AT LEAST ONE of the two counts and may carry only one (D-16803). (ii) An omitted count keeps that scheme's engine default: 8 twists (D-1411) / numPlayers bystanders (D-1412); a scheme absent from this file emits neither field and falls back to both defaults. (iii) Producers: convert-cards-v15.mjs applies these to the 36 npm-derived sets; apply-card-counts.mjs applies them to the 4 outlier sets (2099, amwp, wpnx, wtif). (iv) Counts are extracted from each scheme's committed printed 'Setup:' text in data/cards/*.json; villainDeckTwistCount is the number of Twists shuffled INTO the villain deck (Twists placed next to the Scheme are excluded), and villainDeckBystanderCount is the explicit villain-deck bystander count (including an explicit 0). (v) Schemes whose printed villain-deck twist count is player-count-dependent, additive-per-player, or otherwise not a single constant are CARVED OUT (not encoded) and keep the 8-twist fallback pending a per-player representation (D-16804). Both converters loud-fail (full-sentence error, non-zero exit) on a slug matching no scheme in the set, or on an entry carrying neither count.",
   "core": {
     "midtown-bank-robbery": {
       "villainDeckTwistCount": 8,
       "villainDeckBystanderCount": 12
+    },
+    "portals-to-the-dark-dimension": {
+      "villainDeckTwistCount": 7
+    },
+    "replace-earths-leaders-with-killbots": {
+      "villainDeckTwistCount": 5,
+      "villainDeckBystanderCount": 18
+    }
+  },
+  "anni": {
+    "pulse-waves-from-the-negative-zone": {
+      "villainDeckTwistCount": 9
+    },
+    "sneak-attack-the-heroes-homes": {
+      "villainDeckTwistCount": 6
+    },
+    "put-humanity-on-trial": {
+      "villainDeckTwistCount": 11
+    },
+    "breach-parallel-dimensions": {
+      "villainDeckTwistCount": 6
+    }
+  },
+  "antm": {
+    "age-of-ultron": {
+      "villainDeckTwistCount": 11
+    },
+    "pull-earth-into-medieval-times": {
+      "villainDeckTwistCount": 9
+    },
+    "trap-heroes-in-the-microverse": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "asrd": {
+    "asgardian-test-of-worth": {
+      "villainDeckTwistCount": 11
+    },
+    "dark-world-of-svartalfheim-the": {
+      "villainDeckTwistCount": 10
+    },
+    "war-of-the-frost-giants": {
+      "villainDeckTwistCount": 9
+    },
+    "ragnarok-twilight-of-the-gods": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "bkpt": {
+    "seize-the-wakandan-throne": {
+      "villainDeckTwistCount": 6
+    },
+    "plunder-wakandas-vibranium": {
+      "villainDeckTwistCount": 10
+    },
+    "provoke-a-clash-of-nations": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "bkwd": {
+    "corrupt-the-spy-agencies": {
+      "villainDeckTwistCount": 7
+    },
+    "frame-heroes-for-murder": {
+      "villainDeckTwistCount": 7
+    }
+  },
+  "ca75": {
+    "brainwash-the-military": {
+      "villainDeckTwistCount": 7
+    },
+    "change-the-outcome-of-wwii": {
+      "villainDeckTwistCount": 7
+    },
+    "go-back-in-time-to-slay-heroes-ancestors": {
+      "villainDeckTwistCount": 9
+    },
+    "unbreakable-enigma-code-the": {
+      "villainDeckTwistCount": 6
+    }
+  },
+  "chmp": {
+    "hypnotize-every-human": {
+      "villainDeckBystanderCount": 0
+    }
+  },
+  "cosm": {
+    "contest-of-champions-the": {
+      "villainDeckTwistCount": 11
+    },
+    "turn-the-soul-of-adam-warlock": {
+      "villainDeckTwistCount": 14
+    },
+    "destroy-the-nova-corps": {
+      "villainDeckTwistCount": 9
+    },
+    "annihilation-conquest": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "cvwr": {
+    "avengers-vs-x-men": {
+      "villainDeckTwistCount": 9
+    },
+    "dark-reign-of-h-a-m-m-e-r-officers": {
+      "villainDeckTwistCount": 7
+    },
+    "imprison-unregistered-superhumans": {
+      "villainDeckTwistCount": 11
+    },
+    "predict-future-crime": {
+      "villainDeckTwistCount": 6
+    },
+    "reveal-heroes-secret-identities": {
+      "villainDeckTwistCount": 6
+    },
+    "united-states-split-by-civil-war": {
+      "villainDeckTwistCount": 10
+    }
+  },
+  "dead": {
+    "deadpool-wants-a-chimichanga": {
+      "villainDeckTwistCount": 6,
+      "villainDeckBystanderCount": 12
+    },
+    "deadpool-writes-a-scheme": {
+      "villainDeckTwistCount": 6
+    },
+    "everybody-hates-deadpool": {
+      "villainDeckTwistCount": 6
+    }
+  },
+  "dkcy": {
+    "transform-citizens-into-demons": {
+      "villainDeckBystanderCount": 0
+    },
+    "x-cutioners-song": {
+      "villainDeckBystanderCount": 0
+    }
+  },
+  "dstr": {
+    "war-for-the-dream-dimension": {
+      "villainDeckTwistCount": 7
+    },
+    "cursed-pages-of-the-darkhold-tome": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "fear": {
+    "fear-itself": {
+      "villainDeckTwistCount": 10
+    },
+    "last-stand-at-avengers-tower": {
+      "villainDeckTwistCount": 6
+    }
+  },
+  "ff04": {
+    "bathe-the-earth-in-cosmic-rays": {
+      "villainDeckTwistCount": 6
+    },
+    "invincible-force-field": {
+      "villainDeckTwistCount": 7
+    }
+  },
+  "mdns": {
+    "sire-vampires-at-the-blood-bank": {
+      "villainDeckTwistCount": 10
+    },
+    "midnight-massacre": {
+      "villainDeckTwistCount": 11
+    },
+    "wager-at-blackjack-for-heroes-souls": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "mgtg": {
+    "provoke-the-sovereign-war-fleet": {
+      "villainDeckTwistCount": 11
+    },
+    "star-lords-awesome-mix-tape": {
+      "villainDeckTwistCount": 7
+    },
+    "unleash-the-abilisk-space-monster": {
+      "villainDeckTwistCount": 9
+    }
+  },
+  "msis": {
+    "halve-all-life-in-the-universe": {
+      "villainDeckTwistCount": 5
+    },
+    "warp-reality-into-a-tv-show": {
+      "villainDeckTwistCount": 11
+    },
+    "the-time-heist": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "msmc": {
+    "hack-cerebro-servers-to": {
+      "villainDeckTwistCount": 10
+    },
+    "drain-mutant-powers-to": {
+      "villainDeckTwistCount": 11
+    },
+    "hire-singularity-investigations-to": {
+      "villainDeckTwistCount": 9
+    }
+  },
+  "msp1": {
+    "destroy-the-cities-of-earth": {
+      "villainDeckBystanderCount": 12
+    },
+    "invade-asgard": {
+      "villainDeckTwistCount": 7
+    },
+    "replace-earths-leaders-with-hydra": {
+      "villainDeckTwistCount": 5,
+      "villainDeckBystanderCount": 18
+    }
+  },
+  "nmut": {
+    "crash-the-moon-into-the-sun": {
+      "villainDeckTwistCount": 11
+    },
+    "superhuman-baseball-game": {
+      "villainDeckTwistCount": 9
+    }
+  },
+  "noir": {
+    "silence-the-witnesses": {
+      "villainDeckTwistCount": 6
+    }
+  },
+  "pttr": {
+    "weave-a-web-of-lies": {
+      "villainDeckTwistCount": 7
+    }
+  },
+  "rlmk": {
+    "ruin-the-perfect-wedding": {
+      "villainDeckTwistCount": 11
+    },
+    "war-of-kings": {
+      "villainDeckTwistCount": 11
+    },
+    "tornado-of-terrigen-mists": {
+      "villainDeckTwistCount": 10
+    }
+  },
+  "rvlt": {
+    "earthquake-drains-the-ocean": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "shld": {
+    "shield-vs-hydra-war": {
+      "villainDeckTwistCount": 7
+    },
+    "hail-hydra": {
+      "villainDeckTwistCount": 11
+    },
+    "secret-empire-of-betrayal": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "smhc": {
+    "ferry-disaster": {
+      "villainDeckTwistCount": 9
+    },
+    "scavenge-alien-weaponry": {
+      "villainDeckTwistCount": 7
+    }
+  },
+  "ssw1": {
+    "build-an-army-of-annihilation": {
+      "villainDeckTwistCount": 9
+    },
+    "crush-them-with-my-bare-hands": {
+      "villainDeckTwistCount": 5
+    },
+    "pan-dimensional-plague": {
+      "villainDeckTwistCount": 10
+    }
+  },
+  "ssw2": {
+    "mark-of-khonshu-the": {
+      "villainDeckTwistCount": 10
+    },
+    "sinister-ambitions": {
+      "villainDeckTwistCount": 6
+    }
+  },
+  "vnom": {
+    "maximum-carnage": {
+      "villainDeckTwistCount": 10
+    },
+    "paralyzing-venom": {
+      "villainDeckTwistCount": 6
+    },
+    "symbiotic-absorption": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "wwhk": {
+    "break-the-planet-asunder": {
+      "villainDeckTwistCount": 9
+    },
+    "cytoplasm-spike-invasion": {
+      "villainDeckTwistCount": 10
+    },
+    "fall-of-the-hulks": {
+      "villainDeckTwistCount": 10
+    },
+    "gladiator-pits-of-sakaar": {
+      "villainDeckTwistCount": 6
+    },
+    "mutating-gamma-rays": {
+      "villainDeckTwistCount": 7
+    },
+    "subjugate-with-obedience-disks": {
+      "villainDeckTwistCount": 11
+    },
+    "world-war-hulk": {
+      "villainDeckTwistCount": 9
+    }
+  },
+  "xmen": {
+    "alien-brood-encounters": {
+      "villainDeckBystanderCount": 0
+    },
+    "anti-mutant-hatred": {
+      "villainDeckTwistCount": 11
+    },
+    "dark-phoenix-saga-the": {
+      "villainDeckTwistCount": 10
+    },
+    "horror-of-horrors": {
+      "villainDeckTwistCount": 6
+    },
+    "mutant-hunting-super-sentinels": {
+      "villainDeckTwistCount": 9
+    },
+    "nuclear-armageddon": {
+      "villainDeckTwistCount": 5
+    },
+    "televised-deathtraps-of-mojoworld": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "2099": {
+    "pull-reality-into-cyberspace": {
+      "villainDeckTwistCount": 7
+    },
+    "become-president-of-the-united-states": {
+      "villainDeckTwistCount": 11
+    },
+    "subjugate-earth-with-mega-corporations": {
+      "villainDeckTwistCount": 11
+    }
+  },
+  "amwp": {
+    "auction-shrink-tech-to-highest-bidder": {
+      "villainDeckTwistCount": 11
+    },
+    "safeguard-dark-secrets": {
+      "villainDeckTwistCount": 5
+    },
+    "escape-an-imprisoning-dimension": {
+      "villainDeckTwistCount": 5
+    },
+    "siphon-energy-from-the-quantum-realm": {
+      "villainDeckTwistCount": 9
+    }
+  },
+  "wtif": {
+    "trash-earth-with-hugest-party-ever": {
+      "villainDeckTwistCount": 6
+    },
+    "marvel-zombies": {
+      "villainDeckTwistCount": 4
+    },
+    "collect-an-interstellar-zoo": {
+      "villainDeckTwistCount": 11
     }
   }
 }

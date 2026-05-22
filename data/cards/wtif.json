@@ -2107,7 +2107,8 @@
             "Evil Wins: When 5 Wreckages have been Discovered."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 175,
@@ -2123,7 +2124,8 @@
             "Evil Wins: When there are 3 Villains per player in the Escape Pile or the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 4
     },
     {
       "id": 176,
@@ -2139,7 +2141,8 @@
             "Evil Wins: When the Zoo has 5 heroes."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 177,

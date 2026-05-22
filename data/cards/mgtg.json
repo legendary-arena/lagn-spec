@@ -1344,7 +1344,8 @@
             "Evil Wins: When 3 Omnicraft escape."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 156,
@@ -1359,7 +1360,8 @@
             "Evil Wins: When there are 32 non-grey Heroes in the KO pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     },
     {
       "id": 157,
@@ -1375,7 +1377,8 @@
             "Evil Wins: When there are 5 Tentacles."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     }
   ],
   "bystanders": [],

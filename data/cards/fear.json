@@ -854,7 +854,8 @@
             "Good Wins: When the Fear Level is 0."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 10
     },
     {
       "id": 38,
@@ -870,7 +871,8 @@
             "Good Wins: When there are 13 non-grey Allies in the KO pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 39,

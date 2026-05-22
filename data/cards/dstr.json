@@ -842,7 +842,8 @@
             "Evil Wins: When there are 3 Villains per player in the Escape Pile or the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     },
     {
       "id": 151,
@@ -874,7 +875,8 @@
             "Evil Wins: When the Mastermind has 7 Cursed Pages at the end of any player's turn or the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 153,

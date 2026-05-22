@@ -830,7 +830,9 @@
             "Evil Wins: When 6 Chimichangas are in the Escape Pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6,
+      "villainDeckBystanderCount": 12
     },
     {
       "id": 70,
@@ -849,7 +851,8 @@
             "Twist 6: Deadpool wins 6 times! Wow, I'm way better at this game than you."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 71,
@@ -865,7 +868,8 @@
             "Evil Wins: When 3 Villains per player have escaped."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     }
   ],
   "bystanders": [],

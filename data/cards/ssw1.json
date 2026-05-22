@@ -2214,7 +2214,8 @@
             "Evil Wins: When there are 10 Annihilation Henchmen next to the Mastermind."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     },
     {
       "id": 41,
@@ -2246,7 +2247,8 @@
             "Evil Wins: When 8 Master Strikes have taken effect."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 5
     },
     {
       "id": 43,
@@ -2311,7 +2313,8 @@
             "Evil Wins: When the Wound Stack runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 10
     },
     {
       "id": 47,

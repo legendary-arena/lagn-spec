@@ -859,7 +859,8 @@
             "Evil Wins: When the 5 Tribes of Wakanda have been defeated."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 159,
@@ -891,7 +892,8 @@
             "Evil Wins: When 4 Vibranium are in the Escape Pile or the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 10
     },
     {
       "id": 161,
@@ -908,7 +910,8 @@
             "Evil Wins: At 6 International Crises."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     }
   ],
   "bystanders": [],

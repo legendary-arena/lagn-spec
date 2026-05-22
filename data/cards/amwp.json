@@ -1997,7 +1997,8 @@
             "Evil Wins: When 8 Shrink Tech cards are Controlled by Arms Dealers."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 179,
@@ -2013,7 +2014,8 @@
             "Evil Wins: When the Mastermind has 5 Secrets."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 5
     },
     {
       "id": 180,
@@ -2029,7 +2031,8 @@
             "Evil Wins: When 3 Escape Routes have been discovered."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 5
     },
     {
       "id": 181,
@@ -2045,7 +2048,8 @@
             "Evil Wins: When 4 Quantum Realm Villains have been KO'd or there are 9 Quantum Siphons."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     }
   ],
   "bystanders": [

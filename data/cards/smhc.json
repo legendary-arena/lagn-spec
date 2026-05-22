@@ -880,7 +880,8 @@
             "Evil Wins: When 7 Bystanders are in the KO pile and/or Escape Pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     },
     {
       "id": 87,
@@ -896,7 +897,8 @@
             "Evil Wins: When 3 Villains per player have escaped or the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     }
   ],
   "bystanders": [

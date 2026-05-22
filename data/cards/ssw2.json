@@ -2469,7 +2469,8 @@
             "Evil Wins: When 7 Khonshu Guardians escape (includes both Villain and Henchman)."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 10
     },
     {
       "id": 53,
@@ -2517,7 +2518,8 @@
             "Evil Wins: When 4 Ambition Villains escape."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     }
   ],
   "bystanders": [

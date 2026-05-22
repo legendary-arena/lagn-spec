@@ -905,7 +905,8 @@
             "Evil Wins: When there are 5 Moral Failings."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 123,
@@ -921,7 +922,8 @@
             "Evil Wins: When all city spaces or all HQ spaces are covered in Eternal Darkness."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 10
     },
     {
       "id": 124,
@@ -937,7 +939,8 @@
             "Evil Wins: When there are 5 Frost Giant Invaders in the city and/or Escape Pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     },
     {
       "id": 125,
@@ -960,7 +963,8 @@
             "Evil Wins: When there are 5 Guardians Defeated."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     }
   ],
   "bystanders": [],

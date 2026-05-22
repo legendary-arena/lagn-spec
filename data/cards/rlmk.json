@@ -874,7 +874,8 @@
             "Evil Wins: When either Wedding Hero Stack is KO'd."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 135,
@@ -891,7 +892,8 @@
             "Evil Wins: When there are 6 Victorious Generals."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 136,
@@ -909,7 +911,8 @@
             "Twist 10: Evil Wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 10
     },
     {
       "id": 137,

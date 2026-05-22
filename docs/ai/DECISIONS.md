@@ -17980,7 +17980,7 @@ when a scheme is listed" note; the field semantics (D-16702) are unchanged. The
 behavior.
 
 **Introduced:** WP-169 (SPEC).
-**Status:** Drafted 2026-05-20; not yet landed. Flips to Accepted on WP-169 execution.
+**Status:** Accepted 2026-05-22 (WP-169 executed).
 
 ---
 
@@ -18006,8 +18006,36 @@ fix rather than silently approximating.
 engine resolution. Until then, carve-out schemes resolve to 8 twists, which is
 wrong for some player counts — a known, documented gap, not silent drift.
 
+**Finalized carve-out list (WP-169 census, 2026-05-22):** 21 schemes whose
+printed villain-deck twist count is player-count-dependent, additive-per-player,
+or a base-plus-conditional value a single integer cannot represent. Each keeps
+the 8-twist fallback (D-1411) and is intentionally absent from
+`scheme-deck-counts.json`. Slug followed by the printed reason:
+
+- `antm.transform-commuters-into-giant-ants` — "Twists equal to the number of players plus 6."
+- `bkpt.poison-lakes-with-nanite-microbots` — "Twists equal to 5 plus the number of players."
+- `bkwd.train-black-widows-in-the-red-room` — "8 Twists, minus 1 Twist per player."
+- `bkwd.sniper-rifle-assassins` — "11 Twists, minus 1 Twist per player."
+- `core.super-hero-civil-war` — "For 2-3 players, use 8 Twists. For 4-5 players, use 5 Twists."
+- `msp1.super-hero-civil-war` — "For 2-3 players, use 8 Twists. For 4-5 players, use 5 Twists."
+- `cvwr.epic-super-hero-civil-war` — "1-3 players: 9 Twists. 4-5 players: 6 Twists."
+- `dead.deadpool-kills-the-marvel-universe` — "1-3 players: 6 Twists. 4-5 Players: 5 Twists."
+- `dstr.duels-of-science-and-magic` — "2 players: 9 Twists. 1 or 4 players: 10 Twists. 3 or 5 players: 11 Twists."
+- `fear.traitor-the` — "8 Twists. … a 9th Twist." (base-plus-conditional; the betrayal deck scales per player)
+- `gotg.unite-the-shards` — "Twists equal to the number of players plus 5."
+- `mdns.ritual-sacrifice-to-summon-chthon` — "6 Twists, plus 1 per player." (plus a Lilith conditional override)
+- `msis.sacrifice-for-the-soul-stone` — "Twists equal to the number of players plus 4."
+- `nmut.trapped-in-the-insane-asylum` — "1 Twist, plus 2 Twists per player."
+- `rlmk.devolve-with-xerogen-crystals` — "Add Twists equal to the number of players plus 3."
+- `rvlt.secret-hydra-corruption` — "1 player: 7 Twists. 2-3 players: 9 Twists. 4-5 players: 11 Twists."
+- `ssw1.fragmented-realities` — "shuffle 2 Twists into each player's Villain Deck" (per-player, multi-deck split)
+- `ssw2.fountain-of-eternal-life-the` — "8 Twists. (1 player: 4 Twists.)"
+- `wpnx.go-after-heroes-loved-ones` — "1 player: 8 Twists. 2-4 players: 10 Twists. 5 players: 11 Twists."
+- `wpnx.wipe-heroes-memories` — "Twists equal to the number of players plus 4."
+- `wtif.breach-the-nexus-of-all-realities` — "Add 2 Twists to each Reality" (per-villain-group, player-dependent distribution)
+
 **Introduced:** WP-169 (SPEC).
-**Status:** Drafted 2026-05-20; not yet landed. Flips to Accepted on WP-169 execution.
+**Status:** Accepted 2026-05-22 (WP-169 executed).
 
 ---
 

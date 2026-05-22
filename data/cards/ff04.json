@@ -809,7 +809,8 @@
             "Evil Wins: When the number of non-grey Heroes in the KO pile is six times the number of players."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 18,
@@ -840,7 +841,8 @@
             "Twist 7: Evil Wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     },
     {
       "id": 20,

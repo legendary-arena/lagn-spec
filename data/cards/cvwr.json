@@ -2845,7 +2845,8 @@
             "Twist 8: Evil wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     },
     {
       "id": 61,
@@ -2860,7 +2861,8 @@
             "Evil Wins: When there are 7 Officers next to the Mastermind."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     },
     {
       "id": 62,
@@ -2891,7 +2893,8 @@
             "Evil Wins: When 3 Bystanders are in the KO pile and/or Escape Pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 64,
@@ -2921,7 +2924,8 @@
             "Evil Wins: When there are 2 Villains per player in the Escape Pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 66,
@@ -2936,7 +2940,8 @@
             "Evil Wins: When 5 Heroes are Unmasked."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 67,
@@ -2951,7 +2956,8 @@
             "Evil Wins: When there are 3 Western Victories or 3 Eastern Victories."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 10
     }
   ],
   "bystanders": [

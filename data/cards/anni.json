@@ -843,7 +843,8 @@
             "Twist 9: Evil wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     },
     {
       "id": 139,
@@ -858,7 +859,8 @@
             "Twist 6: Evil Wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 140,
@@ -877,7 +879,8 @@
             "Evil Wins: When 6 Jurors vote to Condmen Humanity."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 141,
@@ -893,7 +896,8 @@
             "Evil Wins: When at least half of the original Dimensions are destroyed."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     }
   ],
   "bystanders": [],

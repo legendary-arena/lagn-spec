@@ -1260,7 +1260,8 @@
             "Evil Wins: When the Hero Deck or Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 5
     },
     {
       "id": 168,
@@ -1276,7 +1277,8 @@
             "Evil Wins: When all TV is destroyed."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 169,
@@ -1291,7 +1293,8 @@
             "Twist 10: Evil wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     }
   ],
   "bystanders": [],

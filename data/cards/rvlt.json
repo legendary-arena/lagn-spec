@@ -1704,7 +1704,8 @@
             "Evil Wins: When 3 Villains per player have escaped or the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 115,

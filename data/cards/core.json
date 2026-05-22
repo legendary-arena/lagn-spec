@@ -2392,7 +2392,8 @@
             "Twist 7: Evil Wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     },
     {
       "id": 6,
@@ -2408,7 +2409,9 @@
             "Evil Wins: If 5 “Killbots“ escape."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 5,
+      "villainDeckBystanderCount": 18
     },
     {
       "id": 7,

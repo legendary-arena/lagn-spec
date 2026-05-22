@@ -891,7 +891,8 @@
             "Twist 7: Evil Wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     }
   ],
   "bystanders": [],

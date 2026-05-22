@@ -1524,7 +1524,8 @@
             "Evil Wins: When there are 6 Evil Triumphs."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 131,
@@ -1539,7 +1540,8 @@
             "Evil Wins: When there are 8 Souls Corruptions."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 14
     },
     {
       "id": 132,
@@ -1556,7 +1558,8 @@
             "Evil Wins: When there are 5 KO'd Nova Centurions per player."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     },
     {
       "id": 133,
@@ -1572,7 +1575,8 @@
             "Evil Wins: When there are 6 Phalanx-Infected in the city and/or Escape Pile, or the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     }
   ],
   "bystanders": [

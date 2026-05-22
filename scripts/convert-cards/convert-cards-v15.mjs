@@ -331,13 +331,16 @@ function applyLeadsRelationships(result, setAbbr) {
 
 /**
  * Applies optional villainDeckTwistCount / villainDeckBystanderCount onto
- * schemes from scheme-deck-counts.json (D-16702). Schemes absent from the file
- * keep neither field. Loud-fails if a scheme slug in the file matches no scheme
- * in the converted set, before the set's output is written.
+ * schemes from scheme-deck-counts.json (D-16702 / D-16803). Each count is
+ * assigned independently and only when present in the entry; an omitted count
+ * leaves the scheme's field absent so the engine default applies. Schemes absent
+ * from the file keep neither field. Loud-fails (before the set's output is
+ * written) if a scheme slug matches no scheme in the set, or if an entry carries
+ * neither count.
  *
  * @param result - The converted set object (mutated in place).
  * @param setAbbr - The set abbreviation being converted.
- * @throws If a scheme-deck-counts.json entry matches no scheme in the set.
+ * @throws If an entry matches no scheme, or carries neither count.
  */
 function applySchemeDeckCounts(result, setAbbr) {
   const setSchemeCounts = SCHEME_DECK_COUNTS[setAbbr];
@@ -356,8 +359,24 @@ function applySchemeDeckCounts(result, setAbbr) {
           `Fix the scheme slug in scheme-deck-counts.json or update the source data.`,
       );
     }
-    scheme.villainDeckTwistCount = counts.villainDeckTwistCount;
-    scheme.villainDeckBystanderCount = counts.villainDeckBystanderCount;
+    const hasTwistCount = typeof counts.villainDeckTwistCount === 'number';
+    const hasBystanderCount = typeof counts.villainDeckBystanderCount === 'number';
+    if (!hasTwistCount && !hasBystanderCount) {
+      throw new Error(
+        `scheme-deck-counts.json entry for set "${setAbbr}" scheme "${schemeSlug}" ` +
+          `carries neither villainDeckTwistCount nor villainDeckBystanderCount. Every ` +
+          `entry must specify at least one count (D-16803); remove the entry or add a count.`,
+      );
+    }
+    // why: assign each count only when present so an omitted count keeps the
+    // scheme's engine default (8 twists / numPlayers bystanders) per
+    // D-16702/D-16803; never write an undefined-valued key.
+    if (hasTwistCount) {
+      scheme.villainDeckTwistCount = counts.villainDeckTwistCount;
+    }
+    if (hasBystanderCount) {
+      scheme.villainDeckBystanderCount = counts.villainDeckBystanderCount;
+    }
   }
 }
 

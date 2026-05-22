@@ -972,7 +972,8 @@
             "Twist 7: Evil Wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     },
     {
       "id": 183,
@@ -988,7 +989,8 @@
             "Evil Wins: When the Mastermind is elected President by having Forty Million more votes than the highest-voted Hero Name."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 184,
@@ -1008,7 +1010,8 @@
             "Evil Wins: When a single Mega-Corp has 3 Dominations."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 185,

@@ -936,7 +936,8 @@
             "Evil Wins: When 7 Evolved Ultrons are in the city and/or Escape Pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 107,
@@ -952,7 +953,8 @@
             "Evil Wins: When 3 Villains per player have escaped."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     },
     {
       "id": 108,
@@ -983,7 +985,8 @@
             "Evil Wins: When 3 Villains per player have escaped or the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     }
   ],
   "bystanders": [],

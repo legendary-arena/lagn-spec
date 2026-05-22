@@ -871,7 +871,8 @@
             "Evil Wins: When there are 5 Vampire Thralls on the Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 10
     },
     {
       "id": 171,
@@ -910,7 +911,8 @@
             "Evil Wins: When the Hero Deck or Villain Deck runs out."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 173,
@@ -926,7 +928,8 @@
             "Evil Wins: When there are 4 Wagered Souls."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": null,

@@ -874,7 +874,8 @@
             "Evil Wins: When 6 Bystanders are in the Escape Pile."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 6
     },
     {
       "id": 74,

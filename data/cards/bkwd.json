@@ -914,7 +914,8 @@
             "Twist 7: Evil Wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     },
     {
       "id": 163,
@@ -961,7 +962,8 @@
             "Evil Wins: When there are 5 pieces of Incriminating Evidence."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     }
   ],
   "bystanders": [],

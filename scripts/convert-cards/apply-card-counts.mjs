@@ -28,6 +28,7 @@ const OUTPUT_DIR = join(__dirname, '..', '..', 'data', 'cards');
 const PATCH_PATH = join(INPUTS_DIR, 'hero-card-counts.json');
 const VILLAIN_COUNTS_PATH = join(INPUTS_DIR, 'villain-card-counts.json');
 const LEADS_PATH = join(INPUTS_DIR, 'leads.json');
+const SCHEME_DECK_COUNTS_PATH = join(INPUTS_DIR, 'scheme-deck-counts.json');
 const R2_BASE_URL = 'https://images.legendary-arena.com';
 
 // why: WP-167 / D-16703 — the four outlier sets are produced only by this
@@ -36,6 +37,11 @@ const R2_BASE_URL = 'https://images.legendary-arena.com';
 // villains silently lack `copies` and outlier leads stay empty.
 const VILLAIN_CARD_COUNTS = JSON.parse(readFileSync(VILLAIN_COUNTS_PATH, 'utf8'));
 const LEADS = JSON.parse(readFileSync(LEADS_PATH, 'utf8'));
+
+// why: WP-169 / D-16803 — apply-card-counts.mjs is the only producer for the 4
+// outlier sets (2099, amwp, wpnx, wtif), so without this overlay any scheme
+// entry for those sets in scheme-deck-counts.json is silently ignored.
+const SCHEME_DECK_COUNTS = JSON.parse(readFileSync(SCHEME_DECK_COUNTS_PATH, 'utf8'));
 
 /**
  * Builds a per-set list of villain-group lead rows from the raw leads.json
@@ -165,6 +171,57 @@ function applyLeadsRelationships(setData, setAbbr) {
       }
       pushUnique(mastermind.alwaysLeads, groupSlug);
       pushUnique(villainGroup.ledBy, leadRow.mastermind);
+    }
+  }
+}
+
+/**
+ * Applies optional villainDeckTwistCount / villainDeckBystanderCount onto the
+ * schemes of an outlier set from scheme-deck-counts.json (WP-169 / D-16803),
+ * mirroring applySchemeDeckCounts in convert-cards-v15.mjs. Each count is
+ * assigned independently and only when present; an omitted count leaves the
+ * scheme's field absent so the engine default applies. Loud-fails (before
+ * writeFileSync) if a scheme slug matches no scheme in the set, or if an entry
+ * carries neither count.
+ *
+ * @param setData - The outlier set object (mutated in place).
+ * @param setAbbr - The set abbreviation being processed.
+ * @throws If an entry matches no scheme, or carries neither count.
+ */
+function applySchemeDeckCounts(setData, setAbbr) {
+  const setSchemeCounts = SCHEME_DECK_COUNTS[setAbbr];
+  if (!setSchemeCounts) return;
+
+  const schemeBySlug = new Map();
+  for (const scheme of setData.schemes ?? []) {
+    schemeBySlug.set(scheme.slug, scheme);
+  }
+  for (const [schemeSlug, counts] of Object.entries(setSchemeCounts)) {
+    const scheme = schemeBySlug.get(schemeSlug);
+    if (!scheme) {
+      throw new Error(
+        `scheme-deck-counts.json entry for set "${setAbbr}" names scheme ` +
+          `"${schemeSlug}", which does not match any scheme in ${setAbbr}.json. ` +
+          `Fix the scheme slug in scheme-deck-counts.json or update the source data.`,
+      );
+    }
+    const hasTwistCount = typeof counts.villainDeckTwistCount === 'number';
+    const hasBystanderCount = typeof counts.villainDeckBystanderCount === 'number';
+    if (!hasTwistCount && !hasBystanderCount) {
+      throw new Error(
+        `scheme-deck-counts.json entry for set "${setAbbr}" scheme "${schemeSlug}" ` +
+          `carries neither villainDeckTwistCount nor villainDeckBystanderCount. Every ` +
+          `entry must specify at least one count (D-16803); remove the entry or add a count.`,
+      );
+    }
+    // why: assign each count only when present so an omitted count keeps the
+    // scheme's engine default (8 twists / numPlayers bystanders) per D-16803;
+    // never write an undefined-valued key.
+    if (hasTwistCount) {
+      scheme.villainDeckTwistCount = counts.villainDeckTwistCount;
+    }
+    if (hasBystanderCount) {
+      scheme.villainDeckBystanderCount = counts.villainDeckBystanderCount;
     }
   }
 }
@@ -325,6 +382,9 @@ for (const setAbbr of TARGET_SETS) {
   // writeFileSync so a mismatched set is never partially overwritten.
   applyVillainCopies(setData, setAbbr);
   applyLeadsRelationships(setData, setAbbr);
+  // WP-169: scheme villain-deck twist/bystander counts for the outlier sets.
+  // Throws before writeFileSync so a mismatched set is never partially written.
+  applySchemeDeckCounts(setData, setAbbr);
 
   writeFileSync(targetPath, JSON.stringify(setData, null, 2), 'utf8');
   console.log(`  ✅ Saved ${targetPath}\n`);

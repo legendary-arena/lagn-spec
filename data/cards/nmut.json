@@ -901,7 +901,8 @@
             "Evil Wins: When there are 4 Altered Orbits."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 128,
@@ -933,7 +934,8 @@
             "Evil Wins: When Evil has 4 “runs“ (Villains in the Escape Pile) per player."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 9
     }
   ],
   "bystanders": [],

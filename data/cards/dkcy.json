@@ -2644,7 +2644,8 @@
             "Evil Wins: When 4 Goblin Queen cards escape."
           ]
         }
-      ]
+      ],
+      "villainDeckBystanderCount": 0
     },
     {
       "id": 16,
@@ -2660,7 +2661,8 @@
             "Evil Wins: 9 non grey Heroes are KO'd or carried off."
           ]
         }
-      ]
+      ],
+      "villainDeckBystanderCount": 0
     }
   ],
   "bystanders": [

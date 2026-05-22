@@ -933,7 +933,8 @@
             "Evil Wins: When the [keyword:Hydra Level] is 11."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 7
     },
     {
       "id": 119,
@@ -950,7 +951,8 @@
             "Twist 10: Evil Wins!"
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     },
     {
       "id": 120,
@@ -980,7 +982,8 @@
             "Evil Wins: When there are 6 Vicious Betrayals next to the Scheme."
           ]
         }
-      ]
+      ],
+      "villainDeckTwistCount": 11
     }
   ],
   "bystanders": [],
