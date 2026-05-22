@@ -17949,6 +17949,68 @@ execution).
 
 ---
 
+### D-16803 — Scheme-Deck-Count Entries Carry Counts Independently; the Outlier Applier Applies Them Too (WP-169)
+
+**Unlocks:** curation of twist-only schemes and outlier-set schemes (WP-169)
+
+**Decision:** An `inputs/scheme-deck-counts.json` entry must carry **at least
+one** of `villainDeckTwistCount` / `villainDeckBystanderCount` and may carry only
+one. An omitted count keeps that scheme's engine default (8 twists per D-1411;
+`numPlayers` bystanders per D-1412). `applySchemeDeckCounts` (in
+`convert-cards-v15.mjs`) assigns each count independently and never writes an
+`undefined`-valued key. `apply-card-counts.mjs` applies the same overlay — with
+the identical exact-slug loud-fail and validate-before-write — to the 4 outlier
+sets (`2099`, `amwp`, `wpnx`, `wtif`), for which it is the only producer. An entry
+present for a real `schemeSlug` but carrying neither count is malformed input:
+both converters throw a full-sentence error and exit non-zero rather than silently
+skipping (the at-least-one-count rule is enforced, not merely documented).
+
+**Rationale:** The printed Setup text deviates from the 8-twist default for
+roughly two-thirds of schemes while almost all of them keep the `numPlayers`
+bystander default. Forcing both counts per entry (the WP-167 `_note` claim) is
+incompatible with twist-only curation, and the bystander default is `numPlayers`
+— not a constant that can be written into the file. Independent assignment lets
+each scheme override exactly the count it prints. WP-167 wired
+`applySchemeDeckCounts` only into `convert-cards-v15.mjs`, so without the outlier
+overlay any `2099`/`amwp`/`wpnx`/`wtif` entry would be silently ignored.
+
+**Consequences:** Relaxes (does not contradict) the WP-167 "both counts required
+when a scheme is listed" note; the field semantics (D-16702) are unchanged. The
+`_note` is corrected to reflect at-least-one-count and the outlier-applier
+behavior.
+
+**Introduced:** WP-169 (SPEC).
+**Status:** Drafted 2026-05-20; not yet landed. Flips to Accepted on WP-169 execution.
+
+---
+
+### D-16804 — Player-Count-Dependent Scheme Twist Counts Are Carved Out of Curation Pending a Per-Player Representation (WP-169)
+
+**Unlocks:** a future per-player twist-mapping schema + engine WP
+
+**Decision:** Schemes whose printed villain-deck twist count varies with player
+count, is additive-per-player, or is otherwise not a single constant are **not**
+encoded in `scheme-deck-counts.json`. They keep the 8-twist fallback (D-1411).
+The single-integer `villainDeckTwistCount` (D-16702) and WP-168's single-integer
+read cannot represent these. The finalized carve-out scheme list is recorded in
+this decision's body at WP-169 execution time.
+
+**Rationale:** Encoding a single "representative" value for a player-count-
+dependent scheme would be an authenticity guess, not data extraction (Vision §1).
+Carving them out explicitly (Vision §14) keeps the curated set correct for the
+player counts the fallback happens to match and flags the remainder for a real
+fix rather than silently approximating.
+
+**Consequences:** A future WP may introduce a per-player twist mapping (e.g.
+`villainDeckTwistCountByPlayers: { "1": …, … }`) plus the matching deterministic
+engine resolution. Until then, carve-out schemes resolve to 8 twists, which is
+wrong for some player counts — a known, documented gap, not silent drift.
+
+**Introduced:** WP-169 (SPEC).
+**Status:** Drafted 2026-05-20; not yet landed. Flips to Accepted on WP-169 execution.
+
+---
+
 ### D-16805 — `ops-app` Code Category for Internal Operations / Admin Dashboard Apps (covers `apps/dashboard/`)
 
 **Decision:** Define a new `ops-app` code category in
