@@ -1,6 +1,6 @@
 # WP-168 — Villain Deck Composition Logic (Engine)
 
-**Status:** Draft — BLOCKED on WP-167 and the SPEC commit (D-16801, D-16802); requires human review
+**Status:** Ready for execution — WP-167 landed 2026-05-20; D-16801/D-16802 recorded (Accepted, effective on WP-168 execution)
 **Primary Layer:** Game Engine / Implementation
 **Dependencies:** WP-167 (registry data + schema). Supersedes D-1413 (and the count *application* in D-1411 / D-1412).
 
@@ -27,8 +27,9 @@ scheme-twist count comes from the scheme's `villainDeckTwistCount` (fallback 8);
 the villain-deck bystander count comes from the scheme's
 `villainDeckBystanderCount` (fallback `numPlayers`); and a fixed number of
 **generic** Master Strikes (`MASTER_STRIKE_COUNT = 5`) are added as virtual
-instanced cards. The mastermind's own cards are no longer pushed into the villain
-deck. For the "watch bot play" loadout (Midtown Bank Robbery / Magneto /
+instanced cards. The count of 5 matches the standard Marvel Legendary core-game
+rule (add 5 Master Strikes to the Villain Deck). The mastermind's own cards are
+no longer pushed into the villain deck. For the "watch bot play" loadout (Midtown Bank Robbery / Magneto /
 Brotherhood / Hand Ninjas) the deck grows from 24 cards to the correct total
 (8 twists + 12 bystanders + 5 Master Strikes + Brotherhood copies + 10 Hand Ninjas).
 
@@ -49,8 +50,10 @@ Brotherhood / Hand Ninjas) the deck grows from 24 cards to the correct total
   `RevealedCardType` including `'mastermind-strike'`.
 - `packages/game-engine/src/test/mockCtx.ts` exports `makeMockCtx`.
 - `pnpm --filter @legendary-arena/game-engine build` and `test` exit 0.
-- `docs/ai/DECISIONS.md` exists; highest decision id is D-16802 (after this SPEC).
-- The SPEC commit recording D-16801 and D-16802 has landed.
+- `docs/ai/DECISIONS.md` already records D-16801 and D-16802, both **Accepted**
+  (SPEC — drafted alongside WP-168; status reads "effective on WP-168
+  execution"). This packet only flips that conditional status to effective; it
+  does **not** re-record the decisions.
 
 If any of the above is false, this packet is **BLOCKED** and must not proceed.
 
@@ -155,6 +158,14 @@ locks the per-type counts so any future replay-breaking change is caught.
 - **RevealedCardType values:** `'villain' | 'henchman' | 'bystander' |
   'scheme-twist' | 'mastermind-strike'` — unchanged; generic Master Strikes
   reuse `'mastermind-strike'`.
+- **Index base for every `-{NN}` ext_id suffix:** **zero-based**, two-digit,
+  zero-padded (`00`, `01`, …), produced by `String(index).padStart(2, '0')` with
+  `index` starting at `0`. This is the convention the existing henchman /
+  scheme-twist / bystander instancing already uses in `villainDeck.setup.ts`;
+  villain copies and Master Strikes MUST use the identical base so every
+  instanced ext_id in one deck shares one grammar. (D-16802's "zero-padded to
+  two digits, consistent with the henchman / scheme-twist conventions" already
+  implies this; it is made explicit here so the executor never re-derives it.)
 - **Existing ext_id conventions:** henchman `henchman-{groupSlug}-{NN}`; scheme
   twist `scheme-twist-{schemeSlug}-{NN}`; villain-deck bystander
   `bystander-villain-deck-{NN}`; mastermind card
@@ -167,11 +178,13 @@ locks the per-type counts so any future replay-breaking change is caught.
 - The villain deck must be fully reproducible from identical setup config +
   identical RNG seed: same `copies`, same scheme counts ⇒ identical pre-shuffle
   sequence ⇒ identical shuffled deck.
-- A golden composition test (see Scope C) asserts exact per-type counts for the
-  Midtown loadout so any future change to the assembly algorithm is caught.
-- When a scheme omits twist/bystander metadata and the engine falls back to the
-  default, append a human-readable note to `G.messages` so replay inspection can
-  see that a fallback (not scheme data) drove the count.
+- A golden composition test (see Scope C) asserts exact per-type counts **and
+  the total deck size** for the Midtown loadout so any future change to the
+  assembly algorithm is caught.
+- The fallback behavior (default `8` twists / `numPlayers` bystanders when a
+  scheme omits the field) is locked by the fallback tests in Scope C. Emitting a
+  `G.messages` diagnostic when a fallback drives the count is **deferred** — see
+  Out of Scope for the rationale.
 
 ---
 
@@ -183,7 +196,8 @@ locks the per-type counts so any future replay-breaking change is caught.
    selected group, read `copies` from the set data for that card (default 1 when
    absent). Push that many instanced ext_ids:
    `{setAbbr}-villain-{groupSlug}-{cardSlug}-{copyIndex}` with `copyIndex`
-   zero-padded to two digits. Each instance gets `cardTypes[extId] = 'villain'`.
+   **zero-based** and zero-padded to two digits (`00`..`copies-1`, identical to
+   the henchman loop's base). Each instance gets `cardTypes[extId] = 'villain'`.
    - Add a `// why:` comment: copies are instanced (not duplicate keys) so each
      villain card moves independently and escapes/KOs stay attributable (D-16802,
      mirroring the D-1410 henchman rationale).
@@ -202,8 +216,8 @@ locks the per-type counts so any future replay-breaking change is caught.
    ext_id format).
 
 4. **Master Strikes (new section).** Add `MASTER_STRIKE_COUNT = 5` generic
-   virtual instanced cards with ext_id `master-strike-{NN}` (zero-padded) and
-   `cardTypes[extId] = 'mastermind-strike'`.
+   virtual instanced cards with ext_id `master-strike-{NN}` (**zero-based**,
+   zero-padded: `00`..`04`) and `cardTypes[extId] = 'mastermind-strike'`.
 
 5. **Remove mastermind-card inclusion (section 5 deletion).** Delete the logic
    that pushed non-tactic mastermind cards into the villain deck. The mastermind
@@ -224,16 +238,21 @@ Add `node:test` cases (keep existing cases green):
   `core.json` (Brotherhood copies, Midtown twist=8 / bystander=12, Hand Ninjas,
   Magneto) and `numPlayers: 2`, assert exact counts by `RevealedCardType`:
   `scheme-twist` = 8, `bystander` = 12, `mastermind-strike` = 5, `henchman` = 10,
-  and `villain` = sum of Brotherhood `copies` (= 8, i.e. 4 villains × `copies: 2`;
-  deck total = 43). Add a `// why:` comment: failure means a replay-breaking
-  change to deck composition.
+  and `villain` = sum of Brotherhood `copies` (= 8, i.e. 4 villains × `copies: 2`).
+  Also assert the total directly: `deck.length === 43` (fast whole-deck failure
+  mode alongside the per-type counts). Add a `// why:` comment: failure means a
+  replay-breaking change to deck composition.
 - **Twist fallback.** A scheme with no `villainDeckTwistCount` yields 8 twists.
 - **Bystander fallback.** A scheme with no `villainDeckBystanderCount` yields
   `numPlayers` bystanders.
 - **Copies default.** A villain card with no `copies` yields exactly 1 instance.
 - **No mastermind card in deck.** No deck entry matches
-  `{setAbbr}-mastermind-{mastermindSlug}-...`.
-- **Determinism.** Two builds with the same mock ctx produce identical decks.
+  `{setAbbr}-mastermind-{mastermindSlug}-...`; additionally, every entry typed
+  `'mastermind-strike'` has a `master-strike-` prefix (proves the removed
+  mastermind-card branch cannot reappear under the same type via a different
+  ext_id).
+- **Determinism.** Two builds with the **same fixed RNG seed** (identical
+  `makeMockCtx`) produce identical decks.
 - `JSON.stringify(state)` succeeds. Uses `makeMockCtx`; no `boardgame.io` import.
 
 ---
@@ -250,6 +269,15 @@ Add `node:test` cases (keep existing cases green):
   the `-{copyIndex}` suffix for card art) — flag as a follow-up to verify in
   arena-client / registry-viewer; do not change UI here.
 - No `MatchSetupConfig` changes; no henchman copy-count changes (stays 10).
+- **No fallback diagnostic message.** Emitting a `G.messages` note when a
+  twist/bystander default applies is **deferred**. `buildVillainDeck` returns a
+  pure `BuildVillainDeckResult` (`{ state, cardTypes }`) and has no `G`, and it
+  intentionally follows the side-effect-free, validator-authoritative soft-skip
+  model (it never narrates its own data gaps). Surfacing a fallback note would
+  require a `BuildVillainDeckResult` shape change plus caller wiring to drain it
+  into `G.messages` — outside this packet's composition scope. The fallback
+  *behavior* (default `8` / `numPlayers`) is fully covered by the Scope C
+  fallback tests; only the message is deferred to a future diagnostics WP.
 - Refactors or cleanups beyond the sections listed in Scope (In).
 
 ---
@@ -261,9 +289,12 @@ Add `node:test` cases (keep existing cases green):
   Strikes, remove mastermind-card inclusion.
 - `packages/game-engine/src/villainDeck/villainDeck.setup.test.ts` — **modified** —
   golden composition + fallback + determinism cases.
-- `docs/ai/DECISIONS.md` — **modified** — D-16801, D-16802.
+- `docs/ai/DECISIONS.md` — **modified** — flip D-16801 / D-16802 status from
+  "effective on WP-168 execution" to effective (status finalization only — they
+  are already recorded and Accepted; do **not** re-record their bodies).
 - `docs/ai/STATUS.md` — **modified** — record corrected villain-deck composition.
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — check off WP-168.
+- `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — flip EC-186 to Done.
 
 No other files may be modified.
 
@@ -285,8 +316,11 @@ No other files may be modified.
 
 ### Golden / determinism
 - [ ] The Midtown golden test asserts `scheme-twist`=8, `bystander`=12,
-      `mastermind-strike`=5, `henchman`=10, `villain`=8 (4 × `copies:2`); total=43.
-- [ ] Two builds with identical mock ctx produce identical decks.
+      `mastermind-strike`=5, `henchman`=10, `villain`=8 (4 × `copies:2`), and
+      `deck.length === 43` directly.
+- [ ] Every `'mastermind-strike'`-typed entry has a `master-strike-` prefix (the
+      removed mastermind-card branch cannot reappear under the same type).
+- [ ] Two builds with identical mock ctx (same fixed seed) produce identical decks.
 - [ ] `JSON.stringify(state)` succeeds.
 
 ### Boundaries
@@ -337,7 +371,12 @@ git diff --name-only
 
 ---
 
-## Decisions to Record
+## Decisions (Already Recorded — Verify + Finalize Status)
+
+These two decisions were **recorded and Accepted** in the WP-168 drafting SPEC
+(status: "effective on WP-168 execution"). This packet does **not** re-record
+them; it verifies they are present and flips their status to effective. Their
+content is reproduced here for reference:
 
 - **D-16801 — Master Strikes are generic virtual instanced cards; the
   mastermind card is not a villain-deck card.** The villain deck contains
@@ -370,5 +409,7 @@ This packet is complete when ALL of the following are true:
       (confirmed with `git diff --name-only`)
 - [ ] `docs/ai/STATUS.md` updated — villain deck now composes from scheme
       metadata + villain copies + generic Master Strikes
-- [ ] `docs/ai/DECISIONS.md` updated — D-16801, D-16802 recorded
+- [ ] `docs/ai/DECISIONS.md` — D-16801 / D-16802 status finalized to effective
+      (status flip only; bodies not re-recorded)
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` has WP-168 checked off with today's date
+- [ ] `docs/ai/execution-checklists/EC_INDEX.md` has EC-186 flipped to Done
