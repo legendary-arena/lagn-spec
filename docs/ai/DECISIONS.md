@@ -17958,4 +17958,64 @@ It is left to a separate decision so `ops-app` stays internal-only.
 
 ---
 
+### D-16806 — `attract-app` Code Category for Public Attract / Scoreboard Board Apps (covers `apps/legends-board/`)
+
+**Decision:** Define a new `attract-app` code category in
+`docs/ai/REFERENCE/02-CODE-CATEGORIES.md` covering public-facing,
+read-only scoreboard / attract-mode board applications, and classify
+`apps/legends-board/` under it. The category is the public counterpart to
+the internal-only `ops-app` (D-16805): both are standalone SPAs that are
+neither gameplay clients (`client-app`) nor documentation viewers
+(`docs-app`), but they differ in audience and data posture.
+
+**Rationale:**
+- **Closes the second standalone-SPA classification gap.** `D-16805`
+  classified `apps/dashboard/` (`ops-app`) and explicitly left
+  `apps/legends-board/` (introduced by WP-143) for a separate decision
+  because its posture differs. This entry makes that decision.
+- **It fits no existing category cleanly — and notably differs from
+  `ops-app`.** It is public (not internal), uses no `localStorage` / Pinia
+  / PrimeVue, and fetches published snapshot JSON from a **public** R2 base
+  URL (`VITE_LEGENDS_R2_BASE_URL`) via its own `snapshotClient.ts` seam.
+  Most distinctively, it reads the local wall clock (`Date.now()`) in a
+  **render path** (`FreshnessBadge.vue`) to display snapshot age — which
+  both `client-app` and `docs-app` forbid. A dedicated category lets that
+  render-path clock read be explicitly permitted for freshness display
+  rather than treated as a violation.
+- **Layer-boundary safety.** The category forbids all `@legendary-arena/*`
+  runtime/type imports and `apps/server/**` and `boardgame.io`. The board
+  already ships with zero such imports — the `snapshotClient.ts` "DO NOT
+  import @legendary-arena/server" comment is load-bearing — and is a
+  read-only R2 consumer (never writes R2 or any storage).
+
+**Category rules** (locked alongside D-16806; full definition lives in
+`02-CODE-CATEGORIES.md`):
+
+- **May:** Use Vue 3. Fetch published snapshot JSON over HTTP from a public
+  R2 base URL via its own data-seam module. Read the local wall clock to
+  compute and display snapshot freshness/age (render-path clock reads are
+  permitted for this purpose — non-authoritative display only). Use
+  `import.meta.env.DEV`-guarded dev harnesses. Deploy as a static SPA /
+  kiosk.
+- **Must not:** Import `@legendary-arena/game-engine` (any),
+  `@legendary-arena/registry`, `@legendary-arena/preplan`, or
+  `apps/server/**`. Import `boardgame.io`. Implement gameplay rules or
+  compute game outcomes. Mutate / read engine `G` / `ctx`. Write to R2 or
+  any storage. Read non-public data sources.
+- **Failure mode:** Layer-boundary violations (server/engine import in the
+  public board bundle). Reading non-public data. Wall-clock reads escaping
+  the freshness/age display into authoritative logic. Stale snapshots shown
+  without a freshness indicator.
+
+**Directories:** `apps/legends-board/` (D-16806).
+
+**Relationship:** Public counterpart to `ops-app` (D-16805); together they
+classify the two standalone non-game, non-docs SPAs in `apps/`.
+
+**Introduced:** Ad-hoc governance fix (no WP); follow-on to D-16805,
+closing the WP-143 classification gap noted there.
+**Status:** Active.
+
+---
+
 Protect this file.

@@ -46,6 +46,7 @@ they are not real categories.
 | `cli-producer-app` | CLI Producer App | `apps/replay-producer/` | `docs/ai/ARCHITECTURE.md` §Layer Boundary (D-6301) |
 | `docs-app` | Documentation / Reference Viewer App | `apps/registry-viewer/`, `apps/wiki-viewer/` | `docs/ai/DECISIONS.md` D-13807 |
 | `ops-app` | Operations / Admin Dashboard App | `apps/dashboard/` | `docs/ai/DECISIONS.md` D-16805 |
+| `attract-app` | Public Attract / Scoreboard Board App | `apps/legends-board/` | `docs/ai/DECISIONS.md` D-16806 |
 | `test` | Tests | `**/*.test.ts` | `.claude/rules/code-style.md` |
 | `infra` | Data Pipeline / Infra | `scripts/`, `.githooks/`, CI workflows | N/A (not shipped to players) |
 | `docs` | Documentation / Governance | `docs/`, `.claude/` | `.claude/rules/work-packets.md` |
@@ -377,10 +378,44 @@ paths into anything shared or authoritative.
 
 **Directories:** `apps/dashboard/` (D-16805)
 
-> **Known gap (not covered here):** `apps/legends-board/` (the WP-143
-> public attract board, which reads R2 snapshots directly) is also
-> unclassified. It is a different posture (public kiosk, R2 reader) and is
-> deliberately left for a separate decision — `ops-app` is internal-only.
+---
+
+### `attract-app` — Public Attract / Scoreboard Board App
+
+**What it is:** Public-facing, read-only browser SPA that renders published
+scoreboard / "attract mode" content for big-screen, kiosk, and stream
+(Twitch) display. The first (and only) instance is `apps/legends-board/` —
+a Vue 3 + Vite SPA at `legends.legendary-arena.com` (Cloudflare Pages) that
+fetches public Legends snapshot JSON from R2 and renders leaderboard panels
+with a freshness badge. It is not player-interactive (unlike `client-app`),
+not internal (unlike `ops-app`), and not a documentation / reference viewer
+(unlike `docs-app`).
+
+**May:** Use a UI framework (Vue 3). Fetch published snapshot JSON over
+HTTP from a **public** R2 base URL (`VITE_LEGENDS_R2_BASE_URL`) via its own
+data-seam module (`snapshotClient.ts`). Read the local wall clock
+(`Date.now()` / `new Date()`) **to compute and display snapshot
+freshness/age** — this category explicitly permits render-path clock reads
+for the freshness badge, unlike `client-app` / `docs-app`, because age
+display is the board's purpose and is non-authoritative. Use
+`import.meta.env.DEV`-guarded dev harnesses. Be deployed as a static SPA /
+kiosk.
+
+**Must not:** Import `@legendary-arena/game-engine` (any),
+`@legendary-arena/registry`, `@legendary-arena/preplan`, or
+`apps/server/**` (the `snapshotClient.ts` "DO NOT import
+@legendary-arena/server" comment is load-bearing — the board is an R2-fetch
+consumer only). Import `boardgame.io`. Implement gameplay rules or compute
+game outcomes. Mutate / read engine `G` / `ctx`. Write to R2 or any storage
+(it is a read-only consumer of published snapshots). Read non-public data
+sources.
+
+**Failure mode:** Layer-boundary violations (server / engine import sneaking
+into the public board bundle). Reading a non-public data source. Wall-clock
+reads escaping the freshness/age display into authoritative logic. Stale
+snapshots displayed without a freshness indicator.
+
+**Directories:** `apps/legends-board/` (D-16806)
 
 ---
 
