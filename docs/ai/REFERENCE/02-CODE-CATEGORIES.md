@@ -14,20 +14,45 @@
 
 ## Purpose
 
-Every file in the codebase belongs to exactly one code category. Categories
-define what a file is allowed to do — what it may import, whether it may
-mutate state, and what failure mode applies when it breaks.
+This document establishes the **authoritative classification system** for all
+code in the repository by assigning every file to a single, enforceable
+category.
 
-This document exists so that:
+Each category defines a file's **permitted capabilities and constraints**,
+including:
 
-- Pre-flight can check: "does this file belong to the right category?"
-- Debugging can start with: "what category is this? what are the rules?"
-- Patching can assess: "what's the blast radius of changing this?"
-- New WPs can scope: "which categories will this touch?"
+- allowed imports and dependencies,
+- access to data and external systems,
+- authority to mutate state, and
+- expected failure modes.
 
-Categories are **structural and enforceable**, not labels. If two categories
-allow the same imports, access the same data, and mutate the same state,
-they are not real categories.
+The intent of this system is to ensure that architectural boundaries defined in
+higher-order governance artifacts are **operationalized at the file level** and
+can be mechanically verified.
+
+This document exists to enable:
+
+- **Pre-flight validation** — to confirm that all files are correctly
+  categorized and comply with their constraints.
+- **Deterministic debugging** — to identify the applicable rule set and expected
+  failure mode based on category.
+- **Change impact analysis** — to bound the blast radius of modifications by
+  category scope.
+- **Work Packet scoping** — to explicitly define which categories a change is
+  permitted to touch.
+
+Categories are **structural enforcement mechanisms**, not descriptive labels. A
+category is considered valid only if it materially constrains behavior. If two
+categories permit the same imports, state access, and mutation patterns, they
+are indistinguishable and must not coexist.
+
+This document organizes and names the categories. All enforcement authority
+resides in:
+
+- `docs/ai/ARCHITECTURE.md` (layer boundaries), and
+- `.claude/rules/*.md` (rule enforcement).
+
+In the event of conflict, those higher-authority documents govern.
 
 ---
 
