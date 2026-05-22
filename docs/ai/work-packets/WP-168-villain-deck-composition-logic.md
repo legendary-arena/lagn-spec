@@ -149,6 +149,14 @@ locks the per-type counts so any future replay-breaking change is caught.
 - No `.reduce()` in deck assembly — use explicit `for` / `for...of` loops.
 - The lexical pre-shuffle sort and `shuffleDeck(...)` call must be preserved so
   replays stay deterministic.
+- **Preserve the exported helpers `extractVillainGroupSlug` and
+  `listHenchmanGroupSlugsInSet` (and the `VillainDeckFlatCard` type).**
+  `matchSetup.validate.ts` imports them (WP-113 / D-10014 single-source
+  decoders) and is **outside** this packet's allowlist. The section-1 rewrite
+  stops *calling* `extractVillainGroupSlug` for deck assembly but MUST NOT
+  delete the export — removing it breaks the validator build with no
+  authorized fix. Only the now-dead **internal** helpers
+  (`filterVillainCardsByGroupSlug`, `filterFlatCardsByType`) may be removed.
 
 **Session protocol:**
 - If the villain-copy ext_id format or any count source is unclear, stop and ask
@@ -203,7 +211,11 @@ locks the per-type counts so any future replay-breaking change is caught.
      mirroring the D-1410 henchman rationale).
    - Reading `copies` requires per-set card data (the `FlatCard` key carries no
      copy count), so resolve villain cards through `getSet(setAbbr)` like the
-     henchman/scheme/mastermind helpers, not through `listCards()` alone.
+     henchman/scheme/mastermind helpers, not through `listCards()` alone. This
+     means extending the local `SetDataSubset` structural interface to include
+     `villains` (each group `{ slug, cards: { slug, copies? }[] }`); the current
+     interface only declares `henchmen / masterminds / schemes`. Use the local
+     structural type — do **not** import registry types.
 
 2. **Scheme twist count (section 3 rewrite).** Resolve the scheme's
    `villainDeckTwistCount` from set data; if absent, fall back to
@@ -233,7 +245,12 @@ locks the per-type counts so any future replay-breaking change is caught.
 - Each helper ≤ 30 lines, descriptive names, no `.reduce()` with branching.
 
 ### C) Tests — `src/villainDeck/villainDeck.setup.test.ts` (modified)
-Add `node:test` cases (keep existing cases green):
+**Replace** the existing `'mastermind strikes: only non-tactic cards included'`
+case — it asserts the mastermind card IS in the deck (`strikeCards.length === 2`,
+including `test-mastermind-test-mm-main` / `-epic`), which D-16801 removes. The
+"keep existing cases green" instruction below does **not** apply to that one
+case; it is superseded by the new "No mastermind card in deck" assertion. All
+other existing cases stay green. Add `node:test` cases (keep existing cases green):
 - **Golden composition (Midtown loadout).** With a mock registry mirroring
   `core.json` (Brotherhood copies, Midtown twist=8 / bystander=12, Hand Ninjas,
   Magneto) and `numPlayers: 2`, assert exact counts by `RevealedCardType`:

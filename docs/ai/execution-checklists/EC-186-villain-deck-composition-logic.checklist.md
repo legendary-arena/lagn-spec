@@ -30,6 +30,9 @@
 - Use `for` / `for...of` only — no `.reduce()` in deck assembly.
 - The builder must not import `boardgame.io` or `@legendary-arena/registry`.
 - Reuse `'mastermind-strike'` — do NOT add a `RevealedCardType` value (no drift-array change).
+- **Preserve the exported helpers `extractVillainGroupSlug` + `listHenchmanGroupSlugsInSet` (and the `VillainDeckFlatCard` type).** `matchSetup.validate.ts` imports them (WP-113 / D-10014 single-source decoders) and is OUTSIDE the allowlist. The section-1 rewrite stops *calling* `extractVillainGroupSlug` for assembly but MUST NOT delete the export — removing it breaks the validator build with no authorized fix. Drop only the now-dead internals (`filterVillainCardsByGroupSlug`, `filterFlatCardsByType`).
+- Section 1 reads villain `copies` via `getSet().villains[].cards[].{slug, copies?}` — extend the local `SetDataSubset` interface to include `villains`; do NOT switch to registry types or read copies off the `listCards()` FlatCard (it carries none).
+- **Replace** the existing `'mastermind strikes: only non-tactic cards included'` test — it asserts the mastermind card IS in the deck (`strikeCards.length === 2`), which D-16801 removes. "Keep existing cases green" does NOT apply to this one case; it is superseded by the new "No mastermind card in deck" assertion.
 
 ## Required `// why:` Comments
 - Villain copy instancing: distinct ext_ids keep copies independently trackable for escapes/KOs and replay (D-16802, mirrors D-1410).
