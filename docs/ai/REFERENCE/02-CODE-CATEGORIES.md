@@ -45,6 +45,7 @@ they are not real categories.
 | `client-app` | Client App | `apps/arena-client/` | `docs/ai/ARCHITECTURE.md` §Layer Boundary (D-6511) |
 | `cli-producer-app` | CLI Producer App | `apps/replay-producer/` | `docs/ai/ARCHITECTURE.md` §Layer Boundary (D-6301) |
 | `docs-app` | Documentation / Reference Viewer App | `apps/registry-viewer/`, `apps/wiki-viewer/` | `docs/ai/DECISIONS.md` D-13807 |
+| `ops-app` | Operations / Admin Dashboard App | `apps/dashboard/` | `docs/ai/DECISIONS.md` D-16805 |
 | `test` | Tests | `**/*.test.ts` | `.claude/rules/code-style.md` |
 | `infra` | Data Pipeline / Infra | `scripts/`, `.githooks/`, CI workflows | N/A (not shipped to players) |
 | `docs` | Documentation / Governance | `docs/`, `.claude/` | `.claude/rules/work-packets.md` |
@@ -340,6 +341,46 @@ into a doc viewer bundle). Static-build determinism breaks
 gameplay surface.
 
 **Directories:** `apps/registry-viewer/`, `apps/wiki-viewer/` (D-13807)
+
+---
+
+### `ops-app` — Operations / Admin Dashboard App
+
+**What it is:** Internal-facing browser SPA for operators/admins to monitor
+business and game-health metrics and drive operational tasks. The first
+(and only) instance is `apps/dashboard/` — a Vue 3 + PrimeVue 4 + Pinia +
+Vite SPA at `dashboard.legendary-arena.com` (Cloudflare Pages) presenting
+KPI / analytics widgets and operational tooling (e.g. the daily-execution
+checklist). It is not player-facing (unlike `client-app`) and not a
+documentation / reference viewer (unlike `docs-app`).
+
+**May:** Use a UI framework (Vue 3) and component library (PrimeVue 4).
+Mount Pinia stores. Fetch its own data over HTTP from operational /
+telemetry endpoints (mock-mode today, gated by `VITE_USE_MOCKS`). Persist
+**browser-local, single-operator, non-authoritative** state to
+`localStorage` — both view preferences (theme) and operational UI state
+(the daily checklist). Read the local wall clock (`new Date()`) for display
+and for date-scoped local keys. Use `import.meta.env.DEV`-guarded dev
+harnesses. Be deployed as a static SPA.
+
+**Must not:** Import `@legendary-arena/game-engine` (runtime or type-only),
+`@legendary-arena/registry`, `@legendary-arena/preplan`, or
+`apps/server/**`. Import `boardgame.io`. Implement gameplay rules or
+compute game outcomes. Mutate or read engine `G` / `ctx`. Treat
+`localStorage` as authoritative or shared storage. Persist any game /
+engine state.
+
+**Failure mode:** Layer-boundary violations (engine / registry runtime
+leaking into an internal tool bundle). Treating browser-local operator
+state as a source of truth. Wall-clock reads escaping display / local-key
+paths into anything shared or authoritative.
+
+**Directories:** `apps/dashboard/` (D-16805)
+
+> **Known gap (not covered here):** `apps/legends-board/` (the WP-143
+> public attract board, which reads R2 snapshots directly) is also
+> unclassified. It is a different posture (public kiosk, R2 reader) and is
+> deliberately left for a separate decision — `ops-app` is internal-only.
 
 ---
 

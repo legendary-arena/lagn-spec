@@ -17894,4 +17894,68 @@ execution).
 
 ---
 
+### D-16805 — `ops-app` Code Category for Internal Operations / Admin Dashboard Apps (covers `apps/dashboard/`)
+
+**Decision:** Define a new `ops-app` code category in
+`docs/ai/REFERENCE/02-CODE-CATEGORIES.md` covering internal-facing
+operations / admin dashboard applications, and classify `apps/dashboard/`
+under it. The category is internal-only and distinct from both
+`client-app` (player-facing gameplay UI) and `docs-app` (documentation /
+reference viewers).
+
+**Rationale:**
+- **Closes a classification gap inherited from WP-157.** `apps/dashboard/`
+  has shipped without a category since the WP-157 scaffold. The gap was
+  surfaced as a WP-162 copilot-check (`01.7`) finding #13. Classifying it
+  now prevents future dashboard WPs (WP-162 and beyond) from re-inheriting
+  the gap silently.
+- **It fits no existing category cleanly.** `client-app` (D-6511) is
+  defined as browser apps that render gameplay UI and explicitly forbids
+  `localStorage` persistence and `Date.now()` — the dashboard uses both.
+  `docs-app` (D-13807) is a documentation / reference viewer that permits
+  `localStorage` for view preferences only and forbids `Date.now()` in
+  render paths — the dashboard's operational checklist state exceeds
+  "view preferences" and it reads the local clock for date-scoped keys.
+  Stretching either category would blur its meaning.
+- **Layer-boundary safety.** The category forbids all `@legendary-arena/*`
+  runtime and type imports (engine, registry, preplan) and
+  `apps/server/**` and `boardgame.io`. The dashboard already ships with
+  zero such imports (WP-157); the rule locks that posture.
+- **Browser-local state is explicitly non-authoritative.** `localStorage`
+  is permitted for single-operator, per-browser view + operational UI
+  state, never as shared or authoritative storage. No game / engine state
+  is persisted.
+
+**Category rules** (locked alongside D-16805; full definition lives in
+`02-CODE-CATEGORIES.md`):
+
+- **May:** Use Vue 3 + PrimeVue 4 + Pinia. Fetch its own data over HTTP
+  from operational / telemetry endpoints (mock-mode via `VITE_USE_MOCKS`).
+  Persist browser-local, single-operator, non-authoritative state to
+  `localStorage` (view preferences + operational UI state). Read the local
+  wall clock for display and date-scoped local keys. Use
+  `import.meta.env.DEV`-guarded dev harnesses. Deploy as a static SPA.
+- **Must not:** Import `@legendary-arena/game-engine` (any),
+  `@legendary-arena/registry`, `@legendary-arena/preplan`, or
+  `apps/server/**`. Import `boardgame.io`. Implement gameplay rules or
+  compute game outcomes. Mutate / read engine `G` / `ctx`. Treat
+  `localStorage` as authoritative or shared storage. Persist game / engine
+  state.
+- **Failure mode:** Layer-boundary violations (engine / registry runtime
+  leaking into an internal tool). Browser-local operator state treated as
+  a source of truth. Wall-clock reads escaping display / local-key paths.
+
+**Directories:** `apps/dashboard/` (D-16805).
+
+**Scope note:** `apps/legends-board/` (the WP-143 public attract board) is
+also unclassified but is **not** covered here — it is a public kiosk that
+reads R2 snapshots directly, a different posture from an internal ops tool.
+It is left to a separate decision so `ops-app` stays internal-only.
+
+**Introduced:** Ad-hoc governance fix (no WP); surfaced by the WP-162
+`01.7` copilot check, finding #13.
+**Status:** Active.
+
+---
+
 Protect this file.
