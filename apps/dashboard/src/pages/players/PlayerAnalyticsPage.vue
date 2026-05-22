@@ -41,6 +41,9 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
       dataKey="id"
       filterDisplay="row"
       :globalFilterFields="['name', 'email', 'status']"
+      :stripedRows="true"
+      scrollable
+      scrollHeight="60vh"
       class="player-table"
     >
       <Column field="name" header="Name" :sortable="true" filter />
@@ -53,7 +56,7 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
       </Column>
       <Column field="status" header="Status" :sortable="true" filter>
         <template #body="{ data: row }">
-          <span :class="'status-' + row.status">{{ row.status }}</span>
+          <span class="status-badge" :class="'status-' + row.status">{{ row.status }}</span>
         </template>
       </Column>
       <Column field="lastActive" header="Last Active" :sortable="true">
@@ -78,17 +81,18 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   align-items: center;
 }
 
-.page-header h1 { margin: 0; font-size: 1.5rem; color: #0f172a; }
+.page-header h1 { margin: 0; font-size: 1.5rem; color: var(--p-text-color); }
 
 .freshness-badge {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--p-text-muted-color);
   display: flex;
   gap: 0.5rem;
 }
 
 .freshness-badge .source {
-  background: #f1f5f9;
+  background: var(--p-surface-border, var(--p-content-border-color));
+  color: var(--p-text-color);
   padding: 0.15rem 0.4rem;
   border-radius: 3px;
   font-weight: 600;
@@ -99,10 +103,17 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   text-align: center;
 }
 
-.page-error { color: #dc2626; }
-.page-empty { color: #94a3b8; }
+.page-error { color: var(--p-text-color); }
+.page-empty { color: var(--p-text-muted-color); }
 
-.status-active { color: #16a34a; font-weight: 600; }
-.status-inactive { color: #94a3b8; }
-.status-banned { color: #dc2626; font-weight: 600; }
+/* why: status is shown as a labelled badge so it never relies on color alone;
+   the text label is always present alongside the color cue. */
+.status-badge {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.status-active { color: var(--p-green-500); }
+.status-inactive { color: var(--p-text-muted-color); }
+.status-banned { color: var(--p-red-500); }
 </style>

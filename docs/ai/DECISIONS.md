@@ -17534,6 +17534,61 @@ Authentication).
 
 ---
 
+### D-16201 — Daily checklist persists in localStorage per user per day; no server-side storage (WP-162)
+
+**Decision:** The dashboard Daily Execution Panel persists its checklist state in the browser's `localStorage` under the key `la-dashboard-checklist-{userId}-{dateString}`, where `userId` is the stable `mock-user` under mock auth (the real auth-store id once a real auth backend ships) and `dateString` is a `YYYY-MM-DD` string built from the browser's **local** calendar fields (`getFullYear` / `getMonth`+1 / `getDate`, zero-padded) — never `toISOString()` or `toLocaleDateString()`. A new local calendar day yields a new key, which is an automatic fresh (unchecked) checklist; the prior day's key remains as history but is not displayed. Stale keys (more than 30 days old) are pruned once on composable init, inspecting only keys with the exact `la-dashboard-checklist-` prefix so unrelated keys (including `la-dashboard-theme`) are never touched. Writes are explicit, inside `toggle()` and `resetAll()` only — no deep watchers. Persisted state is merged **onto** the static config: the rendered list always has exactly the static array's length; a persisted entry is applied only when it is shape-valid (`completed: boolean`, `completedAt: number | null`), otherwise the item stays unchecked (never coerced); a `JSON.parse` failure surfaces as the panel's error state. There is no server-side persistence.
+
+**Rationale.** The team is 1–3 people; server persistence would add an API endpoint plus a migration for negligible benefit, and the checklist is intrinsically a per-operator daily ritual, not shared state. Local-time date keys make the reset boundary match the operator's wall clock (a UTC boundary would reset mid-evening for US time zones). Shape-validating persisted entries before applying them keeps a corrupt or hand-edited storage value from poisoning the rendered list, while still distinguishing a recoverable bad-shape entry (unchecked) from an unparseable blob (error state). Revisit server-side persistence only if the team grows beyond 3 people.
+
+**Rejected alternatives:**
+- **Server-side checklist storage.** Rejected for MVP — endpoint + migration cost with no multi-user requirement yet.
+- **Deep watcher on checklist state for persistence.** Rejected — implicit writes are harder to reason about and fire on unrelated reactivity; explicit writes in `toggle()`/`resetAll()` are the only two mutation points.
+- **`toISOString()` for the date key.** Rejected — UTC-based; would reset the checklist at a time unrelated to the operator's local midnight.
+
+**Packet:** WP-162.
+
+**Introduced:** WP-162 (drafted 2026-05-19; executed 2026-05-21)
+**Status:** Active
+
+---
+
+### D-16202 — Default dashboard theme is dark, via PrimeVue Aura dark-mode selector (WP-162)
+
+**Decision:** The dashboard defaults to dark mode (Aura dark token set), with a light-mode toggle. The preference is stored in `localStorage` key `la-dashboard-theme` (`'dark'` | `'light'`) and applied **synchronously in `main.ts` before `createApp(...).mount(...)`** so the first paint is already themed (no light→dark flash). Theme switching is realized through PrimeVue's own theming API: PrimeVue is configured with `theme.options.darkModeSelector: '.app-dark'`, and the toggle adds/removes the `app-dark` class on `document.documentElement`, which swaps PrimeVue's entire token set. No hand-rolled CSS variables and no custom theme stylesheet duplicate PrimeVue tokens.
+
+**Amended at execution (2026-05-21):** the WP/EC phrased this as "PrimeVue theme preset swapping (Aura light ↔ Aura dark)." PrimeVue 4's Aura ships a **single** preset whose light/dark token values are selected by the `darkModeSelector`, not two separate presets; "preset swapping" is therefore realized by toggling that selector class, which is the supported Aura dark-mode mechanism. The load-bearing intent — switch themes through PrimeVue's token system, never via hand-rolled CSS variables or class-toggled custom styles — is satisfied exactly. Verified in-browser: toggling flips `--p-content-background` between `#18181b` (dark) and `#ffffff` (light).
+
+**Rationale.** Ops tools are used for extended periods; dark mode reduces eye strain, so it is the sensible default. Reading the stored preference synchronously before mount is the only way to avoid a first-paint flash (an `onMounted` read paints the default palette first). Using PrimeVue's `darkModeSelector` keeps the dashboard on the framework's token system, so every component themes consistently with zero bespoke CSS to maintain.
+
+**Rejected alternatives:**
+- **Manual CSS class toggles with custom variables.** Rejected — duplicates PrimeVue's token surface and drifts from component styling.
+- **Reading the theme preference in `onMounted`.** Rejected — produces a visible light→dark flash on every load.
+- **Two distinct Aura preset objects swapped at runtime.** Rejected — Aura does not ship separate light/dark presets; the `darkModeSelector` is the framework-supported path.
+
+**Packet:** WP-162.
+
+**Introduced:** WP-162 (drafted 2026-05-19; executed 2026-05-21)
+**Status:** Active
+
+---
+
+### D-16203 — Responsive sidebar: full ≥1200px, collapsed 768–1199px, hidden <768px (WP-162)
+
+**Decision:** The dashboard sidebar has three responsive tiers driven by reactive state (`isCollapsed`, `isHidden`) in `AppLayout.vue`, not by CSS media queries on `body`/`html`: full (240px, icons + labels) at viewport width ≥ 1200px; collapsed (60px, icons only) at 768–1199px; hidden behind a hamburger toggle at < 768px. The width is read from a `resize` listener throttled at 100–200ms; the reactive state is reassigned only when a 768/1200 boundary is actually crossed (not on every resize tick), and the listener is removed in `onUnmounted`.
+
+**Rationale.** A reactive layout tier lets the component own its own responsive behavior and coordinate the sidebar with a mobile hamburger + scrim, which pure `body` media queries cannot do. Throttling and boundary-gated reassignment keep a stream of resize events from thrashing the sidebar. The dashboard is a desk tool; <768px is "usable, not optimized," so hiding the sidebar behind a toggle is acceptable rather than building a mobile-first layout.
+
+**Rejected alternatives:**
+- **CSS media queries on `body`.** Rejected — cannot drive the hamburger/scrim interaction or share state with the rest of the layout component.
+- **Reassigning sidebar state on every resize event.** Rejected — unthrottled, per-tick reassignment flickers the sidebar during a drag-resize.
+
+**Packet:** WP-162.
+
+**Introduced:** WP-162 (drafted 2026-05-19; executed 2026-05-21)
+**Status:** Active
+
+---
+
 ### D-16301 — Single cursor-write site; live broadcast wins (WP-163)
 
 **Decision:** In the autoplay playback controller (`apps/server/src/autoplay/playbackController.mjs`), `cursor` is a **private closure variable** owned entirely by the controller — no wiring-layer code in `autoplay.mjs` reads or writes it (handlers only call controller methods and `getCursor()`). `pushState()` is the sole site that drives the cursor **forward to the live edge** (`stateHistory.length - 1`); every real-move boundary in the bot loop calls `pushState()`, so a rewound cursor can never persist across a real move. The rewind methods (`stepBack`, `stepForward` cursor branch, `restart`, `goToEnd`) move the cursor within the captured-history window only. The live Socket.IO broadcast always wins over a REST rewind response — a rewind is a transient per-requester overlay, not a competing source of truth.

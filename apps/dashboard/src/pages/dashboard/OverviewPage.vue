@@ -5,6 +5,7 @@ import KpiCard from '../../widgets/KpiCard.vue';
 import DauChartWidget from '../../widgets/DauChartWidget.vue';
 import RevenueChartWidget from '../../widgets/RevenueChartWidget.vue';
 import AlertsPanel from '../../widgets/AlertsPanel.vue';
+import DailyExecutionPanel from '../../widgets/DailyExecutionPanel.vue';
 import type { KpiSnapshot } from '../../types/index.js';
 
 const router = useRouter();
@@ -46,6 +47,8 @@ function handleKpiClick(kpi: KpiSnapshot): void {
       <KpiCard kpi-id="server-health" @click="handleKpiClick" />
     </div>
 
+    <DailyExecutionPanel />
+
     <div class="charts-grid">
       <DauChartWidget />
       <RevenueChartWidget />
@@ -71,13 +74,13 @@ function handleKpiClick(kpi: KpiSnapshot): void {
 .page-header h1 {
   margin: 0;
   font-size: 1.5rem;
-  color: #0f172a;
+  color: var(--p-text-color);
 }
 
 .range-selector {
   display: flex;
   gap: 0.25rem;
-  background: #e2e8f0;
+  background: var(--p-content-border-color);
   border-radius: 6px;
   padding: 0.2rem;
 }
@@ -89,19 +92,18 @@ function handleKpiClick(kpi: KpiSnapshot): void {
   background: transparent;
   font-size: 0.8rem;
   cursor: pointer;
-  color: #475569;
+  color: var(--p-text-muted-color);
 }
 
 .range-selector button.active {
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--p-surface-card, var(--p-content-background));
+  color: var(--p-text-color);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }
 
@@ -109,5 +111,15 @@ function handleKpiClick(kpi: KpiSnapshot): void {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1rem;
+}
+
+@media (max-width: 1199px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

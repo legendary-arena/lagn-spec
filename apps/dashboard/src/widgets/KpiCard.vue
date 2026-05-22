@@ -24,6 +24,26 @@ const kpi = computed<KpiSnapshot | null>(() => {
   return data.value.find((snapshot) => snapshot.id === props.kpiId) ?? null;
 });
 
+const trendSymbol = computed(() => {
+  if (!kpi.value) {
+    return '';
+  }
+  if (kpi.value.trend === 'up') {
+    return '↑';
+  }
+  if (kpi.value.trend === 'down') {
+    return '↓';
+  }
+  return '→';
+});
+
+const trendLabel = computed(() => {
+  if (!kpi.value) {
+    return '';
+  }
+  return `${kpi.value.trend} vs previous`;
+});
+
 function formatValue(snapshot: KpiSnapshot): string {
   if (snapshot.unit === 'USD') {
     return formatCurrency(snapshot.value);
@@ -42,72 +62,98 @@ function handleClick(): void {
 </script>
 
 <template>
-  <div class="kpi-card" @click="handleClick">
-    <!-- Loading state -->
-    <div v-if="loading && !kpi" class="kpi-skeleton">
-      <div class="skeleton-label"></div>
-      <div class="skeleton-value"></div>
-    </div>
-
-    <!-- Error state -->
-    <div v-else-if="error" class="kpi-error">
-      <span class="error-icon">⚠</span>
-      <p>{{ error.message }}</p>
-    </div>
-
-    <!-- Empty state -->
-    <div v-else-if="!kpi" class="kpi-empty">
-      <p>No data available</p>
-    </div>
-
-    <!-- Data state -->
-    <div v-else class="kpi-data">
-      <span class="kpi-label">{{ kpi.label }}</span>
-      <span class="kpi-value">{{ formatValue(kpi) }}</span>
-      <span class="kpi-trend" :class="kpi.trend">
-        {{ kpi.trend === 'up' ? '↑' : kpi.trend === 'down' ? '↓' : '→' }}
+  <div class="kpi-card widget" @click="handleClick">
+    <header class="card-header">
+      <span class="kpi-label">{{ kpi?.label ?? 'KPI' }}</span>
+      <span v-if="sourceLabel" class="freshness-badge">
+        <span class="source">{{ sourceLabel }}</span>
+        <span class="timestamp">{{ relativeTime }}</span>
       </span>
+    </header>
+
+    <div class="card-body">
+      <div v-if="loading && !kpi" class="kpi-skeleton">
+        <div class="skeleton-value"></div>
+      </div>
+
+      <div v-else-if="error" class="kpi-error">
+        <p>{{ error.message }}</p>
+      </div>
+
+      <div v-else-if="!kpi" class="kpi-empty">
+        <p>No data available</p>
+      </div>
+
+      <span v-else class="kpi-value">{{ formatValue(kpi) }}</span>
     </div>
 
-    <!-- Freshness badge -->
-    <div v-if="sourceLabel" class="freshness-badge">
-      <span class="source">{{ sourceLabel }}</span>
-      <span class="timestamp">{{ relativeTime }}</span>
-    </div>
+    <footer v-if="kpi" class="card-footer">
+      <span class="kpi-trend" :class="kpi.trend">
+        <span class="trend-symbol" aria-hidden="true">{{ trendSymbol }}</span>
+        <span class="trend-label">{{ trendLabel }}</span>
+      </span>
+    </footer>
   </div>
 </template>
 
 <style scoped>
 .kpi-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--p-surface-card, var(--p-content-background));
+  border: 1px solid var(--p-surface-border, var(--p-content-border-color));
   border-radius: 8px;
   padding: 1.25rem;
   cursor: pointer;
   transition: box-shadow 0.15s;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .kpi-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--p-text-color) 12%, transparent);
 }
 
-.kpi-skeleton .skeleton-label,
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.freshness-badge {
+  font-size: 0.65rem;
+  color: var(--p-text-muted-color);
+  display: flex;
+  gap: 0.35rem;
+}
+
+.freshness-badge .source {
+  background: var(--p-surface-border, var(--p-content-border-color));
+  color: var(--p-text-color);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.card-body {
+  min-height: 2.2rem;
+  display: flex;
+  align-items: center;
+}
+
 .kpi-skeleton .skeleton-value {
-  background: #e2e8f0;
-  border-radius: 4px;
-  animation: pulse 1.5s infinite;
-}
-
-.skeleton-label {
-  height: 14px;
-  width: 80px;
-  margin-bottom: 0.5rem;
-}
-
-.skeleton-value {
   height: 28px;
   width: 120px;
+  background: var(--p-surface-border, var(--p-content-border-color));
+  border-radius: 4px;
+  animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
@@ -115,58 +161,31 @@ function handleClick(): void {
   50% { opacity: 0.5; }
 }
 
-.kpi-error {
-  color: #dc2626;
-  font-size: 0.85rem;
-}
-
-.kpi-empty {
-  color: #94a3b8;
-  font-size: 0.85rem;
-}
-
-.kpi-data {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.kpi-label {
-  font-size: 0.8rem;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
+.kpi-error { color: var(--p-text-color); font-size: 0.85rem; }
+.kpi-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
 
 .kpi-value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--p-text-color);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
 }
 
 .kpi-trend {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.kpi-trend.up { color: #16a34a; }
-.kpi-trend.down { color: #dc2626; }
-.kpi-trend.flat { color: #64748b; }
-
-.freshness-badge {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.75rem;
-  font-size: 0.65rem;
-  color: #94a3b8;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   gap: 0.35rem;
-}
-
-.freshness-badge .source {
-  background: #f1f5f9;
-  padding: 0.1rem 0.3rem;
-  border-radius: 3px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
+
+.trend-symbol { font-size: 0.9rem; }
+
+.kpi-trend.up { color: var(--p-green-500); }
+.kpi-trend.down { color: var(--p-red-500); }
+.kpi-trend.flat { color: var(--p-text-muted-color); }
 </style>

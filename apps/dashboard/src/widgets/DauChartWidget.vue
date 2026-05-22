@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useFetch } from '../composables/useFetch.js';
 import { useDataFreshness } from '../composables/useDataFreshness.js';
 import { useDateRange } from '../composables/useDateRange.js';
 import { fetchDauHistory } from '../services/endpoints.js';
 import BaseChart from '../components/charts/BaseChart.vue';
 import type { EChartsOption } from 'echarts';
+
+/**
+ * Reads a PrimeVue design-token value from the document root. echarts draws on
+ * a canvas and cannot consume CSS custom properties directly, so the resolved
+ * string is handed to the chart options.
+ */
+function readThemeColor(tokenName: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(tokenName).trim();
+}
 
 const { range } = useDateRange();
 
@@ -14,17 +23,38 @@ const { data, loading, error, updatedAt, source } = useFetch(
 );
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
 
+// why: echarts renders on a canvas and cannot read CSS custom properties, so
+// chart colors are resolved from PrimeVue tokens in JS and recomputed when the
+// theme toggle dispatches its change event.
+const themeVersion = ref(0);
+function handleThemeChange(): void {
+  themeVersion.value += 1;
+}
+onMounted(() => window.addEventListener('dashboard-theme-change', handleThemeChange));
+onUnmounted(() => window.removeEventListener('dashboard-theme-change', handleThemeChange));
+
 const chartOption = computed<EChartsOption>(() => {
+  void themeVersion.value;
   if (!data.value) {
     return {};
   }
+  const lineColor = readThemeColor('--p-blue-500');
+  const axisColor = readThemeColor('--p-text-muted-color');
+  const splitColor = readThemeColor('--p-content-border-color');
   return {
     tooltip: { trigger: 'axis' },
+    textStyle: { color: axisColor },
     xAxis: {
       type: 'category',
       data: data.value.map((point) => point.date),
+      axisLabel: { color: axisColor },
+      axisLine: { lineStyle: { color: splitColor } },
     },
-    yAxis: { type: 'value' },
+    yAxis: {
+      type: 'value',
+      axisLabel: { color: axisColor },
+      splitLine: { lineStyle: { color: splitColor } },
+    },
     series: [
       {
         name: 'DAU',
@@ -32,7 +62,8 @@ const chartOption = computed<EChartsOption>(() => {
         data: data.value.map((point) => point.value),
         smooth: true,
         areaStyle: { opacity: 0.15 },
-        itemStyle: { color: '#3b82f6' },
+        itemStyle: { color: lineColor },
+        lineStyle: { color: lineColor },
       },
     ],
     grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
@@ -42,13 +73,13 @@ const chartOption = computed<EChartsOption>(() => {
 
 <template>
   <div class="widget">
-    <div class="widget-header">
+    <header class="widget-header">
       <h3>Daily Active Users</h3>
       <span v-if="sourceLabel" class="freshness-badge">
         <span class="source">{{ sourceLabel }}</span>
         <span class="timestamp">{{ relativeTime }}</span>
       </span>
-    </div>
+    </header>
 
     <div v-if="loading && !data" class="widget-loading">
       <div class="skeleton-chart"></div>
@@ -68,8 +99,8 @@ const chartOption = computed<EChartsOption>(() => {
 
 <style scoped>
 .widget {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--p-surface-card, var(--p-content-background));
+  border: 1px solid var(--p-surface-border, var(--p-content-border-color));
   border-radius: 8px;
   padding: 1.25rem;
 }
@@ -81,17 +112,18 @@ const chartOption = computed<EChartsOption>(() => {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: #475569; }
+.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
 
 .freshness-badge {
   font-size: 0.65rem;
-  color: #94a3b8;
+  color: var(--p-text-muted-color);
   display: flex;
   gap: 0.35rem;
 }
 
 .freshness-badge .source {
-  background: #f1f5f9;
+  background: var(--p-surface-border, var(--p-content-border-color));
+  color: var(--p-text-color);
   padding: 0.1rem 0.3rem;
   border-radius: 3px;
   font-weight: 600;
@@ -99,13 +131,13 @@ const chartOption = computed<EChartsOption>(() => {
 
 .widget-loading .skeleton-chart {
   height: 250px;
-  background: #e2e8f0;
+  background: var(--p-surface-border, var(--p-content-border-color));
   border-radius: 4px;
   animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-.widget-error { color: #dc2626; font-size: 0.85rem; }
-.widget-empty { color: #94a3b8; font-size: 0.85rem; }
+.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
+.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
 </style>
