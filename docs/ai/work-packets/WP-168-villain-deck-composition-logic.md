@@ -157,6 +157,14 @@ locks the per-type counts so any future replay-breaking change is caught.
   delete the export — removing it breaks the validator build with no
   authorized fix. Only the now-dead **internal** helpers
   (`filterVillainCardsByGroupSlug`, `filterFlatCardsByType`) may be removed.
+- **§18 prose-vs-grep discipline.** Verification Steps 3–5 grep this file for
+  `boardgame.io`, `Math.random`, and `.reduce(` and expect **no output**, so a
+  *comment* containing any of those literal tokens is a false-positive drift
+  (precedent WP-037 / `00.3 §18.4`). The current file already trips this — line
+  14 (`No .reduce().`) and line 278 (`boardgame.io's PRNG`). On rewrite, phrase
+  the module-header JSDoc and inline comments by citing the governing rule
+  (e.g. "no array-reduce in deck assembly per `00.6` Rule 7", "seeded by the
+  framework PRNG via `ctx.random`") instead of writing the tokens verbatim.
 
 **Session protocol:**
 - If the villain-copy ext_id format or any count source is unclear, stop and ask
@@ -412,6 +420,63 @@ content is reproduced here for reference:
   card; that UI follow-up is tracked separately.
 
 ---
+
+## Lint Gate Self-Review
+
+Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`, run 2026-05-22 against
+this WP. All 21 sections resolved:
+
+- **§1 Structure** — PASS. All 10 required sections present and non-empty;
+  `## Out of Scope` lists 7 explicit exclusions.
+- **§2 Non-Negotiable Constraints** — PASS. Engine-wide + packet-specific +
+  session protocol + locked values; full-file-contents required (diffs/snippets
+  forbidden); cites `00.6-code-style.md`.
+- **§3 Assumes** — PASS. Lists WP-167, the exact builder/types/mock exports, and
+  the build/test + DECISIONS external state; blocking gate stated.
+- **§4 Context** — PASS. Specific docs + sections: ARCHITECTURE §Layer Boundary,
+  `00.2 §1.4/§1.5`, DECISIONS D-1410..13 / D-16701/2, `00.6` Rules 4/6/7/8/14.
+- **§5 Files Expected to Change** — PASS. 6 files, each marked modified with a
+  one-line change note; closed list ("No other files may be modified").
+- **§6 Naming** — PASS. `copies` / `villainDeckTwistCount` /
+  `villainDeckBystanderCount` / `ext_id` / setup-payload fields match `00.2`.
+- **§7 Dependency Discipline** — PASS. Introduces no npm dependencies.
+- **§8 Architectural Boundaries** — PASS. Setup-time builder; `ctx.random.*`
+  only; `G` JSON-serializable (CardExtId strings); no registry/`boardgame.io`
+  imports; lives in the correct `villainDeck/` engine path.
+- **§9 Windows Compatibility** — PASS. Verification Steps are PowerShell
+  (`Select-String`, `pwsh` fence).
+- **§10 Env Var Hygiene** — N/A. WP touches no environment variables.
+- **§11 Authentication** — N/A. WP touches no authentication surface.
+- **§12 Test Quality** — PASS. `node:test` + `makeMockCtx` (reverse-shuffle); no
+  `boardgame.io` import / network / DB; golden deterministic deck test with a
+  `// why:` replay-breaking warning.
+- **§13 Verification Commands** — PASS. Exact `pnpm` commands with expected
+  output.
+- **§14 Acceptance Criteria** — PASS. 15 binary, observable, specific items
+  aligned to scope. (Count exceeds the 6–12 guideline because criteria are
+  grouped Composition / Golden / Boundaries / Tests; not a FAIL — every item is
+  binary and testable.)
+- **§15 Definition of Done** — PASS. Includes acceptance, STATUS.md,
+  DECISIONS.md, WORK_INDEX.md, and the no-out-of-scope-files check.
+- **§16 Code Style** — PASS. Helpers ≤30 lines + JSDoc, no `.reduce()`,
+  descriptive names, `// why:` on the non-obvious constants — all required by
+  the constraints.
+- **§17 Vision Alignment** — PASS. Triggered (RNG sourcing + card content); WP
+  has the `## Vision Alignment` block citing §1/§3/§8/§10/§14/§18/§22, conflict
+  assertion, NG-1..7 check, and the determinism-preservation line.
+- **§18 Prose-vs-Grep** — **FIX applied.** Verification Steps 3 & 5 grep this
+  file for `boardgame.io` / `.reduce(` expecting no output, but the current
+  file's line-14 and line-278 comments contain those literal tokens (WP-037
+  precedent). Added a packet-specific constraint requiring the rewritten
+  comments to cite the rule instead of the verbatim tokens. Now PASS.
+- **§19 Bridge-vs-HEAD Staleness** — N/A. Commit-time discipline, not a
+  WP-lint gate; this WP is not a repo-state-summarizing artifact.
+- **§20 Funding Surface Gate** — N/A. Engine setup logic only; no funding
+  affordances, no user-visible copy, no funding channels referenced.
+- **§21 API Catalog** — N/A. No HTTP endpoint added/modified/removed and no
+  `apps/server/src/**` library function changed; engine-only change.
+
+**Verdict:** all 21 sections PASS or justified N/A after the §18 fix.
 
 ## Definition of Done
 
