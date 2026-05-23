@@ -19,21 +19,26 @@
 | Key | Value | Source |
 |---|---|---|
 | `villain_group_total_sum` | `sum(card.copies ?? 1)` for all cards in group | WP-167 data; no hardcoded `8` |
-| `hero_deck_total_sum` | `sum(Object.values(hero.cardCounts))` or undefined | hero.cardCounts JSON |
-| `flatcard_count_field` | `count?: number` (copies or undefined) | new FlatCard type |
-| `flatcard_setTotal_field` | `setTotal?: number` (group/deck total or undefined) | new FlatCard type |
-| `display_format` | `"{count} of {setTotal}"` | user-visible; omit if either absent |
-| `AND_semantics_rule` | Omit row if count/setTotal absent; never show default/em-dash | CardDataDisplay.vue pattern |
+| `hero_count_lookup` | `count = cardCounts[card.rarity]` (rarity as key, no fallback) | hero.cardCounts JSON; rarity-based |
+| `hero_deck_total_sum` | `sum(Object.values(hero.cardCounts))` or undefined | computed once per hero; reused for all cards |
+| `flatcard_count_field` | `count?: number` (per-card copies or rarity lookup result) | new FlatCard type |
+| `flatcard_setTotal_field` | `setTotal?: number` (precomputed group/deck total or undefined) | new FlatCard type |
+| `display_format` | `"{count} of {setTotal}"` | user-visible; omit row if count undefined |
+| `AND_semantics_rule` | Omit row entirely if count absent; never render partial values | CardDetail + CardDataDisplay; binary decision |
+| `flatten_structure` | Totals computed once **before** card loop; per-card assigns precomputed values | flattenSet() pattern; no duplication |
 
 ---
 
 ## Guardrails
 
 1. **No hardcoded group/deck totals** — all sums computed per group/hero from data; `8` for villains and `14` for heroes are heuristics, not constants
-2. **Hero count lookup by display name** — `cardCounts[card.name]` where `card.name = HeroCardSchema.name`; must match exactly (name is optional in schema; absent ⇒ `undefined` count)
-3. **Villain copies fallback** — `card.copies ?? 1` (WP-167 default); never assume `2`
-4. **SHIELD Officers and alt-art omit counts** — single-side heroes and 4-side variants don't have `cardCounts`; FlatCard.count will be undefined; AND-semantics omits the row
-5. **No game-engine imports in registry-viewer** — hero counts are data (cardCounts), not derived from engine rarity logic; grep gates enforce this
+2. **Hero count mapping is strictly rarity-based** — `count = cardCounts[card.rarity]` (rarity as key); no display-name fallback, no heuristics; if rarity key not found → count = undefined
+3. **Villain copies fallback** — `card.copies ?? 1` (WP-167 default) applied at computation time only; never assume `2`; source data immutable
+4. **Totals precomputed, not per-card** — villainGroupTotal and heroDeckTotal computed once **before** the card loop; per-card iteration only assigns precomputed values; no repeated summation
+5. **SHIELD Officers and alt-art omit counts** — hero.cardCounts absent → count undefined, setTotal undefined; AND-semantics omits entire row (never partial values)
+6. **Rendering is binary: all-or-nothing** — if count is undefined, row MUST NOT render (even if setTotal computed); partial values are contract violations
+7. **UI row ordering is deterministic** — CardDetail: "Card Count" after "Type", before "Rarity"; CardDataDisplay: same ordering as rarity; never "before or after existing rows"
+8. **No game-engine imports in registry-viewer** — hero counts are data (cardCounts), not derived from engine rarity logic; grep gates enforce this
 
 ---
 
@@ -71,9 +76,15 @@
 
 ## Common Failure Smells
 
-- **Parse strips count data:** R2 JSON carries `copies` and `cardCounts`, but Zod drops them → verify schema changes are in place before flattenSet is called
-- **Hero count undefined for all heroes:** hero.cardCounts is present in R2 but lost at parse → check `HeroSchema.cardCounts` optional field definition
-- **Hardcoded "8" or "14" appear:** grep the codebase for literal numbers; all sums must come from data
-- **Count row renders for SHIELD Officers:** alt-art heroes and single-card heroes don't have cardCounts → ensure FlatCard.count is undefined for these and AND-semantics omits the row
-- **Layer boundary violated:** `game-engine` import appears in registry-viewer → hero counts are data, not engine-derived; grep gate catches this
+- **Parse strips count data:** R2 JSON carries `copies` and `cardCounts`, but Zod drops them → verify schema changes in place before flattenSet is called
+- **Hero count undefined for all heroes:** hero.cardCounts present in R2 but lost at parse → check `HeroSchema.cardCounts` optional field definition
+- **Hero count lookup uses wrong key:** cardCounts keyed by something other than rarity (e.g., display name) → verify mapping rule: `count = cardCounts[card.rarity]` only
+- **Hero count lookup has fallback heuristic:** code tries name-matching or default values when rarity lookup fails → remove fallbacks; must return undefined
+- **Totals computed inside card loop:** villainGroupTotal or heroDeckTotal summed per-card instead of once per group/hero → move sum before loop
+- **Partial values render:** count row appears when count is undefined (even if setTotal computed) → verify AND-semantics: row omitted if count absent
+- **Count row ordering inconsistent:** row placed "before or after" existing rows instead of deterministic position (after Type, before Rarity) → lock ordering
+- **Hardcoded "8" or "14" appear:** grep codebase for literal numbers; all sums must come from data
+- **Count row renders for SHIELD Officers:** alt-art heroes and single-card heroes don't have cardCounts → ensure FlatCard.count undefined and AND-semantics omits row
+- **Layer boundary violated:** `game-engine` import in registry-viewer → hero counts are data, not engine-derived; grep gate catches this
+- **Villain source data mutated:** copies modified to apply default instead of using `copies ?? 1` in computation → source data must remain immutable
 

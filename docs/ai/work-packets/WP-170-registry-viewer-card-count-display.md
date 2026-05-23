@@ -70,48 +70,125 @@ interface FlatCard {
 ### Display Format
 
 - **Display string (when both `count` and `setTotal` are defined):** `"{count} of {setTotal}"`
-- **Render location:** CardDetail.vue stats grid (after Slot, before or after existing rows) + CardDataDisplay.vue (in the data table, same AND-semantics pattern as rarity)
+- **Rendering rule (STRICT):** Omit the count row entirely if `count` is undefined, even if `setTotal` is computed. Partial values MUST NOT render.
 - **Cards that show count:** villains (always, since `copies` defaults to 1), heroes with explicit `cardCounts`, SHIELD Officers (omit), alternate-art heroes (omit)
+
+### Hero Count Mapping Rule (MUST)
+
+For hero cards:
+
+- If `hero.cardCounts` exists AND `card.rarity` exists:
+  - `count = cardCounts[card.rarity]` (lookup rarity as key)
+  - Example: rarity = "rare" → count = cardCounts["rare"]
+  - If rarity key not found in cardCounts: count = undefined
+- If `card.rarity` missing OR `hero.cardCounts` absent:
+  - count = undefined
+- No fallback heuristics (name matching, default values, or inferencing) allowed
+
+### setTotal Computation Rules (MUST)
+
+- **Villains:**
+  - setTotal = sum of `copies ?? 1` across ALL cards in the group
+  - Computed once per group; reused for every card in that group
+  - If group is empty: setTotal = 0
+  
+- **Heroes:**
+  - If `hero.cardCounts` exists AND has ≥1 entries:
+    - setTotal = sum of all values in cardCounts (regardless of whether this card has a count)
+    - Computed once per hero; reused for every card
+  - Else:
+    - setTotal = undefined
+    
+- **No partial totals:** If count is undefined, setTotal MUST NOT render (even if computed)
+
+### flattenSet Implementation Constraint (MUST)
+
+- Totals MUST be computed once per group/deck **before** the per-card loop:
+  - villainGroupTotal = computed once for each villain group
+  - heroDeckTotal = computed once per hero
+  
+- The per-card loop MUST only **assign** precomputed values:
+  - `card.count = ...`
+  - `card.setTotal = precomputedTotal`
+  
+- No repeated summation inside the per-card iteration (performance + auditability)
+
+### Villain Default Rule (MUST)
+
+- If `copies` is undefined or missing:
+  - Treat as 1 at computation time only
+- Viewer MUST NOT mutate source data; treat as read-only
 
 ### Data Flow
 
 1. **R2 → HTTP fetch:** Live `data/cards/*.json` already carries `villain.cards[].copies` and `hero.cardCounts`
 2. **Parse boundary:** Updated schema at `SetDataSchema.safeParse()` preserves both fields
-3. **flattenSet → FlatCard:** compute `count` and `setTotal` per type, attach to card object
-4. **Display:** CardDetail.vue + CardDataDisplay.vue render the count when present, omit when absent
+3. **flattenSet → FlatCard:** 
+   - Compute `villainGroupTotal` once per group; compute `heroDeckTotal` once per hero
+   - For each card: assign `count` via rarity lookup (heroes) or direct value (villains), assign `setTotal` from precomputed total
+4. **Display:** CardDetail.vue + CardDataDisplay.vue render count + setTotal only when BOTH are defined; omit row if count is undefined
 
 ---
 
 ## Acceptance Criteria
 
 - [ ] Schema changes allow `copies` and `cardCounts` to pass Zod validation without stripping
-- [ ] flattenSet computes and attaches `count` and `setTotal` to every FlatCard
-- [ ] Villain cards display their individual `copies` count and group total (sum of group's copies)
-- [ ] Hero cards with `cardCounts` display their side's count and deck total (sum of all cardCounts values)
-- [ ] Heroes without `cardCounts` (alt-art, SHIELD Officers) omit the count row gracefully
-- [ ] CardDetail.vue stats grid renders the count row for applicable cards
-- [ ] CardDataDisplay.vue data table renders the count row for applicable cards (AND-semantics: absent = no row)
-- [ ] No card or group total is hardcoded (all sums computed per data); henchman constant 10 is **not** surfaced here (future follow-up)
-- [ ] Registry-viewer layer boundary is not violated (no `game-engine` imports for count logic)
-- [ ] Tests confirm FlatCard count/setTotal are present and correct for sample villain and hero cards
+- [ ] flattenSet computes totals once per group/deck (before card loop); per-card assignment reuses precomputed values
+- [ ] Villain cards: count = individual `copies ?? 1`, setTotal = sum(copies ?? 1) per group
+- [ ] Hero cards: count = `cardCounts[card.rarity]` (rarity-based lookup), setTotal = sum(all cardCounts) or undefined
+- [ ] Heroes without `cardCounts` (alt-art, SHIELD Officers) have count = undefined, setTotal = undefined
+- [ ] Rendering is strict AND-semantics: count row OMIT if count is undefined (even if setTotal computed)
+- [ ] CardDetail.vue stats grid: "Card Count" row placed after "Type" and before "Rarity" (deterministic ordering)
+- [ ] CardDataDisplay.vue data table: "Card Count" row follows rarity row ordering, omit if count undefined
+- [ ] No hardcoded group/deck totals; all sums computed per data; henchman constant 10 **not** surfaced (future follow-up)
+- [ ] Registry-viewer layer boundary respected: no `game-engine` imports for count logic
+- [ ] All required test cases pass (villain, hero, edge cases defined below)
 
 ---
 
 ## Verification Steps
 
-**Local dev:**
-1. Start `pnpm --filter registry-viewer dev` and navigate to cards.barefootbetters.com local mirror (or localhost dev server)
-2. Search for a villain card (e.g., "Blob" from core Brotherhood) → detail panel opens → stats grid shows `count: 2` and `setTotal: 8`
-3. Search for a hero (e.g., "Black Widow" from core) → detail panel opens → stats grid shows `count: 1` (rare card) and `setTotal: 14`
-4. Search for a SHIELD Officer (e.g., "Dum Dum Dugan" from shld) → detail panel opens → count row is absent (SHIELD Officers have no `cardCounts`)
-5. Switch to data-view mode (CardDataDisplay) for the same cards → data table shows count row for villains/heroes, omits for alternates
-6. Inspect the flat card objects in the browser console to confirm `count` and `setTotal` are attached
-7. Verify no `game-engine` imports appear in any registry-viewer file (grep check)
+### Required Test Cases (Unit/Integration)
 
-**R2 live (smoke test post-merge):**
-1. Visit https://cards.barefootbetters.com/ (live production)
-2. Open a villain card detail → count row displays correctly
-3. Open a hero card detail → count row displays correctly
+1. **Villain group (Brotherhood core):**
+   - Expect Blob card: `count = 2`, `setTotal = 8`
+   - Verify total computed once, reused across all group cards
+   
+2. **Hero with full cardCounts (Black Widow core, rare):**
+   - Expect count = `cardCounts["rare"]` = 1
+   - Expect setTotal = sum of all cardCounts values = 14
+   - Verify rarity key lookup is deterministic
+
+3. **Hero missing cardCounts (SHIELD Officer e.g., Dum Dum Dugan):**
+   - Expect count = undefined
+   - Expect setTotal = undefined
+   - Verify row omitted entirely in both CardDetail and CardDataDisplay
+
+4. **Hero edge case (cardCounts present, rarity not in keys):**
+   - Expect count = undefined (rarity key not found)
+   - Expect setTotal computed but NOT rendered (row omitted per AND-semantics)
+   - Verify partial value never appears in UI
+
+5. **Schema preservation:**
+   - Verify `copies` field survives Zod parse (VillainCardSchema)
+   - Verify `cardCounts` field survives Zod parse (HeroSchema)
+   - Verify unknown fields not declared in schema are stripped (safeParse behavior unchanged)
+
+### Local Dev Smoke Test
+
+1. Start `pnpm --filter registry-viewer dev` 
+2. **Villain path:** Search "Blob" (core Brotherhood) → detail → count row shows "2 of 8"
+3. **Hero path:** Search "Black Widow" (core rare) → detail → count row shows "1 of 14"
+4. **SHIELD path:** Search "Dum Dum Dugan" (shld) → detail → count row absent
+5. **Data view:** Switch to CardDataDisplay for same cards → count row present/absent matches CardDetail
+6. **Console audit:** Inspect FlatCard objects → verify count/setTotal attached correctly
+7. **Layer check:** `grep -r "game-engine\|packages/game-engine" apps/registry-viewer/` must return 0 hits
+
+### R2 Live Smoke Test (Post-Merge)
+
+1. Visit https://cards.barefootbetters.com/ (production)
+2. Villain card detail: count row displays "N of M" format
+3. Hero card detail: count row displays "N of M" format for standard decks, absent for SHIELD/alt-art
 
 ---
 
@@ -119,18 +196,67 @@ interface FlatCard {
 
 All of the following must be true:
 
-- [ ] Schema changes (`copies` on `VillainCardSchema`, `cardCounts` on `HeroSchema`) merged
-- [ ] FlatCard type updated with `count?` and `setTotal?` fields
-- [ ] flattenSet logic computes and attaches both for villain and hero branches
-- [ ] CardDetail.vue stats grid displays the count row (or omits it for non-applicable cards)
-- [ ] CardDataDisplay.vue data table displays the count row (or omits it per AND-semantics)
-- [ ] No hardcoded count constants; all sums are computed from data
-- [ ] No game-engine imports in registry-viewer; layer boundary respected
-- [ ] Local dev verified: villain, hero, alt-art, SHIELD Officer cards all render correctly
-- [ ] Lint gate self-review completed (all 21 sections pass or N/A with justification)
-- [ ] Pre-flight verdict: READY TO EXECUTE
-- [ ] Copilot check verdict: PASS
-- [ ] EC-188 merged to main via SPEC PR
+**Schema & Types:**
+- [ ] `VillainCardSchema` has optional `copies: z.number().int().min(1).optional()`
+- [ ] `HeroSchema` has optional `cardCounts: z.record(z.string(), z.number().int().min(1)).optional().nullable()`
+- [ ] `FlatCard` interface has `count?: number` and `setTotal?: number`
+
+**flattenSet Logic:**
+- [ ] Villain branch: compute villainGroupTotal once, assign to all cards in group
+- [ ] Hero branch: compute heroDeckTotal once per hero, use rarity lookup for per-card count
+- [ ] Villain default rule enforced: `copies ?? 1` at computation time (source data immutable)
+- [ ] Hero rarity-key lookup: no fallback heuristics, undefined if rarity not found in cardCounts
+- [ ] Totals computed before card loop; per-card iteration only assigns precomputed values
+
+**Component Display:**
+- [ ] CardDetail.vue: "Card Count" row placed after "Type", before "Rarity" (deterministic ordering)
+- [ ] CardDataDisplay.vue: count row follows rarity row ordering; omitted if count undefined
+- [ ] AND-semantics enforced: row omitted entirely if count is undefined (no partial values)
+
+**Testing:**
+- [ ] Unit tests for villain total computation (Brotherhood example)
+- [ ] Unit tests for hero rarity lookup (Black Widow example)
+- [ ] Unit tests for SHIELD/alt-art omission (count undefined)
+- [ ] Unit tests for edge case (cardCounts present, rarity key missing)
+- [ ] Integration tests: FlatCard objects verified in test harness
+- [ ] Schema preservation tests: copies and cardCounts survive parse
+
+**Guardrails:**
+- [ ] No hardcoded group/deck totals; all sums computed per data
+- [ ] No game-engine imports anywhere in registry-viewer
+- [ ] Grep gate: `grep -r "game-engine\|packages/game-engine" apps/registry-viewer/` returns 0
+- [ ] Render layer boundary respected (hero counts are data, not engine-derived)
+
+**Smoke Tests:**
+- [ ] Local dev villain path: "2 of 8" for Blob (core Brotherhood)
+- [ ] Local dev hero path: "1 of 14" for Black Widow (core rare)
+- [ ] Local dev SHIELD path: count row absent for Dum Dum Dugan (shld)
+- [ ] R2 live verification: villain and hero counts display correctly
+- [ ] Layer isolation verified: no `game-engine` imports introduced
+
+**Governance:**
+- [ ] All required comments added: `// why:` on group/deck sum logic and display format
+- [ ] Lint gate sections 1–21 all pass or justified
+- [ ] EC-188 checklist completed and attached
+- [ ] SPEC PR merged to main with full commit message
+
+---
+
+## Tightening Addendum: Execution Guarantees
+
+This section locks down the execution contract to eliminate hidden risks:
+
+| Guarantee | Enforcement |
+|---|---|
+| Hero count mapping | Strictly rarity-based: `count = cardCounts[card.rarity]`; no fallback matching |
+| Total computation | Computed once per group/deck **before** card loop; per-card iteration reuses precomputed values |
+| UI row ordering | "Card Count" placed deterministically: after "Type", before "Rarity" in CardDetail.vue and after rarity in CardDataDisplay.vue |
+| Rendering condition | **BOTH** count AND setTotal must exist to render row; partial values MUST NOT appear |
+| Villain default | `copies ?? 1` applied at computation time only; source data remains immutable |
+| Schema preservation | Zod parse boundary unchanged; unknown fields stripped as before; only declared fields preserved |
+| Test coverage | 5 concrete test cases (villain, hero, SHIELD, edge-case, schema) + local smoke + R2 verification |
+
+**Key principle:** All totals are precomputed, all mappings are deterministic, all rendering decisions are binary (row present or absent, never partial).
 
 ---
 
