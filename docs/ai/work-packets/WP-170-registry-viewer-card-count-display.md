@@ -23,6 +23,8 @@ Users of the registry-viewer (cards.barefootbetters.com) browse Legendary cards 
 
 The data is **100% complete and correct**: villains have 632/632 copies (100%); heroes with standard 14-card decks have `cardCounts` (296); the remaining heroes are either SHIELD Officers (single-card, no count needed) or alternate-art variants (4-side or fewer, counts implicit). No upstream data-fix needed — just the viewer schema + flatten + display changes.
 
+**Drafting baseline.** `origin/main @ 855e90d` (2026-05-22). Recovered post-hoc from the WORK_INDEX row and recorded inline here per `docs/ai/REFERENCE/01.0a-wp-drafting-phase.md §Step 2` ("Record the baseline: capture `git rev-parse origin/main` and cite it in the WP's `§Context` or `§Assumes` block"). This WP predates routine in-body baseline capture; the line is a 01.0a retrofit, not a record of in-session capture. Pre-flight (`01.4`) and copilot check (`01.7`) verdicts were not explicitly recorded at draft time and are NOT asserted here.
+
 ---
 
 ## Scope (In) / (Out)
