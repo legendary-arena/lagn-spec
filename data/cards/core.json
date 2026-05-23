@@ -1630,6 +1630,87 @@
           ]
         }
       ]
+    },
+    {
+      "name": "S.H.I.E.L.D. Agent",
+      "slug": "agent",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Agent",
+          "slug": "agent",
+          "cost": 0,
+          "attack": null,
+          "recruit": "1",
+          "rarityLabel": "S.H.I.E.L.D. Agent",
+          "cardType": "shield-agent",
+          "abilities": []
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 1,
+          "imageUrl": "https://images.legendary-arena.com/core/core-sa-agent.webp",
+          "sides": [
+            "agent"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "S.H.I.E.L.D. Trooper",
+      "slug": "trooper",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Trooper",
+          "slug": "trooper",
+          "cost": 0,
+          "attack": "1",
+          "recruit": null,
+          "rarityLabel": "S.H.I.E.L.D. Trooper",
+          "cardType": "shield-trooper",
+          "abilities": []
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 1,
+          "imageUrl": "https://images.legendary-arena.com/core/core-tr-trooper.webp",
+          "sides": [
+            "trooper"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "S.H.I.E.L.D. Officer",
+      "slug": "officer",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Officer",
+          "slug": "officer",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer",
+          "cardType": "shield-officer",
+          "abilities": []
+        }
+      ],
+      "physicalCards": [
+        {
+          "id": "p1",
+          "count": 1,
+          "imageUrl": "https://images.legendary-arena.com/core/core-so-officer.webp",
+          "sides": [
+            "officer"
+          ]
+        }
+      ]
     }
   ],
   "masterminds": [
