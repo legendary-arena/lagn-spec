@@ -390,3 +390,195 @@ describe("flattenSet hero physicalCardImageUrl (D-14103)", () => {
     assert.equal(web.physicalCardImageUrl, undefined, "physicalCardImageUrl undefined when no physicalCards");
   });
 });
+
+// ===========================================================================
+// WP-170 — Card Count display (count + setTotal on FlatCard)
+// ===========================================================================
+
+describe("flattenSet villain card-count (WP-170)", () => {
+  it("Brotherhood: Blob is 2 of 8, totals shared across all group cards", () => {
+    const setData = {
+      id: 1,
+      abbr: "core",
+      heroes: [],
+      masterminds: [],
+      villains: [
+        {
+          id: 1,
+          name: "Brotherhood",
+          slug: "brotherhood",
+          cards: [
+            { name: "Blob", slug: "blob", copies: 2, abilities: [] },
+            { name: "Juggernaut", slug: "juggernaut", copies: 2, abilities: [] },
+            { name: "Mystique", slug: "mystique", copies: 2, abilities: [] },
+            { name: "Sabretooth", slug: "sabretooth", copies: 2, abilities: [] },
+          ],
+        },
+      ],
+      henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    const blob = result.find((c) => c.slug === "blob");
+    const juggernaut = result.find((c) => c.slug === "juggernaut");
+
+    assert.ok(blob, "blob must exist");
+    assert.equal(blob.count, 2, "Blob count");
+    assert.equal(blob.setTotal, 8, "Brotherhood group total = 4 × 2");
+    assert.ok(juggernaut, "juggernaut must exist");
+    assert.equal(juggernaut.setTotal, 8, "Group total reused across all cards");
+  });
+
+  it("treats missing copies as 1 at computation time (no source mutation)", () => {
+    const groupCards = [
+      { name: "A", slug: "a", abilities: [] },
+      { name: "B", slug: "b", copies: 3, abilities: [] },
+    ];
+    const setData = {
+      id: 1, abbr: "core", heroes: [], masterminds: [],
+      villains: [{ id: 1, name: "Mixed", slug: "mixed", cards: groupCards }],
+      henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    const a = result.find((c) => c.slug === "a");
+    const b = result.find((c) => c.slug === "b");
+    assert.equal(a?.count, 1, "absent copies defaults to 1");
+    assert.equal(b?.count, 3, "explicit copies preserved");
+    assert.equal(a?.setTotal, 4, "group total = 1 + 3");
+    assert.equal(b?.setTotal, 4, "group total shared");
+    // source data must not be mutated
+    assert.equal((groupCards[0] as Record<string, unknown>)["copies"], undefined, "source still has no copies");
+  });
+});
+
+describe("flattenSet hero card-count (WP-170, name-keyed amendment)", () => {
+  // why: R2 cardCounts is keyed by card display name, not rarity (verified
+  // 2026-05-22 across 5 heroes). Original WP spec said rarity-key; amendment
+  // landed in this execution session corrects to name-key lookup.
+  it("Black Widow standard deck: rare card is 1 of 14", () => {
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [
+        {
+          name: "Black Widow",
+          slug: "black-widow",
+          cardCounts: {
+            "Dangerous Rescue": 5,
+            "Mission Accomplished": 5,
+            "Covert Operation": 3,
+            "Silent Sniper": 1,
+          },
+          cards: [
+            { name: "Dangerous Rescue", slug: "dangerous-rescue", rarity: 1, abilities: [] },
+            { name: "Mission Accomplished", slug: "mission-accomplished", rarity: 1, abilities: [] },
+            { name: "Covert Operation", slug: "covert-operation", rarity: 2, abilities: [] },
+            { name: "Silent Sniper", slug: "silent-sniper", rarity: 3, abilities: [] },
+          ],
+        },
+      ],
+      masterminds: [], villains: [], henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    const silentSniper = result.find((c) => c.slug === "silent-sniper");
+    const dangerousRescue = result.find((c) => c.slug === "dangerous-rescue");
+
+    assert.ok(silentSniper, "silent sniper must exist");
+    assert.equal(silentSniper.count, 1, "rare card (Silent Sniper) count = 1");
+    assert.equal(silentSniper.setTotal, 14, "deck total = 5+5+3+1");
+    assert.ok(dangerousRescue, "dangerous rescue must exist");
+    assert.equal(dangerousRescue.count, 5, "common card (Dangerous Rescue) count = 5");
+    assert.equal(dangerousRescue.setTotal, 14, "deck total shared");
+  });
+
+  it("hero without cardCounts (e.g. SHIELD Officer): count and setTotal undefined", () => {
+    const setData = {
+      id: 1, abbr: "shld",
+      heroes: [
+        {
+          name: "Dum Dum Dugan",
+          slug: "dum-dum-dugan",
+          cards: [
+            { name: "Officer", slug: "officer", abilities: [] },
+          ],
+        },
+      ],
+      masterminds: [], villains: [], henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "SHIELD");
+    const officer = result.find((c) => c.slug === "officer");
+    assert.ok(officer, "officer must exist");
+    assert.equal(officer.count, undefined, "count undefined when cardCounts absent");
+    assert.equal(officer.setTotal, undefined, "setTotal undefined when cardCounts absent");
+  });
+
+  it("AND-semantics edge case: card name not in cardCounts ⇒ count undefined (setTotal stays defined)", () => {
+    // why: lock the strict AND-semantics — if a card's name doesn't appear in
+    // cardCounts (data drift, alt-card), count must be undefined so the row
+    // omits. setTotal is still precomputed from the hero's cardCounts; the
+    // template never renders the row when count is missing.
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [
+        {
+          name: "Black Widow",
+          slug: "black-widow",
+          cardCounts: {
+            "Dangerous Rescue": 5,
+            "Mission Accomplished": 5,
+            "Covert Operation": 3,
+            "Silent Sniper": 1,
+          },
+          cards: [
+            { name: "Orphaned Variant", slug: "orphaned-variant", rarity: 1, abilities: [] },
+          ],
+        },
+      ],
+      masterminds: [], villains: [], henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    const orphan = result.find((c) => c.slug === "orphaned-variant");
+    assert.ok(orphan, "orphan must exist");
+    assert.equal(orphan.count, undefined, "name not in cardCounts ⇒ count undefined");
+    assert.equal(orphan.setTotal, 14, "setTotal still precomputed from hero cardCounts");
+  });
+});
+
+describe("schema preservation through Zod parse (WP-170)", () => {
+  it("villain copies and hero cardCounts survive SetDataSchema.safeParse()", async () => {
+    const { SetDataSchema } = await import("./schema.js");
+    const raw = {
+      id: 1, abbr: "core",
+      heroes: [
+        {
+          name: "Black Widow",
+          slug: "black-widow",
+          cardCounts: { "Silent Sniper": 1, "Covert Operation": 3 },
+          cards: [
+            { name: "Silent Sniper", slug: "silent-sniper", rarity: 3, abilities: [] },
+          ],
+        },
+      ],
+      masterminds: [],
+      villains: [
+        {
+          id: 1, name: "Brotherhood", slug: "brotherhood",
+          cards: [
+            { name: "Blob", slug: "blob", copies: 2, abilities: [] },
+          ],
+        },
+      ],
+      henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    };
+    const parsed = SetDataSchema.safeParse(raw);
+    assert.equal(parsed.success, true, "raw set parses cleanly");
+    if (!parsed.success) return;
+    const widow = parsed.data.heroes[0];
+    assert.deepEqual(widow?.cardCounts, { "Silent Sniper": 1, "Covert Operation": 3 }, "cardCounts preserved");
+    const blob = parsed.data.villains[0]?.cards[0];
+    assert.equal((blob as { copies?: number })?.copies, 2, "villain copies preserved");
+  });
+});

@@ -53,6 +53,10 @@ export interface FlatCard {
   attack?:    string | null;
   recruit?:   string | null;
   abilities:  string[];
+  /** Card-count display (WP-170): copies of this card in its group/deck. */
+  count?:     number;
+  /** Card-count display (WP-170): total cards in the villain group or hero deck. */
+  setTotal?:  number;
 }
 
 // ── Registry info ─────────────────────────────────────────────────────────────

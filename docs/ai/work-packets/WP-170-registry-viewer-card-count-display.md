@@ -75,10 +75,16 @@ interface FlatCard {
 
 ### Hero Count Mapping Rule (MUST)
 
+> **Amended 2026-05-22 during EC-188 execution.** The original rule below
+> prescribed a rarity-key lookup (`cardCounts[card.rarity]`). Verification
+> against live R2 `core.json` proved `cardCounts` is keyed by **card display
+> name**, not rarity. The corrected rule is recorded in the **Amendments**
+> section at the end of this WP and is the rule the shipped code follows.
+
 For hero cards:
 
 - If `hero.cardCounts` exists AND `card.rarity` exists:
-  - `count = cardCounts[card.rarity]` (lookup rarity as key)
+  - `count = cardCounts[card.rarity]` (lookup rarity as key) ← **superseded; see Amendments**
   - Example: rarity = "rare" → count = cardCounts["rare"]
   - If rarity key not found in cardCounts: count = undefined
 - If `card.rarity` missing OR `hero.cardCounts` absent:
@@ -287,4 +293,58 @@ This section locks down the execution contract to eliminate hidden risks:
 | 21. Co-Authored-By in commit message? | ✅ | Will be included per WP-170 execution session |
 
 **Lint gate verdict: PASS** — all items resolved. No carve-outs needed.
+
+---
+
+## Amendments
+
+### Amendment 1 — Hero count lookup is name-keyed, not rarity-keyed (2026-05-22, during EC-188 execution)
+
+**Trigger:** Pre-execution verification of live R2 `core.json` showed
+`hero.cardCounts` keyed by **card display name**, not rarity tier or
+rarity label:
+
+```jsonc
+// Black Widow (core)
+"cardCounts": {
+  "Dangerous Rescue": 5,
+  "Mission Accomplished": 5,
+  "Covert Operation": 3,
+  "Silent Sniper": 1
+}
+// Each card carries rarity: 1/2/3 and rarityLabel: "Common 1"/"Common 2"/"Rare"
+```
+
+Verified across 5 sample heroes in `core.json` (Black Widow, Captain
+America, Cyclops, Deadpool, Emma Frost) — all follow the same 5/5/3/1
+= 14 pattern, all keyed by card name.
+
+**Original spec** (§Hero Count Mapping Rule, §Contract Data Flow,
+§Locked Values in EC-188): `count = cardCounts[card.rarity]`. This
+lookup yields `undefined` for every hero card under the real data
+shape; no hero count rows would ever render — contradicting
+§Verification Steps expectation "Black Widow → 1 of 14".
+
+**Corrected rule (the rule the shipped code implements):**
+
+For hero cards:
+- If `hero.cardCounts` exists AND `card.name` is a non-empty string:
+  - `count = cardCounts[card.name]` (lookup card display name as key)
+  - Example: card.name = "Silent Sniper" → count = cardCounts["Silent Sniper"]
+  - If name key not found in cardCounts: `count = undefined`
+- If `card.name` missing/empty OR `hero.cardCounts` absent:
+  - `count = undefined`
+- **No fuzzy matching, no fallback heuristics, no default values.** Absent
+  key still yields `count = undefined` ⇒ row omits per AND-semantics.
+
+**Why fold-inline (not redraft):** Single drift correction; well under
+the 5-amendment ceiling in `01.0b §Anti-patterns`. The WP's intent
+(data-driven count display, no fallback heuristics, AND-semantics
+omission) is preserved — only the lookup key changes to match data
+reality. Operator approved fold-inline path 2026-05-22.
+
+**Companion EC-188 §Locked Values update:** `hero_count_lookup` row
+amended from `cardCounts[card.rarity]; rarity-key only; no fallback`
+to `cardCounts[card.name]; name-key only; no fallback`. EC change
+landed in this same governance-close commit.
 

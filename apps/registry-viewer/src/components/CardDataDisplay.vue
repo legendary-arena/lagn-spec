@@ -121,6 +121,15 @@ function hasAbilityText(line: string): boolean {
         <dd>{{ card.rarity }}</dd>
       </template>
 
+      <!-- why: WP-170 strict AND-semantics — Card Count row renders only when
+           both count AND setTotal are defined. Same omission rule as the
+           image-view stats grid in CardDetail.vue. Placed after Rarity per
+           EC-188 §Required Comments + WP §Acceptance Criteria. -->
+      <template v-if="card.count !== undefined && card.setTotal !== undefined">
+        <dt>Card Count</dt>
+        <dd>{{ card.count }} of {{ card.setTotal }}</dd>
+      </template>
+
       <template v-if="typeof card.slot === 'number'">
         <dt>Slot</dt>
         <dd>{{ card.slot }}</dd>

@@ -143,6 +143,14 @@ function tokenLabel(token: AbilityToken): string {
             <span class="stat-label">Type</span>
             <span class="stat-value" :style="{ color: TYPE_COLOR[card.cardType] }">{{ card.cardType }}</span>
           </div>
+          <!-- why: WP-170 strict AND-semantics — render Card Count ONLY when
+               both count AND setTotal are defined. Partial values must never
+               render (e.g. setTotal computed but rarity-key missing ⇒ omit).
+               Placed after Type and before Rarity per WP §Acceptance Criteria. -->
+          <div v-if="card.count !== undefined && card.setTotal !== undefined" class="stat">
+            <span class="stat-label">Card Count</span>
+            <span class="stat-value">{{ card.count }} of {{ card.setTotal }}</span>
+          </div>
           <div class="stat">
             <span class="stat-label">Set</span>
             <span class="stat-value">{{ card.setName }} <small>({{ card.setAbbr }})</small></span>

@@ -52,6 +52,13 @@ export const HeroSchema = z.object({
   slug:  z.string(),
   team:  z.string().optional().nullable(),
   cards: z.array(HeroCardSchema),
+  // why: WP-170 — declare cardCounts so SetDataSchema.safeParse() preserves it
+  // through the parse boundary. Keyed by rarity label ("common"/"uncommon"/
+  // "rare"); values are deck-copy counts. Optional+nullable because SHIELD
+  // Officers and alt-art heroes don't carry it (count row omits per AND-
+  // semantics). Engine-side schema lives at packages/registry/src/schema.ts;
+  // viewer parses independently.
+  cardCounts: z.record(z.string(), z.number().int().min(1)).optional().nullable(),
   physicalCards: z.array(z.object({
     id:       z.string(),
     count:    z.number().int().min(1),
@@ -88,6 +95,11 @@ export const VillainCardSchema = z.object({
   vAttack:   z.union([z.string(), z.number(), z.null()]).optional(),
   imageUrl:  z.string().url().optional().nullable(),
   abilities: z.array(z.string()).optional().default([]),
+  // why: WP-170 — declare copies so SetDataSchema.safeParse() preserves it
+  // through the parse boundary. WP-167 published this on all 632 villain
+  // cards (default 2, absent ⇒ 1). flattenSet applies the absent-⇒-1 default
+  // at computation time; source data is treated read-only.
+  copies:    z.number().int().min(1).optional(),
 });
 
 // ── Villain group ─────────────────────────────────────────────────────────────

@@ -27,7 +27,33 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
       }
     }
 
+    // why: WP-170 Amendment (2026-05-22) — heroDeckTotal precomputed ONCE per
+    // hero before the per-card loop. Sum cardCounts values (typically
+    // 5/5/3/1 → 14) so every card in this hero reuses the same total.
+    // Undefined when cardCounts is absent (SHIELD Officers, alt-art heroes)
+    // — count row omits per AND-semantics. No per-card summation.
+    let heroDeckTotal: number | undefined;
+    if (hero.cardCounts && typeof hero.cardCounts === "object") {
+      let sum = 0;
+      for (const value of Object.values(hero.cardCounts)) {
+        if (typeof value === "number") sum += value;
+      }
+      if (sum > 0) heroDeckTotal = sum;
+    }
+
     for (const card of hero.cards) {
+      // why: WP-170 Amendment (2026-05-22) — R2 cardCounts is keyed by card
+      // display name (e.g. {"Mission Accomplished": 5, ...}), not by rarity
+      // tier or rarity label. Original WP/EC spec said cardCounts[card.rarity]
+      // — that's a misread of the data shape; rarity-key lookup yields
+      // undefined for every hero card. Name-key lookup is deterministic; no
+      // fuzzy matching, no fallback heuristics. Absent key ⇒ count undefined
+      // ⇒ row omits per AND-semantics.
+      let heroCardCount: number | undefined;
+      if (hero.cardCounts && typeof card.name === "string" && card.name.length > 0) {
+        const lookedUp = hero.cardCounts[card.name];
+        if (typeof lookedUp === "number") heroCardCount = lookedUp;
+      }
       cards.push({
         // why: use card.slug (not card.slot) — a few heroes (wwhk Caiera,
         // Miek The Unhived, Rick Jones) have two cards sharing the same
@@ -56,6 +82,8 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
         attack:      card.attack == null ? null : String(card.attack),
         recruit:     card.recruit == null ? null : String(card.recruit),
         abilities:   card.abilities ?? [],
+        count:       heroCardCount,
+        setTotal:    heroDeckTotal,
       });
     }
   }
@@ -78,6 +106,15 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
 
   // Villains
   for (const group of set.villains) {
+    // why: WP-170 — villainGroupTotal precomputed ONCE per group before the
+    // per-card loop. Sum copies ?? 1 across all cards in the group (e.g.
+    // Brotherhood 4 cards × 2 copies = 8). The `?? 1` default is applied at
+    // computation time only — source data remains read-only. Per-card iteration
+    // below only assigns; no summation inside the loop.
+    let villainGroupTotal = 0;
+    for (const card of group.cards) {
+      villainGroupTotal += card.copies ?? 1;
+    }
     for (const card of group.cards) {
       cards.push({
         key:       `${abbr}-villain-${group.slug}-${card.slug}`,
@@ -88,6 +125,8 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
         slug:      card.slug,
         imageUrl:  card.imageUrl ?? "",
         abilities: card.abilities ?? [],
+        count:     card.copies ?? 1,
+        setTotal:  villainGroupTotal,
       });
     }
   }
