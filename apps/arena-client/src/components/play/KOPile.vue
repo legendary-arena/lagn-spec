@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, toRaw, type PropType } from 'vue';
 import type { UIKoPileState } from '@legendary-arena/game-engine';
 
 /**
@@ -8,11 +8,14 @@ import type { UIKoPileState } from '@legendary-arena/game-engine';
  *
  * Renders the count + the top-card display + a click-to-browse affordance.
  * The browse modal itself is owned by the parent page-level SFC; this leaf
- * exposes a `data-testid` on the browse button so the parent's click
- * handler can intercept.
+ * emits `open` carrying a payload of `{ pileLabel, cards }` that the page
+ * stores in its `activePile` ref and feeds to a single `<PileBrowseModal>`
+ * mount.
  *
  * @see WP-129 §Acceptance Criteria — Shared KO Pile rendering
- * @see DECISIONS.md D-12804 KO pile fully projected
+ * @see WP-171 §Acceptance Criteria — Pile Browse Modal (browse button + emit)
+ * @see DECISIONS.md D-12804 KO pile fully projected, D-12805 UIDisplayEntry,
+ *      D-16502 type-only engine import
  */
 export default defineComponent({
   name: 'KOPile',
@@ -22,8 +25,23 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
-    return {};
+  emits: ['open'],
+  setup(props, { emit }) {
+    function onBrowse(): void {
+      // why: WP-171 / EC-189 — emit the source `koPile.cards` array by JS
+      // reference (no `.slice()`, no spread, no `Array.from`). Vue 3
+      // wraps props in a deep-readonly proxy, so `props.koPile.cards`
+      // is a proxy view of the engine's array, not the array itself.
+      // `toRaw()` is the documented Vue API for revealing the underlying
+      // reference — it is NOT a clone; the engine's original array
+      // travels through the emit byte-stable, preserving the
+      // order-preservation + referential-identity ACs.
+      emit('open', {
+        pileLabel: 'KO Pile',
+        cards: toRaw(props.koPile).cards,
+      });
+    }
+    return { onBrowse };
   },
 });
 </script>
@@ -48,6 +66,20 @@ export default defineComponent({
     <p v-else class="ko-pile__empty" data-testid="play-ko-empty">
       Empty.
     </p>
+    <!-- why: WP-171 / EC-189 — browse button is rendered only when the pile
+         has at least one card (`koPile.count > 0`); the affordance is
+         meaningless for an empty pile, so hiding it prevents a useless
+         click target. `type="button"` defends against future form-wrapping
+         that would otherwise convert the click into a submit. -->
+    <button
+      v-if="koPile.count > 0"
+      type="button"
+      class="ko-pile__browse"
+      data-testid="play-ko-browse"
+      @click="onBrowse"
+    >
+      View all ▼
+    </button>
   </section>
 </template>
 
@@ -74,5 +106,10 @@ export default defineComponent({
   margin: 0;
   font-style: italic;
   opacity: 0.7;
+}
+
+.ko-pile__browse {
+  align-self: flex-start;
+  padding: 0.25rem 0.5rem;
 }
 </style>

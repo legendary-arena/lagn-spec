@@ -1,20 +1,22 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, toRaw, type PropType } from 'vue';
 import type { UIDisplayEntry } from '@legendary-arena/game-engine';
 
 /**
- * Master Strike Pile leaf — face-up destination for resolved Master
- * Strike cards. Sits to the right of the Mastermind tile per
- * `DESIGN-BOARD-LAYOUT.md §3.1`.
+ * Master Strike Pile leaf — face-up destination for resolved Master Strike
+ * cards. Sits to the right of the Mastermind tile per
+ * `DESIGN-BOARD-LAYOUT.md §3.1`. WP-153 populated `G.mastermind.strikePile`
+ * so the array is no longer a constant safe-skip.
  *
- * SAFE-SKIP-WP128: `mastermind.strikePile` is `[]` until a future WP
- * back-fills `G.mastermind.strikePile` so resolved Master Strike cards
- * are preserved for replay (today they live in `G.villainDeck.discard`).
- * Per WP-128 / D-12806 the field ships as a constant empty array — this
- * leaf renders the empty count rather than stub data.
+ * Renders the count + the top-card display + a click-to-browse affordance.
+ * The browse modal itself is owned by the parent page-level SFC; this leaf
+ * emits `open` carrying `{ pileLabel, cards }` that the page stores in its
+ * `activePile` ref and feeds to a single `<PileBrowseModal>` mount.
  *
  * @see WP-129 §Acceptance Criteria — Master Strike Pile rendering
+ * @see WP-171 §Acceptance Criteria — Pile Browse Modal (browse button + emit)
  * @see DESIGN-BOARD-LAYOUT.md §3.1 (desktop) and §3.2 (mobile)
+ * @see DECISIONS.md D-12805 UIDisplayEntry shape, D-16502 type-only engine import
  */
 export default defineComponent({
   name: 'MasterStrikePile',
@@ -24,8 +26,23 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
-    return {};
+  emits: ['open'],
+  setup(props, { emit }) {
+    function onBrowse(): void {
+      // why: WP-171 / EC-189 — emit the source `pile` array by JS reference
+      // (no `.slice()`, no spread, no `Array.from`). Vue 3 wraps props in
+      // a deep-readonly proxy, so `props.pile` is a proxy view of the
+      // engine's array, not the array itself. `toRaw()` is the documented
+      // Vue API for revealing the underlying reference — it is NOT a
+      // clone; the engine's original array travels through the emit
+      // byte-stable, preserving the order-preservation +
+      // referential-identity ACs.
+      emit('open', {
+        pileLabel: 'Master Strike Pile',
+        cards: toRaw(props.pile),
+      });
+    }
+    return { onBrowse };
   },
 });
 </script>
@@ -50,6 +67,20 @@ export default defineComponent({
     <p v-else class="master-strike-pile__empty" data-testid="play-master-strike-empty">
       No strikes yet.
     </p>
+    <!-- why: WP-171 / EC-189 — browse button is rendered only when the pile
+         has at least one card (`pile.length > 0`); the affordance is
+         meaningless for an empty pile, so hiding it prevents a useless
+         click target. `type="button"` defends against future form-wrapping
+         that would otherwise convert the click into a submit. -->
+    <button
+      v-if="pile.length > 0"
+      type="button"
+      class="master-strike-pile__browse"
+      data-testid="play-master-strike-browse"
+      @click="onBrowse"
+    >
+      View all ▼
+    </button>
   </section>
 </template>
 
@@ -76,5 +107,10 @@ export default defineComponent({
   margin: 0;
   font-style: italic;
   opacity: 0.7;
+}
+
+.master-strike-pile__browse {
+  align-self: flex-start;
+  padding: 0.25rem 0.5rem;
 }
 </style>

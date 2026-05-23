@@ -1,7 +1,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, type PropType } from 'vue';
 import { storeToRefs } from 'pinia';
-import type { UIPlayerState } from '@legendary-arena/game-engine';
+import type { UIDisplayEntry, UIPlayerState } from '@legendary-arena/game-engine';
 import { useUiStateStore } from '../stores/uiState';
 import { useRevealDetector } from '../composables/useRevealDetector';
 import {
@@ -29,7 +29,13 @@ import YourVictoryPile from '../components/play/YourVictoryPile.vue';
 import TurnActionBar from '../components/play/TurnActionBar.vue';
 import LobbyControls from '../components/play/LobbyControls.vue';
 import RevealOverlay from '../components/play/RevealOverlay.vue';
+import PileBrowseModal from '../components/play/PileBrowseModal.vue';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
+
+interface ActivePile {
+  pileLabel: string;
+  cards: readonly UIDisplayEntry[];
+}
 
 /**
  * Desktop landscape page (1280×800 to 1920×1080) per
@@ -45,6 +51,7 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
  * / D-6512.
  *
  * @see WP-129 §Acceptance Criteria — desktop viewport
+ * @see WP-171 §Acceptance Criteria — Pile Browse Modal page wiring
  * @see DESIGN-BOARD-LAYOUT.md §3.1
  */
 export default defineComponent({
@@ -68,6 +75,7 @@ export default defineComponent({
     TurnActionBar,
     LobbyControls,
     RevealOverlay,
+    PileBrowseModal,
   },
   props: {
     submitMove: {
@@ -91,6 +99,20 @@ export default defineComponent({
     // confirms an autoplay match (D-16501); a normal PvP match returns 404 and
     // leaves this null so the bar stays hidden.
     const autoplayStatus = ref<AutoplayControlResponse | null>(null);
+
+    // why: WP-171 / EC-189 — single page-level modal-state ref mirrors the
+    // `OpponentPanel.vue:30-43` precedent (local ref, no Pinia, no composable).
+    // The discriminator is `null` (not an optional field) so the modal's
+    // `isOpen` binding is a clean `activePile !== null` boolean check.
+    const activePile = ref<ActivePile | null>(null);
+
+    function onPileOpen(payload: ActivePile): void {
+      activePile.value = payload;
+    }
+
+    function onPileClose(): void {
+      activePile.value = null;
+    }
 
     // why: game-over is engine truth, read PASSIVELY from the live snapshot and
     // passed to the control bar as a prop; never computed/inferred here.
@@ -167,6 +189,9 @@ export default defineComponent({
       matchId: props.matchId,
       autoplayStatus,
       isGameOver,
+      activePile,
+      onPileOpen,
+      onPileClose,
     };
   },
 });
@@ -226,11 +251,17 @@ export default defineComponent({
               :economy="snapshot.economy"
               :submit-move="submitMove"
             />
-            <MasterStrikePile :pile="snapshot.mastermind.strikePile" />
+            <MasterStrikePile
+              :pile="snapshot.mastermind.strikePile"
+              @open="onPileOpen"
+            />
           </div>
           <div class="play-desktop__scheme-zone">
             <SchemeTile :scheme="snapshot.scheme" :twist-threshold="8" />
-            <SchemeTwistPile :pile="snapshot.scheme.twistPile" />
+            <SchemeTwistPile
+              :pile="snapshot.scheme.twistPile"
+              @open="onPileOpen"
+            />
           </div>
         </section>
         <CityRow
@@ -248,7 +279,7 @@ export default defineComponent({
           :submit-move="submitMove"
         />
         <SharedDecks :piles="snapshot.piles" />
-        <KOPile :ko-pile="snapshot.koPile" />
+        <KOPile :ko-pile="snapshot.koPile" @open="onPileOpen" />
         <!-- why: the personal zone (own hand / economy / deck / victory) and the
              turn-action bar require an identified viewer. They are hidden for a
              spectator or rewound-autoplay frame (viewer null) while the shared
@@ -284,6 +315,17 @@ export default defineComponent({
         <slot name="preplan-affordance" />
       </template>
     </template>
+    <!-- why: WP-171 / EC-189 — exactly one pile-browse-modal instance per
+         page; the page-level `activePile` ref discriminates which pile is
+         currently open. The modal teleports under `document.body` so it
+         escapes the sticky board zones; ESC keydown + backdrop click clear
+         `activePile` via the page's `onPileClose` handler. -->
+    <PileBrowseModal
+      :is-open="activePile !== null"
+      :pile-label="activePile?.pileLabel ?? ''"
+      :cards="activePile?.cards ?? []"
+      @close="onPileClose"
+    />
   </div>
 </template>
 

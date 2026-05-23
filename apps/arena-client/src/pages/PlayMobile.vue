@@ -1,7 +1,7 @@
 <script lang="ts">
-import { computed, defineComponent, type PropType } from 'vue';
+import { computed, defineComponent, ref, type PropType } from 'vue';
 import { storeToRefs } from 'pinia';
-import type { UIPlayerState } from '@legendary-arena/game-engine';
+import type { UIDisplayEntry, UIPlayerState } from '@legendary-arena/game-engine';
 import { useUiStateStore } from '../stores/uiState';
 
 import TopHudBar from '../components/play/TopHudBar.vue';
@@ -20,7 +20,13 @@ import YourDeckDiscardZone from '../components/play/YourDeckDiscardZone.vue';
 import YourVictoryPile from '../components/play/YourVictoryPile.vue';
 import TurnActionBar from '../components/play/TurnActionBar.vue';
 import LobbyControls from '../components/play/LobbyControls.vue';
+import PileBrowseModal from '../components/play/PileBrowseModal.vue';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
+
+interface ActivePile {
+  pileLabel: string;
+  cards: readonly UIDisplayEntry[];
+}
 
 /**
  * Mobile portrait page (375×667 to 414×896) per
@@ -35,6 +41,7 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
  * / D-6512.
  *
  * @see WP-129 §Acceptance Criteria — mobile portrait viewport
+ * @see WP-171 §Acceptance Criteria — Pile Browse Modal page wiring
  * @see DESIGN-BOARD-LAYOUT.md §3.2
  */
 export default defineComponent({
@@ -56,6 +63,7 @@ export default defineComponent({
     YourVictoryPile,
     TurnActionBar,
     LobbyControls,
+    PileBrowseModal,
   },
   props: {
     submitMove: {
@@ -66,6 +74,20 @@ export default defineComponent({
   setup() {
     const store = useUiStateStore();
     const { snapshot } = storeToRefs(store);
+
+    // why: WP-171 / EC-189 — single page-level modal-state ref mirrors the
+    // `OpponentPanel.vue:30-43` precedent (local ref, no Pinia, no composable).
+    // PlayMobile reuses the identical wiring as PlayDesktop so behavior is
+    // viewport-symmetric.
+    const activePile = ref<ActivePile | null>(null);
+
+    function onPileOpen(payload: ActivePile): void {
+      activePile.value = payload;
+    }
+
+    function onPileClose(): void {
+      activePile.value = null;
+    }
 
     const viewer = computed<UIPlayerState | null>(() => {
       const current = snapshot.value;
@@ -100,7 +122,16 @@ export default defineComponent({
       () => snapshot.value?.game.phase === 'play',
     );
 
-    return { snapshot, viewer, opponents, isLobbyPhase, isPlayPhase };
+    return {
+      snapshot,
+      viewer,
+      opponents,
+      isLobbyPhase,
+      isPlayPhase,
+      activePile,
+      onPileOpen,
+      onPileClose,
+    };
   },
 });
 </script>
@@ -131,11 +162,17 @@ export default defineComponent({
             :economy="snapshot.economy"
             :submit-move="submitMove"
           />
-          <MasterStrikePile :pile="snapshot.mastermind.strikePile" />
+          <MasterStrikePile
+            :pile="snapshot.mastermind.strikePile"
+            @open="onPileOpen"
+          />
         </section>
         <section class="play-mobile__band">
           <SchemeTile :scheme="snapshot.scheme" :twist-threshold="8" />
-          <SchemeTwistPile :pile="snapshot.scheme.twistPile" />
+          <SchemeTwistPile
+            :pile="snapshot.scheme.twistPile"
+            @open="onPileOpen"
+          />
         </section>
         <section class="play-mobile__band play-mobile__band--scroll-x">
           <CityRow
@@ -156,7 +193,7 @@ export default defineComponent({
           />
         </section>
         <SharedDecks :piles="snapshot.piles" />
-        <KOPile :ko-pile="snapshot.koPile" />
+        <KOPile :ko-pile="snapshot.koPile" @open="onPileOpen" />
         <section
           class="play-mobile__band"
           data-testid="play-mobile-opponents"
@@ -208,6 +245,17 @@ export default defineComponent({
         <slot name="preplan-affordance" />
       </footer>
     </template>
+    <!-- why: WP-171 / EC-189 — exactly one pile-browse-modal instance per
+         page; identical wiring to PlayDesktop so behavior is
+         viewport-symmetric. The modal teleports under `document.body` so it
+         escapes the sticky-top/sticky-bottom zones; ESC keydown + backdrop
+         click clear `activePile` via the page's `onPileClose` handler. -->
+    <PileBrowseModal
+      :is-open="activePile !== null"
+      :pile-label="activePile?.pileLabel ?? ''"
+      :cards="activePile?.cards ?? []"
+      @close="onPileClose"
+    />
   </div>
 </template>
 
