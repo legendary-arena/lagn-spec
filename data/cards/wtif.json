@@ -2349,5 +2349,20 @@
       ]
     }
   ],
-  "other": []
+  "other": [
+    {
+      "name": "Master Strike",
+      "slug": "master-strike",
+      "cardType": "mastermind-strike",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-ms-master-strike.webp",
+      "abilities": []
+    },
+    {
+      "name": "Scheme Twist",
+      "slug": "scheme-twist",
+      "cardType": "scheme-twist",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-st-scheme-twist.webp",
+      "abilities": []
+    }
+  ]
 }

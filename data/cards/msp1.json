@@ -1588,5 +1588,20 @@
       ]
     }
   ],
-  "other": []
+  "other": [
+    {
+      "name": "Master Strike",
+      "slug": "master-strike",
+      "cardType": "mastermind-strike",
+      "imageUrl": "https://images.legendary-arena.com/msp1/msp1-ms-master-strike.webp",
+      "abilities": []
+    },
+    {
+      "name": "Scheme Twist",
+      "slug": "scheme-twist",
+      "cardType": "scheme-twist",
+      "imageUrl": "https://images.legendary-arena.com/msp1/msp1-st-scheme-twist.webp",
+      "abilities": []
+    }
+  ]
 }
