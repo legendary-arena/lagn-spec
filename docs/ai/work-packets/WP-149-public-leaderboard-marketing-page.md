@@ -1,6 +1,6 @@
 # WP-149 — Public Leaderboard — Marketing-Site Hugo Page
 
-**Status:** Drafted (BLOCKED on WP-148 + WP-150)
+**Status:** Done 2026-05-14 (commit `3471e0d`)
 **Primary Layer:** Cross-repo — implementation lives in the marketing
 repo (`C:\www\legendary-arena-com\`, a Hugo + PaperMod site at
 `https://www.legendary-arena.com/`). Governance and the WP / EC pair
