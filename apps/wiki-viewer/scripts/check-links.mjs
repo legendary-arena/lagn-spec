@@ -11,6 +11,13 @@
 // pass locally and fail in CI when, e.g., the body says `(Master-Strike.md)`
 // and the file on disk is `master-strike.md`. The check enforces the strict
 // rule so local and CI agree.
+// why: fenced code blocks are stripped before scanning per EC-179. Markdown
+// link syntax `[text](path)` inside a ``` fence is illustration text, not a
+// navigable link — image-embedding examples in blog-post-authoring.md,
+// brevo-email-pipeline.md, and wiki-viewer.md teach authors the Hugo
+// /-rooted static-asset URL convention and intentionally reference paths
+// that don't exist on the engine repo's filesystem. Without stripping,
+// every such example trips the gate by design.
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
@@ -20,6 +27,11 @@ const here = dirname(fileURLToPath(import.meta.url));
 const projectedRoot = join(here, '..', 'content');
 
 const MARKDOWN_LINK_PATTERN = /\[([^\]]+)\]\(([^)]+)\)/g;
+const FENCED_CODE_BLOCK_PATTERN = /```[\s\S]*?```/g;
+
+function stripFencedCodeBlocks(body) {
+  return body.replace(FENCED_CODE_BLOCK_PATTERN, '');
+}
 
 function isExternal(destination) {
   return (
@@ -65,7 +77,8 @@ function checkLinks() {
     }
     const filePath = join(projectedRoot, fileName);
     const body = readFileSync(filePath, 'utf8');
-    const matches = body.matchAll(MARKDOWN_LINK_PATTERN);
+    const scanBody = stripFencedCodeBlocks(body);
+    const matches = scanBody.matchAll(MARKDOWN_LINK_PATTERN);
     for (const match of matches) {
       const destination = match[2].trim();
       if (isExternal(destination)) {
