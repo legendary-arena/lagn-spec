@@ -2352,5 +2352,13 @@
     }
   ],
   "wounds": [],
-  "other": []
+  "other": [
+    {
+      "name": "Sidekick",
+      "slug": "sidekick",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-sk-sidekick.webp",
+      "abilities": []
+    }
+  ]
 }
