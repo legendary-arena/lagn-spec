@@ -590,5 +590,63 @@
         }
       ]
     }
+  ],
+  "other": [
+    {
+      "_op": "append",
+      "name": "Hairball",
+      "slug": "hairball",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-ss-hairball.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Lockheed",
+      "slug": "lockheed",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-ss-lockheed.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Lockjaw",
+      "slug": "lockjaw",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-ss-lockjaw.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Ms. Lion",
+      "slug": "ms-lion",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-ss-ms-lion.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Redwing",
+      "slug": "redwing",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-ss-redwing.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Throg",
+      "slug": "throg",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-ss-throg.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Zabu",
+      "slug": "zabu",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-ss-zabu.webp",
+      "abilities": []
+    }
   ]
 }
