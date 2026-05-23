@@ -1619,5 +1619,55 @@
     }
   ],
   "wounds": [],
-  "other": []
+  "other": [
+    {
+      "name": "Boom-Boom",
+      "slug": "boom-boom",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-boom-boom.webp",
+      "abilities": []
+    },
+    {
+      "name": "Darwin",
+      "slug": "darwin",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-darwin.webp",
+      "abilities": []
+    },
+    {
+      "name": "Layla Miller",
+      "slug": "layla-miller",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-layla-miller.webp",
+      "abilities": []
+    },
+    {
+      "name": "Prodigy",
+      "slug": "prodigy",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-prodigy.webp",
+      "abilities": []
+    },
+    {
+      "name": "Rockslide",
+      "slug": "rockslide",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-rockslide.webp",
+      "abilities": []
+    },
+    {
+      "name": "Rusty Firefist Collins",
+      "slug": "rusty-firefist-collins",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-rusty-firefist-collins.webp",
+      "abilities": []
+    },
+    {
+      "name": "Skids",
+      "slug": "skids",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-skids.webp",
+      "abilities": []
+    }
+  ]
 }

@@ -464,5 +464,63 @@
         "[keyword:Fight]: If there are no other Sentinel Squad O*N*E*s in the city, KO one of your Heroes and put this Villain on the bottom of the Villain Deck."
       ]
     }
+  ],
+  "other": [
+    {
+      "_op": "append",
+      "name": "Boom-Boom",
+      "slug": "boom-boom",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-boom-boom.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Darwin",
+      "slug": "darwin",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-darwin.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Layla Miller",
+      "slug": "layla-miller",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-layla-miller.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Prodigy",
+      "slug": "prodigy",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-prodigy.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Rockslide",
+      "slug": "rockslide",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-rockslide.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Rusty Firefist Collins",
+      "slug": "rusty-firefist-collins",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-rusty-firefist-collins.webp",
+      "abilities": []
+    },
+    {
+      "_op": "append",
+      "name": "Skids",
+      "slug": "skids",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/msmc/msmc-ss-skids.webp",
+      "abilities": []
+    }
   ]
 }
