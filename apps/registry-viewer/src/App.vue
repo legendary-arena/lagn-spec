@@ -480,7 +480,7 @@ function navigateToCard(slug: string, cardType: string) {
   <AppShell>
     <div class="app">
     <header class="header">
-      <h1 class="logo">⚔️ Legendary Arena <span class="sub">Registry Viewer</span></h1>
+      <h1 class="logo">⚔️ <a class="logo-link" href="https://www.legendary-arena.com">Legendary Arena</a> <span class="sub">Registry Viewer</span></h1>
       <div class="header-actions">
         <ViewModeToggle v-if="!loading && !loadError" />
         <button v-if="!loading && !loadError" class="diag-btn" @click="glossary.toggle()" title="Open Rules Glossary (Ctrl+K)">
@@ -696,6 +696,8 @@ function navigateToCard(slug: string, cardType: string) {
 
 .header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; background: #1a1a24; border-bottom: 1px solid #2e2e42; flex-shrink: 0; }
 .logo  { margin: 0; font-size: 1.1rem; font-weight: 700; color: #fff; }
+.logo-link { color: inherit; text-decoration: none; }
+.logo-link:hover, .logo-link:focus-visible { color: var(--la-color-cta, #6aa6ff); text-decoration: underline; }
 .sub   { font-weight: 400; color: #8888aa; font-size: 0.85rem; margin-left: 0.5rem; }
 .header-actions { display: flex; gap: 0.5rem; align-items: center; }
 .diag-btn { background: #2a2a3a; border: 1px solid #3e3e56; color: #c8c8e0; padding: 0.4rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: inherit; }
