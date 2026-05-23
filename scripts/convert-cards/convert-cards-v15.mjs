@@ -936,9 +936,36 @@ function applyPatch(result, setAbbr) {
         // Strip any stale imageUrl from appended hero cards — hero card
         // imageUrl was removed in WP-151 (D-15101); physicalCards[].imageUrl
         // is the sole hero image source.
+        //
+        // why: before stripping, capture each card's imageUrl onto the
+        // hero-level `_cardImageUrlsBySlug` map IF AND ONLY IF the URL's
+        // ribbon is non-standard (i.e., NOT `{setAbbr}-hr-`). This is the
+        // patch author's escape hatch for hero cards whose printed-card
+        // image URL doesn't fit `heroImageUrl()`'s
+        // `{setAbbr}-hr-{heroSlug}-{cardSlug}.webp` pattern — e.g.,
+        // S.H.I.E.L.D. Officer Specials, which use `{setAbbr}-sp-{slug}.webp`.
+        // Standard `-hr-` URLs in patches are LEGACY CRUFT from the pre-WP-151
+        // era (cost-rarity-slot filenames like `core-hr-black-widow-2c1.webp`)
+        // and MUST be discarded so `heroImageUrl()` regenerates the canonical
+        // slug-based form — capturing them would silently revert WP-151.
+        // `synthesizePhysicalCards()` reads this map for single-side
+        // physicalCards. The private field is deleted right after synthesis
+        // in `buildPhysicalCards()` so it never reaches the output JSON.
         if (section === 'heroes' && fields.cards) {
+          const standardRibbon = `/${setAbbr}-hr-`;
+          const capturedImageUrls = {};
           for (const card of fields.cards) {
+            if (
+              typeof card.imageUrl === 'string' &&
+              card.imageUrl.length > 0 &&
+              !card.imageUrl.includes(standardRibbon)
+            ) {
+              capturedImageUrls[card.slug] = card.imageUrl;
+            }
             delete card.imageUrl;
+          }
+          if (Object.keys(capturedImageUrls).length > 0) {
+            fields._cardImageUrlsBySlug = capturedImageUrls;
           }
         }
         result[section].push(fields);
@@ -1008,9 +1035,28 @@ function applyPatch(result, setAbbr) {
         }
 
         // Strip any stale imageUrl from merged hero cards (D-15101).
+        // why: same escape-hatch capture as the append branch above —
+        // preserve any patch-declared per-card imageUrl on the hero-level
+        // `_cardImageUrlsBySlug` map for `synthesizePhysicalCards()` to
+        // consult. Skips standard `{setAbbr}-hr-` URLs (legacy cruft from
+        // the pre-WP-151 era — see append-branch comment for full reasoning).
+        // Merged into any existing map so multiple merge entries for the
+        // same hero compose correctly.
         if (section === 'heroes' && target.cards) {
+          const standardRibbon = `/${setAbbr}-hr-`;
+          const capturedImageUrls = target._cardImageUrlsBySlug ?? {};
           for (const card of target.cards) {
+            if (
+              typeof card.imageUrl === 'string' &&
+              card.imageUrl.length > 0 &&
+              !card.imageUrl.includes(standardRibbon)
+            ) {
+              capturedImageUrls[card.slug] = card.imageUrl;
+            }
             delete card.imageUrl;
+          }
+          if (Object.keys(capturedImageUrls).length > 0) {
+            target._cardImageUrlsBySlug = capturedImageUrls;
           }
         }
 
@@ -1276,6 +1322,17 @@ function isClusterCovered(cluster, hero, patchHero) {
  * @returns The synthesized hero.physicalCards array.
  */
 function synthesizePhysicalCards(hero, setAbbr, declaredPhysicalCards) {
+  // why: `_cardImageUrlsBySlug` is the patch author's escape hatch for
+  // hero cards whose printed-card image URL doesn't fit `heroImageUrl()`'s
+  // `{setAbbr}-hr-{heroSlug}-{cardSlug}.webp` pattern (e.g., S.H.I.E.L.D.
+  // Officer Specials, which use `{setAbbr}-sp-{slug}.webp`). It's
+  // populated by `applyPatch()` when a patch card carries an `imageUrl`,
+  // and is deleted by `buildPhysicalCards()` after synthesis so it never
+  // reaches the output JSON. Only consulted for single-side physicalCards
+  // — multi-side overrides remain a future enhancement; today no patch
+  // declares a multi-side imageUrl that disagrees with `heroImageUrl()`.
+  const cardImageUrlsBySlug = hero._cardImageUrlsBySlug ?? {};
+
   if (Array.isArray(declaredPhysicalCards) && declaredPhysicalCards.length > 0) {
     const physicalCards = declaredPhysicalCards.map((entry, index) => {
       const sides = entry.sides;
@@ -1286,10 +1343,13 @@ function synthesizePhysicalCards(hero, setAbbr, declaredPhysicalCards) {
       // segment and the field is omitted from the output object so the
       // existing 39 declared two-side physicalCards remain byte-identical.
       const companionSlug = entry.companionSlug;
+      const overrideImageUrl = sides.length === 1
+        ? cardImageUrlsBySlug[sides[0]]
+        : undefined;
       const built = {
         id: `p${index + 1}`,
         count: entry.count,
-        imageUrl: heroImageUrl(setAbbr, hero.slug, sides, companionSlug),
+        imageUrl: overrideImageUrl ?? heroImageUrl(setAbbr, hero.slug, sides, companionSlug),
         sides,
       };
       if (companionSlug !== undefined) {
@@ -1305,10 +1365,11 @@ function synthesizePhysicalCards(hero, setAbbr, declaredPhysicalCards) {
     let nextIdNumber = physicalCards.length + 1;
     for (const card of hero.cards || []) {
       if (!declaredSides.has(card.slug)) {
+        const overrideImageUrl = cardImageUrlsBySlug[card.slug];
         physicalCards.push({
           id: `p${nextIdNumber}`,
           count: resolveSoloCardCount(hero, card),
-          imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug], undefined),
+          imageUrl: overrideImageUrl ?? heroImageUrl(setAbbr, hero.slug, [card.slug], undefined),
           sides: [card.slug],
         });
         nextIdNumber++;
@@ -1317,12 +1378,15 @@ function synthesizePhysicalCards(hero, setAbbr, declaredPhysicalCards) {
     return physicalCards;
   }
 
-  return (hero.cards || []).map((card, index) => ({
-    id: `p${index + 1}`,
-    count: resolveSoloCardCount(hero, card),
-    imageUrl: heroImageUrl(setAbbr, hero.slug, [card.slug], undefined),
-    sides: [card.slug],
-  }));
+  return (hero.cards || []).map((card, index) => {
+    const overrideImageUrl = cardImageUrlsBySlug[card.slug];
+    return {
+      id: `p${index + 1}`,
+      count: resolveSoloCardCount(hero, card),
+      imageUrl: overrideImageUrl ?? heroImageUrl(setAbbr, hero.slug, [card.slug], undefined),
+      sides: [card.slug],
+    };
+  });
 }
 
 /**
@@ -1422,6 +1486,15 @@ function buildPhysicalCards(result, setAbbr, patch, auditWarnings) {
       setAbbr,
       patchHero?.physicalCards
     );
+
+    // why: `_cardImageUrlsBySlug` is the patch-author escape hatch populated
+    // by `applyPatch()` for hero cards whose printed-card image URL doesn't
+    // fit `heroImageUrl()`'s synthesized pattern (see comment in
+    // `synthesizePhysicalCards()`). Now that synthesis is done, delete the
+    // private field so it never leaks into the output JSON — D-15101 (hero
+    // card `imageUrl` removed; `physicalCards[].imageUrl` is the sole hero
+    // image source) stays intact.
+    delete hero._cardImageUrlsBySlug;
 
     // Drift validation when patch declares physicalCards (existing WP-138 contract)
     if (patchHero && Array.isArray(patchHero.physicalCards) && patchHero.physicalCards.length > 0) {
