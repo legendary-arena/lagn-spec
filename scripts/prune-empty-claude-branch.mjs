@@ -4,7 +4,7 @@
 // Hygiene check for accumulated `claude/*` worktree+branch leftovers
 // produced by Claude Code's per-session auto-spawn behavior.
 //
-// Four modes:
+// Five modes:
 //
 //   --report  (default; safe to run from any hook)
 //     Read-only audit across all claude/* branches. Counts prunable
@@ -28,6 +28,30 @@
 //     Verifies that the CURRENT branch (where the script is invoked
 //     from) is safe to delete. Exits 0 on PASS, 1 on FAIL. Use after
 //     a PR merges, before `git branch -D`.
+//
+//   --audit (operator-driven; informational only, never destructive)
+//     Surfaces soft-case findings that --report's strict safety contract
+//     misses. Reports across four heuristics; the operator decides per
+//     finding. Always exits 0. Heuristics:
+//
+//       abandoned-no-PR      Branch has 1+ commits ahead of main, no PR
+//                            on record (any state), and last commit is
+//                            older than --abandoned-days (default 7).
+//       worktree-idle        Worktree has had no activity for longer
+//                            than --idle-days (default 14). Activity =
+//                            the most recent of HEAD commit time OR
+//                            mtime of any tracked file in the worktree.
+//       stale-untracked-spec Worktree has untracked WP-*.md / EC-*.md
+//                            drafts whose slug number already exists on
+//                            main (the spec shipped via another path).
+//       dangling-far-behind  Branch is 0 commits ahead of main but
+//                            >--behind-threshold commits behind
+//                            (default 50). The work landed via a
+//                            different path; the branch is now noise.
+//
+//     Future concern: a SessionStart hook could surface counts as a
+//     chip; not wired in this commit (intentional — surface first,
+//     decide on hook integration after operator validation).
 //
 // Safety contract for --report / --execute (ALL must hold to prune):
 //
@@ -55,14 +79,27 @@
 //         (the squash-merge case; queried via `gh pr list`)
 
 import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
+import path from 'node:path';
 
 const REPORT_THRESHOLD = 5;
 const mode = process.argv.includes('--verify-current') ? 'verify'
+  : process.argv.includes('--audit') ? 'audit'
   : process.argv.includes('--cleanup-orphans') ? 'cleanup-orphans'
   : process.argv.includes('--execute') ? 'execute'
   : 'report';
 const verbose = process.argv.includes('--verbose');
+
+/**
+ * Parses `--<name> <number>` from argv. Returns defaultValue if missing,
+ * non-numeric, or non-positive. Used by --audit threshold flags.
+ */
+function getNumberFlag(name, defaultValue) {
+  const idx = process.argv.indexOf(name);
+  if (idx === -1 || idx === process.argv.length - 1) return defaultValue;
+  const value = Number(process.argv[idx + 1]);
+  return Number.isFinite(value) && value > 0 ? value : defaultValue;
+}
 
 function git(args, cwd) {
   return execSync(`git ${args}`, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
@@ -325,6 +362,271 @@ function hasMergedPR(branch) {
 }
 
 /**
+ * Returns the unix timestamp (seconds) of the last commit on the given ref
+ * from the given cwd. Returns 0 if the ref is unreachable.
+ */
+function lastCommitTimestamp(cwd, ref) {
+  try {
+    return Number(git(`log -1 --format=%ct ${ref}`, cwd));
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Number of commits the branch is behind origin/main; -1 if unknown.
+ * Used by --audit's dangling-far-behind heuristic.
+ */
+function commitsBehindMain(repo, branch) {
+  try {
+    return Number(git(`rev-list --count ${branch}..origin/main`, repo));
+  } catch {
+    return -1;
+  }
+}
+
+/**
+ * Returns the max mtime (unix seconds) across all tracked files in the
+ * worktree. Used by --audit's worktree-idle heuristic to detect activity
+ * beyond just commit timestamps. Returns 0 if the worktree is missing or
+ * empty.
+ */
+function maxTrackedFileMtime(worktreePath) {
+  if (!existsSync(worktreePath)) return 0;
+  let files;
+  try {
+    files = git('ls-files', worktreePath).split('\n').filter(Boolean);
+  } catch {
+    return 0;
+  }
+  let maxMs = 0;
+  for (const relPath of files) {
+    const fullPath = path.join(worktreePath, relPath);
+    try {
+      const stat = statSync(fullPath);
+      if (stat.mtimeMs > maxMs) maxMs = stat.mtimeMs;
+    } catch {
+      // Skip missing files (sparse checkout, broken symlinks, etc.).
+    }
+  }
+  return Math.floor(maxMs / 1000);
+}
+
+/**
+ * Lists every claude/* worktree as { branch, worktreePath }. Skips the
+ * canonical clone (which is never on a claude/* branch in normal use).
+ */
+function listClaudeWorktrees(repo) {
+  const blocks = git('worktree list --porcelain', repo).split('\n\n');
+  const results = [];
+  for (const block of blocks) {
+    let worktreePath = null;
+    let branch = null;
+    for (const line of block.split('\n')) {
+      if (line.startsWith('worktree ')) worktreePath = line.slice('worktree '.length);
+      else if (line.startsWith('branch refs/heads/')) branch = line.slice('branch refs/heads/'.length);
+    }
+    if (worktreePath && branch && branch.startsWith('claude/')) {
+      results.push({ branch, worktreePath });
+    }
+  }
+  return results;
+}
+
+/**
+ * Returns the count of PRs (any state) where the given branch is the
+ * head. Returns -1 if the gh CLI is unavailable so the caller can degrade
+ * gracefully (--audit emits a single warning and skips the heuristic).
+ */
+function ghPRCount(branch) {
+  try {
+    const out = execSync(
+      `gh pr list --state all --search "head:${branch}" --json number --jq "length"`,
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }
+    ).trim();
+    return Number(out);
+  } catch {
+    return -1;
+  }
+}
+
+/**
+ * Returns the set of WP and EC numbers present on main (parsed from
+ * filenames like `WP-171-pile-browse-modal.md`). Used by --audit's
+ * stale-untracked-spec heuristic to decide whether an untracked draft
+ * was already superseded by what shipped.
+ */
+function mainSpecSlugs(repo) {
+  const wpNumbers = new Set();
+  const ecNumbers = new Set();
+  try {
+    const wps = git('ls-tree -r --name-only main -- docs/ai/work-packets', repo).split('\n');
+    for (const file of wps) {
+      const m = file.match(/WP-(\d+)/);
+      if (m) wpNumbers.add(m[1]);
+    }
+  } catch {
+    // Tree may not exist in this repo state; treat as empty.
+  }
+  try {
+    const ecs = git('ls-tree -r --name-only main -- docs/ai/execution-checklists', repo).split('\n');
+    for (const file of ecs) {
+      const m = file.match(/EC-(\d+)/);
+      if (m) ecNumbers.add(m[1]);
+    }
+  } catch {
+    // Same as above.
+  }
+  return { wpNumbers, ecNumbers };
+}
+
+/**
+ * Returns untracked files in the worktree that match the WP-*.md or
+ * EC-*.md naming pattern under docs/ai/. Empty array if the worktree
+ * is missing.
+ */
+function untrackedSpecs(worktreePath) {
+  if (!existsSync(worktreePath)) return [];
+  let out;
+  try {
+    out = git('ls-files --others --exclude-standard', worktreePath);
+  } catch {
+    return [];
+  }
+  if (!out) return [];
+  return out.split('\n').filter(line =>
+    /^docs\/ai\/work-packets\/WP-\d+/.test(line) ||
+    /^docs\/ai\/execution-checklists\/EC-\d+/.test(line)
+  );
+}
+
+/**
+ * Runs the four soft-case heuristics and returns findings grouped by
+ * heuristic name. Pure: no side effects, no destructive operations.
+ * The caller (reportAudit) is responsible for printing.
+ */
+function auditSoftCases() {
+  const repo = getCanonicalRoot();
+  const abandonedDays = getNumberFlag('--abandoned-days', 7);
+  const idleDays = getNumberFlag('--idle-days', 14);
+  const behindThreshold = getNumberFlag('--behind-threshold', 50);
+
+  const now = Math.floor(Date.now() / 1000);
+  const abandonedThresholdSec = abandonedDays * 86400;
+  const idleThresholdSec = idleDays * 86400;
+
+  const findings = {
+    'abandoned-no-PR': [],
+    'worktree-idle': [],
+    'stale-untracked-spec': [],
+    'dangling-far-behind': [],
+  };
+  let ghUnavailable = false;
+
+  const branches = listClaudeBranches(repo);
+  const claudeWorktrees = listClaudeWorktrees(repo);
+  const { wpNumbers, ecNumbers } = mainSpecSlugs(repo);
+
+  // Heuristic 1 (abandoned-no-PR) + Heuristic 4 (dangling-far-behind) —
+  // both keyed on branch state.
+  for (const branch of branches) {
+    const ahead = commitsAheadOfMain(repo, branch);
+
+    if (ahead > 0) {
+      const lastCommit = lastCommitTimestamp(repo, branch);
+      if (lastCommit > 0 && (now - lastCommit) >= abandonedThresholdSec) {
+        const prCount = ghPRCount(branch);
+        if (prCount === 0) {
+          const ageDays = Math.floor((now - lastCommit) / 86400);
+          findings['abandoned-no-PR'].push({
+            target: branch,
+            reason: `${ageDays} days since last commit, no PR on record (any state)`,
+          });
+        } else if (prCount === -1) {
+          ghUnavailable = true;
+        }
+      }
+    } else if (ahead === 0) {
+      const behind = commitsBehindMain(repo, branch);
+      if (behind > behindThreshold) {
+        findings['dangling-far-behind'].push({
+          target: branch,
+          reason: `0 ahead, ${behind} behind origin/main (threshold ${behindThreshold})`,
+        });
+      }
+    }
+  }
+
+  // Heuristic 2 (worktree-idle) + Heuristic 3 (stale-untracked-spec) —
+  // both keyed on worktree state.
+  for (const { branch, worktreePath } of claudeWorktrees) {
+    if (!existsSync(worktreePath)) continue;
+
+    const headTimestamp = lastCommitTimestamp(worktreePath, 'HEAD');
+    const fileTimestamp = maxTrackedFileMtime(worktreePath);
+    const mostRecent = Math.max(headTimestamp, fileTimestamp);
+    if (mostRecent > 0 && (now - mostRecent) >= idleThresholdSec) {
+      const ageDays = Math.floor((now - mostRecent) / 86400);
+      findings['worktree-idle'].push({
+        target: worktreePath,
+        reason: `${ageDays} days since last activity on ${branch}`,
+      });
+    }
+
+    for (const file of untrackedSpecs(worktreePath)) {
+      const wpMatch = file.match(/work-packets\/WP-(\d+)-/);
+      const ecMatch = file.match(/execution-checklists\/EC-(\d+)/);
+      if (wpMatch && wpNumbers.has(wpMatch[1])) {
+        findings['stale-untracked-spec'].push({
+          target: worktreePath,
+          reason: `untracked ${file} — WP-${wpMatch[1]} already shipped on main`,
+        });
+      } else if (ecMatch && ecNumbers.has(ecMatch[1])) {
+        findings['stale-untracked-spec'].push({
+          target: worktreePath,
+          reason: `untracked ${file} — EC-${ecMatch[1]} already shipped on main`,
+        });
+      }
+    }
+  }
+
+  return { findings, ghUnavailable };
+}
+
+/**
+ * Prints --audit findings grouped by heuristic, with a per-heuristic
+ * summary count at the end. Always returns 0 (audit is informational).
+ */
+function reportAudit({ findings, ghUnavailable }) {
+  const groups = ['abandoned-no-PR', 'worktree-idle', 'stale-untracked-spec', 'dangling-far-behind'];
+  let total = 0;
+
+  if (ghUnavailable) {
+    console.log('Warning: gh CLI unavailable. abandoned-no-PR results may be incomplete.\n');
+  }
+
+  for (const group of groups) {
+    for (const { target, reason } of findings[group]) {
+      console.log(`[${group}] ${target}: ${reason}`);
+      total++;
+    }
+  }
+
+  if (total === 0) {
+    console.log('No soft-case findings.');
+  }
+
+  console.log('');
+  console.log('Summary:');
+  for (const group of groups) {
+    console.log(`  ${group}: ${findings[group].length}`);
+  }
+  console.log(`  total: ${total}`);
+
+  return 0;
+}
+
+/**
  * Verifies the current branch is safe to delete. Output is single-line
  * PASS/FAIL with operator-actionable diagnosis on failure.
  */
@@ -372,6 +674,8 @@ function verifyCurrent() {
 
 if (mode === 'verify') {
   process.exit(verifyCurrent());
+} else if (mode === 'audit') {
+  process.exit(reportAudit(auditSoftCases()));
 } else {
   const result = audit();
   if (mode === 'execute') {
