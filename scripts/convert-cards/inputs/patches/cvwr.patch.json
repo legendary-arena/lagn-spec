@@ -476,5 +476,119 @@
         ]
       ]
     }
+  ],
+  "wounds": [
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Blinding Flash",
+      "slug": "blinding-flash",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-wd-blinding-flash.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "Grievous Wound",
+            "Healing: You may discard a card and have each other player discard a card. If you do, KO this Wound."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Blunt Force Trauma",
+      "slug": "blunt-force-trauma",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-wd-blunt-force-trauma.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "Grievous Wound",
+            "Healing: You may spend 5. If you do, KO this Wound."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Corrosive Webbing",
+      "slug": "corrosive-webbing",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-wd-corrosive-webbing.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "Grievous Wound",
+            "Healing: You may KO this Wound. If you do, gain another Wound."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Fatal Blow",
+      "slug": "fatal-blow",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-wd-fatal-blow.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "Grievous Wound",
+            "Healing: You may KO a Hero that costs 1 or more from your hand or discard pile. If you do, KO this Wound."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Psychic Trauma",
+      "slug": "psychic-trauma",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-wd-psychic-trauma.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "Grievous Wound",
+            "Healing: You may spend 5. If you do, KO this Wound."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Spreading Nanovirus",
+      "slug": "spreading-nanovirus",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-wd-spreading-nanovirus.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "Grievous Wound",
+            "Healing: You may have the player on your left gain this Wound."
+          ]
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Subdermal Tracker",
+      "slug": "subdermal-tracker",
+      "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-wd-subdermal-tracker.webp",
+      "cards": [
+        {
+          "qtd": 1,
+          "abilities": [
+            "Grievous Wound",
+            "Healing: You may play a card from the Villain Deck. If you do, KO this Wound."
+          ]
+        }
+      ]
+    }
   ]
 }
