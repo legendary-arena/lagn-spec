@@ -54,6 +54,18 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
         const lookedUp = hero.cardCounts[card.name];
         if (typeof lookedUp === "number") heroCardCount = lookedUp;
       }
+      // why: WP-086 Phase 2 (Officer-Specials slice) — heroes may carry a
+      // per-card cardType override. When absent, defaults to "hero" so the
+      // historical behavior is preserved for every existing hero card. The
+      // override is currently used only for the 8 S.H.I.E.L.D. Officer
+      // Specials in shld.json so they appear under the SHIELD ribbon's
+      // Officer-Special sub-chip rather than under Hero. The key still
+      // includes the override slug so it stays unique across reclassified
+      // cards (e.g., `shld-shield-officer-special-dum-dum-dugan` instead of
+      // `shld-hero-dum-dum-dugan-dum-dum-dugan`).
+      const resolvedCardType = typeof card.cardType === "string" && card.cardType.length > 0
+        ? card.cardType
+        : "hero";
       cards.push({
         // why: use card.slug (not card.slot) — a few heroes (wwhk Caiera,
         // Miek The Unhived, Rick Jones) have two cards sharing the same
@@ -61,8 +73,8 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
         // produced duplicate Vue v-for keys and stranded DOM nodes that
         // survived filtering, making those cards appear to match every
         // search term.
-        key:         `${abbr}-hero-${hero.slug}-${card.slug}`,
-        cardType:    "hero",
+        key:         `${abbr}-${resolvedCardType}-${hero.slug}-${card.slug}`,
+        cardType:    resolvedCardType,
         setAbbr:     abbr,
         setName,
         name:        card.name ?? "",

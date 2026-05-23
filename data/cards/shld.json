@@ -463,6 +463,7 @@
           "attack": "1",
           "recruit": "2",
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "cardType": "shield-officer-special",
           "abilities": [
             "You may send this Hero [keyword:Undercover]."
           ]
@@ -492,6 +493,7 @@
           "attack": null,
           "recruit": "2",
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "cardType": "shield-officer-special",
           "abilities": [
             "You may send this Hero [keyword:Undercover]. If you do, KO another [team:shield] Hero from your hand."
           ]
@@ -521,6 +523,7 @@
           "attack": null,
           "recruit": "2",
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "cardType": "shield-officer-special",
           "abilities": [
             "You may discard a card. If you do, draw a card."
           ]
@@ -550,6 +553,7 @@
           "attack": "0+",
           "recruit": "0+",
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "cardType": "shield-officer-special",
           "abilities": [
             "Choose one: You get +2[icon:recruit] — Or you get +1[icon:attack] and draw a card."
           ]
@@ -579,6 +583,7 @@
           "attack": null,
           "recruit": "2",
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "cardType": "shield-officer-special",
           "abilities": [
             "[team:shield][team:shield][team:shield]: Draw a card."
           ]
@@ -608,6 +613,7 @@
           "attack": null,
           "recruit": "2",
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "cardType": "shield-officer-special",
           "abilities": [
             "You may send this Hero [keyword:Undercover]. If you do, you get +1[icon:recruit]."
           ]
@@ -637,6 +643,7 @@
           "attack": null,
           "recruit": "2",
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "cardType": "shield-officer-special",
           "abilities": [
             "[team:shield][team:shield][team:shield]: You may send this Hero or a [team:shield] Hero from your hand [keyword:Undercover]."
           ]
@@ -666,6 +673,7 @@
           "attack": null,
           "recruit": "2",
           "rarityLabel": "S.H.I.E.L.D. Officer Special",
+          "cardType": "shield-officer-special",
           "abilities": [
             "[team:shield][team:shield]: You may send this Hero [keyword:Undercover] or put it on top of your deck."
           ]

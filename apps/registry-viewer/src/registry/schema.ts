@@ -37,6 +37,11 @@ export const HeroCardSchema = z.object({
   recruit:     z.union([z.string(), z.number(), z.null()]).optional(),
   imageUrl:    z.string().url().optional().nullable(),
   abilities:   z.array(z.string()).optional().default([]),
+  // why: per-card cardType override (Phase 2 of WP-086). Defaults to "hero"
+  // in flattenSet when absent. Currently set only on S.H.I.E.L.D. Officer
+  // Specials in shld.json so they appear under the SHIELD ribbon's
+  // Officer-Special sub-chip rather than being miscounted as heroes.
+  cardType:    z.string().optional(),
 });
 
 // ── Hero ──────────────────────────────────────────────────────────────────────

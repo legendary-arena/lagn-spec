@@ -73,6 +73,13 @@ export const HeroCardSchema = z.object({
   attack:      z.string().nullable().optional(),
   recruit:     z.string().nullable().optional(),
   abilities:   z.array(z.string()).optional(),
+  // why: per-card cardType override (Phase 2 of WP-086). Defaults to "hero"
+  // in the viewer's flattenSet when absent. Currently set only on
+  // S.H.I.E.L.D. Officer Specials in shld.json so they appear under the
+  // SHIELD ribbon's Officer-Special sub-chip rather than being miscounted as
+  // heroes. Optional + string-typed so the registry stays permissive at load
+  // and any future cardType slugs require only a card-types.json change.
+  cardType:    z.string().optional(),
 });
 
 // ── Physical card (deck-composition primitive — WP-138 Phase 1a) ──────────────
