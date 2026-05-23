@@ -265,5 +265,15 @@
         }
       ]
     }
+  ],
+  "other": [
+    {
+      "_op": "append",
+      "name": "Command Strike",
+      "slug": "command-strike",
+      "cardType": "mastermind-strike",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-ms-command-strike.webp",
+      "abilities": []
+    }
   ]
 }
