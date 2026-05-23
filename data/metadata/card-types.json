@@ -14,13 +14,6 @@
     "parentType": null
   },
   {
-    "slug": "mastermind-strike",
-    "label": "Master Strike",
-    "emoji": "💥",
-    "order": 25,
-    "parentType": null
-  },
-  {
     "slug": "villain",
     "label": "Villain",
     "emoji": "🦹",
@@ -39,13 +32,6 @@
     "label": "Scheme",
     "emoji": "📜",
     "order": 50,
-    "parentType": null
-  },
-  {
-    "slug": "scheme-twist",
-    "label": "Scheme Twist",
-    "emoji": "🌀",
-    "order": 55,
     "parentType": null
   },
   {
@@ -106,5 +92,17 @@
     "label": "Officer Special",
     "order": 40,
     "parentType": "shield"
+  },
+  {
+    "slug": "mastermind-strike",
+    "label": "Master Strike",
+    "order": 10,
+    "parentType": "other"
+  },
+  {
+    "slug": "scheme-twist",
+    "label": "Scheme Twist",
+    "order": 20,
+    "parentType": "other"
   }
 ]
