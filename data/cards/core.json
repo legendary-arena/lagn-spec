@@ -2542,6 +2542,20 @@
       ]
     }
   ],
-  "wounds": [],
+  "wounds": [
+    {
+      "id": null,
+      "name": "Wound",
+      "filterName": null,
+      "slug": "wound",
+      "imageUrl": "https://images.legendary-arena.com/core/core-wd-wound.webp",
+      "cards": [
+        {
+          "qtd": 30,
+          "abilities": []
+        }
+      ]
+    }
+  ],
   "other": []
 }

@@ -491,5 +491,20 @@
       "vAttack": "3",
       "vp": "1"
     }
+  ],
+  "wounds": [
+    {
+      "_op": "append",
+      "id": null,
+      "name": "Wound",
+      "slug": "wound",
+      "imageUrl": "https://images.legendary-arena.com/core/core-wd-wound.webp",
+      "cards": [
+        {
+          "qtd": 30,
+          "abilities": []
+        }
+      ]
+    }
   ]
 }
