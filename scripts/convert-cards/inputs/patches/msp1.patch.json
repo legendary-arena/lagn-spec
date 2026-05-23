@@ -206,6 +206,63 @@
           "surge-of-power"
         ]
       ]
+    },
+    {
+      "_op": "append",
+      "name": "S.H.I.E.L.D. Agent",
+      "slug": "agent",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Agent",
+          "slug": "agent",
+          "cost": 0,
+          "attack": null,
+          "recruit": "1",
+          "rarityLabel": "S.H.I.E.L.D. Agent",
+          "cardType": "shield-agent",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-sa-agent.webp",
+          "abilities": []
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "S.H.I.E.L.D. Trooper",
+      "slug": "trooper",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Trooper",
+          "slug": "trooper",
+          "cost": 0,
+          "attack": "1",
+          "recruit": null,
+          "rarityLabel": "S.H.I.E.L.D. Trooper",
+          "cardType": "shield-trooper",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-tr-trooper.webp",
+          "abilities": []
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "S.H.I.E.L.D. Officer",
+      "slug": "officer",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Officer",
+          "slug": "officer",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer",
+          "cardType": "shield-officer",
+          "imageUrl": "https://images.legendary-arena.com/msp1/msp1-so-officer.webp",
+          "abilities": []
+        }
+      ]
     }
   ],
   "masterminds": [
@@ -347,15 +404,22 @@
     {
       "_op": "merge",
       "slug": "bystander",
-      "imageUrl": "https://images.legendary-arena.com/msp1/msp1-by.webp"
+      "imageUrl": "https://images.legendary-arena.com/msp1/msp1-by-bystander.webp"
     }
   ],
   "wounds": [
     {
-      "_op": "merge",
-      "slug": "wound-ms",
-      "_slug": "wound-msp1",
-      "imageUrl": "https://images.legendary-arena.com/msp1/msp1-wd.webp"
+      "_op": "append",
+      "id": null,
+      "name": "Wound",
+      "slug": "wound",
+      "imageUrl": "https://images.legendary-arena.com/msp1/msp1-wd-wound.webp",
+      "cards": [
+        {
+          "qtd": 30,
+          "abilities": []
+        }
+      ]
     }
   ],
   "schemes": [
