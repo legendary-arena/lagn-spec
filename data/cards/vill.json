@@ -2599,6 +2599,41 @@
       "cardType": "mastermind-strike",
       "imageUrl": "https://images.legendary-arena.com/vill/vill-ms-command-strike.webp",
       "abilities": []
+    },
+    {
+      "name": "Plot Twist",
+      "slug": "plot-twist",
+      "cardType": "scheme-twist",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-st-plot-twist.webp",
+      "abilities": []
+    },
+    {
+      "name": "Operative",
+      "slug": "operative",
+      "cardType": "shield-agent",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sa-operative.webp",
+      "abilities": []
+    },
+    {
+      "name": "Soldier",
+      "slug": "soldier",
+      "cardType": "shield-trooper",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-tr-soldier.webp",
+      "abilities": []
+    },
+    {
+      "name": "Madame Hydra",
+      "slug": "madame-hydra",
+      "cardType": "shield-officer",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-so-madame-hydra.webp",
+      "abilities": []
+    },
+    {
+      "name": "New Recruits",
+      "slug": "new-recruits",
+      "cardType": "sidekick",
+      "imageUrl": "https://images.legendary-arena.com/vill/vill-sk-new-recruits.webp",
+      "abilities": []
     }
   ]
 }
