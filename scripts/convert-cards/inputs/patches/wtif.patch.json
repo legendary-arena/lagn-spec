@@ -139,6 +139,70 @@
           "slot": 6
         }
       ]
+    },
+    {
+      "_op": "append",
+      "name": "S.H.I.E.L.D. Agent",
+      "slug": "agent",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Agent",
+          "slug": "agent",
+          "cost": 0,
+          "attack": null,
+          "recruit": "1",
+          "rarityLabel": "S.H.I.E.L.D. Agent",
+          "cardType": "shield-agent",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-sa-agent.webp",
+          "abilities": []
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "S.H.I.E.L.D. Trooper",
+      "slug": "trooper",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Trooper",
+          "slug": "trooper",
+          "cost": 0,
+          "attack": "1",
+          "recruit": null,
+          "rarityLabel": "S.H.I.E.L.D. Trooper",
+          "cardType": "shield-trooper",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-tr-trooper.webp",
+          "abilities": []
+        }
+      ]
+    },
+    {
+      "_op": "append",
+      "name": "S.H.I.E.L.D. Officer",
+      "slug": "officer",
+      "team": "shield",
+      "cards": [
+        {
+          "name": "S.H.I.E.L.D. Officer",
+          "slug": "officer",
+          "cost": 3,
+          "attack": null,
+          "recruit": "2",
+          "rarityLabel": "S.H.I.E.L.D. Officer",
+          "cardType": "shield-officer",
+          "imageUrl": "https://images.legendary-arena.com/wtif/wtif-so-officer.webp",
+          "abilities": []
+        }
+      ]
+    }
+  ],
+  "wounds": [
+    {
+      "_op": "merge",
+      "slug": "wound",
+      "imageUrl": "https://images.legendary-arena.com/wtif/wtif-wd-wound.webp"
     }
   ]
 }
