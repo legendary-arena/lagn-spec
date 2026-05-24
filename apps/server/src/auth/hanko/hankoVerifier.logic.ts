@@ -86,6 +86,8 @@ interface JwtPayload {
   readonly aud: readonly string[];
   readonly exp: number;
   readonly amr: readonly string[];
+  readonly email: string | undefined;
+  readonly displayName: string | undefined;
 }
 
 function decodeBase64Url(segment: string): Buffer {
@@ -158,11 +160,34 @@ function parsePayload(payloadSegment: string): JwtPayload | undefined {
   } else {
     amrValues = [];
   }
+  // why: best-effort enrichment for account provisioning (WP-174) —
+  // missing email or name does not cause verification to fail
+  let extractedEmail: string | undefined;
+  const emailClaim = (candidate as { email?: unknown }).email;
+  if (typeof emailClaim === 'string' && emailClaim.length > 0) {
+    extractedEmail = emailClaim;
+  } else if (
+    typeof emailClaim === 'object' &&
+    emailClaim !== null &&
+    typeof (emailClaim as { address?: unknown }).address === 'string' &&
+    ((emailClaim as { address: string }).address).length > 0
+  ) {
+    extractedEmail = (emailClaim as { address: string }).address;
+  }
+
+  let extractedDisplayName: string | undefined;
+  const nameClaim = (candidate as { name?: unknown }).name;
+  if (typeof nameClaim === 'string' && nameClaim.length > 0) {
+    extractedDisplayName = nameClaim;
+  }
+
   return {
     sub: candidate.sub,
     aud: audValues,
     exp: candidate.exp,
     amr: amrValues,
+    email: extractedEmail,
+    displayName: extractedDisplayName,
   };
 }
 
@@ -367,6 +392,8 @@ export function createHankoSessionVerifier(
         authProvider,
         authProviderSub: payload.sub,
         expiresAt,
+        email: payload.email,
+        displayName: payload.displayName,
       },
     };
   }

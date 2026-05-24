@@ -138,6 +138,8 @@ export interface VerifiedSessionClaim {
   readonly authProvider: AuthProvider;
   readonly authProviderSub: string;
   readonly expiresAt: string;
+  readonly email?: string;
+  readonly displayName?: string;
 }
 
 /**

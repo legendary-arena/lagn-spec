@@ -17400,7 +17400,7 @@ Authentication).
 **Packet:** WP-160.
 
 **Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
-**Status:** Active
+**Status:** Superseded by D-17401 (WP-174, landed 2026-05-24)
 
 ---
 
@@ -18681,7 +18681,7 @@ shape).
 - **Single-site provisioning.** The resolver is the natural write-site because it already has the verified claim + the database handle. No new endpoint needed (D-16006's rejected alternative remains rejected for the same reasons).
 - **Race-safe by construction.** `ON CONFLICT (auth_provider, auth_provider_id) DO NOTHING` + re-SELECT eliminates TOCTOU.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active (landed 2026-05-24).
 
 ---
 
@@ -18698,7 +18698,7 @@ shape).
 - **Minimal surface.** Only the data the provisioning path needs. No `is_verified` or `is_primary` metadata exposed — those are Hanko-internal concerns.
 - **Matches OIDC convention.** Standard `email` and `name` claims per OpenID Connect Core §5.1.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active (landed 2026-05-24).
 
 ---
 
@@ -18715,7 +18715,7 @@ shape).
 - **Defence-in-depth.** The application-layer lookup already uses `LIMIT 1`, but a DB-level constraint is the only source of truth for uniqueness in a concurrent environment.
 - **No existing duplicates.** Production `legendary.players` has exactly one row per `auth_provider_id` (verified 2026-05-24); the migration will succeed without conflict.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active (landed 2026-05-24).
 
 ---
 
@@ -18731,7 +18731,7 @@ shape).
 - **Hanko's default flow requires email confirmation.** By the time a JWT is issued, Hanko has already verified the email via OTP or passkey-registered email address. The `is_verified` field reflects Hanko's internal state tracking, not a meaningful trust signal for our system.
 - **Blocking on `is_verified = false` would create a dead-end UX.** A user who completes Hanko's flow but whose JWT arrives with `is_verified = false` (a race condition during email confirmation) would be permanently locked out with no recovery path in our system.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active (landed 2026-05-24).
 
 ---
 
@@ -18747,7 +18747,7 @@ shape).
 - **No blank names in the DB.** The `display_name text NOT NULL` column + the existing validation contract (`length 1-64`) means we must supply a non-empty value. The email local-part is always non-empty if email itself is non-empty.
 - **Low-friction first experience.** A name derived from the email is better than a generic "Player" or a forced-name-entry modal on first sign-in. Users who care about their display name can change it immediately.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active (landed 2026-05-24).
 
 ---
 
@@ -18759,7 +18759,7 @@ shape).
 
 **Decision:** D-16006's assertion — "WP-131 already provisions accounts on first authenticated call" — is empirically false. The `productionAccountResolver` shipped by WP-131 is read-only (`findAccountByAuthProviderSub` → null → orchestrator emits `'unknown_account'`). No production code path calls `createPlayerAccount`. This was verified on 2026-05-24 during WP-107 PS-1 against `play.legendary-arena.com`. D-17401 documents the correct implementation shape. D-16006's status is updated to `Superseded by D-17401`.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active (landed 2026-05-24).
 
 ---
 

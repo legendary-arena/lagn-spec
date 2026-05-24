@@ -451,6 +451,116 @@ describe('createHankoSessionVerifier (WP-126)', () => {
     );
   });
 
+  test('email claim as string is extracted into VerifiedSessionClaim.email', async () => {
+    const verifier = createHankoSessionVerifier(
+      makeBaseConfig(makeJwksFetcher([PRIMARY_KEY])),
+    );
+    const header = base64UrlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: PRIMARY_KEY.kid }));
+    const payload = base64UrlEncode(JSON.stringify({
+      sub: 'user-email-string',
+      aud: [EXPECTED_AUDIENCE],
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      amr: ['passkey'],
+      email: 'test@example.com',
+    }));
+    const signedInput = `${header}.${payload}`;
+    const signer = createSign('RSA-SHA256');
+    signer.update(signedInput);
+    signer.end();
+    const signature = base64UrlEncode(signer.sign(PRIMARY_KEY.privateKey));
+    const token = `${header}.${payload}.${signature}`;
+
+    const result = await verifier.verify(token);
+    assert.equal(result.ok, true);
+    if (result.ok === true) {
+      assert.equal(result.value.email, 'test@example.com');
+    }
+  });
+
+  test('email claim as object with .address is extracted', async () => {
+    const verifier = createHankoSessionVerifier(
+      makeBaseConfig(makeJwksFetcher([PRIMARY_KEY])),
+    );
+    const header = base64UrlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: PRIMARY_KEY.kid }));
+    const payload = base64UrlEncode(JSON.stringify({
+      sub: 'user-email-object',
+      aud: [EXPECTED_AUDIENCE],
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      amr: ['passkey'],
+      email: { address: 'obj@example.com', is_primary: true, is_verified: true },
+    }));
+    const signedInput = `${header}.${payload}`;
+    const signer = createSign('RSA-SHA256');
+    signer.update(signedInput);
+    signer.end();
+    const signature = base64UrlEncode(signer.sign(PRIMARY_KEY.privateKey));
+    const token = `${header}.${payload}.${signature}`;
+
+    const result = await verifier.verify(token);
+    assert.equal(result.ok, true);
+    if (result.ok === true) {
+      assert.equal(result.value.email, 'obj@example.com');
+    }
+  });
+
+  test('missing email claim yields undefined email on VerifiedSessionClaim', async () => {
+    const verifier = createHankoSessionVerifier(
+      makeBaseConfig(makeJwksFetcher([PRIMARY_KEY])),
+    );
+    const token = signToken({
+      key: PRIMARY_KEY,
+      sub: 'user-no-email',
+      amr: ['passkey'],
+    });
+    const result = await verifier.verify(token);
+    assert.equal(result.ok, true);
+    if (result.ok === true) {
+      assert.equal(result.value.email, undefined);
+    }
+  });
+
+  test('name claim is extracted into VerifiedSessionClaim.displayName', async () => {
+    const verifier = createHankoSessionVerifier(
+      makeBaseConfig(makeJwksFetcher([PRIMARY_KEY])),
+    );
+    const header = base64UrlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: PRIMARY_KEY.kid }));
+    const payload = base64UrlEncode(JSON.stringify({
+      sub: 'user-with-name',
+      aud: [EXPECTED_AUDIENCE],
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      amr: ['passkey'],
+      name: 'Alice Smith',
+    }));
+    const signedInput = `${header}.${payload}`;
+    const signer = createSign('RSA-SHA256');
+    signer.update(signedInput);
+    signer.end();
+    const signature = base64UrlEncode(signer.sign(PRIMARY_KEY.privateKey));
+    const token = `${header}.${payload}.${signature}`;
+
+    const result = await verifier.verify(token);
+    assert.equal(result.ok, true);
+    if (result.ok === true) {
+      assert.equal(result.value.displayName, 'Alice Smith');
+    }
+  });
+
+  test('missing name claim yields undefined displayName on VerifiedSessionClaim', async () => {
+    const verifier = createHankoSessionVerifier(
+      makeBaseConfig(makeJwksFetcher([PRIMARY_KEY])),
+    );
+    const token = signToken({
+      key: PRIMARY_KEY,
+      sub: 'user-no-name',
+      amr: ['passkey'],
+    });
+    const result = await verifier.verify(token);
+    assert.equal(result.ok, true);
+    if (result.ok === true) {
+      assert.equal(result.value.displayName, undefined);
+    }
+  });
+
   test('two factory calls produce two independent verifiers with independent JWKS caches', async () => {
     const fetcherA = makeJwksFetcher([PRIMARY_KEY]);
     const fetcherB = makeJwksFetcher([ROTATED_KEY]);

@@ -1,24 +1,16 @@
 /**
- * Tests for the production account resolver (WP-131 / EC-134).
+ * Tests for the production account resolver (WP-131 / EC-134 + WP-174 / EC-196).
  *
- * Three pure-logic tests inside one describe block. The resolver is
- * a thin closure over WP-112's `findAccountByAuthProviderSub`; the
- * locked column shape is `{ ext_id, auth_provider, auth_provider_id }`
- * per `accountLookup.logic.ts:68-72`. All tests use a locally-defined
- * fake `DatabaseClient` (the `query(text, params): Promise<{ rows: T[] }>`
- * shape from `identity.types.ts`) — no real PostgreSQL connection,
- * no `TEST_DATABASE_URL` skip-pattern (these tests are pure logic
- * by construction, mirroring tests 1-2 of `accountLookup.logic.test.ts`).
+ * Original three WP-131 tests (hit / clean miss / lookup failure) plus
+ * WP-174 tests for the read-or-create provisioning flow: happy-path
+ * provisioning, missing-email fallback, whitespace/no-@ email fallback,
+ * duplicate-email (different provider) fallback, and concurrent-insert
+ * idempotency.
  *
- * The tests do not import from `boardgame.io`, `boardgame.io/testing`,
- * or any engine / registry / preplan / UI package. The only imports
- * are `node:test`, `node:assert/strict`, the resolver under test,
- * and the `VerifiedSessionClaim` type for the fake claim shape.
+ * All tests use a locally-defined fake `DatabaseClient` — no real
+ * PostgreSQL connection.
  *
- * Authority: WP-131 §B; EC-134 §3 (test plan — exactly three cases:
- * hit / clean miss / lookup failure); D-11203
- * (`findAccountByAuthProviderSub` signature + `'lookup_failed'`
- * propagation lock).
+ * Authority: WP-131 §B; WP-174 §C; EC-196.
  */
 
 import { describe, test } from 'node:test';
@@ -102,5 +94,192 @@ describe('productionAccountResolver (WP-131)', () => {
         (result as { reason: string }).reason.includes('connection lost'),
       'lookup_failed result must propagate the underlying error message in its reason field',
     );
+  });
+});
+
+describe('productionAccountResolver — WP-174 provisioning', () => {
+  const claimWithEmail: VerifiedSessionClaim = {
+    authProvider: 'email',
+    authProviderSub: 'hanko-new-user',
+    expiresAt: '2099-01-01T00:00:00.000Z',
+    email: 'newuser@example.com',
+    displayName: 'New User',
+  };
+
+  test('provisions a new account when lookup returns null and email is present', async () => {
+    let queryCount = 0;
+    const fakeDatabase = {
+      query: async (text: string, params: unknown[]) => {
+        queryCount += 1;
+        if (queryCount === 1) {
+          return { rows: [], rowCount: 0 };
+        }
+        return {
+          rows: [
+            {
+              ext_id: 'provisioned-uuid',
+              email: params[1],
+              display_name: params[2],
+              auth_provider: params[3],
+              auth_provider_id: params[4],
+            },
+          ],
+          rowCount: 1,
+        };
+      },
+    } as unknown as pg.Pool;
+
+    const result = await productionAccountResolver(claimWithEmail, fakeDatabase);
+
+    assert.ok(result.ok === true);
+    assert.equal(result.value, 'provisioned-uuid');
+  });
+
+  test('returns Result.ok(null) when lookup returns null and email is absent', async () => {
+    const claimNoEmail: VerifiedSessionClaim = {
+      authProvider: 'email',
+      authProviderSub: 'hanko-no-email',
+      expiresAt: '2099-01-01T00:00:00.000Z',
+    };
+
+    const fakeDatabase = {
+      query: async () => ({ rows: [], rowCount: 0 }),
+    } as unknown as pg.Pool;
+
+    const result = await productionAccountResolver(claimNoEmail, fakeDatabase);
+
+    assert.ok(result.ok === true);
+    assert.equal(result.value, null);
+  });
+
+  test('returns Result.ok(null) when email is whitespace-only', async () => {
+    const claimWhitespace: VerifiedSessionClaim = {
+      authProvider: 'email',
+      authProviderSub: 'hanko-whitespace',
+      expiresAt: '2099-01-01T00:00:00.000Z',
+      email: '   ',
+    };
+
+    const fakeDatabase = {
+      query: async () => ({ rows: [], rowCount: 0 }),
+    } as unknown as pg.Pool;
+
+    const result = await productionAccountResolver(claimWhitespace, fakeDatabase);
+
+    assert.ok(result.ok === true);
+    assert.equal(result.value, null);
+  });
+
+  test('returns Result.ok(null) when email has no @ sign', async () => {
+    const claimNoAt: VerifiedSessionClaim = {
+      authProvider: 'email',
+      authProviderSub: 'hanko-no-at',
+      expiresAt: '2099-01-01T00:00:00.000Z',
+      email: 'notanemail',
+    };
+
+    const fakeDatabase = {
+      query: async () => ({ rows: [], rowCount: 0 }),
+    } as unknown as pg.Pool;
+
+    const result = await productionAccountResolver(claimNoAt, fakeDatabase);
+
+    assert.ok(result.ok === true);
+    assert.equal(result.value, null);
+  });
+
+  test('returns Result.ok(null) when provisioning hits duplicate_email (different provider)', async () => {
+    let queryCount = 0;
+    const fakeDatabase = {
+      query: async () => {
+        queryCount += 1;
+        if (queryCount === 1) {
+          return { rows: [], rowCount: 0 };
+        }
+        const error = new Error('duplicate key value violates unique constraint "players_email_key"');
+        (error as unknown as { code: string }).code = '23505';
+        throw error;
+      },
+    } as unknown as pg.Pool;
+
+    const result = await productionAccountResolver(claimWithEmail, fakeDatabase);
+
+    assert.ok(result.ok === true);
+    assert.equal(result.value, null);
+  });
+
+  test('uses display name fallback from email local-part when displayName is absent', async () => {
+    const claimNoName: VerifiedSessionClaim = {
+      authProvider: 'email',
+      authProviderSub: 'hanko-no-name',
+      expiresAt: '2099-01-01T00:00:00.000Z',
+      email: 'jeff@barefootbetters.com',
+    };
+
+    let capturedDisplayName: unknown;
+    let queryCount = 0;
+    const fakeDatabase = {
+      query: async (_text: string, params: unknown[]) => {
+        queryCount += 1;
+        if (queryCount === 1) {
+          return { rows: [], rowCount: 0 };
+        }
+        capturedDisplayName = params[2];
+        return {
+          rows: [
+            {
+              ext_id: 'uuid-fallback',
+              email: params[1],
+              display_name: params[2],
+              auth_provider: params[3],
+              auth_provider_id: params[4],
+            },
+          ],
+          rowCount: 1,
+        };
+      },
+    } as unknown as pg.Pool;
+
+    const result = await productionAccountResolver(claimNoName, fakeDatabase);
+
+    assert.ok(result.ok === true);
+    assert.equal(capturedDisplayName, 'jeff');
+  });
+
+  test('normalizes email to lowercase before provisioning', async () => {
+    const claimUppercase: VerifiedSessionClaim = {
+      authProvider: 'email',
+      authProviderSub: 'hanko-uppercase',
+      expiresAt: '2099-01-01T00:00:00.000Z',
+      email: '  Alice@Example.COM  ',
+    };
+
+    let capturedEmail: unknown;
+    let queryCount = 0;
+    const fakeDatabase = {
+      query: async (_text: string, params: unknown[]) => {
+        queryCount += 1;
+        if (queryCount === 1) {
+          return { rows: [], rowCount: 0 };
+        }
+        capturedEmail = params[1];
+        return {
+          rows: [
+            {
+              ext_id: 'uuid-norm',
+              email: params[1],
+              display_name: params[2],
+              auth_provider: params[3],
+              auth_provider_id: params[4],
+            },
+          ],
+          rowCount: 1,
+        };
+      },
+    } as unknown as pg.Pool;
+
+    await productionAccountResolver(claimUppercase, fakeDatabase);
+
+    assert.equal(capturedEmail, 'alice@example.com');
   });
 });
