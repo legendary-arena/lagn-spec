@@ -167,11 +167,15 @@ interface DisplayDataHeroEntry {
 
 /**
  * Minimal structural type for a villain card entry in SetData.
- * Only vAttack is needed for display cost.
+ *
+ * `copies` (WP-167 / D-16701) is the per-card copy count read by the
+ * WP-172 per-copy fan-out (D-16802). Absent means a single instance —
+ * mirrors `readVillainCopyCount` in `villainDeck.setup.ts:389–394`.
  */
 interface DisplayDataVillainCardEntry {
   slug: string;
   vAttack: string | number | null;
+  copies?: number;
 }
 
 /**
@@ -298,9 +302,11 @@ function parseQualifiedIdForSetup(
 /**
  * Builds a card display data lookup from registry data at setup time.
  *
- * Iterates heroes, villains, henchmen, and the mastermind base card
- * reachable from the match config and projects their display fields
- * (name, imageUrl, cost) into UICardDisplay records keyed by CardExtId.
+ * Iterates heroes, villains, henchmen, the mastermind base card, the
+ * generic Master Strikes, the scheme-twist virtual cards, and the
+ * villain-deck bystander virtual cards reachable from the match config
+ * and projects their display fields (name, imageUrl, cost) into
+ * UICardDisplay records keyed by CardExtId.
  *
  * @param registry - Setup-time registry reader. Accepts unknown to
  *   support narrow test mocks (CardRegistryReader). When the registry
@@ -309,11 +315,34 @@ function parseQualifiedIdForSetup(
  *   moves and projections handle missing entries via the
  *   UNKNOWN_DISPLAY_PLACEHOLDER fallback in uiState.build.ts.
  * @param matchConfig - Match setup configuration with selected entity IDs.
+ * @param numPlayers - Number of players in the match. Read only by
+ *   section 7 as the bystander-count fallback when the scheme does not
+ *   carry `villainDeckBystanderCount`. DO NOT replace `numPlayers`
+ *   usage with `matchConfig.bystandersCount`; these represent different
+ *   domains:
+ *
+ *   - `numPlayers` → virtual villain-deck bystanders (D-1412, setup-time
+ *     composition); section 7 reads this.
+ *   - `matchConfig.bystandersCount` → shared rescue-pile supply in
+ *     `G.sharedPiles.bystanders`.
+ *
+ *   Conflating them will silently break villain-deck composition
+ *   correctness (both are `number`; no type error). Mirrors
+ *   `context.ctx.numPlayers` read in `villainDeck.setup.ts:262`.
+ *   `MatchSetupConfig` does not carry `numPlayers` (9-field composition
+ *   lock per `.claude/rules/code-style.md`), so `Game.setup()` passes
+ *   `ctx.numPlayers` through here.
  * @returns Readonly record keyed by CardExtId with display payloads.
  */
+// why: WP-172 — `numPlayers` is the third parameter (not the whole
+// `SetupContext`) so the builder keeps its pure-helper posture intact
+// (no `boardgame.io` import, no `ctx.random` exposure). See JSDoc
+// `@param numPlayers` above for the load-bearing two-domain distinction
+// from `matchConfig.bystandersCount`.
 export function buildCardDisplayData(
   registry: unknown,
   matchConfig: MatchSetupConfig,
+  numPlayers: number,
 ): Readonly<Record<CardExtId, UICardDisplay>> {
   // why: layer-boundary precedent — narrow test mocks may only implement
   // a subset of the registry interface. Mirror buildCardStats:170–172
@@ -447,6 +476,36 @@ export function buildCardDisplayData(
         imageUrl: matchingFlatCard.imageUrl,
         cost: parseCostNullable(villainCard.vAttack),
       };
+
+      // why: WP-172 / D-16802 — villain copies are virtual-instanced;
+      // each suffixed ext_id needs its own display entry so the UIState
+      // projection's resolveDisplay does not fall through to
+      // UNKNOWN_DISPLAY_PLACEHOLDER (the literal `<unknown>`) for
+      // city-revealed villains. Mirrors the WP-135 hero card-instance
+      // per-copy fan-out at section 1b and the WP-168 villain instancing
+      // at `villainDeck.setup.ts:203`. Grammar byte-identity with that
+      // emitter site is the regression-guard the §C cross-builder
+      // superset test asserts. `copies` default is 1 — inlined verbatim
+      // from `readVillainCopyCount` (`villainDeck.setup.ts:389–394`);
+      // Rule §16.1 forbids helper extraction across two files / two
+      // call sites.
+      let copyCount = 1;
+      if (typeof villainCard.copies === 'number' && villainCard.copies >= 1) {
+        copyCount = villainCard.copies;
+      }
+      for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+        const paddedIndex = String(copyIndex).padStart(2, '0');
+        const copyExtId = `${parsed.setAbbr}-villain-${parsed.slug}-${villainCard.slug}-${paddedIndex}` as CardExtId;
+        // why: per-copy fresh object literal — no aliasing across keys
+        // (D-2802 / D-13502 / D-14102 precedent already in this file at
+        // section 1b lines 383–388).
+        result[copyExtId] = {
+          extId: copyExtId,
+          name: matchingFlatCard.name,
+          imageUrl: matchingFlatCard.imageUrl,
+          cost: parseCostNullable(villainCard.vAttack),
+        };
+      }
     }
   }
 
@@ -507,6 +566,161 @@ export function buildCardDisplayData(
           name: matchingFlatCard.name,
           imageUrl: matchingFlatCard.imageUrl,
           cost: parseCostNullable(baseCardEntry.vAttack ?? null),
+        };
+      }
+    }
+  }
+
+  // --- 5. Master Strikes (5 generic virtual cards per D-16801) ---
+  // why: D-16801 — exactly 5 generic Master Strikes per villain deck.
+  // The literal `5` is inlined verbatim from `villainDeck.setup.ts:130`
+  // (MASTER_STRIKE_COUNT). RS-1 lock: tabletop rule invariant, not a
+  // tuning knob; the two-file duplication mirrors the
+  // HENCHMAN_COPIES_PER_GROUP precedent (literal `10` at section 3
+  // line 474). Soft-skip on mastermind parse failure (mirrors the
+  // section-4 mastermind soft-skip — only `Game.setup()` may throw).
+  if (mastermindParsed !== null) {
+    let strikeName = 'Master Strike';
+    let strikeImageUrl = '';
+    const mastermindSetData = registry.getSet(mastermindParsed.setAbbr);
+    const tierOneStrike = findOtherEntryByCardType(mastermindSetData, 'mastermind-strike');
+    if (tierOneStrike !== null) {
+      strikeName = tierOneStrike.name;
+      strikeImageUrl = tierOneStrike.imageUrl;
+    } else {
+      // why: D-17201 — empirically only 5 of 40 sets carry a
+      // `mastermind-strike` entry in their per-set `other[]` (core,
+      // msp1, vill, wtif, ssw1 as of 2026-05-23). The `core` set is the
+      // canonical Marvel Legendary visual source for the generic Master
+      // Strike; without this tier-2 cross-set fallback, 35/40 matches
+      // would render the tier-3 broken-image placeholder.
+      const coreSetData = registry.getSet('core');
+      const tierTwoStrike = findOtherEntryByCardType(coreSetData, 'mastermind-strike');
+      if (tierTwoStrike !== null) {
+        strikeName = tierTwoStrike.name;
+        strikeImageUrl = tierTwoStrike.imageUrl;
+      }
+    }
+
+    for (let strikeIndex = 0; strikeIndex < 5; strikeIndex++) {
+      const paddedIndex = String(strikeIndex).padStart(2, '0');
+      const strikeExtId = `master-strike-${paddedIndex}` as CardExtId;
+      // why: per-copy fresh object literal — no aliasing across keys
+      // (D-2802 / D-13502 / D-14102 precedent). `cost: null` — Master
+      // Strikes have no printed cost on the physical card.
+      result[strikeExtId] = {
+        extId: strikeExtId,
+        name: strikeName,
+        imageUrl: strikeImageUrl,
+        cost: null,
+      };
+    }
+  }
+
+  // --- 6. Scheme Twists + 7. Villain-Deck Bystanders (shared scheme lookup) ---
+  // why: D-10014 — Builder Filtering Order — iterate named set only.
+  // Sections 6 + 7 share the scheme parse + `getSet(schemeSetAbbr)`
+  // lookup; the WP §Scope-B section ordering groups by display-source
+  // scope (mastermind-set → scheme-set) rather than mirroring
+  // `villainDeck.setup.ts`'s 3-4-5 ordering. Soft-skip on parse /
+  // lookup failure (mirrors section-4 mastermind soft-skip — only
+  // `Game.setup()` may throw).
+  const parsedScheme = parseQualifiedIdForSetup(matchConfig.schemeId);
+  if (parsedScheme !== null) {
+    const schemeSetData = registry.getSet(parsedScheme.setAbbr);
+    const scheme = findSchemeInSetForDisplay(schemeSetData, parsedScheme.slug);
+    if (scheme !== null) {
+      // why: D-16702 — twist count from scheme metadata; fallback `8`
+      // inlined verbatim from `villainDeck.setup.ts:124` SCHEME_TWIST_COUNT
+      // (D-1411 default). Two-file literal duplication is the RS-1 / Rule
+      // §16.1 pattern; do not extract a helper across files.
+      let twistCount = 8;
+      if (typeof scheme.villainDeckTwistCount === 'number') {
+        twistCount = scheme.villainDeckTwistCount;
+      }
+
+      let twistImageUrl = '';
+      const tierOneTwist = findOtherEntryByCardType(schemeSetData, 'scheme-twist');
+      if (tierOneTwist !== null) {
+        twistImageUrl = tierOneTwist.imageUrl;
+      } else {
+        // why: D-17201 — empirically only 4 of 40 sets carry a
+        // `scheme-twist` entry in their per-set `other[]` (core, msp1,
+        // vill, wtif as of 2026-05-23). The `core` set is the canonical
+        // Marvel Legendary visual source; tier-2 prevents 36/40 broken-
+        // image tiles. The repeated `registry.getSet('core')` call (also
+        // made in section 5) is negligible at setup time and keeps the
+        // two sections independent of execution order.
+        const coreSetData = registry.getSet('core');
+        const tierTwoTwist = findOtherEntryByCardType(coreSetData, 'scheme-twist');
+        if (tierTwoTwist !== null) {
+          twistImageUrl = tierTwoTwist.imageUrl;
+        }
+      }
+
+      for (let twistIndex = 0; twistIndex < twistCount; twistIndex++) {
+        const paddedIndex = String(twistIndex).padStart(2, '0');
+        const twistExtId = `scheme-twist-${scheme.slug}-${paddedIndex}` as CardExtId;
+        // why: per-copy fresh object literal — no aliasing across keys.
+        // `name` is always the literal `'Scheme Twist'` (printed-card
+        // name is fixed — `core.json:2570` `name: "Scheme Twist"`).
+        result[twistExtId] = {
+          extId: twistExtId,
+          name: 'Scheme Twist',
+          imageUrl: twistImageUrl,
+          cost: null,
+        };
+      }
+
+      // --- 7. Villain-Deck Bystanders ---
+      // why: D-1412 — bystander count from scheme metadata
+      // (`villainDeckBystanderCount`); fallback to `numPlayers` (the new
+      // 3rd parameter — see function JSDoc for why this is NOT
+      // `matchConfig.bystandersCount`). Mirrors the
+      // `villainDeck.setup.ts:262` read of `context.ctx.numPlayers`.
+      let bystanderCount = numPlayers;
+      if (typeof scheme.villainDeckBystanderCount === 'number') {
+        bystanderCount = scheme.villainDeckBystanderCount;
+      }
+
+      let bystanderName = 'Bystander';
+      let bystanderImageUrl = '';
+      // why: tier-1 slug-match MUST beat positional `bystanders[0]`
+      // because msp1 / vill / wtif / wpnx carry the generic
+      // `slug === 'bystander'` entry mixed with named characters at
+      // non-zero array positions; reading `bystanders[0]` blindly would
+      // silently mis-render those sets.
+      const tierOneBystander = findGenericBystanderEntry(schemeSetData);
+      if (tierOneBystander !== null) {
+        bystanderName = tierOneBystander.name;
+        bystanderImageUrl = tierOneBystander.imageUrl;
+      } else {
+        // why: tier-2 acknowledged-imperfect named-character fallback —
+        // cvwr / ssw2 / xmen `bystanders[]` carry ONLY named characters
+        // (no `slug === 'bystander'` entry), so `bystanders[0]` becomes
+        // the displayed art (e.g. "Aspiring Hero" for cvwr) — least-bad
+        // choice until upstream registry data backfills the generic
+        // entry. NO `core`-set cross-set fallback for bystanders because
+        // bystander identity is conceptually per-scheme; a generic
+        // `core` bystander would be a misleading visual for a Civil War
+        // or Secret Wars II match. dstr has `bystanders: []` and falls
+        // through to tier-3 literal `{ name: 'Bystander', imageUrl: '' }`.
+        const tierTwoBystander = findFirstBystanderEntry(schemeSetData);
+        if (tierTwoBystander !== null) {
+          bystanderName = tierTwoBystander.name;
+          bystanderImageUrl = tierTwoBystander.imageUrl;
+        }
+      }
+
+      for (let bystanderIndex = 0; bystanderIndex < bystanderCount; bystanderIndex++) {
+        const paddedIndex = String(bystanderIndex).padStart(2, '0');
+        const bystanderExtId = `bystander-villain-deck-${paddedIndex}` as CardExtId;
+        // why: per-copy fresh object literal — no aliasing across keys.
+        result[bystanderExtId] = {
+          extId: bystanderExtId,
+          name: bystanderName,
+          imageUrl: bystanderImageUrl,
+          cost: null,
         };
       }
     }
@@ -777,6 +991,191 @@ function findCardEntryBySlug(
   for (const cardEntry of cards) {
     if (!cardEntry || typeof cardEntry !== 'object') continue;
     if (cardEntry.slug === slug) return cardEntry;
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// WP-172 helpers — per-set `other[]` and `bystanders[]` defensive readers
+// ---------------------------------------------------------------------------
+
+// why: `SetDataSchema.other` and `SetDataSchema.bystanders` are both
+// `z.array(z.unknown())` in the registry (verified at
+// `packages/registry/src/schema.ts:334–336`); values pass through
+// verbatim and must be read defensively. Every iteration gates on
+// `typeof entry === 'object' && entry !== null` first, then reads
+// `cardType` / `slug` / `name` / `imageUrl` with `typeof === 'string'`
+// guards. The §C defensive parsing test asserts that null / primitive /
+// missing-field entries are silently skipped.
+
+/**
+ * Display payload extracted from a per-set `other[]` entry (used by
+ * sections 5 + 6 for Master Strike + Scheme Twist art resolution).
+ */
+interface OtherEntryDisplay {
+  /** Display name preserved verbatim from the registry. */
+  name: string;
+  /** Full image URL preserved verbatim from the registry. */
+  imageUrl: string;
+}
+
+/**
+ * Finds the first entry in `setData.other[]` whose `cardType` field
+ * matches the supplied value AND carries well-formed string `name` and
+ * `imageUrl` fields.
+ *
+ * Used by section 5 (`cardType === 'mastermind-strike'`) and section 6
+ * (`cardType === 'scheme-twist'`) under the D-17201 tiered-lookup
+ * pattern (tier-1 source set; tier-2 `core` set; tier-3 literal
+ * fallback handled by caller).
+ *
+ * Returns null when the set is not loaded, `other[]` is absent or not
+ * an array, or no well-formed matching entry exists. Malformed entries
+ * (null, primitives, missing string fields) are silently skipped per
+ * the §C defensive parsing test.
+ */
+function findOtherEntryByCardType(
+  setData: unknown,
+  cardType: string,
+): OtherEntryDisplay | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { other?: unknown };
+  if (!Array.isArray(candidate.other)) return null;
+
+  for (const entry of candidate.other) {
+    if (!entry || typeof entry !== 'object') continue;
+    const otherEntry = entry as Record<string, unknown>;
+    if (otherEntry.cardType !== cardType) continue;
+    if (typeof otherEntry.name !== 'string') continue;
+    if (typeof otherEntry.imageUrl !== 'string') continue;
+    return { name: otherEntry.name, imageUrl: otherEntry.imageUrl };
+  }
+  return null;
+}
+
+/**
+ * Display payload extracted from a per-set `bystanders[]` entry (used
+ * by section 7 for villain-deck bystander art resolution).
+ */
+interface BystanderEntryDisplay {
+  /** Display name preserved verbatim from the registry. */
+  name: string;
+  /** Full image URL preserved verbatim from the registry. */
+  imageUrl: string;
+}
+
+/**
+ * Finds the first entry in `setData.bystanders[]` whose `slug` field
+ * equals the canonical generic-bystander literal `'bystander'` AND
+ * carries well-formed string `name` and `imageUrl` fields. The
+ * slug-match must beat positional `bystanders[0]` because msp1 / vill /
+ * wtif / wpnx carry the generic entry mixed with named characters at
+ * non-zero positions.
+ *
+ * Returns null when no slug-match exists; the caller falls through to
+ * the tier-2 positional fallback (`findFirstBystanderEntry`).
+ */
+function findGenericBystanderEntry(
+  setData: unknown,
+): BystanderEntryDisplay | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { bystanders?: unknown };
+  if (!Array.isArray(candidate.bystanders)) return null;
+
+  for (const entry of candidate.bystanders) {
+    if (!entry || typeof entry !== 'object') continue;
+    const bystanderEntry = entry as Record<string, unknown>;
+    if (bystanderEntry.slug !== 'bystander') continue;
+    if (typeof bystanderEntry.name !== 'string') continue;
+    if (typeof bystanderEntry.imageUrl !== 'string') continue;
+    return {
+      name: bystanderEntry.name,
+      imageUrl: bystanderEntry.imageUrl,
+    };
+  }
+  return null;
+}
+
+/**
+ * Finds the first well-formed entry in `setData.bystanders[]` (tier-2
+ * acknowledged-imperfect named-character fallback for section 7).
+ *
+ * The first entry that carries both string `name` and `imageUrl` is
+ * returned. Returns null when `bystanders[]` is absent / empty / all
+ * malformed; the caller falls through to the tier-3 literal
+ * `{ name: 'Bystander', imageUrl: '' }`.
+ */
+function findFirstBystanderEntry(
+  setData: unknown,
+): BystanderEntryDisplay | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { bystanders?: unknown };
+  if (!Array.isArray(candidate.bystanders)) return null;
+
+  for (const entry of candidate.bystanders) {
+    if (!entry || typeof entry !== 'object') continue;
+    const bystanderEntry = entry as Record<string, unknown>;
+    if (typeof bystanderEntry.name !== 'string') continue;
+    if (typeof bystanderEntry.imageUrl !== 'string') continue;
+    return {
+      name: bystanderEntry.name,
+      imageUrl: bystanderEntry.imageUrl,
+    };
+  }
+  return null;
+}
+
+/**
+ * Scheme metadata read from a per-set `schemes[]` entry for sections
+ * 6 + 7.
+ */
+interface SchemeForDisplay {
+  /** Scheme slug used to build the scheme-twist ext_id grammar. */
+  slug: string;
+  /**
+   * Optional twist count override. Absent ⇒ use the engine default
+   * literal `8` (D-1411 fallback, mirrors `villainDeck.setup.ts:124`).
+   */
+  villainDeckTwistCount?: number;
+  /**
+   * Optional villain-deck bystander count override. Absent ⇒ use the
+   * `numPlayers` parameter (D-1412 fallback, mirrors
+   * `villainDeck.setup.ts:262`).
+   */
+  villainDeckBystanderCount?: number;
+}
+
+/**
+ * Finds a scheme entry within the named set's `schemes[]` by slug.
+ *
+ * Returns null when the set is not loaded, `schemes[]` is absent or
+ * not an array, the slug is not present, or the entry shape is
+ * malformed. Optional `villainDeckTwistCount` /
+ * `villainDeckBystanderCount` are passed through when present and a
+ * `number`; absent fields surface as `undefined` so the caller can
+ * apply the engine default.
+ */
+function findSchemeInSetForDisplay(
+  setData: unknown,
+  schemeSlug: string,
+): SchemeForDisplay | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { schemes?: unknown };
+  if (!Array.isArray(candidate.schemes)) return null;
+
+  for (const entry of candidate.schemes) {
+    if (!entry || typeof entry !== 'object') continue;
+    const schemeEntry = entry as Record<string, unknown>;
+    if (schemeEntry.slug !== schemeSlug) continue;
+
+    const result: SchemeForDisplay = { slug: schemeEntry.slug };
+    if (typeof schemeEntry.villainDeckTwistCount === 'number') {
+      result.villainDeckTwistCount = schemeEntry.villainDeckTwistCount;
+    }
+    if (typeof schemeEntry.villainDeckBystanderCount === 'number') {
+      result.villainDeckBystanderCount = schemeEntry.villainDeckBystanderCount;
+    }
+    return result;
   }
   return null;
 }

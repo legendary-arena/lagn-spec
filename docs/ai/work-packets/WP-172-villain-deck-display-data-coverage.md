@@ -320,6 +320,31 @@ The following requirements are mandatory:
 
 No other files may be modified. (7 files total — at the §00.3 §5 ~8-file cap; no split needed.)
 
+### Allowlist Amendment (operator-approved at execution, 2026-05-23)
+
+Two cascade re-baselines downstream of the WP's correct enlargement of
+`G.cardDisplayData` (per-copy villains + master strikes + scheme twists +
+bystanders shift the final-state hash). Mirrors WP-168 / EC-186's
+`PRE_WP080_HASH` + `sentinel-core-doom-2p.replay.json` precedent
+verbatim. Operator-approved on the execution session via
+`AskUserQuestion` ("Approve amendment (mirror WP-168 precedent)").
+
+- `packages/game-engine/src/replay/replay.execute.test.ts` — **modified**
+  — `PRE_WP080_HASH` value-only change `'35fbe2fc'` → `'17c60ea9'`.
+  Comment block at the declaration cites WP-172 + WP-168 cascade
+  precedent.
+- `packages/game-engine/src/test/fixtures/games/sentinel-core-doom-2p.replay.json`
+  — **modified** — `expected.finalStateHash`
+  `925cd7a2b598ceb81d15e1963231c0d4cec15633836886c2f45fb5cd6bbdc2e4` →
+  `6263f12f6bc24d4689bb49978f817bf2c373dd3c4266bd414a66ec5a4d37829e`.
+  Regenerated via `scripts/record-game-fixture.mjs` with identical
+  `name` / `seed` / `createdAt` / `engineVersion` / `input.moves`; only
+  the final-state hash differs. `meta.version` and all other fields are
+  byte-identical pre- and post-execution.
+
+Final allowlist (9 files): the 7 originally enumerated above plus the
+2 cascade re-baselines.
+
 ---
 
 ## Vision Alignment

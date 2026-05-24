@@ -18162,4 +18162,115 @@ closing the WP-143 classification gap noted there.
 
 ---
 
+### D-17201 — Display-Coverage Invariant + Tiered Display Resolution with `core`-Set Cross-Set Fallback for Master Strike + Scheme Twist (WP-172)
+
+**Unlocks:** WP-172 closes the WP-168 gap that surfaced `<unknown>` in
+the production RevealOverlay for every Master Strike, Scheme Twist, and
+city villain reveal.
+
+**Decision:** Three coupled rules govern the engine's display-data
+resolution for the four villain-deck ext_id grammars:
+
+1. **Display-Coverage Invariant.** For every `extId` that
+   `buildVillainDeck` puts into `G.villainDeck.deck` or
+   `G.villainDeck.discard`, `G.cardDisplayData[extId]` MUST be defined
+   after `Game.setup()` returns. Stated as a grep-friendly superset
+   contract: `Object.keys(G.cardDisplayData)` ⊇
+   `[...G.villainDeck.deck, ...G.villainDeck.discard]`. The cross-builder
+   superset test in `buildCardDisplayData.test.ts` asserts this directly
+   and indirectly proves grammar byte-identity for all four villain-deck
+   grammars (drift in any grammar would produce a missing ext_id and
+   fail the superset assertion).
+
+2. **Tiered display resolution for Master Strike + Scheme Twist.** Both
+   generic virtual cards use a three-tier lookup:
+   - **Tier 1** — read the first `cardType === 'mastermind-strike'` (or
+     `'scheme-twist'`) entry in the source set's `other[]` (mastermind
+     set for strikes; scheme set for twists).
+   - **Tier 2** — when tier 1 returns null, repeat the same defensive
+     scan against `registry.getSet('core').other[]`. The `core` set is
+     the canonical Marvel Legendary visual source for both generic
+     cards.
+   - **Tier 3** — when neither tier resolves, use the literal
+     `{ name: 'Master Strike', imageUrl: '' }` (or
+     `{ name: 'Scheme Twist', imageUrl: '' }`).
+
+   Empirically (verified 2026-05-23 against `data/cards/*.json`): only
+   5/40 sets carry a `mastermind-strike` entry in their per-set
+   `other[]` (core, msp1, vill, wtif, ssw1), and only 4/40 carry a
+   `scheme-twist` entry (core, msp1, vill, wtif). Without the tier-2
+   `core`-set fallback, 35/40 Master Strike matches and 36/40 Scheme
+   Twist matches would render the tier-3 broken-image placeholder.
+
+3. **Two-tier scheme-set lookup for Villain-Deck Bystanders (NO
+   cross-set fallback).** Bystander identity is conceptually per-scheme;
+   a generic `core` bystander would be a misleading visual for a Civil
+   War or Secret Wars II match. The lookup is:
+   - **Tier 1** — scan the scheme set's `bystanders[]` for an entry
+     where `slug === 'bystander'`. This MUST beat positional
+     `bystanders[0]` because msp1 / vill / wtif / wpnx carry the
+     generic entry mixed with named characters at non-zero array
+     positions.
+   - **Tier 2** — when no slug-match exists AND `bystanders[]` is
+     non-empty, use the first well-formed entry. Acknowledged-imperfect
+     named-character fallback (cvwr / ssw2 / xmen real-set cases) —
+     least-bad choice until upstream registry data backfills the
+     generic entry.
+   - **Tier 3** — when `bystanders[]` is absent or empty (dstr case),
+     use the literal `{ name: 'Bystander', imageUrl: '' }`.
+
+**Rationale:**
+- **The original gap was undetectable by per-builder tests.** WP-168
+  enlarged `buildVillainDeck`'s output without touching
+  `buildCardDisplayData`; both builders had passing per-file tests but
+  no cross-builder contract test existed. The Display-Coverage
+  Invariant explicitly bridges the two so the same gap cannot reappear
+  silently (Vision §22 replay reproducibility benefits when the
+  invariant holds).
+- **Engine-side `core`-set fallback is the right place to fix data
+  scarcity.** The alternative — backfilling per-set `other[]` art for
+  35+ sets — is a registry-data pipeline WP that this engine WP must
+  not wait on. Tier-1 still surfaces per-set fidelity when it exists
+  (e.g., `vill` carries `name: 'Command Strike'`, the printed-card
+  name for that set, which the tier-1 read preserves verbatim); tier-2
+  prevents the common-case broken-image regression. **The `name` field
+  must always prefer the resolved entry's `name` field when tier-1 or
+  tier-2 succeeds** — the literal `'Master Strike'` is ONLY used at
+  tier-3 (locked precedence; do not "normalize" tier-1 / tier-2 names
+  to the literal in a future cleanup).
+- **Bystander identity is per-scheme, not generic.** Civil War's
+  "Aspiring Hero" should not surface as a Secret Wars II "Alligator
+  Trapper" via a `core` fallback. The two-tier lookup keeps each
+  scheme's bystander art locally resolved; tier-3 broken-image is the
+  honest failure mode until upstream data backfills.
+
+**Consequences:**
+- A future registry-pipeline WP can backfill per-set `other[]` art for
+  the 35 / 36 sets currently relying on tier-2; the engine code stays
+  unchanged (tier-1 simply starts winning more often). Symmetric to
+  the bystanders backfill (cvwr / ssw2 / xmen).
+- A future WP that revises D-16801 (e.g., to honor SW1's 30-card Master
+  Strike deck) would need to update `MASTER_STRIKE_COUNT` AND the
+  tier-1 lookup in `buildCardDisplayData` to iterate ALL
+  `mastermind-strike` entries in `other[]` instead of returning the
+  first. Today's "first entry wins" is locked to the D-16801 5-generic-
+  strikes constraint.
+- All four new entry types in `G.cardDisplayData` carry `cost: null`
+  (no printed cost on the physical card); future revisions that
+  introduce printed-cost virtual cards must update the section that
+  emits them, not the literal fallback.
+
+**Cross-Builder Regression Guard (cited):** The new
+`buildCardDisplayData.test.ts` test
+`'Object.keys(displayMap) ⊇ [...villainDeck.deck, ...villainDeck.discard]'`
+is the load-bearing assertion. Any future villain-deck composition WP
+(e.g., a scheme that introduces a fifth virtual card type) MUST update
+`buildCardDisplayData` in lockstep; the superset test will fail
+otherwise.
+
+**Introduced:** WP-172.
+**Status:** Active 2026-05-23 (WP-172 executed).
+
+---
+
 Protect this file.

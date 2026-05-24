@@ -267,7 +267,13 @@ export function buildInitialGameState(
   // import. Placed after buildMastermindState because the completeness
   // sweep below uses cardStats (which now contains the mastermind base
   // card entry) as the expected-key set.
-  const cardDisplayData = buildCardDisplayData(registry as unknown, config);
+  // why: WP-172 — `numPlayers` (3rd arg) is the bystander-count fallback
+  // source for section 7 of `buildCardDisplayData` per D-1412; mirrors
+  // `villainDeck.setup.ts:262` read of `context.ctx.numPlayers`. Do NOT
+  // substitute `config.bystandersCount` (that sizes the rescue-pile
+  // supply in `G.sharedPiles.bystanders`, a different domain — see the
+  // `numPlayers` @param JSDoc in `buildCardDisplayData.ts`).
+  const cardDisplayData = buildCardDisplayData(registry as unknown, config, numPlayers);
 
   // why: WP-111 / EC-118 / PS-8 — setup-time diagnostic surface for missing
   // display entries. Preserves WP-028 D-2801 projection-purity contract:

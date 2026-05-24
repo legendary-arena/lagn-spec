@@ -67,7 +67,13 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // hash. Dependency-driven cascade (revert by undoing the WP-168 composition
 // change with no remaining diff); no logic change to this test. Pre-edit
 // hash: '6228d103'. Post-edit hash: '35fbe2fc'.
-const PRE_WP080_HASH = '35fbe2fc';
+// why: WP-172 cascade re-baseline (2026-05-23) — `G.cardDisplayData`
+// now carries per-copy villains + master strikes + scheme twists +
+// villain-deck bystanders (was previously empty for those grammars), so
+// the WP-080 regression-guard hash shifts. Same cascade pattern as
+// WP-168 (`6228d103` → `35fbe2fc`). Operator-approved allowlist
+// amendment recorded in WP-172 §Amendments / EC-190 §Notes.
+const PRE_WP080_HASH = '17c60ea9';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.
