@@ -1,6 +1,6 @@
 # WP-107 — Profile Integrity / Anti-Cheat Surface
 
-**Status:** Draft (drafted 2026-05-17 alongside WP-159; **BLOCKED** on WP-159 execution)
+**Status:** Draft (drafted 2026-05-17 alongside WP-159; **ready for execution** — WP-159 shipped 2026-05-17 via commit `295eec6` / PR #85)
 **Primary Layer:** Server (`apps/server/src/profile/admin/**`, `apps/server/src/identity/**`) + Database (`data/migrations/015_*`) + Reference (`docs/ai/REFERENCE/api-endpoints.md`)
 **Dependencies:**
 - WP-052 (`legendary.players`; `AccountId` brand)
@@ -10,13 +10,13 @@
 - WP-112 (`requireAuthenticatedSession`)
 - WP-126 (Hanko verifier)
 - WP-131 (`configureSessionValidation` production wiring)
-- **WP-159** (`requireAdminSession` — primary blocker; this WP's first caller)
+- **WP-159** (`requireAdminSession` — this WP's first caller; **shipped 2026-05-17** via commit `295eec6` / PR #85)
 - WP-053 (`competitive_scores` table — read-only correlation source for integrity flags)
 - WP-105 (`player_badges` — context for "what does this player have")
 
 **Explicit Non-Dependencies:** WP-110 (admin billing surface; separate concern, separate gate); WP-108 (owner billing UI; not admin); WP-105 (badges are display data, not integrity signals).
 
-**Blocked-on:** WP-159 must execute first. Until `requireAdminSession` exists, this WP cannot ship any admin-attribution surface without re-using WP-110's shared-secret gate — which fails this WP's §22 auditability requirement.
+**Blocker cleared:** WP-159 shipped 2026-05-17 (commit `295eec6` / PR #85); `requireAdminSession` is live at `apps/server/src/auth/adminSession.ts` and the `admin-session-required` Auth taxonomy value is present in `docs/ai/REFERENCE/api-endpoints.md`. WP-107 is now ready for execution. Historical context: until WP-159 landed, this WP could not ship any admin-attribution surface without re-using WP-110's shared-secret gate — which would have failed this WP's §22 auditability requirement.
 
 ---
 
@@ -203,7 +203,7 @@ Plus a `Library-only` row for `requireUnsuspendedAccount` (the shared intake hel
   `apps/server/src/auth/`.
 - `pnpm --filter @legendary-arena/server build` exits 0.
 
-If WP-159 is not complete at execution time, this packet is **BLOCKED**.
+WP-159 completed 2026-05-17 (commit `295eec6` / PR #85); all assumes are met as of this WP's drafting. Re-verify at execution time per `01.4` pre-flight.
 
 ---
 
@@ -610,23 +610,28 @@ value at execution-time review unless explicitly overridden.
 
 ## Lint Self-Review
 
-Pending — to be completed after WP-159 executes and before WP-107 enters
-execution. Self-review must additionally confirm:
+Pending — to be completed before WP-107 enters execution. WP-159 (the
+primary structural blocker) shipped 2026-05-17, so the self-review may
+now run. Self-review must additionally confirm:
 - All §Open Questions resolved
 - Score-submission route filename is identified and locked
 - The "split into A/B?" question is answered
 
 ---
 
-## Blocking Note
+## Blocking Note (Historical — Blocker Cleared)
 
-**This WP cannot enter execution until WP-159 is complete.** Specifically:
-- `apps/server/src/auth/adminSession.ts` must exist with the signature locked
-  in WP-159 §A and §Locked contract values.
-- Migration 014 must be applied (the `is_admin` column must exist on
-  `legendary.players`).
-- The `admin-session-required` value must be present in the
+**WP-159 shipped 2026-05-17** (commit `295eec6` / PR #85). The structural
+blocker that originally gated this packet is cleared:
+- `apps/server/src/auth/adminSession.ts` exists with the locked
+  `requireAdminSession(request, options): Promise<AdminSessionResult>`
+  signature.
+- Migration 014 (`014_add_is_admin_to_players.sql`) is in
+  `data/migrations/`; the `is_admin BOOLEAN` column is on
+  `legendary.players`.
+- The `admin-session-required` value is present in the
   `docs/ai/REFERENCE/api-endpoints.md` Auth taxonomy.
 
-If any of the above is false at session start, this packet is **BLOCKED** and
-must not proceed.
+At session start, re-verify per `01.4` pre-flight (the dependency state
+above is a snapshot from this WP's drafting; pre-flight is the
+authoritative re-check).

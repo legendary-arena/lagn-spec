@@ -7,10 +7,10 @@
 
 **Execution Authority:** This EC is the authoritative execution checklist for WP-107. Implementation must satisfy every clause exactly. If EC and WP conflict on design, **WP-107 wins**.
 
-**Blocking:** WP-107 is BLOCKED on WP-159. Do NOT enter execution until §Before Starting is all-green AND WP-107 §Open Questions 1–6 are resolved and locked into WP-107 §Locked contract values.
+**Readiness:** WP-159 (the structural blocker) shipped 2026-05-17 (commit `295eec6` / PR #85). EC-195 is ready for execution once §Before Starting is all-green AND WP-107 §Open Questions 1–6 are resolved and locked into WP-107 §Locked contract values.
 
 ## Before Starting (STOP / GO Gate)
-- [ ] WP-159 merged on `main`; `apps/server/src/auth/adminSession.ts` exists with the locked `requireAdminSession(request, options): Promise<AdminSessionResult>` signature; `is_admin BOOLEAN` present on `legendary.players` via migration 014; `admin-session-required` present in `docs/ai/REFERENCE/api-endpoints.md` Auth taxonomy
+- [ ] WP-159 confirmed merged on `main` (shipped 2026-05-17, commit `295eec6` / PR #85); re-verify at session start: `apps/server/src/auth/adminSession.ts` exists with the locked `requireAdminSession(request, options): Promise<AdminSessionResult>` signature; `is_admin BOOLEAN` present on `legendary.players` via migration 014; `admin-session-required` present in `docs/ai/REFERENCE/api-endpoints.md` Auth taxonomy
 - [ ] WP-052 / WP-101 / WP-102 / WP-104 / WP-112 / WP-126 / WP-131 / WP-053 merged on `main`; their contract files unchanged at HEAD (`git diff main`)
 - [ ] WP-107 §Open Questions 1–6 resolved and locked — especially Q1 (score-submission route filename, identified by `Select-String -Path apps\server\src\score -Pattern requireAuthenticatedSession -Recurse`) and Q6 (single-WP vs split into WP-107A / WP-107B)
 - [ ] `legendary.players.handle` (WP-101 migration 008) + `legendary.competitive_scores` (WP-053 migration 007) present in `data/migrations/`
