@@ -7,7 +7,7 @@
 
 **Execution Authority:** This EC is the authoritative execution checklist for WP-107. Implementation must satisfy every clause exactly. If EC and WP conflict on design, **WP-107 wins**.
 
-**Readiness:** WP-159 (the structural blocker) shipped 2026-05-17 (commit `295eec6` / PR #85). EC-195 is ready for execution once §Before Starting is all-green AND WP-107 §Open Questions 1–6 are resolved and locked into WP-107 §Locked contract values.
+**Readiness:** WP-159 (the structural blocker) shipped 2026-05-17 (commit `295eec6` / PR #85). EC-195 status remains **Draft** pending Phase 1 close-out gates (pre-flight `01.4`, copilot check `01.7`, lint gate `00.3` self-review on the WP body) AND §Before Starting all-green AND WP-107 §Open Questions 1–6 resolved and locked into WP-107 §Locked contract values.
 
 ## Before Starting (STOP / GO Gate)
 - [ ] WP-159 confirmed merged on `main` (shipped 2026-05-17, commit `295eec6` / PR #85); re-verify at session start: `apps/server/src/auth/adminSession.ts` exists with the locked `requireAdminSession(request, options): Promise<AdminSessionResult>` signature; `is_admin BOOLEAN` present on `legendary.players` via migration 014; `admin-session-required` present in `docs/ai/REFERENCE/api-endpoints.md` Auth taxonomy

@@ -1,6 +1,6 @@
 # WP-107 — Profile Integrity / Anti-Cheat Surface
 
-**Status:** Draft (drafted 2026-05-17 alongside WP-159; **ready for execution** — WP-159 shipped 2026-05-17 via commit `295eec6` / PR #85)
+**Status:** Draft (drafted 2026-05-17 alongside WP-159; structural dependency on WP-159 cleared 2026-05-17 via commit `295eec6` / PR #85; **Phase 1 close-out gates pending** — pre-flight `01.4`, copilot check `01.7`, lint gate `00.3` self-review)
 **Primary Layer:** Server (`apps/server/src/profile/admin/**`, `apps/server/src/identity/**`) + Database (`data/migrations/015_*`) + Reference (`docs/ai/REFERENCE/api-endpoints.md`)
 **Dependencies:**
 - WP-052 (`legendary.players`; `AccountId` brand)
@@ -16,7 +16,7 @@
 
 **Explicit Non-Dependencies:** WP-110 (admin billing surface; separate concern, separate gate); WP-108 (owner billing UI; not admin); WP-105 (badges are display data, not integrity signals).
 
-**Blocker cleared:** WP-159 shipped 2026-05-17 (commit `295eec6` / PR #85); `requireAdminSession` is live at `apps/server/src/auth/adminSession.ts` and the `admin-session-required` Auth taxonomy value is present in `docs/ai/REFERENCE/api-endpoints.md`. WP-107 is now ready for execution. Historical context: until WP-159 landed, this WP could not ship any admin-attribution surface without re-using WP-110's shared-secret gate — which would have failed this WP's §22 auditability requirement.
+**Structural blocker cleared:** WP-159 shipped 2026-05-17 (commit `295eec6` / PR #85); `requireAdminSession` is live at `apps/server/src/auth/adminSession.ts` and the `admin-session-required` Auth taxonomy value is present in `docs/ai/REFERENCE/api-endpoints.md`. **Phase 1 close-out gates remain pending** before execution opens: pre-flight (`01.4`) must produce `READY TO EXECUTE`; copilot check (`01.7`) must produce `PASS` or `RISK`; lint gate (`00.3`) self-review must be completed inline in §Lint Self-Review. Historical context: until WP-159 landed, this WP could not ship any admin-attribution surface without re-using WP-110's shared-secret gate — which would have failed this WP's §22 auditability requirement.
 
 ---
 
