@@ -18273,4 +18273,149 @@ otherwise.
 
 ---
 
+### D-17301 — Well-Known Coverage Invariant + Tiered Display Resolution for Generic Game-Component Ext_ids (WP-173)
+
+**Unlocks:** WP-173 closes the well-known ext_id gap that surfaced
+`<unknown>` in the production RevealOverlay popup, hand row, discard
+top, and victory pile for the six generic game-component ext_ids that
+exist independent of any registry set and were never registered in
+`G.cardDisplayData` since `G.cardDisplayData` was introduced
+(WP-111 / EC-118). Production symptom observed 2026-05-23 against
+`play.legendary-arena.com` match `WT_9sGMLmdG`.
+
+**Decision:** Two coupled rules govern the engine's display-data
+resolution for the six well-known generic ext_ids
+(`pile-bystander`, `pile-wound`, `pile-shield-officer`,
+`pile-sidekick`, `starting-shield-agent`, `starting-shield-trooper`):
+
+1. **Well-Known Coverage Invariant.** For every `extId` in the locked
+   six-element set `[BYSTANDER_EXT_ID, WOUND_EXT_ID,
+   SHIELD_OFFICER_EXT_ID, SIDEKICK_EXT_ID, SHIELD_AGENT_EXT_ID,
+   SHIELD_TROOPER_EXT_ID]`, `G.cardDisplayData[extId]` MUST be defined
+   after `Game.setup()` returns AND its `name` field MUST be non-empty
+   (regardless of tier-1 hit or tier-2 fallback). Asserted directly by
+   the new test in `buildCardDisplayData.test.ts` (`'buildCardDisplayData
+   — WP-173 well-known ext_id coverage (D-17301)'` describe block,
+   `Well-Known Coverage Invariant` test). Parallel to D-17201's
+   Display-Coverage Invariant but a different builder pair: the
+   constants exported from `pilesInit.ts` + `buildInitialGameState.ts`
+   vs the output of `buildCardDisplayData`. Doubles as the no-shadow
+   contract guard via value-shape assertion (any accidental shadow
+   from a prior section would emit a different `name` value and fail).
+
+2. **Tiered display resolution per ext_id.** Each of the six ext_ids
+   has a specific tier-1 source path; tier-2 is the literal
+   printed-card-name fallback with `imageUrl: ''`:
+   - `pile-bystander` → tier-1 `core.bystanders[*]` where
+     `slug === 'bystander'`; tier-2 `{ name: 'Bystander', imageUrl: '' }`.
+   - `pile-wound` → tier-1 `core.wounds[*]` where `slug === 'wound'`;
+     tier-2 `{ name: 'Wound', imageUrl: '' }`.
+   - `pile-shield-officer` → tier-1 `core.heroes[*]` where
+     `slug === 'officer'` (read `cards[0].name` + `physicalCards[0].imageUrl`);
+     tier-2 `{ name: 'S.H.I.E.L.D. Officer', imageUrl: '' }`.
+   - `pile-sidekick` → tier-1 `ssw1.other[*]` where
+     `cardType === 'sidekick'` (single-set lookup — only set carrying
+     the entry as of 2026-05-23 per `data/cards/ssw1.json:2356-2362`);
+     tier-2 `{ name: 'Sidekick', imageUrl: '' }`. **No cross-set
+     fallback** (silent widening is forbidden; a future multi-set
+     sidekick deployment requires a separate WP that explicitly
+     broadens the lookup).
+   - `starting-shield-agent` → tier-1 `core.heroes[*]` where
+     `slug === 'agent'`; tier-2 `{ name: 'S.H.I.E.L.D. Agent', imageUrl: '' }`.
+   - `starting-shield-trooper` → tier-1 `core.heroes[*]` where
+     `slug === 'trooper'`; tier-2 `{ name: 'S.H.I.E.L.D. Trooper', imageUrl: '' }`.
+
+   The S.H.I.E.L.D. period-separated acronym is verbatim from the
+   printed cards (Vision §1 tabletop faithfulness — locked, do not
+   normalize to "SHIELD" in any future cleanup). All six entries
+   carry `cost: null` (no printed cost on the physical token /
+   starter cards; SHIELD Officer's recruit-cost-3 lives in
+   `G.cardStats[SHIELD_OFFICER_EXT_ID]` — separate sibling-snapshot
+   surface).
+
+**Rationale:**
+- **The original gap was undetectable by per-builder tests.** WP-111 /
+  EC-118 introduced `G.cardDisplayData` without populating it for the
+  six well-known generic ext_ids that live outside any registry set.
+  Per-file tests passed for `pilesInit` + `buildInitialGameState`
+  (which define the constants) AND for `buildCardDisplayData` (which
+  populates the registry-driven ext_ids); no cross-builder contract
+  test existed. The Well-Known Coverage Invariant explicitly bridges
+  the two so the same gap cannot reappear silently.
+- **Inlined literals + test-side drift detection avoid a true ESM
+  circular import.** `buildInitialGameState.ts` imports the
+  `buildCardDisplayData` function, so a reverse value-import from
+  `buildInitialGameState.ts` (the source of `SHIELD_AGENT_EXT_ID` /
+  `SHIELD_TROOPER_EXT_ID`) into `buildCardDisplayData.ts` would form
+  a circular value-import path. ESM tolerates value-only cycles in
+  lazy contexts but the cycle is brittle and a layering smell. The
+  six literal strings are INLINED at the Section 8 emission site
+  with a `// why:` block naming both source-of-truth constant
+  locations; the test file (`buildCardDisplayData.test.ts`) imports
+  the constants from `pilesInit.ts` + `buildInitialGameState.ts` (a
+  different module — no cycle) and asserts each
+  `result[CONSTANT]` matches the inlined literal. Any future drift
+  between the constants and the inlined literals fails the test.
+- **Section 8 is a terminal augmentation pass.** Placed AFTER
+  sections 5–7 and IMMEDIATELY BEFORE the final `return result;` in
+  `buildCardDisplayData`. Sections 5–7 (villain-deck composition) read
+  scheme + mastermind data from the match config; Section 8 reads
+  only the canonical generic-card data and has no shared state with
+  prior sections. The placement order is semantic: Section 8 is the
+  last logical pass because it covers cards that aren't part of any
+  match-configuration-driven composition. Future refactors must
+  preserve "Section 8 last" — re-ordering would silently change the
+  section's role from "always-applied augmentation" to "one of many
+  builder steps", which would invite mis-classification.
+- **No consolidation of WP-172 + WP-173 bystander helpers.** Rule
+  §16.1 forbids 2-call-site abstraction. WP-172's
+  `findGenericBystanderEntry` (hard-coded `slug === 'bystander'` for
+  section 7's villain-deck bystander art) and WP-173's
+  `findBystanderArrayEntry` (parameterized slug for Section 8's
+  `pile-bystander` lookup) stay distinct — section 7 has a tier-2
+  positional fallback (`findFirstBystanderEntry`) reflecting
+  per-scheme bystander identity; Section 8 has only a tier-2 literal
+  fallback. Different fallback semantics, different call sites.
+
+**Consequences:**
+- A future registry-pipeline WP can backfill per-set hero / bystander
+  / wound art for sets that don't share `core`'s shape; the engine
+  code stays unchanged (Section 8's tier-1 always reads `core` for
+  the five core-sourced ext_ids, so backfills to non-`core` sets
+  don't affect Section 8).
+- A future WP that adds a seventh well-known generic ext_id (e.g.,
+  a new pile token type or a starter card revision) must extend
+  Section 8 AND update the locked six-element set in the Well-Known
+  Coverage Invariant test in lockstep. The test name "six-element
+  set" is a load-bearing string; a seventh element changes the
+  invariant's cardinality and the test would need renaming
+  ("seven-element set" etc.).
+- A future WP that introduces a second `cardType === 'sidekick'`
+  entry in another set MUST explicitly broaden Section 8's
+  `pile-sidekick` lookup (e.g., a tiered cross-set fallback
+  mirroring D-17201 for Master Strike + Scheme Twist). Silent
+  widening is forbidden; the single-set `'ssw1'` lookup is locked
+  documentation of the 2026-05-23 empirical state.
+- `HandRow.vue` retains its `humanizeCardId` fallback as
+  defense-in-depth for any future ext_id grammar this WP doesn't
+  cover (e.g., a future engine flow that introduces a new
+  client-visible ext_id without registering display data). The
+  fallback's `// why:` block already points at WP-173 as the close;
+  no client-side change is needed.
+
+**Well-Known Coverage Regression Guard (cited):** The new
+`buildCardDisplayData.test.ts` test `'Well-Known Coverage Invariant
+(D-17301): all six entries defined with non-empty name'` is the
+load-bearing assertion. Plus the `'constants drift detection: the
+six imported constants index into Section 8 emissions'` test which
+imports the six constants and asserts they each index into the
+Section 8 emissions byte-identically. Any future drift between the
+inlined Section 8 literals and the source constants in `pilesInit.ts`
+/ `buildInitialGameState.ts` fails the drift-detection test.
+
+**Introduced:** WP-173.
+**Status:** Active 2026-05-23 (WP-173 executed).
+
+---
+
 Protect this file.

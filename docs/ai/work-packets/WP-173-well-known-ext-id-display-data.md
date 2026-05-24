@@ -718,6 +718,32 @@ The following requirements are mandatory:
 No other files may be modified. (7 files total — at the §00.3 §5
 ~8-file cap; no split needed.)
 
+### Allowlist Amendment (operator-approved at execution, 2026-05-23)
+
+Two cascade re-baselines downstream of the WP's correct enlargement of
+`G.cardDisplayData` (Section 8 adds 6 entries for the well-known
+generic ext_ids, shifting the final-state hash). Mirrors WP-172 /
+EC-190 and WP-168 / EC-186's `PRE_WP080_HASH` +
+`sentinel-core-doom-2p.replay.json` precedent verbatim.
+Operator-approved on the execution session via `AskUserQuestion`
+("Approve — re-baseline both (Recommended)").
+
+- `packages/game-engine/src/replay/replay.execute.test.ts` — **modified**
+  — `PRE_WP080_HASH` value-only change `'17c60ea9'` → `'b3240d6a'`.
+  The constant's existing comment block already cites the cascade
+  pattern; no new comment needed (mirrors WP-172 amendment).
+- `packages/game-engine/src/test/fixtures/games/sentinel-core-doom-2p.replay.json`
+  — **modified** — `expected.finalStateHash`
+  `6263f12f6bc24d4689bb49978f817bf2c373dd3c4266bd414a66ec5a4d37829e` →
+  `535aa9a96e30a9cd3ec678edab806489be919565cc7b40b305e70f613861176d`.
+  Regenerated via `scripts/record-game-fixture.mjs` with identical
+  `name` / `seed` / `createdAt` / `engineVersion` / `input.moves`; only
+  the final-state hash differs. `meta.version` and all other fields are
+  byte-identical pre- and post-execution.
+
+Final allowlist (9 files): the 7 originally enumerated above plus the
+2 cascade re-baselines.
+
 ---
 
 ## Vision Alignment

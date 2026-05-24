@@ -726,6 +726,141 @@ export function buildCardDisplayData(
     }
   }
 
+  // --- 8. Well-Known Generic Cards (D-17301) ---
+  // why: D-17301 — terminal augmentation pass — ensures well-known
+  // ext_ids always resolve. Extends the WP-172 / D-17201 tiered display
+  // resolution pattern to the six generic game-component ext_ids that
+  // exist independent of any match composition (the four pile tokens
+  // exported from `pilesInit.ts` + the two starting cards from
+  // `buildInitialGameState.ts`). Production symptom (2026-05-23 match
+  // `WT_9sGMLmdG`): the RevealOverlay popup surfaced `<unknown>` for
+  // `pile-bystander` (captured-from-supply, ending in the victory pile)
+  // and the hand row surfaced `<unknown>` for `starting-shield-trooper`.
+  //
+  // Section 8 is the LAST logical pass in this builder — it covers cards
+  // that aren't part of any match-configuration-driven composition, so
+  // it has no shared state with prior sections and must sit immediately
+  // before `return result;` to preserve the "always-applied augmentation"
+  // semantic. Re-ordering would silently change its role to "one of
+  // many builder steps" which would invite mis-classification.
+  //
+  // why: the six ext_id literal strings below are INLINED rather than
+  // imported from their source-of-truth (`pilesInit.ts:22/25/28/31` +
+  // `buildInitialGameState.ts:74/77`). `buildInitialGameState.ts`
+  // imports `buildCardDisplayData`, so a reverse value import would
+  // form a true ESM circular import path — tolerated for value-only
+  // cycles in lazy contexts but brittle and a layering smell. Drift
+  // detection lives in `buildCardDisplayData.test.ts`: it imports the
+  // six constants from the source modules (test file is a different
+  // module — no cycle) and asserts `result[CONSTANT]` matches each
+  // inlined literal below.
+  const coreSetData = registry.getSet('core');
+  // why: `ssw1` is the ONLY set carrying a `cardType === 'sidekick'`
+  // entry in `other[]` as of 2026-05-23 (verified against
+  // `data/cards/ssw1.json:2356-2362`). Single call site keeps Rule §16.1
+  // (no premature abstraction). Future-proofing: if a later set
+  // introduces a second sidekick entry, a separate WP must explicitly
+  // broaden this lookup (e.g. a tiered cross-set fallback mirroring the
+  // D-17201 pattern for Master Strike + Scheme Twist); silent widening
+  // is forbidden.
+  const ssw1SetData = registry.getSet('ssw1');
+
+  // pile-bystander
+  let wellKnownBystanderName = 'Bystander';
+  let wellKnownBystanderImageUrl = '';
+  const wellKnownBystanderEntry = findBystanderArrayEntry(coreSetData, 'bystander');
+  if (wellKnownBystanderEntry !== null) {
+    wellKnownBystanderName = wellKnownBystanderEntry.name;
+    wellKnownBystanderImageUrl = wellKnownBystanderEntry.imageUrl;
+  }
+  result['pile-bystander' as CardExtId] = {
+    extId: 'pile-bystander' as CardExtId,
+    name: wellKnownBystanderName,
+    imageUrl: wellKnownBystanderImageUrl,
+    cost: null,
+  };
+
+  // pile-wound
+  let wellKnownWoundName = 'Wound';
+  let wellKnownWoundImageUrl = '';
+  const wellKnownWoundEntry = findWoundArrayEntry(coreSetData);
+  if (wellKnownWoundEntry !== null) {
+    wellKnownWoundName = wellKnownWoundEntry.name;
+    wellKnownWoundImageUrl = wellKnownWoundEntry.imageUrl;
+  }
+  result['pile-wound' as CardExtId] = {
+    extId: 'pile-wound' as CardExtId,
+    name: wellKnownWoundName,
+    imageUrl: wellKnownWoundImageUrl,
+    cost: null,
+  };
+
+  // pile-shield-officer
+  // why: `cost: null` for SHIELD Officer — printed-cost surface only;
+  // gameplay cost resolved elsewhere. `UICardDisplay.cost` is the
+  // printed card cost, and the SHIELD Officer pile token has no printed
+  // cost on its physical face. Officer's recruit-cost-3 lives in
+  // `G.cardStats[SHIELD_OFFICER_EXT_ID]` (`buildInitialGameState.ts:293`),
+  // a separate sibling-snapshot surface read by the supply-pile UI.
+  let wellKnownOfficerName = 'S.H.I.E.L.D. Officer';
+  let wellKnownOfficerImageUrl = '';
+  const wellKnownOfficerEntry = findHeroByExactSlug(coreSetData, 'officer');
+  if (wellKnownOfficerEntry !== null) {
+    wellKnownOfficerName = wellKnownOfficerEntry.name;
+    wellKnownOfficerImageUrl = wellKnownOfficerEntry.imageUrl;
+  }
+  result['pile-shield-officer' as CardExtId] = {
+    extId: 'pile-shield-officer' as CardExtId,
+    name: wellKnownOfficerName,
+    imageUrl: wellKnownOfficerImageUrl,
+    cost: null,
+  };
+
+  // pile-sidekick
+  let wellKnownSidekickName = 'Sidekick';
+  let wellKnownSidekickImageUrl = '';
+  const wellKnownSidekickEntry = findOtherEntryByCardType(ssw1SetData, 'sidekick');
+  if (wellKnownSidekickEntry !== null) {
+    wellKnownSidekickName = wellKnownSidekickEntry.name;
+    wellKnownSidekickImageUrl = wellKnownSidekickEntry.imageUrl;
+  }
+  result['pile-sidekick' as CardExtId] = {
+    extId: 'pile-sidekick' as CardExtId,
+    name: wellKnownSidekickName,
+    imageUrl: wellKnownSidekickImageUrl,
+    cost: null,
+  };
+
+  // starting-shield-agent
+  let wellKnownAgentName = 'S.H.I.E.L.D. Agent';
+  let wellKnownAgentImageUrl = '';
+  const wellKnownAgentEntry = findHeroByExactSlug(coreSetData, 'agent');
+  if (wellKnownAgentEntry !== null) {
+    wellKnownAgentName = wellKnownAgentEntry.name;
+    wellKnownAgentImageUrl = wellKnownAgentEntry.imageUrl;
+  }
+  result['starting-shield-agent' as CardExtId] = {
+    extId: 'starting-shield-agent' as CardExtId,
+    name: wellKnownAgentName,
+    imageUrl: wellKnownAgentImageUrl,
+    cost: null,
+  };
+
+  // starting-shield-trooper
+  let wellKnownTrooperName = 'S.H.I.E.L.D. Trooper';
+  let wellKnownTrooperImageUrl = '';
+  const wellKnownTrooperEntry = findHeroByExactSlug(coreSetData, 'trooper');
+  if (wellKnownTrooperEntry !== null) {
+    wellKnownTrooperName = wellKnownTrooperEntry.name;
+    wellKnownTrooperImageUrl = wellKnownTrooperEntry.imageUrl;
+  }
+  result['starting-shield-trooper' as CardExtId] = {
+    extId: 'starting-shield-trooper' as CardExtId,
+    name: wellKnownTrooperName,
+    imageUrl: wellKnownTrooperImageUrl,
+    cost: null,
+  };
+
   return result;
 }
 
@@ -1176,6 +1311,203 @@ function findSchemeInSetForDisplay(
       result.villainDeckBystanderCount = schemeEntry.villainDeckBystanderCount;
     }
     return result;
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// WP-173 helpers — well-known generic ext_id defensive readers (D-17301)
+// ---------------------------------------------------------------------------
+
+// why: SetDataSchema.heroes / .bystanders / .wounds are read defensively
+// in this WP because Section 8 emissions are an augmentation layer over
+// data that may be partially or fully absent in narrow test mocks. The
+// three helpers below mirror the WP-172 `findOtherEntryByCardType` /
+// `findGenericBystanderEntry` defensive-read pattern: gate on
+// `typeof entry === 'object' && entry !== null`, then read fields with
+// `typeof === 'string'` guards. The §C defensive parsing test asserts
+// that null / primitive / wrong-type entries are silently skipped (only
+// `Game.setup()` may throw — these helpers must soft-skip).
+
+/**
+ * Hero display payload extracted from a `setData.heroes[]` entry by
+ * exact slug match (used by Section 8 for SHIELD Agent / Trooper /
+ * Officer well-known ext_id resolution).
+ */
+interface HeroByExactSlugDisplay {
+  /** Canonical face name read from `heroes[i].cards[0].name`. */
+  name: string;
+  /** Canonical image URL read from `heroes[i].physicalCards[0].imageUrl`. */
+  imageUrl: string;
+}
+
+/**
+ * Finds a hero in `setData.heroes[]` whose `slug` matches exactly and
+ * returns the canonical face name + image URL.
+ *
+ * Name is read from `cards[0].name`; imageUrl is read from
+ * `physicalCards[0].imageUrl` (the D-14102 canonical-face source per
+ * the existing section-1b walk). All field reads gate with
+ * `typeof === 'string'` guards before use.
+ *
+ * Returns null when the set is not loaded, `heroes[]` is absent or not
+ * an array, no slug match exists, or the matching entry's `cards[0]` /
+ * `physicalCards[0]` does not carry both required string fields.
+ * Malformed entries (null, primitive, wrong-type fields) are silently
+ * skipped — defensive read of registry data (unknown shape per
+ * ARCHITECTURE.md); only `Game.setup()` may throw.
+ *
+ * Distinct from `findHeroEntryForDisplay` (the existing section-1b
+ * helper, which returns the whole `DisplayDataHeroEntry` for the
+ * per-copy physicalCards walk). This helper returns only `name` +
+ * `imageUrl` for the Section 8 well-known ext_id emission — different
+ * call site, different return shape, kept separate per Rule §16.1.
+ *
+ * @param setData - Per-set data object from the registry (unknown shape).
+ * @param heroSlug - The hero slug to match exactly (`'agent'` /
+ *   `'trooper'` / `'officer'` for the WP-173 well-known SHIELD ext_ids).
+ * @returns Hero display payload, or null on lookup / parse failure.
+ */
+function findHeroByExactSlug(
+  setData: unknown,
+  heroSlug: string,
+): HeroByExactSlugDisplay | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { heroes?: unknown };
+  if (!Array.isArray(candidate.heroes)) return null;
+
+  for (const entry of candidate.heroes) {
+    if (!entry || typeof entry !== 'object') continue;
+    const heroEntry = entry as Record<string, unknown>;
+    if (heroEntry.slug !== heroSlug) continue;
+
+    if (!Array.isArray(heroEntry.cards)) continue;
+    const firstCard = heroEntry.cards[0];
+    if (!firstCard || typeof firstCard !== 'object') continue;
+    const cardCandidate = firstCard as Record<string, unknown>;
+    if (typeof cardCandidate.name !== 'string') continue;
+
+    if (!Array.isArray(heroEntry.physicalCards)) continue;
+    const firstPhysical = heroEntry.physicalCards[0];
+    if (!firstPhysical || typeof firstPhysical !== 'object') continue;
+    const physicalCandidate = firstPhysical as Record<string, unknown>;
+    if (typeof physicalCandidate.imageUrl !== 'string') continue;
+
+    return {
+      name: cardCandidate.name,
+      imageUrl: physicalCandidate.imageUrl,
+    };
+  }
+  return null;
+}
+
+/**
+ * Bystander display payload extracted from a `setData.bystanders[]`
+ * entry by exact slug match (used by Section 8 for the `pile-bystander`
+ * well-known ext_id resolution).
+ */
+interface BystanderArrayEntryDisplay {
+  /** Display name preserved verbatim from the registry. */
+  name: string;
+  /** Full image URL preserved verbatim from the registry. */
+  imageUrl: string;
+}
+
+/**
+ * Finds the first entry in `setData.bystanders[]` whose `slug` field
+ * matches the supplied value exactly AND carries well-formed string
+ * `name` and `imageUrl` fields.
+ *
+ * Used by Section 8 for `pile-bystander` (target slug `'bystander'`).
+ *
+ * Returns null when the set is not loaded, `bystanders[]` is absent or
+ * not an array, no slug match exists, or the matching entry lacks the
+ * required string fields. Malformed entries are silently skipped —
+ * defensive read of registry data (unknown shape per ARCHITECTURE.md);
+ * only `Game.setup()` may throw.
+ *
+ * Kept distinct from the WP-172 `findGenericBystanderEntry` (which
+ * hard-codes `slug === 'bystander'`) per Rule §16.1 — two-call-site
+ * duplication is preferred over a parameterized merge that would
+ * obscure the section-7 vs section-8 call sites' different fallback
+ * semantics. Section 7's bystander resolution has a tier-2 positional
+ * fallback (`findFirstBystanderEntry`) reflecting per-scheme bystander
+ * identity; Section 8's `pile-bystander` is the generic supply-pile
+ * token and falls back to a tier-2 literal only.
+ *
+ * @param setData - Per-set data object from the registry (unknown shape).
+ * @param targetSlug - The bystander slug to match exactly.
+ * @returns Bystander display payload, or null on lookup / parse failure.
+ */
+function findBystanderArrayEntry(
+  setData: unknown,
+  targetSlug: string,
+): BystanderArrayEntryDisplay | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { bystanders?: unknown };
+  if (!Array.isArray(candidate.bystanders)) return null;
+
+  for (const entry of candidate.bystanders) {
+    if (!entry || typeof entry !== 'object') continue;
+    const bystanderEntry = entry as Record<string, unknown>;
+    if (bystanderEntry.slug !== targetSlug) continue;
+    if (typeof bystanderEntry.name !== 'string') continue;
+    if (typeof bystanderEntry.imageUrl !== 'string') continue;
+    return {
+      name: bystanderEntry.name,
+      imageUrl: bystanderEntry.imageUrl,
+    };
+  }
+  return null;
+}
+
+/**
+ * Wound display payload extracted from a `setData.wounds[]` entry
+ * (used by Section 8 for the `pile-wound` well-known ext_id resolution).
+ */
+interface WoundArrayEntryDisplay {
+  /** Display name preserved verbatim from the registry. */
+  name: string;
+  /** Full image URL preserved verbatim from the registry. */
+  imageUrl: string;
+}
+
+/**
+ * Finds the first entry in `setData.wounds[]` whose `slug` field equals
+ * the canonical wound literal `'wound'` AND carries well-formed string
+ * `name` and `imageUrl` fields.
+ *
+ * Single call site (Section 8 / `pile-wound`); the literal `'wound'` is
+ * inlined per Rule §16.1 — parameterization would imply other wound
+ * slugs exist, which they do not in any of the 40 registered sets as
+ * of 2026-05-23.
+ *
+ * Returns null when the set is not loaded, `wounds[]` is absent or not
+ * an array, no slug match exists, or the matching entry lacks the
+ * required string fields. Malformed entries are silently skipped —
+ * defensive read of registry data (unknown shape per ARCHITECTURE.md);
+ * only `Game.setup()` may throw.
+ *
+ * @param setData - Per-set data object from the registry (unknown shape).
+ * @returns Wound display payload, or null on lookup / parse failure.
+ */
+function findWoundArrayEntry(
+  setData: unknown,
+): WoundArrayEntryDisplay | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { wounds?: unknown };
+  if (!Array.isArray(candidate.wounds)) return null;
+
+  for (const entry of candidate.wounds) {
+    if (!entry || typeof entry !== 'object') continue;
+    const woundEntry = entry as Record<string, unknown>;
+    if (woundEntry.slug !== 'wound') continue;
+    if (typeof woundEntry.name !== 'string') continue;
+    if (typeof woundEntry.imageUrl !== 'string') continue;
+    return {
+      name: woundEntry.name,
+      imageUrl: woundEntry.imageUrl,
+    };
   }
   return null;
 }

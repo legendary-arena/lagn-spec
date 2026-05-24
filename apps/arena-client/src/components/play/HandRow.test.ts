@@ -71,28 +71,34 @@ describe('HandRow (WP-129 — extends WP-100)', () => {
     assert.equal(wrapper.find('[data-testid="play-hand-card"]').text(), 'cap rogers');
   });
 
-  test('falls back to humanized cardId when handDisplay entry is the WP-111 placeholder', () => {
-    // why: regression — starter cards (`starting-shield-agent` /
-    // `starting-shield-trooper`) are engine-synthetic and not in the
-    // registry, so buildCardDisplayData does not populate display
-    // entries for them. The projection falls back to
-    // UNKNOWN_DISPLAY_PLACEHOLDER (name === '<unknown>'). HandRow must
-    // detect this shape and render a humanized cardId instead.
+  test('renders engine-resolved S.H.I.E.L.D. starter names when handDisplay is populated (WP-173 / D-17301)', () => {
+    // why: WP-173 fixture refresh — `buildCardDisplayData` Section 8
+    // now populates `G.cardDisplayData[starting-shield-agent / trooper]`
+    // with the tier-1 registry-resolved names ('S.H.I.E.L.D. Agent' /
+    // 'S.H.I.E.L.D. Trooper') OR tier-2 literal fallback (same names
+    // with empty imageUrl). The UIState projection therefore no longer
+    // surfaces UNKNOWN_DISPLAY_PLACEHOLDER for these two ext_ids, so
+    // HandRow renders the engine-supplied name verbatim — including
+    // the period-separated S.H.I.E.L.D. acronym (printed-card
+    // faithfulness per Vision §1). The humanize-fallback path itself
+    // stays in place as defense-in-depth and is exercised by the
+    // "falls back to humanized cardId when handDisplay is missing"
+    // test above with a synthesized unknown extId.
     const { submitMove } = recorder();
     const wrapper = mount(HandRow, {
       props: {
         handCards: ['starting-shield-agent', 'starting-shield-trooper'],
         handDisplay: [
-          { extId: 'starting-shield-agent', name: '<unknown>', imageUrl: '', cost: null },
-          { extId: 'starting-shield-trooper', name: '<unknown>', imageUrl: '', cost: null },
+          { extId: 'starting-shield-agent', name: 'S.H.I.E.L.D. Agent', imageUrl: '', cost: null },
+          { extId: 'starting-shield-trooper', name: 'S.H.I.E.L.D. Trooper', imageUrl: '', cost: null },
         ],
         currentStage: 'main',
         submitMove,
       },
     });
     const buttons = wrapper.findAll('[data-testid="play-hand-card"]');
-    assert.equal(buttons[0]!.text(), 'starting shield agent');
-    assert.equal(buttons[1]!.text(), 'starting shield trooper');
+    assert.equal(buttons[0]!.text(), 'S.H.I.E.L.D. Agent');
+    assert.equal(buttons[1]!.text(), 'S.H.I.E.L.D. Trooper');
   });
 
   test('click emits playCard with the card id at play.main', () => {

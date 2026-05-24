@@ -14,6 +14,25 @@ import {
   isCardDisplayDataRegistryReader,
 } from './buildCardDisplayData.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
+// why: WP-173 / D-17301 — constants-drift detection. The test imports
+// the six well-known ext_id constants from their source modules so the
+// "Constants drift detection" test asserts that the inlined Section 8
+// literals in `buildCardDisplayData.ts` match the canonical constants
+// byte-for-byte. The test file is a different module from
+// `buildCardDisplayData.ts` so the import does NOT form the circular
+// path that an implementation-side import would (`buildInitialGameState.ts`
+// imports `buildCardDisplayData`, so a reverse value import there
+// would cycle).
+import {
+  BYSTANDER_EXT_ID,
+  WOUND_EXT_ID,
+  SHIELD_OFFICER_EXT_ID,
+  SIDEKICK_EXT_ID,
+} from './pilesInit.js';
+import {
+  SHIELD_AGENT_EXT_ID,
+  SHIELD_TROOPER_EXT_ID,
+} from './buildInitialGameState.js';
 
 // ---------------------------------------------------------------------------
 // Structural mock fixtures
@@ -70,6 +89,21 @@ interface MockSetData {
   schemes?: unknown[];
   bystanders?: unknown[];
   other?: unknown[];
+  // why: WP-173 §Scope-B fixture widening — Section 8's `pile-wound`
+  // resolution reads `setData.wounds[]`; the field is `unknown[]`
+  // because the production schema (`packages/registry/src/schema.ts`)
+  // treats it that way and the §C defensive parsing test deliberately
+  // passes wrong-type entries to prove the helper guards work.
+  wounds?: unknown[];
+  // why: WP-173 §Scope-B fixture widening — Section 8's
+  // `pile-shield-officer` / `starting-shield-agent` / `starting-shield-trooper`
+  // resolutions read `setData.heroes[]` via `findHeroByExactSlug`. Typed
+  // as `unknown[]` for the same defensive-parsing reason as `wounds`.
+  // (The base WP-111 fixture inlined a typed `heroes` only inside the
+  // section-1b tests; the shared `MockSetData` carries this as `unknown[]`
+  // so all describe blocks can populate `core.heroes` without colliding
+  // with the WP-135 / D-14102 hero-card-instance shapes.)
+  heroes?: unknown[];
 }
 
 interface MockRegistry {
@@ -229,12 +263,60 @@ function buildFixtureRegistry(): MockRegistry {
         imageUrl: 'https://images.legendary-arena.com/core/core-st-scheme-twist.webp',
       },
     ],
-    // why: WP-172 §Scope-B — tier-1 generic bystander (`slug: 'bystander'`).
+    // why: WP-172 §Scope-B tier-1 generic bystander (`slug: 'bystander'`).
+    // WP-173 §Scope-B — `name` + `imageUrl` aligned with production
+    // (`data/cards/core.json:2530-2543`) so the WP-173 `pile-bystander`
+    // tier-1 test asserts the canonical literal `'Bystander'`. No WP-172
+    // test asserts the prior `'Test Bystander A'` literal (the Set A
+    // bystander tests only check counts via `assert.ok`), so the rename
+    // is non-breaking.
     bystanders: [
       {
-        name: 'Test Bystander A',
+        name: 'Bystander',
         slug: 'bystander',
-        imageUrl: 'https://images.legendary-arena.com/core/core-by-bystander.webp',
+        imageUrl: 'core-by.webp',
+      },
+    ],
+    // why: WP-173 §Scope-B fixture extension — `pile-wound` tier-1
+    // source. Mirrors `data/cards/core.json:2545-2558` shape verbatim
+    // (`{ slug, name, imageUrl }`; vp / id / cards fields elided since
+    // `findWoundArrayEntry` reads only `slug` / `name` / `imageUrl`).
+    wounds: [
+      {
+        name: 'Wound',
+        slug: 'wound',
+        imageUrl: 'core-wd.webp',
+      },
+    ],
+    // why: WP-173 §Scope-B fixture extension — `pile-shield-officer` /
+    // `starting-shield-agent` / `starting-shield-trooper` tier-1
+    // sources. Mirrors `data/cards/core.json:1635-1714` shape verbatim
+    // (`{ slug, cards: [{ name, ... }], physicalCards: [{ imageUrl, ... }] }`).
+    // `findHeroByExactSlug` reads `cards[0].name` + `physicalCards[0].imageUrl`.
+    heroes: [
+      {
+        name: 'S.H.I.E.L.D. Agent',
+        slug: 'agent',
+        cards: [{ slug: 'agent', name: 'S.H.I.E.L.D. Agent' }],
+        physicalCards: [
+          { id: 'p1', count: 1, imageUrl: 'core-agent.webp', sides: ['agent'] },
+        ],
+      },
+      {
+        name: 'S.H.I.E.L.D. Trooper',
+        slug: 'trooper',
+        cards: [{ slug: 'trooper', name: 'S.H.I.E.L.D. Trooper' }],
+        physicalCards: [
+          { id: 'p1', count: 1, imageUrl: 'core-trooper.webp', sides: ['trooper'] },
+        ],
+      },
+      {
+        name: 'S.H.I.E.L.D. Officer',
+        slug: 'officer',
+        cards: [{ slug: 'officer', name: 'S.H.I.E.L.D. Officer' }],
+        physicalCards: [
+          { id: 'p1', count: 1, imageUrl: 'core-officer.webp', sides: ['officer'] },
+        ],
       },
     ],
     // why: WP-172 §Scope-C — two schemes on Set A. `midtown-bombing`
@@ -371,6 +453,30 @@ function buildFixtureRegistry(): MockRegistry {
     schemes: [],
   };
 
+  // why: WP-173 §Scope-B fixture extension — `pile-sidekick` tier-1
+  // source. Mirrors `data/cards/ssw1.json:2356-2362` shape verbatim
+  // (`{ name, slug, cardType: 'sidekick', imageUrl }` inside `other[]`).
+  // `findOtherEntryByCardType(ssw1SetData, 'sidekick')` is the existing
+  // WP-172 helper reused by Section 8. The empty arrays for
+  // villains / henchmen / masterminds / heroes mean ssw1 contributes
+  // nothing else to the cardDisplayData output for the WP-173 tests'
+  // configs (which don't reference ssw1 entities); the mock just
+  // exposes the sidekick entry.
+  const ssw1SetData: MockSetData = {
+    abbr: 'ssw1',
+    villains: [],
+    henchmen: [],
+    masterminds: [],
+    other: [
+      {
+        name: 'Sidekick',
+        slug: 'sidekick',
+        cardType: 'sidekick',
+        imageUrl: 'ssw1-sk.webp',
+      },
+    ],
+  };
+
   return {
     listCards: () => flatCards,
     listSets: () => [
@@ -379,6 +485,7 @@ function buildFixtureRegistry(): MockRegistry {
       { abbr: 'testset-orphan' },
       { abbr: 'testset-empty-bystanders' },
       { abbr: 'testset-defensive' },
+      { abbr: 'ssw1' },
     ],
     getSet: (abbr: string) => {
       if (abbr === 'core') return setData;
@@ -386,6 +493,7 @@ function buildFixtureRegistry(): MockRegistry {
       if (abbr === 'testset-orphan') return setDataC;
       if (abbr === 'testset-empty-bystanders') return setDataD;
       if (abbr === 'testset-defensive') return setDataDefensive;
+      if (abbr === 'ssw1') return ssw1SetData;
       return undefined;
     },
   };
@@ -1419,5 +1527,427 @@ describe('buildCardDisplayData — WP-172 cross-builder superset invariant (D-17
       [],
       `Display-Coverage Invariant (D-17201) violated — buildVillainDeck emitted ext_ids missing from G.cardDisplayData: ${missingFromDisplay.join(', ')}. The most likely cause is grammar drift in one of the four villain-deck sections of buildCardDisplayData.ts; re-verify byte-identity against villainDeck.setup.ts lines 203 (villain), 247 (scheme-twist), 266 (bystander), 279 (master-strike).`,
     );
+  });
+});
+
+// ===========================================================================
+// WP-173 — Well-Known Ext_id Display Data Coverage (D-17301)
+//
+// Section 8 emits one entry per well-known generic game-component
+// ext_id (`pile-bystander`, `pile-wound`, `pile-shield-officer`,
+// `pile-sidekick`, `starting-shield-agent`, `starting-shield-trooper`).
+// Tier-1: read from `core.bystanders / wounds / heroes` or
+// `ssw1.other` defensively. Tier-2: literal printed-card-name fallback
+// with `imageUrl: ''`. All entries carry `cost: null`.
+// ===========================================================================
+
+describe('buildCardDisplayData — WP-173 well-known ext_id coverage (D-17301)', () => {
+  it('tier-1 pile-bystander: reads name + imageUrl from core.bystanders slug-match', () => {
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const entry = result['pile-bystander'];
+    assert.ok(entry, 'pile-bystander must be present');
+    assert.equal(entry.extId, 'pile-bystander');
+    assert.equal(entry.name, 'Bystander');
+    assert.equal(entry.imageUrl, 'core-by.webp');
+    assert.equal(entry.cost, null);
+  });
+
+  it('tier-1 pile-wound: reads name + imageUrl from core.wounds slug-match', () => {
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const entry = result['pile-wound'];
+    assert.ok(entry, 'pile-wound must be present');
+    assert.equal(entry.extId, 'pile-wound');
+    assert.equal(entry.name, 'Wound');
+    assert.equal(entry.imageUrl, 'core-wd.webp');
+    assert.equal(entry.cost, null);
+  });
+
+  it('tier-1 pile-shield-officer: reads cards[0].name + physicalCards[0].imageUrl (S.H.I.E.L.D. periods verbatim)', () => {
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const entry = result['pile-shield-officer'];
+    assert.ok(entry, 'pile-shield-officer must be present');
+    assert.equal(entry.name, 'S.H.I.E.L.D. Officer', 'periods are intentional, verbatim from printed card');
+    assert.equal(entry.imageUrl, 'core-officer.webp');
+    assert.equal(entry.cost, null, 'cost: null — printed-cost surface only; gameplay cost in G.cardStats');
+  });
+
+  it('tier-1 pile-sidekick: reads name + imageUrl from ssw1.other cardType=sidekick', () => {
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const entry = result['pile-sidekick'];
+    assert.ok(entry, 'pile-sidekick must be present');
+    assert.equal(entry.name, 'Sidekick');
+    assert.equal(entry.imageUrl, 'ssw1-sk.webp');
+    assert.equal(entry.cost, null);
+  });
+
+  it('tier-1 starting-shield-agent: reads via core.heroes slug=agent', () => {
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const entry = result['starting-shield-agent'];
+    assert.ok(entry, 'starting-shield-agent must be present');
+    assert.equal(entry.name, 'S.H.I.E.L.D. Agent');
+    assert.equal(entry.imageUrl, 'core-agent.webp');
+    assert.equal(entry.cost, null);
+  });
+
+  it('tier-1 starting-shield-trooper: reads via core.heroes slug=trooper', () => {
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const entry = result['starting-shield-trooper'];
+    assert.ok(entry, 'starting-shield-trooper must be present');
+    assert.equal(entry.name, 'S.H.I.E.L.D. Trooper');
+    assert.equal(entry.imageUrl, 'core-trooper.webp');
+    assert.equal(entry.cost, null);
+  });
+
+  it('tier-2 fallback (core unloaded): five core-sourced ext_ids carry literal printed names with empty imageUrl', () => {
+    // why: when `registry.getSet('core')` returns undefined, the four
+    // pile tokens that read from core (`pile-bystander`, `pile-wound`,
+    // `pile-shield-officer`) + two starting cards
+    // (`starting-shield-agent`, `starting-shield-trooper`) must fall
+    // back to the locked tier-2 literal names with `imageUrl: ''`. All
+    // six tier-2 names preserve the S.H.I.E.L.D. periods verbatim
+    // because they are the printed-card names.
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'ssw1' }],
+      getSet: (abbr: string) =>
+        abbr === 'ssw1'
+          ? {
+              abbr: 'ssw1',
+              villains: [],
+              henchmen: [],
+              masterminds: [],
+              other: [
+                {
+                  name: 'Sidekick',
+                  slug: 'sidekick',
+                  cardType: 'sidekick',
+                  imageUrl: 'ssw1-sk.webp',
+                },
+              ],
+            }
+          : undefined,
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    assert.deepStrictEqual(
+      result['pile-bystander'],
+      { extId: 'pile-bystander', name: 'Bystander', imageUrl: '', cost: null },
+    );
+    assert.deepStrictEqual(
+      result['pile-wound'],
+      { extId: 'pile-wound', name: 'Wound', imageUrl: '', cost: null },
+    );
+    assert.deepStrictEqual(
+      result['pile-shield-officer'],
+      { extId: 'pile-shield-officer', name: 'S.H.I.E.L.D. Officer', imageUrl: '', cost: null },
+    );
+    assert.deepStrictEqual(
+      result['starting-shield-agent'],
+      { extId: 'starting-shield-agent', name: 'S.H.I.E.L.D. Agent', imageUrl: '', cost: null },
+    );
+    assert.deepStrictEqual(
+      result['starting-shield-trooper'],
+      { extId: 'starting-shield-trooper', name: 'S.H.I.E.L.D. Trooper', imageUrl: '', cost: null },
+    );
+    // ssw1 IS loaded — pile-sidekick still hits tier-1 in this fixture
+    assert.equal(result['pile-sidekick']?.imageUrl, 'ssw1-sk.webp');
+  });
+
+  it('tier-2 fallback (ssw1 unloaded): pile-sidekick carries literal Sidekick with empty imageUrl', () => {
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'core' }],
+      getSet: (abbr: string) =>
+        abbr === 'core'
+          ? {
+              abbr: 'core',
+              villains: [],
+              henchmen: [],
+              masterminds: [],
+              bystanders: [],
+              wounds: [],
+              heroes: [],
+              other: [],
+            }
+          : undefined,
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    assert.deepStrictEqual(
+      result['pile-sidekick'],
+      { extId: 'pile-sidekick', name: 'Sidekick', imageUrl: '', cost: null },
+    );
+  });
+
+  it('locked shape: all six well-known entries carry cost: null', () => {
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const wellKnownExtIds = [
+      'pile-bystander',
+      'pile-wound',
+      'pile-shield-officer',
+      'pile-sidekick',
+      'starting-shield-agent',
+      'starting-shield-trooper',
+    ];
+    for (const wellKnownExtId of wellKnownExtIds) {
+      const entry = result[wellKnownExtId];
+      assert.ok(entry, `${wellKnownExtId} must be present`);
+      assert.equal(entry.cost, null, `${wellKnownExtId} cost must be null`);
+    }
+  });
+
+  it('no aliasing across the six well-known entries (mutation isolation)', () => {
+    // why: D-2802 / D-13502 / D-14102 aliasing-prevention precedent —
+    // mutating one Section 8 entry must not leak to a sibling. Asserts
+    // per-entry fresh object literals.
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2) as Record<
+      string,
+      { extId: string; name: string; imageUrl: string; cost: number | null }
+    >;
+    result['pile-bystander'].name = 'Mutated';
+
+    assert.equal(result['pile-wound'].name, 'Wound', 'mutation to pile-bystander must not leak to pile-wound');
+    assert.equal(result['pile-sidekick'].name, 'Sidekick', 'mutation to pile-bystander must not leak to pile-sidekick');
+    assert.equal(result['starting-shield-agent'].name, 'S.H.I.E.L.D. Agent', 'mutation must not leak to starting-shield-agent');
+  });
+
+  it('Well-Known Coverage Invariant (D-17301): all six entries defined with non-empty name', () => {
+    // why: the load-bearing test for D-17301 — every ext_id in the
+    // locked six-element set is defined in `result` AND has a non-empty
+    // `name` field (regardless of tier-1 hit or tier-2 fallback).
+    // Mirrors the WP-172 cross-builder superset invariant pattern; the
+    // value-shape assertion doubles as the no-shadow contract guard
+    // (each entry's name must be one of the six locked literals — any
+    // accidental shadow from a prior section would emit a different
+    // name and fail).
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const wellKnownExtIds = [
+      'pile-bystander',
+      'pile-wound',
+      'pile-shield-officer',
+      'pile-sidekick',
+      'starting-shield-agent',
+      'starting-shield-trooper',
+    ];
+    for (const wellKnownExtId of wellKnownExtIds) {
+      const entry = result[wellKnownExtId];
+      assert.ok(
+        entry,
+        `Well-Known Coverage Invariant violated: ${wellKnownExtId} is missing from G.cardDisplayData. The most likely cause is a typo in the Section 8 inlined ext_id literal or a missing emission block; re-verify against pilesInit.ts:22/25/28/31 + buildInitialGameState.ts:74/77.`,
+      );
+      assert.ok(
+        entry.name.length > 0,
+        `Well-Known Coverage Invariant violated: ${wellKnownExtId}.name is empty. Tier-2 literal fallback should still produce a non-empty name.`,
+      );
+    }
+  });
+
+  it('defensive parsing: malformed core.heroes entries (null / primitive / missing fields) → tier-2 fallback', () => {
+    // why: §Defensive parsing acceptance — when `core.heroes[]` carries
+    // malformed entries, `findHeroByExactSlug` silently skips them and
+    // the affected ext_ids fall back to tier-2 literal. Soft-skip
+    // mirrors the WP-172 helpers; only `Game.setup()` may throw.
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'core' }],
+      getSet: (abbr: string) =>
+        abbr === 'core'
+          ? {
+              abbr: 'core',
+              villains: [],
+              henchmen: [],
+              masterminds: [],
+              bystanders: [],
+              wounds: [],
+              heroes: [
+                null,
+                'string-not-object',
+                42,
+                // slug match but missing `cards` field
+                { slug: 'officer' },
+                // slug match but `cards` is not an array
+                { slug: 'agent', cards: 'not-an-array' },
+                // slug match but `physicalCards` missing
+                { slug: 'trooper', cards: [{ slug: 'trooper', name: 'X' }] },
+              ],
+              other: [],
+            }
+          : undefined,
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    assert.equal(result['pile-shield-officer']?.name, 'S.H.I.E.L.D. Officer');
+    assert.equal(result['pile-shield-officer']?.imageUrl, '', 'tier-2 fallback empty imageUrl');
+    assert.equal(result['starting-shield-agent']?.name, 'S.H.I.E.L.D. Agent');
+    assert.equal(result['starting-shield-agent']?.imageUrl, '');
+    assert.equal(result['starting-shield-trooper']?.name, 'S.H.I.E.L.D. Trooper');
+    assert.equal(result['starting-shield-trooper']?.imageUrl, '');
+  });
+
+  it('defensive parsing: partial-malformed (slug match, wrong-type fields) → tier-2 fallback', () => {
+    // why: §Defensive parsing acceptance — when a hero entry's `slug`
+    // matches but `physicalCards[0].imageUrl` is a number (not string)
+    // or `cards[0].name` is null, the helper's `typeof === 'string'`
+    // field guards reject the entry and the affected ext_id falls back
+    // to tier-2 literal. Closes the silent-data-corruption surface
+    // distinct from the missing-key case above.
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'core' }],
+      getSet: (abbr: string) =>
+        abbr === 'core'
+          ? {
+              abbr: 'core',
+              villains: [],
+              henchmen: [],
+              masterminds: [],
+              bystanders: [],
+              wounds: [],
+              heroes: [
+                // slug='officer', but physicalCards[0].imageUrl is a number
+                {
+                  slug: 'officer',
+                  cards: [{ slug: 'officer', name: 'S.H.I.E.L.D. Officer' }],
+                  physicalCards: [
+                    { id: 'p1', count: 1, imageUrl: 42, sides: ['officer'] },
+                  ],
+                },
+                // slug='agent', but cards[0].name is null
+                {
+                  slug: 'agent',
+                  cards: [{ slug: 'agent', name: null }],
+                  physicalCards: [
+                    { id: 'p1', count: 1, imageUrl: 'pm-agent.webp', sides: ['agent'] },
+                  ],
+                },
+              ],
+              other: [],
+            }
+          : undefined,
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'core/s',
+      mastermindId: 'core/mm',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    assert.equal(result['pile-shield-officer']?.name, 'S.H.I.E.L.D. Officer', 'tier-2 literal (helper rejected number imageUrl)');
+    assert.equal(result['pile-shield-officer']?.imageUrl, '');
+    assert.equal(result['starting-shield-agent']?.name, 'S.H.I.E.L.D. Agent', 'tier-2 literal (helper rejected null name)');
+    assert.equal(result['starting-shield-agent']?.imageUrl, '');
+  });
+
+  it('constants drift detection: the six imported constants index into Section 8 emissions', () => {
+    // why: D-17301 drift-detection contract. The implementation file
+    // (`buildCardDisplayData.ts`) inlines the six literal strings at
+    // the Section 8 emission site rather than importing the constants
+    // (importing would form a circular path via `buildInitialGameState.ts`).
+    // This test imports the six constants from their source modules
+    // and asserts that each constant value indexes into the Section 8
+    // emission — any future drift between an inlined literal in
+    // `buildCardDisplayData.ts` and its source constant in
+    // `pilesInit.ts` / `buildInitialGameState.ts` fails this test.
+    const registry = buildFixtureRegistry();
+    const config = buildFixtureConfig();
+
+    const result = buildCardDisplayData(registry, config, 2);
+
+    const wellKnownConstants = [
+      { constant: BYSTANDER_EXT_ID, expectedTier1Name: 'Bystander' },
+      { constant: WOUND_EXT_ID, expectedTier1Name: 'Wound' },
+      { constant: SHIELD_OFFICER_EXT_ID, expectedTier1Name: 'S.H.I.E.L.D. Officer' },
+      { constant: SIDEKICK_EXT_ID, expectedTier1Name: 'Sidekick' },
+      { constant: SHIELD_AGENT_EXT_ID, expectedTier1Name: 'S.H.I.E.L.D. Agent' },
+      { constant: SHIELD_TROOPER_EXT_ID, expectedTier1Name: 'S.H.I.E.L.D. Trooper' },
+    ];
+    for (const { constant, expectedTier1Name } of wellKnownConstants) {
+      const entry = result[constant];
+      assert.ok(
+        entry,
+        `Constants drift detected: ${constant} (source-of-truth constant) does not index into Section 8 emissions. Likely cause: a Section 8 inlined literal does NOT match its source constant. Re-verify pilesInit.ts:22/25/28/31 + buildInitialGameState.ts:74/77 against the six inlined literals in buildCardDisplayData.ts §Section 8.`,
+      );
+      assert.equal(entry.extId, constant, `extId field must equal the constant for ${constant}`);
+      assert.equal(entry.name, expectedTier1Name, `tier-1 name mismatch for ${constant}`);
+      assert.equal(entry.cost, null, `cost must be null for ${constant}`);
+    }
   });
 });

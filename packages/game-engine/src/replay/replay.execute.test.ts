@@ -73,7 +73,7 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // the WP-080 regression-guard hash shifts. Same cascade pattern as
 // WP-168 (`6228d103` → `35fbe2fc`). Operator-approved allowlist
 // amendment recorded in WP-172 §Amendments / EC-190 §Notes.
-const PRE_WP080_HASH = '17c60ea9';
+const PRE_WP080_HASH = 'b3240d6a';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.
