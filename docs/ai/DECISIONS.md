@@ -17358,7 +17358,7 @@ Authentication).
 **Packet:** WP-160.
 
 **Introduced:** WP-160 (drafted 2026-05-17; executed 2026-05-18)
-**Status:** Active
+**Status:** Superseded by D-17401 (WP-174, drafted 2026-05-24)
 
 ---
 
@@ -18663,6 +18663,103 @@ shape).
 
 **Introduced:** WP-107 (drafted 2026-05-17, executed 2026-05-24)
 **Status:** Active
+
+---
+
+### D-17401 — First-Sign-In Auto-Provisioning: Read-or-Create Account Resolver (WP-174)
+
+**Type:** Server Auth Contract Lock
+**Packet:** WP-174 / EC-196
+**Date:** Drafted 2026-05-24; not yet landed.
+
+**Decision:** `productionAccountResolver` (`apps/server/src/auth/accountResolver.logic.ts`) becomes read-or-create. On no-match from `findAccountByAuthProviderSub`, the resolver provisions a new `legendary.players` row using `claim.email` + derived `displayName` + `claim.authProvider` + `claim.authProviderSub`. If `claim.email` is absent, the resolver returns `Result.ok(null)` (preserving the existing `'unknown_account'` path for edge-case tokens without an email claim).
+
+**Supersedes:** D-16006 (which incorrectly asserted WP-131 "already provisions accounts on first authenticated call" — empirically false; no INSERT path existed in production as of 2026-05-24).
+
+**Rationale.**
+- **Closes the production gap.** Every Hanko-verified first-sign-in was returning 401 `unknown_account` because the resolver was read-only. Manual `INSERT INTO legendary.players` was the only workaround.
+- **Single-site provisioning.** The resolver is the natural write-site because it already has the verified claim + the database handle. No new endpoint needed (D-16006's rejected alternative remains rejected for the same reasons).
+- **Race-safe by construction.** `ON CONFLICT (auth_provider, auth_provider_id) DO NOTHING` + re-SELECT eliminates TOCTOU.
+
+**Status:** Drafted 2026-05-24; not yet landed.
+
+---
+
+### D-17402 — VerifiedSessionClaim Extension: Additive Optional `email` + `displayName` (WP-174)
+
+**Type:** Server Auth Contract Lock
+**Packet:** WP-174 / EC-196
+**Date:** Drafted 2026-05-24; not yet landed.
+
+**Decision:** `VerifiedSessionClaim` (in `sessionToken.types.ts`) gains two additive optional fields: `readonly email?: string` and `readonly displayName?: string`. Both are populated by the Hanko verifier from the JWT payload's `email` and `name` claims respectively. Neither causes verification failure when absent. Existing consumers (fakes, other verifiers) remain compatible because the fields are optional.
+
+**Rationale.**
+- **Backwards-compatible.** Existing test fakes and the orchestrator compile unchanged.
+- **Minimal surface.** Only the data the provisioning path needs. No `is_verified` or `is_primary` metadata exposed — those are Hanko-internal concerns.
+- **Matches OIDC convention.** Standard `email` and `name` claims per OpenID Connect Core §5.1.
+
+**Status:** Drafted 2026-05-24; not yet landed.
+
+---
+
+### D-17403 — UNIQUE Constraint on (auth_provider, auth_provider_id) (WP-174)
+
+**Type:** Database Schema Lock
+**Packet:** WP-174 / EC-196
+**Date:** Drafted 2026-05-24; not yet landed.
+
+**Decision:** Migration 016 adds `CREATE UNIQUE INDEX IF NOT EXISTS players_auth_provider_sub_unique ON legendary.players (auth_provider, auth_provider_id)`. This makes the claim-pair globally unique and enables `ON CONFLICT` in the provisioning INSERT.
+
+**Rationale.**
+- **Eliminates TOCTOU.** Without the constraint, two concurrent first-auth calls with the same `(auth_provider, auth_provider_id)` could insert duplicate rows. The UNIQUE index + `ON CONFLICT DO NOTHING` guarantees exactly one row per claim pair.
+- **Defence-in-depth.** The application-layer lookup already uses `LIMIT 1`, but a DB-level constraint is the only source of truth for uniqueness in a concurrent environment.
+- **No existing duplicates.** Production `legendary.players` has exactly one row per `auth_provider_id` (verified 2026-05-24); the migration will succeed without conflict.
+
+**Status:** Drafted 2026-05-24; not yet landed.
+
+---
+
+### D-17404 — Email-Not-Verified Policy: Accept and Provision (WP-174)
+
+**Type:** Server Auth Policy Lock
+**Packet:** WP-174 / EC-196
+**Date:** Drafted 2026-05-24; not yet landed.
+
+**Decision:** The provisioning path accepts tokens where `email.is_verified = false` (or where the `is_verified` field is absent). Hanko is the trust boundary; if Hanko issued a valid signed JWT, the user completed Hanko's own verification flow. The `is_verified` metadata is not consulted for provisioning decisions.
+
+**Rationale.**
+- **Hanko's default flow requires email confirmation.** By the time a JWT is issued, Hanko has already verified the email via OTP or passkey-registered email address. The `is_verified` field reflects Hanko's internal state tracking, not a meaningful trust signal for our system.
+- **Blocking on `is_verified = false` would create a dead-end UX.** A user who completes Hanko's flow but whose JWT arrives with `is_verified = false` (a race condition during email confirmation) would be permanently locked out with no recovery path in our system.
+
+**Status:** Drafted 2026-05-24; not yet landed.
+
+---
+
+### D-17405 — Missing-Name Fallback: Email Local-Part (WP-174)
+
+**Type:** Server Auth Policy Lock
+**Packet:** WP-174 / EC-196
+**Date:** Drafted 2026-05-24; not yet landed.
+
+**Decision:** When the Hanko JWT carries no `name` claim (the common case — Hanko's default tenant configuration does not collect display names), the provisioning path derives `displayName` from the email local-part: `email.split('@')[0].slice(0, 64)`. The 64-character cap matches `validateDisplayName`'s existing maximum. The user can change their display name later via the WP-104 profile edit endpoint.
+
+**Rationale.**
+- **No blank names in the DB.** The `display_name text NOT NULL` column + the existing validation contract (`length 1-64`) means we must supply a non-empty value. The email local-part is always non-empty if email itself is non-empty.
+- **Low-friction first experience.** A name derived from the email is better than a generic "Player" or a forced-name-entry modal on first sign-in. Users who care about their display name can change it immediately.
+
+**Status:** Drafted 2026-05-24; not yet landed.
+
+---
+
+### D-17406 — D-16006 Supersession: Claim Was Empirically False (WP-174)
+
+**Type:** Decision Supersession Record
+**Packet:** WP-174 / EC-196
+**Date:** Drafted 2026-05-24; not yet landed.
+
+**Decision:** D-16006's assertion — "WP-131 already provisions accounts on first authenticated call" — is empirically false. The `productionAccountResolver` shipped by WP-131 is read-only (`findAccountByAuthProviderSub` → null → orchestrator emits `'unknown_account'`). No production code path calls `createPlayerAccount`. This was verified on 2026-05-24 during WP-107 PS-1 against `play.legendary-arena.com`. D-17401 documents the correct implementation shape. D-16006's status is updated to `Superseded by D-17401`.
+
+**Status:** Drafted 2026-05-24; not yet landed.
 
 ---
 
