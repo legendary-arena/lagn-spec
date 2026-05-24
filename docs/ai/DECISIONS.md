@@ -18418,4 +18418,252 @@ inlined Section 8 literals and the source constants in `pilesInit.ts`
 
 ---
 
+### D-10701 — Profile Integrity Surface Scoped to Account-Level Suspension Only (WP-107)
+
+**Decision:** The WP-107 admin profile integrity surface ships
+**account-level suspension** as the sole moderation primitive. The
+surface exposes one binary toggle (`is_suspended` on
+`legendary.players`) plus an append-only audit log
+(`legendary.admin_actions`); it does NOT ship granular per-record
+moderation (void a specific score, hide a specific replay, redact a
+specific profile link), user-facing notification (banner, email, in-
+product modal), self-service appeal, moderation console UI, IP /
+device / pattern-based fraud detection, multi-tier admin (moderator
+vs admin), or cross-account correlation tooling. The `is_suspended`
+column gates write surfaces via the shared
+`requireUnsuspendedAccount(database, accountId)` helper under
+`apps/server/src/auth/`; suspended accounts cannot submit new
+competitive scores via the future score-submission request-handler
+WP that wires the helper (the helper itself ships `Library-only` in
+WP-107). Historical scores remain on leaderboards per Open Question
+Q3 LOCK; team affiliations remain intact per Q4 LOCK; public profile
+reads remain available for suspended accounts per Q2 LOCK
+(suspension blocks writes only, not visibility).
+
+**Rationale:** WP-107 is the minimum-viable response to the abuse
+surface that emerged after WP-053 (competitive scores) + WP-101
+(handles) + WP-054/WP-149/WP-150 (public leaderboards) shipped. A
+small operations team needs a way to disable an account's future
+submissions when a fraud / harassment / impersonation incident is
+confirmed. The account-level axis composes with every existing write
+surface via a single intake check; granular per-record moderation
+would require per-record state machines, dispute history, and
+user-visible notification UX — none of which exist today and all of
+which would expand WP-107's scope beyond what a single execution
+session can deliver.
+
+The audit log establishes the **seam** for finer-grained moderation
+later: once the table exists, the next moderation WP can add
+per-record actions (`'void_score'`, `'hide_replay'`, `'redact_link'`)
+that write to the same table — same shape, same transactional
+envelope. The WP-107 `AdminPlayerActionType` closed union (`'suspend'
+| 'unsuspend'`) extends additively; the DB-level `CHECK` constraint
+in migration 015 is the gate that future moderation WPs must update
+in lockstep with the union.
+
+Visibility hiding for suspended accounts (Q2 LOCK = NO public-read
+block), retroactive score scrubbing (Q3 LOCK = STAY historical
+scores), and team-side display of suspended members (Q4 LOCK = NO
+auto-leave) are all DELIBERATELY DEFERRED. They are separate
+moderation WPs with separate scope shapes — Q2 needs a per-row
+visibility column on `legendary.players`; Q3 needs a per-record
+`hidden_at` column on `legendary.competitive_scores` plus a
+PAR-impact policy decision; Q4 needs team-side display logic +
+captain-reassignment rules when the suspended member was the
+captain. None of those fit WP-107's "single-axis admin tool" shape.
+
+**Alternatives rejected:**
+- **Ship per-record moderation in WP-107.** Rejected because
+  per-record state machines need their own design (dispute history,
+  appeal flow, notification UX). Adding them to WP-107 would
+  inflate the file count past the soft cap and conflate two
+  distinct moderation surfaces.
+- **Ship visibility hiding alongside suspension.** Rejected per Q2
+  LOCK = NO public-read block. Public profile reads
+  (`/api/players/:handle/profile`) remain available for suspended
+  accounts because hiding a profile is a separate concern from
+  suspending an account's write surface, and conflating them would
+  create a chicken-and-egg appeals problem (a hidden account cannot
+  see the public-facing description of their suspension).
+- **Auto-revert historical scores when an account is suspended.**
+  Rejected per Q3 LOCK = STAY. Suspension is forward-only; existing
+  PAR-eligible scores remain on leaderboards. Retroactive score
+  scrubbing would require a PAR-impact policy decision that WP-107
+  is not shaped to make.
+- **Auto-leave team affiliations when an account is suspended.**
+  Rejected per Q4 LOCK = NO auto-leave. Team affiliations persist;
+  team-side display of suspended members is a future team-moderation
+  WP with its own captain-reassignment rules.
+
+**Packet:** WP-107 (Profile Integrity / Anti-Cheat Surface).
+
+**Introduced:** WP-107 (drafted 2026-05-17, executed 2026-05-24)
+**Status:** Active
+
+---
+
+### D-10702 — Admin Action Audit Log Is Append-Only and Single-Table (WP-107)
+
+**Decision:** Every admin mutation in the WP-107 profile integrity
+surface (and every future moderation surface that extends it) writes
+one row to a single table: `legendary.admin_actions`. The table is
+**structurally append-only** — no application file ever issues
+`UPDATE legendary.admin_actions` or `DELETE FROM legendary.admin_actions`
+(grep-verified at every commit per WP-107 §Verification Steps), and
+the DB schema has no UPDATE-trigger / DELETE-trigger surface. Every
+row carries five non-null fields: `acting_account_id` (FK to
+`legendary.players(ext_id) ON DELETE RESTRICT`), `target_account_id`
+(same FK shape), `action_type` (DB-level `CHECK (action_type IN
+('suspend', 'unsuspend'))`), `reason` (`text NOT NULL CHECK
+(length(reason) BETWEEN 1 AND 500)`), and `created_at` (`timestamptz
+NOT NULL DEFAULT now()`). Audit rows are written transactionally
+inside the same `BEGIN -> UPDATE legendary.players -> INSERT
+legendary.admin_actions -> COMMIT` envelope as the column update they
+audit; the INSERT completes BEFORE COMMIT (no fire-and-forget audit
+writes anywhere in scope). Retention is **indefinite** per Open
+Question Q5 LOCK; a retention-policy WP is a Phase-7 ops decision.
+
+**Rationale:** Vision §22 (Auditability) requires that every
+moderation action be attributable and immutable. The append-only
+single-table shape is the smallest design that satisfies both:
+
+1. **Attribution.** Every row carries `acting_account_id` (the admin
+   who performed the action, sourced from `requireAdminSession`'s
+   success branch at the mutation site). The FK constraint to
+   `legendary.players(ext_id) ON DELETE RESTRICT` prevents accidental
+   deletion of any admin account row that appears in the audit log;
+   the audit log outlives any single account row by construction.
+2. **Immutability.** Zero UPDATE / DELETE writers anywhere in the
+   codebase. A row in `legendary.admin_actions` is, by application
+   contract, never modified or removed. If an audit row is wrong
+   (e.g., a typo in `reason`), the correction is a new row, not an
+   edit — same pattern as the team-membership-events
+   amendment-instead-of-edit invariant established by WP-109 §9.
+
+The single-table shape is forward-compatible with finer-grained
+moderation: when the next moderation WP adds per-record actions
+(`'void_score'`, `'hide_replay'`, `'redact_link'`), those rows land
+in the same table with the same shape; the only changes are (a) the
+`action_type` CHECK constraint expands to include the new values,
+and (b) the application-layer closed union extends in lockstep. No
+new table; no new query pattern; no new authorization seam. The
+admin-action-history reads (`getAdminActionsForPlayer`,
+`getAdminProfileView`'s tail) continue to work unchanged.
+
+The DB-level CHECK + FK constraints are **defense-in-depth**, not
+the primary gate. Application-layer validation in
+`adminProfile.logic.ts` runs first (reason trim + 1-500 cap;
+closed-union `action_type`); the constraints catch any future code
+path that bypasses the validators. The two-layer defense is
+deliberate — a single layer would either fail open (if only the DB
+constraint exists, the application could write data the constraint
+allows but the application contract forbids) or fail closed (if only
+the application validation exists, a direct SQL writer could bypass
+the gate).
+
+**Alternatives rejected:**
+- **Per-action audit tables** (`admin_suspend_events`,
+  `admin_unsuspend_events`, etc.). Rejected because the schema cost
+  doubles for every new action type AND the query pattern fragments
+  (a unified action-history view would require N-way UNION). The
+  single table with a discriminator column is the smaller surface.
+- **Allow UPDATE on `legendary.admin_actions` for "soft corrections"**
+  (e.g., updating `reason` text after a typo). Rejected because any
+  UPDATE surface invites a future moderator-edit feature that would
+  break the immutability contract. The amendment-instead-of-edit
+  pattern (write a new row referencing the original) keeps the
+  audit-log property intact.
+- **Defer the DB-level CHECK / FK constraints to a future hardening
+  WP.** Rejected because they ARE the defense-in-depth gate; without
+  them the application-layer validator is the sole authority,
+  brittle to refactor, and silently bypassable by direct SQL.
+- **Audit-row INSERT after the transaction commits** (fire-and-forget
+  via a worker queue). Rejected because the audit row is part of
+  the atomic admin action — if the audit write fails after the
+  column update commits, the action is observable to game logic
+  (the user is suspended) but not in the audit log (no record of who
+  did it or why). The same-transaction lock makes either both writes
+  succeed or neither succeed.
+
+**Packet:** WP-107 (Profile Integrity / Anti-Cheat Surface).
+
+**Introduced:** WP-107 (drafted 2026-05-17, executed 2026-05-24)
+**Status:** Active
+
+---
+
+### D-10703 — Admin Routes Identify Players by Handle in URL, Not by AccountId (WP-107)
+
+**Decision:** The three WP-107 admin endpoints take a `:handle` path
+parameter (NOT `:accountId`):
+
+  `GET  /api/admin/players/:handle/integrity`
+  `POST /api/admin/players/:handle/suspend`
+  `POST /api/admin/players/:handle/unsuspend`
+
+The route handler canonicalizes the handle (`.trim().toLowerCase()`)
+and resolves it to the target `AccountId` server-side via the WP-101
+lookup pattern (`SELECT ext_id FROM legendary.players WHERE
+handle_canonical = $1 LIMIT 1`). Suspending an account with no
+claimed handle is **structurally not possible via this surface**;
+the operator must use direct SQL until a future admin-by-AccountId
+endpoint ships (deferred — no admin workflow today identifies
+players by AccountId rather than handle).
+
+**Rationale:** Handles are the **human-facing** identifier admins
+use when reading incident reports, talking to other moderators, and
+documenting actions. Forcing admins to translate handle -> UUID
+before issuing a moderation action adds friction at every step:
+
+1. **Incident reports cite handles.** Player complaints
+   ("`@evilplayer` is harassing me") arrive with a handle; the
+   admin's mental model is anchored to the handle. Asking the admin
+   to look up `evilplayer`'s `AccountId` (a 36-character UUID v4)
+   before issuing a suspend is friction without benefit.
+2. **AccountId is internal.** Per WP-052 / D-5201 `AccountId` is the
+   stable cross-service identifier; per WP-101 the handle is the
+   stable user-visible identifier (claimable once, immutable post-
+   claim per Q-13 = NO claim revocation). Exposing `AccountId` in
+   admin URLs would create a second surface where the UUID leaks
+   through to operator-facing tooling — every URL that admins read,
+   bookmark, or share would carry the UUID.
+3. **The handle is canonical.** Resolution is deterministic
+   (`handle_canonical` has a UNIQUE constraint in migration 008); a
+   handle resolves to exactly one `AccountId` or `null`. The
+   resolution cost is one indexed SELECT, dwarfed by the network
+   round-trip the admin pays anyway.
+
+The server-side resolution preserves the AccountId-attribution
+invariant downstream — every audit row carries the resolved
+`AccountId` in `acting_account_id` + `target_account_id`. The
+handle-in-URL choice is a presentation concern, not an
+authorization concern; `requireAdminSession` operates on the acting
+admin's session (which resolves to an AccountId regardless of URL
+shape).
+
+**Alternatives rejected:**
+- **`:accountId` in URL.** Rejected per the rationale above —
+  forces admin tooling to expose UUIDs at every surface and adds
+  per-action friction with no compensating benefit. The
+  AccountId-bearing path remains available for future internal
+  tooling (a CLI / admin-console WP could ship `:accountId` routes
+  if a handle-less surface ever becomes necessary; today there is no
+  such workflow).
+- **Both `:handle` and `:accountId` routes.** Rejected because two
+  URL shapes for the same operation invite bug surface (which one is
+  canonical? what happens if the same admin uses both inconsistently
+  in a multi-action workflow?). The single-handle shape is smaller.
+- **Resolve in the client / require a wrapper service.** Rejected
+  because every consumer (today's curl-from-operator-machine,
+  tomorrow's admin-console UI) would re-implement the same lookup.
+  Server-side resolution puts the canonicalization logic in exactly
+  one place (`resolveHandleToAccountId` in `adminProfile.logic.ts`).
+
+**Packet:** WP-107 (Profile Integrity / Anti-Cheat Surface).
+
+**Introduced:** WP-107 (drafted 2026-05-17, executed 2026-05-24)
+**Status:** Active
+
+---
+
 Protect this file.

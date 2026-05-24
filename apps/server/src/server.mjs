@@ -29,6 +29,8 @@ import { registerTeamRoutes } from './teams/team.routes.js';
 import { registerEntitlementRoutes } from './entitlements/entitlements.routes.js';
 import { registerBillingRoutes } from './billing/billing.routes.js';
 import { registerAdminBillingRoutes } from './billing/adminBilling.routes.js';
+import { registerAdminProfileRoutes } from './profile/admin/adminProfile.routes.js';
+import { requireAdminSession } from './auth/adminSession.js';
 import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
 import { registerLegendsPublisherRoutes } from './legends/legends.routes.js';
 import { registerAutoplayRoutes } from './autoplay/autoplay.mjs';
@@ -554,6 +556,24 @@ export async function startServer() {
   // header gate (X-Admin-Secret) rather than session-based auth. The gate
   // is isolated in adminGate.ts for future RBAC replacement.
   registerAdminBillingRoutes(server.router, pool);
+
+  // why: WP-107 / D-10701..D-10703 — register the three admin-only
+  // profile integrity routes (GET integrity, POST suspend, POST
+  // unsuspend) on the same long-lived pool. requireAdminSession is the
+  // WP-159 helper; the per-request `verifier` + `accountResolver`
+  // bindings come from the same deps bundle threaded into the WP-104 /
+  // WP-109 / WP-132 / WP-133 routes. WP-131 wires the Hanko verifier
+  // (production) or leaves both fields undefined (dev-mode + missing
+  // env) — the existing fail-closed orchestrator path handles the
+  // dev-mode case unchanged, surfacing 401 via the
+  // 'session_verifier_not_configured' -> 'unauthorized' collapse
+  // locked in WP-159 §A. WP-107 is the FIRST caller of
+  // requireAdminSession.
+  registerAdminProfileRoutes(server.router, pool, {
+    requireAdminSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+  });
 
   // why: Render.com injects PORT automatically. The fallback 8000 is for
   // local development only. Do not set PORT in the Render dashboard --
