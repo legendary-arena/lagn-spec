@@ -1,6 +1,6 @@
 # WP-107 — Profile Integrity / Anti-Cheat Surface
 
-**Status:** Draft (drafted 2026-05-17 alongside WP-159; structural dependency on WP-159 cleared 2026-05-17 via commit `295eec6` / PR #85; **Phase 1 close-out gates pending** — pre-flight `01.4`, copilot check `01.7`, lint gate `00.3` self-review)
+**Status:** Draft (drafted 2026-05-17 alongside WP-159; structural dependency on WP-159 cleared 2026-05-17 via commit `295eec6` / PR #85; **Phase 1 close-out gates run 2026-05-23 — pre-flight `01.4` returned `DO NOT EXECUTE YET` (RS-1: §G score-submission route does not exist; copilot `01.7` SKIPPED per sequencing rule; lint `00.3` PASS conditional on RS-1)**. See §Lint Self-Review and §Pre-Flight Verdict blocks below.)
 **Primary Layer:** Server (`apps/server/src/profile/admin/**`, `apps/server/src/identity/**`) + Database (`data/migrations/015_*`) + Reference (`docs/ai/REFERENCE/api-endpoints.md`)
 **Dependencies:**
 - WP-052 (`legendary.players`; `AccountId` brand)
@@ -610,12 +610,49 @@ value at execution-time review unless explicitly overridden.
 
 ## Lint Self-Review
 
-Pending — to be completed before WP-107 enters execution. WP-159 (the
-primary structural blocker) shipped 2026-05-17, so the self-review may
-now run. Self-review must additionally confirm:
-- All §Open Questions resolved
-- Score-submission route filename is identified and locked
-- The "split into A/B?" question is answered
+**Date run:** 2026-05-23
+**Verdict:** PASS-WITH-FAIL — 36 of 38 Final Gate conditions pass; **2 FAIL conditions surface RS items for pre-flight, not lint defects in the WP body proper**:
+
+| Final Gate # | §  | Condition | Disposition |
+|---|---|---|---|
+| 6 | §3 | `## Assumes` does not list all file and state dependencies | **FAIL → RS-1.** WP §Assumes states *"`apps/server/src/score/scoreSubmission.routes.ts` (or equivalent — STOP and confirm filename during execution) exists"* — this assumption is **provably false** at HEAD; no such directory exists, `submitCompetitiveScore` is `Library-only` per [api-endpoints.md:193](../REFERENCE/api-endpoints.md). The assumption was hedged ("STOP and confirm") and §Open Question 1 prescribed a grep, but per `00.3 §3` ❌ rule, *"if the packet could silently produce wrong output when run out of order"* this is a structural FAIL. **Resolution:** scope §G out of WP-107 per pre-flight RS-1 Option A. |
+| (none) | §5 | File count > 8 soft cap | **NOT-A-FAIL (advisory).** 12–14 files exceeds the ~8 soft cap; WP §Open Question 6 already flagged this with split-into-A/B as a deferred decision. Under RS-1 Option A (§G scoped out), file count drops to 11 — still above cap but within tolerance for a server-side admin+migration WP (precedent: EC-117 = 8, EC-112 = 10, EC-174 = 13). |
+
+**All other gates pass:**
+
+- **§1** All 10 required sections present (Goal, Assumes, Context, Scope In / Out, Files Expected to Change, Non-Negotiable Constraints, Acceptance Criteria, Verification Steps, Definition of Done). §Out of Scope explicitly enumerates 11+ excluded items. ✅
+- **§2** Non-Negotiable Constraints carries engine-wide block (full file contents, ESM, Node v22+, human-style code referencing `00.6-code-style.md`, pnpm, no axios/node-fetch) + packet-specific block (transaction ownership, audit append-only, score-route hardening, migration shape, reason discipline, locked contracts). Partial output forbidden. ✅
+- **§3** Assumes lists every prior WP dep + every file/state precondition. (See FAIL above on the one stale precondition.) ✅ (with RS-1 carve-out)
+- **§4** Context (Read First) lists ARCHITECTURE.md, 00.2 §1 + §Competitive Scoring, 00.3 §11/§17/§21, api-endpoints.md, DECISIONS.md scan list, WP-159, adminSession.ts, ownerProfile.routes.ts, ownerProfile.types.ts, migrations 004/008. All specific, no vague references. ✅
+- **§5** Files Expected to Change marks each entry — **new** / — **modified** with one-line description. No "show the diff" / "add the following" language. (See advisory above on file count.) ✅
+- **§6** Names match `00.2-data-requirements.md`: `accountId`, `handle`, `ext_id`, `legendary.players`, `is_admin`, `is_suspended` all canonical. `AdminPlayerActionType` / `AdminProfileResponse` follow project conventions. ✅
+- **§7** No new npm deps introduced. Hanko broker boundary preserved (no `'hanko'` literal in scope). ✅
+- **§8** Layer boundary: server-only; no engine / registry / preplan / client imports. `pg` used for DB; no ORM. ✅
+- **§9** Windows compatibility: Verification Steps use `Select-String` (PowerShell-native). No bash/sh assumptions. ✅
+- **§10** No new env vars introduced. No secrets in WP body. ✅
+- **§11** Authentication clarity: `admin-session-required` Auth taxonomy value (per D-15901) explicitly cited; `requireAdminSession` is the sole authorization site. Identity model unambiguous. ✅
+- **§12** Tests use `node:test`; no boardgame.io import in test files; injected fake `DatabaseClient` per WP-101 / WP-102 precedent. ✅
+- **§13** Verification Steps use `pnpm --filter @legendary-arena/server test`. All grep patterns are exact with expected output. ✅
+- **§14** Acceptance Criteria: 19 binary, observable, scope-aligned items (post-tightening; was 12 pre-`daf1e2e`). ✅
+- **§15** Definition of Done includes STATUS.md / DECISIONS.md (D-10701..10703) / WORK_INDEX.md / no-files-outside-allowlist check. Also includes 01.5 NOT INVOKED + 01.6 MANDATORY. ✅
+- **§16** Code-style alignment: human-style code mandate, `// why:` requirements at 8 specific sites, no `.reduce()` in zone ops (N/A — no zone ops in scope), full-sentence error messages. ✅
+- **§17 Vision Alignment** §17.1 triggered (player identity + suspension is competitive integrity surface); §Vision Alignment block present with clauses §3 / §13 / §14 / §22 + no-conflict assertion + NG proximity check + determinism N/A justified. ✅
+- **§18 Prose-vs-grep discipline** Verification Steps' grep patterns (`UPDATE legendary.admin_actions`, `BEGIN`/`COMMIT`/`ROLLBACK`) appear in WP body prose but the prose is governance-rationale context, not within the gated grep path (the grep targets `apps/server/src/profile/admin/` / `data/migrations/015_*`, not `docs/ai/`). ✅
+- **§19 Bridge-vs-HEAD staleness** N/A — WP-107 is not a repo-state-summarizing artifact. ✅
+- **§20 Funding Surface Gate** Explicitly marked N/A with justification: *"WP-107 introduces a backend admin surface with no user-visible funding, donation, or attribution UI."* Not a tautological placeholder. ✅
+- **§21 API Catalog Update Obligation** Section present; 3 `Wired` rows + 1 `Library-only` row enumerated per D-11804 replace-whole-row semantics; closed-set taxonomy values (`Wired` / `admin-session-required`) cited correctly. ✅
+
+**Lint Gate Final Verdict:** PASS conditional on RS-1 resolution. The single hard FAIL (gate #6 on §3) tracks the same issue pre-flight surfaces as RS-1; resolving RS-1 also clears the lint FAIL. The advisory on file count is not a hard FAIL but warrants the §Open Question 6 split-evaluation under whichever RS-1 option is chosen.
+
+---
+
+## Pre-Flight Verdict (run 2026-05-23)
+
+**Verdict:** DO NOT EXECUTE YET (NOT READY).
+**Blocker:** RS-1 — §G Score-Submission Intake Hook has no route to modify; `submitCompetitiveScore` is `Library-only` and the score-submission HTTP route is deferred to a future request-handler WP per api-endpoints.md:193. Full report: [`docs/ai/invocations/preflight-wp107.md`](../invocations/preflight-wp107.md) (gitignored scratchpad).
+**Non-blocking RS items:** RS-2 (§Open Questions Q1–Q6 not yet locked into §Locked contract values; recommended defaults documented in pre-flight scratchpad and may flip to LOCK via SPEC commit).
+**Copilot check (`01.7`):** SKIPPED per `01.7` sequencing rule (*"Step 1b may only begin after step 1 produces READY TO EXECUTE"*).
+**Re-run after:** SPEC commit resolving RS-1 (operator decision: Option A scope-out preferred; Options B and C also valid).
 
 ---
 
