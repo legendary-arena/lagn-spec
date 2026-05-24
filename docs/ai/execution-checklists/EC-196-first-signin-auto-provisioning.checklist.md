@@ -17,8 +17,13 @@
 - Migration file: `data/migrations/016_add_auth_provider_unique_constraint.sql`
 - Index name: `players_auth_provider_sub_unique`
 - ON CONFLICT target: `(auth_provider, auth_provider_id)`
-- Display name fallback: `email.split('@')[0].slice(0, 64)`
+- Email validation gate: defined + non-empty after trim + contains `'@'`
+- Email canonicalization: `claim.email.trim().toLowerCase()` BEFORE use
+- Display name fallback: `normalizedEmail.split('@')[0].slice(0, 64)`
+- Display name from claim: `claim.displayName.trim().slice(0, 64)` (only if non-empty after trim)
 - Display name max: 64 characters
+- Provisioning is a SINGLE INSERT statement (atomic, no multi-step)
+- Idempotency: same `(auth_provider, auth_provider_id)` → same `accountId` always
 - New helper file: `apps/server/src/auth/accountProvisioning.logic.ts`
 - D-entries: D-17401 through D-17406
 
@@ -34,9 +39,11 @@
 
 ## Required Comments
 - `// why:` on the email extraction in `hankoVerifier.logic.ts` (best-effort enrichment, not verification failure)
-- `// why:` on the ON CONFLICT clause in `accountProvisioning.logic.ts` (race-safety)
-- `// why:` on the `duplicate_email` branch in `accountResolver.logic.ts` (account-linking deferred)
-- `// why:` on the display-name fallback derivation (email local-part when name absent)
+- `// why:` on the ON CONFLICT clause in `accountProvisioning.logic.ts` (race-safety + idempotency)
+- `// why:` on the `duplicate_email` branch in `accountResolver.logic.ts` (account-linking intentionally deferred — identity ambiguity)
+- `// why:` on the display-name fallback derivation (normalize email + deterministic derivation)
+- `// why:` on the email validation gate (`@` check — reject garbage without full validation)
+- `// why:` on the `console.info` provisioning log (observability for onboarding debugging)
 
 ## Files to Produce
 - `apps/server/src/auth/sessionToken.types.ts` — modify (2 optional fields)
@@ -70,3 +77,7 @@
 - Making `email` or `displayName` required on `VerifiedSessionClaim` — breaks all existing test fakes
 - Modifying `accountLookup.logic.ts` to add INSERT logic — wrong file; the lookup is read-only by design
 - Using SELECT-then-INSERT without ON CONFLICT — TOCTOU race under concurrent first calls
+- Skipping the `@` check on email — allows garbage like `" "` to attempt an INSERT that will fail at DB level
+- Using `claim.email` without `.trim().toLowerCase()` first — creates inconsistent DB rows
+- Multi-statement provisioning (BEGIN/INSERT/UPDATE/COMMIT) — violates atomicity; single INSERT only
+- Missing the "no row created" assertion in missing-email tests — silent partial provisioning

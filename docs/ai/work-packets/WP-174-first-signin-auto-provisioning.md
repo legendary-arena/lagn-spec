@@ -5,10 +5,11 @@
 When a user authenticates via Hanko for the first time (no existing
 `legendary.players` row), the server automatically provisions a new
 account row using the verified JWT claims. After WP-174 lands, every
-valid Hanko-verified token resolves to an `AccountId` — the
-`'unknown_account'` 401 response becomes structurally unreachable for
-valid tokens and the manual-INSERT workaround applied during WP-107
-PS-1 (2026-05-24) is never needed again.
+valid Hanko-verified token that includes a parseable email claim
+resolves to an `AccountId` — the `'unknown_account'` 401 response
+becomes structurally unreachable for valid tokens carrying an email,
+and the manual-INSERT workaround applied during WP-107 PS-1
+(2026-05-24) is never needed again.
 
 ## Assumes
 
@@ -109,21 +110,52 @@ best-effort enrichment for provisioning.
 
 ### §C — Make `productionAccountResolver` read-or-create
 
+**Resolver Contract (Post-WP-174):**
+- The resolver remains the single entry point for mapping a verified claim → AccountId.
+- It MUST attempt lookup first.
+- It MAY attempt provisioning only when:
+  - No account exists (lookup returned `null`)
+  - AND sufficient identity data (email with `@`) is present in the claim
+- It MUST remain idempotent and side-effect-safe under concurrent calls.
+- It NEVER throws. All failure paths return typed `Result`.
+
 In `accountResolver.logic.ts`, the no-match branch (`lookupResult.value === null`)
 currently returns `{ ok: true, value: null }`. Change to:
 
-1. Check `claim.email` is defined and non-empty.
-   - If absent → return `{ ok: true, value: null }` (preserves existing
-     behavior; the orchestrator emits `'unknown_account'`).
-2. Derive `displayName`: use `claim.displayName` if defined, else
-   use the local-part of `claim.email` (portion before `@`).
+1. Check `claim.email` is defined, non-empty after trim, and contains `'@'`.
+   - If absent, empty, whitespace-only, or missing `@` → return
+     `{ ok: true, value: null }` (preserves existing behavior; the
+     orchestrator emits `'unknown_account'`). No row is created.
+2. Normalize and derive `displayName`:
+   ```ts
+   const normalizedEmail = claim.email.trim().toLowerCase();
+   const displayName =
+     claim.displayName && claim.displayName.trim().length > 0
+       ? claim.displayName.trim().slice(0, 64)
+       : normalizedEmail.split('@')[0].slice(0, 64);
+   // why: normalize email + enforce deterministic display name derivation
+   ```
+   Email is always canonicalized (trim + lowercase) before use as both
+   the insert value and the fallback-name source.
 3. Call `createPlayerAccount({ email: claim.email, displayName,
    authProvider: claim.authProvider, authProviderId: claim.authProviderSub },
    database)`.
-4. On success → return `{ ok: true, value: newAccount.accountId }`.
+4. On success → log the provisioning event for observability:
+   ```ts
+   // why: observability for first-sign-in provisioning events —
+   // the only diagnostic available for debugging onboarding issues
+   // without inspecting DB rows directly
+   console.info('[accountResolver] Provisioned new player account', {
+     authProvider: claim.authProvider,
+     accountId: newAccount.accountId,
+   });
+   ```
+   Then return `{ ok: true, value: newAccount.accountId }`.
 5. On `'duplicate_email'` → the email is already taken by a different
    auth provider. Return `{ ok: true, value: null }` (fail open to
-   `'unknown_account'`; a future account-linking WP resolves this).
+   `'unknown_account'`). Automatic account linking is intentionally NOT
+   performed here to avoid identity ambiguity — a separate
+   account-linking WP is required to resolve cross-provider collisions.
 6. On any other failure → forward as `Result.fail({ code: 'lookup_failed' })`.
 
 ### §D — Migration: UNIQUE constraint on (auth_provider, auth_provider_id)
@@ -139,6 +171,11 @@ This eliminates the TOCTOU race between SELECT and INSERT. Combined
 with `ON CONFLICT` in the INSERT (§E below), concurrent first calls
 resolve deterministically.
 
+**Rollback note:** Safe to leave index in place on rollback; it enforces
+a correctness invariant that is independently valid regardless of
+whether the provisioning code is deployed. No `DROP INDEX` required
+during rollback paths.
+
 ### §E — Race-safe INSERT with ON CONFLICT
 
 Amend `createPlayerAccount` OR add a dedicated
@@ -153,6 +190,18 @@ RETURNING ext_id, email, display_name, auth_provider, auth_provider_id, created_
 
 If `RETURNING` yields no rows (conflict), immediately re-SELECT
 by `(auth_provider, auth_provider_id)` to fetch the winning row.
+
+**Idempotency guarantee:**
+For a given `(auth_provider, auth_provider_id)` pair:
+- Multiple concurrent or repeated provisioning attempts MUST resolve to
+  a single row.
+- The function MUST always return the same `accountId` after the first
+  successful insert.
+
+**Atomicity requirement:**
+Provisioning MUST never leave a partially created row. The INSERT is the
+only write operation; no multi-step creation sequence is allowed. A
+single SQL statement is the entire write surface.
 
 **Design choice:** add a NEW `provisionPlayerAccount` helper in
 `accountResolver.logic.ts` (or a dedicated `accountProvisioning.logic.ts`)
@@ -249,8 +298,13 @@ to `Superseded by D-17401`.
 - Migration filename: `016_add_auth_provider_unique_constraint.sql`
 - UNIQUE index name: `players_auth_provider_sub_unique`
 - ON CONFLICT target: `(auth_provider, auth_provider_id)`
-- Display name fallback: local-part of email (before `@`)
+- Email validation gate: defined + non-empty after `.trim()` + contains `'@'`
+- Email canonicalization: `.trim().toLowerCase()` before any use (insert value AND fallback-name source)
+- Display name fallback: `normalizedEmail.split('@')[0].slice(0, 64)`
+- Display name from claim: `claim.displayName.trim().slice(0, 64)` (only if `.trim().length > 0`)
 - Display name max length: 64 characters (per existing `validateDisplayName`)
+- Provisioning atomicity: single INSERT statement (no multi-step write sequence)
+- Provisioning idempotency: same `(auth_provider, auth_provider_id)` → same `accountId` always
 
 ### Locked Policies
 
@@ -283,8 +337,9 @@ the WP-104 profile edit endpoint.
 3. Two concurrent first calls from the same user result in exactly one
    `legendary.players` row (UNIQUE constraint + ON CONFLICT).
 4. Existing users (row already present) see no behavior change.
-5. A token missing the `email` claim returns 401 `unknown_account`
-   (no crash, no 500).
+5. A token missing the `email` claim (or with whitespace-only /
+   missing-`@` email) returns 401 `unknown_account` (no crash, no 500)
+   AND does NOT create a row in `legendary.players`.
 6. `VerifiedSessionClaim` extension is backwards-compatible — existing
    test suites pass unchanged (the fields are optional).
 7. The UNIQUE index migration is idempotent (`IF NOT EXISTS`).
@@ -369,4 +424,14 @@ grep -c "players_auth_provider_sub_unique" data/migrations/016_add_auth_provider
 
 ## Amendments
 
-(None — initial draft.)
+**2026-05-24 — Tightening pass (10 items, post-external-review):**
+1. Added explicit Resolver Contract block to §C (lookup-first, idempotent, never-throw).
+2. Tightened email validation: must contain `@` (rejects garbage without full validation).
+3. Made display-name derivation deterministic: `trim().toLowerCase()` on email before use.
+4. Added explicit idempotency guarantee to §E (same claim pair → same accountId always).
+5. Strengthened duplicate-email comment (account-linking intentionally deferred — identity ambiguity).
+6. Added rollback note to §D (index safe to leave in place; no DROP needed).
+7. Tightened AC #5: explicitly asserts no row created on missing/invalid email.
+8. Added `console.info` observability hook for provisioning events.
+9. Qualified Goal sentence: "for valid tokens that include a parseable email claim."
+10. Added atomicity requirement to §E (single INSERT, no multi-step sequence).
