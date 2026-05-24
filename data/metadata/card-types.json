@@ -104,5 +104,23 @@
     "label": "Scheme Twist",
     "order": 20,
     "parentType": "other"
+  },
+  {
+    "slug": "ambitions",
+    "label": "Ambition",
+    "order": 30,
+    "parentType": "other"
+  },
+  {
+    "slug": "token",
+    "label": "Token",
+    "order": 40,
+    "parentType": "other"
+  },
+  {
+    "slug": "horror",
+    "label": "Horror",
+    "order": 50,
+    "parentType": "other"
   }
 ]

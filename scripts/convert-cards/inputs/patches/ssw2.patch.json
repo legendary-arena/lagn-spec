@@ -266,5 +266,17 @@
         ]
       ]
     }
+  ],
+  "other": [
+    { "_op": "append", "name": "Crazed Charge",         "slug": "crazed-charge",         "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-crazed-charge.webp",         "abilities": [] },
+    { "_op": "append", "name": "Detonate the Bridge",   "slug": "detonate-the-bridge",   "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-detonate-the-bridge.webp",   "abilities": [] },
+    { "_op": "append", "name": "Devastate S.H.I.E.L.D.","slug": "devastate-shield",      "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-devastate-shield.webp",      "abilities": [] },
+    { "_op": "append", "name": "Hostage Situation",     "slug": "hostage-situation",     "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-hostage-situation.webp",     "abilities": [] },
+    { "_op": "append", "name": "Puzzle Trap",           "slug": "puzzle-trap",           "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-puzzle-trap.webp",           "abilities": [] },
+    { "_op": "append", "name": "Rack and Ruin",         "slug": "rack-and-ruin",         "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-rack-and-ruin.webp",         "abilities": [] },
+    { "_op": "append", "name": "Secret Escape Tunnels", "slug": "secret-escape-tunnels", "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-secret-escape-tunnels.webp", "abilities": [] },
+    { "_op": "append", "name": "Seize the High Ground", "slug": "seize-the-high-ground", "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-seize-the-high-ground.webp", "abilities": [] },
+    { "_op": "append", "name": "Shadowy Disciple",      "slug": "shadowy-disciple",      "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-shadowy-disciple.webp",      "abilities": [] },
+    { "_op": "append", "name": "This is a Stickup",     "slug": "this-is-a-stickup",     "cardType": "ambitions", "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-am-this-is-a-stickup.webp",     "abilities": [] }
   ]
 }

@@ -3049,5 +3049,31 @@
     }
   ],
   "wounds": [],
-  "other": []
+  "other": [
+    { "name": "Deathbird Token 1",                       "slug": "deathbird-token-1",                       "cardType": "token", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-to-deathbird-token-1.webp",                       "abilities": [] },
+    { "name": "Deathbird Token 2",                       "slug": "deathbird-token-2",                       "cardType": "token", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-to-deathbird-token-2.webp",                       "abilities": [] },
+    { "name": "Hellfire Club Phoenix Force Token",       "slug": "hellfire-club-phoenix-force-token",       "cardType": "token", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-to-hellfire-club-phoenix-force-token.webp",       "abilities": [] },
+    { "name": "Murderworld Animatronic Killer Clown Token", "slug": "murderworld-animatronic-killer-clown-token", "cardType": "token", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-to-murderworld-animatronic-killer-clown-token.webp", "abilities": [] },
+    { "name": "Army of Evil",            "slug": "army-of-evil",            "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-army-of-evil.webp",            "abilities": [] },
+    { "name": "Empire of Oppression",    "slug": "empire-of-oppression",    "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-empire-of-oppression.webp",    "abilities": [] },
+    { "name": "Endless Hatred",          "slug": "endless-hatred",          "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-endless-hatred.webp",          "abilities": [] },
+    { "name": "Enraged Mastermind",      "slug": "enraged-mastermind",      "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-enraged-mastermind.webp",      "abilities": [] },
+    { "name": "Fight to the End",        "slug": "fight-to-the-end",        "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-fight-to-the-end.webp",        "abilities": [] },
+    { "name": "Growing Threat",          "slug": "growing-threat",          "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-growing-threat.webp",          "abilities": [] },
+    { "name": "Legions Upon Legions",    "slug": "legions-upon-legions",    "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-legions-upon-legions.webp",    "abilities": [] },
+    { "name": "Maniacal Mastermind",     "slug": "maniacal-mastermind",     "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-maniacal-mastermind.webp",     "abilities": [] },
+    { "name": "Master Plan",             "slug": "master-plan",             "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-master-plan.webp",             "abilities": [] },
+    { "name": "Misery Upon Misery",      "slug": "misery-upon-misery",      "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-misery-upon-misery.webp",      "abilities": [] },
+    { "name": "Opening Salvo",           "slug": "opening-salvo",           "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-opening-salvo.webp",           "abilities": [] },
+    { "name": "Pain Upon Pain",          "slug": "pain-upon-pain",          "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-pain-upon-pain.webp",          "abilities": [] },
+    { "name": "Plots Upon Plots",        "slug": "plots-upon-plots",        "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-plots-upon-plots.webp",        "abilities": [] },
+    { "name": "Psychic Infection",       "slug": "psychic-infection",       "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-psychic-infection.webp",       "abilities": [] },
+    { "name": "Shadow of the Discipline","slug": "shadow-of-the-discipline","cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-shadow-of-the-discipline.webp","abilities": [] },
+    { "name": "Surprise Assault",        "slug": "surprise-assault",        "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-surprise-assault.webp",        "abilities": [] },
+    { "name": "The Apprentice Rises",    "slug": "the-apprentice-rises",    "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-the-apprentice-rises.webp",    "abilities": [] },
+    { "name": "The Blood Thickens",      "slug": "the-blood-thickens",      "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-the-blood-thickens.webp",      "abilities": [] },
+    { "name": "The Plot Thickens",       "slug": "the-plot-thickens",       "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-the-plot-thickens.webp",       "abilities": [] },
+    { "name": "Tyrant Mastermind",       "slug": "tyrant-mastermind",       "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-tyrant-mastermind.webp",       "abilities": [] },
+    { "name": "Viral Infection",         "slug": "viral-infection",         "cardType": "horror", "imageUrl": "https://images.legendary-arena.com/xmen/xmen-ho-viral-infection.webp",         "abilities": [] }
+  ]
 }
