@@ -29,6 +29,28 @@
 - **Lint gate (`00.3`) self-review:** PASS (38 items: 33 ✅ direct,
   5 N/A with non-tautological justification, 0 ❌). See §Lint Gate
   Self-Review at the foot of this document.
+- **External review tightening pass (2026-05-23):** post-draft
+  external review surfaced 6 actionable improvements + 3
+  micro-tightenings; 6 of 7 integrated (the optional helper-rename
+  was skipped — the existing naming asymmetry reflects parameter-
+  shape differences and renaming would worsen consistency, not
+  improve it). Integrated changes: (1) the constants-import
+  surface was rewritten to inline literals at the emission site
+  with test-side drift-detection (avoids a circular import path
+  via `buildInitialGameState.ts`); (2) explicit no-shadow
+  contract added — Section 8 emissions are authoritative for the
+  six `pile-*` / `starting-shield-*` keys, with shadow-detection
+  via the value-shape assertion in the Coverage Invariant test;
+  (3) section-ordering lock — Section 8 is a terminal augmentation
+  pass placed immediately before the final `return result;`;
+  (5) negative-overlap test added — partial-malformed `core.heroes[]`
+  entries (object with correct slug but wrong-type fields) fall
+  back to tier-2; (6) HandRow audit framing — the test change is
+  a fixture refresh, not a UI behavior change; (7) Sidekick
+  future-proofing — single-set lookup is intentional; future
+  multi-set entries require a separate WP. Plus three
+  micro-tightenings in the §Required `// why:` Comments locking
+  verbatim phrases. File allowlist unchanged at 7 files.
 - **Session prompt:** Written at
   `docs/ai/invocations/session-wp173-well-known-ext-id-display-data.md`
   (gitignored scratchpad per `.claude/rules/work-packets.md` Invocation
@@ -251,11 +273,23 @@ Before writing a single line:
   any future ext_id grammar this WP does not cover. Only
   `HandRow.test.ts` is updated (fixture-expectation refresh; the
   test assertions stay structurally the same).
-- The six well-known ext_id literal strings used by this WP must
-  be **byte-identical** to the constants in `pilesInit.ts` and
-  `buildInitialGameState.ts`. No re-typing; the new code imports
-  the constants from those files (the constants are already
-  exported per the existing engine surface).
+- The six well-known ext_id literal strings used by Section 8 must
+  be **byte-identical** to the constants exported by `pilesInit.ts`
+  and `buildInitialGameState.ts`. **Implementation MUST inline the
+  six literal strings** at the Section 8 emission site (with a
+  `// why:` block naming the two source-of-truth constant locations
+  and pointing at the drift-detection test). DO NOT import the
+  constants into `buildCardDisplayData.ts` itself: `buildInitialGameState.ts`
+  imports the `buildCardDisplayData` function, so a reverse value
+  import from `buildInitialGameState.ts` would create a true ESM
+  circular import path. ESM tolerates value-only cycles in lazy
+  contexts, but the cycle is brittle and a layering smell.
+  **Drift detection lives in the test:** `buildCardDisplayData.test.ts`
+  imports the four constants from `pilesInit.ts` and the two from
+  `buildInitialGameState.ts` (test file is a different module — no
+  cycle) and asserts `result[CONSTANT]` is defined and shape-equal
+  to the inlined Section 8 literal. Any future drift in either the
+  constants or the inlined literals fails the test.
 - Tiered display resolution per D-17301 (proposed). Each of the
   six ext_ids has a specific tier-1 source path; tier-2 is the
   literal printed-card-name fallback with `imageUrl: ''`:
@@ -276,6 +310,22 @@ Before writing a single line:
   - `starting-shield-trooper` → tier-1 `core.heroes[*]` where
     `slug === 'trooper'`, read as above; tier-2
     `{ name: 'S.H.I.E.L.D. Trooper', imageUrl: '' }`.
+- **No-shadow contract:** the six well-known ext_ids are
+  prefix-disjoint from every prior section's output (sections 1–2
+  emit `{setAbbr}-{cardType}-...`; section 3 emits
+  `henchman-{slug}-NN`; section 4 emits the qualified mastermind
+  base-card key; sections 5–7 emit `master-strike-`,
+  `scheme-twist-`, `bystander-villain-deck-` prefixes). Section 8
+  emissions are **authoritative** for the six `pile-*` /
+  `starting-shield-*` keys. If a future WP introduces a card type
+  whose ext_id grammar collides with any of these six, that WP must
+  explicitly resolve precedence in its own scope; this WP locks
+  Section 8 as the sole legitimate writer for the six keys. The
+  Well-Known Coverage Invariant test (§Scope B) doubles as the
+  no-shadow guard: it asserts each of the six entries' `name` field
+  matches one of the six locked literals (tier-1 registry-resolved
+  OR tier-2 literal) — any accidental shadow from a prior section
+  would emit a different `name` value and fail.
 - All six new entry types carry `cost: null` (no printed cost on
   the physical token / starter cards). The shape and the
   `cost: null` decision are locked. Rationale: SHIELD Agent
@@ -304,6 +354,17 @@ Before writing a single line:
   bystanders-slug, wounds-slug) added as private functions in
   `buildCardDisplayData.ts`. Do NOT extract these helpers into a
   separate file (Rule §16.1: two-call-site duplication is OK).
+- **Section 8 is a terminal augmentation pass** — placed after
+  sections 5–7 and immediately before the final `return result;`.
+  Sections 5–7 (villain-deck composition) read scheme + mastermind
+  data; Section 8 reads only the canonical generic-card data and
+  has no shared state with prior sections. The placement order is
+  semantic, not runtime-dependent: Section 8 is the last logical
+  pass because it covers cards that aren't part of any
+  match-configuration-driven composition. Future refactors must
+  preserve "Section 8 last" — re-ordering would silently change
+  the section's role from "always-applied augmentation" to "one of
+  many builder steps", which would invite mis-classification.
 - Required `// why:` comments at each of the six tier-1 + tier-2
   resolution sites and at the new helpers (see §Scope).
 
@@ -339,7 +400,12 @@ Before writing a single line:
 - **`SHIELD set abbreviation` for Sidekick tier-1 lookup:** `'ssw1'`
   (the only set carrying `cardType === 'sidekick'` in `other[]` as
   of 2026-05-23). Inlined verbatim; do NOT add a "scan all sets"
-  loop (Rule §16.1 — single call site).
+  loop (Rule §16.1 — single call site). **Future-proofing:** if a
+  later set introduces a second `cardType === 'sidekick'` entry,
+  this WP's single-set lookup is intentional; a future WP must
+  explicitly broaden the scope (e.g. to a tiered cross-set fallback
+  mirroring the D-17201 `core`-set pattern for Master Strike +
+  Scheme Twist). Do not silently widen this lookup.
 - **Core set abbreviation:** `'core'` (the tier-1 source for the
   other five ext_ids).
 
@@ -389,10 +455,15 @@ The following requirements are mandatory:
     ext_id) and emits `result[extId] = { extId, name, imageUrl,
     cost: null }` using the per-ext_id tier-1 resolution path
     (with tier-2 literal fallback).
-  - Import the six ext_id constants from
-    `pilesInit.ts` and `buildInitialGameState.ts` (engine-internal
-    relative imports — `.js` extension per the ESM convention). The
-    constants are already exported; do not re-declare.
+  - Inline the six ext_id literal strings at the Section 8 emission
+    site with a `// why:` block naming the two source-of-truth
+    constant locations (`pilesInit.ts:22/25/28/31`,
+    `buildInitialGameState.ts:74/77`) and pointing at the
+    drift-detection test in `buildCardDisplayData.test.ts`. Do NOT
+    import the constants into `buildCardDisplayData.ts` — see
+    §Non-Negotiable Constraints for the circular-import rationale.
+    The test file imports the actual constants for drift detection
+    (different module, no cycle).
   - Soft-skip when the source set is not loaded (e.g., `core` set
     missing for a narrow test mock; `ssw1` set missing for matches
     that don't load it). The tier-2 literal fallback fires.
@@ -402,16 +473,27 @@ The following requirements are mandatory:
     literals — no aliasing across keys.
   - Required `// why:` comments at:
     - The section header naming D-17301 + the WP-172 / D-17201
-      precedent it extends.
+      precedent it extends. Must include the verbatim phrase
+      "terminal augmentation pass — ensures well-known ext_ids
+      always resolve" to lock the placement semantic.
     - The Sidekick `'ssw1'` hardcoded set lookup explaining why
       this is single-set rather than cross-set (only set carrying
-      the entry as of 2026-05-23; Rule §16.1).
-    - The `cost: null` decision for SHIELD Officer (Officer is
-      purchasable from the supply but `UICardDisplay.cost` is the
-      printed cost — Officer has no printed cost on the physical
-      card; the recruit-cost-3 fight surface reads
-      `G.cardStats[SHIELD_OFFICER_EXT_ID]` separately).
-    - Each new helper function (per the helper additions below).
+      the entry as of 2026-05-23; Rule §16.1; future-proofing note
+      per §Non-Negotiable Constraints).
+    - The `cost: null` decision for SHIELD Officer. Must include
+      the verbatim phrase "printed-cost surface only; gameplay
+      cost resolved elsewhere" referencing
+      `G.cardStats[SHIELD_OFFICER_EXT_ID]`.
+    - The six inlined ext_id literal strings (single `// why:`
+      block above the Section 8 emission site): name both
+      source-of-truth constant locations
+      (`pilesInit.ts:22/25/28/31`,
+      `buildInitialGameState.ts:74/77`), the circular-import
+      rationale (don't import — function consumer is the
+      orchestrator), and the test-side drift-detection contract.
+    - Each new helper function: must include the verbatim phrase
+      "defensive read of registry data (unknown shape per
+      ARCHITECTURE.md)" naming the source-data shape.
 
 - **`packages/game-engine/src/setup/buildCardDisplayData.ts`** —
   modified (helper additions, at the end of the helpers block
@@ -498,6 +580,18 @@ The following requirements are mandatory:
       primitive, missing `cards` / `physicalCards`), the helpers
       silently skip and the affected ext_id falls back to tier-2
       literal.
+    - **Partial-malformed (object present, field wrong type):**
+      when a hero entry exists with the correct `slug` but
+      `physicalCards[0].imageUrl` is a number (or
+      `cards[0].name` is `null`), the helper rejects the entry
+      via its `typeof === 'string'` field guards and the affected
+      ext_id falls back to tier-2 literal. Distinct from the
+      missing-key case; closes the silent-data-corruption surface.
+    - **Constants drift detection:** imports the six ext_id
+      constants from `pilesInit.ts` (4) + `buildInitialGameState.ts`
+      (2) and asserts `result[CONSTANT]` is defined and matches
+      the inlined Section 8 literal for each — fails if either
+      side drifts.
   - All tests use `node:test` and `node:assert/strict`; no
     `boardgame.io` import; no network; no DB.
 
@@ -515,6 +609,13 @@ The following requirements are mandatory:
     ones.
   - No other arena-client changes; `HandRow.vue` is byte-identical
     pre- and post-execution.
+  - **Audit framing:** the `HandRow.test.ts` change is a fixture
+    refresh consequent to the engine output shape change, not a
+    UI behavior change. `HandRow.vue` rendering, props, methods,
+    and emit signatures are unchanged. A reviewer auditing the
+    diff should expect the client-side change to be exactly two
+    string literal replacements in test fixtures and zero changes
+    elsewhere in the arena-client tree.
 
 ### C) Acceptance + Verification
 
@@ -721,6 +822,30 @@ All items must be binary pass/fail. No partial credit.
 - [ ] Malformed `core.heroes[]` entries (`null`, primitive,
   missing `cards` / `physicalCards`) are silently skipped; the
   affected ext_id falls back to tier-2 literal.
+- [ ] Partial-malformed entries (object with correct `slug` but
+  wrong-type fields such as `physicalCards[0].imageUrl` as a
+  number or `cards[0].name` as `null`) are rejected by the
+  helper's `typeof === 'string'` field guards; the affected
+  ext_id falls back to tier-2 literal.
+
+### No-shadow contract + ordering
+- [ ] Section 8 is placed AFTER sections 5–7 and IMMEDIATELY
+  BEFORE the final `return result;` in `buildCardDisplayData`.
+- [ ] No-shadow contract is asserted indirectly via the Well-Known
+  Coverage Invariant test (each of the six entries' `name` field
+  matches one of the six locked literals — any accidental shadow
+  from a prior section would emit a different `name` and fail).
+
+### Constants drift detection
+- [ ] `buildCardDisplayData.ts` does NOT import any of the six
+  well-known ext_id constants (preserves the
+  setup-orchestrator-vs-setup-helper layering; avoids the
+  circular import that would form against `buildInitialGameState`).
+- [ ] `buildCardDisplayData.test.ts` imports the four pile
+  constants from `pilesInit.ts` and the two starting-card
+  constants from `buildInitialGameState.ts`; the drift-detection
+  test asserts `result[CONSTANT]` is defined and equals the
+  inlined Section 8 literal for each.
 
 ### Scope enforcement
 - [ ] `pilesInit.ts` was NOT modified.

@@ -12,7 +12,7 @@
 - [ ] `pnpm --filter @legendary-arena/arena-client test` exits 0 (baseline).
 
 ## Locked Values (do not re-derive)
-- Six well-known ext_ids (import constants — DO NOT re-type the strings):
+- Six well-known ext_ids — **implementation INLINES the literal strings** at the Section 8 emission site (do NOT import the constants — `buildInitialGameState.ts` imports `buildCardDisplayData`, so importing the constants back would form a circular import path; test file imports the actual constants for drift detection — different module, no cycle):
   - `BYSTANDER_EXT_ID = 'pile-bystander'` (`pilesInit.ts:22`)
   - `WOUND_EXT_ID = 'pile-wound'` (`pilesInit.ts:25`)
   - `SHIELD_OFFICER_EXT_ID = 'pile-shield-officer'` (`pilesInit.ts:28`)
@@ -25,8 +25,9 @@
 - Tier-1 source paths per D-17301 (defensively walked; do NOT scan all sets):
   - `pile-bystander` → `core.bystanders[*]` where `slug === 'bystander'`; `pile-wound` → `core.wounds[*]` where `slug === 'wound'` → `{ name, imageUrl }`.
   - `pile-shield-officer` / `starting-shield-agent` / `starting-shield-trooper` → `core.heroes[*]` where `slug === 'officer' | 'agent' | 'trooper'`; name from `cards[0].name`; imageUrl from `physicalCards[0].imageUrl`.
-  - `pile-sidekick` → `ssw1.other[*]` where `cardType === 'sidekick'` → `{ name, imageUrl }`.
+  - `pile-sidekick` → `ssw1.other[*]` where `cardType === 'sidekick'` → `{ name, imageUrl }`. **Single-set lookup is intentional** — future multi-set entries require a separate WP (no silent widening).
 - All six new entry types carry `cost: null` (no printed cost on the physical token / starter cards; SHIELD Officer's recruit cost lives in `G.cardStats[SHIELD_OFFICER_EXT_ID]` — separate surface).
+- **No-shadow contract:** Section 8 emissions are authoritative for the six `pile-*` / `starting-shield-*` keys. The Well-Known Coverage Invariant test doubles as the no-shadow guard via value-shape assertion (any accidental shadow from a prior section would emit a different `name` and fail).
 - `UICardDisplay` shape: `{ extId: string; name: string; imageUrl: string; cost: number | null }`.
 
 ## Guardrails
@@ -38,13 +39,14 @@
 - No `.reduce()` with branching. Use explicit `for...of` loops with descriptive variable names (`coreSetData`, `ssw1SetData`, `heroEntry`, `bystanderEntry`, `woundEntry`).
 - No abbreviations: `findHeroByExactSlug` not `findHeroBySlug`; `findBystanderArrayEntry` not `findBystanderEntry` (the WP-172 `findGenericBystanderEntry` exists; do not consolidate per Rule §16.1).
 - Do NOT consolidate `findGenericBystanderEntry` (WP-172, hard-coded `slug === 'bystander'`) and the new `findBystanderArrayEntry` (parameterized slug) — Rule §16.1 forbids 2-call-site abstraction across sections.
-- Section 8 (new) goes AFTER the existing section 7 (Villain-Deck Bystanders) and BEFORE the final `return result;`.
+- Section 8 is a **terminal augmentation pass** — placed AFTER section 7 and IMMEDIATELY BEFORE the final `return result;`. Re-ordering is forbidden (changes the section's semantic role from "always-applied augmentation" to "one of many builder steps").
 
 ## Required `// why:` Comments
-- Section 8 header: D-17301 (mirrors WP-172 / D-17201); cite production symptom (2026-05-23 match `WT_9sGMLmdG` showed `pile-bystander` + `starting-shield-trooper` as `<unknown>`).
-- Sidekick `'ssw1'` lookup: only set carrying `cardType === 'sidekick'` in `other[]` (2026-05-23); single call site per Rule §16.1.
-- SHIELD Officer `cost: null`: `UICardDisplay.cost` is printed cost (none); recruit-cost-3 lives in `G.cardStats` (separate surface).
-- Each new helper: source data shape + why distinct from WP-172 helpers (different shapes; Rule §16.1 no consolidation).
+- Section 8 header: D-17301 (mirrors WP-172 / D-17201); cite production symptom (2026-05-23 match `WT_9sGMLmdG` showed `pile-bystander` + `starting-shield-trooper` as `<unknown>`). MUST include verbatim phrase **"terminal augmentation pass — ensures well-known ext_ids always resolve"** to lock placement.
+- Six inlined ext_id literals (single `// why:` above the Section 8 emissions): name source-of-truth constants (`pilesInit.ts:22/25/28/31`, `buildInitialGameState.ts:74/77`), the circular-import rationale (don't import), the test-side drift-detection contract.
+- Sidekick `'ssw1'` lookup: only set carrying `cardType === 'sidekick'` (2026-05-23); single call site per Rule §16.1; future-proofing — multi-set is a separate WP.
+- SHIELD Officer `cost: null`: MUST include verbatim phrase **"printed-cost surface only; gameplay cost resolved elsewhere"**; reference `G.cardStats[SHIELD_OFFICER_EXT_ID]`.
+- Each new helper: MUST include verbatim phrase **"defensive read of registry data (unknown shape per ARCHITECTURE.md)"**; name source data shape; why distinct from WP-172 helpers (Rule §16.1).
 
 ## Files to Produce
 - `packages/game-engine/src/setup/buildCardDisplayData.ts` — **modified** — Section 8 (Well-Known Generic Cards) + 3 new defensive-read helpers.
@@ -70,6 +72,6 @@
 ## Common Failure Smells
 - "`<unknown>` still shows in production after merge" — deploy lag OR the match was started before the redeploy. `G.cardDisplayData` is frozen at `Game.setup()`; existing matches keep their pre-WP-173 map. Start a fresh match post-deploy to verify.
 - "SHIELD Officer test asserts `cost === 3` but got `null`" — test expectation is wrong. `UICardDisplay.cost` is the PRINTED cost; SHIELD Officer has no printed cost (the recruit-cost-3 is in `G.cardStats`). All six WP-173 entries are `cost: null`.
-- "Tempted to consolidate `findGenericBystanderEntry` (WP-172) + `findBystanderArrayEntry` (WP-173) into one helper" — NOT allowed (Rule §16.1, 2-call-site abstraction forbidden). Different scopes; keep distinct.
-- "Sidekick falls back to tier-2 in matches that load SSW1" — verify the helper matches `cardType === 'sidekick'` (NOT `slug ===`); see `data/cards/ssw1.json:2359` for the contract.
-- "HandRow humanize-fallback test broke" — that test uses a synthesized unknown extId for defense-in-depth; only the two `starting-shield-*` fixtures should change. If broader, the change overreached.
+- "Sidekick falls back to tier-2 in matches that load SSW1" — verify the helper matches `cardType === 'sidekick'` (NOT `slug ===`); contract at `data/cards/ssw1.json:2359`. Do NOT consolidate with WP-172's `findGenericBystanderEntry` (Rule §16.1).
+- "HandRow humanize-fallback test broke" — only the two `starting-shield-*` fixtures should change (fixture refresh consequent to engine output shape change; `HandRow.vue` stays byte-identical). If broader, the change overreached.
+- "Partial-malformed entry (object present, field wrong type) silently emitted instead of tier-2 fallback" — the helper's `typeof === 'string'` field guard is missing. The §Defensive parsing fixture includes a hero with `physicalCards[0].imageUrl` as a number — MUST reject and fall through.
