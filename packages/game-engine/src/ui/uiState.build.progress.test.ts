@@ -24,6 +24,7 @@ import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { CardRegistryReader } from '../matchSetup.validate.js';
 import type { LegendaryGameState } from '../types.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
+import { BYSTANDER_EXT_ID } from '../setup/buildInitialGameState.js';
 
 /**
  * Creates a valid test MatchSetupConfig.
@@ -103,6 +104,38 @@ describe('UIState progress counters (WP-067)', () => {
     const result = buildUIState(gameState, mockCtx);
 
     assert.equal(result.progress.bystandersRescued, 3);
+  });
+
+  it('bystandersRescued counts supply-pile bystanders (BYSTANDER_EXT_ID) without a villainDeckCardTypes entry', () => {
+    const gameState = createTestGameState();
+    // why: supply-pile bystander tokens (BYSTANDER_EXT_ID = 'pile-bystander')
+    // land in victory via attached-bystander awards on villain defeat and via
+    // hero-ability rescues. They are NOT registered in villainDeckCardTypes
+    // — the engine must count them by literal ext_id equality, mirroring
+    // scoring.logic.ts:computeFinalScores. Regression guard for the
+    // production "Bystanders rescued = 1 with 2 bystanders in pile" bug.
+    assert.equal(
+      gameState.villainDeckCardTypes[BYSTANDER_EXT_ID],
+      undefined,
+      'BYSTANDER_EXT_ID must not be registered in villainDeckCardTypes — that is the precondition for this bug',
+    );
+    gameState.playerZones['0']!.victory.push(BYSTANDER_EXT_ID);
+    gameState.playerZones['0']!.victory.push(BYSTANDER_EXT_ID);
+
+    const result = buildUIState(gameState, mockCtx);
+
+    assert.equal(result.progress.bystandersRescued, 2);
+  });
+
+  it('bystandersRescued counts a mixed pile of villain-deck and supply-pile bystanders together', () => {
+    const gameState = createTestGameState();
+    gameState.villainDeckCardTypes['bystander-villain-deck-00'] = 'bystander';
+    gameState.playerZones['0']!.victory.push('bystander-villain-deck-00');
+    gameState.playerZones['0']!.victory.push(BYSTANDER_EXT_ID);
+
+    const result = buildUIState(gameState, mockCtx);
+
+    assert.equal(result.progress.bystandersRescued, 2);
   });
 
   it('bystandersRescued excludes bystanders sitting outside the victory zone', () => {

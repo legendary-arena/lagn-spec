@@ -35,7 +35,7 @@ import type {
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
 import { evaluateEndgame } from '../endgame/endgame.evaluate.js';
 import { computeFinalScores } from '../scoring/scoring.logic.js';
-import { WOUND_EXT_ID } from '../setup/buildInitialGameState.js';
+import { BYSTANDER_EXT_ID, WOUND_EXT_ID } from '../setup/buildInitialGameState.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
 
 // why: exact structural contract — do not widen or add optional fields.
@@ -183,9 +183,20 @@ function countBystandersRescued(gameState: LegendaryGameState): number {
 
   // why: iterate every player's victory zone explicitly with for...of; no
   // .reduce() with branching per code-style Rule 8.
+  //
+  // why: bystanders in victory come from two sources — villain-deck
+  // bystanders (tracked in G.villainDeckCardTypes with type='bystander',
+  // ext_id `bystander-villain-deck-NN`) and rescued / awarded supply-pile
+  // bystanders (using BYSTANDER_EXT_ID = 'pile-bystander', NOT registered
+  // in villainDeckCardTypes). Mirrors the same dual condition in
+  // scoring.logic.ts:computeFinalScores so the HUD counter and the VP
+  // calculation agree on what a "bystander in the victory pile" is.
   for (const playerZones of Object.values(gameState.playerZones)) {
     for (const cardExtId of playerZones.victory) {
-      if (gameState.villainDeckCardTypes[cardExtId] === 'bystander') {
+      if (
+        gameState.villainDeckCardTypes[cardExtId] === 'bystander' ||
+        cardExtId === BYSTANDER_EXT_ID
+      ) {
         bystanderCount += 1;
       }
     }

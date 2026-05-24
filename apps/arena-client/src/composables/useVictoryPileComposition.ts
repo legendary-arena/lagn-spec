@@ -26,7 +26,19 @@
  * @see DESIGN-BOARD-LAYOUT.md §7.2 #6
  */
 
-import type { UIDisplayEntry } from '@legendary-arena/game-engine';
+import {
+  BYSTANDER_EXT_ID,
+  WOUND_EXT_ID,
+  type UIDisplayEntry,
+} from '@legendary-arena/game-engine';
+
+// why: master-strike ext_ids are emitted by the villain-deck builder as
+// `master-strike-{NN}` (see villainDeck.setup.ts §MASTER_STRIKE_COUNT
+// loop). They don't appear in the victory pile under MVP rules — defeated
+// Master Strikes route to G.mastermind.strikePile, not player victory —
+// but classify defensively so a future routing change (or a recorded
+// fixture replay) doesn't silently misbin them as villainsDefeated.
+const MASTER_STRIKE_PREFIX = 'master-strike-';
 
 export interface VictoryPileComposition {
   bystandersRescued: number;
@@ -56,13 +68,27 @@ function classify(extId: string): keyof Omit<VictoryPileComposition, 'scenarioSp
   // canonical CardExtId patterns set by the registry. The order matters:
   // mastermind/henchman/bystander/wound prefixes are checked first; the
   // catch-all bins to villainsDefeated.
-  if (extId.startsWith('bystander')) {
+  //
+  // why: well-known generic-component ext_ids (BYSTANDER_EXT_ID =
+  // 'pile-bystander', WOUND_EXT_ID = 'pile-wound') are checked first as
+  // literal equality before the prefix paths. These tokens are emitted by
+  // pilesInit (NOT registered in G.villainDeckCardTypes) and land in the
+  // victory pile via attached-bystander awards on villain defeat and via
+  // hero-ability rescues. Without these checks they fall through to the
+  // catch-all and miscount as villainsDefeated — mirrors the same dual
+  // condition the engine uses in scoring.logic.ts:computeFinalScores and
+  // uiState.build.ts:countBystandersRescued.
+  if (extId === BYSTANDER_EXT_ID || extId.startsWith('bystander')) {
     return 'bystandersRescued';
   }
-  if (extId.startsWith('wound')) {
+  if (extId === WOUND_EXT_ID || extId.startsWith('wound')) {
     return 'woundsInPile';
   }
-  if (extId.startsWith('mastermind') || extId.startsWith('strike-')) {
+  if (
+    extId.startsWith(MASTER_STRIKE_PREFIX) ||
+    extId.startsWith('mastermind') ||
+    extId.startsWith('strike-')
+  ) {
     return 'mastermindCards';
   }
   if (extId.startsWith('henchman')) {

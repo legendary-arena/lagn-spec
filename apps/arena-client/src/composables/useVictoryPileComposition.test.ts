@@ -1,6 +1,10 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import type { UIDisplayEntry } from '@legendary-arena/game-engine';
+import {
+  BYSTANDER_EXT_ID,
+  WOUND_EXT_ID,
+  type UIDisplayEntry,
+} from '@legendary-arena/game-engine';
 import { useVictoryPileComposition } from './useVictoryPileComposition';
 
 function entry(extId: string): UIDisplayEntry {
@@ -45,6 +49,47 @@ describe('useVictoryPileComposition (WP-129)', () => {
   test('classifies wound* prefix into woundsInPile', () => {
     const result = useVictoryPileComposition([entry('wound')]);
     assert.equal(result.woundsInPile, 1);
+  });
+
+  test('classifies BYSTANDER_EXT_ID (pile-bystander) into bystandersRescued', () => {
+    // why: regression guard for the production "Bystanders rescued = 1 with
+    // 2 bystanders in pile" bug. The supply-pile token does NOT start with
+    // 'bystander' so the legacy prefix-only heuristic mis-binned it as
+    // villainsDefeated. Mirrors the dual condition the engine uses in
+    // scoring.logic.ts:computeFinalScores.
+    const result = useVictoryPileComposition([
+      entry(BYSTANDER_EXT_ID),
+      entry(BYSTANDER_EXT_ID),
+    ]);
+    assert.equal(result.bystandersRescued, 2);
+    assert.equal(result.villainsDefeated, 0);
+  });
+
+  test('classifies WOUND_EXT_ID (pile-wound) into woundsInPile', () => {
+    const result = useVictoryPileComposition([entry(WOUND_EXT_ID)]);
+    assert.equal(result.woundsInPile, 1);
+    assert.equal(result.villainsDefeated, 0);
+  });
+
+  test('classifies master-strike-NN into mastermindCards', () => {
+    // why: master-strike ext_ids are emitted by villainDeck.setup.ts and
+    // do not start with 'mastermind' or 'strike-' — without the explicit
+    // 'master-strike-' prefix branch they would catch-all into
+    // villainsDefeated.
+    const result = useVictoryPileComposition([
+      entry('master-strike-00'),
+      entry('master-strike-01'),
+    ]);
+    assert.equal(result.mastermindCards, 2);
+    assert.equal(result.villainsDefeated, 0);
+  });
+
+  test('mixed villain-deck and supply-pile bystanders are both counted', () => {
+    const result = useVictoryPileComposition([
+      entry('bystander-villain-deck-00'),
+      entry(BYSTANDER_EXT_ID),
+    ]);
+    assert.equal(result.bystandersRescued, 2);
   });
 
   test('classifies henchman* prefix into henchmenDefeated', () => {
