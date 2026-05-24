@@ -7,12 +7,12 @@
 
 **Execution Authority:** This EC is the authoritative execution checklist for WP-107. Implementation must satisfy every clause exactly. If EC and WP conflict on design, **WP-107 wins**.
 
-**Readiness:** Phase 1 gates run 2026-05-23. Pre-flight `01.4` returned **DO NOT EXECUTE YET** — blocking RS-1: WP-107 §G score-submission intake hook has no HTTP route to modify (`submitCompetitiveScore` is `Library-only` per [api-endpoints.md:193](../REFERENCE/api-endpoints.md); the score-submission request handler is deferred to a future WP). Copilot check `01.7` SKIPPED per sequencing rule. Lint gate `00.3` self-review PASS conditional on RS-1 resolution. EC-195 status remains **Draft**; execution authorization deferred until: (1) operator resolves RS-1 (recommended: Option A — scope §G out of WP-107, ship the helper as `Library-only`, defer the intake-hook to the future request-handler WP); (2) SPEC commit updates WP-107 + EC-195 accordingly; (3) pre-flight re-runs to READY. See [`docs/ai/invocations/preflight-wp107.md`](../invocations/preflight-wp107.md) (gitignored scratchpad) for the full report.
+**Readiness:** Phase 1 gates all green 2026-05-23 post-Option-A RS-1 resolution. Pre-flight `01.4` re-run = `READY TO EXECUTE`; copilot check `01.7` = `PASS` (CONFIRM); lint gate `00.3` self-review = `PASS` (all 38 Final Gate conditions). §G scoped out — WP-107 ships the shared `requireUnsuspendedAccount` helper `Library-only`; the score-submission intake-hook is deferred to the future score-submission request-handler WP. EC-195 status: **Draft → ready for execution**. See WP-107 §Lint Self-Review, §Pre-Flight Verdict (initial + re-run), and §Copilot Check Verdict blocks.
 
 ## Before Starting (STOP / GO Gate)
 - [ ] WP-159 confirmed merged on `main` (shipped 2026-05-17, commit `295eec6` / PR #85); re-verify at session start: `apps/server/src/auth/adminSession.ts` exists with the locked `requireAdminSession(request, options): Promise<AdminSessionResult>` signature; `is_admin BOOLEAN` present on `legendary.players` via migration 014; `admin-session-required` present in `docs/ai/REFERENCE/api-endpoints.md` Auth taxonomy
 - [ ] WP-052 / WP-101 / WP-102 / WP-104 / WP-112 / WP-126 / WP-131 / WP-053 merged on `main`; their contract files unchanged at HEAD (`git diff main`)
-- [ ] WP-107 §Open Questions 1–6 resolved and locked — especially Q1 (score-submission route filename, identified by `Select-String -Path apps\server\src\score -Pattern requireAuthenticatedSession -Recurse`) and Q6 (single-WP vs split into WP-107A / WP-107B)
+- [ ] WP-107 §Open Questions all LOCKED (resolved 2026-05-23): Q1 N/A under Option A; Q2 LOCK = NO public-read-block; Q3 LOCK = STAY historical scores; Q4 LOCK = NO auto-leave teams; Q5 LOCK = indefinite retention; Q6 LOCK = single WP
 - [ ] `legendary.players.handle` (WP-101 migration 008) + `legendary.competitive_scores` (WP-053 migration 007) present in `data/migrations/`
 - [ ] `pnpm -r build` exits 0; `pnpm --filter @legendary-arena/server test` exits 0 (baseline test counts captured)
 - [ ] `git diff --name-only apps/server/src/profile/admin/ apps/server/src/auth/requireUnsuspendedAccount.ts data/migrations/015_*` empty at start
@@ -37,7 +37,7 @@
 - `AuditLogEntry` exact shape: `{ actionId: string; actingAccountId: AccountId; actionType: AdminPlayerActionType; reason: string; createdAt: string /* ISO-8601 */ }`
 - `AdminActionRequest` exact shape: `{ reason: string }` (1–500 chars after `trim()`)
 - `AdminActionResponse` exact shape: `{ ok: true; actionId: string }`
-- `requireUnsuspendedAccount` → HTTP error mapping (verbatim): `'suspended'` → HTTP 403 `{ code: 'forbidden', reason: 'Account is suspended.' }`; `'lookup_failed'` → HTTP 500 `{ code: 'internal_error' }`
+- `requireUnsuspendedAccount` → HTTP error mapping (caller-contract for the future request-handler WP; not exercised in this EC): `'suspended'` → HTTP 403 `{ code: 'forbidden', reason: 'Account is suspended.' }`; `'lookup_failed'` → HTTP 500 `{ code: 'internal_error' }`
 - Self-suspension forbidden: `actingAccountId === targetAccountId` (after handle → `ext_id` resolution) → 400 `{ code: 'invalid_request', reason: 'Admins cannot suspend their own account.' }`. Applies to BOTH `POST /suspend` and `POST /unsuspend`. Zero audit rows written.
 - Reason normalization: `reason.trim()` before validation; trimmed length `≥ 1` AND `≤ 500`; whitespace-only rejected; trimmed value stored verbatim
 - Shared intake helper: `requireUnsuspendedAccount(database, accountId): Result<void>` with codes `'suspended' | 'lookup_failed'` — lives under `apps/server/src/auth/`, NOT `apps/server/src/profile/admin/`
@@ -56,12 +56,12 @@
 - DB-level enforcement: `CHECK (action_type IN ('suspend', 'unsuspend'))`, `CHECK (length(reason) BETWEEN 1 AND 500)`, `FOREIGN KEY` to `legendary.players(ext_id)` on both account-id columns — present in migration 015
 - Self-action forbidden: both `POST /suspend` and `POST /unsuspend` reject `actingAccountId === targetAccountId` with 400 + zero audit rows
 - Reason discipline: `.trim()` applied before validation; trimmed length ∈ [1, 500]; trimmed value stored in audit row
-- Score-submission intake check lives **only** inside `requireUnsuspendedAccount`; WP-053's route gains exactly **one import line + one early-return guard** (≤ 6 lines `git diff --stat`); no new imports beyond `requireUnsuspendedAccount`; no other error-code paths altered
+- The shared helper `requireUnsuspendedAccount` ships `Library-only`; this EC modifies no score-submission route file (none exists at HEAD). The helper's first caller is a future score-submission request-handler WP. `git diff --name-only apps/server/src/competition/ apps/server/src/leaderboards/ apps/server/src/par/` returns no output at session close.
 - Migration 015 is purely additive (one `ALTER TABLE … ADD COLUMN IF NOT EXISTS` + one `CREATE TABLE IF NOT EXISTS` + one `CREATE INDEX IF NOT EXISTS`) AND idempotent — zero `DROP` / `TRUNCATE`
 - Re-suspending an already-suspended account is a no-op on `is_suspended` (column update is still issued unconditionally) but **DOES** write one audit row (idempotent at column, observable at log)
 - MUST NOT modify: `apps/server/src/auth/adminSession.ts`, `apps/server/src/auth/adminGate.ts`, `apps/server/src/auth/sessionToken.{logic,types}.ts`, `apps/server/src/auth/hanko/**`, any leaderboard / score-computation / PAR logic, engine / registry / preplan / client packages
 - No `boardgame.io` / `@legendary-arena/game-engine` / `@legendary-arena/registry` / `@legendary-arena/preplan` import in any WP-107 file
-- File-count discipline: if final count exceeds 12, STOP and apply WP-107 §Open Question 6 split (WP-107A gate+audit+admin / WP-107B intake hook)
+- File-count discipline: post-Option-A target is 11 files. If final count exceeds 12, STOP — Option A scope-out should have held the count down; investigate any drift before continuing.
 
 ## Required `// why:` Comments
 - `adminProfile.logic.ts` mutation sites: the transaction lives in the logic layer (not the route) so the audit `INSERT` and the column `UPDATE` share atomicity; a failed audit rolls back the suspension (Vision §22 auditability invariant)
@@ -76,7 +76,6 @@
 - `requireUnsuspendedAccount.ts` result-code split: `'suspended'` (row exists, `is_suspended = TRUE`) is distinct from `'lookup_failed'` (DB error or row missing) so the score-submission route can map each to a different HTTP status (403 vs 500)
 - Migration 015 `CHECK` + `FOREIGN KEY` constraints: DB-level enforcement of the closed `AdminPlayerActionType` union and of audit-row referential integrity; application-layer validation is defense-in-depth, not the authoritative gate
 - Migration 015 `IF NOT EXISTS` clauses: idempotency required so re-apply over a partially-applied state succeeds without manual cleanup
-- Score-submission route guard: positioned **after** the existing session-validation step and **before** any DB write (a suspended-account row insert would be an observable side effect)
 - Route layer `reason.trim()` site: trimming happens before the length-bound validation so whitespace-only reasons are caught at the application boundary; the DB `CHECK (length(reason) BETWEEN 1 AND 500)` constraint is defense-in-depth against bypass
 
 ## Files to Produce
@@ -89,8 +88,7 @@
 - `apps/server/src/auth/requireUnsuspendedAccount.ts` — **new** — shared intake helper returning `Result<void>` with closed-union code `'suspended' | 'lookup_failed'`
 - `apps/server/src/auth/requireUnsuspendedAccount.test.ts` — **new**
 - `apps/server/src/server.mjs` — **modified** — one-line `registerAdminProfileRoutes(server.router, pool)` after the existing `registerAdminBillingRoutes` call
-- `apps/server/src/score/<score submission route — locked per WP-107 §Open Question 1>` — **modified** — exactly one import + one early-return guard (`≤ 6` lines diff)
-- `docs/ai/REFERENCE/api-endpoints.md` — **modified** — 3 `Wired` rows + 1 `Library-only` row per §21 (replace-whole-row per D-11804)
+- `docs/ai/REFERENCE/api-endpoints.md` — **modified** — 3 `Wired` rows + 1 `Library-only` row per §21 (replace-whole-row per D-11804); the `Library-only` row for `requireUnsuspendedAccount` notes "first caller deferred to future score-submission request-handler WP" (mirrors WP-053 / WP-112 `Library-only` precedent)
 - `docs/ai/DECISIONS.md` — **modified** — D-10701, D-10702, D-10703 landed verbatim
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — WP-107 row `[ ]` → `[x]` with date + commit SHA
 - `docs/05-ROADMAP-MINDMAP.md` — **modified** — Phase 9 row (3/4 → 4/4); WP-107 Drafted → ✅
@@ -100,7 +98,7 @@
 - [ ] All WP-107 §Acceptance Criteria + §Verification Steps pass
 - [ ] `pnpm -r build` exits 0; `pnpm --filter @legendary-arena/server test` exits 0
 - [ ] `git diff --name-only apps/server/src/auth/adminSession.ts apps/server/src/auth/adminGate.ts apps/server/src/auth/sessionToken.logic.ts apps/server/src/auth/sessionToken.types.ts apps/server/src/auth/hanko/` returns no output (locked contracts untouched)
-- [ ] `git diff --stat -- apps/server/src/score/` shows exactly one file changed, ≤ 6 lines
+- [ ] `git diff --name-only apps/server/src/competition/ apps/server/src/leaderboards/ apps/server/src/par/` returns no output (this EC touches no score / leaderboard / PAR surface per Option A scope-out)
 - [ ] D-10701, D-10702, D-10703 written verbatim into `DECISIONS.md`
 - [ ] `STATUS.md` carries `### WP-107 / EC-195 Executed` block at top of `## Current State`
 - [ ] `WORK_INDEX.md` WP-107 `[x]` with date + commit SHA; `EC_INDEX.md` EC-195 `Draft` → `Done {YYYY-MM-DD}`
@@ -119,8 +117,8 @@
 - `UPDATE legendary.admin_actions` or `DELETE FROM legendary.admin_actions` appears anywhere → append-only contract violated; redesign rather than relax the gate
 - Migration 015 ships `action_type text NOT NULL` without the `CHECK (action_type IN (...))` clause OR the FK constraints OR the `length(reason) BETWEEN 1 AND 500` check → DB-level enforcement skipped; locked migration shape requires all three
 - An admin can suspend their own account (no self-action guard) → policy gap; add `actingAccountId === targetAccountId` rejection to both mutation routes
-- Score-submission route diff exceeds 6 lines, adds an import other than `requireUnsuspendedAccount`, or changes any existing error-code path → §Scope drift; revert and apply only the two-line pattern
-- `requireUnsuspendedAccount.ts` lives under `apps/server/src/profile/admin/` → layout inverts the dependency direction (score submission would import from profile-admin); the helper belongs under `auth/`
+- Any file under `apps/server/src/competition/` / `apps/server/src/leaderboards/` / `apps/server/src/par/` appears in `git diff` → Option A scope-out violated; §G was deliberately removed because the score-submission HTTP route does not exist. Revert; wiring belongs to the future score-submission request-handler WP, not this one.
+- `requireUnsuspendedAccount.ts` lives under `apps/server/src/profile/admin/` → layout inverts the dependency direction (the future score-submission route would import from profile-admin); the helper belongs under `auth/`
 - Whitespace-only `reason` accepted (e.g., `reason.length > 0` without `.trim()`) → Vision §22 violated; the audit log is meaningless without a real reason
 - `reason` of >500 chars accepted at the route → length-cap contract violated; the DB `CHECK` will reject it but the 400 should fire at the application boundary first
 - Re-suspending a suspended account returns 200 with no audit row written (caller short-circuits on `is_suspended === TRUE`) → idempotency-at-log contract violated; the column update is the no-op, not the audit write

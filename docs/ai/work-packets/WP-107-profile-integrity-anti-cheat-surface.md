@@ -1,6 +1,6 @@
 # WP-107 — Profile Integrity / Anti-Cheat Surface
 
-**Status:** Draft (drafted 2026-05-17 alongside WP-159; structural dependency on WP-159 cleared 2026-05-17 via commit `295eec6` / PR #85; **Phase 1 close-out gates run 2026-05-23 — pre-flight `01.4` returned `DO NOT EXECUTE YET` (RS-1: §G score-submission route does not exist; copilot `01.7` SKIPPED per sequencing rule; lint `00.3` PASS conditional on RS-1)**. See §Lint Self-Review and §Pre-Flight Verdict blocks below.)
+**Status:** Draft — **READY TO EXECUTE** (2026-05-23). Phase 1 close-out gates all green post-Option-A RS-1 resolution: pre-flight `01.4` re-run = `READY TO EXECUTE`; copilot check `01.7` = `PASS` (CONFIRM); lint gate `00.3` self-review = `PASS` (all 38 Final Gate conditions). Structural dependency on WP-159 cleared 2026-05-17 via commit `295eec6` / PR #85. See §Lint Self-Review, §Pre-Flight Verdict (initial + re-run), and §Copilot Check Verdict blocks below. Session prompt at [`docs/ai/invocations/session-wp107-profile-integrity-anti-cheat-surface.md`](../invocations/session-wp107-profile-integrity-anti-cheat-surface.md) needs §Pre-Execution Checks reconciled against Option A scope (§G removal) before execution opens.
 **Primary Layer:** Server (`apps/server/src/profile/admin/**`, `apps/server/src/identity/**`) + Database (`data/migrations/015_*`) + Reference (`docs/ai/REFERENCE/api-endpoints.md`)
 **Dependencies:**
 - WP-052 (`legendary.players`; `AccountId` brand)
@@ -28,9 +28,12 @@ authenticated administrators to:
 1. **View extended profile state** for any player — public + owner fields plus
    admin-only fields (suspension status, integrity flag history, raw competitive
    score counts) attributed to a specific player by `accountId` or `handle`.
-2. **Suspend a player account** — toggles `is_suspended = TRUE`; suspended
-   players cannot submit new competitive scores (WP-053 score-submission
-   endpoint gains a `is_suspended` check at intake).
+2. **Suspend a player account** — toggles `is_suspended = TRUE`. WP-107
+   ships the shared `requireUnsuspendedAccount` helper that gates writes
+   on this flag; the helper ships `Library-only` (mirrors WP-053
+   `submitCompetitiveScore` / D-10202 precedent) because the
+   score-submission HTTP route is itself deferred to a future
+   request-handler WP. That future WP becomes the helper's first caller.
 3. **Unsuspend a player account** — toggles `is_suspended = FALSE`.
 4. **Read the audit log** of admin actions taken on a given account — every
    `requireAdminSession`-gated mutation appends one row.
@@ -99,10 +102,16 @@ This WP composes WP-159's primitive at every admin route and adds:
 - `is_suspended BOOLEAN` column on `legendary.players` (migration 015).
 - `legendary.admin_actions` table — append-only audit log (migration 015).
 - Three new endpoints under `/api/admin/players/` (one read, two mutations).
-- An intake check in WP-053's score-submission route — STOP and ask if
-  modifying WP-053 is in scope (it should NOT be; the check belongs in a
-  shared `requireUnsuspendedAccount` helper this WP also ships, and WP-053's
-  route imports the helper rather than this WP editing the route).
+- A shared intake-check helper (`requireUnsuspendedAccount` under
+  `apps/server/src/auth/`) shipped `Library-only`. WP-107 does NOT
+  modify any score-submission route — the route itself is deferred per
+  api-endpoints.md:193 (WP-053 ships `submitCompetitiveScore`
+  Library-only; route wiring belongs to a future request-handler WP
+  that owns long-lived `pg.Pool` lifecycle, mirroring WP-102 /
+  D-10202). The helper's first caller is that future request-handler
+  WP. The HTTP error mapping (`'suspended'` → 403, `'lookup_failed'`
+  → 500) is locked here as a caller-contract so the future WP wires
+  the helper consistently.
 
 **Scope deliberately excluded:**
 - Granular per-record moderation (void specific score, hide specific replay,
@@ -197,10 +206,10 @@ Plus a `Library-only` row for `requireUnsuspendedAccount` (the shared intake hel
 - WP-052 / WP-101 / WP-102 / WP-104 / WP-112 / WP-126 / WP-131 / WP-053
   complete.
 - `legendary.players` exists with `handle` column (per WP-101 migration 008).
-- `legendary.competitive_scores` exists per WP-053.
-- `apps/server/src/score/scoreSubmission.routes.ts` (or equivalent — STOP and
-  confirm filename during execution) exists and imports auth helpers from
-  `apps/server/src/auth/`.
+- `legendary.competitive_scores` exists per WP-053 (the table is in
+  place; `submitCompetitiveScore` ships `Library-only` per
+  api-endpoints.md:193 — no HTTP route exists, and WP-107 does NOT
+  introduce one).
 - `pnpm --filter @legendary-arena/server build` exits 0.
 
 WP-159 completed 2026-05-17 (commit `295eec6` / PR #85); all assumes are met as of this WP's drafting. Re-verify at execution time per `01.4` pre-flight.
@@ -261,13 +270,14 @@ WP-159 completed 2026-05-17 (commit `295eec6` / PR #85); all assumes are met as 
   `actingAccountId === targetAccountId` after handle resolution; on match
   the route returns 400 with `{ code: 'invalid_request', reason: 'Admins cannot suspend their own account.' }`.
   The check applies to both `POST /suspend` and `POST /unsuspend`.
-- The score-submission intake check MUST live in a shared helper
-  (`requireUnsuspendedAccount`) imported by WP-053's route. WP-107 may NOT
-  inline the check inside WP-053's route file. WP-107 may **add a single
-  import line** to WP-053's route file but may not modify its other logic.
-  The guard MUST NOT introduce any new imports beyond
-  `requireUnsuspendedAccount`, and MUST NOT alter any existing error-code
-  path except the new `'suspended'` case.
+- The shared intake-check helper (`requireUnsuspendedAccount` under
+  `apps/server/src/auth/`) ships `Library-only` in this WP. **WP-107
+  modifies no score-submission route file** (none exists at HEAD;
+  `submitCompetitiveScore` is `Library-only` per api-endpoints.md:193).
+  The helper's first caller is a future score-submission
+  request-handler WP. The HTTP error mapping locked in §Locked
+  contract values is a caller-contract for that future WP, not an
+  intake-hook this WP wires.
 - Migration 015 MUST be purely additive (one `ALTER` + one
   `CREATE TABLE IF NOT EXISTS` + one `CREATE INDEX IF NOT EXISTS`).
 - Migration 015 MUST be idempotent.
@@ -284,11 +294,12 @@ WP-159 completed 2026-05-17 (commit `295eec6` / PR #85); all assumes are met as 
   - The engine, registry, preplan, or any client package
 
 ### Session protocol
-- Before editing WP-053's score-submission route, STOP and confirm the filename
-  and the helper import shape with the operator. Modifying the wrong file in
-  the score-submission layer is a high-blast-radius mistake.
 - If WP-159's `requireAdminSession` signature differs from what this WP assumes
   (per §Assumes), STOP — do not modify either WP's contract. Raise the drift.
+- The shared helper `requireUnsuspendedAccount` ships `Library-only`. If a
+  caller (e.g., an in-flight score-submission request-handler WP) appears
+  during execution and proposes wiring the helper, STOP — that wiring belongs
+  to that caller's WP, not this one.
 
 ### Locked contract values
 - Admin route prefix: `/api/admin/players/`
@@ -395,17 +406,13 @@ Closed-union codes, `AdminProfileResponse`, `AdminActionRequest`, `AdminActionRe
 
 **File:** `apps/server/src/server.mjs` — **modified** — add import + `registerAdminProfileRoutes(server.router, pool)` after existing `registerAdminBillingRoutes`.
 
-### G) Score Submission Intake Hook
+### G) ~~Score Submission Intake Hook~~ — SCOPED OUT (Option A, pre-flight RS-1 resolution, 2026-05-23)
 
-**File:** `apps/server/src/score/<scoreSubmission route filename — confirm at execution>` — **modified**
-
-Add exactly ONE import line + ONE early-return guard in the score-submission
-handler that calls `requireUnsuspendedAccount(database, accountId)` after the
-existing session-validation step and before any DB write. If the guard
-returns `{ ok: false; code: 'suspended' }`, the route returns 403 with
-`{ code: 'forbidden', reason: 'Account is suspended.' }`.
-
-**Out-of-scope hardening:** no other changes to the score-submission file.
+**Original §G dropped.** The score-submission HTTP route does not exist
+at HEAD (`submitCompetitiveScore` is `Library-only` per
+api-endpoints.md:193). Wiring the helper into a future request-handler
+is that future WP's responsibility. The helper itself still ships under
+§D (with the HTTP error mapping locked here as a caller-contract).
 
 ### H) API Catalog Update
 
@@ -434,6 +441,8 @@ returns `{ ok: false; code: 'suspended' }`, the route returns 403 with
 - Modifying competitive score computation, leaderboard ordering, or PAR calculation
 - Suspending teams, leaderboard entries, or replays directly
 - Migrating WP-110's billing admin surface from `requireAdminSecret` to `requireAdminSession` (separate cutover WP)
+- Wiring `requireUnsuspendedAccount` into any score-submission HTTP handler — deferred to the future score-submission request-handler WP that introduces the route (WP-053 ships `submitCompetitiveScore` `Library-only` per api-endpoints.md:193 / D-10202; the future WP becomes the helper's first caller)
+- Introducing the score-submission HTTP route itself — out of scope on the same deferral grounds
 - Any change to engine, registry, preplan, or client packages
 - New migration on any table other than `legendary.players` and the new `legendary.admin_actions`
 
@@ -450,16 +459,17 @@ returns `{ ok: false; code: 'suspended' }`, the route returns 403 with
 - `apps/server/src/auth/requireUnsuspendedAccount.ts` — new
 - `apps/server/src/auth/requireUnsuspendedAccount.test.ts` — new
 - `apps/server/src/server.mjs` — modified — wire admin profile routes
-- `apps/server/src/score/<score submission route>` — modified — single intake guard
 - `docs/ai/REFERENCE/api-endpoints.md` — modified — three Wired rows + Library-only row
 - `docs/ai/DECISIONS.md` — modified — D-10701, D-10702, D-10703
 - `docs/ai/work-packets/WORK_INDEX.md` — modified — mark complete
 - `docs/05-ROADMAP-MINDMAP.md` — modified — WP-107 → ✅
 
-12-14 files (final count depends on the score-submission route filename). Above
-the recommended 8-file soft cap; consider splitting into WP-107A (gate + audit
-table + admin routes) and WP-107B (score-submission intake hook) if execution
-runs hot. Decision deferred to execution-time judgement.
+11 files (post-Option-A; score-submission route file removed). Above the
+recommended 8-file soft cap but within tolerance for a server-side admin
++ migration WP (precedent: EC-117 = 8, EC-112 = 10, EC-174 = 13). §Open
+Question 6 LOCK = single WP under Option A. The original WP-107A /
+WP-107B split contemplated routing §G to a B-packet; Option A removes
+§G entirely, so the split is no longer indicated.
 
 ---
 
@@ -490,11 +500,11 @@ runs hot. Decision deferred to execution-time judgement.
 - [ ] The DB-level `CHECK (action_type IN ('suspend', 'unsuspend'))` constraint rejects any other value at insertion time
 - [ ] FK constraints on `acting_account_id` / `target_account_id` reject inserts referencing missing `legendary.players.ext_id` rows
 - [ ] Re-suspending a suspended account is a no-op on `is_suspended` but DOES write an audit row (idempotent at column, observable at log); the column update is the unconditional `UPDATE … SET is_suspended = TRUE`, never a read-modify-write
-- [ ] Score-submission endpoint returns 403 with `{ code: 'forbidden', reason: 'Account is suspended.' }` when the submitting account is suspended; returns 500 with `{ code: 'internal_error' }` when `requireUnsuspendedAccount` returns `'lookup_failed'` (both verified by intake-guard test)
+- [ ] `requireUnsuspendedAccount(database, accountId)` unit test verifies the closed-union code split (`'suspended'` when row exists with `is_suspended = TRUE`; `'lookup_failed'` when row missing OR DB throws); the future request-handler WP that wires the helper inherits the locked HTTP error mapping (`'suspended'` → 403; `'lookup_failed'` → 500) from this WP's §Locked contract values
 - [ ] `legendary.admin_actions` contains zero `UPDATE` or `DELETE` statements across all new files (grep verification)
 - [ ] `adminProfile.logic.ts` contains exactly one `BEGIN` site per mutation function; route handlers contain zero `BEGIN` / `COMMIT` / `ROLLBACK` literals
 - [ ] Migration 015 applies cleanly AND is idempotent (re-apply succeeds; CHECK + FK constraints survive re-apply)
-- [ ] Score-submission route `git diff --stat` shows exactly one file, ≤ 6 lines changed, and no new imports beyond `requireUnsuspendedAccount`
+- [ ] `git diff --name-only apps/server/src/competition/ apps/server/src/leaderboards/ apps/server/src/par/` returns no output (this WP touches no score / leaderboard / PAR surface)
 - [ ] All test files pass: `pnpm --filter @legendary-arena/server test`
 - [ ] `apps/server/src/auth/adminSession.ts` is byte-identical before and after this WP
 
@@ -550,9 +560,9 @@ git diff --name-only -- apps/server/src/auth/adminSession.ts apps/server/src/aut
 git diff --name-only -- apps/server/src/auth/sessionToken.logic.ts apps/server/src/auth/sessionToken.types.ts apps/server/src/auth/hanko/
 # Expected: no output
 
-# Score-submission file change is minimal (only the import + guard)
-git diff --stat -- apps/server/src/score/
-# Expected: one file, small line count (≤ 6 lines changed)
+# No touch to competition / leaderboards / PAR surface (Option A scope)
+git diff --name-only apps/server/src/competition/ apps/server/src/leaderboards/ apps/server/src/par/
+# Expected: no output
 
 # Catalog updated
 Select-String -Path "docs\ai\REFERENCE\api-endpoints.md" -Pattern "/api/admin/players/" 
@@ -561,35 +571,33 @@ Select-String -Path "docs\ai\REFERENCE\api-endpoints.md" -Pattern "/api/admin/pl
 
 ---
 
-## Open Questions (Resolve Before Execution)
+## Open Questions (Resolved 2026-05-23)
 
-These ambiguities should be settled before this WP enters execution. Each is
-listed with a recommended default; the recommendation becomes the locked
-value at execution-time review unless explicitly overridden.
+All six Open Questions are LOCKED below per pre-flight RS-1 / RS-2
+resolution (Option A). Operator may override via SPEC commit + pre-flight
+re-run.
 
-1. **Score-submission route filename.** Need to confirm the exact file under
-   `apps/server/src/score/` that handles `POST` score submissions. Recommended
-   action at execution: grep `requireAuthenticatedSession` under `apps/server/src/score/`
-   to identify the single intake route.
-2. **Suspended-account read visibility.** Should public profile reads
-   (`/api/players/:handle/profile`) hide suspended accounts (404)? **Recommended
-   default: NO** — public reads remain available; suspension only blocks
-   writes (score submission, profile edits, team join). Visibility hiding is
-   a separate moderation WP.
-3. **Existing scores from suspended accounts.** Stay on leaderboards or hide?
-   **Recommended default: STAY** — historical scores remain; suspension is
-   forward-only. Retroactive hiding is a per-record moderation WP, not this
-   one.
-4. **Team membership when suspended.** Auto-leave teams? **Recommended default:
-   NO** — team affiliations remain; team-side display of suspended members is
-   a future team-moderation WP.
-5. **Audit log retention.** Indefinite or N-day? **Recommended default: indefinite
-   for this WP** — retention policy is a Phase-7 ops decision, separate WP.
-6. **Should WP-107 split into A/B?** If file count exceeds 12 at execution
-   time, recommend split: WP-107A = gate + audit table + admin routes (8
-   files); WP-107B = score-submission intake hook (3 files including test).
-   **Recommended default: ship as one WP unless execution-time file count
-   forces a split.**
+1. **Score-submission route filename.** **N/A under Option A.** §G scope-out
+   removes the intake-hook from this WP; the route does not exist at HEAD
+   and is deferred to a future request-handler WP that owns long-lived
+   `pg.Pool` lifecycle.
+2. **Suspended-account read visibility.** **LOCK: NO.** Public profile reads
+   (`/api/players/:handle/profile`) remain available for suspended accounts.
+   Suspension blocks writes only (score submission, profile edits, team
+   join). Visibility hiding is a separate moderation WP.
+3. **Existing scores from suspended accounts.** **LOCK: STAY.** Historical
+   scores remain on leaderboards. Suspension is forward-only. Retroactive
+   hiding is a per-record moderation WP.
+4. **Team membership when suspended.** **LOCK: NO** auto-leave. Team
+   affiliations remain. Team-side display of suspended members is a future
+   team-moderation WP.
+5. **Audit log retention.** **LOCK: indefinite** for this WP. Retention
+   policy is a Phase-7 ops decision, separate WP.
+6. **Should WP-107 split into A/B?** **LOCK: single WP.** Option A removes
+   §G, dropping the file count to 11 (under the original 12-file split
+   threshold). The original WP-107A / WP-107B split contemplated routing
+   §G to a B-packet; with §G out entirely, the split is no longer
+   indicated.
 
 ---
 
@@ -611,12 +619,13 @@ value at execution-time review unless explicitly overridden.
 ## Lint Self-Review
 
 **Date run:** 2026-05-23
-**Verdict:** PASS-WITH-FAIL — 36 of 38 Final Gate conditions pass; **2 FAIL conditions surface RS items for pre-flight, not lint defects in the WP body proper**:
+**Verdict (initial):** PASS-WITH-FAIL — 36 of 38 Final Gate conditions pass; 2 FAIL surfaced RS items.
+**Verdict (after RS-1 Option A resolution, same day):** **PASS.** Both prior FAILs cleared.
 
 | Final Gate # | §  | Condition | Disposition |
 |---|---|---|---|
-| 6 | §3 | `## Assumes` does not list all file and state dependencies | **FAIL → RS-1.** WP §Assumes states *"`apps/server/src/score/scoreSubmission.routes.ts` (or equivalent — STOP and confirm filename during execution) exists"* — this assumption is **provably false** at HEAD; no such directory exists, `submitCompetitiveScore` is `Library-only` per [api-endpoints.md:193](../REFERENCE/api-endpoints.md). The assumption was hedged ("STOP and confirm") and §Open Question 1 prescribed a grep, but per `00.3 §3` ❌ rule, *"if the packet could silently produce wrong output when run out of order"* this is a structural FAIL. **Resolution:** scope §G out of WP-107 per pre-flight RS-1 Option A. |
-| (none) | §5 | File count > 8 soft cap | **NOT-A-FAIL (advisory).** 12–14 files exceeds the ~8 soft cap; WP §Open Question 6 already flagged this with split-into-A/B as a deferred decision. Under RS-1 Option A (§G scoped out), file count drops to 11 — still above cap but within tolerance for a server-side admin+migration WP (precedent: EC-117 = 8, EC-112 = 10, EC-174 = 13). |
+| 6 | §3 | `## Assumes` does not list all file and state dependencies | **Initially FAIL → RS-1; CLEARED by Option A.** Original §Assumes referenced a score-submission HTTP route that does not exist at HEAD. Option A scope-out removed §G and the score-route assumption together; §Assumes now lists only real preconditions, and §Out of Scope explicitly excludes the score-submission route. Per `00.3 §3` ❌ rule the packet can no longer silently produce wrong output. ✅ |
+| (none) | §5 | File count > 8 soft cap | **NOT-A-FAIL (advisory).** Post-Option-A file count = 11 — above the ~8 soft cap but within tolerance for a server-side admin + migration WP (precedent: EC-117 = 8, EC-112 = 10, EC-174 = 13). §Open Question 6 LOCK = single WP. ✅ |
 
 **All other gates pass:**
 
@@ -642,17 +651,54 @@ value at execution-time review unless explicitly overridden.
 - **§20 Funding Surface Gate** Explicitly marked N/A with justification: *"WP-107 introduces a backend admin surface with no user-visible funding, donation, or attribution UI."* Not a tautological placeholder. ✅
 - **§21 API Catalog Update Obligation** Section present; 3 `Wired` rows + 1 `Library-only` row enumerated per D-11804 replace-whole-row semantics; closed-set taxonomy values (`Wired` / `admin-session-required`) cited correctly. ✅
 
-**Lint Gate Final Verdict:** PASS conditional on RS-1 resolution. The single hard FAIL (gate #6 on §3) tracks the same issue pre-flight surfaces as RS-1; resolving RS-1 also clears the lint FAIL. The advisory on file count is not a hard FAIL but warrants the §Open Question 6 split-evaluation under whichever RS-1 option is chosen.
+**Lint Gate Final Verdict (post-Option-A):** **PASS.** All 38 Final Gate conditions pass. Both prior FAILs cleared by the RS-1 Option A scope-out.
 
 ---
 
-## Pre-Flight Verdict (run 2026-05-23)
+## Pre-Flight Verdict (initial run 2026-05-23)
 
 **Verdict:** DO NOT EXECUTE YET (NOT READY).
 **Blocker:** RS-1 — §G Score-Submission Intake Hook has no route to modify; `submitCompetitiveScore` is `Library-only` and the score-submission HTTP route is deferred to a future request-handler WP per api-endpoints.md:193. Full report: [`docs/ai/invocations/preflight-wp107.md`](../invocations/preflight-wp107.md) (gitignored scratchpad).
-**Non-blocking RS items:** RS-2 (§Open Questions Q1–Q6 not yet locked into §Locked contract values; recommended defaults documented in pre-flight scratchpad and may flip to LOCK via SPEC commit).
-**Copilot check (`01.7`):** SKIPPED per `01.7` sequencing rule (*"Step 1b may only begin after step 1 produces READY TO EXECUTE"*).
-**Re-run after:** SPEC commit resolving RS-1 (operator decision: Option A scope-out preferred; Options B and C also valid).
+**Non-blocking RS items:** RS-2 (§Open Questions Q1–Q6 not yet locked into §Locked contract values; recommended defaults documented in pre-flight scratchpad).
+**Copilot check (`01.7`):** SKIPPED per `01.7` sequencing rule.
+
+## Pre-Flight Verdict (re-run 2026-05-23, post-Option-A)
+
+**Verdict:** **READY TO EXECUTE.**
+
+RS-1 resolved via Option A: §G scoped out of WP-107; shared helper `requireUnsuspendedAccount` ships `Library-only`; score-submission intake-hook deferred to the future score-submission request-handler WP. RS-2 resolved: §Open Questions Q1 (N/A), Q2–Q5 (LOCKED to recommended defaults), Q6 (LOCK = single WP) all promoted into §Open Questions and §Files Expected to Change.
+
+**Authorized Next Step:** Generate session execution prompt per `docs/ai/invocations/session-wp107-profile-integrity-anti-cheat-surface.md` (already drafted on 2026-05-23 — needs §Pre-Execution Checks reconciled against Option A scope before session opens).
+
+## Copilot Check Verdict (run 2026-05-23, post-pre-flight READY)
+
+**Verdict:** **PASS.**
+
+All 30 failure modes from `01.7-copilot-check.md` audited against the post-Option-A WP-107 + EC-195 + pre-flight artifact. Key dispositions:
+
+- **#1 Engine/UI boundary drift** — PASS. WP explicitly forbids engine / registry / preplan / client imports; EC §Guardrails enforces.
+- **#2 Non-determinism** — PASS. No `Math.random()` / `Date.now()` in scope; only `now()` is DB-server-side `timestamptz DEFAULT`, acceptable for audit.
+- **#4 Contract drift** — PASS. EC §Locked Values is a verbatim mirror of WP §Locked contract values. Closed unions for `AdminPlayerActionType` + error codes.
+- **#7 Persisting runtime state** — PASS. WP touches no `G` / no engine. DB persistence is intentional (the WP's whole point).
+- **#10 Stringly-typed outcomes** — PASS. Closed-union error codes; closed-union action types; DB-level `CHECK` constraints back the unions.
+- **#11 Invariant-focused tests** — PASS. EC §Acceptance Criteria includes injected-fault rollback, CHECK/FK rejection, self-action zero-audit-rows, idempotent-re-suspend-still-writes-audit.
+- **#12 Scope creep** — PASS. RS-1 + Option A narrowed scope; §Out of Scope expanded with two new explicit exclusions; file count dropped 13 → 11.
+- **#13 Unclassified directories** — PASS. `apps/server/src/profile/admin/` inherits the `apps/server/src/profile/` classification (server-layer, profile-namespace, WP-102 / D-10301 precedent); `apps/server/src/auth/requireUnsuspendedAccount.ts` lives under existing classified `auth/` directory.
+- **#15 Missing "why"** — PASS. EC §Required `// why:` Comments enumerates 13 sites.
+- **#16 Lifecycle wiring creep** — PASS. Only `server.mjs` modified (one line); no `game.ts` / phase / move touches.
+- **#17 Hidden mutation via aliasing** — PASS. No `G` involvement; helper returns `Result<void>`.
+- **#19 JSON serializability** — PASS. `actionId` explicitly serialized as `string` at JSON boundary (bigserial → string); response shapes are plain objects.
+- **#22 Silent vs loud failure** — PASS. Helper returns typed `Result<void>`; rollback on audit failure produces 500.
+- **#23 Deterministic ordering** — PASS. `ORDER BY created_at DESC, action_id DESC` tiebreaker locked verbatim.
+- **#27 Canonical naming** — PASS. Names match `00.2-data-requirements.md` exactly (`accountId`, `handle`, `ext_id`, `legendary.players`).
+- **#28 Upgrade/deprecation story** — PASS. Migration 015 purely additive; CHECK constraint relaxable via `ALTER TABLE` for future action types.
+- **#30 Missing pre-session governance fixes** — PASS. RS-1 (pre-flight) + lint FAIL (gate #6 §3) both cleared by Option A scope-out in this same SPEC commit.
+
+All other issues (#3 / #5 / #6 / #8 / #9 / #14 / #18 / #20 / #21 / #24 / #25 / #26 / #29): rapid PASS.
+
+**Pre-Flight Disposition:** **CONFIRM** — pre-flight READY TO EXECUTE verdict stands; session prompt generation authorized.
+
+**Mandatory Governance Follow-ups:** None new. Existing post-execution governance per EC §After Completing already enumerated.
 
 ---
 
