@@ -188,6 +188,65 @@ describe('PlayDesktop (WP-129)', () => {
     assert.equal(wrapper.find('[data-testid="play-your-deck-discard"]').exists(), false);
     assert.equal(wrapper.find('[data-testid="play-your-victory-pile"]').exists(), false);
   });
+
+  // why: regression guard for the autoplay post-game blank-board bug — when
+  // the engine flips `phase` to 'end' and sets `gameOver`, the shared board
+  // (especially the opponent panels with the `Victory: N ▼` buttons) MUST
+  // still render so a viewer who watched a bot match through to completion
+  // can read the final piles. Mirrors the EC-183 spectator-frame contract
+  // but for the gameover frame.
+  test('renders the shared board for a gameover frame (phase=end with gameOver set)', () => {
+    setActivePinia(createPinia());
+    const endgameFrame = snapshot();
+    endgameFrame.game.phase = 'end';
+    // Autoplay viewer is a spectator — strip handCards from every player so
+    // `viewer` resolves to null (matches the production audience-filter posture).
+    for (const player of endgameFrame.players) {
+      delete player.handCards;
+      delete player.handDisplay;
+    }
+    endgameFrame.gameOver = {
+      outcome: 'heroes-win',
+      reason: 'Mastermind defeated.',
+      scores: {
+        players: [
+          {
+            playerId: 'alice',
+            villainVP: 6,
+            henchmanVP: 0,
+            bystanderVP: 2,
+            tacticVP: 5,
+            woundVP: 0,
+            totalVP: 13,
+          },
+        ],
+        winner: 'alice',
+      },
+    };
+    const store = useUiStateStore();
+    store.setSnapshot(endgameFrame);
+    const wrapper = mount(PlayDesktop, {
+      props: { submitMove: noopSubmitMove },
+    });
+
+    // Shared board renders (the bug: this was empty after game-end).
+    assert.equal(wrapper.find('[data-testid="play-top-hud-bar"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-mastermind-tile"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-scheme-tile"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-city-row"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-hq-row"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-shared-decks"]').exists(), true);
+    assert.equal(wrapper.find('[data-testid="play-ko-pile"]').exists(), true);
+    // All three players appear as opponent panels — the inspection surface for
+    // reading the final victory pile by clicking each `Victory: N ▼` button.
+    assert.equal(wrapper.findAll('[data-testid="play-opponent-panel"]').length, 3);
+
+    // Personal "your" zone stays hidden — viewer is null on a spectator frame.
+    assert.equal(wrapper.find('[data-testid="play-hand-row"]').exists(), false);
+    assert.equal(wrapper.find('[data-testid="play-turn-action-bar"]').exists(), false);
+    assert.equal(wrapper.find('[data-testid="play-your-deck-discard"]').exists(), false);
+    assert.equal(wrapper.find('[data-testid="play-your-victory-pile"]').exists(), false);
+  });
 });
 
 describe('PlayDesktop autoplay-bar gating (WP-164)', () => {

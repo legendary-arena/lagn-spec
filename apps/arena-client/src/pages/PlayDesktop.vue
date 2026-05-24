@@ -178,12 +178,28 @@ export default defineComponent({
       () => snapshot.value?.game.phase === 'play',
     );
 
+    // why: gameover transitions `phase` from 'play' → 'end' (or in some
+    // boardgame.io v0.50 codepaths nulls it out), which would collapse the
+    // shared board if we kept the outer template gated on `isPlayPhase`
+    // alone — leaving an autoplay viewer stranded on TopHudBar with no way
+    // to click the opponents' `Victory: N ▼` buttons to inspect final
+    // piles. `boardVisible` extends the EC-183 spectator-frame fix to the
+    // post-game frame: render the same shared board (mastermind, scheme,
+    // city, HQ, shared decks, KO, opponent panels) so the final state is
+    // inspectable. The personal `viewer !== null` gate inside still hides
+    // the "your" zone for spectator / autoplay frames; this gate only
+    // controls whether the board renders AT ALL.
+    const boardVisible = computed<boolean>(
+      () => isPlayPhase.value || isGameOver.value,
+    );
+
     return {
       snapshot,
       viewer,
       opponents,
       isLobbyPhase,
       isPlayPhase,
+      boardVisible,
       currentReveal,
       dismissReveal,
       matchId: props.matchId,
@@ -227,9 +243,15 @@ export default defineComponent({
            viewer. A spectator or rewound-autoplay frame is audience-filtered
            (D-16303) and exposes no own hand, so `viewer` is null; gating the
            board on `viewer !== null` (the prior behavior) blanked the screen on
-           rewind (WP-163/164). Only the personal "your" zone below depends on a
-           viewer. -->
-      <template v-if="isPlayPhase">
+           rewind (WP-163/164, EC-183). Only the personal "your" zone below
+           depends on a viewer.
+           why: `boardVisible` extends the gate to include gameover so the
+           final frame still renders the opponent panels (with the
+           `Victory: N ▼` button) for post-match inspection — without this,
+           a viewer who watched an autoplay match to completion lost the
+           board the moment `phase` flipped to 'end' and had no way to read
+           the final piles. -->
+      <template v-if="boardVisible">
         <RevealOverlay
           :reveal="currentReveal"
           :duration-ms="2000"
