@@ -234,20 +234,47 @@ If WP-159 is not complete at execution time, this packet is **BLOCKED**.
 ### Packet-specific
 - Every admin route MUST call `requireAdminSession(request, options)` as the
   first action in the route handler. No route may decide authorization inline.
-- Every successful admin **mutation** MUST write exactly one row to
-  `legendary.admin_actions` BEFORE returning a 2xx response. If the audit
-  write fails, the route MUST return 500 and the mutation MUST be rolled back
-  (single SQL transaction).
+- Every successful admin **mutation** MUST execute inside an explicit
+  database transaction owned by the **logic layer**
+  (`adminProfile.logic.ts`), NOT the route layer. The transaction shape is
+  exactly: `BEGIN → UPDATE legendary.players → INSERT legendary.admin_actions → COMMIT`.
+  If any step fails, the transaction MUST `ROLLBACK` and the route returns
+  500 with `{ code: 'internal_error' }`. The audit `INSERT` MUST complete
+  before the `COMMIT`; no fire-and-forget audit writes.
+- The `DatabaseClient` passed into logic functions MUST support transaction
+  scoping (no implicit autocommit). Logic functions accept a client; route
+  handlers do not begin transactions.
 - `legendary.admin_actions` is **append-only**. No new file may emit
   `UPDATE legendary.admin_actions` or `DELETE FROM legendary.admin_actions`.
+  The DB-level `CHECK (action_type IN ('suspend', 'unsuspend'))` constraint
+  enforces the closed union at insertion time.
+- The suspension `UPDATE` MUST be implemented as a single unconditional
+  set, not a read-modify-write: `UPDATE legendary.players SET is_suspended = $1 WHERE ext_id = $2`.
+  Duplicate updates under concurrent admin actions are acceptable and
+  expected; idempotency is DB-enforced, not application-enforced.
+- `GET /api/admin/players/:handle/integrity` MUST compose its response from
+  a single SQL transaction (one `BEGIN`/`COMMIT` pair at isolation level
+  `REPEATABLE READ`) OR from a single JOINed `SELECT`, so the profile-state
+  read and the audit-log tail read see the same snapshot. No multi-connection
+  composition.
+- An admin MUST NOT suspend their own account. The check is
+  `actingAccountId === targetAccountId` after handle resolution; on match
+  the route returns 400 with `{ code: 'invalid_request', reason: 'Admins cannot suspend their own account.' }`.
+  The check applies to both `POST /suspend` and `POST /unsuspend`.
 - The score-submission intake check MUST live in a shared helper
   (`requireUnsuspendedAccount`) imported by WP-053's route. WP-107 may NOT
   inline the check inside WP-053's route file. WP-107 may **add a single
   import line** to WP-053's route file but may not modify its other logic.
-- Migration 015 MUST be purely additive (one ALTER + one CREATE TABLE IF NOT EXISTS).
+  The guard MUST NOT introduce any new imports beyond
+  `requireUnsuspendedAccount`, and MUST NOT alter any existing error-code
+  path except the new `'suspended'` case.
+- Migration 015 MUST be purely additive (one `ALTER` + one
+  `CREATE TABLE IF NOT EXISTS` + one `CREATE INDEX IF NOT EXISTS`).
 - Migration 015 MUST be idempotent.
 - All admin mutations MUST require a non-empty `reason: string` in the
-  request body. The reason is stored verbatim in the audit-log row.
+  request body. The reason is `trim`-normalized before validation; the
+  trimmed value MUST be 1–500 characters inclusive. The trimmed reason is
+  stored verbatim in the audit-log row.
 - Must NOT modify:
   - `apps/server/src/auth/adminSession.ts` (WP-159 contract is locked)
   - `apps/server/src/auth/adminGate.ts` (WP-110 contract is locked)
@@ -267,19 +294,61 @@ If WP-159 is not complete at execution time, this packet is **BLOCKED**.
 - Admin route prefix: `/api/admin/players/`
 - Route paths: `:handle` (NOT `:accountId`) — admins identify players by handle
   in the URL; the route resolves `handle → accountId` server-side via the
-  WP-101 lookup pattern.
+  WP-101 lookup pattern (`findAccountByHandle`).
 - Suspension column: `is_suspended BOOLEAN NOT NULL DEFAULT FALSE` on
   `legendary.players`.
-- Audit table: `legendary.admin_actions` with columns:
+- Suspension `UPDATE` shape (verbatim): `UPDATE legendary.players SET is_suspended = $1 WHERE ext_id = $2;`
+- Audit table: `legendary.admin_actions` with columns + constraints:
   - `action_id bigserial PRIMARY KEY`
-  - `acting_account_id text NOT NULL` (`AccountId` of the admin)
-  - `target_account_id text NOT NULL` (`AccountId` of the player acted on)
-  - `action_type text NOT NULL` — closed set: `'suspend'` | `'unsuspend'`
-  - `reason text NOT NULL`
+  - `acting_account_id text NOT NULL REFERENCES legendary.players(ext_id) ON DELETE RESTRICT`
+  - `target_account_id text NOT NULL REFERENCES legendary.players(ext_id) ON DELETE RESTRICT`
+  - `action_type text NOT NULL CHECK (action_type IN ('suspend', 'unsuspend'))`
+  - `reason text NOT NULL CHECK (length(reason) BETWEEN 1 AND 500)`
   - `created_at timestamptz NOT NULL DEFAULT now()`
+- Audit-log index: `CREATE INDEX IF NOT EXISTS admin_actions_target_idx ON legendary.admin_actions (target_account_id, created_at DESC, action_id DESC);`
+- Audit-log query `ORDER BY` (verbatim): `ORDER BY created_at DESC, action_id DESC` — the `action_id` tiebreaker resolves same-millisecond `created_at` collisions deterministically.
 - Closed-union `AdminPlayerActionType = 'suspend' | 'unsuspend'`
 - Closed-union error codes:
   - `'unauthorized'` | `'forbidden'` | `'not_found'` | `'invalid_request'` | `'internal_error'`
+- `AdminProfileResponse` exact shape (response body for `GET /integrity`):
+  ```ts
+  type AdminProfileResponse = {
+    accountId: AccountId;            // text; matches legendary.players.ext_id
+    handle: string;                  // canonical handle
+    isSuspended: boolean;
+    recentAuditLog: AuditLogEntry[]; // capped at LIMIT 100, DESC
+  };
+  type AuditLogEntry = {
+    actionId: string;                // bigserial → string at JSON boundary
+    actingAccountId: AccountId;
+    actionType: AdminPlayerActionType;
+    reason: string;
+    createdAt: string;               // ISO-8601 (timestamptz → ISO string)
+  };
+  ```
+  **Note on §Goal item 1 narrowing:** the admin profile endpoint returns
+  admin-only fields. Public/owner profile composition (display name,
+  badges, replays, etc.) is reached by admins via the existing WP-102 /
+  WP-104 endpoints; composing those into this response is out of scope
+  to keep the locked surface narrow.
+- `AdminActionRequest` exact shape (request body for `POST /suspend` and `POST /unsuspend`):
+  ```ts
+  type AdminActionRequest = { reason: string }; // 1–500 chars after trim
+  ```
+- `AdminActionResponse` exact shape (response body for both mutations):
+  ```ts
+  type AdminActionResponse = { ok: true; actionId: string };
+  ```
+- `requireUnsuspendedAccount` → HTTP error mapping (locked):
+  - `'suspended'` → HTTP 403, body `{ code: 'forbidden', reason: 'Account is suspended.' }`
+  - `'lookup_failed'` → HTTP 500, body `{ code: 'internal_error' }`
+- Self-suspension/self-unsuspension forbidden: route returns 400 with body
+  `{ code: 'invalid_request', reason: 'Admins cannot suspend their own account.' }`
+  when `actingAccountId === targetAccountId`.
+- Reason normalization: `reason.trim()` applied before validation; trimmed
+  length MUST be `≥ 1` AND `≤ 500`. Whitespace-only reason rejected.
+- `GET /integrity` audit-log tail: `LIMIT 100` (read-mostly bound; full-history
+  endpoint deferred to later moderation WP).
 - Migration filename: `data/migrations/015_add_player_suspension_and_admin_actions.sql`
 - Decision IDs reserved: D-10701, D-10702, D-10703 (added on execution close)
 
@@ -409,15 +478,23 @@ runs hot. Decision deferred to execution-time judgement.
 ## Acceptance Criteria
 
 - [ ] All three new endpoints (`GET integrity`, `POST suspend`, `POST unsuspend`) return 200 with the documented response shape on success
+- [ ] `GET /integrity` response body matches `AdminProfileResponse` exactly — 4 fields (`accountId`, `handle`, `isSuspended`, `recentAuditLog`); audit log capped at 100 rows; ordered `created_at DESC, action_id DESC`
+- [ ] `GET /integrity` profile + audit-log composition reads see a consistent snapshot (single `BEGIN…COMMIT` at `REPEATABLE READ` OR single JOINed `SELECT`)
 - [ ] All three endpoints return 401 when `requireAdminSession` returns `unauthorized` (verified by missing-session test)
 - [ ] All three endpoints return 403 when `requireAdminSession` returns `forbidden` (verified by non-admin-session test)
 - [ ] Suspending a non-existent handle returns 404 with `{ code: 'not_found' }`
-- [ ] Suspending without a non-empty `reason` returns 400 with `{ code: 'invalid_request' }`
-- [ ] Every successful suspend/unsuspend writes exactly one row to `legendary.admin_actions`
-- [ ] Re-suspending a suspended account is a no-op on `is_suspended` but DOES write an audit row (idempotent at column, observable at log)
-- [ ] Score-submission endpoint returns 403 with `{ code: 'forbidden' }` when the submitting account is suspended (verified by intake-guard test)
+- [ ] Suspending with an empty / whitespace-only `reason` returns 400 with `{ code: 'invalid_request' }` (verified by both `''` and `'   '` test inputs)
+- [ ] Suspending with `reason.trim().length > 500` returns 400 with `{ code: 'invalid_request' }`
+- [ ] An admin attempting to suspend or unsuspend their own account (matched after handle → `ext_id` resolution) returns 400 with `{ code: 'invalid_request' }` and writes zero audit rows
+- [ ] Every successful suspend/unsuspend writes exactly one row to `legendary.admin_actions` inside the same SQL transaction as the column update; if the audit `INSERT` fails, the column update is rolled back and the route returns 500 (verified by injected-fault test)
+- [ ] The DB-level `CHECK (action_type IN ('suspend', 'unsuspend'))` constraint rejects any other value at insertion time
+- [ ] FK constraints on `acting_account_id` / `target_account_id` reject inserts referencing missing `legendary.players.ext_id` rows
+- [ ] Re-suspending a suspended account is a no-op on `is_suspended` but DOES write an audit row (idempotent at column, observable at log); the column update is the unconditional `UPDATE … SET is_suspended = TRUE`, never a read-modify-write
+- [ ] Score-submission endpoint returns 403 with `{ code: 'forbidden', reason: 'Account is suspended.' }` when the submitting account is suspended; returns 500 with `{ code: 'internal_error' }` when `requireUnsuspendedAccount` returns `'lookup_failed'` (both verified by intake-guard test)
 - [ ] `legendary.admin_actions` contains zero `UPDATE` or `DELETE` statements across all new files (grep verification)
-- [ ] Migration 015 applies cleanly AND is idempotent
+- [ ] `adminProfile.logic.ts` contains exactly one `BEGIN` site per mutation function; route handlers contain zero `BEGIN` / `COMMIT` / `ROLLBACK` literals
+- [ ] Migration 015 applies cleanly AND is idempotent (re-apply succeeds; CHECK + FK constraints survive re-apply)
+- [ ] Score-submission route `git diff --stat` shows exactly one file, ≤ 6 lines changed, and no new imports beyond `requireUnsuspendedAccount`
 - [ ] All test files pass: `pnpm --filter @legendary-arena/server test`
 - [ ] `apps/server/src/auth/adminSession.ts` is byte-identical before and after this WP
 
@@ -440,6 +517,30 @@ Get-ChildItem apps\server\src\profile\admin\ -Recurse -Include *.ts | Select-Str
 # Migration is purely additive
 Select-String -Path "data\migrations\015_add_player_suspension_and_admin_actions.sql" -Pattern "DROP|TRUNCATE"
 # Expected: no matches
+
+# Migration carries CHECK + FK + length constraints
+Select-String -Path "data\migrations\015_add_player_suspension_and_admin_actions.sql" -Pattern "CHECK \(action_type IN|REFERENCES legendary\.players\(ext_id\)|length\(reason\)"
+# Expected: at least 4 matches (1 CHECK, 2 FKs, 1 length)
+
+# Transaction ownership lives in logic, not routes
+Select-String -Path "apps\server\src\profile\admin\adminProfile.logic.ts" -Pattern "\bBEGIN\b|\bCOMMIT\b|\bROLLBACK\b"
+# Expected: at least 6 matches (BEGIN/COMMIT/ROLLBACK across suspend + unsuspend)
+Select-String -Path "apps\server\src\profile\admin\adminProfile.routes.ts" -Pattern "\bBEGIN\b|\bCOMMIT\b|\bROLLBACK\b"
+# Expected: no matches
+
+# Suspension UPDATE is unconditional set, not read-modify-write
+Select-String -Path "apps\server\src\profile\admin\adminProfile.logic.ts" -Pattern "UPDATE legendary\.players SET is_suspended"
+# Expected: at least 1 match; the statement carries `WHERE ext_id =` and no surrounding SELECT-then-UPDATE pattern
+
+# Self-suspension guard exists
+Select-String -Path "apps\server\src\profile\admin\adminProfile.logic.ts","apps\server\src\profile\admin\adminProfile.routes.ts" -Pattern "actingAccountId === targetAccountId|cannot suspend their own"
+# Expected: at least 1 match
+
+# Reason trim + length cap applied
+Select-String -Path "apps\server\src\profile\admin\" -Recurse -Pattern "\.trim\(\)" -Include *.ts
+# Expected: at least 1 match in the route or logic layer
+Select-String -Path "apps\server\src\profile\admin\" -Recurse -Pattern "500" -Include *.ts
+# Expected: at least 1 match (the length cap)
 
 # WP-159 contract unchanged
 git diff --name-only -- apps/server/src/auth/adminSession.ts apps/server/src/auth/adminSession.test.ts
