@@ -23,7 +23,7 @@ describe('YourVictoryPile (WP-129)', () => {
     const wrapper = mount(YourVictoryPile, {
       props: {
         victoryCards: [entry('doom'), entry('mystique')],
-        victoryVP: 14,
+        victoryVp: 14,
       },
     });
     assert.equal(wrapper.find('[data-testid="play-your-victory-count"]').text(), '2 cards');
@@ -32,7 +32,7 @@ describe('YourVictoryPile (WP-129)', () => {
 
   test('renders empty placeholder when victoryCards is empty', () => {
     const wrapper = mount(YourVictoryPile, {
-      props: { victoryCards: [], victoryVP: 0 },
+      props: { victoryCards: [], victoryVp: 0 },
     });
     assert.equal(wrapper.find('[data-testid="play-your-victory-empty"]').exists(), true);
   });
@@ -48,7 +48,7 @@ describe('YourVictoryPile (WP-129)', () => {
           entry('doom-himself'),
           entry('wound'),
         ],
-        victoryVP: 18,
+        victoryVp: 18,
       },
     });
     assert.equal(wrapper.find('[data-testid="play-victory-bystanders"]').text(), '2');

@@ -25,7 +25,17 @@ export default defineComponent({
       required: false,
       default: () => [],
     },
-    victoryVP: {
+    // why: prop name uses single-cap `victoryVp` (NOT `victoryVP`) so the
+    // kebab binding `:victory-vp` from PlayDesktop / PlayMobile camelizes
+    // cleanly to `victoryVp`. Multi-consecutive-capital prop names break
+    // Vue's kebab↔camel round-trip — `victory-vp` camelizes to `victoryVp`,
+    // not `victoryVP`, so a `victoryVP` prop is treated as an unmatched
+    // attr and Vue silently falls back to the default (0). The
+    // engine-layer field `UIPlayerState.victoryVP` keeps the canonical
+    // `totalVP` casing (WP-128 / D-12801) — only the component prop name
+    // changes. Vue style guide explicitly recommends `videoSrc` over
+    // `videoSRC` for this exact reason.
+    victoryVp: {
       type: Number,
       required: false,
       default: 0,
@@ -54,7 +64,7 @@ export default defineComponent({
     <header class="your-victory-pile__header">
       Your Victory Pile —
       <span data-testid="play-your-victory-count">{{ victoryCards.length }} cards</span> /
-      <span data-testid="play-your-victory-vp">{{ victoryVP }} VP</span>
+      <span data-testid="play-your-victory-vp">{{ victoryVp }} VP</span>
     </header>
     <ol
       v-if="victoryCards.length > 0"
