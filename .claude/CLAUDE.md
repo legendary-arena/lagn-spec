@@ -18,6 +18,33 @@ pnpm -r build         # build all packages
 pnpm test             # run all tests
 ```
 
+## Session Start: Catch Up On `main`
+
+When the user asks for substantive work in this repo, start with a
+quick check of what's landed on `origin/main` since the last session
+you worked in. Cheap:
+
+```bash
+git fetch origin main --prune
+git log origin/main --oneline -10
+```
+
+Surface only what matters for the current ask:
+- A WP that completed and changes the answer (e.g., user asks you
+  to draft WP-X but WP-X already shipped)
+- A contract, decision, or invariant the new work would touch
+  (DECISIONS.md, ARCHITECTURE.md, `.claude/rules/**`, REFERENCE docs)
+- Direct edits to the file(s) the user is asking you to modify
+- A stash or open PR that overlaps with the request
+
+If nothing relevant landed, say so in one line and move on. If
+something did, one sentence per item — don't enumerate exhaustively.
+
+This catches the "that already shipped while I was offline" class of
+drift before it costs an unproductive draft cycle. Especially valuable
+here because the WP/EC throughput is high — sessions can land a WP
+every few hours.
+
 ## Architecture Rules (see .claude/rules/ and .claude/skills/ for details)
 
 > Cross-cutting rules (architecture, code-style, work-packets) load every
