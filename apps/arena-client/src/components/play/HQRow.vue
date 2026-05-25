@@ -8,6 +8,7 @@ import type {
 import { useHqRow, type HqCell } from '../../composables/useHqRow';
 import { useCardCostGating, type GatingResult } from '../../composables/useCardCostGating';
 import { useTurnActions } from '../../composables/useTurnActions';
+import CardTile from './CardTile.vue';
 import type { SubmitMove } from './uiMoveName.types';
 
 /**
@@ -32,6 +33,7 @@ import type { SubmitMove } from './uiMoveName.types';
  */
 export default defineComponent({
   name: 'HQRow',
+  components: { CardTile },
   props: {
     hq: {
       type: Object as PropType<UIHQState>,
@@ -117,15 +119,13 @@ export default defineComponent({
                  (stage → resource → structural). Reason text is bound from
                  useTurnActions / useCardCostGating. Cost gate consumes
                  WP-128 economy.availableRecruit + UICardDisplay.cost. -->
-            <span class="hq-slot__name">
-              {{ cell.display !== null ? cell.display.name : cell.cardId }}
-            </span>
-            <span
-              v-if="cell.display !== null && cell.display.cost !== null"
-              class="hq-slot__cost"
-            >
-              ${{ cell.display.cost }} rec
-            </span>
+            <CardTile
+              v-if="cell.display !== null"
+              :display="cell.display"
+              size="md"
+              :interactive="gateForCell(cell).allowed"
+            />
+            <span v-else class="hq-slot__name">{{ cell.cardId }}</span>
           </button>
           <div
             v-else

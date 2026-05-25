@@ -54,9 +54,10 @@ describe('HandRow (WP-129 — extends WP-100)', () => {
         submitMove,
       },
     });
-    const buttons = wrapper.findAll('[data-testid="play-hand-card"]');
-    assert.equal(buttons[0]!.text(), 'Captain America');
-    assert.equal(buttons[1]!.text(), 'Iron Man');
+    const tiles = wrapper.findAll('[data-testid="card-tile"]');
+    assert.equal(tiles.length, 2);
+    assert.equal(tiles[0]!.attributes('title'), 'Captain America');
+    assert.equal(tiles[1]!.attributes('title'), 'Iron Man');
   });
 
   test('falls back to humanized cardId when handDisplay is missing', () => {

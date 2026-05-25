@@ -32,7 +32,10 @@ describe('YourDeckDiscardZone (WP-129)', () => {
       },
     });
     const top = wrapper.find('[data-testid="play-your-discard-top"]');
-    assert.equal(top.text(), 'Top: S.H.I.E.L.D. Officer');
+    assert.equal(top.exists(), true);
+    const tile = top.find('[data-testid="card-tile"]');
+    assert.equal(tile.exists(), true);
+    assert.equal(tile.attributes('title'), 'S.H.I.E.L.D. Officer');
   });
 
   test('renders Empty placeholder when discardTopCard is null', () => {

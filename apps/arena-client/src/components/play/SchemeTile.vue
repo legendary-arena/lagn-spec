@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-import type { UISchemeState } from '@legendary-arena/game-engine';
+import type { UISchemeState, UICardDisplay } from '@legendary-arena/game-engine';
+import CardTile from './CardTile.vue';
 
 /**
  * Scheme tile leaf — renders the scheme id + twist progress bar.
@@ -15,10 +16,21 @@ import type { UISchemeState } from '@legendary-arena/game-engine';
  */
 export default defineComponent({
   name: 'SchemeTile',
+  components: { CardTile },
   props: {
     scheme: {
       type: Object as PropType<UISchemeState>,
       required: true,
+    },
+    /**
+     * Optional display data for the scheme card. When present and has a
+     * truthy imageUrl, CardTile renders the scheme art. When absent or
+     * imageUrl is empty, CardTile renders in fallback text mode.
+     */
+    schemeDisplay: {
+      type: Object as PropType<UICardDisplay | null>,
+      required: false,
+      default: null,
     },
     /**
      * Total twist threshold for the scheme (e.g., 8 in "Capture Five
@@ -30,8 +42,22 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
-    return {};
+  setup(props) {
+    function schemeCardDisplay(): UICardDisplay {
+      if (props.schemeDisplay !== null) {
+        return props.schemeDisplay;
+      }
+      // why: fallback synthesizes a UICardDisplay with empty imageUrl so
+      // CardTile renders in text mode — no broken image placeholders
+      return {
+        extId: props.scheme.id,
+        name: props.scheme.id.replace(/-/g, ' '),
+        imageUrl: '',
+        cost: null,
+      };
+    }
+
+    return { schemeCardDisplay };
   },
 });
 </script>
@@ -42,9 +68,7 @@ export default defineComponent({
     data-testid="play-scheme-tile"
     aria-label="Scheme"
   >
-    <header class="scheme-tile__header">
-      <span class="scheme-tile__id">{{ scheme.id }}</span>
-    </header>
+    <CardTile :display="schemeCardDisplay()" size="lg" :show-cost="false" />
     <p class="scheme-tile__progress" data-testid="play-scheme-twist-progress">
       Twists: {{ scheme.twistCount }}/{{ twistThreshold }}
     </p>

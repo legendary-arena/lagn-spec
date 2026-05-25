@@ -2,6 +2,7 @@
 import { defineComponent, type PropType } from 'vue';
 import type { UICardDisplay } from '@legendary-arena/game-engine';
 import { useTurnActions } from '../../composables/useTurnActions';
+import CardTile from './CardTile.vue';
 import type { SubmitMove } from './uiMoveName.types';
 
 /**
@@ -26,6 +27,7 @@ import type { SubmitMove } from './uiMoveName.types';
  */
 export default defineComponent({
   name: 'HandRow',
+  components: { CardTile },
   props: {
     handCards: {
       type: Array as PropType<readonly string[]>,
@@ -98,7 +100,17 @@ export default defineComponent({
       return humanizeCardId(cardId);
     }
 
-    return { onPlay, buttonReason, buttonDisabled, displayName };
+    function displayForIndex(index: number): UICardDisplay | null {
+      if (props.handDisplay !== undefined && index < props.handDisplay.length) {
+        const entry = props.handDisplay[index]!;
+        if (entry.name !== '<unknown>') {
+          return entry;
+        }
+      }
+      return null;
+    }
+
+    return { onPlay, buttonReason, buttonDisabled, displayName, displayForIndex };
   },
 });
 </script>
@@ -135,7 +147,13 @@ export default defineComponent({
                (stage → resource → structural). The reason text is bound
                from useTurnActions().canPlayCard() rather than composed
                ad-hoc. -->
-          {{ displayName(cardId, index) }}
+          <CardTile
+            v-if="displayForIndex(index) !== null"
+            :display="displayForIndex(index)!"
+            size="md"
+            :interactive="!buttonDisabled()"
+          />
+          <span v-else>{{ displayName(cardId, index) }}</span>
         </button>
       </li>
     </ul>

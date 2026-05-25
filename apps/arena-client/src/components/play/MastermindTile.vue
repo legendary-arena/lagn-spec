@@ -6,6 +6,7 @@ import type {
 } from '@legendary-arena/game-engine';
 import { useTurnActions } from '../../composables/useTurnActions';
 import { useCardCostGating, type GatingResult } from '../../composables/useCardCostGating';
+import CardTile from './CardTile.vue';
 import type { SubmitMove } from './uiMoveName.types';
 
 /**
@@ -35,6 +36,7 @@ import type { SubmitMove } from './uiMoveName.types';
  */
 export default defineComponent({
   name: 'MastermindTile',
+  components: { CardTile },
   props: {
     mastermind: {
       type: Object as PropType<UIMastermindState>,
@@ -106,14 +108,11 @@ export default defineComponent({
            (stage → resource → structural). Reason text is bound from
            useTurnActions / useCardCostGating + the structural "all
            tactics defeated" override. -->
-      <span class="mastermind-id">{{ mastermind.display.name }}</span>
-      <span
-        v-if="mastermind.display.cost !== null"
-        class="mastermind-cost"
-        data-testid="play-mastermind-cost"
-      >
-        ${{ mastermind.display.cost }} atk
-      </span>
+      <CardTile
+        :display="mastermind.display"
+        size="lg"
+        :interactive="gateForFight().allowed"
+      />
       <span class="mastermind-status" data-testid="play-mastermind-tactics-remaining">
         Tactics remaining: {{ mastermind.tacticsRemaining }}
       </span>

@@ -126,10 +126,14 @@ describe('MastermindTile (WP-129 — extends WP-100)', () => {
         submitMove,
       },
     });
-    const text = wrapper.find('[data-testid="play-mastermind-button"]').text();
-    assert.match(text, /Doctor Doom/);
-    assert.match(text, /\$6 atk/);
-    assert.match(text, /Tactics remaining: 4/);
+    const tile = wrapper.find('[data-testid="card-tile"]');
+    assert.equal(tile.exists(), true);
+    assert.equal(tile.attributes('title'), 'Doctor Doom');
+    const costBadge = wrapper.find('[data-testid="card-tile-cost-badge"]');
+    assert.equal(costBadge.exists(), true);
+    assert.equal(costBadge.text(), '6');
+    const tactics = wrapper.find('[data-testid="play-mastermind-tactics-remaining"]');
+    assert.match(tactics.text(), /Tactics remaining: 4/);
   });
 
   test('renders empty placeholder when attachedBystanders is empty (SAFE-SKIP-WP128)', () => {

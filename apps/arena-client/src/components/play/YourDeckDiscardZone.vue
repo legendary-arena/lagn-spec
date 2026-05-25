@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import type { UIDisplayEntry } from '@legendary-arena/game-engine';
+import CardTile from './CardTile.vue';
 
 /**
  * Your deck + discard zone — renders the active player's deck count
@@ -16,6 +17,7 @@ import type { UIDisplayEntry } from '@legendary-arena/game-engine';
  */
 export default defineComponent({
   name: 'YourDeckDiscardZone',
+  components: { CardTile },
   props: {
     deckCount: {
       type: Number,
@@ -58,13 +60,14 @@ export default defineComponent({
     <div class="your-deck-discard__discard" data-testid="play-your-discard">
       <header>Your Discard</header>
       <p class="your-deck-discard__count">[{{ discardCount }} — face-up]</p>
-      <p
+      <div
         v-if="discardTopCard !== null && discardTopCard !== undefined"
         class="your-deck-discard__top"
         data-testid="play-your-discard-top"
       >
-        Top: {{ discardTopCard.display.name }}
-      </p>
+        <CardTile :display="discardTopCard.display" size="sm" :show-cost="false" />
+        <span class="your-deck-discard__top-label">{{ discardTopCard.display.name }}</span>
+      </div>
       <p
         v-else
         class="your-deck-discard__empty"

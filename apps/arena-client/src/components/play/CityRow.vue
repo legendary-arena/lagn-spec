@@ -8,6 +8,7 @@ import type {
 import { useCityRow, type CityCell } from '../../composables/useCityRow';
 import { useCardCostGating, type GatingResult } from '../../composables/useCardCostGating';
 import { useTurnActions } from '../../composables/useTurnActions';
+import CardTile from './CardTile.vue';
 import EscapedPile from './EscapedPile.vue';
 import type { SubmitMove } from './uiMoveName.types';
 
@@ -35,7 +36,7 @@ import type { SubmitMove } from './uiMoveName.types';
  */
 export default defineComponent({
   name: 'CityRow',
-  components: { EscapedPile },
+  components: { CardTile, EscapedPile },
   props: {
     city: {
       type: Object as PropType<UICityState>,
@@ -122,10 +123,11 @@ export default defineComponent({
                  from useTurnActions / useCardCostGating, not composed
                  ad-hoc. Cost gate consumes WP-128 economy.availableAttack
                  + UICityCard.display.cost. -->
-            <span class="city-space__name">{{ cell.card.display.name }}</span>
-            <span v-if="cell.card.display.cost !== null" class="city-space__cost">
-              ${{ cell.card.display.cost }} atk
-            </span>
+            <CardTile
+              :display="cell.card.display"
+              size="md"
+              :interactive="gateForCell(cell).allowed"
+            />
           </button>
           <div
             v-else
