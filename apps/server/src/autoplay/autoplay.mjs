@@ -109,22 +109,64 @@ function errorEnvelope(controller, message) {
 }
 
 /**
- * Projects a captured snapshot into a spectator-filtered UIState for a rewind
+ * Projects a captured snapshot into an audience-filtered UIState for a rewind
  * response.
  *
- * // why: D-16303 — rewind frames must be audience-filtered (spectator) or they
- * leak hidden information (hands, decks) that the live spectator view hides.
+ * // why: D-17701 — scopes D-16303; audience defaults to spectator for back-compat
  *
  * @param {{ G: unknown, ctx: { phase: string, turn: number, currentPlayer: string } }} snapshot
- * @returns {object} The spectator-filtered UIState.
+ * @param {{ kind: 'player', playerId: string } | { kind: 'spectator' }} [audience={ kind: 'spectator' }]
+ * @returns {object} The audience-filtered UIState.
  */
-function rewindUIState(snapshot) {
+export function rewindUIState(snapshot, audience = { kind: 'spectator' }) {
   const fullUIState = buildUIState(snapshot.G, {
     phase: snapshot.ctx.phase,
     turn: snapshot.ctx.turn,
     currentPlayer: snapshot.ctx.currentPlayer,
   });
-  return filterUIStateForAudience(fullUIState, { kind: 'spectator' });
+  return filterUIStateForAudience(fullUIState, audience);
+}
+
+/**
+ * Derives the requester's viewing audience from optional identity headers.
+ *
+ * When the caller supplies valid X-Player-ID and X-Credentials headers whose
+ * credentials pass boardgame.io's match-level auth check, the returned
+ * audience is `{ kind: 'player', playerId }` — giving that viewer their own
+ * hand in rewind frames. Every other case (missing headers, invalid
+ * credentials, missing metadata) falls back to the spectator audience that
+ * D-16303 originally mandated.
+ *
+ * @param {object} koaContext - The koa request context.
+ * @param {object} db - boardgame.io storage backend.
+ * @param {object} auth - boardgame.io Auth instance.
+ * @param {string} matchId - The match id to validate credentials against.
+ * @returns {Promise<{ kind: 'player', playerId: string } | { kind: 'spectator' }>}
+ */
+export async function resolveRequesterAudience(koaContext, db, auth, matchId) {
+  const playerID = koaContext.get('X-Player-ID');
+  const credentials = koaContext.get('X-Credentials');
+
+  if (playerID && credentials) {
+    try {
+      const { metadata } = await db.fetch(matchId, { metadata: true });
+      if (metadata) {
+        const isAuthentic = auth.authenticateCredentials({
+          playerID,
+          credentials,
+          metadata,
+        });
+        if (isAuthentic) {
+          return { kind: 'player', playerId: playerID };
+        }
+      }
+    } catch {
+      // why: metadata fetch failure is non-fatal — falls through to spectator default
+    }
+  }
+
+  // why: D-17701 — safe-by-default; absent or invalid identity yields the same spectator view D-16303 mandated
+  return { kind: 'spectator' };
 }
 
 /**
@@ -302,13 +344,15 @@ export function registerAutoplayRoutes(router, context) {
   });
 
   router.post('/api/match/autoplay/:matchId/step-forward', async (koaContext) => {
+    const matchId = koaContext.params.matchId;
+    const audience = await resolveRequesterAudience(koaContext, db, auth, matchId); // why: D-17701
     await handlePlaybackRequest(koaContext, (controller) => {
       const result = controller.stepForward();
       // why: D-16304/D-16302 — uiState is returned only on the 'cursor' branch;
       // the 'live-move' branch released the gate and the client awaits the live
       // broadcast rather than a rewind overlay.
       if (result.type === 'cursor') {
-        koaContext.body = buildResponse(controller, { uiState: rewindUIState(result.snapshot) });
+        koaContext.body = buildResponse(controller, { uiState: rewindUIState(result.snapshot, audience) });
       } else {
         koaContext.body = buildResponse(controller);
       }
@@ -316,6 +360,8 @@ export function registerAutoplayRoutes(router, context) {
   });
 
   router.post('/api/match/autoplay/:matchId/step-back', async (koaContext) => {
+    const matchId = koaContext.params.matchId;
+    const audience = await resolveRequesterAudience(koaContext, db, auth, matchId); // why: D-17701
     await handlePlaybackRequest(koaContext, (controller) => {
       const snapshot = controller.stepBack();
       if (snapshot === null) {
@@ -323,11 +369,13 @@ export function registerAutoplayRoutes(router, context) {
         koaContext.body = errorEnvelope(controller, 'Cannot step back: already at the first captured state.');
         return;
       }
-      koaContext.body = buildResponse(controller, { uiState: rewindUIState(snapshot) });
+      koaContext.body = buildResponse(controller, { uiState: rewindUIState(snapshot, audience) });
     });
   });
 
   router.post('/api/match/autoplay/:matchId/restart', async (koaContext) => {
+    const matchId = koaContext.params.matchId;
+    const audience = await resolveRequesterAudience(koaContext, db, auth, matchId); // why: D-17701
     await handlePlaybackRequest(koaContext, (controller) => {
       const snapshot = controller.restart();
       if (snapshot === null) {
@@ -335,7 +383,7 @@ export function registerAutoplayRoutes(router, context) {
         koaContext.body = errorEnvelope(controller, 'Cannot restart: no playback history has been captured yet.');
         return;
       }
-      koaContext.body = buildResponse(controller, { uiState: rewindUIState(snapshot) });
+      koaContext.body = buildResponse(controller, { uiState: rewindUIState(snapshot, audience) });
     });
   });
 
