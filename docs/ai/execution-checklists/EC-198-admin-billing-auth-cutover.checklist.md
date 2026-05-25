@@ -22,8 +22,8 @@
 - `Cache-Control: no-store` first statement (D-11504)
 - 200 body: `{ entries: AdminBillingEntry[] }`
 - 500 body: `{ error: 'internal_error' }`
-- Auth failure body: `{ code: 'unauthorized' | 'forbidden', reason: string }`
-- `lookup_failed` → 500 `{ code: 'internal_error' }` (not surfaced distinctly)
+- Auth failure body: `{ code: 'unauthorized' | 'forbidden', reason: string }` (closed-union per D-15901)
+- `lookup_failed` → 500 `{ code: 'internal_error' }` — distinct from operational-fault 500 `{ error: 'internal_error' }`; both shapes coexist
 - Status-code domain: `{200, 401, 403, 500}`
 - Deps interface: `{ requireAdminSession, verifier?, accountResolver? }`
 - server.mjs three-arg call: byte-identical deps bundle to `registerAdminProfileRoutes`
@@ -38,8 +38,11 @@
 4. `sessionToken.{logic,types}.ts` are NOT modified
 5. `auth/hanko/**` is NOT modified
 6. No new npm dependencies
-7. `adminGate.ts` + `adminGate.test.ts` deleted — grep `requireAdminSecret` = 0 hits post-commit
+7. `adminGate.ts` + `adminGate.test.ts` deleted — grep `requireAdminSecret` = 0 hits post-commit; `pnpm -r build` exits 0 with no missing-import errors referencing `adminGate.*`
 8. No `process.env.ADMIN_SECRET` in any test file post-rewrite
+9. Handler performs exhaustive closed-union dispatch on `result.code` — no `default` branch, no `if (!result.ok)` short-circuit
+10. server.mjs deps object for `registerAdminBillingRoutes` is structurally identical to the one for `registerAdminProfileRoutes` (field names, ordering, conditional expression)
+11. Test assertions for 401 and 403 responses must verify both `code` AND `reason` match the fixture value
 
 ---
 
@@ -77,8 +80,12 @@
 
 ## Common Failure Smells
 
-- Forgetting to widen `KoaAdminBillingContext.req` from `IncomingMessage` to `SessionTokenRequest`
+- Forgetting to widen `KoaAdminBillingContext.req` from `IncomingMessage` to `SessionTokenRequest` in the local interface
 - Forgetting to pass `database` into the `requireAdminSession` options (it needs the pool for the `is_admin` check)
 - Leaving a stale `import { requireAdminSecret }` that still compiles because the file exists
 - Writing `{ code: result.code }` without `reason: result.reason` on the failure path
+- Collapsing the two 500 shapes (`{ error: 'internal_error' }` operational vs `{ code: 'internal_error' }` lookup\_failed) into one
+- Using `if (!result.ok)` instead of exhaustive closed-union dispatch on `result.code`
 - Partial taxonomy edit (changing the row but leaving the taxonomy table at 5 values)
+- Diverging the deps object shape between `registerAdminBillingRoutes` and `registerAdminProfileRoutes` in server.mjs
+- Test assertions checking only `code` without also checking `reason` matches the fixture

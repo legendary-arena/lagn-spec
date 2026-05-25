@@ -72,9 +72,10 @@ Rewrite `registerAdminBillingRoutes` in `adminBilling.routes.ts`:
    - `'unauthorized'` → 401 `{ code: 'unauthorized', reason: result.reason }`
    - `'forbidden'` → 403 `{ code: 'forbidden', reason: result.reason }`
    - `'lookup_failed'` → 500 `{ code: 'internal_error' }`
-4. **Error body change:** failure responses gain a `reason` field (the old `{ code: 'unauthorized' }` becomes `{ code: <union>, reason: <string> }`). The 500 operational-fault path retains `{ error: 'internal_error' }` (no reason — deliberate; mirrors WP-107).
+4. **Error body change:** failure responses gain a `reason` field (the old `{ code: 'unauthorized' }` becomes `{ code: 'unauthorized' | 'forbidden', reason: string }`). The `lookup_failed` code maps to 500 `{ code: 'internal_error' }` — this is distinct from operational faults (catch block), which return `{ error: 'internal_error' }`. Implementers MUST NOT collapse these two 500 shapes; both must exist as separate code paths.
+5. **Exhaustive dispatch REQUIRED:** the handler must perform an explicit closed-union dispatch on `result.code`; no default branch, no `if (!result.ok)` short-circuit. All known variants (`ok: true`, `'unauthorized'`, `'forbidden'`, `'lookup_failed'`) must be handled explicitly to prevent silent drift if the union expands.
 5. **`Cache-Control: no-store`** remains the first statement (WP-115 D-11504 lock unchanged).
-6. **KoaContext type:** `req` type widens from `IncomingMessage` to `SessionTokenRequest` (the `requireAdminSession` signature requires it).
+6. **KoaContext type:** the type of `koaContext.req` **at the route handler boundary** must be widened from `IncomingMessage` to `SessionTokenRequest` (the `requireAdminSession` signature requires it). This change must be reflected in the local `KoaAdminBillingContext` interface within `adminBilling.routes.ts`.
 
 ### §B — Test rewrite
 
@@ -86,8 +87,8 @@ Rewrite `adminBilling.routes.test.ts`:
 4. Define `okSession`, `unauthorizedSession`, `forbiddenSession` fixtures — same three-fixture pattern.
 5. Test cases:
    - 200 happy path with `okSession`
-   - 401 with `unauthorizedSession`
-   - 403 with `forbiddenSession` (**new test** — the old route had no 403 path)
+   - 401 with `unauthorizedSession` — assert both `code` and `reason` match the fixture value
+   - 403 with `forbiddenSession` (**new test** — the old route had no 403 path) — assert both `code` and `reason` match the fixture value
    - Cache-Control no-store on 200 and 401
    - 500 on database fault with `okSession`
    - Cache-Control no-store on 500
@@ -106,7 +107,7 @@ In `apps/server/src/server.mjs`:
    });
    ```
 2. Update the `// why:` comment from the D-11001 shared-secret rationale to a WP-176 / D-17601 cutover rationale.
-3. Remove the now-dead `import { registerAdminBillingRoutes } from './billing/adminBilling.routes.js'` — no, that import stays (the function is still called). Only the call-site args change.
+3. **Structural identity constraint:** the deps object passed to `registerAdminBillingRoutes` must be structurally identical to the one passed to `registerAdminProfileRoutes` within the same file — same field names, same ordering, same conditional expression for `accountResolver`. No divergence is permitted.
 
 ### §D — File deletion
 
@@ -114,13 +115,13 @@ Delete:
 - `apps/server/src/auth/adminGate.ts`
 - `apps/server/src/auth/adminGate.test.ts`
 
-Post-deletion grep verification: `requireAdminSecret` returns 0 hits under `apps/server/src/`.
+Post-deletion grep verification: `requireAdminSecret` returns 0 hits under `apps/server/src/`. Post-deletion, the project must compile (`pnpm -r build` exits 0) without any missing-import errors referencing `adminGate.*`.
 
 ### §E — API catalog update (per §21 + D-11804)
 
 In `docs/ai/REFERENCE/api-endpoints.md`:
 
-1. **Replace the `/api/admin/billing/history` row** (whole-row replacement per D-11804). Auth changes from `admin-secret` to `admin-session-required`. Status-code domain expands from `{200, 401, 500}` to `{200, 401, 403, 500}`. Error body changes from `{ code: 'unauthorized' }` to `{ code: <closed-union>, reason: string }`. Notes rewrite the gate description.
+1. **Replace the `/api/admin/billing/history` row** (whole-row replacement per D-11804). Auth changes from `admin-secret` to `admin-session-required`. Status-code domain expands from `{200, 401, 500}` to `{200, 401, 403, 500}`. Error body changes from `{ code: 'unauthorized' }` to `{ code: 'unauthorized' | 'forbidden', reason: string }` (closed-union per D-15901). Notes rewrite the gate description.
 2. **Auth Taxonomy reduction:** remove the `admin-secret` row from the Auth Taxonomy table. Update the header from "five values" to "four values". Update the `extended by D-11001 +` reference to cite D-17602 for the removal.
 3. **Update the `admin-session-required` taxonomy row:** remove the trailing sentence "No endpoint uses this value today." (WP-107 already uses it; WP-176 adds a second caller).
 4. **Changelog entry** at the bottom of `api-endpoints.md`.
@@ -194,8 +195,8 @@ Three entries landed at execution close:
 - `Cache-Control: no-store` as the first statement of the handler body (D-11504 lock)
 - 200 response body: `{ entries: AdminBillingEntry[] }` (unchanged)
 - 500 operational-fault body: `{ error: 'internal_error' }` (unchanged)
-- Auth failure body shape: `{ code: <closed-union>, reason: string }` where code ∈ `{ 'unauthorized', 'forbidden' }`
-- `lookup_failed` maps to 500 `{ code: 'internal_error' }` (not surfaced as a distinct status; mirrors WP-107)
+- Auth failure body shape: `{ code: 'unauthorized' | 'forbidden', reason: string }` (closed-union per D-15901)
+- `lookup_failed` maps to 500 `{ code: 'internal_error' }` — distinct from operational-fault 500 `{ error: 'internal_error' }`; both shapes must coexist as separate code paths
 - Status-code domain: `{200, 401, 403, 500}`
 - `AdminBillingRouteDependencies` interface: three fields (`requireAdminSession`, `verifier?`, `accountResolver?`)
 
@@ -214,6 +215,7 @@ Three entries landed at execution close:
 9. `server.mjs` calls `registerAdminBillingRoutes(server.router, pool, { requireAdminSession, verifier, accountResolver: ... })` — three-arg form.
 10. `api-endpoints.md` Auth Taxonomy table has exactly 4 rows (guest, handle-required, authenticated-session-required, admin-session-required).
 11. Locked contract files byte-identical pre/post execution: `adminSession.ts`, `adminBilling.logic.ts`, `adminBilling.types.ts`, `billing.types.ts`, `sessionToken.logic.ts`, `sessionToken.types.ts`, `auth/hanko/**`.
+12. The handler performs exhaustive result dispatch (no `default` branch, no `if (!result.ok)` short-circuit; all union variants `ok: true` / `'unauthorized'` / `'forbidden'` / `'lookup_failed'` handled explicitly).
 
 ---
 
@@ -241,7 +243,11 @@ grep -r 'X-Admin-Secret' apps/server/src/
 grep -r 'admin-secret' docs/ai/REFERENCE/api-endpoints.md
 # Expected: 0 hits
 
-# 4. Locked-file invariant
+# 4. Route wiring check
+grep -n 'registerAdminBillingRoutes(server.router, pool, {' apps/server/src/server.mjs
+# Expected: 1 hit (three-arg form)
+
+# 5. Locked-file invariant
 git diff --name-only apps/server/src/auth/adminSession.ts apps/server/src/billing/adminBilling.logic.ts apps/server/src/billing/adminBilling.types.ts apps/server/src/billing/billing.types.ts apps/server/src/auth/sessionToken.logic.ts apps/server/src/auth/sessionToken.types.ts
 # Expected: empty (no changes to locked files)
 
@@ -342,4 +348,7 @@ cutover WP modifies `server.mjs` (the `registerAdminBillingRoutes`
 wiring call). The execution session is a natural home to pop the stash
 and include the hardening in the same EC-scoped commit if convenient.
 This is OPTIONAL and must not block the cutover if the stash has
-conflicts.
+conflicts. The stash change MUST NOT modify any auth, routing, or
+billing-related code paths defined in WP-176. If conflicts arise
+with any WP-176 scope file, the stash must be abandoned without
+blocking the WP.
