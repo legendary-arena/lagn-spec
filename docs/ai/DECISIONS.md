@@ -18899,8 +18899,8 @@ shape).
 
 **Packet:** WP-177.
 
-**Introduced:** WP-177 (drafted 2026-05-24; not yet landed)
-**Status:** Drafted 2026-05-24; not yet landed.
+**Introduced:** WP-177 (drafted 2026-05-24; landed 2026-05-25)
+**Status:** Active
 
 ---
 

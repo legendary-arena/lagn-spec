@@ -7,6 +7,18 @@
 
 ## Current State
 
+### WP-177 / EC-199 Executed — Autoplay Rewind Requester Audience (2026-05-25)
+
+**Autoplay rewind frames are now audience-filtered by the requester's identity.** A viewer who launched an autoplay match and provides valid `X-Player-ID` / `X-Credentials` headers on rewind requests (step-back, restart, step-forward cursor branch) sees the historical board **plus their own hand** — matching the live broadcast view. A genuine spectator (no headers or invalid credentials) continues to see the spectator-redacted view, preserving D-16303's hidden-information guarantee.
+
+- `resolveRequesterAudience(koaContext, db, auth, matchId)` derives the viewing audience from optional identity headers; every failure path (missing headers, invalid credentials, metadata fetch error) falls back to `{ kind: 'spectator' }` (safe-by-default, D-17701).
+- `rewindUIState(snapshot, audience)` is parameterized — audience defaults to `{ kind: 'spectator' }` for back-compat with any caller that omits identity.
+- Three rewind call sites (step-forward cursor, step-back, restart) resolve the audience before invoking the playback controller; pause/resume/go-to-end/status endpoints are untouched (no `uiState`, no audience concern).
+- `playbackController.mjs` byte-identical pre/post; status endpoint byte-identical; no engine changes.
+- API catalog updated per §21 + D-11804 (3 rows: step-forward, step-back, restart).
+- D-17701 landed (Active); D-16303 scoped by D-17701.
+- Server test baseline **385/0/66 → 393/0/66** (+8 new tests in `rewindAudience.test.ts`).
+
 ### WP-107 / EC-195 Executed — Profile Integrity / Anti-Cheat Surface (2026-05-24)
 
 **Admins can now read an account's integrity view and suspend / unsuspend accounts via three new HTTP endpoints under `/api/admin/players/:handle/`, with every mutation captured as one row in a new append-only audit table.** The surface ships:
