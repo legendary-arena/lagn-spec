@@ -17638,7 +17638,7 @@ Authentication).
 **Packet:** WP-163.
 
 **Introduced:** WP-163 (drafted 2026-05-19; executed 2026-05-19)
-**Status:** Active
+**Status:** Active (scoped by D-17701)
 
 ---
 
@@ -18878,6 +18878,29 @@ shape).
 **Rationale:** Dead code is a liability. The file served its purpose as a bridge between WP-110 (2026-05-15) and WP-159 (2026-05-17). Preserving it "just in case" contradicts the project's no-dormant-code principle. Git history preserves the implementation for reference.
 
 **Status:** Active
+
+---
+
+### D-17701 — Rewind audience uses requester identity when available (WP-177)
+
+**Date:** 2026-05-24
+
+**Decision:** The `rewindUIState` function in `apps/server/src/autoplay/autoplay.mjs` is parameterized with an `audience` argument (defaulting to `{ kind: 'spectator' }`). The three rewind endpoints (`step-back`, `restart`, `step-forward` cursor branch) derive the audience from optional `X-Player-ID` / `X-Credentials` request headers, validated against boardgame.io match metadata via `auth.authenticateCredentials`. When both headers are present and credentials are valid, the audience is `{ kind: 'player', playerId }` — the requester sees their own hand in the rewound frame. When headers are missing, empty, or invalid, the audience falls back to `{ kind: 'spectator' }` — identical to the pre-WP-177 behavior.
+
+**Rationale.** D-16303 correctly mandated audience-filtering on rewind to prevent hidden-information leaks. However, the hardcoded `{ kind: 'spectator' }` audience caused a visible inconsistency for a player who launched an autoplay match: live frames showed their hand, rewind frames did not. The engine's `filterUIStateForAudience` already supports `{ kind: 'player', playerId }` — the only change is which audience the server passes. The spectator fallback preserves D-16303's safety guarantee for unauthenticated or spectating viewers.
+
+**Scopes:** D-16303 (audience is no longer hardcoded to spectator; D-16303's REST-only mandate and audience-filter-is-mandatory mandate remain active).
+
+**Rejected alternatives:**
+- **Always return player-0 audience.** Rejected — breaks the hidden-information guarantee for genuine spectators.
+- **Require headers (reject if missing).** Rejected — breaks the current bodyless-POST contract; existing clients would get errors until updated.
+- **Use request body instead of headers.** Rejected — would require `koaBody()` middleware on the three endpoints; headers are the smallest contract delta.
+- **Use query-string params.** Rejected — credentials in URL query strings leak into server logs and browser history.
+
+**Packet:** WP-177.
+
+**Introduced:** WP-177 (drafted 2026-05-24; not yet landed)
+**Status:** Drafted 2026-05-24; not yet landed.
 
 ---
 
