@@ -29,8 +29,13 @@ describe('join-match', () => {
   });
 
   it('missing --name flag exits 1 with a clear error message', () => {
+    // why: parseJoinMatchArguments checks --match -> --player -> --name in
+    // order and throws on the first missing arg. To reach the --name check
+    // this test must supply both --match AND --player; otherwise the
+    // function errors on the missing --player and the --name assertion
+    // below never sees a --name-mentioning message.
     assert.throws(
-      () => parseJoinMatchArguments(['--match', 'abc123']),
+      () => parseJoinMatchArguments(['--match', 'abc123', '--player', '0']),
       (error: Error) => {
         assert.ok(
           error.message.includes('--name'),
