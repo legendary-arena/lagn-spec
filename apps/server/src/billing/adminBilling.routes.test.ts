@@ -1,35 +1,48 @@
 /**
  * Tests for the `GET /api/admin/billing/history` route handler
- * registered by `registerAdminBillingRoutes` (WP-110 / EC-163).
+ * registered by `registerAdminBillingRoutes` (WP-176 / EC-198).
  * Logic-pure suite: fakes are injected at construction time; no live
  * database, no network.
  *
- * Authority: WP-110 §J; EC-163 §Files to Produce.
+ * Authority: WP-176 §B; EC-198 §Locked Values + §Guardrails.
  */
 
-import { describe, test, beforeEach, afterEach } from 'node:test';
+import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-
-import type { IncomingMessage } from 'node:http';
 
 import { registerAdminBillingRoutes } from './adminBilling.routes.js';
 import type { DatabaseClient } from './billing.types.js';
+import type {
+  AdminSessionResult,
+} from '../auth/adminSession.js';
+import type {
+  AccountId,
+  RequireAuthenticatedSessionOptions,
+  SessionTokenRequest,
+} from '../auth/sessionToken.types.js';
 
-const TEST_SECRET = 'test-admin-secret-value-32chars!!';
-
+/**
+ * Minimal fake Koa context for testing the billing route handler.
+ */
 interface FakeAdminContext {
-  readonly req: IncomingMessage;
+  readonly req: SessionTokenRequest;
   status: number;
   body: unknown;
   set(field: string, value: string): void;
   headersSet: Record<string, string>;
 }
 
+/**
+ * Captured GET route registration from the fake router.
+ */
 interface RegisteredGetRoute {
   path: string;
   handler: (ctx: FakeAdminContext) => Promise<void> | void;
 }
 
+/**
+ * Fake Koa router that captures route registrations.
+ */
 class FakeRouter {
   readonly getRoutes: RegisteredGetRoute[] = [];
   get(
@@ -46,12 +59,13 @@ class FakeRouter {
   }
 }
 
-function makeContext(
-  headers?: Record<string, string | string[] | undefined>,
-): FakeAdminContext {
+/**
+ * Build a fake Koa context with optional request headers.
+ */
+function makeContext(): FakeAdminContext {
   const headersSet: Record<string, string> = {};
   return {
-    req: { headers: headers ?? {} } as unknown as IncomingMessage,
+    req: { headers: {} } as unknown as SessionTokenRequest,
     status: 0,
     body: undefined,
     set(field, value) {
@@ -61,6 +75,9 @@ function makeContext(
   };
 }
 
+/**
+ * Build a fake DatabaseClient that returns fixed rows or throws.
+ */
 function makeFakeDatabase(args: {
   rows?: ReadonlyArray<Record<string, unknown>>;
   throwOnQuery?: boolean;
@@ -77,23 +94,36 @@ function makeFakeDatabase(args: {
   } as unknown as DatabaseClient;
 }
 
-describe('GET /api/admin/billing/history', () => {
-  let originalEnvValue: string | undefined;
+/**
+ * Factory for a fake `requireAdminSession` that always returns a
+ * fixed result. Byte-identical to `adminProfile.routes.test.ts`.
+ */
+function makeRequireAdminSession(
+  result: AdminSessionResult,
+): (
+  request: SessionTokenRequest,
+  options: RequireAuthenticatedSessionOptions,
+) => Promise<AdminSessionResult> {
+  return async () => result;
+}
 
-  beforeEach(() => {
-    originalEnvValue = process.env.ADMIN_SECRET;
-    process.env.ADMIN_SECRET = TEST_SECRET;
-  });
+const okSession: AdminSessionResult = {
+  ok: true,
+  accountId: 'aaaaaaaa-1111-4444-9999-aaaaaaaaaaaa' as AccountId,
+};
+const unauthorizedSession: AdminSessionResult = {
+  ok: false,
+  code: 'unauthorized',
+  reason: 'Admin session validation failed: upstream session check rejected the request.',
+};
+const forbiddenSession: AdminSessionResult = {
+  ok: false,
+  code: 'forbidden',
+  reason: 'Authenticated account does not have admin privileges.',
+};
 
-  afterEach(() => {
-    if (originalEnvValue === undefined) {
-      delete process.env.ADMIN_SECRET;
-    } else {
-      process.env.ADMIN_SECRET = originalEnvValue;
-    }
-  });
-
-  test('returns 200 with entries for valid admin secret', async () => {
+describe('GET /api/admin/billing/history (WP-176)', () => {
+  test('returns 200 with entries for valid admin session', async () => {
     const router = new FakeRouter();
     const database = makeFakeDatabase({
       rows: [
@@ -107,9 +137,11 @@ describe('GET /api/admin/billing/history', () => {
         },
       ],
     });
-    registerAdminBillingRoutes(router as never, database);
+    registerAdminBillingRoutes(router as never, database, {
+      requireAdminSession: makeRequireAdminSession(okSession),
+    });
     const route = router.getRouteFor('/api/admin/billing/history');
-    const ctx = makeContext({ 'x-admin-secret': TEST_SECRET });
+    const ctx = makeContext();
     await route.handler(ctx);
 
     assert.equal(ctx.status, 200);
@@ -117,36 +149,48 @@ describe('GET /api/admin/billing/history', () => {
     assert.equal(responseBody.entries.length, 1);
   });
 
-  test('returns 401 when X-Admin-Secret header is missing', async () => {
+  test('returns 401 when requireAdminSession returns unauthorized', async () => {
     const router = new FakeRouter();
     const database = makeFakeDatabase({ rows: [] });
-    registerAdminBillingRoutes(router as never, database);
+    registerAdminBillingRoutes(router as never, database, {
+      requireAdminSession: makeRequireAdminSession(unauthorizedSession),
+    });
     const route = router.getRouteFor('/api/admin/billing/history');
     const ctx = makeContext();
     await route.handler(ctx);
 
     assert.equal(ctx.status, 401);
-    assert.deepStrictEqual(ctx.body, { code: 'unauthorized' });
+    assert.deepStrictEqual(ctx.body, {
+      code: 'unauthorized',
+      reason: 'Admin session validation failed: upstream session check rejected the request.',
+    });
   });
 
-  test('returns 401 when X-Admin-Secret header is wrong', async () => {
+  test('returns 403 when requireAdminSession returns forbidden', async () => {
     const router = new FakeRouter();
     const database = makeFakeDatabase({ rows: [] });
-    registerAdminBillingRoutes(router as never, database);
+    registerAdminBillingRoutes(router as never, database, {
+      requireAdminSession: makeRequireAdminSession(forbiddenSession),
+    });
     const route = router.getRouteFor('/api/admin/billing/history');
-    const ctx = makeContext({ 'x-admin-secret': 'wrong-value' });
+    const ctx = makeContext();
     await route.handler(ctx);
 
-    assert.equal(ctx.status, 401);
-    assert.deepStrictEqual(ctx.body, { code: 'unauthorized' });
+    assert.equal(ctx.status, 403);
+    assert.deepStrictEqual(ctx.body, {
+      code: 'forbidden',
+      reason: 'Authenticated account does not have admin privileges.',
+    });
   });
 
-  test('Cache-Control no-store header present on success response', async () => {
+  test('Cache-Control no-store header present on 200 response', async () => {
     const router = new FakeRouter();
     const database = makeFakeDatabase({ rows: [] });
-    registerAdminBillingRoutes(router as never, database);
+    registerAdminBillingRoutes(router as never, database, {
+      requireAdminSession: makeRequireAdminSession(okSession),
+    });
     const route = router.getRouteFor('/api/admin/billing/history');
-    const ctx = makeContext({ 'x-admin-secret': TEST_SECRET });
+    const ctx = makeContext();
     await route.handler(ctx);
 
     assert.equal(ctx.headersSet['Cache-Control'], 'no-store');
@@ -155,7 +199,9 @@ describe('GET /api/admin/billing/history', () => {
   test('Cache-Control no-store header present on 401 response', async () => {
     const router = new FakeRouter();
     const database = makeFakeDatabase({ rows: [] });
-    registerAdminBillingRoutes(router as never, database);
+    registerAdminBillingRoutes(router as never, database, {
+      requireAdminSession: makeRequireAdminSession(unauthorizedSession),
+    });
     const route = router.getRouteFor('/api/admin/billing/history');
     const ctx = makeContext();
     await route.handler(ctx);
@@ -163,16 +209,31 @@ describe('GET /api/admin/billing/history', () => {
     assert.equal(ctx.headersSet['Cache-Control'], 'no-store');
   });
 
-  test('returns 500 on database fault with valid admin secret', async () => {
+  test('returns 500 on database fault with valid admin session', async () => {
     const router = new FakeRouter();
     const database = makeFakeDatabase({ throwOnQuery: true });
-    registerAdminBillingRoutes(router as never, database);
+    registerAdminBillingRoutes(router as never, database, {
+      requireAdminSession: makeRequireAdminSession(okSession),
+    });
     const route = router.getRouteFor('/api/admin/billing/history');
-    const ctx = makeContext({ 'x-admin-secret': TEST_SECRET });
+    const ctx = makeContext();
     await route.handler(ctx);
 
     assert.equal(ctx.status, 500);
     assert.deepStrictEqual(ctx.body, { error: 'internal_error' });
+    assert.equal(ctx.headersSet['Cache-Control'], 'no-store');
+  });
+
+  test('Cache-Control no-store header present on 500 response', async () => {
+    const router = new FakeRouter();
+    const database = makeFakeDatabase({ throwOnQuery: true });
+    registerAdminBillingRoutes(router as never, database, {
+      requireAdminSession: makeRequireAdminSession(okSession),
+    });
+    const route = router.getRouteFor('/api/admin/billing/history');
+    const ctx = makeContext();
+    await route.handler(ctx);
+
     assert.equal(ctx.headersSet['Cache-Control'], 'no-store');
   });
 });

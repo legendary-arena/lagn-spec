@@ -18839,13 +18839,13 @@ shape).
 
 **Type:** Auth Cutover
 **Packet:** WP-176 / EC-198
-**Date:** Reserved 2026-05-24; landed at execution close.
+**Date:** 2026-05-24
 
 **Decision:** `GET /api/admin/billing/history` is cut over from the WP-110 shared-secret gate (`requireAdminSecret` / `X-Admin-Secret` header per D-11001) to WP-159's session-based gate (`requireAdminSession`). No dual-running window: single commit + redeploy. The cutover adopts the caller-injected deps pattern proven by WP-107 (first production caller of `requireAdminSession`). The `registerAdminBillingRoutes` call signature changes from two-arg `(router, database)` to three-arg `(router, database, deps)` where `deps` carries `requireAdminSession`, `verifier`, and `accountResolver` — byte-identical to the `registerAdminProfileRoutes` wiring. Status-code domain expands from `{200, 401, 500}` to `{200, 401, 403, 500}` (the new 403 path covers non-admin sessions per WP-159 §A). Error response body shape changes from `{ code: 'unauthorized' }` to `{ code: <closed-union>, reason: string }`. The `ADMIN_SECRET` env var on Render becomes unreachable code post-deploy; operator action to delete it is documented in WP-176 §Post-Merge Operator Action.
 
 **Rationale:** D-11001 explicitly described `admin-secret` as a "temporary mechanism pending a future RBAC WP." WP-159 shipped the per-user-attributable successor (`requireAdminSession`) on 2026-05-17; WP-107 proved the pattern works end-to-end against a live Hanko session on 2026-05-24. With only one admin (jeff) and one `admin-secret` route remaining, the cutover is minimal risk and eliminates a category of tech debt (shared-secret auth with no per-user attribution).
 
-**Status:** Reserved 2026-05-24; landed at execution close.
+**Status:** Active
 
 ---
 
@@ -18853,13 +18853,13 @@ shape).
 
 **Type:** Taxonomy Reduction
 **Packet:** WP-176 / EC-198
-**Date:** Reserved 2026-05-24; landed at execution close.
+**Date:** 2026-05-24
 
 **Decision:** The `admin-secret` value is removed from the `api-endpoints.md` Auth Taxonomy closed set, reducing it from 5 to 4 values: `guest`, `handle-required`, `authenticated-session-required`, `admin-session-required`. Post-cutover, zero catalog rows use `admin-secret`; retaining it as a historical value would add a taxonomy entry with no living referent, inviting future drafters to reach for a mechanism the codebase no longer supports.
 
 **Rationale:** Tighter is better for closed sets. The value was introduced by D-11001 as explicitly temporary. Its successor (`admin-session-required`, D-15901) is now the sole admin auth mechanism in the catalog. Git history preserves the prior taxonomy state for auditing.
 
-**Status:** Reserved 2026-05-24; landed at execution close.
+**Status:** Active
 
 ---
 
@@ -18867,7 +18867,7 @@ shape).
 
 **Type:** Dead Code Removal
 **Packet:** WP-176 / EC-198
-**Date:** Reserved 2026-05-24; landed at execution close.
+**Date:** 2026-05-24
 
 **Decision:** `apps/server/src/auth/adminGate.ts` and `apps/server/src/auth/adminGate.test.ts` are deleted as part of the cutover. The helper (`requireAdminSecret`) has exactly one caller (`adminBilling.routes.ts`), and the cutover removes that caller. The three alternatives considered:
 
@@ -18877,7 +18877,7 @@ shape).
 
 **Rationale:** Dead code is a liability. The file served its purpose as a bridge between WP-110 (2026-05-15) and WP-159 (2026-05-17). Preserving it "just in case" contradicts the project's no-dormant-code principle. Git history preserves the implementation for reference.
 
-**Status:** Reserved 2026-05-24; landed at execution close.
+**Status:** Active
 
 ---
 

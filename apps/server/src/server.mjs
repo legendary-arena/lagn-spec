@@ -552,10 +552,16 @@ export async function startServer() {
     },
   });
 
-  // why: WP-110, D-11001 — admin billing visibility uses a shared-secret
-  // header gate (X-Admin-Secret) rather than session-based auth. The gate
-  // is isolated in adminGate.ts for future RBAC replacement.
-  registerAdminBillingRoutes(server.router, pool);
+  // why: WP-176, D-17601 — admin billing auth cutover. The shared-secret
+  // gate (admin-secret header per D-11001) is replaced by
+  // the WP-159 session-based gate (requireAdminSession / Hanko session +
+  // is_admin = TRUE). The deps bundle is structurally identical to the
+  // registerAdminProfileRoutes call below.
+  registerAdminBillingRoutes(server.router, pool, {
+    requireAdminSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+  });
 
   // why: WP-107 / D-10701..D-10703 — register the three admin-only
   // profile integrity routes (GET integrity, POST suspend, POST
