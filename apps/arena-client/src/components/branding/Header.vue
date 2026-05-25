@@ -1,14 +1,24 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import { useAuthNav } from '../../composables/useAuthNav';
+
 // why: defineComponent (NOT <script setup>) matches the established
 // arena-client convention under the @legendary-arena/vue-sfc-loader
-// separate-compile pipeline (D-6512 / P6-30). Even though this
-// component has no setup-time bindings, keeping the convention
-// uniform avoids per-component decisions about which compile mode
-// is active.
+// separate-compile pipeline (D-6512 / P6-30).
 export default defineComponent({
   name: 'BrandHeader',
+  setup() {
+    const { isSignedIn, isBootstrapping, displayLabel, signOut } =
+      useAuthNav();
+
+    return {
+      isSignedIn,
+      isBootstrapping,
+      displayLabel,
+      signOut,
+    };
+  },
 });
 </script>
 
@@ -22,6 +32,37 @@ export default defineComponent({
       <a class="brand-nav-link" href="https://cards.barefootbetters.com">
         Cards
       </a>
+
+      <template v-if="isBootstrapping">
+        <span
+          class="auth-nav-bootstrapping"
+          data-testid="auth-nav-bootstrapping"
+        >...</span>
+      </template>
+      <template v-else-if="!isSignedIn">
+        <a
+          class="brand-nav-link"
+          href="?route=login"
+          data-testid="auth-nav-sign-in"
+        >Sign in</a>
+      </template>
+      <template v-else>
+        <span
+          class="auth-nav-display"
+          data-testid="auth-nav-display"
+        >{{ displayLabel }}</span>
+        <a
+          class="brand-nav-link"
+          href="?route=me"
+          data-testid="auth-nav-profile-link"
+        >My profile</a>
+        <button
+          type="button"
+          class="auth-nav-sign-out"
+          data-testid="auth-nav-sign-out"
+          @click="signOut"
+        >Sign out</button>
+      </template>
     </nav>
   </header>
 </template>
@@ -54,6 +95,7 @@ export default defineComponent({
 
 .brand-nav {
   display: flex;
+  align-items: center;
   gap: var(--la-space-5);
 }
 
@@ -66,6 +108,35 @@ export default defineComponent({
 
 .brand-nav-link:hover,
 .brand-nav-link:focus-visible {
+  color: var(--la-color-cta);
+}
+
+.auth-nav-bootstrapping {
+  font-family: var(--la-font-body);
+  font-size: var(--la-font-size-body);
+  color: var(--la-color-text-secondary);
+  opacity: 0.6;
+}
+
+.auth-nav-display {
+  font-family: var(--la-font-body);
+  font-size: var(--la-font-size-body);
+  color: var(--la-color-text-primary);
+  font-weight: 500;
+}
+
+.auth-nav-sign-out {
+  font-family: var(--la-font-body);
+  font-size: var(--la-font-size-body);
+  color: var(--la-color-text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.auth-nav-sign-out:hover,
+.auth-nav-sign-out:focus-visible {
   color: var(--la-color-cta);
 }
 </style>

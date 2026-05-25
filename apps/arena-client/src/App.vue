@@ -4,6 +4,7 @@ import {
   defineComponent,
   onBeforeUnmount,
   onMounted,
+  provide,
   ref,
 } from 'vue';
 
@@ -244,6 +245,12 @@ export default defineComponent({
     const isAuthBootstrapping = ref(
       initialRoute === 'me' || initialRoute === 'admin-billing',
     );
+
+    // why: isAuthBootstrapping is provided via Vue provide/inject (D-17501)
+    // so the BrandHeader's useAuthNav composable can read it without
+    // extending the Pinia auth store. The bootstrapping state is a transient
+    // app-lifecycle concern, not a durable auth-session property.
+    provide('isAuthBootstrapping', isAuthBootstrapping);
 
     if (isAuthBootstrapping.value === true) {
       const tenantBaseUrl = readTenantBaseUrl();

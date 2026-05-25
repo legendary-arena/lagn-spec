@@ -18767,11 +18767,11 @@ shape).
 
 **Type:** Component Architecture
 **Packet:** WP-175 / EC-197
-**Date:** Drafted 2026-05-24; not yet landed.
+**Date:** Drafted 2026-05-24; landed 2026-05-25.
 
 **Decision:** The `isAuthBootstrapping` transient state is delivered from `App.vue` to `Header.vue` via Vue's `provide()` / `inject()`, NOT by extending the Pinia auth store. The bootstrapping flag is a transient app-lifecycle concern (true only during the initial guarded-route broker check), not a durable auth-session property. Adding it to the store would pollute the store's shape with non-session state and break the clean `token + accountId + isAuthenticated` contract established by WP-160 (D-16003). The Pinia auth store (`stores/auth.ts`) MUST remain byte-identical pre- and post-WP-175 execution.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active.
 
 ---
 
@@ -18779,11 +18779,13 @@ shape).
 
 **Type:** Data Flow
 **Packet:** WP-175 / EC-197
-**Date:** Drafted 2026-05-24; not yet landed.
+**Date:** Drafted 2026-05-24; landed 2026-05-25.
 
-**Decision:** The signed-in nav's display name is fetched lazily by the `useAuthNav` composable from `/api/me/profile` on first authenticated render and held in a composable-local `Ref<string>`. It is NOT persisted in the Pinia auth store. Rationale: (1) the auth store's purpose is session credentials, not profile data — adding `displayName` would blur the boundary; (2) the profile response is already available from the existing `fetchOwnerProfile(token)` API client, so no new endpoint is needed; (3) a single fire-and-forget fetch is acceptable — the nav renders "My account" immediately and upgrades to the resolved name. The fallback chain is: `displayName` → `handle` → email local-part (first 16 chars) → `"My account"`.
+**Decision:** The signed-in nav's display name is held in a composable-local `Ref<string>` initialized to `"My account"`. It is NOT persisted in the Pinia auth store. Rationale: (1) the auth store's purpose is session credentials, not profile data — adding `displayName` would blur the boundary.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Amendment 1 (2026-05-25):** The original decision assumed `GET /api/me/profile` returns `handle`, `displayName`, and `email` fields for the fallback chain (`displayName` → `handle` → email local-part → `"My account"`). At execution time, the actual `OwnerProfileView` response schema was found to contain only profile-editing fields (`avatarUrl`, `aboutMe`, visibility settings, `links`, `teamAffiliations`, `badges`) — no identity fields. The profile fetch and fallback chain are deferred to a follow-up WP that adds `handle`/`displayName` to the `/api/me/profile` server response. Until then, the display label is always `"My account"`.
+
+**Status:** Active (Amendment 1 — fetch deferred).
 
 ---
 
@@ -18791,11 +18793,11 @@ shape).
 
 **Type:** Behavioral Contract
 **Packet:** WP-175 / EC-197
-**Date:** Drafted 2026-05-24; not yet landed.
+**Date:** Drafted 2026-05-24; landed 2026-05-25.
 
 **Decision:** The nav's sign-out flow is byte-identical to `MyProfilePage.vue`'s `signOut()`: `ensureHankoHandle()` → `signOutCurrentSession(handle)` → `clearSession()` → `window.location.assign('?route=')`. The same try/catch fail-safe applies: if the broker logout rejects, local cleanup + lobby redirect still proceed (D-16004). There is exactly one sign-out behavioral contract in the app, invoked from two sites. If the sign-out semantics change (e.g., a future WP adds server-side session invalidation), both sites update together.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active.
 
 ---
 
@@ -18803,11 +18805,11 @@ shape).
 
 **Type:** Component Architecture
 **Packet:** WP-175 / EC-197
-**Date:** Drafted 2026-05-24; not yet landed.
+**Date:** Drafted 2026-05-24; landed 2026-05-25.
 
-**Decision:** The auth-aware nav section is added inline in `Header.vue`'s existing `<nav>` (or as a sibling `<div>` at the same flexbox level), NOT as a separate `AuthNav.vue` component. Rationale: the auth nav is 3 elements (sign-in link OR display-name + profile-link + sign-out button), which is well below the threshold for extraction. The header is the only consumer. The reactive state lives in the `useAuthNav` composable, keeping `Header.vue` declarative. Extraction to a separate component is premature abstraction at this scale and violates the "duplicate first, abstract at third copy" code-style rule (00.6 Rule 1).
+**Decision:** The auth-aware nav section is added inline in `Header.vue`'s existing `<nav>`, NOT as a separate `AuthNav.vue` component. Rationale: the auth nav is 3 elements (sign-in link OR display-name + profile-link + sign-out button), which is well below the threshold for extraction. The header is the only consumer. The reactive state lives in the `useAuthNav` composable, keeping `Header.vue` declarative. Extraction to a separate component is premature abstraction at this scale and violates the "duplicate first, abstract at third copy" code-style rule (00.6 Rule 1).
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active.
 
 ---
 
@@ -18815,11 +18817,11 @@ shape).
 
 **Type:** Behavioral Contract
 **Packet:** WP-175 / EC-197
-**Date:** Drafted 2026-05-24; not yet landed.
+**Date:** Drafted 2026-05-24; landed 2026-05-25.
 
 **Decision:** The nav's "Sign in" link navigates to `?route=login` without a `returnTo` parameter. After sign-in, `LoginPage.vue`'s `validatedReturnTo` falls back to `null` → `window.location.assign('?route=')` → lobby. This is correct: the lobby is the default post-sign-in destination for users who were browsing public content. The `returnTo` mechanism exists for route-guard redirects (user tried `?route=me` while signed out → guard sends to login with `returnTo=me` → sign-in lands back on profile). The nav's "Sign in" is a voluntary action, not a guard redirect, so no returnTo is appropriate.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active.
 
 ---
 
@@ -18827,11 +18829,11 @@ shape).
 
 **Type:** UI Scope Lock
 **Packet:** WP-175 / EC-197
-**Date:** Drafted 2026-05-24; not yet landed.
+**Date:** Drafted 2026-05-24; landed 2026-05-25.
 
 **Decision:** The auth nav element follows `Header.vue`'s existing single-layout pattern (flexbox row, no breakpoints, no mobile-specific nav). There is no hamburger menu, no slide-out drawer, no mobile-specific treatment. If the header wraps on narrow viewports, both the site nav and auth nav wrap together naturally. A dedicated mobile nav surface (hamburger, drawer, bottom-bar) is a separate future WP — it affects the entire header/nav architecture, not just the auth element, and should be designed holistically.
 
-**Status:** Drafted 2026-05-24; not yet landed.
+**Status:** Active.
 
 ---
 
