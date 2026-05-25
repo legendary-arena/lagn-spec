@@ -83,6 +83,8 @@ export function buildResponse(controller, options = {}) {
     historyLength: controller.getHistoryLength(),
     cursor: controller.getCursor(),
     mode: controller.getMode(),
+    speedMode: controller.getSpeedMode(),
+    gameOver: controller.isGameOver(),
   };
   if (options.uiState !== undefined) {
     response.uiState = options.uiState;
@@ -189,6 +191,8 @@ async function handlePlaybackRequest(koaContext, core) {
       historyLength: 0,
       cursor: -1,
       mode: 'live',
+      speedMode: '1x',
+      gameOver: false,
       error: 'No autoplay match is running for the requested match id.',
     };
     return;
@@ -336,9 +340,13 @@ export function registerAutoplayRoutes(router, context) {
     });
   });
 
-  router.post('/api/match/autoplay/:matchId/resume', async (koaContext) => {
+  router.post('/api/match/autoplay/:matchId/resume', koaBody(), async (koaContext) => {
     await handlePlaybackRequest(koaContext, (controller) => {
       controller.resume();
+      const requestedSpeed = koaContext.request.body?.speedMode;
+      if (requestedSpeed && requestedSpeed !== 'max') {
+        controller.setSpeedMode(requestedSpeed);
+      }
       koaContext.body = buildResponse(controller);
     });
   });
@@ -446,10 +454,14 @@ export async function withRegisteredController(matchId, baseDelay, body) {
   autoplayControllers.set(matchId, controller);
   try {
     await body(controller);
-  } finally {
-    // why: D-16308 — release the controller on every exit path (normal,
-    // break/return, or throw) so the map never leaks one entry per match.
+    // why: normal exit means game over. Mark and defer cleanup for 5 minutes
+    // so the viewer can scrub completed match history (review window).
+    controller.markGameOver();
+    setTimeout(() => autoplayControllers.delete(matchId), 5 * 60 * 1000);
+  } catch (error) {
+    // why: error exit — immediate cleanup (no review possible).
     autoplayControllers.delete(matchId);
+    throw error;
   }
 }
 

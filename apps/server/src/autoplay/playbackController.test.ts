@@ -179,17 +179,23 @@ test('buildResponse always carries mode (D-16304) and uiState only when supplied
   assert.deepEqual(withView.uiState, { stub: true });
 });
 
-test('controller map is empty after N=10 matches on normal and throw exit paths (D-16308)', async () => {
-  for (let i = 0; i < 10; i += 1) {
-    const key = `normal-${i}`;
-    await withRegisteredController(key, 100, async (controller) => {
-      assert.equal(autoplayControllers.has(key), true);
-      controller.pushState(snap(0));
-    });
-    assert.equal(autoplayControllers.has(key), false);
-  }
+test('controller remains in map after normal exit for review; error exit deletes immediately (D-16308)', async () => {
+  // Normal exit: controller stays (deferred cleanup for review window)
+  const normalKey = 'normal-review';
+  await withRegisteredController(normalKey, 100, async (controller) => {
+    assert.equal(autoplayControllers.has(normalKey), true);
+    controller.pushState(snap(0));
+  });
+  // Still present after normal exit (game-over review window)
+  assert.equal(autoplayControllers.has(normalKey), true);
+  const controller = autoplayControllers.get(normalKey);
+  assert.equal(controller.isGameOver(), true);
+  assert.equal(controller.isPaused(), true);
+  // Clean up manually for test isolation
+  autoplayControllers.delete(normalKey);
 
-  for (let i = 0; i < 10; i += 1) {
+  // Error exit: immediate cleanup, no review
+  for (let i = 0; i < 5; i += 1) {
     const key = `throw-${i}`;
     await assert.rejects(
       withRegisteredController(key, 100, async () => {
@@ -198,6 +204,87 @@ test('controller map is empty after N=10 matches on normal and throw exit paths 
     );
     assert.equal(autoplayControllers.has(key), false);
   }
+});
 
-  assert.equal(autoplayControllers.size, 0);
+test('setSpeedMode halves delay at 2x, quarters at 4x, floors at 10ms', () => {
+  const controller = createPlaybackController(800);
+
+  controller.setSpeedMode('2x');
+  assert.equal(controller.getActiveDelay(), 400);
+  assert.equal(controller.getSpeedMode(), '2x');
+
+  controller.setSpeedMode('4x');
+  assert.equal(controller.getActiveDelay(), 200);
+  assert.equal(controller.getSpeedMode(), '4x');
+
+  // Floor at 10ms: baseDelay 40 / 4 = 10
+  const fastController = createPlaybackController(40);
+  fastController.setSpeedMode('4x');
+  assert.equal(fastController.getActiveDelay(), 10);
+});
+
+test('setMaxSpeed yields delay=10 and speedMode=max', () => {
+  const controller = createPlaybackController(800);
+  controller.setMaxSpeed();
+  assert.equal(controller.getActiveDelay(), 10);
+  assert.equal(controller.getSpeedMode(), 'max');
+});
+
+test('resume resets max speed back to 1x; preserves user-set speed modes', () => {
+  const controller = createPlaybackController(800);
+
+  controller.setSpeedMode('2x');
+  controller.pause();
+  controller.resume();
+  assert.equal(controller.getSpeedMode(), '2x');
+  assert.equal(controller.getActiveDelay(), 400);
+
+  // After goToEnd (which sets max), resume resets to 1x
+  controller.pause();
+  controller.goToEnd();
+  assert.equal(controller.getSpeedMode(), 'max');
+  controller.pause();
+  controller.resume();
+  assert.equal(controller.getSpeedMode(), '1x');
+  assert.equal(controller.getActiveDelay(), 800);
+});
+
+test('pause does NOT reset speed mode', () => {
+  const controller = createPlaybackController(800);
+  controller.setSpeedMode('4x');
+  controller.pause();
+  assert.equal(controller.getSpeedMode(), '4x');
+});
+
+test('invalid speed mode is a no-op', () => {
+  const controller = createPlaybackController(800);
+  controller.setSpeedMode('invalid' as any);
+  assert.equal(controller.getSpeedMode(), '1x');
+  assert.equal(controller.getActiveDelay(), 800);
+});
+
+test('markGameOver sets both isGameOverFlag and isPausedFlag', () => {
+  const controller = createPlaybackController(800);
+  controller.pushState(snap(0));
+  assert.equal(controller.isGameOver(), false);
+  assert.equal(controller.isPaused(), false);
+
+  controller.markGameOver();
+  assert.equal(controller.isGameOver(), true);
+  assert.equal(controller.isPaused(), true);
+});
+
+test('buildResponse includes speedMode and gameOver fields', () => {
+  const controller = createPlaybackController(800);
+  controller.pushState(snap(0));
+  controller.setSpeedMode('2x');
+
+  const response = buildResponse(controller);
+  assert.equal(response.speedMode, '2x');
+  assert.equal(response.gameOver, false);
+
+  controller.markGameOver();
+  const gameOverResponse = buildResponse(controller);
+  assert.equal(gameOverResponse.speedMode, '2x');
+  assert.equal(gameOverResponse.gameOver, true);
 });

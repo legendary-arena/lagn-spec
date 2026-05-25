@@ -75,6 +75,8 @@ test('404 returns the not-found envelope on an unknown match id', async () => {
     historyLength: 0,
     cursor: -1,
     mode: 'live',
+    speedMode: '1x',
+    gameOver: false,
     error: 'No autoplay match is running for the requested match id.',
   });
 });

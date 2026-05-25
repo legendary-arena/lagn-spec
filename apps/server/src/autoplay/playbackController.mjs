@@ -54,6 +54,10 @@ export function createPlaybackController(baseDelay) {
   /** @type {null | (() => void)} */
   let resumeResolver = null;
   let activeDelay = baseDelay;
+  let speedMode = '1x';
+  let isGameOverFlag = false;
+
+  const SPEED_FACTORS = { '1x': 1, '2x': 2, '4x': 4 };
 
   /**
    * Releases the bot loop's pending pause gate, if one is waiting.
@@ -119,13 +123,19 @@ export function createPlaybackController(baseDelay) {
     },
 
     /**
-     * Releases the gate, restores normal cadence, and lets the loop run.
+     * Releases the gate, restores speed-appropriate cadence, and lets the loop run.
      *
      * @returns {void}
      */
     resume() {
       isPausedFlag = false;
-      activeDelay = baseDelay;
+      // why: 'max' is transient (go-to-end only); resume always restores the
+      // user's chosen speed mode. If speed was 'max', reset to '1x'.
+      if (speedMode === 'max') {
+        speedMode = '1x';
+      }
+      const factor = SPEED_FACTORS[speedMode] ?? 1;
+      activeDelay = Math.max(10, Math.round(baseDelay / factor));
       releasePending();
     },
 
@@ -190,6 +200,7 @@ export function createPlaybackController(baseDelay) {
      */
     goToEnd() {
       cursor = stateHistory.length - 1;
+      speedMode = 'max';
       activeDelay = PLAYBACK_DELAY_OVERRIDE;
       isPausedFlag = false;
       releasePending();
@@ -228,6 +239,53 @@ export function createPlaybackController(baseDelay) {
      */
     getActiveDelay() {
       return activeDelay;
+    },
+
+    /**
+     * Sets the playback speed mode and adjusts activeDelay accordingly.
+     *
+     * @param {'1x' | '2x' | '4x'} mode
+     * @returns {void}
+     */
+    setSpeedMode(mode) {
+      const factor = SPEED_FACTORS[mode];
+      if (factor === undefined) return;
+      speedMode = mode;
+      activeDelay = Math.max(10, Math.round(baseDelay / factor));
+    },
+
+    /**
+     * Forces maximum speed (used by goToEnd).
+     *
+     * @returns {void}
+     */
+    setMaxSpeed() {
+      speedMode = 'max';
+      activeDelay = PLAYBACK_DELAY_OVERRIDE;
+    },
+
+    /**
+     * @returns {'1x' | '2x' | '4x' | 'max'} The stored speed mode.
+     */
+    getSpeedMode() {
+      return speedMode;
+    },
+
+    /**
+     * Marks the match as complete. Pauses the controller so scrub operations work.
+     *
+     * @returns {void}
+     */
+    markGameOver() {
+      isGameOverFlag = true;
+      isPausedFlag = true;
+    },
+
+    /**
+     * @returns {boolean} Whether the match has ended.
+     */
+    isGameOver() {
+      return isGameOverFlag;
     },
   };
 }

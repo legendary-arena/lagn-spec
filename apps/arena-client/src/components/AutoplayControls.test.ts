@@ -55,6 +55,8 @@ function status(
     historyLength: 5,
     cursor: 4,
     mode: 'paused',
+    speedMode: '1x',
+    gameOver: false,
     ...overrides,
   };
 }
@@ -211,7 +213,7 @@ describe('AutoplayControls (WP-164) — rendering + disabled matrix', () => {
     );
   });
 
-  test('toggle shows ▶ (resume) when paused and ⏸ (pause) when running; never disabled', () => {
+  test('toggle shows ▶ (resume) when paused and ⏸ (pause) when running; not disabled unless game over', () => {
     const pausedBar = mountBar(status({ paused: true }));
     const pausedToggle = pausedBar.find('[data-testid="autoplay-toggle"]');
     assert.match(pausedToggle.text(), /▶/);
@@ -366,5 +368,285 @@ describe('AutoplayControls (WP-164) — button → service + REWIND', () => {
     await flushPromises();
 
     assert.equal(callCount, 0);
+  });
+});
+
+describe('AutoplayControls — Feature 1: keyboard shortcuts', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+  afterEach(() => {
+    restoreFetch();
+  });
+
+  test('Space key triggers pause/resume toggle', async () => {
+    installControlStub(
+      { resume: status({ paused: false, mode: 'live' }) },
+      status(),
+    );
+    const wrapper = mountBar(status({ paused: true }));
+    const bar = wrapper.find('[data-testid="autoplay-controls"]');
+
+    await bar.trigger('keydown', { key: ' ' });
+    await flushPromises();
+
+    assert.equal(calls.length, 1);
+    assert.match(calls[0]!.url, /\/resume$/);
+  });
+
+  test('ArrowLeft triggers step-back when paused', async () => {
+    installControlStub({}, status({ paused: true, cursor: 3 }));
+    const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+    const bar = wrapper.find('[data-testid="autoplay-controls"]');
+
+    await bar.trigger('keydown', { key: 'ArrowLeft' });
+    await flushPromises();
+
+    assert.equal(calls.length, 1);
+    assert.match(calls[0]!.url, /\/step-back$/);
+  });
+
+  test('ArrowRight triggers step-forward when paused', async () => {
+    installControlStub({}, status({ paused: true, cursor: 5 }));
+    const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+    const bar = wrapper.find('[data-testid="autoplay-controls"]');
+
+    await bar.trigger('keydown', { key: 'ArrowRight' });
+    await flushPromises();
+
+    assert.equal(calls.length, 1);
+    assert.match(calls[0]!.url, /\/step-forward$/);
+  });
+
+  test('Home triggers restart when paused with history', async () => {
+    installControlStub({}, status({ paused: true, cursor: 0 }));
+    const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+    const bar = wrapper.find('[data-testid="autoplay-controls"]');
+
+    await bar.trigger('keydown', { key: 'Home' });
+    await flushPromises();
+
+    assert.equal(calls.length, 1);
+    assert.match(calls[0]!.url, /\/restart$/);
+  });
+
+  test('End triggers go-to-end when not game over', async () => {
+    installControlStub({}, status({ paused: false, mode: 'live' }));
+    const wrapper = mountBar(status({ paused: true, cursor: 2, historyLength: 5 }));
+    const bar = wrapper.find('[data-testid="autoplay-controls"]');
+
+    await bar.trigger('keydown', { key: 'End' });
+    await flushPromises();
+
+    assert.equal(calls.length, 1);
+    assert.match(calls[0]!.url, /\/go-to-end$/);
+  });
+
+  test('disabled action keys are no-ops — no fetch call', async () => {
+    installControlStub({}, status());
+    // Mount with paused=false (live mode) — step-back is disabled
+    const wrapper = mountBar(status({ paused: false, mode: 'live', cursor: 4, historyLength: 5 }));
+    const bar = wrapper.find('[data-testid="autoplay-controls"]');
+
+    await bar.trigger('keydown', { key: 'ArrowLeft' });
+    await flushPromises();
+
+    assert.equal(calls.length, 0);
+  });
+
+  test('Space is no-op when toggle is disabled (game over)', async () => {
+    installControlStub({}, status());
+    const wrapper = mountBar(status({ paused: true }), true);
+    const bar = wrapper.find('[data-testid="autoplay-controls"]');
+
+    await bar.trigger('keydown', { key: ' ' });
+    await flushPromises();
+
+    assert.equal(calls.length, 0);
+  });
+});
+
+describe('AutoplayControls — Feature 2: position indicator', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+  afterEach(() => {
+    restoreFetch();
+  });
+
+  test('shows "Move N / M" when historyLength > 0', () => {
+    const wrapper = mountBar(status({ cursor: 2, historyLength: 5 }));
+    const position = wrapper.find('[data-testid="autoplay-position"]');
+    assert.equal(position.exists(), true);
+    assert.equal(position.text(), 'Move 3 / 5');
+  });
+
+  test('hidden when historyLength is 0', () => {
+    const wrapper = mountBar(status({ cursor: 0, historyLength: 0 }));
+    assert.equal(wrapper.find('[data-testid="autoplay-position"]').exists(), false);
+  });
+
+  test('updates after a control action', async () => {
+    installControlStub(
+      { 'step-back': status({ paused: true, cursor: 1, historyLength: 5 }) },
+      status(),
+    );
+    const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+    assert.equal(wrapper.find('[data-testid="autoplay-position"]').text(), 'Move 5 / 5');
+
+    await wrapper.find('[data-testid="autoplay-step-back"]').trigger('click');
+    await flushPromises();
+
+    assert.equal(wrapper.find('[data-testid="autoplay-position"]').text(), 'Move 2 / 5');
+  });
+});
+
+describe('AutoplayControls — Feature 3: speed control', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+  afterEach(() => {
+    restoreFetch();
+  });
+
+  test('speed button renders with initial label 1×', () => {
+    const wrapper = mountBar(status({ speedMode: '1x' }));
+    const speedBtn = wrapper.find('[data-testid="autoplay-speed"]');
+    assert.equal(speedBtn.exists(), true);
+    assert.equal(speedBtn.text(), '1×');
+  });
+
+  test('cycling speed: 1×→2×→4×→1×', async () => {
+    installControlStub({}, status({ paused: true }));
+    const wrapper = mountBar(status({ paused: true, speedMode: '1x' }));
+    const speedBtn = wrapper.find('[data-testid="autoplay-speed"]');
+
+    await speedBtn.trigger('click');
+    assert.equal(speedBtn.text(), '2×');
+
+    await speedBtn.trigger('click');
+    assert.equal(speedBtn.text(), '4×');
+
+    await speedBtn.trigger('click');
+    assert.equal(speedBtn.text(), '1×');
+  });
+
+  test('cycling while playing sends resume with speedMode body', async () => {
+    installControlStub({}, status({ paused: false, mode: 'live', speedMode: '2x' }));
+    const wrapper = mountBar(status({ paused: false, mode: 'live', speedMode: '1x' }));
+    const speedBtn = wrapper.find('[data-testid="autoplay-speed"]');
+
+    await speedBtn.trigger('click');
+    await flushPromises();
+
+    assert.equal(calls.length, 1);
+    assert.match(calls[0]!.url, /\/resume$/);
+    const body = JSON.parse(calls[0]!.init?.body as string);
+    assert.equal(body.speedMode, '2x');
+  });
+
+  test('speed persists across pause/resume (no reset)', async () => {
+    installControlStub(
+      { pause: status({ paused: true, speedMode: '4x' }) },
+      status({ paused: false, mode: 'live', speedMode: '4x' }),
+    );
+    const wrapper = mountBar(status({ paused: false, mode: 'live', speedMode: '4x' }));
+
+    // Pause
+    await wrapper.find('[data-testid="autoplay-toggle"]').trigger('click');
+    await flushPromises();
+
+    // Speed label still shows 4×
+    assert.equal(wrapper.find('[data-testid="autoplay-speed"]').text(), '4×');
+  });
+
+  test('go-to-end forces display "Max" from response speedMode', async () => {
+    installControlStub(
+      { 'go-to-end': status({ paused: false, mode: 'live', speedMode: 'max' }) },
+      status(),
+    );
+    const wrapper = mountBar(status({ paused: true, cursor: 2, historyLength: 5 }));
+    await wrapper.find('[data-testid="autoplay-go-to-end"]').trigger('click');
+    await flushPromises();
+
+    assert.equal(wrapper.find('[data-testid="autoplay-speed"]').text(), 'Max');
+  });
+});
+
+describe('AutoplayControls — Feature 4: game-over review state', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+  afterEach(() => {
+    restoreFetch();
+  });
+
+  test('toggle shows 🏁 when game over and is disabled', () => {
+    const wrapper = mountBar(status({ paused: true }), true);
+    const toggle = wrapper.find('[data-testid="autoplay-toggle"]');
+    assert.match(toggle.text(), /🏁/);
+    assert.notEqual(toggle.attributes('disabled'), undefined);
+  });
+
+  test('step-back and restart are enabled when game over (not gated on paused)', () => {
+    const wrapper = mountBar(
+      status({ paused: true, cursor: 3, historyLength: 5 }),
+      true,
+    );
+    assert.equal(
+      wrapper.find('[data-testid="autoplay-step-back"]').attributes('disabled'),
+      undefined,
+    );
+    assert.equal(
+      wrapper.find('[data-testid="autoplay-restart"]').attributes('disabled'),
+      undefined,
+    );
+  });
+
+  test('step-forward is enabled when game over', () => {
+    const wrapper = mountBar(
+      status({ paused: true, cursor: 2, historyLength: 5 }),
+      true,
+    );
+    assert.equal(
+      wrapper.find('[data-testid="autoplay-step-forward"]').attributes('disabled'),
+      undefined,
+    );
+  });
+
+  test('watcher sets paused=true when isGameOver transitions to true', async () => {
+    const wrapper = mount(AutoplayControls, {
+      props: {
+        matchId: 'match-1',
+        initialStatus: status({ paused: false, mode: 'live' }),
+        isGameOver: false,
+      },
+    });
+    const toggle = wrapper.find('[data-testid="autoplay-toggle"]');
+    assert.match(toggle.text(), /⏸/);
+
+    await wrapper.setProps({ isGameOver: true });
+    assert.match(
+      wrapper.find('[data-testid="autoplay-toggle"]').text(),
+      /🏁/,
+    );
+  });
+
+  test('expired state disables all controls after 404 in game-over mode', async () => {
+    const originalFetchRef = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      return new Response('', { status: 404, statusText: 'Not Found' });
+    }) as typeof globalThis.fetch;
+
+    const wrapper = mountBar(status({ paused: true, cursor: 3, historyLength: 5 }), true);
+    await wrapper.find('[data-testid="autoplay-step-back"]').trigger('click');
+    await flushPromises();
+
+    assert.equal(
+      wrapper.find('[data-testid="autoplay-expired"]').exists(),
+      true,
+    );
+
+    globalThis.fetch = originalFetchRef;
   });
 });

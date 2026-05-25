@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, ref, type PropType } from 'vue';
+import { computed, defineComponent, onMounted, ref, watch, type PropType } from 'vue';
 import {
   pause,
   resume,
@@ -49,10 +49,13 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const barRef = ref<HTMLElement | null>(null);
     const paused = ref<boolean>(props.initialStatus.paused);
     const cursor = ref<number>(props.initialStatus.cursor);
     const historyLength = ref<number>(props.initialStatus.historyLength);
     const mode = ref<'live' | 'paused'>(props.initialStatus.mode);
+    const speedMode = ref<string>(props.initialStatus.speedMode ?? '1x');
+    const expired = ref<boolean>(false);
 
     // why: REWIND keys on cursor position (the spectator is viewing a frame
     // behind the live edge), NOT on `mode`. `isRewound` and `mode` are
@@ -63,14 +66,24 @@ export default defineComponent({
     );
 
     const isStepBackDisabled = computed<boolean>(
-      () => cursor.value === 0 || paused.value === false,
+      () => cursor.value === 0 || (!props.isGameOver && paused.value === false),
     );
     const isStepForwardDisabled = computed<boolean>(
-      () => paused.value === false,
+      () => !props.isGameOver && paused.value === false,
     );
     const isRestartDisabled = computed<boolean>(
-      () => paused.value === false || historyLength.value === 0,
+      () => (!props.isGameOver && paused.value === false) || historyLength.value === 0,
     );
+    const positionLabel = computed<string>(() =>
+      historyLength.value > 0
+        ? `Move ${cursor.value + 1} / ${historyLength.value}`
+        : '',
+    );
+    const speedLabel = computed<string>(() => {
+      const labels: Record<string, string> = { '1x': '1×', '2x': '2×', '4x': '4×', 'max': 'Max' };
+      return labels[speedMode.value] ?? '1×';
+    });
+    const isToggleDisabled = computed<boolean>(() => props.isGameOver);
     const isGoToEndDisabled = computed<boolean>(() => props.isGameOver === true);
 
     /**
@@ -83,6 +96,7 @@ export default defineComponent({
       cursor.value = response.cursor;
       historyLength.value = response.historyLength;
       mode.value = response.mode;
+      speedMode.value = response.speedMode;
     }
 
     /**
@@ -93,17 +107,28 @@ export default defineComponent({
     async function runControl(
       control: (matchId: string) => Promise<AutoplayControlResponse>,
     ): Promise<void> {
+      if (expired.value) return;
       try {
         applyResponse(await control(props.matchId));
       } catch (controlError) {
-        // why: a failed control must not desync local state; surface the fault
-        // and leave the bar as-is (the next successful control re-syncs it).
+        if (props.isGameOver && controlError instanceof Error && controlError.message.includes('404')) {
+          expired.value = true;
+        }
         console.error('Autoplay control request failed.', controlError);
       }
     }
 
     function onToggle(): void {
-      void runControl(paused.value === true ? resume : pause);
+      if (paused.value === true) {
+        const currentSpeed = speedMode.value;
+        if (currentSpeed !== '1x' && currentSpeed !== 'max') {
+          void runControl((matchId) => resume(matchId, { speedMode: currentSpeed as '2x' | '4x' }));
+        } else {
+          void runControl(resume);
+        }
+      } else {
+        void runControl(pause);
+      }
     }
     function onStepBack(): void {
       void runControl(stepBack);
@@ -118,10 +143,59 @@ export default defineComponent({
       void runControl(goToEnd);
     }
 
+    function onCycleSpeed(): void {
+      const cycle: Record<string, string> = { '1x': '2x', '2x': '4x', '4x': '1x' };
+      const next = cycle[speedMode.value] ?? '1x';
+      speedMode.value = next;
+      if (!paused.value) {
+        void runControl((matchId) => resume(matchId, { speedMode: next as '1x' | '2x' | '4x' }));
+      }
+    }
+
+    function onKeyDown(event: KeyboardEvent): void {
+      switch (event.key) {
+        case ' ':
+          event.preventDefault();
+          if (!isToggleDisabled.value) onToggle();
+          return;
+        case 'ArrowLeft':
+          event.preventDefault();
+          if (!isStepBackDisabled.value) onStepBack();
+          return;
+        case 'ArrowRight':
+          event.preventDefault();
+          if (!isStepForwardDisabled.value) onStepForward();
+          return;
+        case 'Home':
+          event.preventDefault();
+          if (!isRestartDisabled.value) onRestart();
+          return;
+        case 'End':
+          event.preventDefault();
+          if (!isGoToEndDisabled.value) onGoToEnd();
+          return;
+        default:
+          return;
+      }
+    }
+
+    watch(() => props.isGameOver, (isOver) => {
+      if (isOver) paused.value = true;
+    });
+
+    onMounted(() => {
+      barRef.value?.focus();
+    });
+
     return {
+      barRef,
       paused,
       mode,
       isRewound,
+      positionLabel,
+      speedLabel,
+      expired,
+      isToggleDisabled,
       isStepBackDisabled,
       isStepForwardDisabled,
       isRestartDisabled,
@@ -131,6 +205,8 @@ export default defineComponent({
       onStepForward,
       onRestart,
       onGoToEnd,
+      onCycleSpeed,
+      onKeyDown,
     };
   },
 });
@@ -138,9 +214,13 @@ export default defineComponent({
 
 <template>
   <section
+    ref="barRef"
     class="autoplay-controls"
     data-testid="autoplay-controls"
+    role="toolbar"
     aria-label="Autoplay playback controls"
+    tabindex="0"
+    @keydown="onKeyDown"
   >
     <button
       type="button"
@@ -163,10 +243,11 @@ export default defineComponent({
     <button
       type="button"
       data-testid="autoplay-toggle"
-      :aria-label="paused ? 'Resume' : 'Pause'"
+      :aria-label="isToggleDisabled ? 'Game over' : (paused ? 'Resume' : 'Pause')"
+      :disabled="isToggleDisabled"
       @click="onToggle"
     >
-      {{ paused ? '▶' : '⏸' }}
+      {{ isToggleDisabled ? '🏁' : (paused ? '▶' : '⏸') }}
     </button>
     <button
       type="button"
@@ -186,6 +267,28 @@ export default defineComponent({
     >
       ⏭
     </button>
+    <button
+      type="button"
+      data-testid="autoplay-speed"
+      aria-label="Playback speed"
+      @click="onCycleSpeed"
+    >
+      {{ speedLabel }}
+    </button>
+    <span
+      v-if="positionLabel !== ''"
+      class="autoplay-controls__position"
+      data-testid="autoplay-position"
+    >
+      {{ positionLabel }}
+    </span>
+    <span
+      v-if="expired"
+      class="autoplay-controls__expired"
+      data-testid="autoplay-expired"
+    >
+      Session expired
+    </span>
     <span
       v-if="isRewound"
       class="autoplay-controls__rewind"
@@ -213,6 +316,15 @@ export default defineComponent({
   cursor: not-allowed;
 }
 
+.autoplay-controls__position {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  min-width: 8.5rem;
+  text-align: center;
+}
+
 .autoplay-controls__rewind {
   padding: 0.1rem 0.4rem;
   font-size: 0.75rem;
@@ -221,5 +333,11 @@ export default defineComponent({
   color: var(--color-background, #fff);
   background: var(--color-warning, #c0392b);
   border-radius: 0.2rem;
+}
+
+.autoplay-controls__expired {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  font-style: italic;
 }
 </style>

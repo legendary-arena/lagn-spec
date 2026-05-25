@@ -67,6 +67,8 @@ function envelope(
     historyLength: 5,
     cursor: 4,
     mode: 'paused',
+    speedMode: '1x',
+    gameOver: false,
     ...overrides,
   };
 }
@@ -251,6 +253,18 @@ describe('autoplayPlayback service (WP-164) — control endpoints', () => {
 
     const result = await goToEnd('match-xyz');
     assert.equal(result.mode, 'live');
+  });
+
+  test('resume with speedMode option sends a JSON body', async () => {
+    installFetchStub(() => jsonResponse(200, envelope({ speedMode: '2x' })));
+
+    const result = await resume('match-xyz', { speedMode: '2x' });
+    assert.equal(result.speedMode, '2x');
+    assert.equal(calls.length, 1);
+    assert.match(calls[0]!.url, /\/resume$/);
+    assert.equal(calls[0]!.init?.method, 'POST');
+    const body = JSON.parse(calls[0]!.init?.body as string);
+    assert.equal(body.speedMode, '2x');
   });
 
   test('a later setSnapshot (live broadcast) overwrites an injected rewind frame — no merge', async () => {

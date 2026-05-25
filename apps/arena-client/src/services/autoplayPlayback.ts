@@ -47,6 +47,8 @@ export interface AutoplayControlResponse {
   // value other than 'live' | 'paused' — REWIND is derived separately from
   // cursor position, not from `mode`.
   mode: 'live' | 'paused';
+  speedMode: '1x' | '2x' | '4x' | 'max';
+  gameOver: boolean;
   uiState?: UIState;
   error?: string;
 }
@@ -151,6 +153,55 @@ async function postControl(
 }
 
 /**
+ * POST to a control URL with a JSON body and return its envelope. Same as
+ * `postControl` but sends a request body.
+ *
+ * @param url The absolute control URL.
+ * @param action The hyphenated route action (for error messages).
+ * @param matchId The live match id (for error messages).
+ * @param body The JSON-serializable request body.
+ * @returns The parsed control envelope.
+ */
+async function postControlWithBody(
+  url: string,
+  action: string,
+  matchId: string,
+  body: Record<string, unknown>,
+): Promise<AutoplayControlResponse> {
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch (cause) {
+    throw new Error(
+      `Autoplay ${action} request for match ${matchId} failed: the network request to ${url} did not complete. Check that the API server is reachable.`,
+      { cause },
+    );
+  }
+  if (response.status !== 200) {
+    throw new Error(
+      `Autoplay ${action} request for match ${matchId} returned HTTP ${response.status}; expected 200. The control was not applied.`,
+    );
+  }
+  let envelope: AutoplayControlResponse;
+  try {
+    envelope = (await response.json()) as AutoplayControlResponse;
+  } catch (cause) {
+    throw new Error(
+      `Autoplay ${action} response for match ${matchId} could not be parsed as JSON. Check that the API server returned a valid control envelope.`,
+      { cause },
+    );
+  }
+  if (envelope.uiState) {
+    useUiStateStore().setSnapshot(envelope.uiState);
+  }
+  return envelope;
+}
+
+/**
  * Pause the autoplay loop.
  * @param matchId The live match id.
  */
@@ -165,17 +216,19 @@ export async function pause(
 }
 
 /**
- * Resume the autoplay loop.
+ * Resume the autoplay loop, optionally setting a speed mode.
  * @param matchId The live match id.
+ * @param options Optional speed mode to apply on resume.
  */
 export async function resume(
   matchId: string,
+  options?: { speedMode?: '1x' | '2x' | '4x' },
 ): Promise<AutoplayControlResponse> {
-  return postControl(
-    buildApiUrl(`/api/match/autoplay/${matchId}/resume`),
-    'resume',
-    matchId,
-  );
+  const url = buildApiUrl(`/api/match/autoplay/${matchId}/resume`);
+  if (options?.speedMode) {
+    return postControlWithBody(url, 'resume', matchId, { speedMode: options.speedMode });
+  }
+  return postControl(url, 'resume', matchId);
 }
 
 /**
