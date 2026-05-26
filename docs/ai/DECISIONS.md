@@ -18906,4 +18906,60 @@ shape).
 
 ---
 
+### D-17901 — `G.cardTraits` Setup-Time Snapshot
+
+**Decision:** `G.cardTraits: Record<CardExtId, CardTraitEntry>` is a setup-time-only snapshot built by `buildCardTraits()` in `buildInitialGameState`. `CardTraitEntry = { heroClass: string | null; team: string | null }` stores categorical traits separate from economy stats (`CardStatEntry`). The snapshot is keyed by copy-suffixed CardExtIds (e.g., `core-hero-black-widow-mission-accomplished#0`) and is immutable after setup — moves must never modify it.
+
+**Rationale.** Categorical traits (hero class, team affiliation) are orthogonal to economy stats (attack, recruit, cost). Merging them into `CardStatEntry` would widen a locked contract and conflate two independent concerns. A sibling snapshot follows the established pattern (`cardStats`, `cardKeywords`, `cardDisplayData`) and keeps each builder focused on one domain.
+
+**Scopes:** D-0301 (UI consumes projections only — cardTraits is an engine internal, not projected directly).
+
+**Packet:** WP-179.
+
+**Introduced:** WP-179 (drafted 2026-05-25; landed 2026-05-25)
+**Status:** Active
+
+---
+
+### D-17902 — `normalizeTraitSlug` Single Canonical Normalizer
+
+**Decision:** `normalizeTraitSlug(raw: string): string` (`raw.trim().toLowerCase()`) lives in `state/traits.normalize.ts` and is the single canonical normalizer for hero class and team slug values. Both the markup parser (`heroAbility.setup.ts`) and the trait builder (`buildCardTraits.ts`) import and use this function. No other file may define a competing normalizer.
+
+**Rationale.** Two independent normalization paths (one in the parser, one in the builder) would silently diverge if either is updated without the other, causing superpowers to fail to match. A single shared helper guarantees that the `[hc:X]` value written at parse time and the `heroClass` value stored at build time use identical normalization.
+
+**Packet:** WP-179.
+
+**Introduced:** WP-179 (drafted 2026-05-25; landed 2026-05-25)
+**Status:** Active
+
+---
+
+### D-17903 — Superpower Self-Exclusion Rule
+
+**Decision:** `heroClassMatch` and `requiresTeam` condition evaluators skip the `triggeringCardId` when scanning `playerZones[playerID].inPlay`. A card's own hero class or team does not satisfy its own superpower. The `triggeringCardId` parameter is optional on both `evaluateCondition` and `evaluateAllConditions`; when omitted, behavior is identical to the WP-023 baseline (backward compatible). `requiresKeyword` and `playedThisTurn` do not consult `triggeringCardId`.
+
+**Rationale.** The physical Legendary card game requires *another* card of the same class (or team) to have been played this turn for a superpower to trigger. Without self-exclusion, every card with a superpower would self-trigger, which is incorrect.
+
+**Packet:** WP-179.
+
+**Introduced:** WP-179 (drafted 2026-05-25; landed 2026-05-25)
+**Status:** Active
+
+---
+
+### D-17904 — UICardDisplay Trait Projection (heroClass, team)
+
+**Decision:** `UICardDisplay` gains two optional fields: `heroClass?: string | null` and `team?: string | null`. Despite the optional TS typing, `uiState.build.ts` always assigns both keys on every `UICardDisplay` instance at runtime (value is `null` when the CardExtId has no matching `G.cardTraits` entry). This guarantees a stable runtime shape for UI consumers.
+
+**Rationale.** Optional typing allows existing tests and consumers to omit the fields without breakage (additive, non-breaking). Always-assign at runtime prevents `undefined` from leaking to the UI, which would require every consumer to handle both `undefined` and `null`. The `null` fallback signals "no trait data" unambiguously.
+
+**Scopes:** D-0301 (UICardDisplay is the UI's projection — traits are surfaced through it, not by exposing `G.cardTraits` directly).
+
+**Packet:** WP-179.
+
+**Introduced:** WP-179 (drafted 2026-05-25; landed 2026-05-25)
+**Status:** Active
+
+---
+
 Protect this file.
