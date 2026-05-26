@@ -137,7 +137,11 @@ mindmap
         ["WP-163 ✅ Autoplay playback controls (server: pause/step/rewind endpoints)"]
         ["WP-165 ✅ Autoplay status endpoint (server: GET .../status read-only probe)"]
         ["WP-177 ✅ Autoplay rewind requester audience (server: D-17701 scopes D-16303)"]
+        ["WP-164 ✅ Autoplay playback controls (client: media-player bar + status probe gating)"]
         ["WP-166 ✅ arena-client vue-tsc green + CI typecheck gate (engine barrel publishes the 6 WP-128 UIState sub-types; D-16502)"]
+        ["WP-171 ✅ Pile browse modal (click-to-view card piles)"]
+        ["WP-178 ✅ Card image rendering on play surface (CardTile component)"]
+        ["WP-179 ✅ Card traits + superpower condition evaluation"]
 
       Auth Stack & Profile Surface
         ["WP-099 ✅ Auth provider selection (Hanko)"]
@@ -152,6 +156,7 @@ mindmap
         ["WP-160 ✅ Hanko client UI (production sign-in surface)"]
         ["WP-161 ✅ Arena client API base URL surfacing (VITE_API_BASE_URL)"]
         ["WP-174 ✅ First-sign-in auto-provisioning (read-or-create account resolver)"]
+        ["WP-175 ✅ Auth-aware navigation surface"]
 
       Engine + Server Wiring & Leaderboard HTTP
         ["WP-113 ✅ Engine-server registry wiring"]
@@ -164,12 +169,21 @@ mindmap
         ["WP-123 ✅ cardType widening and other dispatch"]
         ["WP-124 ✅ Theme zoom slider"]
         ["WP-125 ✅ Card abilities effect-tag filter"]
+        ["WP-086 ✅ Card-types upgrade"]
+        ["WP-096 ✅ Grid data view mode"]
         ["WP-127 ✅ Grid tile team and ability text"]
+        ["WP-170 ✅ Card count display"]
 
       Phase 8 — Interactive Board Layout
         ["WP-128 ✅ UIState board projections"]
         ["WP-129 ✅ Board layout (desktop/mobile)"]
         ["WP-130 ✅ Playmat / reskin selector"]
+
+      G-State Extensions
+        ["WP-153 ✅ Destination piles (strike, twist, escaped)"]
+        ["WP-154 ✅ Mastermind attached bystanders"]
+        ["WP-155 ✅ Turn economy extensions (piercing, wounds drawn)"]
+        ["WP-156 ✅ Horrors pile"]
 
       Monetization Stack
         ["WP-132 ✅ Entitlements data model and read endpoint"]
@@ -203,6 +217,17 @@ mindmap
         ["WP-142 ✅ Legends snapshot publisher"]
         ["WP-143 ✅ Legends attract board (public scoreboard SPA)"]
 
+      Villain Deck Pipeline
+        ["WP-167 ✅ Villain deck composition data (registry)"]
+        ["WP-168 ✅ Villain deck composition logic (engine)"]
+        ["WP-169 ✅ Scheme villain-deck count curation"]
+        ["WP-172 ✅ Villain-deck display data coverage"]
+        ["WP-173 ✅ Well-known ext_id display data"]
+
+      Dashboard
+        ["WP-157 ✅ Dashboard scaffold (PrimeVue + Pinia + ECharts)"]
+        ["WP-162 ✅ Dashboard daily execution panel + UI polish"]
+
       Admin & Route Wiring
         ["WP-110 ✅ Admin billing visibility"]
         ["WP-176 ✅ Admin billing auth cutover (shared-secret → session)"]
@@ -214,6 +239,23 @@ mindmap
         ["WP-106 ✅ Done — avatar upload pipeline"]
         ["WP-107 ✅ Profile integrity / anti-cheat surface"]
         ["WP-108 ✅ Profile billing & funding history UI"]
+
+      Architecture & API Governance
+        ["WP-116 ✅ Disconnect & reconnect semantics"]
+        ["WP-117 ✅ Client routing strategy"]
+        ["WP-118 ✅ HTTP API surface catalog"]
+        ["WP-119 ✅ Architecture doc hygiene"]
+
+      Complete-Game Testing
+        ["WP-158 ✅ Complete-game regression tests (seed-faithful fixture harness)"]
+
+      Cross-App Infrastructure
+        ["WP-180 ✅ Build-time version stamping"]
+
+      Next Horizons
+        ["📦 Card keyword & ability coverage — expand implemented keywords across 40 sets"]
+        ["📦 Live PvP matchmaking & reconnect — implement WP-116 architecture + match discovery UX"]
+        ["📦 Score submission HTTP wiring — close the play-to-leaderboard loop"]
 
       Phase 10 — Debugging, Testing & Troubleshooting
         ["Future-WP-A 📝 Placeholder — replay diff tool"]
@@ -258,22 +300,29 @@ mindmap
 | Scoring & PAR Pipeline | 4/4 | — |
 | Beta-Launch Pillar | 5/5 | — |
 | Engine Hardening | 2/2 | — |
-| Client Integration Cluster | 8/8 | — |
-| Auth Stack & Profile Surface | 12/12 | — |
+| Client Integration Cluster | 12/12 | — |
+| Auth Stack & Profile Surface | 13/13 | — |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
-| Registry Viewer Enhancements | 6/6 | — |
+| Registry Viewer Enhancements | 9/9 | — |
 | Phase 8 — Interactive Board Layout | 3/3 | — |
+| G-State Extensions | 4/4 | — |
 | Monetization Stack | 3/3 | — |
 | Engine & Test-Harness Cleanup | 3/3 | — |
 | Physical Card Pipeline | 5/5 | — |
 | Domain Cutover & Infrastructure | 5/5 | — |
 | Public Leaderboard (Marketing) | 2/2 | — |
 | Legends Public Scoreboard | 2/2 | — |
+| Villain Deck Pipeline | 5/5 | — |
+| Dashboard | 2/2 | — |
 | Admin & Route Wiring | 3/3 | — |
 | Phase 9 — Profile Surface Follow-ups | 4/4 | — |
+| Architecture & API Governance | 4/4 | — |
+| Complete-Game Testing | 1/1 | — |
+| Cross-App Infrastructure | 1/1 | — |
+| Next Horizons | 0/3 | 3 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **156/161 ✅** | 8 📝 placeholders + 2 ⏸ |
+| **Total** | **181/195 ✅** | 3 📦 + 8 📝 placeholders + 1 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 
@@ -283,32 +332,34 @@ mindmap
 
 - **Phase 3 Gate:** Closed (D-1320)
 - **Phase 6 Gate:** Closed 2026-04-19 — tag `phase-6-complete` at `c376467`
-- **Engine test baseline:** `749 / 0 / 0` (post-WP-158)
-- **Registry test baseline:** `53 / 0 / 0` (post-WP-151)
-- **Server test baseline:** `330 / 1 / 66 / 0` (post-WP-165; +7 autoplay-status tests over the WP-163 baseline; the 1 fail is the pre-existing `join-match.test.ts` "missing --name flag" carried since WP-106 per STATUS.md)
-- **arena-client test baseline:** `362 / 0 / 0` (post-WP-166; WP-164 326→361, EC-183 →362; WP-166 adds no tests — fixture/test-literal shape refresh + the `OpponentPanel` redaction rewrite, net 0)
-- **DECISIONS.md range:** `D-4801..D-16502` (extends through WP-166)
-- **EC range:** `EC-001..EC-184` (extends through WP-166)
+- **Engine test baseline:** `813 / 0 / 0` (post-WP-179; 174 suites)
+- **Registry test baseline:** `112 / 0 / 0` (post-WP-169; 12 suites)
+- **Registry-viewer test baseline:** `39 / 0 / 0` (post-WP-170)
+- **Server test baseline:** `466 / 0 / 66` (post-WP-180; pre-existing `join-match.test.ts` 1-fail now resolved; 400 pass + 66 skipped)
+- **arena-client test baseline:** `444 / 0 / 0` (post-WP-180; 60 suites)
+- **Dashboard test baseline:** `9 / 0 / 0` (post-WP-162)
+- **DECISIONS.md range:** `D-4801..D-18002` (extends through WP-180)
+- **EC range:** `EC-001..EC-204` (extends through WP-180)
 
 ---
 
 ## Next Unblocked (ordered)
 
-1. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
-2. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+1. **Card keyword & ability coverage** — expand the set of implemented hero keywords, villain abilities, and scheme/mastermind mechanics. Most of the 40 card sets have abilities that don't fire yet. This is the highest-impact axis for making each game feel like Legendary.
+2. **Live PvP matchmaking & reconnect** — WP-116 defined the disconnect/reconnect architecture; no implementation WP exists yet. Match discovery UX and reconnect handling are prerequisites for real multiplayer sessions.
+3. **Score submission HTTP wiring** — the PAR/competition/leaderboard pipeline is fully built, but the score-submission request-handler route doesn't exist at HEAD. Wiring it closes the loop from "play a game" to "see yourself on the leaderboard."
+4. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
+5. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
 
-**Recently completed:**
-- ✅ **Autoplay playback controls (client)** (WP-164, 2026-05-19) — spectator "Watch Bot Play" media-player bar: new `autoplayPlayback.ts` service (`getStatus` + six controls via `buildApiUrl`; injects `setSnapshot` iff `uiState`) + `AutoplayControls.vue` (5 buttons + pause/resume toggle; REWIND keyed on `isRewound = cursor < historyLength - 1`) + `PlayDesktop.vue` mounting the bar only when the WP-165 status probe resolves non-null (D-16501; gates out normal PvP), with `matchId` prop-drilled `App.vue` → `PlayViewport.vue` → `PlayDesktop.vue`. `mode` read directly (D-16304); live broadcast wins (D-16301). Consumes D-16101/16301/16304/16309/16501/14401 — no new decisions. arena-client 326 → 361 ✅.
-- ✅ **Autoplay status endpoint (server)** (WP-165, 2026-05-19) — one side-effect-free `GET /api/match/autoplay/:matchId/status` read probe so the WP-164 client tells an autoplay match (200) from a normal live match (404) without a URL marker; reuses WP-163's `getController` + `buildResponse` + `handlePlaybackRequest`; strictly read-only. D-16501 Active. Unblocks WP-164.
-- ✅ **First-sign-in auto-provisioning** (WP-174, 2026-05-24) — `productionAccountResolver` becomes read-or-create: provisions a `legendary.players` row on first Hanko-verified sign-in via `INSERT ... ON CONFLICT DO NOTHING` + re-SELECT. Migration 016 adds `UNIQUE INDEX players_auth_provider_sub_unique`. `VerifiedSessionClaim` extended with additive optional `email` + `displayName`. D-16006 superseded; D-17401..D-17406 Active.
-- ✅ **Autoplay rewind requester audience** (WP-177, 2026-05-25) — `resolveRequesterAudience` derives viewing audience from optional `X-Player-ID` / `X-Credentials` headers; `rewindUIState` parameterized with audience; 3 rewind call sites threaded. No engine change. D-17701 Active (scopes D-16303).
-- ✅ **Profile integrity / anti-cheat surface** (WP-107, 2026-05-24) — three admin-only endpoints under `/api/admin/players/:handle/` (`GET /integrity`, `POST /suspend`, `POST /unsuspend`) + migration 015 (`is_suspended` on `legendary.players` + append-only `legendary.admin_actions` audit table) + shared `requireUnsuspendedAccount` intake helper (Library-only). FIRST caller of WP-159 `requireAdminSession`. Phase 9 closes at 4/4 ✅. D-10701..D-10703 Active.
-- ✅ **Autoplay playback controls (server)** (WP-163, 2026-05-19) — six `POST /api/match/autoplay/:matchId/*` endpoints + cursor-based snapshot history + pause-gated bot loop; rewind is REST-only / visual-only (no `G` mutation, no persistence). D-16301..D-16309 Active. Paired client WP-164 not yet drafted.
-- ✅ **Arena client API base URL surfacing** (WP-161, 2026-05-18) — `VITE_API_BASE_URL` + `buildApiUrl(...)` helper; surfaced during WP-160 smoke as the unblocker for end-to-end authenticated `/api/me/*` paths.
-- ✅ **Hanko client UI** (WP-160, 2026-05-18) — production sign-in surface; closes the WP-099/112/126/131 stack at the client boundary; D-16001..D-16011 Active.
-- ✅ **Admin session gate** (WP-159, 2026-05-17) — `requireAdminSession` library; D-15901, D-15902.
-- ✅ **G-state sub-WPs** (all `// SAFE-SKIP-WP128` assignment sites graduated 2026-05-16) — WP-153, WP-154, WP-155, WP-156.
-- ✅ **Dashboard scaffold** (WP-157, 2026-05-16) — `apps/dashboard/` SPA live.
+**Recently completed (2026-05-25):**
+- ✅ WP-180 — Build-time version stamping (cross-app)
+- ✅ WP-179 — Card traits + superpower condition evaluation
+- ✅ WP-178 — Card image rendering on play surface (CardTile)
+- ✅ WP-177 — Autoplay rewind requester audience
+- ✅ WP-175 — Arena client auth-aware navigation
+- ✅ WP-176 — Admin billing auth cutover (shared-secret → session)
+- ✅ WP-174 — First-sign-in auto-provisioning
+- ✅ WP-107 — Profile integrity / anti-cheat surface
 
 **Blocked (cannot start):**
 - (none)
@@ -337,4 +388,4 @@ mindmap
 
 ---
 
-*Last updated: 2026-05-24 (WP-174 First-Sign-In Auto-Provisioning executed: `productionAccountResolver` becomes read-or-create — provisions a `legendary.players` row on first Hanko-verified sign-in when no existing `(authProvider, authProviderSub)` row exists. New `accountProvisioning.logic.ts` helper uses `INSERT ... ON CONFLICT (auth_provider, auth_provider_id) DO NOTHING` + re-SELECT for race safety. Migration 016 adds `UNIQUE INDEX players_auth_provider_sub_unique`. `VerifiedSessionClaim` extended with additive optional `email` + `displayName`; Hanko verifier extracts both from JWT payload (handles string and object-with-`.address` shapes). Email validation gate: defined + non-empty after trim + contains `@`; canonicalized `.trim().toLowerCase()`. Display name fallback: `email.split('@')[0].slice(0, 64)`. Duplicate-email (different provider) returns `Result.ok(null)` — account linking intentionally deferred. Locked files unchanged: `identity.logic.ts`, `identity.types.ts`, `accountLookup.logic.ts`, `sessionToken.logic.ts`. `createPlayerAccount` grep count in `accountResolver.logic.ts` = 0. Server test baseline 441/374/1/66 -> 453/386/1/66 (+12 new: 4 accountProvisioning + 8 accountResolver WP-174 provisioning); 5 new hankoVerifier tests. 1 pre-existing `join-match.test.ts` fail carried forward. `pnpm -r build` exits 0. Catalog updated per §21 + D-11804: `productionAccountResolver` row amended + `provisionPlayerAccount` `Library-only` row added. D-16006 superseded by D-17401. D-17401..D-17406 Active. Auth Stack & Profile Surface 11/11 -> 12/12 ✅; total now 157/162 ✅. 8 files (impl) + 4 files (governance). DECISIONS range -> D-17406; EC range -> EC-196.) Previous: 2026-05-19 (WP-166 arena-client vue-tsc Green + CI Gate executed: engine barrel `packages/game-engine/src/index.ts` now re-exports the six WP-128 `UIState` projection sub-types (`UICardDisplay`/`UIHQCard`/`UIDisplayEntry`/`UIDecksState`/`UISharedPilesState`/`UIKoPileState`) — additive, type-only (D-16502 Active); `uiState.types.ts` untouched. Three `UIState` JSON fixtures + `SharedScoreboard.test.ts` literals raised to the full WP-128 shape; `OpponentPanel.test.ts` omits redacted optional keys via object-rest under `exactOptionalPropertyTypes` (flag not relaxed); `PlayMobile.vue` guards `TurnActionBar` on `viewer !== null` (minimal, mobile gets no rewind frame per D-16501). New `typecheck-arena-client` CI job (own job, not in `build-viewer`, since it needs engine/preplan dist). arena-client baseline 362/0/0 preserved; `pnpm -r build` 0; `vue-tsc` 0. Two reconciliations folded inline (draft written against short-circuited `vue-tsc` output): R1 fixtures live in `fixtures/uiState/{mid-turn,endgame-win,endgame-loss}.json` not the `.ts` wrappers; R2 full WP-128 shape required (`city.escapedPile`+`city.spaces[].display`, `mastermind.{display,attachedBystanders,strikePile}`, `scheme.twistPile`, `economy.{piercing,woundsDrawn}`) per WP Goal §B. DECISIONS range → D-16502; EC range → EC-184. 01.5 NOT INVOKED; 01.6 SKIPPED.) Previous: 2026-05-19 (WP-164 Autoplay Playback Controls (Client) executed: new `autoplayPlayback.ts` service (`getStatus` + six controls via `buildApiUrl`; injects `setSnapshot` iff `uiState`; exports the pure `resolveAutoplayGating` mount/gating helper + `STATUS_RETRY_DELAY_MS = 1000`) + `AutoplayControls.vue` (5 buttons + pause/resume toggle; REWIND keyed on `isRewound = cursor < historyLength - 1`; no `fetch` / no store import) + `PlayDesktop.vue` gating the bar on the WP-165 status probe (D-16501; one bounded retry) with `matchId` prop-drilled `App.vue` → `PlayViewport.vue` → `PlayDesktop.vue` (additive bind, no `parseQuery` change). Consumes D-16101/16301/16304/16309/16501/14401 — no new decisions; no amendments. arena-client baseline 326/0/0 → 361/0/0 (+35: 19 service + 14 component + 2 page-gating); `pnpm -r build` exits 0. EC range → EC-181. Closes the autoplay playback cluster (server WP-163/165 + client WP-164).) Previous: 2026-05-19 (WP-163 Autoplay Playback Controls (Server) executed: new `playbackController.mjs` pure helper — cursor-based snapshot history, single-consumer pause gate, `maxHistory=100` — plus six bodyless `POST /api/match/autoplay/:matchId/*` endpoints and `runBotMatch` integration (controller map, `withRegisteredController` try/finally cleanup, `recordAndPace` per-move push+gate+delay-substitution). Rewind REST-only and visual-only; buffer = Class 1 Runtime State (D-16306). Client Integration Cluster 7/7 → 8/8; total now 155/161 ✅. Server test baseline 313/1/66 → 323/1/66 (+10 controller tests; 1 fail is pre-existing `join-match.test.ts`). D-16301..D-16309 Active; DECISIONS range → D-16309; EC range → EC-180. Three execution amendments folded inline (A1 `.test.mjs`→`.test.ts`; A2 D-16301 cursor-invariant reword; A3 `server build`→`pnpm -r build`). Paired client WP-164 not yet drafted. Previous: 2026-05-18 (WP-161 Arena Client API Base URL Surfacing executed: VITE_API_BASE_URL env var + buildApiUrl helper unblock end-to-end /api/me/* paths from production; surfaced during WP-160 smoke; total now 154/160 ✅. Previous: 2026-05-18 — WP-160 Hanko Client UI executed: flipped 📝 → ✅ on Auth Stack & Profile Surface cluster, which now closes at 10/10 ✅; total now 153/159 ✅ with 1 📝 Drafted ready-for-execution — WP-107. D-16001..D-16011 flipped to Active; D-16004 Decision text corrected during execution to reflect the SDK API drift `hanko.user.logout()` → `hanko.logout()` folded inline. arena-client baseline refreshed to `326 / 0 / 0` post-WP-160 (+15 new tests: 8 wrapper + 7 store, all passing); DECISIONS.md range extended to D-16011; EC range extended to EC-174. Previous update 2026-05-17: WP-160 drafted; total was 152/159 ✅ with 2 📝 Drafted — WP-107 + WP-160.)*
+*Last updated: 2026-05-26 (roadmap catchup: added 25 missing WPs to mindmap — WP-086/096/116-119/153-158/162/164/167-173/175/178-180; added Next Horizons section with 3 forward-looking strategic directions (card keyword coverage, live PvP reconnect, score submission wiring); trimmed Recently Completed to one-liners per checklist rule; total 181/195 ✅.)*
