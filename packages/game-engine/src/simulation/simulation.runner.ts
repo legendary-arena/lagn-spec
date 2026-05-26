@@ -305,6 +305,15 @@ function simulateOneGame(
     }
 
     const intent = activePolicy.decideTurn(filteredState, legalMoves);
+
+    // why: decision log is pushed before dispatching the move so bot
+    // rationale appears in G.messages before the move's own messages.
+    if (intent.decisionLog !== undefined) {
+      for (const logLine of intent.decisionLog) {
+        gameState.messages.push(logLine);
+      }
+    }
+
     const moveFn = MOVE_MAP[intent.move.name];
     const endTurnFlag = { triggered: false };
 

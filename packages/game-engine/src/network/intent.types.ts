@@ -48,6 +48,9 @@ export interface ClientTurnIntent {
   };
   /** Optional client state hash for desync detection. */
   clientStateHash?: string;
+  // why: optional so existing callers that don't set it compile without changes.
+  /** Optional bot decision rationale lines. */
+  decisionLog?: string[];
 }
 
 /**

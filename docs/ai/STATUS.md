@@ -7,6 +7,17 @@
 
 ## Current State
 
+### WP-181 / EC-207 Executed — Bot Decision Logging (2026-05-26)
+
+**Every bot turn now produces 1–2 human-readable decision log messages in `G.messages` explaining what the bot chose, its score, and what alternatives it considered.** Players watching bot games (autoplay or PvP with bot) see `[Bot] Chose: ...` and `[Bot] Over: ...` lines narrating the AI's rationale.
+
+- `ClientTurnIntent` gains optional `decisionLog?: string[]` field — existing callers unaffected.
+- `selectBestMove` in `ai.competent.ts` returns `BestMoveResult { move, decisionLog }` (local interface, not exported).
+- Line 1 format: `[Bot] Chose: <moveName>[<argValue>] (score <N>)` — always present.
+- Line 2 format: `[Bot] Over: <alt1> (<score1>), <alt2> (<score2>)` — present only when alternatives scored above lifecycle threshold (10).
+- Simulation runner pushes `intent.decisionLog` into `G.messages` before dispatching the move (rationale appears before move effects).
+- 5 new tests, 819 total passing. No heuristic changes, no UI changes, no PRNG perturbation (D-3604).
+
 ### WP-180 / EC-204 Executed — Build-Time Version Stamping (2026-05-25)
 
 **Every deployed app now displays a subtle version badge and the server exposes a `GET /api/version` endpoint.** All four Vite SPAs (arena-client, registry-viewer, dashboard, legends-board) show a fixed-position bottom-right badge rendering `v{version} · {gitSha} · {date}` at 11px monospace, 50% opacity. The server endpoint returns `{ version, gitSha, buildTimestamp }` cached at process start.

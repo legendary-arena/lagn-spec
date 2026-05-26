@@ -328,3 +328,121 @@ describe('T2 Competent Heuristic policy (WP-049)', () => {
     );
   });
 });
+
+describe('Bot decision logging (WP-181)', () => {
+  test('decideTurn returns decisionLog with chosen move name and score', () => {
+    const view = buildSyntheticUIState(emptyCitySpaces());
+    const legalMoves: LegalMove[] = [
+      { name: 'recruitHero', args: { hqIndex: 0 } },
+      { name: 'advanceStage', args: {} },
+    ];
+    const policy = createCompetentHeuristicPolicy('log-shape-seed');
+    const intent = policy.decideTurn(view, legalMoves);
+
+    assert.equal(Array.isArray(intent.decisionLog), true, 'decisionLog must be an array');
+    assert.equal(
+      intent.decisionLog!.length >= 1,
+      true,
+      'decisionLog must have at least one line',
+    );
+    assert.ok(
+      intent.decisionLog![0]!.includes('recruitHero'),
+      'Line 1 must include chosen move name',
+    );
+    assert.ok(
+      intent.decisionLog![0]!.includes('score 50'),
+      'Line 1 must include integer score',
+    );
+  });
+
+  test('every decisionLog line starts with [Bot] prefix', () => {
+    const villainWithBystander: UICityCard = {
+      extId: 'v-carrier',
+      type: 'villain',
+      keywords: ['bystander'],
+    };
+    const view = buildSyntheticUIState([villainWithBystander, null, null, null, null]);
+    const legalMoves: LegalMove[] = [
+      { name: 'fightVillain', args: { cityIndex: 0 } },
+      { name: 'recruitHero', args: { hqIndex: 0 } },
+      { name: 'advanceStage', args: {} },
+    ];
+    const policy = createCompetentHeuristicPolicy('bot-prefix-seed');
+    const intent = policy.decideTurn(view, legalMoves);
+
+    for (const line of intent.decisionLog!) {
+      assert.equal(
+        line.startsWith('[Bot] '),
+        true,
+        `Every line must start with "[Bot] ": ${line}`,
+      );
+    }
+  });
+
+  test('decisionLog is deterministic across identical seeds', () => {
+    const view = buildSyntheticUIState(emptyCitySpaces());
+    const legalMoves: LegalMove[] = [
+      { name: 'recruitHero', args: { hqIndex: 0 } },
+      { name: 'drawCards', args: { count: 1 } },
+      { name: 'advanceStage', args: {} },
+    ];
+    const policyA = createCompetentHeuristicPolicy('det-log-seed');
+    const policyB = createCompetentHeuristicPolicy('det-log-seed');
+    const intentA = policyA.decideTurn(view, legalMoves);
+    const intentB = policyB.decideTurn(view, legalMoves);
+
+    assert.deepStrictEqual(
+      intentA.decisionLog,
+      intentB.decisionLog,
+      'Same seed + same inputs = same decisionLog',
+    );
+  });
+
+  test('decisionLog includes alternative scores when alternatives exist', () => {
+    const villain: UICityCard = {
+      extId: 'v-mid',
+      type: 'villain',
+      keywords: [],
+    };
+    const view = buildSyntheticUIState([null, villain, null, null, null]);
+    const legalMoves: LegalMove[] = [
+      { name: 'fightVillain', args: { cityIndex: 1 } },
+      { name: 'recruitHero', args: { hqIndex: 0 } },
+      { name: 'endTurn', args: {} },
+    ];
+    const policy = createCompetentHeuristicPolicy('alt-scores-seed');
+    const intent = policy.decideTurn(view, legalMoves);
+
+    assert.equal(
+      intent.decisionLog!.length,
+      2,
+      'decisionLog must have 2 lines when alternatives above threshold exist',
+    );
+    assert.equal(
+      intent.decisionLog![1]!.startsWith('[Bot] Over:'),
+      true,
+      'Line 2 must start with "[Bot] Over:"',
+    );
+    assert.ok(
+      intent.decisionLog![1]!.includes('recruitHero'),
+      'Over line must include recruitHero alternative',
+    );
+  });
+
+  test('decisionLog omits alternatives line when all alternatives are lifecycle moves', () => {
+    const view = buildSyntheticUIState(emptyCitySpaces());
+    const legalMoves: LegalMove[] = [
+      { name: 'recruitHero', args: { hqIndex: 0 } },
+      { name: 'advanceStage', args: {} },
+      { name: 'endTurn', args: {} },
+    ];
+    const policy = createCompetentHeuristicPolicy('no-alt-seed');
+    const intent = policy.decideTurn(view, legalMoves);
+
+    assert.equal(
+      intent.decisionLog!.length,
+      1,
+      'decisionLog must have only 1 line when no alternatives score above lifecycle threshold',
+    );
+  });
+});

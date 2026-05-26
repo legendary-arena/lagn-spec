@@ -295,11 +295,50 @@ function scoreOneMove(move: LegalMove, view: UIState): number {
 }
 
 // ---------------------------------------------------------------------------
+// Decision log formatting.
+// ---------------------------------------------------------------------------
+
+// why: BestMoveResult is local to ai.competent.ts — not exported — because
+// it is an internal refactor detail; the public API surface remains AIPolicy.
+/**
+ * Internal result pairing the chosen move with human-readable decision log
+ * lines for bot transparency (WP-181).
+ */
+interface BestMoveResult {
+  readonly move: LegalMove;
+  readonly decisionLog: string[];
+}
+
+/**
+ * Formats the arg suffix for a decision log message.
+ *
+ * Returns `[value]` when args contains a known single-numeric field
+ * (cityIndex, hqIndex, count); returns empty string otherwise.
+ */
+function formatArgSuffix(args: unknown): string {
+  if (args === null || args === undefined || typeof args !== 'object') {
+    return '';
+  }
+  const record = args as Record<string, unknown>;
+  if (typeof record.cityIndex === 'number') {
+    return `[${record.cityIndex}]`;
+  }
+  if (typeof record.hqIndex === 'number') {
+    return `[${record.hqIndex}]`;
+  }
+  if (typeof record.count === 'number') {
+    return `[${record.count}]`;
+  }
+  return '';
+}
+
+// ---------------------------------------------------------------------------
 // Tie-break selection.
 // ---------------------------------------------------------------------------
 
 /**
- * Selects the highest-scoring move, breaking ties via the policy RNG.
+ * Selects the highest-scoring move, breaking ties via the policy RNG,
+ * and builds a human-readable decision log.
  *
  * Steps:
  *   1. Score every move into a ScoredMove array using for...of (no .reduce).
@@ -307,12 +346,13 @@ function scoreOneMove(move: LegalMove, view: UIState): number {
  *   3. Collect every move whose score equals the maximum.
  *   4. If a single winner, return it. Otherwise, select a winner by
  *      indexing into the tie group with the next mulberry32 draw.
+ *   5. Build 1–2 decision log lines: chosen move + top alternatives.
  */
 function selectBestMove(
   legalMoves: LegalMove[],
   view: UIState,
   nextRandom: () => number,
-): LegalMove {
+): BestMoveResult {
   const scored: ScoredMove[] = [];
   for (const move of legalMoves) {
     scored.push({ move, score: scoreOneMove(move, view) });
@@ -332,11 +372,48 @@ function selectBestMove(
     }
   }
 
+  let winner: LegalMove;
   if (tieGroup.length === 1) {
-    return tieGroup[0]!;
+    winner = tieGroup[0]!;
+  } else {
+    const tieIndex = Math.floor(nextRandom() * tieGroup.length);
+    winner = tieGroup[tieIndex]!;
   }
-  const tieIndex = Math.floor(nextRandom() * tieGroup.length);
-  return tieGroup[tieIndex]!;
+
+  const decisionLog: string[] = [];
+  decisionLog.push(
+    `[Bot] Chose: ${winner.name}${formatArgSuffix(winner.args)} (score ${maxScore})`,
+  );
+
+  // why: SCORE_ADVANCE_STAGE_BASE is the lifecycle-move threshold —
+  // alternatives at or below it are mandatory progression steps (advance,
+  // end turn), not real decision alternatives worth reporting.
+  let firstAlt: ScoredMove | null = null;
+  let secondAlt: ScoredMove | null = null;
+  for (const entry of scored) {
+    if (entry.move === winner) {
+      continue;
+    }
+    if (entry.score <= SCORE_ADVANCE_STAGE_BASE) {
+      continue;
+    }
+    if (firstAlt === null || entry.score > firstAlt.score) {
+      secondAlt = firstAlt;
+      firstAlt = entry;
+    } else if (secondAlt === null || entry.score > secondAlt.score) {
+      secondAlt = entry;
+    }
+  }
+
+  if (firstAlt !== null) {
+    let overLine = `[Bot] Over: ${firstAlt.move.name}${formatArgSuffix(firstAlt.move.args)} (${firstAlt.score})`;
+    if (secondAlt !== null) {
+      overLine += `, ${secondAlt.move.name}${formatArgSuffix(secondAlt.move.args)} (${secondAlt.score})`;
+    }
+    decisionLog.push(overLine);
+  }
+
+  return { move: winner, decisionLog };
 }
 
 // ---------------------------------------------------------------------------
@@ -383,12 +460,13 @@ export function createCompetentHeuristicPolicy(seed: string): AIPolicy {
         };
       }
 
-      const chosen = selectBestMove(legalMoves, playerView, nextRandom);
+      const result = selectBestMove(legalMoves, playerView, nextRandom);
       return {
         matchId: `simulation-${seed}`,
         playerId: playerView.game.activePlayerId,
         turnNumber: playerView.game.turn,
-        move: { name: chosen.name, args: chosen.args },
+        move: { name: result.move.name, args: result.move.args },
+        decisionLog: result.decisionLog,
       };
     },
   };
