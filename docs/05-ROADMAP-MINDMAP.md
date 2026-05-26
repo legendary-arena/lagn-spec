@@ -253,7 +253,7 @@ mindmap
         ["WP-180 ✅ Build-time version stamping"]
 
       Next Horizons
-        ["📦 Card keyword & ability coverage — expand implemented keywords across 40 sets"]
+        ["📦 Core set keyword & ability coverage — get the core set fully playable first, then add sets incrementally"]
         ["📦 Live PvP matchmaking & reconnect — implement WP-116 architecture + match discovery UX"]
         ["📦 Score submission HTTP wiring — close the play-to-leaderboard loop"]
 
@@ -345,7 +345,7 @@ mindmap
 
 ## Next Unblocked (ordered)
 
-1. **Card keyword & ability coverage** — expand the set of implemented hero keywords, villain abilities, and scheme/mastermind mechanics. Most of the 40 card sets have abilities that don't fire yet. This is the highest-impact axis for making each game feel like Legendary.
+1. **Core set keyword & ability coverage** — get the `core` set fully playable on play.legendary-arena.com first: all hero keywords, villain abilities, scheme mechanics, and mastermind tactics firing correctly for the base game. Additional sets are added incrementally after core is solid.
 2. **Live PvP matchmaking & reconnect** — WP-116 defined the disconnect/reconnect architecture; no implementation WP exists yet. Match discovery UX and reconnect handling are prerequisites for real multiplayer sessions.
 3. **Score submission HTTP wiring** — the PAR/competition/leaderboard pipeline is fully built, but the score-submission request-handler route doesn't exist at HEAD. Wiring it closes the loop from "play a game" to "see yourself on the leaderboard."
 4. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
