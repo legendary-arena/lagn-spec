@@ -38,6 +38,7 @@ import { requireAuthenticatedSession } from './auth/sessionToken.logic.js';
 import { createHankoSessionVerifier } from './auth/hanko/hankoVerifier.logic.js';
 import { productionAccountResolver } from './auth/accountResolver.logic.js';
 import { LegendaryGame, setRegistryForSetup } from '@legendary-arena/game-engine';
+import { getVersionInfo } from './version.mjs';
 
 // why: boardgame.io v0.50 only ships a CJS server bundle (dist/cjs/server.js)
 // with no ESM entrypoint. Node v22+ ESM does not resolve CJS-only subpackage
@@ -360,6 +361,12 @@ export async function startServer() {
   });
 
   registerHealthRoute(server.router);
+
+  // why: read-only diagnostics for deployment freshness verification
+  server.router.get('/api/version', (koaContext) => {
+    koaContext.body = getVersionInfo();
+  });
+
   registerLegendsPublisherRoutes(server.router);
 
   // why: "Watch Bot Play" feature — server-side autoplay loop using

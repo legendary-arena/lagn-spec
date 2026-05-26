@@ -1,8 +1,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import VersionBadge from './VersionBadge.vue';
 
 export default defineComponent({
   name: 'BrandFooter',
+  components: { VersionBadge },
 });
 </script>
 
@@ -14,6 +16,7 @@ export default defineComponent({
         Legendary Arena
       </a>
     </span>
+    <VersionBadge />
   </footer>
 </template>
 

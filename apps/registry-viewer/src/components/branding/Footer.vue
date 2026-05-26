@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// Brand footer — copyright + canonical site link. Presentation-only.
-// No data-pipeline imports per WP-007b §Step 5 import contract.
+import VersionBadge from './VersionBadge.vue';
 </script>
 
 <template>
@@ -11,6 +10,7 @@
         Legendary Arena
       </a>
     </span>
+    <VersionBadge />
   </footer>
 </template>
 

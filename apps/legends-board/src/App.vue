@@ -17,6 +17,7 @@ import WeeklyPanel from "./panels/WeeklyPanel.vue";
 import BySchemePanel from "./panels/BySchemePanel.vue";
 import RecentAchievementsPanel from "./panels/RecentAchievementsPanel.vue";
 import NowPlayingPanel from "./panels/NowPlayingPanel.vue";
+import VersionBadge from "./components/VersionBadge.vue";
 
 // ---------------------------------------------------------------------------
 // State
@@ -257,6 +258,8 @@ onUnmounted(() => {
         </template>
       </AttractCycler>
     </main>
+
+    <VersionBadge />
 
     <!-- Debug footer -->
     <footer v-if="kioskConfig.isDebug" class="debug-footer">
