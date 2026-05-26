@@ -73,3 +73,10 @@ installGlobal('navigator', dom.window.navigator);
 // access). WP-136 / D-13601.
 installGlobal('localStorage', dom.window.localStorage);
 installGlobal('sessionStorage', dom.window.sessionStorage);
+
+// why: Vite `define` constants (__APP_VERSION__, __BUILD_TIMESTAMP__,
+// __GIT_SHA__) are string-replaced at build time but absent in the
+// node:test runner. VersionBadge.vue reads them as bare globals.
+installGlobal('__APP_VERSION__', '0.0.0-test');
+installGlobal('__BUILD_TIMESTAMP__', new Date().toISOString());
+installGlobal('__GIT_SHA__', 'test');
