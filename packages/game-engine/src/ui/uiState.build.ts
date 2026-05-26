@@ -75,6 +75,8 @@ export const UNKNOWN_DISPLAY_PLACEHOLDER: UICardDisplay = {
   name: '<unknown>',
   imageUrl: '',
   cost: null,
+  heroClass: null,
+  team: null,
 };
 
 // why: every projection-time read of G.cardDisplayData[extId] MUST
@@ -94,10 +96,18 @@ function resolveDisplay(
   gameState: LegendaryGameState,
 ): UICardDisplay {
   const entry = gameState.cardDisplayData[extId];
+  // why: WP-179 — `heroClass` and `team` are always assigned on every
+  // UICardDisplay (runtime shape guarantee despite optional TS typing).
+  // `null` on lookup miss prevents `undefined` from leaking to the UI.
+  const traitEntry = gameState.cardTraits !== undefined
+    ? gameState.cardTraits[extId]
+    : undefined;
+  const heroClass = traitEntry !== undefined ? traitEntry.heroClass : null;
+  const team = traitEntry !== undefined ? traitEntry.team : null;
   if (entry !== undefined) {
-    return { ...entry };
+    return { ...entry, heroClass, team };
   }
-  return { ...UNKNOWN_DISPLAY_PLACEHOLDER, extId };
+  return { ...UNKNOWN_DISPLAY_PLACEHOLDER, extId, heroClass, team };
 }
 
 // why: WP-128 / D-12805 — produce a per-entry shallow-copied

@@ -64,9 +64,9 @@ export interface UIState {
  * Display-safe card data projected once at setup time and surfaced through
  * UIState. Read-only. JSON-serializable. Contains only primitive fields.
  *
- * Field set is locked at exactly four entries — adding `team`, `class`,
- * `setName`, `cardType`, `attack`, `recruit`, or `keywords` here is scope
- * creep and requires a separate WP. The drift-detection test in
+ * Field set is locked at exactly six entries — adding `setName`,
+ * `cardType`, `attack`, `recruit`, or `keywords` here is scope creep
+ * and requires a separate WP. The drift-detection test in
  * uiState.types.drift.test.ts pins the field set.
  *
  * // why: gives the UI enough to render a real card (name + image + cost)
@@ -80,6 +80,8 @@ export interface UICardDisplay {
   name: string;
   imageUrl: string;
   cost: number | null;
+  heroClass?: string | null;
+  team?: string | null;
 }
 
 /**

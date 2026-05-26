@@ -252,3 +252,141 @@ describe('HERO_ABILITY_TIMINGS drift-detection', () => {
     );
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-179 — [team:X] markup parsing tests
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks [team:X] markup (WP-179)', () => {
+  it('[team:avengers] markup produces requiresTeam condition with value avengers', () => {
+    const registry = {
+      listCards: (): HeroAbilityFlatCard[] => [
+        {
+          key: 'core-hero-cap-1',
+          cardType: 'hero',
+          setAbbr: 'core',
+          abilities: ['[team:avengers]: +2[icon:attack].'],
+        },
+      ],
+    };
+    const config: MatchSetupConfig = {
+      ...createTestConfig(),
+      heroDeckIds: ['core/cap'],
+    };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined);
+    assert.ok(hook.conditions !== undefined);
+
+    let foundTeamCondition = false;
+    for (const condition of hook.conditions!) {
+      if (condition.type === 'requiresTeam') {
+        assert.equal(condition.value, 'avengers');
+        foundTeamCondition = true;
+      }
+    }
+    assert.ok(foundTeamCondition, 'requiresTeam condition must be present');
+  });
+
+  it('mixed markup [hc:tech][team:avengers] emits both in stable order (heroClassMatch first)', () => {
+    const registry = {
+      listCards: (): HeroAbilityFlatCard[] => [
+        {
+          key: 'core-hero-iron-man-1',
+          cardType: 'hero',
+          setAbbr: 'core',
+          abilities: ['[hc:tech][team:avengers]: Draw 2 cards.'],
+        },
+      ],
+    };
+    const config: MatchSetupConfig = {
+      ...createTestConfig(),
+      heroDeckIds: ['core/iron-man'],
+    };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined);
+    assert.ok(hook.conditions !== undefined);
+    assert.equal(hook.conditions!.length, 2);
+    assert.equal(hook.conditions![0]!.type, 'heroClassMatch');
+    assert.equal(hook.conditions![0]!.value, 'tech');
+    assert.equal(hook.conditions![1]!.type, 'requiresTeam');
+    assert.equal(hook.conditions![1]!.value, 'avengers');
+  });
+
+  it('mixed-case parsing: [hc:Tech] normalizes to condition value tech', () => {
+    const registry = {
+      listCards: (): HeroAbilityFlatCard[] => [
+        {
+          key: 'core-hero-hero-x-1',
+          cardType: 'hero',
+          setAbbr: 'core',
+          abilities: ['[hc:Tech]: You get +1[icon:attack].'],
+        },
+      ],
+    };
+    const config: MatchSetupConfig = {
+      ...createTestConfig(),
+      heroDeckIds: ['core/hero-x'],
+    };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined);
+    assert.ok(hook.conditions !== undefined);
+    assert.equal(hook.conditions![0]!.value, 'tech');
+  });
+
+  it('whitespace parsing: [team: Avengers ] normalizes to condition value avengers', () => {
+    const registry = {
+      listCards: (): HeroAbilityFlatCard[] => [
+        {
+          key: 'core-hero-cap-1',
+          cardType: 'hero',
+          setAbbr: 'core',
+          abilities: ['[team: Avengers ]: +3 attack.'],
+        },
+      ],
+    };
+    const config: MatchSetupConfig = {
+      ...createTestConfig(),
+      heroDeckIds: ['core/cap'],
+    };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined);
+    assert.ok(hook.conditions !== undefined);
+    assert.equal(hook.conditions![0]!.value, 'avengers');
+  });
+
+  it('team markup tokens are removed from ability text after extraction (conditional keyword added)', () => {
+    const registry = {
+      listCards: (): HeroAbilityFlatCard[] => [
+        {
+          key: 'core-hero-cap-1',
+          cardType: 'hero',
+          setAbbr: 'core',
+          abilities: ['[team:avengers]: You get +2[icon:attack].'],
+        },
+      ],
+    };
+    const config: MatchSetupConfig = {
+      ...createTestConfig(),
+      heroDeckIds: ['core/cap'],
+    };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined);
+    let hasConditional = false;
+    for (const keyword of hook.keywords) {
+      if (keyword === 'conditional') {
+        hasConditional = true;
+      }
+    }
+    assert.ok(hasConditional, 'conditional keyword should be added when team conditions are present');
+  });
+});

@@ -21,12 +21,13 @@ import type { HeroAbilityHook } from '../rules/heroAbility.types.js';
 /**
  * Creates a minimal LegendaryGameState for condition evaluation testing.
  *
- * @param overrides - Partial overrides for player zones and hooks.
+ * @param overrides - Partial overrides for player zones, hooks, and traits.
  * @returns A minimal LegendaryGameState.
  */
 function makeTestState(overrides?: {
   inPlay?: string[];
   heroAbilityHooks?: HeroAbilityHook[];
+  cardTraits?: Record<string, { heroClass: string | null; team: string | null }>;
 }): LegendaryGameState {
   return {
     matchConfiguration: {
@@ -77,6 +78,7 @@ function makeTestState(overrides?: {
       spentRecruit: 0,
     },
     cardStats: {},
+    cardTraits: overrides?.cardTraits ?? {},
     mastermind: {
       id: 'test-mastermind',
       baseCardId: 'test-mastermind-base',
@@ -92,12 +94,14 @@ function makeTestState(overrides?: {
 
 describe('evaluateCondition', () => {
   // -------------------------------------------------------------------------
-  // Test 1: heroClassMatch returns false (placeholder)
+  // Test 1: heroClassMatch returns false when no matching trait data
   // -------------------------------------------------------------------------
-  it('heroClassMatch returns false — no class data in G yet', () => {
-    // why: heroClassMatch is a placeholder until class data is resolved into G
+  it('heroClassMatch returns false when no card traits match', () => {
     const gameState = makeTestState({
       inPlay: ['hero-a'],
+      cardTraits: {
+        'hero-a': { heroClass: 'covert', team: null },
+      },
     });
 
     const result = evaluateCondition(gameState, '0', {
@@ -106,15 +110,18 @@ describe('evaluateCondition', () => {
     });
 
     assert.equal(result, false,
-      'heroClassMatch should return false until class data is in G.');
+      'heroClassMatch should return false when no matching class in inPlay.');
   });
 
   // -------------------------------------------------------------------------
-  // Test 2: requiresTeam returns false (placeholder)
+  // Test 2: requiresTeam returns false when no matching trait data
   // -------------------------------------------------------------------------
-  it('requiresTeam returns false — no team data in G yet', () => {
+  it('requiresTeam returns false when no card traits match', () => {
     const gameState = makeTestState({
       inPlay: ['hero-a'],
+      cardTraits: {
+        'hero-a': { heroClass: null, team: 'x-men' },
+      },
     });
 
     const result = evaluateCondition(gameState, '0', {
@@ -123,7 +130,7 @@ describe('evaluateCondition', () => {
     });
 
     assert.equal(result, false,
-      'requiresTeam should return false until team data is in G.');
+      'requiresTeam should return false when no matching team in inPlay.');
   });
 
   // -------------------------------------------------------------------------
@@ -297,5 +304,201 @@ describe('evaluateAllConditions', () => {
 
     assert.deepEqual(gameState, snapshot,
       'G must not be mutated by condition evaluation.');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-179 — heroClassMatch evaluator with G.cardTraits
+// ---------------------------------------------------------------------------
+
+describe('evaluateCondition heroClassMatch (WP-179)', () => {
+  it('positive: matching hero class card in inPlay returns true', () => {
+    const gameState = makeTestState({
+      inPlay: ['tech-card-a#0', 'tech-card-b#0'],
+      cardTraits: {
+        'tech-card-a#0': { heroClass: 'tech', team: 'avengers' },
+        'tech-card-b#0': { heroClass: 'tech', team: 'avengers' },
+      },
+    });
+
+    const result = evaluateCondition(gameState, '0', {
+      type: 'heroClassMatch',
+      value: 'tech',
+    }, 'tech-card-b#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(result, true, 'should return true when another tech card is in inPlay');
+  });
+
+  it('self-only: only the triggering card (same class) in inPlay returns false', () => {
+    const gameState = makeTestState({
+      inPlay: ['tech-card-a#0'],
+      cardTraits: {
+        'tech-card-a#0': { heroClass: 'tech', team: 'avengers' },
+      },
+    });
+
+    const result = evaluateCondition(gameState, '0', {
+      type: 'heroClassMatch',
+      value: 'tech',
+    }, 'tech-card-a#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(result, false, 'should return false when only self has matching class');
+  });
+
+  it('mismatch: different class in inPlay returns false', () => {
+    const gameState = makeTestState({
+      inPlay: ['covert-card#0', 'trigger-card#0'],
+      cardTraits: {
+        'covert-card#0': { heroClass: 'covert', team: null },
+        'trigger-card#0': { heroClass: 'tech', team: null },
+      },
+    });
+
+    const result = evaluateCondition(gameState, '0', {
+      type: 'heroClassMatch',
+      value: 'tech',
+    }, 'trigger-card#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(result, false, 'should return false when no other tech card in inPlay');
+  });
+
+  it('undefined-trait: card in inPlay with no cardTraits entry returns false', () => {
+    const gameState = makeTestState({
+      inPlay: ['unknown-card', 'trigger-card#0'],
+      cardTraits: {
+        'trigger-card#0': { heroClass: 'tech', team: null },
+      },
+    });
+
+    const result = evaluateCondition(gameState, '0', {
+      type: 'heroClassMatch',
+      value: 'tech',
+    }, 'trigger-card#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(result, false, 'should return false when other card has no trait entry');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-179 — requiresTeam evaluator with G.cardTraits
+// ---------------------------------------------------------------------------
+
+describe('evaluateCondition requiresTeam (WP-179)', () => {
+  it('positive: matching team card in inPlay returns true', () => {
+    const gameState = makeTestState({
+      inPlay: ['avenger-a#0', 'avenger-b#0'],
+      cardTraits: {
+        'avenger-a#0': { heroClass: 'tech', team: 'avengers' },
+        'avenger-b#0': { heroClass: 'covert', team: 'avengers' },
+      },
+    });
+
+    const result = evaluateCondition(gameState, '0', {
+      type: 'requiresTeam',
+      value: 'avengers',
+    }, 'avenger-b#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(result, true, 'should return true when another avengers card is in inPlay');
+  });
+
+  it('self-only: only the triggering card (same team) in inPlay returns false', () => {
+    const gameState = makeTestState({
+      inPlay: ['avenger-a#0'],
+      cardTraits: {
+        'avenger-a#0': { heroClass: 'tech', team: 'avengers' },
+      },
+    });
+
+    const result = evaluateCondition(gameState, '0', {
+      type: 'requiresTeam',
+      value: 'avengers',
+    }, 'avenger-a#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(result, false, 'should return false when only self has matching team');
+  });
+
+  it('mismatch: different team in inPlay returns false', () => {
+    const gameState = makeTestState({
+      inPlay: ['xmen-card#0', 'trigger-card#0'],
+      cardTraits: {
+        'xmen-card#0': { heroClass: 'covert', team: 'x-men' },
+        'trigger-card#0': { heroClass: 'tech', team: 'avengers' },
+      },
+    });
+
+    const result = evaluateCondition(gameState, '0', {
+      type: 'requiresTeam',
+      value: 'avengers',
+    }, 'trigger-card#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(result, false, 'should return false when no other avengers card in inPlay');
+  });
+
+  it('undefined-trait: card in inPlay with no cardTraits entry returns false', () => {
+    const gameState = makeTestState({
+      inPlay: ['no-trait-card', 'trigger-card#0'],
+      cardTraits: {
+        'trigger-card#0': { heroClass: 'tech', team: 'avengers' },
+      },
+    });
+
+    const result = evaluateCondition(gameState, '0', {
+      type: 'requiresTeam',
+      value: 'avengers',
+    }, 'trigger-card#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(result, false, 'should return false when other card has no trait entry');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-179 — Integration tests (Tech→Tech superpower, Avengers→Avengers)
+// ---------------------------------------------------------------------------
+
+describe('evaluateCondition integration (WP-179)', () => {
+  it('Tech→Tech superpower: second tech card condition passes', () => {
+    const gameState = makeTestState({
+      inPlay: ['core/iron-man/repulsor#0', 'core/iron-man/unibeam#0'],
+      cardTraits: {
+        'core/iron-man/repulsor#0': { heroClass: 'tech', team: 'avengers' },
+        'core/iron-man/unibeam#0': { heroClass: 'tech', team: 'avengers' },
+      },
+    });
+
+    const conditionResult = evaluateCondition(gameState, '0', {
+      type: 'heroClassMatch',
+      value: 'tech',
+    }, 'core/iron-man/unibeam#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(conditionResult, true, 'Tech condition passes when another Tech card in inPlay');
+
+    const allResult = evaluateAllConditions(gameState, '0', [
+      { type: 'heroClassMatch', value: 'tech' },
+    ], 'core/iron-man/unibeam#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(allResult, true, 'evaluateAllConditions also passes');
+  });
+
+  it('Avengers→Avengers team condition passes', () => {
+    const gameState = makeTestState({
+      inPlay: ['core/cap/shield-bash#0', 'core/iron-man/repulsor#0'],
+      cardTraits: {
+        'core/cap/shield-bash#0': { heroClass: 'strength', team: 'avengers' },
+        'core/iron-man/repulsor#0': { heroClass: 'tech', team: 'avengers' },
+      },
+    });
+
+    const conditionResult = evaluateCondition(gameState, '0', {
+      type: 'requiresTeam',
+      value: 'avengers',
+    }, 'core/iron-man/repulsor#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(conditionResult, true, 'Avengers team condition passes when another Avenger is in inPlay');
+
+    const allResult = evaluateAllConditions(gameState, '0', [
+      { type: 'requiresTeam', value: 'avengers' },
+    ], 'core/iron-man/repulsor#0' as unknown as import('../state/zones.types.js').CardExtId);
+
+    assert.equal(allResult, true, 'evaluateAllConditions also passes for team');
   });
 });

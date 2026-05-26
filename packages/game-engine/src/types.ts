@@ -146,6 +146,10 @@ export type { MastermindState } from './mastermind/mastermind.types.js';
 // consumers importing from './types.js' have access.
 export type { TurnEconomy, CardStatEntry } from './economy/economy.types.js';
 
+// why: CardTraitEntry is defined canonically in src/state/cardTraits.types.ts
+// (WP-179). Re-exported here so consumers importing from './types.js' have access.
+export type { CardTraitEntry } from './state/cardTraits.types.js';
+
 // why: Hero ability hook contracts (HeroAbilityHook, HeroCondition,
 // HeroEffectDescriptor) are defined canonically in
 // src/rules/heroAbility.types.ts (WP-021). HeroKeyword and HeroAbilityTiming
@@ -320,6 +324,7 @@ export type {
 import type { TurnStage } from './turn/turnPhases.types.js';
 import type { CardExtId, PlayerZones, GlobalPiles } from './state/zones.types.js';
 import type { TurnEconomy, CardStatEntry } from './economy/economy.types.js';
+import type { CardTraitEntry } from './state/cardTraits.types.js';
 import type { MastermindState } from './mastermind/mastermind.types.js';
 import type { SchemeState } from './scheme/schemeState.types.js';
 import type { HookDefinition } from './rules/ruleHooks.types.js';
@@ -532,6 +537,12 @@ export interface LegendaryGameState {
   // Read-only after setup.
   /** Card stat lookup keyed by CardExtId. Built at setup, read-only at runtime. */
   cardStats: Record<CardExtId, CardStatEntry>;
+
+  // why: WP-179 — categorical traits (heroClass, team) resolved at setup time
+  // from registry. Sibling snapshot to G.cardStats, G.cardKeywords,
+  // G.cardDisplayData. Keyed by copy-suffixed CardExtId. Read-only at runtime.
+  /** Card trait lookup keyed by CardExtId. Built at setup, read-only at runtime. */
+  cardTraits: Record<CardExtId, CardTraitEntry>;
 
   // why: board keyword data resolved at setup time from registry so moves
   // never query registry at runtime — same setup-time resolution pattern as

@@ -17,6 +17,7 @@ import type {
 } from '../rules/heroAbility.types.js';
 import type { HeroKeyword, HeroAbilityTiming } from '../rules/heroKeywords.js';
 import { HERO_KEYWORDS } from '../rules/heroKeywords.js';
+import { normalizeTraitSlug } from '../state/traits.normalize.js';
 
 // ---------------------------------------------------------------------------
 // HeroAbilityRegistryReader — local structural interface
@@ -59,6 +60,11 @@ export interface HeroAbilityRegistryReader {
 
 /** Regex for [hc:X] hero class condition markup. */
 const HERO_CLASS_PATTERN = /\[hc:([^\]]+)\]/g;
+
+// why: mirrors the [hc:X] pattern — same extraction semantics, same consumption
+// behavior (markup tokens removed from downstream text after extraction).
+/** Regex for [team:X] team condition markup. */
+const TEAM_PATTERN = /\[team:([^\]]+)\]/g;
 
 /** Regex for [keyword:X] keyword markup. */
 const KEYWORD_PATTERN = /\[keyword:([^\]]+)\]/g;
@@ -111,20 +117,39 @@ function parseAbilityText(abilityText: string): {
   timing: HeroAbilityTiming;
 } {
   const keywords: HeroKeyword[] = [];
-  const conditions: HeroCondition[] = [];
+  const heroClassConditions: HeroCondition[] = [];
+  const teamConditions: HeroCondition[] = [];
   const effects: HeroEffectDescriptor[] = [];
 
-  // Step 1: Extract [hc:X] condition markup
+  // Step 1a: Extract [hc:X] condition markup
+  // why: defense-in-depth normalization on already-validated hc values — pipeline
+  // produces lowercase, but a single authoring slip like [hc:Tech] should not
+  // silently break superpowers.
   let heroClassMatch: RegExpExecArray | null = null;
   const heroClassRegex = new RegExp(HERO_CLASS_PATTERN.source, 'g');
   heroClassMatch = heroClassRegex.exec(abilityText);
   while (heroClassMatch !== null) {
-    conditions.push({
+    heroClassConditions.push({
       type: 'heroClassMatch',
-      value: heroClassMatch[1]!,
+      value: normalizeTraitSlug(heroClassMatch[1]!),
     });
     heroClassMatch = heroClassRegex.exec(abilityText);
   }
+
+  // Step 1b: Extract [team:X] condition markup
+  const teamRegex = new RegExp(TEAM_PATTERN.source, 'g');
+  let teamMatch: RegExpExecArray | null = teamRegex.exec(abilityText);
+  while (teamMatch !== null) {
+    teamConditions.push({
+      type: 'requiresTeam',
+      value: normalizeTraitSlug(teamMatch[1]!),
+    });
+    teamMatch = teamRegex.exec(abilityText);
+  }
+
+  // Condition emission order: all heroClassMatch first, then requiresTeam
+  // (deterministic, independent of markup position in text).
+  const conditions: HeroCondition[] = [...heroClassConditions, ...teamConditions];
 
   // Step 2: Extract [keyword:X] markup
   const keywordRegex = new RegExp(KEYWORD_PATTERN.source, 'g');

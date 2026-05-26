@@ -146,12 +146,11 @@ export function executeHeroEffects(
   const hooks = getHooksForCard(G.heroAbilityHooks, cardId);
 
   for (const hook of hooks) {
-    // why: WP-023 upgrade — WP-022 skipped all conditional effects;
-    // WP-023 evaluates them deterministically. Effects execute only when
-    // ALL conditions pass (AND logic). Unsupported condition types return
-    // false (safe skip), so hooks with unsupported conditions are still
-    // effectively skipped.
-    if (!evaluateAllConditions(G, playerID, hook.conditions)) {
+    // why: cardId is threaded through to condition evaluation so heroClassMatch
+    // and requiresTeam can exclude the triggering card from their inPlay scan
+    // (self-exclusion rule — a card's own class/team does not satisfy its own
+    // superpower).
+    if (!evaluateAllConditions(G, playerID, hook.conditions, cardId)) {
       continue;
     }
 

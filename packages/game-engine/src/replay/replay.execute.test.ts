@@ -73,7 +73,10 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // the WP-080 regression-guard hash shifts. Same cascade pattern as
 // WP-168 (`6228d103` → `35fbe2fc`). Operator-approved allowlist
 // amendment recorded in WP-172 §Amendments / EC-190 §Notes.
-const PRE_WP080_HASH = 'b3240d6a';
+// why: WP-179 cascade re-baseline — `G.cardTraits` added as a new
+// sibling snapshot (Record<CardExtId, CardTraitEntry>), changing the
+// JSON-encoded state hash. Same cascade pattern as WP-168/WP-172.
+const PRE_WP080_HASH = '91c90efd';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

@@ -83,25 +83,27 @@ describe('UIState type drift (WP-067)', () => {
 });
 
 describe('UIState type drift (WP-111 / EC-118)', () => {
-  it('UICardDisplay has exactly the four locked fields', () => {
-    // why: WP-111 §Locked Values — UICardDisplay shape is `extId`,
-    // `name`, `imageUrl`, `cost: number | null`. Adding any field
-    // (e.g., `team`, `cardType`, `keywords`) is scope creep — separate
-    // WP required. The `satisfies` check fails at compile time on
-    // unexpected fields; the runtime keyset assertion catches widening
-    // that escapes type narrowing.
+  it('UICardDisplay has exactly the six locked fields', () => {
+    // why: WP-111 locked the first four fields; WP-179 adds `heroClass`
+    // and `team` (optional in TS, always assigned at runtime). Adding
+    // further fields (e.g., `cardType`, `keywords`) is scope creep —
+    // separate WP required.
     const fixture = {
       extId: 'core-hero-black-widow-1',
       name: 'Mission Accomplished',
       imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
       cost: 2,
+      heroClass: 'covert',
+      team: 'avengers',
     } satisfies UICardDisplay;
 
     assert.deepStrictEqual(Object.keys(fixture).sort(), [
       'cost',
       'extId',
+      'heroClass',
       'imageUrl',
       'name',
+      'team',
     ]);
   });
 
@@ -112,8 +114,12 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
       name: 'No-Cost Card',
       imageUrl: '',
       cost: null,
+      heroClass: null,
+      team: null,
     };
     assert.equal(fixture.cost, null);
+    assert.equal(fixture.heroClass, null);
+    assert.equal(fixture.team, null);
   });
 
   it('UIHQCard has exactly the two locked fields', () => {

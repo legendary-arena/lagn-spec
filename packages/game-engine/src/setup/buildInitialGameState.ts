@@ -46,6 +46,7 @@ import {
   isHeroAbilityRegistryReader,
 } from './heroAbility.setup.js';
 import { buildCardKeywords } from './buildCardKeywords.js';
+import { buildCardTraits } from './buildCardTraits.js';
 import {
   buildSchemeSetupInstructions,
   isSchemeRegistryReader,
@@ -242,6 +243,10 @@ export function buildInitialGameState(
   // G.villainDeckCardTypes (WP-014B).
   const cardKeywords = buildCardKeywords(registry as unknown, config);
 
+  // why: WP-179 — categorical traits (heroClass, team) resolved at setup from
+  // registry. Same sibling-snapshot pattern as cardStats/cardKeywords/cardDisplayData.
+  const cardTraits = buildCardTraits(registry as unknown, config);
+
   // why: scheme setup runs after base construction, before first turn.
   // Instructions configure the board (counters, keywords, city state).
   // Separate from scheme twist execution (WP-024).
@@ -364,6 +369,9 @@ export function buildInitialGameState(
     // registry at runtime — same pattern as G.villainDeckCardTypes (WP-014).
     // Read-only after setup (mastermind base card added by buildMastermindState).
     cardStats,
+    // why: WP-179 — categorical traits built from registry at setup time.
+    // Sibling-snapshot pattern matching cardStats/cardKeywords/cardDisplayData.
+    cardTraits,
     // why: board keywords resolved at setup from registry — same pattern as
     // cardStats and villainDeckCardTypes. Immutable during gameplay.
     cardKeywords,

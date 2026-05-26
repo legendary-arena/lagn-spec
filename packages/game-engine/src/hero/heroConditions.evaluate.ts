@@ -5,14 +5,14 @@
  * Pure functions only — conditions read G and return boolean, never mutating
  * state. Unsupported condition types return false (safe skip).
  *
- * WP-023 scope: 4 MVP condition types. heroClassMatch and requiresTeam are
- * placeholders (return false) until team/class data is resolved into G by
- * a follow-up WP. requiresKeyword and playedThisTurn are fully functional.
+ * WP-179: heroClassMatch and requiresTeam are fully wired against G.cardTraits.
+ * requiresKeyword and playedThisTurn are unchanged from WP-023.
  *
  * No boardgame.io imports. No registry imports. No .reduce().
  */
 
 import type { LegendaryGameState } from '../types.js';
+import type { CardExtId } from '../state/zones.types.js';
 import type { HeroCondition } from '../rules/heroAbility.types.js';
 import { getHooksForCard } from '../rules/heroAbility.types.js';
 
@@ -29,12 +29,16 @@ import { getHooksForCard } from '../rules/heroAbility.types.js';
  * @param G - Current game state (read-only).
  * @param playerID - Active player ID.
  * @param condition - The condition descriptor to evaluate.
+ * @param triggeringCardId - Optional CardExtId of the card whose superpower is
+ *   being evaluated. When provided, heroClassMatch and requiresTeam exclude
+ *   this card from the inPlay scan (self-exclusion rule).
  * @returns Whether the condition is met.
  */
 export function evaluateCondition(
   G: LegendaryGameState,
   playerID: string,
   condition: HeroCondition,
+  triggeringCardId?: CardExtId,
 ): boolean {
   const playerZones = G.playerZones[playerID];
   if (!playerZones) {
@@ -43,17 +47,43 @@ export function evaluateCondition(
 
   switch (condition.type) {
     case 'heroClassMatch': {
-      // why: hero class data is not resolved into G yet — returns false
-      // until a follow-up WP adds class data to G.cardStats or a dedicated
-      // field. This is a safe skip, same pattern as WP-022 for unsupported
-      // keywords.
+      // why: self is excluded from scan — a card's own class does not satisfy
+      // its own superpower. The physical card game rule requires *another*
+      // card of the same class to have been played this turn.
+      if (!G.cardTraits) {
+        return false;
+      }
+
+      for (const playedCardId of playerZones.inPlay) {
+        if (triggeringCardId !== undefined && playedCardId === triggeringCardId) {
+          continue;
+        }
+        const traitEntry = G.cardTraits[playedCardId as CardExtId];
+        if (traitEntry !== undefined && traitEntry.heroClass === condition.value) {
+          return true;
+        }
+      }
+
       return false;
     }
 
     case 'requiresTeam': {
-      // why: team data is not resolved into G yet — returns false until a
-      // follow-up WP adds team data to G.cardStats or a dedicated field.
-      // Same safe-skip pattern.
+      // why: self is excluded from scan — a card's own team does not satisfy
+      // its own superpower. Same self-exclusion logic as heroClassMatch.
+      if (!G.cardTraits) {
+        return false;
+      }
+
+      for (const playedCardId of playerZones.inPlay) {
+        if (triggeringCardId !== undefined && playedCardId === triggeringCardId) {
+          continue;
+        }
+        const traitEntry = G.cardTraits[playedCardId as CardExtId];
+        if (traitEntry !== undefined && traitEntry.team === condition.value) {
+          return true;
+        }
+      }
+
       return false;
     }
 
@@ -115,19 +145,21 @@ export function evaluateCondition(
  * @param G - Current game state (read-only).
  * @param playerID - Active player ID.
  * @param conditions - Array of conditions to evaluate (may be undefined).
+ * @param triggeringCardId - Optional CardExtId forwarded to each evaluateCondition call.
  * @returns Whether all conditions are met.
  */
 export function evaluateAllConditions(
   G: LegendaryGameState,
   playerID: string,
   conditions: HeroCondition[] | undefined,
+  triggeringCardId?: CardExtId,
 ): boolean {
   if (conditions === undefined || conditions.length === 0) {
     return true;
   }
 
   for (const condition of conditions) {
-    if (!evaluateCondition(G, playerID, condition)) {
+    if (!evaluateCondition(G, playerID, condition, triggeringCardId)) {
       return false;
     }
   }
