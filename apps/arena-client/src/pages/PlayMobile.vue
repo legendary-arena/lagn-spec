@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia';
 import type { UIDisplayEntry, UIPlayerState } from '@legendary-arena/game-engine';
 import { useUiStateStore } from '../stores/uiState';
 
+import EndgameSummary from '../components/hud/EndgameSummary.vue';
 import TopHudBar from '../components/play/TopHudBar.vue';
 import OpponentPanel from '../components/play/OpponentPanel.vue';
 import MastermindTile from '../components/play/MastermindTile.vue';
@@ -47,6 +48,7 @@ interface ActivePile {
 export default defineComponent({
   name: 'PlayMobile',
   components: {
+    EndgameSummary,
     TopHudBar,
     OpponentPanel,
     MastermindTile,
@@ -122,12 +124,17 @@ export default defineComponent({
       () => snapshot.value?.game.phase === 'play',
     );
 
+    const isGameOver = computed<boolean>(
+      () => snapshot.value?.gameOver !== undefined,
+    );
+
     return {
       snapshot,
       viewer,
       opponents,
       isLobbyPhase,
       isPlayPhase,
+      isGameOver,
       activePile,
       onPileOpen,
       onPileClose,
@@ -153,6 +160,10 @@ export default defineComponent({
           :scheme-twist-threshold="8"
         />
       </header>
+      <EndgameSummary
+        v-if="isGameOver && snapshot.gameOver"
+        :game-over="snapshot.gameOver"
+      />
       <LobbyControls v-if="isLobbyPhase" :submit-move="submitMove" />
       <main v-if="isPlayPhase && viewer !== null" class="play-mobile__scroll">
         <section class="play-mobile__band">

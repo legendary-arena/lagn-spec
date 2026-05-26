@@ -297,6 +297,28 @@ describe('T2 Competent Heuristic policy (WP-049)', () => {
     }
   });
 
+  test('prefers fighting mastermind over fighting a non-escape villain (victory path)', () => {
+    const villainMid: UICityCard = {
+      extId: 'villain-mid',
+      type: 'villain',
+      keywords: [],
+    };
+    const view = buildSyntheticUIState([null, villainMid, null, null, null]);
+    const legalMoves: LegalMove[] = [
+      { name: 'fightVillain', args: { cityIndex: 1 } },
+      { name: 'fightMastermind', args: {} },
+    ];
+
+    const policy = createCompetentHeuristicPolicy('mm-priority-seed');
+    const intent = policy.decideTurn(view, legalMoves);
+
+    assert.equal(
+      intent.move.name,
+      'fightMastermind',
+      'T2 must prefer fighting the mastermind over a non-escape, non-bystander villain',
+    );
+  });
+
   test('T2 policy name is CompetentHeuristic', () => {
     const policy = createCompetentHeuristicPolicy('name-seed');
     assert.equal(

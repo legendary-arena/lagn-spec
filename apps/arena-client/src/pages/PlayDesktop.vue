@@ -12,6 +12,7 @@ import {
 } from '../services/autoplayPlayback';
 
 import AutoplayControls from '../components/AutoplayControls.vue';
+import EndgameSummary from '../components/hud/EndgameSummary.vue';
 import TopHudBar from '../components/play/TopHudBar.vue';
 import OpponentPanel from '../components/play/OpponentPanel.vue';
 import MastermindTile from '../components/play/MastermindTile.vue';
@@ -58,6 +59,7 @@ export default defineComponent({
   name: 'PlayDesktop',
   components: {
     AutoplayControls,
+    EndgameSummary,
     TopHudBar,
     OpponentPanel,
     MastermindTile,
@@ -237,6 +239,10 @@ export default defineComponent({
         :snapshot="snapshot"
         :mastermind-tactics-total="4"
         :scheme-twist-threshold="8"
+      />
+      <EndgameSummary
+        v-if="isGameOver && snapshot.gameOver"
+        :game-over="snapshot.gameOver"
       />
       <LobbyControls v-if="isLobbyPhase" :submit-move="submitMove" />
       <!-- why: the shared board renders for the whole play phase regardless of

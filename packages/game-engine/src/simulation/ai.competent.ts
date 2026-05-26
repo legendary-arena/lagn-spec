@@ -97,8 +97,8 @@ const SCORE_BYSTANDER_RESCUE_BONUS = 500;
  */
 const SCORE_IMMINENT_ESCAPE_BONUS = 800;
 
-/** Base score for fighting the mastermind (high-impact threat response). */
-const SCORE_FIGHT_MASTERMIND_BASE = 300;
+/** Base score for fighting the mastermind (path to victory — highest combat priority). */
+const SCORE_FIGHT_MASTERMIND_BASE = 1500;
 
 /** Base score for recruiting a hero from HQ. */
 const SCORE_RECRUIT_BASE = 50;
@@ -238,10 +238,11 @@ function scoreDrawCards(_move: LegalMove): number {
 /**
  * Scores a fightMastermind move.
  *
- * // why: heuristic 1 (threat prioritization) — defeating mastermind
- * tactics is the path to victory; ranks above plain recruiting and
- * non-bystander fights. Still ranks below bystander rescue (heuristic 2)
- * and imminent-escape prevention.
+ * // why: defeating mastermind tactics is the ONLY path to victory —
+ * it outranks all other combat actions including imminent-escape
+ * prevention and bystander rescue. A competent player always fights
+ * the mastermind when affordable because each tactic defeated moves
+ * toward winning the game.
  */
 function scoreFightMastermind(_move: LegalMove): number {
   return SCORE_FIGHT_MASTERMIND_BASE;
