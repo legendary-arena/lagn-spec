@@ -18962,4 +18962,30 @@ shape).
 
 ---
 
+### D-18001 — Version Stamp Timestamp Semantics (Client = Build Time, Server = Boot Time)
+
+**Decision:** Client apps stamp `__BUILD_TIMESTAMP__` at Vite build time (immutable per deploy). The server's `/api/version` endpoint stamps `buildTimestamp` at process start time (changes on every restart). These values are expected to differ — the client timestamp answers "when was this bundle built?" and the server timestamp answers "when did this process start?"
+
+**Rationale.** A single "build time" semantic is impossible across Vite SPAs (static, rebuilt per deploy) and a long-running Node server (no Vite build step, restarts independently). Both values are useful for deployment-freshness diagnosis: a stale client timestamp means Cloudflare is caching an old bundle; a recent server timestamp means Render restarted the process.
+
+**Packet:** WP-180.
+
+**Introduced:** WP-180 (drafted 2026-05-25; landed 2026-05-25)
+**Status:** Active
+
+---
+
+### D-18002 — Per-App VersionBadge Over Shared Package
+
+**Decision:** Each Vite app gets its own copy of `VersionBadge.vue` rather than a shared `packages/ui` component package. Template and style blocks are byte-identical across all four copies; the only variance is the import path in the parent mount file.
+
+**Rationale.** Per code-style Rule 1 ("duplicate first, abstract only when a third copy appears"), four copies of a trivial presentational component do not justify a new package. A `packages/ui` package would add monorepo wiring (package.json, tsconfig, build step, workspace dep) for a single 20-line SFC with zero props. Deferred until a second shared UI component justifies the package overhead.
+
+**Packet:** WP-180.
+
+**Introduced:** WP-180 (drafted 2026-05-25; landed 2026-05-25)
+**Status:** Active
+
+---
+
 Protect this file.

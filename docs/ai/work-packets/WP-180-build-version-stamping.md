@@ -278,3 +278,32 @@ This pattern is reusable across any Vite + Vue project:
 For non-Vite apps (Express, Koa, etc.), the server pattern applies: read
 `package.json` at startup, capture git SHA via `execSync`, cache in memory,
 expose via endpoint or response header.
+
+## Lint Gate Self-Review
+
+**Date:** 2026-05-25
+**Result:** All 21 sections PASS
+
+| § | Section | Verdict | Notes |
+|---|---|---|---|
+| 1 | Work Packet Structure | PASS | All required sections present |
+| 2 | Non-Negotiable Constraints | PASS | Engine-wide + packet-specific + locked values |
+| 3 | Prerequisites | PASS | No prior WPs; file deps listed |
+| 4 | Context References | PASS | 7 specific files listed |
+| 5 | Output Completeness | PASS | 22 files, all marked new/modified |
+| 6 | Naming Consistency | PASS | N/A for 00.2 — no data contracts |
+| 7 | Dependency Discipline | PASS | No new npm deps |
+| 8 | Architectural Boundaries | PASS | Layer imports explicitly forbidden |
+| 9 | Windows Compatibility | PASS | PowerShell `Select-String` in verification |
+| 10 | Environment Variable Hygiene | PASS | N/A — no env vars introduced |
+| 11 | Authentication Clarity | N/A | WP does not touch authentication |
+| 12 | Test Quality | N/A | WP produces no tests |
+| 13 | Commands and Verification | PASS | Exact commands with expected output |
+| 14 | Acceptance Criteria Quality | PASS | 9 binary, observable items |
+| 15 | Definition of Done | PASS | STATUS, DECISIONS, WORK_INDEX updates |
+| 16 | Code Style | PASS | All 7 sub-sections clear |
+| 17 | Vision Alignment | N/A | Build infrastructure; no §17.1 trigger surfaces |
+| 18 | Prose-vs-Grep Discipline | PASS | Grep targets component files, not prose |
+| 19 | Bridge-vs-HEAD Staleness | N/A | Commit-time discipline, not pre-execution |
+| 20 | Funding Surface Gate | N/A | No funding surfaces; build infrastructure only |
+| 21 | API Catalog Update | PASS | `GET /api/version` row specified in §Files |

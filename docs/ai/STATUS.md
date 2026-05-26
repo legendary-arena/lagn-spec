@@ -7,6 +7,17 @@
 
 ## Current State
 
+### WP-180 / EC-204 Executed — Build-Time Version Stamping (2026-05-25)
+
+**Every deployed app now displays a subtle version badge and the server exposes a `GET /api/version` endpoint.** All four Vite SPAs (arena-client, registry-viewer, dashboard, legends-board) show a fixed-position bottom-right badge rendering `v{version} · {gitSha} · {date}` at 11px monospace, 50% opacity. The server endpoint returns `{ version, gitSha, buildTimestamp }` cached at process start.
+
+- Four `vite.config.ts` files gain `define` blocks with `__APP_VERSION__`, `__BUILD_TIMESTAMP__`, `__GIT_SHA__` (Vite build-time replacement).
+- Git SHA resolved via `execSync('git rev-parse --short HEAD')` with try/catch fallback to `'unknown'` — builds never fail on missing git.
+- Four byte-identical `VersionBadge.vue` components (template + style); only the import path in the parent mount differs.
+- `apps/server/src/version.mjs` caches version info at process start; `server.mjs` registers `GET /api/version` (guest, read-only).
+- D-18001 (timestamp semantics: client = build time, server = boot time) and D-18002 (per-app component over shared package) landed.
+- API catalog updated per §21 + D-11804 (1 new `Wired` row).
+
 ### WP-177 / EC-199 Executed — Autoplay Rewind Requester Audience (2026-05-25)
 
 **Autoplay rewind frames are now audience-filtered by the requester's identity.** A viewer who launched an autoplay match and provides valid `X-Player-ID` / `X-Credentials` headers on rewind requests (step-back, restart, step-forward cursor branch) sees the historical board **plus their own hand** — matching the live broadcast view. A genuine spectator (no headers or invalid credentials) continues to see the spectator-redacted view, preserving D-16303's hidden-information guarantee.
