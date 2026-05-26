@@ -18,4 +18,12 @@ export interface SchemeState {
   // Order is chronological (insertion order); no reshuffle in MVP.
   /** Resolved scheme-twist cards — append-only, chronological. */
   twistPile: CardExtId[];
+
+  // why: setup-time snapshot of the scheme card's abilities text from the
+  // registry. Projected through UIState so the play surface can tell the
+  // player what the scheme does and what happens on a Scheme Twist.
+  // Optional on the G type so existing test fixtures compile without
+  // modification; the builder always populates it.
+  /** Scheme card ability text lines. Built at setup, read-only at runtime. */
+  readonly gameText?: readonly string[];
 }

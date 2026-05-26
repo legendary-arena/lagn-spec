@@ -629,6 +629,22 @@ export function buildCardDisplayData(
   if (parsedScheme !== null) {
     const schemeSetData = registry.getSet(parsedScheme.setAbbr);
     const scheme = findSchemeInSetForDisplay(schemeSetData, parsedScheme.slug);
+    // why: scheme card display entry — the flat card key for a scheme is
+    // `{setAbbr}-scheme-{slug}` (no card-level slug). Resolves name and
+    // imageUrl from the flat card list so UISchemeState.display renders
+    // the scheme identity on the play surface.
+    const schemeFlatCardKey = `${parsedScheme.setAbbr}-scheme-${parsedScheme.slug}`;
+    const schemeFlatCard = findFlatCardByKey(allFlatCards, schemeFlatCardKey);
+    if (schemeFlatCard !== undefined) {
+      const schemeExtId = schemeFlatCard.key as CardExtId;
+      result[schemeExtId] = {
+        extId: schemeExtId,
+        name: schemeFlatCard.name,
+        imageUrl: schemeFlatCard.imageUrl,
+        cost: null,
+      };
+    }
+
     if (scheme !== null) {
       // why: D-16702 — twist count from scheme metadata; fallback `8`
       // inlined verbatim from `villainDeck.setup.ts:124` SCHEME_TWIST_COUNT

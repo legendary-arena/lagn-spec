@@ -130,6 +130,54 @@ function buildMatchSelection(config: MatchSetupConfig): MatchSelection {
   };
 }
 
+/**
+ * Extracts scheme card abilities text from the registry at setup time.
+ *
+ * Walks `registry.getSet(setAbbr).schemes[]` to find the matching slug,
+ * then reads `cards[0].abilities[]`. Returns an empty array on any
+ * lookup or parse failure — never throws.
+ */
+function buildSchemeGameText(
+  schemeId: string,
+  registry: unknown,
+): string[] {
+  if (!registry || typeof registry !== 'object') return [];
+  const candidate = registry as { getSet?: unknown };
+  if (typeof candidate.getSet !== 'function') return [];
+
+  const slashIndex = schemeId.indexOf('/');
+  if (slashIndex === -1) return [];
+  const setAbbr = schemeId.slice(0, slashIndex);
+  const slug = schemeId.slice(slashIndex + 1);
+  if (setAbbr.length === 0 || slug.length === 0) return [];
+
+  const getSet = candidate.getSet as (abbr: string) => unknown;
+  const setData = getSet(setAbbr);
+  if (!setData || typeof setData !== 'object') return [];
+  const setCandidate = setData as { schemes?: unknown };
+  if (!Array.isArray(setCandidate.schemes)) return [];
+
+  for (const entry of setCandidate.schemes) {
+    if (!entry || typeof entry !== 'object') continue;
+    const schemeEntry = entry as { slug?: unknown; cards?: unknown };
+    if (schemeEntry.slug !== slug) continue;
+    if (!Array.isArray(schemeEntry.cards)) return [];
+    const firstCard = schemeEntry.cards[0];
+    if (!firstCard || typeof firstCard !== 'object') return [];
+    const cardCandidate = firstCard as { abilities?: unknown };
+    if (!Array.isArray(cardCandidate.abilities)) return [];
+
+    const gameText: string[] = [];
+    for (const line of cardCandidate.abilities) {
+      if (typeof line === 'string' && line.length > 0) {
+        gameText.push(line);
+      }
+    }
+    return gameText;
+  }
+  return [];
+}
+
 // ── Main orchestrator ───────────────────────────────────────────────────────
 
 /**
@@ -361,7 +409,9 @@ export function buildInitialGameState(
     mastermind: mastermindState,
     // why: scheme runtime state holds the twist pile for resolved
     // scheme-twist cards. Separate from schemeSetupInstructions (D-2601).
-    scheme: { twistPile: [] },
+    // gameText: abilities from the registry so UIState can tell the player
+    // what the scheme does and what happens on a Scheme Twist.
+    scheme: { twistPile: [], gameText: buildSchemeGameText(config.schemeId, registry) },
     // why: escaped pile is top-level because CityZone is a fixed 5-tuple
     // that cannot host named fields. Append-only, chronological order.
     escapedPile: [],

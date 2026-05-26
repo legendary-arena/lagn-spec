@@ -37,6 +37,7 @@ interface MastermindCardEntry {
   slug: string;
   tactic?: boolean;
   vAttack?: string | number | null;
+  abilities?: string[];
 }
 
 /**
@@ -180,6 +181,7 @@ export function buildMastermindState(
       tacticsDefeated: [],
       strikePile: [],
       attachedBystanders: [],
+      gameText: [],
     };
   }
 
@@ -195,6 +197,7 @@ export function buildMastermindState(
       tacticsDefeated: [],
       strikePile: [],
       attachedBystanders: [],
+      gameText: [],
     };
   }
 
@@ -208,6 +211,7 @@ export function buildMastermindState(
       tacticsDefeated: [],
       strikePile: [],
       attachedBystanders: [],
+      gameText: [],
     };
   }
 
@@ -242,6 +246,19 @@ export function buildMastermindState(
   // boardgame.io's PRNG, ensuring replay reproducibility
   const shuffledTactics = shuffleDeck(sortedTactics, context);
 
+  // why: abilities text from the base card is the "radio announcer" —
+  // tells the player what happens on Master Strike and the mastermind's
+  // special rules. Stored in G at setup so the UIState projection can
+  // surface it without runtime registry access.
+  const gameText: string[] = [];
+  if (Array.isArray(baseCard.abilities)) {
+    for (const line of baseCard.abilities) {
+      if (typeof line === 'string' && line.length > 0) {
+        gameText.push(line);
+      }
+    }
+  }
+
   return {
     id: mastermindId,
     baseCardId,
@@ -249,6 +266,7 @@ export function buildMastermindState(
     tacticsDefeated: [],
     strikePile: [],
     attachedBystanders: [],
+    gameText,
   };
 }
 

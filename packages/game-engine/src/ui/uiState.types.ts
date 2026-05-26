@@ -268,6 +268,7 @@ export interface UIMastermindState {
   display: UICardDisplay;
   attachedBystanders: UIDisplayEntry[];
   strikePile: UIDisplayEntry[];
+  gameText?: readonly string[];
 }
 
 /**
@@ -282,6 +283,8 @@ export interface UISchemeState {
   id: string;
   twistCount: number;
   twistPile: UIDisplayEntry[];
+  display?: UICardDisplay;
+  gameText?: readonly string[];
 }
 
 /**

@@ -44,4 +44,12 @@ export interface MastermindState {
   // Append-only during strike resolution; no removal in MVP.
   /** Bystanders captured by mastermind strikes — append-only. */
   attachedBystanders: CardExtId[];
+
+  // why: setup-time snapshot of the mastermind base card's abilities text
+  // from the registry. Projected through UIState so the play surface can
+  // tell the player what happens on a Master Strike.
+  // Optional on the G type so existing test fixtures compile without
+  // modification; the builder always populates it.
+  /** Mastermind base card ability text lines. Built at setup, read-only at runtime. */
+  readonly gameText?: readonly string[];
 }

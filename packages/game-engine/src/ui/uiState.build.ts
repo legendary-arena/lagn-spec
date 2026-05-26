@@ -17,7 +17,7 @@
  */
 
 import type { LegendaryGameState } from '../types.js';
-import type { PlayerZones } from '../state/zones.types.js';
+import type { CardExtId, PlayerZones } from '../state/zones.types.js';
 import type {
   UIState,
   UIPlayerState,
@@ -130,6 +130,24 @@ function buildDisplayEntries(
     entries.push({ extId, display: resolveDisplay(extId, gameState) });
   }
   return entries;
+}
+
+/**
+ * Parses a qualified scheme id `<setAbbr>/<slug>` into components.
+ *
+ * Returns null on malformed input. Used to build the cardDisplayData
+ * lookup prefix for scheme display resolution.
+ */
+function parseSchemeIdForDisplay(
+  schemeId: string,
+): { setAbbr: string; slug: string } | null {
+  if (typeof schemeId !== 'string' || schemeId.length === 0) return null;
+  const slashIndex = schemeId.indexOf('/');
+  if (slashIndex === -1) return null;
+  const setAbbr = schemeId.slice(0, slashIndex);
+  const slug = schemeId.slice(slashIndex + 1);
+  if (setAbbr.length === 0 || slug.length === 0) return null;
+  return { setAbbr, slug };
 }
 
 /**
@@ -463,6 +481,7 @@ export function buildUIState(
     display: resolveDisplay(gameState.mastermind.baseCardId, gameState),
     attachedBystanders: mastermindAttachedBystanders,
     strikePile: mastermindStrikePile,
+    gameText: gameState.mastermind.gameText ?? [],
   };
 
   // --- 6. Project scheme — derive twist count ---
@@ -478,10 +497,30 @@ export function buildUIState(
     gameState.scheme.twistPile,
     gameState,
   );
+  // why: scheme display resolved from cardDisplayData using the flat card
+  // key format `{setAbbr}-scheme-{slug}`. The scheme ext_id in selection
+  // is the qualified group id (e.g. 'core/midtown-bank-robbery'); the
+  // flat card key replaces the slash with `-scheme-`.
+  const schemeParsed = parseSchemeIdForDisplay(gameState.selection.schemeId);
+  let schemeDisplay: UICardDisplay = {
+    extId: gameState.selection.schemeId as CardExtId,
+    name: gameState.selection.schemeId.replace(/-/g, ' '),
+    imageUrl: '',
+    cost: null,
+  };
+  if (schemeParsed !== null) {
+    const schemeFlatKey = `${schemeParsed.setAbbr}-scheme-${schemeParsed.slug}` as CardExtId;
+    if (gameState.cardDisplayData[schemeFlatKey] !== undefined) {
+      schemeDisplay = resolveDisplay(schemeFlatKey, gameState);
+    }
+  }
+
   const scheme = {
     id: gameState.selection.schemeId,
     twistCount,
     twistPile: schemeTwistPile,
+    display: schemeDisplay,
+    gameText: gameState.scheme.gameText ?? [],
   };
 
   // --- 7. Project economy ---

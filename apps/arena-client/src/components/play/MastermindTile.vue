@@ -117,6 +117,19 @@ export default defineComponent({
         Tactics remaining: {{ mastermind.tacticsRemaining }}
       </span>
     </button>
+    <ul
+      v-if="mastermind.gameText && mastermind.gameText.length > 0"
+      class="mastermind-game-text"
+      data-testid="play-mastermind-game-text"
+    >
+      <li
+        v-for="(line, index) in mastermind.gameText"
+        :key="index"
+        class="mastermind-game-text__line"
+      >
+        {{ line }}
+      </li>
+    </ul>
     <section
       class="mastermind-bystanders"
       data-testid="play-mastermind-bystanders"
@@ -182,5 +195,18 @@ export default defineComponent({
   margin: 0;
   font-style: italic;
   opacity: 0.7;
+}
+
+.mastermind-game-text {
+  margin: 0.25rem 0 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  opacity: 0.9;
+}
+
+.mastermind-game-text__line {
+  margin-bottom: 0.15rem;
 }
 </style>

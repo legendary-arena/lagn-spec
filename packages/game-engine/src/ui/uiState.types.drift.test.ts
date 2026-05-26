@@ -251,14 +251,13 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
       },
       attachedBystanders: [],
       strikePile: [],
+      gameText: ['Master Strike: Each player reveals a Hero or discards.'],
     };
 
-    // why: keys sorted to compare to the locked field list. WP-128 added
-    // `attachedBystanders` and `strikePile`; the assertion below pins
-    // both alongside the existing four.
     assert.deepStrictEqual(Object.keys(fixture).sort(), [
       'attachedBystanders',
       'display',
+      'gameText',
       'id',
       'strikePile',
       'tacticsDefeated',
@@ -383,9 +382,18 @@ describe('UIState type drift (WP-128 / EC-131) — type pinning', () => {
       id: 'core/scheme-001',
       twistCount: 0,
       twistPile: [],
+      display: {
+        extId: 'core-scheme-midtown-bank-robbery',
+        name: 'Midtown Bank Robbery',
+        imageUrl: '',
+        cost: null,
+      },
+      gameText: ['Twist: Any Villain in the Bank captures 2 Bystanders.'],
     };
 
     assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'display',
+      'gameText',
       'id',
       'twistCount',
       'twistPile',

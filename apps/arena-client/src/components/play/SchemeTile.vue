@@ -44,6 +44,9 @@ export default defineComponent({
   },
   setup(props) {
     function schemeCardDisplay(): UICardDisplay {
+      if (props.scheme.display !== undefined && props.scheme.display !== null) {
+        return props.scheme.display;
+      }
       if (props.schemeDisplay !== null) {
         return props.schemeDisplay;
       }
@@ -72,6 +75,19 @@ export default defineComponent({
     <p class="scheme-tile__progress" data-testid="play-scheme-twist-progress">
       Twists: {{ scheme.twistCount }}/{{ twistThreshold }}
     </p>
+    <ul
+      v-if="scheme.gameText && scheme.gameText.length > 0"
+      class="scheme-tile__game-text"
+      data-testid="play-scheme-game-text"
+    >
+      <li
+        v-for="(line, index) in scheme.gameText"
+        :key="index"
+        class="scheme-tile__game-text-line"
+      >
+        {{ line }}
+      </li>
+    </ul>
   </section>
 </template>
 
@@ -91,5 +107,18 @@ export default defineComponent({
 .scheme-tile__progress {
   margin: 0;
   font-variant-numeric: tabular-nums;
+}
+
+.scheme-tile__game-text {
+  margin: 0.25rem 0 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  opacity: 0.9;
+}
+
+.scheme-tile__game-text-line {
+  margin-bottom: 0.15rem;
 }
 </style>
