@@ -18988,4 +18988,30 @@ shape).
 
 ---
 
+### D-18201 — Data-Driven Scheme Twist Resolver Framework
+
+**Decision:** Scheme twist card-text behaviors are dispatched via a data-driven
+`SchemeTwistConfig` + resolver registry rather than per-scheme `if/else`
+branching. Each scheme twist is a `{ schemeId, resolverId, params,
+lossThreshold? }` config entry that maps to a reusable resolver function.
+Resolvers mutate `G` directly (pre-effect); the generic counter-increment +
+loss-check effects run after the resolver returns. The resolver registry is a
+plain `Record<SchemeTwistResolverId, SchemeTwistResolver>` — no factory, no
+class, no dynamic registration.
+
+**Rationale.** The `if/else` pattern in `schemeHandlers.ts` is a scaling
+bottleneck: 191 schemes across 40 sets would produce an unreadable chain. Most
+scheme twists fall into a small number of reusable patterns (reveal-or-punish,
+chained reveals, wound-all, KO-from-HQ). A config-driven approach lets future
+WPs add scheme support as data entries without touching resolver code. The
+Midtown Bank Robbery twist (unique pattern) migrates into the framework as its
+own resolver, proving the framework handles both reusable and one-off patterns.
+
+**Packet:** WP-182.
+
+**Drafted:** 2026-05-27; not yet landed.
+**Status:** Drafted (pre-execution)
+
+---
+
 Protect this file.
