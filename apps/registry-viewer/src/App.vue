@@ -430,6 +430,17 @@ function applyFilters() {
   if (filterHC.value)   q.heroClass    = filterHC.value as CardQueryExtended["heroClass"];
   if (searchText.value) q.nameContains = searchText.value;
   const queryResults = registry.value.query(q as any);
+  // why: registry.query() returns fresh FlatCard objects each call (listCards
+  // rebuilds via flattenSet), so the post-hoc twistPattern enrichment applied
+  // to allCards in onMounted doesn't carry over. Re-enrich scheme cards here
+  // so the twist filter and downstream grid/detail badges see the field.
+  if (twistAssignments.value.size > 0) {
+    for (const card of queryResults) {
+      if (card.cardType !== "scheme") continue;
+      const pattern = twistAssignments.value.get(`${card.setAbbr}/${card.slug}`);
+      if (pattern) card.twistPattern = pattern;
+    }
+  }
   // why: twist-pattern filter is AND-combined with all other filters and
   // implicitly enforces scheme-only. Applied post-query because the
   // registry's internal query() call doesn't know about twist patterns.
