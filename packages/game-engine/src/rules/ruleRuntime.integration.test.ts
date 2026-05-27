@@ -158,13 +158,16 @@ describe('rule execution pipeline — integration', () => {
     );
   });
 
-  it('executeRuleHooks does not modify G — calling twice produces the same G', () => {
+  it('executeRuleHooks does not modify G besides messages — calling twice produces the same G', () => {
     const config = createTestConfig();
     const context = makeMockCtx({ numPlayers: 1 });
     const registry = createMockRegistry();
     const gameState = buildInitialGameState(config, registry, context);
 
-    const snapshotBefore = JSON.stringify(gameState);
+    // why: the config-driven scheme twist dispatcher (WP-182) pushes a
+    // diagnostic message for unconfigured schemes. Exclude messages from the
+    // no-mutation check — messages are the intended mutation surface.
+    const snapshotBefore = JSON.stringify({ ...gameState, messages: [] });
 
     executeRuleHooks(
       gameState,
@@ -175,12 +178,12 @@ describe('rule execution pipeline — integration', () => {
       DEFAULT_IMPLEMENTATION_MAP,
     );
 
-    const snapshotAfter = JSON.stringify(gameState);
+    const snapshotAfter = JSON.stringify({ ...gameState, messages: [] });
 
     assert.equal(
       snapshotBefore,
       snapshotAfter,
-      'executeRuleHooks must not modify G — snapshots must be identical',
+      'executeRuleHooks must not modify G besides messages — snapshots must be identical',
     );
   });
 

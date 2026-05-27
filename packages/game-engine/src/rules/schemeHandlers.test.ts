@@ -195,15 +195,23 @@ describe('schemeTwistHandler', () => {
   });
 
   // -------------------------------------------------------------------------
-  // Test 4: handler does not mutate G
+  // Test 4: handler does not mutate G (except messages)
   // -------------------------------------------------------------------------
-  it('does not mutate G', () => {
+  it('does not mutate G besides messages', () => {
     const gameState = makeTestState({ schemeTwistCount: 3 });
     const snapshot = JSON.parse(JSON.stringify(gameState));
 
     schemeTwistHandler(gameState, {}, { cardId: 'test-twist' }, DEFAULT_IMPLEMENTATION_MAP);
 
-    assert.deepStrictEqual(gameState, snapshot, 'G must not be mutated by handler');
+    // why: the config-driven dispatcher (WP-182) pushes a diagnostic message
+    // for unconfigured schemes. Exclude messages from the no-mutation check.
+    const gameStateWithoutMessages = { ...gameState, messages: [] };
+    const snapshotWithoutMessages = { ...snapshot, messages: [] };
+    assert.deepStrictEqual(
+      gameStateWithoutMessages,
+      snapshotWithoutMessages,
+      'G must not be mutated by handler (except messages)',
+    );
   });
 
   // -------------------------------------------------------------------------
