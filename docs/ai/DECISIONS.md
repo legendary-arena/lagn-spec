@@ -19009,8 +19009,16 @@ own resolver, proving the framework handles both reusable and one-off patterns.
 
 **Packet:** WP-182.
 
-**Drafted:** 2026-05-27; not yet landed.
-**Status:** Drafted (pre-execution)
+**Drafted:** 2026-05-27.
+**Landed:** 2026-05-27 (EC-209 @ 48b832a).
+**Status:** Landed
+
+**Amendment (2026-05-27):** `core/secret-invasion-of-the-skrull-shapeshifters`
+dropped from v1 config coverage. Verified twist text ("highest-cost Hero from
+HQ moves into Sewers as Skrull Villain") is HQ-to-City hero conversion, not
+the `reveal-or-punish` pattern originally assumed. Deferred to a future
+resolver WP alongside `core/portals-to-the-dark-dimension` and
+`core/replace-earths-leaders-with-killbots`.
 
 ---
 
