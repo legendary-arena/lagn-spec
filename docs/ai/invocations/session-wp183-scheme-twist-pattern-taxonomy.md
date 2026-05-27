@@ -139,8 +139,17 @@ Export the inferred types too (`SchemeTwistPattern`, etc.).
 Add an optional `twistPattern?: string` field to `FlatCard` in the
 registry types. In `flattenSet()` (shared.ts), look up the scheme's
 ext_id (`{setAbbr}/{scheme.slug}`) in the assignments map and populate
-the field. This requires `flattenSet` to receive the assignments map as
-a parameter (or access it from the singleton).
+the field.
+
+`flattenSet` must receive the assignments map as an explicit parameter:
+
+```typescript
+flattenSet(set, schemeTwistAssignments?: Map<string, string>)
+```
+
+- If `undefined` → skip enrichment (no pattern field populated)
+- If present → look up and enrich
+- Must NOT read from the singleton internally — keep `flattenSet` pure
 
 ### 3g — Filter UI
 
@@ -158,6 +167,10 @@ This could be a new `SchemeTwistFilter.vue` component or reuse
 `AbilityEffectFilter.vue` if the shape is compatible. The existing
 component expects `CardAbilityEntry[]` with `matchers` — the twist
 patterns have no matchers, so a new component is probably cleaner.
+
+**Visual rules:** Use existing chip CSS variables (`--chip-bg`,
+`--chip-border`, `--chip-text`). Pattern-specific color variation is
+NOT required in v1 — the emoji is the primary differentiator.
 
 ### 3h — CardDetail badge
 
@@ -181,6 +194,11 @@ In `shared.ts`'s `applyQuery()`, add twist-pattern filtering:
   set
 - Unassigned schemes (no `twistPattern`) pass through when no pattern
   filter is active; are excluded when any pattern IS active
+
+Filters are **AND-combined**. When the twist-patterns filter is active:
+- Only cards matching `type === "scheme"` AND `twistPattern ∈ selected
+  set` AND passing all existing filters are included
+- Non-scheme cards are excluded when any twist-pattern filter is active
 
 ## 5 — App.vue wiring
 
@@ -239,11 +257,53 @@ guidelines, not regex rules):
 - **board-manipulation**: "moves" / "swap" / "city" / villain
   repositioning — spatial effects on the city row or HQ
 
-Some schemes combine patterns. Assign the **primary** one. When truly
-ambiguous, pick the pattern that a player would use to describe the
-scheme in one sentence.
+Some schemes combine patterns. Assign the **primary** one using these
+tie-break rules:
 
-## 8 — Constraints
+1. Prefer the mechanic described **first** in the twist text
+2. If unclear, prefer the mechanic with the largest gameplay impact
+3. If still ambiguous, use this precedence:
+   `reveal-or-punish` > `stack-and-escalate` > `chained-reveals` >
+   `bystander-capture` > `hero-ko` > `wound-distribution` >
+   `hand-disruption` > `board-manipulation`
+
+When truly ambiguous after all three rules, pick the pattern a player
+would use to describe the scheme in one sentence.
+
+## 8 — Drift Guards (Client-Side, Non-Blocking)
+
+At runtime, warn on data inconsistencies — never throw:
+
+- Every assignment value must exist in the pattern slugs list
+- Pattern slugs must be unique
+- Duplicate scheme keys: last write wins + warn
+- Unknown scheme ext_ids (not found in loaded card data): warn, ignore
+
+All violations use `console.warn` with prefix `[scheme-twist]`.
+
+## 9 — Performance Constraints
+
+- Convert the assignments JSON object to `Map<string, string>` once at
+  load time
+- Pattern lookups during flattening must be O(1) (Map.get)
+- No per-render recomputation of the assignments map or pattern list
+
+## 10 — Assignment Workflow (Deterministic)
+
+For each file in `data/cards/*.json`:
+
+1. Iterate `cards[]`
+2. Filter where `type === "scheme"`
+3. Find the ability line starting with `"Twist:"`
+4. Classify using §7 heuristics + primary pattern tie-break rules
+5. Write `ext_id → pattern slug` to assignments file
+
+Do NOT:
+- Infer pattern from the card name
+- Use flavor text for classification
+- Skip reading the full twist text
+
+## 11 — Constraints
 
 - **Layer boundary**: registry-viewer may import `registry` (Zod
   schemas). It must NOT import `game-engine`.
@@ -259,7 +319,7 @@ scheme in one sentence.
 - `pnpm --filter registry-viewer test` must pass (if tests exist).
 - `pnpm -r build` must exit 0.
 
-## 9 — Governance
+## 12 — Governance
 
 - This is a registry-viewer feature — no WP/EC in the game-engine
   governance system required. If you want to track it as WP-183 / EC-210
@@ -268,7 +328,7 @@ scheme in one sentence.
   recent `git log` for `registry-viewer:` prefixed commits).
 - No `DECISIONS.md` entry needed (no engine architecture impact).
 
-## 10 — Out of Scope
+## 13 — Out of Scope
 
 - Master Strike patterns (future — same approach, different taxonomy)
 - Villain fight-effect patterns (future)
