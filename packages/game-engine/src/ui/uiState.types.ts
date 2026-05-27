@@ -274,10 +274,9 @@ export interface UIMastermindState {
 /**
  * Scheme projection with identity and twist count.
  *
- * // why: WP-128 / D-12806 — `twistPile` ships as `[]` until a future
- * WP adds `G.scheme.twistPile` so resolved Scheme Twist cards are
- * preserved for replay. The existing `twistCount` (already derived from
- * `villainDeck.discard`) is unaffected.
+ * // why: WP-128 / D-12806 — `twistPile` projects `G.scheme.twistPile`
+ * (scheme-twist cards route there, not to villainDeck.discard).
+ * `twistCount` is derived from `twistPile.length`.
  */
 export interface UISchemeState {
   id: string;

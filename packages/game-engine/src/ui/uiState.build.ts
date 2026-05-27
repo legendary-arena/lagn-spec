@@ -485,14 +485,10 @@ export function buildUIState(
   };
 
   // --- 6. Project scheme — derive twist count ---
-  // why: twist count derived from already-revealed cards in villain
-  // deck discard; no new G fields needed
-  let twistCount = 0;
-  for (const cardId of gameState.villainDeck.discard) {
-    if (gameState.villainDeckCardTypes[cardId] === 'scheme-twist') {
-      twistCount += 1;
-    }
-  }
+  // why: scheme-twist cards route to G.scheme.twistPile (not
+  // villainDeck.discard) per villainDeck.reveal.ts — count the pile
+  // directly so the UI reflects actual resolved twists.
+  const twistCount = gameState.scheme.twistPile.length;
   const schemeTwistPile: UIDisplayEntry[] = buildDisplayEntries(
     gameState.scheme.twistPile,
     gameState,
