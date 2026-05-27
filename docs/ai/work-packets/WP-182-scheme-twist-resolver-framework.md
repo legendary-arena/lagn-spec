@@ -103,8 +103,9 @@ All paths relative to `packages/game-engine/`.
   remove per-scheme constants
 - `src/rules/schemeTwistResolvers.test.ts` — **new** — unit tests for each
   resolver function
-- `src/rules/schemeTwistConfigs.test.ts` — **new** — drift test asserting
-  every config's `resolverId` exists in the resolver registry
+- `src/rules/schemeTwistConfigs.test.ts` — **new** — drift tests: (A) every
+  config's `resolverId` exists in the resolver registry, (B) every config
+  map key equals its `config.schemeId`
 
 ## Non-Negotiable Constraints
 
@@ -131,11 +132,18 @@ All paths relative to `packages/game-engine/`.
   `resolveMidtownBankRobberyTwist`). They push messages to
   `gameState.messages`. They do NOT return `RuleEffect[]`.
 - The generic counter-increment + loss-check effects are appended by the
-  dispatcher after the resolver runs (existing `buildGenericTwistEffects`
-  pattern, unchanged).
+  dispatcher after the resolver runs. `buildGenericTwistEffects` logic is
+  unchanged (still counter increment + loss-check), but the dispatcher
+  computes the effective threshold (`config.lossThreshold ??
+  MVP_SCHEME_TWIST_THRESHOLD`) and passes it as a parameter. This is the
+  only signature change to `buildGenericTwistEffects`.
 - New `RuleEffect` types must NOT be added. Resolvers are pre-effect.
 - `SchemeTwistConfig.lossThreshold` overrides `MVP_SCHEME_TWIST_THRESHOLD`
   when present; otherwise the default of 7 applies.
+- **Resolvers never throw on invalid config.** If a resolver receives
+  missing or malformed params, it pushes a full-sentence message to
+  `gameState.messages` explaining the problem and returns. Generic effects
+  still apply. This preserves the "moves never throw" invariant.
 - The resolver registry is a plain `Record<SchemeTwistResolverId,
   SchemeTwistResolver>` — no factory, no class, no dynamic registration.
 - The config registry is a `Map<string, SchemeTwistConfig>` keyed by
@@ -211,11 +219,12 @@ export type SchemeTwistResolver = (
 1. Look up `SchemeTwistConfig` by `gameState.selection.schemeId`
 2. If found, look up the resolver by `config.resolverId`, call it with
    `config.params`
-3. If no config found, log a message (existing fallback — counter increment
-   only)
-4. Use `config.lossThreshold` if present, otherwise
-   `MVP_SCHEME_TWIST_THRESHOLD`
-5. Call `buildGenericTwistEffects` and return effects
+3. If no config found, push a message (existing fallback — counter
+   increment only)
+4. Compute threshold: `config?.lossThreshold ?? MVP_SCHEME_TWIST_THRESHOLD`
+5. Call `buildGenericTwistEffects(gameState, threshold)` and return effects
+   (logic unchanged: counter increment + loss-check; only the threshold
+   source changes from hardcoded to parameterized)
 
 ### Resolver summaries
 
@@ -223,9 +232,65 @@ export type SchemeTwistResolver = (
 |---|---|---|
 | `reveal-or-punish` | Each player reveals a hero matching condition or suffers penalty | `condition: { field, value }`, `penalty` |
 | `chained-reveals` | Play top N cards of villain deck | `revealCount` |
-| `wound-all` | Each player gains N wounds | `woundCount`, `escalate?` |
+| `wound-all` | Each player gains N wounds | `woundCount` |
 | `ko-from-hq` | KO N heroes from the HQ | `koCount`, `costThreshold?` |
 | `midtown-bank-robbery` | Villain in Bank captures bystanders + chain reveal | (none — self-contained) |
+
+### Per-Resolver Param Expectations (v1)
+
+Resolvers validate params at entry. Missing or malformed params push a
+message and return (never throw). Generic effects still apply.
+
+**`reveal-or-punish`**
+- Required: `condition: { field: 'heroClass' | 'team', value: string }`
+- Required: `penalty: 'gainWound' | 'discardHand'`
+- Player iteration order: canonical `Object.keys(gameState.playerZones)`.
+- Condition check: `gameState.cardTraits[cardId]` field equals value.
+
+**`chained-reveals`**
+- Required: `revealCount: number` (integer >= 1)
+- Calls `performVillainReveal` exactly `revealCount` times unless the
+  villain deck is exhausted, in which case stop early and push a message.
+
+**`wound-all`**
+- Required: `woundCount: number` (integer >= 1)
+- Each player gains exactly `woundCount` wounds via `gainWound`. If the
+  wound supply is exhausted mid-loop, stop early and push a message.
+
+**`ko-from-hq`**
+- Required: `koCount: number` (integer >= 1)
+- Optional: `costThreshold: number`
+- Selection: if `costThreshold` provided, eligible = HQ heroes with
+  `cost <= costThreshold`. Otherwise all non-null HQ slots are eligible.
+- Tie-break: sort eligible by `gameState.cardStats[cardId].cost`
+  ascending; ties broken by HQ slot index (left-to-right, i.e., lower
+  index first). This is deterministic and matches the physical game's
+  left-to-right convention.
+- KO up to `koCount` eligible cards. If fewer exist, KO all eligible and
+  push a message.
+- Each KO'd slot is refilled via `refillHqSlot`.
+
+**`midtown-bank-robbery`**
+- No params. Self-contained with locked constants (`BANK_CITY_INDEX`,
+  `MIDTOWN_BYSTANDERS_PER_TWIST`). Behavior is identical to the existing
+  `resolveMidtownBankRobberyTwist`.
+
+### Core-Set Scheme Coverage
+
+8 schemes in `core` set. 6 are covered by the 5 resolvers in v1:
+
+| Scheme ext_id | Resolver | Params |
+|---|---|---|
+| `core/midtown-bank-robbery` | `midtown-bank-robbery` | (none) |
+| `core/legacy-virus-the` | `reveal-or-punish` | `condition: { field: 'heroClass', value: 'tech' }, penalty: 'gainWound'` |
+| `core/secret-invasion-of-the-skrull-shapeshifters` | `reveal-or-punish` | (verify card text for exact condition) |
+| `core/negative-zone-prison-breakout` | `chained-reveals` | `revealCount: 2` |
+| `core/unleash-the-power-of-the-cosmic-cube` | `wound-all` | `woundCount: 1` |
+| `core/super-hero-civil-war` | `ko-from-hq` | `koCount: 2` (cheapest first) |
+
+**Not covered in v1** (require new resolvers in future WPs):
+- `core/portals-to-the-dark-dimension` — unique mechanic (dark dimension pile)
+- `core/replace-earths-leaders-with-killbots` — unique mechanic (leader replacement)
 
 ## Acceptance Criteria
 
@@ -241,12 +306,16 @@ export type SchemeTwistResolver = (
    on `schemeId` (except the config-present/absent branch).
 5. Midtown Bank Robbery behavior is identical before and after migration
    (existing tests pass without modification).
-6. Each resolver pushes descriptive messages to `gameState.messages`.
-7. `buildGenericTwistEffects` is unchanged and still produces the
-   counter-increment + loss-check effects.
-8. `buildGenericTwistEffects` respects `config.lossThreshold` when present.
-9. Drift test: every `resolverId` in `SCHEME_TWIST_CONFIGS` exists as a key
-   in `SCHEME_TWIST_RESOLVERS`.
+6. Each resolver pushes descriptive messages to `gameState.messages` for
+   every significant action and for invalid/missing config params (never
+   throws).
+7. `buildGenericTwistEffects` logic is unchanged (counter increment +
+   loss-check), but it accepts an explicit threshold parameter computed
+   by the dispatcher (`config.lossThreshold ?? MVP_SCHEME_TWIST_THRESHOLD`).
+8. Drift test A: every `resolverId` in `SCHEME_TWIST_CONFIGS` exists as a
+   key in `SCHEME_TWIST_RESOLVERS`.
+9. Drift test B: every config entry's map key equals its `config.schemeId`
+   (prevents key/schemeId mismatch bugs).
 10. No `boardgame.io` imports in any new file.
 11. No `@legendary-arena/registry` imports in any file.
 12. `pnpm --filter @legendary-arena/game-engine test` passes (819+ tests,
