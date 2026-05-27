@@ -8,8 +8,9 @@ import { getKeywordGlossary, getKeywordPdfPages, getRuleGlossary } from "./lib/g
 import { getCardTypes } from "./lib/cardTypesClient";
 import { getCardAbilities, buildAbilityTagIndex } from "./lib/cardAbilitiesClient";
 import { getSchemeTwistPatterns, getSchemeTwistAssignments } from "./lib/schemeTwistClient";
+import { getCardPatterns, type PatternTaxonomyKey } from "./lib/cardPatternsClient";
 import { devLog } from "./lib/devLog";
-import type { CardTypeEntry, CardAbilityEntry, SchemeTwistPattern } from "@legendary-arena/registry/schema";
+import type { CardTypeEntry, CardAbilityEntry, SchemeTwistPattern, CardPattern } from "@legendary-arena/registry/schema";
 import { setGlossaries } from "./composables/useRules";
 import { useGlossary, rebuildGlossaryEntries } from "./composables/useGlossary";
 import { useLightbox } from "./composables/useLightbox";
@@ -28,6 +29,7 @@ import LoadoutBuilder from "./components/LoadoutBuilder.vue";
 import LoadoutPreview from "./components/LoadoutPreview.vue";
 import AbilityEffectFilter from "./components/AbilityEffectFilter.vue";
 import SchemeTwistFilter from "./components/SchemeTwistFilter.vue";
+import PatternFilter from "./components/PatternFilter.vue";
 import AppShell from "./components/branding/AppShell.vue";
 import { useSetupFromUrl } from "./composables/useSetupFromUrl";
 import type {
@@ -127,6 +129,7 @@ const activeFilterCount = computed(() => {
   if (selectedTypes.value.size > 0) n += selectedTypes.value.size;
   if (selectedEffectSlugs.value.size > 0) n += selectedEffectSlugs.value.size;
   if (selectedTwistSlugs.value.size > 0) n += selectedTwistSlugs.value.size;
+  if (selectedMechanicalPatternSlugs.value.size > 0) n += selectedMechanicalPatternSlugs.value.size;
   return n;
 });
 
@@ -227,6 +230,20 @@ const twistPatterns = ref<SchemeTwistPattern[]>([]);
 const twistAssignments = ref<Map<string, string>>(new Map());
 const selectedTwistSlugs = ref<Set<string>>(new Set());
 
+// ── Card mechanical pattern taxonomies (WP-184) ──────────────────────────────
+// Four parallel taxonomies, one per entity-level cardType. Empty arrays/Maps
+// until the cardPatternsClient fetch resolves; stay empty if that taxonomy's
+// fetch fails (per-taxonomy isolation via Promise.allSettled).
+const heroPatterns = ref<CardPattern[]>([]);
+const villainPatterns = ref<CardPattern[]>([]);
+const henchmanPatterns = ref<CardPattern[]>([]);
+const mastermindPatterns = ref<CardPattern[]>([]);
+const heroPatternAssignments = ref<Map<string, string>>(new Map());
+const villainPatternAssignments = ref<Map<string, string>>(new Map());
+const henchmanPatternAssignments = ref<Map<string, string>>(new Map());
+const mastermindPatternAssignments = ref<Map<string, string>>(new Map());
+const selectedMechanicalPatternSlugs = ref<Set<string>>(new Set());
+
 function toggleGroup(group: TypeGroup) {
   const allSelected = group.types.every((t) => selectedTypes.value.has(t));
   const next = new Set(selectedTypes.value);
@@ -236,6 +253,12 @@ function toggleGroup(group: TypeGroup) {
     group.types.forEach((t) => next.add(t));
   }
   selectedTypes.value = next;
+  // why: WP-184 — mechanical pattern slugs are taxonomy-specific (a hero
+  // pattern slug is meaningless on a villain card). When the user changes
+  // cardType selection, drop any active pattern slugs to avoid carrying
+  // stale state across taxonomy boundaries. The filter ribbon will reappear
+  // empty when the user activates a single matching cardType again.
+  selectedMechanicalPatternSlugs.value = new Set();
   applyFilters();
 }
 
@@ -249,6 +272,7 @@ function isGroupFullyActive(group: TypeGroup): boolean {
 
 function clearTypes() {
   selectedTypes.value = new Set();
+  selectedMechanicalPatternSlugs.value = new Set();
   applyFilters();
 }
 
@@ -260,6 +284,7 @@ function clearAllFilters() {
   selectedTypes.value = new Set();
   selectedEffectSlugs.value = new Set();
   selectedTwistSlugs.value = new Set();
+  selectedMechanicalPatternSlugs.value = new Set();
   selectedCard.value = null;
   applyFilters();
 }
@@ -366,6 +391,24 @@ onMounted(async () => {
       }
     }
 
+    // why: WP-184 — card mechanical pattern taxonomies (hero / villain /
+    // henchman / mastermind). cardPatternsClient.ts is non-blocking and uses
+    // Promise.allSettled internally, so a failed fetch for one taxonomy does
+    // not affect the others. Post-hoc enrichment of allCards mirrors the
+    // WP-183 pattern above — the registry was loaded before the pattern
+    // assignments resolved, so applyFilters() re-enriches after each query().
+    loadStatus.value = "Loading card mechanical patterns…";
+    const patternsBundle = await getCardPatterns(metadataBaseUrl);
+    heroPatterns.value       = patternsBundle.patternsByType.hero;
+    villainPatterns.value    = patternsBundle.patternsByType.villain;
+    henchmanPatterns.value   = patternsBundle.patternsByType.henchman;
+    mastermindPatterns.value = patternsBundle.patternsByType.mastermind;
+    heroPatternAssignments.value       = patternsBundle.assignmentsByType.hero;
+    villainPatternAssignments.value    = patternsBundle.assignmentsByType.villain;
+    henchmanPatternAssignments.value   = patternsBundle.assignmentsByType.henchman;
+    mastermindPatternAssignments.value = patternsBundle.assignmentsByType.mastermind;
+    enrichMechanicalPatterns(allCards.value);
+
     // why: Parallel to getThemes() above — glossary fetch is non-blocking.
     // If R2 is unreachable or the JSON files are missing, console.warn and
     // continue; tooltips will be absent but the card view remains functional.
@@ -417,6 +460,75 @@ function handleKeydown(event: KeyboardEvent) {
   }
 }
 
+// ── Pattern enrichment helpers (WP-184) ──────────────────────────────────────
+// why: registry.query() rebuilds the flat list each call via flattenSet, so
+// post-hoc enrichment on allCards (in onMounted) doesn't carry over to filtered
+// results. enrichMechanicalPatterns() re-applies the assignment maps over
+// any list of FlatCards; called both at boot (against allCards) and inside
+// applyFilters() (against the fresh query results). Explicit per-cardType
+// routing — no dynamic dispatch.
+function enrichMechanicalPatterns(targetCards: FlatCard[]) {
+  const hasAny =
+    heroPatternAssignments.value.size > 0 ||
+    villainPatternAssignments.value.size > 0 ||
+    henchmanPatternAssignments.value.size > 0 ||
+    mastermindPatternAssignments.value.size > 0;
+  if (!hasAny) return;
+  for (const card of targetCards) {
+    const key = `${card.setAbbr}/${card.slug}`;
+    let assignment: string | undefined;
+    if (card.cardType === "hero") {
+      assignment = heroPatternAssignments.value.get(key);
+    } else if (card.cardType === "villain") {
+      // why: villain assignment keys are `{abbr}/{groupSlug}`; FlatCard.slug
+      // for villains is the individual card slug, so the group slug lives
+      // inside card.key (`{abbr}-villain-{groupSlug}-{cardSlug}`). Derive
+      // the group slug from card.key to look up the group-level pattern.
+      const groupSlug = extractGroupSlugFromKey(card.key, "villain");
+      if (groupSlug) assignment = villainPatternAssignments.value.get(`${card.setAbbr}/${groupSlug}`);
+    } else if (card.cardType === "henchman") {
+      const groupSlug = extractGroupSlugFromKey(card.key, "henchman");
+      if (groupSlug) assignment = henchmanPatternAssignments.value.get(`${card.setAbbr}/${groupSlug}`);
+    } else if (card.cardType === "mastermind") {
+      const groupSlug = extractGroupSlugFromKey(card.key, "mastermind");
+      if (groupSlug) assignment = mastermindPatternAssignments.value.get(`${card.setAbbr}/${groupSlug}`);
+    }
+    if (assignment) card.mechanicalPattern = assignment;
+  }
+}
+
+// why: FlatCard.key shape is `{abbr}-{cardType}-{groupSlug}-{cardSlug}` for
+// villain/henchman/mastermind cards (and `{abbr}-{cardType}-{groupSlug}` for
+// the legacy flat-shape henchman branch). Extract the segment between the
+// cardType marker and the trailing card slug to get the group slug. Returns
+// null if the key doesn't match the expected shape.
+function extractGroupSlugFromKey(key: string, cardType: string): string | null {
+  const prefix = `${key.split("-")[0]}-${cardType}-`;
+  if (!key.startsWith(prefix)) return null;
+  const rest = key.slice(prefix.length);
+  if (rest.length === 0) return null;
+  // why: flat-shape henchman branch keys end at groupSlug with no trailing
+  // cardSlug. If the rest has no further hyphen at all, treat it as the
+  // group slug itself.
+  const lastDash = rest.lastIndexOf("-");
+  if (lastDash <= 0) return rest;
+  return rest.slice(0, lastDash);
+}
+
+// ── Filter visibility helpers (WP-184) ───────────────────────────────────────
+// why: each per-taxonomy pattern chip ribbon is shown only when (a) the
+// taxonomy's patterns loaded successfully AND (b) the user has exactly one
+// cardType chip active that matches the taxonomy. The single-cardType
+// requirement is also enforced in applyQuery (logic, not just UI).
+function isSingleCardTypeActive(cardType: string): boolean {
+  return selectedTypes.value.size === 1 && selectedTypes.value.has(cardType);
+}
+
+const showHeroPatternFilter       = computed(() => heroPatterns.value.length > 0       && isSingleCardTypeActive("hero"));
+const showVillainPatternFilter    = computed(() => villainPatterns.value.length > 0    && isSingleCardTypeActive("villain"));
+const showHenchmanPatternFilter   = computed(() => henchmanPatterns.value.length > 0   && isSingleCardTypeActive("henchman"));
+const showMastermindPatternFilter = computed(() => mastermindPatterns.value.length > 0 && isSingleCardTypeActive("mastermind"));
+
 // ── Filtering ─────────────────────────────────────────────────────────────────
 function applyFilters() {
   if (!registry.value) return;
@@ -441,6 +553,11 @@ function applyFilters() {
       if (pattern) card.twistPattern = pattern;
     }
   }
+  // why: WP-184 — re-enrich mechanicalPattern on query results for the same
+  // reason as twistPattern above (the registry's query() returns fresh
+  // FlatCards each call). enrichMechanicalPatterns() handles per-cardType
+  // routing internally.
+  enrichMechanicalPatterns(queryResults);
   // why: twist-pattern filter is AND-combined with all other filters and
   // implicitly enforces scheme-only. Applied post-query because the
   // registry's internal query() call doesn't know about twist patterns.
@@ -451,6 +568,28 @@ function applyFilters() {
       if (card.cardType !== "scheme") return false;
       return card.twistPattern != null && activeTwists.has(card.twistPattern);
     });
+  }
+  // why: WP-184 — mechanical pattern filter. Single-cardType enforcement is
+  // here in logic (not just UI gating per EC-211 §Guardrails). When the user
+  // has zero or multiple cardType chips active, the pattern filter is
+  // silently ignored and a [card-patterns] warning is logged. The chip
+  // ribbons themselves are also hidden via showXPatternFilter computed flags,
+  // so this branch should only fire if a future caller bypasses the UI.
+  // why: cross-taxonomy pattern filter has undefined semantics
+  if (selectedMechanicalPatternSlugs.value.size > 0) {
+    if (selectedTypes.value.size !== 1) {
+      console.warn(
+        "[card-patterns] mechanicalPatterns filter ignored — requires exactly one active cardType " +
+        `(got ${selectedTypes.value.size}). Activate a single cardType chip to apply pattern filtering.`,
+      );
+    } else {
+      const activePatterns = selectedMechanicalPatternSlugs.value;
+      const onlyActiveCardType = [...selectedTypes.value][0];
+      twistFiltered = twistFiltered.filter((card) => {
+        if (card.cardType !== onlyActiveCardType) return false;
+        return card.mechanicalPattern != null && activePatterns.has(card.mechanicalPattern);
+      });
+    }
   }
   // why: the abilities filter is applied *after* applyQuery() rather than
   // inside it. applyQuery() lives in apps/registry-viewer/src/registry/shared.ts
@@ -729,6 +868,48 @@ function navigateToCard(slug: string, cardType: string) {
             @update:selected-twist-slugs="applyFilters"
           />
 
+          <!-- Card mechanical pattern chip ribbons (WP-184) — one per taxonomy.
+               Each ribbon is visible only when (a) the taxonomy loaded and
+               (b) exactly the matching cardType chip is active. Single-cardType
+               enforcement is duplicated in logic (applyFilters / applyQuery)
+               so a future caller bypassing the UI still gets safe behavior. -->
+          <PatternFilter
+            v-if="showHeroPatternFilter"
+            taxonomy-label="Hero Pattern"
+            target-card-type="hero"
+            :patterns="heroPatterns"
+            :all-cards="allCards"
+            v-model:selected-pattern-slugs="selectedMechanicalPatternSlugs"
+            @update:selected-pattern-slugs="applyFilters"
+          />
+          <PatternFilter
+            v-if="showVillainPatternFilter"
+            taxonomy-label="Villain Pattern"
+            target-card-type="villain"
+            :patterns="villainPatterns"
+            :all-cards="allCards"
+            v-model:selected-pattern-slugs="selectedMechanicalPatternSlugs"
+            @update:selected-pattern-slugs="applyFilters"
+          />
+          <PatternFilter
+            v-if="showHenchmanPatternFilter"
+            taxonomy-label="Henchman Pattern"
+            target-card-type="henchman"
+            :patterns="henchmanPatterns"
+            :all-cards="allCards"
+            v-model:selected-pattern-slugs="selectedMechanicalPatternSlugs"
+            @update:selected-pattern-slugs="applyFilters"
+          />
+          <PatternFilter
+            v-if="showMastermindPatternFilter"
+            taxonomy-label="Mastermind Pattern"
+            target-card-type="mastermind"
+            :patterns="mastermindPatterns"
+            :all-cards="allCards"
+            v-model:selected-pattern-slugs="selectedMechanicalPatternSlugs"
+            @update:selected-pattern-slugs="applyFilters"
+          />
+
           <!-- Set quick-filter pills -->
           <div class="set-pills">
             <span class="pills-label">Set:</span>
@@ -761,8 +942,28 @@ function navigateToCard(slug: string, cardType: string) {
 
         <!-- Cards content -->
         <template v-if="activeView === 'cards'">
-          <CardGrid :cards="filteredCards" :selected-key="selectedCard?.key" :twist-patterns="twistPatterns" @select="selectedCard = $event" @clear-filters="clearAllFilters" />
-          <CardDetail v-if="selectedCard" :card="selectedCard" :view-mode="cardViewMode" :twist-patterns="twistPatterns" @close="selectedCard = null" />
+          <CardGrid
+            :cards="filteredCards"
+            :selected-key="selectedCard?.key"
+            :twist-patterns="twistPatterns"
+            :hero-patterns="heroPatterns"
+            :villain-patterns="villainPatterns"
+            :henchman-patterns="henchmanPatterns"
+            :mastermind-patterns="mastermindPatterns"
+            @select="selectedCard = $event"
+            @clear-filters="clearAllFilters"
+          />
+          <CardDetail
+            v-if="selectedCard"
+            :card="selectedCard"
+            :view-mode="cardViewMode"
+            :twist-patterns="twistPatterns"
+            :hero-patterns="heroPatterns"
+            :villain-patterns="villainPatterns"
+            :henchman-patterns="henchmanPatterns"
+            :mastermind-patterns="mastermindPatterns"
+            @close="selectedCard = null"
+          />
         </template>
 
         <!-- Loadout content -->

@@ -464,6 +464,92 @@ export type SchemeTwistPattern     = z.infer<typeof SchemeTwistPatternSchema>;
 export type SchemeTwistPatternsIndex = z.infer<typeof SchemeTwistPatternsIndexSchema>;
 export type SchemeTwistAssignments = z.infer<typeof SchemeTwistAssignmentsSchema>;
 
+// ── Card mechanical pattern taxonomies (WP-184) ───────────────────────────────
+// why: WP-184 — four sibling taxonomies for hero / villain / henchman /
+// mastermind mechanical roles. Each taxonomy has its own per-slug z.enum so
+// assignment files reject cross-taxonomy leakage (a hero slug must not parse
+// as a villain assignment value, etc.) at parse time. The shared pattern
+// definition shape mirrors WP-183's SchemeTwistPatternSchema but the slug
+// field is a plain z.string() here — the per-taxonomy enums constrain values
+// inside the assignment maps where leakage is most likely.
+export const HERO_PATTERN_SLUGS = [
+  "draw-engine",
+  "attack-boost",
+  "recruit-boost",
+  "class-synergy",
+  "team-synergy",
+  "deck-thin",
+  "reveal-manipulate",
+  "wound-interact",
+  "bystander-interact",
+  "keyword-carrier",
+] as const;
+
+export const VILLAIN_PATTERN_SLUGS = [
+  "fight-draw",
+  "fight-wound-others",
+  "fight-ko-hero",
+  "fight-rescue",
+  "fight-gain-hero",
+  "fight-recruit",
+  "ambush-capture",
+  "ambush-cascade",
+] as const;
+
+export const HENCHMAN_PATTERN_SLUGS = [
+  "hench-ko-hero",
+  "hench-recruit",
+  "hench-draw",
+  "hench-deck-filter",
+  "hench-gain-as-hero",
+  "hench-conditional",
+] as const;
+
+export const MASTERMIND_PATTERN_SLUGS = [
+  "strike-wound",
+  "strike-discard",
+  "strike-ko-hero",
+  "strike-capture",
+  "strike-spawn",
+  "strike-deck-disrupt",
+  "strike-escalate",
+  "strike-board",
+] as const;
+
+export const HeroPatternSlugSchema       = z.enum(HERO_PATTERN_SLUGS);
+export const VillainPatternSlugSchema    = z.enum(VILLAIN_PATTERN_SLUGS);
+export const HenchmanPatternSlugSchema   = z.enum(HENCHMAN_PATTERN_SLUGS);
+export const MastermindPatternSlugSchema = z.enum(MASTERMIND_PATTERN_SLUGS);
+
+// Shared pattern definition shape — all four taxonomies validate against this.
+export const CardPatternSchema = z.object({
+  slug:        z.string().min(1),
+  label:       z.string().min(1),
+  emoji:       z.string().min(1),
+  order:       z.number().int().nonnegative(),
+  description: z.string().min(1),
+});
+
+export const CardPatternsIndexSchema = z.array(CardPatternSchema);
+
+// Per-taxonomy assignment record schemas. z.record value type is the taxonomy's
+// own slug enum so cross-taxonomy leakage rejects at parse time.
+export const HeroPatternAssignmentsSchema       = z.record(z.string(), HeroPatternSlugSchema);
+export const VillainPatternAssignmentsSchema    = z.record(z.string(), VillainPatternSlugSchema);
+export const HenchmanPatternAssignmentsSchema   = z.record(z.string(), HenchmanPatternSlugSchema);
+export const MastermindPatternAssignmentsSchema = z.record(z.string(), MastermindPatternSlugSchema);
+
+export type HeroPatternSlug       = z.infer<typeof HeroPatternSlugSchema>;
+export type VillainPatternSlug    = z.infer<typeof VillainPatternSlugSchema>;
+export type HenchmanPatternSlug   = z.infer<typeof HenchmanPatternSlugSchema>;
+export type MastermindPatternSlug = z.infer<typeof MastermindPatternSlugSchema>;
+export type CardPattern           = z.infer<typeof CardPatternSchema>;
+export type CardPatternsIndex     = z.infer<typeof CardPatternsIndexSchema>;
+export type HeroPatternAssignments       = z.infer<typeof HeroPatternAssignmentsSchema>;
+export type VillainPatternAssignments    = z.infer<typeof VillainPatternAssignmentsSchema>;
+export type HenchmanPatternAssignments   = z.infer<typeof HenchmanPatternAssignmentsSchema>;
+export type MastermindPatternAssignments = z.infer<typeof MastermindPatternAssignmentsSchema>;
+
 // why: CardType = string is the named alias replacing the prior 4-value
 // z.enum(["hero","mastermind","villain","scheme"]) at CardQuerySchema. The
 // registry package stays permissive at load (any string accepted); the viewer

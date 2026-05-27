@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch, nextTick, computed } from "vue";
 import type { FlatCard } from "../registry/browser";
-import type { SchemeTwistPattern } from "@legendary-arena/registry/schema";
+import type { SchemeTwistPattern, CardPattern } from "@legendary-arena/registry/schema";
 import { TYPE_COLOR, HC_COLOR, RARITY_DOT } from "../lib/theme";
 import { devLog } from "../lib/devLog";
 // why: useCardViewMode is the module-scoped single source of truth for
@@ -30,6 +30,10 @@ const props = defineProps<{
   cards: FlatCard[];
   selectedKey?: string;
   twistPatterns?: readonly SchemeTwistPattern[];
+  heroPatterns?: readonly CardPattern[];
+  villainPatterns?: readonly CardPattern[];
+  henchmanPatterns?: readonly CardPattern[];
+  mastermindPatterns?: readonly CardPattern[];
 }>();
 const emit = defineEmits<{ select: [card: FlatCard]; clearFilters: [] }>();
 
@@ -40,6 +44,23 @@ const twistPatternMap = computed(() => {
   if (!props.twistPatterns) return new Map<string, SchemeTwistPattern>();
   return new Map(props.twistPatterns.map((p) => [p.slug, p]));
 });
+
+// why: WP-184 — per-cardType mechanical-pattern slug → definition maps for
+// O(1) lookup during tile rendering. One map per taxonomy so badge resolution
+// is explicit by cardType (no dynamic dispatch on a string key).
+const heroPatternMap       = computed(() => new Map((props.heroPatterns       ?? []).map((p) => [p.slug, p])));
+const villainPatternMap    = computed(() => new Map((props.villainPatterns    ?? []).map((p) => [p.slug, p])));
+const henchmanPatternMap   = computed(() => new Map((props.henchmanPatterns   ?? []).map((p) => [p.slug, p])));
+const mastermindPatternMap = computed(() => new Map((props.mastermindPatterns ?? []).map((p) => [p.slug, p])));
+
+function resolveMechanicalPattern(card: FlatCard): CardPattern | undefined {
+  if (!card.mechanicalPattern) return undefined;
+  if (card.cardType === "hero")       return heroPatternMap.value.get(card.mechanicalPattern);
+  if (card.cardType === "villain")    return villainPatternMap.value.get(card.mechanicalPattern);
+  if (card.cardType === "henchman")   return henchmanPatternMap.value.get(card.mechanicalPattern);
+  if (card.cardType === "mastermind") return mastermindPatternMap.value.get(card.mechanicalPattern);
+  return undefined;
+}
 
 // why: when a card is selected (either by clicking or via cross-link from
 // themes view), scroll it into view so the user can see which tile is active
@@ -103,6 +124,11 @@ watch(() => props.selectedKey, (newKey) => {
               class="twist-tile-badge"
               :title="twistPatternMap.get(card.twistPattern)!.label"
             >{{ twistPatternMap.get(card.twistPattern)!.emoji }}</span>
+            <span
+              v-if="resolveMechanicalPattern(card)"
+              class="pattern-tile-badge"
+              :title="resolveMechanicalPattern(card)!.label"
+            >{{ resolveMechanicalPattern(card)!.emoji }}</span>
           </template>
           <!--
             why: the viewMode swap is confined to the inside of .img-wrap
@@ -172,6 +198,7 @@ watch(() => props.selectedKey, (newKey) => {
 .img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .type-badge { position: absolute; bottom: 4px; left: 4px; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600; text-transform: capitalize; }
 .twist-tile-badge { position: absolute; top: 4px; right: 4px; font-size: 0.75rem; line-height: 1; background: rgba(0, 0, 0, 0.55); border-radius: 4px; padding: 2px 4px; cursor: help; }
+.pattern-tile-badge { position: absolute; top: 4px; right: 4px; font-size: 0.75rem; line-height: 1; background: rgba(0, 0, 0, 0.55); border-radius: 4px; padding: 2px 4px; cursor: help; }
 .tile-info { padding: 0.4rem 0.5rem 0.5rem; display: flex; flex-direction: column; gap: 0.15rem; }
 .tile-name { font-size: 0.72rem; font-weight: 600; color: #d8d8ee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tile-hero { font-size: 0.62rem; color: #7777aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

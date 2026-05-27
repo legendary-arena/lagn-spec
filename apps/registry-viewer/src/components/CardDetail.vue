@@ -9,12 +9,16 @@ import { useLightbox } from "../composables/useLightbox";
 import { TYPE_COLOR, HC_COLOR, RARITY_LABEL } from "../lib/theme";
 import CardDataDisplay from "./CardDataDisplay.vue";
 
-import type { SchemeTwistPattern } from "@legendary-arena/registry/schema";
+import type { SchemeTwistPattern, CardPattern } from "@legendary-arena/registry/schema";
 
 const props = defineProps<{
   card: FlatCard;
   viewMode: "image" | "data";
   twistPatterns?: readonly SchemeTwistPattern[];
+  heroPatterns?: readonly CardPattern[];
+  villainPatterns?: readonly CardPattern[];
+  henchmanPatterns?: readonly CardPattern[];
+  mastermindPatterns?: readonly CardPattern[];
 }>();
 const emit = defineEmits<{ close: [] }>();
 
@@ -106,6 +110,22 @@ const matchedTwistPattern = computed(() => {
   return props.twistPatterns.find((p) => p.slug === props.card.twistPattern) ?? null;
 });
 
+// why: WP-184 — the mechanical pattern badge resolves the per-cardType
+// taxonomy and looks up the pattern definition by slug. Returns null when
+// the card has no assigned pattern OR its cardType has no corresponding
+// taxonomy (e.g. scheme cards use twistPattern instead, bystander/wound
+// have no mechanical pattern at all).
+const matchedMechanicalPattern = computed(() => {
+  if (!props.card.mechanicalPattern) return null;
+  let taxonomy: readonly CardPattern[] | undefined;
+  if (props.card.cardType === "hero")            taxonomy = props.heroPatterns;
+  else if (props.card.cardType === "villain")    taxonomy = props.villainPatterns;
+  else if (props.card.cardType === "henchman")   taxonomy = props.henchmanPatterns;
+  else if (props.card.cardType === "mastermind") taxonomy = props.mastermindPatterns;
+  if (!taxonomy) return null;
+  return taxonomy.find((p) => p.slug === props.card.mechanicalPattern) ?? null;
+});
+
 // why: TYPE_COLOR, HC_COLOR, RARITY_LABEL imported from src/lib/theme.ts
 // (single source of truth for all color constants across the viewer)
 </script>
@@ -134,6 +154,11 @@ const matchedTwistPattern = computed(() => {
           class="twist-badge"
           :title="matchedTwistPattern.description"
         >{{ matchedTwistPattern.emoji }} {{ matchedTwistPattern.label }}</span>
+        <span
+          v-if="matchedMechanicalPattern"
+          class="pattern-badge"
+          :title="matchedMechanicalPattern.description"
+        >{{ matchedMechanicalPattern.emoji }} {{ matchedMechanicalPattern.label }}</span>
       </div>
       <button class="close-btn" @click="emit('close')">✕</button>
     </div>
@@ -322,6 +347,21 @@ const matchedTwistPattern = computed(() => {
   background: #2a2a5a;
   border: 1px solid #5555aa;
   color: #c0c0ff;
+  padding: 0.15rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  white-space: nowrap;
+  width: fit-content;
+  cursor: help;
+}
+.pattern-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #2a4a5a;
+  border: 1px solid #55aacc;
+  color: #c0e0ff;
   padding: 0.15rem 0.55rem;
   border-radius: 12px;
   font-size: 0.68rem;

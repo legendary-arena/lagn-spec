@@ -1,0 +1,58 @@
+[
+  {
+    "slug": "fight-draw",
+    "label": "Fight: Draw",
+    "emoji": "🃏",
+    "order": 10,
+    "description": "Defeating this villain draws cards"
+  },
+  {
+    "slug": "fight-wound-others",
+    "label": "Fight: Wound Others",
+    "emoji": "🩸",
+    "order": 20,
+    "description": "Defeating this villain wounds other players (reveal-or-punish)"
+  },
+  {
+    "slug": "fight-ko-hero",
+    "label": "Fight: KO Hero",
+    "emoji": "💀",
+    "order": 30,
+    "description": "Defeating this villain costs you a hero (KO from your cards)"
+  },
+  {
+    "slug": "fight-rescue",
+    "label": "Fight: Rescue",
+    "emoji": "🧑",
+    "order": 40,
+    "description": "Defeating this villain rescues bystanders"
+  },
+  {
+    "slug": "fight-gain-hero",
+    "label": "Fight: Gain Hero",
+    "emoji": "🦸",
+    "order": 50,
+    "description": "Defeating this villain gives you a free hero or the villain becomes a hero"
+  },
+  {
+    "slug": "fight-recruit",
+    "label": "Fight: Recruit",
+    "emoji": "💰",
+    "order": 60,
+    "description": "Defeating this villain gives recruit points or a free card"
+  },
+  {
+    "slug": "ambush-capture",
+    "label": "Ambush: Capture",
+    "emoji": "🧑‍🤝‍🧑",
+    "order": 70,
+    "description": "This villain captures bystanders when entering the city"
+  },
+  {
+    "slug": "ambush-cascade",
+    "label": "Ambush: Cascade",
+    "emoji": "🔗",
+    "order": 80,
+    "description": "This villain plays additional villain deck cards on entry"
+  }
+]

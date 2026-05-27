@@ -55,6 +55,8 @@ export interface FlatCard {
   abilities:  string[];
   /** Scheme twist pattern slug (WP-183): assigned mechanical pattern for scheme cards. */
   twistPattern?: string;
+  /** Card mechanical pattern slug (WP-184): assigned pattern for hero/villain/henchman/mastermind cards. */
+  mechanicalPattern?: string;
   /** Card-count display (WP-170): copies of this card in its group/deck. */
   count?:     number;
   /** Card-count display (WP-170): total cards in the villain group or hero deck. */

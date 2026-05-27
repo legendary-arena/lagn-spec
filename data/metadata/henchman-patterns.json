@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "hench-ko-hero",
+    "label": "Fight: KO Hero",
+    "emoji": "💀",
+    "order": 10,
+    "description": "Defeating costs you one of your heroes"
+  },
+  {
+    "slug": "hench-recruit",
+    "label": "Fight: Recruit",
+    "emoji": "💰",
+    "order": 20,
+    "description": "Defeating gives recruit points"
+  },
+  {
+    "slug": "hench-draw",
+    "label": "Fight: Draw",
+    "emoji": "🃏",
+    "order": 30,
+    "description": "Defeating draws extra cards at end of turn"
+  },
+  {
+    "slug": "hench-deck-filter",
+    "label": "Fight: Deck Filter",
+    "emoji": "🔮",
+    "order": 40,
+    "description": "Defeating lets you reveal/KO/rearrange top of deck"
+  },
+  {
+    "slug": "hench-gain-as-hero",
+    "label": "Fight: Gain as Hero",
+    "emoji": "🦸",
+    "order": 50,
+    "description": "This henchman becomes a hero card in your deck"
+  },
+  {
+    "slug": "hench-conditional",
+    "label": "Fight: Conditional",
+    "emoji": "❓",
+    "order": 60,
+    "description": "Reveal-or-punish gate (reveal X or suffer penalty)"
+  }
+]

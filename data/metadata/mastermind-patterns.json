@@ -1,0 +1,58 @@
+[
+  {
+    "slug": "strike-wound",
+    "label": "Strike: Wounds",
+    "emoji": "🩸",
+    "order": 10,
+    "description": "Each player gains wounds (often with a reveal gate)"
+  },
+  {
+    "slug": "strike-discard",
+    "label": "Strike: Discard",
+    "emoji": "✋",
+    "order": 20,
+    "description": "Each player discards cards or discards down to N"
+  },
+  {
+    "slug": "strike-ko-hero",
+    "label": "Strike: KO Heroes",
+    "emoji": "💀",
+    "order": 30,
+    "description": "KO heroes from hand, discard, or HQ"
+  },
+  {
+    "slug": "strike-capture",
+    "label": "Strike: Capture",
+    "emoji": "🧑‍🤝‍🧑",
+    "order": 40,
+    "description": "Mastermind captures bystanders as shields"
+  },
+  {
+    "slug": "strike-spawn",
+    "label": "Strike: Spawn",
+    "emoji": "👹",
+    "order": 50,
+    "description": "The Strike card itself enters the city as a villain"
+  },
+  {
+    "slug": "strike-deck-disrupt",
+    "label": "Strike: Deck Disruption",
+    "emoji": "📚",
+    "order": 60,
+    "description": "Cards placed on top of deck, deck manipulation"
+  },
+  {
+    "slug": "strike-escalate",
+    "label": "Strike: Escalate",
+    "emoji": "📈",
+    "order": 70,
+    "description": "Strikes stack — effects grow with each successive strike"
+  },
+  {
+    "slug": "strike-board",
+    "label": "Strike: Board Effect",
+    "emoji": "🔀",
+    "order": 80,
+    "description": "Villains escape, move, or board state changes"
+  }
+]

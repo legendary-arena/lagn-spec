@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "draw-engine",
+    "label": "Draw Engine",
+    "emoji": "🃏",
+    "order": 10,
+    "description": "Abilities that draw extra cards from your deck"
+  },
+  {
+    "slug": "attack-boost",
+    "label": "Attack Power",
+    "emoji": "⚔️",
+    "order": 20,
+    "description": "Flat or conditional +attack bonuses"
+  },
+  {
+    "slug": "recruit-boost",
+    "label": "Recruit Power",
+    "emoji": "💰",
+    "order": 30,
+    "description": "Flat or conditional +recruit bonuses"
+  },
+  {
+    "slug": "class-synergy",
+    "label": "Class Synergy",
+    "emoji": "🎨",
+    "order": 40,
+    "description": "Abilities gated by hero class ([hc:X]) conditions"
+  },
+  {
+    "slug": "team-synergy",
+    "label": "Team Synergy",
+    "emoji": "🤝",
+    "order": 50,
+    "description": "Abilities that scale with or require same-team heroes"
+  },
+  {
+    "slug": "deck-thin",
+    "label": "Deck Thinning",
+    "emoji": "✂️",
+    "order": 60,
+    "description": "KO cards from hand or discard to slim your deck"
+  },
+  {
+    "slug": "reveal-manipulate",
+    "label": "Deck Manipulation",
+    "emoji": "🔮",
+    "order": 70,
+    "description": "Reveal, rearrange, or filter top cards of your deck"
+  },
+  {
+    "slug": "wound-interact",
+    "label": "Wound Interaction",
+    "emoji": "🩹",
+    "order": 80,
+    "description": "KO wounds, benefit from wounds, or wound immunity"
+  },
+  {
+    "slug": "bystander-interact",
+    "label": "Bystander Rescuer",
+    "emoji": "🧑",
+    "order": 90,
+    "description": "Rescue bystanders or scale based on rescued bystanders"
+  },
+  {
+    "slug": "keyword-carrier",
+    "label": "Keyword Specialist",
+    "emoji": "🏷️",
+    "order": 100,
+    "description": "Primary identity is a set keyword (Berserk, Teleport, Soaring Flight, etc.)"
+  }
+]

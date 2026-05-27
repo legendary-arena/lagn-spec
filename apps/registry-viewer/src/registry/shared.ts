@@ -7,14 +7,37 @@ import type {
 
 // why: schemeTwistAssignments is optional so flattenSet stays pure and
 // degrades gracefully — when the R2 fetch fails the parameter is undefined
-// and scheme cards simply omit the twistPattern field.
+// and scheme cards simply omit the twistPattern field. patternAssignmentsByType
+// extends the same pattern for the four WP-184 mechanical pattern taxonomies
+// (hero / villain / henchman / mastermind / scheme — scheme is threaded here
+// as well so a single caller can pass all assignments through one structured
+// parameter). Each Map is built once at load time and passed in for O(1)
+// lookups; flattenSet stays pure (no singleton reads inside).
+export interface PatternAssignmentsByType {
+  hero?:       Map<string, string>;
+  villain?:    Map<string, string>;
+  henchman?:   Map<string, string>;
+  mastermind?: Map<string, string>;
+  scheme?:     Map<string, string>;
+}
+
 export function flattenSet(
   set: SetData,
   setName: string,
   schemeTwistAssignments?: Map<string, string>,
+  patternAssignmentsByType?: PatternAssignmentsByType,
 ): FlatCard[] {
   const cards: FlatCard[] = [];
   const abbr = set.abbr;
+
+  // why: per-entity (hero / villain / henchman / mastermind) pattern lookups
+  // for WP-184. Resolved ONCE per group/hero before the inner card loop so
+  // every card under the same entity reuses the lookup. Explicit per-type
+  // routing — no dynamic dispatch by cardType string and no singleton reads.
+  const heroPatternMap       = patternAssignmentsByType?.hero;
+  const villainPatternMap    = patternAssignmentsByType?.villain;
+  const henchmanPatternMap   = patternAssignmentsByType?.henchman;
+  const mastermindPatternMap = patternAssignmentsByType?.mastermind;
 
   // Heroes
   for (const hero of set.heroes) {
@@ -47,6 +70,10 @@ export function flattenSet(
       }
       if (sum > 0) heroDeckTotal = sum;
     }
+
+    // why: WP-184 — hero patterns are assigned at the hero level (one slug per
+    // hero, applied to all 4 cards in the set). Look up once per hero.
+    const heroMechanicalPattern = heroPatternMap?.get(`${abbr}/${hero.slug}`);
 
     for (const card of hero.cards) {
       // why: WP-170 Amendment (2026-05-22) — R2 cardCounts is keyed by card
@@ -103,12 +130,17 @@ export function flattenSet(
         abilities:   card.abilities ?? [],
         count:       heroCardCount,
         setTotal:    heroDeckTotal,
+        // why: WP-184 — populated only when the resolved cardType is exactly
+        // "hero". Per-card cardType overrides (e.g. "shield-officer-special")
+        // route to no map, so mechanicalPattern stays undefined for those.
+        mechanicalPattern: resolvedCardType === "hero" ? heroMechanicalPattern : undefined,
       });
     }
   }
 
   // Masterminds
   for (const mm of set.masterminds) {
+    const mastermindMechanicalPattern = mastermindPatternMap?.get(`${abbr}/${mm.slug}`);
     for (const card of mm.cards) {
       cards.push({
         key:       `${abbr}-mastermind-${mm.slug}-${card.slug}`,
@@ -119,6 +151,7 @@ export function flattenSet(
         slug:      card.slug,
         imageUrl:  card.imageUrl ?? "",
         abilities: card.abilities ?? [],
+        mechanicalPattern: mastermindMechanicalPattern,
       });
     }
   }
@@ -134,6 +167,7 @@ export function flattenSet(
     for (const card of group.cards) {
       villainGroupTotal += card.copies ?? 1;
     }
+    const villainMechanicalPattern = villainPatternMap?.get(`${abbr}/${group.slug}`);
     for (const card of group.cards) {
       cards.push({
         key:       `${abbr}-villain-${group.slug}-${card.slug}`,
@@ -146,6 +180,7 @@ export function flattenSet(
         abilities: card.abilities ?? [],
         count:     card.copies ?? 1,
         setTotal:  villainGroupTotal,
+        mechanicalPattern: villainMechanicalPattern,
       });
     }
   }
@@ -190,6 +225,7 @@ export function flattenSet(
     const groupSlug = String(henchmanRecord["slug"] ?? henchmanRecord["name"] ?? "henchman");
     const groupName = String(henchmanRecord["name"] ?? groupSlug);
     const subCards = henchmanRecord["cards"];
+    const henchmanMechanicalPattern = henchmanPatternMap?.get(`${abbr}/${groupSlug}`);
 
     if (Array.isArray(subCards) && subCards.length > 0) {
       for (const c of subCards) {
@@ -205,6 +241,7 @@ export function flattenSet(
           slug:      cardSlug,
           imageUrl:  String(cardRecord["imageUrl"] ?? henchmanRecord["imageUrl"] ?? ""),
           abilities: Array.isArray(cardRecord["abilities"]) ? cardRecord["abilities"] as string[] : [],
+          mechanicalPattern: henchmanMechanicalPattern,
         });
       }
       continue;
@@ -219,6 +256,7 @@ export function flattenSet(
       slug:      groupSlug,
       imageUrl:  String(henchmanRecord["imageUrl"] ?? ""),
       abilities: Array.isArray(henchmanRecord["abilities"]) ? henchmanRecord["abilities"] as string[] : [],
+      mechanicalPattern: henchmanMechanicalPattern,
     });
   }
 
@@ -317,7 +355,27 @@ export function applyQuery(
   cards: FlatCard[],
   q: CardQueryExtended,
   twistPatterns?: Set<string>,
+  mechanicalPatterns?: Set<string>,
 ): FlatCard[] {
+  // why: WP-184 — the mechanical pattern filter has undefined semantics when
+  // the user has multiple cardType chips active (a hero pattern slug should
+  // not match a villain card, and vice versa). Single-cardType enforcement
+  // lives here (in logic) — NOT only in UI gating — so a future caller that
+  // bypasses the chip UI still gets safe behavior.
+  // why: cross-taxonomy pattern filter has undefined semantics
+  const activeMechanicalPatterns = (() => {
+    if (!mechanicalPatterns || mechanicalPatterns.size === 0) return null;
+    const activeCardTypeCount = (q.cardTypes?.length ?? 0) + (q.cardType ? 1 : 0);
+    if (activeCardTypeCount !== 1) {
+      console.warn(
+        "[card-patterns] mechanicalPatterns filter ignored — requires exactly one active cardType " +
+        `(got ${activeCardTypeCount}). Activate a single cardType chip to apply pattern filtering.`,
+      );
+      return null;
+    }
+    return mechanicalPatterns;
+  })();
+
   return cards.filter((c) => {
     // why: when twist-pattern filter is active, non-scheme cards are excluded
     // regardless of the cardType filter state — the twist taxonomy is
@@ -325,6 +383,13 @@ export function applyQuery(
     if (twistPatterns && twistPatterns.size > 0) {
       if (c.cardType !== "scheme") return false;
       if (!c.twistPattern || !twistPatterns.has(c.twistPattern)) return false;
+    }
+    // why: mechanical pattern filter — AND-combined with all other filters.
+    // The single-cardType guard above guarantees that only cards of that one
+    // cardType reach this filter; unassigned cards (no mechanicalPattern)
+    // are excluded when the filter is active.
+    if (activeMechanicalPatterns) {
+      if (!c.mechanicalPattern || !activeMechanicalPatterns.has(c.mechanicalPattern)) return false;
     }
     // Multi-type filter takes priority over single cardType
     if (q.cardTypes && q.cardTypes.length > 0) {
