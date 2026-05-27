@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { watch, nextTick } from "vue";
+import { watch, nextTick, computed } from "vue";
 import type { FlatCard } from "../registry/browser";
+import type { SchemeTwistPattern } from "@legendary-arena/registry/schema";
 import { TYPE_COLOR, HC_COLOR, RARITY_DOT } from "../lib/theme";
 import { devLog } from "../lib/devLog";
 // why: useCardViewMode is the module-scoped single source of truth for
@@ -25,11 +26,20 @@ import { useCardSize } from "../composables/useCardSize";
 import { ABILITY_THRESHOLD_PX } from "../composables/cardTileThresholds";
 import CardDataTile from "./CardDataTile.vue";
 
-const props = defineProps<{ cards: FlatCard[]; selectedKey?: string }>();
+const props = defineProps<{
+  cards: FlatCard[];
+  selectedKey?: string;
+  twistPatterns?: readonly SchemeTwistPattern[];
+}>();
 const emit = defineEmits<{ select: [card: FlatCard]; clearFilters: [] }>();
 
 const { viewMode } = useCardViewMode();
 const { cardSize } = useCardSize();
+
+const twistPatternMap = computed(() => {
+  if (!props.twistPatterns) return new Map<string, SchemeTwistPattern>();
+  return new Map(props.twistPatterns.map((p) => [p.slug, p]));
+});
 
 // why: when a card is selected (either by clicking or via cross-link from
 // themes view), scroll it into view so the user can see which tile is active
@@ -88,6 +98,11 @@ watch(() => props.selectedKey, (newKey) => {
             <span class="type-badge" :style="{ background: TYPE_COLOR[card.cardType] + '22', color: TYPE_COLOR[card.cardType] }">
               {{ card.cardType }}
             </span>
+            <span
+              v-if="card.twistPattern && twistPatternMap.get(card.twistPattern)"
+              class="twist-tile-badge"
+              :title="twistPatternMap.get(card.twistPattern)!.label"
+            >{{ twistPatternMap.get(card.twistPattern)!.emoji }}</span>
           </template>
           <!--
             why: the viewMode swap is confined to the inside of .img-wrap
@@ -156,6 +171,7 @@ watch(() => props.selectedKey, (newKey) => {
 .img-wrap.data-expanded { aspect-ratio: auto; }
 .img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .type-badge { position: absolute; bottom: 4px; left: 4px; font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600; text-transform: capitalize; }
+.twist-tile-badge { position: absolute; top: 4px; right: 4px; font-size: 0.75rem; line-height: 1; background: rgba(0, 0, 0, 0.55); border-radius: 4px; padding: 2px 4px; cursor: help; }
 .tile-info { padding: 0.4rem 0.5rem 0.5rem; display: flex; flex-direction: column; gap: 0.15rem; }
 .tile-name { font-size: 0.72rem; font-weight: 600; color: #d8d8ee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tile-hero { font-size: 0.62rem; color: #7777aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

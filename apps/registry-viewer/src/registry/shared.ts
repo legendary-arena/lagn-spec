@@ -5,7 +5,14 @@ import type {
   SetData, SetIndexEntry, FlatCard, CardQueryExtended, HealthReport,
 } from "./types/types-index.js";
 
-export function flattenSet(set: SetData, setName: string): FlatCard[] {
+// why: schemeTwistAssignments is optional so flattenSet stays pure and
+// degrades gracefully — when the R2 fetch fails the parameter is undefined
+// and scheme cards simply omit the twistPattern field.
+export function flattenSet(
+  set: SetData,
+  setName: string,
+  schemeTwistAssignments?: Map<string, string>,
+): FlatCard[] {
   const cards: FlatCard[] = [];
   const abbr = set.abbr;
 
@@ -217,6 +224,9 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
 
   // Schemes
   for (const scheme of set.schemes) {
+    // why: Map.get is O(1) — no per-render recomputation; the map is built
+    // once at load time and passed in as a parameter to keep flattenSet pure.
+    const twistPattern = schemeTwistAssignments?.get(`${abbr}/${scheme.slug}`);
     cards.push({
       key:       `${abbr}-scheme-${scheme.slug}`,
       cardType:  "scheme",
@@ -226,6 +236,7 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
       slug:      scheme.slug,
       imageUrl:  scheme.imageUrl ?? "",
       abilities: scheme.cards?.flatMap((c) => c.abilities ?? []) ?? [],
+      twistPattern,
     });
   }
 
@@ -302,8 +313,19 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
   return cards;
 }
 
-export function applyQuery(cards: FlatCard[], q: CardQueryExtended): FlatCard[] {
+export function applyQuery(
+  cards: FlatCard[],
+  q: CardQueryExtended,
+  twistPatterns?: Set<string>,
+): FlatCard[] {
   return cards.filter((c) => {
+    // why: when twist-pattern filter is active, non-scheme cards are excluded
+    // regardless of the cardType filter state — the twist taxonomy is
+    // scheme-specific and including non-scheme cards would be nonsensical.
+    if (twistPatterns && twistPatterns.size > 0) {
+      if (c.cardType !== "scheme") return false;
+      if (!c.twistPattern || !twistPatterns.has(c.twistPattern)) return false;
+    }
     // Multi-type filter takes priority over single cardType
     if (q.cardTypes && q.cardTypes.length > 0) {
       if (!q.cardTypes.includes(c.cardType)) return false;

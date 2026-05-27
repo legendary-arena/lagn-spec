@@ -427,6 +427,43 @@ export type CardAbilityMatcher = z.infer<typeof CardAbilityMatcherSchema>;
 export type CardAbilityEntry   = z.infer<typeof CardAbilityEntrySchema>;
 export type CardAbilitiesIndex = z.infer<typeof CardAbilitiesIndexSchema>;
 
+// ── Scheme twist pattern taxonomy (scheme-twist-patterns.json + assignments) ──
+// why: WP-183 — static taxonomy for the 8 mechanical twist patterns observed
+// across 191 schemes. z.enum on the slug field catches typos and invalid slugs
+// at parse time in both the patterns index and the assignments map.
+export const TWIST_PATTERN_SLUGS = [
+  "reveal-or-punish",
+  "stack-and-escalate",
+  "chained-reveals",
+  "bystander-capture",
+  "hero-ko",
+  "wound-distribution",
+  "hand-disruption",
+  "board-manipulation",
+] as const;
+
+export const TwistPatternSlugSchema = z.enum(TWIST_PATTERN_SLUGS);
+
+export const SchemeTwistPatternSchema = z.object({
+  slug:        TwistPatternSlugSchema,
+  label:       z.string().min(1),
+  emoji:       z.string().min(1),
+  order:       z.number().int().nonnegative(),
+  description: z.string().min(1),
+});
+
+export const SchemeTwistPatternsIndexSchema = z.array(SchemeTwistPatternSchema);
+
+export const SchemeTwistAssignmentsSchema = z.record(
+  z.string(),
+  TwistPatternSlugSchema,
+);
+
+export type TwistPatternSlug       = z.infer<typeof TwistPatternSlugSchema>;
+export type SchemeTwistPattern     = z.infer<typeof SchemeTwistPatternSchema>;
+export type SchemeTwistPatternsIndex = z.infer<typeof SchemeTwistPatternsIndexSchema>;
+export type SchemeTwistAssignments = z.infer<typeof SchemeTwistAssignmentsSchema>;
+
 // why: CardType = string is the named alias replacing the prior 4-value
 // z.enum(["hero","mastermind","villain","scheme"]) at CardQuerySchema. The
 // registry package stays permissive at load (any string accepted); the viewer

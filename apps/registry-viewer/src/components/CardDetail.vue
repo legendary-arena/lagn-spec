@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import type { FlatCard } from "../registry/browser";
 import { parseAbilityText, lookupKeyword, lookupRule, lookupHeroClass } from "../composables/useRules";
 import type { AbilityToken } from "../composables/useRules";
@@ -8,7 +9,13 @@ import { useLightbox } from "../composables/useLightbox";
 import { TYPE_COLOR, HC_COLOR, RARITY_LABEL } from "../lib/theme";
 import CardDataDisplay from "./CardDataDisplay.vue";
 
-defineProps<{ card: FlatCard; viewMode: "image" | "data" }>();
+import type { SchemeTwistPattern } from "@legendary-arena/registry/schema";
+
+const props = defineProps<{
+  card: FlatCard;
+  viewMode: "image" | "data";
+  twistPatterns?: readonly SchemeTwistPattern[];
+}>();
 const emit = defineEmits<{ close: [] }>();
 
 // ── Resizable panel width (persisted) ───────────────────────────────────────
@@ -94,6 +101,11 @@ function tokenLabel(token: AbilityToken): string {
   return token.value;
 }
 
+const matchedTwistPattern = computed(() => {
+  if (!props.card.twistPattern || !props.twistPatterns) return null;
+  return props.twistPatterns.find((p) => p.slug === props.card.twistPattern) ?? null;
+});
+
 // why: TYPE_COLOR, HC_COLOR, RARITY_LABEL imported from src/lib/theme.ts
 // (single source of truth for all color constants across the viewer)
 </script>
@@ -115,7 +127,14 @@ function tokenLabel(token: AbilityToken): string {
       aria-label="Resize card detail panel (Enter or Space to reset)"
     ></div>
     <div class="detail-header">
-      <h2>{{ card.name }}</h2>
+      <div class="detail-header-title">
+        <h2>{{ card.name }}</h2>
+        <span
+          v-if="matchedTwistPattern"
+          class="twist-badge"
+          :title="matchedTwistPattern.description"
+        >{{ matchedTwistPattern.emoji }} {{ matchedTwistPattern.label }}</span>
+      </div>
       <button class="close-btn" @click="emit('close')">✕</button>
     </div>
 
@@ -293,8 +312,24 @@ function tokenLabel(token: AbilityToken): string {
 .resize-handle:active {
   background: rgba(112, 112, 224, 0.4);
 }
-.detail-header { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1rem; border-bottom: 1px solid #2e2e42; flex-shrink: 0; }
+.detail-header { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1rem; border-bottom: 1px solid #2e2e42; flex-shrink: 0; gap: 0.5rem; }
+.detail-header-title { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; flex: 1; }
 .detail-header h2 { margin: 0; font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.twist-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #2a2a5a;
+  border: 1px solid #5555aa;
+  color: #c0c0ff;
+  padding: 0.15rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  white-space: nowrap;
+  width: fit-content;
+  cursor: help;
+}
 .close-btn { background: none; border: none; color: #6666aa; font-size: 1.1rem; cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 4px; }
 .close-btn:hover { background: #2a2a3a; color: #e8e8ee; }
 .detail-body { overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }

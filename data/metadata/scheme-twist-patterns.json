@@ -1,0 +1,58 @@
+[
+  {
+    "slug": "reveal-or-punish",
+    "label": "Reveal or Punish",
+    "emoji": "🔍",
+    "order": 10,
+    "description": "Each player reveals a card matching a condition or suffers a penalty"
+  },
+  {
+    "slug": "stack-and-escalate",
+    "label": "Stack & Escalate",
+    "emoji": "📈",
+    "order": 20,
+    "description": "Effects scale with the number of twists already played"
+  },
+  {
+    "slug": "chained-reveals",
+    "label": "Chained Reveals",
+    "emoji": "🔗",
+    "order": 30,
+    "description": "Play top cards from the villain deck, adding new threats"
+  },
+  {
+    "slug": "bystander-capture",
+    "label": "Bystander Capture",
+    "emoji": "🧑‍🤝‍🧑",
+    "order": 40,
+    "description": "Villains at locations capture bystanders"
+  },
+  {
+    "slug": "hero-ko",
+    "label": "Hero KO",
+    "emoji": "💀",
+    "order": 50,
+    "description": "KO heroes from HQ, hand, or discard pile"
+  },
+  {
+    "slug": "wound-distribution",
+    "label": "Wound Distribution",
+    "emoji": "🩸",
+    "order": 60,
+    "description": "Each player gains wound cards into their deck"
+  },
+  {
+    "slug": "hand-disruption",
+    "label": "Hand Disruption",
+    "emoji": "✋",
+    "order": 70,
+    "description": "Each player discards cards from their hand"
+  },
+  {
+    "slug": "board-manipulation",
+    "label": "Board Manipulation",
+    "emoji": "🔀",
+    "order": 80,
+    "description": "Move villains or heroes between city spaces or zones"
+  }
+]

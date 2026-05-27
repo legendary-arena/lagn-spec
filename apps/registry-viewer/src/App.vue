@@ -7,8 +7,9 @@ import type { ThemeDefinition } from "./lib/themeClient";
 import { getKeywordGlossary, getKeywordPdfPages, getRuleGlossary } from "./lib/glossaryClient";
 import { getCardTypes } from "./lib/cardTypesClient";
 import { getCardAbilities, buildAbilityTagIndex } from "./lib/cardAbilitiesClient";
+import { getSchemeTwistPatterns, getSchemeTwistAssignments } from "./lib/schemeTwistClient";
 import { devLog } from "./lib/devLog";
-import type { CardTypeEntry, CardAbilityEntry } from "@legendary-arena/registry/schema";
+import type { CardTypeEntry, CardAbilityEntry, SchemeTwistPattern } from "@legendary-arena/registry/schema";
 import { setGlossaries } from "./composables/useRules";
 import { useGlossary, rebuildGlossaryEntries } from "./composables/useGlossary";
 import { useLightbox } from "./composables/useLightbox";
@@ -26,6 +27,7 @@ import ViewModeToggle from "./components/ViewModeToggle.vue";
 import LoadoutBuilder from "./components/LoadoutBuilder.vue";
 import LoadoutPreview from "./components/LoadoutPreview.vue";
 import AbilityEffectFilter from "./components/AbilityEffectFilter.vue";
+import SchemeTwistFilter from "./components/SchemeTwistFilter.vue";
 import AppShell from "./components/branding/AppShell.vue";
 import { useSetupFromUrl } from "./composables/useSetupFromUrl";
 import type {
@@ -124,6 +126,7 @@ const activeFilterCount = computed(() => {
   if (filterHC.value) n++;
   if (selectedTypes.value.size > 0) n += selectedTypes.value.size;
   if (selectedEffectSlugs.value.size > 0) n += selectedEffectSlugs.value.size;
+  if (selectedTwistSlugs.value.size > 0) n += selectedTwistSlugs.value.size;
   return n;
 });
 
@@ -219,6 +222,11 @@ const abilitiesTaxonomy = ref<CardAbilityEntry[]>([]);
 const abilityTagIndex = ref<Map<string, Set<string>> | null>(null);
 const selectedEffectSlugs = ref<Set<string>>(new Set());
 
+// ── Scheme twist pattern taxonomy (WP-183) ───────────────────────────────────
+const twistPatterns = ref<SchemeTwistPattern[]>([]);
+const twistAssignments = ref<Map<string, string>>(new Map());
+const selectedTwistSlugs = ref<Set<string>>(new Set());
+
 function toggleGroup(group: TypeGroup) {
   const allSelected = group.types.every((t) => selectedTypes.value.has(t));
   const next = new Set(selectedTypes.value);
@@ -251,6 +259,7 @@ function clearAllFilters() {
   filterHC.value = "";
   selectedTypes.value = new Set();
   selectedEffectSlugs.value = new Set();
+  selectedTwistSlugs.value = new Set();
   selectedCard.value = null;
   applyFilters();
 }
@@ -338,6 +347,25 @@ onMounted(async () => {
       );
     }
 
+    // why: WP-183 — scheme twist pattern taxonomy. Non-blocking parallel
+    // fetches; empty results hide the twist UI via v-if guards. Post-hoc
+    // enrichment of allCards avoids modifying httpRegistry.ts internals.
+    loadStatus.value = "Loading scheme twist patterns…";
+    const [fetchedTwistPatterns, fetchedTwistAssignments] = await Promise.all([
+      getSchemeTwistPatterns(metadataBaseUrl),
+      getSchemeTwistAssignments(metadataBaseUrl),
+    ]);
+    twistPatterns.value = fetchedTwistPatterns;
+    twistAssignments.value = fetchedTwistAssignments;
+    if (fetchedTwistAssignments.size > 0) {
+      for (const card of allCards.value) {
+        if (card.cardType === "scheme") {
+          const pattern = fetchedTwistAssignments.get(`${card.setAbbr}/${card.slug}`);
+          if (pattern) card.twistPattern = pattern;
+        }
+      }
+    }
+
     // why: Parallel to getThemes() above — glossary fetch is non-blocking.
     // If R2 is unreachable or the JSON files are missing, console.warn and
     // continue; tooltips will be absent but the card view remains functional.
@@ -402,6 +430,17 @@ function applyFilters() {
   if (filterHC.value)   q.heroClass    = filterHC.value as CardQueryExtended["heroClass"];
   if (searchText.value) q.nameContains = searchText.value;
   const queryResults = registry.value.query(q as any);
+  // why: twist-pattern filter is AND-combined with all other filters and
+  // implicitly enforces scheme-only. Applied post-query because the
+  // registry's internal query() call doesn't know about twist patterns.
+  let twistFiltered = queryResults;
+  if (selectedTwistSlugs.value.size > 0) {
+    const activeTwists = selectedTwistSlugs.value;
+    twistFiltered = queryResults.filter((card) => {
+      if (card.cardType !== "scheme") return false;
+      return card.twistPattern != null && activeTwists.has(card.twistPattern);
+    });
+  }
   // why: the abilities filter is applied *after* applyQuery() rather than
   // inside it. applyQuery() lives in apps/registry-viewer/src/registry/shared.ts
   // (the registry package's per-viewer flatten copy) and an effect-tag
@@ -413,7 +452,7 @@ function applyFilters() {
   if (selectedEffectSlugs.value.size > 0 && abilityTagIndex.value) {
     const tagIndex = abilityTagIndex.value;
     const selected = selectedEffectSlugs.value;
-    filteredCards.value = queryResults.filter((card) => {
+    filteredCards.value = twistFiltered.filter((card) => {
       const tags = tagIndex.get(card.key);
       if (!tags) return false;
       for (const slug of selected) {
@@ -422,7 +461,7 @@ function applyFilters() {
       return false;
     });
   } else {
-    filteredCards.value = queryResults;
+    filteredCards.value = twistFiltered;
   }
   selectedCard.value = null;
 }
@@ -670,6 +709,15 @@ function navigateToCard(slug: string, cardType: string) {
             @update:selected-effect-slugs="applyFilters"
           />
 
+          <!-- Scheme twist pattern chip ribbon (WP-183) -->
+          <SchemeTwistFilter
+            v-if="twistPatterns.length > 0"
+            :patterns="twistPatterns"
+            :all-cards="allCards"
+            v-model:selected-twist-slugs="selectedTwistSlugs"
+            @update:selected-twist-slugs="applyFilters"
+          />
+
           <!-- Set quick-filter pills -->
           <div class="set-pills">
             <span class="pills-label">Set:</span>
@@ -702,8 +750,8 @@ function navigateToCard(slug: string, cardType: string) {
 
         <!-- Cards content -->
         <template v-if="activeView === 'cards'">
-          <CardGrid :cards="filteredCards" :selected-key="selectedCard?.key" @select="selectedCard = $event" @clear-filters="clearAllFilters" />
-          <CardDetail v-if="selectedCard" :card="selectedCard" :view-mode="cardViewMode" @close="selectedCard = null" />
+          <CardGrid :cards="filteredCards" :selected-key="selectedCard?.key" :twist-patterns="twistPatterns" @select="selectedCard = $event" @clear-filters="clearAllFilters" />
+          <CardDetail v-if="selectedCard" :card="selectedCard" :view-mode="cardViewMode" :twist-patterns="twistPatterns" @close="selectedCard = null" />
         </template>
 
         <!-- Loadout content -->

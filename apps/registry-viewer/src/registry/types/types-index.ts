@@ -53,6 +53,8 @@ export interface FlatCard {
   attack?:    string | null;
   recruit?:   string | null;
   abilities:  string[];
+  /** Scheme twist pattern slug (WP-183): assigned mechanical pattern for scheme cards. */
+  twistPattern?: string;
   /** Card-count display (WP-170): copies of this card in its group/deck. */
   count?:     number;
   /** Card-count display (WP-170): total cards in the villain group or hero deck. */
