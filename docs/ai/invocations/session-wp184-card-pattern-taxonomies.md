@@ -1,5 +1,10 @@
 # Session Prompt — WP-184: Card Mechanical Pattern Taxonomies for Registry Viewer
 
+**WP:** [WP-184-card-mechanical-pattern-taxonomies.md](../work-packets/WP-184-card-mechanical-pattern-taxonomies.md)  
+**EC:** [EC-211-card-mechanical-pattern-taxonomies.checklist.md](../execution-checklists/EC-211-card-mechanical-pattern-taxonomies.checklist.md)  
+**Pre-flight:** READY TO EXECUTE | **Copilot:** PASS  
+**Drafting baseline:** `origin/main @ 0e2558f` (2026-05-27)
+
 Add four new mechanical-pattern taxonomies to `cards.legendary-arena.com`
 so users can browse, filter, and understand heroes, villains, henchmen,
 and masterminds by what they mechanically DO. This is a
@@ -8,6 +13,35 @@ and masterminds by what they mechanically DO. This is a
 This is a sibling to WP-183 (Scheme Twist Pattern taxonomy). The
 implementation pattern is identical: static metadata files + Zod
 schemas + singleton R2 fetchers + filter chips + card badges.
+
+---
+
+## Authority Chain (Read Order)
+
+Before starting, read in this order:
+
+1. `.claude/CLAUDE.md`
+2. `docs/ai/ARCHITECTURE.md` — §Layer Boundary (registry-viewer + registry only)
+3. `.claude/rules/architecture.md` — import rules quick reference
+4. `docs/ai/execution-checklists/EC-211-card-mechanical-pattern-taxonomies.checklist.md` — **read first**
+5. `docs/ai/work-packets/WP-184-card-mechanical-pattern-taxonomies.md` — authoritative design
+6. `docs/ai/REFERENCE/00.6-code-style.md` — human-style code guide
+7. `packages/registry/src/schema.ts` — existing Zod schemas (WP-183's twist schemas are models)
+8. `apps/registry-viewer/src/registry/shared.ts` — `flattenSet` + `applyQuery` (read current signatures)
+9. `apps/registry-viewer/src/registry/types/types-index.ts` — `FlatCard` (has `twistPattern?` already)
+10. `apps/registry-viewer/src/lib/schemeTwistClient.ts` — singleton-factory model to replicate
+11. `apps/registry-viewer/src/components/SchemeTwistFilter.vue` — filter chip model to generalize
+12. `apps/registry-viewer/src/App.vue` — WP-183 wiring pattern to extend
+
+## Pre-Execution Checks
+
+Before writing any code:
+
+- [ ] `git rev-parse HEAD` — confirm starting from `0e2558f` or later
+- [ ] `pnpm --filter @legendary-arena/registry test` exits 0 (baseline)
+- [ ] `pnpm --filter registry-viewer build` exits 0 (baseline)
+- [ ] `pnpm -r build` exits 0 (baseline)
+- [ ] EC-211 locked values match what you see in `schema.ts` / `shared.ts` / `types-index.ts`
 
 ---
 
@@ -99,192 +133,31 @@ that fires when a Master Strike card is revealed from the villain deck.
 
 ---
 
-## 3 — Implementation (Same Pattern as WP-183)
+## 3 — Implementation Summary
 
-### 3a — Data files
+> Full specification in WP-184 §Scope (In) / §Contract and EC-211 §Files to Produce.
 
-Create 8 files under `data/metadata/`:
-
-| File | Contents |
-|---|---|
-| `hero-patterns.json` | 10 pattern definitions (slug, label, emoji, order, description) |
-| `hero-pattern-assignments.json` | 318 hero → pattern mappings (keyed by `{setAbbr}/{hero-slug}`) |
-| `villain-patterns.json` | 8 pattern definitions |
-| `villain-pattern-assignments.json` | 126 villain group → pattern mappings (keyed by `{setAbbr}/{group-slug}`) |
-| `henchman-patterns.json` | 6 pattern definitions |
-| `henchman-pattern-assignments.json` | 46 henchman group → pattern mappings (keyed by `{setAbbr}/{group-slug}`) |
-| `mastermind-patterns.json` | 8 pattern definitions |
-| `mastermind-pattern-assignments.json` | 106 mastermind → pattern mappings (keyed by `{setAbbr}/{mastermind-slug}`) |
-
-Pattern definition shape (same as WP-183's scheme-twist-patterns):
-
-```json
-{
-  "slug": "draw-engine",
-  "label": "Draw Engine",
-  "emoji": "🃏",
-  "order": 10,
-  "description": "Abilities that draw extra cards from your deck"
-}
-```
-
-Assignment shape (same as WP-183's scheme-twist-assignments):
-
-```json
-{
-  "core/spider-man": "draw-engine",
-  "core/wolverine": "attack-boost",
-  ...
-}
-```
-
-### 3b — Classifying all cards
-
-For each card type, read every set's JSON file under `data/cards/*.json`.
-Examine the `abilities` text arrays and classify by pattern:
-
-**Heroes:** Read the 4 cards' abilities for each hero. What is the hero's
-primary deck role? A Spider-Man who draws 2 cards on his Rare is a
-`draw-engine`. A Wolverine who gives +3 attack on his Uncommon is
-`attack-boost`.
-
-**Villains:** Read all cards in the villain group. What's the Fight
-reward? What's the Ambush? Focus on the most distinctive mechanic.
-
-**Henchmen:** Usually one ability shared across 3-10 copies. Straightforward.
-
-**Masterminds:** Read the Master Strike text. What happens when the
-strike fires?
-
-When a card genuinely doesn't fit, leave it out of the assignments.
-The UI handles unassigned cards gracefully.
-
-### 3c — Zod schemas
-
-Add to `packages/registry/src/schema.ts` (or reuse the schema from
-WP-183 if it's already landed — the pattern-definition shape is
-identical):
-
-```typescript
-// Reuse SchemeTwistPatternSchema shape for all card pattern taxonomies
-export const CardPatternSchema = z.object({
-  slug: z.string(),
-  label: z.string(),
-  emoji: z.string(),
-  order: z.number(),
-  description: z.string(),
-});
-
-export const CardPatternsIndexSchema = z.array(CardPatternSchema);
-export const CardPatternAssignmentsSchema = z.record(z.string(), z.string());
-```
-
-If WP-183 already defined `SchemeTwistPatternSchema` with the same shape,
-reuse it or factor it into a shared `CardPatternSchema`. Don't duplicate.
-
-### 3d — Registry-viewer client
-
-Create `apps/registry-viewer/src/lib/cardPatternsClient.ts`:
-
-- Fetch all 8 JSON files from R2 (parallel, `Promise.allSettled`)
-- Validate with Zod
-- Export getters per card type:
-  - `getHeroPatterns()` / `getHeroPatternAssignments()`
-  - `getVillainPatterns()` / `getVillainPatternAssignments()`
-  - `getHenchmanPatterns()` / `getHenchmanPatternAssignments()`
-  - `getMastermindPatterns()` / `getMastermindPatternAssignments()`
-- Singleton-cached, non-blocking
-- If WP-183's `schemeTwistClient.ts` is already landed, factor out a
-  shared `fetchPatternData(patternsUrl, assignmentsUrl)` helper to avoid
-  5× copy-paste
-
-### 3e — FlatCard extension
-
-Add an optional `mechanicalPattern?: string` field to `FlatCard`. In
-`flattenSet()`, look up the card's ext_id in the appropriate assignments
-map based on `cardType`:
-
-- `cardType === 'hero'` → hero assignments
-- `cardType === 'villain'` → villain assignments
-- `cardType === 'henchman'` → henchman assignments
-- `cardType === 'mastermind'` → mastermind assignments
-- `cardType === 'scheme'` → scheme assignments (WP-183, if landed)
-
-`flattenSet` receives a single combined assignments map or a
-per-card-type lookup function. Keep `flattenSet` pure — no singleton
-reads inside.
-
-### 3f — Filter UI
-
-Add a "Mechanical Pattern" filter chip ribbon to the Cards view. Behavior:
-
-- When a single card type is filtered (e.g., user selects "Hero" chip),
-  show the pattern chips for that card type
-- When no card type is filtered, hide the pattern chips (too many to show
-  all at once)
-- When multiple card types are filtered, hide the pattern chips (mixed
-  taxonomy doesn't make sense)
-- Chip ribbon uses the same visual style as WP-183's scheme twist filter
-
-If WP-183's `SchemeTwistFilter.vue` is already landed, generalize it into
-a `PatternFilter.vue` that accepts any `CardPattern[]` taxonomy. Or create
-card-type-specific filter components — whatever is cleaner.
-
-### 3g — CardDetail + CardGrid badges
-
-Same as WP-183: emoji + label badge on detail view, subtle emoji badge on
-grid tiles. Use the pattern's `description` as tooltip text.
-
-### 3h — applyQuery integration
-
-Extend `applyQuery()` filter:
-
-- New filter parameter: `mechanicalPatterns?: Set<string>`
-- When active, filter to cards whose `mechanicalPattern` is in the set
-- Unassigned cards pass when no pattern filter is active; excluded when
-  any pattern IS active
-- Filters are AND-combined with existing filters
+- **8 JSON data files** under `data/metadata/` — 4 patterns files + 4 assignments
+  files. Keyed by `{setAbbr}/{entity-slug}`. Pattern definition shape: `{ slug,
+  label, emoji, order, description }`. Assignment shape: `{ "core/spider-man": "draw-engine" }`.
+- **Zod schemas** in `packages/registry/src/schema.ts` — reuse `CardPatternSchema`
+  from WP-183's shape; add 4 per-taxonomy slug enums (`HeroPatternSlug`, etc.) +
+  4 typed assignment record schemas. Locked slugs are in EC-211 Locked Values.
+- **`cardPatternsClient.ts`** — singleton-factory, 8 parallel fetches via
+  `Promise.allSettled`, per-taxonomy getters. Model: `schemeTwistClient.ts`.
+- **`FlatCard.mechanicalPattern?: string`** — enriched by `flattenSet` via
+  explicit `patternAssignmentsByType?` param (keyed: `hero`, `villain`,
+  `henchman`, `mastermind`, `scheme`). Pure — no singleton reads inside.
+- **`applyQuery` + `mechanicalPatterns?: Set<string>`** — single-cardType
+  enforcement in logic (not just UI). Warn + ignore if multi-type.
+- **`PatternFilter.vue`** — generic chip ribbon; generalize `SchemeTwistFilter.vue`.
+- **CardDetail + CardGrid badges** — same pattern as WP-183.
+- **App.vue** — 8 parallel fetches in `onMounted`; pass `patternAssignmentsByType`
+  to `flattenSet`; wire filter; each taxonomy isolated.
 
 ---
 
-## 4 — App.vue Wiring
-
-In `onMounted`:
-
-- Fetch all 4 pattern taxonomies + assignment maps in parallel (8 fetches
-  via `Promise.allSettled`, alongside existing fetches)
-- Store as reactive refs
-- Pass to `flattenSet()` enrichment
-- Wire to filter components
-
-Non-blocking: if any R2 fetch fails, that card type gets no badges and
-no filter — other card types still work.
-
----
-
-## 5 — File Plan
-
-| File | Action |
-|---|---|
-| `data/metadata/hero-patterns.json` | **New** — 10 pattern entries |
-| `data/metadata/hero-pattern-assignments.json` | **New** — 318 hero mappings |
-| `data/metadata/villain-patterns.json` | **New** — 8 pattern entries |
-| `data/metadata/villain-pattern-assignments.json` | **New** — 126 villain group mappings |
-| `data/metadata/henchman-patterns.json` | **New** — 6 pattern entries |
-| `data/metadata/henchman-pattern-assignments.json` | **New** — 46 henchman group mappings |
-| `data/metadata/mastermind-patterns.json` | **New** — 8 pattern entries |
-| `data/metadata/mastermind-pattern-assignments.json` | **New** — 106 mastermind mappings |
-| `packages/registry/src/schema.ts` | **Modify** — add/reuse pattern Zod schemas |
-| `apps/registry-viewer/src/lib/cardPatternsClient.ts` | **New** — R2 fetcher for all 4 taxonomies |
-| `apps/registry-viewer/src/components/PatternFilter.vue` | **New** — generic pattern chip ribbon |
-| `apps/registry-viewer/src/components/CardDetail.vue` | **Modify** — pattern badge |
-| `apps/registry-viewer/src/components/CardGrid.vue` | **Modify** — pattern tile badge |
-| `apps/registry-viewer/src/registry/shared.ts` | **Modify** — FlatCard extension, flattenSet, applyQuery |
-| `apps/registry-viewer/src/App.vue` | **Modify** — fetch + wire + pass to components |
-
----
-
-## 6 — Classification Guidelines
+## 4 — Classification Guidelines
 
 ### Heroes (318 total)
 
@@ -340,36 +213,44 @@ Read the Master Strike text:
 
 ---
 
-## 7 — Constraints
+## 5 — Constraints, Contracts, and Out of Scope
 
-- **Layer boundary**: registry-viewer may import `registry` (Zod
-  schemas). Must NOT import `game-engine`.
-- **No engine changes**: purely data + UI for the card browser.
-- **Degraded mode**: if any R2 fetch fails, that taxonomy is absent —
-  no badges, no filter — but cards still display.
-- **Dark theme**: all new UI elements use existing dark theme CSS.
-- **Permissive validation**: `.safeParse()`, warn + skip, never throw.
-- `pnpm --filter registry-viewer build` must exit 0.
-- `pnpm -r build` must exit 0.
+> All contracts, guardrails, coverage requirements, tie-break rules, partial
+> failure semantics, slug stability, and out-of-scope boundaries are locked
+> in **WP-184 §Contract** and **EC-211 §Guardrails**. Read those before coding.
 
-## 8 — Coordination with WP-183
+Key enforcements for quick reference:
+- `grep -r "game-engine" apps/registry-viewer/` MUST return 0
+- Each `*PatternAssignmentsSchema` MUST use per-taxonomy `z.enum`, not `z.string()`
+- `applyQuery` single-cardType enforcement is in logic, not just UI gating
+- WP-183 ✅ has already landed — generalize `SchemeTwistFilter.vue` into
+  `PatternFilter.vue`; `FlatCard` already has `twistPattern?`
 
-If WP-183 (Scheme Twist Patterns) has already landed:
+---
 
-- Reuse its Zod schemas if they match this shape
-- Generalize `SchemeTwistFilter.vue` into `PatternFilter.vue`
-- Extend `schemeTwistClient.ts` into `cardPatternsClient.ts` (or merge)
-- Use the same `twistPattern` → `mechanicalPattern` field on FlatCard
+## Post-Merge Close Ritual (REQUIRED)
 
-If WP-183 has NOT landed yet, this WP can ship independently. The scheme
-twist taxonomy is just a 5th card type in this same framework. Whoever
-lands second refactors to share code.
+After the operator merges the PR via the GitHub UI, run from inside the
+execution worktree:
 
-## 9 — Out of Scope
+```pwsh
+node scripts/prune-empty-claude-branch.mjs --verify-current
+```
 
-- Engine resolver implementation (WP-182)
-- Scheme twist patterns (WP-183)
-- Automated NLP classification (manual is fine)
-- Per-card classification (heroes are classified at hero level, not per
-  individual card in the 4-card set)
-- Pattern combination / multi-tag (one pattern per entity in v1)
+Expected: `VERIFY PASS: ...`. If `VERIFY FAIL`, STOP — fix before
+continuing.
+
+Then delete the branch (local + remote):
+
+```pwsh
+git branch -D claude/<branch-name>
+git push origin --delete claude/<branch-name>
+```
+
+Then from the canonical clone, confirm clean state:
+
+```pwsh
+node scripts/prune-empty-claude-branch.mjs --report
+```
+
+Expected: silent (no output).
