@@ -58,4 +58,10 @@
 .brand-nav-link:focus-visible {
   color: var(--la-color-cta);
 }
+
+@media (max-height: 800px) {
+  .brand-header {
+    padding-block: 0.4rem;
+  }
+}
 </style>

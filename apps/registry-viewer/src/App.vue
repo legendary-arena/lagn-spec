@@ -108,6 +108,25 @@ const setupParsedParams = ref<Partial<SetupCompositionInput>>({});
 // re-fires, preserving the user's subsequent manual tab navigation.
 const hasAppliedUrlAutoSwitch = ref(false);
 
+// ── Filter drawer (collapsible on short viewports) ───────────────────────────
+const compactMq = window.matchMedia("(max-height: 800px)");
+const filterDrawerOpen = ref(!compactMq.matches);
+
+function onCompactMqChange(e: MediaQueryListEvent) {
+  filterDrawerOpen.value = !e.matches;
+}
+compactMq.addEventListener("change", onCompactMqChange);
+onBeforeUnmount(() => compactMq.removeEventListener("change", onCompactMqChange));
+
+const activeFilterCount = computed(() => {
+  let n = 0;
+  if (filterSet.value) n++;
+  if (filterHC.value) n++;
+  if (selectedTypes.value.size > 0) n += selectedTypes.value.size;
+  if (selectedEffectSlugs.value.size > 0) n += selectedEffectSlugs.value.size;
+  return n;
+});
+
 // ── Theme state ──────────────────────────────────────────────────────────────
 const allThemes       = ref<ThemeDefinition[]>([]);
 const filteredThemes  = ref<ThemeDefinition[]>([]);
@@ -571,79 +590,99 @@ function navigateToCard(slug: string, cardType: string) {
       </template>
 
       <!-- ══════════════════════════════════════════════════════════════════════ -->
-      <!-- ── CARDS VIEW (filter bar only) ────────────────────────────────────── -->
+      <!-- ── CARDS VIEW (filter bar + collapsible drawer) ────────────────────── -->
       <!-- ══════════════════════════════════════════════════════════════════════ -->
       <template v-if="activeView === 'cards'">
 
-      <!-- ── Search + Set + Class filters ───────────────────────────────────── -->
+      <!-- ── Search bar (always visible) ────────────────────────────────────── -->
       <div class="filter-bar">
         <input v-model="searchText" class="search" placeholder="Search cards…" @input="applyFilters" />
 
-        <select v-model="filterSet" @change="applyFilters" aria-label="Filter by set">
-          <option value="">All Sets</option>
-          <option v-for="s in allSets" :key="s.abbr" :value="s.abbr">{{ s.name }}</option>
-        </select>
-
-        <select v-model="filterHC" @change="applyFilters" aria-label="Filter by hero class">
-          <option value="">All Classes</option>
-          <option v-for="hc in HC_OPTIONS" :key="hc" :value="hc">{{ hc }}</option>
-        </select>
+        <button
+          type="button"
+          class="filter-drawer-toggle"
+          :aria-expanded="filterDrawerOpen"
+          @click="filterDrawerOpen = !filterDrawerOpen"
+        >
+          Filters
+          <span v-if="!filterDrawerOpen && activeFilterCount > 0" class="filter-badge">{{ activeFilterCount }}</span>
+          <span class="filter-caret">{{ filterDrawerOpen ? '▴' : '▾' }}</span>
+        </button>
 
         <CardSizeSlider />
 
         <span class="count">{{ filteredCards.length }} cards</span>
       </div>
 
-      <!-- ── Card type group toggles ─────────────────────────────────────────── -->
-      <div class="type-bar">
-        <button
-          class="type-group-btn"
-          :class="{ active: activeTypeCount === 0 }"
-          @click="clearTypes"
-        >All</button>
+      <!-- ── Collapsible filter drawer ──────────────────────────────────────── -->
+      <div class="filter-drawer" :class="{ open: filterDrawerOpen }">
+        <div class="filter-drawer-inner">
 
-        <button
-          v-for="group in displayedTypeGroups"
-          :key="group.label"
-          class="type-group-btn"
-          :class="{
-            active: isGroupFullyActive(group),
-            partial: isGroupActive(group) && !isGroupFullyActive(group)
-          }"
-          @click="toggleGroup(group)"
-          :title="group.subtypes.map(s => s.label).join(', ')"
-        >
-          {{ group.emoji }} {{ group.label }}
-        </button>
+          <!-- Set + Class dropdowns -->
+          <div class="filter-drawer-row">
+            <select v-model="filterSet" @change="applyFilters" aria-label="Filter by set">
+              <option value="">All Sets</option>
+              <option v-for="s in allSets" :key="s.abbr" :value="s.abbr">{{ s.name }}</option>
+            </select>
 
-        <!-- why: was <span @click>; converted to <button> for native keyboard + SR support (EC-103) -->
-        <button
-          v-if="activeTypeCount > 0"
-          type="button"
-          class="clear-link"
-          @click="clearTypes"
-        >✕ clear</button>
-      </div>
+            <select v-model="filterHC" @change="applyFilters" aria-label="Filter by hero class">
+              <option value="">All Classes</option>
+              <option v-for="hc in HC_OPTIONS" :key="hc" :value="hc">{{ hc }}</option>
+            </select>
+          </div>
 
-      <!-- ── Effect-tag chip ribbon (WP-125) ─────────────────────────────────── -->
-      <AbilityEffectFilter
-        v-if="abilitiesTaxonomy.length > 0"
-        :taxonomy="abilitiesTaxonomy"
-        :tag-index="abilityTagIndex"
-        v-model:selected-effect-slugs="selectedEffectSlugs"
-        @update:selected-effect-slugs="applyFilters"
-      />
+          <!-- Card type group toggles -->
+          <div class="type-bar">
+            <button
+              class="type-group-btn"
+              :class="{ active: activeTypeCount === 0 }"
+              @click="clearTypes"
+            >All</button>
 
-      <!-- ── Set quick-filter pills ──────────────────────────────────────────── -->
-      <div class="set-pills">
-        <span class="pills-label">Set:</span>
-        <button
-          v-for="s in allSets"
-          :key="s.abbr"
-          class="pill"
-          :class="{ active: filterSet === s.abbr }"
-          @click="filterSet = filterSet === s.abbr ? '' : s.abbr; applyFilters()"
-        >{{ s.abbr }}</button>
+            <button
+              v-for="group in displayedTypeGroups"
+              :key="group.label"
+              class="type-group-btn"
+              :class="{
+                active: isGroupFullyActive(group),
+                partial: isGroupActive(group) && !isGroupFullyActive(group)
+              }"
+              @click="toggleGroup(group)"
+              :title="group.subtypes.map(s => s.label).join(', ')"
+            >
+              {{ group.emoji }} {{ group.label }}
+            </button>
+
+            <button
+              v-if="activeTypeCount > 0"
+              type="button"
+              class="clear-link"
+              @click="clearTypes"
+            >✕ clear</button>
+          </div>
+
+          <!-- Effect-tag chip ribbon (WP-125) -->
+          <AbilityEffectFilter
+            v-if="abilitiesTaxonomy.length > 0"
+            :taxonomy="abilitiesTaxonomy"
+            :tag-index="abilityTagIndex"
+            v-model:selected-effect-slugs="selectedEffectSlugs"
+            @update:selected-effect-slugs="applyFilters"
+          />
+
+          <!-- Set quick-filter pills -->
+          <div class="set-pills">
+            <span class="pills-label">Set:</span>
+            <button
+              v-for="s in allSets"
+              :key="s.abbr"
+              class="pill"
+              :class="{ active: filterSet === s.abbr }"
+              @click="filterSet = filterSet === s.abbr ? '' : s.abbr; applyFilters()"
+            >{{ s.abbr }}</button>
+          </div>
+
+        </div>
       </div>
 
       </template><!-- end cards filter bar -->
@@ -748,6 +787,61 @@ function navigateToCard(slug: string, cardType: string) {
 select { padding: 0.4rem 0.6rem; background: #22222e; border: 1px solid #33334a; border-radius: 6px; color: #e8e8ee; font-size: 0.85rem; cursor: pointer; }
 .count { color: #6666aa; font-size: 0.8rem; margin-left: auto; white-space: nowrap; }
 
+/* ── Filter drawer toggle button ─────────────────────────────────────────── */
+.filter-drawer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #2a2a3a;
+  border: 1px solid #3e3e56;
+  color: #c8c8e0;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.filter-drawer-toggle:hover { background: #35354a; }
+.filter-badge {
+  background: #7070e0;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 1.1em;
+  height: 1.1em;
+  line-height: 1.1em;
+  text-align: center;
+  border-radius: 9px;
+  padding: 0 0.3rem;
+}
+.filter-caret { font-size: 0.7rem; }
+
+/* ── Collapsible filter drawer ───────────────────────────────────────────── */
+.filter-drawer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease;
+  flex-shrink: 0;
+  background: #12121a;
+  border-bottom: 1px solid transparent;
+}
+.filter-drawer.open {
+  max-height: 500px;
+  border-bottom-color: #22222e;
+}
+.filter-drawer-inner {
+  display: flex;
+  flex-direction: column;
+}
+.filter-drawer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1.25rem;
+  flex-wrap: wrap;
+}
+
 /* ── Type group toggles ──────────────────────────────────────────────────── */
 .type-bar {
   display: flex;
@@ -755,7 +849,6 @@ select { padding: 0.4rem 0.6rem; background: #22222e; border: 1px solid #33334a;
   gap: 0.4rem;
   padding: 0.5rem 1.25rem;
   background: #12121a;
-  border-bottom: 1px solid #22222e;
   flex-shrink: 0;
   flex-wrap: wrap;
 }
@@ -791,7 +884,7 @@ select { padding: 0.4rem 0.6rem; background: #22222e; border: 1px solid #33334a;
 .clear-link:hover { color: #f87171; }
 
 /* ── Set pills ───────────────────────────────────────────────────────────── */
-.set-pills { display: none; gap: 0.35rem; padding: 0.35rem 1.25rem; background: #0f0f13; border-bottom: 1px solid #1a1a22; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+.set-pills { display: none; gap: 0.35rem; padding: 0.35rem 1.25rem; background: #0f0f13; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
 @media (min-width: 768px) { .set-pills { display: flex; } }
 .pills-label { font-size: 0.65rem; color: #44445a; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
 .pill { background: #161620; border: 1px solid #2a2a38; color: #66669a; padding: 0.15rem 0.45rem; border-radius: 3px; font-size: 0.67rem; cursor: pointer; }
@@ -828,4 +921,15 @@ select { padding: 0.4rem 0.6rem; background: #22222e; border: 1px solid #33334a;
 
 /* WP-114: stack LoadoutPreview above LoadoutBuilder inside the Loadout tab */
 .loadout-tab-stack { display: flex; flex-direction: column; flex: 1; overflow: auto; }
+
+/* ── Compact mode for short viewports ────────────────────────────────────── */
+@media (max-height: 800px) {
+  .header { padding-block: 0.4rem; }
+  .logo { font-size: 0.95rem; }
+  .view-tab { padding: 0.35rem 0.75rem; }
+  .filter-bar { padding-block: 0.4rem; }
+  .filter-drawer-row { padding-block: 0.35rem; }
+  .type-bar { padding-block: 0.35rem; }
+  .set-pills { padding-block: 0.25rem; }
+}
 </style>
