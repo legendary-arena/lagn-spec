@@ -407,6 +407,10 @@ onMounted(async () => {
     villainPatternAssignments.value    = patternsBundle.assignmentsByType.villain;
     henchmanPatternAssignments.value   = patternsBundle.assignmentsByType.henchman;
     mastermindPatternAssignments.value = patternsBundle.assignmentsByType.mastermind;
+    // why: build the card.key → entitySlug index ONCE before enrichment so
+    // both the initial allCards pass and every subsequent applyFilters() call
+    // share an O(1) lookup table built from the registry's structural data.
+    buildCardKeyToEntitySlugIndex();
     enrichMechanicalPatterns(allCards.value);
 
     // why: Parallel to getThemes() above — glossary fetch is non-blocking.
@@ -461,6 +465,64 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 // ── Pattern enrichment helpers (WP-184) ──────────────────────────────────────
+// why: card.key is shaped `${abbr}-${cardType}-${groupSlug}-${cardSlug}` for
+// villain/henchman/mastermind cards and `${abbr}-${cardType}-${heroSlug}-${cardSlug}`
+// for hero cards. Both groupSlug and cardSlug can contain hyphens (e.g.
+// villain "false-aesir-of-alchemax", hero "old-man-logan", card
+// "mission-accomplished"), so string-parsing the boundary inside the key is
+// structurally ambiguous. Walk the registry structurally instead and build
+// a definitive `card.key → entitySlug` map once after the registry loads;
+// then enrichment is O(1) per card and survives any key shape changes.
+const cardKeyToEntitySlug = ref<Map<string, string>>(new Map());
+
+function buildCardKeyToEntitySlugIndex() {
+  if (!registry.value) return;
+  const index = new Map<string, string>();
+  for (const setEntry of registry.value.listSets()) {
+    const setData = registry.value.getSet(setEntry.abbr);
+    if (!setData) continue;
+    const abbr = setData.abbr;
+    for (const hero of setData.heroes) {
+      for (const card of hero.cards) {
+        const resolvedCardType = typeof card.cardType === "string" && card.cardType.length > 0
+          ? card.cardType
+          : "hero";
+        // why: hero key shape (per shared.ts flattenSet) uses card.slug as
+        // the trailing segment and the resolved cardType in the type slot.
+        index.set(`${abbr}-${resolvedCardType}-${hero.slug}-${card.slug}`, hero.slug);
+      }
+    }
+    for (const group of setData.villains) {
+      for (const card of group.cards) {
+        index.set(`${abbr}-villain-${group.slug}-${card.slug}`, group.slug);
+      }
+    }
+    for (const henchman of setData.henchmen as Array<Record<string, unknown>>) {
+      if (typeof henchman !== "object" || henchman === null) continue;
+      const groupSlug = String(henchman["slug"] ?? henchman["name"] ?? "henchman");
+      const subCards = henchman["cards"];
+      if (Array.isArray(subCards) && subCards.length > 0) {
+        for (const c of subCards) {
+          if (typeof c !== "object" || c === null) continue;
+          const cardRecord = c as Record<string, unknown>;
+          const cardSlug = String(cardRecord["slug"] ?? cardRecord["name"] ?? groupSlug);
+          index.set(`${abbr}-henchman-${groupSlug}-${cardSlug}`, groupSlug);
+        }
+      } else {
+        // why: legacy flat-shape henchman branch in flattenSet emits one
+        // FlatCard whose key has no trailing card slug.
+        index.set(`${abbr}-henchman-${groupSlug}`, groupSlug);
+      }
+    }
+    for (const mm of setData.masterminds) {
+      for (const card of mm.cards) {
+        index.set(`${abbr}-mastermind-${mm.slug}-${card.slug}`, mm.slug);
+      }
+    }
+  }
+  cardKeyToEntitySlug.value = index;
+}
+
 // why: registry.query() rebuilds the flat list each call via flattenSet, so
 // post-hoc enrichment on allCards (in onMounted) doesn't carry over to filtered
 // results. enrichMechanicalPatterns() re-applies the assignment maps over
@@ -474,45 +536,18 @@ function enrichMechanicalPatterns(targetCards: FlatCard[]) {
     henchmanPatternAssignments.value.size > 0 ||
     mastermindPatternAssignments.value.size > 0;
   if (!hasAny) return;
+  const index = cardKeyToEntitySlug.value;
   for (const card of targetCards) {
-    const key = `${card.setAbbr}/${card.slug}`;
+    const entitySlug = index.get(card.key);
+    if (!entitySlug) continue;
+    const lookupKey = `${card.setAbbr}/${entitySlug}`;
     let assignment: string | undefined;
-    if (card.cardType === "hero") {
-      assignment = heroPatternAssignments.value.get(key);
-    } else if (card.cardType === "villain") {
-      // why: villain assignment keys are `{abbr}/{groupSlug}`; FlatCard.slug
-      // for villains is the individual card slug, so the group slug lives
-      // inside card.key (`{abbr}-villain-{groupSlug}-{cardSlug}`). Derive
-      // the group slug from card.key to look up the group-level pattern.
-      const groupSlug = extractGroupSlugFromKey(card.key, "villain");
-      if (groupSlug) assignment = villainPatternAssignments.value.get(`${card.setAbbr}/${groupSlug}`);
-    } else if (card.cardType === "henchman") {
-      const groupSlug = extractGroupSlugFromKey(card.key, "henchman");
-      if (groupSlug) assignment = henchmanPatternAssignments.value.get(`${card.setAbbr}/${groupSlug}`);
-    } else if (card.cardType === "mastermind") {
-      const groupSlug = extractGroupSlugFromKey(card.key, "mastermind");
-      if (groupSlug) assignment = mastermindPatternAssignments.value.get(`${card.setAbbr}/${groupSlug}`);
-    }
+    if (card.cardType === "hero")            assignment = heroPatternAssignments.value.get(lookupKey);
+    else if (card.cardType === "villain")    assignment = villainPatternAssignments.value.get(lookupKey);
+    else if (card.cardType === "henchman")   assignment = henchmanPatternAssignments.value.get(lookupKey);
+    else if (card.cardType === "mastermind") assignment = mastermindPatternAssignments.value.get(lookupKey);
     if (assignment) card.mechanicalPattern = assignment;
   }
-}
-
-// why: FlatCard.key shape is `{abbr}-{cardType}-{groupSlug}-{cardSlug}` for
-// villain/henchman/mastermind cards (and `{abbr}-{cardType}-{groupSlug}` for
-// the legacy flat-shape henchman branch). Extract the segment between the
-// cardType marker and the trailing card slug to get the group slug. Returns
-// null if the key doesn't match the expected shape.
-function extractGroupSlugFromKey(key: string, cardType: string): string | null {
-  const prefix = `${key.split("-")[0]}-${cardType}-`;
-  if (!key.startsWith(prefix)) return null;
-  const rest = key.slice(prefix.length);
-  if (rest.length === 0) return null;
-  // why: flat-shape henchman branch keys end at groupSlug with no trailing
-  // cardSlug. If the rest has no further hyphen at all, treat it as the
-  // group slug itself.
-  const lastDash = rest.lastIndexOf("-");
-  if (lastDash <= 0) return rest;
-  return rest.slice(0, lastDash);
 }
 
 // ── Filter visibility helpers (WP-184) ───────────────────────────────────────
