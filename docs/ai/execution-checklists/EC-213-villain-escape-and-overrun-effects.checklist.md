@@ -4,82 +4,78 @@
 **Layer:** Game Engine (`packages/game-engine/src/`)
 
 ## Before Starting
-- [ ] **WP-185 landed** ✅ — `G.villainAbilityHooks` exists; `buildVillainAbilityHooks`, `executeVillainAbilities`, `VILLAIN_ABILITY_TIMINGS`, `VILLAIN_EFFECT_KEYWORDS` all exported from the engine package. **HARD-STOP: do not proceed if any of these is missing.**
+- [ ] **WP-185 landed** ✅ — `G.villainAbilityHooks` exists; `buildVillainAbilityHooks`, `executeVillainAbilities`, `VILLAIN_ABILITY_TIMINGS`, `VILLAIN_EFFECT_KEYWORDS` all exported. **HARD-STOP if missing.**
+- [ ] **WP-188 landed** ⛔ HARD BLOCKER — escape `[effect:]` markers exist in card data. Verify with `grep -rn "Escape:.*\[effect:" data/cards/`; if it returns nothing, **STOP and report `BLOCKED: WP-188`**. Wiring the `onEscape` pipeline against marker-free escape data fires on nothing (dead WP).
 - [ ] WP-009A / WP-009B / WP-014A / WP-014B / WP-015 / WP-017 complete ✅
-- [ ] Read WP-185 + EC-212 in full — every locked value carries forward; this WP touches the same files
-- [ ] Read `packages/game-engine/src/rules/villainAbility.types.ts` (the union being extended)
-- [ ] Read `packages/game-engine/src/setup/villainAbility.setup.ts` (the parser being extended)
-- [ ] Read `packages/game-engine/src/villain/villainEffects.execute.ts` (executor — NOT modified by this WP)
+- [ ] Read WP-185 + EC-212 in full — every locked value carries forward; this WP touches the same files and the same `[effect:]` marker model
+- [ ] Read WP-188 + EC-215 — the upstream data WP; its `_unassigned` block documents what WP-186 safe-skips (esp. the each-player-KO cluster)
+- [ ] Read `packages/game-engine/src/rules/villainAbility.types.ts` (timing union being extended)
+- [ ] Read `packages/game-engine/src/setup/villainAbility.setup.ts` (parser — reads `[effect:]` markers generically; this WP adds prefix detection only)
+- [ ] Read `packages/game-engine/src/villain/villainEffects.execute.ts` (executor — NOT modified by this WP; dispatch is by hook lookup, not timing)
 - [ ] Read `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — escape branch (the new fire site)
-- [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
-- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0 (post-WP-185 baseline)
+- [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0; test exits 0 (post-WP-185 baseline)
 
 ## Locked Values (do not re-derive)
 - `VillainAbilityTiming = 'onAmbush' | 'onFight' | 'onEscape'` — **three entries, this order**. The third entry is new in this WP.
 - `VILLAIN_ABILITY_TIMINGS = ['onAmbush', 'onFight', 'onEscape'] as const` — order locked.
-- `VILLAIN_EFFECT_KEYWORDS` is **unchanged from WP-185** — still exactly 5 entries: `'gainWoundEachPlayer' | 'gainWoundCurrentPlayer' | 'koHeroCurrentPlayer' | 'heroDeckTopToEscape' | 'captureBystander'`. **Adding a sixth here is FAIL.**
+- `VILLAIN_EFFECT_KEYWORDS` is **unchanged from WP-185** — still exactly five entries: `'gainWoundEachPlayer' | 'gainWoundCurrentPlayer' | 'koHeroCurrentPlayer' | 'heroDeckTopToEscape' | 'captureBystander'`. **Adding a sixth here is FAIL.**
 - `VillainAbilityHook` interface is unchanged.
-- Parser prefix → timing map: `Ambush:` → `'onAmbush'` (WP-185); `Fight:` → `'onFight'` (WP-185); `Escape:` → `'onEscape'` (this WP); `Overrun:` → `'onEscape'` (this WP — v1 synonym).
-- Escape fire site location: inside `if (pushResult.escapedCard !== null) { ... }` in `villainDeck.reveal.ts`, **appended after** `resolveEscapedBystanders` call (the bystander-release step). NO reordering of pre-existing operations.
-- Pre-existing escape branch ordering (preserved exactly):
-  1. Counter increment (`ENDGAME_CONDITIONS.ESCAPED_VILLAINS`)
-  2. Append to `G.escapedPile`
-  3. Generic current-player wound (`gainWound`)
-  4. `resolveEscapedBystanders` (bystander release)
-  5. **NEW:** `executeVillainAbilities(G, { ctx }, pushResult.escapedCard, 'onEscape')`
-- `captureBystander` semantics under `onEscape`: attach 1 bystander from `G.piles.bystanders` to the **escaped card** (the card now in `G.escapedPile`, NOT to a card still in the city). Per D-18603.
-- Generic per-escape wound (current player gains 1 wound when villain escapes the City) is **preserved**, NOT replaced by card-specific effects. They layer.
+- **Detection model (same as WP-185):** effects come from `[effect:<VillainEffectKeyword>]` markers on the line (authored by WP-188), NOT from `[icon:]` / `[keyword:]` / free-text. WP-186 adds ONLY prefix→timing detection.
+- Parser prefix → timing map (case-insensitive, leading whitespace trimmed): `Ambush:` → `onAmbush` (WP-185); `Fight:` → `onFight` (WP-185); `Escape:` → `onEscape` (this WP); `Overrun:` → `onEscape` (this WP — v1 synonym).
+- Escape fire site: inside `if (pushResult.escapedCard !== null) { ... }` in `villainDeck.reveal.ts`, **appended after** `resolveEscapedBystanders`. NO reordering of pre-existing operations.
+- Pre-existing escape branch ordering (preserved exactly): (1) counter increment `ENDGAME_CONDITIONS.ESCAPED_VILLAINS`; (2) append to `G.escapedPile`; (3) generic current-player wound (`gainWound`); (4) `resolveEscapedBystanders`; (5) **NEW** `executeVillainAbilities(G, { ctx }, pushResult.escapedCard, 'onEscape')`.
+- Generic per-escape current-player wound (WP-015) is **preserved**, NOT replaced — card-specific effects layer on top.
+- `captureBystander` under `onEscape` attaches to the **escaped card** now in `G.escapedPile` (D-18603) — the fire site runs after the escaping card's bystanders are released.
+- `koHeroCurrentPlayer` auto-resolution (if reached via an escape marker): zone-priority (discard before hand), then `ext_id` lexical — **NOT VP-based** (D-18503; per-card VP not in engine runtime state). Inherited from WP-185.
+- **Each-player-KO escape lines are NOT in the MVP vocabulary** (D-18802) — WP-188 leaves them marker-free; WP-186 safe-skips them (`effects: []`). Do NOT add an each-player-KO keyword or branch.
 
 ## Guardrails
-- No `@legendary-arena/registry` import in any modified file
-- No `boardgame.io` import in `villainAbility.types.ts`
+- No `@legendary-arena/registry` import in any modified file; no `boardgame.io` import in `villainAbility.types.ts`
 - No `.reduce()` for multi-step branching
-- Moves never throw — `executeVillainAbilities` returns `void` and silently no-ops on unknown effects (WP-185 contract carried forward)
-- Out-of-vocabulary effects safely no-op
-- The hardcoded WP-014A escape branch ordering MUST be preserved exactly (counter → escape-pile → wound → bystander release → new call)
-- `'onOverrun'` MUST NOT appear in `VILLAIN_ABILITY_TIMINGS` — `Overrun:` is a synonym of `Escape:` in v1 per D-18602
-- `VILLAIN_EFFECT_KEYWORDS` array length MUST remain 5; the executor file is NOT modified by this WP
+- Moves never throw — `executeVillainAbilities` returns `void` and silently no-ops on empty/unknown effects (WP-185 contract carried forward)
+- The parser change is **prefix detection only** — do NOT add `[icon:]` / `[keyword:]` / free-text effect parsing; reuse WP-185's `[effect:]` marker reader unchanged
+- `'onOverrun'` MUST NOT appear in `VILLAIN_ABILITY_TIMINGS` — `Overrun:` is a synonym of `Escape:` per D-18602
+- `VILLAIN_EFFECT_KEYWORDS` array length MUST remain 5; the executor file (`villainEffects.execute.ts`) is NOT modified — dispatch is by per-card hook lookup, not by a timing-specific branch
+- The pre-existing WP-014A/WP-015 escape branch ordering MUST be preserved exactly (counter → escape-pile → generic wound → bystander release → new call)
 - Per-copy hook objects freshly constructed (D-13502; carried from WP-185)
-- The drift-detection test must be updated to the three-entry array; do NOT leave the test asserting two entries
+- The drift-detection test must be updated from two entries to three; do NOT leave it asserting two
 
 ## Required `// why:` Comments
-- `VILLAIN_ABILITY_TIMINGS` declaration: update the `// why:` comment to note three entries with WP-186 introducing `'onEscape'`
-- `villainAbility.setup.ts` prefix-detection branch for `Escape:` / `Overrun:`: why both prefixes emit the same timing (D-18602 — v1 synonym; printed `Overrun:` text on villain cards behaves identically to `Escape:`; distinct timing deferred to future scheme-text WP if needed)
-- `villainDeck.reveal.ts` new fire-site call: why placed AFTER `resolveEscapedBystanders` (so a `captureBystander` Escape effect attaches a bystander to the post-release escaped card, per D-18603; placing before would attach to a card whose attached-bystanders are about to be released)
-- `villainDeck.reveal.ts` retention of generic escape-wound: why the WP-015 legacy behavior is preserved (layering — card-specific Escape effects add on top, do not replace; rationale: the generic wound is a system-level escape penalty, the card-specific text is content-driven)
+- `VILLAIN_ABILITY_TIMINGS` declaration: update the `// why:` comment to note three entries, WP-186 introducing `'onEscape'`
+- `villainAbility.setup.ts` prefix-detection branch for `Escape:` / `Overrun:`: why both prefixes emit the same `onEscape` timing (D-18602 — v1 synonym; printed villain `Overrun:` behaves like `Escape:`; distinct `'onOverrun'` deferred to a future scheme-text WP); and why detection is prefix-only while effects still come from `[effect:]` markers (same model as WP-185)
+- `villainDeck.reveal.ts` new fire-site call: why placed AFTER `resolveEscapedBystanders` (so a `captureBystander` escape effect attaches to the post-release escaped card per D-18603); and why the generic WP-015 escape wound is preserved above it (system-level penalty; card text layers on top)
+- (No `// why:` needed in `villainEffects.execute.ts` — it is not modified)
 
 ## Files to Produce
-- `packages/game-engine/src/rules/villainAbility.types.ts` — **modified** — extend `VillainAbilityTiming` union and `VILLAIN_ABILITY_TIMINGS` array to three entries; update `// why:` comment
-- `packages/game-engine/src/setup/villainAbility.setup.ts` — **modified** — extend prefix detection to `Escape:` and `Overrun:` (both → `onEscape`); reuse existing markup-extraction logic
+- `packages/game-engine/src/rules/villainAbility.types.ts` — **modified** — extend `VillainAbilityTiming` union + `VILLAIN_ABILITY_TIMINGS` array to three entries; update `// why:`
+- `packages/game-engine/src/setup/villainAbility.setup.ts` — **modified** — extend prefix detection to `Escape:` / `Overrun:` (both → `onEscape`); reuse the existing `[effect:]` marker reader; add no new markup namespace
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — **modified** — append one line inside the existing escape branch (after `resolveEscapedBystanders`): `executeVillainAbilities(G, { ctx }, pushResult.escapedCard, 'onEscape');`
-- `packages/game-engine/src/rules/villainAbility.types.test.ts` — **modified** — drift-detection assertions extended to three-entry array
-- `packages/game-engine/src/setup/villainAbility.setup.test.ts` — **modified** — add tests: `Escape:` detection → `onEscape`; `Overrun:` detection → `onEscape`; per-card and group-level shapes both covered
-- `packages/game-engine/src/villain/villainEffects.execute.test.ts` — **modified** — add `onEscape` dispatch tests covering each MVP effect keyword
-- `packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts` — **modified** — add escape integration test: a villain with `Escape: Each player gains a Wound` text escapes; assert generic escape-wound + per-player ambush-style wound BOTH apply; bystander release ordering preserved
+- `packages/game-engine/src/rules/villainAbility.types.test.ts` — **modified** — drift-detection extended to three-entry array
+- `packages/game-engine/src/setup/villainAbility.setup.test.ts` — **modified** — `Escape:` + `Overrun:` prefix detection → `onEscape`; per-card + group-level; marker-present (effects populated) and marker-absent (effects empty) cases
+- `packages/game-engine/src/villain/villainEffects.execute.test.ts` — **modified** — add `onEscape` dispatch tests (esp. `gainWoundEachPlayer`)
+- `packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts` — **modified** — escape integration test: escaped card carrying `[effect:gainWoundEachPlayer]` fires (all players wounded) AND generic current-player escape wound + bystander release + counter + escape-pile push all still occur in order
 
 ## After Completing
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0 (post-WP-185 baseline + N new tests)
 - [ ] `pnpm -r build` exits 0
-- [ ] Grep: zero `@legendary-arena/registry` matches in any of the seven modified files
-- [ ] Grep: zero `boardgame.io` matches in `villainAbility.types.ts`
-- [ ] Grep: `'onEscape'` appears in `villainAbility.types.ts`; appears in `villainDeck.reveal.ts`; appears in test files
-- [ ] Grep: `'Escape:'` and `'Overrun:'` both appear in `villainAbility.setup.ts`
-- [ ] Grep: `executeVillainAbilities` count in `villainDeck.reveal.ts` is exactly 2 (one onAmbush from WP-185 + one onEscape from WP-186)
+- [ ] Grep: zero `@legendary-arena/registry` matches in any modified file; zero `boardgame.io` in `villainAbility.types.ts`
+- [ ] Grep: `'onEscape'` appears in `villainAbility.types.ts`, `villainDeck.reveal.ts`, and test files
+- [ ] Grep: `escape:` and `overrun:` prefix detection both present in `villainAbility.setup.ts`
+- [ ] Grep: `executeVillainAbilities` count in `villainDeck.reveal.ts` is exactly 2 (onAmbush from WP-185 + onEscape from WP-186)
 - [ ] Grep: zero `'onOverrun'` matches anywhere in `packages/game-engine/src/` (synonym lock)
-- [ ] `VILLAIN_EFFECT_KEYWORDS` count remains 5 entries (effect-keyword vocabulary unchanged)
-- [ ] `docs/ai/STATUS.md` updated with `### WP-186 Executed` block
-- [ ] `docs/ai/DECISIONS.md` updated with D-18601..D-18603
-- [ ] `docs/ai/work-packets/WORK_INDEX.md` row for WP-186 flipped to `[x]` with completion date
-- [ ] `docs/ai/execution-checklists/EC_INDEX.md` row for EC-213 flipped to `Done`
+- [ ] `git diff --stat packages/game-engine/src/villain/villainEffects.execute.ts` is empty (executor untouched)
+- [ ] `VILLAIN_EFFECT_KEYWORDS` count remains 5 entries
+- [ ] `docs/ai/STATUS.md` updated; `docs/ai/DECISIONS.md` D-18601..D-18603; `WORK_INDEX.md` WP-186 `[x]`; `EC_INDEX.md` EC-213 Done
 
 ## Common Failure Smells
-- Adding a sixth entry to `VILLAIN_EFFECT_KEYWORDS` to handle a specific Escape card → vocabulary-lock violation; safe-skip is correct
+- Executing before WP-188 lands → `onEscape` hooks all carry `effects: []`; pipeline fires on nothing (dead WP). The HARD BLOCKER grep prevents this.
+- Adding a sixth `VILLAIN_EFFECT_KEYWORDS` entry (e.g. `koHeroEachPlayer`) to cover the dominant escape pattern → vocabulary-lock violation; that is a separate WP-185-side WP (D-18802 defers it)
+- Forcing an each-player-KO escape line onto `koHeroCurrentPlayer` → semantics FAIL; it stays marker-free and safe-skips
 - Introducing `'onOverrun'` as a distinct timing → D-18602 violation; v1 lock is synonym
-- Placing the new `executeVillainAbilities` call BEFORE `resolveEscapedBystanders` → `captureBystander` would observe pre-release bystander state; D-18603 violation
-- Replacing the generic escape-wound with card-specific Escape effects (rather than layering) → silently breaks WP-015 legacy behavior; locked-ordering violation
-- Reordering or modifying any of the four pre-existing escape branch operations → out-of-scope FAIL
+- Adding `[icon:]` / `[keyword:]` / free-text parsing in the parser → model violation; WP-186 reads the same `[effect:]` markers as WP-185, prefix detection only
+- Placing the new `executeVillainAbilities` call BEFORE `resolveEscapedBystanders` → `captureBystander` observes pre-release state; D-18603 violation
+- Replacing the generic WP-015 escape wound with card-specific effects (instead of layering) → silently breaks legacy behavior; locked-ordering violation
+- Modifying `villainEffects.execute.ts` to add an `onEscape` branch → out-of-scope FAIL; the executor is timing-agnostic (dispatches by hook lookup)
+- Re-deriving a VP-based KO sort → D-18503 violation; order by zone (discard→hand) then ext_id lexical
 - Forgetting to update the drift-detection test from two entries to three → test FAIL surfaces immediately
-- Adding `Overrun:` handling at the executor level (rather than at the parser level via synonym mapping) → architecture FAIL; the synonym lock is a parser-time fold, not an executor-time branch
-- `executeVillainAbilities` throws on a missing `pushResult.escapedCard` (null) → move-contract FAIL; the guarding `if` already filters null, but defensive code that throws is still wrong
-- Touching `villainEffects.execute.ts` to add an `onEscape` branch → out-of-scope FAIL; the executor is timing-agnostic and dispatches by hook lookup, NOT by timing-specific code paths
