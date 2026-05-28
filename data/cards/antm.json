@@ -722,7 +722,7 @@
           "imageUrl": "https://images.legendary-arena.com/antm/antm-vi-ultrons-legacy-ultron-roboticks.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },
@@ -734,7 +734,7 @@
           "imageUrl": "https://images.legendary-arena.com/antm/antm-vi-ultrons-legacy-original-ultron-1.webp",
           "abilities": [
             "[keyword:Empowered] by [hc:ranged]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },
@@ -807,7 +807,7 @@
           "imageUrl": "https://images.legendary-arena.com/antm/antm-vi-ultrons-legacy-crimson-cowl.webp",
           "abilities": [
             "[keyword:Empowered] by [hc:covert]",
-            "Ambush: Crimson Cowl captures a Bystander."
+            "Ambush: Crimson Cowl captures a Bystander. [effect:captureBystander]"
           ],
           "copies": 1
         }
@@ -841,7 +841,7 @@
           "imageUrl": "https://images.legendary-arena.com/antm/antm-vi-queens-vengeance-blackbird.webp",
           "abilities": [
             "[keyword:Chivalrous Duel]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },
@@ -853,7 +853,7 @@
           "imageUrl": "https://images.legendary-arena.com/antm/antm-vi-queens-vengeance-gigantus.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:strength][hc:strength][hc:strength][hc:strength][hc:strength][hc:strength]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },

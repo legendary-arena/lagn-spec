@@ -2636,7 +2636,7 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-aspects-of-the-void-infini-tendrils.webp",
           "abilities": [
             "[keyword:Wounded Fury]",
-            "Ambush: Infini-Tendrils captures a Bystander."
+            "Ambush: Infini-Tendrils captures a Bystander. [effect:captureBystander]"
           ],
           "copies": 2
         },
@@ -2856,7 +2856,7 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-intelligencia-doc-samson.webp",
           "abilities": [
             "Doc Samson has +4[icon:attack] unless you [keyword:Outwit] him.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -2936,7 +2936,7 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-sakaar-imperial-guard-primus-vand.webp",
           "abilities": [
             "Primus Vand gets +1[icon:attack] for each Villain adjacent to him.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         }

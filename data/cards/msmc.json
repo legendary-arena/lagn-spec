@@ -1319,7 +1319,7 @@
           "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-acolytes-unuscione.webp",
           "abilities": [
             "You may pay 2[icon:recruit] any number of times to [keyword:Shatter] Unuscione.",
-            "Ambush: Unuscione captures a Bystander."
+            "Ambush: Unuscione captures a Bystander. [effect:captureBystander]"
           ],
           "copies": 2
         },
@@ -1343,7 +1343,7 @@
           "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-acolytes-frenzy.webp",
           "abilities": [
             "You may pay 1[icon:recruit] any number of times to [keyword:Shatter] Frenzy. Each time you do, reveal the top card of the Hero Deck and put it on the bottom of that deck. If it's [hc:strength], gain a Wound. If it's [hc:instinct], the player on your right gains a Wound.",
-            "Fight: KO one of your heroes."
+            "Fight: KO one of your heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -1398,7 +1398,7 @@
           "vAttack": "4",
           "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-clan-yashida-lord-shingen.webp",
           "abilities": [
-            "Ambush: Lord Shingen captures a Bystander.",
+            "Ambush: Lord Shingen captures a Bystander. [effect:captureBystander]",
             "Bystanders held by Lord Shingen are \"Samurai Bodyguards.\" You can't fight Lord Shingen while he has any Bodyguards. You can fight them as if they were 3[icon:attack] Villains with \"[keyword:Chivalrous Duel]. Fight: Rescue this as a Bystander.\""
           ],
           "copies": 2
@@ -1411,7 +1411,7 @@
           "imageUrl": "https://images.legendary-arena.com/msmc/msmc-vi-clan-yashida-gorgon.webp",
           "abilities": [
             "Ambush: Choose a Hero Name. You can't play Heroes this turn unless they are that Hero Name or grey Heroes.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         }

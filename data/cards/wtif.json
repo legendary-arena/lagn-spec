@@ -1686,7 +1686,7 @@
           "vAttack": "5",
           "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-intergalactic-party-animals-party-korg.webp",
           "abilities": [
-            "Fight: KO one of your Heroes.",
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]",
             "Escape: [keyword:Cross-Dimensional Party Rampage]"
           ],
           "copies": 1
@@ -1826,7 +1826,7 @@
           "imageUrl": "https://images.legendary-arena.com/wtif/wtif-vi-rival-overlords-yondu.webp",
           "abilities": [
             "Yondu gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
-            "Ambush: Yondu captures a Bystander.",
+            "Ambush: Yondu captures a Bystander. [effect:captureBystander]",
             "Fight: Each player KOs one of their Heroes."
           ],
           "copies": 1
@@ -1852,7 +1852,7 @@
           "abilities": [
             "Ulysses Klaue gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Ambush: A Villain in the city with an “ascend“ ability ascends to become a [rule:new Mastermind].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         }
@@ -1897,7 +1897,7 @@
           "abilities": [
             "[keyword:Empowered] by cards that cost 5 or more.",
             "Ambush: Each player discards a card that costs 5 or more or gains a Wound.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -1957,7 +1957,7 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "While in the Sewers, Rooftops, or Bridge, Zombie Wasp is “giant-size“ and gets +2[icon:attack].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },

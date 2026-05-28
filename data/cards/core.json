@@ -2318,7 +2318,7 @@
           "vAttack": "6",
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-spider-foes-green-goblin.webp",
           "abilities": [
-            "Ambush: Green Goblin captures a Bystander."
+            "Ambush: Green Goblin captures a Bystander. [effect:captureBystander]"
           ],
           "copies": 2
         },
@@ -2388,7 +2388,7 @@
       "slug": "sentinel",
       "imageUrl": "https://images.legendary-arena.com/core/core-hm-sentinel.webp",
       "abilities": [
-        "Fight: KO one of your Heroes."
+        "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
       ],
       "vAttack": "3",
       "vp": "1"

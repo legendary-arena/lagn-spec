@@ -771,7 +771,7 @@
           "imageUrl": "https://images.legendary-arena.com/vnom/vnom-vi-life-foundation-riot.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, it [keyword:Symbiote Bonds] with Riot.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },

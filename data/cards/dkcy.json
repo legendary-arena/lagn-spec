@@ -2521,7 +2521,7 @@
       "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-hm-maggia-goons.webp",
       "abilities": [
         "[keyword:Bribe]",
-        "Fight: KO one of your Heroes."
+        "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
       ]
     },
     {

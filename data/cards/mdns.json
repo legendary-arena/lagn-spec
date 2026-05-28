@@ -775,7 +775,7 @@
           "abilities": [
             "Skinner gets +2[icon:attack] if there are at least four Bystanders in the KO pile.",
             "Ambush: [keyword:Hunt for Victims]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -811,7 +811,7 @@
           "abilities": [
             "[keyword:Blood Frenzy]",
             "Ambush: [keyword:Haunt] the rightmost unhaunted Hero in the HQ.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },

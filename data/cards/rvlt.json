@@ -1242,7 +1242,7 @@
           "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-vi-army-of-evil-mister-hyde.webp",
           "abilities": [
             "While in the Bank or Streets, this card's name is “Dr. Calvin Zabo“, and you muist spend [icon:recruit] to fight him instead of [icon:attack].",
-            "Fight: KO pne of your Heroes."
+            "Fight: KO pne of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -1310,7 +1310,7 @@
           "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-vi-dark-avengers-ares.webp",
           "abilities": [
             "[keyword:Last Stand]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },
@@ -1446,7 +1446,7 @@
           "abilities": [
             "[keyword:Dark Memories]",
             "Ambush: Guess Villain, Bystander, Strike, or Twist.  Then reveal the top card of the Villain Deck.  If you guessed wrong, play that card.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -1589,7 +1589,7 @@
       "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-hm-hydra-base.webp",
       "abilities": [
         "HYDRA Base gets +2[icon:attack] while there's a Villain here.",
-        "Fight: KO one of your Heroes."
+        "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
       ]
     },
     {

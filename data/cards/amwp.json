@@ -1534,7 +1534,7 @@
           "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-cross-technologies-cross-security-detail.webp",
           "abilities": [
             "While the back side of a Mastermind card is face up, this Villain gets +2[icon:attack] and “Escape: Each player discards a card.“",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -1867,7 +1867,7 @@
           "imageUrl": "https://images.legendary-arena.com/amwp/amwp-vi-quantum-realm-hungering-energy.webp",
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:tech][hc:tech][hc:tech][hc:tech]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },
@@ -1909,7 +1909,7 @@
       "abilities": [
         "[keyword:Rooftops Conqueror 1]",
         "[keyword:Streets Conqueror 1]",
-        "Fight: KO one of your Heroes."
+        "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
       ]
     },
     {

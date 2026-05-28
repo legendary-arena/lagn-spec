@@ -715,7 +715,7 @@
           "vAttack": "5",
           "imageUrl": "https://images.legendary-arena.com/pttr/pttr-vi-maximum-carnage-demogoblin.webp",
           "abilities": [
-            "Ambush: Demogoblin captures a Bystander.",
+            "Ambush: Demogoblin captures a Bystander. [effect:captureBystander]",
             "[keyword:Feast]"
           ],
           "copies": 2

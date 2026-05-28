@@ -1095,7 +1095,7 @@
           "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-children-of-thanos-chitauri-gorilla.webp",
           "abilities": [
             "[keyword:Endgame]: +2[icon:attack]",
-            "Ambush: Chitauri Gorilla captures a Bystander."
+            "Ambush: Chitauri Gorilla captures a Bystander. [effect:captureBystander]"
           ],
           "copies": 1
         },

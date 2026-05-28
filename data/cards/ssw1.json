@@ -1933,7 +1933,7 @@
           "vAttack": "7",
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-domain-of-apocalypse-apocalyptic-weapon-x.webp",
           "abilities": [
-            "Fight: KO one of your heroes.",
+            "Fight: KO one of your heroes. [effect:koHeroCurrentPlayer]",
             "Escape: [keyword:Cross-Dimensional Wolverine Rampage]"
           ],
           "copies": 2
@@ -1956,7 +1956,7 @@
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-limbo-inferno-colossus.webp",
           "abilities": [
             "Ambush: The Mastermind captures a Bystander.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -1967,7 +1967,7 @@
           "vAttack": "6",
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-limbo-inferno-cyclops.webp",
           "abilities": [
-            "Ambush: Inferno Cyclops captures a Bystander.",
+            "Ambush: Inferno Cyclops captures a Bystander. [effect:captureBystander]",
             "Escape: The Mastermind captures all the Bystanders this Villain had.",
             "(Players still discard for the Bystander being carried away.)"
           ],
@@ -2150,7 +2150,7 @@
           "vAttack": "6",
           "imageUrl": "https://images.legendary-arena.com/ssw1/ssw1-vi-wasteland-wasteland-hawkeye.webp",
           "abilities": [
-            "Ambush: Wasteland Hawkeye captures a Bystander.",
+            "Ambush: Wasteland Hawkeye captures a Bystander. [effect:captureBystander]",
             "Fight: Each other player draws a card, or each other player discards a card."
           ],
           "copies": 2

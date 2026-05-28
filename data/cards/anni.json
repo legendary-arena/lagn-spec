@@ -738,7 +738,7 @@
           "imageUrl": "https://images.legendary-arena.com/anni/anni-vi-annihilation-wave-queens-of-annihilation.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Villain, play it.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 3
         },

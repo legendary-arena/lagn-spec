@@ -736,7 +736,7 @@
           "abilities": [
             "[keyword:Sunlight]: To fight N'astirh, you must also spend 3[icon:recruit].",
             "[keyword:Moonlight]: N'astirh gets +3[icon:attack].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -796,7 +796,7 @@
           "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-hellions-catseye.webp",
           "abilities": [
             "[keyword:Moonlight]: Catseye gets +2[icon:attack].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },
@@ -808,7 +808,7 @@
           "imageUrl": "https://images.legendary-arena.com/nmut/nmut-vi-hellions-thunderbird.webp",
           "abilities": [
             "[keyword:Sunlight]: Thunderbird gets +2[icon:attack].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },

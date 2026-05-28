@@ -2219,7 +2219,7 @@
           "vAttack": "5",
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-dark-descendants-fatale.webp",
           "abilities": [
-            "Fight: KO one of your Heroes.",
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]",
             "Escape: The Mastermind [keyword:Dominates] the top card of the Hero Deck."
           ],
           "copies": 2
@@ -2406,7 +2406,7 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-mojoverse-warwolves.webp",
           "abilities": [
             "Ambush: These Warwolves capture a [keyword:Human Shield].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         }
@@ -2649,7 +2649,7 @@
           "vAttack": "6",
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-sisterhood-of-mutants-lady-deathstrike.webp",
           "abilities": [
-            "Fight: KO one of your Heroes.",
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]",
             "Escape: Each player reveals an [hc:instinct] Hero or gains a Wound."
           ],
           "copies": 2
@@ -2740,7 +2740,7 @@
       "imageUrl": "https://images.legendary-arena.com/xmen/xmen-hm-shiar-death-commandos.webp",
       "abilities": [
         "Ambush: This Villain captures a [keyword:Human Shield].",
-        "Fight: KO one of your Heroes."
+        "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
       ]
     },
     {

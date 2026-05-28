@@ -795,7 +795,7 @@
           "vAttack": "2",
           "imageUrl": "https://images.legendary-arena.com/bkwd/bkwd-vi-taskmasters-thunderbolts-jester.webp",
           "abilities": [
-            "Ambush: Jester captures a Bystander.",
+            "Ambush: Jester captures a Bystander. [effect:captureBystander]",
             "Fight: Reveal the top four cards of the Villain Deck. Play all the Henchmen you find. Put the rest back in any order."
           ],
           "copies": 2

@@ -711,7 +711,7 @@
           "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-zolas-creations-doughboy.webp",
           "abilities": [
             "[keyword:Abomination]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -757,7 +757,7 @@
           "vAttack": "4",
           "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-masters-of-evil-wwii-black-knight.webp",
           "abilities": [
-            "Ambush: Black Knight captures a Bystander.",
+            "Ambush: Black Knight captures a Bystander. [effect:captureBystander]",
             "Fight: [keyword:Savior]: KO one of your Heroes."
           ],
           "copies": 2
@@ -769,7 +769,7 @@
           "vAttack": "6",
           "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-masters-of-evil-wwii-executioner.webp",
           "abilities": [
-            "Ambush: Executioner captures a Bystander.",
+            "Ambush: Executioner captures a Bystander. [effect:captureBystander]",
             "Fight: [keyword:Savior]: Draw a card.",
             "Escape: KO a Bystander from each player's Victory Pile."
           ],
@@ -782,7 +782,7 @@
           "vAttack": "5",
           "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-masters-of-evil-wwii-melter-wwii.webp",
           "abilities": [
-            "Ambush: Melter captures a Bystander.",
+            "Ambush: Melter captures a Bystander. [effect:captureBystander]",
             "Fight: [keyword:Savior]: Each player reveals the top card of their deck. For each card, you choose to KO it or put it back."
           ],
           "copies": 2
@@ -794,7 +794,7 @@
           "vAttack": "5",
           "imageUrl": "https://images.legendary-arena.com/ca75/ca75-vi-masters-of-evil-wwii-radioactive-man.webp",
           "abilities": [
-            "Ambush: Radioactive Man captures a Bystander.",
+            "Ambush: Radioactive Man captures a Bystander. [effect:captureBystander]",
             "Fight: Each player who is not a [keyword:Savior] gains a Wound.",
             "Escape: Same effect."
           ],

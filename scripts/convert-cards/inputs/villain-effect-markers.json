@@ -1,0 +1,337 @@
+{
+  "_notes": [
+    "WP-187 / EC-214 — curated, human-reviewed [effect:] marker map. Consumed by apply-effect-markers.mjs, which appends [effect:<VillainEffectKeyword>] tokens to the matched Ambush:/Fight: ability line in data/cards/*.json. WP-185's engine setup parser reads those markers.",
+    "Keys: villains -> setAbbr -> villainGroupSlug -> villainCardSlug -> { ambush?, fight? }; henchmen -> setAbbr -> henchmanGroupSlug -> { ambush?, fight? } (henchman ability text is group-level). Each list holds only the five locked VillainEffectKeyword strings: gainWoundEachPlayer, gainWoundCurrentPlayer, koHeroCurrentPlayer, heroDeckTopToEscape, captureBystander.",
+    "v1 curation discipline (WP-185 semantics): a line is marked ONLY when its entire effect reduces to unconditional + magnitude-1 + single-target applications of the MVP vocabulary. Conditional (may / If / '... or ...' choice), magnitude>1 (two / all / 'for each'), wrong/multi target (each villain, the Mastermind, another player, target-restricted KO), and lines carrying an extra non-MVP clause ('... Then ...') are deliberately left unmarked. Conservatism over coverage.",
+    "The exhaustive candidate list is reproducible at any time via `node scripts/convert-cards/apply-effect-markers.mjs --propose` (221 phrase-match candidates as of 2026-05-28). The _unassigned block below records the human classification RATIONALE with representative rows per reason; it is intentionally not a 1:1 copy of --propose output.",
+    "DATA-vs-SPEC drift found at execution (2026-05-28): (a) The WP assumed two cards (one bkwd, one rvlt) carry two Fight: lines apiece and would loud-fail as reason 'multi-line'. Under the LOCKED predicate (line.trimStart() begins with 'Fight:'), NO card has two timing lines of the same timing — rvlt/army-of-evil/mister-hyde and rvlt/dark-avengers/sentry each have a SECOND 'Fight:' embedded mid-line (inside flavor / a granted ability), which the predicate correctly does not treat as a timing line. So _unassigned carries no 'multi-line' rows; the multi-line loud-fail remains an active guardrail in the script and is exercised via a scratch input. (b) The WP spot-check expected a 'gainWoundEachPlayer' Ambush mark; NO unconditional each-player or current-player wound line exists in any of the 40 sets — every wound line is conditional ('reveal X or gains a Wound', 'If ...', 'with no ...', 'each other player'). So gainWoundEachPlayer and gainWoundCurrentPlayer are uncurated in v1; they await a future conditional/magnitude vocabulary expansion on the WP-185 side.",
+    "Escape:/Overrun: timings are handled generically by the script but are uncurated here (WP-186 follow-on)."
+  ],
+  "villains": {
+    "2099": {
+      "alchemax-enforcers": {
+        "cyber-nostra": { "ambush": ["heroDeckTopToEscape"] },
+        "jigsaw-2099": { "ambush": ["heroDeckTopToEscape"] }
+      },
+      "false-aesir-of-alchemax": {
+        "heimdall-2099": { "ambush": ["captureBystander"] }
+      }
+    },
+    "amwp": {
+      "cross-technologies": {
+        "cross-security-detail": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "quantum-realm": {
+        "hungering-energy": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "anni": {
+      "annihilation-wave": {
+        "queens-of-annihilation": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "antm": {
+      "queens-vengeance": {
+        "blackbird": { "fight": ["koHeroCurrentPlayer"] },
+        "gigantus": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "ultrons-legacy": {
+        "crimson-cowl": { "ambush": ["captureBystander"] },
+        "original-ultron-1": { "fight": ["koHeroCurrentPlayer"] },
+        "ultron-roboticks": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "asrd": {
+      "dark-council": {
+        "ulik-the-troll": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "omens-of-ragnarok": {
+        "skurge-the-executioner": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "bkpt": {
+      "enemies-of-wakanda": {
+        "jakarra": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "bkwd": {
+      "taskmasters-thunderbolts": {
+        "jester": { "ambush": ["captureBystander"] }
+      }
+    },
+    "ca75": {
+      "masters-of-evil-wwii": {
+        "black-knight": { "ambush": ["captureBystander"] },
+        "executioner": { "ambush": ["captureBystander"] },
+        "melter-wwii": { "ambush": ["captureBystander"] },
+        "radioactive-man": { "ambush": ["captureBystander"] }
+      },
+      "zolas-creations": {
+        "doughboy": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "chmp": {
+      "monsters-unleashed": {
+        "goom": { "ambush": ["captureBystander"], "fight": ["koHeroCurrentPlayer"] }
+      },
+      "wrecking-crew": {
+        "piledriver": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "core": {
+      "spider-foes": {
+        "green-goblin": { "ambush": ["captureBystander"] }
+      }
+    },
+    "cosm": {
+      "black-order-of-thanos": {
+        "black-dwarf": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "elders-of-the-universe": {
+        "the-champion-of-the-universe": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "from-beyond": {
+        "the-mapmakers": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "cvwr": {
+      "heroes-for-hire": {
+        "humbug": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "registration-enforcers": {
+        "micromax": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "dead": {
+      "deadpools-friends": {
+        "taskmaster": { "ambush": ["captureBystander"] }
+      }
+    },
+    "ff04": {
+      "subterranea": {
+        "moloids": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "mdns": {
+      "fallen": {
+        "metarchus": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "lilin": {
+        "skinner": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "mgtg": {
+      "followers-of-ronan": {
+        "exolon-monks": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "msis": {
+      "children-of-thanos": {
+        "chitauri-gorilla": { "ambush": ["captureBystander"] }
+      }
+    },
+    "msmc": {
+      "acolytes": {
+        "frenzy": { "fight": ["koHeroCurrentPlayer"] },
+        "unuscione": { "ambush": ["captureBystander"] }
+      },
+      "clan-yashida": {
+        "gorgon": { "fight": ["koHeroCurrentPlayer"] },
+        "lord-shingen": { "ambush": ["captureBystander"] }
+      }
+    },
+    "msp1": {
+      "chitauri": {
+        "chitauri-soldier": { "ambush": ["captureBystander"] }
+      },
+      "gamma-hunters": {
+        "fighter-jet": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "nmut": {
+      "demons-of-limbo": {
+        "nastirh": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "hellions": {
+        "catseye": { "fight": ["koHeroCurrentPlayer"] },
+        "thunderbird": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "noir": {
+      "goblins-freak-show": {
+        "fancy-dan": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "pttr": {
+      "maximum-carnage": {
+        "demogoblin": { "ambush": ["captureBystander"] }
+      }
+    },
+    "rvlt": {
+      "army-of-evil": {
+        "mister-hyde": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "dark-avengers": {
+        "ares": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "hoods-gang": {
+        "madam-masque": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "ssw1": {
+      "domain-of-apocalypse": {
+        "apocalyptic-weapon-x": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "limbo": {
+        "inferno-colossus": { "fight": ["koHeroCurrentPlayer"] },
+        "inferno-cyclops": { "ambush": ["captureBystander"] }
+      },
+      "wasteland": {
+        "wasteland-hawkeye": { "ambush": ["captureBystander"] }
+      }
+    },
+    "ssw2": {
+      "deadpools-secret-secret-wars": {
+        "howard-the-duck": { "ambush": ["captureBystander"] }
+      }
+    },
+    "vnom": {
+      "life-foundation": {
+        "riot": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "wpnx": {
+      "weapon-plus": {
+        "daken": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "wtif": {
+      "black-order-guards": {
+        "proxima-midnight": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "intergalactic-party-animals": {
+        "party-korg": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "rival-overlords": {
+        "ulysses-klaue": { "fight": ["koHeroCurrentPlayer"] },
+        "yondu": { "ambush": ["captureBystander"] }
+      },
+      "zombie-avengers": {
+        "zombie-wasp": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "wwhk": {
+      "aspects-of-the-void": {
+        "infini-tendrils": { "ambush": ["captureBystander"] }
+      },
+      "intelligencia": {
+        "doc-samson": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "sakaar-imperial-guard": {
+        "primus-vand": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    },
+    "xmen": {
+      "dark-descendants": {
+        "fatale": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "mojoverse": {
+        "warwolves": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "sisterhood-of-mutants": {
+        "lady-deathstrike": { "fight": ["koHeroCurrentPlayer"] }
+      }
+    }
+  },
+  "henchmen": {
+    "amwp": {
+      "quantumnauts": { "fight": ["koHeroCurrentPlayer"] }
+    },
+    "core": {
+      "sentinel": { "fight": ["koHeroCurrentPlayer"] }
+    },
+    "cvwr": {
+      "mandroid": { "fight": ["koHeroCurrentPlayer"] }
+    },
+    "dkcy": {
+      "maggia-goons": { "fight": ["koHeroCurrentPlayer"] }
+    },
+    "rvlt": {
+      "hydra-base": { "fight": ["koHeroCurrentPlayer"] }
+    },
+    "ssw2": {
+      "khonshu-guardians": { "fight": ["koHeroCurrentPlayer"] },
+      "magma-men": { "fight": ["koHeroCurrentPlayer"] },
+      "spider-infected": { "ambush": ["captureBystander"] }
+    },
+    "xmen": {
+      "shiar-death-commandos": { "fight": ["koHeroCurrentPlayer"] }
+    }
+  },
+  "_unassigned": [
+    { "set": "amwp", "group": "armada-of-kang", "card": "quantumnaut-elite", "timing": "fight", "text": "Fight: KO two of your Heroes.", "reason": "magnitude>1" },
+    { "set": "core", "group": "enemies-of-asgard", "card": "destroyer", "timing": "fight", "text": "Fight: KO all your [team:shield] Heroes.", "reason": "magnitude>1" },
+    { "set": "msp1", "group": "enemies-of-asgard", "card": "destroyer", "timing": "fight", "text": "Fight: KO all your [team:shield] Heroes.", "reason": "magnitude>1" },
+    { "set": "core", "group": "radiation", "card": "maestro", "timing": "fight", "text": "Fight: For each of your [hc:strength] Heroes, KO one of your Heroes.", "reason": "magnitude>1" },
+    { "set": "ssw2", "group": "kun-lun", "card": "razor-fist", "timing": "fight", "text": "Fight: For each of your Heroes that costs 3, KO one of your Heroes.", "reason": "magnitude>1" },
+    { "set": "dkcy", "group": "streets-of-new-york", "card": "bullseye", "timing": "fight", "text": "Fight: KO one of your Heroes with a [icon:recruit] icon and one of your Heroes with an [icon:attack] icon.", "reason": "magnitude>1" },
+    { "set": "xmen", "group": "sisterhood-of-mutants", "card": "selene", "timing": "fight", "text": "Fight: KO all the Heroes Dominated by Selene.", "reason": "magnitude>1" },
+    { "set": "ff04", "group": "subterranea", "card": "megataur", "timing": "ambush", "text": "Ambush: Megataur captures two Bystanders.", "reason": "magnitude>1" },
+    { "set": "msis", "group": "infinity-stones", "card": "the-space-stone", "timing": "ambush", "text": "Ambush: The Space Stone captures three Bystanders. Then move an Infinity Stone from any city space to the Bridge. If there's already a Villain there, swap them.", "reason": "magnitude>1" },
+    { "set": "wwhk", "group": "illuminati", "card": "dr-strange-possessed-by-zom", "timing": "ambush", "text": "Ambush: This Villain captures 3 Bystanders.", "reason": "magnitude>1" },
+
+    { "set": "pttr", "group": "sinister-six", "card": "hobgoblin", "timing": "ambush", "text": "Ambush: Each Sinister Six Villain captures a Bystander.", "reason": "multi-target" },
+    { "set": "ssw2", "group": "monster-metropolis", "card": "man-thing", "timing": "ambush", "text": "Ambush: Each Monster Metropolis Villain captures a Bystander.", "reason": "multi-target" },
+    { "set": "ssw1", "group": "limbo", "card": "inferno-colossus", "timing": "ambush", "text": "Ambush: The Mastermind captures a Bystander.", "reason": "multi-target" },
+    { "set": "msmc", "group": "clan-yashida", "card": "silver-samurai", "timing": "ambush", "text": "Ambush: The Villain in the city worth the most VP captures a Bystander.", "reason": "multi-target" },
+    { "set": "xmen", "group": "mojoverse", "card": "mindwarping-tv-broadcast", "timing": "ambush", "text": "Ambush: A Villain captures a Bystander.", "reason": "multi-target" },
+    { "set": "wtif", "group": "vibranium-liberator-drones", "timing": "ambush", "text": "Ambush: Another Villain captures a Bystander. ", "reason": "multi-target" },
+
+    { "set": "cvwr", "group": "csa-special-marshals", "card": "bullseye", "timing": "fight", "text": "Fight: KO one of your heroes with a [icon:recruit] icon.", "reason": "other" },
+    { "set": "dkcy", "group": "streets-of-new-york", "card": "hammerhead", "timing": "fight", "text": "Fight: KO one of your Heroes with a [icon:recruit] icon.", "reason": "other" },
+    { "set": "smhc", "group": "vulture-tech", "card": "chitauri-weapon-assault", "timing": "fight", "text": "Fight: KO one of your Heroes with a [icon:recruit] icon.", "reason": "other" },
+    { "set": "ssw1", "group": "deadlands-the", "card": "zombie-m-o-d-o-k", "timing": "fight", "text": "Fight: KO one of your heroes with a [icon:recruit] icon.", "reason": "other" },
+    { "set": "msmc", "group": "reavers", "card": "donald-pierce", "timing": "fight", "text": "Fight: KO one of your grey Heroes.", "reason": "other" },
+    { "set": "smhc", "group": "salvagers", "card": "hybrid-alien-tech", "timing": "fight", "text": "Fight: KO one of your 0-cost Heroes.", "reason": "other" },
+    { "set": "rlmk", "group": "inhuman-rebellion", "card": "the-unspoken", "timing": "fight", "text": "Fight: KO one of your Heroes with no [icon:attack] icon.", "reason": "other" },
+
+    { "set": "msis", "group": "children-of-thanos", "card": "endless-armies-of-chitauri", "timing": "fight", "text": "Fight: KO one of your Heroes. Then reveal the top card of the Villain Deck. If it's a Children of Thanos Villain, Endless Armies of Chitauri reenters the Sewers.", "reason": "other" },
+    { "set": "msis", "group": "children-of-thanos", "card": "outrider-threshers", "timing": "fight", "text": "Fight: KO one of your Heroes. Then choose any number of Heroes from the HQ. Put them on the bottom of the Hero Deck.", "reason": "other" },
+    { "set": "msis", "group": "infinity-stones", "card": "the-power-stone", "timing": "fight", "text": "Fight: KO one of your Heroes. Then KO a Wound from your hand or discard pile.", "reason": "other" },
+    { "set": "dstr", "group": "fear-lords", "card": "nox", "timing": "fight", "text": "Fight: KO one of your Heroes. Then, if Nox was in the city, she enters the [keyword:Astral Plane] and captures a Bystander.", "reason": "other" },
+    { "set": "rvlt", "group": "dark-avengers", "card": "dark-hawkeye-bullseye", "timing": "fight", "text": "Fight: KO one of your Heroes. Then choose one:", "reason": "other" },
+    { "set": "wpnx", "group": "berserkers", "card": "cyber", "timing": "fight", "text": "Fight: KO one your Heroes. If any of the cards you Berserked were [hc:instinct] or [hc:tech], shuffle Cyber into the Villain Deck, then play another card from the Villain Deck.", "reason": "other" },
+    { "set": "xmen", "group": "brood-the", "timing": "fight", "text": "Fight: KO one of your Heroes. Then KO a Bystander from the Bystander Stack.", "reason": "other" },
+    { "set": "xmen", "group": "sapien-league", "timing": "fight", "text": "Fight: KO one of your Heroes. Then, reveal the top card of the Villain Deck. If it's a Henchman Villain, play it.", "reason": "other" },
+
+    { "set": "2099", "group": "alchemax-enforcers", "card": "venture", "timing": "ambush", "text": "Ambush: Put the top card of the Hero Deck into the Escape Pile. Venture captures a Bystander. [keyword:Cyber-Mod][hc:ranged]: Venture also captures a non-grey Hero from your discard pile.", "reason": "other" },
+    { "set": "2099", "group": "alchemax-enforcers", "card": "whackoid", "timing": "ambush", "text": "Ambush: Put the top card of the Hero Deck into the Escape Pile. Whackoid captures all Bystanders from other Villains in the city. If he captures any Bystanders this way, each player gains a Wound.", "reason": "other" },
+    { "set": "chmp", "group": "monsters-unleashed", "card": "trull-the-unhuman", "timing": "ambush", "text": "Ambush: Trull captures a Bystander. Then [keyword:Demolish] each player.", "reason": "other" },
+    { "set": "smhc", "group": "vulture-tech", "card": "turbine-powered", "timing": "ambush", "text": "Ambush: Turbine Powered captures a Bystander. Then move this Villain to the Rooftops. If there's already a Villain there, swap them.", "reason": "other" },
+    { "set": "dstr", "group": "fear-lords", "card": "dspayre", "timing": "ambush", "text": "Ambush: D'Spayre enters the [keyword:Astral Plane] and captures a Bystander.", "reason": "other" },
+
+    { "set": "2099", "group": "alchemax-enforcers", "card": "cyber-nostra", "timing": "fight", "text": "Fight: [keyword:Cyber-Mod][hc:tech]: KO one of your Heroes.", "reason": "conditional" },
+    { "set": "ca75", "group": "masters-of-evil-wwii", "card": "black-knight", "timing": "fight", "text": "Fight: [keyword:Savior]: KO one of your Heroes.", "reason": "conditional" },
+    { "set": "ssw2", "group": "deadpools-secret-secret-wars", "card": "pink-sphinx", "timing": "fight", "text": "Fight: [keyword:Spectrum]: KO one of your Heroes.", "reason": "conditional" },
+    { "set": "wtif", "group": "stranges-demons", "card": "wolf-demon", "timing": "fight", "text": "Fight: [keyword:Soulbind another Villain]: KO one of your Heroes.", "reason": "conditional" },
+    { "set": "anni", "group": "timelines-of-kang", "card": "scarlet-centurion", "timing": "fight", "text": "Fight: If you played a [hc:covert] Hero this turn, KO one of your Heroes.", "reason": "conditional" },
+    { "set": "mgtg", "group": "ravagers", "card": "tullk", "timing": "fight", "text": "Fight: If Tullk was [keyword:Commanding] the Ravagers, KO one of your Heroes.", "reason": "conditional" },
+    { "set": "mgtg", "group": "ravagers", "card": "yondu-udonta", "timing": "fight", "text": "Fight: If Yondu was [keyword:Commanding] the Ravagers, KO up to two of your Heroes.", "reason": "conditional" },
+    { "set": "core", "group": "masters-of-evil", "card": "whirlwind", "timing": "fight", "text": "Fight: If you fight Whirlwind on the Rooftops or Bridge, KO two of your Heroes.", "reason": "conditional" },
+    { "set": "amwp", "group": "ghost-chasers", "card": "anitolov", "timing": "fight", "text": "Fight: [keyword:Heist]: You may KO up to two of your Heroes.", "reason": "conditional" },
+    { "set": "wtif", "group": "intergalactic-party-animals", "card": "party-surtur", "timing": "fight", "text": "Fight: You may KO a grey Hero from your discard pile.", "reason": "conditional" },
+    { "set": "2099", "group": "alchemax-enforcers", "card": "venture", "timing": "fight", "text": "Fight: Either KO that captured Hero or choose a player to gain it.", "reason": "conditional" },
+    { "set": "msis", "group": "infinity-stones", "card": "nebula-stone-seeker", "timing": "fight", "text": "Fight: Either KO that Hero or choose a player to gain it.", "reason": "conditional" },
+
+    { "set": "core", "group": "brotherhood", "card": "sabretooth", "timing": "fight", "text": "Fight: Each player reveals an [team:x-men] Hero or gains a Wound.", "reason": "conditional" },
+    { "set": "core", "group": "enemies-of-asgard", "card": "frost-giant", "timing": "fight", "text": "Fight: Each player reveals a [hc:ranged] Hero or gains a Wound.", "reason": "conditional" },
+    { "set": "core", "group": "enemies-of-asgard", "card": "ymir-frost-giant-king", "timing": "ambush", "text": "Ambush: Each player reveals a [hc:ranged] Hero or gains a Wound.", "reason": "conditional" },
+    { "set": "core", "group": "hydra", "card": "viper", "timing": "fight", "text": "Fight: Each player without another HYDRA Villain in their Victory Pile gains a Wound.", "reason": "conditional" },
+    { "set": "cvwr", "group": "heroes-for-hire", "card": "tarantula", "timing": "fight", "text": "Fight: Each player discards two cards or gains a Wound.", "reason": "conditional" },
+    { "set": "msp1", "group": "chitauri", "card": "chitauri-leviathan", "timing": "fight", "text": "Fight: Each player with no Bystanders in their Victory Pile gains a Wound.", "reason": "conditional" },
+    { "set": "dkcy", "group": "four-horsemen", "card": "war", "timing": "fight", "text": "Fight: Each other player reveals an [hc:instinct] Hero or gains a Wound.", "reason": "multi-target" },
+    { "set": "core", "group": "spider-foes", "card": "the-lizard", "timing": "fight", "text": "Fight: If you fight the Lizard in the Sewers, each other player gains a Wound.", "reason": "multi-target" },
+    { "set": "dkcy", "group": "emissaries-of-evil", "card": "rhino", "timing": "ambush", "text": "Ambush: Reveal the top card of the Villain Deck. If it's a Master Strike, each player gains a Wound.", "reason": "conditional" },
+    { "set": "rvlt", "group": "dark-avengers", "card": "captain-marvel-noh-varr", "timing": "ambush", "text": "Ambush: If any other Dark Avengers are in the city, each player gains a Wound.", "reason": "conditional" }
+  ]
+}

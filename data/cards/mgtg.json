@@ -1112,7 +1112,7 @@
           "imageUrl": "https://images.legendary-arena.com/mgtg/mgtg-vi-followers-of-ronan-exolon-monks.webp",
           "abilities": [
             "Exolon Monks get +2[icon:attack] while another Villain is [keyword:Commanding] the Followers of Ronan.",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         },

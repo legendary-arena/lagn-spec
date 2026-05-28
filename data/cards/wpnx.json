@@ -766,7 +766,7 @@
           "abilities": [
             "[keyword:Weapon X Sequence]",
             "[keyword:Berserk]",
-            "Fight: KO one of your Heroes.",
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]",
             "[keyword:Fail]: You gain a Wound."
           ],
           "copies": 1

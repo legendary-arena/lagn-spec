@@ -2547,7 +2547,7 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-heroes-for-hire-humbug.webp",
           "abilities": [
             "[keyword:Bribe]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -2630,7 +2630,7 @@
           "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-vi-registration-enforcers-micromax.webp",
           "abilities": [
             "[keyword:Size-Changing]: [hc:instinct]",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         }
@@ -2817,7 +2817,7 @@
       "imageUrl": "https://images.legendary-arena.com/cvwr/cvwr-hm-mandroid.webp",
       "abilities": [
         "This gets +1[icon:attack] for each other Mandroid in your Victory Pile.",
-        "Fight: KO one of your Heroes."
+        "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
       ]
     },
     {

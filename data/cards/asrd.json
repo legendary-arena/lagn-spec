@@ -755,7 +755,7 @@
           "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-dark-council-ulik-the-troll.webp",
           "abilities": [
             "Ulik gets +2[icon:attack] if you are not [keyword:Worthy].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
@@ -840,7 +840,7 @@
           "imageUrl": "https://images.legendary-arena.com/asrd/asrd-vi-omens-of-ragnarok-skurge-the-executioner.webp",
           "abilities": [
             "[keyword:Bridge] [keyword:Conqueror] 3",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },

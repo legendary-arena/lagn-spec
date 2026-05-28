@@ -844,7 +844,7 @@
           "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-false-aesir-of-alchemax-heimdall-2099.webp",
           "abilities": [
             "[keyword:Uru-Enchanted Weapon]",
-            "Ambush: Heimdall 2099 captures a Bystander.",
+            "Ambush: Heimdall 2099 captures a Bystander. [effect:captureBystander]",
             "[keyword:Fight or Fail]: If the (Rainbow) Bridge is empty and Heimdall's [keyword:Uru-Enchanted Weapon] revealed a Villain, that Villain enters the Bridge. When a Villain enters this way, shuffle a card from the Bystander Deck into the Villain Deck."
           ],
           "copies": 2
@@ -908,7 +908,7 @@
           "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-alchemax-enforcers-cyber-nostra.webp",
           "abilities": [
             "[keyword:Cyber-Mod][hc:tech]: Cyber-Nostra gets +1[icon:attack] for each [hc:tech] card in the Escape Pile.",
-            "Ambush: Put the top card of the Hero Deck into the Escape Pile.",
+            "Ambush: Put the top card of the Hero Deck into the Escape Pile. [effect:heroDeckTopToEscape]",
             "Fight: [keyword:Cyber-Mod][hc:tech]: KO one of your Heroes."
           ],
           "copies": 3
@@ -946,7 +946,7 @@
           "imageUrl": "https://images.legendary-arena.com/2099/2099-vi-alchemax-enforcers-jigsaw-2099.webp",
           "abilities": [
             "Jigsaw 2099 gets +1[icon:attack] for each Bystander he has.",
-            "Ambush: Put the top card of the Hero Deck into the Escape Pile.",
+            "Ambush: Put the top card of the Hero Deck into the Escape Pile. [effect:heroDeckTopToEscape]",
             "Fight: KO one of your Heroes. [keyword:Cyber-Mod][hc:strength]: If Jigsaw 2099 had no Bystanders, he reenters the city and captures a Bystander for each [hc:strength] card in the Escape Pile.",
             "Escape: [keyword:Cyber-Mod][hc:strength]: Each player gains a Wound."
           ],

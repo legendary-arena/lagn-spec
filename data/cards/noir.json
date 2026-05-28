@@ -749,7 +749,7 @@
           "imageUrl": "https://images.legendary-arena.com/noir/noir-vi-goblins-freak-show-fancy-dan.webp",
           "abilities": [
             "Ambush: Fancy Dan captures 3 [keyword:Hidden Witnesses].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 1
         }

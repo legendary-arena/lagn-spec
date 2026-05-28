@@ -2040,7 +2040,7 @@
           "vAttack": "1+",
           "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-vi-deadpools-secret-secret-wars-howard-the-duck.webp",
           "abilities": [
-            "Ambush: Howard the Duck captures (the heart of) a Bystander.",
+            "Ambush: Howard the Duck captures (the heart of) a Bystander. [effect:captureBystander]",
             "[keyword:7th Circle of Quack-Fu]"
           ],
           "copies": 2
@@ -2366,7 +2366,7 @@
       "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-hm-khonshu-guardians.webp",
       "abilities": [
         "While in the Sewers, Rooftops or Bridge, this is in “wolf form“ and gets +2[icon:attack].",
-        "Fight: KO one of your Heroes."
+        "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
       ]
     },
     {
@@ -2375,7 +2375,7 @@
       "slug": "magma-men",
       "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-hm-magma-men.webp",
       "abilities": [
-        "Fight: KO one of your Heroes.",
+        "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]",
         "[keyword:Fateful Resurrection]"
       ]
     },
@@ -2385,7 +2385,7 @@
       "slug": "spider-infected",
       "imageUrl": "https://images.legendary-arena.com/ssw2/ssw2-hm-spider-infected.webp",
       "abilities": [
-        "Ambush: This captures a Bystander.",
+        "Ambush: This captures a Bystander. [effect:captureBystander]",
         "Fight: The next Hero you gain this turn has [keyword:Wall-Crawl]."
       ]
     }

@@ -1051,7 +1051,7 @@
           "imageUrl": "https://images.legendary-arena.com/msp1/msp1-vi-chitauri-chitauri-soldier.webp",
           "abilities": [
             "[keyword:Rooftops Conqueror 2]",
-            "Ambush: Chitauri Soldier captures a Bystander."
+            "Ambush: Chitauri Soldier captures a Bystander. [effect:captureBystander]"
           ],
           "copies": 2
         },
@@ -1144,7 +1144,7 @@
           "imageUrl": "https://images.legendary-arena.com/msp1/msp1-vi-gamma-hunters-fighter-jet.webp",
           "abilities": [
             "[keyword:Streets Conqueror 2]",
-            "Fight: KO one of your heroes."
+            "Fight: KO one of your heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         }

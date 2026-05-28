@@ -774,7 +774,7 @@
           "vAttack": "3",
           "imageUrl": "https://images.legendary-arena.com/ff04/ff04-vi-subterranea-moloids.webp",
           "abilities": [
-            "Fight: KO one of your Heroes.",
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]",
             "[keyword:Burrow]"
           ],
           "copies": 2

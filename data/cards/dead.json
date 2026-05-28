@@ -717,7 +717,7 @@
           "vAttack": "3+",
           "imageUrl": "https://images.legendary-arena.com/dead/dead-vi-deadpools-friends-taskmaster.webp",
           "abilities": [
-            "Ambush: Taskmaster captures a Bystander.",
+            "Ambush: Taskmaster captures a Bystander. [effect:captureBystander]",
             "During your turn, Taskmaster gets +[icon:attack] equal to the cost of the highest cost Hero you played this turn."
           ],
           "copies": 2

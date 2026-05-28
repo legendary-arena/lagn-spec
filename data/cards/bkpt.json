@@ -799,7 +799,7 @@
           "imageUrl": "https://images.legendary-arena.com/bkpt/bkpt-vi-enemies-of-wakanda-jakarra.webp",
           "abilities": [
             "[keyword:Empowered] by [hc:strength].",
-            "Fight: KO one of your Heroes."
+            "Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]"
           ],
           "copies": 2
         },
