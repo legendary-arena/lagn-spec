@@ -19022,4 +19022,97 @@ resolver WP alongside `core/portals-to-the-dark-dimension` and
 
 ---
 
+### D-18701 — Effect Enrichment Is a Curated `[effect:]` Marker Overlay, Not Engine Free-Text Parsing
+
+**Decision:** Villain/Henchman Fight/Ambush effect detection is driven by an
+inline `[effect:<VillainEffectKeyword>]` marker authored into `data/cards/*.json`
+by a build-time overlay (`scripts/convert-cards/apply-effect-markers.mjs` reading
+the curated `inputs/villain-effect-markers.json`), mirroring the
+`apply-card-counts.mjs` + `keywords.json` overlay precedent. The engine (WP-185)
+reads only these reviewed, structured markers; it never parses free-text English
+at runtime. The overlay appends markers at end-of-line (after any existing
+markup), is per-keyword idempotent, and applies edits via **surgical anchored
+text replacement** rather than a whole-file `JSON.stringify` re-serialize — three
+sets (`ssw1`, `ssw2`, `xmen`) carry custom column-aligned `other` blocks that a
+full re-serialize would reformat, so per-line replacement is required to keep the
+diff bounded to the curated lines.
+
+**Rationale.** The five MVP effect keywords appear nowhere as `[keyword:]` /
+`[icon:]` markup in the raw data (those namespaces carry card-mechanic names and
+resource icons). The effects live in free text. Per the engine's no-NL-parsing
+discipline (hero-ability precedent), the engine must read a dedicated marker. A
+build-time script may phrase-scan the free text (its output is committed and
+human-reviewed), but the engine may not.
+
+**Packet:** WP-187.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-214).
+**Status:** Landed
+
+---
+
+### D-18702 — v1 Curation Marks Only Unconditional, Magnitude-1, Single-Target Lines
+
+**Decision:** A line receives an `[effect:]` marker only when its entire effect
+reduces to unconditional + magnitude-1 + single-target applications of the MVP
+vocabulary (WP-185 semantics). Conditional (`may` / `If …` / `… or …` choice),
+magnitude>1 (`KO two`, `KO all`, `for each …`), wrong/multi target (each villain,
+the Mastermind, another player, icon/colour/cost-restricted KO), and lines
+carrying an extra non-MVP clause (`… Then …`) are left unmarked and recorded in
+the map's `_unassigned` ledger. Conservatism over coverage: when in doubt, leave
+unmarked (WP-185 safe-skips → `effects: []`).
+
+**Rationale & data findings.** A `--propose` phrase-scan surfaced 221 candidate
+lines (2026-05-28); 76 reduced cleanly and were marked
+(`koHeroCurrentPlayer` ×53, `captureBystander` ×21, `heroDeckTopToEscape` ×2).
+Two WP-187 assumptions did not survive contact with the data and were folded
+inline:
+(a) **No card carries two `Fight:` lines** under the locked predicate
+(`line.trimStart()` begins with `Fight:`). The cards the WP cited
+(`rvlt/army-of-evil/mister-hyde`, `rvlt/dark-avengers/sentry`) carry a second
+"Fight:" *embedded mid-line* (inside flavor / a conditionally-granted ability),
+which the predicate correctly does not treat as a timing line. So `_unassigned`
+contains no `multi-line` rows; the multi-line loud-fail remains an active
+guardrail in the script and is exercised via a scratch input rather than real
+data.
+(b) **No unconditional each-player or current-player wound line exists** in any
+of the 40 sets — every wound line is conditional ("reveal X or gains a Wound",
+"If …", "with no …", "each *other* player"). So `gainWoundEachPlayer` and
+`gainWoundCurrentPlayer` are uncurated in v1; they await a future
+conditional/magnitude vocabulary expansion on the WP-185 side.
+
+**Packet:** WP-187.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-214).
+**Status:** Landed
+
+---
+
+### D-18703 — Marker Vocabulary Is WP-185's Five Strings; Overlay Loud-Fails on Drift
+
+**Decision:** The marker vocabulary is exactly the five `VillainEffectKeyword`
+strings locked by WP-185 (`gainWoundEachPlayer`, `gainWoundCurrentPlayer`,
+`koHeroCurrentPlayer`, `heroDeckTopToEscape`, `captureBystander`). The overlay
+hardcodes a LOCAL copy of that array (a `.mjs` ops script cannot and must not
+import from `packages/`) and loud-fails on any value outside it. If WP-185 ever
+changes the vocabulary, the overlay breaks loudly on the new value until the
+local copy is manually updated — drift is intentional, never silent.
+
+**Rationale.** Producer (this overlay) and consumer (WP-185's parser) must agree
+on the keyword set and the timing-line predicate, but the layer boundary forbids
+the data-tooling script from importing engine TypeScript. A hardcoded local copy
+with a loud-fail validation gate is the same drift-guard discipline used
+elsewhere in the converter pipeline (e.g. the `D-13501` rarity fallback map kept
+in lockstep across two scripts).
+
+**Packet:** WP-187.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-214).
+**Status:** Landed
+
+---
+
 Protect this file.

@@ -7,6 +7,18 @@
 
 ## Current State
 
+### WP-187 / EC-214 Executed — Villain & Henchman Effect-Marker Enrichment (Card Data) (2026-05-28)
+
+**The unambiguous subset of Villain/Henchman `Ambush:` / `Fight:` ability lines now carries inline `[effect:<VillainEffectKeyword>]` markers, unblocking WP-185's engine parser.** This is data-tooling only — no engine/registry/server code. A curated, human-reviewed marker map plus an idempotent overlay script append `[effect:]` tokens to the matched timing line in `data/cards/*.json`; WP-185 reads those markers (it does not parse free-text English).
+
+- New `scripts/convert-cards/apply-effect-markers.mjs` — apply mode (default) + `--propose` dry-run. Validates every keyword against a local hardcoded copy of WP-185's five `VILLAIN_EFFECT_KEYWORDS` (drift guard); loud-fails on unknown keyword, missing set/group/card, or a timing key matching zero/>1 ability lines. Append-only at end-of-line; per-keyword idempotent (re-run → zero diff).
+- New `scripts/convert-cards/inputs/villain-effect-markers.json` — curated map (`villains` per-card + `henchmen` group-level + `_unassigned` ledger + `_notes`).
+- **76 `[effect:]` markers appended across 76 ability lines in 31 of 40 sets:** `koHeroCurrentPlayer` ×53, `captureBystander` ×21, `heroDeckTopToEscape` ×2. v1 marks only unconditional + magnitude-1 + single-target lines.
+- **Mechanism is surgical text replacement, not whole-file `JSON.stringify`.** Three sets (`ssw1`, `ssw2`, `xmen`) carry custom column-aligned `other` blocks that a full re-serialize would reformat; anchored per-line replacement keeps the diff bounded to exactly the 76 changed lines (76 insertions / 76 deletions).
+- **Two WP assumptions did not hold against the data (folded inline, documented in the map's `_notes` and D-18702):** (1) No card has two `Fight:` lines under the locked predicate (`line.trimStart()` begins with `Fight:`) — `rvlt/mister-hyde` and `rvlt/sentry` carry a second "Fight:" *embedded mid-line*, which the predicate correctly ignores — so `_unassigned` has no `multi-line` rows; the multi-line loud-fail remains an active guardrail (verified via scratch input). (2) No unconditional each-player/current-player wound line exists in any set — every wound line is conditional ("reveal X *or* gains a Wound", "If …", "with no …", "each *other* player") — so `gainWoundEachPlayer` / `gainWoundCurrentPlayer` are uncurated in v1, awaiting a future conditional/magnitude vocabulary expansion on WP-185's side.
+- No `.test.ts` (ops-script convention, matching `apply-card-counts.mjs`); loud-fail + idempotency + verification greps are the guardrails. `pnpm -r build` exits 0.
+- D-18701, D-18702, D-18703 landed. WP-185 hard-dep on WP-187 now satisfied.
+
 ### WP-181 / EC-207 Executed — Bot Decision Logging (2026-05-26)
 
 **Every bot turn now produces 1–2 human-readable decision log messages in `G.messages` explaining what the bot chose, its score, and what alternatives it considered.** Players watching bot games (autoplay or PvP with bot) see `[Bot] Chose: ...` and `[Bot] Over: ...` lines narrating the AI's rationale.
