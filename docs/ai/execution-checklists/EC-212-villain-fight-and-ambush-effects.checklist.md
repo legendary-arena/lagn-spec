@@ -4,7 +4,7 @@
 **Layer:** Game Engine (`packages/game-engine/src/`)
 
 ## Before Starting
-- [ ] **WP-187 complete ⛔ HARD BLOCKER** — card-data `[effect:]` enrichment. Verify with `grep -rn "\[effect:" data/cards/`; if it returns nothing, **STOP and report `BLOCKED: WP-187`**. Executing against unenriched data produces `effects: []` for every hook and deletes the only Ambush effect that fires today (net regression).
+- [ ] **WP-187 complete ✅ (2026-05-28, EC-214)** — card-data `[effect:]` enrichment landed (76 markers / 31 sets). Verify with `grep -rn "\[effect:" data/cards/`; if it ever returns nothing, **STOP and report `BLOCKED: WP-187`**. Note (D-18702): `gainWound*` keywords carry zero real markers (no unconditional wound line exists) and are covered by synthetic-hook tests, not real-card fixtures.
 - [ ] WP-009A + WP-009B complete ✅ (rule hook contracts + pipeline)
 - [ ] WP-014A + WP-014B complete ✅ (villain reveal pipeline + classification)
 - [ ] WP-016 + WP-017 complete ✅ (`fightVillain` move; `koCard` / `gainWound` / bystander helpers)
@@ -39,6 +39,7 @@
 ## Guardrails
 - No `@legendary-arena/registry` import in `villainAbility.types.ts`, `villainAbility.setup.ts`, or `villainEffects.execute.ts`
 - No `boardgame.io` import in `villainAbility.types.ts` or `villainEffects.execute.ts`
+- `executeVillainAbilities` types its `ctx` parameter as `unknown` and narrows it via `as` to a local structural type (`{ currentPlayer: string }` — the only `ctx` field it reads); MUST NOT import `Ctx` / `FnContext` from `boardgame.io`. Mirrors `heroEffects.execute.ts` (`ctx: unknown` → `ctx as ShuffleProvider`). All other iteration derives from `G`
 - No `.reduce()` for multi-step branching; use `for...of` with descriptive loop variables
 - Moves never throw — `executeVillainAbilities` returns `void` and silently no-ops on unknown effects
 - Out-of-vocabulary effects safely no-op — no `console.warn`, no throw, no message push
@@ -62,6 +63,8 @@
 - `villainEffects.execute.ts` out-of-vocabulary switch default: why silent no-op rather than warn or throw (move contract — moves never throw; matches WP-022 hero-effects precedent for unsupported keywords)
 - `fightVillain.ts` insertion point: why after bystander award and before message push (effects observe post-award pile state; Fight `captureBystander` then awards immediately to avoid stranding)
 - `villainDeck.reveal.ts` Ambush replacement: why the hardcoded `gainWound` loop is deleted (per D-18504; D-2403 safe-skip note superseded for Ambush case)
+- `villainAbility.setup.ts` timing-prefix match: why only exact `Ambush:` / `Fight:` prefixes match and variant forms (`Ambush —`, `Ambush :`) are excluded in v1 (avoids punctuation normalization; preserves the no-inference rule; variants are a future-WP addition if a real card ever needs them)
+- `villainEffects.execute.ts` `ctx` narrowing: why `ctx` is typed `unknown` and narrowed with `as` to `{ currentPlayer: string }` rather than imported from `boardgame.io` (executor is barred from `boardgame.io` imports; mirrors heroEffects' `ctx as ShuffleProvider`)
 
 ## Files to Produce
 - `packages/game-engine/src/rules/villainAbility.types.ts` — **new** — timing + effect keyword unions, canonical arrays, `VillainAbilityHook` interface, `getVillainHooksForCard` pure filter
@@ -70,7 +73,7 @@
 - `packages/game-engine/src/types.ts` — **modified** — add `villainAbilityHooks: Readonly<VillainAbilityHook[]>` to `LegendaryGameState`; re-export new types
 - `packages/game-engine/src/setup/buildInitialGameState.ts` — **modified** — one new line: `G.villainAbilityHooks = buildVillainAbilityHooks(registry, matchConfig);` in the composition block
 - `packages/game-engine/src/moves/fightVillain.ts` — **modified** — add `executeVillainAbilities(G, ctx, cardId, 'onFight')` after Step 3b, before message push
-- `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — **modified** — replace lines 203-228 (hardcoded ambush wound loop) with a single `executeVillainAbilities(G, { ctx }, cardId, 'onAmbush')` call gated by `hasAmbush(...)`
+- `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — **modified** — replace lines 203-228 (stale `// why:` comment 203-207 + `const cardKeywords` 208 + hardcoded ambush wound loop 209-228) with a single `executeVillainAbilities(G, ctx, cardId, 'onAmbush')` call gated by `hasAmbush(cardId, G.cardKeywords ?? {})` — re-derive the keyword map inline; the `const` is deleted
 - `packages/game-engine/src/rules/villainAbility.types.test.ts` — **new** — drift-detection (TIMINGS + EFFECT_KEYWORDS); `getVillainHooksForCard` query tests
 - `packages/game-engine/src/setup/villainAbility.setup.test.ts` — **new** — Ambush + Fight prefix detection (case/whitespace); henchman group-level fan-out; `[effect:]` marker extraction + validation; `[keyword:]`/`[icon:]`/free-text → empty effects; `keywords === effects` parity; gate-consistency (`onAmbush` hook ⇒ `hasAmbush` true); deterministic emission order
 - `packages/game-engine/src/villain/villainEffects.execute.test.ts` — **new** — per-effect-keyword behavior; `captureBystander` onFight immediate-award (no stranded bystander); `koHeroCurrentPlayer` zone+ext_id ordering; fire-site integration via direct calls; safe-skip on empty piles and `effects: []` hooks; deterministic replay
@@ -83,7 +86,7 @@
 - [ ] Grep: zero `boardgame.io` matches in `villainAbility.types.ts` and `villainEffects.execute.ts`
 - [ ] Grep: zero `"gained a wound from Ambush"` matches anywhere in `packages/game-engine/src/villainDeck/`
 - [ ] Grep: exactly one `executeVillainAbilities` match in `fightVillain.ts`; exactly one in `villainDeck.reveal.ts`
-- [ ] Test asserts a card producing an `onAmbush` hook also satisfies `hasAmbush(...)` (gate-drift reachability guard)
+- [ ] Test asserts that **every** card producing an `onAmbush` hook satisfies `hasAmbush(cardId, G.cardKeywords ?? {}) === true` — compiled hooks cannot become unreachable through detection drift (reachability guard)
 - [ ] Test asserts Fight `[effect:captureBystander]` awards the bystander (no stranded attachment on the victory-pile card)
 - [ ] Test asserts a line with `[keyword:]` / `[icon:]` / free-text but no `[effect:]` marker yields `effects: []`
 - [ ] `docs/ai/STATUS.md` updated with `### WP-185 Executed` block
@@ -95,7 +98,7 @@
 - Adding `'onEscape'` to `VILLAIN_ABILITY_TIMINGS` "to get a head start on WP-186" → scope-creep FAIL; WP-186 owns that addition
 - Wrapping the deleted Ambush hardcode in `if (false)` or a feature flag instead of deleting it → D-18504 violation
 - Henchman ability text emitted as one hook for the group rather than fanning out to every card-instance ext_id → D-13502 aliasing precedent violation
-- `koHeroCurrentPlayer` using `Math.random()` or seed-less first-card pick → determinism FAIL; auto-resolution must be VP-ascending + ext_id lexical tie-break
+- `koHeroCurrentPlayer` using `Math.random()` or seed-less first-card pick → determinism FAIL; auto-resolution must be zone priority (discard → hand) then `ext_id` lexical ascending (explicitly NOT VP-based — VP is not in engine runtime state; matches D-18503 and the line-108 smell below)
 - Adding `console.warn` on out-of-vocabulary effects → WP-022 precedent violation; safe-skip means silent
 - `executeVillainAbilities` throws on a missing `payload.cardId` or unknown cardId → move-contract FAIL; moves never throw
 - Fight: fire site placed before bystander award → ordering FAIL; Fight `captureBystander` would observe pre-award state

@@ -5,7 +5,7 @@
 Wire the engine to execute card-text-driven `Fight:` and `Ambush:` effects on
 villain and henchman cards, so that defeating a Henchman that reads
 `Fight: KO one of your Heroes` actually KOs a hero, and revealing a villain
-that reads `Ambush: Each player gains a Wound` actually wounds each player.
+whose `Ambush:` line captures a Bystander actually captures it.
 Replace the pre-existing hardcoded `gainWound` placeholder in
 `villainDeck.reveal.ts` (currently fires for every Ambush card regardless of
 its text — wrong in every case where the card's Ambush text is not literally
@@ -24,9 +24,13 @@ subset enriched by WP-187 and dispatched by this WP.
 > **free text**. Per the hero precedent's no-NL-parsing rule, this WP does
 > **not** parse free-text English. Instead it reads a dedicated
 > `[effect:<VillainEffectKeyword>]` marker authored by **WP-187** (card-data
-> enrichment). **WP-185 is BLOCKED until WP-187 lands** — without the markers,
-> every hook would carry `effects: []` and the WP would ship dead while
-> deleting the one Ambush effect that fires today (net regression).
+> enrichment, ✅ landed 2026-05-28 — 76 markers across 31 sets). Deleting the
+> hardcoded Ambush-wound loop is safe **not** because WP-187 re-marked the
+> wound cards, but because no unconditional each-player-wound `Ambush:` line
+> exists in any of the 40 sets (D-18702) — the hardcode fired "each player
+> gains a wound" on every Ambush card regardless of its printed text, which
+> was wrong in every case. No card legitimately loses wound behavior when it
+> is deleted.
 
 ---
 
@@ -52,22 +56,24 @@ subset enriched by WP-187 and dispatched by this WP.
 - WP-025 ✅ — Board keywords (Patrol, Ambush, Guard) landed.
   `G.cardKeywords` exists and tags `ambush` per
   `buildCardKeywords.ts:detectAmbush`. **This WP replaces the
-  Ambush execution branch in `villainDeck.reveal.ts:209-228` but does
+  Ambush execution branch in `villainDeck.reveal.ts:203-228` but does
   NOT change keyword detection or `G.cardKeywords` shape.**
-- **WP-187 ⛔ DRAFTED, NOT YET EXECUTED — HARD BLOCKER.** Card-data
-  effect-marker enrichment (EC-214). WP-187 injects
-  `[effect:<VillainEffectKeyword>]` markers onto the `Ambush:` /
-  `Fight:` ability lines of the MVP-vocabulary subset in
-  `data/cards/*.json`. WP-185's setup parser reads those markers; it
-  does not parse free-text English. **WP-185 must not be executed until
-  WP-187 has landed** (verify `grep -rn "\[effect:" data/cards/` returns
-  matches). If not, stop and report `BLOCKED: WP-187`.
+- **WP-187 ✅ COMPLETE (2026-05-28, EC-214).** Card-data effect-marker
+  enrichment. WP-187 injected `[effect:<VillainEffectKeyword>]` markers
+  onto the `Ambush:` / `Fight:` ability lines of the MVP-vocabulary
+  subset in `data/cards/*.json` — 76 markers across 31 sets
+  (`koHeroCurrentPlayer` ×53 on `Fight:` lines, `captureBystander` ×21
+  and `heroDeckTopToEscape` ×2 on `Ambush:` lines; `gainWound*`
+  uncurated — no unconditional wound line exists, per D-18702). WP-185's
+  setup parser reads those markers; it does not parse free-text English.
+  Pre-flight `grep -rn "\[effect:" data/cards/` returns matches; if it
+  ever returns nothing, stop and report `BLOCKED: WP-187`.
 - `data/cards/*.json` (40 sets) contains villain + henchman cards with
   `Fight:` and `Ambush:` ability text. Verified counts (2026-05-27):
   ~874 ability lines start with `Fight:`; ~300 start with `Ambush:`.
-  The raw text carries **no** `[effect:]` markers — those are WP-187's
-  output. Timing (`Ambush:` / `Fight:` prefix) is present in raw text
-  and needs no enrichment.
+  The `[effect:]` markers are WP-187's output and are now present
+  (76 markers across 31 sets). Timing (`Ambush:` / `Fight:` prefix) is
+  present in raw text and needs no enrichment.
 - **Drafting baseline:** `origin/main @ ccc79bf` (2026-05-27).
 
 ---
@@ -104,6 +110,11 @@ subset enriched by WP-187 and dispatched by this WP.
 - `packages/game-engine/src/hero/heroEffects.execute.ts` —
   canonical precedent for the deterministic execution path with MVP
   keyword subset + safe-skip on out-of-vocabulary keywords.
+  **`villainEffects.execute.ts` follows this hero direct-mutation path:
+  it mutates `G` via existing zone helpers and returns `void` — it does
+  NOT return `RuleEffect[]` via the global pipeline cited under §Section 4
+  above. The new `VillainAbilityHook` table is deliberately separate from
+  the global `HookRegistry` (D-18501).**
 - `packages/game-engine/src/moves/fightVillain.ts` — the Fight: fire
   site (modified by this WP).
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` —
@@ -138,7 +149,7 @@ of villain card effects: text that fires when a villain enters the City
    / `Fight: Each player ...` card is dead text.
 2. **`Ambush:` text has a placeholder bug.** `buildCardKeywords.ts` tags
    any villain whose ability starts with `"Ambush"` as having the `ambush`
-   board keyword. `villainDeck.reveal.ts:209-228` then fires a hardcoded
+   board keyword. `villainDeck.reveal.ts:203-228` then fires a hardcoded
    "each player gains a wound" on city entry for every such card —
    regardless of what the Ambush text actually says. This is wrong in
    nearly every case: real Ambush text varies from "captures a Bystander"
@@ -177,6 +188,15 @@ WP-186 depends on WP-185.
   + canonical array `VILLAIN_EFFECT_KEYWORDS` with drift-detection.
   v1 vocabulary is intentionally small; out-of-vocabulary effects
   safely no-op per WP-022 precedent.
+  - **Marker coverage at this WP's execution (per D-18702):** only three
+    of the five keywords carry real card markers — `koHeroCurrentPlayer`,
+    `captureBystander`, `heroDeckTopToEscape`. `gainWoundEachPlayer` and
+    `gainWoundCurrentPlayer` match **zero** real cards (every printed wound
+    line is conditional, so WP-187 left them uncurated). Both keywords stay
+    in the locked v1 vocabulary as forward-looking — `gainWoundEachPlayer`
+    gets its first real data from WP-188 (`Escape:` lines) — and are
+    exercised here by synthetic-hook unit tests only, not by real-card
+    fixtures.
 - **`VillainAbilityHook` data-only descriptor type** —
   `{ cardId, timing, keywords, effects }` mirroring `HeroAbilityHook`
   shape. Stored in new G field `G.villainAbilityHooks: VillainAbilityHook[]`.
@@ -203,6 +223,14 @@ WP-186 depends on WP-185.
   - A matched line with no recognized `[effect:]` marker yields a hook
     with empty `effects: []` (timing preserved so future WPs can
     introspect coverage).
+  - **Effect order within a hook:** when a single line carries multiple
+    `[effect:]` markers, they populate `effects[]` (and `keywords[]`) in
+    left-to-right source order, and the executor applies them in that
+    array order — never sorted or normalized — for deterministic replay.
+    No v1 card carries multiple markers (verified 2026-05-28); since
+    WP-187 appends multi-markers in `VILLAIN_EFFECT_KEYWORDS` order,
+    left-to-right already equals canonical order. This lock is
+    forward-looking for WP-188 / WP-190 enrichment.
 - **`keywords` vs `effects` field semantics (v1):** the parser emits
   `keywords` and `effects` as the **same** array (the recognized
   executable tokens). Both fields exist to preserve parity with the
@@ -227,14 +255,30 @@ WP-186 depends on WP-185.
   `getVillainHooksForCard(cardId, timing)`, and applies the MVP effect
   vocabulary deterministically using existing helpers
   (`gainWound`, `koCard`, `attachBystanderToVillain`).
+  **Execution contract:** the executor mutates `G` directly via these
+  helpers and returns `void` — it MUST NOT return `RuleEffect[]`. This
+  mirrors `heroEffects.execute.ts` and keeps the executor outside the
+  global RuleEffect pipeline (D-18501). Its `ctx` parameter is typed
+  `unknown` and narrowed via `as` to a local structural type
+  (`{ currentPlayer: string }` — the only `ctx` field it reads), exactly
+  as `heroEffects.execute.ts` narrows `ctx as ShuffleProvider`; no
+  `boardgame.io` import (see §Non-Negotiable Constraints).
 - **Fight: fire site** — `fightVillain.ts` modified: after the card is
   pushed to the player's victory pile and bystanders are awarded
   (existing Step 3 + 3b), call
   `executeVillainAbilities(G, ctx, cardId, 'onFight')`. Move return
   contract unchanged (still returns `void`, still never throws).
 - **Ambush: fire site replacement** — `villainDeck.reveal.ts` modified:
-  the existing `if (hasAmbush(...))` block (lines 203-228) is replaced
-  with a call to `executeVillainAbilities(G, ctx, cardId, 'onAmbush')`.
+  lines 203-228 are deleted in full — that range is the stale `// why:`
+  comment (203-207, which describes the old inline-wound rationale), the
+  `const cardKeywords = G.cardKeywords ?? {}` binding (208), and the
+  `if (hasAmbush(...))` hardcoded-wound block (209-228). The block is
+  uniquely identified — independent of line drift — by the message it
+  emits (`"... gained a wound from Ambush ..."`), which the §Verification
+  grep keys on. It is replaced with a single gated call that
+  **re-derives the keyword map inline** so it carries no dependency on
+  the deleted `const`:
+  `if (hasAmbush(cardId, G.cardKeywords ?? {})) { executeVillainAbilities(G, ctx, cardId, 'onAmbush'); }`.
   `hasAmbush` is **kept as a fast gate** — the executor is only called
   when the card has the `ambush` board keyword, preserving the
   detection invariant from `buildCardKeywords.ts`.
@@ -286,8 +330,9 @@ WP-186 depends on WP-185.
   `VillainEffectKeyword` union.
 - **Unit tests** — setup-time parser (Ambush + Fight detection),
   executor per effect keyword, fire-site integration (fight a villain
-  with `Fight: KO ...` → hero KO'd; reveal a villain with
-  `Ambush: each player gains a Wound` → all players wounded), free-text
+  with `Fight: KO ...` → hero KO'd; reveal a villain whose `Ambush:`
+  line carries `[effect:captureBystander]` → bystander attached; a
+  constructed `gainWoundEachPlayer` hook → all players wounded), free-text
   safe-skip, deterministic replay across hook execution.
 - **STATUS.md entry**, **DECISIONS.md entries** (D-18501..D-18504),
   **WORK_INDEX.md flip to `[x]`**, **EC-212 flip to Done**.
@@ -411,6 +456,12 @@ WP-186 depends on WP-185.
   `HeroAbilityRegistryReader`).
 - No `boardgame.io` import in pure helpers (the types file, the
   setup parser, and the executor's per-effect helpers).
+- **Ctx typing guard:** `executeVillainAbilities` types its `ctx`
+  parameter as `unknown` and narrows it via `as` to a local structural
+  type (`{ currentPlayer: string }` — the only `ctx` field the executor
+  reads). It MUST NOT import `Ctx` / `FnContext` from `boardgame.io`.
+  This mirrors `heroEffects.execute.ts`, which types `ctx: unknown` and
+  narrows `ctx as ShuffleProvider`. All other iteration derives from `G`.
 
 **Packet-specific:**
 
@@ -423,7 +474,7 @@ WP-186 depends on WP-185.
   throw, log to console, or block the move/reveal pipeline on an
   unknown effect keyword.
 - The hardcoded `gainWound` loop at
-  `villainDeck.reveal.ts:209-228` MUST be deleted (not commented
+  `villainDeck.reveal.ts:203-228` MUST be deleted (not commented
   out, not gated by a flag, not left dormant). Its replacement is
   the single `executeVillainAbilities(G, ctx, cardId, 'onAmbush')`
   call.
@@ -469,12 +520,12 @@ WP-186 depends on WP-185.
 
 **Session protocol:**
 
-- **WP-187 must be complete at session start.** If the card data does
-  not yet carry `[effect:]` markers (verify with
-  `grep -rn "\[effect:" data/cards/`), stop and report
-  `BLOCKED: WP-187`. Executing WP-185 against unenriched data would
-  produce `effects: []` for every hook and delete the only Ambush
-  effect that fires today — a net regression.
+- **WP-187 is complete (2026-05-28).** Pre-flight
+  `grep -rn "\[effect:" data/cards/` returns matches; if it ever returns
+  nothing, stop and report `BLOCKED: WP-187`. Note (D-18702): only three
+  keywords carry real markers — `gainWoundEachPlayer` /
+  `gainWoundCurrentPlayer` match zero real cards and are covered by
+  synthetic-hook tests, not real-card fixtures.
 - If any assumption above is false at session start, stop and report
   `BLOCKED:` with the missing dependency. Do not work around.
 - If during execution a real Ambush or Fight card's effect cannot be
@@ -543,16 +594,18 @@ export interface VillainAbilityHook {
   `[effect:koHeroCurrentPlayer]` (e.g. `Fight: KO one of your Heroes
   [effect:koHeroCurrentPlayer]`) produces exactly one KO in the current
   player's KO pile, selected by zone-priority + `ext_id` lexical order.
-- [ ] Revealing a villain whose ability line carries
-  `[effect:gainWoundEachPlayer]` increments every player's discard by
-  exactly 1 wound (subject to wound pile availability, mirroring
-  existing escape-wound semantics).
+- [ ] Executing a **constructed** `onAmbush` hook carrying
+  `gainWoundEachPlayer` increments every player's discard by exactly 1
+  wound (subject to wound pile availability, mirroring existing
+  escape-wound semantics). This is a synthetic-hook test — no real card
+  carries `[effect:gainWoundEachPlayer]` in v1 (per D-18702), so the test
+  builds the hook directly rather than driving it from a card fixture.
 - [ ] Revealing a villain whose ability line has no recognized
   `[effect:]` marker no-ops at the executor (no state mutation) and
   logs no warning.
-- [ ] For a sample card producing an `onAmbush` hook,
-  `hasAmbush(cardId, G.cardKeywords ?? {})` is true — the gate cannot
-  silently suppress a compiled hook (gate-drift guard).
+- [ ] **Every** card producing an `onAmbush` hook satisfies
+  `hasAmbush(cardId, G.cardKeywords ?? {}) === true` — the gate cannot
+  silently suppress a compiled hook (reachability / gate-drift guard).
 - [ ] A Fight: `[effect:captureBystander]` resolves to the captured
   bystander being **awarded to the current player** — no bystander
   remains stranded on the defeated villain now in the victory pile.
@@ -706,7 +759,7 @@ recorded in the catalog as `Library-only`.
 | # | Item | Verdict |
 |---|---|---|
 | 1 | Goal is one paragraph, user-visible outcome | ✅ |
-| 2 | Assumes lists all prerequisites with status | ✅ (incl. **WP-187 ⛔ hard blocker** — not executable until enrichment lands) |
+| 2 | Assumes lists all prerequisites with status | ✅ (incl. **WP-187 ✅ complete 2026-05-28** — enrichment landed; pre-flight grep passes) |
 | 3 | Context (Read First) is specific (file paths + sections) | ✅ |
 | 4 | Scope (In) / Out of Scope present and closed | ✅ |
 | 5 | Files Expected to Change matches contract; 10 files (engine + tests) | ✅ |
@@ -737,3 +790,18 @@ de-VP'd, Fight `captureBystander` immediate-award, gate-drift +
 emission-order locks. Paired with WP-186 (Escape + Overrun); WP-186
 inherits the same WP-187 data dependency for `Escape:` / `Overrun:`
 markers.*
+
+*Revised 2026-05-28 (post-WP-187 landing, review pass): WP-187 ✅
+complete (EC-214) — all blocker references flipped from ⛔ to ✅. The
+net-regression rationale was corrected: deleting the hardcoded
+Ambush-wound loop is safe because **no unconditional each-player-wound
+`Ambush:` line exists in any set** (D-18702), not because WP-187 re-marked
+the wound cards (it marked none). Goal and acceptance-criteria examples
+re-grounded on keywords that carry real markers (`koHeroCurrentPlayer` on
+`Fight:`, `captureBystander` on `Ambush:`); `gainWoundEachPlayer` /
+`gainWoundCurrentPlayer` documented as synthetic-test-only in v1 (first
+real data arrives via WP-188 `Escape:` lines). Deletion range
+standardized to 203-228 (stale `// why:` comment + `const cardKeywords` +
+`if (hasAmbush)` block) with inline gate re-derivation. Executor substrate
+clarified as the hero direct-mutation path (mutates `G`, returns `void`;
+NOT the `RuleEffect[]` pipeline) per D-18501.*
