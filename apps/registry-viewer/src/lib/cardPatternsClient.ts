@@ -208,10 +208,12 @@ async function loadAssignmentsFile(
       return new Map();
     }
     const rawPayload = await response.json();
-    // why: the JSON files allow a top-level `_unassigned` documentation block
-    // (per WP-184 §Coverage Contract). Strip it before parsing so the strict
-    // per-taxonomy z.enum value type doesn't reject the documentation object.
-    const sanitized = stripUnassignedBlock(rawPayload);
+    // why: the JSON files allow top-level metadata keys prefixed with `_`
+    // (e.g. `_unassigned` documentation blocks per WP-184 §Coverage Contract,
+    // and `_generatedBy` provenance on the per-card villain file). Strip any
+    // `_`-prefixed key before parsing so the strict per-taxonomy z.enum value
+    // type doesn't reject the non-slug metadata objects/strings.
+    const sanitized = stripMetadataKeys(rawPayload);
     const result = schema.safeParse(sanitized);
     if (!result.success) {
       const issue = result.error.issues[0]!;
@@ -236,15 +238,16 @@ async function loadAssignmentsFile(
   }
 }
 
-function stripUnassignedBlock(rawPayload: unknown): unknown {
+function stripMetadataKeys(rawPayload: unknown): unknown {
   if (typeof rawPayload !== "object" || rawPayload === null || Array.isArray(rawPayload)) {
     return rawPayload;
   }
   const record = rawPayload as Record<string, unknown>;
-  if (!("_unassigned" in record)) return rawPayload;
   const copy: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(record)) {
-    if (key === "_unassigned") continue;
+    // why: `_`-prefixed keys are documentation/provenance metadata, not
+    // assignment entries (e.g. `_unassigned`, `_generatedBy`). Skip them.
+    if (key.startsWith("_")) continue;
     copy[key] = value;
   }
   return copy;

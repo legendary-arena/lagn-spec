@@ -167,8 +167,14 @@ export function flattenSet(
     for (const card of group.cards) {
       villainGroupTotal += card.copies ?? 1;
     }
-    const villainMechanicalPattern = villainPatternMap?.get(`${abbr}/${group.slug}`);
     for (const card of group.cards) {
+      // why: WP-184 per-card defect fix (2026-05-27) — villain patterns are
+      // assigned PER CARD, not per group. A villain group bundles 4-8
+      // mechanically distinct cards; the prior group-level lookup stamped one
+      // slug onto every card, so the "Fight: KO Hero" chip surfaced cards with
+      // no Fight effect. Key shape is `{abbr}/{groupSlug}/{cardSlug}`; cards
+      // with no qualifying clause are absent from the map and stay unbadged.
+      const villainMechanicalPattern = villainPatternMap?.get(`${abbr}/${group.slug}/${card.slug}`);
       cards.push({
         key:       `${abbr}-villain-${group.slug}-${card.slug}`,
         cardType:  "villain",

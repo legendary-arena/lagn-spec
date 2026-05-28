@@ -545,12 +545,20 @@ function enrichMechanicalPatterns(targetCards: FlatCard[]) {
   for (const card of targetCards) {
     const entitySlug = index.get(card.key);
     if (!entitySlug) continue;
-    const lookupKey = `${card.setAbbr}/${entitySlug}`;
+    const entityKey = `${card.setAbbr}/${entitySlug}`;
     let assignment: string | undefined;
-    if (card.cardType === "hero")            assignment = heroPatternAssignments.value.get(lookupKey);
-    else if (card.cardType === "villain")    assignment = villainPatternAssignments.value.get(lookupKey);
-    else if (card.cardType === "henchman")   assignment = henchmanPatternAssignments.value.get(lookupKey);
-    else if (card.cardType === "mastermind") assignment = mastermindPatternAssignments.value.get(lookupKey);
+    if (card.cardType === "hero") {
+      assignment = heroPatternAssignments.value.get(entityKey);
+    } else if (card.cardType === "villain") {
+      // why: WP-184 per-card defect fix — villain assignments are keyed
+      // per-card (`{abbr}/{groupSlug}/{cardSlug}`), not per-group, so the
+      // "Fight: KO Hero" chip only matches cards whose own clause KOs a hero.
+      assignment = villainPatternAssignments.value.get(`${entityKey}/${card.slug}`);
+    } else if (card.cardType === "henchman") {
+      assignment = henchmanPatternAssignments.value.get(entityKey);
+    } else if (card.cardType === "mastermind") {
+      assignment = mastermindPatternAssignments.value.get(entityKey);
+    }
     if (assignment) card.mechanicalPattern = assignment;
   }
 }
