@@ -771,7 +771,7 @@ recorded in the catalog as `Library-only`.
 | 11 | Identity model N/A — no auth surface | N/A |
 | 12 | Test rules: node:test only, makeMockCtx, no boardgame.io/testing | ✅ |
 | 13 | pnpm commands only; expected output shown | ✅ |
-| 14 | Acceptance ≤ 13 binary items; specific filenames + token greps | ✅ |
+| 14 | Acceptance criteria objective and scope-aligned (§14); 18 binary items, specific filenames + token greps | ✅ |
 | 15 | Definition of Done includes STATUS / DECISIONS / WORK_INDEX / scope-bound | ✅ |
 | 16 | Code style: full English names, JSDoc, no .reduce in effect application | ✅ |
 | 17 | Vision Alignment present; clauses §1 / §2 / §10 / §22; determinism line included | ✅ |
