@@ -37,6 +37,7 @@
 - Unassigned schemes: no badge, pass filters when no pattern filter active
 - UI sorts patterns by `order` ascending, never by array insertion position
 - Partial failure: patterns-fail → no filter UI; assignments-fail → informational chips only; both-fail → fully degraded
+- (Follow-up amendment — D-18301, 2026-05-28) The `SchemeTwistFilter` ribbon is shown only when exactly one active cardType chip is `scheme` (`showSchemeTwistFilter` computed in `App.vue`), matching the EC-211 mechanical-pattern ribbon gating. Changing or clearing the cardType selection (`toggleGroup` / `clearTypes`) MUST also clear `selectedTwistSlugs`, so a twist selection cannot persist as a hidden filter once its ribbon is gated away. This supersedes the original always-on (`v-if="twistPatterns.length > 0"`) behavior.
 
 ## Required `// why:` Comments
 - `flattenSet` assignments parameter: why optional (degraded mode)

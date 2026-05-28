@@ -257,8 +257,12 @@ function toggleGroup(group: TypeGroup) {
   // pattern slug is meaningless on a villain card). When the user changes
   // cardType selection, drop any active pattern slugs to avoid carrying
   // stale state across taxonomy boundaries. The filter ribbon will reappear
-  // empty when the user activates a single matching cardType again.
+  // empty when the user activates a single matching cardType again. The
+  // scheme twist slugs (WP-183) are cleared for the same reason — once the
+  // ribbon is gated to the Scheme cardType, a leftover twist selection would
+  // otherwise stay applied (scheme-only) while its ribbon is hidden.
   selectedMechanicalPatternSlugs.value = new Set();
+  selectedTwistSlugs.value = new Set();
   applyFilters();
 }
 
@@ -273,6 +277,7 @@ function isGroupFullyActive(group: TypeGroup): boolean {
 function clearTypes() {
   selectedTypes.value = new Set();
   selectedMechanicalPatternSlugs.value = new Set();
+  selectedTwistSlugs.value = new Set();
   applyFilters();
 }
 
@@ -563,6 +568,12 @@ const showHeroPatternFilter       = computed(() => heroPatterns.value.length > 0
 const showVillainPatternFilter    = computed(() => villainPatterns.value.length > 0    && isSingleCardTypeActive("villain"));
 const showHenchmanPatternFilter   = computed(() => henchmanPatterns.value.length > 0   && isSingleCardTypeActive("henchman"));
 const showMastermindPatternFilter = computed(() => mastermindPatterns.value.length > 0 && isSingleCardTypeActive("mastermind"));
+// why: the scheme twist taxonomy (WP-183) only applies to scheme cards, so its
+// ribbon follows the same single-cardType gating as the WP-184 mechanical
+// pattern ribbons — visible only when "Scheme" is the lone active cardType.
+// Before this gate the twist ribbon used a bare twistPatterns.length guard and
+// stayed on under every cardType selection.
+const showSchemeTwistFilter       = computed(() => twistPatterns.value.length > 0      && isSingleCardTypeActive("scheme"));
 
 // ── Filtering ─────────────────────────────────────────────────────────────────
 function applyFilters() {
@@ -894,9 +905,12 @@ function navigateToCard(slug: string, cardType: string) {
             @update:selected-effect-slugs="applyFilters"
           />
 
-          <!-- Scheme twist pattern chip ribbon (WP-183) -->
+          <!-- Scheme twist pattern chip ribbon (WP-183). Gated on a single
+               active "Scheme" cardType — mirrors the mechanical pattern
+               ribbons below so the twist ribbon toggles with the Scheme pill
+               instead of being permanently visible. -->
           <SchemeTwistFilter
-            v-if="twistPatterns.length > 0"
+            v-if="showSchemeTwistFilter"
             :patterns="twistPatterns"
             :all-cards="allCards"
             v-model:selected-twist-slugs="selectedTwistSlugs"

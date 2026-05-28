@@ -19115,4 +19115,36 @@ in lockstep across two scripts).
 
 ---
 
+### D-18301 — Scheme Twist Filter Ribbon Is Gated to a Single Active `scheme` cardType
+
+**Decision:** The `SchemeTwistFilter` ribbon in the registry viewer is shown only
+when exactly one cardType chip is active and that chip is `scheme` — the same
+single-cardType visibility rule EC-211 (WP-184) applied to the four mechanical
+pattern ribbons (`showHeroPatternFilter` and siblings). Previously the twist
+ribbon used a bare `v-if="twistPatterns.length > 0"` guard and stayed visible
+under every cardType selection (and under no selection). Switching or clearing
+the cardType selection (`toggleGroup` / `clearTypes`) now also clears
+`selectedTwistSlugs`, so a twist selection cannot survive as a hidden but
+still-applied filter once its ribbon is gated away — mirroring the existing
+`selectedMechanicalPatternSlugs` reset in those handlers.
+
+**Rationale.** EC-210 (WP-183) shipped the twist ribbon as always-on because the
+single-cardType gating model did not yet exist. EC-211 (WP-184) introduced that
+model but deliberately scoped it to the four mechanical-pattern taxonomies and
+kept scheme/twist as a separate taxonomy. The result was a user-visible
+inconsistency: clicking the Hero pill reveals/hides the Hero pattern ribbon, but
+the Twist ribbon was permanently on. This decision records the parity choice —
+the twist ribbon is treated as the scheme cardType's pattern ribbon for
+visibility purposes — so the behavior is traceable rather than folklore. This is
+a specification enhancement (the desired parity was not covered by any existing
+EC clause), not an implementation violation of EC-210 or EC-211.
+
+**Packet:** WP-183 (follow-up; viewer surface owned by EC-210). Gating model reused from WP-184 / EC-211.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-210 follow-up).
+**Status:** Landed
+
+---
+
 Protect this file.

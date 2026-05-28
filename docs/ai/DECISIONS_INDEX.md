@@ -56,6 +56,7 @@ For full rationale, see `DECISIONS.md`.
 |------------|---------|---------------|--------------|
 | D‑0301 | UI consumes projections only | WP‑028 | WP‑041 |
 | D‑0302 | One UIState, many audiences | WP‑029 | WP‑042 |
+| D‑18301 | Scheme twist filter ribbon gated to single active `scheme` cardType (parity with mechanical‑pattern ribbons) | WP‑183 | WP‑184 / EC‑211 |
 
 ---
 
