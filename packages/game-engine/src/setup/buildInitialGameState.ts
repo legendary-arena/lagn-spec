@@ -45,6 +45,7 @@ import {
   buildHeroAbilityHooks,
   isHeroAbilityRegistryReader,
 } from './heroAbility.setup.js';
+import { buildVillainAbilityHooks } from './villainAbility.setup.js';
 import { buildCardKeywords } from './buildCardKeywords.js';
 import { buildCardTraits } from './buildCardTraits.js';
 import {
@@ -439,6 +440,10 @@ export function buildInitialGameState(
     // pattern as hookRegistry and cardStats. Immutable during gameplay.
     // Execution deferred to WP-022+.
     heroAbilityHooks: buildHeroAbilityHooks(registry, config),
+    // why: villain/henchman ability hooks built from registry at setup — same
+    // pattern as heroAbilityHooks. Immutable during gameplay; executed at the
+    // Fight/Ambush fire sites (WP-185). Narrow test mocks → empty table.
+    villainAbilityHooks: buildVillainAbilityHooks(registry, config),
     // why: lobby state initialized at setup time from ctx.numPlayers. All
     // players start as not ready. G.lobby.started is false until
     // startMatchIfReady succeeds.

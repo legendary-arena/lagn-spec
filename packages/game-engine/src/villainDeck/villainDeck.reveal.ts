@@ -29,6 +29,7 @@ import {
   resolveEscapedBystanders,
 } from '../board/bystanders.logic.js';
 import { hasAmbush } from '../board/boardKeywords.logic.js';
+import { executeVillainAbilities } from '../villain/villainEffects.execute.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
@@ -200,31 +201,16 @@ export function performVillainReveal(
       }
     }
 
-    // why: Ambush fires on City entry, not on fight. When a villain with
-    // Ambush enters the City, each player gains 1 wound. Wound gain is
-    // inline (not RuleEffect) because no 'gainWound' RuleEffect type exists
-    // — same pattern as escape wounds above (D-2403 safe-skip for effect
-    // type gaps).
-    const cardKeywords = G.cardKeywords ?? {};
-    if (hasAmbush(cardId, cardKeywords)) {
-      const playerIds = Object.keys(G.playerZones);
-      for (const playerId of playerIds) {
-        if (G.piles.wounds.length > 0) {
-          const ambushWoundResult = gainWound(
-            G.piles.wounds,
-            G.playerZones[playerId]!.discard,
-          );
-          G.piles.wounds = ambushWoundResult.woundsPile;
-          G.playerZones[playerId]!.discard = ambushWoundResult.playerDiscard;
-          // why: woundsDrawn tracks current player only — other players' Ambush wounds are not projected
-          if (playerId === ctx.currentPlayer) {
-            G.turnEconomy.woundsDrawn += 1;
-          }
-          G.messages.push(
-            `Player ${playerId} gained a wound from Ambush on "${cardId}".`,
-          );
-        }
-      }
+    // why: Ambush fires on City entry. The hardcoded "each player gains a
+    // wound" loop previously here is deleted (D-18504; supersedes the D-2403
+    // safe-skip note for the Ambush case) — it fired identical wrong behavior
+    // for every Ambush card regardless of printed text. Dispatch now runs the
+    // card's parsed [effect:] hooks via executeVillainAbilities, gated by the
+    // existing hasAmbush fast pre-check (the keyword-detection invariant from
+    // buildCardKeywords.ts). The keyword map is re-derived inline so this call
+    // carries no dependency on a deleted binding.
+    if (hasAmbush(cardId, G.cardKeywords ?? {})) {
+      executeVillainAbilities(G, ctx, cardId, 'onAmbush');
     }
 
     // why: bystander appears with villain on City entry; rule hooks must

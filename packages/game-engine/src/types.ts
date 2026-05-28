@@ -165,6 +165,21 @@ export type {
   HeroAbilityTiming,
 } from './rules/heroKeywords.js';
 
+// why: Villain/henchman ability hook contracts (VillainAbilityHook,
+// VillainAbilityTiming, VillainEffectKeyword) are defined canonically in
+// src/rules/villainAbility.types.ts (WP-185). Re-exported here so consumers
+// importing from './types.js' have access. The canonical drift-detection
+// arrays are value exports, so they use a separate export statement.
+export type {
+  VillainAbilityHook,
+  VillainAbilityTiming,
+  VillainEffectKeyword,
+} from './rules/villainAbility.types.js';
+export {
+  VILLAIN_ABILITY_TIMINGS,
+  VILLAIN_EFFECT_KEYWORDS,
+} from './rules/villainAbility.types.js';
+
 // why: Zone types (CardExtId, PlayerZones, GlobalPiles) were originally
 // defined inline in this file during WP-005B. WP-006A consolidated them
 // into src/state/zones.types.ts as the canonical source. They are
@@ -329,6 +344,7 @@ import type { MastermindState } from './mastermind/mastermind.types.js';
 import type { SchemeState } from './scheme/schemeState.types.js';
 import type { HookDefinition } from './rules/ruleHooks.types.js';
 import type { HeroAbilityHook } from './rules/heroAbility.types.js';
+import type { VillainAbilityHook } from './rules/villainAbility.types.js';
 import type { LobbyState } from './lobby/lobby.types.js';
 import type { VillainDeckState, RevealedCardType } from './villainDeck/villainDeck.types.js';
 import type { CityZone, HqZone } from './board/city.types.js';
@@ -583,6 +599,13 @@ export interface LegendaryGameState {
   // gameplay. Data-only — no functions or closures. Execution is WP-022+.
   /** Hero ability hook declarations (data-only, inert in WP-021). */
   heroAbilityHooks: HeroAbilityHook[];
+
+  // why: villain/henchman ability hooks built from registry at setup time —
+  // same pattern as heroAbilityHooks/hookRegistry/cardStats. Data-only,
+  // immutable during gameplay; executed at the Fight/Ambush fire sites by
+  // villainEffects.execute.ts (WP-185).
+  /** Villain/henchman ability hook declarations (data-only). */
+  villainAbilityHooks: Readonly<VillainAbilityHook[]>;
 
   // why: lobby state is stored in G so the UI can observe lobby completion
   // and readiness status. Initialized at setup time from ctx.numPlayers.

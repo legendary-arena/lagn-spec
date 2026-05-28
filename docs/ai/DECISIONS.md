@@ -19147,4 +19147,191 @@ EC clause), not an implementation violation of EC-210 or EC-211.
 
 ---
 
+### D-18501 — Villain Ability Effects Use a Dedicated Hook Table, Not the Global HookRegistry
+
+**Decision:** Villain/henchman `Fight:` / `Ambush:` effects dispatch through a new
+data-only `VillainAbilityHook[]` table on `G.villainAbilityHooks` (parallel to
+`HeroAbilityHook`), executed by `villain/villainEffects.execute.ts`. The executor
+mutates `G` via existing zone helpers and returns `void` — it does NOT return
+`RuleEffect[]` and is deliberately separate from the global `HookRegistry` /
+`RuleEffect` pipeline.
+
+**Rationale.** Direct `cardId` + `timing` dispatch needs no handler-side
+`payload.cardId === sourceId` filtering and mirrors the proven WP-022 hero
+direct-mutation executor. Staying off the RuleEffect pipeline avoids inventing a
+`gainWound` / `koHero` RuleEffect type and keeps the executor a pure
+read-`G` / mutate-`G` function.
+
+**Packet:** WP-185.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed
+
+---
+
+### D-18502 — Villain Effect Vocabulary Locked to Five Keywords
+
+**Decision:** `VILLAIN_EFFECT_KEYWORDS` is exactly `gainWoundEachPlayer`,
+`gainWoundCurrentPlayer`, `koHeroCurrentPlayer`, `heroDeckTopToEscape`,
+`captureBystander`, in that canonical order. Out-of-vocabulary effects safe-skip
+silently (no throw, no console, no message). Adding a sixth keyword requires a new
+WP and a DECISIONS entry.
+
+**Rationale.** MVP scope discipline, matching the WP-022 hero MVP-subset model.
+The drift-detection array and the union must change together. (WP-189 plans the
+sixth keyword, `koHeroEachPlayer`.)
+
+**Packet:** WP-185.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed
+
+---
+
+### D-18503 — koHeroCurrentPlayer Resolves by Zone + ext_id Over Non-Wound Cards, Not VP
+
+**Decision:** `koHeroCurrentPlayer` KOs one card from the current player's discard
+(priority) then hand, selecting the lexically-smallest `ext_id` that is NOT the
+wound token (`pile-wound`). Silent no-op if neither zone holds a non-wound card.
+It does not read victory points and does not read the registry at runtime.
+
+**Rationale.** Per-card hero VP is not in engine runtime state (`G.cardStats`
+carries `attack` / `recruit` / `cost` / `fightCost` only) and a runtime registry
+read would be a layer violation. The printed card grants player choice, so a
+deterministic stand-in needs no rules-faithful ranking; interactive targeting is
+deferred to a future UI WP. The non-wound predicate is the minimal correct "hero"
+filter without a registry read — the wound token is the only non-hero card that
+can sit in a player's hand/discard (bystanders go to the victory zone), and
+KO-ing a wound would invert the intended penalty.
+
+**Packet:** WP-185.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed
+
+---
+
+### D-18504 — Hardcoded Ambush Wound Loop Deleted (Supersedes D-2403 for the Ambush Case)
+
+**Decision:** The hardcoded "each player gains a wound" block in
+`villainDeck.reveal.ts` (formerly lines 203-228) is deleted, replaced by a single
+`executeVillainAbilities(G, ctx, cardId, 'onAmbush')` call gated by the kept
+`hasAmbush(cardId, G.cardKeywords ?? {})` fast pre-check. This supersedes the
+D-2403 effect-type-gap safe-skip note for the Ambush case specifically.
+
+**Rationale.** The hardcode fired identical wrong behavior for every Ambush card
+regardless of printed text. Ambush effects now come from parsed `[effect:]`
+markers. (No card legitimately loses wound behavior: no unconditional
+each-player-wound Ambush line exists in any set — D-18702. The hardcode also never
+actually resolved for real villains, due to the deck-instance vs definition-key
+grammar split recorded in D-18508.)
+
+**Packet:** WP-185.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed
+
+---
+
+### D-18505 — Effect Detection Reads a Dedicated [effect:] Marker, Not [keyword:]/[icon:] or Free Text
+
+**Decision:** The setup parser sources executable effects exclusively from
+`[effect:<VillainEffectKeyword>]` markers (authored by WP-187), validating each
+value against `VILLAIN_EFFECT_KEYWORDS` and ignoring unknown values. It never reads
+the `[keyword:]` / `[icon:]` namespaces (card-mechanic names + resource icons) and
+never parses free-text English. Timing comes from the `Ambush:` / `Fight:` text
+prefix (case-insensitive, leading-whitespace-trimmed, exact-colon only).
+
+**Rationale.** The five effect keywords appear nowhere as native card markup;
+`[keyword:]` / `[icon:]` are already occupied; the hero precedent forbids NL
+parsing. WP-185 therefore depends on WP-187 for the markers.
+
+**Packet:** WP-185.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed
+
+---
+
+### D-18506 — Fight captureBystander Awards the Captured Bystander Immediately
+
+**Decision:** On `onFight`, `captureBystander` attaches a bystander to the defeated
+card AND immediately awards attached bystanders to the current player's victory
+zone.
+
+**Rationale.** The Fight fire site is positioned after the bystander award
+(Step 3b) and before the message push, so a bystander attached to a card already in
+the victory pile would otherwise be stranded (never awarded). Immediate award
+preserves the tabletop "rescue on defeat" semantics while keeping the required
+fire-site position.
+
+**Packet:** WP-185.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed
+
+---
+
+### D-18507 — Villain-Only onAmbush in v1; Henchman Ambush Hooks Deferred
+
+**Decision:** The parser emits `onAmbush` hooks for villains only; henchman
+`Ambush:` lines emit no hook in v1. Henchman `onFight` hooks are still fanned out,
+one per card-instance ext_id. Villain hooks key by the definition ext_id
+`{set}-villain-{group}-{card}`; henchman hooks key by the copy-indexed instance
+ext_id `henchman-{group}-NN` (00-09).
+
+**Rationale.** `buildCardKeywords` only assigns the `ambush` board keyword to
+villains — it explicitly skips henchmen, and changing that is out of WP-185's
+scope. So the reveal-site `hasAmbush` gate can never fire a henchman `onAmbush`
+hook; emitting one would be unreachable and would violate the gate-consistency
+invariant ("every `onAmbush` hook satisfies `hasAmbush`"). Five henchman groups
+carry `Ambush:` lines (one with a real `[effect:captureBystander]`,
+`ssw2/spider-infected`); their ambush effects await a future WP that adds henchman
+keyword detection. The villain-definition vs henchman-copy-indexed keying split is
+chosen so the hook table aligns with `buildCardKeywords` / `buildCardStats` for
+gate-consistency. Operator-decided during the WP-185 execution session.
+
+**Packet:** WP-185.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed
+
+---
+
+### D-18508 — Replay Oracles Re-Pinned for the Additive G Field; Pre-Existing Villain ext_id Grammar Gap Recorded
+
+**Decision:** `PRE_WP080_HASH` (`replay.execute.test.ts`) and the
+`sentinel-core-doom-2p` fixture `finalStateHash` are re-pinned because `G` gained
+the additive `villainAbilityHooks` field. The change is behavior-neutral in those
+empty-registry fixtures — no hooks build, the per-turn snapshot oracle is
+unchanged, and only the whole-`G` serialization hash shifts — the same cascade
+pattern as the `heroAbilityHooks` and `cardTraits` field additions. Separately
+recorded: a pre-existing engine ext_id grammar split where villain deck/city cards
+are copy-indexed (`...-card-NN`) while `cardStats` / `cardKeywords` are
+definition-keyed (`...-card`), so villain `Fight:` / `Ambush:` effects (and villain
+`fightCost`) do not resolve end-to-end in real games today; henchman `Fight:`
+(both copy-indexed) does.
+
+**Rationale.** Re-pinning determinism oracles after an additive state-shape change
+is routine and precedented. Documenting the grammar gap captures a real finding
+surfaced during execution — WP-185 keys hooks to satisfy the gate-consistency and
+unit contracts (villain-by-definition, henchman-by-copy-index), and closing the
+villain end-to-end gap is out of scope and needs a separate ext_id-reconciliation
+WP (it also affects hero-ability execution).
+
+**Packet:** WP-185.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed
+
+---
+
 Protect this file.

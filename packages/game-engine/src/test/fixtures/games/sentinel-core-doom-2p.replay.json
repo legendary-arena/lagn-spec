@@ -1,6 +1,6 @@
 {
   "expected": {
-    "finalStateHash": "8bcf5238ed050736a1263c6d682d5df7cfd1b250b7f1909adedcdf9bd3c53f01",
+    "finalStateHash": "b034b7740774be85452b24a5cfcef35ad34c0835758547e4e40f27e845c2e18b",
     "messages": [
       "Mastermind strike revealed — strike count incremented.",
       "Mastermind strike revealed — strike count incremented."

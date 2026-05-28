@@ -393,6 +393,18 @@ describe('economy integration', () => {
     gameState.piles.wounds = ['wound-01', 'wound-02', 'wound-03', 'wound-04'];
     gameState.playerZones['1'] = { deck: [], hand: [], discard: [], inPlay: [], victory: [] };
     (gameState as Record<string, unknown>).cardKeywords = { 'ambush-villain': ['ambush'] };
+    // why: WP-185 deleted the hardcoded Ambush wound loop (D-18504). Each-player
+    // wounding now arrives via a parsed gainWoundEachPlayer hook dispatched
+    // through executeVillainAbilities at the reveal fire site; the gate
+    // (hasAmbush) and current-player woundsDrawn projection are preserved.
+    (gameState as Record<string, unknown>).villainAbilityHooks = [
+      {
+        cardId: 'ambush-villain',
+        timing: 'onAmbush',
+        keywords: ['gainWoundEachPlayer'],
+        effects: ['gainWoundEachPlayer'],
+      },
+    ];
 
     const mockCtx = makeMockCtx({ numPlayers: 2 });
     const moveContext = {

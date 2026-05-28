@@ -17,6 +17,7 @@ import type { LegendaryGameState } from '../types.js';
 import { awardAttachedBystanders } from '../board/bystanders.logic.js';
 import { getAvailableAttack, spendAttack } from '../economy/economy.logic.js';
 import { isGuardBlocking, getPatrolModifier } from '../board/boardKeywords.logic.js';
+import { executeVillainAbilities } from '../villain/villainEffects.execute.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
@@ -97,6 +98,12 @@ export function fightVillain(
   G.playerZones[ctx.currentPlayer]!.victory = awardResult.playerVictory;
 
   G.turnEconomy = spendAttack(G.turnEconomy, requiredFightCost);
+
+  // why: Fight: effects fire after the bystander award (Step 3b) and before
+  // the message push, so they observe post-award pile state. A Fight:
+  // captureBystander awards the newly attached bystander immediately (the card
+  // is already in the victory pile), avoiding a stranded bystander (WP-185).
+  executeVillainAbilities(G, ctx, cardId, 'onFight');
 
   G.messages.push(
     `Player ${ctx.currentPlayer} fought "${cardId}" at city space ${cityIndex}.`,

@@ -1,0 +1,380 @@
+/**
+ * Setup-parser tests for buildVillainAbilityHooks.
+ *
+ * Covers Ambush/Fight prefix detection (case + whitespace variants),
+ * henchman group-level onFight fan-out, henchman onAmbush deferral (D-18507),
+ * [effect:] marker extraction + validation, keywords/effects parity,
+ * deterministic emission order, and gate-consistency with buildCardKeywords.
+ *
+ * Uses node:test and node:assert only. No boardgame.io imports.
+ */
+
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { buildVillainAbilityHooks } from './villainAbility.setup.js';
+import { buildCardKeywords } from './buildCardKeywords.js';
+import { hasAmbush } from '../board/boardKeywords.logic.js';
+import { VILLAIN_ABILITY_TIMINGS } from '../rules/villainAbility.types.js';
+import type { MatchSetupConfig } from '../matchSetup.types.js';
+import type { CardExtId } from '../state/zones.types.js';
+
+// ---------------------------------------------------------------------------
+// Mock registry builder
+// ---------------------------------------------------------------------------
+
+interface MockVillainCard {
+  slug: string;
+  abilities: string[];
+}
+interface MockVillainGroup {
+  slug: string;
+  cards: MockVillainCard[];
+}
+interface MockHenchmanGroup {
+  slug: string;
+  abilities: string[];
+}
+
+/**
+ * Builds a registry mock exposing getSet (for buildVillainAbilityHooks) and
+ * listSets / listCards / getSet (for buildCardKeywords). Villain flat cards
+ * are derived from the villain groups so buildCardKeywords can match them.
+ */
+function makeRegistry(
+  setAbbr: string,
+  villains: MockVillainGroup[],
+  henchmen: MockHenchmanGroup[],
+) {
+  const setData = {
+    abbr: setAbbr,
+    villains,
+    henchmen,
+    schemes: [],
+    masterminds: [],
+    heroes: [],
+    bystanders: [],
+    wounds: [],
+    other: [],
+  };
+
+  const flatCards: Array<{
+    key: string;
+    cardType: string;
+    slug: string;
+    setAbbr: string;
+    abilities: string[];
+  }> = [];
+  for (const group of villains) {
+    for (const card of group.cards) {
+      flatCards.push({
+        key: `${setAbbr}-villain-${group.slug}-${card.slug}`,
+        cardType: 'villain',
+        slug: card.slug,
+        setAbbr,
+        abilities: card.abilities,
+      });
+    }
+  }
+
+  return {
+    listCards: () => flatCards,
+    listSets: () => [{ abbr: setAbbr }],
+    getSet: (abbr: string) => (abbr === setAbbr ? setData : undefined),
+  };
+}
+
+/**
+ * Builds a minimal MatchSetupConfig selecting the given villain/henchman groups.
+ */
+function makeConfig(
+  villainGroupIds: string[],
+  henchmanGroupIds: string[],
+): MatchSetupConfig {
+  return {
+    schemeId: 'core/midtown-bank-robbery',
+    mastermindId: 'core/dr-doom',
+    villainGroupIds,
+    henchmanGroupIds,
+    heroDeckIds: [],
+    bystandersCount: 5,
+    woundsCount: 5,
+    officersCount: 5,
+    sidekicksCount: 5,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+describe('buildVillainAbilityHooks — timing prefix detection', () => {
+  it('detects Ambush: and Fight: case-insensitively with leading whitespace trimmed', () => {
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'variants',
+          cards: [
+            { slug: 'caps', abilities: ['AMBUSH: foo [effect:captureBystander]'] },
+            { slug: 'spaced', abilities: ['   Fight: bar [effect:koHeroCurrentPlayer]'] },
+            { slug: 'emdash', abilities: ['Ambush — no colon here'] },
+            { slug: 'spacedcolon', abilities: ['Ambush : spaced colon'] },
+            { slug: 'passive', abilities: ['This is passive text with no timing.'] },
+          ],
+        },
+      ],
+      [],
+    );
+    const config = makeConfig(['core/variants'], []);
+    const hooks = buildVillainAbilityHooks(registry, config);
+
+    const byCard = (slug: string) =>
+      hooks.filter((h) => h.cardId === `core-villain-variants-${slug}`);
+
+    assert.equal(byCard('caps').length, 1, 'AMBUSH: matches case-insensitively');
+    assert.equal(byCard('caps')[0]!.timing, 'onAmbush');
+    assert.equal(byCard('spaced').length, 1, 'leading whitespace is trimmed');
+    assert.equal(byCard('spaced')[0]!.timing, 'onFight');
+    assert.equal(byCard('emdash').length, 0, 'em-dash variant is not matched');
+    assert.equal(byCard('spacedcolon').length, 0, 'spaced-colon variant is not matched');
+    assert.equal(byCard('passive').length, 0, 'lines with no timing prefix yield no hook');
+  });
+});
+
+describe('buildVillainAbilityHooks — [effect:] marker extraction', () => {
+  const registry = makeRegistry(
+    'core',
+    [
+      {
+        slug: 'mix',
+        cards: [
+          {
+            slug: 'real',
+            abilities: ['Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]'],
+          },
+          {
+            slug: 'bogus',
+            abilities: [
+              'Fight: do a thing [effect:notARealKeyword] [keyword:Dominates] [icon:attack]',
+            ],
+          },
+          {
+            slug: 'freetext',
+            abilities: ['Fight: Each player gains a Wound.'],
+          },
+        ],
+      },
+    ],
+    [],
+  );
+  const hooks = buildVillainAbilityHooks(registry, makeConfig(['core/mix'], []));
+  const effectsFor = (slug: string) =>
+    hooks.find((h) => h.cardId === `core-villain-mix-${slug}`)!.effects;
+
+  it('extracts a valid [effect:] marker', () => {
+    assert.deepStrictEqual(effectsFor('real'), ['koHeroCurrentPlayer']);
+  });
+
+  it('ignores unknown [effect:] values and never reads [keyword:]/[icon:]', () => {
+    assert.deepStrictEqual(effectsFor('bogus'), []);
+  });
+
+  it('never parses free-text English into effects', () => {
+    assert.deepStrictEqual(effectsFor('freetext'), []);
+  });
+
+  it('still emits a hook (timing preserved) for a matched line with no recognized marker', () => {
+    const freetextHook = hooks.find((h) => h.cardId === 'core-villain-mix-freetext');
+    assert.ok(freetextHook, 'a matched Fight: line yields a hook even with empty effects');
+    assert.equal(freetextHook!.timing, 'onFight');
+  });
+});
+
+describe('buildVillainAbilityHooks — keywords/effects parity', () => {
+  it('keywords and effects are the same array on every hook', () => {
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'skrulls',
+          cards: [
+            {
+              slug: 'super-skrull',
+              abilities: ['Ambush: This captures a Bystander. [effect:captureBystander]'],
+            },
+          ],
+        },
+      ],
+      [{ slug: 'doombot-legion', abilities: ['Fight: Reveal the top card.'] }],
+    );
+    const hooks = buildVillainAbilityHooks(
+      registry,
+      makeConfig(['core/skrulls'], ['core/doombot-legion']),
+    );
+    assert.ok(hooks.length > 0);
+    for (const hook of hooks) {
+      assert.equal(hook.keywords, hook.effects, 'keywords === effects (same array) in v1');
+    }
+  });
+});
+
+describe('buildVillainAbilityHooks — henchman group-level fan-out', () => {
+  const registry = makeRegistry(
+    'core',
+    [],
+    [{ slug: 'doombot-legion', abilities: ['Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]'] }],
+  );
+  const hooks = buildVillainAbilityHooks(registry, makeConfig([], ['core/doombot-legion']));
+
+  it('emits one onFight hook per virtual copy ext_id (00-09)', () => {
+    const henchHooks = hooks.filter((h) => h.cardId.startsWith('henchman-doombot-legion-'));
+    assert.equal(henchHooks.length, 10, '10 henchman copies → 10 hooks');
+    for (let copyIndex = 0; copyIndex < 10; copyIndex++) {
+      const paddedIndex = String(copyIndex).padStart(2, '0');
+      const match = henchHooks.find(
+        (h) => h.cardId === `henchman-doombot-legion-${paddedIndex}`,
+      );
+      assert.ok(match, `hook for henchman-doombot-legion-${paddedIndex} must exist`);
+      assert.equal(match!.timing, 'onFight');
+      assert.deepStrictEqual(match!.effects, ['koHeroCurrentPlayer']);
+    }
+  });
+
+  it('does not alias the effects array across copies (D-13502)', () => {
+    const henchHooks = hooks.filter((h) => h.cardId.startsWith('henchman-doombot-legion-'));
+    assert.notEqual(
+      henchHooks[0]!.effects,
+      henchHooks[1]!.effects,
+      'each copy must own a freshly-constructed effects array',
+    );
+  });
+});
+
+describe('buildVillainAbilityHooks — henchman onAmbush deferral (D-18507)', () => {
+  it('emits no hook for a henchman Ambush: line', () => {
+    // why: spider-infected (ssw2) is a real henchman whose Ambush line carries
+    // [effect:captureBystander], but buildCardKeywords never tags henchmen, so a
+    // henchman onAmbush hook would be unreachable — it must not be emitted.
+    const registry = makeRegistry(
+      'core',
+      [],
+      [
+        {
+          slug: 'spider-infected',
+          abilities: ['Ambush: This captures a Bystander. [effect:captureBystander]'],
+        },
+      ],
+    );
+    const hooks = buildVillainAbilityHooks(
+      registry,
+      makeConfig([], ['core/spider-infected']),
+    );
+    const henchHooks = hooks.filter((h) => h.cardId.startsWith('henchman-spider-infected-'));
+    assert.equal(henchHooks.length, 0, 'henchman Ambush lines yield zero hooks in v1');
+  });
+});
+
+describe('buildVillainAbilityHooks — deterministic emission order', () => {
+  const registry = makeRegistry(
+    'core',
+    [
+      {
+        slug: 'hood',
+        cards: [
+          {
+            slug: 'the-hood',
+            abilities: [
+              'Ambush: Put the top Hero Deck card into the Escape Pile. [effect:heroDeckTopToEscape]',
+              'Fight: Each player gains a Wound.',
+            ],
+          },
+        ],
+      },
+      {
+        slug: 'skrulls',
+        cards: [
+          {
+            slug: 'super-skrull',
+            abilities: ['Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]'],
+          },
+        ],
+      },
+    ],
+    [{ slug: 'doombot-legion', abilities: ['Fight: Reveal the top card.'] }],
+  );
+  const config = makeConfig(['core/hood', 'core/skrulls'], ['core/doombot-legion']);
+
+  it('produces JSON-identical output across two builds', () => {
+    const first = buildVillainAbilityHooks(registry, config);
+    const second = buildVillainAbilityHooks(registry, config);
+    assert.equal(JSON.stringify(first), JSON.stringify(second));
+  });
+
+  it('orders hooks by cardId lexical, then timing, then ability-line index', () => {
+    const hooks = buildVillainAbilityHooks(registry, config);
+    for (let i = 1; i < hooks.length; i++) {
+      const prev = hooks[i - 1]!;
+      const cur = hooks[i]!;
+      if (prev.cardId !== cur.cardId) {
+        assert.ok(prev.cardId < cur.cardId, `cardId order violated at index ${i}`);
+        continue;
+      }
+      const prevRank = VILLAIN_ABILITY_TIMINGS.indexOf(prev.timing);
+      const curRank = VILLAIN_ABILITY_TIMINGS.indexOf(cur.timing);
+      assert.ok(prevRank <= curRank, `timing order violated at index ${i}`);
+    }
+  });
+});
+
+describe('buildVillainAbilityHooks — gate-consistency with buildCardKeywords', () => {
+  it('every onAmbush hook satisfies hasAmbush(cardId, cardKeywords)', () => {
+    // why: standard-cased "Ambush:" villains only — both detectors (the parser's
+    // case-insensitive prefix and buildCardKeywords' case-sensitive
+    // startsWith('Ambush')) agree on real data, so the gate cannot drop a
+    // compiled onAmbush hook (reachability / gate-drift guard).
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'skrulls',
+          cards: [
+            {
+              slug: 'super-skrull',
+              abilities: ['Ambush: This captures a Bystander. [effect:captureBystander]'],
+            },
+            {
+              slug: 'skrull-soldier',
+              abilities: ['Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]'],
+            },
+          ],
+        },
+        {
+          slug: 'hood',
+          cards: [
+            {
+              slug: 'the-hood',
+              abilities: [
+                'Ambush: Put the top Hero Deck card into the Escape Pile. [effect:heroDeckTopToEscape]',
+              ],
+            },
+          ],
+        },
+      ],
+      [{ slug: 'doombot-legion', abilities: ['Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]'] }],
+    );
+    const config = makeConfig(['core/skrulls', 'core/hood'], ['core/doombot-legion']);
+
+    const hooks = buildVillainAbilityHooks(registry, config);
+    const cardKeywords = buildCardKeywords(registry, config);
+
+    const ambushHooks = hooks.filter((h) => h.timing === 'onAmbush');
+    assert.ok(ambushHooks.length >= 2, 'fixture must produce onAmbush hooks to exercise the guard');
+    for (const hook of ambushHooks) {
+      assert.equal(
+        hasAmbush(hook.cardId as CardExtId, cardKeywords),
+        true,
+        `onAmbush hook for ${hook.cardId} must satisfy hasAmbush (gate-consistency)`,
+      );
+    }
+  });
+});

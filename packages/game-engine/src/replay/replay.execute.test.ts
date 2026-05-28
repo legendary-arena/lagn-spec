@@ -77,7 +77,12 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // sibling snapshot (Record<CardExtId, CardTraitEntry>), changing the
 // JSON-encoded state hash. Same cascade pattern as WP-168/WP-172.
 // why: hash updated after adding gameText to MastermindState + SchemeState
-const PRE_WP080_HASH = 'eae128df';
+// why: WP-185 cascade re-baseline — `G.villainAbilityHooks` added as a new
+// sibling field (initialized [] for this empty mock registry, which builds no
+// hooks), changing the JSON-encoded state hash. Purely structural — no behavior
+// change in this empty-registry replay (same cascade pattern as the
+// heroAbilityHooks / cardTraits field additions). Pre-edit: 'eae128df'.
+const PRE_WP080_HASH = '86895342';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

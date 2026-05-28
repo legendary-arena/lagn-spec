@@ -15,6 +15,7 @@ import type { LegendaryGameState } from '../types.js';
 import type { BoardKeyword } from './boardKeywords.types.js';
 import type { CardExtId } from '../state/zones.types.js';
 import type { CityZone } from './city.types.js';
+import type { VillainAbilityHook } from '../rules/villainAbility.types.js';
 
 /**
  * Creates a minimal LegendaryGameState for board keyword integration testing.
@@ -32,6 +33,7 @@ function makeTestGameState(overrides?: {
   woundCount?: number;
   villainDeck?: { deck: CardExtId[]; discard: CardExtId[] };
   villainDeckCardTypes?: Record<string, string>;
+  villainAbilityHooks?: VillainAbilityHook[];
 }): LegendaryGameState {
   const playerCount = overrides?.playerCount ?? 2;
   const woundCount = overrides?.woundCount ?? 10;
@@ -106,6 +108,7 @@ function makeTestGameState(overrides?: {
     hq: [null, null, null, null, null],
     lobby: { requiredPlayers: playerCount, ready: {}, started: false },
     heroAbilityHooks: [],
+    villainAbilityHooks: overrides?.villainAbilityHooks ?? [],
   };
 }
 
@@ -207,13 +210,25 @@ describe('Board keywords integration', () => {
   // -------------------------------------------------------------------------
   // Test 4: Ambush — wound gain on City entry
   // -------------------------------------------------------------------------
-  it('Ambush triggers wound gain on City entry', () => {
+  it('Ambush dispatches a gainWoundEachPlayer hook on City entry', () => {
+    // why: WP-185 deleted the hardcoded Ambush wound loop (D-18504). Wounding
+    // now flows through executeVillainAbilities, gated by hasAmbush, applying
+    // the card's parsed [effect:] hooks. A gainWoundEachPlayer hook reproduces
+    // the each-player wound behavior the hardcode used to provide.
     const ambushCardId = 'v-ambush' as CardExtId;
     const gameState = makeTestGameState({
       currentStage: 'start' as LegendaryGameState['currentStage'],
       villainDeck: { deck: [ambushCardId], discard: [] },
       villainDeckCardTypes: { 'v-ambush': 'villain' },
       cardKeywords: { 'v-ambush': ['ambush'] },
+      villainAbilityHooks: [
+        {
+          cardId: ambushCardId,
+          timing: 'onAmbush',
+          keywords: ['gainWoundEachPlayer'],
+          effects: ['gainWoundEachPlayer'],
+        },
+      ],
       playerCount: 2,
       woundCount: 10,
     });
