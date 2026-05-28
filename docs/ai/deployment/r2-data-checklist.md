@@ -365,10 +365,65 @@ later."
 
 ---
 
+## §A.8 — ⚠️ `rclone sync` hazard: the `metadata/` directory is a union of two local sources
+
+**Never run `rclone sync` from a single local directory into
+`legendary-r2:legendary-images/metadata/`.** `rclone sync` mirrors source
+onto destination and **deletes every destination object that is not in the
+source**. R2's flat `metadata/` directory is populated from **two
+disjoint local directories**, so no single local directory is a complete
+mirror of it:
+
+| R2 object pattern | Local source | Count |
+|---|---|---|
+| `metadata/{abbr}.json` (per-set card data) | `data/cards/*.json` | 40 |
+| `metadata/sets.json`, `metadata/keywords-full.json`, `metadata/rules-full.json`, `metadata/card-abilities.json`, `metadata/card-types.json`, `metadata/scheme-twist-*.json`, `metadata/{hero,villain,henchman,mastermind}-pattern*.json` (config + taxonomy files) | `data/metadata/*.json` | 15+ |
+
+Because the two local trees are disjoint, `rclone sync data/metadata …`
+deletes all 40 per-set card files (they live in `data/cards/`, not
+`data/metadata/`), and `rclone sync data/cards …` would delete all 15+
+config files. Either direction silently destroys half of production.
+
+**Safe patterns:**
+
+| Goal | Command | Why safe |
+|---|---|---|
+| Push new/changed config or taxonomy files | `rclone copy ./data/metadata legendary-r2:legendary-images/metadata` | `copy` is additive — uploads new/changed files, never deletes |
+| Push new/changed per-set card data | `rclone copy ./data/cards legendary-r2:legendary-images/metadata` | same — additive |
+| Push a single file | `rclone copyto ./data/metadata/sets.json legendary-r2:legendary-images/metadata/sets.json` | one object, no directory diff (this is the §A.7 new-set pattern) |
+| Audit drift without mutating | `rclone check legendary-r2:legendary-images/metadata/ ./data/metadata/` | read-only (§A.6) |
+
+`rclone sync` is appropriate **only** for image staging (§A.7 step 3),
+where the local staging directory genuinely mirrors the entire remote
+image subtree. It is never appropriate against the shared `metadata/`
+directory.
+
+**Recovery, if `metadata/` per-set files are wiped:** the source data is
+intact in-repo. Re-run the additive copy:
+
+```pwsh
+rclone copy ./data/cards legendary-r2:legendary-images/metadata --progress
+```
+
+Then re-verify with R2-mode validation (§A.1) or a spot HEAD check:
+`curl -s -o /dev/null -w "%{http_code}" https://images.barefootbetters.com/metadata/core.json` → `200`.
+
+- [ ] No release procedure or ad-hoc upload step invokes `rclone sync`
+      with `legendary-r2:legendary-images/metadata/` as the destination.
+
+> **Incident precedent (2026-05-27):** during the WP-184 pattern-taxonomy
+> R2 upload, `rclone sync data/metadata r2:legendary-images/metadata`
+> deleted all 40 per-set card files (`Deleted: 40 (files)`), taking
+> `cards.legendary-arena.com` offline for card browsing until
+> `rclone copy data/cards …` restored them. The new pattern files
+> uploaded fine; the `sync` verb — not the file set — was the fault.
+
+---
+
 ## Completion criteria
 
 A R2 data verification pass is complete when every checkbox in
-§A.1 through §A.7 is checked **for the specific release candidate
+§A.1 through §A.8 is checked **for the specific release candidate
 being promoted**. Carrying forward checks from a prior release is
 not acceptable — card data and images can change between releases
 even when the engine build has not, and the whole point of this gate
