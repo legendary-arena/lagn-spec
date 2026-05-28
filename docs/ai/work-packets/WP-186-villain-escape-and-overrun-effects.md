@@ -24,7 +24,7 @@ WP-185's setup parser to detect `Escape:` / `Overrun:` prefixes.
 > WP-185's parser. The escape markers themselves are authored by **WP-188**
 > (the Escape/Overrun sibling of WP-187). **WP-186 is BLOCKED until WP-188
 > lands** — without the markers every escape hook carries `effects: []` and
-> the WP ships dead. Verify with `grep -rn "Escape:.*\[effect:" data/cards/`.
+> the WP ships dead. Verify with `grep -rnE "(Escape|Overrun):.*\[effect:" data/cards/`.
 
 > **Scope reality — the curatable escape subset is small.** Escape effects
 > are overwhelmingly *each-player* ("Each player KOs one of their Heroes"),
@@ -52,7 +52,7 @@ WP-185's setup parser to detect `Escape:` / `Overrun:` prefixes.
   that authors `[effect:<VillainEffectKeyword>]` markers on the curatable
   `Escape:` / `Overrun:` ability lines (EC-215). Without it every escape
   hook carries `effects: []` (nothing fires). WP-186 must not execute
-  until `grep -rn "Escape:.*\[effect:" data/cards/` returns matches; if
+  until `grep -rnE "(Escape|Overrun):.*\[effect:" data/cards/` returns matches; if
   not, stop and report `BLOCKED: WP-188`.
 - WP-009A / WP-009B / WP-014A / WP-014B / WP-015 ✅ — escape pipeline
   exists; `villainDeck.reveal.ts` handles the
@@ -86,10 +86,13 @@ WP-185's setup parser to detect `Escape:` / `Overrun:` prefixes.
   — Game Engine layer; no registry runtime import.
 - `docs/ai/REFERENCE/00.6-code-style.md` — full English names; JSDoc;
   explicit `// why:` comments; no `.reduce()` in zone/effect application.
-- `docs/ai/DECISIONS.md` — scan D-18501..D-18506 (the WP-185 lock set,
-  incl. the `[effect:]` marker model + zone-priority KO resolution),
-  D-18701..D-18703 (WP-187 enrichment), D-18801..D-18803 (WP-188 escape
-  enrichment), D-2403 (effect-type gap safe-skip).
+- `docs/ai/DECISIONS.md` — scan D-18501..D-18508 (the WP-185 lock set,
+  incl. the `[effect:]` marker model, zone-priority KO resolution, D-18507
+  reserving `'onEscape'`, and **D-18508 the villain ext_id grammar gap —
+  read this one carefully, it directly governs this WP's fire-site
+  real-game behavior**), D-18701..D-18703 (WP-187 enrichment),
+  D-18801..D-18803 (WP-188 escape enrichment), D-2403 (effect-type gap
+  safe-skip).
 - `.claude/rules/architecture.md` + `.claude/rules/code-style.md` +
   `.claude/skills/legendary-game-engine/SKILL.md`.
 - `packages/game-engine/src/rules/villainAbility.types.ts`
@@ -148,6 +151,22 @@ so WP-188 leaves it unmarked and WP-186 safe-skips it (hook with
 each-player-KO coverage arrives with a future `koHeroEachPlayer`
 vocabulary expansion (a WP-185-side WP).
 
+**Known limitation — villain ext_id grammar gap (D-18508).** A
+pre-existing engine grammar split means villain deck/city/escaped-pile
+card ext_ids are copy-indexed (`...-card-NN`) while `villainAbilityHooks`
+(and `cardStats` / `cardKeywords`) key villains by the definition id
+(`...-card`). At the escape fire site `pushResult.escapedCard` is the
+copy-indexed id, so a real villain's `onEscape` hook lookup misses and the
+effect **does not resolve end-to-end in a real game today** — exactly as
+villain `onFight` / `onAmbush` don't (D-18508). This is NOT a WP-186 bug:
+WP-186 wires the fire site correctly, and the effect fires once the ext_id
+grammars are reconciled (a separate ext_id-reconciliation WP, out of scope
+here). Henchmen are copy-indexed on both sides, so a henchman that escapes
+WOULD fire. The unit/integration tests author hooks keyed to the escaped
+card instance, so they pass and prove the wiring; do **not** diagnose the
+real-game no-op as a regression or attempt to reconcile the grammar
+mid-session.
+
 ---
 
 ## Scope (In)
@@ -167,7 +186,7 @@ vocabulary expansion (a WP-185-side WP).
 - **New fire site** — `villainDeck.reveal.ts` escape branch (inside
   `if (pushResult.escapedCard !== null) { ... }`): after the existing
   bystander-release step, call
-  `executeVillainAbilities(G, { ctx }, pushResult.escapedCard, 'onEscape')`.
+  `executeVillainAbilities(G, ctx, pushResult.escapedCard, 'onEscape')`.
   The generic per-escape current-player wound is **preserved**; the new
   call layers card-specific `Escape:` effects on top.
 - **No new effect keywords; no timing-specific executor branch** — the
@@ -188,10 +207,14 @@ vocabulary expansion (a WP-185-side WP).
   setup-parser tests for `Escape:` + `Overrun:` prefix detection emitting
   `timing: 'onEscape'` (per-card and henchman group-level shapes; with
   and without an `[effect:]` marker); executor `onEscape` dispatch via
-  direct call on a mock G; fire-site integration test that escapes a
-  villain whose escape line carries `[effect:gainWoundEachPlayer]` and
-  asserts every player gains a wound **in addition** to the generic
-  current-player escape wound.
+  direct call on a mock G (including a `captureBystander`-under-`onEscape`
+  case asserting attachment to the escaped card per D-18603); a fire-site
+  integration test that escapes a villain whose escape line carries
+  `[effect:gainWoundEachPlayer]` and asserts every player gains a wound
+  **in addition** to the generic current-player escape wound; and an
+  escape-before-Ambush ordering integration test that pins `onEscape`
+  resolving before the entering card's `onAmbush` via a non-commutative
+  finite-wound-pool fixture (§Files Expected to Change #7b).
 - **STATUS.md entry**, **DECISIONS.md entries** (D-18601..D-18603),
   **WORK_INDEX.md flip to `[x]`**, **EC-213 flip to Done**.
 
@@ -204,6 +227,13 @@ vocabulary expansion (a WP-185-side WP).
   the each-player-KO keyword the dominant escape pattern needs. Adding it
   is a WP-185-side vocabulary-expansion WP with its own `DECISIONS.md`
   entry, NOT WP-186. WP-186 safe-skips unmarked escape lines.
+- **Reconciling the villain ext_id grammar gap (D-18508)** — the
+  copy-indexed deck/city/escaped-pile ids vs definition-keyed
+  `villainAbilityHooks` / `cardStats` / `cardKeywords`. Closing the
+  villain end-to-end firing gap is a separate ext_id-reconciliation WP
+  (it also affects hero-ability and villain `onFight` / `onAmbush`
+  execution). WP-186 wires the `onEscape` fire site; it does not unify
+  the grammars.
 - **Distinct `'onOverrun'` timing label** — v1 lock: `Overrun:` is a
   synonym of `Escape:` (both emit `onEscape`).
 - **Scheme card `Overrun:` semantics** — scheme cards have richer
@@ -245,9 +275,14 @@ vocabulary expansion (a WP-185-side WP).
 3. `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` —
    **modified** — inside the existing
    `if (pushResult.escapedCard !== null) { ... }` block, append one line:
-   `executeVillainAbilities(G, { ctx }, pushResult.escapedCard,
-   'onEscape');` after the bystander-release step. No reordering of the
-   existing branch body.
+   `executeVillainAbilities(G, ctx, pushResult.escapedCard,
+   'onEscape');` after the bystander-release step. The second argument is
+   the local `ctx` (= `context.ctx`, the `{ currentPlayer }` object),
+   matching the WP-185 `onAmbush` call already at this fire site
+   (`executeVillainAbilities(G, ctx, cardId, 'onAmbush')`) — **not** a
+   wrapped `{ ctx }`; the executor reads `ctx.currentPlayer` directly, so
+   wrapping it would resolve `currentPlayer` to `undefined`. No reordering
+   of the existing branch body.
 4. `packages/game-engine/src/rules/villainAbility.types.test.ts` —
    **modified** — drift-detection assertions extended to the three-entry
    timing array.
@@ -259,13 +294,31 @@ vocabulary expansion (a WP-185-side WP).
 6. `packages/game-engine/src/villain/villainEffects.execute.test.ts`
    — **modified** — add `onEscape` dispatch tests covering the MVP effect
    keywords reachable via escape markers (esp. `gainWoundEachPlayer`).
+   Include a `captureBystander`-under-`onEscape` test asserting the
+   bystander attaches to the **escaped card** (`G.attachedBystanders`
+   keyed by the escaped card's ext_id) — locking D-18603. The executor
+   auto-awards a captured bystander only on `onFight`, so under
+   `onEscape` it stays attached (follows the card out of the city).
 7. `packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts`
-   — **modified** — add an integration test: reveal a villain that pushes
-   a prior occupant carrying an `[effect:gainWoundEachPlayer]` escape
-   marker off the escape edge; assert the escaped card's effect fires
-   (all players wounded) AND the generic current-player escape wound +
-   bystander release + counter increment + escape-pile push all still
-   occur in their existing order.
+   — **modified** — add integration tests:
+   (a) reveal a villain that pushes a prior occupant carrying an
+   `[effect:gainWoundEachPlayer]` escape marker off the escape edge;
+   assert the escaped card's effect fires (all players wounded) AND the
+   generic current-player escape wound + bystander release + counter
+   increment + escape-pile push all still occur in their existing order.
+   (b) **Escape-before-Ambush ordering lock** — set up one reveal whose
+   push both escapes a prior occupant carrying an `onEscape` marker AND
+   brings in an entering card carrying an `onAmbush` marker, then prove
+   `onEscape` resolves first. The executor pushes no per-effect
+   `G.messages`, so message order cannot distinguish the two; instead
+   contend a **finite wound pool** with an asymmetric pair — escaped card
+   `[effect:gainWoundCurrentPlayer]`, entering card
+   `[effect:gainWoundEachPlayer]`, with `G.piles.wounds` sized to exhaust
+   partway. Escape-first produces a different per-player wound
+   distribution than ambush-first, so the assertion FAILS if a future
+   refactor moves the Ambush fire site before the escape branch. (Exact
+   pool size / fixture is the executor's choice; the invariant is that the
+   test must distinguish the two orderings.)
 
 ---
 
@@ -303,6 +356,16 @@ vocabulary expansion (a WP-185-side WP).
   `G.escapedPile` → generic current-player wound → bystander release) is
   preserved exactly; the new `executeVillainAbilities(..., 'onEscape')`
   call comes **after** `resolveEscapedBystanders`.
+- **Escape resolves before Ambush (cross-branch ordering lock).** Within
+  a single reveal the escape branch (the `onEscape` fire site) runs
+  **before** the city-entry Ambush block (the `onAmbush` fire site for
+  the newly entering card) — matching the canonical Reveal → Fight →
+  Side-Effect ordering (ARCHITECTURE.md §Canonical Reveal → Fight →
+  Side-Effect Ordering). This holds today by sequential structure
+  (escape branch precedes the `hasAmbush(...)` block in
+  `performVillainReveal`); WP-186 must NOT reorder them, and the
+  integration test (§Files #7b) pins it so a future refactor cannot
+  silently invert it.
 - The generic per-escape current-player wound (WP-015 legacy behavior) is
   **preserved**; card-specific `Escape:` effects layer on top, they do
   not replace it.
@@ -321,7 +384,7 @@ vocabulary expansion (a WP-185-side WP).
 
 - If WP-185 is not landed (no `G.villainAbilityHooks` field, no
   `executeVillainAbilities` export), stop and report `BLOCKED: WP-185`.
-- If WP-188 has not landed (`grep -rn "Escape:.*\[effect:" data/cards/`
+- If WP-188 has not landed (`grep -rnE "(Escape|Overrun):.*\[effect:" data/cards/`
   returns nothing), stop and report `BLOCKED: WP-188` — executing against
   marker-free escape data wires a pipeline that fires on nothing.
 - If a real `Escape:` line falls outside the MVP vocabulary (e.g. the
@@ -362,32 +425,38 @@ NOT from the prefix):
 ## Acceptance Criteria
 
 - [ ] `VillainAbilityTiming` and `VILLAIN_ABILITY_TIMINGS` are exact
-  three-entry siblings — drift-detection test passes.
-- [ ] `VILLAIN_EFFECT_KEYWORDS` count is unchanged at five entries (no new
-  keywords introduced).
-- [ ] `buildVillainAbilityHooks` detects `Escape:` lines and emits hooks
-  with `timing: 'onEscape'`; effects come from the line's `[effect:]`
-  markers (empty when none present).
-- [ ] `buildVillainAbilityHooks` detects `Overrun:` lines and emits hooks
-  with `timing: 'onEscape'` (synonym lock).
+  three-entry siblings (`['onAmbush', 'onFight', 'onEscape']`) — the
+  drift-detection test passes — and `VILLAIN_EFFECT_KEYWORDS` is unchanged
+  at five entries (no new keyword introduced).
+- [ ] `buildVillainAbilityHooks` detects both `Escape:` and `Overrun:`
+  line prefixes and emits hooks with `timing: 'onEscape'` (v1 synonym
+  lock); effects come only from the line's `[effect:]` markers (empty
+  when none present).
 - [ ] When a villain whose escape line carries
   `[effect:gainWoundEachPlayer]` escapes during a reveal, every player's
   discard increments by 1 wound **in addition** to the generic
   current-player escape wound (subject to wound-pile availability).
-- [ ] An `Escape:` line with no `[effect:]` marker (e.g. an each-player-KO
-  line left unmarked by WP-188) produces a hook with `effects: []` and
-  the executor no-ops; the generic escape behavior is unchanged.
-- [ ] The pre-existing escape branch ordering is preserved: counter
+- [ ] An `Escape:` / `Overrun:` line with no `[effect:]` marker (e.g. an
+  each-player-KO line left unmarked by WP-188) produces a hook with
+  `effects: []` and the executor no-ops; the generic escape behavior is
+  unchanged.
+- [ ] **Ordering integrity (integration test), both clauses:** (a) the
+  pre-existing escape branch internal order is preserved — counter
   increment → push to `G.escapedPile` → generic current-player wound →
-  bystander release → **new** card-specific effects. (Integration test.)
+  bystander release → **new** `onEscape` call; AND (b) when the same
+  reveal both pushes a card off the escape edge AND the newly entering
+  card carries an `onAmbush` effect, the escaped card's `onEscape`
+  effects resolve **before** the entering card's `onAmbush` effects —
+  proven by a deterministic non-commutative observable (see the
+  integration-test entry, §Files Expected to Change #7).
 - [ ] `villainDeck.reveal.ts` contains exactly two
   `executeVillainAbilities` calls total — one `onAmbush` (WP-185,
   city-entry branch) and one `onEscape` (WP-186, escape branch).
 - [ ] The executor file `villainEffects.execute.ts` is **not** modified
   (no timing-specific branch added; dispatch is by hook lookup).
-- [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0.
-- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0 with the
-  post-WP-185 baseline +N new tests.
+- [ ] `pnpm --filter @legendary-arena/game-engine build` and
+  `pnpm --filter @legendary-arena/game-engine test` both exit 0
+  (post-WP-185 baseline +N new tests).
 - [ ] No `@legendary-arena/registry` or `boardgame.io` import in any
   modified file (verified by grep).
 - [ ] `pnpm -r build` exits 0.
@@ -397,8 +466,10 @@ NOT from the prefix):
 ## Verification Steps
 
 ```pwsh
-# Confirm WP-188 landed (escape markers exist) — else this WP is BLOCKED
-grep -rn "Escape:.*\[effect:" data/cards/ | head
+# Confirm WP-188 landed (escape/overrun markers exist) — else this WP is BLOCKED.
+# The alternation matches BOTH prefixes so the gate does not falsely report
+# "blocked" if WP-188 only marked Overrun: lines (or only Escape: lines).
+grep -rnE "(Escape|Overrun):.*\[effect:" data/cards/ | head
 # Expected: at least one match (e.g. an [effect:gainWoundEachPlayer] escape line)
 
 # Build & test the engine
@@ -425,9 +496,13 @@ grep -c "executeVillainAbilities" packages/game-engine/src/villainDeck/villainDe
 git diff --stat packages/game-engine/src/villain/villainEffects.execute.ts
 # Expected: no changes
 
-# Effect-keyword vocabulary unchanged (still 5 entries)
-grep -c "VILLAIN_EFFECT_KEYWORDS" packages/game-engine/src/rules/villainAbility.types.ts
-# Expected: 2 (one type declaration + one canonical array)
+# Effect-keyword vocabulary unchanged (still exactly five). The drift-detection
+# test is authoritative for the count; this grep is a robustness sanity check that
+# the canonical array declaration is present and intact — it matches the export
+# line, not a raw substring count (which would be brittle: comments and the union
+# type name shift the count).
+grep -n "VILLAIN_EFFECT_KEYWORDS: readonly VillainEffectKeyword\[\] = \[" packages/game-engine/src/rules/villainAbility.types.ts
+# Expected: 1 match (declaration unchanged)
 
 # Drift-detection test
 pnpm --filter @legendary-arena/game-engine test --grep "VILLAIN_ABILITY_TIMINGS"
@@ -436,12 +511,12 @@ pnpm --filter @legendary-arena/game-engine test --grep "VILLAIN_ABILITY_TIMINGS"
 pnpm -r build
 ```
 
-Expected outputs: the escape-marker grep returns matches (WP-188 landed);
-registry / boardgame.io greps return nothing; the `'onEscape'` grep
+Expected outputs: the escape/overrun-marker grep returns matches (WP-188
+landed); registry / boardgame.io greps return nothing; the `'onEscape'` grep
 returns one or more matches; the prefix greps each return a match; the
 `executeVillainAbilities` grep returns `2`; the executor-file diff is
-empty; the `VILLAIN_EFFECT_KEYWORDS` grep returns `2`; drift-detection
-test passes.
+empty; the `VILLAIN_EFFECT_KEYWORDS` declaration grep returns one match
+(array intact); drift-detection test passes.
 
 ---
 
@@ -450,9 +525,12 @@ test passes.
 - [ ] All Acceptance Criteria items pass.
 - [ ] `docs/ai/STATUS.md` updated with `### WP-186 Executed` block — one
   paragraph summarizing the timing-union extension, the new escape fire
-  site, the `Overrun:`/`Escape:` synonym lock, and the honest note that
-  v1 escape coverage is `gainWoundEachPlayer`-dominated (each-player-KO
-  deferred per D-18802).
+  site, the `Overrun:`/`Escape:` synonym lock, the honest note that v1
+  escape coverage is `gainWoundEachPlayer`-dominated (each-player-KO
+  deferred per D-18802), and the further honest note that villain
+  `onEscape` effects do not fire end-to-end in a real game until the
+  D-18508 ext_id grammar gap is reconciled (the fire site is wired
+  correctly; henchman escapes fire; villain escapes fire once ids unify).
 - [ ] `docs/ai/DECISIONS.md` updated with **D-18601..D-18603** (proposed):
   - D-18601: `'onEscape'` added to `VILLAIN_ABILITY_TIMINGS` (third
     entry); extends the WP-185 lock under D-18501.
@@ -490,8 +568,10 @@ escape branch is already deterministic (no `ctx.random.*` introduced or
 removed). The new `executeVillainAbilities` call reuses WP-185's
 deterministic auto-resolution — `koHeroCurrentPlayer` (if reached) orders
 by zone (discard→hand) then ext_id lexical, **not** by VP (per-card VP is
-not in engine runtime state; D-18503). Same seed + same moves = same
-escape resolution every replay.
+not in engine runtime state; D-18503). The escape-before-Ambush ordering
+within a reveal is fixed by sequential structure and pinned by an
+integration test (§Files #7b), so replay order cannot silently invert.
+Same seed + same moves = same escape resolution every replay.
 
 ---
 
@@ -525,7 +605,7 @@ functions touched.
 | 11 | Identity model N/A | N/A |
 | 12 | Test rules: node:test only | ✅ |
 | 13 | pnpm commands only; expected output shown | ✅ |
-| 14 | Acceptance ≤ 13 binary items; specific filenames + counts | ✅ |
+| 14 | Acceptance 6–12 binary items (consolidated to 10); specific filenames + counts | ✅ |
 | 15 | Definition of Done includes STATUS / DECISIONS / WORK_INDEX / scope-bound | ✅ |
 | 16 | Code style: full English names, JSDoc, no .reduce | ✅ |
 | 17 | Vision Alignment present; clauses cited; determinism line included (zone-priority KO, not VP) | ✅ |
