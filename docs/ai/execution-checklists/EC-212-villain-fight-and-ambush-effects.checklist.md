@@ -4,6 +4,7 @@
 **Layer:** Game Engine (`packages/game-engine/src/`)
 
 ## Before Starting
+- [ ] **WP-187 complete ⛔ HARD BLOCKER** — card-data `[effect:]` enrichment. Verify with `grep -rn "\[effect:" data/cards/`; if it returns nothing, **STOP and report `BLOCKED: WP-187`**. Executing against unenriched data produces `effects: []` for every hook and deletes the only Ambush effect that fires today (net regression).
 - [ ] WP-009A + WP-009B complete ✅ (rule hook contracts + pipeline)
 - [ ] WP-014A + WP-014B complete ✅ (villain reveal pipeline + classification)
 - [ ] WP-016 + WP-017 complete ✅ (`fightVillain` move; `koCard` / `gainWound` / bystander helpers)
@@ -24,10 +25,15 @@
 - `VILLAIN_EFFECT_KEYWORDS` canonical order = `['gainWoundEachPlayer', 'gainWoundCurrentPlayer', 'koHeroCurrentPlayer', 'heroDeckTopToEscape', 'captureBystander']`
 - `VillainAbilityHook` interface: `{ cardId: CardExtId; timing: VillainAbilityTiming; keywords: VillainEffectKeyword[]; effects: VillainEffectKeyword[]; }`
 - `G.villainAbilityHooks: Readonly<VillainAbilityHook[]>` — new field on `LegendaryGameState`
-- `koHeroCurrentPlayer` auto-resolution order: lowest-VP hero in discard, then lowest-VP hero in hand, ties broken by ext_id lexically; silent no-op if neither
+- **Effect marker token = `[effect:<VillainEffectKeyword>]`** — the only source of executable effects. Validate `<value>` against `VILLAIN_EFFECT_KEYWORDS`; ignore unknown values. Do **not** read `[keyword:]` / `[icon:]` (card-mechanic names + resource icons) and do **not** parse free-text. Markers authored by WP-187.
+- **Timing detection from text prefix:** case-insensitive, leading whitespace trimmed; only exact `Ambush:` / `Fight:` prefixes match (v1). One hook per matched ability line.
+- **Emission order (stable total order):** (1) `cardId` lexical asc, (2) `timing` per `VILLAIN_ABILITY_TIMINGS`, (3) ability-line index in `abilities[]`.
+- **`keywords` === `effects`** in v1 (identical arrays; both kept for `HeroAbilityHook` parity).
+- `koHeroCurrentPlayer` auto-resolution order: **zone priority (discard before hand), then `ext_id` lexical ascending**; silent no-op if neither zone has a hero. **NOT VP-based** — per-card hero VP is not in engine runtime state (`G.cardStats` has `attack`/`recruit`/`cost`/`fightCost` only); no registry read at runtime.
 - Henchman ability text source: **group-level** `group.abilities[]` — fans out to every card-instance ext_id within the group
 - Ambush dispatch is gated by `hasAmbush(cardId, G.cardKeywords ?? {})` — keep the fast pre-check
 - Fight: fire site order: **after** bystander award, **before** message push, in `fightVillain.ts`
+- Fight: `captureBystander` **awards the captured bystander immediately** (post-award fire site would otherwise strand it)
 - Hardcoded `gainWound` Ambush placeholder at `villainDeck.reveal.ts:203-228` is **deleted**, not gated
 
 ## Guardrails
@@ -38,6 +44,12 @@
 - Out-of-vocabulary effects safely no-op — no `console.warn`, no throw, no message push
 - Per-copy hook objects are freshly constructed (no shared references across card-instance ext_ids per D-13502)
 - Setup parser must handle henchman group-level ability text — read `group.abilities[]`, emit one hook per card-instance ext_id in the group
+- Structured effect tokens MUST be parsed only from `[effect:<VillainEffectKeyword>]` markup; `[keyword:]` / `[icon:]` namespaces and free-text MUST NOT produce executable effects
+- In v1, `keywords` and `effects` MUST be identical arrays (schema parity with hero hooks)
+- Setup parser MUST emit hooks in deterministic order: (1) cardId lexical, (2) timing order, (3) ability index
+- Ability prefix detection MUST be case-insensitive with leading whitespace trimmed; only exact `Ambush:` / `Fight:` match
+- VP for KO resolution MUST NOT be read — order by zone (discard→hand) then ext_id lexical; no registry lookup
+- `captureBystander` during `onFight` MUST immediately award the captured bystander to the current player after attachment
 - `G.villainAbilityHooks` is JSON-serializable — no functions, no Maps, no Sets, no class instances
 - Drift-detection tests are mandatory for both canonical arrays; bidirectional union ↔ array assertion
 
@@ -45,22 +57,23 @@
 - `VILLAIN_ABILITY_TIMINGS` declaration: why drift-detection array exists (must match union exactly; adding `'onEscape'` requires WP-186)
 - `VILLAIN_EFFECT_KEYWORDS` declaration: why this five-keyword vocabulary is the MVP lock (WP-185 §Non-Negotiable Constraints; expansion = future WP)
 - `villainAbility.setup.ts` henchman group-level fan-out loop: why one ability text becomes N hooks (group-level shape in registry data; each card-instance ext_id needs its own hook entry per D-13502)
-- `villainEffects.execute.ts` `koHeroCurrentPlayer` auto-resolution helper: why deterministic VP-ascending sort over discard then hand (replay determinism — interactive choice deferred per WP-185 §Out of Scope)
+- `villainEffects.execute.ts` `koHeroCurrentPlayer` auto-resolution helper: why deterministic zone-priority (discard→hand) + `ext_id` lexical order, and why **not** VP-based (per-card VP not in engine runtime state; interactive choice deferred per WP-185 §Out of Scope)
+- `villainEffects.execute.ts` `captureBystander` onFight branch: why the captured bystander is awarded immediately (post-award fire site would strand it on a victory-pile card)
 - `villainEffects.execute.ts` out-of-vocabulary switch default: why silent no-op rather than warn or throw (move contract — moves never throw; matches WP-022 hero-effects precedent for unsupported keywords)
-- `fightVillain.ts` insertion point: why after bystander award and before message push (so a Fight `captureBystander` observes post-award pile state)
+- `fightVillain.ts` insertion point: why after bystander award and before message push (effects observe post-award pile state; Fight `captureBystander` then awards immediately to avoid stranding)
 - `villainDeck.reveal.ts` Ambush replacement: why the hardcoded `gainWound` loop is deleted (per D-18504; D-2403 safe-skip note superseded for Ambush case)
 
 ## Files to Produce
 - `packages/game-engine/src/rules/villainAbility.types.ts` — **new** — timing + effect keyword unions, canonical arrays, `VillainAbilityHook` interface, `getVillainHooksForCard` pure filter
-- `packages/game-engine/src/setup/villainAbility.setup.ts` — **new** — structural `VillainAbilityRegistryReader`; `buildVillainAbilityHooks(registry, matchConfig)` produces hook table; handles villain per-card AND henchman group-level shapes
+- `packages/game-engine/src/setup/villainAbility.setup.ts` — **new** — structural `VillainAbilityRegistryReader`; `buildVillainAbilityHooks(registry, matchConfig)` produces hook table; timing from `Ambush:` / `Fight:` prefix, effects from `[effect:]` markers validated against `VILLAIN_EFFECT_KEYWORDS`; handles villain per-card AND henchman group-level shapes; deterministic emission order
 - `packages/game-engine/src/villain/villainEffects.execute.ts` — **new** — `executeVillainAbilities(G, ctx, cardId, timing)`; per-keyword switch; safe-skip default
 - `packages/game-engine/src/types.ts` — **modified** — add `villainAbilityHooks: Readonly<VillainAbilityHook[]>` to `LegendaryGameState`; re-export new types
 - `packages/game-engine/src/setup/buildInitialGameState.ts` — **modified** — one new line: `G.villainAbilityHooks = buildVillainAbilityHooks(registry, matchConfig);` in the composition block
 - `packages/game-engine/src/moves/fightVillain.ts` — **modified** — add `executeVillainAbilities(G, ctx, cardId, 'onFight')` after Step 3b, before message push
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — **modified** — replace lines 203-228 (hardcoded ambush wound loop) with a single `executeVillainAbilities(G, { ctx }, cardId, 'onAmbush')` call gated by `hasAmbush(...)`
 - `packages/game-engine/src/rules/villainAbility.types.test.ts` — **new** — drift-detection (TIMINGS + EFFECT_KEYWORDS); `getVillainHooksForCard` query tests
-- `packages/game-engine/src/setup/villainAbility.setup.test.ts` — **new** — Ambush + Fight detection; henchman group-level fan-out; structured markup extraction; free-text → empty effects; deterministic emission order
-- `packages/game-engine/src/villain/villainEffects.execute.test.ts` — **new** — per-effect-keyword behavior; fire-site integration via direct calls; safe-skip on empty piles; deterministic replay
+- `packages/game-engine/src/setup/villainAbility.setup.test.ts` — **new** — Ambush + Fight prefix detection (case/whitespace); henchman group-level fan-out; `[effect:]` marker extraction + validation; `[keyword:]`/`[icon:]`/free-text → empty effects; `keywords === effects` parity; gate-consistency (`onAmbush` hook ⇒ `hasAmbush` true); deterministic emission order
+- `packages/game-engine/src/villain/villainEffects.execute.test.ts` — **new** — per-effect-keyword behavior; `captureBystander` onFight immediate-award (no stranded bystander); `koHeroCurrentPlayer` zone+ext_id ordering; fire-site integration via direct calls; safe-skip on empty piles and `effects: []` hooks; deterministic replay
 
 ## After Completing
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
@@ -70,6 +83,9 @@
 - [ ] Grep: zero `boardgame.io` matches in `villainAbility.types.ts` and `villainEffects.execute.ts`
 - [ ] Grep: zero `"gained a wound from Ambush"` matches anywhere in `packages/game-engine/src/villainDeck/`
 - [ ] Grep: exactly one `executeVillainAbilities` match in `fightVillain.ts`; exactly one in `villainDeck.reveal.ts`
+- [ ] Test asserts a card producing an `onAmbush` hook also satisfies `hasAmbush(...)` (gate-drift reachability guard)
+- [ ] Test asserts Fight `[effect:captureBystander]` awards the bystander (no stranded attachment on the victory-pile card)
+- [ ] Test asserts a line with `[keyword:]` / `[icon:]` / free-text but no `[effect:]` marker yields `effects: []`
 - [ ] `docs/ai/STATUS.md` updated with `### WP-185 Executed` block
 - [ ] `docs/ai/DECISIONS.md` updated with D-18501..D-18504
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` row for WP-185 flipped to `[x]` with completion date
@@ -86,3 +102,7 @@
 - Setup parser reads `@legendary-arena/registry` instead of using local structural `VillainAbilityRegistryReader` → layer-boundary FAIL
 - Adding a sixth effect keyword to satisfy a single card → vocabulary-lock violation; safe-skip is the correct response
 - Aliasing the same `VillainAbilityHook` object across multiple card-instance ext_ids in a henchman group → D-13502 violation; each ext_id gets a freshly-constructed object literal
+- Parser generates effects from free-text or from `[keyword:]` / `[icon:]` tokens rather than `[effect:]` markers → non-deterministic / wrong-namespace behavior; only `[effect:]` is executable
+- Parser emits an `onAmbush` hook but `hasAmbush(...)` is false → silent execution drop (gate mismatch); the gate-consistency test must catch this
+- `captureBystander` onFight attaches a bystander without awarding it → stranded bystander BUG on a victory-pile card
+- `koHeroCurrentPlayer` reaching for VP (registry read, or assuming `G.cardStats.vp`) → layer/scope violation; VP is not in engine runtime state, order by zone + ext_id instead
