@@ -116,24 +116,46 @@ script WP required.
     (henchman ability text is group-level per WP-185 — the marker
     applies to the group's `abilities[]` line.)
   - Each list contains only the five locked keyword strings. A
-    `_unassigned` / `_notes` block at the top documents lines that were
-    candidates but deliberately left unmarked (magnitude>1, conditional,
-    multi-target), mirroring WP-184's `_unassigned` convention.
+    `_unassigned` block at the top is a **structured array** (not free
+    prose) documenting candidate lines deliberately left unmarked, so it
+    is diffable and can feed a future WP-185 vocabulary expansion. Each
+    row: `{ set, group, card?, timing, text, reason }` where `reason` ∈
+    `{ "magnitude>1", "conditional", "multi-target", "multi-line",
+    "other" }` (`card` omitted for henchman group-level entries). Mirrors
+    and tightens WP-184's `_unassigned` convention.
 - **Overlay script** — `scripts/convert-cards/apply-effect-markers.mjs`:
   - **Apply mode (default):** reads the marker map, locates the matching
-    `Ambush:` / `Fight:` ability line in each target card (villain
-    per-card) or group (henchman group-level), and appends
-    ` [effect:<keyword>]` token(s) to that line. Writes set files back
-    with the same `JSON.stringify(..., null, 2)` formatting as
+    ability line by the deterministic predicate below, and appends
+    ` [effect:<keyword>]` token(s) to that line. Iterates sets → groups →
+    cards in lexicographic order (deterministic processing). Writes set
+    files back with the same `JSON.stringify(..., null, 2)` formatting as
     `apply-card-counts.mjs`.
-  - **Idempotent:** a marker already present on the line is not appended
-    again (re-running produces no diff).
+  - **Match predicate (consistent with WP-185):** a target line is one
+    whose leading-whitespace-trimmed form begins with `<Timing>:`
+    (case-insensitive; `<Timing>` ∈ `Ambush` / `Fight` for v1). The
+    predicate runs on an ephemeral trimmed copy; the stored string is
+    never altered except by the marker append. This is the **same**
+    timing detection WP-185's parser uses — producer and consumer must
+    agree on what counts as a timing line.
+  - **Append ordering (canonical):** markers go at the **end** of the
+    matched line — original text, then any existing trailing markup
+    (e.g. `[rule:Adapt]`, order preserved), then `[effect:]` token(s).
+    When a line gets multiple effect markers, they are appended in
+    `VILLAIN_EFFECT_KEYWORDS` canonical order (not map-authoring order).
+  - **Idempotent, per-keyword:** each distinct `[effect:X]` appears at
+    most once per line; presence is checked per-keyword before append, so
+    re-running produces a zero-line diff.
   - **Loud-fail** on: a keyword outside the five locked strings; a
-    named set/group/card that does not exist; a timing key with zero or
-    more-than-one matching ability line (ambiguous placement).
-  - **`--propose` mode (dry-run):** scans all `Ambush:` / `Fight:` lines,
-    phrase-matches candidate keywords, prints a review table to stdout.
-    Writes nothing. Read-only bootstrap for the human curation.
+    named set/group/card that does not exist; a timing key matching
+    **zero or more-than-one** ability line. (Two cards — one in `bkwd`,
+    one in `rvlt` — carry two `Fight:` lines apiece; the map shape cannot
+    disambiguate which, so they loud-fail and are recorded as
+    `multi-line` in `_unassigned` — v1 defers them.)
+  - **`--propose` mode (dry-run):** scans all `Ambush:` / `Fight:`
+    lines, phrase-matches candidate keywords, and prints one row per
+    candidate — `set | group | card | timing | text | proposedKeywords`,
+    sorted lexicographically for diffable review. Writes nothing.
+    Read-only bootstrap; never authoritative.
 - **Regenerated data** — the `data/cards/*.json` set files that contain
   curated cards are rewritten with the injected `[effect:]` markers.
   Diff is bounded to the curated ability lines.
@@ -214,13 +236,29 @@ loud-fail + idempotency + the verification greps below, not a `.test.ts`.
   validates every emitted marker against its local copy of that set and
   **loud-fails** on any other value. A `// why:` on that local array
   states it MUST equal WP-185's `VILLAIN_EFFECT_KEYWORDS`.
-- The overlay is **idempotent**: re-running over already-marked data
-  produces a zero-line diff.
+- The overlay is **idempotent per-keyword**: each `[effect:X]` appears
+  at most once per line; a re-run over already-marked data produces a
+  zero-line diff.
 - The overlay **loud-fails** (never silently skips) on: unknown keyword,
   missing set/group/card, zero-or-multiple matching timing lines.
-- Markers are **appended** to the matched line (after existing trailing
-  markup like `[rule:Adapt]`), never inserted mid-text, never used to
-  rewrite the human-readable effect text.
+- **Match predicate = WP-185's timing detection.** A target line is
+  located by `line.trimStart()` beginning with `<Timing>:`
+  (case-insensitive). The predicate is ephemeral; the stored string is
+  altered only by the marker append. Producer (this script) and consumer
+  (WP-185 parser) MUST use the same predicate or markers drift onto
+  lines the engine reads differently.
+- **Append-only, canonical order.** Markers are appended at the end of
+  the line — original text, then existing markup (order preserved), then
+  `[effect:]` token(s) in `VILLAIN_EFFECT_KEYWORDS` order. The overlay
+  MUST NOT insert mid-text, split/reflow the line, edit punctuation,
+  reorder words, or rewrite the human-readable effect text.
+- **Deterministic iteration:** process sets → groups → cards in
+  lexicographic order.
+- The local five-keyword array is the validation gate; it is a hardcoded
+  copy with **no import/auto-sync** from engine TS (a `.mjs` script
+  cannot and must not reach into `packages/`). If WP-185 ever changes the
+  vocabulary, this script fails on the new value until manually updated —
+  drift is intentional, not silent.
 - v1 curation marks only unconditional, magnitude-1, single-target
   lines (see Scope discipline). Conservatism over coverage.
 - WP-187 adds **no** engine/registry/server code and modifies **no**
@@ -258,8 +296,15 @@ captureBystander
 - [ ] `apply-effect-markers.mjs` loud-fails (non-zero exit, descriptive
   message) on: an unknown keyword in the map; a set/group/card not
   found; a timing key matching zero or >1 ability lines.
-- [ ] `--propose` mode writes nothing and prints a candidate review
-  table.
+- [ ] `--propose` mode writes nothing and prints one row per candidate
+  in the `set | group | card | timing | text | proposedKeywords` format,
+  sorted lexicographically.
+- [ ] Where a line already carries trailing markup (e.g. `[rule:Adapt]`),
+  the `[effect:]` token(s) appear **after** it; multiple effect markers on
+  one line are in `VILLAIN_EFFECT_KEYWORDS` order.
+- [ ] `_unassigned` is a structured array; the two cards (`bkwd`, `rvlt`)
+  with two `Fight:` lines appear there with `reason: "multi-line"` (v1
+  defers multi-line same-timing cards).
 - [ ] `grep -rn "\[effect:" data/cards/` returns matches **only** for
   the five locked keywords (no typo'd/unknown values).
 - [ ] Every marked line still begins with its original `Ambush:` /

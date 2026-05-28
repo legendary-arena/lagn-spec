@@ -12,17 +12,18 @@
 
 ## Locked Values (do not re-derive)
 - Marker token = `[effect:<VillainEffectKeyword>]`; value ∈ exactly five strings: `gainWoundEachPlayer | gainWoundCurrentPlayer | koHeroCurrentPlayer | heroDeckTopToEscape | captureBystander`
-- Marker is **appended** to the matched `Ambush:` / `Fight:` ability line (after any existing trailing markup), never inserted mid-text, never substituted for the human-readable text
-- Input map sections: `villains: {setAbbr:{groupSlug:{cardSlug:{ambush?,fight?}}}}` + `henchmen: {setAbbr:{groupSlug:{ambush?,fight?}}}` (henchman text is group-level)
-- v1 curation marks ONLY: unconditional + magnitude-1 + single-target lines matching WP-185 semantics
+- Match predicate (= WP-185's detection): `line.trimStart()` begins with `<Timing>:` (case-insensitive); ephemeral, never alters the stored string except by the append
+- Append order: original text → existing markup (order preserved) → `[effect:]` token(s) in `VILLAIN_EFFECT_KEYWORDS` order, at end of line. Append-only: no insert/reflow/punctuation-edit/reorder/rewrite
+- Input map: `villains:{setAbbr:{groupSlug:{cardSlug:{ambush?,fight?}}}}` + `henchmen:{setAbbr:{groupSlug:{ambush?,fight?}}}` (henchman group-level); `_unassigned` is a structured array `{set,group,card?,timing,text,reason}`
+- v1 curation marks ONLY unconditional + magnitude-1 + single-target lines (WP-185 semantics). Multi-line same-timing cards (2 known `Fight:`) cannot be disambiguated → loud-fail → `_unassigned` reason `multi-line`
 - v1 timings = `Ambush:` + `Fight:` only; script handles `Escape:`/`Overrun:` generically but those are uncurated (WP-186 follow-on)
-- Output formatting = `JSON.stringify(..., null, 2)` (match apply-card-counts.mjs for clean diffs)
+- Iterate sets → groups → cards lexicographically; output formatting = `JSON.stringify(..., null, 2)` (match apply-card-counts.mjs for clean diffs)
 
 ## Guardrails
-- Overlay MUST be idempotent — second run produces a zero-line `git diff data/cards/`
+- Overlay MUST be idempotent per-keyword (each `[effect:X]` at most once per line) — second run produces a zero-line `git diff data/cards/`
 - Overlay MUST loud-fail (non-zero exit, descriptive message) on: unknown keyword; missing set/group/card; zero or >1 matching ability line for a timing key
-- Overlay MUST validate every emitted keyword against a LOCAL copy of the five strings — never emit an unvalidated value
-- `--propose` mode is read-only — writes nothing, prints a candidate review table only
+- Overlay MUST validate every emitted keyword against a LOCAL hardcoded copy of the five strings (no import/auto-sync from engine TS) — never emit an unvalidated value
+- `--propose` mode is read-only — writes nothing; prints one row per candidate `set | group | card | timing | text | proposedKeywords`, sorted lexicographically
 - Conservatism over coverage: ambiguous candidate → leave unmarked, record in the map `_unassigned` block
 - Add NO engine/registry/server code; modify NO existing converter script (`convert-cards-v15.mjs`, `apply-card-counts.mjs`)
 - No randomness/clocks/network — deterministic pure-IO transform over local files
@@ -59,4 +60,7 @@
 - Silent skip on a missing card/keyword instead of loud-fail → an effect the engine can never fire
 - Emitting a keyword outside the five (typo, plural) → validate against the local locked array
 - Modifying `apply-card-counts.mjs` / `convert-cards-v15.mjs` → out of scope; add a sibling script
+- Inserting a marker mid-text or before existing `[rule:]`/`[keyword:]` markup → breaks canonical append order + idempotency; effects append at end-of-line only
+- Curating one of the two multi-`Fight:` cards instead of deferring it → ambiguous placement; loud-fail and record as `multi-line` in `_unassigned`
+- Match predicate diverging from WP-185 (e.g. case-sensitive) → marker can land on a line the engine reads differently; keep predicates identical
 - Curating `Escape:`/`Overrun:` lines → WP-186 follow-on, not this WP
