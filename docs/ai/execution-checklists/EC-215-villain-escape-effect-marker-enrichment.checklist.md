@@ -17,15 +17,17 @@
 - Match predicate UNCHANGED: `line.trimStart().toLowerCase().startsWith(\`${timing}:\`)`. Do NOT alter `isTimingLine`.
 - Marker token format UNCHANGED: `[effect:<keyword>]`, appended at END of line (original text → existing markup → effect tokens in `VILLAIN_EFFECT_KEYWORDS` order). Per-keyword idempotent.
 - v1 curation discipline IDENTICAL to WP-187: mark only unconditional, magnitude-1, single-target lines reducing to exactly one MVP keyword. No `may` / `If …` / `… or …` / "(After the normal Escape KO)" compound.
-- **Each-player-KO escape lines are NOT curatable in v1** — "Each player KOs one of their Heroes" ≠ `koHeroCurrentPlayer` (current-player ≠ each-player). These go to `_unassigned` with `reason: "no-vocabulary-keyword"`. Do NOT force them onto `koHeroCurrentPlayer`.
-- Curatable escape subset is dominated by `gainWoundEachPlayer` (unconditional "Escape: Each player gains a Wound." lines) — this keyword has ZERO data under WP-187; WP-188 is its first source.
+- **Each-player-KO escape lines are NOT curatable in v1** — "Each player KOs one of their Heroes" ≠ `koHeroCurrentPlayer` (current-player ≠ each-player). These go to `_unassigned` with the **first-class** `reason: "no-vocabulary-keyword"` (NOT folded under `other`). Do NOT force them onto `koHeroCurrentPlayer`. **This tagging is a cross-WP contract:** WP-190 (drafted, commit `1ac0762`) reads exactly these rows to promote the unconditional subset to `[effect:koHeroEachPlayer]` after WP-189 adds the keyword.
+- **`_unassigned` `reason` closed set:** `magnitude>1` | `multi-target` | `other` | `conditional` | `multi-line` (the WP-187 set) **+** `no-vocabulary-keyword` (new in WP-188, first-class). The script does NOT read/validate `reason` — it is a human-review field, so adding the new value is safe.
+- **Curatable `gainWoundEachPlayer` shapes only:** `Escape: Each player gains a Wound.` plus punctuation-/markup-only variants. DEFER anything with `If`/`When`/`Unless`/`For each`, `… or …`, magnitude>1, compound "(After the normal Escape KO) …", or "each other player". This keyword has ZERO data under WP-187; WP-188 is its first source.
+- **`overrun` may curate to ZERO entries** — widening the gate enables `--propose`/`_unassigned` for overrun; no overrun marker is required to land. An empty overrun set is a valid v1 outcome, not a gap. Scheme overrun is out of scope.
 - Multi-`Escape:`-line cards (if any) loud-fail and go to `_unassigned` reason `multi-line` (same as WP-187's multi-`Fight:` cards).
 
 ## Guardrails
 - Touch ONLY `apply-effect-markers.mjs` (the WP-187 sibling) and `villain-effect-markers.json` — no other converter, no engine/registry/server code
 - Do NOT change `apply-card-counts.mjs` or `convert-cards-v15.mjs`
 - Do NOT re-mark existing `ambush` / `fight` lines — idempotency guarantees a re-run leaves them untouched; the WP-187 76-marker baseline must be preserved
-- Do NOT add a sixth keyword — the each-player-KO gap is deferred, not filled
+- Do NOT add a sixth keyword — the each-player-KO gap is deferred to WP-189 (engine keyword) + WP-190 (curation), not filled here
 - Do NOT alter `isTimingLine` or the append logic — widening `SUPPORTED_TIMINGS` is sufficient because the matching code is already generic
 - Overlay stays loud-fail (unknown keyword / missing entity / zero-or-multiple timing match) and idempotent per-keyword
 - `_unassigned` stays a structured array (`{ set, group, card?, timing, text, reason }`), diffable, not free prose
@@ -33,7 +35,7 @@
 
 ## Required `// why:` Comments
 - `SUPPORTED_TIMINGS` declaration: update the existing `// why:` comment — it currently states Escape/Overrun is a "WP-186 follow-on"; rewrite to record that WP-188 IS that follow-on, all four timings are now curatable, and `escape`/`overrun` are distinct prefix-matched map keys that WP-186 collapses to `onEscape` in the engine
-- Any new `_unassigned` rows with `reason: "no-vocabulary-keyword"`: the map's `_notes` (or a header comment) explains this names the each-player-KO cluster deferred to a future `koHeroEachPlayer` vocabulary expansion (cross-ref D-18802)
+- Any new `_unassigned` rows with `reason: "no-vocabulary-keyword"`: the map's `_notes` (or a header comment) explains this names the each-player-KO cluster deferred to WP-189 (`koHeroEachPlayer` keyword) + WP-190 (curation), cross-ref D-18802; WP-190 reads these exact rows
 
 ## Files to Produce
 - `scripts/convert-cards/apply-effect-markers.mjs` — **modified** — widen `SUPPORTED_TIMINGS` to four entries; update its `// why:`; widen the module-header docstring + JSDoc on `isTimingLine` / `findSingleTimingLineIndex` / `collectTimingEdits` to name all four timings (prose only — no logic change)
@@ -50,13 +52,13 @@
 - [ ] At least one `Escape: Each player gains a Wound.` line carries `[effect:gainWoundEachPlayer]`
 - [ ] `grep -rc "\[effect:" data/cards/` ≥ 76 (WP-187 markers preserved, escape markers added on top)
 - [ ] `node scripts/convert-cards/apply-effect-markers.mjs --propose | grep -E "escape|overrun"` now returns rows
-- [ ] No each-player-KO line marked `koHeroCurrentPlayer`; cluster in `_unassigned` reason `no-vocabulary-keyword`
+- [ ] No each-player-KO line mis-mapped: `grep -RhoE '"(Escape|Ambush|Fight): Each player KOs[^"]*\[effect:koHeroCurrentPlayer\]"' data/cards/` returns ZERO lines; cluster sits in `_unassigned` reason `no-vocabulary-keyword`
 - [ ] `pnpm -r build` exits 0
 - [ ] `docs/ai/STATUS.md` updated; `docs/ai/DECISIONS.md` D-18801..D-18803; `WORK_INDEX.md` WP-188 `[x]` + WP-186 Hard-deps; `EC_INDEX.md` EC-215 Done
 
 ## Common Failure Smells
 - Forcing "Each player KOs one of their Heroes" onto `koHeroCurrentPlayer` → semantics FAIL (current-player ≠ each-player); it belongs in `_unassigned`
-- Adding a sixth keyword (`koHeroEachPlayer`) to satisfy the escape cluster → vocabulary-lock violation; that is a separate WP-185-side WP
+- Adding a sixth keyword (`koHeroEachPlayer`) to satisfy the escape cluster → out of scope for WP-188; the keyword is WP-189's job and the curation is WP-190's (both drafted, commit `1ac0762`). WP-188 leaves the cluster in `_unassigned`
 - Editing `isTimingLine` or the append logic → unnecessary; the matching code is already generic, only the gate needs widening
 - Re-running reformats unrelated set sections → the anchored surgical replacement must touch only the matched line; a full `JSON.stringify` rewrite is the WP-187 anti-pattern already avoided
 - Second apply run shows a diff → idempotency broken (per-keyword presence guard must hold for the new timings too)

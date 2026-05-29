@@ -20,8 +20,14 @@ and becomes engine-readable by WP-186.
 > *each-player* effects ("Each player KOs one of their Heroes" — 9 lines),
 > but the WP-185 MVP vocabulary is *current-player*-biased and has no
 > each-player KO keyword. So the dominant escape KO pattern is **not**
-> curatable in v1 and goes to `_unassigned` pending a future
-> `koHeroEachPlayer` vocabulary expansion. The genuinely curatable escape
+> curatable in v1 and goes to `_unassigned` with
+> `reason: "no-vocabulary-keyword"` (D-18802). That deferral is now picked
+> up downstream by **WP-189** (adds the `koHeroEachPlayer` engine keyword +
+> executor) and **WP-190** (curates these exact `_unassigned` rows with
+> `[effect:koHeroEachPlayer]`) — both drafted (commit `1ac0762`). WP-190
+> hard-deps WP-188 and reads the rows WP-188 tags here, so the
+> `no-vocabulary-keyword` tagging is a cross-WP contract, not internal
+> bookkeeping. The genuinely curatable escape
 > subset is dominated by **`gainWoundEachPlayer`** (~17 "each player gains
 > a Wound" escape lines, of which the unconditional/non-compound ones
 > qualify) — which is notable because that keyword has **zero** data under
@@ -51,6 +57,13 @@ and becomes engine-readable by WP-186.
   parser reads the markers WP-188 authors; WP-188 does not consume any
   WP-186 code. WP-188 is upstream of WP-186, exactly as WP-187 is
   upstream of WP-185.
+- **WP-190 (downstream consumer of this WP's `_unassigned` — NOT a
+  dependency).** WP-190 hard-deps WP-188 and reads the each-player-KO rows
+  WP-188 tags `reason: "no-vocabulary-keyword"`, promoting the
+  unconditional magnitude-1 subset to `[effect:koHeroEachPlayer]` once
+  WP-189 adds the keyword. WP-188 does not consume WP-190; it only authors
+  the rows WP-190 later reads. Both WP-189 and WP-190 are drafted (commit
+  `1ac0762`).
 - **Card-generation pipeline shape (verified 2026-05-28).**
   `data/cards/*.json` (40 sets, tracked in git) carries `Escape:`
   ability lines on >100 cards and `Overrun:` on a small number; the
@@ -115,9 +128,10 @@ effects (`koHeroCurrentPlayer`) and one each-player wound
 - **Deferred to `_unassigned`:** every "Each player KOs …" line (no
   vocabulary keyword), every magnitude>1 / conditional / `… or …` /
   "(After the normal Escape KO) …" compound line. The each-player-KO
-  cluster is documented as the motivating candidate for a future
-  `koHeroEachPlayer` vocabulary expansion (a WP-185-side WP, not this
-  one).
+  cluster is tagged `reason: "no-vocabulary-keyword"` and is closed
+  downstream by WP-189 (adds the `koHeroEachPlayer` engine keyword) +
+  WP-190 (curates the lines) — both drafted (commit `1ac0762`); WP-190
+  reads exactly these rows.
 
 The engine still reads only reviewed, structured markers; the offline
 `--propose` bootstrap may over-capture because its output is committed
@@ -151,11 +165,14 @@ and human-reviewed before anything lands.
 - **Extend `_unassigned`** — every each-player-KO escape line, every
   magnitude>1 / conditional / compound escape line surfaced by
   `--propose` is recorded as a structured `_unassigned` row
-  (`{ set, group, card?, timing, text, reason }`) with `reason` ∈ the
-  WP-187 set plus the existing `multi-line`. The each-player-KO cluster
-  uses `reason: "no-vocabulary-keyword"` (a value WP-187's `_unassigned`
-  already permits under `other`; this WP names it explicitly) and is
-  cross-referenced in D-18802 as the future-expansion motivator.
+  (`{ set, group, card?, timing, text, reason }`). `reason` is drawn from
+  the closed set defined in §v1 Curation — Allowed Shapes & `_unassigned`
+  Reason Vocabulary (below). The each-player-KO cluster uses the
+  **first-class** `reason: "no-vocabulary-keyword"` (NOT folded under
+  `other`) and is recorded in D-18802. WP-190 (now drafted) reads exactly
+  these rows to promote the unconditional subset once WP-189 lands the
+  keyword — so the tagging is a cross-WP contract, not internal
+  bookkeeping.
 - **Regenerated data** — re-run `apply-effect-markers.mjs`; the
   `data/cards/*.json` set files containing curated escape lines gain
   `[effect:]` markers on those lines. Diff bounded to curated lines.
@@ -174,11 +191,13 @@ and human-reviewed before anything lands.
 
 - **Engine parsing / execution** — entirely WP-186. WP-188 produces data
   only; it adds no engine, registry, or server code.
-- **Expanding the five-keyword vocabulary** — locked by WP-185. The
-  each-player-KO escape cluster motivates a future `koHeroEachPlayer`
-  (or similar) keyword, but adding it is a WP-185-side vocabulary WP with
-  its own `DECISIONS.md` entry, NOT this WP. WP-188 leaves those lines
-  in `_unassigned`.
+- **Expanding the five-keyword vocabulary** — out of scope for WP-188.
+  The each-player-KO escape cluster is closed by **WP-189** (adds the
+  `koHeroEachPlayer` engine keyword + executor) and **WP-190** (curates
+  the lines), both drafted (commit `1ac0762`, each with its own
+  `DECISIONS.md` entries D-189xx / D-190xx). WP-188 adds no keyword and
+  leaves those lines in `_unassigned` (`reason: "no-vocabulary-keyword"`)
+  for WP-190 to promote.
 - **`Ambush:` / `Fight:` curation** — WP-187 scope, already landed. WP-188
   must not touch existing `ambush` / `fight` map entries or re-mark their
   lines (idempotency guarantees a re-run leaves them untouched).
@@ -193,6 +212,58 @@ and human-reviewed before anything lands.
 - **Changing the engine's generic per-escape behavior** (WP-015 wound)
   — that is engine behavior owned by WP-186, not card data.
 - **Image/asset, schema, or registry-runtime changes** — none.
+
+---
+
+## v1 Curation — Allowed Shapes & `_unassigned` Reason Vocabulary
+
+This section makes the WP-187 curation discipline **operational** for the
+two new timings so reviewers do not "almost-curate" borderline lines. It
+does not loosen the discipline — it enumerates it.
+
+**Curatable in v1 (`gainWoundEachPlayer` on `Escape:` / `Overrun:`):**
+
+- `Escape: Each player gains a Wound.` (exact)
+- The same line with punctuation-only variance (e.g. a trailing `!`)
+- The same line carrying pre-existing markup tokens (keyword/formatting)
+  that do not alter the semantics — the `[effect:]` marker is appended
+  after them, never mid-text
+
+**Not curatable — defer to `_unassigned` (do NOT mark):**
+
+- Any conditional lead-in: `If`, `When`, `Unless`, `For each …`
+- Any choice: `… or …` (e.g. "reveals a Hero **or** gains a Wound")
+- Any magnitude > 1: `gains 2 Wounds`, `gains a Wound and …`
+- Any compound sequence, including "(After the normal Escape KO) …"
+- `each other player` (solo-rule complication — not plain each-player)
+- Any target ambiguity ("a player of your choice")
+- Every "Each player KOs …" line — no each-player-KO keyword exists in
+  WP-188's vocabulary (see the reason vocabulary below)
+
+**`Overrun:` may curate to ZERO entries in v1 — that is acceptable.**
+Widening the gate to `overrun` enables `--propose` scanning and
+`_unassigned` capture for overrun lines; it does **not** require any
+overrun marker to land. Scheme overrun is out of scope entirely, and
+villain / henchman overrun lines that reduce to an MVP keyword are likely
+few or none. An empty `overrun` curation set is a valid v1 outcome, not a
+gap to be filled.
+
+**`_unassigned` `reason` vocabulary (closed set for WP-188):**
+
+The overlay script does **not** read or validate the `reason` field — it
+is a human-review documentation field on each `_unassigned` row (verified
+in `apply-effect-markers.mjs`; only timing entries + keywords are
+validated). WP-188 uses exactly these values:
+
+- `magnitude>1`, `multi-target`, `other`, `conditional` — the WP-187 set,
+  unchanged
+- `multi-line` — existing convention (a card with two same-timing lines
+  the map cannot disambiguate; loud-fail → defer)
+- `no-vocabulary-keyword` — **new in WP-188, first-class (NOT folded under
+  `other`)** — names every "Each player KOs …" line that has no keyword in
+  the current vocabulary. WP-190 reads exactly these rows to promote the
+  unconditional magnitude-1 subset to `[effect:koHeroEachPlayer]` after
+  WP-189 adds the keyword, so this value is a cross-WP contract.
 
 ---
 
@@ -276,8 +347,9 @@ verification greps below.
   unmarked and record it in `_unassigned`. Do not guess. Do not stretch
   an each-player line onto a current-player keyword.
 - If a real escape line needs the each-player-KO keyword, that is out of
-  scope — record it `no-vocabulary-keyword` in `_unassigned`; the
-  vocabulary expansion is a WP-185-side future WP.
+  scope for WP-188 — record it `no-vocabulary-keyword` in `_unassigned`.
+  The keyword itself is added by WP-189 and the lines are curated by
+  WP-190 (both drafted); WP-188 must not add the keyword or mark the line.
 
 **Locked marker vocabulary (mirrors WP-185 — do not re-derive):**
 
@@ -317,11 +389,16 @@ SUPPORTED_TIMINGS = ['ambush', 'fight', 'escape', 'overrun']
 - [ ] At least one `Escape: Each player gains a Wound.` line carries
   `[effect:gainWoundEachPlayer]` after apply (spot-check the curatable
   subset).
-- [ ] No each-player-KO escape line was marked `koHeroCurrentPlayer`;
-  the each-player-KO cluster appears in `_unassigned` with
-  `reason: "no-vocabulary-keyword"`.
+- [ ] No each-player-KO line was mis-mapped onto `koHeroCurrentPlayer`:
+  `grep -RhoE '"(Escape|Ambush|Fight): Each player KOs[^"]*\[effect:koHeroCurrentPlayer\]"' data/cards/`
+  returns **zero** lines. The each-player-KO cluster instead appears in
+  `_unassigned` with the first-class `reason: "no-vocabulary-keyword"`.
 - [ ] No magnitude>1 / conditional / compound escape line was marked
   (verified against `_unassigned`).
+- [ ] An empty `overrun` curation set passes: `--propose` scans `overrun`
+  (writes nothing) but no overrun marker is required to land. If no
+  villain/henchman `overrun` line reduces to an MVP keyword, zero overrun
+  entries is the correct v1 outcome.
 - [ ] `pnpm -r build` exits 0 (data-only change must not break builds).
 
 ---
@@ -345,6 +422,10 @@ grep -rc "\[effect:" data/cards/ | tail
 
 # Propose mode now scans escape/overrun and writes nothing
 node scripts/convert-cards/apply-effect-markers.mjs --propose | grep -E "escape|overrun" | head
+
+# No semantic mis-map: each-player KO must NOT become koHeroCurrentPlayer
+grep -RhoE '"(Escape|Ambush|Fight): Each player KOs[^"]*\[effect:koHeroCurrentPlayer\]"' data/cards/
+# expected: no output (those lines live in _unassigned, reason no-vocabulary-keyword)
 
 # Loud-fail behaviors still hold (scratch-test a bogus keyword / missing card)
 
@@ -371,10 +452,13 @@ rows and leaves the tree clean; `pnpm -r build` exits 0.
     `overrun` are distinct map keys (script matches by prefix) that
     WP-186 collapses to `onEscape`.
   - D-18802: the dominant escape effect ("each player KOs a Hero") is
-    deferred to `_unassigned` (`reason: "no-vocabulary-keyword"`) because
-    the MVP vocabulary has no each-player KO keyword; this cluster is the
-    motivating candidate for a future WP-185-side `koHeroEachPlayer`
-    vocabulary expansion.
+    deferred to `_unassigned` (first-class `reason: "no-vocabulary-keyword"`)
+    because WP-188's vocabulary has no each-player KO keyword. WP-189 adds
+    that keyword (`koHeroEachPlayer`) and WP-190 promotes these exact rows
+    (both drafted, commit `1ac0762`); WP-190 hard-deps WP-188 and reads the
+    `no-vocabulary-keyword` rows authored here. D-18901 supersedes the
+    unconditional portion of this deferral; the conditional / magnitude>1 /
+    filtered remainder stays deferred.
   - D-18803: WP-188 finally gives `gainWoundEachPlayer` data (zero under
     WP-187, which found no unconditional wound lines on Ambush/Fight);
     escape "each player gains a Wound" lines are its first real source.
@@ -449,6 +533,10 @@ added/modified/removed.
 
 ---
 
-*Drafted: 2026-05-28. Baseline `origin/main @ cc29447`. Continuation of
+*Drafted: 2026-05-28. Baseline `origin/main @ cc29447`; revised 2026-05-28
+to reconcile cross-references against WP-189 + WP-190 (drafted at `1ac0762`,
+after this WP's original draft at `87f3712`) and to make the curation
+discipline + `_unassigned` reason vocabulary operational. Continuation of
 WP-187 (same overlay + map). Upstream prerequisite for WP-186
-(Escape/Overrun effect execution).*
+(Escape/Overrun effect execution); also feeds WP-190's each-player-KO
+curation via the `no-vocabulary-keyword` `_unassigned` rows.*

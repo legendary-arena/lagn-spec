@@ -32,19 +32,24 @@
 - `VILLAIN_EFFECT_KEYWORDS` / `VILLAIN_ABILITY_TIMINGS` = **unchanged** (no `onEscape`, no `koHeroEachPlayer`)
 - Fire sites (`fightVillain.ts`, `villainDeck.reveal.ts`, `coreMoves.impl.ts`) = **byte-identical pre/post**
 - Registry FlatCard key (`packages/registry/src/shared.ts`) = **unchanged**; registry + registry-viewer = **untouched**
+- Emitters return ids in **copyIndex-ascending order, no sorting**, pure (safe to call repeatedly); consumers use the returned array order
+- **Invariant-check definitions** (suffix/substring structure, NOT segment count — slugs contain hyphens): villain instance key = contains `-villain-` AND ends `/-\d\d$/`; villain definition key (FORBIDDEN) = contains `-villain-` AND does NOT end `-\d\d`; hero dash/slot key (FORBIDDEN) = contains `-hero-`; hero instance key = contains both `/` and `#`; henchman key (valid) = `henchman-{group}-{NN}`
+- e2e test **MUST NOT hand-author** any `cardStats`/`cardKeywords`/hook key — obtain all keys via `buildInitialGameState` and assert hits using ids that originated in `G` deck/city/hand zones (a self-consistent fake must not be able to pass)
 
 ## Guardrails
 - No `@legendary-arena/registry` import in `economy.logic.ts`, `buildCardKeywords.ts`, `villainAbility.setup.ts`, `heroAbility.setup.ts`, or the emitter files (local structural readers stay)
 - No `boardgame.io` import in `villainDeck.setup.ts`, `buildHeroDeck.ts`, or any of the four builders (pure helpers)
 - **Import-not-duplicate (D-13702 RS-4):** lookup builders import `villainCardInstanceExtIds` / `heroCardInstanceExtIds`; MUST NOT re-implement copy-count resolution or the id-format string locally
+- **Emitters are leaf utilities (no cycles):** `villainDeck.setup.ts` + `buildHeroDeck.ts` MUST NOT import from the consumer builders (`economy.logic.ts`, `buildCardKeywords.ts`, `villainAbility.setup.ts`, `heroAbility.setup.ts`); dependency is one-directional (lookups → emitters)
+- Emitters perform **no sorting** and are pure (copyIndex-ascending order; safe to call repeatedly)
 - No `.reduce()` for multi-step branching; `for...of` with descriptive loop variables
 - Per-copy fan-out emits a freshly-constructed entry per instance ext_id (no aliasing across copies, D-13502)
 - Builders soft-skip malformed data (no throws — setup-time builders mirror the deck builder's soft-skip; the validator is the authoritative reporter)
 - `G.*` lookup tables stay JSON-serializable (no functions, Maps, Sets, classes)
 - Henchman branches in all four builders MUST be byte-identical pre/post (regression-guarded)
 - `cardTraits` / `villainDeckCardTypes` / `cardDisplayData` / `attachedBystanders` builders MUST NOT be modified (already instance-keyed; out of scope)
-- Gate-consistency (D-18507) preserved at the instance grammar: an `onAmbush` hook's copy-indexed `cardId` must satisfy `hasAmbush(cardId, G.cardKeywords ?? {})`
-- Hero hooks key by the canonical-face slash instance id; ability text on a non-canonical face is safe-skip (out of scope)
+- Gate-consistency (D-18507) preserved at the instance grammar: an `onAmbush` hook's copy-indexed `cardId` must satisfy `hasAmbush(cardId, G.cardKeywords ?? {})`. **One-directional by design** — do NOT also assert "gate ⇒ hook" (`hasAmbush` matches the `Ambush` prefix; hooks require the `Ambush:` colon, so `Ambush`-without-colon cards set the keyword but yield no hook)
+- Hero hooks key by the canonical-face slash instance id; if the canonical face (`sides[0]`) cannot be resolved to a `cards[]` entry, emit **no hook** for that instance (safe-skip, no throw); ability text on a non-canonical face is out of scope
 
 ## Required `// why:` Comments
 - `villainCardInstanceExtIds` export: why villain lookups fan out per copy to match the zone instance grammar (D-18704; henchman precedent; D-16802 per-copy attributability)
@@ -81,8 +86,10 @@
 - [ ] Grep: `villainCardInstanceExtIds` used in `economy.logic.ts`, `buildCardKeywords.ts`, `villainAbility.setup.ts`; `heroCardInstanceExtIds` used in `economy.logic.ts` + `heroAbility.setup.ts`
 - [ ] `git diff --stat` shows zero change to `fightVillain.ts`, `villainDeck.reveal.ts`, `coreMoves.impl.ts`, `packages/registry/src/shared.ts`
 - [ ] Grep: zero `@legendary-arena/registry` in the four builders + emitter files; zero `boardgame.io` in the emitter files
-- [ ] e2e test asserts villain `fightCost` is spent (non-zero), villain Ambush + Fight effects fire, and a hero ability fires — all via `buildInitialGameState` on a populated registry
-- [ ] e2e test asserts the reconciliation invariant: no `cardStats`/`cardKeywords`/`villainAbilityHooks`/`heroAbilityHooks` key is a villain-definition or hero-dash form
+- [ ] e2e test asserts villain `fightCost` is spent (non-zero), villain Ambush + Fight effects fire, and a hero ability fires — all via `buildInitialGameState` on a populated registry, with **no hand-authored** lookup-table keys (every key obtained from setup; hits asserted via ids that originated in `G` zones)
+- [ ] e2e test asserts hero setup coverage: for every hero `cardId` reachable in a hand/deck whose canonical face carries an MVP-keyword ability line, `getHooksForCard` returns ≥1 hook
+- [ ] e2e test asserts the reconciliation invariant per the Invariant-check definitions: every key ends `-\d\d` (villain) or contains both `/` and `#` (hero); none contains `-hero-` or is a `-villain-` key lacking `-\d\d`
+- [ ] Grep: hero slash-id construction (`}/${`, `}#${`) appears ONLY in the `buildHeroDeck.ts` emitter — zero in `heroAbility.setup.ts` and `economy.logic.ts` (no blanket villain grep — henchman inline construction would false-positive; the invariant test is the villain-key guard)
 - [ ] Henchman regression guard: henchman keys remain `henchman-{group}-NN` in `cardStats` + `villainAbilityHooks`
 - [ ] `PRE_WP080_HASH` and `sentinel-core-doom-2p` `finalStateHash` tests pass with their existing pinned values (no edit)
 - [ ] `docs/ai/STATUS.md` updated with `### WP-191 Executed` block
@@ -101,5 +108,8 @@
 - Adding `onEscape` / `koHeroEachPlayer` "while in here" → WP-186 / WP-189 own those; vocabulary + timings are frozen in this WP
 - Hero hooks keyed by `card.slug` without going through `sides[0]` canonical face → drifts from the zone id for double-sided cards; resolve via `heroCardInstanceExtIds`
 - e2e test driven by an empty/narrow mock registry → proves nothing (the bug only appears with real cards); the test MUST populate villains-with-copies + a hero deck with `physicalCards` + ability lines
+- e2e test hand-authors `cardStats`/`cardKeywords`/hook keys to match zone ids → "self-consistent fake"; it passes while real games stay broken — obtain ALL keys via `buildInitialGameState`
+- Asserting "gate ⇒ hook" (every `hasAmbush` villain has an `onAmbush` hook) → FALSE by design; `Ambush`-without-colon cards set the keyword but yield no hook (D-18507). Assert only "hook ⇒ gate"
+- Sorting emitter output, or building it via an object + `Object.keys` → nondeterminism footgun; return a copyIndex-ascending array with no sorting
 - Re-pinning `PRE_WP080_HASH` / `sentinel-core-doom-2p` → those oracles are empty-registry and MUST NOT change; a diff there means real cards leaked into the oracle path (investigate, don't re-pin)
 - Gate-consistency test left asserting definition-form ids → must assert at the copy-indexed instance grammar now

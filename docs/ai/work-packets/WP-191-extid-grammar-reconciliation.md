@@ -35,6 +35,21 @@ fire-site code changes; the entire fix lives in the setup-time builders.
 
 ---
 
+## Terminology (three identities, one source of truth)
+
+- **Zone instance CardExtId** — authoritative at runtime; the id a card carries
+  in `G` zones (deck, city, hand, discard, …). Copy-indexed for
+  villains/henchmen, slash-format for heroes.
+- **Definition id / registry FlatCard key** — the registry's display identity
+  (`{abbr}-villain-{group}-{card}`, `{abbr}-hero-{hero}-{slot}`); used by the
+  registry package and `apps/registry-viewer` only. **Not** an engine runtime
+  lookup key.
+- **Lookup-table key** — the setup-time artifact under which `cardStats`,
+  `cardKeywords`, `villainAbilityHooks`, and `heroAbilityHooks` store per-card
+  data. After this WP it **must equal the zone instance CardExtId** (D-18704).
+
+---
+
 ## Assumes
 
 - **WP-185 ✅ (2026-05-28, EC-212)** — `VillainAbilityHook` table,
@@ -142,7 +157,7 @@ fire-site code changes; the entire fix lives in the setup-time builders.
 
 ---
 
-## Context
+## Problem Statement (Grammar Split)
 
 The engine identifies a card three different ways and never reconciled them:
 
@@ -212,7 +227,9 @@ same function.
   `{setAbbr}-villain-{groupSlug}-{cardSlug}-{NN}` (NN zero-padded 2-digit,
   `00..copies-1`). `buildVillainDeck`'s existing section-1 inner loop is
   refactored to call it. **Deck output (post-sort, post-shuffle) must be
-  byte-identical** — pure extraction, no behavior change.
+  byte-identical** — pure extraction, no behavior change. The emitter returns
+  ids in copyIndex-ascending order, performs **no sorting**, and is a pure
+  function (safe to call repeatedly); consumers use the returned array order.
 - **Shared hero instance-id emitter** — export
   `heroCardInstanceExtIds(setAbbr, heroSlug, heroEntry)` from
   `buildHeroDeck.ts`. The function returns the slash-format instance ext_ids
@@ -220,7 +237,10 @@ same function.
   (`physicalCards[].sides[0]`, with the `resolveHeroCardCopyCount` fallback when
   `physicalCards` is absent — the exact algorithm `buildHeroDeck` and
   `buildCardStats §1b` already use). `buildHeroDeck`'s instance loop is
-  refactored to call it. **Deck output must be byte-identical.**
+  refactored to call it. **Deck output must be byte-identical.** The emitter
+  returns ids in copyIndex-ascending order, performs **no sorting**, and is a
+  pure function (safe to call repeatedly); consumers use the returned array
+  order.
 - **`buildCardStats` villain conformance (§2)** — emit one
   `CardStatEntry` (`attack:0, recruit:0, cost:0, fightCost:<vAttack>`) per
   villain **instance** ext_id from `villainCardInstanceExtIds`, instead of one
@@ -245,7 +265,9 @@ same function.
   face card entry (the `cards[]` entry whose `slug === sides[0]`). One hook per
   (hero instance × ability line), one freshly-constructed hook per instance (no
   aliasing across copies, D-13502). The dash/slot FlatCard `key` is no longer
-  used as a runtime lookup key (D-18705, proposed).
+  used as a runtime lookup key (D-18705, proposed). If the canonical face
+  (`sides[0]`) cannot be resolved to a `cards[]` entry, the builder emits **no
+  hook** for that instance (safe-skip, no throw), mirroring the deck builder.
 - **Gate-consistency preserved (D-18507) at the instance grammar** — both the
   `onAmbush` hook key and the `hasAmbush` gate now resolve on the same
   copy-indexed instance id, so they still agree. The gate-consistency test is
@@ -260,9 +282,13 @@ same function.
   `heroAbilityHooks` entry when its card text has one; (c) playing through a
   fight spends the villain's `fightCost`, an Ambush reveal fires its effect, and
   a hero play fires its ability. Plus a **reconciliation invariant** assertion:
-  no `cardStats` / `cardKeywords` / `villainAbilityHooks` / `heroAbilityHooks`
-  key is a villain-definition or hero-dash form (regression guard against
-  re-introducing a definition-keyed table).
+  every `cardStats` / `cardKeywords` / `villainAbilityHooks` / `heroAbilityHooks`
+  key is a valid instance key per the Invariant-check definitions (regression
+  guard against re-introducing a definition/dash-keyed table). The test **MUST
+  NOT** hand-author any lookup-table key — it obtains them solely via
+  `buildInitialGameState` and asserts hits using ids that originated in `G`
+  deck / city / hand zones, so a "self-consistent fake" cannot pass while still
+  broken.
 - **Updated unit tests** — `economy.logic.test.ts` (villain stat keys now
   copy-indexed; hero §1b byte-identical), `villainAbility.setup.test.ts`
   (villain hook ids copy-indexed; gate-consistency at instance grammar;
@@ -341,9 +367,12 @@ same function.
 11. `packages/game-engine/src/rules/heroAbility.setup.test.ts` — **modified** —
     hero hook ids are slash-format instance ids.
 12. `packages/game-engine/src/ui/uiState.types.drift.test.ts` — **modified** —
-    literal villain/hero ext_id fixtures updated to the instance grammar.
+    literal villain/hero ext_id fixtures updated to the instance grammar. (These
+    tests embed literal `CardExtId` strings to validate UI-state derivations, so
+    they must track the engine's zone-instance grammar.)
 13. `packages/game-engine/src/ui/uiState.build.test.ts` — **modified** —
-    literal villain/hero ext_id fixtures updated to the instance grammar.
+    literal villain/hero ext_id fixtures updated to the instance grammar (same
+    reason as item 12).
 14. `packages/game-engine/src/setup/extIdReconciliation.e2e.test.ts` —
     **new** — end-to-end resolution test + reconciliation-invariant guard
     (drives `buildInitialGameState` with a populated mock registry; asserts
@@ -391,6 +420,11 @@ same function.
   emission has exactly one home (`heroCardInstanceExtIds` in `buildHeroDeck.ts`).
   The lookup builders **import** these; they MUST NOT re-implement copy-count
   resolution or the id-format string locally.
+- **Emitters are leaf utilities (no cycles):** the emitter-hosting modules
+  (`villainDeck.setup.ts`, `buildHeroDeck.ts`) MUST NOT import from the lookup
+  builders that consume them (`economy.logic.ts`, `buildCardKeywords.ts`,
+  `villainAbility.setup.ts`, `heroAbility.setup.ts`). The dependency is
+  one-directional: lookups → emitters.
 - **Byte-identical zone output:** the refactor of `buildVillainDeck` and
   `buildHeroDeck` to call the shared emitters MUST produce byte-identical
   shuffled deck output (same ids, same pre-sort order). This is pure
@@ -440,6 +474,19 @@ Hero instance ext_id:      {setAbbr}/{heroSlug}/{cardSlug}#{copyIndex}
                            copyIndex = 0..count-1
 ```
 
+**Invariant-check definitions (enforced in `extIdReconciliation.e2e.test.ts`).**
+Defined by suffix/substring **structure**, not segment count — villain group
+and card slugs contain hyphens, so a segment-count check would misclassify:
+
+- **Villain instance key (valid):** contains `-villain-` AND ends with two
+  digits (matches `/-\d\d$/`).
+- **Villain definition key (FORBIDDEN):** contains `-villain-` AND does NOT end
+  with `-\d\d`.
+- **Hero dash/slot key (FORBIDDEN):** contains `-hero-`.
+- **Hero instance key (valid):** contains both `/` and `#` (slash-format
+  `{set}/{heroSlug}/{cardSlug}#{copyIndex}`).
+- **Henchman key (valid, unchanged):** `henchman-{group}-{NN}` (ends `-\d\d`).
+
 ---
 
 ## Acceptance Criteria
@@ -467,16 +514,26 @@ Hero instance ext_id:      {setAbbr}/{heroSlug}/{cardSlug}#{copyIndex}
   id).
 - [ ] Playing a hero whose ability line carries an MVP keyword fires
   `executeHeroEffects` — `getHooksForCard(G.heroAbilityHooks, cardId)` returns
-  the hook for the slash-format played-card id.
-- [ ] **Reconciliation invariant:** no key in `G.cardStats`, `G.cardKeywords`,
-  `G.villainAbilityHooks`, or `G.heroAbilityHooks` matches a villain-definition
-  form (`-villain-…-…` with no trailing `-NN`) or a hero dash/slot form
-  (`-hero-…`); the e2e test asserts this over a populated registry.
+  the hook for the slash-format played-card id; **and** for every hero `cardId`
+  reachable in a player hand/deck whose canonical face carries an MVP-keyword
+  ability line, `getHooksForCard` returns at least one hook (hooks are built
+  under the right ids, not merely built).
+- [ ] **Reconciliation invariant:** every key in `G.cardStats`,
+  `G.cardKeywords`, `G.villainAbilityHooks`, and `G.heroAbilityHooks` is a valid
+  instance key per the **Invariant-check definitions** (villain ends with
+  `-\d\d`; hero contains `/` and `#`; no key contains `-hero-` or is a
+  `-villain-` key lacking the `-\d\d` suffix). The e2e test asserts this over a
+  populated registry and **MUST NOT hand-author any lookup-table key** — it
+  obtains every key via `buildInitialGameState` and asserts hits using ids that
+  originated in `G` deck/city/hand zones.
 - [ ] Henchman keys remain copy-indexed (`henchman-{group}-NN`) in `cardStats`
   and `villainAbilityHooks` — henchman regression guard passes.
 - [ ] Gate-consistency holds at the instance grammar: every villain instance
   that produces an `onAmbush` hook also satisfies
-  `hasAmbush(cardId, G.cardKeywords ?? {}) === true`.
+  `hasAmbush(cardId, G.cardKeywords ?? {}) === true`. (One-directional **by
+  design** — `hasAmbush` is a broader fast pre-check keyed on the `Ambush`
+  prefix while hook emission requires the `Ambush:` colon, D-18507; the reverse
+  direction would fail on `Ambush`-without-colon cards and is out of scope.)
 - [ ] `fightVillain.ts`, `villainDeck.reveal.ts`, and `coreMoves.impl.ts` are
   byte-identical pre/post (the fire sites are not modified).
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0.
@@ -505,6 +562,15 @@ grep -n "villainCardInstanceExtIds" packages/game-engine/src/setup/buildCardKeyw
 grep -n "villainCardInstanceExtIds" packages/game-engine/src/setup/villainAbility.setup.ts
 grep -n "heroCardInstanceExtIds" packages/game-engine/src/setup/heroAbility.setup.ts
 
+# Hero slash-id construction lives ONLY in the emitter (heroes have no inline
+# construction exception). These must return zero — the consumers iterate the
+# emitter's output, they do not build the slash id locally:
+grep -nF '}/${' packages/game-engine/src/setup/heroAbility.setup.ts packages/game-engine/src/economy/economy.logic.ts
+grep -nF '}#${' packages/game-engine/src/setup/heroAbility.setup.ts packages/game-engine/src/economy/economy.logic.ts
+# (No equivalent blanket villain `-villain-...-NN` grep: henchman paths
+# legitimately construct copy-indexed ids inline, so it would false-positive.
+# The reconciliation-invariant TEST is the authoritative villain-key guard.)
+
 # Fire sites unchanged (must return zero diff against HEAD before the commit)
 git diff --stat -- packages/game-engine/src/moves/fightVillain.ts packages/game-engine/src/villainDeck/villainDeck.reveal.ts packages/game-engine/src/moves/coreMoves.impl.ts
 
@@ -529,8 +595,9 @@ pnpm -r build
 Expected outputs: each emitter `grep` returns exactly one definition site;
 each lookup-builder `grep` returns at least one import/use; the fire-site and
 `shared.ts` `git diff --stat` return nothing; the layer-boundary greps return
-nothing; the reconciliation/e2e tests pass; the two oracle greps pass with the
-existing pinned hashes unchanged.
+nothing; the hero slash-id construction greps return nothing (construction
+lives only in the emitter); the reconciliation/e2e tests pass; the two oracle
+greps pass with the existing pinned hashes unchanged.
 
 ---
 
@@ -661,3 +728,14 @@ ext_id-grammar gap recorded in D-18508 during WP-185 execution. Approach
 (conform lookups to instances) and scope (villain + hero together) locked by
 review on 2026-05-28. Prerequisite for WP-186 / WP-189 villain effects to
 resolve end-to-end (both extend WP-185's hook table and inherit its keying).*
+
+*Revised 2026-05-28 (review-hardening pass): added a Terminology block; renamed
+the second "Context" → "Problem Statement (Grammar Split)"; added
+machine-checkable Invariant-check definitions (suffix-based, not segment-count,
+since slugs contain hyphens); added emitter "no-sorting / pure" and
+"leaf-utility / no-cycle" constraints; added the hero canonical-face safe-skip
+rule and a hero-hook setup-coverage acceptance criterion; hardened the e2e test
+to forbid hand-authored lookup keys; annotated gate-consistency as
+one-directional by design (declined a "gate ⇒ hook" assertion that would fail
+on `Ambush`-without-colon cards); added a hero slash-id construction grep guard.
+File count unchanged (no new files).*
