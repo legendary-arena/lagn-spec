@@ -19330,6 +19330,141 @@ WP (it also affects hero-ability execution).
 
 **Drafted:** 2026-05-28.
 **Landed:** 2026-05-28 (EC-212 @ a5aa570).
+**Status:** Landed (villain/hero end-to-end grammar gap closed by D-18704, WP-191).
+
+---
+
+### D-18704 — Canonical Keying Invariant: Lookup Tables Are Keyed by the Zone Instance ext_id
+
+**Decision:** Every per-card lookup table — `G.cardStats`, `G.cardKeywords`,
+`G.villainAbilityHooks`, `G.heroAbilityHooks` — is keyed by the **exact instance
+ext_id the card carries in `G` zones**. The lookup builders fan out one entry per
+copy instance (villains: `{setAbbr}-villain-{groupSlug}-{cardSlug}-{NN}`; heroes:
+`{setAbbr}/{heroSlug}/{cardSlug}#{copyIndex}`), exactly as henchmen already do. No
+lookup table is keyed by a definition id (`{set}-villain-{group}-{card}`) or a hero
+dash/slot key (`{set}-hero-{slug}-{slot}`). Zones remain the single source of truth
+— the zone-instance grammar is unchanged (D-16802 preserved). This supersedes the
+villain-by-definition keying WP-185 adopted for gate-consistency: the D-18507
+gate-consistency reasoning is preserved, now holding at the instance grammar
+(both the `onAmbush` hook key and the `hasAmbush` gate resolve on the same
+copy-indexed instance id). **Closes D-18508.**
+
+**Rationale.** Before WP-191 villain/hero deck and city cards were copy-indexed /
+slash-format while the lookup tables were definition / dash-keyed, so every runtime
+`G.cardStats[cardId]` / `getVillainHooksForCard` / `getHooksForCard` /
+`hasAmbush(cardId, …)` lookup silently missed: villain `fightCost` defaulted to 0,
+`hasAmbush` was always false, and villain/hero ability effects were dead text.
+Henchmen worked because both sides were already copy-indexed. Conforming the
+lookups TO the zones (never the reverse) was chosen over a fire-site normalizer
+because the hero zone id (slug-based) and the old hook key (slot-based) differ in
+two independent ways, so a normalizer would need a new registry-derived slug↔slot
+table in `G` — nearly as much state as conforming the lookups, while leaving two
+grammars in the codebase forever. The fix lives entirely in the setup-time
+builders; the fire sites already pass the zone-instance ext_id and are unchanged.
+
+**Packet:** WP-191.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-218 @ 08060a6).
+**Status:** Landed
+
+---
+
+### D-18705 — Hero Ability Hooks Key by the Canonical-Face Slash Instance ext_id
+
+**Decision:** `buildHeroAbilityHooks` keys each hook by the canonical-face slash
+instance id `{setAbbr}/{heroSlug}/{sides[0]}#{copyIndex}` and resolves the hook's
+ability text from the `cards[]` entry whose `slug === sides[0]` (the canonical
+face, per D-14101). The dash/slot registry FlatCard `key`
+(`{set}-hero-{heroSlug}-{slot}`) is the registry's **display identity** and is no
+longer an engine runtime lookup key. If the canonical face cannot be resolved to a
+`cards[]` entry, the builder emits **no hook** for that instance (safe-skip, no
+throw). Ability text printed on a non-canonical face is out of scope.
+
+**Rationale.** The played-card id the play site passes to `getHooksForCard`
+(`coreMoves.impl.ts`) is the slash zone instance; keying hooks by the dash/slot
+FlatCard key meant the lookup always missed for heroes. Resolving the seam at the
+canonical face (the same face the deck reservoir and `buildCardStats §1b` use)
+makes the hook key equal the played-card id by construction, with no slot↔slug map
+in `G`.
+
+**Packet:** WP-191.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-218 @ 08060a6).
+**Status:** Landed
+
+---
+
+### D-18706 — Instance-ID Emission Is Centralized in One Exported Emitter per Card Class
+
+**Decision:** Instance-id emission has exactly one home per card class:
+`villainCardInstanceExtIds(setAbbr, groupSlug, cardSlug, card)` + the
+`readVillainCopyCount(card)` resolver exported from `villainDeck.setup.ts`, and
+`heroCardInstanceExtIds(setAbbr, heroSlug, heroEntry)` exported from
+`buildHeroDeck.ts`. The deck builders AND every per-card lookup builder import and
+call these emitters — they MUST NOT re-implement copy-count resolution or the
+id-format string locally (import-not-duplicate, per the D-13702 RS-4 precedent).
+The emitters return ids in copyIndex-ascending order, perform no sorting, are pure
+(safe to call repeatedly), and are leaf utilities — the emitter-hosting modules
+never import the consumer builders (dependency is one-directional, lookups →
+emitters).
+
+**Rationale.** The D-18508 bug was precisely a copy-count / id-format divergence
+between the deck builder (copy-indexed) and the lookup builders (definition-keyed).
+A single emitter home makes that class of drift unrepresentable: a lookup builder
+cannot disagree with the deck builder because they call the same function.
+
+**Packet:** WP-191.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-218 @ 08060a6).
+**Status:** Landed
+
+---
+
+### D-18707 — Dead Dash-Format Hero Rows in buildCardStats §1 Are Left in Place
+
+**Decision:** The dash-format hero rows emitted by `buildCardStats §1`
+(`{set}-hero-{slug}-{slot}`, sourced from `listCards()`) are **left exactly as-is**.
+They are never read at runtime (no zone id matches them) and removing them is a
+separate cleanup WP, out of WP-191's scope. WP-191 changes only §1b's internal id
+sourcing (byte-identical output) and §2's villain keying.
+
+**Rationale.** Removing the dead rows would change `G` content and the uiState
+fixtures for no correctness gain, widening the blast radius of a focused
+reconciliation WP. The reconciliation-invariant test is therefore exercised against
+a registry whose `listCards()` exposes no hero FlatCards (so §1 emits nothing),
+which is also the existing `buildCardStats` hero-instance fixture pattern.
+
+**Packet:** WP-191.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-218 @ 08060a6).
+**Status:** Landed
+
+---
+
+### D-18708 — No Replay/Snapshot Oracle Re-Pin
+
+**Decision:** WP-191 re-pins **no** determinism oracle. `PRE_WP080_HASH`
+(`replay.execute.test.ts`), the `sentinel-core-doom-2p` fixture `finalStateHash`,
+and the snapshot oracles all run against empty/narrow mock registries — no
+set-specific villain/hero cards enter zones or lookup tables, so the per-copy
+key-grammar change is invisible to them. The new
+`setup/extIdReconciliation.e2e.test.ts` asserts end-to-end behavior and the keying
+invariant on a populated registry rather than a whole-`G` hash.
+
+**Rationale.** Unlike D-18508's additive whole-`G` field (which shifted the
+serialization hash), WP-191 changes only the **keys** of derived setup-time lookup
+tables, and only for set-specific cards that the empty-registry oracles never
+instantiate. A diff in those oracles would mean real cards leaked into the oracle
+path — investigate, never re-pin.
+
+**Packet:** WP-191.
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-28 (EC-218 @ 08060a6).
 **Status:** Landed
 
 ---

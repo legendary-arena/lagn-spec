@@ -193,8 +193,8 @@ describe('buildUIState', () => {
 function makeGameStateWithDisplayData(): LegendaryGameState {
   const gameState = createTestGameState();
 
-  const heroExtId = 'core-hero-black-widow-1' as CardExtId;
-  const villainExtId = 'core-villain-brotherhood-magneto' as CardExtId;
+  const heroExtId = 'core/black-widow/strike#0' as CardExtId;
+  const villainExtId = 'core-villain-brotherhood-magneto-00' as CardExtId;
   const henchmanExtId = 'henchman-doombot-legion-00' as CardExtId;
   const mastermindBaseExtId = 'core-mastermind-dr-doom-doctor-doom' as CardExtId;
 
@@ -468,7 +468,7 @@ describe('buildUIState — aliasing prevention (WP-028 cardKeywords precedent)',
     // contract asserts that every projection-time read of
     // G.cardDisplayData[extId] produces a fresh shallow copy.
     const gameState = makeGameStateWithDisplayData();
-    const heroExtId = 'core-hero-black-widow-1' as CardExtId;
+    const heroExtId = 'core/black-widow/strike#0' as CardExtId;
     const originalName = gameState.cardDisplayData[heroExtId]!.name;
 
     const ui = buildUIState(gameState, mockCtx);
@@ -640,7 +640,7 @@ describe('buildUIState — WP-128 board-layout projections', () => {
 describe('buildUIState — mastermind.attachedBystanders projection (WP-154)', () => {
   it('projects mastermind.attachedBystanders with correct length and extId values', () => {
     const gameState = makeGameStateWithDisplayData();
-    const bystanderExtId = 'core-hero-black-widow-1' as CardExtId;
+    const bystanderExtId = 'core/black-widow/strike#0' as CardExtId;
     gameState.mastermind.attachedBystanders = [bystanderExtId, bystanderExtId];
 
     const ui = buildUIState(gameState, mockCtx);
@@ -664,7 +664,7 @@ describe('buildUIState — mastermind.attachedBystanders projection (WP-154)', (
 
   it('projected array is aliasing-safe (new array, new entry objects)', () => {
     const gameState = makeGameStateWithDisplayData();
-    const bystanderExtId = 'core-hero-black-widow-1' as CardExtId;
+    const bystanderExtId = 'core/black-widow/strike#0' as CardExtId;
     gameState.mastermind.attachedBystanders = [bystanderExtId];
 
     const ui = buildUIState(gameState, mockCtx);

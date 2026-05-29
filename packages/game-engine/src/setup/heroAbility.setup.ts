@@ -18,6 +18,11 @@ import type {
 import type { HeroKeyword, HeroAbilityTiming } from '../rules/heroKeywords.js';
 import { HERO_KEYWORDS } from '../rules/heroKeywords.js';
 import { normalizeTraitSlug } from '../state/traits.normalize.js';
+// why: D-18705 / D-18706 — hero hooks must key by the canonical-face slash
+// instance id (the id the played card carries in `G` zones), resolving
+// ability text from the canonical face (sides[0]). The shared emitter is the
+// single source of those instance ids (import-not-duplicate, D-13702 RS-4).
+import { heroCardInstanceExtIds } from './buildHeroDeck.js';
 
 // ---------------------------------------------------------------------------
 // HeroAbilityRegistryReader — local structural interface
@@ -52,6 +57,38 @@ export interface HeroAbilityFlatCard {
 export interface HeroAbilityRegistryReader {
   /** All flat cards across all loaded sets. */
   listCards(): HeroAbilityFlatCard[];
+}
+
+// why: hook resolution reads the per-card ability text and the canonical-face
+// (sides[0]) mapping from the hero entry in set data — the same source the
+// hero deck reservoir and buildCardStats §1b read. The local structural
+// interfaces respect the layer boundary (no @legendary-arena/registry import).
+
+/**
+ * Minimal structural type for one hero card entry in SetData.heroes[i].cards[j].
+ *
+ * `slug` is matched against the canonical-face slug (`physicalCards[].sides[0]`)
+ * to resolve the ability text the played-card instance carries. `abilities`
+ * holds the structured markup lines parsed into hooks.
+ */
+interface HeroAbilityHeroCardEntry {
+  slug: string;
+  name?: string;
+  rarityLabel?: string;
+  abilities?: string[];
+}
+
+/**
+ * Minimal structural type for a hero entry in SetData.heroes[i].
+ *
+ * Carries the per-card data (`cards`) plus the copy-count / canonical-face
+ * sources (`physicalCards`, `cardCounts`) the shared instance-id emitter reads.
+ */
+interface HeroAbilityHeroEntry {
+  slug: string;
+  cards: HeroAbilityHeroCardEntry[];
+  physicalCards?: unknown;
+  cardCounts?: unknown;
 }
 
 // ---------------------------------------------------------------------------
@@ -351,24 +388,27 @@ export function buildHeroAbilityHooks(
     return [];
   }
 
+  // why: hook keys are the canonical-face slash instance ids emitted by
+  // heroCardInstanceExtIds (D-18705), which reads the hero entry from set
+  // data — so getSet is required here even though isHeroAbilityRegistryReader
+  // guards only listCards (the guard's listCards-only contract is pinned by
+  // buildInitialGameState.loadout.test.ts and the validator's
+  // buildKnownHeroQualifiedIds). When getSet is absent (narrow listCards-only
+  // test mocks), no hero entries are reachable, so no hooks are built —
+  // identical to the empty-result path, no throw.
+  const candidate = registry as { getSet?: unknown };
+  if (typeof candidate.getSet !== 'function') {
+    return [];
+  }
+  const getSet = candidate.getSet as (abbr: string) => unknown;
+
   const hooks: HeroAbilityHook[] = [];
 
-  // Get all flat cards and filter to hero type
-  const allFlatCards = registry.listCards();
-  const heroFlatCards: HeroAbilityFlatCard[] = [];
-  for (const card of allFlatCards) {
-    if (card.cardType === 'hero') {
-      heroFlatCards.push(card);
-    }
-  }
-
-  // Iterate selected hero decks deterministically
-  // why: D-10014 — Builder Filtering Order — iterate named set only.
-  // Each heroDeckIds entry is `<setAbbr>/<heroSlug>`. We parse the
-  // qualified form, filter hero cards to that setAbbr first, then match
-  // by heroSlug within that set's cards only. Hero slugs collide across
-  // sets (51 / 307 instances per the D-10014 PS-8 probe), so the filter
-  // order is non-negotiable for determinism.
+  // Iterate selected hero decks deterministically.
+  // why: D-10014 — Builder Filtering Order — iterate named set only. Each
+  // heroDeckIds entry is `<setAbbr>/<heroSlug>`; resolve the hero entry from
+  // that set's data only. Hero slugs collide across sets (51 / 307 instances
+  // per the D-10014 PS-8 probe), so the named-set filter is non-negotiable.
   for (const heroDeckId of matchConfig.heroDeckIds) {
     const parsed = parseQualifiedId(heroDeckId);
     if (parsed === null) {
@@ -376,47 +416,46 @@ export function buildHeroAbilityHooks(
       // format-error reporter; this builder is defense-in-depth.
       continue;
     }
-    // Filter hero cards belonging to this deck — setAbbr first, then slug
-    const deckCards: HeroAbilityFlatCard[] = [];
-    for (const card of heroFlatCards) {
-      if (card.setAbbr !== parsed.setAbbr) continue;
-      const heroSlug = extractHeroSlug(card);
-      if (heroSlug === parsed.slug) {
-        deckCards.push(card);
-      }
-    }
 
-    // Sort deck cards by key for deterministic output order
-    // why: ensures identical input produces byte-identical JSON output
-    deckCards.sort((cardA, cardB) => cardA.key.localeCompare(cardB.key));
+    const heroEntry = findHeroAbilityHeroEntry(getSet(parsed.setAbbr), parsed.slug);
+    if (heroEntry === null) continue;
 
-    // Process each hero card's abilities
-    for (const card of deckCards) {
-      const cardId = card.key as CardExtId;
-
-      if (!Array.isArray(card.abilities) || card.abilities.length === 0) {
+    // why: D-18705 — emit one hook per (canonical-face slash instance id ×
+    // ability line). The instance ids come from the shared emitter (matching
+    // the played-card zone id getHooksForCard reads at the play site); the
+    // ability text is resolved from the cards[] entry whose slug === the
+    // canonical face (sides[0]). A copy with no resolvable canonical-face
+    // card entry emits no hook (safe-skip, no throw) — non-canonical-face
+    // ability text is out of scope.
+    const instances = heroCardInstanceExtIds(parsed.setAbbr, parsed.slug, heroEntry);
+    for (const instance of instances) {
+      const cardEntry = findHeroAbilityCardBySlug(heroEntry.cards, instance.cardSlug);
+      if (cardEntry === null) continue;
+      if (!Array.isArray(cardEntry.abilities) || cardEntry.abilities.length === 0) {
         continue;
       }
 
-      for (const abilityText of card.abilities) {
+      for (const abilityText of cardEntry.abilities) {
         if (typeof abilityText !== 'string' || abilityText.trim() === '') {
           continue;
         }
 
-        const parsed = parseAbilityText(abilityText);
+        const parsedAbility = parseAbilityText(abilityText);
 
+        // why: freshly-constructed hook per instance — copies never alias a
+        // shared object or arrays (D-13502).
         const hook: HeroAbilityHook = {
-          cardId,
-          timing: parsed.timing,
-          keywords: parsed.keywords,
+          cardId: instance.extId,
+          timing: parsedAbility.timing,
+          keywords: parsedAbility.keywords,
         };
 
-        if (parsed.conditions.length > 0) {
-          hook.conditions = parsed.conditions;
+        if (parsedAbility.conditions.length > 0) {
+          hook.conditions = parsedAbility.conditions;
         }
 
-        if (parsed.effects.length > 0) {
-          hook.effects = parsed.effects;
+        if (parsedAbility.effects.length > 0) {
+          hook.effects = parsedAbility.effects;
         }
 
         hooks.push(hook);
@@ -425,4 +464,52 @@ export function buildHeroAbilityHooks(
   }
 
   return hooks;
+}
+
+/**
+ * Finds a hero entry within set data's heroes[] by slug.
+ *
+ * Returns null when the set data is absent/malformed or the named hero is
+ * not present (no cross-set fallback) — mirrors the soft-skip pattern in
+ * buildHeroDeckCards and buildCardStats.
+ *
+ * @param setData - Raw set data from getSet().
+ * @param heroSlug - Hero slug to match.
+ * @returns The matching hero entry, or null.
+ */
+function findHeroAbilityHeroEntry(
+  setData: unknown,
+  heroSlug: string,
+): HeroAbilityHeroEntry | null {
+  if (!setData || typeof setData !== 'object') return null;
+  const candidate = setData as { heroes?: unknown };
+  if (!Array.isArray(candidate.heroes)) return null;
+
+  for (const entry of candidate.heroes) {
+    if (!entry || typeof entry !== 'object') continue;
+    const heroEntry = entry as HeroAbilityHeroEntry;
+    if (typeof heroEntry.slug !== 'string') continue;
+    if (heroEntry.slug !== heroSlug) continue;
+    if (!Array.isArray(heroEntry.cards)) continue;
+    return heroEntry;
+  }
+  return null;
+}
+
+/**
+ * Finds the hero card entry whose slug matches the canonical-face slug.
+ *
+ * @param cards - The hero entry's cards array.
+ * @param slug - The canonical-face slug (physicalCards[].sides[0]).
+ * @returns The matching card entry, or null when none matches.
+ */
+function findHeroAbilityCardBySlug(
+  cards: HeroAbilityHeroCardEntry[],
+  slug: string,
+): HeroAbilityHeroCardEntry | null {
+  for (const cardEntry of cards) {
+    if (!cardEntry || typeof cardEntry !== 'object') continue;
+    if (cardEntry.slug === slug) return cardEntry;
+  }
+  return null;
 }

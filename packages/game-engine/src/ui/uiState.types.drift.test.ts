@@ -89,7 +89,7 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
     // further fields (e.g., `cardType`, `keywords`) is scope creep —
     // separate WP required.
     const fixture = {
-      extId: 'core-hero-black-widow-1',
+      extId: 'core/black-widow/strike#0',
       name: 'Mission Accomplished',
       imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
       cost: 2,
@@ -127,9 +127,9 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
     // join key, repeated for UI convenience and drift-detection sanity)
     // plus `display: UICardDisplay`.
     const fixture = {
-      extId: 'core-hero-black-widow-1',
+      extId: 'core/black-widow/strike#0',
       display: {
-        extId: 'core-hero-black-widow-1',
+        extId: 'core/black-widow/strike#0',
         name: 'Mission Accomplished',
         imageUrl: 'https://images.barefootbetters.com/core/core-hero-black-widow-1.webp',
         cost: 2,
@@ -143,11 +143,11 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
     // why: WP-111 — additive extension of UICityCard; existing extId /
     // type / keywords preserved verbatim.
     const fixture = {
-      extId: 'core-villain-brotherhood-magneto',
+      extId: 'core-villain-brotherhood-magneto-00',
       type: 'villain',
       keywords: ['ambush'],
       display: {
-        extId: 'core-villain-brotherhood-magneto',
+        extId: 'core-villain-brotherhood-magneto-00',
         name: 'Magneto',
         imageUrl: '',
         cost: 5,
@@ -167,12 +167,12 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
     // verbatim (Q3 audit blocked the breaking-change form). `slotDisplay`
     // is an optional parallel array.
     const withDisplay = {
-      slots: ['core-hero-black-widow-1', null] as (string | null)[],
+      slots: ['core/black-widow/strike#0', null] as (string | null)[],
       slotDisplay: [
         {
-          extId: 'core-hero-black-widow-1',
+          extId: 'core/black-widow/strike#0',
           display: {
-            extId: 'core-hero-black-widow-1',
+            extId: 'core/black-widow/strike#0',
             name: 'Mission Accomplished',
             imageUrl: '',
             cost: 2,
@@ -184,7 +184,7 @@ describe('UIState type drift (WP-111 / EC-118)', () => {
 
     // slotDisplay is optional — the without-display form must also satisfy.
     const withoutDisplay = {
-      slots: ['core-hero-black-widow-1', null] as (string | null)[],
+      slots: ['core/black-widow/strike#0', null] as (string | null)[],
     } satisfies UIHQState;
 
     assert.equal(withDisplay.slots.length, withDisplay.slotDisplay.length);
@@ -278,9 +278,9 @@ describe('UIState type drift (WP-128 / EC-131) — type pinning', () => {
     // at every consumer site would be a DRY violation; this pin guards
     // the alias's two-field shape.
     const fixture = {
-      extId: 'core-villain-brotherhood-magneto',
+      extId: 'core-villain-brotherhood-magneto-00',
       display: {
-        extId: 'core-villain-brotherhood-magneto',
+        extId: 'core-villain-brotherhood-magneto-00',
         name: 'Magneto',
         imageUrl: '',
         cost: 5,
@@ -333,9 +333,9 @@ describe('UIState type drift (WP-128 / EC-131) — type pinning', () => {
     const populated: UIKoPileState = {
       count: 2,
       topCard: {
-        extId: 'core-villain-brotherhood-toad',
+        extId: 'core-villain-brotherhood-toad-00',
         display: {
-          extId: 'core-villain-brotherhood-toad',
+          extId: 'core-villain-brotherhood-toad-00',
           name: 'Toad',
           imageUrl: '',
           cost: 2,
@@ -343,18 +343,18 @@ describe('UIState type drift (WP-128 / EC-131) — type pinning', () => {
       },
       cards: [
         {
-          extId: 'core-villain-brotherhood-pyro',
+          extId: 'core-villain-brotherhood-pyro-00',
           display: {
-            extId: 'core-villain-brotherhood-pyro',
+            extId: 'core-villain-brotherhood-pyro-00',
             name: 'Pyro',
             imageUrl: '',
             cost: 3,
           },
         },
         {
-          extId: 'core-villain-brotherhood-toad',
+          extId: 'core-villain-brotherhood-toad-00',
           display: {
-            extId: 'core-villain-brotherhood-toad',
+            extId: 'core-villain-brotherhood-toad-00',
             name: 'Toad',
             imageUrl: '',
             cost: 2,

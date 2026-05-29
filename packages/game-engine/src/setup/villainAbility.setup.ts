@@ -22,6 +22,11 @@ import {
   VILLAIN_ABILITY_TIMINGS,
   VILLAIN_EFFECT_KEYWORDS,
 } from '../rules/villainAbility.types.js';
+// why: D-18704 / D-18706 — villain hooks must key by the copy-indexed
+// instance ext_id (matching the Fight/Ambush fire sites that pass a zone id),
+// fanning out exactly like the henchman path already does. The shared emitter
+// is imported, not re-implemented (D-13702 RS-4).
+import { villainCardInstanceExtIds } from '../villainDeck/villainDeck.setup.js';
 
 // ---------------------------------------------------------------------------
 // VillainAbilityRegistryReader — local structural interface
@@ -39,6 +44,8 @@ import {
 interface VillainAbilityVillainCard {
   slug: string;
   abilities: string[];
+  /** Copy count (WP-167 / D-16701); read by the shared instance-id emitter. */
+  copies?: number;
 }
 
 /**
@@ -279,10 +286,14 @@ function findHenchmanGroupAbilities(
 /**
  * Collects hook entries for the selected villain groups.
  *
- * Villain hooks are keyed by the definition ext_id
- * `{setAbbr}-villain-{groupSlug}-{cardSlug}` — the same key buildCardKeywords
- * and buildCardStats use for villains — so the onAmbush gate (hasAmbush) and
- * the hook table agree on card identity (reachability / gate-consistency).
+ * Villain hooks are fanned out one per (copy-indexed instance ext_id ×
+ * matched ability line) via the shared villainCardInstanceExtIds emitter, so
+ * the keys equal the zone-instance grammar the Fight/Ambush fire sites pass
+ * (D-18704). Before WP-191 these keyed the single definition id, so
+ * getVillainHooksForCard (called with a copy-indexed zone id) always missed
+ * and no villain onFight/onAmbush hook ever fired. Gate-consistency with
+ * buildCardKeywords (D-18507) is preserved because that builder now emits the
+ * `ambush` keyword under the same copy-indexed instance ids.
  *
  * @param registry - Setup-time registry reader.
  * @param matchConfig - Validated match config providing villainGroupIds.
@@ -303,20 +314,32 @@ function collectVillainHookEntries(
     for (const card of groupCards) {
       if (typeof card.slug !== 'string') continue;
       if (!Array.isArray(card.abilities)) continue;
-      const cardId =
-        `${parsed.setAbbr}-villain-${parsed.slug}-${card.slug}` as CardExtId;
+      const instanceExtIds = villainCardInstanceExtIds(
+        parsed.setAbbr,
+        parsed.slug,
+        card.slug,
+        card,
+      );
 
       for (let lineIndex = 0; lineIndex < card.abilities.length; lineIndex++) {
         const abilityLine = card.abilities[lineIndex];
         if (typeof abilityLine !== 'string') continue;
         const timing = detectTiming(abilityLine);
         if (timing === null) continue;
-        entries.push({
-          cardId,
-          timing,
-          lineIndex,
-          effects: extractEffectKeywords(abilityLine),
-        });
+        const effects = extractEffectKeywords(abilityLine);
+        // why: fan out one freshly-constructed hook per copy instance so
+        // copies never alias a shared object or effects array (D-13502),
+        // mirroring the henchman fan-out below. The deterministic sort in
+        // buildVillainAbilityHooks restores the locked total order
+        // (cardId lexical, timing, lineIndex).
+        for (const cardId of instanceExtIds) {
+          entries.push({
+            cardId,
+            timing,
+            lineIndex,
+            effects: [...effects],
+          });
+        }
       }
     }
   }

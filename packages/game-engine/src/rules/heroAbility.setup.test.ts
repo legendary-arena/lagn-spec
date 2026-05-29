@@ -1,6 +1,13 @@
 /**
  * Tests for hero ability hook builder, keyword taxonomy, and timing taxonomy.
  *
+ * WP-191 — hooks now key by the canonical-face slash instance ext_id
+ * (`{setAbbr}/{heroSlug}/{cardSlug}#{copyIndex}`, D-18705) resolved via the
+ * shared heroCardInstanceExtIds emitter, and ability text is read from the
+ * hero entry's `cards[]` (canonical face = `physicalCards[].sides[0]`). The
+ * mocks therefore expose `getSet` (hero entries with cards + physicalCards)
+ * rather than a dash-keyed FlatCard `listCards` array.
+ *
  * Uses node:test and node:assert only. No boardgame.io imports.
  * No modifications to shared test helpers.
  */
@@ -8,78 +15,75 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildHeroAbilityHooks } from '../setup/heroAbility.setup.js';
-import type { HeroAbilityFlatCard } from '../setup/heroAbility.setup.js';
 import { HERO_KEYWORDS, HERO_ABILITY_TIMINGS } from './heroKeywords.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
 
 // ---------------------------------------------------------------------------
-// Mock registry
+// Mock registry (getSet-based — hero entries with cards + physicalCards)
 // ---------------------------------------------------------------------------
 
+interface MockHeroCard {
+  slug: string;
+  rarityLabel?: string;
+  abilities: string[];
+}
+
 /**
- * Creates mock hero cards with structured ability markup.
- *
- * Only provides the three allowed registry fields: cardId/key,
- * abilities: string[], and deck membership (via setAbbr + cardType).
+ * Builds a registry exposing getSet (the source buildHeroAbilityHooks reads)
+ * and a listCards stub (satisfies the isHeroAbilityRegistryReader guard,
+ * which checks only that listCards is a function). Each hero card becomes a
+ * single-copy physical card whose canonical face (sides[0]) is the card slug,
+ * so hooks key by `{setAbbr}/{heroSlug}/{cardSlug}#0`.
  */
-function createMockHeroCards(): HeroAbilityFlatCard[] {
-  return [
+function makeHeroRegistry(
+  setAbbr: string,
+  heroSlug: string,
+  cards: MockHeroCard[],
+) {
+  const physicalCards = cards.map((card, index) => ({
+    id: `p${String(index)}`,
+    count: 1,
+    sides: [card.slug],
+  }));
+  const setData = {
+    abbr: setAbbr,
+    heroes: [{ slug: heroSlug, cards, physicalCards }],
+    villains: [],
+    henchmen: [],
+    schemes: [],
+    masterminds: [],
+    bystanders: [],
+    wounds: [],
+    other: [],
+  };
+  return {
+    listCards: () => [],
+    listSets: () => [{ abbr: setAbbr }],
+    getSet: (abbr: string) => (abbr === setAbbr ? setData : undefined),
+  };
+}
+
+/**
+ * Creates the canonical spider-man mock registry used by the core suite.
+ */
+function createMockRegistry() {
+  return makeHeroRegistry('core', 'spider-man', [
+    { slug: 'astonishing-strength', rarityLabel: 'Common 1', abilities: ['You get +1[icon:attack].'] },
+    { slug: 'web-shooters', rarityLabel: 'Common 2', abilities: ['[hc:tech]: You get +2[icon:recruit].'] },
+    { slug: 'spider-sense', rarityLabel: 'Uncommon', abilities: ['[keyword:rescue] a Bystander.'] },
     {
-      key: 'core-hero-spider-man-1',
-      cardType: 'hero',
-      setAbbr: 'core',
-      abilities: ['You get +1[icon:attack].'],
-    },
-    {
-      key: 'core-hero-spider-man-2',
-      cardType: 'hero',
-      setAbbr: 'core',
-      abilities: ['[hc:tech]: You get +2[icon:recruit].'],
-    },
-    {
-      key: 'core-hero-spider-man-3',
-      cardType: 'hero',
-      setAbbr: 'core',
-      abilities: ['[keyword:rescue] a Bystander.'],
-    },
-    {
-      key: 'core-hero-spider-man-4',
-      cardType: 'hero',
-      setAbbr: 'core',
+      slug: 'great-responsibility',
+      rarityLabel: 'Rare',
       abilities: [
         '[icon:attack] for each hero you played.',
         '[icon:recruit] for each villain in the city.',
       ],
     },
-    // Non-hero card — should be excluded
-    {
-      key: 'core-villain-green-goblin-1',
-      cardType: 'villain',
-      setAbbr: 'core',
-      abilities: ['Ambush: Capture a Bystander.'],
-    },
-  ];
-}
-
-/**
- * Creates a mock registry that returns hero cards with abilities.
- */
-function createMockRegistry(): { listCards(): HeroAbilityFlatCard[] } {
-  return {
-    listCards: () => createMockHeroCards(),
-  };
+  ]);
 }
 
 /**
  * Creates a valid mock MatchSetupConfig for tests.
- *
- * @amended WP-113 PS-7: bare slug fixtures migrated to set-qualified
- *   form `'<setAbbr>/<slug>'` per the qualified-ID contract
- *   (per D-10014). The hero card mock
- *   uses `setAbbr: 'core'` and slug `'spider-man'`, so the qualified ID
- *   is `'core/spider-man'`. Other entity fixtures use `'test'` since
- *   they only flow through the validator (which is bypassed) and the
- *   builders here only consume `heroDeckIds`.
  */
 function createTestConfig(): MatchSetupConfig {
   return {
@@ -110,7 +114,7 @@ describe('buildHeroAbilityHooks', () => {
     assert.ok(hooks.length > 0, 'result must be non-empty for valid hero decks');
   });
 
-  it('every hook has a valid cardId (non-empty CardExtId string)', () => {
+  it('every hook has a slash-format instance cardId (D-18705)', () => {
     const registry = createMockRegistry();
     const config = createTestConfig();
 
@@ -119,6 +123,15 @@ describe('buildHeroAbilityHooks', () => {
     for (const hook of hooks) {
       assert.equal(typeof hook.cardId, 'string', 'cardId must be a string');
       assert.ok(hook.cardId.length > 0, 'cardId must be non-empty');
+      // why: WP-191 — hooks key by the canonical-face slash instance id
+      // `{setAbbr}/{heroSlug}/{cardSlug}#{copyIndex}` (contains both '/' and
+      // '#'), never the dash/slot FlatCard key.
+      assert.ok(hook.cardId.includes('/'), `cardId '${hook.cardId}' must contain a slash`);
+      assert.ok(hook.cardId.includes('#'), `cardId '${hook.cardId}' must contain a '#' copy suffix`);
+      assert.ok(
+        !hook.cardId.includes('-hero-'),
+        `cardId '${hook.cardId}' must not be a dash/slot FlatCard key`,
+      );
     }
   });
 
@@ -163,6 +176,56 @@ describe('buildHeroAbilityHooks', () => {
     const serialized = JSON.stringify(hooks);
     assert.ok(serialized, 'JSON.stringify(hooks) must produce a non-empty string');
     assert.ok(serialized.length > 2, 'serialized output must contain data');
+  });
+
+  it('resolves ability text from the canonical face (sides[0]) only', () => {
+    // why: WP-191 / D-18705 — for a split physical card, only the canonical
+    // face (sides[0]) is keyed; the back side's ability text is out of scope
+    // (safe-skip). Here the back side 'venom-symbiote' carries an ability, but
+    // no hook is emitted for it because it is never a canonical face.
+    const setData = {
+      abbr: 'core',
+      heroes: [
+        {
+          slug: 'spider-man',
+          cards: [
+            { slug: 'front-face', rarityLabel: 'Common 1', abilities: ['You get +1[icon:attack].'] },
+            { slug: 'venom-symbiote', rarityLabel: 'Common 1', abilities: ['[keyword:ko] this card.'] },
+          ],
+          physicalCards: [{ id: 'p0', count: 2, sides: ['front-face', 'venom-symbiote'] }],
+        },
+      ],
+      villains: [],
+      henchmen: [],
+      schemes: [],
+      masterminds: [],
+    };
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'core' }],
+      getSet: (abbr: string) => (abbr === 'core' ? setData : undefined),
+    };
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/spider-man'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+
+    for (const hook of hooks) {
+      assert.ok(
+        hook.cardId.startsWith('core/spider-man/front-face#'),
+        `only the canonical face is keyed; got '${hook.cardId}'`,
+      );
+    }
+    // Two physical copies of the canonical face → two hooks (one per copy).
+    assert.equal(hooks.length, 2, 'both copies of the canonical face are keyed');
+  });
+
+  it('returns an empty array when the registry exposes no getSet (narrow mock)', () => {
+    // why: WP-191 — hook keys derive from hero entries read via getSet. A
+    // narrow listCards-only mock satisfies the isHeroAbilityRegistryReader
+    // guard but cannot supply hero entries, so no hooks are built (no throw).
+    const narrowRegistry = { listCards: () => [] };
+    const hooks = buildHeroAbilityHooks(narrowRegistry, createTestConfig());
+    assert.deepStrictEqual(hooks, []);
   });
 });
 
@@ -259,16 +322,9 @@ describe('HERO_ABILITY_TIMINGS drift-detection', () => {
 
 describe('buildHeroAbilityHooks [team:X] markup (WP-179)', () => {
   it('[team:avengers] markup produces requiresTeam condition with value avengers', () => {
-    const registry = {
-      listCards: (): HeroAbilityFlatCard[] => [
-        {
-          key: 'core-hero-cap-1',
-          cardType: 'hero',
-          setAbbr: 'core',
-          abilities: ['[team:avengers]: +2[icon:attack].'],
-        },
-      ],
-    };
+    const registry = makeHeroRegistry('core', 'cap', [
+      { slug: 'shield-bash', rarityLabel: 'Common 1', abilities: ['[team:avengers]: +2[icon:attack].'] },
+    ]);
     const config: MatchSetupConfig = {
       ...createTestConfig(),
       heroDeckIds: ['core/cap'],
@@ -290,16 +346,9 @@ describe('buildHeroAbilityHooks [team:X] markup (WP-179)', () => {
   });
 
   it('mixed markup [hc:tech][team:avengers] emits both in stable order (heroClassMatch first)', () => {
-    const registry = {
-      listCards: (): HeroAbilityFlatCard[] => [
-        {
-          key: 'core-hero-iron-man-1',
-          cardType: 'hero',
-          setAbbr: 'core',
-          abilities: ['[hc:tech][team:avengers]: Draw 2 cards.'],
-        },
-      ],
-    };
+    const registry = makeHeroRegistry('core', 'iron-man', [
+      { slug: 'repulsor', rarityLabel: 'Common 1', abilities: ['[hc:tech][team:avengers]: Draw 2 cards.'] },
+    ]);
     const config: MatchSetupConfig = {
       ...createTestConfig(),
       heroDeckIds: ['core/iron-man'],
@@ -317,16 +366,9 @@ describe('buildHeroAbilityHooks [team:X] markup (WP-179)', () => {
   });
 
   it('mixed-case parsing: [hc:Tech] normalizes to condition value tech', () => {
-    const registry = {
-      listCards: (): HeroAbilityFlatCard[] => [
-        {
-          key: 'core-hero-hero-x-1',
-          cardType: 'hero',
-          setAbbr: 'core',
-          abilities: ['[hc:Tech]: You get +1[icon:attack].'],
-        },
-      ],
-    };
+    const registry = makeHeroRegistry('core', 'hero-x', [
+      { slug: 'tech-card', rarityLabel: 'Common 1', abilities: ['[hc:Tech]: You get +1[icon:attack].'] },
+    ]);
     const config: MatchSetupConfig = {
       ...createTestConfig(),
       heroDeckIds: ['core/hero-x'],
@@ -340,16 +382,9 @@ describe('buildHeroAbilityHooks [team:X] markup (WP-179)', () => {
   });
 
   it('whitespace parsing: [team: Avengers ] normalizes to condition value avengers', () => {
-    const registry = {
-      listCards: (): HeroAbilityFlatCard[] => [
-        {
-          key: 'core-hero-cap-1',
-          cardType: 'hero',
-          setAbbr: 'core',
-          abilities: ['[team: Avengers ]: +3 attack.'],
-        },
-      ],
-    };
+    const registry = makeHeroRegistry('core', 'cap', [
+      { slug: 'shield-throw', rarityLabel: 'Common 1', abilities: ['[team: Avengers ]: +3 attack.'] },
+    ]);
     const config: MatchSetupConfig = {
       ...createTestConfig(),
       heroDeckIds: ['core/cap'],
@@ -363,16 +398,9 @@ describe('buildHeroAbilityHooks [team:X] markup (WP-179)', () => {
   });
 
   it('team markup tokens are removed from ability text after extraction (conditional keyword added)', () => {
-    const registry = {
-      listCards: (): HeroAbilityFlatCard[] => [
-        {
-          key: 'core-hero-cap-1',
-          cardType: 'hero',
-          setAbbr: 'core',
-          abilities: ['[team:avengers]: You get +2[icon:attack].'],
-        },
-      ],
-    };
+    const registry = makeHeroRegistry('core', 'cap', [
+      { slug: 'rally', rarityLabel: 'Common 1', abilities: ['[team:avengers]: You get +2[icon:attack].'] },
+    ]);
     const config: MatchSetupConfig = {
       ...createTestConfig(),
       heroDeckIds: ['core/cap'],

@@ -153,9 +153,11 @@ describe('buildCardStats — qualified ID parsing (WP-113 PS-7 amendment)', () =
 
     const stats = buildCardStats(registry, config);
 
-    assert.ok(stats['core-hero-black-widow-1'], 'core/black-widow hero stat must be present');
-    assert.ok(stats['core-villain-brotherhood-magneto'], 'core/brotherhood magneto villain stat must be present');
-    assert.ok(stats['core-villain-brotherhood-mystique'], 'core/brotherhood mystique villain stat must be present');
+    assert.ok(stats['core-hero-black-widow-1'], 'core/black-widow hero stat (§1 dash row) must be present');
+    // why: WP-191 — villain stats are now keyed by the copy-indexed instance
+    // ext_id (magneto/mystique have no `copies` field → one instance each, -00).
+    assert.ok(stats['core-villain-brotherhood-magneto-00'], 'core/brotherhood magneto villain instance stat must be present');
+    assert.ok(stats['core-villain-brotherhood-mystique-00'], 'core/brotherhood mystique villain instance stat must be present');
     assert.ok(stats['henchman-doombot-legion-00'], 'henchman virtual copy 00 must be present');
     assert.ok(stats['henchman-doombot-legion-09'], 'henchman virtual copy 09 must be present');
   });
@@ -176,9 +178,9 @@ describe('buildCardStats — qualified ID parsing (WP-113 PS-7 amendment)', () =
       'Bare-slug hero must not match any FlatCard via the qualified-ID filter',
     );
     assert.equal(
-      stats['core-villain-brotherhood-magneto'],
+      stats['core-villain-brotherhood-magneto-00'],
       undefined,
-      'Bare-slug villain group must not match any FlatCard via the qualified-ID filter',
+      'Bare-slug villain group must not produce a villain instance stat via the qualified-ID filter',
     );
     assert.equal(
       stats['henchman-doombot-legion-00'],
@@ -208,13 +210,13 @@ describe('buildCardStats — qualified ID parsing (WP-113 PS-7 amendment)', () =
       'core hero stat must NOT be present when wwhk/black-widow was chosen — cross-set filter is mandatory',
     );
     assert.ok(
-      stats['wwhk-villain-brotherhood-wwhk-magneto'],
-      'wwhk villain stat must be present',
+      stats['wwhk-villain-brotherhood-wwhk-magneto-00'],
+      'wwhk villain instance stat must be present',
     );
     assert.equal(
-      stats['core-villain-brotherhood-magneto'],
+      stats['core-villain-brotherhood-magneto-00'],
       undefined,
-      'core villain stat must NOT be present when wwhk/brotherhood was chosen',
+      'core villain instance stat must NOT be present when wwhk/brotherhood was chosen',
     );
   });
 });

@@ -194,13 +194,18 @@ export function buildVillainDeck(
 
     for (const card of groupCards) {
       if (typeof card.slug !== 'string') continue;
-      const copyCount = readVillainCopyCount(card);
-      // why: each copy is a distinct virtual instance with its own ext_id so
-      // copies move independently and escapes/KOs stay attributable in replays
-      // (D-16802, mirroring the henchman instancing rationale in D-1410).
-      for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
-        const paddedIndex = String(copyIndex).padStart(2, '0');
-        const extId = `${parsed.setAbbr}-villain-${parsed.slug}-${card.slug}-${paddedIndex}` as CardExtId;
+      // why: the shared emitter is the single source of villain instance
+      // ext_ids — the deck builder and every per-card lookup builder
+      // (cardStats §2, cardKeywords, villainAbilityHooks) call it so their
+      // keys can never drift from the zone-instance grammar (D-18704 /
+      // D-18706; import-not-duplicate per the D-13702 RS-4 precedent).
+      const instanceExtIds = villainCardInstanceExtIds(
+        parsed.setAbbr,
+        parsed.slug,
+        card.slug,
+        card,
+      );
+      for (const extId of instanceExtIds) {
         deck.push(extId);
         cardTypes[extId] = 'villain';
       }
@@ -382,15 +387,65 @@ function findVillainGroupCards(
 
 /**
  * Reads a villain card's copy count, defaulting to 1 when absent.
+ *
+ * @param card - Any villain-card-shaped object; only the optional `copies`
+ *   field is read, so the per-card lookup builders can pass their own
+ *   structural card types.
+ * @returns The declared copy count (>= 1), or 1 when `copies` is absent.
  */
 // why: a villain card with no `copies` field is a single-instance card
 // (D-16802 / D-16701 default). Returning 1 keeps the section-1 loop uniform
-// whether or not the card declares a copy count.
-function readVillainCopyCount(card: VillainCardEntry): number {
+// whether or not the card declares a copy count. Exported as the single
+// copy-count resolver so the lookup builders import it rather than
+// re-implementing the default rule locally (D-13702 RS-4 — divergent copy
+// counts across sites are exactly the silent lookup-miss class this WP fixes).
+export function readVillainCopyCount(card: { copies?: number }): number {
   if (typeof card.copies === 'number' && card.copies >= 1) {
     return card.copies;
   }
   return 1;
+}
+
+/**
+ * Returns the copy-indexed instance ext_ids for one villain card.
+ *
+ * The returned ids are the exact strings the card carries in `G` zones
+ * (deck, City, etc.): `{setAbbr}-villain-{groupSlug}-{cardSlug}-{NN}` where
+ * NN is the zero-padded two-digit copy index from `00` to `copies - 1`.
+ *
+ * Pure and copyIndex-ascending: it performs no sorting and is safe to call
+ * repeatedly. Consumers (the deck builder and the cardStats / cardKeywords /
+ * villainAbilityHooks builders) use the returned array order directly.
+ *
+ * @param setAbbr - Set abbreviation (e.g., "core").
+ * @param groupSlug - Villain group slug (e.g., "brotherhood").
+ * @param cardSlug - Villain card slug within the group (e.g., "magneto").
+ * @param card - The villain card object; only its `copies` field is read.
+ * @returns Copy-indexed instance ext_ids in ascending copy order.
+ */
+// why: villain per-card lookups must fan out one entry per copy to match the
+// zone-instance grammar the deck builder emits (D-18704). Before WP-191 the
+// lookup builders keyed villains by the single definition id while zones were
+// copy-indexed, so every villain fightCost / Ambush / Fight lookup silently
+// missed. Centralizing emission here (consumed by the deck builder AND the
+// lookup builders) mirrors the henchman per-copy fan-out that already works
+// and guarantees the keys agree by construction (D-18706; D-16802 per-copy
+// attributability preserved — zones remain the source of truth).
+export function villainCardInstanceExtIds(
+  setAbbr: string,
+  groupSlug: string,
+  cardSlug: string,
+  card: { copies?: number },
+): CardExtId[] {
+  const copyCount = readVillainCopyCount(card);
+  const instanceExtIds: CardExtId[] = [];
+  for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+    const paddedIndex = String(copyIndex).padStart(2, '0');
+    instanceExtIds.push(
+      `${setAbbr}-villain-${groupSlug}-${cardSlug}-${paddedIndex}` as CardExtId,
+    );
+  }
+  return instanceExtIds;
 }
 
 /**

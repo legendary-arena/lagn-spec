@@ -347,25 +347,145 @@ function parsePhysicalCards(raw: unknown): PhysicalCardEntry[] {
 }
 
 // ---------------------------------------------------------------------------
+// heroCardInstanceExtIds — shared hero instance-id emitter (D-18705 / D-18706)
+// ---------------------------------------------------------------------------
+
+/**
+ * One hero card instance: the canonical-face slug paired with the slash-format
+ * instance ext_id the card carries in `G` zones.
+ *
+ * `cardSlug` is the canonical face (`physicalCards[].sides[0]`, or the card
+ * slug in the rarity-fallback path); consumers resolve their per-card payload
+ * (stats in buildCardStats §1b, ability text in buildHeroAbilityHooks) from
+ * the hero entry's `cards[]` entry whose `slug === cardSlug`.
+ */
+export interface HeroCardInstance {
+  /** Canonical-face card slug (physicalCards[].sides[0] or fallback card slug). */
+  cardSlug: string;
+  /** Slash-format instance ext_id `{setAbbr}/{heroSlug}/{cardSlug}#{copyIndex}`. */
+  extId: CardExtId;
+}
+
+/**
+ * Returns the slash-format instance ext_ids for one hero's cards.
+ *
+ * Reproduces the exact algorithm the hero deck reservoir uses: when
+ * `physicalCards` is present (the curated path) it emits `count` ids per
+ * physical card using `sides[0]` as the canonical face slug (D-14101); when
+ * `physicalCards` is absent it falls back to the per-card
+ * `resolveHeroCardCopyCount` cascade (D-13701 → D-13501). Each id is
+ * `{setAbbr}/{heroSlug}/{cardSlug}#{copyIndex}` (D-13702).
+ *
+ * Pure and copyIndex-ascending: it performs no sorting and is safe to call
+ * repeatedly. Consumers (this module's deck builder, plus buildCardStats §1b
+ * and buildHeroAbilityHooks) use the returned array order directly.
+ *
+ * Throws the D-13501 Option A loud-fail (full-sentence Error) when, on the
+ * fallback path, a card's copy count cannot be resolved from either source —
+ * the deck builder's existing loud-fail surface, preserved unchanged. The
+ * physicalCards path never throws; malformed physical cards (empty `sides[]`)
+ * are soft-skipped by parsePhysicalCards exactly as before.
+ *
+ * @param setAbbr - Set abbreviation (e.g., "core").
+ * @param heroSlug - Hero slug within the set (e.g., "black-widow").
+ * @param heroEntry - The hero entry; `cards`, `physicalCards`, and
+ *   `cardCounts` are read.
+ * @returns Hero card instances in declaration/copy order.
+ */
+// why: hero per-card lookups must key by the canonical-face slash instance id
+// and NOT the dash/slot FlatCard key (D-18705). The zone id
+// (`{set}/{heroSlug}/{cardSlug}#{copy}`, slug-based) and the old hook key
+// (`{set}-hero-{heroSlug}-{slot}`, slot-based) differed in two independent
+// ways (slug-vs-slot and slash-vs-dash), so before WP-191 every hero ability
+// lookup silently missed. Centralizing emission here (consumed by the deck
+// builder AND the lookup builders) makes the keys agree with the zone +
+// cardStats §1b grammar by construction (D-18706; import-not-duplicate).
+export function heroCardInstanceExtIds(
+  setAbbr: string,
+  heroSlug: string,
+  heroEntry: {
+    cards: Array<{ slug: string; name?: string; rarityLabel?: string }>;
+    physicalCards?: unknown;
+    cardCounts?: unknown;
+  },
+): HeroCardInstance[] {
+  const instances: HeroCardInstance[] = [];
+
+  // why: D-14101 / D-14102 — when physicalCards is present, emit `count` ids
+  // per physical card using sides[0] as the canonical face slug. Split heroes
+  // (2 sides) emit one id per physical copy using the first side; solo heroes
+  // (1 side) are unchanged because sides[0] === the only card slug.
+  const physicalCards = parsePhysicalCards(heroEntry.physicalCards);
+  if (physicalCards.length > 0) {
+    for (const physicalCard of physicalCards) {
+      const canonicalSlug = physicalCard.sides[0]!;
+      const baseExtId = `${setAbbr}/${heroSlug}/${canonicalSlug}`;
+      for (let copyIndex = 0; copyIndex < physicalCard.count; copyIndex++) {
+        instances.push({
+          cardSlug: canonicalSlug,
+          extId: `${baseExtId}#${copyIndex}` as CardExtId,
+        });
+      }
+    }
+    return instances;
+  }
+
+  // why: fallback to per-card resolveHeroCardCopyCount when physicalCards is
+  // absent or empty — preserves backward compatibility with data that has not
+  // been curated yet (should not occur after WP-140 Phase 1b, but
+  // defense-in-depth). The D-13501 Option A loud-fail lives here so the deck
+  // builder's throw-on-unresolvable-copy-count contract is preserved.
+  const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
+  for (const card of heroEntry.cards) {
+    if (!card || typeof card !== 'object') continue;
+    if (typeof card.slug !== 'string' || typeof card.rarityLabel !== 'string') {
+      continue;
+    }
+
+    const copyCount = resolveHeroCardCopyCount(
+      { name: card.name, rarityLabel: card.rarityLabel },
+      nameLookup,
+    );
+    if (copyCount === null) {
+      const supportedList = SUPPORTED_RARITY_LABELS.map((label) => `'${label}'`).join(', ');
+      const cardNameDisplay = typeof card.name === 'string' && card.name.length > 0 ? card.name : '<unnamed>';
+      throw new Error(
+        `buildHeroDeck refused to build hero '${setAbbr}/${heroSlug}': ` +
+          `card '${card.slug}' (display name '${cardNameDisplay}') has no resolvable copy count — ` +
+          `the per-hero cardCounts map has no positive integer entry for display name '${cardNameDisplay}', ` +
+          `and the card's rarityLabel '${card.rarityLabel}' is not in the supported four-label set ${supportedList}. ` +
+          `Either populate cardCounts in the hero entry of data/cards/${setAbbr}.json with a positive integer keyed by '${cardNameDisplay}', ` +
+          `or correct the card's rarityLabel to one of the supported labels.`,
+      );
+    }
+
+    const baseExtId = `${setAbbr}/${heroSlug}/${card.slug}`;
+    for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
+      instances.push({
+        cardSlug: card.slug,
+        extId: `${baseExtId}#${copyIndex}` as CardExtId,
+      });
+    }
+  }
+
+  return instances;
+}
+
+// ---------------------------------------------------------------------------
 // buildHeroDeckCards — pure registry walk
 // ---------------------------------------------------------------------------
 
 /**
  * Builds the unshuffled flat array of hero card-instance ext_ids.
  *
- * For each hero in heroDeckIds, walks setData.heroes[i].cards[j], resolves
- * the per-card copy count via the cardCounts → rarity-map cascade (D-13701
- * → D-13501), and emits one ext_id per copy with a `#<copyIndex>` suffix
- * (D-13702). Card order: heroes per heroDeckIds order; cards per registry
- * cards[] order; copies appended in zero-indexed contiguous order
- * (`#0`, `#1`, …, `#(N-1)`).
+ * For each hero in heroDeckIds, resolves the hero entry from the set data and
+ * delegates instance-id emission to heroCardInstanceExtIds (the single
+ * emitter home, D-18706). Card order: heroes per heroDeckIds order; cards per
+ * the emitter's order; copies appended in zero-indexed contiguous order.
  *
- * Throws a full-sentence Error (the surviving D-13501 Option A loud-fail
- * surface) when, for a given card, BOTH copy-count sources fail
- * simultaneously: the cardCounts entry is absent / malformed AND the
- * rarityLabel is not in the four-label set. The message enumerates both
- * attempted paths so the operator can fix the patch file or extend the
- * rarity map as appropriate.
+ * Throws a full-sentence Error (the D-13501 Option A loud-fail surface,
+ * raised inside heroCardInstanceExtIds) when, on the fallback path, a card's
+ * copy count cannot be resolved from either source.
  *
  * @param heroDeckIds - Array of qualified hero deck IDs `<setAbbr>/<heroSlug>`.
  * @param registry - Setup-time registry reader. Must satisfy RegistryReader.
@@ -398,60 +518,9 @@ export function buildHeroDeckCards(
     if (heroEntry === null) continue;
     if (!Array.isArray(heroEntry.cards)) continue;
 
-    // why: D-14102 — the deck reservoir now iterates physicalCards[].count
-    // instead of summing per-side cardCounts via resolveHeroCardCopyCount.
-    // Each physicalCard carries a `count` and ordered `sides[]`; the
-    // canonical face is sides[0] per D-14101. For solo heroes (D-13803
-    // uniform model), each physicalCard has one side and count matches the
-    // rarity-derived value. For split heroes (e.g., Falcon/Winter Soldier),
-    // physicalCards group paired sides into one entry with the combined count.
-    const physicalCards = parsePhysicalCards(heroEntry.physicalCards);
-    if (physicalCards.length === 0) {
-      // why: fallback to per-card resolveHeroCardCopyCount when
-      // physicalCards is absent or empty — preserves backward
-      // compatibility with data that has not been curated yet
-      // (should not occur after WP-140 Phase 1b, but defense-in-depth).
-      const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
-
-      for (const card of heroEntry.cards) {
-        if (!card || typeof card !== 'object') continue;
-        if (typeof card.slug !== 'string' || typeof card.rarityLabel !== 'string') {
-          continue;
-        }
-
-        const copyCount = resolveHeroCardCopyCount(card, nameLookup);
-        if (copyCount === null) {
-          const supportedList = SUPPORTED_RARITY_LABELS.map((label) => `'${label}'`).join(', ');
-          const cardNameDisplay = typeof card.name === 'string' && card.name.length > 0 ? card.name : '<unnamed>';
-          throw new Error(
-            `buildHeroDeck refused to build hero '${parsed.setAbbr}/${parsed.slug}': ` +
-              `card '${card.slug}' (display name '${cardNameDisplay}') has no resolvable copy count — ` +
-              `the per-hero cardCounts map has no positive integer entry for display name '${cardNameDisplay}', ` +
-              `and the card's rarityLabel '${card.rarityLabel}' is not in the supported four-label set ${supportedList}. ` +
-              `Either populate cardCounts in the hero entry of data/cards/${parsed.setAbbr}.json with a positive integer keyed by '${cardNameDisplay}', ` +
-              `or correct the card's rarityLabel to one of the supported labels.`,
-          );
-        }
-
-        const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${card.slug}`;
-        for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
-          cards.push(`${baseExtId}#${copyIndex}` as CardExtId);
-        }
-      }
-      continue;
-    }
-
-    // why: D-14101 — for each physicalCard, emit `count` ext_ids using
-    // sides[0] (declaration order) as the canonical face slug. D-13702
-    // #<copyIndex> suffix preserved. Split heroes (2 sides) get one
-    // ext_id per physical copy using the first side; solo heroes
-    // (1 side) are unchanged because sides[0] === the only card slug.
-    for (const physicalCard of physicalCards) {
-      const canonicalSlug = physicalCard.sides[0];
-      const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${canonicalSlug}`;
-      for (let copyIndex = 0; copyIndex < physicalCard.count; copyIndex++) {
-        cards.push(`${baseExtId}#${copyIndex}` as CardExtId);
-      }
+    const instances = heroCardInstanceExtIds(parsed.setAbbr, parsed.slug, heroEntry);
+    for (const instance of instances) {
+      cards.push(instance.extId);
     }
   }
 

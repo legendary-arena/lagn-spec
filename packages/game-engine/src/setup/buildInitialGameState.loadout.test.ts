@@ -230,9 +230,12 @@ describe('buildInitialGameState — loadout integration', () => {
     );
 
     // Villain stat present
+    // why: WP-191 — villain cardStats are keyed by the copy-indexed instance
+    // ext_id (the zone-instance grammar the fight fire site reads), not the
+    // definition FlatCard key. The first copy is always -00.
     assert.ok(
-      gameState.cardStats['core-villain-brotherhood-magneto'],
-      'cardStats must include the chosen villain ext_ids (core-villain-brotherhood-magneto)',
+      gameState.cardStats['core-villain-brotherhood-magneto-00'],
+      'cardStats must include the chosen villain instance ext_id (core-villain-brotherhood-magneto-00)',
     );
 
     // Henchman stat present (10 virtual copies)

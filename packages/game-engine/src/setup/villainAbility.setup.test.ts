@@ -128,8 +128,10 @@ describe('buildVillainAbilityHooks — timing prefix detection', () => {
     const config = makeConfig(['core/variants'], []);
     const hooks = buildVillainAbilityHooks(registry, config);
 
+    // why: WP-191 — villain hooks now key by the copy-indexed instance ext_id.
+    // The fixture cards declare no `copies`, so each yields a single -00 instance.
     const byCard = (slug: string) =>
-      hooks.filter((h) => h.cardId === `core-villain-variants-${slug}`);
+      hooks.filter((h) => h.cardId === `core-villain-variants-${slug}-00`);
 
     assert.equal(byCard('caps').length, 1, 'AMBUSH: matches case-insensitively');
     assert.equal(byCard('caps')[0]!.timing, 'onAmbush');
@@ -168,8 +170,9 @@ describe('buildVillainAbilityHooks — [effect:] marker extraction', () => {
     [],
   );
   const hooks = buildVillainAbilityHooks(registry, makeConfig(['core/mix'], []));
+  // why: WP-191 — villain hooks key by the -00 copy instance (no `copies` field).
   const effectsFor = (slug: string) =>
-    hooks.find((h) => h.cardId === `core-villain-mix-${slug}`)!.effects;
+    hooks.find((h) => h.cardId === `core-villain-mix-${slug}-00`)!.effects;
 
   it('extracts a valid [effect:] marker', () => {
     assert.deepStrictEqual(effectsFor('real'), ['koHeroCurrentPlayer']);
@@ -184,7 +187,7 @@ describe('buildVillainAbilityHooks — [effect:] marker extraction', () => {
   });
 
   it('still emits a hook (timing preserved) for a matched line with no recognized marker', () => {
-    const freetextHook = hooks.find((h) => h.cardId === 'core-villain-mix-freetext');
+    const freetextHook = hooks.find((h) => h.cardId === 'core-villain-mix-freetext-00');
     assert.ok(freetextHook, 'a matched Fight: line yields a hook even with empty effects');
     assert.equal(freetextHook!.timing, 'onFight');
   });
@@ -376,5 +379,52 @@ describe('buildVillainAbilityHooks — gate-consistency with buildCardKeywords',
         `onAmbush hook for ${hook.cardId} must satisfy hasAmbush (gate-consistency)`,
       );
     }
+  });
+});
+
+describe('buildVillainAbilityHooks — villain per-copy fan-out (WP-191)', () => {
+  it('emits one hook per (copy instance × matched ability line) keyed by the copy-indexed id', () => {
+    // why: WP-191 / D-18704 — a villain card with copies:2 must produce hooks
+    // under both -00 and -01 instance ids (matching the zone-instance grammar
+    // the Fight fire site passes), exactly as henchmen already fan out. Before
+    // this WP villains keyed the single definition id and never resolved.
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'brotherhood',
+          cards: [
+            {
+              slug: 'magneto',
+              copies: 2,
+              abilities: ['Fight: KO one of your Heroes. [effect:koHeroCurrentPlayer]'],
+            },
+          ],
+        },
+      ],
+      [],
+    );
+    const hooks = buildVillainAbilityHooks(registry, makeConfig(['core/brotherhood'], []));
+
+    const magnetoHooks = hooks.filter((h) =>
+      h.cardId.startsWith('core-villain-brotherhood-magneto-'),
+    );
+    assert.equal(magnetoHooks.length, 2, 'copies:2 must yield 2 villain hook instances');
+    for (let copyIndex = 0; copyIndex < 2; copyIndex++) {
+      const paddedIndex = String(copyIndex).padStart(2, '0');
+      const match = magnetoHooks.find(
+        (h) => h.cardId === `core-villain-brotherhood-magneto-${paddedIndex}`,
+      );
+      assert.ok(match, `hook for core-villain-brotherhood-magneto-${paddedIndex} must exist`);
+      assert.equal(match!.timing, 'onFight');
+      assert.deepStrictEqual(match!.effects, ['koHeroCurrentPlayer']);
+    }
+
+    // why: copies must not alias a shared effects array (D-13502).
+    assert.notEqual(
+      magnetoHooks[0]!.effects,
+      magnetoHooks[1]!.effects,
+      'each copy must own a freshly-constructed effects array',
+    );
   });
 });

@@ -11,17 +11,15 @@
 import type { CardExtId } from '../state/zones.types.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { TurnEconomy, CardStatEntry } from './economy.types.js';
-// why: D-13702 fan-out — economy.logic.ts must resolve hero card-instance
-// copy counts identically to buildHeroDeckCards so G.cardStats keys form
-// a superset of the hero deck reservoir. The shared helper enforces
-// byte-for-byte parity by construction; divergence between the three
-// sites would cause silent lookup misses across G.cardStats under
-// specific RNG seeds. Per RS-4 lock, the helper is imported (not
-// duplicated) from the canonical emitter site.
-import {
-  buildCardCountsNameLookup,
-  resolveHeroCardCopyCount,
-} from '../setup/buildHeroDeck.js';
+// why: D-13702 / D-18706 fan-out — economy.logic.ts must resolve hero AND
+// villain card-instance ext_ids identically to the deck builders so
+// G.cardStats keys equal the zone-instance grammar (a superset of the hero
+// deck reservoir and the exact set of villain zone instances). The shared
+// emitters enforce parity by construction; divergence between sites is the
+// silent lookup-miss class WP-191 fixes. Per the D-13702 RS-4 lock the
+// emitters are imported (not re-implemented) from their canonical homes.
+import { heroCardInstanceExtIds } from '../setup/buildHeroDeck.js';
+import { villainCardInstanceExtIds } from '../villainDeck/villainDeck.setup.js';
 
 // ---------------------------------------------------------------------------
 // CardStatsRegistryReader — local structural interface
@@ -81,21 +79,6 @@ interface HeroInstanceEntry {
 }
 
 /**
- * Minimal structural type for one physical card in SetData.heroes[i].physicalCards[j].
- *
- * Introduced by WP-138 Phase 1a (D-13801). Used by the D-14102 deck-size
- * migration to read count from the physical card.
- */
-interface EconomyPhysicalCardEntry {
-  /** Physical card identifier within the hero (e.g., 'p1'). */
-  id: string;
-  /** Number of copies of this physical card in the deck. */
-  count: number;
-  /** Ordered side slugs. sides[0] is the canonical face per D-14101. */
-  sides: string[];
-}
-
-/**
  * Minimal structural type for a flat card returned by listCards().
  * Matches a subset of FlatCard from the registry package.
  *
@@ -121,11 +104,15 @@ export interface CardStatsFlatCard {
 
 /**
  * Minimal structural type for a villain card entry in SetData.
- * Only the vAttack field is needed for card stats resolution.
+ *
+ * `vAttack` drives the fightCost; `copies` (WP-167 / D-16701) is read by the
+ * shared villain instance-id emitter so §2 fans out one stat row per copy
+ * instance, matching the zone-instance grammar.
  */
 interface VillainCardEntry {
   slug: string;
   vAttack: string | number | null;
+  copies?: number;
 }
 
 /**
@@ -274,14 +261,14 @@ export function buildCardStats(
     }
   }
 
-  // --- 1b. Hero card instances (WP-135 / WP-137 — slash-format ext_id with #<copyIndex>) ---
-  // why: D-14102 — the per-copy fan-out now iterates physicalCards[].count
-  // instead of summing per-side cardCounts via resolveHeroCardCopyCount.
-  // Each physicalCard carries count and ordered sides[]; sides[0] is the
-  // canonical face slug per D-14101. Card stat fields (attack, recruit,
-  // cost) are resolved from heroEntry.cards by matching sides[0] to
-  // card.slug. Falls back to the old per-card resolveHeroCardCopyCount
-  // path when physicalCards is absent (defense-in-depth).
+  // --- 1b. Hero card instances (slash-format ext_id with #<copyIndex>) ---
+  // why: D-18706 — §1b sources its instance ids from the shared
+  // heroCardInstanceExtIds emitter rather than re-walking physicalCards
+  // locally, so §1b and buildHeroAbilityHooks provably share one emitter and
+  // can never key heroes differently. Output is byte-identical to the prior
+  // inline walk: the emitter yields canonical-face slugs (sides[0], or the
+  // card slug on the rarity-fallback path), and the per-copy stat fields are
+  // still resolved from heroEntry.cards by matching that slug.
   for (const heroDeckId of matchConfig.heroDeckIds) {
     const parsed = parseQualifiedIdForSetup(heroDeckId);
     if (parsed === null) continue;
@@ -292,88 +279,59 @@ export function buildCardStats(
     const heroEntry = findHeroEntry(setData, parsed.slug);
     if (heroEntry === null) continue;
 
-    const physicalCards = parseEconomyPhysicalCards(heroEntry.physicalCards);
-    if (physicalCards.length > 0) {
-      for (const physicalCard of physicalCards) {
-        const canonicalSlug = physicalCard.sides[0] as string;
-        const cardEntry = findEconomyCardEntryBySlug(heroEntry.cards, canonicalSlug);
-        const attack = cardEntry !== null ? parseCardStatValue(cardEntry.attack) : 0;
-        const recruit = cardEntry !== null ? parseCardStatValue(cardEntry.recruit) : 0;
-        const cost = cardEntry !== null ? parseCardStatValue(cardEntry.cost) : 0;
-        const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${canonicalSlug}`;
-        for (let copyIndex = 0; copyIndex < physicalCard.count; copyIndex++) {
-          const extId = `${baseExtId}#${copyIndex}` as CardExtId;
-          // why: per-copy fresh object literal — no aliasing across keys
-          // (WP-028 D-2802 aliasing prevention extended to setup-time
-          // sibling-snapshot fan-out).
-          stats[extId] = {
-            attack,
-            recruit,
-            cost,
-            // why: heroes are never fought; fightCost is for villains only.
-            fightCost: 0,
-          };
-        }
-      }
-    } else {
-      // why: fallback to per-card resolveHeroCardCopyCount when
-      // physicalCards is absent or empty — preserves backward
-      // compatibility with data that has not been curated yet.
-      const nameLookup = buildCardCountsNameLookup(heroEntry.cardCounts);
-
-      for (const heroCardEntry of heroEntry.cards) {
-        if (!heroCardEntry || typeof heroCardEntry !== 'object') continue;
-        if (typeof heroCardEntry.slug !== 'string') continue;
-
-        const rarityLabel = typeof heroCardEntry.rarityLabel === 'string' ? heroCardEntry.rarityLabel : '';
-        const copyCount = resolveHeroCardCopyCount({ name: heroCardEntry.name, rarityLabel }, nameLookup);
-        if (copyCount === null) continue;
-
-        const baseExtId = `${parsed.setAbbr}/${parsed.slug}/${heroCardEntry.slug}`;
-        const attack = parseCardStatValue(heroCardEntry.attack);
-        const recruit = parseCardStatValue(heroCardEntry.recruit);
-        const cost = parseCardStatValue(heroCardEntry.cost);
-        for (let copyIndex = 0; copyIndex < copyCount; copyIndex++) {
-          const extId = `${baseExtId}#${copyIndex}` as CardExtId;
-          // why: per-copy fresh object literal — no aliasing across keys
-          stats[extId] = {
-            attack,
-            recruit,
-            cost,
-            // why: heroes are never fought; fightCost is for villains only.
-            fightCost: 0,
-          };
-        }
-      }
+    const instances = heroCardInstanceExtIds(parsed.setAbbr, parsed.slug, heroEntry);
+    for (const instance of instances) {
+      const cardEntry = findEconomyCardEntryBySlug(heroEntry.cards, instance.cardSlug);
+      const attack = cardEntry !== null ? parseCardStatValue(cardEntry.attack) : 0;
+      const recruit = cardEntry !== null ? parseCardStatValue(cardEntry.recruit) : 0;
+      const cost = cardEntry !== null ? parseCardStatValue(cardEntry.cost) : 0;
+      // why: per-copy fresh object literal — no aliasing across keys
+      // (WP-028 D-2802 aliasing prevention extended to setup-time
+      // sibling-snapshot fan-out).
+      stats[instance.extId] = {
+        attack,
+        recruit,
+        cost,
+        // why: heroes are never fought; fightCost is for villains only.
+        fightCost: 0,
+      };
     }
   }
 
   // --- 2. Villain cards (from getSet — vAttack is not on FlatCard) ---
   // why: WP-113 PS-7 mid-execution amendment — set-qualified ID + named-set
   //   filter (per D-10014).
+  // why: D-18704 — fan out one stat row per copy instance via the shared
+  // villainCardInstanceExtIds emitter, keyed by the exact zone-instance
+  // ext_id. Before WP-191 this section keyed villains by the single
+  // definition FlatCard key while zones were copy-indexed, so the runtime
+  // `G.cardStats[cardId]` lookup (cardId = a copy-indexed city id) always
+  // missed and fightCost defaulted to 0. The FlatCard existence gate is
+  // dropped: the deck builder emits an instance for every group card, so
+  // keying off the same emitter guarantees cardStats covers every villain
+  // zone instance (no FlatCard prerequisite).
   for (const villainGroupId of matchConfig.villainGroupIds) {
     const parsed = parseQualifiedIdForSetup(villainGroupId);
     if (parsed === null) continue;
     const villainCards = findVillainGroupCards(registry, parsed.setAbbr, parsed.slug);
 
     for (const villainCard of villainCards) {
-      // why: villain ext_id format matches FlatCard key convention
-      // {setAbbr}-villain-{groupSlug}-{cardSlug}
-      const matchingFlatCard = findFlatCardForVillain(
-        allFlatCards,
+      if (typeof villainCard.slug !== 'string') continue;
+      const fightCost = parseCardStatValue(villainCard.vAttack);
+      const instanceExtIds = villainCardInstanceExtIds(
         parsed.setAbbr,
         parsed.slug,
         villainCard.slug,
+        villainCard,
       );
-
-      if (matchingFlatCard) {
-        const extId = matchingFlatCard.key as CardExtId;
+      for (const extId of instanceExtIds) {
+        // why: per-copy fresh object literal — no aliasing across keys.
         stats[extId] = {
           // why: villains do not generate resources or have recruit costs
           attack: 0,
           recruit: 0,
           cost: 0,
-          fightCost: parseCardStatValue(villainCard.vAttack),
+          fightCost,
         };
       }
     }
@@ -654,42 +612,6 @@ function findHeroEntry(
 }
 
 /**
- * Defensively parses raw physicalCards data into typed entries.
- *
- * Mirrors parsePhysicalCards in buildHeroDeck.ts. No imageUrl needed here
- * — economy stats use count and sides only. Malformed entries are silently
- * skipped (defense-in-depth).
- */
-function parseEconomyPhysicalCards(raw: unknown): EconomyPhysicalCardEntry[] {
-  if (!Array.isArray(raw)) return [];
-
-  const result: EconomyPhysicalCardEntry[] = [];
-  for (const entry of raw) {
-    if (!entry || typeof entry !== 'object') continue;
-    const candidate = entry as Record<string, unknown>;
-    if (typeof candidate.id !== 'string' || candidate.id.length === 0) continue;
-    if (typeof candidate.count !== 'number' || !Number.isInteger(candidate.count) || candidate.count < 1) continue;
-    if (!Array.isArray(candidate.sides) || candidate.sides.length === 0) continue;
-
-    let sidesValid = true;
-    for (const side of candidate.sides) {
-      if (typeof side !== 'string' || side.length === 0) {
-        sidesValid = false;
-        break;
-      }
-    }
-    if (!sidesValid) continue;
-
-    result.push({
-      id: candidate.id,
-      count: candidate.count,
-      sides: candidate.sides as string[],
-    });
-  }
-  return result;
-}
-
-/**
  * Finds a hero card entry by slug within the cards array.
  *
  * Used by the physicalCards migration to resolve stat fields for the
@@ -728,44 +650,6 @@ function findVillainGroupCards(
     }
   }
   return [];
-}
-
-/**
- * Finds a FlatCard matching a villain card by setAbbr first, then group
- * slug, then card slug.
- *
- * Villain FlatCard key format: {setAbbr}-villain-{groupSlug}-{cardSlug}.
- */
-// why: WP-113 PS-7 mid-execution amendment — Builder Filtering Order —
-//   iterate named set only (per D-10014).
-function findFlatCardForVillain(
-  allFlatCards: CardStatsFlatCard[],
-  setAbbr: string,
-  villainGroupSlug: string,
-  cardSlug: string,
-): CardStatsFlatCard | undefined {
-  for (const card of allFlatCards) {
-    if (card.cardType !== 'villain') continue;
-    if (card.setAbbr !== setAbbr) continue;
-
-    // Check if this card's key contains the group slug and card slug
-    const prefix = `${card.setAbbr}-villain-`;
-    if (!card.key.startsWith(prefix)) continue;
-
-    const afterPrefix = card.key.slice(prefix.length);
-    const expectedSuffix = `-${cardSlug}`;
-
-    if (afterPrefix.endsWith(expectedSuffix)) {
-      const extractedGroupSlug = afterPrefix.slice(
-        0,
-        afterPrefix.length - expectedSuffix.length,
-      );
-      if (extractedGroupSlug === villainGroupSlug) {
-        return card;
-      }
-    }
-  }
-  return undefined;
 }
 
 /**

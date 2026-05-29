@@ -11,6 +11,11 @@
 import type { CardExtId } from '../state/zones.types.js';
 import type { BoardKeyword } from '../board/boardKeywords.types.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
+// why: D-18704 / D-18706 — the `ambush` board keyword must be emitted under
+// each copy-indexed villain instance ext_id (matching the zone grammar the
+// reveal-site hasAmbush gate reads), not under the single definition key.
+// The shared emitter is imported, not re-implemented (D-13702 RS-4).
+import { villainCardInstanceExtIds } from '../villainDeck/villainDeck.setup.js';
 
 // ---------------------------------------------------------------------------
 // CardKeywordsRegistryReader — local structural interface
@@ -27,6 +32,8 @@ import type { MatchSetupConfig } from '../matchSetup.types.js';
 interface KeywordVillainCardEntry {
   slug: string;
   abilities: string[];
+  /** Copy count (WP-167 / D-16701); read by the shared instance-id emitter. */
+  copies?: number;
 }
 
 /**
@@ -200,8 +207,11 @@ export function buildCardKeywords(
           continue;
         }
 
-        const expectedKey = `${setEntry.abbr}-villain-${villainGroup.slug}-${villainCard.slug}`;
-        if (!villainExtIds.has(expectedKey)) {
+        // why: the definition key gates emission to real listed villains
+        // (a card present in listCards). The keyword itself is emitted under
+        // the copy-indexed INSTANCE ids, not this definition key (D-18704).
+        const definitionKey = `${setEntry.abbr}-villain-${villainGroup.slug}-${villainCard.slug}`;
+        if (!villainExtIds.has(definitionKey)) {
           continue;
         }
 
@@ -229,7 +239,22 @@ export function buildCardKeywords(
         }
 
         if (keywords.length > 0) {
-          result[expectedKey as CardExtId] = keywords;
+          // why: D-18704 — fan out the keyword array under each copy-indexed
+          // villain instance ext_id so the reveal-site hasAmbush gate
+          // (keyed on the City card's instance id) resolves. Before WP-191
+          // this keyed the single definition id, so hasAmbush was always
+          // false at the copy-indexed City id and every villain Ambush was
+          // suppressed. Each instance gets a freshly-constructed array (no
+          // aliasing across copies, D-8802 / D-13502).
+          const instanceExtIds = villainCardInstanceExtIds(
+            setEntry.abbr,
+            villainGroup.slug,
+            villainCard.slug,
+            villainCard,
+          );
+          for (const extId of instanceExtIds) {
+            result[extId] = [...keywords];
+          }
         }
       }
     }

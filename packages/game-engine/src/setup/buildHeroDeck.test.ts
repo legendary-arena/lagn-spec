@@ -13,6 +13,7 @@ import assert from 'node:assert/strict';
 import {
   buildHeroDeck,
   buildHeroDeckCards,
+  heroCardInstanceExtIds,
   shuffleHeroDeck,
   buildCardCountsNameLookup,
   resolveHeroCardCopyCount,
@@ -692,5 +693,86 @@ describe('buildHeroDeckCards — physicalCards (D-14101 / D-14102)', () => {
     const cards = buildHeroDeckCards(['core/test-hero'], registry);
 
     assert.equal(cards.length, 14, 'Fallback to rarity map must produce 14 ext_ids');
+  });
+});
+
+// ===========================================================================
+// WP-191 — heroCardInstanceExtIds shared emitter (single instance-id home)
+// ===========================================================================
+
+describe('heroCardInstanceExtIds — shared hero instance-id emitter (WP-191)', () => {
+  it('physicalCards path: returns one instance per copy with cardSlug = sides[0]', () => {
+    const heroEntry = {
+      slug: 'falcon-winter-soldier',
+      cards: [
+        { slug: 'attune', rarityLabel: 'Common 1' },
+        { slug: 'atone', rarityLabel: 'Common 1' },
+        { slug: 'solo', rarityLabel: 'Rare' },
+      ],
+      physicalCards: [
+        { id: 'p1', count: 2, sides: ['attune', 'atone'] },
+        { id: 'p2', count: 1, sides: ['solo'] },
+      ],
+    };
+
+    const instances = heroCardInstanceExtIds('bkwd', 'falcon-winter-soldier', heroEntry);
+
+    assert.deepStrictEqual(
+      instances,
+      [
+        { cardSlug: 'attune', extId: 'bkwd/falcon-winter-soldier/attune#0' },
+        { cardSlug: 'attune', extId: 'bkwd/falcon-winter-soldier/attune#1' },
+        { cardSlug: 'solo', extId: 'bkwd/falcon-winter-soldier/solo#0' },
+      ],
+      'canonical face = sides[0]; back-side slugs never appear; copy order ascending',
+    );
+  });
+
+  it('fallback path (no physicalCards): resolves copy counts via the rarity cascade', () => {
+    const heroEntry = {
+      slug: 'spider-man',
+      cards: [{ slug: 'astonishing-strength', rarityLabel: 'Common 1' }],
+    };
+
+    const instances = heroCardInstanceExtIds('core', 'spider-man', heroEntry);
+
+    assert.equal(instances.length, 5, 'Common 1 fallback → 5 copies');
+    for (let copyIndex = 0; copyIndex < 5; copyIndex++) {
+      assert.deepStrictEqual(instances[copyIndex], {
+        cardSlug: 'astonishing-strength',
+        extId: `core/spider-man/astonishing-strength#${copyIndex}`,
+      });
+    }
+  });
+
+  it('drives buildHeroDeckCards: the emitter ext_ids equal the deck reservoir output', () => {
+    // why: the deck builder delegates to the emitter, so the flat reservoir
+    // must equal the emitter ext_ids in order (single-emitter-home proof).
+    const hero: MockHero = {
+      slug: 'spider-man',
+      cards: [
+        { slug: 'card-c1', rarityLabel: 'Common 1' },
+        { slug: 'card-rare', rarityLabel: 'Rare' },
+      ],
+    };
+    const registry = buildMockRegistry('core', [hero]);
+
+    const reservoir = buildHeroDeckCards(['core/spider-man'], registry);
+    const emitterIds = heroCardInstanceExtIds('core', 'spider-man', hero).map((i) => i.extId);
+
+    assert.deepStrictEqual(reservoir, emitterIds, 'deck reservoir must equal emitter ext_ids');
+  });
+
+  it('fallback path preserves the D-13501 Option A loud-fail on unknown rarityLabel', () => {
+    const heroEntry = {
+      slug: 'ant-man',
+      cards: [{ slug: 'shrink', rarityLabel: 'Common 3' }],
+    };
+
+    assert.throws(
+      () => heroCardInstanceExtIds('amwp', 'ant-man', heroEntry),
+      /Common 3/,
+      'emitter must propagate the loud-fail throw on an unresolvable copy count',
+    );
   });
 });

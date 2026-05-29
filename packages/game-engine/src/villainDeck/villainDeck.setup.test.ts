@@ -11,7 +11,11 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildVillainDeck } from './villainDeck.setup.js';
+import {
+  buildVillainDeck,
+  villainCardInstanceExtIds,
+  readVillainCopyCount,
+} from './villainDeck.setup.js';
 import type { VillainDeckRegistryReader, VillainDeckFlatCard } from './villainDeck.setup.js';
 import { REVEALED_CARD_TYPES } from './villainDeck.types.js';
 import type { RevealedCardType } from './villainDeck.types.js';
@@ -580,5 +584,63 @@ describe('buildVillainDeck', () => {
         `Card "${cardId}" has invalid type "${cardType}" — must be a REVEALED_CARD_TYPES member`,
       );
     }
+  });
+});
+
+// ===========================================================================
+// WP-191 — villainCardInstanceExtIds / readVillainCopyCount shared emitter
+// ===========================================================================
+
+describe('readVillainCopyCount (WP-191)', () => {
+  it('defaults to 1 when copies is absent', () => {
+    assert.equal(readVillainCopyCount({}), 1);
+  });
+
+  it('returns the declared copies when >= 1', () => {
+    assert.equal(readVillainCopyCount({ copies: 3 }), 3);
+  });
+
+  it('falls back to 1 for a copies value below 1', () => {
+    assert.equal(readVillainCopyCount({ copies: 0 }), 1);
+  });
+});
+
+describe('villainCardInstanceExtIds (WP-191)', () => {
+  it('emits copy-indexed instance ext_ids in ascending order', () => {
+    const ids = villainCardInstanceExtIds('core', 'brotherhood', 'magneto', { copies: 2 });
+    assert.deepStrictEqual(ids, [
+      'core-villain-brotherhood-magneto-00',
+      'core-villain-brotherhood-magneto-01',
+    ]);
+  });
+
+  it('emits a single -00 instance when copies is absent', () => {
+    const ids = villainCardInstanceExtIds('core', 'brotherhood', 'mystique', {});
+    assert.deepStrictEqual(ids, ['core-villain-brotherhood-mystique-00']);
+  });
+
+  it('drives the deck builder: emitter ids match the villain instances in the deck', () => {
+    // why: buildVillainDeck delegates section 1 to the emitter, so every
+    // villain id in the deck must be reproducible from the emitter (single
+    // instance-id home — keys can never drift from the zone grammar).
+    const registry = createMidtownMockRegistry();
+    const config = createMidtownConfig();
+    const context = makeMockCtx({ numPlayers: 2 });
+
+    const result = buildVillainDeck(config, registry, context);
+    const deckVillains = result.state.deck
+      .filter((id) => result.cardTypes[id] === 'villain')
+      .sort();
+
+    // Brotherhood: blob/juggernaut/mystique/quicksilver, each copies:2.
+    const expected: string[] = [];
+    for (const slug of ['blob', 'juggernaut', 'mystique', 'quicksilver']) {
+      for (const id of villainCardInstanceExtIds('core', 'brotherhood', slug, { copies: 2 })) {
+        expected.push(id);
+      }
+    }
+    expected.sort();
+
+    assert.deepStrictEqual(deckVillains, expected, 'deck villain ids must equal emitter output');
   });
 });
