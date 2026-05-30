@@ -1386,7 +1386,7 @@
           "imageUrl": "https://images.legendary-arena.com/rvlt/rvlt-vi-dark-avengers-sentry.webp",
           "abilities": [
             "While in the Bank or Streets, this card's name is “The Void“, it gets +5[icon:attack], and it gets “Fight: KO up to two cards from your discard pile.“",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 1
         },

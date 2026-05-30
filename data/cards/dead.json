@@ -706,7 +706,7 @@
           "abilities": [
             "[keyword:Revenge for Deadpool's “Friends“]",
             "Fight: [keyword:Excessive Violence]: Gain the Hero from the HQ with the lowest cost (or tied for lowest).",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         },

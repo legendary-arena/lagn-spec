@@ -2335,7 +2335,7 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-hellfire-club-sebastian-shaw-black-king.webp",
           "abilities": [
             "Sebastian Shaw has +1[icon:attack] for each card you've played from your hand this turn.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         }
@@ -2582,7 +2582,7 @@
           "imageUrl": "https://images.legendary-arena.com/xmen/xmen-vi-shiar-imperial-guard-blackthorn.webp",
           "abilities": [
             "Fight: If you fought Blackthorn in the Sewers or Streets, each other player gains a Wound.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         },

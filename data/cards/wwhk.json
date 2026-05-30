@@ -2913,7 +2913,7 @@
           "imageUrl": "https://images.legendary-arena.com/wwhk/wwhk-vi-sakaar-imperial-guard-headman-charr.webp",
           "abilities": [
             "During your turn, Headman Charr gets +1[icon:attack] for each Villain in your Victory Pile.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         },

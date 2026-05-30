@@ -1,11 +1,13 @@
 {
   "_notes": [
-    "WP-187 / EC-214 — curated, human-reviewed [effect:] marker map. Consumed by apply-effect-markers.mjs, which appends [effect:<VillainEffectKeyword>] tokens to the matched Ambush:/Fight: ability line in data/cards/*.json. WP-185's engine setup parser reads those markers.",
-    "Keys: villains -> setAbbr -> villainGroupSlug -> villainCardSlug -> { ambush?, fight? }; henchmen -> setAbbr -> henchmanGroupSlug -> { ambush?, fight? } (henchman ability text is group-level). Each list holds only the five locked VillainEffectKeyword strings: gainWoundEachPlayer, gainWoundCurrentPlayer, koHeroCurrentPlayer, heroDeckTopToEscape, captureBystander.",
+    "WP-187 / EC-214 — curated, human-reviewed [effect:] marker map. WP-188 / EC-215 extends it to admit the Escape:/Overrun: timings. Consumed by apply-effect-markers.mjs, which appends [effect:<VillainEffectKeyword>] tokens to the matched Ambush:/Fight:/Escape:/Overrun: ability line in data/cards/*.json. WP-185's engine setup parser reads the Ambush/Fight markers; WP-186's parser reads the Escape/Overrun markers (collapsing both prefixes to the single onEscape timing engine-side).",
+    "Keys: villains -> setAbbr -> villainGroupSlug -> villainCardSlug -> { ambush?, fight?, escape?, overrun? }; henchmen -> setAbbr -> henchmanGroupSlug -> { ambush?, fight?, escape?, overrun? } (henchman ability text is group-level). Each list holds only the five locked VillainEffectKeyword strings: gainWoundEachPlayer, gainWoundCurrentPlayer, koHeroCurrentPlayer, heroDeckTopToEscape, captureBystander.",
     "v1 curation discipline (WP-185 semantics): a line is marked ONLY when its entire effect reduces to unconditional + magnitude-1 + single-target applications of the MVP vocabulary. Conditional (may / If / '... or ...' choice), magnitude>1 (two / all / 'for each'), wrong/multi target (each villain, the Mastermind, another player, target-restricted KO), and lines carrying an extra non-MVP clause ('... Then ...') are deliberately left unmarked. Conservatism over coverage.",
-    "The exhaustive candidate list is reproducible at any time via `node scripts/convert-cards/apply-effect-markers.mjs --propose` (221 phrase-match candidates as of 2026-05-28). The _unassigned block below records the human classification RATIONALE with representative rows per reason; it is intentionally not a 1:1 copy of --propose output.",
-    "DATA-vs-SPEC drift found at execution (2026-05-28): (a) The WP assumed two cards (one bkwd, one rvlt) carry two Fight: lines apiece and would loud-fail as reason 'multi-line'. Under the LOCKED predicate (line.trimStart() begins with 'Fight:'), NO card has two timing lines of the same timing — rvlt/army-of-evil/mister-hyde and rvlt/dark-avengers/sentry each have a SECOND 'Fight:' embedded mid-line (inside flavor / a granted ability), which the predicate correctly does not treat as a timing line. So _unassigned carries no 'multi-line' rows; the multi-line loud-fail remains an active guardrail in the script and is exercised via a scratch input. (b) The WP spot-check expected a 'gainWoundEachPlayer' Ambush mark; NO unconditional each-player or current-player wound line exists in any of the 40 sets — every wound line is conditional ('reveal X or gains a Wound', 'If ...', 'with no ...', 'each other player'). So gainWoundEachPlayer and gainWoundCurrentPlayer are uncurated in v1; they await a future conditional/magnitude vocabulary expansion on the WP-185 side.",
-    "Escape:/Overrun: timings are handled generically by the script but are uncurated here (WP-186 follow-on)."
+    "WP-188 curatable Escape shapes: ONLY 'Escape: Each player gains a Wound.' plus punctuation-/markup-only variants — this is gainWoundEachPlayer's first data (zero matches under WP-187, which found no unconditional each-player wound lines on Ambush/Fight). DEFER anything with 'If'/'When'/'Unless'/'For each', '... or ...' choices, magnitude>1, compound '(After the normal Escape KO) ...', or 'each other player' wording.",
+    "WP-188 'overrun' curation: the gate is widened so --propose scans overrun and _unassigned can capture it, but ZERO overrun entries were curatable under v1 discipline. Villain/henchman overrun lines appear only in the standalone Fear-Itself / Villains-Only sets and all carry either conditional choices, '[keyword:Demolish]' (no MVP keyword), or 'Bindings' (Fear-Itself recoloring distinct from 'Wound'). An empty overrun curation set is a valid v1 outcome per WP-188 §v1 Curation, not a gap. Scheme overrun is explicitly out of scope.",
+    "_unassigned reason vocabulary (closed set; the script does NOT read this field — it is human-review documentation): magnitude>1 | multi-target | other | conditional | multi-line (WP-187 set) + no-vocabulary-keyword (WP-188; first-class, NOT folded under 'other'). 'no-vocabulary-keyword' names every literal 'Each player KOs ...' villain Escape/Overrun line that has no keyword in the current vocabulary; D-18802 records the deferral. WP-190 (drafted, commit 1ac0762) reads exactly these rows to promote the unconditional magnitude-1 subset to [effect:koHeroEachPlayer] once WP-189 adds the keyword. This tagging is a cross-WP contract, not internal bookkeeping — the no-vocabulary-keyword rows below are EXHAUSTIVE across the 40 sets; rows for the other reason values remain representative per the WP-187 precedent.",
+    "The exhaustive candidate list is reproducible at any time via `node scripts/convert-cards/apply-effect-markers.mjs --propose`. WP-187 surfaced 221 Ambush/Fight phrase-match candidates (2026-05-28); WP-188 widening surfaced an additional 57 Escape/Overrun candidates (2026-05-29). The _unassigned block below records the human classification RATIONALE with representative rows per reason (plus EVERY 'Each player KOs' Escape line, exhaustively); it is intentionally not a 1:1 copy of --propose output.",
+    "DATA-vs-SPEC drift found during WP-187 execution (2026-05-28; unchanged by WP-188): (a) The WP-187 spec assumed two cards (one bkwd, one rvlt) carry two Fight: lines apiece and would loud-fail as reason 'multi-line'. Under the LOCKED predicate (line.trimStart() begins with 'Fight:'), NO card has two timing lines of the same timing — rvlt/army-of-evil/mister-hyde and rvlt/dark-avengers/sentry each have a SECOND 'Fight:' embedded mid-line (inside flavor / a granted ability), which the predicate correctly does not treat as a timing line. So _unassigned carries no 'multi-line' rows; the multi-line loud-fail remains an active guardrail in the script and is exercised via a scratch input. (b) The WP-187 spot-check expected a 'gainWoundEachPlayer' Ambush mark; NO unconditional each-player wound line exists on any Ambush/Fight line in the 40 sets — every wound line is conditional ('reveal X or gains a Wound', 'If ...', 'with no ...', 'each other player'). WP-188's Escape side fills that gap: 14 'Escape: Each player gains a Wound.' lines give gainWoundEachPlayer its first real data."
   ],
   "villains": {
     "2099": {
@@ -67,7 +69,8 @@
         "radioactive-man": { "ambush": ["captureBystander"] }
       },
       "zolas-creations": {
-        "doughboy": { "fight": ["koHeroCurrentPlayer"] }
+        "doughboy": { "fight": ["koHeroCurrentPlayer"] },
+        "man-fish": { "escape": ["gainWoundEachPlayer"] }
       }
     },
     "chmp": {
@@ -80,7 +83,8 @@
     },
     "core": {
       "spider-foes": {
-        "green-goblin": { "ambush": ["captureBystander"] }
+        "green-goblin": { "ambush": ["captureBystander"] },
+        "venom": { "escape": ["gainWoundEachPlayer"] }
       }
     },
     "cosm": {
@@ -104,7 +108,13 @@
     },
     "dead": {
       "deadpools-friends": {
+        "sluggo": { "escape": ["gainWoundEachPlayer"] },
         "taskmaster": { "ambush": ["captureBystander"] }
+      }
+    },
+    "dkcy": {
+      "emissaries-of-evil": {
+        "rhino": { "escape": ["gainWoundEachPlayer"] }
       }
     },
     "ff04": {
@@ -159,12 +169,14 @@
     },
     "noir": {
       "goblins-freak-show": {
-        "fancy-dan": { "fight": ["koHeroCurrentPlayer"] }
+        "fancy-dan": { "fight": ["koHeroCurrentPlayer"] },
+        "vulture-carnival-cannibal": { "escape": ["gainWoundEachPlayer"] }
       }
     },
     "pttr": {
       "maximum-carnage": {
-        "demogoblin": { "ambush": ["captureBystander"] }
+        "demogoblin": { "ambush": ["captureBystander"] },
+        "shriek": { "escape": ["gainWoundEachPlayer"] }
       }
     },
     "rvlt": {
@@ -172,13 +184,17 @@
         "mister-hyde": { "fight": ["koHeroCurrentPlayer"] }
       },
       "dark-avengers": {
-        "ares": { "fight": ["koHeroCurrentPlayer"] }
+        "ares": { "fight": ["koHeroCurrentPlayer"] },
+        "sentry": { "escape": ["gainWoundEachPlayer"] }
       },
       "hoods-gang": {
         "madam-masque": { "fight": ["koHeroCurrentPlayer"] }
       }
     },
     "ssw1": {
+      "deadlands-the": {
+        "zombie-venom": { "escape": ["gainWoundEachPlayer"] }
+      },
       "domain-of-apocalypse": {
         "apocalyptic-weapon-x": { "fight": ["koHeroCurrentPlayer"] }
       },
@@ -193,6 +209,12 @@
     "ssw2": {
       "deadpools-secret-secret-wars": {
         "howard-the-duck": { "ambush": ["captureBystander"] }
+      },
+      "guardians-of-knowhere": {
+        "gamora": { "escape": ["gainWoundEachPlayer"] }
+      },
+      "utopolis": {
+        "whizzer": { "escape": ["gainWoundEachPlayer"] }
       }
     },
     "vnom": {
@@ -202,7 +224,8 @@
     },
     "wpnx": {
       "weapon-plus": {
-        "daken": { "fight": ["koHeroCurrentPlayer"] }
+        "daken": { "fight": ["koHeroCurrentPlayer"] },
+        "nuke-weapon-vii": { "escape": ["gainWoundEachPlayer"] }
       }
     },
     "wtif": {
@@ -228,6 +251,7 @@
         "doc-samson": { "fight": ["koHeroCurrentPlayer"] }
       },
       "sakaar-imperial-guard": {
+        "headman-charr": { "escape": ["gainWoundEachPlayer"] },
         "primus-vand": { "fight": ["koHeroCurrentPlayer"] }
       }
     },
@@ -235,8 +259,14 @@
       "dark-descendants": {
         "fatale": { "fight": ["koHeroCurrentPlayer"] }
       },
+      "hellfire-club": {
+        "sebastian-shaw-black-king": { "escape": ["gainWoundEachPlayer"] }
+      },
       "mojoverse": {
         "warwolves": { "fight": ["koHeroCurrentPlayer"] }
+      },
+      "shiar-imperial-guard": {
+        "blackthorn": { "escape": ["gainWoundEachPlayer"] }
       },
       "sisterhood-of-mutants": {
         "lady-deathstrike": { "fight": ["koHeroCurrentPlayer"] }
@@ -332,6 +362,30 @@
     { "set": "dkcy", "group": "four-horsemen", "card": "war", "timing": "fight", "text": "Fight: Each other player reveals an [hc:instinct] Hero or gains a Wound.", "reason": "multi-target" },
     { "set": "core", "group": "spider-foes", "card": "the-lizard", "timing": "fight", "text": "Fight: If you fight the Lizard in the Sewers, each other player gains a Wound.", "reason": "multi-target" },
     { "set": "dkcy", "group": "emissaries-of-evil", "card": "rhino", "timing": "ambush", "text": "Ambush: Reveal the top card of the Villain Deck. If it's a Master Strike, each player gains a Wound.", "reason": "conditional" },
-    { "set": "rvlt", "group": "dark-avengers", "card": "captain-marvel-noh-varr", "timing": "ambush", "text": "Ambush: If any other Dark Avengers are in the city, each player gains a Wound.", "reason": "conditional" }
+    { "set": "rvlt", "group": "dark-avengers", "card": "captain-marvel-noh-varr", "timing": "ambush", "text": "Ambush: If any other Dark Avengers are in the city, each player gains a Wound.", "reason": "conditional" },
+
+    { "set": "2099", "group": "false-aesir-of-alchemax", "card": "hela-2099", "timing": "escape", "text": "Escape: Each player KOs two Henchmen from their Victory Pile or gains a Wound.", "reason": "no-vocabulary-keyword" },
+    { "set": "core", "group": "brotherhood", "card": "juggernaut", "timing": "escape", "text": "Escape: Each player KOs two Heroes from their hand.", "reason": "no-vocabulary-keyword" },
+    { "set": "core", "group": "enemies-of-asgard", "card": "destroyer", "timing": "escape", "text": "Escape: Each player KOs two of their Heroes.", "reason": "no-vocabulary-keyword" },
+    { "set": "cvwr", "group": "csa-special-marshals", "card": "bullseye", "timing": "escape", "text": "Escape: Each player KOs one of their Heroes that has printed [icon:attack] of 2 or more.", "reason": "no-vocabulary-keyword" },
+    { "set": "msp1", "group": "enemies-of-asgard", "card": "destroyer", "timing": "escape", "text": "Escape: Each player KOs two of their Heroes.", "reason": "no-vocabulary-keyword" },
+    { "set": "wpnx", "group": "weapon-plus", "card": "ultimaton-weapon-xv", "timing": "escape", "text": "Escape: Each player KOs one of their non-grey Heroes.", "reason": "no-vocabulary-keyword" },
+
+    { "set": "core", "group": "masters-of-evil", "card": "ultron", "timing": "escape", "text": "Escape: Each player reveals a [hc:tech] Hero or gains a Wound.", "reason": "conditional" },
+    { "set": "anni", "group": "annihilation-wave", "card": "ravenous", "timing": "escape", "text": "Escape: Each player reveals a [hc:strength] Hero or gains a wound.", "reason": "conditional" },
+    { "set": "asrd", "group": "dark-council", "card": "the-mangog", "timing": "escape", "text": "Escape: Each player who is not [keyword:Worthy] gains a Wound.", "reason": "conditional" },
+    { "set": "bkwd", "group": "taskmasters-thunderbolts", "card": "jack-olantern", "timing": "escape", "text": "Escape: Each player with fewer than two Henchmen in their Victory Pile gains a Wound.", "reason": "conditional" },
+    { "set": "dkcy", "group": "underworld", "card": "lilith-daughter-of-dracula", "timing": "escape", "text": "Escape: Each player without Dracula in their Victory Pile gains a Wound.", "reason": "conditional" },
+
+    { "set": "cosm", "group": "celestials", "card": "gammenon-the-gatherer", "timing": "escape", "text": "Escape: Three Villains in the city each capture a Bystander.", "reason": "multi-target" },
+    { "set": "ssw1", "group": "limbo", "card": "inferno-cyclops", "timing": "escape", "text": "Escape: The Mastermind captures all the Bystanders this Villain had.", "reason": "multi-target" },
+
+    { "set": "asrd", "group": "omens-of-ragnarok", "card": "surtur-fire-giant-king", "timing": "escape", "text": "Escape: If Surtur was holding The Eternal Flame, say \"Ragnarok has come\", KO each [team:heroes-of-asgard] Hero from the HQ, and each player gains two Wounds.", "reason": "magnitude>1" },
+
+    { "set": "cosm", "group": "celestials", "card": "arishem-the-judge", "timing": "escape", "text": "Escape: (After the normal Escape KO) Put each Hero that costs 5 or more from the HQ on the bottom of the Hero Deck.", "reason": "other" },
+    { "set": "mdns", "group": "lilin", "card": "blackout", "timing": "escape", "text": "Escape: (After the normal Escape KO) If it's Moonlight, each player gains a Wound.", "reason": "other" },
+    { "set": "pttr", "group": "sinister-six", "card": "kraven-the-hunter", "timing": "escape", "text": "Escape: (After you do the normal escape KO) KO a Hero from the HQ with the highest cost.", "reason": "other" },
+    { "set": "cvwr", "group": "superhuman-registration-act", "card": "she-hulk", "timing": "escape", "text": "Escape: [keyword:Fortify] the Villain deck. When a Master Strike is completed from that deck, each player gains a Wound and She-Hulk enters the Sewers.", "reason": "other" },
+    { "set": "bkwd", "group": "taskmasters-thunderbolts", "card": "bullseye", "timing": "escape", "text": "Escape: KO that Hero.", "reason": "other" }
   ]
 }

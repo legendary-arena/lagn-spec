@@ -1,14 +1,17 @@
 /**
  * apply-effect-markers.mjs
  *
- * Sibling overlay to apply-card-counts.mjs (WP-187 / EC-214). Reads the
- * curated marker map inputs/villain-effect-markers.json and appends a
- * structured `[effect:<VillainEffectKeyword>]` marker to the unambiguous
- * subset of Villain / Henchman `Ambush:` / `Fight:` ability lines in
- * data/cards/*.json. WP-185's engine setup parser reads those markers to
- * dispatch Fight/Ambush effects; without them every hook would carry
- * `effects: []` (no execution). This script is the sole author of
- * `[effect:]` markers in the card data.
+ * Sibling overlay to apply-card-counts.mjs (WP-187 / EC-214; extended by
+ * WP-188 / EC-215 to admit the Escape/Overrun timings). Reads the curated
+ * marker map inputs/villain-effect-markers.json and appends a structured
+ * `[effect:<VillainEffectKeyword>]` marker to the unambiguous subset of
+ * Villain / Henchman `Ambush:` / `Fight:` / `Escape:` / `Overrun:` ability
+ * lines in data/cards/*.json. WP-185's engine setup parser reads those
+ * markers to dispatch Fight/Ambush effects; WP-186's parser reads the
+ * Escape/Overrun markers (collapsing both prefixes to the single
+ * `onEscape` timing). Without them every hook would carry `effects: []`
+ * (no execution). This script is the sole author of `[effect:]` markers
+ * in the card data.
  *
  * This is offline, deterministic, pure-IO data tooling — upstream of the
  * Registry layer. It adds no engine/registry/server code and modifies no
@@ -17,16 +20,16 @@
  * Modes:
  *   (default, apply)  — locate the matched timing line for each curated
  *                       entry and append its `[effect:]` token(s). Writes
- *                       the set files back with the same
- *                       JSON.stringify(..., null, 2) formatting the other
- *                       converters use so diffs stay clean. Idempotent
+ *                       the set files back as a surgical text replacement
+ *                       so on-disk formatting of unrelated sections is
+ *                       preserved and diffs stay clean. Idempotent
  *                       per-keyword: a re-run produces a zero-line diff.
  *   --propose         — read-only dry-run. Phrase-scans every `Ambush:` /
- *                       `Fight:` line, prints one row per candidate
- *                       (`set | group | card | timing | text |
- *                       proposedKeywords`) sorted lexicographically, and
- *                       writes nothing. A non-authoritative bootstrap for
- *                       authoring the curated map (it over-captures by
+ *                       `Fight:` / `Escape:` / `Overrun:` line, prints one
+ *                       row per candidate (`set | group | card | timing |
+ *                       text | proposedKeywords`) sorted lexicographically,
+ *                       and writes nothing. A non-authoritative bootstrap
+ *                       for authoring the curated map (it over-captures by
  *                       design; the committed map is human-reviewed).
  *
  * Loud-fail (non-zero exit, full-sentence message) on:
@@ -68,11 +71,15 @@ const VILLAIN_EFFECT_KEYWORDS = [
   'captureBystander',
 ];
 
-// why: v1 curates only the two timings WP-185 executes. The mechanism is
-// timing-agnostic (it would handle Escape:/Overrun: identically), but the
-// curated map carries only Ambush/Fight entries; Escape/Overrun curation
-// is a WP-186 follow-on against the same map shape.
-const SUPPORTED_TIMINGS = ['ambush', 'fight'];
+// why: WP-188 / EC-215 is the follow-on the WP-187 comment anticipated:
+// the gate is widened to admit the Escape/Overrun timings against the
+// same map shape, so all four villain timing prefixes are now curatable.
+// `escape` and `overrun` are kept as DISTINCT map keys because the script
+// matches by line prefix (line.trimStart() begins with "<Timing>:"); the
+// engine-side collapse of both prefixes to the single `onEscape` timing
+// is WP-186's concern, not this script's. The mechanism remains
+// timing-agnostic; the rest of the file required no logic change.
+const SUPPORTED_TIMINGS = ['ambush', 'fight', 'escape', 'overrun'];
 
 /**
  * Returns true when the keyword is one of the five locked
@@ -122,13 +129,16 @@ function readSetData(setAbbr) {
  * Returns true when an ability line is a timing line for the given timing —
  * i.e. its leading-whitespace-trimmed form begins with "<Timing>:"
  * (case-insensitive). This is the SAME predicate WP-185's setup parser uses
- * to detect timing lines; producer (this script) and consumer (the engine
- * parser) MUST agree on what counts as a timing line or markers land on
- * lines the engine reads differently. The check runs on an ephemeral
- * trimmed copy; the stored string is never altered except by the append.
+ * to detect Fight/Ambush timing lines and the SAME predicate WP-186's
+ * setup parser uses to detect Escape/Overrun lines (collapsing both to the
+ * single `onEscape` timing engine-side); producer (this script) and
+ * consumer (the engine parser) MUST agree on what counts as a timing line
+ * or markers land on lines the engine reads differently. The check runs on
+ * an ephemeral trimmed copy; the stored string is never altered except by
+ * the append.
  *
  * @param {string} line - The raw ability line from abilities[].
- * @param {string} timing - The timing token, lowercase ("ambush" | "fight").
+ * @param {string} timing - The timing token, lowercase ("ambush" | "fight" | "escape" | "overrun").
  * @returns {boolean} True when the line is a timing line for that timing.
  */
 function isTimingLine(line, timing) {
@@ -139,11 +149,13 @@ function isTimingLine(line, timing) {
  * Finds the single ability-line index that is a timing line for the given
  * timing. Loud-fails when zero or more than one line matches: a missing
  * line means the curated entry is wrong, and a multi-match means the entry
- * cannot say WHICH line the marker belongs on (the two known cards with two
- * Fight: lines each must be deferred to `_unassigned` reason "multi-line").
+ * cannot say WHICH line the marker belongs on (any card carrying two
+ * same-timing lines under the locked predicate — e.g. two `Fight:` lines or
+ * two `Escape:` lines — must be deferred to `_unassigned` reason
+ * "multi-line").
  *
  * @param {string[]} abilities - The card's (or henchman group's) abilities.
- * @param {string} timing - The timing token, lowercase ("ambush" | "fight").
+ * @param {string} timing - The timing token, lowercase ("ambush" | "fight" | "escape" | "overrun").
  * @param {string} entityLabel - A human label for the failing entity.
  * @returns {number} The index of the single matching ability line.
  * @throws If zero or more than one ability line matches the timing.
@@ -330,15 +342,15 @@ function collectHenchmanEdits(setData, setAbbr, henchmanEntries) {
 }
 
 /**
- * For one entity's curated timing entry ({ ambush?, fight? }), locates each
- * timing's single matching ability line and produces an edit descriptor
- * (old line → marker-appended line) when the markers are not already
- * present. Loud-fails on an unsupported timing key so an `escape`/`overrun`
- * entry authored ahead of WP-186 cannot land silently uncurated. Does not
- * mutate the abilities array.
+ * For one entity's curated timing entry ({ ambush?, fight?, escape?,
+ * overrun? }), locates each timing's single matching ability line and
+ * produces an edit descriptor (old line → marker-appended line) when the
+ * markers are not already present. Loud-fails on a timing key outside the
+ * four locked strings so a typo'd or out-of-vocabulary timing cannot land
+ * silently uncurated. Does not mutate the abilities array.
  *
  * @param {string[]} abilities - The entity's abilities[] (read-only).
- * @param {object} timingEntry - The curated { ambush?, fight? } object.
+ * @param {object} timingEntry - The curated { ambush?, fight?, escape?, overrun? } object.
  * @param {string} entityLabel - A human label for failure messages.
  * @param {string} section - "villains" | "henchmen" (anchor section).
  * @param {string} groupSlug - The group slug (anchor).
@@ -351,9 +363,10 @@ function collectTimingEdits(abilities, timingEntry, entityLabel, section, groupS
   for (const timing of Object.keys(timingEntry)) {
     if (!SUPPORTED_TIMINGS.includes(timing)) {
       throw new Error(
-        `villain-effect-markers.json maps timing "${timing}" onto ${entityLabel}, but v1 curates ` +
-          `only [${SUPPORTED_TIMINGS.map((value) => `"${value}"`).join(', ')}]. Escape/Overrun ` +
-          `curation is a WP-186 follow-on; remove the "${timing}" entry for now.`,
+        `villain-effect-markers.json maps timing "${timing}" onto ${entityLabel}, but the locked ` +
+          `villain-timing vocabulary is [${SUPPORTED_TIMINGS.map((value) => `"${value}"`).join(', ')}]. ` +
+          `Fix the typo in the marker map, or — if a genuinely new timing is needed — expand ` +
+          `SUPPORTED_TIMINGS first (a separate WP) and then this entry.`,
       );
     }
     const orderedKeywords = validateAndOrderKeywords(timingEntry[timing], entityLabel);

@@ -741,7 +741,7 @@
           "abilities": [
             "[keyword:Feast]",
             "When Shriek feasts on a 0-cost Hero, each other player gains a Wound.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         }

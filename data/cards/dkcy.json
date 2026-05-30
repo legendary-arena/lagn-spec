@@ -2225,7 +2225,7 @@
           "imageUrl": "https://images.legendary-arena.com/dkcy/dkcy-vi-emissaries-of-evil-rhino.webp",
           "abilities": [
             "Ambush: Reveal the top card of the Villain Deck. If it's a Master Strike, each player gains a Wound.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         }

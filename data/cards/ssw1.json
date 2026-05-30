@@ -1879,7 +1879,7 @@
           "abilities": [
             "Ambush: [keyword:Rise of The Living Dead]",
             "You can't defeat Zombie Venom unless you have a [hc:covert] Hero.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 1
         }

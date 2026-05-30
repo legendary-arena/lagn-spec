@@ -692,7 +692,7 @@
           "abilities": [
             "Ambush: The Vulture captures 2 [keyword:Hidden Witnesses].",
             "Fight: Each other player KOs a Bystander from their Victory Pile or gains a Wound.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         },

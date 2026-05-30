@@ -796,7 +796,7 @@
             "[hc:covert]: “Rage“ — Each other player gains a Wound.",
             "[hc:instinct]: “Balance“ — Draw a card.",
             "[hc:ranged]: “Relax“ — You get +2[icon:recruit].",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         },

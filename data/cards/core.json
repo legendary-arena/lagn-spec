@@ -2341,7 +2341,7 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-spider-foes-venom.webp",
           "abilities": [
             "You can't defeat Venom unless you have a [hc:covert] Hero.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 1
         }

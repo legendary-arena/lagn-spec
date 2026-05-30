@@ -724,7 +724,7 @@
           "abilities": [
             "[keyword:Abomination]",
             "Fight: If you fought Man-Fish in the Sewers or Bridge, then each other player gains a Wound.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         },

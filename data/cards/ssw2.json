@@ -2096,7 +2096,7 @@
           "abilities": [
             "Ambush: [keyword:Charge] one space.",
             "Fight: (After this goes to your Victory Pile) [keyword:Patrol the Sewers]: If it's empty, each other player gains a Wound.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 1
         },
@@ -2294,7 +2294,7 @@
           "abilities": [
             "Ambush: [keyword:Charge] three spaces.",
             "Fight: (After this goes to your Victory Pile) [keyword:Patrol the Bridge]: If there's a Villain there, each other player gains a Wound.",
-            "Escape: Each player gains a Wound."
+            "Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]"
           ],
           "copies": 2
         }
