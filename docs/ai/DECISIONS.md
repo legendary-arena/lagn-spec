@@ -19115,6 +19115,118 @@ in lockstep across two scripts).
 
 ---
 
+### D-18801 — Escape/Overrun Enrichment Reuses the WP-187 Overlay; `escape` and `overrun` Are Distinct Map Keys
+
+**Decision:** Villain/Henchman Escape/Overrun effect detection is driven by the
+SAME `[effect:<VillainEffectKeyword>]` marker overlay WP-187 built — no second
+script, no parallel pipeline. WP-188 widens the script's `SUPPORTED_TIMINGS`
+gate from `['ambush', 'fight']` to `['ambush', 'fight', 'escape', 'overrun']`
+(the matching code at `isTimingLine` / `findSingleTimingLineIndex` /
+`collectTimingEdits` is already timing-generic) and extends the curated map
+with `escape?` / `overrun?` entries. `escape` and `overrun` are kept as
+**distinct map keys** in `villain-effect-markers.json` because the script
+matches by line prefix (`line.trimStart()` begins with `"<Timing>:"`); the
+engine-side collapse of both prefixes to the single `onEscape` timing is
+WP-186's concern, not this script's. The script's local
+`VILLAIN_EFFECT_KEYWORDS` array (5 entries) is unchanged — WP-188 adds no
+keyword.
+
+**Rationale.** Two-pipeline drift is the failure mode this decision prevents.
+The WP-187 overlay was deliberately designed timing-agnostic from day one (its
+JSDoc and field shape both reserved `escape?` / `overrun?` slots), gated to
+two timings only so an escape entry could not land silently before WP-186
+existed. WP-188 is the gate-widen point. Keeping `escape` / `overrun` as
+distinct map keys preserves the line-prefix matching predicate (the producer/
+consumer agreement WP-187's D-18701 / D-18703 lock); the timing collapse is a
+read-time decision the engine parser owns.
+
+**Packet:** WP-188.
+
+**Drafted:** 2026-05-29.
+**Landed:** 2026-05-29 (EC-215).
+**Status:** Landed
+
+---
+
+### D-18802 — Each-Player-KO Escape Lines Use First-Class `_unassigned` Reason `no-vocabulary-keyword`; Cross-WP Contract WP-190 Reads
+
+**Decision:** Every villain `Escape:` ability line whose effect is "Each player
+KOs …" is recorded in `villain-effect-markers.json`'s `_unassigned` array with
+the **first-class** `reason: "no-vocabulary-keyword"` (NOT folded under `other`).
+The closed reason vocabulary is now `magnitude>1 | multi-target | other |
+conditional | multi-line` (the WP-187 set) plus `no-vocabulary-keyword`. WP-190
+(drafted, commit `1ac0762`) reads exactly these rows to promote the
+unconditional magnitude-1 subset to `[effect:koHeroEachPlayer]` after WP-189
+adds the keyword — so this tagging is a cross-WP contract, not internal
+bookkeeping. The overlay script does NOT read or validate the `reason` field
+(it is a human-review documentation field on each row), so adding the new
+value is safe.
+
+**Rationale.** The dominant escape effect across the 40 sets is *each-player*
+KO ("Each player KOs … Heroes"), but the WP-185 MVP vocabulary is
+*current-player*-biased and has no each-player KO keyword. Forcing those lines
+onto `koHeroCurrentPlayer` would be a semantics FAIL (current-player ≠
+each-player). Folding them under generic `other` would lose them in a bag with
+unrelated "compound after Then" / "KO-with-filter" lines and force WP-190 to
+re-scan the data to find them. A first-class reason value lets WP-190 read the
+exact rows it needs (`_unassigned.filter(r => r.reason === "no-vocabulary-keyword")`).
+
+**Verification.** WP-188 execution surfaced 6 such lines exhaustively across
+the villain section: `2099/false-aesir-of-alchemax/hela-2099` (KOs Henchmen +
+choice — WP-190 will reject), `core/brotherhood/juggernaut` (KOs from hand,
+magnitude>1), `core/enemies-of-asgard/destroyer` (magnitude>1),
+`cvwr/csa-special-marshals/bullseye` (magnitude=1 + filtered),
+`msp1/enemies-of-asgard/destroyer` (magnitude>1), and
+`wpnx/weapon-plus/ultimaton-weapon-xv` (magnitude=1 + filtered "non-grey").
+The map's `_notes` block calls out this rule as a cross-WP contract.
+
+**Packet:** WP-188.
+
+**Drafted:** 2026-05-29.
+**Landed:** 2026-05-29 (EC-215). **Status:** Landed.
+
+Superseded-by-portion: D-18901 (WP-189) supersedes the unconditional
+magnitude-1 portion of this deferral by adding the `koHeroEachPlayer` keyword;
+WP-190 then promotes the qualifying rows. The conditional / magnitude>1 /
+filtered remainder stays deferred under this entry.
+
+---
+
+### D-18803 — WP-188 Is `gainWoundEachPlayer`'s First Real Data Source
+
+**Decision:** Of the five locked `VILLAIN_EFFECT_KEYWORDS`, `gainWoundEachPlayer`
+received **zero** markers under WP-187: a phrase-scan of all 40 sets' Ambush
+and Fight lines (2026-05-28, ~221 candidates) found no `Ambush:` or `Fight:`
+line that was *unconditionally* "Each player gains a Wound." (every wound line
+is conditional — "reveal X or gains a Wound", "If …", "with no …", "each
+*other* player"). WP-188's Escape side is where the keyword finally has data:
+14 cards across 14 sets carry the exact `Escape: Each player gains a Wound.`
+shape (plus punctuation-/markup-only variants) — the only shape that survives
+the v1 curation discipline locked by D-18702. This entry records that
+asymmetry as load-bearing data context (not a defect): the keyword was
+correctly specced under WP-185, its data simply lives entirely on the Escape
+prefix.
+
+**Rationale.** Without this record, a future reader inspecting the marker
+distribution might assume WP-187 missed Ambush/Fight wound lines and try to
+"fill in" the gap; the asymmetry is real and conservative-curation-correct.
+The 14 curatable Escape lines are: `ca75/zolas-creations/man-fish`,
+`core/spider-foes/venom`, `dead/deadpools-friends/sluggo`,
+`dkcy/emissaries-of-evil/rhino`, `noir/goblins-freak-show/vulture-carnival-cannibal`,
+`pttr/maximum-carnage/shriek`, `rvlt/dark-avengers/sentry`,
+`ssw1/deadlands-the/zombie-venom`, `ssw2/guardians-of-knowhere/gamora`,
+`ssw2/utopolis/whizzer`, `wpnx/weapon-plus/nuke-weapon-vii`,
+`wwhk/sakaar-imperial-guard/headman-charr`, `xmen/hellfire-club/sebastian-shaw-black-king`,
+`xmen/shiar-imperial-guard/blackthorn`.
+
+**Packet:** WP-188.
+
+**Drafted:** 2026-05-29.
+**Landed:** 2026-05-29 (EC-215).
+**Status:** Landed
+
+---
+
 ### D-18301 — Scheme Twist Filter Ribbon Is Gated to a Single Active `scheme` cardType
 
 **Decision:** The `SchemeTwistFilter` ribbon in the registry viewer is shown only
