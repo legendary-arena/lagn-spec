@@ -59,21 +59,27 @@ WP-185's setup parser to detect `Escape:` / `Overrun:` prefixes.
   `pushResult.escapedCard !== null` branch (counter increment, escape-pile
   push, generic current-player wound, attached-bystander release).
 - WP-017 ✅ — `gainWound`, `resolveEscapedBystanders` helpers exist.
-- **WP-191 ✅ (upstream reconciler — closes D-18508).** Landed 2026-05-30
-  at `20de3ae`; D-18704..D-18708. Every per-card lookup table is now keyed
-  by the zone-instance ext_id, so villain `onEscape` hook lookups resolve
-  end-to-end on real cards. Not a hard-dep in the strict sense — the WP-186
-  fire site wires correctly regardless and henchman escapes always fired —
-  but WP-191's landing is what makes the new end-to-end villain
-  verification (§Files #7c) testable. The synthetic-hook tests remain
-  authoritative for wiring; the real-registry test verifies consumption of
-  the reconciled grammar.
+- **WP-191 ✅ (execution-time reconciler — DoD gate, especially §Files
+  #7c).** Landed 2026-05-30 at `20de3ae`; D-18704..D-18708. Every per-card
+  lookup table is now keyed by the zone-instance ext_id, so villain
+  `onEscape` hook lookups resolve end-to-end on real cards. The WP-186
+  fire-site wiring is structurally correct without WP-191 (and henchman
+  escapes always fired), but the real-registry villain verification in
+  §Files Expected to Change #7c and its matching Acceptance Criterion
+  cannot pass unless WP-191 is present. Treat WP-191 as a **DoD gate**
+  for this packet even though the `onEscape` fire-site addition itself
+  does not re-derive or modify the grammar. The synthetic-hook tests
+  remain authoritative for wiring; the real-registry test verifies
+  consumption of the reconciled grammar.
 - `data/cards/*.json` contains villain + henchman cards with `Escape:`
   (>100 cards across all 40 sets) and `Overrun:` (small number) ability
   text. After WP-188 the curatable subset carries `[effect:]` markers;
   the dominant each-player-KO lines stay marker-free (WP-188
   `_unassigned`) and WP-186 safe-skips them.
 - **Drafting baseline:** `origin/main @ cc29447` (2026-05-28).
+- **Execution baseline clarification:** actual execution must occur
+  against a branch/HEAD that already includes WP-185, WP-188, and WP-191
+  (all ✅ as of 2026-05-30).
 
 ---
 
@@ -340,6 +346,14 @@ that the WP-191 reconciliation feeds the fire site correctly.
    with a henchman escape end-to-end test for symmetry. Existing
    synthetic-hook tests (#7a, #7b) remain authoritative for wiring; #7c
    verifies the WP-191 grammar reconciliation is consumed correctly.
+8. `docs/ai/STATUS.md` — **modified** — `### WP-186 Executed` summary
+   block (see Definition of Done for required content).
+9. `docs/ai/DECISIONS.md` — **modified** — add D-18601..D-18603 (see
+   Definition of Done for the locked text).
+10. `docs/ai/work-packets/WORK_INDEX.md` — **modified** — flip WP-186 row
+    to `[x]` with completion date.
+11. `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — flip
+    EC-213 row to `Done`.
 
 ---
 
@@ -414,6 +428,13 @@ that the WP-191 reconciliation feeds the fire site correctly.
   safe-skips. Do NOT extend the vocabulary mid-session.
 - If a printed `Overrun:` card needs distinct scheme semantics, that is a
   future scheme-text WP — not an inline amendment.
+- If WP-191 is absent from the execution baseline, do not claim full
+  Definition of Done for WP-186. The fire-site wiring and synthetic-hook
+  tests (§Files #7a, #7b) may still be implementable, but the
+  real-registry villain end-to-end verification in §Files Expected to
+  Change #7c and its matching Acceptance Criterion cannot pass until the
+  reconciled zone-instance ext_id lookup model is present. Stop and
+  report `BLOCKED: WP-191` rather than ship a partial-coverage close.
 
 **Locked contract values:**
 
@@ -478,9 +499,11 @@ NOT from the prefix):
   increases. This test would have FAILED under the D-18508 grammar gap
   and PASSES because WP-191 ✅ closed it (`20de3ae`); pair with a
   henchman end-to-end escape for symmetry.
-- [ ] `villainDeck.reveal.ts` contains exactly two
-  `executeVillainAbilities` calls total — one `onAmbush` (WP-185,
-  city-entry branch) and one `onEscape` (WP-186, escape branch).
+- [ ] `villainDeck.reveal.ts` contains one
+  `executeVillainAbilities(..., 'onEscape')` call in the escape branch
+  and one `executeVillainAbilities(..., 'onAmbush')` call in the
+  city-entry Ambush branch; no other `executeVillainAbilities` call is
+  introduced by WP-186.
 - [ ] The executor file `villainEffects.execute.ts` is **not** modified
   (no timing-specific branch added; dispatch is by hook lookup).
 - [ ] `pnpm --filter @legendary-arena/game-engine build` and
@@ -574,8 +597,8 @@ empty; the `VILLAIN_EFFECT_KEYWORDS` declaration grep returns one match
   with completion date.
 - [ ] `docs/ai/execution-checklists/EC_INDEX.md` row for EC-213 flipped to
   `Done`.
-- [ ] No files outside the 7-file `## Files Expected to Change` list were
-  modified.
+- [ ] No files outside the 11-file `## Files Expected to Change` list
+  were modified.
 
 ---
 
@@ -625,7 +648,7 @@ functions touched.
 | 2 | Assumes lists all prerequisites; WP-185 + WP-188 marked as hard-deps | ✅ |
 | 3 | Context (Read First) is specific (file paths + sections) | ✅ |
 | 4 | Scope (In) / Out of Scope present and closed | ✅ |
-| 5 | Files Expected to Change matches contract; 7 files (all engine + tests) | ✅ |
+| 5 | Files Expected to Change matches contract; 11 files (7 engine/tests + 4 governance/index) | ✅ |
 | 6 | Non-Negotiable Constraints section present; cites 00.6 | ✅ |
 | 7 | Acceptance Criteria are testable bullets | ✅ |
 | 8 | Verification Steps are operator-runnable; grep gates exact | ✅ |
@@ -651,4 +674,11 @@ markup extraction). Baseline `origin/main @ cc29447`. Hard-deps: WP-185
 2026-05-30. Revised 2026-05-30 to reconcile against WP-191 ✅ (closes
 D-18508 at `20de3ae`; D-18704..D-18708): villain `onEscape` now fires
 end-to-end on real cards; added §Files #7c real-registry end-to-end test
-+ matching AC to verify consumption of the reconciled grammar.*
++ matching AC to verify consumption of the reconciled grammar.
+Revised 2026-05-30 (second pass): expanded §Files Expected to Change
+from 7 to 11 (added STATUS/DECISIONS/WORK_INDEX/EC_INDEX entries to
+resolve the prior contradiction with DoD's "No files outside" gate);
+promoted WP-191 from "upstream reconciler" to **DoD gate** in §Assumes
++ §Session protocol (preserves the wiring-doesn't-strictly-depend
+nuance but blocks false-green completion claims); added execution
+baseline clarification; tightened the executeVillainAbilities AC.*
