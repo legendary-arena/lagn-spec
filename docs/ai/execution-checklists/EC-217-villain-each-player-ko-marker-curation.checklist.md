@@ -15,27 +15,30 @@
 - Overlay local `VILLAIN_EFFECT_KEYWORDS` goes **5 → 6**: append `'koHeroEachPlayer'` at **position 6**, byte-matching WP-189's engine array `['gainWoundEachPlayer','gainWoundCurrentPlayer','koHeroCurrentPlayer','heroDeckTopToEscape','captureBystander','koHeroEachPlayer']`.
 - Marker token `[effect:koHeroEachPlayer]`, appended trailing, per-keyword idempotent — unchanged append mechanics from WP-187.
 - Curation discipline: mark ONLY "each player KOs **one / a** Hero" — unconditional, magnitude 1, unfiltered. Magnitude>1 / filtered (cost, non-grey, `[team]`) / conditional / `… or …` choice variants stay `_unassigned`.
-- **Each-player ≠ current-player.** "each player KOs …" → `koHeroEachPlayer`; "KO one of **your** Heroes" → `koHeroCurrentPlayer` (WP-187, do NOT re-mark).
+- **Each-player ≠ current-player (hard separation; semantic-corruption FAIL).** `"each player KOs …"` → `koHeroEachPlayer` (this WP). `"KO one of your Heroes"` → `koHeroCurrentPlayer` (WP-187, untouched). Any conversion between these is a **semantic corruption FAIL** — stop, do not commit. The two keywords address structurally different effects (broadcast vs current-player) and conflating them breaks both branches' real-card firing.
+- **EXACT CURATION COUNT IS FIXED — invariant.** Total `[effect:koHeroEachPlayer]` occurrences across `data/cards/` after execution MUST equal **4** (one each in `amwp.json`, `core.json`, `msis.json`, `wtif.json`). Any deviation (≠ 4) is a FAIL — investigate before commit. A 5th marker = scope creep (filtered/magnitude>1 line got curated); ≤ 3 = a card was missed (or `--propose` over-filtered). Verified by `grep -r "\[effect:koHeroEachPlayer\]" data/cards/ | wc -l` = 4.
 - **Empirical curatable yield (verified 2026-05-31): 4 markers across 4 cards across 4 sets, ALL on the `Fight:` timing.** Exactly one card each in `amwp.json`, `core.json`, `msis.json`, `wtif.json` carries the curatable shape `"Fight: Each player KOs one of their Heroes."`. Ambush yield is **0** (the only Ambush each-player-KO line is magnitude>1). Escape yield is **0** (all 6 Escape each-player-KO lines are magnitude>1 / filtered / compound — exhaustively recorded in WP-188's `_unassigned`). Master Strike each-player-KO is the WP-024 mastermind-strike system — out of scope (`SUPPORTED_TIMINGS` does not include master-strike; do not add it). The earlier draft estimate (`~11 lines across A/F/E`) was speculative; this empirical count supersedes it.
 - Promote the four curatable Fight rows OUT of WP-187's `_unassigned` if recorded there; the deferred each-player-KO rows (1 Ambush magnitude>1, 6 Escape, 2 Fight filtered/choice, plus any compound) STAY in `_unassigned`. **WP-188's six Escape rows under `reason: "no-vocabulary-keyword"` are retained verbatim** — WP-190 adds a `_notes` clarifying paragraph but does NOT re-tag (preserves the cross-WP audit anchor; see WP-190 §`_unassigned` post-curation hygiene).
 
 ## Guardrails
+- **EXACT CURATION COUNT = 4 (hard invariant).** Pinned by the §Locked Values rule above; verified at close-out by the `wc -l` AC.
+- **Each-player ≠ current-player conversion = semantic-corruption FAIL** (pinned by §Locked Values).
 - Touch ONLY `apply-effect-markers.mjs` + `villain-effect-markers.json` — no other converter, no engine/registry/server code
 - Local six-keyword array is a hand-kept copy (no import from `packages/` into a `.mjs`); it loud-fails on drift — do NOT auto-sync
 - Do NOT add any keyword other than `koHeroEachPlayer` (no discard, filtered, magnitude)
 - Do NOT re-mark or convert existing `koHeroCurrentPlayer` / `gainWound*` / `captureBystander` / `heroDeckTopToEscape` lines — additive-only over WP-187/188's markers
 - Do NOT alter `isTimingLine`, the append logic, or the loud-fail behavior — only the local array + a propose heuristic change
 - Overlay stays idempotent (second run = zero diff) and loud-fail (unknown keyword / missing entity / zero-or-multiple match)
-- `_unassigned` stays a structured array; promoted rows removed, deferred rows retained with reason
+- `_unassigned` stays a structured array; moved rows removed, deferred rows retained with reason
 - No randomness, no clocks, no network — deterministic pure-IO transform
 
 ## Required `// why:` Comments
 - `VILLAIN_EFFECT_KEYWORDS` local array (script): update the existing `// why:` (it states the array MUST equal WP-185's vocabulary) to record WP-189's sixth keyword `koHeroEachPlayer` and that the array stays hand-synced to the engine
-- New `koHeroEachPlayer` `PROPOSE_HEURISTICS` entry: why an each-player-specific pattern is needed (the existing `koHeroCurrentPlayer` heuristic `/\bKO\b[^.]*\bhero/i` over-captures "each player KOs …"; the each-player heuristic disambiguates for review; the committed map is human-reviewed and authoritative)
+- New `koHeroEachPlayer` `PROPOSE_HEURISTICS` entry: why an each-player-specific pattern is needed (the existing `koHeroCurrentPlayer` heuristic `/\bKO\b[^.]*\bhero/i` over-captures "each player KOs …"; the each-player heuristic disambiguates for review). **Heuristic only; final curation is EXACT TEXT MATCH on `"Fight: Each player KOs one of their Heroes."` — no fuzzy acceptance.** The committed map is human-reviewed and authoritative.
 
 ## Files to Produce
 - `scripts/convert-cards/apply-effect-markers.mjs` — **modified** — append `'koHeroEachPlayer'` to local `VILLAIN_EFFECT_KEYWORDS` (position 6); update its `// why:`; add the `koHeroEachPlayer` propose heuristic. No matching/append/loud-fail logic change.
-- `scripts/convert-cards/inputs/villain-effect-markers.json` — **modified** — add `koHeroEachPlayer` to the ~11 curatable ambush/fight/escape entries; remove the now-curated rows from `_unassigned`; retain the deferred magnitude>1/filtered/choice rows
+- `scripts/convert-cards/inputs/villain-effect-markers.json` — **modified** — add `koHeroEachPlayer` to the FOUR curatable Fight entries only (one each on the villain cards in `amwp.json` / `core.json` / `msis.json` / `wtif.json` whose printed text is exactly `"Fight: Each player KOs one of their Heroes."`); NO Ambush or Escape entries are curated (zero curatable yield on both timings — verified empirically 2026-05-31, see §Locked Values). Promote the four newly-marked rows out of `_unassigned` if recorded there; retain the deferred magnitude>1/filtered/choice/compound rows IN `_unassigned`
 - `data/cards/*.json` — **modified** — curated lines gain `[effect:koHeroEachPlayer]`; diff bounded to curated lines
 - `docs/ai/STATUS.md` — **modified** — `### WP-190 Executed` block
 - `docs/ai/DECISIONS.md` — **modified** — D-19001..D-19002
@@ -47,7 +50,8 @@
 - [ ] `grep -rhoE "\[effect:[^]]+\]" data/cards/ | sort -u` lists exactly the six locked keywords
 - [ ] **Exactly 4 `Fight:` each-player-KO lines carry `[effect:koHeroEachPlayer]`** — one per set: `amwp`, `core`, `msis`, `wtif`. Verified by `grep -rcE '"Fight: Each player KOs one of their Heroes\.\s*\[effect:koHeroEachPlayer\]"' data/cards/` returning total = 4
 - [ ] **No `Ambush:` or `Escape:` line carries `[effect:koHeroEachPlayer]`.** Verified by `grep -rcE '"(Ambush|Escape):[^"]*\[effect:koHeroEachPlayer\]"' data/cards/` returning total = 0 (Ambush + Escape have zero curatable lines under the v1 discipline)
-- [ ] **`git diff --stat data/cards/` shows exactly four files modified** (`amwp.json`, `core.json`, `msis.json`, `wtif.json`), each with `+1/-1`. Any other set with a diff is a FAIL — investigate, do not commit
+- [ ] **`git diff --stat data/cards/` shows exactly four files modified** (`amwp.json`, `core.json`, `msis.json`, `wtif.json`), each with `+1/-1`. Any `data/cards/*.json` file outside these four showing a diff is a **HARD FAIL — STOP, investigate, and do not commit.**
+- [ ] **Global marker-count invariant.** Total `[effect:koHeroEachPlayer]` occurrences across the corpus = 4. Verified by `grep -r "\[effect:koHeroEachPlayer\]" data/cards/ | wc -l` returning 4. Pairs with the §Locked Values EXACT CURATION COUNT IS FIXED rule; catches accidental variant injections that pass the per-timing greps above.
 - [ ] `grep -rc "\[effect:" data/cards/` = WP-187/188 baseline + 4 (the new koHeroEachPlayer markers; WP-187/188 markers preserved byte-for-byte)
 - [ ] No magnitude>1 / filtered / conditional / choice / compound each-player-KO line marked; those remain in `_unassigned`
 - [ ] No `koHeroCurrentPlayer` line re-marked or converted
