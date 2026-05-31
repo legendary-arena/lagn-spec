@@ -53,21 +53,31 @@ export const VILLAIN_ABILITY_TIMINGS: readonly VillainAbilityTiming[] = [
  *
  * These are the only effect tokens the executor knows how to apply. Effect
  * keywords are sourced exclusively from `[effect:<VillainEffectKeyword>]`
- * markers on ability lines (authored by WP-187) — never from free text or
- * the `[keyword:]` / `[icon:]` namespaces.
+ * markers on ability lines (authored by WP-187 / WP-188 / WP-190) — never
+ * from free text or the `[keyword:]` / `[icon:]` namespaces.
  */
 export type VillainEffectKeyword =
   | 'gainWoundEachPlayer'
   | 'gainWoundCurrentPlayer'
   | 'koHeroCurrentPlayer'
   | 'heroDeckTopToEscape'
-  | 'captureBystander';
+  | 'captureBystander'
+  | 'koHeroEachPlayer';
 
 // why: drift-detection array — must match the VillainEffectKeyword union
-// exactly. The five-keyword vocabulary is the locked MVP per WP-185
-// §Non-Negotiable Constraints; adding a sixth keyword requires a new WP and a
-// DECISIONS.md entry (see WP-189 for the planned `koHeroEachPlayer` addition).
-// The order here is the canonical emission order for multi-marker lines.
+// exactly. The six-keyword vocabulary is the current locked MVP set. The
+// first five (positions 1-5) carry forward unchanged from WP-185
+// §Non-Negotiable Constraints — WP-187's executed markers and the overlay
+// script's hardcoded copy depend on byte-identical ordering of positions
+// 1-5, so insertions are appended at the end (position 6) only.
+// `koHeroEachPlayer` was added at position 6 by WP-189 to close the
+// dominant blocked each-player-KO pattern (D-18901): each-player vocabulary
+// is expanded incrementally, keyword-by-keyword, only where unconditional
+// magnitude-1 patterns are present in the current dataset. Conditional and
+// filtered each-player effects (cost-gated, class-gated, "or gains a
+// Wound", magnitude>1, compound clauses) remain out of scope for the MVP.
+// Any future addition requires a new WP plus a DECISIONS.md entry. The
+// order here is the canonical emission order for multi-marker lines.
 /**
  * All villain effect keywords in canonical order. Single source of truth.
  */
@@ -77,6 +87,7 @@ export const VILLAIN_EFFECT_KEYWORDS: readonly VillainEffectKeyword[] = [
   'koHeroCurrentPlayer',
   'heroDeckTopToEscape',
   'captureBystander',
+  'koHeroEachPlayer',
 ] as const;
 
 // ---------------------------------------------------------------------------

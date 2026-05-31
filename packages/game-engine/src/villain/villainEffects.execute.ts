@@ -123,7 +123,31 @@ function applyVillainEffect(
       break;
     }
     case 'koHeroCurrentPlayer': {
-      koHeroForCurrentPlayer(G, currentPlayer);
+      koOneHeroForPlayer(G, currentPlayer);
+      break;
+    }
+    case 'koHeroEachPlayer': {
+      // why: iterate every player and delegate to the shared resolver. The
+      // iteration order is derived from `Object.keys(G.playerZones).sort()`
+      // — default JavaScript string compare → lexical ascending — NOT from
+      // `Object.keys`'s natural insertion order and NOT from a `Number()`
+      // numeric sort (D-18902). For 1-5-player boardgame.io string ids
+      // ('0'..'N-1') lexical equals numeric equals insertion order, so this
+      // is observationally equal to the pre-existing `gainWoundEachPlayer`
+      // iteration (which does not sort); the explicit `.sort()` here makes
+      // the determinism contract auditable and robust to future setup-order
+      // changes. The branch body is a thin loop — the shared resolver owns
+      // target selection AND the `koCard` mutation; this caller MUST NOT
+      // post-process or modify the resolver's output (D-18902 mutation-
+      // location lock). The resolver is the same one called by the
+      // `koHeroCurrentPlayer` case above, ensuring identical per-player
+      // resolution (pinned by the shared-resolver parity test on a
+      // single-player G). Auto-resolved, not interactive, not VP-based
+      // (D-18503 carries forward from `koHeroCurrentPlayer`).
+      const playerIds = Object.keys(G.playerZones).sort();
+      for (const playerId of playerIds) {
+        koOneHeroForPlayer(G, playerId);
+      }
       break;
     }
     case 'heroDeckTopToEscape': {
@@ -175,26 +199,50 @@ function applyVillainEffect(
 }
 
 // ---------------------------------------------------------------------------
-// koHeroCurrentPlayer resolver
+// Shared per-player KO resolver
 // ---------------------------------------------------------------------------
 
 /**
- * KOs one hero card from the current player's discard (priority) then hand.
+ * KOs one hero card from the given player's discard (priority) then hand.
+ *
+ * Shared per-player resolver called by BOTH the `koHeroCurrentPlayer` and
+ * `koHeroEachPlayer` effect cases — the latter iterates every player in
+ * `Object.keys(G.playerZones).sort()` order and calls this helper once per
+ * player. There is no duplicated KO logic anywhere else in the executor
+ * (D-18902); the per-player KO semantics live here and nowhere else.
+ *
+ * Originally introduced as `koHeroForCurrentPlayer` by WP-185 with a
+ * misleading name (the parameter is any player id, not specifically the
+ * current player); WP-189 renamed it to make the shared-helper intent
+ * obvious and added the `koHeroEachPlayer` second call site.
+ *
+ * The resolver performs the `koCard` mutation itself — callers MUST NOT
+ * post-process or modify its output. Both branches reach byte-identical
+ * post-state on a single-player G (pinned by the shared-resolver parity
+ * test).
  *
  * @param G - Game state (mutated under Immer draft).
- * @param currentPlayer - The active player id.
+ * @param playerId - The target player id (any player; for the
+ *   `koHeroCurrentPlayer` case this is `ctx.currentPlayer`, for the
+ *   `koHeroEachPlayer` case it is each entry of the sorted player-ids
+ *   iteration).
  */
 // why: deterministic auto-resolution — zone priority (discard before hand),
 // then ext_id lexical ascending. It is explicitly NOT VP-based: per-card hero
 // VP is not in engine runtime state (G.cardStats carries attack/recruit/cost/
 // fightCost only) and a runtime registry read would be a layer violation
 // (D-18503). The printed card grants player choice; interactive targeting is
-// deferred to a future UI WP (WP-185 §Out of Scope).
-function koHeroForCurrentPlayer(
+// deferred to a future UI WP (WP-185 §Out of Scope). This function owns the
+// `koCard` mutation site for the per-player KO — callers in both the
+// `koHeroCurrentPlayer` and `koHeroEachPlayer` dispatch cases delegate to it
+// and do not post-process its output, so the mutation site is uniform across
+// branches (D-18902 mutation-location lock; single source of truth for KO
+// targeting + replay determinism).
+function koOneHeroForPlayer(
   G: LegendaryGameState,
-  currentPlayer: string,
+  playerId: string,
 ): void {
-  const zones = G.playerZones[currentPlayer];
+  const zones = G.playerZones[playerId];
   if (!zones) return;
 
   const discardTarget = selectKoHeroTarget(zones.discard);

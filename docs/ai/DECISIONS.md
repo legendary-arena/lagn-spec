@@ -19666,4 +19666,96 @@ part of the same action.
 
 ---
 
+### D-18901 — `koHeroEachPlayer` Appended at Position 6; Incremental Each-Player Vocabulary Expansion Clause
+
+**Decision:** `'koHeroEachPlayer'` is appended at position 6 of
+`VILLAIN_EFFECT_KEYWORDS` and added as the sixth member of the
+`VillainEffectKeyword` union. The first five entries and their order are
+byte-identical to the WP-185 array — WP-187's executed markers and the
+`apply-effect-markers.mjs` local-copy depend on the first-five ordering, so
+new entries are appended at the end only (no mid-array insertions). The
+**incremental-expansion governance clause** is locked: each-player
+vocabulary is expanded keyword-by-keyword, only where unconditional,
+magnitude-1, unfiltered patterns are present in the current dataset.
+Conditional, filtered (cost-gated, class-gated), magnitude>1, "or gains a
+Wound" choice, and compound-clause each-player effects remain out of scope
+for the MVP — they stay in `_unassigned` until a future WP introduces
+predicate machinery. The drift-detection test asserts the six-entry array
+↔ union bidirectional plus an append-only-invariant guard pinning
+positions 0-4 byte-identical to the WP-185 first-five.
+
+**Rationale.** D-18802 deferred the each-player-KO escape cluster
+("`reason: no-vocabulary-keyword`") because the WP-185 vocabulary had no
+keyword to express it. WP-189 closes the unconditional magnitude-1 subset
+of that deferral (the Fight-side `"Fight: Each player KOs one of their
+Heroes."` pattern carried by ~4 villain cards). The Escape and Ambush
+subsets remain blocked at the data-discipline level — every Ambush
+each-player-KO line in the 40 sets is magnitude>1, and every Escape
+each-player-KO line is magnitude>1 / filtered / compound — but the engine
+keyword exists for any future curation. The first-five-byte-identical
+constraint prevents silent breakage of WP-187's executed marker stream and
+the overlay script's local-copy validation. The incremental-expansion
+clause is the cross-WP discipline mechanism: each new keyword pairs an
+engine WP (the vocabulary entry + executor branch) with a data WP (the
+overlay-script local-copy sync + curation pass), mirroring WP-185↔WP-187
+and WP-186↔WP-188.
+
+**Packet:** WP-189 (EC-216).
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
+### D-18902 — Shared Per-Player KO Resolver; Mutation-Location Lock; Lexical Player Iteration
+
+**Decision:** A single shared per-player KO resolver exists at
+`packages/game-engine/src/villain/villainEffects.execute.ts`
+(`koOneHeroForPlayer(G, playerId)`); both the `koHeroCurrentPlayer` and
+the `koHeroEachPlayer` dispatch cases MUST call it. No duplicated KO logic
+exists anywhere else in the executor. The shared resolver owns the
+`koCard` mutation; callers MUST NOT post-process or modify its output. The
+two branches reach byte-identical post-state on a single-player `G` —
+pinned by a behavioral parity test that compares `G.ko`, every player zone
+(`hand`, `discard`, `inPlay`, `victory`, `deck`),
+`G.attachedBystanders`, and `G.messages` by deep equality. The
+`koHeroEachPlayer` dispatch case derives its player iteration from
+`Object.keys(G.playerZones).sort()` — default JavaScript string compare,
+lexical ascending. It does NOT rely on `Object.keys` insertion order and
+it does NOT use `Number(playerId)` numeric sort. Per-player KO semantics
+inherit from D-18503 unchanged: discard before hand, `ext_id` lexical
+tie-break over non-wound cards, silent no-op for zero eligible heroes,
+NOT VP-based, NOT interactive.
+
+**Rationale.** The existing helper introduced by WP-185
+(`koHeroForCurrentPlayer`) was structurally generic — its `currentPlayer`
+parameter was already any player id — but the misleading name invited a
+future change to duplicate the logic for the each-player case. Renaming
+to `koOneHeroForPlayer` makes the shared-helper intent obvious and removes
+the conditional "extract if not already" ambiguity from the WP body. The
+mutation-location lock (resolver owns `koCard`; callers do not
+post-process) prevents a future per-branch message injection or KO-list
+mutation that would silently break parity; the deep-equality parity test
+on a single-player `G` is the load-bearing guard. The explicit lexical
+sort on `koHeroEachPlayer`'s player iteration makes the determinism
+contract auditable. For 1–5-player boardgame.io string ids (`'0'`..`'N-1'`)
+lexical equals numeric equals insertion order, so this is observationally
+equal to the pre-existing `gainWoundEachPlayer` iteration (which does NOT
+sort); the explicit sort is for audit clarity and robustness to future
+setup-order changes, not for behavior change. The pre-existing
+`gainWoundEachPlayer` branch is NOT touched by WP-189 — scope discipline
+(modifying it would change behavior of an already-landed WP). Numeric sort
+is rejected in favor of lexical: JavaScript's default `Array.prototype.sort()`,
+fails safe for any future non-numeric player id, and observationally
+equivalent for the current id range.
+
+**Packet:** WP-189 (EC-216).
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
 Protect this file.

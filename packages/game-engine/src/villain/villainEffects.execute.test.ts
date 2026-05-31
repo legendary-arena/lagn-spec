@@ -389,3 +389,297 @@ describe('executeVillainAbilities — determinism', () => {
     assert.equal(JSON.stringify(first), JSON.stringify(second));
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-189: koHeroEachPlayer dispatch
+// ---------------------------------------------------------------------------
+
+describe('executeVillainAbilities — koHeroEachPlayer (WP-189)', () => {
+  it('KOs exactly one hero from every player with ≥1 eligible hero; skips players with zero eligible heroes', () => {
+    // why: 3-player fixture exercises the eligible-hero split per the
+    // hardened §AC. Player 0: hero in discard (KO target). Player 1: hero
+    // only in hand (KO falls through to hand). Player 2: wounds only (zero
+    // eligible — silent skip). Expected: G.ko = [p0-discard-hero,
+    // p1-hand-hero] in iteration order; player 2 unchanged.
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroEachPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: ['core-hero-p0-hand-z' as CardExtId],
+          discard: ['core-hero-p0-disc-b' as CardExtId, 'core-hero-p0-disc-a' as CardExtId, WOUND],
+          inPlay: [],
+          victory: [],
+        },
+        '1': {
+          deck: [],
+          hand: ['core-hero-p1-hand-m' as CardExtId, 'core-hero-p1-hand-a' as CardExtId],
+          discard: [WOUND],
+          inPlay: [],
+          victory: [],
+        },
+        '2': {
+          deck: [],
+          hand: [],
+          discard: [WOUND],
+          inPlay: [],
+          victory: [],
+        },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      G.ko,
+      ['core-hero-p0-disc-a', 'core-hero-p1-hand-a'],
+      'KOs in sorted-player order: player 0 from discard (lex-first non-wound), player 1 from hand (lex-first)',
+    );
+    assert.equal(
+      G.playerZones['0']!.discard.includes('core-hero-p0-disc-a' as CardExtId),
+      false,
+      "player 0's chosen discard hero removed",
+    );
+    assert.equal(
+      G.playerZones['1']!.hand.includes('core-hero-p1-hand-a' as CardExtId),
+      false,
+      "player 1's chosen hand hero removed",
+    );
+    assert.deepStrictEqual(
+      G.playerZones['2']!.hand,
+      [],
+      'player 2 hand untouched (zero eligible heroes)',
+    );
+    assert.deepStrictEqual(
+      G.playerZones['2']!.discard,
+      [WOUND],
+      'player 2 discard untouched (wound-only is zero eligible heroes)',
+    );
+  });
+
+  it('player iteration is lexically sorted ascending (D-18902 — not insertion order)', () => {
+    // why: the locked iteration contract uses Object.keys(G.playerZones).sort()
+    // (default JavaScript string compare). For 1-5-player boardgame.io
+    // string ids the orderings coincide observationally, but the explicit
+    // sort is the auditable determinism contract. This test inserts the
+    // players in REVERSED order ('2', '1', '0') to prove the dispatch
+    // iterates in sorted order regardless of insertion order.
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroEachPlayer'])],
+      playerZones: {
+        '2': {
+          deck: [],
+          hand: [],
+          discard: ['core-hero-z-z2' as CardExtId],
+          inPlay: [],
+          victory: [],
+        },
+        '1': {
+          deck: [],
+          hand: [],
+          discard: ['core-hero-z-z1' as CardExtId],
+          inPlay: [],
+          victory: [],
+        },
+        '0': {
+          deck: [],
+          hand: [],
+          discard: ['core-hero-z-z0' as CardExtId],
+          inPlay: [],
+          victory: [],
+        },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      G.ko,
+      ['core-hero-z-z0', 'core-hero-z-z1', 'core-hero-z-z2'],
+      'G.ko mutation order matches sorted player ids (0, 1, 2), not insertion order (2, 1, 0)',
+    );
+  });
+
+  it('shared-resolver parity: on a single-player G, koHeroEachPlayer and koHeroCurrentPlayer produce byte-identical post-state (load-bearing)', () => {
+    // why: this is the hardened §AC load-bearing test. Both branches MUST
+    // call the same shared per-player resolver and reach byte-identical
+    // post-state on a single-player G. If a future change duplicates and
+    // silently drifts the resolution logic between the branches, this test
+    // fails. The deep-equality classes covered: G.ko, every player zone
+    // (hand/discard/inPlay/victory/deck), G.attachedBystanders, G.messages.
+    const buildG = (effect: 'koHeroCurrentPlayer' | 'koHeroEachPlayer') =>
+      makeG({
+        hooks: [hook('v-x', 'onFight', [effect])],
+        playerZones: {
+          '0': {
+            deck: ['core-hero-deck-d' as CardExtId],
+            hand: ['core-hero-hand-h' as CardExtId, 'core-hero-hand-z' as CardExtId],
+            discard: ['core-hero-disc-b' as CardExtId, 'core-hero-disc-a' as CardExtId, WOUND],
+            inPlay: ['core-hero-play-p' as CardExtId],
+            victory: ['core-hero-vict-v' as CardExtId],
+          },
+        },
+        attachedBystanders: { ['v-other' as CardExtId]: ['by-1' as CardExtId] },
+      });
+
+    const gCurrent = buildG('koHeroCurrentPlayer');
+    executeVillainAbilities(gCurrent, CTX, 'v-x' as CardExtId, 'onFight');
+
+    const gEach = buildG('koHeroEachPlayer');
+    executeVillainAbilities(gEach, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(gEach.ko, gCurrent.ko, 'G.ko deep-equal');
+    assert.deepStrictEqual(
+      gEach.playerZones['0']!.discard,
+      gCurrent.playerZones['0']!.discard,
+      "player 0 discard deep-equal",
+    );
+    assert.deepStrictEqual(
+      gEach.playerZones['0']!.hand,
+      gCurrent.playerZones['0']!.hand,
+      "player 0 hand deep-equal",
+    );
+    assert.deepStrictEqual(
+      gEach.playerZones['0']!.inPlay,
+      gCurrent.playerZones['0']!.inPlay,
+      "player 0 inPlay deep-equal",
+    );
+    assert.deepStrictEqual(
+      gEach.playerZones['0']!.victory,
+      gCurrent.playerZones['0']!.victory,
+      "player 0 victory deep-equal",
+    );
+    assert.deepStrictEqual(
+      gEach.playerZones['0']!.deck,
+      gCurrent.playerZones['0']!.deck,
+      "player 0 deck deep-equal",
+    );
+    assert.deepStrictEqual(
+      gEach.attachedBystanders,
+      gCurrent.attachedBystanders,
+      'G.attachedBystanders deep-equal',
+    );
+    // why: messages is a separate JSON array; the resolver pushes none
+    // today, but deep equality pins it so a future per-branch message
+    // divergence (which would violate the mutation-location lock) fails the
+    // test.
+    assert.deepStrictEqual(
+      (gEach as { messages?: unknown }).messages,
+      (gCurrent as { messages?: unknown }).messages,
+      'G.messages deep-equal (resolver-pushed messages are uniform across branches)',
+    );
+  });
+
+  it('determinism (audit-exact): two identical dispatches produce identical KO targets, mutation order, and messages', () => {
+    // why: the hardened §AC determinism criterion enumerates three deep-
+    // equality classes: per-player KO target ext_ids, G.ko mutation order,
+    // G.messages sequence. This test snapshots all three across two runs of
+    // identical input G.
+    const buildG = () =>
+      makeG({
+        hooks: [hook('v-x', 'onFight', ['koHeroEachPlayer'])],
+        playerZones: {
+          '0': {
+            deck: [],
+            hand: ['core-hero-p0-hand' as CardExtId],
+            discard: ['core-hero-p0-d2' as CardExtId, 'core-hero-p0-d1' as CardExtId],
+            inPlay: [],
+            victory: [],
+          },
+          '1': {
+            deck: [],
+            hand: ['core-hero-p1-hand-m' as CardExtId, 'core-hero-p1-hand-a' as CardExtId],
+            discard: [],
+            inPlay: [],
+            victory: [],
+          },
+        },
+      });
+
+    const first = buildG();
+    executeVillainAbilities(first, CTX, 'v-x' as CardExtId, 'onFight');
+
+    const second = buildG();
+    executeVillainAbilities(second, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      first.ko,
+      second.ko,
+      'G.ko targets identical across two runs (mutation order pinned)',
+    );
+    assert.deepStrictEqual(
+      first.playerZones['0']!.discard,
+      second.playerZones['0']!.discard,
+      'player 0 discard identical across runs',
+    );
+    assert.deepStrictEqual(
+      first.playerZones['1']!.hand,
+      second.playerZones['1']!.hand,
+      'player 1 hand identical across runs',
+    );
+    assert.deepStrictEqual(
+      (first as { messages?: unknown }).messages,
+      (second as { messages?: unknown }).messages,
+      'G.messages identical sequence across runs',
+    );
+  });
+
+  it('koHeroCurrentPlayer non-regression: on multi-player G, only the current player is targeted', () => {
+    // why: WP-189 only adds the koHeroEachPlayer keyword; the
+    // koHeroCurrentPlayer semantics (current-player only) MUST be unchanged
+    // post-shared-resolver-rename. This regression test confirms invoking
+    // koHeroCurrentPlayer from a multi-player G targets ONLY currentPlayer.
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: [],
+          discard: ['core-hero-p0-a' as CardExtId],
+          inPlay: [],
+          victory: [],
+        },
+        '1': {
+          deck: [],
+          hand: [],
+          discard: ['core-hero-p1-a' as CardExtId],
+          inPlay: [],
+          victory: [],
+        },
+        '2': {
+          deck: [],
+          hand: [],
+          discard: ['core-hero-p2-a' as CardExtId],
+          inPlay: [],
+          victory: [],
+        },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      G.ko,
+      ['core-hero-p0-a'],
+      'only current player 0 is targeted; other players untouched',
+    );
+    assert.deepStrictEqual(
+      G.playerZones['1']!.discard,
+      ['core-hero-p1-a'],
+      'player 1 discard untouched',
+    );
+    assert.deepStrictEqual(
+      G.playerZones['2']!.discard,
+      ['core-hero-p2-a'],
+      'player 2 discard untouched',
+    );
+  });
+
+  it('safe-skips when G.playerZones is empty (no throw)', () => {
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroEachPlayer'])],
+      playerZones: {},
+    });
+    assert.doesNotThrow(() =>
+      executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight'),
+    );
+    assert.deepStrictEqual(G.ko, [], 'no KO when there are no players');
+  });
+});
