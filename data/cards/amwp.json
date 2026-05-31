@@ -1775,7 +1775,7 @@
           "abilities": [
             "[keyword:Microscopic Size-Changing] [hc:ranged][hc:ranged][hc:ranged][hc:ranged]",
             "Ambush: M.O.D.O.K. [keyword:Double-Crosses] each player.",
-            "Fight: Each player KOs one of their Heroes."
+            "Fight: Each player KOs one of their Heroes. [effect:koHeroEachPlayer]"
           ],
           "copies": 1
         },

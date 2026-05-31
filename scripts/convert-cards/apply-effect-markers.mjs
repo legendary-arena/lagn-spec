@@ -62,13 +62,19 @@ const MARKER_MAP_PATH = join(INPUTS_DIR, 'villain-effect-markers.json');
 // so if WP-185 ever changes its vocabulary this script breaks loudly on
 // the new value until it is manually updated here — drift is intentional,
 // never silent. The canonical append order below is also this array's
-// order (so multi-marker lines are stable across runs).
+// order (so multi-marker lines are stable across runs). WP-189 added the
+// sixth keyword `koHeroEachPlayer` at position 6 (engine-side); WP-190 /
+// D-19002 mirrors it here byte-identically. Positions 0-4 remain byte-
+// identical to WP-185's array; the hand-sync convention is the load-
+// bearing guardrail (auto-importing from packages/ is explicitly
+// forbidden — the loud-fail discipline depends on hand-keeping).
 const VILLAIN_EFFECT_KEYWORDS = [
   'gainWoundEachPlayer',
   'gainWoundCurrentPlayer',
   'koHeroCurrentPlayer',
   'heroDeckTopToEscape',
   'captureBystander',
+  'koHeroEachPlayer',
 ];
 
 // why: WP-188 / EC-215 is the follow-on the WP-187 comment anticipated:
@@ -82,7 +88,7 @@ const VILLAIN_EFFECT_KEYWORDS = [
 const SUPPORTED_TIMINGS = ['ambush', 'fight', 'escape', 'overrun'];
 
 /**
- * Returns true when the keyword is one of the five locked
+ * Returns true when the keyword is one of the six locked
  * VillainEffectKeyword strings. Used as the validation gate before any
  * marker is emitted so an unknown / typo'd / pluralised value can never
  * reach the card data.
@@ -520,6 +526,19 @@ const PROPOSE_HEURISTICS = [
   { keyword: 'koHeroCurrentPlayer', pattern: /\bKO\b[^.]*\bhero/i },
   { keyword: 'heroDeckTopToEscape', pattern: /top[^.]*\bhero\s+deck\b[^.]*\bescape/i },
   { keyword: 'captureBystander', pattern: /\bcaptures?\b[^.]*\bbystander/i },
+  // why: the existing `koHeroCurrentPlayer` heuristic `/\bKO\b[^.]*\bhero/i`
+  // over-captures — it matches both "KO one of your Heroes" (current-player)
+  // AND "each player KOs one of their Heroes" (each-player). WP-189 split
+  // these into structurally distinct engine effects (broadcast vs current-
+  // player); conflating them at curation time would surface each-player
+  // candidates only under the current-player keyword in --propose, hiding
+  // them from human review. This pattern surfaces them distinctly so
+  // reviewers can route them to the correct keyword. HEURISTIC ONLY —
+  // final curation is EXACT TEXT MATCH on the canonical printed string
+  // `"Fight: Each player KOs one of their Heroes."`; the committed map
+  // pins the four curatable cards by exact set/group/card keys with no
+  // fuzzy acceptance.
+  { keyword: 'koHeroEachPlayer', pattern: /each\s+player[^.]*\bKO[^.]*\bhero/i },
 ];
 
 /**

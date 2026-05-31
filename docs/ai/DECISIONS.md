@@ -19758,4 +19758,119 @@ equivalent for the current id range.
 
 ---
 
+### D-19001 — Each-Player-KO Curation Marks Only Unconditional Magnitude-1 Unfiltered Lines; Closes Fight-Side Subset of D-18802
+
+**Decision:** Curation of the `koHeroEachPlayer` keyword marks ONLY
+"each player KOs one / a Hero" ability lines that are unconditional
+(no `may`, `If`, `When`, `Unless`), magnitude 1 (NOT "KO two", NOT
+"all"), and unfiltered (no cost gate, class gate, `[team]` predicate,
+"non-grey" filter, or "or gains a Wound" choice clause), AND that
+match the exact canonical printed text. Compound clauses ("KO a Hero
+**and** …") and Master Strike each-player-KO lines (which run through
+the WP-024 mastermind-strike system, not the villain-ability hooks)
+are also out of scope. The total `[effect:koHeroEachPlayer]`
+occurrences across `data/cards/` after curation MUST equal exactly 4
+— one each on the `"Fight: Each player KOs one of their Heroes."`
+line in `amwp.json` (M.O.D.O.K.), `core.json` (Super-Skrull),
+`msis.json` (Stonekeeper), and `wtif.json` (Yondu). This extends the
+v1 curation discipline established by WP-187 (D-18702) and WP-188
+(D-18802). Magnitude>1 / filtered / conditional / choice / compound
+each-player-KO variants stay in `_unassigned` until predicate
+machinery (cost-gate, class-gate, magnitude-N) lands in a future WP.
+This decision **resolves the Fight-side unconditional portion of
+D-18802's `no-vocabulary-keyword` deferral** (4 cards across 4 sets).
+The **Ambush-side and Escape-side portions of D-18802 remain
+deferred** — the one Ambush each-player-KO line in the corpus is
+magnitude>1, and all six Escape each-player-KO lines are magnitude>1
+/ filtered / compound under the v1 discipline. WP-188's six
+`_unassigned` Escape rows under `reason: "no-vocabulary-keyword"` are
+retained verbatim (preserves the cross-WP audit anchor); a single new
+`_notes` paragraph at the JSON top level records the WP-190 audit
+outcome (0 of 6 promoted) — no substantive re-tagging churn.
+
+**Rationale.** WP-189 added the engine keyword, but on its own
+reads nothing — the card data carried no `[effect:koHeroEachPlayer]`
+markers. The curation discipline locked here is the data-side mirror
+of the engine's incremental-expansion governance clause (D-18901):
+new vocabulary covers the unconditional magnitude-1 patterns only;
+the filtered / conditional / magnitude>1 remainder requires
+predicate machinery that's deliberately out of MVP scope. The
+empirically-grounded yield (4 Fight + 0 Ambush + 0 Escape, verified
+against the 40-set corpus on 2026-05-31) is the actual data
+distribution, not a WP failure. The zero-yield on Ambush and Escape
+mirrors WP-188's "zero overrun curated — a valid v1 outcome"
+framing: the discipline is conservative on purpose, and partial
+clusters are recorded in `_unassigned` for future predicate-machinery
+WPs to graduate. The EXACT CURATION COUNT = 4 invariant (verified by
+`grep -r "\[effect:koHeroEachPlayer\]" data/cards/ | wc -l`) catches
+both directions of drift — a 5th marker means scope creep (a
+filtered or magnitude>1 line got curated), ≤ 3 means a card was
+missed. The hard separation between `koHeroEachPlayer`
+("each player KOs …") and `koHeroCurrentPlayer`
+("KO one of your Heroes") is non-negotiable; conversion between them
+is a semantic-corruption FAIL because the two keywords address
+structurally different effects (broadcast vs current-player) and
+conflating them breaks both branches' real-card firing. The
+minimal-churn `_unassigned` convention preserves WP-188's audit
+anchor for any future predicate-machinery WP that needs to retrace
+the deferral chain (WP-188 → WP-190 → predicate WP), which
+substantive re-tagging would break.
+
+**Packet:** WP-190 (EC-217).
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
+### D-19002 — Overlay's Local Six-Keyword Array Is Hand-Synced to WP-189's Engine Array; Drift Loud-Fails
+
+**Decision:** `apply-effect-markers.mjs`'s local
+`VILLAIN_EFFECT_KEYWORDS` array is a hand-kept copy of WP-189's
+engine `VILLAIN_EFFECT_KEYWORDS` at
+`packages/game-engine/src/rules/villainAbility.types.ts`. The two
+arrays MUST stay byte-identical at all six positions. A `.mjs` ops
+script cannot and must not import from `packages/`; the two lists
+are kept in sync **by hand** and the script loud-fails on any value
+in the curated map that is outside the locked six. Drift is therefore
+intentional and never silent — if a future WP changes the engine
+vocabulary, the overlay breaks loudly on the first unknown value
+until the local copy is manually updated. The first-five positions
+(`gainWoundEachPlayer`, `gainWoundCurrentPlayer`,
+`koHeroCurrentPlayer`, `heroDeckTopToEscape`, `captureBystander`)
+are byte-identical to WP-185's array (preserved by WP-189);
+`koHeroEachPlayer` is appended at position 6.
+
+**Rationale.** The hand-sync convention is the load-bearing
+guardrail for the overlay's loud-fail discipline. Auto-importing the
+engine array (e.g., via a build-time export or a generated header)
+would silently absorb any engine-side vocabulary change — including
+ones that break WP-187/188's already-executed marker stream — and
+defer the failure until runtime, where the engine's drift-detection
+test would still catch it but only at the cost of a broken main
+branch. Keeping the copy hand-synced means every vocabulary change
+appears in `git diff` against this file, in the same commit/PR that
+changes the engine, with the same reviewer attention. The append-
+only-position-6 discipline mirrors D-18901's engine-side append-only
+invariant (positions 0-4 stay byte-identical to WP-185's array, so
+WP-187/188 markers and the overlay's local-copy validation never
+silently break). The script's `// why:` comment above the array
+records both halves of the contract — "hardcoded LOCAL copy" and
+"drift is intentional, never silent" — so future operators don't
+mistake the hand-sync for a TODO. The `koHeroEachPlayer` propose
+heuristic that lands in the same WP is explicitly tagged as
+HEURISTIC ONLY (not authoritative); final curation is EXACT TEXT
+MATCH on the canonical printed string, and the committed map pins
+the four curatable cards by exact `set`/`group`/`card` keys with no
+fuzzy acceptance.
+
+**Packet:** WP-190 (EC-217).
+
+**Drafted:** 2026-05-28.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
 Protect this file.

@@ -1827,7 +1827,7 @@
           "abilities": [
             "Yondu gets -2[icon:attack] for each other Rival Overlord that's in the city or a Mastermind.",
             "Ambush: Yondu captures a Bystander. [effect:captureBystander]",
-            "Fight: Each player KOs one of their Heroes."
+            "Fight: Each player KOs one of their Heroes. [effect:koHeroEachPlayer]"
           ],
           "copies": 1
         },

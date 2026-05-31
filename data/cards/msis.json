@@ -1221,7 +1221,7 @@
           "imageUrl": "https://images.legendary-arena.com/msis/msis-vi-infinity-stones-stonekeeper.webp",
           "abilities": [
             "Ambush: If the Soul Stone is in the city or Escape Pile, each player discards a card. If it's in a player's Victory Pile, that player draws two cards.",
-            "Fight: Each player KOs one of their Heroes.",
+            "Fight: Each player KOs one of their Heroes. [effect:koHeroEachPlayer]",
             "(This card counts as ”an Infinity Stone.”)"
           ],
           "copies": 1

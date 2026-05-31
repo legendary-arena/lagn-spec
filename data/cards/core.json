@@ -2288,7 +2288,7 @@
           "vAttack": "4",
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-skrulls-super-skrull.webp",
           "abilities": [
-            "Fight: Each player KOs one of their Heroes."
+            "Fight: Each player KOs one of their Heroes. [effect:koHeroEachPlayer]"
           ],
           "copies": 3
         }

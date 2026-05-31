@@ -7,7 +7,8 @@
     "WP-188 'overrun' curation: the gate is widened so --propose scans overrun and _unassigned can capture it, but ZERO overrun entries were curatable under v1 discipline. Villain/henchman overrun lines appear only in the standalone Fear-Itself / Villains-Only sets and all carry either conditional choices, '[keyword:Demolish]' (no MVP keyword), or 'Bindings' (Fear-Itself recoloring distinct from 'Wound'). An empty overrun curation set is a valid v1 outcome per WP-188 §v1 Curation, not a gap. Scheme overrun is explicitly out of scope.",
     "_unassigned reason vocabulary (closed set; the script does NOT read this field — it is human-review documentation): magnitude>1 | multi-target | other | conditional | multi-line (WP-187 set) + no-vocabulary-keyword (WP-188; first-class, NOT folded under 'other'). 'no-vocabulary-keyword' names every literal 'Each player KOs ...' villain Escape/Overrun line that has no keyword in the current vocabulary; D-18802 records the deferral. WP-190 (drafted, commit 1ac0762) reads exactly these rows to promote the unconditional magnitude-1 subset to [effect:koHeroEachPlayer] once WP-189 adds the keyword. This tagging is a cross-WP contract, not internal bookkeeping — the no-vocabulary-keyword rows below are EXHAUSTIVE across the 40 sets; rows for the other reason values remain representative per the WP-187 precedent.",
     "The exhaustive candidate list is reproducible at any time via `node scripts/convert-cards/apply-effect-markers.mjs --propose`. WP-187 surfaced 221 Ambush/Fight phrase-match candidates (2026-05-28); WP-188 widening surfaced an additional 57 Escape/Overrun candidates (2026-05-29). The _unassigned block below records the human classification RATIONALE with representative rows per reason (plus EVERY 'Each player KOs' Escape line, exhaustively); it is intentionally not a 1:1 copy of --propose output.",
-    "DATA-vs-SPEC drift found during WP-187 execution (2026-05-28; unchanged by WP-188): (a) The WP-187 spec assumed two cards (one bkwd, one rvlt) carry two Fight: lines apiece and would loud-fail as reason 'multi-line'. Under the LOCKED predicate (line.trimStart() begins with 'Fight:'), NO card has two timing lines of the same timing — rvlt/army-of-evil/mister-hyde and rvlt/dark-avengers/sentry each have a SECOND 'Fight:' embedded mid-line (inside flavor / a granted ability), which the predicate correctly does not treat as a timing line. So _unassigned carries no 'multi-line' rows; the multi-line loud-fail remains an active guardrail in the script and is exercised via a scratch input. (b) The WP-187 spot-check expected a 'gainWoundEachPlayer' Ambush mark; NO unconditional each-player wound line exists on any Ambush/Fight line in the 40 sets — every wound line is conditional ('reveal X or gains a Wound', 'If ...', 'with no ...', 'each other player'). WP-188's Escape side fills that gap: 14 'Escape: Each player gains a Wound.' lines give gainWoundEachPlayer its first real data."
+    "DATA-vs-SPEC drift found during WP-187 execution (2026-05-28; unchanged by WP-188): (a) The WP-187 spec assumed two cards (one bkwd, one rvlt) carry two Fight: lines apiece and would loud-fail as reason 'multi-line'. Under the LOCKED predicate (line.trimStart() begins with 'Fight:'), NO card has two timing lines of the same timing — rvlt/army-of-evil/mister-hyde and rvlt/dark-avengers/sentry each have a SECOND 'Fight:' embedded mid-line (inside flavor / a granted ability), which the predicate correctly does not treat as a timing line. So _unassigned carries no 'multi-line' rows; the multi-line loud-fail remains an active guardrail in the script and is exercised via a scratch input. (b) The WP-187 spot-check expected a 'gainWoundEachPlayer' Ambush mark; NO unconditional each-player wound line exists on any Ambush/Fight line in the 40 sets — every wound line is conditional ('reveal X or gains a Wound', 'If ...', 'with no ...', 'each other player'). WP-188's Escape side fills that gap: 14 'Escape: Each player gains a Wound.' lines give gainWoundEachPlayer its first real data.",
+    "WP-190 promoted 0 of 6 rows (all non-curatable under v1 discipline: 5 magnitude>1, 1 filtered, 1 compound; counts overlap). The `no-vocabulary-keyword` tag is preserved for cross-WP audit traceability; substantive re-tagging deferred to a future predicate-machinery WP."
   ],
   "villains": {
     "2099": {
@@ -20,6 +21,9 @@
       }
     },
     "amwp": {
+      "armada-of-kang": {
+        "m-o-d-o-k": { "fight": ["koHeroEachPlayer"] }
+      },
       "cross-technologies": {
         "cross-security-detail": { "fight": ["koHeroCurrentPlayer"] }
       },
@@ -82,6 +86,9 @@
       }
     },
     "core": {
+      "skrulls": {
+        "super-skrull": { "fight": ["koHeroEachPlayer"] }
+      },
       "spider-foes": {
         "green-goblin": { "ambush": ["captureBystander"] },
         "venom": { "escape": ["gainWoundEachPlayer"] }
@@ -138,6 +145,9 @@
     "msis": {
       "children-of-thanos": {
         "chitauri-gorilla": { "ambush": ["captureBystander"] }
+      },
+      "infinity-stones": {
+        "stonekeeper": { "fight": ["koHeroEachPlayer"] }
       }
     },
     "msmc": {
@@ -237,7 +247,7 @@
       },
       "rival-overlords": {
         "ulysses-klaue": { "fight": ["koHeroCurrentPlayer"] },
-        "yondu": { "ambush": ["captureBystander"] }
+        "yondu": { "ambush": ["captureBystander"], "fight": ["koHeroEachPlayer"] }
       },
       "zombie-avengers": {
         "zombie-wasp": { "fight": ["koHeroCurrentPlayer"] }
