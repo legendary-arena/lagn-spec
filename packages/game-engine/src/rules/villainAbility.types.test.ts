@@ -26,13 +26,19 @@ describe('VILLAIN_ABILITY_TIMINGS drift-detection', () => {
   // why: failure means union/array mismatch — a timing added to the union but
   // not the array (or vice versa) would silently break hook dispatch for the
   // missing timing. Same pattern as HERO_ABILITY_TIMINGS / REVEALED_CARD_TYPES.
-  it('contains exactly the 2 canonical timing values in order', () => {
-    const expectedTimings: VillainAbilityTiming[] = ['onAmbush', 'onFight'];
+  // WP-186 added 'onEscape' as the third entry (D-18601); the array length is
+  // now 3 and the canonical order is locked.
+  it('contains exactly the 3 canonical timing values in order', () => {
+    const expectedTimings: VillainAbilityTiming[] = [
+      'onAmbush',
+      'onFight',
+      'onEscape',
+    ];
 
     assert.equal(
       VILLAIN_ABILITY_TIMINGS.length,
-      2,
-      'VILLAIN_ABILITY_TIMINGS must have exactly 2 entries',
+      3,
+      'VILLAIN_ABILITY_TIMINGS must have exactly 3 entries',
     );
 
     assert.deepStrictEqual(
@@ -49,13 +55,15 @@ describe('VILLAIN_ABILITY_TIMINGS drift-detection', () => {
     );
   });
 
-  // why: 'onEscape' is reserved for WP-186; if it leaks into this WP's array
-  // the scope boundary has been crossed.
-  it('does not contain onEscape (reserved for WP-186)', () => {
+  // why: `Overrun:` is a v1 synonym of `Escape:` and emits `onEscape` at
+  // parse time (D-18602). `'onOverrun'` must never appear in the timing
+  // union or canonical array — distinct overrun semantics are deferred to a
+  // future scheme-text WP. This guard prevents accidental reintroduction.
+  it("does not contain 'onOverrun' (D-18602 synonym lock)", () => {
     assert.equal(
-      VILLAIN_ABILITY_TIMINGS.includes('onEscape' as VillainAbilityTiming),
+      VILLAIN_ABILITY_TIMINGS.includes('onOverrun' as VillainAbilityTiming),
       false,
-      "VILLAIN_ABILITY_TIMINGS must not include 'onEscape' in WP-185",
+      "VILLAIN_ABILITY_TIMINGS must not include 'onOverrun' — Overrun: emits onEscape (D-18602)",
     );
   });
 });

@@ -138,17 +138,24 @@ function isValidVillainEffectKeyword(
  * Detects the timing label from an ability line's leading text prefix.
  *
  * Returns 'onAmbush' for an `Ambush:` prefix, 'onFight' for a `Fight:` prefix,
- * or null when the line matches neither.
+ * 'onEscape' for an `Escape:` or `Overrun:` prefix, or null when the line
+ * matches none.
  *
  * @param abilityLine - One ability text line.
  * @returns The matched timing label, or null.
  */
-// why: only the exact `Ambush:` / `Fight:` prefixes (word immediately followed
-// by a colon) match in v1, case-insensitive with leading whitespace trimmed.
-// Variant forms like `Ambush —` or `Ambush :` (spaced colon) are intentionally
-// excluded — matching them would require punctuation normalization and would
-// break the no-inference rule. A future WP can add variants if a real card
-// ever needs one.
+// why: only the exact `Ambush:` / `Fight:` / `Escape:` / `Overrun:` prefixes
+// (word immediately followed by a colon) match in v1, case-insensitive with
+// leading whitespace trimmed. Variant forms like `Ambush —` or `Ambush :`
+// (spaced colon) are intentionally excluded — matching them would require
+// punctuation normalization and would break the no-inference rule. A future
+// WP can add variants if a real card ever needs one. Both `Escape:` and
+// `Overrun:` map to the same `onEscape` timing — they are v1 synonyms per
+// D-18602; the engine collapses them at parse time and `'onOverrun'` is NOT
+// in the VillainAbilityTiming union. Distinct overrun semantics are deferred
+// to a future scheme-text WP. Effects on the matched line still come from
+// `[effect:<VillainEffectKeyword>]` markers (same model as Ambush/Fight) —
+// the prefix only determines timing, not effects.
 function detectTiming(abilityLine: string): VillainAbilityTiming | null {
   const normalized = abilityLine.replace(/^\s+/, '').toLowerCase();
   if (normalized.startsWith('ambush:')) {
@@ -156,6 +163,12 @@ function detectTiming(abilityLine: string): VillainAbilityTiming | null {
   }
   if (normalized.startsWith('fight:')) {
     return 'onFight';
+  }
+  if (normalized.startsWith('escape:')) {
+    return 'onEscape';
+  }
+  if (normalized.startsWith('overrun:')) {
+    return 'onEscape';
   }
   return null;
 }
@@ -376,7 +389,12 @@ function collectHenchmanHookEntries(
       // board keyword, so the reveal-site hasAmbush gate can never fire a
       // henchman onAmbush hook — emitting one would be unreachable and would
       // violate the gate-consistency invariant. Henchman Ambush effects are
-      // deferred to a future WP that adds henchman keyword detection.
+      // deferred to a future WP that adds henchman keyword detection. The
+      // same filter also defers henchman onEscape hooks (WP-186): no real
+      // henchman card in the v1 data carries an `Escape:` line with an
+      // `[effect:]` marker, so emitting henchman onEscape hooks would have
+      // no consumer; the escape fire site still calls executeVillainAbilities
+      // on a henchman escape, which safely no-ops via per-card hook lookup.
       if (timing !== 'onFight') continue;
 
       const effects = extractEffectKeywords(abilityLine);

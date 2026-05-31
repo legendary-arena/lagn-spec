@@ -20,22 +20,28 @@ import type { CardExtId } from '../state/zones.types.js';
  * Closed canonical union of villain/henchman ability timing labels.
  *
  * `onAmbush` fires when a villain enters the City; `onFight` fires when a
- * villain or henchman is defeated. Timing is read from the `Ambush:` /
- * `Fight:` text prefix at setup time — there is no NL inference.
+ * villain or henchman is defeated; `onEscape` fires when a villain or
+ * henchman is pushed off the City escape edge. Timing is read from the
+ * `Ambush:` / `Fight:` / `Escape:` (or `Overrun:`) text prefix at setup
+ * time — there is no NL inference.
  */
-export type VillainAbilityTiming = 'onAmbush' | 'onFight';
+export type VillainAbilityTiming = 'onAmbush' | 'onFight' | 'onEscape';
 
 // why: drift-detection array — must match the VillainAbilityTiming union
 // exactly (the villainAbility.types.test.ts drift test asserts bidirectional
-// parity). `'onEscape'` is deliberately ABSENT: it is reserved for WP-186 and
-// adding it here is out of WP-185's scope. Adding a timing requires updating
-// both this array and the union together, plus a DECISIONS.md entry.
+// parity). The three-entry canonical order is locked: 'onAmbush' (city
+// entry, WP-185), 'onFight' (defeat, WP-185), 'onEscape' (escape edge,
+// WP-186 / D-18601). 'onOverrun' is deliberately absent — `Overrun:` is a
+// v1 synonym of `Escape:` and emits `onEscape` at parse time (D-18602).
+// Adding a timing requires updating both this array and the union together,
+// plus a DECISIONS.md entry.
 /**
  * All villain ability timings in canonical order. Single source of truth.
  */
 export const VILLAIN_ABILITY_TIMINGS: readonly VillainAbilityTiming[] = [
   'onAmbush',
   'onFight',
+  'onEscape',
 ] as const;
 
 // ---------------------------------------------------------------------------

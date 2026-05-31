@@ -80,7 +80,7 @@ function makeG(options: MakeGOptions): LegendaryGameState {
  */
 function hook(
   cardId: string,
-  timing: 'onAmbush' | 'onFight',
+  timing: 'onAmbush' | 'onFight' | 'onEscape',
   effects: string[],
 ): VillainAbilityHook {
   return {
@@ -277,6 +277,90 @@ describe('executeVillainAbilities — safe-skip paths', () => {
     });
     executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
     assert.equal(G.piles.wounds.length, 1, 'non-matching cardId fires nothing');
+  });
+});
+
+describe('executeVillainAbilities — onEscape dispatch (WP-186)', () => {
+  it('gainWoundEachPlayer fires via onEscape dispatch (hook lookup by timing)', () => {
+    // why: the executor is timing-agnostic and dispatches by per-card hook
+    // lookup (`getVillainHooksForCard(cardId, timing)`); adding the onEscape
+    // timing must reach the same effect-apply path with no executor-side
+    // branching. Hook for 'v-escapee' onEscape with gainWoundEachPlayer →
+    // every player gets one wound from the pool.
+    const G = makeG({
+      hooks: [hook('v-escapee', 'onEscape', ['gainWoundEachPlayer'])],
+      wounds: ['w0', 'w1', 'w2'] as CardExtId[],
+    });
+    executeVillainAbilities(G, CTX, 'v-escapee' as CardExtId, 'onEscape');
+
+    assert.equal(G.playerZones['0']!.discard.length, 1, 'player 0 gains a wound');
+    assert.equal(G.playerZones['1']!.discard.length, 1, 'player 1 gains a wound');
+    assert.equal(G.piles.wounds.length, 1, 'wound pile decreased by 2');
+    assert.equal(G.turnEconomy.woundsDrawn, 1, 'only current player projected');
+  });
+
+  it('does not fire onAmbush or onFight hooks for the same card when called with onEscape', () => {
+    // why: timing filter must isolate dispatch — the same card may carry
+    // onAmbush and onFight hooks (from other ability lines); onEscape must
+    // execute only the onEscape hooks.
+    const G = makeG({
+      hooks: [
+        hook('v-x', 'onAmbush', ['gainWoundEachPlayer']),
+        hook('v-x', 'onFight', ['koHeroCurrentPlayer']),
+        hook('v-x', 'onEscape', ['gainWoundCurrentPlayer']),
+      ],
+      wounds: ['w0', 'w1'] as CardExtId[],
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onEscape');
+
+    assert.equal(G.playerZones['0']!.discard.length, 1, 'current player gains a wound');
+    assert.equal(G.playerZones['1']!.discard.length, 0, 'other player unaffected');
+    assert.equal(G.piles.wounds.length, 1);
+    assert.equal(G.turnEconomy.woundsDrawn, 1);
+    assert.deepStrictEqual(G.ko, [], 'no KO — onFight hook did not fire');
+  });
+
+  it('captureBystander under onEscape attaches to the escaped card and does NOT auto-award (D-18603)', () => {
+    // why: the executor auto-awards a captured bystander only on 'onFight'
+    // (the Fight fire site runs post-award and would otherwise strand the
+    // bystander). Under 'onEscape' the bystander attaches to the escaped
+    // card now in G.escapedPile and follows it out of the city; the reveal
+    // fire site calls executeVillainAbilities AFTER resolveEscapedBystanders
+    // has released the escaping card's pre-escape attachments, so this new
+    // attachment is to a clean slot.
+    const G = makeG({
+      hooks: [hook('v-escaped', 'onEscape', ['captureBystander'])],
+      bystanders: ['b0', 'b1'] as CardExtId[],
+    });
+    executeVillainAbilities(G, CTX, 'v-escaped' as CardExtId, 'onEscape');
+
+    assert.deepStrictEqual(
+      G.attachedBystanders['v-escaped' as CardExtId],
+      ['b0'],
+      'captured bystander attaches to the escaped card (D-18603)',
+    );
+    assert.deepStrictEqual(G.piles.bystanders, ['b1'], 'one bystander drawn from supply');
+    assert.deepStrictEqual(
+      G.playerZones['0']!.victory,
+      [],
+      'no auto-award under onEscape — only onFight awards (timing branch)',
+    );
+  });
+
+  it('safe-skips an onEscape hook with empty effects (e.g. each-player-KO line left marker-free by WP-188)', () => {
+    // why: WP-188 leaves unmarked escape lines marker-free with
+    // reason:"no-vocabulary-keyword" (e.g. the each-player-KO pattern; D-18802).
+    // The parser still emits a hook with effects:[] so the timing is recorded;
+    // the executor must no-op without touching any state.
+    const G = makeG({
+      hooks: [hook('v-unmarked', 'onEscape', [])],
+      wounds: ['w0'] as CardExtId[],
+      bystanders: ['b0'] as CardExtId[],
+    });
+    executeVillainAbilities(G, CTX, 'v-unmarked' as CardExtId, 'onEscape');
+    assert.equal(G.piles.wounds.length, 1, 'no mutation from an empty-effects hook');
+    assert.equal(G.piles.bystanders.length, 1, 'bystander pile untouched');
+    assert.deepStrictEqual(G.attachedBystanders, {});
   });
 });
 

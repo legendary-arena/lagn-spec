@@ -382,6 +382,203 @@ describe('buildVillainAbilityHooks — gate-consistency with buildCardKeywords',
   });
 });
 
+describe('buildVillainAbilityHooks — Escape: / Overrun: prefix detection (WP-186)', () => {
+  it('detects Escape: case-insensitively with leading whitespace trimmed (villain per-card)', () => {
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'variants',
+          cards: [
+            {
+              slug: 'caps',
+              abilities: ['ESCAPE: each player loses a wound [effect:gainWoundEachPlayer]'],
+            },
+            {
+              slug: 'spaced',
+              abilities: ['   Escape: bar [effect:gainWoundCurrentPlayer]'],
+            },
+            {
+              slug: 'emdash',
+              abilities: ['Escape — no colon here'],
+            },
+            {
+              slug: 'spacedcolon',
+              abilities: ['Escape : spaced colon'],
+            },
+          ],
+        },
+      ],
+      [],
+    );
+    const config = makeConfig(['core/variants'], []);
+    const hooks = buildVillainAbilityHooks(registry, config);
+
+    // why: WP-191 — villain hooks key by the -00 copy instance (no `copies` field).
+    const byCard = (slug: string) =>
+      hooks.filter((h) => h.cardId === `core-villain-variants-${slug}-00`);
+
+    assert.equal(byCard('caps').length, 1, 'ESCAPE: matches case-insensitively');
+    assert.equal(byCard('caps')[0]!.timing, 'onEscape');
+    assert.deepStrictEqual(byCard('caps')[0]!.effects, ['gainWoundEachPlayer']);
+    assert.equal(byCard('spaced').length, 1, 'leading whitespace is trimmed');
+    assert.equal(byCard('spaced')[0]!.timing, 'onEscape');
+    assert.deepStrictEqual(byCard('spaced')[0]!.effects, ['gainWoundCurrentPlayer']);
+    assert.equal(byCard('emdash').length, 0, 'em-dash variant is not matched');
+    assert.equal(byCard('spacedcolon').length, 0, 'spaced-colon variant is not matched');
+  });
+
+  it('detects Overrun: as a v1 synonym of Escape: (D-18602 — both emit onEscape)', () => {
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'siege',
+          cards: [
+            {
+              slug: 'overrun-card',
+              abilities: ['Overrun: Each player gains a Wound. [effect:gainWoundEachPlayer]'],
+            },
+            {
+              slug: 'overrun-caps',
+              abilities: ['OVERRUN: bar [effect:gainWoundCurrentPlayer]'],
+            },
+          ],
+        },
+      ],
+      [],
+    );
+    const config = makeConfig(['core/siege'], []);
+    const hooks = buildVillainAbilityHooks(registry, config);
+
+    const overrunHook = hooks.find(
+      (h) => h.cardId === 'core-villain-siege-overrun-card-00',
+    );
+    assert.ok(overrunHook, 'Overrun: line yields a hook');
+    assert.equal(
+      overrunHook!.timing,
+      'onEscape',
+      "Overrun: emits onEscape — 'onOverrun' is not a timing in v1 (D-18602)",
+    );
+    assert.deepStrictEqual(overrunHook!.effects, ['gainWoundEachPlayer']);
+
+    const overrunCapsHook = hooks.find(
+      (h) => h.cardId === 'core-villain-siege-overrun-caps-00',
+    );
+    assert.ok(overrunCapsHook, 'OVERRUN: matches case-insensitively');
+    assert.equal(overrunCapsHook!.timing, 'onEscape');
+  });
+
+  it('emits an onEscape hook with empty effects when the matched line carries no [effect:] marker (safe-skip)', () => {
+    // why: real escape lines outside the MVP vocabulary (e.g. the each-player-KO
+    // pattern; D-18802) are left marker-free by WP-188 and must still produce
+    // a hook with effects:[] — the executor then no-ops. This proves the
+    // prefix-detection-only contract: timing is set from the prefix, effects
+    // come only from [effect:] markers.
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'mix',
+          cards: [
+            {
+              slug: 'unmarked',
+              abilities: ['Escape: Each player KOs a Hero from their hand.'],
+            },
+            {
+              slug: 'unmarked-overrun',
+              abilities: ['Overrun: Each player KOs a Hero from their hand.'],
+            },
+          ],
+        },
+      ],
+      [],
+    );
+    const config = makeConfig(['core/mix'], []);
+    const hooks = buildVillainAbilityHooks(registry, config);
+
+    const unmarked = hooks.find(
+      (h) => h.cardId === 'core-villain-mix-unmarked-00',
+    );
+    assert.ok(unmarked, 'a matched Escape: line yields a hook even with no marker');
+    assert.equal(unmarked!.timing, 'onEscape');
+    assert.deepStrictEqual(unmarked!.effects, [], 'effects:[] when marker absent');
+
+    const unmarkedOverrun = hooks.find(
+      (h) => h.cardId === 'core-villain-mix-unmarked-overrun-00',
+    );
+    assert.ok(unmarkedOverrun, 'a matched Overrun: line yields a hook even with no marker');
+    assert.equal(unmarkedOverrun!.timing, 'onEscape');
+    assert.deepStrictEqual(unmarkedOverrun!.effects, []);
+  });
+
+  it("does not emit a hook with timing 'onOverrun' (synonym lock — D-18602)", () => {
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'siege',
+          cards: [
+            {
+              slug: 'overrun-card',
+              abilities: ['Overrun: Each player gains a Wound. [effect:gainWoundEachPlayer]'],
+            },
+          ],
+        },
+      ],
+      [],
+    );
+    const hooks = buildVillainAbilityHooks(
+      registry,
+      makeConfig(['core/siege'], []),
+    );
+    for (const hook of hooks) {
+      assert.notEqual(
+        hook.timing as string,
+        'onOverrun',
+        "'onOverrun' must never appear as a hook timing (Overrun: collapses to onEscape at parse time)",
+      );
+    }
+  });
+
+  it('does not emit henchman onEscape hooks in v1 (D-18507-class filter mirror)', () => {
+    // why: the henchman filter excludes every timing except onFight (the
+    // executor-side rationale is identical to the D-18507 onAmbush deferral —
+    // no real henchman in v1 data carries an [effect:]-marked Escape: line,
+    // and the keyword-detection asymmetry would make emission unreachable).
+    // The reveal-site fire still calls executeVillainAbilities on a henchman
+    // escape; it safely no-ops via per-card hook lookup. This test pins the
+    // emission boundary so a future WP that adds henchman onEscape coverage
+    // updates both the parser AND this test together.
+    const registry = makeRegistry(
+      'core',
+      [],
+      [
+        {
+          slug: 'hand-ninjas',
+          abilities: ['Escape: Each player gains a Wound. [effect:gainWoundEachPlayer]'],
+        },
+        {
+          slug: 'doombot-legion',
+          abilities: ['Overrun: KO one of your Heroes. [effect:koHeroCurrentPlayer]'],
+        },
+      ],
+    );
+    const hooks = buildVillainAbilityHooks(
+      registry,
+      makeConfig([], ['core/hand-ninjas', 'core/doombot-legion']),
+    );
+    const henchHooks = hooks.filter((h) =>
+      h.cardId.startsWith('henchman-'),
+    );
+    assert.equal(
+      henchHooks.length,
+      0,
+      'henchman Escape:/Overrun: lines yield zero hooks in v1',
+    );
+  });
+});
+
 describe('buildVillainAbilityHooks — villain per-copy fan-out (WP-191)', () => {
   it('emits one hook per (copy instance × matched ability line) keyed by the copy-indexed id', () => {
     // why: WP-191 / D-18704 — a villain card with copies:2 must produce hooks

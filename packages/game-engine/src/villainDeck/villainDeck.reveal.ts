@@ -199,6 +199,21 @@ export function performVillainReveal(
           `Bystanders from escaped villain "${pushResult.escapedCard}" returned to supply.`,
         );
       }
+
+      // why: card-specific Escape:/Overrun: effects fire AFTER
+      // resolveEscapedBystanders per D-18603 — a captureBystander effect
+      // reached via an Escape: marker attaches to the escaped card now in
+      // G.escapedPile (post-release), not the still-attached pre-release
+      // state. The generic per-escape current-player wound above (WP-015
+      // legacy system-level penalty) is PRESERVED; card-text effects layer
+      // on top, they do not replace it. Overrun: is a v1 synonym of Escape:
+      // (D-18602) — both prefixes resolve to onEscape at parse time, so this
+      // single fire site covers both. Henchman escapes safely no-op here
+      // (per-card hook lookup misses; D-18507-class filter). Per WP-191
+      // (D-18704..D-18708), pushResult.escapedCard is the zone-instance
+      // ext_id the per-card hook lookup expects, so villain onEscape effects
+      // now fire end-to-end on real cards (D-18508 CLOSED).
+      executeVillainAbilities(G, ctx, pushResult.escapedCard, 'onEscape');
     }
 
     // why: Ambush fires on City entry. The hardcoded "each player gains a

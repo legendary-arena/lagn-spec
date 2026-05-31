@@ -19581,4 +19581,89 @@ path — investigate, never re-pin.
 
 ---
 
+### D-18601 — `'onEscape'` Added to VillainAbilityTiming (Third Entry)
+
+**Decision:** `VillainAbilityTiming` is extended to a three-member union
+`'onAmbush' | 'onFight' | 'onEscape'` and the canonical
+`VILLAIN_ABILITY_TIMINGS` array becomes `['onAmbush', 'onFight', 'onEscape']`
+(this order). The new `'onEscape'` timing fires when a villain or henchman is
+pushed off the City escape edge during a reveal — the third trigger in the
+canonical Reveal → Fight → Side-Effect ordering. The drift-detection test is
+updated bidirectionally; the previous "reserved for WP-186" guard against
+`'onEscape'` in the array is removed. Extends the WP-185 lock under D-18501.
+
+**Rationale.** Without a dedicated escape timing the card-text-driven
+`Escape:` / `Overrun:` ability lines (carrying `[effect:]` markers authored by
+WP-188) cannot fire. The same hook table, parser, executor, and per-card
+lookup model from WP-185 carry forward unchanged — only the timing union, the
+canonical array, the parser's prefix detection, and one reveal-site fire
+site change. Adding a timing is the minimal additive change consistent with
+the WP-185 / WP-022 hook-table contract.
+
+**Packet:** WP-186 (EC-213).
+
+**Drafted:** 2026-05-30.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
+### D-18602 — `Overrun:` Is a v1 Synonym of `Escape:`; Both Prefixes Emit `'onEscape'`
+
+**Decision:** The setup parser's prefix detector maps both leading-whitespace-
+trimmed, case-insensitive `escape:` AND `overrun:` to `timing: 'onEscape'`.
+`'onOverrun'` does NOT exist as a value of `VillainAbilityTiming` and is
+explicitly absent from `VILLAIN_ABILITY_TIMINGS`. Distinct overrun semantics
+are deferred to a future scheme-text WP. The data-side overlay (WP-188) keeps
+`escape` and `overrun` as distinct map keys because it matches by line prefix;
+the engine collapses them at parse time.
+
+**Rationale.** Real `Overrun:` text on villain cards behaves like `Escape:`
+for engine purposes — it triggers when the card leaves the City off the
+escape edge and carries the same MVP-vocabulary side effects. Real `Overrun:`
+text on scheme cards has richer setup-tied semantics (deck reshuffling,
+twist-count thresholds) that are outside the MVP villain-ability vocabulary;
+collapsing the two prefixes lets WP-186 cover the villain-card subset
+without committing to scheme semantics. Curating WP-188 found zero villain
+overrun lines that matched the MVP shape, but the synonym is locked
+proactively so a future curation does not accidentally introduce a
+`'onOverrun'` timing or duplicate executor branch.
+
+**Packet:** WP-186 (EC-213).
+
+**Drafted:** 2026-05-30.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
+### D-18603 — `captureBystander` Under `'onEscape'` Attaches to the Escaped Card; No Auto-Award
+
+**Decision:** When an `Escape:` line carries `[effect:captureBystander]`, the
+executor (timing-agnostic, unchanged) attaches one bystander from the supply
+pile to the **escaped card now in `G.escapedPile`**. It does NOT auto-award
+the captured bystander to any player's victory zone. The captured bystander
+follows the card out of the City. The reveal-site fire is placed AFTER
+`resolveEscapedBystanders` so the escaping card's pre-escape attachments are
+released to the supply before this new attachment lands on a clean slot.
+
+**Rationale.** The executor's auto-award branch fires only on `'onFight'`
+(D-18506 — to prevent stranding a bystander on a card already in the victory
+pile). Under `'onEscape'` the escaped card is in `G.escapedPile`, not
+`victory` — there is no defeated state to award against, and any
+auto-award would have to invent semantics ("award to whom?"). v1 attaches
+deterministically with no choice; refinement (e.g., transfer-on-defeat, or a
+distinct escape-award rule) is deferred. Placing the fire site after
+`resolveEscapedBystanders` keeps the release-and-recapture ordering local to
+the escape branch and prevents the released bystanders from being awarded as
+part of the same action.
+
+**Packet:** WP-186 (EC-213).
+
+**Drafted:** 2026-05-30.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
 Protect this file.
