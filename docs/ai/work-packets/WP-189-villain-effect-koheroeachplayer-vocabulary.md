@@ -102,8 +102,8 @@ no interactive-choice machinery — each player's KO is auto-resolved by the
 same deterministic helper `koHeroCurrentPlayer` already uses. It is a
 dispatch branch, not new machinery.
 
-This WP is the **engine** half. The **data** half (WP-190) curates the
-deferred lines with `[effect:koHeroEachPlayer]` markers and teaches the
+This WP implements the **engine** half. The **data** half (WP-190) curates
+the deferred lines with `[effect:koHeroEachPlayer]` markers and teaches the
 overlay script the sixth keyword. Neither half is useful alone:
 WP-189 without WP-190 is an unread keyword; WP-190 without WP-189 would
 loud-fail (the marker validates against the engine vocabulary). The two
@@ -122,24 +122,41 @@ land as a pair.
   drift-detection test updated to the six-entry array.
 - **Add the `koHeroEachPlayer` executor branch** —
   `villain/villainEffects.execute.ts`: a new dispatch case that iterates
-  every player in `G.playerZones` in **ascending player-ID order** and, for
-  each, KOs exactly one hero from that player's own zones via the **same
-  deterministic auto-resolution `koHeroCurrentPlayer` uses** (discard before
-  hand; ext_id lexical tie-break; silent no-op for a player with no hero in
-  either zone). Extract the existing per-player KO logic into a shared
-  helper if `koHeroCurrentPlayer` does not already expose one, so the two
-  branches call identical resolution (no duplicated resolution logic).
-- **Semantics (locked):** for each player, KO **exactly one** hero,
-  unconditional, no filter, deterministic. `koHeroCurrentPlayer` is
-  unchanged and continues to target only the current player.
+  every player in `G.playerZones` in the order defined under
+  §Non-Negotiable Constraints (player-iteration contract) and, for each,
+  delegates to the shared per-player KO resolver. The branch body is a
+  thin loop over the iteration order; the resolver owns target selection
+  and the `koCard` mutation.
+- **MANDATORY shared per-player KO resolver — no duplicated logic.** A
+  single helper performs the per-player KO. Both `koHeroCurrentPlayer`
+  and `koHeroEachPlayer` MUST call this helper. The existing
+  `koHeroForCurrentPlayer(G, playerId)` at
+  `villain/villainEffects.execute.ts` lines 193-220 is already
+  structurally generic (its parameter is any player id); the
+  implementation may either rename/repurpose it (e.g.,
+  `koOneHeroForPlayer`) or extract a new helper, but a duplicated
+  resolution copy in the `koHeroEachPlayer` branch is FAIL (00.6 §16.1;
+  abstraction is correctness-critical here because the parity is the
+  invariant). The shared resolver MUST perform the `koCard` mutation
+  itself; callers MUST NOT post-process or modify its output.
+- **Semantics (locked):** KO exactly one hero per player using
+  deterministic auto-resolution (no filters, no conditions, no choice).
+  `koHeroCurrentPlayer` is unchanged and continues to target only the
+  current player.
 - **Incremental-expansion governance clause** — recorded verbatim-level in
   §Non-Negotiable Constraints and as D-18901.
 - **Unit tests** — drift-detection for the six-entry array ↔ union;
-  executor tests for `koHeroEachPlayer` (two-player and three-player mock G:
-  each player loses exactly one hero by the deterministic rule; a player
-  with no hero is skipped silently; current player is not special-cased);
-  a determinism test (same mock G + same dispatch → identical KO targets
-  and identical `G.messages` order across two runs).
+  executor tests for `koHeroEachPlayer` (two-player and three-player mock
+  G: each player with ≥1 eligible hero loses exactly one hero by the
+  deterministic rule; a player with zero eligible heroes is skipped
+  silently without mutation; current player is not special-cased); a
+  **shared-resolver parity test** — given a single-player `G`, dispatching
+  `koHeroCurrentPlayer` and dispatching `koHeroEachPlayer` MUST produce
+  identical `G.ko` ordering, identical per-zone post-mutation state, and
+  identical `G.messages` (deep equality); a **determinism test** — two
+  dispatches against an identical mock `G` MUST produce identical KO
+  target `ext_id`s for every player, identical mutation order, and
+  identical `G.messages` sequence (deep equality).
 - **STATUS.md entry**, **DECISIONS.md entries** (D-18901..D-18902),
   **WORK_INDEX.md flip to `[x]`**, **EC-216 flip to Done**.
 
@@ -190,9 +207,22 @@ land as a pair.
    **modified** — drift-detection assertions updated to the six-entry array
    ↔ union.
 4. `packages/game-engine/src/villain/villainEffects.execute.test.ts` —
-   **modified** — add `koHeroEachPlayer` executor tests (multi-player KO,
-   no-hero skip, determinism) and a test that `koHeroCurrentPlayer` is
-   unaffected.
+   **modified** — add `koHeroEachPlayer` executor tests covering the
+   acceptance criteria above: multi-player KO with eligible-hero split,
+   zero-eligible-hero skip, **shared-resolver parity** on a single-player
+   `G` (deep equality across `G.ko`, every player zone,
+   `G.attachedBystanders`, `G.messages`), **determinism** (two dispatches
+   produce identical KO targets, mutation order, and `G.messages`
+   sequence by deep equality), and a `koHeroCurrentPlayer`
+   non-regression case.
+5. `docs/ai/STATUS.md` — **modified** — add `### WP-189 Executed` block
+   per Definition of Done.
+6. `docs/ai/DECISIONS.md` — **modified** — add D-18901..D-18902 per
+   Definition of Done.
+7. `docs/ai/work-packets/WORK_INDEX.md` — **modified** — flip WP-189 row
+   to `[x]` with completion date.
+8. `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — flip
+   EC-216 row to `Done`.
 
 ---
 
@@ -222,18 +252,33 @@ land as a pair.
   out of scope and a separate WP.
 - `VILLAIN_EFFECT_KEYWORDS` append position is **6 (end)**; the first five
   entries and their order are unchanged.
-- `koHeroEachPlayer` iterates players in **ascending player-ID order** and
-  KOs **exactly one** hero per player via the **same** deterministic
-  resolution as `koHeroCurrentPlayer` (discard before hand; ext_id lexical;
-  silent no-op when a player has no hero). It must call a **shared** helper,
-  not a second copy of the resolution logic.
-- `koHeroCurrentPlayer` is **unchanged** — still current-player only.
+- **Player-iteration contract (locked).** `koHeroEachPlayer` MUST derive
+  the iteration order from `Object.keys(G.playerZones)` sorted lexically
+  ascending (default JavaScript string compare; no `Number()` conversion,
+  no reliance on `Object.keys` insertion order). For typical Legendary
+  player counts (1–5; boardgame.io string IDs `'0'`..`'N-1'`) lexical
+  ascending equals numeric ascending, so this is observationally equal
+  to the pre-existing `gainWoundEachPlayer` iteration (which relies on
+  setup-time insertion order); the explicit sort makes the determinism
+  contract auditable and robust to future setup-order changes.
+- **Shared-resolver contract (locked, MANDATORY).** Both
+  `koHeroCurrentPlayer` and `koHeroEachPlayer` MUST call **one** shared
+  per-player KO resolver — no duplicated resolution logic. The shared
+  resolver owns target selection AND the `koCard` mutation; callers MUST
+  NOT post-process or modify its output. The two branches MUST resolve
+  identically on a single-player `G` (pinned by the shared-resolver
+  parity test under §Acceptance Criteria).
+- `koHeroCurrentPlayer` is **unchanged** behaviorally — still
+  current-player only; only its callable identity (or that of the shared
+  resolver it delegates to) is reused.
+- Per-player KO semantics (carried from `koHeroCurrentPlayer` and
+  D-18503): discard before hand; `ext_id` lexical tie-break; silent
+  no-op for a player with zero eligible heroes. NOT VP-based, NOT
+  interactive.
 - The incremental-expansion governance clause (below) is recorded as
   D-18901 and as a `// why:` on the canonical array.
-- No interactive choice; no VP-based resolution (per-card hero VP is not in
-  engine runtime state — D-18503).
-- This WP edits **no card data** and **no overlay script** — the markers are
-  WP-190's job.
+- This WP edits **no card data** and **no overlay script** — the markers
+  are WP-190's job.
 
 **Session protocol:**
 
@@ -282,18 +327,29 @@ export const VILLAIN_EFFECT_KEYWORDS: readonly VillainEffectKeyword[] = [
   their order are byte-identical to the WP-185 array.
 - [ ] Drift-detection test asserts the six-entry array ↔ union bidirectional
   equality and passes.
-- [ ] Dispatching `koHeroEachPlayer` on a two-player mock G KOs exactly one
-  hero from **each** player's zones (discard before hand, ext_id lexical),
-  leaving no player un-targeted.
-- [ ] A player with no hero in discard or hand is skipped silently (no
-  throw, no spurious KO, no message claiming a KO).
-- [ ] `koHeroEachPlayer` and `koHeroCurrentPlayer` call the **same** shared
-  per-player resolution helper (no duplicated resolution logic) — verified
-  by inspection / a test asserting identical single-player behavior.
+- [ ] Dispatching `koHeroEachPlayer` on a multi-player mock `G` produces
+  the following per-player outcome:
+  - every player with ≥1 eligible hero (non-wound card in discard or hand)
+    has exactly one hero KO'd, selected by the locked rule (discard before
+    hand; `ext_id` lexical tie-break);
+  - every player with zero eligible heroes is skipped without mutation
+    (no throw, no spurious KO, no message claiming a KO).
+- [ ] **Shared-resolver enforcement (behavioral).** A test MUST assert
+  that, given a single-player `G`, dispatching `koHeroEachPlayer` and
+  dispatching `koHeroCurrentPlayer` produce identical post-state by deep
+  equality across `G.ko`, every player zone (`hand`, `discard`,
+  `inPlay`, `victory`, `deck`), `G.attachedBystanders`, and
+  `G.messages`. This is the load-bearing parity guard — it would fail
+  if a future change duplicated and silently drifted the resolution
+  logic between the two branches.
 - [ ] `koHeroCurrentPlayer` behavior is unchanged (regression test still
-  targets only the current player).
-- [ ] Determinism: two dispatches against an identical mock G produce
-  identical KO targets and identical `G.messages` ordering.
+  targets only the current player when invoked from a multi-player `G`).
+- [ ] **Determinism (audit-exact).** Given an identical input `G`, two
+  executions of `koHeroEachPlayer` MUST produce:
+  - identical KO target `ext_id`s for every player,
+  - identical mutation order (verified by snapshotting `G.ko` after
+    dispatch),
+  - identical `G.messages` sequence (deep equality).
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0.
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0 with the
   pre-WP baseline +N new tests.
@@ -319,6 +375,27 @@ grep -c "'koHeroEachPlayer'\|'gainWoundEachPlayer'\|'gainWoundCurrentPlayer'\|'k
 
 # Executor has a koHeroEachPlayer branch reusing the shared resolver
 grep -n "koHeroEachPlayer" packages/game-engine/src/villain/villainEffects.execute.ts
+
+# Shared-resolver structural check: the koHeroEachPlayer branch body is a
+# thin loop that delegates to the resolver. Both KO branches must call the
+# same helper (name chosen at implementation time; the parity test under
+# §Acceptance Criteria is the behavioral guard). This grep counts the
+# resolver-call sites — exactly two are expected (one inside the
+# koHeroCurrentPlayer case, one inside the koHeroEachPlayer case's loop).
+# Replace <resolverName> with the actual name at execution time; e.g.
+# `koOneHeroForPlayer` if the existing koHeroForCurrentPlayer is renamed,
+# or whatever new helper name is extracted.
+grep -nE "koOneHeroForPlayer\(|koHeroForCurrentPlayer\(" packages/game-engine/src/villain/villainEffects.execute.ts
+# Expected: exactly 2 call sites (one in each KO dispatch case); function
+# declaration line excluded by the `(` filter. If the count is not 2, the
+# resolver is either duplicated, mis-named, or not yet wired.
+
+# Negative grep: the koHeroEachPlayer branch must not contain its own
+# discard/hand zone search — that would mean the per-player resolution
+# was duplicated instead of delegated.
+grep -nE "selectKoHeroTarget|moveCardFromZone" packages/game-engine/src/villain/villainEffects.execute.ts
+# Expected: matches only inside the shared resolver, never inside the
+# koHeroEachPlayer case body (audit the surrounding context to confirm).
 
 # Layer-boundary greps (zero matches)
 grep -n "@legendary-arena/registry" packages/game-engine/src/villain/villainEffects.execute.ts
@@ -355,15 +432,19 @@ array) and the executor; the registry / boardgame.io greps return nothing;
     "vocabulary locked at 5" framing of the WP-185 draft for the
     `koHeroEachPlayer` addition; D-18802's deferral is resolved for the
     unconditional subset (the conditional remainder stays deferred).
-  - D-18902: `koHeroEachPlayer` reuses `koHeroCurrentPlayer`'s deterministic
-    per-player resolution (discard→hand, ext_id lexical; D-18503) applied
-    over players in ascending player-ID order; no interactive choice, no VP.
+  - D-18902: `koHeroEachPlayer` and `koHeroCurrentPlayer` MUST call one
+    shared per-player KO resolver (deterministic discard→hand, `ext_id`
+    lexical; D-18503; the shared resolver owns the `koCard` mutation —
+    callers do not post-process). `koHeroEachPlayer` derives its player
+    iteration from `Object.keys(G.playerZones).sort()` (default lexical
+    ascending; not insertion order, not numeric). No interactive choice,
+    no VP. Parity is pinned by a behavioral test on a single-player `G`.
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` row for WP-189 flipped to `[x]`
   with completion date.
 - [ ] `docs/ai/execution-checklists/EC_INDEX.md` row for EC-216 flipped to
   `Done`.
-- [ ] No files outside the 4-file `## Files Expected to Change` list were
-  modified.
+- [ ] No files outside the 8-file `## Files Expected to Change` list were
+  modified (4 engine/tests + 4 governance).
 
 ---
 
@@ -381,10 +462,13 @@ vocabulary disciplined and prevents speculative surface area.
 correctness change; no PvP framing, monetization, or scoring surface.
 
 **Determinism preservation:** `koHeroEachPlayer` is deterministic — it
-iterates players in ascending player-ID order and resolves each player's KO
-by the existing discard→hand, ext_id-lexical sort (no `ctx.random.*`, no VP,
-no clock). Same seed + same moves = same KO targets and same `G.messages`
-order every replay.
+iterates players in `Object.keys(G.playerZones).sort()` lexical-ascending
+order (no reliance on `Object.keys` insertion order; no `Number()`
+conversion) and delegates each player's KO to the shared resolver, which
+applies the discard→hand, `ext_id`-lexical rule (no `ctx.random.*`, no
+VP, no clock). Same seed + same moves = same KO targets and same
+`G.messages` order every replay; the load-bearing parity is enforced by
+the shared-resolver test on a single-player `G`.
 
 ---
 
@@ -411,7 +495,7 @@ functions added/modified/removed.
 | 2 | Assumes lists all prerequisites; WP-185 hard-dep; WP-190 downstream | ✅ |
 | 3 | Context (Read First) is specific (file paths + sections) | ✅ |
 | 4 | Scope (In) / Out of Scope present and closed | ✅ |
-| 5 | Files Expected to Change matches contract; 4 files (engine + tests) | ✅ |
+| 5 | Files Expected to Change matches contract; 8 files (4 engine/tests + 4 governance — widened from 4 to 8 in the 2026-05-31 hardening pass to resolve the prior contradiction with the DoD "No files outside" gate, matching the WP-186 precedent at commit `5033ece`) | ✅ |
 | 6 | Non-Negotiable Constraints present; cites 00.6 | ✅ |
 | 7 | Acceptance Criteria are testable bullets | ✅ |
 | 8 | Verification Steps operator-runnable; grep gates exact | ✅ |
@@ -422,7 +506,7 @@ functions added/modified/removed.
 | 13 | pnpm commands only; expected output shown | ✅ |
 | 14 | Acceptance ≤ 13 binary items; specific filenames + token greps | ✅ |
 | 15 | Definition of Done includes STATUS / DECISIONS / WORK_INDEX / scope-bound | ✅ |
-| 16 | Code style: full English names, JSDoc, shared helper (no dup), no .reduce | ✅ |
+| 16 | Code style: full English names, JSDoc, shared helper MANDATORY (00.6 §16.1; mutation location locked at the resolver, callers do not post-process), no `.reduce()` in the executor branch | ✅ |
 | 17 | Vision Alignment present; clauses §1/§2/§10/§22; determinism line included | ✅ |
 | 18 | Prose-vs-grep: §Verification greps scoped to filenames/tokens, not raw forbidden tokens | ✅ |
 | 19 | Bridge-vs-HEAD staleness — commit-time discipline | N/A |
@@ -433,4 +517,16 @@ functions added/modified/removed.
 
 *Drafted: 2026-05-28. Baseline `origin/main @ cc29447`. Engine half of the
 `koHeroEachPlayer` expansion; paired with WP-190 (data markers). Hard-dep:
-WP-185. Supersedes the unconditional portion of D-18802's deferral.*
+WP-185. Supersedes the unconditional portion of D-18802's deferral.
+Hardened 2026-05-31 (docs-only SPEC pass, no code touched): mandatory
+shared-resolver contract replaces conditional wording; explicit
+mutation-location guardrail (resolver owns `koCard`, callers do not
+post-process); player-iteration sort locked to
+`Object.keys(G.playerZones).sort()` (lexical ascending) for auditable
+determinism; acceptance criteria split eligible-hero vs zero-eligible
+outcomes explicitly; determinism and shared-resolver-parity criteria
+enumerated as deep-equality classes (KO target ext_ids, mutation order,
+`G.messages` sequence, plus full zone snapshot for parity); §Verification
+adds a structural resolver-call grep + a negative duplicated-zone-search
+grep. Micro-polish: "this WP **implements** the engine half". EC-216
+mirrors all of the above.*
