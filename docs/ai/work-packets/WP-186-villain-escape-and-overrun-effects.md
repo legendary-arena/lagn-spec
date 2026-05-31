@@ -59,6 +59,15 @@ WP-185's setup parser to detect `Escape:` / `Overrun:` prefixes.
   `pushResult.escapedCard !== null` branch (counter increment, escape-pile
   push, generic current-player wound, attached-bystander release).
 - WP-017 ✅ — `gainWound`, `resolveEscapedBystanders` helpers exist.
+- **WP-191 ✅ (upstream reconciler — closes D-18508).** Landed 2026-05-30
+  at `20de3ae`; D-18704..D-18708. Every per-card lookup table is now keyed
+  by the zone-instance ext_id, so villain `onEscape` hook lookups resolve
+  end-to-end on real cards. Not a hard-dep in the strict sense — the WP-186
+  fire site wires correctly regardless and henchman escapes always fired —
+  but WP-191's landing is what makes the new end-to-end villain
+  verification (§Files #7c) testable. The synthetic-hook tests remain
+  authoritative for wiring; the real-registry test verifies consumption of
+  the reconciled grammar.
 - `data/cards/*.json` contains villain + henchman cards with `Escape:`
   (>100 cards across all 40 sets) and `Overrun:` (small number) ability
   text. After WP-188 the curatable subset carries `[effect:]` markers;
@@ -88,9 +97,9 @@ WP-185's setup parser to detect `Escape:` / `Overrun:` prefixes.
   explicit `// why:` comments; no `.reduce()` in zone/effect application.
 - `docs/ai/DECISIONS.md` — scan D-18501..D-18508 (the WP-185 lock set,
   incl. the `[effect:]` marker model, zone-priority KO resolution, D-18507
-  reserving `'onEscape'`, and **D-18508 the villain ext_id grammar gap —
-  read this one carefully, it directly governs this WP's fire-site
-  real-game behavior**), D-18701..D-18703 (WP-187 enrichment),
+  reserving `'onEscape'`); **D-18508 (villain ext_id grammar gap) is now
+  CLOSED by WP-191 (D-18704..D-18708)** — villain `onEscape` hook lookups
+  resolve end-to-end on real cards. D-18701..D-18703 (WP-187 enrichment),
   D-18801..D-18803 (WP-188 escape enrichment), D-2403 (effect-type gap
   safe-skip).
 - `.claude/rules/architecture.md` + `.claude/rules/code-style.md` +
@@ -151,21 +160,22 @@ so WP-188 leaves it unmarked and WP-186 safe-skips it (hook with
 each-player-KO coverage arrives with a future `koHeroEachPlayer`
 vocabulary expansion (a WP-185-side WP).
 
-**Known limitation — villain ext_id grammar gap (D-18508).** A
-pre-existing engine grammar split means villain deck/city/escaped-pile
-card ext_ids are copy-indexed (`...-card-NN`) while `villainAbilityHooks`
-(and `cardStats` / `cardKeywords`) key villains by the definition id
-(`...-card`). At the escape fire site `pushResult.escapedCard` is the
-copy-indexed id, so a real villain's `onEscape` hook lookup misses and the
-effect **does not resolve end-to-end in a real game today** — exactly as
-villain `onFight` / `onAmbush` don't (D-18508). This is NOT a WP-186 bug:
-WP-186 wires the fire site correctly, and the effect fires once the ext_id
-grammars are reconciled (a separate ext_id-reconciliation WP, out of scope
-here). Henchmen are copy-indexed on both sides, so a henchman that escapes
-WOULD fire. The unit/integration tests author hooks keyed to the escaped
-card instance, so they pass and prove the wiring; do **not** diagnose the
-real-game no-op as a regression or attempt to reconcile the grammar
-mid-session.
+**End-to-end villain firing — D-18508 CLOSED by WP-191 ✅.** WP-186 was
+originally drafted with a known limitation: villain deck/city/escaped-pile
+card ext_ids were copy-indexed (`...-card-NN`) while `villainAbilityHooks`
+(and `cardStats` / `cardKeywords`) keyed villains by the definition id
+(`...-card`), so a real villain's `onEscape` hook lookup missed and the
+effect did not resolve end-to-end. WP-191 reconciled the grammar (landed
+2026-05-30 at `20de3ae`; D-18704..D-18708 close D-18508): every per-card
+lookup table is now keyed by the zone-instance ext_id, fanning out per
+copy the way henchmen already did. As a result **villain `onEscape`
+effects now fire end-to-end on real cards** in addition to henchman
+escapes (which always fired). WP-186 must consume this reconciliation: at
+least one integration test exercises the path with a real villain card
+from the registry, not just synthetic hooks keyed to the escaped instance
+(see §Files Expected to Change #7c). The synthetic-hook unit/integration
+tests still pass and prove the wiring; the real-registry test verifies
+that the WP-191 reconciliation feeds the fire site correctly.
 
 ---
 
@@ -227,13 +237,11 @@ mid-session.
   the each-player-KO keyword the dominant escape pattern needs. Adding it
   is a WP-185-side vocabulary-expansion WP with its own `DECISIONS.md`
   entry, NOT WP-186. WP-186 safe-skips unmarked escape lines.
-- **Reconciling the villain ext_id grammar gap (D-18508)** — the
-  copy-indexed deck/city/escaped-pile ids vs definition-keyed
-  `villainAbilityHooks` / `cardStats` / `cardKeywords`. Closing the
-  villain end-to-end firing gap is a separate ext_id-reconciliation WP
-  (it also affects hero-ability and villain `onFight` / `onAmbush`
-  execution). WP-186 wires the `onEscape` fire site; it does not unify
-  the grammars.
+- **Reconciling the villain ext_id grammar gap (D-18508)** — done by
+  WP-191 ✅ (D-18704..D-18708, landed at `20de3ae`). WP-186 consumes the
+  reconciliation; it does NOT re-derive or modify the grammar. The
+  reconciled lookup tables (keyed by zone-instance ext_id) are what the
+  WP-186 escape fire site reads at runtime.
 - **Distinct `'onOverrun'` timing label** — v1 lock: `Overrun:` is a
   synonym of `Escape:` (both emit `onEscape`).
 - **Scheme card `Overrun:` semantics** — scheme cards have richer
@@ -319,6 +327,19 @@ mid-session.
    refactor moves the Ambush fire site before the escape branch. (Exact
    pool size / fixture is the executor's choice; the invariant is that the
    test must distinguish the two orderings.)
+   (c) **Real-registry villain end-to-end (post-WP-191 consumption)** —
+   build initial game state via `buildInitialGameState` against the real
+   registry, pick a real villain card whose `Escape:` line carries
+   `[effect:gainWoundEachPlayer]` (authored by WP-188), drive a reveal
+   that pushes that villain off the escape edge, and assert every
+   player's wound count increases. The villain is identified by its
+   zone-instance ext_id (`{set}-villain-{group}-{card}-NN`) — same
+   grammar WP-191 keys lookups by. This is the test that would FAIL
+   under the old D-18508 grammar gap (the hook lookup would miss the
+   copy-indexed id) and PASSES under WP-191's reconciliation; pair it
+   with a henchman escape end-to-end test for symmetry. Existing
+   synthetic-hook tests (#7a, #7b) remain authoritative for wiring; #7c
+   verifies the WP-191 grammar reconciliation is consumed correctly.
 
 ---
 
@@ -449,6 +470,14 @@ NOT from the prefix):
   effects resolve **before** the entering card's `onAmbush` effects —
   proven by a deterministic non-commutative observable (see the
   integration-test entry, §Files Expected to Change #7).
+- [ ] **End-to-end villain escape on a real card (post-WP-191
+  reconciliation, §Files #7c):** an integration test that builds initial
+  game state via `buildInitialGameState` against the real registry,
+  escapes a real villain whose `Escape:` line carries
+  `[effect:gainWoundEachPlayer]`, and asserts every player's wound count
+  increases. This test would have FAILED under the D-18508 grammar gap
+  and PASSES because WP-191 ✅ closed it (`20de3ae`); pair with a
+  henchman end-to-end escape for symmetry.
 - [ ] `villainDeck.reveal.ts` contains exactly two
   `executeVillainAbilities` calls total — one `onAmbush` (WP-185,
   city-entry branch) and one `onEscape` (WP-186, escape branch).
@@ -527,10 +556,10 @@ empty; the `VILLAIN_EFFECT_KEYWORDS` declaration grep returns one match
   paragraph summarizing the timing-union extension, the new escape fire
   site, the `Overrun:`/`Escape:` synonym lock, the honest note that v1
   escape coverage is `gainWoundEachPlayer`-dominated (each-player-KO
-  deferred per D-18802), and the further honest note that villain
-  `onEscape` effects do not fire end-to-end in a real game until the
-  D-18508 ext_id grammar gap is reconciled (the fire site is wired
-  correctly; henchman escapes fire; villain escapes fire once ids unify).
+  deferred per D-18802 pending WP-189 + WP-190), and the note that
+  villain `onEscape` effects fire end-to-end on real cards (WP-191 ✅
+  closed D-18508 at `20de3ae`; D-18704..D-18708) — verified by the
+  Files #7c real-registry integration test.
 - [ ] `docs/ai/DECISIONS.md` updated with **D-18601..D-18603** (proposed):
   - D-18601: `'onEscape'` added to `VILLAIN_ABILITY_TIMINGS` (third
     entry); extends the WP-185 lock under D-18501.
@@ -618,5 +647,8 @@ functions touched.
 
 *Reworked: 2026-05-28 to enrichment-first model (was: `[icon:]`/`[keyword:]`
 markup extraction). Baseline `origin/main @ cc29447`. Hard-deps: WP-185
-(engine infrastructure) + WP-188 (escape effect markers) must both land
-before WP-186 starts.*
+(engine infrastructure) + WP-188 (escape effect markers) — both ✅ as of
+2026-05-30. Revised 2026-05-30 to reconcile against WP-191 ✅ (closes
+D-18508 at `20de3ae`; D-18704..D-18708): villain `onEscape` now fires
+end-to-end on real cards; added §Files #7c real-registry end-to-end test
++ matching AC to verify consumption of the reconciled grammar.*
