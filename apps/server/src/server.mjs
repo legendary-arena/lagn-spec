@@ -222,16 +222,26 @@ export function tryConstructHankoVerifier() {
     expectedAudience.length > 0;
 
   if (envComplete) {
-    // why: `Number(undefined)` produces `NaN`, which would defeat
-    // the D-12603 default substitution inside the verifier factory
-    // (the factory checks `jwksRefreshIntervalMs === undefined` to
-    // apply the 300_000ms default; `NaN` is a number and bypasses
-    // that branch). Pass `undefined` explicitly when the env var
-    // is unset.
-    const jwksRefreshIntervalMs =
+    // why: `Number(undefined)` produces `NaN`, and so does
+    // `Number("typo")` / `Number("")` / `Number("123abc")` — any of
+    // which would defeat the D-12603 default substitution inside the
+    // verifier factory (the factory checks `jwksRefreshIntervalMs ===
+    // undefined` to apply the 300_000ms default; `NaN` is a number
+    // and bypasses that branch, producing `setInterval(..., NaN)`
+    // which the WHATWG timers spec coerces to 1ms — hammering Hanko's
+    // JWKS endpoint). Surfaced 2026-05-24 by a production deploy log
+    // showing `refresh=NaNms` after the env var was set to a
+    // non-numeric value. The two-step parse + `Number.isFinite` guard
+    // collapses every malformed shape (undefined, empty string,
+    // non-numeric, Infinity, -Infinity, NaN) to `undefined` so the
+    // factory's default-substitution branch fires.
+    const parsedRefreshInterval =
       refreshIntervalRaw === undefined
         ? undefined
         : Number(refreshIntervalRaw);
+    const jwksRefreshIntervalMs = Number.isFinite(parsedRefreshInterval)
+      ? parsedRefreshInterval
+      : undefined;
 
     try {
       const verifier = createHankoSessionVerifier({

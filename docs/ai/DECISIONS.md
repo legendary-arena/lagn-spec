@@ -19873,4 +19873,106 @@ fuzzy acceptance.
 
 ---
 
+### D-19201 — `HANKO_JWKS_REFRESH_INTERVAL_MS` Parsing Uses Two-Step Parse + `Number.isFinite` Guard at the Env-Read Boundary
+
+**Decision:** `apps/server/src/server.mjs`'s `tryConstructHankoVerifier()`
+parses `HANKO_JWKS_REFRESH_INTERVAL_MS` in two steps at the env-read
+boundary. First, compute `parsedRefreshInterval` — `undefined` when the
+env var is unset, else `Number(refreshIntervalRaw)`. Second, derive
+`jwksRefreshIntervalMs` via `Number.isFinite(parsedRefreshInterval) ?
+parsedRefreshInterval : undefined`. The guard MUST collapse every
+member of the closed set `{ undefined, '', 'typo', '123abc',
+'Infinity', '-Infinity', 'NaN' }` to `jwksRefreshIntervalMs =
+undefined`. Any value `Number()`-parseable to a finite real number
+passes through unchanged. The guard sits strictly upstream of
+`createHankoSessionVerifier({ ..., jwksRefreshIntervalMs })`; the
+factory's behavior is byte-identical pre/post (the factory still
+checks `jwksRefreshIntervalMs === undefined` to apply the D-12603
+default-substitution 300 000 ms — D-12603 is defended, not changed).
+Behavior preservation invariant: a numeric env value (e.g., `"60000"`)
+produces the same `jwksRefreshIntervalMs = 60000`, same log line, same
+factory call as before.
+
+**Rationale.** The pre-WP-192 single-step `Number(refreshIntervalRaw)`
+parse returned `NaN` for any non-numeric input (typo, empty string,
+suffix-corrupted numeric, `Infinity`, `-Infinity`, literal `"NaN"`).
+`NaN === undefined` is false (NaN is technically a number), so the
+factory's default-substitution branch did not fire, and `NaN`
+propagated into `createHankoSessionVerifier({ jwksRefreshIntervalMs:
+NaN })` → `setInterval(refreshJwks, NaN)`. The WHATWG timers spec
+coerces a `NaN` interval to **1 ms**, hammering Hanko's JWKS endpoint
+~1000 requests per second between deploy and rollback. Surfaced 2026-
+05-24 by a production deploy log showing `refresh=NaNms` after the
+env var was set to a non-numeric value. The two-step parse + finiteness
+check is the smallest possible defensive change: it collapses every
+malformed shape into the single `undefined` value the factory already
+knows how to handle (apply the 300 000 ms default). Defending the
+factory's contract at the env-read boundary keeps the factory itself
+free of input-shape concerns and preserves D-12603's mechanism. The
+guard is hand-inlined rather than extracted into a pure helper because
+the parked stash from WP-176's session represented the minimal-surgical
+shape; helper extraction is a separate D-19202 follow-up scope decision.
+
+**Packet:** WP-192 (EC-219).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
+### D-19202 — Test Coverage for the Malformed-Env Parse Path Is Deferred; Inline Guard + `// why:` Block Carry the Contract Until a Follow-Up Refactor Lands
+
+**Decision:** WP-192 does NOT add test coverage for the malformed-env
+parse path. The server test baseline (400 pass / 0 fail / 66 skipped
+on `apps/server/src/server.mjs.test.ts`) is preserved byte-identical
+pre/post. The contract is carried by (a) the rewritten `// why:`
+comment block above the parse (citing D-12603, the WHATWG `setInterval
+(..., NaN)` → 1 ms coercion, the 2026-05-24 production deploy log, and
+the closed list of malformed shapes the guard collapses), plus (b) the
+production log evidence that motivated the fix. A future WP that wants
+direct test coverage of the malformed-env path MUST take one of two
+shapes — neither in WP-192 scope:
+
+1. **Factory-stub approach.** Stub `createHankoSessionVerifier` at the
+   module level so the test can drive `tryConstructHankoVerifier()`
+   through the `envComplete=true` branch without constructing a real
+   verifier. Invasive — requires module-level mocking infrastructure
+   the server test suite does not currently use.
+2. **Pure-helper extraction (preferred).** Extract the parse into
+   `parseRefreshIntervalMs(rawValue): number | undefined` (or similar)
+   and unit-test the helper directly. Lighter touch but a code-shape
+   change — the parse block currently lives inline inside
+   `tryConstructHankoVerifier()` and the parked-stash convention from
+   WP-176 was to keep it inline (single-block surgery). Extracting the
+   helper is a separate follow-up WP scope decision.
+
+**Rationale.** The parked stash from WP-176's session represented the
+minimal-surgical shape: replace the parse, rewrite the `// why:`
+comment, ship. Expanding into test coverage during WP-192 execution
+would (a) require non-trivial test-infrastructure work (factory
+stubbing or helper extraction) that's substantively bigger than the
+3-line guard itself, (b) violate the parked-stash "ride along with the
+next server.mjs touch" convention's intent (small, surgical, no
+collateral changes), and (c) trip the `01.0b §Anti-patterns`
+"Folding more than ~5 distinct corrections inline into a single
+execution session" guidance if execution surfaces more drift to absorb.
+The rich `// why:` comment + the production log evidence are
+sufficient operator-facing documentation of the guard's contract;
+regression risk is low because the parse is now mechanically obvious
+(`Number.isFinite` is well-understood). If a future regression slips
+past the documentation (e.g., someone removes the `Number.isFinite`
+guard under the misconception that `NaN === undefined` is true), the
+follow-up WP path is clear: extract the pure helper, unit-test the
+closed set of malformed shapes, re-inline if helper boilerplate isn't
+worth the indirection cost.
+
+**Packet:** WP-192 (EC-219).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-05-31.
+**Status:** Landed
+
+---
+
 Protect this file.
