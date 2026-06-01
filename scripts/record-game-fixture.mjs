@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 /**
- * CLI recorder for the complete-game regression harness (WP-158).
+ * CLI recorder for the complete-game regression harness (WP-158, WP-193).
  *
- * Produces a `*.replay.json` fixture from either an explicit
- * input-block JSON file or a recorded existing fixture's input block.
- * The recorder calls `runFixture` for dispatch — duplicating the
- * dispatch loop is FORBIDDEN by EC-172 §Guardrails (Determinism
- * integrity). The recorder's only loop is over CLI argument parsing
- * and the final write step; the engine-state advancement happens
- * inside `runFixture`.
+ * Produces a `*.replay.json` fixture from either an explicit input-block
+ * JSON file (`--input` mode, WP-158) or a captured simulation trace
+ * (`--policy random|heuristic --setup <path>` mode, WP-193). Both modes
+ * call `runFixture` for dispatch — duplicating the dispatch loop is
+ * FORBIDDEN by EC-172 §Guardrails (Determinism integrity). The `--policy`
+ * mode uses simulation as a move generator only and routes the captured
+ * `ReplayMove[]` through `recordFromInput` so the path converges with
+ * `--input` mode at `validateFixture → runFixture → writeFixtureFile`.
  *
  * Required CLI flags:
  *   --name <fixture-name>          (REQUIRED)
@@ -16,7 +17,7 @@
  *   --created-at <ISO 8601>        (REQUIRED; or inherited from --input fixture meta)
  *   --engine-version <string>      (REQUIRED; or inherited from --input fixture meta)
  *   --input <path>                 (one of two modes)
- *   --policy random|heuristic --setup <path>   (CURRENTLY ACCEPTED + DEFERRED)
+ *   --policy random|heuristic --setup <path>   (the other mode; WP-193)
  *   --max-moves <N>                (optional; default 10000)
  *
  * Constraints honored: no Math randomness, no wall-clock reads, no
@@ -31,7 +32,8 @@
  * Node v22 patch versions.
  *
  * Run from the repository root after `pnpm -r build` has produced
- * `packages/game-engine/dist/test/fixtures/runFixture.js`.
+ * `packages/game-engine/dist/test/fixtures/runFixture.js` and
+ * `packages/game-engine/dist/simulation/simulation.runner.js`.
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -40,6 +42,9 @@ import { fileURLToPath } from 'node:url';
 
 import { runFixture } from '../packages/game-engine/dist/test/fixtures/runFixture.js';
 import { validateFixture } from '../packages/game-engine/dist/test/fixtures/fixtureSchema.js';
+import { simulateOneGameAndCaptureMoves } from '../packages/game-engine/dist/simulation/simulation.runner.js';
+import { createRandomPolicy } from '../packages/game-engine/dist/simulation/ai.random.js';
+import { createCompetentHeuristicPolicy } from '../packages/game-engine/dist/simulation/ai.competent.js';
 
 // why: __dirname is unavailable in ESM; reconstruct via import.meta.url
 // to anchor the output directory relative to the recorder script
@@ -61,6 +66,15 @@ const FIXTURES_DIRECTORY = join(
 // autoplay policies and runaway hand-written move lists with a
 // full-sentence error rather than running indefinitely.
 const DEFAULT_MAX_MOVES = 10000;
+
+// why (D-19303 locked separator): `::seat:` is the literal seat-derived
+// seed separator. All four characters appear verbatim in the recorder
+// source so the source-level grep gate from EC-220 passes; the recorder
+// MUST NOT paraphrase or abbreviate this segment. Per-seat seeds are the
+// decorrelation mechanism that preserves determinism while preventing
+// correlated PRNG streams across seats (which would yield identical
+// tie-breaks at identical filtered UIStates under one policy family).
+const SEAT_SEED_SEPARATOR = '::seat:';
 
 /**
  * Parses argv into a flag map. Accepts `--flag value` pairs only;
@@ -277,13 +291,13 @@ function resolveMaxMoves(parsedArgs) {
 /**
  * Throws if the move list exceeds the operator-supplied cap. The
  * full-sentence error names the fixture, the seed, and the move count
- * for actionable forensic triage when autoplay-mode (deferred to a
- * follow-up WP) eventually wires through.
+ * for actionable forensic triage when autoplay policies fail to
+ * terminate.
  */
 // why: infinite-loop guard for autoplay policies that fail to
-// terminate. Hand-written fixtures rarely trip this (they are
-// finite by construction), but the guard is a forward-compatibility
-// rail for the --policy mode the follow-up WP will land.
+// terminate. Hand-written fixtures rarely trip this (they are finite by
+// construction); under `--policy` mode (WP-193) it meaningfully fires
+// when a policy + setup combination loops the simulation past the cap.
 function assertMoveCountUnderCap(input, fixtureName, maxMoves) {
   if (input.moves.length > maxMoves) {
     throw new Error(
@@ -306,6 +320,97 @@ const EMPTY_REGISTRY = {
   listSets: () => [],
   getSet: () => undefined,
 };
+
+/**
+ * Validates the setup envelope JSON loaded from `--setup`. Mirrors the
+ * canonical shape `apps/arena-client/public/loadout-test.json` uses
+ * (schemaVersion / playerCount / heroSelectionMode / composition).
+ * Returns `{ composition, playerCount }`; `heroSelectionMode` is read
+ * but not consumed by v1 (the engine's setup pipeline already handles
+ * the `GROUP_STANDARD` default per D-9301).
+ */
+function validateSetupEnvelope(parsed, sourcePath) {
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error(
+      `Recorder setup envelope at "${sourcePath}" is not a JSON object at the top level; expected the canonical { schemaVersion, playerCount, heroSelectionMode, composition } shape.`,
+    );
+  }
+  if (parsed.schemaVersion !== '1.0') {
+    throw new Error(
+      `Recorder setup envelope at "${sourcePath}" has schemaVersion ${JSON.stringify(parsed.schemaVersion)}; only schemaVersion "1.0" is supported.`,
+    );
+  }
+  if (
+    typeof parsed.playerCount !== 'number' ||
+    !Number.isInteger(parsed.playerCount) ||
+    parsed.playerCount < 1 ||
+    parsed.playerCount > 5
+  ) {
+    throw new Error(
+      `Recorder setup envelope at "${sourcePath}" has playerCount ${JSON.stringify(parsed.playerCount)}; expected an integer between 1 and 5.`,
+    );
+  }
+  if (typeof parsed.composition !== 'object' || parsed.composition === null || Array.isArray(parsed.composition)) {
+    throw new Error(
+      `Recorder setup envelope at "${sourcePath}" is missing a composition object (the 9-field MatchSetupConfig); buildInitialGameState requires this payload.`,
+    );
+  }
+  return {
+    composition: parsed.composition,
+    playerCount: parsed.playerCount,
+  };
+}
+
+/**
+ * Builds the per-seat policy list for `--policy` mode. One policy
+ * family across all seats; each seat receives a deterministic
+ * seat-derived seed.
+ */
+// why (D-19303): one policy *family* across all seats with seat-derived
+// deterministic seeds. Per-seat policy *family* heterogeneity (random
+// vs heuristic head-to-head) is WP-194's seam. The seat-derived seed
+// `${operatorSeed}::seat:${i}` preserves determinism while decorrelating
+// seat-local PRNG streams — identical legal-move sets at identical
+// filtered UIStates would otherwise produce identical tie-breaks at every
+// seat under one family. The literal separator `::seat:` is part of the
+// locked contract (SEAT_SEED_SEPARATOR above carries the verbatim string).
+function buildPolicyList(policyName, operatorSeed, playerCount) {
+  const policies = [];
+  if (policyName === 'random') {
+    for (let seatIndex = 0; seatIndex < playerCount; seatIndex++) {
+      const seatSeed = `${operatorSeed}${SEAT_SEED_SEPARATOR}${seatIndex}`;
+      policies.push(createRandomPolicy(seatSeed));
+    }
+    return policies;
+  }
+  if (policyName === 'heuristic') {
+    for (let seatIndex = 0; seatIndex < playerCount; seatIndex++) {
+      const seatSeed = `${operatorSeed}${SEAT_SEED_SEPARATOR}${seatIndex}`;
+      policies.push(createCompetentHeuristicPolicy(seatSeed));
+    }
+    return policies;
+  }
+  throw new Error(
+    `Recorder --policy received unrecognised value "${policyName}"; expected exactly one of "random" or "heuristic" (no fallback).`,
+  );
+}
+
+/**
+ * Derives the deterministic playerOrder for `--policy` mode.
+ */
+// why: the locked seat-ordering convention is
+// `["0", "1", …, String(playerCount - 1)]`. Simulation already starts
+// post-lobby at `phase = 'play'` with `currentPlayer = '0'`, and
+// `runFixture` rotates through this exact sequence; deriving playerOrder
+// here matches both paths and keeps the captured fixture replayable
+// without operator-supplied seat ids.
+function derivePlayerOrder(playerCount) {
+  const playerOrder = [];
+  for (let seatIndex = 0; seatIndex < playerCount; seatIndex++) {
+    playerOrder.push(String(seatIndex));
+  }
+  return playerOrder;
+}
 
 /**
  * Records a fixture from a parsed input block and operator-supplied
@@ -356,6 +461,68 @@ function recordFromInput(input, operatorMeta) {
 }
 
 /**
+ * Executes `--policy` mode end-to-end: load + validate the setup
+ * envelope, build per-seat policies, capture moves via
+ * `simulateOneGameAndCaptureMoves`, assemble a bare-input block, and
+ * hand off to `recordFromInput` for the convergence with `--input`
+ * mode at `validateFixture → runFixture → writeFixtureFile`.
+ */
+async function recordFromPolicy(parsedArgs, operatorMeta, maxMoves) {
+  const policyName = parsedArgs['--policy'];
+  const setupPath = parsedArgs['--setup'];
+  if (typeof setupPath !== 'string' || setupPath.length === 0) {
+    throw new Error(
+      'Recorder --policy mode requires --setup <path-to-setup-envelope.json>; the envelope carries playerCount + the 9-field composition (MatchSetupConfig) needed to call simulateOneGameAndCaptureMoves.',
+    );
+  }
+
+  const parsedEnvelope = await readJsonFile(setupPath, 'setup envelope');
+  const envelope = validateSetupEnvelope(parsedEnvelope, setupPath);
+  const playerOrder = derivePlayerOrder(envelope.playerCount);
+  const policies = buildPolicyList(
+    policyName,
+    operatorMeta.seed,
+    envelope.playerCount,
+  );
+
+  const captured = simulateOneGameAndCaptureMoves(
+    envelope.composition,
+    EMPTY_REGISTRY,
+    policies,
+    operatorMeta.seed,
+    0,
+  );
+
+  // why (D-19302): the captured trace contains play-phase moves only.
+  // Simulation starts post-lobby at `phase = 'play'` after
+  // `buildInitialGameState`, and `runFixture` also starts from
+  // `buildInitialGameState`'s output and dispatches whatever `moves[]`
+  // it receives. Lobby moves (`setPlayerReady`, `startMatchIfReady`)
+  // are not in simulation's MOVE_MAP and would have to be synthesised
+  // here; doing so would add a lobby-semantics dependency simulation
+  // does not carry today. Hand-crafted fixtures via `--input` mode are
+  // unaffected and may continue to include lobby moves.
+  const input = {
+    seed: operatorMeta.seed,
+    playerCount: envelope.playerCount,
+    playerOrder,
+    setupConfig: envelope.composition,
+    moves: [...captured.moves],
+  };
+
+  assertMoveCountUnderCap(input, operatorMeta.name, maxMoves);
+
+  // why (WP-158 §Contract + EC-172 §Guardrails): the captured-moves
+  // → `recordFromInput(input, operatorMeta)` handoff is the convergence
+  // point that preserves the shared-loop invariant. From here the path
+  // is byte-identical to `--input` mode:
+  // `validateFixture → runFixture → writeFixtureFile`. `runFixture`
+  // remains the single oracle source; the recorder never produces an
+  // oracle directly.
+  return recordFromInput(input, operatorMeta);
+}
+
+/**
  * Ensures the output directory exists, then writes the serialised
  * fixture. Uses `mkdir({ recursive: true })` so first-time invocations
  * create the `games/` directory without operator intervention.
@@ -369,9 +536,9 @@ async function writeFixtureFile(fixture) {
 }
 
 /**
- * Main entry point. Parses CLI args, dispatches to --input mode (the
- * sole fully-implemented mode for this WP), writes the fixture, and
- * prints the output path for operator confirmation.
+ * Main entry point. Parses CLI args, dispatches to --input mode or
+ * --policy mode (mutually exclusive), writes the fixture, and prints
+ * the output path for operator confirmation.
  */
 async function main() {
   const argv = process.argv.slice(2);
@@ -384,31 +551,29 @@ async function main() {
       'Recorder requires exactly one of --policy or --input; received both or neither.',
     );
   }
+
+  let fixture;
   if (hasPolicy) {
-    // why: --policy mode is CLI-accepted for forward compatibility per
-    // WP-158 AC #6, but the autoplay implementation is deferred to a
-    // follow-up corpus-expansion WP. Implementing it inline would
-    // either require exporting harness internals (widening
-    // runFixture.ts's public API) or replicating the dispatch loop
-    // (forbidden by EC-172 §Guardrails — Determinism integrity). The
-    // sentinel fixture and any near-term corpus growth use --input
-    // mode with hand-crafted move lists. Documented as a known
-    // limitation in docs/ai/REFERENCE/complete-game-tests.md.
-    throw new Error(
-      'Recorder --policy mode is accepted by the CLI for forward compatibility but is deferred to a follow-up WP (functional autoplay requires exporting runFixture internals or duplicating the dispatch loop, both of which the WP-158 guardrails reject). Use --input mode with a hand-crafted input-block JSON file or an existing fixture whose input block can be re-recorded.',
-    );
+    const operatorMeta = resolveOperatorMeta(parsedArgs, {
+      inheritedCreatedAt: undefined,
+      inheritedEngineVersion: undefined,
+      inheritedSeed: undefined,
+    });
+    const maxMoves = resolveMaxMoves(parsedArgs);
+    fixture = await recordFromPolicy(parsedArgs, operatorMeta, maxMoves);
+  } else {
+    const sourcePath = parsedArgs['--input'];
+    const parsedJson = await readJsonFile(sourcePath, 'input source');
+    const inherited = extractInputAndInheritedMeta(parsedJson, sourcePath);
+    assertInputShape(inherited.input, sourcePath);
+
+    const operatorMeta = resolveOperatorMeta(parsedArgs, inherited);
+    const maxMoves = resolveMaxMoves(parsedArgs);
+    assertMoveCountUnderCap(inherited.input, operatorMeta.name, maxMoves);
+
+    fixture = recordFromInput(inherited.input, operatorMeta);
   }
 
-  const sourcePath = parsedArgs['--input'];
-  const parsedJson = await readJsonFile(sourcePath, 'input source');
-  const inherited = extractInputAndInheritedMeta(parsedJson, sourcePath);
-  assertInputShape(inherited.input, sourcePath);
-
-  const operatorMeta = resolveOperatorMeta(parsedArgs, inherited);
-  const maxMoves = resolveMaxMoves(parsedArgs);
-  assertMoveCountUnderCap(inherited.input, operatorMeta.name, maxMoves);
-
-  const fixture = recordFromInput(inherited.input, operatorMeta);
   const outputPath = await writeFixtureFile(fixture);
 
   // why: stdout reporting confirms the output path so the operator can

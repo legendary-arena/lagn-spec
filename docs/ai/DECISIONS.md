@@ -19975,4 +19975,40 @@ worth the indirection cost.
 
 ---
 
+### D-19301 — Recorder `--policy` Mode Uses Simulation as Move-Generator + `runFixture` as Oracle Producer
+
+**D-19301 — Recorder `--policy` mode uses simulation as move-generator + `runFixture` as oracle producer.** Rationale: WP-158 deferred `--policy` mode after rejecting two paths — exporting `runFixture` internals (API widening) and duplicating the dispatch loop (EC-172 §Guardrails violation). WP-193 resolves the deferral via a third path: simulation generates moves through its existing engine-state pipeline; those moves flow through `runFixture` unchanged to produce the oracle. The shared-loop invariant (EC-172 §Guardrails — Determinism integrity) is preserved because `runFixture` remains the single oracle source; `--policy` and `--input` paths converge on the same `runFixture` call. Closes the WP-158 deferral.
+
+**Packet:** WP-193 (EC-220).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-01.
+**Status:** Landed
+
+---
+
+### D-19302 — Captured Trace Excludes Lobby Moves
+
+**D-19302 — Captured trace excludes lobby moves.** Rationale: simulation starts from `buildInitialGameState`'s output at `phase = 'play'`; `runFixture` also starts from `buildInitialGameState`'s output and dispatches whatever `moves[]` it receives. Lobby moves are not required for the dispatch loop to function — they appear in the sentinel fixture because it was hand-crafted with the full lobby sequence. Emitting synthetic lobby moves in `--policy` mode would require simulation to also dispatch them (so its starting state matches runFixture's post-lobby state), adding a lobby-semantics dependency simulation does not have today. The simpler choice — skip lobby moves entirely — preserves simulation's existing semantics and keeps the captured trace minimal. Hand-crafted fixtures via `--input` mode are unaffected and may continue to include lobby moves.
+
+**Packet:** WP-193 (EC-220).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-01.
+**Status:** Landed
+
+---
+
+### D-19303 — `--policy` Mode Uses One Policy Family Across All Seats, with Seat-Derived Deterministic Seeds
+
+**D-19303 — `--policy` mode uses one policy family across all seats, with seat-derived deterministic seeds.** Rationale: WP-193 closes the `--policy` deferral, not the policy-family-heterogeneity question (e.g., random vs heuristic head-to-head) — that's a matrix-sweep concern owned by WP-194. Within a single policy family, instantiating every seat with the same literal seed produces correlated PRNG streams across seats: identical legal-move sets at identical filtered UIStates yield identical tie-breaks at every seat. The locked construction is `factory(\`${operatorSeed}::seat:${i}\`)` for each seat `i`, which preserves determinism while decorrelating seat-local behaviour. The literal separator `::seat:` is part of the locked contract — the recorder source carries it verbatim. WP-194 may extend the recorder (or add a sibling tool) to accept a per-seat policy-family list; that extension does not retro-violate WP-193 because the seat-derived seed convention is orthogonal to family selection.
+
+**Packet:** WP-193 (EC-220).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-01.
+**Status:** Landed
+
+---
+
 Protect this file.

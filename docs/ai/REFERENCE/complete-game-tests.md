@@ -124,6 +124,33 @@ often resolves the others automatically.
    globs the fixtures directory and replays each one in turn.
 5. Commit the new fixture file alongside the source change it pins.
 
+**Alternative — `--policy` mode (WP-193).** When the operator does not
+want to hand-author a move list, the recorder can capture one from a
+deterministic autoplay policy:
+
+```pwsh
+node scripts/record-game-fixture.mjs `
+  --name <fixture-name> `
+  --seed <seed-string> `
+  --created-at "<ISO 8601 timestamp>" `
+  --engine-version "<git short SHA or semver>" `
+  --policy random `
+  --setup apps/arena-client/public/loadout-test.json
+```
+
+`--setup` points at a canonical setup-envelope JSON
+(`{ schemaVersion: "1.0", playerCount, heroSelectionMode, composition }`).
+The recorder builds one policy per seat with a seat-derived seed
+`${operatorSeed}::seat:${i}`, captures the dispatched `ReplayMove[]`
+through the existing simulation runner, and routes the trace through
+`recordFromInput` so the convergence point with `--input` mode at
+`validateFixture → runFixture → writeFixtureFile` is preserved. The
+captured trace is play-phase moves only (lobby moves are not emitted
+in this mode — see §"`--policy` mode (WP-193)" below).
+Disposable smoke recordings are appropriate; whether a captured fixture
+is promoted into the committed regression corpus is an operator decision
+outside `--policy` mode's scope.
+
 **Do not hand-edit the `expected` block.** The recorder is the
 source of truth — if the recorder produces different values than
 the committed fixture, the file is wrong and the recorder is
@@ -273,23 +300,68 @@ that fixture needs harness extension. Until then, the gap is a
 deliberate trade-off: the harness stays small and stays engine-only
 in exchange for not exercising phase-hook side effects.
 
-### Recorder `--policy` mode is deferred
+### `--policy` mode (WP-193)
 
-The recorder accepts `--policy random|heuristic --setup <path>` for
-forward compatibility, but the autoplay implementation is deferred
-to a follow-up WP. Implementing it inline would either require
-exporting `runFixture` internals (widening the harness public API)
-or replicating the dispatch loop (forbidden by EC-172 §Guardrails).
-The sentinel and any near-term fixtures use `--input` mode with
-hand-crafted move lists. The error message the recorder emits on
-`--policy` invocation explains the deferral with a single
-full-sentence message.
+The recorder's `--policy random|heuristic --setup <path>` mode produces
+a deterministic fixture from a captured simulation trace. The CLI shape:
 
-When `--policy` mode lands, it will share the dispatch primitive
-with `runFixture` (so the recorder/runner shared-loop invariant
-holds) and consume `createRandomPolicy` /
-`createCompetentHeuristicPolicy` from
-`packages/game-engine/src/simulation/`.
+```pwsh
+node scripts/record-game-fixture.mjs `
+  --name <fixture-name> `
+  --seed <seed-string> `
+  --created-at "<ISO 8601 timestamp>" `
+  --engine-version "<git short SHA or semver>" `
+  --policy random|heuristic `
+  --setup <path-to-setup-envelope.json> `
+  [--max-moves <N>]
+```
+
+The setup envelope is the canonical shape consumed by
+`apps/arena-client/public/loadout-test.json`:
+
+```jsonc
+{
+  "schemaVersion": "1.0",
+  "playerCount": <integer 1..5>,
+  "heroSelectionMode": "GROUP_STANDARD",
+  "composition": { /* the 9-field MatchSetupConfig */ }
+}
+```
+
+The recorder extracts `composition` and `playerCount`, derives
+`playerOrder` as `["0", "1", …, String(playerCount - 1)]`, and builds
+one policy per seat with the locked seat-derived seed convention
+`${operatorSeed}::seat:${i}` (literal `::seat:` separator; D-19303).
+`--policy random` resolves to `createRandomPolicy`; `--policy heuristic`
+resolves to `createCompetentHeuristicPolicy` (both from
+`packages/game-engine/src/simulation/`).
+
+The captured `ReplayMove[]` flows through `recordFromInput` →
+`runFixture` — the same path `--input` mode takes — so `runFixture`
+remains the single oracle source (D-19301; EC-172 §Guardrails —
+Determinism integrity). The recorder never produces an oracle itself.
+
+**Cross-path determinism guarantee.** Both `runFixture` and
+`simulation.runner.ts` construct their mulberry32 PRNG from
+`hashSeedString(seed)` using byte-identical local helpers. The
+round-trip test in `simulation.captureMoves.test.ts` asserts that a
+captured trace replayed through `runFixture` produces an `outcome`
+field-equal to the captured `outcome` — if either path's PRNG
+construction drifts, the trace references cards in wrong zones and
+`runFixture` fails loudly.
+
+**Lobby moves are excluded from the captured trace (D-19302).**
+Simulation starts post-lobby at `phase = 'play'` after
+`buildInitialGameState`; `runFixture` also starts from
+`buildInitialGameState`'s output. Lobby moves (`setPlayerReady`,
+`startMatchIfReady`) are not in simulation's MOVE_MAP and are not
+emitted in `--policy` mode. Hand-crafted fixtures via `--input` mode
+are unaffected and may continue to include lobby moves.
+
+**One policy family across all seats.** Per-seat policy *family*
+heterogeneity (e.g., random vs heuristic head-to-head) is a future
+matrix-sweep concern (WP-194); WP-193 locks one family, with only the
+seat seed varying per seat.
 
 ---
 

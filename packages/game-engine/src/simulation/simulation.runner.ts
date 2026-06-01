@@ -7,6 +7,13 @@
  * → policy.decideTurn → dispatch move) → evaluateEndgame → computeFinalScores.
  * Same pipeline as multiplayer per D-0701; balance validation per D-0702.
  *
+ * simulateOneGameAndCaptureMoves (WP-193) reuses the same per-turn loop via
+ * an `onMoveDispatched?` callback side-channel; it returns the dispatched
+ * ReplayMove[] so the recorder can route that move list through `runFixture`
+ * (the single oracle source — D-19301). No second execution path; no widening
+ * of `runFixture`'s public API; the internal `GameOutcome` aggregate stays
+ * unexported.
+ *
  * No boardgame.io imports. No registry imports. No Math.random(). No
  * .reduce(). No IO.
  */
@@ -14,8 +21,11 @@
 import type { LegendaryGameState } from '../types.js';
 import type { CardRegistryReader } from '../matchSetup.validate.js';
 import type { FinalScoreSummary } from '../scoring/scoring.types.js';
-import type { SimulationConfig, SimulationResult, LegalMove } from './ai.types.js';
+import type { MatchSetupConfig } from '../matchSetup.types.js';
+import type { SimulationConfig, SimulationResult, LegalMove, AIPolicy } from './ai.types.js';
 import type { SimulationLifecycleContext } from './ai.legalMoves.js';
+import type { ReplayMove } from '../replay/replay.types.js';
+import type { EndgameOutcome } from '../endgame/endgame.types.js';
 
 import { buildInitialGameState } from '../setup/buildInitialGameState.js';
 import { makeMockCtx } from '../test/mockCtx.js';
@@ -188,6 +198,13 @@ function zeroedResult(seed: string): SimulationResult {
 
 /**
  * Per-game outcome record used for runSimulation aggregation.
+ *
+ * `endgameReached` + `endgameWinner` are additive fields surfaced for the
+ * WP-193 capture path (projected into `CapturedOutcomeSummary`). They are
+ * NOT consumed by `runSimulation`'s aggregation (which uses `isHeroesWin`
+ * exclusively) so the existing aggregate contract is byte-stable. This
+ * interface stays internal — `simulateOneGameAndCaptureMoves` exposes only
+ * the narrower `CapturedOutcomeSummary` projection (smallest-seam posture).
  */
 interface GameOutcome {
   readonly turns: number;
@@ -195,6 +212,8 @@ interface GameOutcome {
   readonly highestTotalVP: number;
   readonly escapedVillains: number;
   readonly totalWounds: number;
+  readonly endgameReached: boolean;
+  readonly endgameWinner: EndgameOutcome | null;
 }
 
 /**
@@ -202,7 +221,7 @@ interface GameOutcome {
  *
  * // why: events.endTurn flips a closure flag the runner checks after
  * dispatch — boardgame.io would handle turn rotation; simulation does it
- * manually in runGameLoop.
+ * manually in runPerTurnLoop.
  */
 function buildMoveContext(
   gameState: LegendaryGameState,
@@ -240,33 +259,63 @@ function buildMoveContext(
 }
 
 /**
- * Simulates one game and returns its aggregate outcome record.
+ * Aggregate signal returned by the extracted per-turn loop helper.
  *
- * Runs up to MAX_TURNS_PER_GAME turns. Each turn:
- *   1. Build UIState from G + current lifecycle context.
- *   2. Filter UIState for the active player audience.
- *   3. Enumerate legal moves.
- *   4. Ask the active policy for a ClientTurnIntent.
- *   5. Dispatch the move via MOVE_MAP (unknown names log + skip).
- *   6. If the move triggered events.endTurn() OR evaluateEndgame signals
- *      termination, end the per-game loop or rotate player.
- *
- * @param config - simulation configuration (unchanged across games).
- * @param registry - card registry reader.
- * @param gameIndex - 0-based index of this game within the run.
- * @param nextRandom - the run's mulberry32 closure (shared across games).
- * @returns per-game outcome record.
+ * The fields beyond `turnsElapsed` let `buildGameOutcome` thread the
+ * loop-exit reason into `GameOutcome` so the WP-193 capture path can
+ * project `endgameReached` + `endgameWinner` into `CapturedOutcomeSummary`
+ * without re-deriving them from terminal G state.
  */
-function simulateOneGame(
-  config: SimulationConfig,
-  registry: CardRegistryReader,
+interface PerTurnLoopResult {
+  readonly turnsElapsed: number;
+  readonly endgameReached: boolean;
+  readonly endgameWinner: EndgameOutcome | null;
+}
+
+/**
+ * Runs the per-turn loop for a single game and returns the aggregate
+ * loop-exit signal. Mutates `gameState` in place.
+ *
+ * Each turn:
+ *   1. Evaluate endgame. If non-null, set `endgameReached` + `endgameWinner`
+ *      and exit the loop.
+ *   2. Build UIState from G + lifecycle context.
+ *   3. Filter UIState for the active player audience.
+ *   4. Enumerate legal moves.
+ *   5. Ask the active policy for a ClientTurnIntent.
+ *   6. Dispatch the move via MOVE_MAP (unknown names log + skip).
+ *   7. Stuck-game check (endTurn outside cleanup → flag and exit).
+ *   8. If endTurnFlag triggered: rotate player + reset stage / economy.
+ *
+ * The optional `onMoveDispatched` callback (WP-193) is the move-capture
+ * side-channel: it fires AFTER successful dispatch and AFTER the stuck-game
+ * check reads `endTurnFlag`, so a captured `ReplayMove` represents a
+ * dispatched move that did not trigger a stuck-game exit. When
+ * `onMoveDispatched === undefined` (the existing `simulateOneGame` path),
+ * the loop's behaviour is byte-identical to the pre-WP-193 implementation.
+ *
+ * // why (callback fire site): per D-19301, `runFixture` is the single oracle
+ * source — the recorder's `--policy` path captures moves here and hands
+ * them off to `runFixture` for replay. Dispatch must be AFTER the move
+ * function returns (so its effects on `endTurnFlag` / G are fully
+ * realised) AND after the stuck-game check reads `endTurnFlag` (so a
+ * stuck-endTurn dispatch is NOT captured — it represents a degenerate
+ * loop-exit signal, not a replayable move that contributes to a fixture
+ * trajectory). Skipped dispatches (unknown moveFn) are also NOT captured.
+ * A callback-via-parameter side-channel is chosen over a mutable-array
+ * parameter so the helper's signature stays read-only at the value layer
+ * (the caller observes captures by writing the receiver inside the
+ * closure) and so the helper composes with future consumers that need
+ * non-array sinks.
+ */
+function runPerTurnLoop(
+  gameState: LegendaryGameState,
+  policies: readonly AIPolicy[],
+  numPlayers: number,
   gameIndex: number,
   nextRandom: () => number,
-): GameOutcome {
-  const numPlayers = config.policies.length;
-  const setupContext = makeMockCtx({ numPlayers });
-  const gameState = buildInitialGameState(config.setupConfig, registry, setupContext);
-
+  onMoveDispatched?: (move: ReplayMove) => void,
+): PerTurnLoopResult {
   // why: buildInitialGameState initializes currentStage to TURN_STAGES[0]
   // ('start') and turnEconomy to all-zero; it does not set phase (the
   // framework manages phase). Simulation tracks phase externally as
@@ -275,10 +324,14 @@ function simulateOneGame(
   let currentPlayer = '0';
   let turn = 1;
   let turnsElapsed = 0;
+  let endgameReached = false;
+  let endgameWinner: EndgameOutcome | null = null;
 
   while (turnsElapsed < MAX_TURNS_PER_GAME) {
     const endgameResult = evaluateEndgame(gameState);
     if (endgameResult !== null) {
+      endgameReached = true;
+      endgameWinner = endgameResult.outcome;
       break;
     }
 
@@ -296,7 +349,7 @@ function simulateOneGame(
     const legalMoves: LegalMove[] = getLegalMoves(gameState, lifecycleContext);
 
     const policyIndex = Number(currentPlayer);
-    const activePolicy = config.policies[policyIndex];
+    const activePolicy = policies[policyIndex];
     if (activePolicy === undefined) {
       gameState.messages.push(
         `Simulation warning: no AI policy for playerId "${currentPlayer}" (game ${gameIndex}). Ending this game as stuck.`,
@@ -351,6 +404,21 @@ function simulateOneGame(
       break;
     }
 
+    // why (WP-193 / D-19301): capture the successfully-dispatched move into
+    // the recorder's ReplayMove[] AFTER move dispatch returns AND AFTER
+    // the stuck-game check reads `endTurnFlag`. A captured move is one
+    // that `runFixture` can replay; the recorder's `--policy` path hands
+    // this list off to `runFixture` as the single oracle source. Skipped
+    // dispatches (unknown moveFn) and stuck-endTurn breaks are excluded
+    // from the trace because they do not represent replayable progress.
+    if (moveFn !== undefined && onMoveDispatched !== undefined) {
+      onMoveDispatched({
+        playerId: currentPlayer,
+        moveName: intent.move.name,
+        args: intent.move.args,
+      });
+    }
+
     if (endTurnFlag.triggered) {
       // why: boardgame.io would fire onTurnEnd hooks and then onBegin on
       // the next turn, resetting currentStage + turnEconomy. Simulation
@@ -366,7 +434,48 @@ function simulateOneGame(
     }
   }
 
-  return buildGameOutcome(gameState, turnsElapsed, numPlayers);
+  return { turnsElapsed, endgameReached, endgameWinner };
+}
+
+/**
+ * Simulates one game and returns its aggregate outcome record.
+ *
+ * Thin wrapper around `runPerTurnLoop` that constructs the per-game state
+ * and projects the loop-exit signal + terminal state into `GameOutcome`.
+ * Behaviour is byte-identical to the pre-WP-193 implementation when the
+ * capture callback is omitted (which it always is here).
+ *
+ * @param config - simulation configuration (unchanged across games).
+ * @param registry - card registry reader.
+ * @param gameIndex - 0-based index of this game within the run.
+ * @param nextRandom - the run's mulberry32 closure (shared across games).
+ * @returns per-game outcome record.
+ */
+function simulateOneGame(
+  config: SimulationConfig,
+  registry: CardRegistryReader,
+  gameIndex: number,
+  nextRandom: () => number,
+): GameOutcome {
+  const numPlayers = config.policies.length;
+  const setupContext = makeMockCtx({ numPlayers });
+  const gameState = buildInitialGameState(config.setupConfig, registry, setupContext);
+
+  const loopResult = runPerTurnLoop(
+    gameState,
+    config.policies,
+    numPlayers,
+    gameIndex,
+    nextRandom,
+  );
+
+  return buildGameOutcome(
+    gameState,
+    loopResult.turnsElapsed,
+    numPlayers,
+    loopResult.endgameReached,
+    loopResult.endgameWinner,
+  );
 }
 
 /**
@@ -381,12 +490,20 @@ function simulateOneGame(
  * @param gameState - terminal game state (mutated during the per-game loop).
  * @param turnsElapsed - number of turns taken; capped at MAX_TURNS_PER_GAME.
  * @param numPlayers - number of players (for lifecycle context).
+ * @param endgameReached - whether the loop exited via `evaluateEndgame`
+ *   returning non-null (true) vs the cap / stuck-game break (false).
+ * @param endgameWinner - the `EndgameOutcome` value `evaluateEndgame`
+ *   returned on the exiting turn; `null` when the loop exited via cap or
+ *   stuck. Threaded through into `CapturedOutcomeSummary.winner` for the
+ *   WP-193 capture path.
  * @returns per-game outcome record.
  */
 function buildGameOutcome(
   gameState: LegendaryGameState,
   turnsElapsed: number,
   numPlayers: number,
+  endgameReached: boolean,
+  endgameWinner: EndgameOutcome | null,
 ): GameOutcome {
   // why: 'end' phase + explicit currentPlayer '0' produces a stable
   // post-endgame projection; turn count is the elapsed count capped at
@@ -426,6 +543,8 @@ function buildGameOutcome(
     highestTotalVP,
     escapedVillains: postEndgameUi.progress.escapedVillains,
     totalWounds,
+    endgameReached,
+    endgameWinner,
   };
 }
 
@@ -524,4 +643,153 @@ export function runSimulation(
   }
 
   return aggregateOutcomes(perGame, config.seed);
+}
+
+/**
+ * Narrower outcome surface exposed to the WP-193 capture path.
+ *
+ * // why (CapturedOutcomeSummary definition): the recorder + future
+ * WP-194/195 consumers need just enough to (a) compare against the
+ * `runFixture` outcome for the round-trip determinism test and
+ * (b) carry forward into downstream tooling. The narrower
+ * `CapturedOutcomeSummary` (two fields) is the minimum sufficient
+ * surface; widening simulation's public contract to include the
+ * broader internal aggregate would violate this packet's
+ * "smallest seam possible" theme — the internal aggregate stays
+ * unexported. Adding a fourth field here later is a deliberate API
+ * change rather than silent inheritance of internal-aggregate
+ * evolution. `winner` is typed `EndgameOutcome | null` (not
+ * `string | null`) so the type system rejects typos and any future
+ * outcome value that would otherwise compile but fail replay matching
+ * silently against the `FixtureOutcome.winner` oracle in
+ * `fixtureSchema.ts`.
+ */
+export interface CapturedOutcomeSummary {
+  readonly winner: EndgameOutcome | null;
+  readonly escapedVillains: number;
+}
+
+/**
+ * Result returned by `simulateOneGameAndCaptureMoves` (WP-193).
+ *
+ * // why (CapturedGameResult.endgameReached): the recorder does not
+ * surface a "hit-cap" anomaly today — classification of cap-hit vs
+ * endgame-reached vs stuck-game is WP-195's seam (anomaly oracle layer).
+ * WP-193 exposes the raw signal so WP-195 has a stable hook to consume
+ * without re-deriving it from terminal G state. `endgameReached === true`
+ * iff the per-turn loop exited via `evaluateEndgame` returning non-null;
+ * `endgameReached === false` iff the loop exited via the
+ * `MAX_TURNS_PER_GAME` cap or the stuck-endTurn break.
+ */
+export interface CapturedGameResult {
+  readonly moves: readonly ReplayMove[];
+  readonly outcome: CapturedOutcomeSummary;
+  readonly endgameReached: boolean;
+}
+
+/**
+ * Simulates one game and captures the dispatched `ReplayMove[]` plus
+ * outcome summary (WP-193).
+ *
+ * The captured move list is the recorder's input to `runFixture` — the
+ * single oracle source (D-19301). Simulation is the move generator; the
+ * fixture's `expected` block is produced by `runFixture` on the captured
+ * trace, NOT by this function. The narrower `CapturedOutcomeSummary` is
+ * for round-trip determinism comparison + downstream consumers, not a
+ * fixture oracle.
+ *
+ * PRNG semantics: this function constructs a fresh mulberry32 from
+ * `hashSeedString(seed)` and advances it through `gameIndex` prior
+ * `simulateOneGame` invocations (with no callback) before capturing game
+ * `gameIndex`. The PRNG stream the captured game observes is therefore
+ * identical to game `gameIndex` of a `runSimulation` call with the same
+ * `(seed, setupConfig, policies)`. The recorder always passes
+ * `gameIndex === 0`, which collapses the warm-up loop to a no-op and
+ * makes the captured stream identical to a one-game `runSimulation`.
+ *
+ * Captured trace contains play-phase moves only (D-19302) — simulation
+ * starts post-lobby at `phase = 'play'`, and `runFixture` also starts
+ * from `buildInitialGameState`'s output; lobby moves are not in the
+ * MOVE_MAP and are not emitted.
+ *
+ * @param setupConfig - validated 9-field MatchSetupConfig.
+ * @param registry - card registry reader (setup-time resolution only).
+ * @param policies - one policy per seat; `policies[i]` is applied when
+ *   the active player's `playerId === String(i)`.
+ * @param seed - run-level seed string; hashed via djb2 → mulberry32.
+ * @param gameIndex - 0-based per-game index for PRNG-stream parity with
+ *   `runSimulation`.
+ * @returns CapturedGameResult — moves, outcome summary, endgame-reached flag.
+ */
+export function simulateOneGameAndCaptureMoves(
+  setupConfig: MatchSetupConfig,
+  registry: CardRegistryReader,
+  policies: readonly AIPolicy[],
+  seed: string,
+  gameIndex: number,
+): CapturedGameResult {
+  if (seed.length === 0) {
+    return {
+      moves: [],
+      outcome: { winner: null, escapedVillains: 0 },
+      endgameReached: false,
+    };
+  }
+  if (policies.length < 1) {
+    return {
+      moves: [],
+      outcome: { winner: null, escapedVillains: 0 },
+      endgameReached: false,
+    };
+  }
+
+  const seedNumber = hashSeedString(seed);
+  const nextRandom = createMulberry32(seedNumber);
+
+  // why: warm-up advances the run-level PRNG by `gameIndex` prior
+  // simulateOneGame calls so the captured game observes the same PRNG
+  // state runSimulation's game `gameIndex` would. Loop is a no-op when
+  // `gameIndex === 0` (the recorder's only call site).
+  const warmupConfig: SimulationConfig = {
+    games: gameIndex + 1,
+    seed,
+    setupConfig,
+    policies: [...policies],
+  };
+  for (let priorGameIndex = 0; priorGameIndex < gameIndex; priorGameIndex++) {
+    simulateOneGame(warmupConfig, registry, priorGameIndex, nextRandom);
+  }
+
+  const numPlayers = policies.length;
+  const setupContext = makeMockCtx({ numPlayers });
+  const gameState = buildInitialGameState(setupConfig, registry, setupContext);
+
+  const capturedMoves: ReplayMove[] = [];
+  const loopResult = runPerTurnLoop(
+    gameState,
+    policies,
+    numPlayers,
+    gameIndex,
+    nextRandom,
+    (move) => {
+      capturedMoves.push(move);
+    },
+  );
+
+  const outcome = buildGameOutcome(
+    gameState,
+    loopResult.turnsElapsed,
+    numPlayers,
+    loopResult.endgameReached,
+    loopResult.endgameWinner,
+  );
+
+  return {
+    moves: capturedMoves,
+    outcome: {
+      winner: outcome.endgameWinner,
+      escapedVillains: outcome.escapedVillains,
+    },
+    endgameReached: outcome.endgameReached,
+  };
 }
