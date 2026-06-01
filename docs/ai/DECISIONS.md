@@ -20011,4 +20011,40 @@ worth the indirection cost.
 
 ---
 
+### D-19401 — Sweep Dimensions for WP-194 MVP Are `schemeId × mastermindId`; Matrix-Builder Is N-Axis-Generic; Iteration Order Is Lexicographic Ascending on Both Axes
+
+**D-19401 — Sweep dimensions for WP-194 MVP are `schemeId × mastermindId`; matrix-builder is N-axis-generic; iteration order is lexicographic ascending on both axes.** Rationale: WP-194 is the execution-layer primitive (deterministic traversal of a defined slice of setup-space); WP-195 owns the analysis layer. Expanding the matrix to additional axes (villain groups, hero decks, player counts) at this stage would push WP-194 into combinatorics-explosion territory (10^5+ cells for the full cross-product) and into pseudo-statistical interpretation that belongs in WP-195. The MVP locks Scheme × Mastermind because those are the two top-level drivers in the setup envelope's composition. The matrix-builder core is implemented as an N-axis `cartesianProduct` helper so future axes can be added without rewriting the enumeration engine; only the CLI surface + manifest record shape need to grow when the axis count grows. Iteration order is lex-sorted ascending (outer = schemeId, inner = mastermindId), the dispatcher does the sort itself (stable copy of input arrays). The sort is a determinism guarantee, not an implementation detail — resume logic + manifest line order both depend on it; `cellIndex` is the per-run enumeration index over the sorted product and is informational only (the identity key for resume + dedup is `(schemeId, mastermindId)`). This WP does NOT claim full gameplay coverage; it claims a deterministic, resumable traversal primitive over a bounded subset of setup-space.
+
+**Packet:** WP-194 (EC-221).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-01.
+**Status:** Landed
+
+---
+
+### D-19402 — Per-Cell Seed Convention Is `${runSeed}::cell:${schemeId}:${mastermindId}`
+
+**D-19402 — Per-cell seed convention is `${runSeed}::cell:${schemeId}:${mastermindId}`.** Rationale: per-cell PRNG streams MUST be decorrelated across cells so cell outcomes vary even when the underlying card data does not (the WP-194 MVP uses `EMPTY_REGISTRY`, mirroring the WP-193 recorder precedent). The locked separator `::cell:` mirrors the WP-193 `::seat:` convention: a literal string carried verbatim in the sweep runner source as `CELL_SEED_SEPARATOR`, with grep-gated presence in the source file. The intra-cell-coordinate separator `:` between schemeId and mastermindId is NOT the `::cell:` separator (it is the single-colon coordinate join); this distinction is intentional. Per-seat seeds within a cell nest on top: `${cellSeed}::seat:${seatIndex}` using the WP-193 `SEAT_SEED_SEPARATOR`. The D-3604 two-domain PRNG invariant (policy PRNG vs run-level shuffle PRNG) holds at every level of the nesting.
+
+**Packet:** WP-194 (EC-221).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-01.
+**Status:** Landed
+
+---
+
+### D-19403 — Sweep Output Is Manifest-Only (JSONL); Per-Cell Fixture Files Are NOT Written; the Abort Path Emits a Fatal Record Before Exit
+
+**D-19403 — Sweep output is manifest-only (JSONL); per-cell fixture files are NOT written; the abort path emits a fatal record before exit.** Rationale: WP-194 is for aggregate analysis (consumed by WP-195), not for growing the regression-test corpus. Committing per-cell fixtures would (a) bloat the repo monotonically as sweeps accumulate and (b) blur the WP-193 contract that fixture promotion is an operator decision rather than a sweep behaviour. The manifest at `sweep-output/<run-id>/manifest.jsonl` is canonical-JSON one-line-per-cell, with the seven keys listed in the WP §E, sorted lexicographically. The `sweep-output/` directory is gitignored (so the bulk artifact does not enter the repo). On a thrown cell, the script appends a fatal-record JSONL line (`{ cellSeed, error, mastermindId, schemeId, type: "fatal" }`, canonical JSON, sorted keys, closed five-key shape) before exiting non-zero — preserving resumability + visibility + reproducibility. Fatal records are indistinguishable from cell-result records to the resume scanner's identity-key check (the `(schemeId, mastermindId)` pair); the `type` field is the disambiguator for downstream consumers (e.g., WP-195) that need to distinguish abort-cells from completed-cells. An opt-in `--write-fixtures` flag could land in a follow-up WP if operators surface a real use case for per-cell fixture promotion.
+
+**Packet:** WP-194 (EC-221).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-01.
+**Status:** Landed
+
+---
+
 Protect this file.

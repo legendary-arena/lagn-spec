@@ -363,6 +363,118 @@ heterogeneity (e.g., random vs heuristic head-to-head) is a future
 matrix-sweep concern (WP-194); WP-193 locks one family, with only the
 seat seed varying per seat.
 
+### Setup-matrix sweep (WP-194)
+
+`scripts/sweep-setup-matrix.mjs` wraps WP-193's capture primitive in a
+deterministic, resumable traversal of the `schemeId × mastermindId`
+cross-product over a base setup envelope. The sweep is a **traversal
+primitive**, not a coverage claim — it enumerates a defined
+two-dimensional slice of setup-space and records raw cell results to a
+manifest. Classification, aggregation, and anomaly triage are deferred
+to WP-195 (anomaly oracle layer, not yet drafted).
+
+The CLI shape:
+
+```pwsh
+node scripts/sweep-setup-matrix.mjs `
+  --run-id <id-matching-/^[A-Za-z0-9._-]+$/> `
+  --seed <seed-string> `
+  --setup <path-to-setup-envelope.json> `
+  --scheme-ids <path-to-scheme-ids-list.json> `
+  --mastermind-ids <path-to-mastermind-ids-list.json> `
+  --policy random|heuristic `
+  [--max-cells <N>]
+```
+
+`--setup` consumes the same canonical envelope shape WP-193's `--policy`
+mode does. `--scheme-ids` and `--mastermind-ids` each point at a JSON
+file containing an array of non-empty unique strings — the two axes the
+sweep cross-products. The empty axis case is permitted (yields a
+zero-cell no-op sweep); duplicates within an axis are a full-sentence
+error. `--policy` resolves to the same `createRandomPolicy` /
+`createCompetentHeuristicPolicy` factories WP-193 uses, applied per
+seat with the nested seed convention described below. `--max-cells`
+defaults to `10000`; a soft stderr warning fires for
+`5000 < cellCount ≤ max-cells`. An over-cap configuration emits a
+full-sentence error BEFORE any dispatch and exits non-zero (no partial
+manifest is written).
+
+**Per-cell seed convention (D-19402).** Each cell's seed is
+`${runSeed}::cell:${schemeId}:${mastermindId}` with the literal
+`::cell:` separator carried verbatim by the engine's
+`CELL_SEED_SEPARATOR` export. The intra-cell-coordinate `:` between
+`schemeId` and `mastermindId` is the single-colon coordinate join, NOT
+the `::cell:` separator. Per-seat seeds nest on top of the cell seed
+via `${cellSeed}::seat:${seatIndex}` (WP-193 D-19303 preserved); the
+two-domain PRNG invariant (D-3604) holds at every level of the
+`runSeed → cellSeed → seatSeed` chain.
+
+**Lex-sort iteration order (D-19401).** The dispatcher (`sweepSetupMatrix`
+in `packages/game-engine/src/simulation/sweep.runner.ts`) stable-copies
+and lex-sorts both axes before enumeration — outer loop = `schemeId`,
+inner loop = `mastermindId`. The operator's axis files are not mutated.
+Iteration order is a determinism guarantee, not an implementation
+detail: resume logic + manifest line order both depend on it.
+`cellIndex` is the per-run 0-based ordinal over the lex-sorted product
+and is informational only; the identity key for resume + dedup is the
+`(schemeId, mastermindId)` pair.
+
+**Manifest format (canonical JSONL).** Output is written to
+`sweep-output/<run-id>/manifest.jsonl`, one line per cell, no enclosing
+array, no header, no pretty-print. Success records carry seven keys,
+sorted lexicographically:
+
+```jsonc
+{
+  "cellIndex": <0-based ordinal>,
+  "cellSeed": "<runSeed>::cell:<schemeId>:<mastermindId>",
+  "endgameReached": <boolean>,
+  "mastermindId": "<id>",
+  "moveCount": <integer ≥ 0>,
+  "outcome": { "escapedVillains": <integer>, "winner": "heroes-win" | "scheme-wins" | null },
+  "schemeId": "<id>"
+}
+```
+
+On a thrown cell the script appends a fatal record (closed five-key
+shape) and exits non-zero:
+
+```jsonc
+{
+  "cellSeed": "<cellSeed of throwing cell>",
+  "error": "<full-sentence error message>",
+  "mastermindId": "<id of throwing cell>",
+  "schemeId": "<id of throwing cell>",
+  "type": "fatal"
+}
+```
+
+The `type` field is the discriminator that distinguishes fatal records
+from success records (success records carry no `type` field).
+
+**Resume idempotency.** Re-running with identical CLI args reads any
+existing manifest, parses each line to extract its
+`(schemeId, mastermindId)` pair, builds a skip-set, and dispatches only
+the missing cells. Same args + same axis-file contents +
+non-truncated existing manifest → byte-identical final manifest
+compared to a single-pass run. Fatal records participate in the
+skip-set the same way success records do: to retry a fatal cell the
+operator must either remove the fatal record from the manifest or run
+under a new `--run-id` (there is no `--retry-fatal` flag in v1).
+
+**Gitignored bulk output.** `sweep-output/` is listed in `.gitignore`
+under a WP-194 comment so the bulk artifact never enters the repo.
+Pruning the directory is an operator-driven concern outside this WP.
+
+**Deferred-coverage notice.** The sweep does NOT claim full gameplay
+coverage. It claims a deterministic, resumable traversal primitive
+over a bounded subset of setup-space (schemeId × mastermindId only;
+the remaining seven `MatchSetupConfig` fields are held verbatim from
+the base envelope). Broader axes (villain groups, hero decks, player
+counts), anomaly classification, and aggregate reporting are deferred
+to a follow-up WP. WP-194 emits raw cell results; downstream consumers
+(WP-195) own interpretation.
+
 ---
 
 ## Authority chain

@@ -43,3 +43,9 @@ content/themes/01-ALL_THEMES_COMBINED.json
 # snapshots can still be committed manually with `git add -f` when a
 # WP / review wants a frozen reference.
 docs/ai/audits/architecture-inventory-latest.md
+
+# Setup-matrix sweep output (WP-194) — bulk JSONL manifests produced by
+# scripts/sweep-setup-matrix.mjs. The directory grows monotonically
+# with every run; pruning is operator-driven. Never committed; WP-195
+# consumes manifests in-place rather than pulling them from history.
+sweep-output/
