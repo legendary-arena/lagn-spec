@@ -3,7 +3,7 @@
 **Status:** Draft
 **Primary Layer:** Client (`apps/dashboard`)
 **Dependencies:** WP-157 (Dashboard Scaffold) — Done 2026-05-16; WP-162 (Dashboard Daily Execution + UI Polish) — refer to its precedent for Widget Contract and design tokens
-**EC:** To be assigned at execution time
+**EC:** EC-225
 **Baseline:** `origin/main` at time of execution
 
 ---
