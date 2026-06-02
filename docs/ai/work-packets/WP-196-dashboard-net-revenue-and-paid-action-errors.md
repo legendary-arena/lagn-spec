@@ -94,6 +94,14 @@ If any of the above is false, this packet is **BLOCKED**.
 - New `apps/dashboard/src/widgets/PaidActionErrorsWidget.vue`
 - New `apps/dashboard/src/services/billingHealthMocks.ts` (mock data
   source for webhook failure rate + intent abandonment rate)
+- New `apps/dashboard/src/services/hashRange.ts` (FNV-1a or
+  equivalent single-source hash function for mock determinism per
+  D-19605 ext.; imported by `billingHealthMocks.ts` and any future
+  range-seeded mock)
+- New `apps/dashboard/src/services/normalizeRange.ts` (DateRange
+  normalization helper per D-19605 ext.; called at the entry of
+  `fetchBillingHealth` and any other range-consuming service
+  function)
 
 ### Service / type extensions
 
@@ -216,12 +224,34 @@ infraCogsCents   = round(grossCents[i] * infraCogsPercent)
 netCents         = grossCents[i] - royaltyCents - stripeFeesCents - infraCogsCents
 ```
 
-- `round` is banker's rounding (`Math.round` is acceptable; the
-  composable must document this choice in a `// why:` comment)
+- `round` here is `Math.round` (round half toward +∞ / "asymmetric
+  half-up"; the composable's `// why:` comment cites this exact
+  behavior — **not** banker's rounding / round-half-to-even). The
+  asymmetric behavior is documented to fix a wording drift from
+  the original draft. Per-day rounding direction is the only
+  rounding in the composable; aggregates derive from integer
+  sums and require no further rounding.
 - If `netCents` is negative for a given day (gross too small to cover
   the fixed Stripe fee), the widget still displays the value as-is —
   it is not clamped to zero. A negative net day is a real signal
   (you lost money on that day after deductions) and must not be hidden.
+
+### Tooltip Margin Definition (D-19606 extension)
+
+For each day `i`, the per-day margin shown in the chart tooltip
+MUST be computed from that day's values only:
+
+```
+dayMarginRatio = grossCents[i] === 0 ? 0 : netCents[i] / grossCents[i]
+```
+
+The tooltip displays the **per-day** ratio for the hovered day.
+The aggregate `netMarginRatio` exposed by the composable is a
+**separate** number used only for the operator interpretation
+footer (D-19606 base). Confusing the two — showing aggregate
+margin on a per-day hover, or vice versa — tells the operator
+the wrong number for the surface they're reading. Both numbers
+exist; they answer different questions.
 
 ### Aggregation Rule (Non-Negotiable, D-19604)
 
@@ -290,6 +320,38 @@ The mock generator MUST produce realistic but obviously-mock values.
   pair (no independent draws — rate and count would visually disagree
   otherwise)
 
+### Billing Health Window Definition (D-19603 extension)
+
+- Default window for `BillingHealth` queries = last 30 days
+  derived from `range.end - 30` (exclusive) to `range.end`
+  (inclusive). The `range.start` value the operator picked is
+  ignored for the window computation — webhook health is a
+  trailing-window metric, not a date-range metric.
+- The 30-day window applies uniformly to BOTH the webhook
+  failure and intent abandonment surfaces. Both sparklines plot
+  exactly **30 daily data points** (one per day in the window).
+- The sparkline series MUST contain exactly `30` entries; fewer
+  is FAIL. The operator's eye calibrates to a fixed visual
+  cadence across widget refreshes; a 22-point sparkline next to
+  a 30-point one reads as a different metric.
+
+### Rate-Division Safety Guard (D-19603 extension)
+
+If `webhookTotalCount === 0` (no webhook deliveries in the
+window), `webhookFailureRate` MUST be `0` exactly — NOT `NaN`,
+NOT `undefined`, NOT `1`. Same rule for `intentAbandonmentRate`
+when `intentTotalCount === 0`. The display-side branch reads:
+
+```ts
+const displayRate = totalCount === 0 ? 0 : failureCount / totalCount;
+```
+
+Zero-denominator producing `NaN` is the most common production
+bug in dashboards that ship with sparsely-populated metrics.
+Guarding at the composable / mock-generator boundary means every
+downstream surface (sparkline, KPI card, future alerts widget)
+gets the clean `0` without a per-renderer band-aid.
+
 ### Mock Determinism Contract (Non-Negotiable, D-19605)
 
 Mock data on the dashboard is **deterministic** at the same standard
@@ -324,6 +386,57 @@ WP (it should not be — the mock surface is already in place — but
 if any tightening occurs, the determinism contract applies
 uniformly).
 
+### DateRange Normalization Contract (Non-Negotiable, D-19605 extension)
+
+The seed input `range.start + '|' + range.end` is meaningful only
+if `range.start` and `range.end` have a single canonical form.
+Without normalization, `'2026-06-01'` and `'2026-06-01T00:00:00Z'`
+seed differently and break every cross-widget consistency check
+the harden round just locked.
+
+Normalization rules:
+
+- `range.start` and `range.end` are ISO date strings in `YYYY-MM-DD`
+  format. No time component, no timezone offset, no fractional
+  seconds, no `Z` suffix.
+- The range is **inclusive on both ends** — `start === end`
+  represents a 1-day window with one data point.
+- If `start > end` (lexical comparison, which matches
+  chronological for zero-padded `YYYY-MM-DD`), the entry point
+  MUST throw a full-sentence error naming both offending values.
+- Normalization happens at the **service boundary**
+  (`fetchBillingHealth` and the revenue-history mock entry point),
+  NOT inside widgets. Widgets receive an already-normalized range.
+
+The hash input is constructed from the normalized values only;
+upstream callers who pass non-normalized ranges trigger the
+boundary validation and never reach the seed.
+
+### Hash Function Contract (D-19605 extension)
+
+The hash function backing the seed has its own pure-function
+contract because dashboards have shipped before with
+`Math.random()`-seeded "deterministic" mocks; the discipline only
+holds if the hash is locked too:
+
+- Deterministic and pure — same input string produces the same
+  output on every call, every browser, every architecture.
+- Output is a stable 32-bit integer suitable as the PRNG seed.
+  **Recommended:** FNV-1a (32-bit) or an equivalent simple
+  non-cryptographic hash. SHA-* and crypto-grade hashes are
+  overkill for mock-seed purposes and add bundle weight.
+- MUST NOT depend on JS-engine-specific behavior (e.g., legacy
+  `String.prototype.hashCode` analogues, which differ across
+  engines historically).
+- Lives in a single file alongside the mock generators with a
+  `// why:` comment citing **D-19605**; widgets and composables
+  import the function rather than re-implementing it.
+- Collision expectation: 32-bit FNV-1a has ~2^16 birthday-attack
+  collisions over the range-string universe. Acceptable for mock
+  seeding because (a) the practical input universe is small (a
+  few dozen date ranges per operator session) and (b) collisions
+  produce identical mock data — harmless, not incorrect.
+
 ### Service Function
 
 ```ts
@@ -339,6 +452,48 @@ otherwise, `apiClient.get('/metrics/billing/health', { params: { range } })`.
 The future server endpoint path `/metrics/billing/health` is named
 here as the **client-side target**, not as a server-side promise.
 Implementing the server endpoint is a separate WP.
+
+### Shared Revenue Source Contract (Non-Negotiable, D-19607)
+
+The harden-round-1 acceptance criterion "Cross-widget consistency:
+sum of NetRevenueChartWidget gross series exactly equals
+RevenueChartWidget total" is prose-level — auditable manually but
+not structurally. This contract converts it to an enforceable
+single-source rule.
+
+`NetRevenueChartWidget` and `RevenueChartWidget` MUST consume the
+SAME `fetchRevenueHistory(range)` call path:
+
+- No widget may call `mockRevenueHistory` (or any other lower-level
+  mock generator) directly — the only entry point is the
+  `fetchRevenueHistory(range)` service function exported by
+  `apps/dashboard/src/services/endpoints.ts`.
+- No widget may construct its own revenue series in-component
+  (e.g., synthesizing dates from `Date.now()`, deriving from a
+  cached KPI snapshot, etc.).
+- Both widgets MUST be passed the SAME `range` reference. The
+  page-level date-range composable (`useDateRange`, established
+  by WP-157) provides the canonical reactive `range`; both
+  widgets `import { useDateRange } from '...'` and consume it.
+- A single `useFetch` invocation (or equivalent) feeds both
+  widgets so the mock generator is called once per range change,
+  not once per widget. Two independent fetches against the same
+  range with the same seed will return identical data — but
+  duplicating the call doubles network/mock work and creates two
+  reactive update paths the operator can observe out of sync
+  during a transition.
+
+The contract is structurally auditable:
+
+```bash
+grep -rn "fetchRevenueHistory\|mockRevenueHistory" apps/dashboard/src/widgets/
+```
+
+The output MUST show exactly two call sites for `fetchRevenueHistory`
+(one in each widget that consumes revenue) AND zero call sites for
+`mockRevenueHistory` (it is a service-internal mock, not a widget
+import). Any other shape is a FAIL against cross-widget
+consistency.
 
 ### Widget Contract (per WP-157 §5 + WP-162 Card Structure)
 
@@ -383,19 +538,96 @@ contract breach against WP-157, and any downstream visual test
 that depends on the four-state semantics will produce false
 positives.
 
+### Widget State Gate Pattern (Non-Negotiable, structural enforcement)
+
+Excellent semantics are still violable without structure. The
+four states MUST be enforced through a single `state` computed
+in the widget's `<script setup>` block:
+
+```ts
+const state = computed<'loading' | 'error' | 'empty' | 'data'>(() => {
+  if (loading.value && !data.value) return 'loading';
+  if (error.value) return 'error';
+  if (!data.value || data.value.length === 0) return 'empty';
+  return 'data';
+});
+```
+
+The widget's `<template>` MUST branch exclusively on this single
+`state` ref. The Vue template structure is locked to a four-arm
+`v-if` / `v-else-if` chain:
+
+```html
+<div v-if="state === 'loading'">...skeleton...</div>
+<div v-else-if="state === 'error'">...full-sentence message...</div>
+<div v-else-if="state === 'empty'">...empty message...</div>
+<BaseChart v-else :option="chartOption" />
+```
+
+A chart MUST NOT appear under any condition outside the `'data'`
+branch. The gate makes the four-state contract auditable in the
+diff:
+
+```bash
+grep -n 'v-if="state' apps/dashboard/src/widgets/NetRevenueChartWidget.vue
+grep -n 'v-if="state' apps/dashboard/src/widgets/PaidActionErrorsWidget.vue
+```
+
+Each widget MUST return exactly one `v-if="state === 'loading'"`
+plus matching `v-else-if` branches; anything else fails the
+state-gate AC.
+
 ### Net Revenue Chart Specifics
 
 - Chart type: **stacked bar chart** showing gross broken into the
   four buckets (net, royalty, Stripe fees, infra COGS) bottom-to-top
 - Net is the bottom band (the eye reads bottom-up as "what we keep first")
 - Tooltip on each day shows all four bucket values plus net margin %
-- Colors come from PrimeVue severity tokens, not custom hex:
+- Colors come from PrimeVue Aura design tokens, not custom hex
+  (these are surface/text tokens — true severity tokens are
+  reserved for RYG status indicators which this WP does not
+  introduce):
   - net → `--p-primary-color`
   - royalty → `--p-text-muted-color`
-  - Stripe fees → `--p-content-border-color`
+  - Stripe fees → `--p-content-border-color` (Aura token used by
+    the existing `RevenueChartWidget.vue` for grid lines; in the
+    broader Aura set, even though WP-162's locked subset focuses
+    on the surface/border/text quartet)
   - infra COGS → `--p-surface-border`
 - No pie chart variant (per DASHBOARD-REQUIREMENTS.md §12 and WP-162
   precedent)
+- **Empty state trigger:** the Net Revenue widget renders the
+  `empty` state when `series.dates.length === 0` (after the
+  service call has resolved). A zero-length series is distinct
+  from a series of zero-value days; the latter is `data` state
+  with a visually flat chart.
+
+### ECharts Stacking Contract (Non-Negotiable, D-19608)
+
+ECharts handles stacked bars with mixed-sign values via a `stack`
+identifier on each series. Without an explicit lock, a developer
+may set per-series stack keys, omit the key on the negative-value
+series "to avoid weird rendering", or rely on ECharts default
+behavior — all three break the visual contract on negative-net
+days.
+
+- All four series MUST share the **identical** stack identifier
+  string `'total'`. The literal `stack: 'total'` is locked across
+  all four series objects.
+- Series array order MUST match the band order bottom-to-top:
+  net (index 0, bottom band), royalty (index 1), stripeFees
+  (index 2), infraCogs (index 3, top band). ECharts paints stacks
+  in array order, so this is also the render order.
+- Negative values use the **same** stack key — ECharts handles
+  the negative band positioning natively (below the zero axis).
+  Do NOT introduce a separate stack for negative buckets; doing
+  so detaches the negative bar from the positive stack and the
+  operator reads it as a different metric.
+- Tooltip series-list ordering MUST match the series-array
+  order. Operators read the tooltip top-to-bottom and expect
+  net at the top of the list, infra COGS at the bottom (the
+  inverse of the visual band order, which is conventional for
+  stacked-chart tooltips).
 
 ### Operator Interpretation Hook (Non-Negotiable, D-19606)
 
@@ -476,6 +708,24 @@ condition is **labeled**, not just rendered as a smaller bar.
    output (same dates array, same per-day values, same totals).
    This is the composable-level guarantee that the mock determinism
    contract is end-to-end honored.
+10. **DateRange normalization (D-19605 extension):** the service
+    boundary throws a full-sentence error when `range.start >
+    range.end` (lexically), and the error message names both
+    offending values. An already-normalized `YYYY-MM-DD` pair
+    passes through unchanged and is reused byte-identically as the
+    hash input.
+11. **Hash determinism (D-19605 extension):** the hash function
+    invoked twice with the same input string returns the
+    byte-identical integer output; with two different input
+    strings, returns two different integer outputs (smoke check,
+    not exhaustive collision testing — collisions are accepted per
+    the §Hash Function Contract).
+12. **Rate-zero safety guard (D-19603 extension):** invoking the
+    billing-health mock with a window that produces zero total
+    counts (either `webhookTotalCount` or `intentTotalCount`)
+    returns the corresponding rate as exactly `0` — NOT `NaN`,
+    NOT `undefined`, NOT `1`. Both rates have independent
+    coverage.
 
 Tests use `node:test` and `node:assert`. No `boardgame.io` imports.
 No network or database access.
@@ -590,6 +840,14 @@ block.
 | Operator interpretation footer | `"Net margin: X.X%"` label; informational only, no RYG in this WP | D-19606 |
 | Negative-net surfacing | Tooltip label `"Negative net day"` on `net < 0` days; range footer adds `(net loss)` qualifier when range total is negative | D-19606 |
 | Forward server contract | Response shape byte-compatible with `BillingHealth`; rate-count invariants; `authenticated-session-required` + `finance`/`admin` role gate | D-19603 |
+| Billing health window | Trailing 30 days from `range.end` (inclusive); 30 sparkline points exactly | D-19603 ext. |
+| Rate-zero safety guard | `displayRate = totalCount === 0 ? 0 : failureCount / totalCount`; never `NaN` | D-19603 ext. |
+| DateRange normalization | `YYYY-MM-DD` ISO strings, inclusive both ends, error on `start > end`, normalize at service boundary | D-19605 ext. |
+| Hash function | FNV-1a (32-bit) or equivalent pure non-crypto hash; single file with D-19605 `// why:` | D-19605 ext. |
+| Per-day tooltip margin | `dayMarginRatio = grossCents[i] === 0 ? 0 : netCents[i] / grossCents[i]` (per-day, NOT aggregate) | D-19606 ext. |
+| Shared revenue source | Both NetRevenue + Revenue widgets consume `fetchRevenueHistory(range)`; never `mockRevenueHistory` directly; single `useDateRange` source | D-19607 |
+| ECharts stacking key | All four series share `stack: 'total'`; series array order = net, royalty, stripeFees, infraCogs; negative values use the same stack key | D-19608 |
+| Widget state gate | Single `state` computed in `<script setup>`; 4-arm `v-if`/`v-else-if` template; chart only inside `'data'` arm | Structural (WP-157) |
 
 ---
 
@@ -635,6 +893,33 @@ block.
 - MUST render the operator interpretation footer
   (`"Net margin: X.X%"`) — informational only, no RYG, no threshold
   hook (D-19606)
+- MUST normalize `range.start` / `range.end` to `YYYY-MM-DD` ISO
+  strings at the service boundary; MUST throw a full-sentence
+  error when `start > end` lexically (D-19605 ext.)
+- MUST use a single hash function for mock seeding (FNV-1a or
+  equivalent), defined in one file with a `// why:` citing
+  D-19605; no inline hash math in widgets or composables
+  (D-19605 ext.)
+- MUST consume revenue history exclusively via
+  `fetchRevenueHistory(range)` in widget code; MUST NOT call
+  `mockRevenueHistory` from any file under `apps/dashboard/src/widgets/`
+  (D-19607)
+- MUST pass identical `range` references (sourced from
+  `useDateRange`) to both revenue widgets (D-19607)
+- MUST set `stack: 'total'` literal on all four Net Revenue series
+  in the echarts config; MUST NOT introduce a separate stack key
+  for negative values (D-19608)
+- MUST gate widget render exclusively through a single `state`
+  computed and a 4-arm `v-if`/`v-else-if` template; chart appears
+  only in the `'data'` arm (Widget State Gate Pattern)
+- MUST compute the chart tooltip per-day margin via
+  `dayMarginRatio = grossCents[i] === 0 ? 0 : netCents[i] / grossCents[i]`;
+  MUST NOT use the aggregate `netMarginRatio` for per-day tooltip
+  display (D-19606 ext.)
+- MUST plot exactly 30 daily data points in both `PaidActionErrorsWidget`
+  sparklines (D-19603 ext.)
+- MUST display rate as `0` when the corresponding `totalCount` is
+  `0`; `NaN` reaching the renderer is FAIL (D-19603 ext.)
 
 **Session protocol:**
 - If any ambiguity arises about the deduction percentages, STOP and
@@ -664,8 +949,10 @@ block.
       (4-state rendering: loading / error / empty / data)
 - [ ] Both new widgets respond to the `dashboard-theme-change`
       event and re-resolve their chart colors on theme toggle
-- [ ] `useNetRevenueBreakdown.test.ts` passes all 9 required tests
-      (including the new aggregation-consistency and referential-stability cases)
+- [ ] `useNetRevenueBreakdown.test.ts` passes all 12 required tests
+      (the original 7 + the harden-round-1 aggregation-consistency
+      and referential-stability + the harden-round-2 DateRange
+      normalization, hash determinism, and rate-zero safety guard)
 - [ ] All money arithmetic in the composable uses integer cents
       (no `parseFloat`, no `.toFixed()` mid-computation)
 - [ ] A day whose gross is too small to cover the fixed Stripe fee
@@ -692,6 +979,37 @@ block.
       a skeleton or spinner (never a blank card); the `error` state
       renders a full-sentence message and NO chart; the `empty` state
       renders a message and NO chart
+- [ ] **Widget state gate structural lock:** both widgets have a
+      single `state` computed in `<script setup>` returning the
+      4-state union, AND their `<template>` branches on it via a
+      4-arm `v-if` / `v-else-if` / `v-else` chain with `BaseChart`
+      only inside the `v-else` (data) arm
+- [ ] **ECharts stacking contract (D-19608):** the Net Revenue
+      widget's chart option declares `stack: 'total'` on all four
+      series; series array order is `net, royalty, stripeFees, infraCogs`;
+      no separate stack key for negative values
+- [ ] **DateRange normalization (D-19605 ext.):** the service
+      boundary rejects `range.start > range.end` with a
+      full-sentence error naming both values; normalized
+      `YYYY-MM-DD` pairs pass through unchanged
+- [ ] **Shared revenue source (D-19607):** zero widget-level calls
+      to `mockRevenueHistory`; both revenue widgets call
+      `fetchRevenueHistory(range)` against the same
+      `useDateRange`-sourced reference
+- [ ] **Billing health window (D-19603 ext.):** both
+      `PaidActionErrorsWidget` sparklines render exactly 30 daily
+      data points
+- [ ] **Rate-zero safety guard (D-19603 ext.):** when
+      `webhookTotalCount === 0` or `intentTotalCount === 0`, the
+      corresponding displayed rate is `0` exactly, never `NaN`
+- [ ] **Per-day tooltip margin (D-19606 ext.):** chart tooltip
+      shows `dayMarginRatio = grossCents[i] === 0 ? 0 : netCents[i] / grossCents[i]`,
+      computed from the hovered day's values only — NOT the
+      aggregate `netMarginRatio`
+- [ ] **Hash function single source (D-19605 ext.):** the hash
+      function (e.g., FNV-1a) lives in exactly one file with a
+      `// why:` citing D-19605; widgets and composables import it
+      rather than re-implementing
 - [ ] No file in `apps/dashboard/` imports from
       `@legendary-arena/game-engine`, `@legendary-arena/registry`,
       `@legendary-arena/preplan`, or `@legendary-arena/server`
@@ -712,7 +1030,7 @@ pnpm install && pnpm -r build
 
 # 2. Run dashboard tests
 pnpm --filter @legendary-arena/dashboard test
-#    → useNetRevenueBreakdown.test.ts passes all 9 tests
+#    → useNetRevenueBreakdown.test.ts passes all 12 tests
 #    → no other test regressions
 
 # 3. Run dev server
@@ -770,7 +1088,7 @@ pnpm -r build
 1. `pnpm -r build` exits 0
 2. `pnpm --filter @legendary-arena/dashboard build` exits 0
 3. `pnpm --filter @legendary-arena/dashboard test` exits 0 and
-   `useNetRevenueBreakdown.test.ts` passes all 9 required tests
+   `useNetRevenueBreakdown.test.ts` passes all 12 required tests
 4. `MonetizationPage.vue` renders the three widgets
    (existing revenue + new net revenue + new paid-action errors)
 5. Net revenue widget shows stacked-bar four-band layout with
@@ -786,10 +1104,14 @@ pnpm -r build
 13. Zero hard-coded hex colors in new widget files
 14. `docs/ai/REFERENCE/api-endpoints.md` is unchanged by the commit
 15. `docs/ai/STATUS.md` updated with what changed
-16. `docs/ai/DECISIONS.md` updated with D-19601, D-19602, D-19603,
-    D-19604 (aggregation + numerical integrity), D-19605 (mock
-    determinism), D-19606 (operator interpretation hook + negative
-    net signal)
+16. `docs/ai/DECISIONS.md` updated with D-19601, D-19602, D-19603
+    (incl. forward server contract + window + rate-zero
+    extensions), D-19604 (aggregation + numerical integrity),
+    D-19605 (mock determinism, incl. DateRange normalization +
+    hash function extensions), D-19606 (operator interpretation
+    hook + negative net signal, incl. per-day tooltip margin
+    extension), D-19607 (Shared Revenue Source Contract), D-19608
+    (ECharts Stacking Contract)
 17. `docs/ai/work-packets/WORK_INDEX.md` row added/checked off for WP-196
 18. No files outside `## Files Expected to Change` are modified
 
@@ -804,7 +1126,9 @@ pnpm -r build
 | D-19603 | Paid-action error visibility is the union of two surfaces — Stripe webhook fulfillment failure rate (`stripe_events.process_error IS NOT NULL`) and Checkout intent abandonment rate (`stripe_checkout_sessions.intent_status IN ('expired', 'canceled')`). The future server endpoint path is `/metrics/billing/health`. The forward contract (response shape byte-compatible with `BillingHealth`; `0.0 ≤ rate ≤ 1.0`; `count = round(total × rate)`; `authenticated-session-required` + `finance`/`admin` role gate) is locked in this WP so the follow-up server WP has zero schema ambiguity. | Webhook failures are a silent revenue leak — Stripe collected the money, but our entitlements table didn't flip, so the customer feels cheated and the operator never knows unless surfaced. Intent abandonment is the leading indicator of checkout-UX friction. Bundling both into a single widget (rather than two separate ones) reflects that they are a single class of "paid-action did not land" health signal. Naming the forward contract here prevents the classic dashboard ↔ server drift bug where the server returns a slightly different shape than the client expects. |
 | D-19604 | Aggregate values exposed by the composable (`totalGross`, `totalNet`, `netMarginRatio`) derive ONLY from summing already-rounded per-day arrays — never from recomputing against raw inputs or aggregated raw totals. Division is permitted only when producing a ratio for display, and ratios MUST NOT be re-multiplied into money. | Recompute-from-aggregate is the most common financial-dashboard correctness bug: chart totals, tooltip totals, and table totals diverge by a few cents at month boundaries and the operator can't tell which one is real. Locking the derivation direction (per-day rounded → summed) means all three displays trace to the same source. The numerical-integrity rider blocks the related class of bug where a developer notices a ratio is "close to" a percentage and feeds it back into a money calculation. |
 | D-19605 | Mock data on the dashboard is deterministic at the same standard as engine RNG: `seed = hash(range.start + '\|' + range.end)`, pure, no `Math.random()` without a seeded wrapper. Identical `range` input produces byte-identical output across calls, reloads, and widgets. | The engine's determinism guarantees only carry value if the rest of the stack matches them. A flaky mock causes flaky tests, flaky screenshots, and operators second-guessing what they saw on Tuesday. Hashing the range string is the cheapest stable seed source available — no globals, no module-load-time reads, no implicit `Date.now()`. The contract is stricter than "stable within a session" because cross-reload stability is what makes "I saw X yesterday" debuggable. |
-| D-19606 | Operator interpretation hook: the Net Revenue widget footer displays a single `"Net margin: X.X%"` label for the selected range — informational only, no RYG / threshold / alert hook in this WP. Negative-net days surface explicitly via tooltip label `"Negative net day"`; range-negative net margin renders `"Net margin: −X.X% (net loss)"`. | A dashboard widget that's purely descriptive forces the operator to do mental math under load; a single interpretive cue ("are we making money or not") collapses the decision. Deferring RYG to a future WP is deliberate — real percentages aren't known yet, so any threshold today would be meaningless and bake in the wrong defaults. Surfacing negative net explicitly (rather than just rendering a smaller bar) turns the highest-signal edge case into the most visible signal — exactly inverted from the common bug of clamping it away. |
+| D-19606 | Operator interpretation hook: the Net Revenue widget footer displays a single `"Net margin: X.X%"` label for the selected range — informational only, no RYG / threshold / alert hook in this WP. Negative-net days surface explicitly via tooltip label `"Negative net day"`; range-negative net margin renders `"Net margin: −X.X% (net loss)"`. The harden-round-2 extension locks the tooltip-margin formula as **per-day** (`dayMarginRatio = grossCents[i] === 0 ? 0 : netCents[i] / grossCents[i]`), distinct from the aggregate `netMarginRatio` used in the footer — both numbers exist; they answer different questions. | A dashboard widget that's purely descriptive forces the operator to do mental math under load; a single interpretive cue ("are we making money or not") collapses the decision. Deferring RYG to a future WP is deliberate — real percentages aren't known yet, so any threshold today would be meaningless and bake in the wrong defaults. Surfacing negative net explicitly (rather than just rendering a smaller bar) turns the highest-signal edge case into the most visible signal — exactly inverted from the common bug of clamping it away. The per-day vs aggregate margin split prevents the related bug where the tooltip shows the range average on every hover, telling the operator the wrong number for the surface they're reading. |
+| D-19607 | Shared Revenue Source Contract: `NetRevenueChartWidget` and `RevenueChartWidget` MUST consume the same `fetchRevenueHistory(range)` call path, the same `useDateRange` reference, and a single shared fetch invocation. Direct calls to `mockRevenueHistory` from widget code are forbidden. | The harden-round-1 acceptance criterion "Cross-widget consistency: sum of NetRevenueChartWidget gross series exactly equals RevenueChartWidget total" was prose-level only — auditable manually but not structurally enforced. Without this contract, a developer adding a third revenue widget could legitimately construct its own series and watch the cross-widget totals drift by mock-determinism distance. Locking the call path means the grep is the audit. |
+| D-19608 | ECharts Stacking Contract: all four Net Revenue series share the literal stack identifier `'total'`; series array order is fixed as `net, royalty, stripeFees, infraCogs` (bottom-to-top render); negative values use the same stack key; tooltip series order matches series-array order. | ECharts handles mixed-sign stacked bars correctly only when every series shares the stack key. A well-meaning developer might think the negative band "looks wrong" and assign the net series a separate stack for negative days — which detaches the negative bar from the positive stack and visually reads as a different metric. Locking the contract structurally prevents this class of "fix" from ever being merged. |
 
 ---
 
@@ -871,6 +1195,33 @@ Specific deferrals out of WP-A:
 - Do NOT add RYG colors, threshold comparisons, or alert hooks to
   the operator interpretation footer in this WP — they are
   deliberately deferred until real percentages exist (D-19606)
+- Do NOT call `mockRevenueHistory` (or any lower-level mock) from
+  widget code — only `fetchRevenueHistory(range)` may appear in
+  widget files (D-19607)
+- Do NOT introduce a second `useDateRange` or independent reactive
+  `range` ref alongside the page-level one — both revenue widgets
+  share the page-level reference (D-19607)
+- Do NOT assign a different `stack` key (e.g., `'positive'`,
+  `'negative'`) to any series in the Net Revenue chart "to fix"
+  negative-day rendering — ECharts handles mixed signs on a
+  single stack key by design (D-19608)
+- Do NOT re-implement the hash function inline in a widget,
+  composable, or mock generator — import from the single source
+  file with the D-19605 `// why:` (D-19605 ext.)
+- Do NOT accept timestamped or timezoned values for `range.start`
+  / `range.end` at any boundary — `YYYY-MM-DD` only; the service
+  boundary normalizes (D-19605 ext.)
+- Do NOT compute the chart tooltip margin from the aggregate
+  `netMarginRatio` — per-day tooltip uses per-day values
+  (D-19606 ext.)
+- Do NOT branch the widget render on multiple booleans (e.g.,
+  `v-if="loading" v-else-if="error"`) — use the single `state`
+  computed and the locked 4-arm `v-if` chain (Widget State Gate)
+- Do NOT call the term "banker's rounding" anywhere; `Math.round`
+  is round-half-toward-+∞, not banker's (round-half-to-even) —
+  the wording fix is part of the harden-round-2 contract
+- Do NOT let `NaN` reach the renderer for any rate — branch on
+  `totalCount === 0` upstream (D-19603 ext.)
 
 ---
 
@@ -888,6 +1239,14 @@ Specific deferrals out of WP-A:
 | Two widget reloads on the same range show different mock values | Mock seeded from `Date.now()` or `Math.random()` instead of `hash(range.start + '\|' + range.end)`; rebuild generator per D-19605 |
 | Negative net day rendered without a tooltip label | Tooltip formatter forgot to branch on `net < 0`; add the `"Negative net day"` label inside the tooltip formatter, not on the chart series |
 | Operator interpretation footer missing or RYG-colored | Footer dropped during widget refactor, or a future-WP threshold hook was added prematurely; the footer is mandatory and must remain informational-only in this WP |
+| Net Revenue and Revenue Trend widgets show different gross totals for the same range | Shared Revenue Source Contract violated — one widget bypassed `fetchRevenueHistory` or sourced a different `range` reference; D-19607 violation. Fix: grep should show exactly 2 `fetchRevenueHistory` widget call sites and 0 `mockRevenueHistory` widget call sites |
+| Two browser reloads show different mock values for the same operator-picked range | DateRange normalization missed somewhere (e.g., `range.start` arrived with a `T00:00:00.000Z` suffix in one path, plain `YYYY-MM-DD` in another); D-19605 ext. violation. Fix: normalize at the service boundary; widgets see only normalized strings |
+| Chart tooltip shows the same margin percentage on every day | Tooltip formatter is reading `breakdown.netMarginRatio.value` (aggregate) instead of per-day values; D-19606 ext. violation. Fix: compute per-day `dayMarginRatio` inside the tooltip formatter |
+| Negative-net day bar visually detached from the positive stack | A series was assigned a different `stack` key for negative values; D-19608 violation. Fix: every series uses `stack: 'total'` literal |
+| Sparkline shows 22 points one render and 30 the next | Window definition not enforced; D-19603 ext. violation. Fix: window is trailing 30 days from `range.end`, exactly 30 points |
+| Rate displays as `NaN%` in the operator UI | Zero-denominator slipped past the guard; D-19603 ext. violation. Fix: branch on `totalCount === 0` upstream of the renderer |
+| Widget renders chart AND a transient error message at the same time | Render branching used independent `v-if`s on `loading`/`error` instead of the single `state` gate; Widget State Gate violation. Fix: rewrite the template to the 4-arm chain |
+| Operator on a different machine sees different mock values | Hash function depends on JS-engine-specific behavior or wasn't sourced from the single locked file; D-19605 ext. violation. Fix: use the FNV-1a implementation from the single source file; verify with a cross-platform smoke test |
 
 ---
 
@@ -908,7 +1267,7 @@ Specific deferrals out of WP-A:
 | 11 | Auth posture | N/A — page-level role gates (`admin`, `finance`) are inherited from WP-157, not modified here |
 | 12 | Tests — `node:test` only | PASS — 7-test suite specified; no boardgame.io or DB access |
 | 13 | Verification steps — pnpm, expected output | PASS — every step is exact |
-| 14 | Acceptance criteria binary and observable | PASS — 20 criteria after harden pass (above the §14 6–12 soft guidance; each item is binary, observable, and specific per §14's actual FAIL conditions; precedent: WP-107 / WP-162 / EC-218 land with extended criteria sets when contract-heavy). No subjective or vague items. Every criterion references a file, function, value, or D-entry. |
+| 14 | Acceptance criteria binary and observable | PASS — 29 criteria after harden-round-2 (was 14 → 20 in round 1 → 29 now). Far above the §14 6–12 soft guidance; every item remains binary, observable, and specific per §14's actual FAIL conditions; precedent: WP-107 / WP-162 / EC-218 land with extended criteria sets when contract-heavy. No subjective or vague items. Every criterion references a file, function, value, or D-entry. The round-2 expansion locks the eight previously-implicit contracts (DateRange normalization, hash function, shared revenue source, ECharts stacking, widget state gate, per-day tooltip margin, billing-health window, rate-zero guard) into explicit AC items. |
 | 15 | Definition of Done includes STATUS / DECISIONS / WORK_INDEX | PASS — items 15-17 |
 | 16 | Code style (00.6) — no abbreviations, no nested ternaries, no `.reduce()` with branching, JSDoc on functions, `// why:` on non-obvious code, full-sentence error messages | PASS — constraints block and anti-patterns enforce |
 | 17 | Vision Alignment | PASS — §Financial Sustainability, NG-1..NG-8 cited; conflict assertion = no conflict; non-goal proximity = none crossed; determinism preservation = N/A documented |
