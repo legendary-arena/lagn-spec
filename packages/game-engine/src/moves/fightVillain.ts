@@ -18,6 +18,7 @@ import { awardAttachedBystanders } from '../board/bystanders.logic.js';
 import { getAvailableAttack, spendAttack } from '../economy/economy.logic.js';
 import { isGuardBlocking, getPatrolModifier } from '../board/boardKeywords.logic.js';
 import { executeVillainAbilities } from '../villain/villainEffects.execute.js';
+import { composeFightNarrative } from '../events/notableEvents.compose.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
@@ -103,14 +104,46 @@ export function fightVillain(
   // the message push, so they observe post-award pile state. A Fight:
   // captureBystander awards the newly attached bystander immediately (the card
   // is already in the victory pile), avoiding a stranded bystander (WP-185).
-  executeVillainAbilities(G, ctx, cardId, 'onFight');
+  // WP-200: capture the executor's return — the applied effect keywords in
+  // dispatch order — for the fightResolved emission below.
+  const appliedFightEffects = executeVillainAbilities(G, ctx, cardId, 'onFight');
 
   G.messages.push(
     `Player ${ctx.currentPlayer} fought "${cardId}" at city space ${cityIndex}.`,
   );
+  const bystandersRescued = awardResult.playerVictory.length - victoryBefore;
   if (awardResult.playerVictory.length > victoryBefore) {
     G.messages.push(
-      `Player ${ctx.currentPlayer} rescued ${awardResult.playerVictory.length - victoryBefore} bystander(s) from "${cardId}".`,
+      `Player ${ctx.currentPlayer} rescued ${bystandersRescued} bystander(s) from "${cardId}".`,
     );
   }
+
+  // why: WP-200 — emission is the LAST step in this move (after Fight:
+  // effect dispatch AND after both `G.messages.push` calls), so the event
+  // observes the fully settled post-mutation state. `bystandersRescued`
+  // reflects the post-award delta; `appliedEffects` is the executor's
+  // dispatch-order return (post-safe-skip). Narrative composition uses the
+  // resolved display name with a defensive fallback to raw cardId when
+  // G.cardDisplayData has no matching entry — emissions never throw
+  // (D-20006 + WP §Non-Negotiable Constraints).
+  // why: WP-200 — defensive access; legacy test G states may leave
+  // `cardDisplayData` undefined. Production setup always builds it.
+  const fightCardDisplay = G.cardDisplayData?.[cardId];
+  const fightCardName =
+    fightCardDisplay && typeof fightCardDisplay.name === 'string' && fightCardDisplay.name.length > 0
+      ? fightCardDisplay.name
+      : cardId;
+  G.notableEvents.push({
+    type: 'fightResolved',
+    playerId: ctx.currentPlayer,
+    cardId,
+    citySpace: cityIndex,
+    bystandersRescued,
+    appliedEffects: appliedFightEffects,
+    narrative: composeFightNarrative(
+      fightCardName,
+      bystandersRescued,
+      appliedFightEffects,
+    ),
+  });
 }

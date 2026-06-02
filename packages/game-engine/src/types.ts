@@ -180,6 +180,26 @@ export {
   VILLAIN_EFFECT_KEYWORDS,
 } from './rules/villainAbility.types.js';
 
+// why: WP-200 — notable game event contracts (NotableGameEvent,
+// NotableGameEventType, SchemeTwistResolverKey, FightResolvedEvent,
+// AmbushResolvedEvent, SchemeTwistResolvedEvent, MastermindStrikeResolvedEvent)
+// are defined canonically in src/events/notableEvents.types.ts. Re-exported
+// here so consumers importing from './types.js' have access. The canonical
+// drift-detection arrays are value exports.
+export type {
+  NotableGameEvent,
+  NotableGameEventType,
+  SchemeTwistResolverKey,
+  FightResolvedEvent,
+  AmbushResolvedEvent,
+  SchemeTwistResolvedEvent,
+  MastermindStrikeResolvedEvent,
+} from './events/notableEvents.types.js';
+export {
+  NOTABLE_EVENT_TYPES,
+  SCHEME_TWIST_RESOLVER_KEYS,
+} from './events/notableEvents.types.js';
+
 // why: Zone types (CardExtId, PlayerZones, GlobalPiles) were originally
 // defined inline in this file during WP-005B. WP-006A consolidated them
 // into src/state/zones.types.ts as the canonical source. They are
@@ -345,6 +365,7 @@ import type { SchemeState } from './scheme/schemeState.types.js';
 import type { HookDefinition } from './rules/ruleHooks.types.js';
 import type { HeroAbilityHook } from './rules/heroAbility.types.js';
 import type { VillainAbilityHook } from './rules/villainAbility.types.js';
+import type { NotableGameEvent } from './events/notableEvents.types.js';
 import type { LobbyState } from './lobby/lobby.types.js';
 import type { VillainDeckState, RevealedCardType } from './villainDeck/villainDeck.types.js';
 import type { CityZone, HqZone } from './board/city.types.js';
@@ -606,6 +627,20 @@ export interface LegendaryGameState {
   // villainEffects.execute.ts (WP-185).
   /** Villain/henchman ability hook declarations (data-only). */
   villainAbilityHooks: Readonly<VillainAbilityHook[]>;
+
+  // why: WP-200 — append-only structured event log emitted at four fire
+  // sites (fightVillain.ts, villainDeck.reveal.ts ambush branch,
+  // schemeTwistResolvers.ts × 5 resolvers, mastermindHandlers.ts). Each
+  // entry is a JSON-serialisable NotableGameEvent (discriminated union —
+  // see events/notableEvents.types.ts). Append-only via `.push(...)` —
+  // never spliced, reassigned, sorted, or mutated. Replay determinism: same
+  // setup + same moves produces a byte-identical sequence. Projected
+  // through UIState.notableEvents so the arena client (WP-201) renders
+  // descriptive "what happened" overlays without parsing G.messages
+  // strings. Empty array initialiser lives in
+  // setup/buildInitialGameState.ts.
+  /** Append-only typed event log for player-visible outcomes (WP-200). */
+  notableEvents: NotableGameEvent[];
 
   // why: lobby state is stored in G so the UI can observe lobby completion
   // and readiness status. Initialized at setup time from ctx.numPlayers.

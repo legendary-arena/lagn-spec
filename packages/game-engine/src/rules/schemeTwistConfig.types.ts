@@ -9,6 +9,7 @@
  */
 
 import type { LegendaryGameState } from '../types.js';
+import type { CardExtId } from '../state/zones.types.js';
 import type { RevealContext } from '../villainDeck/villainDeck.reveal.js';
 import type { ImplementationMap } from './ruleRuntime.execute.js';
 
@@ -46,10 +47,26 @@ export interface SchemeTwistConfig {
  * Resolvers mutate G directly. They push messages to gameState.messages.
  * They do NOT return RuleEffect[] — the generic counter-increment +
  * loss-check effects are appended by the dispatcher after the resolver runs.
+ *
+ * WP-200 / D-20003 (signature widening, 01.5 cascade allowlist extension):
+ * `twistCardId` is the 5th positional parameter carrying the zone-instance
+ * ext_id of the scheme-twist card that triggered. Each resolver pushes one
+ * `schemeTwistResolved` event to `G.notableEvents` at its terminal point,
+ * stamping the event with `twistCardId`. Injected by the dispatcher
+ * (`schemeHandlers.ts:schemeTwistHandler`) from the trigger payload —
+ * resolvers do not source it from `G` (the cardId is in-flight between
+ * deck removal and twist-pile routing at resolver-call time, so no G
+ * field carries it).
+ *
+ * The 5th param is optional in the type so legacy direct-resolver test
+ * call sites compile unchanged; resolver implementations fall back to a
+ * sentinel ext_id on the optional path. The production dispatch path
+ * always passes the real cardId.
  */
 export type SchemeTwistResolver = (
   gameState: LegendaryGameState,
   context: RevealContext,
   implementationMap: ImplementationMap,
   params: Record<string, unknown>,
+  twistCardId?: CardExtId,
 ) => void;

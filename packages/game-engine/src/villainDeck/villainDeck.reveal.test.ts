@@ -164,6 +164,11 @@ function createMockGameState(options: {
       ready: {},
       started: false,
     },
+    // why: WP-200 — the Ambush branch pushes one `ambushResolved` event
+    // and the scheme-twist / mastermind-strike paths (via their
+    // handlers) push their own events. Initialised here so the emissions
+    // do not throw on a missing field.
+    notableEvents: [],
   };
 }
 
@@ -1118,6 +1123,120 @@ function buildEscapeConfig(): MatchSetupConfig {
     sidekicksCount: 5,
   };
 }
+
+// ---------------------------------------------------------------------------
+// WP-200 — ambushResolved emission
+// ---------------------------------------------------------------------------
+
+describe('revealVillainCard — WP-200 ambushResolved emission', () => {
+  it('pushes exactly one ambushResolved event when an ambush villain enters the city', () => {
+    const villainExtId = 'villain-ambush-1' as CardExtId;
+    const gameState = createMockGameState({
+      deck: [villainExtId],
+      discard: [],
+      cardTypes: { [villainExtId]: 'villain' },
+      cardKeywords: { [villainExtId]: ['ambush'] },
+      villainAbilityHooks: [
+        {
+          cardId: villainExtId,
+          timing: 'onAmbush',
+          keywords: ['gainWoundEachPlayer'],
+          effects: ['gainWoundEachPlayer'],
+        },
+      ],
+    });
+    gameState.playerZones['0'] = {
+      deck: [],
+      hand: [],
+      discard: [],
+      inPlay: [],
+      victory: [],
+    };
+    gameState.piles.wounds = ['w0' as CardExtId];
+
+    const setupCtx = makeMockCtx({ numPlayers: 1 });
+    const moveContext = {
+      G: gameState,
+      ctx: {
+        ...setupCtx.ctx,
+        currentPlayer: '0',
+        phase: 'play',
+        turn: 1,
+        numMoves: 0,
+        playOrder: ['0'],
+        playOrderPos: 0,
+        activePlayers: null,
+      },
+      random: setupCtx.random,
+      events: { endTurn: () => {}, setPhase: () => {}, endGame: () => {} },
+      playerID: '0' as string,
+      log: { setMetadata: () => {} },
+    };
+    revealVillainCard(moveContext);
+
+    assert.equal(
+      gameState.notableEvents.length,
+      1,
+      'exactly one ambushResolved event must be emitted',
+    );
+    const event = gameState.notableEvents[0]!;
+    assert.equal(event.type, 'ambushResolved');
+    if (event.type === 'ambushResolved') {
+      assert.equal(event.revealedCardId, villainExtId);
+      assert.deepStrictEqual(
+        event.appliedEffects,
+        ['gainWoundEachPlayer'],
+        'appliedEffects mirrors the executor dispatch order',
+      );
+      assert.ok(
+        event.narrative.length > 0 && event.narrative.includes(villainExtId),
+        'narrative is non-empty and names the card',
+      );
+    }
+  });
+
+  it('does NOT push ambushResolved when the villain has no Ambush keyword', () => {
+    const villainExtId = 'villain-noambush-1' as CardExtId;
+    const gameState = createMockGameState({
+      deck: [villainExtId],
+      discard: [],
+      cardTypes: { [villainExtId]: 'villain' },
+      cardKeywords: {},
+    });
+    gameState.playerZones['0'] = {
+      deck: [],
+      hand: [],
+      discard: [],
+      inPlay: [],
+      victory: [],
+    };
+
+    const setupCtx = makeMockCtx({ numPlayers: 1 });
+    const moveContext = {
+      G: gameState,
+      ctx: {
+        ...setupCtx.ctx,
+        currentPlayer: '0',
+        phase: 'play',
+        turn: 1,
+        numMoves: 0,
+        playOrder: ['0'],
+        playOrderPos: 0,
+        activePlayers: null,
+      },
+      random: setupCtx.random,
+      events: { endTurn: () => {}, setPhase: () => {}, endGame: () => {} },
+      playerID: '0' as string,
+      log: { setMetadata: () => {} },
+    };
+    revealVillainCard(moveContext);
+
+    // why: WP-200 — Ambush emission is gated by `hasAmbush`; without the
+    // keyword, no event is pushed (the unconditional bystander attach is
+    // NOT an Ambush effect per D-20001-style scoping).
+    assert.equal(gameState.notableEvents.length, 0);
+  });
+});
 
 describe('revealVillainCard — real-registry villain end-to-end (WP-186 §Files #7c; WP-191 consumption)', () => {
   it('a real Venom escape fires its Escape: [effect:gainWoundEachPlayer] marker on every player', () => {

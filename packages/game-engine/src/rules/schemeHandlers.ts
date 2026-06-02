@@ -13,6 +13,7 @@
 import type { RuleEffect } from './ruleHooks.types.js';
 import type { ImplementationMap } from './ruleRuntime.execute.js';
 import type { LegendaryGameState } from '../types.js';
+import type { CardExtId } from '../state/zones.types.js';
 import type { RevealContext } from '../villainDeck/villainDeck.reveal.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
 import { SCHEME_TWIST_RESOLVERS } from './schemeTwistResolvers.js';
@@ -79,18 +80,41 @@ function buildGenericTwistEffects(
  *
  * @param gameState - Current game state (mutated by resolvers).
  * @param ctx - boardgame.io context (passed through to chained reveals).
- * @param _payload - Trigger payload ({ cardId } from villain reveal).
+ * @param payload - Trigger payload `{ cardId }` from `villainDeck.reveal.ts`.
+ *   WP-200: previously unused (`_payload`); now read to thread the
+ *   twist cardId to the resolver so the resolver can push a
+ *   `schemeTwistResolved` event with the correct `twistCardId`. The
+ *   cardId is in-flight between deck removal (step 4 of
+ *   `performVillainReveal`) and twist-pile routing (step 7); the
+ *   resolver runs in step 5 inside `executeRuleHooks`, so the trigger
+ *   payload is the only path that carries the cardId.
  * @param implementationMap - Handler map threaded through chained reveals.
  * @returns Array of RuleEffect descriptions to apply.
  */
 export function schemeTwistHandler(
   gameState: LegendaryGameState,
   ctx: unknown,
-  _payload: unknown,
+  payload: unknown,
   implementationMap: ImplementationMap,
 ): RuleEffect[] {
   const schemeId = gameState.selection.schemeId;
   const config = SCHEME_TWIST_CONFIGS.get(schemeId);
+
+  // why: WP-200 — the trigger payload is shaped `{ cardId }` by
+  // `villainDeck.reveal.ts` (step 5 — `executeRuleHooks('onSchemeTwistRevealed',
+  // { cardId }, ...)`). Narrowed defensively because the rule pipeline's
+  // payload param is typed `unknown`; an empty / malformed payload falls
+  // back to the empty string so the resolver still emits a well-typed
+  // event rather than throwing (moves never throw, per architecture
+  // rules). The fallback is observably impossible in production flow but
+  // protects tests that call the handler directly with a stub payload.
+  const twistCardId = (() => {
+    if (payload === null || payload === undefined) return '' as CardExtId;
+    if (typeof payload !== 'object') return '' as CardExtId;
+    const candidate = (payload as { cardId?: unknown }).cardId;
+    if (typeof candidate !== 'string') return '' as CardExtId;
+    return candidate as CardExtId;
+  })();
 
   if (config) {
     const resolver = SCHEME_TWIST_RESOLVERS[config.resolverId];
@@ -105,6 +129,7 @@ export function schemeTwistHandler(
         ctx as RevealContext,
         implementationMap,
         config.params,
+        twistCardId,
       );
     } else {
       gameState.messages.push(

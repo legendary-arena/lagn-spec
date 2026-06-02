@@ -84,6 +84,11 @@ function makeTestState(): LegendaryGameState {
     hq: [null, null, null, null, null],
     lobby: { requiredPlayers: 1, ready: {}, started: false },
     heroAbilityHooks: [],
+    // why: WP-200 — mastermindStrikeHandler pushes one
+    // `mastermindStrikeResolved` event to G.notableEvents at its terminal
+    // point. Initialised here so the emission does not throw on a missing
+    // field; required by D-20003.
+    notableEvents: [],
   };
 }
 
@@ -411,5 +416,46 @@ describe('mastermindStrikeHandler — Magneto Master Strike', () => {
       1,
       'Generic bystander capture still runs for any mastermind',
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-200 — mastermindStrikeResolved emission
+// ---------------------------------------------------------------------------
+
+describe('mastermindStrikeHandler — WP-200 mastermindStrikeResolved emission', () => {
+  it('pushes exactly one mastermindStrikeResolved event per strike resolution', () => {
+    const gameState = makeTestState();
+    mastermindStrikeHandler(gameState, {}, { cardId: 'master-strike-00' }, {});
+
+    assert.equal(
+      gameState.notableEvents.length,
+      1,
+      'exactly one mastermindStrikeResolved event must be emitted',
+    );
+    const event = gameState.notableEvents[0]!;
+    assert.equal(event.type, 'mastermindStrikeResolved');
+    if (event.type === 'mastermindStrikeResolved') {
+      assert.equal(event.strikeCardId, 'master-strike-00');
+      assert.ok(
+        event.narrative.length > 0 && event.narrative.includes('master-strike-00'),
+        'narrative is non-empty and names the strike card',
+      );
+    }
+  });
+
+  it('falls back to empty strikeCardId when payload is malformed (no throw)', () => {
+    // why: WP-200 + architecture rules — moves never throw. Defensive
+    // payload narrowing yields '' when the trigger payload is missing /
+    // not an object / missing cardId. Production dispatch always supplies
+    // `{ cardId: string }`; this guard only matters for the malformed-
+    // payload code path that is reachable only via misuse / test stubs.
+    const gameState = makeTestState();
+    mastermindStrikeHandler(gameState, {}, null, {});
+    assert.equal(gameState.notableEvents.length, 1);
+    const event = gameState.notableEvents[0]!;
+    if (event.type === 'mastermindStrikeResolved') {
+      assert.equal(event.strikeCardId, '');
+    }
   });
 });

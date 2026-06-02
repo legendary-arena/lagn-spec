@@ -67,6 +67,9 @@ function makeTestState(counterOverrides?: Record<string, number>): LegendaryGame
       sidekicks: [],
     },
     messages: [],
+    // why: WP-200 — required field; scheme twist resolvers emit to
+    // `notableEvents` at their terminal point.
+    notableEvents: [],
     counters: counterOverrides ?? {},
     hookRegistry: [],
     villainDeck: { deck: [], discard: [] },

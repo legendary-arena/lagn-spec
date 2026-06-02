@@ -1,11 +1,13 @@
 /**
  * Villain & henchman ability execution for the Legendary Arena game engine.
  *
- * executeVillainAbilities applies the locked 5-keyword MVP effect vocabulary
- * for a card at a given timing (onAmbush / onFight). It mutates G directly via
- * existing zone helpers and returns void — it does NOT return RuleEffect[] and
- * is deliberately separate from the global rule-hook pipeline (D-18501).
- * Out-of-vocabulary effects safe-skip silently.
+ * executeVillainAbilities applies the locked 6-keyword MVP effect vocabulary
+ * for a card at a given timing (onAmbush / onFight / onEscape). It mutates G
+ * directly via existing zone helpers and returns the applied
+ * `VillainEffectKeyword[]` in dispatch order (WP-200) so the four fire-site
+ * emissions can record which effects actually ran. It is deliberately
+ * separate from the global rule-hook pipeline (D-18501). Out-of-vocabulary
+ * effects safe-skip silently and are NOT included in the return array.
  *
  * Imports no game framework and no registry package. No .reduce().
  * Uses existing helpers only: gainWound, koCard, moveCardFromZone,
@@ -35,27 +37,42 @@ import { WOUND_EXT_ID } from '../setup/pilesInit.js';
 /**
  * Applies villain/henchman ability effects for a card at a given timing.
  *
- * Called from the Fight fire site (fightVillain.ts, 'onFight') and the Ambush
- * fire site (villainDeck.reveal.ts, 'onAmbush'). Looks up the card's hooks for
- * the timing and applies each effect in left-to-right array order.
+ * Called from the Fight fire site (fightVillain.ts, 'onFight'), the Ambush
+ * fire site (villainDeck.reveal.ts, 'onAmbush'), and the Escape fire site
+ * (villainDeck.reveal.ts, 'onEscape' — WP-186). Looks up the card's hooks
+ * for the timing and applies each effect in left-to-right array order.
  *
  * @param G - Game state (mutated under Immer draft).
  * @param ctx - framework context passed as unknown to avoid a game-framework
  *   import. Only ctx.currentPlayer is read.
  * @param cardId - The villain/henchman card-instance ext_id that triggered.
- * @param timing - Which timing fired ('onAmbush' or 'onFight').
+ * @param timing - Which timing fired ('onAmbush', 'onFight', or 'onEscape').
+ * @returns The applied effect keywords in dispatch order (post-safe-skip).
+ *   WP-200 widening (D-20003): the return value lets the four fire-site
+ *   emissions record which Fight: / Ambush: effects actually ran. Body
+ *   behaviour is unchanged from WP-185 — only the return signature
+ *   widens from `void` to `VillainEffectKeyword[]`. Out-of-vocabulary
+ *   effects safe-skip and are NOT included. Callers that ignore the
+ *   return value compile unchanged.
  */
 export function executeVillainAbilities(
   G: LegendaryGameState,
   ctx: unknown,
   cardId: CardExtId,
   timing: VillainAbilityTiming,
-): void {
+): VillainEffectKeyword[] {
+  // why: WP-200 — accumulator captures the effect keywords whose case
+  // branches actually ran, in dispatch order. Returned to the caller so
+  // emissions can record exactly which Fight/Ambush effects fired.
+  // Out-of-vocab effects (the default case) are NOT appended; the
+  // emission sites see only effects whose state mutation was attempted.
+  const appliedEffects: VillainEffectKeyword[] = [];
+
   // why: guard against older test mocks (and pre-WP-185 G states) that lack
   // villainAbilityHooks — mirrors the WP-022 heroAbilityHooks guard. No hooks
   // means no effects.
   if (!G.villainAbilityHooks || G.villainAbilityHooks.length === 0) {
-    return;
+    return appliedEffects;
   }
 
   // why: ctx is typed `unknown` and narrowed via `as` to the one field this
@@ -68,9 +85,14 @@ export function executeVillainAbilities(
   const hooks = getVillainHooksForCard(G.villainAbilityHooks, cardId, timing);
   for (const hook of hooks) {
     for (const effect of hook.effects) {
-      applyVillainEffect(G, currentPlayer, cardId, timing, effect);
+      const applied = applyVillainEffect(G, currentPlayer, cardId, timing, effect);
+      if (applied) {
+        appliedEffects.push(effect);
+      }
     }
   }
+
+  return appliedEffects;
 }
 
 // ---------------------------------------------------------------------------
@@ -85,6 +107,13 @@ export function executeVillainAbilities(
  * @param cardId - The triggering villain/henchman card-instance ext_id.
  * @param timing - The timing that fired (changes captureBystander behavior).
  * @param effect - The effect keyword to apply.
+ * @returns `true` when an in-vocab case branch ran (regardless of whether
+ *   mutation guards short-circuited inside it); `false` only on the
+ *   out-of-vocab default. WP-200 D-20003: drives the `appliedEffects`
+ *   array returned by `executeVillainAbilities` — only effects whose
+ *   dispatch branch reached the body are listed (the post-safe-skip
+ *   contract). Mutation-guarded short-circuits (e.g., empty wound pile)
+ *   still count as "applied" because the keyword was attempted.
  */
 function applyVillainEffect(
   G: LegendaryGameState,
@@ -92,7 +121,7 @@ function applyVillainEffect(
   cardId: CardExtId,
   timing: VillainAbilityTiming,
   effect: VillainEffectKeyword,
-): void {
+): boolean {
   switch (effect) {
     case 'gainWoundEachPlayer': {
       // why: every player gains 1 wound (subject to wound-pile availability),
@@ -110,21 +139,26 @@ function applyVillainEffect(
           G.turnEconomy.woundsDrawn += 1;
         }
       }
-      break;
+      return true;
     }
     case 'gainWoundCurrentPlayer': {
       const zones = G.playerZones[currentPlayer];
-      if (!zones) break;
-      if (G.piles.wounds.length === 0) break;
+      // why: WP-200 — mutation-guarded short-circuit still counts as
+      // "applied" per the post-safe-skip contract (the keyword was
+      // attempted; the empty-pile / missing-zone guards short-circuit
+      // body work, not the dispatch). Returning true here keeps the
+      // emission accurate to which effect tokens fired their case branch.
+      if (!zones) return true;
+      if (G.piles.wounds.length === 0) return true;
       const result = gainWound(G.piles.wounds, zones.discard);
       G.piles.wounds = result.woundsPile;
       zones.discard = result.playerDiscard;
       G.turnEconomy.woundsDrawn += 1;
-      break;
+      return true;
     }
     case 'koHeroCurrentPlayer': {
       koOneHeroForPlayer(G, currentPlayer);
-      break;
+      return true;
     }
     case 'koHeroEachPlayer': {
       // why: iterate every player and delegate to the shared resolver. The
@@ -148,18 +182,18 @@ function applyVillainEffect(
       for (const playerId of playerIds) {
         koOneHeroForPlayer(G, playerId);
       }
-      break;
+      return true;
     }
     case 'heroDeckTopToEscape': {
       // why: WP-185 §Scope wrote "G.piles.heroDeck[0]" but the engine's hero
       // reservoir is the top-level G.heroDeck (GlobalPiles has no heroDeck);
       // this moves the top of that reservoir to the escaped pile. Silent no-op
       // when the reservoir is empty.
-      if (G.heroDeck.length === 0) break;
+      if (G.heroDeck.length === 0) return true;
       const topCard = G.heroDeck[0]!;
       G.heroDeck = G.heroDeck.slice(1);
       G.escapedPile = [...G.escapedPile, topCard];
-      break;
+      return true;
     }
     case 'captureBystander': {
       const attachResult = attachBystanderToVillain(
@@ -186,14 +220,18 @@ function applyVillainEffect(
           zones.victory = awardResult.playerVictory;
         }
       }
-      break;
+      return true;
     }
     default: {
       // why: out-of-vocabulary effects safe-skip silently — moves never throw,
       // no console output, no message push (matches the WP-022 hero-effects
       // precedent for unsupported keywords). Reachable only via a malformed
       // hook; the parser validates markers against VILLAIN_EFFECT_KEYWORDS.
-      break;
+      // WP-200 D-20003: returning false excludes the effect from the
+      // executor's `appliedEffects[]` return value — the post-safe-skip
+      // contract means emission sites only see effects whose dispatch
+      // branch ran (not parsed-but-unknown tokens).
+      return false;
     }
   }
 }

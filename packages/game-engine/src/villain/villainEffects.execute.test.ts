@@ -683,3 +683,94 @@ describe('executeVillainAbilities — koHeroEachPlayer (WP-189)', () => {
     assert.deepStrictEqual(G.ko, [], 'no KO when there are no players');
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-200 — return-shape assertions (additive)
+// ---------------------------------------------------------------------------
+
+describe('executeVillainAbilities — WP-200 return shape', () => {
+  it('returns the applied keywords in dispatch order for a multi-effect hook', () => {
+    const G = makeG({
+      hooks: [
+        hook('v-x', 'onFight', ['captureBystander', 'gainWoundCurrentPlayer']),
+      ],
+      bystanders: ['b0'] as CardExtId[],
+      wounds: ['w0'] as CardExtId[],
+    });
+    const applied = executeVillainAbilities(
+      G,
+      CTX,
+      'v-x' as CardExtId,
+      'onFight',
+    );
+    assert.deepStrictEqual(applied, ['captureBystander', 'gainWoundCurrentPlayer']);
+  });
+
+  it('returns [] when no hooks match the (cardId, timing)', () => {
+    const G = makeG({
+      hooks: [hook('v-x', 'onAmbush', ['captureBystander'])],
+      bystanders: ['b0'] as CardExtId[],
+    });
+    const applied = executeVillainAbilities(
+      G,
+      CTX,
+      'v-x' as CardExtId,
+      'onFight',
+    );
+    assert.deepStrictEqual(applied, []);
+  });
+
+  it('returns [] when villainAbilityHooks is empty (guard path)', () => {
+    const G = makeG({ hooks: [] });
+    const applied = executeVillainAbilities(
+      G,
+      CTX,
+      'v-x' as CardExtId,
+      'onFight',
+    );
+    assert.deepStrictEqual(applied, []);
+  });
+
+  it('post-safe-skip: out-of-vocab effects are NOT in the returned array', () => {
+    // why: WP-200 D-20003 — the executor's `appliedEffects[]` lists only
+    // effects whose case branch ran. Parsed-but-unknown keywords (default
+    // branch) are excluded. Constructing a hook with an out-of-vocab token
+    // via the `as` cast simulates the malformed-hook code path that the
+    // safe-skip default branch handles.
+    const G = makeG({
+      hooks: [
+        hook('v-x', 'onFight', [
+          'captureBystander',
+          'totallyMadeUpKeyword',
+        ]),
+      ],
+      bystanders: ['b0'] as CardExtId[],
+    });
+    const applied = executeVillainAbilities(
+      G,
+      CTX,
+      'v-x' as CardExtId,
+      'onFight',
+    );
+    assert.deepStrictEqual(applied, ['captureBystander']);
+  });
+
+  it('mutation-guarded short-circuit still appears in the applied array', () => {
+    // why: WP-200 — empty-pile / missing-zone guards short-circuit the case
+    // body but the keyword was attempted; emissions sites need to know which
+    // effect tokens fired their dispatch branch (so the narrative reflects
+    // intent, not whether the mutation succeeded). Empty wound pile must
+    // still surface `gainWoundCurrentPlayer` in the applied array.
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['gainWoundCurrentPlayer'])],
+      wounds: [],
+    });
+    const applied = executeVillainAbilities(
+      G,
+      CTX,
+      'v-x' as CardExtId,
+      'onFight',
+    );
+    assert.deepStrictEqual(applied, ['gainWoundCurrentPlayer']);
+  });
+});

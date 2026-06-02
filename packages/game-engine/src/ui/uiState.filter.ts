@@ -386,6 +386,11 @@ export function filterUIStateForAudience(
     },
     economy,
     log: [...uiState.log],
+    // why: WP-200 — mirror the `log` filter clone. Spread copy prevents
+    // the audience-filtered UIState from aliasing the input UIState's
+    // notableEvents array; per-entry payloads are plain JSON objects so
+    // top-level copy is sufficient (mirrors `log`).
+    notableEvents: [...uiState.notableEvents],
     // why: progress counters are public (no redaction needed) — passed through
     // unchanged via fresh object copy to avoid aliasing with the input UIState.
     // Forced cascade from WP-067 making `progress` a required UIState field.

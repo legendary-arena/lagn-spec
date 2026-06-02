@@ -444,6 +444,13 @@ export function buildInitialGameState(
     // pattern as heroAbilityHooks. Immutable during gameplay; executed at the
     // Fight/Ambush fire sites (WP-185). Narrow test mocks → empty table.
     villainAbilityHooks: buildVillainAbilityHooks(registry, config),
+    // why: WP-200 — append-only structured event log initialised empty.
+    // Populated at runtime by the four fire-site emissions
+    // (fightVillain.ts / villainDeck.reveal.ts ambush branch /
+    // schemeTwistResolvers.ts × 5 / mastermindHandlers.ts). Replay
+    // determinism: identical setup + identical moves produces a
+    // byte-identical event sequence.
+    notableEvents: [],
     // why: lobby state initialized at setup time from ctx.numPlayers. All
     // players start as not ready. G.lobby.started is false until
     // startMatchIfReady succeeds.

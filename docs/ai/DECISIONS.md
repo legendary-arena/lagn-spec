@@ -20443,6 +20443,404 @@ worth the indirection cost.
 
 ---
 
+### D-20001 — `NotableGameEvent` Discriminated Union Closed at Four Canonical Variants
+
+**Decision:**
+`NotableGameEvent` is a closed discriminated union with exactly four
+variants in fixed canonical order: `fightResolved` → `ambushResolved` →
+`schemeTwistResolved` → `mastermindStrikeResolved`. The
+`NOTABLE_EVENT_TYPES: readonly NotableGameEventType[]` canonical array
+mirrors the union byte-for-byte; a drift-detection test in
+`packages/game-engine/src/events/notableEvents.types.test.ts` pins
+bidirectional parity + length + uniqueness. Event identity is implicit
+by index position in `G.notableEvents` — no `eventId`, `seq`, or
+`timestamp` field exists.
+
+**Rationale:**
+Closed unions are the load-bearing pattern across the engine
+(`REVEALED_CARD_TYPES`, `VILLAIN_ABILITY_TIMINGS`,
+`VILLAIN_EFFECT_KEYWORDS`, etc.). A four-variant union covers the four
+canonical "what happened" moments the UI overlay system needs (Fight
+defeat, Ambush city entry, Scheme Twist resolution, Mastermind Strike
+resolution) without committing to per-effect fan-out (one event per
+fight even if multiple effects fire — see D-20005). Pre-adding a fifth
+variant (e.g., `'escapeResolved'`) "to get a head start on WP-186" is
+scope creep and would invite a similar pattern for every future
+fire-site type. WP-186 owns the addition of `'escapeResolved'` when it
+lands; it requires a fresh DECISIONS entry.
+
+The implicit-index identity choice forecloses a future "we need event
+IDs" expansion WP. Debug traces use the array index as the trace
+handle; replay determinism makes the index a stable identifier across
+replay runs (same setup + same moves = identical event sequence).
+
+**Alternatives rejected:**
+- **Open union with `string` discriminator** — would silently absorb new
+  variants without DECISIONS-level review; defeats the point of the
+  closed-vocabulary pattern.
+- **`eventId: string` per event** — payload-surface drift; debug
+  tooling can use the array index without it. UUIDs would also break
+  replay determinism unless seeded.
+- **`seq: number` + `timestamp: number`** — same payload-surface
+  concern; `timestamp` would break replay determinism if sourced from
+  wall clock.
+
+**Implications:**
+Adding `'escapeResolved'` (WP-186) or any future fifth variant requires
+expanding `NOTABLE_EVENT_TYPES` AND the type union in lockstep,
+updating the drift test, AND a new DECISIONS entry citing this one as
+the precedent.
+
+**Packet:** WP-200 (EC-227).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20002 — Narrative Is Engine-Composed Plain English, Composed Once at Emission Site
+
+**Decision:**
+`NotableGameEvent.narrative` is a **single sentence of plain English**,
+composed once at the engine emission site via a pure helper in
+`packages/game-engine/src/events/notableEvents.compose.ts`. No markup
+(no Markdown, no HTML), no emoji, no `Intl.*` / `toLocaleString` /
+locale-sensitive formatters, no conditional punctuation that reorders
+or omits segments. Client-side narrative composition is **forbidden** —
+the UI consumes the engine-composed string verbatim.
+
+**Rationale:**
+Replay determinism requires byte-stable narrative output for identical
+inputs. Locale-sensitive formatters (number formatting, date
+formatting) vary across runtime locales and would break the
+byte-identity contract on `G.notableEvents` under a non-English JVM /
+non-English browser locale. Client-side composition would diverge from
+the engine's view of state (the engine knows the post-mutation state
+at emission time; the client sees a snapshot that may lag), and the
+client would need to re-derive the entire narrative logic — an
+information-leak risk for hidden-state cases.
+
+**Alternatives rejected:**
+- **Client-side composition with `{cardName, effects}` raw fields** —
+  duplicates narrative logic across engine + client, diverges over
+  time, breaks replay-vs-render equality, and pushes locale-formatting
+  decisions to the UI layer where they would be hard to lock.
+- **Markdown narrative** — UI can render plain text without a
+  Markdown parser; adding one is a render-time dependency for no
+  narrative gain.
+- **i18n key + params shape** — deferred to a future WP. The current
+  engine surface is English-only; introducing a key/params shape here
+  would force every consumer to thread an i18n catalog into rendering.
+
+**Implications:**
+Any change to a narrative format string in
+`events/notableEvents.compose.ts` is a replay-affecting change and
+requires re-pinning `PRE_WP080_HASH` + the sentinel
+`finalStateHash`. A future i18n WP would introduce a key/params shape
+alongside the existing English narrative (additive), not replace it.
+
+**Packet:** WP-200 (EC-227).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20003 — `executeVillainAbilities` Return Widened from `void` to `VillainEffectKeyword[]`
+
+**Decision:**
+`executeVillainAbilities(G, ctx, cardId, timing)` widens its return
+type from `void` to `VillainEffectKeyword[]`. The returned array
+contains the applied effect keywords in **dispatch order**
+(left-to-right per hook, per ability line), with the
+out-of-vocabulary `default` branch excluded (post-safe-skip).
+Mutation-guarded short-circuits inside a case body (empty wound pile,
+missing player zones) **still count as "applied"** — the dispatch
+branch was reached, the keyword was attempted, the emission narrative
+should reflect that intent.
+
+Callers that ignore the return value compile unchanged (assignment is
+optional). This is the **only** signature change introduced by WP-200.
+`SchemeTwistResolver`'s 5th-parameter widening (per D-20001 family) is
+a separate 01.5 cascade addition documented in the execution
+governance close.
+
+**Rationale:**
+The four fire-site emissions need to know which Fight: / Ambush:
+effects actually ran so `appliedEffects` accurately reflects what the
+narrative describes. Sourcing this from `G` post-execution is not
+possible — the keyword identity isn't preserved as a mutation marker
+(e.g., a wound-pile decrement could come from any of `gainWoundEachPlayer`
+/ `gainWoundCurrentPlayer` / the WP-015 escape-wound system). The
+executor is the only call site with the full keyword-by-keyword
+visibility.
+
+Counting mutation-guarded short-circuits as "applied" matches the
+narrative intent: the operator's mental model is "the card text fired
+even if the wound pile was empty." A future split into
+`attempted: VillainEffectKeyword[]` + `mutated: VillainEffectKeyword[]`
+is possible but premature; the current shape is sufficient for the
+WP-201 overlay surface.
+
+**Alternatives rejected:**
+- **Add a separate `getLastAppliedEffects()` accessor** — implicit
+  state retention across calls; breaks the engine's pure-function
+  contract for moves and is more complex than a return widening.
+- **Return only effects whose mutation succeeded (exclude guarded
+  short-circuits)** — surprises the operator when an empty wound pile
+  silently makes the Ambush narrative read "ambushed with no effect"
+  even though the card text says otherwise.
+- **Return `RuleEffect[]`** — couples the executor to the rule pipeline's
+  effect descriptor format; D-18501 explicitly keeps the executor
+  separate from the global rule-hook pipeline.
+
+**Implications:**
+Adding a new `VillainEffectKeyword` requires updating
+`VILLAIN_EFFECT_KEYWORDS` + the union + the executor's case branches +
+the `EFFECT_KEYWORD_LABELS` map in `events/notableEvents.compose.ts`
+in lockstep, and re-pinning the replay hashes (the new keyword in any
+fired emission shifts the narrative byte-content).
+
+**Packet:** WP-200 (EC-227).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20004 — `G.notableEvents` Is Strictly Append-Only
+
+**Decision:**
+`G.notableEvents` is **write-only via `.push(...)`**. The following are
+forbidden across the engine:
+- `splice` / `shift` / `pop` calls on the array.
+- Reassignment of a new array reference
+  (`G.notableEvents = [...G.notableEvents, newEvent]`,
+  `G.notableEvents = []`, etc. — except the initialiser in
+  `buildInitialGameState`).
+- In-place mutation of any prior entry (no narrative rewrite, no
+  payload patching, no event coalescing).
+- Post-hoc sort or reorder.
+- Truncation / windowing.
+
+UI windowing (e.g., "show last 10 events") is **WP-201's concern**, not
+the engine's.
+
+**Rationale:**
+Append-only semantics make replay determinism trivially provable: the
+event sequence is fully derivable from the `(setup, moves)` pair.
+Truncation or coalescing introduces ordering-dependent state that would
+break replay equality. Reassignment via spread (`[...notableEvents, e]`)
+is technically equivalent to `.push(...)` but breaks the
+"single-mutation-pattern" auditing — a grep for `notableEvents = `
+flags suspicious activity; a grep for `.push` is the canonical write
+site.
+
+**Alternatives rejected:**
+- **Cap at last N entries** — UI windowing concern; the engine's
+  contract is a complete event history.
+- **Coalesce consecutive same-cardId events** — narrative readability
+  concern that varies per UI design; the engine should not pre-decide.
+- **Drop on game-over** — replay tools need the full sequence
+  post-game.
+
+**Implications:**
+WP-201's overlay system slices `UIState.notableEvents.slice(-N)` at
+render time. Long games accumulate unbounded entries — this is
+acceptable for MVP (a Legendary game caps at ~30 turns; event count
+stays in the low hundreds). A future memory-pressure WP could
+introduce a snapshot-time compaction, but it would need a fresh
+DECISIONS entry overriding this one.
+
+**Packet:** WP-200 (EC-227).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20005 — Event Payload Split: `appliedEffects` for Fight/Ambush; `resolverKey` for Scheme Twist; Strike Carries Narrative Only
+
+**Decision:**
+The four event variants have **deliberately asymmetric payloads**:
+- `fightResolved` carries `appliedEffects: VillainEffectKeyword[]`
+  (typed Fight: effect keywords for UI badges).
+- `ambushResolved` carries `appliedEffects: VillainEffectKeyword[]`
+  (typed Ambush: effect keywords).
+- `schemeTwistResolved` carries `resolverKey: SchemeTwistResolverKey`
+  (which of the five WP-182 resolvers handled the twist; no
+  `appliedEffects` array).
+- `mastermindStrikeResolved` carries narrative only (no
+  `appliedEffects`, no `resolverKey`).
+
+**Rationale:**
+Fight + Ambush have a closed effect-keyword vocabulary
+(`VillainEffectKeyword` = 6 entries today) that maps directly to UI
+badges; `appliedEffects` is the structured payload UI components
+consume. Scheme Twist resolvers are not effect-keyword-based — each
+resolver is a distinct G-mutation flow (reveal-or-punish, chained
+reveals, wound-all, ko-from-hq, midtown-bank-robbery). The
+`resolverKey` exposes which flow ran without forcing the resolvers
+into a synthetic effect-keyword shape. Mastermind Strike resolutions
+have one canonical flow (per-mastermind handler dispatch) with the
+strike-text resolution being card-specific; the narrative captures the
+outcome and no structured keyword array would carry useful UI signal.
+
+**Alternatives rejected:**
+- **Uniform shape across variants** — would force synthetic
+  `appliedEffects` arrays on twist + strike, polluting the
+  `VillainEffectKeyword` vocabulary with non-villain-effect tokens.
+- **`SchemeTwistResolverKey` extended with extra resolver-specific
+  fields** — payload-surface drift; the resolver-specific data
+  (e.g., how many cards were chain-revealed) is captured in the
+  narrative.
+- **Single `details: Record<string, unknown>` field** — opaque to
+  TypeScript consumers; breaks the discriminated-union pattern that
+  lets UI consumers narrow via `switch (event.type)`.
+
+**Implications:**
+WP-201 renders Fight + Ambush with effect-keyword badges (or icons)
+plus narrative; renders Scheme Twist + Mastermind Strike with
+narrative only (and possibly a resolver-key icon for Twists). A
+future "Strike: detailed-payload" WP would need a fresh DECISIONS
+entry to break this asymmetry.
+
+**Packet:** WP-200 (EC-227).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20006 — Events Are Pushed AFTER State Mutation at Each Fire Site (Post-Mutation Observation)
+
+**Decision:**
+Every emission is the **last step** at its fire site, after all
+attributable state mutations AND after any associated
+`G.messages.push` calls. The event payload observes the fully settled
+post-mutation state.
+
+Specific orderings:
+- `fightVillain.ts`: emission AFTER bystander-award + AFTER the two
+  `G.messages.push` calls. `bystandersRescued` reflects the post-award
+  delta; `appliedEffects` is the executor's post-dispatch return.
+- `villainDeck.reveal.ts` ambush branch: emission AFTER
+  `executeVillainAbilities(...,'onAmbush')` and BEFORE the
+  unconditional bystander-attach block (the attach is the MVP
+  city-entry rule per D-18504, NOT an Ambush effect — see D-20005
+  payload split). The unconditional attach must not appear in
+  `appliedEffects` and must not be described as an Ambush effect in
+  the narrative.
+- `schemeTwistResolvers.ts`: each resolver's emission is the last
+  statement in the function, after every per-player loop, every
+  `messages.push`, every state mutation.
+- `mastermindHandlers.ts:mastermindStrikeHandler`: emission AFTER
+  both the generic bystander capture AND the per-mastermind text
+  effect (e.g., Magneto's hand discard).
+
+**Rationale:**
+Post-mutation observation makes the event's payload trivially
+self-consistent with `G`. A pre-mutation push would surface stale
+counts (e.g., `bystandersRescued: 0` when 2 were rescued); a
+mid-mutation push would surface partial state. The "fire-site
+wrapper" pattern (one emission per fight / ambush / twist / strike,
+not per effect-helper invocation) prevents fan-out — a single fight
+that triggers multiple Fight: effects produces ONE event with
+`appliedEffects: ['captureBystander', 'gainWoundEachPlayer']`, not
+two events.
+
+**Alternatives rejected:**
+- **Pre-mutation push** — payload reflects intent, not outcome;
+  inconsistent with `G` post-emission.
+- **Per-effect-helper emission** — fan-out failure mode flagged in
+  EC §Common Failure Smells; multiplies event count by effect count
+  and breaks the "one event per gameplay moment" contract.
+- **Lazy emission (build event lazily from G on UIState read)** —
+  requires re-deriving the resolution sequence from snapshot state,
+  which loses the in-flight cardId (see D-20003 / WP §Locked Contract
+  Values discussion).
+
+**Implications:**
+The ambush fire-site's pre-attach emission is the **single exception**
+to "after all attributable mutations" — the attach is causally part of
+the city-entry rule, not the Ambush trigger. Future emissions follow
+the post-mutation rule unless an analogous causal split exists, in
+which case the WP must call out the exception explicitly.
+
+**Packet:** WP-200 (EC-227).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20007 — Replay-Oracle Re-Pin Is Behaviour-Neutral
+
+**Decision:**
+The WP-200 execution re-pins two replay anchors:
+- `PRE_WP080_HASH` in `replay/replay.execute.test.ts`:
+  `86895342` → `a3d25f9e`.
+- Sentinel fixture `finalStateHash` in
+  `test/fixtures/games/sentinel-core-doom-2p.replay.json`:
+  `b034b7740774be85452b24a5cfcef35ad34c0835758547e4e40f27e845c2e18b` →
+  `bdb9bf1fb87421ebe55986178409bdb65c3d5f155fb40e697d617583d3be75d7`.
+
+Both re-pins are **behaviour-neutral by construction**:
+- The `PRE_WP080_HASH` test uses an empty-registry mock with no villain
+  hooks; the executor returns `[]` for every call; no fire site emits.
+  The hash shifts ONLY because the empty `G.notableEvents: []`
+  initialiser exists on `LegendaryGameState`.
+- The sentinel fixture revealed 2 mastermind strikes; each emits one
+  `mastermindStrikeResolved` event. The fixture's `messages` array is
+  byte-identical pre/post (two `"Mastermind strike revealed — strike
+  count incremented."` entries unchanged). The hash shifts ONLY
+  because `G.notableEvents` now contains the two emitted events.
+
+The preservation invariant (sentinel `messages` array byte-identical
+pre/post) is verified manually at execution close.
+
+**Rationale:**
+Replay hashes pin the JSON-encoded shape of `G`. Any field addition
+(here: `notableEvents`) shifts the hash even when no behaviour
+changes. Documenting the cascade explicitly distinguishes
+"hash-shifted because we added an empty field" (acceptable, dependency-
+driven) from "hash-shifted because behaviour changed" (would warrant a
+behaviour audit). The pattern mirrors prior cascades documented in
+the `PRE_WP080_HASH` JSDoc history (WP-113 / WP-135 / WP-153 / WP-154
+/ WP-155 / WP-156 / WP-168 / WP-172 / WP-179 / WP-185, etc.).
+
+**Alternatives rejected:**
+- **Defer the field addition until replay tests can validate
+  event-content equality** — premature complexity; the WP-200
+  contract is "events emit, fixture stays behaviourally identical."
+- **Hash `notableEvents` separately** — splits the replay-determinism
+  contract across two oracles; harder to audit.
+- **Reset hash to capture-only sentinel and run for one WP** — the
+  capture-only pattern is reserved for `__CAPTURE_ME__` first-time
+  initialisation; subsequent shifts are explicit literal updates with
+  documented rationale.
+
+**Implications:**
+Any future WP that emits a new event variant against the sentinel
+fixture's playthrough will shift the sentinel hash. WP-186 (when it
+adds `'escapeResolved'`) and any WP that introduces new fire sites
+must re-pin AND document. The behaviour-neutrality test (sentinel
+`messages` array byte-identical) catches accidental side effects.
+
+**Packet:** WP-200 (EC-227).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
 ### D-20008 — `packages/game-engine/src/events/` Classified as Engine Code Category
 
 **Decision:**
@@ -20541,8 +20939,9 @@ WP-186 `escapeResolved` extension per D-20001).
 
 **Packet:** WP-200 (EC-227).
 
-**Drafted:** 2026-06-02 (copilot check resolution; not yet landed).
-**Status:** Drafted; flips to Active on WP-200 execution close.
+**Drafted:** 2026-06-02 (copilot check resolution).
+**Landed:** 2026-06-02.
+**Status:** Active
 
 ---
 

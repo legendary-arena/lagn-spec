@@ -82,6 +82,11 @@ function makeTestGameState(overrides?: {
       sidekicks: [],
     },
     messages: [],
+    // why: WP-200 — required by `LegendaryGameState`; the four fire-site
+    // emissions push to this array. Initialised here so tests that call
+    // fightVillain / revealVillainCard / scheme-twist resolvers / strike
+    // handler do not throw on a missing field.
+    notableEvents: [],
     counters: {},
     hookRegistry: [],
     villainDeck: overrides?.villainDeck ?? { deck: [], discard: [] },

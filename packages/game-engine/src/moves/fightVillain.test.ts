@@ -89,6 +89,10 @@ function createMockGameState(options?: {
       ready: {},
       started: false,
     },
+    // why: WP-200 — fightVillain pushes one `fightResolved` event to
+    // `G.notableEvents` after the message push. Field initialised here so
+    // the emission does not throw on missing-field; required by D-20003.
+    notableEvents: [],
   };
 }
 
@@ -240,6 +244,58 @@ describe('fightVillain', () => {
       moveContext.G.playerZones['0']!.victory.length,
       1,
       'Victory unchanged after second fight on same (now null) space',
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // WP-200 — fightResolved emission
+  // -------------------------------------------------------------------------
+
+  it('WP-200: pushes exactly one fightResolved event with correct payload', () => {
+    const gameState = createMockGameState({
+      city: ['villain-a', null, null, null, null],
+    });
+    const moveContext = createMockMoveContext(gameState);
+
+    fightVillain(moveContext, { cityIndex: 0 });
+
+    assert.equal(
+      moveContext.G.notableEvents.length,
+      1,
+      'exactly one fightResolved event must be emitted',
+    );
+    const event = moveContext.G.notableEvents[0]!;
+    assert.equal(event.type, 'fightResolved');
+    if (event.type === 'fightResolved') {
+      assert.equal(event.playerId, '0');
+      assert.equal(event.cardId, 'villain-a');
+      assert.equal(event.citySpace, 0);
+      assert.equal(event.bystandersRescued, 0);
+      assert.deepStrictEqual(
+        event.appliedEffects,
+        [],
+        'no villain ability hooks in this test G → appliedEffects empty',
+      );
+      assert.ok(
+        event.narrative.length > 0 && event.narrative.includes('villain-a'),
+        'narrative is non-empty and names the card',
+      );
+    }
+  });
+
+  it('WP-200: fightResolved event is NOT pushed when the move short-circuits', () => {
+    const gameState = createMockGameState({
+      city: ['villain-a', null, null, null, null],
+      currentStage: 'start',
+    });
+    const moveContext = createMockMoveContext(gameState);
+
+    fightVillain(moveContext, { cityIndex: 0 });
+
+    assert.equal(
+      moveContext.G.notableEvents.length,
+      0,
+      'stage-gated short-circuit must not push an event',
     );
   });
 });

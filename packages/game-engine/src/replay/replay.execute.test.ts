@@ -82,7 +82,15 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // hooks), changing the JSON-encoded state hash. Purely structural — no behavior
 // change in this empty-registry replay (same cascade pattern as the
 // heroAbilityHooks / cardTraits field additions). Pre-edit: 'eae128df'.
-const PRE_WP080_HASH = '86895342';
+// why: WP-200 cascade re-baseline — `G.notableEvents: NotableGameEvent[]`
+// added as a new sibling field on `LegendaryGameState`. Initialised `[]` in
+// `buildInitialGameState`; no fire site emits during the empty-registry
+// replay (no villain hooks → executor returns []; no Ambush keyword on any
+// card; the registry path doesn't produce villains/strikes), so the only
+// hash delta is the empty `notableEvents` array's existence. Pre-edit:
+// '86895342'. Post-edit: 'a3d25f9e'. Dependency-driven (revert by removing
+// the new G field with no remaining diff); no behavior change in this test.
+const PRE_WP080_HASH = 'a3d25f9e';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

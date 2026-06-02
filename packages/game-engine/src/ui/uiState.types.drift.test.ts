@@ -37,7 +37,9 @@ import type {
   UISharedPilesState,
   UIKoPileState,
   UIDisplayEntry,
+  UIState,
 } from './uiState.types.js';
+import type { NotableGameEvent } from '../events/notableEvents.types.js';
 import { buildUIState } from './uiState.build.js';
 import { buildInitialGameState } from '../setup/buildInitialGameState.js';
 import { makeMockCtx } from '../test/mockCtx.js';
@@ -638,6 +640,43 @@ describe('UIState — WP-135 heroDeckCount graduation', () => {
       Array.isArray(gameState.heroDeck),
       'G.heroDeck must be present and an array on LegendaryGameState',
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-200 — UIState.notableEvents projection drift
+// ---------------------------------------------------------------------------
+
+describe('UIState type drift (WP-200) — notableEvents projection', () => {
+  it('UIState.notableEvents is a required NotableGameEvent[] field', () => {
+    // why: WP-200 — mirror the `log: string[]` projection precedent. The
+    // field is REQUIRED on every UIState; empty array at lobby/setup time
+    // (initialised in buildInitialGameState). A rename or removal trips
+    // this `satisfies` check at compile time.
+    const sample: NotableGameEvent[] = [
+      {
+        type: 'fightResolved',
+        playerId: '0',
+        cardId: 'core-villain-brotherhood-magneto-00',
+        citySpace: 2,
+        bystandersRescued: 0,
+        appliedEffects: [],
+        narrative: 'Fought "Magneto".',
+      },
+    ];
+    // Pin the field via a structural fixture (Partial<UIState>) so a future
+    // rename fails typecheck before any runtime assertion.
+    const fixture = { notableEvents: sample } satisfies Pick<UIState, 'notableEvents'>;
+    assert.equal(fixture.notableEvents.length, 1);
+    assert.equal(fixture.notableEvents[0]!.type, 'fightResolved');
+  });
+
+  it('empty match projects notableEvents === [] (safe-skip default)', () => {
+    // why: empty registry → no fire site emits → projection equals the
+    // empty G.notableEvents initialiser. Pins the always-present invariant
+    // (no `?: NotableGameEvent[]` optional shape).
+    const ui = buildEmptyMatchUIState();
+    assert.deepStrictEqual(ui.notableEvents, []);
   });
 });
 

@@ -109,6 +109,10 @@ function makeResolverState(overrides?: {
     schemeSetupInstructions: [],
     cardKeywords: {},
     cardDisplayData: {},
+    // why: WP-200 — resolvers now push to `gameState.notableEvents` at
+    // their terminal point. Initialise to [] so direct-resolver tests
+    // exercise the emission without throwing on a missing field.
+    notableEvents: [],
   } as unknown as LegendaryGameState;
 }
 
@@ -502,5 +506,149 @@ describe('midtown-bank-robbery resolver', () => {
       gameState.messages.some((message) => message.includes('no bystanders to capture')),
       'must log supply-empty message',
     );
+  });
+});
+
+// ===========================================================================
+// WP-200 — schemeTwistResolved emission per resolver
+// ===========================================================================
+
+import type { CardExtId as CardExtIdAlias } from '../state/zones.types.js';
+
+const TWIST_CARD_ID = 'core-scheme-twist-test' as CardExtIdAlias;
+
+describe('WP-200 — schemeTwistResolved emission per resolver', () => {
+  it('revealOrPunish emits exactly one event with resolverKey "revealOrPunish"', () => {
+    const gameState = makeResolverState({ playerCount: 1, wounds: ['w1'] });
+    gameState.playerZones['0']!.hand = ['hero-tech-1'];
+    gameState.cardTraits['hero-tech-1'] = { heroClass: 'tech', team: null };
+
+    SCHEME_TWIST_RESOLVERS['reveal-or-punish'](
+      gameState,
+      makeRevealContext(),
+      emptyImplementationMap,
+      { condition: { field: 'heroClass', value: 'tech' }, penalty: 'gainWound' },
+      TWIST_CARD_ID,
+    );
+
+    assert.equal(gameState.notableEvents.length, 1, 'exactly one event emitted');
+    const event = gameState.notableEvents[0]!;
+    assert.equal(event.type, 'schemeTwistResolved');
+    if (event.type === 'schemeTwistResolved') {
+      assert.equal(event.twistCardId, TWIST_CARD_ID);
+      assert.equal(event.resolverKey, 'revealOrPunish');
+      assert.ok(event.narrative.length > 0, 'narrative is non-empty');
+    }
+  });
+
+  it('chainedReveals emits exactly one event with resolverKey "chainedReveals"', () => {
+    const gameState = makeResolverState();
+    gameState.villainDeck.deck = ['villain-1'];
+    gameState.villainDeckCardTypes = { 'villain-1': 'villain' };
+
+    SCHEME_TWIST_RESOLVERS['chained-reveals'](
+      gameState,
+      makeRevealContext(),
+      emptyImplementationMap,
+      { revealCount: 1 },
+      TWIST_CARD_ID,
+    );
+
+    // why: WP-200 — the chained reveal's villain card triggers no recursive
+    // schemeTwistResolved emission (it routes through onCardRevealed, not
+    // onSchemeTwistRevealed), so the resolver's own terminal emission is
+    // the only event in the array.
+    assert.equal(gameState.notableEvents.length, 1);
+    const event = gameState.notableEvents[0]!;
+    assert.equal(event.type, 'schemeTwistResolved');
+    if (event.type === 'schemeTwistResolved') {
+      assert.equal(event.resolverKey, 'chainedReveals');
+    }
+  });
+
+  it('woundAll emits exactly one event with resolverKey "woundAll"', () => {
+    const gameState = makeResolverState({ playerCount: 1, wounds: ['w1'] });
+
+    SCHEME_TWIST_RESOLVERS['wound-all'](
+      gameState,
+      makeRevealContext(),
+      emptyImplementationMap,
+      { woundCount: 1 },
+      TWIST_CARD_ID,
+    );
+
+    assert.equal(gameState.notableEvents.length, 1);
+    const event = gameState.notableEvents[0]!;
+    assert.equal(event.type, 'schemeTwistResolved');
+    if (event.type === 'schemeTwistResolved') {
+      assert.equal(event.resolverKey, 'woundAll');
+    }
+  });
+
+  it('koFromHq emits exactly one event with resolverKey "koFromHq"', () => {
+    const gameState = makeResolverState();
+    gameState.hq = ['hero-a', null, null, null, null] as LegendaryGameState['hq'];
+    gameState.cardStats['hero-a'] = { attack: 0, recruit: 0, cost: 1, fightCost: 0 };
+
+    SCHEME_TWIST_RESOLVERS['ko-from-hq'](
+      gameState,
+      makeRevealContext(),
+      emptyImplementationMap,
+      { koCount: 1 },
+      TWIST_CARD_ID,
+    );
+
+    assert.equal(gameState.notableEvents.length, 1);
+    const event = gameState.notableEvents[0]!;
+    assert.equal(event.type, 'schemeTwistResolved');
+    if (event.type === 'schemeTwistResolved') {
+      assert.equal(event.resolverKey, 'koFromHq');
+    }
+  });
+
+  it('midtownBankRobbery emits exactly one event with resolverKey "midtownBankRobbery"', () => {
+    const gameState = makeResolverState({ bystanders: ['b1', 'b2'] });
+    gameState.city[1] = 'villain-bank';
+    gameState.attachedBystanders['villain-bank'] = [];
+    gameState.villainDeck.deck = ['villain-next'];
+    gameState.villainDeckCardTypes = { 'villain-next': 'villain' };
+
+    SCHEME_TWIST_RESOLVERS['midtown-bank-robbery'](
+      gameState,
+      makeRevealContext(),
+      emptyImplementationMap,
+      {},
+      TWIST_CARD_ID,
+    );
+
+    // why: WP-200 — chained villain reveal does not emit
+    // schemeTwistResolved (it's a villain card, not a twist), so only the
+    // outer midtownBankRobbery emission lands in the array.
+    assert.equal(gameState.notableEvents.length, 1);
+    const event = gameState.notableEvents[0]!;
+    assert.equal(event.type, 'schemeTwistResolved');
+    if (event.type === 'schemeTwistResolved') {
+      assert.equal(event.resolverKey, 'midtownBankRobbery');
+      assert.equal(event.twistCardId, TWIST_CARD_ID);
+    }
+  });
+
+  it('falls back to UNKNOWN_TWIST_CARD_ID when called without the 5th argument', () => {
+    // why: WP-200 — legacy direct-resolver tests pre-date the 5th param;
+    // the resolver implementation falls back to a sentinel so the
+    // emission still produces a well-typed event without breaking the
+    // earlier tests.
+    const gameState = makeResolverState({ playerCount: 1, wounds: ['w1'] });
+    SCHEME_TWIST_RESOLVERS['wound-all'](
+      gameState,
+      makeRevealContext(),
+      emptyImplementationMap,
+      { woundCount: 1 },
+    );
+    assert.equal(gameState.notableEvents.length, 1);
+    const event = gameState.notableEvents[0]!;
+    if (event.type === 'schemeTwistResolved') {
+      assert.equal(event.twistCardId, 'unknown-twist-card');
+    }
   });
 });

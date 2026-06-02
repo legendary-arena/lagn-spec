@@ -74,6 +74,9 @@ function createMockGameState(options?: {
       sidekicks: [],
     },
     messages: [],
+    // why: WP-200 — required field; integration tests call fightVillain /
+    // revealVillainCard which emit to this array.
+    notableEvents: [],
     counters: {},
     hookRegistry: buildDefaultHookDefinitions(config),
     villainDeck: options?.villainDeck ?? { deck: [], discard: [] },

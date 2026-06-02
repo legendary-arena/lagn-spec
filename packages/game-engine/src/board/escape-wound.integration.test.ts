@@ -71,6 +71,9 @@ function createMockGameState(options?: {
       sidekicks: ['sidekick-1'],
     },
     messages: [],
+    // why: WP-200 — required field; fightVillain emits to this array
+    // when defeating a card.
+    notableEvents: [],
     counters: {},
     hookRegistry: buildDefaultHookDefinitions(config),
     villainDeck: {

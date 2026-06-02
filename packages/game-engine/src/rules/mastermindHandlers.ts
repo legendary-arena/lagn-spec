@@ -14,6 +14,8 @@
 import type { RuleEffect } from './ruleHooks.types.js';
 import type { ImplementationMap } from './ruleRuntime.execute.js';
 import type { LegendaryGameState } from '../types.js';
+import type { CardExtId } from '../state/zones.types.js';
+import { composeMastermindStrikeNarrative } from '../events/notableEvents.compose.js';
 
 // why: mastermind ext_id constants — matching against
 // G.selection.mastermindId for per-mastermind dispatch. Strings come from
@@ -125,14 +127,19 @@ function resolveMagnetoStrike(gameState: LegendaryGameState): void {
  *
  * @param gameState - Current game state (mutated for bystander capture and per-mastermind effects).
  * @param _ctx - Context (unused — chained reveals are scheme-side for now).
- * @param _payload - Trigger payload ({ cardId } from villain reveal).
+ * @param payload - Trigger payload `{ cardId }` from villain reveal.
+ *   WP-200: read to source `strikeCardId` for the terminal
+ *   `mastermindStrikeResolved` emission. Production dispatch always
+ *   passes a real `{ cardId: string }`; unit tests that call the handler
+ *   directly with a stub fall back to an empty string so the emission
+ *   produces a well-typed event without throwing.
  * @param _implementationMap - Handler map (unused; reserved for future cascading strikes).
  * @returns Array of RuleEffect descriptions to apply.
  */
 export function mastermindStrikeHandler(
   gameState: LegendaryGameState,
   _ctx: unknown,
-  _payload: unknown,
+  payload: unknown,
   _implementationMap: ImplementationMap,
 ): RuleEffect[] {
   captureBystanderOntoMastermind(gameState);
@@ -141,6 +148,38 @@ export function mastermindStrikeHandler(
   if (mastermindId === MASTERMIND_MAGNETO) {
     resolveMagnetoStrike(gameState);
   }
+
+  // why: WP-200 — terminal emission AFTER both the generic bystander
+  // capture AND the per-mastermind text effect. Narrows the trigger
+  // payload defensively (`unknown` from the rule pipeline) so a missing
+  // / malformed payload produces an empty `strikeCardId` rather than a
+  // throw — moves never throw, per architecture rules. Production dispatch
+  // path from `villainDeck.reveal.ts` always supplies `{ cardId }` so the
+  // empty-string fallback only surfaces in unit-test harnesses that
+  // pre-date WP-200.
+  const strikeCardId = (() => {
+    if (payload === null || payload === undefined) return '' as CardExtId;
+    if (typeof payload !== 'object') return '' as CardExtId;
+    const candidate = (payload as { cardId?: unknown }).cardId;
+    if (typeof candidate !== 'string') return '' as CardExtId;
+    return candidate as CardExtId;
+  })();
+  // why: WP-200 — defensive access (`?.`) because some legacy test states
+  // do not populate `cardDisplayData`. Production setup always builds it
+  // (WP-111), but tests that pre-date that field cast through `as unknown
+  // as LegendaryGameState` and leave it undefined. Falling back to the
+  // raw `strikeCardId` keeps the emission from throwing — moves never
+  // throw, per architecture rules.
+  const strikeCardDisplay = gameState.cardDisplayData?.[strikeCardId];
+  const strikeCardName =
+    strikeCardDisplay && typeof strikeCardDisplay.name === 'string' && strikeCardDisplay.name.length > 0
+      ? strikeCardDisplay.name
+      : strikeCardId;
+  gameState.notableEvents.push({
+    type: 'mastermindStrikeResolved',
+    strikeCardId,
+    narrative: composeMastermindStrikeNarrative(strikeCardName),
+  });
 
   return buildGenericStrikeEffects();
 }

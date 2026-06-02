@@ -538,6 +538,12 @@ export function buildUIState(
   // why: shallow copy prevents mutation of G.messages through UIState
   const log = [...gameState.messages];
 
+  // why: WP-200 — mirror the `log` projection for structured events. Spread
+  // copy prevents UIState consumers from mutating G.notableEvents; per-entry
+  // payloads are plain JSON objects (primitives + arrays) so a shallow
+  // top-level copy is sufficient.
+  const notableEvents = [...gameState.notableEvents];
+
   // --- 9. Project progress counters ---
   // why: progress counters are required on every UIState (even pre-play)
   // so the HUD can render a stable shape. WP-067.
@@ -633,6 +639,7 @@ export function buildUIState(
     scheme,
     economy,
     log,
+    notableEvents,
     progress,
     decks,
     piles,

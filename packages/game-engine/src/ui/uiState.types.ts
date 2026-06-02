@@ -21,6 +21,7 @@
  */
 
 import type { FinalScoreSummary } from '../scoring/scoring.types.js';
+import type { NotableGameEvent } from '../events/notableEvents.types.js';
 
 // why: UIState is the only data the UI sees. All items in the canonical
 // forbidden internals list (hookRegistry, ImplementationMap, cardStats,
@@ -53,6 +54,12 @@ export interface UIState {
   scheme: UISchemeState;
   economy: UITurnEconomyState;
   log: string[];
+  // why: WP-200 — typed event projection mirroring `log: string[]`. UI
+  // consumers (WP-201) render descriptive "what happened" overlays from
+  // these structured events without parsing free-text log strings. Cloned
+  // by `uiState.build.ts` (spread copy) and by `uiState.filter.ts` so
+  // UIState never aliases G's array.
+  notableEvents: NotableGameEvent[];
   progress: UIProgressCounters;
   decks: UIDecksState;
   piles: UISharedPilesState;

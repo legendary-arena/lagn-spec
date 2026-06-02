@@ -30,6 +30,7 @@ import {
 } from '../board/bystanders.logic.js';
 import { hasAmbush } from '../board/boardKeywords.logic.js';
 import { executeVillainAbilities } from '../villain/villainEffects.execute.js';
+import { composeAmbushNarrative } from '../events/notableEvents.compose.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
@@ -224,8 +225,36 @@ export function performVillainReveal(
     // existing hasAmbush fast pre-check (the keyword-detection invariant from
     // buildCardKeywords.ts). The keyword map is re-derived inline so this call
     // carries no dependency on a deleted binding.
+    // why: WP-200 — capture the executor's return and emit `ambushResolved`
+    // BEFORE the unconditional bystander-attach block below. The
+    // unconditional attach is NOT an Ambush effect (it's the MVP
+    // city-entry rule per D-18504); it must not appear in
+    // `appliedEffects` and must not be described in the narrative as an
+    // Ambush effect. Resolving the citySpace via `G.city.indexOf(cardId)`
+    // after `pushVillainIntoCity` reflects the final placement index
+    // (0..4); -1 falls back to 0 if the push collapsed the card off the
+    // edge (a contract violation the move never hits in production but
+    // the emission must remain defensive).
     if (hasAmbush(cardId, G.cardKeywords ?? {})) {
-      executeVillainAbilities(G, ctx, cardId, 'onAmbush');
+      const appliedAmbushEffects = executeVillainAbilities(G, ctx, cardId, 'onAmbush');
+      // why: WP-200 — defensive access; legacy test states may leave
+      // `cardDisplayData` undefined. Production setup always builds it.
+      const ambushCardDisplay = G.cardDisplayData?.[cardId];
+      const ambushCardName =
+        ambushCardDisplay && typeof ambushCardDisplay.name === 'string' && ambushCardDisplay.name.length > 0
+          ? ambushCardDisplay.name
+          : cardId;
+      const ambushCitySpace = (() => {
+        const found = G.city.indexOf(cardId);
+        return found >= 0 ? found : 0;
+      })();
+      G.notableEvents.push({
+        type: 'ambushResolved',
+        revealedCardId: cardId,
+        citySpace: ambushCitySpace,
+        appliedEffects: appliedAmbushEffects,
+        narrative: composeAmbushNarrative(ambushCardName, appliedAmbushEffects),
+      });
     }
 
     // why: bystander appears with villain on City entry; rule hooks must

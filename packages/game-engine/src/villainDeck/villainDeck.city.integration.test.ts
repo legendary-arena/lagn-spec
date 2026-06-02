@@ -78,6 +78,9 @@ function createMockGameState(options: {
       sidekicks: [],
     },
     messages: [],
+    // why: WP-200 — required field; revealVillainCard's Ambush branch and
+    // the rule pipeline's mastermind-strike handler emit to this array.
+    notableEvents: [],
     counters: {},
     hookRegistry: [...defaultHooks, ...additionalHooks],
     villainDeck: {
