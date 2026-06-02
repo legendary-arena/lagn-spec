@@ -1,6 +1,14 @@
 import { computed, ref, onUnmounted, type Ref, type ComputedRef } from 'vue';
 import type { ServiceResponse } from '../types/index.js';
 
+// why: D-19804 — the 'BUILD' label is additive over the fetched-data labels
+// owned by ServiceResponse.source (LIVE/CACHED/MOCK). Build-time-baked data
+// has a different freshness semantic than runtime-fetched data (no auto-
+// refresh, no retry), so the operator must see which axis a widget rode at
+// build time. The widening is local to useDataFreshness — ServiceResponse
+// stays untouched so fetched-data callsites keep their narrower contract.
+export type DataFreshnessSource = ServiceResponse<unknown>['source'] | 'BUILD';
+
 interface UseDataFreshnessReturn {
   relativeTime: ComputedRef<string>;
   sourceLabel: ComputedRef<string>;
@@ -8,7 +16,7 @@ interface UseDataFreshnessReturn {
 
 export function useDataFreshness(
   updatedAt: Ref<number | null>,
-  source: Ref<ServiceResponse<unknown>['source'] | null>,
+  source: Ref<DataFreshnessSource | null>,
 ): UseDataFreshnessReturn {
   const now = ref(Date.now());
 

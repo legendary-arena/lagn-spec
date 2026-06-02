@@ -7,6 +7,8 @@ import RevenueChartWidget from '../../widgets/RevenueChartWidget.vue';
 import AlertsPanel from '../../widgets/AlertsPanel.vue';
 import DailyExecutionPanel from '../../widgets/DailyExecutionPanel.vue';
 import VisionCard from '../../widgets/VisionCard.vue';
+import GovernanceThroughputWidget from '../../widgets/GovernanceThroughputWidget.vue';
+import RecentActivityWidget from '../../widgets/RecentActivityWidget.vue';
 import type { KpiSnapshot } from '../../types/index.js';
 
 const router = useRouter();
@@ -51,6 +53,11 @@ function handleKpiClick(kpi: KpiSnapshot): void {
     </div>
 
     <DailyExecutionPanel />
+
+    <div class="overview-governance-grid">
+      <GovernanceThroughputWidget />
+      <RecentActivityWidget />
+    </div>
 
     <div class="charts-grid">
       <DauChartWidget />
@@ -110,6 +117,12 @@ function handleKpiClick(kpi: KpiSnapshot): void {
   gap: 1rem;
 }
 
+.overview-governance-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -118,6 +131,10 @@ function handleKpiClick(kpi: KpiSnapshot): void {
 
 @media (max-width: 1199px) {
   .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-governance-grid {
     grid-template-columns: 1fr;
   }
 
