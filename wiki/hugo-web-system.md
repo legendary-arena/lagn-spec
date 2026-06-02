@@ -20,7 +20,7 @@ source:
   - C:\www\legendary-arena-com\layouts\_partials\footer.html
   - C:\www\legendary-arena-com\layouts\_partials\extend_head.html
   - C:\www\legendary-arena-com\layouts\index.html
-last-reviewed: 2026-05-13
+last-reviewed: 2026-06-01
 ---
 
 ## Repository base URLs
@@ -59,6 +59,7 @@ deploy:
 | File | Published at |
 |---|---|
 | Marketing repo site files | Deployed to `www.legendary-arena.com` via Cloudflare Pages |
+| Built images (Hugo output) | `C:\www\legendary-arena-com\public\images\` — Hugo writes here during build by copying from `static\images\`. Do NOT save images here manually; the directory is regenerated on each build and manual files get overwritten or end up untracked. Manual saves go in `C:\www\legendary-arena-com\static\images\`. |
 | This wiki page | Published to `ewiki.legendary-arena.com/hugo-web-system/` via Render |
 | Screenshots | Published to `ewiki.legendary-arena.com/hugo-web-system/` via Render |
 
