@@ -20155,4 +20155,100 @@ worth the indirection cost.
 
 ---
 
+### D-19601 — Net Revenue Four-Bucket Decomposition + Integer-Cents Discipline
+
+**D-19601 — Net Revenue Four-Bucket Decomposition + Integer-Cents Discipline.** Net revenue is decomposed into four buckets: gross, royalty, Stripe fees, infra COGS. All arithmetic in integer cents; floating-point dollars are forbidden. Rationale: The royalty obligation to Upper Deck Entertainment and Marvel is a Vision-level non-negotiable (Financial Sustainability §). Gross revenue alone obscures the true unit economics. Stripe fees and infra COGS are the next-largest fixed deductions and round out the model. Integer cents avoids the rounding-drift class of bug that surfaces when monthly totals are summed from floating-point dailies.
+
+**Packet:** WP-196 (EC-225).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19602 — Royalty Deduction Placeholder Posture
+
+**D-19602 — Royalty Deduction Placeholder Posture.** Royalty deduction percentage ships as a flagged-mock placeholder; real numbers require finance review and a follow-up D-entry. Rationale: The royalty contract terms are operationally sensitive and outside the scope of a client-only widget WP. Locking the shape and the display posture now lets the real numbers swap in by editing a single config file when finance signs off.
+
+**Packet:** WP-196 (EC-225).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19603 — Paid-Action Error Union + Forward Server Contract + Window + Rate-Zero Guard
+
+**D-19603 — Paid-Action Error Union + Forward Server Contract + Window + Rate-Zero Guard.** Paid-action error visibility is the union of two surfaces — Stripe webhook fulfillment failure rate (`stripe_events.process_error IS NOT NULL`) and Checkout intent abandonment rate (`stripe_checkout_sessions.intent_status IN ('expired', 'canceled')`). The future server endpoint path is `/metrics/billing/health`. The forward contract (response shape byte-compatible with `BillingHealth`; `0.0 ≤ rate ≤ 1.0`; `count = round(total × rate)`; `authenticated-session-required` + `finance`/`admin` role gate) is locked in this WP so the follow-up server WP has zero schema ambiguity. **Harden-round-2 extensions:** the billing-health window is a trailing 30 days from `range.end` (inclusive); both sparklines plot exactly 30 daily data points; `displayRate = totalCount === 0 ? 0 : failureCount / totalCount` (NaN never reaches the renderer). Rationale: Webhook failures are a silent revenue leak — Stripe collected the money, but our entitlements table didn't flip, so the customer feels cheated and the operator never knows unless surfaced. Intent abandonment is the leading indicator of checkout-UX friction. Naming the forward contract here prevents the classic dashboard ↔ server drift bug where the server returns a slightly different shape than the client expects. The window + rate-zero extensions close the two most common sparkline/KPI bugs: variable point counts (operator's eye loses calibration) and zero-denominator producing NaN.
+
+**Packet:** WP-196 (EC-225).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19604 — Aggregation Derivation Rule + Numerical Integrity Guard
+
+**D-19604 — Aggregation Derivation Rule + Numerical Integrity Guard.** Aggregate values exposed by the composable (`totalGross`, `totalNet`, `netMarginRatio`) derive ONLY from summing already-rounded per-day arrays — never from recomputing against raw inputs or aggregated raw totals. Division is permitted only when producing a ratio for display, and ratios MUST NOT be re-multiplied into money. Rationale: Recompute-from-aggregate is the most common financial-dashboard correctness bug: chart totals, tooltip totals, and table totals diverge by a few cents at month boundaries and the operator can't tell which one is real. Locking the derivation direction (per-day rounded → summed) means all three displays trace to the same source. The numerical-integrity rider blocks the related class of bug where a developer notices a ratio is "close to" a percentage and feeds it back into a money calculation.
+
+**Packet:** WP-196 (EC-225).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19605 — Mock Determinism Contract + DateRange Normalization + Hash Function
+
+**D-19605 — Mock Determinism Contract + DateRange Normalization + Hash Function.** Mock data on the dashboard is deterministic at the same standard as engine RNG: `seed = hash(range.start + '|' + range.end)`, pure, no `Math.random()` without a seeded wrapper. Identical `range` input produces byte-identical output across calls, reloads, and widgets. **Harden-round-2 extensions:** (1) **DateRange normalization** — `range.start` and `range.end` MUST be `YYYY-MM-DD` ISO strings (no time, no timezone, no `Z`); range is inclusive both ends; `start > end` (lexical) at the service boundary throws a full-sentence error naming both values; normalization happens at the service boundary (`fetchBillingHealth`, `normalizeRange.ts`), NOT inside widgets. (2) **Hash function contract** — the hash is FNV-1a 32-bit (or equivalent simple non-crypto hash) defined in `apps/dashboard/src/services/hashRange.ts` with a `// why:` citing D-19605; pure function, same input string → byte-identical integer output on every platform; widgets and mocks import this single function rather than re-implementing. Rationale: The engine's determinism guarantees only carry value if the rest of the stack matches them. A flaky mock causes flaky tests, flaky screenshots, and operators second-guessing what they saw on Tuesday. Hashing the range string is the cheapest stable seed source available — no globals, no module-load-time reads, no implicit `Date.now()`. The contract is stricter than "stable within a session" because cross-reload stability is what makes "I saw X yesterday" debuggable. The normalization and hash extensions close the two cross-machine drift sources: variable input formats (`'2026-06-01'` vs `'2026-06-01T00:00:00Z'` seed differently) and engine-specific string-hash conventions.
+
+**Packet:** WP-196 (EC-225).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19606 — Operator Interpretation Hook + Negative-Net First-Class Signal
+
+**D-19606 — Operator Interpretation Hook + Negative-Net First-Class Signal.** The Net Revenue widget footer displays a single `"Net margin: X.X%"` label for the selected range — informational only, no RYG / threshold / alert hook in this WP. Negative-net days surface explicitly via tooltip label `"Negative net day"`; range-negative net margin renders `"Net margin: −X.X% (net loss)"`. The harden-round-2 extension locks the chart tooltip margin formula as **per-day** (`dayMarginRatio = grossCents[i] === 0 ? 0 : netCents[i] / grossCents[i]`), distinct from the aggregate `netMarginRatio` used in the footer — both numbers exist; they answer different questions. Rationale: A dashboard widget that's purely descriptive forces the operator to do mental math under load; a single interpretive cue ("are we making money or not") collapses the decision. Deferring RYG to a future WP is deliberate — real percentages aren't known yet, so any threshold today would be meaningless and bake in the wrong defaults. Surfacing negative net explicitly (rather than just rendering a smaller bar) turns the highest-signal edge case into the most visible signal — exactly inverted from the common bug of clamping it away. The per-day vs aggregate margin split prevents the related bug where the tooltip shows the range average on every hover, telling the operator the wrong number for the surface they're reading.
+
+**Packet:** WP-196 (EC-225).
+
+**Drafted:** 2026-05-31.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19607 — Shared Revenue Source Contract
+
+**D-19607 — Shared Revenue Source Contract.** `NetRevenueChartWidget` and `RevenueChartWidget` MUST consume the same `fetchRevenueHistory(range)` call path. Direct calls to `mockRevenueHistory` (or any lower-level mock generator) from widget code are forbidden. Both widgets MUST be passed the SAME `range` reference sourced from the page-level `useDateRange` composable. A single fetch invocation feeds both widgets so the mock generator is called once per range change, not once per widget. Rationale: The harden-round-1 acceptance criterion "Cross-widget consistency: sum of NetRevenueChartWidget gross series exactly equals RevenueChartWidget total" was prose-level only — auditable manually but not structurally enforced. Without this contract, a developer adding a third revenue widget could legitimately construct its own series and watch the cross-widget totals drift by mock-determinism distance. Locking the call path means the grep is the audit: exactly 2 `fetchRevenueHistory` widget call sites, zero `mockRevenueHistory` widget call sites.
+
+**Packet:** WP-196 (EC-225).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19608 — ECharts Stacking Contract
+
+**D-19608 — ECharts Stacking Contract.** All four Net Revenue series share the literal stack identifier `'total'`. Series array order is fixed bottom-to-top: net (index 0), royalty (index 1), stripeFees (index 2), infraCogs (index 3). Negative values use the same stack key — ECharts handles mixed-sign stacked bars correctly on a single stack key. Tooltip series-list ordering matches series-array order. Rationale: ECharts handles mixed-sign stacked bars correctly only when every series shares the stack key. A well-meaning developer might think the negative band "looks wrong" and assign the net series a separate stack for negative days — which detaches the negative bar from the positive stack and visually reads as a different metric. Locking the contract structurally prevents this class of "fix" from ever being merged.
+
+**Packet:** WP-196 (EC-225).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
 Protect this file.

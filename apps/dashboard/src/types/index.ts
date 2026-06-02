@@ -83,3 +83,23 @@ export interface ServerNode {
 }
 
 export type WebSocketState = 'connected' | 'disconnected' | 'disabled';
+
+export interface BillingHealth {
+  readonly windowStart: string;
+  readonly windowEnd: string;
+  readonly webhookFailureRate: number;
+  readonly webhookFailureCount: number;
+  readonly webhookTotalCount: number;
+  readonly intentAbandonmentRate: number;
+  readonly intentAbandonedCount: number;
+  readonly intentTotalCount: number;
+}
+
+export interface NetRevenueSeries {
+  readonly dates: readonly string[];
+  readonly gross: readonly number[];
+  readonly royalty: readonly number[];
+  readonly stripeFees: readonly number[];
+  readonly infraCogs: readonly number[];
+  readonly net: readonly number[];
+}

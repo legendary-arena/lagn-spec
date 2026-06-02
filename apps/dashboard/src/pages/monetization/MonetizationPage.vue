@@ -4,9 +4,18 @@ import { useDataFreshness } from '../../composables/useDataFreshness.js';
 import { fetchRevenueRecords } from '../../services/endpoints.js';
 import { formatCurrency } from '../../utils/format.js';
 import RevenueChartWidget from '../../widgets/RevenueChartWidget.vue';
+import NetRevenueChartWidget from '../../widgets/NetRevenueChartWidget.vue';
+import PaidActionErrorsWidget from '../../widgets/PaidActionErrorsWidget.vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
+// why: D-19607 (Shared Revenue Source Contract) — the existing
+// `RevenueChartWidget` and the new `NetRevenueChartWidget` consume revenue
+// history exclusively through `fetchRevenueHistory(range)` and share the
+// page-level `useDateRange()` reference. Mock determinism (D-19605) gives
+// both widgets byte-identical revenue series for the same range, so
+// `RevenueChartWidget`'s total equals `sum(NetRevenueChartWidget.series.gross)`
+// without an explicit prop bridge.
 const { data, loading, error, updatedAt, source } = useFetch(fetchRevenueRecords);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
 </script>
@@ -22,6 +31,11 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
     </div>
 
     <RevenueChartWidget />
+
+    <div class="widget-grid">
+      <NetRevenueChartWidget />
+      <PaidActionErrorsWidget />
+    </div>
 
     <div v-if="loading && !data" class="page-loading">
       <p>Loading revenue data...</p>
@@ -93,4 +107,16 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
 
 .page-error { color: #dc2626; }
 .page-empty { color: #94a3b8; }
+
+.widget-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .widget-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 </style>
