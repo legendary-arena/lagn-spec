@@ -130,7 +130,8 @@ incorrectness.
 `packages/game-engine/src/ops/` (D-3501),
 `packages/game-engine/src/simulation/` (D-3601),
 `packages/game-engine/src/beta/` (D-3701),
-`packages/game-engine/src/governance/` (D-4001)
+`packages/game-engine/src/governance/` (D-4001),
+`packages/game-engine/src/events/` (D-20008)
 
 ---
 

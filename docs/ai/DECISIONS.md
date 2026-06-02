@@ -20443,4 +20443,107 @@ worth the indirection cost.
 
 ---
 
+### D-20008 — `packages/game-engine/src/events/` Classified as Engine Code Category
+
+**Decision:**
+The `packages/game-engine/src/events/` subdirectory, introduced by
+WP-200, is classified as **engine** code category. It follows all engine-
+category rules defined in `docs/ai/REFERENCE/02-CODE-CATEGORIES.md §Engine`
+and in `.claude/rules/architecture.md` + `.claude/skills/legendary-game-engine/SKILL.md`.
+
+Specifically, files under `packages/game-engine/src/events/`:
+- Contain **pure type definitions and pure helpers only** — no I/O, no
+  filesystem access, no network access, no environment reads, no clock
+  reads, no randomness.
+- Do **not** import `boardgame.io` (the game framework), the registry
+  package (`@legendary-arena/registry`), the server layer, or any other
+  `apps/*` package.
+- Do **not** read `Math.random` (non-engine RNG), `Date.now`
+  (wall-clock helper), `performance.now` (high-resolution timing reads),
+  or any other nondeterministic source.
+- Do **not** use `.reduce()` in any form (per `.claude/rules/code-style.md`).
+- Export types and pure narrative-composition helpers used by the engine
+  emission sites (`fightVillain.ts`, `villainDeck.reveal.ts`,
+  `schemeTwistResolvers.ts`, `mastermindHandlers.ts`) AND projected by the
+  UIState builder. The directory exposes additive public-API surface only;
+  no runtime registry data flow, no `G`/`ctx` ownership.
+
+**Rationale:**
+WP-200 produces `NotableGameEvent` discriminated union type definitions
+(four variants: `fightResolved`, `ambushResolved`, `schemeTwistResolved`,
+`mastermindStrikeResolved`) plus pure narrative-composition helpers
+(`composeFightNarrative`, `composeAmbushNarrative`,
+`composeSchemeTwistNarrative`, `composeMastermindStrikeNarrative`). These
+types and helpers are engine-internal (consumed by emission fire sites
+and projected through `UIState.notableEvents`) but runtime-pure (no
+`G`/`ctx` mutation, no framework imports, no I/O). Classifying the
+directory as engine matches the D-2706 / D-2801 / D-3001 / D-3101 /
+D-3201 / D-3301 / D-3401 / D-3501 / D-3601 / D-3701 / D-4001 precedent
+chain for engine subdirectories that ship pure types plus pure helpers
+without framework or boundary-crossing imports. Alternatives considered:
+
+- **Place types in `packages/game-engine/src/types.ts` and helpers in
+  `packages/game-engine/src/rules/`** — rejected because the narrative
+  composers and event type union are a cohesive surface that benefits
+  from a dedicated directory; the inline-everywhere alternative
+  scatters the contract across unrelated files and obscures the
+  emission-site → composer → type-union dependency chain.
+- **New top-level category (e.g., `events`)** — rejected because the
+  D-5601 pattern (new top-level category) applies only when the package
+  itself is top-level (`packages/<name>/`), not when a single
+  subdirectory is added to an existing package.
+- **Infra / test category** — rejected because the directory contains
+  type contracts and narrative helpers that are part of the engine's
+  runtime emission path, not test or infrastructure code.
+
+**Implications:**
+- All files under `packages/game-engine/src/events/` must pass the
+  engine-category verification greps (no `boardgame.io`, no `Math.random`,
+  no `Date.now`, no `performance.now`, no `@legendary-arena/registry`,
+  no `apps/server`, no `require(`, no `.reduce()`).
+- Future additions to the directory (new event variants, new composers,
+  new types) inherit the engine-category rules without requiring a fresh
+  decision. Adding a fifth event variant (e.g., `escapeResolved` for
+  WP-186) still requires a new WP per D-20001, but the directory
+  classification carries forward.
+- If a future WP proposes runtime logic that crosses a boundary (e.g.,
+  reading the registry from a composer, importing `boardgame.io` for a
+  ctx event helper), that WP must either carve out an exception with a
+  new D-entry or place the boundary-crossing logic in a different
+  directory that already permits it.
+
+**Alternatives rejected:** See Rationale section above.
+
+**Implementation locations:**
+
+- `packages/game-engine/src/events/notableEvents.types.ts` — new file
+  introduced by WP-200; exports `NotableGameEventType` union,
+  `NOTABLE_EVENT_TYPES` canonical array, four event interfaces,
+  `NotableGameEvent` discriminated union, `SchemeTwistResolverKey` +
+  `SCHEME_TWIST_RESOLVER_KEYS` canonical array.
+- `packages/game-engine/src/events/notableEvents.compose.ts` — new file
+  introduced by WP-200; exports four pure narrative composers
+  (`composeFightNarrative`, `composeAmbushNarrative`,
+  `composeSchemeTwistNarrative`, `composeMastermindStrikeNarrative`).
+- `packages/game-engine/src/events/notableEvents.types.test.ts` — new
+  drift-detection + JSON round-trip tests.
+- `packages/game-engine/src/events/notableEvents.compose.test.ts` — new
+  narrative-composition golden-string tests.
+- `docs/ai/REFERENCE/02-CODE-CATEGORIES.md` — updated alongside this
+  decision to list `packages/game-engine/src/events/` (D-20008) as
+  engine category (same-session drafting update per
+  `01.7-copilot-check.md §13` resolution workflow).
+
+**Affected WPs:** WP-200 (introducing WP); WP-201 (UI consumer; reads
+the type contracts but does not import composers); all future WPs that
+touch `packages/game-engine/src/events/` (including the eventual
+WP-186 `escapeResolved` extension per D-20001).
+
+**Packet:** WP-200 (EC-227).
+
+**Drafted:** 2026-06-02 (copilot check resolution; not yet landed).
+**Status:** Drafted; flips to Active on WP-200 execution close.
+
+---
+
 Protect this file.
