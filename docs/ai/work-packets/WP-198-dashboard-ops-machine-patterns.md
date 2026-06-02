@@ -238,7 +238,7 @@ If any of the above is false, this packet is **BLOCKED**.
 |---|---|
 | Cadence union (extended) | `'daily' \| 'weekly' \| 'monthly' \| 'quarterly' \| 'as-scheduled'` |
 | Cadence horizon tab order (UI) | `Today` → `This Week` → `This Month` → `This Quarter` (left-to-right; `as-scheduled` items appear under `Today`) |
-| Storage-key shape for new cadences | `la-dashboard-checklist-{userId}-{cadence}-{periodKey}` where `periodKey` is `YYYY-MM` (monthly) or `YYYY-Q[1-4]` (quarterly) |
+| Storage-key shape for new cadences | `la-dashboard-checklist-{userId}-{cadence}-{periodKey}` where `cadence ∈ { 'weekly', 'monthly', 'quarterly' }` and `periodKey` is `YYYY-Www` (weekly, ISO week), `YYYY-MM` (monthly), or `YYYY-Q[1-4]` (quarterly). Daily items keep the WP-162 shape `la-dashboard-checklist-{userId}-{dateString}` byte-identical. **Note:** the WP-162 codebase persists every cadence under the daily-shape key; this WP introduces the per-cadence shape for weekly/monthly/quarterly. The `weekly` migration is one-way: existing weekly entries in the daily key are NOT migrated — operator-persisted weekly state resets at WP-198 deployment (acceptable trade — weekly state is sparse and ephemeral). |
 | KpiSnapshot extended fields | `target?: number`, `tolerance?: number`, `direction?: 'higher-is-better' \| 'lower-is-better'` (all optional; KPIs without `target` render no status chip) |
 | Status chip values | `'on-track' \| 'off-track' \| 'needs-attention'` |
 | Status chip thresholds | `on-track` when value within `target ± tolerance`; `off-track` when value is on the wrong side of `target` beyond `tolerance`; `needs-attention` when value is on the wrong side of `target` but within `tolerance` |
@@ -250,6 +250,7 @@ If any of the above is false, this packet is **BLOCKED**.
 | Generator wiring | `apps/dashboard/package.json` `"build"` script becomes `"node scripts/build-governance-snapshot.mjs && vite build"` |
 | Snapshot JSON shape | See §D Contract below |
 | Snapshot refresh cadence | Every `pnpm dash:build` (build-time only — no live updates) |
+| Snapshot `generatedAt` source | `git log -1 --format=%cI` of `HEAD` (commit ISO timestamp). NOT the build wall-clock — two builds against the same commit MUST produce byte-identical JSON. Fallback: empty string `""` if `git log` fails. |
 | Activity feed source | DECISIONS.md entries newer than 30 days + WP-completion git commits (`git log --oneline -50` filtered to commits whose first line begins with `WP-NNN:` or `SPEC:`) |
 | Vision card placement | Top of Overview, above the KPI grid |
 | Governance throughput placement | Below the DailyExecutionPanel, left column of a new two-column grid |
@@ -362,25 +363,47 @@ If any of the above is false, this packet is **BLOCKED**.
       `^- \[(x| )\] WP-(\d{3}) — (.+?)\. \*\*(Draft|Done|Ready|Blocked)\*\* (\d{4}-\d{2}-\d{2})?`
       (regex anchored to start-of-line). Counts per status and
       per ISO week / month / quarter. **Also extracts dependency
-      lists** by scanning each row's body for `Hard-deps?: ([^.]+)`
-      and parsing the matched segment for `WP-\d{3}` tokens. A WP
-      is **executable now** when its status is `Ready` or `Draft`
-      and every extracted dependency WP has status `Done`. Rows
-      with no extractable `Hard-deps:` segment are treated as
-      dependency-free (executable as long as their own status
-      qualifies). Per D-19806.
+      lists** by scanning each row's body for the literal
+      case-sensitive token `Hard-deps:` (single segment per row;
+      `Hard-deps:` may appear zero or one times; if absent the row
+      is dependency-free). The segment **terminates at the first
+      `.` character** after the literal `Hard-deps:` token. Within
+      that segment, dependency WPs are extracted via the regex
+      `/WP-\d{3}/g` (case-sensitive). A WP is **executable now**
+      when its status is `Ready` or `Draft` and every extracted
+      dependency WP has status `Done`. Per D-19806.
+    - **Ordering of `nextExecutable()` candidates.** After filtering
+      to (`status ∈ {Ready, Draft}` AND every dependency
+      resolves to status `Done`), candidates are sorted by **WP
+      number ascending only**. `Ready` and `Draft` are
+      interchangeable in the ordering — status does NOT affect
+      sort order; lowest WP number wins.
     - `docs/ai/DECISIONS.md` — parses entries matching
-      `^### D-(\d{5}) — (.+?)$` and the first paragraph after each
-      heading (capped at 240 chars per entry); annotates with the
-      file's git-log mtime per entry (via
+      `^### D-(\d{5}) — (.+?)$` and the **first paragraph** after
+      each heading. **Paragraph definition (locked):** first
+      contiguous block of non-empty lines after the heading;
+      iteration stops at the first empty line (a line whose
+      `.trim()` is the empty string). Lines within the paragraph
+      are joined with a single space (no `\n`, no multi-space
+      collapse beyond the join itself). The joined string is then
+      capped at 240 chars via `String.prototype.slice(0, 240)` —
+      no `.trim()`, no whitespace normalization. Annotated with
+      the file's git-log mtime via
       `git log -1 --format=%cI -- docs/ai/DECISIONS.md` — single
-      file mtime is acceptable since DECISIONS.md is append-only).
+      file mtime is acceptable since DECISIONS.md is append-only
+      (per-entry mtime is documented in §Known Failure Modes).
     - `git log --oneline -50` — filtered to commits whose first
       line begins with `WP-NNN:` or `SPEC:`.
   - Emits JSON to `apps/dashboard/src/data/governance-snapshot.json`.
   - Shape: see §D Contract below.
   - Deterministic: same repo state → byte-identical JSON. Sort
-    arrays and object keys explicitly.
+    arrays and object keys explicitly. **`generatedAt` is NOT the
+    build wall-clock** — it is the ISO commit timestamp of `HEAD`
+    via `git log -1 --format=%cI` so two builds against the same
+    commit produce byte-identical JSON. (If `git log` fails — e.g.
+    detached state with no commits — the generator falls back to
+    the empty string `""` rather than a wall-clock; the byte-identity
+    contract takes priority over a human-readable freshness label.)
   - Failure mode: if any required file is missing or `git log`
     fails, write a snapshot with `error: <message>` instead of
     throwing; the runtime widget then renders its error state
@@ -461,7 +484,8 @@ If any of the above is false, this packet is **BLOCKED**.
 
 ### G) Decisions
 
-Five D-entries appended to `docs/ai/DECISIONS.md`:
+Six D-entries appended to `docs/ai/DECISIONS.md` (D-19801..D-19803
+land in EC-224a; D-19804..D-19806 land in EC-224b):
 
 - **D-19801** — Cadence union extended with `monthly` and
   `quarterly`; new cadences use a distinct storage-key shape so
@@ -477,11 +501,21 @@ Five D-entries appended to `docs/ai/DECISIONS.md`:
 - **D-19804** — Governance snapshot is a build-time JSON
   generated by `apps/dashboard/scripts/build-governance-snapshot.mjs`,
   not a server endpoint. Gitignored; regenerated every
-  `pnpm dash:build`.
+  `pnpm dash:build`. `generatedAt` is sourced from
+  `git log -1 --format=%cI` of `HEAD` (commit timestamp, not build
+  wall-clock) so two builds against the same commit produce
+  byte-identical JSON.
 - **D-19805** — Snapshot generator failure writes
   `{ error: <message> }` to the JSON instead of throwing, so the
   widget renders its error state cleanly and the build does not
   abort on a transient parse problem.
+- **D-19806** — `GovernanceThroughputWidget` primary card is
+  "Now: next executable WP" (lowest-numbered `Ready`/`Draft` WP
+  whose deps are all `Done`), not a passive count. Snapshot
+  generator extracts dependency lists from each WORK_INDEX row's
+  `Hard-deps:` segment. Action-first framing over passive-state
+  framing for a solo operator running dependency-ordered
+  execution.
 
 ### H) Governance index updates
 
@@ -499,7 +533,7 @@ Five D-entries appended to `docs/ai/DECISIONS.md`:
 
 ```ts
 interface GovernanceSnapshot {
-  readonly generatedAt: string;        // ISO timestamp (build-time)
+  readonly generatedAt: string;        // ISO timestamp of HEAD commit (`git log -1 --format=%cI`), NOT build wall-clock; falls back to "" if git unavailable
   readonly schemaVersion: 1;           // bump on breaking shape change
   readonly error?: string;             // present only on generator failure
   readonly throughput: {
@@ -621,7 +655,7 @@ the emitted JSON (deterministic byte-identical output).
 - `apps/dashboard/src/composables/useDataFreshness.ts` — **modified** — extend source-label union with `'BUILD'`
 
 **Governance (§G + §H):**
-- `docs/ai/DECISIONS.md` — **modified** — append D-19801..D-19805
+- `docs/ai/DECISIONS.md` — **modified** — append D-19801..D-19806
 - `docs/ai/STATUS.md` — **modified** — note new dashboard capabilities
 - `docs/ai/work-packets/WP-198-dashboard-ops-machine-patterns.md` — **new** — this file
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — add WP-198 row (deferred if WP-195 mid-execution; see §H)
@@ -670,7 +704,7 @@ top.
 - [ ] `package.json` `"build"` is `"node scripts/build-governance-snapshot.mjs && vite build"`.
 - [ ] `useGovernanceSnapshot` composable exposes typed `throughput()`, `decisions()`, `commits()`, `loadError` accessors.
 - [ ] GovernanceThroughputWidget renders 4 cards in the data state: a **Now: next executable WP** card (primary, showing the lowest-numbered `Ready`/`Draft` WP whose deps are all `Done`, with "+N more queued" subtitle if more than one) plus three count cards (Done / In-flight / Blocked) scoped to the selected horizon.
-- [ ] Snapshot generator extracts a `dependencies: number[]` array on each WpRef by parsing `Hard-deps?:` segments in WORK_INDEX row bodies; rows with no matching segment carry an empty array.
+- [ ] Snapshot generator extracts a `dependencies: number[]` array on each WpRef by parsing the literal case-sensitive `Hard-deps:` token in each WORK_INDEX row body; the segment terminates at the first `.` after the token and dependency WP numbers are extracted via `/WP-\d{3}/g`. Rows with no `Hard-deps:` token carry an empty array (not a parse error).
 - [ ] `useGovernanceSnapshot.nextExecutable(limit)` returns up to `limit` WpRefs whose status is `Ready` or `Draft` AND whose every `dependencies` entry resolves to a WpRef with status `Done`.
 - [ ] Widget freshness badge shows `BUILD` + the snapshot's `generatedAt` timestamp.
 
@@ -829,7 +863,7 @@ directly; no HTTP call.
 | D-19803 | VisionCard renders a curated condensed string in the component; no runtime file read, no build-time generator. The string is JSDoc-versioned against `docs/01-VISION.md` and re-verified on every WP that modifies VISION.md. | The Benioff pattern from the video (P4) is *pinning* the vision, not *displaying* a live file. A curated condensed string fits the operator's at-a-glance need; a full VISION.md render would dilute the signal. Static text avoids both runtime file IO (browser-impossible) and build-time generator coupling (over-engineering for a one-paragraph card). The versioning rule prevents the curated string from silently drifting from the source. |
 | D-19804 | Governance snapshot is a build-time JSON generated by `apps/dashboard/scripts/build-governance-snapshot.mjs` from `WORK_INDEX.md`, `DECISIONS.md`, and `git log`. Gitignored. The SPA imports it via Vite's static-asset mechanism. | A server endpoint would mean a new `/api/admin/governance/*` route, a query path against the DB or filesystem, and a CORS + auth posture decision — too much new surface for a widget that re-renders only when the operator triggers a build. The build-time path keeps the dashboard's client-only posture intact and is consistent with the legends-board WP-142/WP-143 R2-snapshot pattern (decouple presentation from runtime data source when the data is build-cadence). Gitignoring the JSON keeps the repo from churning on every commit. |
 | D-19805 | Snapshot generator failure mode writes `{ error: <message>, schemaVersion: 1, generatedAt: <iso> }` to the JSON; never throws. The widget surfaces the error state cleanly; the build does not abort. | Throwing aborts the entire dashboard build, which is worse for the operator than seeing a "governance snapshot unavailable" widget error. The Widget Contract (WP-157 §5) already mandates an error state — leveraging it for build-time failures preserves the contract and keeps the operator's other widgets reachable. |
-| D-19806 | GovernanceThroughputWidget's primary card is **Now: next executable WP** (lowest-numbered `Ready`/`Draft` WP whose deps are all `Done`) rather than a passive count card. Snapshot generator extracts dependency lists from each WORK_INDEX row's `Hard-deps?:` segment to compute it. | The original four-count framing (Done / In-flight / Blocked / This-week-shipped) told the operator state but not next action. For a solo operator running a strict dependency-ordered execution model (per `.claude/rules/work-packets.md`), the highest-value glance is "what can I execute next?" — not "how many landed this week?" The dependency extraction is a small regex extension to the parser. Added 2026-06-01 after an external dashboard-design critique correctly identified this as a sharper operator framing. |
+| D-19806 | GovernanceThroughputWidget's primary card is **Now: next executable WP** (lowest-numbered `Ready`/`Draft` WP whose deps are all `Done`) rather than a passive count card. Snapshot generator extracts dependency lists from each WORK_INDEX row's `Hard-deps:` segment (literal case-sensitive token; segment terminates at the first `.`; `/WP-\d{3}/g` extracts WP numbers within) to compute it. | The original four-count framing (Done / In-flight / Blocked / This-week-shipped) told the operator state but not next action. For a solo operator running a strict dependency-ordered execution model (per `.claude/rules/work-packets.md`), the highest-value glance is "what can I execute next?" — not "how many landed this week?" The dependency extraction is a small regex extension to the parser. Added 2026-06-01 after an external dashboard-design critique correctly identified this as a sharper operator framing. |
 
 ---
 
@@ -890,7 +924,7 @@ directly; no HTTP call.
 |---|---|
 | Build fails with "Cannot find module '../data/governance-snapshot.json'" | `pnpm dash:build` ran without the snapshot generator step; check `package.json` `build` script wiring. |
 | Governance widget shows error state on a fresh checkout | Generator not run yet; `.gitkeep` is present but the JSON is gitignored. Run `pnpm --filter @legendary-arena/dashboard prebuild:snapshot`. |
-| Snapshot byte-identical check fails | Generator is non-deterministic — likely cause: object-key insertion order in the emitted JSON, or `git log` includes a timestamp field. Sort keys explicitly; never include wall-clock data outside `generatedAt`. |
+| Snapshot byte-identical check fails | Generator is non-deterministic — likely cause: object-key insertion order in the emitted JSON, OR `generatedAt` is sourced from `new Date().toISOString()` (build wall-clock) instead of `git log -1 --format=%cI` of `HEAD`, OR `localeCompare` slipped in. Sort keys explicitly; never include wall-clock data anywhere in the output (including `generatedAt`). |
 | KpiCard renders status chip but the color and text disagree | `computeKpiStatus` returned one status but the chip CSS class is keyed off a different field (e.g., trend). Re-check the chip's `:class` binding. |
 | Daily checklist resets unexpectedly after this WP lands | Storage-key shape changed for daily items by accident — daily key shape must remain byte-identical per D-19801. Roll back the storage-key change and re-verify with the existing 9 tests. |
 | VisionCard text drifts from VISION.md | Operator updated `docs/01-VISION.md` without re-running the VisionCard's JSDoc-versioned curated string update. Re-verify against source. |

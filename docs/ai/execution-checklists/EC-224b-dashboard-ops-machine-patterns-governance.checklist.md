@@ -7,7 +7,7 @@
 ## Pre-Session Actions (PS-1..PS-4) — Blocking
 
 - [ ] **PS-1 — EC-224a landed.** `git log origin/main --oneline` shows the EC-224a implementation commit + governance close. `docs/ai/DECISIONS.md` carries `D-19801`, `D-19802`, `D-19803`. `OverviewPage.vue` carries the VisionCard insert at the top. If not, STOP — EC-224a is the hard dependency.
-- [ ] **PS-2 — D-entries reserved.** `D-19804` (build-time governance snapshot posture) and `D-19805` (generator failure writes error JSON, never throws) MUST be appended BYTE-IDENTICALLY to `docs/ai/DECISIONS.md` per WP §Decisions Introduced. Paraphrase is FAIL.
+- [ ] **PS-2 — D-entries reserved.** `D-19804` (build-time governance snapshot posture, including `generatedAt = git %cI HEAD`), `D-19805` (generator failure writes error JSON, never throws), and `D-19806` (action-first "Now: next executable WP" widget framing + `Hard-deps:` parsing rules) MUST be appended BYTE-IDENTICALLY to `docs/ai/DECISIONS.md` per WP §Decisions Introduced. Paraphrase is FAIL.
 - [ ] **PS-3 — Governance file format baseline captured.** Record verbatim samples from `main` of: (a) one `WORK_INDEX.md` row matching the regex `^- \[(x| )\] WP-(\d{3}) — (.+?)\. \*\*(Draft|Done|Ready|Blocked)\*\* (\d{4}-\d{2}-\d{2})?`; (b) one `DECISIONS.md` `### D-NNNNN —` heading + first paragraph. The generator parsers MUST round-trip the captured samples without coercion or repair.
 - [ ] **PS-4 — `pnpm-lock.yaml` baseline.** Capture current SHA. The generator uses Node built-ins only; `pnpm-lock.yaml` MUST be byte-identical at completion.
 
@@ -32,13 +32,27 @@ If any PS item is unsatisfied, the executor STOPS and reports `BLOCKED`.
 - **Output path** = `apps/dashboard/src/data/governance-snapshot.json` (gitignored).
 - **Input files** = `docs/ai/work-packets/WORK_INDEX.md`, `docs/ai/DECISIONS.md`, `git log --oneline -50`.
 - **WORK_INDEX row regex** = `^- \[(x| )\] WP-(\d{3}) — (.+?)\. \*\*(Draft|Done|Ready|Blocked)\*\* (\d{4}-\d{2}-\d{2})?` (anchored to start-of-line; per WP §D).
-- **DECISIONS entry regex** = `^### D-(\d{5}) — (.+?)$` for heading; first paragraph after each heading captured (240-char cap, slice via `String.prototype.slice(0, 240)` — no normalization).
+- **`Hard-deps:` parsing rules (per WP §D, locked):**
+  - Literal case-sensitive token match: `Hard-deps:` (no `Hard-Deps`, no `hard-deps`).
+  - At most one `Hard-deps:` segment per row (rows with zero are dependency-free).
+  - Segment terminates at the **first `.` character** after the literal `Hard-deps:` token.
+  - Within the segment, dependency WPs are extracted via the regex `/WP-\d{3}/g` (case-sensitive, exactly three digits — `WP-99` and `WP-1234` are NOT matched).
+  - A row is **dependency-free** when no `Hard-deps:` segment is found; this is NOT a parse error.
+- **`nextExecutable()` ordering rule (per WP §D + D-19806):**
+  1. Filter: `status ∈ {Ready, Draft}` AND every dependency resolves to a WpRef with status `Done`.
+  2. Sort: WP number ascending only. `Ready` and `Draft` are interchangeable — status does NOT affect sort order; lowest WP number wins.
+- **DECISIONS entry regex** = `^### D-(\d{5}) — (.+?)$` for heading.
+- **DECISIONS first-paragraph capture (locked):**
+  - **Paragraph definition** = first contiguous block of non-empty lines after the heading. Iteration stops at the first empty line (a line whose `.trim()` is the empty string).
+  - **Join rule** = paragraph lines joined with a single space (no `\n`, no multi-space collapse beyond the single-space join itself).
+  - **Cap** = joined string sliced via `String.prototype.slice(0, 240)`. No `.trim()`, no whitespace normalization beyond the join, no ellipsis.
 - **DECISIONS mtime resolution** = single file mtime via `git log -1 --format=%cI -- docs/ai/DECISIONS.md`. Per-entry mtime is OUT OF SCOPE for this WP (documented in WP §Known Failure Modes).
 - **`git log` filter** = commits whose first line begins with `WP-NNN:` or `SPEC:`. Other prefixes are dropped silently.
 - **JSON schema** = exactly per WP §D Contract. `schemaVersion: 1`. Five top-level keys: `generatedAt`, `schemaVersion`, `throughput`, `decisions`, `commits`. `error` field is OPTIONAL and present ONLY on generator failure.
-- **`throughput` sub-keys** = `byWeek`, `byMonth`, `byQuarter`, `inFlight`, `blocked` (closed 5-key set).
+- **`throughput` sub-keys** = `byWeek`, `byMonth`, `byQuarter`, `inFlight`, `blocked`, `now` (closed 6-key set; `now` is the ordered `WpRef[]` returned by `nextExecutable()` — see ordering rule above, per D-19806).
 - **Horizon-key formats** = `'YYYY-Www'` (ISO week), `'YYYY-MM'`, `'YYYY-Qn'` (n ∈ 1..4).
-- **Determinism contract** — same repo state → byte-identical JSON. Object keys sorted lexicographically at every nesting level via key-sorted intermediate before `JSON.stringify(value, null, 2)`. Arrays sorted explicitly (lex by `key`/`id`, or commit-order descending — never insertion-order).
+- **`generatedAt` source (locked, per WP §D)** = ISO commit timestamp of `HEAD` via `git log -1 --format=%cI`. **NOT** the build wall-clock (`new Date().toISOString()` is FAIL). Fallback to the empty string `""` if `git log` fails (e.g. detached state with no commits). The byte-identity contract takes priority over a human-readable freshness label — same commit → same `generatedAt` → byte-identical JSON.
+- **Determinism contract** — same repo state (same `HEAD` commit + same input files) → byte-identical JSON, end-to-end. Object keys sorted lexicographically at every nesting level via key-sorted intermediate before `JSON.stringify(value, null, 2)`. Arrays sorted explicitly (lex by `key`/`id`, or commit-order descending — never insertion-order).
 - **Lexicographic comparator** = JavaScript's default `<` string comparison (Unicode code-unit order). **NOT `String.prototype.localeCompare`** — locale-aware sort is forbidden across the contract.
 - **Stdout / file byte-stream** = UTF-8 encoding, LF line endings (`\n`), no BOM, exactly one trailing `\n` at end of file.
 - **Failure-mode contract (D-19805)** — if any input read fails or any parse throws, generator catches, writes `{ error: <full-sentence message>, schemaVersion: 1, generatedAt: <iso> }` to the output path, exits 0. NEVER throws to the build runner.
@@ -55,7 +69,15 @@ If any PS item is unsatisfied, the executor STOPS and reports `BLOCKED`.
 - **Snapshot import** = `import snapshot from '../data/governance-snapshot.json'` (Vite's static-asset mechanism; a missing file at build time surfaces as a vite error, NOT a runtime error).
 
 ### Widgets (Sub-tasks D + E)
-- **`GovernanceThroughputWidget` data state** = 4 count cards (Done / In-flight (Draft + Ready) / Blocked / This-week-shipped). Horizon selector at top: `This Week | This Month | This Quarter`, default `This Week`.
+- **`GovernanceThroughputWidget` data state** = 4 cards in this order (per D-19806; conflict with the older 4-count framing is resolved in favor of action-first):
+  1. **Primary: "Now: next executable WP"** — title of the next unblocked WP returned by `useGovernanceSnapshot.nextExecutable(1)[0]`, with a `+N more queued` subtitle when `nextExecutable(10).length > 1`. Horizon-independent (always exactly one "next" regardless of selected horizon).
+  2. **Done** — count of WPs in `Done` status scoped to the selected horizon.
+  3. **In-flight** — count of WPs in `Draft` + `Ready` status scoped to the selected horizon.
+  4. **Blocked** — count of WPs in `Blocked` status scoped to the selected horizon.
+
+  **"This-week-shipped" is OUT.** Earlier drafts of this EC listed a "This-week-shipped" card; that wording is REMOVED — it was not defined in the WP, not in the snapshot schema, and not computed by the generator. Do NOT reintroduce it.
+
+  Horizon selector at top: `This Week | This Month | This Quarter`, default `This Week`. The horizon affects cards 2–4 only; card 1 ("Now") is horizon-independent.
 - **`RecentActivityWidget` data state** = unified chronological feed with badges (`DECISION` / `WP` / `SPEC`). Item shape: timestamp (relative + ISO on hover), badge, title, body (240-char cap). Default 10 items; "Show more" reveals up to 50.
 - **Both widgets** follow the Widget Contract: 4-state rendering (loading / error / empty / data); freshness badge in the header.
 - **Freshness badge for build-time data** = source label `'BUILD'`, freshness timestamp = snapshot's `generatedAt`. The `BUILD` source label is added to `useDataFreshness` in Sub-task F.
@@ -65,7 +87,10 @@ If any PS item is unsatisfied, the executor STOPS and reports `BLOCKED`.
 - **`useDataFreshness` source-label union extension** = add exactly one new label: `'BUILD'`. Existing labels (`'MOCK'` etc.) untouched.
 
 ### D-entries to append (this EC)
-- `D-19804` (build-time governance snapshot posture), `D-19805` (generator failure writes error JSON, never throws). Verbatim from WP-198 §Decisions Introduced.
+- `D-19804` (build-time governance snapshot posture; `generatedAt` is the `HEAD` commit's `%cI` timestamp, not build wall-clock).
+- `D-19805` (generator failure writes error JSON, never throws).
+- `D-19806` (action-first "Now: next executable WP" widget framing replaces the older 4-count framing; snapshot generator extracts dependency lists via the locked `Hard-deps:` parsing rules).
+- All three verbatim from WP-198 §Decisions Introduced.
 
 ## Guardrails
 
@@ -109,7 +134,7 @@ Additions only; scoped per file. Edits to any unrelated line are FAIL.
 - `apps/dashboard/src/widgets/RecentActivityWidget.vue` — **new** — 4-state widget per §Locked Values §Widgets. Shares the `useGovernanceSnapshot` composable from this same EC (no duplicate snapshot import).
 - `apps/dashboard/src/composables/useDataFreshness.ts` — **modified** — EXACTLY one source-label added: `'BUILD'`. No other label / behavior touched.
 - `apps/dashboard/src/pages/dashboard/OverviewPage.vue` — **modified** — EXACTLY one new two-column grid added BELOW the existing `<DailyExecutionPanel />`: left `<GovernanceThroughputWidget />`, right `<RecentActivityWidget />`. **VisionCard insert (EC-224a) MUST remain in place**; do not touch it. Existing charts grid stays below the new row.
-- `docs/ai/DECISIONS.md` — **modified** — EXACTLY 2 new entries appended: `D-19804`, `D-19805`. Verbatim per WP §Decisions Introduced.
+- `docs/ai/DECISIONS.md` — **modified** — EXACTLY 3 new entries appended: `D-19804`, `D-19805`, `D-19806`. Verbatim per WP §Decisions Introduced.
 - `docs/ai/STATUS.md` — **modified** — EXACTLY one new status block: WP-198 Sub-tasks D + E + F executed; governance snapshot + throughput + activity widgets shipped. (Combine with EC-224a's status block by appending below it, OR flip EC-224a's pending status to fully Done — both acceptable.)
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — WP-198 row flipped to `[x]` with completion date. **This is the row WORK_INDEX edit deferred from EC-224a**; lands here because WP-198 is fully done only after sub-tasks D+E+F land.
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — EXACTLY one row state flip (EC-224b → Done).
@@ -120,7 +145,7 @@ Additions only; scoped per file. Edits to any unrelated line are FAIL.
 - [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0 (EC-224a baseline + new composable tests).
 - [ ] **Determinism gate.** Two sequential `pnpm --filter @legendary-arena/dashboard prebuild:snapshot` runs produce byte-identical files (`Get-FileHash` comparison).
 - [ ] **Failure-mode gate.** Temporarily rename `docs/ai/work-packets/WORK_INDEX.md`; re-run `prebuild:snapshot`; confirm: (a) exit code 0; (b) output JSON has `error` key with a full-sentence message + `schemaVersion: 1` + `generatedAt`; (c) generator does NOT throw to the shell. Restore the file.
-- [ ] **Schema gate.** `ConvertFrom-Json` parses the snapshot cleanly; top-level keys deep-equal `['commits', 'decisions', 'generatedAt', 'schemaVersion', 'throughput']` (lex-sorted); `throughput` keys deep-equal `['blocked', 'byMonth', 'byQuarter', 'byWeek', 'inFlight']`.
+- [ ] **Schema gate.** `ConvertFrom-Json` parses the snapshot cleanly; top-level keys deep-equal `['commits', 'decisions', 'generatedAt', 'schemaVersion', 'throughput']` (lex-sorted); `throughput` keys deep-equal `['blocked', 'byMonth', 'byQuarter', 'byWeek', 'inFlight', 'now']` (lex-sorted, 6 keys per D-19806).
 - [ ] **PII gate.** `Select-String -Path apps\dashboard\src\data\governance-snapshot.json -Pattern "@barefootbetters\.com|@legendary-arena\.com|jeff@"` returns zero matches.
 - [ ] **Gitignore gate.** `git status apps\dashboard\src\data\governance-snapshot.json` returns empty (file is ignored). `git ls-files apps/dashboard/src/data/.gitkeep` returns one match (the .gitkeep IS tracked).
 - [ ] **Build-wiring gate.** `apps/dashboard/package.json` `"build"` value is exactly `"node scripts/build-governance-snapshot.mjs && vite build"`; `"prebuild:snapshot"` value is exactly `"node scripts/build-governance-snapshot.mjs"`.
@@ -130,14 +155,17 @@ Additions only; scoped per file. Edits to any unrelated line are FAIL.
 - [ ] **No-hex-colors gate.** `Select-String -Path apps\dashboard\src\widgets\GovernanceThroughputWidget.vue, apps\dashboard\src\widgets\RecentActivityWidget.vue -Pattern "#[0-9A-Fa-f]{3,8}"` returns zero matches.
 - [ ] **No-server-endpoint gate.** `git diff --name-only origin/main -- apps/server/src/ docs/ai/REFERENCE/api-endpoints.md` returns empty.
 - [ ] **OverviewPage composition gate.** `OverviewPage.vue` contains EXACTLY one `<VisionCard />` (from EC-224a, untouched) AND EXACTLY one new two-column grid containing `<GovernanceThroughputWidget />` + `<RecentActivityWidget />` BELOW `<DailyExecutionPanel />`.
-- [ ] `docs/ai/DECISIONS.md` carries `D-19801..D-19805` (EC-224a landed `D-19801..D-19803`; this EC adds `D-19804`, `D-19805`).
+- [ ] `docs/ai/DECISIONS.md` carries `D-19801..D-19806` (EC-224a landed `D-19801..D-19803`; this EC adds `D-19804`, `D-19805`, `D-19806`).
 - [ ] `docs/ai/STATUS.md` reflects full WP-198 completion; `docs/ai/work-packets/WORK_INDEX.md` carries WP-198 `[x]` with completion date; `docs/ai/execution-checklists/EC_INDEX.md` EC-224b Done; EC-224a row already Done (verified in PS-1).
-- [ ] **Build-time freshness verification (manual).** `pnpm dash:dev`, open `/overview` as admin, confirm both new widgets render the `BUILD` freshness badge + the `generatedAt` timestamp. Sanity-check the counts against a manual `grep '\[x\] WP-' docs/ai/work-packets/WORK_INDEX.md | wc -l`.
+- [ ] **Build-time freshness verification (manual).** `pnpm dash:dev`, open `/overview` as admin, confirm both new widgets render the `BUILD` freshness badge + the `generatedAt` timestamp. The displayed timestamp MUST equal `git log -1 --format=%cI HEAD` (the HEAD commit ISO), NOT a wall-clock build time — confirm by eyeballing against `git log -1 --format=%cI` output.
+- [ ] **`generatedAt` determinism gate.** Capture `git log -1 --format=%cI HEAD`; run `pnpm --filter @legendary-arena/dashboard prebuild:snapshot`; `ConvertFrom-Json` the snapshot; assert `$snapshot.generatedAt -eq <captured value>`. Same commit → same `generatedAt` is the load-bearing invariant for the determinism contract.
+- [ ] **Next-executable widget gate.** `GovernanceThroughputWidget` data state renders 4 cards in this exact order: (1) "Now: next executable WP" primary card, (2) Done, (3) In-flight, (4) Blocked. The "Now" card shows the lowest-numbered `Ready`/`Draft` WP whose every `Hard-deps:` token resolves to a `Done` WP. No "This-week-shipped" card is present (removed per the contract-fix pass).
+- [ ] **Sanity-check the counts** against a manual `grep '\[x\] WP-' docs/ai/work-packets/WORK_INDEX.md | wc -l`.
 
 ## Common Failure Smells
 
 - Generator throws on a missing input file → D-19805 violation. Fix: catch all read/parse errors; write `{ error: <message>, schemaVersion: 1, generatedAt: <iso> }`; exit 0.
-- Snapshot byte-identity check fails across two runs → non-deterministic generator. Likely causes: (1) JSON-object insertion-order reliance — fix with key-sorted intermediate; (2) `Date.now()` or wall-clock data outside `generatedAt` — remove; (3) `localeCompare` used somewhere — replace with bare `.sort()`.
+- Snapshot byte-identity check fails across two runs → non-deterministic generator. Likely causes: (1) JSON-object insertion-order reliance — fix with key-sorted intermediate; (2) `Date.now()` / `new Date().toISOString()` used **anywhere**, including `generatedAt` — `generatedAt` MUST be `git log -1 --format=%cI` of `HEAD`, not the build wall-clock (per D-19804); (3) `localeCompare` used somewhere — replace with bare `.sort()`.
 - Snapshot includes a `mtime` field with millisecond-precision timestamp that changes per build → non-determinism vector. Fix: use the file's git-log mtime (`%cI` — committer-date ISO), which is stable across builds.
 - Snapshot contains `jeff@barefootbetters.com` → PII gate violation. Likely cause: a commit subject was captured verbatim and contained the email. Fix: strip email-shaped tokens via regex before persistence.
 - `governance-snapshot.json` shows up in `git status` → `.gitignore` entry missing or path wrong. Fix: confirm `src/data/governance-snapshot.json` (NOT `governance-snapshot.json`, NOT `data/governance-snapshot.json`) is the gitignored line.
@@ -147,6 +175,13 @@ Additions only; scoped per file. Edits to any unrelated line are FAIL.
 - `useDataFreshness` source-label union widened to include `'BUILD'` AND another new label → scope creep. Fix: revert; this EC adds EXACTLY one label.
 - `useReduce()` with branching used in the throughput-by-week aggregation → 00.6 Rule 7 violation. Fix: explicit `for...of` loop with a descriptive counter object.
 - `OverviewPage.vue` had its VisionCard insert (EC-224a) accidentally modified or moved → cross-EC tampering. Fix: revert the VisionCard region; only ADD the new grid.
+- `GovernanceThroughputWidget` data state renders a "This-week-shipped" card → D-19806 violation (older draft phrasing). Fix: remove; the 4-card set is Now + Done + In-flight + Blocked, in that order. "This-week-shipped" was never defined in the WP, never in the snapshot schema, and never computed by the generator.
+- `GovernanceThroughputWidget` "Now" card is absent or rendered below the count cards → D-19806 violation; the primary action card is card #1. Fix: re-order so "Now: next executable WP" is the leftmost / topmost card.
+- `nextExecutable()` returns `Ready` candidates before `Draft` candidates (or vice versa) → ordering violation. Fix: sort by WP number ascending ONLY; status does NOT affect order.
+- `Hard-deps:` parsing reads beyond the first `.` (e.g., picks up `WP-NNN` tokens from a following sentence) → segment-termination violation. Fix: terminate at the first `.` character after the literal `Hard-deps:` token.
+- `Hard-deps:` parsing matches `hard-deps:` or `Hard-Deps:` case-insensitively → casing violation. Fix: case-sensitive literal match only.
+- `generatedAt` ISO string changes between two runs against the same `HEAD` → wall-clock leakage. Fix: source `generatedAt` from `git log -1 --format=%cI`, not `new Date()`.
+- DECISIONS first-paragraph capture pulls multiple paragraphs joined by `\n\n` → paragraph-definition violation. Fix: stop iteration at the first empty line; join with a single space.
 - A server endpoint or `fetch()` call landed in either widget → D-19804 violation. Fix: revert; both widgets read the imported snapshot only.
 - New npm dependency added to `apps/dashboard/package.json` → guardrail violation. Fix: revert; Node built-ins only.
 - WORK_INDEX.md row not flipped to `[x]` despite full WP-198 completion → governance close incomplete. Fix: flip the row with the completion date.

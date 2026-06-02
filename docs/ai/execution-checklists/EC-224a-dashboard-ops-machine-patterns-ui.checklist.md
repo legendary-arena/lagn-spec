@@ -6,7 +6,7 @@
 
 ## Pre-Session Actions (PS-1..PS-3) — Blocking
 
-- [ ] **PS-1 — D-entries reserved.** `D-19801` (cadence union extension), `D-19802` (KpiSnapshot extension + pure-helper status chip), `D-19803` (VisionCard curated-string posture) appended to `docs/ai/DECISIONS.md` BYTE-IDENTICALLY to the WP §Decisions Introduced table. Paraphrased rationale is FAIL. D-19804 and D-19805 are reserved for EC-224b and MUST NOT be landed here.
+- [ ] **PS-1 — D-entries reserved.** `D-19801` (cadence union extension), `D-19802` (KpiSnapshot extension + pure-helper status chip), `D-19803` (VisionCard curated-string posture) appended to `docs/ai/DECISIONS.md` BYTE-IDENTICALLY to the WP §Decisions Introduced table. Paraphrased rationale is FAIL. `D-19804`, `D-19805`, and `D-19806` are reserved for EC-224b and MUST NOT be landed here.
 - [ ] **PS-2 — Existing test count baseline captured.** Before any code change, record `pnpm --filter @legendary-arena/dashboard test` output line count and the 9 existing `useDailyChecklist` test names. After execution, the 9 existing tests MUST pass byte-identically (no rename, no skip, no signature change); new tests are additive.
 - [ ] **PS-3 — VISION.md curated-string source captured.** Record the current SHA of `docs/01-VISION.md` and the verbatim text of Primary Goals #1–5 + the Financial Sustainability covenant section. The VisionCard's curated string MUST be condensed from this exact source and the JSDoc header MUST cite this SHA + capture date.
 
@@ -28,9 +28,12 @@ If any PS item is unsatisfied, the executor STOPS and reports `BLOCKED`.
 ### Cadence union (Sub-task A)
 - **`ChecklistCadence`** extends to `'daily' | 'weekly' | 'monthly' | 'quarterly' | 'as-scheduled'` (exactly 5 values, in this order). Drift-pinned via a canonical-array test mirroring `MATCH_PHASES` / `TURN_STAGES` pattern.
 - **Cadence horizon tab order (left-to-right):** `Today` → `This Week` → `This Month` → `This Quarter`. `as-scheduled` items appear under `Today`.
-- **Storage-key shape:**
-  - `daily` items → `la-dashboard-checklist-{userId}-{dateString}` (**byte-identical** to WP-162; do NOT modify).
-  - `weekly` / `monthly` / `quarterly` items → `la-dashboard-checklist-{userId}-{cadence}-{periodKey}` where `periodKey` is `YYYY-MM` (monthly), `YYYY-Q[1-4]` (quarterly), or the existing ISO-week shape (weekly per WP-162 — verify against current code; do NOT change weekly shape).
+- **Storage-key shape (locked, no inference at execution time):**
+  - `daily` items → `la-dashboard-checklist-{userId}-{dateString}` where `dateString` is `YYYY-MM-DD` per WP-162. **Byte-identical** to WP-162; do NOT modify.
+  - `weekly` items → `la-dashboard-checklist-{userId}-weekly-{YYYY-Www}` (ISO-8601 week-numbered key; e.g., `la-dashboard-checklist-mock-user-weekly-2026-W23`). **This is a new shape introduced by WP-198** — the WP-162 codebase persisted weekly items under the daily-shape key, so the migration is one-way: existing weekly entries under the daily key are NOT migrated and operator-persisted weekly state resets at WP-198 deployment (acceptable per WP §Locked Contract Values; weekly state is sparse and ephemeral).
+  - `monthly` items → `la-dashboard-checklist-{userId}-monthly-{YYYY-MM}` (e.g., `la-dashboard-checklist-mock-user-monthly-2026-06`).
+  - `quarterly` items → `la-dashboard-checklist-{userId}-quarterly-{YYYY-Q[1-4]}` (e.g., `la-dashboard-checklist-mock-user-quarterly-2026-Q2`).
+  - `as-scheduled` items → reuse the `daily` shape (they render under the Today tab).
 - **`formatPeriodKey(date: Date, cadence: 'monthly' | 'quarterly'): string`** — returns `YYYY-MM` or `YYYY-Q[1-4]`. Pure function; no `Date.now()`.
 - **Prune retention per cadence:** daily 30 days; weekly 90 days; monthly 365 days; quarterly 2 years (730 days). Each retention branch is its own `for...of` loop; no shared dynamic-prefix logic.
 
@@ -58,7 +61,7 @@ If any PS item is unsatisfied, the executor STOPS and reports `BLOCKED`.
 
 ### D-entries to append (this EC)
 - `D-19801` (cadence union extension), `D-19802` (KpiSnapshot extension + pure-helper status chip), `D-19803` (VisionCard curated-string render posture). Verbatim from WP-198 §Decisions Introduced.
-- `D-19804`, `D-19805` are reserved for EC-224b. DO NOT land them here.
+- `D-19804`, `D-19805`, `D-19806` are reserved for EC-224b. DO NOT land them here.
 
 ## Guardrails
 
@@ -99,7 +102,7 @@ Additions only; scoped per file. Edits to any unrelated line are FAIL.
 - `apps/dashboard/src/services/mocks.ts` — **modified** — add `target` / `tolerance` / `direction` to EXACTLY 2 KPI mocks (`active-players` + `revenue-today`) so the chip is visible in dev. No other mock touched.
 - `apps/dashboard/src/widgets/VisionCard.vue` — **new** — static curated card per §Locked Values §VisionCard. JSDoc header cites VISION.md SHA + PS-3 capture date.
 - `apps/dashboard/src/pages/dashboard/OverviewPage.vue` — **modified** — EXACTLY one new child added: `<VisionCard />` as the first child of `.overview-page`, above the page header. **Do not add the two-column governance/activity grid here** — that lands in EC-224b §F.
-- `docs/ai/DECISIONS.md` — **modified** — EXACTLY 3 new entries appended: `D-19801`, `D-19802`, `D-19803`. Verbatim per WP §Decisions Introduced. `D-19804` and `D-19805` are reserved for EC-224b — DO NOT append them here.
+- `docs/ai/DECISIONS.md` — **modified** — EXACTLY 3 new entries appended: `D-19801`, `D-19802`, `D-19803`. Verbatim per WP §Decisions Introduced. `D-19804`, `D-19805`, `D-19806` are reserved for EC-224b — DO NOT append them here.
 - `docs/ai/STATUS.md` — **modified** — EXACTLY one new status block: WP-198 Sub-tasks A + B + C executed; cadence horizons, status chip, vision card shipped.
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — EXACTLY one row state flip (EC-224a → Done).
 
@@ -114,12 +117,13 @@ WORK_INDEX.md update is deferred to EC-224b's governance commit (WP-198 lands a 
 - [ ] **Daily storage-key drift gate** — A `cadence === 'daily'` item with `userId = 'u1'` and `dateString = '2026-06-01'` MUST produce storage key `'la-dashboard-checklist-u1-2026-06-01'` byte-identical to a manually-constructed reference string. A test asserts this.
 - [ ] **Cadence union drift gate** — A `node:test` assertion deep-equals the runtime `ChecklistCadence` literals array to the union extracted via TypeScript's type-narrowing test pattern. Adding a 6th cadence without updating both sides fails the test loudly.
 - [ ] `VisionCard.vue` JSDoc header cites `docs/01-VISION.md` and the PS-3 capture date verbatim.
+- [ ] **VisionCard SHA-pin gate (auditable drift protection).** Run `Select-String -Path apps\dashboard\src\widgets\VisionCard.vue -Pattern "<PS-3 SHA>"` (substitute the SHA captured in PS-3); expect exactly one match (the JSDoc header). This converts the human-discipline rule ("re-verify on each WP touching VISION.md") into a grep-checkable invariant — any future WP that bumps `docs/01-VISION.md`'s SHA without re-running the VisionCard curated-string update will fail this gate.
 - [ ] `OverviewPage.vue` carries EXACTLY one new `<VisionCard />` element as the first child of `.overview-page`; the new two-column governance/activity grid is NOT present (that's EC-224b's responsibility).
 - [ ] `git diff --name-only` matches the §Files to Produce list exactly (no out-of-scope edits).
 - [ ] `git diff --stat pnpm-lock.yaml` empty.
 - [ ] `Select-String -Path apps\dashboard\src -Pattern "@legendary-arena/(game-engine|registry|preplan|server)" -Recurse` returns zero matches.
 - [ ] `Select-String -Path apps\dashboard\src\widgets\VisionCard.vue -Pattern "#[0-9A-Fa-f]{3,8}"` returns zero matches (hex colors forbidden).
-- [ ] `docs/ai/DECISIONS.md` contains `D-19801`, `D-19802`, `D-19803` (and ONLY those three from this WP; `D-19804`/`D-19805` NOT present until EC-224b lands).
+- [ ] `docs/ai/DECISIONS.md` contains `D-19801`, `D-19802`, `D-19803` (and ONLY those three from this WP; `D-19804` / `D-19805` / `D-19806` NOT present until EC-224b lands).
 - [ ] `docs/ai/STATUS.md` updated; `docs/ai/execution-checklists/EC_INDEX.md` EC-224a row flipped to Done.
 
 ## Common Failure Smells
@@ -135,6 +139,6 @@ WORK_INDEX.md update is deferred to EC-224b's governance commit (WP-198 lands a 
 - VisionCard added an in-UI dismiss / hide / edit affordance → constraint violation. Fix: remove the affordance.
 - `OverviewPage.vue` modified beyond the single VisionCard insert (e.g., the EC-224b grid landed here too) → scope violation. Fix: revert; EC-224b owns the grid.
 - New tab UI uses a third-party tab library → constraint violation. Fix: PrimeVue Tab components or a button-group with `role="tablist"`.
-- `D-19804` or `D-19805` landed in DECISIONS.md → cross-EC reservation violation. Fix: revert; reserve those numbers for EC-224b's governance commit.
+- `D-19804`, `D-19805`, or `D-19806` landed in DECISIONS.md → cross-EC reservation violation. Fix: revert; reserve those numbers for EC-224b's governance commit.
 - WORK_INDEX.md row flipped to `[x]` here → premature. Fix: revert; WP-198's `[x]` lands with EC-224b's governance commit when sub-tasks D+E+F complete.
 - `pnpm-lock.yaml` changed → unauthorized dependency edit; revert.
