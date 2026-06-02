@@ -93,6 +93,63 @@ const queuedExtra = computed(() => {
   return queue.length > 1 ? queue.length - 1 : 0;
 });
 
+const statusEntries = computed(() => governance.statusEntries(50));
+const nextWpFilePath = computed(() => {
+  const wp = nextWp.value;
+  if (wp === null) {
+    return '';
+  }
+  for (const entry of statusEntries.value) {
+    if (entry.wpNumber === wp.number && entry.filePath !== '') {
+      return entry.filePath;
+    }
+  }
+  const padded = String(wp.number).padStart(3, '0');
+  return `docs/ai/work-packets/WP-${padded}-*.md`;
+});
+
+const suggestedAction = computed(() => {
+  const path = nextWpFilePath.value;
+  if (path === '') {
+    return '';
+  }
+  return `Open new session and read ${path}`;
+});
+
+const copyState = ref<'idle' | 'copied'>('idle');
+let copyResetTimer: ReturnType<typeof setTimeout> | null = null;
+
+// why: navigator.clipboard.writeText MUST be invoked inside a direct user-
+// gesture handler (`@click`). Browsers block clipboard writes outside the
+// gesture and the "Copied" badge would silently never fire. Wrapping the
+// call in a setTimeout or watcher breaks the gesture chain; this binding
+// is a direct click handler with no async delay before the write call.
+function copyFilePathToClipboard(): void {
+  const path = nextWpFilePath.value;
+  if (path === '') {
+    return;
+  }
+  if (typeof navigator === 'undefined' || typeof navigator.clipboard === 'undefined') {
+    return;
+  }
+  navigator.clipboard.writeText(path).then(
+    () => {
+      copyState.value = 'copied';
+      if (copyResetTimer !== null) {
+        clearTimeout(copyResetTimer);
+      }
+      copyResetTimer = setTimeout(() => {
+        copyState.value = 'idle';
+      }, 1500);
+    },
+    () => {
+      // Clipboard write rejected (permissions, focus, or non-secure context);
+      // suppress the "Copied" badge so the operator does not see a false
+      // confirmation.
+    },
+  );
+}
+
 type WidgetState = 'loading' | 'error' | 'empty' | 'data';
 const state = computed<WidgetState>(() => {
   if (governance.loadError) {
@@ -155,11 +212,24 @@ function selectHorizon(option: HorizonOption): void {
       <div class="card-grid">
         <article class="card card-primary" aria-label="Now: next executable work packet">
           <span class="card-label">Now: next executable WP</span>
-          <span v-if="nextWp" class="card-primary-title">
-            WP-{{ String(nextWp.number).padStart(3, '0') }} — {{ nextWp.title }}
-          </span>
-          <span v-else class="card-primary-title card-primary-empty">No unblocked WP queued — drafting space available.</span>
-          <span v-if="nextWp && queuedExtra > 0" class="card-primary-subtitle">+{{ queuedExtra }} more queued</span>
+          <template v-if="nextWp">
+            <span class="card-primary-title">
+              WP-{{ String(nextWp.number).padStart(3, '0') }} — {{ nextWp.title }}
+            </span>
+            <button
+              v-if="nextWpFilePath !== ''"
+              type="button"
+              class="card-primary-path"
+              :aria-label="`Copy ${nextWpFilePath} to clipboard`"
+              @click="copyFilePathToClipboard"
+            >
+              <code class="path-code">{{ nextWpFilePath }}</code>
+              <span v-if="copyState === 'copied'" class="copied-badge" role="status">Copied</span>
+            </button>
+            <span v-if="suggestedAction !== ''" class="card-primary-action">{{ suggestedAction }}</span>
+            <span v-if="queuedExtra > 0" class="card-primary-subtitle">+{{ queuedExtra }} more queued</span>
+          </template>
+          <span v-else class="card-primary-title card-primary-empty">All WPs blocked or done — drafting room is open</span>
         </article>
 
         <article class="card card-count" aria-label="Work packets done this period">
@@ -308,6 +378,42 @@ function selectHorizon(option: HorizonOption): void {
 
 .card-primary-subtitle {
   font-size: 0.7rem;
+  color: var(--p-text-muted-color);
+}
+
+.card-primary-path {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--p-primary-color) 25%, transparent);
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  align-self: flex-start;
+  text-align: left;
+}
+
+.card-primary-path:hover {
+  background: color-mix(in srgb, var(--p-primary-color) 8%, transparent);
+}
+
+.card-primary-path .path-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  color: var(--p-text-color);
+}
+
+.card-primary-path .copied-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--p-green-500);
+}
+
+.card-primary-action {
+  font-size: 0.72rem;
+  font-style: italic;
   color: var(--p-text-muted-color);
 }
 

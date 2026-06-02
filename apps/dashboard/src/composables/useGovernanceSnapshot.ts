@@ -1,4 +1,5 @@
 import snapshotImport from '../data/governance-snapshot.json';
+import type { StatusEntry, GovernanceKpis } from '../types/index.js';
 
 export type HorizonKey = 'week' | 'month' | 'quarter';
 export type WpStatus = 'Draft' | 'Ready' | 'Done' | 'Blocked';
@@ -46,6 +47,11 @@ export interface GovernanceSnapshot {
   readonly throughput?: ThroughputBlock;
   readonly decisions?: readonly DecisionEntry[];
   readonly commits?: readonly CommitEntry[];
+  // why: D-19904 — v2 additive fields. v1 snapshots that leak through (a
+  // stale `git stash` or a cached build) omit these keys; the accessor
+  // fallbacks return empty array / null so the composable never throws.
+  readonly status?: readonly StatusEntry[];
+  readonly governanceKpis?: GovernanceKpis;
 }
 
 export interface UseGovernanceSnapshotReturn {
@@ -55,6 +61,8 @@ export interface UseGovernanceSnapshotReturn {
   readonly nextExecutable: (limit: number) => readonly WpRef[];
   readonly decisions: (limit: number) => readonly DecisionEntry[];
   readonly commits: (limit: number) => readonly CommitEntry[];
+  readonly statusEntries: (limit: number) => readonly StatusEntry[];
+  readonly governanceKpis: () => GovernanceKpis | null;
   readonly loadError: boolean;
   readonly generatedAt: string;
 }
@@ -91,6 +99,7 @@ export function useGovernanceSnapshot(snapshotOverride?: GovernanceSnapshot): Us
   const throughputBlock = snapshot.throughput ?? EMPTY_THROUGHPUT;
   const decisionsAll = snapshot.decisions ?? [];
   const commitsAll = snapshot.commits ?? [];
+  const statusAll = snapshot.status ?? [];
 
   function throughput(horizon: HorizonKey): readonly HorizonCount[] {
     if (horizon === 'week') {
@@ -122,6 +131,37 @@ export function useGovernanceSnapshot(snapshotOverride?: GovernanceSnapshot): Us
     return commitsAll.slice(0, limit);
   }
 
+  /**
+   * Return up to `limit` STATUS entries (newest first per the snapshot's
+   * sort) for the StatusFeedWidget. Returns an empty array when the snapshot
+   * carries an `error` field or when the `status` field is missing
+   * (forward-compat with hypothetical v1 snapshots).
+   */
+  function statusEntries(limit: number): readonly StatusEntry[] {
+    return statusAll.slice(0, limit);
+  }
+
+  /**
+   * Return the snapshot's governance KPIs. Returns `null` only when the
+   * snapshot carries an `error` field OR when the `governanceKpis` field is
+   * missing entirely (v1 forward-compat). When non-null, every field is a
+   * concrete number per D-19908 — individual field nulls are not a valid
+   * state.
+   */
+  // why: D-19908 — field-level nulls are forbidden but whole-object null is
+  // the explicit error state. The composable returns null here only for the
+  // whole-snapshot-error / missing-field case; widgets branch on that single
+  // null and consume the three concrete numbers without per-field guards.
+  function governanceKpis(): GovernanceKpis | null {
+    if (loadError) {
+      return null;
+    }
+    if (snapshot.governanceKpis === undefined) {
+      return null;
+    }
+    return snapshot.governanceKpis;
+  }
+
   return {
     throughput,
     inFlight,
@@ -129,6 +169,8 @@ export function useGovernanceSnapshot(snapshotOverride?: GovernanceSnapshot): Us
     nextExecutable,
     decisions,
     commits,
+    statusEntries,
+    governanceKpis,
     loadError,
     generatedAt: snapshot.generatedAt,
   };

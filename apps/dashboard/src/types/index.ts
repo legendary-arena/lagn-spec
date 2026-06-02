@@ -121,3 +121,35 @@ export interface NetRevenueSeries {
   readonly infraCogs: readonly number[];
   readonly net: readonly number[];
 }
+
+// why: D-19905 + D-19906 — six-field shape locks the StatusEntry contract for
+// the v2 snapshot's `status` array. `wpNumber` is a number (e.g. 198);
+// `ecNumber` is the literal-string suffix carried verbatim from the heading
+// regex's second capture group with the `EC-` prefix stripped (e.g. `'224a'`
+// preserves the lowercase letter suffix). `body` is the 480-char capped
+// first-paragraph slice from the parser's 3-step skip-then-capture-then-stop
+// algorithm; `filePath` is the build-time-resolved WP file path (empty string
+// when the resolver found zero or >1 matches under `docs/ai/work-packets/`).
+// A seventh field landing silently would fail the field-set drift gate from
+// EC-226 §After Completing.
+export interface StatusEntry {
+  readonly wpNumber: number;
+  readonly ecNumber: string;
+  readonly title: string;
+  readonly date: string;
+  readonly body: string;
+  readonly filePath: string;
+}
+
+// why: D-19908 — every field is a required non-optional `number`; numeric `0`
+// is the meaningful zero-value (zero WPs done this week is a real, surface-
+// able operator state, not a missing-data state). The composable accessor
+// returns the whole object as `null` only for the whole-snapshot-error case;
+// when it returns a non-null value, every individual field is a concrete
+// number. UI branching collapses to one null-check at the call site instead
+// of per-field null-coalescing in every widget.
+export interface GovernanceKpis {
+  readonly wpsDoneThisWeek: number;
+  readonly daysSinceLastDoneFlip: number;
+  readonly openDrafts: number;
+}

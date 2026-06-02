@@ -20323,4 +20323,124 @@ worth the indirection cost.
 
 ---
 
+### D-19901 — STATUS.md as Third Governance-Snapshot Data Source
+
+**D-19901 — STATUS.md as Third Governance-Snapshot Data Source.** STATUS.md becomes a third governance-snapshot data source (alongside WORK_INDEX.md and DECISIONS.md). Parser anchors on the locked heading regex; body capture mirrors the WP-198 D-19804 DECISIONS discipline (first contiguous non-empty block, verbatim slice — but at 480 chars to reflect STATUS entries being substantively richer prose). Snapshot caps at 50 newest entries. Rationale: STATUS.md is the single richest "what shipped" artifact in the repo (~7500 lines, ~20+ executed-WP entries at WP-199 baseline) and was previously unsurfaced in the dashboard. The Recent Activity widget surfaces commits + decisions but not the operator narrative of what those commits *meant*. STATUS gives the operator's morning-glance the highest-signal layer. The 480-char cap balances "enough body to convey the headline finding" against "snapshot size stays bounded" — empirically STATUS headline paragraphs run 200–600 chars; 480 captures the median + bulk of long ones with the rest visible by clicking through to STATUS.md itself.
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19902 — Governance KPI Strip Is Additive
+
+**D-19902 — Governance KPI Strip Is Additive.** Real governance KPI strip is **additive** — rendered as a new widget above the existing 4-card mock KPI strip, not in-place replacement. The mock strip (`active-players`/`matches-running`/`revenue-today`/`server-health`) stays as forward-looking placeholders for when the game has real player data. Replacing the mock strip would force a UX decision about player-side metrics that belongs in WP-B (acquisition + funnel per the pre-mortem grouping memory), not here. Rationale: The operator's current pain ("doesn't feel daily-useful") is that the eye lands on mock content first. Adding a real-data strip above the mock strip flips that: the first thing seen is real ("WPs Done This Week: 4 — On Track"), the second thing seen is honestly-labeled placeholder ("active-players: 2500 — MOCK"). The mock strip stays as a visible promise of what the dashboard will surface once real player data exists; deleting it would force re-litigating the player-KPI catalog before WP-B has set the PII / data-source posture.
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19903 — Since-You-Last-Looked Determinism + PII-Free LocalStorage
+
+**D-19903 — Since-You-Last-Looked Determinism + PII-Free LocalStorage.** "Since you last looked" diff anchors on `snapshot.generatedAt` (the HEAD commit's committer-date ISO from WP-198 D-19804), NOT wall clock. localStorage key `la-dashboard-last-visit` stores ISO string only — no email, no account ID, no IP, no PII of any kind. Per-browser only; no server-side mirror. Rationale: Anchoring on `generatedAt` rather than wall clock preserves determinism: two operators opening the same build see byte-identical "since you last looked" deltas regardless of when they clicked. PII-free localStorage value is non-negotiable — the dashboard ships to a CF Pages CDN (behind Access per WP-197) and the SPA bundle is in principle scrapeable; localStorage is even more exposed (any in-browser script can read it). Limiting the value to an ISO string means no recovery path leaks identity even under a hypothetical XSS or Access-gate bypass.
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19904 — Snapshot schemaVersion Bumps 1 → 2; Additive Only
+
+**D-19904 — Snapshot schemaVersion Bumps 1 → 2; Additive Only.** Snapshot `schemaVersion` bumps from `1` to `2`. Bump is **additive only**: existing 5 v1 top-level keys (`commits`, `decisions`, `generatedAt`, `schemaVersion`, `throughput`) retain v1 shape byte-identical; 2 new top-level keys (`status`, `governanceKpis`) are added. Closed top-level key set becomes 7 (lex-sorted). Composable accessors handle both versions for one build cycle — v1 snapshots emit empty arrays / null for the new fields rather than crashing. **Implementation hardening:** (a) **JSON key insertion-order is locked**, not implied — the generator MUST construct snapshot objects with explicit alphabetical key insertion-order OR apply a `JSON.stringify` replacer that enforces lexicographic key sorting at every nesting level. Relying on JavaScript object insertion order without explicit control is NOT sufficient for the determinism gate. (b) **HEAD commit date single-call invariant** — `git log -1 --format=%cI HEAD` MUST be resolved exactly once per snapshot generation and the resolved string reused for `generatedAt`, the ISO week anchor, and any per-KPI date arithmetic. Multiple git invocations are forbidden because a commit landing between calls (rare but possible during long builds) would produce inconsistent values across the snapshot's fields. Rationale: The version bump is a contract-honesty signal more than a runtime necessity (snapshots are regenerated on every build; there's no persistence across versions). Bumping makes the closed-set drift gate from WP-198 §EC-224b honest: a test that asserts "exactly 5 top-level keys" would silently break under additive change without the bump. Bumping also future-proofs against operators inspecting older bundle snapshots (e.g., comparing two CF Pages preview deploys) and noticing the field gap. The "v1 → empty arrays / null" composable fallback prevents a regression in any session that picks up a stale snapshot from `git stash` or a cached build. The implementation-hardening extensions close two subtle determinism leaks: (a) JS object insertion-order is implementation-defined for integer-like keys and historically inconsistent across V8 versions — relying on it for "alphabetical" emission has bitten production at scale before; locking the rule to explicit construction or replacer-enforced sorting collapses the ambiguity; (b) two `git log` calls in the same generator run are an obvious-once-broken footgun — a commit landing mid-build (rare in operator-driven dev, more plausible in CI with concurrent jobs) would make `generatedAt` and the ISO-week anchor disagree by one commit's worth of time, breaking byte-identity across two otherwise-identical runs.
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19905 — STATUS Parser Determinism: Tie-Break + Body Capture + ISO Week
+
+**D-19905 — STATUS Parser Determinism: Tie-Break + Body Capture + ISO Week.** STATUS.md parser locks three determinism rules: **(a) tie-break by heading byte-offset** in `STATUS.md` ascending (top-to-bottom file order, NOT filesystem or parser iteration order); **(b) body capture algorithm** is the explicit 3-step skip-then-capture-then-stop where "non-empty" means `line.trim().length > 0` and the stop condition is the first empty line OR the next `^###` heading; **(c) ISO week computation** uses the explicit Monday-1...Sunday-7 translation (`((getUTCDay() + 6) % 7) + 1`) with locale-independent arithmetic — no `toLocaleString`, no `Intl.DateTimeFormat`. **Implementation hardening:** (i) **"Heading byte-offset" is the JavaScript string index** (UTF-16 code unit index) returned by `rawText.indexOf(headingLine)` or a regex match's `.index` property — NOT `Buffer.byteLength` and NOT a UTF-8 byte count. The label "byte-offset" is historical; the underlying primitive is the JS string index, which is what `String.prototype` and `RegExp` operate on consistently. (ii) **Date comparisons use lexicographic string sort on the literal `'YYYY-MM-DD'` substring** from the heading match. The ISO format guarantees correct chronological ordering under Unicode code-unit comparator without any numeric or `Date`-object conversion. Parsing dates into `Date` objects for comparison is FORBIDDEN — `Date` constructor + comparison introduces timezone-shift bugs and locale-dependent edge cases that the string-literal sort sidesteps. (iii) **STATUS.md MUST be read with explicit `utf-8` encoding** (`readFile(path, 'utf-8')`, not `readFile(path)` which returns a `Buffer`). Any BOM character (`﻿`) at the start of the file MUST be stripped before parsing — operator editors occasionally save with BOM and parser drift would otherwise depend on which editor last touched the file. (iv) **Heading regex match uniqueness** — each STATUS.md entry MUST be parsed from exactly one heading match. If the regex produces overlapping or duplicate matches for the same `wpNumber + ecNumber + date` triplet (e.g., a copy-paste error in STATUS.md), the parser MUST skip every match in that overlap group and emit a full-sentence stderr warning naming the triplet and the duplicate-match count. Rationale: The first draft's "ties broken by file order" was ambiguous — git checkout order, FS iteration, and line-ending normalization can all drift across environments. Pinning the tie-break to heading byte-offset makes the rule executable from the parsed `STATUS.md` text alone, with zero environmental sensitivity. The body capture algorithm closes a similar gap: "first contiguous block of non-empty lines" left whitespace-only lines, code fences, and bullet-list boundaries underspecified — three implementations could plausibly produce three different bodies. The explicit `line.trim().length > 0` predicate + the dual stop condition (empty line OR next heading) collapses the ambiguity. The ISO week rule prevents the classic JS week-of-year bug where `getDay()` returns Sunday=0 but ISO weeks start Monday=1. All three rules are load-bearing for the WP-198 D-19804 determinism gate to hold end-to-end. The four implementation-hardening extensions close cross-platform drift sources that survived the original determinism framing: (i) "byte-offset" was loose terminology — `Buffer.byteLength` counts UTF-8 bytes (variable-width on non-ASCII), while `String.prototype.indexOf` returns UTF-16 code-unit indices; the two diverge on any non-ASCII heading content; locking to JS string index matches the actual runtime primitive used by the parser. (ii) `Date.parse('2026-06-02')` returns a Unix timestamp interpreted as UTC midnight on Node, but as local midnight in some browsers — a parser that round-trips through `Date` would emit different sort orders on different platforms; lexicographic string sort is platform-invariant. (iii) Implicit-binary `readFile` calls return a `Buffer` whose `.toString()` defaults vary by Node version and OS locale; explicit `'utf-8'` + BOM strip eliminates that variance class. (iv) Duplicate-heading skip-and-warn prevents silent double-counting if an operator accidentally copy-pastes an entry in STATUS.md — the failure mode is loud (stderr warning) instead of subtle (a 51st snapshot entry that's a phantom).
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19906 — Build-Time WP File Path Resolution
+
+**D-19906 — Build-Time WP File Path Resolution.** STATUS-entry WP file path is resolved at **build time** by the generator (`fs.readdir` over `docs/ai/work-packets/`, prefix-match on `WP-${zeroPaddedWpNumber}-`), emitted as `StatusEntry.filePath`, and consumed by the widget as a literal string. On zero or >1 matches, `filePath` is the empty string `""` and the widget suppresses the link. Rationale: The first draft used a `WP-NNN-*.md` glob pattern in widget code, which is non-resolvable at runtime in a browser SPA — the widget would have had to either guess a filename (non-deterministic, breaks audit safety) or fall back to a broken link. Resolving at build time inside the generator (which already does FS reads against `docs/ai/work-packets/` for WORK_INDEX.md parsing) keeps the resolution in the deterministic layer, surfaces ambiguity (the >1-match case) as a real signal via the stderr warning + empty-string field, and lets the widget remain a pure render. The zero-padding convention (`WP-198-`, not `WP-19-`) matches the existing WORK_INDEX heading regex shape and prevents `WP-198` from matching `WP-1984-...md` if a future WP number gets long.
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19907 — STATUS Parser Mirrors DECISIONS Parser Structure
+
+**D-19907 — STATUS Parser Mirrors DECISIONS Parser Structure.** STATUS.md parser MUST mirror the DECISIONS.md parser structure and control flow in `build-governance-snapshot.mjs` — same `for...of` over heading matches, same per-entry try/catch, same skip-capture body advance. The two differ only in (a) the heading regex, (b) the body cap (480 vs 240), and (c) the per-entry `filePath` resolution (STATUS only). A refactor that extracts a shared helper is acceptable but not required. Rationale: The load-bearing rule is symmetrical control flow, not shared code. The two parsers are conceptually one pattern with two configurations; allowing them to diverge structurally invites a future bug where (e.g.) DECISIONS-side error containment gets tightened and STATUS-side silently doesn't follow. By locking the symmetry at the WP level, the executor can choose extraction-or-not at execution time without ambiguity about the load-bearing constraint.
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19908 — Governance KPIs Use Numeric Zero, Never Null
+
+**D-19908 — Governance KPIs Use Numeric Zero, Never Null.** Governance KPI fields use numeric `0` for empty values, never `null` or `undefined`. The `GovernanceKpis` interface declares all three fields as **required** non-optional `number`. The composable returns `null` only for the whole-snapshot-error case (the governance-KPIs-cannot-be-computed-at-all state); individual field values are always concrete numbers when the accessor returns non-null. Rationale: UI branching complexity is the cost of "zero or null" ambiguity — every widget that consumes a KPI value would need a separate `value === null ? 'no data' : formatNumber(value)` branch, doubling the render-path conditional count for a non-distinction (zero WPs done this week IS a real, surfaceable operator state, not a missing-data state). Locking the convention at the data shape pushes the discipline up to the boundary where it matters: the composable accessor either returns a concrete `GovernanceKpis` object or returns `null` (no partial states).
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19909 — Composable Naming + Import Pattern Locked to Existing Shape
+
+**D-19909 — Composable Naming + Import Pattern Locked to Existing Shape.** New composables added by this WP follow the existing `useGovernanceSnapshot.ts` shape exactly: `use*` naming; matching export style; matching import path style; JSDoc header on every exported function. No new naming conventions, no new factory-function patterns, no new HOC wrappers. Rationale: The "no cognitive fork" standard from the dashboard's existing composable family (WP-157 + WP-162 + WP-198) is the load-bearing rule. Introducing a new convention here would mean every future operator reading the dashboard codebase has to learn two patterns for the same job. Locking the rule means the executor has zero design decisions on composable shape — copy the pattern, change the body.
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19910 — markVisited() Strict Ordering + Single-Call Invariant
+
+**D-19910 — markVisited() Strict Ordering + Single-Call Invariant.** `markVisited()` execution order at Overview mount is strictly: **(1) read `lastVisit` into local snapshot, (2) compute diff counts against local snapshot, (3) render the since-you-last-looked line, (4) call `markVisited()`**. `markVisited()` MUST run **at most once per component mount** (one-shot guard prevents reactive re-renders from triggering a second call). Multi-tab "race" is documented as idempotent — both tabs writing `snapshot.generatedAt` (deterministic per build) produce byte-identical localStorage state. Rationale: The order matters because a naive `markVisited()` on mount followed by a `lastVisit`-reading reactive computed would silently zero-out the diff every load — the operator would always see "0 new commits, 0 new DECISIONS, 0 new STATUS entries" regardless of how much shipped between visits. The one-shot guard prevents a subtler bug: if `markVisited()` is wired to a reactive watcher rather than a mount hook, any state change (e.g., the user toggling a checkbox in DailyExecutionPanel) could re-trigger it. The multi-tab idempotency note pre-empts a likely operator question — "what if I have two tabs open?" — by anchoring on `generatedAt` (deterministic per build) rather than wall clock.
+
+**Packet:** WP-199 (EC-226).
+
+**Drafted:** 2026-06-02.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
 Protect this file.
