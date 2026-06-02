@@ -18,6 +18,11 @@ apps/registry-viewer/dist/
 # Claude Code transient harness state (ScheduleWakeup lock; written/deleted continuously during sessions)
 .claude/scheduled_tasks.lock
 
+# Session-local scratchpad directory — ad-hoc artifacts a session writes for its
+# own working memory (e.g., downloaded transcripts, intermediate computation
+# dumps). Per-session, never load-bearing across sessions, never committed.
+.session/
+
 # Invocation scratchpads — preflight / copilot / session-prompt files behave
 # like REPL transcripts. session-context-* files in docs/ai/session-context/
 # remain committed as governance artifacts. Override: `git add -f <path>` if
