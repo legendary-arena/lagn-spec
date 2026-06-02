@@ -76,6 +76,17 @@
       "notes": "Public, no-auth. Reads leaderboard JSON snapshots from R2 (written by WP-142 publisher). Does NOT call the game-server API directly. A 200 here proves the SPA shell loads; the snapshot freshness is a separate concern verified by the publisher's own health check."
     },
     {
+      "name": "Internal admin dashboard",
+      "url": "https://dashboard.legendary-arena.com",
+      "host": "Cloudflare Pages + Cloudflare Access",
+      "source": "apps/dashboard",
+      "expectedStatus": [302, 401, 403],
+      "expectedLocation": "https://legendary-arena.cloudflareaccess.com/",
+      "state": "live",
+      "anchor": "dashboard",
+      "notes": "Live since 2026-06-02. CF Pages project: legendary-arena-dashboard. Cloudflare Access (Self-hosted, Email OTP, single-operator allow = jeff@barefootbetters.com) redirects unauthenticated probes to login (302) or rejects them (401/403). A 200 here means the gate is misconfigured and the dashboard is publicly readable. expectedLocation is a prefix; the Access login URL appends a long JWT in the query string that varies per request. Ships in mock mode (VITE_USE_MOCKS=true on CF Pages Production scope); real-data wiring is a separate WP."
+    },
+    {
       "name": "API (game server, friendly hostname)",
       "url": "https://api.legendary-arena.com/health",
       "host": "Render (legendary-arena-server)",

@@ -28,7 +28,7 @@ define new architectural boundaries.
 | `legends.legendary-arena.com` | Public scoreboard (attract board) | Cloudflare Pages | `apps/legends-board` (planned — WP-143) | planned |
 | `api.legendary-arena.com` | Game server REST + Socket.IO | Render (CNAME from Cloudflare) | [apps/server](../../apps/server) | live |
 | `legendary-arena-server.onrender.com` | API canonical hostname | Render | [apps/server](../../apps/server) | live |
-| `dashboard.legendary-arena.com` | Internal admin dashboard | Cloudflare Pages | [apps/dashboard](../../apps/dashboard) | planned |
+| `dashboard.legendary-arena.com` | Internal admin dashboard | Cloudflare Pages + Access | [apps/dashboard](../../apps/dashboard) | live, gated |
 | `images.barefootbetters.com` | Card image CDN | Cloudflare R2 | external | live |
 
 `state` legend: `live` = deployed and probed for health; `planned` = not yet
@@ -197,6 +197,71 @@ Configuration steps (completed 2026-05-08):
    email OTP, the wiki should render. **A 200 with content unauthenticated,
    or Render's plain-text "Not Found" 404, is a failure — see the failure
    runbook below.**
+
+### dashboard
+**`dashboard.legendary-arena.com`** — internal admin dashboard, gated. Live since 2026-06-02.
+
+- **Source:** [apps/dashboard](../../apps/dashboard)
+- **Renderer:** Vite SPA, deployed to the Cloudflare Pages project `legendary-arena-dashboard` (build command `pnpm install --frozen-lockfile && pnpm --filter "@legendary-arena/dashboard..." build`; output dir `apps/dashboard/dist`)
+- **Gate:** Cloudflare Zero Trust Access policy (Free tier, Self-hosted application, Email One-time PIN identity provider, single-operator allow rule on `jeff@barefootbetters.com`)
+- **DNS posture:** **proxied (orange cloud)**, NOT DNS-only. Access can only intercept traffic that flows through Cloudflare's edge; DNS-only would route the client directly to the CF Pages origin and bypass the gate. (Same posture as `ewiki.`, opposite of `api.`.)
+- **Production env vars (CF Pages):** `VITE_USE_MOCKS=true`, `NODE_VERSION=22`. `VITE_API_BASE_URL` is **deliberately not set** — the dashboard ships in mock mode and makes zero HTTP calls to `api.legendary-arena.com` until the real-data wiring WP lands.
+
+**Healthy response (unauthenticated):** `302` to a `*.cloudflareaccess.com`
+login URL, or `401`/`403`. **A `200` here is a failure** — it means the
+Access policy is missing and the dashboard's in-app mock login (which
+accepts any email + any role per
+[`apps/dashboard/src/pages/auth/LoginPage.vue`](../../apps/dashboard/src/pages/auth/LoginPage.vue))
+is publicly exposed. The redirect target is enforced by the probe via
+`expectedLocation: "https://legendary-arena.cloudflareaccess.com/"` in
+[domains.json](./domains.json) — a `302` to anywhere else fails the row.
+
+**Configure the Cloudflare Access policy before attaching the custom domain.**
+If the custom domain is attached before the Access policy exists, there is a
+window during which the dashboard is on the public internet — and the mock
+login lets any email + any role through. This is the canonical
+**Gate-before-expose** rule (WP-197 / EC-223).
+
+Configuration steps (completed 2026-06-02 under WP-197 / EC-223):
+1. Add the `dashboard` row to [domains.json](./domains.json) with
+   `state: "planned"`, `expectedStatus: [302, 401, 403]`,
+   `expectedLocation: "https://legendary-arena.cloudflareaccess.com/"`.
+2. In Cloudflare Pages, create project `legendary-arena-dashboard`
+   linked to the `legendary-arena` GitHub repo, production branch
+   `main`, build command and output dir as above, env vars
+   `VITE_USE_MOCKS=true` and `NODE_VERSION=22` on the Production
+   scope. Trigger the first production build; confirm
+   `legendary-arena-dashboard.pages.dev` serves the SPA shell. **Do
+   not attach the custom domain yet.**
+3. Activate Cloudflare Zero Trust Free plan on the account (already
+   active from `ewiki.` setup). In Cloudflare Zero Trust → Access →
+   Applications → Add an Application, pick the **Self-hosted** tile
+   (NOT "Connect a private web application"). Set application
+   domain to `dashboard.legendary-arena.com`, identity provider
+   = Email One-time PIN (built-in), allow policy single-rule
+   `Include: Emails = jeff@barefootbetters.com`.
+4. In Cloudflare Pages → `legendary-arena-dashboard` → Custom
+   domains, attach `dashboard.legendary-arena.com`. Cloudflare
+   auto-creates the DNS record; verify it is `CNAME dashboard →
+   legendary-arena-dashboard.pages.dev` and is **proxied (orange
+   cloud)**.
+5. Verify Cloudflare TLS mode for the `legendary-arena.com` zone is
+   `Full` or `Full (strict)`, not `Flexible`.
+6. From an incognito browser, visit `https://dashboard.legendary-arena.com`.
+   Expect a redirect to `*.cloudflareaccess.com/cdn-cgi/access/...`. After
+   email OTP, `/login` should render; selecting any role routes to
+   `/overview` (mock login posture); every widget displays its
+   `MOCK` freshness badge. **A 200 unauthenticated is a security
+   incident — see the failure runbook.**
+7. Verify `pnpm check:domains` reports `READY` for the `dashboard`
+   entry, then flip `state: "planned"` → `"live"` in
+   [domains.json](./domains.json). Re-run; expect `OK`.
+
+**Real-data wiring is explicitly deferred** (D-19702). Every widget
+on `/overview` renders its four-state shell against in-bundle mock
+data. Wiring to real endpoints (Stripe webhook stream, analytics
+events table, cohort materialization, public-surface ping) is the
+domain of follow-up WPs.
 
 ### legends
 **`legends.legendary-arena.com`** — public, no-auth scoreboard ("Hall of Legends" attract board).

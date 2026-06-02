@@ -20131,4 +20131,28 @@ worth the indirection cost.
 
 ---
 
+### D-19701 — Dashboard Deploy Posture Is Cloudflare Pages + Cloudflare Access (Self-Hosted, Email OTP, Single-Operator Allow), Mirroring the `ewiki.` Precedent
+
+**D-19701 — Dashboard deploy posture is Cloudflare Pages + Cloudflare Access (Self-hosted, Email OTP, single-operator allow), mirroring the `ewiki.` precedent.** Rationale: the in-app login (`apps/dashboard/src/pages/auth/LoginPage.vue`) is a mock that accepts any email and lets the user pick any role. A publicly-reachable mock deploy would expose every operator route to any visitor. The Access gate restores the security model the mock login removes during development. CF Pages (rather than Render) is the deploy host because the existing dashboard build is already a Vite SPA targeting that shape — no advantage to Render here. The single-operator allow policy on `jeff@barefootbetters.com` is intentional during pre-launch to keep the attack surface minimal; expanding the allow list is a one-line Cloudflare Access edit but requires a separate WP. The canonical **Gate-before-expose** rule that Sub-task C (Access app) strictly precedes Sub-task D (custom domain attach) is reusable across future Access-gated WPs.
+
+**Packet:** WP-197 (EC-223).
+
+**Drafted:** 2026-06-01.
+**Landed:** 2026-06-02.
+**Status:** Landed
+
+---
+
+### D-19702 — Initial Dashboard Production Deploy Ships in Mock Mode (`VITE_USE_MOCKS=true`); Real-Data Wiring Is Deferred to Separate WPs
+
+**D-19702 — Initial production deploy ships in mock mode (`VITE_USE_MOCKS=true` on the CF Pages Production env scope). Real-data wiring is deferred to a separate WP.** Rationale: each widget's data source is its own contract (Stripe webhook stream for net revenue, `analytics_events` table that does not yet exist for acquisition, cohort-materialization batch job for retention, public-surface ping for system health). Conflating real-data wiring into the deploy WP would expand scope past one-packet-per-session. Mock-mode in production is useful in its own right — design review from any device, demoing the operator surface to stakeholders, validating the deploy pipeline before real data has stakes. `VITE_API_BASE_URL` is deliberately not set on the CF Pages Production scope while mocks are on; adding it before the real-data wiring WP lands invites drift between local `.env` and production env.
+
+**Packet:** WP-197 (EC-223).
+
+**Drafted:** 2026-06-01.
+**Landed:** 2026-06-02.
+**Status:** Landed
+
+---
+
 Protect this file.
