@@ -20047,4 +20047,81 @@ worth the indirection cost.
 
 ---
 
+### D-19501 — Anomaly Oracle Layer Ships as Engine Pure Helper (`sweep.analyze.ts`) + Operator CLI (`scripts/analyze-sweep-manifest.mjs`)
+
+**D-19501 — The anomaly oracle layer ships as an engine pure helper (`packages/game-engine/src/simulation/sweep.analyze.ts`) + operator CLI (`scripts/analyze-sweep-manifest.mjs`). The engine carries the classifier + parser; the script carries the I/O boundary and report rendering.** Rationale: mirrors WP-194's pure-helper + script-wrapper pattern, which keeps the load-bearing logic testable under `node:test` and avoids leaking I/O into the engine package. The script is thin (file read + line-by-line parse + classifier call + report format); the engine carries the classification rules + summary aggregation. Putting the classifier in the engine package also makes it reachable to a future dashboard widget or alternate consumer without re-implementing the logic in a non-engine surface.
+
+**Packet:** WP-195 (EC-222).
+
+**Drafted:** 2026-06-01.
+**Status:** Proposed
+
+---
+
+### D-19502 — Anomaly Taxonomy Is a Closed 4-Class Set; Fatal `errorSignature` = First 80 UTF-16 Code Units Verbatim (No Normalization, No Hashing)
+
+**D-19502 — Anomaly taxonomy is a closed 4-class set: `'endgame-reached'`, `'not-endgame'`, `'escaped-villain-cap'`, `'fatal'`. The manifest cannot distinguish `not-endgame` cap-hit from `not-endgame` stuck (both yield `endgameReached: false`); v1 merges them into one class and surfaces the bimodal `moveCount` distribution as the operator's discrimination signal. Fatal-record `errorSignature` is the first 80 UTF-16 code units of the `error` field, taken EXACTLY as present in the parsed JSON value — no hashing, no trimming, no whitespace normalization, no newline stripping, no case folding.** Rationale: the four-class set is exhaustive and mutually exclusive over the manifest's record space (the manifest carries `endgameReached`, `outcome.escapedVillains`, and the fatal-vs-success discriminator — those three signals collapse onto exactly four legal classifications). Distinguishing cap-hit from stuck requires a manifest field WP-194 does not emit (`turnsElapsed`); rather than back-fill an inferred discriminator from `moveCount` (which conflates "many dispatched moves per turn" with "many turns"), v1 surfaces them as one class with a distribution slice. The 80-code-unit error signature balances uniqueness against table readability — long enough to disambiguate distinct error sites, short enough to render in a markdown table column without wrapping. Hashing was considered and rejected: a hash is opaque to operators reading the markdown report, while a prefix is human-readable and stable enough to group identical errors across cells. No-normalization is locked because any normalization (trim, lowercase, newline strip) is a divergence vector across implementations; the verbatim prefix is the simplest deterministic contract.
+
+**Packet:** WP-195 (EC-222).
+
+**Drafted:** 2026-06-01.
+**Status:** Proposed
+
+---
+
+### D-19503 — `MAX_TURNS_PER_GAME` Carried as Local Copy in `sweep.analyze.ts` + Drift Gate; `ESCAPE_LIMIT` Imported From `endgame.types.ts`
+
+**D-19503 — `MAX_TURNS_PER_GAME` is carried as a local copy in `sweep.analyze.ts`, drift-pinned to `simulation.runner.ts:54` via a test that reads both source files and asserts byte equality. `ESCAPE_LIMIT` is imported from `endgame/endgame.types.ts` (already a public export).** Rationale: `MAX_TURNS_PER_GAME` is currently file-private in `simulation.runner.ts`; exporting it would add a public engine API surface for a value that is functionally a runtime constant. The precedent at `par.aggregator.ts:450` (which also carries a local copy of the same constant) is the established pattern. The drift-gate test guarantees the local copy stays in sync; if the engine value ever changes, the test fires loudly and forces both copies to update in the same commit. `ESCAPE_LIMIT` is already exported and is imported directly.
+
+**Packet:** WP-195 (EC-222).
+
+**Drafted:** 2026-06-01.
+**Status:** Proposed
+
+---
+
+### D-19504 — Report Format Is `--format markdown|json` with Markdown Default; Both Deterministic
+
+**D-19504 — Report format is `--format markdown|json` with markdown default. Both formats are deterministic (same input → byte-identical output). Markdown is the operator-reading default; JSON is canonical (sorted keys at every level) for downstream tooling ingestion.** Rationale: markdown matches the operator's primary use case (reading the report in a terminal or pasted into a PR comment). JSON exists for future downstream consumers (dashboard widgets, multi-manifest trend tooling) that need structured input. Both formats are deterministic so manifest-analyzer composition with diff tools is stable. The default was chosen by analogy with WP-194's one-line stdout summary: WP-194's primary stdout consumer is the operator reading the result, not a tool; WP-195 inherits the same posture.
+
+**Packet:** WP-195 (EC-222).
+
+**Drafted:** 2026-06-01.
+**Status:** Proposed
+
+---
+
+### D-19505 — Malformed Manifest Lines Are Non-Fatal; Warn-and-Continue Policy with Line-Number + Reason in stderr
+
+**D-19505 — Malformed manifest lines are non-fatal. The analyzer emits a full-sentence stderr warning naming the line number + reason, counts the malformed line in the summary, and proceeds with the remaining lines. The malformed-line count is surfaced in the markdown header and in the JSON `malformedLines` array.** Rationale: a manifest with a single corrupted line is a real failure mode (partial write during sweep abort, manual edit by an operator, disk corruption). Aborting the analyzer on first malformed line would lose all the analysis for the rest of the manifest. The warn-and-continue policy mirrors WP-194's resume-scan posture (which also tolerates malformed lines for the skip-set scan). The line count is surfaced so the operator sees the cardinality and knows whether the malformed lines are a small noise floor or a systemic issue worth investigating.
+
+**Packet:** WP-195 (EC-222).
+
+**Drafted:** 2026-06-01.
+**Status:** Proposed
+
+---
+
+### D-19506 — v1 Locks to Two-Axis Manifest Shape (`schemeId` + `mastermindId`); No Optional Multi-Axis Fields
+
+**D-19506 — v1 locks to the two-axis manifest shape (`schemeId` + `mastermindId`). The classifier carries NO optional fields for hypothetical multi-axis manifests; if WP-194 follow-ups add a third axis, the analyzer extends with the new axis at that point.** Rationale: this mirrors D-19401's anti-premature-generality posture at the analysis layer: WP-194's `cartesianProduct` is N-axis-generic at the matrix-builder layer, but the CLI + manifest record shape lock to the two-axis MVP. WP-195 inherits the same lock. Speculatively future-proofing the classifier for a third axis that may never land would introduce optional fields that complicate the type signatures and the report rendering without buying any operator value today. The follow-up WP that adds the third axis is the right place to extend both WP-194's manifest emission and WP-195's classifier in one coordinated change.
+
+**Packet:** WP-195 (EC-222).
+
+**Drafted:** 2026-06-01.
+**Status:** Proposed
+
+---
+
+### D-19507 — Operator CLI Script Named `scripts/analyze-sweep-manifest.mjs` (Verb-Noun-Noun Pattern Mirroring `record-game-fixture.mjs`)
+
+**D-19507 — The operator CLI script is named `scripts/analyze-sweep-manifest.mjs`, following the verb-noun-noun naming pattern from `scripts/record-game-fixture.mjs`.** Rationale: naming consistency across the simulation-tooling script family makes the script set self-describing. The candidates `sweep-analyze.mjs` (matches WP-194's `sweep-setup-matrix.mjs`) and `classify-sweep-anomalies.mjs` (more specific) were considered; the verb-noun-noun pattern was chosen because the recorder precedent already exists and is the closer analog (both are read-the-input + produce-an-output tools, vs. WP-194's dispatch-the-loop posture).
+
+**Packet:** WP-195 (EC-222).
+
+**Drafted:** 2026-06-01.
+**Status:** Proposed
+
+---
+
 Protect this file.
