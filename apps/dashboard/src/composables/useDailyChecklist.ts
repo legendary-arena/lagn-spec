@@ -2,7 +2,22 @@ import { ref, computed, type Ref, type ComputedRef } from 'vue';
 import { useAuthStore } from '../stores/auth.js';
 
 export type ChecklistCategory = 'content' | 'community' | 'growth';
-export type ChecklistCadence = 'daily' | 'weekly' | 'as-scheduled';
+export type ChecklistCadence = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'as-scheduled';
+
+/**
+ * Canonical readonly array mirroring the `ChecklistCadence` union. Drift-pinned
+ * via a `node:test` assertion so adding a 6th cadence to the union without
+ * updating this array (or vice versa) fails loudly. Pattern mirrors
+ * `MATCH_PHASES` / `TURN_STAGES` from `.claude/rules/code-style.md §Drift
+ * Detection`.
+ */
+export const CHECKLIST_CADENCES: readonly ChecklistCadence[] = [
+  'daily',
+  'weekly',
+  'monthly',
+  'quarterly',
+  'as-scheduled',
+];
 
 export interface DailyChecklistItem {
   id: string;
@@ -40,15 +55,24 @@ interface UseDailyChecklistReturn {
 }
 
 const STORAGE_KEY_PREFIX = 'la-dashboard-checklist-';
-const STALE_KEY_MAX_AGE_DAYS = 30;
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 const FALLBACK_USER_ID = 'mock-user';
+
+const DAILY_RETENTION_DAYS = 30;
+const WEEKLY_RETENTION_DAYS = 90;
+const MONTHLY_RETENTION_DAYS = 365;
+const QUARTERLY_RETENTION_DAYS = 730;
 
 /**
  * Static configuration for the Daily Execution Panel. The render order here is
  * the displayed order (content, then community, then growth); the UI never
  * sorts or re-derives it. Adding or removing an item is a deliberate code
- * change, not a runtime concern.
+ * change, not a runtime concern. The current 9-item set is the WP-162
+ * baseline; the cadence union now admits `monthly` and `quarterly` but no
+ * example items at those cadences are added in WP-198 — adding any would
+ * break the 9-existing-test byte-identity invariant (test 1 asserts the
+ * exact item count and per-category distribution). Monthly + quarterly
+ * horizon tabs surface as empty-state until a follow-up WP curates items.
  */
 const CHECKLIST_CONFIG: readonly ChecklistConfigItem[] = [
   { id: 'youtube-video', label: 'YouTube video published', category: 'content', cadence: 'daily' },
@@ -100,6 +124,71 @@ function formatLocalDateString(date: Date): string {
 }
 
 /**
+ * Returns an ISO-8601 week-numbered key (`YYYY-Www`) for a local date. ISO
+ * weeks belong to the year of their Thursday; week 1 is the week containing
+ * the first Thursday of the year. The week-count math runs in UTC to avoid
+ * DST boundary drift — a local-timestamp subtraction across the
+ * spring-forward day is off by one hour and rounds the week number down.
+ */
+function formatIsoWeek(date: Date): string {
+  // why: feed the local calendar fields into Date.UTC so the subsequent
+  // millisecond subtraction is DST-free. The returned token is still
+  // correct for the date the operator sees on their local calendar.
+  const reference = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayOffsetFromMonday = (reference.getUTCDay() + 6) % 7;
+  reference.setUTCDate(reference.getUTCDate() - dayOffsetFromMonday + 3);
+  const isoYear = reference.getUTCFullYear();
+  const firstThursday = new Date(Date.UTC(isoYear, 0, 4));
+  const firstThursdayOffset = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstThursdayOffset + 3);
+  const weekNumber = Math.floor((reference.getTime() - firstThursday.getTime()) / (7 * MILLISECONDS_PER_DAY)) + 1;
+  return `${isoYear}-W${String(weekNumber).padStart(2, '0')}`;
+}
+
+/**
+ * Returns the period key string for a monthly or quarterly cadence. Pure;
+ * never reads `Date.now()` so tests can pass a fixed date and assert
+ * byte-identical output. Daily and weekly cadences use their own dedicated
+ * formatters (`formatLocalDateString`, `formatIsoWeek`) and do NOT route
+ * through this function.
+ */
+export function formatPeriodKey(date: Date, cadence: 'monthly' | 'quarterly'): string {
+  if (cadence === 'monthly') {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  }
+  const year = date.getFullYear();
+  const quarter = Math.floor(date.getMonth() / 3) + 1;
+  return `${year}-Q${quarter}`;
+}
+
+/**
+ * Derives the localStorage key for an item with the given cadence on the given
+ * reference date. Daily and as-scheduled items share the daily key (the WP-162
+ * shape, byte-identical). Weekly / monthly / quarterly items use their own
+ * cadence-tagged shape. Exported so the per-cadence storage-key drift gates
+ * (per EC-224a §After Completing) can assert byte-identical shapes against
+ * manually-constructed reference strings.
+ */
+export function deriveStorageKey(userId: string, cadence: ChecklistCadence, referenceDate: Date): string {
+  // why: D-19801 — the daily key shape is byte-identical to WP-162 so
+  // operator-persisted state migrates silently across the WP-198 boundary.
+  // The `as-scheduled` cadence reuses the daily key per the WP-198 §Locked
+  // Contract Values (those items render under the Today tab).
+  if (cadence === 'daily' || cadence === 'as-scheduled') {
+    return `${STORAGE_KEY_PREFIX}${userId}-${formatLocalDateString(referenceDate)}`;
+  }
+  if (cadence === 'weekly') {
+    return `${STORAGE_KEY_PREFIX}${userId}-weekly-${formatIsoWeek(referenceDate)}`;
+  }
+  if (cadence === 'monthly') {
+    return `${STORAGE_KEY_PREFIX}${userId}-monthly-${formatPeriodKey(referenceDate, 'monthly')}`;
+  }
+  return `${STORAGE_KEY_PREFIX}${userId}-quarterly-${formatPeriodKey(referenceDate, 'quarterly')}`;
+}
+
+/**
  * Type guard for a single persisted entry. A persisted value is only applied
  * to an item when it has the exact expected shape; malformed values are
  * ignored (the item stays unchecked) rather than coerced.
@@ -120,10 +209,10 @@ interface PersistedStateReadResult {
 }
 
 /**
- * Reads and parses the persisted state for a single day's key. A missing key
- * is an empty (unchecked) state. A non-object payload is treated as empty. A
- * JSON parse failure is surfaced as a parse error so the panel can render its
- * error state instead of crashing.
+ * Reads and parses the persisted state for a single storage key. A missing
+ * key is an empty (unchecked) state. A non-object payload is treated as empty.
+ * A JSON parse failure is surfaced as a parse error so the panel can render
+ * its error state instead of crashing.
  */
 function readPersistedState(storageKey: string): PersistedStateReadResult {
   const raw = localStorage.getItem(storageKey);
@@ -146,15 +235,42 @@ function readPersistedState(storageKey: string): PersistedStateReadResult {
   }
 }
 
+interface CadenceEntries {
+  readonly daily: Record<string, unknown>;
+  readonly weekly: Record<string, unknown>;
+  readonly monthly: Record<string, unknown>;
+  readonly quarterly: Record<string, unknown>;
+}
+
 /**
- * Merges persisted entries onto the static config. Iterates the static array
- * only: every config item produces exactly one rendered item, so the rendered
- * count always equals the config length. Persisted ids absent from the config
- * are ignored; config ids absent from the persisted state stay unchecked.
+ * Picks the entries record that holds the persisted state for an item with the
+ * given cadence. Daily and as-scheduled items share the daily entries record;
+ * the rest map one-to-one.
  */
-function buildItems(entries: Record<string, unknown>): DailyChecklistItem[] {
+function entriesForCadence(allEntries: CadenceEntries, cadence: ChecklistCadence): Record<string, unknown> {
+  if (cadence === 'daily' || cadence === 'as-scheduled') {
+    return allEntries.daily;
+  }
+  if (cadence === 'weekly') {
+    return allEntries.weekly;
+  }
+  if (cadence === 'monthly') {
+    return allEntries.monthly;
+  }
+  return allEntries.quarterly;
+}
+
+/**
+ * Merges per-cadence persisted entries onto the static config. Iterates the
+ * static array only: every config item produces exactly one rendered item, so
+ * the rendered count always equals the config length. Persisted ids absent
+ * from the config are ignored; config ids absent from persisted state stay
+ * unchecked.
+ */
+function buildItems(allEntries: CadenceEntries): DailyChecklistItem[] {
   const result: DailyChecklistItem[] = [];
   for (const configItem of CHECKLIST_CONFIG) {
+    const entries = entriesForCadence(allEntries, configItem.cadence);
     const persistedEntry = entries[configItem.id];
     if (isValidPersistedEntry(persistedEntry)) {
       result.push({
@@ -170,14 +286,23 @@ function buildItems(entries: Record<string, unknown>): DailyChecklistItem[] {
 }
 
 /**
- * Extracts the trailing 'YYYY-MM-DD' date from a checklist storage key. The
- * user id segment may itself contain hyphens (e.g. 'mock-user'), so the date
- * is always the final three hyphen-separated groups.
+ * Extracts the trailing date from a daily storage key (`...-YYYY-MM-DD`). Keys
+ * that carry a cadence marker (`-weekly-`, `-monthly-`, `-quarterly-`) are
+ * NOT classified as daily and return null. The user id segment may itself
+ * contain hyphens (e.g., 'mock-user'), so the date is always the final three
+ * hyphen-separated groups.
  */
-function parseDateFromKey(key: string): Date | null {
+function parseDailyKeyDate(key: string): Date | null {
+  if (!key.startsWith(STORAGE_KEY_PREFIX)) {
+    return null;
+  }
   const suffix = key.slice(STORAGE_KEY_PREFIX.length);
   const segments = suffix.split('-');
-  if (segments.length < 3) {
+  if (segments.length < 4) {
+    return null;
+  }
+  const cadenceMarker = segments[segments.length - 3];
+  if (cadenceMarker === 'weekly' || cadenceMarker === 'monthly' || cadenceMarker === 'quarterly') {
     return null;
   }
   const dayPart = segments[segments.length - 1];
@@ -196,31 +321,156 @@ function parseDateFromKey(key: string): Date | null {
 }
 
 /**
- * Deletes checklist keys whose date is more than 30 days before the reference
- * date. Only keys with the checklist prefix are inspected; every other
- * localStorage key (including the theme preference) is left untouched.
+ * Extracts the reference date (Monday of the ISO week) from a weekly storage
+ * key (`...-weekly-YYYY-Www`). Returns null for any key that does not carry
+ * the `weekly` marker as its 4th-from-last hyphen segment.
+ */
+function parseWeeklyKeyDate(key: string): Date | null {
+  if (!key.startsWith(STORAGE_KEY_PREFIX)) {
+    return null;
+  }
+  const segments = key.slice(STORAGE_KEY_PREFIX.length).split('-');
+  if (segments.length < 4) {
+    return null;
+  }
+  if (segments[segments.length - 3] !== 'weekly') {
+    return null;
+  }
+  const yearPart = segments[segments.length - 2];
+  const weekToken = segments[segments.length - 1];
+  if (yearPart === undefined || weekToken === undefined || !weekToken.startsWith('W')) {
+    return null;
+  }
+  const year = Number(yearPart);
+  const weekNumber = Number(weekToken.slice(1));
+  if (!Number.isInteger(year) || !Number.isInteger(weekNumber) || weekNumber < 1 || weekNumber > 53) {
+    return null;
+  }
+  const firstThursday = new Date(year, 0, 4);
+  const firstThursdayOffset = (firstThursday.getDay() + 6) % 7;
+  firstThursday.setDate(firstThursday.getDate() - firstThursdayOffset + 3);
+  const weekStartMs = firstThursday.getTime() + (weekNumber - 1) * 7 * MILLISECONDS_PER_DAY - 3 * MILLISECONDS_PER_DAY;
+  return new Date(weekStartMs);
+}
+
+/**
+ * Extracts the reference date (first day of the month) from a monthly storage
+ * key (`...-monthly-YYYY-MM`). Returns null for any key that does not carry
+ * the `monthly` marker as its 4th-from-last hyphen segment.
+ */
+function parseMonthlyKeyDate(key: string): Date | null {
+  if (!key.startsWith(STORAGE_KEY_PREFIX)) {
+    return null;
+  }
+  const segments = key.slice(STORAGE_KEY_PREFIX.length).split('-');
+  if (segments.length < 4) {
+    return null;
+  }
+  if (segments[segments.length - 3] !== 'monthly') {
+    return null;
+  }
+  const yearPart = segments[segments.length - 2];
+  const monthPart = segments[segments.length - 1];
+  if (yearPart === undefined || monthPart === undefined) {
+    return null;
+  }
+  const year = Number(yearPart);
+  const month = Number(monthPart);
+  if (!Number.isInteger(year) || !Number.isInteger(month) || month < 1 || month > 12) {
+    return null;
+  }
+  return new Date(year, month - 1, 1);
+}
+
+/**
+ * Extracts the reference date (first day of the quarter) from a quarterly
+ * storage key (`...-quarterly-YYYY-Qn`). Returns null for any key that does
+ * not carry the `quarterly` marker as its 4th-from-last hyphen segment.
+ */
+function parseQuarterlyKeyDate(key: string): Date | null {
+  if (!key.startsWith(STORAGE_KEY_PREFIX)) {
+    return null;
+  }
+  const segments = key.slice(STORAGE_KEY_PREFIX.length).split('-');
+  if (segments.length < 4) {
+    return null;
+  }
+  if (segments[segments.length - 3] !== 'quarterly') {
+    return null;
+  }
+  const yearPart = segments[segments.length - 2];
+  const quarterToken = segments[segments.length - 1];
+  if (yearPart === undefined || quarterToken === undefined || !quarterToken.startsWith('Q')) {
+    return null;
+  }
+  const year = Number(yearPart);
+  const quarter = Number(quarterToken.slice(1));
+  if (!Number.isInteger(year) || !Number.isInteger(quarter) || quarter < 1 || quarter > 4) {
+    return null;
+  }
+  return new Date(year, (quarter - 1) * 3, 1);
+}
+
+/**
+ * Deletes stale checklist keys per cadence-specific retention. Each retention
+ * branch is its own `for...of` loop with descriptive variables so the prune
+ * logic is explicit and a future reader can trace exactly which cadence
+ * removed which key. Theme and other non-checklist keys are left untouched.
  */
 function pruneStaleKeys(referenceDate: Date): void {
-  const checklistKeys: string[] = [];
+  const allChecklistKeys: string[] = [];
   for (let index = 0; index < localStorage.length; index += 1) {
-    const key = localStorage.key(index);
-    if (key !== null && key.startsWith(STORAGE_KEY_PREFIX)) {
-      checklistKeys.push(key);
+    const candidate = localStorage.key(index);
+    if (candidate !== null && candidate.startsWith(STORAGE_KEY_PREFIX)) {
+      allChecklistKeys.push(candidate);
     }
   }
-  const cutoffTime = referenceDate.getTime() - STALE_KEY_MAX_AGE_DAYS * MILLISECONDS_PER_DAY;
-  for (const key of checklistKeys) {
-    const keyDate = parseDateFromKey(key);
-    if (keyDate !== null && keyDate.getTime() < cutoffTime) {
-      localStorage.removeItem(key);
+
+  // why: D-19801 — per-cadence prune branches without shared dynamic-prefix
+  // logic prevent accidental cross-cadence prune. Each loop classifies its
+  // own keys via a dedicated parser; an unrecognized key shape returns null
+  // and the loop skips it without removing.
+
+  const dailyCutoffMs = referenceDate.getTime() - DAILY_RETENTION_DAYS * MILLISECONDS_PER_DAY;
+  for (const dailyKey of allChecklistKeys) {
+    const dailyDate = parseDailyKeyDate(dailyKey);
+    if (dailyDate !== null && dailyDate.getTime() < dailyCutoffMs) {
+      localStorage.removeItem(dailyKey);
+    }
+  }
+
+  const weeklyCutoffMs = referenceDate.getTime() - WEEKLY_RETENTION_DAYS * MILLISECONDS_PER_DAY;
+  for (const weeklyKey of allChecklistKeys) {
+    const weeklyDate = parseWeeklyKeyDate(weeklyKey);
+    if (weeklyDate !== null && weeklyDate.getTime() < weeklyCutoffMs) {
+      localStorage.removeItem(weeklyKey);
+    }
+  }
+
+  const monthlyCutoffMs = referenceDate.getTime() - MONTHLY_RETENTION_DAYS * MILLISECONDS_PER_DAY;
+  for (const monthlyKey of allChecklistKeys) {
+    const monthlyDate = parseMonthlyKeyDate(monthlyKey);
+    if (monthlyDate !== null && monthlyDate.getTime() < monthlyCutoffMs) {
+      localStorage.removeItem(monthlyKey);
+    }
+  }
+
+  const quarterlyCutoffMs = referenceDate.getTime() - QUARTERLY_RETENTION_DAYS * MILLISECONDS_PER_DAY;
+  for (const quarterlyKey of allChecklistKeys) {
+    const quarterlyDate = parseQuarterlyKeyDate(quarterlyKey);
+    if (quarterlyDate !== null && quarterlyDate.getTime() < quarterlyCutoffMs) {
+      localStorage.removeItem(quarterlyKey);
     }
   }
 }
 
 /**
  * Provides the Daily Execution Panel's checklist state, persisted in
- * localStorage per user per local calendar day. Persistence happens through
- * explicit writes in toggle() and resetAll() only — there are no watchers.
+ * localStorage per user per cadence period. Daily and as-scheduled items
+ * share one storage key (per local calendar day); weekly / monthly /
+ * quarterly items each ride their own cadence-tagged storage key.
+ * Persistence happens through explicit writes in toggle() and resetAll()
+ * only — there are no watchers.
  *
  * @param options.now Injectable clock returning the current Date. Tests pass a
  *   fixed clock here instead of mocking the global Date; production omits it.
@@ -229,15 +479,34 @@ export function useDailyChecklist(options?: UseDailyChecklistOptions): UseDailyC
   const now = options?.now ?? (() => new Date());
 
   const userId = resolveUserId();
-  const dateString = formatLocalDateString(now());
-  const storageKey = `${STORAGE_KEY_PREFIX}${userId}-${dateString}`;
+  const referenceDate = now();
+  const dailyKey = deriveStorageKey(userId, 'daily', referenceDate);
+  const weeklyKey = deriveStorageKey(userId, 'weekly', referenceDate);
+  const monthlyKey = deriveStorageKey(userId, 'monthly', referenceDate);
+  const quarterlyKey = deriveStorageKey(userId, 'quarterly', referenceDate);
 
-  const { entries, hadParseError } = readPersistedState(storageKey);
-  const items = ref<DailyChecklistItem[]>(buildItems(entries));
-  const loadError = ref(hadParseError);
-  const loadedAt = ref(now().getTime());
+  const dailyState = readPersistedState(dailyKey);
+  const weeklyState = readPersistedState(weeklyKey);
+  const monthlyState = readPersistedState(monthlyKey);
+  const quarterlyState = readPersistedState(quarterlyKey);
 
-  pruneStaleKeys(now());
+  const allEntries: CadenceEntries = {
+    daily: dailyState.entries,
+    weekly: weeklyState.entries,
+    monthly: monthlyState.entries,
+    quarterly: quarterlyState.entries,
+  };
+
+  const items = ref<DailyChecklistItem[]>(buildItems(allEntries));
+  const loadError = ref(
+    dailyState.hadParseError
+      || weeklyState.hadParseError
+      || monthlyState.hadParseError
+      || quarterlyState.hadParseError,
+  );
+  const loadedAt = ref(referenceDate.getTime());
+
+  pruneStaleKeys(referenceDate);
 
   const totalCount = computed(() => items.value.length);
   const completedCount = computed(
@@ -245,17 +514,36 @@ export function useDailyChecklist(options?: UseDailyChecklistOptions): UseDailyC
   );
 
   /**
-   * Persists the current item state for today's key. A write failure (for
-   * example, exceeding the storage quota) must not break the toggle, so it is
-   * caught and ignored.
+   * Persists the current item state. Each cadence's items are written to that
+   * cadence's storage key — daily and as-scheduled items co-locate under the
+   * daily key (WP-162 byte-identical shape), the others ride their own keys.
+   * A write failure (for example, exceeding the storage quota) must not break
+   * the toggle, so it is caught and ignored.
    */
   function persist(): void {
-    const snapshot: Record<string, PersistedEntry> = {};
+    const dailySnapshot: Record<string, PersistedEntry> = {};
+    const weeklySnapshot: Record<string, PersistedEntry> = {};
+    const monthlySnapshot: Record<string, PersistedEntry> = {};
+    const quarterlySnapshot: Record<string, PersistedEntry> = {};
+
     for (const item of items.value) {
-      snapshot[item.id] = { completed: item.completed, completedAt: item.completedAt };
+      const entry: PersistedEntry = { completed: item.completed, completedAt: item.completedAt };
+      if (item.cadence === 'daily' || item.cadence === 'as-scheduled') {
+        dailySnapshot[item.id] = entry;
+      } else if (item.cadence === 'weekly') {
+        weeklySnapshot[item.id] = entry;
+      } else if (item.cadence === 'monthly') {
+        monthlySnapshot[item.id] = entry;
+      } else {
+        quarterlySnapshot[item.id] = entry;
+      }
     }
+
     try {
-      localStorage.setItem(storageKey, JSON.stringify(snapshot));
+      localStorage.setItem(dailyKey, JSON.stringify(dailySnapshot));
+      localStorage.setItem(weeklyKey, JSON.stringify(weeklySnapshot));
+      localStorage.setItem(monthlyKey, JSON.stringify(monthlySnapshot));
+      localStorage.setItem(quarterlyKey, JSON.stringify(quarterlySnapshot));
     } catch {
       // why: a localStorage write can fail when the quota is exceeded or
       // storage is disabled; the in-memory checklist remains usable for the

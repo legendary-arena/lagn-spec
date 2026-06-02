@@ -28,7 +28,25 @@ export interface KpiSnapshot {
   previousValue: number;
   unit: string;
   trend: 'up' | 'down' | 'flat';
+  // why: D-19802 — `target` / `tolerance` / `direction` are all OPTIONAL so
+  // existing KPIs without a threshold continue to type-check. A KPI rendering
+  // a status chip MUST supply all three; absence of `target` is the explicit
+  // opt-out signal (computeKpiStatus returns null and no chip is rendered).
+  target?: number;
+  tolerance?: number;
+  direction?: 'higher-is-better' | 'lower-is-better';
 }
+
+export type KpiStatus = 'on-track' | 'off-track' | 'needs-attention';
+
+/**
+ * Canonical readonly array mirroring the `KpiStatus` union, drift-pinned via
+ * a `node:test` assertion (see `utils/kpiStatus.test.ts`). Pattern mirrors
+ * `MATCH_PHASES` / `TURN_STAGES` from `.claude/rules/code-style.md §Drift
+ * Detection`. Adding a 4th status to the union without updating this array
+ * (or vice versa) fails the drift test loudly.
+ */
+export const KPI_STATUSES: readonly KpiStatus[] = ['on-track', 'off-track', 'needs-attention'];
 
 export interface PlayerRecord {
   id: string;

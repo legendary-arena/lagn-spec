@@ -6,6 +6,7 @@ import DauChartWidget from '../../widgets/DauChartWidget.vue';
 import RevenueChartWidget from '../../widgets/RevenueChartWidget.vue';
 import AlertsPanel from '../../widgets/AlertsPanel.vue';
 import DailyExecutionPanel from '../../widgets/DailyExecutionPanel.vue';
+import VisionCard from '../../widgets/VisionCard.vue';
 import type { KpiSnapshot } from '../../types/index.js';
 
 const router = useRouter();
@@ -26,6 +27,8 @@ function handleKpiClick(kpi: KpiSnapshot): void {
 
 <template>
   <div class="overview-page">
+    <VisionCard />
+
     <div class="page-header">
       <h1>Overview</h1>
       <div class="range-selector">

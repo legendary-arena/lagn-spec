@@ -4,7 +4,8 @@ import { useFetch } from '../composables/useFetch.js';
 import { useDataFreshness } from '../composables/useDataFreshness.js';
 import { fetchKpiSnapshots } from '../services/endpoints.js';
 import { formatNumber, formatCurrency } from '../utils/format.js';
-import type { KpiSnapshot } from '../types/index.js';
+import { computeKpiStatus } from '../utils/kpiStatus.js';
+import type { KpiSnapshot, KpiStatus } from '../types/index.js';
 
 const props = defineProps<{
   kpiId: string;
@@ -43,6 +44,21 @@ const trendLabel = computed(() => {
   }
   return `${kpi.value.trend} vs previous`;
 });
+
+const kpiStatus = computed<KpiStatus | null>(() => {
+  if (!kpi.value) {
+    return null;
+  }
+  return computeKpiStatus(kpi.value);
+});
+
+const STATUS_LABELS: Readonly<Record<KpiStatus, string>> = {
+  'on-track': 'On track',
+  'off-track': 'Off track',
+  'needs-attention': 'Needs attention',
+};
+
+const statusLabel = computed(() => (kpiStatus.value ? STATUS_LABELS[kpiStatus.value] : ''));
 
 function formatValue(snapshot: KpiSnapshot): string {
   if (snapshot.unit === 'USD') {
@@ -91,6 +107,17 @@ function handleClick(): void {
       <span class="kpi-trend" :class="kpi.trend">
         <span class="trend-symbol" aria-hidden="true">{{ trendSymbol }}</span>
         <span class="trend-label">{{ trendLabel }}</span>
+      </span>
+      <!-- why: D-19802 — chip renders only when computeKpiStatus is non-null.
+           Text label renders FIRST so color is never the sole indicator;
+           aria-label carries the status text so screen readers convey it. -->
+      <span
+        v-if="kpiStatus"
+        class="kpi-status-chip"
+        :class="`status-${kpiStatus}`"
+        :aria-label="`Status: ${statusLabel}`"
+      >
+        <span class="status-label">{{ statusLabel }}</span>
       </span>
     </footer>
   </div>
@@ -173,6 +200,8 @@ function handleClick(): void {
 .card-footer {
   display: flex;
   align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 .kpi-trend {
@@ -188,4 +217,20 @@ function handleClick(): void {
 .kpi-trend.up { color: var(--p-green-500); }
 .kpi-trend.down { color: var(--p-red-500); }
 .kpi-trend.flat { color: var(--p-text-muted-color); }
+
+.kpi-status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid currentColor;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.kpi-status-chip.status-on-track { color: var(--p-green-500); }
+.kpi-status-chip.status-off-track { color: var(--p-red-500); }
+.kpi-status-chip.status-needs-attention { color: var(--p-yellow-500); }
 </style>

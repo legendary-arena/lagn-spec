@@ -33,6 +33,13 @@ export function mockKpiSnapshots(): ServiceResponse<KpiSnapshot[]> {
       previousValue: 2800,
       unit: 'players',
       trend: 'up',
+      // why: EC-224a §B — locked example KPI with thresholds so the status
+      // chip is visible in dev without further wiring. Target / tolerance
+      // / direction are illustrative; a follow-up WP curates real operator
+      // targets per D-19802's "target-setting discipline" rationale.
+      target: 2500,
+      tolerance: 300,
+      direction: 'higher-is-better',
     },
     {
       id: 'matches-running',
@@ -49,6 +56,12 @@ export function mockKpiSnapshots(): ServiceResponse<KpiSnapshot[]> {
       previousValue: 2100,
       unit: 'USD',
       trend: 'up',
+      // why: EC-224a §B — second locked example KPI with thresholds.
+      // `lower-is-better` would be inappropriate for revenue; this is the
+      // higher-is-better case mirroring active-players.
+      target: 2000,
+      tolerance: 400,
+      direction: 'higher-is-better',
     },
     {
       id: 'server-health',

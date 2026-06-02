@@ -20251,4 +20251,40 @@ worth the indirection cost.
 
 ---
 
+### D-19801 — Cadence Union Extension + Per-Cadence Storage-Key Shape
+
+**D-19801 — Cadence Union Extension + Per-Cadence Storage-Key Shape.** Cadence union extended to `daily | weekly | monthly | quarterly | as-scheduled`. New cadences use storage-key shape `la-dashboard-checklist-{userId}-{cadence}-{periodKey}` separate from the daily shape; per-cadence prune branches with cadence-appropriate retention (30d/90d/365d/2y). Rationale: The video's strongest single pattern is laddering goals across time horizons (P3 in `session-context-ops-machine-video.md`). The existing checklist composable already knows about `cadence`; surfacing the dimension in the UI requires only a union extension and a tabbed render. Keeping the daily storage-key shape byte-identical preserves operator-persisted state across the WP boundary; the new-cadence keys ride a separate shape so the per-day prune logic doesn't have to learn about them.
+
+**Packet:** WP-198 (EC-224a).
+
+**Drafted:** 2026-06-01.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19802 — KpiSnapshot Threshold Extension + Pure-Helper Status Chip
+
+**D-19802 — KpiSnapshot Threshold Extension + Pure-Helper Status Chip.** `KpiSnapshot` gains optional `target`, `tolerance`, `direction`. Status computation lives in a pure helper (`computeKpiStatus`) so the widget render path stays branching-free and the logic is testable without component mount. KPIs without `target` render no chip — the chip is opt-in per KPI. Rationale: Trend arrow alone doesn't tell the operator whether a number is *good* (P2 in the inspiration artifact). Threshold-based chips force target-setting discipline (you can't ship a chip without a target), which is the actual value. Making target optional avoids retroactively requiring every existing KPI to be re-justified.
+
+**Packet:** WP-198 (EC-224a).
+
+**Drafted:** 2026-06-01.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-19803 — VisionCard Curated-String Render Posture
+
+**D-19803 — VisionCard Curated-String Render Posture.** VisionCard renders a curated condensed string in the component; no runtime file read, no build-time generator. The string is JSDoc-versioned against `docs/01-VISION.md` and re-verified on every WP that modifies VISION.md. Rationale: The Benioff pattern from the video (P4) is *pinning* the vision, not *displaying* a live file. A curated condensed string fits the operator's at-a-glance need; a full VISION.md render would dilute the signal. Static text avoids both runtime file IO (browser-impossible) and build-time generator coupling (over-engineering for a one-paragraph card). The versioning rule prevents the curated string from silently drifting from the source.
+
+**Packet:** WP-198 (EC-224a).
+
+**Drafted:** 2026-06-01.
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
 Protect this file.
