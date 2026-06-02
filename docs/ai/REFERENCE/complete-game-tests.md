@@ -475,6 +475,117 @@ counts), anomaly classification, and aggregate reporting are deferred
 to a follow-up WP. WP-194 emits raw cell results; downstream consumers
 (WP-195) own interpretation.
 
+### Sweep manifest analysis (WP-195)
+
+`scripts/analyze-sweep-manifest.mjs` is the analysis-layer companion to
+WP-194's sweep runner. It consumes a `sweep-output/<run-id>/manifest.jsonl`
+manifest, classifies each cell into a closed 4-class anomaly taxonomy,
+aggregates distribution summaries, and renders a deterministic report
+in markdown (default) or JSON (`--format json`). The analyzer is
+**read-only** over the manifest — it never appends, truncates, or
+re-emits the file, and it never re-dispatches anomalous cells (the
+re-dispatch path is a follow-up WP, not WP-195's seam).
+
+The CLI shape:
+
+```pwsh
+node scripts/analyze-sweep-manifest.mjs `
+  --manifest <path-to-manifest.jsonl> `
+  [--format markdown|json]
+```
+
+`--manifest` is required; the script reads the entire file
+synchronously into memory and parses it line-by-line (WP-194's 10K-cell
+cap bounds the manifest to ≤5 MB, well under any reasonable memory
+budget). `--format` defaults to `markdown`. CLI flag duplication
+follows the last-occurrence-wins rule (e.g.,
+`--format markdown --format json` yields JSON output); a flag without
+a following value is a full-sentence stderr error with non-zero exit.
+
+**Closed 4-class anomaly taxonomy (D-19502).** Each cell classifies
+into exactly one of `'endgame-reached'`, `'not-endgame'`,
+`'escaped-villain-cap'`, or `'fatal'`:
+
+- `'endgame-reached'` — success record with `endgameReached: true` and
+  `outcome.escapedVillains < ESCAPE_LIMIT` (the healthy baseline; the
+  engine reached a terminal state via `evaluateEndgame`).
+- `'not-endgame'` — success record with `endgameReached: false`.
+  Covers both the cap-hit (loop exited via `MAX_TURNS_PER_GAME = 200`)
+  and the stuck-game (loop exited via the stuck-endTurn break)
+  sub-cases. The manifest cannot discriminate them; operators look at
+  the `moveCount` distribution slice as the discrimination signal.
+- `'escaped-villain-cap'` — success record with `endgameReached: true`
+  and `outcome.escapedVillains >= ESCAPE_LIMIT` (the legitimate
+  scheme-wins-via-escape path).
+- `'fatal'` — fatal record (`type === 'fatal'`) emitted by the sweep
+  dispatcher's outer try/catch when the cell threw.
+
+Classification rules are decided in this branch order; the FIRST
+matching branch wins. The four classes are mutually exclusive and
+exhaustive over the manifest's record space.
+
+**Distribution summaries.** `ManifestSummary` carries `totalCells`
+(successfully parsed records only — malformed lines are EXCLUDED and
+tracked separately in the `malformedLines` array), `anomalyCounts`
+(per anomaly class), `winnerCounts` (three buckets: `'heroes-win'`,
+`'scheme-wins'`, `null`; fatal records contribute to `null`),
+`moveCountStats` + `escapedVillainStats` (`NumericDistributionStats`
+with `count` / `min` / `max` / `mean` / `median` / `p95`), and
+`fatalErrorSignatures` (buckets sorted descending by `count` then
+ascending by `signature` in Unicode code-unit order; each bucket holds
+the FULL list of matching `cellSeeds`, sorted lexicographically
+ascending — v1 retention guarantee, no truncation). Cell-count
+invariant: `totalCells === records.length` AND
+`sum(anomalyCounts) === totalCells` AND
+`sum(winnerCounts) === totalCells`.
+
+`mean` and `median` compute full-precision IEEE-754 arithmetic FIRST,
+then round to 2 decimal places via `Math.round(value * 100) / 100` —
+rounding before averaging is forbidden. `p95` uses the nearest-rank
+method with index `Math.ceil(0.95 * count) - 1`. `count === 1` yields
+`min === max === mean === median === p95 === <the single value>`.
+Sum accumulation honors the input array's iteration order verbatim
+(no Kahan summation, no reordering) so a future port of the analyzer
+to Python or Go produces byte-identical numeric output.
+
+**Markdown + JSON report formats.** Both formats are deterministic:
+same manifest input produces byte-identical output. Markdown is the
+operator-reading default; JSON is canonical (deep-sorted keys at every
+nesting level via Unicode code-unit comparator — NEVER `localeCompare`)
+for downstream tooling ingestion. Empty sections render exactly the
+section header followed by a single line containing the literal
+`(none)`. Percentages render as `N.N%`; distribution stats as `N.NN`;
+counts as integers; markdown line endings are LF (`\n`), never CRLF.
+The stdout byte-stream contract (both formats) is UTF-8 encoding,
+exactly one trailing `\n`, no BOM.
+
+**Malformed-line warn-and-continue policy (D-19505).** A malformed
+manifest line (non-JSON, neither-shape, missing field, wrong-typed
+field, non-canonical `type` value, extra key on the outer record or
+the nested `outcome` object, array / `null` / primitive / non-
+`Object.prototype` object) is non-fatal: the analyzer emits a
+full-sentence stderr warning naming the 1-based line number + the
+reason, increments the malformed-line counter (surfaced in the
+markdown header and the JSON `malformedLines` array), and proceeds
+with the remaining lines. Warnings emit synchronously in ascending
+`lineNumber` order — no batching, no asynchronous interleaving;
+replay-stability of stderr is part of the determinism contract.
+
+**v1 single-manifest scope.** The analyzer consumes exactly one
+manifest per invocation. Multi-manifest aggregation (trend analysis
+across sweep runs), registry-backed analysis (real card scripts vs the
+`EMPTY_REGISTRY` placeholder), anomaly-driven fixture promotion
+(auto-record anomalous cells into the regression corpus), and
+dashboard widget ingestion of the JSON output are deferred to
+follow-up WPs.
+
+**Re-dispatch is out of scope.** The analyzer never calls
+`sweepSetupMatrix`, `simulateOneGameAndCaptureMoves`, `runSimulation`,
+or `runFixture`. To re-run an anomalous cell, the operator uses the
+WP-193 recorder with the cell's `cellSeed` (carried verbatim in the
+manifest), which produces a reproducible fixture for forensic
+inspection.
+
 ---
 
 ## Authority chain

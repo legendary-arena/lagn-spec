@@ -20054,7 +20054,8 @@ worth the indirection cost.
 **Packet:** WP-195 (EC-222).
 
 **Drafted:** 2026-06-01.
-**Status:** Proposed
+**Landed:** 2026-06-01.
+**Status:** Landed
 
 ---
 
@@ -20065,7 +20066,8 @@ worth the indirection cost.
 **Packet:** WP-195 (EC-222).
 
 **Drafted:** 2026-06-01.
-**Status:** Proposed
+**Landed:** 2026-06-01.
+**Status:** Landed
 
 ---
 
@@ -20076,7 +20078,8 @@ worth the indirection cost.
 **Packet:** WP-195 (EC-222).
 
 **Drafted:** 2026-06-01.
-**Status:** Proposed
+**Landed:** 2026-06-01.
+**Status:** Landed
 
 ---
 
@@ -20087,7 +20090,8 @@ worth the indirection cost.
 **Packet:** WP-195 (EC-222).
 
 **Drafted:** 2026-06-01.
-**Status:** Proposed
+**Landed:** 2026-06-01.
+**Status:** Landed
 
 ---
 
@@ -20098,7 +20102,8 @@ worth the indirection cost.
 **Packet:** WP-195 (EC-222).
 
 **Drafted:** 2026-06-01.
-**Status:** Proposed
+**Landed:** 2026-06-01.
+**Status:** Landed
 
 ---
 
@@ -20109,7 +20114,8 @@ worth the indirection cost.
 **Packet:** WP-195 (EC-222).
 
 **Drafted:** 2026-06-01.
-**Status:** Proposed
+**Landed:** 2026-06-01.
+**Status:** Landed
 
 ---
 
@@ -20120,7 +20126,8 @@ worth the indirection cost.
 **Packet:** WP-195 (EC-222).
 
 **Drafted:** 2026-06-01.
-**Status:** Proposed
+**Landed:** 2026-06-01.
+**Status:** Landed
 
 ---
 
