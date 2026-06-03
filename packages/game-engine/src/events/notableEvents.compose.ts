@@ -34,6 +34,7 @@ const EFFECT_KEYWORD_LABELS: Readonly<Record<VillainEffectKeyword, string>> = {
   heroDeckTopToEscape: 'the top of the hero deck escaped',
   captureBystander: 'a bystander was captured',
   koHeroEachPlayer: 'every player KO’d a hero',
+  koHeroEachPlayerMag2: 'every player KO’d two heroes',
 };
 
 /**

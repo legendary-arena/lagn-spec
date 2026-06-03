@@ -62,22 +62,33 @@ export type VillainEffectKeyword =
   | 'koHeroCurrentPlayer'
   | 'heroDeckTopToEscape'
   | 'captureBystander'
-  | 'koHeroEachPlayer';
+  | 'koHeroEachPlayer'
+  | 'koHeroEachPlayerMag2';
 
 // why: drift-detection array — must match the VillainEffectKeyword union
-// exactly. The six-keyword vocabulary is the current locked MVP set. The
+// exactly. The seven-keyword vocabulary is the current locked MVP set. The
 // first five (positions 1-5) carry forward unchanged from WP-185
 // §Non-Negotiable Constraints — WP-187's executed markers and the overlay
 // script's hardcoded copy depend on byte-identical ordering of positions
-// 1-5, so insertions are appended at the end (position 6) only.
+// 1-5, so insertions are appended at the end only.
 // `koHeroEachPlayer` was added at position 6 by WP-189 to close the
 // dominant blocked each-player-KO pattern (D-18901): each-player vocabulary
 // is expanded incrementally, keyword-by-keyword, only where unconditional
 // magnitude-1 patterns are present in the current dataset. Conditional and
 // filtered each-player effects (cost-gated, class-gated, "or gains a
-// Wound", magnitude>1, compound clauses) remain out of scope for the MVP.
-// Any future addition requires a new WP plus a DECISIONS.md entry. The
-// order here is the canonical emission order for multi-marker lines.
+// Wound", source-filtered, compound clauses) remain out of scope for the MVP.
+// `koHeroEachPlayerMag2` was added at position 7 by WP-202 to close the
+// unconditional unfiltered magnitude-2 each-player-KO subset (D-20201):
+// magnitude-N each-player-KO uses closed-union-per-magnitude keywords
+// appended at position N (`koHeroEachPlayerMag2`, `koHeroEachPlayerMag3`
+// if ever needed); parameterized markers (`[effect:koHeroEachPlayer:N]`)
+// are rejected for v1 because the parser regex + executor dispatch
+// contract + overlay validator + every drift test would all need to
+// change for parameterization; the closed-union approach extends the
+// WP-189 append-only-position-N pattern with no parser change, and the
+// corpus shows only N=2 in v1 (zero N≥3 lines empirically). Any future
+// addition requires a new WP plus a DECISIONS.md entry. The order here
+// is the canonical emission order for multi-marker lines.
 /**
  * All villain effect keywords in canonical order. Single source of truth.
  */
@@ -88,6 +99,7 @@ export const VILLAIN_EFFECT_KEYWORDS: readonly VillainEffectKeyword[] = [
   'heroDeckTopToEscape',
   'captureBystander',
   'koHeroEachPlayer',
+  'koHeroEachPlayerMag2',
 ] as const;
 
 // ---------------------------------------------------------------------------

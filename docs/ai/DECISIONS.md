@@ -21503,4 +21503,346 @@ presence) are styling concerns by design and do not derive new meaning
 
 ---
 
+### D-20201 — Magnitude-N Each-Player Hero KO Uses Closed-Union-Per-Magnitude Keywords; Parameterized Markers Rejected for v1
+
+**Decision:**
+Each magnitude variant of an each-player-KO effect is its own
+closed-union keyword appended at position N of `VillainEffectKeyword` /
+`VILLAIN_EFFECT_KEYWORDS`. WP-202 introduces `koHeroEachPlayerMag2` at
+position 7 (index 6). Future `koHeroEachPlayerMag3+` (if a card with
+that shape ever ships) would be a copy-paste-and-edit of the case
+body, appended at the next position. Parameterized markers
+(`[effect:koHeroEachPlayer:N]`) are explicitly rejected for the MVP.
+The N-iteration executor branch is **literal-loop-bound** (the inner
+loop bound is the literal numeral `2` in the `koHeroEachPlayerMag2`
+case body — NOT a parameter, NOT a constant, NOT a `MAGNITUDE_BY_KEYWORD`
+lookup, NOT a field on the dispatch payload). Future magnitude expansion
+is a copy-paste-and-edit of the case body — NOT a parser / regex /
+dispatch-contract change.
+
+**Rationale:**
+Two design pressures push toward parameterization at first glance:
+(a) the printed text differs only by a quantifier word, and (b) a
+parameter feels like the "DRY" answer. The blast radius rules them out
+for v1. Parameterizing the magnitude would require, at minimum:
+- The `EFFECT_MARKER_PATTERN` parser regex to support a colon-split form
+  (`[effect:koHeroEachPlayer:N]`), which is the first regex-shape change
+  this surface has taken since WP-187 and is a load-bearing surface for
+  WP-187/188/190's already-shipped markers.
+- The executor dispatch contract to change from `effect:
+  VillainEffectKeyword` (a closed string union) to a struct shape
+  `{ keyword: VillainEffectKeyword, args: ... }`. Every dispatch site,
+  every test mock, every `hook.effects` array shape downstream of the
+  setup parser would need to update.
+- The overlay validator (`scripts/convert-cards/apply-effect-markers.mjs`)
+  to recognize the parameterized form when matching curated entries
+  against the closed-vocabulary gate.
+- Every drift-detection test (`VILLAIN_EFFECT_KEYWORDS` union-vs-array
+  parity, the WP-200 label-table exhaustiveness, the overlay's local
+  hand-synced copy) to update its assertion shape.
+
+The closed-union-per-magnitude approach extends the WP-189 append-only-
+position-N pattern (D-18901) with **zero parser change** and **zero
+dispatch-contract change**. The corpus shows only N=2 in v1 (verified
+empirically 2026-06-02 via `grep -rhE "Each player KOs (two|three|four|
+five) [^.]+\." data/cards/ | sort -u` — seven unique lines, all
+magnitude-2, zero N≥3 lines). The closed-union approach therefore
+degenerates to exactly one new keyword for the v1 dataset, which is
+materially cheaper than the parameterized refactor for the same outcome.
+
+The literal-2 inner-loop bound in the executor branch body is
+intentional and load-bearing for D-20201: extracting it to a helper
+(`runEachPlayerKoN(G, N)`) would re-introduce the shape D-20201
+rejects. Future magnitude expansion is a copy-paste-and-edit of the
+entire case body — duplication-first per `.claude/rules/code-style.md`
+§"Duplicate first, abstract only when a third copy appears". A
+hypothetical `koHeroEachPlayerMag3` would be the second occurrence; not
+yet a third. The branch's `// why:` block in `villainEffects.execute.ts`
+documents this extension seam explicitly so the pattern is discoverable
+by code search without requiring a DECISIONS round-trip.
+
+**Alternatives rejected:**
+- **`[effect:koHeroEachPlayer:N]` parameterized markers.** Rejected per
+  the rationale above (parser + dispatch + validator + drift-test blast
+  radius for a corpus that has only N=2 today).
+- **`koHeroEachPlayerMag*` glob match in the parser.** Rejected as a
+  hidden union expansion — every keyword in the closed vocabulary must
+  be enumerable by `VILLAIN_EFFECT_KEYWORDS` for the drift-detection
+  test and the overlay validator to function. A glob form opts out of
+  closed-set discipline.
+- **Pre-add `koHeroEachPlayerMag3` speculatively.** Rejected per the
+  empirical-only addition rule (the corpus has zero N≥3 lines; adding
+  unused vocabulary breaks the WP-189 closed-set-grows-incrementally
+  pattern and would create a keyword that the drift test cannot
+  exercise via real data).
+- **Add a single `koHeroEachPlayerN` keyword whose N is read from a
+  `magnitude?` field on `VillainAbilityHook`.** Rejected as a struct-
+  shape change to `VillainAbilityHook` and a setup-parser change to
+  populate the new field — both larger than the literal-2 inner loop.
+
+**Implications:**
+- Adding a future `koHeroEachPlayerMag3` (only if a real card ships
+  with the shape) is: append the keyword to the union at position 8;
+  append it to `VILLAIN_EFFECT_KEYWORDS` at index 7; add the dispatch
+  case (copy `koHeroEachPlayerMag2`'s body, rename, change literal `2`
+  to `3`); extend the drift test from 7 entries to 8; extend the
+  overlay's local hand-synced copy from 7 entries to 8 (D-20202
+  extension); add the propose heuristic; curate the marker(s); add the
+  matching label to `EFFECT_KEYWORD_LABELS` in
+  `notableEvents.compose.ts`. No parser/regex/dispatch-contract
+  change.
+- The `VillainEffectKeyword` union grows by one entry per new magnitude
+  variant. The drift test asserts the seven-entry array and the union
+  match bidirectionally; future expansion bumps the assertion in lockstep.
+- A future `MAGNITUDE_BY_KEYWORD: Record<VillainEffectKeyword, number>`
+  helper would be a D-20201 violation if introduced as a runtime
+  dispatch input — magnitude lives in the keyword name and in the
+  literal loop bound; it is NOT a runtime field.
+
+**Implementation locations:**
+- `packages/game-engine/src/rules/villainAbility.types.ts` — `VillainEffectKeyword`
+  union (7th entry `koHeroEachPlayerMag2`) and `VILLAIN_EFFECT_KEYWORDS`
+  canonical array (index 6 = `koHeroEachPlayerMag2`). The array's
+  `// why:` comment cites this decision verbatim.
+- `packages/game-engine/src/villain/villainEffects.execute.ts` — the
+  `koHeroEachPlayerMag2` dispatch case body with the literal `2` inner
+  loop bound; the case `// why:` block documents the extension seam.
+- `packages/game-engine/src/rules/villainAbility.types.test.ts` — the
+  seven-entry drift assertion and the indices-0-5-byte-identical
+  append-only invariant guard.
+- `packages/game-engine/src/villain/villainEffects.execute.test.ts` —
+  the load-bearing magnitude-2 ≡ magnitude-1-twice parity test on a
+  single-player `G` (pins that the literal-2 inner loop produces deep-
+  equal post-state to two sequential magnitude-1 dispatches).
+
+**Packet:** WP-202 (EC-230).
+
+**Drafted:** 2026-06-02 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
+### D-20202 — Overlay's Local Seven-Keyword Array Is Hand-Synced to the Engine `VILLAIN_EFFECT_KEYWORDS`; Drift Loud-Fails
+
+**Decision:**
+The overlay script `scripts/convert-cards/apply-effect-markers.mjs`
+carries a local `VILLAIN_EFFECT_KEYWORDS` array that mirrors the
+engine's canonical seven-entry array byte-for-byte. The two lists are
+kept in sync by hand. The script does NOT import from `packages/`. Any
+value in the curated marker map outside the locked seven-entry set
+loud-fails on first apply, and a future engine vocabulary change
+breaks the script loudly until the local copy is manually updated.
+WP-202 extends this hand-sync convention from six entries (per
+D-19002) to seven entries — positions 0-5 remain byte-identical to
+the post-WP-190 array, position 6 is the WP-202 append slot
+(`koHeroEachPlayerMag2`).
+
+**Rationale:**
+The overlay is a `.mjs` ops script that operates upstream of the
+TypeScript build. Importing from `packages/game-engine/dist/` would
+introduce a build-order dependency (the script depends on engine TS
+compilation, which the script itself preconditions in some workflows)
+and break the script's ability to run against a non-built tree.
+Importing from `packages/game-engine/src/` (the `.ts` source) would
+require the script to spawn `tsx` or transpile inline — both larger
+than the maintenance cost of a 7-entry array kept in sync by hand.
+
+The hand-sync convention also makes the loud-fail discipline
+load-bearing. If the engine ever changes its vocabulary (e.g., a
+future WP renames or removes a keyword), the overlay's local copy
+keeps the old value until manually updated; the curated marker map
+still references the old value; the script applies markers that the
+engine parser rejects; the next engine test run loud-fails on the
+unknown keyword. That noisy failure is the desired outcome — it
+forces the operator to confront the divergence rather than silently
+shipping markers the engine cannot dispatch.
+
+D-19002 introduced this convention at the six-entry mark (WP-190);
+D-20202 extends it to seven entries verbatim. The convention scales
+to any future N: each magnitude or each-player variant introduced by
+a future WP adds one entry, hand-synced.
+
+**Alternatives rejected:**
+- **Auto-import from the engine's compiled output.** Rejected per the
+  build-order dependency above and per `.claude/rules/architecture.md`
+  §Shared Tooling (the overlay is upstream of `packages/` in the
+  dependency graph; importing downward from a script that runs at
+  data-curation time inverts the layer direction).
+- **Re-derive the locked seven from the JSON marker map at script
+  start.** Rejected because the loud-fail-on-unknown-keyword guardrail
+  depends on the script having an independent ground-truth copy of
+  the vocabulary; deriving from the map would mean the map is
+  self-validating, which silently admits typos.
+- **Embed the seven-entry array as a JSON sidecar
+  (`villain-effect-vocab.json`) and read it from both engine setup and
+  overlay.** Rejected as a larger refactor (engine setup currently
+  reads the canonical array directly; introducing a JSON sidecar adds
+  a loader site and a schema). Worth revisiting only if the vocabulary
+  grows past ~20 entries; at 7, hand-keeping is cheaper.
+
+**Implications:**
+- Future magnitude or each-player additions (per D-20201's extension
+  seam) require updating BOTH the engine canonical array AND the
+  overlay's local copy in lockstep. The WP body for any such future
+  addition MUST list both files in `§Files Expected to Change` and
+  the EC's drift-detection close gate MUST grep for the new keyword in
+  both files.
+- The `// why:` comment on the overlay's local array carries forward
+  the citation chain (D-19002 → D-20202 → future D-XXXXX); each
+  addition appends a new clause without overwriting the prior one.
+- `packages/` imports remain forbidden from the overlay script
+  permanently. The loud-fail discipline is the contract; auto-sync
+  would silently break it.
+
+**Implementation locations:**
+- `scripts/convert-cards/apply-effect-markers.mjs` — the local
+  `VILLAIN_EFFECT_KEYWORDS` array (7 entries; position 6 =
+  `koHeroEachPlayerMag2`). The array's `// why:` comment cites
+  D-19002 + D-20202.
+- `packages/game-engine/src/rules/villainAbility.types.ts` — the
+  authoritative `VILLAIN_EFFECT_KEYWORDS` canonical array the overlay
+  mirrors.
+
+**Packet:** WP-202 (EC-230).
+
+**Drafted:** 2026-06-02 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
+### D-20203 — Magnitude-2 Curation Marks ONLY Unconditional Unfiltered Each-Player Hero KO Lines; Filtered / Target-Mismatched / Choice Variants Stay Deferred
+
+**Decision:**
+The WP-202 `[effect:koHeroEachPlayerMag2]` marker is curated ONLY on
+the printed text `"Escape: Each player KOs two of their Heroes."`
+exact-match. Two such lines exist in the 40-set corpus (both
+`enemies-of-asgard/destroyer` — one in `core.json`, one in
+`msp1.json`); both are marked. EXACT CURATION COUNT IS FIXED = 2
+(verified by `grep -r "[effect:koHeroEachPlayerMag2]" data/cards/ |
+wc -l` = 2). Magnitude>2 lines, source-filtered each-player-KO lines
+("from their hand" / "from their discard pile" / "from their Victory
+Pile"), target-mismatched lines (Henchmen not Heroes), class-filtered
+lines ("non-grey Heroes"), stat-filtered lines ("printed [icon:attack]
+of 2 or more"), and choice clauses ("or gains a Wound") all stay in
+`_unassigned` under their existing `reason` tags. The EXACT CURATION
+COUNT IS FIXED invariant mirrors D-19001's pattern. Each-player ≠
+current-player remains a hard separation: any future "KO two of your
+Heroes" magnitude variant (current-player magnitude-2) is a separate
+WP with its own keyword — converting a `koHeroCurrentPlayer` line to
+`koHeroEachPlayerMag2` (or vice versa) is a semantic-corruption FAIL
+that extends D-19001's hard-separation rule to the magnitude-N branch.
+
+**Rationale:**
+The closed-union vocabulary expansion (D-20201) is intentionally
+narrow: one keyword, one magnitude, one unconditional unfiltered
+shape. The four remaining D-18802 Escape rows that WP-202 does NOT
+promote each carry an additional qualifier the MVP defers:
+- `2099/false-aesir-of-alchemax/hela-2099` — wrong target (Henchmen
+  not Heroes) + choice ("or gains a Wound") + filtered source
+  (Victory Pile). Three orthogonal disqualifiers.
+- `core/brotherhood/juggernaut` Escape — filtered source ("from their
+  hand"). The shared resolver's discard→hand priority is NOT
+  equivalent to "from hand only"; marking this with
+  `koHeroEachPlayerMag2` would mis-execute the printed text on a
+  player whose discard contains an eligible hero.
+- `cvwr/csa-special-marshals/bullseye` — stat/class filter
+  ("printed [icon:attack] of 2 or more"). The MVP has no runtime
+  card-stat reads (D-18503 carries forward); the shared resolver
+  selects by zone priority + ext_id lexical, NOT by printed attack.
+- `wpnx/weapon-plus/ultimaton-weapon-xv` — class filter ("non-grey
+  Heroes"). Same: no runtime team/class reads in the resolver.
+
+The corpus-wide Juggernaut **Ambush** row
+(`"Ambush: Each player KOs two Heroes from their discard pile."`) is
+ALSO out of scope for WP-202 — it carries the same source-filter
+disqualifier as the Juggernaut Escape row. It stays under its
+existing `reason: "magnitude>1"` tag (NOT under the D-18802
+`no-vocabulary-keyword` ledger; see WP-202 §Assumes audit-scope
+clarifier — the D-18802 ledger and the corpus-wide magnitude>1 scan
+are distinct audit universes, and conflating them is the most likely
+execution misread).
+
+The each-player ≠ current-player hard separation (extending D-19001)
+prevents a class of FAIL where a reviewer sees "magnitude-2 KO" and
+routes both `"KO two of your Heroes"` (current-player) and `"Each
+player KOs two of their Heroes"` (each-player) to the same keyword.
+These are structurally distinct dispatch surfaces and structurally
+distinct printed-text semantics; converting between them is a
+semantic-corruption FAIL.
+
+The EXACT CURATION COUNT IS FIXED = 2 invariant pins the curation
+discipline at execution close. `--propose` may surface additional
+candidates (the heuristic regex is intentionally over-capturing per
+the WP-187 propose-vs-commit boundary); the committed map authorizes
+ONLY the two Destroyer entries regardless of `--propose` output. The
+invariant is verifiable via two greps: a positive grep counts exactly
+2 lines with the marker, and a negative grep confirms zero
+Ambush/Fight/Overrun lines carry the marker.
+
+**Alternatives rejected:**
+- **Mark Juggernaut Escape with `koHeroEachPlayerMag2` because the
+  magnitude matches.** Rejected: source-filtered. The shared
+  resolver's discard→hand priority would KO from discard first when
+  the printed text says "from their hand" only — semantic
+  corruption.
+- **Mark Juggernaut Ambush with `koHeroEachPlayerMag2`.** Rejected
+  per the same source-filter disqualifier (the Ambush row says "from
+  their discard pile"; the shared resolver would fall through to hand
+  on iteration 2 if discard runs out, which the printed text
+  forbids).
+- **Mark Bullseye / Ultimaton-Weapon-XV with `koHeroEachPlayerMag2`.**
+  Rejected: class/stat filter AND magnitude-1, not magnitude-2. Two
+  orthogonal disqualifiers each.
+- **Mark Hela-2099 with `koHeroEachPlayerMag2`.** Rejected: wrong
+  target (Henchmen not Heroes) + choice + filtered source. Three
+  orthogonal disqualifiers.
+- **Add `master-strike` to `SUPPORTED_TIMINGS` to catch Master Strike
+  magnitude-2 lines.** Rejected: out of scope — Master Strike
+  resolutions run through the mastermind-strike system (WP-024), not
+  the villain-ability hook surface. The two SSW2 / 2099 Master
+  Strike magnitude-2 lines stay unmarked.
+
+**Implications:**
+- Re-running the overlay script after a future WP adds predicate
+  machinery (source-filter, target-filter, class-filter, choice) and
+  promotes the 4 remaining D-18802 rows must NOT touch the two
+  Destroyer rows WP-202 owns; the EXACT CURATION COUNT IS FIXED = 2
+  invariant defines WP-202's curated surface verbatim.
+- Any future "KO two of your Heroes" (current-player magnitude-2)
+  line in the corpus needs its own keyword (a separate WP); converting
+  to `koHeroEachPlayerMag2` is a hard-separation FAIL.
+- The 4 remaining D-18802 Escape rows are documented verbatim in
+  `villain-effect-markers.json`'s `_unassigned` block with their
+  existing `reason: "no-vocabulary-keyword"` tag. WP-202 appends one
+  new `_notes` paragraph naming the 4 blockers explicitly so the
+  cross-WP audit anchor (D-18802) and the per-row blocker rationale
+  are co-located.
+
+**Implementation locations:**
+- `scripts/convert-cards/inputs/villain-effect-markers.json` — the
+  two newly-curated Destroyer entries (`villains/core/enemies-of-asgard/
+  destroyer` + `villains/msp1/enemies-of-asgard/destroyer`, both
+  `escape: ["koHeroEachPlayerMag2"]`); the 4 retained
+  `_unassigned no-vocabulary-keyword` rows (hela-2099, juggernaut
+  Escape, bullseye, ultimaton-weapon-xv); the new `_notes` paragraph
+  naming the 4 blockers verbatim.
+- `data/cards/core.json` + `data/cards/msp1.json` — the two
+  `[effect:koHeroEachPlayerMag2]` markers on the printed Destroyer
+  Escape lines (each `+1/-1`; bounded diff invariant).
+- `scripts/convert-cards/apply-effect-markers.mjs` — the
+  `koHeroEachPlayerMag2` propose heuristic requires the literal word
+  "two" between the each-player phrase and the hero token so
+  magnitude-2 candidates surface distinctly from magnitude-1; the
+  heuristic is advisory only.
+
+**Packet:** WP-202 (EC-230).
+
+**Drafted:** 2026-06-02 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
 Protect this file.

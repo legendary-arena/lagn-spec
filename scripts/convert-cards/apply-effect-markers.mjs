@@ -64,10 +64,13 @@ const MARKER_MAP_PATH = join(INPUTS_DIR, 'villain-effect-markers.json');
 // never silent. The canonical append order below is also this array's
 // order (so multi-marker lines are stable across runs). WP-189 added the
 // sixth keyword `koHeroEachPlayer` at position 6 (engine-side); WP-190 /
-// D-19002 mirrors it here byte-identically. Positions 0-4 remain byte-
-// identical to WP-185's array; the hand-sync convention is the load-
-// bearing guardrail (auto-importing from packages/ is explicitly
-// forbidden — the loud-fail discipline depends on hand-keeping).
+// D-19002 mirrored it here byte-identically. WP-202 / D-20202 appends
+// the seventh keyword `koHeroEachPlayerMag2` at position 7 (engine-side);
+// this array mirrors it here byte-identically — positions 0-5 remain
+// byte-identical to the post-WP-190 array, position 6 is the WP-202
+// append slot. The hand-sync convention is the load-bearing guardrail
+// (auto-importing from packages/ is explicitly forbidden — the loud-fail
+// discipline depends on hand-keeping).
 const VILLAIN_EFFECT_KEYWORDS = [
   'gainWoundEachPlayer',
   'gainWoundCurrentPlayer',
@@ -75,6 +78,7 @@ const VILLAIN_EFFECT_KEYWORDS = [
   'heroDeckTopToEscape',
   'captureBystander',
   'koHeroEachPlayer',
+  'koHeroEachPlayerMag2',
 ];
 
 // why: WP-188 / EC-215 is the follow-on the WP-187 comment anticipated:
@@ -539,6 +543,20 @@ const PROPOSE_HEURISTICS = [
   // pins the four curatable cards by exact set/group/card keys with no
   // fuzzy acceptance.
   { keyword: 'koHeroEachPlayer', pattern: /each\s+player[^.]*\bKO[^.]*\bhero/i },
+  // why: the `koHeroEachPlayer` heuristic above also matches magnitude-2
+  // lines because `[^.]*` is greedy and a "two" quantifier word is allowed
+  // between `each player` and `hero`. WP-202 needs reviewers to see
+  // magnitude-2 candidates distinctly so they route to `koHeroEachPlayerMag2`
+  // rather than `koHeroEachPlayer`. This pattern requires the literal word
+  // "two" between the each-player phrase and the hero token; --propose then
+  // surfaces a magnitude-2 candidate under BOTH heuristics, which is the
+  // signal for the reviewer to pick the magnitude-2 keyword. HEURISTIC
+  // ONLY — final curation is EXACT TEXT MATCH on the canonical printed
+  // string `"Escape: Each player KOs two of their Heroes."`; the
+  // committed map pins the two curatable Destroyer cards by exact
+  // set/group/card keys with no fuzzy acceptance, regardless of what
+  // --propose surfaces (D-20203 EXACT CURATION COUNT = 2 invariant).
+  { keyword: 'koHeroEachPlayerMag2', pattern: /each\s+player[^.]*\bKOs?\s+two\s+[^.]*\bhero/i },
 ];
 
 /**

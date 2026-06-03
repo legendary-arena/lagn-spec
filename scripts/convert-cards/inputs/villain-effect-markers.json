@@ -8,7 +8,8 @@
     "_unassigned reason vocabulary (closed set; the script does NOT read this field — it is human-review documentation): magnitude>1 | multi-target | other | conditional | multi-line (WP-187 set) + no-vocabulary-keyword (WP-188; first-class, NOT folded under 'other'). 'no-vocabulary-keyword' names every literal 'Each player KOs ...' villain Escape/Overrun line that has no keyword in the current vocabulary; D-18802 records the deferral. WP-190 (drafted, commit 1ac0762) reads exactly these rows to promote the unconditional magnitude-1 subset to [effect:koHeroEachPlayer] once WP-189 adds the keyword. This tagging is a cross-WP contract, not internal bookkeeping — the no-vocabulary-keyword rows below are EXHAUSTIVE across the 40 sets; rows for the other reason values remain representative per the WP-187 precedent.",
     "The exhaustive candidate list is reproducible at any time via `node scripts/convert-cards/apply-effect-markers.mjs --propose`. WP-187 surfaced 221 Ambush/Fight phrase-match candidates (2026-05-28); WP-188 widening surfaced an additional 57 Escape/Overrun candidates (2026-05-29). The _unassigned block below records the human classification RATIONALE with representative rows per reason (plus EVERY 'Each player KOs' Escape line, exhaustively); it is intentionally not a 1:1 copy of --propose output.",
     "DATA-vs-SPEC drift found during WP-187 execution (2026-05-28; unchanged by WP-188): (a) The WP-187 spec assumed two cards (one bkwd, one rvlt) carry two Fight: lines apiece and would loud-fail as reason 'multi-line'. Under the LOCKED predicate (line.trimStart() begins with 'Fight:'), NO card has two timing lines of the same timing — rvlt/army-of-evil/mister-hyde and rvlt/dark-avengers/sentry each have a SECOND 'Fight:' embedded mid-line (inside flavor / a granted ability), which the predicate correctly does not treat as a timing line. So _unassigned carries no 'multi-line' rows; the multi-line loud-fail remains an active guardrail in the script and is exercised via a scratch input. (b) The WP-187 spot-check expected a 'gainWoundEachPlayer' Ambush mark; NO unconditional each-player wound line exists on any Ambush/Fight line in the 40 sets — every wound line is conditional ('reveal X or gains a Wound', 'If ...', 'with no ...', 'each other player'). WP-188's Escape side fills that gap: 14 'Escape: Each player gains a Wound.' lines give gainWoundEachPlayer its first real data.",
-    "WP-190 promoted 0 of 6 rows (all non-curatable under v1 discipline: 5 magnitude>1, 1 filtered, 1 compound; counts overlap). The `no-vocabulary-keyword` tag is preserved for cross-WP audit traceability; substantive re-tagging deferred to a future predicate-machinery WP."
+    "WP-190 promoted 0 of 6 rows (all non-curatable under v1 discipline: 5 magnitude>1, 1 filtered, 1 compound; counts overlap). The `no-vocabulary-keyword` tag is preserved for cross-WP audit traceability; substantive re-tagging deferred to a future predicate-machinery WP.",
+    "WP-202 promoted 2 of the 6 D-18802 Escape-side `no-vocabulary-keyword` rows by adding the seventh engine keyword `koHeroEachPlayerMag2` (D-20201 closed-union-per-magnitude). The promoted rows are the two unconditional unfiltered magnitude-2 Destroyer Escape lines: `villains/core/enemies-of-asgard/destroyer` and `villains/msp1/enemies-of-asgard/destroyer` (both print exactly 'Escape: Each player KOs two of their Heroes.'). 4 rows remain deferred under the same `reason: \"no-vocabulary-keyword\"` tag — the cross-WP D-18802 audit anchor is preserved verbatim (NO re-tagging). The 4 remaining blockers, named explicitly: `2099/false-aesir-of-alchemax/hela-2099` — wrong target (Henchmen not Heroes) + choice ('or gains a Wound') + filtered source (Victory Pile); `core/brotherhood/juggernaut` Escape — filtered source ('from their hand'); `cvwr/csa-special-marshals/bullseye` — stat/class filter ('printed [icon:attack] of 2 or more'); `wpnx/weapon-plus/ultimaton-weapon-xv` — class filter ('non-grey Heroes'). Substantive re-tagging is deferred to a future predicate-machinery WP."
   ],
   "villains": {
     "2099": {
@@ -86,6 +87,9 @@
       }
     },
     "core": {
+      "enemies-of-asgard": {
+        "destroyer": { "escape": ["koHeroEachPlayerMag2"] }
+      },
       "skrulls": {
         "super-skrull": { "fight": ["koHeroEachPlayer"] }
       },
@@ -163,6 +167,9 @@
     "msp1": {
       "chitauri": {
         "chitauri-soldier": { "ambush": ["captureBystander"] }
+      },
+      "enemies-of-asgard": {
+        "destroyer": { "escape": ["koHeroEachPlayerMag2"] }
       },
       "gamma-hunters": {
         "fighter-jet": { "fight": ["koHeroCurrentPlayer"] }
@@ -376,9 +383,7 @@
 
     { "set": "2099", "group": "false-aesir-of-alchemax", "card": "hela-2099", "timing": "escape", "text": "Escape: Each player KOs two Henchmen from their Victory Pile or gains a Wound.", "reason": "no-vocabulary-keyword" },
     { "set": "core", "group": "brotherhood", "card": "juggernaut", "timing": "escape", "text": "Escape: Each player KOs two Heroes from their hand.", "reason": "no-vocabulary-keyword" },
-    { "set": "core", "group": "enemies-of-asgard", "card": "destroyer", "timing": "escape", "text": "Escape: Each player KOs two of their Heroes.", "reason": "no-vocabulary-keyword" },
     { "set": "cvwr", "group": "csa-special-marshals", "card": "bullseye", "timing": "escape", "text": "Escape: Each player KOs one of their Heroes that has printed [icon:attack] of 2 or more.", "reason": "no-vocabulary-keyword" },
-    { "set": "msp1", "group": "enemies-of-asgard", "card": "destroyer", "timing": "escape", "text": "Escape: Each player KOs two of their Heroes.", "reason": "no-vocabulary-keyword" },
     { "set": "wpnx", "group": "weapon-plus", "card": "ultimaton-weapon-xv", "timing": "escape", "text": "Escape: Each player KOs one of their non-grey Heroes.", "reason": "no-vocabulary-keyword" },
 
     { "set": "core", "group": "masters-of-evil", "card": "ultron", "timing": "escape", "text": "Escape: Each player reveals a [hc:tech] Hero or gains a Wound.", "reason": "conditional" },

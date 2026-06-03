@@ -2036,7 +2036,7 @@
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-enemies-of-asgard-destroyer.webp",
           "abilities": [
             "Fight: KO all your [team:shield] Heroes.",
-            "Escape: Each player KOs two of their Heroes."
+            "Escape: Each player KOs two of their Heroes. [effect:koHeroEachPlayerMag2]"
           ],
           "copies": 1
         },

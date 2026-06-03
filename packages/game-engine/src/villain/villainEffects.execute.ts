@@ -184,6 +184,44 @@ function applyVillainEffect(
       }
       return true;
     }
+    case 'koHeroEachPlayerMag2': {
+      // why: magnitude-2 each-player hero KO — iterate every player
+      // (lexically sorted, D-18902 inherited from the `koHeroEachPlayer`
+      // branch above) and run a literal-2 inner loop per player, each
+      // iteration delegating to the same shared per-player KO resolver
+      // (`koOneHeroForPlayer`). The literal `2` is intentional and NOT a
+      // parameter (D-20201 closed-union-per-magnitude): magnitude lives in
+      // the keyword name, not in a runtime field — parameterizing the
+      // magnitude would force a parser regex change + a dispatch-contract
+      // shape change (`effect` becomes `{ keyword, args }`) + every drift
+      // test, which is the larger blast radius D-20201 rejects for v1.
+      // The shared resolver owns target selection AND the `koCard`
+      // mutation; this caller MUST NOT post-process or modify the
+      // resolver's output (D-18902 mutation-location lock extends here).
+      // Per-iteration semantics inherit from D-18503: discard before
+      // hand, ext_id lexical tie-break, silent no-op for zero eligible
+      // heroes — auto-resolved, not interactive, not VP-based. A player
+      // with exactly 1 eligible hero loses 1 (the second iteration silent
+      // no-ops); a player with 0 eligible heroes loses 0 (both iterations
+      // silent no-op). Magnitude-2 ≡ magnitude-1-twice parity is pinned
+      // by the shared-resolver parity test on a single-player G.
+      //
+      // Future magnitude-N expansion (e.g., `koHeroEachPlayerMag3`): copy
+      // this entire case body, rename to `MagN`, change the literal `2`
+      // to `N`, append the new keyword at the next position in
+      // `VILLAIN_EFFECT_KEYWORDS`. No parser/regex/dispatch contract
+      // change — closed-union-per-magnitude (D-20201) is the seam, and
+      // the inner-loop bound is intentionally literal (not extracted to
+      // a helper) because parameterization would re-introduce the shape
+      // D-20201 rejects.
+      const playerIds = Object.keys(G.playerZones).sort();
+      for (const playerId of playerIds) {
+        for (let iteration = 0; iteration < 2; iteration++) {
+          koOneHeroForPlayer(G, playerId);
+        }
+      }
+      return true;
+    }
     case 'heroDeckTopToEscape': {
       // why: WP-185 §Scope wrote "G.piles.heroDeck[0]" but the engine's hero
       // reservoir is the top-level G.heroDeck (GlobalPiles has no heroDeck);

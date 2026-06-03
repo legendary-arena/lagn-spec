@@ -71,11 +71,12 @@ describe('VILLAIN_ABILITY_TIMINGS drift-detection', () => {
 describe('VILLAIN_EFFECT_KEYWORDS drift-detection', () => {
   // why: failure means the locked vocabulary drifted from the union. WP-189
   // appended 'koHeroEachPlayer' at position 6 (D-18901; the incremental-
-  // expansion governance clause). Positions 1-5 stay byte-identical to the
-  // WP-185 array — WP-187's executed markers + the apply-effect-markers.mjs
-  // local copy depend on the first-five ordering. Any further addition
-  // requires a new WP + DECISIONS.md entry.
-  it('contains exactly the 6 canonical effect keyword values in order', () => {
+  // expansion governance clause). WP-202 appended 'koHeroEachPlayerMag2'
+  // at position 7 (D-20201; closed-union-per-magnitude). Positions 1-5
+  // stay byte-identical to the WP-185 array — WP-187's executed markers +
+  // the apply-effect-markers.mjs local copy depend on the first-five
+  // ordering. Any further addition requires a new WP + DECISIONS.md entry.
+  it('contains exactly the 7 canonical effect keyword values in order', () => {
     const expectedKeywords: VillainEffectKeyword[] = [
       'gainWoundEachPlayer',
       'gainWoundCurrentPlayer',
@@ -83,12 +84,13 @@ describe('VILLAIN_EFFECT_KEYWORDS drift-detection', () => {
       'heroDeckTopToEscape',
       'captureBystander',
       'koHeroEachPlayer',
+      'koHeroEachPlayerMag2',
     ];
 
     assert.equal(
       VILLAIN_EFFECT_KEYWORDS.length,
-      6,
-      'VILLAIN_EFFECT_KEYWORDS must have exactly 6 entries',
+      7,
+      'VILLAIN_EFFECT_KEYWORDS must have exactly 7 entries',
     );
 
     assert.deepStrictEqual(
@@ -105,27 +107,30 @@ describe('VILLAIN_EFFECT_KEYWORDS drift-detection', () => {
     );
   });
 
-  // why: WP-189 appended at position 6. WP-187's executed markers + the
-  // overlay script's local copy are keyed on the first-five ordering being
-  // byte-identical to WP-185; an insertion mid-array would silently break
-  // them. This guard prevents that class of regression.
-  it('preserves the WP-185 first-five entries at positions 0-4 (append-only invariant)', () => {
-    const firstFive: VillainEffectKeyword[] = [
+  // why: WP-189 appended at position 6; WP-202 appended at position 7.
+  // WP-187's executed markers + the overlay script's local copy are keyed
+  // on positions 0-5 being byte-identical to the post-WP-189 array; an
+  // insertion mid-array would silently break them. This guard pins
+  // positions 0-5 byte-identical and asserts position 6 is the WP-202
+  // append slot.
+  it('preserves the post-WP-189 first-six entries at positions 0-5 (append-only invariant)', () => {
+    const firstSix: VillainEffectKeyword[] = [
       'gainWoundEachPlayer',
       'gainWoundCurrentPlayer',
       'koHeroCurrentPlayer',
       'heroDeckTopToEscape',
       'captureBystander',
+      'koHeroEachPlayer',
     ];
     assert.deepStrictEqual(
-      VILLAIN_EFFECT_KEYWORDS.slice(0, 5),
-      firstFive,
-      'VILLAIN_EFFECT_KEYWORDS positions 0-4 must be byte-identical to the WP-185 array (WP-187 marker compatibility)',
+      VILLAIN_EFFECT_KEYWORDS.slice(0, 6),
+      firstSix,
+      'VILLAIN_EFFECT_KEYWORDS positions 0-5 must be byte-identical to the post-WP-189 array (WP-187/WP-190 marker compatibility)',
     );
     assert.equal(
-      VILLAIN_EFFECT_KEYWORDS[5],
-      'koHeroEachPlayer',
-      "'koHeroEachPlayer' must be at position 5 (the appended slot for WP-189)",
+      VILLAIN_EFFECT_KEYWORDS[6],
+      'koHeroEachPlayerMag2',
+      "'koHeroEachPlayerMag2' must be at position 6 (the appended slot for WP-202)",
     );
   });
 });
