@@ -22,7 +22,7 @@ import type { CityZone, HqZone } from './city.types.js';
 export interface PushVillainResult {
   /** The new City state after the push. */
   city: CityZone;
-  /** The card that escaped (was in space 4), or null if space 4 was empty. */
+  /** The card that escaped from space 4, or null when no card was pushed off. */
   escapedCard: CardExtId | null;
 }
 
@@ -33,8 +33,20 @@ export interface PushVillainResult {
 /**
  * Pushes a villain or henchman card into City space 0.
  *
- * All existing cards shift rightward (toward the escape edge at space 4).
- * If space 4 was occupied, that card escapes and is returned as escapedCard.
+ * The new card enters at space 0 and only the contiguous block of cards
+ * starting at space 0 advances one space toward the escape edge. The
+ * leftmost (lowest-index) empty space absorbs the push — every space to the
+ * right of it is unchanged. A card on space 4 escapes ONLY when the City
+ * has no empty space (i.e., the entry-side block reaches all the way to
+ * the escape edge).
+ *
+ * Example (matches the player-visible bug scenario):
+ *   `[A, _, _, _, B]` + `N` → `[N, A, _, _, B]`. B does NOT escape; the
+ *   empty space at index 1 absorbs A's advance and B's neighborhood is
+ *   untouched.
+ *
+ * Example (full city):
+ *   `[A, B, C, D, E]` + `N` → `[N, A, B, C, D]` with `escapedCard = E`.
  *
  * @param city - The current City zone (5-tuple). Not mutated.
  * @param cardId - The card to place at space 0.
@@ -44,22 +56,46 @@ export function pushVillainIntoCity(
   city: CityZone,
   cardId: CardExtId,
 ): PushVillainResult {
-  // Capture escape before shifting
-  const escapedCard = city[4];
+  // why: only the contiguous entry-side block advances. Empty spaces absorb
+  // the push so a far-side card on space 4 does not escape unless every
+  // space between it and the entry is occupied. Locate the leftmost empty
+  // space — that's where the cascade stops.
+  let leftmostEmptyIndex = -1;
+  for (let spaceIndex = 0; spaceIndex < city.length; spaceIndex++) {
+    if (city[spaceIndex] === null) {
+      leftmostEmptyIndex = spaceIndex;
+      break;
+    }
+  }
 
-  // why: rightward = toward escape. Space 4 is the escape edge.
-  // Explicit assignment — no .reduce(), no array methods.
-  const newCity: CityZone = [
-    cardId,   // space 0: newly revealed card enters here
-    city[0],  // space 1: old space 0 shifts right
-    city[1],  // space 2: old space 1 shifts right
-    city[2],  // space 3: old space 2 shifts right
-    city[3],  // space 4: old space 3 shifts right (old space 4 escaped above)
-  ];
+  // why: start from a copy so spaces past the empty slot (or all spaces in
+  // the full-city escape branch) carry over unchanged without per-slot
+  // re-assignment.
+  const newCity: CityZone = [city[0], city[1], city[2], city[3], city[4]];
+
+  let escapedCard: CardExtId | null = null;
+
+  if (leftmostEmptyIndex === -1) {
+    // City is full — space 4 escapes and the entire row shifts up by one.
+    escapedCard = city[4];
+    newCity[4] = city[3];
+    newCity[3] = city[2];
+    newCity[2] = city[1];
+    newCity[1] = city[0];
+  } else {
+    // Shift the contiguous entry-side block one space toward the escape
+    // edge, terminating at the leftmost empty slot. Iterate top-down so
+    // each write reads the pre-shift value.
+    for (let spaceIndex = leftmostEmptyIndex; spaceIndex >= 1; spaceIndex--) {
+      newCity[spaceIndex] = city[spaceIndex - 1]!;
+    }
+  }
+
+  newCity[0] = cardId;
 
   return {
     city: newCity,
-    escapedCard: escapedCard ?? null,
+    escapedCard,
   };
 }
 

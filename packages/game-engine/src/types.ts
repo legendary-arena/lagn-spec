@@ -508,8 +508,11 @@ export interface LegendaryGameState {
   villainDeckCardTypes: Record<CardExtId, RevealedCardType>;
 
   // why: City is a 5-space row where revealed villains and henchmen are placed
-  // via pushVillainIntoCity. Cards shift rightward; space 4 is the escape edge.
-  // Initialized to all nulls at setup; populated during play by revealVillainCard.
+  // via pushVillainIntoCity. Only the contiguous entry-side block advances on
+  // each push; the leftmost empty space absorbs the cascade. Space 4 is the
+  // escape edge — a card escapes only when every space is occupied at push
+  // time. Initialized to all nulls at setup; populated during play by
+  // revealVillainCard.
   /** City zone: 5 spaces for villain/henchman cards. */
   city: CityZone;
 

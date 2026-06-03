@@ -91,9 +91,12 @@ const SCORE_BYSTANDER_RESCUE_BONUS = 500;
 /**
  * Bonus for fighting a villain at City slot 4 (the escape edge).
  *
- * Slot 4 is where the next reveal would push a villain out of the City
- * (per WP-015 pushVillainIntoCity). Preventing escape at slot 4 is the
- * highest-urgency threat response.
+ * Slot 4 is the escape edge — a villain there escapes the next time a
+ * reveal pushes the city while every space is occupied (per WP-015
+ * pushVillainIntoCity; empty spaces between the entry-side block and
+ * slot 4 absorb the push, so slot 4 is only "imminent" once the row is
+ * full). The bonus stays attached to slot 4 because it's still the
+ * highest-threat slot to clear pre-emptively.
  */
 const SCORE_IMMINENT_ESCAPE_BONUS = 800;
 

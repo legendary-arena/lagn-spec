@@ -2347,6 +2347,84 @@ focused.
 
 ---
 
+### D-1504 — City Push Absorbs Cascade at Leftmost Empty Space (Refines D-1502 Mechanics)
+
+**Unlocks:** Corrected push semantics observed in play (2026-06-02 bug
+report); enables faithful Legendary tabletop behavior for partially-empty
+city configurations.
+
+**Decision:** When `pushVillainIntoCity` places a new card at space 0, only
+the **contiguous entry-side block** of cards advances one space toward the
+escape edge. The cascade terminates at the **leftmost empty space**, which
+absorbs the push. Cards in spaces to the right of that empty space — even
+a card on space 4 — do **not** advance. A card escapes from space 4 only
+when every space in the City is occupied at push time (i.e., no empty
+space exists to absorb the cascade).
+
+Formal algorithm:
+
+1. Scan space 0 → space 4 for the first `null`. Call its index
+   `leftmostEmptyIndex` (or `-1` if every space is occupied).
+2. If `leftmostEmptyIndex === -1`: the card previously at space 4 escapes
+   (`escapedCard = city[4]`); every space shifts one toward the escape
+   edge (space 3 → 4, 2 → 3, 1 → 2, 0 → 1); the new card lands at space 0.
+3. Otherwise (a `null` exists): for `i` from `leftmostEmptyIndex` down to
+   `1`, set `newCity[i] = city[i - 1]`. Spaces at indices greater than
+   `leftmostEmptyIndex` are unchanged. The new card lands at space 0.
+   `escapedCard = null`.
+
+Worked example (the reported bug): given
+`[Sewers: A, _, _, _, Bridge: B]` and a new villain `N`:
+- `leftmostEmptyIndex = 1`
+- Result: `[Sewers: N, Bank: A, _, _, Bridge: B]` with `escapedCard = null`.
+- `B` does **not** escape — the empty space at index 1 absorbs `A`'s
+  advance and `B`'s neighborhood is untouched.
+
+Worked example (full city): given `[A, B, C, D, E]` and `N`:
+- `leftmostEmptyIndex = -1`
+- Result: `[N, A, B, C, D]` with `escapedCard = E`.
+
+**Refines:** **D-1502 — City Push Inserts at Space 0**. D-1502's space-0
+entry, escape-edge identity, and escaping-card identity invariants are
+preserved verbatim. D-1502's shorthand that "all existing cards shift
+toward space 4" is the part this entry refines: only the contiguous
+entry-side block shifts; empty spaces absorb the cascade. The two entries
+read together describe one consistent push contract.
+
+**Rationale:**
+1. **Tabletop faithfulness.** In tabletop Legendary, a new villain enters
+   the Sewers and pushes the rest *as a group* through the City — but a
+   physical gap between villains breaks the chain. A villain at the Bridge
+   with empty spaces behind it has nothing pushing it forward, so it does
+   not escape. The uniform-shift implementation that shipped with WP-015
+   ignored gaps and escaped the Bridge villain on every reveal, which is
+   not what the printed rules describe.
+2. **Only villains push.** The corrected mechanics encode the physical
+   constraint that empty spaces don't apply force. This is the principle
+   behind the gap-absorbs-cascade rule and is the clearest mental model
+   for future readers.
+3. **Determinism preserved.** The corrected algorithm is fully
+   deterministic — same input city + same new card → same output city +
+   same escapedCard. Replay integrity is unaffected. Pre-existing replays
+   that exercised the uniform-shift code path may diverge if rebuilt;
+   that's the expected price of a corrective spec fix and is consistent
+   with the bug-handling protocol's Specification Fix path
+   (`docs/ai/REFERENCE/01.2-bug-handling-under-ec-mode.md`).
+4. **AI heuristic still aligns.** `SCORE_IMMINENT_ESCAPE_BONUS` in
+   `ai.competent.ts` still biases toward clearing space 4, which is
+   correct — space 4 is still the highest-threat slot to clear
+   pre-emptively, just no longer one-reveal-from-escape unless the city
+   is otherwise full. The heuristic value is unchanged.
+
+**Introduced:** Bug fix session, 2026-06-02 (Jeff reported via play). No
+new Work Packet; landed as a single `SPEC:` commit per the Specification
+Fix path.
+
+**Status:** Accepted (refines D-1502 mechanics; supersedes any prose in
+WP-015 §B or EC-015 that implies uniform shift)
+
+---
+
 **Related packets:**
 - WP-015 — City & HQ Zones (Villain Movement + Escapes)
 - WP-016 — Fight First, Then Recruit

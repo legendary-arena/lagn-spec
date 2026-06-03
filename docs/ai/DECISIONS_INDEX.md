@@ -330,6 +330,7 @@ For full rationale, see `DECISIONS.md`.
 | D-1501 | City and HQ use fixed 5-tuples | WP-015 |
 | D-1502 | City push inserts at space 0 | WP-015 |
 | D-1503 | Bystander MVP: discard, not capture | WP-015 |
+| D-1504 | City push absorbs cascade at leftmost empty space (refines D-1502 mechanics) | WP-015 (post-execution bug fix) |
 
 ---
 

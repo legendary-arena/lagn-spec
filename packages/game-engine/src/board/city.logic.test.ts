@@ -93,6 +93,66 @@ describe('pushVillainIntoCity', () => {
     );
   });
 
+  it('absorbs the push at the leftmost empty space: bridge villain does not escape when a gap separates it from the sewers villain', () => {
+    // Scenario: villain at sewers (space 0) and villain at bridge (space 4)
+    // with empty bank/rooftops/streets between them. Drawing a new villain
+    // must shift only the sewers villain into the bank; the bridge villain
+    // stays put because the empty space at index 1 absorbs the advance.
+    const city: CityZone = ['villain-sewers', null, null, null, 'villain-bridge'];
+
+    const result = pushVillainIntoCity(city, 'villain-new');
+
+    assert.equal(result.city[0], 'villain-new', 'New villain enters at sewers');
+    assert.equal(result.city[1], 'villain-sewers', 'Sewers villain moves to bank');
+    assert.equal(result.city[2], null, 'Rooftops stays empty (push absorbed here)');
+    assert.equal(result.city[3], null, 'Streets stays empty');
+    assert.equal(result.city[4], 'villain-bridge', 'Bridge villain does NOT advance — empty space absorbed the push');
+    assert.equal(result.escapedCard, null, 'No escape: city had an empty space');
+  });
+
+  it('only the contiguous entry-side block advances; spaces past the first gap are unchanged', () => {
+    // [V0, V1, _, V3, V4] → leftmost empty is space 2. Spaces 0..1 advance;
+    // spaces 3..4 stay put because the gap at space 2 catches the cascade.
+    const city: CityZone = ['v0', 'v1', null, 'v3', 'v4'];
+
+    const result = pushVillainIntoCity(city, 'new');
+
+    assert.equal(result.city[0], 'new');
+    assert.equal(result.city[1], 'v0', 'v0 advances into the gap-adjacent slot');
+    assert.equal(result.city[2], 'v1', 'v1 advances into the former gap');
+    assert.equal(result.city[3], 'v3', 'v3 unchanged — past the absorbed gap');
+    assert.equal(result.city[4], 'v4', 'v4 unchanged — past the absorbed gap; no escape');
+    assert.equal(result.escapedCard, null);
+  });
+
+  it('when space 0 is already empty, no existing card moves; new card just fills space 0', () => {
+    const city: CityZone = [null, 'v1', null, null, 'v4'];
+
+    const result = pushVillainIntoCity(city, 'new');
+
+    assert.equal(result.city[0], 'new', 'New card fills the empty entry slot');
+    assert.equal(result.city[1], 'v1', 'No advance — entry slot was already empty');
+    assert.equal(result.city[2], null);
+    assert.equal(result.city[3], null);
+    assert.equal(result.city[4], 'v4', 'Far-side villain untouched');
+    assert.equal(result.escapedCard, null);
+  });
+
+  it('full-but-for-space-4 push fills space 4 without escaping', () => {
+    // [V0, V1, V2, V3, _] → block advances all the way; space 4 fills but
+    // no card was displaced off the edge.
+    const city: CityZone = ['v0', 'v1', 'v2', 'v3', null];
+
+    const result = pushVillainIntoCity(city, 'new');
+
+    assert.equal(result.city[0], 'new');
+    assert.equal(result.city[1], 'v0');
+    assert.equal(result.city[2], 'v1');
+    assert.equal(result.city[3], 'v2');
+    assert.equal(result.city[4], 'v3', 'Block advanced into the open escape edge');
+    assert.equal(result.escapedCard, null, 'Filling space 4 does not escape — only being pushed off does');
+  });
+
   it('city remains a 5-element tuple after push', () => {
     const emptyCity: CityZone = [null, null, null, null, null];
 

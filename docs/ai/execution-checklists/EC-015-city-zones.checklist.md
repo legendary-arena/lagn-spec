@@ -52,6 +52,14 @@ If formatting, spelling, or ordering differs, the implementation is invalid.
   Violation of this ordering is a breaking change requiring DECISIONS.md entry.
 - City mutation in WP-015 occurs only during `revealVillainCard`. No other
   helper, move, or test may mutate `G.city` directly.
+- **Push absorbs the cascade at the leftmost empty space (per D-1504).**
+  Only the contiguous entry-side block advances on each push; cards in
+  spaces past the leftmost empty space (including a card on space 4) do
+  NOT advance. A card escapes from space 4 only when every space is
+  occupied at push time. Implementations that shift every space uniformly
+  on every push are wrong — only villains push, empty spaces don't.
+  Supersedes any prose in WP-015 §B or this EC's earlier revisions that
+  implied uniform shift.
 
 ---
 
@@ -90,6 +98,17 @@ If formatting, spelling, or ordering differs, the implementation is invalid.
   -> ordering contract violation; hooks must observe post-placement state
 - City mutated outside `revealVillainCard`
   -> only the reveal move may mutate G.city in WP-015
+- **Push shifts every space uniformly regardless of empty slots
+  (e.g., `newCity = [cardId, city[0], city[1], city[2], city[3]]`
+  unconditionally; `escapedCard = city[4]` regardless of gaps)**
+  -> the bug fixed by D-1504. Symptom: a villain on space 4 escapes on
+  every reveal even when one or more spaces between it and the entry-side
+  block are empty. Correct behavior: locate the leftmost empty space; only
+  the contiguous block from space 0 up to that space advances; spaces past
+  the empty slot are untouched; escape fires only when every space is
+  occupied at push time. A test fixture of `[A, _, _, _, B]` + push must
+  produce `[N, A, _, _, B]` with `escapedCard = null`, not
+  `[N, A, _, _, _]` with `escapedCard = B`.
 
 ---
 
