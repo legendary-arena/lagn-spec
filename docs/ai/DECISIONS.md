@@ -22187,4 +22187,339 @@ after real spend data flows.
 
 ---
 
+### D-20501 — `analytics_events` Schema Closed at 7 Columns; `event_type` 9-Value CHECK Enforced at DB Level
+
+**Decision:**
+`legendary.analytics_events` schema is closed at 7 columns: `id`
+(UUID PK; `gen_random_uuid()` default), `event_type` (TEXT;
+9-value CHECK), `user_id_hash` (CHAR(64) NULL; 64-char-lowercase-
+hex format CHECK or NULL), `session_id` (TEXT NOT NULL), `ts`
+(TIMESTAMPTZ NOT NULL; client-supplied event time), `properties`
+(JSONB NOT NULL DEFAULT '{}'), `created_at` (TIMESTAMPTZ NOT
+NULL DEFAULT NOW(); server-side ingest time). 2 BTREE indexes:
+`(event_type, ts)` for per-channel + per-step aggregation;
+`(user_id_hash, ts) WHERE user_id_hash IS NOT NULL` for cohort
+retention queries (partial index excludes the
+anonymous-event subset).
+
+The 9-value `event_type` closed set (`'direct'` / `'search'` /
+`'referral'` / `'paid'` / `'signup-start'` / `'signup-complete'`
+/ `'first-match-started'` / `'first-match-completed'` /
+`'retention-return'`) is enforced at THREE layers: the
+TypeScript union (`AcquisitionEventType`) + the canonical
+readonly array (`ACQUISITION_EVENT_TYPES`) + the route validator
++ the SQL CHECK constraint. Adding a 10th event type requires
+updating all 4 sites in the same WP; drift test catches
+asymmetric updates.
+
+Future per-event-type metadata rides on the `properties` JSONB
+field (no schema change required). Adding a new top-level
+column is a breaking change — requires a new migration + a new
+D-entry + a justification why the data can't live in
+`properties`.
+
+**Tightening (channel attribution, retention return, SQL
+pre-sorted, INSERT discipline, request validation rules):**
+
+- **Channel attribution per session.** For any `session_id`,
+  the attributed channel is the FIRST `(ts ASC)` event whose
+  `event_type IN ('direct', 'search', 'referral', 'paid')`.
+  Subsequent channel events in the same session are IGNORED
+  for `traffic-sources` attribution. Sessions with no
+  channel event are EXCLUDED entirely (NOT bucketed as a
+  `direct` fallback or null-channel row). SQL implementation
+  uses a window function: `ROW_NUMBER() OVER (PARTITION BY
+  session_id ORDER BY ts ASC)` filtered to channel events;
+  `rn = 1` per session is the canonical channel.
+- **Retention return definition (v1 coarse).** A "return"
+  event for cohort day-N is ANY event where `event_type !=
+  'signup-complete'` AND `user_id_hash` matches the cohort's
+  signup-complete user-hash set AND `ts` falls in day-N of
+  that user's cohort window. No event-type-class filtering
+  in v1 — channel events, activation events, AND
+  `retention-return` events all count. Per-class filtering
+  is a future tuning WP.
+- **SQL pre-sorted invariant.** The 3 GET endpoints return
+  rows DIRECTLY from SQL `ORDER BY ASC`. Route layer MUST
+  NOT call `Array.sort(...)` in any GET return path.
+  Composable layer (future MOCK→LIVE flip WP) MUST NOT
+  re-sort either. Grep gate at close.
+- **INSERT column list MANDATORY.** Every
+  `INSERT INTO legendary.analytics_events` enumerates target
+  columns explicitly. The form `INSERT INTO
+  analytics_events VALUES (...)` (positional binds) is
+  FORBIDDEN — a future migration adding a column would
+  silently shift binds. Grep gate at close.
+- **Request validation rules (validator-side):**
+  `event_type` ∈ `ACQUISITION_EVENT_TYPES`; `user_id`
+  `string | null` (non-null max 512 chars pre-hash);
+  `session_id` non-empty ≤ 128 chars; `timestamp` finite
+  number ∈ `[0, currentServerTime + 5 * 60 * 1000]`
+  (server captures `currentServerTime` via `Date.now()`
+  ONCE at validator entry; INSERTed `ts` is the client-
+  supplied value, NOT the server clock); `properties`
+  optional object; depth ≤ 5; leaf values
+  `string | number | boolean | null` only; root arrays
+  forbidden; empty stored as `'{}'::jsonb`.
+
+**Rationale:**
+Mirrors D-13202 / D-13203 closed-shape discipline (WP-132
+entitlements). Closed schema + closed enum + 3-layer
+enforcement catches regressions loudly (DB CHECK, route
+validator, and drift test all fire on misuse). The
+`user_id_hash` format CHECK is a defense-in-depth safety net:
+if a future refactor accidentally bypasses the route's
+`hashUserId()` call and binds raw `user_id` into the INSERT
+statement, the DB rejects it.
+
+The partial index on `(user_id_hash, ts) WHERE user_id_hash IS
+NOT NULL` keeps the index efficient — anonymous-event rows
+(NULL `user_id_hash`) are excluded so the index is sized for
+authenticated-event queries only, which is where cohort
+retention SQL spends its time.
+
+**Implementation locations:**
+- `data/migrations/017_create_analytics_events.sql` —
+  authoritative schema definition.
+- `apps/server/src/analytics/analytics.types.ts` — union +
+  canonical array + envelope interfaces.
+- `apps/server/src/analytics/analytics.types.test.ts` — drift
+  assertions; parses the .sql file's CHECK constraint text to
+  enforce byte-equality across the 3 layers.
+
+**Packet:** WP-205 (EC-233).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
+### D-20502 — PII Posture: `user_id_hash = SHA-256(rawUserId || '|' || salt)`; Production Loud-Fail on Missing Salt; Salt Rotation Deferred
+
+**Decision:**
+`AnalyticsEvent.user_id` is hashed at the server route boundary
+BEFORE any INSERT into `analytics_events`. The hash function is
+`crypto.createHash('sha256').update(rawUserId + '|' + salt).
+digest('hex')` — 64-char lowercase hex digest. `null` input
+(anonymous events) passes through to `user_id_hash = NULL`. The
+salt is read from `process.env.ANALYTICS_USER_ID_SALT` at server
+startup; the salt is a server-held secret of operator-chosen
+high entropy.
+
+In `NODE_ENV === 'production'`, `getAnalyticsUserIdSalt()`
+throws a full-sentence error when the env var is unset OR is
+the empty string — server startup fails loudly. In test / dev,
+the helper returns a fixed test salt
+`'test-salt-do-not-use-in-prod'` and emits exactly one
+`console.warn` per process (one-shot guard via module-level
+boolean). The test salt is the only string literal in source
+code AND is gated by `NODE_ENV !== 'production'`.
+
+**Salt rotation is explicitly deferred.** Rotating the salt
+means either (a) re-hashing every row (impractical at any
+meaningful event volume; the table doesn't retain raw user_id
+to re-hash from), or (b) maintaining a multi-salt decoder where
+the table carries a `salt_version` column and queries union
+across two hash spaces. Both have non-trivial cost. v1 ships a
+fixed-salt-per-deployment posture; a future hardening WP can
+introduce rotation if a salt leak ever surfaces.
+
+**Per-user drill-down at the `analytics_events` table is
+intentionally infeasible.** This is a feature, not a bug — an
+attacker who reads the table cannot re-attribute events to
+identities without the salt. Future per-user revenue / ARPU /
+LTV dashboards MUST source identity from a different table
+(e.g., `legendary.players` + payment-history tables) and join
+on `account_id`, not on `user_id_hash`. Reviewers reject any
+PR that joins `analytics_events` to identity-bearing tables.
+
+**Tightening (leakage gate at diagnostic boundaries):**
+
+The "raw user_id never persisted" invariant extends to
+diagnostics: raw `user_id` MUST NOT appear in any
+`console.log` / `console.info` / `console.warn` /
+`console.error` call site inside
+`apps/server/src/analytics/`. Logs reference `user_id_hash`
+only. Error response bodies use static codes + messages
+referring to field NAMES, not field VALUES. A leakage test
+intercepts console output during a request carrying a
+known test value and asserts the literal substring does NOT
+appear in any captured log line emitted by analytics code.
+The `properties` column intentionally preserves string
+values verbatim per the JSON-spec leaf-type rule — that's
+documented feature, not leakage; the gate scopes to logs +
+error bodies + stack traces.
+
+**Rationale:**
+The cheapest meaningful protection for analytics data at rest.
+Hashing is one-way; the salt is server-held; the table by
+itself reveals nothing about identity if compromised. Raw
+`user_id` would make every event attributable to a player on
+DB leak; auth-gating only the read path leaves the data
+exposed. Hash-with-salt protects rows AND queries without
+sacrificing the dashboard's aggregation needs (cohort grouping
+and per-day return detection both work on deterministic hashes
+— same input + same salt → same hash → DISTINCT counts and
+joins still work).
+
+The production loud-fail posture is the same shape as
+billingConfig's `billing_not_configured` 503 (WP-133): a server
+that's misconfigured for production should refuse to serve
+rather than silently degrade to insecure operation.
+
+The fixed test salt + one-shot warning posture is the same
+shape as several existing test-mode fallbacks; it lets `pnpm
+test` run without env-var ceremony while still calling
+attention to the fallback so a developer doesn't accidentally
+ship a build that depends on it.
+
+**Implementation locations:**
+- `apps/server/src/analytics/userIdHash.ts` — `hashUserId()` +
+  `getAnalyticsUserIdSalt()`.
+- `apps/server/src/analytics/userIdHash.test.ts` —
+  determinism + salt-influence + null passthrough + production
+  loud-fail + 64-char-hex format assertions.
+- `apps/server/src/analytics/analytics.routes.ts` — each POST
+  handler invokes `hashUserId(payload.user_id, salt)` at the
+  request-validation boundary BEFORE any INSERT.
+
+**Packet:** WP-205 (EC-233).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
+### D-20503 — Auth Posture Split: `POST` Capture is `guest` with Rate Limit + Size Cap; 3 GET Queries are `authenticated-session-required`; Response Envelope is `{ data: T }`
+
+**Decision:**
+`POST /api/analytics/events` is `guest` (no session token
+required). Pre-signup visitors emit channel-attribution events
+before they have a session; gating capture would discard the
+entire pre-signup funnel surface. Defenses for the always-open
+posture: per-IP rate limit (60 events / minute via in-memory
+token bucket keyed by `ctx.request.ip`); per-request body size
+cap (8 KB for a single-event payload; 100 KB and 50 events max
+for a batch payload). Requests exceeding any cap return the
+appropriate status code (413 / 429) BEFORE any parsing /
+hashing / INSERT work.
+
+The 3 `GET` query endpoints (`/api/analytics/traffic-sources`,
+`/api/analytics/activation-funnel`,
+`/api/analytics/retention-cohorts`) are
+`authenticated-session-required` — operator-only, matching the
+WP-197 dashboard auth posture. `SessionValidationErrorCode`
+collapses to a single client-facing `'unauthorized'` value at
+the route boundary per D-10403 account-existence-probe defense
+(carry-forward from billing / entitlements / teams / profile
+surfaces).
+
+The 3 GET responses use the envelope shape `{ data: readonly
+T[] }` only — NO `source` or `updatedAt` fields. The dashboard's
+future MOCK→LIVE flip wrapper (in
+`apps/dashboard/src/services/mocks.ts`) adds the
+`ServiceResponse<T>` envelope at the call site by injecting
+`source: 'LIVE'` + `updatedAt: Date.now()`. The server stays
+envelope-agnostic so a future caching layer (CDN, edge cache)
+can label freshness independently.
+
+Status-code domains locked per handler: POST `{202, 400, 413,
+429, 500}`; each GET `{200, 400, 401, 500}`. Any other status
+code (403, 404, 422) leaking from these handlers = HARD FAIL.
+
+**Tightening (rate limit per-event, idempotency NOT
+idempotent, response envelope shape):**
+
+- **Rate limit semantics — per-EVENT, not per-REQUEST.** The
+  60/minute/IP limit counts individual events. A batch of
+  N events consumes N tokens. A request that would exceed
+  remaining tokens is rejected with 429 BEFORE any parsing
+  / hashing / INSERT work — the full batch is dropped (no
+  partial accept). The capacity bound is on events, NOT on
+  HTTP requests; batching CANNOT bypass the limit. Token
+  bucket implementation MUST treat capacity as
+  event-count.
+- **Capture endpoint is NOT idempotent.** Duplicate POST
+  submissions produce duplicate rows. Server applies no
+  UNIQUE constraint beyond `id`; no `INSERT ... ON
+  CONFLICT`; no clock-window dedupe. Clients own
+  deduplication if required (e.g., POST-once semantics via
+  local idempotency keys at emission time). Aggregate
+  queries treat the natural row count as ground truth.
+  Rationale: server-side idempotency would require either
+  a UNIQUE constraint that wedges legitimate high-volume
+  same-session activity, or a clock-window dedupe filter
+  that introduces edge cases under late-arrival / clock-
+  skew patterns.
+- **Response envelope MUST NOT include `source` /
+  `updatedAt`.** Server returns `{ data: readonly T[] }`
+  for the 3 GETs; `{ accepted: number }` for the POST.
+  The dashboard's future MOCK→LIVE flip wrapper adds
+  `ServiceResponse<T>` envelope fields at the call site.
+  Keeping the server envelope-agnostic decouples the
+  freshness display from server-side caching decisions.
+
+`Cache-Control: no-store` is the literal first statement of
+every handler body — happy paths AND error paths — per the
+D-11504 carry-forward. The first statement is enforced by grep
+gate at execution close.
+
+**Sub-rule (in-memory rate limit lifecycle):** the per-IP token
+bucket is process-local (in-memory `Map<string, BucketState>`)
+and resets on server restart. Multi-instance deployments share
+no rate-limit state; a redis-backed limiter is a future
+hardening WP if/when multi-instance lands. Documented inline at
+the limiter call site so a reader doesn't accidentally rely on
+cross-instance enforcement.
+
+**Rationale:**
+The split posture matches the data flow: capture must accept
+events from anyone (no session ceremony for visitor
+attribution); queries are operator-internal surface (the
+operator dashboard is auth-gated per WP-197). Mirrors the
+Stripe webhook discipline (WP-133: webhook endpoint is `guest`
+because Stripe has no session; signature verification is the
+auth) — different always-open mechanisms, same posture
+rationale.
+
+The `{ data: T }` envelope shape mirrors the existing billing
+health endpoint (D-13501) which returns the bare `BillingHealth`
+shape and lets the dashboard wrap with `ServiceResponse<T>` at
+the fetch site. Adding `source` / `updatedAt` server-side
+would couple the server to the dashboard's freshness display
+contract, which is a layer-mixing trap.
+
+In-memory rate limiting is the cheapest meaningful defense for
+v1's single-instance Render deployment. The 60/min limit
+absorbs typical bot-spam patterns without affecting legitimate
+clients; multi-instance state-sharing is genuine engineering
+scope that v1 doesn't need.
+
+**Implementation locations:**
+- `apps/server/src/analytics/analytics.routes.ts` — 4
+  endpoint handlers + caller-injected
+  `AnalyticsRouteDependencies`; rate limiter implementation;
+  status-code domain locks; `Cache-Control: no-store` first-
+  statement lock; response envelope shape.
+- `apps/server/src/analytics/analytics.routes.test.ts` —
+  per-endpoint coverage of locked posture (auth collapse;
+  closed-set rejection; rate-limit trigger; size cap; cache-
+  control header; envelope shape).
+- `apps/server/src/server.mjs` —
+  `registerAnalyticsRoutes(...)` call wiring the dependency
+  bundle.
+- `docs/ai/REFERENCE/api-endpoints.md` — 4 new rows under
+  `## Wired → Server-Registered Routes` per D-11804 catalog
+  update obligation.
+
+**Packet:** WP-205 (EC-233).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
 Protect this file.

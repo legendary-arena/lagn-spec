@@ -30,6 +30,8 @@ import { registerEntitlementRoutes } from './entitlements/entitlements.routes.js
 import { registerBillingRoutes } from './billing/billing.routes.js';
 import { registerAdminBillingRoutes } from './billing/adminBilling.routes.js';
 import { registerAdminProfileRoutes } from './profile/admin/adminProfile.routes.js';
+import { registerAnalyticsRoutes } from './analytics/analytics.routes.js';
+import { getAnalyticsUserIdSalt } from './analytics/userIdHash.js';
 import { requireAdminSession } from './auth/adminSession.js';
 import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
 import { registerLegendsPublisherRoutes } from './legends/legends.routes.js';
@@ -596,6 +598,30 @@ export async function startServer() {
     requireAdminSession,
     verifier,
     accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+  });
+
+  // why: WP-205 / D-20501..D-20503 — register the four analytics
+  // routes (POST /api/analytics/events capture endpoint + 3 GET
+  // query endpoints). Salt loaded once at startup via
+  // getAnalyticsUserIdSalt() per D-20502 (production loud-fail when
+  // ANALYTICS_USER_ID_SALT is unset; test/dev returns the EC-233
+  // §Locked Values fixed salt + one-shot warning). The deps bundle
+  // threads the same { requireAuthenticatedSession, verifier,
+  // accountResolver } trio used by every other authenticated route
+  // plus the analyticsUserIdSalt — the hashing happens at the route
+  // boundary BEFORE any INSERT so raw user_id never reaches the
+  // persistence layer in cleartext. Capture endpoint is `guest`
+  // (always-open posture per D-20503) with per-IP rate limit (60
+  // events/min) and body size cap (8 KB single / 100 KB batch / 50
+  // events max); the 3 GET query endpoints are
+  // authenticated-session-required and use the same auth-code
+  // collapse to 'unauthorized' per D-10403.
+  const analyticsUserIdSalt = getAnalyticsUserIdSalt();
+  registerAnalyticsRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+    analyticsUserIdSalt,
   });
 
   // why: Render.com injects PORT automatically. The fallback 8000 is for
