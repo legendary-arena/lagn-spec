@@ -182,6 +182,65 @@
   - Retention dayN return = `COUNT(DISTINCT user_id_hash)` for
     any non-`signup-complete` event whose `ts` falls in dayN of
     the cohort's signup-complete user-id-hash subset.
+- **Channel attribution per session (D-20501 tightening):**
+  - For any `session_id`, the channel attributed is the
+    FIRST event ordered by `ts ASC` whose `event_type IN
+    ('direct', 'search', 'referral', 'paid')`. Subsequent
+    channel events in the same session are IGNORED.
+    Sessions with no channel event are EXCLUDED from
+    `traffic-sources` entirely (NOT bucketed into any
+    fallback). SQL implementation MUST use a window
+    function: `ROW_NUMBER() OVER (PARTITION BY session_id
+    ORDER BY ts ASC)` filtered to channel events; rn=1 per
+    session is the canonical channel.
+- **Retention return v1 coarse definition (D-20501
+  tightening):**
+  - A "return" event for cohort day-N is ANY event where
+    `event_type != 'signup-complete'` AND `user_id_hash`
+    matches the cohort's signup-complete user-hash set
+    AND `ts` falls in day-N of that user's cohort window.
+    Channel events, activation events, and
+    `retention-return` events ALL count. Only
+    `signup-complete` is excluded. Per-class filtering is
+    a future tuning WP.
+- **Idempotency posture (D-20503 tightening): NOT
+  IDEMPOTENT.** Duplicate POST submissions produce
+  duplicate rows. Server applies no UNIQUE constraint
+  beyond `id`. No `INSERT ... ON CONFLICT`. No
+  clock-window dedupe. Clients own deduplication if
+  needed.
+- **Rate limit semantics (D-20503 tightening): PER-EVENT.**
+  60 events/min/IP. Batch of N events consumes N tokens.
+  Request exceeding remaining tokens → 429 BEFORE any
+  parsing / hashing / INSERT work; full batch dropped (no
+  partial accept). Token bucket implementation MUST treat
+  capacity as event-count, NOT request-count.
+- **SQL pre-sorted invariant (D-20501 tightening).** 3 GET
+  endpoints return rows DIRECTLY from SQL `ORDER BY ASC`.
+  Route layer MUST NOT call `Array.sort(...)` in any GET
+  return path. Composable layer (future MOCK→LIVE flip
+  WP) MUST NOT re-sort either.
+- **INSERT column list MANDATORY (D-20501 tightening).**
+  Every `INSERT INTO legendary.analytics_events`
+  enumerates target columns explicitly. The form
+  `INSERT INTO analytics_events VALUES (...)` (positional
+  binds) is FORBIDDEN.
+- **Request validation rules (D-20501 / D-20503
+  tightening):**
+  - `event_type` ∈ `ACQUISITION_EVENT_TYPES` (9 values).
+  - `user_id` is `string | null`; non-null max 512 chars
+    pre-hash.
+  - `session_id` non-empty string ≤ 128 chars.
+  - `timestamp` finite number ∈ `[0, Date.now() + 5 *
+    60 * 1000]`; server captures `Date.now()` ONCE at
+    validator entry as upper-bound anchor; INSERTed `ts`
+    is the client-supplied value.
+  - `properties` optional; nesting depth ≤ 5; leaf
+    values `string | number | boolean | null` only;
+    forbidden: `Date`, `undefined`, `Map`, `Set`,
+    `Function`, class instances, BigInt, Symbol;
+    forbidden root: arrays at root. Empty `properties`
+    stored as `'{}'::jsonb`.
 - **Cohort week (D-20501 / D-19908):** ISO 8601 week label
   `YYYY-Www` derived in SQL via `to_char(date_trunc('week', ts),
   'IYYY-"W"IW')`. Sort ascending under Unicode code-unit.
@@ -269,6 +328,77 @@
   semantics; closed-set `Status: Wired` + closed-set `Auth`
   values; each row's Notes column cites D-20501..D-20503 + the
   relevant carry-forward D-entries.
+- **Channel attribution rule MUST be SQL-window-function-based
+  (D-20501 tightening).** The `getTrafficSources` query uses
+  `ROW_NUMBER() OVER (PARTITION BY session_id ORDER BY ts
+  ASC)` filtered to channel events; `rn = 1` is the canonical
+  channel per session. Other implementations (e.g., MIN(ts)
+  subquery + INNER JOIN with conflict-resolution on equal-ts
+  multi-channel sessions) MAY produce equivalent results but
+  the window function is the locked pattern for clarity and
+  index-friendliness. Test asserts the SQL string contains
+  the literal `ROW_NUMBER() OVER (PARTITION BY session_id`
+  substring.
+- **Sessions with no channel event MUST NOT appear in
+  `traffic-sources` (D-20501 tightening).** No `direct`
+  fallback bucket; no synthetic null-channel row.
+  Integration test asserts: a fixture with one session
+  containing only `signup-complete` produces zero
+  `TrafficSource` rows.
+- **Idempotency forbidden (D-20503 tightening).** No
+  `INSERT ... ON CONFLICT (id) DO NOTHING`; no UNIQUE
+  constraint on `(session_id, event_type, ts)`; no
+  application-layer dedupe map. The capture endpoint
+  accepts every well-formed payload as a new event.
+- **Rate limit MUST be per-event (D-20503 tightening).**
+  The in-memory token bucket's `consume(n)` method counts
+  events, not requests. A batch handler computes
+  `eventCount = payload.events.length` (or 1 for single-
+  event payloads) and calls `bucket.consume(eventCount)`
+  BEFORE any parsing / hashing / INSERT. If
+  `bucket.consume(eventCount) === false` (insufficient
+  tokens), the handler returns 429 with the full payload
+  dropped — partial accept FORBIDDEN.
+- **INSERT discipline grep (D-20501 tightening).**
+  `grep -rnE "INSERT INTO analytics_events VALUES\s*\("
+  apps/server/src/analytics/` returns ZERO matches (no
+  positional-bind form). `grep -rnE "INSERT INTO
+  legendary\.analytics_events\s*\([a-z_,\s]+\)\s*VALUES"
+  apps/server/src/analytics/` returns ≥ 2 matches
+  (column-list form present in both single + batch INSERT
+  paths).
+- **No `.sort()` in GET handlers (D-20501 tightening).**
+  `grep -nE "\.sort\(" apps/server/src/analytics/analytics.routes.ts`
+  returns zero matches inside any of the 3 GET handler
+  bodies (the `topSignatures` sort in the route layer is
+  not present here — this WP has no signature-tier
+  derivation; that's WP-204's surface).
+- **`timestamp` future-clock tolerance (D-20503
+  tightening).** The validator captures `currentServerTime
+  = Date.now()` ONCE at validator entry. Each event's
+  `timestamp` is checked against `[0, currentServerTime +
+  5 * 60 * 1000]`. The captured `currentServerTime` is
+  NOT used for the INSERTed `ts` (that stays the client-
+  supplied value). A handler that calls `Date.now()`
+  multiple times per request is a flakiness vector — the
+  test fixtures inject a fixed `currentServerTime` via
+  dependency injection for determinism.
+- **Length bounds enforced pre-INSERT (D-20503
+  tightening).** `session_id` length validator runs
+  BEFORE the INSERT call site. `user_id` length validator
+  runs BEFORE the `hashUserId(...)` call. Order matters:
+  rejecting over-long `user_id` after hashing wastes CPU
+  + a malformed input pretends to be a valid event in
+  intermediate state.
+- **No raw `user_id` in logs or error messages (D-20502
+  tightening — leakage gate).** Every `console.{log,info,
+  warn,error}` call site in `apps/server/src/analytics/`
+  passes ONLY `user_id_hash` or anonymized identifiers.
+  Every error response body references field NAMES, not
+  field VALUES. A leakage test intercepts console output
+  during a request carrying `user_id: "alice@example.com"`
+  and asserts the literal substring `"alice@example.com"`
+  does NOT appear in any captured log line.
 
 ### Execution (the things you must not touch)
 
@@ -371,6 +501,52 @@
 - `017_create_analytics_events.sql` per index — `// why:` query
   patterns the index serves (the future ops-rollup WP will know
   what to pre-aggregate from these patterns).
+- `analytics.logic.ts` channel-attribution window function —
+  `// why:` D-20501 channel attribution lock; FIRST `(ts ASC)`
+  channel event per session wins; subsequent channel events
+  IGNORED; no-channel sessions EXCLUDED from `traffic-sources`
+  entirely.
+- `analytics.logic.ts` retention return query — `// why:`
+  D-20501 v1 coarse return definition; ANY event `!=
+  'signup-complete'` in day-N counts; per-class filtering
+  deferred.
+- `analytics.routes.ts` rate-limit `bucket.consume(eventCount)`
+  call — `// why:` D-20503 per-EVENT rate limit (NOT per-
+  request); batching cannot bypass; reject BEFORE any parsing
+  / hashing / INSERT.
+- `analytics.routes.ts` capture handler's "no idempotency"
+  branch (the absence of `ON CONFLICT`) — `// why:` D-20503
+  capture endpoint is NOT idempotent in v1; duplicates
+  produce duplicate rows; client-owned deduplication.
+- `analytics.routes.ts` `timestamp` validator — `// why:`
+  D-20503 timestamp bounds; server captures
+  `currentServerTime = Date.now()` ONCE at validator entry as
+  upper-bound anchor only; INSERTed `ts` is client-supplied.
+- `analytics.routes.ts` `session_id` / `user_id` length
+  validators — `// why:` D-20503 length bounds; `session_id`
+  ≤ 128; `user_id` ≤ 512 pre-hash; user_id length check runs
+  BEFORE `hashUserId(...)` call to avoid wasted CPU on
+  rejected payloads.
+- `analytics.routes.ts` `properties` depth + leaf-type
+  validator — `// why:` D-20501 `properties` JSON-
+  serializability + depth ≤ 5; forbidden leaf types
+  (`Date`, `undefined`, `Map`, `Set`, `Function`, class
+  instances, BigInt, Symbol); empty stored as
+  `'{}'::jsonb` via SQL DEFAULT.
+- `analytics.routes.ts` any `console.{log,info,warn,error}`
+  call site — `// why:` D-20502 leakage gate; logs
+  reference `user_id_hash` only; raw `user_id` MUST NOT
+  appear in any captured log line. Error responses use
+  field-NAME messages, not field-VALUE messages.
+- `analytics.routes.ts` GET handlers' return path — `// why:`
+  D-20501 SQL pre-sorted invariant; rows returned in SQL
+  `ORDER BY ASC` order directly; route MUST NOT call
+  `Array.sort(...)` here.
+- INSERT statement in `analytics.logic.ts` (single + batch
+  paths) — `// why:` D-20501 INSERT column list MANDATORY;
+  positional binds forbidden; a future migration adding a
+  column would silently shift positional binds without an
+  explicit column list.
 
 ## Files to Produce
 
@@ -445,9 +621,20 @@
 - [ ] `analytics_events_user_id_hash_format` rejects
   `'not-a-hash'` at the DB.
 - [ ] `pnpm --filter @legendary-arena/server build` exits 0.
-- [ ] Drift test passes: `ACQUISITION_EVENT_TYPES` byte-equals
-  the 9-value list AND byte-equals the migration's CHECK
-  constraint values (parsed from the .sql file).
+- [ ] Drift test passes with EXACT equality (D-20501
+  tightening). Parses the SQL CHECK constraint string from
+  `017_create_analytics_events.sql` text via a literal
+  substring match on
+  `'CHECK (event_type IN ('` followed by reading the
+  9 quoted string literals in order. Compares against
+  `ACQUISITION_EVENT_TYPES` using:
+  - exact string equality per element,
+  - preserved order (same indices),
+  - same length,
+  - whitespace-trimmed comparison on each parsed value.
+  Any deviation (extra element, missing element, order
+  swap, whitespace mismatch, character-case mismatch)
+  fails the test loudly with a sentence-form diagnostic.
 - [ ] Grep: 1 union + 1 canonical array + 5 interfaces + 1
   DateRange + 1 AnalyticsErrorCode present in
   `analytics.types.ts` byte-identical to WP-205 §Locked contract
@@ -478,6 +665,34 @@
   committed.
 - [ ] Aggregation correctness: per-channel × per-day counts
   match a hand-computed fixture.
+- [ ] **Channel attribution test (D-20501 tightening):**
+  fixture seeds a single session with three events at
+  ascending `ts`: `direct@t1`, `search@t2`,
+  `signup-complete@t3`. `getTrafficSources(range)` returns
+  a row with `channel: 'direct'` (NOT `'search'`, NOT both,
+  NOT duplicated). A second fixture session with ONLY
+  `signup-complete` (no channel event) produces zero
+  `TrafficSource` rows in the same query.
+- [ ] **Window function used in SQL (D-20501 tightening):**
+  `grep -nE "ROW_NUMBER\(\) OVER \(PARTITION BY
+  session_id ORDER BY ts ASC\)"
+  apps/server/src/analytics/analytics.logic.ts` returns
+  ≥ 1 match.
+- [ ] **Retention v1 coarse return test (D-20501
+  tightening):** fixture seeds a cohort with one user
+  whose signup-complete is on `2026-06-01` and who emits
+  `first-match-started` on `2026-06-02`, a channel event
+  (`direct`) on `2026-06-08`, and another `signup-complete`
+  on `2026-06-09`. `getRetentionCohorts(1)` reports
+  `day1ReturnCount = 1` (first-match-started counts) and
+  `day7ReturnCount = 1` (the channel event on day 7
+  counts; the second `signup-complete` is excluded by
+  definition).
+- [ ] **INSERT column list grep (D-20501 tightening):**
+  `grep -rnE "INSERT INTO analytics_events VALUES\s*\("
+  apps/server/src/analytics/` returns 0;
+  `grep -rnE "INSERT INTO legendary\.analytics_events\s*\("
+  apps/server/src/analytics/` returns ≥ 2.
 
 ### Sub-task C close
 
@@ -502,6 +717,79 @@
   value per D-10403).
 - [ ] **Catalog rows landed**: `grep -nE "/api/analytics/(events|traffic-sources|activation-funnel|retention-cohorts)"
   docs/ai/REFERENCE/api-endpoints.md` returns 4 matches.
+- [ ] **Request validation: `timestamp` bounds (D-20503
+  tightening).** Payload with `timestamp: -1` → 400; payload
+  with `timestamp` > `Date.now() + 5 * 60 * 1000` (test
+  injects `currentServerTime` via dependency injection for
+  determinism) → 400; payload with `timestamp` exactly at
+  the upper bound → 202.
+- [ ] **Request validation: `session_id` length (D-20503
+  tightening).** Payload with `session_id: ''` → 400;
+  payload with `session_id` of 129 chars → 400; 128 chars
+  → 202.
+- [ ] **Request validation: `user_id` length (D-20503
+  tightening).** Payload with `user_id` of 513 chars → 400
+  WITHOUT calling `hashUserId(...)`; 512 chars → 202;
+  `user_id: null` → 202.
+- [ ] **Request validation: `properties` depth (D-20501
+  tightening).** Payload with `properties` nested 6 levels
+  deep → 400; 5 levels → 202; arrays count as one level
+  (a payload with a 3-level array-of-arrays nested inside
+  a 3-level object → 6 levels → 400).
+- [ ] **Request validation: `properties` forbidden types
+  (D-20501 tightening).** Payload with `properties:
+  { ts: new Date() }` arrives as either an ISO string or a
+  number depending on JSON serialization — the validator
+  rejects with 400 if any leaf value's type tag is outside
+  `{string, number, boolean, null}`. Test injects synthetic
+  parsed values via a mock JSON parser to exercise the
+  `Date`/`Map`/`Set`/`Function`/class-instance/BigInt/Symbol
+  rejection paths.
+- [ ] **Request validation: empty `properties` default
+  (D-20501 tightening).** Payload omitting `properties` →
+  202; row's `properties` column = `{}` (JSONB). Payload
+  with `properties: {}` → 202; row's `properties` column
+  = `{}` (JSONB).
+- [ ] **Idempotency: NOT IDEMPOTENT (D-20503 tightening).**
+  Same payload (event_type / user_id / session_id /
+  timestamp / properties all identical) POSTed twice in
+  distinct requests → both return 202; table row count
+  = 2; aggregate queries see both rows.
+- [ ] **Rate limit: per-event semantics (D-20503
+  tightening).** Initial bucket capacity 60. Submit a
+  batch of 30 events → 202 (bucket: 30 remaining).
+  Submit a batch of 31 events → 429 BEFORE any
+  parsing/hashing/INSERT (no `hashUserId(...)` call
+  observed via test-injected spy); 0 new rows.
+  Submit a batch of 30 events → 202 (bucket: 0 remaining).
+  Submit a single event → 429.
+- [ ] **SQL pre-sorted invariant (D-20501 tightening).**
+  `grep -nE "\.sort\("
+  apps/server/src/analytics/analytics.routes.ts` returns
+  0 matches inside the 3 GET handler bodies (matches in
+  other handlers — e.g., the POST batch handler — are OK
+  if they exist). Each of the 3 GET endpoints returns
+  rows in the SQL's natural `ORDER BY ASC` order; a test
+  asserts the returned array is already monotonically
+  non-decreasing by `date` / `cohortWeek` (no client-side
+  sort step in the test could correct a regression).
+- [ ] **Leakage gate: raw user_id NOT in logs/errors
+  (D-20502 tightening).** Test intercepts `console.log` /
+  `console.info` / `console.warn` / `console.error`
+  during a POST carrying `user_id: "alice@example.com"`
+  AND `properties: { "note": "alice@example.com" }`. The
+  response status is 202; the row's `user_id_hash` is the
+  SHA-256 of `"alice@example.com|" + testSalt`; the row's
+  `properties` column carries `{"note":"alice@example.com"}`
+  verbatim (string preservation in `properties` is
+  intended). The leakage gate asserts the literal
+  substring `"alice@example.com"` does NOT appear in any
+  captured log line emitted by `apps/server/src/analytics/`
+  code. A follow-up negative-path test POSTs a payload
+  with an over-long `user_id` (513 chars including the
+  string `"alice@example.com"` as a prefix), confirms 400
+  response, AND asserts the substring does not appear in
+  the error response body OR captured logs.
 - [ ] **Server.mjs wiring**: `grep -nE "registerAnalyticsRoutes"
   apps/server/src/server.mjs` returns 2 matches (import + call).
 - [ ] Pre-existing route files unchanged: `git diff --name-only
@@ -606,6 +894,67 @@
   bearing tables** → structural bound violation per D-20502
   intentional design. Future ARPU dashboards source from
   `legendary.players`, not this table.
+- **Session attributed to MULTIPLE channels** → D-20501
+  channel attribution HARD FAIL. Each session has exactly
+  one channel — the FIRST `(ts ASC)` channel event;
+  subsequent channel events ignored.
+- **No-channel sessions bucketed into `direct` fallback or
+  appearing as null-channel rows** → D-20501 HARD FAIL.
+  Sessions without any channel event are EXCLUDED from
+  `traffic-sources` entirely.
+- **`MIN(ts)` subquery / GROUP BY with implicit
+  tie-breaking instead of `ROW_NUMBER() OVER (PARTITION
+  BY ...)`** → D-20501 implementation HARD FAIL. The
+  window function is the locked pattern for clarity and
+  index friendliness.
+- **`INSERT INTO analytics_events VALUES (...)`
+  (positional binds, no column list)** → D-20501 INSERT
+  discipline HARD FAIL. Future migration adding a column
+  would silently shift binds.
+- **`Array.sort(...)` call site in any of the 3 GET
+  handler return paths** → D-20501 SQL pre-sorted
+  invariant HARD FAIL. SQL `ORDER BY ASC` is
+  authoritative; route MUST NOT re-sort.
+- **`INSERT ... ON CONFLICT DO NOTHING` (or any
+  application-layer dedupe)** → D-20503 idempotency
+  posture HARD FAIL. Capture endpoint is intentionally
+  NOT idempotent in v1.
+- **Rate limit counting REQUESTS instead of EVENTS** →
+  D-20503 rate-limit semantics HARD FAIL. Bucket
+  capacity is on events; batching cannot bypass the
+  limit.
+- **Partial batch accept (rate limit consumed N tokens;
+  M < N events inserted because some failed downstream
+  validation)** → D-20503 HARD FAIL. Either the full
+  batch lands (202) or none of it does (4xx); no
+  intermediate state.
+- **`Date.now()` used for INSERTed `ts`** → D-20503
+  timestamp posture HARD FAIL. INSERTed `ts` is the
+  client-supplied `timestamp`; server clock used ONLY
+  for the upper-bound anchor at validator entry.
+- **`Date.now()` called multiple times per request inside
+  the validator** → flakiness vector; D-20503 captures
+  `currentServerTime` ONCE per request.
+- **`session_id` length check missing or applied
+  post-INSERT** → D-20503 length-bound HARD FAIL.
+- **`user_id` length check applied AFTER
+  `hashUserId(...)`** → D-20503 ordering HARD FAIL.
+  Length check runs BEFORE hashing to avoid wasted CPU
+  + invalid intermediate state.
+- **`properties` depth check missing or implemented via
+  `JSON.stringify(...).length` (proxy for depth)** →
+  D-20501 depth HARD FAIL. Depth = nesting levels, NOT
+  serialized size.
+- **Arrays at `properties` root accepted** → D-20501
+  HARD FAIL. Root must be an object (so future
+  per-event-type metadata has a stable key surface).
+- **Raw `user_id` appears in any `console.log` /
+  `console.info` / `console.warn` / `console.error` call
+  site inside `apps/server/src/analytics/`** → D-20502
+  leakage HARD FAIL. Logs reference `user_id_hash` only.
+- **Raw `user_id` echoed in any 4xx error response body**
+  → D-20502 leakage HARD FAIL. Error messages reference
+  field NAMES, not field VALUES.
 
 ## DECISIONS.md Verbatim Block (PS-1 Transcription)
 
@@ -646,6 +995,50 @@ field (no schema change required). Adding a new top-level
 column is a breaking change — requires a new migration + a new
 D-entry + a justification why the data can't live in
 `properties`.
+
+**Tightening (channel attribution, retention return, SQL
+pre-sorted, INSERT discipline, request validation rules):**
+
+- **Channel attribution per session.** For any `session_id`,
+  the attributed channel is the FIRST `(ts ASC)` event whose
+  `event_type IN ('direct', 'search', 'referral', 'paid')`.
+  Subsequent channel events in the same session are IGNORED
+  for `traffic-sources` attribution. Sessions with no
+  channel event are EXCLUDED entirely (NOT bucketed as a
+  `direct` fallback or null-channel row). SQL implementation
+  uses a window function: `ROW_NUMBER() OVER (PARTITION BY
+  session_id ORDER BY ts ASC)` filtered to channel events;
+  `rn = 1` per session is the canonical channel.
+- **Retention return definition (v1 coarse).** A "return"
+  event for cohort day-N is ANY event where `event_type !=
+  'signup-complete'` AND `user_id_hash` matches the cohort's
+  signup-complete user-hash set AND `ts` falls in day-N of
+  that user's cohort window. No event-type-class filtering
+  in v1 — channel events, activation events, AND
+  `retention-return` events all count. Per-class filtering
+  is a future tuning WP.
+- **SQL pre-sorted invariant.** The 3 GET endpoints return
+  rows DIRECTLY from SQL `ORDER BY ASC`. Route layer MUST
+  NOT call `Array.sort(...)` in any GET return path.
+  Composable layer (future MOCK→LIVE flip WP) MUST NOT
+  re-sort either. Grep gate at close.
+- **INSERT column list MANDATORY.** Every
+  `INSERT INTO legendary.analytics_events` enumerates target
+  columns explicitly. The form `INSERT INTO
+  analytics_events VALUES (...)` (positional binds) is
+  FORBIDDEN — a future migration adding a column would
+  silently shift binds. Grep gate at close.
+- **Request validation rules (validator-side):**
+  `event_type` ∈ `ACQUISITION_EVENT_TYPES`; `user_id`
+  `string | null` (non-null max 512 chars pre-hash);
+  `session_id` non-empty ≤ 128 chars; `timestamp` finite
+  number ∈ `[0, currentServerTime + 5 * 60 * 1000]`
+  (server captures `currentServerTime` via `Date.now()`
+  ONCE at validator entry; INSERTed `ts` is the client-
+  supplied value, NOT the server clock); `properties`
+  optional object; depth ≤ 5; leaf values
+  `string | number | boolean | null` only; root arrays
+  forbidden; empty stored as `'{}'::jsonb`.
 
 **Rationale:**
 Mirrors D-13202 / D-13203 closed-shape discipline (WP-132
@@ -718,6 +1111,23 @@ LTV dashboards MUST source identity from a different table
 (e.g., `legendary.players` + payment-history tables) and join
 on `account_id`, not on `user_id_hash`. Reviewers reject any
 PR that joins `analytics_events` to identity-bearing tables.
+
+**Tightening (leakage gate at diagnostic boundaries):**
+
+The "raw user_id never persisted" invariant extends to
+diagnostics: raw `user_id` MUST NOT appear in any
+`console.log` / `console.info` / `console.warn` /
+`console.error` call site inside
+`apps/server/src/analytics/`. Logs reference `user_id_hash`
+only. Error response bodies use static codes + messages
+referring to field NAMES, not field VALUES. A leakage test
+intercepts console output during a request carrying a
+known test value and asserts the literal substring does NOT
+appear in any captured log line emitted by analytics code.
+The `properties` column intentionally preserves string
+values verbatim per the JSON-spec leaf-type rule — that's
+documented feature, not leakage; the gate scopes to logs +
+error bodies + stack traces.
 
 **Rationale:**
 The cheapest meaningful protection for analytics data at rest.
@@ -796,6 +1206,38 @@ can label freshness independently.
 Status-code domains locked per handler: POST `{202, 400, 413,
 429, 500}`; each GET `{200, 400, 401, 500}`. Any other status
 code (403, 404, 422) leaking from these handlers = HARD FAIL.
+
+**Tightening (rate limit per-event, idempotency NOT
+idempotent, response envelope shape):**
+
+- **Rate limit semantics — per-EVENT, not per-REQUEST.** The
+  60/minute/IP limit counts individual events. A batch of
+  N events consumes N tokens. A request that would exceed
+  remaining tokens is rejected with 429 BEFORE any parsing
+  / hashing / INSERT work — the full batch is dropped (no
+  partial accept). The capacity bound is on events, NOT on
+  HTTP requests; batching CANNOT bypass the limit. Token
+  bucket implementation MUST treat capacity as
+  event-count.
+- **Capture endpoint is NOT idempotent.** Duplicate POST
+  submissions produce duplicate rows. Server applies no
+  UNIQUE constraint beyond `id`; no `INSERT ... ON
+  CONFLICT`; no clock-window dedupe. Clients own
+  deduplication if required (e.g., POST-once semantics via
+  local idempotency keys at emission time). Aggregate
+  queries treat the natural row count as ground truth.
+  Rationale: server-side idempotency would require either
+  a UNIQUE constraint that wedges legitimate high-volume
+  same-session activity, or a clock-window dedupe filter
+  that introduces edge cases under late-arrival / clock-
+  skew patterns.
+- **Response envelope MUST NOT include `source` /
+  `updatedAt`.** Server returns `{ data: readonly T[] }`
+  for the 3 GETs; `{ accepted: number }` for the POST.
+  The dashboard's future MOCK→LIVE flip wrapper adds
+  `ServiceResponse<T>` envelope fields at the call site.
+  Keeping the server envelope-agnostic decouples the
+  freshness display from server-side caching decisions.
 
 `Cache-Control: no-store` is the literal first statement of
 every handler body — happy paths AND error paths — per the
