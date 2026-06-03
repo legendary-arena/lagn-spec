@@ -289,3 +289,179 @@ export interface RetentionCohort {
   readonly day1ReturnCount: number;
   readonly day7ReturnCount: number;
 }
+
+// ============================================================================
+// WP-204 / EC-232 — Dashboard Public-Surface Health + Error Monitor + Cost
+// Watchdog. Forward-locked type contract consumed verbatim by the paired
+// server WP (TBD; tentatively WP-206 unless WP-205 ordering shifts —
+// uptime probe scheduler + 5xx aggregator + vendor cost ingestion + PII
+// posture decision). Mock-mode-first per D-20402 / WP-197 D-19702.
+// Drift-pinned canonical arrays (PUBLIC_SURFACES / UPTIME_STATUSES /
+// INFRA_COST_VENDORS) mirror WP-198's KPI_STATUSES precedent; bidirectional
+// parity is enforced in `utils/opsTaxonomy.test.ts`.
+// ============================================================================
+
+// why: WP-204 §Locked contract values + WP-198 KPI_STATUSES precedent —
+// `PublicSurfaceKey` is a closed union of the four externally-reachable
+// operator-owned domains: `marketing` (www.legendary-arena.com, player
+// on-ramp), `play` (play.legendary-arena.com, the game itself), `cards`
+// (cards.legendary-arena.com, registry-viewer reference), `api` (api /
+// legendary-arena-server.onrender.com, game server). Other entries in
+// `docs/ops/DOMAINS.md` (`ewiki`, `wiki`, `legends`, `dashboard`,
+// `images`) are operator-internal or vendor-hosted and remain out of
+// scope in v1. Adding a fifth surface WITHOUT updating both this union
+// AND the `PUBLIC_SURFACES` canonical array fails the drift test loudly
+// in `utils/opsTaxonomy.test.ts` (D-20401 forward-locked envelope).
+export type PublicSurfaceKey = 'marketing' | 'play' | 'cards' | 'api';
+
+// why: WP-204 §Determinism scope + WP-198 KPI_STATUSES drift precedent —
+// canonical readonly array drift-pinned to `PublicSurfaceKey`. Order is
+// load-bearing: per-surface table row order in `PublicSurfaceHealthWidget`,
+// composable iteration in `usePublicSurfaceHealth` (worst-surface tie-break
+// reads this order), and any future per-surface chart legend all read
+// from this array so output is byte-identical across JS runtimes
+// regardless of object-key insertion-order behavior. Adding a 5th surface
+// without updating both this array AND the union fails the drift test in
+// `utils/opsTaxonomy.test.ts`.
+export const PUBLIC_SURFACES: readonly PublicSurfaceKey[] = [
+  'marketing',
+  'play',
+  'cards',
+  'api',
+];
+
+// why: WP-204 §Locked contract values — `UptimeStatus` is a closed union of
+// the three observable per-surface uptime states (`up` / `degraded` /
+// `down`). Membership exactly matches the existing `ServerNode.status`
+// union members (line 96 above) so per-node and per-surface status
+// renderings share a vocabulary; the two interfaces (`ServerNode`
+// per-node infrastructure vs `UptimeProbe` per-surface domain-level)
+// remain distinct. Adding a 4th status (e.g., `'maintenance'`) requires
+// updating both this union AND the `UPTIME_STATUSES` canonical array per
+// the drift discipline (D-20401 forward-locked envelope).
+export type UptimeStatus = 'up' | 'degraded' | 'down';
+
+// why: WP-204 §Determinism scope + WP-198 KPI_STATUSES drift precedent —
+// canonical readonly array drift-pinned to `UptimeStatus`. Order reflects
+// severity (best to worst) so status chip rendering and any future
+// summary table read from this array deterministically. Drift test:
+// `utils/opsTaxonomy.test.ts` asserts bidirectional parity with the
+// `UptimeStatus` union.
+export const UPTIME_STATUSES: readonly UptimeStatus[] = [
+  'up',
+  'degraded',
+  'down',
+];
+
+// why: WP-204 §Locked contract values — `InfraCostVendor` is a closed union
+// of the four currently-billed operator vendors (Render game server,
+// Cloudflare CDN/R2, Postgres database, Hanko identity). Future vendor
+// additions (e.g., R2 split out from `cloudflare`, separate
+// observability tooling) get added by extending both this union AND
+// `INFRA_COST_VENDORS` in the same edit; the drift test in
+// `utils/opsTaxonomy.test.ts` catches asymmetric updates loudly
+// (D-20401 forward-locked envelope).
+export type InfraCostVendor = 'render' | 'cloudflare' | 'postgres' | 'hanko';
+
+// why: WP-204 §Determinism scope + WP-198 KPI_STATUSES drift precedent —
+// canonical readonly array drift-pinned to `InfraCostVendor`. Order is
+// load-bearing: per-vendor card order in `InfraCostWatchdogWidget`,
+// composable iteration in `useInfraCostWatchdog` (per-vendor MTD /
+// projection / status assembly), and the `INFRA_COST_BUDGETS` config
+// array all iterate this order. Adding a 5th vendor without updating
+// both this array AND the union fails the drift test in
+// `utils/opsTaxonomy.test.ts`.
+export const INFRA_COST_VENDORS: readonly InfraCostVendor[] = [
+  'render',
+  'cloudflare',
+  'postgres',
+  'hanko',
+];
+
+// why: D-20401 — `UptimeProbe` envelope is CLOSED at 6 fields (`surface`,
+// `date`, `status`, `uptimePercent`, `incidentCount`,
+// `lastIncidentTimestamp`). The paired server WP (TBD; tentatively
+// WP-206 unless WP-205 ordering shifts) consumes this envelope verbatim
+// at server-side capture time so widget files stay byte-identical
+// pre/post MOCK → LIVE flip. Future per-surface metadata (per-region,
+// per-incident-ticket-id, response-time percentiles) rides on a
+// follow-up extension WP, NOT v1 envelope widening. `date` is the
+// canonical `YYYY-MM-DD` UTC bucket; `uptimePercent` is 0-100 with
+// 1-decimal precision (NOT a 0-1 fraction — a 100× display error trap).
+// `lastIncidentTimestamp: number | null` — see field-level `// why:`
+// below for the D-19908 numeric-zero rationale.
+export interface UptimeProbe {
+  readonly surface: PublicSurfaceKey;
+  readonly date: string;
+  readonly status: UptimeStatus;
+  readonly uptimePercent: number;
+  readonly incidentCount: number;
+  // why: D-19908 numeric-zero semantics — zero is a meaningful epoch
+  // millisecond value (1970-01-01 UTC), NOT the no-incidents sentinel.
+  // The explicit `null` is the absence sentinel so a future caller
+  // cannot confuse "we don't track this" with "there was an incident at
+  // the dawn of UNIX time". Mirrors the optional-vs-null distinction
+  // from `KpiSnapshot.target` (undefined opts out of the chip) — here
+  // `null` is the explicit empty-window signal.
+  readonly lastIncidentTimestamp: number | null;
+}
+
+// why: D-20401 — `ErrorSignature` sub-interface is CLOSED at 4 fields.
+// `signature` is the UTF-16 first-80-code-units truncation of the
+// observed error message (mirrors WP-195 errorSignature precedent —
+// code units NOT JS chars NOT bytes so the cap is locale-stable).
+// `firstSeen` / `lastSeen` are epoch ms timestamps; `count` is the
+// non-negative integer occurrence count in the snapshot's window.
+// Cross-snapshot signature aggregation in `useErrorRateMonitor` merges
+// identical signature strings via sum-of-counts + min-firstSeen +
+// max-lastSeen.
+export interface ErrorSignature {
+  readonly signature: string;
+  readonly count: number;
+  readonly firstSeen: number;
+  readonly lastSeen: number;
+}
+
+// why: D-20401 — `ErrorRateSnapshot` envelope is CLOSED at 6 fields
+// (`date`, `windowSeconds`, `totalRequests`, `errorCount`, `errorRate`,
+// `topSignatures`). `windowSeconds` is the bucket size — locked at
+// `3600` for the rolling-1h panel and `86400` for the daily aggregate
+// in v1; both bucket sizes flow through this single interface but
+// mixed-window aggregation (summing 3600 + 86400 rows in the same
+// derivation) is a HARD FAIL per WP-204 §"Current" snapshot selection.
+// `errorRate` is a decimal fraction (0.012 = 1.2%) — NOT a percentage;
+// display formatting (`Math.round(rate * 1000) / 10`) lives at the
+// widget render boundary per D-19601 carry-forward. Zero-`totalRequests`
+// snapshots return `errorRate = 0` per D-19908 numeric-zero semantics.
+// `topSignatures` is pre-truncated to the top 5 by `count` descending
+// (tiebreak `signature` ascending Unicode code-unit) for deterministic
+// rendering.
+export interface ErrorRateSnapshot {
+  readonly date: string;
+  readonly windowSeconds: number;
+  readonly totalRequests: number;
+  readonly errorCount: number;
+  readonly errorRate: number;
+  readonly topSignatures: readonly ErrorSignature[];
+}
+
+// why: D-20401 — `InfraCostEntry` envelope is CLOSED at 4 fields (`vendor`,
+// `date`, `amountCents`, `currency`) with `currency` locked to the
+// literal `'USD'`. Multi-currency support (EUR, GBP) is a real
+// engineering scope (currency conversion, FX-timestamp posture,
+// base-currency display semantics) that v1 does not need — the
+// operator's vendor stack bills 100% USD. `amountCents` is an integer
+// per D-19601 integer-cents discipline (display formatting via
+// `(cents / 100).toFixed(2)` lives at the widget render boundary only;
+// composable stays in integer-cents space). Per-day discrete entries —
+// NOT cumulative — per WP-204 §Aggregation rule.
+export interface InfraCostEntry {
+  readonly vendor: InfraCostVendor;
+  readonly date: string;
+  readonly amountCents: number;
+  // why: D-20401 single-currency lock — literal `'USD'` (NOT `string`).
+  // Multi-currency is a future WP; widening this field to a broader
+  // closed set (e.g., `'USD' | 'EUR'`) requires a new D-entry and the
+  // widget's amount-formatter rewrite for non-USD glyphs.
+  readonly currency: 'USD';
+}
