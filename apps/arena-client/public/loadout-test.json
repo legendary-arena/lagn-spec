@@ -5,8 +5,8 @@
   "composition": {
     "schemeId": "core/midtown-bank-robbery",
     "mastermindId": "core/magneto",
-    "villainGroupIds": ["core/brotherhood"],
-    "henchmanGroupIds": ["core/hand-ninjas"],
+    "villainGroupIds": ["core/skrulls"],
+    "henchmanGroupIds": ["core/sentinel"],
     "heroDeckIds": ["core/spider-man", "core/hulk", "core/wolverine", "core/black-widow"],
     "bystandersCount": 1,
     "woundsCount": 30,
