@@ -12,6 +12,27 @@ import type {
 export { mockBillingHealth, mockBillingHealthSparklines } from './billingHealthMocks.js';
 export type { BillingHealthSparklines, BillingHealthSparklinePoint } from './billingHealthMocks.js';
 
+export {
+  mockTrafficSources,
+  mockActivationFunnel,
+  mockRetentionCohorts,
+} from './analyticsMocks.js';
+
+// why: WP-203 §Acceptance Criteria MOCK → LIVE upgrade-path verifiable —
+// widgets import these `fetch*`-aliased bindings so widget files contain
+// zero literal `mockTrafficSources` / `mockActivationFunnel` /
+// `mockRetentionCohorts` tokens (verified by close-out grep). The alias
+// is the seam WP-205 will swap to real HTTP fetch (`mocks.ts` updates to
+// re-export from `endpoints.ts` instead of `analyticsMocks.ts`) without
+// any widget-side change. The signature stays
+// `(rangeOrCohortCount, nowMs) => ServiceResponse<readonly T[]>` pre/post
+// flip; widget files stay byte-identical.
+export {
+  mockTrafficSources as fetchTrafficSources,
+  mockActivationFunnel as fetchActivationFunnel,
+  mockRetentionCohorts as fetchRetentionCohorts,
+} from './analyticsMocks.js';
+
 function randomBetween(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

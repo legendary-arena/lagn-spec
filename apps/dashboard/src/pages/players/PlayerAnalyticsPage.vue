@@ -5,6 +5,9 @@ import { fetchPlayerRecords } from '../../services/endpoints.js';
 import { formatPercent } from '../../utils/format.js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import TrafficSourcesWidget from '../../widgets/TrafficSourcesWidget.vue';
+import ActivationFunnelWidget from '../../widgets/ActivationFunnelWidget.vue';
+import RetentionCohortsWidget from '../../widgets/RetentionCohortsWidget.vue';
 
 const { data, loading, error, updatedAt, source } = useFetch(fetchPlayerRecords);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
@@ -19,6 +22,18 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
         <span class="timestamp">Updated {{ relativeTime }}</span>
       </span>
     </div>
+
+    <!-- why: WP-203 §Scope (In) Page wiring — the 3 full analytics
+         widgets land in vertical layout: TrafficSources →
+         ActivationFunnel → RetentionCohorts. Each widget reads its own
+         composable (the page does not duplicate or pre-fetch state);
+         the trend widgets pick up `useDateRange` from the route query
+         automatically, and the cohorts widget defaults to 8 cohorts. -->
+    <section class="analytics-stack" aria-label="Player analytics widgets">
+      <TrafficSourcesWidget />
+      <ActivationFunnelWidget />
+      <RetentionCohortsWidget />
+    </section>
 
     <div v-if="loading && !data" class="page-loading">
       <p>Loading player data...</p>
@@ -70,6 +85,12 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
 
 <style scoped>
 .players-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.analytics-stack {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;

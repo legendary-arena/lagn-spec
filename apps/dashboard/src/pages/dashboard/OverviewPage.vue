@@ -13,6 +13,7 @@ import VisionCard from '../../widgets/VisionCard.vue';
 import GovernanceThroughputWidget from '../../widgets/GovernanceThroughputWidget.vue';
 import StatusFeedWidget from '../../widgets/StatusFeedWidget.vue';
 import GovernanceKpiStrip from '../../widgets/GovernanceKpiStrip.vue';
+import AcquisitionFunnelStripWidget from '../../widgets/AcquisitionFunnelStripWidget.vue';
 import type { KpiSnapshot } from '../../types/index.js';
 
 const router = useRouter();
@@ -145,6 +146,13 @@ function handleKpiClick(kpi: KpiSnapshot): void {
       <DauChartWidget />
       <RevenueChartWidget />
     </div>
+
+    <!-- why: WP-203 §Scope (In) — the strip lands immediately after the
+         DauChart row (engagement) so the operator's eye moves from
+         engagement → acquisition pressure → alerts. Additive-only:
+         no other Overview widget is removed, hidden, or relocated per
+         the §Non-Negotiable Constraints rule. -->
+    <AcquisitionFunnelStripWidget />
 
     <AlertsPanel />
   </div>

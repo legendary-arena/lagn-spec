@@ -21845,4 +21845,191 @@ Ambush/Fight/Overrun lines carry the marker.
 
 ---
 
+### D-20301 — `AnalyticsEvent` Envelope Closed at 5 Fields; WP-205 Consumes Verbatim
+
+**Decision:**
+The `AnalyticsEvent` envelope shape introduced in
+`apps/dashboard/src/types/index.ts` is locked at 5 fields:
+
+```typescript
+interface AnalyticsEvent {
+  readonly event_type: AcquisitionEventType;
+  readonly user_id: string | null;
+  readonly session_id: string;
+  readonly timestamp: number;
+  readonly properties: Readonly<Record<string, string | number | boolean | null>>;
+}
+```
+
+The envelope is **closed at the field level**. Future per-event-type
+schema growth (e.g., `referrer` for `direct`-channel events, `query`
+for `search`, `sourceCardId` for funnel-completion events) rides on
+the open `properties` field. The envelope MUST NOT be widened past 5
+fields; per-event-type discriminators MUST NOT bypass the
+`event_type` + `properties` shape. WP-205 (`analytics_events`
+migration + server-side capture + endpoints + PII posture decision —
+deferred) consumes this envelope verbatim at server-side capture
+time.
+
+**Reserved sub-rule:** `AcquisitionEventType` is reserved for FUNNEL
+events only (`AcquisitionChannel` ∪ `ActivationStep` ∪
+`'retention-return'` = 9 values). Future non-funnel event types
+(billing-charge, governance-event, error-emitted, etc.) MUST create
+a sibling discriminator union, NOT bloat `AcquisitionEventType`. A
+non-funnel event widening this union would silently expand the
+funnel taxonomy and break the closed-set drift gate in
+`utils/funnelTaxonomy.test.ts`.
+
+**Rationale:**
+Mirrors WP-196's `/metrics/billing/health` forward-contract pattern
+(D-19603). Locking the envelope at draft time means the paired
+server WP (WP-205) has zero schema ambiguity at execution time —
+the migration's column shape, the capture endpoint's request
+schema, the wire format, and the dashboard's `useFetch` consumer
+all derive from the same five fields. Per-event-type schema growth
+is inherently open-ended (every future analytics use case wants its
+own properties); locking it onto a single open `properties` field
+collapses the proliferation into one extension seam rather than
+ever-growing envelope variants.
+
+snake_case field naming (`event_type`, `user_id`, `session_id`)
+anticipates the future PostgreSQL column names per
+`00.2-data-requirements.md` — the column shape is the source of
+truth at the persistence boundary; the TypeScript shape mirrors it.
+
+**Implementation locations:**
+- `apps/dashboard/src/types/index.ts` — `AnalyticsEvent` interface
+  definition + `// why:` comment citing this decision.
+- `apps/dashboard/src/utils/funnelTaxonomy.test.ts` — drift gate
+  asserting `AcquisitionEventType` reserves the closed 9-value
+  funnel taxonomy.
+
+**Packet:** WP-203 (EC-231).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
+### D-20302 — Mock-Mode-First Carries Forward from WP-197 D-19702; All 4 WP-203 Widgets Ship `MOCK` Freshness Badge
+
+**Decision:**
+The WP-197 D-19702 mock-mode-first deploy posture carries forward to
+WP-203. All four new widgets (`TrafficSourcesWidget`,
+`ActivationFunnelWidget`, `RetentionCohortsWidget`,
+`AcquisitionFunnelStripWidget`) read from
+`apps/dashboard/src/services/analyticsMocks.ts` (the three new mock
+factories) and surface the `MOCK` source label via the composable's
+`source` passthrough on the freshness badge. Flip to `LIVE` is
+WP-205's concern (server-side capture + real-data endpoint); when
+WP-205 lands, the widget files stay byte-identical pre/post flip
+because `services/mocks.ts` swaps its `fetch*` re-exports behind
+the same `(range, nowMs) => ServiceResponse<readonly T[]>`
+signature.
+
+**Sub-rule (verifiable upgrade path):** widget files have ZERO
+literal `mockTrafficSources` / `mockActivationFunnel` /
+`mockRetentionCohorts` tokens — widgets import fetch-prefixed
+aliases. Verified at close-out by `grep -rE`.
+
+**Rationale:**
+Mirrors WP-197's deploy-posture decision (mock-mode-first on CF
+Pages Production via `VITE_USE_MOCKS=true`). The MOCK badge is the
+operator's visible, non-removable signal that the surface is not
+yet real data; iteration on widget layout / channel definitions /
+funnel-step granularity / cohort granularity is cheap (mock data
+costs nothing) and lets the operator settle the surface BEFORE
+WP-205 sinks engineering effort into the server-side capture
+pipeline. The widget-files-stay-byte-identical invariant is what
+makes the MOCK → LIVE flip a zero-risk change at WP-205 time.
+
+**Implementation locations:**
+- `apps/dashboard/src/services/analyticsMocks.ts` — 3 factories,
+  every output wrapped via `wrapMock<T>` with `source: 'MOCK'`.
+- `apps/dashboard/src/services/mocks.ts` — re-exports the 3
+  factories under both `mockX` (for tests) and `fetchX` (for
+  widgets) aliases.
+- 4 new widget files — each imports `fetchX` (NOT `mockX`); freshness
+  badge sources from the composable's `.source` passthrough.
+
+**Packet:** WP-203 (EC-231).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
+### D-20303 — PII Posture for Analytics Capture Deferred to WP-205 Drafting Time; WP-203 Mocks Assume Anonymized Opaque `user_id` Only
+
+**Decision:**
+The PII posture for the `AnalyticsEvent.user_id` field — raw vs
+hashed vs auth-gated vs aggregated-only — is **explicitly deferred
+to WP-205 drafting time**. WP-203 mocks assume `user_id` is an
+anonymized opaque string. No email, no handle, no IP, no device
+fingerprint, no third-party tracking ID surfaces anywhere in the
+mock data, the composables, or the widget rendering. The TypeScript
+type is exactly `string | null` (NOT `string`, NOT optional) — `null`
+is the explicit pre-signup-visitor sentinel.
+
+The WP-205 drafter selects the actual posture in consultation with
+finance + legal. The four canonical options are:
+
+1. **Raw `user_id`** — internal DB row id; only ever stored
+   server-side, never echoed back to the client.
+2. **Hashed `user_id`** — one-way hash (HMAC-SHA-256 over a salted
+   secret) so the operator can correlate per-user behaviour without
+   the dashboard ever seeing the source identity.
+3. **Auth-gated `user_id`** — only finance + admin roles can query
+   per-user event streams; other roles see aggregates only.
+4. **Aggregated-only** — `user_id` never leaves the server; the
+   dashboard receives pre-aggregated counts / rates / cohort
+   memberships only.
+
+The choice is non-trivial: option 1 is cheapest to implement but
+strictest on access control; option 4 is the most privacy-
+preserving but eliminates per-user drill-down forever; options
+2-3 are middle paths with different operator-UX trade-offs.
+
+**Rationale:**
+This is a **finance + legal + product** decision, not a pure
+engineering one. The dashboard's widgets need to render counts and
+rates (which all four options support equally well), but the choice
+of how `user_id` flows determines:
+
+- Which compliance regimes the dashboard must respect (GDPR,
+  CCPA, PIPEDA, etc.) — varies by user residency.
+- Which operator roles can drill into per-user behaviour vs aggregates.
+- Whether the dashboard can ever support per-user ARPU / LTV
+  surfacing (option 4 forbids; options 1-3 allow with caveats).
+- Whether the operator can correlate analytics events with billing
+  events for cross-surface debugging (option 1 trivially; option 2
+  requires the same hash on both sides; option 3 requires both
+  surfaces under the same role gate; option 4 cannot correlate).
+
+Choosing prematurely at WP-203 drafting time would lock the
+operator into the wrong trade-off without the input of the
+stakeholders who know the regulatory and revenue context. Locking
+the TypeScript type as `string | null` reserves the contract space
+for ALL four options — none requires re-shaping the envelope.
+
+**Implementation locations:**
+- `apps/dashboard/src/types/index.ts` — `AnalyticsEvent.user_id:
+  string | null` with `// why:` citing this decision.
+- `apps/dashboard/src/services/analyticsMocks.ts` — mock factories
+  never emit a `user_id` value resembling email / handle / IP; the
+  forward-locked envelope does not appear in the mock series at
+  all (`TrafficSource[]` / `ActivationFunnelStep[]` /
+  `RetentionCohort[]` are pre-aggregated already), keeping PII
+  exposure surface = 0 in v1.
+
+**Packet:** WP-203 (EC-231).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
 Protect this file.
