@@ -33,6 +33,23 @@ export {
   mockRetentionCohorts as fetchRetentionCohorts,
 } from './analyticsMocks.js';
 
+// why: WP-204 / EC-232 / D-20402 — ops-health mock factories. Same
+// dual-export pattern as the WP-203 analytics block above: `mockX` for
+// tests (so tests can assert factory-direct output) and `fetchX` for
+// widgets (so widget files contain zero literal `mockX` tokens — the
+// MOCK → LIVE flip seam is the paired server WP's concern, not a
+// widget-side change).
+export {
+  mockUptimeProbes,
+  mockErrorRateSnapshots,
+  mockInfraCostEntries,
+} from './opsHealthMocks.js';
+export {
+  mockUptimeProbes as fetchUptimeProbes,
+  mockErrorRateSnapshots as fetchErrorRateSnapshots,
+  mockInfraCostEntries as fetchInfraCostEntries,
+} from './opsHealthMocks.js';
+
 function randomBetween(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
