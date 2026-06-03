@@ -14,6 +14,7 @@ import GovernanceThroughputWidget from '../../widgets/GovernanceThroughputWidget
 import StatusFeedWidget from '../../widgets/StatusFeedWidget.vue';
 import GovernanceKpiStrip from '../../widgets/GovernanceKpiStrip.vue';
 import AcquisitionFunnelStripWidget from '../../widgets/AcquisitionFunnelStripWidget.vue';
+import OpsAtAGlanceStripWidget from '../../widgets/OpsAtAGlanceStripWidget.vue';
 import type { KpiSnapshot } from '../../types/index.js';
 
 const router = useRouter();
@@ -153,6 +154,13 @@ function handleKpiClick(kpi: KpiSnapshot): void {
          no other Overview widget is removed, hidden, or relocated per
          the §Non-Negotiable Constraints rule. -->
     <AcquisitionFunnelStripWidget />
+
+    <!-- why: WP-204 §Scope (In) — the ops strip lands immediately after
+         the acquisition strip so all pre-mortem-grouped strips (revenue
+         trend → acquisition → ops) sit in a vertical run. Additive-only:
+         the existing AlertsPanel render below remains byte-identical
+         apart from this single strip insertion. -->
+    <OpsAtAGlanceStripWidget />
 
     <AlertsPanel />
   </div>

@@ -377,13 +377,14 @@ export function mockErrorRateSnapshots(
       ),
     );
     const dailyErrorCount = Math.round(dailyTotalRequests * dailyErrorRate);
+    const dayMidnightMs = dateToUtcMidnightMs(date);
     entries.push({
       date,
       windowSeconds: 86400,
       totalRequests: dailyTotalRequests,
       errorCount: dailyErrorCount,
       errorRate: dailyErrorRate,
-      topSignatures: pickTopSignatures(prng, dailyErrorCount),
+      topSignatures: pickTopSignatures(prng, dailyErrorCount, dayMidnightMs),
     });
 
     // Rolling 1h panel — represents the latest hour of the day in v1.
@@ -405,7 +406,7 @@ export function mockErrorRateSnapshots(
       totalRequests: hourlyTotalRequests,
       errorCount: hourlyErrorCount,
       errorRate: hourlyErrorRate,
-      topSignatures: pickTopSignatures(prng, hourlyErrorCount),
+      topSignatures: pickTopSignatures(prng, hourlyErrorCount, dayMidnightMs),
     });
   }
 
@@ -429,6 +430,7 @@ export function mockErrorRateSnapshots(
 function pickTopSignatures(
   prng: () => number,
   totalErrorCount: number,
+  dayMidnightMs: number,
 ): readonly ErrorSignature[] {
   if (totalErrorCount === 0) {
     return [];
@@ -457,15 +459,17 @@ function pickTopSignatures(
       continue;
     }
     const occurrencesInSlot = counts[i] ?? 1;
-    // Sample two epoch-ms timestamps inside the snapshot's window for
-    // firstSeen / lastSeen; firstSeen <= lastSeen by construction.
+    // Sample two intra-day second offsets and anchor them to the
+    // snapshot's UTC midnight so firstSeen / lastSeen are full
+    // epoch-ms timestamps (not 1970-anchored offsets). firstSeen <=
+    // lastSeen by construction.
     const lateOffsetSeconds = Math.round(sampleRange(prng, 0, 86399));
     const earlyOffsetSeconds = Math.round(sampleRange(prng, 0, lateOffsetSeconds));
     result.push({
       signature: signatureText,
       count: occurrencesInSlot,
-      firstSeen: earlyOffsetSeconds * 1000,
-      lastSeen: lateOffsetSeconds * 1000,
+      firstSeen: dayMidnightMs + earlyOffsetSeconds * 1000,
+      lastSeen: dayMidnightMs + lateOffsetSeconds * 1000,
     });
   }
   // why: WP-204 §Error rate math invariants — top-5 ordering: primary

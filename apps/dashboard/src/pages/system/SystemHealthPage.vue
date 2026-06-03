@@ -5,6 +5,15 @@ import { fetchServerNodes } from '../../services/endpoints.js';
 import { formatUptime } from '../../utils/format.js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+// why: WP-204 §Scope (In) — insert the 3 new ops widgets ABOVE the
+// existing per-node DataTable. The DataTable + `fetchServerNodes`
+// call site below is preserved byte-identical; per-node infrastructure
+// detail remains the page's drill-down for the new domain-level
+// widgets.
+import PublicSurfaceHealthWidget from '../../widgets/PublicSurfaceHealthWidget.vue';
+import ErrorRateMonitorWidget from '../../widgets/ErrorRateMonitorWidget.vue';
+import InfraCostWatchdogWidget from '../../widgets/InfraCostWatchdogWidget.vue';
+import { INFRA_COST_BUDGETS } from '../../config/infraCostBudgets.js';
 
 const { data, loading, error, updatedAt, source } = useFetch(fetchServerNodes);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
@@ -19,6 +28,16 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
         <span class="timestamp">Updated {{ relativeTime }}</span>
       </span>
     </div>
+
+    <!-- why: WP-204 §Scope (In) — the 3 new ops widgets land ABOVE the
+         existing per-node DataTable in vertical layout. Order locked:
+         PublicSurfaceHealth → ErrorRateMonitor → InfraCostWatchdog.
+         `INFRA_COST_BUDGETS` is passed in as a prop so the
+         finance-loop follow-up WP (D-20403) can flip placeholder
+         values without touching the widget or composable. -->
+    <PublicSurfaceHealthWidget />
+    <ErrorRateMonitorWidget />
+    <InfraCostWatchdogWidget :budgets="INFRA_COST_BUDGETS" />
 
     <div v-if="loading && !data" class="page-loading">
       <p>Loading server data...</p>
