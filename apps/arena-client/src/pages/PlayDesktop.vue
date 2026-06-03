@@ -1,9 +1,14 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, type PropType } from 'vue';
 import { storeToRefs } from 'pinia';
-import type { UIDisplayEntry, UIPlayerState } from '@legendary-arena/game-engine';
+import type {
+  UICardDisplay,
+  UIDisplayEntry,
+  UIPlayerState,
+} from '@legendary-arena/game-engine';
 import { useUiStateStore } from '../stores/uiState';
-import { useRevealDetector } from '../composables/useRevealDetector';
+import { useNotableEventStream } from '../composables/useNotableEventStream';
+import type { NotableEventCardLookup } from '../components/play/NotableEventOverlay.vue';
 import {
   getStatus,
   resolveAutoplayGating,
@@ -29,7 +34,7 @@ import YourDeckDiscardZone from '../components/play/YourDeckDiscardZone.vue';
 import YourVictoryPile from '../components/play/YourVictoryPile.vue';
 import TurnActionBar from '../components/play/TurnActionBar.vue';
 import LobbyControls from '../components/play/LobbyControls.vue';
-import RevealOverlay from '../components/play/RevealOverlay.vue';
+import NotableEventOverlay from '../components/play/NotableEventOverlay.vue';
 import PileBrowseModal from '../components/play/PileBrowseModal.vue';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
 
@@ -76,7 +81,7 @@ export default defineComponent({
     YourVictoryPile,
     TurnActionBar,
     LobbyControls,
-    RevealOverlay,
+    NotableEventOverlay,
     PileBrowseModal,
   },
   props: {
@@ -95,7 +100,88 @@ export default defineComponent({
   setup(props) {
     const store = useUiStateStore();
     const { snapshot } = storeToRefs(store);
-    const { currentReveal, dismiss: dismissReveal } = useRevealDetector(snapshot);
+    const { currentEvent: notableEvent, dismiss: dismissNotableEvent } =
+      useNotableEventStream(snapshot);
+
+    // why: the engine's `cardDisplayData` lives on G and is NOT projected as
+    // a top-level UIState field (pre-flight inspection of `uiState.types.ts`
+    // on `main @ 52d64e2`); it surfaces only through per-zone embedded
+    // `display: UICardDisplay` entries. The overlay needs an ext_id → name
+    // lookup for the notable-event card; this computed walks every visible
+    // display-bearing projection in the snapshot and folds them into a
+    // single keyed map. Cards that have already left every visible zone
+    // (e.g., a defeated villain pre-rendered into the active player's
+    // victory pile) still resolve through the same map. Cards that the
+    // viewer cannot see fall back to the raw ext_id per the WP-201
+    // §Scope (In) overlay fallback rule.
+    const notableEventCardLookup = computed<NotableEventCardLookup>(() => {
+      const result: Record<string, UICardDisplay> = {};
+      const current = snapshot.value;
+      if (current === null) return result;
+
+      function store(extId: string | undefined, value: UICardDisplay | undefined): void {
+        if (extId === undefined || value === undefined) return;
+        if (result[extId] === undefined) result[extId] = value;
+      }
+
+      for (const spaceCard of current.city.spaces) {
+        if (spaceCard !== null) store(spaceCard.extId, spaceCard.display);
+      }
+      for (const entry of current.city.escapedPile) {
+        store(entry.extId, entry.display);
+      }
+      store(current.mastermind.display?.extId, current.mastermind.display);
+      for (const entry of current.mastermind.attachedBystanders) {
+        store(entry.extId, entry.display);
+      }
+      for (const entry of current.mastermind.strikePile) {
+        store(entry.extId, entry.display);
+      }
+      if (current.scheme.display !== undefined) {
+        store(current.scheme.display.extId, current.scheme.display);
+      }
+      for (const entry of current.scheme.twistPile) {
+        store(entry.extId, entry.display);
+      }
+      const slotDisplay = current.hq.slotDisplay;
+      if (slotDisplay !== undefined) {
+        for (const slot of slotDisplay) {
+          if (slot !== null) store(slot.extId, slot.display);
+        }
+      }
+      for (const player of current.players) {
+        const handDisplay = player.handDisplay;
+        const handCards = player.handCards;
+        if (handDisplay !== undefined && handCards !== undefined) {
+          for (let index = 0; index < handDisplay.length; index += 1) {
+            store(handCards[index], handDisplay[index]);
+          }
+        }
+        const inPlayDisplay = player.inPlayDisplay;
+        const inPlayCards = player.inPlayCards;
+        if (inPlayDisplay !== undefined && inPlayCards !== undefined) {
+          for (let index = 0; index < inPlayDisplay.length; index += 1) {
+            store(inPlayCards[index], inPlayDisplay[index]);
+          }
+        }
+        const discardTop = player.discardTopCard;
+        if (discardTop !== null && discardTop !== undefined) {
+          store(discardTop.extId, discardTop.display);
+        }
+        if (player.victoryCards !== undefined) {
+          for (const entry of player.victoryCards) {
+            store(entry.extId, entry.display);
+          }
+        }
+      }
+      for (const entry of current.koPile.cards) {
+        store(entry.extId, entry.display);
+      }
+      const koTop = current.koPile.topCard;
+      if (koTop !== null) store(koTop.extId, koTop.display);
+
+      return result;
+    });
 
     // why: the autoplay control bar renders ONLY when the WP-165 status probe
     // confirms an autoplay match (D-16501); a normal PvP match returns 404 and
@@ -202,8 +288,9 @@ export default defineComponent({
       isLobbyPhase,
       isPlayPhase,
       boardVisible,
-      currentReveal,
-      dismissReveal,
+      notableEvent,
+      dismissNotableEvent,
+      notableEventCardLookup,
       matchId: props.matchId,
       autoplayStatus,
       isGameOver,
@@ -258,10 +345,11 @@ export default defineComponent({
            board the moment `phase` flipped to 'end' and had no way to read
            the final piles. -->
       <template v-if="boardVisible">
-        <RevealOverlay
-          :reveal="currentReveal"
-          :duration-ms="2000"
-          @dismiss="dismissReveal"
+        <NotableEventOverlay
+          :event="notableEvent"
+          :card-display-data="notableEventCardLookup"
+          :duration-ms="2500"
+          @dismiss="dismissNotableEvent"
         />
         <section class="play-desktop__opponents" data-testid="play-desktop-opponents">
           <OpponentPanel

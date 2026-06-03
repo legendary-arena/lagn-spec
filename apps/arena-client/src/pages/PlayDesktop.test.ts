@@ -4,10 +4,12 @@ import { describe, test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount, flushPromises } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import type { UIState } from '@legendary-arena/game-engine';
 import PlayDesktop from './PlayDesktop.vue';
 import { useUiStateStore } from '../stores/uiState';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
+import type { NotableGameEvent } from '../composables/useNotableEventStream';
 
 const noopSubmitMove: SubmitMove = () => undefined;
 
@@ -98,6 +100,7 @@ function snapshot(): UIState {
       woundsDrawn: 0,
     },
     log: [],
+    notableEvents: [],
     progress: { bystandersRescued: 1, escapedVillains: 3 },
     decks: { villainDeckCount: 14, heroDeckCount: 42 },
     piles: {
@@ -311,4 +314,80 @@ describe('PlayDesktop autoplay-bar gating (WP-164)', () => {
   // deterministically in autoplayPlayback.test.ts against resolveAutoplayGating
   // with an injected (timer-free) retry delay; mounting the page for those
   // would require a real STATUS_RETRY_DELAY_MS timer (flaky / slow).
+});
+
+describe('PlayDesktop notable-event overlay integration (WP-201)', () => {
+  // why: the composable catches up to `notableEvents.length` on its first
+  // valid frame to prevent re-emission across remount (D-20104). Mounting
+  // with empty `notableEvents`, then pushing a frame carrying the test event,
+  // exercises the steady-state path where a new engine emission propagates
+  // through `UIState.notableEvents` to the overlay.
+  async function mountThenPush(event: NotableGameEvent) {
+    setActivePinia(createPinia());
+    const store = useUiStateStore();
+    store.setSnapshot(snapshot());
+    const wrapper = mount(PlayDesktop, {
+      props: { submitMove: noopSubmitMove },
+    });
+    await flushPromises();
+
+    const nextFrame = snapshot();
+    nextFrame.notableEvents = [event];
+    store.setSnapshot(nextFrame);
+    await nextTick();
+    await nextTick();
+
+    return wrapper;
+  }
+
+  test('fightResolved event mounts the overlay with data-event-type="fightResolved"', async () => {
+    const wrapper = await mountThenPush({
+      type: 'fightResolved',
+      playerId: 'alice',
+      cardId: 'doom-bot',
+      citySpace: 0,
+      bystandersRescued: 1,
+      appliedEffects: [],
+      narrative: 'Fought "doom-bot" and rescued 1 bystander(s).',
+    });
+    const overlay = wrapper.find('[data-testid="play-notable-event-overlay"]');
+    assert.equal(overlay.exists(), true);
+    assert.equal(overlay.attributes('data-event-type'), 'fightResolved');
+  });
+
+  test('ambushResolved event mounts the overlay with data-event-type="ambushResolved"', async () => {
+    const wrapper = await mountThenPush({
+      type: 'ambushResolved',
+      revealedCardId: 'hand-ninja',
+      citySpace: 2,
+      appliedEffects: ['gainWoundCurrentPlayer'],
+      narrative: '"hand-ninja" ambushed: the active player gained a wound.',
+    });
+    const overlay = wrapper.find('[data-testid="play-notable-event-overlay"]');
+    assert.equal(overlay.exists(), true);
+    assert.equal(overlay.attributes('data-event-type'), 'ambushResolved');
+  });
+
+  test('schemeTwistResolved event mounts the overlay with data-event-type="schemeTwistResolved"', async () => {
+    const wrapper = await mountThenPush({
+      type: 'schemeTwistResolved',
+      twistCardId: 'scheme-twist-aa',
+      resolverKey: 'woundAll',
+      narrative: 'Scheme Twist "scheme-twist-aa": every player gained wounds.',
+    });
+    const overlay = wrapper.find('[data-testid="play-notable-event-overlay"]');
+    assert.equal(overlay.exists(), true);
+    assert.equal(overlay.attributes('data-event-type'), 'schemeTwistResolved');
+  });
+
+  test('mastermindStrikeResolved event mounts the overlay with data-event-type="mastermindStrikeResolved"', async () => {
+    const wrapper = await mountThenPush({
+      type: 'mastermindStrikeResolved',
+      strikeCardId: 'master-strike-03',
+      narrative: 'Master Strike: "master-strike-03" resolved.',
+    });
+    const overlay = wrapper.find('[data-testid="play-notable-event-overlay"]');
+    assert.equal(overlay.exists(), true);
+    assert.equal(overlay.attributes('data-event-type'), 'mastermindStrikeResolved');
+  });
 });

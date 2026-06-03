@@ -20945,4 +20945,484 @@ WP-186 `escapeResolved` extension per D-20001).
 
 ---
 
+### D-20101 — `useNotableEventStream` Replaces `useRevealDetector`; Bystander String-Parse Permanently Removed from the Arena Client
+
+**Decision:**
+The arena-client's reveal-overlay data path is cut over from the legacy
+snapshot-diff + log-string-match implementation
+(`useRevealDetector.ts` + `RevealOverlay.vue`) to a structured-event
+consumer (`useNotableEventStream.ts` + `NotableEventOverlay.vue`) reading
+`UIState.notableEvents` (the WP-200 typed projection). The legacy files
+are unconditionally deleted in the same commit — no deprecation comment,
+no re-export shim, no parallel surfaces. The arena-client never again
+parses `UIState.log` to identify reveal destinations.
+
+**Rationale:**
+`useRevealDetector` identified reveal destinations by diffing the
+villain-deck count between snapshots, then walking the city slots to
+find the entry index, the scheme twistPile for length-grows, the
+mastermind strikePile for length-grows, and — for bystander reveals —
+calling `message.toLowerCase().includes('bystander')` on each new
+`UIState.log` entry. That string-match shape was fragile in three
+specific ways: (a) any future log-message rewording (capitalisation,
+phrasing, punctuation) silently broke the match, with no test coverage
+that would catch it; (b) it only covered the one destination the engine
+happened to emit a recognisable log line for, leaving Fight resolutions
+with no overlay at all; (c) it forced the UI to reverse-engineer
+semantics the engine already knows — a D-20002 / D-20105 violation in
+spirit (the engine is the source of event truth). WP-200 shipped the
+structured `UIState.notableEvents` projection precisely so the UI could
+drop this parsing surface, and WP-201 cashes in that contract.
+
+Maintaining both code paths in parallel — a "soft deprecation" where the
+legacy detector kept firing alongside the new composable — was
+considered and rejected. Two surfaces means two divergence vectors and
+two maintenance burdens; the structured projection IS the contract going
+forward, and the legacy path's failure modes (above) are exactly what
+WP-201 exists to fix. Clean delete is the contract.
+
+**Alternatives rejected:**
+- **Soft-deprecate the legacy detector + overlay** (keep them as
+  fallback) — rejected because the bystander-string match would
+  silently mask the new overlay's coverage gaps, and two parallel
+  surfaces create a divergence-debt class.
+- **Re-export `RevealEvent` type alias from the new composable** for
+  backwards compatibility — rejected because no other consumer existed;
+  `PlayDesktop.vue` was the only call site. A re-export would
+  semi-permanently document a deprecated surface.
+- **Retain the bystander-reveal flash path under a separate
+  `useBystanderRevealDetector` composable** — rejected because WP-200's
+  `NotableGameEvent` union deliberately closes at four variants
+  (D-20001) and bystander-reveal flash is out of scope per WP-201
+  §Out of Scope. A future WP may add a fifth variant + composable
+  surface if requested; today's clean delete does not preclude that.
+
+**Implications:**
+- `apps/arena-client/src/composables/useRevealDetector.ts` is deleted.
+- `apps/arena-client/src/components/play/RevealOverlay.vue` is deleted.
+- The strict-delete grep gate (`grep -rn "useRevealDetector\|RevealOverlay"
+  apps/arena-client/src` → zero matches) is binding for this WP and
+  for every future arena-client WP — re-introducing either symbol by
+  literal name (in any extension, including comments / JSDoc / string
+  literals) is a regression and requires a new D-entry to overturn.
+- Bystander reveals continue to occur in the engine and surface via
+  `UIState.log`; the structured overlay does not cover them. A future
+  WP may add a fifth `NotableGameEventType` variant if the operator
+  decides bystander-reveal flashes should return.
+
+**Implementation locations:**
+- `apps/arena-client/src/composables/useNotableEventStream.ts` (new) —
+  replacement composable.
+- `apps/arena-client/src/components/play/NotableEventOverlay.vue` (new)
+  — replacement overlay.
+- `apps/arena-client/src/pages/PlayDesktop.vue` — rewired to the new
+  composable + overlay; legacy reveal-pattern reference sites all
+  rewritten or removed.
+- Deleted: `apps/arena-client/src/composables/useRevealDetector.ts`,
+  `apps/arena-client/src/components/play/RevealOverlay.vue`.
+
+**Packet:** WP-201 (EC-228).
+
+**Drafted:** 2026-06-02 (execution close).
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20102 — Humanised Effect-Label Map LOCKED to Five `VILLAIN_EFFECT_KEYWORDS` Entries; Additions Track With the Engine; Unknown Keywords Render the Raw Keyword
+
+**Decision:**
+The arena-client's humanised effect-label map in
+`NotableEventOverlay.vue` is LOCKED to exactly five entries matching the
+v1 `VILLAIN_EFFECT_KEYWORDS` shipped by WP-185:
+
+- `gainWoundEachPlayer` → `"Each player gains a Wound"`
+- `gainWoundCurrentPlayer` → `"You gain a Wound"`
+- `koHeroCurrentPlayer` → `"KO a Hero"`
+- `heroDeckTopToEscape` → `"Hero deck top escapes"`
+- `captureBystander` → `"Captures a Bystander"`
+
+When the engine emits a `VillainEffectKeyword` the arena-client's locked
+map does not recognise (already the case for `koHeroEachPlayer` added by
+WP-189; possible again for any future engine widening ahead of an
+arena-client bundle), the overlay renders the raw keyword string
+verbatim. Silent-skip — dropping the unknown keyword from the rendered
+badge row — is forbidden.
+
+**Rationale:**
+The locked five-entry map exists for two reasons. First, the labels
+themselves are user-facing English copy and benefit from being
+spec-locked (the engine's narrative composer in
+`events/notableEvents.compose.ts` produces a different phrasing
+optimised for in-narrative reading; the overlay's badge labels are
+optimised for at-a-glance scanning and are deliberately tuned
+separately). Second, locking the map at WP-185's v1 set means future
+engine widenings (already realised by WP-189's `koHeroEachPlayer`) are
+handled by the totality fallback rather than silently broken — the
+arena-client renders the raw keyword and the operator sees that
+something new is firing, which is a discoverable surface for "the
+engine added a keyword, time to add the corresponding label." The
+alternative (sync the map to the engine's current vocabulary in every
+WP) imposes a coupling tax with no engineering benefit — the overlay's
+human labels are independent of the engine's machine keywords.
+
+Silent-skip — dropping an unknown keyword from the rendered output
+entirely — was considered and rejected. Silent-skip would hide real
+data: the engine emitted an effect, the executor applied it, the player
+suffered or benefited from it, and yet the overlay would say nothing
+about it. The raw-keyword fallback preserves the data even when the
+human label is missing.
+
+**Alternatives rejected:**
+- **Match the engine's full `VILLAIN_EFFECT_KEYWORDS` vocabulary
+  byte-for-byte** — rejected because the labels diverge from the
+  engine's narrative phrasing by design (badge-scanning vs.
+  in-narrative reading), and bundle-ordering forces a totality strategy
+  anyway (the arena-client bundle can predate the engine bundle that
+  introduced a new keyword).
+- **Silent-skip unknown keywords** — rejected because it hides real
+  data; the raw-keyword fallback is strictly more honest.
+- **Throw on unknown keyword** — rejected because the overlay is a
+  presentational surface and must never break the play frame on a
+  recoverable data condition.
+
+**Implications:**
+- Adding a sixth label requires a new WP that updates the locked-five
+  map plus an `// why:` comment on the new entry. The grep gate in
+  EC-228 §After Completing (`grep -nc "koHeroCurrentPlayer\|...
+  apps/arena-client/src/components/play/NotableEventOverlay.vue"`) pins
+  the current vocabulary; adding a sixth bumps the expected count.
+- Engine bundle widening ahead of arena-client bundle (today's state
+  for `koHeroEachPlayer`) is handled by the totality fallback at
+  runtime — the operator sees the raw keyword string in the badge row.
+- The 5-entry totality test (`unknown-keyword fallback`) in
+  `NotableEventOverlay.test.ts` is binding: any future map widening must
+  preserve the raw-keyword behaviour for keywords still outside the
+  map.
+
+**Implementation locations:**
+- `apps/arena-client/src/components/play/NotableEventOverlay.vue`
+  `EFFECT_LABELS` constant + `effectLabel()` function with the
+  fallback path.
+- `apps/arena-client/src/components/play/NotableEventOverlay.test.ts`
+  `locked humanised effect-label map` describe block (5 entries) +
+  `unknown-keyword fallback` describe block.
+
+**Packet:** WP-201 (EC-228).
+
+**Drafted:** 2026-06-02 (execution close).
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20103 — Fight Events Use the Villain Border Colour; Chip Label `"Fought"` Locked
+
+**Decision:**
+The `NotableEventOverlay.vue` renders Fight events
+(`type: 'fightResolved'`) with the chip label `"Fought"` and the border
+colour bound to the CSS custom property `--color-villain`. Ambush events
+share the same `--color-villain` binding (per below). Scheme Twist events
+bind to `--color-scheme-twist`. Master Strike events bind to
+`--color-master-strike`. The chip-label map is locked at four entries
+total: `fightResolved` → `"Fought"`, `ambushResolved` → `"Ambush!"`,
+`schemeTwistResolved` → `"Scheme Twist!"`, `mastermindStrikeResolved` →
+`"Master Strike!"`.
+
+**Rationale:**
+Defeating a villain is semantically a villain-coloured event: the card
+that just resolved IS a villain (or a henchman, which renders in
+villain-coloured ranks today). The pre-WP-201 `RevealOverlay` reserved
+`--color-villain` (purple) for the "city" destination — meaning any
+villain entering the city was the only purple event in the overlay
+vocabulary. WP-201 adds the missing Fight overlay and extends the same
+villain colour to Fight + Ambush because both events centre on a villain
+(or henchman): Fight = a villain defeated; Ambush = a villain entered the
+city with an ability firing. Scheme Twist gets its own gold
+(`--color-scheme-twist`) and Master Strike gets red
+(`--color-master-strike`), preserving the legacy two-colour vocabulary
+for those destinations.
+
+The chip label `"Fought"` (past-tense verb) was chosen over alternatives
+like `"Fight!"` (imperative) or `"Defeated"` (verb but ambiguous about
+the defeating direction) to match the engine narrative composer's tense
+posture (`composeFightNarrative` produces `Fought "<name>" ...`) and to
+keep the operator's mental model byte-aligned across the chip and the
+narrative.
+
+**Alternatives rejected:**
+- **`"Fight!"` (imperative)** — rejected because the event is
+  post-resolution (D-20006 — events emit AFTER state mutation), so the
+  past-tense verb matches the temporal posture of the surfaced data.
+- **`"Defeated"` (past-tense but ambiguous)** — rejected because
+  "defeated" by itself doesn't specify direction; the engine narrative
+  uses `Fought "<name>"` which establishes the player as the actor.
+- **Fight uses a new dedicated colour (e.g., `--color-fight` green)** —
+  rejected because Fight is a villain-coloured event by design (the
+  resolved card is a villain or henchman); introducing a new CSS custom
+  property would require adding a theme variable that no other
+  consumer benefits from.
+
+**Implications:**
+- Adding a fifth `NotableGameEventType` variant (e.g., WP-186's
+  `escapeResolved`) requires a new D-entry adding the chip label + the
+  border-colour binding. The existing 4-entry chip-label map and
+  border-colour map are locked; widening them is a contract change.
+- Theme overrides (CSS custom property definitions in the consuming
+  app's stylesheet) can change the visual border colour without
+  touching the overlay code — the `--color-villain` / `--color-scheme-
+  twist` / `--color-master-strike` bindings are stable contracts.
+- The chip-label string is part of the user-facing English copy and is
+  test-pinned by the `locked chip labels` describe block in
+  `NotableEventOverlay.test.ts`. Re-wording the chip is a spec change
+  requiring a new D-entry.
+
+**Implementation locations:**
+- `apps/arena-client/src/components/play/NotableEventOverlay.vue`
+  `CHIP_LABELS` constant + `data-event-type`-keyed CSS border bindings.
+- `apps/arena-client/src/components/play/NotableEventOverlay.test.ts`
+  `locked chip labels` describe block (4 entries).
+
+**Packet:** WP-201 (EC-228).
+
+**Drafted:** 2026-06-02 (execution close).
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20104 — Composable Contract: FIFO Queue + Consumption Cursor; No Synthetic Metadata; `eventCardId` Helper Is the Single Per-Variant Id-Resolution Surface
+
+**Decision:**
+`useNotableEventStream(snapshot)` maintains an internal FIFO queue of
+unseen events plus a consumption cursor (the first `notableEvents`
+array index the composable has not yet ingested). The cursor is the
+load-bearing re-emission gate: events with array index `< cursor` MUST
+NOT re-emit under any condition (component remount, snapshot
+reactivity reset, Vue HMR, wholesale snapshot reference replacement,
+or any combination thereof). Length-diff alone is INSUFFICIENT.
+
+The composable exposes the engine event directly as `NotableGameEvent`
+(structurally derived from `UIState['notableEvents'][number]`). No
+wrapper interface (no `NotableEventStreamEvent`), no synthetic
+metadata (no client-side clocks, no client-generated IDs, no derived
+identity fields like `eventId` / `generatedAt` / timestamp). Event
+identity is the array index and the cursor's progression IS the
+identity model.
+
+The exported pure helper `eventCardId(event: NotableGameEvent): string`
+is the single per-variant id-resolution surface. The overlay template,
+the overlay tests, and any future consumer call it; inline ternaries
+over the per-variant id fields are forbidden in any consumer except
+the helper itself.
+
+The composable owns the auto-dismiss timer at a hardcoded 2500 ms
+(matches the locked overlay `durationMs` default). Mounting a new
+event unconditionally clears any in-flight timer before starting a
+fresh one — never two timers in flight, regardless of how the previous
+event ended (manual `dismiss()` or auto-fire). Manual dismiss mid-timer
+yields a full fresh 2500 ms window for the next event, not the
+remainder.
+
+**Rationale:**
+The cursor strategy survives both length-diff failure modes (component
+remount on the same snapshot ref: a fresh composable instance sees the
+populated array and length-diff says "everything is new" → re-emission)
+AND snapshot reactivity reset (a host store replaces the snapshot ref
+wholesale, length resets to whatever the new ref carries → length-diff
+says "everything is new"). On the composable's first valid frame, the
+cursor catches up to `notableEvents.length` so a remount against a
+populated snapshot does not replay history — this is the load-bearing
+behaviour that lets the composable be Vue-lifecycle-friendly without
+sacrificing the no-re-emission invariant. Engine append-only
+(D-20004) is the upstream invariant that makes the cursor strategy
+work: the array never shrinks, so `length` is a monotonically
+non-decreasing high-water mark.
+
+Synthetic metadata was rejected because: (a) the engine is the source
+of event truth (D-20002 / D-20105) and any client-side identity field
+would be a parallel-truth surface that drifts; (b) timestamps are
+non-deterministic (`Date.now()` is wall-clock and violates
+determinism; `performance.now()` is high-resolution but still
+nondeterministic); (c) client-generated IDs add no information beyond
+the array index and create a memory-management burden when events
+drain. The array index IS the identity.
+
+The `eventCardId` helper centralises per-variant id-field branching
+because inline ternaries (`event.cardId ?? event.revealedCardId ?? ...`)
+drift across consumers — adding a fifth variant requires touching every
+inline site, and missing one is a silent runtime bug. The helper is the
+single update point; consumers grep-verifiably do not inline the
+ternary.
+
+The single-timer invariant (composable-owned timer, unconditional clear
+on every event boundary) prevents two timer regressions: (a) overlapping
+timers from fast-fire dismiss / advance, leaking timer handles and
+producing UI flicker (an event displays for less than the full duration
+because the prior event's timer is still scheduled); (b) timer leakage
+across component unmount, where the unmounted composable's timer fires
+into a destroyed Vue scope.
+
+**Alternatives rejected:**
+- **Length-diff alone (no cursor)** — rejected because it fails on
+  component remount (fresh composable instance sees full array as
+  new) and on snapshot reactivity reset (host store replaces ref).
+- **`WeakSet` of seen event references** — rejected because snapshot
+  reactivity may produce different `NotableGameEvent` object
+  references for the same logical event across frames (host store
+  rebuilds projections); WeakSet identity fails open.
+- **Wrapper interface (`NotableEventStreamEvent`) with synthetic
+  metadata** — rejected because the wrapper duplicates the engine
+  contract and creates a parallel-truth surface; consumers would
+  have to unwrap to reach engine fields anyway.
+- **Inline per-variant ternaries in consumers** — rejected because the
+  helper is the single update point for adding a fifth variant; inline
+  ternaries fragment the contract.
+- **Timer in the overlay (legacy pattern)** — rejected because the
+  composable's `dismiss()` contract pairs naturally with a
+  composable-owned timer; splitting the timer across composable
+  (dismiss) + overlay (auto-fire) creates two queue-progression paths
+  and a coordination burden.
+
+**Implications:**
+- Adding a fifth `NotableGameEventType` variant requires adding a
+  branch in `eventCardId` for the new variant's id field. The
+  composable's queue + cursor + timer mechanics are unchanged.
+- The composable's `caughtUp` flag is set on the first valid frame
+  (snapshot non-null + `notableEvents` defined). A new composable
+  instance against an already-populated snapshot ref catches up to
+  the current length and does not re-emit history.
+- Vue HMR that disposes + re-creates the composable on the same
+  snapshot ref does not re-emit consumed events. The `no-re-emission
+  after consume` test in `useNotableEventStream.test.ts` is the
+  regression guard.
+- The 2500 ms hardcoded auto-dismiss duration is internal; the
+  overlay's `durationMs` prop (locked default 2500) is a parallel
+  declaration that matches by convention. Future visual-only changes
+  to the prop (e.g., driving a progress-bar CSS animation) do not
+  affect the queue advance.
+
+**Implementation locations:**
+- `apps/arena-client/src/composables/useNotableEventStream.ts` —
+  `cursor` + `caughtUp` + `queue` + `timerHandle` declarations; `watch`
+  handler with safe-skip + first-frame catch-up + sequential ingest;
+  `advance()` + `startTimer()` + `clearTimer()` + `dismiss()` + the
+  exported `eventCardId(event)` helper + the `AUTO_DISMISS_MS = 2500`
+  constant.
+- `apps/arena-client/src/composables/useNotableEventStream.test.ts` —
+  `safe-skip branches`, `diff detection`, `multi-event index-order`,
+  `snapshot-gap recovery`, `no re-emission after consume`,
+  `dismiss() advances queue`, `single-timer invariant`, and
+  `eventCardId helper` describe blocks.
+
+**Packet:** WP-201 (EC-228).
+
+**Drafted:** 2026-06-02 (execution close).
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
+### D-20105 — UI Layer Does Not Interpret Notable-Event Semantics (Extension of D-20002 to All Event Interpretation)
+
+**Decision:**
+The `NotableEventOverlay.vue` (and any future consumer of the
+`useNotableEventStream` composable) MUST NOT derive meaning from
+notable-event fields beyond rendering the engine-provided values.
+Branching in the overlay is permitted ONLY for two narrowly-defined
+purposes:
+
+1. **Per-event-type styling** — border colour binding (data-event-type
+   CSS selector) and chip-label lookup (per D-20103).
+2. **Presence / absence of the applied-effect badge row** — Fight +
+   Ambush events render the badge row when `appliedEffects.length > 0`;
+   Twist + Strike never render the row (D-20005). The badge row is
+   omitted entirely when `appliedEffects` is empty (no wrapper element).
+
+The overlay MUST NOT:
+- Reword, truncate, or transform the `narrative` field (D-20002
+  extension — render via Vue text interpolation only).
+- Conditionally style or annotate effects based on their semantics
+  (e.g., "if `appliedEffects` includes `koHeroCurrentPlayer`, append a
+  'critical' badge class").
+- Derive `resolverKey`-based copy (e.g., infer scheme-twist severity
+  from the resolver identity).
+- Surface synthetic event categories (e.g., "this was a 'critical'
+  ambush because three effects fired").
+
+**Rationale:**
+D-20002 establishes that the engine is the source of narrative truth.
+D-20105 extends that authority from narrative composition to ALL event
+interpretation. The overlay is a pure rendering surface; semantics live
+in the engine. This is a Layer Boundary rule for the UI ↔ engine seam
+specific to the notable-events stream.
+
+Two failure modes motivate the rule. First, the legacy `useRevealDetector`
+violated it: the client matched `message.toLowerCase().includes('bystander')`
+to derive a destination, which is semantic interpretation. The new
+contract closes that hole — the engine emits the destination directly
+via the discriminator `type`. Second, future overlay-side feature
+requests will likely tempt the implementer to "just add a small
+conditional" for emphasis (a critical-badge style for KO effects, a
+chained-reveal banner for compound Twist events, etc.). The rule
+forbids that drift: any emphasis or annotation lives in the engine's
+narrative composition + structured payload, not in the overlay's
+template.
+
+The two permitted branches (per-event-type styling + applied-effect
+presence) are styling concerns by design and do not derive new meaning
+— they map engine-provided variant data to visual treatment.
+
+**Alternatives rejected:**
+- **Allow narrative truncation in the overlay** — rejected because
+  the engine composer (`composeFightNarrative` et al.) already
+  produces single-sentence English narratives byte-stable for replay;
+  client-side truncation would diverge across viewport widths and
+  break the replay-deterministic visual contract.
+- **Allow client-side severity annotations** — rejected because
+  severity is a semantic call that belongs to the engine; adding it
+  client-side forks the source-of-truth surface.
+- **Restrict the overlay to a pure data render with no styling** —
+  rejected because per-event-type colour cues are an accessibility
+  feature (visual scanability for colour-vision-typical players) and
+  the chip label is a user-facing English copy that benefits from a
+  presentation-layer lock.
+
+**Implications:**
+- Adding a fifth `NotableGameEventType` variant requires adding the
+  variant's chip-label + border-colour binding (per D-20103) but does
+  NOT permit adding semantic branching keyed on the new variant's
+  payload fields beyond presence / absence styling.
+- Future "emphasis" features (e.g., a critical-badge for high-impact
+  effects) must originate in the engine — either via a new
+  `severity?: 'low' | 'high'` field on the event payload (a contract
+  change requiring its own WP + D-entry) or via narrative composition
+  that conveys the emphasis in text.
+- The grep gate enforcing this is structural rather than syntactic:
+  reviewer / copilot-check audit reads the overlay template + script
+  and confirms branches are limited to per-type-styling +
+  appliedEffects-presence. The `UI-does-not-interpret-events guard`
+  `// why:` comment in `NotableEventOverlay.vue` documents the rule
+  in-code.
+
+**Implementation locations:**
+- `apps/arena-client/src/components/play/NotableEventOverlay.vue` —
+  the `appliedEffects` computed (variant-narrowed via the
+  fightResolved / ambushResolved discriminator check; this IS the
+  styling-presence branch permitted by D-20105) and the
+  `data-event-type` CSS selector pattern.
+- `apps/arena-client/src/components/play/NotableEventOverlay.test.ts`
+  — the `does NOT render an effect-badge row for Scheme Twist /
+  Master Strike events` tests (assert the badge-presence rule
+  matches D-20005) and the `narrative is rendered verbatim` test
+  (assert no client-side rewording).
+
+**Packet:** WP-201 (EC-228).
+
+**Drafted:** 2026-06-02 (execution close).
+**Landed:** 2026-06-02.
+**Status:** Active
+
+---
+
 Protect this file.
