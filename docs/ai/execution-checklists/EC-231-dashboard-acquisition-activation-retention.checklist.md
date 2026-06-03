@@ -17,7 +17,7 @@
 2. **Sub-task B — Mock service + composables**
    - New `services/analyticsMocks.ts` (3 factories, `hashRange`-seeded determinism, `wrapMock<T>` per existing precedent).
    - Re-exports added to `services/mocks.ts`.
-   - 3 new composables (`useTrafficSources`, `useActivationFunnel`, `useRetentionCohorts`) + 3 test files (≥ 5 tests each = ≥ 15 net-new tests).
+   - 3 new composables (`useTrafficSources`, `useActivationFunnel`, `useRetentionCohorts`) + 3 test files (≥ 7 tests each = ≥ 21 net-new tests; the bump from 5 → 7 reflects the locked Composable Source Contract passthrough test + 1-2 new invariant tests per composable from WP-203 §Behavior / Determinism).
    - Gate: build + test exit 0; mock determinism test passes.
 3. **Sub-task C — Widgets + page wiring**
    - 4 new widgets (3 full for `/players`; 1 strip for `/overview`).
@@ -53,6 +53,13 @@ A, B, C MAY land as one session-internal commit chain (`EC-231:` prefix per `01.
 - Mock-mode-first: every widget carries `source: 'MOCK'` freshness badge per WP-197 D-19702 (D-20302).
 - Forward-contract: `AnalyticsEvent` envelope shape is closed at 5 fields; WP-205 consumes verbatim (D-20301).
 - Strip widget link: `AcquisitionFunnelStripWidget`'s "View full funnel →" routes to `/players`.
+- Composable Source Contract: all 3 composables accept `() => ServiceResponse<readonly T[]>` and surface `source` + `updatedAt` in their returns.
+- Aggregation rule: daily discrete counts (NOT cumulative); UTC-normalized; series sorted ascending via Unicode code-unit comparison; canonical iteration order.
+- Conversion invariants: step-to-step = `step[n+1] / step[n]`; overall = `step[3] / step[0]`; overall ≠ product of step-to-step.
+- Retention definition: "return" = any event with same `user_id` after signup; Day-N counted if ≥ 1 event exists that UTC day; per-user-per-day return is a boolean.
+- Determinism scope: mock output is a pure function of `DateRange` (traffic / funnel) and `cohortCount` (retention); iteration order is canonical via `ACQUISITION_CHANNELS` / `ACTIVATION_STEPS`.
+- Empty-state rule: empty datasets drop to the explicit `empty` arm of the 4-state Widget Contract; per-widget thresholds in WP-203 §Widget Data Requirements.
+- Strip `paid` collapse: if `paid` summed = 0 across the window, exclude `paid` from the pill row and rebalance remaining pills to sum to 100%.
 
 ## Guardrails
 
@@ -60,7 +67,14 @@ A, B, C MAY land as one session-internal commit chain (`EC-231:` prefix per `01.
 
 - **All v1 data is mock.** Every widget reads from `analyticsMocks.ts`. Any production-data fetch in a widget = HARD FAIL.
 - **No PII surfaces.** No email / handle / IP / fingerprint in any mock, composable, or widget. `user_id` is an anonymized opaque string.
-- **Forward-locked envelope (D-20301).** The 5-field `AnalyticsEvent` shape is closed; future per-event-type properties ride on the open `properties` field. Widening / narrowing the envelope here is OUT OF SCOPE (belongs in WP-205).
+- **Forward-locked envelope (D-20301).** The 5-field `AnalyticsEvent` shape is closed; future per-event-type properties ride on the open `properties` field. Widening / narrowing the envelope here is OUT OF SCOPE (belongs in WP-205). **`AcquisitionEventType` union is reserved for funnel events only** (channels ∪ steps ∪ `'retention-return'`); non-funnel event types get a separate union, not bloat on this one.
+- **Composable Source Contract (hard).** All 3 composables accept `() => ServiceResponse<readonly T[]>` (NOT `() => readonly T[]`). The composable reads `.data` internally; it MUST preserve `.source` and `.updatedAt` in its returned object. Stripping `ServiceResponse` at the composable boundary = HARD FAIL (breaks the MOCK → LIVE swap symmetry WP-205 depends on).
+- **Aggregation rule (locked).** `TrafficSource[]` and `ActivationFunnelStep[]` are **per-day discrete counts (NOT cumulative)**; each `date` is a closed daily UTC bucket via `normalizeRange`. Series MUST be sorted ascending by `date` via Unicode code-unit comparison (no `localeCompare`). Per-channel / per-step assembly MUST iterate the canonical drift-pinned array — NOT `Object.keys()` of a derived map.
+- **Conversion invariants (locked).** Step-to-step = `stepCounts[ACTIVATION_STEPS[n+1]] / stepCounts[ACTIVATION_STEPS[n]]`. Overall = `stepCounts['first-match-completed'] / stepCounts['signup-start']` (the literal end-to-end ratio). Overall MUST NOT be computed as the product of step-to-step ratios — that silently diverges under rounding and creates a display mismatch.
+- **Retention definition (locked).** A "return" is any event with the same `user_id` occurring **after** signup (`event_type === 'signup-complete'`). Day-N return is counted if at least one event exists for that `user_id` on that UTC day. No deduplication beyond existence (per-user-per-day return is a boolean). `day1ReturnCount` and `day7ReturnCount` count distinct `user_id`s in the cohort with the corresponding boolean true.
+- **Determinism scope (hard).** Mock outputs are a pure function of: `DateRange` (traffic / funnel) and `cohortCount` (retention). No other external state (system clock, env vars, JS iteration order, ambient locale / timezone) may influence output. `Date.now()` is allowed ONLY in `wrapMock`'s `updatedAt`. Iteration order MUST be canonical via `ACQUISITION_CHANNELS` / `ACTIVATION_STEPS`.
+- **Empty-state rule.** Empty datasets MUST drop the widget to the explicit `empty` arm of the 4-state Widget Contract — NOT a flat-line chart, NOT a degenerate axis, NOT a funnel diagram with all stages = 0. Per-widget thresholds locked in WP-203 §Widget Data Requirements. `AcquisitionFunnelStripWidget` MUST hide its pill row entirely in empty state (do NOT render zero-percent pills).
+- **Strip channel collapse (locked).** If `paid` `visitorCount` summed across the 14-day window is `0`, `AcquisitionFunnelStripWidget` excludes `paid` from the pill row entirely AND recomputes the remaining percentages over `direct + search + referral` so they still sum to 100%. If `paid` summed > 0, all 4 pills render at their actual percentage.
 - **Each-channel ≠ each-step (semantic separation).** `AcquisitionChannel` (4 values) and `ActivationStep` (4 values) are distinct closed unions. Do NOT collapse them into a single union.
 - **Drift-pinned arrays.** Adding a 5th channel without updating BOTH `ACQUISITION_CHANNELS` array AND `AcquisitionChannel` union = FAIL (drift test catches it).
 - **Zero-denominator guard.** All rate computations check the denominator BEFORE division; zero returns `0`, never `NaN`.
@@ -87,6 +101,12 @@ A, B, C MAY land as one session-internal commit chain (`EC-231:` prefix per `01.
 - `ACQUISITION_CHANNELS` + `ACTIVATION_STEPS` canonical arrays — `// why:` citing WP-198's `KPI_STATUSES` drift-detection precedent and pointing at `utils/funnelTaxonomy.test.ts` as the enforcement site.
 - `analyticsMocks.ts` per-factory function — `// why:` citing D-19605 (hashRange-seeded determinism) and D-20302 (mock-mode-first per WP-197 D-19702).
 - Each composable's zero-denominator guard — `// why:` explaining that `0` (not `NaN`) is the meaningful empty-data return per D-19908 numeric-zero semantics carry-forward.
+- Each composable's `source` / `updatedAt` passthrough — `// why:` citing WP-203 §Composable Source Contract (extends D-19607 Shared Source Contract pattern): widgets read freshness from the composable's returned `source` / `updatedAt`, not from the service layer directly; this is what makes the MOCK → LIVE swap a getter-only change in WP-205.
+- `useTrafficSources` ascending-by-date sort — `// why:` citing §Aggregation rule: `YYYY-MM-DD` strings sort correctly under Unicode code-unit comparison; `localeCompare` is forbidden per D-19605 / D-19904 because it introduces ambient-locale dependence.
+- `useActivationFunnel.overallConversion` literal-ratio computation — `// why:` citing §Conversion invariants: product-of-step-ratios silently diverges from the literal end-to-end ratio under rounding, which would cause the funnel footer to disagree with the per-stage tooltip; the literal `stepCounts['first-match-completed'] / stepCounts['signup-start']` is the load-bearing formula.
+- `analyticsMocks.ts` per-factory canonical iteration — `// why:` citing §Determinism scope: iterate `ACQUISITION_CHANNELS` / `ACTIVATION_STEPS` in canonical array order (NOT `Object.keys()` of a derived map) so the output is byte-identical across JS runtimes regardless of object-key insertion-order behavior.
+- `AcquisitionFunnelStripWidget` `paid`-collapse branch — `// why:` citing §Strip channel collapse: when summed `paid` visitors = 0, the pill row excludes `paid` entirely and rebalances `direct + search + referral` to sum to 100% — never render a zero-percent pill (it's visual noise).
+- Each widget's empty-state arm — `// why:` citing §Empty-state rule + §Widget Data Requirements: per-widget data-requirement threshold drops the widget to the explicit `empty` arm (NOT a flat chart, NOT a degenerate axis); the WP-157 reference implementations are the visual contract.
 - `useRetentionCohorts` tie-break logic — `// why:` explaining the deterministic lexical-descending tie-break on `cohortWeek` (mirrors D-18902 lexical-iteration discipline pattern).
 - Each widget's `v-if="state ===` block — `// why:` referencing WP-196 Widget State Gate Pattern (D-19608 adapted for non-chart widgets).
 - `AcquisitionFunnelStripWidget` router-link — `// why:` explaining why the strip links to `/players` (depth on demand; the full funnel widgets live there).
@@ -103,9 +123,9 @@ A, B, C MAY land as one session-internal commit chain (`EC-231:` prefix per `01.
 
 - `apps/dashboard/src/services/analyticsMocks.ts` — **new** — 3 factories (`mockTrafficSources`, `mockActivationFunnel`, `mockRetentionCohorts`); `hashRange`-seeded; `wrapMock<T>`; `source: 'MOCK'`.
 - `apps/dashboard/src/services/mocks.ts` — **modified** — re-export the 3 new factories per `billingHealthMocks` precedent.
-- `apps/dashboard/src/composables/useTrafficSources.ts` + `.test.ts` — **new** — per-channel totals + signup conversion derivations; ≥ 5 tests.
-- `apps/dashboard/src/composables/useActivationFunnel.ts` + `.test.ts` — **new** — step-to-step + overall conversion; ≥ 5 tests.
-- `apps/dashboard/src/composables/useRetentionCohorts.ts` + `.test.ts` — **new** — per-cohort + averages + best-cohort selection with deterministic tie-break; ≥ 5 tests.
+- `apps/dashboard/src/composables/useTrafficSources.ts` + `.test.ts` — **new** — per-channel totals + signup conversion derivations + ascending-by-date series sort (Unicode code-unit) + `source` / `updatedAt` passthrough; accepts `() => ServiceResponse<readonly TrafficSource[]>`; ≥ 7 tests.
+- `apps/dashboard/src/composables/useActivationFunnel.ts` + `.test.ts` — **new** — step-to-step + literal-end-to-end overall conversion (NOT product of stages) + all-4-steps normalization + `source` / `updatedAt` passthrough; accepts `() => ServiceResponse<readonly ActivationFunnelStep[]>`; ≥ 7 tests.
+- `apps/dashboard/src/composables/useRetentionCohorts.ts` + `.test.ts` — **new** — per-cohort + averages + best-cohort selection with deterministic tie-break + `source` / `updatedAt` passthrough + mock-output-is-pure-function-of-`cohortCount` assertion; accepts `() => ServiceResponse<readonly RetentionCohort[]>`; ≥ 7 tests.
 
 ### Sub-task C — Widgets + Page Wiring (6 files)
 
@@ -136,7 +156,7 @@ A, B, C MAY land as one session-internal commit chain (`EC-231:` prefix per `01.
 ### Sub-task B close
 
 - [ ] `pnpm --filter @legendary-arena/dashboard build` exits 0.
-- [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0 with baseline + **exactly 15 new tests** (5 per composable × 3 composables, matching WP-203 §Acceptance Criteria enumerated case count; mirrors WP-189 / WP-202 exact-pin precedent).
+- [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0 with baseline + **≥ 21 new tests** (≥ 7 per composable × 3 composables, matching WP-203 §Acceptance Criteria enumerated case count; the bump from the original 15 reflects the Source-Contract passthrough test + locked invariant tests; mirrors WP-189 / WP-202 minimum-pin precedent).
 - [ ] Mock determinism: each composable produces byte-identical output for the same `DateRange` input across two consecutive evaluations.
 - [ ] Grep: 3 new mock factories exported from `analyticsMocks.ts` AND re-exported from `mocks.ts`.
 
@@ -182,3 +202,14 @@ A, B, C MAY land as one session-internal commit chain (`EC-231:` prefix per `01.
 - **`RecentActivityWidget`-style displacement on Overview** → scope violation; WP-203 is purely additive (one strip insertion, zero removals).
 - **Strip widget link points anywhere other than `/players`** → page-routing contract violation; "View full funnel" implies the operator goes to the full-funnel page.
 - **Step-to-step conversion computed as product of stage ratios instead of literal end-to-end ratio** → divergence between displays (the funnel widget's overall conversion footer would disagree with the sum-of-stages tooltip); use the literal `count[3] / count[0]` formula per WP-203 §Acceptance Criteria.
+- **Composable accepts bare `() => readonly T[]` instead of `() => ServiceResponse<readonly T[]>`** → Composable Source Contract violation; strips `source` / `updatedAt` at the composable boundary and breaks the MOCK → LIVE swap symmetry that WP-205 depends on. Re-add the `ServiceResponse` envelope.
+- **Widget reads `source` / `updatedAt` from the service layer directly instead of from the composable** → same Source Contract violation seen from the widget side; widgets MUST source freshness from the composable's returned `source` / `updatedAt`, NOT by re-importing `analyticsMocks` / `wrapMock` / `services/api`.
+- **Time series unsorted, or sorted via `localeCompare`** → §Aggregation rule violation; `YYYY-MM-DD` must be sorted ascending via Unicode code-unit comparison so the output is locale-independent (D-19605 / D-19904 carry-forward).
+- **Cumulative counts in `TrafficSource[]` or `ActivationFunnelStep[]` series** → §Aggregation rule violation; daily counts MUST be discrete (the value for `2026-06-03` is that day's count, not the running total up to that day). Mixing cumulative + discrete will produce wildly wrong stacked-bar visuals.
+- **Per-channel / per-step output assembled via `Object.keys()` of a derived map instead of canonical-array iteration** → §Determinism scope violation; iterate `ACQUISITION_CHANNELS` / `ACTIVATION_STEPS` instead. Object-key iteration order is observable in templates and varies across runtimes.
+- **`Date.now()` or `Math.random()` influencing mock data shape** → §Determinism scope violation; mock output is a pure function of `DateRange` (traffic / funnel) and `cohortCount` (retention). `Date.now()` is allowed ONLY in `wrapMock`'s `updatedAt`; `Math.random()` is allowed ONLY inside `analyticsMocks.ts` and ONLY seeded via `hashRange`.
+- **`AcquisitionFunnelStripWidget` renders zero-percent pills** (e.g., `paid: 0%` when paid summed = 0) → §Strip channel collapse violation; the `paid` pill must be excluded entirely and the remaining pills rebalanced to sum to 100%.
+- **Widget renders a flat-line chart / degenerate axis / all-zero funnel when the underlying dataset is empty** → §Empty-state rule violation; the widget MUST drop to the explicit `empty` arm of the 4-state Widget Contract.
+- **`ActivationFunnelWidget` enters `data` state with `signup-start` = 0** → §Widget Data Requirements violation; a funnel with zero entries at the top is uninformative and must render the empty state instead.
+- **`AcquisitionEventType` union widened to include a non-funnel event type** (e.g., `'billing-charge'`, `'governance-event'`) → §Forward-locked envelope violation; the funnel taxonomy is reserved for channels ∪ steps ∪ `'retention-return'`. Non-funnel event types get a separate union.
+- **Retention "return" counted multiple times per user per day** → §Retention definition violation; per-user-per-day return is a boolean (no deduplication beyond existence). `day1ReturnCount` / `day7ReturnCount` count distinct `user_id`s, not raw event counts.
