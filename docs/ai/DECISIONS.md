@@ -22032,4 +22032,159 @@ for ALL four options — none requires re-shaping the envelope.
 
 ---
 
+### D-20401 — Forward-Locked Ops Telemetry Envelopes (`UptimeProbe` / `ErrorRateSnapshot` / `ErrorSignature` / `InfraCostEntry`)
+
+**Decision:**
+The WP-204 type contracts are locked at drafting time. `UptimeProbe`
+carries exactly 6 fields (`surface`, `date`, `status`,
+`uptimePercent`, `incidentCount`, `lastIncidentTimestamp`).
+`ErrorRateSnapshot` carries exactly 6 fields (`date`,
+`windowSeconds`, `totalRequests`, `errorCount`, `errorRate`,
+`topSignatures`). `ErrorSignature` carries exactly 4 fields
+(`signature`, `count`, `firstSeen`, `lastSeen`). `InfraCostEntry`
+carries exactly 4 fields (`vendor`, `date`, `amountCents`,
+`currency`) with `currency` locked to the literal `'USD'`. The
+paired server WP (TBD; tentatively WP-206 unless WP-205 ordering
+shifts — WP-205 currently reserved for WP-203's `analytics_events`
+server companion) consumes these envelopes verbatim at server-side
+capture time.
+
+**Rationale:**
+Mirrors the WP-196 ↔ `/metrics/billing/health` and WP-203 ↔
+`AnalyticsEvent` forward-contract precedents. Locking the envelope
+shape at the dashboard side BEFORE the server WP starts implementation
+means the server WP has zero schema ambiguity: the data structures
+it produces are exactly what the dashboard already consumes.
+Per-surface / per-vendor / per-error metadata that the v1 envelopes
+cannot represent (e.g., per-incident ticket id, per-error stack
+trace, per-vendor SKU-level cost breakdown) is intentionally
+deferred to a follow-up extension WP rather than retro-fit into
+the v1 envelopes — closed-set discipline preserves the type-check
+gate that catches schema drift loudly.
+
+The single-currency lock (`currency: 'USD'`) is intentional: the
+operator's vendor stack is currently 100% USD-billed (Render,
+Cloudflare, Postgres, Hanko all bill the operator's USD-denominated
+account). Multi-currency support is real engineering scope (currency
+conversion, FX timestamp, base-currency display semantics) that the
+v1 dashboard does not need.
+
+**Implementation locations:**
+- `apps/dashboard/src/types/index.ts` — 3 interfaces +
+  1 sub-interface byte-identical to WP-204 §Locked contract values.
+- `apps/dashboard/src/utils/opsTaxonomy.test.ts` — bidirectional
+  drift assertions enforce the closed unions.
+
+**Packet:** WP-204 (EC-232).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
+### D-20402 — Mock-Mode-First Deploy Posture Carries Forward to WP-204; All Four Widgets Ship `MOCK` Freshness Badge
+
+**Decision:**
+The WP-197 D-19702 mock-mode-first deploy posture carries forward
+to WP-204. All four new widgets (`PublicSurfaceHealthWidget`,
+`ErrorRateMonitorWidget`, `InfraCostWatchdogWidget`,
+`OpsAtAGlanceStripWidget`) read from
+`apps/dashboard/src/services/opsHealthMocks.ts` (the three new mock
+factories) and surface the `MOCK` source label via the composable's
+`source` passthrough on the freshness badge. Flip to `LIVE` is the
+paired server WP's concern (uptime probe scheduler + 5xx aggregator
++ vendor cost ingestion + real-data endpoints); when that WP lands,
+the widget files stay byte-identical pre/post flip because
+`services/mocks.ts` swaps its `fetchX` re-exports behind the same
+`(range) => ServiceResponse<readonly T[]>` signature.
+
+**Sub-rule (verifiable upgrade path):** widget files have ZERO
+literal `mockUptimeProbes` / `mockErrorRateSnapshots` /
+`mockInfraCostEntries` tokens — widgets import `fetchX`-prefixed
+aliases. Verified at close-out by `grep -rE`.
+
+**Rationale:**
+Mirrors WP-197's deploy-posture decision (mock-mode-first on CF
+Pages Production via `VITE_USE_MOCKS=true`) + WP-203's D-20302
+carry-forward. The MOCK badge is the operator's visible,
+non-removable signal that the surface is not yet real data;
+iteration on widget layout / surface list / vendor list / budget
+thresholds is cheap (mock data costs nothing) and lets the operator
+settle the surface BEFORE the paired server WP sinks engineering
+effort into probe scheduling, log aggregation, and vendor billing
+ingestion. The widget-files-stay-byte-identical invariant is what
+makes the MOCK → LIVE flip a zero-risk change at the server-WP
+time.
+
+**Implementation locations:**
+- `apps/dashboard/src/services/opsHealthMocks.ts` — 3 factories,
+  every output wrapped via `wrapMock<T>` with `source: 'MOCK'`.
+- `apps/dashboard/src/services/mocks.ts` — re-exports the 3
+  factories under both `mockX` (for tests) and `fetchX` (for
+  widgets) aliases.
+- 4 new widget files — each imports `fetchX` (NOT `mockX`);
+  freshness badge sources from the composable's `.source`
+  passthrough.
+
+**Packet:** WP-204 (EC-232).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
+### D-20403 — Per-Vendor Monthly Budget Values and Threshold Ratios Are Placeholder in v1; Real Values Deferred to a Future Finance-Loop WP
+
+**Decision:**
+`INFRA_COST_BUDGETS` ships with operator-supplied placeholder
+monthly budget values (`render: $100`, `cloudflare: $50`,
+`postgres: $30`, `hanko: $25`) and a uniform `toleranceRatio: 0.20`
+(20% over-budget band before `'off-track'` fires) across all four
+vendors. Every entry carries `isMock: true`. The `isMock: true`
+flag is the source of truth for the widget's MOCK badge label.
+
+Real per-vendor budget values, per-vendor `toleranceRatio` tuning
+(e.g., tighter band on the highest-spend vendor; per-vendor
+seasonal adjustments), and any expansion of the threshold model
+(e.g., monthly-vs-quarterly horizon, soft-cap vs hard-cap) require
+operator review and a separate follow-up WP. This deferral mirrors
+WP-196's `revenueDeductions.ts` precedent: the WP locks the SHAPE
+of the config, not the values.
+
+**Rationale:**
+Setting real budget values prematurely at WP-204 drafting time
+would lock the operator into thresholds without finance + ops
+context (current vendor invoices, projected scale, seasonality,
+risk tolerance). Locking the SHAPE of the config (per-vendor
+`monthlyBudgetCents` + `toleranceRatio` + `isMock` flag) gives the
+future finance-loop WP zero schema ambiguity — it changes 4 numbers
+and 1 ratio, flips 4 booleans, no composable or widget edit needed.
+
+Uniform `toleranceRatio: 0.20` across vendors is the v1 default
+because per-vendor tuning is a tuning problem, not a contract
+problem: the closed `'on-track' | 'needs-attention' | 'off-track'`
+taxonomy (matching the existing WP-198 `KpiStatus` enum verbatim)
+is sufficient for v1 operator visibility; operator feedback on
+which vendor merits a tighter `'needs-attention'` band arrives only
+after real spend data flows.
+
+**Implementation locations:**
+- `apps/dashboard/src/config/infraCostBudgets.ts` — `INFRA_COST_BUDGETS`
+  with `isMock: true` per entry; values flagged for finance review
+  in inline `// why:` comments.
+- `apps/dashboard/src/composables/useInfraCostWatchdog.ts` —
+  accepts `budgets` as an injected argument (NOT reached into the
+  config module directly) so a future finance-loop WP can swap the
+  config without touching the composable.
+
+**Packet:** WP-204 (EC-232).
+
+**Drafted:** 2026-06-03 (drafting close — reserved). **Landed:**
+2026-06-03 (execution close — flipped to Active).
+**Status:** Active
+
+---
+
 Protect this file.
