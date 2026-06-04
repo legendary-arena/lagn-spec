@@ -22522,18 +22522,26 @@ scope that v1 doesn't need.
 
 ---
 
-### D-20601 — Dashboard Analytics LIVE-Flip Posture: Cookie-Credentials Auth, Empty-Sentinel Error Path, Per-Key SPA Cache, `source: 'LIVE'` Literal-Locked
+### D-20601 — Dashboard Analytics LIVE-Flip Posture: Single-Source-of-Truth Gate, Cache-Write-Before-Fetch, Cookie-Credentials Auth, Sentinel Non-Regression, Injectable `now()`, Shared Envelope Guard, Console Policy, Per-Key SPA Cache, `source: 'LIVE'` Literal-Locked
 
 **Decision:**
 The dashboard's 3 analytics widgets
 (`TrafficSourcesWidget` / `ActivationFunnelWidget` /
 `RetentionCohortsWidget`) flip from MOCK to LIVE via an
-`isLiveMode`-gated conditional re-export in
-`apps/dashboard/src/services/mocks.ts`. `isLiveMode` is `true`
-iff ALL of: `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
+`isLiveModeEnabled()`-gated conditional re-export in
+`apps/dashboard/src/services/mocks.ts`. The `isLiveModeEnabled()`
+predicate is exported from
+`apps/dashboard/src/services/analyticsLiveFetchers.ts` and returns
+`true` iff ALL of: `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
 `typeof import.meta.env.VITE_API_BASE_URL === 'string'` AND
 `import.meta.env.VITE_API_BASE_URL.length > 0`. Any condition
-failing → fall through to the MOCK factories.
+failing → fall through to the MOCK factories. The predicate is
+the **single source of truth** for the LIVE-mode gate — both
+`mocks.ts` (routing) AND every LIVE fetcher (defensive
+re-validation at fetch time) consume it. Inline `import.meta.env`
+references in `mocks.ts` are FORBIDDEN; the gate must not be
+re-derived at any other site (defense against silent two-gate
+drift over the long tail of future edits).
 
 The LIVE fetchers
 (`fetchTrafficSourcesLive` / `fetchActivationFunnelLive` /
@@ -22541,11 +22549,34 @@ The LIVE fetchers
 `apps/dashboard/src/services/analyticsLiveFetchers.ts`) preserve
 the composable's synchronous `() => ServiceResponse<readonly T[]>`
 getter contract via a module-level `Map<key, Ref<ServiceResponse>>`
-per fetcher. First call with a given key returns the empty
-sentinel (`data: []`, `source: 'LIVE'`, `updatedAt: Date.now()`)
-synchronously and kicks off the async fetch via a fire-and-forget
-closure. Vue reactivity propagates fetch completion to the
-composable + widget.
+per fetcher. First call with a given key returns the live empty
+sentinel (`makeLiveEmptySentinel<T>()` — `{ data: [], updatedAt:
+now(), source: 'LIVE' }`) synchronously and kicks off the async
+fetch via a fire-and-forget closure. Vue reactivity propagates
+fetch completion to the composable + widget. The factory's
+`Live` prefix is deliberate — at cache-touch points it
+disambiguates against MOCK-factory empty-state outputs.
+
+**Cache-write-before-fetch invariant.** On a cache miss for
+`key`, the cache-miss branch executes in this exact source order:
+(1) construct `liveRef = ref(makeLiveEmptySentinel<T>())`;
+(2) `cache.set(key, liveRef)`; (3) invoke the async fetch closure
+(fire-and-forget); (4) return `liveRef.value`. Concurrent same-key
+calls within a single tick see the populated cache on step 2 and
+skip directly to the cached-branch path — exactly ONE network
+fetch per (key, process) is initiated. Inverting steps 2 and 3
+would let same-tick callers race past the empty cache and
+double-fetch; the test suite verifies via fetch-spy count after
+a two-same-tick exercise.
+
+**Sentinel non-regression invariant.** Once a cached `ref.value`
+has been replaced with successfully-fetched data, no code path
+may overwrite it back to a live empty sentinel. In v1 (no
+refetch) the invariant is structurally upheld by never re-entering
+the cache-miss branch for an existing key; locking it now means
+the future SWR / background-refetch / abort-on-key-change WPs
+inherit the rule that a failed refetch must preserve the prior
+good data, not silently downgrade it.
 
 `source: 'LIVE'` is the only literal value emitted by successful
 LIVE-mode responses in v1. `'CACHED'` (stale-while-revalidate) is
@@ -22553,9 +22584,35 @@ deferred to a future hardening WP.
 
 `updatedAt` is captured at the network RESPONSE time — immediately
 before the cached ref's `.value` is replaced with the parsed data.
-The empty sentinel captures `Date.now()` at sentinel-build-time so
-the widget freshness chip reads `LIVE · just now` from widget mount;
-the timestamp then advances on fetch resolve.
+The live empty sentinel captures `now()` at sentinel-build-time so
+the widget freshness chip reads `LIVE · just now` from widget
+mount; the timestamp then advances on fetch resolve.
+
+**Injectable `now()` (test determinism).** The fetcher module
+declares a module-private `let now: () => number = () =>
+Date.now();` invoked at every timestamp capture site. Direct
+`Date.now()` calls anywhere else in the module are FORBIDDEN —
+exactly one match in source is allowed (the initializer). Tests
+swap via the exported `__testHooks.setNow(fn)` escape hatch and
+reset in teardown. Production code never invokes `__testHooks`.
+
+**Shared JSON envelope guard.** All three fetchers validate the
+response payload via the same exported `isValidEnvelope<T>(value):
+value is { data: readonly T[] }` type-predicate — `true` iff
+`value` is a non-null object AND
+`Array.isArray((value as { data?: unknown }).data)`. Inline
+`Array.isArray(...)` at fetcher call sites is FORBIDDEN.
+Element-level schema validation is the server's job per the
+WP-205 envelope contract; the dashboard's guard is strictly
+structural.
+
+**Console policy (production).** The ONLY console output
+permitted to fire in production builds is the one-shot
+`console.warn(MISSING_BASE_URL_WARNING)`. Every `console.debug` /
+`console.error` site MUST be wrapped in
+`if (import.meta.env.DEV) { ... }`. Bare `console.log` FORBIDDEN.
+This keeps production logs / Sentry-style integrations free of
+dev-tier debug noise while preserving rich local-dev visibility.
 
 **Error-path posture (fail-silent to empty sentinel):**
 Fetch failures (network reject, HTTP 4xx / 5xx, invalid JSON,
@@ -22591,15 +22648,18 @@ A fresh data load requires a page reload. All deferred to future
 polish WPs.
 
 **Missing-URL one-shot warning posture:**
-If `isLiveMode` evaluates `true` but `VITE_API_BASE_URL` is somehow
-missing or empty at fetch time (defense against the
-`VITE_USE_MOCKS=false` + unset URL crash mode), each fetcher
-returns the empty sentinel synchronously AND emits exactly one
-`console.warn` per process via a module-level boolean guard. The
-locked warning message:
+If `isLiveModeEnabled()` evaluates `true` at routing time (in
+`mocks.ts`) but returns `false` at fetch time (the defensive
+re-check inside the fetcher — defense against the
+`VITE_USE_MOCKS=false` + unset URL crash mode AND against
+mid-execution env-var corruption), each fetcher returns the live
+empty sentinel synchronously AND emits exactly one `console.warn`
+per process via a module-level boolean guard. The locked warning
+message:
 `'[analytics] LIVE mode requested but VITE_API_BASE_URL is unset;
 falling back to MOCK. Set the env var in the deployment
-environment.'`
+environment.'` Per the production console policy this is the
+ONLY console output permitted to fire in production builds.
 
 **Rationale:**
 The composable + widget pattern locked under D-19607 (Shared Source
@@ -22609,7 +22669,7 @@ widget files stay byte-identical pre/post flip. WP-203 close-out
 already verified the widgets contain ZERO literal `mockX` tokens;
 this WP preserves that gate by introducing a `_Live`-suffixed
 parallel set of getters that the `mocks.ts` seam chooses between
-via `isLiveMode`.
+via the shared `isLiveModeEnabled()` predicate.
 
 The Vue `ref`-backed sync getter pattern bridges async fetch to the
 composable's synchronous contract without changing the composable
@@ -22645,21 +22705,51 @@ engineering scope that v1 does not need.
 
 **Implementation locations:**
 - `apps/dashboard/src/services/analyticsLiveFetchers.ts` — 3
-  fetcher functions + locked constants + module-level caches.
+  synchronous fetcher getters (`fetchTrafficSourcesLive` /
+  `fetchActivationFunnelLive` / `fetchRetentionCohortsLive`) +
+  shared `isLiveModeEnabled` + `isValidEnvelope` +
+  `makeLiveEmptySentinel` helpers + module-private injectable
+  `now()` + `__testHooks.setNow` escape hatch +
+  `MISSING_BASE_URL_WARNING` + `FETCH_OPTIONS` constants +
+  module-level per-fetcher caches + one-shot warning guard.
 - `apps/dashboard/src/services/analyticsLiveFetchers.test.ts` — ≥
-  10 tests covering happy-path + caching + error paths +
-  missing-URL + auth + URL construction.
-- `apps/dashboard/src/services/mocks.ts` — the `isLiveMode`-gated
-  conditional re-export block.
+  14 tests covering happy-path + caching + concurrent same-key
+  dedupe + sentinel non-regression + `__testHooks` time injection
+  + `isValidEnvelope` direct unit + `isLiveModeEnabled` truth
+  table + DEV-only console gating + error paths + missing-URL +
+  auth + URL construction.
+- `apps/dashboard/src/services/mocks.ts` — the
+  `isLiveModeEnabled()`-gated conditional re-export block
+  (consumes the shared predicate; no inline env-var check on
+  this side).
 - `apps/server/src/server.mjs` — CORS `origins` array gets 2 new
   entries (`https://dashboard.legendary-arena.com` +
   `http://localhost:4173`).
 
+**Implementation note (test-environment env injection):** WP-206
+§Locked LIVE-fetcher contract values shows the predicate body as
+`import.meta.env.VITE_USE_MOCKS !== 'true' && ...` with direct
+`import.meta.env` references. Under `node --import tsx --test`
+(the dashboard's test runner per `apps/dashboard/package.json`),
+`import.meta.env` is undefined — a direct `.VITE_USE_MOCKS` access
+throws TypeError before any test can assert. The shipped
+implementation routes env access through a one-line indirection
+helper (`readEnv()`) swappable via `__testHooks.setEnv()`. The
+triple-AND predicate body is otherwise byte-identical to the
+locked text; the production runtime path resolves `readEnv()` to
+the live `import.meta.env` object on every call (Vite rewrites
+the inner reference at build time exactly as it would have on a
+direct reference). Source carries a SPEC DEVIATION block at module
+top explaining the rationale. Future spec authors writing similar
+env-gated predicates for code that needs Node-runner test coverage
+should adopt this seam pattern at WP draft time rather than
+re-discovering it at execution time.
+
 **Packet:** WP-206 (EC-234).
 
-**Drafted:** 2026-06-04 (drafting close — reserved). **Landed:** TBD
-(execution close — flips to Active).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-04 (drafting close — reserved). **Landed:**
+2026-06-04 (execution close — Active).
+**Status:** Active
 
 ---
 

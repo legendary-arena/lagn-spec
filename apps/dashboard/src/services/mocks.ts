@@ -18,20 +18,36 @@ export {
   mockRetentionCohorts,
 } from './analyticsMocks.js';
 
-// why: WP-203 §Acceptance Criteria MOCK → LIVE upgrade-path verifiable —
-// widgets import these `fetch*`-aliased bindings so widget files contain
-// zero literal `mockTrafficSources` / `mockActivationFunnel` /
-// `mockRetentionCohorts` tokens (verified by close-out grep). The alias
-// is the seam WP-205 will swap to real HTTP fetch (`mocks.ts` updates to
-// re-export from `endpoints.ts` instead of `analyticsMocks.ts`) without
-// any widget-side change. The signature stays
-// `(rangeOrCohortCount, nowMs) => ServiceResponse<readonly T[]>` pre/post
-// flip; widget files stay byte-identical.
-export {
-  mockTrafficSources as fetchTrafficSources,
-  mockActivationFunnel as fetchActivationFunnel,
-  mockRetentionCohorts as fetchRetentionCohorts,
-} from './analyticsMocks.js';
+import {
+  fetchTrafficSourcesLive,
+  fetchActivationFunnelLive,
+  fetchRetentionCohortsLive,
+  isLiveModeEnabled,
+} from './analyticsLiveFetchers.js';
+
+// why: D-20601 LIVE-flip seam — `isLiveModeEnabled()` is the SHARED
+// single-source-of-truth predicate (also re-validated inside each LIVE
+// fetcher at fetch time). `mocks.ts` does NOT re-derive the env-var
+// gate from import.meta env directly — two independent gates would
+// drift silently over the long tail of future edits, surfacing only
+// when production diverged from local-dev. The verification grep
+// (close-out) requires zero env-var-name matches in this file.
+const liveMode = isLiveModeEnabled();
+
+// why: WP-203 §Composable Source Contract + D-20302 widget byte-identity
+// + D-20601 LIVE-flip seam — widgets import these `fetch*`-aliased
+// bindings; the alias identifier stays unchanged pre/post LIVE flip so
+// widget files contain zero literal `mockX` tokens (verified by the
+// WP-203 close-out grep, re-asserted by this WP's close-out gate). The
+// signature stays `(rangeOrCohortCount, nowMs) => ServiceResponse<readonly T[]>`
+// in both arms (LIVE accepts `_nowMs` and ignores it; MOCK consumes it).
+// When `liveMode` is false (default + local-dev + tests), the MOCK
+// factories run; when true (CF Pages deploy env flips the use-mocks
+// flag off and supplies a non-empty API base URL), the LIVE fetchers
+// run.
+export const fetchTrafficSources = liveMode ? fetchTrafficSourcesLive : mockTrafficSources;
+export const fetchActivationFunnel = liveMode ? fetchActivationFunnelLive : mockActivationFunnel;
+export const fetchRetentionCohorts = liveMode ? fetchRetentionCohortsLive : mockRetentionCohorts;
 
 // why: WP-204 / EC-232 / D-20402 — ops-health mock factories. Same
 // dual-export pattern as the WP-203 analytics block above: `mockX` for

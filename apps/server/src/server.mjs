@@ -366,6 +366,16 @@ export async function startServer() {
       'https://legendary-arena.com',
       'https://www.legendary-arena.com',
       'https://legendary-arena-play.pages.dev',
+      // why: WP-206 / D-20601 — dashboard analytics LIVE flip wiring.
+      // The first entry below is the live operator-dashboard host per
+      // docs/ops/DOMAINS.md §dashboard (CF Pages + CF Access, live
+      // since 2026-06-02). The second is the Vite dashboard preview-
+      // server default for local-dev LIVE-mode against the local
+      // server. The 3 GET endpoints registered by
+      // `registerAnalyticsRoutes` consume the operator's
+      // cookie-credentials Hanko session via this CORS allowance.
+      'https://dashboard.legendary-arena.com',
+      'http://localhost:4173',
       'https://cards.barefootbetters.com',
       'https://cards.legendary-arena.com',
       'http://localhost:5173',
