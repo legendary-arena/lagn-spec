@@ -40,7 +40,7 @@
 
 ## After Completing
 - [ ] `test -f apps/dashboard/src/types/sweep.drift.test.ts` → FILE_OK
-- [ ] No forbidden import: `grep -E "@legendary-arena/(game-engine|registry|server)|apps/server" apps/dashboard/src/types/sweep.drift.test.ts` → **NO MATCH**
+- [ ] No forbidden import (anchored to the import specifier so provenance comments + Rule-11 error strings don't false-trip): `grep -E "from\s+'[^']*(apps/server|@legendary-arena/(game-engine|registry|server))" apps/dashboard/src/types/sweep.drift.test.ts` → **NO MATCH (exit 1)**
 - [ ] Provenance + deviation cited: `grep -F 'sweep.types.ts' …drift.test.ts` ≥ 1; `grep -F 'D-20703' …drift.test.ts` ≥ 1
 - [ ] Typed-literal guard present: `grep -E ': SweepRunSummary =' …drift.test.ts` ≥ 1
 - [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0 (new tests pass; prior suite count preserved)

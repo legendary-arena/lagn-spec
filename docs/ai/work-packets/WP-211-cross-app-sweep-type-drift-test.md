@@ -176,7 +176,7 @@ test -f apps/dashboard/src/types/sweep.drift.test.ts && echo "FILE_OK"
 # Expected: FILE_OK
 
 # 2. No forbidden cross-layer import (the bridge is the committed constant, not an import)
-grep -E "from '(\.\./)*(\.\.)?/?(server|.*apps/server)|@legendary-arena/(game-engine|registry|server)" apps/dashboard/src/types/sweep.drift.test.ts
+grep -E "from\s+'[^']*(apps/server|@legendary-arena/(game-engine|registry|server))" apps/dashboard/src/types/sweep.drift.test.ts
 # Expected: NO MATCH (empty output, grep exit 1)
 
 # 3. The committed field-set constant + provenance comment are present
