@@ -27,6 +27,11 @@ per DOMAINS.md §dashboard), and the operator flips it to `false`
 post-merge to take LIVE mode live. Local-dev + test runs (where the env
 var is unset) default to MOCK to preserve the current dev ergonomics.
 
+> **No widget state-machine changes are introduced in this WP.** The 4-arm
+> Widget Contract (`loading` / `empty` / `error` / `data`) is preserved
+> byte-identical; the LIVE flip is a getter substitution behind the
+> existing `fetchX` re-export seam.
+
 > **Invariant:** widget files contain ZERO HTTP-fetch logic — the
 > `services/mocks.ts` re-export seam is the sole MOCK↔LIVE boundary.
 > `TrafficSourcesWidget.vue` / `ActivationFunnelWidget.vue` /
@@ -39,10 +44,18 @@ var is unset) default to MOCK to preserve the current dev ergonomics.
 > factories produce the data (current default). "LIVE mode" = the new
 > `analyticsLiveFetchers.ts` async fetch wrappers produce the data
 > (gated on `VITE_USE_MOCKS !== 'true'` + `VITE_API_BASE_URL` set).
-> "LIVE-flip seam" = the conditional re-export in `mocks.ts`. "Empty
-> sentinel" = the initial-state `ServiceResponse<T>` returned by a
-> LIVE fetcher BEFORE the network fetch resolves (carries
-> `data: []`, `source: 'LIVE'`, `updatedAt: Date.now()`).
+> "LIVE-flip seam" = the conditional re-export in `mocks.ts`.
+> "`isLiveModeEnabled()`" = the **shared, single-source-of-truth**
+> predicate exported from `analyticsLiveFetchers.ts` and consumed by
+> both `mocks.ts` (routing) and the LIVE fetchers themselves
+> (defensive re-validation at fetch time). "Live empty sentinel" =
+> the initial-state `ServiceResponse<T>` returned by a LIVE fetcher
+> BEFORE the network fetch resolves (carries `data: []`,
+> `source: 'LIVE'`, `updatedAt: now()`). Constructed by
+> `makeLiveEmptySentinel<T>()` (the `Live` prefix is deliberate — it
+> disambiguates against the MOCK factories' own empty-state outputs
+> at call sites, so a reader at any cache-touch point knows
+> immediately which branch produced the value).
 
 ---
 
@@ -94,18 +107,47 @@ var is unset) default to MOCK to preserve the current dev ergonomics.
     `(cohortCount)`) key in a module-level `ref` so the composable's
     synchronous `() => ServiceResponse` getter contract is preserved;
     Vue reactivity propagates fetch completion to the widget;
-    (b) `source: 'LIVE'` and `updatedAt: Date.now()` are captured at
-    the network RESPONSE time, NOT at sentinel-emission time
-    (sentinel uses `Date.now()` at emission, then gets overwritten on
-    fetch resolve); (c) fetch failure (network error, 4xx, 5xx,
-    invalid JSON) collapses to the empty sentinel (`data: []`) and
-    the widget renders its existing `empty` arm — operator-visible
-    error display deferred to a future error-UX WP; (d) auth uses
-    `credentials: 'include'` cookie-bound session — no Bearer header
-    construction at the dashboard layer; (e) `VITE_USE_MOCKS !==
-    'true'` is the LIVE gate; missing `VITE_API_BASE_URL` while in
-    LIVE mode falls back to MOCK with a one-shot `console.warn` per
-    process for local-dev ergonomics.
+    (b) `source: 'LIVE'` and `updatedAt: now()` are captured at the
+    network RESPONSE time, NOT at sentinel-emission time (sentinel
+    captures `now()` at emission, then gets overwritten on fetch
+    resolve); (c) fetch failure (network error, 4xx, 5xx, invalid
+    JSON, payload-shape mismatch) collapses to the live empty
+    sentinel (`data: []`) and the widget renders its existing
+    `empty` arm — operator-visible error display deferred to a
+    future error-UX WP; (d) auth uses `credentials: 'include'`
+    cookie-bound session — no Bearer header construction at the
+    dashboard layer; (e) the LIVE gate is the **shared**
+    `isLiveModeEnabled()` predicate (exported from
+    `analyticsLiveFetchers.ts`) — `mocks.ts` consumes it for routing
+    AND every LIVE fetcher consumes it for defensive re-validation
+    so the gate is single-source-of-truth (no duplicated env-var
+    checks); missing `VITE_API_BASE_URL` while in LIVE mode falls
+    back to the live empty sentinel with a one-shot `console.warn`
+    per process for local-dev ergonomics;
+    (f) **cache-write-before-fetch invariant** — the cache entry
+    (sentinel-valued `ref`) MUST be inserted into the per-fetcher
+    `Map` BEFORE the async fetch closure is invoked, so concurrent
+    same-key calls within a single tick share the same in-flight
+    fetch (verified by spy: 2 same-tick calls → exactly 1 network
+    fetch); (g) **sentinel non-regression** — once a cached ref's
+    `.value` has been replaced with successfully-fetched data, it
+    MUST NEVER transition back to a live empty sentinel on a
+    subsequent error path (defends future refetch / SWR WPs against
+    overwriting good data with sentinel — a regression class we
+    won't see until SWR ships but the invariant is locked now);
+    (h) **time injection (`now()`)** — the fetcher module exports a
+    module-private `now` function defaulting to `() => Date.now()`,
+    swappable via a `__testHooks.setNow(fn)` exported escape hatch
+    used only by `analyticsLiveFetchers.test.ts`; production code
+    never invokes `__testHooks`; (i) **JSON shape guard** — every
+    fetcher validates `payload.data` via a shared
+    `isValidEnvelope<T>(value): value is { data: readonly T[] }`
+    type-predicate function (one reusable validator, not three
+    inline `Array.isArray` checks); (j) **console policy** —
+    `console.warn` is the ONLY console output allowed in production
+    (and only via the one-shot missing-URL guard);
+    `console.debug` + `console.error` are gated on
+    `import.meta.env.DEV` and never reach production logs.
 - **Repo posture.** Single-repo (`apps/dashboard/` only with one
   surgical CORS-allowlist line added to `apps/server/src/server.mjs`).
   No engine, registry, preplan, or migration code touched. No new npm
@@ -218,37 +260,96 @@ path. WP-206 sets that precedent.
 ### New file (1)
 
 - **`apps/dashboard/src/services/analyticsLiveFetchers.ts`** — exports
-  `fetchTrafficSourcesLive(range, nowMs)`,
-  `fetchActivationFunnelLive(range, nowMs)`,
-  `fetchRetentionCohortsLive(cohortCount, nowMs)` (and `_Live` suffix
-  is deliberate — the unsuffixed `fetchX` exports in `mocks.ts` are
-  the public-to-widgets seam; this file is the LIVE implementation
-  detail). Each:
-  - Maintains a module-level `Map<key, Ref<ServiceResponse<T>>>` cache
-    keyed by the input parameter (`range` string OR `cohortCount`
-    number). Vue's `ref()` wraps the `ServiceResponse` so subsequent
-    composable evaluations see fetch completion reactively.
-  - First call for a given key: creates the cache entry with an empty
-    sentinel (`data: []`, `source: 'LIVE'`, `updatedAt: Date.now()`),
-    kicks off the async fetch via a fire-and-forget closure.
-  - Subsequent calls for the same key: return the cached `ref.value`
-    immediately (which may or may not have been updated by a resolved
-    fetch). The Vue reactivity makes the widget update when the value
-    changes.
-  - On fetch resolve with HTTP 200 + valid JSON shape: updates the
-    cached ref to `{ data: payload.data, source: 'LIVE', updatedAt:
-    Date.now() }`.
-  - On fetch failure (network error, non-200 status, JSON parse
-    error, payload shape mismatch): leaves the empty sentinel in
-    place, optionally emits a debug `console.warn` (gated on
-    `import.meta.env.DEV`). Operator sees the `empty` arm with `LIVE`
-    badge — error UX is a future hardening WP.
-  - URL composed via `import.meta.env.VITE_API_BASE_URL + '/api/analytics/...'`.
-    If `VITE_API_BASE_URL` is missing or empty, emit a one-shot
-    `console.warn` per process and return the empty sentinel
-    (graceful local-dev fallback).
-  - Fetch options: `{ credentials: 'include', headers: { 'Accept':
-    'application/json' } }` for cookie-bound cross-origin auth.
+  the 3 synchronous getter functions `fetchTrafficSourcesLive(range)`,
+  `fetchActivationFunnelLive(range)`,
+  `fetchRetentionCohortsLive(cohortCount)` (and `_Live` suffix is
+  deliberate — the unsuffixed `fetchX` exports in `mocks.ts` are the
+  public-to-widgets seam; this file is the LIVE implementation
+  detail). Also exports the shared LIVE-gate predicate
+  `isLiveModeEnabled()`, the JSON envelope guard
+  `isValidEnvelope<T>(value)`, and the `__testHooks` escape hatch
+  (test-only). All `async function fetch*` declarations are
+  **internal closures** — no top-level `export async function` in the
+  module (a verification grep guards this).
+  - **Shared LIVE-gate predicate.** `isLiveModeEnabled()` returns
+    `true` iff `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
+    `typeof import.meta.env.VITE_API_BASE_URL === 'string'` AND
+    `import.meta.env.VITE_API_BASE_URL.length > 0`. Single source of
+    truth — `mocks.ts` consumes it for routing AND each LIVE fetcher
+    consumes it for defensive re-validation. Removes the two-source
+    drift risk that arises if `mocks.ts` and the fetchers each
+    re-derive the gate independently.
+  - **Module-level time injection.** A module-private
+    `let now: () => number = () => Date.now();` is invoked at every
+    timestamp capture site (sentinel emission + fetch RESPONSE
+    overwrite). The exported `__testHooks.setNow(fn)` swaps it for
+    test determinism; tests are responsible for resetting it in
+    teardown. Production code never invokes `__testHooks`.
+  - **Module-level `Map<key, Ref<ServiceResponse<T>>>` cache** per
+    fetcher, keyed by the input parameter (`range` string OR
+    `cohortCount` number). Vue's `ref()` wraps the `ServiceResponse`
+    so subsequent composable evaluations see fetch completion
+    reactively.
+  - **First call for a given key (cache-write-before-fetch
+    invariant).** The order is **non-negotiable**:
+    1. Construct the live empty sentinel via
+       `makeLiveEmptySentinel<T>()`.
+    2. Insert a freshly-wrapped `ref(sentinel)` into the cache
+       `Map` under the key (`cache.set(key, ref)`).
+    3. THEN — and only then — invoke the async fetch closure
+       (fire-and-forget).
+    4. Return `ref.value` synchronously to the caller.
+    Concurrent same-tick calls with the same key see the cache
+    populated on step 2 and skip directly to "subsequent call"
+    semantics — exactly ONE network fetch per key is initiated.
+  - **Subsequent calls for the same key.** Return the cached
+    `ref.value` immediately. The returned value may still contain
+    the live empty sentinel (fetch in-flight or failed) or resolved
+    data (fetch succeeded). Vue reactivity propagates any future
+    change to the widget.
+  - **On fetch resolve with HTTP 200 + `isValidEnvelope<T>(payload)`
+    true.** Replace `ref.value` with `{ data: payload.data,
+    source: 'LIVE', updatedAt: now() }`. Timestamp captured
+    immediately before the replacement (RESPONSE-time lock).
+  - **Sentinel non-regression invariant.** Once `ref.value` has been
+    successfully replaced with fetched data, NO error path may
+    overwrite it back to a live empty sentinel. (In v1 this only
+    applies to mid-flight cancellation races — there is no refetch
+    — but the invariant locks the contract for the future SWR /
+    refetch WPs so good data is never silently downgraded.)
+  - **On fetch failure** (network error, non-200 status,
+    `response.json()` throw, `isValidEnvelope` false): the cached
+    `ref.value` is left as-is (the sentinel from step 1, or the
+    successful data from a prior call if any). DEV-only debug log
+    via `if (import.meta.env.DEV) console.debug(...)` carries the
+    error shape for local debugging. **NO `console.error` is ever
+    emitted** (would produce production noise via Sentry / similar
+    error-reporter integrations that may attach later). Operator
+    sees the widget's `empty` arm with `LIVE` badge — error UX is a
+    future hardening WP.
+  - **URL composition.**
+    `import.meta.env.VITE_API_BASE_URL + '/api/analytics/...'`. If
+    `isLiveModeEnabled()` is false at fetch-time (defense against
+    the env var disappearing or never being set in the LIVE
+    branch's local-dev sub-path), emit the one-shot
+    `MISSING_BASE_URL_WARNING` via `console.warn` and return the
+    live empty sentinel.
+  - **Fetch options.** `{ credentials: 'include', headers:
+    { Accept: 'application/json' } }` — exact `FETCH_OPTIONS`
+    constant, every call site.
+  - **JSON envelope guard.** `isValidEnvelope<T>(value): value is
+    { data: readonly T[] }` is the SINGLE inline validator — no
+    fetcher rolls its own `Array.isArray(...)` check at the call
+    site. Returns `true` iff `value` is a non-null object AND
+    `Array.isArray((value as { data?: unknown }).data)`. The guard
+    intentionally accepts unknown array element types — element-level
+    schema validation is the server's job per WP-205 §Locked
+    contract values.
+  - **Console policy (production).** Only `console.warn` (one-shot
+    missing-URL guard) is permitted to fire in production builds.
+    All `console.debug` / `console.error` sites are wrapped in
+    `if (import.meta.env.DEV)`. No bare `console.log`. A
+    verification grep guards the import.meta.env.DEV wrapping.
 
 ### Modified file (1) — `apps/dashboard/src/services/mocks.ts`
 
@@ -260,18 +361,29 @@ path. WP-206 sets that precedent.
     mockRetentionCohorts as fetchRetentionCohorts,
   } from './analyticsMocks.js';
   ```
-  to a conditional re-export block gated on `import.meta.env.VITE_USE_MOCKS`:
+  to a conditional re-export block gated on the **shared**
+  `isLiveModeEnabled()` predicate (single-source-of-truth — no
+  duplicated env-var check on the `mocks.ts` side):
   ```typescript
-  // why: D-20601 LIVE-flip seam — VITE_USE_MOCKS !== 'true' AND
-  // VITE_API_BASE_URL set → use the LIVE fetchers (real HTTP
-  // against WP-205's GET endpoints); otherwise (default + local-dev
-  // + tests) fall through to the MOCK factories. The `fetchX`
+  import {
+    fetchTrafficSourcesLive,
+    fetchActivationFunnelLive,
+    fetchRetentionCohortsLive,
+    isLiveModeEnabled,
+  } from './analyticsLiveFetchers.js';
+
+  // why: D-20601 LIVE-flip seam — isLiveModeEnabled() is the SHARED
+  // predicate (also re-validated inside each LIVE fetcher at fetch
+  // time); when true → use the LIVE fetchers (real HTTP against
+  // WP-205's GET endpoints); otherwise (default + local-dev +
+  // tests) fall through to the MOCK factories. The `fetchX`
   // identifier preserves widget byte-identity per WP-203 §Composable
-  // Source Contract.
-  const isLiveMode = import.meta.env.VITE_USE_MOCKS !== 'true'
-    && typeof import.meta.env.VITE_API_BASE_URL === 'string'
-    && import.meta.env.VITE_API_BASE_URL.length > 0;
-  export const fetchTrafficSources = isLiveMode
+  // Source Contract. The mocks.ts side does NOT re-derive the gate
+  // from `import.meta.env.*` directly — drift between two gates
+  // would be invisible until production diverged from local-dev,
+  // so the helper is the single source of truth.
+  const liveMode = isLiveModeEnabled();
+  export const fetchTrafficSources = liveMode
     ? fetchTrafficSourcesLive
     : mockTrafficSources;
   // ... (analogous for fetchActivationFunnel + fetchRetentionCohorts)
@@ -294,20 +406,71 @@ path. WP-206 sets that precedent.
 
 ### New file (1) — `apps/dashboard/src/services/analyticsLiveFetchers.test.ts`
 
-- node:test cases (≥ 10) covering: happy-path JSON envelope unwrap
-  + ServiceResponse wrapping; `source: 'LIVE'` literal in every
-  successful response; `updatedAt` captured at fetch RESPONSE time
-  (not at sentinel-emission time — assertion uses a fake `now()` via
-  module-level injection); per-key caching (second call with same
-  key returns same ref); per-key cache miss on different key kicks
-  off a second fetch; fetch failure (network reject, non-200
-  status, invalid JSON, payload shape mismatch) all collapse to
-  empty sentinel; missing `VITE_API_BASE_URL` returns empty
-  sentinel + emits exactly ONE `console.warn` per process (one-shot
-  guard); `credentials: 'include'` + `Accept: application/json` are
-  set on the fetch call (verified via spy); URL construction
-  appends `?range=...` for the 2 range-keyed endpoints and
-  `?cohortCount=...` for the retention endpoint.
+- node:test cases (**≥ 14**) covering the full behavior matrix.
+  Required axes (each axis = one or more tests; total ≥ 14 across
+  the 3 fetchers):
+  1. **Happy-path JSON envelope unwrap** + `ServiceResponse` wrapping
+     with `source: 'LIVE'` literal in every successful response.
+  2. **`updatedAt` captured at fetch RESPONSE time** — assertion uses
+     `__testHooks.setNow(fn)` to advance the clock between sentinel
+     emission and fetch resolve; asserts the sentinel `updatedAt`
+     and the post-fetch `updatedAt` differ by exactly the injected
+     delta.
+  3. **Per-key caching** — second call with same key returns the
+     same ref; fetch-spy count = 1 after two calls.
+  4. **Per-key cache miss** on different key kicks off a second
+     fetch; fetch-spy count = 2 after two distinct-key calls.
+  5. **Concurrent same-key dedupe (cache-write-before-fetch
+     invariant)** — fire two same-key calls synchronously in the
+     same tick (no `await` between them); assert fetch-spy count is
+     **exactly 1** at the end of the microtask queue (proves the
+     cache entry was inserted BEFORE the fetch closure was invoked).
+  6. **Sentinel non-regression** — populate a key via a successful
+     fetch; trigger a subsequent error path (use a second
+     same-fetcher call after monkey-patching the global `fetch` to
+     reject); assert the cached `ref.value` is the
+     successfully-fetched data, NOT a live empty sentinel. (v1
+     never re-enters the cache for a populated key, so this test
+     additionally documents the invariant for future SWR / refetch
+     WPs.)
+  7. **`isValidEnvelope<T>` reuse** — assert the function is
+     exported and accepts `{ data: [] }`, rejects `null`,
+     `'string'`, `{}`, `{ data: 'not-array' }`, `{ unrelated: ... }`.
+     (Direct unit test on the validator — guarantees fetchers don't
+     each roll their own.)
+  8. **Fetch reject (network error)** → live empty sentinel
+     preserved; no exception propagates.
+  9. **HTTP 401 / 403 / 500 status** → live empty sentinel preserved.
+  10. **Invalid JSON in response body** (`response.json()` throws)
+      → live empty sentinel preserved.
+  11. **Payload shape mismatch** (`{ data: 'not-array' }` and
+      `{ unrelated: ... }`) → live empty sentinel preserved.
+  12. **Missing `VITE_API_BASE_URL`** → live empty sentinel
+      returned + exactly ONE `console.warn` per process emitted
+      with the locked `MISSING_BASE_URL_WARNING` text (one-shot
+      guard verified by `mock.method(console, 'warn')` capture
+      across multiple subsequent calls — only one warn ever fires).
+  13. **`credentials: 'include'` + `Accept: 'application/json'`** —
+      both set on every fetch call (verified via spy
+      `RequestInit` arg).
+  14. **URL construction** matches the locked patterns (verified
+      via fetch-spy URL arg) — `?range=...` for traffic-sources +
+      activation-funnel; `?cohortCount=...` for retention-cohorts.
+  15. **`isLiveModeEnabled()` predicate truth table** — direct test
+      with stub `import.meta.env` values covering: both-set →
+      true; `VITE_USE_MOCKS='true'` → false; `VITE_API_BASE_URL`
+      undefined → false; `VITE_API_BASE_URL` empty string → false;
+      `VITE_API_BASE_URL` non-empty + `VITE_USE_MOCKS` unset →
+      true.
+  16. **DEV-only console gating** — under `import.meta.env.DEV =
+      false` (production-build simulation), a fetch-failure code
+      path emits ZERO `console.debug` / `console.error` calls;
+      under `DEV = true`, the same path emits exactly one
+      `console.debug`.
+
+  Each axis is repeated for activation-funnel + retention-cohorts
+  where the behavior shape applies (URL key naming + cohortCount
+  integer-in-URL specifics).
 
 ### Governance (4 files)
 
@@ -375,15 +538,17 @@ path. WP-206 sets that precedent.
    empty-sentinel posture; cookie-credentials; missing-env-var
    one-shot warn fallback.
 2. `apps/dashboard/src/services/analyticsLiveFetchers.test.ts` —
-   **new** — node:test cases (≥ 10) per §Scope (In) coverage list.
+   **new** — node:test cases (≥ 14) per §Scope (In) coverage list.
 
 ### Modified (2)
 
 3. `apps/dashboard/src/services/mocks.ts` — **modified** — replace
-   the 3 `fetchX` static re-exports with a `isLiveMode`-gated
-   const-export block; no other line changes; `mockX` re-exports
-   preserved byte-identical so tests + MOCK fallback paths keep
-   working.
+   the 3 `fetchX` static re-exports with a const-export block
+   gated on the SHARED `isLiveModeEnabled()` predicate imported
+   from `./analyticsLiveFetchers.js`; no inline env-var check on
+   this side (single-source-of-truth gate); no other line changes;
+   `mockX` re-exports preserved byte-identical so tests + MOCK
+   fallback paths keep working.
 4. `apps/server/src/server.mjs` — **modified** — add 2 entries to
    the CORS `origins` array (`https://dashboard.legendary-arena.com`
    + `http://localhost:4173`) with a `// why:` block citing WP-206.
@@ -431,37 +596,78 @@ shared-tooling files changed.
 - **Composable byte-identity invariant.** `git diff --name-only
   apps/dashboard/src/composables/{useTrafficSources,useActivationFunnel,useRetentionCohorts}.ts`
   returns empty at close. The 3 composable files are NOT touched.
-- **LIVE-flip gate posture (D-20601).** `isLiveMode` is `true`
-  iff BOTH `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
+- **Single-source-of-truth LIVE gate (D-20601).** The boolean
+  predicate lives in **one** place: `isLiveModeEnabled()` exported
+  from `analyticsLiveFetchers.ts`. Returns `true` iff
+  `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
   `typeof import.meta.env.VITE_API_BASE_URL === 'string'` AND
-  `import.meta.env.VITE_API_BASE_URL.length > 0`. Any of the three
-  conditions failing → MOCK fallback. Defense against the failure
-  mode where production env carries `VITE_USE_MOCKS=false` but
-  `VITE_API_BASE_URL` is unset (would otherwise produce a fetch
-  to `undefined/api/...` and crash).
+  `import.meta.env.VITE_API_BASE_URL.length > 0`. Both `mocks.ts`
+  (routing) AND every LIVE fetcher (defensive re-validation at
+  fetch time) consume this helper — neither re-derives the
+  condition from `import.meta.env.*` directly. Defense against the
+  failure mode where production env carries `VITE_USE_MOCKS=false`
+  but `VITE_API_BASE_URL` is unset (would otherwise produce a fetch
+  to `undefined/api/...` and crash), AND against the silent-drift
+  failure mode where the two gates evolve independently over time.
 - **`source: 'LIVE'` literal-locked (D-20601).** Every successful
   fetch response wraps with the literal string `'LIVE'`. No
   `'CACHED'` variant in v1 (would require stale-while-revalidate
   semantics not yet locked).
-- **`updatedAt` capture timing (D-20601).** Captured at the
-  network RESPONSE time (immediately before the cached ref's
-  value is replaced), NOT at sentinel-emission time. The empty
-  sentinel uses `Date.now()` at the SENTINEL-emission time so
-  the widget freshness chip reads `LIVE · just now` from the
-  moment of widget mount; on fetch resolve the timestamp jumps
-  forward by however long the fetch took.
+- **`updatedAt` capture timing + injectable `now()` (D-20601).**
+  Captured at the network RESPONSE time (immediately before the
+  cached ref's value is replaced), NOT at sentinel-emission time.
+  The live empty sentinel captures `now()` at the SENTINEL-emission
+  time so the widget freshness chip reads `LIVE · just now` from
+  the moment of widget mount; on fetch resolve the timestamp jumps
+  forward by however long the fetch took. The `now()` function is
+  module-private (`let now: () => number = () => Date.now();`) and
+  is the ONLY timestamp source in the module — direct `Date.now()`
+  calls in source code beyond the one-line default initializer are
+  FORBIDDEN. `__testHooks.setNow(fn)` is the test-only swap point;
+  production code never invokes `__testHooks`.
 - **Empty-sentinel error-path posture (D-20601).** Network reject /
   non-200 status / invalid JSON / payload-shape mismatch all
-  collapse to the empty sentinel (`data: []`, `source: 'LIVE'`,
-  `updatedAt: Date.now()`). The widget's existing `empty` arm
-  renders — no template change required. Operator-visible
-  structured error display is deferred to a future hardening WP.
+  collapse to the live empty sentinel (`data: []`,
+  `source: 'LIVE'`, `updatedAt: now()`). The widget's existing
+  `empty` arm renders — no template change required.
+  Operator-visible structured error display is deferred to a
+  future hardening WP.
+- **Sentinel non-regression invariant (D-20601).** Once a cached
+  `ref.value` has been replaced with successfully-fetched data, NO
+  code path may overwrite it back to a live empty sentinel. In v1
+  (no refetch) this primarily future-proofs against the SWR /
+  background-refetch WPs that will follow — when those land they
+  inherit the invariant that a failed refetch must preserve the
+  prior good data, not downgrade it. Locked here so the contract
+  predates the temptation.
+- **Cache-write-before-fetch invariant (D-20601).** For any
+  fetcher, on a cache miss for `key`, the order is:
+  `cache.set(key, ref(makeLiveEmptySentinel<T>()))` **first**,
+  then the async fetch closure is invoked, then `ref.value` is
+  returned synchronously. Concurrent same-key calls within a
+  single tick see the populated cache on step 2 and skip the
+  fetch — exactly ONE network fetch per key per process. Test
+  verifies via fetch-spy count after two-same-tick calls.
 - **Per-key cache discipline (D-20601).** The module-level cache
-  is `Map<key, Ref<ServiceResponse<T>>>` where `key` is the
-  range string for traffic-sources + activation-funnel, and the
-  `cohortCount` number for retention-cohorts. Second call with
+  is `Map<key, Ref<ServiceResponse<readonly T[]>>>` where `key` is
+  the range string for traffic-sources + activation-funnel, and
+  the `cohortCount` number for retention-cohorts. Second call with
   the same key returns the cached ref — no redundant network
   fetch. SPA lifetime persistence; no TTL.
+- **JSON envelope guard reuse (D-20601).** All three fetchers
+  validate the response payload via the **same** exported
+  `isValidEnvelope<T>(value): value is { data: readonly T[] }`
+  type-predicate. No inline `Array.isArray(...)` checks at fetch
+  call sites — single validator, one audit point. The validator
+  intentionally accepts unknown element types (element-level
+  schema is the server's job per WP-205 §Locked).
+- **Console policy in production (D-20601).** The ONLY console
+  output permitted to fire in production builds is the one-shot
+  `console.warn(MISSING_BASE_URL_WARNING)`. Every `console.debug`
+  / `console.error` site MUST be wrapped in
+  `if (import.meta.env.DEV) { ... }`. No bare `console.log`.
+  Verification grep counts non-DEV-wrapped console calls = 1
+  (just the one-shot warn).
 - **Cookie-credentials auth (D-20601).** Every `fetch` call passes
   `{ credentials: 'include', headers: { 'Accept': 'application/json' } }`.
   No Bearer header construction at the dashboard layer (the Hanko
@@ -473,13 +679,16 @@ shared-tooling files changed.
   `'https://dashboard.legendary-arena.com'` and
   `'http://localhost:4173'`. Adjacent `// why:` cites WP-206 +
   the DOMAINS.md §dashboard reference.
-- **Missing-env one-shot warn posture (D-20601).** If `isLiveMode`
-  is true BUT `import.meta.env.VITE_API_BASE_URL` is checked and
-  somehow comes back empty mid-execution (defense), emit exactly
-  one `console.warn` per process via a module-level boolean
-  guard. The fixed warning message: `'[analytics] LIVE mode
+- **Missing-env one-shot warn posture (D-20601).** If
+  `isLiveModeEnabled()` returns false at fetch-time (the defensive
+  re-check inside the fetcher), the fetcher returns the live empty
+  sentinel and emits exactly one `console.warn` per process via a
+  module-level boolean guard (`let hasWarnedAboutMissingBaseUrl =
+  false;`). The fixed warning message: `'[analytics] LIVE mode
   requested but VITE_API_BASE_URL is unset; falling back to MOCK.
-  Set the env var in the deployment environment.'`
+  Set the env var in the deployment environment.'` This is the
+  one and only console output permitted in production builds (see
+  Console policy above).
 - **No raw error message in user-facing context (D-20601).**
   Caught errors are inspected via `instanceof Error` for the
   debug log only (gated on `import.meta.env.DEV`); the user-facing
@@ -519,6 +728,30 @@ shared-tooling files changed.
 - Adding `'CACHED'` to the `ServiceResponse<T>['source']` union —
   type change; defer to a future WP that actually implements
   stale-while-revalidate.
+- **Duplicating the LIVE-gate condition in `mocks.ts`** (any
+  `import.meta.env.VITE_USE_MOCKS` or `VITE_API_BASE_URL` reference
+  in `mocks.ts` source) — single-source-of-truth HARD FAIL.
+  `mocks.ts` consumes `isLiveModeEnabled()` only.
+- **Invoking the async fetch closure BEFORE the cache `Map.set`**
+  — cache-write-before-fetch HARD FAIL (concurrent dedupe
+  regression; a two-same-tick test will catch it).
+- **Overwriting a populated `ref.value` with a live empty sentinel
+  on any error path** — sentinel non-regression HARD FAIL.
+- **Direct `Date.now()` calls in `analyticsLiveFetchers.ts` beyond
+  the one-line `now` default initializer** — bypasses
+  `__testHooks.setNow` injection; test determinism HARD FAIL.
+- **`console.debug` / `console.error` / `console.log` not
+  wrapped in `if (import.meta.env.DEV) { ... }`** — production
+  log noise; console policy HARD FAIL.
+- **`Array.isArray(...)` inlined at a fetcher call site instead of
+  using `isValidEnvelope<T>(...)`** — duplicated validation
+  surface; single-validator HARD FAIL.
+- **Exporting any `async function fetch*` from
+  `analyticsLiveFetchers.ts`** — every async fetcher closure is
+  internal; the public API is the synchronous getters + the
+  helper exports (`isLiveModeEnabled` / `isValidEnvelope` /
+  `makeLiveEmptySentinel` / `__testHooks`). Verification grep
+  guards.
 
 See EC-234 §Pre-Commit Failure Smells for the full enumeration.
 
@@ -526,21 +759,99 @@ See EC-234 §Pre-Commit Failure Smells for the full enumeration.
 
 ```typescript
 // apps/dashboard/src/services/analyticsLiveFetchers.ts additions
-// (verbatim — copy as-is; the empty-sentinel + isLiveMode +
-// MISSING_BASE_URL_WARNING are EC-234 §Locked Values)
+// (verbatim — copy as-is; every block in this code fence is an
+// EC-234 §Locked Value).
 
 const MISSING_BASE_URL_WARNING =
   '[analytics] LIVE mode requested but VITE_API_BASE_URL is unset; falling back to MOCK. Set the env var in the deployment environment.';
-
-function makeEmptySentinel<T>(): ServiceResponse<readonly T[]> {
-  return { data: [], updatedAt: Date.now(), source: 'LIVE' };
-}
 
 // fetch options (locked — every analytics fetch uses these exactly)
 const FETCH_OPTIONS: RequestInit = {
   credentials: 'include',
   headers: { Accept: 'application/json' },
 };
+
+// Module-private time source. Direct `Date.now()` calls elsewhere
+// in the module are FORBIDDEN — every timestamp capture goes
+// through `now()` so the test hook can swap it.
+let now: () => number = () => Date.now();
+
+/**
+ * Single-source-of-truth LIVE-mode predicate. Consumed by
+ * `mocks.ts` (for routing) AND by every LIVE fetcher (for
+ * defensive re-validation at fetch time). Do NOT inline the
+ * condition at either call site.
+ */
+export function isLiveModeEnabled(): boolean {
+  return (
+    import.meta.env.VITE_USE_MOCKS !== 'true'
+    && typeof import.meta.env.VITE_API_BASE_URL === 'string'
+    && import.meta.env.VITE_API_BASE_URL.length > 0
+  );
+}
+
+/**
+ * JSON envelope guard. Returns true iff `value` matches the
+ * locked WP-205 server envelope shape `{ data: readonly T[] }`.
+ * Element-level schema is the server's responsibility — this
+ * guard intentionally accepts unknown element types.
+ */
+export function isValidEnvelope<T>(
+  value: unknown,
+): value is { data: readonly T[] } {
+  return (
+    typeof value === 'object'
+    && value !== null
+    && Array.isArray((value as { data?: unknown }).data)
+  );
+}
+
+/**
+ * Live empty sentinel factory. `Live` prefix is deliberate — at
+ * cache-touch points it disambiguates against MOCK factory
+ * outputs. Every error path collapses to a fresh call of this
+ * factory; once a successful fetch has replaced the sentinel,
+ * the sentinel non-regression invariant prohibits re-emitting it
+ * for that key.
+ */
+function makeLiveEmptySentinel<T>(): ServiceResponse<readonly T[]> {
+  return { data: [], updatedAt: now(), source: 'LIVE' };
+}
+
+// Test-only hooks (production code never invokes these).
+// Tests reset via `__testHooks.setNow(() => Date.now())` in
+// teardown. Exporting via a single namespace keeps the test
+// surface visible at one grep.
+export const __testHooks = {
+  setNow(fn: () => number): void {
+    now = fn;
+  },
+};
+```
+
+**Locked cache-write-before-fetch pseudocode (every fetcher
+follows this exact order — copy the shape, not the literal):**
+
+```typescript
+function fetchTrafficSourcesLive(range: DateRange): ServiceResponse<readonly TrafficSource[]> {
+  if (!isLiveModeEnabled()) {
+    warnAboutMissingBaseUrlOnce();
+    return makeLiveEmptySentinel<TrafficSource>();
+  }
+  const cached = trafficSourcesCache.get(range);
+  if (cached !== undefined) {
+    return cached.value;
+  }
+  // why: D-20601 cache-write-before-fetch invariant — populate
+  // the cache with the sentinel BEFORE kicking off the async
+  // fetch so concurrent same-tick callers see the entry and
+  // skip directly to the "cached" branch above. Exactly ONE
+  // network fetch per (key, process).
+  const liveRef = ref(makeLiveEmptySentinel<TrafficSource>());
+  trafficSourcesCache.set(range, liveRef);
+  void runTrafficSourcesFetch(range, liveRef);
+  return liveRef.value;
+}
 ```
 
 **Locked auth + CORS matrix:**
@@ -569,10 +880,10 @@ composable) only ever passes validated values.
 
 ### LIVE-fetcher behavior (D-20601)
 
-- [ ] `fetchTrafficSourcesLive('14d', nowMs)` returns an empty
+- [ ] `fetchTrafficSourcesLive('14d')` returns a live empty
   sentinel synchronously on first call (`data: []`,
-  `source: 'LIVE'`, `updatedAt` ≈ `Date.now()`); the in-flight
-  fetch is kicked off in the background.
+  `source: 'LIVE'`, `updatedAt` = `now()` at sentinel-build-time);
+  the in-flight fetch is kicked off in the background.
 - [ ] When the fetch resolves with HTTP 200 +
   `{ data: [...TrafficSource items...] }`, the cached ref's
   `.value` updates to the parsed data; Vue reactivity propagates
@@ -580,21 +891,47 @@ composable) only ever passes validated values.
 - [ ] `source: 'LIVE'` literal appears in every successful response;
   no `'CACHED'` literal emitted anywhere.
 - [ ] `updatedAt` is captured at network RESPONSE time — assertion
-  test uses an injected fake `now()` to verify the timestamp
-  advances between sentinel emission and fetch resolve.
+  test uses `__testHooks.setNow(fn)` to advance the clock between
+  sentinel emission and fetch resolve, and asserts the timestamps
+  differ by exactly the injected delta.
 - [ ] Second call with the same key returns the cached ref's `.value`
   without kicking off a second fetch (verified via fetch-spy count).
 - [ ] Call with a different key kicks off a second fetch (cache
   miss; verified via fetch-spy count).
-- [ ] Fetch reject (network error) → empty sentinel preserved; no
-  exception propagates to the caller.
-- [ ] HTTP 401 / 403 / 500 status → empty sentinel preserved.
-- [ ] Invalid JSON in response body → empty sentinel preserved.
+- [ ] **Concurrent same-key dedupe.** Two synchronous same-key
+  calls in the same tick result in exactly ONE network fetch
+  (verified via fetch-spy count = 1 after both calls and the
+  microtask queue has drained). Proves cache-write-before-fetch
+  ordering.
+- [ ] **Sentinel non-regression.** A cached ref whose `.value` has
+  been replaced with successfully-fetched data is NEVER overwritten
+  back to a live empty sentinel by any error path (test covers v1
+  contract via direct ref-value inspection after monkey-patched
+  fetch-rejection on a populated key).
+- [ ] **`isValidEnvelope<T>` reuse.** The exported predicate accepts
+  `{ data: [] }`, rejects `null` / `'string'` / `{}` /
+  `{ data: 'not-array' }` / `{ unrelated: 1 }`. Used by all three
+  fetchers (no inline `Array.isArray` at any fetcher call site —
+  verified by grep).
+- [ ] **`isLiveModeEnabled()` truth table.** Direct unit test with
+  stub env values covers all 4 truth-table outcomes (both-conditions
+  true → true; `VITE_USE_MOCKS='true'` → false; URL undefined →
+  false; URL empty string → false).
+- [ ] **DEV-only console gating.** Under `import.meta.env.DEV =
+  false`, the fetch-failure path emits zero `console.debug` /
+  `console.error` calls; under `DEV = true` the same path emits
+  exactly one `console.debug`. The one-shot `console.warn` for
+  missing-URL fires in both environments (production-allowed).
+- [ ] Fetch reject (network error) → live empty sentinel preserved;
+  no exception propagates to the caller.
+- [ ] HTTP 401 / 403 / 500 status → live empty sentinel preserved.
+- [ ] Invalid JSON in response body → live empty sentinel preserved.
 - [ ] Payload shape mismatch (`{ data: 'not-array' }` or `{ unrelated:
-  ... }`) → empty sentinel preserved.
-- [ ] Missing `VITE_API_BASE_URL` env var → empty sentinel returned
-  + exactly ONE `console.warn` per process emitted with the locked
-  message text (one-shot guard).
+  ... }`) → live empty sentinel preserved.
+- [ ] Missing `VITE_API_BASE_URL` env var → live empty sentinel
+  returned + exactly ONE `console.warn` per process emitted with
+  the locked message text (one-shot guard verified via repeated
+  calls; only the first emits).
 - [ ] `credentials: 'include'` + `Accept: application/json` set on
   every fetch call (verified via spy).
 - [ ] URL construction matches the locked patterns (verified via
@@ -606,15 +943,17 @@ composable) only ever passes validated values.
 
 ### LIVE-flip gate (mocks.ts)
 
-- [ ] When `import.meta.env.VITE_USE_MOCKS === 'true'`, `fetchX`
-  exports resolve to the `mockX` factories regardless of
-  `VITE_API_BASE_URL`.
-- [ ] When `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
-  `VITE_API_BASE_URL` is set, `fetchX` exports resolve to the
-  `_Live` variants.
-- [ ] When `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
-  `VITE_API_BASE_URL` is unset, `fetchX` exports resolve to the
-  `mockX` factories (graceful fallback).
+- [ ] `mocks.ts` imports `isLiveModeEnabled` from
+  `./analyticsLiveFetchers.js` and invokes it (no inline
+  `import.meta.env.VITE_USE_MOCKS` or `VITE_API_BASE_URL` reference
+  anywhere in `mocks.ts` — verified by grep returning ZERO matches
+  on those identifiers in `mocks.ts`).
+- [ ] When `isLiveModeEnabled()` returns false (any of the
+  triple-condition AND branches fails — `VITE_USE_MOCKS='true'`,
+  unset `VITE_API_BASE_URL`, or empty `VITE_API_BASE_URL`), `fetchX`
+  exports resolve to the `mockX` factories.
+- [ ] When `isLiveModeEnabled()` returns true, `fetchX` exports
+  resolve to the `_Live` variants.
 - [ ] `mockX` exports (`mockTrafficSources` /
   `mockActivationFunnel` / `mockRetentionCohorts`) continue to
   be re-exported byte-identical so tests can import them
@@ -643,7 +982,7 @@ composable) only ever passes validated values.
 
 - [ ] `pnpm --filter @legendary-arena/dashboard build` exits 0.
 - [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0 with
-  **≥ 10 net-new tests** in `analyticsLiveFetchers.test.ts`.
+  **≥ 14 net-new tests** in `analyticsLiveFetchers.test.ts`.
 - [ ] `pnpm --filter @legendary-arena/server build` exits 0
   (CORS array edit doesn't change anything materially).
 - [ ] `pnpm --filter @legendary-arena/server test` exits 0
@@ -671,17 +1010,51 @@ pnpm --filter @legendary-arena/dashboard test
 pnpm --filter @legendary-arena/server build
 pnpm --filter @legendary-arena/server test
 
-# LIVE-flip gate grep
-grep -nE "isLiveMode|fetchTrafficSourcesLive" apps/dashboard/src/services/mocks.ts
-# Expected: ≥ 2 matches (gate constant + at least one Live reference).
+# Shared LIVE-gate helper consumed by mocks.ts
+grep -nE "isLiveModeEnabled|fetchTrafficSourcesLive" apps/dashboard/src/services/mocks.ts
+# Expected: ≥ 2 matches (gate import + at least one Live reference).
 
-# Empty-sentinel posture grep
-grep -nE "makeEmptySentinel|MISSING_BASE_URL_WARNING" apps/dashboard/src/services/analyticsLiveFetchers.ts
-# Expected: ≥ 3 matches (sentinel factory + the warning constant).
+# mocks.ts does NOT re-derive the env-var condition
+grep -nE "VITE_USE_MOCKS|VITE_API_BASE_URL" apps/dashboard/src/services/mocks.ts
+# Expected: ZERO matches. The shared isLiveModeEnabled() is the
+# single source of truth; mocks.ts must not duplicate the check.
+
+# Sentinel + locked-constant posture
+grep -nE "makeLiveEmptySentinel|MISSING_BASE_URL_WARNING|FETCH_OPTIONS|isValidEnvelope|isLiveModeEnabled" apps/dashboard/src/services/analyticsLiveFetchers.ts
+# Expected: ≥ 5 matches (sentinel factory + warning constant +
+# fetch options + envelope guard + LIVE-mode predicate).
 
 # `credentials: 'include'` posture
 grep -nE "credentials: 'include'" apps/dashboard/src/services/analyticsLiveFetchers.ts
 # Expected: ≥ 1 match.
+
+# Cache-write-before-fetch ordering (manual review gate)
+grep -nE "cache\.set|\.set\(.*ref\(" apps/dashboard/src/services/analyticsLiveFetchers.ts
+# Expected: ≥ 3 matches (one per fetcher). Manual review verifies
+# every cache.set precedes its corresponding fetch closure
+# invocation in source order — a fetch BEFORE the set is a HARD
+# FAIL on the cache-write-before-fetch invariant.
+
+# No exported async fetch leakage
+grep -nE "^export async function|^export const fetch[A-Z][A-Za-z]* = async" apps/dashboard/src/services/analyticsLiveFetchers.ts
+# Expected: ZERO matches. The 3 exported fetchers are SYNCHRONOUS
+# getters; every async function is an internal closure. Exporting
+# an async function would let callers `await` it and break the
+# composable's synchronous `() => ServiceResponse` contract.
+
+# No direct Date.now() in source (the one-line `now` initializer
+# is the only exception)
+grep -nE "Date\.now\(\)" apps/dashboard/src/services/analyticsLiveFetchers.ts
+# Expected: exactly 1 match (the `let now = () => Date.now();`
+# default initializer). Any additional match means a timestamp
+# capture bypassed the injectable `now()` — HARD FAIL.
+
+# Console policy: DEV-wrapping
+grep -nE "console\.(debug|error|log)" apps/dashboard/src/services/analyticsLiveFetchers.ts
+# Expected: every match is preceded (within 1 line) by
+# `if (import.meta.env.DEV)` — manual review or paired grep:
+grep -nB1 "console\.(debug|error)" apps/dashboard/src/services/analyticsLiveFetchers.ts | grep -E "import\.meta\.env\.DEV"
+# Expected count = count of console.(debug|error) matches above.
 
 # CORS update
 grep -nE "dashboard.legendary-arena.com|localhost:4173" apps/server/src/server.mjs
@@ -714,7 +1087,7 @@ git diff --stat apps/dashboard/package.json apps/server/package.json pnpm-lock.y
 
 - [ ] All Acceptance Criteria items pass.
 - [ ] `docs/ai/STATUS.md` has a `### WP-206 / EC-234 Executed` block
-  (2 source files + server CORS + 4 governance; ≥ 10 net-new tests;
+  (2 source files + server CORS + 4 governance; ≥ 14 net-new tests;
   widget + composable byte-identity verified by grep + `git diff`;
   cross-cutting gates clean).
 - [ ] `docs/ai/DECISIONS.md` has D-20601 landed Active byte-identical
@@ -799,6 +1172,38 @@ analytics rows landed at WP-205 close (catalog already correct).
   fallback path depend on it.
 - Do NOT remove or rename any existing entry in the server CORS
   origins array. The 2 new entries are PURE additions.
+- Do NOT duplicate the LIVE-gate condition in `mocks.ts`. The
+  shared `isLiveModeEnabled()` predicate is the single source of
+  truth — `mocks.ts` calls it; the LIVE fetchers re-validate via
+  the same function. Two independent gates are a drift class
+  waiting to happen.
+- Do NOT invoke the async fetch closure before the cache
+  `Map.set` completes. The order is locked: build sentinel →
+  `cache.set` → invoke fetch (fire-and-forget) → return
+  `ref.value`. A concurrent same-tick test will catch the
+  inversion.
+- Do NOT overwrite a populated `ref.value` with a live empty
+  sentinel on any error path. Even though v1 has no refetch,
+  the sentinel non-regression invariant is locked now so future
+  SWR / refetch WPs inherit it.
+- Do NOT call `Date.now()` directly inside `analyticsLiveFetchers.ts`
+  beyond the one-line `now` default initializer. Every timestamp
+  capture goes through the swappable `now()` so
+  `__testHooks.setNow` can drive deterministic tests.
+- Do NOT inline `Array.isArray(...)` at a fetch call site. The
+  exported `isValidEnvelope<T>(...)` predicate is the single
+  validator; reusing it keeps the audit surface to one line.
+- Do NOT export an `async function fetch*` from
+  `analyticsLiveFetchers.ts`. The public API is the 3
+  synchronous getters + the helper exports
+  (`isLiveModeEnabled` / `isValidEnvelope` /
+  `makeLiveEmptySentinel` / `__testHooks`); the async fetch
+  closures stay internal so callers cannot `await` them and
+  break the composable's synchronous contract.
+- Do NOT emit `console.debug`, `console.error`, or `console.log`
+  outside an `if (import.meta.env.DEV) { ... }` wrapper. The only
+  production-permitted console output is the one-shot
+  `console.warn(MISSING_BASE_URL_WARNING)`.
 
 ---
 
@@ -817,7 +1222,7 @@ analytics rows landed at WP-205 close (catalog already correct).
 | 9 | Definition of Done has binary gates | ✅ |
 | 10 | Layer boundary preserved — dashboard + surgical server CORS edit | ✅ (no engine/registry/preplan/arena-client/registry-viewer touches; server edit is a 2-line CORS-array insertion adjacent to the existing pattern) |
 | 11 | Identity model — cookie-bound Hanko session via `credentials: 'include'` | ✅ (D-20601; no new identity surface; relies on the operator's existing CF-Access-gated browser session) |
-| 12 | Test rules — `node:test`; ≥ 10 net-new tests; no boardgame.io / engine import | ✅ |
+| 12 | Test rules — `node:test`; ≥ 14 net-new tests; no boardgame.io / engine import | ✅ |
 | 13 | pnpm/node commands only; expected output shown | ✅ |
 | 14 | Acceptance criteria binary + specific | ✅ |
 | 15 | Definition of Done includes STATUS/DECISIONS/WORK_INDEX/EC_INDEX scope-bound | ✅ |
@@ -840,7 +1245,7 @@ analytics rows landed at WP-205 close (catalog already correct).
 | File allowlist tight? | ✅ — 8 files total; surface < 10-file split threshold. |
 | Locked values verbatim copyable? | ✅ — `MISSING_BASE_URL_WARNING` + `FETCH_OPTIONS` + URL templates all written byte-exact in §Locked contract values. |
 | Layer boundary respected? | ✅ — single dashboard layer file + 1-line surgical server CORS edit per existing pattern; no engine / registry / preplan / arena-client / registry-viewer touches. |
-| Test surface bounded + countable? | ✅ — ≥ 10 net-new node:test cases in `analyticsLiveFetchers.test.ts`; no integration test framework added. |
+| Test surface bounded + countable? | ✅ — ≥ 14 net-new node:test cases in `analyticsLiveFetchers.test.ts`; no integration test framework added. |
 | Forbidden patterns enumerated? | ✅ — 11 traps listed under §Non-Negotiable Constraints → Forbidden. |
 | Definition of Done binary? | ✅ — 6 checkbox items; each independently verifiable via grep / build / git diff. |
 

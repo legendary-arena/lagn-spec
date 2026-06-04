@@ -11,20 +11,48 @@
 
 1. **Sub-task A — LIVE fetcher module + tests (2 files)**
    - Create `apps/dashboard/src/services/analyticsLiveFetchers.ts`
-     with 3 exported async wrappers + the locked
-     `MISSING_BASE_URL_WARNING` + `FETCH_OPTIONS` + sentinel factory.
+     with the locked helpers + 3 synchronous fetcher getters:
+     - `MISSING_BASE_URL_WARNING` + `FETCH_OPTIONS` constants
+       (verbatim from §Locked Values).
+     - Module-private `let now: () => number = () => Date.now();`
+       (the SINGLE permitted `Date.now()` call in the module).
+     - Exported `isLiveModeEnabled()` shared predicate (the LIVE
+       gate's single source of truth).
+     - Exported `isValidEnvelope<T>(value)` type-predicate (the
+       single payload guard).
+     - Exported `makeLiveEmptySentinel<T>()` factory.
+     - Exported `__testHooks = { setNow(fn) { now = fn; } }`
+       (test-only escape hatch).
+     - 3 synchronous getter exports
+       (`fetchTrafficSourcesLive` / `fetchActivationFunnelLive` /
+       `fetchRetentionCohortsLive`) — each one follows the locked
+       cache-write-before-fetch order: build sentinel →
+       `cache.set` → invoke internal async fetch closure →
+       return `ref.value`. Internal async closures are NOT
+       exported.
+     - Module-level per-fetcher `Map<key, Ref<ServiceResponse>>`
+       caches + one-shot missing-URL warning guard.
    - Create `apps/dashboard/src/services/analyticsLiveFetchers.test.ts`
-     with ≥ 10 tests per WP-206 §Acceptance Criteria → LIVE-fetcher
-     behavior.
+     with ≥ 14 tests per WP-206 §Acceptance Criteria → LIVE-fetcher
+     behavior (concurrent same-key dedupe + sentinel non-regression
+     + `__testHooks.setNow` time injection + `isValidEnvelope` /
+     `isLiveModeEnabled` direct unit + DEV-only console gating +
+     error paths + missing-URL + auth + URL construction).
    - Gate: `pnpm --filter @legendary-arena/dashboard build` + `test`
-     exit 0; ≥ 10 new tests pass.
+     exit 0; ≥ 14 new tests pass; helper grep returns ≥ 6 matches;
+     no exported async fetch leak; exactly 1 `Date.now()` match.
    - **Commit Sub-task A** with prefix `EC-234:`.
 
 2. **Sub-task B — LIVE-flip gate + server CORS (2 files)**
    - Modify `apps/dashboard/src/services/mocks.ts` — replace the 3
-     `fetchX` static re-exports with an `isLiveMode`-gated const
-     export block per WP-206 §Scope (In). `mockX` re-exports preserved
-     byte-identical.
+     `fetchX` static re-exports with an
+     `isLiveModeEnabled()`-gated const export block per WP-206
+     §Scope (In). `mocks.ts` imports the shared predicate from
+     `./analyticsLiveFetchers.js`; **no inline env-var check** on
+     this side (`grep -nE "VITE_USE_MOCKS|VITE_API_BASE_URL"
+     apps/dashboard/src/services/mocks.ts` returns 0 at close —
+     single-source-of-truth gate enforced). `mockX` re-exports
+     preserved byte-identical.
    - Modify `apps/server/src/server.mjs` — add 2 entries to the CORS
      `origins` array (`https://dashboard.legendary-arena.com` +
      `http://localhost:4173`) with a `// why:` block citing WP-206 +
@@ -78,9 +106,10 @@
 
 ## Locked Values (verbatim from WP-206)
 
-> Full constant strings + URL templates live in WP-206 §Non-Negotiable
-> Constraints → Locked LIVE-fetcher contract values. Copy byte-identical
-> into `analyticsLiveFetchers.ts`; do NOT re-derive.
+> Full constant strings + URL templates + helper signatures live in
+> WP-206 §Non-Negotiable Constraints → Locked LIVE-fetcher contract
+> values. Copy byte-identical into `analyticsLiveFetchers.ts`; do
+> NOT re-derive.
 
 - **`MISSING_BASE_URL_WARNING` string (locked):** exactly
   `'[analytics] LIVE mode requested but VITE_API_BASE_URL is unset;
@@ -91,19 +120,60 @@
   Accept: 'application/json' } }` — every `fetch` call uses this
   exact options object. `credentials: 'omit'` or
   `'same-origin'` is FORBIDDEN.
-- **Empty sentinel shape (D-20601):** `{ data: [], updatedAt:
-  Date.now(), source: 'LIVE' }`. Returned synchronously on first
-  call for a key and on every error path.
+- **Live empty sentinel shape (D-20601):** `{ data: [], updatedAt:
+  now(), source: 'LIVE' }` (note `now()`, not `Date.now()` —
+  module-private injectable time source). Constructed by
+  `makeLiveEmptySentinel<T>()` (the `Live` prefix is locked; it
+  disambiguates against MOCK-factory empty outputs at every cache-
+  touch point). Returned synchronously on first call for a key and
+  on every error path SUBJECT to the sentinel non-regression
+  invariant (see Guardrails).
 - **One-shot guard mechanism (D-20601):** module-level `let
   hasWarnedAboutMissingBaseUrl = false;` flipped to `true` after
   first warning emission; subsequent calls skip the warning. Process
   lifetime; fresh process re-warns once. Test asserts via
   `mock.method(console, 'warn')` capture.
-- **`isLiveMode` gate condition (D-20601):** the boolean is `true`
-  iff ALL of: `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
-  `typeof import.meta.env.VITE_API_BASE_URL === 'string'` AND
-  `import.meta.env.VITE_API_BASE_URL.length > 0`. Any condition
-  failing → fall through to `mockX`.
+- **`isLiveModeEnabled()` shared predicate (D-20601):** exported
+  function returning `true` iff ALL of: `import.meta.env.VITE_USE_MOCKS
+  !== 'true'` AND `typeof import.meta.env.VITE_API_BASE_URL ===
+  'string'` AND `import.meta.env.VITE_API_BASE_URL.length > 0`.
+  Single source of truth for the gate — `mocks.ts` imports it for
+  routing; every LIVE fetcher calls it for defensive re-validation
+  before fetch. Inline env-var checks at either call site are
+  FORBIDDEN.
+- **`isValidEnvelope<T>(value)` shared guard (D-20601):** exported
+  type-predicate `value is { data: readonly T[] }` — `true` iff
+  `value` is a non-null object AND
+  `Array.isArray((value as { data?: unknown }).data)`. All three
+  fetchers reuse it; inline `Array.isArray` at a fetcher call site
+  is FORBIDDEN.
+- **Injectable time source (D-20601):** module-private `let now: ()
+  => number = () => Date.now();`. Direct `Date.now()` calls anywhere
+  else in the module are FORBIDDEN — verification grep allows
+  exactly 1 `Date.now()` match (the initializer line). Tests use
+  the exported `__testHooks.setNow(fn)` escape hatch and reset in
+  teardown.
+- **`__testHooks` shape (locked):** exported `const __testHooks =
+  { setNow(fn: () => number): void { now = fn; } };`. Production
+  code never invokes `__testHooks` — grep guards by counting
+  matches in non-test source files = 1 (the declaration only).
+- **Cache-write-before-fetch order (locked):** every fetcher's
+  cache-miss branch executes the lines in this exact source order:
+  `(1) const liveRef = ref(makeLiveEmptySentinel<T>()); (2)
+  cache.set(key, liveRef); (3) void runFetchClosure(key,
+  liveRef); (4) return liveRef.value;`. Any reordering that
+  inverts (2) and (3) violates the concurrent-dedupe invariant.
+- **Sentinel non-regression invariant (D-20601):** once a cached
+  `ref.value` has been replaced with successfully-fetched data,
+  NO code path may overwrite it back to a live empty sentinel.
+  In v1 (no refetch) this is structurally upheld by never re-entering
+  the cache-miss branch for an existing key; the invariant locks
+  the future SWR / refetch WPs against silent good-data
+  downgrades.
+- **Console policy (locked):** production builds emit ONLY
+  `console.warn(MISSING_BASE_URL_WARNING)` (one-shot). Every
+  `console.debug` / `console.error` site MUST be wrapped in
+  `if (import.meta.env.DEV) { ... }`. Bare `console.log` FORBIDDEN.
 - **URL templates (locked):**
   - `${VITE_API_BASE_URL}/api/analytics/traffic-sources?range=${range}`
   - `${VITE_API_BASE_URL}/api/analytics/activation-funnel?range=${range}`
@@ -113,12 +183,20 @@
   `cohortCount: number` for retention-cohorts. Module-level
   `Map<key, Ref<ServiceResponse<readonly T[]>>>` per fetcher.
 - **`source: 'LIVE'` literal (D-20601):** every successful response
-  + every empty sentinel carries this literal. `'CACHED'` FORBIDDEN
-  in v1.
+  + every live empty sentinel carries this literal. `'CACHED'`
+  FORBIDDEN in v1.
 - **`updatedAt` capture timing (D-20601):** RESPONSE time — captured
-  immediately before the cached ref's value is replaced, NOT at
-  function call entry. Sentinel emission uses `Date.now()` at the
+  via `now()` immediately before the cached ref's value is replaced,
+  NOT at function call entry. Sentinel emission uses `now()` at the
   sentinel-build-time (separate capture).
+- **Public export surface (locked):** the module exports exactly
+  (a) the 3 synchronous getters
+  `fetchTrafficSourcesLive` / `fetchActivationFunnelLive` /
+  `fetchRetentionCohortsLive`; (b) the helpers
+  `isLiveModeEnabled` / `isValidEnvelope` /
+  `makeLiveEmptySentinel`; (c) the `__testHooks` namespace.
+  Exporting `async function fetch*` is FORBIDDEN — every async
+  closure is internal.
 - **Server CORS additions (locked):** literal strings
   `'https://dashboard.legendary-arena.com'` and `'http://localhost:4173'`
   appended to the existing 7-entry `origins` array. NO other entry
@@ -137,24 +215,56 @@
   `use{TrafficSources,ActivationFunnel,RetentionCohorts}.ts`
   composables. NO composable edit.
 - **`source: 'LIVE'` literal-locked (D-20601).** Every successful
-  fetch + every empty sentinel carries this literal string. `'CACHED'`
-  emission anywhere = HARD FAIL.
-- **`updatedAt` capture timing (D-20601).** RESPONSE time only; the
-  test asserts the timestamp advances between sentinel emission and
-  fetch resolve.
+  fetch + every live empty sentinel carries this literal string.
+  `'CACHED'` emission anywhere = HARD FAIL.
+- **`updatedAt` capture timing + injectable `now()` (D-20601).**
+  RESPONSE time only — captured via the module-private `now()`
+  function. Direct `Date.now()` calls beyond the one-line `now`
+  default initializer = HARD FAIL. Tests inject via
+  `__testHooks.setNow(fn)`.
 - **Cookie-credentials auth (D-20601).** `credentials: 'include'`
   on every fetch. Bearer Authorization header construction at the
   dashboard layer = HARD FAIL.
 - **Empty-sentinel error path (D-20601).** Network reject / 4xx /
-  5xx / invalid JSON / payload shape mismatch → empty sentinel; widget
-  renders its existing `empty` arm. NO raw error message reaches the
-  user-facing surface.
+  5xx / invalid JSON / payload shape mismatch → live empty
+  sentinel (subject to non-regression invariant below); widget
+  renders its existing `empty` arm. NO raw error message reaches
+  the user-facing surface.
+- **Sentinel non-regression invariant (D-20601).** Once a cached
+  `ref.value` has been replaced with successfully-fetched data,
+  no code path may overwrite it back to a live empty sentinel.
+  Locks the future SWR / refetch WPs against silent good-data
+  downgrades.
+- **Cache-write-before-fetch invariant (D-20601).** Cache-miss
+  branch ordering is locked: build sentinel → `cache.set` →
+  invoke fetch closure → return `ref.value`. Inverting the
+  `cache.set` and fetch-invoke lines = concurrent-dedupe HARD
+  FAIL (a two-same-tick test will catch it).
 - **Per-key cache (D-20601).** `Map<key, Ref<ServiceResponse>>` per
   fetcher; module-level lifetime. Second call with same key returns
   cached ref's `.value` without kicking off a second fetch.
-- **`isLiveMode` gate (D-20601).** Triple-condition AND: `VITE_USE_MOCKS
-  !== 'true'` AND `VITE_API_BASE_URL` is string AND non-empty. Defense
-  against the `VITE_USE_MOCKS=false` + unset URL crash mode.
+- **Single-source-of-truth LIVE gate (D-20601).** The shared
+  exported `isLiveModeEnabled()` function is the ONLY place the
+  triple-condition AND lives: `VITE_USE_MOCKS !== 'true'` AND
+  `VITE_API_BASE_URL` is string AND non-empty. `mocks.ts` imports
+  and calls it; every LIVE fetcher calls it for defensive
+  re-validation. Inline env-var references in `mocks.ts` source =
+  HARD FAIL (defense against silent two-gate drift over time).
+- **JSON envelope guard reuse (D-20601).** All three fetchers
+  validate the response via the same exported
+  `isValidEnvelope<T>(value): value is { data: readonly T[] }`
+  predicate. Inline `Array.isArray(...)` at a fetcher call site
+  = single-validator HARD FAIL.
+- **Console policy in production (D-20601).** Only the one-shot
+  `console.warn(MISSING_BASE_URL_WARNING)` may fire in production.
+  Every `console.debug` / `console.error` site is wrapped in
+  `if (import.meta.env.DEV) { ... }`. Bare `console.log` or
+  unwrapped DEV-tier output = HARD FAIL.
+- **Public export surface (D-20601).** The module exports exactly
+  the 3 synchronous getters + `isLiveModeEnabled` /
+  `isValidEnvelope` / `makeLiveEmptySentinel` / `__testHooks`.
+  Exporting `async function fetch*` = HARD FAIL (breaks the
+  composable's synchronous-getter contract).
 - **One-shot warning posture (D-20601).** Missing-URL warning emits
   exactly once per process via module-level boolean; warning text
   byte-identical to `MISSING_BASE_URL_WARNING`.
@@ -202,23 +312,51 @@
   citing D-20601 cookie-credentials auth posture (no Bearer header
   construction at the dashboard layer; the Hanko session cookie is
   bound to the dashboard's CF-Access-gated browser session).
-- `analyticsLiveFetchers.ts` `makeEmptySentinel` factory — `// why:`
+- `analyticsLiveFetchers.ts` `makeLiveEmptySentinel` factory — `// why:`
   citing D-20601 empty-sentinel error-path posture + widget `empty`
-  arm fallback.
-- `analyticsLiveFetchers.ts` per-fetcher module-level cache — `// why:`
-  citing D-20601 per-key cache discipline + SPA lifetime + Vue
-  reactivity bridge (sync getter contract preservation).
-- `analyticsLiveFetchers.ts` per-fetcher `updatedAt: Date.now()` at
-  RESPONSE time — `// why:` citing D-20601 capture-timing lock.
-- `analyticsLiveFetchers.ts` per-fetcher fetch-failure catch block —
-  `// why:` citing D-20601 fail-silent posture (empty sentinel
-  preserved; widget renders `empty` arm).
+  arm fallback + the `Live` prefix's disambiguation role at cache-
+  touch points.
+- `analyticsLiveFetchers.ts` `isLiveModeEnabled` export — `// why:`
+  citing D-20601 single-source-of-truth LIVE gate + defense against
+  two-gate drift between `mocks.ts` and the fetchers.
+- `analyticsLiveFetchers.ts` `isValidEnvelope` export — `// why:`
+  citing D-20601 JSON envelope guard reuse (one validator, three
+  fetchers) + the WP-205 server-envelope contract being the
+  element-level schema authority.
+- `analyticsLiveFetchers.ts` module-private `now` declaration —
+  `// why:` citing D-20601 injectable-time-source posture +
+  `__testHooks.setNow` swap point + the no-direct-Date.now rule.
+- `analyticsLiveFetchers.ts` `__testHooks` export — `// why:`
+  TEST-ONLY escape hatch for `now` injection; production code
+  never invokes (verification grep counts call sites in
+  non-test source = 0).
+- `analyticsLiveFetchers.ts` per-fetcher cache-write-before-fetch
+  block — `// why:` citing D-20601 cache-write-before-fetch
+  invariant (cache.set BEFORE async-fetch invoke; concurrent
+  same-tick callers share the in-flight fetch — exactly ONE
+  network call per (key, process)).
+- `analyticsLiveFetchers.ts` per-fetcher module-level cache —
+  `// why:` citing D-20601 per-key cache discipline + SPA
+  lifetime + Vue reactivity bridge (sync getter contract
+  preservation).
+- `analyticsLiveFetchers.ts` per-fetcher `updatedAt: now()` at
+  RESPONSE time — `// why:` citing D-20601 capture-timing lock +
+  injectable-now posture.
+- `analyticsLiveFetchers.ts` per-fetcher fetch-failure catch
+  block — `// why:` citing D-20601 fail-silent posture (live
+  empty sentinel preserved; widget renders `empty` arm) + sentinel
+  non-regression invariant (populated `ref.value` is not
+  downgraded on error).
+- `analyticsLiveFetchers.ts` DEV-wrapped debug log site — `// why:`
+  citing D-20601 console policy (production builds emit only the
+  one-shot warn; `console.debug` / `console.error` are DEV-only).
 - `analyticsLiveFetchers.ts` one-shot warning guard — `// why:`
   citing D-20601 one-shot lifetime + EC §Locked Values one-shot
   guard mechanism + the WP-205 `userIdHash.ts` precedent.
-- `mocks.ts` `isLiveMode` const — `// why:` citing D-20601 LIVE-flip
-  seam + the triple-condition AND gate (defense against `VITE_USE_MOCKS=false`
-  + unset URL crash mode).
+- `mocks.ts` `liveMode` const (consuming `isLiveModeEnabled()`) —
+  `// why:` citing D-20601 LIVE-flip seam + single-source-of-truth
+  gate import (no inline env-var check on this side; the helper
+  is the only source).
 - `mocks.ts` per-export const — `// why:` citing D-20302 widget
   byte-identity preservation + D-20601 LIVE-flip seam (the `fetchX`
   identifier stays; the binding behind it changes).
@@ -239,8 +377,10 @@
 ### Sub-task B — LIVE-flip gate + server CORS (2 modified)
 
 - `apps/dashboard/src/services/mocks.ts` — **modified** — replace
-  the 3 `fetchX` static re-exports with an `isLiveMode`-gated const
-  export block.
+  the 3 `fetchX` static re-exports with an
+  `isLiveModeEnabled()`-gated const export block (consumes the
+  shared predicate; zero inline `VITE_USE_MOCKS` /
+  `VITE_API_BASE_URL` references on this side).
 - `apps/server/src/server.mjs` — **modified** — 2 surgical entries
   added to the CORS `origins` array.
 
@@ -262,15 +402,38 @@
 
 - [ ] `pnpm --filter @legendary-arena/dashboard build` exits 0.
 - [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0 with
-  baseline + **≥ 10 new tests** in `analyticsLiveFetchers.test.ts`.
-- [ ] Locked-constant grep: `grep -nE "MISSING_BASE_URL_WARNING|FETCH_OPTIONS|makeEmptySentinel"
-  apps/dashboard/src/services/analyticsLiveFetchers.ts` returns ≥ 3
-  matches.
+  baseline + **≥ 14 new tests** in `analyticsLiveFetchers.test.ts`
+  covering the full §Acceptance Criteria → LIVE-fetcher behavior
+  matrix (concurrent same-key dedupe, sentinel non-regression,
+  `__testHooks.setNow` time injection, `isValidEnvelope` direct
+  unit test, `isLiveModeEnabled` truth table, DEV-only console
+  gating).
+- [ ] Locked-constant + helper grep: `grep -nE "MISSING_BASE_URL_WARNING|FETCH_OPTIONS|makeLiveEmptySentinel|isLiveModeEnabled|isValidEnvelope|__testHooks"
+  apps/dashboard/src/services/analyticsLiveFetchers.ts` returns ≥ 6
+  matches (each of the 6 identifiers declared once).
 - [ ] `credentials: 'include'` grep: `grep -nE "credentials: 'include'"
   apps/dashboard/src/services/analyticsLiveFetchers.ts` returns ≥ 1
   match.
 - [ ] `source: 'LIVE'` grep: at least 4 matches (sentinel factory +
   3 per-fetcher response wrapper sites).
+- [ ] Cache-write-before-fetch ordering (manual review gate):
+  `grep -nE "cache\.set|\.set\(.*ref\(" apps/dashboard/src/services/analyticsLiveFetchers.ts`
+  returns ≥ 3 matches (one per fetcher). Manually verify each
+  `cache.set` precedes its corresponding async-fetch invocation in
+  source order.
+- [ ] No exported async fetch leakage: `grep -nE "^export async function|^export const fetch[A-Z][A-Za-z]* = async"
+  apps/dashboard/src/services/analyticsLiveFetchers.ts` returns 0
+  matches (public getters are synchronous; async closures are
+  internal).
+- [ ] Direct `Date.now()` audit: `grep -nE "Date\.now\(\)"
+  apps/dashboard/src/services/analyticsLiveFetchers.ts` returns
+  exactly 1 match (the `let now = () => Date.now();` initializer).
+- [ ] Console-policy audit: every `console.(debug|error)` match in
+  `analyticsLiveFetchers.ts` source is preceded by an
+  `if (import.meta.env.DEV)` gate within 1 line (manual review or
+  paired grep:
+  `grep -nB1 "console\.(debug|error)" apps/dashboard/src/services/analyticsLiveFetchers.ts | grep -E "import\.meta\.env\.DEV"`
+  returns count equal to the unwrapped grep count).
 - [ ] Layer-boundary grep on the new file: zero
   `@legendary-arena/(game-engine|registry|preplan|server)` matches.
 
@@ -282,8 +445,14 @@
 - [ ] `pnpm --filter @legendary-arena/server build` + `test` exit 0;
   full server test count = baseline (no new server tests; CORS array
   edit is non-functional regression-only).
-- [ ] LIVE-flip gate grep on `mocks.ts`: `grep -nE "isLiveMode|fetchTrafficSourcesLive|fetchActivationFunnelLive|fetchRetentionCohortsLive"
-  apps/dashboard/src/services/mocks.ts` returns ≥ 4 matches.
+- [ ] Shared LIVE-gate consumption + Live-fetcher imports on
+  `mocks.ts`: `grep -nE "isLiveModeEnabled|fetchTrafficSourcesLive|fetchActivationFunnelLive|fetchRetentionCohortsLive"
+  apps/dashboard/src/services/mocks.ts` returns ≥ 4 matches
+  (gate import + 3 fetcher imports/usages).
+- [ ] `mocks.ts` does NOT re-derive the env-var gate:
+  `grep -nE "VITE_USE_MOCKS|VITE_API_BASE_URL" apps/dashboard/src/services/mocks.ts`
+  returns 0 matches. Single-source-of-truth gate HARD FAIL if
+  non-zero.
 - [ ] `mockX` preservation: `grep -nE "mockTrafficSources|mockActivationFunnel|mockRetentionCohorts"
   apps/dashboard/src/services/mocks.ts` returns ≥ 3 matches (the
   preserved re-export block).
@@ -352,9 +521,37 @@
 - **Raw error message rendered in widget UI** → D-20601 leakage
   gate HARD FAIL (the failure path is empty sentinel + widget's
   existing `empty` arm).
-- **`isLiveMode` gate omits any of the three AND conditions** —
+- **`isLiveModeEnabled()` omits any of the three AND conditions** —
   defense against `VITE_USE_MOCKS=false` + unset URL crash mode
   HARD FAIL.
+- **`mocks.ts` source contains `VITE_USE_MOCKS` or
+  `VITE_API_BASE_URL`** — single-source-of-truth HARD FAIL.
+  `mocks.ts` consumes `isLiveModeEnabled()`; it does NOT
+  re-derive the condition.
+- **Async fetch closure invoked BEFORE `cache.set` in any
+  fetcher** — cache-write-before-fetch invariant HARD FAIL;
+  concurrent same-tick callers would double-fetch.
+- **A populated `ref.value` is overwritten with a live empty
+  sentinel on an error path** — sentinel non-regression HARD
+  FAIL; locks the contract against the future SWR / refetch WPs.
+- **Direct `Date.now()` call in `analyticsLiveFetchers.ts` source
+  beyond the `let now = () => Date.now();` initializer** —
+  injectable-time HARD FAIL; bypasses `__testHooks.setNow`.
+- **`Array.isArray(...)` inlined at a fetcher call site** —
+  validator-reuse HARD FAIL; the single `isValidEnvelope<T>`
+  is the only payload guard.
+- **`export async function fetch*` or `export const fetch* = async`
+  in `analyticsLiveFetchers.ts`** — public async leakage HARD FAIL;
+  the public getters are synchronous and the async closures stay
+  internal.
+- **`console.debug` / `console.error` / `console.log` not
+  wrapped in `if (import.meta.env.DEV)`** — console policy HARD
+  FAIL; production builds would emit dev-tier noise.
+- **`__testHooks.setNow` invoked outside test source** —
+  production code touching the test escape hatch HARD FAIL.
+- **`makeEmptySentinel` (no `Live` prefix) defined or referenced**
+  — locked-naming HARD FAIL; the factory is
+  `makeLiveEmptySentinel` per EC §Locked Values.
 - **Missing-URL warning text drifts from
   `MISSING_BASE_URL_WARNING`** → EC §Locked Values HARD FAIL.
 - **Missing-URL warning emits more than once per process** →
@@ -386,18 +583,26 @@
 > (proposed)` at draft time to `Active` at landing time; no other
 > field changes.
 
-### D-20601 — Dashboard Analytics LIVE-Flip Posture: Cookie-Credentials Auth, Empty-Sentinel Error Path, Per-Key SPA Cache, `source: 'LIVE'` Literal-Locked
+### D-20601 — Dashboard Analytics LIVE-Flip Posture: Single-Source-of-Truth Gate, Cache-Write-Before-Fetch, Cookie-Credentials Auth, Sentinel Non-Regression, Injectable `now()`, Shared Envelope Guard, Console Policy, Per-Key SPA Cache, `source: 'LIVE'` Literal-Locked
 
 **Decision:**
 The dashboard's 3 analytics widgets
 (`TrafficSourcesWidget` / `ActivationFunnelWidget` /
 `RetentionCohortsWidget`) flip from MOCK to LIVE via an
-`isLiveMode`-gated conditional re-export in
-`apps/dashboard/src/services/mocks.ts`. `isLiveMode` is `true`
-iff ALL of: `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
+`isLiveModeEnabled()`-gated conditional re-export in
+`apps/dashboard/src/services/mocks.ts`. The `isLiveModeEnabled()`
+predicate is exported from
+`apps/dashboard/src/services/analyticsLiveFetchers.ts` and returns
+`true` iff ALL of: `import.meta.env.VITE_USE_MOCKS !== 'true'` AND
 `typeof import.meta.env.VITE_API_BASE_URL === 'string'` AND
 `import.meta.env.VITE_API_BASE_URL.length > 0`. Any condition
-failing → fall through to the MOCK factories.
+failing → fall through to the MOCK factories. The predicate is
+the **single source of truth** for the LIVE-mode gate — both
+`mocks.ts` (routing) AND every LIVE fetcher (defensive
+re-validation at fetch time) consume it. Inline `import.meta.env`
+references in `mocks.ts` are FORBIDDEN; the gate must not be
+re-derived at any other site (defense against silent two-gate
+drift over the long tail of future edits).
 
 The LIVE fetchers
 (`fetchTrafficSourcesLive` / `fetchActivationFunnelLive` /
@@ -405,11 +610,34 @@ The LIVE fetchers
 `apps/dashboard/src/services/analyticsLiveFetchers.ts`) preserve
 the composable's synchronous `() => ServiceResponse<readonly T[]>`
 getter contract via a module-level `Map<key, Ref<ServiceResponse>>`
-per fetcher. First call with a given key returns the empty
-sentinel (`data: []`, `source: 'LIVE'`, `updatedAt: Date.now()`)
-synchronously and kicks off the async fetch via a fire-and-forget
-closure. Vue reactivity propagates fetch completion to the
-composable + widget.
+per fetcher. First call with a given key returns the live empty
+sentinel (`makeLiveEmptySentinel<T>()` — `{ data: [], updatedAt:
+now(), source: 'LIVE' }`) synchronously and kicks off the async
+fetch via a fire-and-forget closure. Vue reactivity propagates
+fetch completion to the composable + widget. The factory's
+`Live` prefix is deliberate — at cache-touch points it
+disambiguates against MOCK-factory empty-state outputs.
+
+**Cache-write-before-fetch invariant.** On a cache miss for
+`key`, the cache-miss branch executes in this exact source order:
+(1) construct `liveRef = ref(makeLiveEmptySentinel<T>())`;
+(2) `cache.set(key, liveRef)`; (3) invoke the async fetch closure
+(fire-and-forget); (4) return `liveRef.value`. Concurrent same-key
+calls within a single tick see the populated cache on step 2 and
+skip directly to the cached-branch path — exactly ONE network
+fetch per (key, process) is initiated. Inverting steps 2 and 3
+would let same-tick callers race past the empty cache and
+double-fetch; the test suite verifies via fetch-spy count after
+a two-same-tick exercise.
+
+**Sentinel non-regression invariant.** Once a cached `ref.value`
+has been replaced with successfully-fetched data, no code path
+may overwrite it back to a live empty sentinel. In v1 (no
+refetch) the invariant is structurally upheld by never re-entering
+the cache-miss branch for an existing key; locking it now means
+the future SWR / background-refetch / abort-on-key-change WPs
+inherit the rule that a failed refetch must preserve the prior
+good data, not silently downgrade it.
 
 `source: 'LIVE'` is the only literal value emitted by successful
 LIVE-mode responses in v1. `'CACHED'` (stale-while-revalidate) is
@@ -417,9 +645,35 @@ deferred to a future hardening WP.
 
 `updatedAt` is captured at the network RESPONSE time — immediately
 before the cached ref's `.value` is replaced with the parsed data.
-The empty sentinel captures `Date.now()` at sentinel-build-time so
-the widget freshness chip reads `LIVE · just now` from widget mount;
-the timestamp then advances on fetch resolve.
+The live empty sentinel captures `now()` at sentinel-build-time so
+the widget freshness chip reads `LIVE · just now` from widget
+mount; the timestamp then advances on fetch resolve.
+
+**Injectable `now()` (test determinism).** The fetcher module
+declares a module-private `let now: () => number = () =>
+Date.now();` invoked at every timestamp capture site. Direct
+`Date.now()` calls anywhere else in the module are FORBIDDEN —
+exactly one match in source is allowed (the initializer). Tests
+swap via the exported `__testHooks.setNow(fn)` escape hatch and
+reset in teardown. Production code never invokes `__testHooks`.
+
+**Shared JSON envelope guard.** All three fetchers validate the
+response payload via the same exported `isValidEnvelope<T>(value):
+value is { data: readonly T[] }` type-predicate — `true` iff
+`value` is a non-null object AND
+`Array.isArray((value as { data?: unknown }).data)`. Inline
+`Array.isArray(...)` at fetcher call sites is FORBIDDEN.
+Element-level schema validation is the server's job per the
+WP-205 envelope contract; the dashboard's guard is strictly
+structural.
+
+**Console policy (production).** The ONLY console output
+permitted to fire in production builds is the one-shot
+`console.warn(MISSING_BASE_URL_WARNING)`. Every `console.debug` /
+`console.error` site MUST be wrapped in
+`if (import.meta.env.DEV) { ... }`. Bare `console.log` FORBIDDEN.
+This keeps production logs / Sentry-style integrations free of
+dev-tier debug noise while preserving rich local-dev visibility.
 
 **Error-path posture (fail-silent to empty sentinel):**
 Fetch failures (network reject, HTTP 4xx / 5xx, invalid JSON,
@@ -455,15 +709,18 @@ A fresh data load requires a page reload. All deferred to future
 polish WPs.
 
 **Missing-URL one-shot warning posture:**
-If `isLiveMode` evaluates `true` but `VITE_API_BASE_URL` is somehow
-missing or empty at fetch time (defense against the
-`VITE_USE_MOCKS=false` + unset URL crash mode), each fetcher
-returns the empty sentinel synchronously AND emits exactly one
-`console.warn` per process via a module-level boolean guard. The
-locked warning message:
+If `isLiveModeEnabled()` evaluates `true` at routing time (in
+`mocks.ts`) but returns `false` at fetch time (the defensive
+re-check inside the fetcher — defense against the
+`VITE_USE_MOCKS=false` + unset URL crash mode AND against
+mid-execution env-var corruption), each fetcher returns the live
+empty sentinel synchronously AND emits exactly one `console.warn`
+per process via a module-level boolean guard. The locked warning
+message:
 `'[analytics] LIVE mode requested but VITE_API_BASE_URL is unset;
 falling back to MOCK. Set the env var in the deployment
-environment.'`
+environment.'` Per the production console policy this is the
+ONLY console output permitted to fire in production builds.
 
 **Rationale:**
 The composable + widget pattern locked under D-19607 (Shared Source
@@ -473,7 +730,7 @@ widget files stay byte-identical pre/post flip. WP-203 close-out
 already verified the widgets contain ZERO literal `mockX` tokens;
 this WP preserves that gate by introducing a `_Live`-suffixed
 parallel set of getters that the `mocks.ts` seam chooses between
-via `isLiveMode`.
+via the shared `isLiveModeEnabled()` predicate.
 
 The Vue `ref`-backed sync getter pattern bridges async fetch to the
 composable's synchronous contract without changing the composable
@@ -509,12 +766,23 @@ engineering scope that v1 does not need.
 
 **Implementation locations:**
 - `apps/dashboard/src/services/analyticsLiveFetchers.ts` — 3
-  fetcher functions + locked constants + module-level caches.
+  synchronous fetcher getters (`fetchTrafficSourcesLive` /
+  `fetchActivationFunnelLive` / `fetchRetentionCohortsLive`) +
+  shared `isLiveModeEnabled` + `isValidEnvelope` +
+  `makeLiveEmptySentinel` helpers + module-private injectable
+  `now()` + `__testHooks.setNow` escape hatch +
+  `MISSING_BASE_URL_WARNING` + `FETCH_OPTIONS` constants +
+  module-level per-fetcher caches + one-shot warning guard.
 - `apps/dashboard/src/services/analyticsLiveFetchers.test.ts` — ≥
-  10 tests covering happy-path + caching + error paths +
-  missing-URL + auth + URL construction.
-- `apps/dashboard/src/services/mocks.ts` — the `isLiveMode`-gated
-  conditional re-export block.
+  14 tests covering happy-path + caching + concurrent same-key
+  dedupe + sentinel non-regression + `__testHooks` time injection
+  + `isValidEnvelope` direct unit + `isLiveModeEnabled` truth
+  table + DEV-only console gating + error paths + missing-URL +
+  auth + URL construction.
+- `apps/dashboard/src/services/mocks.ts` — the
+  `isLiveModeEnabled()`-gated conditional re-export block
+  (consumes the shared predicate; no inline env-var check on
+  this side).
 - `apps/server/src/server.mjs` — CORS `origins` array gets 2 new
   entries (`https://dashboard.legendary-arena.com` +
   `http://localhost:4173`).
