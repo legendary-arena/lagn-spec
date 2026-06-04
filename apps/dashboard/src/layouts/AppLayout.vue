@@ -15,6 +15,12 @@ interface NavItem {
   abbreviation: string;
 }
 
+interface ExternalLink {
+  href: string;
+  label: string;
+  abbreviation: string;
+}
+
 const NAV_ITEMS: readonly NavItem[] = [
   { to: '/overview', label: 'Overview', abbreviation: 'Ov' },
   { to: '/players', label: 'Players', abbreviation: 'Pl' },
@@ -22,6 +28,10 @@ const NAV_ITEMS: readonly NavItem[] = [
   { to: '/gameplay', label: 'Gameplay', abbreviation: 'Ga' },
   { to: '/system', label: 'System Health', abbreviation: 'Sy' },
   { to: '/debug', label: 'Debug', abbreviation: 'De' },
+];
+
+const EXTERNAL_LINKS: readonly ExternalLink[] = [
+  { href: 'https://ewiki.legendary-arena.com', label: 'Eng Wiki', abbreviation: 'Wi' },
 ];
 
 const router = useRouter();
@@ -146,6 +156,12 @@ onUnmounted(() => {
             <span class="nav-icon">{{ navItem.abbreviation }}</span>
             <span v-if="!isCollapsed" class="nav-label">{{ navItem.label }}</span>
           </RouterLink>
+        </li>
+        <li v-for="link in EXTERNAL_LINKS" :key="link.href" class="external-link">
+          <a :href="link.href" :title="link.label" target="_blank" rel="noopener noreferrer">
+            <span class="nav-icon">{{ link.abbreviation }}</span>
+            <span v-if="!isCollapsed" class="nav-label">{{ link.label }} ↗</span>
+          </a>
         </li>
       </ul>
 
@@ -313,6 +329,12 @@ onUnmounted(() => {
 .nav-links a:hover {
   background: var(--p-content-border-color);
   color: var(--p-text-color);
+}
+
+.nav-links .external-link {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--p-content-border-color);
 }
 
 .nav-links a.router-link-active {
