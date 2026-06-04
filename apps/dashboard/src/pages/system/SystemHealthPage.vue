@@ -13,6 +13,9 @@ import Column from 'primevue/column';
 import PublicSurfaceHealthWidget from '../../widgets/PublicSurfaceHealthWidget.vue';
 import ErrorRateMonitorWidget from '../../widgets/ErrorRateMonitorWidget.vue';
 import InfraCostWatchdogWidget from '../../widgets/InfraCostWatchdogWidget.vue';
+// why: WP-210 §Scope (In) — the new sweep-health widget lands BELOW the
+// existing three WP-204 ops widgets; those widgets are preserved byte-identical.
+import SweepHealthWidget from '../../widgets/SweepHealthWidget.vue';
 import { INFRA_COST_BUDGETS } from '../../config/infraCostBudgets.js';
 
 const { data, loading, error, updatedAt, source } = useFetch(fetchServerNodes);
@@ -38,6 +41,11 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
     <PublicSurfaceHealthWidget />
     <ErrorRateMonitorWidget />
     <InfraCostWatchdogWidget :budgets="INFRA_COST_BUDGETS" />
+
+    <!-- why: WP-210 §Scope (In) — the sweep-health widget renders below the
+         existing three WP-204 widgets, consuming GET /api/sweep/latest
+         (MOCK-mode-first per D-20402). -->
+    <SweepHealthWidget />
 
     <div v-if="loading && !data" class="page-loading">
       <p>Loading server data...</p>

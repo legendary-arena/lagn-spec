@@ -66,6 +66,14 @@ export {
   mockInfraCostEntries as fetchInfraCostEntries,
 } from './opsHealthMocks.js';
 
+// why: WP-210 / EC-242 / D-20402 — sweep-health mock factory. Same dual-export
+// pattern as the WP-204 ops block above: the `mockX` binding for tests (direct
+// factory output) and the `fetchX` alias for the widget (so the widget file
+// contains zero literal mock-binding tokens — the MOCK → LIVE flip seam is a
+// future single-file swap here, not a widget-side change).
+export { mockSweepHealth } from './sweepHealthMocks.js';
+export { fetchSweepHealth } from './sweepHealthMocks.js';
+
 function randomBetween(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
