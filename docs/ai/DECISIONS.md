@@ -22873,4 +22873,37 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-20701 — `sweep_runs` Storage Shape Lock
+
+**D-20701 — `sweep_runs` storage shape lock.** `legendary.sweep_runs` is the durable record for sweep classification summaries (WP-194 runner + WP-195 analyzer outputs). Closed 6-column schema: `run_id text PRIMARY KEY`, `submitted_at timestamptz NOT NULL DEFAULT now()`, `started_at timestamptz NOT NULL`, `cell_count int NOT NULL CHECK (cell_count >= 0 AND cell_count <= 10000)`, `anomaly_counts jsonb NOT NULL` (shape: `Record<SweepAnomalyClass, number>` per WP-195 D-19502), `manifest_blob jsonb NULL` (raw `ManifestClassification` for forensic re-analyze; nullable). One BTREE index on `submitted_at DESC` for the latest-runs query path. `run_id` PRIMARY KEY enforces idempotent submission: duplicate POST returns 409 Conflict and the existing row is BYTE-IDENTICAL pre/post — no `ON CONFLICT DO UPDATE` (no UPSERT), no `ON CONFLICT DO NOTHING` (duplicate must be observable to the caller). All `INSERT` statements MUST list columns explicitly (`(run_id, started_at, cell_count, anomaly_counts, manifest_blob)`); positional inserts forbidden as defense against future column-order migration drift. `submitted_at` omitted from INSERT column lists — column DEFAULT `now()` populates server-side. "Latest" ordering dimension is greatest `submitted_at` (NOT `started_at`); `recentRuns` SQL is `ORDER BY submitted_at DESC LIMIT 30` (literal). Cell-count CHECK constraint is defense-in-depth against malformed payloads; route validator rejects with 413 BEFORE the INSERT. `anomaly_counts` JSONB key validation lives at the route validator layer (CHECK constraint cannot enforce JSONB key sets in pure SQL); drift test asserts validator behavior matches `SWEEP_ANOMALY_CLASSES` canonical array byte-identical. Local `sweep-output/<run-id>/` directory remains the ephemeral working artifact per D-19403; the durable record is this table. Retention is unlimited in v1 (~1.5 GB/year worst-case is inside free-tier headroom); a successor D-NNNN may introduce TTL if the trend warrants. Future schema migrations are additive — column removal or type change requires a successor D-NNNN entry.
+
+**Packet:** WP-209 / EC-241.
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
+### D-20702 — Sweep Submission Auth Posture
+
+**D-20702 — Sweep submission auth posture.** `POST /api/sweep/runs` is `guest` per D-9905 with **shared-secret header** auth: `X-Sweep-Token` MUST equal `process.env.SWEEP_SUBMIT_TOKEN` byte-for-byte via `node:crypto.timingSafeEqual` (`===` is forbidden due to timing-side-channel exposure). Length-equality precheck via `Buffer.byteLength` is REQUIRED before invoking `timingSafeEqual` — Node's `timingSafeEqual` throws `RangeError` on unequal-length buffers; the pre-check preserves both the 401 path and the constant-time guarantee on equal-length inputs. Mismatch returns 401 `{ data: [], error: 'unauthorized' }` BEFORE any DB I/O. Token is sourced from Render env (`sync: false`, operator-set in dashboard) on the server; GitHub Actions secret `SWEEP_SUBMIT_TOKEN` on the submitter side. Production server loud-fails at startup if the env var is unset (mirrors `ANALYTICS_USER_ID_SALT` D-20502 carry-forward). `GET /api/sweep/latest` is `authenticated-session-required` per D-9905 with `SessionValidationErrorCode` collapse to `'unauthorized'` per D-10403 carry-forward. Response envelope on GET: `{ data: { latest: SweepRunSummary | null, recentRuns: readonly SweepRunSummary[] } }` — `data` is an OBJECT (not the WP-205 `data: readonly T[]` array shape) because the endpoint serves two semantically distinct payloads in one response. `SweepRunSummary` excludes `manifestBlob` (forensic-only, never on dashboard read path). GET MUST NOT accept query parameters in v1 (no `?limit`, `?since`, `?runId`); unknown query strings ignored, response shape invariant. Both endpoints set `Cache-Control: no-store` as the literal first statement per D-11504 carry-forward. POST cell-count cap 10000; body size cap 5 MB; raw `manifest_blob` accepted but optional (nightly runs include it for forensic; smaller submissions may omit). Submission script (`scripts/sweep-submit.mjs`) exit-code mapping is `{0: success, 2: config/git error, 3: sweep/analyze error, 4: network/POST error}`; cleanup of `sweep-output/<runId>/` runs ONLY on exit 0 — every non-zero path preserves the local artifact for forensic. `runId` submission format: `<shortSha>-<isoTimestampUtc>` so legitimate same-commit re-runs produce distinct PKs.
+
+**Packet:** WP-209 / EC-241.
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
+### D-20704 — Sweep Nightly Axis Cardinality Lock (v1 = 2×2 Smoke)
+
+**D-20704 — Sweep nightly axis cardinality lock (v1 = 2×2 smoke).** The nightly sweep runs exactly 4 cells per run — the cross-product of 2 schemes × 2 masterminds. Axis content is committed at the repo-relative paths `data/sweep-fixtures/setup.json` (canonical EC-220 envelope), `data/sweep-fixtures/scheme-ids.json` (literal `["core/legacy-virus-the", "core/midtown-bank-robbery"]`), and `data/sweep-fixtures/mastermind-ids.json` (literal `["core/dr-doom", "core/magneto"]`). Policy is locked to `random` (deterministic per-cell seeds via WP-194 D-19402's `${runSeed}::cell:${schemeId}:${mastermindId}` convention); seed is the literal string `nightly`. The 4-cell smoke catches "engine fundamentally broken" in < 60s of wall-clock per run on GitHub Actions free-tier `ubuntu-latest` runners — the QA-loop intent ("did anything fundamentally break since yesterday?") is regression detection, not exhaustive matrix coverage. Richer axes (full ~32×32 corpus, per-scheme team filters, cohort masterminds, heuristic-vs-random policy comparison) are explicitly deferred to a future hardening WP; daily cadence at 1024 cells would cost ~hours/night and overshoot the v1 intent. Cardinality changes require a successor D-NNNN entry. Fixture paths are passed verbatim to `scripts/sweep-setup-matrix.mjs` as `--setup` / `--scheme-ids` / `--mastermind-ids`; the GitHub Actions workflow runs `pnpm -r build` BEFORE `pnpm sweep:nightly` to produce `packages/game-engine/dist/simulation/sweep.runner.js` (required per `scripts/sweep-setup-matrix.mjs:33` runtime import).
+
+**Packet:** WP-209 / EC-241 (drafted under PR #212 amendment).
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
 Protect this file.

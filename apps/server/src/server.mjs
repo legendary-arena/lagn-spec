@@ -32,6 +32,7 @@ import { registerAdminBillingRoutes } from './billing/adminBilling.routes.js';
 import { registerAdminProfileRoutes } from './profile/admin/adminProfile.routes.js';
 import { registerAnalyticsRoutes } from './analytics/analytics.routes.js';
 import { getAnalyticsUserIdSalt } from './analytics/userIdHash.js';
+import { registerSweepRoutes } from './sweep/sweep.routes.js';
 import { requireAdminSession } from './auth/adminSession.js';
 import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
 import { registerLegendsPublisherRoutes } from './legends/legends.routes.js';
@@ -141,6 +142,50 @@ async function buildThemeScenarioKeyMap() {
       `(theme → scenarioKey via buildScenarioKey per D-15001)`,
   );
   return mapping;
+}
+
+// why (D-20702): loud-fail-on-production guard for the SWEEP_SUBMIT_TOKEN env
+// var, mirroring the `ANALYTICS_USER_ID_SALT` precedent at
+// `apps/server/src/analytics/userIdHash.ts`. Production startup is fatal on
+// unset / empty; non-production returns a fixed test token and emits one
+// `console.warn` per process. The module-level `hasWarnedAboutSweepToken`
+// guard ensures subsequent calls do not re-warn (process-lifetime — a fresh
+// process re-warns once). The fixed test token + locked warning message are
+// per WP-209 §Locked Contract Values; do NOT paraphrase.
+const SWEEP_TOKEN_TEST_FALLBACK = 'test-sweep-token-do-not-use-in-prod';
+const SWEEP_TOKEN_ONE_SHOT_WARNING =
+  '[sweep] SWEEP_SUBMIT_TOKEN not set; using test-mode fallback token. NOT FOR PRODUCTION.';
+let hasWarnedAboutSweepToken = false;
+
+/**
+ * Loads the sweep-submit shared-secret token from the environment.
+ *
+ * - Production (`NODE_ENV === 'production'`): throws a full-sentence error if
+ *   `process.env.SWEEP_SUBMIT_TOKEN` is unset OR is the empty string. Server
+ *   startup fails loudly — same posture as `getAnalyticsUserIdSalt`.
+ *
+ * - Test / dev: returns the fixed test token and emits exactly one
+ *   `console.warn` per process. The one-shot guard via module-level
+ *   `hasWarnedAboutSweepToken` ensures subsequent calls do not re-warn.
+ *
+ * @returns {string}
+ */
+function loadSweepSubmitToken() {
+  const rawValue = process.env.SWEEP_SUBMIT_TOKEN;
+  const isPresent = typeof rawValue === 'string' && rawValue.length > 0;
+  if (process.env.NODE_ENV === 'production' && isPresent === false) {
+    throw new Error(
+      'SWEEP_SUBMIT_TOKEN is unset; refusing to start. Set the env var to a high-entropy secret string in the deployment environment.',
+    );
+  }
+  if (isPresent === true) {
+    return rawValue;
+  }
+  if (hasWarnedAboutSweepToken === false) {
+    hasWarnedAboutSweepToken = true;
+    console.warn(SWEEP_TOKEN_ONE_SHOT_WARNING);
+  }
+  return SWEEP_TOKEN_TEST_FALLBACK;
 }
 
 /**
@@ -632,6 +677,24 @@ export async function startServer() {
     verifier,
     accountResolver: verifier === undefined ? undefined : productionAccountResolver,
     analyticsUserIdSalt,
+  });
+
+  // why (D-20702): production startup fails fast if the shared secret is
+  // unset, preventing a deployed server from silently accepting all POST
+  // submissions (or no submissions at all if the GitHub Actions secret is
+  // also unset). Mirrors the WP-205 ANALYTICS_USER_ID_SALT loud-fail
+  // precedent at `apps/server/src/analytics/userIdHash.ts` —
+  // production-fatal when the env var is unset; non-production returns a
+  // fixed test token and emits one `console.warn` per process so a developer
+  // doesn't accidentally rely on the fallback. The token is loaded once at
+  // startup and threaded to the route handler via the deps bundle; per-request
+  // reads of process.env are forbidden by D-20702.
+  const sweepSubmitToken = loadSweepSubmitToken();
+  registerSweepRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+    sweepSubmitToken,
   });
 
   // why: Render.com injects PORT automatically. The fallback 8000 is for

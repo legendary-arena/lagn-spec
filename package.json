@@ -19,6 +19,7 @@
     "wiki-viewer:dev":         "pnpm run wiki-viewer:project && hugo server --source apps/wiki-viewer --port 1313",
 
     "migrate":              "node --env-file=.env scripts/migrate.mjs",
+    "sweep:nightly":        "node scripts/sweep-submit.mjs",
 
     "check":                "node --env-file=.env scripts/check-connections.mjs",
     "check:ec":             "node --env-file=.env scripts/ec/health-check.ec.mjs",

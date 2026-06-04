@@ -1,0 +1,72 @@
+# WP-209 / EC-241 — Nightly sweep workflow.
+#
+# Runs `pnpm sweep:nightly` against the locked 4-cell 2×2 axis fixture
+# committed at `data/sweep-fixtures/` (per D-20704), classifies the resulting
+# manifest via the WP-195 engine analyzer, POSTs the summary to the
+# production `${API_BASE_URL}/api/sweep/runs` endpoint with the
+# `X-Sweep-Token` header, and `rm -rf`s the local `sweep-output/<runId>/`
+# artifact on confirmed success.
+#
+# `workflow_dispatch:` alongside `schedule:` permits on-demand operator
+# testing without waiting 24h for the cron tick.
+#
+# `pnpm -r build` MUST run BEFORE `pnpm sweep:nightly` because
+# `scripts/sweep-setup-matrix.mjs:33-44` imports the sweep runner from the
+# compiled `packages/game-engine/dist/simulation/sweep.runner.js` (the
+# `pnpm install` step does not transpile workspace TS sources).
+#
+# Failure exit codes (locked per WP-209 §Submission Script Failure Modes):
+#   - 0: success
+#   - 2: config/git error (missing env var, git rev-parse failure)
+#   - 3: sweep/analyze error (runner non-zero, manifest read fail, analyzer threw)
+#   - 4: network/POST error (non-2xx response, body shape mismatch)
+
+name: Sweep Nightly
+
+on:
+  schedule:
+    # why (D-20704): 07:00 UTC = midnight Pacific Standard Time; the operator
+    # sees overnight results during the next-business-morning ops sanity
+    # check. Cardinality locked at 4 cells per run (2 schemes × 2 masterminds)
+    # so a single GitHub Actions free-tier `ubuntu-latest` runner completes
+    # in well under 60s of wall-clock.
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+jobs:
+  sweep:
+    name: Run sweep + submit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with: { version: 10 }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # why: `scripts/sweep-setup-matrix.mjs:33-44` imports
+      # `packages/game-engine/dist/simulation/sweep.runner.js`; the workspace
+      # `pnpm install` does not run `tsc`, so the dist must be built before
+      # the runner can resolve its imports.
+      - name: Build workspace
+        run: pnpm -r build
+
+      - name: Submit nightly sweep
+        run: pnpm sweep:nightly
+        env:
+          # why (D-20702): the shared-secret token; rotated by the operator
+          # in the GitHub Actions repository secrets surface alongside the
+          # Render dashboard SWEEP_SUBMIT_TOKEN env var. Both ends MUST be in
+          # lockstep for the POST to succeed.
+          SWEEP_SUBMIT_TOKEN: ${{ secrets.SWEEP_SUBMIT_TOKEN }}
+          # why (WP-209): production API base URL (e.g.,
+          # `https://legendary-arena-server.onrender.com`); the submission
+          # script appends `/api/sweep/runs` to this value. No trailing slash.
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}

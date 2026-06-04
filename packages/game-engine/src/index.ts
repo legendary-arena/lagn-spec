@@ -413,6 +413,30 @@ export type {
   AIPolicyTierDefinition,
 } from './simulation/ai.tiers.js';
 
+// Sweep setup-matrix runner + manifest anomaly oracle (WP-194 / WP-195;
+// barrel-exposed under WP-209 so apps/server can import the closed
+// SweepAnomalyClass taxonomy + classifier without deep-importing dist/).
+// Both modules are pure (no node:* imports, no IO, no Math.random); safe
+// to keep on the Runtime-Safe Engine Surface per D-14401.
+export type {
+  SweepAnomalyClass,
+  ParsedSuccessRecord,
+  ParsedFatalRecord,
+  ParsedManifestRecord,
+  ClassifiedCell,
+  NumericDistributionStats,
+  FatalErrorBucket,
+  MalformedLine,
+  ManifestSummary,
+  ManifestClassification,
+  ParseRecordResult,
+} from './simulation/sweep.analyze.js';
+export {
+  SWEEP_ANOMALY_CLASSES,
+  parseManifestLine,
+  classifyManifestRecords,
+} from './simulation/sweep.analyze.js';
+
 // Beta metadata (WP-037 / D-3701)
 export type {
   BetaFeedback,
