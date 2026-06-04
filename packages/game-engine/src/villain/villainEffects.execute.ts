@@ -29,6 +29,10 @@ import {
 } from '../board/bystanders.logic.js';
 import { moveCardFromZone } from '../moves/zoneOps.js';
 import { WOUND_EXT_ID } from '../setup/pilesInit.js';
+import {
+  SHIELD_AGENT_EXT_ID,
+  SHIELD_TROOPER_EXT_ID,
+} from '../setup/buildInitialGameState.js';
 
 // ---------------------------------------------------------------------------
 // executeVillainAbilities — main entry point
@@ -304,16 +308,18 @@ function applyVillainEffect(
  *   iteration).
  */
 // why: deterministic auto-resolution — zone priority (discard before hand),
-// then ext_id lexical ascending. It is explicitly NOT VP-based: per-card hero
-// VP is not in engine runtime state (G.cardStats carries attack/recruit/cost/
-// fightCost only) and a runtime registry read would be a layer violation
-// (D-18503). The printed card grants player choice; interactive targeting is
-// deferred to a future UI WP (WP-185 §Out of Scope). This function owns the
-// `koCard` mutation site for the per-player KO — callers in both the
-// `koHeroCurrentPlayer` and `koHeroEachPlayer` dispatch cases delegate to it
-// and do not post-process its output, so the mutation site is uniform across
-// branches (D-18902 mutation-location lock; single source of truth for KO
-// targeting + replay determinism).
+// then a two-tier ext_id rule per D-20602: starting SHIELD cards
+// (`starting-shield-trooper`, `starting-shield-agent`) ahead of everything
+// else, with ext_id lexical ascending as the tie-break within each tier.
+// Starting-first preserves replay determinism and remains NOT VP-based —
+// the starter set is a closed enum, no registry read (D-18503 carries
+// forward). The printed card grants player choice; interactive targeting
+// is deferred to a future UI WP (WP-185 §Out of Scope). This function
+// owns the `koCard` mutation site for the per-player KO — callers in both
+// the `koHeroCurrentPlayer` and `koHeroEachPlayer` dispatch cases delegate
+// to it and do not post-process its output, so the mutation site is
+// uniform across branches (D-18902 mutation-location lock; single source
+// of truth for KO targeting + replay determinism).
 function koOneHeroForPlayer(
   G: LegendaryGameState,
   playerId: string,
@@ -344,24 +350,41 @@ function koOneHeroForPlayer(
 }
 
 /**
- * Selects the lexically-smallest hero card ext_id in a zone, or null.
+ * Selects the highest-priority hero card ext_id in a zone, or null.
+ *
+ * Priority (D-20602 amends D-18503):
+ *   1. Starting SHIELD cards (Trooper / Agent) — KO the worst cards first
+ *      so auto-resolution acts as deck-thinning, not as a penalty.
+ *   2. Among non-starting non-wound cards, fall back to ext_id lexical
+ *      ascending (the original D-18503 tie-break).
  *
  * @param zone - A player's hand or discard zone.
  * @returns The KO target ext_id, or null when the zone has no hero card.
  */
 // why: a "hero card" for KO purposes is any card that is NOT a wound token.
-// Wounds are not Heroes — KO-a-Hero must not remove a wound (that would invert
-// the penalty into a benefit). The wound token is the only non-hero card that
-// can sit in a player's hand/discard (bystanders go to the victory zone), so a
-// non-wound predicate is the minimal correct hero filter without a registry
-// read (D-18503).
+// Wounds are not Heroes — KO-a-Hero must not remove a wound (that would
+// invert the penalty into a benefit). Starting SHIELD cards (cost 0, +1
+// attack OR +1 recruit each) are the worst cards in any deck; preferring
+// them first turns the auto-resolution into deck-thinning instead of
+// silently KO-ing the player's best recruited heroes (recruited ext_ids
+// like 'core/spider-man/...' sort lex-before 'starting-shield-...' under
+// pure lex-asc, so the pre-D-20602 heuristic always picked good cards).
+// Membership check uses a closed enum, so the rule remains NOT VP-based
+// and reads no registry at runtime (D-18503 carries forward).
 function selectKoHeroTarget(zone: CardExtId[]): CardExtId | null {
-  let selected: CardExtId | null = null;
+  let startingSelected: CardExtId | null = null;
+  let otherSelected: CardExtId | null = null;
   for (const candidate of zone) {
     if (candidate === WOUND_EXT_ID) continue;
-    if (selected === null || candidate < selected) {
-      selected = candidate;
+    if (candidate === SHIELD_AGENT_EXT_ID || candidate === SHIELD_TROOPER_EXT_ID) {
+      if (startingSelected === null || candidate < startingSelected) {
+        startingSelected = candidate;
+      }
+    } else {
+      if (otherSelected === null || candidate < otherSelected) {
+        otherSelected = candidate;
+      }
     }
   }
-  return selected;
+  return startingSelected ?? otherSelected;
 }

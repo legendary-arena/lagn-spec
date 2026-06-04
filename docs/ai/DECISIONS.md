@@ -22663,4 +22663,65 @@ engineering scope that v1 does not need.
 
 ---
 
+### D-20602 — KO Target Selection Prefers Starting SHIELD Cards Ahead of Lexical Ascending (Amends D-18503)
+
+**Decision:** The per-player KO target resolver
+(`selectKoHeroTarget` in
+`packages/game-engine/src/villain/villainEffects.execute.ts`) picks the
+highest-priority non-wound card in a zone using a two-tier rule:
+
+1. **Starting SHIELD cards first** — `starting-shield-trooper` and
+   `starting-shield-agent` (the well-known starter ext_ids defined in
+   `setup/buildInitialGameState.ts`). Tie-break inside this tier is
+   ext_id lexical ascending.
+2. **All other non-wound cards** — ext_id lexical ascending.
+
+Zone priority (discard before hand), wound exclusion, silent no-op for
+zero eligible heroes, single-target-per-call semantics, replay
+determinism, and the "not VP-based, no runtime registry read" lock all
+carry forward from D-18503 unchanged. The amendment scope is the
+within-zone tie-break only.
+
+**Rationale.** Under D-18503's pure lex-asc tie-break, every recruited
+hero ext_id (e.g., `core/spider-man/strike`, `core/hulk/smash`) sorts
+lexicographically before every starter ext_id (`starting-shield-…`)
+because `'c' < 's'`. That made the deterministic stand-in always KO the
+player's *best* card whenever a recruited hero was in the same zone —
+inverting the printed-text intent: a thinking player KOs the worst card
+(a starter) to thin their deck, never the best card they just paid
+recruit points to acquire. The Sentinel henchman's "Fight: KO one of
+your Heroes" was the operator-visible bug surface (the bot recruited a
+good hero from the HQ, then the resolver KO'd that same hero on the
+next Sentinel defeat). The two-tier rule keeps the same closed-enum,
+no-registry, no-VP, fully-deterministic posture while making the
+stand-in act as deck-thinning rather than as a self-inflicted penalty.
+
+The starter set is closed (Trooper + Agent only — defined as
+`SHIELD_TROOPER_EXT_ID` and `SHIELD_AGENT_EXT_ID` in
+`buildInitialGameState.ts`) and never grows, so no future-proofing
+churn is incurred. Interactive targeting remains deferred to a future
+UI WP (WP-185 §Out of Scope unchanged).
+
+**Implementation locations:**
+- `packages/game-engine/src/villain/villainEffects.execute.ts` —
+  `selectKoHeroTarget` two-tier scan; new import of
+  `SHIELD_AGENT_EXT_ID` + `SHIELD_TROOPER_EXT_ID` from
+  `../setup/buildInitialGameState.js`; updated `// why:` comments on
+  `koOneHeroForPlayer` and `selectKoHeroTarget` citing this decision.
+- `packages/game-engine/src/villain/villainEffects.execute.test.ts` —
+  new `describe('… starting-SHIELD KO priority (D-20602)')` block
+  pinning: starting-first in discard, starting-first in hand,
+  fallback to lex-asc when no starter present, zone-priority
+  preservation, `koHeroEachPlayer` inheritance via the shared
+  resolver, and determinism.
+
+**Packet:** Hot-fix (no WP — auto-resolution heuristic correction
+inside the existing `selectKoHeroTarget` site; no contract churn, no
+new move, no new effect keyword, no DECISIONS authority moved).
+
+**Drafted:** 2026-06-03. **Landed:** 2026-06-03.
+**Status:** Active
+
+---
+
 Protect this file.

@@ -184,6 +184,191 @@ describe('executeVillainAbilities — koHeroCurrentPlayer', () => {
   });
 });
 
+describe('executeVillainAbilities — starting-SHIELD KO priority (D-20602)', () => {
+  // why: D-20602 amends D-18503's lex-asc tie-break. Pure lex-asc always KOs
+  // recruited heroes ('core/...' < 'starting-shield-...' lexically), which
+  // defeats deck-thinning. The amended heuristic prefers starting-shield
+  // ext_ids first so auto-resolution KOs the worst cards instead of the
+  // best. These tests pin the new priority across both zones and both
+  // dispatch cases (current-player and each-player).
+  const SHIELD_AGENT = 'starting-shield-agent' as CardExtId;
+  const SHIELD_TROOPER = 'starting-shield-trooper' as CardExtId;
+
+  it('koHeroCurrentPlayer prefers starting SHIELD card over a recruited hero in discard', () => {
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: [],
+          // why: 'core/spider-man/...' lex-sorts before 'starting-shield-...';
+          // pre-D-20602 the resolver would have picked the recruited hero.
+          discard: ['core/spider-man/strike' as CardExtId, SHIELD_AGENT, SHIELD_TROOPER],
+          inPlay: [],
+          victory: [],
+        },
+        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      G.ko,
+      [SHIELD_AGENT],
+      'KOs the lex-first starting SHIELD card, NOT the recruited hero',
+    );
+    assert.deepStrictEqual(
+      G.playerZones['0']!.discard,
+      ['core/spider-man/strike', SHIELD_TROOPER],
+      'recruited hero and second SHIELD card remain in discard',
+    );
+  });
+
+  it('koHeroCurrentPlayer prefers starting SHIELD card over a recruited hero in hand (discard had only wounds)', () => {
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: ['core/hulk/smash' as CardExtId, SHIELD_TROOPER, SHIELD_AGENT],
+          discard: [WOUND],
+          inPlay: [],
+          victory: [],
+        },
+        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      G.ko,
+      [SHIELD_AGENT],
+      'falls through to hand and picks the lex-first starting SHIELD card',
+    );
+    assert.deepStrictEqual(
+      G.playerZones['0']!.hand,
+      ['core/hulk/smash', SHIELD_TROOPER],
+      'recruited hero and second SHIELD card remain in hand',
+    );
+  });
+
+  it('falls back to lex-asc among recruited heroes when no starting SHIELD cards present', () => {
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: [],
+          discard: [
+            'core/wolverine/claws' as CardExtId,
+            'core/black-widow/spy' as CardExtId,
+          ],
+          inPlay: [],
+          victory: [],
+        },
+        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      G.ko,
+      ['core/black-widow/spy'],
+      'lex-asc tie-break still applies among non-starting cards (D-18503 preserved)',
+    );
+  });
+
+  it('discard zone priority is preserved even when only the hand holds a starting card', () => {
+    // why: starting-first tier ordering does NOT override the zone-priority
+    // (discard before hand) lock from D-18503. A recruited hero in discard
+    // is KO'd before a starting card in hand — same zone-priority semantics
+    // as before, only the within-zone tie-break is amended.
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: [SHIELD_AGENT],
+          discard: ['core/spider-man/strike' as CardExtId],
+          inPlay: [],
+          victory: [],
+        },
+        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      G.ko,
+      ['core/spider-man/strike'],
+      'discard always beats hand, regardless of starting-card tier',
+    );
+    assert.deepStrictEqual(
+      G.playerZones['0']!.hand,
+      [SHIELD_AGENT],
+      'hand untouched while discard held any hero',
+    );
+  });
+
+  it('koHeroEachPlayer applies starting-first priority per player', () => {
+    // why: per-player resolver is shared (D-18902), so each-player dispatch
+    // inherits the new priority. Player 0 has both a recruited hero AND a
+    // starting card in discard — starting wins. Player 1 has only a recruited
+    // hero — falls back to lex-asc.
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroEachPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: [],
+          discard: ['core/spider-man/strike' as CardExtId, SHIELD_AGENT],
+          inPlay: [],
+          victory: [],
+        },
+        '1': {
+          deck: [],
+          hand: [],
+          discard: ['core/hulk/smash' as CardExtId, 'core/wolverine/claws' as CardExtId],
+          inPlay: [],
+          victory: [],
+        },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(
+      G.ko,
+      [SHIELD_AGENT, 'core/hulk/smash'],
+      'player 0 KOs starting SHIELD; player 1 KOs lex-first recruited hero',
+    );
+  });
+
+  it('determinism: starting-first priority is stable across two identical runs', () => {
+    const build = () =>
+      makeG({
+        hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
+        playerZones: {
+          '0': {
+            deck: [],
+            hand: ['core/wolverine/claws' as CardExtId],
+            discard: [SHIELD_TROOPER, 'core/spider-man/strike' as CardExtId, SHIELD_AGENT, WOUND],
+            inPlay: [],
+            victory: [],
+          },
+          '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
+        },
+      });
+
+    const first = build();
+    executeVillainAbilities(first, CTX, 'v-x' as CardExtId, 'onFight');
+    const second = build();
+    executeVillainAbilities(second, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.equal(JSON.stringify(first), JSON.stringify(second));
+    assert.deepStrictEqual(first.ko, [SHIELD_AGENT], 'lex-first starting card wins');
+  });
+});
+
 describe('executeVillainAbilities — heroDeckTopToEscape', () => {
   it('moves the top hero-deck card to the escaped pile', () => {
     const G = makeG({
