@@ -12,11 +12,20 @@ import type {
 export { mockBillingHealth, mockBillingHealthSparklines } from './billingHealthMocks.js';
 export type { BillingHealthSparklines, BillingHealthSparklinePoint } from './billingHealthMocks.js';
 
-export {
+// why: INFRA — `export { X } from './mod'` is a pure re-export and does NOT
+// introduce a local binding for X, so the `liveMode ? … : mockX` ternaries
+// below referenced unbound identifiers. Native-ESM dev (Vite/esbuild) throws
+// `ReferenceError: mockTrafficSources is not defined` at module eval, breaking
+// every dashboard page; the rollup production build hoists the re-export into
+// module scope so `pnpm -r build` / CI stayed green (dev-mode-only, latent on
+// main). Split into import + separate re-export so the local bindings exist
+// while keeping the `mockX` re-export contract intact.
+import {
   mockTrafficSources,
   mockActivationFunnel,
   mockRetentionCohorts,
 } from './analyticsMocks.js';
+export { mockTrafficSources, mockActivationFunnel, mockRetentionCohorts };
 
 import {
   fetchTrafficSourcesLive,
