@@ -4,13 +4,14 @@
  * Goals (#1–5) and the Financial Sustainability covenant ("No margin, no
  * mission").
  *
- * Curated condensed string sourced from `docs/01-VISION.md` Primary Vision
- * Goals (Non-Negotiable) §1–5 and §Financial Sustainability ("No Margin, No
- * Mission"), at the following PS-3 baseline:
+ * Curated condensed string sourced from `docs/01-VISION.md` §Business Survival
+ * (Sales & Product), Primary Vision Goals (Non-Negotiable) §1–5, and
+ * §Financial Sustainability ("No Margin, No Mission"), at the following PS-3
+ * baseline:
  *
  *   Source file:   docs/01-VISION.md
- *   Source SHA:    9fbf819cb4cc198d7007e61230a9c0b0a10d18a9
- *   Capture date:  2026-06-02
+ *   Source SHA:    51aec9e3c251040f36ee2a177fd607117d2bc121
+ *   Capture date:  2026-06-03
  *
  * why: D-19803 — the card renders a curated condensed STATIC string in the
  * component. No runtime file read (browser-impossible), no build-time
@@ -35,8 +36,22 @@
   <section class="vision-card" aria-labelledby="vision-card-title">
     <header class="vision-header">
       <h3 id="vision-card-title">Vision</h3>
-      <p class="vision-tagline">Legendary Arena&apos;s non-negotiable Primary Goals and the financial covenant that keeps them shippable.</p>
+      <p class="vision-tagline">Legendary Arena&apos;s survival truths, the goals that serve them, and the financial covenant that keeps payroll funded.</p>
     </header>
+
+    <section class="vision-survival" aria-labelledby="vision-survival-title">
+      <h4 id="vision-survival-title" class="survival-heading">Business Survival</h4>
+      <ul class="survival-list">
+        <li>
+          <strong>Sales.</strong>
+          Every dollar funds payroll, royalties to Marvel and Upper Deck, cloud bills, and the next round of content. No sales = no business, no game, no royalties. Selling is the act that funds everything else this card says we care about.
+        </li>
+        <li>
+          <strong>A great product.</strong>
+          Players pay for a faithful, reliable, fast Marvel Legendary that gets better every release. The Primary Goals below are not abstract values — they are the engineering truths that make the product worth buying.
+        </li>
+      </ul>
+    </section>
 
     <div class="vision-body">
       <section class="vision-column" aria-labelledby="vision-primary-title">
@@ -70,8 +85,7 @@
         <p class="financial-tagline"><em>&ldquo;No margin, no mission.&rdquo;</em></p>
         <ul class="vision-list">
           <li>The game must be <strong>financially self-sustaining</strong> from launch onward.</li>
-          <li>The core experience (all rules, all content, full multiplayer, scoring, replays, exports) stays <strong>permanently free</strong>.</li>
-          <li>Monetization is limited to distribution, access, presentation, and participation — never gameplay advantage.</li>
+          <li>Revenue models protect gameplay fairness — no pay-to-win — and pricing, packaging, and distribution are open commercial decisions.</li>
           <li>A non-negotiable royalty portion flows directly to Upper Deck and Marvel on every revenue stream.</li>
           <li>If revenue falls short, non-essential features scale back <strong>before</strong> any compromise to rules, fairness, accessibility, or royalties.</li>
         </ul>
@@ -157,5 +171,42 @@
 
 .vision-list strong {
   color: var(--p-text-color);
+}
+
+.vision-survival {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-left: 4px solid var(--p-primary-color);
+  border-radius: 0 4px 4px 0;
+  background: var(--p-surface-section, transparent);
+}
+
+.survival-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--p-primary-color);
+  font-weight: 700;
+}
+
+.survival-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.survival-list li::marker {
+  color: var(--p-primary-color);
+}
+
+.survival-list strong {
+  color: var(--p-primary-color);
+  font-weight: 700;
 }
 </style>

@@ -16,6 +16,40 @@ If this document is violated, Legendary Arena is no longer being built as intend
 
 ---
 
+## Business Survival (Sales & Product)
+
+**Legendary Arena is a business.** It exists to make money so that the people
+working on it can keep working on it. Every other goal in this document —
+rules authenticity, content fidelity, multiplayer reliability, fairness,
+longevity, and the entire engineering discipline behind them — exists in
+service of two survival truths.
+
+### Sales
+
+Every dollar in funds payroll, royalties to Upper Deck and Marvel, cloud
+bills, R2 storage, and the next round of content. **No sales = no business,
+no game, no royalties.** Selling is the act that funds everything else this
+document says we care about. It is not optional, distasteful, or a problem
+to solve later. It is the act that keeps Legendary Arena alive.
+
+### A Great Product
+
+Players pay for a faithful, reliable, fast Marvel Legendary that gets better
+every release. **No product worth buying = no sales = no business.** The
+Primary Vision Goals below are not abstract values; they are the engineering
+truths that make the product worth buying. Rules Authenticity, Content
+Authenticity, Player Trust & Fairness, Faithful Multiplayer, and Longevity &
+Expandability all serve the single question: *will real customers pay for
+this?*
+
+---
+
+If sales and product are healthy, the rest of this document is the blueprint
+for how to keep them healthy. If either fails, nothing else in this document
+matters — because the project ceases to exist.
+
+---
+
 ## Primary Vision Goals (Non‑Negotiable)
 
 Primary goals define **what Legendary Arena *is***.
@@ -659,18 +693,14 @@ If money changes how the game *plays*, it violates the vision.
 All purchasable content must be:
 - Fully disclosed
 - Deterministic
-- Directly comparable to known physical products
 
 ---
 
-### NG‑3. Content Withheld for Competitive Advantage
+### NG‑3. Pay-for-Power Content
 
-- No heroes, masterminds, or villains that are:
-  - Exclusive to payers in shared play
-  - Temporarily locked to paying users
-  - Tuned differently based on ownership
-
-Ownership never alters balance or fairness.
+Paid content (heroes, masterminds, villains, expansion packs) must
+never be tuned differently based on ownership. Ownership never alters
+card balance, behavior, or competitive viability.
 
 ---
 
@@ -689,10 +719,13 @@ Players are never monetized for wanting to play the game.
 ### NG‑5. Ads, Sponsorships, or Brand Insertion in Gameplay
 
 - No advertisements during gameplay
-- No branded cards, tables, or events that break immersion
+- No branded cards or in-table sponsor placements that break immersion
 - No sponsor messaging tied to in-game actions or outcomes
 
-Legendary Arena is a game table, not an ad surface.
+The gameplay frame is not an ad surface. Sponsorship of events,
+tournaments, leaderboards, the marketing site, or other surfaces
+outside the gameplay frame is governed by §Financial Sustainability,
+not by this rule.
 
 ---
 
@@ -702,7 +735,7 @@ Legendary Arena rejects:
 - FOMO-driven monetization pressure
 - Manipulative UX designed to induce spending
 - Obfuscated pricing or bundled confusion
-- Artificial scarcity unrelated to physical products
+- Deceptive scarcity claims (fake urgency, false "X left!" counters)
 
 If a monetization tactic relies on psychological pressure rather than value, it is disallowed.
 
@@ -718,7 +751,7 @@ Monetization must be:
 - Obvious
 - Honest
 - Respectful
-- Self-justifying through value alone
+- Transparent in pricing
 
 ---
 
@@ -752,8 +785,16 @@ must remain the only currency.
 Legendary Arena **will** generate revenue (see Financial Sustainability below)
 but draws a permanent line:
 
-- **Permitted:** distribution, access, presentation, participation, cosmetics
-- **Forbidden:** power, probability, impatience, advantage, psychological exploitation
+- **Bright lines:** no pay-to-win (NG‑1), no gacha or randomized
+  purchases (NG‑2), no balance disparity between paid and free
+  content (NG‑3), no friction monetization (NG‑4), no ads inside the
+  gameplay frame (NG‑5), no dark patterns (NG‑6), no monetization
+  that requires apology (NG‑7)
+- **Open commercial space:** any revenue model that stays on the
+  right side of those lines — subscriptions, expansion packs,
+  cosmetics, enterprise and tournament licensing, sponsorship outside
+  the gameplay frame, premium tiers, recognition programs, and any
+  other model not yet imagined
 
 The fastest way to destroy trust is to compromise fairness.
 Legendary Arena chooses trust — even when it costs money.
@@ -774,22 +815,28 @@ This principle is **foundational**. It directly supports Primary Goal 5 (Longevi
 
 - The game must be **financially self-sustaining** from launch onward
 - Revenue must never compromise any Primary Goal, Secondary Goal, or Non-Goal
-- The core experience (all rules, all official content, full multiplayer, scoring, replays, and exports) remains **permanently free** for every player
-- Monetization is limited exclusively to **distribution, access, presentation, and participation** — nothing more
+- Revenue models must protect gameplay fairness (per Non-Goals NG‑1 through NG‑7); within that constraint, pricing, packaging, and distribution are open commercial decisions
 
 ### Sustainable Revenue Model
 
-Legendary Arena will fund itself through transparent, optional, value-adding streams that respect the vision:
+Legendary Arena will fund itself through transparent, value-adding revenue streams that respect the vision:
 
-1. **Optional Legendary Supporter Subscriptions**
-   Monthly or annual tiers that unlock cosmetic and convenience enhancements only: custom playmats, card-back designs, UI themes, sound packs, unlimited cloud replay storage, advanced export filters, priority matchmaking queues, and early access to non-gameplay features.
-   These are luxuries, never necessities.
+1. **Legendary Supporter Subscriptions**
+   Monthly or annual tiers that unlock cosmetic and convenience
+   enhancements: custom playmats, card-back designs, UI themes, sound
+   packs, unlimited cloud replay storage, advanced export filters,
+   priority matchmaking queues, and early access to non-gameplay
+   features. Subscriptions deliver real product differentiation; the
+   only thing they never include is gameplay advantage.
 
 2. **One-Time Cosmetic & Presentation Purchases**
    Deterministic, fully disclosed packs of visual flair (alternate frames, themed tables, avatar options) that enhance the table experience without altering rules or balance.
 
-3. **Community Support Tiers**
-   Transparent donation / membership platforms (Patreon-style or in-game supporter program) where backers receive public recognition, exclusive cosmetic flair, and the satisfaction of directly funding the game's continued existence. Supporter names may appear in credits or on a permanent "Hall of Legends" wall.
+3. **Premium Recognition Tiers**
+   Higher-tier supporter programs where backers receive public
+   recognition, exclusive cosmetic flair, and priority access to
+   community surfaces. Supporter names may appear in credits or on a
+   permanent "Hall of Legends" wall.
 
 4. **Enterprise & Organized-Play Licensing (Future-Proofed)**
    Paid hosting tools or white-label access for tournament organizers, content creators, schools, or libraries — strictly for facilitation, never for player advantage.
@@ -807,10 +854,8 @@ Financial success is not an afterthought; it is the engine that keeps the entire
 
 ### Operational Guardrails
 
-- Full revenue will be directed first to covering expenses and royalties, then to a modest operating buffer and content expansion
-- High-level, privacy-preserving financial summaries will be published regularly so the community can see that funds support the mission and the IP partners
+- Full revenue will be directed first to covering expenses and royalties, then to an operating buffer and content expansion
 - If revenue ever falls short, non-essential features will be scaled back **before** any compromise to rules, fairness, accessibility, or royalties
-- No venture-capital-style growth-at-all-costs. Profit is acceptable only as a byproduct of delivering exceptional, trust-based value
 
 This is not a compromise.
 This is the hard truth that makes every other goal possible.
