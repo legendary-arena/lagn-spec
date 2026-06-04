@@ -128,7 +128,10 @@ jobs:
 
             if [ "$HAS_CODE" -gt 0 ]; then
               SUBJECT=$(git log --format='%s' -n 1 "$SHA")
-              IS_EC=$(echo "$SUBJECT" | grep -cE '^EC-[0-9]+[A-Z]?:' || true)
+              # why: [A-Za-z]? + -iname (below) mirror .githooks/commit-msg so a
+              # lowercase-suffix EC commit (EC-053a:) that passes the local hook
+              # does not fail CI — the two enforcement copies must agree on case.
+              IS_EC=$(echo "$SUBJECT" | grep -cE '^EC-[0-9]+[A-Za-z]?:' || true)
               IS_INFRA=$(echo "$SUBJECT" | grep -cE '^INFRA:' || true)
 
               # INFRA: may touch code for infra / hygiene fixes (per D-20801);
@@ -140,8 +143,8 @@ jobs:
                 FAIL=$((FAIL + 1))
               else
                 # Verify the referenced EC file exists
-                EC_NUM=$(echo "$SUBJECT" | sed -E 's/^EC-([0-9]+[A-Z]?).*/\1/')
-                EC_FILE=$(find docs/ai/execution-checklists -name "EC-${EC_NUM}-*.checklist.md" 2>/dev/null | head -n 1)
+                EC_NUM=$(echo "$SUBJECT" | sed -E 's/^EC-([0-9]+[A-Za-z]?).*/\1/')
+                EC_FILE=$(find docs/ai/execution-checklists -iname "EC-${EC_NUM}-*.checklist.md" 2>/dev/null | head -n 1)
                 if [ -z "$EC_FILE" ]; then
                   echo "::error::Commit $SHA references EC-${EC_NUM} but no checklist file exists."
                   FAIL=$((FAIL + 1))
