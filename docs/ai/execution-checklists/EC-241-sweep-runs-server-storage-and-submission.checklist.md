@@ -44,7 +44,30 @@
 - `pnpm sweep:nightly` literal script name
 - `runId` format (submission side): `<shortSha>-<isoTimestampUtc>` (e.g., `a1b2c3d4-20260604T070000Z`); short SHA from `git rev-parse --short HEAD`; timestamp compact-basic UTC ISO-8601
 - Submission script exit-code map: `0` success; `2` config/git error; `3` sweep/analyze error; `4` network/POST error
-- D-20701 + D-20702 reservations
+- **Sweep CLI surface (`scripts/sweep-setup-matrix.mjs`, verified against the script source at lines 13-19 on 2026-06-04):** 6 required flags + 1 optional. NOT `--run-seed` + `--out-dir` (those were drafting-error placeholders; the actual surface is the 6-flag set below):
+  - `--run-id <id>` (matches `/^[A-Za-z0-9._-]+$/`)
+  - `--seed <seed-string>` (run-level seed; literal `nightly` per fixture)
+  - `--setup <path>` (canonical EC-220 envelope JSON)
+  - `--scheme-ids <path>` (JSON array of non-empty unique strings)
+  - `--mastermind-ids <path>` (JSON array of non-empty unique strings)
+  - `--policy random|heuristic` (no fallback; literal `random` per fixture)
+  - optional `--max-cells <N>` (default 10000; OMITTED in v1 — 4-cell smoke is far under the default)
+- **Sweep fixture paths (repo-relative, literal — locked per D-20704):**
+  - `data/sweep-fixtures/setup.json`
+  - `data/sweep-fixtures/scheme-ids.json`
+  - `data/sweep-fixtures/mastermind-ids.json`
+- **Sweep fixture content (locked per D-20704):**
+  - `setup.json`: `{ "schemaVersion": "1.0", "playerCount": 1, "heroSelectionMode": "GROUP_STANDARD", "composition": { "schemeId": "core/midtown-bank-robbery", "mastermindId": "core/dr-doom", "villainGroupIds": ["core/skrulls"], "henchmanGroupIds": ["core/sentinel"], "heroDeckIds": ["core/spider-man", "core/hulk", "core/wolverine", "core/black-widow"], "bystandersCount": 1, "woundsCount": 30, "officersCount": 5, "sidekicksCount": 12 } }`
+  - `scheme-ids.json`: `["core/legacy-virus-the", "core/midtown-bank-robbery"]`
+  - `mastermind-ids.json`: `["core/dr-doom", "core/magneto"]`
+- **Sweep axis cardinality (v1 lock per D-20704):** 2 schemes × 2 masterminds = exactly 4 cells per nightly run
+- **`scripts/sweep-submit.mjs` invocation (literal — passed to `node scripts/sweep-setup-matrix.mjs`):**
+  ```
+  --run-id <runId> --seed nightly --setup data/sweep-fixtures/setup.json --scheme-ids data/sweep-fixtures/scheme-ids.json --mastermind-ids data/sweep-fixtures/mastermind-ids.json --policy random
+  ```
+- **Workflow build step:** workflow MUST run `pnpm -r build` between `pnpm install` and `pnpm sweep:nightly` to produce `packages/game-engine/dist/simulation/sweep.runner.js` (required per `scripts/sweep-setup-matrix.mjs:33` runtime import resolution)
+- **Workflow triggers:** `schedule: - cron: '0 7 * * *'` AND `workflow_dispatch:` (operator on-demand testing without 24h wait)
+- D-20701 + D-20702 + D-20704 reservations
 
 ### Locked Type Contracts (single-source — re-export from engine where applicable)
 
@@ -108,11 +131,14 @@ interface SweepRunSummary {
 - `apps/server/src/sweep/sweep.routes.test.ts` — **new** — ≥ 10 tests
 - `apps/server/src/server.mjs` — **modified** — `registerSweepRoutes` call + `SWEEP_SUBMIT_TOKEN` loud-fail guard
 - `scripts/sweep-submit.mjs` — **new** — sweep + classify + POST + cleanup wrapper
+- `data/sweep-fixtures/setup.json` — **new** — canonical EC-220 envelope (locked content per Locked Values)
+- `data/sweep-fixtures/scheme-ids.json` — **new** — `["core/legacy-virus-the", "core/midtown-bank-robbery"]`
+- `data/sweep-fixtures/mastermind-ids.json` — **new** — `["core/dr-doom", "core/magneto"]`
 - `package.json` — **modified** — add `"sweep:nightly"` root script
-- `.github/workflows/sweep-nightly.yml` — **new** — cron workflow
+- `.github/workflows/sweep-nightly.yml` — **new** — cron + workflow_dispatch workflow
 - `render.yaml` — **modified** — add `SWEEP_SUBMIT_TOKEN` `sync: false` declaration
 - `docs/ai/REFERENCE/api-endpoints.md` — **modified** — 2 new rows per D-11804
-- `docs/ai/DECISIONS.md` — **modified** — D-20701 + D-20702 reserved (verbatim block in EC §DECISIONS.md Verbatim Block below)
+- `docs/ai/DECISIONS.md` — **modified** — D-20701 + D-20702 + D-20704 reserved (verbatim block in EC §DECISIONS.md Verbatim Block below)
 - `docs/ai/STATUS.md` — **modified** — Done entry
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — Ready → Done
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — Ready → Done
@@ -133,7 +159,15 @@ interface SweepRunSummary {
 - [ ] `grep -E "SWEEP_SUBMIT_TOKEN" render.yaml` returns 1 line with `sync: false`
 - [ ] `grep -nE "POST.*/api/sweep/runs|GET.*/api/sweep/latest" docs/ai/REFERENCE/api-endpoints.md` returns 2 matches
 - [ ] `grep -nE "rev-parse --short HEAD" scripts/sweep-submit.mjs` returns ≥ 1 (runId builder)
-- [ ] D-20701 + D-20702 active in DECISIONS.md byte-identical to verbatim block below
+- [ ] `grep -nE "workflow_dispatch:" .github/workflows/sweep-nightly.yml` returns ≥ 1 (on-demand trigger present)
+- [ ] `grep -nE "pnpm -r build" .github/workflows/sweep-nightly.yml` returns ≥ 1 (engine dist required for the sweep CLI's runtime import)
+- [ ] `grep -nE "--policy random" scripts/sweep-submit.mjs` returns ≥ 1
+- [ ] `grep -nE "data/sweep-fixtures/setup.json|data/sweep-fixtures/scheme-ids.json|data/sweep-fixtures/mastermind-ids.json" scripts/sweep-submit.mjs | wc -l` returns 3 (all three fixture paths referenced from the submission script)
+- [ ] Fixture content verification: `node -e "const a=require('./data/sweep-fixtures/scheme-ids.json'); console.assert(JSON.stringify(a)==='[\"core/legacy-virus-the\",\"core/midtown-bank-robbery\"]')"` exits 0
+- [ ] Fixture content verification: `node -e "const a=require('./data/sweep-fixtures/mastermind-ids.json'); console.assert(JSON.stringify(a)==='[\"core/dr-doom\",\"core/magneto\"]')"` exits 0
+- [ ] Fixture content verification: `node -e "const s=require('./data/sweep-fixtures/setup.json'); console.assert(s.schemaVersion==='1.0' && s.playerCount===1 && s.composition.villainGroupIds[0]==='core/skrulls')"` exits 0
+- [ ] Smoke invocation (executor verifies during execution): `pnpm -r build && pnpm sweep:nightly` against a local server produces exactly 4 cells in `sweep-output/<runId>/manifest.jsonl` and a 201 response with `{ data: { runId, accepted: true } }`
+- [ ] D-20701 + D-20702 + D-20704 active in DECISIONS.md byte-identical to verbatim block below
 - [ ] WORK_INDEX + EC_INDEX rows flipped to Done
 - [ ] Commit prefix: `EC-241:`
 
@@ -165,3 +199,7 @@ interface SweepRunSummary {
 ### D-20702 — Sweep Submission Auth Posture
 
 **D-20702 — Sweep submission auth posture.** `POST /api/sweep/runs` is `guest` per D-9905 with **shared-secret header** auth: `X-Sweep-Token` MUST equal `process.env.SWEEP_SUBMIT_TOKEN` byte-for-byte via `node:crypto.timingSafeEqual` (`===` is forbidden due to timing-side-channel exposure). Length-equality precheck via `Buffer.byteLength` is REQUIRED before invoking `timingSafeEqual` — Node's `timingSafeEqual` throws `RangeError` on unequal-length buffers; the pre-check preserves both the 401 path and the constant-time guarantee on equal-length inputs. Mismatch returns 401 `{ data: [], error: 'unauthorized' }` BEFORE any DB I/O. Token is sourced from Render env (`sync: false`, operator-set in dashboard) on the server; GitHub Actions secret `SWEEP_SUBMIT_TOKEN` on the submitter side. Production server loud-fails at startup if the env var is unset (mirrors `ANALYTICS_USER_ID_SALT` D-20502 carry-forward). `GET /api/sweep/latest` is `authenticated-session-required` per D-9905 with `SessionValidationErrorCode` collapse to `'unauthorized'` per D-10403 carry-forward. Response envelope on GET: `{ data: { latest: SweepRunSummary | null, recentRuns: readonly SweepRunSummary[] } }` — `data` is an OBJECT (not the WP-205 `data: readonly T[]` array shape) because the endpoint serves two semantically distinct payloads in one response. `SweepRunSummary` excludes `manifestBlob` (forensic-only, never on dashboard read path). GET MUST NOT accept query parameters in v1 (no `?limit`, `?since`, `?runId`); unknown query strings ignored, response shape invariant. Both endpoints set `Cache-Control: no-store` as the literal first statement per D-11504 carry-forward. POST cell-count cap 10000; body size cap 5 MB; raw `manifest_blob` accepted but optional (nightly runs include it for forensic; smaller submissions may omit). Submission script (`scripts/sweep-submit.mjs`) exit-code mapping is `{0: success, 2: config/git error, 3: sweep/analyze error, 4: network/POST error}`; cleanup of `sweep-output/<runId>/` runs ONLY on exit 0 — every non-zero path preserves the local artifact for forensic. `runId` submission format: `<shortSha>-<isoTimestampUtc>` so legitimate same-commit re-runs produce distinct PKs.
+
+### D-20704 — Sweep Nightly Axis Cardinality Lock (v1 = 2×2 Smoke)
+
+**D-20704 — Sweep nightly axis cardinality lock (v1 = 2×2 smoke).** The nightly sweep runs exactly 4 cells per run — the cross-product of 2 schemes × 2 masterminds. Axis content is committed at the repo-relative paths `data/sweep-fixtures/setup.json` (canonical EC-220 envelope), `data/sweep-fixtures/scheme-ids.json` (literal `["core/legacy-virus-the", "core/midtown-bank-robbery"]`), and `data/sweep-fixtures/mastermind-ids.json` (literal `["core/dr-doom", "core/magneto"]`). Policy is locked to `random` (deterministic per-cell seeds via WP-194 D-19402's `${runSeed}::cell:${schemeId}:${mastermindId}` convention); seed is the literal string `nightly`. The 4-cell smoke catches "engine fundamentally broken" in < 60s of wall-clock per run on GitHub Actions free-tier `ubuntu-latest` runners — the QA-loop intent ("did anything fundamentally break since yesterday?") is regression detection, not exhaustive matrix coverage. Richer axes (full ~32×32 corpus, per-scheme team filters, cohort masterminds, heuristic-vs-random policy comparison) are explicitly deferred to a future hardening WP; daily cadence at 1024 cells would cost ~hours/night and overshoot the v1 intent. Cardinality changes require a successor D-NNNN entry. Fixture paths are passed verbatim to `scripts/sweep-setup-matrix.mjs` as `--setup` / `--scheme-ids` / `--mastermind-ids`; the GitHub Actions workflow runs `pnpm -r build` BEFORE `pnpm sweep:nightly` to produce `packages/game-engine/dist/simulation/sweep.runner.js` (required per `scripts/sweep-setup-matrix.mjs:33` runtime import).

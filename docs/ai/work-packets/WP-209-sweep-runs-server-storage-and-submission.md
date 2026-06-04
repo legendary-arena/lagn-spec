@@ -22,7 +22,7 @@ After this session, the server exposes `POST /api/sweep/runs` (CI-only via share
 
 - WP-194 complete. Specifically:
   - `packages/game-engine/src/simulation/sweep.runner.ts` exports `sweepSetupMatrix` and `CELL_SEED_SEPARATOR`
-  - `scripts/sweep-setup-matrix.mjs` exists and accepts `--run-seed`, `--out-dir`, and is invocable via `node scripts/sweep-setup-matrix.mjs`
+  - `scripts/sweep-setup-matrix.mjs` exists and accepts the 6-required + 1-optional flag set verified against the script source at `scripts/sweep-setup-matrix.mjs:13-19`: `--run-id <id>` (matches `/^[A-Za-z0-9._-]+$/`), `--seed <seed-string>` (run-level seed), `--setup <path>` (canonical EC-220 envelope JSON: `{ schemaVersion: "1.0", playerCount, heroSelectionMode, composition: MatchSetupConfig }`), `--scheme-ids <path>` (JSON array of non-empty unique scheme ext_ids), `--mastermind-ids <path>` (JSON array of non-empty unique mastermind ext_ids), `--policy random|heuristic` (no fallback), optional `--max-cells <N>` (default 10000)
   - Manifest at `sweep-output/<run-id>/manifest.jsonl` has the 7-key JSONL shape per D-19403 + WP-194 §E
 - WP-195 complete. Specifically:
   - `packages/game-engine/src/simulation/sweep.analyze.ts` exports `classifyManifestRecords`, `SWEEP_ANOMALY_CLASSES` (4-class closed taxonomy: `'endgame-reached' | 'not-endgame' | 'escaped-villain-cap' | 'fatal'` per D-19502, verified against the engine source at sweep.analyze.ts:85), and the `ManifestSummary` + `ManifestClassification` interfaces
@@ -60,11 +60,15 @@ Before writing a single line:
 - Test files `sweep.logic.test.ts` + `sweep.routes.test.ts` (≥ 18 net-new node:test cases total: ≥ 6 logic + ≥ 12 routes — bumped from 16 to cover the token-length pre-check, duplicate-no-overwrite, ordering, and query-param-ignore ACs)
 - Bootstrap wiring in `apps/server/src/server.mjs` — invoke `registerSweepRoutes(router, { pool, sweepSubmitToken })` next to the existing `registerAnalyticsRoutes(...)` call
 - API catalog update at `docs/ai/REFERENCE/api-endpoints.md` — 2 new rows under `## Wired → Server-Registered Routes` per D-11804 replace-whole-row semantics
-- New `scripts/sweep-submit.mjs` — wrapper that invokes `scripts/sweep-setup-matrix.mjs`, classifies the resulting manifest via `sweep.analyze`, POSTs the summary to `${API_BASE_URL}/api/sweep/runs` with the shared-secret header, and `rm -rf`'s the local `sweep-output/<run-id>/` directory on success
+- New `scripts/sweep-submit.mjs` — wrapper that invokes `scripts/sweep-setup-matrix.mjs` with the **6 required flags** locked in §Locked Contract Values (`--run-id`, `--seed`, `--setup`, `--scheme-ids`, `--mastermind-ids`, `--policy`), classifies the resulting manifest via `sweep.analyze`'s `classifyManifestRecords`, POSTs the summary to `${API_BASE_URL}/api/sweep/runs` with the shared-secret header, and `rm -rf`'s the local `sweep-output/<run-id>/` directory ONLY on POST success
 - New `pnpm sweep:nightly` root script — `"node scripts/sweep-submit.mjs"`
-- New `.github/workflows/sweep-nightly.yml` — cron `0 7 * * *` (07:00 UTC = midnight Pacific), checkout + pnpm setup + `pnpm install --frozen-lockfile` + `pnpm sweep:nightly` with `SWEEP_SUBMIT_TOKEN` + `API_BASE_URL` from GitHub Actions secrets
+- New `.github/workflows/sweep-nightly.yml` — cron `0 7 * * *` (07:00 UTC = midnight Pacific), checkout + pnpm setup + `pnpm install --frozen-lockfile` + `pnpm -r build` (required to produce `packages/game-engine/dist/simulation/sweep.runner.js` per script line 33) + `pnpm sweep:nightly` with `SWEEP_SUBMIT_TOKEN` + `API_BASE_URL` from GitHub Actions secrets; declares `workflow_dispatch:` alongside `schedule:` for on-demand testing without waiting 24h
 - Render env var declaration: `SWEEP_SUBMIT_TOKEN` added to `render.yaml` `envVars` block as `sync: false` (operator sets the secret in the Render dashboard; loud-fail at server startup if unset in production per the existing `ANALYTICS_USER_ID_SALT` precedent)
-- Reserve D-20701 (sweep_runs storage shape lock) + D-20702 (sweep submission auth posture)
+- **3 new sweep fixture files** committed at the repo-relative paths locked in §Locked Contract Values:
+  - `data/sweep-fixtures/setup.json` — canonical EC-220 envelope (`schemaVersion: "1.0"`, `playerCount: 1`, `heroSelectionMode: "GROUP_STANDARD"`, `composition: MatchSetupConfig` with `villainGroupIds: ["core/skrulls"]`, `henchmanGroupIds: ["core/sentinel"]`, `heroDeckIds: ["core/spider-man", "core/hulk", "core/wolverine", "core/black-widow"]`, `bystandersCount: 1`, `woundsCount: 30`, `officersCount: 5`, `sidekicksCount: 12`; the `composition.schemeId` + `composition.mastermindId` placeholders are overwritten per-cell by `sweepSetupMatrix`)
+  - `data/sweep-fixtures/scheme-ids.json` — `["core/legacy-virus-the", "core/midtown-bank-robbery"]` (2-element scheme axis, lex-sorted)
+  - `data/sweep-fixtures/mastermind-ids.json` — `["core/dr-doom", "core/magneto"]` (2-element mastermind axis, lex-sorted)
+- Reserve D-20701 (sweep_runs storage shape lock) + D-20702 (sweep submission auth posture) + D-20704 (sweep nightly axis cardinality lock — v1 = 2×2 smoke)
 
 ## Out of Scope
 
@@ -91,16 +95,19 @@ Before writing a single line:
 - `apps/server/src/sweep/sweep.routes.test.ts` — new (≥ 12 tests)
 - `apps/server/src/server.mjs` — modified (one-line `registerSweepRoutes` call + one-line `SWEEP_SUBMIT_TOKEN` env-var loud-fail-on-production guard mirroring the existing `ANALYTICS_USER_ID_SALT` pattern)
 - `scripts/sweep-submit.mjs` — new (sweep + classify + POST + cleanup wrapper)
+- `data/sweep-fixtures/setup.json` — new (EC-220 canonical envelope; placeholder schemeId/mastermindId overwritten per cell)
+- `data/sweep-fixtures/scheme-ids.json` — new (2-element scheme axis: `["core/legacy-virus-the", "core/midtown-bank-robbery"]`)
+- `data/sweep-fixtures/mastermind-ids.json` — new (2-element mastermind axis: `["core/dr-doom", "core/magneto"]`)
 - `package.json` — modified (add `"sweep:nightly": "node scripts/sweep-submit.mjs"` to root `scripts`)
-- `.github/workflows/sweep-nightly.yml` — new (cron workflow)
+- `.github/workflows/sweep-nightly.yml` — new (cron + workflow_dispatch workflow)
 - `render.yaml` — modified (add `SWEEP_SUBMIT_TOKEN` `sync: false` env-var declaration)
 - `docs/ai/REFERENCE/api-endpoints.md` — modified (2 new catalog rows per D-11804)
-- `docs/ai/DECISIONS.md` — modified (D-20701 + D-20702 reserved)
+- `docs/ai/DECISIONS.md` — modified (D-20701 + D-20702 + D-20704 reserved)
 - `docs/ai/STATUS.md` — modified (Done entry)
 - `docs/ai/work-packets/WORK_INDEX.md` — modified (status Ready → Done)
 - `docs/ai/execution-checklists/EC_INDEX.md` — modified (status Ready → Done)
 
-16 files total (10 new + 2 modified source + 4 governance). This exceeds the §1 ~8 file guidance; bundling is justified because the migration + types + logic + routes + bootstrap + script + workflow form a single coherent server-side surface that has no value in partial landing — splitting would force an artificial 209a/209b that doesn't reflect testable contract boundaries.
+19 files total (13 new + 2 modified source + 4 governance). This exceeds the §1 ~8 file guidance; bundling is justified because the migration + types + logic + routes + bootstrap + script + workflow + sweep-fixtures form a single coherent server-side surface that has no value in partial landing — splitting would force artificial 209a/209b/209c that doesn't reflect testable contract boundaries. The 3 fixture files are bounded JSON (1 envelope + 2 axis arrays totaling < 40 lines combined) and cannot be deferred to a follow-up WP because the workflow has no other source for the required `--setup` / `--scheme-ids` / `--mastermind-ids` arguments.
 
 ---
 
@@ -197,7 +204,7 @@ interface SweepRunSummary {
 
 **Session protocol:**
 - If `SWEEP_ANOMALY_CLASSES` on the engine side has shifted from the documented 4-class taxonomy (`'endgame-reached' | 'not-endgame' | 'escaped-villain-cap' | 'fatal'` — verified at sweep.analyze.ts:85 on 2026-06-04): STOP and report (drift signal; downstream consumers may not be aware)
-- If the existing `scripts/sweep-setup-matrix.mjs` CLI flags have changed from `--run-seed` + `--out-dir`: read the script and adapt `scripts/sweep-submit.mjs` to the actual surface; do not invent flags
+- If the existing `scripts/sweep-setup-matrix.mjs` CLI flags have changed from the 6-required + 1-optional set locked in §Assumes (`--run-id`, `--seed`, `--setup`, `--scheme-ids`, `--mastermind-ids`, `--policy`, optional `--max-cells`): STOP and report (drift signal; the WP's §Locked Contract Values cite the canonical paths the workflow passes to these flags — a CLI shape change invalidates the locked invocation)
 - If the existing `apps/server/src/analytics/` module has been refactored since this WP was drafted: read the new shape and mirror it for sweep; do not duplicate stale patterns
 - If `render.yaml` does not contain `ANALYTICS_USER_ID_SALT` as the existing sync-false precedent: STOP and ask — the sync-false pattern may have shifted
 
@@ -216,8 +223,16 @@ interface SweepRunSummary {
 - "Latest" ordering dimension: the row with the greatest `submitted_at` timestamp (NOT `started_at`). Back-fills and out-of-order submissions sort by submission wall-clock, not sweep wall-clock — this matches the operator question "what's the most recent thing the dashboard knows about?"
 - `recentRuns` SQL ordering: `ORDER BY submitted_at DESC LIMIT 30` (literal); the BTREE index `sweep_runs_submitted_at_desc_idx` exists precisely to serve this query path
 - `runId` format (submission side): `<shortSha>-<isoTimestampUtc>` where `shortSha = git rev-parse --short HEAD` (7 chars) and `isoTimestampUtc = new Date().toISOString().replace(/[-:.]/g, '').replace(/\.\d+Z$/, 'Z')` (compact basic form, e.g., `20260604T070000Z`). Example: `a1b2c3d4-20260604T070000Z`. Format chosen so re-running the same commit (manual operator forensic re-run; nightly retries after partial failure) produces distinct `runId`s and avoids 409s on legitimate retry
+- **Sweep fixture paths (repo-relative, literal — passed to `sweep-setup-matrix.mjs` as `--setup` / `--scheme-ids` / `--mastermind-ids`):**
+  - `data/sweep-fixtures/setup.json`
+  - `data/sweep-fixtures/scheme-ids.json`
+  - `data/sweep-fixtures/mastermind-ids.json`
+- **Sweep policy:** `random` (literal; passed as `--policy random`). Heuristic-policy comparison sweeps are a future hardening WP; v1 nightly cadence locks `random` for deterministic seed→outcome reproducibility
+- **Sweep axis cardinality (v1 lock per D-20704):** 2 schemes × 2 masterminds = **exactly 4 cells per nightly run**. The 4-cell smoke catches "engine fundamentally broken" in < 60s of wall-clock per run on GitHub Actions free-tier `ubuntu-latest`. Richer axes (full ~32×32 corpus, per-scheme team filters, cohort masterminds) are explicitly deferred to a future hardening WP — daily cadence at 1024 cells would cost ~hours/night and overshoot the QA-loop intent
+- **Sweep seed (submission side):** literal `nightly` (passed as `--seed nightly`). Per-cell variation flows through WP-194's `runSeed::cell:` D-19402 convention deterministically; the same `--seed nightly` produces byte-identical per-cell seeds across reruns
 - D-20701: storage shape lock (the 6 columns + index + closed CHECK constraints)
 - D-20702: auth posture (POST shared-secret + GET authenticated-session-required)
+- D-20704: sweep nightly axis cardinality lock (v1 = 2×2 smoke; fixtures committed at `data/sweep-fixtures/`)
 
 ---
 
@@ -227,7 +242,7 @@ interface SweepRunSummary {
 
 1. `SWEEP_SUBMIT_TOKEN` or `API_BASE_URL` env vars are missing or empty at script entry — exit 2 (config error), no sweep invoked
 2. `git rev-parse --short HEAD` fails or returns empty — exit 2 (no git context, `runId` not derivable)
-3. Sweep runner invocation (`node scripts/sweep-setup-matrix.mjs --run-seed=... --out-dir=...`) exits non-zero — exit 3, local artifact PRESERVED for forensic
+3. Sweep runner invocation (`node scripts/sweep-setup-matrix.mjs --run-id <runId> --seed nightly --setup data/sweep-fixtures/setup.json --scheme-ids data/sweep-fixtures/scheme-ids.json --mastermind-ids data/sweep-fixtures/mastermind-ids.json --policy random`) exits non-zero — exit 3, local artifact PRESERVED for forensic
 4. Manifest read fails (file missing, unreadable, malformed JSONL) — exit 3, local artifact PRESERVED
 5. `classifyManifestRecords` from `@legendary-arena/game-engine` throws or returns a non-`ManifestClassification` shape — exit 3, local artifact PRESERVED
 6. POST to `${API_BASE_URL}/api/sweep/runs` returns non-2xx OR network error — exit 4, local artifact PRESERVED
@@ -255,11 +270,15 @@ On exit 0, the script MUST have (a) successfully POSTed and (b) `rm -rf`'d `swee
 14. GET `/api/sweep/latest` ignores unknown query parameters and does NOT alter response shape — verified by test submitting `?limit=5&since=2026-01-01` and asserting full 30-row response identical to the no-query-param baseline
 15. Every handler body sets `Cache-Control: no-store` as the literal first statement — grep gate `grep -nE "Cache-Control.*no-store" apps/server/src/sweep/sweep.routes.ts | wc -l` returns ≥ 4 (POST happy + POST 4 error paths)
 16. `docs/ai/REFERENCE/api-endpoints.md` carries 2 new rows for `POST /api/sweep/runs` (auth: `guest`, status closed-set `{201, 400, 401, 409, 413, 500}`) and `GET /api/sweep/latest` (auth: `authenticated-session-required`, status closed-set `{200, 401, 500}`) per replace-whole-row merge semantics
-17. `scripts/sweep-submit.mjs` (a) invokes the existing `scripts/sweep-setup-matrix.mjs` with a deterministic `runId` of form `<shortSha>-<isoTimestampUtc>` derived from `git rev-parse --short HEAD` + UTC now, (b) classifies the resulting manifest via `sweep.analyze`'s `classifyManifestRecords`, (c) POSTs the summary to `${API_BASE_URL}/api/sweep/runs` with the `X-Sweep-Token` header, (d) `rm -rf`'s `sweep-output/<runId>/` ONLY on POST success, (e) exits 0 on success and non-zero with the §Submission Script Failure Modes exit-code mapping `{2: config/git, 3: sweep/analyze, 4: network/POST}` on any failure step
+17. `scripts/sweep-submit.mjs` (a) invokes the existing `scripts/sweep-setup-matrix.mjs` with **all 6 required flags** locked verbatim in §Locked Contract Values — `--run-id <runId>` (form `<shortSha>-<isoTimestampUtc>`), `--seed nightly`, `--setup data/sweep-fixtures/setup.json`, `--scheme-ids data/sweep-fixtures/scheme-ids.json`, `--mastermind-ids data/sweep-fixtures/mastermind-ids.json`, `--policy random`; (b) classifies the resulting manifest via `sweep.analyze`'s `classifyManifestRecords`; (c) POSTs the summary to `${API_BASE_URL}/api/sweep/runs` with the `X-Sweep-Token` header; (d) `rm -rf`'s `sweep-output/<runId>/` ONLY on POST success; (e) exits 0 on success and non-zero with the §Submission Script Failure Modes exit-code mapping `{2: config/git, 3: sweep/analyze, 4: network/POST}` on any failure step
 18. `scripts/sweep-submit.mjs` preserves `sweep-output/<runId>/` on every non-zero exit path — verified by a unit test that stubs each of the 7 documented failure modes and asserts the directory is still present post-exit
 19. `package.json` root scripts contain `"sweep:nightly": "node scripts/sweep-submit.mjs"`
-20. `.github/workflows/sweep-nightly.yml` cron is exactly `0 7 * * *`; declares `SWEEP_SUBMIT_TOKEN` + `API_BASE_URL` as required env vars sourced from GitHub Actions secrets
+20. `.github/workflows/sweep-nightly.yml` cron is exactly `0 7 * * *` AND declares `workflow_dispatch:` alongside `schedule:` for on-demand operator testing; declares `SWEEP_SUBMIT_TOKEN` + `API_BASE_URL` as required env vars sourced from GitHub Actions secrets; runs `pnpm -r build` before `pnpm sweep:nightly` (required to produce `packages/game-engine/dist/simulation/sweep.runner.js` per `scripts/sweep-setup-matrix.mjs` line 33)
 21. `render.yaml` declares `SWEEP_SUBMIT_TOKEN` as `sync: false`; `apps/server/src/server.mjs` loud-fails at startup in production if unset (mirrors `ANALYTICS_USER_ID_SALT` pattern)
+22. `data/sweep-fixtures/setup.json` exists, conforms to the EC-220 envelope shape (`schemaVersion: "1.0"`, `playerCount: 1`, `heroSelectionMode: "GROUP_STANDARD"`, `composition: MatchSetupConfig`), and parses cleanly as JSON
+23. `data/sweep-fixtures/scheme-ids.json` is exactly `["core/legacy-virus-the", "core/midtown-bank-robbery"]` (lex-sorted; 2 entries; verified by `node -e "const a=require('./data/sweep-fixtures/scheme-ids.json'); console.assert(a.length===2 && a[0]==='core/legacy-virus-the' && a[1]==='core/midtown-bank-robbery')"`)
+24. `data/sweep-fixtures/mastermind-ids.json` is exactly `["core/dr-doom", "core/magneto"]` (lex-sorted; 2 entries; verified analogously)
+25. A successful local invocation of `pnpm sweep:nightly` (with valid `SWEEP_SUBMIT_TOKEN` + `API_BASE_URL`) produces exactly 4 cells in `sweep-output/<runId>/manifest.jsonl` and a 201-response with `{ data: { runId, accepted: true } }` from the POST — verified by a smoke-test invocation against a local server during execution
 
 ---
 
