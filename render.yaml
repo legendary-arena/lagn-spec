@@ -82,6 +82,21 @@ services:
       # manipulation.
       - key: PUBLIC_BASE_URL
         sync: false
+      # Analytics user-id hashing salt (WP-205 / D-20502). The salt is the
+      # high-entropy secret string mixed into the SHA-256 user_id hash in
+      # apps/server/src/analytics/userIdHash.ts so the raw user_id never
+      # reaches legendary.analytics_events in cleartext. Production startup
+      # fails loudly when this env var is unset or empty per the locked
+      # error text:
+      #   "ANALYTICS_USER_ID_SALT is unset; refusing to start. Set the env
+      #    var to a high-entropy secret string in the deployment environment."
+      # Generate with:
+      # node --input-type=module -e "import { randomBytes } from 'node:crypto'; console.log(randomBytes(32).toString('hex'))"
+      # Salt rotation is out of scope for v1 (D-20502) — rotating the salt
+      # invalidates every existing user_id_hash linkage; treat as a one-time
+      # provisioning step until a future WP designs a rotation strategy.
+      - key: ANALYTICS_USER_ID_SALT
+        sync: false
       # Legends Snapshot Publisher (WP-142 / D-14201..D-14207).
       # R2 credentials for the S3-compatible API. sync: false because
       # these are secrets provisioned manually in the Render dashboard.
