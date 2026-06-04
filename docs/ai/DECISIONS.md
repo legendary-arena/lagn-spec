@@ -22961,4 +22961,25 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-21001 — `devLog` `Category` Becomes Single-Source-Derived From `LOG_CATEGORIES` (Amends D-12501 §7) (WP-213)
+
+**Amends:** D-12501 §7 ("`devLog.ts` extension is a known mechanical dependency").
+
+**Decision:** The `Category` literal union in `apps/registry-viewer/src/lib/devLog.ts` is no longer a hand-maintained closed union. WP-213 introduces a module-local `const LOG_CATEGORIES = [...] as const` array holding the 9 category literals (`"registry"`, `"theme"`, `"filter"`, `"render"`, `"glossary"`, `"cardTypes"`, `"cardAbilities"`, `"cardPatterns"`, `"schemeTwist"`) and derives the type via `type Category = (typeof LOG_CATEGORIES)[number];`. Both `LOG_CATEGORIES` and `Category` stay module-local — no `export` is added.
+
+**What this retires:** D-12501 §7 framed the closed `Category` union as a known mechanical dependency that *forces* every new `devLog`-consuming domain to hand-extend the union or the Registry Viewer typecheck goes red — the chore that cost WP-086 (`"cardTypes"`), WP-125 (`"cardAbilities"`), and WP-208 (`"cardPatterns"` + `"schemeTwist"`), the last of which sat as red CI on every `main` commit between the WP-183 merge and the WP-208 fix. That manual per-domain union-extension requirement is **retired**. After this change a new domain appends **one array element** to `LOG_CATEGORIES`; the union widens automatically and can never drift from the array because it *is* the array.
+
+**No behavioral change:** the resolved `Category` type is identical pre/post (the same 9-member string-literal union). This is proven by both consumer clients (`cardPatternsClient.ts`, `schemeTwistClient.ts`) continuing to typecheck byte-identically unchanged. `devLog`'s signature, body, JSDoc, and the module import are untouched.
+
+**Type-identity guard (all three must hold):** (a) the literal set is exactly the 9 locked members; (b) each literal's casing is byte-identical (camelCase, lowercase-first); (c) the `as const` assertion is present. Without `as const`, the element type widens to `string` and `Category` silently collapses to `string` — a green typecheck alone does not prove `as const` held.
+
+**Out of scope (per WP-213):** no drift-detection test is added — the union derives from the array via `typeof[number]`, so divergence is structurally impossible (a drift test would assert a tautology); and `LOG_CATEGORIES` is **not** registered in the canonical-readonly-array list in `.claude/rules/code-style.md` / `00.6-code-style.md`, which governs the engine's distinct "array + separate union + drift test" pattern, not this single-source-derived shape.
+
+**Packet:** WP-213 / EC-244.
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
 Protect this file.

@@ -11,19 +11,27 @@
 
 import { DEBUG_VIEWER } from "./debugMode";
 
-// why: "cardAbilities" appended under EC-127 §0 pre-execution amendment
-// (2026-05-01) — mechanical dependency of cardAbilitiesClient.ts which
-// mirrors cardTypesClient.ts line-for-line per the duplicate-first rule.
-// WP-086 (commit ccc6d0e) is the precedent: the same audit-trail extension
-// added "cardTypes" when WP-086 introduced cardTypesClient.ts. D-12501
-// records the lock.
-// why: "cardPatterns" + "schemeTwist" appended under EC-240 / WP-208 —
-// mechanical dependency of cardPatternsClient.ts + schemeTwistClient.ts
-// (added by WP-183), which call devLog("cardPatterns", ...) /
-// devLog("schemeTwist", ...). WP-086 ("cardTypes") and WP-125
-// ("cardAbilities", D-12501 §7) are the precedent: the same closed-union
-// audit-trail extension.
-type Category = "registry" | "theme" | "filter" | "render" | "glossary" | "cardTypes" | "cardAbilities" | "cardPatterns" | "schemeTwist";
+// why: devLog categories are the single-source-derived taxonomy here. Each
+// new devLog-consuming domain appends ONE element to LOG_CATEGORIES; Category
+// derives from it via (typeof LOG_CATEGORIES)[number], so the union can never
+// drift from the array. This retires the hand-maintained closed-union chore
+// recorded at D-12501 §7 (see D-21001). Extension history: "cardTypes"
+// (WP-086), "cardAbilities" (WP-125), "cardPatterns" + "schemeTwist" (WP-208).
+// To add a new domain "fooBar": append "fooBar", to the array (keep the as
+// const) and nothing else — do NOT edit the Category line, do NOT reorder.
+const LOG_CATEGORIES = [
+  "registry",
+  "theme",
+  "filter",
+  "render",
+  "glossary",
+  "cardTypes",
+  "cardAbilities",
+  "cardPatterns",
+  "schemeTwist",
+] as const;
+
+type Category = (typeof LOG_CATEGORIES)[number];
 
 /**
  * Logs a categorized dev event. No-op when `DEBUG_VIEWER` is false.
