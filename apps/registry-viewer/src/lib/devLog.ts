@@ -17,7 +17,13 @@ import { DEBUG_VIEWER } from "./debugMode";
 // WP-086 (commit ccc6d0e) is the precedent: the same audit-trail extension
 // added "cardTypes" when WP-086 introduced cardTypesClient.ts. D-12501
 // records the lock.
-type Category = "registry" | "theme" | "filter" | "render" | "glossary" | "cardTypes" | "cardAbilities";
+// why: "cardPatterns" + "schemeTwist" appended under EC-240 / WP-208 —
+// mechanical dependency of cardPatternsClient.ts + schemeTwistClient.ts
+// (added by WP-183), which call devLog("cardPatterns", ...) /
+// devLog("schemeTwist", ...). WP-086 ("cardTypes") and WP-125
+// ("cardAbilities", D-12501 §7) are the precedent: the same closed-union
+// audit-trail extension.
+type Category = "registry" | "theme" | "filter" | "render" | "glossary" | "cardTypes" | "cardAbilities" | "cardPatterns" | "schemeTwist";
 
 /**
  * Logs a categorized dev event. No-op when `DEBUG_VIEWER` is false.
