@@ -12,10 +12,10 @@
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0
 
 ## Locked Values (do not re-derive)
-- Field name: `villainRevealedThisTurn` — `?: boolean` (OPTIONAL, not required)
+- Field name: `villainRevealedThisTurn` — `?: boolean` (OPTIONAL, not required); turn-scoped boolean ONLY (never a counter/enum/timestamp)
 - Start stage: `TURN_STAGES[0] === 'start'`
-- Guard read: `if (G.villainRevealedThisTurn) return;` (truthy check; absent ⇒ proceeds)
-- Set after reveal: `G.villainRevealedThisTurn = true;`
+- Wrapper order (exact, no statement reordered/interleaved): (1) `if (G.currentStage !== 'start') return;` (2) `if (G.villainRevealedThisTurn) return;` (3) `performVillainReveal(...)` (4) `G.villainRevealedThisTurn = true;`
+- Set is UNCONDITIONAL — consumed on the *attempt*, not the reveal *success* (empty-deck no-op still sets `true`)
 - Reset in `onBegin`: `G.villainRevealedThisTurn = false;`
 
 ## Guardrails
@@ -24,6 +24,7 @@
 - Do NOT modify `schemeTwistResolvers.ts` or the `performVillainReveal` pipeline (steps 1–7)
 - Do NOT add a `G.messages` entry for the blocked reveal (silent no-op per Move Validation Contract)
 - Move never throws — guard is an early `return`, not a throw
+- Blocked reveal = ZERO mutation: assert `deepStrictEqual` against a `structuredClone(G)` snapshot, not just unchanged deck/City
 - Fixture re-pin: ONLY `expected.finalStateHash` may change; `expected.messages` + `expected.outcome` byte-identical — else STOP
 
 ## Required `// why:` Comments
@@ -39,7 +40,7 @@
 - `packages/game-engine/src/setup/buildInitialGameState.ts` — **modified** — init `false` in `baseState`
 - `packages/game-engine/src/game.ts` — **modified** — reset `false` in play phase turn `onBegin`
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — **modified** — wrapper guard + set-after-reveal
-- `packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts` — **modified** — 4 guard tests
+- `packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts` — **modified** — 5 guard tests (exactly-1-reveal / whole-G-deepEqual-on-block / shared-body-ignores-flag / empty-deck-still-consumes / JSON-serializable)
 - `packages/game-engine/src/test/fixtures/games/sentinel-core-doom-2p.replay.json` — **modified** — re-pin `finalStateHash`
 
 ## After Completing
@@ -57,3 +58,4 @@
 - 21 test files suddenly fail to compile → field declared required instead of optional
 - Fixture `messages`/`outcome` oracle changes → guard is blocking a legitimate single reveal; investigate before re-pinning
 - Reveals work on turn 1 but never after → missing `onBegin` reset
+- Empty-deck reveal can be retried same turn → flag set guarded on reveal success instead of unconditionally

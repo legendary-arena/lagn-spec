@@ -23,8 +23,9 @@
 After this session, `@legendary-arena/game-engine` enforces the tabletop
 "reveal the top villain card once at the start of your turn" rule in the engine
 itself. A second player-initiated `revealVillainCard` move within the same turn
-returns silently as a no-op instead of drawing another villain card into the
-City. A new optional runtime field `G.villainRevealedThisTurn` tracks whether
+returns early with no state mutation and no message emission, instead of drawing
+another villain card into the City. A new optional runtime field
+`G.villainRevealedThisTurn` tracks whether
 the start-of-turn reveal has been consumed; it is set when the wrapper completes
 a reveal and reset to `false` at the start of every player turn. Rule-handler
 chained reveals (scheme twists that reveal additional cards via
@@ -136,6 +137,17 @@ Before writing a single line:
   absent (`undefined`) field correctly permits the first reveal.
 - The flag is set to `true` **after** `performVillainReveal(...)` returns in the
   wrapper — once the player's single start-of-turn reveal action is consumed.
+- The flag is set to `true` **regardless of whether a card was actually
+  revealed**. The allowance represents the player's *attempt* to take the
+  start-of-turn reveal action, not the success of the underlying deck operation.
+  `performVillainReveal` may early-return without mutating the board (e.g., both
+  deck and discard empty) — the attempt is still consumed. This aligns with the
+  Move Validation Contract (an action consumes its attempt even when it results
+  in no state change) and forecloses an empty-deck retry loop.
+- `G.villainRevealedThisTurn` is a **turn-scoped boolean flag only**. It MUST NOT
+  be widened into a counter, enum, timestamp, or multi-purpose field. If a future
+  mechanic needs reveal *counts* or multiple reveals per turn, that is a new
+  field under a new WP — never an extension of this one.
 - The flag is reset to `false` in the play phase turn `onBegin`, adjacent to the
   existing `G.currentStage` / `G.turnEconomy` resets. A missing reset would
   permanently block reveals from turn 2 onward.
@@ -168,8 +180,13 @@ Before writing a single line:
   `revealVillainCard` moves in a single `start` stage, the second is always a
   no-op and `G.villainRevealedThisTurn === true` after the first.
 - The behaviour is externally observable via `G.villainRevealedThisTurn`
-  (true/false) and via the City contents (unchanged after the blocked second
-  reveal).
+  (true/false) and via whole-state equality: a blocked reveal leaves `G`
+  `deepStrictEqual` to its pre-call snapshot (zero observable mutation anywhere,
+  not merely an unchanged City/deck).
+- The flag is set on the reveal *attempt*, not the reveal *success*: an attempt
+  against an exhausted (empty deck + empty discard) villain deck still sets
+  `G.villainRevealedThisTurn === true`, so the allowance cannot be re-spent that
+  turn via an empty-deck retry.
 - Runtime state remains JSON-serializable after the new field is written
   (boolean only).
 - No `G.messages` entry is required for the blocked reveal: a silently-ignored
@@ -206,36 +223,55 @@ Before writing a single line:
   permanently block reveals after turn 1.
 
 ### D) Add the wrapper guard — `src/villainDeck/villainDeck.reveal.ts` (modified)
-- In `revealVillainCard`, after the existing stage gate
-  (`if (G.currentStage !== 'start') return;`) and before the
-  `performVillainReveal(...)` call, add:
-  - `if (G.villainRevealedThisTurn) return;` with a `// why:` comment: the
-    start-of-turn reveal is once per turn; scheme/card effects that chain extra
-    reveals call `performVillainReveal` directly and intentionally bypass this
-    guard.
-- After `performVillainReveal(...)` returns, add:
-  - `G.villainRevealedThisTurn = true;` with a `// why:` comment: the player's
-    single start-of-turn reveal action is now consumed.
+The body of `revealVillainCard` must execute in this exact order — no statement
+may be inserted between, reordered, or skipped:
+
+1. **Stage gate** (existing): `if (G.currentStage !== 'start') return;`
+2. **Once-per-turn guard** (new): `if (G.villainRevealedThisTurn) return;` with a
+   `// why:` comment: the start-of-turn reveal is once per turn; scheme/card
+   effects that chain extra reveals call `performVillainReveal` directly and
+   intentionally bypass this guard.
+3. **Call the shared body** (existing): `performVillainReveal(...)`.
+4. **Consume the attempt** (new): `G.villainRevealedThisTurn = true;` with a
+   `// why:` comment: the player's single start-of-turn reveal attempt is now
+   consumed (set regardless of whether step 3 mutated the board).
+
+- Ordering rationale: the guard sits **after** the stage gate (so a wrong-stage
+  reveal is rejected on stage, not falsely "consumed") and the flag is set
+  **after** the shared body (step 4 cannot precede step 3).
 - `performVillainReveal` and its draw→classify→route pipeline (steps 1–7) are
-  **unchanged**.
+  **unchanged** — it neither reads nor writes `G.villainRevealedThisTurn`.
 
 ### E) Tests — `src/villainDeck/villainDeck.reveal.test.ts` (modified)
-Add `node:test` cases (using the existing mock-G factory and `makeMockCtx`):
-- **Second reveal in the same start stage is a no-op:** build G with ≥ 2
-  classifiable villain cards in `villainDeck.deck`, `currentStage === 'start'`,
-  `villainRevealedThisTurn` absent. Call `revealVillainCard` once → assert one
-  card moved into the City and `G.villainRevealedThisTurn === true`. Capture the
-  City and deck state, call `revealVillainCard` again → assert the City and
-  `villainDeck.deck` are unchanged from the post-first-reveal snapshot.
+Add five `node:test` cases (using the existing mock-G factory and `makeMockCtx`):
+- **First reveal occurs exactly once, then the second is blocked:** build G with
+  ≥ 2 classifiable villain cards in `villainDeck.deck`, `currentStage ===
+  'start'`, `villainRevealedThisTurn` absent. Record `villainDeck.deck.length`,
+  call `revealVillainCard` once → assert the deck length decreased by **exactly
+  1** (proves a single reveal — not zero, not two), one card landed in the City,
+  and `G.villainRevealedThisTurn === true`. Then **deep-clone the entire `G`**
+  (`structuredClone(G)`), call `revealVillainCard` a second time → assert the
+  post-second-call `G` is `deepStrictEqual` to the pre-second-call clone. Add a
+  `// why:` comment: the blocked reveal must produce **zero observable mutation
+  anywhere in `G`** — not merely an unchanged deck/City — so a whole-state
+  snapshot equality is the assertion, which also cannot drift as new zones are
+  added to `G`.
 - **An already-set flag blocks the reveal:** build G with `currentStage ===
-  'start'`, `villainRevealedThisTurn === true`, a non-empty deck. Call
-  `revealVillainCard` → assert `villainDeck.deck` is unchanged (no draw).
+  'start'`, `villainRevealedThisTurn === true`, a non-empty deck. Snapshot
+  `structuredClone(G)`, call `revealVillainCard` → assert `G` is
+  `deepStrictEqual` to the snapshot (no draw, no mutation).
 - **The shared body ignores the flag (chained-reveal path preserved):** build G
   with `villainRevealedThisTurn === true` and a non-empty deck. Call
   `performVillainReveal(G, context, DEFAULT_IMPLEMENTATION_MAP)` directly →
-  assert a card was revealed (deck shrank by one / City or discard changed).
-  Add a `// why:` comment: proves scheme-twist chained reveals are unaffected by
-  the wrapper guard.
+  assert a card was revealed (`villainDeck.deck.length` decreased by exactly 1 /
+  City or discard changed). Add a `// why:` comment: proves scheme-twist chained
+  reveals are unaffected by the wrapper guard.
+- **An attempt against an exhausted deck still consumes the allowance:** build G
+  with `currentStage === 'start'`, both `villainDeck.deck` and
+  `villainDeck.discard` empty, `villainRevealedThisTurn` absent. Call
+  `revealVillainCard` → assert `G.villainRevealedThisTurn === true` even though
+  no card was revealed. Add a `// why:` comment: the allowance tracks the
+  attempt, not the outcome (forecloses an empty-deck retry loop).
 - **Serializability:** assert `JSON.stringify(G)` succeeds after a reveal
   (boolean field is JSON-safe).
 
@@ -284,7 +320,7 @@ Add `node:test` cases (using the existing mock-G factory and `makeMockCtx`):
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — **modified** —
   add the once-per-turn wrapper guard + set-flag-after-reveal.
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts` —
-  **modified** — add the four guard tests.
+  **modified** — add the five guard tests.
 - `packages/game-engine/src/test/fixtures/games/sentinel-core-doom-2p.replay.json`
   — **modified** — re-pin `expected.finalStateHash` (behaviour-neutral).
 - `docs/ai/STATUS.md` — **modified** — record the once-per-turn reveal fix.
@@ -314,10 +350,15 @@ field addition and cannot be split off — same justification class as WP-200.)
       the `currentStage` / `turnEconomy` resets.
 
 ### D) Wrapper guard
+- [ ] The four statements in `revealVillainCard` appear in the locked order:
+      stage gate → once-per-turn guard → `performVillainReveal(...)` → set flag
+      `true` (confirmed by reading the function; no statement reordered or
+      interleaved).
 - [ ] `revealVillainCard` returns early (no `performVillainReveal` call) when
       `G.villainRevealedThisTurn` is truthy, after the stage gate.
-- [ ] `revealVillainCard` sets `G.villainRevealedThisTurn = true` after a
-      completed `performVillainReveal(...)` call.
+- [ ] `revealVillainCard` sets `G.villainRevealedThisTurn = true` after the
+      `performVillainReveal(...)` call **unconditionally** (not guarded on whether
+      a card was revealed).
 - [ ] Both new lines carry `// why:` comments.
 - [ ] `performVillainReveal` contains no reference to `villainRevealedThisTurn`
       (confirmed with `Select-String`).
@@ -325,10 +366,15 @@ field addition and cannot be split off — same justification class as WP-200.)
 
 ### E) Tests
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0 (all test files).
-- [ ] A test proves a second `revealVillainCard` in the same start stage leaves
-      the City and `villainDeck.deck` unchanged.
+- [ ] A test proves the first `revealVillainCard` decreases `villainDeck.deck`
+      length by **exactly 1** (single reveal — not zero, not two).
+- [ ] A test proves a blocked second `revealVillainCard` leaves `G`
+      `deepStrictEqual` to its pre-call `structuredClone` snapshot (zero mutation
+      anywhere in `G`).
 - [ ] A test proves `performVillainReveal` still reveals when
       `villainRevealedThisTurn === true` (chained-reveal path preserved).
+- [ ] A test proves an attempt against an empty-deck-and-empty-discard `G` still
+      sets `G.villainRevealedThisTurn === true` (attempt consumed, no retry loop).
 - [ ] A test asserts `JSON.stringify(G)` succeeds after a reveal.
 - [ ] The test file imports no `boardgame.io` and uses `makeMockCtx`.
 
