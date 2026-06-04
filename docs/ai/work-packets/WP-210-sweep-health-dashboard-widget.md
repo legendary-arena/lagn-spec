@@ -22,7 +22,7 @@ After this session, `dashboard.legendary-arena.com/system` displays a `SweepHeal
 
 - WP-209 complete on `main`. Specifically:
   - `legendary.sweep_runs` table exists with the 6-column schema locked in WP-209 D-20701
-  - `GET /api/sweep/latest` returns `{ data: { latest: SweepRunSummary, recentRuns: readonly SweepRunSummary[] } }` with `recentRuns.length <= 30`
+  - `GET /api/sweep/latest` returns `{ data: { latest: SweepRunSummary | null, recentRuns: readonly SweepRunSummary[] } }` with `recentRuns.length <= 30` (`latest` is `null` only pre-first-run; once `legendary.sweep_runs` has any rows, `latest` is non-null and `latest === recentRuns[0]`)
   - `SweepRunSummary` shape: `{ runId: string, startedAt: string (ISO-8601), submittedAt: string (ISO-8601), cellCount: number, anomalyCounts: Record<string, number> }`
   - API catalog row for `GET /api/sweep/latest` is `Wired` per D-11804
 - WP-204 complete. Specifically:
