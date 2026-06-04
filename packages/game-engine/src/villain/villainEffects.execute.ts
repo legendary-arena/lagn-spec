@@ -307,19 +307,24 @@ function applyVillainEffect(
  *   `koHeroEachPlayer` case it is each entry of the sorted player-ids
  *   iteration).
  */
-// why: deterministic auto-resolution — zone priority (discard before hand),
-// then a two-tier ext_id rule per D-20602: starting SHIELD cards
-// (`starting-shield-trooper`, `starting-shield-agent`) ahead of everything
-// else, with ext_id lexical ascending as the tie-break within each tier.
-// Starting-first preserves replay determinism and remains NOT VP-based —
-// the starter set is a closed enum, no registry read (D-18503 carries
-// forward). The printed card grants player choice; interactive targeting
-// is deferred to a future UI WP (WP-185 §Out of Scope). This function
-// owns the `koCard` mutation site for the per-player KO — callers in both
-// the `koHeroCurrentPlayer` and `koHeroEachPlayer` dispatch cases delegate
-// to it and do not post-process its output, so the mutation site is
-// uniform across branches (D-18902 mutation-location lock; single source
-// of truth for KO targeting + replay determinism).
+// why: deterministic auto-resolution — zone priority is discard → hand →
+// inPlay per D-20603 (which adds the third tier on top of D-18503's
+// original discard-then-hand contract; the third tier closes the
+// turn-1 autoplay no-op where every starter card the bot just played
+// sits in inPlay while hand and discard are both empty). Within each
+// tier, the D-20602 two-tier ext_id rule applies: starting SHIELD
+// cards (`starting-shield-trooper`, `starting-shield-agent`) ahead of
+// everything else, with ext_id lexical ascending as the tie-break.
+// Starting-first preserves replay determinism and remains NOT VP-based
+// — the starter set is a closed enum, no registry read (D-18503
+// carries forward). The printed card grants player choice; interactive
+// targeting is deferred to a future UI WP (WP-185 §Out of Scope). This
+// function owns the `koCard` mutation site for the per-player KO —
+// callers in both the `koHeroCurrentPlayer` and `koHeroEachPlayer`
+// dispatch cases delegate to it and do not post-process its output, so
+// the mutation site is uniform across branches (D-18902
+// mutation-location lock; single source of truth for KO targeting +
+// replay determinism).
 function koOneHeroForPlayer(
   G: LegendaryGameState,
   playerId: string,
@@ -335,7 +340,7 @@ function koOneHeroForPlayer(
       G.ko = koCard(G.ko, discardTarget);
     }
     // why: discard has strict priority — once a discard hero is chosen we stop
-    // and never fall through to the hand.
+    // and never fall through to hand or inPlay.
     return;
   }
 
@@ -345,6 +350,26 @@ function koOneHeroForPlayer(
     if (moveResult.found) {
       zones.hand = moveResult.from;
       G.ko = koCard(G.ko, handTarget);
+    }
+    // why: hand wins over inPlay once a hand hero is chosen.
+    return;
+  }
+
+  // why: D-20603 — inPlay is the third tier. The autoplay flow runs
+  // `playCard` for every hand card (hand → inPlay) BEFORE the spend
+  // phase that calls `fightVillain`, so on turn 1 (when nothing has
+  // cycled into discard yet) both hand and discard are empty while
+  // inPlay holds every starter SHIELD card the bot just played.
+  // Without this third tier, a Sentinel Fight: KO no-ops silently
+  // even though the printed text "KO one of your Heroes" clearly has
+  // 6 eligible targets sitting in inPlay. Same starter-first priority
+  // applies (D-20602 carries forward via selectKoHeroTarget).
+  const inPlayTarget = selectKoHeroTarget(zones.inPlay);
+  if (inPlayTarget !== null) {
+    const moveResult = moveCardFromZone(zones.inPlay, [], inPlayTarget);
+    if (moveResult.found) {
+      zones.inPlay = moveResult.from;
+      G.ko = koCard(G.ko, inPlayTarget);
     }
   }
 }

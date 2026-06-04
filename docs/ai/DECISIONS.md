@@ -22724,4 +22724,63 @@ new move, no new effect keyword, no DECISIONS authority moved).
 
 ---
 
+### D-20603 — KO Target Selection Adds `inPlay` as Third Zone Tier (Amends D-18503 Zone List)
+
+**Decision:** The per-player KO target resolver
+(`koOneHeroForPlayer` in
+`packages/game-engine/src/villain/villainEffects.execute.ts`) now
+scans three zones in priority order: **discard → hand → inPlay**.
+Within each zone, the D-20602 two-tier ext_id rule (starting SHIELD
+ahead of everything else, then lex-asc) carries forward unchanged.
+All other D-18503 locks — wound exclusion, single-target-per-call,
+not-VP-based, no-runtime-registry-read, deterministic — carry
+forward unchanged.
+
+**Rationale.** Pre-D-20603 the resolver only inspected `discard`
+then `hand`. The arena-client's autoplay loop in
+`apps/server/src/autoplay/autoplay.mjs` runs `playCard` on every
+hand card BEFORE the spend loop that calls `fightVillain`, so during
+the spend phase a player's `hand` is empty (everything played) and
+`inPlay` holds every card just committed for the turn. On turn 1
+(and any turn after the player draws a fresh hand and fights a
+henchman before end-of-turn cleanup), `discard` is also empty. Both
+tiers returned `null` and `koOneHeroForPlayer` silently no-opped —
+the Sentinel went to the victory pile as expected, but `G.ko` stayed
+empty even though 6 perfectly KO-able starter cards sat in `inPlay`.
+
+Jeff's production observation: *"Bot defeated Sentinel (sentinel went
+to victory pile) but KO pile UI is empty."* That's exactly this state.
+
+The printed Sentinel text is *"Fight: KO one of your Heroes."* — no
+zone restriction. A thinking player would happily KO a starter
+Trooper that's already in `inPlay` (it generated its attack for this
+turn; nothing left for it to do). Adding `inPlay` as the third tier
+restores the deck-thinning purpose the auto-resolver is meant to
+demonstrate.
+
+The third-tier addition is strictly additive: the existing
+discard→hand priority is unchanged, so every existing test using
+`inPlay: []` produces byte-identical post-state. The new tier only
+matters when both prior zones are empty.
+
+**Implementation locations:**
+- `packages/game-engine/src/villain/villainEffects.execute.ts` —
+  `koOneHeroForPlayer` gains a third `selectKoHeroTarget(zones.inPlay)`
+  branch after the hand branch returns `null`; updated `// why:`
+  comments on both `koOneHeroForPlayer` and `selectKoHeroTarget`
+  citing D-20603.
+- `packages/game-engine/src/setup/henchmanFightKo.repro.test.ts` —
+  new test pinning the turn-1 inPlay KO scenario, plus two zone
+  priority pins (`discard > hand > inPlay`; `hand > inPlay` when
+  discard empty).
+
+**Packet:** Hot-fix (no WP — auto-resolution zone-list extension
+inside the existing `koOneHeroForPlayer` site; no contract churn,
+no new move, no new effect keyword). Free-standing EC-236.
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
 Protect this file.
