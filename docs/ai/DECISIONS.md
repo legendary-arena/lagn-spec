@@ -22917,4 +22917,15 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-20801 — `INFRA:` Prefix Accepted by the Code-Path Commit Gate (Narrows EC-Only Traceability for Infra/Hygiene)
+
+**D-20801 — `INFRA:` prefix accepted by the code-path commit gate.** The code-path traceability gate previously required an `EC-###:` prefix on any commit whose staged files included anything under `packages/` or `apps/`; `SPEC:` and `INFRA:` were both rejected for code. As of D-20801 the gate also accepts `INFRA:` on the code path. `SPEC:` stays code-forbidden by design (spec/doc corrections must not carry code). **Rationale:** small infra/hygiene fixes that fall outside any Work Packet — dev-mode-only breakage, build glue, mock wiring (the originating case was PR #217's analytics-mock rebind, a dev-mode ESM `ReferenceError` latent on `main`) — had no compliant prefix and forced a `git commit --no-verify` bypass. Bypassing hooks is itself prohibited under EC mode except by explicit operator approval (01.3 §Bypassing Hooks); routing these fixes through `INFRA:` removes the routine bypass and keeps the hook chain green locally and in CI. **Accepted tradeoff:** the gate cannot mechanically distinguish "infra/hygiene" from "feature work," so `INFRA:` is now a path to land arbitrary `packages/`/`apps/` code without an EC. The "infra/hygiene only" boundary becomes a documented convention enforced at PR review, not a mechanical gate. The EC-mode invariant "every code commit traces to exactly one EC" is correspondingly narrowed to: *every feature/gameplay code commit traces to exactly one EC; infra/hygiene code commits trace to an `INFRA:` subject plus PR review.* **Surfaces updated in lockstep (all four must stay aligned — changing one without the others reintroduces the local-passes-then-CI-fails split that motivated this entry):** (1) `.githooks/commit-msg` Rule 5 condition (`IS_INFRA` carve-out); (2) `.github/workflows/commit-hygiene.yml` `ec-code-traceability` job — an *independent reimplementation* of the rule, not a call into the hook, so it required its own carve-out; (3) `docs/ai/REFERENCE/01.3-commit-hygiene-under-ec-mode.md` (prefix contract, validation summary, error table); (4) `scripts/git/ec-commit.ps1` interactive prompt (UX hint only — the hook remains the sole gate, the helper delegates to it). A successor D-NNNN may re-tighten — e.g., path-allowlist `INFRA:` code to hygiene-prone globs — if `INFRA:`-without-EC is observed being used to bypass EC governance for feature work.
+
+**Packet:** None — operator INFRA / commit-hygiene governance (accepted standing offer from PR #217 follow-up).
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
 Protect this file.

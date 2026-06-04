@@ -100,7 +100,8 @@ $hasCode = $staged | Where-Object { $_ -match '^(packages/|apps/)' }
 if (-not $Message) {
     Write-Host "Commit message format:" -ForegroundColor Cyan
     if ($hasCode) {
-        Write-Host "  EC-###: <summary>  (REQUIRED for code changes)" -ForegroundColor Green
+        Write-Host "  EC-###: <summary>  (feature / gameplay code)" -ForegroundColor Green
+        Write-Host "  INFRA: <summary>   (infra / hygiene under packages/ or apps/, per D-20801)" -ForegroundColor Green
     } else {
         Write-Host "  EC-###: <summary>  (execution work)" -ForegroundColor White
         Write-Host "  SPEC: <summary>    (specification fix)" -ForegroundColor White

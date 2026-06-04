@@ -109,21 +109,26 @@ if [ "$IS_EC" -gt 0 ]; then
   fi
 fi
 
-# --- Rule 5: Code changes require EC-### prefix ---
+# --- Rule 5: Code changes require EC-### or INFRA: prefix (per D-20801) ---
+# Feature / gameplay code traces to an Execution Checklist (EC-###). Small
+# infra / hygiene fixes that happen to touch packages/ or apps/ (dev-mode
+# breakage, build glue, mock wiring outside any Work Packet) may use INFRA:
+# instead — see D-20801. SPEC: stays forbidden for code: spec/doc
+# corrections must not carry code changes.
 STAGED=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null)
 HAS_CODE=0
 if [ -n "$STAGED" ]; then
   HAS_CODE=$(echo "$STAGED" | grep -cE '^(packages/|apps/)' || true)
 fi
 
-if [ "$HAS_CODE" -gt 0 ] && [ "$IS_EC" -eq 0 ]; then
+if [ "$HAS_CODE" -gt 0 ] && [ "$IS_EC" -eq 0 ] && [ "$IS_INFRA" -eq 0 ]; then
   echo ""
-  echo "${RED}COMMIT BLOCKED:${NC} Code changes detected but commit is not EC-scoped."
-  echo "Staged code files under packages/ or apps/ require an EC-###: prefix."
+  echo "${RED}COMMIT BLOCKED:${NC} Code changes detected but commit is neither EC-scoped nor INFRA."
+  echo "Staged code files under packages/ or apps/ require an EC-###: prefix"
+  echo "(feature / gameplay work) or an INFRA: prefix (infra / hygiene, per D-20801)."
   echo "Rejected prefix: $(echo "$SUBJECT" | sed -E 's/:.*/:/')"
   echo ""
-  echo "If this is genuinely infrastructure (hooks, scripts, config):"
-  echo "  Move code files out of staging, or use EC-###: prefix."
+  echo "SPEC: is not valid for code — use EC-###: or INFRA:."
   echo ""
   exit 1
 fi
