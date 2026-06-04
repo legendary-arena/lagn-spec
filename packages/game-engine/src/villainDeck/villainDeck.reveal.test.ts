@@ -14,7 +14,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { revealVillainCard } from './villainDeck.reveal.js';
+import { revealVillainCard, performVillainReveal } from './villainDeck.reveal.js';
 import type { LegendaryGameState } from '../types.js';
 import type { CardExtId } from '../state/zones.types.js';
 import type { RevealedCardType, VillainDeckState } from './villainDeck.types.js';
@@ -618,8 +618,14 @@ describe('revealVillainCard — destination pile routing (WP-153)', () => {
     });
 
     const moveContext = createMockMoveContext(gameState);
+    // why: WP-212 — the wrapper now consumes a once-per-turn allowance, so
+    // these successive reveals (which in real play span successive turns) reset
+    // the flag between calls to mirror the per-turn refresh the onBegin hook
+    // performs. The assertion under test is pile insertion ORDER, not the guard.
     revealVillainCard(moveContext);
+    moveContext.G.villainRevealedThisTurn = false;
     revealVillainCard(moveContext);
+    moveContext.G.villainRevealedThisTurn = false;
     revealVillainCard(moveContext);
 
     assert.deepStrictEqual(
@@ -640,7 +646,11 @@ describe('revealVillainCard — destination pile routing (WP-153)', () => {
     });
 
     const moveContext = createMockMoveContext(gameState);
+    // why: WP-212 — reset the once-per-turn allowance between successive reveals
+    // (mirrors the onBegin per-turn refresh) so this insertion-ORDER assertion
+    // still exercises two reveals under the new wrapper guard.
     revealVillainCard(moveContext);
+    moveContext.G.villainRevealedThisTurn = false;
     revealVillainCard(moveContext);
 
     assert.deepStrictEqual(
@@ -1448,6 +1458,136 @@ describe('revealVillainCard — real-registry villain end-to-end (WP-186 §Files
       gameState.playerZones['1']!.discard.length - p1DiscardBefore,
       0,
       'no card-text onEscape effect → other player unaffected (henchman has no onEscape hook)',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-212: once-per-turn villain reveal guard (wrapper)
+// ---------------------------------------------------------------------------
+
+describe('revealVillainCard — once-per-turn guard (WP-212)', () => {
+  it('reveals exactly once, then blocks the second reveal with zero state mutation', () => {
+    const gameState = createMockGameState({
+      deck: ['card-a', 'card-b'],
+      discard: [],
+      cardTypes: { 'card-a': 'villain', 'card-b': 'villain' },
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    const deckLengthBefore = moveContext.G.villainDeck.deck.length;
+
+    revealVillainCard(moveContext);
+
+    assert.equal(
+      moveContext.G.villainDeck.deck.length,
+      deckLengthBefore - 1,
+      'first reveal must decrease the deck length by exactly 1 (single reveal, not zero, not two)',
+    );
+    assert.equal(
+      moveContext.G.city[0],
+      'card-a',
+      'the revealed villain card must land in the City',
+    );
+    assert.equal(
+      moveContext.G.villainRevealedThisTurn,
+      true,
+      'the reveal must consume the once-per-turn allowance',
+    );
+
+    // why: the blocked second reveal must produce ZERO observable mutation
+    // anywhere in G — not merely an unchanged deck/City — so a whole-state
+    // snapshot equality is the assertion, which also cannot drift as new zones
+    // are added to G.
+    const snapshotBeforeSecondCall = structuredClone(moveContext.G);
+    revealVillainCard(moveContext);
+
+    assert.deepStrictEqual(
+      moveContext.G,
+      snapshotBeforeSecondCall,
+      'a blocked second reveal must leave G deepStrictEqual to its pre-call snapshot',
+    );
+  });
+
+  it('blocks the reveal when villainRevealedThisTurn is already set', () => {
+    const gameState = createMockGameState({
+      deck: ['card-a', 'card-b'],
+      discard: [],
+      cardTypes: { 'card-a': 'villain', 'card-b': 'villain' },
+    });
+    gameState.villainRevealedThisTurn = true;
+
+    const moveContext = createMockMoveContext(gameState);
+    const snapshotBefore = structuredClone(moveContext.G);
+
+    revealVillainCard(moveContext);
+
+    assert.deepStrictEqual(
+      moveContext.G,
+      snapshotBefore,
+      'an already-set flag must block the reveal with no draw and no mutation',
+    );
+  });
+
+  it('the shared body ignores the flag so chained reveals are preserved', () => {
+    const gameState = createMockGameState({
+      deck: ['card-a', 'card-b'],
+      discard: [],
+      cardTypes: { 'card-a': 'villain', 'card-b': 'villain' },
+    });
+    gameState.villainRevealedThisTurn = true;
+
+    const moveContext = createMockMoveContext(gameState);
+    const deckLengthBefore = moveContext.G.villainDeck.deck.length;
+
+    // why: proves scheme-twist chained reveals are unaffected by the wrapper
+    // guard — performVillainReveal still draws even with the flag set true.
+    performVillainReveal(
+      moveContext.G,
+      { random: moveContext.random, ctx: { currentPlayer: '0' } },
+      DEFAULT_IMPLEMENTATION_MAP,
+    );
+
+    assert.equal(
+      moveContext.G.villainDeck.deck.length,
+      deckLengthBefore - 1,
+      'the shared body must reveal a card (deck length -1) regardless of the flag',
+    );
+  });
+
+  it('consumes the allowance even when the deck and discard are both empty', () => {
+    const gameState = createMockGameState({
+      deck: [],
+      discard: [],
+      cardTypes: {},
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    // why: the allowance tracks the player's reveal attempt, not the outcome —
+    // an exhausted-deck no-op still spends it, foreclosing a same-turn retry.
+    assert.equal(
+      moveContext.G.villainRevealedThisTurn,
+      true,
+      'an attempt against an exhausted deck must still set the flag true',
+    );
+  });
+
+  it('keeps G JSON-serializable after the flag is written by a reveal', () => {
+    const gameState = createMockGameState({
+      deck: ['card-a', 'card-b'],
+      discard: [],
+      cardTypes: { 'card-a': 'villain', 'card-b': 'villain' },
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    revealVillainCard(moveContext);
+
+    const serialized = JSON.stringify(moveContext.G);
+    assert.ok(
+      serialized,
+      'JSON.stringify(G) must produce a non-empty string after a reveal sets the flag',
     );
   });
 });

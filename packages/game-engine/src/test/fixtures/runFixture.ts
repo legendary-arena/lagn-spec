@@ -274,6 +274,11 @@ function rotateToNextTurn(
   cursor.completedTurnCount += 1;
   gameState.currentStage = TURN_STAGES[0]!;
   gameState.turnEconomy = resetTurnEconomy();
+  // why: mirror the play phase onBegin reset of the once-per-turn villain
+  // reveal allowance (WP-212). Without it the harness leaves a stale true flag
+  // across the turn boundary and the wrapper guard wrongly blocks the next
+  // player's legitimate first-of-turn reveal, diverging from real play.
+  gameState.villainRevealedThisTurn = false;
 }
 
 /**

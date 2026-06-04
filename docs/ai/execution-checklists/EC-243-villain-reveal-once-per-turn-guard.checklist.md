@@ -42,6 +42,8 @@
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.ts` — **modified** — wrapper guard + set-after-reveal
 - `packages/game-engine/src/villainDeck/villainDeck.reveal.test.ts` — **modified** — 5 guard tests (exactly-1-reveal / whole-G-deepEqual-on-block / shared-body-ignores-flag / empty-deck-still-consumes / JSON-serializable)
 - `packages/game-engine/src/test/fixtures/games/sentinel-core-doom-2p.replay.json` — **modified** — re-pin `finalStateHash`
+- `packages/game-engine/src/test/fixtures/runFixture.ts` — **modified (execution amendment, D-20903)** — mirror the `onBegin` reset of `villainRevealedThisTurn` in `rotateToNextTurn` (harness reimplements the turn reset; without this the guard blocks a legitimate cross-turn reveal and the sentinel `outcome` oracle wrongly changes)
+- `packages/game-engine/src/replay/replay.execute.test.ts` — **modified (execution amendment, D-20903)** — re-pin `PRE_WP080_HASH` (`a3d25f9e` → `8658f02b`); second behaviour-neutral pinned-hash shift, WP-200 class
 
 ## After Completing
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0

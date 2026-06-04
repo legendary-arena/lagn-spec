@@ -382,6 +382,9 @@ export function buildInitialGameState(
     // assertion is safe because TURN_STAGES always has at least one element
     // (enforced by drift-detection tests in WP-007A).
     currentStage: TURN_STAGES[0]!,
+    // why: the start-of-turn villain reveal has not occurred at setup time; the
+    // play phase onBegin hook resets this to false on every turn including turn 1.
+    villainRevealedThisTurn: false,
     playerZones,
     piles,
     messages: setupMessages,

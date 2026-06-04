@@ -388,6 +388,11 @@ export const LegendaryGame: Game<LegendaryGameState, Record<string, unknown>, Ma
           // and spent values from previous turn are cleared
           G.turnEconomy = resetTurnEconomy();
 
+          // why: the once-per-turn villain reveal allowance refreshes at the
+          // start of every player turn; without this reset the wrapper guard
+          // would permanently block reveals from turn 2 onward.
+          G.villainRevealedThisTurn = false;
+
           // why: trigger -> collect effects -> apply effects pipeline.
           // onTurnStart fires at the beginning of each player's turn so
           // scheme hooks can react to the new turn.

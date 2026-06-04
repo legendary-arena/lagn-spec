@@ -22928,4 +22928,37 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-20901 — Once-Per-Turn Villain Reveal Enforced by a Wrapper-Only Guard
+
+**D-20901 — wrapper-only once-per-turn villain reveal guard.** `revealVillainCard` (the boardgame.io move wrapper) now enforces the tabletop "reveal the top villain card once at the start of your turn" rule via an optional turn-scoped runtime field `G.villainRevealedThisTurn` and a guard placed in the **wrapper only**, in this exact order: (1) stage gate `if (G.currentStage !== 'start') return;` (existing); (2) once-per-turn guard `if (G.villainRevealedThisTurn) return;` (new); (3) `performVillainReveal(...)` shared body (existing, unchanged); (4) `G.villainRevealedThisTurn = true;` (new). The flag is reset to `false` in the play phase turn `onBegin` adjacent to the existing `currentStage` / `turnEconomy` resets, and initialised `false` in `buildInitialGameState`. **Rationale:** WP-015 deliberately split the wrapper (which carries the stage gate) from the shared `performVillainReveal` body (the draw→classify→route pipeline) so rule handlers could chain extra reveals without re-asserting the gate; WP-182's scheme-twist resolvers call `performVillainReveal` directly for exactly that purpose. Placing the guard in the wrapper — and leaving the shared body free of any reference to the flag — means chained reveals intentionally bypass the once-per-turn limit, while a second *player-initiated* reveal in the same turn is a silent no-op. The move never throws (early `return` per the Move Validation Contract) and emits no `G.messages` entry for the blocked reveal, mirroring the existing stage-gate early return. Fixes a live `play.legendary-arena.com` bug where a player could click reveal repeatedly within the `start` stage and draw multiple villain cards into the City. The UI button-disable polish (projecting the flag through `UIState`) is a deferred follow-up WP, out of scope here.
+
+**Packet:** WP-212 / EC-243.
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
+### D-20902 — `villainRevealedThisTurn` Declared Optional, Not Required (Absent ⇒ False)
+
+**D-20902 — optional field chosen over required.** `G.villainRevealedThisTurn` is declared `?: boolean` (optional) on `LegendaryGameState`, not as a required field. The guard reads truthiness (`if (G.villainRevealedThisTurn) return;`), so an absent (`undefined`) value correctly permits the first reveal — absent is treated as "not yet revealed." **Rationale:** a required field would force an edit to every full-`LegendaryGameState` object literal across the test suite (21 files), which is out of scope for a rules-correctness fix. Production setup (`buildInitialGameState`) and the per-turn `onBegin` reset both write `false` explicitly, so the field is always present in real play; the optionality exists purely to spare the test-fixture literals. The field is a **turn-scoped boolean only** — it must never be widened into a counter, enum, timestamp, or multi-purpose field. A future mechanic needing reveal *counts* or multiple reveals per turn is a new field under a new WP, never an extension of this one. The set in step 4 of the wrapper is **unconditional** — it consumes the player's reveal *attempt*, not the reveal *success*, so an exhausted-deck no-op still spends the allowance and forecloses a same-turn empty-deck retry loop.
+
+**Packet:** WP-212 / EC-243.
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
+### D-20903 — Behaviour-Neutral Pinned-Hash Re-Pins for the Always-Present Field (Two Sites, Not One)
+
+**D-20903 — behaviour-neutral hash re-pins; harness onBegin-mirror correction.** Adding the always-present `villainRevealedThisTurn: false` to the setup state shifts every pinned full-state hash, because the canonical sha256 (`hashGameState`) omits `undefined` but serializes a present `false`. This is the same dependency-driven, behaviour-neutral re-pin class WP-200 documented when it added `notableEvents`. **Two sites were affected, not the one the WP anticipated:** (1) `sentinel-core-doom-2p.replay.json` `expected.finalStateHash` (`bdb9bf1f…` → `a7748f0f…`); (2) `PRE_WP080_HASH` in `replay/replay.execute.test.ts` (`a3d25f9e` → `8658f02b`). In both, only the hash changes — the `messages` and `outcome` oracle layers stay byte-identical. **Scope correction (fold-inline, operator-approved):** the WP's 9-file allowlist also missed that `test/fixtures/runFixture.ts` `rotateToNextTurn` is a **parallel reimplementation** of the play-phase `onBegin` reset (its docstring states it "mirrors the work the framework's play-phase `onBegin` hook performs"). It resets `currentStage` and `turnEconomy` but not the new flag; without mirroring the reset there, the replay harness left a stale `true` flag across the turn boundary and the guard wrongly blocked the next player's legitimate first-of-turn reveal — which surfaced as a genuine `outcome` oracle change (`masterStrikeCount` 2→1) on the sentinel fixture, correctly triggering the WP-212 §F "do not re-pin — investigate" hard stop. The fix mirrors the reset in `rotateToNextTurn`, restoring true behaviour-neutrality. **Lesson:** an always-present new field on `G` must re-baseline *every* pinned-hash regression guard, and any harness that reimplements the `onBegin` turn reset must mirror every reset the real hook performs. The executed file set is 11 (8 source/test/fixture + 3 governance), not the WP's drafted 9.
+
+**Packet:** WP-212 / EC-243.
+
+**Drafted:** 2026-06-04. **Landed:** 2026-06-04.
+**Status:** Active
+
+---
+
 Protect this file.

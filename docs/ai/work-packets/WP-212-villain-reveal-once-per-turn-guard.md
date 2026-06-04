@@ -327,9 +327,29 @@ Add five `node:test` cases (using the existing mock-G factory and `makeMockCtx`)
 - `docs/ai/DECISIONS.md` — **modified** — add D-20901..D-20903.
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — check off WP-212.
 
-No other files may be modified. (9 files: 6 source/fixture + 3 governance. The
-fixture re-pin pushes one over the ~8 guidance; it is mechanically forced by the
-field addition and cannot be split off — same justification class as WP-200.)
+**Execution amendment (2026-06-04, operator-approved fold-inline — see D-20903):**
+two additional files were modified, raising the executed set to 11:
+
+- `packages/game-engine/src/test/fixtures/runFixture.ts` — **modified** — mirror
+  the play phase `onBegin` reset of `villainRevealedThisTurn` in `rotateToNextTurn`.
+  The harness independently reimplements the turn reset (resets `currentStage`
+  and `turnEconomy`); without mirroring the new reset it left a stale `true`
+  flag across the turn boundary, so the guard blocked a legitimate cross-turn
+  reveal and the sentinel fixture's `outcome` oracle changed
+  (`masterStrikeCount` 2→1), correctly tripping the §F hard stop.
+- `packages/game-engine/src/replay/replay.execute.test.ts` — **modified** —
+  re-pin `PRE_WP080_HASH` (`a3d25f9e` → `8658f02b`). A second pinned full-state
+  hash the always-present field shifts; behaviour-neutral, same dependency-driven
+  class as the sentinel re-pin and the WP-200 `notableEvents` re-pin already
+  documented in that file.
+
+The §F behaviour-neutrality claim ("the fixture reveals exactly once per turn so
+`messages` + `outcome` stay byte-identical") holds **only after** the harness
+mirror above; the original 9-file scope under-counted the field's reach.
+
+No other files may be modified. (Executed: 11 files — 8 source/test/fixture + 3
+governance. Drafted as 9; the two test/harness files were mechanically forced by
+the field addition and surfaced at execution — see D-20903.)
 
 ---
 

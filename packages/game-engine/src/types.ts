@@ -467,6 +467,14 @@ export interface LegendaryGameState {
   /** Current turn stage within the play phase (start, main, cleanup). */
   currentStage: TurnStage;
 
+  // why: tracks whether the once-per-turn start-of-turn villain reveal has been
+  // consumed this turn. Optional so existing full-LegendaryGameState literals
+  // across the test suite need no edit (absent is treated as not-yet-revealed).
+  // Set by the revealVillainCard wrapper when the player's reveal attempt is
+  // consumed; reset to false each turn by the play phase onBegin hook.
+  /** Whether the start-of-turn villain reveal has been consumed this turn. */
+  villainRevealedThisTurn?: boolean;
+
   // why: playerZones is keyed by player ID string (boardgame.io uses "0", "1",
   // etc.). Each player has exactly 5 zone arrays. Only deck is non-empty after
   // setup — cards enter other zones via moves only.

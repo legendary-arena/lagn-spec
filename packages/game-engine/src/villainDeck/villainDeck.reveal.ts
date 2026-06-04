@@ -62,11 +62,21 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
   // why: villain reveal is a start-of-turn action per tabletop Legendary
   if (G.currentStage !== 'start') return;
 
+  // why: the start-of-turn reveal is once per turn; scheme/card effects that
+  // chain extra reveals call performVillainReveal directly and intentionally
+  // bypass this guard.
+  if (G.villainRevealedThisTurn) return;
+
   performVillainReveal(
     G,
     { random: context.random, ctx: { currentPlayer: ctx.currentPlayer } },
     DEFAULT_IMPLEMENTATION_MAP,
   );
+
+  // why: the player's single start-of-turn reveal attempt is now consumed; set
+  // regardless of whether the call above mutated the board (an exhausted-deck
+  // no-op still spends the allowance, foreclosing a same-turn retry loop).
+  G.villainRevealedThisTurn = true;
 }
 
 /**

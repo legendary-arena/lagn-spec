@@ -90,7 +90,13 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // hash delta is the empty `notableEvents` array's existence. Pre-edit:
 // '86895342'. Post-edit: 'a3d25f9e'. Dependency-driven (revert by removing
 // the new G field with no remaining diff); no behavior change in this test.
-const PRE_WP080_HASH = 'a3d25f9e';
+// why: WP-212 cascade re-baseline — `G.villainRevealedThisTurn?: boolean`
+// initialised `false` in `buildInitialGameState` serializes into this empty
+// replay's final state (the canonical hash omits `undefined` but includes a
+// present `false`), shifting the hash with no behaviour change. Same
+// dependency-driven class as the notableEvents re-pin above. Pre-WP-212:
+// 'a3d25f9e'. Post-WP-212: '8658f02b'.
+const PRE_WP080_HASH = '8658f02b';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.
