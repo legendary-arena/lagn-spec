@@ -121,5 +121,6 @@
     "officersCount": 22,
     "sidekicksCount": 13
   },
-  "koPile": { "count": 0, "topCard": null, "cards": [] }
+  "koPile": { "count": 0, "topCard": null, "cards": [] },
+  "notableEvents": []
 }
