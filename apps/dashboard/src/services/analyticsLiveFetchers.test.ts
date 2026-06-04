@@ -39,7 +39,12 @@ const LIVE_ENV = {
 
 interface FetchSpyCall {
   url: string;
-  init?: RequestInit;
+  // why: the spy records the real init arg verbatim, which is RequestInit |
+  // undefined (fetch's second param is optional). Under
+  // exactOptionalPropertyTypes, an optional `init?: RequestInit` rejects an
+  // explicitly-passed `undefined`; widening to `| undefined` lets the recorded
+  // call hold the undefined case instead of forcing the caller to omit it.
+  init?: RequestInit | undefined;
 }
 
 interface FetchSpy {
