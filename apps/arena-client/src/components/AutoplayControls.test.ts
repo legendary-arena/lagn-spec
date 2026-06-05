@@ -100,6 +100,7 @@ function sampleUiState(): UIState {
       sidekicksCount: 0,
     },
     koPile: { count: 0, topCard: null, cards: [] },
+    notableEvents: [],
   };
 }
 

@@ -103,7 +103,8 @@ describe('useNotableEventStream — diff detection across frames (WP-201 §AC)',
     snapshot.value = uiStateWith([fightEvent('thug')]);
     await nextTick();
     assert.notEqual(currentEvent.value, null);
-    assert.equal(currentEvent.value?.type, 'fightResolved');
+    // why: vue-tsc narrows .value to never after assert.equal(x, null) + assert.notEqual(x, null) assertion pair
+    assert.equal((currentEvent.value as NotableGameEvent | null)?.type, 'fightResolved');
     assert.equal(eventCardId(currentEvent.value!), 'thug');
   });
 
@@ -145,7 +146,8 @@ describe('useNotableEventStream — multi-event index-order invariant (WP-201 §
 
       // Auto-dismiss timer again advances to the third event.
       mock.timers.tick(2500);
-      assert.equal(currentEvent.value?.type, 'schemeTwistResolved');
+      // why: vue-tsc narrows .value?.type to never after sequential assert.equal assertion signatures compound
+      assert.equal((currentEvent.value as NotableGameEvent | null)?.type, 'schemeTwistResolved');
       assert.equal(eventCardId(currentEvent.value!), 'gamma');
 
       // Final timer fire empties the queue.

@@ -138,6 +138,7 @@ function makeUIState(overrides?: Partial<UIState>): UIState {
       topCard: null,
       cards: [],
     },
+    notableEvents: [],
     ...overrides,
   };
 }

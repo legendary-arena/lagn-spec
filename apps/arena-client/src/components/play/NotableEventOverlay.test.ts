@@ -20,9 +20,7 @@ function display(extId: string, name: string): UICardDisplay {
 
 function fightEvent(
   cardId: string,
-  appliedEffects: NotableGameEvent extends { type: 'fightResolved' }
-    ? NotableGameEvent['appliedEffects']
-    : never = [],
+  appliedEffects: Extract<NotableGameEvent, { type: 'fightResolved' }>['appliedEffects'] = [],
 ): NotableGameEvent {
   return {
     type: 'fightResolved',
@@ -37,9 +35,7 @@ function fightEvent(
 
 function ambushEvent(
   revealedCardId: string,
-  appliedEffects: NotableGameEvent extends { type: 'ambushResolved' }
-    ? NotableGameEvent['appliedEffects']
-    : never = [],
+  appliedEffects: Extract<NotableGameEvent, { type: 'ambushResolved' }>['appliedEffects'] = [],
 ): NotableGameEvent {
   return {
     type: 'ambushResolved',

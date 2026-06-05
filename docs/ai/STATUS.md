@@ -7,6 +7,10 @@
 
 ## Current State
 
+### WP-207b / EC-239 Executed — Arena Client `UIState.notableEvents` Test Backfill (2026-06-04)
+
+**The arena-client typecheck is green.** Backfilled `notableEvents: []` into all 8 test files that inline-construct `UIState` objects: `AutoplayControls.test.ts`, `NotableEventOverlay.test.ts`, `TopHudBar.test.ts`, `PlayMobile.test.ts`, `mutationDetector.test.ts`, `mutationMiddleware.test.ts`, `autoplayPlayback.test.ts` (mechanical append), and `useNotableEventStream.test.ts` (TS2339 `.type` on `never` resolved via type assertion at 2 sites — vue-tsc assertion-signature narrowing compound). `NotableEventOverlay.test.ts` also fixed distributive-conditional-type parameter defaults (`Extract<>` replacing the broken `NotableGameEvent extends { type: '...' } ? ... : never` pattern). `pnpm --filter @legendary-arena/arena-client typecheck` exits 0 after this WP + WP-207a. Mechanical backfill of an existing engine-owned contract — no new DECISIONS entry.
+
 ### WP-207a / EC-238 Executed — Arena Client `UIState.notableEvents` Fixture Backfill (JSON Fixtures) (2026-06-04)
 
 **The 6 fixture typecheck errors from the WP-200/WP-201 `notableEvents` addition are resolved.** Added `"notableEvents": []` as the last top-level member in each of the three committed JSON fixtures under `apps/arena-client/src/fixtures/uiState/`: `mid-turn.json`, `endgame-win.json`, `endgame-loss.json`. The `.ts` fixture modules (`index.ts`, `typed.ts`) were not modified — they were correct as written; their errors propagated from the stale JSON. `pnpm --filter @legendary-arena/arena-client typecheck` no longer reports errors at `fixtures/uiState/index.ts:54,56,58` or `fixtures/uiState/typed.ts:18,19,20`. Mechanical backfill of an existing engine-owned contract — no new DECISIONS entry. The paired WP-207b (test-file backfill) is next in the pipeline to bring the full arena-client typecheck to green.
