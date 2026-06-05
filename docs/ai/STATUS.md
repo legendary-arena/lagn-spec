@@ -7,9 +7,9 @@
 
 ## Current State
 
-### WP-216 / EC-248 Drafted — Hero Ability Markup Corpus Sweep: Rescue and Reveal-Draw (Card Data + Tooling) (2026-06-05)
+### WP-216 / EC-248 Executed — Hero Ability Markup Corpus Sweep: Rescue and Reveal-Draw (Card Data + Tooling) (2026-06-05)
 
-**WP-216 drafted.** Data-only corpus sweep adding `[keyword:rescue:1]` to ~19 sets worth of unmarked hero "Rescue a Bystander." ability lines and `[keyword:reveal]`/`[keyword:reveal:2]` to simple reveal-draw hero ability lines. New offline idempotent `apply-hero-ability-markers.mjs` script + `hero-ability-markers.json` curated map (mirrors `apply-effect-markers.mjs` pattern). No engine changes. Hard-dep: WP-215 ✅. Reserved D-21601..D-21603.
+**WP-216 done.** New `apply-hero-ability-markers.mjs` + `hero-ability-markers.json` curated map. 19 entries across 10 sets (3dtc, ca75, chmp, core, cosm, cvwr, dkcy, msp1, smhc, ssw1): 11 rescue:1 entries + 8 reveal entries. 4 deferred patterns in `_deferred` block per D-21602/D-21603 (onFight-timed rescue: Heist:, [keyword:Excessive Violence]:, [keyword:Excessive Kindness]:; Focus-gated rescue: [keyword:Focus 2]). --validate exits 0. Engine tests unaffected. D-21601..D-21603 Active. Inline amendments: core.json rescue:1 count 1→2 (black-widow/mission-accomplished added); total rescue:1 count ≥20→12 (villain/henchman/deferred lines not in scope); core.json reveal count 1→3 (astonishing-strength + great-responsibility added).
 
 ### WP-215 / EC-247 Executed — Hero Rescue and Reveal-Draw Effects (Engine + Data) (2026-06-05)
 

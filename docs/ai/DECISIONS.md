@@ -23073,8 +23073,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** Constraining the valid token set to three forms prevents ambiguous markup (e.g., `[keyword:rescue:2]` for a hero line that has no multi-bystander text, or `[keyword:reveal]` on a line with no VP icon) from silently producing wrong executor behavior. Idempotence prevents double-append on re-runs. The `_deferred` block with mandatory `reason` fields ensures excluded patterns are explicitly documented, not silently absent.
 
 **Packet:** WP-216 / EC-248.
-**Drafted:** 2026-06-05. **Landed:** not yet landed.
-**Status:** Drafted 2026-06-05; not yet landed
+**Drafted:** 2026-06-05. **Landed:** ac739d3 (2026-06-05).
+**Status:** Active
 
 ---
 
@@ -23085,8 +23085,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** Variable-magnitude rescue requires counter/per-card-count engine support not yet available. `onFight`-timed effects require `onFight` timing dispatch wired to `executeHeroEffects` — not yet present. Meta-trigger lines are not rescue effects and have no executor dispatch target.
 
 **Packet:** WP-216 / EC-248.
-**Drafted:** 2026-06-05. **Landed:** not yet landed.
-**Status:** Drafted 2026-06-05; not yet landed
+**Drafted:** 2026-06-05. **Landed:** ac739d3 (2026-06-05).
+**Status:** Active
 
 ---
 
@@ -23097,8 +23097,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** Non-draw reveals require different executor branches not yet implemented. Multi-card reveals require a multi-peek executor, not yet present. Villain-deck reveals are a different pipeline entirely. Keyword-gated reveals need condition evaluation machinery not yet available. Non-2-threshold reveals need separate verification — corpus scan at execution time may surface new cases.
 
 **Packet:** WP-216 / EC-248.
-**Drafted:** 2026-06-05. **Landed:** not yet landed.
-**Status:** Drafted 2026-06-05; not yet landed
+**Drafted:** 2026-06-05. **Landed:** ac739d3 (2026-06-05).
+**Status:** Active
 
 ---
 
