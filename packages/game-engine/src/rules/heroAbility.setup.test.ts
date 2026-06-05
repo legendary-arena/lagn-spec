@@ -283,6 +283,114 @@ describe('buildHeroAbilityHooks determinism', () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// WP-215 — [keyword:X:N] magnitude extraction tests (AC-9, AC-10, AC-11)
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks [keyword:X:N] magnitude extraction (WP-215)', () => {
+  it('[keyword:rescue:1] produces effects[0] with magnitude 1 (AC-9)', () => {
+    const registry = makeHeroRegistry('core', 'spider-man', [
+      { slug: 'web-shooters', rarityLabel: 'Uncommon', abilities: ['Rescue a Bystander. [keyword:rescue:1]'] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/spider-man'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+    assert.ok(Array.isArray(hook.effects) && hook.effects!.length > 0, 'effects must be present');
+    const rescueEffect = hook.effects!.find(e => e.type === 'rescue');
+    assert.ok(rescueEffect !== undefined, 'rescue effect must be present');
+    assert.equal(rescueEffect!.magnitude, 1, 'rescue magnitude must be 1');
+  });
+
+  it('[keyword:rescue] without suffix produces rescue effect with no magnitude (AC-10)', () => {
+    const registry = makeHeroRegistry('core', 'spider-man', [
+      { slug: 'web-shooters', rarityLabel: 'Uncommon', abilities: ['[keyword:rescue] a Bystander.'] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/spider-man'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+    assert.ok(Array.isArray(hook.effects) && hook.effects!.length > 0, 'effects must be present');
+    const rescueEffect = hook.effects!.find(e => e.type === 'rescue');
+    assert.ok(rescueEffect !== undefined, 'rescue effect must be present');
+    assert.equal(rescueEffect!.magnitude, undefined, 'rescue effect must have no magnitude');
+  });
+
+  it('[keyword:reveal] with VP-cost pattern extracts reveal magnitude from icon (AC-11)', () => {
+    const registry = makeHeroRegistry('core', 'spider-man', [
+      {
+        slug: 'web-shooters',
+        rarityLabel: 'Uncommon',
+        abilities: ['Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it. [keyword:reveal]'],
+      },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/spider-man'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+    assert.ok(Array.isArray(hook.effects) && hook.effects!.length > 0, 'effects must be present');
+    const revealEffect = hook.effects!.find(e => e.type === 'reveal');
+    assert.ok(revealEffect !== undefined, 'reveal effect must be present');
+    assert.equal(revealEffect!.magnitude, 2, 'reveal magnitude must be 2 from the VP-cost pattern');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-215 — icon-adjacent magnitude extraction tests (AC-12)
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks icon-adjacent magnitude extraction (WP-215)', () => {
+  it('+2[icon:attack] sets attack effect magnitude to 2 (AC-12)', () => {
+    const registry = makeHeroRegistry('core', 'hero-a', [
+      { slug: 'power-fist', rarityLabel: 'Common 1', abilities: ['You get +2[icon:attack].'] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/hero-a'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+    assert.ok(Array.isArray(hook.effects) && hook.effects!.length > 0, 'effects must be present');
+    const attackEffect = hook.effects!.find(e => e.type === 'attack');
+    assert.ok(attackEffect !== undefined, 'attack effect must be present');
+    assert.equal(attackEffect!.magnitude, 2, 'attack magnitude must be 2 from icon-adjacent extraction');
+  });
+
+  it('+3[icon:recruit] sets recruit effect magnitude to 3 (AC-12)', () => {
+    const registry = makeHeroRegistry('core', 'hero-b', [
+      { slug: 'rally', rarityLabel: 'Common 1', abilities: ['You get +3[icon:recruit].'] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/hero-b'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+    assert.ok(Array.isArray(hook.effects) && hook.effects!.length > 0, 'effects must be present');
+    const recruitEffect = hook.effects!.find(e => e.type === 'recruit');
+    assert.ok(recruitEffect !== undefined, 'recruit effect must be present');
+    assert.equal(recruitEffect!.magnitude, 3, 'recruit magnitude must be 3 from icon-adjacent extraction');
+  });
+
+  it('bare N[icon:vp] without "or less" does not extract reveal magnitude', () => {
+    // why: VP icon is used for both cost-threshold (with "or less") and
+    // victory-points values (bare). Pattern must not match bare usage.
+    const registry = makeHeroRegistry('core', 'hero-c', [
+      { slug: 'victory', rarityLabel: 'Common 1', abilities: ['Gain 2[icon:vp]. [keyword:reveal]'] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/hero-c'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+    assert.ok(Array.isArray(hook.effects) && hook.effects!.length > 0, 'effects must be present');
+    const revealEffect = hook.effects!.find(e => e.type === 'reveal');
+    assert.ok(revealEffect !== undefined, 'reveal effect must be present');
+    assert.equal(revealEffect!.magnitude, undefined, 'reveal magnitude must be undefined for bare VP icon');
+  });
+});
+
 describe('HERO_ABILITY_TIMINGS drift-detection', () => {
   // why: same pattern as HERO_KEYWORDS drift detection
   it('contains exactly the 5 canonical timing values', () => {

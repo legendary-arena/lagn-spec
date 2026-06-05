@@ -1249,8 +1249,8 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Rescue a Bystander.",
-            "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it."
+            "Rescue a Bystander. [keyword:rescue:1]",
+            "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it. [keyword:reveal]"
           ]
         },
         {

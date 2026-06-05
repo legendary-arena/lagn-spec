@@ -30,10 +30,13 @@ function makeTestState(overrides?: {
   hand?: string[];
   discard?: string[];
   inPlay?: string[];
+  victory?: string[];
+  bystanders?: string[];
   heroAbilityHooks?: HeroAbilityHook[];
   turnEconomyAttack?: number;
   turnEconomyRecruit?: number;
   ko?: string[];
+  cardStats?: Record<string, { attack: number; recruit: number; cost: number; fightCost: number; fightCostMode: 'static' | 'dynamic'; fightCostBase: number }>;
 }): LegendaryGameState {
   return {
     matchConfiguration: {
@@ -61,11 +64,11 @@ function makeTestState(overrides?: {
         hand: overrides?.hand ?? [],
         discard: overrides?.discard ?? [],
         inPlay: overrides?.inPlay ?? [],
-        victory: [],
+        victory: overrides?.victory ?? [],
       },
     },
     piles: {
-      bystanders: [],
+      bystanders: overrides?.bystanders ?? [],
       wounds: [],
       officers: [],
       sidekicks: [],
@@ -83,7 +86,7 @@ function makeTestState(overrides?: {
       spentAttack: 0,
       spentRecruit: 0,
     },
-    cardStats: {},
+    cardStats: overrides?.cardStats ?? {},
     mastermind: {
       id: 'test-mastermind',
       baseCardId: 'test-mastermind-base',
@@ -232,15 +235,15 @@ describe('executeHeroEffects', () => {
   // -------------------------------------------------------------------------
   // Test 6: unsupported keyword skipped
   // -------------------------------------------------------------------------
-  it('unsupported keyword is skipped — no G mutation', () => {
+  it('unsupported keyword (wound) is skipped — no G mutation', () => {
     const gameState = makeTestState({
       inPlay: ['hero-x'],
       heroAbilityHooks: [
         {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
-          keywords: ['rescue'],
-          effects: [{ type: 'rescue', magnitude: 1 }],
+          keywords: ['wound'],
+          effects: [{ type: 'wound', magnitude: 1 }],
         },
       ],
     });
@@ -254,6 +257,217 @@ describe('executeHeroEffects', () => {
       'turnEconomy should not change for unsupported keyword.');
     assert.deepEqual(gameState.ko, koBefore,
       'KO pile should not change for unsupported keyword.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 12: rescue — moves top bystander to victory (AC-3)
+  // -------------------------------------------------------------------------
+  it('rescue effect moves top bystander to victory zone', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: ['b-1', 'b-2'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].victory, ['b-1'],
+      'b-1 should be moved to the victory zone.');
+    assert.deepEqual(gameState.piles.bystanders, ['b-2'],
+      'bystander pile should have b-2 remaining.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 13: rescue — empty bystander pile is a silent no-op (AC-4)
+  // -------------------------------------------------------------------------
+  it('rescue effect is a no-op when bystander pile is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: [],
+      victory: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].victory, [],
+      'victory zone should remain empty when no bystanders available.');
+    assert.deepEqual(gameState.piles.bystanders, [],
+      'bystander pile should remain empty.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 14: rescue — magnitude defaults to 1 when undefined
+  // -------------------------------------------------------------------------
+  it('rescue effect defaults to magnitude 1 when magnitude is undefined', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: ['b-1', 'b-2', 'b-3'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.playerZones['0'].victory.length, 1,
+      'exactly 1 bystander should be rescued when magnitude is undefined.');
+    assert.equal(gameState.piles.bystanders.length, 2,
+      'bystander pile should have 2 remaining.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 15: reveal — draws card when cost <= threshold (AC-5)
+  // -------------------------------------------------------------------------
+  it('reveal effect draws top card to hand when cost is within threshold', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['hero-y'],
+      'hero-y should move to hand when its cost is within threshold.');
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should be empty after the card is drawn.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 16: reveal — card stays on deck when cost > threshold (AC-6)
+  // -------------------------------------------------------------------------
+  it('reveal effect leaves card on deck when cost exceeds threshold', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'hero-y should remain on top of deck when cost exceeds threshold.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when card is not drawn.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 17: reveal — empty deck is a silent no-op (AC-7)
+  // -------------------------------------------------------------------------
+  it('reveal effect is a no-op when deck is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should remain empty.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when deck is empty.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 18: reveal — missing cardStats entry is a silent no-op (AC-8)
+  // -------------------------------------------------------------------------
+  it('reveal effect is a no-op when top card has no cardStats entry', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['starter-agent'],
+      cardStats: {},
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['starter-agent'],
+      'starter-agent should remain on deck when its stats are unknown.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when stats entry is missing.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 19: reveal — invalid magnitude skips execution
+  // -------------------------------------------------------------------------
+  it('reveal effect is skipped when magnitude is undefined', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'deck should be unchanged when reveal magnitude is undefined.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should be unchanged when reveal magnitude is undefined.');
   });
 
   // -------------------------------------------------------------------------

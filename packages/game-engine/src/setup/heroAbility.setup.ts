@@ -103,8 +103,17 @@ const HERO_CLASS_PATTERN = /\[hc:([^\]]+)\]/g;
 /** Regex for [team:X] team condition markup. */
 const TEAM_PATTERN = /\[team:([^\]]+)\]/g;
 
-/** Regex for [keyword:X] keyword markup. */
-const KEYWORD_PATTERN = /\[keyword:([^\]]+)\]/g;
+// why: optional :N suffix carries magnitude for rescue/reveal effects (D-21503)
+/** Regex for [keyword:X] or [keyword:X:N] keyword markup (N = non-negative integer). */
+const KEYWORD_PATTERN = /\[keyword:([a-zA-Z]+)(?::(\d+))?\]/g;
+
+// why: extract magnitude from icon-adjacent integers — avoids per-card manual markup (D-21505)
+/** Regex for attack/recruit icon-adjacent magnitude, e.g. "+2[icon:attack]". */
+const ICON_MAGNITUDE_PATTERN = /\+?(\d+)\s*\[icon:(attack|recruit)\]/g;
+
+// why: extract magnitude from icon-adjacent integers — avoids per-card manual markup (D-21505)
+/** Regex for VP-cost-threshold in reveal lines: "2[icon:vp] or less". Non-global; first match only. */
+const VP_COST_THRESHOLD_PATTERN = /(\d+)\s*\[icon:vp\]\s*or less/;
 
 /** Regex for [icon:X] icon markup. */
 const ICON_PATTERN = /\[icon:([^\]]+)\]/g;
@@ -188,15 +197,44 @@ function parseAbilityText(abilityText: string): {
   // (deterministic, independent of markup position in text).
   const conditions: HeroCondition[] = [...heroClassConditions, ...teamConditions];
 
-  // Step 2: Extract [keyword:X] markup
+  // Step 2: Extract [keyword:X] or [keyword:X:N] markup
+  // Collect magnitudes keyed by keyword — explicit markup wins over icon-derived.
+  const magnitudes: Map<string, number> = new Map();
   const keywordRegex = new RegExp(KEYWORD_PATTERN.source, 'g');
   let keywordMatch: RegExpExecArray | null = keywordRegex.exec(abilityText);
   while (keywordMatch !== null) {
     const normalizedKeyword = keywordMatch[1]!.toLowerCase();
     if (isValidHeroKeyword(normalizedKeyword)) {
       keywords.push(normalizedKeyword);
+      // Capture optional :N magnitude suffix when present and valid integer
+      const magnitudeString = keywordMatch[2];
+      if (magnitudeString !== undefined && /^\d+$/.test(magnitudeString)) {
+        magnitudes.set(normalizedKeyword, parseInt(magnitudeString, 10));
+      }
     }
     keywordMatch = keywordRegex.exec(abilityText);
+  }
+
+  // Step 2b: Extract icon-adjacent magnitudes for attack/recruit keywords.
+  // Only sets magnitude if no explicit [keyword:X:N] markup already provided it.
+  const iconMagnitudeRegex = new RegExp(ICON_MAGNITUDE_PATTERN.source, 'g');
+  let iconMagnitudeMatch: RegExpExecArray | null = iconMagnitudeRegex.exec(abilityText);
+  while (iconMagnitudeMatch !== null) {
+    const iconKeyword = iconMagnitudeMatch[2]!.toLowerCase();
+    const iconMagnitudeValue = parseInt(iconMagnitudeMatch[1]!, 10);
+    if (!magnitudes.has(iconKeyword)) {
+      magnitudes.set(iconKeyword, iconMagnitudeValue);
+    }
+    iconMagnitudeMatch = iconMagnitudeRegex.exec(abilityText);
+  }
+
+  // Step 2c: Extract VP-cost threshold for reveal lines.
+  // Pattern: "N[icon:vp] or less" — non-global, first match only.
+  // Only sets magnitude if no explicit [keyword:reveal:N] markup provided it.
+  const vpThresholdMatch = VP_COST_THRESHOLD_PATTERN.exec(abilityText);
+  if (vpThresholdMatch !== null && !magnitudes.has('reveal')) {
+    const vpThresholdValue = parseInt(vpThresholdMatch[1]!, 10);
+    magnitudes.set('reveal', vpThresholdValue);
   }
 
   // Step 3: Extract [icon:X] markup
@@ -228,10 +266,16 @@ function parseAbilityText(abilityText: string): {
     }
   }
 
-  // Build effect descriptors from extracted keywords (no magnitude from NL)
+  // Build effect descriptors from extracted keywords.
+  // Apply magnitude from the magnitudes map when available.
   for (const keyword of uniqueKeywords) {
     if (keyword !== 'conditional') {
-      effects.push({ type: keyword });
+      const magnitude = magnitudes.get(keyword);
+      if (magnitude !== undefined) {
+        effects.push({ type: keyword, magnitude });
+      } else {
+        effects.push({ type: keyword });
+      }
     }
   }
 

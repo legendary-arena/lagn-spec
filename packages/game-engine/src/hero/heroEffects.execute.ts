@@ -26,11 +26,10 @@ import { koCard } from '../board/ko.logic.js';
 // MVP keyword set
 // ---------------------------------------------------------------------------
 
-// why: only these 4 keywords are executed in WP-022 MVP. The remaining
-// keywords ('rescue', 'wound', 'reveal', 'conditional') are safely
-// ignored — they require conditional logic, targeting UI, or additional
-// game systems that are deferred to WP-023+.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko']);
+// why: WP-215 adds 'rescue' and 'reveal' to the executed set. 'wound' and
+// 'conditional' remain deferred — they require targeting UI or additional
+// game systems not yet implemented.
+const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal']);
 
 // ---------------------------------------------------------------------------
 // Magnitude validation
@@ -199,9 +198,10 @@ function executeSingleEffect(
     return;
   }
 
-  // why: 'ko' does not use magnitude — it targets the played card itself.
-  // All other MVP keywords require a valid magnitude.
-  if (keyword !== 'ko') {
+  // why: 'ko' and 'rescue' do not use the pre-check magnitude gate — both
+  // handle undefined magnitude internally. All other MVP keywords require a
+  // valid magnitude.
+  if (keyword !== 'ko' && keyword !== 'rescue') {
     if (!isValidMagnitude(effect.magnitude)) {
       return;
     }
@@ -235,6 +235,53 @@ function executeSingleEffect(
           playerZones.inPlay = moveResult.from;
           G.ko = koCard(G.ko, cardId);
         }
+      }
+      break;
+    }
+    case 'rescue': {
+      const rescueMagnitude = effect.magnitude ?? 1;
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) {
+        break;
+      }
+      if (G.piles.bystanders.length === 0) {
+        break;
+      }
+      const rescueCount = Math.min(rescueMagnitude, G.piles.bystanders.length);
+      for (let rescued = 0; rescued < rescueCount; rescued++) {
+        // why: top-of-pile convention — pile[0] is the first available bystander (D-21501)
+        const topBystander = G.piles.bystanders[0];
+        if (!topBystander) {
+          break;
+        }
+        const moveResult = moveCardFromZone(G.piles.bystanders, playerZones.victory, topBystander);
+        G.piles.bystanders = moveResult.from;
+        playerZones.victory = moveResult.to;
+      }
+      break;
+    }
+    case 'reveal': {
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) {
+        break;
+      }
+      // why: reveal does not trigger deck reshuffle; empty deck is a silent no-op (D-21502)
+      if (playerZones.deck.length === 0) {
+        break;
+      }
+      const topCardId = playerZones.deck[0];
+      if (!topCardId) {
+        break;
+      }
+      const cardStats = G.cardStats[topCardId];
+      // why: G.cardStats has no entry for SHIELD starter cards; missing entry is a safe no-op (D-21502)
+      if (cardStats === undefined) {
+        break;
+      }
+      if (cardStats.cost <= (effect.magnitude as number)) {
+        const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+        playerZones.deck = moveResult.from;
+        playerZones.hand = moveResult.to;
       }
       break;
     }
