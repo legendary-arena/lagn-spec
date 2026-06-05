@@ -50,6 +50,24 @@ const REDACTED_ECONOMY: UITurnEconomyState = {
  * additive `display` payload, to prevent aliasing with the input
  * UIState. Public information — not redacted.
  */
+// why: WP-214 — villainAttachedHeroes is public; per-entry spread copies
+// prevent aliasing with the input UIState
+function buildVillainAttachedHeroesFilterCopy(
+  villainAttachedHeroes: Record<string, string[]> | undefined,
+): Record<string, string[]> {
+  if (!villainAttachedHeroes) {
+    return {};
+  }
+  const result: Record<string, string[]> = {};
+  for (const villainId of Object.keys(villainAttachedHeroes)) {
+    const heroes = villainAttachedHeroes[villainId];
+    if (heroes !== undefined) {
+      result[villainId] = [...heroes];
+    }
+  }
+  return result;
+}
+
 // why: WP-111 — City display is public; shallow copies at every level
 // prevent aliasing with the input UIState's card objects. Mirrors the
 // WP-028 cardKeywords post-mortem aliasing-prevention precedent.
@@ -66,6 +84,8 @@ function deepCopyCitySpaces(
         type: space.type,
         keywords: [...space.keywords],
         display: { ...space.display },
+        attachedHeroes: [...space.attachedHeroes],
+        fightCost: space.fightCost,
       });
     }
   }
@@ -391,6 +411,9 @@ export function filterUIStateForAudience(
     // notableEvents array; per-entry payloads are plain JSON objects so
     // top-level copy is sufficient (mirrors `log`).
     notableEvents: [...uiState.notableEvents],
+    // why: WP-214 — villainAttachedHeroes is public (visible to all players);
+    // per-entry spread copy prevents aliasing with the input UIState
+    villainAttachedHeroes: buildVillainAttachedHeroesFilterCopy(uiState.villainAttachedHeroes),
     // why: progress counters are public (no redaction needed) — passed through
     // unchanged via fresh object copy to avoid aliasing with the input UIState.
     // Forced cascade from WP-067 making `progress` a required UIState field.

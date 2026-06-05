@@ -449,6 +449,118 @@ describe('buildCardStats — physicalCards (D-14102)', () => {
     assert.equal(attuneEntry.cost, 2, 'cost from card entry for sides[0]');
   });
 
+  // ===========================================================================
+  // WP-214 — fightCostMode / fightCostBase parser tests (C2)
+  // ===========================================================================
+
+  it('WP-214: vAttack "*" produces fightCostMode=dynamic, fightCostBase=0, fightCost=0', () => {
+    const setData = {
+      abbr: 'skrulls',
+      villains: [
+        {
+          slug: 'skrull-shapeshifters',
+          cards: [{ slug: 'skrull-trooper', vAttack: '*' }],
+        },
+      ],
+      henchmen: [],
+    };
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'skrulls' }],
+      getSet: (abbr: string) => (abbr === 'skrulls' ? setData : undefined),
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'skrulls/s',
+      mastermindId: 'skrulls/mm',
+      villainGroupIds: ['skrulls/skrull-shapeshifters'],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+    const entry = stats['skrulls-villain-skrull-shapeshifters-skrull-trooper-00'];
+    assert.ok(entry, 'villain instance stat must exist for skrull-trooper-00');
+    assert.equal(entry.fightCostMode, 'dynamic', 'vAttack "*" must produce fightCostMode="dynamic"');
+    assert.equal(entry.fightCostBase, 0, 'vAttack "*" must produce fightCostBase=0');
+    assert.equal(entry.fightCost, 0, 'vAttack "*" must produce fightCost=0 at setup time');
+  });
+
+  it('WP-214: vAttack "4+" produces fightCostMode=dynamic, fightCostBase=4, fightCost=4', () => {
+    const setData = {
+      abbr: 'skrulls',
+      villains: [
+        {
+          slug: 'skrull-shapeshifters',
+          cards: [{ slug: 'skrull-queen', vAttack: '4+' }],
+        },
+      ],
+      henchmen: [],
+    };
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'skrulls' }],
+      getSet: (abbr: string) => (abbr === 'skrulls' ? setData : undefined),
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'skrulls/s',
+      mastermindId: 'skrulls/mm',
+      villainGroupIds: ['skrulls/skrull-shapeshifters'],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+    const entry = stats['skrulls-villain-skrull-shapeshifters-skrull-queen-00'];
+    assert.ok(entry, 'villain instance stat must exist for skrull-queen-00');
+    assert.equal(entry.fightCostMode, 'dynamic', 'vAttack "4+" must produce fightCostMode="dynamic"');
+    assert.equal(entry.fightCostBase, 4, 'vAttack "4+" must produce fightCostBase=4');
+    assert.equal(entry.fightCost, 4, 'vAttack "4+" must produce fightCost=4 (base at setup)');
+  });
+
+  it('WP-214: vAttack "7" (static) produces fightCostMode=static, fightCostBase=0, fightCost=7', () => {
+    const setData = {
+      abbr: 'skrulls',
+      villains: [
+        {
+          slug: 'skrull-shapeshifters',
+          cards: [{ slug: 'super-skrull', vAttack: '7' }],
+        },
+      ],
+      henchmen: [],
+    };
+    const registry = {
+      listCards: () => [],
+      listSets: () => [{ abbr: 'skrulls' }],
+      getSet: (abbr: string) => (abbr === 'skrulls' ? setData : undefined),
+    };
+    const config: MatchSetupConfig = {
+      schemeId: 'skrulls/s',
+      mastermindId: 'skrulls/mm',
+      villainGroupIds: ['skrulls/skrull-shapeshifters'],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    };
+
+    const stats = buildCardStats(registry, config);
+    const entry = stats['skrulls-villain-skrull-shapeshifters-super-skrull-00'];
+    assert.ok(entry, 'villain instance stat must exist for super-skrull-00');
+    assert.equal(entry.fightCostMode, 'static', 'vAttack "7" must produce fightCostMode="static"');
+    assert.equal(entry.fightCostBase, 0, 'vAttack "7" must produce fightCostBase=0');
+    assert.equal(entry.fightCost, 7, 'vAttack "7" must produce fightCost=7');
+  });
+
   it('falls back to rarity map when physicalCards is absent', () => {
     const setData = {
       abbr: 'core',

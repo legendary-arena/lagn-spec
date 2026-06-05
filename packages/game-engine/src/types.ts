@@ -557,6 +557,14 @@ export interface LegendaryGameState {
   /** Bystanders attached to villains/henchmen currently in the City. */
   attachedBystanders: Record<CardExtId, CardExtId[]>;
 
+  // why: villainAttachedHeroes maps villains in the City to their captured
+  // heroes. Heroes enter via captureHqHero* keywords and are either awarded
+  // to the defeating player's discard (Fight: Gain that Hero) or KO'd on
+  // escape. Mirrors attachedBystanders structure. Entries are deleted (not
+  // set to []) when all heroes are removed. See D-21401.
+  /** Heroes attached to villains currently in the City (WP-214). */
+  villainAttachedHeroes: Record<CardExtId, CardExtId[]>;
+
   // why: mastermind state with identity, tactics deck, and defeated list.
   // Built at setup from registry data. tacticsDeck drawn from index 0;
   // tacticsDefeated append-only. All fields are CardExtId or CardExtId[].

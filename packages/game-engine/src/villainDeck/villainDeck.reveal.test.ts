@@ -145,6 +145,7 @@ function createMockGameState(options: {
     villainDeckCardTypes: options.cardTypes,
     ko: [],
     attachedBystanders: {},
+    villainAttachedHeroes: {},
     turnEconomy: { attack: 0, recruit: 0, spentAttack: 0, spentRecruit: 0, piercing: 0, woundsDrawn: 0 },
     city: initializeCity(),
     hq: initializeHq(),

@@ -27,6 +27,7 @@ import {
   attachBystanderToVillain,
   awardAttachedBystanders,
 } from '../board/bystanders.logic.js';
+import { captureHeroFromHq } from '../board/heroCapture.logic.js';
 import { moveCardFromZone } from '../moves/zoneOps.js';
 import { WOUND_EXT_ID } from '../setup/pilesInit.js';
 import {
@@ -262,6 +263,23 @@ function applyVillainEffect(
           zones.victory = awardResult.playerVictory;
         }
       }
+      return true;
+    }
+    case 'captureHqHeroRightmost': {
+      // why: captures the rightmost non-null hero from the HQ (index 4 → 0)
+      captureHeroFromHq(G, cardId, 'rightmost');
+      return true;
+    }
+    case 'captureHqHeroHighestCost': {
+      // why: captures the highest-cost hero from the HQ; ties resolved by
+      // rightmost index per selector determinism contract (WP-214)
+      captureHeroFromHq(G, cardId, 'highestCost');
+      return true;
+    }
+    case 'captureHqHeroLowestCost': {
+      // why: captures the lowest-cost hero from the HQ; ties resolved by
+      // rightmost index per selector determinism contract (WP-214)
+      captureHeroFromHq(G, cardId, 'lowestCost');
       return true;
     }
     default: {

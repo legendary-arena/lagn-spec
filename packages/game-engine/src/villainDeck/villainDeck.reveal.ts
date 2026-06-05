@@ -29,6 +29,7 @@ import {
   resolveEscapedBystanders,
 } from '../board/bystanders.logic.js';
 import { hasAmbush } from '../board/boardKeywords.logic.js';
+import { koAttachedHeroesOnEscape } from '../board/heroCapture.logic.js';
 import { executeVillainAbilities } from '../villain/villainEffects.execute.js';
 import { composeAmbushNarrative } from '../events/notableEvents.compose.js';
 
@@ -225,6 +226,8 @@ export function performVillainReveal(
       // ext_id the per-card hook lookup expects, so villain onEscape effects
       // now fire end-to-end on real cards (D-18508 CLOSED).
       executeVillainAbilities(G, ctx, pushResult.escapedCard, 'onEscape');
+      // why: captured heroes KO'd when villain escapes (tabletop rules)
+      koAttachedHeroesOnEscape(G, pushResult.escapedCard);
     }
 
     // why: Ambush fires on City entry. The hardcoded "each player gains a

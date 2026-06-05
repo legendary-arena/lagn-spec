@@ -37,6 +37,9 @@ interface MakeGOptions {
   escapedPile?: CardExtId[];
   attachedBystanders?: Record<CardExtId, CardExtId[]>;
   ko?: CardExtId[];
+  hq?: (CardExtId | null)[];
+  villainAttachedHeroes?: Record<string, CardExtId[]>;
+  cardStats?: Record<string, { cost: number }>;
 }
 
 /**
@@ -62,8 +65,11 @@ function makeG(options: MakeGOptions): LegendaryGameState {
     },
     ko: options.ko ?? [],
     attachedBystanders: options.attachedBystanders ?? {},
+    villainAttachedHeroes: options.villainAttachedHeroes ?? {},
+    hq: (options.hq ?? [null, null, null, null, null]) as LegendaryGameState['hq'],
     heroDeck: options.heroDeck ?? [],
     escapedPile: options.escapedPile ?? [],
+    cardStats: options.cardStats ?? {},
     turnEconomy: {
       attack: 0,
       recruit: 0,
@@ -1387,5 +1393,94 @@ describe('executeVillainAbilities — WP-200 return shape', () => {
       'onFight',
     );
     assert.deepStrictEqual(applied, ['gainWoundCurrentPlayer']);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-214: captureHqHero* keyword dispatch
+// ---------------------------------------------------------------------------
+
+describe('executeVillainAbilities — captureHqHeroRightmost (WP-214)', () => {
+  it('captures the rightmost non-null HQ hero and attaches to the villain', () => {
+    const G = makeG({
+      hooks: [hook('v-skrull', 'onAmbush', ['captureHqHeroRightmost'])],
+      hq: ['h0' as CardExtId, null, 'h2' as CardExtId, null, 'h4' as CardExtId],
+    });
+    executeVillainAbilities(G, CTX, 'v-skrull' as CardExtId, 'onAmbush');
+
+    assert.deepStrictEqual(
+      G.villainAttachedHeroes['v-skrull'],
+      ['h4'],
+      'h4 at index 4 is the rightmost non-null slot',
+    );
+    assert.equal(G.hq[4], null, 'HQ slot 4 vacated after capture');
+  });
+
+  it('no-op when HQ is entirely null — returns safely without throw', () => {
+    const G = makeG({
+      hooks: [hook('v-skrull', 'onAmbush', ['captureHqHeroRightmost'])],
+      hq: [null, null, null, null, null],
+    });
+    assert.doesNotThrow(() =>
+      executeVillainAbilities(G, CTX, 'v-skrull' as CardExtId, 'onAmbush'),
+    );
+    assert.deepStrictEqual(G.villainAttachedHeroes, {});
+  });
+
+  it('appears in the applied array when HQ has a target', () => {
+    const G = makeG({
+      hooks: [hook('v-skrull', 'onAmbush', ['captureHqHeroRightmost'])],
+      hq: [null, null, null, null, 'h4' as CardExtId],
+    });
+    const applied = executeVillainAbilities(G, CTX, 'v-skrull' as CardExtId, 'onAmbush');
+    assert.deepStrictEqual(applied, ['captureHqHeroRightmost']);
+  });
+});
+
+describe('executeVillainAbilities — captureHqHeroHighestCost (WP-214)', () => {
+  it('captures the highest-cost HQ hero and attaches to the villain', () => {
+    const G = makeG({
+      hooks: [hook('v-skrull', 'onAmbush', ['captureHqHeroHighestCost'])],
+      hq: ['h0' as CardExtId, 'h1' as CardExtId, 'h2' as CardExtId, null, null],
+      cardStats: { h0: { cost: 3 }, h1: { cost: 7 }, h2: { cost: 2 } },
+    });
+    executeVillainAbilities(G, CTX, 'v-skrull' as CardExtId, 'onAmbush');
+
+    assert.deepStrictEqual(G.villainAttachedHeroes['v-skrull'], ['h1'], 'h1 has cost 7 — highest');
+    assert.equal(G.hq[1], null, 'HQ slot 1 vacated');
+  });
+
+  it('appears in the applied array', () => {
+    const G = makeG({
+      hooks: [hook('v-skrull', 'onAmbush', ['captureHqHeroHighestCost'])],
+      hq: [null, 'h1' as CardExtId, null, null, null],
+      cardStats: { h1: { cost: 4 } },
+    });
+    const applied = executeVillainAbilities(G, CTX, 'v-skrull' as CardExtId, 'onAmbush');
+    assert.deepStrictEqual(applied, ['captureHqHeroHighestCost']);
+  });
+});
+
+describe('executeVillainAbilities — captureHqHeroLowestCost (WP-214)', () => {
+  it('captures the lowest-cost HQ hero and attaches to the villain', () => {
+    const G = makeG({
+      hooks: [hook('v-skrull', 'onAmbush', ['captureHqHeroLowestCost'])],
+      hq: ['h0' as CardExtId, 'h1' as CardExtId, 'h2' as CardExtId, null, null],
+      cardStats: { h0: { cost: 3 }, h1: { cost: 7 }, h2: { cost: 1 } },
+    });
+    executeVillainAbilities(G, CTX, 'v-skrull' as CardExtId, 'onAmbush');
+
+    assert.deepStrictEqual(G.villainAttachedHeroes['v-skrull'], ['h2'], 'h2 has cost 1 — lowest');
+    assert.equal(G.hq[2], null, 'HQ slot 2 vacated');
+  });
+
+  it('appears in the applied array', () => {
+    const G = makeG({
+      hooks: [hook('v-skrull', 'onAmbush', ['captureHqHeroLowestCost'])],
+      hq: ['h0' as CardExtId, null, null, null, null],
+      cardStats: { h0: { cost: 2 } },
+    });
+    const applied = executeVillainAbilities(G, CTX, 'v-skrull' as CardExtId, 'onAmbush');
+    assert.deepStrictEqual(applied, ['captureHqHeroLowestCost']);
   });
 });

@@ -33,6 +33,7 @@ import type {
   UIKoPileState,
 } from './uiState.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
+import { resolveFightCost } from '../economy/economy.resolve.js';
 import { evaluateEndgame } from '../endgame/endgame.evaluate.js';
 import { computeFinalScores } from '../scoring/scoring.logic.js';
 import { BYSTANDER_EXT_ID, WOUND_EXT_ID } from '../setup/buildInitialGameState.js';
@@ -252,6 +253,31 @@ function buildProgressCounters(gameState: LegendaryGameState): UIProgressCounter
   };
 }
 
+/**
+ * Projects G.villainAttachedHeroes into a fresh Record with spread-copied
+ * inner arrays to prevent aliasing with G state.
+ *
+ * @param villainAttachedHeroes - Source from G (may be undefined in old test states).
+ * @returns A new Record with spread-copied hero id arrays.
+ */
+// why: WP-214 — per-entry spread ensures inner arrays are also new references,
+// so UIState consumers cannot mutate G.villainAttachedHeroes through the projection
+function buildVillainAttachedHeroesProjection(
+  villainAttachedHeroes: Record<string, string[]> | undefined,
+): Record<string, string[]> {
+  if (!villainAttachedHeroes) {
+    return {};
+  }
+  const result: Record<string, string[]> = {};
+  for (const villainId of Object.keys(villainAttachedHeroes)) {
+    const heroes = villainAttachedHeroes[villainId];
+    if (heroes !== undefined) {
+      result[villainId] = [...heroes];
+    }
+  }
+  return result;
+}
+
 // why: per D-6701, PAR payload is deferred until `buildUIState` has access to
 // a `ReplayResult`. The type-level contract ships via `UIParBreakdown` and the
 // drift test locks the four field names. Body stays `return undefined;`
@@ -411,6 +437,8 @@ export function buildUIState(
       // why: spread operator creates a new array to prevent aliasing
       // with G.cardKeywords — UIState must not hold references to G data
       const cardKeywords = gameState.cardKeywords[space];
+      // why: WP-214 — spread copy prevents aliasing with G.villainAttachedHeroes
+      const spaceAttachedHeroes = gameState.villainAttachedHeroes?.[space] ?? [];
       citySpaces.push({
         extId: space,
         type: gameState.villainDeckCardTypes[space] ?? 'unknown',
@@ -419,6 +447,12 @@ export function buildUIState(
         // copy via resolveDisplay prevents aliasing with
         // G.cardDisplayData[space].
         display: resolveDisplay(space, gameState),
+        // why: WP-214 — attached heroes projected as string[] for arena-client
+        // rendering; spread copy ensures no aliasing with G state
+        attachedHeroes: [...spaceAttachedHeroes],
+        // why: WP-214 — engine-resolved fight cost; UI must not recompute
+        // dynamic values (engine-owns-truth invariant)
+        fightCost: resolveFightCost(gameState, space),
       });
     }
   }
@@ -640,6 +674,9 @@ export function buildUIState(
     economy,
     log,
     notableEvents,
+    // why: WP-214 — spread copy of G.villainAttachedHeroes prevents aliasing;
+    // per-entry spread ensures inner arrays are also new references
+    villainAttachedHeroes: buildVillainAttachedHeroesProjection(gameState.villainAttachedHeroes),
     progress,
     decks,
     piles,

@@ -60,6 +60,10 @@ export interface UIState {
   // by `uiState.build.ts` (spread copy) and by `uiState.filter.ts` so
   // UIState never aliases G's array.
   notableEvents: NotableGameEvent[];
+  // why: WP-214 — top-level projection of G.villainAttachedHeroes for
+  // the arena-client to render captured heroes beneath villain city tiles.
+  // Spread copy prevents aliasing with G state.
+  villainAttachedHeroes: Record<string, string[]>;
   progress: UIProgressCounters;
   decks: UIDecksState;
   piles: UISharedPilesState;
@@ -218,6 +222,10 @@ export interface UICityCard {
   type: string;
   keywords: string[];
   display: UICardDisplay;
+  /** Hero ext_ids captured under this villain (WP-214). Empty array when none. */
+  attachedHeroes: string[];
+  /** Engine-resolved fight cost for this villain (WP-214). Static or dynamic. */
+  fightCost: number;
 }
 
 /**

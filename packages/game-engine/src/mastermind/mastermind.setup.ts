@@ -230,6 +230,8 @@ export function buildMastermindState(
     recruit: 0,
     cost: 0,
     fightCost: parseCardStatValue(baseCard.vAttack),
+    fightCostMode: 'static',
+    fightCostBase: 0,
   };
 
   // Build tactic ext_ids

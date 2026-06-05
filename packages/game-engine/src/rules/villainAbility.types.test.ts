@@ -72,11 +72,12 @@ describe('VILLAIN_EFFECT_KEYWORDS drift-detection', () => {
   // why: failure means the locked vocabulary drifted from the union. WP-189
   // appended 'koHeroEachPlayer' at position 6 (D-18901; the incremental-
   // expansion governance clause). WP-202 appended 'koHeroEachPlayerMag2'
-  // at position 7 (D-20201; closed-union-per-magnitude). Positions 1-5
-  // stay byte-identical to the WP-185 array — WP-187's executed markers +
+  // at position 7 (D-20201; closed-union-per-magnitude). WP-214 appended
+  // captureHqHero* at positions 8-10 (D-21401). Positions 1-5 stay
+  // byte-identical to the WP-185 array — WP-187's executed markers +
   // the apply-effect-markers.mjs local copy depend on the first-five
   // ordering. Any further addition requires a new WP + DECISIONS.md entry.
-  it('contains exactly the 7 canonical effect keyword values in order', () => {
+  it('contains exactly the 10 canonical effect keyword values in order', () => {
     const expectedKeywords: VillainEffectKeyword[] = [
       'gainWoundEachPlayer',
       'gainWoundCurrentPlayer',
@@ -85,12 +86,15 @@ describe('VILLAIN_EFFECT_KEYWORDS drift-detection', () => {
       'captureBystander',
       'koHeroEachPlayer',
       'koHeroEachPlayerMag2',
+      'captureHqHeroRightmost',
+      'captureHqHeroHighestCost',
+      'captureHqHeroLowestCost',
     ];
 
     assert.equal(
       VILLAIN_EFFECT_KEYWORDS.length,
-      7,
-      'VILLAIN_EFFECT_KEYWORDS must have exactly 7 entries',
+      10,
+      'VILLAIN_EFFECT_KEYWORDS must have exactly 10 entries',
     );
 
     assert.deepStrictEqual(
@@ -107,7 +111,8 @@ describe('VILLAIN_EFFECT_KEYWORDS drift-detection', () => {
     );
   });
 
-  // why: WP-189 appended at position 6; WP-202 appended at position 7.
+  // why: WP-189 appended at position 6; WP-202 appended at position 7;
+  // WP-214 appended at positions 8, 9, 10.
   // WP-187's executed markers + the overlay script's local copy are keyed
   // on positions 0-5 being byte-identical to the post-WP-189 array; an
   // insertion mid-array would silently break them. This guard pins

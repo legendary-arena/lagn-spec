@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Pure narrative-composition helpers for `NotableGameEvent` records.
  *
  * Each composer takes plain string / number / array inputs and returns a
@@ -35,6 +35,9 @@ const EFFECT_KEYWORD_LABELS: Readonly<Record<VillainEffectKeyword, string>> = {
   captureBystander: 'a bystander was captured',
   koHeroEachPlayer: 'every player KO’d a hero',
   koHeroEachPlayerMag2: 'every player KO’d two heroes',
+  captureHqHeroRightmost: "the rightmost HQ hero was captured",
+  captureHqHeroHighestCost: "the highest-cost HQ hero was captured",
+  captureHqHeroLowestCost: "the lowest-cost HQ hero was captured",
 };
 
 /**

@@ -91,6 +91,8 @@
         "destroyer": { "escape": ["koHeroEachPlayerMag2"] }
       },
       "skrulls": {
+        "skrull-shapeshifters": { "ambush": ["captureHqHeroRightmost"] },
+        "skrull-queen-veranke": { "ambush": ["captureHqHeroHighestCost"] },
         "super-skrull": { "fight": ["koHeroEachPlayer"] }
       },
       "spider-foes": {

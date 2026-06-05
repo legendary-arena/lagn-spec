@@ -2264,7 +2264,7 @@
           "vAttack": "*",
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-skrulls-skrull-queen-veranke.webp",
           "abilities": [
-            "Ambush: Put the highest-cost Hero from the HQ under this Villain. This Villain's [icon:attack] is equal to that Hero's [icon:vp].",
+            "Ambush: Put the highest-cost Hero from the HQ under this Villain. This Villain's [icon:attack] is equal to that Hero's [icon:vp]. [effect:captureHqHeroHighestCost]",
             "Fight: Gain that Hero."
           ],
           "copies": 1
@@ -2276,7 +2276,7 @@
           "vAttack": "*",
           "imageUrl": "https://images.legendary-arena.com/core/core-vi-skrulls-skrull-shapeshifters.webp",
           "abilities": [
-            "Ambush: Put the rightmost Hero from the HQ under this Villain. This Villain's [icon:attack] is equal to that Hero's [icon:vp].",
+            "Ambush: Put the rightmost Hero from the HQ under this Villain. This Villain's [icon:attack] is equal to that Hero's [icon:vp]. [effect:captureHqHeroRightmost]",
             "Fight: Gain that Hero"
           ],
           "copies": 3

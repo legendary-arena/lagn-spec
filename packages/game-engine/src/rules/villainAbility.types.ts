@@ -63,10 +63,13 @@ export type VillainEffectKeyword =
   | 'heroDeckTopToEscape'
   | 'captureBystander'
   | 'koHeroEachPlayer'
-  | 'koHeroEachPlayerMag2';
+  | 'koHeroEachPlayerMag2'
+  | 'captureHqHeroRightmost'
+  | 'captureHqHeroHighestCost'
+  | 'captureHqHeroLowestCost';
 
 // why: drift-detection array — must match the VillainEffectKeyword union
-// exactly. The seven-keyword vocabulary is the current locked MVP set. The
+// exactly. The ten-keyword vocabulary is the current locked MVP set. The
 // first five (positions 1-5) carry forward unchanged from WP-185
 // §Non-Negotiable Constraints — WP-187's executed markers and the overlay
 // script's hardcoded copy depend on byte-identical ordering of positions
@@ -89,6 +92,10 @@ export type VillainEffectKeyword =
 // corpus shows only N=2 in v1 (zero N≥3 lines empirically). Any future
 // addition requires a new WP plus a DECISIONS.md entry. The order here
 // is the canonical emission order for multi-marker lines.
+// `captureHqHeroRightmost`, `captureHqHeroHighestCost`,
+// `captureHqHeroLowestCost` were added at positions 8, 9, 10 (0-indexed
+// 7, 8, 9) by WP-214 to support the v1 HQ hero capture vocabulary
+// (D-21401). Append-only; prior positions unchanged.
 /**
  * All villain effect keywords in canonical order. Single source of truth.
  */
@@ -100,6 +107,9 @@ export const VILLAIN_EFFECT_KEYWORDS: readonly VillainEffectKeyword[] = [
   'captureBystander',
   'koHeroEachPlayer',
   'koHeroEachPlayerMag2',
+  'captureHqHeroRightmost',
+  'captureHqHeroHighestCost',
+  'captureHqHeroLowestCost',
 ] as const;
 
 // ---------------------------------------------------------------------------

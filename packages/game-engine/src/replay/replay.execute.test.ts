@@ -95,8 +95,8 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // replay's final state (the canonical hash omits `undefined` but includes a
 // present `false`), shifting the hash with no behaviour change. Same
 // dependency-driven class as the notableEvents re-pin above. Pre-WP-212:
-// 'a3d25f9e'. Post-WP-212: '8658f02b'.
-const PRE_WP080_HASH = '8658f02b';
+// 'a3d25f9e'. Post-WP-212: '8658f02b'. Post-WP-214: 'f2c9f9ec'.
+const PRE_WP080_HASH = 'f2c9f9ec';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

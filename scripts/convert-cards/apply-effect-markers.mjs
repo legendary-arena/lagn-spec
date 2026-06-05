@@ -68,9 +68,10 @@ const MARKER_MAP_PATH = join(INPUTS_DIR, 'villain-effect-markers.json');
 // the seventh keyword `koHeroEachPlayerMag2` at position 7 (engine-side);
 // this array mirrors it here byte-identically — positions 0-5 remain
 // byte-identical to the post-WP-190 array, position 6 is the WP-202
-// append slot. The hand-sync convention is the load-bearing guardrail
-// (auto-importing from packages/ is explicitly forbidden — the loud-fail
-// discipline depends on hand-keeping).
+// append slot. WP-214 / D-21401 appends captureHqHero* at positions 8-10;
+// this array mirrors them here byte-identically. The hand-sync convention
+// is the load-bearing guardrail (auto-importing from packages/ is
+// explicitly forbidden — the loud-fail discipline depends on hand-keeping).
 const VILLAIN_EFFECT_KEYWORDS = [
   'gainWoundEachPlayer',
   'gainWoundCurrentPlayer',
@@ -79,6 +80,9 @@ const VILLAIN_EFFECT_KEYWORDS = [
   'captureBystander',
   'koHeroEachPlayer',
   'koHeroEachPlayerMag2',
+  'captureHqHeroRightmost',
+  'captureHqHeroHighestCost',
+  'captureHqHeroLowestCost',
 ];
 
 // why: WP-188 / EC-215 is the follow-on the WP-187 comment anticipated:

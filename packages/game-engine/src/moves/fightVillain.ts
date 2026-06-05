@@ -15,7 +15,9 @@
 import type { FnContext, PlayerID } from 'boardgame.io';
 import type { LegendaryGameState } from '../types.js';
 import { awardAttachedBystanders } from '../board/bystanders.logic.js';
+import { awardAttachedHeroes } from '../board/heroCapture.logic.js';
 import { getAvailableAttack, spendAttack } from '../economy/economy.logic.js';
+import { resolveFightCost } from '../economy/economy.resolve.js';
 import { isGuardBlocking, getPatrolModifier } from '../board/boardKeywords.logic.js';
 import { executeVillainAbilities } from '../villain/villainEffects.execute.js';
 import { composeFightNarrative } from '../events/notableEvents.compose.js';
@@ -68,8 +70,10 @@ export function fightVillain(
   }
 
   // why: Patrol adds +1 to the fight cost (MVP additive modifier). The
-  // patrol modifier is additive on top of the card's base fightCost.
-  const baseFightCost = G.cardStats[cardId]?.fightCost ?? 0;
+  // patrol modifier is additive on top of the resolved fight cost.
+  // resolveFightCost is the single authority — handles both static and
+  // dynamic (captured-hero-based) villains (WP-214).
+  const baseFightCost = resolveFightCost(G, cardId);
   const patrolModifier = getPatrolModifier(cardId, cardKeywords);
   const requiredFightCost = baseFightCost + patrolModifier;
   const availableAttack = getAvailableAttack(G.turnEconomy);
@@ -97,6 +101,9 @@ export function fightVillain(
   );
   G.attachedBystanders = awardResult.attachedBystanders;
   G.playerZones[ctx.currentPlayer]!.victory = awardResult.playerVictory;
+
+  // Step 3c: Award attached heroes to player's discard pile (WP-214)
+  awardAttachedHeroes(G, cardId, ctx.currentPlayer);
 
   G.turnEconomy = spendAttack(G.turnEconomy, requiredFightCost);
 

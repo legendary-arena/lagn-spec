@@ -257,6 +257,8 @@ export function buildCardStats(
         cost: parseCardStatValue(card.cost),
         // why: heroes are never fought; fightCost is for villains only
         fightCost: 0,
+        fightCostMode: 'static',
+        fightCostBase: 0,
       };
     }
   }
@@ -294,6 +296,8 @@ export function buildCardStats(
         cost,
         // why: heroes are never fought; fightCost is for villains only.
         fightCost: 0,
+        fightCostMode: 'static',
+        fightCostBase: 0,
       };
     }
   }
@@ -317,7 +321,33 @@ export function buildCardStats(
 
     for (const villainCard of villainCards) {
       if (typeof villainCard.slug !== 'string') continue;
-      const fightCost = parseCardStatValue(villainCard.vAttack);
+
+      // Detect dynamic vAttack patterns BEFORE calling parseCardStatValue.
+      // Guard: vAttack may be undefined/null for villains without an attack
+      // stat — check for falsy before pattern matching to avoid TypeError.
+      const rawVAttack = villainCard.vAttack;
+      let fightCostMode: 'static' | 'dynamic' = 'static';
+      let fightCostBase = 0;
+      let fightCost = 0;
+
+      if (!rawVAttack) {
+        // why: villains without vAttack (e.g. some henchmen) default to static 0
+        fightCost = 0;
+      } else if (rawVAttack === '*') {
+        // why: "*" = fight cost is entirely determined by captured hero recruit costs
+        fightCostMode = 'dynamic';
+        fightCostBase = 0;
+        fightCost = 0;
+      } else if (typeof rawVAttack === 'string' && rawVAttack.endsWith('+')) {
+        // why: "N+" = base N plus captured hero costs; parseCardStatValue strips the "+"
+        fightCostMode = 'dynamic';
+        fightCostBase = parseCardStatValue(rawVAttack);
+        fightCost = fightCostBase;
+      } else {
+        // why: static villain — fightCostMode defaults to 'static'
+        fightCost = parseCardStatValue(rawVAttack);
+      }
+
       const instanceExtIds = villainCardInstanceExtIds(
         parsed.setAbbr,
         parsed.slug,
@@ -332,6 +362,8 @@ export function buildCardStats(
           recruit: 0,
           cost: 0,
           fightCost,
+          fightCostMode,
+          fightCostBase,
         };
       }
     }
@@ -362,6 +394,8 @@ export function buildCardStats(
           recruit: 0,
           cost: 0,
           fightCost: parsedFightCost,
+          fightCostMode: 'static',
+          fightCostBase: 0,
         };
       }
     }

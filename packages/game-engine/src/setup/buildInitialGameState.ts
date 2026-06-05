@@ -350,8 +350,8 @@ export function buildInitialGameState(
   // Per tabletop rules: Agents give 1 recruit, Troopers give 1 attack.
   // Placed after the completeness audit so the audit only checks
   // registry-derived cards (starting cards have no cardDisplayData entry).
-  cardStats[SHIELD_AGENT_EXT_ID] = { attack: 0, recruit: 1, cost: 0, fightCost: 0 };
-  cardStats[SHIELD_TROOPER_EXT_ID] = { attack: 1, recruit: 0, cost: 0, fightCost: 0 };
+  cardStats[SHIELD_AGENT_EXT_ID] = { attack: 0, recruit: 1, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 };
+  cardStats[SHIELD_TROOPER_EXT_ID] = { attack: 1, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 };
 
   // why: WP-135 — build the per-match hero deck reservoir from
   // MatchSetupConfig.heroDeckIds via the locked rarity → copy-count map
@@ -398,6 +398,8 @@ export function buildInitialGameState(
     ko: [],
     // why: no bystanders attached at game start; populated during reveals (WP-017)
     attachedBystanders: {},
+    // why: no heroes captured at game start; populated by captureHqHero* effects (WP-214)
+    villainAttachedHeroes: {},
     // why: City initialized empty; villains enter via revealVillainCard (WP-015)
     city: initializeCity(),
     // why: HQ filled from first 5 of the shuffled hero deck via

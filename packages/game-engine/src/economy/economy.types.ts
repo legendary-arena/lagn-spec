@@ -48,6 +48,19 @@ export interface CardStatEntry {
    * Villain/henchman fight requirement parsed from vAttack.
    * fightVillain validates available attack against this value.
    * For hero cards this is always 0 (heroes are never fought).
+   * For dynamic villains (vAttack "*" or "N+"), this is the base value
+   * at setup time — resolveFightCost computes the runtime cost.
    */
   fightCost: number;
+  /**
+   * Whether fight cost is static (read fightCost directly) or dynamic
+   * (sum fightCostBase + captured hero costs via resolveFightCost).
+   * All existing cards default to 'static'. WP-214.
+   */
+  fightCostMode: 'static' | 'dynamic';
+  /**
+   * Base fight cost for dynamic villains (vAttack "N+" pattern).
+   * Zero for "*" villains; N for "N+" villains. Always 0 for static.
+   */
+  fightCostBase: number;
 }
