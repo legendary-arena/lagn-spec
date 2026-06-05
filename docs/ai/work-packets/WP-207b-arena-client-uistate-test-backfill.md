@@ -2,7 +2,8 @@
 
 **Status:** Ready
 **Primary Layer:** Client (`apps/arena-client/src/**/*.test.ts` + test-adjacent files)
-**Dependencies:** WP-200, WP-201, WP-207a (all landed; WP-207a fixes the fixture files, this packet fixes the 8 test files that inline-construct `UIState` objects)
+**Dependencies:** WP-200, WP-201, WP-207a (all landed; WP-207a fixed the 3 JSON fixture files, this packet fixes the 8 test files that inline-construct `UIState` objects)
+**Pre-flight:** READY TO EXECUTE (2026-06-04) · **Copilot:** PASS / CONFIRM (2026-06-04)
 
 ---
 
@@ -21,7 +22,7 @@ After this session, the 8 test files listed in `## Files Expected to Change` eit
 ## Assumes
 
 - WP-207a complete. Specifically:
-  - `apps/arena-client/src/fixtures/uiState/index.ts` and `typed.ts` carry `notableEvents: []` on all 6 prior failure sites
+  - `apps/arena-client/src/fixtures/uiState/mid-turn.json`, `endgame-win.json`, and `endgame-loss.json` each carry `"notableEvents": []` as a top-level member (WP-207a was a JSON-only fix; the `.ts` modules `index.ts` and `typed.ts` were correct all along — their errors propagated from the stale JSON)
   - The 6 fixture-file typecheck errors from the WP-201-era cascade are resolved
 - WP-200 + WP-201 complete. Specifically:
   - `UIState.notableEvents: NotableGameEvent[]` is required
@@ -53,8 +54,12 @@ Before writing a single line:
 ## Scope (In)
 
 - Add `notableEvents: []` to every inline `UIState` construction site in the 8 test files listed in `## Files Expected to Change`
-- For `useNotableEventStream.test.ts`: resolve the TS2339 `.type` on `never` errors at lines 106 and 148 via the minimum-surface change needed (likely: add a missing type annotation on the local `currentEvent` ref or extend the `uiStateWith` helper signature; investigate during execution)
-- For `mutationDetector.test.ts` and `mutationMiddleware.test.ts`: resolve the TS2375 exactOptionalPropertyTypes errors at the cited line numbers; the most likely fix is appending `notableEvents: []` to the local `makeUIState` helper's literal `UIState` body
+- For `useNotableEventStream.test.ts`: resolve the TS2339 `.type` on `never` errors at lines 106 and 148 using the following escalation order (stop at first working fix):
+  1. Add explicit type annotation to the local ref/variable holding the event (e.g., `Ref<NotableGameEvent | null>`)
+  2. Tighten the helper return type (e.g., `uiStateWith` signature) so the inferred type is not `never`
+  3. Add a minimal type assertion at the usage site (e.g., `currentEvent.value as NotableGameEvent`) with a `// why:` comment explaining the narrowing
+  If none of the above resolves the error within ≤5 lines of change: STOP (out of scope)
+- For `mutationDetector.test.ts` and `mutationMiddleware.test.ts`: resolve the TS2375 exactOptionalPropertyTypes errors at the cited line numbers. REQUIRED FIX: add `notableEvents: []` to the `UIState` literal constructed by the local `makeUIState` helper. If the helper already includes `notableEvents`, STOP (unexpected state — the WP assumptions are wrong). Do NOT modify helper signatures, generics, or optional typing — the failure is a missing required field, not a type-shape issue
 - Verify `pnpm --filter @legendary-arena/arena-client typecheck` exits 0 after this WP lands (assuming WP-207a is already on `main`)
 
 ## Out of Scope
@@ -107,12 +112,13 @@ No DECISIONS.md entry — this WP makes no new decisions; it is a mechanical bac
 - Read-only on `tsconfig.json` — do not relax `exactOptionalPropertyTypes` or any other strict setting
 - Read-only on all 2 fixture files under `apps/arena-client/src/fixtures/uiState/` (WP-207a scope)
 - For the 7 mechanical files: `notableEvents: []` is the literal empty-array default; no factory call, no helper, no factory function
-- For `useNotableEventStream.test.ts`: the fix may differ — read the file first, understand the TS2339 `never` narrowing, and apply the smallest possible change that resolves the error without adding new test behavior
-- For `mutationDetector.test.ts` and `mutationMiddleware.test.ts`: the fix is most likely appending `notableEvents: []` to the local helper's `UIState` literal; if the helper does not exist, the fix is on inline literals
+- For `useNotableEventStream.test.ts`: the fix is type-narrowing, not contract-backfill. Use the deterministic escalation ladder in `## Scope (In)` — annotation first, then helper signature, then assertion with `// why:`. If none resolves within ≤5 lines: STOP
+- For `mutationDetector.test.ts` and `mutationMiddleware.test.ts`: REQUIRED FIX is appending `notableEvents: []` to the local helper's `UIState` literal body. Do not modify helper signatures, generics, or optional typing. If the helper already includes `notableEvents`: STOP (unexpected state)
 - The field name is exactly `notableEvents` per WP-201 — no abbreviation, no paraphrase
 - No `// why:` comment is required on backfill additions — the WP-201 contract is self-explanatory
 - If the `useNotableEventStream.test.ts` fix requires more than 5 lines of change: STOP and report (the WP scope assumes a small fix; larger refactor signals scope creep)
 - Tests use `node:test` and `node:assert` only (preserve existing test infrastructure verbatim)
+- Every `UIState` literal in scope must satisfy the WP-201 contract WITHOUT relying on unsafe casts (`as UIState`). If a pre-existing `as UIState` cast already exists in the file, leave it as-is (do not introduce new casts to "fix" type errors)
 
 **Session protocol:**
 - If any of the 8 source files has had its line numbers shifted since the CI report (e.g., a parallel commit landed): re-run the typecheck and locate the actual current sites before editing. Do not blindly trust the line numbers in this WP body.
@@ -129,14 +135,14 @@ No DECISIONS.md entry — this WP makes no new decisions; it is a mechanical bac
 
 ## Acceptance Criteria
 
-1. Every literal `UIState` construction site in the 7 simple test files carries `notableEvents: []` — verified by `grep -rn "notableEvents" apps/arena-client/src/` showing matches in all 7 paths
+1. Every literal `UIState` construction site in the 7 simple test files carries `notableEvents: []` — verified by `grep -rn "notableEvents" apps/arena-client/src/` showing matches in all 7 paths AND by absence of TS2741/TS2739 missing-property errors in the typecheck output for those files (grep proves presence; typecheck proves completeness)
 2. `useNotableEventStream.test.ts` lines 106 and 148 no longer report TS2339 `.type` on `never` — verified by post-fix typecheck output
 3. `mutationDetector.test.ts:18` and `mutationMiddleware.test.ts:65` no longer report TS2375 exactOptionalPropertyTypes errors — verified by post-fix typecheck output
 4. `pnpm --filter @legendary-arena/arena-client typecheck` exits 0 (assuming WP-207a is on `main`; WP-208 affects registry-viewer typecheck independently)
 5. `useNotableEventStream.ts` (the composable implementation) is byte-identical to the pre-WP state — verified by `git diff` showing it unchanged
 6. `tsconfig.json` is byte-identical to the pre-WP state — no strict-mode relaxation
-7. No new test cases added; no existing test behavior altered beyond the type-fix surface — verified by reading the diff against the failing-test-list and confirming structural-only changes
-8. No file outside `## Files Expected to Change` is modified — verified by `git status` matching the 11-file expected list exactly
+7. No new test cases added; no existing test behavior altered beyond the type-fix surface — verified by diff inspection confirming: (a) all `assert.*` calls remain byte-identical, (b) no test descriptions (`it(...)`, `test(...)`, `describe(...)`) modified, (c) no control flow changes (no added conditionals, loops, or branches)
+8. No file outside `## Files Expected to Change` is modified — verified by `git status` matching the 11-file expected list exactly. If ANY file outside the 11-path set appears: STOP and revert before continuing
 9. No new imports added to any file unless required for the `useNotableEventStream.test.ts` fix; if added, the import is named and explicit (no `import *`)
 
 ---
@@ -208,3 +214,31 @@ git diff --name-only | sort
 ## API Catalog Update
 
 **N/A.** This WP touches no HTTP endpoint, no `apps/server/src/**` library function, no route registration, no catalog row. Test-file infrastructure only.
+
+---
+
+## Lint Gate Self-Review
+
+Run against `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md` (all 21 sections). Verdict: **PASS** — every applicable section satisfied; N/A sections justified. Claims verified against live typecheck output (post-WP-207a baseline `4b99811`).
+
+- **§1 Structure** — PASS. All 10 required sections present and non-empty; `## Out of Scope` excludes 6 related surfaces.
+- **§2 Non-Negotiable Constraints** — PASS. Engine-wide block requires full file contents; Packet-specific includes read-only guards on UIState type, composable, tsconfig, fixtures; Session protocol present; Locked contract values present.
+- **§3 Assumes** — PASS. Lists WP-200 + WP-201 + WP-207a with verified engine paths and external state (typecheck exits 2 at cited lines).
+- **§4 Context (Read First)** — PASS. Specific files + sections cited including ARCHITECTURE.md layer boundary, composable source, both TS2375 files, tsconfig. 00.2 sub-check N/A — `notableEvents` is a WP-200 engine UI-projection field, not 00.2 card data.
+- **§5 Files Expected to Change** — PASS. All 11 files marked `modified` with one-line descriptions; exceeds ~8 guidance with inline justification (bundling justified — same root cause, partial fix leaves CI red).
+- **§6 Naming Consistency** — PASS. `notableEvents` matches the WP-200 canonical engine name; no 00.2 setup-payload fields touched.
+- **§7 Dependency Discipline** — PASS. No new npm dependencies.
+- **§8 Architectural Boundaries** — PASS. Client-only test-file edits; no engine/server/registry/DB reach; engine `UIState` contract treated as read-only.
+- **§9 Windows Compatibility** — PASS (with note). Verification commands use `pnpm` + `git` which are cross-platform.
+- **§10 Environment Variable Hygiene** — N/A. No environment variables touched.
+- **§11 Authentication Clarity** — N/A. No authentication surface.
+- **§12 Test Quality** — PASS. No new tests added; existing tests use `node:test` + `node:assert` only; no `boardgame.io/testing` imports.
+- **§13 Commands and Verification** — PASS. `pnpm` used (never `npm run`); commands exact with expected output inline.
+- **§14 Acceptance Criteria Quality** — PASS. 9 items, all binary, observable, and specific. AC #1 uses both grep (presence) and typecheck (completeness). AC #7 defines observable behavior-preservation checks.
+- **§15 Definition of Done** — PASS. Includes STATUS.md, explicit DECISIONS.md no-update, WORK_INDEX.md, EC_INDEX.md, scope-boundary check.
+- **§16 Code Style** — PASS. The output is `notableEvents: []` appended to existing literals — no abstraction, control flow, names, functions, imports, or error messages to flag. No-cast invariant prevents shortcut fixes.
+- **§17 Vision Alignment** — PASS. `## Vision Alignment` present and marked N/A against the §17.1 trigger list with reasons.
+- **§18 Prose-vs-Grep** — N/A. No literal-string-scoped grep verification steps targeting forbidden tokens.
+- **§19 Bridge-vs-HEAD** — N/A at lint time (commit-time discipline); applies when the executor authors the STATUS.md Done entry.
+- **§20 Funding Surface Gate** — PASS. `## Funding Surface Gate` present, N/A with justification.
+- **§21 API Catalog Update** — PASS. `## API Catalog Update` present, N/A with justification.
