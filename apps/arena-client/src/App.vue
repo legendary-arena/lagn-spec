@@ -63,6 +63,7 @@ const LoginPage = defineAsyncComponent(
 
 type AppRoute =
   | 'fixture'
+  | 'play-fixture'
   | 'live'
   | 'lobby'
   | 'profile'
@@ -78,6 +79,7 @@ interface LiveRouteParams {
 
 interface ParsedQuery {
   fixtureName: string | null;
+  playFixture: boolean;
   live: LiveRouteParams | null;
   profileHandle: string | null;
   meRoute: boolean;
@@ -131,10 +133,14 @@ function parseQuery(search: string): ParsedQuery {
   const meRoute = routeParam === 'me';
   const adminBillingRoute = routeParam === 'admin-billing';
   const loginRoute = routeParam === 'login';
+  // why: dev-only route — `?fixture=mid-turn&play=1` renders PlayViewport
+  // instead of ArenaHud so the gameplay mat can be previewed with fixture data
+  const playFixture = params.get('play') === '1';
   const returnTo = readQueryParam(params, 'returnTo');
 
   return {
     fixtureName,
+    playFixture,
     live,
     profileHandle,
     meRoute,
@@ -165,6 +171,9 @@ function selectRoute(parsed: ParsedQuery): AppRoute {
   }
   if (parsed.profileHandle !== null) {
     return 'profile';
+  }
+  if (parsed.fixtureName !== null && parsed.playFixture) {
+    return 'play-fixture';
   }
   if (parsed.fixtureName !== null) {
     return 'fixture';
@@ -366,6 +375,9 @@ export default defineComponent({
       </template>
       <template v-else-if="route === 'profile'">
         <PlayerProfilePage :handle="profileHandle" />
+      </template>
+      <template v-else-if="route === 'play-fixture'">
+        <PlayViewport :submit-move="submitMove" />
       </template>
       <template v-else-if="route === 'fixture'">
         <ArenaHud />

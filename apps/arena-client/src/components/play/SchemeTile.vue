@@ -54,7 +54,7 @@ export default defineComponent({
       // CardTile renders in text mode — no broken image placeholders
       return {
         extId: props.scheme.id,
-        name: props.scheme.id.replace(/-/g, ' '),
+        name: props.scheme.id.replace(/^scheme-/i, '').replace(/-/g, ' '),
         imageUrl: '',
         cost: null,
       };
@@ -71,7 +71,7 @@ export default defineComponent({
     data-testid="play-scheme-tile"
     aria-label="Scheme"
   >
-    <CardTile :display="schemeCardDisplay()" size="lg" :show-cost="false" />
+    <CardTile :display="schemeCardDisplay()" size="lg" :show-cost="false" :show-label="true" />
     <p class="scheme-tile__progress" data-testid="play-scheme-twist-progress">
       Twists: {{ scheme.twistCount }}/{{ twistThreshold }}
     </p>

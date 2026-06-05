@@ -65,10 +65,28 @@ export default defineComponent({
       return `${defeated}/${props.mastermindTacticsTotal}`;
     }
 
+    function schemeName(): string {
+      const display = props.snapshot.scheme.display;
+      if (display !== undefined && display.name !== '<unknown>') {
+        return display.name;
+      }
+      return props.snapshot.scheme.id.replace(/^scheme-/i, '').replace(/-/g, ' ');
+    }
+
+    function mastermindName(): string {
+      const display = props.snapshot.mastermind.display;
+      if (display.name !== '<unknown>') {
+        return display.name;
+      }
+      return props.snapshot.mastermind.id.replace(/-/g, ' ');
+    }
+
     return {
       activePlayerLabel,
       twistProgressLabel,
       mastermindProgressLabel,
+      schemeName,
+      mastermindName,
     };
   },
 });
@@ -80,6 +98,14 @@ export default defineComponent({
     data-testid="play-top-hud-bar"
     aria-label="Top HUD"
   >
+    <div class="top-hud-bar__row top-hud-bar__setup">
+      <span data-testid="play-hud-mastermind-name">
+        <strong>Mastermind:</strong> {{ mastermindName() }}
+      </span>
+      <span data-testid="play-hud-scheme-name">
+        <strong>Scheme:</strong> {{ schemeName() }}
+      </span>
+    </div>
     <div class="top-hud-bar__row">
       <span data-testid="play-hud-phase">Phase: {{ snapshot.game.phase }}</span>
       <span data-testid="play-hud-turn">Turn {{ snapshot.game.turn }}</span>
@@ -123,6 +149,11 @@ export default defineComponent({
   flex-wrap: wrap;
   gap: 0.75rem;
   font-variant-numeric: tabular-nums;
+}
+
+.top-hud-bar__setup {
+  font-size: 0.95rem;
+  text-transform: capitalize;
 }
 
 .top-hud-bar__skin-placeholder {

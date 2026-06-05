@@ -110,7 +110,20 @@ export default defineComponent({
       return null;
     }
 
-    return { onPlay, buttonReason, buttonDisabled, displayName, displayForIndex };
+    function resolveDisplay(cardId: string, index: number): UICardDisplay {
+      const existing = displayForIndex(index);
+      if (existing !== null) {
+        return existing;
+      }
+      return {
+        extId: cardId,
+        name: humanizeCardId(cardId),
+        imageUrl: '',
+        cost: null,
+      };
+    }
+
+    return { onPlay, buttonReason, buttonDisabled, displayName, displayForIndex, resolveDisplay };
   },
 });
 </script>
@@ -148,12 +161,11 @@ export default defineComponent({
                from useTurnActions().canPlayCard() rather than composed
                ad-hoc. -->
           <CardTile
-            v-if="displayForIndex(index) !== null"
-            :display="displayForIndex(index)!"
+            :display="resolveDisplay(cardId, index)"
             size="md"
             :interactive="!buttonDisabled()"
+            :show-label="true"
           />
-          <span v-else>{{ displayName(cardId, index) }}</span>
         </button>
       </li>
     </ul>

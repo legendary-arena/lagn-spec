@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, ref, type PropType } from 'vue';
 import type { UICardDisplay } from '@legendary-arena/game-engine';
 
 /**
@@ -29,19 +29,30 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    showLabel: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
+    // why: tracks broken image loads so the tile falls back to text mode
+    // instead of rendering a black rectangle on the dark card background
+    const imageLoadFailed = ref(false);
+
     function hasImage(): boolean {
-      // why: falsy check catches both empty string and undefined/null — no
-      // broken image placeholders are ever rendered
-      return !!props.display.imageUrl;
+      return !!props.display.imageUrl && !imageLoadFailed.value;
+    }
+
+    function onImageError(): void {
+      imageLoadFailed.value = true;
     }
 
     function shouldShowCostBadge(): boolean {
       return props.showCost && props.display.cost !== null;
     }
 
-    return { hasImage, shouldShowCostBadge };
+    return { hasImage, onImageError, shouldShowCostBadge };
   },
 });
 </script>
@@ -66,6 +77,7 @@ export default defineComponent({
       loading="lazy"
       class="card-tile__image"
       data-testid="card-tile-image"
+      @error="onImageError"
     />
     <div
       v-else
@@ -87,6 +99,18 @@ export default defineComponent({
     >
       {{ display.cost }}
     </span>
+    <!-- why: card name + cost below the image so players can read the card
+         identity without relying on hover tooltips or squinting at tiny art -->
+    <div
+      v-if="hasImage() && showLabel"
+      class="card-tile__label"
+      data-testid="card-tile-label"
+    >
+      <span class="card-tile__label-name">{{ display.name }}</span>
+      <span v-if="shouldShowCostBadge()" class="card-tile__label-cost">
+        {{ display.cost }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -136,29 +160,32 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
-  padding: 0.25rem;
+  padding: 0.35rem;
   text-align: center;
   width: 100%;
   height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
 }
 
 .card-tile__name {
-  font-size: 0.7rem;
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
-  color: var(--color-foreground, #eee);
+  color: #fff;
+  text-transform: capitalize;
 }
 
 .card-tile__cost-text {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  opacity: 0.8;
-  color: var(--color-foreground, #ccc);
+  color: #ffd700;
 }
 
 .card-tile__cost-badge {
@@ -177,5 +204,36 @@ export default defineComponent({
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   padding: 0 0.2rem;
+}
+
+.card-tile__label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  padding: 0.15rem 0.25rem;
+  background: rgba(0, 0, 0, 0.65);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.card-tile__label-name {
+  font-size: 0.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.card-tile__label-cost {
+  font-size: 0.55rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #ffd700;
+  flex-shrink: 0;
 }
 </style>

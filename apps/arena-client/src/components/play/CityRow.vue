@@ -127,6 +127,7 @@ export default defineComponent({
               :display="cell.card.display"
               size="md"
               :interactive="gateForCell(cell).allowed"
+              :show-label="true"
             />
           </button>
           <div

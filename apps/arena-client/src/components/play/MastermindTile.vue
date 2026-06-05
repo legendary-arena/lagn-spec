@@ -112,6 +112,7 @@ export default defineComponent({
         :display="mastermind.display"
         size="lg"
         :interactive="gateForFight().allowed"
+        :show-label="true"
       />
       <span class="mastermind-status" data-testid="play-mastermind-tactics-remaining">
         Tactics remaining: {{ mastermind.tacticsRemaining }}

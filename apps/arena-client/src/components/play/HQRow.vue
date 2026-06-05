@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import type {
+  UICardDisplay,
   UIDecksState,
   UIHQState,
   UITurnEconomyState,
@@ -83,7 +84,20 @@ export default defineComponent({
       props.submitMove('recruitHero', { hqIndex });
     }
 
-    return { buildCells, gateForCell, onRecruit };
+    function displayForCell(cell: HqCell): UICardDisplay {
+      if (cell.kind === 'hero' && cell.display !== null) {
+        return cell.display;
+      }
+      const cardId = cell.kind === 'hero' ? cell.cardId ?? '' : '';
+      return {
+        extId: cardId,
+        name: cardId.replace(/-/g, ' '),
+        imageUrl: '',
+        cost: null,
+      };
+    }
+
+    return { buildCells, gateForCell, onRecruit, displayForCell };
   },
 });
 </script>
@@ -120,12 +134,11 @@ export default defineComponent({
                  useTurnActions / useCardCostGating. Cost gate consumes
                  WP-128 economy.availableRecruit + UICardDisplay.cost. -->
             <CardTile
-              v-if="cell.display !== null"
-              :display="cell.display"
+              :display="displayForCell(cell)"
               size="md"
               :interactive="gateForCell(cell).allowed"
+              :show-label="true"
             />
-            <span v-else class="hq-slot__name">{{ cell.cardId }}</span>
           </button>
           <div
             v-else
