@@ -7,6 +7,10 @@
 
 ## Current State
 
+### WP-216 / EC-248 Drafted — Hero Ability Markup Corpus Sweep: Rescue and Reveal-Draw (Card Data + Tooling) (2026-06-05)
+
+**WP-216 drafted.** Data-only corpus sweep adding `[keyword:rescue:1]` to ~19 sets worth of unmarked hero "Rescue a Bystander." ability lines and `[keyword:reveal]`/`[keyword:reveal:2]` to simple reveal-draw hero ability lines. New offline idempotent `apply-hero-ability-markers.mjs` script + `hero-ability-markers.json` curated map (mirrors `apply-effect-markers.mjs` pattern). No engine changes. Hard-dep: WP-215 ✅. Reserved D-21601..D-21603.
+
 ### WP-215 / EC-247 Executed — Hero Rescue and Reveal-Draw Effects (Engine + Data) (2026-06-05)
 
 **The `rescue` and `reveal` hero ability keywords are now functional.** `MVP_KEYWORDS` expanded from 4 to 6 (`draw`, `attack`, `recruit`, `ko`, `rescue`, `reveal`). `rescue` case: moves top bystanders (`G.piles.bystanders[0]`, top-of-pile convention D-21501) to `G.playerZones[playerID].victory`; magnitude defaults to `1` when undefined; empty pile is a silent no-op. `reveal` case: peeks `deck[0]`, draws to hand if `cardStats.cost <= effect.magnitude`; does NOT reshuffle on empty deck (D-21502); missing `G.cardStats` entry is a silent no-op (SHIELD starter cards). `parseAbilityText()` extended with three new extraction capabilities: (1) `[keyword:X:N]` optional magnitude suffix via extended `KEYWORD_PATTERN` (D-21503); (2) icon-adjacent magnitude extraction for attack/recruit via `/\+?(\d+)\s*\[icon:(attack|recruit)\]/g` (D-21505); (3) VP-cost-threshold extraction for reveal via `/(\d+)\s*\[icon:vp\]\s*or less/` non-global first-match (D-21505). Explicit `[keyword:X:N]` markup wins over icon-derived magnitude for the same keyword. `data/cards/core.json` Web-Shooters ability lines updated: line 1 `"Rescue a Bystander. [keyword:rescue:1]"`; line 2 `"...2[icon:vp] or less... [keyword:reveal]"` (no `:2` suffix — threshold extracted from icon). `pnpm -r build` exits 0; tests 1102 → 1116 (+14 net-new). Decisions: D-21501..D-21505.

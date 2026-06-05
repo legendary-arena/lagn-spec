@@ -23064,4 +23064,42 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+---
+
+### D-21601 — Hero Ability Markup Corpus Sweep: Token Forms, Map Format, Idempotence (WP-216)
+
+**Decision:** Three and only three markup token forms are valid in `hero-ability-markers.json`: `[keyword:rescue:1]` (single-bystander rescue), `[keyword:reveal]` (no suffix — threshold present as `N[icon:vp] or less` in the ability line), and `[keyword:reveal:2]` (explicit suffix — ability line has no `[icon:vp]`). Tokens are appended at the end of the ability string with a single space separator. Append is idempotent: if the token is already present anywhere in the string, the line is silently skipped. The curated map is keyed by `setAbbr`, with entries `{ heroSlug, cardSlug, abilityIndex, markupToken }`; a `_deferred` block documents excluded patterns with non-empty `reason` strings. The script loud-fails (non-zero exit + full-sentence message) on any unknown `setAbbr`/`heroSlug`/`cardSlug`/`abilityIndex` or invalid token form.
+
+**Rationale:** Constraining the valid token set to three forms prevents ambiguous markup (e.g., `[keyword:rescue:2]` for a hero line that has no multi-bystander text, or `[keyword:reveal]` on a line with no VP icon) from silently producing wrong executor behavior. Idempotence prevents double-append on re-runs. The `_deferred` block with mandatory `reason` fields ensures excluded patterns are explicitly documented, not silently absent.
+
+**Packet:** WP-216 / EC-248.
+**Drafted:** 2026-06-05. **Landed:** not yet landed.
+**Status:** Drafted 2026-06-05; not yet landed
+
+---
+
+### D-21602 — Deferred Rescue Patterns: Variable-Magnitude, onFight-Timed, Meta-Trigger (WP-216)
+
+**Decision:** The following rescue ability line patterns are deferred from WP-216 corpus markup and must NOT receive `[keyword:rescue:*]` tokens in this WP: (1) variable-magnitude rescue — any line whose rescue count depends on cards played this turn, villains in the city, or other runtime state (e.g., "Rescue a Bystander for each other [team:x-men] Hero you played this turn."); (2) `onFight`-timed rescue — any line prefixed `Fight:`, `Ambush:`, or carrying `[keyword:Ambush]`/`[keyword:Fight]`; (3) meta-rescue trigger lines — any line that modifies how other rescue effects fire (e.g., "Whenever you Rescue a Bystander this turn, do any 'rescue' ability on it an extra time."). All deferred patterns must be explicitly listed in `hero-ability-markers.json`'s `_deferred` block with a non-empty `reason` field.
+
+**Rationale:** Variable-magnitude rescue requires counter/per-card-count engine support not yet available. `onFight`-timed effects require `onFight` timing dispatch wired to `executeHeroEffects` — not yet present. Meta-trigger lines are not rescue effects and have no executor dispatch target.
+
+**Packet:** WP-216 / EC-248.
+**Drafted:** 2026-06-05. **Landed:** not yet landed.
+**Status:** Drafted 2026-06-05; not yet landed
+
+---
+
+### D-21603 — Deferred Reveal Patterns: Non-Draw, Multi-Card, Villain-Deck, Keyword-Gated, Non-2-Threshold (WP-216)
+
+**Decision:** The following reveal ability line patterns are deferred from WP-216 corpus markup and must NOT receive `[keyword:reveal:*]` tokens in this WP: (1) non-draw reveals — any reveal line that does not end with "draw it." (e.g., "Discard it or put it back.", "You may KO it."); (2) multi-card reveals — "Reveal the top two/three/four cards..."; (3) villain-deck reveals — any line mentioning "Villain Deck" or "Master Strike"; (4) reveals gated on `[keyword:Spectrum]`, `[keyword:Focus]`, or other card-ability keywords not yet in the condition evaluation pipeline; (5) any reveal line with a cost threshold other than 2 (verify at execution time; curate into `_deferred` if found). All deferred patterns must be explicitly listed in `hero-ability-markers.json`'s `_deferred` block with a non-empty `reason` field.
+
+**Rationale:** Non-draw reveals require different executor branches not yet implemented. Multi-card reveals require a multi-peek executor, not yet present. Villain-deck reveals are a different pipeline entirely. Keyword-gated reveals need condition evaluation machinery not yet available. Non-2-threshold reveals need separate verification — corpus scan at execution time may surface new cases.
+
+**Packet:** WP-216 / EC-248.
+**Drafted:** 2026-06-05. **Landed:** not yet landed.
+**Status:** Drafted 2026-06-05; not yet landed
+
+---
+
 Protect this file.
