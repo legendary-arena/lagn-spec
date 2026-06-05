@@ -193,11 +193,11 @@ export default defineComponent({
 
 <style scoped>
 .notable-event-overlay {
-  position: absolute;
-  top: 50%;
+  position: fixed;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 100;
+  z-index: 200;
   padding: 1rem 1.5rem;
   border-radius: 0.5rem;
   text-align: center;
