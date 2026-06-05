@@ -22982,4 +22982,31 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-21401 — Villain Hero Capture Infrastructure (WP-214)
+
+**Decision:** Introduce `G.villainAttachedHeroes: Record<CardExtId, CardExtId[]>` to mirror `G.attachedBystanders`. Entries are **deleted** (not set to `[]`) when all heroes are removed — a key is present if and only if at least one hero is attached. Heroes enter via three new capture keywords dispatched from `executeVillainAbilities` and processed by pure helpers in `heroCapture.logic.ts`. Fight resolution is extended with dynamic fight cost support (`fightCostMode: 'static' | 'dynamic'`, `fightCostBase: number`) on `CardStatEntry`. A single authoritative function `resolveFightCost` replaces direct `cardStats[id].fightCost` reads at the fight site and in UIState projections.
+
+### D-21402 — Dynamic Fight Cost Grammar (`"*"` and `"N+"`) (WP-214)
+
+**Decision:** `vAttack: "*"` → `fightCostMode: 'dynamic'`, `fightCostBase: 0`, `fightCost: 0` at setup time. `vAttack: "N+"` → `fightCostMode: 'dynamic'`, `fightCostBase: N`, `fightCost: N` at setup time (base only; hero contributions added at runtime by `resolveFightCost`). `vAttack` values without `"*"` or `"+"` suffix remain static (`fightCostMode: 'static'`). The `resolveFightCost` function is the single authoritative source for resolved fight cost; the UI reads the projected `fightCost` from `UICityCard` and never recomputes.
+
+### D-21403 — Capture Keyword Selector Semantics (WP-214)
+
+**Decision:** Three capture keywords: `captureHqHeroRightmost` (scan 4→0, first non-null), `captureHqHeroHighestCost` (scan left→right, highest `cost`, rightmost wins ties), `captureHqHeroLowestCost` (scan left→right, lowest `cost`, rightmost wins ties). Empty HQ is a safe no-op (returns `null`). HQ slot is nulled before refill; refill uses `refillHqSlot` from `city.logic.ts`. Capture is atomic: null slot → attach hero → refill.
+
+### D-21404 — Hero Lifecycle on Fight/Escape (WP-214)
+
+**Decision:** On villain defeat (`fightVillain`): call `awardAttachedHeroes(G, cardId, ctx.currentPlayer)` — moves captured heroes to the defeating player's discard pile ("Gain that Hero" card text). On villain escape (`villainDeck.reveal.ts`): call `koAttachedHeroesOnEscape(G, escapedCard)` after `executeVillainAbilities` — KOs captured heroes to `G.ko`. Both functions delete the villain's entry from `G.villainAttachedHeroes` after transfer. Pre-WP-214 G fixtures without the field are tolerated via `if (!G.villainAttachedHeroes) return` guards.
+
+### D-21405 — Skrull Shapeshifter Card Data Markers (WP-214)
+
+**Decision:** Two Skrull villain cards in `data/cards/core.json` receive `[effect:]` markers: `skrull-shapeshifters` → `ambush: captureHqHeroRightmost`; `skrull-queen-veranke` → `ambush: captureHqHeroHighestCost`. `captureHqHeroLowestCost` has no v1 unconditional card text match and is omitted from markers. The three keywords are added to `apply-effect-markers.mjs`'s local `VILLAIN_EFFECT_KEYWORDS` copy (positions 8–10, byte-identical to the engine-side array).
+
+**Packet:** WP-214 / EC-246.
+
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
+
+---
+
 Protect this file.
