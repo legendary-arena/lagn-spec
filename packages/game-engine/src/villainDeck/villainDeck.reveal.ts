@@ -361,6 +361,18 @@ export function performVillainReveal(
       ...G.attachedBystanders,
       [captorCardId]: [...existingAttached, cardId],
     };
+    // why: when the mastermind is the captor (city is empty), also push to
+    // G.mastermind.attachedBystanders so the UI projection surfaces it on
+    // the mastermind tile. G.attachedBystanders is the authoritative store
+    // for all bystander attachments; G.mastermind.attachedBystanders is the
+    // projection surface the UI reads (D-12805 Interpretation B).
+    if (captorCardId === G.mastermind.baseCardId) {
+      const existing = G.mastermind.attachedBystanders ?? [];
+      G.mastermind = {
+        ...G.mastermind,
+        attachedBystanders: [...existing, cardId],
+      };
+    }
     G.messages.push(
       `Bystander "${cardId}" revealed and captured by "${captorCardId}".`,
     );
