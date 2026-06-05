@@ -48,6 +48,11 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    isViewerTurn: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     submitMove: {
       type: Function as PropType<SubmitMove>,
       required: true,
@@ -62,12 +67,12 @@ export default defineComponent({
       // why: per EC-132 §3 disabled-state tooltip precedence — stage →
       // resource → structural. playCard has no resource cost (any hand
       // card may be played); only the stage gate applies.
-      const gate = useTurnActions(props.currentStage).canPlayCard();
+      const gate = useTurnActions(props.currentStage, props.isViewerTurn).canPlayCard();
       return gate.allowed ? null : gate.reason;
     }
 
     function buttonDisabled(): boolean {
-      return !useTurnActions(props.currentStage).canPlayCard().allowed;
+      return !useTurnActions(props.currentStage, props.isViewerTurn).canPlayCard().allowed;
     }
 
     function humanizeCardId(cardId: string): string {

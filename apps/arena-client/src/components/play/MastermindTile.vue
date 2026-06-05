@@ -46,6 +46,11 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    isViewerTurn: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     economy: {
       type: Object as PropType<UITurnEconomyState>,
       required: true,
@@ -61,7 +66,7 @@ export default defineComponent({
       // resource → structural. Stage gate first; then cost gate (consumes
       // WP-128 economy.availableAttack); finally the structural-lock
       // "all tactics defeated" check.
-      const stage = useTurnActions(props.currentStage).canFightMastermind();
+      const stage = useTurnActions(props.currentStage, props.isViewerTurn).canFightMastermind();
       if (!stage.allowed) {
         return stage;
       }

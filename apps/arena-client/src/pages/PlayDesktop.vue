@@ -281,6 +281,15 @@ export default defineComponent({
       () => isPlayPhase.value || isGameOver.value,
     );
 
+    // why: actions must be disabled when it's another player's turn —
+    // otherwise clicks submit moves as the wrong player and boardgame.io
+    // silently rejects them, making buttons appear broken on alternating turns.
+    const isViewerTurn = computed<boolean>(() => {
+      const own = viewer.value;
+      if (own === null) return false;
+      return snapshot.value?.game.activePlayerId === own.playerId;
+    });
+
     return {
       snapshot,
       viewer,
@@ -288,6 +297,7 @@ export default defineComponent({
       isLobbyPhase,
       isPlayPhase,
       boardVisible,
+      isViewerTurn,
       notableEvent,
       dismissNotableEvent,
       notableEventCardLookup,
@@ -364,6 +374,7 @@ export default defineComponent({
             <MastermindTile
               :mastermind="snapshot.mastermind"
               :current-stage="snapshot.game.currentStage"
+              :is-viewer-turn="isViewerTurn"
               :economy="snapshot.economy"
               :submit-move="submitMove"
             />
@@ -384,6 +395,7 @@ export default defineComponent({
           :city="snapshot.city"
           :decks="snapshot.decks"
           :current-stage="snapshot.game.currentStage"
+          :is-viewer-turn="isViewerTurn"
           :economy="snapshot.economy"
           :submit-move="submitMove"
         />
@@ -391,6 +403,7 @@ export default defineComponent({
           :hq="snapshot.hq"
           :decks="snapshot.decks"
           :current-stage="snapshot.game.currentStage"
+          :is-viewer-turn="isViewerTurn"
           :economy="snapshot.economy"
           :submit-move="submitMove"
         />
@@ -406,6 +419,7 @@ export default defineComponent({
               :hand-cards="viewer.handCards ?? []"
               :hand-display="viewer.handDisplay"
               :current-stage="snapshot.game.currentStage"
+              :is-viewer-turn="isViewerTurn"
               :submit-move="submitMove"
             />
             <EconomyBar :economy="snapshot.economy" />
@@ -421,6 +435,7 @@ export default defineComponent({
           </section>
           <TurnActionBar
             :current-stage="snapshot.game.currentStage"
+            :is-viewer-turn="isViewerTurn"
             :hand-count="viewer.handCount"
             :submit-move="submitMove"
           />

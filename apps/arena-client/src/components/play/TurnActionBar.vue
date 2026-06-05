@@ -36,6 +36,11 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    isViewerTurn: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     handCount: {
       // why: D-10003 / D-10013 (carried forward from WP-100) — the Draw
       // button computes `count = max(0, 6 - handCount)` so the button is
@@ -56,22 +61,25 @@ export default defineComponent({
   },
   setup(props) {
     function activeStep(): 1 | 2 | 3 {
-      return useTurnActions(props.currentStage).activeStep;
+      return useTurnActions(props.currentStage, props.isViewerTurn).activeStep;
     }
 
     function revealGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage).canRevealVillain();
+      return useTurnActions(props.currentStage, props.isViewerTurn).canRevealVillain();
     }
 
     function passPriorityGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage).canPassPriority();
+      return useTurnActions(props.currentStage, props.isViewerTurn).canPassPriority();
     }
 
     function endTurnGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage).canEndTurn();
+      return useTurnActions(props.currentStage, props.isViewerTurn).canEndTurn();
     }
 
     function drawGate(): { allowed: boolean; reason: string | null } {
+      if (!props.isViewerTurn) {
+        return { allowed: false, reason: 'It is not your turn.' };
+      }
       // why: drawCards is gated to `start` or `main` per D-10003 +
       // engine validateMoveAllowedInStage. Disabled at `cleanup`
       // because End Turn does the canonical cleanup draw. Disabled

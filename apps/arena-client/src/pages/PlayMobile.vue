@@ -128,6 +128,12 @@ export default defineComponent({
       () => snapshot.value?.gameOver !== undefined,
     );
 
+    const isViewerTurn = computed<boolean>(() => {
+      const own = viewer.value;
+      if (own === null) return false;
+      return snapshot.value?.game.activePlayerId === own.playerId;
+    });
+
     return {
       snapshot,
       viewer,
@@ -135,6 +141,7 @@ export default defineComponent({
       isLobbyPhase,
       isPlayPhase,
       isGameOver,
+      isViewerTurn,
       activePile,
       onPileOpen,
       onPileClose,
@@ -170,6 +177,7 @@ export default defineComponent({
           <MastermindTile
             :mastermind="snapshot.mastermind"
             :current-stage="snapshot.game.currentStage"
+            :is-viewer-turn="isViewerTurn"
             :economy="snapshot.economy"
             :submit-move="submitMove"
           />
@@ -190,6 +198,7 @@ export default defineComponent({
             :city="snapshot.city"
             :decks="snapshot.decks"
             :current-stage="snapshot.game.currentStage"
+            :is-viewer-turn="isViewerTurn"
             :economy="snapshot.economy"
             :submit-move="submitMove"
           />
@@ -199,6 +208,7 @@ export default defineComponent({
             :hq="snapshot.hq"
             :decks="snapshot.decks"
             :current-stage="snapshot.game.currentStage"
+            :is-viewer-turn="isViewerTurn"
             :economy="snapshot.economy"
             :submit-move="submitMove"
           />
@@ -230,6 +240,7 @@ export default defineComponent({
             :hand-cards="viewer.handCards ?? []"
             :hand-display="viewer.handDisplay"
             :current-stage="snapshot.game.currentStage"
+            :is-viewer-turn="isViewerTurn"
             :submit-move="submitMove"
           />
         </section>
@@ -248,6 +259,7 @@ export default defineComponent({
         <TurnActionBar
           v-if="viewer !== null"
           :current-stage="snapshot.game.currentStage"
+          :is-viewer-turn="isViewerTurn"
           :hand-count="viewer.handCount"
           :submit-move="submitMove"
         />

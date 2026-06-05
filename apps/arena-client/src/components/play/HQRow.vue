@@ -48,6 +48,11 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    isViewerTurn: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     economy: {
       type: Object as PropType<UITurnEconomyState>,
       required: true,
@@ -70,7 +75,7 @@ export default defineComponent({
       if (cell.kind !== 'hero' || cell.cardId === null) {
         return { allowed: true, reason: null };
       }
-      const stage = useTurnActions(props.currentStage).canRecruitHero();
+      const stage = useTurnActions(props.currentStage, props.isViewerTurn).canRecruitHero();
       if (!stage.allowed) {
         return stage;
       }

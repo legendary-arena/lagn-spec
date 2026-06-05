@@ -53,6 +53,11 @@ function stageGateReason(currentStage: string, allowedStage: TurnStage): string 
   return `Only available during the ${allowedDisplay} step (current: ${currentStage}).`;
 }
 
+const NOT_YOUR_TURN: GatingResult = {
+  allowed: false,
+  reason: 'It is not your turn.',
+};
+
 /**
  * Composable exposing per-button gating predicates for `<TurnActionBar>`.
  * The returned object's keys map 1:1 to the locked move table in
@@ -69,9 +74,14 @@ function stageGateReason(currentStage: string, allowedStage: TurnStage): string 
  *
  * Each predicate returns a {@link GatingResult}; resource and structural
  * conditions compose on top of the stage-gating reason via the locked
- * precedence (stage → resource → structural).
+ * precedence (turn → stage → resource → structural).
+ *
+ * @param currentStage The engine's G.currentStage value.
+ * @param isViewerTurn Whether it is currently the viewing player's turn.
+ *   When false, all action gates return disabled. Defaults to true for
+ *   backwards compatibility with callers that don't pass it.
  */
-export function useTurnActions(currentStage: string): {
+export function useTurnActions(currentStage: string, isViewerTurn: boolean = true): {
   activeStep: TurnStep;
   canRevealVillain: () => GatingResult;
   canPlayCard: () => GatingResult;
@@ -83,34 +93,49 @@ export function useTurnActions(currentStage: string): {
 } {
   return {
     activeStep: activeStepFor(currentStage),
-    canRevealVillain: () =>
-      currentStage === 'start'
+    canRevealVillain: () => {
+      if (!isViewerTurn) return NOT_YOUR_TURN;
+      return currentStage === 'start'
         ? ALLOWED
-        : { allowed: false, reason: stageGateReason(currentStage, 'start') },
-    canPlayCard: () =>
-      currentStage === 'main'
+        : { allowed: false, reason: stageGateReason(currentStage, 'start') };
+    },
+    canPlayCard: () => {
+      if (!isViewerTurn) return NOT_YOUR_TURN;
+      return currentStage === 'main'
         ? ALLOWED
-        : { allowed: false, reason: stageGateReason(currentStage, 'main') },
-    canFightVillain: () =>
-      currentStage === 'main'
+        : { allowed: false, reason: stageGateReason(currentStage, 'main') };
+    },
+    canFightVillain: () => {
+      if (!isViewerTurn) return NOT_YOUR_TURN;
+      return currentStage === 'main'
         ? ALLOWED
-        : { allowed: false, reason: stageGateReason(currentStage, 'main') },
-    canRecruitHero: () =>
-      currentStage === 'main'
+        : { allowed: false, reason: stageGateReason(currentStage, 'main') };
+    },
+    canRecruitHero: () => {
+      if (!isViewerTurn) return NOT_YOUR_TURN;
+      return currentStage === 'main'
         ? ALLOWED
-        : { allowed: false, reason: stageGateReason(currentStage, 'main') },
-    canFightMastermind: () =>
-      currentStage === 'main'
+        : { allowed: false, reason: stageGateReason(currentStage, 'main') };
+    },
+    canFightMastermind: () => {
+      if (!isViewerTurn) return NOT_YOUR_TURN;
+      return currentStage === 'main'
         ? ALLOWED
-        : { allowed: false, reason: stageGateReason(currentStage, 'main') },
+        : { allowed: false, reason: stageGateReason(currentStage, 'main') };
+    },
     // why: D-10011 — Pass-priority fires `advanceStage`, the canonical
     // stage-advance vocabulary. Allowed at every stage (start advances
     // to main; main advances to cleanup; cleanup advances + ends turn
     // per turnLoop.ts). NOT a no-op.
-    canPassPriority: () => ALLOWED,
-    canEndTurn: () =>
-      currentStage === 'cleanup'
+    canPassPriority: () => {
+      if (!isViewerTurn) return NOT_YOUR_TURN;
+      return ALLOWED;
+    },
+    canEndTurn: () => {
+      if (!isViewerTurn) return NOT_YOUR_TURN;
+      return currentStage === 'cleanup'
         ? ALLOWED
-        : { allowed: false, reason: stageGateReason(currentStage, 'cleanup') },
+        : { allowed: false, reason: stageGateReason(currentStage, 'cleanup') };
+    },
   };
 }

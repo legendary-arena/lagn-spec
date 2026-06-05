@@ -50,6 +50,11 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    isViewerTurn: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     economy: {
       type: Object as PropType<UITurnEconomyState>,
       required: true,
@@ -71,7 +76,7 @@ export default defineComponent({
       if (cell.kind !== 'slot' || cell.card === null) {
         return { allowed: true, reason: null };
       }
-      const stage = useTurnActions(props.currentStage).canFightVillain();
+      const stage = useTurnActions(props.currentStage, props.isViewerTurn).canFightVillain();
       if (!stage.allowed) {
         return stage;
       }
