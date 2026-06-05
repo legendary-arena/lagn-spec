@@ -7,6 +7,12 @@
 
 ## Current State
 
+### WP-217 / EC-249 Drafted — Hero Reveal Executor Extensions: Reveal-KO-If-Zero and Reveal-Draw-At-Least (2026-06-05)
+
+**WP-217 drafted.** Extends the hero reveal executor with two new patterns: `reveal-ko` (peek deck top, KO if cost = 0) and `reveal-min` (peek deck top, draw if cost ≥ N). Adds `'reveal-ko'` and `'reveal-min'` to `HeroKeyword` union + `HERO_KEYWORDS` array. Extends `KEYWORD_PATTERN` to allow hyphens. Adds executor cases in `heroEffects.execute.ts`. Applies markup to 5 hero cards across cvwr (3) and wwhk (2). Extends `apply-hero-ability-markers.mjs` with new detection/suggestion functions. D-21701..D-21704 reserved. Hard-dep: WP-216 ✅. See [WP-217](work-packets/WP-217-hero-reveal-executor-extensions.md) + [EC-249](execution-checklists/EC-249-hero-reveal-executor-extensions.checklist.md).
+
+---
+
 ### WP-216 / EC-248 Executed — Hero Ability Markup Corpus Sweep: Rescue and Reveal-Draw (Card Data + Tooling) (2026-06-05)
 
 **WP-216 done.** New `apply-hero-ability-markers.mjs` + `hero-ability-markers.json` curated map. 19 entries across 10 sets (3dtc, ca75, chmp, core, cosm, cvwr, dkcy, msp1, smhc, ssw1): 11 rescue:1 entries + 8 reveal entries. 4 deferred patterns in `_deferred` block per D-21602/D-21603 (onFight-timed rescue: Heist:, [keyword:Excessive Violence]:, [keyword:Excessive Kindness]:; Focus-gated rescue: [keyword:Focus 2]). --validate exits 0. Engine tests unaffected. D-21601..D-21603 Active. Inline amendments: core.json rescue:1 count 1→2 (black-widow/mission-accomplished added); total rescue:1 count ≥20→12 (villain/henchman/deferred lines not in scope); core.json reveal count 1→3 (astonishing-strength + great-responsibility added).
