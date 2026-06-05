@@ -137,7 +137,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Reveal the top card of your deck. If it costs 2 or less, draw it.",
+            "Reveal the top card of your deck. If it costs 2 or less, draw it. [keyword:reveal:2]",
             "[hc:covert]: Draw a card."
           ]
         },
@@ -267,7 +267,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Danger Sense 2]",
-            "Reveal the top card of your deck. If it costs 2 or less, draw it."
+            "Reveal the top card of your deck. If it costs 2 or less, draw it. [keyword:reveal:2]"
           ]
         },
         {

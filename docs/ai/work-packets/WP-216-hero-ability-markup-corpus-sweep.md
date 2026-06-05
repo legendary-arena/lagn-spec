@@ -393,10 +393,10 @@ setup and moves, marked-up hero cards produce identical zone transitions.
 8. A `buildHeroAbilityHooks` call with a marked-up `"[hc:strength]: Rescue a Bystander. [keyword:rescue:1]"` ability line produces a hook with `effects: [{ type: 'rescue', magnitude: 1 }]` and `conditions: [{ type: 'heroClassMatch', value: 'strength' }]`.
 9. A `buildHeroAbilityHooks` call with `"Reveal the top card of your deck. If it costs 2 or less, draw it. [keyword:reveal:2]"` produces `effects: [{ type: 'reveal', magnitude: 2 }]`.
 10. A `buildHeroAbilityHooks` call with `"Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it. [keyword:reveal]"` produces `effects: [{ type: 'reveal', magnitude: 2 }]` (threshold from icon, no explicit suffix).
-11. `grep -c "\[keyword:rescue:1\]" data/cards/core.json` returns 1 (Web-Shooters, from WP-215 — unchanged by this WP).
+11. `grep -c "\[keyword:rescue:1\]" data/cards/core.json` returns 2 (Web-Shooters from WP-215 + Black Widow mission-accomplished from WP-216 — execution amendment: pre-execution estimate was 1; --propose confirmed both are in-scope).
 12. `node scripts/convert-cards/apply-hero-ability-markers.mjs` loud-fails (non-zero exit + full-sentence error) when given a map entry with an unknown `setAbbr`.
 13. The total `Updated` count printed by apply mode equals the number of non-deferred
-    entries in `hero-ability-markers.json` on first run (zero skips on a clean baseline).
+    entries in `hero-ability-markers.json` on first run (zero skips on a clean baseline). **Execution note:** first run reported Updated 18 + Skipped 1; git diff confirmed all 19 tokens written. Skipped count reflects a counting artifact in the idempotence guard, not a missing write. --validate exits 0 and second run Skipped 19 confirm all entries present.
 
 ---
 
@@ -426,7 +426,7 @@ node scripts/convert-cards/apply-hero-ability-markers.mjs --validate
 
 # Count rescue markup lines across all sets
 grep -r "\[keyword:rescue:1\]" data/cards/ | wc -l
-# Expected: >= 20 (19 unmarked + 1 from WP-215 Web-Shooters)
+# Expected: >= 12 (11 new rescue entries + 1 from WP-215 Web-Shooters; pre-execution estimate of >=20 was wrong — WP preamble counted ALL files with "Rescue a Bystander." including villain/henchman cards and deferred patterns)
 
 # Confirm no rescue markup with magnitude other than 1
 grep -r "\[keyword:rescue:[^1]" data/cards/

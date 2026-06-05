@@ -1190,7 +1190,7 @@
           "attack": "1",
           "recruit": "1",
           "abilities": [
-            "[hc:tech]: Reveal the top card of your deck. If it costs 2 or less, draw it."
+            "[hc:tech]: Reveal the top card of your deck. If it costs 2 or less, draw it. [keyword:reveal:2]"
           ]
         },
         {
@@ -1221,7 +1221,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "Rescue a Bystander."
+            "Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
         {

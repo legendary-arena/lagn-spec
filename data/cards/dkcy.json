@@ -1334,7 +1334,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "[team:x-men]: Rescue a Bystander."
+            "[team:x-men]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
         {

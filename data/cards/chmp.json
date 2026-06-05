@@ -140,7 +140,7 @@
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
             "Draw a card.",
-            "[hc:covert]: Rescue a Bystander."
+            "[hc:covert]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
         {
@@ -254,7 +254,7 @@
           "recruit": "0+",
           "abilities": [
             "[keyword:Versatile 1]",
-            "[team:champions]: Rescue a Bystander."
+            "[team:champions]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
         {

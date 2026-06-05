@@ -28,7 +28,7 @@
           "recruit": null,
           "abilities": [
             "Draw a Card.",
-            "[hc:tech]: Rescue a Bystander."
+            "[hc:tech]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
         {
@@ -1219,7 +1219,7 @@
           "attack": null,
           "recruit": "1",
           "abilities": [
-            "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it."
+            "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it. [keyword:reveal]"
           ]
         },
         {
@@ -1234,7 +1234,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it."
+            "Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it. [keyword:reveal]"
           ]
         },
         {

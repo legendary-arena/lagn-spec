@@ -45,10 +45,10 @@
 - [ ] Apply exits 0; `Updated` count equals non-deferred map entry count (first run)
 - [ ] Second apply run: `git diff data/cards/` empty; `Skipped` count equals entry count (idempotence)
 - [ ] `--validate` exits 0 immediately after apply
-- [ ] `grep -r "\[keyword:rescue:1\]" data/cards/ | wc -l` ≥ 20
+- [ ] `grep -r "\[keyword:rescue:1\]" data/cards/ | wc -l` ≥ 12 (amendment: pre-execution estimate ≥20 was wrong; actual count is 12 = 11 new + 1 WP-215; villain/henchman rescue lines and deferred patterns account for the gap)
 - [ ] `grep -r "\[keyword:rescue:[^1]" data/cards/` empty
-- [ ] `grep "keyword:rescue:1" data/cards/core.json | wc -l` = 1 (no duplicate)
-- [ ] `grep "keyword:reveal\]" data/cards/core.json | wc -l` = 1 (no duplicate)
+- [ ] `grep "keyword:rescue:1" data/cards/core.json | wc -l` = 2 (amendment: 1→2; web-shooters from WP-215 + black-widow/mission-accomplished from WP-216)
+- [ ] `grep "keyword:reveal\]" data/cards/core.json | wc -l` = 3 (amendment: 1→3; web-shooters from WP-215 + astonishing-strength + great-responsibility from WP-216)
 - [ ] Every `_deferred` entry has non-empty `reason` field
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0; `pnpm -r build` exits 0
 - [ ] `DECISIONS.md` D-21601..D-21603 Active; `STATUS.md`, `WORK_INDEX.md`, `EC_INDEX.md` updated

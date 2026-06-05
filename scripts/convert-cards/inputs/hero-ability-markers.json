@@ -1,0 +1,82 @@
+{
+  "_notes": [
+    "WP-216 / EC-248 — curated, human-reviewed hero ability markup map. Consumed by apply-hero-ability-markers.mjs, which appends [keyword:rescue:N] / [keyword:reveal] / [keyword:reveal:N] tokens to the specified hero ability lines in data/cards/*.json.",
+    "Keys: setAbbr -> array of { heroSlug, cardSlug, abilityIndex, markupToken }. abilityIndex is 0-based into card.abilities[]. Valid markupToken values: '[keyword:rescue:1]', '[keyword:reveal]', '[keyword:reveal:2]' (D-21601 closed set).",
+    "Curation discipline: a line is marked ONLY when it unambiguously reduces to a single-bystander rescue or a reveal-draw with an extractable cost threshold of 2. Condition-gated lines ([hc:X]:, [team:X]:) are included — the executor evaluates conditions already. Timing-gated lines (Fight:, Ambush:, Heist:, [keyword:Ambush], [keyword:Excessive Violence], [keyword:Excessive Kindness], [keyword:Focus]) are deferred per D-21602/D-21603.",
+    "Web-Shooters (core/spider-man) is NOT included — WP-215 already applied rescue:1 and reveal markup to those two lines. The idempotence guard would skip them, but we omit them from the map to keep it authoritative for WP-216 additions only.",
+    "Amendment (inline, EC-248 fold): AC #11 and EC §After Completing originally asserted grep count=1 for rescue:1 in core.json. Execution confirmed core/black-widow/mission-accomplished is an in-scope candidate (discovered by --propose). Count updated to 2 (web-shooters from WP-215 + mission-accomplished from WP-216). Corrected in WP-216 AC #11 and EC-248 §After Completing as part of Commit A."
+  ],
+  "3dtc": [
+    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
+  ],
+  "ca75": [
+    { "heroSlug": "captain-america-1941", "cardSlug": "liberate-the-prisoners", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "captain-america-falcon", "cardSlug": "aerial-catch", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "steve-rogers-director-of-shield", "cardSlug": "save-the-world", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" }
+  ],
+  "chmp": [
+    { "heroSlug": "ms-marvel", "cardSlug": "long-arm-of-the-law", "abilityIndex": 2, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "nova", "cardSlug": "space-cop", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
+  ],
+  "core": [
+    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "spider-man", "cardSlug": "astonishing-strength", "abilityIndex": 0, "markupToken": "[keyword:reveal]" },
+    { "heroSlug": "spider-man", "cardSlug": "great-responsibility", "abilityIndex": 0, "markupToken": "[keyword:reveal]" }
+  ],
+  "cosm": [
+    { "heroSlug": "ronan-the-accuser", "cardSlug": "rally-kree-warriors", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
+  ],
+  "cvwr": [
+    { "heroSlug": "peter-parker", "cardSlug": "conflicted-loyalties", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
+    { "heroSlug": "peter-parker", "cardSlug": "protect-my-family", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" }
+  ],
+  "dkcy": [
+    { "heroSlug": "jean-grey", "cardSlug": "psychic-search", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" }
+  ],
+  "msp1": [
+    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
+  ],
+  "smhc": [
+    { "heroSlug": "high-tech-spider-man", "cardSlug": "advanced-targeting-system", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
+    { "heroSlug": "peter-parker-homecoming", "cardSlug": "heightened-senses", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" }
+  ],
+  "ssw1": [
+    { "heroSlug": "ultimate-spider-man", "cardSlug": "leaping-spider", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
+    { "heroSlug": "ultimate-spider-man", "cardSlug": "marvel-team-up", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" },
+    { "heroSlug": "ultimate-spider-man", "cardSlug": "web-slinger", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" }
+  ],
+  "_deferred": [
+    {
+      "setAbbr": "amwp",
+      "heroSlug": "scott-lang-cat-burglar",
+      "cardSlug": "anything-for-cassie",
+      "abilityIndex": 1,
+      "abilityText": "Heist: Rescue a Bystander.",
+      "reason": "D-21602 — onFight-timed rescue: 'Heist:' is a custom timing prefix analogous to 'Fight:'; the onFight timing is not wired to executeHeroEffects."
+    },
+    {
+      "setAbbr": "dead",
+      "heroSlug": "slapstick",
+      "cardSlug": "saturday-morning-harpoons",
+      "abilityIndex": 0,
+      "abilityText": "[keyword:Excessive Violence]: Rescue a Bystander.",
+      "reason": "D-21602 — onFight-timed rescue: '[keyword:Excessive Violence]:' is a card-ability keyword timing prefix analogous to '[keyword:Ambush]:'; executor dispatch for this keyword timing is not wired to executeHeroEffects."
+    },
+    {
+      "setAbbr": "ff04",
+      "heroSlug": "invisible-woman",
+      "cardSlug": "unseen-rescue",
+      "abilityIndex": 0,
+      "abilityText": "[keyword:Focus 2][icon:recruit]  [icon:5] Rescue a Bystander. You may only use this ability up to four times this turn.",
+      "reason": "D-21602 — [keyword:Focus 2] modifies how the ability triggers (Focus token mechanic); the Focus condition is not in the hero condition evaluation pipeline. Also carries a per-turn-use-count limit not expressible in the current executor."
+    },
+    {
+      "setAbbr": "mgtg",
+      "heroSlug": "rocket-groot",
+      "cardSlug": "baby-groot",
+      "abilityIndex": 0,
+      "abilityText": "[keyword:Excessive Kindness]: Rescue a Bystander.",
+      "reason": "D-21602 — onFight-timed rescue: '[keyword:Excessive Kindness]:' is a card-ability keyword timing prefix analogous to '[keyword:Ambush]:'; executor dispatch for this keyword timing is not wired to executeHeroEffects."
+    }
+  ]
+}

@@ -137,7 +137,7 @@
           "attack": null,
           "recruit": "2",
           "abilities": [
-            "[hc:instinct]: Rescue a Bystander."
+            "[hc:instinct]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
         {
@@ -278,7 +278,7 @@
           "attack": "3",
           "recruit": null,
           "abilities": [
-            "[team:avengers]: Rescue a Bystander.",
+            "[team:avengers]: Rescue a Bystander. [keyword:rescue:1]",
             "[keyword:Savior]: Draw a Card."
           ]
         },
@@ -403,7 +403,7 @@
           "attack": "4+",
           "recruit": null,
           "abilities": [
-            "Rescue a Bystander.",
+            "Rescue a Bystander. [keyword:rescue:1]",
             "[keyword:Savior]: You get +3[icon:attack]."
           ]
         }

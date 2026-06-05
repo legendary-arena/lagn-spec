@@ -1435,7 +1435,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Reveal the top card of your deck. If it costs 2 or less, draw it.",
+            "Reveal the top card of your deck. If it costs 2 or less, draw it. [keyword:reveal:2]",
             "[hc:strength]: You get +2[icon:attack]."
           ]
         },
@@ -1452,7 +1452,7 @@
           "recruit": null,
           "abilities": [
             "Gain a [rule:Sidekick].",
-            "Reveal the top card of your deck. If it costs 2 or less, draw it."
+            "Reveal the top card of your deck. If it costs 2 or less, draw it. [keyword:reveal:2]"
           ]
         },
         {
@@ -1468,7 +1468,7 @@
           "recruit": null,
           "abilities": [
             "You get +2[icon:attack], usable only against the Mastermind or Villains on the Rooftops or Bridge.",
-            "Reveal the top card of your deck. If it costs 2 or less, draw it."
+            "Reveal the top card of your deck. If it costs 2 or less, draw it. [keyword:reveal:2]"
           ]
         },
         {

@@ -818,7 +818,7 @@
           "recruit": "2",
           "abilities": [
             "Whenever you rescue a Bystander this turn, gain a [rule:Shard].",
-            "[hc:strength]: Rescue a Bystander."
+            "[hc:strength]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
         {
