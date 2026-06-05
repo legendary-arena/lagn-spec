@@ -1,8 +1,9 @@
 <script setup lang="ts">
 /**
- * VisionCard — pinned read-only surface for Legendary Arena's Primary Vision
- * Goals (#1–5) and the Financial Sustainability covenant ("No margin, no
- * mission").
+ * VisionCard — pinned read-only surface leading with the three Revenue
+ * Drivers (Sell, Ship Content, Retain Players), followed by Quality
+ * Standards (#1–5 repositioned as guardrails) and the Financial
+ * Sustainability covenant ("No margin, no mission").
  *
  * Curated condensed string sourced from `docs/01-VISION.md` §Business Survival
  * (Sales & Product), Primary Vision Goals (Non-Negotiable) §1–5, and
@@ -12,6 +13,7 @@
  *   Source file:   docs/01-VISION.md
  *   Source SHA:    51aec9e3c251040f36ee2a177fd607117d2bc121
  *   Capture date:  2026-06-03
+ *   Restructured:  2026-06-04 — 80/20 revenue focus per operator directive
  *
  * why: D-19803 — the card renders a curated condensed STATIC string in the
  * component. No runtime file read (browser-impossible), no build-time
@@ -36,46 +38,51 @@
   <section class="vision-card" aria-labelledby="vision-card-title">
     <header class="vision-header">
       <h3 id="vision-card-title">Vision</h3>
-      <p class="vision-tagline">Legendary Arena&apos;s survival truths, the goals that serve them, and the financial covenant that keeps payroll funded.</p>
+      <p class="vision-tagline">The 20% of work that drives 80% of income &mdash; and the quality standards that make it worth paying for.</p>
     </header>
 
-    <section class="vision-survival" aria-labelledby="vision-survival-title">
-      <h4 id="vision-survival-title" class="survival-heading">Business Survival</h4>
-      <ul class="survival-list">
+    <section class="vision-revenue" aria-labelledby="vision-revenue-title">
+      <h4 id="vision-revenue-title" class="revenue-heading">Revenue Drivers &mdash; Daily Focus</h4>
+      <ol class="revenue-list">
         <li>
-          <strong>Sales.</strong>
-          Every dollar funds payroll, royalties to Marvel and Upper Deck, cloud bills, and the next round of content. No sales = no business, no game, no royalties. Selling is the act that funds everything else this card says we care about.
+          <strong>Sell.</strong>
+          Get players to pay. Marketing, conversion, pricing, packaging. Every dollar funds payroll, royalties to Marvel and Upper Deck, cloud bills, and the next round of content. No sales = no business.
         </li>
         <li>
-          <strong>A great product.</strong>
-          Players pay for a faithful, reliable, fast Marvel Legendary that gets better every release. The Primary Goals below are not abstract values — they are the engineering truths that make the product worth buying.
+          <strong>Ship playable content.</strong>
+          New sets, schemes, heroes. Content is the product. Content drives purchases and retention.
         </li>
-      </ul>
+        <li>
+          <strong>Keep paying players playing.</strong>
+          Reliability, matchmaking, reconnection. Churn kills recurring revenue.
+        </li>
+      </ol>
     </section>
 
     <div class="vision-body">
-      <section class="vision-column" aria-labelledby="vision-primary-title">
-        <h4 id="vision-primary-title" class="column-heading">Primary Goals</h4>
+      <section class="vision-column" aria-labelledby="vision-quality-title">
+        <h4 id="vision-quality-title" class="column-heading">Quality Standards</h4>
+        <p class="quality-tagline">How we do the above well &mdash; guardrails, not goals.</p>
         <ol class="vision-list">
           <li>
             <strong>Rules Authenticity.</strong>
-            Follows the exact rules of Marvel Legendary — no simplifications, no digital-only shortcuts, strict and deterministic enforcement.
+            Exact rules of Marvel Legendary; no simplifications, no digital-only shortcuts.
           </li>
           <li>
             <strong>Content Authenticity.</strong>
-            Uses the same card images, names, text, and semantics as the physical cards; presentation never alters rules meaning.
+            Same card images, names, text, and semantics as the physical cards.
           </li>
           <li>
             <strong>Player Trust &amp; Fairness.</strong>
-            No hidden modifiers; randomness verifiably fair and reproducible; the system never makes strategic decisions on behalf of players.
+            No hidden modifiers; verifiably fair randomness; no decisions made on behalf of players.
           </li>
           <li>
             <strong>Faithful Multiplayer.</strong>
-            Mirrors the tabletop cooperative experience; correctness over convenience; reliable synchronization, reconnection, late-joining.
+            Tabletop cooperative experience; reliable sync, reconnection, late-joining.
           </li>
           <li>
             <strong>Longevity &amp; Expandability.</strong>
-            Built for decades of expansions, heroes, villains, and rule complexity; core systems scale without rewrites.
+            Built for decades of expansions; core systems scale without rewrites.
           </li>
         </ol>
       </section>
@@ -173,7 +180,7 @@
   color: var(--p-text-color);
 }
 
-.vision-survival {
+.vision-revenue {
   margin-bottom: 1.25rem;
   padding: 0.85rem 1rem;
   border-left: 4px solid var(--p-primary-color);
@@ -181,7 +188,7 @@
   background: var(--p-surface-section, transparent);
 }
 
-.survival-heading {
+.revenue-heading {
   margin: 0 0 0.5rem;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -190,7 +197,7 @@
   font-weight: 700;
 }
 
-.survival-list {
+.revenue-list {
   margin: 0;
   padding-left: 1.1rem;
   color: var(--p-text-color);
@@ -201,12 +208,19 @@
   gap: 0.5rem;
 }
 
-.survival-list li::marker {
+.revenue-list li::marker {
   color: var(--p-primary-color);
 }
 
-.survival-list strong {
+.revenue-list strong {
   color: var(--p-primary-color);
   font-weight: 700;
+}
+
+.quality-tagline {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--p-text-muted-color);
+  font-style: italic;
 }
 </style>
