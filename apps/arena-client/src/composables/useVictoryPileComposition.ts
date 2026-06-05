@@ -84,9 +84,13 @@ function classify(extId: string): keyof Omit<VictoryPileComposition, 'scenarioSp
   if (extId === WOUND_EXT_ID || extId.startsWith('wound')) {
     return 'woundsInPile';
   }
+  // why: tactic ext_ids follow `${setAbbr}-mastermind-${slug}-${tacticSlug}`
+  // (e.g. "core-mastermind-doctor-octopus-tentacle-strike"), so they don't
+  // start with 'mastermind' — check for '-mastermind-' anywhere in the id
   if (
     extId.startsWith(MASTER_STRIKE_PREFIX) ||
     extId.startsWith('mastermind') ||
+    extId.includes('-mastermind-') ||
     extId.startsWith('strike-')
   ) {
     return 'mastermindCards';

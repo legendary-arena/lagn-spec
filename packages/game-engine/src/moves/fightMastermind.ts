@@ -60,7 +60,12 @@ export function fightMastermind(
   if (G.currentStage !== 'main') return;
 
   // Step 3: Mutate G
+  // why: capture the tactic card ID before defeatTopTactic moves it from
+  // tacticsDeck to tacticsDefeated — the player earns this card in their
+  // victory pile (tabletop Legendary: defeated tactics are VP cards).
+  const defeatedTacticId = G.mastermind.tacticsDeck[0]!;
   G.mastermind = defeatTopTactic(G.mastermind);
+  G.playerZones[ctx.currentPlayer]!.victory.push(defeatedTacticId);
   G.turnEconomy = spendAttack(G.turnEconomy, requiredFightCost);
 
   G.messages.push(
