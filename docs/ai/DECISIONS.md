@@ -23009,4 +23009,59 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-21501 — Rescue Effect: Top-of-Pile Convention (WP-215)
+
+**Decision:** The `rescue` effect draws from `G.piles.bystanders[0]` (top-of-pile convention). Magnitude defaults to `1` when `effect.magnitude` is undefined. Empty bystander pile is a silent no-op — never throws. Rescued bystanders move to `G.playerZones[playerID].victory`.
+
+**Packet:** WP-215 / EC-247.
+
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
+
+---
+
+### D-21502 — Reveal Effect: No-Reshuffle and Missing-Stats Guards (WP-215)
+
+**Decision:** The `reveal` effect does NOT trigger a deck reshuffle. If `playerZones[playerID].deck.length === 0`, the effect is a silent no-op. If `G.cardStats[topCardId]` is undefined (e.g., SHIELD starter cards), the effect is also a silent no-op — the card stays on top of the deck. This gap is deferred to a future WP.
+
+**Packet:** WP-215 / EC-247.
+
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
+
+---
+
+### D-21503 — Keyword Magnitude Syntax: `[keyword:X:N]` (WP-215)
+
+**Decision:** The `KEYWORD_PATTERN` regex is extended to optionally capture a `:N` magnitude suffix (`[keyword:X:N]` where N is a non-negative integer string). Existing `[keyword:X]` markup without `:N` remains valid and produces `magnitude: undefined` on the effect descriptor. Non-integer or negative values are rejected. Magnitude extraction runs after keyword validation — only recognized keywords receive magnitude. The pattern is replaced in-place (no second const added).
+
+**Packet:** WP-215 / EC-247.
+
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
+
+---
+
+### D-21504 — Web-Shooters Card Data Markup (WP-215)
+
+**Decision:** Web-Shooters (`slug: "web-shooters"`) in `data/cards/core.json` receives markup on both ability lines. Line 1 becomes `"Rescue a Bystander. [keyword:rescue:1]"`. Line 2 becomes `"Reveal the top card of your deck. If that card costs 2[icon:vp] or less, draw it. [keyword:reveal]"` — no `:2` suffix; threshold is extracted from `2[icon:vp]` by the VP-cost-threshold pattern (D-21505). No other card entries are modified.
+
+**Packet:** WP-215 / EC-247.
+
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
+
+---
+
+### D-21505 — Icon-Adjacent Magnitude Extraction (WP-215)
+
+**Decision:** `parseAbilityText()` gains two icon-adjacent magnitude extraction patterns. Pattern for attack/recruit: `/\+?(\d+)\s*\[icon:(attack|recruit)\]/g` — populates the same `magnitudes` map as `[keyword:X:N]` markup; explicit markup wins over icon-derived for the same keyword. Pattern for reveal cost threshold: `/(\d+)\s*\[icon:vp\]\s*or less/` — non-global, first match only. The VP-cost pattern MUST include `or less` to distinguish cost-threshold context from bare victory-point values (which use the same icon).
+
+**Packet:** WP-215 / EC-247.
+
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
+
+---
+
 Protect this file.
