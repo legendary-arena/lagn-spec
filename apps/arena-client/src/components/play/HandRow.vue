@@ -167,7 +167,7 @@ export default defineComponent({
                ad-hoc. -->
           <CardTile
             :display="resolveDisplay(cardId, index)"
-            size="md"
+            size="sm"
             :interactive="!buttonDisabled()"
             :show-label="true"
           />

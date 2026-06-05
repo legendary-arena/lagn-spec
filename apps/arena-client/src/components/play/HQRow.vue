@@ -140,7 +140,7 @@ export default defineComponent({
                  WP-128 economy.availableRecruit + UICardDisplay.cost. -->
             <CardTile
               :display="displayForCell(cell)"
-              size="md"
+              size="sm"
               :interactive="gateForCell(cell).allowed"
               :show-label="true"
             />

@@ -105,29 +105,20 @@ export default defineComponent({
       <span data-testid="play-hud-scheme-name">
         <strong>Scheme:</strong> {{ schemeName() }}
       </span>
-    </div>
-    <div class="top-hud-bar__row">
-      <span data-testid="play-hud-phase">Phase: {{ snapshot.game.phase }}</span>
       <span data-testid="play-hud-turn">Turn {{ snapshot.game.turn }}</span>
       <span data-testid="play-hud-active">Active: {{ activePlayerLabel() }}</span>
-      <span data-testid="play-hud-stage">Stage: {{ snapshot.game.currentStage }}</span>
+      <span data-testid="play-hud-stage" class="top-hud-bar__stage">{{ snapshot.game.currentStage }}</span>
     </div>
     <div class="top-hud-bar__row">
       <span data-testid="play-hud-twists">Twists: {{ twistProgressLabel() }}</span>
       <span data-testid="play-hud-strikes">Strikes: {{ mastermindProgressLabel() }}</span>
       <span data-testid="play-hud-bystanders">
-        Bystanders rescued: {{ snapshot.progress.bystandersRescued }}
+        Rescued: {{ snapshot.progress.bystandersRescued }}
       </span>
       <span data-testid="play-hud-escaped">
         Escaped: {{ snapshot.progress.escapedVillains }}
       </span>
-    </div>
-    <div class="top-hud-bar__row">
-      <!-- why: D-12907 reserves the skin-selector slot for WP-130; the
-           WP-130 `<SkinSelector>` mounts here as the default slot
-           content. Parents that want to override (test fixtures, future
-           replay-spectator surface) can still pass alternative slot
-           content; the slot itself is preserved. -->
+      <!-- why: D-12907 reserves the skin-selector slot for WP-130 -->
       <slot name="skin-selector">
         <SkinSelector />
       </slot>
@@ -139,9 +130,10 @@ export default defineComponent({
 .top-hud-bar {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.5rem 0.75rem;
+  gap: 0.1rem;
+  padding: 0.25rem 0.75rem;
   border-bottom: 1px solid var(--color-foreground, #999);
+  font-size: 0.85rem;
 }
 
 .top-hud-bar__row {
@@ -152,8 +144,14 @@ export default defineComponent({
 }
 
 .top-hud-bar__setup {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   text-transform: capitalize;
+}
+
+.top-hud-bar__stage {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .top-hud-bar__skin-placeholder {

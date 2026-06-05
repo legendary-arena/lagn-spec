@@ -361,12 +361,15 @@ export default defineComponent({
           :duration-ms="2500"
           @dismiss="dismissNotableEvent"
         />
-        <section class="play-desktop__opponents" data-testid="play-desktop-opponents">
-          <OpponentPanel
-            v-for="opponent in opponents"
-            :key="opponent.playerId"
-            :player="opponent"
-          />
+        <section class="play-desktop__info-row">
+          <div class="play-desktop__opponents" data-testid="play-desktop-opponents">
+            <OpponentPanel
+              v-for="opponent in opponents"
+              :key="opponent.playerId"
+              :player="opponent"
+            />
+          </div>
+          <SharedDecks :piles="snapshot.piles" />
         </section>
         <section class="play-desktop__top-row">
           <div class="play-desktop__mastermind-zone">
@@ -389,6 +392,18 @@ export default defineComponent({
               :pile="snapshot.scheme.twistPile"
               @open="onPileOpen"
             />
+            <KOPile :ko-pile="snapshot.koPile" @open="onPileOpen" />
+            <div v-if="viewer !== null" class="play-desktop__victory-deck-stack">
+              <YourVictoryPile
+                :victory-cards="viewer.victoryCards ?? []"
+                :victory-vp="viewer.victoryVP ?? 0"
+              />
+              <YourDeckDiscardZone
+                :deck-count="viewer.deckCount"
+                :discard-count="viewer.discardCount"
+                :discard-top-card="viewer.discardTopCard"
+              />
+            </div>
           </div>
         </section>
         <CityRow
@@ -407,8 +422,6 @@ export default defineComponent({
           :economy="snapshot.economy"
           :submit-move="submitMove"
         />
-        <SharedDecks :piles="snapshot.piles" />
-        <KOPile :ko-pile="snapshot.koPile" @open="onPileOpen" />
         <!-- why: the personal zone (own hand / economy / deck / victory) and the
              turn-action bar require an identified viewer. They are hidden for a
              spectator or rewound-autoplay frame (viewer null) while the shared
@@ -423,15 +436,6 @@ export default defineComponent({
               :submit-move="submitMove"
             />
             <EconomyBar :economy="snapshot.economy" />
-            <YourDeckDiscardZone
-              :deck-count="viewer.deckCount"
-              :discard-count="viewer.discardCount"
-              :discard-top-card="viewer.discardTopCard"
-            />
-            <YourVictoryPile
-              :victory-cards="viewer.victoryCards ?? []"
-              :victory-vp="viewer.victoryVP ?? 0"
-            />
           </section>
           <TurnActionBar
             :current-stage="snapshot.game.currentStage"
@@ -464,36 +468,51 @@ export default defineComponent({
 .play-desktop {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
   position: relative;
+  /* why: minimal padding — the sticky TurnActionBar overlaps the bottom
+     of the page; this just prevents the last content line from being
+     fully hidden behind it */
+  padding-bottom: 0.25rem;
+}
+
+.play-desktop__info-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .play-desktop__opponents {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.35rem;
   flex-wrap: wrap;
 }
 
 .play-desktop__top-row {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .play-desktop__mastermind-zone,
 .play-desktop__scheme-zone {
   display: flex;
-  gap: 0.5rem;
-  flex: 1;
-  min-width: 18rem;
+  gap: 0.35rem;
+}
+
+.play-desktop__victory-deck-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .play-desktop__player-zone {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
   border-top: 1px solid var(--color-foreground, #999);
-  padding-top: 0.5rem;
+  padding-top: 0.25rem;
 }
 
 .play-empty-match {

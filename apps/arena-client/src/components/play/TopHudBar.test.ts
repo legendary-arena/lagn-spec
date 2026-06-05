@@ -70,10 +70,9 @@ describe('TopHudBar (WP-129)', () => {
         schemeTwistThreshold: 8,
       },
     });
-    assert.equal(wrapper.find('[data-testid="play-hud-phase"]').text(), 'Phase: play');
     assert.equal(wrapper.find('[data-testid="play-hud-turn"]').text(), 'Turn 4');
     assert.equal(wrapper.find('[data-testid="play-hud-active"]').text(), 'Active: alice');
-    assert.equal(wrapper.find('[data-testid="play-hud-stage"]').text(), 'Stage: main');
+    assert.equal(wrapper.find('[data-testid="play-hud-stage"]').text(), 'main');
   });
 
   test('renders twist + mastermind + bystanders + escaped counters', () => {
@@ -87,7 +86,7 @@ describe('TopHudBar (WP-129)', () => {
     });
     assert.equal(wrapper.find('[data-testid="play-hud-twists"]').text(), 'Twists: 2/8');
     assert.equal(wrapper.find('[data-testid="play-hud-strikes"]').text(), 'Strikes: 1/4');
-    assert.match(wrapper.find('[data-testid="play-hud-bystanders"]').text(), /Bystanders rescued: 1/);
+    assert.match(wrapper.find('[data-testid="play-hud-bystanders"]').text(), /Rescued: 1/);
     assert.equal(wrapper.find('[data-testid="play-hud-escaped"]').text(), 'Escaped: 3');
   });
 

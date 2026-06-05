@@ -130,7 +130,7 @@ export default defineComponent({
                  + UICityCard.display.cost. -->
             <CardTile
               :display="cell.card.display"
-              size="md"
+              size="sm"
               :interactive="gateForCell(cell).allowed"
               :show-label="true"
             />

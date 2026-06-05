@@ -71,7 +71,7 @@ export default defineComponent({
     data-testid="play-scheme-tile"
     aria-label="Scheme"
   >
-    <CardTile :display="schemeCardDisplay()" size="lg" :show-cost="false" :show-label="true" />
+    <CardTile :display="schemeCardDisplay()" size="md" :show-cost="false" :show-label="true" />
     <p class="scheme-tile__progress" data-testid="play-scheme-twist-progress">
       Twists: {{ scheme.twistCount }}/{{ twistThreshold }}
     </p>
@@ -95,8 +95,8 @@ export default defineComponent({
 .scheme-tile {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.5rem 0.75rem;
+  gap: 0.15rem;
+  padding: 0.25rem 0.5rem;
   border: 1px solid var(--color-foreground, #999);
 }
 

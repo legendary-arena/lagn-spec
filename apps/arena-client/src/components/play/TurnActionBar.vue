@@ -246,37 +246,54 @@ export default defineComponent({
 </template>
 
 <style scoped>
+.turn-action-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  background: var(--color-background, #fff);
+  border-top: 2px solid var(--color-foreground, #333);
+  padding: 0.35rem 0.75rem;
+  margin: 0 -0.75rem;
+}
+
 .turn-action-bar__steps {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.5rem;
+  align-items: flex-start;
 }
 
 .turn-action-bar__step {
-  padding: 0.5rem 0.75rem;
+  flex: 1;
+  padding: 0.25rem 0.5rem;
   border: 1px solid var(--color-foreground, #999);
-  opacity: 0.55;
+  opacity: 0.4;
+  font-size: 0.8rem;
 }
 
 .turn-action-bar__step--active {
   opacity: 1;
+  border-color: var(--color-foreground, #333);
 }
 
 .turn-action-bar__step header {
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.15rem;
 }
 
 .turn-action-bar__hint {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.25rem 0;
   font-style: italic;
   opacity: 0.85;
+  font-size: 0.75rem;
 }
 
 .turn-action-bar__step button {
-  padding: 0.5rem 1rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
 }
 </style>

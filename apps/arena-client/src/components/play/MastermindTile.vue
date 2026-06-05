@@ -115,7 +115,7 @@ export default defineComponent({
            tactics defeated" override. -->
       <CardTile
         :display="mastermind.display"
-        size="lg"
+        size="md"
         :interactive="gateForFight().allowed"
         :show-label="true"
       />
@@ -169,8 +169,8 @@ export default defineComponent({
 .mastermind-tile {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
   border: 1px solid var(--color-foreground, #999);
 }
 
@@ -178,8 +178,8 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.25rem;
-  padding: 0.75rem 1rem;
+  gap: 0.15rem;
+  padding: 0.25rem 0.5rem;
 }
 
 .mastermind-id {
