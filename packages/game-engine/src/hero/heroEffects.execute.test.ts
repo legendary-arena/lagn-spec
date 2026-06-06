@@ -617,8 +617,12 @@ describe('executeHeroEffects', () => {
 
     assert.deepEqual(gameState.ko, ['starter-agent'],
       'starter-agent should be added to the KO pile when its cost is 0.');
-    assert.deepEqual(gameState.playerZones['0'].deck, ['starter-agent'],
-      'starter-agent should remain on deck (reveal-ko peeks, not pops).');
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'starter-agent should be removed from deck after reveal-ko fires (AC-23).');
+    assert.equal(gameState.playerZones['0'].deck.length, 0,
+      'deck should shrink by 1 after reveal-ko fires on a cost-0 card (AC-23).');
+    assert.equal(gameState.ko.length, 1,
+      'KO pile should grow by 1 after reveal-ko fires on a cost-0 card (AC-23).');
   });
 
   // -------------------------------------------------------------------------
@@ -833,6 +837,251 @@ describe('executeHeroEffects', () => {
       'deck should be unchanged when reveal-min magnitude is undefined.');
     assert.deepEqual(gameState.playerZones['0'].hand, [],
       'hand should be unchanged when reveal-min magnitude is undefined.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 29: reveal-ko-or-draw — cost-0 card is KO'd and removed from deck (AC-6, AC-7)
+  // -------------------------------------------------------------------------
+  it('reveal-ko-or-draw KOs and removes deck top when cost is 0, card is NOT in hand', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['starter-agent'],
+      hand: [],
+      cardStats: {
+        'starter-agent': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should be empty after cost-0 card is KO\'d (AC-23).');
+    assert.equal(gameState.playerZones['0'].deck.length, 0,
+      'deck should shrink by 1 after reveal-ko-or-draw fires on a cost-0 card.');
+    assert.deepEqual(gameState.ko, ['starter-agent'],
+      'starter-agent should be in the KO pile.');
+    assert.equal(gameState.ko.length, 1,
+      'KO pile should grow by 1 after reveal-ko-or-draw fires on a cost-0 card.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty — KO branch takes precedence over draw branch (AC-7).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 30: reveal-ko-or-draw — cost-1 card is drawn (AC-8)
+  // -------------------------------------------------------------------------
+  it('reveal-ko-or-draw draws top card to hand when cost is within draw range', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['hero-y'],
+      'hero-y should move to hand when cost is within the draw range (AC-8).');
+    assert.equal(gameState.playerZones['0'].deck.length, 0,
+      'deck should shrink by 1 after draw fires.');
+    assert.equal(gameState.playerZones['0'].hand.length, 1,
+      'hand should grow by 1 after draw fires.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should remain empty when card is drawn.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 31: reveal-ko-or-draw — cost equals magnitude is drawn (boundary, AC-9)
+  // -------------------------------------------------------------------------
+  it('reveal-ko-or-draw draws top card when cost equals magnitude (boundary)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['hero-y'],
+      'hero-y should be drawn when cost equals magnitude (boundary case AC-9).');
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should be empty after draw.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should remain empty when card is drawn.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 32: reveal-ko-or-draw — cost exceeds magnitude is a no-op (AC-10)
+  // -------------------------------------------------------------------------
+  it('reveal-ko-or-draw is a no-op when top card cost exceeds magnitude', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'deck should be unchanged when cost exceeds magnitude (AC-10).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when cost exceeds magnitude.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should remain empty when cost exceeds magnitude.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 33: reveal-ko-or-draw — undefined magnitude skips execution (AC-11)
+  // -------------------------------------------------------------------------
+  it('reveal-ko-or-draw is skipped when magnitude is undefined', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [{ type: 'reveal-ko-or-draw' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'deck should be unchanged when magnitude is undefined (AC-11).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should be unchanged when magnitude is undefined.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should be unchanged when magnitude is undefined.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 34: reveal-ko-or-draw — magnitude 0 is treated as invalid (AC-12)
+  // -------------------------------------------------------------------------
+  it('reveal-ko-or-draw is skipped when magnitude is 0', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [{ type: 'reveal-ko-or-draw', magnitude: 0 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'deck should be unchanged when magnitude is 0 (AC-12).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should be unchanged when magnitude is 0.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should be unchanged when magnitude is 0.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 35: reveal-ko-or-draw — empty deck is a no-op (AC-13)
+  // -------------------------------------------------------------------------
+  it('reveal-ko-or-draw is a no-op when deck is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should remain empty when reveal-ko-or-draw fires on empty deck (AC-13).');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should remain empty when deck is empty.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when deck is empty.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 36: reveal-ko-or-draw — missing cardStats is a no-op (AC-14)
+  // -------------------------------------------------------------------------
+  it('reveal-ko-or-draw is a no-op when top card has no cardStats entry', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['unknown-card'],
+      cardStats: {},
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['unknown-card'],
+      'deck should remain unchanged when cardStats entry is missing (AC-14).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when cardStats entry is missing.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should remain empty when cardStats entry is missing.');
   });
 
   // -------------------------------------------------------------------------

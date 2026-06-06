@@ -1661,7 +1661,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Reveal the top card of your deck. If it costs 0[icon:vp], KO it.",
+            "Reveal the top card of your deck. If it costs 0[icon:vp], KO it. [keyword:reveal-ko]",
             "[hc:tech]: Draw a card."
           ]
         },

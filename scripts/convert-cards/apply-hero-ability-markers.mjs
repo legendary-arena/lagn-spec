@@ -46,9 +46,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const CARDS_DIR = join(__dirname, '..', '..', 'data', 'cards');
 const MAP_PATH = join(__dirname, 'inputs', 'hero-ability-markers.json');
 
-// why: only valid token forms per D-21601, D-21701, D-21702 — catch typos before data is written
+// why: only valid token forms per D-21601, D-21701, D-21702, D-21802 — catch typos before data is written
 const VALID_TOKEN_PATTERN =
-  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$/;
+  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$/;
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -196,7 +196,7 @@ function assertValidToken(markupToken, cardSlug, heroSlug, setAbbr) {
       `hero-ability-markers.json uses markupToken "${markupToken}" for card "${cardSlug}" ` +
         `under hero "${heroSlug}" in set "${setAbbr}", which is not one of the locked token ` +
         `forms: "[keyword:rescue:N]", "[keyword:reveal]", "[keyword:reveal:N]", ` +
-        `"[keyword:reveal-ko]", or "[keyword:reveal-min:N]". ` +
+        `"[keyword:reveal-ko]", "[keyword:reveal-min:N]", or "[keyword:reveal-ko-or-draw:N]". ` +
         `Fix the typo in the marker map, or — if a new token form is genuinely needed — ` +
         `update DECISIONS.md first (a separate WP) and then this validation.`,
     );
@@ -322,12 +322,51 @@ function runApply(markerMap) {
  */
 function isRevealKoCandidate(line) {
   if (!line.includes('Reveal the top card of your deck.')) return false;
-  if (!line.includes('If it costs 0, KO it.')) return false;
+  // why: D-21803 extends detection to cover the [icon:vp] zero-cost form used
+  // by dkcy/punisher; [icon:vp] is display-only and does not affect executor logic
+  const ZERO_COST_KO_RE = /costs\s+0(?:\[icon:vp\])?,\s*KO it/i;
+  if (!ZERO_COST_KO_RE.test(line)) return false;
   if (line.includes('or more')) return false;
   if (line.includes('draw it.')) return false;
   if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
   if (line.includes('[keyword:reveal')) return false;
   return true;
+}
+
+/**
+ * Returns true when an ability line is an in-scope reveal-ko-or-draw candidate.
+ * Requires BOTH a zero-cost-KO phrase AND a range-draw phrase to be present.
+ * This makes it structurally mutually exclusive with isRevealKoCandidate, which
+ * requires the KO phrase but excludes any line containing 'draw it.' (D-21802).
+ *
+ * @param {string} line - The ability line to test.
+ * @returns {boolean} True if the line is an in-scope reveal-ko-or-draw candidate.
+ */
+function isRevealKoOrDrawCandidate(line) {
+  const ZERO_COST_KO_RE = /costs\s+0,\s*KO it/i;
+  const RANGE_DRAW_RE = /costs\s+\d+\s+or\s+\d+,\s*draw it/i;
+  if (!ZERO_COST_KO_RE.test(line)) return false;
+  if (!RANGE_DRAW_RE.test(line)) return false;
+  if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
+  if (line.includes('Otherwise')) return false;
+  if (line.includes('[keyword:reveal')) return false;
+  return true;
+}
+
+/**
+ * Determines the suggested markup token for an in-scope reveal-ko-or-draw line.
+ * Extracts the two cost values from "costs N or M, draw it" and returns the max.
+ * Returns null on regex failure — callers must guard before emitting a row.
+ *
+ * @param {string} line - The reveal-ko-or-draw ability line.
+ * @returns {string|null} The markup token, or null if the range regex does not match.
+ */
+function suggestRevealKoOrDrawToken(line) {
+  const RANGE_DRAW_RE = /costs\s+(\d+)\s+or\s+(\d+),\s*draw it/i;
+  const match = RANGE_DRAW_RE.exec(line);
+  if (!match) return null;
+  const maxCost = Math.max(Number(match[1]), Number(match[2]));
+  return `[keyword:reveal-ko-or-draw:${maxCost}]`;
 }
 
 /**
@@ -460,6 +499,20 @@ function collectProposeRowsForSet(setAbbr, setData, rows) {
             abilityText: line,
             suggestedToken: suggestRescueToken(line),
           });
+        } else if (isRevealKoOrDrawCandidate(line)) {
+          // why: compound-first ordering is defense-in-depth; functions are already
+          // mutually exclusive by construction (D-21802)
+          const suggestedToken = suggestRevealKoOrDrawToken(line);
+          if (suggestedToken !== null) {
+            rows.push({
+              setAbbr,
+              heroSlug: hero.slug,
+              cardSlug: card.slug,
+              abilityIndex,
+              abilityText: line,
+              suggestedToken,
+            });
+          }
         } else if (isRevealKoCandidate(line)) {
           rows.push({
             setAbbr,

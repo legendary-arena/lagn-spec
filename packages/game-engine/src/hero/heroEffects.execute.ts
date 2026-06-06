@@ -27,9 +27,10 @@ import { koCard } from '../board/ko.logic.js';
 // ---------------------------------------------------------------------------
 
 // why: WP-215 adds 'rescue' and 'reveal' to the executed set. WP-217 adds
-// 'reveal-ko' and 'reveal-min'. 'wound' and 'conditional' remain deferred —
-// they require targeting UI or additional game systems not yet implemented.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min']);
+// 'reveal-ko' and 'reveal-min'. WP-218 adds 'reveal-ko-or-draw' (D-21802).
+// 'wound' and 'conditional' remain deferred — they require targeting UI or
+// additional game systems not yet implemented.
+const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw']);
 
 // ---------------------------------------------------------------------------
 // Magnitude validation
@@ -199,10 +200,10 @@ function executeSingleEffect(
   }
 
   // why: 'ko', 'rescue', and 'reveal-ko' do not use the pre-check magnitude
-  // gate — all three handle undefined magnitude internally. 'reveal-min' has
-  // its own magnitude gate inside its case. All other MVP keywords require a
-  // valid magnitude at this level.
-  if (keyword !== 'ko' && keyword !== 'rescue' && keyword !== 'reveal-ko' && keyword !== 'reveal-min') {
+  // gate — all three handle undefined magnitude internally. 'reveal-min' and
+  // 'reveal-ko-or-draw' have their own magnitude gates inside their cases.
+  // All other MVP keywords require a valid magnitude at this level.
+  if (keyword !== 'ko' && keyword !== 'rescue' && keyword !== 'reveal-ko' && keyword !== 'reveal-min' && keyword !== 'reveal-ko-or-draw') {
     if (!isValidMagnitude(effect.magnitude)) {
       return;
     }
@@ -287,7 +288,7 @@ function executeSingleEffect(
       break;
     }
     case 'reveal-ko': {
-      // why: reveal-ko peeks one card and KOs it only when cost = 0; deck empty is a silent no-op per D-21502 precedent
+      // why: reveal-ko peeks one card and KOs it only when cost = 0; deck empty is a silent no-op per D-21502 precedent; D-21801 fixes zone integrity — card must be removed from deck before being added to KO
       const playerZones = G.playerZones[playerID];
       if (!playerZones) {
         break;
@@ -304,7 +305,11 @@ function executeSingleEffect(
         break;
       }
       if (cardStats.cost === 0) {
-        G.ko = koCard(G.ko, topCardId);
+        const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
+        if (moveResult.found) {
+          playerZones.deck = moveResult.from;
+          G.ko = koCard(G.ko, topCardId);
+        }
       }
       break;
     }
@@ -333,6 +338,45 @@ function executeSingleEffect(
         playerZones.deck = moveResult.from;
         playerZones.hand = moveResult.to;
       }
+      break;
+    }
+    case 'reveal-ko-or-draw': {
+      // why: reveal-ko-or-draw peeks deck top; KOs the card (removing it from deck)
+      // when cost = 0; draws it when 0 < cost <= magnitude; no-op otherwise (D-21802)
+      if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) {
+        break;
+      }
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) {
+        break;
+      }
+      if (playerZones.deck.length === 0) {
+        break;
+      }
+      const topCardId = playerZones.deck[0];
+      if (!topCardId) {
+        break;
+      }
+      const cardStats = G.cardStats[topCardId];
+      if (cardStats === undefined) {
+        break;
+      }
+      // KO branch MUST be evaluated before draw branch.
+      // cost === 0 MUST NOT reach the draw branch.
+      if (cardStats.cost === 0) {
+        const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
+        if (moveResult.found) {
+          playerZones.deck = moveResult.from;
+          G.ko = koCard(G.ko, topCardId);
+        }
+      } else if (cardStats.cost <= (effect.magnitude as number)) {
+        const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+        if (moveResult.found) {
+          playerZones.deck = moveResult.from;
+          playerZones.hand = moveResult.to;
+        }
+      }
+      // cost > magnitude: no-op
       break;
     }
     default: {

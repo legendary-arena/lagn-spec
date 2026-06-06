@@ -34,7 +34,8 @@
     { "heroSlug": "peter-parker", "cardSlug": "protect-my-family", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" }
   ],
   "dkcy": [
-    { "heroSlug": "jean-grey", "cardSlug": "psychic-search", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" }
+    { "heroSlug": "jean-grey", "cardSlug": "psychic-search", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "punisher", "cardSlug": "boom-goes-the-dynamite", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" }
   ],
   "msp1": [
     { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
@@ -42,6 +43,9 @@
   "smhc": [
     { "heroSlug": "high-tech-spider-man", "cardSlug": "advanced-targeting-system", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
     { "heroSlug": "peter-parker-homecoming", "cardSlug": "heightened-senses", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" }
+  ],
+  "ssw2": [
+    { "heroSlug": "silk", "cardSlug": "silk-stalking", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko-or-draw:2]" }
   ],
   "ssw1": [
     { "heroSlug": "ultimate-spider-man", "cardSlug": "leaping-spider", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },

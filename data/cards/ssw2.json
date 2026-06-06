@@ -1367,7 +1367,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "[team:spider-friends]: Reveal the top card of your deck. If it costs 0, KO it. If it costs 1 or 2, draw it."
+            "[team:spider-friends]: Reveal the top card of your deck. If it costs 0, KO it. If it costs 1 or 2, draw it. [keyword:reveal-ko-or-draw:2]"
           ]
         },
         {

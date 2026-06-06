@@ -232,7 +232,7 @@ describe('buildHeroAbilityHooks', () => {
 describe('HERO_KEYWORDS drift-detection', () => {
   // why: prevents union/array divergence — same pattern as
   // REVEALED_CARD_TYPES drift detection
-  it('contains exactly the 10 canonical keyword values', () => {
+  it('contains exactly the 11 canonical keyword values', () => {
     const expectedKeywords = [
       'draw',
       'attack',
@@ -243,13 +243,14 @@ describe('HERO_KEYWORDS drift-detection', () => {
       'reveal',
       'reveal-ko',
       'reveal-min',
+      'reveal-ko-or-draw',
       'conditional',
     ];
 
     assert.equal(
       HERO_KEYWORDS.length,
-      10,
-      'HERO_KEYWORDS must have exactly 10 entries',
+      11,
+      'HERO_KEYWORDS must have exactly 11 entries',
     );
 
     assert.deepStrictEqual(
