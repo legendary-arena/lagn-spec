@@ -23225,4 +23225,40 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-22001 — New Field `G.pendingHeroChoice` (WP-220)
+
+**Decision:** A `pendingHeroChoice?: PendingHeroChoice` field is added to `LegendaryGameState`. The absent value is `undefined` (locked — setup does not default-initialize it; existing setup tests must pass unchanged). `PendingHeroChoice = { choiceType: 'discard-or-return'; cardId: CardExtId; playerID: string }`. The field is written only by the `reveal-attack-choose` executor and cleared only by `resolveHeroChoice`. Reject-second policy: if the field is already set, a second `reveal-attack-choose` execution is a silent no-op and does NOT overwrite the original pending choice.
+
+**Rationale:** The synchronous single-effect executor model has no mechanism for a pending player decision resolved by a later move. A single optional field is the minimal state addition. `undefined` matches the existing optional-field convention (`villainRevealedThisTurn?`); `null` is never used for absent G state. Reject-second avoids queue/overwrite ambiguity and keeps the invariant (one pending choice at a time) trivially enforceable.
+
+**Packet:** WP-220 / EC-252.
+**Drafted:** 2026-06-06. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
+### D-22002 — New Move `resolveHeroChoice` + Dual Turn-End Guard (WP-220)
+
+**Decision:** A `resolveHeroChoice` move is added with the boardgame.io `(context, args)` signature — `resolveHeroChoice({ G, playerID }: MoveContext, args: ResolveHeroChoiceArgs): void`, where `ResolveHeroChoiceArgs.resolution ∈ 'discard' | 'return'` — registered in `game.ts` `moves:` as `{ move: resolveHeroChoice, client: false }`. No-op on: unknown `resolution`, no pending choice, wrong `playerID`, wrong `choiceType`. `G.pendingHeroChoice` is ALWAYS cleared before the function returns, even when the discard zone move cannot find the card (`moveResult.found = false`). Turn-end is blocked while `G.pendingHeroChoice` is set at BOTH turn-end callsites: (a) the `endTurn` move (`coreMoves.impl.ts`) — guard at the top of the function, before the inPlay/hand→discard sweep; (b) the `advanceStage` move (`game.ts`) — guard `G.currentStage === 'cleanup' && G.pendingHeroChoice !== undefined` before delegating to `advanceTurnStage`.
+
+**Rationale:** A dedicated resolving move keeps the choice branch out of the synchronous executor. The `(context, args)` signature is mandatory — boardgame.io 0.50.x passes a single context object as arg 1, so a positional `(G, ctx, playerID, resolution)` signature would never receive `resolution`. Always-clear-before-return prevents a wedged pending state. The dual guard is required because turn-end fires through two independent paths: the `endTurn` move and `advanceStage` → `advanceTurnStage` → `events.endTurn()` at cleanup (`getNextTurnStage('cleanup')` returns `null`). `advanceStage` has no stage gate and is exposed to clients as "Pass Priority", so guarding `endTurn` alone would let a player end the turn with an unresolved choice. The `endTurn` guard precedes the zone sweep so a blocked turn does not discard the hand.
+
+**Packet:** WP-220 / EC-252.
+**Drafted:** 2026-06-06. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
+### D-22003 — New HeroKeyword `reveal-attack-choose` (WP-220)
+
+**Decision:** A new `reveal-attack-choose` HeroKeyword and executor are added (`HERO_KEYWORDS` 13 → 14). The executor peeks `playerZones.deck[0]`, grants `G.turnEconomy.attack += cardStats.cost` only when `cost <= magnitude`, always sets `G.pendingHeroChoice` (when all guards pass), and leaves the card at `deck[0]` until the player resolves the choice. Magnitude is required: `[keyword:reveal-attack-choose]` (bare) and `[keyword:reveal-attack-choose:0]` are invalid and rejected by `assertValidToken` (token pattern `[1-9]\d*`). In-scope card: `2099/ravage-2099/overhorns-and-underhorns` with magnitude 4.
+
+**Rationale:** Lifts D-21903 item 1. The conditional attack grant (`cost <= N`) plus the unconditional choice prompt models the printed text "Reveal the top card of your deck. If it costs 4 or less, you get +[icon:attack] equal to its cost. Discard it or put it back." Guards (empty deck, missing `cardStats`, undefined `turnEconomy`, pre-existing pending choice) fire before the pending assignment — the `turnEconomy`-before-pending ordering is load-bearing. The `reveal-attack-choose` keyword is NOT in `NO_MAGNITUDE_KEYWORDS` because it requires a magnitude (the cost ceiling).
+
+**Packet:** WP-220 / EC-252.
+**Drafted:** 2026-06-06. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
 Protect this file.
