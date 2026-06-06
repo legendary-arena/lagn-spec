@@ -214,7 +214,7 @@
           "attack": "3",
           "recruit": null,
           "abilities": [
-            "[hc:tech]: Reveal the top card of your deck. If it costs 0, KO it."
+            "[hc:tech]: Reveal the top card of your deck. If it costs 0, KO it. [keyword:reveal-ko]"
           ]
         },
         {
@@ -1560,7 +1560,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "Reveal the top card of your deck. If it costs 3 or more, draw it."
+            "Reveal the top card of your deck. If it costs 3 or more, draw it. [keyword:reveal-min:3]"
           ],
           "transformOf": "seek-the-nega-bands",
           "isTransform": true

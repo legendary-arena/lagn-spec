@@ -46,8 +46,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const CARDS_DIR = join(__dirname, '..', '..', 'data', 'cards');
 const MAP_PATH = join(__dirname, 'inputs', 'hero-ability-markers.json');
 
-// why: only three token forms are valid per D-21601 — catch typos before data is written
-const VALID_TOKEN_PATTERN = /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$/;
+// why: only valid token forms per D-21601, D-21701, D-21702 — catch typos before data is written
+const VALID_TOKEN_PATTERN =
+  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$/;
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -189,14 +190,15 @@ function resolveAbility(card, abilityIndex, cardSlug, heroSlug, setAbbr) {
  * @param {string} setAbbr - The set abbreviation (for error messages).
  */
 function assertValidToken(markupToken, cardSlug, heroSlug, setAbbr) {
-  // why: only three token forms are valid per D-21601 — catch typos before data is written
+  // why: only valid token forms per D-21601, D-21701, D-21702 — catch typos before data is written
   if (!VALID_TOKEN_PATTERN.test(markupToken)) {
     console.error(
       `hero-ability-markers.json uses markupToken "${markupToken}" for card "${cardSlug}" ` +
-        `under hero "${heroSlug}" in set "${setAbbr}", which is not one of the three locked ` +
-        `token forms: "[keyword:rescue:N]", "[keyword:reveal]", or "[keyword:reveal:N]". ` +
+        `under hero "${heroSlug}" in set "${setAbbr}", which is not one of the locked token ` +
+        `forms: "[keyword:rescue:N]", "[keyword:reveal]", "[keyword:reveal:N]", ` +
+        `"[keyword:reveal-ko]", or "[keyword:reveal-min:N]". ` +
         `Fix the typo in the marker map, or — if a new token form is genuinely needed — ` +
-        `update D-21601 first (a separate WP) and then this validation.`,
+        `update DECISIONS.md first (a separate WP) and then this validation.`,
     );
     process.exit(1);
   }
@@ -309,6 +311,68 @@ function runApply(markerMap) {
 // ─── Propose mode ─────────────────────────────────────────────────────────────
 
 /**
+ * Returns true when a reveal-ko ability line is an in-scope candidate.
+ * Matches: "Reveal the top card" + exact "If it costs 0, KO it." phrase.
+ * Excludes lines with "or more" (multi-effect lines like cosm/captain-mar-vell),
+ * "draw it." (mixed draw+KO lines like ssw2/silk), and "You may KO" (optional
+ * KO forms). Only unconditional cost-0-KO-only lines are in scope.
+ *
+ * @param {string} line - The ability line to test.
+ * @returns {boolean} True if the line is an in-scope reveal-ko candidate.
+ */
+function isRevealKoCandidate(line) {
+  if (!line.includes('Reveal the top card of your deck.')) return false;
+  if (!line.includes('If it costs 0, KO it.')) return false;
+  if (line.includes('or more')) return false;
+  if (line.includes('draw it.')) return false;
+  if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
+  if (line.includes('[keyword:reveal')) return false;
+  return true;
+}
+
+/**
+ * Returns true when a reveal-min ability line is an in-scope candidate.
+ * Matches: "Reveal the top card" + "draw it." + "costs N or more" pattern,
+ * with no "Otherwise" clause (which signals a deferred multi-branch line).
+ *
+ * @param {string} line - The ability line to test.
+ * @returns {boolean} True if the line is an in-scope reveal-min candidate.
+ */
+function isRevealMinCandidate(line) {
+  if (!line.includes('Reveal the top card of your deck.')) return false;
+  if (!line.includes('draw it.')) return false;
+  if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
+  if (line.includes('top two') || line.includes('top three') || line.includes('top four')) return false;
+  if (line.includes('[keyword:Spectrum]') || line.includes('[keyword:Focus]')) return false;
+  if (line.includes('[keyword:reveal')) return false;
+  if (line.includes('Otherwise')) return false;
+  return /costs \d+ or more/.test(line);
+}
+
+/**
+ * Determines the suggested markup token for an in-scope reveal-min line.
+ * Extracts N from "costs N or more" / "costs at least N" patterns.
+ *
+ * @param {string} line - The reveal-min ability line.
+ * @returns {string} The markup token to suggest.
+ */
+function suggestRevealMinToken(line) {
+  const orMoreMatch = line.match(/costs (\d+) or more/);
+  if (orMoreMatch) {
+    return `[keyword:reveal-min:${orMoreMatch[1]}]`;
+  }
+  const atLeastMatch = line.match(/costs at least (\d+)/);
+  if (atLeastMatch) {
+    return `[keyword:reveal-min:${atLeastMatch[1]}]`;
+  }
+  const vpOrMoreMatch = line.match(/costs (\d+)\[icon:vp\] or more/);
+  if (vpOrMoreMatch) {
+    return `[keyword:reveal-min:${vpOrMoreMatch[1]}]`;
+  }
+  return '[keyword:reveal-min:1]';
+}
+
+/**
  * Returns true when a rescue ability line is in-scope (a candidate).
  * Matches the authoritative Candidate Detection Rules from WP-216.
  *
@@ -395,6 +459,24 @@ function collectProposeRowsForSet(setAbbr, setData, rows) {
             abilityIndex,
             abilityText: line,
             suggestedToken: suggestRescueToken(line),
+          });
+        } else if (isRevealKoCandidate(line)) {
+          rows.push({
+            setAbbr,
+            heroSlug: hero.slug,
+            cardSlug: card.slug,
+            abilityIndex,
+            abilityText: line,
+            suggestedToken: '[keyword:reveal-ko]',
+          });
+        } else if (isRevealMinCandidate(line)) {
+          rows.push({
+            setAbbr,
+            heroSlug: hero.slug,
+            cardSlug: card.slug,
+            abilityIndex,
+            abilityText: line,
+            suggestedToken: suggestRevealMinToken(line),
           });
         } else if (isRevealCandidate(line)) {
           rows.push({

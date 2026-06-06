@@ -213,7 +213,7 @@
           "attack": "3",
           "recruit": null,
           "abilities": [
-            "[hc:covert]: Reveal the top card of your deck. If it costs 0, KO it."
+            "[hc:covert]: Reveal the top card of your deck. If it costs 0, KO it. [keyword:reveal-ko]"
           ]
         },
         {
@@ -228,7 +228,7 @@
           "attack": null,
           "recruit": "3",
           "abilities": [
-            "[hc:ranged]: Reveal the top card of your deck. If it costs 1 or more, draw it."
+            "[hc:ranged]: Reveal the top card of your deck. If it costs 1 or more, draw it. [keyword:reveal-min:1]"
           ]
         },
         {
@@ -734,7 +734,7 @@
           "attack": null,
           "recruit": "3",
           "abilities": [
-            "[hc:strength]: Reveal the top card of your deck. If it costs 0, KO it."
+            "[hc:strength]: Reveal the top card of your deck. If it costs 0, KO it. [keyword:reveal-ko]"
           ]
         },
         {

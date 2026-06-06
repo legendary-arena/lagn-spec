@@ -27,6 +27,9 @@
     { "heroSlug": "ronan-the-accuser", "cardSlug": "rally-kree-warriors", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
   ],
   "cvwr": [
+    { "heroSlug": "cloak-dagger", "cardSlug": "darkness", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" },
+    { "heroSlug": "cloak-dagger", "cardSlug": "light", "abilityIndex": 0, "markupToken": "[keyword:reveal-min:1]" },
+    { "heroSlug": "hercules", "cardSlug": "prince-of-power", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" },
     { "heroSlug": "peter-parker", "cardSlug": "conflicted-loyalties", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
     { "heroSlug": "peter-parker", "cardSlug": "protect-my-family", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" }
   ],
@@ -44,6 +47,10 @@
     { "heroSlug": "ultimate-spider-man", "cardSlug": "leaping-spider", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
     { "heroSlug": "ultimate-spider-man", "cardSlug": "marvel-team-up", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" },
     { "heroSlug": "ultimate-spider-man", "cardSlug": "web-slinger", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" }
+  ],
+  "wwhk": [
+    { "heroSlug": "bruce-banner", "cardSlug": "dangerous-testing", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" },
+    { "heroSlug": "rick-jones", "cardSlug": "captain-marvel", "abilityIndex": 0, "markupToken": "[keyword:reveal-min:3]" }
   ],
   "_deferred": [
     {

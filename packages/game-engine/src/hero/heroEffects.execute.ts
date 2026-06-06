@@ -26,10 +26,10 @@ import { koCard } from '../board/ko.logic.js';
 // MVP keyword set
 // ---------------------------------------------------------------------------
 
-// why: WP-215 adds 'rescue' and 'reveal' to the executed set. 'wound' and
-// 'conditional' remain deferred — they require targeting UI or additional
-// game systems not yet implemented.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal']);
+// why: WP-215 adds 'rescue' and 'reveal' to the executed set. WP-217 adds
+// 'reveal-ko' and 'reveal-min'. 'wound' and 'conditional' remain deferred —
+// they require targeting UI or additional game systems not yet implemented.
+const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min']);
 
 // ---------------------------------------------------------------------------
 // Magnitude validation
@@ -198,10 +198,11 @@ function executeSingleEffect(
     return;
   }
 
-  // why: 'ko' and 'rescue' do not use the pre-check magnitude gate — both
-  // handle undefined magnitude internally. All other MVP keywords require a
-  // valid magnitude.
-  if (keyword !== 'ko' && keyword !== 'rescue') {
+  // why: 'ko', 'rescue', and 'reveal-ko' do not use the pre-check magnitude
+  // gate — all three handle undefined magnitude internally. 'reveal-min' has
+  // its own magnitude gate inside its case. All other MVP keywords require a
+  // valid magnitude at this level.
+  if (keyword !== 'ko' && keyword !== 'rescue' && keyword !== 'reveal-ko' && keyword !== 'reveal-min') {
     if (!isValidMagnitude(effect.magnitude)) {
       return;
     }
@@ -279,6 +280,55 @@ function executeSingleEffect(
         break;
       }
       if (cardStats.cost <= (effect.magnitude as number)) {
+        const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+        playerZones.deck = moveResult.from;
+        playerZones.hand = moveResult.to;
+      }
+      break;
+    }
+    case 'reveal-ko': {
+      // why: reveal-ko peeks one card and KOs it only when cost = 0; deck empty is a silent no-op per D-21502 precedent
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) {
+        break;
+      }
+      if (playerZones.deck.length === 0) {
+        break;
+      }
+      const topCardId = playerZones.deck[0];
+      if (!topCardId) {
+        break;
+      }
+      const cardStats = G.cardStats[topCardId];
+      if (cardStats === undefined) {
+        break;
+      }
+      if (cardStats.cost === 0) {
+        G.ko = koCard(G.ko, topCardId);
+      }
+      break;
+    }
+    case 'reveal-min': {
+      // why: reveal-min draws the card only when cost >= threshold — opposite direction from 'reveal' which draws when cost <= threshold
+      if (!isValidMagnitude(effect.magnitude)) {
+        break;
+      }
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) {
+        break;
+      }
+      if (playerZones.deck.length === 0) {
+        break;
+      }
+      const topCardId = playerZones.deck[0];
+      if (!topCardId) {
+        break;
+      }
+      const cardStats = G.cardStats[topCardId];
+      if (cardStats === undefined) {
+        break;
+      }
+      if (cardStats.cost >= (effect.magnitude as number)) {
         const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
         playerZones.deck = moveResult.from;
         playerZones.hand = moveResult.to;

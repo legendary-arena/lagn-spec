@@ -594,6 +594,248 @@ describe('executeHeroEffects', () => {
   });
 
   // -------------------------------------------------------------------------
+  // Test 20: reveal-ko — KOs top card when cost is 0 (AC-21)
+  // -------------------------------------------------------------------------
+  it('reveal-ko effect KOs the top deck card when its cost is 0', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['starter-agent'],
+      cardStats: {
+        'starter-agent': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko'],
+          effects: [{ type: 'reveal-ko' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.ko, ['starter-agent'],
+      'starter-agent should be added to the KO pile when its cost is 0.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['starter-agent'],
+      'starter-agent should remain on deck (reveal-ko peeks, not pops).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 21: reveal-ko — card stays on deck when cost > 0 (AC-21)
+  // -------------------------------------------------------------------------
+  it('reveal-ko effect is a no-op when top card cost is greater than 0', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko'],
+          effects: [{ type: 'reveal-ko' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should remain empty when cost is greater than 0.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'deck should be unchanged when cost is greater than 0.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 22: reveal-ko — empty deck is a silent no-op (AC-21, D-21502)
+  // -------------------------------------------------------------------------
+  it('reveal-ko effect is a no-op when deck is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko'],
+          effects: [{ type: 'reveal-ko' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should remain empty when deck is empty.');
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should remain empty.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 23: reveal-ko — missing cardStats entry is a silent no-op (AC-22)
+  // -------------------------------------------------------------------------
+  it('reveal-ko effect is a no-op when top card has no cardStats entry', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['unknown-card'],
+      cardStats: {},
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko'],
+          effects: [{ type: 'reveal-ko' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.ko, [],
+      'KO pile should remain empty when stats entry is missing.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['unknown-card'],
+      'deck should remain unchanged when stats entry is missing.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 24: reveal-min — draws top card when cost >= threshold (AC-3)
+  // -------------------------------------------------------------------------
+  it('reveal-min effect draws top card to hand when cost meets the threshold', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-min'],
+          effects: [{ type: 'reveal-min', magnitude: 3 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['hero-y'],
+      'hero-y should move to hand when cost equals the threshold.');
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should be empty after the card is drawn.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 25: reveal-min — card stays on deck when cost < threshold (AC-4)
+  // -------------------------------------------------------------------------
+  it('reveal-min effect leaves card on deck when cost is below the threshold', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-min'],
+          effects: [{ type: 'reveal-min', magnitude: 3 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'hero-y should remain on deck when cost is below the threshold.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when cost is below the threshold.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 26: reveal-min — empty deck is a silent no-op (AC-5)
+  // -------------------------------------------------------------------------
+  it('reveal-min effect is a no-op when deck is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-min'],
+          effects: [{ type: 'reveal-min', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should remain empty.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when deck is empty.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 27: reveal-min — missing cardStats entry is a silent no-op (AC-22)
+  // -------------------------------------------------------------------------
+  it('reveal-min effect is a no-op when top card has no cardStats entry', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['unknown-card'],
+      cardStats: {},
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-min'],
+          effects: [{ type: 'reveal-min', magnitude: 2 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['unknown-card'],
+      'deck should remain unchanged when stats entry is missing.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when stats entry is missing.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 28: reveal-min — undefined magnitude skips execution (AC-3)
+  // -------------------------------------------------------------------------
+  it('reveal-min effect is skipped when magnitude is undefined', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 5, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-min'],
+          effects: [{ type: 'reveal-min' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'deck should be unchanged when reveal-min magnitude is undefined.');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should be unchanged when reveal-min magnitude is undefined.');
+  });
+
+  // -------------------------------------------------------------------------
   // Test 11: JSON serialization
   // -------------------------------------------------------------------------
   it('JSON.stringify(G) succeeds after execution', () => {

@@ -104,8 +104,9 @@ const HERO_CLASS_PATTERN = /\[hc:([^\]]+)\]/g;
 const TEAM_PATTERN = /\[team:([^\]]+)\]/g;
 
 // why: optional :N suffix carries magnitude for rescue/reveal effects (D-21503)
+// why: hyphen allowed in keyword names to support reveal-ko and reveal-min tokens (D-21701, D-21702)
 /** Regex for [keyword:X] or [keyword:X:N] keyword markup (N = non-negative integer). */
-const KEYWORD_PATTERN = /\[keyword:([a-zA-Z]+)(?::(\d+))?\]/g;
+const KEYWORD_PATTERN = /\[keyword:([a-zA-Z][a-zA-Z-]*)(?::(\d+))?\]/g;
 
 // why: extract magnitude from icon-adjacent integers — avoids per-card manual markup (D-21505)
 /** Regex for attack/recruit icon-adjacent magnitude, e.g. "+2[icon:attack]". */

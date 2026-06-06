@@ -31,6 +31,8 @@ export type HeroKeyword =
   | 'rescue'
   | 'wound'
   | 'reveal'
+  | 'reveal-ko'
+  | 'reveal-min'
   | 'conditional';
 
 // why: canonical array for drift-detection. Must match HeroKeyword
@@ -48,6 +50,8 @@ export const HERO_KEYWORDS: readonly HeroKeyword[] = [
   'rescue',
   'wound',
   'reveal',
+  'reveal-ko',
+  'reveal-min',
   'conditional',
 ] as const;
 
