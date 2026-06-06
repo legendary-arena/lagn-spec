@@ -7,9 +7,9 @@
 
 ## Current State
 
-### WP-218 Drafted — Hero Reveal Compound Executor + VP-Cost Corpus Extension (2026-06-05)
+### WP-218 / EC-250 Executed — Hero Reveal Compound Executor + VP-Cost Corpus Extension (2026-06-05)
 
-**WP-218 drafted.** Next work packet after WP-217. Fixes `reveal-ko` zone-integrity bug (D-21801): WP-217 executor added card to `G.ko` without removing it from `playerZones.deck`, leaving the card ID in two zones simultaneously. Fix mirrors the existing `'ko'` case pattern (`moveCardFromZone(deck, [], topCardId)` before `koCard`). Adds `'reveal-ko-or-draw:N'` keyword (D-21802) for ssw2/silk's compound pattern (KO if cost=0, draw if 0 < cost ≤ N). Extends `isRevealKoCandidate` for `[icon:vp]` zero-cost form (D-21803), lifts D-21703 item 2 deferral — marks dkcy/punisher/boom-goes-the-dynamite with `[keyword:reveal-ko]`. Total: 2 new card markups, 1 engine bug fix, 1 new keyword/executor, drift-detection update to 11.
+**WP-218 done.** Fixes `reveal-ko` zone-integrity bug (D-21801): deck removal now coupled with `koCard` via `moveCardFromZone(deck, [], topCardId)` before `koCard` — mirrors the `'ko'` case pattern. Adds `'reveal-ko-or-draw'` HeroKeyword and executor (D-21802) for ssw2/silk's compound KO-or-draw pattern; KO branch (`cost === 0`) structurally precedes draw branch (`else if`). Extends `isRevealKoCandidate` for `[icon:vp]` zero-cost form via regex (D-21803), lifting D-21703 item 2 deferral. Adds `isRevealKoOrDrawCandidate` + `suggestRevealKoOrDrawToken` to tooling. Marks 2 hero cards: ssw2/silk/silk-stalking (`[keyword:reveal-ko-or-draw:2]`) + dkcy/punisher/boom-goes-the-dynamite (`[keyword:reveal-ko]`). Tests: 1133 passing (+8 over WP-217 baseline). D-21801..D-21803 Active. Hard-dep: WP-217 ✅.
 
 ---
 

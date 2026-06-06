@@ -23157,8 +23157,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** Zone integrity requires a card to exist in exactly one zone at all times. `G.ko` and `playerZones.deck` are separate arrays; adding to `G.ko` without removing from deck produces a duplicate reference. The `moveCardFromZone(zone, [], cardId)` → `koCard` coupling is the engine's standard KO-from-zone pattern (existing `'ko'` case, lines 232–237).
 
 **Packet:** WP-218 / EC-250.
-**Drafted:** 2026-06-05. **Landed:** (execution session).
-**Status:** Active (post-execution)
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
 
 ---
 
@@ -23169,8 +23169,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** `ssw2/silk/silk-stalking` has a compound ability: "If it costs 0, KO it. If it costs 1 or 2, draw it." No existing keyword covers the KO-or-draw pattern; a dedicated keyword avoids ambiguity and keeps executor logic single-responsibility. The magnitude encodes the draw upper bound (N = 2 for silk).
 
 **Packet:** WP-218 / EC-250.
-**Drafted:** 2026-06-05. **Landed:** (execution session).
-**Status:** Active (post-execution)
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
 
 ---
 
@@ -23181,8 +23181,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** The `reveal-ko` executor already handles cost-0 KO regardless of how the zero cost is annotated in ability text. The `[icon:vp]` icon is rendered by the UI as a VP symbol; at the engine level `cost` is a plain integer. Detection required no executor change, only a regex extension that tolerates the icon annotation.
 
 **Packet:** WP-218 / EC-250.
-**Drafted:** 2026-06-05. **Landed:** (execution session).
-**Status:** Active (post-execution)
+**Drafted:** 2026-06-05. **Landed:** 2026-06-05.
+**Status:** Active
 
 ---
 
