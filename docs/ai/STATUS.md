@@ -7,6 +7,12 @@
 
 ## Current State
 
+### WP-220 / EC-252 Executed — Hero Reveal Attack-Choose Executor (Player-Choice Infrastructure) (2026-06-06)
+
+**WP-220 done.** Adds `G.pendingHeroChoice?: PendingHeroChoice | undefined` field to `LegendaryGameState` (D-22001). Adds `resolveHeroChoice` move + `ResolveHeroChoiceArgs` payload type; registered in `game.ts` as `{ move: resolveHeroChoice, client: false }` (D-22002). Dual turn-end guard: (a) `coreMoves.impl.ts` `endTurn()` — guard before inPlay/hand→discard sweep; (b) `game.ts` `advanceStage()` — guard at cleanup stage before `advanceTurnStage` call. Adds `'reveal-attack-choose'` HeroKeyword + executor (D-22003): peek deck top, grant `G.turnEconomy.attack += cardStats.cost` when `cost <= magnitude`, always set `G.pendingHeroChoice`. Reject-second policy: second call while pending is set is a silent no-op. Extends `apply-hero-ability-markers.mjs` with `isRevealAttackChooseCandidate` + `suggestRevealAttackChooseToken` (routed before `isRevealCostAttackCandidate`). Marks 1 hero card: 2099/ravage-2099/overhorns-and-underhorns (`[keyword:reveal-attack-choose:4]`). Closes D-21903 item 1. Tests: 1165 passing (+21 over WP-219 baseline). HERO_KEYWORDS: 13 → 14. D-22001..D-22003 Active. Hard-dep: WP-219 ✅.
+
+---
+
 ### WP-219 / EC-251 Executed — Hero Reveal Cost-Attack + Odd-Draw Executors (2026-06-06)
 
 **WP-219 done.** Adds `'reveal-cost-attack'` (D-21901: peek deck top, grant `G.turnEconomy.attack += cardStats.cost`, card stays on deck — no zone mutation) and `'reveal-odd-draw'` (D-21902: peek deck top, draw via `moveCardFromZone` when `cost % 2 !== 0`; cost-0 is even, no draw) to `HeroKeyword` union + `HERO_KEYWORDS` array. Adds `NO_MAGNITUDE_KEYWORDS` Set replacing ad hoc chained exclusions. Extends `apply-hero-ability-markers.mjs` with `isRevealCostAttackCandidate` + `isRevealOddDrawCandidate`. Marks 2 hero cards: core/gambit/high-stakes-jackpot (`[keyword:reveal-cost-attack]`) + msis/wanda-vision/witchcraft (`[keyword:reveal-odd-draw]`). Tests: 1144 passing (+11 over WP-218 baseline). HERO_KEYWORDS: 11 → 13. D-21901..D-21903 Active. Hard-dep: WP-218 ✅.

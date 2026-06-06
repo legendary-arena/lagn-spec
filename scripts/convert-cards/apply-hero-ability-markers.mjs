@@ -46,9 +46,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const CARDS_DIR = join(__dirname, '..', '..', 'data', 'cards');
 const MAP_PATH = join(__dirname, 'inputs', 'hero-ability-markers.json');
 
-// why: only valid token forms per D-21601, D-21701, D-21702, D-21802, D-21901, D-21902 — catch typos before data is written
+// why: only valid token forms per D-21601, D-21701, D-21702, D-21802, D-21901, D-21902, D-22003 — catch typos before data is written
+// why: reveal-attack-choose uses [1-9]\d* (not \d+) to reject the zero-magnitude form per D-22003
 const VALID_TOKEN_PATTERN =
-  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$|^\[keyword:reveal-cost-attack\]$|^\[keyword:reveal-odd-draw\]$/;
+  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$|^\[keyword:reveal-cost-attack\]$|^\[keyword:reveal-odd-draw\]$|^\[keyword:reveal-attack-choose:[1-9]\d*\]$/;
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -196,8 +197,9 @@ function assertValidToken(markupToken, cardSlug, heroSlug, setAbbr) {
       `hero-ability-markers.json uses markupToken "${markupToken}" for card "${cardSlug}" ` +
         `under hero "${heroSlug}" in set "${setAbbr}", which is not one of the locked token ` +
         `forms: "[keyword:rescue:N]", "[keyword:reveal]", "[keyword:reveal:N]", ` +
-        `"[keyword:reveal-ko]", "[keyword:reveal-min:N]", or "[keyword:reveal-ko-or-draw:N]". ` +
-        `Fix the typo in the marker map, or — if a new token form is genuinely needed — ` +
+        `"[keyword:reveal-ko]", "[keyword:reveal-min:N]", "[keyword:reveal-ko-or-draw:N]", ` +
+        `"[keyword:reveal-cost-attack]", "[keyword:reveal-odd-draw]", or "[keyword:reveal-attack-choose:N]" ` +
+        `(N ≥ 1). Fix the typo in the marker map, or — if a new token form is genuinely needed — ` +
         `update DECISIONS.md first (a separate WP) and then this validation.`,
     );
     process.exit(1);
@@ -509,6 +511,44 @@ function suggestRevealToken(line) {
 }
 
 /**
+ * Returns true when an ability line is an in-scope reveal-attack-choose candidate.
+ * Requires: reveal anchor, [icon:attack], "equal to (its|that card's) cost", AND
+ * the "Discard it or put it back." choice phrase. The choice phrase is the
+ * distinguishing feature from plain reveal-cost-attack lines (D-22003).
+ *
+ * MUST be routed BEFORE isRevealCostAttackCandidate — overhorns-and-underhorns
+ * matches both patterns; reveal-attack-choose takes priority.
+ *
+ * @param {string} line - The ability line to test.
+ * @returns {boolean} True if the line is an in-scope reveal-attack-choose candidate.
+ */
+function isRevealAttackChooseCandidate(line) {
+  if (!/Reveal the top card of your deck\./i.test(line)) return false;
+  if (!line.includes('[icon:attack]')) return false;
+  if (!/equal to (?:its|that card's) cost/i.test(line)) return false;
+  if (!line.includes('Discard it or put it back.')) return false;
+  if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
+  if (line.includes('[keyword:reveal')) return false;
+  return true;
+}
+
+/**
+ * Determines the suggested markup token for an in-scope reveal-attack-choose line.
+ * Returns a high magnitude placeholder because the card text carries no explicit
+ * cost threshold — the curator adjusts the value in hero-ability-markers.json to
+ * match the physical card ruling (D-22003).
+ *
+ * @param {string} _line - The reveal-attack-choose ability line (unused).
+ * @returns {string} The markup token suggestion.
+ */
+function suggestRevealAttackChooseToken(_line) {
+  // why: no numeric threshold appears in the ability text; return a high
+  // placeholder so the row is easy to spot in --propose output. The curator
+  // replaces the magnitude with the correct value per D-22003 before applying.
+  return '[keyword:reveal-attack-choose:99]';
+}
+
+/**
  * Collects --propose candidate rows for one set's heroes. Scans every hero
  * card ability line and emits a row for each in-scope rescue or reveal match.
  *
@@ -547,6 +587,18 @@ function collectProposeRowsForSet(setAbbr, setData, rows) {
               suggestedToken,
             });
           }
+        } else if (isRevealAttackChooseCandidate(line)) {
+          // why: reveal-attack-choose routes BEFORE reveal-cost-attack because
+          // overhorns-and-underhorns matches both patterns; the choice phrase
+          // is the distinguishing feature (D-22003)
+          rows.push({
+            setAbbr,
+            heroSlug: hero.slug,
+            cardSlug: card.slug,
+            abilityIndex,
+            abilityText: line,
+            suggestedToken: suggestRevealAttackChooseToken(line),
+          });
         } else if (isRevealCostAttackCandidate(line)) {
           rows.push({
             setAbbr,

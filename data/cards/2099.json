@@ -518,7 +518,7 @@
           "attack": "3+",
           "recruit": null,
           "abilities": [
-            "Reveal the top card of your deck. You get +[icon:attack] equal to that card's cost. Discard it or put it back.",
+            "Reveal the top card of your deck. You get +[icon:attack] equal to that card's cost. Discard it or put it back. [keyword:reveal-attack-choose:4]",
             "[team:marvel-knights]: Then do the same thing with the bottom card of your deck."
           ]
         }

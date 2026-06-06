@@ -6,6 +6,9 @@
     "Web-Shooters (core/spider-man) is NOT included — WP-215 already applied rescue:1 and reveal markup to those two lines. The idempotence guard would skip them, but we omit them from the map to keep it authoritative for WP-216 additions only.",
     "Amendment (inline, EC-248 fold): AC #11 and EC §After Completing originally asserted grep count=1 for rescue:1 in core.json. Execution confirmed core/black-widow/mission-accomplished is an in-scope candidate (discovered by --propose). Count updated to 2 (web-shooters from WP-215 + mission-accomplished from WP-216). Corrected in WP-216 AC #11 and EC-248 §After Completing as part of Commit A."
   ],
+  "2099": [
+    { "heroSlug": "ravage-2099", "cardSlug": "overhorns-and-underhorns", "abilityIndex": 0, "markupToken": "[keyword:reveal-attack-choose:4]" }
+  ],
   "3dtc": [
     { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
   ],
