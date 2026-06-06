@@ -16,8 +16,8 @@
 > the WP-215/216 token vocabulary:
 >
 > 1. **Reveal-KO-if-zero:** "Reveal the top card of your deck. If it costs 0, KO it."
->    — 3 clean hero cards across cvwr and wwhk. Zero executor case; peek deck
->    top, move to KO pile if cost = 0, otherwise put back face-down.
+>    — 3 clean hero cards across cvwr and wwhk. Peek deck top; KO if cost = 0;
+>    card stays on deck (no movement) if cost ≠ 0.
 >
 > 2. **Reveal-draw-at-least:** "Reveal the top card of your deck. If it costs N
 >    or more, draw it." — 2 clean hero cards across cvwr and wwhk. Opposite
@@ -59,9 +59,14 @@ Fight:-timed reveals) are deferred and documented.
   uses `MVP_KEYWORDS` set to gate dispatch; new keywords must be added to that set.
 - `G.cardStats[extId].cost` is the authoritative recruit cost for all hero deck
   cards at runtime (WP-021 / D-21502).
-- `G.heroDeck[playerID]` is the player's draw pile; `[0]` is the top card.
-- KO destination: `G.piles.ko` (or equivalent KO pile used by existing `'ko'`
-  executor case — verify at execution time).
+- `G.playerZones[playerID].deck` is the player's draw pile; `[0]` is the top
+  card. **Not** `G.heroDeck` — verified against existing `'reveal'` case in
+  `heroEffects.execute.ts`.
+- KO destination: `G.ko` mutated via `koCard(G.ko, cardId)`, imported from
+  `'../board/ko.logic.js'` — verified against existing `'ko'` case.
+- Draw mutation: `moveCardFromZone(playerZones.deck, playerZones.hand, topCardId)`
+  then `playerZones.deck = moveResult.from; playerZones.hand = moveResult.to` —
+  verified against existing `'reveal'` case. Imported from `'../moves/zoneOps.js'`.
 - Baseline: `ac739d3` on `origin/main` (2026-06-05) — WP-216 + governance landed.
 
 ---
@@ -106,21 +111,31 @@ Fight:-timed reveals) are deferred and documented.
    `heroEffects.execute.ts`.
 
 4. **Add `'reveal-ko'` executor branch** in `executeSingleEffect()`:
-   - Peek `G.heroDeck[playerID][0]` (deck top, if present).
-   - Look up `G.cardStats[topCardExtId]?.cost`.
-   - If cost = 0, move the card from deck top to the KO pile (same destination
-     as the existing `'ko'` case — verify the actual pile name at execution time).
-   - If cost ≠ 0 or deck is empty, no mutation (silent no-op).
+   - Access `G.playerZones[playerID]`; guard if missing.
+   - Guard on `playerZones.deck.length === 0` → silent no-op (D-21502 precedent).
+   - Read `topCardId = playerZones.deck[0]`; guard if falsy.
+   - The card is NEVER removed from the deck during evaluation — read `[0]` only;
+     no intermediate pop/push.
+   - Look up `cardStats = G.cardStats[topCardId]`; guard if undefined → no-op
+     (same D-21502 pattern as existing `'reveal'` case).
+   - If `cardStats.cost === 0`: `G.ko = koCard(G.ko, topCardId)` then remove
+     topCardId from `playerZones.deck` via `moveCardFromZone`.
+   - If `cardStats.cost !== 0`: no mutation. Card remains at `playerZones.deck[0]`.
    - `magnitude` is unused for `reveal-ko`; skip the magnitude pre-check gate.
    - Add a `// why:` comment: `// why: reveal-ko peeks one card and KOs it
      only when cost = 0; deck empty is a silent no-op per D-21502 precedent`
 
 5. **Add `'reveal-min'` executor branch** in `executeSingleEffect()`:
-   - Peek `G.heroDeck[playerID][0]` (deck top, if present).
-   - Look up `G.cardStats[topCardExtId]?.cost`.
-   - If cost ≥ `effect.magnitude`, draw it (move from deck top to player hand —
-     same mutation as the existing `'reveal'` case when threshold passes).
-   - If cost < `effect.magnitude` or deck is empty, no mutation (silent no-op).
+   - Access `G.playerZones[playerID]`; guard if missing.
+   - Guard on `playerZones.deck.length === 0` → silent no-op (D-21502 precedent).
+   - Read `topCardId = playerZones.deck[0]`; guard if falsy.
+   - The card is NEVER removed from the deck during evaluation — read `[0]` only;
+     no intermediate pop/push.
+   - Look up `cardStats = G.cardStats[topCardId]`; guard if undefined → no-op.
+   - If `cardStats.cost >= effect.magnitude`: `moveCardFromZone(playerZones.deck,
+     playerZones.hand, topCardId)`; assign `playerZones.deck = result.from;
+     playerZones.hand = result.to`.
+   - If `cardStats.cost < effect.magnitude`: no mutation. Card remains at deck top.
    - `magnitude` is required for `reveal-min`; apply the existing magnitude
      pre-check gate (undefined magnitude → skip, same as `draw`/`attack`/`recruit`).
    - Add a `// why:` comment: `// why: reveal-min draws the card only when cost
@@ -286,19 +301,40 @@ export type HeroKeyword =
 
 ### Executor contracts (D-21701, D-21702)
 
+**State access (locked — verified against `'reveal'` and `'ko'` cases):**
+- Deck: `G.playerZones[playerID].deck` (array; `[0]` = top card)
+- Cost lookup: `G.cardStats[topCardId]?.cost`
+- KO mutation: `G.ko = koCard(G.ko, topCardId)` — import `koCard` from `'../board/ko.logic.js'`
+- Draw mutation: `moveCardFromZone(playerZones.deck, playerZones.hand, topCardId)`;
+  assign `playerZones.deck = result.from; playerZones.hand = result.to`
+  — import `moveCardFromZone` from `'../moves/zoneOps.js'`
+
+**Card-stay-on-deck invariant:**
+- The revealed card is NEVER removed from the deck unless the condition passes.
+- No intermediate zone transfer occurs. `deck[0]` is read in place; `moveCardFromZone`
+  is called ONLY when KO or draw actually happens.
+
 **`reveal-ko`:**
-- Deck empty → silent no-op (no error, no mutation)
-- `G.cardStats[topExtId]` missing → silent no-op (defensive; cards in deck must have stats but guard anyway)
-- cost = 0 → move `topExtId` from `G.heroDeck[playerID]` head to KO pile
-- cost > 0 → silent no-op (card stays on deck top, face-down)
+- `G.playerZones[playerID]` missing → silent no-op
+- Deck empty → silent no-op (D-21502)
+- `G.cardStats[topCardId]` missing → silent no-op (D-21502)
+- cost = 0 → KO: `koCard` + remove from deck via `moveCardFromZone`
+- cost > 0 → silent no-op; card stays at `deck[0]`
 - `magnitude` is not used; never gate on magnitude for this case
 
 **`reveal-min`:**
 - `magnitude` = undefined → skip (same pre-check gate as `draw`/`attack`/`recruit`)
-- Deck empty → silent no-op
-- `G.cardStats[topExtId]` missing → silent no-op
-- cost ≥ magnitude → move `topExtId` from `G.heroDeck[playerID]` head to player hand
-- cost < magnitude → silent no-op
+- `G.playerZones[playerID]` missing → silent no-op
+- Deck empty → silent no-op (D-21502)
+- `G.cardStats[topCardId]` missing → silent no-op (D-21502)
+- cost ≥ magnitude → draw: `moveCardFromZone(deck, hand, topCardId)`
+- cost < magnitude → silent no-op; card stays at `deck[0]`
+
+**Mutual exclusivity:**
+- `reveal`, `reveal-ko`, and `reveal-min` are mutually exclusive executor types.
+- A parsed effect resolves to exactly one of these types per token.
+- A single ability line may carry at most one `reveal-*` token; detection functions
+  must return false if the line already contains any `[keyword:reveal` token.
 
 Both executors do NOT trigger deck reshuffle (same D-21502 precedent as `'reveal'`).
 
@@ -460,6 +496,13 @@ every replay. No new randomness introduced.
 19. Every new `_deferred` entry in `hero-ability-markers.json` has a non-empty
     `reason` field.
 20. `docs/ai/DECISIONS.md` D-21701..D-21704 all Active with `Landed:` commit.
+21. `reveal-ko` with `G.cardStats[topCardId]` missing (no registry entry) → no mutation
+    (confirmed by test; covers SHIELD starter card edge case per D-21502).
+22. `reveal-min` with `G.cardStats[topCardId]` missing → no mutation (confirmed by test).
+23. After `reveal-ko` fires on a cost-0 card: `G.playerZones[playerID].deck.length`
+    decreases by 1; `G.ko.length` increases by 1 (deck size invariant, confirmed by test).
+24. After `reveal-ko` does NOT fire (cost > 0): `G.playerZones[playerID].deck.length`
+    is unchanged (confirmed by test).
 
 ---
 

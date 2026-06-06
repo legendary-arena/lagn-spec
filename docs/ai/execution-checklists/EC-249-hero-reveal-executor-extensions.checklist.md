@@ -26,6 +26,10 @@
 - `reveal-min` executor: cost ≥ magnitude → draw; cost < magnitude → no-op; empty deck → no-op; undefined magnitude → skip
 - Both executors: no deck reshuffle (D-21502 precedent); no throw on empty deck
 - `assertValidToken` rejects `[keyword:reveal-ko:0]` (no suffix allowed) and `[keyword:reveal-min]` (suffix required)
+- Deck access: `G.playerZones[playerID].deck` (NOT `G.heroDeck`) — `deck[0]` is top card
+- KO mutation: `G.ko = koCard(G.ko, topCardId)` — import from `'../board/ko.logic.js'`
+- Draw mutation: `moveCardFromZone(playerZones.deck, playerZones.hand, topCardId)`, then assign both — import from `'../moves/zoneOps.js'`
+- Card-stay-on-deck: card is NEVER removed from deck unless condition passes; no intermediate pop/reinsert
 - 5 in-scope cards: cvwr/cloak-dagger/darkness/0 (reveal-ko), cvwr/cloak-dagger/light/0 (reveal-min:1), cvwr/hercules/prince-of-power/0 (reveal-ko), wwhk/bruce-banner/dangerous-testing/0 (reveal-ko), wwhk/rick-jones/captain-marvel/0 (reveal-min:3)
 - Run `--propose` BEFORE curating map entries — confirm slugs/indices match card data
 
@@ -36,6 +40,7 @@
 - Deck-top access: use `G.heroDeck[playerID][0]` (or whatever the existing `'reveal'` case uses — verify and match)
 - `reveal-ko` must NOT apply the magnitude pre-check gate (`effect.magnitude` check bypassed, same as `'ko'` and `'rescue'`)
 - `reveal-min` MUST apply the magnitude pre-check gate (undefined magnitude → skip, same as `'draw'`)
+- `reveal`, `reveal-ko`, `reveal-min` are mutually exclusive per line — detection functions return false if line already contains any `[keyword:reveal` token
 - No `.reduce()` in executor branches
 - `apply-effect-markers.mjs` and `villain-effect-markers.json` must remain byte-identical (do NOT touch)
 
@@ -83,3 +88,4 @@
 - `reveal-ko` fires on a cost-1 card — magnitude pre-check gate was incorrectly applied (it strips cases with undefined magnitude; `reveal-ko` skips the gate, so a cost-1 card should still hit the executor but return no-op from the cost check)
 - `assertValidToken` accepts `[keyword:reveal-ko:0]` — regex not tight enough; the `reveal-ko` branch must require end-of-string after the `]` with no suffix
 - `Updated` count on first apply ≠ 5 — at least one map entry silently skipped; check heroSlug/cardSlug/abilityIndex against `--propose` output before closing
+- `G.playerZones[playerID].deck` used instead of any `G.heroDeck` reference — if you see `G.heroDeck` in your executor code, it's wrong; the correct path is `G.playerZones`
