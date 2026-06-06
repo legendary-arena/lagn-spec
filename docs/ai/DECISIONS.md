@@ -23193,8 +23193,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** "You get +[icon:attack] equal to its cost" is a standalone unconditional reveal effect. The cost-grant reads directly from `G.cardStats[topCardId].cost` (setup-time resolved). No zone mutation means simpler invariants and no `moveResult.found` guard needed for the attack path.
 
 **Packet:** WP-219 / EC-251.
-**Drafted:** 2026-06-05. **Landed:** (execution session).
-**Status:** Active (post-execution)
+**Drafted:** 2026-06-05. **Landed:** Drafted 2026-06-05; not yet landed.
+**Status:** Drafted (not yet landed)
 
 ---
 
@@ -23205,8 +23205,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** Standard mathematical odd/even definition. The `cost % 2 !== 0` form is preferred over `=== 1` because it is correct for all non-negative integers and matches standard JS semantics. Zero is even by the printed card text ("if its cost is odd, draw it" — cost 0 is not odd).
 
 **Packet:** WP-219 / EC-251.
-**Drafted:** 2026-06-05. **Landed:** (execution session).
-**Status:** Active (post-execution)
+**Drafted:** 2026-06-05. **Landed:** Drafted 2026-06-05; not yet landed.
+**Status:** Drafted (not yet landed)
 
 ---
 
@@ -23220,8 +23220,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** These patterns require either player-choice routing or multi-branch compound executor support — neither is in scope for the v1 reveal executor family.
 
 **Packet:** WP-219 / EC-251.
-**Drafted:** 2026-06-05. **Landed:** (execution session).
-**Status:** Active (post-execution)
+**Drafted:** 2026-06-05. **Landed:** Drafted 2026-06-05; not yet landed.
+**Status:** Drafted (not yet landed)
 
 ---
 

@@ -71,6 +71,43 @@ After this packet:
 
 ---
 
+## Non-Negotiable Constraints
+
+### Engine
+- No `.reduce()` in zone operations or effect application — use `for` / `for...of` loops.
+- Zone mutations MUST go through `zoneOps.ts` helpers (`moveCardFromZone`).
+- `reveal-cost-attack` MUST NOT mutate any zone — only `G.turnEconomy.attack` is written.
+- `HERO_KEYWORDS` canonical array and `HeroKeyword` union must stay in parity at all times.
+  Drift-detection test must pass at exactly 13 after this packet.
+- `NO_MAGNITUDE_KEYWORDS` is the sole gate for magnitude-exempt forms — no ad hoc chained
+  `keyword !== X` conditions for this gate.
+- Both executors emit silent no-ops on empty deck, missing stats, or missing turnEconomy.
+  No throw. No log.
+- All `ctx.events.setPhase()` and `ctx.events.endTurn()` calls require a `// why:` comment
+  (none introduced by this packet; carried as standing rule).
+
+### Tooling
+- ESM-only, Node v22+ — no `require()`, no `node-fetch`.
+- No `@legendary-arena/*` imports in `scripts/convert-cards/`. Offline Shared Tooling only.
+- All detection functions MUST require the reveal anchor `/Reveal the top card of your deck\./i`
+  as a positive match condition.
+- All detection functions MUST use regex-based, case-insensitive matching.
+- `assertValidToken()` must reject `[keyword:reveal-cost-attack:2]` and `[keyword:reveal-odd-draw:1]`.
+
+### Data
+- Only surgical token appends — no structural JSON changes to `data/cards/*.json`.
+- Run `--propose` before editing `hero-ability-markers.json` — never skip.
+- `hero-ability-markers.json` entries added to existing set arrays (do not replace or
+  restructure).
+
+### Locked Contract Values (do not re-derive at execution time; read EC-251 instead)
+- Odd check: `cardStats.cost % 2 !== 0` — never `=== 1`
+- Odd-draw move assignment: `playerZones.deck = moveResult.from; playerZones.hand = moveResult.to`
+  when `moveResult.found === true`
+- Attack mutation: `G.turnEconomy.attack += cardStats.cost` — no zone mutation
+
+---
+
 ## Context (Read First)
 
 1. `packages/game-engine/src/hero/heroEffects.execute.ts` — `'attack'` case (canonical
@@ -93,6 +130,7 @@ After this packet:
 8. `data/cards/msis.json` — wanda-vision/witchcraft abilityIndex=0
 9. `docs/ai/DECISIONS.md` — D-21901..D-21903 (draft in this session)
 10. `docs/ai/REFERENCE/00.6-code-style.md` — human-style code constraints
+11. `docs/ai/ARCHITECTURE.md` — Layer Boundary; engine vs Shared Tooling; `G` is runtime-only
 
 ---
 
@@ -511,3 +549,143 @@ pnpm -r build
 - [ ] `docs/ai/DECISIONS.md` D-21901..D-21903 Active.
 - [ ] `docs/ai/STATUS.md`, `WORK_INDEX.md`, `EC_INDEX.md` updated.
 - [ ] No files outside §Files Expected to Change were modified.
+
+---
+
+## Pre-Flight Report
+
+**Target WP:** WP-219
+**EC:** EC-251
+**Pre-Flight Date:** 2026-06-05
+**Class:** Behavior / State Mutation (mutates `G.turnEconomy.attack`, `playerZones.deck`, `playerZones.hand`)
+
+### Vision Sanity Check
+
+- **Vision clauses touched:** §22 Deterministic Eval — both executors read `G.cardStats[topCardId].cost` (setup-time resolved integer); no randomness introduced.
+- **Conflict assertion:** No conflict: this WP preserves all touched clauses.
+- **Non-Goal proximity:** N/A — WP touches no monetization or competitive surface.
+- **Determinism preservation:** Confirmed. All cost comparisons read `G.cardStats[topCardId].cost` (setup-time populated, never mutated by executors). No `Math.random`, `Date.now`, or `ctx.random.*` introduced. No new randomness.
+- **`## Vision Alignment` block:** N/A — `00.3 §17.1` triggers do not apply (no scoring, PAR, replay RNG, identity, leaderboard, or monetization surface).
+
+### Dependency & Sequencing Check
+
+| WP | Status | Notes |
+|---|---|---|
+| WP-218 | ✅ Done 2026-06-05 | commit `9c9215b`; `reveal-ko-or-draw`, `HERO_KEYWORDS` = 11, tests = 1133 all landed |
+
+### Dependency Contract Verification
+
+- [x] `moveCardFromZone(from, to, cardId)` — pure helper in `zoneOps.ts`; returns `{from, to, found}`; used by WP-218 `reveal-ko-or-draw` draw branch ✅
+- [x] `G.cardStats[topCardId].cost` — `CardStatEntry.cost: number`; setup-time populated; accessed by `reveal-min` and `reveal-ko-or-draw` in WP-217/218 ✅
+- [x] `G.turnEconomy.attack` — mutated by existing `'attack'` executor case; `G.turnEconomy` may be undefined; guard required (confirmed in WP §Assumes) ✅
+- [x] `HERO_KEYWORDS` array + `HeroKeyword` union — exists in `heroKeywords.ts`; WP-218 extended both to exactly 11 entries ✅
+- [x] `MVP_KEYWORDS` Set — exists in `heroEffects.execute.ts`; WP-218 extended it to include `reveal-ko-or-draw` ✅
+- [x] `NO_MAGNITUDE_KEYWORDS` — WP scope explicitly handles creation-if-absent; §Assumes documents the extraction obligation ✅
+- [x] `apply-hero-ability-markers.mjs` — `isRevealKoOrDrawCandidate` added in WP-218; `VALID_TOKEN_PATTERN` and routing structure established; extension-only ✅
+- [x] `data/cards/core.json`, `data/cards/msis.json` — both files exist on disk ✅
+- [x] No new types introduced that cross package boundaries — both new keywords are `HeroKeyword` string literals ✅
+
+### Structural Readiness
+
+All 12 source files in §Files Expected to Change exist on disk. No new directories created.
+`NO_MAGNITUDE_KEYWORDS` creation pattern is scoped inside `heroEffects.execute.ts` — no new file.
+`VALID_TOKEN_PATTERN` extension is additive-only; structure established by WP-215 through WP-218.
+
+### Mutation Boundary Confirmation
+
+- `reveal-cost-attack`: only `G.turnEconomy.attack` mutated; zero zone mutations; `playerZones.deck` MUST be identical after execution
+- `reveal-odd-draw` odd branch: `playerZones.deck` shrinks by 1; `playerZones.hand` grows by 1; both assigned from `moveResult.from` and `moveResult.to`
+- `reveal-odd-draw` even branch: no mutation
+- No mutations to `G.piles`, `G.villainDeck`, `G.counters`, `G.hookRegistry`, or any other player's zones
+- `G.cardStats` is read-only; no new `G` fields introduced
+
+### Scope Lock
+
+12 files + EC-251 + this report. Git allowlist is closed. Any file not in §Files Expected to Change is forbidden. `git diff --name-only` checked after completion.
+
+### Test Expectations
+
+| Suite | Before | Expected After | Delta |
+|---|---|---|---|
+| `game-engine` | 1133 | ≥ 1144 | +11 (5 cost-attack cases + 6 odd-draw cases) |
+
+Drift-detection test: expects exactly **13** keywords (was 11).
+
+### Risk Review
+
+- `G.turnEconomy` guard risk — `G.turnEconomy` may be undefined in some test contexts; test must initialize it or the guard fires silently. Risk: low — `makeMockCtx` pattern from WP-218 test suite covers this.
+- Cost-0 attack grant ambiguity — AC-5 asserts `attack += 0`; observable as "attack value unchanged." Test should assert the exact expected value, not infer from mutation absence. Risk: documentation clarity only; AC-5 is correctly written.
+- `NO_MAGNITUDE_KEYWORDS` extraction — if the set doesn't yet exist, WP must create it by extracting the current chained exclusions. Risk: low — §Assumes and §Non-Negotiable Constraints both cover this obligation.
+- Detection function reach — `isRevealCostAttackCandidate` and `isRevealOddDrawCandidate` target distinct phrases (`[icon:attack] equal to its cost` vs `cost is odd`); no corpus overlap expected. Risk: low.
+
+### Verdict
+
+**READY TO EXECUTE**
+
+All dependencies met. Scope locked. Contract verified. Test delta quantified. No blocking risks.
+
+---
+
+## Copilot Check
+
+**Date:** 2026-06-05
+**Pre-flight verdict under review:** READY TO EXECUTE (2026-06-05)
+**WP class:** Behavior / State Mutation — copilot check is mandatory.
+
+### Overall Judgment
+
+**PASS**
+
+Pre-flight READY verdict stands. WP-219 is tightly scoped (8 source files + 4 governance). Both new executors follow the established `reveal-ko-or-draw` draw pattern exactly. Reveal anchor requirement closes the detection-function false-positive class. All 30 issues scanned; one minor RISK surfaced (issue 22) — documentation clarity only, no scope change required.
+
+### Findings (non-PASS items only)
+
+**22. [RISK] Cost-0 attack grant test assertion** — AC-5 asserts "`G.turnEconomy.attack` increases by 0; deck unchanged." A poorly-written test could misread this as "no-op" and pass vacuously (e.g., asserting `attack >= initialAttack` instead of `attack === initialAttack + 0`). The distinction is subtle but real: the executor fires and reads cost; the guard does NOT fire. The WP prose covers this ("executor fires; economy is touched even if by zero"), but a test author relying on the phrase "increases by 0" might implement a weaker assertion.
+FIX: EC-251 §Locked Values already specifies `G.turnEconomy.attack += cardStats.cost` as the canonical form. The test setup should record `const attackBefore = G.turnEconomy.attack` and assert `G.turnEconomy.attack === attackBefore` (for cost-0) rather than checking delta > 0. This is scope-neutral. Added to Common Failure Smells consideration — already covered by EC-251 §Common Failure Smells "G.turnEconomy.attack unchanged after cost-3 reveal" smell (the inverse).
+
+All other 29 issues: PASS.
+
+Notable strong points:
+- Issue 3 (Immer mutation vs pure helpers): `moveCardFromZone` returns new arrays; executor assigns into Immer draft — pattern correct and consistent with WP-218.
+- Issue 4 (contract drift): HERO_KEYWORDS array + HeroKeyword union updated atomically; drift-detection test asserts exactly 13.
+- Issue 11 (tests validate invariants): deck[0] identity (AC-25), topCardId-in-hand (AC-26), deck-length preservation, all guard paths covered.
+- Issue 21 (magnitude gate): `NO_MAGNITUDE_KEYWORDS` Set replaces brittle chained exclusions; both new keywords included.
+- Issue 27 (reveal anchor): required in both new detection functions; closes villain-line false-positive class.
+
+### Mandatory Governance Follow-ups
+
+- DECISIONS.md: D-21901, D-21902, D-21903 — drafted 2026-06-05; land at execution.
+
+### Pre-Flight Verdict Disposition
+
+- [x] CONFIRM — Pre-flight READY TO EXECUTE verdict stands. Session prompt generation authorized.
+
+---
+
+## Lint Gate Self-Review
+
+**Date:** 2026-06-05 | **Verdict: PASS** (all applicable sections resolved)
+
+| § | Title | Result | Notes |
+|---|---|---|---|
+| §1 | Work Packet Structure | PASS | All 10 required sections present and non-empty, including `## Non-Negotiable Constraints` |
+| §2 | Non-Negotiable Constraints | PASS | No `.reduce()` in zone ops; zoneOps helpers for zone mutation; HERO_KEYWORDS parity; ESM/Node v22; no `@legendary-arena` imports in tooling; `NO_MAGNITUDE_KEYWORDS` set gate; reveal anchor in all detection functions |
+| §3 | Prerequisites | PASS | WP-218 listed with commit `9c9215b`; D-21801..D-21803 cited; baseline 1133 tests cited; `G.turnEconomy.attack` mutation grounded in WP-218 context item |
+| §4 | Context References | PASS | 11 context items; `ARCHITECTURE.md` added as item 11; `heroEffects.execute.ts` `'attack'` case listed as canonical `turnEconomy` pattern reference |
+| §5 | Output Completeness | PASS | 12 files under §Files Expected to Change with change type |
+| §6 | Naming Consistency | PASS | `reveal-cost-attack`, `reveal-odd-draw`, `isRevealCostAttackCandidate`, `isRevealOddDrawCandidate`, `NO_MAGNITUDE_KEYWORDS` consistent throughout |
+| §7 | Dependency Discipline | PASS | No new npm deps; existing `moveCardFromZone` and `zoneOps.ts` helpers only |
+| §8 | Architectural Boundaries | PASS | Engine changes in `packages/game-engine` only; tooling in `scripts/convert-cards/` (Shared Tooling); data in `data/cards/` only; no cross-layer imports |
+| §9 | Windows Compatibility | N/A | Node built-ins only; no Windows-specific paths or APIs |
+| §10 | Environment Variable Hygiene | N/A | No env vars touched |
+| §11 | Authentication Clarity | N/A | No auth surface touched |
+| §12 | Test Quality | PASS | 11 new test cases; branches include cost-0 no-draw (even), cost-0 attack-grant (valid 0), empty-deck no-op, missing-stats no-op, undefined-turnEconomy no-op, deck[0] identity (AC-25), topCardId-in-hand (AC-26) |
+| §13 | Commands and Verification | PASS | 8 explicit commands with expected output; test count delta updated to ≥ 1144 |
+| §14 | Acceptance Criteria Quality | PASS | 26 items; all binary and observable; count exceeds 6–12 guideline but established precedent per WP-218 (24 ACs passed) |
+| §15 | Definition of Done | PASS | All governance files listed: DECISIONS.md, STATUS.md, WORK_INDEX.md, EC_INDEX.md |
+| §16 | Code Style | PASS | `// why: D-21901` and `// why: D-21902` on executor cases; `NO_MAGNITUDE_KEYWORDS` `// why:` comment specified; full-sentence `assertValidToken` error required; reveal anchor in detection functions |
+| §17 | Vision Alignment | N/A | Engine-only add of two executor keywords. No scoring, RNG, monetization, leaderboard, or competitive surface touched. No `## Vision Alignment` block required. |
+| §18 | Prose-vs-Grep Discipline | N/A | No API endpoint claims |
+| §19 | Bridge-vs-HEAD Staleness | PASS | Baseline commit `9c9215b` (WP-218) cited; HERO_KEYWORDS count of 11 quoted for pre-execution verification |
+| §20 | Funding Surface Gate | N/A | No monetization surface touched; engine-only changes |
+| §21 | API Endpoints Catalog | N/A | No HTTP endpoints added, modified, or removed |
