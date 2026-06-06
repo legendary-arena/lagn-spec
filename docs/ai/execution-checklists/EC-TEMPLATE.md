@@ -87,8 +87,14 @@ For each WP, extract:
   is binary; every item must be satisfied exactly
 - The WP is the **authoritative design document** — if the EC and WP conflict
   on design intent, the WP wins
-- ECs must be ≤ 60 non-empty content lines (excluding this header and
-  section titles)
+- ECs should **target ~60** non-empty content lines and **must not exceed 100**
+  (excluding the header block and section titles). The cap keeps the EC a
+  quick-reference, not a WP duplicate; it is not a per-line budget. Multi-file
+  engine-mutating ECs legitimately run ~70–85 (e.g., EC-251 ≈ 72, EC-252 ≈ 81).
+  An EC over ~100 lines is probably duplicating WP content and should be trimmed.
+  (Ceiling raised from a flat 60 by `SPEC` 2026-06-06 per the WP-220 audit: the 60
+  figure predated the reveal-executor EC family, and every shipped EC in that
+  lineage exceeded it — doc-vs-practice drift, not over-long ECs.)
 - Locked Values must be copied verbatim from the WP.
   If formatting or ordering differs, the EC is invalid.
 - Do not include narrative, rationale, or session context
