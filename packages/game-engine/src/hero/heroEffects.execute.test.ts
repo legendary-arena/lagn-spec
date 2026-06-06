@@ -12,7 +12,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { executeHeroEffects } from './heroEffects.execute.js';
 import { makeMockCtx } from '../test/mockCtx.js';
-import type { LegendaryGameState } from '../types.js';
+import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
 import type { HeroAbilityHook } from '../rules/heroAbility.types.js';
 
 // ---------------------------------------------------------------------------
@@ -37,6 +37,7 @@ function makeTestState(overrides?: {
   turnEconomyRecruit?: number;
   ko?: string[];
   cardStats?: Record<string, { attack: number; recruit: number; cost: number; fightCost: number; fightCostMode: 'static' | 'dynamic'; fightCostBase: number }>;
+  pendingHeroChoice?: PendingHeroChoice;
 }): LegendaryGameState {
   return {
     matchConfiguration: {
@@ -97,6 +98,7 @@ function makeTestState(overrides?: {
     hq: [null, null, null, null, null],
     lobby: { requiredPlayers: 1, ready: {}, started: false },
     heroAbilityHooks: overrides?.heroAbilityHooks ?? [],
+    ...(overrides?.pendingHeroChoice !== undefined ? { pendingHeroChoice: overrides.pendingHeroChoice } : {}),
   };
 }
 
@@ -1399,6 +1401,285 @@ describe('executeHeroEffects', () => {
       'deck should remain unchanged when cardStats entry is missing (AC-14).');
     assert.deepEqual(gameState.playerZones['0'].hand, [],
       'hand should remain empty when cardStats entry is missing (AC-14).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 48: reveal-attack-choose — cost-2 top card with magnitude-4: attack +2; pending set (AC-4)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose grants attack equal to card cost when cost <= magnitude; sets pendingHeroChoice; card stays at deck[0]', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      turnEconomyAttack: 0,
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 2,
+      'attack should increase by 2 when cost-2 card and magnitude-4 (cost <= magnitude) (AC-4).');
+    assert.notEqual(gameState.pendingHeroChoice, undefined,
+      'pendingHeroChoice must be set after executor fires (AC-4).');
+    assert.equal(gameState.pendingHeroChoice?.choiceType, 'discard-or-return',
+      'choiceType must be discard-or-return (AC-4).');
+    assert.equal(gameState.pendingHeroChoice?.cardId, 'hero-y',
+      'cardId must be the top card id (AC-4).');
+    assert.equal(gameState.pendingHeroChoice?.playerID, '0',
+      'playerID must match the active player (AC-4).');
+    assert.equal(gameState.playerZones['0']!.deck[0], 'hero-y',
+      'deck[0] must still be hero-y — card stays on deck until choice resolved (AC-4).');
+    assert.equal(gameState.playerZones['0']!.deck.length, 1,
+      'deck must be unchanged in length after reveal-attack-choose (AC-4).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 49: reveal-attack-choose — cost-5 top card with magnitude-4: attack unchanged; pending still set (AC-5)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose leaves attack unchanged when cost > magnitude; still sets pendingHeroChoice', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      turnEconomyAttack: 0,
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 5, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 0,
+      'attack must remain 0 when cost-5 > magnitude-4 (attack not granted) (AC-5).');
+    assert.notEqual(gameState.pendingHeroChoice, undefined,
+      'pendingHeroChoice must still be set even when attack grant does not fire (AC-5).');
+    assert.equal(gameState.playerZones['0']!.deck[0], 'hero-y',
+      'card must remain at deck[0] when cost exceeds magnitude (AC-5).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 50: reveal-attack-choose — cost-0 top card: attack +0; pending set (AC-6)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose grants 0 attack for cost-0 card; pendingHeroChoice still set', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['starter-agent'],
+      hand: [],
+      turnEconomyAttack: 2,
+      cardStats: {
+        'starter-agent': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 2,
+      'attack should remain 2 (cost-0 adds 0 to existing 2) when cost is 0 (AC-6).');
+    assert.notEqual(gameState.pendingHeroChoice, undefined,
+      'pendingHeroChoice must be set even when attack grant adds 0 (cost-0 is <= magnitude) (AC-6).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 51: reveal-attack-choose — empty deck: no-op; pendingHeroChoice NOT set (AC-7)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose is a no-op when deck is empty; pendingHeroChoice not set', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      turnEconomyAttack: 1,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 1,
+      'attack must remain unchanged when deck is empty (AC-7).');
+    assert.equal(gameState.pendingHeroChoice, undefined,
+      'pendingHeroChoice must NOT be set when deck is empty (AC-7).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 52: reveal-attack-choose — missing cardStats: no-op; pendingHeroChoice NOT set (AC-8)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose is a no-op when top card has no cardStats entry; pendingHeroChoice not set', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['unknown-card'],
+      cardStats: {},
+      turnEconomyAttack: 1,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 1,
+      'attack must remain unchanged when cardStats entry is missing (AC-8).');
+    assert.equal(gameState.pendingHeroChoice, undefined,
+      'pendingHeroChoice must NOT be set when cardStats entry is missing (AC-8).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 53: reveal-attack-choose — G.turnEconomy undefined: no-op; pendingHeroChoice NOT set (AC-9)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose is a no-op when G.turnEconomy is undefined; pendingHeroChoice not set', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+        },
+      ],
+    });
+
+    // Simulate missing turnEconomy — guard must fire BEFORE the pending assignment
+    (gameState as unknown as { turnEconomy: undefined }).turnEconomy = undefined as unknown as typeof gameState.turnEconomy;
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.strictEqual((gameState as unknown as { turnEconomy: unknown }).turnEconomy, undefined,
+      'G.turnEconomy should remain undefined after guard fires (AC-9).');
+    assert.equal(gameState.pendingHeroChoice, undefined,
+      'pendingHeroChoice must NOT be set when G.turnEconomy guard fires — guard ordering is load-bearing (AC-9).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 54: reveal-attack-choose — reject-second: second call with pending set is a no-op (AC-10)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose is a no-op when pendingHeroChoice is already set (reject-second policy)', () => {
+    const existingPending: PendingHeroChoice = {
+      choiceType: 'discard-or-return',
+      cardId: 'original-card',
+      playerID: '0',
+    };
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      turnEconomyAttack: 0,
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+        },
+      ],
+      pendingHeroChoice: existingPending,
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 0,
+      'attack must remain unchanged when reject-second guard fires (AC-10).');
+    assert.equal(gameState.pendingHeroChoice, existingPending,
+      'original pendingHeroChoice must be preserved; second call must not overwrite it (AC-10).');
+    assert.equal(gameState.pendingHeroChoice?.cardId, 'original-card',
+      'original cardId must be intact after reject-second no-op (AC-10).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 55: reveal-attack-choose — undefined magnitude: skipped via pre-check gate (AC-11)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose is skipped when magnitude is undefined', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.pendingHeroChoice, undefined,
+      'pendingHeroChoice must NOT be set when magnitude is undefined (AC-11).');
+    assert.equal(gameState.turnEconomy.attack, 0,
+      'attack must remain unchanged when magnitude is undefined (AC-11).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 56: reveal-attack-choose — magnitude-0: skipped via < 1 guard (AC-12)
+  // -------------------------------------------------------------------------
+  it('reveal-attack-choose is skipped when magnitude is 0 (zero threshold invalid)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-attack-choose'],
+          effects: [{ type: 'reveal-attack-choose', magnitude: 0 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.pendingHeroChoice, undefined,
+      'pendingHeroChoice must NOT be set when magnitude is 0 (< 1 guard fires) (AC-12).');
+    assert.equal(gameState.turnEconomy.attack, 0,
+      'attack must remain unchanged when magnitude is 0 (AC-12).');
   });
 
   // -------------------------------------------------------------------------

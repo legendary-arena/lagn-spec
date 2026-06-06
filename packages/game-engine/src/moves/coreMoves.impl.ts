@@ -137,6 +137,13 @@ export function endTurn({ G, playerID, events }: MoveContext): void {
     return;
   }
 
+  // why: turn cannot end while a player-choice reveal is pending; the player must
+  // call resolveHeroChoice first. Guard precedes the zone sweep so a blocked turn
+  // does not discard the hand (D-22002)
+  if (G.pendingHeroChoice !== undefined) {
+    return;
+  }
+
   // Step 3: Mutate G
   const playerZones = G.playerZones[playerID];
   if (!playerZones) {

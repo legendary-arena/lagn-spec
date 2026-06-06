@@ -102,12 +102,12 @@ describe('LegendaryGame', () => {
     );
   });
 
-  it('defines moves: advanceStage, drawCards, endTurn, fightMastermind, fightVillain, playCard, recruitHero, and revealVillainCard', () => {
+  it('defines moves: advanceStage, drawCards, endTurn, fightMastermind, fightVillain, playCard, recruitHero, resolveHeroChoice, and revealVillainCard', () => {
     const moveNames = Object.keys(LegendaryGame.moves ?? {});
     assert.deepStrictEqual(
       moveNames.sort(),
-      ['advanceStage', 'drawCards', 'endTurn', 'fightMastermind', 'fightVillain', 'playCard', 'recruitHero', 'revealVillainCard'],
-      'LegendaryGame must define exactly 8 moves',
+      ['advanceStage', 'drawCards', 'endTurn', 'fightMastermind', 'fightVillain', 'playCard', 'recruitHero', 'resolveHeroChoice', 'revealVillainCard'],
+      'LegendaryGame must define exactly 9 moves',
     );
   });
 

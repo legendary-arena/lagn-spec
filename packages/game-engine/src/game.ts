@@ -5,6 +5,7 @@ import { buildInitialGameState } from './setup/buildInitialGameState.js';
 import { TURN_STAGES } from './turn/turnPhases.types.js';
 import { advanceTurnStage } from './turn/turnLoop.js';
 import { drawCards, playCard, endTurn } from './moves/coreMoves.impl.js';
+import { resolveHeroChoice } from './moves/heroChoice.resolve.js';
 import { executeRuleHooks } from './rules/ruleRuntime.execute.js';
 import { applyRuleEffects } from './rules/ruleRuntime.effects.js';
 import { DEFAULT_IMPLEMENTATION_MAP } from './rules/ruleRuntime.impl.js';
@@ -76,6 +77,10 @@ type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
  * @param context - boardgame.io move context with G and events.
  */
 function advanceStage({ G, events }: MoveContext): void {
+  // why: turn cannot end while a player-choice reveal is pending; at cleanup,
+  // advanceTurnStage would otherwise call events.endTurn() and bypass the
+  // endTurn-move guard (D-22002)
+  if (G.currentStage === 'cleanup' && G.pendingHeroChoice !== undefined) { return; }
   advanceTurnStage(G, { events: { endTurn: () => events.endTurn() } });
 }
 
@@ -287,6 +292,7 @@ export const LegendaryGame: Game<LegendaryGameState, Record<string, unknown>, Ma
     fightVillain: { move: fightVillain, client: false },
     recruitHero: { move: recruitHero, client: false },
     fightMastermind: { move: fightMastermind, client: false },
+    resolveHeroChoice: { move: resolveHeroChoice, client: false },
   },
 
   // why: phase `next` fields declare the intended linear progression

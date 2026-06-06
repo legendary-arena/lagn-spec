@@ -36,6 +36,7 @@ export type HeroKeyword =
   | 'reveal-ko-or-draw' // why: D-21802
   | 'reveal-cost-attack' // why: D-21901
   | 'reveal-odd-draw' // why: D-21902
+  | 'reveal-attack-choose' // why: D-22003
   | 'conditional';
 
 // why: canonical array for drift-detection. Must match HeroKeyword
@@ -58,6 +59,7 @@ export const HERO_KEYWORDS: readonly HeroKeyword[] = [
   'reveal-ko-or-draw', // why: D-21802
   'reveal-cost-attack', // why: D-21901
   'reveal-odd-draw', // why: D-21902
+  'reveal-attack-choose', // why: D-22003
   'conditional',
 ] as const;
 

@@ -401,6 +401,22 @@ export type MatchConfiguration = MatchSetupConfig;
 export type PlayerId = string;
 
 /**
+ * Pending player-choice state set by the reveal-attack-choose executor.
+ *
+ * Cleared by resolveHeroChoice. Must be undefined at every turn-end.
+ * Absent (undefined) means no pending choice. Second reveal-attack-choose
+ * call while this field is set is rejected (reject-second, D-22001).
+ */
+export interface PendingHeroChoice {
+  /** Discriminant for future extensibility (D-22001). */
+  choiceType: 'discard-or-return';
+  /** The revealed card still at deck[0] until the choice is resolved. */
+  cardId: CardExtId;
+  /** Only this player's resolveHeroChoice call is accepted. */
+  playerID: string;
+}
+
+/**
  * Minimal setup-time context interface for deterministic operations.
  *
  * Captures what buildInitialGameState needs from the boardgame.io setup
@@ -474,6 +490,12 @@ export interface LegendaryGameState {
   // consumed; reset to false each turn by the play phase onBegin hook.
   /** Whether the start-of-turn villain reveal has been consumed this turn. */
   villainRevealedThisTurn?: boolean;
+
+  // why: pending player-choice state set by reveal-attack-choose executor (D-22001).
+  // Must be undefined at every turn-end. Optional so existing test state literals
+  // do not need updating. Absent (undefined) = no pending choice.
+  /** Pending hero reveal choice awaiting player resolution (WP-220 / D-22001). */
+  pendingHeroChoice?: PendingHeroChoice | undefined;
 
   // why: playerZones is keyed by player ID string (boardgame.io uses "0", "1",
   // etc.). Each player has exactly 5 zone arrays. Only deck is non-empty after

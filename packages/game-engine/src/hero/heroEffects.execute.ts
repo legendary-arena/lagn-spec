@@ -10,7 +10,7 @@
  * addResources, koCard.
  */
 
-import type { LegendaryGameState } from '../types.js';
+import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
 import type { CardExtId } from '../state/zones.types.js';
 import type { HeroAbilityHook, HeroEffectDescriptor } from '../rules/heroAbility.types.js';
 import { getHooksForCard } from '../rules/heroAbility.types.js';
@@ -29,9 +29,10 @@ import { koCard } from '../board/ko.logic.js';
 // why: WP-215 adds 'rescue' and 'reveal' to the executed set. WP-217 adds
 // 'reveal-ko' and 'reveal-min'. WP-218 adds 'reveal-ko-or-draw' (D-21802).
 // WP-219 adds 'reveal-cost-attack' (D-21901) and 'reveal-odd-draw' (D-21902).
+// WP-220 adds 'reveal-attack-choose' (D-22003).
 // 'wound' and 'conditional' remain deferred — they require targeting UI or
 // additional game systems not yet implemented.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw']);
+const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose']);
 
 // why: these keywords have no external magnitude; the pre-check gate must not
 // reject them for missing magnitude — they use internal cost or parity logic
@@ -418,6 +419,37 @@ function executeSingleEffect(
         }
       }
       // cost is even (including 0): no-op
+      break;
+    }
+    case 'reveal-attack-choose': {
+      // why: reveal-attack-choose peeks deck top; grants attack equal to cost when
+      // cost <= magnitude; then stores a pending choice (discard or return) that
+      // the player must resolve via resolveHeroChoice before the turn can end (D-22003)
+      if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { break; }
+      // why: reject-second — a pending choice is never silently overwritten; the first
+      // choice's data integrity is preserved until the player resolves it (D-22001)
+      if (G.pendingHeroChoice !== undefined) { break; }
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) { break; }
+      if (playerZones.deck.length === 0) { break; }
+      const topCardId = playerZones.deck[0];
+      if (!topCardId) { break; }
+      const cardStats = G.cardStats[topCardId];
+      if (cardStats === undefined) { break; }
+      if (!G.turnEconomy) { break; }
+      // NOTE: G.pendingHeroChoice is set AFTER the G.turnEconomy guard.
+      // If G.turnEconomy is undefined the break fires here and G.pendingHeroChoice
+      // is NOT set. Tests must verify this (AC-9).
+      if (cardStats.cost <= (effect.magnitude as number)) {
+        G.turnEconomy.attack += cardStats.cost;
+      }
+      // Card stays on deck until player resolves the choice.
+      const pendingChoice: PendingHeroChoice = {
+        choiceType: 'discard-or-return',
+        cardId: topCardId,
+        playerID,
+      };
+      G.pendingHeroChoice = pendingChoice;
       break;
     }
     default: {
