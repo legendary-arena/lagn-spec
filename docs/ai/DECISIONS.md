@@ -23186,4 +23186,43 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-21901 — New HeroKeyword `reveal-cost-attack` (WP-219)
+
+**Decision:** A new `reveal-cost-attack` HeroKeyword and executor are added. The executor peeks `playerZones.deck[0]`, grants `G.turnEconomy.attack += cardStats.cost`, and leaves the card on the deck (no zone mutation). Requires a `G.turnEconomy` existence guard. No magnitude. In-scope card: `core/gambit/high-stakes-jackpot`.
+
+**Rationale:** "You get +[icon:attack] equal to its cost" is a standalone unconditional reveal effect. The cost-grant reads directly from `G.cardStats[topCardId].cost` (setup-time resolved). No zone mutation means simpler invariants and no `moveResult.found` guard needed for the attack path.
+
+**Packet:** WP-219 / EC-251.
+**Drafted:** 2026-06-05. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
+### D-21902 — New HeroKeyword `reveal-odd-draw` (WP-219)
+
+**Decision:** A new `reveal-odd-draw` HeroKeyword and executor are added. The executor peeks `playerZones.deck[0]`, draws the card via `moveCardFromZone(deck, hand, topCardId)` when `cardStats.cost % 2 !== 0` (odd). Cost-0 is even (`0 % 2 === 0`) and does NOT trigger the draw. No magnitude. In-scope card: `msis/wanda-vision/witchcraft`.
+
+**Rationale:** Standard mathematical odd/even definition. The `cost % 2 !== 0` form is preferred over `=== 1` because it is correct for all non-negative integers and matches standard JS semantics. Zero is even by the printed card text ("if its cost is odd, draw it" — cost 0 is not odd).
+
+**Packet:** WP-219 / EC-251.
+**Drafted:** 2026-06-05. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
+### D-21903 — Deferred Discard/Put-Back Reveal Pattern (WP-219)
+
+**Decision:** The following patterns are deferred — not in WP-219 scope:
+1. `2099/ravage-2099/overhorns-and-underhorns`: "Reveal the top card of your deck. If it costs 4 or less, you get +[icon:attack] equal to its cost. Discard it or put it back." The trailing "Discard it or put it back." is a player-choice branch. The current single-effect executor model has no mechanism for player-choice branches. Deferred pending player-choice executor infrastructure.
+2. `ssw2/dr-punisher-soldier-supreme/youre-a-slow-learner`: KO + attack compound reveal — multi-branch; deferred.
+3. Villain odd-draw (Poison Scarlet Witch): villain pipeline, not hero executor; deferred.
+
+**Rationale:** These patterns require either player-choice routing or multi-branch compound executor support — neither is in scope for the v1 reveal executor family.
+
+**Packet:** WP-219 / EC-251.
+**Drafted:** 2026-06-05. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
 Protect this file.
