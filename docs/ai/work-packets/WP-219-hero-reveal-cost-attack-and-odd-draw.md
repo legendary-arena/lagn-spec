@@ -51,15 +51,23 @@ After this packet:
 - `G.turnEconomy.attack` is the attack economy field mutated by the existing `'attack'`
   executor case. `reveal-cost-attack` uses the same mutation: `G.turnEconomy.attack += cardStats.cost`.
 - `G.turnEconomy` may be undefined if not initialized; guard with `if (!G.turnEconomy) { break; }`.
+- When `G.turnEconomy` exists, `G.turnEconomy.attack` is already initialized to a
+  numeric value by setup/turn-start logic — `reveal-cost-attack` does not need to
+  initialize it. If that guarantee does not already hold, this WP must not silently
+  invent it; stop and confirm first.
 - `G.cardStats[topCardId].cost` is 0 for free cards. `0 % 2 === 0` — cost-0 cards are
   **even** and are NOT drawn by `reveal-odd-draw`.
-- `reveal-cost-attack` does NOT mutate any zone. The top card remains at `deck[0]`
-  after the executor fires.
+- `reveal-cost-attack` does NOT mutate any zone. After execution, `playerZones.deck[0]`
+  MUST still equal the same `topCardId` read before evaluation.
 - `reveal-odd-draw` draw path: `moveCardFromZone(playerZones.deck, playerZones.hand, topCardId)`
   then assign `playerZones.deck = moveResult.from; playerZones.hand = moveResult.to`.
   Guarded by `moveResult.found`.
 - Both keywords have no magnitude — `VALID_TOKEN_PATTERN` accepts the no-suffix forms.
 - `KEYWORD_PATTERN` already allows hyphens (extended in WP-217): no regex change needed.
+- The `NO_MAGNITUDE_KEYWORDS` set (or equivalent helper predicate) exists in
+  `heroEffects.execute.ts` by the time this WP executes; if it does not yet exist as
+  a named entity, this WP creates it by extracting the current chained exclusions into
+  the set before adding the two new keywords.
 
 ---
 
@@ -68,7 +76,9 @@ After this packet:
 1. `packages/game-engine/src/hero/heroEffects.execute.ts` — `'attack'` case (canonical
    `G.turnEconomy.attack += effect.magnitude` pattern); `reveal-ko-or-draw` case (draw
    sub-path via `moveCardFromZone`); `reveal-min` case (magnitude-gated draw sub-path);
-   `MVP_KEYWORDS` Set; pre-check magnitude gate (`if (keyword !== 'rescue' && keyword !== 'reveal-ko' && ...)`)
+   `MVP_KEYWORDS` Set; pre-check magnitude gate — look for the `NO_MAGNITUDE_KEYWORDS`
+   set or its current equivalent chained exclusion (`rescue`, `reveal-ko`, …); `'ko'`
+   case (canonical `moveCardFromZone` + `koCard` coupling)
 2. `packages/game-engine/src/hero/heroEffects.execute.test.ts` — tests 29–36
    (reveal-ko-or-draw, 8 cases — reference for test naming and assertion style)
 3. `packages/game-engine/src/rules/heroKeywords.ts` — `HeroKeyword` union,
@@ -97,10 +107,29 @@ After this packet:
 
 2. **Add both keywords to `MVP_KEYWORDS`** Set in `heroEffects.execute.ts`.
 
-3. **Add both keywords to the pre-check magnitude gate exclusion list** in
-   `heroEffects.execute.ts`. The existing gate skips magnitude checks for keywords
-   that either have no magnitude or use internal magnitude (like `rescue`, `reveal-ko`).
-   Both new keywords have no magnitude at all — exclude them from the magnitude gate.
+3. **Add both keywords to `NO_MAGNITUDE_KEYWORDS`** in `heroEffects.execute.ts`.
+
+   The reveal keyword family now contains multiple no-magnitude forms (`rescue`,
+   `reveal-ko`, `reveal-ko-or-draw`, and now both new keywords). If the pre-check
+   gate is currently implemented as an ad hoc chained `keyword !== 'rescue' && ...`
+   condition, extract it into a named `NO_MAGNITUDE_KEYWORDS` Set before adding
+   the two new keywords. This turns a drift-prone boolean chain into a stable,
+   auditable contract surface.
+
+   ```typescript
+   // why: these keywords have no external magnitude; the pre-check gate must not
+   // reject them for missing magnitude — they use internal cost or parity logic
+   const NO_MAGNITUDE_KEYWORDS = new Set<HeroKeyword>([
+     'rescue', 'reveal-ko', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw',
+   ]);
+   ```
+
+   The pre-check gate then reads:
+   ```typescript
+   if (!NO_MAGNITUDE_KEYWORDS.has(keyword) && !isValidMagnitude(effect.magnitude)) {
+     return;
+   }
+   ```
 
 4. **Add `'reveal-cost-attack'` executor branch** in `executeSingleEffect()`, after
    the `reveal-ko-or-draw` case:
@@ -123,7 +152,8 @@ After this packet:
    ```
 
    **No zone mutation.** The card stays at `deck[0]`. Only `G.turnEconomy.attack`
-   is mutated. A cost-0 card grants 0 attack (no-op to economy but still valid).
+   is mutated. A cost-0 card grants 0 attack (valid; not a no-op of the executor
+   itself — the economy is touched even if by zero).
 
 5. **Add `'reveal-odd-draw'` executor branch**, after `reveal-cost-attack`:
 
@@ -153,14 +183,16 @@ After this packet:
 6. **Tests** for both new executors in `heroEffects.execute.test.ts`:
 
    For `reveal-cost-attack` (5 new cases):
-   - cost-3 top card → `G.turnEconomy.attack` increased by 3; card stays on deck; deck unchanged
-   - cost-0 top card → `G.turnEconomy.attack` increased by 0 (no-op to economy); card stays on deck
-   - empty deck → no-op; turnEconomy unchanged
-   - cardStats missing → no-op; turnEconomy unchanged
+   - cost-3 top card → `G.turnEconomy.attack` increased by 3; `deck.length` unchanged;
+     same `topCardId` still at `deck[0]` (identity preserved)
+   - cost-0 top card → `G.turnEconomy.attack` increased by 0; deck unchanged
+   - empty deck → no-op; `G.turnEconomy.attack` unchanged
+   - cardStats missing → no-op; `G.turnEconomy.attack` unchanged
    - `G.turnEconomy` undefined → no-op (guard fires)
 
    For `reveal-odd-draw` (6 new cases):
-   - cost-1 top card → drawn; `deck.length` decreases by 1; `hand.length` increases by 1
+   - cost-1 top card → drawn; `deck.length` decreases by 1; `hand.length` increases by 1;
+     the exact `topCardId` is now in `hand` (not a different card)
    - cost-3 top card → drawn (confirm odd ≥ 3 works)
    - cost-0 top card → no-op (0 is even); deck unchanged; hand unchanged
    - cost-2 top card → no-op (2 is even); deck unchanged
@@ -184,24 +216,42 @@ After this packet:
     |^\[keyword:reveal-odd-draw\]$/
    ```
 
-8. **Add `isRevealCostAttackCandidate(line)`** detection function:
-   A line qualifies IFF ALL of the following are true:
-   - Contains `[icon:attack]` AND a phrase like `equal to its cost` (capture: `/equal to its cost/i` AND `/\[icon:attack\]/`)
-   - Does NOT contain `'Villain Deck'` or `'Master Strike'`
-   - Does NOT contain `'Otherwise'`
-   - Does NOT contain `'[keyword:reveal'` (already marked)
+   Note: no `:\d+` branch for the two new forms. `assertValidToken` MUST reject
+   `[keyword:reveal-cost-attack:2]` and `[keyword:reveal-odd-draw:1]`.
 
-9. **Add `isRevealOddDrawCandidate(line)`** detection function:
+8. **Add `isRevealCostAttackCandidate(line)`** detection function.
+   All detection functions MUST use regex-based, case-insensitive matching and
+   tolerate harmless whitespace variance.
+
    A line qualifies IFF ALL of the following are true:
-   - `/cost is odd.*draw it/i` matches
+   - `/Reveal the top card of your deck\./i` matches (reveal anchor — required)
+   - `/\[icon:attack\]/` matches
+   - `/equal to its cost/i` matches
    - Does NOT contain `'Villain Deck'` or `'Master Strike'`
    - Does NOT contain `'Otherwise'`
-   - Does NOT contain `'[keyword:reveal'` (already marked)
+   - Does NOT contain `'[keyword:reveal-cost-attack]'` (idempotence guard)
+
+9. **Add `isRevealOddDrawCandidate(line)`** detection function.
+   Same regex discipline applies.
+
+   A line qualifies IFF ALL of the following are true:
+   - `/Reveal the top card of your deck\./i` matches (reveal anchor — required)
+   - `/cost is odd/i` matches
+   - `/draw it/i` matches
+   - Does NOT contain `'Villain Deck'` or `'Master Strike'`
+   - Does NOT contain `'Otherwise'`
+   - Does NOT contain `'[keyword:reveal-odd-draw]'` (idempotence guard)
 
 10. **Update `collectProposeRowsForSet()`**: add routing for both new candidate
-    functions. Evaluate compound-KO-or-draw first (already there), then
-    `isRevealCostAttackCandidate`, then `isRevealOddDrawCandidate`, then existing
-    plain-KO / reveal-min / reveal candidates in the established order.
+    functions. The routing order is authoritative — it ensures deterministic
+    first-match behavior as the reveal family grows:
+
+    1. `isRevealKoOrDrawCandidate` (compound — already first)
+    2. `isRevealCostAttackCandidate` (new)
+    3. `isRevealOddDrawCandidate` (new)
+    4. `isRevealKoCandidate`
+    5. `isRevealMinCandidate`
+    6. `isRevealCandidate`
 
 ### Data — `hero-ability-markers.json` and `data/cards/*.json`
 
@@ -220,6 +270,8 @@ After this packet:
     ```
 
     Run `--propose` BEFORE editing the map to confirm slugs and indices.
+    Verify the propose output includes the exact rows for gambit and wanda-vision
+    before committing the curated map entries.
 
 12. **Apply markup** with `node scripts/convert-cards/apply-hero-ability-markers.mjs`.
     `Updated` count must be 2 on first run. Second run must produce zero diff
@@ -248,7 +300,7 @@ After this packet:
 
 **Engine (modified):**
 1. `packages/game-engine/src/rules/heroKeywords.ts` — add `'reveal-cost-attack'`, `'reveal-odd-draw'`
-2. `packages/game-engine/src/hero/heroEffects.execute.ts` — add both keywords to `MVP_KEYWORDS` + magnitude-gate exclusion + two executor cases
+2. `packages/game-engine/src/hero/heroEffects.execute.ts` — add both keywords to `MVP_KEYWORDS` + `NO_MAGNITUDE_KEYWORDS` + two executor cases
 
 **Engine tests (modified):**
 3. `packages/game-engine/src/hero/heroEffects.execute.test.ts` — 11 new test cases
@@ -278,9 +330,13 @@ After this packet:
 |---|---|---|
 | `[keyword:reveal-cost-attack]` | `reveal-cost-attack` | Peek deck top; `G.turnEconomy.attack += cardStats.cost`; card stays on deck |
 
-**No zone mutation.** `deck[0]` is unchanged after the executor fires.
-A cost-0 card grants 0 attack — valid (not a no-op of the executor itself, just
-a zero-magnitude grant).
+**No zone mutation (strict).**
+- `playerZones.deck` MUST remain the same array length after execution.
+- The exact revealed `topCardId` MUST remain at `playerZones.deck[0]`.
+- No deck reorder, remove, or reinsert operation is allowed.
+- Only `G.turnEconomy.attack` is mutated.
+
+A cost-0 card grants 0 attack — valid. The executor fires; economy is touched even if by zero.
 
 **Guards (all `break` on failure):** `playerZones` exists; `deck.length > 0`;
 `deck[0]` truthy; `G.cardStats[topCardId]` exists; `G.turnEconomy` exists.
@@ -301,12 +357,34 @@ a zero-magnitude grant).
 **Draw path:** `moveCardFromZone(deck, hand, topCardId)`; assign `deck = moveResult.from;
 hand = moveResult.to` when `moveResult.found === true`.
 
-### Detection Function Notes
+**Odd branch identity guarantee:**
+- The exact revealed `topCardId` MUST be the card moved to hand.
+- The card removed from `playerZones.deck[0]` and the card appended to
+  `playerZones.hand` MUST be the same ID.
 
-`isRevealCostAttackCandidate` uses two positive anchors: `[icon:attack]` AND
-`equal to its cost`. `isRevealOddDrawCandidate` uses `/cost is odd.*draw it/i`.
-Both are narrow enough to be corpus-safe without requiring mutual-exclusivity logic
-(the two patterns are structurally distinct; no line in the corpus matches both).
+### No-Magnitude Keyword Contract
+
+`NO_MAGNITUDE_KEYWORDS` is a named Set in `heroEffects.execute.ts` containing all
+HeroKeywords that intentionally skip the pre-check magnitude gate:
+
+```
+{ 'rescue', 'reveal-ko', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw' }
+```
+
+Future no-magnitude keywords MUST be added to this set. Ad hoc chained `keyword !== X`
+conditions are forbidden for this gate.
+
+### Detection Function Contract
+
+All candidate detection functions MUST:
+- Use regex-based, case-insensitive matching.
+- Require the reveal anchor: `/Reveal the top card of your deck\./i`.
+- Tolerate harmless punctuation/whitespace variance.
+- Include an idempotence guard (`Does NOT contain '[keyword:X]'`) for their own token.
+
+`collectProposeRowsForSet()` routing order is authoritative for deterministic
+first-match behavior. Order is: compound-KO-or-draw → cost-attack → odd-draw →
+plain-KO → reveal-min → reveal.
 
 ---
 
@@ -335,10 +413,10 @@ Both are narrow enough to be corpus-safe without requiring mutual-exclusivity lo
 3. `HERO_KEYWORDS` canonical array and `HeroKeyword` union both contain
    `'reveal-cost-attack'` and `'reveal-odd-draw'`; drift-detection test passes (13 keywords).
 4. `reveal-cost-attack` on cost-3 top card: `G.turnEconomy.attack` increases by 3;
-   `deck.length` unchanged; card still at `deck[0]`.
+   `deck.length` unchanged; same `topCardId` still at `deck[0]`.
 5. `reveal-cost-attack` on cost-0 top card: `G.turnEconomy.attack` increases by 0;
    deck unchanged.
-6. `reveal-cost-attack` with empty deck: no-op; `G.turnEconomy` unchanged.
+6. `reveal-cost-attack` with empty deck: no-op; `G.turnEconomy.attack` unchanged.
 7. `reveal-cost-attack` with missing cardStats: no-op.
 8. `reveal-cost-attack` with `G.turnEconomy` undefined: no-op.
 9. `reveal-odd-draw` on cost-1 top card: drawn; `deck.length` decreases by 1;
@@ -348,7 +426,9 @@ Both are narrow enough to be corpus-safe without requiring mutual-exclusivity lo
 12. `reveal-odd-draw` on cost-2 top card: no-op (even cost).
 13. `reveal-odd-draw` with empty deck: no-op.
 14. `reveal-odd-draw` with missing cardStats: no-op.
-15. `node scripts/convert-cards/apply-hero-ability-markers.mjs --propose | grep "reveal-cost-attack\|reveal-odd-draw"` includes exactly 2 rows.
+15. `node scripts/convert-cards/apply-hero-ability-markers.mjs --propose` output includes:
+    - a row for `core | gambit | high-stakes-jackpot | abilityIndex=0 | … | suggested=[keyword:reveal-cost-attack]`
+    - a row for `msis | wanda-vision | witchcraft | abilityIndex=0 | … | suggested=[keyword:reveal-odd-draw]`
 16. `node scripts/convert-cards/apply-hero-ability-markers.mjs` reports `Updated: 2` on first run.
 17. Second apply run: `git diff data/cards/` empty (idempotence).
 18. `node scripts/convert-cards/apply-hero-ability-markers.mjs --validate` exits 0.
@@ -356,8 +436,14 @@ Both are narrow enough to be corpus-safe without requiring mutual-exclusivity lo
 20. `grep "\[keyword:reveal-odd-draw\]" data/cards/msis.json | wc -l` = 1.
 21. `assertValidToken` rejects `[keyword:reveal-cost-attack:2]` (spurious suffix) with
     non-zero exit and a full-sentence error message.
-22. No files outside `## Files Expected to Change` were modified.
-23. `DECISIONS.md` D-21901..D-21903 Active.
+22. `assertValidToken` rejects `[keyword:reveal-odd-draw:1]` (spurious suffix) with
+    non-zero exit and a full-sentence error message.
+23. No files outside `## Files Expected to Change` were modified.
+24. `DECISIONS.md` D-21901..D-21903 Active.
+25. `reveal-cost-attack` preserves deck identity: the same `topCardId` remains at
+    `deck[0]` after execution (AC-4 assertion includes this check).
+26. `reveal-odd-draw` moves the exact revealed `topCardId` into hand when the odd branch
+    fires — test asserts `hand.includes(topCardId)`, not just `hand.length` increase.
 
 ---
 
@@ -379,9 +465,9 @@ grep "reveal-cost-attack\|reveal-odd-draw" data/cards/core.json data/cards/msis.
 pnpm --filter @legendary-arena/game-engine test
 # Expected: exits 0; test count ≥ 1144 (1133 + 11 new cases)
 
-# After tooling changes:
+# After tooling changes — verify card-specific propose rows before editing curated map:
 node scripts/convert-cards/apply-hero-ability-markers.mjs --propose | grep "reveal-cost-attack\|reveal-odd-draw"
-# Expected: 2 rows — gambit (reveal-cost-attack) and wanda-vision (reveal-odd-draw)
+# Expected: row for core/gambit/high-stakes-jackpot + row for msis/wanda-vision/witchcraft
 
 # Apply
 node scripts/convert-cards/apply-hero-ability-markers.mjs
@@ -412,13 +498,15 @@ pnpm -r build
 - [ ] All Acceptance Criteria above are met.
 - [ ] `'reveal-cost-attack'` and `'reveal-odd-draw'` in `HeroKeyword` union + `HERO_KEYWORDS` array.
 - [ ] Both executor cases in `heroEffects.execute.ts` with `// why: D-21901` and `// why: D-21902`.
-- [ ] `reveal-cost-attack`: no zone mutation; only `G.turnEconomy.attack` mutated; `G.turnEconomy` guard present.
-- [ ] `reveal-odd-draw`: `cost % 2 !== 0` condition; cost-0 is even (no-op confirmed by test).
+- [ ] `NO_MAGNITUDE_KEYWORDS` Set exists and contains both new keywords; pre-check gate uses it.
+- [ ] `reveal-cost-attack`: no zone mutation; `deck[0]` identity preserved; only `G.turnEconomy.attack` mutated; `G.turnEconomy` guard present.
+- [ ] `reveal-odd-draw`: `cost % 2 !== 0` condition; cost-0 is even (no-op confirmed by test); identity guarantee tested (`topCardId` in hand).
 - [ ] Drift-detection test updated to 13 keywords.
-- [ ] 11 new test cases covering cost-3 attack grant, cost-0 attack grant, odd draw, even/zero no-op, empty deck, missing stats, undefined turnEconomy.
-- [ ] `VALID_TOKEN_PATTERN` accepts `[keyword:reveal-cost-attack]` and `[keyword:reveal-odd-draw]`.
-- [ ] `isRevealCostAttackCandidate` and `isRevealOddDrawCandidate` added.
-- [ ] `hero-ability-markers.json` has 2 new entries.
+- [ ] 11 new test cases covering cost-3 attack grant (with deck[0] identity check), cost-0 attack grant, odd draw (with `topCardId`-in-hand check), even/zero no-op, empty deck, missing stats, undefined turnEconomy.
+- [ ] `VALID_TOKEN_PATTERN` accepts `[keyword:reveal-cost-attack]` and `[keyword:reveal-odd-draw]`; rejects both with spurious `:N` suffixes.
+- [ ] Both detection functions: reveal anchor present; regex-based; case-insensitive; idempotence guard uses own specific token.
+- [ ] `collectProposeRowsForSet` routing order: compound-KO-or-draw → cost-attack → odd-draw → plain-KO → reveal-min → reveal.
+- [ ] `hero-ability-markers.json` has 2 new entries; entries verified against `--propose` output.
 - [ ] `data/cards/core.json` and `data/cards/msis.json` marked.
 - [ ] `docs/ai/DECISIONS.md` D-21901..D-21903 Active.
 - [ ] `docs/ai/STATUS.md`, `WORK_INDEX.md`, `EC_INDEX.md` updated.
