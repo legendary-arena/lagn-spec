@@ -20,10 +20,10 @@
 - Token form: `[keyword:reveal-attack-choose:N]` — magnitude required; no bare form
 - `PendingHeroChoice.choiceType` discriminant: `'discard-or-return'`
 - `resolveHeroChoice` resolution values: `'discard'` | `'return'`
-- Absent-value form for `G.pendingHeroChoice`: **TBD at pre-flight** (read existing G optional fields to determine `undefined` vs `null` convention; EC-252 locks whichever form is chosen)
+- Absent-value form for `G.pendingHeroChoice`: **`undefined`** (locked — matches `villainRevealedThisTurn?: boolean` and all other optional G fields; `null` is never used)
 - Attack grant condition: `cardStats.cost <= effect.magnitude`
 - Attack grant amount: `G.turnEconomy.attack += cardStats.cost`
-- Turn-end guard site: **TBD at pre-flight** (locate `ctx.events.endTurn()` callsite in cleanup stage; EC-252 locks the file + line)
+- Turn-end guard site: **`packages/game-engine/src/moves/coreMoves.impl.ts` — `endTurn()` function body, immediately before `events.endTurn()`** (currently line ~157; guard must be inserted here and nowhere else)
 - HERO_KEYWORDS count after: **14**
 
 ## Guardrails
@@ -31,6 +31,10 @@
 - `reveal-attack-choose` MUST NOT be in `NO_MAGNITUDE_KEYWORDS` — it requires a valid magnitude
 - `G.pendingHeroChoice` is set ONLY in the `reveal-attack-choose` executor case
 - `G.pendingHeroChoice` is cleared ONLY in `resolveHeroChoice`
+- If `G.pendingHeroChoice !== undefined` at executor entry, the executor MUST return silently
+  without overwriting it (reject-second policy, D-22001)
+- `G.pendingHeroChoice` is assigned AFTER the `G.turnEconomy` guard — if `G.turnEconomy` is
+  undefined the pending field is NOT set; the ordering is load-bearing
 - `resolveHeroChoice` MUST clear the pending field before returning, even when the zone move fails
 - The turn-end guard MUST check `G.pendingHeroChoice !== undefined` (or `!== null` — locked form) before the `ctx.events.endTurn()` call
 - `isRevealAttackChooseCandidate` MUST require the reveal anchor AND the `Discard it or put it back` phrase
@@ -82,6 +86,8 @@
 
 - Test count < 1160 → turn-end guard test missing, or resolveHeroChoice test file not wired to test runner
 - `G.pendingHeroChoice` set even on empty deck → guard fires after pending assignment; reorder guards before the pending set
+- `G.pendingHeroChoice` set when `G.turnEconomy` is undefined → turnEconomy guard is missing or placed after the pending assignment; move it before
+- Second `reveal-attack-choose` call overwrites first pending choice → reject-second guard (`if (G.pendingHeroChoice !== undefined) { break; }`) is missing
 - `G.pendingHeroChoice` not cleared when `moveResult.found = false` → clear-before-return invariant violated
 - Attack granted for cost-5 card with magnitude-4 → cost-ceiling condition inverted; must be `cost <= magnitude`
 - `isRevealAttackChooseCandidate` matches plain `reveal-cost-attack` lines → missing Discard-or-return phrase check

@@ -28,12 +28,12 @@
 
 After this packet:
 
-- A `G.pendingHeroChoice` nullable field exists on `LegendaryGameState`, typed and validated.
+- A `G.pendingHeroChoice` optional field exists on `LegendaryGameState`, typed and validated.
 - A `resolveHeroChoice` move resolves an outstanding player choice (discard or return to top).
 - A new `reveal-attack-choose` executor sets `G.pendingHeroChoice` after granting the
   conditional attack; card stays on deck until the player resolves the choice.
 - `2099/ravage-2099/overhorns-and-underhorns` is marked with `[keyword:reveal-attack-choose:4]`.
-- Turn-end is blocked while `G.pendingHeroChoice !== null`.
+- Turn-end is blocked while `G.pendingHeroChoice !== undefined`.
 - D-21903 item 1 is closed; items 2 and 3 remain deferred.
 
 ---
@@ -43,17 +43,18 @@ After this packet:
 - WP-219 shipped: `HERO_KEYWORDS` = 13, tests = 1144. Commit `dc6df11` on `origin/main`.
 - `G.pendingHeroChoice` does not exist in `LegendaryGameState` before this WP executes.
   This WP creates it as a new optional field (`PendingHeroChoice | undefined`).
-- `'undefined' | PendingHeroChoice` is preferred over `null` because the existing G fields
-  use `undefined` for absent optional state. If the execution session finds a `null` pattern
-  is more idiomatic in context, the EC will lock whichever form is chosen — do not re-derive.
+- `G.pendingHeroChoice` is `PendingHeroChoice | undefined` — `undefined` is locked as the absent-value
+  form. This is consistent with all other optional G fields (e.g., `villainRevealedThisTurn?: boolean`).
+  `null` is never used for absent G state in this codebase.
 - `G.cardStats[topCardId].cost` is available at executor time (same guarantee as WP-219).
 - `moveCardFromZone(deck, discard, cardId)` handles the discard branch.
 - "Put it back" = card stays at `deck[0]` — no mutation (identical to reveal-cost-attack).
 - A cost-0 or cost > magnitude card still triggers the player-choice prompt.
   The choice is not conditional on whether the attack grant fired.
-- Turn-end gating is enforced by checking `G.pendingHeroChoice` before `ctx.events.endTurn()`
-  fires. The exact enforcement site (stage-enter guard, cleanup-stage gate, or endTurn-move
-  guard) is determined at execution time; the EC will lock the mechanism.
+- Turn-end gating is enforced by checking `G.pendingHeroChoice !== undefined` at the top of the
+  `endTurn` function body in `packages/game-engine/src/moves/coreMoves.impl.ts`, immediately
+  before `events.endTurn()` at line ~157. If set, `endTurn` returns silently without calling
+  `events.endTurn()`. This callsite is locked; do not add a second guard elsewhere.
 - `KEYWORD_PATTERN` already allows hyphens (WP-217); `reveal-attack-choose` is valid.
 
 ---
@@ -63,13 +64,13 @@ After this packet:
 ### Engine
 - No `.reduce()` in zone operations or effect application.
 - Zone mutations go through `zoneOps.ts` helpers.
-- `G.pendingHeroChoice` is `PendingHeroChoice | undefined` (or `| null` — locked by EC-252).
+- `G.pendingHeroChoice` is `PendingHeroChoice | undefined` (`undefined` locked — see §Assumes).
   It may only be set by the `reveal-attack-choose` executor and cleared by `resolveHeroChoice`.
 - `resolveHeroChoice` validates that `G.pendingHeroChoice` is set and that the requesting
   player matches `pendingHeroChoice.playerID`; mismatched or absent pending state is a
   silent no-op (move never throws).
-- `G.pendingHeroChoice` must be `undefined` (or `null`) at turn-end; the
-  `ctx.events.endTurn()` call site must check and block if it is set.
+- `G.pendingHeroChoice` must be `undefined` at turn-end; the `ctx.events.endTurn()` call
+  site in `coreMoves.impl.ts:endTurn()` must check and return silently if it is set.
 - `HERO_KEYWORDS` canonical array and `HeroKeyword` union must stay in parity.
   Drift-detection test must pass at exactly 14 after this packet.
 - Both the `reveal-attack-choose` executor AND the `resolveHeroChoice` move must emit
@@ -158,6 +159,9 @@ After this packet:
      // cost <= magnitude; then stores a pending choice (discard or return) that
      // the player must resolve via resolveHeroChoice before the turn can end (D-22003)
      if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { break; }
+     // why: reject-second — a pending choice is never silently overwritten; the first
+     // choice's data integrity is preserved until the player resolves it (D-22001)
+     if (G.pendingHeroChoice !== undefined) { break; }
      const playerZones = G.playerZones[playerID];
      if (!playerZones) { break; }
      if (playerZones.deck.length === 0) { break; }
@@ -166,6 +170,9 @@ After this packet:
      const cardStats = G.cardStats[topCardId];
      if (cardStats === undefined) { break; }
      if (!G.turnEconomy) { break; }
+     // NOTE: G.pendingHeroChoice is set AFTER the G.turnEconomy guard.
+     // If G.turnEconomy is undefined the break fires here and G.pendingHeroChoice is
+     // NOT set. Tests must verify this (see AC-8b).
      if (cardStats.cost <= (effect.magnitude as number)) {
        G.turnEconomy.attack += cardStats.cost;
      }
@@ -180,11 +187,12 @@ After this packet:
    ```
 
    **Key invariants:**
-   - Attack grant is conditional (`cost <= magnitude`); choice prompt is unconditional.
+   - Attack grant is conditional (`cost <= magnitude`); choice prompt fires only if all guards pass.
+   - A second `reveal-attack-choose` while a choice is already pending is a silent no-op
+     (reject-second, per D-22001). No queue. No overwrite.
+   - `G.pendingHeroChoice` is NOT set when `G.turnEconomy` is undefined — the guard fires
+     before the pending assignment. AC-8b tests this explicitly.
    - Card stays at `deck[0]` until `resolveHeroChoice` fires.
-   - A second `reveal-attack-choose` firing while a choice is already pending overwrites
-     the pending choice (last-writer-wins). The EC will confirm or restrict this; do not
-     invent a queue at execution time.
 
 6. **Add `resolveHeroChoice` move** (new file or added to existing moves file per the
    execution session's judgment — one move, new or existing):
@@ -237,8 +245,8 @@ After this packet:
    - cost-0 top card: attack +0 (even, still within threshold); `G.pendingHeroChoice` set
    - empty deck: no-op; `G.pendingHeroChoice` NOT set
    - missing cardStats: no-op; `G.pendingHeroChoice` NOT set
-   - `G.turnEconomy` undefined: no-op; but `G.pendingHeroChoice`... (EC to clarify ordering
-     — if turnEconomy guard fires before pending assignment, choice is never set)
+   - `G.turnEconomy` undefined: no-op; `G.pendingHeroChoice` NOT set (guard fires before assignment — AC-8b)
+   - Second call while `G.pendingHeroChoice` already set: no-op; original pending unchanged (AC-8c)
    - undefined magnitude: skipped (pre-check gate); no mutation
    - magnitude-0: skipped (< 1 guard); no mutation
 
@@ -314,7 +322,7 @@ After this packet:
 - Villain odd-draw (Poison Scarlet Witch): villain pipeline; remains deferred in D-21903.
 - Other player-choice reveal patterns (e.g., "Draw it or put it back") — deferred until this
   WP's infrastructure proves stable.
-- Choice queue / multi-pending-choice support — last-writer-wins is sufficient for v1.
+- Choice queue / multi-pending-choice support — reject-second (no overwrite) is the v1 policy.
   Queue support deferred.
 - UI rendering of the pending choice prompt — client concern, not engine scope.
 - Disconnect/reconnect behavior while choice is pending — deferred.
@@ -364,7 +372,7 @@ Up to 15 files. The execution session determines whether `heroChoice.resolve.ts`
 
 | Field | Type | Semantics |
 |---|---|---|
-| `G.pendingHeroChoice` | `PendingHeroChoice \| undefined` | Set by `reveal-attack-choose` executor; cleared by `resolveHeroChoice`. Absent (undefined) = no pending choice. |
+| `G.pendingHeroChoice` | `PendingHeroChoice \| undefined` | Set by `reveal-attack-choose` executor; cleared by `resolveHeroChoice`. Absent (`undefined`) = no pending choice. Second `reveal-attack-choose` call while set is rejected (no overwrite). |
 
 **`PendingHeroChoice`:**
 - `choiceType: 'discard-or-return'` — closed discriminant for future extensibility
@@ -375,7 +383,10 @@ Up to 15 files. The execution session determines whether `heroChoice.resolve.ts`
 - Only set inside the `reveal-attack-choose` executor case.
 - Only cleared inside `resolveHeroChoice`.
 - `undefined` is the resting state between turns.
-- At `ctx.events.endTurn()`, must be `undefined`; the turn-end call site returns silently if set.
+- A second `reveal-attack-choose` executor call while this field is set is a silent no-op
+  (reject-second, D-22001). The original pending choice is not overwritten.
+- At `ctx.events.endTurn()`, must be `undefined`; the turn-end call site in
+  `coreMoves.impl.ts:endTurn()` returns silently if set.
 
 ### New Move `resolveHeroChoice` (D-22002)
 
@@ -403,10 +414,10 @@ Up to 15 files. The execution session determines whether `heroChoice.resolve.ts`
 
 ## Decisions to Reserve
 
-- **D-22001** — `G.pendingHeroChoice` field on `LegendaryGameState`: type, absent-value
-  (`undefined` vs `null`), write/clear ownership, last-writer-wins semantics.
+- **D-22001** — `G.pendingHeroChoice` field on `LegendaryGameState`: type `PendingHeroChoice | undefined`,
+  absent-value = `undefined` (locked), write/clear ownership, reject-second overwrite policy.
 - **D-22002** — `resolveHeroChoice` move: argument type (`'discard' | 'return'`), no-op
-  conditions, pending-always-cleared invariant, turn-end guard mechanism and callsite.
+  conditions, pending-always-cleared invariant, turn-end guard at `coreMoves.impl.ts:endTurn()`.
 - **D-22003** — New `reveal-attack-choose` HeroKeyword: executor peeks deck top,
   conditional attack grant (`cost <= magnitude`), unconditional choice prompt. First card:
   `2099/ravage-2099/overhorns-and-underhorns` with magnitude 4.
@@ -427,6 +438,10 @@ Up to 15 files. The execution session determines whether `heroChoice.resolve.ts`
    `G.pendingHeroChoice` set.
 7. `reveal-attack-choose` with empty deck: no-op; `G.pendingHeroChoice` NOT set.
 8. `reveal-attack-choose` with missing cardStats: no-op; `G.pendingHeroChoice` NOT set.
+8b. `reveal-attack-choose` with `G.turnEconomy` undefined: no-op; `G.pendingHeroChoice` NOT set
+    (turnEconomy guard fires before the pending assignment — ordering matters).
+8c. Second `reveal-attack-choose` while `G.pendingHeroChoice` is already set: silent no-op;
+    original pending choice is unchanged (reject-second).
 9. `reveal-attack-choose` with undefined magnitude: skipped; no mutation.
 10. `resolveHeroChoice('discard')`: card moves deck→discard; `G.pendingHeroChoice` cleared.
 11. `resolveHeroChoice('return')`: card stays at `deck[0]`; `G.pendingHeroChoice` cleared.
