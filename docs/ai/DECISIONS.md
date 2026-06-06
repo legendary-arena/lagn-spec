@@ -23150,4 +23150,40 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-21801 — Reveal-KO Deck-Removal Fix (WP-218)
+
+**Decision:** The `reveal-ko` executor must call `moveCardFromZone(playerZones.deck, [], topCardId)` before `koCard`. `koCard` MUST NOT be called unless `moveResult.found === true`. This follows the established `'ko'` case pattern. The WP-217 implementation omitted the deck removal, leaving the card ID in both `G.ko` and `playerZones.deck` simultaneously (zone integrity violation; EC-249 AC-23 unmet). WP-218 corrects the executor and the accompanying test assertion.
+
+**Rationale:** Zone integrity requires a card to exist in exactly one zone at all times. `G.ko` and `playerZones.deck` are separate arrays; adding to `G.ko` without removing from deck produces a duplicate reference. The `moveCardFromZone(zone, [], cardId)` → `koCard` coupling is the engine's standard KO-from-zone pattern (existing `'ko'` case, lines 232–237).
+
+**Packet:** WP-218 / EC-250.
+**Drafted:** 2026-06-05. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
+### D-21802 — New HeroKeyword `reveal-ko-or-draw` (WP-218)
+
+**Decision:** Add `'reveal-ko-or-draw'` to `HeroKeyword` union and `HERO_KEYWORDS` canonical array. The executor `reveal-ko-or-draw` implements: cost = 0 → KO + remove from deck; 0 < cost ≤ magnitude → draw (append to hand); cost > magnitude → no-op. The KO branch (`if cost === 0`) structurally precedes the draw branch (`else if`). Magnitude must be integer ≥ 1; undefined or ≤ 0 → skip. Both KO and draw branches use `moveCardFromZone` to remove the card from the deck before assigning it to the destination zone.
+
+**Rationale:** `ssw2/silk/silk-stalking` has a compound ability: "If it costs 0, KO it. If it costs 1 or 2, draw it." No existing keyword covers the KO-or-draw pattern; a dedicated keyword avoids ambiguity and keeps executor logic single-responsibility. The magnitude encodes the draw upper bound (N = 2 for silk).
+
+**Packet:** WP-218 / EC-250.
+**Drafted:** 2026-06-05. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
+### D-21803 — VP-Cost Zero Form Detection Lift (WP-218)
+
+**Decision:** `isRevealKoCandidate` is extended to detect `"If it costs 0[icon:vp], KO it."` via regex `/costs\s+0(?:\[icon:vp\])?,\s*KO it/i` in addition to the plain form. `[icon:vp]` is a display-only annotation; `G.cardStats[topCardId].cost` is the authoritative cost value for all reveal executors — no alternative cost source is consulted. Lifts D-21703 item 2 deferral. In-scope card: `dkcy/punisher/boom-goes-the-dynamite` receives `[keyword:reveal-ko]` token.
+
+**Rationale:** The `reveal-ko` executor already handles cost-0 KO regardless of how the zero cost is annotated in ability text. The `[icon:vp]` icon is rendered by the UI as a VP symbol; at the engine level `cost` is a plain integer. Detection required no executor change, only a regex extension that tolerates the icon annotation.
+
+**Packet:** WP-218 / EC-250.
+**Drafted:** 2026-06-05. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
 Protect this file.

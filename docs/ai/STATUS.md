@@ -7,6 +7,12 @@
 
 ## Current State
 
+### WP-218 Drafted — Hero Reveal Compound Executor + VP-Cost Corpus Extension (2026-06-05)
+
+**WP-218 drafted.** Next work packet after WP-217. Fixes `reveal-ko` zone-integrity bug (D-21801): WP-217 executor added card to `G.ko` without removing it from `playerZones.deck`, leaving the card ID in two zones simultaneously. Fix mirrors the existing `'ko'` case pattern (`moveCardFromZone(deck, [], topCardId)` before `koCard`). Adds `'reveal-ko-or-draw:N'` keyword (D-21802) for ssw2/silk's compound pattern (KO if cost=0, draw if 0 < cost ≤ N). Extends `isRevealKoCandidate` for `[icon:vp]` zero-cost form (D-21803), lifts D-21703 item 2 deferral — marks dkcy/punisher/boom-goes-the-dynamite with `[keyword:reveal-ko]`. Total: 2 new card markups, 1 engine bug fix, 1 new keyword/executor, drift-detection update to 11.
+
+---
+
 ### WP-217 / EC-249 Executed — Hero Reveal Executor Extensions: Reveal-KO-If-Zero and Reveal-Draw-At-Least (2026-06-05)
 
 **WP-217 done.** Adds `'reveal-ko'` (D-21701) and `'reveal-min'` (D-21702) to `HeroKeyword` union + `HERO_KEYWORDS` array. Extends `KEYWORD_PATTERN` to allow hyphens. Adds executor cases in `heroEffects.execute.ts` following the existing `'reveal'` pattern. Applies markup to 5 hero cards (cvwr×3: cloak-dagger/darkness reveal-ko, cloak-dagger/light reveal-min:1, hercules/prince-of-power reveal-ko; wwhk×2: bruce-banner/dangerous-testing reveal-ko, rick-jones/captain-marvel reveal-min:3). Extends `apply-hero-ability-markers.mjs` with `isRevealKoCandidate`, `isRevealMinCandidate`, `suggestRevealMinToken`. Drift-detection test updated to 10 keywords. Tests: 1125 passing (+9 over baseline). D-21701..D-21704 Active. Hard-dep: WP-216 ✅.
