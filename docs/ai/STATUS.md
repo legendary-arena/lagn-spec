@@ -7,6 +7,12 @@
 
 ## Current State
 
+### WP-219 / EC-251 Executed — Hero Reveal Cost-Attack + Odd-Draw Executors (2026-06-06)
+
+**WP-219 done.** Adds `'reveal-cost-attack'` (D-21901: peek deck top, grant `G.turnEconomy.attack += cardStats.cost`, card stays on deck — no zone mutation) and `'reveal-odd-draw'` (D-21902: peek deck top, draw via `moveCardFromZone` when `cost % 2 !== 0`; cost-0 is even, no draw) to `HeroKeyword` union + `HERO_KEYWORDS` array. Adds `NO_MAGNITUDE_KEYWORDS` Set replacing ad hoc chained exclusions. Extends `apply-hero-ability-markers.mjs` with `isRevealCostAttackCandidate` + `isRevealOddDrawCandidate`. Marks 2 hero cards: core/gambit/high-stakes-jackpot (`[keyword:reveal-cost-attack]`) + msis/wanda-vision/witchcraft (`[keyword:reveal-odd-draw]`). Tests: 1144 passing (+11 over WP-218 baseline). HERO_KEYWORDS: 11 → 13. D-21901..D-21903 Active. Hard-dep: WP-218 ✅.
+
+---
+
 ### WP-218 / EC-250 Executed — Hero Reveal Compound Executor + VP-Cost Corpus Extension (2026-06-05)
 
 **WP-218 done.** Fixes `reveal-ko` zone-integrity bug (D-21801): deck removal now coupled with `koCard` via `moveCardFromZone(deck, [], topCardId)` before `koCard` — mirrors the `'ko'` case pattern. Adds `'reveal-ko-or-draw'` HeroKeyword and executor (D-21802) for ssw2/silk's compound KO-or-draw pattern; KO branch (`cost === 0`) structurally precedes draw branch (`else if`). Extends `isRevealKoCandidate` for `[icon:vp]` zero-cost form via regex (D-21803), lifting D-21703 item 2 deferral. Adds `isRevealKoOrDrawCandidate` + `suggestRevealKoOrDrawToken` to tooling. Marks 2 hero cards: ssw2/silk/silk-stalking (`[keyword:reveal-ko-or-draw:2]`) + dkcy/punisher/boom-goes-the-dynamite (`[keyword:reveal-ko]`). Tests: 1133 passing (+8 over WP-217 baseline). D-21801..D-21803 Active. Hard-dep: WP-217 ✅.

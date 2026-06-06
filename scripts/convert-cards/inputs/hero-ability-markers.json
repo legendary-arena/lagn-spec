@@ -20,6 +20,7 @@
   ],
   "core": [
     { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "gambit", "cardSlug": "high-stakes-jackpot", "abilityIndex": 0, "markupToken": "[keyword:reveal-cost-attack]" },
     { "heroSlug": "spider-man", "cardSlug": "astonishing-strength", "abilityIndex": 0, "markupToken": "[keyword:reveal]" },
     { "heroSlug": "spider-man", "cardSlug": "great-responsibility", "abilityIndex": 0, "markupToken": "[keyword:reveal]" }
   ],
@@ -36,6 +37,9 @@
   "dkcy": [
     { "heroSlug": "jean-grey", "cardSlug": "psychic-search", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
     { "heroSlug": "punisher", "cardSlug": "boom-goes-the-dynamite", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" }
+  ],
+  "msis": [
+    { "heroSlug": "wanda-vision", "cardSlug": "witchcraft", "abilityIndex": 0, "markupToken": "[keyword:reveal-odd-draw]" }
   ],
   "msp1": [
     { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }

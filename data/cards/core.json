@@ -614,7 +614,7 @@
           "attack": "4+",
           "recruit": null,
           "abilities": [
-            "Reveal the top card of your deck. You get +[icon:attack] equal to that card's cost."
+            "Reveal the top card of your deck. You get +[icon:attack] equal to that card's cost. [keyword:reveal-cost-attack]"
           ]
         }
       ],

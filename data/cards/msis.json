@@ -681,7 +681,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "Reveal the top card of your deck. If it has an odd-numbered cost, draw it. ( 0 is even.)"
+            "Reveal the top card of your deck. If it has an odd-numbered cost, draw it. ( 0 is even.) [keyword:reveal-odd-draw]"
           ]
         },
         {

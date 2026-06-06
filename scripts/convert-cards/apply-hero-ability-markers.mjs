@@ -46,9 +46,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const CARDS_DIR = join(__dirname, '..', '..', 'data', 'cards');
 const MAP_PATH = join(__dirname, 'inputs', 'hero-ability-markers.json');
 
-// why: only valid token forms per D-21601, D-21701, D-21702, D-21802 — catch typos before data is written
+// why: only valid token forms per D-21601, D-21701, D-21702, D-21802, D-21901, D-21902 — catch typos before data is written
 const VALID_TOKEN_PATTERN =
-  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$/;
+  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$|^\[keyword:reveal-cost-attack\]$|^\[keyword:reveal-odd-draw\]$/;
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -370,6 +370,40 @@ function suggestRevealKoOrDrawToken(line) {
 }
 
 /**
+ * Returns true when an ability line is an in-scope reveal-cost-attack candidate.
+ * "Reveal the top card of your deck. You get +[icon:attack] equal to its cost."
+ *
+ * @param {string} line - The ability line to test.
+ * @returns {boolean} True if the line is an in-scope reveal-cost-attack candidate.
+ */
+function isRevealCostAttackCandidate(line) {
+  if (!/Reveal the top card of your deck\./i.test(line)) return false;
+  if (!line.includes('[icon:attack]')) return false;
+  if (!/equal to (?:its|that card's) cost/i.test(line)) return false;
+  if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
+  if (line.includes('Otherwise')) return false;
+  if (line.includes('[keyword:reveal-cost-attack]')) return false;
+  return true;
+}
+
+/**
+ * Returns true when an ability line is an in-scope reveal-odd-draw candidate.
+ * "Reveal the top card of your deck. If its cost is odd, draw it."
+ *
+ * @param {string} line - The ability line to test.
+ * @returns {boolean} True if the line is an in-scope reveal-odd-draw candidate.
+ */
+function isRevealOddDrawCandidate(line) {
+  if (!/Reveal the top card of your deck\./i.test(line)) return false;
+  if (!/odd[-\s]?(?:numbered\s+)?cost|cost is odd/i.test(line)) return false;
+  if (!/draw it/i.test(line)) return false;
+  if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
+  if (line.includes('Otherwise')) return false;
+  if (line.includes('[keyword:reveal-odd-draw]')) return false;
+  return true;
+}
+
+/**
  * Returns true when a reveal-min ability line is an in-scope candidate.
  * Matches: "Reveal the top card" + "draw it." + "costs N or more" pattern,
  * with no "Otherwise" clause (which signals a deferred multi-branch line).
@@ -513,6 +547,24 @@ function collectProposeRowsForSet(setAbbr, setData, rows) {
               suggestedToken,
             });
           }
+        } else if (isRevealCostAttackCandidate(line)) {
+          rows.push({
+            setAbbr,
+            heroSlug: hero.slug,
+            cardSlug: card.slug,
+            abilityIndex,
+            abilityText: line,
+            suggestedToken: '[keyword:reveal-cost-attack]',
+          });
+        } else if (isRevealOddDrawCandidate(line)) {
+          rows.push({
+            setAbbr,
+            heroSlug: hero.slug,
+            cardSlug: card.slug,
+            abilityIndex,
+            abilityText: line,
+            suggestedToken: '[keyword:reveal-odd-draw]',
+          });
         } else if (isRevealKoCandidate(line)) {
           rows.push({
             setAbbr,
