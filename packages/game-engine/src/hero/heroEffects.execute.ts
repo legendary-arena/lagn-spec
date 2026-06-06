@@ -28,9 +28,16 @@ import { koCard } from '../board/ko.logic.js';
 
 // why: WP-215 adds 'rescue' and 'reveal' to the executed set. WP-217 adds
 // 'reveal-ko' and 'reveal-min'. WP-218 adds 'reveal-ko-or-draw' (D-21802).
+// WP-219 adds 'reveal-cost-attack' (D-21901) and 'reveal-odd-draw' (D-21902).
 // 'wound' and 'conditional' remain deferred — they require targeting UI or
 // additional game systems not yet implemented.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw']);
+const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw']);
+
+// why: these keywords have no external magnitude; the pre-check gate must not
+// reject them for missing magnitude — they use internal cost or parity logic
+const NO_MAGNITUDE_KEYWORDS = new Set<string>([
+  'rescue', 'reveal-ko', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw',
+]);
 
 // ---------------------------------------------------------------------------
 // Magnitude validation
@@ -199,11 +206,11 @@ function executeSingleEffect(
     return;
   }
 
-  // why: 'ko', 'rescue', and 'reveal-ko' do not use the pre-check magnitude
-  // gate — all three handle undefined magnitude internally. 'reveal-min' and
-  // 'reveal-ko-or-draw' have their own magnitude gates inside their cases.
+  // why: 'ko' and NO_MAGNITUDE_KEYWORDS members do not use the pre-check magnitude
+  // gate — they handle undefined magnitude internally or use internal cost/parity logic.
+  // 'reveal-min' and 'reveal-ko-or-draw' have their own magnitude gates inside their cases.
   // All other MVP keywords require a valid magnitude at this level.
-  if (keyword !== 'ko' && keyword !== 'rescue' && keyword !== 'reveal-ko' && keyword !== 'reveal-min' && keyword !== 'reveal-ko-or-draw') {
+  if (keyword !== 'ko' && !NO_MAGNITUDE_KEYWORDS.has(keyword) && keyword !== 'reveal-min') {
     if (!isValidMagnitude(effect.magnitude)) {
       return;
     }
@@ -377,6 +384,40 @@ function executeSingleEffect(
         }
       }
       // cost > magnitude: no-op
+      break;
+    }
+    case 'reveal-cost-attack': {
+      // why: reveal-cost-attack peeks deck top; grants attack equal to its cost;
+      // card stays on deck (no zone mutation) (D-21901)
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) { break; }
+      if (playerZones.deck.length === 0) { break; }
+      const topCardId = playerZones.deck[0];
+      if (!topCardId) { break; }
+      const cardStats = G.cardStats[topCardId];
+      if (cardStats === undefined) { break; }
+      if (!G.turnEconomy) { break; }
+      G.turnEconomy.attack += cardStats.cost;
+      break;
+    }
+    case 'reveal-odd-draw': {
+      // why: reveal-odd-draw peeks deck top; draws it when cost is odd (cost % 2 !== 0);
+      // cost-0 is even and does NOT trigger the draw (D-21902)
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) { break; }
+      if (playerZones.deck.length === 0) { break; }
+      const topCardId = playerZones.deck[0];
+      if (!topCardId) { break; }
+      const cardStats = G.cardStats[topCardId];
+      if (cardStats === undefined) { break; }
+      if (cardStats.cost % 2 !== 0) {
+        const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+        if (moveResult.found) {
+          playerZones.deck = moveResult.from;
+          playerZones.hand = moveResult.to;
+        }
+      }
+      // cost is even (including 0): no-op
       break;
     }
     default: {

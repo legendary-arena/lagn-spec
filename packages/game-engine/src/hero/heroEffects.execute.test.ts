@@ -1085,6 +1085,323 @@ describe('executeHeroEffects', () => {
   });
 
   // -------------------------------------------------------------------------
+  // Test 37: reveal-cost-attack — cost-3 top card grants 3 attack; deck unchanged (AC-4, AC-25)
+  // -------------------------------------------------------------------------
+  it('reveal-cost-attack grants attack equal to card cost; deck identity preserved', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      turnEconomyAttack: 0,
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-cost-attack'],
+          effects: [{ type: 'reveal-cost-attack' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 3,
+      'attack should increase by 3 when top card cost is 3 (AC-4).');
+    assert.equal(gameState.playerZones['0'].deck.length, 1,
+      'deck length should be unchanged after reveal-cost-attack (AC-25).');
+    assert.equal(gameState.playerZones['0'].deck[0], 'hero-y',
+      'deck[0] must still be hero-y — no zone mutation allowed (AC-25).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 38: reveal-cost-attack — cost-0 top card grants 0 attack; deck unchanged (AC-5)
+  // -------------------------------------------------------------------------
+  it('reveal-cost-attack grants 0 attack for cost-0 card; deck unchanged', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['starter-agent'],
+      hand: [],
+      turnEconomyAttack: 2,
+      cardStats: {
+        'starter-agent': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-cost-attack'],
+          effects: [{ type: 'reveal-cost-attack' }],
+        },
+      ],
+    });
+
+    const attackBefore = gameState.turnEconomy.attack;
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, attackBefore,
+      'attack should equal attackBefore when cost is 0 (AC-5); executor fires but +0 means no change.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['starter-agent'],
+      'deck should be unchanged after reveal-cost-attack on cost-0 card.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 39: reveal-cost-attack — empty deck is a silent no-op (AC-6)
+  // -------------------------------------------------------------------------
+  it('reveal-cost-attack is a no-op when deck is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      turnEconomyAttack: 1,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-cost-attack'],
+          effects: [{ type: 'reveal-cost-attack' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 1,
+      'attack should remain unchanged when deck is empty (AC-6).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 40: reveal-cost-attack — missing cardStats is a silent no-op (AC-7)
+  // -------------------------------------------------------------------------
+  it('reveal-cost-attack is a no-op when top card has no cardStats entry', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['unknown-card'],
+      cardStats: {},
+      turnEconomyAttack: 1,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-cost-attack'],
+          effects: [{ type: 'reveal-cost-attack' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 1,
+      'attack should remain unchanged when cardStats entry is missing (AC-7).');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['unknown-card'],
+      'deck should remain unchanged when cardStats entry is missing.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 41: reveal-cost-attack — undefined G.turnEconomy is a silent no-op (AC-8)
+  // -------------------------------------------------------------------------
+  it('reveal-cost-attack is a no-op when G.turnEconomy is undefined', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-cost-attack'],
+          effects: [{ type: 'reveal-cost-attack' }],
+        },
+      ],
+    });
+
+    // Simulate missing turnEconomy
+    (gameState as unknown as { turnEconomy: undefined }).turnEconomy = undefined as unknown as typeof gameState.turnEconomy;
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.strictEqual((gameState as unknown as { turnEconomy: unknown }).turnEconomy, undefined,
+      'G.turnEconomy should remain undefined after guard fires (AC-8).');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'deck should be unchanged when G.turnEconomy guard fires.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 42: reveal-odd-draw — cost-1 top card is drawn; exact topCardId in hand (AC-9, AC-26)
+  // -------------------------------------------------------------------------
+  it('reveal-odd-draw draws top card to hand when cost is odd (cost 1)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-odd-draw'],
+          effects: [{ type: 'reveal-odd-draw' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.playerZones['0'].deck.length, 0,
+      'deck should shrink by 1 when cost is odd (AC-9).');
+    assert.equal(gameState.playerZones['0'].hand.length, 1,
+      'hand should grow by 1 when cost is odd (AC-9).');
+    assert.ok(gameState.playerZones['0'].hand.includes('hero-y'),
+      'the exact topCardId (hero-y) must be in hand after odd-draw fires (AC-26).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 43: reveal-odd-draw — cost-3 top card is drawn (AC-10)
+  // -------------------------------------------------------------------------
+  it('reveal-odd-draw draws top card to hand when cost is odd (cost 3)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-odd-draw'],
+          effects: [{ type: 'reveal-odd-draw' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.ok(gameState.playerZones['0'].hand.includes('hero-y'),
+      'hero-y should be drawn when cost is 3 (odd) (AC-10).');
+    assert.equal(gameState.playerZones['0'].deck.length, 0,
+      'deck should be empty after draw.');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 44: reveal-odd-draw — cost-0 top card is a no-op (AC-11)
+  // -------------------------------------------------------------------------
+  it('reveal-odd-draw is a no-op when top card cost is 0 (even)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['starter-agent'],
+      hand: [],
+      cardStats: {
+        'starter-agent': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-odd-draw'],
+          effects: [{ type: 'reveal-odd-draw' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['starter-agent'],
+      'deck should be unchanged when cost is 0 (even) (AC-11).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when cost is 0 (even) (AC-11).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 45: reveal-odd-draw — cost-2 top card is a no-op (AC-12)
+  // -------------------------------------------------------------------------
+  it('reveal-odd-draw is a no-op when top card cost is 2 (even)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['hero-y'],
+      hand: [],
+      cardStats: {
+        'hero-y': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-odd-draw'],
+          effects: [{ type: 'reveal-odd-draw' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['hero-y'],
+      'deck should be unchanged when cost is 2 (even) (AC-12).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when cost is 2 (even) (AC-12).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 46: reveal-odd-draw — empty deck is a silent no-op (AC-13)
+  // -------------------------------------------------------------------------
+  it('reveal-odd-draw is a no-op when deck is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      hand: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-odd-draw'],
+          effects: [{ type: 'reveal-odd-draw' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should remain empty (AC-13).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when deck is empty (AC-13).');
+  });
+
+  // -------------------------------------------------------------------------
+  // Test 47: reveal-odd-draw — missing cardStats is a silent no-op (AC-14)
+  // -------------------------------------------------------------------------
+  it('reveal-odd-draw is a no-op when top card has no cardStats entry', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['unknown-card'],
+      hand: [],
+      cardStats: {},
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-odd-draw'],
+          effects: [{ type: 'reveal-odd-draw' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['unknown-card'],
+      'deck should remain unchanged when cardStats entry is missing (AC-14).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when cardStats entry is missing (AC-14).');
+  });
+
+  // -------------------------------------------------------------------------
   // Test 11: JSON serialization
   // -------------------------------------------------------------------------
   it('JSON.stringify(G) succeeds after execution', () => {
