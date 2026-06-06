@@ -64,18 +64,21 @@ After this packet:
 ### Engine
 - No `.reduce()` in zone operations or effect application.
 - Zone mutations go through `zoneOps.ts` helpers.
-- `G.pendingHeroChoice` is `PendingHeroChoice | undefined` (`undefined` locked — see §Assumes).
-  It may only be set by the `reveal-attack-choose` executor and cleared by `resolveHeroChoice`.
+- `G.pendingHeroChoice` is `PendingHeroChoice | undefined`. `undefined` is the only locked absent-value form.
+- `G.pendingHeroChoice` may only be set by the `reveal-attack-choose` executor and may only be cleared by `resolveHeroChoice`.
 - `resolveHeroChoice` validates that `G.pendingHeroChoice` is set and that the requesting
   player matches `pendingHeroChoice.playerID`; mismatched or absent pending state is a
   silent no-op (move never throws).
-- `G.pendingHeroChoice` must be `undefined` at turn-end; the `ctx.events.endTurn()` call
-  site in `coreMoves.impl.ts:endTurn()` must check and return silently if it is set.
+- `G.pendingHeroChoice` must be `undefined` at turn-end; `endTurn()` in
+  `packages/game-engine/src/moves/coreMoves.impl.ts` must check `G.pendingHeroChoice !== undefined`
+  immediately before `events.endTurn()` and return silently if set.
 - `HERO_KEYWORDS` canonical array and `HeroKeyword` union must stay in parity.
   Drift-detection test must pass at exactly 14 after this packet.
-- Both the `reveal-attack-choose` executor AND the `resolveHeroChoice` move must emit
-  silent no-ops on empty deck, missing stats, missing/wrong pending state.
-  No throw. No log.
+- Executor silent no-op conditions: empty deck, missing `playerZones`, missing top card,
+  missing `cardStats`, invalid or absent magnitude, `G.turnEconomy` undefined, pre-existing
+  `G.pendingHeroChoice`. No throw. No log.
+- `resolveHeroChoice` silent no-op conditions: missing pending choice, wrong player, unexpected
+  `choiceType`. No throw. No log.
 - All `ctx.events.setPhase()` and `ctx.events.endTurn()` calls require a `// why:` comment.
 
 ### Tooling
@@ -194,8 +197,7 @@ After this packet:
      before the pending assignment. AC-8b tests this explicitly.
    - Card stays at `deck[0]` until `resolveHeroChoice` fires.
 
-6. **Add `resolveHeroChoice` move** (new file or added to existing moves file per the
-   execution session's judgment — one move, new or existing):
+6. **Add `resolveHeroChoice` move** to new file `packages/game-engine/src/moves/heroChoice.resolve.ts`:
 
    ```typescript
    function resolveHeroChoice(
@@ -224,9 +226,12 @@ After this packet:
    }
    ```
 
-7. **Turn-end guard**: locate the site where `ctx.events.endTurn()` is called from the
-   cleanup stage (likely in `coreMoves.impl.ts` or the turn-phase logic). Add a guard that
-   returns silently when `G.pendingHeroChoice !== undefined`:
+7. **Move registration** in `packages/game-engine/src/game.ts`:
+   - Import: `import { resolveHeroChoice } from './moves/heroChoice.resolve.js';`
+   - Register: `resolveHeroChoice: { move: resolveHeroChoice, client: false }` in the `moves:` map
+
+8. **Turn-end guard** in the `endTurn()` function body of `packages/game-engine/src/moves/coreMoves.impl.ts`,
+   immediately before `events.endTurn()`:
 
    ```typescript
    if (G.pendingHeroChoice !== undefined) {
@@ -236,17 +241,16 @@ After this packet:
    }
    ```
 
-8. **Tests** in `heroEffects.execute.test.ts` and a new `heroChoice.resolve.test.ts`
-   (or appended to an existing test file):
+9. **Tests** in `heroEffects.execute.test.ts` and new `heroChoice.resolve.test.ts`:
 
-   For `reveal-attack-choose` executor (≥8 new cases):
+   For `reveal-attack-choose` executor (≥9 new cases):
    - cost-2 top card with magnitude-4: attack +2; `G.pendingHeroChoice` set; card still at `deck[0]`
    - cost-5 top card with magnitude-4: attack unchanged (cost > magnitude); `G.pendingHeroChoice` still set; card at `deck[0]`
-   - cost-0 top card: attack +0 (even, still within threshold); `G.pendingHeroChoice` set
+   - cost-0 top card: attack +0; `G.pendingHeroChoice` set
    - empty deck: no-op; `G.pendingHeroChoice` NOT set
    - missing cardStats: no-op; `G.pendingHeroChoice` NOT set
-   - `G.turnEconomy` undefined: no-op; `G.pendingHeroChoice` NOT set (guard fires before assignment — AC-8b)
-   - Second call while `G.pendingHeroChoice` already set: no-op; original pending unchanged (AC-8c)
+   - `G.turnEconomy` undefined: no-op; `G.pendingHeroChoice` NOT set (turnEconomy guard fires before pending assignment)
+   - second call while `G.pendingHeroChoice` already set: no-op; original pending unchanged (reject-second)
    - undefined magnitude: skipped (pre-check gate); no mutation
    - magnitude-0: skipped (< 1 guard); no mutation
 
@@ -256,26 +260,25 @@ After this packet:
    - no pending choice: no-op; no mutation
    - wrong player: no-op; pending choice unchanged
    - wrong choiceType (defensive): no-op
-   - discard with card no longer at deck[0] (defensive — card moved by another effect): `moveResult.found = false`; pending cleared anyway
+   - discard with card no longer at deck[0]: `moveResult.found = false`; pending cleared anyway
    - turn-end guard fires while pending choice outstanding: no endTurn mutation
 
 ### Tooling — `apply-hero-ability-markers.mjs`
 
-9. **Extend `VALID_TOKEN_PATTERN`** to accept `[keyword:reveal-attack-choose:N]` (magnitude ≥ 1
-   required; no-suffix form invalid):
+10. **Extend `VALID_TOKEN_PATTERN`** to accept only the magnitude-bearing form with a positive integer:
 
-   Add `|^\[keyword:reveal-attack-choose:\d+\]$` — the `\d+` branch only, no bare form.
+    Add `|^\[keyword:reveal-attack-choose:[1-9]\d*\]$` — bare form and `:0` form are invalid.
 
-10. **Add `isRevealAttackChooseCandidate(line)` detection function.**
+11. **Add `isRevealAttackChooseCandidate(line)` detection function.**
     A line qualifies IFF ALL of the following are true:
-    - `/Reveal the top card of your deck\./i` matches (reveal anchor — required)
+    - `/Reveal the top card of your deck\./i` matches
     - `/\[icon:attack\]/` matches
-    - `/equal to (?:its|that card's) cost/i` matches (reuse WP-219's regex)
-    - `/Discard it or put it back/i` matches (distinguishes from plain reveal-cost-attack)
+    - `/equal to (?:its|that card's) cost/i` matches
+    - `/Discard it or put it back/i` matches (distinguishes from plain `reveal-cost-attack`)
     - Does NOT contain `'Villain Deck'` or `'Master Strike'`
     - Does NOT contain `'[keyword:reveal-attack-choose'` (idempotence guard)
 
-11. **Add `suggestRevealAttackChooseToken(line)` function.**
+12. **Add `suggestRevealAttackChooseToken(line)` function.**
     Extracts the cost ceiling from "If it costs N or less" / "costs N or less":
     ```javascript
     function suggestRevealAttackChooseToken(line) {
@@ -285,14 +288,11 @@ After this packet:
     }
     ```
 
-12. **Update `collectProposeRowsForSet()` routing:** insert `isRevealAttackChooseCandidate`
-    BEFORE `isRevealCostAttackCandidate` in the routing chain (compound-with-choice takes
-    priority over unconditional cost-attack):
+13. **Update `collectProposeRowsForSet()` routing.** Locked order — do not reorder:
 
-    Authoritative routing order after this WP:
-    1. `isRevealKoOrDrawCandidate` (compound KO-or-draw)
-    2. `isRevealAttackChooseCandidate` (NEW — compound attack + player choice)
-    3. `isRevealCostAttackCandidate` (unconditional attack grant)
+    1. `isRevealKoOrDrawCandidate`
+    2. `isRevealAttackChooseCandidate` (NEW — must precede `isRevealCostAttackCandidate`)
+    3. `isRevealCostAttackCandidate`
     4. `isRevealOddDrawCandidate`
     5. `isRevealKoCandidate`
     6. `isRevealMinCandidate`
@@ -300,7 +300,7 @@ After this packet:
 
 ### Data
 
-13. **Add 1 new entry** to `hero-ability-markers.json`:
+14. **Add 1 new entry** to `hero-ability-markers.json`:
 
     ```json
     "2099": [
@@ -311,7 +311,7 @@ After this packet:
 
     Run `--propose` BEFORE editing the map to confirm the slug and index.
 
-14. **Apply markup.** `Updated: 1` on first run. Idempotence on second run.
+15. **Apply markup.** `Updated: 1` on first run. Idempotence on second run.
 
 ---
 
@@ -326,8 +326,13 @@ After this packet:
   Queue support deferred.
 - UI rendering of the pending choice prompt — client concern, not engine scope.
 - Disconnect/reconnect behavior while choice is pending — deferred.
-- Any engine changes beyond `types.ts`, `heroKeywords.ts`, `heroEffects.execute.ts`,
-  and the new move file.
+- Any engine changes beyond:
+  - `packages/game-engine/src/types.ts`
+  - `packages/game-engine/src/rules/heroKeywords.ts`
+  - `packages/game-engine/src/hero/heroEffects.execute.ts`
+  - `packages/game-engine/src/moves/heroChoice.resolve.ts` (new file)
+  - `packages/game-engine/src/game.ts` (import + move registration only)
+  - the single turn-end guard callsite in `packages/game-engine/src/moves/coreMoves.impl.ts`
 
 ---
 
@@ -336,31 +341,34 @@ After this packet:
 **Engine (modified):**
 1. `packages/game-engine/src/types.ts` — add `PendingHeroChoice` interface + `pendingHeroChoice?` field to `LegendaryGameState`
 2. `packages/game-engine/src/rules/heroKeywords.ts` — add `'reveal-attack-choose'`
+3. `packages/game-engine/src/hero/heroEffects.execute.ts` — add `reveal-attack-choose` executor case + `MVP_KEYWORDS` entry
+4. `packages/game-engine/src/moves/coreMoves.impl.ts` — turn-end guard before `events.endTurn()`
 
-**Engine (modified or new — execution session decides):**
-3. `packages/game-engine/src/hero/heroEffects.execute.ts` — add `reveal-attack-choose` executor case
-4. `packages/game-engine/src/moves/heroChoice.resolve.ts` — new file for `resolveHeroChoice` move (OR added to existing moves file if the execution session determines no new file is warranted)
+**Engine (new):**
+5. `packages/game-engine/src/moves/heroChoice.resolve.ts` — `resolveHeroChoice` move
 
-**Engine — turn-end gate (modified):**
-5. `packages/game-engine/src/moves/coreMoves.impl.ts` (or equivalent `ctx.events.endTurn()` callsite) — pending-choice guard
+**Engine — move registration (modified):**
+6. `packages/game-engine/src/game.ts` — import `resolveHeroChoice` + add to `moves:` map as `{ move: resolveHeroChoice, client: false }`
 
 **Engine tests (modified or new):**
-6. `packages/game-engine/src/hero/heroEffects.execute.test.ts` — ≥8 new `reveal-attack-choose` cases
-7. `packages/game-engine/src/hero/heroChoice.resolve.test.ts` — new file; ≥8 `resolveHeroChoice` cases
-8. `packages/game-engine/src/rules/heroAbility.setup.test.ts` — drift-detection test 13 → 14
+7. `packages/game-engine/src/hero/heroEffects.execute.test.ts` — ≥9 new `reveal-attack-choose` cases
+8. `packages/game-engine/src/hero/heroChoice.resolve.test.ts` — new file; ≥8 `resolveHeroChoice` cases
+9. `packages/game-engine/src/rules/heroAbility.setup.test.ts` — drift-detection test 13 → 14
 
 **Tooling (modified):**
-9. `scripts/convert-cards/apply-hero-ability-markers.mjs` — extend `VALID_TOKEN_PATTERN`; add `isRevealAttackChooseCandidate`, `suggestRevealAttackChooseToken`; update routing
+10. `scripts/convert-cards/apply-hero-ability-markers.mjs` — extend `VALID_TOKEN_PATTERN`; add `isRevealAttackChooseCandidate`, `suggestRevealAttackChooseToken`; update routing
 
 **Data (modified):**
-10. `scripts/convert-cards/inputs/hero-ability-markers.json` — 1 new entry
-11. `data/cards/2099.json` — overhorns-and-underhorns abilityIndex=0 markup
+11. `scripts/convert-cards/inputs/hero-ability-markers.json` — 1 new entry
+12. `data/cards/2099.json` — overhorns-and-underhorns abilityIndex=0 markup
 
 **Governance:**
-12. `docs/ai/DECISIONS.md` — D-22001..D-22003
-13. `docs/ai/STATUS.md` — WP-220 executed
-14. `docs/ai/work-packets/WORK_INDEX.md` — WP-220 `[ ]` → `[x]`
-15. `docs/ai/execution-checklists/EC_INDEX.md` — EC-252 Draft → Done
+13. `docs/ai/DECISIONS.md` — D-22001..D-22003
+14. `docs/ai/STATUS.md` — WP-220 executed
+15. `docs/ai/work-packets/WORK_INDEX.md` — WP-220 `[ ]` → `[x]`
+16. `docs/ai/execution-checklists/EC_INDEX.md` — EC-252 Draft → Done
+
+16 files. `game.ts` is required for move registration — `resolveHeroChoice` will not be callable without it.
 
 Up to 15 files. The execution session determines whether `heroChoice.resolve.ts` is new or co-located with existing moves.
 
@@ -428,38 +436,33 @@ Up to 15 files. The execution session determines whether `heroChoice.resolve.ts`
 
 1. `pnpm --filter @legendary-arena/game-engine test` exits 0 with no new failures.
 2. `pnpm -r build` exits 0.
-3. `HERO_KEYWORDS` array and `HeroKeyword` union both contain `'reveal-attack-choose'`;
-   drift-detection test passes (14 keywords).
-4. `reveal-attack-choose` with cost-2 top card (magnitude 4): `G.turnEconomy.attack` += 2;
-   `G.pendingHeroChoice` set; `deck[0]` still equals the same cardId.
-5. `reveal-attack-choose` with cost-5 top card (magnitude 4): `G.turnEconomy.attack` unchanged;
-   `G.pendingHeroChoice` still set; `deck[0]` unchanged.
-6. `reveal-attack-choose` with cost-0 top card: `G.turnEconomy.attack` += 0 (executor fires);
-   `G.pendingHeroChoice` set.
-7. `reveal-attack-choose` with empty deck: no-op; `G.pendingHeroChoice` NOT set.
-8. `reveal-attack-choose` with missing cardStats: no-op; `G.pendingHeroChoice` NOT set.
-8b. `reveal-attack-choose` with `G.turnEconomy` undefined: no-op; `G.pendingHeroChoice` NOT set
-    (turnEconomy guard fires before the pending assignment — ordering matters).
-8c. Second `reveal-attack-choose` while `G.pendingHeroChoice` is already set: silent no-op;
-    original pending choice is unchanged (reject-second).
-9. `reveal-attack-choose` with undefined magnitude: skipped; no mutation.
-10. `resolveHeroChoice('discard')`: card moves deck→discard; `G.pendingHeroChoice` cleared.
-11. `resolveHeroChoice('return')`: card stays at `deck[0]`; `G.pendingHeroChoice` cleared.
-12. `resolveHeroChoice` with no pending choice: no-op; no mutation.
-13. `resolveHeroChoice` with wrong playerID: no-op; pending choice unchanged.
-14. Turn-end guard: when `G.pendingHeroChoice` is set, the `ctx.events.endTurn()` callsite
-    returns without calling `endTurn`.
-15. `--propose` output includes row for `2099 | ravage-2099 | overhorns-and-underhorns |
-    abilityIndex=0 | … | suggested=[keyword:reveal-attack-choose:4]`.
-16. `apply-hero-ability-markers.mjs` reports `Updated: 1` on first run; zero diff on second run.
-17. `--validate` exits 0 after apply.
-18. `grep "\[keyword:reveal-attack-choose:4\]" data/cards/2099.json | wc -l` = 1.
-19. `assertValidToken` rejects `[keyword:reveal-attack-choose]` (missing magnitude).
-20. `assertValidToken` rejects `[keyword:reveal-attack-choose:0]` (zero magnitude).
-21. `G.pendingHeroChoice` is `undefined` (never defined) at game setup — existing setup
-    tests continue to pass without modification.
-22. No files outside §Files Expected to Change were modified.
-23. D-22001..D-22003 Active in `docs/ai/DECISIONS.md`.
+3. `HERO_KEYWORDS` array and `HeroKeyword` union both contain `'reveal-attack-choose'`; drift-detection test passes at 14.
+4. With cost-2 top card and magnitude 4: executor grants `+2` attack, sets `G.pendingHeroChoice`, leaves card at `deck[0]`.
+5. With cost-5 top card and magnitude 4: executor grants no attack, still sets `G.pendingHeroChoice`, leaves card at `deck[0]`.
+6. With cost-0 top card and magnitude 4: executor grants `+0` attack and sets `G.pendingHeroChoice`.
+7. With empty deck: executor is a silent no-op and does not set `G.pendingHeroChoice`.
+8. With missing `cardStats`: executor is a silent no-op and does not set `G.pendingHeroChoice`.
+9. With `G.turnEconomy` undefined: executor is a silent no-op and does not set `G.pendingHeroChoice` (turnEconomy guard fires before the pending assignment — ordering is load-bearing).
+10. If `G.pendingHeroChoice` is already set: second `reveal-attack-choose` execution is a silent no-op and does not overwrite the original pending choice (reject-second).
+11. With undefined magnitude: executor performs no mutation.
+12. With magnitude 0: executor performs no mutation.
+13. `resolveHeroChoice('discard')` moves the card from deck to discard and clears `G.pendingHeroChoice`.
+14. `resolveHeroChoice('return')` leaves the card at `deck[0]` and clears `G.pendingHeroChoice`.
+15. `resolveHeroChoice` with no pending choice: silent no-op.
+16. `resolveHeroChoice` with wrong `playerID`: silent no-op; pending choice unchanged.
+17. `resolveHeroChoice` with wrong `choiceType`: silent no-op.
+18. If discard resolution cannot find the card in deck: pending choice is still cleared before return.
+19. Turn-end guard returns silently before `ctx.events.endTurn()` fires when `G.pendingHeroChoice` is set.
+20. `--propose` includes row: `2099 | ravage-2099 | overhorns-and-underhorns | abilityIndex=0 | … | suggested=[keyword:reveal-attack-choose:4]`.
+21. First apply reports `Updated: 1`.
+22. Second apply is idempotent and produces no further diff in `data/cards/`.
+23. `--validate` exits 0 after apply.
+24. `grep "\[keyword:reveal-attack-choose:4\]" data/cards/2099.json | wc -l` returns `1`.
+25. `assertValidToken` rejects `[keyword:reveal-attack-choose]` (missing magnitude).
+26. `assertValidToken` rejects `[keyword:reveal-attack-choose:0]` (zero magnitude).
+27. Existing setup tests continue to pass without requiring default initialization of `G.pendingHeroChoice`.
+28. No files outside §Files Expected to Change were modified.
+29. D-22001, D-22002, and D-22003 are Active in `docs/ai/DECISIONS.md`.
 
 ---
 
@@ -514,8 +517,9 @@ pnpm -r build
 - [ ] `reveal-attack-choose` executor in `heroEffects.execute.ts` with `// why: D-22003`.
 - [ ] `resolveHeroChoice` move with no-op guards and `// why: D-22002` comment on pending-clear.
 - [ ] Turn-end guard at `ctx.events.endTurn()` callsite with `// why: D-22002` comment.
-- [ ] ≥16 new tests covering executor cases + resolveHeroChoice cases + turn-end guard.
-- [ ] `VALID_TOKEN_PATTERN` accepts `[keyword:reveal-attack-choose:N]`; rejects bare form and `:0` form.
+- [ ] `resolveHeroChoice` registered in `game.ts` `moves:` map as `{ move: resolveHeroChoice, client: false }`.
+- [ ] ≥17 new tests covering executor cases + resolveHeroChoice cases + turn-end guard.
+- [ ] `VALID_TOKEN_PATTERN` accepts `[keyword:reveal-attack-choose:[1-9]\d*]`; rejects bare form and `:0` form.
 - [ ] `isRevealAttackChooseCandidate` has reveal anchor + discard-or-return phrase; routes BEFORE `isRevealCostAttackCandidate`.
 - [ ] `hero-ability-markers.json` entry for `2099/ravage-2099/overhorns-and-underhorns`.
 - [ ] `data/cards/2099.json` overhorns card marked.
