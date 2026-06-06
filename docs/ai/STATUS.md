@@ -7,9 +7,9 @@
 
 ## Current State
 
-### WP-217 / EC-249 Drafted — Hero Reveal Executor Extensions: Reveal-KO-If-Zero and Reveal-Draw-At-Least (2026-06-05)
+### WP-217 / EC-249 Executed — Hero Reveal Executor Extensions: Reveal-KO-If-Zero and Reveal-Draw-At-Least (2026-06-05)
 
-**WP-217 drafted.** Extends the hero reveal executor with two new patterns: `reveal-ko` (peek deck top, KO if cost = 0) and `reveal-min` (peek deck top, draw if cost ≥ N). Adds `'reveal-ko'` and `'reveal-min'` to `HeroKeyword` union + `HERO_KEYWORDS` array. Extends `KEYWORD_PATTERN` to allow hyphens. Adds executor cases in `heroEffects.execute.ts`. Applies markup to 5 hero cards across cvwr (3) and wwhk (2). Extends `apply-hero-ability-markers.mjs` with new detection/suggestion functions. D-21701..D-21704 reserved. Hard-dep: WP-216 ✅. See [WP-217](work-packets/WP-217-hero-reveal-executor-extensions.md) + [EC-249](execution-checklists/EC-249-hero-reveal-executor-extensions.checklist.md).
+**WP-217 done.** Adds `'reveal-ko'` (D-21701) and `'reveal-min'` (D-21702) to `HeroKeyword` union + `HERO_KEYWORDS` array. Extends `KEYWORD_PATTERN` to allow hyphens. Adds executor cases in `heroEffects.execute.ts` following the existing `'reveal'` pattern. Applies markup to 5 hero cards (cvwr×3: cloak-dagger/darkness reveal-ko, cloak-dagger/light reveal-min:1, hercules/prince-of-power reveal-ko; wwhk×2: bruce-banner/dangerous-testing reveal-ko, rick-jones/captain-marvel reveal-min:3). Extends `apply-hero-ability-markers.mjs` with `isRevealKoCandidate`, `isRevealMinCandidate`, `suggestRevealMinToken`. Drift-detection test updated to 10 keywords. Tests: 1125 passing (+9 over baseline). D-21701..D-21704 Active. Hard-dep: WP-216 ✅.
 
 ---
 

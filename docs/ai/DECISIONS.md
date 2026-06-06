@@ -23102,4 +23102,52 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-21701 — New HeroKeyword: `reveal-ko` (WP-217)
+
+**Decision:** Add `'reveal-ko'` to the `HeroKeyword` union and `HERO_KEYWORDS` canonical array in `heroKeywords.ts`. Token form: `[keyword:reveal-ko]` with no suffix ever. Executor behavior: peek `G.playerZones[playerID].deck[0]`; if `G.cardStats[topCardId].cost === 0`, apply `G.ko = koCard(G.ko, topCardId)`; otherwise no-op. Empty deck → silent no-op (D-21502 precedent). Missing cardStats entry → silent no-op. Magnitude field is ignored — no magnitude gate applied.
+
+**Rationale:** Cloak & Dagger (darkness), Hercules (prince-of-power), and Bruce Banner (dangerous-testing) all have "Reveal the top card. If it costs 0, KO it." text. The cost-zero KO is a distinct semantic from the cost-threshold draw (`reveal`) and the self-KO (`ko`). A dedicated keyword keeps executor dispatch single-purpose and prevents re-deriving the behavior at parse time.
+
+**Packet:** WP-217 / EC-249.
+**Drafted:** 2026-06-05. **Landed:** (this session).
+**Status:** Active
+
+---
+
+### D-21702 — New HeroKeyword: `reveal-min` (WP-217)
+
+**Decision:** Add `'reveal-min'` to the `HeroKeyword` union and `HERO_KEYWORDS` canonical array in `heroKeywords.ts`. Token form: `[keyword:reveal-min:N]` — integer suffix required (N = minimum cost threshold). Executor behavior: peek `G.playerZones[playerID].deck[0]`; if `G.cardStats[topCardId].cost >= effect.magnitude`, apply `moveCardFromZone(deck, hand, topCardId)`; otherwise no-op. `effect.magnitude === undefined` → skip (AC-3). Empty deck → silent no-op (D-21502 precedent). Missing cardStats entry → silent no-op.
+
+**Rationale:** Cloak & Dagger (light) and Rick Jones (captain-marvel) have "Reveal the top card. If it costs N or more, draw it." text. The cost-minimum draw is the opposite direction from the existing `reveal` keyword (which draws when cost ≤ threshold). A dedicated keyword prevents executor logic from inverting the cost comparison silently.
+
+**Packet:** WP-217 / EC-249.
+**Drafted:** 2026-06-05. **Landed:** (this session).
+**Status:** Active
+
+---
+
+### D-21703 — Deferred Reveal-KO Patterns: Optional KO, Icon-Gated Cost, Multi-Effect (WP-217)
+
+**Decision:** The following reveal-ko ability line patterns are deferred from WP-217 corpus markup and must NOT receive `[keyword:reveal-ko]` tokens: (1) optional-KO forms — "You may KO it." (mgtg/drax, vill/electro, vnom/carnage); (2) icon-gated cost threshold — "If it costs 0[icon:vp], KO it." (dkcy/punisher); (3) multi-effect lines — lines that include both a KO branch and a draw or bonus branch (ssw2/silk, cosm/captain-mar-vell). Only lines matching the exact phrase "If it costs 0, KO it." with no additional effects are in scope for WP-217.
+
+**Rationale:** Optional-KO forms require player-choice UI not yet implemented. Icon-gated cost threshold uses a different magnitude extraction path. Multi-effect lines encode two distinct executors that need compound dispatch, deferred to a future WP.
+
+**Packet:** WP-217 / EC-249.
+**Drafted:** 2026-06-05. **Landed:** (this session).
+**Status:** Active
+
+---
+
+### D-21704 — Deferred Reveal-Min Patterns: Otherwise Clause, Multi-Branch (WP-217)
+
+**Decision:** The following reveal-min ability line patterns are deferred from WP-217 corpus markup and must NOT receive `[keyword:reveal-min:N]` tokens: (1) lines with an "Otherwise" clause — "If it costs N or more, draw it. Otherwise, discard it or put it back." (anni/brainstorm); (2) any reveal-min line that also contains a KO or bonus branch. Only unconditional single-branch "If it costs N or more, draw it." lines are in scope for WP-217.
+
+**Rationale:** "Otherwise" clauses require two-branch executor dispatch (draw branch + discard/KO branch) not yet implemented. Single-branch draw-when-above-threshold is the simplest form and the only one with clear unambiguous executor semantics in the current pipeline.
+
+**Packet:** WP-217 / EC-249.
+**Drafted:** 2026-06-05. **Landed:** (this session).
+**Status:** Active
+
+---
+
 Protect this file.
