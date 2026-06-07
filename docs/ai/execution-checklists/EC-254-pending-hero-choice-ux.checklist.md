@@ -37,6 +37,7 @@
 - Projection uses `resolveDisplay()` — client never does a registry lookup
 - Aliasing defense: projection is a fresh `{ ...spread }` object, not an alias into G
 - No `.reduce()` in projection or filter logic
+- Filter pass-through MUST use the conditional-assignment pattern: `if (uiState.pendingHeroChoice !== undefined) { result.pendingHeroChoice = { ...uiState.pendingHeroChoice, display: { ...uiState.pendingHeroChoice.display } } }` — matches `gameOver` pattern at filter line 426; do NOT assign `pendingHeroChoice: undefined` on the result literal (`exactOptionalPropertyTypes`)
 - Prompt layout: same container as TurnActionBar, above it in DOM order; no `position: fixed`; no `<Teleport>`
 - Disabled buttons MUST show gate reason string in `title` attribute (tooltip) — same pattern as existing TurnActionBar gates
 - No boardgame.io imports in `uiState.types.ts`, `uiState.build.ts`, or `uiState.filter.ts`

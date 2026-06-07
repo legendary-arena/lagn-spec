@@ -251,48 +251,34 @@ understands why end-turn is blocked.
 
 ## Acceptance Criteria
 
-1. `UIState.pendingHeroChoice` is `undefined` when `G.pendingHeroChoice` is
-   `undefined`.
-2. `UIState.pendingHeroChoice` is a `UIPendingHeroChoice` with correct
-   `choiceType`, `cardId`, `playerID`, and `display` when
-   `G.pendingHeroChoice` is set.
-3. `UIPendingHeroChoice.display` is a new object reference (`!==`)
-   compared to any entry in `G.cardDisplayData` — guaranteed by
-   `resolveDisplay()` spread. Mutation of the projection MUST NOT
-   affect `G`.
-4. `filterUIStateForAudience` passes `pendingHeroChoice` through unchanged
-   for all audiences (player, opponent, spectator).
-5. `UIPendingHeroChoice` type is exported from
-   `@legendary-arena/game-engine` barrel.
-6. `UiMoveName` union includes `'resolveHeroChoice'` (11 members total).
-7. `useTurnActions` with `hasPendingChoice: true` returns
-   `{ allowed: false, reason: ... }` for `canEndTurn()` at cleanup stage.
-8. `useTurnActions` with `hasPendingChoice: true` returns
-   `{ allowed: false, reason: ... }` for `canPassPriority()` at cleanup stage.
-9. `useTurnActions` with `hasPendingChoice: true` does NOT block
-   `canPassPriority()` at non-cleanup stages (player must still be able to
-   advance through start and main).
-10. `PendingHeroChoicePrompt` renders card name and two buttons when
-    `pendingHeroChoice` is defined and viewer is the choosing player.
-11. "Discard" button calls `submitMove('resolveHeroChoice', { resolution: 'discard' })`.
-12. "Put it back" button calls `submitMove('resolveHeroChoice', { resolution: 'return' })`.
-13. `PendingHeroChoicePrompt` is hidden (does not render) when
-    `pendingHeroChoice` is `undefined`.
-14. `PendingHeroChoicePrompt` is hidden when the viewer is not the choosing
-    player (spectator or opponent perspective).
-15. `PlayDesktop` and `PlayMobile` both mount `PendingHeroChoicePrompt` and
-    pass `hasPendingChoice` to `TurnActionBar`.
-16. Drift test pins `UIPendingHeroChoice` field names (exactly 4 fields).
-17. Prompt renders iff `pendingHeroChoice !== undefined` AND
-    `viewerPlayerId === pendingHeroChoice.playerID`. Does NOT render when
-    `viewerPlayerId` is `null`.
-18. Prompt buttons are disabled immediately after either is clicked
-    (local `isSubmitting` ref). Only one `resolveHeroChoice` move may be
-    submitted per prompt instance.
-19. Gate reason string for `canEndTurn` and `canPassPriority` at cleanup
-    with pending choice exactly matches the locked value.
-20. Engine tests ≥ **1170** (baseline 1165 + ≥4 projection + ≥1 drift).
-21. Client tests ≥ **497** (baseline 484 + ≥7 prompt + ≥4 gate + ≥2 bar).
+1. **Engine projection:** `UIState.pendingHeroChoice` is `undefined` when
+   `G.pendingHeroChoice` is absent; is a correct 4-field
+   `UIPendingHeroChoice` when present; `display` reference is `!==` any
+   `G.cardDisplayData` entry (aliasing defense via `resolveDisplay()`
+   spread — mutation of the projection MUST NOT affect `G`).
+2. **Audience filter:** `filterUIStateForAudience` passes
+   `pendingHeroChoice` through via conditional assignment (matching
+   `gameOver` pattern) for all audiences (player, opponent, spectator).
+3. **Engine exports + drift:** `UIPendingHeroChoice` exported from barrel;
+   `UiMoveName` includes `'resolveHeroChoice'` (11 total); drift test pins
+   exactly 4 fields.
+4. **Turn-action gating:** `useTurnActions` with `hasPendingChoice: true`
+   blocks `canEndTurn` + `canPassPriority` at cleanup stage (gate reason
+   matches locked value); does NOT block `canPassPriority` at non-cleanup
+   stages (player must advance through start and main to reach the prompt).
+5. **Prompt rendering:** `PendingHeroChoicePrompt` renders iff
+   `pendingHeroChoice !== undefined AND viewerPlayerId ===
+   pendingHeroChoice.playerID`; hidden when `undefined`, when viewer is not
+   the choosing player, and when `viewerPlayerId` is `null`.
+6. **Prompt buttons:** "Discard" → `submitMove('resolveHeroChoice',
+   { resolution: 'discard' })`; "Put it back" → `submitMove(
+   'resolveHeroChoice', { resolution: 'return' })`; both disabled after
+   first click (`isSubmitting` ref — one move per prompt instance).
+7. **Page mounting:** `PlayDesktop` and `PlayMobile` both mount
+   `PendingHeroChoicePrompt` and pass `hasPendingChoice` to `TurnActionBar`.
+8. **Test counts:** Engine tests ≥ **1170** (baseline 1165 + ≥4 projection
+   + ≥1 drift). Client tests ≥ **497** (baseline 484 + ≥7 prompt + ≥4 gate
+   + ≥2 bar).
 
 ## Verification Steps
 
@@ -326,14 +312,44 @@ grep 'hasPendingChoice' apps/arena-client/src/composables/useTurnActions.ts
 # Expected: ≥1 line
 ```
 
+## Lint Gate Self-Review
+
+Retroactive audit against `00.3-prompt-lint-checklist.md` (2026-06-07):
+
+| Section | Result |
+|---|---|
+| §1 Structure | PASS — all 10 required sections present, Out of Scope has 7 items |
+| §2 Constraints | PASS — references 00.6, forbids diffs/snippets, engine-wide + packet-specific + locked values |
+| §3 Prerequisites | PASS — WP-220 deps with commit hashes, file shapes, baselines |
+| §4 Context | PASS — 10 specific source files + ARCHITECTURE.md + rules + DECISIONS |
+| §5 Output | PASS — 18 files listed with new/modified + descriptions |
+| §6 Naming | PASS — cardId, playerID, choiceType match engine conventions |
+| §7 Dependencies | PASS — no new npm deps |
+| §8 Architecture | PASS — layer boundary respected, no forbidden imports |
+| §9 Windows | PASS — pnpm + grep commands, no Unix assumptions |
+| §10 Env vars | PASS — no new env vars |
+| §11 Auth | N/A — no authentication surfaces |
+| §12 Tests | PASS — node:test, .test.ts, no network/DB |
+| §13 Verification | PASS — exact pnpm commands with expected output |
+| §14 ACs | PASS — 8 composite criteria, all binary/observable/specific |
+| §15 DoD | PASS — STATUS, DECISIONS, WORK_INDEX, EC_INDEX, scope check |
+| §16 Code style | PASS — 00.6 referenced, // why: required, no .reduce() |
+| §17 Vision | N/A — no §17.1 trigger surfaces (projection + prompt for existing engine field) |
+| §18 Prose/grep | N/A — no forbidden-token greps in verification steps |
+| §19 Staleness | N/A — commit-time discipline, not WP-lint gate |
+| §20 Funding | N/A — gameplay-only buttons, no funding surfaces |
+| §21 API catalog | N/A — boardgame.io move, no HTTP endpoints |
+
+**Verdict:** PASS (0 failures).
+
 ## Definition of Done
 
-- [ ] All 21 acceptance criteria pass
+- [ ] All 8 acceptance criteria pass
 - [ ] `pnpm --filter @legendary-arena/game-engine test` — ≥1170 pass, 0 fail
 - [ ] `pnpm --filter arena-client test` — ≥497 pass, 0 fail
 - [ ] `pnpm -r build` exits 0
 - [ ] `docs/ai/STATUS.md` updated
-- [ ] `docs/ai/DECISIONS.md` updated — D-22201..D-22203 Active
+- [ ] `docs/ai/DECISIONS.md` updated — D-22201..D-22203 flipped from Drafted → Active
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` WP-222 checked off with date
 - [ ] `docs/ai/execution-checklists/EC_INDEX.md` EC-254 updated
 - [ ] No files outside §Files Expected to Change modified
