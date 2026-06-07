@@ -23261,4 +23261,40 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-22201 — `UIPendingHeroChoice` UIState Projection Type (WP-222)
+
+**Decision:** A new `UIPendingHeroChoice` interface is added to `uiState.types.ts` with four fields: `choiceType: 'discard-or-return'`, `cardId: string`, `playerID: string`, `display: UICardDisplay`. A new optional field `pendingHeroChoice?: UIPendingHeroChoice` is added to `UIState`. The `display` field is resolved via `resolveDisplay()` in `uiState.build.ts` (aliasing-defense shallow copy). When `G.pendingHeroChoice` is `undefined`, `UIState.pendingHeroChoice` is `undefined` (absent, not `null`).
+
+**Rationale:** The arena-client consumes `UIState` projections only (D-0301). Without this projection, the client has no visibility into the pending hero choice and cannot render the resolution prompt. The `display` field is resolved engine-side so the client never performs a registry lookup (layer boundary: UI consumes projections, not engine internals). The type mirrors `G.pendingHeroChoice` with the addition of `display` for rendering.
+
+**Packet:** WP-222 / EC-254.
+**Drafted:** 2026-06-07. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
+### D-22202 — Pending Hero Choice Audience Visibility (WP-222)
+
+**Decision:** `UIState.pendingHeroChoice` passes through `filterUIStateForAudience` without redaction for all audiences (player, opponent, spectator). A spread copy is applied for aliasing defense, but no fields are omitted or zeroed.
+
+**Rationale:** In the physical Legendary card game, the revealed card is face-up on the table — visible to all players. The choice (discard or return) is the active player's decision, but the card identity and the fact that a choice is pending are public information. Redacting the field from other audiences would diverge from physical-table semantics with no gameplay benefit.
+
+**Packet:** WP-222 / EC-254.
+**Drafted:** 2026-06-07. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
+### D-22203 — Client-Side Pending-Choice Turn-Action Gating (WP-222)
+
+**Decision:** `useTurnActions` gains an optional `hasPendingChoice?: boolean` parameter (default `false` for backwards compatibility). When `true`, `canEndTurn()` returns `{ allowed: false, reason: 'Resolve the revealed card choice before ending your turn.' }` at cleanup stage, and `canPassPriority()` returns the same at cleanup stage only. At non-cleanup stages, `canPassPriority()` remains allowed regardless of `hasPendingChoice` — the player must be able to advance through `start` and `main` to reach the prompt.
+
+**Rationale:** The engine's dual turn-end guard (D-22002) silently blocks the move server-side, but the UI must explain WHY the button is disabled — a disabled button with no explanation reads as a bug, not a game mechanic. Gating `canPassPriority` at cleanup only (not at start/main) prevents a secondary soft-lock: if pass-priority were globally blocked, a player who triggered the reveal at `start` or `main` stage would be unable to advance to `cleanup` where the prompt appears.
+
+**Packet:** WP-222 / EC-254.
+**Drafted:** 2026-06-07. **Landed:** (execution session).
+**Status:** Active (post-execution)
+
+---
+
 Protect this file.
