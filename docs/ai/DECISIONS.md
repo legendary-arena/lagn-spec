@@ -23268,8 +23268,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** The arena-client consumes `UIState` projections only (D-0301). Without this projection, the client has no visibility into the pending hero choice and cannot render the resolution prompt. The `display` field is resolved engine-side so the client never performs a registry lookup (layer boundary: UI consumes projections, not engine internals). The type mirrors `G.pendingHeroChoice` with the addition of `display` for rendering.
 
 **Packet:** WP-222 / EC-254.
-**Drafted:** 2026-06-07. **Landed:** (pending execution).
-**Status:** Drafted
+**Drafted:** 2026-06-07. **Landed:** 2026-06-07.
+**Status:** Active
 
 ---
 
@@ -23280,8 +23280,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** In the physical Legendary card game, the revealed card is face-up on the table — visible to all players. The choice (discard or return) is the active player's decision, but the card identity and the fact that a choice is pending are public information. Redacting the field from other audiences would diverge from physical-table semantics with no gameplay benefit.
 
 **Packet:** WP-222 / EC-254.
-**Drafted:** 2026-06-07. **Landed:** (pending execution).
-**Status:** Drafted
+**Drafted:** 2026-06-07. **Landed:** 2026-06-07.
+**Status:** Active
 
 ---
 
@@ -23292,8 +23292,8 @@ no new move, no new effect keyword). Free-standing EC-236.
 **Rationale:** The engine's dual turn-end guard (D-22002) silently blocks the move server-side, but the UI must explain WHY the button is disabled — a disabled button with no explanation reads as a bug, not a game mechanic. Gating `canPassPriority` at cleanup only (not at start/main) prevents a secondary soft-lock: if pass-priority were globally blocked, a player who triggered the reveal at `start` or `main` stage would be unable to advance to `cleanup` where the prompt appears.
 
 **Packet:** WP-222 / EC-254.
-**Drafted:** 2026-06-07. **Landed:** (pending execution).
-**Status:** Drafted
+**Drafted:** 2026-06-07. **Landed:** 2026-06-07.
+**Status:** Active
 
 ---
 

@@ -7,6 +7,12 @@
 
 ## Current State
 
+### WP-222 / EC-254 Executed — Pending Hero Choice UX (Engine Projection + Client Prompt) (2026-06-07)
+
+**WP-222 done.** Projects `G.pendingHeroChoice` into `UIState.pendingHeroChoice` via a new `UIPendingHeroChoice` interface (4 fields: `choiceType`, `cardId`, `playerID`, `display`; display resolved via `resolveDisplay()` with aliasing-defense shallow copy — D-22201). Pass-through for all audiences in `filterUIStateForAudience` with aliasing-defense spread (D-22202). Adds `PendingHeroChoicePrompt.vue` — renders only for the choosing player; "Discard" fires `resolveHeroChoice({ resolution: 'discard' })`, "Put it back" fires `resolveHeroChoice({ resolution: 'return' })`; `isSubmitting` ref prevents double-submit; wired in `PlayDesktop.vue` + `PlayMobile.vue`. `useTurnActions` gains `hasPendingChoice` param (default `false`): blocks `canEndTurn()` and `canPassPriority()` at cleanup stage only with gate reason `'Resolve the revealed card choice before ending your turn.'` (D-22203). `TurnActionBar.vue` gains `hasPendingChoice` prop; wired through. `'resolveHeroChoice'` added to `UiMoveName` union (10 → 11). Engine tests: 1165 → 1170 (+5). Client tests: 484 → 497 (+13). D-22201..D-22203 Active. Hard-dep: WP-220 ✅.
+
+---
+
 ### WP-220 / EC-252 Executed — Hero Reveal Attack-Choose Executor (Player-Choice Infrastructure) (2026-06-06)
 
 **WP-220 done.** Adds `G.pendingHeroChoice?: PendingHeroChoice | undefined` field to `LegendaryGameState` (D-22001). Adds `resolveHeroChoice` move + `ResolveHeroChoiceArgs` payload type; registered in `game.ts` as `{ move: resolveHeroChoice, client: false }` (D-22002). Dual turn-end guard: (a) `coreMoves.impl.ts` `endTurn()` — guard before inPlay/hand→discard sweep; (b) `game.ts` `advanceStage()` — guard at cleanup stage before `advanceTurnStage` call. Adds `'reveal-attack-choose'` HeroKeyword + executor (D-22003): peek deck top, grant `G.turnEconomy.attack += cardStats.cost` when `cost <= magnitude`, always set `G.pendingHeroChoice`. Reject-second policy: second call while pending is set is a silent no-op. Extends `apply-hero-ability-markers.mjs` with `isRevealAttackChooseCandidate` + `suggestRevealAttackChooseToken` (routed before `isRevealCostAttackCandidate`). Marks 1 hero card: 2099/ravage-2099/overhorns-and-underhorns (`[keyword:reveal-attack-choose:4]`). Closes D-21903 item 1. Tests: 1165 passing (+21 over WP-219 baseline). HERO_KEYWORDS: 13 → 14. D-22001..D-22003 Active. Hard-dep: WP-219 ✅.
