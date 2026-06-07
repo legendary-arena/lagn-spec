@@ -69,6 +69,10 @@ export interface UIState {
   piles: UISharedPilesState;
   koPile: UIKoPileState;
   gameOver?: UIGameOverState;
+  // why: D-22201 + WP-222 — projects G.pendingHeroChoice so the client can
+  // render the "Discard / Put it back" prompt. Absent (undefined) means no
+  // pending choice; the client must not render the prompt in that case.
+  pendingHeroChoice?: UIPendingHeroChoice;
 }
 
 /**
@@ -413,6 +417,25 @@ export interface UIParBreakdown {
   finalScore: number;
   /** Version stamp of the ScenarioScoringConfig used to compute the breakdown. */
   scoringConfigVersion: number;
+}
+
+/**
+ * UI-safe projection of a pending hero reveal choice (WP-222).
+ *
+ * // why: D-22201 — projects G.pendingHeroChoice into UIState so the
+ * arena-client can render an inline "Discard / Put it back" prompt without
+ * any registry lookup at the client layer. `display` is pre-resolved via
+ * resolveDisplay() at projection time. Strict 4-field contract; no engine
+ * internals (no hookRegistry, no cardStats).
+ */
+export interface UIPendingHeroChoice {
+  // why: D-22201 — discriminant mirrors PendingHeroChoice.choiceType;
+  // preserving it here allows the client to branch on future choice types
+  // without a separate WP to extend the UI contract.
+  choiceType: 'discard-or-return';
+  cardId: string;
+  playerID: string;
+  display: UICardDisplay;
 }
 
 export type { UIAudience } from './uiAudience.types.js';

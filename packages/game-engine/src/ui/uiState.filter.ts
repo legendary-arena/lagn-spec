@@ -427,5 +427,17 @@ export function filterUIStateForAudience(
     result.gameOver = { ...uiState.gameOver };
   }
 
+  // why: D-22202 — pendingHeroChoice passes through for all audiences without
+  // redaction. The revealed card is face-up at the physical table; all players
+  // and spectators see it. Conditional-assignment pattern matches gameOver above
+  // — do NOT assign `pendingHeroChoice: undefined` on the result literal
+  // (exactOptionalPropertyTypes).
+  if (uiState.pendingHeroChoice !== undefined) {
+    result.pendingHeroChoice = {
+      ...uiState.pendingHeroChoice,
+      display: { ...uiState.pendingHeroChoice.display },
+    };
+  }
+
   return result;
 }

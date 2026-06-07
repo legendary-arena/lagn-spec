@@ -264,6 +264,7 @@ export type {
   UIDecksState,
   UISharedPilesState,
   UIKoPileState,
+  UIPendingHeroChoice,
 } from './ui/uiState.types.js';
 export { buildUIState } from './ui/uiState.build.js';
 

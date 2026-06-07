@@ -17,7 +17,7 @@ import { buildInitialGameState } from '../setup/buildInitialGameState.js';
 import { makeMockCtx } from '../test/mockCtx.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { CardRegistryReader } from '../matchSetup.validate.js';
-import type { LegendaryGameState, CardExtId } from '../types.js';
+import type { LegendaryGameState, CardExtId, PendingHeroChoice } from '../types.js';
 import type { UICardDisplay } from './uiState.types.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
 
@@ -716,6 +716,118 @@ describe('buildUIState — piles.horrorsCount projection (WP-156)', () => {
       ui.piles.horrorsCount,
       2,
       'horrorsCount must equal piles.horrors.length',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-222 / EC-254 — pendingHeroChoice projection contract
+// ---------------------------------------------------------------------------
+
+describe('buildUIState — pendingHeroChoice projection (WP-222 / EC-254)', () => {
+  it('pendingHeroChoice is undefined when G.pendingHeroChoice is absent', () => {
+    // why: absent G field must project as absent UIState field — the client
+    // renders the prompt iff pendingHeroChoice !== undefined (D-22201).
+    const gameState = createTestGameState();
+    assert.equal(gameState.pendingHeroChoice, undefined);
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      ui.pendingHeroChoice,
+      undefined,
+      'pendingHeroChoice must be absent from UIState when G has no pending choice',
+    );
+  });
+
+  it('pendingHeroChoice projects all 4 locked fields when G.pendingHeroChoice is set', () => {
+    // why: strict 4-field contract per EC-254 — choiceType, cardId, playerID
+    // verbatim from G; display resolved via resolveDisplay() (D-22201).
+    const gameState = makeGameStateWithDisplayData();
+    const cardId = 'core/black-widow/strike#0' as CardExtId;
+    const pendingChoice: PendingHeroChoice = {
+      choiceType: 'discard-or-return',
+      cardId,
+      playerID: '0',
+    };
+    gameState.pendingHeroChoice = pendingChoice;
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.ok(
+      ui.pendingHeroChoice !== undefined,
+      'pendingHeroChoice must be present when G.pendingHeroChoice is set',
+    );
+    assert.equal(ui.pendingHeroChoice!.choiceType, 'discard-or-return');
+    assert.equal(ui.pendingHeroChoice!.cardId, cardId);
+    assert.equal(ui.pendingHeroChoice!.playerID, '0');
+    assert.ok(
+      typeof ui.pendingHeroChoice!.display === 'object',
+      'display must be an object',
+    );
+    assert.ok(
+      ui.pendingHeroChoice!.display.name.length > 0,
+      'display.name must be non-empty for a known cardId',
+    );
+  });
+
+  it('pendingHeroChoice display falls back to placeholder for unknown cardId', () => {
+    // why: resolveDisplay() returns UNKNOWN_DISPLAY_PLACEHOLDER spread for
+    // a cardId with no matching entry in G.cardDisplayData (projection-purity
+    // contract per D-2801 — no G mutation, no throw).
+    const gameState = createTestGameState();
+    const unknownCardId = 'unknown-card-no-display-entry' as CardExtId;
+    const pendingChoice: PendingHeroChoice = {
+      choiceType: 'discard-or-return',
+      cardId: unknownCardId,
+      playerID: '1',
+    };
+    gameState.pendingHeroChoice = pendingChoice;
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.ok(ui.pendingHeroChoice !== undefined, 'pendingHeroChoice must be projected');
+    assert.equal(ui.pendingHeroChoice!.cardId, unknownCardId);
+    assert.equal(
+      ui.pendingHeroChoice!.display.name,
+      UNKNOWN_DISPLAY_PLACEHOLDER.name,
+      'unknown cardId must fall back to placeholder name',
+    );
+    assert.equal(
+      ui.pendingHeroChoice!.display.extId,
+      unknownCardId,
+      'placeholder extId must be the actual cardId, not the empty placeholder constant',
+    );
+  });
+
+  it('pendingHeroChoice display is not aliased into G.cardDisplayData (aliasing defense)', () => {
+    // why: EC-254 aliasing defense — the display reference MUST be !== any
+    // object in G.cardDisplayData (guaranteed by resolveDisplay() spread per
+    // WP-111 D-11105). Mutating the returned display must not affect G.
+    const gameState = makeGameStateWithDisplayData();
+    const cardId = 'core/black-widow/strike#0' as CardExtId;
+    const pendingChoice: PendingHeroChoice = {
+      choiceType: 'discard-or-return',
+      cardId,
+      playerID: '0',
+    };
+    gameState.pendingHeroChoice = pendingChoice;
+
+    const originalName = gameState.cardDisplayData[cardId]!.name;
+    const ui = buildUIState(gameState, mockCtx);
+
+    // Mutate the projected display — G.cardDisplayData must be untouched.
+    ui.pendingHeroChoice!.display.name = 'mutated-by-aliasing-test';
+
+    assert.equal(
+      gameState.cardDisplayData[cardId]!.name,
+      originalName,
+      'G.cardDisplayData must NOT be aliased by the pendingHeroChoice display reference',
+    );
+    assert.notStrictEqual(
+      ui.pendingHeroChoice!.display,
+      gameState.cardDisplayData[cardId],
+      'display reference must not be the same object as G.cardDisplayData entry',
     );
   });
 });

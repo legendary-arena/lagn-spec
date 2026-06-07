@@ -58,3 +58,39 @@ describe('useTurnActions (WP-129)', () => {
     assert.equal(useTurnActions('cleanup').activeStep, 3);
   });
 });
+
+describe('useTurnActions — hasPendingChoice gating (WP-222 / EC-254 / D-22203)', () => {
+  test('canEndTurn blocked at cleanup when hasPendingChoice is true', () => {
+    const result = useTurnActions('cleanup', true, true).canEndTurn();
+    assert.equal(result.allowed, false);
+    assert.equal(
+      result.reason,
+      'Resolve the revealed card choice before ending your turn.',
+      'gate reason must match locked value from EC-254',
+    );
+  });
+
+  test('canPassPriority blocked at cleanup when hasPendingChoice is true', () => {
+    const result = useTurnActions('cleanup', true, true).canPassPriority();
+    assert.equal(result.allowed, false);
+    assert.equal(
+      result.reason,
+      'Resolve the revealed card choice before ending your turn.',
+      'gate reason must match locked value from EC-254',
+    );
+  });
+
+  test('canEndTurn and canPassPriority allowed at cleanup when hasPendingChoice is false', () => {
+    // why: default false — existing callers must be unaffected
+    const actions = useTurnActions('cleanup', true, false);
+    assert.equal(actions.canEndTurn().allowed, true);
+    assert.equal(actions.canPassPriority().allowed, true);
+  });
+
+  test('canPassPriority allowed at start and main even when hasPendingChoice is true', () => {
+    // why: D-22203 — only cleanup is blocked; start and main must remain
+    // passable so the player can advance through stages to reach the prompt.
+    assert.equal(useTurnActions('start', true, true).canPassPriority().allowed, true);
+    assert.equal(useTurnActions('main', true, true).canPassPriority().allowed, true);
+  });
+});

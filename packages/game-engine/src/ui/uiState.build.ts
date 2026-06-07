@@ -31,6 +31,7 @@ import type {
   UIDecksState,
   UISharedPilesState,
   UIKoPileState,
+  UIPendingHeroChoice,
 } from './uiState.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
 import { resolveFightCost } from '../economy/economy.resolve.js';
@@ -639,7 +640,25 @@ export function buildUIState(
     cards: buildDisplayEntries(gameState.ko, gameState),
   };
 
-  // --- 13. Project game over ---
+  // --- 13. Project pending hero choice ---
+  // why: D-22201 + WP-222 — resolveDisplay() produces a fresh shallow copy of
+  // the card's display data so the returned UIPendingHeroChoice object does NOT
+  // alias any entry in G.cardDisplayData (aliasing defense per WP-111 D-11105).
+  // Direct spread of G.pendingHeroChoice is forbidden by the EC-254 strict
+  // 4-field projection contract — choiceType/cardId/playerID are copied
+  // verbatim from G; display is resolved fresh via resolveDisplay().
+  let pendingHeroChoice: UIPendingHeroChoice | undefined;
+  if (gameState.pendingHeroChoice !== undefined) {
+    const resolvedDisplay = resolveDisplay(gameState.pendingHeroChoice.cardId, gameState);
+    pendingHeroChoice = {
+      choiceType: gameState.pendingHeroChoice.choiceType,
+      cardId: gameState.pendingHeroChoice.cardId,
+      playerID: gameState.pendingHeroChoice.playerID,
+      display: resolvedDisplay,
+    };
+  }
+
+  // --- 14. Project game over ---
   // why: endgame state derived from G counters via evaluateEndgame
   // (pure); scores reuse the finalScores already computed for victoryVP
   // (avoids a second pass). No ctx.gameover access needed.
@@ -682,5 +701,6 @@ export function buildUIState(
     piles,
     koPile,
     ...(gameOver !== undefined ? { gameOver } : {}),
+    ...(pendingHeroChoice !== undefined ? { pendingHeroChoice } : {}),
   };
 }

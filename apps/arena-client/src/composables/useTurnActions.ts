@@ -80,8 +80,16 @@ const NOT_YOUR_TURN: GatingResult = {
  * @param isViewerTurn Whether it is currently the viewing player's turn.
  *   When false, all action gates return disabled. Defaults to true for
  *   backwards compatibility with callers that don't pass it.
+ * @param hasPendingChoice Whether the viewer has an unresolved hero choice
+ *   (derived from `UIState.pendingHeroChoice !== undefined` at the call site).
+ *   When true and `currentStage === 'cleanup'`, blocks `canEndTurn` and
+ *   `canPassPriority`. Defaults to false — existing callers unaffected.
  */
-export function useTurnActions(currentStage: string, isViewerTurn: boolean = true): {
+export function useTurnActions(
+  currentStage: string,
+  isViewerTurn: boolean = true,
+  hasPendingChoice: boolean = false,
+): {
   activeStep: TurnStep;
   canRevealVillain: () => GatingResult;
   canPlayCard: () => GatingResult;
@@ -127,12 +135,32 @@ export function useTurnActions(currentStage: string, isViewerTurn: boolean = tru
     // stage-advance vocabulary. Allowed at every stage (start advances
     // to main; main advances to cleanup; cleanup advances + ends turn
     // per turnLoop.ts). NOT a no-op.
+    // why: D-22203 — blocked at cleanup ONLY when hasPendingChoice is true.
+    // Start and main must remain passable so the player can advance through
+    // stages to reach the cleanup prompt; blocking all stages would prevent
+    // the player from ever reaching the choice.
     canPassPriority: () => {
       if (!isViewerTurn) return NOT_YOUR_TURN;
+      if (currentStage === 'cleanup' && hasPendingChoice) {
+        return {
+          allowed: false,
+          reason: 'Resolve the revealed card choice before ending your turn.',
+        };
+      }
       return ALLOWED;
     },
     canEndTurn: () => {
       if (!isViewerTurn) return NOT_YOUR_TURN;
+      if (currentStage === 'cleanup' && hasPendingChoice) {
+        // why: D-22203 — the engine's dual turn-end guard (WP-220) blocks
+        // endTurn when pendingHeroChoice is set; this client-side gate
+        // surfaces the reason so the player sees a tooltip instead of a
+        // silent rejection.
+        return {
+          allowed: false,
+          reason: 'Resolve the revealed card choice before ending your turn.',
+        };
+      }
       return currentStage === 'cleanup'
         ? ALLOWED
         : { allowed: false, reason: stageGateReason(currentStage, 'cleanup') };

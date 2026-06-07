@@ -38,6 +38,7 @@ import type {
   UIKoPileState,
   UIDisplayEntry,
   UIState,
+  UIPendingHeroChoice,
 } from './uiState.types.js';
 import type { NotableGameEvent } from '../events/notableEvents.types.js';
 import { buildUIState } from './uiState.build.js';
@@ -677,6 +678,36 @@ describe('UIState type drift (WP-200) — notableEvents projection', () => {
     // (no `?: NotableGameEvent[]` optional shape).
     const ui = buildEmptyMatchUIState();
     assert.deepStrictEqual(ui.notableEvents, []);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-222 / EC-254 — UIPendingHeroChoice drift pin
+// ---------------------------------------------------------------------------
+
+describe('UIState type drift (WP-222 / EC-254) — UIPendingHeroChoice', () => {
+  it('UIPendingHeroChoice has exactly the four locked fields', () => {
+    // why: strict 4-field contract per EC-254 — any rename or addition trips
+    // this satisfies check at compile time and the Object.keys assertion at
+    // runtime. No engine internals (hookRegistry, cardStats) permitted.
+    const fixture = {
+      choiceType: 'discard-or-return' as const,
+      cardId: 'core/black-widow/strike#0',
+      playerID: '0',
+      display: {
+        extId: 'core/black-widow/strike#0',
+        name: 'Mission Accomplished',
+        imageUrl: '',
+        cost: 2,
+      },
+    } satisfies UIPendingHeroChoice;
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'cardId',
+      'choiceType',
+      'display',
+      'playerID',
+    ]);
   });
 });
 

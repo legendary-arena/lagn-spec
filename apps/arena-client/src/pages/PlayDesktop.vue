@@ -36,6 +36,7 @@ import TurnActionBar from '../components/play/TurnActionBar.vue';
 import LobbyControls from '../components/play/LobbyControls.vue';
 import NotableEventOverlay from '../components/play/NotableEventOverlay.vue';
 import PileBrowseModal from '../components/play/PileBrowseModal.vue';
+import PendingHeroChoicePrompt from '../components/play/PendingHeroChoicePrompt.vue';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
 
 interface ActivePile {
@@ -83,6 +84,7 @@ export default defineComponent({
     LobbyControls,
     NotableEventOverlay,
     PileBrowseModal,
+    PendingHeroChoicePrompt,
   },
   props: {
     submitMove: {
@@ -290,6 +292,13 @@ export default defineComponent({
       return snapshot.value?.game.activePlayerId === own.playerId;
     });
 
+    // why: D-22203 — derived from UIState.pendingHeroChoice !== undefined so
+    // the composable does not read UIState internally (separation of concerns).
+    // Passed to TurnActionBar to block end-turn and pass-priority at cleanup.
+    const hasPendingChoice = computed<boolean>(
+      () => snapshot.value?.pendingHeroChoice !== undefined,
+    );
+
     return {
       snapshot,
       viewer,
@@ -307,6 +316,7 @@ export default defineComponent({
       activePile,
       onPileOpen,
       onPileClose,
+      hasPendingChoice,
     };
   },
 });
@@ -437,10 +447,19 @@ export default defineComponent({
             />
             <EconomyBar :economy="snapshot.economy" />
           </section>
+          <!-- why: D-22201 + WP-222 — prompt renders above TurnActionBar in DOM
+               order; appears only for the choosing player when pendingHeroChoice
+               is set. NOT a modal; NOT position:fixed. Normal document flow. -->
+          <PendingHeroChoicePrompt
+            :pending-hero-choice="snapshot.pendingHeroChoice"
+            :viewer-player-id="viewer.playerId"
+            :submit-move="submitMove"
+          />
           <TurnActionBar
             :current-stage="snapshot.game.currentStage"
             :is-viewer-turn="isViewerTurn"
             :hand-count="viewer.handCount"
+            :has-pending-choice="hasPendingChoice"
             :submit-move="submitMove"
           />
         </template>

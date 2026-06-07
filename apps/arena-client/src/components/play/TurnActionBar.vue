@@ -58,22 +58,30 @@ export default defineComponent({
       type: Function as PropType<SubmitMove>,
       required: true,
     },
+    // why: D-22203 — derived from UIState.pendingHeroChoice !== undefined at
+    // the page level; passed down so TurnActionBar can block end-turn and
+    // pass-priority at cleanup while the player has an unresolved choice.
+    hasPendingChoice: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     function activeStep(): 1 | 2 | 3 {
-      return useTurnActions(props.currentStage, props.isViewerTurn).activeStep;
+      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).activeStep;
     }
 
     function revealGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage, props.isViewerTurn).canRevealVillain();
+      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).canRevealVillain();
     }
 
     function passPriorityGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage, props.isViewerTurn).canPassPriority();
+      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).canPassPriority();
     }
 
     function endTurnGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage, props.isViewerTurn).canEndTurn();
+      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).canEndTurn();
     }
 
     function drawGate(): { allowed: boolean; reason: string | null } {

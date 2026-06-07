@@ -22,6 +22,7 @@ import YourVictoryPile from '../components/play/YourVictoryPile.vue';
 import TurnActionBar from '../components/play/TurnActionBar.vue';
 import LobbyControls from '../components/play/LobbyControls.vue';
 import PileBrowseModal from '../components/play/PileBrowseModal.vue';
+import PendingHeroChoicePrompt from '../components/play/PendingHeroChoicePrompt.vue';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
 
 interface ActivePile {
@@ -66,6 +67,7 @@ export default defineComponent({
     TurnActionBar,
     LobbyControls,
     PileBrowseModal,
+    PendingHeroChoicePrompt,
   },
   props: {
     submitMove: {
@@ -134,6 +136,13 @@ export default defineComponent({
       return snapshot.value?.game.activePlayerId === own.playerId;
     });
 
+    // why: D-22203 — derived from UIState.pendingHeroChoice !== undefined so
+    // the composable does not read UIState internally (separation of concerns).
+    // Passed to TurnActionBar to block end-turn and pass-priority at cleanup.
+    const hasPendingChoice = computed<boolean>(
+      () => snapshot.value?.pendingHeroChoice !== undefined,
+    );
+
     return {
       snapshot,
       viewer,
@@ -145,6 +154,7 @@ export default defineComponent({
       activePile,
       onPileOpen,
       onPileClose,
+      hasPendingChoice,
     };
   },
 });
@@ -256,13 +266,22 @@ export default defineComponent({
              matchId to PlayDesktop only, D-16501), so this is a type-safety guard,
              not the EC-183 board-ungating restructure (which deliberately scoped
              mobile out). The footer and preplan-affordance slot stay on isPlayPhase. -->
-        <TurnActionBar
-          v-if="viewer !== null"
-          :current-stage="snapshot.game.currentStage"
-          :is-viewer-turn="isViewerTurn"
-          :hand-count="viewer.handCount"
-          :submit-move="submitMove"
-        />
+        <template v-if="viewer !== null">
+          <!-- why: D-22201 + WP-222 — prompt renders above TurnActionBar; appears
+               only for the choosing player when pendingHeroChoice is set. -->
+          <PendingHeroChoicePrompt
+            :pending-hero-choice="snapshot.pendingHeroChoice"
+            :viewer-player-id="viewer.playerId"
+            :submit-move="submitMove"
+          />
+          <TurnActionBar
+            :current-stage="snapshot.game.currentStage"
+            :is-viewer-turn="isViewerTurn"
+            :hand-count="viewer.handCount"
+            :has-pending-choice="hasPendingChoice"
+            :submit-move="submitMove"
+          />
+        </template>
         <!-- why: D-12908 — pre-plan affordance slot reserved for WP-059
              at the bottom-edge zone. WP-059 owns the integration shape. -->
         <slot name="preplan-affordance" />
