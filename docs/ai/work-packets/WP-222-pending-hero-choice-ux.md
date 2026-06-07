@@ -79,40 +79,68 @@ understands why end-turn is blocked.
 - **`uiMoveName.types.ts`**: Add `'resolveHeroChoice'` to `UiMoveName`
   union (10 → 11). Update JSDoc count.
 - **`useTurnActions.ts`**: Add optional `hasPendingChoice?: boolean`
-  parameter. When `true`, `canEndTurn()` and `canPassPriority()` (at
-  cleanup stage only) return `{ allowed: false, reason: ... }` with a
-  descriptive message directing the player to resolve the pending choice.
+  parameter (default `false`). Gating semantics:
+  - `canEndTurn()` returns `{ allowed: false, reason: ... }` when BOTH
+    `currentStage === 'cleanup'` AND `hasPendingChoice === true`
+  - `canPassPriority()` returns `{ allowed: false, reason: ... }` when
+    BOTH `currentStage === 'cleanup'` AND `hasPendingChoice === true`
+  - At non-cleanup stages, `hasPendingChoice` has no effect on either gate
+  - `hasPendingChoice` MUST be derived from
+    `UIState.pendingHeroChoice !== undefined` at the call site (page
+    component) — the composable does not read UIState internally
 - **`PendingHeroChoicePrompt.vue`** (NEW): Inline prompt (not a modal —
   the choice is game-blocking and cannot be dismissed). Shows the
   revealed card (name + image via `UICardDisplay`), cost, and two
   buttons: "Discard" and "Put it back". Fires
   `submitMove('resolveHeroChoice', { resolution: 'discard' | 'return' })`.
-  Visible only when `pendingHeroChoice` is defined AND the viewer is the
-  choosing player. Renders above the `TurnActionBar` (positioned in the
-  same sticky bottom zone). Not Teleport'd — lives in the normal document
-  flow within the player-zone `<template>`.
+  Props contract:
+  ```
+  pendingHeroChoice?: UIPendingHeroChoice  // from UIState projection
+  viewerPlayerId: string | null            // from viewer computed
+  submitMove: SubmitMove                   // prop-drilled from page
+  ```
+  Rendering formula (strict boolean):
+  - Prompt MUST render iff
+    `pendingHeroChoice !== undefined AND viewerPlayerId === pendingHeroChoice.playerID`
+  - Prompt MUST NOT render in all other cases (including `viewerPlayerId === null`)
+  Button behavior:
+  - Both buttons MUST be disabled immediately after either is clicked
+    (local `isSubmitting` ref; prevents double-submit race). The
+    component unmounts when the next server frame clears
+    `pendingHeroChoice`, so `isSubmitting` does not need resetting.
+  Layout rules:
+  - Renders inside the same container as `TurnActionBar`, above it in
+    DOM order
+  - MUST NOT use `position: fixed` or `<Teleport>`
+  - Lives in the normal document flow within the player-zone `<template>`
 - **`PlayDesktop.vue`**: Mount `PendingHeroChoicePrompt` inside the
   `v-if="viewer !== null"` template block, between the player zone and
   `TurnActionBar`. Pass `pendingHeroChoice`, `submitMove`, viewer's
-  `playerId`. Add `hasPendingChoice` prop to `TurnActionBar`.
-- **`PlayMobile.vue`**: Same mounting pattern as `PlayDesktop`.
+  `playerId`. Add `hasPendingChoice` boolean prop to `TurnActionBar`.
+  When `hasPendingChoice === true`:
+  - End Turn button MUST be disabled with gate reason tooltip
+  - Pass Priority MUST be disabled ONLY when `currentStage === 'cleanup'`
+    with gate reason tooltip
+- **`PlayMobile.vue`**: Same mounting + wiring pattern as `PlayDesktop`.
 
 ### Tests (5 files: 3 modified, 2 new)
 
-- **`uiState.build.test.ts`**: ≥3 new tests — projection when
+- **`uiState.build.test.ts`**: ≥4 new tests — projection when
   `G.pendingHeroChoice` is set (with display resolution), projection
   when absent (`undefined`), projection with unknown cardId (fallback
-  display).
+  display), aliasing defense (`display` reference `!==` source
+  `G.cardDisplayData` entry).
 - **`uiState.types.drift.test.ts`**: Pin `UIPendingHeroChoice` field
   names.
 - **`useTurnActions.test.ts`**: ≥4 new tests — `canEndTurn` blocked
   when `hasPendingChoice` is true at cleanup; `canPassPriority` blocked
   at cleanup; both allowed when `hasPendingChoice` is false; both
   allowed at non-cleanup stages regardless of `hasPendingChoice`.
-- **`PendingHeroChoicePrompt.test.ts`** (NEW): ≥5 tests — renders card
+- **`PendingHeroChoicePrompt.test.ts`** (NEW): ≥7 tests — renders card
   name; fires discard move; fires return move; hidden when
   `pendingHeroChoice` is undefined; hidden when viewer is not the
-  choosing player.
+  choosing player; hidden when `viewerPlayerId` is `null`; buttons
+  disabled after first click (double-submit prevention).
 - **`TurnActionBar.test.ts`**: ≥2 new tests — end-turn disabled when
   `hasPendingChoice` is true; pass-priority disabled at cleanup when
   `hasPendingChoice` is true.
@@ -186,8 +214,16 @@ understands why end-turn is blocked.
 - The projection includes `display: UICardDisplay` resolved via
   `resolveDisplay()` so the client never performs a registry lookup
 - `undefined` means "no pending choice" (matching engine convention)
-- Aliasing defense: the projection must be a fresh object (spread copy),
-  not an alias into `G`
+- The projection MUST be constructed as a fresh object — direct spread of
+  `G.pendingHeroChoice` is forbidden. Construction order:
+  1. Call `resolveDisplay(G.pendingHeroChoice.cardId, gameState)`
+  2. Build `{ choiceType, cardId, playerID, display }` from primitives +
+     the resolved display result
+  3. No additional fields may be added (strict 4-field projection contract)
+- `choiceType`, `cardId`, and `playerID` MUST be copied verbatim from
+  `G.pendingHeroChoice` — no transformation, no normalization
+- Aliasing defense: the `display` object reference MUST be `!==` any
+  object in `G.cardDisplayData` (guaranteed by `resolveDisplay()` spread)
 - Audience filter passes through without redaction (D-22202)
 
 **Client-layer:**
@@ -204,10 +240,13 @@ understands why end-turn is blocked.
 - Stop and ask if any scope or contract ambiguity arises
 
 **Locked values:**
-- `UIPendingHeroChoice = { choiceType: 'discard-or-return'; cardId: string; playerID: string; display: UICardDisplay }`
+- `UIPendingHeroChoice = { choiceType: 'discard-or-return'; cardId: string; playerID: string; display: UICardDisplay }` — strict 4-field contract; no additional fields
 - `UiMoveName` count after: **11**
 - `useTurnActions` pending-choice gate reason: `'Resolve the revealed card choice before ending your turn.'`
 - Prompt buttons: "Discard" (`{ resolution: 'discard' }`) and "Put it back" (`{ resolution: 'return' }`)
+- Prompt rendering formula: `pendingHeroChoice !== undefined AND viewerPlayerId === pendingHeroChoice.playerID`
+- Prompt props: `pendingHeroChoice?: UIPendingHeroChoice`, `viewerPlayerId: string | null`, `submitMove: SubmitMove`
+- Prompt `isSubmitting` ref: set `true` on first button click; both buttons disabled while `true`
 - `resolveHeroChoice` is `client: false` (server-only execution) — no change
 
 ## Acceptance Criteria
@@ -217,8 +256,10 @@ understands why end-turn is blocked.
 2. `UIState.pendingHeroChoice` is a `UIPendingHeroChoice` with correct
    `choiceType`, `cardId`, `playerID`, and `display` when
    `G.pendingHeroChoice` is set.
-3. `UIPendingHeroChoice.display` is a fresh shallow copy via
-   `resolveDisplay()` — not an alias into `G.cardDisplayData`.
+3. `UIPendingHeroChoice.display` is a new object reference (`!==`)
+   compared to any entry in `G.cardDisplayData` — guaranteed by
+   `resolveDisplay()` spread. Mutation of the projection MUST NOT
+   affect `G`.
 4. `filterUIStateForAudience` passes `pendingHeroChoice` through unchanged
    for all audiences (player, opponent, spectator).
 5. `UIPendingHeroChoice` type is exported from
@@ -241,24 +282,32 @@ understands why end-turn is blocked.
     player (spectator or opponent perspective).
 15. `PlayDesktop` and `PlayMobile` both mount `PendingHeroChoicePrompt` and
     pass `hasPendingChoice` to `TurnActionBar`.
-16. Drift test pins `UIPendingHeroChoice` field names.
-17. Engine tests ≥ **1169** (baseline 1165 + ≥3 projection + ≥1 drift).
-18. Client tests ≥ **495** (baseline 484 + ≥5 prompt + ≥4 gate + ≥2 bar).
+16. Drift test pins `UIPendingHeroChoice` field names (exactly 4 fields).
+17. Prompt renders iff `pendingHeroChoice !== undefined` AND
+    `viewerPlayerId === pendingHeroChoice.playerID`. Does NOT render when
+    `viewerPlayerId` is `null`.
+18. Prompt buttons are disabled immediately after either is clicked
+    (local `isSubmitting` ref). Only one `resolveHeroChoice` move may be
+    submitted per prompt instance.
+19. Gate reason string for `canEndTurn` and `canPassPriority` at cleanup
+    with pending choice exactly matches the locked value.
+20. Engine tests ≥ **1170** (baseline 1165 + ≥4 projection + ≥1 drift).
+21. Client tests ≥ **497** (baseline 484 + ≥7 prompt + ≥4 gate + ≥2 bar).
 
 ## Verification Steps
 
 ```bash
-# Engine tests — projection + drift
+# Engine tests — projection + drift + aliasing
 pnpm --filter @legendary-arena/game-engine test
-# Expected: ≥1169 pass, 0 fail
+# Expected: ≥1170 pass, 0 fail
 
 # Engine build
 pnpm --filter @legendary-arena/game-engine build
 # Expected: exits 0
 
-# Client tests — component + composable + bar
+# Client tests — component + composable + bar + double-submit
 pnpm --filter arena-client test
-# Expected: ≥495 pass, 0 fail
+# Expected: ≥497 pass, 0 fail
 
 # Full monorepo build
 pnpm -r build
@@ -279,9 +328,9 @@ grep 'hasPendingChoice' apps/arena-client/src/composables/useTurnActions.ts
 
 ## Definition of Done
 
-- [ ] All 18 acceptance criteria pass
-- [ ] `pnpm --filter @legendary-arena/game-engine test` — ≥1169 pass, 0 fail
-- [ ] `pnpm --filter arena-client test` — ≥495 pass, 0 fail
+- [ ] All 21 acceptance criteria pass
+- [ ] `pnpm --filter @legendary-arena/game-engine test` — ≥1170 pass, 0 fail
+- [ ] `pnpm --filter arena-client test` — ≥497 pass, 0 fail
 - [ ] `pnpm -r build` exits 0
 - [ ] `docs/ai/STATUS.md` updated
 - [ ] `docs/ai/DECISIONS.md` updated — D-22201..D-22203 Active
