@@ -76,8 +76,17 @@ After this packet:
 - No `.reduce()` in zone operations or effect application.
 - Zone mutations via `zoneOps.ts` helpers only.
 - Executor is fully synchronous. `G.pendingHeroChoice` is NOT touched.
-- Silent no-op conditions (no throw, no log): empty deck, missing `playerZones`, missing `cardStats`
-  for the top card, `G.turnEconomy` undefined, invalid or absent magnitude.
+- Precondition guard block — executor MUST early-return (silent no-op, no throw, no log) if ANY of
+  the following: `playerZones` missing, deck empty, `topCardId` missing, `G.cardStats[topCardId]`
+  missing, `G.turnEconomy` undefined, `effect.magnitude` not a positive integer (`>= 1`).
+  All guards fire **before** any zone mutation.
+- Executor is atomic: `G.turnEconomy.attack` MUST NOT be mutated unless `moveCardFromZone` returns
+  `found: true`. Check the return value; if `found: false`, exit the case block without granting
+  attack. No partial state mutation is permitted under any condition.
+- `topCardId` is captured once from `deck[0]` before any zone mutation. Do NOT re-read `deck[0]`
+  after `moveCardFromZone` — zone contents may have shifted.
+- `effect.magnitude` MUST be a positive integer (`>= 1`); treat invalid, missing, zero, or
+  non-integer magnitude as a silent no-op. No coercion or fallback is permitted.
 - Magnitude is required: `[keyword:reveal-ko-attack]` (no magnitude) and `[keyword:reveal-ko-attack:0]`
   (zero threshold) are invalid — `assertValidToken` must reject both.
 - `HERO_KEYWORDS` canonical array and `HeroKeyword` union must stay in parity.
@@ -88,11 +97,13 @@ After this packet:
 ### Tooling (offline, `scripts/convert-cards/`)
 - ESM-only, Node v22+. No `@legendary-arena/*` imports.
 - Reveal anchor required in all detection functions: `/Reveal the top card of your deck\./i`.
-- KO-attack compound detection: `/If it costs 0, KO it and you get \+(\d+)\[icon:attack\]/i`
-  (capture group gives magnitude).
+- KO-attack compound detection: `/If it costs 0,\s*KO it and you get \+(\d+)\[icon:attack\]/i`
+  (`\s*` tolerates minor whitespace variation after comma; capture group gives magnitude).
 - Run `--propose` before editing `hero-ability-markers.json`. Never skip.
-- Route `isRevealKoAttackCandidate` AFTER `isRevealKoOrDrawCandidate` (the more specific
-  ko-or-draw pattern must have first-match priority).
+- Route `isRevealKoAttackCandidate` AFTER both `isRevealKoOrDrawCandidate` AND `isRevealKoCandidate`
+  in `collectProposeRowsForSet` — both have first-match priority on cost=0 cards.
+- If `--propose` surfaces any additional candidates beyond `ssw2/youre-a-slow-learner`, STOP and
+  amend this WP before applying any tokens.
 
 ### Data
 - Surgical token appends to `data/cards/*.json` — no structural changes.
@@ -107,13 +118,16 @@ After this packet:
 | Token form | `[keyword:reveal-ko-attack:N]` — magnitude required, bare form invalid |
 | Magnitude semantics | Fixed attack grant amount; not a cost ceiling, not the card's cost |
 | Trigger condition | `deck[0].cost === 0` (strict equality) |
-| Effects when condition met | (1) `moveCardFromZone(deck, koPile, topCardId)` then (2) `G.turnEconomy.attack += effect.magnitude` |
+| Effects when condition met | (1) `moveCardFromZone(deck, koPile, topCardId)` → check return; if `found: false`, exit without attack grant; if `found: true`, (2) `G.turnEconomy.attack += effect.magnitude` |
 | Effect when condition NOT met | No mutation; card remains at `deck[0]` |
 | Pending choice | `G.pendingHeroChoice` — NOT touched |
+| KO atomicity | Attack granted IFF `moveCardFromZone` returns `found: true`; no partial mutation |
+| `topCardId` capture | Captured from `deck[0]` once before any mutation; not re-read after `moveCardFromZone` |
+| Magnitude validation | Positive integer `>= 1`; invalid/missing/zero/non-integer → silent no-op, no coercion |
 | In-scope card | `ssw2/dr-punisher-soldier-supreme/youre-a-slow-learner` → `[keyword:reveal-ko-attack:1]` |
 | `HERO_KEYWORDS` count after | 15 |
 | Engine test baseline | 1170 (WP-222) |
-| Engine test floor after | ≥ 1175 |
+| Engine test floor after | ≥ 1177 |
 
 ---
 
@@ -122,7 +136,7 @@ After this packet:
 - `'reveal-ko-attack'` added to `HeroKeyword` union and `HERO_KEYWORDS` array (`heroKeywords.ts`)
 - New executor case in `heroEffects.execute.ts` under `'reveal-ko-attack'`
 - Drift-detection test update: `HERO_KEYWORDS.length === 15`
-- ≥ 5 new executor tests in `heroEffects.execute.test.ts` (or `heroAbility.setup.test.ts`)
+- ≥ 7 new executor tests in `heroEffects.execute.test.ts` (or `heroAbility.setup.test.ts`)
 - `isRevealKoAttackCandidate` + `suggestRevealKoAttackToken` in `apply-hero-ability-markers.mjs`
 - `inputs/hero-ability-markers.json` updated with new detection entry
 - `data/cards/ssw2.json` — `youre-a-slow-learner` marked `[keyword:reveal-ko-attack:1]`
@@ -144,22 +158,30 @@ After this packet:
 2. Add the executor case in `heroEffects.execute.ts`:
    ```
    case 'reveal-ko-attack': {
-     // Peek deck top; silent no-op if deck empty, cardStats missing, or turnEconomy missing.
+     // Guard block: silent no-op if playerZones missing, deck empty, cardStats missing,
+     // G.turnEconomy undefined, or magnitude invalid (not a positive integer >= 1).
+     // All guards fire before any mutation.
+     //
+     // Capture topCardId from deck[0] once, before any zone mutation.
+     //
      // If deck[0].cost === 0:
-     //   moveCardFromZone(playerZones.deck, playerZones.koPile, topCardId)
+     //   const result = moveCardFromZone(playerZones.deck, playerZones.koPile, topCardId)
+     //   if (!result.found) { break }  // why: atomic — do not grant attack if KO did not occur
      //   G.turnEconomy.attack += effect.magnitude
      // else: no mutation (card stays at deck[0])
    }
    ```
 3. Update the drift-detection test to assert `HERO_KEYWORDS.length === 15`.
-4. Write executor tests (≥ 5):
-   - KOs card and grants attack when cost = 0
-   - No zone mutation when cost > 0 (card stays at deck[0])
+4. Write executor tests (≥ 7):
+   - KOs card and grants attack when cost = 0; deck size decreases by 1
+   - No zone mutation when cost > 0 (card stays at deck[0]); deck size unchanged
+   - KO-failed (`moveCardFromZone` returns `found: false`) → attack NOT granted; no partial mutation
    - Silent no-op: empty deck
    - Silent no-op: missing `cardStats` for top card
    - Silent no-op: `G.turnEconomy` undefined
+   - Silent no-op: invalid magnitude (undefined, 0, negative) → no zone mutation, no attack change
 5. Add `isRevealKoAttackCandidate` + `suggestRevealKoAttackToken` to `apply-hero-ability-markers.mjs`.
-   Route after `isRevealKoOrDrawCandidate`.
+   Route after both `isRevealKoOrDrawCandidate` and `isRevealKoCandidate`.
 6. Run `--propose` on ssw2 to validate detection picks up `youre-a-slow-learner`. Fix detection if needed.
 7. Run `--propose` across all sets. Mark any additional candidates found.
 8. Apply `[keyword:reveal-ko-attack:1]` token to `ssw2.json` for `youre-a-slow-learner`.
@@ -193,7 +215,7 @@ card's cost, unlike `reveal-cost-attack`) because the printed text says "+1[icon
 
 ## Definition of Done
 
-- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0, count ≥ **1175**
+- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0, count ≥ **1177**
 - [ ] `HERO_KEYWORDS` drift-detection test asserts count = **15**
 - [ ] `apply-hero-ability-markers.mjs --propose` exits 0, no unexpected warnings
 - [ ] `ssw2/dr-punisher-soldier-supreme/youre-a-slow-learner` carries `[keyword:reveal-ko-attack:1]`
