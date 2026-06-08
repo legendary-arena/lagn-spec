@@ -136,7 +136,11 @@ jobs:
     name: Dashboard Gates
     runs-on: ubuntu-latest
     steps:
+      # why: fetch-depth 0 gives the governance-snapshot generator full git
+      # history (it reads `git log`); a shallow clone would thin the snapshot.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v3
         with: { version: 10 }
@@ -145,6 +149,12 @@ jobs:
         with: { node-version: 22, cache: pnpm }
 
       - run: pnpm install --frozen-lockfile
+
+      # why: src/data/governance-snapshot.json is generated at build time and
+      # gitignored, but useGovernanceSnapshot.ts imports it statically — so it
+      # must exist before typecheck / test / build can resolve the module.
+      - name: Generate governance snapshot
+        run: pnpm --filter @legendary-arena/dashboard prebuild:snapshot
 
       - name: Lint dashboard
         run: pnpm --filter @legendary-arena/dashboard lint
