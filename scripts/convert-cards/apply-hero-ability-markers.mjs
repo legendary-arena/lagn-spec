@@ -46,10 +46,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const CARDS_DIR = join(__dirname, '..', '..', 'data', 'cards');
 const MAP_PATH = join(__dirname, 'inputs', 'hero-ability-markers.json');
 
-// why: only valid token forms per D-21601, D-21701, D-21702, D-21802, D-21901, D-21902, D-22003 — catch typos before data is written
-// why: reveal-attack-choose uses [1-9]\d* (not \d+) to reject the zero-magnitude form per D-22003
+// why: only valid token forms per D-21601, D-21701, D-21702, D-21802, D-21901, D-21902, D-22003, D-22301 — catch typos before data is written
+// why: reveal-attack-choose and reveal-ko-attack use [1-9]\d* (not \d+) to reject the zero-magnitude form per D-22003/D-22301
 const VALID_TOKEN_PATTERN =
-  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$|^\[keyword:reveal-cost-attack\]$|^\[keyword:reveal-odd-draw\]$|^\[keyword:reveal-attack-choose:[1-9]\d*\]$/;
+  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$|^\[keyword:reveal-cost-attack\]$|^\[keyword:reveal-odd-draw\]$|^\[keyword:reveal-attack-choose:[1-9]\d*\]$|^\[keyword:reveal-ko-attack:[1-9]\d*\]$/;
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -191,16 +191,16 @@ function resolveAbility(card, abilityIndex, cardSlug, heroSlug, setAbbr) {
  * @param {string} setAbbr - The set abbreviation (for error messages).
  */
 function assertValidToken(markupToken, cardSlug, heroSlug, setAbbr) {
-  // why: only valid token forms per D-21601, D-21701, D-21702 — catch typos before data is written
+  // why: only valid token forms per D-21601, D-21701, D-21702, D-22301 — catch typos before data is written
   if (!VALID_TOKEN_PATTERN.test(markupToken)) {
     console.error(
       `hero-ability-markers.json uses markupToken "${markupToken}" for card "${cardSlug}" ` +
         `under hero "${heroSlug}" in set "${setAbbr}", which is not one of the locked token ` +
         `forms: "[keyword:rescue:N]", "[keyword:reveal]", "[keyword:reveal:N]", ` +
         `"[keyword:reveal-ko]", "[keyword:reveal-min:N]", "[keyword:reveal-ko-or-draw:N]", ` +
-        `"[keyword:reveal-cost-attack]", "[keyword:reveal-odd-draw]", or "[keyword:reveal-attack-choose:N]" ` +
-        `(N ≥ 1). Fix the typo in the marker map, or — if a new token form is genuinely needed — ` +
-        `update DECISIONS.md first (a separate WP) and then this validation.`,
+        `"[keyword:reveal-cost-attack]", "[keyword:reveal-odd-draw]", "[keyword:reveal-attack-choose:N]", ` +
+        `or "[keyword:reveal-ko-attack:N]" (N ≥ 1). Fix the typo in the marker map, or — if a new ` +
+        `token form is genuinely needed — update DECISIONS.md first (a separate WP) and then this validation.`,
     );
     process.exit(1);
   }
@@ -330,6 +330,9 @@ function isRevealKoCandidate(line) {
   if (!ZERO_COST_KO_RE.test(line)) return false;
   if (line.includes('or more')) return false;
   if (line.includes('draw it.')) return false;
+  // why: exclude KO-attack compound lines — those match isRevealKoAttackCandidate;
+  // reveal-ko is pure-KO-only (no attack grant)
+  if (/KO it and you get \+\d+\[icon:attack\]/i.test(line)) return false;
   if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
   if (line.includes('[keyword:reveal')) return false;
   return true;
@@ -549,6 +552,44 @@ function suggestRevealAttackChooseToken(_line) {
 }
 
 /**
+ * Returns true when an ability line is an in-scope reveal-ko-attack candidate.
+ * Requires BOTH the reveal anchor AND the compound KO-plus-attack-grant phrase.
+ * The compound phrase "KO it and you get +N[icon:attack]" is the distinguishing
+ * feature from plain reveal-ko lines (D-22301).
+ *
+ * MUST be routed AFTER isRevealKoOrDrawCandidate AND isRevealKoCandidate — both
+ * have first-match priority on cost=0 cards. isRevealKoCandidate excludes
+ * KO-attack compound lines so this function can match them correctly.
+ *
+ * @param {string} line - The ability line to test.
+ * @returns {boolean} True if the line is an in-scope reveal-ko-attack candidate.
+ */
+function isRevealKoAttackCandidate(line) {
+  if (!/Reveal the top card of your deck\./i.test(line)) return false;
+  if (!/If it costs 0,\s*KO it and you get \+(\d+)\[icon:attack\]/i.test(line)) return false;
+  if (line.includes('Villain Deck') || line.includes('Master Strike')) return false;
+  if (line.includes('[keyword:reveal')) return false;
+  return true;
+}
+
+/**
+ * Determines the suggested markup token for an in-scope reveal-ko-attack line.
+ * Extracts the attack grant magnitude from the "you get +N[icon:attack]" phrase.
+ * Returns a fallback placeholder if extraction fails — callers should log a warning.
+ *
+ * @param {string} line - The reveal-ko-attack ability line.
+ * @returns {string} The markup token suggestion.
+ */
+function suggestRevealKoAttackToken(line) {
+  const match = /If it costs 0,\s*KO it and you get \+(\d+)\[icon:attack\]/i.exec(line);
+  if (match) {
+    return `[keyword:reveal-ko-attack:${match[1]}]`;
+  }
+  // why: fallback placeholder — curator adjusts the value in hero-ability-markers.json
+  return '[keyword:reveal-ko-attack:1]';
+}
+
+/**
  * Collects --propose candidate rows for one set's heroes. Scans every hero
  * card ability line and emits a row for each in-scope rescue or reveal match.
  *
@@ -625,6 +666,18 @@ function collectProposeRowsForSet(setAbbr, setData, rows) {
             abilityIndex,
             abilityText: line,
             suggestedToken: '[keyword:reveal-ko]',
+          });
+        } else if (isRevealKoAttackCandidate(line)) {
+          // why: routes after isRevealKoOrDrawCandidate and isRevealKoCandidate — both have
+          // first-match priority on cost=0 cards; the more specific compound pattern (KO + attack)
+          // is reached only after the pure-KO and KO-or-draw patterns are ruled out
+          rows.push({
+            setAbbr,
+            heroSlug: hero.slug,
+            cardSlug: card.slug,
+            abilityIndex,
+            abilityText: line,
+            suggestedToken: suggestRevealKoAttackToken(line),
           });
         } else if (isRevealMinCandidate(line)) {
           rows.push({

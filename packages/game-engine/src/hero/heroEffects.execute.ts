@@ -30,9 +30,10 @@ import { koCard } from '../board/ko.logic.js';
 // 'reveal-ko' and 'reveal-min'. WP-218 adds 'reveal-ko-or-draw' (D-21802).
 // WP-219 adds 'reveal-cost-attack' (D-21901) and 'reveal-odd-draw' (D-21902).
 // WP-220 adds 'reveal-attack-choose' (D-22003).
+// WP-223 adds 'reveal-ko-attack' (D-22301).
 // 'wound' and 'conditional' remain deferred — they require targeting UI or
 // additional game systems not yet implemented.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose']);
+const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack']);
 
 // why: these keywords have no external magnitude; the pre-check gate must not
 // reject them for missing magnitude — they use internal cost or parity logic
@@ -450,6 +451,35 @@ function executeSingleEffect(
         playerID,
       };
       G.pendingHeroChoice = pendingChoice;
+      break;
+    }
+    case 'reveal-ko-attack': {
+      // why: D-22301 — compound executor. Peeks deck[0]; if cost === 0 (strict equality),
+      // (1) KOs the card via moveCardFromZone + koCard, then (2) grants fixed attack equal
+      // to magnitude. If cost > 0, no zone mutation — card stays at deck[0]. No player
+      // choice; G.pendingHeroChoice is NOT touched. Magnitude encodes the fixed attack grant
+      // amount, not a cost ceiling.
+      if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { break; }
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) { break; }
+      if (playerZones.deck.length === 0) { break; }
+      const topCardId = playerZones.deck[0];
+      if (!topCardId) { break; }
+      const cardStats = G.cardStats[topCardId];
+      if (cardStats === undefined) { break; }
+      // why: G.turnEconomy is initialised by turn-start machinery, not by this executor;
+      // if it is undefined the executor must not crash — silent no-op is correct here
+      if (!G.turnEconomy) { break; }
+      if (cardStats.cost === 0) {
+        // topCardId captured above before any mutation — do not re-read deck[0] after moveCardFromZone
+        const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
+        // why: atomic — attack is not granted when KO did not occur; no partial state mutation
+        if (!moveResult.found) { break; }
+        playerZones.deck = moveResult.from;
+        G.ko = koCard(G.ko, topCardId);
+        G.turnEconomy.attack += effect.magnitude as number;
+      }
+      // cost > 0: no zone mutation — card stays at deck[0]
       break;
     }
     default: {

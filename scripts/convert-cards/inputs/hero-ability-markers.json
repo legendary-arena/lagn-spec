@@ -52,6 +52,7 @@
     { "heroSlug": "peter-parker-homecoming", "cardSlug": "heightened-senses", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" }
   ],
   "ssw2": [
+    { "heroSlug": "dr-punisher-soldier-supreme", "cardSlug": "youre-a-slow-learner", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko-attack:1]" },
     { "heroSlug": "silk", "cardSlug": "silk-stalking", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko-or-draw:2]" }
   ],
   "ssw1": [

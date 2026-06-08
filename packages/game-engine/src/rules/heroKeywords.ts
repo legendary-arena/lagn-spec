@@ -37,6 +37,7 @@ export type HeroKeyword =
   | 'reveal-cost-attack' // why: D-21901
   | 'reveal-odd-draw' // why: D-21902
   | 'reveal-attack-choose' // why: D-22003
+  | 'reveal-ko-attack' // why: D-22301 — compound executor; magnitude encodes fixed attack grant (not a cost ceiling)
   | 'conditional';
 
 // why: canonical array for drift-detection. Must match HeroKeyword
@@ -60,6 +61,7 @@ export const HERO_KEYWORDS: readonly HeroKeyword[] = [
   'reveal-cost-attack', // why: D-21901
   'reveal-odd-draw', // why: D-21902
   'reveal-attack-choose', // why: D-22003
+  'reveal-ko-attack', // why: D-22301 — compound executor; magnitude encodes fixed attack grant (not a cost ceiling)
   'conditional',
 ] as const;
 

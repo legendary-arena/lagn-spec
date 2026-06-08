@@ -1710,4 +1710,217 @@ describe('executeHeroEffects', () => {
     assert.ok(typeof serialized === 'string' && serialized.length > 0,
       'Game state should be JSON-serializable after hero effect execution.');
   });
+
+  // -------------------------------------------------------------------------
+  // Tests 57–63: reveal-ko-attack (D-22301, WP-223)
+  // -------------------------------------------------------------------------
+
+  // Test 57: KOs top card and grants attack when cost = 0 (happy path)
+  it('reveal-ko-attack KOs top deck card and grants fixed attack when cost is 0', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-zero-card', 'second-card'],
+      turnEconomyAttack: 2,
+      cardStats: {
+        'cost-zero-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-attack'],
+          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.ko, ['cost-zero-card'],
+      'cost-zero-card must be moved to the KO pile when cost is 0.');
+    assert.equal(gameState.playerZones['0'].deck.length, 1,
+      'Deck must shrink by 1 after KO fires.');
+    assert.equal(gameState.playerZones['0'].deck[0], 'second-card',
+      'second-card must remain at deck[0] after cost-zero-card is KO\'d.');
+    assert.equal(gameState.turnEconomy.attack, 3,
+      'Attack must increase by magnitude (1) when cost is 0.');
+  });
+
+  // Test 58: No zone mutation when cost > 0 — card stays at deck[0]
+  it('reveal-ko-attack is a no-op when top deck card cost is greater than 0', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['costly-card'],
+      turnEconomyAttack: 2,
+      cardStats: {
+        'costly-card': { attack: 0, recruit: 0, cost: 3, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-attack'],
+          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['costly-card'],
+      'Deck must be unchanged when cost is greater than 0.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile must remain empty when cost is greater than 0.');
+    assert.equal(gameState.turnEconomy.attack, 2,
+      'Attack must NOT change when cost is greater than 0.');
+  });
+
+  // Test 59: Atomicity — moveCardFromZone found:false → attack NOT granted
+  it('reveal-ko-attack does not grant attack when moveCardFromZone returns found:false (atomicity)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-zero-card'],
+      turnEconomyAttack: 5,
+      cardStats: {
+        'cost-zero-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-attack'],
+          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+        },
+      ],
+    });
+
+    // Force moveCardFromZone to return found:false by overriding indexOf on the deck array.
+    // deck[0] and deck.length remain valid (guards pass), but indexOf returns -1
+    // so moveCardFromZone sees the card as absent — simulating a KO failure.
+    // This state is unreachable in production but validates the atomicity invariant.
+    const deckRef = gameState.playerZones['0'].deck;
+    (deckRef as unknown as { indexOf: (item: string) => number }).indexOf = () => -1;
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 5,
+      'Attack must NOT be granted when moveCardFromZone returns found:false (atomicity contract).');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile must remain empty when moveCardFromZone returns found:false.');
+  });
+
+  // Test 60: Silent no-op when deck is empty
+  it('reveal-ko-attack is a no-op when deck is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      turnEconomyAttack: 3,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-attack'],
+          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 3,
+      'Attack must remain unchanged when deck is empty.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile must remain empty when deck is empty.');
+  });
+
+  // Test 61: Silent no-op when top card has no cardStats entry
+  it('reveal-ko-attack is a no-op when top card has no cardStats entry', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['unknown-card'],
+      turnEconomyAttack: 4,
+      cardStats: {},
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-attack'],
+          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 4,
+      'Attack must remain unchanged when cardStats entry is missing.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['unknown-card'],
+      'Deck must be unchanged when cardStats entry is missing.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile must remain empty when cardStats entry is missing.');
+  });
+
+  // Test 62: Silent no-op when G.turnEconomy is undefined
+  it('reveal-ko-attack is a no-op when G.turnEconomy is undefined; no crash', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-zero-card'],
+      cardStats: {
+        'cost-zero-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-attack'],
+          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+        },
+      ],
+    });
+
+    // why: simulate missing turnEconomy — guard must fire BEFORE any zone mutation
+    (gameState as unknown as { turnEconomy: undefined }).turnEconomy = undefined as unknown as typeof gameState.turnEconomy;
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.strictEqual((gameState as unknown as { turnEconomy: unknown }).turnEconomy, undefined,
+      'G.turnEconomy must remain undefined; executor must not crash when it is missing.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['cost-zero-card'],
+      'Deck must be unchanged when G.turnEconomy guard fires — no zone mutation before the guard.');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile must remain empty when G.turnEconomy guard fires.');
+  });
+
+  // Test 63: Silent no-op for invalid magnitudes (undefined, 0, negative)
+  it('reveal-ko-attack is a no-op when magnitude is invalid (undefined, 0, negative)', () => {
+    const invalidMagnitudes = [undefined, 0, -1, 1.5, NaN, Infinity];
+
+    for (const magnitude of invalidMagnitudes) {
+      const gameState = makeTestState({
+        inPlay: ['hero-x'],
+        deck: ['cost-zero-card'],
+        turnEconomyAttack: 7,
+        cardStats: {
+          'cost-zero-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        },
+        heroAbilityHooks: [
+          {
+            cardId: 'hero-x' as string,
+            timing: 'onPlay',
+            keywords: ['reveal-ko-attack'],
+            effects: [{ type: 'reveal-ko-attack', magnitude: magnitude as number }],
+          },
+        ],
+      });
+
+      executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+      assert.equal(gameState.turnEconomy.attack, 7,
+        `Attack must remain unchanged for invalid magnitude: ${String(magnitude)}.`);
+      assert.deepEqual(gameState.playerZones['0'].deck, ['cost-zero-card'],
+        `Deck must be unchanged for invalid magnitude: ${String(magnitude)}.`);
+      assert.deepEqual(gameState.ko, [],
+        `KO pile must remain empty for invalid magnitude: ${String(magnitude)}.`);
+    }
+  });
 });

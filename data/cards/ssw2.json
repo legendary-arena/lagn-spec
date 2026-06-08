@@ -807,7 +807,7 @@
           "attack": "2+",
           "recruit": null,
           "abilities": [
-            "[hc:tech]: Reveal the top card of your deck. If it costs 0, KO it and you get +1[icon:attack]."
+            "[hc:tech]: Reveal the top card of your deck. If it costs 0, KO it and you get +1[icon:attack]. [keyword:reveal-ko-attack:1]"
           ]
         },
         {
