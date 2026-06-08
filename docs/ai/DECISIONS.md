@@ -23261,6 +23261,54 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-22101 — No `themeSchemaVersion` Bump for Additive Optional-Field Extension (WP-221)
+
+**Decision:** `themeSchemaVersion` remains `z.literal(2)` when adding four optional `ThemeSetupIntentSchema` fields (`bystanderSetIds`, `woundSetIds`, `sidekickCardIds`, `officerCardIds`) and one optional top-level `ThemeDefinitionSchema` field (`tips`). No version bump is required because all new fields carry `.default([])`, making the extension fully backwards-compatible: all existing theme files parse identically and `validateTheme()` / `validateThemeFile()` do not fail on themes that omit the new fields.
+
+**Rationale:** Schema versioning per D-5504 exists to reject structurally incompatible files. An additive-only extension with empty-array defaults introduces no structural incompatibility — existing themes parse as before and the new fields resolve to `[]`. A version bump would require migrating all existing theme files with no functional benefit and would invalidate the v1-rejection guard in test #9, which is a load-bearing regression check. Future breaking changes (removing a field, making an optional field required, changing a type) will still trigger a version bump per D-5504.
+
+**Packet:** WP-221 / EC-253.
+**Drafted:** 2026-06-07. **Landed:** 2026-06-07.
+**Status:** Active
+
+---
+
+### D-22102 — `tips` Lives at Top Level of `ThemeDefinitionSchema`, Not in `setupIntent` (WP-221)
+
+**Decision:** The `tips` field is added at the top level of `ThemeDefinitionSchema` after `flavorText`, not inside `ThemeSetupIntentSchema`. Type: `z.array(z.string().min(1)).default([])`.
+
+**Rationale:** `setupIntent` mirrors the `MatchSetupConfig` composition block — it holds IDs that identify *which* cards and groups to include. Tips are editorial gameplay guidance that describe *how* to play the theme effectively; they have no bearing on card selection. Placing tips in `setupIntent` would conflate editorial content with match-configuration data, polluting the MatchSetupConfig mirror with non-composition fields.
+
+**Packet:** WP-221 / EC-253.
+**Drafted:** 2026-06-07. **Landed:** 2026-06-07.
+**Status:** Active
+
+---
+
+### D-22103 — `bystanderSetIds` / `woundSetIds` Use Bare Set Abbreviations (WP-221)
+
+**Decision:** `bystanderSetIds` and `woundSetIds` in `ThemeSetupIntentSchema` hold bare lowercase set abbreviation strings (e.g., `"core"`, `"xmen"`, `"cvwr"`) matching the `abbr` field in card set JSON. A set reference includes all bystander or wound cards from that set.
+
+**Rationale:** Set abbreviations are the stable compact identity for a set across the codebase. Using bare abbreviations keeps the reference format consistent with how sets are identified elsewhere (`MatchSetupConfig` uses set-level group IDs for villain groups, hero decks, etc.). A "set reference includes all cards of that type in that set" semantic is simpler and more durable than listing individual card slugs — bystander and wound cards within a set are structurally homogeneous and would require enumerating every card if listed individually.
+
+**Packet:** WP-221 / EC-253.
+**Drafted:** 2026-06-07. **Landed:** 2026-06-07.
+**Status:** Active
+
+---
+
+### D-22104 — `sidekickCardIds` / `officerCardIds` Use `<setAbbr>/<slug>` Format (WP-221)
+
+**Decision:** `sidekickCardIds` and `officerCardIds` in `ThemeSetupIntentSchema` hold `<setAbbr>/<slug>` format strings (e.g., `"cvwr/lockjaw"`, `"shld/maria-hill"`). Format: forward-slash separator, no spaces, all lowercase.
+
+**Rationale:** Unlike bystanders and wounds (homogeneous within a set), sidekick and officer cards have individual identities — specific characters with specific stats. Multiple sets may contain cards with the same slug (e.g., `"lockjaw"` could appear in both `cvwr` and a future expansion). The `<setAbbr>/<slug>` format resolves cross-set ambiguity without requiring a registry lookup at schema-validation time. This is consistent with how the card data pipeline identifies individual cards internally.
+
+**Packet:** WP-221 / EC-253.
+**Drafted:** 2026-06-07. **Landed:** 2026-06-07.
+**Status:** Active
+
+---
+
 ### D-22201 — `UIPendingHeroChoice` UIState Projection Type (WP-222)
 
 **Decision:** A new `UIPendingHeroChoice` interface is added to `uiState.types.ts` with four fields: `choiceType: 'discard-or-return'`, `cardId: string`, `playerID: string`, `display: UICardDisplay`. A new optional field `pendingHeroChoice?: UIPendingHeroChoice` is added to `UIState`. The `display` field is resolved via `resolveDisplay()` in `uiState.build.ts` (aliasing-defense shallow copy). When `G.pendingHeroChoice` is `undefined`, `UIState.pendingHeroChoice` is `undefined` (absent, not `null`).

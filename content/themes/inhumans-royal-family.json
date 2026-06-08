@@ -7,7 +7,12 @@
     "mastermindId": "maximus-the-mad",
     "schemeId": "devolve-with-xerogen-crystals",
     "villainGroupIds": [
-      "inhuman-rebellion"
+      "inhuman-rebellion",
+      "shiar-imperial-elite"
+    ],
+    "henchmanGroupIds": [
+      "deaths-heads",
+      "savage-land-mutates"
     ],
     "heroDeckIds": [
       "black-bolt",
@@ -15,7 +20,11 @@
       "crystal",
       "karnak",
       "gorgon"
-    ]
+    ],
+    "bystanderSetIds": ["core", "xmen"],
+    "woundSetIds": ["core", "cvwr"],
+    "sidekickCardIds": ["cvwr/lockjaw"],
+    "officerCardIds": []
   },
   "playerCount": {
     "recommended": [
@@ -46,6 +55,9 @@
   "comicImageUrl": "https://comicvine.gamespot.com/a/uploads/original/2/22664/968406-inhm.jpg",
   "musicTheme": "Grand March / Processional",
   "musicAIPrompt": "Create a 45-second seamless loopable orchestral film score in the exact style of John Williams. Grand March / Processional. Inhuman Royal Family civil war in Attilan. Regal brass and crystalline percussion. Majestic and royal, wide stereo, instrumental only, perfectly loopable with no fade in/out.",
+  "tips": [
+    "The key mechanic of this scheme is Abomination: each Villain gets +attack equal to the printed attack of the Hero in the HQ space directly under that Villain's city space. Prioritize fighting or KO-ing Heroes in the HQ who have high printed attack values to keep the Villain deck manageable."
+  ],
   "musicAssets": {
     "previewIntroUrl": "https://music.barefootbetters.com/themes/inhumans-royal-family_MT01_preview-intro.mp3",
     "matchStartUrl": "https://music.barefootbetters.com/themes/inhumans-royal-family_MT02_match-start.mp3",

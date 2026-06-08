@@ -42,6 +42,10 @@ const fullTheme = {
     villainGroupIds: ["example-villain-group"],
     henchmanGroupIds: ["example-henchmen"],
     heroDeckIds: ["example-hero-a", "example-hero-b"],
+    bystanderSetIds: ["core", "xmen"],
+    woundSetIds: ["core", "cvwr"],
+    sidekickCardIds: ["cvwr/lockjaw"],
+    officerCardIds: ["shld/maria-hill"],
   },
   playerCount: {
     recommended: [2, 3],
@@ -59,6 +63,7 @@ const fullTheme = {
     },
   },
   flavorText: "A perfectly illustrative example.",
+  tips: ["The key mechanic to know for this theme is the Abomination rule."],
   comicImageUrl: "https://example.com/cover.jpg",
   musicTheme: "Example Theme",
   musicAIPrompt: "Example AI prompt for music generation.",
@@ -282,6 +287,82 @@ describe("theme schema (WP-055)", () => {
         ),
         "expected an error on musicAssets.mainThemeUrl, got: " +
           JSON.stringify(result.errors),
+      );
+    }
+  });
+
+  test("#11 bystanderSetIds and woundSetIds round-trip", () => {
+    const themeWithSets = {
+      ...minimalTheme,
+      setupIntent: {
+        ...minimalTheme.setupIntent,
+        bystanderSetIds: ["core", "xmen"],
+        woundSetIds: ["core", "cvwr"],
+      },
+    };
+    const result = validateTheme(themeWithSets);
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.deepEqual(
+        result.theme.setupIntent.bystanderSetIds,
+        ["core", "xmen"],
+        "bystanderSetIds must round-trip exactly",
+      );
+      assert.deepEqual(
+        result.theme.setupIntent.woundSetIds,
+        ["core", "cvwr"],
+        "woundSetIds must round-trip exactly",
+      );
+    }
+  });
+
+  test("#12 sidekickCardIds and officerCardIds round-trip", () => {
+    const themeWithCards = {
+      ...minimalTheme,
+      setupIntent: {
+        ...minimalTheme.setupIntent,
+        sidekickCardIds: ["cvwr/lockjaw", "cvwr/redwing"],
+        officerCardIds: ["shld/maria-hill"],
+      },
+    };
+    const result = validateTheme(themeWithCards);
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.deepEqual(
+        result.theme.setupIntent.sidekickCardIds,
+        ["cvwr/lockjaw", "cvwr/redwing"],
+        "sidekickCardIds must round-trip exactly",
+      );
+      assert.deepEqual(
+        result.theme.setupIntent.officerCardIds,
+        ["shld/maria-hill"],
+        "officerCardIds must round-trip exactly",
+      );
+    }
+  });
+
+  test("#13 tips round-trip: present value preserved; absent defaults to []", () => {
+    const themeWithTips = {
+      ...minimalTheme,
+      tips: ["The key mechanic is Abomination."],
+    };
+    const resultWithTips = validateTheme(themeWithTips);
+    assert.equal(resultWithTips.success, true);
+    if (resultWithTips.success) {
+      assert.deepEqual(
+        resultWithTips.theme.tips,
+        ["The key mechanic is Abomination."],
+        "tips must round-trip exactly when present",
+      );
+    }
+
+    const resultWithoutTips = validateTheme(minimalTheme);
+    assert.equal(resultWithoutTips.success, true);
+    if (resultWithoutTips.success) {
+      assert.deepEqual(
+        resultWithoutTips.theme.tips,
+        [],
+        "tips must default to [] when absent",
       );
     }
   });

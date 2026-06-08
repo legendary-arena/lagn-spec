@@ -33,6 +33,16 @@ export const ThemeSetupIntentSchema = z.object({
   villainGroupIds: z.array(z.string().min(1)).min(1),
   henchmanGroupIds: z.array(z.string().min(1)).default([]),
   heroDeckIds: z.array(z.string().min(1)).min(1),
+  // why: bystanderSetIds / woundSetIds hold bare set abbreviations matching the `abbr`
+  // field in card set JSON — a set reference includes all bystander/wound cards from
+  // that set (D-22103). sidekickCardIds / officerCardIds use "<setAbbr>/<slug>" format
+  // to resolve ambiguity when the same slug appears in multiple sets (D-22104).
+  // Count fields remain intentionally excluded — themes describe which cards, not pile
+  // sizing (see D-22101 for why this is not a version bump).
+  bystanderSetIds: z.array(z.string().min(1)).default([]),
+  woundSetIds: z.array(z.string().min(1)).default([]),
+  sidekickCardIds: z.array(z.string().min(1)).default([]),
+  officerCardIds: z.array(z.string().min(1)).default([]),
 });
 
 // ── Player count window (refined) ─────────────────────────────────────────────
@@ -117,6 +127,10 @@ export const ThemeDefinitionSchema = z.object({
     })
     .optional(),
   flavorText: z.string().optional(),
+  // why: tips are editorial gameplay guidance displayed in the themes tab; top-level
+  // (not in setupIntent) because they describe how to play the theme, not what cards
+  // to include (D-22102).
+  tips: z.array(z.string().min(1)).default([]),
   comicImageUrl: z.string().url().nullable().optional(),
   musicTheme: z.string().optional(),
   musicAIPrompt: z.string().optional(),

@@ -68,6 +68,12 @@ const { width: panelWidth, startDrag, resetWidth } = useResizable({
       <!-- Flavor text -->
       <p v-if="theme.flavorText" class="flavor">"{{ theme.flavorText }}"</p>
 
+      <!-- Tips -->
+      <div v-if="theme.tips.length" class="section">
+        <div class="section-title">Tips</div>
+        <p v-for="tip in theme.tips" :key="tip" class="tip">{{ tip }}</p>
+      </div>
+
       <!-- Setup Intent -->
       <div class="section">
         <div class="section-title">Setup Intent</div>
@@ -119,6 +125,50 @@ const { width: panelWidth, startDrag, resetWidth } = useResizable({
               class="intent-link hero"
               @click="emit('navigateToCard', heroDeckId, 'hero')"
             >{{ heroDeckId }}</button>
+          </div>
+        </div>
+
+        <div v-if="theme.setupIntent.bystanderSetIds.length" class="intent-group">
+          <span class="intent-label">Bystanders</span>
+          <div class="intent-badges">
+            <span
+              v-for="setId in theme.setupIntent.bystanderSetIds"
+              :key="setId"
+              class="tag"
+            >{{ setId }}</span>
+          </div>
+        </div>
+
+        <div v-if="theme.setupIntent.woundSetIds.length" class="intent-group">
+          <span class="intent-label">Wounds</span>
+          <div class="intent-badges">
+            <span
+              v-for="setId in theme.setupIntent.woundSetIds"
+              :key="setId"
+              class="tag"
+            >{{ setId }}</span>
+          </div>
+        </div>
+
+        <div v-if="theme.setupIntent.sidekickCardIds.length" class="intent-group">
+          <span class="intent-label">Sidekicks</span>
+          <div class="intent-badges">
+            <span
+              v-for="cardId in theme.setupIntent.sidekickCardIds"
+              :key="cardId"
+              class="tag"
+            >{{ cardId }}</span>
+          </div>
+        </div>
+
+        <div v-if="theme.setupIntent.officerCardIds.length" class="intent-group">
+          <span class="intent-label">Officers</span>
+          <div class="intent-badges">
+            <span
+              v-for="cardId in theme.setupIntent.officerCardIds"
+              :key="cardId"
+              class="tag"
+            >{{ cardId }}</span>
           </div>
         </div>
       </div>
@@ -258,6 +308,7 @@ const { width: panelWidth, startDrag, resetWidth } = useResizable({
 /* ── Description ───────────────────────────────────────────────────────── */
 .description { margin: 0; font-size: 0.82rem; color: #c8c8e0; line-height: 1.6; }
 .flavor { margin: 0; font-size: 0.78rem; color: #8888cc; font-style: italic; line-height: 1.5; }
+.tip { margin: 0; font-size: 0.78rem; color: #b8b8d8; line-height: 1.6; }
 
 /* ── Sections ──────────────────────────────────────────────────────────── */
 .section { display: flex; flex-direction: column; gap: 0.5rem; }
