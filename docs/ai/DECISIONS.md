@@ -23297,4 +23297,28 @@ no new move, no new effect keyword). Free-standing EC-236.
 
 ---
 
+### D-22301 — `reveal-ko-attack` HeroKeyword + Executor Contract (WP-223)
+
+**Decision:** A new `reveal-ko-attack` HeroKeyword and executor are added (`HERO_KEYWORDS` 14 → 15).
+The executor peeks `playerZones.deck[0]`; if `cost === 0` (strict equality), it (1) moves the
+card to the KO pile via `moveCardFromZone` + `koCard` and (2) grants `G.turnEconomy.attack += effect.magnitude`.
+If cost > 0, no zone mutation — card stays at `deck[0]`. Magnitude encodes the fixed attack grant
+amount (`assertValidToken` rejects bare and zero-magnitude forms). `G.pendingHeroChoice` is NOT
+set or cleared. Closes D-21903 item 2. In-scope card: `ssw2/dr-punisher-soldier-supreme/youre-a-slow-learner`,
+magnitude 1.
+
+**Rationale:** The "KO it and you get +N attack" compound is a synchronous two-effect executor
+with a cost=0 condition. It does not require player-choice routing (`reveal-attack-choose`
+infrastructure) because the outcome is deterministic: both effects fire, or neither fires — no
+decision is delegated to the player. Magnitude encodes the fixed attack grant (not the revealed
+card's cost, unlike `reveal-cost-attack`) because the printed text says "+1[icon:attack]" literally.
+Executor is atomic: `G.turnEconomy.attack` is mutated only when `moveCardFromZone` returns
+`found: true`; no partial state mutation is permitted.
+
+**Packet:** WP-223 / EC-255.
+**Drafted:** 2026-06-07. **Landed:** 2026-06-07.
+**Status:** Active
+
+---
+
 Protect this file.
