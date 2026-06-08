@@ -36,9 +36,7 @@ const response = computed(() => fetchTrafficSources(range.value, nowMs));
 const breakdown = useTrafficSources(() => response.value);
 
 const updatedAtRef: Ref<number | null> = computed(() => breakdown.updatedAt.value);
-const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(
-  () => breakdown.source.value,
-);
+const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(() => breakdown.source.value);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAtRef, sourceFreshnessRef);
 
 const themeVersion = ref(0);
@@ -170,11 +168,7 @@ const chartOption = computed<EChartsOption>(() => {
 </script>
 
 <template>
-  <div
-    class="widget"
-    data-testid="traffic-sources-widget"
-    aria-label="Traffic sources by channel"
-  >
+  <div class="widget" data-testid="traffic-sources-widget" aria-label="Traffic sources by channel">
     <header class="widget-header">
       <h3>Traffic Sources</h3>
       <span v-if="sourceLabel" class="freshness-badge">
@@ -188,7 +182,9 @@ const chartOption = computed<EChartsOption>(() => {
     </div>
 
     <div v-else-if="state === 'error'" class="widget-error" role="alert">
-      <p>Traffic source data could not be loaded; please retry or check the dashboard status page.</p>
+      <p>
+        Traffic source data could not be loaded; please retry or check the dashboard status page.
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
@@ -202,9 +198,9 @@ const chartOption = computed<EChartsOption>(() => {
       <BaseChart :option="chartOption" height="280px" />
       <footer class="widget-footer">
         <span class="operator-summary">
-          Total visitors: {{ breakdown.totalVisitors.value.toLocaleString() }}
-          · Signups: {{ breakdown.totalSignups.value.toLocaleString() }}
-          · Overall conversion: {{ overallConversionPercentLabel }}
+          Total visitors: {{ breakdown.totalVisitors.value.toLocaleString() }} · Signups:
+          {{ breakdown.totalSignups.value.toLocaleString() }} · Overall conversion:
+          {{ overallConversionPercentLabel }}
         </span>
       </footer>
     </div>
@@ -229,7 +225,11 @@ const chartOption = computed<EChartsOption>(() => {
   margin-bottom: 0.5rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -253,10 +253,24 @@ const chartOption = computed<EChartsOption>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;

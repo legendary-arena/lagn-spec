@@ -20,7 +20,10 @@ function makeDeductions(overrides: Partial<RevenueDeductionConfig> = {}): Revenu
   };
 }
 
-function makeGrossSeries(values: readonly number[], startDate: string = '2026-06-01'): GrossDailyInput[] {
+function makeGrossSeries(
+  values: readonly number[],
+  startDate: string = '2026-06-01',
+): GrossDailyInput[] {
   const start = new Date(`${startDate}T00:00:00Z`).getTime();
   return values.map((grossCents, index) => ({
     date: new Date(start + index * 86400000).toISOString().slice(0, 10),
@@ -44,13 +47,13 @@ test('1. Single-day input with all-zero deductions returns net === gross', () =>
 
 test('2. Royalty-only deduction (20% royalty) subtracts exactly 20% rounded to cents', () => {
   const grossSeries = makeGrossSeries([10_001]);
-  const deductions = makeDeductions({ royaltyPercent: 0.20 });
+  const deductions = makeDeductions({ royaltyPercent: 0.2 });
   const { series } = useNetRevenueBreakdown(
     () => grossSeries,
     () => deductions,
   );
-  assert.equal(series.value.royalty[0], Math.round(10_001 * 0.20));
-  assert.equal(series.value.net[0], 10_001 - Math.round(10_001 * 0.20));
+  assert.equal(series.value.royalty[0], Math.round(10_001 * 0.2));
+  assert.equal(series.value.net[0], 10_001 - Math.round(10_001 * 0.2));
 });
 
 test('3. Stripe fee combines percentage and fixed-cents components per the formula', () => {
@@ -78,7 +81,10 @@ test('4. Day with gross too small to cover fixed Stripe fee produces a negative 
     () => grossSeries,
     () => deductions,
   );
-  assert.ok(series.value.net[0]! < 0, 'net for a sub-fee day must be negative, not clamped to zero');
+  assert.ok(
+    series.value.net[0]! < 0,
+    'net for a sub-fee day must be negative, not clamped to zero',
+  );
   assert.equal(series.value.net[0], 20 - (Math.round(20 * 0.029) + 30));
 });
 
@@ -89,7 +95,7 @@ test('5. totalGross, totalNet, and netMarginRatio aggregate correctly over a 30-
   }
   const grossSeries = makeGrossSeries(grossValues);
   const deductions = makeDeductions({
-    royaltyPercent: 0.20,
+    royaltyPercent: 0.2,
     stripeFeePercent: 0.029,
     stripeFeeFixedCents: 30,
     infraCogsPercent: 0.05,
@@ -109,7 +115,7 @@ test('5. totalGross, totalNet, and netMarginRatio aggregate correctly over a 30-
 
 test('6. Empty input series returns totalGross === 0, totalNet === 0, netMarginRatio === 0', () => {
   const grossSeries: GrossDailyInput[] = [];
-  const deductions = makeDeductions({ royaltyPercent: 0.20 });
+  const deductions = makeDeductions({ royaltyPercent: 0.2 });
   const { totalGross, totalNet, netMarginRatio } = useNetRevenueBreakdown(
     () => grossSeries,
     () => deductions,
@@ -122,7 +128,7 @@ test('6. Empty input series returns totalGross === 0, totalNet === 0, netMarginR
 test('7. The composable does not mutate its input series (referential safety)', () => {
   const grossSeries = makeGrossSeries([10_000, 20_000, 30_000]);
   const snapshot = grossSeries.map((point) => ({ ...point }));
-  const deductions = makeDeductions({ royaltyPercent: 0.20 });
+  const deductions = makeDeductions({ royaltyPercent: 0.2 });
   useNetRevenueBreakdown(
     () => grossSeries,
     () => deductions,
@@ -137,7 +143,7 @@ test('8. Aggregation consistency (D-19604): totalNet equals sum(series.net[]); t
   }
   const grossSeries = makeGrossSeries(grossValues);
   const deductions = makeDeductions({
-    royaltyPercent: 0.20,
+    royaltyPercent: 0.2,
     stripeFeePercent: 0.029,
     stripeFeeFixedCents: 30,
     infraCogsPercent: 0.05,
@@ -161,7 +167,7 @@ test('8. Aggregation consistency (D-19604): totalNet equals sum(series.net[]); t
 test('9. Referential stability (D-19605): two composable calls with the same input produce structurally identical output', () => {
   const grossSeries = makeGrossSeries([12_345, 23_456, 34_567, 45_678]);
   const deductions = makeDeductions({
-    royaltyPercent: 0.20,
+    royaltyPercent: 0.2,
     stripeFeePercent: 0.029,
     stripeFeeFixedCents: 30,
     infraCogsPercent: 0.05,

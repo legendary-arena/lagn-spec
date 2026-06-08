@@ -8,11 +8,7 @@ import {
   isLiveModeEnabled,
   isValidEnvelope,
 } from './analyticsLiveFetchers.js';
-import type {
-  ActivationFunnelStep,
-  RetentionCohort,
-  TrafficSource,
-} from '../types/index.js';
+import type { ActivationFunnelStep, RetentionCohort, TrafficSource } from '../types/index.js';
 
 // ============================================================================
 // WP-206 / EC-234 / D-20601 — analyticsLiveFetchers test coverage.

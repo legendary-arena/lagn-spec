@@ -2,11 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { useActivationFunnel } from './useActivationFunnel.js';
 import { mockActivationFunnel } from '../services/analyticsMocks.js';
-import type {
-  ActivationFunnelStep,
-  ActivationStep,
-  ServiceResponse,
-} from '../types/index.js';
+import type { ActivationFunnelStep, ActivationStep, ServiceResponse } from '../types/index.js';
 
 // ============================================================================
 // WP-203 / EC-231 — Sub-task B test coverage for `useActivationFunnel`.
@@ -21,7 +17,9 @@ import type {
 
 function wrap(
   data: readonly ActivationFunnelStep[],
-  overrides: Partial<Pick<ServiceResponse<readonly ActivationFunnelStep[]>, 'source' | 'updatedAt'>> = {},
+  overrides: Partial<
+    Pick<ServiceResponse<readonly ActivationFunnelStep[]>, 'source' | 'updatedAt'>
+  > = {},
 ): ServiceResponse<readonly ActivationFunnelStep[]> {
   return {
     data,
@@ -88,7 +86,9 @@ test('3. stepCounts always includes all 4 ACTIVATION_STEPS even when input omits
 });
 
 test('4. Empty input returns zeroed step counts, zeroed step-to-step, zero overall', () => {
-  const { stepCounts, stepToStepConversion, overallConversion } = useActivationFunnel(() => wrap([]));
+  const { stepCounts, stepToStepConversion, overallConversion } = useActivationFunnel(() =>
+    wrap([]),
+  );
   assert.equal(stepCounts.value['signup-start'], 0);
   assert.equal(stepCounts.value['signup-complete'], 0);
   assert.equal(stepCounts.value['first-match-started'], 0);
@@ -124,9 +124,9 @@ test('6. overallConversion DIVERGES from product-of-step-ratios under synthetic 
   const { overallConversion, stepToStepConversion } = useActivationFunnel(() => wrap(series));
   const literal = 1 / 3;
   const productOfStages =
-    stepToStepConversion.value['signup-start']
-    * stepToStepConversion.value['signup-complete']
-    * stepToStepConversion.value['first-match-started'];
+    stepToStepConversion.value['signup-start'] *
+    stepToStepConversion.value['signup-complete'] *
+    stepToStepConversion.value['first-match-started'];
   // Literal end-to-end ratio: 1/3 ≈ 0.3333.
   assert.equal(overallConversion.value, literal);
   // Product of stage ratios under this input: (2/3) * (1/2) * (1/1) = 1/3.
@@ -146,9 +146,9 @@ test('6. overallConversion DIVERGES from product-of-step-ratios under synthetic 
   const second = useActivationFunnel(() => wrap(series2));
   const literal2 = 30 / 100;
   const product2 =
-    second.stepToStepConversion.value['signup-start']
-    * second.stepToStepConversion.value['signup-complete']
-    * second.stepToStepConversion.value['first-match-started'];
+    second.stepToStepConversion.value['signup-start'] *
+    second.stepToStepConversion.value['signup-complete'] *
+    second.stepToStepConversion.value['first-match-started'];
   assert.equal(second.overallConversion.value, literal2);
   // The product equals (67/100)*(45/67)*(30/45) which mathematically
   // reduces to 30/100 exactly, so this scenario also agrees. The

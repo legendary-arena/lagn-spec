@@ -77,14 +77,10 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
         </template>
       </Column>
       <Column field="cpuPercent" header="CPU %" :sortable="true">
-        <template #body="{ data: row }">
-          {{ row.cpuPercent }}%
-        </template>
+        <template #body="{ data: row }"> {{ row.cpuPercent }}% </template>
       </Column>
       <Column field="memoryPercent" header="Memory %" :sortable="true">
-        <template #body="{ data: row }">
-          {{ row.memoryPercent }}%
-        </template>
+        <template #body="{ data: row }"> {{ row.memoryPercent }}% </template>
       </Column>
       <Column field="activeConnections" header="Connections" :sortable="true" />
       <Column field="uptime" header="Uptime" :sortable="true">
@@ -109,7 +105,11 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   align-items: center;
 }
 
-.page-header h1 { margin: 0; font-size: 1.5rem; color: #0f172a; }
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #0f172a;
+}
 
 .freshness-badge {
   font-size: 0.75rem;
@@ -125,11 +125,29 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   font-weight: 600;
 }
 
-.page-loading, .page-error, .page-empty { padding: 2rem; text-align: center; }
-.page-error { color: #dc2626; }
-.page-empty { color: #94a3b8; }
+.page-loading,
+.page-error,
+.page-empty {
+  padding: 2rem;
+  text-align: center;
+}
+.page-error {
+  color: #dc2626;
+}
+.page-empty {
+  color: #94a3b8;
+}
 
-.node-status-healthy { color: #16a34a; font-weight: 600; }
-.node-status-degraded { color: #d97706; font-weight: 600; }
-.node-status-down { color: #dc2626; font-weight: 600; }
+.node-status-healthy {
+  color: #16a34a;
+  font-weight: 600;
+}
+.node-status-degraded {
+  color: #d97706;
+  font-weight: 600;
+}
+.node-status-down {
+  color: #dc2626;
+  font-weight: 600;
+}
 </style>

@@ -126,6 +126,41 @@ jobs:
       - name: Typecheck arena-client
         run: pnpm --filter @legendary-arena/arena-client typecheck
 
+  # ── 3c. Dashboard gates ──────────────────────────────────────────────────────
+  # why: wires the apps/dashboard checks from
+  # apps/dashboard/docs/code-checks-and-balances.md §11 into CI. The dashboard is
+  # self-contained (no @legendary-arena/* runtime imports), so this job needs no
+  # prior build artifacts and runs independently of the registry chain.
+  # lint / typecheck / coverage / format / build all run as blocking gates.
+  dashboard:
+    name: Dashboard Gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with: { version: 10 }
+
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint dashboard
+        run: pnpm --filter @legendary-arena/dashboard lint
+
+      - name: Typecheck dashboard
+        run: pnpm --filter @legendary-arena/dashboard typecheck
+
+      - name: Test dashboard (coverage thresholds)
+        run: pnpm --filter @legendary-arena/dashboard test:coverage
+
+      - name: Format check dashboard
+        run: pnpm --filter @legendary-arena/dashboard format:check
+
+      - name: Build dashboard
+        run: pnpm --filter @legendary-arena/dashboard build
+
   # ── 4. Upload to R2 (tags only) ────────────────────────────────────────────
   upload-r2:
     name: Upload to Cloudflare R2

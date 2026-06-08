@@ -59,7 +59,11 @@ const serverHealth = computed(() => {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: #475569; }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #475569;
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -82,11 +86,35 @@ const serverHealth = computed(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: #dc2626; font-size: 0.85rem; }
-.widget-empty { color: #94a3b8; font-size: 0.85rem; }
-.widget-data { display: flex; flex-direction: column; }
-.metric-value { font-size: 2rem; font-weight: 700; color: #0f172a; }
-.metric-label { font-size: 0.8rem; color: #64748b; }
+.widget-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+.widget-data {
+  display: flex;
+  flex-direction: column;
+}
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.metric-label {
+  font-size: 0.8rem;
+  color: #64748b;
+}
 </style>

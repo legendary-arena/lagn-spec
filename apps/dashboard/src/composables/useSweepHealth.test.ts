@@ -65,8 +65,8 @@ function snapshotOf(runs: readonly SweepRunSummary[]): SweepHealthSnapshot {
 
 test('should_surface_data_state_with_projections_when_latest_run_present', () => {
   const runs = [
-    run('r0', 60 * 60 * 1000, { 'soft-lock': 2, 'timeout': 1 }),
-    run('r1', 2 * 60 * 60 * 1000, { 'soft-lock': 0, 'timeout': 3 }),
+    run('r0', 60 * 60 * 1000, { 'soft-lock': 2, timeout: 1 }),
+    run('r1', 2 * 60 * 60 * 1000, { 'soft-lock': 0, timeout: 3 }),
   ];
   const { state, latestRun, recentRuns, lastRunAgeMs, source, updatedAt } = useSweepHealth(
     () => loaded(snapshotOf(runs)),
@@ -152,7 +152,7 @@ test('should_cap_sparkline_to_thirty_retaining_most_recent_when_thirty_five_runs
 });
 
 test('should_sum_all_anomaly_keys_for_sparkline_index_zero_when_latest_has_multiple_kinds', () => {
-  const latestCounts = { 'soft-lock': 4, 'hard-crash': 2, 'timeout': 1 };
+  const latestCounts = { 'soft-lock': 4, 'hard-crash': 2, timeout: 1 };
   const runs = [
     run('r0', 60 * 60 * 1000, latestCounts),
     run('r1', 2 * 60 * 60 * 1000, { 'soft-lock': 9 }),
@@ -199,7 +199,8 @@ test('should_map_kpi_status_via_computeKpiStatus_when_age_crosses_threshold_band
   assert.equal(mild.kpiStatus.value, 'needs-attention');
 
   const severe = useSweepHealth(
-    () => loaded(snapshotOf([run('r0', STALE_THRESHOLD_MS + 12 * 60 * 60 * 1000, { 'soft-lock': 1 })])),
+    () =>
+      loaded(snapshotOf([run('r0', STALE_THRESHOLD_MS + 12 * 60 * 60 * 1000, { 'soft-lock': 1 })])),
     FIXED_NOW_MS,
   );
   assert.equal(severe.kpiStatus.value, 'off-track');

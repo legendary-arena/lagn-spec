@@ -22,11 +22,7 @@ import {
 } from '../services/mocks.js';
 import { computeKpiStatus } from '../utils/kpiStatus.js';
 import { INFRA_COST_BUDGETS } from '../config/infraCostBudgets.js';
-import {
-  INFRA_COST_VENDORS,
-  type KpiSnapshot,
-  type KpiStatus,
-} from '../types/index.js';
+import { INFRA_COST_VENDORS, type KpiSnapshot, type KpiStatus } from '../types/index.js';
 
 const { range } = useDateRange();
 
@@ -44,9 +40,7 @@ const monitor = useErrorRateMonitor(() => errorResponse.value);
 const watchdog = useInfraCostWatchdog(() => costResponse.value, INFRA_COST_BUDGETS);
 
 const updatedAtRef: Ref<number | null> = computed(() => health.updatedAt.value);
-const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(
-  () => health.source.value,
-);
+const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(() => health.source.value);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAtRef, sourceFreshnessRef);
 
 const router = useRouter();
@@ -260,12 +254,7 @@ const cards = computed<readonly StripCard[]>(() => [
 
     <div v-else class="widget-data">
       <div class="card-row">
-        <article
-          v-for="card in cards"
-          :key="card.id"
-          class="strip-card"
-          :aria-label="card.label"
-        >
+        <article v-for="card in cards" :key="card.id" class="strip-card" :aria-label="card.label">
           <span class="card-label">{{ card.label }}</span>
           <span class="card-value">{{ card.valueLabel }}</span>
           <span
@@ -273,7 +262,8 @@ const cards = computed<readonly StripCard[]>(() => [
             class="status-chip"
             :class="'status-' + card.status"
             :aria-label="`Status: ${card.statusLabel}`"
-          >{{ card.statusLabel }}</span>
+            >{{ card.statusLabel }}</span
+          >
         </article>
       </div>
 
@@ -306,7 +296,11 @@ const cards = computed<readonly StripCard[]>(() => [
   align-items: center;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -336,10 +330,24 @@ const cards = computed<readonly StripCard[]>(() => [
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;

@@ -1,9 +1,5 @@
 import { computed, type ComputedRef } from 'vue';
-import type {
-  ErrorRateSnapshot,
-  ErrorSignature,
-  ServiceResponse,
-} from '../types/index.js';
+import type { ErrorRateSnapshot, ErrorSignature, ServiceResponse } from '../types/index.js';
 
 const HOURLY_WINDOW_SECONDS = 3600;
 const DAILY_WINDOW_SECONDS = 86400;

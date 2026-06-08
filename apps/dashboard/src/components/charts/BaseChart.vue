@@ -14,10 +14,6 @@ const chartHeight = computed(() => props.height ?? '300px');
 
 <template>
   <div :style="{ height: chartHeight, width: '100%' }">
-    <VChart
-      :option="props.option"
-      :loading="props.loading ?? false"
-      autoresize
-    />
+    <VChart :option="props.option" :loading="props.loading ?? false" autoresize />
   </div>
 </template>

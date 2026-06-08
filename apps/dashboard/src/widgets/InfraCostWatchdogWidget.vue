@@ -4,11 +4,7 @@ import { useDateRange } from '../composables/useDateRange.js';
 import { useInfraCostWatchdog } from '../composables/useInfraCostWatchdog.js';
 import { useDataFreshness, type DataFreshnessSource } from '../composables/useDataFreshness.js';
 import { fetchInfraCostEntries } from '../services/mocks.js';
-import {
-  INFRA_COST_VENDORS,
-  type InfraCostVendor,
-  type KpiStatus,
-} from '../types/index.js';
+import { INFRA_COST_VENDORS, type InfraCostVendor, type KpiStatus } from '../types/index.js';
 import type { InfraCostBudget } from '../config/infraCostBudgets.js';
 
 interface Props {
@@ -32,9 +28,7 @@ const response = computed(() => fetchInfraCostEntries(range.value, nowMs));
 const watchdog = useInfraCostWatchdog(() => response.value, props.budgets);
 
 const updatedAtRef: Ref<number | null> = computed(() => watchdog.updatedAt.value);
-const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(
-  () => watchdog.source.value,
-);
+const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(() => watchdog.source.value);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAtRef, sourceFreshnessRef);
 
 // why: D-19608 Widget State Gate Pattern — single `state` computed gates
@@ -186,7 +180,8 @@ const footerLabel = computed<string>(() => {
               class="status-chip"
               :class="'status-' + card.status"
               :aria-label="`Cost status: ${card.statusLabel}`"
-            >{{ card.statusLabel }}</span>
+              >{{ card.statusLabel }}</span
+            >
           </header>
           <dl class="card-amounts">
             <dt>MTD</dt>
@@ -224,7 +219,11 @@ const footerLabel = computed<string>(() => {
   margin-bottom: 0.5rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -248,10 +247,24 @@ const footerLabel = computed<string>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;

@@ -133,11 +133,16 @@ const state = computed<WidgetState>(() => {
     </div>
 
     <div v-else-if="state === 'error'" class="widget-error" role="alert">
-      <p>The governance snapshot could not be loaded; please re-run pnpm dash:build or inspect the script logs for the underlying cause.</p>
+      <p>
+        The governance snapshot could not be loaded; please re-run pnpm dash:build or inspect the
+        script logs for the underlying cause.
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
-      <p>No governance KPIs available; the build-time snapshot is missing its governanceKpis field.</p>
+      <p>
+        No governance KPIs available; the build-time snapshot is missing its governanceKpis field.
+      </p>
     </div>
 
     <div v-else class="kpi-strip-grid">
@@ -177,7 +182,11 @@ const state = computed<WidgetState>(() => {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -207,10 +216,24 @@ const state = computed<WidgetState>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .kpi-strip-grid {
   display: grid;
@@ -261,7 +284,13 @@ const state = computed<WidgetState>(() => {
   align-self: flex-start;
 }
 
-.kpi-status-chip.status-on-track { color: var(--p-green-500); }
-.kpi-status-chip.status-off-track { color: var(--p-red-500); }
-.kpi-status-chip.status-needs-attention { color: var(--p-yellow-500); }
+.kpi-status-chip.status-on-track {
+  color: var(--p-green-500);
+}
+.kpi-status-chip.status-off-track {
+  color: var(--p-red-500);
+}
+.kpi-status-chip.status-needs-attention {
+  color: var(--p-yellow-500);
+}
 </style>

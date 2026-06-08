@@ -187,7 +187,10 @@ function selectHorizon(option: HorizonOption): void {
     </div>
 
     <div v-else-if="state === 'error'" class="widget-error" role="alert">
-      <p>The governance snapshot could not be loaded; please re-run pnpm dash:build or inspect the script logs for the underlying cause.</p>
+      <p>
+        The governance snapshot could not be loaded; please re-run pnpm dash:build or inspect the
+        script logs for the underlying cause.
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
@@ -226,10 +229,16 @@ function selectHorizon(option: HorizonOption): void {
               <code class="path-code">{{ nextWpFilePath }}</code>
               <span v-if="copyState === 'copied'" class="copied-badge" role="status">Copied</span>
             </button>
-            <span v-if="suggestedAction !== ''" class="card-primary-action">{{ suggestedAction }}</span>
-            <span v-if="queuedExtra > 0" class="card-primary-subtitle">+{{ queuedExtra }} more queued</span>
+            <span v-if="suggestedAction !== ''" class="card-primary-action">{{
+              suggestedAction
+            }}</span>
+            <span v-if="queuedExtra > 0" class="card-primary-subtitle"
+              >+{{ queuedExtra }} more queued</span
+            >
           </template>
-          <span v-else class="card-primary-title card-primary-empty">All WPs blocked or done — drafting room is open</span>
+          <span v-else class="card-primary-title card-primary-empty"
+            >All WPs blocked or done — drafting room is open</span
+          >
         </article>
 
         <article class="card card-count" aria-label="Work packets done this period">
@@ -269,7 +278,11 @@ function selectHorizon(option: HorizonOption): void {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -299,10 +312,24 @@ function selectHorizon(option: HorizonOption): void {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .horizon-tabs {
   display: flex;
@@ -354,7 +381,11 @@ function selectHorizon(option: HorizonOption): void {
 
 .card-primary {
   border-left: 3px solid var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 6%, var(--p-content-background, var(--p-surface-card)));
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 6%,
+    var(--p-content-background, var(--p-surface-card))
+  );
 }
 
 .card-label {

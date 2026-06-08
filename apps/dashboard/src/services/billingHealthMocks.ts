@@ -4,9 +4,9 @@ import { normalizeRange } from './normalizeRange.js';
 
 const BILLING_WINDOW_DAYS = 30;
 const MS_PER_DAY = 86400000;
-const WEBHOOK_RATE_MIN = 0.00;
+const WEBHOOK_RATE_MIN = 0.0;
 const WEBHOOK_RATE_MAX = 0.05;
-const INTENT_RATE_MIN = 0.10;
+const INTENT_RATE_MIN = 0.1;
 const INTENT_RATE_MAX = 0.35;
 const WEBHOOK_TOTAL_MIN = 80;
 const WEBHOOK_TOTAL_MAX = 240;
@@ -102,7 +102,10 @@ export interface BillingHealthMockResult {
  * draws, but the consuming layer (composable / widget) preserves the
  * guard for future real-data paths where totals can legitimately be zero.
  */
-export function generateBillingHealthMock(range: DateRange, nowMs: number): BillingHealthMockResult {
+export function generateBillingHealthMock(
+  range: DateRange,
+  nowMs: number,
+): BillingHealthMockResult {
   // why: D-19605 (Mock Determinism Contract + DateRange Normalization
   // extension) — normalize at the entry point so the seed input is a
   // single canonical form. Without normalization, `range.start` arriving

@@ -63,7 +63,9 @@ test('initializes with 9 items in the locked category distribution', () => {
   assert.equal(checklist.totalCount.value, 9);
 
   const contentCount = checklist.items.value.filter((item) => item.category === 'content').length;
-  const communityCount = checklist.items.value.filter((item) => item.category === 'community').length;
+  const communityCount = checklist.items.value.filter(
+    (item) => item.category === 'community',
+  ).length;
   const growthCount = checklist.items.value.filter((item) => item.category === 'growth').length;
   assert.equal(contentCount, 4);
   assert.equal(communityCount, 3);
@@ -117,7 +119,10 @@ test('a new calendar day produces a fresh unchecked list', () => {
 
   const dayTwo = useDailyChecklist({ now: () => new Date(2026, 4, 22, 9, 0, 0) });
   assert.equal(dayTwo.completedCount.value, 0);
-  assert.equal(dayTwo.items.value.every((item) => item.completed === false), true);
+  assert.equal(
+    dayTwo.items.value.every((item) => item.completed === false),
+    true,
+  );
 });
 
 test('keys older than 30 days are pruned on init; recent and unrelated keys survive', () => {
@@ -151,7 +156,10 @@ test('persisted ids absent from config are ignored and missing config ids stay u
   const checklist = useDailyChecklist({ now: fixedClock });
 
   assert.equal(checklist.items.value.length, 9);
-  assert.equal(checklist.items.value.some((item) => item.id === 'ghost-item'), false);
+  assert.equal(
+    checklist.items.value.some((item) => item.id === 'ghost-item'),
+    false,
+  );
 
   const youtube = checklist.items.value.find((item) => item.id === 'youtube-video');
   assert.equal(youtube?.completed, true);
@@ -164,7 +172,7 @@ test('shape-invalid persisted entries fall back to unchecked without throwing', 
   seed(TODAY_KEY, {
     'youtube-video': { completed: 'yes', completedAt: null },
     'facebook-post': 5,
-    'newsletter': { completed: true, completedAt: 'soon' },
+    newsletter: { completed: true, completedAt: 'soon' },
   });
 
   let checklist!: ReturnType<typeof useDailyChecklist>;
@@ -192,13 +200,7 @@ test('CHECKLIST_CADENCES drift gate: array deep-equals the union members in lock
   // the union without updating CHECKLIST_CADENCES (or vice versa) fails
   // this assertion loudly. The type-level lock at the bottom catches the
   // union-side drift; the deepEqual catches the array-side drift.
-  assert.deepEqual(CHECKLIST_CADENCES, [
-    'daily',
-    'weekly',
-    'monthly',
-    'quarterly',
-    'as-scheduled',
-  ]);
+  assert.deepEqual(CHECKLIST_CADENCES, ['daily', 'weekly', 'monthly', 'quarterly', 'as-scheduled']);
   assert.equal(CHECKLIST_CADENCES.length, 5);
   const unionCheck: ReadonlyArray<ChecklistCadence> = CHECKLIST_CADENCES;
   assert.equal(unionCheck.length, 5);

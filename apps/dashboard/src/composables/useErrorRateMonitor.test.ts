@@ -2,11 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { useErrorRateMonitor } from './useErrorRateMonitor.js';
 import { mockErrorRateSnapshots } from '../services/opsHealthMocks.js';
-import type {
-  ErrorRateSnapshot,
-  ErrorSignature,
-  ServiceResponse,
-} from '../types/index.js';
+import type { ErrorRateSnapshot, ErrorSignature, ServiceResponse } from '../types/index.js';
 
 // ============================================================================
 // WP-204 / EC-232 — Sub-task B test coverage for `useErrorRateMonitor`.
@@ -22,7 +18,9 @@ import type {
 
 function wrap(
   data: readonly ErrorRateSnapshot[],
-  overrides: Partial<Pick<ServiceResponse<readonly ErrorRateSnapshot[]>, 'source' | 'updatedAt'>> = {},
+  overrides: Partial<
+    Pick<ServiceResponse<readonly ErrorRateSnapshot[]>, 'source' | 'updatedAt'>
+  > = {},
 ): ServiceResponse<readonly ErrorRateSnapshot[]> {
   return {
     data,
@@ -201,8 +199,14 @@ test('should_emit_byte_identical_output_when_mockErrorRateSnapshots_called_twice
   const second = mockErrorRateSnapshots('14d', 1_750_000_000_000);
   assert.deepEqual(first.data, second.data);
   for (const entry of first.data) {
-    assert.ok(entry.errorRate >= 0, `errorRate ${entry.errorRate} below 0 bound at ${entry.date}/${entry.windowSeconds}`);
-    assert.ok(entry.errorRate <= 0.05, `errorRate ${entry.errorRate} above 0.05 bound at ${entry.date}/${entry.windowSeconds}`);
+    assert.ok(
+      entry.errorRate >= 0,
+      `errorRate ${entry.errorRate} below 0 bound at ${entry.date}/${entry.windowSeconds}`,
+    );
+    assert.ok(
+      entry.errorRate <= 0.05,
+      `errorRate ${entry.errorRate} above 0.05 bound at ${entry.date}/${entry.windowSeconds}`,
+    );
     assert.ok(entry.totalRequests >= 0, `totalRequests ${entry.totalRequests} below 0`);
     assert.ok(entry.errorCount >= 0, `errorCount ${entry.errorCount} below 0`);
   }

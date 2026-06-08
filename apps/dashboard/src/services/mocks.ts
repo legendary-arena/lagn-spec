@@ -147,11 +147,26 @@ export function mockKpiSnapshots(): ServiceResponse<KpiSnapshot[]> {
 
 export function mockPlayerRecords(): ServiceResponse<PlayerRecord[]> {
   const names = [
-    'Alice Chen', 'Bob Martinez', 'Carol Johnson', 'David Kim',
-    'Eve Williams', 'Frank Brown', 'Grace Lee', 'Henry Wilson',
-    'Irene Davis', 'Jack Thompson', 'Karen White', 'Leo Harris',
-    'Maria Clark', 'Nathan Lewis', 'Olivia Robinson', 'Paul Walker',
-    'Quinn Hall', 'Rachel Allen', 'Sam Young', 'Tina King',
+    'Alice Chen',
+    'Bob Martinez',
+    'Carol Johnson',
+    'David Kim',
+    'Eve Williams',
+    'Frank Brown',
+    'Grace Lee',
+    'Henry Wilson',
+    'Irene Davis',
+    'Jack Thompson',
+    'Karen White',
+    'Leo Harris',
+    'Maria Clark',
+    'Nathan Lewis',
+    'Olivia Robinson',
+    'Paul Walker',
+    'Quinn Hall',
+    'Rachel Allen',
+    'Sam Young',
+    'Tina King',
   ];
   const players: PlayerRecord[] = names.map((name, index) => ({
     id: `player-${index + 1}`,
@@ -160,7 +175,9 @@ export function mockPlayerRecords(): ServiceResponse<PlayerRecord[]> {
     matchesPlayed: randomBetween(5, 500),
     winRate: randomBetween(20, 85) / 100,
     lastActive: new Date(Date.now() - randomBetween(0, 7 * 86400000)).toISOString(),
-    status: (['active', 'active', 'active', 'inactive', 'banned'] as const)[randomBetween(0, 4)] ?? 'active',
+    status:
+      (['active', 'active', 'active', 'inactive', 'banned'] as const)[randomBetween(0, 4)] ??
+      'active',
   }));
   return wrapMock(players);
 }
@@ -177,7 +194,9 @@ export function mockMatchRecords(): ServiceResponse<MatchRecord[]> {
       playerCount: randomBetween(1, 5),
       scheme: schemes[randomBetween(0, schemes.length - 1)] ?? 'Legacy Virus',
       mastermind: masterminds[randomBetween(0, masterminds.length - 1)] ?? 'Red Skull',
-      outcome: (['villain_wins', 'hero_wins', 'in_progress'] as const)[randomBetween(0, 2)] ?? 'in_progress',
+      outcome:
+        (['villain_wins', 'hero_wins', 'in_progress'] as const)[randomBetween(0, 2)] ??
+        'in_progress',
     });
   }
   return wrapMock(matches);

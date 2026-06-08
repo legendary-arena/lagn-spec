@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, type Ref } from 'vue';
 import { useDateRange } from '../composables/useDateRange.js';
-import {
-  useSweepHealth,
-  type SweepHealthFetchState,
-} from '../composables/useSweepHealth.js';
+import { useSweepHealth, type SweepHealthFetchState } from '../composables/useSweepHealth.js';
 import { useDataFreshness, type DataFreshnessSource } from '../composables/useDataFreshness.js';
 import { fetchSweepHealth } from '../services/mocks.js';
 import BaseChart from '../components/charts/BaseChart.vue';
@@ -36,9 +33,7 @@ const fetchState = computed<SweepHealthFetchState>(() => {
 const sweep = useSweepHealth(() => fetchState.value, nowMs);
 
 const updatedAtRef: Ref<number | null> = computed(() => sweep.updatedAt.value);
-const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(
-  () => sweep.source.value,
-);
+const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(() => sweep.source.value);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAtRef, sourceFreshnessRef);
 
 const themeVersion = ref(0);
@@ -194,11 +189,7 @@ const sparklineOption = computed<EChartsOption>(() => {
 </script>
 
 <template>
-  <div
-    class="widget"
-    data-testid="sweep-health-widget"
-    aria-label="Engine sweep health summary"
-  >
+  <div class="widget" data-testid="sweep-health-widget" aria-label="Engine sweep health summary">
     <header class="widget-header">
       <div class="header-titles">
         <h3>Engine Sweep Health</h3>
@@ -245,7 +236,8 @@ const sparklineOption = computed<EChartsOption>(() => {
           class="status-chip"
           :class="chipStatusClass"
           :aria-label="`Freshness: ${chipLabel}`"
-        >{{ chipLabel }}</span>
+          >{{ chipLabel }}</span
+        >
       </div>
 
       <table class="anomaly-table" aria-label="Latest-run anomalies by kind">
@@ -289,9 +281,21 @@ const sparklineOption = computed<EChartsOption>(() => {
   margin-bottom: 0.5rem;
 }
 
-.header-titles { display: flex; flex-direction: column; gap: 0.15rem; }
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
-.header-subtitle { margin: 0; font-size: 0.7rem; color: var(--p-text-muted-color); }
+.header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
+.header-subtitle {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--p-text-muted-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -321,12 +325,32 @@ const sparklineOption = computed<EChartsOption>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
-.widget-empty h4 { margin: 0 0 0.25rem; color: var(--p-text-color); font-size: 0.9rem; }
-.empty-hint { margin: 0; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
+.widget-empty h4 {
+  margin: 0 0 0.25rem;
+  color: var(--p-text-color);
+  font-size: 0.9rem;
+}
+.empty-hint {
+  margin: 0;
+}
 
 .widget-data {
   display: flex;
@@ -340,7 +364,11 @@ const sparklineOption = computed<EChartsOption>(() => {
   gap: 1.5rem;
 }
 
-.summary-stat { display: flex; flex-direction: column; gap: 0.1rem; }
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
 
 .stat-label {
   font-size: 0.65rem;
@@ -394,21 +422,28 @@ const sparklineOption = computed<EChartsOption>(() => {
   border-bottom: 1px solid var(--p-content-border-color);
 }
 
-.anomaly-table th[scope="col"] {
+.anomaly-table th[scope='col'] {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--p-text-muted-color);
 }
 
-.anomaly-table th[scope="row"] {
+.anomaly-table th[scope='row'] {
   font-weight: 600;
   color: var(--p-text-color);
 }
 
-.count-cell { font-variant-numeric: tabular-nums; color: var(--p-text-color); }
+.count-cell {
+  font-variant-numeric: tabular-nums;
+  color: var(--p-text-color);
+}
 
-.sparkline-block { display: flex; flex-direction: column; gap: 0.25rem; }
+.sparkline-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
 
 .sparkline-label {
   font-size: 0.7rem;

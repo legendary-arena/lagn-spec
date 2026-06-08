@@ -132,7 +132,12 @@ onUnmounted(() => {
 <template>
   <div class="app-layout">
     <div v-if="isHidden" class="mobile-bar">
-      <button type="button" class="hamburger" aria-label="Toggle navigation" @click="toggleMobileMenu">
+      <button
+        type="button"
+        class="hamburger"
+        aria-label="Toggle navigation"
+        @click="toggleMobileMenu"
+      >
         <span class="hamburger-lines"></span>
       </button>
       <span class="mobile-title">Legendary Arena</span>
@@ -171,7 +176,7 @@ onUnmounted(() => {
           <span v-if="primaryRole" class="role-badge">{{ primaryRole }}</span>
         </div>
         <button type="button" class="theme-toggle" :aria-pressed="isDark" @click="toggleTheme">
-          {{ isCollapsed ? (isDark ? 'L' : 'D') : (isDark ? 'Light mode' : 'Dark mode') }}
+          {{ isCollapsed ? (isDark ? 'L' : 'D') : isDark ? 'Light mode' : 'Dark mode' }}
         </button>
         <button type="button" class="logout-button" @click="handleLogout">
           {{ isCollapsed ? 'Out' : 'Logout' }}
@@ -179,11 +184,7 @@ onUnmounted(() => {
       </div>
     </nav>
 
-    <div
-      v-if="isHidden && isMobileMenuOpen"
-      class="scrim"
-      @click="toggleMobileMenu"
-    ></div>
+    <div v-if="isHidden && isMobileMenuOpen" class="scrim" @click="toggleMobileMenu"></div>
 
     <main class="main-content">
       <RouterView />
@@ -248,8 +249,12 @@ onUnmounted(() => {
   position: absolute;
 }
 
-.hamburger-lines::before { top: -5px; }
-.hamburger-lines::after { top: 5px; }
+.hamburger-lines::before {
+  top: -5px;
+}
+.hamburger-lines::after {
+  top: 5px;
+}
 
 .sidebar {
   width: 240px;

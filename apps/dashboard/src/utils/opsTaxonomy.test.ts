@@ -48,12 +48,7 @@ test('should_include_every_documented_PublicSurfaceKey_when_checking_PUBLIC_SURF
   // (marketing / play / cards / api). If the union grows without
   // `PUBLIC_SURFACES` growing, the table widget would silently skip the
   // new surface and the worst-surface comparison would omit it.
-  const documentedUnionMembers: readonly PublicSurfaceKey[] = [
-    'marketing',
-    'play',
-    'cards',
-    'api',
-  ];
+  const documentedUnionMembers: readonly PublicSurfaceKey[] = ['marketing', 'play', 'cards', 'api'];
   for (const expected of documentedUnionMembers) {
     assert.ok(
       PUBLIC_SURFACES.includes(expected),

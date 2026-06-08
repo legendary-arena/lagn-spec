@@ -60,7 +60,7 @@ const SIGNUP_START_BASE_DAILY = 38;
 
 // Retention cohort defaults — typical SaaS-shape (D1 ≈ 50%, D7 ≈ 25%).
 const COHORT_SIZE_BASE = 110;
-const DAY1_RETURN_RATE_BASE = 0.50;
+const DAY1_RETURN_RATE_BASE = 0.5;
 const DAY7_RETURN_RATE_BASE = 0.27;
 
 /**
@@ -151,7 +151,10 @@ function wrapMock<T>(data: T, nowMs: number): ServiceResponse<T> {
  * required by WP-203 §Aggregation rule + §Determinism scope so per-channel
  * iteration order is observable-stable across JS runtimes.
  */
-export function mockTrafficSources(range: DateRange, nowMs: number): ServiceResponse<readonly TrafficSource[]> {
+export function mockTrafficSources(
+  range: DateRange,
+  nowMs: number,
+): ServiceResponse<readonly TrafficSource[]> {
   // why: D-19605 (DateRange normalization) — normalize at the entry point
   // so the seed input is a single canonical form. Without normalization,
   // two paths supplying differently-formatted range endpoints would seed
@@ -216,7 +219,10 @@ export function mockTrafficSources(range: DateRange, nowMs: number): ServiceResp
  * iterates `ACTIVATION_STEPS` in canonical array order per the same
  * determinism discipline as `mockTrafficSources`.
  */
-export function mockActivationFunnel(range: DateRange, nowMs: number): ServiceResponse<readonly ActivationFunnelStep[]> {
+export function mockActivationFunnel(
+  range: DateRange,
+  nowMs: number,
+): ServiceResponse<readonly ActivationFunnelStep[]> {
   // why: D-19605 — same normalization + seeding pattern as mockTrafficSources.
   const normalized = normalizeRange(range, nowMs);
   const seed = hashRange('funnel|' + normalized.start + '|' + normalized.end);
@@ -287,7 +293,10 @@ function isoWeekLabel(ms: number): string {
  * comparison) so the widget can render the heatmap rows in chronological
  * order without further sorting.
  */
-export function mockRetentionCohorts(cohortCount: number, nowMs: number): ServiceResponse<readonly RetentionCohort[]> {
+export function mockRetentionCohorts(
+  cohortCount: number,
+  nowMs: number,
+): ServiceResponse<readonly RetentionCohort[]> {
   // why: D-19605 — seed derives from `cohortCount` (the documented
   // determinism-scope input); same `cohortCount` always produces
   // byte-identical output across calls.
@@ -300,7 +309,10 @@ export function mockRetentionCohorts(cohortCount: number, nowMs: number): Servic
     const cohortWeek = isoWeekLabel(nowMs - weeksBack * 7 * MS_PER_DAY);
     const cohortSize = Math.max(1, Math.round(COHORT_SIZE_BASE * sampleRange(prng, 0.75, 1.25)));
     const day1Rate = Math.max(0, Math.min(1, DAY1_RETURN_RATE_BASE * sampleRange(prng, 0.8, 1.2)));
-    const day7Rate = Math.max(0, Math.min(day1Rate, DAY7_RETURN_RATE_BASE * sampleRange(prng, 0.8, 1.2)));
+    const day7Rate = Math.max(
+      0,
+      Math.min(day1Rate, DAY7_RETURN_RATE_BASE * sampleRange(prng, 0.8, 1.2)),
+    );
     const day1ReturnCount = Math.round(cohortSize * day1Rate);
     const day7ReturnCount = Math.round(cohortSize * day7Rate);
     entries.push({ cohortWeek, cohortSize, day1ReturnCount, day7ReturnCount });

@@ -30,9 +30,7 @@ const response = computed(() => fetchErrorRateSnapshots(range.value, nowMs));
 const monitor = useErrorRateMonitor(() => response.value);
 
 const updatedAtRef: Ref<number | null> = computed(() => monitor.updatedAt.value);
-const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(
-  () => monitor.source.value,
-);
+const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(() => monitor.source.value);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAtRef, sourceFreshnessRef);
 
 const themeVersion = ref(0);
@@ -64,7 +62,9 @@ function formatRatePercent(rate: number): string {
 }
 
 const currentRateLabel = computed<string>(() => formatRatePercent(monitor.currentRate.value));
-const rollingDailyRateLabel = computed<string>(() => formatRatePercent(monitor.rollingDailyRate.value));
+const rollingDailyRateLabel = computed<string>(() =>
+  formatRatePercent(monitor.rollingDailyRate.value),
+);
 
 /**
  * Format an epoch-ms timestamp as a relative "Nm ago" / "Nd ago" string.
@@ -104,9 +104,10 @@ const signatureRows = computed<readonly SignatureRow[]>(() => {
   for (const signature of monitor.topSignaturesAcrossRange.value) {
     rows.push({
       signature: signature.signature,
-      truncatedSignature: signature.signature.length > 60
-        ? signature.signature.slice(0, 60) + '…'
-        : signature.signature,
+      truncatedSignature:
+        signature.signature.length > 60
+          ? signature.signature.slice(0, 60) + '…'
+          : signature.signature,
       count: signature.count,
       firstSeenLabel: formatRelativeTimestamp(signature.firstSeen),
       lastSeenLabel: formatRelativeTimestamp(signature.lastSeen),
@@ -182,15 +183,10 @@ const sparklineOption = computed<EChartsOption>(() => {
     ],
   };
 });
-
 </script>
 
 <template>
-  <div
-    class="widget"
-    data-testid="error-rate-monitor-widget"
-    aria-label="API error rate monitor"
-  >
+  <div class="widget" data-testid="error-rate-monitor-widget" aria-label="API error rate monitor">
     <header class="widget-header">
       <h3>Error Rate Monitor</h3>
       <span v-if="sourceLabel" class="freshness-badge">
@@ -220,7 +216,9 @@ const sparklineOption = computed<EChartsOption>(() => {
       <div class="rate-row">
         <div class="metric-text">
           <span class="metric-label">Current 1h error rate</span>
-          <span class="metric-rate" aria-label="Current 1 hour error rate">{{ currentRateLabel }}</span>
+          <span class="metric-rate" aria-label="Current 1 hour error rate">{{
+            currentRateLabel
+          }}</span>
           <span class="metric-subdued">24h rolling: {{ rollingDailyRateLabel }}</span>
         </div>
         <div class="metric-sparkline">
@@ -275,7 +273,11 @@ const sparklineOption = computed<EChartsOption>(() => {
   margin-bottom: 0.5rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -305,10 +307,24 @@ const sparklineOption = computed<EChartsOption>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;
@@ -365,7 +381,7 @@ const sparklineOption = computed<EChartsOption>(() => {
   border-bottom: 1px solid var(--p-content-border-color);
 }
 
-.signature-table th[scope="col"] {
+.signature-table th[scope='col'] {
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;

@@ -29,9 +29,7 @@ async function handleLogin(): Promise<void> {
 
   authStore.login(mockUser);
 
-  const redirect = typeof route.query.redirect === 'string'
-    ? route.query.redirect
-    : '/overview';
+  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/overview';
 
   await router.push(redirect);
   isSubmitting.value = false;
@@ -137,8 +135,13 @@ async function handleLogin(): Promise<void> {
   cursor: pointer;
 }
 
-.login-form button:hover { background: #2563eb; }
-.login-form button:disabled { background: #94a3b8; cursor: not-allowed; }
+.login-form button:hover {
+  background: #2563eb;
+}
+.login-form button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
 
 .mock-note {
   margin-top: 1.5rem;

@@ -96,7 +96,9 @@ const visibleItems = computed(() => {
   return allItems.value.slice(0, limit);
 });
 
-const canExpand = computed(() => allItems.value.length > DEFAULT_VISIBLE_COUNT && !showExpanded.value);
+const canExpand = computed(
+  () => allItems.value.length > DEFAULT_VISIBLE_COUNT && !showExpanded.value,
+);
 const canCollapse = computed(() => showExpanded.value);
 
 type WidgetState = 'loading' | 'error' | 'empty' | 'data';
@@ -160,7 +162,10 @@ function toggleExpansion(): void {
     </div>
 
     <div v-else-if="state === 'error'" class="widget-error" role="alert">
-      <p>The governance snapshot could not be loaded; please re-run pnpm dash:build or inspect the script logs for the underlying cause.</p>
+      <p>
+        The governance snapshot could not be loaded; please re-run pnpm dash:build or inspect the
+        script logs for the underlying cause.
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
@@ -206,7 +211,11 @@ function toggleExpansion(): void {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -236,10 +245,24 @@ function toggleExpansion(): void {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .activity-list {
   list-style: none;
@@ -274,9 +297,15 @@ function toggleExpansion(): void {
   color: var(--p-primary-contrast-color);
 }
 
-.activity-badge.badge-decision { background: var(--p-primary-color); }
-.activity-badge.badge-wp { background: var(--p-green-500); }
-.activity-badge.badge-spec { background: var(--p-blue-500); }
+.activity-badge.badge-decision {
+  background: var(--p-primary-color);
+}
+.activity-badge.badge-wp {
+  background: var(--p-green-500);
+}
+.activity-badge.badge-spec {
+  background: var(--p-blue-500);
+}
 
 .activity-content {
   display: flex;

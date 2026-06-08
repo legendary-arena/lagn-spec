@@ -48,17 +48,17 @@ export const INFRA_COST_BUDGETS: readonly InfraCostBudget[] = [
   // why: D-20403 — `render` placeholder $100/mo (10000 cents). Render hosts
   // the game server; the v1 budget reflects a single web-service free-to-
   // standard transition with no autoscaling yet. Real number set by finance.
-  { vendor: 'render', monthlyBudgetCents: 10000, toleranceRatio: 0.20, isMock: true },
+  { vendor: 'render', monthlyBudgetCents: 10000, toleranceRatio: 0.2, isMock: true },
   // why: D-20403 — `cloudflare` placeholder $50/mo (5000 cents). Covers
   // Pages + R2 reads + Workers in v1; multi-product split is future.
-  { vendor: 'cloudflare', monthlyBudgetCents: 5000, toleranceRatio: 0.20, isMock: true },
+  { vendor: 'cloudflare', monthlyBudgetCents: 5000, toleranceRatio: 0.2, isMock: true },
   // why: D-20403 — `postgres` placeholder $30/mo (3000 cents). Reflects
   // a single managed-Postgres instance at the smallest tier; tier
   // changes await operator review.
-  { vendor: 'postgres', monthlyBudgetCents: 3000, toleranceRatio: 0.20, isMock: true },
+  { vendor: 'postgres', monthlyBudgetCents: 3000, toleranceRatio: 0.2, isMock: true },
   // why: D-20403 — `hanko` placeholder $25/mo (2500 cents). Identity
   // provider baseline; per-MAU pricing scales post-launch.
-  { vendor: 'hanko', monthlyBudgetCents: 2500, toleranceRatio: 0.20, isMock: true },
+  { vendor: 'hanko', monthlyBudgetCents: 2500, toleranceRatio: 0.2, isMock: true },
 ];
 
 // why: drift-check at module load — if `INFRA_COST_BUDGETS` falls out of

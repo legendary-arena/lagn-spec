@@ -20,11 +20,7 @@ import {
   fetchActivationFunnel,
   fetchRetentionCohorts,
 } from '../services/mocks.js';
-import {
-  ACQUISITION_CHANNELS,
-  type AcquisitionChannel,
-  type DateRange,
-} from '../types/index.js';
+import { ACQUISITION_CHANNELS, type AcquisitionChannel, type DateRange } from '../types/index.js';
 
 const STRIP_RANGE: DateRange = '14d';
 const STRIP_COHORT_COUNT = 8;
@@ -36,18 +32,14 @@ const nowMs = Date.now();
 
 const trafficResponse = computed(() => fetchTrafficSources(STRIP_RANGE, nowMs));
 const funnelResponse = computed(() => fetchActivationFunnel(STRIP_RANGE, nowMs));
-const retentionResponse = computed(() =>
-  fetchRetentionCohorts(STRIP_COHORT_COUNT, nowMs),
-);
+const retentionResponse = computed(() => fetchRetentionCohorts(STRIP_COHORT_COUNT, nowMs));
 
 const traffic = useTrafficSources(() => trafficResponse.value);
 const funnel = useActivationFunnel(() => funnelResponse.value);
 const retention = useRetentionCohorts(() => retentionResponse.value);
 
 const updatedAtRef: Ref<number | null> = computed(() => traffic.updatedAt.value);
-const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(
-  () => traffic.source.value,
-);
+const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(() => traffic.source.value);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAtRef, sourceFreshnessRef);
 
 const CHANNEL_LABEL: Readonly<Record<AcquisitionChannel, string>> = {
@@ -186,12 +178,7 @@ const day1RetentionLabel = computed<string>(() => {
 
     <div v-else class="widget-data">
       <div class="card-row">
-        <article
-          v-for="card in cards"
-          :key="card.id"
-          class="strip-card"
-          :aria-label="card.label"
-        >
+        <article v-for="card in cards" :key="card.id" class="strip-card" :aria-label="card.label">
           <span class="card-label">{{ card.label }}</span>
           <span class="card-value">{{ card.valueLabel }}</span>
         </article>
@@ -238,7 +225,11 @@ const day1RetentionLabel = computed<string>(() => {
   align-items: center;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -268,10 +259,24 @@ const day1RetentionLabel = computed<string>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;

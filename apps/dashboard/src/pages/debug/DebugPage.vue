@@ -50,9 +50,7 @@ const buildTimestamp = __BUILD_TIMESTAMP__;
 
     <div class="debug-section">
       <h2>Feature Flags</h2>
-      <div v-if="flags.all.length === 0" class="no-flags">
-        No feature flags enabled.
-      </div>
+      <div v-if="flags.all.length === 0" class="no-flags">No feature flags enabled.</div>
       <ul v-else class="flags-list">
         <li v-for="flag in flags.all" :key="flag">{{ flag }}</li>
       </ul>

@@ -10,7 +10,12 @@
     "prebuild:snapshot": "node scripts/build-governance-snapshot.mjs",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "test": "node --import tsx --test src/**/*.test.ts"
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "test:coverage": "node --import tsx --test --experimental-test-coverage --test-coverage-lines=90 --test-coverage-branches=80 --test-coverage-functions=88 \"src/**/*.test.ts\"",
+    "lint": "eslint \"src/**/*.{ts,vue}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,vue}\" --fix",
+    "format": "prettier --write \"src/**/*.{ts,vue,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,vue,css,json}\""
   },
   "dependencies": {
     "axios": "^1.7.2",
@@ -24,7 +29,14 @@
   },
   "devDependencies": {
     "@types/node": "^22.19.17",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-vue": "^9.33.0",
+    "prettier": "^3.3.0",
     "tsx": "^4.15.7",
     "typescript": "^5.4.5",
     "vite": "^5.3.1",

@@ -82,9 +82,8 @@ test('3. signupConversionByChannel returns signups/visitors and 0 (not NaN) for 
 });
 
 test('4. Empty input series returns zeroed totals and zeroed per-channel conversion', () => {
-  const { totalVisitors, totalSignups, totalsByChannel, signupConversionByChannel } = useTrafficSources(
-    () => wrap([]),
-  );
+  const { totalVisitors, totalSignups, totalsByChannel, signupConversionByChannel } =
+    useTrafficSources(() => wrap([]));
   assert.equal(totalVisitors.value, 0);
   assert.equal(totalSignups.value, 0);
   assert.equal(totalsByChannel.value.direct, 0);
@@ -142,7 +141,10 @@ test('7. series passes through pre-sorted ascending-by-date input (no re-sort, n
     if (current === undefined || previous === undefined) {
       continue;
     }
-    assert.ok(current.date >= previous.date, `Series not ascending by date at index ${i}: ${previous.date} → ${current.date}`);
+    assert.ok(
+      current.date >= previous.date,
+      `Series not ascending by date at index ${i}: ${previous.date} → ${current.date}`,
+    );
   }
 });
 

@@ -93,7 +93,9 @@ const DEFAULT_SNAPSHOT = snapshotImport as unknown as GovernanceSnapshot;
  * by `useGovernanceSnapshot.test.ts`); production callers omit the argument
  * and receive the JSON-imported default.
  */
-export function useGovernanceSnapshot(snapshotOverride?: GovernanceSnapshot): UseGovernanceSnapshotReturn {
+export function useGovernanceSnapshot(
+  snapshotOverride?: GovernanceSnapshot,
+): UseGovernanceSnapshotReturn {
   const snapshot = snapshotOverride ?? DEFAULT_SNAPSHOT;
   const loadError = typeof snapshot.error === 'string' && snapshot.error.length > 0;
   const throughputBlock = snapshot.throughput ?? EMPTY_THROUGHPUT;

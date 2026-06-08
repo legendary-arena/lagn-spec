@@ -19,9 +19,7 @@ const response = computed(() => fetchRetentionCohorts(cohortCount.value, nowMs))
 const retention = useRetentionCohorts(() => response.value);
 
 const updatedAtRef: Ref<number | null> = computed(() => retention.updatedAt.value);
-const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(
-  () => retention.source.value,
-);
+const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(() => retention.source.value);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAtRef, sourceFreshnessRef);
 
 // why: WP-157 Widget Contract + D-19608 Widget State Gate Pattern — single
@@ -103,11 +101,7 @@ const footerLabel = computed<string>(() => {
 </script>
 
 <template>
-  <div
-    class="widget"
-    data-testid="retention-cohorts-widget"
-    aria-label="Retention cohorts"
-  >
+  <div class="widget" data-testid="retention-cohorts-widget" aria-label="Retention cohorts">
     <header class="widget-header">
       <h3>Retention Cohorts</h3>
       <span v-if="sourceLabel" class="freshness-badge">
@@ -123,7 +117,9 @@ const footerLabel = computed<string>(() => {
     </div>
 
     <div v-else-if="state === 'error'" class="widget-error" role="alert">
-      <p>Retention cohort data could not be loaded; please retry or check the dashboard status page.</p>
+      <p>
+        Retention cohort data could not be loaded; please retry or check the dashboard status page.
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
@@ -185,7 +181,11 @@ const footerLabel = computed<string>(() => {
   margin-bottom: 0.5rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -215,10 +215,24 @@ const footerLabel = computed<string>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;

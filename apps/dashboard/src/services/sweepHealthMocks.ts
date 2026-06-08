@@ -95,11 +95,7 @@ function wrapMock<T>(data: T, nowMs: number): ServiceResponse<T> {
  * the 36h freshness window. `cellCount ∈ [50, 500]`; each anomaly count ∈
  * [0, 50] per §Mock value bounds.
  */
-function buildMockRun(
-  prng: () => number,
-  index: number,
-  nowMs: number,
-): SweepRunSummary {
+function buildMockRun(prng: () => number, index: number, nowMs: number): SweepRunSummary {
   const jitterMs = Math.round(sampleRange(prng, 0, MOCK_RUN_JITTER_MS));
   const ageMs = index * MOCK_RUN_SPACING_MS + jitterMs;
   const submittedAtMs = nowMs - ageMs;

@@ -91,7 +91,7 @@ interface AnalyticsEnv {
 // the predicate can be exercised across its full truth table without
 // trying to mutate the read-only `import.meta` per module record.
 let readEnv: () => AnalyticsEnv = () =>
-  ((import.meta as unknown as { env?: AnalyticsEnv }).env ?? {});
+  (import.meta as unknown as { env?: AnalyticsEnv }).env ?? {};
 
 // why: D-20601 injectable-time-source + `__testHooks.setNow` swap point —
 // every timestamp capture in this module MUST flow through `now()` so
@@ -133,9 +133,9 @@ let hasWarnedAboutMissingBaseUrl = false;
 export function isLiveModeEnabled(): boolean {
   const env = readEnv();
   return (
-    env.VITE_USE_MOCKS !== 'true'
-    && typeof env.VITE_API_BASE_URL === 'string'
-    && env.VITE_API_BASE_URL.length > 0
+    env.VITE_USE_MOCKS !== 'true' &&
+    typeof env.VITE_API_BASE_URL === 'string' &&
+    env.VITE_API_BASE_URL.length > 0
   );
 }
 
@@ -151,13 +151,9 @@ export function isLiveModeEnabled(): boolean {
 // (single-validator HARD FAIL); the verification gate greps for that
 // failure mode. Type-predicate form lets the call site narrow `unknown`
 // to `{ data: readonly T[] }` without an extra cast.
-export function isValidEnvelope<T>(
-  value: unknown,
-): value is { data: readonly T[] } {
+export function isValidEnvelope<T>(value: unknown): value is { data: readonly T[] } {
   return (
-    typeof value === 'object'
-    && value !== null
-    && Array.isArray((value as { data?: unknown }).data)
+    typeof value === 'object' && value !== null && Array.isArray((value as { data?: unknown }).data)
   );
 }
 
@@ -241,7 +237,10 @@ export const __testHooks = {
 // fetch completion — Vue tracks `ref.value` reads and re-evaluates the
 // composable downstream when the fetch closure replaces the value.
 const trafficSourcesCache = new Map<DateRange, Ref<ServiceResponse<readonly TrafficSource[]>>>();
-const activationFunnelCache = new Map<DateRange, Ref<ServiceResponse<readonly ActivationFunnelStep[]>>>();
+const activationFunnelCache = new Map<
+  DateRange,
+  Ref<ServiceResponse<readonly ActivationFunnelStep[]>>
+>();
 const retentionCohortsCache = new Map<number, Ref<ServiceResponse<readonly RetentionCohort[]>>>();
 
 /**
@@ -321,9 +320,8 @@ export function fetchTrafficSourcesLive(
   // the cached-branch return above. Exactly ONE network fetch per
   // (range, process) is initiated. Inverting (2) and (3) is a HARD
   // FAIL caught by the two-same-tick test in the paired test file.
-  const liveRef = ref<ServiceResponse<readonly TrafficSource[]>>(
-    makeLiveEmptySentinel<TrafficSource>(),
-  );
+  const liveRef =
+    ref<ServiceResponse<readonly TrafficSource[]>>(makeLiveEmptySentinel<TrafficSource>());
   trafficSourcesCache.set(range, liveRef);
   const url = buildAnalyticsUrl('/api/analytics/traffic-sources', `range=${range}`);
   void (async () => {
@@ -383,9 +381,10 @@ export function fetchActivationFunnelLive(
   }
   // why: D-20601 cache-write-before-fetch invariant (see
   // fetchTrafficSourcesLive for full rationale).
-  const liveRef = ref<ServiceResponse<readonly ActivationFunnelStep[]>>(
-    makeLiveEmptySentinel<ActivationFunnelStep>(),
-  );
+  const liveRef =
+    ref<ServiceResponse<readonly ActivationFunnelStep[]>>(
+      makeLiveEmptySentinel<ActivationFunnelStep>(),
+    );
   activationFunnelCache.set(range, liveRef);
   const url = buildAnalyticsUrl('/api/analytics/activation-funnel', `range=${range}`);
   void (async () => {
@@ -435,9 +434,8 @@ export function fetchRetentionCohortsLive(
   }
   // why: D-20601 cache-write-before-fetch invariant (see
   // fetchTrafficSourcesLive for full rationale).
-  const liveRef = ref<ServiceResponse<readonly RetentionCohort[]>>(
-    makeLiveEmptySentinel<RetentionCohort>(),
-  );
+  const liveRef =
+    ref<ServiceResponse<readonly RetentionCohort[]>>(makeLiveEmptySentinel<RetentionCohort>());
   retentionCohortsCache.set(cohortCount, liveRef);
   const url = buildAnalyticsUrl('/api/analytics/retention-cohorts', `cohortCount=${cohortCount}`);
   void (async () => {

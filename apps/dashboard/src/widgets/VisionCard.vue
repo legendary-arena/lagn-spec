@@ -38,7 +38,10 @@
   <section class="vision-card" aria-labelledby="vision-card-title">
     <header class="vision-header">
       <h3 id="vision-card-title">Vision</h3>
-      <p class="vision-tagline">The 20% of work that drives 80% of income &mdash; and the quality standards that make it worth paying for.</p>
+      <p class="vision-tagline">
+        The 20% of work that drives 80% of income &mdash; and the quality standards that make it
+        worth paying for.
+      </p>
     </header>
 
     <section class="vision-revenue" aria-labelledby="vision-revenue-title">
@@ -46,7 +49,9 @@
       <ol class="revenue-list">
         <li>
           <strong>Sell.</strong>
-          Get players to pay. Marketing, conversion, pricing, packaging. Every dollar funds payroll, royalties to Marvel and Upper Deck, cloud bills, and the next round of content. No sales = no business.
+          Get players to pay. Marketing, conversion, pricing, packaging. Every dollar funds payroll,
+          royalties to Marvel and Upper Deck, cloud bills, and the next round of content. No sales =
+          no business.
         </li>
         <li>
           <strong>Ship playable content.</strong>
@@ -92,9 +97,18 @@
         <p class="financial-tagline"><em>&ldquo;No margin, no mission.&rdquo;</em></p>
         <ul class="vision-list">
           <li>The game must be <strong>financially self-sustaining</strong> from launch onward.</li>
-          <li>Revenue models protect gameplay fairness — no pay-to-win — and pricing, packaging, and distribution are open commercial decisions.</li>
-          <li>A non-negotiable royalty portion flows directly to Upper Deck and Marvel on every revenue stream.</li>
-          <li>If revenue falls short, non-essential features scale back <strong>before</strong> any compromise to rules, fairness, accessibility, or royalties.</li>
+          <li>
+            Revenue models protect gameplay fairness — no pay-to-win — and pricing, packaging, and
+            distribution are open commercial decisions.
+          </li>
+          <li>
+            A non-negotiable royalty portion flows directly to Upper Deck and Marvel on every
+            revenue stream.
+          </li>
+          <li>
+            If revenue falls short, non-essential features scale back <strong>before</strong> any
+            compromise to rules, fairness, accessibility, or royalties.
+          </li>
         </ul>
       </section>
     </div>

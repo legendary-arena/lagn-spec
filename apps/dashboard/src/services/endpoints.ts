@@ -89,7 +89,9 @@ export async function fetchDauHistory(range: DateRange): Promise<ServiceResponse
   return response.data;
 }
 
-export async function fetchRevenueHistory(range: DateRange): Promise<ServiceResponse<DailyMetric[]>> {
+export async function fetchRevenueHistory(
+  range: DateRange,
+): Promise<ServiceResponse<DailyMetric[]>> {
   if (isMockMode()) {
     await simulateLatency();
     return mockRevenueHistory(DATE_RANGE_DAYS[range]);
@@ -126,7 +128,9 @@ export async function fetchServerNodes(): Promise<ServiceResponse<ServerNode[]>>
 // invariants (`0.0 ≤ rate ≤ 1.0`; `count = round(total × rate)`), and
 // the `authenticated-session-required` + `finance`/`admin` role gate.
 // This WP names the path so the server WP has zero schema ambiguity.
-export async function fetchBillingHealth(range: DateRange): Promise<ServiceResponse<BillingHealth>> {
+export async function fetchBillingHealth(
+  range: DateRange,
+): Promise<ServiceResponse<BillingHealth>> {
   // why: D-19605 (Mock Determinism Contract + DateRange Normalization
   // extension) — `normalizeRange` is invoked at the SERVICE BOUNDARY
   // before either the mock generator or a future HTTP call sees the

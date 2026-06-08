@@ -62,10 +62,7 @@ test('should_deep_equal_server_derived_field_set_when_dashboard_SweepRunSummary_
   // deep-equal the sorted committed server-derived field set. The test sorts
   // both sides before comparing so source declaration order is not load-bearing;
   // only membership (the field SET) is guarded.
-  assert.deepEqual(
-    Object.keys(sample).sort(),
-    [...SERVER_DERIVED_SUMMARY_FIELDS].sort(),
-  );
+  assert.deepEqual(Object.keys(sample).sort(), [...SERVER_DERIVED_SUMMARY_FIELDS].sort());
 });
 
 test('should_carry_exactly_five_fields_when_dashboard_SweepRunSummary_is_counted', () => {

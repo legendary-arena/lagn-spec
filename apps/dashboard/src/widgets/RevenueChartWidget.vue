@@ -18,8 +18,8 @@ function readThemeColor(tokenName: string): string {
 
 const { range } = useDateRange();
 
-const { data, loading, error, updatedAt, source } = useFetch(
-  () => fetchRevenueHistory(range.value),
+const { data, loading, error, updatedAt, source } = useFetch(() =>
+  fetchRevenueHistory(range.value),
 );
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
 
@@ -108,7 +108,11 @@ const chartOption = computed<EChartsOption>(() => {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -132,8 +136,22 @@ const chartOption = computed<EChartsOption>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 </style>

@@ -124,7 +124,10 @@ const intentSparkline = computed<EChartsOption>(() => {
     </div>
 
     <div v-else-if="state === 'error'" class="widget-error">
-      <p>Paid-action error data could not be loaded; please retry or check the dashboard status page. ({{ error?.message ?? 'unknown error' }})</p>
+      <p>
+        Paid-action error data could not be loaded; please retry or check the dashboard status page.
+        ({{ error?.message ?? 'unknown error' }})
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
@@ -135,8 +138,13 @@ const intentSparkline = computed<EChartsOption>(() => {
       <div class="metric-row">
         <div class="metric-text">
           <span class="metric-label">Stripe webhook failure rate</span>
-          <span class="metric-rate" aria-label="Webhook failure rate">{{ formatRate(data!.webhookFailureRate) }}</span>
-          <span class="metric-fraction">{{ formatCountFraction(data!.webhookFailureCount, data!.webhookTotalCount) }} (last 30 days)</span>
+          <span class="metric-rate" aria-label="Webhook failure rate">{{
+            formatRate(data!.webhookFailureRate)
+          }}</span>
+          <span class="metric-fraction"
+            >{{ formatCountFraction(data!.webhookFailureCount, data!.webhookTotalCount) }} (last 30
+            days)</span
+          >
         </div>
         <div class="metric-sparkline">
           <BaseChart :option="webhookSparkline" height="48px" />
@@ -146,8 +154,13 @@ const intentSparkline = computed<EChartsOption>(() => {
       <div class="metric-row">
         <div class="metric-text">
           <span class="metric-label">Checkout intent abandonment rate</span>
-          <span class="metric-rate" aria-label="Intent abandonment rate">{{ formatRate(data!.intentAbandonmentRate) }}</span>
-          <span class="metric-fraction">{{ formatCountFraction(data!.intentAbandonedCount, data!.intentTotalCount) }} (last 30 days)</span>
+          <span class="metric-rate" aria-label="Intent abandonment rate">{{
+            formatRate(data!.intentAbandonmentRate)
+          }}</span>
+          <span class="metric-fraction"
+            >{{ formatCountFraction(data!.intentAbandonedCount, data!.intentTotalCount) }} (last 30
+            days)</span
+          >
         </div>
         <div class="metric-sparkline">
           <BaseChart :option="intentSparkline" height="48px" />
@@ -172,7 +185,11 @@ const intentSparkline = computed<EChartsOption>(() => {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -202,10 +219,24 @@ const intentSparkline = computed<EChartsOption>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;

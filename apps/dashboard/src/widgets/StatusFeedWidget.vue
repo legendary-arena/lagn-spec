@@ -23,14 +23,18 @@ const { relativeTime, sourceLabel } = useDataFreshness(generatedAtMillis, source
 const showExpanded = ref(false);
 const expandedKeys = ref<Set<string>>(new Set());
 
-const allEntries = computed<readonly StatusEntry[]>(() => governance.statusEntries(EXPANDED_VISIBLE_COUNT));
+const allEntries = computed<readonly StatusEntry[]>(() =>
+  governance.statusEntries(EXPANDED_VISIBLE_COUNT),
+);
 
 const visibleEntries = computed<readonly StatusEntry[]>(() => {
   const limit = showExpanded.value ? EXPANDED_VISIBLE_COUNT : DEFAULT_VISIBLE_COUNT;
   return allEntries.value.slice(0, limit);
 });
 
-const canExpand = computed(() => allEntries.value.length > DEFAULT_VISIBLE_COUNT && !showExpanded.value);
+const canExpand = computed(
+  () => allEntries.value.length > DEFAULT_VISIBLE_COUNT && !showExpanded.value,
+);
 const canCollapse = computed(() => showExpanded.value);
 
 type WidgetState = 'loading' | 'error' | 'empty' | 'data';
@@ -90,7 +94,10 @@ function formatHeader(entry: StatusEntry): string {
     </div>
 
     <div v-else-if="state === 'error'" class="widget-error" role="alert">
-      <p>The governance snapshot could not be loaded; please re-run pnpm dash:build or inspect the script logs for the underlying cause.</p>
+      <p>
+        The governance snapshot could not be loaded; please re-run pnpm dash:build or inspect the
+        script logs for the underlying cause.
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
@@ -109,7 +116,9 @@ function formatHeader(entry: StatusEntry): string {
             <span class="status-card-title">{{ formatHeader(entry) }}</span>
             <span class="status-card-meta">
               <span class="status-card-date">{{ entry.date }}</span>
-              <span class="status-card-chevron" aria-hidden="true">{{ isEntryExpanded(entry) ? '▾' : '▸' }}</span>
+              <span class="status-card-chevron" aria-hidden="true">{{
+                isEntryExpanded(entry) ? '▾' : '▸'
+              }}</span>
             </span>
           </button>
           <!-- why: D-19906 — `filePath` is the build-time-resolved relative
@@ -156,7 +165,11 @@ function formatHeader(entry: StatusEntry): string {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -186,10 +199,24 @@ function formatHeader(entry: StatusEntry): string {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .status-list {
   list-style: none;

@@ -36,18 +36,14 @@ function wrap(
   };
 }
 
-function entry(
-  vendor: InfraCostVendor,
-  date: string,
-  amountCents: number,
-): InfraCostEntry {
+function entry(vendor: InfraCostVendor, date: string, amountCents: number): InfraCostEntry {
   return { vendor, date, amountCents, currency: 'USD' };
 }
 
 function budget(
   vendor: InfraCostVendor,
   monthlyBudgetCents: number,
-  toleranceRatio: number = 0.20,
+  toleranceRatio: number = 0.2,
 ): InfraCostBudget {
   return { vendor, monthlyBudgetCents, toleranceRatio, isMock: true };
 }
@@ -80,13 +76,8 @@ test('should_sum_per_vendor_mtd_when_series_has_current_month_entries', () => {
 test('should_project_eom_using_linear_formula_when_dayOfMonth_and_daysInMonth_derive_from_latest_entry', () => {
   // Latest entry = 2026-06-15. June has 30 days. dayOfMonth=15;
   // daysInMonth=30. Projection = Math.round(mtd * 30 / 15) = 2 × mtd.
-  const series: readonly InfraCostEntry[] = [
-    entry('render', '2026-06-15', 5000),
-  ];
-  const { projectedEomByVendor } = useInfraCostWatchdog(
-    () => wrap(series),
-    STANDARD_BUDGETS,
-  );
+  const series: readonly InfraCostEntry[] = [entry('render', '2026-06-15', 5000)];
+  const { projectedEomByVendor } = useInfraCostWatchdog(() => wrap(series), STANDARD_BUDGETS);
   assert.equal(projectedEomByVendor.value.render, 10000);
 });
 
@@ -100,8 +91,8 @@ test('should_map_status_via_computeKpiStatus_when_mtd_crosses_budget_and_toleran
   const series: readonly InfraCostEntry[] = [
     entry('render', '2026-06-15', 8000),
     entry('cloudflare', '2026-06-15', 5500), // 500 over budget, within tolerance 1000
-    entry('postgres', '2026-06-15', 5000),   // far over 3000 → off-track
-    entry('hanko', '2026-06-15', 2500),       // exactly at budget → on-track
+    entry('postgres', '2026-06-15', 5000), // far over 3000 → off-track
+    entry('hanko', '2026-06-15', 2500), // exactly at budget → on-track
   ];
   const { statusByVendor } = useInfraCostWatchdog(() => wrap(series), STANDARD_BUDGETS);
   assert.equal(statusByVendor.value.render, 'on-track');
@@ -120,10 +111,8 @@ test('should_compute_total_utilization_ratio_when_series_and_budgets_are_summed'
     entry('postgres', '2026-06-15', 5000),
     entry('hanko', '2026-06-15', 2500),
   ];
-  const { totalMtdCents, totalMonthlyBudgetCents, totalBudgetUtilizationRatio } = useInfraCostWatchdog(
-    () => wrap(series),
-    STANDARD_BUDGETS,
-  );
+  const { totalMtdCents, totalMonthlyBudgetCents, totalBudgetUtilizationRatio } =
+    useInfraCostWatchdog(() => wrap(series), STANDARD_BUDGETS);
   assert.equal(totalMtdCents.value, 21000);
   assert.equal(totalMonthlyBudgetCents.value, 20500);
   assert.ok(Math.abs(totalBudgetUtilizationRatio.value - 21000 / 20500) < 1e-9);
@@ -135,9 +124,7 @@ test('should_render_zero_for_vendors_with_no_current_month_entries_when_partial_
   // null. This is the partial-data case the widget's `data` state
   // handles by displaying `$0` per vendor (only the strip widget
   // renders the `"—"` placeholder for empty-partial cards).
-  const series: readonly InfraCostEntry[] = [
-    entry('render', '2026-06-15', 3000),
-  ];
+  const series: readonly InfraCostEntry[] = [entry('render', '2026-06-15', 3000)];
   const { mtdByVendor } = useInfraCostWatchdog(() => wrap(series), STANDARD_BUDGETS);
   assert.equal(mtdByVendor.value.render, 3000);
   for (const vendor of INFRA_COST_VENDORS) {
@@ -195,7 +182,7 @@ test('should_anchor_dayOfMonth_to_lex_greatest_date_when_series_has_multiple_mon
   const series: readonly InfraCostEntry[] = [
     entry('render', '2026-05-30', 9999), // prior month — excluded
     entry('render', '2026-06-01', 200),
-    entry('render', '2026-06-15', 300),  // latest entry
+    entry('render', '2026-06-15', 300), // latest entry
   ];
   const { mtdByVendor, projectedEomByVendor } = useInfraCostWatchdog(
     () => wrap(series),
@@ -211,10 +198,8 @@ test('should_return_zero_sentinels_when_series_is_empty', () => {
   // total ratio is zero (D-19908 zero-denominator guard); no NaN
   // anywhere. The widget's `state` computed reads these zeros and
   // drops to the explicit `empty` arm.
-  const { mtdByVendor, projectedEomByVendor, totalMtdCents, totalBudgetUtilizationRatio } = useInfraCostWatchdog(
-    () => wrap([]),
-    STANDARD_BUDGETS,
-  );
+  const { mtdByVendor, projectedEomByVendor, totalMtdCents, totalBudgetUtilizationRatio } =
+    useInfraCostWatchdog(() => wrap([]), STANDARD_BUDGETS);
   for (const vendor of INFRA_COST_VENDORS) {
     assert.equal(mtdByVendor.value[vendor], 0);
     assert.equal(projectedEomByVendor.value[vendor], 0);
@@ -241,17 +226,29 @@ test('should_passthrough_source_and_updatedAt_and_bound_mock_factory_when_called
   // §Mock value bounds factory assertions — per-vendor monthly sum
   // (across the entries the mock emitted) ≤ 200% of monthlyBudgetCents.
   const budgetLookup: Record<InfraCostVendor, number> = {
-    render: 10000, cloudflare: 5000, postgres: 3000, hanko: 2500,
+    render: 10000,
+    cloudflare: 5000,
+    postgres: 3000,
+    hanko: 2500,
   };
   const monthlySumPerVendorPerMonth = new Map<string, number>();
   for (const item of response.data) {
-    assert.ok(item.amountCents >= 0, `amountCents ${item.amountCents} below 0 for ${item.vendor}/${item.date}`);
+    assert.ok(
+      item.amountCents >= 0,
+      `amountCents ${item.amountCents} below 0 for ${item.vendor}/${item.date}`,
+    );
     const monthKey = `${item.vendor}|${item.date.slice(0, 7)}`;
-    monthlySumPerVendorPerMonth.set(monthKey, (monthlySumPerVendorPerMonth.get(monthKey) ?? 0) + item.amountCents);
+    monthlySumPerVendorPerMonth.set(
+      monthKey,
+      (monthlySumPerVendorPerMonth.get(monthKey) ?? 0) + item.amountCents,
+    );
   }
   for (const [monthKey, monthlySum] of monthlySumPerVendorPerMonth) {
     const vendor = monthKey.split('|')[0] as InfraCostVendor;
     const upperBound = budgetLookup[vendor] * 2;
-    assert.ok(monthlySum <= upperBound, `Per-vendor monthly sum for ${monthKey} (${monthlySum}) exceeds 200% upper bound (${upperBound}).`);
+    assert.ok(
+      monthlySum <= upperBound,
+      `Per-vendor monthly sum for ${monthKey} (${monthlySum}) exceeds 200% upper bound (${upperBound}).`,
+    );
   }
 });

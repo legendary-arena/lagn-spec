@@ -38,10 +38,16 @@ const HORIZON_TABS: readonly HorizonTab[] = [
   { id: 'today', label: 'Today', cadences: ['daily', 'as-scheduled'], emptyCadenceLabel: 'daily' },
   { id: 'this-week', label: 'This Week', cadences: ['weekly'], emptyCadenceLabel: 'weekly' },
   { id: 'this-month', label: 'This Month', cadences: ['monthly'], emptyCadenceLabel: 'monthly' },
-  { id: 'this-quarter', label: 'This Quarter', cadences: ['quarterly'], emptyCadenceLabel: 'quarterly' },
+  {
+    id: 'this-quarter',
+    label: 'This Quarter',
+    cadences: ['quarterly'],
+    emptyCadenceLabel: 'quarterly',
+  },
 ];
 
-const { items, completedCount, totalCount, loadError, loadedAt, toggle, resetAll } = useDailyChecklist();
+const { items, completedCount, totalCount, loadError, loadedAt, toggle, resetAll } =
+  useDailyChecklist();
 
 // why: localStorage is read synchronously in the composable, so the freshness
 // source is the local browser store rather than a network response. 'MOCK'
@@ -67,8 +73,8 @@ const activeHorizon = computed<HorizonTab>(
   () => HORIZON_TABS.find((tab) => tab.id === activeHorizonId.value) ?? HORIZON_TABS[0]!,
 );
 
-const horizonItems = computed<DailyChecklistItem[]>(
-  () => items.value.filter((item) => activeHorizon.value.cadences.includes(item.cadence)),
+const horizonItems = computed<DailyChecklistItem[]>(() =>
+  items.value.filter((item) => activeHorizon.value.cadences.includes(item.cadence)),
 );
 
 type PanelState = 'loading' | 'error' | 'empty' | 'data';
@@ -94,7 +100,9 @@ const groupedItems = computed(() =>
 
 const horizonHasItems = computed(() => horizonItems.value.length > 0);
 
-const completionBadge = computed(() => `Daily: ${completedCount.value}/${totalCount.value} complete`);
+const completionBadge = computed(
+  () => `Daily: ${completedCount.value}/${totalCount.value} complete`,
+);
 
 function handleToggle(id: string): void {
   toggle(id);
@@ -105,7 +113,9 @@ function handleToggle(id: string): void {
  * composable deliberately does not prompt, so the confirmation lives here.
  */
 function handleReset(): void {
-  const confirmed = window.confirm('Reset all daily checklist items? This clears today\'s progress.');
+  const confirmed = window.confirm(
+    "Reset all daily checklist items? This clears today's progress.",
+  );
   if (confirmed) {
     resetAll();
   }
@@ -155,7 +165,10 @@ function handleReset(): void {
     </div>
 
     <div v-else-if="panelState === 'error'" class="widget-error" role="alert">
-      <p>The daily checklist could not be read from local storage. Your saved progress may be unavailable; try reloading the page.</p>
+      <p>
+        The daily checklist could not be read from local storage. Your saved progress may be
+        unavailable; try reloading the page.
+      </p>
     </div>
 
     <div v-else-if="panelState === 'empty'" class="widget-empty">
@@ -170,7 +183,8 @@ function handleReset(): void {
       :aria-labelledby="`horizon-tab-${activeHorizon.id}`"
     >
       <p v-if="!horizonHasItems" class="horizon-empty">
-        No items at this cadence yet. A follow-up WP will curate {{ activeHorizon.emptyCadenceLabel }} items in <code>CHECKLIST_CONFIG</code>.
+        No items at this cadence yet. A follow-up WP will curate
+        {{ activeHorizon.emptyCadenceLabel }} items in <code>CHECKLIST_CONFIG</code>.
       </p>
 
       <template v-else>
@@ -297,12 +311,23 @@ function handleReset(): void {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-body {
   display: flex;

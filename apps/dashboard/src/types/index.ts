@@ -225,10 +225,7 @@ export const ACTIVATION_STEPS: readonly ActivationStep[] = [
 // bloat the funnel taxonomy and silently widen the envelope's discriminator
 // surface. Future non-funnel event types MUST get a sibling union, not a
 // member of this one.
-export type AcquisitionEventType =
-  | AcquisitionChannel
-  | ActivationStep
-  | 'retention-return';
+export type AcquisitionEventType = AcquisitionChannel | ActivationStep | 'retention-return';
 
 // why: D-20301 — `AnalyticsEvent` envelope shape is CLOSED at 5 fields
 // (event_type, user_id, session_id, timestamp, properties). WP-205
@@ -323,12 +320,7 @@ export type PublicSurfaceKey = 'marketing' | 'play' | 'cards' | 'api';
 // regardless of object-key insertion-order behavior. Adding a 5th surface
 // without updating both this array AND the union fails the drift test in
 // `utils/opsTaxonomy.test.ts`.
-export const PUBLIC_SURFACES: readonly PublicSurfaceKey[] = [
-  'marketing',
-  'play',
-  'cards',
-  'api',
-];
+export const PUBLIC_SURFACES: readonly PublicSurfaceKey[] = ['marketing', 'play', 'cards', 'api'];
 
 // why: WP-204 §Locked contract values — `UptimeStatus` is a closed union of
 // the three observable per-surface uptime states (`up` / `degraded` /
@@ -347,11 +339,7 @@ export type UptimeStatus = 'up' | 'degraded' | 'down';
 // summary table read from this array deterministically. Drift test:
 // `utils/opsTaxonomy.test.ts` asserts bidirectional parity with the
 // `UptimeStatus` union.
-export const UPTIME_STATUSES: readonly UptimeStatus[] = [
-  'up',
-  'degraded',
-  'down',
-];
+export const UPTIME_STATUSES: readonly UptimeStatus[] = ['up', 'degraded', 'down'];
 
 // why: WP-204 §Locked contract values — `InfraCostVendor` is a closed union
 // of the four currently-billed operator vendors (Render game server,

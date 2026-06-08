@@ -184,12 +184,23 @@ function handleClick(): void {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
-.kpi-error { color: var(--p-text-color); font-size: 0.85rem; }
-.kpi-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.kpi-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.kpi-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .kpi-value {
   font-size: 1.75rem;
@@ -212,11 +223,19 @@ function handleClick(): void {
   font-weight: 600;
 }
 
-.trend-symbol { font-size: 0.9rem; }
+.trend-symbol {
+  font-size: 0.9rem;
+}
 
-.kpi-trend.up { color: var(--p-green-500); }
-.kpi-trend.down { color: var(--p-red-500); }
-.kpi-trend.flat { color: var(--p-text-muted-color); }
+.kpi-trend.up {
+  color: var(--p-green-500);
+}
+.kpi-trend.down {
+  color: var(--p-red-500);
+}
+.kpi-trend.flat {
+  color: var(--p-text-muted-color);
+}
 
 .kpi-status-chip {
   display: inline-flex;
@@ -230,7 +249,13 @@ function handleClick(): void {
   background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
-.kpi-status-chip.status-on-track { color: var(--p-green-500); }
-.kpi-status-chip.status-off-track { color: var(--p-red-500); }
-.kpi-status-chip.status-needs-attention { color: var(--p-yellow-500); }
+.kpi-status-chip.status-on-track {
+  color: var(--p-green-500);
+}
+.kpi-status-chip.status-off-track {
+  color: var(--p-red-500);
+}
+.kpi-status-chip.status-needs-attention {
+  color: var(--p-yellow-500);
+}
 </style>

@@ -100,10 +100,7 @@ test('9. persisted value matches the ISO regex (PII gate — no email/id/IP)', (
   markVisited(SAMPLE_GENERATED_AT);
   const stored = localStorage.getItem(STORAGE_KEY);
   assert.notEqual(stored, null);
-  assert.match(
-    stored ?? '',
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})$/,
-  );
+  assert.match(stored ?? '', /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})$/);
   // Reject anything that looks like an email, an account id, or an IP.
   assert.doesNotMatch(stored ?? '', /@|password|token|[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/);
 });

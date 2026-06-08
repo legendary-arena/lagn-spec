@@ -88,14 +88,35 @@ const matchesRunning = computed(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
-.widget-error { color: #dc2626; font-size: 0.85rem; }
-.widget-empty { color: #94a3b8; font-size: 0.85rem; }
+.widget-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
 
-.widget-data { display: flex; flex-direction: column; }
-.metric-value { font-size: 2rem; font-weight: 700; color: #0f172a; }
-.metric-label { font-size: 0.8rem; color: #64748b; }
+.widget-data {
+  display: flex;
+  flex-direction: column;
+}
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.metric-label {
+  font-size: 0.8rem;
+  color: #64748b;
+}
 </style>

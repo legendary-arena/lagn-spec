@@ -9,10 +9,7 @@ import type {
   UptimeProbe,
   UptimeStatus,
 } from '../types/index.js';
-import {
-  INFRA_COST_VENDORS,
-  PUBLIC_SURFACES,
-} from '../types/index.js';
+import { INFRA_COST_VENDORS, PUBLIC_SURFACES } from '../types/index.js';
 import { INFRA_COST_BUDGETS } from '../config/infraCostBudgets.js';
 import { hashRange } from './hashRange.js';
 import { normalizeRange } from './normalizeRange.js';
@@ -48,7 +45,7 @@ const SURFACE_BASE_UPTIME: Readonly<Record<PublicSurfaceKey, number>> = {
 // server WP; v1 picks a low base rate so most days are clean.
 const SURFACE_INCIDENT_RATE: Readonly<Record<PublicSurfaceKey, number>> = {
   marketing: 0.04,
-  play: 0.10,
+  play: 0.1,
   cards: 0.05,
   api: 0.12,
 };
@@ -364,16 +361,20 @@ export function mockErrorRateSnapshots(
   for (const date of dates) {
     // Daily 86400 entry — represents the day's aggregate 5xx rate.
     const dailyRateRaw =
-      DAILY_ERROR_RATE_BASE
-      + sampleRange(prng, -DAILY_ERROR_RATE_BAND_HALF_WIDTH, DAILY_ERROR_RATE_BAND_HALF_WIDTH);
+      DAILY_ERROR_RATE_BASE +
+      sampleRange(prng, -DAILY_ERROR_RATE_BAND_HALF_WIDTH, DAILY_ERROR_RATE_BAND_HALF_WIDTH);
     // why: §Mock value bounds — errorRate ∈ [0, 0.05]. Clamp at the
     // factory output; consumers MUST NOT clamp.
     const dailyErrorRate = clampToBand(dailyRateRaw, 0, 0.05);
     const dailyTotalRequests = Math.max(
       1,
       Math.round(
-        DAILY_TOTAL_REQUESTS_BASE
-        + sampleRange(prng, -DAILY_TOTAL_REQUESTS_BAND_HALF_WIDTH, DAILY_TOTAL_REQUESTS_BAND_HALF_WIDTH),
+        DAILY_TOTAL_REQUESTS_BASE +
+          sampleRange(
+            prng,
+            -DAILY_TOTAL_REQUESTS_BAND_HALF_WIDTH,
+            DAILY_TOTAL_REQUESTS_BAND_HALF_WIDTH,
+          ),
       ),
     );
     const dailyErrorCount = Math.round(dailyTotalRequests * dailyErrorRate);
@@ -389,14 +390,18 @@ export function mockErrorRateSnapshots(
 
     // Rolling 1h panel — represents the latest hour of the day in v1.
     const hourlyRateRaw =
-      HOURLY_ERROR_RATE_BASE
-      + sampleRange(prng, -HOURLY_ERROR_RATE_BAND_HALF_WIDTH, HOURLY_ERROR_RATE_BAND_HALF_WIDTH);
+      HOURLY_ERROR_RATE_BASE +
+      sampleRange(prng, -HOURLY_ERROR_RATE_BAND_HALF_WIDTH, HOURLY_ERROR_RATE_BAND_HALF_WIDTH);
     const hourlyErrorRate = clampToBand(hourlyRateRaw, 0, 0.05);
     const hourlyTotalRequests = Math.max(
       1,
       Math.round(
-        HOURLY_TOTAL_REQUESTS_BASE
-        + sampleRange(prng, -HOURLY_TOTAL_REQUESTS_BAND_HALF_WIDTH, HOURLY_TOTAL_REQUESTS_BAND_HALF_WIDTH),
+        HOURLY_TOTAL_REQUESTS_BASE +
+          sampleRange(
+            prng,
+            -HOURLY_TOTAL_REQUESTS_BAND_HALF_WIDTH,
+            HOURLY_TOTAL_REQUESTS_BAND_HALF_WIDTH,
+          ),
       ),
     );
     const hourlyErrorCount = Math.round(hourlyTotalRequests * hourlyErrorRate);

@@ -78,12 +78,42 @@ const CHECKLIST_CONFIG: readonly ChecklistConfigItem[] = [
   { id: 'youtube-video', label: 'YouTube video published', category: 'content', cadence: 'daily' },
   { id: 'youtube-short', label: 'YouTube Short posted', category: 'content', cadence: 'daily' },
   { id: 'facebook-post', label: 'Facebook post published', category: 'content', cadence: 'daily' },
-  { id: 'newsletter', label: 'Newsletter drafted / scheduled', category: 'content', cadence: 'weekly' },
-  { id: 'discord-response-sla', label: 'Discord response time < 4h', category: 'community', cadence: 'daily' },
-  { id: 'discord-unanswered', label: 'Unanswered Discord threads < 5', category: 'community', cadence: 'daily' },
-  { id: 'player-acknowledgment', label: 'Top active players acknowledged', category: 'community', cadence: 'daily' },
-  { id: 'tournament-promotion', label: 'Tournament announced / promoted', category: 'growth', cadence: 'as-scheduled' },
-  { id: 'strategy-content', label: 'Strategy/deck content posted', category: 'growth', cadence: 'as-scheduled' },
+  {
+    id: 'newsletter',
+    label: 'Newsletter drafted / scheduled',
+    category: 'content',
+    cadence: 'weekly',
+  },
+  {
+    id: 'discord-response-sla',
+    label: 'Discord response time < 4h',
+    category: 'community',
+    cadence: 'daily',
+  },
+  {
+    id: 'discord-unanswered',
+    label: 'Unanswered Discord threads < 5',
+    category: 'community',
+    cadence: 'daily',
+  },
+  {
+    id: 'player-acknowledgment',
+    label: 'Top active players acknowledged',
+    category: 'community',
+    cadence: 'daily',
+  },
+  {
+    id: 'tournament-promotion',
+    label: 'Tournament announced / promoted',
+    category: 'growth',
+    cadence: 'as-scheduled',
+  },
+  {
+    id: 'strategy-content',
+    label: 'Strategy/deck content posted',
+    category: 'growth',
+    cadence: 'as-scheduled',
+  },
 ];
 
 /**
@@ -141,7 +171,8 @@ function formatIsoWeek(date: Date): string {
   const firstThursday = new Date(Date.UTC(isoYear, 0, 4));
   const firstThursdayOffset = (firstThursday.getUTCDay() + 6) % 7;
   firstThursday.setUTCDate(firstThursday.getUTCDate() - firstThursdayOffset + 3);
-  const weekNumber = Math.floor((reference.getTime() - firstThursday.getTime()) / (7 * MILLISECONDS_PER_DAY)) + 1;
+  const weekNumber =
+    Math.floor((reference.getTime() - firstThursday.getTime()) / (7 * MILLISECONDS_PER_DAY)) + 1;
   return `${isoYear}-W${String(weekNumber).padStart(2, '0')}`;
 }
 
@@ -171,7 +202,11 @@ export function formatPeriodKey(date: Date, cadence: 'monthly' | 'quarterly'): s
  * (per EC-224a §After Completing) can assert byte-identical shapes against
  * manually-constructed reference strings.
  */
-export function deriveStorageKey(userId: string, cadence: ChecklistCadence, referenceDate: Date): string {
+export function deriveStorageKey(
+  userId: string,
+  cadence: ChecklistCadence,
+  referenceDate: Date,
+): string {
   // why: D-19801 — the daily key shape is byte-identical to WP-162 so
   // operator-persisted state migrates silently across the WP-198 boundary.
   // The `as-scheduled` cadence reuses the daily key per the WP-198 §Locked
@@ -199,7 +234,8 @@ function isValidPersistedEntry(value: unknown): value is PersistedEntry {
   }
   const candidate = value as Record<string, unknown>;
   const hasValidCompleted = typeof candidate.completed === 'boolean';
-  const hasValidCompletedAt = typeof candidate.completedAt === 'number' || candidate.completedAt === null;
+  const hasValidCompletedAt =
+    typeof candidate.completedAt === 'number' || candidate.completedAt === null;
   return hasValidCompleted && hasValidCompletedAt;
 }
 
@@ -247,7 +283,10 @@ interface CadenceEntries {
  * given cadence. Daily and as-scheduled items share the daily entries record;
  * the rest map one-to-one.
  */
-function entriesForCadence(allEntries: CadenceEntries, cadence: ChecklistCadence): Record<string, unknown> {
+function entriesForCadence(
+  allEntries: CadenceEntries,
+  cadence: ChecklistCadence,
+): Record<string, unknown> {
   if (cadence === 'daily' || cadence === 'as-scheduled') {
     return allEntries.daily;
   }
@@ -343,13 +382,21 @@ function parseWeeklyKeyDate(key: string): Date | null {
   }
   const year = Number(yearPart);
   const weekNumber = Number(weekToken.slice(1));
-  if (!Number.isInteger(year) || !Number.isInteger(weekNumber) || weekNumber < 1 || weekNumber > 53) {
+  if (
+    !Number.isInteger(year) ||
+    !Number.isInteger(weekNumber) ||
+    weekNumber < 1 ||
+    weekNumber > 53
+  ) {
     return null;
   }
   const firstThursday = new Date(year, 0, 4);
   const firstThursdayOffset = (firstThursday.getDay() + 6) % 7;
   firstThursday.setDate(firstThursday.getDate() - firstThursdayOffset + 3);
-  const weekStartMs = firstThursday.getTime() + (weekNumber - 1) * 7 * MILLISECONDS_PER_DAY - 3 * MILLISECONDS_PER_DAY;
+  const weekStartMs =
+    firstThursday.getTime() +
+    (weekNumber - 1) * 7 * MILLISECONDS_PER_DAY -
+    3 * MILLISECONDS_PER_DAY;
   return new Date(weekStartMs);
 }
 
@@ -455,7 +502,8 @@ function pruneStaleKeys(referenceDate: Date): void {
     }
   }
 
-  const quarterlyCutoffMs = referenceDate.getTime() - QUARTERLY_RETENTION_DAYS * MILLISECONDS_PER_DAY;
+  const quarterlyCutoffMs =
+    referenceDate.getTime() - QUARTERLY_RETENTION_DAYS * MILLISECONDS_PER_DAY;
   for (const quarterlyKey of allChecklistKeys) {
     const quarterlyDate = parseQuarterlyKeyDate(quarterlyKey);
     if (quarterlyDate !== null && quarterlyDate.getTime() < quarterlyCutoffMs) {
@@ -499,19 +547,17 @@ export function useDailyChecklist(options?: UseDailyChecklistOptions): UseDailyC
 
   const items = ref<DailyChecklistItem[]>(buildItems(allEntries));
   const loadError = ref(
-    dailyState.hadParseError
-      || weeklyState.hadParseError
-      || monthlyState.hadParseError
-      || quarterlyState.hadParseError,
+    dailyState.hadParseError ||
+      weeklyState.hadParseError ||
+      monthlyState.hadParseError ||
+      quarterlyState.hadParseError,
   );
   const loadedAt = ref(referenceDate.getTime());
 
   pruneStaleKeys(referenceDate);
 
   const totalCount = computed(() => items.value.length);
-  const completedCount = computed(
-    () => items.value.filter((item) => item.completed).length,
-  );
+  const completedCount = computed(() => items.value.filter((item) => item.completed).length);
 
   /**
    * Persists the current item state. Each cadence's items are written to that

@@ -16,7 +16,9 @@ import type { RetentionCohort, ServiceResponse } from '../types/index.js';
 
 function wrap(
   data: readonly RetentionCohort[],
-  overrides: Partial<Pick<ServiceResponse<readonly RetentionCohort[]>, 'source' | 'updatedAt'>> = {},
+  overrides: Partial<
+    Pick<ServiceResponse<readonly RetentionCohort[]>, 'source' | 'updatedAt'>
+  > = {},
 ): ServiceResponse<readonly RetentionCohort[]> {
   return {
     data,
@@ -60,7 +62,9 @@ test('2. cohortWithHighestDay7 returns the cohort with the highest day7ReturnCou
 });
 
 test('3. Empty input returns averages of 0 and a null cohortWithHighestDay7', () => {
-  const { averageDay1Rate, averageDay7Rate, cohortWithHighestDay7 } = useRetentionCohorts(() => wrap([]));
+  const { averageDay1Rate, averageDay7Rate, cohortWithHighestDay7 } = useRetentionCohorts(() =>
+    wrap([]),
+  );
   assert.equal(averageDay1Rate.value, 0);
   assert.equal(averageDay7Rate.value, 0);
   assert.equal(cohortWithHighestDay7.value, null);
@@ -68,8 +72,8 @@ test('3. Empty input returns averages of 0 and a null cohortWithHighestDay7', ()
 
 test('4. Single-cohort input returns that cohort as the highest and its rate as the average', () => {
   const cohorts: readonly RetentionCohort[] = [cohort('2026-W20', 80, 40, 16)];
-  const { averageDay1Rate, averageDay7Rate, cohortWithHighestDay7 } = useRetentionCohorts(
-    () => wrap(cohorts),
+  const { averageDay1Rate, averageDay7Rate, cohortWithHighestDay7 } = useRetentionCohorts(() =>
+    wrap(cohorts),
   );
   assert.equal(averageDay1Rate.value, 0.5);
   assert.equal(averageDay7Rate.value, 0.2);

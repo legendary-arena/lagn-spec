@@ -71,7 +71,9 @@ function formatTimestamp(timestamp: number): string {
         :class="[severityClass(alert.severity), { acknowledged: alert.acknowledged }]"
       >
         <span class="severity-chip" :class="severityClass(alert.severity)">
-          <span class="severity-symbol" aria-hidden="true">{{ severitySymbol(alert.severity) }}</span>
+          <span class="severity-symbol" aria-hidden="true">{{
+            severitySymbol(alert.severity)
+          }}</span>
           <span class="severity-text">{{ alert.severity.toUpperCase() }}</span>
         </span>
         <span class="alert-message">{{ alert.message }}</span>
@@ -96,7 +98,11 @@ function formatTimestamp(timestamp: number): string {
   margin-bottom: 1rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -121,10 +127,24 @@ function formatTimestamp(timestamp: number): string {
   margin-bottom: 0.5rem;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .alerts-list {
   list-style: none;
@@ -146,12 +166,22 @@ function formatTimestamp(timestamp: number): string {
   background: color-mix(in srgb, var(--p-content-border-color) 35%, transparent);
 }
 
-.alert-item.acknowledged { opacity: 0.6; }
+.alert-item.acknowledged {
+  opacity: 0.6;
+}
 
-.alert-item.severity-critical { border-left-color: var(--p-red-500); }
-.alert-item.severity-error { border-left-color: var(--p-orange-500); }
-.alert-item.severity-warning { border-left-color: var(--p-yellow-500); }
-.alert-item.severity-info { border-left-color: var(--p-blue-500); }
+.alert-item.severity-critical {
+  border-left-color: var(--p-red-500);
+}
+.alert-item.severity-error {
+  border-left-color: var(--p-orange-500);
+}
+.alert-item.severity-warning {
+  border-left-color: var(--p-yellow-500);
+}
+.alert-item.severity-info {
+  border-left-color: var(--p-blue-500);
+}
 
 /* why: severity is conveyed by the text label first; the colored chip and
    symbol are secondary cues so status never depends on color alone. */
@@ -172,11 +202,27 @@ function formatTimestamp(timestamp: number): string {
   line-height: 1;
 }
 
-.severity-chip.severity-critical { background: var(--p-red-500); }
-.severity-chip.severity-error { background: var(--p-orange-500); }
-.severity-chip.severity-warning { background: var(--p-yellow-500); color: var(--p-surface-950); }
-.severity-chip.severity-info { background: var(--p-blue-500); }
+.severity-chip.severity-critical {
+  background: var(--p-red-500);
+}
+.severity-chip.severity-error {
+  background: var(--p-orange-500);
+}
+.severity-chip.severity-warning {
+  background: var(--p-yellow-500);
+  color: var(--p-surface-950);
+}
+.severity-chip.severity-info {
+  background: var(--p-blue-500);
+}
 
-.alert-message { flex: 1; color: var(--p-text-color); }
-.alert-time { font-size: 0.7rem; color: var(--p-text-muted-color); white-space: nowrap; }
+.alert-message {
+  flex: 1;
+  color: var(--p-text-color);
+}
+.alert-time {
+  font-size: 0.7rem;
+  color: var(--p-text-muted-color);
+  white-space: nowrap;
+}
 </style>

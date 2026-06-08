@@ -44,30 +44,35 @@ test('returns null when target is set but tolerance or direction is missing', ()
     computeKpiStatus(snapshot({ value: 100, target: 100, direction: 'higher-is-better' })),
     null,
   );
-  assert.equal(
-    computeKpiStatus(snapshot({ value: 100, target: 100, tolerance: 5 })),
-    null,
-  );
+  assert.equal(computeKpiStatus(snapshot({ value: 100, target: 100, tolerance: 5 })), null);
 });
 
 test('returns on-track when value meets or exceeds target (higher-is-better)', () => {
   assert.equal(
-    computeKpiStatus(snapshot({ value: 100, target: 100, tolerance: 5, direction: 'higher-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 100, target: 100, tolerance: 5, direction: 'higher-is-better' }),
+    ),
     'on-track',
   );
   assert.equal(
-    computeKpiStatus(snapshot({ value: 200, target: 100, tolerance: 5, direction: 'higher-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 200, target: 100, tolerance: 5, direction: 'higher-is-better' }),
+    ),
     'on-track',
   );
 });
 
 test('returns on-track when value meets or falls below target (lower-is-better)', () => {
   assert.equal(
-    computeKpiStatus(snapshot({ value: 100, target: 100, tolerance: 5, direction: 'lower-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 100, target: 100, tolerance: 5, direction: 'lower-is-better' }),
+    ),
     'on-track',
   );
   assert.equal(
-    computeKpiStatus(snapshot({ value: 50, target: 100, tolerance: 5, direction: 'lower-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 50, target: 100, tolerance: 5, direction: 'lower-is-better' }),
+    ),
     'on-track',
   );
 });
@@ -75,17 +80,23 @@ test('returns on-track when value meets or falls below target (lower-is-better)'
 test('returns needs-attention when wrong side of target within tolerance band', () => {
   // higher-is-better, value just below target but within the tolerance band
   assert.equal(
-    computeKpiStatus(snapshot({ value: 96, target: 100, tolerance: 5, direction: 'higher-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 96, target: 100, tolerance: 5, direction: 'higher-is-better' }),
+    ),
     'needs-attention',
   );
   // exactly at the band edge (|distance| === tolerance) is still needs-attention
   assert.equal(
-    computeKpiStatus(snapshot({ value: 95, target: 100, tolerance: 5, direction: 'higher-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 95, target: 100, tolerance: 5, direction: 'higher-is-better' }),
+    ),
     'needs-attention',
   );
   // lower-is-better, value just above target within tolerance
   assert.equal(
-    computeKpiStatus(snapshot({ value: 104, target: 100, tolerance: 5, direction: 'lower-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 104, target: 100, tolerance: 5, direction: 'lower-is-better' }),
+    ),
     'needs-attention',
   );
 });
@@ -93,12 +104,16 @@ test('returns needs-attention when wrong side of target within tolerance band', 
 test('returns off-track when wrong side of target beyond tolerance band', () => {
   // higher-is-better, value well below target
   assert.equal(
-    computeKpiStatus(snapshot({ value: 80, target: 100, tolerance: 5, direction: 'higher-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 80, target: 100, tolerance: 5, direction: 'higher-is-better' }),
+    ),
     'off-track',
   );
   // lower-is-better, value well above target
   assert.equal(
-    computeKpiStatus(snapshot({ value: 200, target: 100, tolerance: 5, direction: 'lower-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 200, target: 100, tolerance: 5, direction: 'lower-is-better' }),
+    ),
     'off-track',
   );
 });
@@ -107,15 +122,21 @@ test('zero-tolerance edge case: any wrong-side value is off-track (no needs-atte
   // With tolerance === 0, the needs-attention band collapses to empty.
   // Wrong-side values jump straight to off-track.
   assert.equal(
-    computeKpiStatus(snapshot({ value: 99, target: 100, tolerance: 0, direction: 'higher-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 99, target: 100, tolerance: 0, direction: 'higher-is-better' }),
+    ),
     'off-track',
   );
   assert.equal(
-    computeKpiStatus(snapshot({ value: 100, target: 100, tolerance: 0, direction: 'higher-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 100, target: 100, tolerance: 0, direction: 'higher-is-better' }),
+    ),
     'on-track',
   );
   assert.equal(
-    computeKpiStatus(snapshot({ value: 101, target: 100, tolerance: 0, direction: 'higher-is-better' })),
+    computeKpiStatus(
+      snapshot({ value: 101, target: 100, tolerance: 0, direction: 'higher-is-better' }),
+    ),
     'on-track',
   );
 });

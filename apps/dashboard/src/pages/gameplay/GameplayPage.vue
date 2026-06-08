@@ -79,7 +79,11 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   align-items: center;
 }
 
-.page-header h1 { margin: 0; font-size: 1.5rem; color: #0f172a; }
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #0f172a;
+}
 
 .freshness-badge {
   font-size: 0.75rem;
@@ -95,11 +99,28 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   font-weight: 600;
 }
 
-.page-loading, .page-error, .page-empty { padding: 2rem; text-align: center; }
-.page-error { color: #dc2626; }
-.page-empty { color: #94a3b8; }
+.page-loading,
+.page-error,
+.page-empty {
+  padding: 2rem;
+  text-align: center;
+}
+.page-error {
+  color: #dc2626;
+}
+.page-empty {
+  color: #94a3b8;
+}
 
-.outcome-hero_wins { color: #16a34a; font-weight: 600; }
-.outcome-villain_wins { color: #dc2626; font-weight: 600; }
-.outcome-in_progress { color: #d97706; }
+.outcome-hero_wins {
+  color: #16a34a;
+  font-weight: 600;
+}
+.outcome-villain_wins {
+  color: #dc2626;
+  font-weight: 600;
+}
+.outcome-in_progress {
+  color: #d97706;
+}
 </style>

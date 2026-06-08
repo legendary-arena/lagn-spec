@@ -37,24 +37,33 @@ function makeMockSnapshot(): import('./useGovernanceSnapshot.js').GovernanceSnap
         { key: '2026-W21', done: 2, drafted: 0 },
         { key: '2026-W22', done: 5, drafted: 1 },
       ],
-      byMonth: [
-        { key: '2026-05', done: 7, drafted: 1 },
-      ],
-      byQuarter: [
-        { key: '2026-Q2', done: 7, drafted: 1 },
-      ],
+      byMonth: [{ key: '2026-05', done: 7, drafted: 1 }],
+      byQuarter: [{ key: '2026-Q2', done: 7, drafted: 1 }],
       inFlight: [
         { number: 198, title: 'Dashboard Ops Patterns', status: 'Draft', dependencies: [] },
       ],
       blocked: [],
-      now: [
-        { number: 198, title: 'Dashboard Ops Patterns', status: 'Draft', dependencies: [] },
-      ],
+      now: [{ number: 198, title: 'Dashboard Ops Patterns', status: 'Draft', dependencies: [] }],
     },
     decisions: [
-      { id: 'D-19803', title: 'VisionCard Posture', body: 'Body 19803', mtime: '2026-06-02T09:00:00-07:00' },
-      { id: 'D-19802', title: 'KPI Threshold', body: 'Body 19802', mtime: '2026-06-01T09:00:00-07:00' },
-      { id: 'D-19801', title: 'Cadence Union', body: 'Body 19801', mtime: '2026-05-31T09:00:00-07:00' },
+      {
+        id: 'D-19803',
+        title: 'VisionCard Posture',
+        body: 'Body 19803',
+        mtime: '2026-06-02T09:00:00-07:00',
+      },
+      {
+        id: 'D-19802',
+        title: 'KPI Threshold',
+        body: 'Body 19802',
+        mtime: '2026-06-01T09:00:00-07:00',
+      },
+      {
+        id: 'D-19801',
+        title: 'Cadence Union',
+        body: 'Body 19801',
+        mtime: '2026-05-31T09:00:00-07:00',
+      },
     ],
     commits: [
       { sha: 'e44da7e', kind: 'WP', title: 'EC-224a: WP-198 sub-tasks A+B+C' },
@@ -121,7 +130,10 @@ test('4. decisions(limit) returns up to N entries preserving snapshot order (mti
   assert.equal(tail[0]?.id, 'D-19803');
   assert.equal(tail[1]?.id, 'D-19802');
   const mtimes = tail.map((entry) => entry.mtime);
-  assert.ok(mtimes[0]! >= mtimes[1]!, 'decisions must arrive in mtime-descending order from the snapshot');
+  assert.ok(
+    mtimes[0]! >= mtimes[1]!,
+    'decisions must arrive in mtime-descending order from the snapshot',
+  );
 });
 
 test('5. commits(limit) returns up to N entries preserving snapshot order (commit-order descending)', () => {
@@ -242,7 +254,11 @@ test('15. governanceKpis() returns the snapshot field verbatim', () => {
   const snapshot = makeMockSnapshot();
   const result = governance.useGovernanceSnapshot(snapshot);
   const kpis = result.governanceKpis();
-  assert.notEqual(kpis, null, 'governanceKpis must be non-null on a non-error snapshot with the field present');
+  assert.notEqual(
+    kpis,
+    null,
+    'governanceKpis must be non-null on a non-error snapshot with the field present',
+  );
   assert.equal(kpis?.wpsDoneThisWeek, 4);
   assert.equal(kpis?.daysSinceLastDoneFlip, 0);
   assert.equal(kpis?.openDrafts, 2);

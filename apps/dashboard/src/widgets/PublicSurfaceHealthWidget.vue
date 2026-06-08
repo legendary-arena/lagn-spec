@@ -36,9 +36,7 @@ const response = computed(() => fetchUptimeProbes(range.value, nowMs));
 const health = usePublicSurfaceHealth(() => response.value);
 
 const updatedAtRef: Ref<number | null> = computed(() => health.updatedAt.value);
-const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(
-  () => health.source.value,
-);
+const sourceFreshnessRef: Ref<DataFreshnessSource | null> = computed(() => health.source.value);
 const { relativeTime, sourceLabel } = useDataFreshness(updatedAtRef, sourceFreshnessRef);
 
 const themeVersion = ref(0);
@@ -116,21 +114,23 @@ function formatRelativeIncident(timestamp: number | null): string {
  * status chip in the table. Iterates the composable's `series` once;
  * status reflects the rollup of the latest day per surface.
  */
-const latestProbeBySurface = computed<Readonly<Record<PublicSurfaceKey, UptimeProbe | null>>>(() => {
-  const result: Record<PublicSurfaceKey, UptimeProbe | null> = {
-    marketing: null,
-    play: null,
-    cards: null,
-    api: null,
-  };
-  for (const entry of health.series.value) {
-    const existing = result[entry.surface];
-    if (existing === null || entry.date > existing.date) {
-      result[entry.surface] = entry;
+const latestProbeBySurface = computed<Readonly<Record<PublicSurfaceKey, UptimeProbe | null>>>(
+  () => {
+    const result: Record<PublicSurfaceKey, UptimeProbe | null> = {
+      marketing: null,
+      play: null,
+      cards: null,
+      api: null,
+    };
+    for (const entry of health.series.value) {
+      const existing = result[entry.surface];
+      if (existing === null || entry.date > existing.date) {
+        result[entry.surface] = entry;
+      }
     }
-  }
-  return result;
-});
+    return result;
+  },
+);
 
 const surfaceRows = computed<readonly SurfaceRow[]>(() => {
   const rows: SurfaceRow[] = [];
@@ -247,7 +247,10 @@ function sparklineOptionFor(surface: PublicSurfaceKey): EChartsOption {
     <div v-else-if="state === 'error'" class="widget-error" role="alert">
       <!-- why: §Empty-state rule — error arm renders text-only, NOT a
            degenerate table. -->
-      <p>Public surface health data could not be loaded; please retry or check the dashboard status page.</p>
+      <p>
+        Public surface health data could not be loaded; please retry or check the dashboard status
+        page.
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
@@ -282,7 +285,8 @@ function sparklineOptionFor(surface: PublicSurfaceKey): EChartsOption {
                 class="status-chip"
                 :class="'status-' + row.status"
                 :aria-label="`Status: ${row.statusLabel}`"
-              >{{ row.statusLabel }}</span>
+                >{{ row.statusLabel }}</span
+              >
             </td>
             <td class="uptime-cell">{{ row.uptimePercentLabel }}</td>
             <td class="sparkline-cell">
@@ -317,7 +321,11 @@ function sparklineOptionFor(surface: PublicSurfaceKey): EChartsOption {
   margin-bottom: 0.5rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -347,10 +355,24 @@ function sparklineOptionFor(surface: PublicSurfaceKey): EChartsOption {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;
@@ -371,21 +393,28 @@ function sparklineOptionFor(surface: PublicSurfaceKey): EChartsOption {
   border-bottom: 1px solid var(--p-content-border-color);
 }
 
-.surface-table th[scope="col"] {
+.surface-table th[scope='col'] {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--p-text-muted-color);
 }
 
-.surface-table th[scope="row"] {
+.surface-table th[scope='row'] {
   font-weight: 600;
   color: var(--p-text-color);
 }
 
-.uptime-cell { font-variant-numeric: tabular-nums; }
-.incident-cell { color: var(--p-text-muted-color); }
-.sparkline-cell { width: 30%; min-width: 80px; }
+.uptime-cell {
+  font-variant-numeric: tabular-nums;
+}
+.incident-cell {
+  color: var(--p-text-muted-color);
+}
+.sparkline-cell {
+  width: 30%;
+  min-width: 80px;
+}
 
 .status-chip {
   display: inline-block;

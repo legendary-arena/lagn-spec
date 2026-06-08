@@ -3,7 +3,10 @@ import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useFetch } from '../composables/useFetch.js';
 import { useDataFreshness } from '../composables/useDataFreshness.js';
 import { useDateRange } from '../composables/useDateRange.js';
-import { useNetRevenueBreakdown, type GrossDailyInput } from '../composables/useNetRevenueBreakdown.js';
+import {
+  useNetRevenueBreakdown,
+  type GrossDailyInput,
+} from '../composables/useNetRevenueBreakdown.js';
 import { fetchRevenueHistory } from '../services/endpoints.js';
 import { REVENUE_DEDUCTIONS } from '../config/revenueDeductions.js';
 import BaseChart from '../components/charts/BaseChart.vue';
@@ -20,9 +23,7 @@ function readThemeColor(tokenName: string): string {
 
 const { range } = useDateRange();
 
-const { data, loading, error, updatedAt } = useFetch(
-  () => fetchRevenueHistory(range.value),
-);
+const { data, loading, error, updatedAt } = useFetch(() => fetchRevenueHistory(range.value));
 // why: D-19602 (Royalty Deduction Placeholder Posture) — the freshness
 // badge label sources from `REVENUE_DEDUCTIONS.isMock`; the mock placeholder
 // percentages are operator-visible and require finance review before the
@@ -135,7 +136,9 @@ const chartOption = computed<EChartsOption>(() => {
         for (const entry of params as { seriesName: string; value: number; color: string }[]) {
           const cents = entry.value;
           const dollars = (cents / 100).toFixed(2);
-          lines.push(`<span style="color:${entry.color}">●</span> ${entry.seriesName}: $${dollars}`);
+          lines.push(
+            `<span style="color:${entry.color}">●</span> ${entry.seriesName}: $${dollars}`,
+          );
         }
         lines.push(`Day margin: ${dayMarginPercent}%`);
         if (netForDay < 0) {
@@ -206,7 +209,11 @@ const chartOption = computed<EChartsOption>(() => {
     </div>
 
     <div v-else-if="state === 'error'" class="widget-error">
-      <p>Net revenue data could not be loaded; please retry or check the dashboard status page. ({{ error?.message ?? 'unknown error' }})</p>
+      <p>
+        Net revenue data could not be loaded; please retry or check the dashboard status page. ({{
+          error?.message ?? 'unknown error'
+        }})
+      </p>
     </div>
 
     <div v-else-if="state === 'empty'" class="widget-empty">
@@ -240,7 +247,11 @@ const chartOption = computed<EChartsOption>(() => {
   margin-bottom: 0.5rem;
 }
 
-.widget-header h3 { margin: 0; font-size: 0.9rem; color: var(--p-text-color); }
+.widget-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.65rem;
@@ -264,10 +275,24 @@ const chartOption = computed<EChartsOption>(() => {
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.widget-error { color: var(--p-text-color); font-size: 0.85rem; }
-.widget-empty { color: var(--p-text-muted-color); font-size: 0.85rem; }
+.widget-error {
+  color: var(--p-text-color);
+  font-size: 0.85rem;
+}
+.widget-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
 
 .widget-data {
   display: flex;

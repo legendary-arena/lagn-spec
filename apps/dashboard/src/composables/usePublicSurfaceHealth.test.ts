@@ -47,7 +47,9 @@ function probe(
   return {
     surface,
     date,
-    status: options.status ?? (uptimePercent >= 99.9 ? 'up' : uptimePercent >= 99.0 ? 'degraded' : 'down'),
+    status:
+      options.status ??
+      (uptimePercent >= 99.9 ? 'up' : uptimePercent >= 99.0 ? 'degraded' : 'down'),
     uptimePercent,
     incidentCount,
     lastIncidentTimestamp: options.lastIncidentTimestamp ?? null,
@@ -130,8 +132,8 @@ test('should_return_null_worstSurface_and_zero_mean_per_surface_when_series_is_e
   // sentinels per D-19908 numeric-zero semantics. `worstSurface` is
   // `null` (absence is meaningful), per-surface means are `0` (zero
   // probes observed). No field is `NaN`.
-  const { worstSurface, uptimeBySurface, lastIncidentBySurface } = usePublicSurfaceHealth(
-    () => wrap([]),
+  const { worstSurface, uptimeBySurface, lastIncidentBySurface } = usePublicSurfaceHealth(() =>
+    wrap([]),
   );
   assert.equal(worstSurface.value, null);
   for (const surface of PUBLIC_SURFACES) {
@@ -168,7 +170,10 @@ test('should_preserve_ascending_by_date_order_when_series_is_passed_through_from
     if (current === undefined || previous === undefined) {
       continue;
     }
-    assert.ok(current.date >= previous.date, `Series not ascending by date at index ${i}: ${previous.date} → ${current.date}`);
+    assert.ok(
+      current.date >= previous.date,
+      `Series not ascending by date at index ${i}: ${previous.date} → ${current.date}`,
+    );
   }
 });
 
@@ -184,7 +189,13 @@ test('should_emit_byte_identical_output_when_mockUptimeProbes_called_twice_with_
   assert.equal(first.updatedAt, 1_750_000_000_000);
   // §Mock value bounds: uptimePercent ∈ [95.0, 100.0] for every entry.
   for (const entry of first.data) {
-    assert.ok(entry.uptimePercent >= 95.0, `uptimePercent ${entry.uptimePercent} below 95.0 bound at ${entry.surface}/${entry.date}`);
-    assert.ok(entry.uptimePercent <= 100.0, `uptimePercent ${entry.uptimePercent} above 100.0 bound at ${entry.surface}/${entry.date}`);
+    assert.ok(
+      entry.uptimePercent >= 95.0,
+      `uptimePercent ${entry.uptimePercent} below 95.0 bound at ${entry.surface}/${entry.date}`,
+    );
+    assert.ok(
+      entry.uptimePercent <= 100.0,
+      `uptimePercent ${entry.uptimePercent} above 100.0 bound at ${entry.surface}/${entry.date}`,
+    );
   }
 });

@@ -15,7 +15,7 @@ export interface RevenueDeductionConfig {
 }
 
 export const REVENUE_DEDUCTIONS: RevenueDeductionConfig = {
-  royaltyPercent: 0.20,
+  royaltyPercent: 0.2,
   stripeFeePercent: 0.029,
   stripeFeeFixedCents: 30,
   infraCogsPercent: 0.05,

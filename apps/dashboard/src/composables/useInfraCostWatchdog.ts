@@ -74,18 +74,20 @@ export function useInfraCostWatchdog(
 
   // Per-vendor budget lookup so per-vendor derivations don't repeatedly
   // scan the `budgets` array.
-  const budgetByVendor = computed<Readonly<Record<InfraCostVendor, InfraCostBudget | undefined>>>(() => {
-    const result: Record<InfraCostVendor, InfraCostBudget | undefined> = {
-      render: undefined,
-      cloudflare: undefined,
-      postgres: undefined,
-      hanko: undefined,
-    };
-    for (const budget of budgets) {
-      result[budget.vendor] = budget;
-    }
-    return result;
-  });
+  const budgetByVendor = computed<Readonly<Record<InfraCostVendor, InfraCostBudget | undefined>>>(
+    () => {
+      const result: Record<InfraCostVendor, InfraCostBudget | undefined> = {
+        render: undefined,
+        cloudflare: undefined,
+        postgres: undefined,
+        hanko: undefined,
+      };
+      for (const budget of budgets) {
+        result[budget.vendor] = budget;
+      }
+      return result;
+    },
+  );
 
   // Latest entry's date string per §Determinism scope HARD invariant —
   // sort on `YYYY-MM-DD` under Unicode code-unit comparison only.

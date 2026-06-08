@@ -23,7 +23,9 @@ export function useRealtimeMetrics<T>(
   const loading = ref(false);
   const error = ref<ApiError | null>(null);
   const updatedAt = ref<number | null>(null);
-  const source = ref<ServiceResponse<T>['source'] | null>(null) as Ref<ServiceResponse<T>['source'] | null>;
+  const source = ref<ServiceResponse<T>['source'] | null>(null) as Ref<
+    ServiceResponse<T>['source'] | null
+  >;
 
   let intervalId: ReturnType<typeof setInterval> | null = null;
   let isComponentMounted = true;

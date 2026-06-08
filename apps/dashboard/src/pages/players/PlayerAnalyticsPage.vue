@@ -102,7 +102,11 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   align-items: center;
 }
 
-.page-header h1 { margin: 0; font-size: 1.5rem; color: var(--p-text-color); }
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--p-text-color);
+}
 
 .freshness-badge {
   font-size: 0.75rem;
@@ -119,13 +123,19 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   font-weight: 600;
 }
 
-.page-loading, .page-error, .page-empty {
+.page-loading,
+.page-error,
+.page-empty {
   padding: 2rem;
   text-align: center;
 }
 
-.page-error { color: var(--p-text-color); }
-.page-empty { color: var(--p-text-muted-color); }
+.page-error {
+  color: var(--p-text-color);
+}
+.page-empty {
+  color: var(--p-text-muted-color);
+}
 
 /* why: status is shown as a labelled badge so it never relies on color alone;
    the text label is always present alongside the color cue. */
@@ -134,7 +144,13 @@ const { relativeTime, sourceLabel } = useDataFreshness(updatedAt, source);
   font-size: 0.8rem;
 }
 
-.status-active { color: var(--p-green-500); }
-.status-inactive { color: var(--p-text-muted-color); }
-.status-banned { color: var(--p-red-500); }
+.status-active {
+  color: var(--p-green-500);
+}
+.status-inactive {
+  color: var(--p-text-muted-color);
+}
+.status-banned {
+  color: var(--p-red-500);
+}
 </style>
