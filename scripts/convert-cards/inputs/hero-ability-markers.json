@@ -74,12 +74,60 @@
       "reason": "D-21602 — onFight-timed rescue: 'Heist:' is a custom timing prefix analogous to 'Fight:'; the onFight timing is not wired to executeHeroEffects."
     },
     {
+      "setAbbr": "anni",
+      "heroSlug": "brainstorm",
+      "cardSlug": "borrow-from-the-future",
+      "abilityIndex": 0,
+      "abilityText": "Reveal the top card of your deck. If it costs 2 or more, draw it. Otherwise, discard it or put it back.",
+      "reason": "reveal-min-or-discard-choose: Inverted cost threshold (draw if cost ≥ N) with a player-choice fallback (discard OR put it back) on the low branch. Requires both a reveal-min-style draw AND pendingHeroChoice for the fallback — a compound not expressible with current executors."
+    },
+    {
+      "setAbbr": "anni",
+      "heroSlug": "fantastic-four-united",
+      "cardSlug": "invisible-woman",
+      "abilityIndex": 1,
+      "abilityText": "[keyword:Focus] 4[icon:recruit] [icon:5] Rescue a Bystander, then you may KO a card from your hand or discard pile.",
+      "reason": "D-21602 — keyword timing prefix: not wired to executeHeroEffects; also carries per-turn-use-count limit and compound rescue+KO effect"
+    },
+    {
+      "setAbbr": "bkpt",
+      "heroSlug": "king-black-panther",
+      "cardSlug": "unseen-protector",
+      "abilityIndex": 0,
+      "abilityText": "[team:heroes-of-wakanda] [keyword:Ambush]: Rescue a Bystander.",
+      "reason": "D-21602 — keyword timing prefix: not wired to executeHeroEffects"
+    },
+    {
       "setAbbr": "dead",
       "heroSlug": "slapstick",
       "cardSlug": "saturday-morning-harpoons",
       "abilityIndex": 0,
       "abilityText": "[keyword:Excessive Violence]: Rescue a Bystander.",
       "reason": "D-21602 — onFight-timed rescue: '[keyword:Excessive Violence]:' is a card-ability keyword timing prefix analogous to '[keyword:Ambush]:'; executor dispatch for this keyword timing is not wired to executeHeroEffects."
+    },
+    {
+      "setAbbr": "dims",
+      "heroSlug": "howard-the-duck",
+      "cardSlug": "rebel-without-a-cause",
+      "abilityIndex": 0,
+      "abilityText": "Reveal the top card of your deck. If it costs 0[icon:recruit] or has no team icon, draw it.",
+      "reason": "reveal-recruit-zero-or-no-team-draw: Compound OR condition: draw if recruit-cost = 0 OR the card has no team icon. Requires evaluating recruit cost (not VP cost) and team-icon presence — neither is in the current executor design."
+    },
+    {
+      "setAbbr": "dims",
+      "heroSlug": "ms-america",
+      "cardSlug": "kick-a-hole-in-reality",
+      "abilityIndex": 0,
+      "abilityText": "[hc:strength]: Reveal the top card of your deck. KO it or [keyword:Teleport] it.",
+      "reason": "reveal-ko-or-teleport: Player choice: KO the card OR Teleport it. [keyword:Teleport] is a movement mechanic (relocate card to a different zone/location) not in the current executor family."
+    },
+    {
+      "setAbbr": "dstr",
+      "heroSlug": "vishanti-the",
+      "cardSlug": "agamotto",
+      "abilityIndex": 0,
+      "abilityText": "Reveal the top card of your deck. Discard it or put it back.",
+      "reason": "reveal-discard-choose: Player must choose to discard OR put the card back. No cost evaluation. No draw. Requires G.pendingHeroChoice routing with a discard-or-return choice object (no attack grant, unlike reveal-attack-choose)."
     },
     {
       "setAbbr": "ff04",
@@ -90,12 +138,204 @@
       "reason": "D-21602 — [keyword:Focus 2] modifies how the ability triggers (Focus token mechanic); the Focus condition is not in the hero condition evaluation pipeline. Also carries a per-turn-use-count limit not expressible in the current executor."
     },
     {
+      "setAbbr": "mdns",
+      "heroSlug": "blade-daywalker",
+      "cardSlug": "hunt-high-and-low",
+      "abilityIndex": 0,
+      "abilityText": "[keyword:Patrol the Rooftops]: If it's empty, reveal the top card of your deck. You may KO it.",
+      "reason": "D-21602 — keyword timing prefix: not wired to executeHeroEffects; also 'You may KO it' is optional, unlike unconditional reveal-ko"
+    },
+    {
+      "setAbbr": "mdns",
+      "heroSlug": "elsa-bloodstone",
+      "cardSlug": "stalk-the-night-stalkers",
+      "abilityIndex": 1,
+      "abilityText": "[hc:tech]: If a Bystander is KO'd this way, you may also rescue that Bystander instead of putting it in the KO pile.",
+      "reason": "KO-event response rescue: rescue is triggered by a prior KO in the same ability chain, not as a standalone action. Requires event-response plumbing not present in the current hero effects executor."
+    },
+    {
+      "setAbbr": "mdns",
+      "heroSlug": "werewolf-by-night",
+      "cardSlug": "track-the-captives",
+      "abilityIndex": 0,
+      "abilityText": "[keyword:Moonlight]: Whenever you defeat a Vilain or Mastermind this turn, you may rescue a Bystander or gain a Hero from the HQ or Sidekick Deck whose cost is less than that Enemy's [icon:attack].",
+      "reason": "D-21602 — fight-win trigger: not wired to executeHeroEffects"
+    },
+    {
+      "setAbbr": "mdns",
+      "heroSlug": "wong-master-of-the-mystic-arts",
+      "cardSlug": "face-your-demons",
+      "abilityIndex": 0,
+      "abilityText": "Once this turn, you may fight the top card of the Bystander Deck as if it were a 4[icon:attack] “Darkhold Demon” Vilan with “Fight: KO up to two of your Heroes. Rescue this card as a Bystander.”",
+      "reason": "D-21602 — fight-win trigger: not wired to executeHeroEffects; non-standard combat against Bystander Deck stack"
+    },
+    {
       "setAbbr": "mgtg",
       "heroSlug": "rocket-groot",
       "cardSlug": "baby-groot",
       "abilityIndex": 0,
       "abilityText": "[keyword:Excessive Kindness]: Rescue a Bystander.",
       "reason": "D-21602 — onFight-timed rescue: '[keyword:Excessive Kindness]:' is a card-ability keyword timing prefix analogous to '[keyword:Ambush]:'; executor dispatch for this keyword timing is not wired to executeHeroEffects."
+    },
+    {
+      "setAbbr": "noir",
+      "heroSlug": "spider-man-noir",
+      "cardSlug": "solve-the-crime",
+      "abilityIndex": 0,
+      "abilityText": "[hc:instinct]: [keyword:Investigate] the Bystander Stack for a Bystander and rescue it.",
+      "reason": "[keyword:Investigate] searches the full Bystander Stack (not just the top card); requires stack-search logic not in the current executor family."
+    },
+    {
+      "setAbbr": "pttr",
+      "heroSlug": "moon-knight",
+      "cardSlug": "crescent-moon-darts",
+      "abilityIndex": 0,
+      "abilityText": "Reveal the top card of your deck. If it's [hc:instinct] or [hc:tech], draw it.",
+      "reason": "reveal-class-conditional-draw: Draw conditional on the revealed card's hero class. No cost evaluation."
+    },
+    {
+      "setAbbr": "pttr",
+      "heroSlug": "moon-knight",
+      "cardSlug": "golden-ankh-of-khonshu",
+      "abilityIndex": 0,
+      "abilityText": "Whenever you defeat a Villain on the Rooftops this turn, rescue Bystanders equal to that Villain's printed [icon:piercing].",
+      "reason": "D-21602 — fight-win trigger: not wired to executeHeroEffects; also scales to defeated villain's piercing value"
+    },
+    {
+      "setAbbr": "pttr",
+      "heroSlug": "spider-woman",
+      "cardSlug": "bioelectric-shock",
+      "abilityIndex": 1,
+      "abilityText": "Reveal the top card of your deck. If that card has an [icon:attack] icon, draw it.",
+      "reason": "reveal-icon-conditional-draw: Draw conditional on the revealed card having a specific icon ([icon:attack] or [icon:recruit]). No cost evaluation."
+    },
+    {
+      "setAbbr": "pttr",
+      "heroSlug": "spider-woman",
+      "cardSlug": "venom-blast",
+      "abilityIndex": 1,
+      "abilityText": "Reveal the top card of your deck. If that card has a [icon:recruit] icon, draw it.",
+      "reason": "reveal-icon-conditional-draw: Draw conditional on the revealed card having a specific icon ([icon:attack] or [icon:recruit]). No cost evaluation."
+    },
+    {
+      "setAbbr": "pttr",
+      "heroSlug": "symbiote-spider-man",
+      "cardSlug": "dark-strength",
+      "abilityIndex": 1,
+      "abilityText": "Reveal the top card of your deck. If it costs 1 [icon:vp] or 2 [icon:vp], you get +2[icon:attack].",
+      "reason": "reveal-cost-range-attack: Attack bonus if the revealed card's cost falls in a specific range (cost ∈ {1, 2}) — not a simple ≤ threshold. A new cost-range parameter format would be required."
+    },
+    {
+      "setAbbr": "rvlt",
+      "heroSlug": "scarlet-witch",
+      "cardSlug": "alter-reality",
+      "abilityIndex": 0,
+      "abilityText": "Reveal the top card of your deck. Discard it or put it back.",
+      "reason": "reveal-discard-choose: Player must choose to discard OR put the card back. No cost evaluation. No draw. Requires G.pendingHeroChoice routing with a discard-or-return choice object (no attack grant, unlike reveal-attack-choose)."
+    },
+    {
+      "setAbbr": "rvlt",
+      "heroSlug": "speed",
+      "cardSlug": "race-to-the-rescue",
+      "abilityIndex": 0,
+      "abilityText": "Choose a Hero Class. ([hc:strength],[hc:instinct],[hc:covert],[hc:tech] or [hc:ranged]) Reveal the top card of your deck. If it's the Hero Class you named, draw it. Otherwise, put it back on the top or bottom.",
+      "reason": "reveal-player-named-class-draw: Player declares a hero class at activation time (before the reveal); draw if the revealed card matches the declared class. Requires ability-activation flow changes not present in the current design."
+    },
+    {
+      "setAbbr": "rvlt",
+      "heroSlug": "war-machine",
+      "cardSlug": "overwhelming-firepower",
+      "abilityIndex": 0,
+      "abilityText": "Whenever you defeat a Villain or Mastermind this turn, draw a card and rescue a Bystander.",
+      "reason": "D-21602 — fight-win trigger: not wired to executeHeroEffects"
+    },
+    {
+      "setAbbr": "vill",
+      "heroSlug": "electro",
+      "cardSlug": "electroshock-therapy",
+      "abilityIndex": 1,
+      "abilityText": "Reveal the top card of your deck. You may KO it.",
+      "reason": "reveal-optional-ko: 'You may KO it' — the player may choose not to KO (unlike the unconditional reveal-ko)."
+    },
+    {
+      "setAbbr": "vill",
+      "heroSlug": "sabretooth",
+      "cardSlug": "leap-of-the-tiger",
+      "abilityIndex": 0,
+      "abilityText": "Reveal the top card of your deck, then put it back on top of your deck or into your discard pile. If that card was an [hc:instinct] Ally, you get +2[icon:attack].",
+      "reason": "reveal-conditional-discard-or-return compound: Multi-branch reveals where the outcome depends on class, team, or card type, and the player has a choice on at least one branch."
+    },
+    {
+      "setAbbr": "vill",
+      "heroSlug": "sabretooth",
+      "cardSlug": "take-one-for-the-team",
+      "abilityIndex": 0,
+      "abilityText": "Reveal the top card of your deck. If it's a [team:brotherhood] Ally, you may draw it. Otherwise, you may KO it.",
+      "reason": "reveal-conditional-discard-or-return compound: Multi-branch reveals where the outcome depends on class, team, or card type, and the player has a choice on at least one branch."
+    },
+    {
+      "setAbbr": "vnom",
+      "heroSlug": "carnage",
+      "cardSlug": "feast-or-famine",
+      "abilityIndex": 0,
+      "abilityText": "[keyword:Excessive Violence]: Reveal the top card of your deck. If it costs 0, KO it and you may repeat this process.",
+      "reason": "D-21602 — keyword timing prefix: not wired to executeHeroEffects; also loop mechanic requires new infrastructure even if timing resolved"
+    },
+    {
+      "setAbbr": "vnom",
+      "heroSlug": "carnage",
+      "cardSlug": "gruesome-feast",
+      "abilityIndex": 0,
+      "abilityText": "[keyword:Excessive Violence]: Reveal the top card of your deck. You may KO it.",
+      "reason": "D-21602 — keyword timing prefix: not wired to executeHeroEffects"
+    },
+    {
+      "setAbbr": "vnom",
+      "heroSlug": "venomized-dr-strange",
+      "cardSlug": "see-future-timelines",
+      "abilityIndex": 0,
+      "abilityText": "[hc:ranged]: Reveal the top card of your deck. If it costs 0, discard it and you get +2[icon:attack].",
+      "reason": "reveal-discard-attack: Similar to reveal-ko-attack but discards the card instead of KO-ing it when cost = 0. Discard vs. KO is a meaningful gameplay difference; a reveal-discard-attack executor (or a mode parameter on reveal-ko-attack) would be needed."
+    },
+    {
+      "setAbbr": "vnom",
+      "heroSlug": "venompool",
+      "cardSlug": "can-i-get-a-little-gratitude",
+      "abilityIndex": 1,
+      "abilityText": "[keyword:Excessive Violence]: “Rescue“ a Bystander.",
+      "reason": "D-21602 — keyword timing prefix: not wired to executeHeroEffects"
+    },
+    {
+      "setAbbr": "vnom",
+      "heroSlug": "venompool",
+      "cardSlug": "digest-that-chimichanga",
+      "abilityIndex": 1,
+      "abilityText": "[keyword:Indigestion]: “Rescue“ a Bystander.",
+      "reason": "D-21602 — keyword timing prefix: not wired to executeHeroEffects"
+    },
+    {
+      "setAbbr": "vnom",
+      "heroSlug": "venompool",
+      "cardSlug": "play-to-the-crowd",
+      "abilityIndex": 1,
+      "abilityText": "[keyword:Indigestion]: “Rescue“ two Bystanders.",
+      "reason": "D-21602 — keyword timing prefix: not wired to executeHeroEffects"
+    },
+    {
+      "setAbbr": "wtif",
+      "heroSlug": "doctor-strange-supreme",
+      "cardSlug": "to-save-christine",
+      "abilityIndex": 1,
+      "abilityText": "[hc:instinct][keyword:Soulbind a Bystander or Villain]: You get +2[icon:attack]. If it's Special Bystander, you may do its Rescue effect.",
+      "reason": "Soulbind keyword captures a bystander/villain face-down; \"do its Rescue effect\" requires inline execution of a Special Bystander's embedded rescue effect text — not expressible in the current executor family."
+    },
+    {
+      "setAbbr": "wtif",
+      "heroSlug": "party-thor",
+      "cardSlug": "destructive-feast",
+      "abilityIndex": 0,
+      "abilityText": "Whenever you recruit a Hero that costs 5 or more this turn, reveal the top card of your deck and you may KO it.",
+      "reason": "D-21602 — recruit-event trigger: not wired to executeHeroEffects"
     }
   ]
 }

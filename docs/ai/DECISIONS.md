@@ -23369,4 +23369,35 @@ Executor is atomic: `G.turnEconomy.attack` is mutated only when `moveCardFromZon
 
 ---
 
+### D-22401 — Hero Ability Markup Corpus Sweep All 40 Sets (WP-224)
+
+**Decision:** Full scan of all 22 previously unscanned sets confirms zero new active
+`hero-ability-markers.json` entries for the current executor family (9 executor keywords
+as of WP-223). All abilities matching rescue or reveal-top-card patterns either (a) use
+fight-timed keyword timing not wired to `executeHeroEffects`, or (b) require new executor
+families not yet implemented (class/icon/range-conditional draws, discard-choose,
+discard-attack, optional-ko, Teleport-reveal, player-named-class, Investigate, Soulbind).
+Thirty new `_deferred` block entries are added across three pattern categories (A: 13
+fight-timed, B: 14 novel player-deck reveal, C: 3 complex rescue). `hero-ability-markers.json`
+now provides complete coverage of all 40 card sets. `_deferred` grows 4 → 34.
+
+**`--propose` note (added at execution, 2026-06-08):** `--propose` surfaces exactly one
+candidate row in the unscanned sets — `vnom/carnage/feast-or-famine` (suggested
+`[keyword:reveal-ko]`). It is a false positive: `isRevealKoCandidate` text-matches
+"Reveal the top card … If it costs 0, KO it" without inspecting the leading
+`[keyword:Excessive Violence]:` timing prefix or the loop ("you may repeat this process"),
+both of which require deferral. The card is captured as a Category A `_deferred` entry per
+D-21602; no active token is added. The gate fired as designed; WP-224's pre-session
+"zero candidates" prose was corrected at execution (WP-224 §Execution Amendment).
+
+**Rationale:** Documenting deferred patterns centrally eliminates re-discovery sweeps
+from future executor WPs. Each future executor WP can scan the `_deferred` block for its
+pattern and mark those cards directly.
+
+**Packet:** WP-224 / EC-256.
+**Drafted:** 2026-06-08. **Landed:** 2026-06-08.
+**Status:** Active
+
+---
+
 Protect this file.

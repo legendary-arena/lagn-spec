@@ -42,6 +42,12 @@
   `{ anni, antm, asrd, bkpt, bkwd, dims, dstr, fear, gotg, mdns, msmc, nmut, noir,`
   `pttr, rlmk, rvlt, shld, vill, vnom, wpnx, wtif, xmen }` → **STOP**, amend WP-224,
   do not add any `[keyword:X]` token under this WP
+  - **Resolved 2026-06-08:** one candidate surfaced — `vnom/carnage/feast-or-famine`
+    (suggested `[keyword:reveal-ko]`). Confirmed **false positive**: `isRevealKoCandidate`
+    text-matches the line without inspecting its leading `[keyword:Excessive Violence]:`
+    timing prefix or loop, both of which require deferral per D-21602. WP-224 amended
+    (§Execution Amendment); the card is kept as a Category A `_deferred` entry; **no
+    `[keyword:X]` token added.** The gate fired as designed.
 - **Slug fidelity is strict.** `setAbbr`, `heroSlug`, and `cardSlug` MUST exactly match
   values in `data/cards/*.json`. Mismatch = blocking error; reconcile before proceeding
 - **Uniqueness constraint.** No two `_deferred` entries may share the same
@@ -62,7 +68,9 @@
 ## After Completing
 
 - [ ] `node scripts/convert-cards/apply-hero-ability-markers.mjs --propose` exits 0 —
-      no candidate rows for any of the 22 unscanned sets
+      exactly one documented false-positive candidate row (`vnom/carnage/feast-or-famine`,
+      deferred per D-21602; see WP-224 §Execution Amendment) and no other candidate rows
+      for the 22 unscanned sets
 - [ ] JSON parse check exits 0:
       `node -e "JSON.parse(require('fs').readFileSync('scripts/convert-cards/inputs/hero-ability-markers.json','utf8'))"`
 - [ ] `node scripts/convert-cards/apply-hero-ability-markers.mjs --validate` exits 0

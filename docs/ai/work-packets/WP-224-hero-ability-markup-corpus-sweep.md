@@ -1,8 +1,36 @@
 # WP-224 — Hero Ability Markup Corpus Sweep (All 40 Sets)
 
-**Status:** Draft
+**Status:** Done (2026-06-08)
 **Primary Layer:** Card Data + Offline Tooling (no engine changes)
 **Dependencies:** WP-222 baseline (no hard engine dependency; may execute in parallel with WP-223)
+
+---
+
+## Execution Amendment (2026-06-08) — `--propose` False-Positive Reconciliation
+
+**Folded inline during EC-256 execution; operator-authorized.**
+
+Pre-session research (§Session Context point 1, below) claimed `--propose` finds
+**zero** new active candidates across the 22 unscanned sets. Execution found this
+overstated: `--propose` surfaces **exactly one** candidate row in an unscanned set —
+`vnom / carnage / feast-or-famine` (suggested `[keyword:reveal-ko]`). It is a
+**false positive**: the detector (`isRevealKoCandidate`) is pure text-matching and
+matches the line `"… Reveal the top card of your deck. If it costs 0, KO it …"`
+without inspecting the leading `[keyword:Excessive Violence]:` timing prefix or the
+loop (`"you may repeat this process"`). Both require deferral per D-21602, so this
+card is — and remains — a `_deferred` entry (Category A), and **no `[keyword:X]`
+token is added** to `data/cards/*.json`. The `--propose` gate fired exactly as
+designed (it catches a candidate that must NOT be auto-marked); the WP's prose merely
+under-stated the result.
+
+The corrected expectation throughout this WP and EC-256 is: **`--propose` surfaces
+exactly one documented false-positive candidate row (`vnom/carnage/feast-or-famine`),
+deferred per D-21602, and zero other candidate rows for the 22 unscanned sets.** The
+deliverable (30 `_deferred` entries, zero active tokens) is unchanged.
+
+**Allowlist expanded 5 → 7 files** for this reconciliation: this WP file and
+`EC-256-hero-ability-markup-corpus-sweep.checklist.md` are added solely to correct the
+`--propose` framing; no deliverable scope changed.
 
 ---
 
@@ -21,10 +49,15 @@ executor family now in place:
 Pre-session research (run before this WP was drafted) confirms the following about these
 22 sets:
 
-1. **`--propose` finds zero new active candidates.** No ability in any unscanned set
+1. **`--propose` finds zero new active *entries* — one false-positive candidate row.**
+   `--propose` surfaces exactly one candidate row in an unscanned set:
+   `vnom/carnage/feast-or-famine` (suggested `[keyword:reveal-ko]`). It is a false
+   positive — the detector ignores the `[keyword:Excessive Violence]:` timing prefix
+   and loop, both of which require deferral per D-21602 — so it is captured as a
+   `_deferred` entry, not an active token. No other ability in any unscanned set
    matches the current detection functions for rescue, reveal-draw, reveal-cost-attack,
    reveal-odd-draw, reveal-ko, reveal-min, reveal-ko-or-draw, reveal-attack-choose, or
-   reveal-ko-attack.
+   reveal-ko-attack. (See §Execution Amendment above.)
 
 2. **Exactly 30 new `_deferred` entries are required.** The unscanned sets contain 30
    abilities matching rescue or reveal-top-card patterns that require executors not yet
@@ -62,8 +95,10 @@ After this packet:
   categories (30 new entries).
 - **Zero new active markup tokens are added.** `data/cards/*.json` files are not
   modified.
-- The `--propose` run confirms zero unexpected candidates (or the WP is amended if
-  any are found before proceeding to the deferred documentation step).
+- The `--propose` run confirms exactly one documented false-positive candidate
+  (`vnom/carnage/feast-or-famine`, deferred per D-21602) and zero other candidates in
+  the 22 unscanned sets (the WP was amended at execution to reconcile this — see
+  §Execution Amendment).
 - D-22401 is recorded in DECISIONS.md.
 
 ---
@@ -387,8 +422,10 @@ No files are created. No files outside this list may be modified.
    ```bash
    node scripts/convert-cards/apply-hero-ability-markers.mjs --propose
    ```
-   Expected outcome: no candidate rows belonging to any of the 22 previously unscanned
-   sets. Existing known candidates in already-scanned sets (if any) are ignored.
+   Expected outcome: exactly one candidate row belonging to the 22 previously unscanned
+   sets — `vnom/carnage/feast-or-famine` (suggested `[keyword:reveal-ko]`), a documented
+   false positive deferred per D-21602 (see §Execution Amendment) — and zero others.
+   Existing known candidates in already-scanned sets are ignored.
 
    If **ANY** candidate appears for a set in:
    ```
@@ -431,10 +468,12 @@ No files are created. No files outside this list may be modified.
 ## Verification Steps
 
 ```bash
-# 1. Gate check — no candidates for any of the 22 unscanned sets
+# 1. Gate check — exactly one documented false-positive candidate across the 22 unscanned sets
 node scripts/convert-cards/apply-hero-ability-markers.mjs --propose
-# Expected: zero candidate rows for anni antm asrd bkpt bkwd dims dstr fear gotg
-#           mdns msmc nmut noir pttr rlmk rvlt shld vill vnom wpnx wtif xmen
+# Expected: exactly one candidate row — vnom/carnage/feast-or-famine (suggested reveal-ko),
+#           a false positive deferred per D-21602 (see §Execution Amendment) — and zero
+#           other candidate rows across anni antm asrd bkpt bkwd dims dstr fear gotg mdns
+#           msmc nmut noir pttr rlmk rvlt shld vill vnom wpnx wtif xmen
 
 # 2. JSON parse integrity
 node -e "JSON.parse(require('fs').readFileSync('scripts/convert-cards/inputs/hero-ability-markers.json','utf8'))"
@@ -459,7 +498,9 @@ pnpm -r build
 
 ## Acceptance Criteria
 
-- [ ] `--propose` exits 0 with zero candidate rows for all 22 unscanned sets
+- [ ] `--propose` exits 0 with exactly one documented false-positive candidate row
+      (`vnom/carnage/feast-or-famine`, deferred per D-21602) and zero other candidate
+      rows for the 22 unscanned sets
 - [ ] JSON parse check exits 0
 - [ ] `--validate` exits 0
 - [ ] `_deferred` count = 34 (invariant: 4 + 30 = 34)
@@ -490,15 +531,16 @@ from future executor WPs. Each future executor WP can scan the `_deferred` block
 its pattern and mark those cards directly.
 
 **Packet:** WP-224 / EC-256.
-**Drafted:** 2026-06-08. **Landed:** (pending execution).
-**Status:** Drafted
+**Drafted:** 2026-06-08. **Landed:** 2026-06-08.
+**Status:** Active
 
 ---
 
 ## Definition of Done
 
 - [ ] `node scripts/convert-cards/apply-hero-ability-markers.mjs --propose` exits 0,
-      no unexpected candidates in the 22 unscanned sets
+      exactly one documented false-positive candidate (`vnom/carnage/feast-or-famine`,
+      deferred per D-21602) and no other candidates in the 22 unscanned sets
 - [ ] `node scripts/convert-cards/apply-hero-ability-markers.mjs --validate` exits 0
 - [ ] `_deferred` block has exactly **34** entries (was 4, +30)
 - [ ] `data/cards/*.json` files are **unchanged** (`git diff data/` shows nothing)
