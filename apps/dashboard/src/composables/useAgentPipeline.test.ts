@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { useAgentPipeline, laneItemCount } from './useAgentPipeline.js';
+import { useAgentPipeline, laneItemCount, type PriorityRecommendation } from './useAgentPipeline.js';
 import type { GovernanceSnapshot } from './useGovernanceSnapshot.js';
 
 /**
@@ -368,6 +368,118 @@ describe('useAgentPipeline', () => {
         assert.ok(lane.emptyActive.length > 0, `${lane.title} has non-empty emptyActive`);
         assert.ok(lane.emptyHistory.length > 0, `${lane.title} has non-empty emptyHistory`);
       }
+    });
+  });
+
+  describe('priority recommendations', () => {
+    const VALID_HORIZONS = ['today', 'this-week', 'this-month', 'this-quarter'];
+    const VALID_URGENCIES = ['critical', 'high', 'moderate', 'strategic'];
+
+    it('should_produce_exactly_four_priorities_per_lane_with_valid_horizons_and_urgencies', () => {
+      const snapshot = makeSnapshot();
+      const result = useAgentPipeline(snapshot);
+
+      for (const lane of [result.architect, result.builder, result.inspector, result.evaluator]) {
+        assert.equal(lane.priorities.length, 4, `${lane.title} has 4 priorities`);
+
+        const horizons = lane.priorities.map((priority: PriorityRecommendation) => priority.horizon);
+        for (const expectedHorizon of VALID_HORIZONS) {
+          assert.ok(horizons.includes(expectedHorizon), `${lane.title} has ${expectedHorizon} horizon`);
+        }
+
+        for (const priority of lane.priorities) {
+          assert.ok(VALID_URGENCIES.includes(priority.urgency), `${lane.title} ${priority.horizon} has valid urgency "${priority.urgency}"`);
+          assert.ok(priority.label.length > 0, `${lane.title} ${priority.horizon} has non-empty label`);
+        }
+      }
+    });
+
+    it('should_return_empty_priorities_when_snapshot_has_loadError', () => {
+      const snapshot = makeSnapshot({ error: 'Snapshot generation failed.' });
+      const result = useAgentPipeline(snapshot);
+
+      for (const lane of [result.architect, result.builder, result.inspector, result.evaluator]) {
+        assert.equal(lane.priorities.length, 0, `${lane.title} has no priorities on loadError`);
+      }
+    });
+
+    it('should_escalate_architect_urgency_when_many_drafts_are_open', () => {
+      const snapshot = makeSnapshot({
+        governanceKpis: { openDrafts: 5, wpsDoneThisWeek: 2, daysSinceLastDoneFlip: 1 },
+      });
+      const result = useAgentPipeline(snapshot);
+
+      const todayPriority = result.architect.priorities.find(
+        (priority: PriorityRecommendation) => priority.horizon === 'today',
+      );
+      assert.equal(todayPriority!.urgency, 'critical', 'architect today is critical with 5 open drafts');
+    });
+
+    it('should_flag_builder_critical_when_zero_wps_done_this_week', () => {
+      const snapshot = makeSnapshot({
+        governanceKpis: { openDrafts: 0, wpsDoneThisWeek: 0, daysSinceLastDoneFlip: 1 },
+      });
+      const result = useAgentPipeline(snapshot);
+
+      const weekPriority = result.builder.priorities.find(
+        (priority: PriorityRecommendation) => priority.horizon === 'this-week',
+      );
+      assert.equal(weekPriority!.urgency, 'critical', 'builder this-week is critical with 0 WPs done');
+    });
+
+    it('should_flag_inspector_critical_when_multiple_wps_blocked', () => {
+      const snapshot = makeSnapshot({
+        throughput: {
+          byWeek: [],
+          byMonth: [],
+          byQuarter: [],
+          inFlight: [],
+          blocked: [
+            { number: 60, title: 'Auth middleware', status: 'Blocked' as const, dependencies: [59] },
+            { number: 61, title: 'Session tokens', status: 'Blocked' as const, dependencies: [60] },
+          ],
+          now: [],
+        },
+      });
+      const result = useAgentPipeline(snapshot);
+
+      const todayPriority = result.inspector.priorities.find(
+        (priority: PriorityRecommendation) => priority.horizon === 'today',
+      );
+      assert.equal(todayPriority!.urgency, 'critical', 'inspector today is critical with 2 blocked');
+    });
+
+    it('should_flag_evaluator_critical_when_days_since_last_completion_exceeds_seven', () => {
+      const snapshot = makeSnapshot({
+        governanceKpis: { openDrafts: 0, wpsDoneThisWeek: 0, daysSinceLastDoneFlip: 10 },
+      });
+      const result = useAgentPipeline(snapshot);
+
+      const todayPriority = result.evaluator.priorities.find(
+        (priority: PriorityRecommendation) => priority.horizon === 'today',
+      );
+      assert.equal(todayPriority!.urgency, 'critical', 'evaluator today is critical at 10 days stale');
+    });
+
+    it('should_produce_strategic_urgency_when_all_signals_are_healthy', () => {
+      const snapshot = makeSnapshot({
+        governanceKpis: { openDrafts: 0, wpsDoneThisWeek: 5, daysSinceLastDoneFlip: 1 },
+        commits: [
+          { sha: 'aaa111', kind: 'SPEC', title: 'SPEC: draft WP-100' },
+          { sha: 'bbb222', kind: 'WP', title: 'EC-100: implement feature' },
+        ],
+      });
+      const result = useAgentPipeline(snapshot);
+
+      const architectToday = result.architect.priorities.find(
+        (priority: PriorityRecommendation) => priority.horizon === 'today',
+      );
+      assert.equal(architectToday!.urgency, 'strategic', 'architect today is strategic when no drafts');
+
+      const builderWeek = result.builder.priorities.find(
+        (priority: PriorityRecommendation) => priority.horizon === 'this-week',
+      );
+      assert.equal(builderWeek!.urgency, 'strategic', 'builder this-week is strategic at 5 WPs done');
     });
   });
 });

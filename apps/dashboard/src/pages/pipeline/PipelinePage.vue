@@ -6,6 +6,7 @@ import {
   laneItemCount,
   type PipelineLane,
   type PipelineItem,
+  type PriorityRecommendation,
 } from '../../composables/useAgentPipeline.js';
 
 const snapshot = useGovernanceSnapshot();
@@ -46,6 +47,17 @@ function sectionsForLane(lane: PipelineLane): readonly TemporalSection[] {
     { heading: 'Active', items: lane.active, emptyMessage: lane.emptyActive },
     { heading: 'History', items: lane.history, emptyMessage: lane.emptyHistory },
   ];
+}
+
+const HORIZON_LABELS: Record<string, string> = {
+  'today': 'Today',
+  'this-week': 'This Week',
+  'this-month': 'This Month',
+  'this-quarter': 'This Quarter',
+};
+
+function horizonLabel(horizon: string): string {
+  return HORIZON_LABELS[horizon] ?? horizon;
 }
 </script>
 
@@ -98,6 +110,21 @@ function sectionsForLane(lane: PipelineLane): readonly TemporalSection[] {
         :aria-label="`${lane.title} lane`"
       >
         <h3 class="lane-title">{{ lane.title }}</h3>
+
+        <div v-if="lane.priorities.length > 0" class="priority-strip">
+          <h4 class="priority-heading">Top Priority</h4>
+          <ul class="priority-list">
+            <li
+              v-for="priority in lane.priorities"
+              :key="priority.horizon"
+              class="priority-item"
+              :class="`urgency-${priority.urgency}`"
+            >
+              <span class="priority-horizon">{{ horizonLabel(priority.horizon) }}</span>
+              <span class="priority-label">{{ priority.label }}</span>
+            </li>
+          </ul>
+        </div>
 
         <div
           v-for="section in sectionsForLane(lane)"
@@ -249,6 +276,102 @@ function sectionsForLane(lane: PipelineLane): readonly TemporalSection[] {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--p-text-muted-color);
+}
+
+.priority-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--p-primary-color, #6366f1);
+}
+
+.priority-heading {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--p-primary-color, #6366f1);
+}
+
+.priority-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.priority-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  border-left: 3px solid transparent;
+}
+
+.priority-item.urgency-critical {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: #ef4444;
+}
+
+.priority-item.urgency-high {
+  background: rgba(249, 115, 22, 0.08);
+  border-left-color: #f97316;
+}
+
+.priority-item.urgency-moderate {
+  background: rgba(234, 179, 8, 0.08);
+  border-left-color: #eab308;
+}
+
+.priority-item.urgency-strategic {
+  background: rgba(34, 197, 94, 0.08);
+  border-left-color: #22c55e;
+}
+
+.priority-horizon {
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  min-width: 5rem;
+  text-align: center;
+}
+
+.urgency-critical .priority-horizon {
+  background: #ef4444;
+  color: #fff;
+}
+
+.urgency-high .priority-horizon {
+  background: #f97316;
+  color: #fff;
+}
+
+.urgency-moderate .priority-horizon {
+  background: #eab308;
+  color: #1a1a1a;
+}
+
+.urgency-strategic .priority-horizon {
+  background: #22c55e;
+  color: #fff;
+}
+
+.priority-label {
+  flex: 1;
+  color: var(--p-text-color);
+  word-break: break-word;
 }
 
 .lane-section {

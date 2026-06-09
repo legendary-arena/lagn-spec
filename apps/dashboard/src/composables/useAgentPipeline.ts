@@ -13,12 +13,35 @@ export interface PipelineItem {
 }
 
 /**
- * A single pipeline lane with three temporal columns: upcoming work, current
- * status, and past activity. Each column carries its own items array and
- * empty-state fallback message.
+ * Urgency levels aligned with the business scorecard action triggers
+ * (business-scorecard-metrics.md §7). Critical = score 1.x (stop everything),
+ * high = score 2.x (fix in 14 days), moderate = score 3.x (improve in 30 days),
+ * strategic = score 4-5 (maintain and plan ahead).
+ */
+export type PriorityUrgency = 'critical' | 'high' | 'moderate' | 'strategic';
+
+/**
+ * Time horizons for priority recommendations. Each agent lane produces exactly
+ * one recommendation per horizon.
+ */
+export type PriorityHorizon = 'today' | 'this-week' | 'this-month' | 'this-quarter';
+
+/**
+ * A single priority recommendation — one actionable sentence per time horizon,
+ * framed around "no margin, no mission" (VISION.md §Financial Sustainability).
+ */
+export interface PriorityRecommendation {
+  readonly horizon: PriorityHorizon;
+  readonly label: string;
+  readonly urgency: PriorityUrgency;
+}
+
+/**
+ * A single pipeline lane with a top-priority strip and three temporal columns.
  */
 export interface PipelineLane {
   readonly title: string;
+  readonly priorities: readonly PriorityRecommendation[];
   readonly backlog: readonly PipelineItem[];
   readonly active: readonly PipelineItem[];
   readonly history: readonly PipelineItem[];
@@ -48,11 +71,265 @@ const EVALUATOR_PLACEHOLDER =
   'No acquisition-readiness evaluation recorded yet. Run the Evaluator quarterly per code-checks-and-balances.md §7.';
 
 /**
+ * Snapshot-derived inputs used by the priority recommendation engine.
+ */
+interface PriorityInputs {
+  readonly openDrafts: number;
+  readonly wpsDoneThisWeek: number;
+  readonly daysSinceLastDoneFlip: number;
+  readonly inFlightCount: number;
+  readonly blockedCount: number;
+  readonly nextExecutableCount: number;
+  readonly hasRecentSpecCommit: boolean;
+  readonly hasRecentWpCommit: boolean;
+  readonly statusEntryCount: number;
+}
+
+/**
+ * Derive Architect priorities from snapshot KPIs. The Architect's job is to
+ * keep specs ahead of the Builder — if the spec pipeline dries up, the
+ * Builder stalls and revenue stops.
+ */
+function deriveArchitectPriorities(inputs: PriorityInputs): PriorityRecommendation[] {
+  const priorities: PriorityRecommendation[] = [];
+
+  if (inputs.openDrafts >= 3) {
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.openDrafts} drafts without specs — spec the highest-value WP now or the Builder stalls.`,
+      urgency: 'critical',
+    });
+  } else if (inputs.openDrafts >= 1) {
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.openDrafts} draft(s) need specs — keep the Builder fed.`,
+      urgency: 'high',
+    });
+  } else {
+    priorities.push({
+      horizon: 'today',
+      label: 'All drafts are specced. Review the backlog for the next revenue-critical feature.',
+      urgency: 'strategic',
+    });
+  }
+
+  if (!inputs.hasRecentSpecCommit) {
+    priorities.push({
+      horizon: 'this-week',
+      label: 'No SPEC commits this cycle — ship at least one spec to unblock downstream work.',
+      urgency: 'high',
+    });
+  } else {
+    priorities.push({
+      horizon: 'this-week',
+      label: 'Spec activity on track. Prioritize specs that unblock the most revenue-adjacent WPs.',
+      urgency: 'moderate',
+    });
+  }
+
+  if (inputs.inFlightCount > 5) {
+    priorities.push({
+      horizon: 'this-month',
+      label: `${inputs.inFlightCount} WPs in flight — triage scope before adding more specs.`,
+      urgency: 'high',
+    });
+  } else {
+    priorities.push({
+      horizon: 'this-month',
+      label: 'Pipeline depth is healthy. Draft specs for the next milestone.',
+      urgency: 'strategic',
+    });
+  }
+
+  priorities.push({
+    horizon: 'this-quarter',
+    label: 'Ensure every revenue-critical feature has a specced WP before quarter-end.',
+    urgency: 'strategic',
+  });
+
+  return priorities;
+}
+
+/**
+ * Derive Builder priorities. The Builder is the direct revenue engine — code
+ * that ships is code that earns. "No margin, no mission" starts here.
+ */
+function deriveBuilderPriorities(inputs: PriorityInputs): PriorityRecommendation[] {
+  const priorities: PriorityRecommendation[] = [];
+
+  if (inputs.nextExecutableCount === 0) {
+    priorities.push({
+      horizon: 'today',
+      label: 'No executable WPs — escalate to Architect. Builder is idle, revenue is stalled.',
+      urgency: 'critical',
+    });
+  } else if (inputs.blockedCount > 0) {
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.blockedCount} blocked WP(s) — unblock before starting new work.`,
+      urgency: 'critical',
+    });
+  } else {
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.nextExecutableCount} WP(s) ready — pick the one closest to shipping revenue.`,
+      urgency: 'moderate',
+    });
+  }
+
+  if (inputs.wpsDoneThisWeek === 0) {
+    priorities.push({
+      horizon: 'this-week',
+      label: 'Zero WPs shipped this week — close at least one to maintain velocity.',
+      urgency: 'critical',
+    });
+  } else if (inputs.wpsDoneThisWeek <= 2) {
+    priorities.push({
+      horizon: 'this-week',
+      label: `${inputs.wpsDoneThisWeek} WP(s) done — push for one more to stay on pace.`,
+      urgency: 'high',
+    });
+  } else {
+    priorities.push({
+      horizon: 'this-week',
+      label: `${inputs.wpsDoneThisWeek} WPs shipped — strong week. Focus on quality over quantity.`,
+      urgency: 'strategic',
+    });
+  }
+
+  if (inputs.inFlightCount > 5) {
+    priorities.push({
+      horizon: 'this-month',
+      label: `${inputs.inFlightCount} WPs in flight — finish before starting. Payroll doesn't wait.`,
+      urgency: 'high',
+    });
+  } else {
+    priorities.push({
+      horizon: 'this-month',
+      label: 'In-flight count is manageable. Ship the revenue-critical path first.',
+      urgency: 'moderate',
+    });
+  }
+
+  priorities.push({
+    horizon: 'this-quarter',
+    label: 'Deliver the minimum shippable product. Every unshipped feature is unrealized revenue.',
+    urgency: 'strategic',
+  });
+
+  return priorities;
+}
+
+/**
+ * Derive Inspector priorities. The Inspector protects quality — shipping
+ * broken code costs more than shipping slow.
+ */
+function deriveInspectorPriorities(inputs: PriorityInputs): PriorityRecommendation[] {
+  const priorities: PriorityRecommendation[] = [];
+
+  if (inputs.blockedCount >= 2) {
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.blockedCount} WPs blocked — investigate and unblock. Blocked work is dead capital.`,
+      urgency: 'critical',
+    });
+  } else if (inputs.blockedCount === 1) {
+    priorities.push({
+      horizon: 'today',
+      label: '1 blocked WP — diagnose the root cause and route to Architect or Builder.',
+      urgency: 'high',
+    });
+  } else {
+    priorities.push({
+      horizon: 'today',
+      label: 'No blocks. Review the most recently completed WP for spec compliance.',
+      urgency: 'moderate',
+    });
+  }
+
+  if (inputs.hasRecentWpCommit && inputs.statusEntryCount === 0) {
+    priorities.push({
+      horizon: 'this-week',
+      label: 'WP commits landed without inspection reports — review gap is growing.',
+      urgency: 'high',
+    });
+  } else {
+    priorities.push({
+      horizon: 'this-week',
+      label: 'Review cadence looks healthy. Focus on highest-risk completed WPs.',
+      urgency: 'moderate',
+    });
+  }
+
+  priorities.push({
+    horizon: 'this-month',
+    label: 'Audit governance doc drift — ARCHITECTURE.md, DECISIONS.md, and rules must match code.',
+    urgency: 'moderate',
+  });
+
+  priorities.push({
+    horizon: 'this-quarter',
+    label: 'Run a full inspection pass on all shipped WPs. Catch accumulated debt before it compounds.',
+    urgency: 'strategic',
+  });
+
+  return priorities;
+}
+
+/**
+ * Derive Evaluator priorities. The Evaluator runs quarterly — its urgency
+ * is driven by staleness and acquisition-readiness posture.
+ */
+function deriveEvaluatorPriorities(inputs: PriorityInputs): PriorityRecommendation[] {
+  const priorities: PriorityRecommendation[] = [];
+
+  if (inputs.daysSinceLastDoneFlip > 7) {
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.daysSinceLastDoneFlip} days since last WP completed — pipeline may be stalled.`,
+      urgency: 'critical',
+    });
+  } else if (inputs.daysSinceLastDoneFlip > 3) {
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.daysSinceLastDoneFlip} days since last completion — monitor for stall.`,
+      urgency: 'high',
+    });
+  } else {
+    priorities.push({
+      horizon: 'today',
+      label: 'Completion cadence is healthy. No immediate evaluation needed.',
+      urgency: 'strategic',
+    });
+  }
+
+  priorities.push({
+    horizon: 'this-week',
+    label: 'Check that shipped WPs map to revenue milestones, not just engineering milestones.',
+    urgency: 'moderate',
+  });
+
+  priorities.push({
+    horizon: 'this-month',
+    label: 'Score the project against business-scorecard-metrics.md. Flag any department below 3.0.',
+    urgency: 'moderate',
+  });
+
+  priorities.push({
+    horizon: 'this-quarter',
+    label: 'Run /agent-evaluator for full acquisition-readiness audit. No margin, no mission.',
+    urgency: 'strategic',
+  });
+
+  return priorities;
+}
+
+/**
  * Derives the four-lane Architect → Builder → Inspector → Evaluator pipeline
- * view-model from the build-time governance snapshot. Each lane exposes three
- * temporal columns — backlog (upcoming work), active (current status), and
- * history (past activity) — so the Pipeline page renders a forward-and-backward
- * view of play.legendary-arena.com development.
+ * view-model from the build-time governance snapshot. Each lane exposes a
+ * "Top Priority" recommendation strip (four time horizons) and three temporal
+ * columns — backlog (upcoming work), active (current status), and history
+ * (past activity).
  *
  * All lane data flows exclusively through `useGovernanceSnapshot`; this
  * composable introduces no other data source.
@@ -67,6 +344,7 @@ export function useAgentPipeline(
 
   const emptyArchitect: PipelineLane = {
     title: 'Architect',
+    priorities: [],
     backlog: [],
     active: [],
     history: [],
@@ -76,6 +354,7 @@ export function useAgentPipeline(
   };
   const emptyBuilder: PipelineLane = {
     title: 'Builder',
+    priorities: [],
     backlog: [],
     active: [],
     history: [],
@@ -85,6 +364,7 @@ export function useAgentPipeline(
   };
   const emptyInspector: PipelineLane = {
     title: 'Inspector',
+    priorities: [],
     backlog: [],
     active: [],
     history: [],
@@ -94,6 +374,7 @@ export function useAgentPipeline(
   };
   const emptyEvaluator: PipelineLane = {
     title: 'Evaluator',
+    priorities: [],
     backlog: [],
     active: [],
     history: [],
@@ -115,6 +396,18 @@ export function useAgentPipeline(
   const kpis = snapshot.governanceKpis();
   const recentDecisions = snapshot.decisions(5);
   const recentStatusEntries = snapshot.statusEntries(5);
+
+  const priorityInputs: PriorityInputs = {
+    openDrafts: kpis?.openDrafts ?? 0,
+    wpsDoneThisWeek: kpis?.wpsDoneThisWeek ?? 0,
+    daysSinceLastDoneFlip: kpis?.daysSinceLastDoneFlip ?? 0,
+    inFlightCount: snapshot.inFlight().length,
+    blockedCount: snapshot.blocked().length,
+    nextExecutableCount: snapshot.nextExecutable(10).length,
+    hasRecentSpecCommit: recentCommits.some((commit) => commit.kind === 'SPEC'),
+    hasRecentWpCommit: recentCommits.some((commit) => commit.kind === 'WP'),
+    statusEntryCount: recentStatusEntries.length,
+  };
 
   // --- Architect lane: specs and planning ---
   const architectBacklog: PipelineItem[] = [];
@@ -252,6 +545,7 @@ export function useAgentPipeline(
   return {
     architect: {
       title: 'Architect',
+      priorities: deriveArchitectPriorities(priorityInputs),
       backlog: architectBacklog,
       active: architectActive,
       history: architectHistory,
@@ -261,6 +555,7 @@ export function useAgentPipeline(
     },
     builder: {
       title: 'Builder',
+      priorities: deriveBuilderPriorities(priorityInputs),
       backlog: builderBacklog,
       active: builderActive,
       history: builderHistory,
@@ -270,6 +565,7 @@ export function useAgentPipeline(
     },
     inspector: {
       title: 'Inspector',
+      priorities: deriveInspectorPriorities(priorityInputs),
       backlog: inspectorBacklog,
       active: inspectorActive,
       history: inspectorHistory,
@@ -279,6 +575,7 @@ export function useAgentPipeline(
     },
     evaluator: {
       title: 'Evaluator',
+      priorities: deriveEvaluatorPriorities(priorityInputs),
       backlog: evaluatorBacklog,
       active: evaluatorActive,
       history: evaluatorHistory,
