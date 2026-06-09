@@ -3,7 +3,10 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import { useUiStateStore } from './stores/uiState';
 import { loadUiStateFixture, isFixtureName } from './fixtures/uiState/index';
+import { installDiagnosticCapture } from './diagnostics/diagnostics';
 import './styles/base.css';
+
+installDiagnosticCapture();
 
 const app = createApp(App);
 const pinia = createPinia();

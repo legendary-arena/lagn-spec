@@ -3,6 +3,7 @@ import { defineComponent, ref, type PropType } from 'vue';
 
 import PlayDesktop from './PlayDesktop.vue';
 import PlayMobile from './PlayMobile.vue';
+import DiagnosticExportButton from '../components/DiagnosticExportButton.vue';
 import { useViewport } from '../composables/useViewport';
 import { useSkinApplier } from '../composables/useSkinApplier';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
@@ -33,7 +34,7 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
  */
 export default defineComponent({
   name: 'PlayViewport',
-  components: { PlayDesktop, PlayMobile },
+  components: { PlayDesktop, PlayMobile, DiagnosticExportButton },
   props: {
     submitMove: {
       type: Function as PropType<SubmitMove>,
@@ -61,6 +62,7 @@ export default defineComponent({
   <div ref="viewportRoot" class="play-viewport">
     <PlayMobile v-if="isMobile" :submit-move="submitMove" />
     <PlayDesktop v-else :submit-move="submitMove" :match-id="matchId" />
+    <DiagnosticExportButton />
   </div>
 </template>
 

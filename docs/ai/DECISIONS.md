@@ -23570,9 +23570,9 @@ beyond the credentials param.
 
 **Packet:** WP-228 (EC-260).
 
-**Drafted:** 2026-06-08 (drafting close — reserved). **Landed:** TBD
+**Drafted:** 2026-06-08 (drafting close — reserved). **Landed:** 2026-06-08
 (execution close — flips to Active).
-**Status:** Reserved (proposed)
+**Status:** Active
 
 ---
 
