@@ -32,8 +32,8 @@
 - **Item meta:** all sweep-derived `PipelineItem` meta fields equal `'Sweep'`.
 - **Inspector lane:** one item per anomaly key where count > 0; fatal keys sort first.
 - **Builder lane:** one item per anomaly key with count > 0 where key contains `'fatal'`.
-- **Architect lane:** health rate = healthy cells / total cells; item added when < 0.8.
-- **Evaluator lane:** sweep freshness item replaces static placeholder when data present.
+- **Architect lane:** health rate = `(cellCount - totalAnomalyCount) / cellCount` where `totalAnomalyCount = sum of Object.values(anomalyCounts)`; item added when < 0.8. Item label: `"${healthPercent}% sweep health rate — review spec coverage"`.
+- **Evaluator lane:** sweep freshness + trend direction item replaces static placeholder (`id: 'evaluator-placeholder'`) when data present. Trend direction from `totalAnomalySparkline` slope.
 - **Priority escalation signals:**
   - Inspector today → `'critical'` when fatals > 0
   - Builder today → `'critical'` when fatals > 0
@@ -46,7 +46,7 @@
 - **Anomaly key opacity (D-20703).** No anomaly key string may be hardcoded — keys read from `anomalyCounts` dynamically via `Object.keys()` or `Object.entries()`. Importing `SweepAnomalyClass` from the engine = HARD FAIL. Grepping for `endgame-reached`, `not-endgame`, or `escaped-villain-cap` in `useAgentPipeline.ts` must return 0.
 - **Consumer only.** `useSweepHealth.ts` and `types/sweep.ts` MUST NOT be modified. `git diff` empty for both.
 - **No engine or server changes.** `git diff --name-only packages/game-engine/` and `git diff --name-only apps/server/` both return empty.
-- **Wall-clock discipline (D-19608).** `Date.now()` called ONCE at the PipelinePage render boundary, passed to `useSweepHealth`. No `Date.now()` inside `useAgentPipeline.ts`.
+- **Wall-clock discipline (WP-204 carry-forward).** `Date.now()` called ONCE at the PipelinePage render boundary, passed to `useSweepHealth`. No `Date.now()` inside `useAgentPipeline.ts`. (Note: `useSweepHealth.ts:91` mis-cites this as D-19608; the correct origin is WP-204 per `SweepHealthWidget.vue:21`.)
 - **Single sweep data source.** `useAgentPipeline.ts` MUST NOT import `useSweepHealth` directly — the Pipeline page extracts fields and passes them in so the composable stays testable without fetch mocks.
 - **Fatal key detection.** Use `key.includes('fatal')` — not exact equality to a specific key string (preserves opacity for future taxonomy expansion).
 - **Graceful absence.** No `console.warn`, `console.error`, or thrown errors when sweep data is null/undefined — this is a normal pre-first-run state.
@@ -55,11 +55,11 @@
 
 ## Required `// why:` Comments
 - `useAgentPipeline.ts` — `// why:` sweep data is an optional parameter so the composable remains backward compatible and testable without sweep fetch infrastructure (D-20703 opacity + D-22901 snapshot-only posture extended).
-- `PipelinePage.vue` — `// why:` `Date.now()` sampled once at render boundary per D-19608 wall-clock discipline; passed to `useSweepHealth` as `currentTimeMs`.
+- `PipelinePage.vue` — `// why:` `Date.now()` sampled once at render boundary per WP-204 carry-forward wall-clock discipline; passed to `useSweepHealth` as `currentTimeMs`.
 
 ## Files to Produce
 - `apps/dashboard/src/composables/useAgentPipeline.ts` — **modified** — accepts optional `sweepData` parameter; adds sweep-derived items to lanes; incorporates sweep signals into priority recommendations.
-- `apps/dashboard/src/composables/useAgentPipeline.test.ts` — **modified** — ≥ 8 new sweep-specific test cases.
+- `apps/dashboard/src/composables/useAgentPipeline.test.ts` — **modified** — ≥ 9 new sweep-specific test cases.
 - `apps/dashboard/src/pages/pipeline/PipelinePage.vue` — **modified** — imports `useSweepHealth`, passes sweep projection to composable, adds sweep summary bar.
 - `docs/ai/STATUS.md` — **modified** — `### WP-230 / EC-262 Executed` block.
 - `docs/ai/DECISIONS.md` — **modified** — D-23001..D-23003 Active.
@@ -69,7 +69,7 @@
 **Total: 7 files** (3 modified source + 4 governance: `STATUS.md`, `DECISIONS.md`, `WORK_INDEX.md`, `EC_INDEX.md`).
 
 ## After Completing
-- [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0; suite includes ≥ 8 net-new sweep cases; no prior test regresses.
+- [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0; suite includes ≥ 9 net-new sweep cases; no prior test regresses.
 - [ ] `pnpm --filter @legendary-arena/dashboard typecheck` exits 0.
 - [ ] `pnpm --filter @legendary-arena/dashboard build` exits 0.
 - [ ] Anomaly key opacity:
@@ -95,7 +95,7 @@
 ## Common Failure Smells
 - Hardcoded anomaly key string (e.g., `'endgame-reached'`) in `useAgentPipeline.ts` → D-20703 opacity HARD FAIL.
 - `import { useSweepHealth }` inside `useAgentPipeline.ts` → composable-testability violation; sweep data must be passed in as a parameter.
-- `Date.now()` called inside `useAgentPipeline.ts` → wall-clock discipline violation (D-19608).
+- `Date.now()` called inside `useAgentPipeline.ts` → wall-clock discipline violation (WP-204 carry-forward).
 - `useSweepHealth.ts` or `sweep.ts` appear in `git diff` → consumer-only violation.
 - Sweep-derived items appear when `latestRun` is null → graceful-absence invariant violated.
 - Priority urgency unchanged when sweep has fatals → escalation signals not wired.

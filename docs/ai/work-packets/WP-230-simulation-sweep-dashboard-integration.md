@@ -29,10 +29,12 @@ on `/system`) and populates each agent lane with sweep-derived items:
 
 - **Inspector**: fatal crash count + stuck-game count as To Do items
   to triage; anomaly breakdown in Active
-- **Builder**: top fatal error signatures (from `anomalyCounts.fatal`)
-  as To Do items to fix
-- **Architect**: health rate (healthy cells / total cells) as a spec
-  coverage signal; low health rate triggers a priority recommendation
+- **Builder**: fatal-class anomaly items (keys containing `'fatal'`,
+  detected via substring match per D-23002 opacity) as To Do items to fix
+- **Architect**: health rate (`(cellCount - totalAnomalyCount) /
+  cellCount`, where `totalAnomalyCount = sum of
+  Object.values(anomalyCounts)`) as a spec coverage signal; low health
+  rate triggers a priority recommendation
 - **Evaluator**: sweep freshness (last run age) and trend direction
   (sparkline slope) as acquisition-readiness signals
 
@@ -77,7 +79,10 @@ Before writing a single line:
   strings per D-20703.
 - `apps/dashboard/src/composables/useSweepHealth.ts` — read the full
   file; this is the data source. The composable is a pure function of
-  `(fetchState, currentTimeMs)` per D-19608.
+  `(fetchState, currentTimeMs)` per WP-204 carry-forward wall-clock
+  discipline (note: `useSweepHealth.ts:91` mis-cites this as D-19608,
+  which is actually the ECharts Stacking Contract — the correct origin
+  is WP-204, as documented in `SweepHealthWidget.vue:21`).
 - `apps/dashboard/src/types/sweep.ts` — read for `SweepRunSummary` and
   `SweepHealthSnapshot` shapes (D-20703 envelope lock).
 - `apps/dashboard/src/composables/useAgentPipeline.ts` — read the full
@@ -114,7 +119,8 @@ Before writing a single line:
 - `useSweepHealth` is the sole data source for sweep data on the Pipeline
   page — do not create a second fetch path or a second composable
 - `Date.now()` must be called ONCE at the render boundary and passed
-  through, same as `SweepHealthWidget` (D-19608 wall-clock discipline)
+  through, same as `SweepHealthWidget` (WP-204 carry-forward wall-clock
+  discipline)
 - The Pipeline page must render correctly when sweep data is unavailable
   (`latest === null` / empty state / error state) — all sweep-derived
   items gracefully disappear
@@ -161,12 +167,17 @@ Before writing a single line:
       `"${count} fatal crash(es) — investigate error signatures"`
       with meta `'Sweep'`
     - **Architect lane backlog**: compute health rate as
-      `(endgameReached / totalCells)` — if < 0.8, add item
-      `"${percent}% of sweep setups unhealthy — review spec coverage"`
+      `(cellCount - totalAnomalyCount) / cellCount` where
+      `totalAnomalyCount = sum of Object.values(anomalyCounts)` —
+      if < 0.8, add item
+      `"${healthPercent}% sweep health rate — review spec coverage"`
       with meta `'Sweep'`
     - **Evaluator lane active**: when sweep data exists, add item
-      showing last run age and freshness status; replace the static
-      placeholder text
+      showing last run age, freshness status, and trend direction
+      (computed from `totalAnomalySparkline` slope: improving if
+      recent values trend downward, worsening if upward, stable if
+      flat); replace the static placeholder item (`id:
+      'evaluator-placeholder'`, label: `EVALUATOR_PLACEHOLDER`)
   - **Priority recommendations**: incorporate sweep signals into the
     four `derive*Priorities` functions:
     - Inspector today: if fatals > 0 → critical (override generic)
@@ -188,7 +199,13 @@ Before writing a single line:
     sweepData)`
   - Add a sweep summary bar (below the refresh bar, above the lanes)
     showing: last sweep date, cell count, total anomaly count,
-    freshness chip. Hidden when no sweep data.
+    freshness chip, and `totalAnomalySparkline` as a mini trend
+    indicator (reusing the sparkline data from `useSweepHealth`).
+    Hidden when no sweep data.
+  - **Mock mode note:** mock anomaly keys (`['soft-lock',
+    'hard-crash', 'rule-divergence', 'timeout']`) contain no
+    `'fatal'` substring, so the Builder lane shows no sweep items
+    in mock mode — this is correct behavior given the mock taxonomy.
   - Health rate color: green ≥ 80%, yellow ≥ 50%, red < 50%
 
 ### C) Tests
@@ -201,6 +218,8 @@ Before writing a single line:
   - Test: null/undefined sweepData produces no sweep items (graceful)
   - Test: priority urgency escalates to critical when sweep has fatals
   - Test: priority urgency escalates to high when sweep is stale
+  - Test: Inspector lane items sort fatal-class anomalies before
+    non-fatal anomalies
   - Test: anomaly keys are treated as opaque (no hardcoded key names
     in assertions beyond format checking)
 
@@ -232,6 +251,7 @@ Before writing a single line:
 - `docs/ai/STATUS.md` — **modified** — completion entry
 - `docs/ai/DECISIONS.md` — **modified** — D-23001+ entries
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — WP-230 checked off
+- `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — EC-262 flipped Draft → Done
 
 No other files may be modified.
 
@@ -266,7 +286,7 @@ All items must be binary pass/fail. No partial credit.
 
 ### Tests
 - [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0 (all test files)
-- [ ] At least 8 new sweep-specific test cases pass
+- [ ] At least 9 new sweep-specific test cases pass
 - [ ] No test imports from `boardgame.io` or `packages/game-engine`
 - [ ] Tests use `node:test` and `node:assert` only
 
@@ -323,9 +343,41 @@ This packet is complete when ALL of the following are true:
 - [ ] Pipeline page renders gracefully when no sweep data exists (confirmed visually)
 - [ ] No files in `packages/game-engine/` or `apps/server/` were modified (confirmed with `git diff`)
 - [ ] No files outside `## Files Expected to Change` were modified (confirmed with `git diff --name-only`)
+- [ ] `docs/ai/execution-checklists/EC_INDEX.md` has EC-262 flipped Draft → Done
 - [ ] `docs/ai/STATUS.md` updated — Pipeline page agent lanes now consume nightly sweep findings; Inspector sees anomalies to triage, Builder sees fatals to fix, Architect sees health rate gaps, Evaluator sees freshness signals
 - [ ] `docs/ai/DECISIONS.md` updated — at minimum: D-23001 (Pipeline composable accepts sweep data as optional parameter; backward compatible), D-23002 (anomaly key opacity preserved on Pipeline page per D-20703), D-23003 (sweep-derived items use `sweep-` ID prefix convention)
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` has WP-230 checked off with today's date
+
+---
+
+## Lint Gate Self-Review
+
+Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`, all 21 sections
+reviewed 2026-06-09:
+
+| § | Verdict | Note |
+|---|---|---|
+| 1 | PASS | All required sections present |
+| 2 | PASS | Engine-wide + packet-specific constraints; full-file output required |
+| 3 | PASS | WP-209, WP-210, WP-229 deps listed with specific exports |
+| 4 | PASS | ARCHITECTURE.md, useSweepHealth.ts, sweep.ts, SweepHealthWidget.vue, 00.6 all cited |
+| 5 | PASS | 7 files listed with create/modify disposition and one-line descriptions |
+| 6 | N/A | No data-shape field names from 00.2; no setup payload fields. Dashboard composable consumes opaque sweep keys. |
+| 7 | PASS | No new npm deps; forbidden packages not applicable (no server/DB work) |
+| 8 | PASS | Dashboard-only; no engine/server/registry imports; layer boundary respected |
+| 9 | PASS | PowerShell verification commands; no Unix assumptions |
+| 10 | N/A | No env vars introduced or consumed by this packet |
+| 11 | N/A | No authentication surfaces touched |
+| 12 | PASS | Tests use `node:test` + `node:assert`; no boardgame.io; no network/DB |
+| 13 | PASS | 7 exact pnpm/git verification commands with expected output |
+| 14 | PASS | 22 binary acceptance criteria; all observable and specific |
+| 15 | PASS | DoD includes STATUS.md, DECISIONS.md, WORK_INDEX.md, EC_INDEX.md, scope-boundary check |
+| 16 | PASS | No new abstractions; explicit control flow; no abbreviations in spec |
+| 17 | N/A | No vision trigger surfaces touched (no scoring, replays, identity, card data, monetization, determinism, accessibility). Dashboard composable consuming operational sweep data. |
+| 18 | PASS | Verification Step 6 greps for opacity-violating tokens; WP prose cites D-20703 by ID rather than enumerating forbidden key strings |
+| 19 | N/A | No repo-state-summarizing artifacts authored in this WP |
+| 20 | N/A | No funding surfaces, no user-visible funding copy, no donation/support UI. Dashboard-internal operational tooling only. |
+| 21 | N/A | No HTTP endpoints added/modified/removed; no `apps/server/src/**` library functions changed. Dashboard-only composable + page modification. |
 
 ---
 
