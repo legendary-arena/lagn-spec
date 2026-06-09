@@ -2,6 +2,7 @@ import {
   useGovernanceSnapshot,
   type GovernanceSnapshot,
 } from './useGovernanceSnapshot.js';
+import type { SweepRunSummary } from '../types/sweep.js';
 
 /**
  * A single item rendered in one of the four pipeline lanes.
@@ -10,6 +11,22 @@ export interface PipelineItem {
   readonly id: string;
   readonly label: string;
   readonly meta?: string;
+}
+
+/**
+ * The projection of `UseSweepHealthReturn` the Pipeline page passes into the
+ * composable. The page extracts these three fields from the sweep-health
+ * composable and hands them in as a plain object so this composable never
+ * imports the sweep fetch composable directly and stays testable via object
+ * injection — the same
+ * dependency-injection shape as `snapshotOverride` (D-23001). Anomaly keys
+ * inside `latestRun.anomalyCounts` are opaque strings (D-20703); this composable
+ * never compares them against a literal anomaly-class name.
+ */
+export interface PipelineSweepData {
+  readonly latestRun: SweepRunSummary | null;
+  readonly staleStatus: 'fresh' | 'stale';
+  readonly totalAnomalySparkline: readonly number[];
 }
 
 /**
@@ -67,6 +84,28 @@ export function laneItemCount(lane: PipelineLane): number {
   return lane.backlog.length + lane.active.length + lane.history.length;
 }
 
+/**
+ * Classify the direction of the anomaly sparkline as a coarse trend signal.
+ * The sparkline is most-recent-first (index 0 is the newest run), so a newest
+ * value below the oldest means anomalies fell across the window ('improving');
+ * above means they rose ('worsening'); equal — or fewer than two points — is
+ * 'stable'. Pure endpoint comparison: deterministic and order-stable.
+ */
+function deriveTrendDirection(sparkline: readonly number[]): 'improving' | 'worsening' | 'stable' {
+  if (sparkline.length < 2) {
+    return 'stable';
+  }
+  const mostRecent = sparkline[0]!;
+  const oldest = sparkline[sparkline.length - 1]!;
+  if (mostRecent < oldest) {
+    return 'improving';
+  }
+  if (mostRecent > oldest) {
+    return 'worsening';
+  }
+  return 'stable';
+}
+
 const EVALUATOR_PLACEHOLDER =
   'No acquisition-readiness evaluation recorded yet. Run the Evaluator quarterly per code-checks-and-balances.md §7.';
 
@@ -83,6 +122,12 @@ interface PriorityInputs {
   readonly hasRecentSpecCommit: boolean;
   readonly hasRecentWpCommit: boolean;
   readonly statusEntryCount: number;
+  // Sweep-derived signals (WP-230). They stay zero / null when no sweep data is
+  // supplied, which keeps every generic recommendation branch reachable for
+  // pre-WP-230 callers — backward compatible.
+  readonly sweepFatalCount: number;
+  readonly sweepHealthRate: number | null;
+  readonly sweepStaleStatus: 'fresh' | 'stale' | null;
 }
 
 /**
@@ -113,7 +158,15 @@ function deriveArchitectPriorities(inputs: PriorityInputs): PriorityRecommendati
     });
   }
 
-  if (!inputs.hasRecentSpecCommit) {
+  if (inputs.sweepHealthRate !== null && inputs.sweepHealthRate < 0.8) {
+    // why: a low sweep health rate signals spec-coverage gaps the Architect
+    // owns; it outranks the generic spec-cadence recommendation this horizon.
+    priorities.push({
+      horizon: 'this-week',
+      label: `Sweep health rate ${Math.round(inputs.sweepHealthRate * 100)}% — close the spec coverage gaps the nightly sweep surfaced.`,
+      urgency: 'high',
+    });
+  } else if (!inputs.hasRecentSpecCommit) {
     priorities.push({
       horizon: 'this-week',
       label: 'No SPEC commits this cycle — ship at least one spec to unblock downstream work.',
@@ -157,7 +210,15 @@ function deriveArchitectPriorities(inputs: PriorityInputs): PriorityRecommendati
 function deriveBuilderPriorities(inputs: PriorityInputs): PriorityRecommendation[] {
   const priorities: PriorityRecommendation[] = [];
 
-  if (inputs.nextExecutableCount === 0) {
+  if (inputs.sweepFatalCount > 0) {
+    // why: a fatal-class sweep anomaly is a crashing engine path — it overrides
+    // the generic "pick the next WP" recommendation for today.
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.sweepFatalCount} fatal sweep crash(es) — fix the crashing path before starting new work.`,
+      urgency: 'critical',
+    });
+  } else if (inputs.nextExecutableCount === 0) {
     priorities.push({
       horizon: 'today',
       label: 'No executable WPs — escalate to Architect. Builder is idle, revenue is stalled.',
@@ -227,7 +288,15 @@ function deriveBuilderPriorities(inputs: PriorityInputs): PriorityRecommendation
 function deriveInspectorPriorities(inputs: PriorityInputs): PriorityRecommendation[] {
   const priorities: PriorityRecommendation[] = [];
 
-  if (inputs.blockedCount >= 2) {
+  if (inputs.sweepFatalCount > 0) {
+    // why: a fatal-class sweep anomaly is the most severe triage signal the
+    // Inspector can act on; it overrides the generic blocked-WP recommendation.
+    priorities.push({
+      horizon: 'today',
+      label: `${inputs.sweepFatalCount} fatal sweep crash(es) — triage the anomaly signatures before review work.`,
+      urgency: 'critical',
+    });
+  } else if (inputs.blockedCount >= 2) {
     priorities.push({
       horizon: 'today',
       label: `${inputs.blockedCount} WPs blocked — investigate and unblock. Blocked work is dead capital.`,
@@ -283,7 +352,15 @@ function deriveInspectorPriorities(inputs: PriorityInputs): PriorityRecommendati
 function deriveEvaluatorPriorities(inputs: PriorityInputs): PriorityRecommendation[] {
   const priorities: PriorityRecommendation[] = [];
 
-  if (inputs.daysSinceLastDoneFlip > 7) {
+  if (inputs.sweepStaleStatus === 'stale') {
+    // why: a stale nightly sweep means the acquisition-readiness signal itself
+    // is unreliable; chase the sweep cron before evaluating anything else.
+    priorities.push({
+      horizon: 'today',
+      label: 'Nightly sweep is stale — investigate the sweep cron before running an evaluation.',
+      urgency: 'high',
+    });
+  } else if (inputs.daysSinceLastDoneFlip > 7) {
     priorities.push({
       horizon: 'today',
       label: `${inputs.daysSinceLastDoneFlip} days since last WP completed — pipeline may be stalled.`,
@@ -331,14 +408,21 @@ function deriveEvaluatorPriorities(inputs: PriorityInputs): PriorityRecommendati
  * columns — backlog (upcoming work), active (current status), and history
  * (past activity).
  *
- * All lane data flows exclusively through `useGovernanceSnapshot`; this
- * composable introduces no other data source.
+ * Governance lane data flows through `useGovernanceSnapshot`. Optional sweep
+ * findings flow through the `sweepData` parameter (a projection of the
+ * sweep-health composable, extracted and injected by the Pipeline page); this
+ * composable introduces no other data source and never fetches sweep data
+ * itself.
  */
-// why: the composable accepts snapshotOverride and passes it to
-// useGovernanceSnapshot so tests can inject deterministic fixtures without
-// touching the baked snapshot file (D-22901 snapshot-only posture).
+// why: snapshotOverride is passed to useGovernanceSnapshot so tests can inject
+// deterministic fixtures without touching the baked snapshot file (D-22901
+// snapshot-only posture).
+// why: sweep data is an optional parameter so the composable remains backward
+// compatible and testable without sweep fetch infrastructure (D-20703 opacity +
+// D-22901 snapshot-only posture extended).
 export function useAgentPipeline(
   snapshotOverride?: GovernanceSnapshot,
+  sweepData?: PipelineSweepData,
 ): UseAgentPipelineReturn {
   const snapshot = useGovernanceSnapshot(snapshotOverride);
 
@@ -397,6 +481,35 @@ export function useAgentPipeline(
   const recentDecisions = snapshot.decisions(5);
   const recentStatusEntries = snapshot.statusEntries(5);
 
+  // --- Sweep findings: opaque-key anomaly breakdown (D-20703) ---
+  // Keys are read dynamically via Object.entries and never compared against a
+  // literal anomaly-class name. Fatal classification is a substring test on the
+  // key so it survives future taxonomy expansion without importing the engine's
+  // closed union (D-23002).
+  const latestSweepRun = sweepData?.latestRun ?? null;
+  const sweepAnomaliesWithCount: Array<{ readonly key: string; readonly count: number; readonly isFatal: boolean }> = [];
+  let sweepTotalAnomalyCount = 0;
+  let sweepFatalCount = 0;
+  if (latestSweepRun !== null) {
+    for (const [anomalyKey, anomalyCount] of Object.entries(latestSweepRun.anomalyCounts)) {
+      sweepTotalAnomalyCount += anomalyCount;
+      const isFatalKey = anomalyKey.includes('fatal');
+      if (isFatalKey) {
+        sweepFatalCount += anomalyCount;
+      }
+      if (anomalyCount > 0) {
+        sweepAnomaliesWithCount.push({ key: anomalyKey, count: anomalyCount, isFatal: isFatalKey });
+      }
+    }
+  }
+
+  let sweepHealthRate: number | null = null;
+  if (latestSweepRun !== null && latestSweepRun.cellCount > 0) {
+    // why: guard divide-by-zero — a sweep run with zero cells yields no
+    // meaningful health rate, so the rate stays null and no item appears.
+    sweepHealthRate = (latestSweepRun.cellCount - sweepTotalAnomalyCount) / latestSweepRun.cellCount;
+  }
+
   const priorityInputs: PriorityInputs = {
     openDrafts: kpis?.openDrafts ?? 0,
     wpsDoneThisWeek: kpis?.wpsDoneThisWeek ?? 0,
@@ -407,10 +520,21 @@ export function useAgentPipeline(
     hasRecentSpecCommit: recentCommits.some((commit) => commit.kind === 'SPEC'),
     hasRecentWpCommit: recentCommits.some((commit) => commit.kind === 'WP'),
     statusEntryCount: recentStatusEntries.length,
+    sweepFatalCount,
+    sweepHealthRate,
+    sweepStaleStatus: latestSweepRun !== null ? (sweepData?.staleStatus ?? 'fresh') : null,
   };
 
   // --- Architect lane: specs and planning ---
   const architectBacklog: PipelineItem[] = [];
+  if (sweepHealthRate !== null && sweepHealthRate < 0.8) {
+    const healthPercent = Math.round(sweepHealthRate * 100);
+    architectBacklog.push({
+      id: 'sweep-architect-health',
+      label: `${healthPercent}% sweep health rate — review spec coverage`,
+      meta: 'Sweep',
+    });
+  }
   if (kpis !== null) {
     architectBacklog.push({
       id: 'kpi-open-drafts',
@@ -450,6 +574,15 @@ export function useAgentPipeline(
 
   // --- Builder lane: code implementation ---
   const builderBacklog: PipelineItem[] = [];
+  for (const anomaly of sweepAnomaliesWithCount) {
+    if (anomaly.isFatal) {
+      builderBacklog.push({
+        id: `sweep-builder-${anomaly.key}`,
+        label: `${anomaly.count} fatal crash(es) — investigate error signatures`,
+        meta: 'Sweep',
+      });
+    }
+  }
   for (const wpRef of snapshot.nextExecutable(5)) {
     builderBacklog.push({
       id: `next-${wpRef.number}`,
@@ -494,6 +627,18 @@ export function useAgentPipeline(
 
   // --- Inspector lane: code review ---
   const inspectorBacklog: PipelineItem[] = [];
+  // why: fatal-class anomalies sort first so the most severe triage items lead
+  // the lane; Array.sort is stable, so non-fatal items keep their source order.
+  const inspectorSweepAnomalies = [...sweepAnomaliesWithCount].sort(
+    (left, right) => Number(right.isFatal) - Number(left.isFatal),
+  );
+  for (const anomaly of inspectorSweepAnomalies) {
+    inspectorBacklog.push({
+      id: `sweep-inspector-${anomaly.key}`,
+      label: `${anomaly.count} ${anomaly.key} anomaly(s) — triage`,
+      meta: 'Sweep',
+    });
+  }
   for (const wpRef of snapshot.blocked()) {
     inspectorBacklog.push({
       id: `blocked-${wpRef.number}`,
@@ -530,15 +675,28 @@ export function useAgentPipeline(
     });
   }
 
-  // why: the Evaluator active/history columns are static placeholders — no
-  // acquisition-readiness data source exists in v1; enrichment is deferred
-  // to a follow-up WP per code-checks-and-balances.md §7.
-  const evaluatorActive: PipelineItem[] = [
-    {
-      id: 'evaluator-placeholder',
-      label: EVALUATOR_PLACEHOLDER,
-    },
-  ];
+  let evaluatorActive: PipelineItem[];
+  if (latestSweepRun !== null) {
+    const trendDirection = deriveTrendDirection(sweepData?.totalAnomalySparkline ?? []);
+    const freshnessLabel = (sweepData?.staleStatus ?? 'fresh') === 'stale' ? 'stale' : 'fresh';
+    evaluatorActive = [
+      {
+        id: 'sweep-evaluator-freshness',
+        label: `Nightly sweep is ${freshnessLabel} — anomaly trend ${trendDirection}`,
+        meta: 'Sweep',
+      },
+    ];
+  } else {
+    // why: the Evaluator active column is a static placeholder when no sweep
+    // data is present — no acquisition-readiness data source exists in v1;
+    // enrichment is deferred to a follow-up WP per code-checks-and-balances.md §7.
+    evaluatorActive = [
+      {
+        id: 'evaluator-placeholder',
+        label: EVALUATOR_PLACEHOLDER,
+      },
+    ];
+  }
 
   const evaluatorHistory: PipelineItem[] = [];
 

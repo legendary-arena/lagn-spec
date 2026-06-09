@@ -7,10 +7,39 @@ import {
   type PipelineLane,
   type PipelineItem,
   type PriorityRecommendation,
+  type PipelineSweepData,
 } from '../../composables/useAgentPipeline.js';
+import { useSweepHealth, type SweepHealthFetchState } from '../../composables/useSweepHealth.js';
+import { useDateRange } from '../../composables/useDateRange.js';
+import { fetchSweepHealth } from '../../services/mocks.js';
 
 const snapshot = useGovernanceSnapshot();
-const pipeline = useAgentPipeline();
+
+const { range } = useDateRange();
+
+// why: Date.now() sampled once at render boundary per WP-204 carry-forward
+// wall-clock discipline; passed to useSweepHealth as currentTimeMs.
+const nowMs = Date.now();
+
+const sweepFetchState = computed<SweepHealthFetchState>(() => {
+  // MOCK-mode-first: the synchronous mock factory always resolves with data, so
+  // `error` is null here. The future LIVE flip swaps `fetchSweepHealth` in
+  // `mocks.ts` and may surface a real error through this same shape.
+  return { response: fetchSweepHealth(range.value, nowMs), error: null };
+});
+
+const sweep = useSweepHealth(() => sweepFetchState.value, nowMs);
+
+// The composable consumes a plain projection of the sweep return value (not the
+// composable itself), so the Pipeline composable stays testable without a fetch
+// mock (D-23001). Sampled once, matching the once-call governance snapshot.
+const sweepData: PipelineSweepData = {
+  latestRun: sweep.latestRun.value,
+  staleStatus: sweep.staleStatus.value,
+  totalAnomalySparkline: sweep.totalAnomalySparkline.value,
+};
+
+const pipeline = useAgentPipeline(undefined, sweepData);
 
 const lanes = computed<readonly PipelineLane[]>(() => [
   pipeline.architect,
@@ -60,8 +89,12 @@ function horizonLabel(horizon: string): string {
   return HORIZON_LABELS[horizon] ?? horizon;
 }
 
-const formattedGeneratedAt = computed<string>(() => {
-  const raw = snapshot.generatedAt;
+/**
+ * Format an ISO timestamp into the dashboard's standard human-readable form.
+ * Returns 'Unknown' for a missing value and the raw string for an unparseable
+ * one, mirroring `formattedGeneratedAt`.
+ */
+function formatTimestamp(raw: string | null): string {
   if (!raw) {
     return 'Unknown';
   }
@@ -77,6 +110,80 @@ const formattedGeneratedAt = computed<string>(() => {
     minute: '2-digit',
     hour12: true,
   });
+}
+
+const formattedGeneratedAt = computed<string>(() => formatTimestamp(snapshot.generatedAt));
+
+// --- Sweep summary bar (hidden when no sweep data) ---
+const hasSweepData = computed<boolean>(() => sweep.latestRun.value !== null);
+
+const sweepLastRunDate = computed<string>(() => formatTimestamp(sweep.latestRun.value?.submittedAt ?? null));
+
+const sweepCellCount = computed<number>(() => sweep.latestRun.value?.cellCount ?? 0);
+
+const sweepTotalAnomalies = computed<number>(() => {
+  const latest = sweep.latestRun.value;
+  if (latest === null) {
+    return 0;
+  }
+  // why: sum across ALL keys generically (Object.values) — the page treats
+  // anomaly keys as opaque and never selects "interesting" ones (D-20703).
+  let total = 0;
+  for (const count of Object.values(latest.anomalyCounts)) {
+    total += count;
+  }
+  return total;
+});
+
+const sweepHealthPercent = computed<number | null>(() => {
+  const latest = sweep.latestRun.value;
+  if (latest === null || latest.cellCount === 0) {
+    return null;
+  }
+  const rate = (latest.cellCount - sweepTotalAnomalies.value) / latest.cellCount;
+  return Math.round(rate * 100);
+});
+
+const sweepHealthColorClass = computed<string>(() => {
+  const percent = sweepHealthPercent.value;
+  if (percent === null) {
+    return 'health-unknown';
+  }
+  if (percent >= 80) {
+    return 'health-green';
+  }
+  if (percent >= 50) {
+    return 'health-yellow';
+  }
+  return 'health-red';
+});
+
+const sweepFreshnessLabel = computed<string>(() => (sweep.staleStatus.value === 'stale' ? 'Stale' : 'Fresh'));
+
+const sweepFreshnessClass = computed<string>(() =>
+  sweep.staleStatus.value === 'stale' ? 'freshness-stale' : 'freshness-fresh',
+);
+
+interface SparklineBar {
+  readonly heightPercent: number;
+}
+
+const sweepSparklineBars = computed<readonly SparklineBar[]>(() => {
+  const values = [...sweep.totalAnomalySparkline.value];
+  if (values.length === 0) {
+    return [];
+  }
+  // why: normalize against the window max (floored at 1) so a flat zero series
+  // renders as empty bars rather than dividing by zero.
+  const maxValue = Math.max(...values, 1);
+  const bars: SparklineBar[] = [];
+  // Render oldest → newest (left → right) by reversing the most-recent-first
+  // series, so the indicator reads chronologically.
+  for (let index = values.length - 1; index >= 0; index--) {
+    const value = values[index]!;
+    bars.push({ heightPercent: Math.round((value / maxValue) * 100) });
+  }
+  return bars;
 });
 </script>
 
@@ -113,6 +220,44 @@ const formattedGeneratedAt = computed<string>(() => {
         To update: <code>pnpm dash:build</code> → <code>pnpm dash:preview</code>
         (or deploy to Cloudflare Pages)
       </span>
+    </div>
+
+    <div v-if="hasSweepData" class="sweep-summary-bar" aria-label="Latest nightly sweep summary">
+      <div class="sweep-stat">
+        <span class="sweep-stat-label">Last sweep</span>
+        <span class="sweep-stat-value">{{ sweepLastRunDate }}</span>
+      </div>
+      <div class="sweep-stat">
+        <span class="sweep-stat-label">Cells run</span>
+        <span class="sweep-stat-value">{{ sweepCellCount }}</span>
+      </div>
+      <div class="sweep-stat">
+        <span class="sweep-stat-label">Total anomalies</span>
+        <span class="sweep-stat-value">{{ sweepTotalAnomalies }}</span>
+      </div>
+      <div class="sweep-stat">
+        <span class="sweep-stat-label">Health rate</span>
+        <span class="sweep-health-value" :class="sweepHealthColorClass">
+          {{ sweepHealthPercent === null ? '—' : `${sweepHealthPercent}%` }}
+        </span>
+      </div>
+      <span
+        class="sweep-freshness-chip"
+        :class="sweepFreshnessClass"
+        :aria-label="`Sweep freshness: ${sweepFreshnessLabel}`"
+        >{{ sweepFreshnessLabel }}</span
+      >
+      <div class="sweep-trend" aria-label="Total anomalies trend across recent runs">
+        <span class="sweep-trend-label">Trend</span>
+        <span class="sweep-sparkline">
+          <span
+            v-for="(bar, index) in sweepSparklineBars"
+            :key="index"
+            class="sweep-sparkline-bar"
+            :style="{ height: `${bar.heightPercent}%` }"
+          ></span>
+        </span>
+      </div>
     </div>
 
     <div v-if="state === 'loading'" class="pipeline-loading" aria-hidden="true">
@@ -251,6 +396,111 @@ const formattedGeneratedAt = computed<string>(() => {
 
 .refresh-timestamp strong {
   color: var(--p-text-color);
+}
+
+.sweep-summary-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--p-surface-card, var(--p-content-background));
+  border: 1px solid var(--p-surface-border, var(--p-content-border-color));
+  border-radius: 6px;
+}
+
+.sweep-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.sweep-stat-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--p-text-muted-color);
+}
+
+.sweep-stat-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.sweep-health-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.health-green {
+  color: #22c55e;
+}
+
+.health-yellow {
+  color: #eab308;
+}
+
+.health-red {
+  color: #ef4444;
+}
+
+.health-unknown {
+  color: var(--p-text-muted-color);
+}
+
+.sweep-freshness-chip {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 1px solid var(--p-content-border-color);
+}
+
+.freshness-fresh {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+}
+
+.freshness-stale {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+.sweep-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-left: auto;
+}
+
+.sweep-trend-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--p-text-muted-color);
+}
+
+.sweep-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 24px;
+  width: 120px;
+}
+
+.sweep-sparkline-bar {
+  flex: 1;
+  min-height: 1px;
+  background: var(--p-primary-color, #6366f1);
+  border-radius: 1px;
+  opacity: 0.7;
 }
 
 .pipeline-loading {
