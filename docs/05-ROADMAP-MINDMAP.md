@@ -139,6 +139,7 @@ mindmap
         ["WP-177 ✅ Autoplay rewind requester audience (server: D-17701 scopes D-16303)"]
         ["WP-164 ✅ Autoplay playback controls (client: media-player bar + status probe gating)"]
         ["WP-166 ✅ arena-client vue-tsc green + CI typecheck gate (engine barrel publishes the 6 WP-128 UIState sub-types; D-16502)"]
+        ["WP-227 ✅ arena-client vue-tsc green (WP-214/222 UIState/UICityCard fixture + prop backfill; 3rd recurrence of engine-field-add → client-typecheck drift after WP-166/207)"]
         ["WP-171 ✅ Pile browse modal (click-to-view card piles)"]
         ["WP-178 ✅ Card image rendering on play surface (CardTile component)"]
         ["WP-179 ✅ Card traits + superpower condition evaluation"]
@@ -351,6 +352,10 @@ mindmap
 4. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
 5. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
 
+**Recently completed (2026-06-08):**
+- ✅ WP-227 — arena-client vue-tsc green (WP-214/222 UIState/UICityCard fixture + prop backfill; 3rd recurrence after WP-166/207)
+- ✅ WP-225 — hero draw markup corpus sweep (`[keyword:draw:N]`; 98 lines / 30 sets)
+
 **Recently completed (2026-05-25):**
 - ✅ WP-180 — Build-time version stamping (cross-app)
 - ✅ WP-179 — Card traits + superpower condition evaluation
@@ -388,4 +393,6 @@ mindmap
 
 ---
 
-*Last updated: 2026-05-26 (roadmap catchup: added 25 missing WPs to mindmap — WP-086/096/116-119/153-158/162/164/167-173/175/178-180; added Next Horizons section with 3 forward-looking strategic directions (card keyword coverage, live PvP reconnect, score submission wiring); trimmed Recently Completed to one-liners per checklist rule; total 181/195 ✅.)*
+*Last updated: 2026-06-08 (session add: WP-227 ✅ arena-client vue-tsc green — WP-214/222 UIState/UICityCard fixture + prop backfill, the 3rd recurrence of the engine-field-add → client-typecheck-drift pattern after WP-166/207; WP-225 ✅ hero draw markup noted under Recently Completed. **Staleness flag:** this was a targeted single-session add, NOT a full catchup. The mindmap is still behind `origin/main` — the last full reconciliation was WP-180 (2026-05-26); WP-181..226 are not yet folded into the mindmap, and the Progress Summary counts (181/195) + Project Baselines remain frozen at the WP-180 state. A full catchup is a separate pass.)*
+
+*Prior: 2026-05-26 (roadmap catchup: added 25 missing WPs to mindmap — WP-086/096/116-119/153-158/162/164/167-173/175/178-180; added Next Horizons section with 3 forward-looking strategic directions (card keyword coverage, live PvP reconnect, score submission wiring); trimmed Recently Completed to one-liners per checklist rule; total 181/195 ✅.)*
