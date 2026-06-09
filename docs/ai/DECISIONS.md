@@ -23502,4 +23502,78 @@ is removed, relocated, or restyled.
 
 ---
 
+### D-22801 — Arena Client Diagnostic Capture & Export Posture: Always-On Bounded Buffer, Pass-Through Console + Window Capture, Credential Redaction, Client-Only No-Egress Export
+
+**Decision:**
+The arena client (`play.legendary-arena.com`) installs an always-on,
+bounded, in-memory diagnostic capture at bootstrap
+(`installDiagnosticCapture()` called once in `apps/arena-client/src/main.ts`
+before `app.mount('#app')`, ungated — it runs in both dev and production
+because the freeze it diagnoses occurs in production). The capture wraps
+`console.error/warn/info/log/debug` — always calling through to the
+original method (pass-through; never suppressing output) — and registers
+`window` `'error'` + `'unhandledrejection'` listeners, appending each event
+to a ring buffer capped at `DIAGNOSTIC_BUFFER_CAP = 200`. On overflow the
+oldest entry is dropped and `entryDroppedCount` is incremented, so the
+exported report's `truncated` flag (`=== entryDroppedCount > 0`) discloses the
+loss.
+
+The capture is hardened against the common production failure modes:
+`installDiagnosticCapture()` is idempotent (a module-level `installed` flag
+makes re-calls NO-OP, so `console.*` is never re-wrapped and the window
+listeners are never duplicated); the capture state (buffer, `sequence`
+counter, `entryDroppedCount`, `installed` flag, saved originals) is a single
+module-singleton per page load; entries are returned oldest → newest by
+ascending `sequence`, which resets to `0` only via
+`resetDiagnosticCaptureForTesting()`; and message shaping is locked — a console
+call joins non-`Error` arguments with `String(value)` and takes the first
+`Error` argument's `.message` + `.stack`, a `window 'error'` event prefers
+`event.error` then falls back to `event.message`, and an `'unhandledrejection'`
+uses the reason's `.message` + `.stack` when it is an `Error` else
+`String(reason)`. The clipboard copy is attempted only when
+`navigator.clipboard?.writeText` exists.
+
+The export affordance is a small `position: fixed` `DiagnosticExportButton.vue`
+(label `Download diagnostics`, authored as `defineComponent({ setup })` per
+D-6512) mounted inside `PlayViewport.vue` so it appears on both the `live`
+and `play-fixture` routes and on both the desktop and mobile viewports. On
+click it reads the live browser context, builds a `DiagnosticReport` via the
+pure `buildDiagnosticReport(entries, context)`, serializes it with
+`serializeDiagnosticReport` (2-space JSON), triggers a `.json` Blob download
+named `legendary-arena-diagnostics-<matchIdOrNoMatch>-<capturedAtMs>.json`,
+and best-effort copies the same payload to the clipboard (a clipboard
+rejection is swallowed and never blocks the download).
+
+The report is client-only and has zero network egress: it is never persisted
+to a database, never sent to the server, and contains no `G`/`ctx`/UIState/
+card data — only the captured console + error entries and a scalar envelope
+(`appVersion`, `gitSha`, `buildTimestamp`, `capturedAtIso`, redacted
+`locationHref`, `matchId`, `playerId`, `userAgent`, viewport size,
+`entryCount`, `entryDroppedCount`, `truncated`). Credential redaction is a hard
+invariant:
+`redactCredentialsFromUrl` replaces the `credentials` query-param value with
+the literal `***redacted***` before the report is built, so the serialized
+report contains zero occurrences of the session secret; `match`/`player` are
+retained for correlation. The browser wall-clock reads
+(`Date.now()`/`toISOString()`) are client-layer diagnostic timestamps,
+explicitly outside the engine determinism boundary (which governs
+`packages/game-engine` only).
+
+The feature is pure client code: the three new files import no
+`@legendary-arena/(game-engine|registry|preplan)`, `apps/server`, `pg`, or
+`boardgame.io` surface, and the single engine-import site
+(`client/bgioClient.ts`) and the router (`App.vue`) are not modified.
+Deferred to follow-ups: UIState / network-frame capture (would hook
+`bgioClient.ts` `subscribe`), server-side upload / automatic error
+reporting, gating/dismissibility/persistence/shortcuts, and PII scrubbing
+beyond the credentials param.
+
+**Packet:** WP-228 (EC-260).
+
+**Drafted:** 2026-06-08 (drafting close — reserved). **Landed:** TBD
+(execution close — flips to Active).
+**Status:** Reserved (proposed)
+
+---
+
 Protect this file.
