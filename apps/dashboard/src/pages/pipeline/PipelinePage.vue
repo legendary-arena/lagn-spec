@@ -37,6 +37,36 @@ const state = computed<PageState>(() => {
       <p class="pipeline-subtitle">Architect → Builder → Inspector → Evaluator</p>
     </header>
 
+    <section class="pipeline-summary">
+      <p>
+        The four agent skills
+        (<code>/agent-architect</code>, <code>/agent-builder</code>,
+        <code>/agent-inspector</code>, <code>/agent-evaluator</code>)
+        are Claude Code slash commands invoked in separate sessions to walk through
+        each role in the checks-and-balances pipeline.
+        Run <code>/agent-architect</code> first to draft a spec (risk tier, acceptance
+        criteria, file map, test contract); its output is a Work Packet and Execution
+        Checklist committed with a <code>SPEC:</code> prefix.
+        Then <code>/agent-builder</code> in a fresh session reads that spec and implements
+        it clause-by-clause &mdash; writing code, tests, and a build note, committing with
+        an <code>EC-NNN:</code> prefix.
+        <code>/agent-inspector</code> runs in yet another session (fresh eyes, not the
+        builder) to review the diff against the spec, tagging findings as P0/P1/P2 and
+        rendering a deterministic PASS/FAIL verdict.
+        <code>/agent-evaluator</code> is the quarterly whole-codebase audit, not per-feature.
+      </p>
+      <p>
+        Each session produces artifacts that the governance snapshot generator captures at
+        build time &mdash; SPEC commits land in the Architect lane, WP/EC execution commits
+        and in-flight WPs land in the Builder lane, next-executable and blocked WPs land in
+        the Inspector lane, and the Evaluator lane remains a placeholder until
+        acquisition-readiness reports exist.
+        After any session completes, running <code>pnpm dash:build</code> regenerates the
+        snapshot from the repo's git log and WORK_INDEX state, and this page reflects the
+        updated lanes automatically.
+      </p>
+    </section>
+
     <div v-if="state === 'loading'" class="pipeline-loading" aria-hidden="true">
       <div class="skeleton-row"></div>
       <div class="skeleton-row"></div>
@@ -94,6 +124,34 @@ const state = computed<PageState>(() => {
   margin: 0.25rem 0 0;
   font-size: 0.8rem;
   color: var(--p-text-muted-color);
+}
+
+.pipeline-summary {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--p-surface-card, var(--p-content-background));
+  border: 1px solid var(--p-surface-border, var(--p-content-border-color));
+  border-radius: 8px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--p-text-muted-color);
+}
+
+.pipeline-summary p {
+  margin: 0;
+}
+
+.pipeline-summary p + p {
+  margin-top: 0.6rem;
+}
+
+.pipeline-summary code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  background: var(--p-content-border-color);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  color: var(--p-text-color);
 }
 
 .pipeline-loading {
