@@ -23494,10 +23494,33 @@ full "X of Y metrics live" aggregate widget is deferred. Additive: no
 existing widget, page, composable, or per-widget WP-197 freshness badge
 is removed, relocated, or restyled.
 
-**Packet:** WP-226 (EC-258).
+**Amendment (2026-06-09, INFRA #256 / `b96f70a`):** The original placement
+mechanics — "mount a single `<MockModeBanner />` line immediately above
+`<main class="main-content">`, with no other `AppLayout.vue` change" (WP-226
+§Locked Contract Values / AC #5) — shipped a banner that stretched to the full
+viewport height in production (reported on
+`dashboard.legendary-arena.com/overview`). Root cause: `.app-layout` is a
+horizontal (row) flex with `min-height: 100vh` and default
+`align-items: stretch`, so a bare banner child stretches to the full container
+height as a vertical band rather than a top strip. The corrected placement
+wraps the banner **and** `<main>` in a vertical `.content-column`
+(`flex: 1; display: flex; flex-direction: column; min-width: 0`): the banner
+sizes to its content (~36px top strip, full width of the content area) and
+`main-content` (`flex: 1`) fills the space below. The mobile fixed-bar
+clearance selector moved from `.sidebar.hidden ~ .main-content` to
+`.sidebar.hidden ~ .content-column` because `main-content` is no longer the
+sidebar's flow sibling. This **supersedes the "one import + one mount line, no
+other change" lock**, which could not express a correct top-strip placement in
+a row-flex layout. All other posture in this decision — the conservative
+`!isLiveModeEnabled()` gate, predicate reuse, zero `import.meta.env` in the new
+files, non-dismissible v1, the locked copy string, and the presentational-only
+component — is unchanged.
+
+**Packet:** WP-226 (EC-258); placement amended by INFRA #256.
 
 **Drafted:** 2026-06-08 (drafting close — reserved). **Landed:** 2026-06-08
-(execution close — flips to Active).
+(execution close — flips to Active). **Amended:** 2026-06-09 (INFRA #256 —
+placement corrected to `.content-column` wrapper).
 **Status:** Active
 
 ---
