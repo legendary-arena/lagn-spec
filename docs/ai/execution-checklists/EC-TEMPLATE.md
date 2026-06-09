@@ -48,6 +48,7 @@ For each WP, extract:
 - [ ] [dependency 2]
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0
+- [ ] `pnpm --filter <package> typecheck` exits 0 — REQUIRED for app/client packages (see Rules)
 
 ## Locked Values (do not re-derive)
 - [verbatim constant 1]
@@ -70,6 +71,7 @@ For each WP, extract:
 ## After Completing
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0
+- [ ] `pnpm --filter <package> typecheck` exits 0 — REQUIRED for app/client packages (see Rules)
 - [ ] `docs/ai/STATUS.md` updated
 - [ ] `docs/ai/DECISIONS.md` updated (list specific decisions)
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` checked off with date
@@ -100,6 +102,17 @@ For each WP, extract:
 - Do not include narrative, rationale, or session context
 - Do not include full acceptance criteria — those live in the WP
 - One EC per WP; filename: `EC-NNN-short-slug.checklist.md`
+- **App/client-package WPs MUST gate `typecheck`.** For `apps/dashboard`,
+  `apps/arena-client`, and `apps/registry-viewer`, both `Before Starting` and
+  `After Completing` MUST include `pnpm --filter <pkg> typecheck` exits 0.
+  `vite build` uses esbuild and `node:test` runs under tsx, so NEITHER
+  type-checks — only the explicit `typecheck` script (`vue-tsc --noEmit`) does.
+  A WP whose close-out verifies only build + test can ship `vue-tsc` errors to
+  unprotected `main`, where they sit until a later PR's CI trips. This has
+  recurred repeatedly: arena-client WP-166 / WP-207 / WP-227 and dashboard
+  WP-229 (a `VALID_HORIZONS` error caught + fixed in WP-230). Engine / registry
+  / server WPs are covered by `pnpm -r build` (their build IS the typecheck) and
+  need no separate line.
 - Short Title in the EC header should match the filename slug semantically
 - The "Common Failure Smells" section is optional — include it when the WP
   has known failure modes that are non-obvious from the guardrails alone
