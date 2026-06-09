@@ -592,7 +592,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
-            "[hc:tech]: Draw a card."
+            "[hc:tech]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -704,7 +704,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -1346,7 +1346,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw two cards."
+            "Draw two cards. [keyword:draw:2]"
           ]
         },
         {
@@ -1442,7 +1442,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: You get +1[icon:attack]."
           ]
         },
@@ -1475,7 +1475,7 @@
           "recruit": "2",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
-            "[hc:tech]: Draw a card."
+            "[hc:tech]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -1574,7 +1574,7 @@
           "attack": null,
           "recruit": "1",
           "abilities": [
-            "[hc:ranged]: Draw a card."
+            "[hc:ranged]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -1589,7 +1589,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "[hc:instinct]: Draw a card."
+            "[hc:instinct]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -1746,7 +1746,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "[hc:instinct]: Draw a card."
+            "[hc:instinct]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -2020,7 +2020,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "[hc:ranged]: Draw a card."
+            "[hc:ranged]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -2035,7 +2035,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:covert]: Draw another card."
           ]
         },

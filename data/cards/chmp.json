@@ -59,7 +59,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Size-Changing]: [hc:instinct]",
-            "[hc:instinct]: Draw a card.",
+            "[hc:instinct]: Draw a card. [keyword:draw:1]",
             "[keyword:Cheering Crowds]"
           ]
         },
@@ -139,7 +139,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Size-Changing]: [hc:covert]",
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:covert]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
@@ -381,7 +381,7 @@
           "recruit": "1",
           "abilities": [
             "[keyword:Size-Changing]: [hc:tech]",
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Cheering Crowds]"
           ]
         },

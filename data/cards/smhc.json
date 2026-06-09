@@ -138,7 +138,7 @@
           "recruit": null,
           "abilities": [
             "Reveal the top card of your deck. If it costs 2 or less, draw it. [keyword:reveal:2]",
-            "[hc:covert]: Draw a card."
+            "[hc:covert]: Draw a card. [keyword:draw:1]"
           ]
         },
         {

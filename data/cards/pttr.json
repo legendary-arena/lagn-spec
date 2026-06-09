@@ -250,7 +250,7 @@
           "recruit": "1",
           "abilities": [
             "[keyword:Wall-Crawl]",
-            "[team:spider-friends]: Draw a card."
+            "[team:spider-friends]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -266,7 +266,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Wall-Crawl]",
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {

@@ -23400,4 +23400,66 @@ pattern and mark those cards directly.
 
 ---
 
+### D-22501 — Hero Draw Markup: `[keyword:draw:N]` Token Form + Corpus Sweep (WP-225)
+
+**Decision:** Extend the `hero-ability-markers.json` valid token set (D-21601)
+with a fourth base form, `[keyword:draw:N]` where N is a positive integer
+(grammar: N ≥ 1; the zero-magnitude form is rejected). The token marks a hero
+ability line that draws a fixed count of cards from the top of the player's deck
+on play. `VALID_TOKEN_PATTERN` and the `assertValidToken` allowed-token list are
+extended **additively** — the existing rescue/reveal branches are kept
+byte-for-byte intact and the draw form is appended as one new alternation.
+`apply-hero-ability-markers.mjs` gains `isDrawCandidate` / `suggestDrawToken`
+detectors: a line is a candidate iff, operating on the trimmed line and after
+stripping at most one leading `[hc:X]:` / `[team:X]:` condition, the whole line
+equals `Draw <a|one|two|three> card(s).` and contains neither `Reveal` nor an
+existing `[keyword:` token. The detector is placed after all reveal-family
+branches (reveal retains first-match priority). The corpus sweep marks **98**
+lines across **30** sets (83 `draw:1`, 13 `draw:2`, 2 `draw:3`). **This WP emits
+only magnitudes 1–3** — the corpus maximum; `four`/`five` are not matched and N
+≥ 4 is reserved for a future WP (the grammar permits it, but no such token is
+produced here). The engine is unchanged — `'draw'` was already in
+`HERO_KEYWORDS` and `executeHeroEffects` since WP-021/WP-215; this WP only
+supplies the missing markup so `parseAbilityText()` emits the `draw` effect that
+was always intended.
+
+**Deferred draw patterns (this WP does NOT mark, documented in `_deferred`):**
+cumulative "another/more/extra" conditional draws; bottom-of-deck draws;
+reveal-then-draw lines (reveal family); game-state-conditional draws;
+draw-a-new-hand replacement triggers; timing-/keyword-gated draws
+(`[keyword:Heist]`, `[keyword:Cyber-Mod]`, `Fight:`, `[keyword:Ambush]`);
+compound multi-effect lines; multi-condition cost prefixes
+(`[hc:covert][hc:covert]:`); and fixed-count draws of 4 or more cards.
+
+**Deferred-catalogue resolution (at execution):** `_deferred` grows 34 → 41
+(+7 real exemplars, one per **draw-specific** class — another/more/extra
+(`core/iron-man/endless-invention[1]`), bottom-of-deck
+(`2099/ravage-2099/down-in-the-dregs[0]`), game-state-conditional
+(`amwp/jentorra/take-the-high-ground[1]`), draw-a-new-hand replacement trigger
+(`chmp/viv-vision/expanding-neural-network[1]`), timing-/keyword-gated
+(`amwp/ant-man/tiny-little-risk[1]`), compound multi-effect
+(`anni/brainstorm/time-loop-experiments[0]`), multi-condition cost prefix
+(`wtif/star-lord-tchalla/fight-or-flight[1]`)). Two of the nine §Out-of-Scope
+classes are deliberately **not** given a new `_deferred` row, consistent with the
+"one real exemplar per class, deduplicated" discipline: **reveal-then-draw** is
+already represented by the reveal-family entries the reveal sweeps added
+(WP-216/224) and is excluded from the draw detector by the `Reveal` rule; and
+**magnitudes ≥ 4** have **no corpus instance** (the detector caps at `three`, so
+there is no real line to mark or defer — the cap is documented here and in the
+map `_notes`).
+
+**Rationale:** "Draw a card." is the most common hero effect, and its absence
+from the markup pipeline meant ~100 hero cards silently drew nothing on
+play.legendary-arena.com (surfaced via Black Widow / Mission Accomplished). The
+executor was always present; only the curated markup was missing. Constraining
+the candidate rule to a whole-line fixed-count draw (optionally one parsed
+condition) keeps the sweep unambiguous, exactly as D-21601 constrained the
+rescue/reveal forms.
+
+**Packet:** WP-225 / EC-257.
+**Drafted:** 2026-06-08. **Landed:** 2026-06-08.
+**Status:** Active
+
+---
+
 Protect this file.

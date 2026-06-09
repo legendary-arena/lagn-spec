@@ -237,7 +237,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },

@@ -470,7 +470,7 @@
           "attack": "0+",
           "recruit": "0+",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: You get +1[icon:recruit] or +1[icon:attack]."
           ]
         },
@@ -582,7 +582,7 @@
           "recruit": null,
           "abilities": [
             "Gain a [rule:Shard].",
-            "[hc:instinct]: Draw a card."
+            "[hc:instinct]: Draw a card. [keyword:draw:1]"
           ]
         },
         {

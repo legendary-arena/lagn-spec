@@ -185,7 +185,7 @@
           "attack": "0+",
           "recruit": "2",
           "abilities": [
-            "Draw two cards.",
+            "Draw two cards. [keyword:draw:2]",
             "[keyword:Focus] 5[icon:recruit] [icon:5] You get +7[icon:attack] usable only against the Mastermind."
           ]
         }

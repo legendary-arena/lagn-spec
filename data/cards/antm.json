@@ -28,7 +28,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -278,7 +278,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Size-Changing] [hc:tech]",
-            "Draw two cards."
+            "Draw two cards. [keyword:draw:2]"
           ]
         },
         {
@@ -373,7 +373,7 @@
           "recruit": "2",
           "abilities": [
             "[keyword:Size-Changing] [hc:covert]",
-            "[hc:covert]: Draw a card."
+            "[hc:covert]: Draw a card. [keyword:draw:1]"
           ]
         },
         {

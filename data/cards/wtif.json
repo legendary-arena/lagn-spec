@@ -661,7 +661,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:covert]: [keyword:Liberate 3]"
           ]
         },
@@ -692,7 +692,7 @@
           "attack": null,
           "recruit": "1",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "You may have a Villain capture a Bystander."
           ]
         },
@@ -819,7 +819,7 @@
           "attack": null,
           "recruit": "0+",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:covert]: You get +2[icon:recruit]."
           ]
         },
@@ -976,7 +976,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:instinct][keyword:Soulbind a Bystander or Villain]: You get +2[icon:attack]. If it's Special Bystander, you may do its Rescue effect."
           ]
         },

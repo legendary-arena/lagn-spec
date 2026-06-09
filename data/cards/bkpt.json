@@ -252,7 +252,7 @@
           "recruit": null,
           "abilities": [
             "[hc:tech] [keyword:Ambush]: Draw a card.",
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: You get [keyword:Empowered] by [hc:tech]."
           ]
         },

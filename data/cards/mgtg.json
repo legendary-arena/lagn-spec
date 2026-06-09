@@ -203,7 +203,7 @@
           "attack": null,
           "recruit": "1",
           "abilities": [
-            "[hc:covert]: Draw a card."
+            "[hc:covert]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -249,7 +249,7 @@
           "recruit": null,
           "abilities": [
             "To play this, you must put a card from your hand on the bottom of  your deck.",
-            "Draw two cards."
+            "Draw two cards. [keyword:draw:2]"
           ]
         },
         {
@@ -791,7 +791,7 @@
           "attack": null,
           "recruit": "2",
           "abilities": [
-            "[hc:instinct]: Draw a card.",
+            "[hc:instinct]: Draw a card. [keyword:draw:1]",
             "Another player draws a card."
           ]
         },
@@ -807,7 +807,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "[hc:ranged]: Draw a card.",
+            "[hc:ranged]: Draw a card. [keyword:draw:1]",
             "Another player discards a card."
           ]
         },

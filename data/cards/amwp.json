@@ -662,7 +662,7 @@
           "recruit": null,
           "abilities": [
             "Microscopic Size-Changing [hc:covert][hc:covert]",
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:covert][hc:covert]: You get +2[icon:attack]."
           ]
         },
@@ -845,7 +845,7 @@
           "recruit": null,
           "abilities": [
             "Streets Conqueror 1",
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {

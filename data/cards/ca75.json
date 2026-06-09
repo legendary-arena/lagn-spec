@@ -246,7 +246,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:strength]: [keyword:Man Out of Time]"
           ]
         },
@@ -482,7 +482,7 @@
           "attack": null,
           "recruit": "1",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: [keyword:Man Out of Time]"
           ]
         },

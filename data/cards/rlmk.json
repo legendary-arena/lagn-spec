@@ -279,7 +279,7 @@
           "recruit": "1",
           "abilities": [
             "Choose [hc:strength], [hc:instinct], [hc:covert], or [hc:ranged]. This card is only that Hero Class this turn.",
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {

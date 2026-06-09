@@ -4,52 +4,98 @@
     "Keys: setAbbr -> array of { heroSlug, cardSlug, abilityIndex, markupToken }. abilityIndex is 0-based into card.abilities[]. Valid markupToken values: '[keyword:rescue:1]', '[keyword:reveal]', '[keyword:reveal:2]' (D-21601 closed set).",
     "Curation discipline: a line is marked ONLY when it unambiguously reduces to a single-bystander rescue or a reveal-draw with an extractable cost threshold of 2. Condition-gated lines ([hc:X]:, [team:X]:) are included — the executor evaluates conditions already. Timing-gated lines (Fight:, Ambush:, Heist:, [keyword:Ambush], [keyword:Excessive Violence], [keyword:Excessive Kindness], [keyword:Focus]) are deferred per D-21602/D-21603.",
     "Web-Shooters (core/spider-man) is NOT included — WP-215 already applied rescue:1 and reveal markup to those two lines. The idempotence guard would skip them, but we omit them from the map to keep it authoritative for WP-216 additions only.",
-    "Amendment (inline, EC-248 fold): AC #11 and EC §After Completing originally asserted grep count=1 for rescue:1 in core.json. Execution confirmed core/black-widow/mission-accomplished is an in-scope candidate (discovered by --propose). Count updated to 2 (web-shooters from WP-215 + mission-accomplished from WP-216). Corrected in WP-216 AC #11 and EC-248 §After Completing as part of Commit A."
+    "Amendment (inline, EC-248 fold): AC #11 and EC §After Completing originally asserted grep count=1 for rescue:1 in core.json. Execution confirmed core/black-widow/mission-accomplished is an in-scope candidate (discovered by --propose). Count updated to 2 (web-shooters from WP-215 + mission-accomplished from WP-216). Corrected in WP-216 AC #11 and EC-248 §After Completing as part of Commit A.",
+    "WP-225 / EC-257 (D-22501) — draw sweep: appends [keyword:draw:N] (N ∈ {1,2,3}) to 98 fixed-count hero draw lines across 30 sets (83 draw:1, 13 draw:2, 2 draw:3). Detector: the trimmed whole line equals 'Draw a|one|two|three card(s).', optionally one leading [hc:X]:/[team:X]: condition the executor already evaluates, excluding any line containing 'Reveal' or an existing [keyword:] token.",
+    "WP-225 deferred draw patterns below carry one real exemplar per draw-specific class: cumulative another/more/extra, bottom-of-deck, game-state-conditional, draw-a-new-hand replacement trigger, timing-/keyword-gated, compound multi-effect, and multi-condition cost prefix. reveal-then-draw is already represented by the reveal-family deferred entries (the draw detector excludes 'Reveal'). Magnitudes ≥ 4 are not emitted and have no _deferred entry — the grammar permits N ≥ 1 but the corpus maximum is 3, so no real ≥ 4 line exists to mark or defer (D-22501)."
   ],
   "2099": [
     { "heroSlug": "ravage-2099", "cardSlug": "overhorns-and-underhorns", "abilityIndex": 0, "markupToken": "[keyword:reveal-attack-choose:4]" }
   ],
   "3dtc": [
-    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
+    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
   ],
   "ca75": [
     { "heroSlug": "captain-america-1941", "cardSlug": "liberate-the-prisoners", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
     { "heroSlug": "captain-america-falcon", "cardSlug": "aerial-catch", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
-    { "heroSlug": "steve-rogers-director-of-shield", "cardSlug": "save-the-world", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" }
+    { "heroSlug": "steve-rogers-director-of-shield", "cardSlug": "save-the-world", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "captain-america-1941", "cardSlug": "devoted-patriot", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "winter-soldier", "cardSlug": "sniper-nest", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
   ],
   "chmp": [
     { "heroSlug": "ms-marvel", "cardSlug": "long-arm-of-the-law", "abilityIndex": 2, "markupToken": "[keyword:rescue:1]" },
-    { "heroSlug": "nova", "cardSlug": "space-cop", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
+    { "heroSlug": "nova", "cardSlug": "space-cop", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "gwenpool", "cardSlug": "i-heard-keywords-are-powerful", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "ms-marvel", "cardSlug": "long-arm-of-the-law", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "totally-awesome-hulk", "cardSlug": "incredible-mind-awesome-body", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
   ],
   "core": [
     { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" },
     { "heroSlug": "gambit", "cardSlug": "high-stakes-jackpot", "abilityIndex": 0, "markupToken": "[keyword:reveal-cost-attack]" },
     { "heroSlug": "spider-man", "cardSlug": "astonishing-strength", "abilityIndex": 0, "markupToken": "[keyword:reveal]" },
-    { "heroSlug": "spider-man", "cardSlug": "great-responsibility", "abilityIndex": 0, "markupToken": "[keyword:reveal]" }
+    { "heroSlug": "spider-man", "cardSlug": "great-responsibility", "abilityIndex": 0, "markupToken": "[keyword:reveal]" },
+    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "emma-frost", "cardSlug": "mental-discipline", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "hawkeye", "cardSlug": "quick-draw", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "iron-man", "cardSlug": "endless-invention", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "iron-man", "cardSlug": "quantum-breakthrough", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "storm", "cardSlug": "gathering-stormclouds", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "wolverine", "cardSlug": "berserker-rage", "abilityIndex": 0, "markupToken": "[keyword:draw:3]" },
+    { "heroSlug": "wolverine", "cardSlug": "frenzied-slashing", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "wolverine", "cardSlug": "keen-senses", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
   ],
   "cosm": [
-    { "heroSlug": "ronan-the-accuser", "cardSlug": "rally-kree-warriors", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
+    { "heroSlug": "ronan-the-accuser", "cardSlug": "rally-kree-warriors", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "nova", "cardSlug": "draw-from-the-worldmind", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "phyla-vell", "cardSlug": "channel-cosmic-power", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
   ],
   "cvwr": [
     { "heroSlug": "cloak-dagger", "cardSlug": "darkness", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" },
     { "heroSlug": "cloak-dagger", "cardSlug": "light", "abilityIndex": 0, "markupToken": "[keyword:reveal-min:1]" },
     { "heroSlug": "hercules", "cardSlug": "prince-of-power", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" },
     { "heroSlug": "peter-parker", "cardSlug": "conflicted-loyalties", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
-    { "heroSlug": "peter-parker", "cardSlug": "protect-my-family", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" }
+    { "heroSlug": "peter-parker", "cardSlug": "protect-my-family", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "goliath", "cardSlug": "growth-industry", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "hercules", "cardSlug": "boy-genius", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "speedball", "cardSlug": "double-down", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "stature", "cardSlug": "crush-file-sizes", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "stature", "cardSlug": "shrink-to-nothing", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "storm-black-panther", "cardSlug": "gathering-clues", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "storm-black-panther", "cardSlug": "gathering-rain-clouds", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "tigra", "cardSlug": "ferocity", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "wiccan", "cardSlug": "supersonic-speed", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "wiccan", "cardSlug": "supersonic-spells", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
   ],
   "dkcy": [
     { "heroSlug": "jean-grey", "cardSlug": "psychic-search", "abilityIndex": 0, "markupToken": "[keyword:rescue:1]" },
-    { "heroSlug": "punisher", "cardSlug": "boom-goes-the-dynamite", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" }
+    { "heroSlug": "punisher", "cardSlug": "boom-goes-the-dynamite", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" },
+    { "heroSlug": "bishop", "cardSlug": "whatever-the-cost", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "domino", "cardSlug": "lucky-break", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "elektra", "cardSlug": "ninjitsu", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "ghost-rider", "cardSlug": "infernal-chains", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "iceman", "cardSlug": "deep-freeze", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "iron-fist", "cardSlug": "ancient-legacy", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "punisher", "cardSlug": "boom-goes-the-dynamite", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "wolverine", "cardSlug": "animal-instincts", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "wolverine", "cardSlug": "no-mercy", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
   ],
   "msis": [
-    { "heroSlug": "wanda-vision", "cardSlug": "witchcraft", "abilityIndex": 0, "markupToken": "[keyword:reveal-odd-draw]" }
+    { "heroSlug": "wanda-vision", "cardSlug": "witchcraft", "abilityIndex": 0, "markupToken": "[keyword:reveal-odd-draw]" },
+    { "heroSlug": "black-panther", "cardSlug": "wakanda-forever", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "captain-marvel", "cardSlug": "dawning-hope", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "captain-marvel", "cardSlug": "infused-by-the-tesseract", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
   ],
   "msp1": [
-    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" }
+    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "hawkeye", "cardSlug": "quick-draw", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "iron-man", "cardSlug": "endless-invention", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "iron-man", "cardSlug": "quantum-breakthrough", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" }
   ],
   "smhc": [
     { "heroSlug": "high-tech-spider-man", "cardSlug": "advanced-targeting-system", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
-    { "heroSlug": "peter-parker-homecoming", "cardSlug": "heightened-senses", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" }
+    { "heroSlug": "peter-parker-homecoming", "cardSlug": "heightened-senses", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" },
+    { "heroSlug": "high-tech-spider-man", "cardSlug": "advanced-targeting-system", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
   ],
   "ssw2": [
     { "heroSlug": "dr-punisher-soldier-supreme", "cardSlug": "youre-a-slow-learner", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko-attack:1]" },
@@ -58,11 +104,101 @@
   "ssw1": [
     { "heroSlug": "ultimate-spider-man", "cardSlug": "leaping-spider", "abilityIndex": 0, "markupToken": "[keyword:reveal:2]" },
     { "heroSlug": "ultimate-spider-man", "cardSlug": "marvel-team-up", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" },
-    { "heroSlug": "ultimate-spider-man", "cardSlug": "web-slinger", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" }
+    { "heroSlug": "ultimate-spider-man", "cardSlug": "web-slinger", "abilityIndex": 1, "markupToken": "[keyword:reveal:2]" },
+    { "heroSlug": "black-panther", "cardSlug": "catlike-reflexes", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "captain-marvel", "cardSlug": "supersonic-flight", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "superior-iron-man", "cardSlug": "optimized-technology", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
   ],
   "wwhk": [
     { "heroSlug": "bruce-banner", "cardSlug": "dangerous-testing", "abilityIndex": 0, "markupToken": "[keyword:reveal-ko]" },
-    { "heroSlug": "rick-jones", "cardSlug": "captain-marvel", "abilityIndex": 0, "markupToken": "[keyword:reveal-min:3]" }
+    { "heroSlug": "rick-jones", "cardSlug": "captain-marvel", "abilityIndex": 0, "markupToken": "[keyword:reveal-min:3]" },
+    { "heroSlug": "amadeus-cho", "cardSlug": "gamma-draining-nanites", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "gladiator-hulk", "cardSlug": "dont-make-me-angry", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "hiroim", "cardSlug": "save-from-the-rubble", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "hulkbuster-iron-man", "cardSlug": "pound-for-pound", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "hulkbuster-iron-man", "cardSlug": "ultra-massive-armor", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "korg", "cardSlug": "lord-of-granite", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "korg", "cardSlug": "nothing-beats-rock", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "namora", "cardSlug": "crushing-tsunami", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "no-name-brood-queen", "cardSlug": "torrent-of-broodlings", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
+  ],
+  "amwp": [
+    { "heroSlug": "freedom-fighters", "cardSlug": "steel-warrior", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "janet-van-dyne", "cardSlug": "subatomic-size", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
+  ],
+  "anni": [
+    { "heroSlug": "fantastic-four-united", "cardSlug": "mr-fantastic", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" }
+  ],
+  "antm": [
+    { "heroSlug": "ant-man", "cardSlug": "ride-the-ants", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "jocasta", "cardSlug": "holographic-image-inducer", "abilityIndex": 1, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "wasp", "cardSlug": "tiny-winged-justice", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
+  ],
+  "asrd": [
+    { "heroSlug": "warriors-three-the", "cardSlug": "fandral-the-dashing", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
+  ],
+  "bkpt": [
+    { "heroSlug": "princess-shuri", "cardSlug": "vibranium-experiments", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
+  ],
+  "bkwd": [
+    { "heroSlug": "falcon-winter-soldier", "cardSlug": "new-plan", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "falcon-winter-soldier", "cardSlug": "reload", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "red-guardian", "cardSlug": "sleeper-agent", "abilityIndex": 2, "markupToken": "[keyword:draw:1]" }
+  ],
+  "dead": [
+    { "heroSlug": "stingray", "cardSlug": "deck-chairs-on-the-titanic", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "stingray", "cardSlug": "superpowered-swimsuit", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
+  ],
+  "dstr": [
+    { "heroSlug": "ancient-one-the", "cardSlug": "teachings-of-kamar-taj", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" }
+  ],
+  "ff04": [
+    { "heroSlug": "mr-fantastic", "cardSlug": "unstable-molecules", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" }
+  ],
+  "mgtg": [
+    { "heroSlug": "gamora", "cardSlug": "forgive", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "gamora", "cardSlug": "resourceful-fugitive", "abilityIndex": 1, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "mantis", "cardSlug": "selfish", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "mantis", "cardSlug": "selfless", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
+  ],
+  "msmc": [
+    { "heroSlug": "m", "cardSlug": "three-sisters-combined", "abilityIndex": 2, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "shatterstar", "cardSlug": "gladiators-blades", "abilityIndex": 2, "markupToken": "[keyword:draw:1]" }
+  ],
+  "pttr": [
+    { "heroSlug": "scarlet-spider", "cardSlug": "flip-out", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "scarlet-spider", "cardSlug": "perfect-hunter", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
+  ],
+  "rlmk": [
+    { "heroSlug": "crystal", "cardSlug": "master-the-four-elements", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
+  ],
+  "rvlt": [
+    { "heroSlug": "darkhawk", "cardSlug": "balance-the-darkforce", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "ronin", "cardSlug": "storm-of-arrows", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" }
+  ],
+  "shld": [
+    { "heroSlug": "deathlok", "cardSlug": "authorize-lethal-force", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "mockingbird", "cardSlug": "infinity-formula", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
+  ],
+  "vill": [
+    { "heroSlug": "bullseye", "cardSlug": "everythings-a-weapon", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "dr-octopus", "cardSlug": "crazed-experiments", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "enchantress", "cardSlug": "unending-anguish", "abilityIndex": 0, "markupToken": "[keyword:draw:3]" }
+  ],
+  "wtif": [
+    { "heroSlug": "apocalyptic-black-widow", "cardSlug": "plant-hidden-asset", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "apocalyptic-black-widow", "cardSlug": "relentless", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "doctor-strange-supreme", "cardSlug": "to-save-christine", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "gamora-destroyer-of-thanos", "cardSlug": "assassins-stealth", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
+  ],
+  "xmen": [
+    { "heroSlug": "banshee", "cardSlug": "sonar-detection", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "jubilee", "cardSlug": "blasting-fireworks", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "jubilee", "cardSlug": "light-a-spark", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "legion", "cardSlug": "channel-time", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "phoenix", "cardSlug": "reincarnating-phoenix", "abilityIndex": 0, "markupToken": "[keyword:draw:2]" },
+    { "heroSlug": "polaris", "cardSlug": "electromagnetic-pulse", "abilityIndex": 1, "markupToken": "[keyword:draw:1]" },
+    { "heroSlug": "psylocke", "cardSlug": "psychic-knife", "abilityIndex": 0, "markupToken": "[keyword:draw:1]" }
   ],
   "_deferred": [
     {
@@ -336,6 +472,62 @@
       "abilityIndex": 0,
       "abilityText": "Whenever you recruit a Hero that costs 5 or more this turn, reveal the top card of your deck and you may KO it.",
       "reason": "D-21602 — recruit-event trigger: not wired to executeHeroEffects"
+    },
+    {
+      "setAbbr": "core",
+      "heroSlug": "iron-man",
+      "cardSlug": "endless-invention",
+      "abilityIndex": 1,
+      "abilityText": "[hc:tech]: Draw another card.",
+      "reason": "D-22501 — cumulative 'another/more/extra' conditional draw: the count is unambiguous but 'another' reads as an additive top-up on a sibling ability line; marking it correctly requires confirming each card's intended total. Deferred for a focused follow-up."
+    },
+    {
+      "setAbbr": "2099",
+      "heroSlug": "ravage-2099",
+      "cardSlug": "down-in-the-dregs",
+      "abilityIndex": 0,
+      "abilityText": "[hc:instinct]: Draw a card from the bottom of your deck.",
+      "reason": "D-22501 — bottom-of-deck draw: drawFromPlayerDeck draws from the top (deck[0]); bottom-of-deck is a different mechanic the executor does not model."
+    },
+    {
+      "setAbbr": "amwp",
+      "heroSlug": "jentorra",
+      "cardSlug": "take-the-high-ground",
+      "abilityIndex": 1,
+      "abilityText": "If there are no Villains on the Rooftops, draw a card.",
+      "reason": "D-22501 — game-state-conditional draw: the draw is gated on a board-state predicate (no Villains on the Rooftops) that is not a [hc:X]:/[team:X]: condition the parser evaluates."
+    },
+    {
+      "setAbbr": "chmp",
+      "heroSlug": "viv-vision",
+      "cardSlug": "expanding-neural-network",
+      "abilityIndex": 1,
+      "abilityText": "[hc:tech]: When you draw a new hand of cards at the end of this turn, draw an extra card.",
+      "reason": "D-22501 — draw-a-new-hand replacement trigger: an end-of-turn draw-hand-replacement effect, not an onPlay draw; no timing dispatch exists for it."
+    },
+    {
+      "setAbbr": "amwp",
+      "heroSlug": "ant-man",
+      "cardSlug": "tiny-little-risk",
+      "abilityIndex": 1,
+      "abilityText": "[keyword:Heist]: Draw two cards.",
+      "reason": "D-22501 — timing-/keyword-gated draw: gated by a card-ability keyword timing prefix ([keyword:Heist], analogous to Fight:/[keyword:Ambush]); the keyword-timing dispatch is not wired to executeHeroEffects."
+    },
+    {
+      "setAbbr": "anni",
+      "heroSlug": "brainstorm",
+      "cardSlug": "time-loop-experiments",
+      "abilityIndex": 0,
+      "abilityText": "Draw a card. Then put a card from your hand on top of your deck.",
+      "reason": "D-22501 — compound multi-effect line: draws AND performs a second effect (put a card from hand on top of deck) in the same line; compound-executor territory."
+    },
+    {
+      "setAbbr": "wtif",
+      "heroSlug": "star-lord-tchalla",
+      "cardSlug": "fight-or-flight",
+      "abilityIndex": 1,
+      "abilityText": "[hc:strength][hc:covert]: Draw a card.",
+      "reason": "D-22501 — multi-condition cost prefix: the doubled [hc:X] prefix encodes a 'pay two hero-class icons' cost the single-condition evaluator does not model; deferred."
     }
   ]
 }

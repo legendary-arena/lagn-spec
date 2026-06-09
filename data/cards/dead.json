@@ -459,7 +459,7 @@
           "attack": "1½ ",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "You may move a Villain to an adjacent city space. If another Villain is already there, swap them."
           ]
         },
@@ -475,7 +475,7 @@
           "attack": "½+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: You get +2[icon:attack], usable only against Villains in the Sewers or Bridge or the Mastermind."
           ]
         },

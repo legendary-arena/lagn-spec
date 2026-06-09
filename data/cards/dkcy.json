@@ -135,7 +135,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:covert]: You may KO a card from your hand or discard pile."
           ]
         },
@@ -678,7 +678,7 @@
           "attack": "0+",
           "recruit": "0+",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[team:x-force]: [keyword:Versatile 1]"
           ]
         },
@@ -803,7 +803,7 @@
           "attack": null,
           "recruit": "0+",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:covert]: You get +2[icon:recruit]."
           ]
         },
@@ -1006,7 +1006,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:strength]: Defeat a Villain of 3[icon:attack] or less for free."
           ]
         },
@@ -1116,7 +1116,7 @@
           "attack": null,
           "recruit": "0+",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:ranged]: You get +1[icon:recruit] for each other [hc:ranged] Hero you played this turn."
           ]
         },
@@ -1225,7 +1225,7 @@
           "attack": "0+",
           "recruit": "0+",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:strength][hc:strength]: [keyword:Versatile 2]"
           ]
         },
@@ -1662,7 +1662,7 @@
           "recruit": null,
           "abilities": [
             "Reveal the top card of your deck. If it costs 0[icon:vp], KO it. [keyword:reveal-ko]",
-            "[hc:tech]: Draw a card."
+            "[hc:tech]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -1771,7 +1771,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:instinct]: You get +2[icon:attack]."
           ]
         },
@@ -1802,7 +1802,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "You may KO a card from your hand or discard pile."
           ]
         },

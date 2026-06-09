@@ -467,7 +467,7 @@
           "recruit": null,
           "abilities": [
             "You may move a Villain to an adjacent city space. If another Villain is already there, swap them.",
-            "[hc:covert]: Draw a card."
+            "[hc:covert]: Draw a card. [keyword:draw:1]"
           ]
         },
         {

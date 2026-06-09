@@ -27,7 +27,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a Card.",
+            "Draw a Card. [keyword:draw:1]",
             "[hc:tech]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
@@ -460,7 +460,7 @@
           "attack": null,
           "recruit": "1",
           "abilities": [
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -677,7 +677,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -893,7 +893,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: Draw another card."
           ]
         },
@@ -939,7 +939,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw two cards.",
+            "Draw two cards. [keyword:draw:2]",
             "[hc:tech]: Draw two more cards."
           ]
         }
@@ -1328,7 +1328,7 @@
           "attack": null,
           "recruit": "2",
           "abilities": [
-            "[hc:ranged]:  Draw a card."
+            "[hc:ranged]:  Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -1546,7 +1546,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "[hc:instinct]: Draw a card."
+            "[hc:instinct]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -1576,7 +1576,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "[hc:instinct]: Draw two cards."
+            "[hc:instinct]: Draw two cards. [keyword:draw:2]"
           ]
         },
         {
@@ -1591,7 +1591,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw three cards.",
+            "Draw three cards. [keyword:draw:3]",
             "[hc:instinct]: You get +1[icon:attack] for each extra card you've drawn this turn."
           ]
         }

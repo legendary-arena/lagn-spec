@@ -366,7 +366,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw two cards."
+            "Draw two cards. [keyword:draw:2]"
           ]
         },
         {

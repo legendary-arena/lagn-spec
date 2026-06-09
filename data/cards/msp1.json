@@ -42,7 +42,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a Card.",
+            "Draw a Card. [keyword:draw:1]",
             "[hc:tech]: Rescue a Bystander. [keyword:rescue:1]"
           ]
         },
@@ -244,7 +244,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -460,7 +460,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: Draw another card."
           ]
         },
@@ -506,7 +506,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw two cards.",
+            "Draw two cards. [keyword:draw:2]",
             "[hc:tech]: Draw two more cards."
           ]
         }

@@ -252,7 +252,7 @@
           "abilities": [
             "[keyword:When Recruited]: Send this [keyword:Undercover].",
             "When you fight a Villain, you may [keyword:Unleash] this card from [keyword:Undercover].",
-            "[hc:covert]: Draw a card."
+            "[hc:covert]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -524,7 +524,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "[hc:tech]: Draw a card."
+            "[hc:tech]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -554,7 +554,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw two cards."
+            "Draw two cards. [keyword:draw:2]"
           ]
         },
         {

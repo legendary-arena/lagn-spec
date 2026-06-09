@@ -42,7 +42,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "[hc:instinct]: Draw a card."
+            "[hc:instinct]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -150,7 +150,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -401,7 +401,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw three cards.",
+            "Draw three cards. [keyword:draw:3]",
             "[team:foes-of-asgard]: Then put Unending Anguish on the bottom of your deck."
           ]
         }

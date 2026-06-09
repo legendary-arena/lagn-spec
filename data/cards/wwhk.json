@@ -43,7 +43,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "Then, if you drew two cards this turn, [keyword:Transform] this into Like Totally Smart Hulk."
           ],
           "transform": "like-totally-smart-hulk"
@@ -437,7 +437,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Smash 2]"
           ]
         },
@@ -591,7 +591,7 @@
           "attack": null,
           "recruit": "1",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "If there are at least 2 Bystanders in your Victory Pile, [keyword:Transform] this into Hiroim Redeemed."
           ],
           "transform": "hiroim-redeemed"
@@ -712,7 +712,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:tech]: You get +2[icon:attack]."
           ]
         },
@@ -758,7 +758,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw two cards.",
+            "Draw two cards. [keyword:draw:2]",
             "[keyword:Smash 2]"
           ]
         },
@@ -981,7 +981,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:strength]: [keyword:Smash 2]. If you [keyword:Smash] a Wound this way, KO it."
           ]
         },
@@ -1028,7 +1028,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Smash 3]"
           ],
           "transformOf": "forged-by-fire",
@@ -1254,7 +1254,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[hc:ranged]: [keyword:Smash 3]"
           ]
         },
@@ -1438,7 +1438,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "Draw a card."
+            "Draw a card. [keyword:draw:1]"
           ],
           "transformOf": "bursting-with-life",
           "isTransform": true

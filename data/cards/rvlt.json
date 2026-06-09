@@ -136,7 +136,7 @@
           "attack": "1",
           "recruit": "1",
           "abilities": [
-            "[hc:tech]: Draw a card."
+            "[hc:tech]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -592,7 +592,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Hyperspeed 4]",
-            "[hc:ranged]: Draw a card."
+            "[hc:ranged]: Draw a card. [keyword:draw:1]"
           ]
         },
         {

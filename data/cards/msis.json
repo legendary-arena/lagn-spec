@@ -188,7 +188,7 @@
           "attack": "1",
           "recruit": null,
           "abilities": [
-            "[hc:covert]: Draw a card."
+            "[hc:covert]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -502,7 +502,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "If you had already drawn any cards this turn, draw two cards instead."
           ]
         },
@@ -518,7 +518,7 @@
           "attack": "0+",
           "recruit": "1",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Endgame]: This card makes [icon:attack] instead of [icon:recruit]."
           ]
         },

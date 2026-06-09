@@ -156,7 +156,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Piercing Energy]",
             "[keyword:X-Gene] [hc:covert]: You get +1[icon:6]."
           ]
@@ -837,7 +837,7 @@
           "attack": null,
           "recruit": "0+",
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Lightshow]: You get +1[icon:recruit] for each Lightshow card you played this turn."
           ]
         },
@@ -853,7 +853,7 @@
           "attack": "1+",
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Lightshow]: You get +1[icon:attack] for each Lightshow card you played this turn."
           ]
         },
@@ -1117,7 +1117,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw two cards."
+            "Draw two cards. [keyword:draw:2]"
           ]
         },
         {
@@ -1358,7 +1358,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw two cards.",
+            "Draw two cards. [keyword:draw:2]",
             "You may put a Hero that was KO'd this turn into your discard pile."
           ]
         },
@@ -1455,7 +1455,7 @@
           "recruit": null,
           "abilities": [
             "[keyword:Piercing Energy]",
-            "[hc:ranged]: Draw a card."
+            "[hc:ranged]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -1550,7 +1550,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Piercing Energy]",
             "[hc:instinct]: You get +1[icon:6]."
           ]

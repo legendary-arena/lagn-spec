@@ -175,7 +175,7 @@
           "abilities": [
             "[keyword:When Recruited] [hc:instinct]: [keyword:Clone]",
             "",
-            "[hc:instinct]: Draw a card."
+            "[hc:instinct]: Draw a card. [keyword:draw:1]"
           ]
         },
         {
@@ -392,7 +392,7 @@
           "abilities": [
             "[keyword:When Recruited] [hc:strength]: [keyword:Clone]",
             "",
-            "Draw a card.",
+            "Draw a card. [keyword:draw:1]",
             "[keyword:Tactical Formation] 333: You get +2[icon:attack]."
           ]
         },
