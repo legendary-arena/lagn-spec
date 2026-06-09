@@ -285,6 +285,15 @@ mindmap
         ["WP-206 ✅ Analytics MOCK→LIVE flip"]
         ["WP-210 ✅ SweepHealthWidget dashboard surface"]
         ["WP-226 ✅ Global mock-mode banner"]
+        ["WP-229 ✅ Agent Pipeline page (Architect/Builder/Inspector/Evaluator lanes)"]
+
+      Agent Triage Pipeline
+        ["WP-230 📝 Drafted — Pipeline page sweep integration (agent lanes consume nightly sweep findings)"]
+        ["WP-231 📦 Pending — Scheduled agent triage sessions (Inspector reads sweep → files findings)"]
+        ["WP-232 📦 Pending — Agent handoff chain (Inspector → Builder → Architect)"]
+        ["WP-233 📦 Pending — Closed-loop sweep verification (Builder fix → re-sweep → Inspector verify)"]
+        ["WP-234 📦 Pending — Full-corpus sweep expansion (beyond 2×2 smoke)"]
+        ["WP-235 📦 Pending — Pipeline page trend view (multi-run anomaly trends)"]
 
       Admin & Route Wiring
         ["WP-110 ✅ Admin billing visibility"]
@@ -314,6 +323,7 @@ mindmap
         ["📦 Core set keyword & ability coverage — get the core set fully playable first, then add sets incrementally"]
         ["📦 Live PvP matchmaking & reconnect — implement WP-116 architecture + match discovery UX"]
         ["📦 Score submission HTTP wiring — close the play-to-leaderboard loop"]
+        ["📦 Agent triage pipeline — WP-230..235 wire simulation sweep data into agent lanes + scheduled triage sessions"]
 
       Phase 10 — Debugging, Testing & Troubleshooting
         ["Future-WP-A 📝 Placeholder — replay diff tool"]
@@ -380,20 +390,21 @@ mindmap
 | Hero Ability Coverage & Markup Pipeline | 10/10 | — |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
-| Dashboard & Operator Analytics | 11/11 | — |
+| Dashboard & Operator Analytics | 12/12 | — |
+| Agent Triage Pipeline | 0/6 | 1 📝 drafted + 5 📦 pending |
 | Admin & Route Wiring | 4/4 | — |
 | Phase 9 — Profile Surface Follow-ups | 4/4 | — |
 | Architecture & API Governance | 4/4 | — |
 | Complete-Game Testing | 1/1 | — |
 | Cross-App Infrastructure | 1/1 | — |
-| Next Horizons | 0/3 | 3 📦 queued |
+| Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **225/226 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ + 3 📦 + 8 📝 |
+| **Total** | **225/232 WP ✅** (+ 4/4 Foundation Prompts) | 1 📝 + 5 📦 + 1 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 >
-> **Counting convention:** each row counts the distinct `WORK_INDEX.md` work-packets homed in that cluster (combined lines like `WP-005A/B` count their members; the Phase-6 `WP-048..051` line is a cross-reference, counted once under Scoring & PAR). Foundation = 4 Foundation Prompts (not WPs). `Next Horizons` (3 📦) and `Phase 10` (8 📝) are forward-looking nav placeholders, not WPs. WP rows sum to **225 done + 1 ⏸ blocked (WP-042.1) = 226**, matching `WORK_INDEX.md`.
+> **Counting convention:** each row counts the distinct `WORK_INDEX.md` work-packets homed in that cluster (combined lines like `WP-005A/B` count their members; the Phase-6 `WP-048..051` line is a cross-reference, counted once under Scoring & PAR). Foundation = 4 Foundation Prompts (not WPs). `Next Horizons` (4 📦) and `Phase 10` (8 📝) are forward-looking nav placeholders, not WPs. WP rows sum to **225 done + 1 📝 drafted (WP-230) + 5 📦 pending (WP-231..235) + 1 ⏸ blocked (WP-042.1) = 232**, matching `WORK_INDEX.md`.
 
 ---
 
@@ -416,11 +427,16 @@ mindmap
 
 ## Next Unblocked (ordered)
 
-1. **Finish core-set ability coverage** — the hero reveal/rescue/draw executors (WP-215..225) and villain fight/ambush/escape/KO effects (WP-185..214) have largely landed; what remains is the deferred predicate machinery for filtered/targeted villain effects (per WP-188 / WP-202) and reveal player-choice breadth beyond WP-220 / WP-222, so the `core` set is fully playable on play.legendary-arena.com. Additional sets follow incrementally.
-2. **Live PvP matchmaking & reconnect** — WP-116 defined the disconnect/reconnect architecture; no implementation WP exists yet. Match discovery UX and reconnect handling are prerequisites for real multiplayer sessions.
-3. **Score submission HTTP wiring** — the PAR/competition/leaderboard pipeline is fully built, and WP-107 shipped `requireUnsuspendedAccount` as the locked caller-contract, but the score-submission request-handler route still doesn't exist at HEAD. Wiring it closes the loop from "play a game" to "see yourself on the leaderboard."
-4. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
-5. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+1. **WP-230 — Pipeline page sweep integration** — all deps met (WP-209 ✅, WP-210 ✅, WP-229 ✅). Dashboard-only. Wires nightly sweep findings into the Pipeline page's agent lanes so the agents show real bugs instead of generic KPI platitudes. First step in the agent triage pipeline (WP-230 → 231 → 232 → 233).
+2. **Finish core-set ability coverage** — the hero reveal/rescue/draw executors (WP-215..225) and villain fight/ambush/escape/KO effects (WP-185..214) have largely landed; what remains is the deferred predicate machinery for filtered/targeted villain effects (per WP-188 / WP-202) and reveal player-choice breadth beyond WP-220 / WP-222, so the `core` set is fully playable on play.legendary-arena.com. Additional sets follow incrementally.
+3. **Live PvP matchmaking & reconnect** — WP-116 defined the disconnect/reconnect architecture; no implementation WP exists yet. Match discovery UX and reconnect handling are prerequisites for real multiplayer sessions.
+4. **Score submission HTTP wiring** — the PAR/competition/leaderboard pipeline is fully built, and WP-107 shipped `requireUnsuspendedAccount` as the locked caller-contract, but the score-submission request-handler route still doesn't exist at HEAD. Wiring it closes the loop from "play a game" to "see yourself on the leaderboard."
+5. **Agent triage pipeline (WP-231..235)** — scheduled Claude Code sessions that triage sweep findings, hand bugs from Inspector → Builder → Architect, and close the loop with re-sweep verification. WP-231..233 are sequential (triage → handoff → verify); WP-234 (full-corpus expansion) is parallel-safe; WP-235 (trend view) depends only on WP-230.
+6. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
+7. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
+
+**Recently completed (2026-06-09):**
+- ✅ WP-229 — Dashboard Agent Pipeline page (Architect/Builder/Inspector/Evaluator lanes)
 
 **Recently completed (2026-06-08):**
 - ✅ WP-228 — Arena-client diagnostic capture + export (shareable freeze log)
@@ -438,7 +454,14 @@ mindmap
 - ⏸ WP-042.1 — Deferred PostgreSQL seeding checklists; unblocks when Foundation Prompt 03 (seed runner + migrations) is revived.
 
 **Drafted (ready for execution):**
-- (none)
+- 📝 WP-230 — Pipeline page sweep integration (agent lanes consume nightly sweep findings). All deps met.
+
+**Pending (WP files not yet authored):**
+- 📦 WP-231 — Scheduled agent triage sessions (Inspector reads sweep → files findings). Depends on: WP-230.
+- 📦 WP-232 — Agent handoff chain (Inspector → Builder → Architect). Depends on: WP-230, WP-231.
+- 📦 WP-233 — Closed-loop sweep verification (Builder fix → re-sweep → Inspector verify). Depends on: WP-231, WP-232.
+- 📦 WP-234 — Full-corpus sweep expansion (beyond 2×2 smoke). Depends on: WP-209 ✅. Parallel-safe with WP-231.
+- 📦 WP-235 — Pipeline page trend view (multi-run anomaly trends). Depends on: WP-230.
 
 ---
 
@@ -463,7 +486,9 @@ mindmap
 
 ---
 
-*Last updated: 2026-06-09 (**FULL reconciliation to `origin/main` HEAD `2e99369`**: folded WP-181..228 plus the pre-existing WP-015A gap into the mindmap — 49 work-packets across **4 new clusters** (Villain & Henchman Effects, Hero Ability Coverage & Markup Pipeline, Notable Events & Overlays, Simulation Sweep & Analytics Pipeline) plus extensions to Phase 4/5, Content Layer, Client Integration, Auth Stack, Registry Viewer Enhancements, Engine & Test-Harness Cleanup, and a renamed/expanded **Dashboard & Operator Analytics**. Rebuilt the Progress Summary to one row per cluster — **225/226 WP ✅, 1 ⏸** (WP-042.1). Re-derived Project Baselines from a live test-run at HEAD (engine 1177, registry 115, registry-viewer 39, server 477/0/66, arena-client 517, dashboard 191) and bumped the DECISIONS range to D-22801 + EC range to EC-260. This supersedes the 2026-06-08 staleness flag below — the mindmap is now current to HEAD.)*
+*Last updated: 2026-06-09 (session add: WP-229 ✅ folded into Dashboard & Operator Analytics; new **Agent Triage Pipeline** cluster added with WP-230 📝 drafted + WP-231..235 📦 pending — the simulation-sweep-to-agent-lane pipeline. WP-230 wires existing `useSweepHealth` into the Pipeline page; WP-231..233 are sequential triage → handoff → verify; WP-234 full-corpus expansion is parallel-safe; WP-235 trend view depends on WP-230. Progress Summary updated: **225/232 WP ✅**, 1 📝, 5 📦, 1 ⏸. Next Unblocked reordered with WP-230 at #1.)*
+
+*Prior: 2026-06-09 (**FULL reconciliation to `origin/main` HEAD `2e99369`**: folded WP-181..228 plus the pre-existing WP-015A gap into the mindmap — 49 work-packets across **4 new clusters** (Villain & Henchman Effects, Hero Ability Coverage & Markup Pipeline, Notable Events & Overlays, Simulation Sweep & Analytics Pipeline) plus extensions to Phase 4/5, Content Layer, Client Integration, Auth Stack, Registry Viewer Enhancements, Engine & Test-Harness Cleanup, and a renamed/expanded **Dashboard & Operator Analytics**. Rebuilt the Progress Summary to one row per cluster — **225/226 WP ✅, 1 ⏸** (WP-042.1). Re-derived Project Baselines from a live test-run at HEAD (engine 1177, registry 115, registry-viewer 39, server 477/0/66, arena-client 517, dashboard 191) and bumped the DECISIONS range to D-22801 + EC range to EC-260. This supersedes the 2026-06-08 staleness flag below — the mindmap is now current to HEAD.)*
 
 *Prior: 2026-06-08 (session add: WP-227 ✅ arena-client vue-tsc green — WP-214/222 UIState/UICityCard fixture + prop backfill, the 3rd recurrence of the engine-field-add → client-typecheck-drift pattern after WP-166/207; WP-225 ✅ hero draw markup noted under Recently Completed. **Staleness flag:** this was a targeted single-session add, NOT a full catchup. The mindmap is still behind `origin/main` — the last full reconciliation was WP-180 (2026-05-26); WP-181..226 are not yet folded into the mindmap, and the Progress Summary counts (181/195) + Project Baselines remain frozen at the WP-180 state. A full catchup is a separate pass.)*
 
