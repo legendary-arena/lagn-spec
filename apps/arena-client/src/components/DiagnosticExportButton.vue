@@ -133,22 +133,25 @@ export default defineComponent({
 <style scoped>
 .diagnostic-export-button {
   position: fixed;
-  bottom: 4px;
+  bottom: 8px;
   left: 8px;
-  font-size: 11px;
+  font-size: 12px;
   font-family: monospace;
-  padding: 2px 6px;
-  opacity: 0.5;
-  color: #aaa;
-  background: transparent;
-  border: 1px solid #555;
-  border-radius: 3px;
+  padding: 5px 10px;
+  color: #f1f5f9;
+  background: #334155;
+  border: 1px solid #64748b;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
   cursor: pointer;
   user-select: none;
-  z-index: 50;
+  /* why: a high z-index keeps the export button reachable above any game
+     overlay or modal — the freeze it diagnoses may itself be a stuck overlay. */
+  z-index: 9999;
 }
 
 .diagnostic-export-button:hover {
-  opacity: 0.9;
+  background: #475569;
+  border-color: #94a3b8;
 }
 </style>
