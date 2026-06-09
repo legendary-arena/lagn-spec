@@ -44,6 +44,7 @@ mindmap
       Phase 4 — Core Gameplay Loop
         ["WP-014A/B ✅ Villain deck and reveal"]
         ["WP-015 ✅ City and HQ zones"]
+        ["WP-015A ✅ Reveal safety fixes (stage gate + no-card-drop)"]
         ["WP-016 ✅ Fight and recruit"]
         ["WP-017 ✅ KO, wounds, bystanders"]
         ["WP-018 ✅ Attack / recruit economy"]
@@ -57,6 +58,7 @@ mindmap
         ["WP-024 ✅ Scheme / mastermind execution"]
         ["WP-025 ✅ Board keywords"]
         ["WP-026 ✅ Scheme setup"]
+        ["WP-182 ✅ Scheme twist resolver framework (engine)"]
 
       Phase 6 — Verification & Production
         ["✅ Phase-6 closed (tag phase-6-complete)"]
@@ -86,6 +88,7 @@ mindmap
       Content Layer
         ["WP-055 ✅ Theme data model"]
         ["WP-060 ✅ Glossary R2 migration"]
+        ["WP-221 ✅ Theme supplemental setup fields + tips display"]
 
       Pre-Planning System
         ["WP-056 ✅ State model and lifecycle"]
@@ -143,6 +146,7 @@ mindmap
         ["WP-171 ✅ Pile browse modal (click-to-view card piles)"]
         ["WP-178 ✅ Card image rendering on play surface (CardTile component)"]
         ["WP-179 ✅ Card traits + superpower condition evaluation"]
+        ["WP-228 ✅ Arena-client diagnostic capture + export (shareable freeze log)"]
 
       Auth Stack & Profile Surface
         ["WP-099 ✅ Auth provider selection (Hanko)"]
@@ -158,6 +162,7 @@ mindmap
         ["WP-161 ✅ Arena client API base URL surfacing (VITE_API_BASE_URL)"]
         ["WP-174 ✅ First-sign-in auto-provisioning (read-or-create account resolver)"]
         ["WP-175 ✅ Auth-aware navigation surface"]
+        ["WP-192 ✅ Hanko JWKS refresh-interval parse guard"]
 
       Engine + Server Wiring & Leaderboard HTTP
         ["WP-113 ✅ Engine-server registry wiring"]
@@ -174,6 +179,10 @@ mindmap
         ["WP-096 ✅ Grid data view mode"]
         ["WP-127 ✅ Grid tile team and ability text"]
         ["WP-170 ✅ Card count display"]
+        ["WP-183 ✅ Scheme twist pattern taxonomy"]
+        ["WP-184 ✅ Card mechanical pattern taxonomies"]
+        ["WP-208 ✅ devLog category union extension (cardPatterns + schemeTwist)"]
+        ["WP-213 ✅ devLog category single-source LOG_CATEGORIES array"]
 
       Phase 8 — Interactive Board Layout
         ["WP-128 ✅ UIState board projections"]
@@ -195,6 +204,7 @@ mindmap
         ["WP-135 ✅ HQ population and hero deck reservoir"]
         ["WP-136 ✅ JSDOM opaque-origin storage fix"]
         ["WP-137 ✅ Hero card-instance distinctness + data-driven cardCounts"]
+        ["WP-191 ✅ Card ext_id grammar reconciliation (zone instance IDs)"]
 
       Physical Card Pipeline
         ["WP-138 ✅ Physical card abstraction layer"]
@@ -225,9 +235,56 @@ mindmap
         ["WP-172 ✅ Villain-deck display data coverage"]
         ["WP-173 ✅ Well-known ext_id display data"]
 
-      Dashboard
+      Villain & Henchman Effects
+        ["WP-185 ✅ Fight + ambush effects (engine)"]
+        ["WP-186 ✅ Escape + overrun effects (engine)"]
+        ["WP-187 ✅ Effect-marker enrichment (card data)"]
+        ["WP-188 ✅ Escape/overrun effect-marker enrichment (card data)"]
+        ["WP-189 ✅ koHeroEachPlayer vocabulary expansion (engine)"]
+        ["WP-190 ✅ Each-player-KO effect-marker curation (card data)"]
+        ["WP-202 ✅ Magnitude-N each-player-KO (engine + data)"]
+        ["WP-212 ✅ Once-per-turn villain reveal guard (engine)"]
+        ["WP-214 ✅ Villain hero capture + dynamic attack resolution (engine + data)"]
+
+      Hero Ability Coverage & Markup Pipeline
+        ["WP-215 ✅ Hero rescue + reveal-draw effects (engine + data)"]
+        ["WP-216 ✅ Markup corpus sweep: rescue + reveal-draw"]
+        ["WP-217 ✅ Reveal-KO-if-zero + reveal-draw-at-least executors (engine + data)"]
+        ["WP-218 ✅ Reveal compound executor + VP-cost corpus"]
+        ["WP-219 ✅ Reveal cost-attack + odd-draw executors (engine + data)"]
+        ["WP-220 ✅ Reveal attack-choose executor (player-choice infrastructure)"]
+        ["WP-222 ✅ Pending hero choice UX (engine projection + client prompt)"]
+        ["WP-223 ✅ Reveal KO-attack compound executor (engine + data)"]
+        ["WP-224 ✅ Hero ability markup corpus sweep (all 40 sets)"]
+        ["WP-225 ✅ Hero draw markup corpus sweep"]
+
+      Notable Events & Overlays
+        ["WP-200 ✅ Notable game event log (engine)"]
+        ["WP-201 ✅ Notable event overlays (arena client)"]
+        ["WP-207a ✅ notableEvents fixture backfill (client)"]
+        ["WP-207b ✅ notableEvents test backfill (client)"]
+
+      Simulation Sweep & Analytics Pipeline
+        ["WP-181 ✅ Bot decision logging"]
+        ["WP-193 ✅ Policy-mode fixture recording (engine + scripts)"]
+        ["WP-194 ✅ Setup-matrix sweep runner (scheme × mastermind)"]
+        ["WP-195 ✅ Sweep manifest anomaly oracle (engine + scripts)"]
+        ["WP-205 ✅ analytics_events server (capture + query endpoints)"]
+        ["WP-209 ✅ sweep_runs server (storage + submission + query + nightly)"]
+        ["WP-211 ✅ Cross-app sweep type drift test (dashboard ↔ server)"]
+
+      Dashboard & Operator Analytics
         ["WP-157 ✅ Dashboard scaffold (PrimeVue + Pinia + ECharts)"]
         ["WP-162 ✅ Dashboard daily execution panel + UI polish"]
+        ["WP-196 ✅ Net revenue + paid-action errors widgets"]
+        ["WP-197 ✅ Live deploy (CF Pages + Access gate)"]
+        ["WP-198 ✅ Ops-machine patterns (cadence horizons + status chip + vision card)"]
+        ["WP-199 ✅ Daily-driver: STATUS feed + governance KPIs"]
+        ["WP-203 ✅ Acquisition + activation + retention surfaces"]
+        ["WP-204 ✅ Public-surface health + error monitor + cost watchdog"]
+        ["WP-206 ✅ Analytics MOCK→LIVE flip"]
+        ["WP-210 ✅ SweepHealthWidget dashboard surface"]
+        ["WP-226 ✅ Global mock-mode banner"]
 
       Admin & Route Wiring
         ["WP-110 ✅ Admin billing visibility"]
@@ -279,7 +336,7 @@ mindmap
         ["cards.barefootbetters.com — registry viewer (public)"]
         [".claude/CLAUDE.md — root coordination"]
         [".claude/rules/ — 7 rule files"]
-        ["EC_INDEX.md — execution checklists EC-001..EC-164"]
+        ["EC_INDEX.md — execution checklists (range in Project Baselines)"]
         ["DECISIONS.md — D-NNNN ledger (range in Project Baselines)"]
         ["WORK_INDEX.md — authoritative per-WP audit log"]
 ```
@@ -290,32 +347,41 @@ mindmap
 
 | Cluster | Done | Open |
 |---|---|---|
-| Foundation | 4/4 | — |
-| Phase 0–5 | 47/47 | — |
-| Phase 6 | 15/15 | — |
+| Foundation (Foundation Prompts) | 4/4 | — |
+| Phase 0 — Coordination | 9/9 | — |
+| Phase 1 — Game Setup | 4/4 | — |
+| Phase 2 — Core Turn Engine | 4/4 | — |
+| Phase 3 — MVP Multiplayer | 6/6 | — |
+| Phase 4 — Core Gameplay Loop | 9/9 | — |
+| Phase 5 — Card Mechanics | 7/7 | — |
+| Phase 6 — Verification & Production | 14/14 | — |
 | UI Implementation Chain | 5/5 | — |
-| Content Layer | 2/2 | — |
+| Content Layer | 3/3 | — |
 | Pre-Planning System | 5/5 | — |
 | Post-Phase-6 Hygiene | 5/5 | — |
-| Phase 7 | 6/6 | — |
+| Phase 7 — Beta, Launch & PAR | 6/6 | — |
 | Scoring & PAR Pipeline | 4/4 | — |
 | Beta-Launch Pillar | 5/5 | — |
 | Engine Hardening | 2/2 | — |
-| Client Integration Cluster | 12/12 | — |
-| Auth Stack & Profile Surface | 13/13 | — |
+| Client Integration Cluster | 17/17 | — |
+| Auth Stack & Profile Surface | 14/14 | — |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
-| Registry Viewer Enhancements | 9/9 | — |
+| Registry Viewer Enhancements | 13/13 | — |
 | Phase 8 — Interactive Board Layout | 3/3 | — |
 | G-State Extensions | 4/4 | — |
 | Monetization Stack | 3/3 | — |
-| Engine & Test-Harness Cleanup | 3/3 | — |
+| Engine & Test-Harness Cleanup | 4/4 | — |
 | Physical Card Pipeline | 5/5 | — |
 | Domain Cutover & Infrastructure | 5/5 | — |
 | Public Leaderboard (Marketing) | 2/2 | — |
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
-| Dashboard | 2/2 | — |
-| Admin & Route Wiring | 3/3 | — |
+| Villain & Henchman Effects | 9/9 | — |
+| Hero Ability Coverage & Markup Pipeline | 10/10 | — |
+| Notable Events & Overlays | 4/4 | — |
+| Simulation Sweep & Analytics Pipeline | 7/7 | — |
+| Dashboard & Operator Analytics | 11/11 | — |
+| Admin & Route Wiring | 4/4 | — |
 | Phase 9 — Profile Surface Follow-ups | 4/4 | — |
 | Architecture & API Governance | 4/4 | — |
 | Complete-Game Testing | 1/1 | — |
@@ -323,9 +389,11 @@ mindmap
 | Next Horizons | 0/3 | 3 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **181/195 ✅** | 3 📦 + 8 📝 placeholders + 1 ⏸ |
+| **Total** | **225/226 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ + 3 📦 + 8 📝 |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
+>
+> **Counting convention:** each row counts the distinct `WORK_INDEX.md` work-packets homed in that cluster (combined lines like `WP-005A/B` count their members; the Phase-6 `WP-048..051` line is a cross-reference, counted once under Scoring & PAR). Foundation = 4 Foundation Prompts (not WPs). `Next Horizons` (3 📦) and `Phase 10` (8 📝) are forward-looking nav placeholders, not WPs. WP rows sum to **225 done + 1 ⏸ blocked (WP-042.1) = 226**, matching `WORK_INDEX.md`.
 
 ---
 
@@ -333,41 +401,41 @@ mindmap
 
 - **Phase 3 Gate:** Closed (D-1320)
 - **Phase 6 Gate:** Closed 2026-04-19 — tag `phase-6-complete` at `c376467`
-- **Engine test baseline:** `813 / 0 / 0` (post-WP-179; 174 suites)
-- **Registry test baseline:** `112 / 0 / 0` (post-WP-169; 12 suites)
-- **Registry-viewer test baseline:** `39 / 0 / 0` (post-WP-170)
-- **Server test baseline:** `466 / 0 / 66` (post-WP-180; pre-existing `join-match.test.ts` 1-fail now resolved; 400 pass + 66 skipped)
-- **arena-client test baseline:** `444 / 0 / 0` (post-WP-180; 60 suites)
-- **Dashboard test baseline:** `9 / 0 / 0` (post-WP-162)
-- **DECISIONS.md range:** `D-4801..D-18002` (extends through WP-180)
-- **EC range:** `EC-001..EC-204` (extends through WP-180)
+- **Engine test baseline:** `1177 / 0 / 0` (post-WP-223; 260 suites)
+- **Registry test baseline:** `115 / 0 / 0` (12 suites)
+- **Registry-viewer test baseline:** `39 / 0 / 0` (10 suites; unchanged since WP-170)
+- **Server test baseline:** `477 / 0 / 66` (post-WP-209; 543 total; 83 suites)
+- **arena-client test baseline:** `517 / 0 / 0` (post-WP-228; 82 suites)
+- **Dashboard test baseline:** `191 / 0 / 0` (post-WP-226)
+- **DECISIONS.md range:** `D-4801..D-22801` (extends through WP-228)
+- **EC range:** `EC-001..EC-260` (extends through WP-228)
+
+> All six `pass / fail / skipped` figures above are a live test-run at HEAD (`2e99369`) on 2026-06-09 (`pnpm --filter <pkg> test`), not STATUS-derived. `post-WP-NNN` marks the latest work-packet known to touch that package's suite.
 
 ---
 
 ## Next Unblocked (ordered)
 
-1. **Core set keyword & ability coverage** — get the `core` set fully playable on play.legendary-arena.com first: all hero keywords, villain abilities, scheme mechanics, and mastermind tactics firing correctly for the base game. Additional sets are added incrementally after core is solid.
+1. **Finish core-set ability coverage** — the hero reveal/rescue/draw executors (WP-215..225) and villain fight/ambush/escape/KO effects (WP-185..214) have largely landed; what remains is the deferred predicate machinery for filtered/targeted villain effects (per WP-188 / WP-202) and reveal player-choice breadth beyond WP-220 / WP-222, so the `core` set is fully playable on play.legendary-arena.com. Additional sets follow incrementally.
 2. **Live PvP matchmaking & reconnect** — WP-116 defined the disconnect/reconnect architecture; no implementation WP exists yet. Match discovery UX and reconnect handling are prerequisites for real multiplayer sessions.
-3. **Score submission HTTP wiring** — the PAR/competition/leaderboard pipeline is fully built, but the score-submission request-handler route doesn't exist at HEAD. Wiring it closes the loop from "play a game" to "see yourself on the leaderboard."
+3. **Score submission HTTP wiring** — the PAR/competition/leaderboard pipeline is fully built, and WP-107 shipped `requireUnsuspendedAccount` as the locked caller-contract, but the score-submission request-handler route still doesn't exist at HEAD. Wiring it closes the loop from "play a game" to "see yourself on the leaderboard."
 4. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
 5. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
 
 **Recently completed (2026-06-08):**
-- ✅ WP-227 — arena-client vue-tsc green (WP-214/222 UIState/UICityCard fixture + prop backfill; 3rd recurrence after WP-166/207)
-- ✅ WP-225 — hero draw markup corpus sweep (`[keyword:draw:N]`; 98 lines / 30 sets)
+- ✅ WP-228 — Arena-client diagnostic capture + export (shareable freeze log)
+- ✅ WP-227 — Arena-client vue-tsc green (UIState/UICityCard fixture + prop backfill; 3rd typecheck-drift recurrence after WP-166 / WP-207)
+- ✅ WP-226 — Dashboard global mock-mode banner
+- ✅ WP-225 — Hero draw markup corpus sweep
+- ✅ WP-224 — Hero ability markup corpus sweep (all 40 sets)
 
-**Recently completed (2026-05-25):**
-- ✅ WP-180 — Build-time version stamping (cross-app)
-- ✅ WP-179 — Card traits + superpower condition evaluation
-- ✅ WP-178 — Card image rendering on play surface (CardTile)
-- ✅ WP-177 — Autoplay rewind requester audience
-- ✅ WP-175 — Arena client auth-aware navigation
-- ✅ WP-176 — Admin billing auth cutover (shared-secret → session)
-- ✅ WP-174 — First-sign-in auto-provisioning
-- ✅ WP-107 — Profile integrity / anti-cheat surface
+**Recently completed (2026-06-07):**
+- ✅ WP-223 — Hero reveal KO-attack compound executor
+- ✅ WP-222 — Pending hero choice UX (engine projection + client prompt)
+- ✅ WP-221 — Theme supplemental setup fields + tips display
 
 **Blocked (cannot start):**
-- (none)
+- ⏸ WP-042.1 — Deferred PostgreSQL seeding checklists; unblocks when Foundation Prompt 03 (seed runner + migrations) is revived.
 
 **Drafted (ready for execution):**
 - (none)
@@ -390,9 +458,13 @@ mindmap
 
 - **WP-042 vs WP-042.1** — WP-042 is intentionally scope-reduced per D-4201; the four PostgreSQL seeding checklist sections are partitioned to a sibling sequel WP-042.1 (Governance Drafts). WP-042 is **complete**; WP-042.1 is **blocked** on FP-03 revival. Not a partial undo.
 - **WP-128/129/130 vs WP-131 EC slot** — WP-128/129/130 reserved EC-131/132/133 by chronological-tail ordering; WP-131 (next free WP slot) retargets to EC-134 per the locked WP-keyed-EC retarget precedent.
+- **WP-207a vs WP-207b** — both backfill the arena client for the new `UIState.notableEvents` projection (WP-200/201): 207a = JSON fixtures, 207b = test backfill. Sequential halves of one client follow-up, not a renumber.
+- **arena-client typecheck-drift recurrences (WP-166 → WP-207a/b → WP-227)** — three distinct WPs that each restored arena-client `vue-tsc` green after an engine field-add; each is a separate recurrence of the same pattern, not a re-do of the prior. (WP-207a/b is the 2nd; WP-227 the 3rd.)
 
 ---
 
-*Last updated: 2026-06-08 (session add: WP-227 ✅ arena-client vue-tsc green — WP-214/222 UIState/UICityCard fixture + prop backfill, the 3rd recurrence of the engine-field-add → client-typecheck-drift pattern after WP-166/207; WP-225 ✅ hero draw markup noted under Recently Completed. **Staleness flag:** this was a targeted single-session add, NOT a full catchup. The mindmap is still behind `origin/main` — the last full reconciliation was WP-180 (2026-05-26); WP-181..226 are not yet folded into the mindmap, and the Progress Summary counts (181/195) + Project Baselines remain frozen at the WP-180 state. A full catchup is a separate pass.)*
+*Last updated: 2026-06-09 (**FULL reconciliation to `origin/main` HEAD `2e99369`**: folded WP-181..228 plus the pre-existing WP-015A gap into the mindmap — 49 work-packets across **4 new clusters** (Villain & Henchman Effects, Hero Ability Coverage & Markup Pipeline, Notable Events & Overlays, Simulation Sweep & Analytics Pipeline) plus extensions to Phase 4/5, Content Layer, Client Integration, Auth Stack, Registry Viewer Enhancements, Engine & Test-Harness Cleanup, and a renamed/expanded **Dashboard & Operator Analytics**. Rebuilt the Progress Summary to one row per cluster — **225/226 WP ✅, 1 ⏸** (WP-042.1). Re-derived Project Baselines from a live test-run at HEAD (engine 1177, registry 115, registry-viewer 39, server 477/0/66, arena-client 517, dashboard 191) and bumped the DECISIONS range to D-22801 + EC range to EC-260. This supersedes the 2026-06-08 staleness flag below — the mindmap is now current to HEAD.)*
+
+*Prior: 2026-06-08 (session add: WP-227 ✅ arena-client vue-tsc green — WP-214/222 UIState/UICityCard fixture + prop backfill, the 3rd recurrence of the engine-field-add → client-typecheck-drift pattern after WP-166/207; WP-225 ✅ hero draw markup noted under Recently Completed. **Staleness flag:** this was a targeted single-session add, NOT a full catchup. The mindmap is still behind `origin/main` — the last full reconciliation was WP-180 (2026-05-26); WP-181..226 are not yet folded into the mindmap, and the Progress Summary counts (181/195) + Project Baselines remain frozen at the WP-180 state. A full catchup is a separate pass.)*
 
 *Prior: 2026-05-26 (roadmap catchup: added 25 missing WPs to mindmap — WP-086/096/116-119/153-158/162/164/167-173/175/178-180; added Next Horizons section with 3 forward-looking strategic directions (card keyword coverage, live PvP reconnect, score submission wiring); trimmed Recently Completed to one-liners per checklist rule; total 181/195 ✅.)*
