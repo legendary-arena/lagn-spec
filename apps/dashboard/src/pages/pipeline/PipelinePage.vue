@@ -59,6 +59,25 @@ const HORIZON_LABELS: Record<string, string> = {
 function horizonLabel(horizon: string): string {
   return HORIZON_LABELS[horizon] ?? horizon;
 }
+
+const formattedGeneratedAt = computed<string>(() => {
+  const raw = snapshot.generatedAt;
+  if (!raw) {
+    return 'Unknown';
+  }
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) {
+    return raw;
+  }
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+});
 </script>
 
 <template>
@@ -85,6 +104,16 @@ function horizonLabel(horizon: string): string {
         updated lanes automatically.
       </p>
     </section>
+
+    <div class="pipeline-refresh-bar">
+      <span class="refresh-timestamp">
+        Last refreshed: <strong>{{ formattedGeneratedAt }}</strong>
+      </span>
+      <span class="refresh-steps">
+        To update: <code>pnpm dash:build</code> → <code>pnpm dash:preview</code>
+        (or deploy to Cloudflare Pages)
+      </span>
+    </div>
 
     <div v-if="state === 'loading'" class="pipeline-loading" aria-hidden="true">
       <div class="skeleton-row"></div>
@@ -193,6 +222,34 @@ function horizonLabel(horizon: string): string {
   background: var(--p-content-border-color);
   padding: 0.1rem 0.3rem;
   border-radius: 3px;
+  color: var(--p-text-color);
+}
+
+.pipeline-refresh-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--p-surface-card, var(--p-content-background));
+  border: 1px solid var(--p-surface-border, var(--p-content-border-color));
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+}
+
+.pipeline-refresh-bar code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem;
+  background: var(--p-content-border-color);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  color: var(--p-text-color);
+}
+
+.refresh-timestamp strong {
   color: var(--p-text-color);
 }
 
