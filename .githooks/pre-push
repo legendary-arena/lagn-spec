@@ -1,0 +1,81 @@
+#!/bin/sh
+# pre-push hook — build + typecheck gate for direct pushes to main
+#
+# why: apps/dashboard, apps/arena-client, and apps/registry-viewer are
+# type-checked ONLY by their explicit `typecheck` (vue-tsc) script — `vite
+# build` (esbuild) and `node:test` (tsx) do not type-check. CI runs these
+# gates on PRs, but direct pushes to an unprotected `main` (the CLI-in-main
+# workflow) bypass PR CI, so vue-tsc errors have repeatedly landed on main and
+# sat until a later PR tripped (arena-client WP-166/207/227, dashboard WP-229).
+# This hook runs the CI-equivalent build + typecheck gate locally before a push
+# that updates main, closing that bypass. Engine/registry/server are covered by
+# `pnpm -r build` (their build IS the typecheck). Emergency escape hatch:
+# `git push --no-verify`.
+#
+# Scope: fires ONLY when a pushed ref targets refs/heads/main. Branch pushes
+# (which go through PR CI) skip the gate so feature-branch work is not taxed.
+
+# why: build the escape sequences via printf so the variables hold real ESC
+# bytes — `echo` does not interpret backslash escapes portably across sh
+# implementations, and this hook prints on every successful main push (not just
+# on failure), so literal `\033[...]` garbage would show otherwise.
+RED=$(printf '\033[0;31m')
+GREEN=$(printf '\033[0;32m')
+YELLOW=$(printf '\033[0;33m')
+NC=$(printf '\033[0m')
+
+# why: an all-zero local sha marks a branch deletion — there is nothing to
+# type-check, so such refs never set the gate flag.
+ZERO_SHA='0000000000000000000000000000000000000000'
+
+pushing_main=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$local_sha" = "$ZERO_SHA" ]; then
+    continue
+  fi
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    pushing_main=1
+  fi
+done
+
+if [ "$pushing_main" -eq 0 ]; then
+  exit 0
+fi
+
+# why: hooks already run from the worktree top, but anchor explicitly so the
+# pnpm workspace commands resolve regardless of how the push was invoked.
+TOPLEVEL=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$TOPLEVEL" ]; then
+  cd "$TOPLEVEL" || exit 1
+fi
+
+echo "${YELLOW}pre-push:${NC} push updates main — running build + typecheck gate (CI-equivalent)."
+echo "          emergency bypass: git push --no-verify"
+
+run_gate() {
+  echo ""
+  echo "→ pnpm -r build"
+  pnpm -r build || return 1
+  echo ""
+  echo "→ pnpm --filter registry-viewer typecheck"
+  pnpm --filter registry-viewer typecheck || return 1
+  echo ""
+  echo "→ pnpm --filter @legendary-arena/arena-client typecheck"
+  pnpm --filter @legendary-arena/arena-client typecheck || return 1
+  echo ""
+  echo "→ pnpm --filter @legendary-arena/dashboard typecheck"
+  pnpm --filter @legendary-arena/dashboard typecheck || return 1
+  return 0
+}
+
+if run_gate; then
+  echo ""
+  echo "${GREEN}pre-push: build + typecheck gate passed.${NC}"
+  exit 0
+fi
+
+echo ""
+echo "${RED}PUSH BLOCKED:${NC} build or typecheck failed — fix before pushing to main."
+echo "Re-run the failing step shown above, or bypass with: git push --no-verify"
+echo ""
+exit 1
