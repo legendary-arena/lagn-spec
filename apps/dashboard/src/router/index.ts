@@ -63,6 +63,12 @@ export const router = createRouter({
           component: () => import('../pages/debug/DebugPage.vue'),
           meta: { roles: ['admin', 'operator'] },
         },
+        {
+          path: 'pipeline',
+          name: 'pipeline',
+          component: () => import('../pages/pipeline/PipelinePage.vue'),
+          meta: { roles: ['admin', 'operator'] },
+        },
       ],
     },
   ],

@@ -29,6 +29,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { to: '/gameplay', label: 'Gameplay', abbreviation: 'Ga' },
   { to: '/system', label: 'System Health', abbreviation: 'Sy' },
   { to: '/debug', label: 'Debug', abbreviation: 'De' },
+  { to: '/pipeline', label: 'Pipeline', abbreviation: 'Pi' },
 ];
 
 const EXTERNAL_LINKS: readonly ExternalLink[] = [
