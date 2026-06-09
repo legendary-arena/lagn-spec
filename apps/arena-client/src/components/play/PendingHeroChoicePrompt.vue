@@ -24,7 +24,7 @@ export default defineComponent({
   name: 'PendingHeroChoicePrompt',
   props: {
     pendingHeroChoice: {
-      type: Object as PropType<UIPendingHeroChoice>,
+      type: Object as PropType<UIPendingHeroChoice | undefined>,
       required: false,
       default: undefined,
     },

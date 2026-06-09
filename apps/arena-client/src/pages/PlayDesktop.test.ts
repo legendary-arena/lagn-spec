@@ -101,6 +101,7 @@ function snapshot(): UIState {
     },
     log: [],
     notableEvents: [],
+    villainAttachedHeroes: {},
     progress: { bystandersRescued: 1, escapedVillains: 3 },
     decks: { villainDeckCount: 14, heroDeckCount: 42 },
     piles: {

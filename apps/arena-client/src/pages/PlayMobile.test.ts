@@ -72,6 +72,7 @@ function snapshot(): UIState {
     },
     koPile: { count: 0, topCard: null, cards: [] },
     notableEvents: [],
+    villainAttachedHeroes: {},
   };
 }
 

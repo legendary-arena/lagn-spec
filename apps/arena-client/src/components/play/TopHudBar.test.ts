@@ -57,6 +57,7 @@ function fixture(overrides: Partial<UIState['game']> = {}): UIState {
     },
     koPile: { count: 0, topCard: null, cards: [] },
     notableEvents: [],
+    villainAttachedHeroes: {},
   };
 }
 

@@ -36,6 +36,8 @@ function villain(extId: string, cost: number): UICityCard {
       imageUrl: `https://images.barefootbetters.com/${extId}.png`,
       cost,
     },
+    attachedHeroes: [],
+    fightCost: 0,
   };
 }
 

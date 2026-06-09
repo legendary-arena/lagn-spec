@@ -43,7 +43,9 @@
           "name": "Shocker",
           "imageUrl": "https://images.barefootbetters.com/sinister-six-shocker.png",
           "cost": null
-        }
+        },
+        "attachedHeroes": [],
+        "fightCost": 0
       },
       {
         "extId": "sinister-six-electro",
@@ -54,7 +56,9 @@
           "name": "Electro",
           "imageUrl": "https://images.barefootbetters.com/sinister-six-electro.png",
           "cost": null
-        }
+        },
+        "attachedHeroes": [],
+        "fightCost": 0
       },
       null,
       {
@@ -66,7 +70,9 @@
           "name": "Vulture",
           "imageUrl": "https://images.barefootbetters.com/sinister-six-vulture.png",
           "cost": null
-        }
+        },
+        "attachedHeroes": [],
+        "fightCost": 0
       },
       null
     ],
@@ -122,5 +128,6 @@
     "sidekicksCount": 13
   },
   "koPile": { "count": 0, "topCard": null, "cards": [] },
-  "notableEvents": []
+  "notableEvents": [],
+  "villainAttachedHeroes": {}
 }

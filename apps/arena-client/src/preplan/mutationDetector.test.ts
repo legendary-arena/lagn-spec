@@ -92,6 +92,7 @@ function makeUIState(overrides?: Partial<UIState>): UIState {
       cards: [],
     },
     notableEvents: [],
+    villainAttachedHeroes: {},
     ...overrides,
   };
 }
@@ -106,6 +107,8 @@ describe('detectPlayerAffectingMutations', () => {
       type: 'villain',
       keywords: [],
       display: { extId: 'core/sentinel', name: 'Sentinel', imageUrl: '', cost: null },
+      attachedHeroes: [],
+      fightCost: 0,
     };
     const current = makeUIState({
       city: {

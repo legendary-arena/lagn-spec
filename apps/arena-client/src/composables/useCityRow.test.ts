@@ -18,6 +18,8 @@ function makeCity(spaces: (string | null)[]): UICityState {
               imageUrl: `https://images.barefootbetters.com/${id}.png`,
               cost: 4,
             },
+            attachedHeroes: [],
+            fightCost: 0,
           },
     ),
     escapedPile: [],

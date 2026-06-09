@@ -101,6 +101,7 @@ function sampleUiState(): UIState {
     },
     koPile: { count: 0, topCard: null, cards: [] },
     notableEvents: [],
+    villainAttachedHeroes: {},
   };
 }
 

@@ -139,6 +139,7 @@ function makeUIState(overrides?: Partial<UIState>): UIState {
       cards: [],
     },
     notableEvents: [],
+    villainAttachedHeroes: {},
     ...overrides,
   };
 }
