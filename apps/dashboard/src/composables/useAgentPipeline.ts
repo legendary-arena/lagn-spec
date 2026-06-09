@@ -13,13 +13,18 @@ export interface PipelineItem {
 }
 
 /**
- * A single pipeline lane: title, items, and a fallback message when the lane
- * has no items to display.
+ * A single pipeline lane with three temporal columns: upcoming work, current
+ * status, and past activity. Each column carries its own items array and
+ * empty-state fallback message.
  */
 export interface PipelineLane {
   readonly title: string;
-  readonly items: readonly PipelineItem[];
-  readonly emptyMessage: string;
+  readonly backlog: readonly PipelineItem[];
+  readonly active: readonly PipelineItem[];
+  readonly history: readonly PipelineItem[];
+  readonly emptyBacklog: string;
+  readonly emptyActive: string;
+  readonly emptyHistory: string;
 }
 
 /**
@@ -32,17 +37,25 @@ export interface UseAgentPipelineReturn {
   readonly evaluator: PipelineLane;
 }
 
+/**
+ * Total item count across all three temporal columns of a lane.
+ */
+export function laneItemCount(lane: PipelineLane): number {
+  return lane.backlog.length + lane.active.length + lane.history.length;
+}
+
 const EVALUATOR_PLACEHOLDER =
   'No acquisition-readiness evaluation recorded yet. Run the Evaluator quarterly per code-checks-and-balances.md §7.';
 
 /**
  * Derives the four-lane Architect → Builder → Inspector → Evaluator pipeline
- * view-model from the build-time governance snapshot. All lane data flows
- * exclusively through `useGovernanceSnapshot`; this composable introduces no
- * other data source.
+ * view-model from the build-time governance snapshot. Each lane exposes three
+ * temporal columns — backlog (upcoming work), active (current status), and
+ * history (past activity) — so the Pipeline page renders a forward-and-backward
+ * view of play.legendary-arena.com development.
  *
- * When the snapshot carries a load error, every lane returns an empty `items`
- * array so the page can render a unified error state without lane content.
+ * All lane data flows exclusively through `useGovernanceSnapshot`; this
+ * composable introduces no other data source.
  */
 // why: the composable accepts snapshotOverride and passes it to
 // useGovernanceSnapshot so tests can inject deterministic fixtures without
@@ -54,23 +67,39 @@ export function useAgentPipeline(
 
   const emptyArchitect: PipelineLane = {
     title: 'Architect',
-    items: [],
-    emptyMessage: 'No recent architect activity.',
+    backlog: [],
+    active: [],
+    history: [],
+    emptyBacklog: 'No draft WPs needing specs.',
+    emptyActive: 'No recent spec activity.',
+    emptyHistory: 'No recent decisions.',
   };
   const emptyBuilder: PipelineLane = {
     title: 'Builder',
-    items: [],
-    emptyMessage: 'No recent builder activity.',
+    backlog: [],
+    active: [],
+    history: [],
+    emptyBacklog: 'No WPs ready to build.',
+    emptyActive: 'No builds in progress.',
+    emptyHistory: 'No recent build activity.',
   };
   const emptyInspector: PipelineLane = {
     title: 'Inspector',
-    items: [],
-    emptyMessage: 'No executable or blocked work packets.',
+    backlog: [],
+    active: [],
+    history: [],
+    emptyBacklog: 'No blocked work packets.',
+    emptyActive: 'No WPs awaiting review.',
+    emptyHistory: 'No recent inspections.',
   };
   const emptyEvaluator: PipelineLane = {
     title: 'Evaluator',
-    items: [],
-    emptyMessage: 'No evaluator data.',
+    backlog: [],
+    active: [],
+    history: [],
+    emptyBacklog: 'Run /agent-evaluator quarterly.',
+    emptyActive: 'No evaluation in progress.',
+    emptyHistory: 'No evaluation reports yet.',
   };
 
   if (snapshot.loadError) {
@@ -82,20 +111,34 @@ export function useAgentPipeline(
     };
   }
 
-  const recentCommits = snapshot.commits(5);
+  const recentCommits = snapshot.commits(10);
   const kpis = snapshot.governanceKpis();
+  const recentDecisions = snapshot.decisions(5);
+  const recentStatusEntries = snapshot.statusEntries(5);
 
-  const architectItems: PipelineItem[] = [];
+  // --- Architect lane: specs and planning ---
+  const architectBacklog: PipelineItem[] = [];
   if (kpis !== null) {
-    architectItems.push({
+    architectBacklog.push({
       id: 'kpi-open-drafts',
-      label: `${kpis.openDrafts} open draft(s)`,
+      label: `${kpis.openDrafts} open draft(s) needing specs`,
       meta: 'KPI',
     });
   }
+  for (const wpRef of snapshot.inFlight()) {
+    if (wpRef.status === 'Draft') {
+      architectBacklog.push({
+        id: `draft-${wpRef.number}`,
+        label: `WP-${String(wpRef.number).padStart(3, '0')} — ${wpRef.title}`,
+        meta: 'Draft',
+      });
+    }
+  }
+
+  const architectActive: PipelineItem[] = [];
   for (const commit of recentCommits) {
     if (commit.kind === 'SPEC') {
-      architectItems.push({
+      architectActive.push({
         id: commit.sha,
         label: commit.title,
         meta: 'SPEC',
@@ -103,77 +146,145 @@ export function useAgentPipeline(
     }
   }
 
-  const builderItems: PipelineItem[] = [];
+  const architectHistory: PipelineItem[] = [];
+  for (const decision of recentDecisions) {
+    architectHistory.push({
+      id: decision.id,
+      label: `${decision.id} — ${decision.title}`,
+      meta: 'Decision',
+    });
+  }
+
+  // --- Builder lane: code implementation ---
+  const builderBacklog: PipelineItem[] = [];
+  for (const wpRef of snapshot.nextExecutable(5)) {
+    builderBacklog.push({
+      id: `next-${wpRef.number}`,
+      label: `WP-${String(wpRef.number).padStart(3, '0')} — ${wpRef.title}`,
+      meta: 'Ready',
+    });
+  }
+
+  const builderActive: PipelineItem[] = [];
   if (kpis !== null) {
-    builderItems.push({
+    builderActive.push({
       id: 'kpi-wps-done-this-week',
       label: `${kpis.wpsDoneThisWeek} WP(s) done this week`,
       meta: 'KPI',
     });
   }
   for (const wpRef of snapshot.inFlight()) {
-    builderItems.push({
+    builderActive.push({
       id: `in-flight-${wpRef.number}`,
       label: `WP-${String(wpRef.number).padStart(3, '0')} — ${wpRef.title}`,
       meta: 'In-flight',
     });
   }
+
+  const builderHistory: PipelineItem[] = [];
   for (const commit of recentCommits) {
     if (commit.kind === 'WP') {
-      builderItems.push({
+      builderHistory.push({
         id: commit.sha,
         label: commit.title,
         meta: 'WP',
       });
     }
   }
-
-  const inspectorItems: PipelineItem[] = [];
-  for (const wpRef of snapshot.nextExecutable(5)) {
-    inspectorItems.push({
-      id: `next-${wpRef.number}`,
-      label: `WP-${String(wpRef.number).padStart(3, '0')} — ${wpRef.title}`,
-      meta: 'Ready',
+  for (const entry of recentStatusEntries) {
+    builderHistory.push({
+      id: `status-${entry.wpNumber}-${entry.ecNumber}`,
+      label: `WP-${String(entry.wpNumber).padStart(3, '0')} / EC-${entry.ecNumber} — ${entry.title}`,
+      meta: entry.date,
     });
   }
+
+  // --- Inspector lane: code review ---
+  const inspectorBacklog: PipelineItem[] = [];
   for (const wpRef of snapshot.blocked()) {
-    inspectorItems.push({
+    inspectorBacklog.push({
       id: `blocked-${wpRef.number}`,
       label: `WP-${String(wpRef.number).padStart(3, '0')} — ${wpRef.title}`,
       meta: 'Blocked',
     });
   }
 
-  // why: the Evaluator lane is a static placeholder — no acquisition-readiness
-  // data source exists in v1; enrichment is deferred to a follow-up WP per
-  // code-checks-and-balances.md §7.
-  const evaluatorItems: PipelineItem[] = [
+  const inspectorActive: PipelineItem[] = [];
+  for (const wpRef of snapshot.nextExecutable(5)) {
+    inspectorActive.push({
+      id: `review-${wpRef.number}`,
+      label: `WP-${String(wpRef.number).padStart(3, '0')} — ${wpRef.title}`,
+      meta: 'Awaiting review',
+    });
+  }
+
+  const inspectorHistory: PipelineItem[] = [];
+  for (const entry of recentStatusEntries) {
+    inspectorHistory.push({
+      id: `inspection-${entry.wpNumber}-${entry.ecNumber}`,
+      label: `WP-${String(entry.wpNumber).padStart(3, '0')} / EC-${entry.ecNumber} — ${entry.title}`,
+      meta: entry.date,
+    });
+  }
+
+  // --- Evaluator lane: quarterly acquisition-readiness audit ---
+  const evaluatorBacklog: PipelineItem[] = [];
+  if (kpis !== null) {
+    evaluatorBacklog.push({
+      id: 'kpi-days-since-done',
+      label: `${kpis.daysSinceLastDoneFlip} day(s) since last WP completed`,
+      meta: 'KPI',
+    });
+  }
+
+  // why: the Evaluator active/history columns are static placeholders — no
+  // acquisition-readiness data source exists in v1; enrichment is deferred
+  // to a follow-up WP per code-checks-and-balances.md §7.
+  const evaluatorActive: PipelineItem[] = [
     {
       id: 'evaluator-placeholder',
       label: EVALUATOR_PLACEHOLDER,
     },
   ];
 
+  const evaluatorHistory: PipelineItem[] = [];
+
   return {
     architect: {
       title: 'Architect',
-      items: architectItems,
-      emptyMessage: 'No recent architect activity.',
+      backlog: architectBacklog,
+      active: architectActive,
+      history: architectHistory,
+      emptyBacklog: 'No draft WPs needing specs.',
+      emptyActive: 'No recent spec activity.',
+      emptyHistory: 'No recent decisions.',
     },
     builder: {
       title: 'Builder',
-      items: builderItems,
-      emptyMessage: 'No recent builder activity.',
+      backlog: builderBacklog,
+      active: builderActive,
+      history: builderHistory,
+      emptyBacklog: 'No WPs ready to build.',
+      emptyActive: 'No builds in progress.',
+      emptyHistory: 'No recent build activity.',
     },
     inspector: {
       title: 'Inspector',
-      items: inspectorItems,
-      emptyMessage: 'No executable or blocked work packets.',
+      backlog: inspectorBacklog,
+      active: inspectorActive,
+      history: inspectorHistory,
+      emptyBacklog: 'No blocked work packets.',
+      emptyActive: 'No WPs awaiting review.',
+      emptyHistory: 'No recent inspections.',
     },
     evaluator: {
       title: 'Evaluator',
-      items: evaluatorItems,
-      emptyMessage: 'No evaluator data.',
+      backlog: evaluatorBacklog,
+      active: evaluatorActive,
+      history: evaluatorHistory,
+      emptyBacklog: 'Run /agent-evaluator quarterly.',
+      emptyActive: 'No evaluation in progress.',
+      emptyHistory: 'No evaluation reports yet.',
     },
   };
 }

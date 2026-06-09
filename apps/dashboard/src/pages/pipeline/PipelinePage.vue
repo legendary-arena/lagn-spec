@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useGovernanceSnapshot } from '../../composables/useGovernanceSnapshot.js';
-import { useAgentPipeline, type PipelineLane } from '../../composables/useAgentPipeline.js';
+import {
+  useAgentPipeline,
+  laneItemCount,
+  type PipelineLane,
+  type PipelineItem,
+} from '../../composables/useAgentPipeline.js';
 
 const snapshot = useGovernanceSnapshot();
 const pipeline = useAgentPipeline();
@@ -21,13 +26,27 @@ const state = computed<PageState>(() => {
   }
   let totalItems = 0;
   for (const lane of lanes.value) {
-    totalItems += lane.items.length;
+    totalItems += laneItemCount(lane);
   }
   if (totalItems === 0) {
     return 'empty';
   }
   return 'data';
 });
+
+interface TemporalSection {
+  readonly heading: string;
+  readonly items: readonly PipelineItem[];
+  readonly emptyMessage: string;
+}
+
+function sectionsForLane(lane: PipelineLane): readonly TemporalSection[] {
+  return [
+    { heading: 'To Do', items: lane.backlog, emptyMessage: lane.emptyBacklog },
+    { heading: 'Active', items: lane.active, emptyMessage: lane.emptyActive },
+    { heading: 'History', items: lane.history, emptyMessage: lane.emptyHistory },
+  ];
+}
 </script>
 
 <template>
@@ -44,23 +63,11 @@ const state = computed<PageState>(() => {
         <code>/agent-inspector</code>, <code>/agent-evaluator</code>)
         are Claude Code slash commands invoked in separate sessions to walk through
         each role in the checks-and-balances pipeline.
-        Run <code>/agent-architect</code> first to draft a spec (risk tier, acceptance
-        criteria, file map, test contract); its output is a Work Packet and Execution
-        Checklist committed with a <code>SPEC:</code> prefix.
-        Then <code>/agent-builder</code> in a fresh session reads that spec and implements
-        it clause-by-clause &mdash; writing code, tests, and a build note, committing with
-        an <code>EC-NNN:</code> prefix.
-        <code>/agent-inspector</code> runs in yet another session (fresh eyes, not the
-        builder) to review the diff against the spec, tagging findings as P0/P1/P2 and
-        rendering a deterministic PASS/FAIL verdict.
-        <code>/agent-evaluator</code> is the quarterly whole-codebase audit, not per-feature.
+        Each lane below shows three temporal views: <strong>To Do</strong> (upcoming work),
+        <strong>Active</strong> (current status), and <strong>History</strong> (past activity
+        and revisions).
       </p>
       <p>
-        Each session produces artifacts that the governance snapshot generator captures at
-        build time &mdash; SPEC commits land in the Architect lane, WP/EC execution commits
-        and in-flight WPs land in the Builder lane, next-executable and blocked WPs land in
-        the Inspector lane, and the Evaluator lane remains a placeholder until
-        acquisition-readiness reports exist.
         After any session completes, running <code>pnpm dash:build</code> regenerates the
         snapshot from the repo's git log and WORK_INDEX state, and this page reflects the
         updated lanes automatically.
@@ -92,14 +99,22 @@ const state = computed<PageState>(() => {
       >
         <h3 class="lane-title">{{ lane.title }}</h3>
 
-        <ul v-if="lane.items.length > 0" class="lane-items">
-          <li v-for="item in lane.items" :key="item.id" class="lane-item">
-            <span class="item-label">{{ item.label }}</span>
-            <span v-if="item.meta" class="item-meta">{{ item.meta }}</span>
-          </li>
-        </ul>
+        <div
+          v-for="section in sectionsForLane(lane)"
+          :key="section.heading"
+          class="lane-section"
+        >
+          <h4 class="section-heading">{{ section.heading }}</h4>
 
-        <p v-else class="lane-empty">{{ lane.emptyMessage }}</p>
+          <ul v-if="section.items.length > 0" class="lane-items">
+            <li v-for="item in section.items" :key="item.id" class="lane-item">
+              <span class="item-label">{{ item.label }}</span>
+              <span v-if="item.meta" class="item-meta">{{ item.meta }}</span>
+            </li>
+          </ul>
+
+          <p v-else class="section-empty">{{ section.emptyMessage }}</p>
+        </div>
       </article>
     </div>
   </div>
@@ -224,15 +239,37 @@ const state = computed<PageState>(() => {
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
 }
 
 .lane-title {
-  margin: 0 0 0.75rem;
+  margin: 0;
   font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--p-text-muted-color);
+}
+
+.lane-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.lane-section + .lane-section {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--p-content-border-color, var(--p-surface-border));
+}
+
+.section-heading {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--p-text-muted-color);
+  opacity: 0.7;
 }
 
 .lane-items {
@@ -241,7 +278,7 @@ const state = computed<PageState>(() => {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .lane-item {
@@ -249,11 +286,11 @@ const state = computed<PageState>(() => {
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.5rem;
-  padding: 0.5rem 0.6rem;
+  padding: 0.4rem 0.5rem;
   background: var(--p-content-background, var(--p-surface-card));
   border: 1px solid var(--p-content-border-color, var(--p-surface-border));
-  border-radius: 6px;
-  font-size: 0.8rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
   color: var(--p-text-color);
   line-height: 1.35;
 }
@@ -265,20 +302,20 @@ const state = computed<PageState>(() => {
 
 .item-meta {
   flex-shrink: 0;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  padding: 0.1rem 0.35rem;
+  padding: 0.1rem 0.3rem;
   border-radius: 3px;
   background: var(--p-surface-border, var(--p-content-border-color));
   color: var(--p-text-muted-color);
   white-space: nowrap;
 }
 
-.lane-empty {
+.section-empty {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--p-text-muted-color);
   font-style: italic;
 }
