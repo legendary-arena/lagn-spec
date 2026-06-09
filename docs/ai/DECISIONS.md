@@ -23599,4 +23599,38 @@ beyond the credentials param.
 
 ---
 
+### D-22901 — Dashboard Pipeline Page: Single-Page Four-Lane Layout, Snapshot-Only Data, Evaluator Placeholder v1, Lane-to-Accessor Mapping
+
+**Decision:**
+The operator dashboard's Pipeline page (`/pipeline`) presents the
+Architect → Builder → Inspector → Evaluator separation-of-duties model as
+one page with four lane-cards, not four separate routes. The four roles form
+a handoff sequence whose relationships must be seen together; Inspector and
+Evaluator have insufficient standalone data to justify their own pages in v1.
+
+All lane data derives exclusively from `useGovernanceSnapshot` (the build-time
+governance snapshot). `build-governance-snapshot.mjs` is not modified by this
+WP; the Pipeline page consumes only the current accessor surface. Lane-to-accessor
+mapping:
+- Architect: `governanceKpis().openDrafts` + `commits(5)` where `kind === 'SPEC'`
+- Builder: `governanceKpis().wpsDoneThisWeek` + `inFlight()` + `commits(5)` where `kind === 'WP'`
+- Inspector: `nextExecutable(5)` + `blocked()` (best-available proxy; structured review-status deferred)
+- Evaluator: static placeholder only (no acquisition-readiness data source exists in v1)
+
+The Evaluator lane renders a single locked placeholder string byte-for-byte; no
+score or readiness indicator is fabricated. Inspector enrichment (structured
+`Needs review` / `Reviewed` status) and Evaluator data plumbing (acquisition-
+readiness scoring, report storage) are both deferred to a follow-up WP that will
+extend the snapshot generator. The Pipeline page is an internal operator-only
+surface; it is a separate nav item from the revenue Overview per the
+`dashboard-operating-system.md` audit (Overview is already governance-heavy).
+
+**Packet:** WP-229 (EC-261).
+
+**Drafted:** 2026-06-09 (reserved). **Landed:** 2026-06-09
+(execution close — flips to Active).
+**Status:** Active
+
+---
+
 Protect this file.
