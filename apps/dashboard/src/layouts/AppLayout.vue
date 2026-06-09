@@ -187,10 +187,12 @@ onUnmounted(() => {
 
     <div v-if="isHidden && isMobileMenuOpen" class="scrim" @click="toggleMobileMenu"></div>
 
-    <MockModeBanner />
-    <main class="main-content">
-      <RouterView />
-    </main>
+    <div class="content-column">
+      <MockModeBanner />
+      <main class="main-content">
+        <RouterView />
+      </main>
+    </div>
   </div>
 </template>
 
@@ -408,6 +410,18 @@ onUnmounted(() => {
   background: var(--p-mask-background, color-mix(in srgb, var(--p-text-color) 40%, transparent));
 }
 
+/* why: .app-layout is a horizontal (row) flex with align-items:stretch, so a
+   bare child stretches to full viewport height. The mock-mode banner must be a
+   top strip above the routed page, so banner + main share a vertical column
+   that occupies the content area beside the sidebar (fixes WP-226's full-height
+   banner; the "one mount line" lock in D-22601 could not express this). */
+.content-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 .main-content {
   flex: 1;
   padding: 2rem;
@@ -416,7 +430,10 @@ onUnmounted(() => {
   overflow-y: auto;
 }
 
-.sidebar.hidden ~ .main-content {
+/* why: on mobile the sidebar is hidden and a 56px fixed mobile-bar overlays the
+   top; the content column (now the sidebar's flow sibling, not main-content)
+   clears it so neither the banner nor the page hides under the bar. */
+.sidebar.hidden ~ .content-column {
   padding-top: calc(56px + 2rem);
 }
 </style>
