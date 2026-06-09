@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
+import MockModeBanner from '../components/MockModeBanner.vue';
 
 const THEME_STORAGE_KEY = 'la-dashboard-theme';
 const DARK_MODE_CLASS = 'app-dark';
@@ -186,6 +187,7 @@ onUnmounted(() => {
 
     <div v-if="isHidden && isMobileMenuOpen" class="scrim" @click="toggleMobileMenu"></div>
 
+    <MockModeBanner />
     <main class="main-content">
       <RouterView />
     </main>

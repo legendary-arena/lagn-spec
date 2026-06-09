@@ -23462,4 +23462,44 @@ rescue/reveal forms.
 
 ---
 
+### D-22601 — Dashboard Global Mock-Mode Banner Posture: Predicate Reuse, App-Wide Single Mount, Non-Dismissible v1, Locked Copy
+
+**Decision:**
+The operator dashboard renders a single global banner at the top of
+`AppLayout.vue` (immediately above `<main class="main-content">`, so it
+appears on every route) whenever the dashboard is not provably serving
+live data. Visibility is `isMockData = !isLiveModeEnabled()`, where
+`isLiveModeEnabled` is IMPORTED from
+`apps/dashboard/src/services/analyticsLiveFetchers.ts` (the D-20601
+single-source-of-truth LIVE gate). The banner's composable
+(`useMockModeIndicator.ts`) and component (`MockModeBanner.vue`) contain
+ZERO `import.meta.env` access — the env truth is read only through the
+shared predicate. The conservative `!isLiveModeEnabled()` gate ("warn
+unless provably live") is deliberately chosen over `endpoints.ts`
+`isMockMode()` (`VITE_USE_MOCKS === 'true'`); the two can disagree in
+the unset-`VITE_USE_MOCKS` + empty-URL edge case, and reconciling them
+is a deferred follow-up.
+
+`MockModeBanner.vue` is presentational only (`v-if="isMockData"`,
+`role="status"`, renders the message); all visibility/message logic
+lives in the composable. The banner is non-dismissible in v1 — no close
+button, no per-session snooze — because it is a persistent
+instrumentation-honesty indicator. The message is a single locked copy
+string sourced only from `useMockModeIndicator.ts`:
+`Mock data — this dashboard is showing sample metrics, not live data. To show real metrics, set VITE_USE_MOCKS=false and a valid VITE_API_BASE_URL in the deploy environment, then redeploy.`
+
+This ships the binary mock-vs-live form of the
+`dashboard-operating-system.md` Instrumentation Health indicator; the
+full "X of Y metrics live" aggregate widget is deferred. Additive: no
+existing widget, page, composable, or per-widget WP-197 freshness badge
+is removed, relocated, or restyled.
+
+**Packet:** WP-226 (EC-258).
+
+**Drafted:** 2026-06-08 (drafting close — reserved). **Landed:** 2026-06-08
+(execution close — flips to Active).
+**Status:** Active
+
+---
+
 Protect this file.
