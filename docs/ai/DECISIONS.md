@@ -23633,4 +23633,57 @@ surface; it is a separate nav item from the revenue Overview per the
 
 ---
 
+### D-23001 — Pipeline Composable: Optional Sweep Data Parameter (Backward Compatible)
+
+**Decision:**
+`useAgentPipeline` accepts an optional `sweepData` parameter containing a
+projection of `UseSweepHealthReturn` (`latestRun`, `staleStatus`,
+`totalAnomalySparkline`). The Pipeline page extracts these fields from the
+sweep-health composable and passes them in; the Pipeline composable itself never
+calls the sweep-health composable directly, preserving testability via plain
+object injection (same pattern as `snapshotOverride` per D-22901). When
+`sweepData` is undefined or `latestRun` is null, all sweep-derived items are
+absent and existing KPI-derived items remain unchanged — backward compatible
+with pre-WP-230 callers.
+
+**Packet:** WP-230 (EC-262).
+**Drafted:** 2026-06-09 (reserved). **Landed:** 2026-06-09 (execution close).
+**Status:** Active
+
+---
+
+### D-23002 — Pipeline Page: Anomaly Key Opacity Preserved (D-20703 Extension)
+
+**Decision:**
+The Pipeline page treats anomaly count keys as opaque strings, extending
+D-20703's dashboard-layer opacity posture from `SweepHealthWidget` to the
+agent lanes. No anomaly key string is hardcoded in `useAgentPipeline.ts`;
+keys are read dynamically via `Object.entries(anomalyCounts)`. Fatal
+detection uses `key.includes('fatal')` — a substring test that survives
+future taxonomy expansion without importing the engine's closed union.
+The literal anomaly class names (`endgame-reached`, `not-endgame`, etc.)
+must never appear in the composable or its tests.
+
+**Packet:** WP-230 (EC-262).
+**Drafted:** 2026-06-09 (reserved). **Landed:** 2026-06-09 (execution close).
+**Status:** Active
+
+---
+
+### D-23003 — Pipeline Page: Sweep-Derived Item ID Prefix Convention
+
+**Decision:**
+All `PipelineItem` instances derived from sweep data use an `id` prefixed
+with `sweep-` (e.g., `sweep-inspector-<key>`, `sweep-builder-<key>`,
+`sweep-architect-health`, `sweep-evaluator-freshness`). This convention enables
+deterministic test assertions and accessibility-tree identification without
+coupling to specific anomaly key values. The prefix is a display/test
+convention only; it carries no behavioral semantics.
+
+**Packet:** WP-230 (EC-262).
+**Drafted:** 2026-06-09 (reserved). **Landed:** 2026-06-09 (execution close).
+**Status:** Active
+
+---
+
 Protect this file.
