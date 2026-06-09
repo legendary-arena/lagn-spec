@@ -70,8 +70,15 @@ touched.
   explicit `undefined` passed from `snapshot.pendingHeroChoice`
   (`UIPendingHeroChoice | undefined`).
 - `pnpm --filter @legendary-arena/arena-client typecheck` currently exits 2
-  (FAILING) with **19 errors across 14 files** (enumerated in
-  `## Files Expected to Change`) — verified at baseline.
+  (FAILING). At baseline it reports exactly **three error classes**: (a) inline
+  `UIState` objects missing `villainAttachedHeroes`; (b) inline `UICityCard`
+  objects missing `attachedHeroes` and/or `fightCost`; (c) an
+  `exactOptionalPropertyTypes` error on the `pendingHeroChoice` prop. **The error
+  classes and the affected file set (`## Files Expected to Change`) are
+  authoritative.** The observed totals (19 errors / 14 files) and the exact line
+  numbers are expected-but-**advisory** — they may shift by ±1 as edits land and
+  must NOT, on their own, trigger a STOP. A STOP fires only on a *new* error class
+  (`## Hard Stop Conditions` #3) or a *missing* expected class.
 - The arena-client `vitest` suite currently passes (runtime is unaffected by the
   typecheck failures; `vitest` uses esbuild, which does not type-check).
 - Baseline: `origin/main` at `26fbc911` (`git rev-parse origin/main`,
@@ -206,6 +213,19 @@ contracts; it introduces no new contract of its own.
   `PropType<UIPendingHeroChoice | undefined>` on the `pendingHeroChoice` prop only.
   Type-level change; runtime behavior unchanged.
 
+**Structural invariants (enforcement-grade — a compiling-but-wrong shape is still a FAIL):**
+- `villainAttachedHeroes` appears **exactly once, at the top level** of each
+  `UIState` literal / JSON object — never nested inside another member.
+- `attachedHeroes` and `fightCost` appear on **every non-null city card object**, at
+  the **same object level** as the existing card fields (`extId` / `type` /
+  `keywords` / `display`) — never nested.
+- **"Non-null city card"** is defined executably as every **truthy** element of
+  `(o.city && o.city.spaces) || []` for a fixture/state object `o` — identical to
+  the verification one-liners; no interpretation.
+- The widened `pendingHeroChoice` prop type is **exactly** `UIPendingHeroChoice | undefined`
+  — it MUST accept `undefined` and MUST **NOT** accept `null` (never `... | null`),
+  mirroring the engine's optional-field (`?:`) semantics.
+
 ---
 
 ## Non-Negotiable Constraints
@@ -222,20 +242,34 @@ contracts; it introduces no new contract of its own.
 **Packet-specific:**
 - **Engine types are read-only** — do not modify `uiState.types.ts` or any
   `packages/**` file.
-- **`index.ts` / `typed.ts` are read-only** — their errors are downstream of the
-  JSON; fixing the JSON clears them.
+- **`index.ts` / `typed.ts` are read-only — REVERT on sight.** Their errors are
+  downstream of the stale JSON; backfilling the JSON clears them. If `git diff`
+  ever shows a change to `fixtures/uiState/index.ts` or `fixtures/uiState/typed.ts`,
+  **revert it immediately** (`git checkout -- <file>`) before proceeding — editing
+  either masks the real fix.
 - **`PendingHeroChoicePrompt.test.ts` is read-only** — the prop widening makes its
   `undefined` mount valid; do not edit it.
 - **Field names are exact:** `villainAttachedHeroes`, `attachedHeroes`, `fightCost`
   — no abbreviation, rename, or paraphrase.
 - **Locked literal values:** `villainAttachedHeroes: {}`, `attachedHeroes: []`,
   `fightCost: 0`. Do not invoke factories or populate sample data.
-- **Additive only:** add the required members; do not reorder, reformat, or alter
-  any existing member. Each JSON file must remain valid JSON (preceding member
-  gains a trailing comma).
+- **Additive only, append at end:** add each required member at the **end** of its
+  object; do not reorder, reformat, or alter any existing member or its key order.
+  Each JSON file must remain **valid JSON** — **no trailing comma after the final
+  member** (the previously-final member gains the separating comma). No
+  formatter-induced churn: if a save adds non-functional reformatting, revert the
+  file and re-apply only the minimal additive edit.
 - **The component prop change is type-only:** widen the `PropType` union; keep
   `required: false` and `default: undefined`. Do not alter the component's
   template or runtime logic.
+- **Idempotent end state:** the conformed codebase is a fixed point — re-applying
+  the same additive edits is a no-op (zero further file changes) and `typecheck` is
+  already exit 0. No member is ever added twice; no duplicate `villainAttachedHeroes`
+  / `attachedHeroes` / `fightCost` may appear in any object.
+- **Commit boundary is a hard STOP:** if `git diff --name-only` or
+  `git status --porcelain` ever lists a path outside the 16-file allowlist, **STOP
+  immediately** — do not stage a partial commit. (The pre-existing untracked
+  dashboard / WP-226 files are out of scope and must remain unstaged.)
 
 **Session protocol:** see `## Hard Stop Conditions (Authoritative)`.
 
@@ -251,9 +285,12 @@ STOP and report if **any** of the following is observed:
 - Baseline `typecheck` reports a materially different error set than the 19 errors
   across the 14 files enumerated above (a different fix already landed, or new
   drift appeared).
-- After the backfill, `typecheck` surfaces a **new** missing required member on the
-  same sites (an engine field beyond these three/one is also unconformed) — scope
-  is wider than this WP assumes; STOP and report.
+- **Scope-violation STOP (binary):** after the backfill, `typecheck` surfaces ANY
+  error whose message does **not** reference one of `villainAttachedHeroes`,
+  `attachedHeroes`, `fightCost`, or `pendingHeroChoice`. A field beyond these four
+  means the drift is wider than this WP assumes — STOP and report; do not guess past
+  it. (Errors that *do* reference one of the four — even at a new site — remain in
+  scope and are fixed, not stopped on.)
 - The arena-client `vitest` suite, which passes at baseline, fails after the
   backfill in a way **not** resolvable by updating a single additive-value
   assertion in the same test file — STOP; the change is not behavior-neutral as
@@ -263,8 +300,10 @@ STOP and report if **any** of the following is observed:
 
 ## Acceptance Criteria
 
-1. `pnpm --filter @legendary-arena/arena-client typecheck` exits 0 (zero
-   `vue-tsc` errors).
+1. `pnpm --filter @legendary-arena/arena-client typecheck` exits 0 (**zero**
+   `vue-tsc` errors). This is the **only** success condition — a reduced-but-nonzero
+   error count is a FAIL, not partial progress; do not stop or commit until the count
+   is zero.
 2. `mid-turn.json`, `endgame-win.json`, `endgame-loss.json` each contain exactly
    one top-level `"villainAttachedHeroes"` member with value `{}`, and each still
    parses as valid JSON.
