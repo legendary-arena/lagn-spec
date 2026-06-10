@@ -79,5 +79,37 @@ export function fightMastermind(
     G.messages.push(
       `All tactics defeated — mastermind "${G.mastermind.id}" is vanquished!`,
     );
+
+    // why: a vanquished mastermind releases every bystander it captured.
+    // G.mastermind.attachedBystanders is the complete capture set — it
+    // holds both Master Strike captures (D-15401, stored only here) and
+    // bystanders revealed while the City was empty (villainDeck.reveal
+    // mirrors those into this field as well). The victorious player earns
+    // all of them in their victory pile (tabletop Legendary: rescued
+    // bystanders are VP cards). `?? []` guards legacy test fixtures that
+    // omit the field; production setup always populates it.
+    const mastermindBaseCardId = G.mastermind.baseCardId;
+    const rescuedBystanders = G.mastermind.attachedBystanders ?? [];
+    for (const bystanderCardId of rescuedBystanders) {
+      G.playerZones[ctx.currentPlayer]!.victory.push(bystanderCardId);
+    }
+    G.mastermind = { ...G.mastermind, attachedBystanders: [] };
+
+    // why: bystanders revealed while the City was empty are mirrored into
+    // BOTH G.mastermind.attachedBystanders (awarded above) and the
+    // city-villain G.attachedBystanders map keyed by the mastermind's base
+    // card. Drop that mirror entry so no dangling attachment survives the
+    // award and the same bystander is never counted in two stores.
+    if (G.attachedBystanders[mastermindBaseCardId] !== undefined) {
+      const remainingAttachments = { ...G.attachedBystanders };
+      delete remainingAttachments[mastermindBaseCardId];
+      G.attachedBystanders = remainingAttachments;
+    }
+
+    if (rescuedBystanders.length > 0) {
+      G.messages.push(
+        `Player ${ctx.currentPlayer} rescued ${rescuedBystanders.length} bystander(s) from the defeated mastermind into their victory pile.`,
+      );
+    }
   }
 }

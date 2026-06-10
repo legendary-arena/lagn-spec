@@ -40,6 +40,36 @@ describe('defeatTopTactic', () => {
     assert.deepStrictEqual(result.tacticsDefeated, ['already-defeated']);
   });
 
+  it('preserves strikePile, attachedBystanders, and gameText through a defeat', () => {
+    const state: MastermindState = {
+      id: 'mm-f',
+      baseCardId: 'mm-f-base',
+      tacticsDeck: ['tactic-1'],
+      tacticsDefeated: [],
+      strikePile: ['strike-1'],
+      attachedBystanders: ['pile-bystander'],
+      gameText: ['Master Strike: each player discards a card.'],
+    };
+
+    const result = defeatTopTactic(state);
+
+    assert.deepStrictEqual(
+      result.strikePile,
+      ['strike-1'],
+      'strikePile must survive the rebuild',
+    );
+    assert.deepStrictEqual(
+      result.attachedBystanders,
+      ['pile-bystander'],
+      'attachedBystanders must survive the rebuild',
+    );
+    assert.deepStrictEqual(
+      result.gameText,
+      ['Master Strike: each player discards a card.'],
+      'gameText must survive the rebuild',
+    );
+  });
+
   it('returns new object (input not mutated)', () => {
     const state: MastermindState = {
       id: 'mm-c',

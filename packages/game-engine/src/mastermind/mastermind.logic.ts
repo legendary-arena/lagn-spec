@@ -29,13 +29,15 @@ export function defeatTopTactic(
   const remainingDeck = mastermindState.tacticsDeck.slice(1);
   const updatedDefeated = [...mastermindState.tacticsDefeated, defeatedTactic];
 
+  // why: copy the prior state and override only the two deck fields so
+  // non-deck fields (strikePile, attachedBystanders, gameText) survive the
+  // defeat. An explicit field-by-field rebuild silently dropped gameText
+  // when that field was added later (WP-154+); copy-then-override is
+  // drift-proof against the next MastermindState field.
   return {
-    id: mastermindState.id,
-    baseCardId: mastermindState.baseCardId,
+    ...mastermindState,
     tacticsDeck: remainingDeck,
     tacticsDefeated: updatedDefeated,
-    strikePile: mastermindState.strikePile,
-    attachedBystanders: mastermindState.attachedBystanders,
   };
 }
 

@@ -256,6 +256,67 @@ describe('fightMastermind', () => {
     );
   });
 
+  it('all tactics defeated: captured bystanders awarded to victory and store cleared', () => {
+    const gameState = createMockGameState({
+      turnEconomy: { attack: 10, recruit: 0, spentAttack: 0, spentRecruit: 0 },
+      mastermind: {
+        id: 'test-mastermind' as CardExtId,
+        baseCardId: 'test-mastermind-base' as CardExtId,
+        tacticsDeck: ['last-tactic'] as CardExtId[],
+        tacticsDefeated: ['t1', 't2'] as CardExtId[],
+        strikePile: [] as CardExtId[],
+        attachedBystanders: ['pile-bystander', 'pile-bystander'] as CardExtId[],
+      },
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    fightMastermind(moveContext);
+
+    assert.deepStrictEqual(
+      moveContext.G.playerZones['0']!.victory,
+      ['last-tactic', 'pile-bystander', 'pile-bystander'],
+      'Victory pile must hold the defeated tactic followed by both rescued bystanders',
+    );
+    assert.deepStrictEqual(
+      moveContext.G.mastermind.attachedBystanders,
+      [],
+      'Mastermind attachedBystanders must be cleared after the award',
+    );
+  });
+
+  it('all tactics defeated: city-empty bystander mirror is awarded once and cleared', () => {
+    const gameState = createMockGameState({
+      turnEconomy: { attack: 10, recruit: 0, spentAttack: 0, spentRecruit: 0 },
+      mastermind: {
+        id: 'test-mastermind' as CardExtId,
+        baseCardId: 'test-mastermind-base' as CardExtId,
+        tacticsDeck: ['last-tactic'] as CardExtId[],
+        tacticsDefeated: ['t1', 't2'] as CardExtId[],
+        strikePile: [] as CardExtId[],
+        attachedBystanders: ['pile-bystander'] as CardExtId[],
+      },
+    });
+    // why: a bystander revealed while the City was empty lives in BOTH
+    // G.mastermind.attachedBystanders and the city-villain map keyed by the
+    // mastermind base card — verify the award counts it exactly once.
+    gameState.attachedBystanders = {
+      'test-mastermind-base': ['pile-bystander'],
+    } as LegendaryGameState['attachedBystanders'];
+
+    const moveContext = createMockMoveContext(gameState);
+    fightMastermind(moveContext);
+
+    assert.ok(
+      !('test-mastermind-base' in moveContext.G.attachedBystanders),
+      'Mastermind mirror entry must be removed from G.attachedBystanders',
+    );
+    assert.deepStrictEqual(
+      moveContext.G.playerZones['0']!.victory,
+      ['last-tactic', 'pile-bystander'],
+      'Bystander must be awarded exactly once despite living in two stores',
+    );
+  });
+
   it('JSON.stringify(G) succeeds after fight', () => {
     const gameState = createMockGameState({
       turnEconomy: { attack: 10, recruit: 0, spentAttack: 0, spentRecruit: 0 },
