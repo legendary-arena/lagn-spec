@@ -46,6 +46,7 @@
     "apps/*"
   ],
   "devDependencies": {
+    "@legendary-arena/game-engine": "workspace:*",
     "typescript": "^5.4.5"
   },
   "pnpm": {
