@@ -23746,4 +23746,85 @@ convention only; it carries no behavioral semantics.
 
 ---
 
+### D-23101 — Inspection Reports: Storage Shape + Report Contract Lock
+
+**Decision:**
+`legendary.inspection_reports` stores one row per nightly Inspector triage:
+9 columns (`report_id` PK, `sweep_run_id`, `submitted_at` DEFAULT now(),
+`generated_at`, `verdict` CHECK PASS|FAIL, `p0_count`/`p1_count`/`p2_count`
+CHECK ≥ 0, `findings` jsonb) + a `submitted_at DESC` BTREE index. The wire
+contract is `InspectionReportPayload` (POST) / `InspectionReportSummary`
+(GET), with `InspectionFinding = { severity, anomalyClass, cellId,
+description, route }`. The count columns are denormalized from `findings` at
+insert time for cheap dashboard reads. `GET /api/inspection/latest` returns
+`{ data: { latest, recentReports } }` (latest by greatest `submitted_at`;
+recent ≤ 30, `submitted_at DESC`) — the same object-envelope deviation
+WP-209's `GET /api/sweep/latest` justified for serving two payloads in one
+response.
+
+The server is the sole authority for ALL derived fields: `verdict` and the
+three count columns are recomputed from `findings` at insert time, and any
+client-supplied derived values (`verdict`, `*_count`) are ignored — not
+trusted, not compared, not stored, never a 400. The `report_id` form is
+`<sweepRunId>-<generatedAtIsoCompact>` (the `sweepRunId` already embeds the
+sweep timestamp), so a re-triage of the same sweep run yields a distinct
+`report_id` and a distinct row rather than a 409.
+
+**Packet:** WP-231 (EC-263).
+**Drafted:** 2026-06-09 (reserved). **Landed:** 2026-06-09 (execution close).
+**Status:** Active
+
+---
+
+### D-23102 — Inspector Triage Posture: Nondeterministic Findings, Server-Enforced Deterministic Verdict, Per-Run API Cost
+
+**Decision:**
+The nightly triage is performed by a headless Claude agent (model
+`claude-sonnet-4-6`) running the `agent-inspector` P0/P1/P2 rubric against the
+latest sweep run, invoked from `inspection-nightly.yml` via
+`anthropics/claude-code-action`. The agent's **findings are
+LLM-generated and intentionally nondeterministic** — an explicit, scoped
+carve-out from the engine's determinism-first posture, permissible because
+this is an internal QA *meta* surface that reasons about sweep outputs and
+changes no game logic, RNG, scoring, or replay (Vision §22 is not engaged).
+The one determinism-bearing output, the PASS/FAIL **verdict** (and the
+`p0/p1/p2` counts), is recomputed server-side via `deriveVerdict(findings)`
+(FAIL iff any P0/P1); the server ignores any client-supplied derived values
+(never compares them, no 400 — D-23101) and stores the recomputed result, so
+the durable verdict is reproducible from the stored findings even though the
+findings themselves are not. Tests validate report shape and verdict
+consistency, never finding content. Each nightly run spends Anthropic API
+tokens; cost is accepted for v1, and a deterministic-classifier fallback is
+named as future work if cost or variance warrants.
+
+**Packet:** WP-231 (EC-263).
+**Drafted:** 2026-06-09 (reserved). **Landed:** 2026-06-09 (execution close).
+**Status:** Active
+
+---
+
+### D-23103 — CI Sweep-Blob Read Endpoint (`GET /api/sweep/runs/latest`)
+
+**Decision:**
+WP-209 deferred a blob-retrieval endpoint until a consumer surfaced; the
+Inspector triage is that consumer. `GET /api/sweep/runs/latest` is added to
+the sweep module as an **additive** read returning the latest run including
+its forensic `manifest_blob`, authenticated by the existing shared-secret
+`X-Sweep-Token` (the CI trust boundary; no third secret). It is a CI-only
+read path distinct from the operator dashboard's session-gated
+`GET /api/sweep/latest`, which stays blob-free and byte-unchanged. The
+inspection surface treats anomaly-class keys as opaque strings (no engine
+`SweepAnomalyClass` import), carrying forward D-20703's dashboard-layer
+opacity posture to the inspection layer. The shared-secret check is
+centralized once in `apps/server/src/auth/validateSharedSecret.ts`; the
+existing sweep POST is refactored to call it (behavior-preserving), the new
+sweep-read calls it, and the inspection POST calls it — no route file
+re-implements the check inline.
+
+**Packet:** WP-231 (EC-263).
+**Drafted:** 2026-06-09 (reserved). **Landed:** 2026-06-09 (execution close).
+**Status:** Active
+
+---
+
 Protect this file.
