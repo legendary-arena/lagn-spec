@@ -27,13 +27,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
@@ -48,7 +48,7 @@ jobs:
       # can point at it. Shallow clone is sufficient — the scan only
       # reads current file contents, not history.
       - name: Checkout website repo (for SaaS detection)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: legendary-arena/legendary-arena-website
           path: legendary-arena-website
