@@ -23856,8 +23856,8 @@ report's rows `ORDER BY finding_index ASC, handoff_id ASC` with a query-level
 `LIMIT 500` + per-status counts.
 
 **Packet:** WP-232 (EC-264).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-10 (execution close).
+**Status:** Active
 
 ---
 
@@ -23886,8 +23886,8 @@ the first such surfaces in the pipeline and get their own separately-gated
 follow-up WP, per the checks-and-balances separation-of-duties discipline.
 
 **Packet:** WP-232 (EC-264).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-10 (execution close).
+**Status:** Active
 
 ---
 
@@ -23917,8 +23917,8 @@ sessions. The existing `inspection-nightly.yml` gains one additive trailing
 nightly triage.
 
 **Packet:** WP-232 (EC-264).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-10 (execution close).
+**Status:** Active
 
 ---
 

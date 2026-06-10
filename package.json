@@ -22,6 +22,7 @@
     "sweep:nightly":        "node scripts/sweep-submit.mjs",
     "inspection:fetch":     "node scripts/inspection-fetch.mjs",
     "inspection:submit":    "node scripts/inspection-submit.mjs",
+    "handoffs:sync":        "node scripts/handoffs-sync.mjs",
 
     "check":                "node --env-file=.env scripts/check-connections.mjs",
     "check:ec":             "node --env-file=.env scripts/ec/health-check.ec.mjs",

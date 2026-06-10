@@ -95,6 +95,21 @@ jobs:
           INSPECTION_SUBMIT_TOKEN: ${{ secrets.INSPECTION_SUBMIT_TOKEN }}
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
 
+      # Step 4 (WP-232 / D-23203) — refresh the handoff queue: POST the latest
+      # inspection report's findings to POST /api/handoffs/sync (idempotent
+      # ON CONFLICT DO NOTHING materialization). `if: success()` so a failed
+      # fetch/triage/submit never syncs a stale queue. Additive — the steps above
+      # are byte-unchanged.
+      - name: Sync handoff queue
+        if: success()
+        run: pnpm handoffs:sync
+        env:
+          # why (D-23203): the handoff submit token gates
+          # POST /api/handoffs/sync; both ends (this Actions secret + the Render
+          # HANDOFF_SUBMIT_TOKEN) must be in lockstep.
+          HANDOFF_SUBMIT_TOKEN: ${{ secrets.HANDOFF_SUBMIT_TOKEN }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+
       # why (WP-231 §CI Failure Semantics): on ANY failure preserve the sweep
       # input + agent output for operator forensic — inspect a failed nightly
       # without re-running the agent. Runs only on failure.

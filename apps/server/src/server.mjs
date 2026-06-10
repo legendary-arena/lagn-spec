@@ -34,6 +34,7 @@ import { registerAnalyticsRoutes } from './analytics/analytics.routes.js';
 import { getAnalyticsUserIdSalt } from './analytics/userIdHash.js';
 import { registerSweepRoutes } from './sweep/sweep.routes.js';
 import { registerInspectionRoutes } from './inspection/inspection.routes.js';
+import { registerHandoffRoutes } from './handoff/handoff.routes.js';
 import { requireAdminSession } from './auth/adminSession.js';
 import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
 import { registerLegendsPublisherRoutes } from './legends/legends.routes.js';
@@ -227,6 +228,47 @@ function loadInspectionSubmitToken() {
     console.warn(INSPECTION_TOKEN_ONE_SHOT_WARNING);
   }
   return INSPECTION_TOKEN_TEST_FALLBACK;
+}
+
+// why (D-23203 / WP-232): the handoff submit token is loaded ONCE at startup —
+// production loud-fail when HANDOFF_SUBMIT_TOKEN is unset; test/dev returns a
+// fixed test fallback and emits one console.warn per process — mirroring the
+// inspection/sweep token posture. Per-request process.env reads are forbidden;
+// the loaded value is threaded to the handoff route handlers via the deps bundle.
+// The token gates POST /api/handoffs/sync + POST /api/handoffs/transition (the CI
+// + manually-invoked Builder/Architect submitters).
+const HANDOFF_TOKEN_TEST_FALLBACK = 'test-handoff-token-do-not-use-in-prod';
+const HANDOFF_TOKEN_ONE_SHOT_WARNING =
+  '[handoff] HANDOFF_SUBMIT_TOKEN not set; using test-mode fallback token. NOT FOR PRODUCTION.';
+let hasWarnedAboutHandoffToken = false;
+
+/**
+ * Loads the handoff-submit shared-secret token from the environment.
+ *
+ * - Production (`NODE_ENV === 'production'`): throws a full-sentence error if
+ *   `process.env.HANDOFF_SUBMIT_TOKEN` is unset OR empty. Server startup fails
+ *   loudly — same posture as `loadInspectionSubmitToken`.
+ * - Test / dev: returns the fixed test token and emits exactly one
+ *   `console.warn` per process via the module-level one-shot guard.
+ *
+ * @returns {string}
+ */
+function loadHandoffSubmitToken() {
+  const rawValue = process.env.HANDOFF_SUBMIT_TOKEN;
+  const isPresent = typeof rawValue === 'string' && rawValue.length > 0;
+  if (process.env.NODE_ENV === 'production' && isPresent === false) {
+    throw new Error(
+      'HANDOFF_SUBMIT_TOKEN is unset; refusing to start. Set the env var to a high-entropy secret string in the deployment environment.',
+    );
+  }
+  if (isPresent === true) {
+    return rawValue;
+  }
+  if (hasWarnedAboutHandoffToken === false) {
+    hasWarnedAboutHandoffToken = true;
+    console.warn(HANDOFF_TOKEN_ONE_SHOT_WARNING);
+  }
+  return HANDOFF_TOKEN_TEST_FALLBACK;
 }
 
 /**
@@ -754,6 +796,25 @@ export async function startServer() {
     verifier,
     accountResolver: verifier === undefined ? undefined : productionAccountResolver,
     inspectionSubmitToken,
+  });
+
+  // why (WP-232 / D-23201..D-23203): register the three handoff routes
+  // (POST /api/handoffs/sync shared-secret materialize + POST /api/handoffs/transition
+  // shared-secret lifecycle move + GET /api/handoffs/latest session-gated read).
+  // The submit token is loaded once at startup via loadHandoffSubmitToken()
+  // (production loud-fail when HANDOFF_SUBMIT_TOKEN is unset; test/dev fixed
+  // fallback + one-shot warn), mirroring the inspection token posture. The deps
+  // bundle threads the same { requireAuthenticatedSession, verifier,
+  // accountResolver } trio used by every other session-gated route plus the
+  // handoffSubmitToken. PLUMBING ONLY (D-23202): the server records handoff
+  // lifecycle state; branchRef/amendmentRequest are stored references, never
+  // actions — it runs no autonomous agent and writes no code/spec.
+  const handoffSubmitToken = loadHandoffSubmitToken();
+  registerHandoffRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+    handoffSubmitToken,
   });
 
   // why: Render.com injects PORT automatically. The fallback 8000 is for
