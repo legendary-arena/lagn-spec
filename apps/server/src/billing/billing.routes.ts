@@ -64,6 +64,12 @@ import {
 } from './billing.logic.js';
 import { getBillingHistoryForAccount } from './billingHistory.logic.js';
 import { processStripeEvent } from './processStripeEvent.logic.js';
+// why: boardgame.io installs koa-body only on its own /games/* routes — there
+// is no global JSON body parser — so POST /api/billing/checkout-session read an
+// undefined koaContext.request.body in production (every checkout 400'd). The
+// Stripe webhook is unaffected (it captures the raw body via its own
+// route-scoped middleware) and MUST NOT be JSON-parsed.
+import koaBody from 'koa-body';
 
 /**
  * Closed-set re-statement of the orchestrator's
@@ -193,6 +199,31 @@ async function captureRawBodyMiddleware(
   await next();
 }
 
+// why: route-scoped JSON body parser for POST /api/billing/checkout-session.
+// koa-body reads the underlying Node request stream (`ctx.req`); the unit-test
+// fake context injects `request.body` directly with a stub `ctx.req` that has no
+// stream methods, so koa-body is invoked ONLY when a real request stream is
+// present (mirrors captureRawBodyMiddleware's test-friendly short-circuit). In
+// production `ctx.req` is a real IncomingMessage and koa-body parses the JSON
+// body into `request.body`. The cast bridges koa-body's Koa.Middleware type to
+// this file's local `KoaBillingContext` middleware shape.
+const checkoutSessionJsonBodyParser = koaBody({ jsonLimit: '1mb' });
+async function parseCheckoutSessionJsonBody(
+  koaContext: KoaBillingContext,
+  next: () => Promise<void>,
+): Promise<void> {
+  if (typeof koaContext.req?.on !== 'function') {
+    await next();
+    return;
+  }
+  await (
+    checkoutSessionJsonBodyParser as unknown as (
+      koaContext: KoaBillingContext,
+      next: () => Promise<void>,
+    ) => Promise<void>
+  )(koaContext, next);
+}
+
 // why: WP-134 PS-1 path (a) — `recordStripeEvent` (WP-133) returns
 // `BillingResult<{ inserted: boolean }>` only; the row itself is NOT
 // returned. After `recordStripeEvent` reports `inserted: true` the
@@ -255,7 +286,7 @@ export function registerBillingRoutes(
   database: DatabaseClient,
   deps: BillingRouteDependencies,
 ): void {
-  router.post('/api/billing/checkout-session', async (koaContext) => {
+  router.post('/api/billing/checkout-session', parseCheckoutSessionJsonBody, async (koaContext) => {
     // why: Cache-Control MUST be the first statement in every handler
     // body per WP-115 D-11504 lock so a thrown exception still leaves
     // the header set on the eventual 500 response — billing
