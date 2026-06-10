@@ -1,7 +1,7 @@
 # Wiki Index
 
-> **24 / 50** entity pages.
-> Last regenerated: 2026-05-18.
+> **25 / 50** entity pages.
+> Last regenerated: 2026-06-10.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
 
@@ -52,6 +52,11 @@ Abstract data shapes, contracts, and design concepts.
   closed three-value union; structural City rules (not hero
   abilities); Ambush wound-flow uses an inline pattern (D-2403)
   pending future migration to a `gainWound` `RuleEffect`.
+- [R2 Image Naming Convention](r2-image-naming-convention.md) —
+  deterministic `{set}/{set}-{ribbon}-{slug}.webp` rule mapping card data to
+  Cloudflare R2 image URLs; ribbon codes (`hr` · `mm` · `me` · `mt` · `vi` ·
+  `hm` · `sc` · `by` · `wd`) are hardcoded in the convert pipeline, not in
+  `card-types.json`.
 
 ## Card-Type
 
@@ -177,7 +182,8 @@ following are useful entry points:
   [Homepage Review Template](homepage-review-template.md)
 - **`layer-registry`** — Pages anchored in the registry layer:
   [Card Type Taxonomy](card-type-taxonomy.md),
-  [CardExtId](cardextid.md) (cross-cuts engine + registry).
+  [CardExtId](cardextid.md) (cross-cuts engine + registry),
+  [R2 Image Naming Convention](r2-image-naming-convention.md).
 
 ---
 
