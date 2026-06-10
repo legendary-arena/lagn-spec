@@ -8,7 +8,7 @@ import { getKeywordGlossary, getKeywordPdfPages, getRuleGlossary } from "./lib/g
 import { getCardTypes } from "./lib/cardTypesClient";
 import { getCardAbilities, buildAbilityTagIndex } from "./lib/cardAbilitiesClient";
 import { getSchemeTwistPatterns, getSchemeTwistAssignments } from "./lib/schemeTwistClient";
-import { getCardPatterns, type PatternTaxonomyKey } from "./lib/cardPatternsClient";
+import { getCardPatterns } from "./lib/cardPatternsClient";
 import { devLog } from "./lib/devLog";
 import type { CardTypeEntry, CardAbilityEntry, SchemeTwistPattern, CardPattern } from "@legendary-arena/registry/schema";
 import { setGlossaries } from "./composables/useRules";
@@ -727,8 +727,13 @@ function applyThemeFilters() {
   selectedTheme.value = null;
 }
 
-/** Cross-link: navigate from theme detail to the card view with a filter. */
-function navigateToCard(slug: string, cardType: string) {
+/**
+ * Cross-link: navigate from theme detail to the card view, searching by slug.
+ * The `@navigate-to-card` event also carries a card-type string, but this
+ * handler intentionally searches by slug only (it clears the type filter), so
+ * that second emitted argument is deliberately not bound.
+ */
+function navigateToCard(slug: string) {
   activeView.value = "cards";
   searchText.value = slug;
   selectedTypes.value = new Set();
