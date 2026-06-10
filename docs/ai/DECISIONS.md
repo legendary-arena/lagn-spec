@@ -23958,4 +23958,65 @@ nightly triage.
 
 ---
 
+### D-23301 — Closed-Loop Verification Posture: Full-Report Diff, Newer-Report Guard, Lifecycle Reuse
+
+**Decision:**
+`POST /api/handoffs/verify` closes the sweep loop. It reads the latest
+inspection report via the exported `fetchLatestInspectionReport(database)` ONLY
+(no direct `inspection_reports` SQL) and, for each handoff in `fix-proposed`
+whose origin `reportId` differs from the latest report's `reportId` — a genuine
+re-sweep has run since the fix — diffs the handoff's snapshotted
+`(cellId, anomalyClass)` against the latest report's findings: anomaly ABSENT ⇒
+transition `fix-proposed → resolved` (verified); anomaly PRESENT ⇒ transition
+`fix-proposed → claimed` (regression — back to the Builder, the re-open edge
+WP-232 reserved). Matching is exact `(cellId, anomalyClass)` equality (a
+run-level finding has `cellId: null`; `null === null` matches a run-level
+anomaly); the LLM-nondeterministic finding `description` is never compared
+(D-23102 carry-forward), and `anomalyClass` stays an opaque string (D-23103
+carry-forward). The **newer-report-only guard** (`handoff.reportId !==
+latest.reportId`) is the load-bearing correctness condition: a `fix-proposed`
+handoff whose origin report IS the latest (no re-sweep yet) is `skipped`, never
+falsely regressed. The verification reuses the WP-232 6-status lifecycle and
+transition table VERBATIM — no new state (e.g. `verified`) and no new transition
+are added (operator decision, 2026-06-10) — and transitions go through the
+existing `applyHandoffTransition` guarded UPDATE, so the diff is server-
+authoritative and concurrency-safe (a row a parallel transition advanced is a
+0-row no-op, never a lost update or a double-act). The mechanism is a full-report
+diff against the next nightly full sweep, not a targeted subset re-sweep
+(operator decision, 2026-06-10); a targeted re-sweep is a deferred performance
+optimization over this same contract.
+
+**Packet:** WP-233 (EC-265).
+**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
+**Status:** Reserved (proposed)
+
+---
+
+### D-23302 — Autonomous Nightly Verify Step (Post-Merge Timing, Idempotent)
+
+**Decision:**
+WP-233 is the agent pipeline's first autonomous-ACTION surface (operator
+decision, 2026-06-10): unlike WP-232's plumbing-only posture, the verify step
+actively transitions handoffs without a human. It is NOT an autonomous
+code-writer — it writes no fix, opens no PR, and edits no spec; the autonomy is
+the verify-and-transition loop over already-filed findings, and the unattended
+Builder (code-writer) / Architect (spec-writer) remain deferred to their own
+separately-gated WPs. Timing is post-merge / next-nightly (operator decision,
+2026-06-10): a fix merged to `main` is re-swept by the next nightly full sweep +
+Inspector triage, and an additive trailing `pnpm handoffs:verify` step in
+`inspection-nightly.yml` (after `handoffs:sync`, `if: success()`, reading
+`HANDOFF_SUBMIT_TOKEN` + `API_BASE_URL`) calls `POST /api/handoffs/verify`. The
+endpoint reuses the WP-232 `X-Handoff-Token` shared secret — no new token, no
+`render.yaml` / `.env.example` change. The step is idempotent: a second run
+against the same latest report finds no eligible `fix-proposed` handoffs (the
+first run transitioned them out) and a run against an unchanged report only
+`skips`; `scripts/handoffs-verify.mjs` exits 0 (200) / 1 (missing env) / 2
+(request failure).
+
+**Packet:** WP-233 (EC-265).
+**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
+**Status:** Reserved (proposed)
+
+---
+
 Protect this file.
