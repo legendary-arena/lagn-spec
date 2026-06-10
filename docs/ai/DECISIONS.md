@@ -23827,6 +23827,42 @@ re-implements the check inline.
 
 ---
 
+### D-23104 — Inspector Triage Invocation: Direct Messages API Call Replaces `anthropics/claude-code-action`
+
+**Decision:**
+The Inspector triage step is invoked via a direct Claude **Messages API** call
+(`scripts/inspection-triage.mjs`, Node built-in `fetch`, no new dependency), not
+`anthropics/claude-code-action`. That action is built for PR review: it requires
+a GitHub OIDC token (`id-token: write`), posts inline PR comments, and rejects a
+`model` input — so in a standalone nightly with no PR context it failed every
+run ("Could not fetch an OIDC token"), independent of `ANTHROPIC_API_KEY`. The
+triage is a single structured-classification call, which the Messages API serves
+directly with no OIDC and no PR surface.
+
+The D-23102 posture is otherwise unchanged and re-enforced: model
+`claude-sonnet-4-6`; the P0/P1/P2 rubric is the self-contained
+`scripts/inspection-triage-prompt.md` (rewritten as a pure API rubric — its
+file-I/O and envelope-assembly instructions move into the script); findings stay
+LLM-generated and nondeterministic. Two refinements: (1) the model emits **only
+the `findings` array** via structured outputs (`output_config.format`
+`json_schema`), and `inspection-triage.mjs` assembles the report envelope
+deterministically — `sweepRunId` from the input run, `generatedAt` = now,
+`reportId`, and `verdict` recomputed locally (FAIL iff any P0/P1) — so the
+verdict can never disagree with the findings and `inspection-submit.mjs` never
+exit-3s on a self-inconsistent agent; (2) the server remains the durable verdict
+authority and still recomputes + ignores the client value (D-23101 / D-23102
+unchanged). `ANTHROPIC_API_KEY` stays a CI-only GitHub Actions secret, never a
+server env var. Triage script exit codes: 1 missing env / 2 bad input / 3 API
+failure / 4 bad model output.
+
+**Packet:** WP-231 (EC-263) follow-up — INFRA fix (commit `b1eceb8`).
+**Drafted:** 2026-06-10. **Landed:** 2026-06-10.
+**Status:** Active. Supersedes the "invoked … via `anthropics/claude-code-action`"
+clause of D-23102; D-23102's triage posture (model, rubric, nondeterministic
+findings, server-enforced verdict, accepted per-run API cost) otherwise stands.
+
+---
+
 ### D-23201 — Finding Handoffs: Storage Shape + Contract Lock + Denormalization-Snapshot Posture
 
 **Decision:**
