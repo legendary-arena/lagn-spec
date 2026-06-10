@@ -33,6 +33,7 @@ import { registerAdminProfileRoutes } from './profile/admin/adminProfile.routes.
 import { registerAnalyticsRoutes } from './analytics/analytics.routes.js';
 import { getAnalyticsUserIdSalt } from './analytics/userIdHash.js';
 import { registerSweepRoutes } from './sweep/sweep.routes.js';
+import { registerInspectionRoutes } from './inspection/inspection.routes.js';
 import { requireAdminSession } from './auth/adminSession.js';
 import { loadBillingConfig, createStripeClient } from './billing/billing.config.js';
 import { registerLegendsPublisherRoutes } from './legends/legends.routes.js';
@@ -186,6 +187,46 @@ function loadSweepSubmitToken() {
     console.warn(SWEEP_TOKEN_ONE_SHOT_WARNING);
   }
   return SWEEP_TOKEN_TEST_FALLBACK;
+}
+
+// why (D-23101 / WP-231): loud-fail-on-production guard for the
+// INSPECTION_SUBMIT_TOKEN env var, mirroring the SWEEP_SUBMIT_TOKEN /
+// ANALYTICS_USER_ID_SALT precedent. Production startup is fatal on unset /
+// empty; non-production returns a fixed test token and emits one console.warn
+// per process so a developer does not accidentally rely on the fallback. The
+// token gates POST /api/inspection/reports (the CI triage submitter).
+const INSPECTION_TOKEN_TEST_FALLBACK = 'test-inspection-token-do-not-use-in-prod';
+const INSPECTION_TOKEN_ONE_SHOT_WARNING =
+  '[inspection] INSPECTION_SUBMIT_TOKEN not set; using test-mode fallback token. NOT FOR PRODUCTION.';
+let hasWarnedAboutInspectionToken = false;
+
+/**
+ * Loads the inspection-submit shared-secret token from the environment.
+ *
+ * - Production (`NODE_ENV === 'production'`): throws a full-sentence error if
+ *   `process.env.INSPECTION_SUBMIT_TOKEN` is unset OR empty. Server startup
+ *   fails loudly — same posture as `loadSweepSubmitToken`.
+ * - Test / dev: returns the fixed test token and emits exactly one
+ *   `console.warn` per process via the module-level one-shot guard.
+ *
+ * @returns {string}
+ */
+function loadInspectionSubmitToken() {
+  const rawValue = process.env.INSPECTION_SUBMIT_TOKEN;
+  const isPresent = typeof rawValue === 'string' && rawValue.length > 0;
+  if (process.env.NODE_ENV === 'production' && isPresent === false) {
+    throw new Error(
+      'INSPECTION_SUBMIT_TOKEN is unset; refusing to start. Set the env var to a high-entropy secret string in the deployment environment.',
+    );
+  }
+  if (isPresent === true) {
+    return rawValue;
+  }
+  if (hasWarnedAboutInspectionToken === false) {
+    hasWarnedAboutInspectionToken = true;
+    console.warn(INSPECTION_TOKEN_ONE_SHOT_WARNING);
+  }
+  return INSPECTION_TOKEN_TEST_FALLBACK;
 }
 
 /**
@@ -695,6 +736,24 @@ export async function startServer() {
     verifier,
     accountResolver: verifier === undefined ? undefined : productionAccountResolver,
     sweepSubmitToken,
+  });
+
+  // why (WP-231 / D-23101..D-23103): register the two inspection routes
+  // (POST /api/inspection/reports shared-secret submit + GET
+  // /api/inspection/latest session-gated read). The submit token is loaded
+  // once at startup via loadInspectionSubmitToken() (production loud-fail when
+  // INSPECTION_SUBMIT_TOKEN is unset; test/dev fixed fallback + one-shot warn),
+  // mirroring the sweep token posture. The deps bundle threads the same
+  // { requireAuthenticatedSession, verifier, accountResolver } trio used by
+  // every other session-gated route plus the inspectionSubmitToken. The server
+  // is the sole authority for the report's derived fields (verdict + counts
+  // recomputed from findings, client-supplied derived values ignored).
+  const inspectionSubmitToken = loadInspectionSubmitToken();
+  registerInspectionRoutes(server.router, pool, {
+    requireAuthenticatedSession,
+    verifier,
+    accountResolver: verifier === undefined ? undefined : productionAccountResolver,
+    inspectionSubmitToken,
   });
 
   // why: Render.com injects PORT automatically. The fallback 8000 is for

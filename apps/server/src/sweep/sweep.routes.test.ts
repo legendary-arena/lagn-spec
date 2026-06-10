@@ -527,8 +527,8 @@ describe('GET /api/sweep/latest (WP-209 / D-20702)', () => {
   });
 });
 
-describe('registerSweepRoutes wiring (WP-209)', () => {
-  test('should_register_exactly_two_routes_POST_runs_and_GET_latest', () => {
+describe('GET /api/sweep/runs/latest (WP-231 / D-23103 CI blob read)', () => {
+  test('should_reject_with_401_when_X_Sweep_Token_is_missing_before_any_DB_IO', async () => {
     const { router, routes } = makeRouter();
     const recorder = makeQueryRecorder();
     registerSweepRoutes(
@@ -536,8 +536,72 @@ describe('registerSweepRoutes wiring (WP-209)', () => {
       recorder.database,
       makeDeps(),
     );
-    assert.equal(routes.length, 2);
+    const handler = findRoute(routes, 'GET', '/api/sweep/runs/latest').handler;
+    const koaContext = makeKoaContext();
+    await handler(koaContext);
+    assert.equal(koaContext.status, 401);
+    assert.deepStrictEqual(koaContext.body, { data: [], error: 'unauthorized' });
+    assert.equal(koaContext.responseHeaders['Cache-Control'], 'no-store');
+    assert.equal(recorder.recorded.length, 0, 'No DB query before the shared-secret gate');
+  });
+
+  test('should_return_the_latest_run_including_manifestBlob_when_token_matches', async () => {
+    const { router, routes } = makeRouter();
+    const recorder = makeQueryRecorder();
+    recorder.setNextResult([
+      {
+        run_id: 'latest-run',
+        submitted_at: new Date('2026-06-10T07:15:00.000Z'),
+        started_at: new Date('2026-06-10T07:14:00.000Z'),
+        cell_count: 4,
+        anomaly_counts: { 'endgame-reached': 4, 'not-endgame': 0, 'escaped-villain-cap': 0, 'fatal': 0 },
+        manifest_blob: { cells: [], summary: { totalCells: 4 }, malformedLines: [] },
+      },
+    ]);
+    registerSweepRoutes(
+      router as unknown as Parameters<typeof registerSweepRoutes>[0],
+      recorder.database,
+      makeDeps(),
+    );
+    const handler = findRoute(routes, 'GET', '/api/sweep/runs/latest').handler;
+    const koaContext = makeKoaContext({ headers: { 'x-sweep-token': TEST_SWEEP_TOKEN } });
+    await handler(koaContext);
+    assert.equal(koaContext.status, 200);
+    const body = koaContext.body as { data: { run: { runId: string; manifestBlob: unknown } | null } };
+    assert.ok(body.data.run);
+    assert.equal(body.data.run.runId, 'latest-run');
+    assert.deepStrictEqual(body.data.run.manifestBlob, { cells: [], summary: { totalCells: 4 }, malformedLines: [] });
+  });
+
+  test('should_return_run_null_when_the_table_is_empty', async () => {
+    const { router, routes } = makeRouter();
+    const recorder = makeQueryRecorder();
+    recorder.setNextResult([]);
+    registerSweepRoutes(
+      router as unknown as Parameters<typeof registerSweepRoutes>[0],
+      recorder.database,
+      makeDeps(),
+    );
+    const handler = findRoute(routes, 'GET', '/api/sweep/runs/latest').handler;
+    const koaContext = makeKoaContext({ headers: { 'x-sweep-token': TEST_SWEEP_TOKEN } });
+    await handler(koaContext);
+    assert.equal(koaContext.status, 200);
+    assert.deepStrictEqual(koaContext.body, { data: { run: null } });
+  });
+});
+
+describe('registerSweepRoutes wiring (WP-209 + WP-231)', () => {
+  test('should_register_exactly_three_routes_POST_runs_GET_latest_and_GET_runs_latest', () => {
+    const { router, routes } = makeRouter();
+    const recorder = makeQueryRecorder();
+    registerSweepRoutes(
+      router as unknown as Parameters<typeof registerSweepRoutes>[0],
+      recorder.database,
+      makeDeps(),
+    );
+    assert.equal(routes.length, 3);
     assert.ok(routes.find((r) => r.method === 'POST' && r.path === '/api/sweep/runs'));
     assert.ok(routes.find((r) => r.method === 'GET' && r.path === '/api/sweep/latest'));
+    assert.ok(routes.find((r) => r.method === 'GET' && r.path === '/api/sweep/runs/latest'));
   });
 });

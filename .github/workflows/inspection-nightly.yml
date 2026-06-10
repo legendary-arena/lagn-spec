@@ -1,0 +1,107 @@
+# WP-231 / EC-263 — Nightly Inspector triage workflow.
+#
+# Chains AFTER the WP-209 `Sweep Nightly` workflow: when that run completes
+# successfully, this workflow fetches the latest sweep run (incl. its forensic
+# `manifestBlob`) from the shared-secret CI read endpoint, runs a headless
+# Claude Inspector that applies the agent-inspector P0/P1/P2 rubric and emits a
+# structured `inspection-report.json`, then POSTs that report to
+# `POST /api/inspection/reports`.
+#
+# `workflow_dispatch:` alongside `workflow_run:` permits on-demand operator
+# testing without waiting for the next nightly sweep.
+#
+# CI failure semantics (locked per WP-231 §CI Failure Semantics):
+#   - No auto-retry within a run — a retry could double-submit.
+#   - On any failure, `inspection-work/` (the sweep input + agent output) is
+#     uploaded as a build artifact so the operator can inspect a failed nightly
+#     without re-running the agent.
+#   - A 409 (duplicate reportId) is a HARD failure (submit script exit 4), never
+#     swallowed. Re-triage across runs is fine (distinct reportId).
+#
+# Script exit codes (locked per WP-231 §Script Exit Codes):
+#   inspection-fetch.mjs : 0 ok / 1 missing env / 2 request-fail / 3 no blob
+#   inspection-submit.mjs: 0 ok / 1 missing env / 2 invalid output / 3 verdict
+#                          mismatch / 4 POST non-2xx (incl. 409)
+
+name: Inspection Nightly
+
+on:
+  workflow_run:
+    workflows: ["Sweep Nightly"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  inspect:
+    name: Fetch sweep + triage + submit
+    runs-on: ubuntu-latest
+    # why (WP-231 §Locked contract values): only run after a SUCCESSFUL sweep
+    # (the triage needs a fresh, complete sweep), OR on a manual dispatch.
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with: { version: 10 }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Step 1 — fetch the latest sweep run + forensic blob into
+      # inspection-work/sweep-input.json (exit 3 if no triageable blob).
+      - name: Fetch latest sweep run
+        run: pnpm inspection:fetch
+        env:
+          # why (D-23103): the sweep-read reuses the sweep token family — the CI
+          # trust boundary; no third secret. Both ends (this Actions secret + the
+          # Render SWEEP_SUBMIT_TOKEN) must be in lockstep.
+          SWEEP_SUBMIT_TOKEN: ${{ secrets.SWEEP_SUBMIT_TOKEN }}
+          # why (WP-209): production API base URL (no trailing slash); the fetch
+          # script appends `/api/sweep/runs/latest`.
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+
+      # Step 2 — headless Claude Inspector triage. Reads
+      # inspection-work/sweep-input.json, applies the self-contained rubric in
+      # scripts/inspection-triage-prompt.md, writes
+      # inspection-work/inspection-report.json as STRICT JSON only.
+      - name: Triage sweep (headless Claude Inspector)
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # why (WP-231 §Locked contract values): claude-sonnet-4-6 is the
+          # cost-appropriate model for structured triage; Opus is reserved for a
+          # later WP if triage depth proves insufficient.
+          model: claude-sonnet-4-6
+          prompt: |
+            Read and follow the instructions in scripts/inspection-triage-prompt.md exactly.
+            Read inspection-work/sweep-input.json, apply the triage rubric, and write
+            inspection-work/inspection-report.json containing STRICT JSON ONLY (no prose,
+            no markdown fences). Do not modify any other file.
+
+      # Step 3 — validate the agent report (bare JSON.parse + shape + verdict
+      # agreement) and POST it. 409 / non-2xx -> exit 4 -> this step fails the
+      # workflow. No auto-retry.
+      - name: Submit inspection report
+        run: pnpm inspection:submit
+        env:
+          # why (D-23101): the inspection submit token gates
+          # POST /api/inspection/reports; both ends (this Actions secret + the
+          # Render INSPECTION_SUBMIT_TOKEN) must be in lockstep.
+          INSPECTION_SUBMIT_TOKEN: ${{ secrets.INSPECTION_SUBMIT_TOKEN }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+
+      # why (WP-231 §CI Failure Semantics): on ANY failure preserve the sweep
+      # input + agent output for operator forensic — inspect a failed nightly
+      # without re-running the agent. Runs only on failure.
+      - name: Upload inspection-work on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: inspection-work
+          path: inspection-work/
+          if-no-files-found: ignore

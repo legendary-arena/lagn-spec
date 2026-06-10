@@ -5,8 +5,8 @@
  * boardgame.io's `Server({...})` instance:
  *
  *   * `POST /api/sweep/runs` — `guest` per D-9905 with shared-secret header
- *     auth (`X-Sweep-Token` byte-compared via `node:crypto.timingSafeEqual`
- *     after a `Buffer.byteLength` length-equality precheck). Persists one row
+ *     auth (`X-Sweep-Token` byte-compared in constant time via the shared
+ *     `validateSharedSecret` helper). Persists one row
  *     to `legendary.sweep_runs` via `insertSweepRun`. Idempotent by `run_id`
  *     PRIMARY KEY: duplicate submissions return 409 with the existing row
  *     UNCHANGED (no UPSERT semantics per D-20701). Status-code domain
@@ -28,8 +28,9 @@
  *
  * Layer-boundary contract: imports only `./sweep.types.js`, `./sweep.logic.js`,
  * the auth-layer `SessionTokenRequest` / `SessionVerifier` / `AccountResolver`
- * / `RequireAuthenticatedSessionOptions` types, and `node:crypto` for
- * `timingSafeEqual`. No `boardgame.io`, no `@legendary-arena/(registry|preplan)`,
+ * / `RequireAuthenticatedSessionOptions` types, and the shared
+ * `../auth/validateSharedSecret.js` helper for the constant-time secret check.
+ * No `boardgame.io`, no `@legendary-arena/(registry|preplan)`,
  * no `apps/dashboard/**`. `SweepAnomalyClass` + `SWEEP_ANOMALY_CLASSES` come
  * from `./sweep.types.js` which re-exports them from
  * `@legendary-arena/game-engine` (single source of truth).
@@ -41,17 +42,17 @@
  * to `'unauthorized'`).
  */
 
-import { timingSafeEqual } from 'node:crypto';
-
 import type {
   AccountResolver,
   RequireAuthenticatedSessionOptions,
   SessionTokenRequest,
   SessionVerifier,
 } from '../auth/sessionToken.types.js';
-import type { DatabaseClient } from './sweep.logic.js';
+import { validateSharedSecret } from '../auth/validateSharedSecret.js';
+import type { DatabaseClient, SweepRunWithBlob } from './sweep.logic.js';
 import {
   SweepRunDuplicateError,
+  fetchLatestSweepRunWithBlob,
   fetchRecentSweepRuns,
   insertSweepRun,
 } from './sweep.logic.js';
@@ -188,34 +189,6 @@ function statusForSessionValidationCode(code: SessionValidationCode): number {
 }
 
 /**
- * Constant-time comparison of two header tokens. Returns `true` iff the two
- * inputs have equal byte length AND the per-byte comparison is identical.
- * Returns `false` for any other input — including the length-mismatch case
- * (which would otherwise throw `RangeError` from `timingSafeEqual`).
- *
- * The length-equality precheck is REQUIRED before invoking `timingSafeEqual`
- * because Node's implementation throws on unequal-length buffers; the
- * pre-check preserves both the 401 fail-fast path AND the constant-time
- * guarantee on equal-length inputs.
- */
-function tokensAreEqualConstantTime(
-  headerToken: string,
-  envToken: string,
-): boolean {
-  // why (D-20702): length-equality precheck is required because
-  // node:crypto.timingSafeEqual throws RangeError on unequal-length buffers;
-  // pre-check preserves both the 401 path and the constant-time guarantee on
-  // equal-length inputs.
-  if (Buffer.byteLength(headerToken) !== Buffer.byteLength(envToken)) {
-    return false;
-  }
-  // why (D-20702): constant-time comparison prevents timing-side-channel
-  // inference of the shared secret; === would leak via early-exit on
-  // first-byte mismatch.
-  return timingSafeEqual(Buffer.from(headerToken), Buffer.from(envToken));
-}
-
-/**
  * Reads the `X-Sweep-Token` header value from the request. Koa lowercases
  * header names; this helper checks the canonical lowercase key. Returns the
  * string value when present and a single string (NOT an array — duplicate
@@ -340,7 +313,11 @@ export function registerSweepRoutes(
         koaContext.body = POST_FAILURE_ENVELOPES.unauthorized;
         return;
       }
-      if (tokensAreEqualConstantTime(headerToken, deps.sweepSubmitToken) === false) {
+      // why (D-20702): the inline constant-time check is now the shared
+      // `validateSharedSecret` helper (length pre-check + constant-time compare);
+      // behavior is byte-identical to the pre-WP-231 inline version — this is
+      // the one and only change permitted to the existing sweep POST handler.
+      if (validateSharedSecret(headerToken, deps.sweepSubmitToken) === false) {
         koaContext.status = 401;
         koaContext.body = POST_FAILURE_ENVELOPES.unauthorized;
         return;
@@ -443,6 +420,35 @@ export function registerSweepRoutes(
           recentRuns,
         },
       };
+    } catch (caughtError) {
+      void caughtError;
+      koaContext.status = 500;
+      koaContext.body = GET_FAILURE_ENVELOPES.internalError;
+    }
+  });
+
+  router.get('/api/sweep/runs/latest', async (koaContext) => {
+    // why (D-11504): `Cache-Control: no-store` first-statement lock ensures
+    // error paths cannot ship cacheable responses.
+    koaContext.set('Cache-Control', 'no-store');
+    try {
+      // why (D-23103): shared-secret `X-Sweep-Token` read realizes the
+      // WP-209-deferred blob endpoint for the CI triage consumer ONLY; it is
+      // NOT the operator dashboard read path (that stays `GET /api/sweep/latest`,
+      // session-gated, blob-free). The CI consumer reuses the sweep token family
+      // — no third secret. Auth fires BEFORE any DB I/O.
+      const headerToken = readSweepTokenHeader(koaContext.request);
+      if (validateSharedSecret(headerToken, deps.sweepSubmitToken) === false) {
+        koaContext.status = 401;
+        koaContext.body = GET_FAILURE_ENVELOPES.unauthorized;
+        return;
+      }
+      const run: SweepRunWithBlob | null = await fetchLatestSweepRunWithBlob(database);
+      // why: the `run` may carry `manifestBlob: null` when the column is null;
+      // the route returns it verbatim and the fetch script treats a null `run`
+      // OR a null `manifestBlob` as exit 3 (forensic blob required for triage).
+      koaContext.status = 200;
+      koaContext.body = { data: { run } };
     } catch (caughtError) {
       void caughtError;
       koaContext.status = 500;

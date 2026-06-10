@@ -201,6 +201,73 @@ export async function fetchRecentSweepRuns(
 }
 
 /**
+ * The latest sweep run INCLUDING its forensic `manifest_blob` — the CI triage
+ * read shape (WP-231 / D-23103). Distinct from `SweepRunSummary`, which
+ * deliberately EXCLUDES the blob because it serves the operator dashboard read
+ * path. Defined here (not in `sweep.types.ts`) because WP-231 modifies only the
+ * sweep logic/routes/test files; the contract is consumed by `sweep.routes.ts`
+ * and `scripts/inspection-fetch.mjs` via the HTTP envelope.
+ */
+export interface SweepRunWithBlob {
+  readonly runId: string;
+  readonly submittedAt: string;
+  readonly startedAt: string;
+  readonly cellCount: number;
+  readonly anomalyCounts: Readonly<Record<SweepAnomalyClass, number>>;
+  readonly manifestBlob: unknown | null;
+}
+
+/**
+ * Returns the latest sweep run (greatest `submitted_at`) INCLUDING its
+ * `manifest_blob`, or `null` when the table is empty. This realizes WP-209's
+ * explicitly-deferred blob-retrieval endpoint (D-23103) for the CI triage
+ * consumer — `scripts/inspection-fetch.mjs` reasons over the forensic blob.
+ *
+ * The `manifest_blob` column is nullable JSONB; the pg driver auto-parses JSONB
+ * (including SQL NULL -> JS `null`), so the returned `manifestBlob` is `null`
+ * when the column is null. The route layer surfaces that as `manifestBlob:
+ * null`; the fetch script treats a null blob as a hard failure (exit 3) because
+ * the LLM triage path needs the blob.
+ */
+export async function fetchLatestSweepRunWithBlob(
+  database: DatabaseClient,
+): Promise<SweepRunWithBlob | null> {
+  // why (D-23103): the CI read path returns the full latest run + manifest_blob
+  // for the triage agent; "latest" is greatest submitted_at (consistent with
+  // the dashboard read path).
+  const result = await database.query(
+    `SELECT
+       run_id,
+       submitted_at,
+       started_at,
+       cell_count,
+       anomaly_counts,
+       manifest_blob
+     FROM legendary.sweep_runs
+     ORDER BY submitted_at DESC
+     LIMIT 1`,
+    [],
+  );
+  if (result.rows.length === 0) {
+    return null;
+  }
+  const dbRow = result.rows[0] as Record<string, unknown>;
+  const submittedAtValue = dbRow.submitted_at;
+  const startedAtValue = dbRow.started_at;
+  const manifestBlobValue = dbRow.manifest_blob;
+  return {
+    runId: String(dbRow.run_id),
+    submittedAt:
+      submittedAtValue instanceof Date ? submittedAtValue.toISOString() : String(submittedAtValue),
+    startedAt:
+      startedAtValue instanceof Date ? startedAtValue.toISOString() : String(startedAtValue),
+    cellCount: Number(dbRow.cell_count ?? 0),
+    anomalyCounts: dbRow.anomaly_counts as Readonly<Record<SweepAnomalyClass, number>>,
+    manifestBlob: manifestBlobValue === undefined ? null : manifestBlobValue,
+  };
+}
+
+/**
  * Maps a single DB row (snake_case columns) to a `SweepRunSummary`
  * (camelCase). The `anomaly_counts` column is JSONB; the pg driver
  * auto-parses JSONB to a JS object, so no `JSON.parse` is needed. The
