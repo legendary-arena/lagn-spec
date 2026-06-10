@@ -44,6 +44,11 @@ import type {
   SessionVerifier,
 } from '../auth/sessionToken.types.js';
 import { validateSharedSecret } from '../auth/validateSharedSecret.js';
+// why: boardgame.io installs koa-body only on its own /games/* routes — no
+// global body parser — so this custom route must attach its own koaBody or
+// koaContext.request.body is undefined at the handler (prod 400). jsonLimit is
+// raised above the route's 5 MB cap so the route's own size check is authoritative.
+import koaBody from 'koa-body';
 import type { DatabaseClient } from './inspection.logic.js';
 import {
   InspectionReportDuplicateError,
@@ -112,6 +117,7 @@ interface KoaInspectionContext {
 interface KoaRouter {
   post(
     path: string,
+    bodyParser: unknown,
     handler: (koaContext: KoaInspectionContext) => Promise<void> | void,
   ): unknown;
   get(
@@ -322,7 +328,7 @@ export function registerInspectionRoutes(
   database: DatabaseClient,
   deps: InspectionRouteDependencies,
 ): void {
-  router.post('/api/inspection/reports', async (koaContext) => {
+  router.post('/api/inspection/reports', koaBody({ jsonLimit: '6mb' }), async (koaContext) => {
     // why (D-11504): `Cache-Control: no-store` first-statement lock ensures
     // error paths cannot ship cacheable responses.
     koaContext.set('Cache-Control', 'no-store');

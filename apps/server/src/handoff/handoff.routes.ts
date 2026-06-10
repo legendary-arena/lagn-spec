@@ -51,6 +51,12 @@ import type {
   SessionVerifier,
 } from '../auth/sessionToken.types.js';
 import { validateSharedSecret } from '../auth/validateSharedSecret.js';
+// why: boardgame.io installs koa-body only on its own /games/* routes — no
+// global body parser — so these custom routes must attach their own koaBody or
+// koaContext.request.body is undefined at the handler (prod 400). Default
+// jsonLimit (1mb) is well above the route's 64 KB cap, so the route's own size
+// check stays authoritative.
+import koaBody from 'koa-body';
 import type { DatabaseClient } from './handoff.logic.js';
 import {
   HandoffNotFoundError,
@@ -116,6 +122,7 @@ interface KoaHandoffContext {
 interface KoaRouter {
   post(
     path: string,
+    bodyParser: unknown,
     handler: (koaContext: KoaHandoffContext) => Promise<void> | void,
   ): unknown;
   get(
@@ -315,7 +322,7 @@ export function registerHandoffRoutes(
   database: DatabaseClient,
   deps: HandoffRouteDependencies,
 ): void {
-  router.post('/api/handoffs/sync', async (koaContext) => {
+  router.post('/api/handoffs/sync', koaBody(), async (koaContext) => {
     // why (D-11504): `Cache-Control: no-store` first-statement lock ensures error
     // paths cannot ship cacheable responses.
     koaContext.set('Cache-Control', 'no-store');
@@ -353,7 +360,7 @@ export function registerHandoffRoutes(
     }
   });
 
-  router.post('/api/handoffs/transition', async (koaContext) => {
+  router.post('/api/handoffs/transition', koaBody(), async (koaContext) => {
     // why (D-11504): `Cache-Control: no-store` first-statement lock ensures error
     // paths cannot ship cacheable responses.
     koaContext.set('Cache-Control', 'no-store');

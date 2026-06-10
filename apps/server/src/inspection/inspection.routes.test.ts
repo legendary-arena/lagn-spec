@@ -48,8 +48,12 @@ function makeRouter(): {
   return {
     routes,
     router: {
-      post(path: string, handler: RecordedRoute['handler']) {
-        routes.push({ method: 'POST', path, handler });
+      post(path: string, ...handlers: unknown[]) {
+        routes.push({
+          method: 'POST',
+          path,
+          handler: handlers[handlers.length - 1] as RecordedRoute['handler'],
+        });
         return undefined;
       },
       get(path: string, handler: RecordedRoute['handler']) {

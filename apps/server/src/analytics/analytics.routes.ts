@@ -86,6 +86,12 @@ import {
   insertAnalyticsEventBatch,
 } from './analytics.logic.js';
 import { hashUserId } from './userIdHash.js';
+// why: boardgame.io installs koa-body only on its own /games/* routes — no
+// global body parser — so this custom route must attach its own koaBody or
+// koaContext.request.body is undefined at the handler (prod 400). Default
+// jsonLimit (1mb) exceeds the route's 100 KB batch cap, so the route's own
+// size check stays authoritative.
+import koaBody from 'koa-body';
 
 /**
  * Closed-set re-statement of the orchestrator's
@@ -144,6 +150,7 @@ interface KoaAnalyticsContext {
 interface KoaRouter {
   post(
     path: string,
+    bodyParser: unknown,
     handler: (koaContext: KoaAnalyticsContext) => Promise<void> | void,
   ): unknown;
   get(
@@ -440,7 +447,7 @@ export function registerAnalyticsRoutes(
     now,
   );
 
-  router.post('/api/analytics/events', async (koaContext) => {
+  router.post('/api/analytics/events', koaBody(), async (koaContext) => {
     // why: D-11504 — Cache-Control MUST be the literal first
     // statement of every handler body so a thrown exception still
     // leaves the header set on the eventual 500 response.
