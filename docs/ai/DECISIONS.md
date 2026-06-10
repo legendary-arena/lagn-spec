@@ -23827,4 +23827,99 @@ re-implements the check inline.
 
 ---
 
+### D-23201 — Finding Handoffs: Storage Shape + Contract Lock + Denormalization-Snapshot Posture
+
+**Decision:**
+`legendary.finding_handoffs` makes each Inspector finding an addressable,
+claimable work-item: 14 columns (`handoff_id` PK of form
+`<reportId>#<findingIndex>`, `report_id`, `sweep_run_id`, `finding_index`,
+`severity`, `route`, `anomaly_class`, `cell_id`, `description`, `status`,
+`branch_ref`, `amendment_request`, `created_at`, `updated_at`) + two BTREE
+indexes (`created_at DESC`, `report_id`). The wire contract is `HandoffRecord`
+(row + GET), `HandoffTransitionPayload` (POST transition), `HandoffSyncSummary`
+(POST sync), `HandoffLatestEnvelope` (GET). The severity + route unions are
+IMPORTED from `apps/server/src/inspection/inspection.types.ts` (one source of
+truth — the handoff module does not redefine them); `anomalyClass` is an opaque
+string (no engine `SweepAnomalyClass` import — D-23103 carry-forward). The
+severity/route/anomalyClass/cellId/description columns are a point-in-time
+SNAPSHOT of the finding for cheap addressable reads; the `inspection_reports`
+row remains authoritative for finding content, and the handoff row is
+authoritative ONLY for lifecycle `status` + the `branch_ref` / `amendment_request`
+references. The two reference columns follow a write-on-enter rule:
+`branch_ref` is written only on the `→ fix-proposed` transition and
+`amendment_request` only on `→ escalated`; both are PRESERVED (never nulled) on
+every other transition for auditability. `GET /api/handoffs/latest` resolves the
+"latest report" deterministically via `ORDER BY created_at DESC, report_id DESC
+LIMIT 1` (greatest `created_at`, tie-broken by lexicographically greatest
+`report_id` — a total order even under equal timestamps) and returns that
+report's rows `ORDER BY finding_index ASC, handoff_id ASC` with a query-level
+`LIMIT 500` + per-status counts.
+
+**Packet:** WP-232 (EC-264).
+**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
+**Status:** Reserved (proposed)
+
+---
+
+### D-23202 — Handoff Lifecycle State Machine + Plumbing-Only Scope Lock
+
+**Decision:**
+The handoff lifecycle is a closed 6-status set (`open`, `claimed`,
+`fix-proposed`, `escalated`, `resolved`, `wont-fix`) with a server-enforced
+transition table: `open→claimed`; `claimed→fix-proposed|escalated|wont-fix`;
+`fix-proposed→resolved|claimed`; `escalated→claimed|resolved|wont-fix`;
+`resolved` / `wont-fix` terminal. The transition handler evaluates in a locked
+order — auth (401) → body parse/size (413/400) → shape (400) →
+conditional-required fields (400) → load row (404 if absent) → legality vs the
+table (409) → apply — with all validation completing BEFORE any database access
+(validation-before-read). The mutation is a single guarded
+`UPDATE ... WHERE handoff_id = $1 AND status = $expectedStatus RETURNING *`: if it
+affects 0 rows (a parallel transition moved the row), the handler re-reads once
+and maps absent → 404 / different-status → 409, so two transitions racing from
+the same start cannot both succeed (no lost update; no `FOR UPDATE` / advisory
+lock / multi-step transaction). **Plumbing-only scope lock (operator decision
+2026-06-10):** WP-232 RECORDS handoff state; it runs no autonomous agent.
+`branchRef` and `amendmentRequest` are references the server stores, never
+actions it performs — the server creates no git branch, opens no PR, and edits
+no WP spec. The unattended Builder (code-writer) and Architect (spec-writer) are
+the first such surfaces in the pipeline and get their own separately-gated
+follow-up WP, per the checks-and-balances separation-of-duties discipline.
+
+**Packet:** WP-232 (EC-264).
+**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
+**Status:** Reserved (proposed)
+
+---
+
+### D-23203 — Idempotent Sync Materialization + Handoff Auth Posture
+
+**Decision:**
+`POST /api/handoffs/sync` reads the latest inspection report via the exported
+`fetchLatestInspectionReport(database)` ONLY (this module issues no direct SQL
+against `legendary.inspection_reports` — one source of truth, no duplicate query
+to drift) and inserts one `open` handoff row per finding via
+`INSERT ... ON CONFLICT (handoff_id) DO NOTHING` — idempotent and
+status-preserving: re-syncing a report that already has rows is a normal no-op
+(a `claimed` row stays `claimed`), NOT a duplicate-submission error. This is a
+deliberate, documented contrast with the inspection POST's no-UPSERT-409
+posture, because re-sync is an expected nightly operation. Sync operates on the
+single latest report only: if multiple reports are filed between two syncs,
+intermediate reports are not guaranteed to be materialized (by design). The response is
+`HandoffSyncSummary { reportId, findingCount, created, unchanged }` with
+`created + unchanged === findingCount` (empty `inspection_reports` →
+`reportId: null` + all-zero counts). Both POSTs are `guest` with a new
+shared-secret `X-Handoff-Token` ↔ `HANDOFF_SUBMIT_TOKEN`, validated via the
+existing `validateSharedSecret` helper (no new helper, no third inline check).
+`GET /api/handoffs/latest` is `authenticated-session-required` (D-9905 +
+D-10403 collapse) for the operator dashboard + manually-invoked Builder/Architect
+sessions. The existing `inspection-nightly.yml` gains one additive trailing
+`pnpm handoffs:sync` step (`if: success()`) so the queue refreshes after each
+nightly triage.
+
+**Packet:** WP-232 (EC-264).
+**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
+**Status:** Reserved (proposed)
+
+---
+
 Protect this file.

@@ -261,9 +261,22 @@ issues.
 `apps/server/src/leaderboards/`, `apps/server/src/profile/`,
 `apps/server/src/par/`, `apps/server/src/identity/`,
 `apps/server/src/competition/`, `apps/server/src/replay/`,
-`apps/server/src/rules/`, etc.; the `server` category covers all
-descendants of `apps/server/` unless an explicit DECISIONS.md
-entry carves out a sub-classification).
+`apps/server/src/rules/`, and the QA / agent-pipeline meta-surface modules
+`apps/server/src/analytics/` (WP-205), `apps/server/src/sweep/`
+(WP-209), `apps/server/src/inspection/` (WP-231 / EC-263,
+D-23101..D-23103 — the nightly LLM-triage surface whose
+`inspection.types.ts` + `inspection.logic.ts` + `inspection.routes.ts`
+mirror the analytics / sweep module shape), and
+`apps/server/src/handoff/` (WP-232 / EC-264, D-23201..D-23203 — the
+Inspector→Builder→Architect finding-lifecycle store + handoff contracts,
+same types+logic+routes shape; plumbing only, no autonomous code-writer),
+etc.; the `server`
+category covers all descendants of `apps/server/` unless an explicit
+DECISIONS.md entry carves out a sub-classification. A leaf helper such
+as `apps/server/src/auth/validateSharedSecret.ts` (WP-231, the shared
+CI shared-secret validator) needs no separate entry — it is classified
+`server` by its directory under `apps/server/src/auth/` per Rule 2, not
+by a per-file line).
 
 ---
 
