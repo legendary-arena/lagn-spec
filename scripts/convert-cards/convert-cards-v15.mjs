@@ -29,7 +29,7 @@
  *   - parseAbilities now handles object-style ability lines (fixes [object Object] output).
  *     Extracted parsePart() helper shared by both array and object ability entries.
  * v13 changes:
- *   - Loads src/data/hero-card-counts.json and attaches cardCounts to
+ *   - Loads scripts/convert-cards/inputs/hero-card-counts.json and attaches cardCounts to
  *     each hero object. null entries are skipped gracefully.
  *     File is maintained manually; missing counts don't break conversion.
  * v15 changes:
@@ -689,7 +689,7 @@ function convertSet(jsFilePath, setAbbr) {
       });
 
       // ── Card counts overlay (v13) ──────────────────────────────────────────
-      // Reads from src/data/hero-card-counts.json — manually maintained.
+      // Reads from scripts/convert-cards/inputs/hero-card-counts.json — manually maintained.
       // Only applies counts that have been filled in (non-null).
       // Cards without a count entry are omitted from cardCounts.
       const setCountMap  = CARD_COUNTS.get(setAbbr);
@@ -898,7 +898,7 @@ function convertSet(jsFilePath, setAbbr) {
 
 /**
  * Loads a patch file for a set if one exists.
- * Patch files live in src/data/patches/{setAbbr}.patch.json
+ * Patch files live in scripts/convert-cards/inputs/patches/{setAbbr}.patch.json
  * Each entry requires a "slug" to locate its target and "_op" to specify the action:
  *   "_op": "merge"  — find the existing item by slug and deep-merge the patch fields
  *   "_op": "append" — item does not exist in npm data, append it to the array
