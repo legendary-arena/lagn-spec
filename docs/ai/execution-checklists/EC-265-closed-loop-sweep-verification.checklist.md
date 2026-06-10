@@ -18,7 +18,9 @@
 
 ## Locked Values (verbatim from WP-233 — do not re-derive)
 - **Only new contract:** `HandoffVerifySummary = { reportId: string|null, verified: number, regressed: number, skipped: number }`; response `{ data: HandoffVerifySummary }`. Added additively to `handoff.types.ts` (no existing type/union/array touched).
-- **Verification rule (per `fix-proposed` handoff `H`, latest report `R`):** (1) `R` null ⇒ no-op, all-zero, `reportId: null`. (2) `H.reportId === R.reportId` ⇒ **skip** (no re-sweep yet; leave `fix-proposed`). (3) else `isAnomalyResolved(H, R)` = NO finding `f` in `R.findings` with `f.cellId === H.cellId && f.anomalyClass === H.anomalyClass` (run-level `cellId: null` matches `null`): resolved ⇒ `applyHandoffTransition(... 'resolved')`; not resolved ⇒ `applyHandoffTransition(... 'claimed')`.
+- **Verification rule (per `fix-proposed` handoff `H`, latest report `R`):** (1) `R` null ⇒ no-op, all-zero, `reportId: null`. (2) `H.reportId === R.reportId` ⇒ **skip** (no re-sweep yet; leave `fix-proposed`). (3) else `isAnomalyResolved(H, R)` = NO finding `f` in `R.findings` with `f.cellId === H.cellId && f.anomalyClass === H.anomalyClass` (run-level `cellId: null` matches `null`): resolved ⇒ `applyHandoffTransition(... 'resolved')`; not resolved ⇒ `applyHandoffTransition(... 'claimed')`. (4) **concurrency:** wrap each transition in `try`/`catch` — `applyHandoffTransition` THROWS on a concurrent advance (`HandoffTransitionError` / `HandoffNotFoundError`); catch, do NOT retry, count in NO bucket, continue.
+- **Diff invariants (locked):** match is strict `===` on `(cellId, anomalyClass)` — `null === null` is a valid run-level match, NO coercion / `String()` / `"null"` / `?? ''` on either side. Multiplicity is existential: ≥ 1 match ⇒ `regressed`, 0 ⇒ `verified` — never counted/weighted. Processing order is undefined and outcome-irrelevant (each `H` diffed independently against the same immutable `R`).
+- **Accounting (locked):** `verified + regressed + skipped <= ` the initial `fix-proposed` count; the delta is the caught concurrent misses, reported in no counter. NO `ignored`/`concurrent` field is added.
 - **Newer-report-only guard (load-bearing):** verify `H` ONLY when `H.reportId !== R.reportId`. Without it the first verify after a fix re-flags the still-pre-fix report as a regression.
 - **Reuse the lifecycle — NO new state, NO new transition.** Transitions go through the EXISTING `applyHandoffTransition` (`fix-proposed → resolved` / `fix-proposed → claimed`, already in WP-232's table). `HANDOFF_STATUSES` stays 6 members; the transition table is byte-unchanged.
 - **URL:** `POST /api/handoffs/verify` (literal; body ignored). **Token:** `X-Handoff-Token` ↔ `HANDOFF_SUBMIT_TOKEN` (reused — no new secret, no `render.yaml`/`.env.example` change).
@@ -26,14 +28,17 @@
 - **Status domain:** `POST /api/handoffs/verify` `{200, 401, 413, 500}`.
 - **Read model:** `verifyFixProposedHandoffs` obtains the report via `fetchLatestInspectionReport(database)` ONLY (NO direct `inspection_reports` SQL); it MAY `SELECT ... WHERE status = 'fix-proposed'` against its own `finding_handoffs`.
 - **Idempotent:** re-running against the same latest report transitions the eligible `fix-proposed` rows the first time, then finds none (all-zero); a run against an unchanged report only `skips`.
-- **Script exit codes —** `handoffs-verify.mjs`: 0 ok (200) / 1 missing env / 2 request-fail (non-2xx). Full-sentence stderr on non-zero.
+- **Script exit codes —** `handoffs-verify.mjs`: 0 ok (HTTP 200) / 1 missing env / 2 request-fail (network error OR any non-200). Classifier is `status === 200 ? 0 : 2` (mirrors `handoffs-sync.mjs` verbatim — NOT a `2xx` range). A 200 with an unparseable/unexpected body still exits 0 (the `isValidHandoffVerifySummaryShape` check gates the success LOG line only — do NOT promote a shape miss to exit 2). Full-sentence stderr on non-zero.
 - **Workflow:** ONE additive trailing step in `inspection-nightly.yml` running `pnpm handoffs:verify`, `if: success()`, AFTER `handoffs:sync`, reading `HANDOFF_SUBMIT_TOKEN` + `API_BASE_URL`. All earlier steps byte-unchanged.
 
 ## Guardrails
 - **Additive-only on WP-232's files.** No existing `handoff.*` function, type, union, array, endpoint, transition, or test is modified — only new symbols/cases appended. The whole pre-existing handoff suite stays green.
 - **No new lifecycle state.** Do NOT add `verified` (or any member) to `HandoffStatus` / `HANDOFF_STATUSES`. Verification reuses `resolved` (success) and `claimed` (regression). (Operator Q4 lock — D-23301.)
 - **Newer-report-only guard is mandatory** — skip a `fix-proposed` handoff whose `reportId` equals the latest report's. This is the correctness condition, not an optimization.
-- **Server is sole authority for `status`.** Transitions go through `applyHandoffTransition`'s guarded `UPDATE ... AND status = 'fix-proposed'`; a row a parallel transition advanced is a 0-row no-op (never a lost update / double-act).
+- **Server is sole authority for `status`.** Transitions go through `applyHandoffTransition`'s guarded `UPDATE ... AND status = 'fix-proposed'`; a row a parallel transition advanced is never a lost update / double-act.
+- **Concurrent-miss catch is mandatory.** `applyHandoffTransition` THROWS on a concurrent advance (`HandoffTransitionError` from its legality re-check or 0-rows re-read; `HandoffNotFoundError` if the row was deleted) — it returns no sentinel. The verify loop MUST `try`/`catch` each transition, NOT retry, count the miss in NO bucket, and continue. An unhandled throw aborts the run mid-sweep → 500 with the rest unprocessed (forbidden). A `// why:` is required on the catch (00.6 swallowed-error rule).
+- **Strict null-`cellId` matching.** Match `(cellId, anomalyClass)` with `===` only; `null === null` is a valid run-level match. NO coercion, `String()`, `?? ''`, or `"null"`-stringification on either side — both `mapRowToHandoff` and `InspectionFinding` already supply `string | null`.
+- **Multiplicity unweighted, order-independent.** `isAnomalyResolved` is existential (≥ 1 match ⇒ regressed, 0 ⇒ verified) — never count/weight matches. Handoffs are processed in undefined order against the same immutable report; order must not change the outcome.
 - **Read the report via `fetchLatestInspectionReport` ONLY** — no direct `inspection_reports` query in `handoff.logic.ts` (one source of truth, D-23203 carry-forward).
 - **Description is never compared.** Match on `(cellId, anomalyClass)` only; `anomalyClass` opaque (no engine union import — D-23103). LLM-nondeterministic `description` is never asserted/matched.
 - **Shared-secret via the single `validateSharedSecret` helper** — no inline `timingSafeEqual` / `node:crypto` in the verify handler.
@@ -46,6 +51,7 @@
 - `handoff.logic.ts` (verify, newer-report guard) — a `fix-proposed` handoff is verified only against a report NEWER than its origin (`reportId` differs); the same-report case is skipped because no re-sweep has run since the fix, so treating the still-pre-fix report as evidence would falsely regress it (D-23301).
 - `handoff.logic.ts` (verify, reuse-not-new-state) — verification reuses the existing lifecycle: anomaly gone ⇒ `resolved`, anomaly present ⇒ `claimed` (re-open); no `verified` state is added (operator decision; D-23301). Transitions go through `applyHandoffTransition` so the guarded UPDATE's concurrency safety is inherited.
 - `handoff.logic.ts` (verify, source of truth) — paraphrase, do NOT echo the policed `FROM legendary.inspection_reports` literal: the report is obtained through the inspection library accessor (`fetchLatestInspectionReport`), never a direct query against that table (D-23203). (Verification step 4 counts that literal at 0 in this file.)
+- `handoff.logic.ts` (verify, concurrent-miss catch) — REQUIRED on the `try`/`catch` around each per-handoff transition (00.6 swallowed-error rule): `applyHandoffTransition` throws when a concurrent writer advanced the row out of `fix-proposed` between this run's load and its guarded UPDATE; that handoff was already acted on by the other writer, so it is intentionally skipped (not retried, not counted) and the loop continues — swallowing the throw here is safe and deliberate, the opposite of an unhandled abort (D-23301).
 - `handoff.routes.ts` (verify) — the autonomy here is the verify-and-transition loop, NOT a code-writer: the server confirms/regresses fixes a human or future autonomous Builder pushed; it writes no fix and opens no PR (D-23302).
 
 ## Files to Produce
@@ -54,7 +60,7 @@
 - `apps/server/src/handoff/handoff.logic.test.ts` — modified (additive: ≥ 8 verify cases incl. resolved / regressed / skipped / empty / truth-table / accessor-only / non-fix-proposed-ignored / concurrency).
 - `apps/server/src/handoff/handoff.routes.ts` — modified (additive: `POST /api/handoffs/verify` + wiring; `registerHandoffRoutes` signature unchanged).
 - `apps/server/src/handoff/handoff.routes.test.ts` — modified (additive: ≥ 5 verify route cases).
-- `scripts/handoffs-verify.mjs` — new (POST verify; exports `isHandoffVerifyEnvComplete`).
+- `scripts/handoffs-verify.mjs` — new (POST verify; exports the helper trio `isHandoffVerifyEnvComplete` / `classifyVerifyStatus` (`status === 200 ? 0 : 2`) / `isValidHandoffVerifySummaryShape` (success-log gate only), mirroring `handoffs-sync.mjs`).
 - `apps/server/scripts/handoffs-verify.test.ts` — new (≥ 4; env guard, exit-code mapping, response-shape). Under `apps/server/scripts/` so the server suite globs it (WP-231/232 precedent); imports `../../../scripts/handoffs-verify.mjs`.
 - `package.json` — modified (1 root script `handoffs:verify`).
 - `.github/workflows/inspection-nightly.yml` — modified (1 additive trailing `handoffs:verify` step).
@@ -74,7 +80,8 @@
 - [ ] Source of truth: `grep -n "FROM legendary.inspection_reports" apps/server/src/handoff/handoff.logic.ts` = 0; `grep -n "fetchLatestInspectionReport" apps/server/src/handoff/handoff.logic.ts` ≥ 1.
 - [ ] Newer-report guard + skip: a logic test asserts a `fix-proposed` handoff with `reportId === latest.reportId` is `skipped` (status preserved), and one with a differing `reportId` is verified/regressed.
 - [ ] Only `fix-proposed` processed: a test seeds mixed statuses and asserts `open`/`claimed`/`escalated`/`resolved`/`wont-fix` are untouched.
-- [ ] Concurrency: a test drives the guarded-UPDATE 0-rows path (row advanced mid-run) and asserts no double-act / lost update.
+- [ ] Concurrency: a test drives a racing advance (fake whose guarded UPDATE returns 0 rows for one handoff so `applyHandoffTransition` throws) and asserts the verify loop catches it, excludes it from every counter, completes the remaining handoffs, and returns 200 (no double-act, no lost update, no 500).
+- [ ] Diff invariants: truth-table test covers `null === null` (run-level) AND a `string` cellId NOT matching `null` (no coercion); a `regressed` case with ≥ 2 findings matching the same `(cellId, anomalyClass)` counts exactly one `regressed` (multiplicity unweighted).
 - [ ] Centralized secret check: `grep -n "timingSafeEqual" apps/server/src/handoff/handoff.routes.ts` = 0; the verify handler calls `validateSharedSecret`.
 - [ ] no-store gate: `Cache-Control.*no-store` across `handoff.routes.ts` ≥ 4 (3 WP-232 handlers + verify).
 - [ ] No reduce: net-new `\.reduce(` in `handoff.logic.ts` = 0.
@@ -88,6 +95,10 @@
 - Omitting the newer-report guard (verifying against `handoff.reportId === latest.reportId`) → false regressions on the first verify after a fix is recorded.
 - A direct `SELECT ... FROM legendary.inspection_reports` in `handoff.logic.ts` → source-of-truth violation (D-23203); read via `fetchLatestInspectionReport`.
 - Re-implementing a guarded UPDATE inside verify instead of calling `applyHandoffTransition` → duplicates the concurrency logic (drift surface); reuse the primitive.
+- Calling `applyHandoffTransition` WITHOUT a surrounding `try`/`catch` → a concurrent advance makes it throw, aborting the run mid-sweep (500, rest unprocessed). Catch `HandoffTransitionError` / `HandoffNotFoundError`, skip, continue. (Assuming it returns a 0/false sentinel is the trap — it THROWS.)
+- Coercing `cellId` for the match (`String(cellId)`, `cellId ?? ''`, a composite `${cellId}|${anomalyClass}` Set key) → turns `null` into `"null"` and breaks (or false-matches) the run-level sentinel. Compare raw with `===`.
+- Counting/weighting `(cellId, anomalyClass)` matches (treating 2 matches differently from 1) → multiplicity is existential only; ≥ 1 ⇒ regressed.
+- Promoting a 200-with-bad-body to exit 2 in `handoffs-verify.mjs` → diverges from the `handoffs-sync.mjs` precedent and fails CI on a valid 200; the shape check is log-only, success is keyed on HTTP 200.
 - Processing handoffs in states other than `fix-proposed` → only `fix-proposed` is eligible for verification.
 - Matching/asserting finding `description` text → couples to inherited LLM-nondeterministic content; match `(cellId, anomalyClass)` only.
 - Inline `timingSafeEqual` / `===` token compare in the verify handler → must call `validateSharedSecret`.
@@ -125,8 +136,15 @@ falsely regressed. The verification reuses the WP-232 6-status lifecycle and
 transition table VERBATIM — no new state (e.g. `verified`) and no new transition
 are added (operator decision, 2026-06-10) — and transitions go through the
 existing `applyHandoffTransition` guarded UPDATE, so the diff is server-
-authoritative and concurrency-safe (a row a parallel transition advanced is a
-0-row no-op, never a lost update or a double-act). The mechanism is a full-report
+authoritative and concurrency-safe: a row a parallel transition advanced makes
+`applyHandoffTransition` throw (`HandoffTransitionError` / `HandoffNotFoundError`),
+which the verify loop catches and excludes from every counter — never a lost
+update or a double-act, and never an unhandled abort. Matching is strict `===` on
+`(cellId, anomalyClass)` (no coercion; `null === null` is a valid run-level
+match) and existential (≥ 1 match ⇒ regressed, 0 ⇒ verified — multiplicity never
+weighted); the per-handoff loop is order-independent. The summary accounts as
+`verified + regressed + skipped <= ` the initial `fix-proposed` count, the delta
+being the caught concurrent misses (no `ignored` field added). The mechanism is a full-report
 diff against the next nightly full sweep, not a targeted subset re-sweep
 (operator decision, 2026-06-10); a targeted re-sweep is a deferred performance
 optimization over this same contract.
