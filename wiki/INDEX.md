@@ -53,10 +53,10 @@ Abstract data shapes, contracts, and design concepts.
   abilities); Ambush wound-flow uses an inline pattern (D-2403)
   pending future migration to a `gainWound` `RuleEffect`.
 - [R2 Image Naming Convention](r2-image-naming-convention.md) —
-  deterministic `{set}/{set}-{ribbon}-{slug}.webp` rule mapping card data to
-  Cloudflare R2 image URLs; ribbon codes (`hr` · `mm` · `me` · `mt` · `vi` ·
-  `hm` · `sc` · `by` · `wd`) are hardcoded in the convert pipeline, not in
-  `card-types.json`.
+  deterministic `{set}/{set}-{prefix}-{slug}.webp` rule mapping card data to
+  Cloudflare R2 image URLs; the full 37-entry card-type prefix registry
+  (`sc` · `mm` · `vi` · `hr` · `sa` · `tr` · …) lives in the upstream
+  `card-types.json`, with the imaged subset auto-composed by the convert pipeline.
 
 ## Card-Type
 

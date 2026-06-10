@@ -57,26 +57,77 @@ full shape is:
 
 ### Ribbon codes by card type
 
-The ribbon is a two-letter code that identifies the card family. The codes are
-assigned in [`convert-cards-v15.mjs`](../scripts/convert-cards/convert-cards-v15.mjs)
-(heroes via [`heroImageUrl.ts`](../packages/registry/src/heroImageUrl.ts)):
+The ribbon is a two-letter code identifying the card family. The complete,
+authoritative registry of card-type prefixes is the project's upstream card-data
+source — the 37-entry `modern-master-strike/src/data/card-types.json` (sibling
+repo). Each entry is `{ id, slug, name, displayName, prefix }`; the six hero
+rarity slots all share the `hr` prefix.
 
-| Ribbon | Card type | Filename pattern | Example |
-|---|---|---|---|
-| `hr` | Hero | `{set}-hr-{heroSlug}-{sides…}.webp` | `nmut-hr-wolfsbane-night-vision.webp` |
-| `mm` | Mastermind (base) | `{set}-mm-{mmSlug}.webp` | `bkpt-mm-killmonger.webp` |
-| `me` | Mastermind (epic) | `{set}-me-{mmSlug}.webp` | `bkpt-me-killmonger.webp` |
-| `mt` | Mastermind (tactic) | `{set}-mt-{mmSlug}-{cardSlug}.webp` | `2099-mt-sinister-six-2099-electro-2099.webp` |
-| `vi` | Villain | `{set}-vi-{groupSlug}-{cardSlug}.webp` | `2099-vi-alchemax-enforcers-cyber-nostra.webp` |
-| `hm` | Henchman | `{set}-hm-{groupSlug}.webp` (group) / `{set}-hm-{groupSlug}-{cardSuffix}.webp` (per-card) | `core-hm-hand-ninjas.webp` |
-| `sc` | Scheme | `{set}-sc-{schemeSlug}.webp` | `2099-sc-pull-reality-into-cyberspace.webp` |
-| `by` | Bystander | `{set}-by-{slug}.webp` | `{set}-by-{slug}.webp` |
-| `wd` | Wound | `{set}-wd-{slug}.webp` | `core-wd-wound.webp` |
+| Prefix | Card type | Slug(s) |
+|---|---|---|
+| `sc` | Scheme | `scheme` |
+| `st` | Scheme Twist | `scheme-twist` |
+| `sx` | Scheme Transform | `scheme-transform` |
+| `sv` | Scheme Veiled | `scheme-veiled` |
+| `mm` | Mastermind | `mastermind` |
+| `ma` | Mastermind Adapting | `mastermind-adapting` |
+| `mp` | Mastermind Adapting Epic | `mastermind-adapting-epic` |
+| `me` | Mastermind Epic | `mastermind-epic` |
+| `mt` | Mastermind Tactics | `mastermind-tactics` |
+| `mc` | Mastermind Tactics Epic | `mastermind-tactics-epic` |
+| `ms` | Mastermind Strike | `mastermind-strike` |
+| `vi` | Villain | `villain` |
+| `hm` | Henchman | `henchman` |
+| `hr` | Hero (all rarities) | `hero-common1` · `hero-common2` · `hero-common3` · `hero-uncommon` · `hero-uncommon2` · `hero-rare` |
+| `sk` | Sidekick | `sidekick` |
+| `ss` | Sidekick Special | `sidekick-special` |
+| `sa` | S.H.I.E.L.D. Agent | `shield-agent` |
+| `so` | S.H.I.E.L.D. Officer | `shield-officer` |
+| `sp` | S.H.I.E.L.D. Officer Special | `shield-officer-special` |
+| `tr` | S.H.I.E.L.D. Trooper | `shield-trooper` |
+| `by` | Bystander | `bystander` |
+| `bh` | Bystander Heroic | `bystander-heroic` |
+| `bs` | Bystander Special | `bystander-special` |
+| `wd` | Wound | `wound` |
+| `we` | Wound Enraging | `wound-enraging` |
+| `wg` | Wound Grievous | `wound-grievous` |
+| `am` | Ambitions | `ambitions` |
+| `ho` | Horror | `horror` |
+| `lo` | Location | `location` |
+| `sr` | Start | `start` |
+| `to` | Token | `token` |
+| `tp` | Trap | `trap` |
+
+> **Two `card-types.json` files — do not confuse them.** The prefix registry
+> above is the **upstream** `modern-master-strike/src/data/card-types.json`. The
+> **in-repo** [`data/metadata/card-types.json`](../data/metadata/card-types.json)
+> is a separate Registry-Viewer taxonomy carrying `slug` / `label` / `emoji` /
+> `order` / `parentType` and **no prefix** — see Edge Cases.
+
+### Filename patterns
+
+Every image is `{set}-{prefix}-{slug(s)}.webp`. The convert pipeline currently
+auto-composes `imageUrl`s for the core imaged families:
+
+| Family | Pattern | Example |
+|---|---|---|
+| Hero (`hr`) | `{set}-hr-{heroSlug}-{sides…}.webp` | `nmut-hr-wolfsbane-night-vision.webp` |
+| Mastermind base (`mm`) | `{set}-mm-{mmSlug}.webp` | `bkpt-mm-killmonger.webp` |
+| Mastermind epic (`me`) | `{set}-me-{mmSlug}.webp` | `bkpt-me-killmonger.webp` |
+| Mastermind tactic (`mt`) | `{set}-mt-{mmSlug}-{cardSlug}.webp` | `2099-mt-sinister-six-2099-electro-2099.webp` |
+| Villain (`vi`) | `{set}-vi-{groupSlug}-{cardSlug}.webp` | `2099-vi-alchemax-enforcers-cyber-nostra.webp` |
+| Henchman (`hm`) | `{set}-hm-{groupSlug}.webp` (group) / `{set}-hm-{groupSlug}-{cardSuffix}.webp` (per-card) | `core-hm-hand-ninjas.webp` |
+| Scheme (`sc`) | `{set}-sc-{schemeSlug}.webp` | `2099-sc-pull-reality-into-cyberspace.webp` |
+| Bystander (`by`) | `{set}-by-{slug}.webp` | `{set}-by-{slug}.webp` |
+| Wound (`wd`) | `{set}-wd-{slug}.webp` | `core-wd-wound.webp` |
 
 Base and epic mastermind filenames carry a **single** slug — the redundant
 double slug (`bkpt-mm-killmonger-killmonger.webp`) was removed; tactic and
 villain cards keep both the group/mastermind slug and the per-card slug because
-those families have multiple distinct cards under one parent.
+those families have multiple distinct cards under one parent. The remaining
+prefixes in the registry (e.g. `st`, `sa`, `tr`, `am`, `to`) name their card
+families' images by the same `{set}-{prefix}-{slug}.webp` rule; their URLs are
+not separately auto-composed by the current in-repo pipeline.
 
 ### Hero filename variants
 
@@ -131,7 +182,9 @@ are assigned in code rather than derived from `card-types.json` (see Edge Cases)
   `scheme`, `bystander`, `wound`, `sidekick`, `shield`, `other`, plus
   sub-chips). Each *imaged* type maps to a ribbon code above. The taxonomy
   names the types; this page documents how each is named on R2. Note the
-  taxonomy file itself does **not** carry the ribbon codes — see Edge Cases.
+  **in-repo** taxonomy file does **not** carry the ribbon codes; the upstream
+  `card-types.json` is the prefix registry — see Ribbon codes by card type and
+  Edge Cases.
 - **[CardExtId](cardextid.md).** A `CardExtId` is `<setAbbr>/<slug>` — the same
   `setAbbr` and slug components that compose the image filename. The image URL
   is an orthogonal projection of the same identity parts into an R2 path.
@@ -145,21 +198,21 @@ are assigned in code rather than derived from `card-types.json` (see Edge Cases)
 
 ## Edge Cases
 
-- **Ribbon codes are not in `card-types.json`.** The pre-WP-084 taxonomy file
-  carried a `prefix` field (shape `{ id, slug, name, displayName, prefix }`),
-  and a stale comment in `convert-cards-v15.mjs` still reads "prefix comes
-  directly from card-types.json." WP-086 reintroduced the file with the shape
-  `{ slug, label, emoji?, order, parentType }` — **no prefix field** — so the
-  ribbon codes now live only as hardcoded literals in the convert pipeline.
-  Adding a new entry to `card-types.json` does **not** create an image ribbon;
-  the convert pipeline is the source of truth for ribbons. Making the naming
-  data-driven from a single source — so introducing a new card type is a data
-  edit rather than a convert-pipeline edit — would mean re-adding a `ribbon` /
-  `imagePrefix` field to `card-types.json`, extending its strict Zod schema, and
-  wiring the convert pipeline to read the ribbon from the taxonomy. That is a
-  data-plus-code change at Work-Packet scope (it touches the registry schema and
-  the pipeline), would require its own DECISIONS entry, and is not in place
-  today.
+- **The prefix registry lives upstream, not in the in-repo taxonomy.** The
+  authoritative prefix mapping is the upstream
+  `modern-master-strike/src/data/card-types.json` (37 entries, each with a
+  `prefix`). The **in-repo** [`data/metadata/card-types.json`](../data/metadata/card-types.json)
+  is a *different* file — the Registry-Viewer taxonomy reintroduced by WP-086
+  with the shape `{ slug, label, emoji?, order, parentType }` and **no prefix
+  field** (the pre-WP-084 in-repo file did carry a `prefix`; WP-086 dropped it).
+  Inside this repo, the convert pipeline therefore carries the imaged-subset
+  prefixes as hardcoded literals; adding an entry to the in-repo
+  `card-types.json` does **not** create an image ribbon. Making the in-repo
+  naming data-driven — so the prefix registry lives in this repo as the single
+  source — would mean importing the prefixes into `data/metadata/card-types.json`,
+  extending its strict Zod schema with a `prefix` / `ribbon` field, and wiring
+  the convert pipeline to read it. That is a data-plus-code change at Work-Packet
+  scope, would require its own DECISIONS entry, and is not in place today.
 - **Not every taxonomy type is imaged.** The convert pipeline emits ribbon
   images for hero, mastermind (base/epic/tactic), villain, henchman, scheme,
   bystander, and wound. Other taxonomy entries (`sidekick`, `shield` and its
@@ -192,8 +245,10 @@ are assigned in code rather than derived from `card-types.json` (see Edge Cases)
 
 ## Data Files
 
+- `modern-master-strike/src/data/card-types.json` (upstream, sibling repo) — the
+  authoritative 37-entry card-type **prefix** registry.
 - [`data/metadata/card-types.json`](../data/metadata/card-types.json) — the
-  card-type taxonomy (type list; no ribbon codes).
+  in-repo Registry-Viewer taxonomy (type list; **no** prefix codes).
 - `data/cards/{setAbbr}.json` — the generated per-set card data; each card
   object carries the composed `imageUrl`.
 
@@ -213,8 +268,11 @@ are assigned in code rather than derived from `card-types.json` (see Edge Cases)
   and hero URL builder
 - [`convert-cards-v15.mjs`](../scripts/convert-cards/convert-cards-v15.mjs) —
   ribbon assignment and `imageUrl` generation
-- [`data/metadata/card-types.json`](../data/metadata/card-types.json) — card-type
-  taxonomy
+- `modern-master-strike/src/data/card-types.json` (upstream card-data origin,
+  sibling repo) — the authoritative 37-entry card-type **prefix** registry
+  (`sc`, `st`, `sa`, `tr`, …)
+- [`data/metadata/card-types.json`](../data/metadata/card-types.json) — in-repo
+  Registry-Viewer taxonomy (no prefix codes)
 - [DECISIONS.md](../docs/ai/DECISIONS.md) — D-13802, D-14701, D-14702
   (hero filename rules)
 - [Card Type Taxonomy](card-type-taxonomy.md) — the type list and its
