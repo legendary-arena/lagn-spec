@@ -20,6 +20,8 @@
 #
 # Script exit codes (locked per WP-231 §Script Exit Codes):
 #   inspection-fetch.mjs : 0 ok / 1 missing env / 2 request-fail / 3 no blob
+#   inspection-triage.mjs: 0 ok / 1 missing env / 2 bad input / 3 API-fail /
+#                          4 bad model output
 #   inspection-submit.mjs: 0 ok / 1 missing env / 2 invalid output / 3 verdict
 #                          mismatch / 4 POST non-2xx (incl. 409)
 
@@ -65,23 +67,23 @@ jobs:
           # script appends `/api/sweep/runs/latest`.
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
 
-      # Step 2 — headless Claude Inspector triage. Reads
+      # Step 2 — Inspector triage via a direct Claude Messages API call. Reads
       # inspection-work/sweep-input.json, applies the self-contained rubric in
-      # scripts/inspection-triage-prompt.md, writes
-      # inspection-work/inspection-report.json as STRICT JSON only.
-      - name: Triage sweep (headless Claude Inspector)
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          # why (WP-231 §Locked contract values): claude-sonnet-4-6 is the
-          # cost-appropriate model for structured triage; Opus is reserved for a
-          # later WP if triage depth proves insufficient.
-          model: claude-sonnet-4-6
-          prompt: |
-            Read and follow the instructions in scripts/inspection-triage-prompt.md exactly.
-            Read inspection-work/sweep-input.json, apply the triage rubric, and write
-            inspection-work/inspection-report.json containing STRICT JSON ONLY (no prose,
-            no markdown fences). Do not modify any other file.
+      # scripts/inspection-triage-prompt.md (the model produces only the findings
+      # array via structured outputs), assembles the report envelope
+      # deterministically, and writes inspection-work/inspection-report.json.
+      #
+      # why a direct API call (not anthropics/claude-code-action): that action is
+      # PR-review-oriented — it requires a GitHub OIDC token (id-token: write) and
+      # posts inline PR comments, and it rejected the `model` input. A standalone
+      # nightly triage is a single structured-classification call, which the
+      # Messages API serves directly with no OIDC, no PR, and no extra dependency.
+      - name: Triage sweep (Claude Inspector)
+        run: pnpm inspection:triage
+        env:
+          # why (WP-231): the triage agent's Anthropic key is a CI-only Actions
+          # secret — never a server env var (see render.yaml note).
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       # Step 3 — validate the agent report (bare JSON.parse + shape + verdict
       # agreement) and POST it. 409 / non-2xx -> exit 4 -> this step fails the

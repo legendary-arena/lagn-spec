@@ -21,6 +21,7 @@
     "migrate":              "node --env-file=.env scripts/migrate.mjs",
     "sweep:nightly":        "node scripts/sweep-submit.mjs",
     "inspection:fetch":     "node scripts/inspection-fetch.mjs",
+    "inspection:triage":    "node scripts/inspection-triage.mjs",
     "inspection:submit":    "node scripts/inspection-submit.mjs",
     "handoffs:sync":        "node scripts/handoffs-sync.mjs",
 
