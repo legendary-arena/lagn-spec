@@ -63,6 +63,16 @@ function strikeEvent(strikeCardId: string): NotableGameEvent {
   };
 }
 
+function defeatEvent(mastermindId: string): NotableGameEvent {
+  return {
+    type: 'mastermindDefeated',
+    playerId: '0',
+    mastermindId,
+    bystandersRescued: 2,
+    narrative: `Defeated the Mastermind "${mastermindId}" and rescued 2 bystander(s).`,
+  };
+}
+
 describe('NotableEventOverlay — null event renders nothing (WP-201)', () => {
   test('omits the overlay element when event prop is null', () => {
     const wrapper = mount(NotableEventOverlay, { props: { event: null } });
@@ -114,6 +124,13 @@ describe('NotableEventOverlay — locked chip labels (WP-201 §Locked Values)', 
       props: { event: strikeEvent('master-strike-01') },
     });
     assert.match(wrapper.text(), /Master Strike!/);
+  });
+
+  test('mastermindDefeated → "Mastermind Defeated!"', () => {
+    const wrapper = mount(NotableEventOverlay, {
+      props: { event: defeatEvent('core/magneto') },
+    });
+    assert.match(wrapper.text(), /Mastermind Defeated!/);
   });
 });
 

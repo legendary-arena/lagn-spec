@@ -182,3 +182,30 @@ export function composeSchemeTwistNarrative(
 export function composeMastermindStrikeNarrative(cardName: string): string {
   return `Master Strike: "${cardName}" resolved.`;
 }
+
+// ---------------------------------------------------------------------------
+// Mastermind defeat narrative
+// ---------------------------------------------------------------------------
+
+/**
+ * Composes the single-sentence narrative for a `mastermindDefeated` event.
+ *
+ * Inputs are pure values; no `G`/`ctx` access. `mastermindName` is the
+ * resolved display name (or the raw mastermind id when `cardDisplayData`
+ * had no entry). The bystander clause mirrors `composeFightNarrative` so
+ * both rescue messages read identically.
+ *
+ * @param mastermindName - Human-facing name of the defeated mastermind.
+ * @param bystandersRescued - Bystanders rescued into the victory pile (>= 0).
+ * @returns Single English sentence describing the mastermind's defeat.
+ */
+export function composeMastermindDefeatedNarrative(
+  mastermindName: string,
+  bystandersRescued: number,
+): string {
+  const bystanderClause =
+    bystandersRescued > 0
+      ? ` and rescued ${String(bystandersRescued)} bystander(s)`
+      : '';
+  return `Defeated the Mastermind "${mastermindName}"${bystanderClause}.`;
+}

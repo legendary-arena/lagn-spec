@@ -3,9 +3,10 @@
  *
  * `NotableGameEvent` is the engine-emitted, JSON-serialisable, append-only
  * record of high-level player-visible outcomes. The discriminated union
- * carries four locked variants — `fightResolved`, `ambushResolved`,
- * `schemeTwistResolved`, `mastermindStrikeResolved` — each composed at
- * its fire site via a pure narrative helper from `notableEvents.compose.ts`.
+ * carries five locked variants — `fightResolved`, `ambushResolved`,
+ * `schemeTwistResolved`, `mastermindStrikeResolved`, `mastermindDefeated`
+ * — each composed at its fire site via a pure narrative helper from
+ * `notableEvents.compose.ts`.
  *
  * Consumed by `UIState.notableEvents` for descriptive "what happened"
  * overlays in the arena client. WP-200 ships the engine half; WP-201
@@ -25,26 +26,30 @@ import type { VillainEffectKeyword } from '../rules/villainAbility.types.js';
 /**
  * Closed canonical union of notable game event types.
  *
- * Four variants in fixed canonical order: a Fight resolution, an Ambush
- * resolution at city entry, a Scheme Twist resolution, and a Mastermind
- * Strike resolution. Adding a fifth variant requires a new WP and a
- * `DECISIONS.md` entry (e.g., WP-186's eventual `'escapeResolved'` per
- * D-20001).
+ * Five variants in fixed canonical order: a Fight resolution, an Ambush
+ * resolution at city entry, a Scheme Twist resolution, a Mastermind
+ * Strike resolution, and a Mastermind defeat. `'mastermindDefeated'` was
+ * added per D-20008 (citing D-20001) so the arena-client overlay can
+ * report the win + bystander rescue — G.messages is not projected to
+ * clients. Adding a sixth variant requires a new `DECISIONS.md` entry
+ * (e.g., WP-186's eventual `'escapeResolved'` per D-20001).
  */
 export type NotableGameEventType =
   | 'fightResolved'
   | 'ambushResolved'
   | 'schemeTwistResolved'
-  | 'mastermindStrikeResolved';
+  | 'mastermindStrikeResolved'
+  | 'mastermindDefeated';
 
 // why: drift-detection array — must match `NotableGameEventType` exactly
 // (the `notableEvents.types.test.ts` drift test asserts bidirectional
-// parity + length + uniqueness). The four-entry canonical order is locked:
+// parity + length + uniqueness). The five-entry canonical order is locked:
 // `fightResolved` (Fight fire site), `ambushResolved` (Ambush fire site),
-// `schemeTwistResolved` (Scheme Twist resolver terminal), and
-// `mastermindStrikeResolved` (Mastermind Strike handler terminal). Adding
-// `'escapeResolved'` for WP-186's onEscape fire site requires WP-186's
-// follow-up WP per D-20001 — not this WP.
+// `schemeTwistResolved` (Scheme Twist resolver terminal),
+// `mastermindStrikeResolved` (Mastermind Strike handler terminal), and
+// `mastermindDefeated` (fightMastermind vanquish fire site, D-20008).
+// Adding `'escapeResolved'` for WP-186's onEscape fire site requires a
+// new DECISIONS entry per D-20001.
 /**
  * All notable game event types in canonical order. Single source of truth.
  */
@@ -53,6 +58,7 @@ export const NOTABLE_EVENT_TYPES: readonly NotableGameEventType[] = [
   'ambushResolved',
   'schemeTwistResolved',
   'mastermindStrikeResolved',
+  'mastermindDefeated',
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -171,6 +177,27 @@ export interface MastermindStrikeResolvedEvent {
 }
 
 /**
+ * Emitted by `moves/fightMastermind.ts` when a player defeats the final
+ * tactic and vanquishes the Mastermind. Payload observes post-mutation
+ * state: every bystander the Mastermind had captured has already been
+ * moved into the defeating player's victory pile and `bystandersRescued`
+ * is that count (>= 0). Added per D-20008 so the arena-client overlay can
+ * surface the win + rescue — `G.messages` is not projected to clients.
+ */
+export interface MastermindDefeatedEvent {
+  /** Discriminator. */
+  type: 'mastermindDefeated';
+  /** boardgame.io player-index string ("0", "1", ...) of the defeating player. */
+  playerId: string;
+  /** Config ext_id of the defeated mastermind (`G.mastermind.id`). */
+  mastermindId: CardExtId;
+  /** Bystanders rescued into the player's victory pile on defeat (>= 0). */
+  bystandersRescued: number;
+  /** Engine-composed single-sentence English narrative. */
+  narrative: string;
+}
+
+/**
  * Closed discriminated union of every notable game event variant.
  *
  * Append-only on `G.notableEvents` at runtime. JSON-serialisable. Event
@@ -181,4 +208,5 @@ export type NotableGameEvent =
   | FightResolvedEvent
   | AmbushResolvedEvent
   | SchemeTwistResolvedEvent
-  | MastermindStrikeResolvedEvent;
+  | MastermindStrikeResolvedEvent
+  | MastermindDefeatedEvent;

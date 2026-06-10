@@ -19,7 +19,8 @@ import type { UIState } from '@legendary-arena/game-engine';
 /**
  * Structural alias for one notable game event variant from the WP-200
  * discriminated union (`fightResolved` / `ambushResolved` /
- * `schemeTwistResolved` / `mastermindStrikeResolved`). Derived from the
+ * `schemeTwistResolved` / `mastermindStrikeResolved` /
+ * `mastermindDefeated`). Derived from the
  * `UIState.notableEvents` array element type so the arena-client never
  * names the engine union directly — keeps the runtime-safe engine
  * surface (the `.` subpath) as the sole import surface and avoids a
@@ -49,7 +50,8 @@ export function eventCardId(event: NotableGameEvent): string {
   if (event.type === 'fightResolved') return event.cardId;
   if (event.type === 'ambushResolved') return event.revealedCardId;
   if (event.type === 'schemeTwistResolved') return event.twistCardId;
-  return event.strikeCardId;
+  if (event.type === 'mastermindStrikeResolved') return event.strikeCardId;
+  return event.mastermindId;
 }
 
 /**

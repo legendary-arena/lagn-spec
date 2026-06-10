@@ -57,6 +57,16 @@ function strikeEvent(strikeCardId: string): NotableGameEvent {
   };
 }
 
+function defeatEvent(mastermindId: string): NotableGameEvent {
+  return {
+    type: 'mastermindDefeated',
+    playerId: '0',
+    mastermindId,
+    bystandersRescued: 2,
+    narrative: `Defeated the Mastermind "${mastermindId}" and rescued 2 bystander(s).`,
+  };
+}
+
 describe('eventCardId helper (WP-201 / D-20104)', () => {
   test('resolves cardId for fightResolved variant', () => {
     assert.equal(eventCardId(fightEvent('doom-bot')), 'doom-bot');
@@ -72,6 +82,10 @@ describe('eventCardId helper (WP-201 / D-20104)', () => {
 
   test('resolves strikeCardId for mastermindStrikeResolved variant', () => {
     assert.equal(eventCardId(strikeEvent('master-strike-03')), 'master-strike-03');
+  });
+
+  test('resolves mastermindId for mastermindDefeated variant', () => {
+    assert.equal(eventCardId(defeatEvent('core/magneto')), 'core/magneto');
   });
 });
 

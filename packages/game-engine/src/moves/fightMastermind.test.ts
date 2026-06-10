@@ -12,6 +12,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { fightMastermind } from './fightMastermind.js';
+import { mastermindStrikeHandler } from '../rules/mastermindHandlers.js';
 import type { LegendaryGameState } from '../types.js';
 import type { CardExtId } from '../state/zones.types.js';
 import { makeMockCtx } from '../test/mockCtx.js';
@@ -93,6 +94,7 @@ function createMockGameState(options?: {
       ready: {},
       started: false,
     },
+    notableEvents: [],
   };
 }
 
@@ -282,6 +284,21 @@ describe('fightMastermind', () => {
       [],
       'Mastermind attachedBystanders must be cleared after the award',
     );
+    // why: D-20008 — defeating the mastermind emits exactly one
+    // mastermindDefeated notable event carrying the rescued-bystander count
+    // so the arena-client overlay can report the win + rescue.
+    assert.equal(
+      moveContext.G.notableEvents.length,
+      1,
+      'Exactly one notable event must be emitted on mastermind defeat',
+    );
+    const defeatEvent = moveContext.G.notableEvents[0]!;
+    assert.equal(defeatEvent.type, 'mastermindDefeated', 'event type must be mastermindDefeated');
+    assert.equal(
+      defeatEvent.type === 'mastermindDefeated' && defeatEvent.bystandersRescued,
+      2,
+      'event must report 2 bystanders rescued',
+    );
   });
 
   it('all tactics defeated: city-empty bystander mirror is awarded once and cleared', () => {
@@ -327,5 +344,122 @@ describe('fightMastermind', () => {
 
     const serialized = JSON.stringify(moveContext.G);
     assert.ok(serialized.length > 0, 'G must be JSON-serializable after fight');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Integration: Master Strike capture (real handler) then vanquish across two
+// fights. Reproduces the play.legendary-arena.com report where a mastermind
+// that captured bystanders is defeated on the second attack — proves the
+// captured bystanders are awarded to victory end-to-end through the real
+// capture + fight code paths, not just the unit-level award branch.
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds a self-contained state for the strike-capture-then-fight integration
+ * test. Includes notableEvents (the strike handler emits one) and a 2-tactic
+ * mastermind with a non-Magneto id so only the generic capture runs.
+ */
+function makeIntegrationState(): LegendaryGameState {
+  return {
+    matchConfiguration: {
+      schemeId: 'test-scheme',
+      mastermindId: 'test-mastermind',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+      bystandersCount: 0,
+      woundsCount: 0,
+      officersCount: 0,
+      sidekicksCount: 0,
+    },
+    selection: {
+      schemeId: 'test-scheme',
+      mastermindId: 'test-mastermind',
+      villainGroupIds: [],
+      henchmanGroupIds: [],
+      heroDeckIds: [],
+    },
+    currentStage: 'main',
+    playerZones: {
+      '0': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
+    },
+    piles: {
+      bystanders: ['bystander-001', 'bystander-002'] as CardExtId[],
+      wounds: [],
+      officers: [],
+      sidekicks: [],
+    },
+    messages: [],
+    counters: {},
+    hookRegistry: [],
+    villainDeck: { deck: [], discard: [] },
+    villainDeckCardTypes: {},
+    ko: [],
+    attachedBystanders: {},
+    turnEconomy: { attack: 100, recruit: 0, spentAttack: 0, spentRecruit: 0 },
+    cardStats: {
+      'test-mastermind-base': { attack: 0, recruit: 0, cost: 0, fightCost: 8 },
+    },
+    mastermind: {
+      id: 'test-mastermind' as CardExtId,
+      baseCardId: 'test-mastermind-base' as CardExtId,
+      tacticsDeck: ['tactic-1', 'tactic-2'] as CardExtId[],
+      tacticsDefeated: [] as CardExtId[],
+      strikePile: [] as CardExtId[],
+      attachedBystanders: [] as CardExtId[],
+    },
+    city: [null, null, null, null, null],
+    hq: [null, null, null, null, null],
+    lobby: { requiredPlayers: 1, ready: {}, started: false },
+    notableEvents: [],
+  } as unknown as LegendaryGameState;
+}
+
+describe('fightMastermind — integration: Master Strike capture then vanquish', () => {
+  it('awards bystanders captured by Master Strikes when the last tactic is defeated', () => {
+    const gameState = makeIntegrationState();
+
+    // Two real Master Strikes capture two bystanders onto the mastermind.
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-1' });
+    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-2' });
+    assert.equal(
+      gameState.mastermind.attachedBystanders.length,
+      2,
+      'two bystanders must be captured onto the mastermind',
+    );
+
+    const moveContext = createMockMoveContext(gameState);
+
+    // First attack: defeats tactic-1 — mastermind NOT yet vanquished, no award.
+    fightMastermind(moveContext);
+    assert.equal(
+      moveContext.G.mastermind.attachedBystanders.length,
+      2,
+      'bystanders are still held after only the first tactic falls',
+    );
+    assert.deepStrictEqual(
+      moveContext.G.playerZones['0']!.victory,
+      ['tactic-1'],
+      'only the first defeated tactic is in victory after the first attack',
+    );
+
+    // Second attack: defeats tactic-2 (last) — vanquish — award all captures.
+    fightMastermind(moveContext);
+    assert.equal(
+      moveContext.G.counters[ENDGAME_CONDITIONS.MASTERMIND_DEFEATED],
+      1,
+      'mastermind must be vanquished after the second attack',
+    );
+    assert.deepStrictEqual(
+      moveContext.G.playerZones['0']!.victory,
+      ['tactic-1', 'tactic-2', 'bystander-001', 'bystander-002'],
+      'both tactics and both rescued bystanders must be in victory after vanquish',
+    );
+    assert.equal(
+      moveContext.G.mastermind.attachedBystanders.length,
+      0,
+      'mastermind bystander store must be cleared after the award',
+    );
   });
 });

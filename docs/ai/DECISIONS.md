@@ -20919,6 +20919,66 @@ must re-pin AND document. The behaviour-neutrality test (sentinel
 
 ---
 
+### D-20008 — `NotableGameEvent` Union Extended to Five Variants: `mastermindDefeated`
+
+**Decision:**
+`NotableGameEventType` / `NotableGameEvent` gain a fifth canonical variant,
+`mastermindDefeated`, appended after `mastermindStrikeResolved` in
+`NOTABLE_EVENT_TYPES`. It is emitted once by `moves/fightMastermind.ts` when
+the final tactic falls and the Mastermind is vanquished; payload is
+`{ type, playerId, mastermindId, bystandersRescued, narrative }`. The
+narrative is composed at the fire site by
+`composeMastermindDefeatedNarrative(mastermindName, bystandersRescued)` in
+`events/notableEvents.compose.ts`. The drift test in
+`events/notableEvents.types.test.ts` is updated to pin five entries; the
+arena-client `eventCardId` helper (`composables/useNotableEventStream.ts`,
+D-20104) gains a `mastermindDefeated → mastermindId` branch and the overlay
+`CHIP_LABELS` gains `"Mastermind Defeated!"`.
+
+**Rationale:**
+The mastermind-defeat bystander award (the defeating player keeps every
+bystander the Mastermind captured) mutates only `G.playerZones[].victory` and
+`G.messages`. `G.messages` is NOT projected to clients — `UIState` carries
+`notableEvents` only — so defeating the Mastermind produced ZERO on-screen
+feedback, unlike defeating a city villain (which emits `fightResolved` with
+`bystandersRescued`). The asymmetry both degraded UX and removed the visible
+signal needed to diagnose a field report that rescued bystanders "were not
+moved to the victory pile." A dedicated variant restores parity with
+`fightResolved` and keeps the engine the single source of event truth
+(D-20002). D-20001 explicitly anticipated this path ("any future fifth
+variant requires expanding `NOTABLE_EVENT_TYPES` AND the type union in
+lockstep, updating the drift test, AND a new DECISIONS entry citing this one
+as the precedent") — this is that entry.
+
+**Alternatives rejected:**
+- **Reuse `fightResolved` for the Mastermind** — semantically wrong: that
+  payload carries `citySpace` + `appliedEffects` (villain-only), and the
+  overlay would render "Fought … at city space N" for a Mastermind.
+- **Project `G.messages` to the client instead** — widens the UIState surface
+  and ships the raw replay-inspection log to players; `notableEvents` is the
+  deliberate curated "what happened" channel (D-20002 / D-20105).
+- **No event, rely on the victory-pile delta** — the pile updates correctly
+  but silently; players get no confirmation of the rescue.
+
+**Implications:**
+- Replay hashes are UNCHANGED: no replay fixture defeats a Mastermind (the
+  sentinel fixture reveals strikes but never runs `fightMastermind`), so the
+  new variant never fires in a pinned playthrough. D-20007's sentinel re-pin
+  caveat does not trigger here.
+- `G.notableEvents` remains strictly append-only via `.push(...)` (D-20004).
+- Adding a sixth variant (e.g., WP-186 `escapeResolved`) still requires a new
+  DECISIONS entry per D-20001.
+
+**Packet:** None — landed inline as an `INFRA:` follow-up to the
+mastermind-defeat bystander award (squash commit `618327f`) per operator
+direction; no standalone WP/EC. Change fully captured by this entry.
+
+**Drafted:** 2026-06-09.
+**Landed:** 2026-06-09.
+**Status:** Active
+
+---
+
 ### D-20008 — `packages/game-engine/src/events/` Classified as Engine Code Category
 
 **Decision:**

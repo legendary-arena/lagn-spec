@@ -23,11 +23,12 @@ import type {
   AmbushResolvedEvent,
   SchemeTwistResolvedEvent,
   MastermindStrikeResolvedEvent,
+  MastermindDefeatedEvent,
   NotableGameEvent,
 } from './notableEvents.types.js';
 
 describe('NOTABLE_EVENT_TYPES drift detection', () => {
-  it('contains exactly four entries in canonical order', () => {
+  it('contains exactly five entries in canonical order', () => {
     assert.deepStrictEqual(
       [...NOTABLE_EVENT_TYPES],
       [
@@ -35,6 +36,7 @@ describe('NOTABLE_EVENT_TYPES drift detection', () => {
         'ambushResolved',
         'schemeTwistResolved',
         'mastermindStrikeResolved',
+        'mastermindDefeated',
       ],
     );
   });
@@ -53,6 +55,7 @@ describe('NOTABLE_EVENT_TYPES drift detection', () => {
       'ambushResolved',
       'schemeTwistResolved',
       'mastermindStrikeResolved',
+      'mastermindDefeated',
     ];
     for (const member of unionMembers) {
       assert.ok(
@@ -156,6 +159,18 @@ describe('NotableGameEvent JSON round-trip per variant', () => {
       narrative: 'Master Strike: "master-strike-00" resolved.',
     };
     const cloned = JSON.parse(JSON.stringify(original)) as MastermindStrikeResolvedEvent;
+    assert.deepStrictEqual(cloned, original);
+  });
+
+  it('MastermindDefeatedEvent round-trips through JSON.stringify/parse', () => {
+    const original: MastermindDefeatedEvent = {
+      type: 'mastermindDefeated',
+      playerId: '0',
+      mastermindId: 'core/magneto',
+      bystandersRescued: 2,
+      narrative: 'Defeated the Mastermind "Magneto" and rescued 2 bystander(s).',
+    };
+    const cloned = JSON.parse(JSON.stringify(original)) as MastermindDefeatedEvent;
     assert.deepStrictEqual(cloned, original);
   });
 

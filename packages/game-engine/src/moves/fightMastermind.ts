@@ -19,6 +19,7 @@ import type { LegendaryGameState } from '../types.js';
 import { getAvailableAttack, spendAttack } from '../economy/economy.logic.js';
 import { defeatTopTactic, areAllTacticsDefeated } from '../mastermind/mastermind.logic.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
+import { composeMastermindDefeatedNarrative } from '../events/notableEvents.compose.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
@@ -111,5 +112,29 @@ export function fightMastermind(
         `Player ${ctx.currentPlayer} rescued ${rescuedBystanders.length} bystander(s) from the defeated mastermind into their victory pile.`,
       );
     }
+
+    // why: D-20008 parity with fightVillain's fightResolved event — surface
+    // a player-visible "mastermind defeated + bystanders rescued" notable
+    // event so the arena-client overlay reports the outcome. G.messages is
+    // NOT projected to clients (UIState carries notableEvents only), so
+    // without this the rescue is invisible on the client. Emitted last so it
+    // observes fully-settled state. Defensive cardDisplayData access mirrors
+    // the mastermind-strike handler — production setup always builds it;
+    // legacy test fixtures may omit it, in which case the id is the fallback.
+    const mastermindDisplay = G.cardDisplayData?.[G.mastermind.baseCardId];
+    const mastermindName =
+      mastermindDisplay && typeof mastermindDisplay.name === 'string' && mastermindDisplay.name.length > 0
+        ? mastermindDisplay.name
+        : G.mastermind.id;
+    G.notableEvents.push({
+      type: 'mastermindDefeated',
+      playerId: ctx.currentPlayer,
+      mastermindId: G.mastermind.id,
+      bystandersRescued: rescuedBystanders.length,
+      narrative: composeMastermindDefeatedNarrative(
+        mastermindName,
+        rescuedBystanders.length,
+      ),
+    });
   }
 }
