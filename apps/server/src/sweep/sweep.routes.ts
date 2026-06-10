@@ -49,6 +49,12 @@ import type {
   SessionVerifier,
 } from '../auth/sessionToken.types.js';
 import { validateSharedSecret } from '../auth/validateSharedSecret.js';
+// why: boardgame.io's Server() installs koa-body ONLY on its own /games/*
+// routes — there is no global body parser — so every custom route on
+// server.router must attach its own koaBody middleware or koaContext.request.body
+// is undefined at the handler (prod 400 on POST /api/sweep/runs). jsonLimit is
+// raised above the route's 5 MB cap so the route's own size check is authoritative.
+import koaBody from 'koa-body';
 import type { DatabaseClient, SweepRunWithBlob } from './sweep.logic.js';
 import {
   SweepRunDuplicateError,
@@ -117,6 +123,7 @@ interface KoaSweepContext {
 interface KoaRouter {
   post(
     path: string,
+    bodyParser: unknown,
     handler: (koaContext: KoaSweepContext) => Promise<void> | void,
   ): unknown;
   get(
@@ -301,7 +308,7 @@ export function registerSweepRoutes(
   database: DatabaseClient,
   deps: SweepRouteDependencies,
 ): void {
-  router.post('/api/sweep/runs', async (koaContext) => {
+  router.post('/api/sweep/runs', koaBody({ jsonLimit: '6mb' }), async (koaContext) => {
     // why (D-11504): `Cache-Control: no-store` first-statement lock ensures
     // error paths cannot ship cacheable responses; downstream operator
     // dashboard reads are explicitly non-cacheable.
