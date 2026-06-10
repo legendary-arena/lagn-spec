@@ -1,5 +1,5 @@
 #!/bin/sh
-# pre-push hook — build + typecheck gate for direct pushes to main
+# pre-push hook — CI-equivalent gate for direct pushes to main
 #
 # why: apps/dashboard, apps/arena-client, and apps/registry-viewer are
 # type-checked ONLY by their explicit `typecheck` (vue-tsc) script — `vite
@@ -49,7 +49,7 @@ if [ -n "$TOPLEVEL" ]; then
   cd "$TOPLEVEL" || exit 1
 fi
 
-echo "${YELLOW}pre-push:${NC} push updates main — running build + typecheck gate (CI-equivalent)."
+echo "${YELLOW}pre-push:${NC} push updates main — running CI-equivalent gate (build + typecheck + dashboard lint/test/format)."
 echo "          emergency bypass: git push --no-verify"
 
 run_gate() {
@@ -65,17 +65,33 @@ run_gate() {
   echo ""
   echo "→ pnpm --filter @legendary-arena/dashboard typecheck"
   pnpm --filter @legendary-arena/dashboard typecheck || return 1
+  # why: the dashboard ships the most CI gates and has repeatedly drifted red to
+  # an unprotected main — vue-tsc (above) AND format:check (WP-230 shipped
+  # un-prettier'd files that sat red on main). Mirror the rest of CI's Dashboard
+  # Gates job locally so a main push cannot land those red: lint, the
+  # coverage-gated test suite, and the prettier format check. `pnpm -r build`
+  # above already ran the dashboard build, which generates the governance
+  # snapshot these steps import.
+  echo ""
+  echo "→ pnpm --filter @legendary-arena/dashboard lint"
+  pnpm --filter @legendary-arena/dashboard lint || return 1
+  echo ""
+  echo "→ pnpm --filter @legendary-arena/dashboard test:coverage"
+  pnpm --filter @legendary-arena/dashboard test:coverage || return 1
+  echo ""
+  echo "→ pnpm --filter @legendary-arena/dashboard format:check"
+  pnpm --filter @legendary-arena/dashboard format:check || return 1
   return 0
 }
 
 if run_gate; then
   echo ""
-  echo "${GREEN}pre-push: build + typecheck gate passed.${NC}"
+  echo "${GREEN}pre-push: CI-equivalent gate passed.${NC}"
   exit 0
 fi
 
 echo ""
-echo "${RED}PUSH BLOCKED:${NC} build or typecheck failed — fix before pushing to main."
+echo "${RED}PUSH BLOCKED:${NC} build, typecheck, lint, test, or format check failed — fix before pushing to main."
 echo "Re-run the failing step shown above, or bypass with: git push --no-verify"
 echo ""
 exit 1
