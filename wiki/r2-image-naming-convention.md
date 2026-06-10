@@ -97,6 +97,32 @@ order is the physical-side order and is **not** sorted (D-14702), while
 single-side ordering follows the UTF-16 sort lock (D-13802). The optional
 companion slug must match `^[a-z0-9-]+$`.
 
+### Adding a new set
+
+When a new set is released, its images join this same convention — the set's
+abbreviation (`setAbbr`) becomes both the R2 directory and the filename prefix,
+and every card's filename follows the ribbon table above. Two halves are
+involved:
+
+1. **URL generation (automatic).** The set's npm-derived source files are placed
+   under `scripts/convert-cards/inputs/cards/` (with any per-set fixups under
+   `scripts/convert-cards/inputs/patches/` and count inputs under
+   `scripts/convert-cards/inputs/`). The convert pipeline assigns the ribbon per
+   card family and writes `data/cards/{setAbbr}.json` with each card's `imageUrl`
+   already composed to this convention — the URLs are generated, never
+   hand-written.
+2. **Image assets (manual).** The actual `.webp` files must exist on R2 under
+   `{setAbbr}/` at the exact `{setAbbr}-{ribbon}-{slug}.webp` paths the generated
+   `imageUrl`s point to. Producing and uploading those assets is the manual
+   side; a mismatch between a generated `imageUrl` and the uploaded object name
+   is what shows up as a broken image in the Registry Viewer.
+
+A set that only adds new cards of **existing** card types needs no code change —
+the ribbons already cover those families, so it is effectively a data drop into
+`scripts/convert-cards/inputs/`. A set that introduces a brand-new card *type*
+(and therefore a new ribbon) requires a convert-pipeline change, because ribbons
+are assigned in code rather than derived from `card-types.json` (see Edge Cases).
+
 ## Interactions
 
 - **[Card Type Taxonomy](card-type-taxonomy.md).** The card-type taxonomy in
@@ -126,7 +152,14 @@ companion slug must match `^[a-z0-9-]+$`.
   `{ slug, label, emoji?, order, parentType }` — **no prefix field** — so the
   ribbon codes now live only as hardcoded literals in the convert pipeline.
   Adding a new entry to `card-types.json` does **not** create an image ribbon;
-  the convert pipeline is the source of truth for ribbons.
+  the convert pipeline is the source of truth for ribbons. Making the naming
+  data-driven from a single source — so introducing a new card type is a data
+  edit rather than a convert-pipeline edit — would mean re-adding a `ribbon` /
+  `imagePrefix` field to `card-types.json`, extending its strict Zod schema, and
+  wiring the convert pipeline to read the ribbon from the taxonomy. That is a
+  data-plus-code change at Work-Packet scope (it touches the registry schema and
+  the pipeline), would require its own DECISIONS entry, and is not in place
+  today.
 - **Not every taxonomy type is imaged.** The convert pipeline emits ribbon
   images for hero, mastermind (base/epic/tactic), villain, henchman, scheme,
   bystander, and wound. Other taxonomy entries (`sidekick`, `shield` and its
