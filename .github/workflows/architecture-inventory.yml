@@ -82,6 +82,13 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
+          # why: scope the commit to ONLY the generated inventory file. The
+          # "Checkout website repo" step clones legendary-arena-website/ into the
+          # worktree for SaaS detection; that path is not gitignored, so without
+          # add-paths create-pull-request stages it as a spurious subproject
+          # gitlink in the PR. The diff-detection step is already scoped to this
+          # same file, so this keeps the commit consistent with the detection.
+          add-paths: wiki/architecture-inventory.md
           commit-message: 'INFRA: regenerate wiki/architecture-inventory.md (cron)'
           title: 'INFRA: regenerate wiki/architecture-inventory.md (cron)'
           body: |
