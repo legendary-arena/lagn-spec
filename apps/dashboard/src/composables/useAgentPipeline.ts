@@ -1,7 +1,4 @@
-import {
-  useGovernanceSnapshot,
-  type GovernanceSnapshot,
-} from './useGovernanceSnapshot.js';
+import { useGovernanceSnapshot, type GovernanceSnapshot } from './useGovernanceSnapshot.js';
 import type { SweepRunSummary } from '../types/sweep.js';
 
 /**
@@ -338,7 +335,8 @@ function deriveInspectorPriorities(inputs: PriorityInputs): PriorityRecommendati
 
   priorities.push({
     horizon: 'this-quarter',
-    label: 'Run a full inspection pass on all shipped WPs. Catch accumulated debt before it compounds.',
+    label:
+      'Run a full inspection pass on all shipped WPs. Catch accumulated debt before it compounds.',
     urgency: 'strategic',
   });
 
@@ -388,7 +386,8 @@ function deriveEvaluatorPriorities(inputs: PriorityInputs): PriorityRecommendati
 
   priorities.push({
     horizon: 'this-month',
-    label: 'Score the project against business-scorecard-metrics.md. Flag any department below 3.0.',
+    label:
+      'Score the project against business-scorecard-metrics.md. Flag any department below 3.0.',
     urgency: 'moderate',
   });
 
@@ -487,7 +486,11 @@ export function useAgentPipeline(
   // key so it survives future taxonomy expansion without importing the engine's
   // closed union (D-23002).
   const latestSweepRun = sweepData?.latestRun ?? null;
-  const sweepAnomaliesWithCount: Array<{ readonly key: string; readonly count: number; readonly isFatal: boolean }> = [];
+  const sweepAnomaliesWithCount: Array<{
+    readonly key: string;
+    readonly count: number;
+    readonly isFatal: boolean;
+  }> = [];
   let sweepTotalAnomalyCount = 0;
   let sweepFatalCount = 0;
   if (latestSweepRun !== null) {
@@ -507,7 +510,8 @@ export function useAgentPipeline(
   if (latestSweepRun !== null && latestSweepRun.cellCount > 0) {
     // why: guard divide-by-zero — a sweep run with zero cells yields no
     // meaningful health rate, so the rate stays null and no item appears.
-    sweepHealthRate = (latestSweepRun.cellCount - sweepTotalAnomalyCount) / latestSweepRun.cellCount;
+    sweepHealthRate =
+      (latestSweepRun.cellCount - sweepTotalAnomalyCount) / latestSweepRun.cellCount;
   }
 
   const priorityInputs: PriorityInputs = {

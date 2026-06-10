@@ -79,7 +79,7 @@ function sectionsForLane(lane: PipelineLane): readonly TemporalSection[] {
 }
 
 const HORIZON_LABELS: Record<string, string> = {
-  'today': 'Today',
+  today: 'Today',
   'this-week': 'This Week',
   'this-month': 'This Month',
   'this-quarter': 'This Quarter',
@@ -117,7 +117,9 @@ const formattedGeneratedAt = computed<string>(() => formatTimestamp(snapshot.gen
 // --- Sweep summary bar (hidden when no sweep data) ---
 const hasSweepData = computed<boolean>(() => sweep.latestRun.value !== null);
 
-const sweepLastRunDate = computed<string>(() => formatTimestamp(sweep.latestRun.value?.submittedAt ?? null));
+const sweepLastRunDate = computed<string>(() =>
+  formatTimestamp(sweep.latestRun.value?.submittedAt ?? null),
+);
 
 const sweepCellCount = computed<number>(() => sweep.latestRun.value?.cellCount ?? 0);
 
@@ -158,7 +160,9 @@ const sweepHealthColorClass = computed<string>(() => {
   return 'health-red';
 });
 
-const sweepFreshnessLabel = computed<string>(() => (sweep.staleStatus.value === 'stale' ? 'Stale' : 'Fresh'));
+const sweepFreshnessLabel = computed<string>(() =>
+  sweep.staleStatus.value === 'stale' ? 'Stale' : 'Fresh',
+);
 
 const sweepFreshnessClass = computed<string>(() =>
   sweep.staleStatus.value === 'stale' ? 'freshness-stale' : 'freshness-fresh',
@@ -196,19 +200,17 @@ const sweepSparklineBars = computed<readonly SparklineBar[]>(() => {
 
     <section class="pipeline-summary">
       <p>
-        The four agent skills
-        (<code>/agent-architect</code>, <code>/agent-builder</code>,
-        <code>/agent-inspector</code>, <code>/agent-evaluator</code>)
-        are Claude Code slash commands invoked in separate sessions to walk through
-        each role in the checks-and-balances pipeline.
+        The four agent skills (<code>/agent-architect</code>, <code>/agent-builder</code>,
+        <code>/agent-inspector</code>, <code>/agent-evaluator</code>) are Claude Code slash commands
+        invoked in separate sessions to walk through each role in the checks-and-balances pipeline.
         Each lane below shows three temporal views: <strong>To Do</strong> (upcoming work),
-        <strong>Active</strong> (current status), and <strong>History</strong> (past activity
-        and revisions).
+        <strong>Active</strong> (current status), and <strong>History</strong> (past activity and
+        revisions).
       </p>
       <p>
-        After any session completes, running <code>pnpm dash:build</code> regenerates the
-        snapshot from the repo's git log and WORK_INDEX state, and this page reflects the
-        updated lanes automatically.
+        After any session completes, running <code>pnpm dash:build</code> regenerates the snapshot
+        from the repo's git log and WORK_INDEX state, and this page reflects the updated lanes
+        automatically.
       </p>
     </section>
 
@@ -300,11 +302,7 @@ const sweepSparklineBars = computed<readonly SparklineBar[]>(() => {
           </ul>
         </div>
 
-        <div
-          v-for="section in sectionsForLane(lane)"
-          :key="section.heading"
-          class="lane-section"
-        >
+        <div v-for="section in sectionsForLane(lane)" :key="section.heading" class="lane-section">
           <h4 class="section-heading">{{ section.heading }}</h4>
 
           <ul v-if="section.items.length > 0" class="lane-items">

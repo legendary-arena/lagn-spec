@@ -104,8 +104,18 @@ describe('useAgentPipeline', () => {
     it('should_place_decisions_in_history', () => {
       const snapshot = makeSnapshot({
         decisions: [
-          { id: 'D-10001', title: 'Lock zone ops', body: 'Zones store CardExtId only.', mtime: '2026-06-08' },
-          { id: 'D-10002', title: 'No reduce in effects', body: 'Use for...of loops.', mtime: '2026-06-07' },
+          {
+            id: 'D-10001',
+            title: 'Lock zone ops',
+            body: 'Zones store CardExtId only.',
+            mtime: '2026-06-08',
+          },
+          {
+            id: 'D-10002',
+            title: 'No reduce in effects',
+            body: 'Use for...of loops.',
+            mtime: '2026-06-07',
+          },
         ],
       });
       const result = useAgentPipeline(snapshot);
@@ -126,9 +136,7 @@ describe('useAgentPipeline', () => {
           byQuarter: [],
           inFlight: [],
           blocked: [],
-          now: [
-            { number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] },
-          ],
+          now: [{ number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] }],
         },
       });
       const result = useAgentPipeline(snapshot);
@@ -165,7 +173,14 @@ describe('useAgentPipeline', () => {
           { sha: 'bbb222', kind: 'WP', title: 'EC-100: implement feature' },
         ],
         status: [
-          { wpNumber: 100, ecNumber: '100', title: 'Build zone ops', date: '2026-06-08', body: 'Done.', filePath: '' },
+          {
+            wpNumber: 100,
+            ecNumber: '100',
+            title: 'Build zone ops',
+            date: '2026-06-08',
+            body: 'Done.',
+            filePath: '',
+          },
         ],
       });
       const result = useAgentPipeline(snapshot);
@@ -186,11 +201,14 @@ describe('useAgentPipeline', () => {
           byQuarter: [],
           inFlight: [],
           blocked: [
-            { number: 60, title: 'Auth middleware', status: 'Blocked' as const, dependencies: [59] },
+            {
+              number: 60,
+              title: 'Auth middleware',
+              status: 'Blocked' as const,
+              dependencies: [59],
+            },
           ],
-          now: [
-            { number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] },
-          ],
+          now: [{ number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] }],
         },
       });
       const result = useAgentPipeline(snapshot);
@@ -206,7 +224,14 @@ describe('useAgentPipeline', () => {
     it('should_place_status_entries_in_history', () => {
       const snapshot = makeSnapshot({
         status: [
-          { wpNumber: 100, ecNumber: '100', title: 'Build zone ops', date: '2026-06-08', body: 'Done.', filePath: '' },
+          {
+            wpNumber: 100,
+            ecNumber: '100',
+            title: 'Build zone ops',
+            date: '2026-06-08',
+            body: 'Done.',
+            filePath: '',
+          },
         ],
       });
       const result = useAgentPipeline(snapshot);
@@ -236,9 +261,7 @@ describe('useAgentPipeline', () => {
     it('should_suppress_all_lane_sections_when_snapshot_has_loadError', () => {
       const snapshot = makeSnapshot({
         error: 'Snapshot generation failed: file not found.',
-        commits: [
-          { sha: 'aaa111', kind: 'SPEC', title: 'SPEC: draft WP-100' },
-        ],
+        commits: [{ sha: 'aaa111', kind: 'SPEC', title: 'SPEC: draft WP-100' }],
         throughput: {
           byWeek: [],
           byMonth: [],
@@ -247,9 +270,7 @@ describe('useAgentPipeline', () => {
             { number: 50, title: 'Zone ops refactor', status: 'Draft' as const, dependencies: [] },
           ],
           blocked: [],
-          now: [
-            { number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] },
-          ],
+          now: [{ number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] }],
         },
       });
       const result = useAgentPipeline(snapshot);
@@ -282,12 +303,22 @@ describe('useAgentPipeline', () => {
       const result = useAgentPipeline(snapshot);
 
       const architectBacklogIds = result.architect.backlog.map((item) => item.id);
-      assert.ok(!architectBacklogIds.includes('kpi-open-drafts'), 'no openDrafts KPI when kpis null');
+      assert.ok(
+        !architectBacklogIds.includes('kpi-open-drafts'),
+        'no openDrafts KPI when kpis null',
+      );
 
       const builderActiveIds = result.builder.active.map((item) => item.id);
-      assert.ok(!builderActiveIds.includes('kpi-wps-done-this-week'), 'no wpsDoneThisWeek KPI when kpis null');
+      assert.ok(
+        !builderActiveIds.includes('kpi-wps-done-this-week'),
+        'no wpsDoneThisWeek KPI when kpis null',
+      );
 
-      assert.equal(result.evaluator.backlog.length, 0, 'no daysSinceLastDoneFlip KPI when kpis null');
+      assert.equal(
+        result.evaluator.backlog.length,
+        0,
+        'no daysSinceLastDoneFlip KPI when kpis null',
+      );
     });
 
     it('should_produce_items_conforming_to_PipelineItem_shape', () => {
@@ -300,7 +331,14 @@ describe('useAgentPipeline', () => {
           { id: 'D-10001', title: 'Lock zone ops', body: 'Detail.', mtime: '2026-06-08' },
         ],
         status: [
-          { wpNumber: 100, ecNumber: '100', title: 'Build', date: '2026-06-08', body: 'Done.', filePath: '' },
+          {
+            wpNumber: 100,
+            ecNumber: '100',
+            title: 'Build',
+            date: '2026-06-08',
+            body: 'Done.',
+            filePath: '',
+          },
         ],
         throughput: {
           byWeek: [],
@@ -310,20 +348,31 @@ describe('useAgentPipeline', () => {
             { number: 50, title: 'Zone ops refactor', status: 'Draft' as const, dependencies: [] },
           ],
           blocked: [
-            { number: 60, title: 'Auth middleware', status: 'Blocked' as const, dependencies: [59] },
+            {
+              number: 60,
+              title: 'Auth middleware',
+              status: 'Blocked' as const,
+              dependencies: [59],
+            },
           ],
-          now: [
-            { number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] },
-          ],
+          now: [{ number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] }],
         },
       });
       const result = useAgentPipeline(snapshot);
 
       const allItems = [
-        ...result.architect.backlog, ...result.architect.active, ...result.architect.history,
-        ...result.builder.backlog, ...result.builder.active, ...result.builder.history,
-        ...result.inspector.backlog, ...result.inspector.active, ...result.inspector.history,
-        ...result.evaluator.backlog, ...result.evaluator.active, ...result.evaluator.history,
+        ...result.architect.backlog,
+        ...result.architect.active,
+        ...result.architect.history,
+        ...result.builder.backlog,
+        ...result.builder.active,
+        ...result.builder.history,
+        ...result.inspector.backlog,
+        ...result.inspector.active,
+        ...result.inspector.history,
+        ...result.evaluator.backlog,
+        ...result.evaluator.active,
+        ...result.evaluator.history,
       ];
 
       for (const item of allItems) {
@@ -399,7 +448,12 @@ describe('useAgentPipeline', () => {
   });
 
   describe('priority recommendations', () => {
-    const VALID_HORIZONS: readonly PriorityHorizon[] = ['today', 'this-week', 'this-month', 'this-quarter'];
+    const VALID_HORIZONS: readonly PriorityHorizon[] = [
+      'today',
+      'this-week',
+      'this-month',
+      'this-quarter',
+    ];
     const VALID_URGENCIES = ['critical', 'high', 'moderate', 'strategic'];
 
     it('should_produce_exactly_four_priorities_per_lane_with_valid_horizons_and_urgencies', () => {
@@ -409,14 +463,25 @@ describe('useAgentPipeline', () => {
       for (const lane of [result.architect, result.builder, result.inspector, result.evaluator]) {
         assert.equal(lane.priorities.length, 4, `${lane.title} has 4 priorities`);
 
-        const horizons = lane.priorities.map((priority: PriorityRecommendation) => priority.horizon);
+        const horizons = lane.priorities.map(
+          (priority: PriorityRecommendation) => priority.horizon,
+        );
         for (const expectedHorizon of VALID_HORIZONS) {
-          assert.ok(horizons.includes(expectedHorizon), `${lane.title} has ${expectedHorizon} horizon`);
+          assert.ok(
+            horizons.includes(expectedHorizon),
+            `${lane.title} has ${expectedHorizon} horizon`,
+          );
         }
 
         for (const priority of lane.priorities) {
-          assert.ok(VALID_URGENCIES.includes(priority.urgency), `${lane.title} ${priority.horizon} has valid urgency "${priority.urgency}"`);
-          assert.ok(priority.label.length > 0, `${lane.title} ${priority.horizon} has non-empty label`);
+          assert.ok(
+            VALID_URGENCIES.includes(priority.urgency),
+            `${lane.title} ${priority.horizon} has valid urgency "${priority.urgency}"`,
+          );
+          assert.ok(
+            priority.label.length > 0,
+            `${lane.title} ${priority.horizon} has non-empty label`,
+          );
         }
       }
     });
@@ -439,7 +504,11 @@ describe('useAgentPipeline', () => {
       const todayPriority = result.architect.priorities.find(
         (priority: PriorityRecommendation) => priority.horizon === 'today',
       );
-      assert.equal(todayPriority!.urgency, 'critical', 'architect today is critical with 5 open drafts');
+      assert.equal(
+        todayPriority!.urgency,
+        'critical',
+        'architect today is critical with 5 open drafts',
+      );
     });
 
     it('should_flag_builder_critical_when_zero_wps_done_this_week', () => {
@@ -451,7 +520,11 @@ describe('useAgentPipeline', () => {
       const weekPriority = result.builder.priorities.find(
         (priority: PriorityRecommendation) => priority.horizon === 'this-week',
       );
-      assert.equal(weekPriority!.urgency, 'critical', 'builder this-week is critical with 0 WPs done');
+      assert.equal(
+        weekPriority!.urgency,
+        'critical',
+        'builder this-week is critical with 0 WPs done',
+      );
     });
 
     it('should_flag_inspector_critical_when_multiple_wps_blocked', () => {
@@ -462,7 +535,12 @@ describe('useAgentPipeline', () => {
           byQuarter: [],
           inFlight: [],
           blocked: [
-            { number: 60, title: 'Auth middleware', status: 'Blocked' as const, dependencies: [59] },
+            {
+              number: 60,
+              title: 'Auth middleware',
+              status: 'Blocked' as const,
+              dependencies: [59],
+            },
             { number: 61, title: 'Session tokens', status: 'Blocked' as const, dependencies: [60] },
           ],
           now: [],
@@ -473,7 +551,11 @@ describe('useAgentPipeline', () => {
       const todayPriority = result.inspector.priorities.find(
         (priority: PriorityRecommendation) => priority.horizon === 'today',
       );
-      assert.equal(todayPriority!.urgency, 'critical', 'inspector today is critical with 2 blocked');
+      assert.equal(
+        todayPriority!.urgency,
+        'critical',
+        'inspector today is critical with 2 blocked',
+      );
     });
 
     it('should_flag_evaluator_critical_when_days_since_last_completion_exceeds_seven', () => {
@@ -485,7 +567,11 @@ describe('useAgentPipeline', () => {
       const todayPriority = result.evaluator.priorities.find(
         (priority: PriorityRecommendation) => priority.horizon === 'today',
       );
-      assert.equal(todayPriority!.urgency, 'critical', 'evaluator today is critical at 10 days stale');
+      assert.equal(
+        todayPriority!.urgency,
+        'critical',
+        'evaluator today is critical at 10 days stale',
+      );
     });
 
     it('should_produce_strategic_urgency_when_all_signals_are_healthy', () => {
@@ -501,12 +587,20 @@ describe('useAgentPipeline', () => {
       const architectToday = result.architect.priorities.find(
         (priority: PriorityRecommendation) => priority.horizon === 'today',
       );
-      assert.equal(architectToday!.urgency, 'strategic', 'architect today is strategic when no drafts');
+      assert.equal(
+        architectToday!.urgency,
+        'strategic',
+        'architect today is strategic when no drafts',
+      );
 
       const builderWeek = result.builder.priorities.find(
         (priority: PriorityRecommendation) => priority.horizon === 'this-week',
       );
-      assert.equal(builderWeek!.urgency, 'strategic', 'builder this-week is strategic at 5 WPs done');
+      assert.equal(
+        builderWeek!.urgency,
+        'strategic',
+        'builder this-week is strategic at 5 WPs done',
+      );
     });
   });
 
@@ -523,11 +617,20 @@ describe('useAgentPipeline', () => {
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);
 
-      const sweepItems = result.inspector.backlog.filter((item) => item.id.startsWith('sweep-inspector-'));
-      assert.equal(sweepItems.length, 2, 'one item per anomaly key with count > 0; zero-count key excluded');
+      const sweepItems = result.inspector.backlog.filter((item) =>
+        item.id.startsWith('sweep-inspector-'),
+      );
+      assert.equal(
+        sweepItems.length,
+        2,
+        'one item per anomaly key with count > 0; zero-count key excluded',
+      );
       for (const item of sweepItems) {
         assert.equal(item.meta, 'Sweep', 'sweep-derived item carries the Sweep meta tag');
-        assert.ok(/ anomaly\(s\) — triage$/.test(item.label), `label is the triage format: "${item.label}"`);
+        assert.ok(
+          / anomaly\(s\) — triage$/.test(item.label),
+          `label is the triage format: "${item.label}"`,
+        );
       }
     });
 
@@ -546,9 +649,15 @@ describe('useAgentPipeline', () => {
       const builderSweepIds = result.builder.backlog
         .filter((item) => item.id.startsWith('sweep-builder-'))
         .map((item) => item.id);
-      assert.deepEqual(builderSweepIds, ['sweep-builder-engine-fatal'], 'only the fatal-class key yields a builder item');
+      assert.deepEqual(
+        builderSweepIds,
+        ['sweep-builder-engine-fatal'],
+        'only the fatal-class key yields a builder item',
+      );
 
-      const fatalItem = result.builder.backlog.find((item) => item.id === 'sweep-builder-engine-fatal');
+      const fatalItem = result.builder.backlog.find(
+        (item) => item.id === 'sweep-builder-engine-fatal',
+      );
       assert.equal(fatalItem!.meta, 'Sweep');
       assert.equal(fatalItem!.label, '4 fatal crash(es) — investigate error signatures');
     });
@@ -565,7 +674,9 @@ describe('useAgentPipeline', () => {
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);
 
-      const healthItem = result.architect.backlog.find((item) => item.id === 'sweep-architect-health');
+      const healthItem = result.architect.backlog.find(
+        (item) => item.id === 'sweep-architect-health',
+      );
       assert.ok(healthItem, 'architect health item present when health rate < 0.8');
       assert.equal(healthItem!.meta, 'Sweep');
       assert.equal(healthItem!.label, '70% sweep health rate — review spec coverage');
@@ -583,7 +694,9 @@ describe('useAgentPipeline', () => {
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);
 
-      const healthItem = result.architect.backlog.find((item) => item.id === 'sweep-architect-health');
+      const healthItem = result.architect.backlog.find(
+        (item) => item.id === 'sweep-architect-health',
+      );
       assert.equal(healthItem, undefined, 'no health item when rate is 0.9 (>= 0.8)');
     });
 
@@ -595,8 +708,13 @@ describe('useAgentPipeline', () => {
       const result = useAgentPipeline(makeSnapshot(), sweepData);
 
       const activeIds = result.evaluator.active.map((item) => item.id);
-      assert.ok(!activeIds.includes('evaluator-placeholder'), 'static placeholder replaced when sweep data present');
-      const freshnessItem = result.evaluator.active.find((item) => item.id === 'sweep-evaluator-freshness');
+      assert.ok(
+        !activeIds.includes('evaluator-placeholder'),
+        'static placeholder replaced when sweep data present',
+      );
+      const freshnessItem = result.evaluator.active.find(
+        (item) => item.id === 'sweep-evaluator-freshness',
+      );
       assert.ok(freshnessItem, 'sweep freshness item present');
       assert.equal(freshnessItem!.meta, 'Sweep');
       assert.equal(freshnessItem!.label, 'Nightly sweep is fresh — anomaly trend improving');
@@ -615,10 +733,18 @@ describe('useAgentPipeline', () => {
       const result = useAgentPipeline(makeSnapshot());
 
       const allItems = [
-        ...result.architect.backlog, ...result.architect.active, ...result.architect.history,
-        ...result.builder.backlog, ...result.builder.active, ...result.builder.history,
-        ...result.inspector.backlog, ...result.inspector.active, ...result.inspector.history,
-        ...result.evaluator.backlog, ...result.evaluator.active, ...result.evaluator.history,
+        ...result.architect.backlog,
+        ...result.architect.active,
+        ...result.architect.history,
+        ...result.builder.backlog,
+        ...result.builder.active,
+        ...result.builder.history,
+        ...result.inspector.backlog,
+        ...result.inspector.active,
+        ...result.inspector.history,
+        ...result.evaluator.backlog,
+        ...result.evaluator.active,
+        ...result.evaluator.history,
       ];
       const sweepItems = allItems.filter((item) => item.id.startsWith('sweep-'));
       assert.equal(sweepItems.length, 0, 'no sweep-prefixed items when no sweep data is injected');
@@ -649,10 +775,22 @@ describe('useAgentPipeline', () => {
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);
 
-      const inspectorToday = result.inspector.priorities.find((priority) => priority.horizon === 'today');
-      const builderToday = result.builder.priorities.find((priority) => priority.horizon === 'today');
-      assert.equal(inspectorToday!.urgency, 'critical', 'inspector today escalates to critical on fatals');
-      assert.equal(builderToday!.urgency, 'critical', 'builder today escalates to critical on fatals');
+      const inspectorToday = result.inspector.priorities.find(
+        (priority) => priority.horizon === 'today',
+      );
+      const builderToday = result.builder.priorities.find(
+        (priority) => priority.horizon === 'today',
+      );
+      assert.equal(
+        inspectorToday!.urgency,
+        'critical',
+        'inspector today escalates to critical on fatals',
+      );
+      assert.equal(
+        builderToday!.urgency,
+        'critical',
+        'builder today escalates to critical on fatals',
+      );
     });
 
     it('should_escalate_evaluator_today_to_high_when_sweep_is_stale', () => {
@@ -662,8 +800,14 @@ describe('useAgentPipeline', () => {
       });
       const result = useAgentPipeline(snapshot, sweepData);
 
-      const evaluatorToday = result.evaluator.priorities.find((priority) => priority.horizon === 'today');
-      assert.equal(evaluatorToday!.urgency, 'high', 'evaluator today escalates to high on stale sweep');
+      const evaluatorToday = result.evaluator.priorities.find(
+        (priority) => priority.horizon === 'today',
+      );
+      assert.equal(
+        evaluatorToday!.urgency,
+        'high',
+        'evaluator today escalates to high on stale sweep',
+      );
     });
 
     it('should_escalate_architect_this_week_to_high_when_health_rate_below_threshold', () => {
@@ -678,8 +822,14 @@ describe('useAgentPipeline', () => {
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);
 
-      const architectWeek = result.architect.priorities.find((priority) => priority.horizon === 'this-week');
-      assert.equal(architectWeek!.urgency, 'high', 'architect this-week escalates to high on low health rate');
+      const architectWeek = result.architect.priorities.find(
+        (priority) => priority.horizon === 'this-week',
+      );
+      assert.equal(
+        architectWeek!.urgency,
+        'high',
+        'architect this-week escalates to high on low health rate',
+      );
     });
 
     it('should_sort_fatal_class_anomalies_before_non_fatal_in_inspector_backlog', () => {
@@ -719,7 +869,9 @@ describe('useAgentPipeline', () => {
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);
 
-      const item = result.inspector.backlog.find((entry) => entry.id === 'sweep-inspector-totally-made-up-key');
+      const item = result.inspector.backlog.find(
+        (entry) => entry.id === 'sweep-inspector-totally-made-up-key',
+      );
       assert.ok(item, 'arbitrary opaque key surfaces as an inspector item');
       assert.equal(item!.label, '5 totally-made-up-key anomaly(s) — triage');
     });
@@ -737,10 +889,16 @@ describe('useAgentPipeline', () => {
       const result = useAgentPipeline(makeSnapshot(), sweepData);
 
       const architectBacklogIds = result.architect.backlog.map((item) => item.id);
-      assert.ok(architectBacklogIds.includes('kpi-open-drafts'), 'existing KPI item retained alongside sweep item');
+      assert.ok(
+        architectBacklogIds.includes('kpi-open-drafts'),
+        'existing KPI item retained alongside sweep item',
+      );
 
       const builderActiveIds = result.builder.active.map((item) => item.id);
-      assert.ok(builderActiveIds.includes('kpi-wps-done-this-week'), 'existing builder KPI item retained');
+      assert.ok(
+        builderActiveIds.includes('kpi-wps-done-this-week'),
+        'existing builder KPI item retained',
+      );
     });
   });
 });
