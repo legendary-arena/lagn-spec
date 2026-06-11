@@ -20,8 +20,8 @@
 - **Health rate (SoT):** `computeSweepHealthRate(run) = cellCount > 0 ? healthyCount / cellCount : null`; `healthyCount = Number.isFinite(anomalyCounts['endgame-reached']) && anomalyCounts['endgame-reached'] >= 0 ? anomalyCounts['endgame-reached'] : 0`. ∈ [0,1] or `null` (0-cell), never `NaN`. The SOLE health-rate definition — consumed by the trend, the Pipeline KPI, and the Architect lane.
 - **Cadence grammar:** `classifyRunCadence(runId)` → `/-weekly-w(\d+)$/` ⇒ `{cadence:'weekly', windowIndex:<int>}`; else `{cadence:'daily', windowIndex:null}`. runId STRING only — never `cellCount` or the taxonomy.
 - **Series partition:** `deriveSweepTrendSeries(points)` → `{daily, weekly}`; the UI MUST NOT re-derive the split.
-- **Trend point:** `{ runId, submittedAt, submittedAtMs, cadence, windowIndex, cellCount, healthRate }`; `submittedAtMs = Date.parse(submittedAt)` (pure, deterministic — not a clock read).
-- **Ordering:** oldest → newest; identical `submittedAt` ties keep input order (stable).
+- **Trend point:** `{ runId, submittedAt, submittedAtMs, cadence, windowIndex, cellCount, healthRate }`; `submittedAtMs = Date.parse(submittedAt)` (pure, deterministic — `submittedAt` is the server's ISO-8601 `toISOString()` string; not a clock read).
+- **Ordering:** oldest → newest via a **stable ascending sort on `submittedAtMs`** (NOT a bare `.reverse()`, which inverts ties); identical `submittedAtMs` ties keep the `recentRuns` most-recent-first input order.
 - **Chart:** y-axis bounded `[0,1]`; `connectNulls = false`; monotonic `submittedAtMs` time axis (no reformatting beyond labels); tooltip order `[timestamp, cadence, windowIndex?, healthRate%, cellCount]`; empty points ⇒ render no container (page owns messaging).
 - **Mock cadence:** every 6th run is weekly (`-weekly-w<N>`, N cycles 0–9, `cellCount` ~2,000); ALL runs carry the `endgame-reached` key.
 - **Data source:** existing `recentRuns` (≤ 30); NO new fetch/endpoint/store/migration; 30-run LIMIT unchanged. Charting via `BaseChart.vue`; no new dep; no new route.
@@ -82,6 +82,7 @@
 - Plotting raw counts instead of the health rate → daily/weekly sawtooth.
 - Divide-by-zero on a 0-cell run (no guard) → `NaN` corrupts the axis; return `null`.
 - Re-deriving the cadence split in the chart instead of consuming `deriveSweepTrendSeries` → duplicate logic.
+- Ordering oldest→newest with a bare `.reverse()` instead of a stable ascending sort on `submittedAtMs` → inverts equal-timestamp tie order and fails the stable-tie test.
 - A `Date.now()` read in the composable → breaks WP-204 purity (`Date.parse` of a fixed string is fine).
 - Shipping a new `vue-tsc` error (typecheck not run) → it is a DoD gate.
 - A dedicated Trends tab/route or a new charting dep → out of scope; inline + `BaseChart.vue`.
