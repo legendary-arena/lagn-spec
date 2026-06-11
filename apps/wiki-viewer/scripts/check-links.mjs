@@ -39,6 +39,16 @@ function isExternal(destination) {
     destination.startsWith('https://') ||
     destination.startsWith('mailto:') ||
     destination.startsWith('#') ||
+    // why: `/`-rooted destinations are Hugo static-root URLs (e.g.
+    // /development-workflow/ai-system-flow.jpg). They are served from
+    // apps/wiki-viewer/static/<slug>/, projected there from ewiki/<slug>/
+    // by project-wiki.mjs — NOT content-relative paths. Resolving them
+    // against the projected content/ root (as this check does for
+    // internal `.md` links) would always fail, since the asset never
+    // lands in content/. The SCHEMA forbids `/`-rooted paths for .md
+    // cross-links, so this exemption is unambiguous: a leading `/` here
+    // is only ever a static asset, validated by the static projection.
+    destination.startsWith('/') ||
     destination.startsWith('../')
   );
 }

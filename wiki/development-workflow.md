@@ -122,74 +122,11 @@ dependency and enables long-running autonomous workflows.
 
 ### AI system flow
 
-```mermaid
-flowchart TD
-    subgraph surfaces["Operator Surfaces"]
-        laptop["Laptop"]
-        workstation["Home Workstation"]
-        phone["Phone"]
-    end
+![AI system flow: operator surfaces (laptop, workstation, phone) connect over the Tailscale mesh to Claude Code, the primary orchestrator. Claude Code commits to the GitHub repo and rclone-syncs assets to Cloudflare R2; merges to main deploy to Render and Cloudflare Pages. GitHub Actions CI runs a nightly Claude Inspector triage that generates new work packets, which feed back into Claude Code as a closed loop. Ollama local models are a future, operator-discretionary layer.](/development-workflow/ai-system-flow.jpg)
 
-    subgraph control["Control Plane"]
-        tailscale["Tailscale Network"]
-    end
-
-    subgraph orchestrator["AI Orchestration"]
-        claude["Claude Code<br/>(primary orchestrator)"]
-        ollama["Ollama Local Models<br/>(7B–70B, future)"]
-    end
-
-    subgraph external["External AI (operator-directed)"]
-        copilot["GitHub Copilot<br/>(inline code assist)"]
-        grok["Grok / Other LLMs<br/>(alt reasoning)"]
-    end
-
-    subgraph pipeline["CI + Deploy Pipeline"]
-        github["GitHub Repo"]
-        ci["GitHub Actions CI"]
-        inspector["Claude CI Inspector<br/>(nightly triage)"]
-        wp["New Work Packets"]
-    end
-
-    subgraph deploy["Deploy Targets"]
-        render["Render<br/>(server + PostgreSQL)"]
-        pages["Cloudflare Pages<br/>(front-ends)"]
-        r2["Cloudflare R2<br/>(images + metadata)"]
-    end
-
-    laptop --> tailscale
-    workstation --> tailscale
-    phone --> tailscale
-    tailscale --> workstation
-
-    laptop -->|"Claude Code session"| claude
-    workstation -->|"Claude Code session"| claude
-    workstation -->|"local inference"| ollama
-    ollama -->|"results"| claude
-    phone -->|"PR review + merge"| github
-
-    claude -->|"commit (2-step topology)"| github
-    claude -->|"rclone sync"| r2
-    github -->|"PR + CI checks"| ci
-    ci -->|"nightly cron"| inspector
-    inspector -->|"findings → new WPs"| wp
-    wp -->|"next session"| claude
-
-    github -->|"merge to main"| render
-    github -->|"merge to main"| pages
-
-    ci -.->|"failures / logs"| claude
-    render -.->|"runtime signals"| claude
-    pages -.->|"deploy status"| claude
-
-    classDef future stroke-dasharray:6;
-    class ollama future;
-    class copilot future;
-    class grok future;
-```
-
-> **Dashed** nodes are future or operator-discretionary — not part of the
-> committed orchestration loop.
+> Ollama and the external AI tools are future / operator-discretionary —
+> not part of the committed orchestration loop. The closed loop is
+> `Claude Code → GitHub → CI → Inspector → new WPs → Claude Code`.
 
 **Key architectural points:**
 
@@ -216,13 +153,7 @@ flowchart TD
 
 **Future: AI routing (when local models are operational):**
 
-```mermaid
-flowchart LR
-    claude["Claude Code"] --> decision{Task type}
-    decision -->|"heavy reasoning"| api["Claude API<br/>(Opus / Sonnet)"]
-    decision -->|"experimentation"| ollama["Ollama<br/>(local 7B–70B)"]
-    decision -->|"code completion"| copilot["Copilot<br/>(inline)"]
-```
+![Future AI routing: Claude Code branches by task type — heavy reasoning routes to the Claude API (Opus / Sonnet), experimentation routes to local Ollama models (7B–70B), and code completion routes to Copilot inline.](/development-workflow/ai-routing.jpg)
 
 This routing is aspirational. Today all AI tasks go through Claude Code's
 API. When Ollama is operational on the workstation, the operator can
