@@ -122,7 +122,7 @@ dependency and enables long-running autonomous workflows.
 
 ### AI system flow
 
-![AI system flow: operator surfaces (laptop, workstation, phone) connect over the Tailscale mesh to Claude Code, the primary orchestrator. Claude Code commits to the GitHub repo and rclone-syncs assets to Cloudflare R2; merges to main deploy to Render and Cloudflare Pages. GitHub Actions CI runs a nightly Claude Inspector triage that generates new work packets, which feed back into Claude Code as a closed loop. Ollama local models are a future, operator-discretionary layer.](/development-workflow/ai-system-flow.jpg)
+![AI system flow: operator surfaces (laptop, workstation, phone) connect over the Tailscale mesh to Claude Code, the primary orchestrator. Claude Code commits to the GitHub repo and rclone-syncs assets to Cloudflare R2; merges to main deploy to Render and Cloudflare Pages. GitHub Actions CI runs a nightly Claude Inspector triage that generates new work packets, which feed back into Claude Code as a closed loop. Ollama local models are a future, operator-discretionary layer.](/development-workflow/ai-system-flow.png)
 
 > Ollama and the external AI tools are future / operator-discretionary —
 > not part of the committed orchestration loop. The closed loop is
@@ -153,7 +153,7 @@ dependency and enables long-running autonomous workflows.
 
 **Future: AI routing (when local models are operational):**
 
-![Future AI routing: Claude Code branches by task type — heavy reasoning routes to the Claude API (Opus / Sonnet), experimentation routes to local Ollama models (7B–70B), and code completion routes to Copilot inline.](/development-workflow/ai-routing.jpg)
+![Future AI routing: Claude Code branches by task type — heavy reasoning routes to the Claude API (Opus / Sonnet), experimentation routes to local Ollama models (7B–70B), and code completion routes to Copilot inline.](/development-workflow/ai-routing.png)
 
 This routing is aspirational. Today all AI tasks go through Claude Code's
 API. When Ollama is operational on the workstation, the operator can
