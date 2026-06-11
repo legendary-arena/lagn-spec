@@ -83,6 +83,7 @@ If any of the above is false, this packet is **BLOCKED** and must not proceed.
 ### A) Matrix runner axis-slice flags (`scripts/sweep-setup-matrix.mjs`)
 
 - **Additive**: two optional flags `--scheme-offset N` (default 0) and `--scheme-limit M` (default = the loaded scheme-axis length). After `validateAxisArray` loads the scheme axis, the script slices it to `schemeIds.slice(offset, offset + limit)` **before** the cross-product; the mastermind axis is always used in full. `cellCount` is computed from the **sliced** scheme length (so `--max-cells` and the soft-warning threshold see the per-run/per-shard count, not the full corpus). Omitting both flags is byte-equivalent to today's behavior (the daily smoke is unaffected). Offset/limit are validated as non-negative integers; `offset >= schemeIds.length` yields an empty slice → 0 cells → the script still **creates an empty `manifest.jsonl`** (so every clamped shard uploads a valid artifact; not an error). No `.reduce()`; explicit slicing + a pure `selectSchemeWindow(schemeIds, offset, limit)` helper.
+- **Additive (testability fix)**: wrap the module's existing unconditional `main().catch(...)` call (currently the last statement of the file) in an **entry-point guard** — `if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) { main().catch(...) }` (the `scripts/handoffs-sync.mjs` pattern). Without it, the unit test's `import { selectSchemeWindow } from '.../sweep-setup-matrix.mjs'` executes `main()` on import (which throws on the missing `--run-id`), so the helper is untestable. The guard is behavior-preserving for the CLI (the workflow still runs it as the process entry point).
 - **Required**: a `// why:` documenting that the canonical scheme-axis ORDER (the committed `scheme-ids.full.json` array order) is the rotation/shard coordinate system — reordering the axis file shifts which cells a window covers, so the file order is a locked contract.
 
 ### B) Full-corpus axis fixtures (`data/sweep-fixtures/`)
@@ -90,14 +91,16 @@ If any of the above is false, this packet is **BLOCKED** and must not proceed.
 - **New** `scheme-ids.full.json` — the 191 scheme ext_ids, **sorted ascending, unique** (the canonical rotation order). **New** `mastermind-ids.full.json` — the 106 mastermind ext_ids, sorted ascending, unique.
 - **New** `scripts/sweep-generate-full-axis.mjs` — regenerates both fixtures from `data/cards/*.json` (`schemes[].ext_id` / `masterminds[].ext_id`, exact-string-match dedupe, **ascending lexicographic sort**, serialized `JSON.stringify(array, null, 2) + '\n'` — 2-space indent, trailing newline, no trailing spaces). Run by the operator when a set is added; emits byte-deterministic fixtures. Exports a pure `collectSortedUniqueExtIds(setFiles, key)` helper for unit testing.
 
-### C) Weekly sharded sweep + combine (`scripts/sweep-weekly-submit.mjs` + workflow)
+### C) Weekly sharded sweep + plan + combine (`scripts/sweep-weekly-*.mjs` + workflow)
 
-- **New** `scripts/sweep-weekly-submit.mjs` — the fan-in combine + submit. Reads every `manifest.jsonl` beneath a `--manifests-dir <dir>` (the downloaded shard artifacts); **asserts exactly `SHARD_COUNT` (4) manifest files are present** (fewer ⇒ exit 3, no POST — defense-in-depth over the workflow's success gate); concatenates the parsed records + malformed lines, **sorts the records by `(schemeId ASC, mastermindId ASC)`** so the `manifestBlob` is deterministic regardless of shard download order; classifies via `classifyManifestRecords`; and POSTs **one** `{ runId, startedAt, cellCount, anomalyCounts, manifestBlob }` to `${API_BASE_URL}/api/sweep/runs` with `X-Sweep-Token`. RunId form `<shortSha>-<compactTimestampUtc>-weekly` (mirrors `sweep-submit.mjs` verbatim; the `-weekly` suffix keeps the weekly id space disjoint from the daily). Exit 0/2/3/4 mirror `sweep-submit.mjs`. Exports pure helpers `isWeeklySubmitEnvComplete(env)` + `concatenateShardManifests(manifestTexts)` (which performs the `(schemeId, mastermindId)` sort) for unit testing.
-- **New** `apps/server/scripts/sweep-weekly-submit.test.ts` — ≥ 6 `node:test` cases for the pure helpers (env guard; `selectSchemeWindow` slice math incl. the clamped last window + the empty over-offset slice ⇒ 0 cells; `collectSortedUniqueExtIds` sort/dedup; `concatenateShardManifests` preserves record + malformed-line counts AND emits records sorted by `(schemeId, mastermindId)` so input order is irrelevant; the empty-manifest contribution; the shard-count-mismatch ⇒ no-POST exit-3 path). Placed under `apps/server/scripts/` so the server suite globs it (WP-231/232/233 precedent); imports the scripts from `../../../scripts/`.
-- **New** `.github/workflows/sweep-weekly.yml` — `cron '0 8 * * 0'` (Sunday 08:00 UTC, after Saturday's daily smoke) + `workflow_dispatch`. Two jobs:
-  - `sweep` (matrix `shard: [0, 1, 2, 3]`): checkout → pnpm → `setup-node` → install → `pnpm -r build` → compute `WEEK=$(date -u +%V)` then `windowIndex = $((10#$WEEK % 10))` (**base-10** parse — never octal) and `schemeOffset = windowIndex * 20` → compute the shard slice `--scheme-offset (schemeOffset + shard*5) --scheme-limit 5` → run `node scripts/sweep-setup-matrix.mjs` with the **full** axis fixtures + `--seed weekly --policy random --run-id <base>-shard-<shard>` → upload `sweep-output/<base>-shard-<shard>/manifest.jsonl` (always a valid file, possibly empty for a clamped 0-cell shard) as artifact `sweep-shard-<shard>`.
-  - `combine` (`needs: sweep` **AND** `if: ${{ needs.sweep.result == 'success' }}`): runs ONLY when all 4 shards succeeded — no partial submit. Downloads all `sweep-shard-*` artifacts into one dir → `node scripts/sweep-weekly-submit.mjs --manifests-dir <dir>` (reads `SWEEP_SUBMIT_TOKEN` + `API_BASE_URL`).
-- **Modified** `package.json` — add root scripts `sweep:generate-axis` (`node scripts/sweep-generate-full-axis.mjs`) and `sweep:weekly-submit` (`node scripts/sweep-weekly-submit.mjs`). The daily `sweep:nightly` is byte-unchanged.
+- **New** `scripts/sweep-weekly-plan.mjs` — the SINGLE source of the rotation/shard math (removes the untested YAML-bash arithmetic; one evaluation site, not 4 per-shard recomputes). Owns the locked constants `SCHEMES_PER_WINDOW = 20`, `CYCLE_LENGTH = 10`, `SHARD_COUNT = 4`, `SCHEMES_PER_SHARD = 5`. Exports pure helpers `computeWeeklyPlan(isoWeek, schemeAxisLength)` → `{ windowIndex, schemeOffset }` (`windowIndex = isoWeek mod CYCLE_LENGTH`, `schemeOffset = windowIndex * SCHEMES_PER_WINDOW`) and `computeShardSlice(schemeOffset, shardIndex)` → `{ schemeOffset: schemeOffset + shardIndex * SCHEMES_PER_SHARD, schemeLimit: SCHEMES_PER_SHARD }`. Its CLI (entry-guarded) parses `--iso-week` / `--shard-index` / `--scheme-axis-length` and writes the computed values to `GITHUB_OUTPUT` (`window_index`, `scheme_offset`, `scheme_limit`). No `.reduce()`; `parseInt(isoWeek, 10)` (base-10, never octal).
+- **New** `scripts/sweep-weekly-submit.mjs` — the fan-in combine + submit. Reads every `manifest.jsonl` beneath a `--manifests-dir <dir>` (the downloaded shard artifacts); **asserts exactly `SHARD_COUNT` (4) manifest files are present** (fewer ⇒ exit 3, no POST — defense-in-depth over the workflow's success gate); concatenates the parsed records + malformed lines, **sorts the records by `(schemeId ASC, mastermindId ASC)`** so the `manifestBlob` is deterministic regardless of shard download order; classifies via `classifyManifestRecords`; **rejects an oversize payload BEFORE the POST** — if `JSON.stringify({ runId, startedAt, cellCount, anomalyCounts, manifestBlob }).length` exceeds the locked 5 MB `/api/sweep/runs` body cap, it exits 4 with a full-sentence stderr (a loud pre-flight failure, never a server 413); and POSTs **one** run to `${API_BASE_URL}/api/sweep/runs` with `X-Sweep-Token`. RunId form `<shortSha>-<compactTimestampUtc>-weekly-w<windowIndex>` (mirrors `sweep-submit.mjs` + the `-weekly` suffix keeps the id space disjoint from the daily; the `-w<windowIndex>` suffix records which rotation window the run covered, so an operator can audit the rotation from `sweep_runs` alone — `--window-index` is passed in from the plan output). Exit 0/2/3/4 mirror `sweep-submit.mjs`. Exports pure helpers `isWeeklySubmitEnvComplete(env)`, `concatenateShardManifests(manifestTexts)` (performs the `(schemeId, mastermindId)` sort), and `isWithinBodyCap(payload)` for unit testing.
+- **New** `apps/server/scripts/sweep-weekly-submit.test.ts` — ≥ 8 `node:test` cases for the pure helpers (env guard; `selectSchemeWindow` slice math incl. the clamped last window + the empty over-offset slice ⇒ 0 cells; `computeWeeklyPlan` rotation incl. the `isoWeek mod 10` wrap + the clamped last window [180, 191); `computeShardSlice` per-shard offsets; `collectSortedUniqueExtIds` sort/dedup; `concatenateShardManifests` preserves counts AND emits records sorted by `(schemeId, mastermindId)` so input order is irrelevant, incl. an empty-manifest contribution; the shard-count-mismatch ⇒ no-POST exit-3 path; `isWithinBodyCap` accepts an under-cap payload and rejects an over-cap one). Placed under `apps/server/scripts/` so the server suite globs it (WP-231/232/233 precedent); imports the scripts from `../../../scripts/`.
+- **New** `.github/workflows/sweep-weekly.yml` — `cron '0 8 * * 0'` (Sunday 08:00 UTC, after Saturday's daily smoke) + `workflow_dispatch`. Three jobs:
+  - `plan`: checkout → derive `runIdBase = <shortSha>-<compactTimestampUtc>` (git + UTC now, computed ONCE here, not per shard) → `node scripts/sweep-weekly-plan.mjs --iso-week $(date -u +%V) --scheme-axis-length 191` → job outputs `window_index`, `scheme_offset`, `run_id_base`. The single wall-clock read site.
+  - `sweep` (`needs: plan`, matrix `shard: [0, 1, 2, 3]`): checkout → pnpm → `setup-node` → install → `pnpm -r build` → `node scripts/sweep-weekly-plan.mjs --scheme-offset ${{ needs.plan.outputs.scheme_offset }} --shard-index ${{ matrix.shard }}` to get this shard's `scheme_offset`/`scheme_limit` → run `node scripts/sweep-setup-matrix.mjs` with the **full** axis fixtures + `--scheme-offset/--scheme-limit` + `--seed weekly --policy random --run-id ${{ needs.plan.outputs.run_id_base }}-shard-<shard>` → `actions/upload-artifact@v4` the `manifest.jsonl` (always a valid file, possibly empty for a clamped 0-cell shard) as artifact `sweep-shard-<shard>`.
+  - `combine` (`needs: [plan, sweep]` **AND** `if: ${{ needs.sweep.result == 'success' }}`): runs ONLY when all 4 shards succeeded — no partial submit. `actions/download-artifact@v4` with `pattern: sweep-shard-*` and **no** `merge-multiple` (each artifact lands in its own subdir so the 4 `manifest.jsonl` files never collide and the exactly-4 assert holds) → `node scripts/sweep-weekly-submit.mjs --manifests-dir <dir> --run-id-base ${{ needs.plan.outputs.run_id_base }} --window-index ${{ needs.plan.outputs.window_index }}` (reads `SWEEP_SUBMIT_TOKEN` + `API_BASE_URL`).
+- **Modified** `package.json` — add root scripts `sweep:generate-axis`, `sweep:weekly-plan` (`node scripts/sweep-weekly-plan.mjs`), and `sweep:weekly-submit` (`node scripts/sweep-weekly-submit.mjs`). The daily `sweep:nightly` is byte-unchanged.
 
 ### D) Decisions
 
@@ -110,6 +113,7 @@ If any of the above is false, this packet is **BLOCKED** and must not proceed.
 - **A nightly full sweep / changing the daily 2×2 smoke** — explicitly NOT done (operator decision). `sweep-nightly.yml`, `scripts/sweep-submit.mjs`, and the 2-entry smoke fixtures are byte-unchanged. D-20704 remains the daily lock.
 - **A self-hosted runner** — explicitly NOT built (operator decision). The weekly sweep runs on GitHub-hosted `ubuntu-latest` matrix shards.
 - **The literal full 20,246-cell cross-product per run** — explicitly NOT built (operator decision). Each run covers a ≤ 2,120-cell rotating window; the full corpus is covered over a 10-run cycle.
+- **Triaging the weekly sweep / extending the WP-231→232→233 closed loop to it** — explicitly NOT in scope. `inspection-nightly.yml` chains only off the `Sweep Nightly` workflow (`workflow_run: ["Sweep Nightly"]`); the new `Sweep Weekly` workflow does **not** trigger Inspector triage. In v1 the weekly sweep populates `legendary.sweep_runs` (raw `cellCount` / `anomalyCounts` / `manifestBlob`) for the operator dashboard + future trend view (WP-235) ONLY — its anomalies are visible as counts/manifest data but are **not** triaged into `inspection_reports` / `finding_handoffs`. Wiring the weekly into triage is a deferred follow-up WP that MUST also add a WP-233 **cell-coverage guard**: WP-233's verify diffs a `fix-proposed` handoff's `(cellId, anomalyClass)` against the latest inspection report, so a daily-originated handoff diffed against a weekly report whose rotating window EXCLUDES that cell would falsely `resolve` it. (Reachable today only via a manual inspection `workflow_dispatch` while the Sunday weekly run is the latest sweep — flagged here so the follow-up WP closes it before auto-triggering weekly triage.)
 - **A manifest-storage retention / pruning policy** — deferred to a separate follow-up WP. At ≤ 2,120 cells × ~4.3 weekly runs/month ≈ 9k records/month of weekly sweep growth, `legendary.sweep_runs` + the R2 manifest blob grow but stay bounded for v1; an explicit retention/TTL/pruning policy (which runs to keep, blob lifecycle) is its own WP, not this one. `sweep-output/` stays gitignored + ephemeral (D-19403).
 - **A heuristic-vs-random policy comparison sweep** — still deferred (D-20704 carry-forward). The weekly sweep uses `--policy random`.
 - **Any change to `POST /api/sweep/runs`, the classifier, the engine, or the dashboard** — the weekly sweep reuses all of them unchanged. No new endpoint, no new engine symbol, no `apps/dashboard/**` edit.
@@ -121,40 +125,41 @@ If any of the above is false, this packet is **BLOCKED** and must not proceed.
 
 ## Files Expected to Change
 
-- `scripts/sweep-setup-matrix.mjs` — modified (additive `--scheme-offset` / `--scheme-limit` + `selectSchemeWindow` helper + the canonical-order `// why:`)
+- `scripts/sweep-setup-matrix.mjs` — modified (additive `--scheme-offset` / `--scheme-limit` + `selectSchemeWindow` helper + the canonical-order `// why:` + the `main()` entry-point guard for testability)
+- `scripts/sweep-weekly-plan.mjs` — new (single source of the rotation/shard math + locked constants; exports `computeWeeklyPlan` / `computeShardSlice`; CLI emits `GITHUB_OUTPUT`)
 - `scripts/sweep-generate-full-axis.mjs` — new (regenerate full axis fixtures; exports `collectSortedUniqueExtIds`)
-- `scripts/sweep-weekly-submit.mjs` — new (fan-in combine + classify + submit; exports `isWeeklySubmitEnvComplete` / `concatenateShardManifests`)
-- `apps/server/scripts/sweep-weekly-submit.test.ts` — new (≥ 4 cases; globbed by the server suite)
+- `scripts/sweep-weekly-submit.mjs` — new (fan-in combine + classify + body-cap guard + submit; exports `isWeeklySubmitEnvComplete` / `concatenateShardManifests` / `isWithinBodyCap`)
+- `apps/server/scripts/sweep-weekly-submit.test.ts` — new (≥ 8 cases; globbed by the server suite)
 - `data/sweep-fixtures/scheme-ids.full.json` — new (191 scheme ext_ids, sorted unique)
 - `data/sweep-fixtures/mastermind-ids.full.json` — new (106 mastermind ext_ids, sorted unique)
-- `.github/workflows/sweep-weekly.yml` — new (weekly sharded sweep + combine)
-- `package.json` — modified (2 new root scripts; `sweep:nightly` byte-unchanged)
+- `.github/workflows/sweep-weekly.yml` — new (weekly plan → sharded sweep → combine)
+- `package.json` — modified (3 new root scripts; `sweep:nightly` byte-unchanged)
 - `docs/ai/DECISIONS.md` — modified (D-23401 + D-23402 reserved → Active at execution close)
 - `docs/ai/STATUS.md` — modified (Done entry)
 - `docs/ai/work-packets/WORK_INDEX.md` — modified (WP-234 row → Done)
 - `docs/ai/execution-checklists/EC_INDEX.md` — modified (EC-267 → Done)
 
-12 files total (5 new source/data + 1 modified source + 1 new + 1 modified config + 4 governance). No engine/server/dashboard runtime change, no migration, no new endpoint, no new token.
+13 files total: 6 new source/data (`sweep-weekly-plan.mjs`, `sweep-generate-full-axis.mjs`, `sweep-weekly-submit.mjs`, `sweep-weekly-submit.test.ts`, 2 fixtures) + 1 new workflow (`sweep-weekly.yml`) + 2 modified source/config (`sweep-setup-matrix.mjs`, `package.json`) + 4 governance. No engine/server/dashboard runtime change, no migration, no new endpoint, no new token.
 
 ---
 
 ## Locked Contract Values
 
 - **Corpus (as of 2026-06-10, 40 sets):** 191 schemes × 106 masterminds = 20,246 cells. The fixtures are regenerated by `sweep:generate-axis` when sets change; the WP's cycle math is derived from the fixture lengths at run time, not hardcoded to 191/106 in the runner.
-- **Window:** `SCHEMES_PER_WINDOW = 20`; a window is 20 schemes × all 106 masterminds = ≤ 2,120 cells. `CYCLE_LENGTH = 10` (`ceil(191 / 20)`). `windowIndex = isoWeek mod CYCLE_LENGTH`; `schemeOffset = windowIndex * SCHEMES_PER_WINDOW`. The last window (index 9 → schemes [180, 200) clamped to [180, 191)) covers 11 schemes.
+- **Window:** `SCHEMES_PER_WINDOW = 20`; a window is 20 schemes × all 106 masterminds = ≤ 2,120 cells. `CYCLE_LENGTH = 10` (`ceil(191 / 20)`). `windowIndex = isoWeek mod CYCLE_LENGTH`; `schemeOffset = windowIndex * SCHEMES_PER_WINDOW`. The last window (index 9 → schemes [180, 200) clamped to [180, 191)) covers 11 schemes. These constants + the rotation/shard math live in `scripts/sweep-weekly-plan.mjs` (single source of truth — not duplicated in YAML bash); the workflow's `plan` job evaluates them ONCE (the only wall-clock read site) and passes the outputs to the shards + combine.
 - **Shards:** `SHARD_COUNT = 4`; `SCHEMES_PER_SHARD = 5` (`SCHEMES_PER_WINDOW / SHARD_COUNT`). Shard `k` runs `--scheme-offset (schemeOffset + k*5) --scheme-limit 5`, clamped to the axis end (a shard whose offset is past 191 produces an empty 0-cell manifest, not an error).
 - **Axis-slice semantics (locked):** `--scheme-offset N --scheme-limit M` selects `schemeIds[N : N+M]` of the **committed** `scheme-ids.full.json` order; the mastermind axis is always full. Both flags optional; omitted ⇒ full scheme axis (daily smoke unchanged). `cellCount` = sliced-scheme-length × mastermind-length.
 - **Canonical order:** the rotation + shard coordinates are indices into the committed `scheme-ids.full.json` array. Its order (ascending unique ext_id) is a locked contract — a reorder shifts coverage. `sweep-generate-full-axis.mjs` MUST emit ascending-sorted unique arrays.
 - **Seed / policy:** `--seed weekly` (distinct from the daily `nightly`; per-cell seeds remain `${seed}::cell:${schemeId}:${mastermindId}` via D-19402), `--policy random`.
-- **Submit:** the combine job POSTs **one** run per week to `${API_BASE_URL}/api/sweep/runs` with `X-Sweep-Token` ↔ `SWEEP_SUBMIT_TOKEN`; runId `<shortSha>-<compactTimestampUtc>-weekly`; `{ runId, startedAt, cellCount, anomalyCounts, manifestBlob }` shape reused from `sweep-submit.mjs`. Exit 0 (POST 2xx) / 2 (config-env) / 3 (manifest read / classify) / 4 (network / non-2xx).
+- **Submit:** the combine job asserts exactly `SHARD_COUNT` (4) manifests present, concatenates + sorts records by `(schemeId ASC, mastermindId ASC)`, then POSTs **one** run per week to `${API_BASE_URL}/api/sweep/runs` with `X-Sweep-Token` ↔ `SWEEP_SUBMIT_TOKEN`; runId `<shortSha>-<compactTimestampUtc>-weekly-w<windowIndex>`; `{ runId, startedAt, cellCount, anomalyCounts, manifestBlob }` shape reused from `sweep-submit.mjs`. **Body-cap guard:** the serialized payload is rejected (exit 4, loud stderr) if it exceeds the locked 5 MB `/api/sweep/runs` body cap BEFORE the POST (never a server 413). Exit 0 (POST 2xx) / 2 (config-env) / 3 (manifest read / classify / shard-count) / 4 (network / non-2xx / oversize).
 - **Schedule:** `sweep-weekly.yml` `cron '0 8 * * 0'` (Sunday 08:00 UTC) + `workflow_dispatch`. The daily `sweep-nightly.yml` `cron '0 7 * * *'` is byte-unchanged.
 - **ISO week source (locked):** `date -u +%V` on GitHub-hosted `ubuntu-latest` (GNU coreutils), zero-padded `01`–`53`. It MUST be parsed **base-10** (`$((10#$WEEK))` in bash / `parseInt(value, 10)` in a script) — never octal, so `08`/`09` do not error. `windowIndex = parseInt(isoWeek, 10) mod CYCLE_LENGTH`; the week-52/53 → `01` year-boundary rollover is accepted (coverage is approximate rotation, not an exact partition).
-- **Artifact naming (locked):** shard `k` uploads artifact `sweep-shard-<k>` containing its `sweep-output/<run-id>/manifest.jsonl`; the combine job downloads the glob `sweep-shard-*` into one directory. A rename on either side is a contract break.
+- **Artifact naming + download layout (locked):** shard `k` uploads artifact `sweep-shard-<k>` (via `actions/upload-artifact@v4`) containing its `sweep-output/<run-id>/manifest.jsonl`; the combine downloads via `actions/download-artifact@v4` with `pattern: sweep-shard-*` and **no** `merge-multiple` — so each artifact lands in its own subdir and the 4 identically-named `manifest.jsonl` files never collide (a flatten/merge would clobber them and break the exactly-4 assert). A rename or a `merge-multiple: true` is a contract break.
 - **Empty-shard handling (locked):** a 0-cell shard (the clamped tail of the last window — e.g. window index 9, shard 3) MUST still produce + upload a valid (possibly empty) `manifest.jsonl`; the matrix script creates the empty file even when the scheme slice is empty. The combine step processes an empty manifest without error and includes its (empty) contribution.
 - **Shard-count invariant (locked):** the combine script asserts exactly `SHARD_COUNT` (4) `manifest.jsonl` files are present after download; fewer ⇒ exit 3 (manifest error), no POST. Defense-in-depth over the `needs: sweep` success gate.
 - **Combined manifest ordering (locked):** after concatenation the combine sorts the parsed records by `(schemeId ASC, mastermindId ASC)` (string compare) before classify, so the submitted `manifestBlob` is deterministic regardless of shard completion / download order; malformed lines are retained in shard-index then line order.
 - **max-cells invariant (locked):** `--max-cells` stays `10000`. After slicing, every shard satisfies `cellCount <= 10000` (≤ 530 at the locked window/shard sizes). Any change to `SCHEMES_PER_WINDOW` / `SHARD_COUNT` that could violate this requires a successor D-entry.
-- **RunId uniqueness (locked):** the weekly runId mirrors `sweep-submit.mjs` **verbatim** — `<shortSha>-<compactTimestampUtc>-weekly`, seconds-precision, **no** `Math.random()` suffix (keeps the tooling deterministic + one runId convention across daily/weekly). A same-commit same-second collision is a safe `409` no-op (exit 4 — the existing `sweep_runs` PRIMARY KEY), never data loss; the `-weekly` suffix keeps the weekly id space disjoint from the daily.
+- **RunId uniqueness + window audit (locked):** the weekly runId is `<shortSha>-<compactTimestampUtc>-weekly-w<windowIndex>` — the `<shortSha>-<compactTimestampUtc>` base mirrors `sweep-submit.mjs` (seconds-precision, **no** `Math.random()` suffix — keeps the tooling deterministic), computed ONCE in the `plan` job and shared across the shards + combine (no per-shard date drift); the `-weekly` suffix keeps the id space disjoint from the daily; the `-w<windowIndex>` suffix records which rotation window the run covered, so an operator can audit from `sweep_runs` alone that the rotation is advancing through all schemes. A same-commit same-second collision is a safe `409` no-op (exit 4 — the existing `sweep_runs` PRIMARY KEY), never data loss.
 - **Axis regeneration determinism (locked):** `sweep-generate-full-axis.mjs` reads `data/cards/*.json`, extracts `schemes[].ext_id` / `masterminds[].ext_id`, dedupes by exact string match, sorts **ascending lexicographic (string compare)**, and serializes as `JSON.stringify(array, null, 2) + '\n'` (2-space indent, trailing newline, no trailing spaces). Any change to the extraction key, comparator, or serialization requires a successor D-entry.
 - **Determinism boundary (locked):** all wall-clock reads (the ISO week) occur ONLY in the CI/workflow layer. **NO** wall-clock value is passed into the engine, the per-cell seed derivation, or any simulation input — per-cell determinism is the D-19402 seed chain alone (`--seed weekly`). The engine determinism boundary (`packages/game-engine`) is untouched.
 
@@ -167,12 +172,14 @@ If any of the above is false, this packet is **BLOCKED** and must not proceed.
 3. `data/sweep-fixtures/scheme-ids.full.json` has 191 ascending-sorted unique scheme ext_ids; `mastermind-ids.full.json` has 106; regenerating via `pnpm sweep:generate-axis` produces a byte-identical file (deterministic) — verified by a re-run + `git diff` empty.
 4. `collectSortedUniqueExtIds` returns ascending-sorted, de-duplicated ext_ids — verified by a unit test (duplicates collapsed, order stable).
 5. `concatenateShardManifests` over N shard manifest texts (including a 0-cell empty manifest) yields the union of parsed records + malformed lines with no loss and no double-count, and the records emerge sorted by `(schemeId ASC, mastermindId ASC)` so the combined result is identical regardless of input order — verified by a unit test (empty-manifest contribution + order-independence).
-6. `scripts/sweep-weekly-submit.mjs` POSTs one `{ runId, startedAt, cellCount, anomalyCounts, manifestBlob }` to `${API_BASE_URL}/api/sweep/runs`; runId ends `-weekly`; exits 0 on 2xx, 2 on missing env (no POST), 3 on manifest/classify error, 4 on network/non-2xx — verified by helper unit tests (env guard, exit-code mapping) + grep of the runId form.
-7. `.github/workflows/sweep-weekly.yml` is `cron '0 8 * * 0'` + `workflow_dispatch`, matrix `shard: [0, 1, 2, 3]`, with a `combine` job carrying both `needs: sweep` AND the explicit `if: ${{ needs.sweep.result == 'success' }}` (no partial submit); each shard passes `--seed weekly --policy random` + the full axis fixtures + its `--scheme-offset/--scheme-limit` slice; the ISO week is parsed base-10 (`10#`) — verified by YAML grep.
-8. No new npm dependency in any `package.json`; no `apps/dashboard/**`, `apps/server/src/**`, `packages/game-engine/**`, `data/migrations/**`, `render.yaml`, or `.env.example` file is modified — verified by `git diff --name-only`.
+6. `scripts/sweep-weekly-submit.mjs` POSTs one `{ runId, startedAt, cellCount, anomalyCounts, manifestBlob }` to `${API_BASE_URL}/api/sweep/runs`; runId ends `-weekly-w<windowIndex>`; it rejects an over-5 MB payload BEFORE the POST (exit 4, no server round-trip); exits 0 on 2xx, 2 on missing env (no POST), 3 on manifest/classify/shard-count error, 4 on network/non-2xx/oversize — verified by helper unit tests (env guard, exit-code mapping, `isWithinBodyCap`) + grep of the runId form.
+7. `.github/workflows/sweep-weekly.yml` is `cron '0 8 * * 0'` + `workflow_dispatch` with THREE jobs (`plan` → `sweep` (`needs: plan`, matrix `shard: [0, 1, 2, 3]`) → `combine` (`needs: [plan, sweep]` AND explicit `if: ${{ needs.sweep.result == 'success' }}`)); the `plan` job is the SOLE wall-clock read (`date -u +%V`, parsed base-10 via `sweep-weekly-plan.mjs`) and emits `window_index` / `scheme_offset` / `run_id_base`; each shard passes `--seed weekly --policy random` + the full axis fixtures + its plan-derived slice; the combine downloads `actions/download-artifact@v4` with `pattern: sweep-shard-*` and NO `merge-multiple` — verified by YAML grep.
+8. No new npm dependency in any `package.json`; no `apps/dashboard/**`, `apps/server/src/**`, `packages/game-engine/**`, `data/migrations/**`, `render.yaml`, `.env.example`, or `.github/workflows/inspection-nightly.yml` file is modified (the weekly sweep is NOT wired into Inspector triage — §Out of Scope) — verified by `git diff --name-only`.
 9. The combine script asserts exactly `SHARD_COUNT` (4) manifests present after download; fewer ⇒ exit 3, no POST — verified by a unit/integration test seeding 3 manifests and asserting the no-POST exit-3 path.
 10. A 0-cell shard (over-offset scheme slice) still writes a valid empty `manifest.jsonl`; the combine includes its empty contribution without error — verified by the slice + concat unit tests.
-11. `pnpm -r build` exits 0; `pnpm --filter @legendary-arena/server test` exits 0 with ≥ 6 net-new cases (the new `sweep-weekly-submit.test.ts`: env guard, slice math incl. clamped + empty slice, sort/dedup, manifest concat with empty + order-independence, shard-count assert); all pre-existing cases still green.
+11. `selectSchemeWindow` is importable WITHOUT side effects — `import { selectSchemeWindow } from '.../sweep-setup-matrix.mjs'` does not execute `main()` (the entry-point guard) — verified by the test file loading + passing.
+12. `computeWeeklyPlan(isoWeek, 191)` returns the correct `(windowIndex, schemeOffset)` across the `isoWeek mod 10` wrap and the clamped last window [180, 191); `computeShardSlice` returns each shard's `(schemeOffset, schemeLimit)` — verified by `sweep-weekly-plan.mjs` unit tests.
+13. `pnpm -r build` exits 0; `pnpm --filter @legendary-arena/server test` exits 0 with ≥ 8 net-new cases (the new `sweep-weekly-submit.test.ts`: env guard, slice math incl. clamped + empty slice, plan rotation + shard-slice, sort/dedup, manifest concat with empty + order-independence, shard-count assert, body-cap accept/reject); all pre-existing cases still green.
 
 ---
 
@@ -195,21 +202,29 @@ node -e "console.log('schemes', JSON.parse(require('fs').readFileSync('data/swee
 pnpm sweep:generate-axis; git diff --name-only data/sweep-fixtures/
 # Expected: no output (byte-identical regeneration)
 
-# 5. Weekly workflow shape (incl. explicit no-partial-submit gate + artifact naming + base-10 week)
-Select-String -Path ".github\workflows\sweep-weekly.yml" -Pattern "cron: '0 8 \* \* 0'|shard: \[0, 1, 2, 3\]|needs: sweep|needs.sweep.result == 'success'|--seed weekly|scheme-ids.full.json|sweep-shard-|10#"
-# Expected: >= 7 lines
+# 5. Weekly workflow shape (3 jobs: plan -> sweep -> combine; no-partial-submit gate; download-artifact pin)
+Select-String -Path ".github\workflows\sweep-weekly.yml" -Pattern "cron: '0 8 \* \* 0'|shard: \[0, 1, 2, 3\]|needs: plan|needs.sweep.result == 'success'|--seed weekly|scheme-ids.full.json|sweep-weekly-plan.mjs|pattern: sweep-shard-\*"
+# Expected: >= 7 lines; AND merge-multiple is absent:
+(Select-String -Path ".github\workflows\sweep-weekly.yml" -Pattern "merge-multiple").Count
+# Expected: 0
 
-# 6. Weekly runId suffix + reused submit endpoint + integrity guards
-Select-String -Path "scripts\sweep-weekly-submit.mjs" -Pattern "-weekly|/api/sweep/runs|X-Sweep-Token|classifyManifestRecords|SHARD_COUNT|schemeId"
-# Expected: >= 5 lines (incl. the shard-count assert + the (schemeId, mastermindId) sort)
+# 6. Weekly runId window-suffix + reused submit endpoint + integrity guards
+Select-String -Path "scripts\sweep-weekly-submit.mjs" -Pattern "-weekly-w|/api/sweep/runs|X-Sweep-Token|classifyManifestRecords|SHARD_COUNT|schemeId|isWithinBodyCap"
+# Expected: >= 6 lines (runId window-suffix + shard-count assert + (schemeId, mastermindId) sort + body-cap guard)
 
-# 7. No new endpoint / engine / dashboard / server / migration edits
-git diff --name-only apps/ packages/ data/migrations/ render.yaml .env.example
+# 6b. Entry-point guard makes selectSchemeWindow importable; plan math present
+Select-String -Path "scripts\sweep-setup-matrix.mjs" -Pattern "import.meta.url === pathToFileURL"
+# Expected: >= 1 line
+Select-String -Path "scripts\sweep-weekly-plan.mjs" -Pattern "computeWeeklyPlan|computeShardSlice|GITHUB_OUTPUT"
+# Expected: >= 3 lines
+
+# 7. No new endpoint / engine / dashboard / server / migration edits; inspection-nightly untouched
+git diff --name-only apps/ packages/ data/migrations/ render.yaml .env.example .github/workflows/inspection-nightly.yml .github/workflows/sweep-nightly.yml
 # Expected: only apps/server/scripts/sweep-weekly-submit.test.ts
 
 # 8. No new npm deps
 git diff package.json
-# Expected: only the 2 new root scripts
+# Expected: only the 3 new root scripts
 
 # 9. Tests + build
 pnpm --filter @legendary-arena/server test 2>&1 | Select-Object -Last 3
@@ -220,11 +235,11 @@ pnpm -r build
 
 ## Definition of Done
 
-- [ ] All 11 Acceptance Criteria pass
-- [ ] All 9 Verification Steps produce the expected output
-- [ ] `pnpm -r build` exits 0; `pnpm --filter @legendary-arena/server test` exits 0 (≥ 6 net-new; pre-existing green)
+- [ ] All 13 Acceptance Criteria pass
+- [ ] All Verification Steps produce the expected output
+- [ ] `pnpm -r build` exits 0; `pnpm --filter @legendary-arena/server test` exits 0 (≥ 8 net-new; pre-existing green)
 - [ ] No files outside `## Files Expected to Change` were modified (`git diff --name-only`)
-- [ ] Daily smoke byte-unchanged: `scripts/sweep-submit.mjs`, `sweep-nightly.yml`, the 2×2 fixtures
+- [ ] Daily smoke byte-unchanged: `scripts/sweep-submit.mjs`, `sweep-nightly.yml`, the 2×2 fixtures; `inspection-nightly.yml` untouched (weekly NOT triaged in v1)
 - [ ] No `apps/dashboard/**`, `apps/server/src/**`, `packages/game-engine/**`, `data/migrations/**`, `render.yaml`, or `.env.example` modified
 - [ ] `data/sweep-fixtures/scheme-ids.full.json` (191) + `mastermind-ids.full.json` (106), ascending-sorted unique, regenerate byte-identical
 - [ ] `docs/ai/STATUS.md` updated — the weekly sweep covers the full corpus over a 10-run rotating cycle; daily smoke preserved
@@ -263,8 +278,15 @@ pnpm -r build
 Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`, all 21 sections reviewed 2026-06-10
 (re-affirmed 2026-06-10 after the audit-tightening pass — ISO-week base-10 parse, explicit
 combine `if`-gate, combined-manifest ordering, shard-count assert, empty-shard manifest,
-max-cells + axis-regen + runId + determinism-boundary locks; the edits strengthen
-enforceability without changing scope/deps/layer, so pre-flight stays READY + copilot PASS):
+max-cells + axis-regen + runId + determinism-boundary locks; and a SECOND
+review-hardening pass 2026-06-10 — entry-point guard for `selectSchemeWindow`
+testability, a new testable `sweep-weekly-plan.mjs` (single source of the
+rotation/shard math, replacing untested YAML bash), the `download-artifact@v4`
+no-`merge-multiple` layout pin, a pre-POST 5 MB body-cap guard, the
+`-w<windowIndex>` runId rotation-audit suffix, and the explicit WP-231/232/233
+triage-boundary §Out-of-Scope clarification. These add ONE file
+(`sweep-weekly-plan.mjs`, 12→13) and bump the test floor (≥6→≥8) but change no
+deps/layer/contract surface, so pre-flight stays READY + copilot PASS):
 
 | § | Verdict | Note |
 |---|---|---|

@@ -24035,13 +24035,22 @@ full corpus is covered over a 10-run cycle. Rotation is by **scheme-axis slice**
 never sliced. The committed scheme-axis ORDER is a locked rotation coordinate
 (`sweep-generate-full-axis.mjs` emits ascending-lexicographic unique ext_ids
 serialized `JSON.stringify(array, null, 2) + '\n'`; comparator/serialization/key
-changes need a successor D-entry). The window-selection wall-clock read is
-`WEEK=$(date -u +%V)` parsed **base-10** (`$((10#$WEEK % 10))` — never octal) — a
-CI scheduling concern in the tooling layer ONLY: no wall-clock value reaches the
-engine, the per-cell seed derivation, or any simulation input, so per-cell
-determinism is the D-19402 seed chain alone (`--seed weekly`). This is the
-successor D-entry D-20704 required for a cardinality change; D-20704 remains
-authoritative for the daily smoke.
+changes need a successor D-entry). The rotation/shard math + the constants live in
+ONE place — `scripts/sweep-weekly-plan.mjs` (`computeWeeklyPlan` / `computeShardSlice`,
+unit-tested) — not duplicated as YAML bash; the workflow's `plan` job evaluates it
+ONCE (the sole wall-clock read, `WEEK=$(date -u +%V)` parsed **base-10** via
+`parseInt(value, 10)` — never octal) and passes `window_index` / `scheme_offset` /
+`run_id_base` to the shards + combine. The wall-clock read is a CI scheduling
+concern in the tooling layer ONLY: no wall-clock value reaches the engine, the
+per-cell seed derivation, or any simulation input, so per-cell determinism is the
+D-19402 seed chain alone (`--seed weekly`). **Triage boundary:** v1 weekly feeds
+`legendary.sweep_runs` (dashboard/trend) ONLY — `inspection-nightly.yml` chains
+only off `Sweep Nightly`, so the weekly is NOT triaged into `inspection_reports` /
+`finding_handoffs`; wiring it in is a deferred follow-up WP that must also add a
+WP-233 cell-coverage guard (a daily-originated `fix-proposed` handoff diffed
+against a weekly report whose window excludes that cell would falsely resolve).
+This is the successor D-entry D-20704 required for a cardinality change; D-20704
+remains authoritative for the daily smoke.
 
 **Packet:** WP-234 (EC-267).
 **Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
@@ -24052,27 +24061,34 @@ authoritative for the daily smoke.
 ### D-23402 — Sharded Fan-Out / Fan-In Topology (4 GitHub-Hosted Matrix Shards → One Submit)
 
 **Decision:**
-The weekly window runs on **GitHub-hosted `ubuntu-latest` matrix shards**
-(`SHARD_COUNT = 4`, `SCHEMES_PER_SHARD = 5`): shard `k` sweeps
-`--scheme-offset (schemeOffset + k*5) --scheme-limit 5` (≤ 530 cells) and uploads
-its `manifest.jsonl` (always a valid file — a clamped 0-cell shard still writes an
-empty manifest) as artifact `sweep-shard-<k>`. A fan-in **combine** job carrying
-both `needs: sweep` AND explicit `if: ${{ needs.sweep.result == 'success' }}` (no
-partial submit) downloads the `sweep-shard-*` glob, **asserts exactly
-`SHARD_COUNT` (4) manifests are present** (fewer ⇒ exit 3, no POST —
-defense-in-depth over the success gate), concatenates the parsed records +
-malformed lines, **sorts the records by `(schemeId ASC, mastermindId ASC)`** so the
-submitted `manifestBlob` is deterministic regardless of shard download order,
-classifies via the existing `classifyManifestRecords`, and POSTs **one** run to
-`POST /api/sweep/runs` (runId `<shortSha>-<compactTimestampUtc>-weekly`, mirroring
-`sweep-submit.mjs` verbatim — seconds-precision, no random suffix; a same-second
-collision is a safe 409 no-op; the `-weekly` suffix keeps the weekly id space
-disjoint from the daily). A failed shard fails the weekly run. The combine script
-reuses `sweep-submit.mjs`'s parse → classify → POST flow + exit-code discipline
-(0/2/3/4); it adds no engine symbol, no new endpoint, and no new sweep token
-(`SWEEP_SUBMIT_TOKEN` + `API_BASE_URL` reused). Self-hosted runners and a literal
-full-corpus-per-run sweep were considered and rejected (operator decision,
-2026-06-10).
+The weekly workflow is **three jobs**: a `plan` job (the sole wall-clock read +
+single `run_id_base` derivation, runs `sweep-weekly-plan.mjs`), a `sweep` job
+(`needs: plan`, **GitHub-hosted `ubuntu-latest` matrix shards** `SHARD_COUNT = 4`,
+`SCHEMES_PER_SHARD = 5`) where shard `k` sweeps `--scheme-offset (schemeOffset +
+k*5) --scheme-limit 5` (≤ 530 cells) and uploads its `manifest.jsonl` (always a
+valid file — a clamped 0-cell shard still writes an empty manifest) via
+`actions/upload-artifact@v4` as `sweep-shard-<k>`, and a fan-in `combine` job
+carrying both `needs: [plan, sweep]` AND explicit
+`if: ${{ needs.sweep.result == 'success' }}` (no partial submit). The combine
+downloads via `actions/download-artifact@v4` with `pattern: sweep-shard-*` and NO
+`merge-multiple` (own-subdir layout so the 4 identically-named manifests never
+collide), **asserts exactly `SHARD_COUNT` (4) manifests are present** (fewer ⇒
+exit 3, no POST — defense-in-depth over the success gate), concatenates the parsed
+records + malformed lines, **sorts the records by `(schemeId ASC, mastermindId
+ASC)`** so the submitted `manifestBlob` is deterministic regardless of shard
+download order, classifies via the existing `classifyManifestRecords`, **rejects an
+over-5 MB serialized payload before the POST** (exit 4, loud — never a server
+413), and POSTs **one** run to `POST /api/sweep/runs`. RunId
+`<shortSha>-<compactTimestampUtc>-weekly-w<windowIndex>` — the base mirrors
+`sweep-submit.mjs` verbatim (seconds-precision, no random suffix; a same-second
+collision is a safe 409 no-op), computed once in `plan`; the `-weekly` suffix keeps
+the id space disjoint from the daily; the `-w<windowIndex>` suffix records the
+rotation window so an operator can audit coverage from `sweep_runs` alone. A failed
+shard fails the weekly run. The combine reuses `sweep-submit.mjs`'s parse →
+classify → POST flow + exit-code discipline (0/2/3/4); it adds no engine symbol, no
+new endpoint, and no new sweep token (`SWEEP_SUBMIT_TOKEN` + `API_BASE_URL`
+reused). Self-hosted runners and a literal full-corpus-per-run sweep were
+considered and rejected (operator decision, 2026-06-10).
 
 **Packet:** WP-234 (EC-267).
 **Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
