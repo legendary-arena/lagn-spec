@@ -24019,4 +24019,65 @@ first run transitioned them out) and a run against an unchanged report only
 
 ---
 
+### D-23401 — Weekly Full-Corpus Sweep: Per-Scheme Rotating Window (Daily 2×2 Smoke Preserved)
+
+**Decision:**
+The nightly 2×2 smoke (4 cells, D-20704) is **preserved unchanged** as the daily
+"did anything fundamentally break?" signal. A **separate weekly** sweep
+(`sweep-weekly.yml`, Sunday 08:00 UTC) covers a **rotating window** of the full
+Scheme × Mastermind corpus (191 × 106 = 20,246 cells as of 2026-06-10). Each
+weekly run sweeps `SCHEMES_PER_WINDOW = 20` schemes × all 106 masterminds
+(≤ 2,120 cells); the window advances by `windowIndex = isoWeek mod CYCLE_LENGTH`
+(`CYCLE_LENGTH = 10 = ceil(191/20)`), `schemeOffset = windowIndex * 20`, so the
+full corpus is covered over a 10-run cycle. Rotation is by **scheme-axis slice**
+(`--scheme-offset/--scheme-limit` over the committed ascending-sorted unique
+`scheme-ids.full.json`), NOT a flat cell-index stride; the mastermind axis is
+never sliced. The committed scheme-axis ORDER is a locked rotation coordinate
+(`sweep-generate-full-axis.mjs` emits ascending-lexicographic unique ext_ids
+serialized `JSON.stringify(array, null, 2) + '\n'`; comparator/serialization/key
+changes need a successor D-entry). The window-selection wall-clock read is
+`WEEK=$(date -u +%V)` parsed **base-10** (`$((10#$WEEK % 10))` — never octal) — a
+CI scheduling concern in the tooling layer ONLY: no wall-clock value reaches the
+engine, the per-cell seed derivation, or any simulation input, so per-cell
+determinism is the D-19402 seed chain alone (`--seed weekly`). This is the
+successor D-entry D-20704 required for a cardinality change; D-20704 remains
+authoritative for the daily smoke.
+
+**Packet:** WP-234 (EC-267).
+**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
+**Status:** Reserved (proposed)
+
+---
+
+### D-23402 — Sharded Fan-Out / Fan-In Topology (4 GitHub-Hosted Matrix Shards → One Submit)
+
+**Decision:**
+The weekly window runs on **GitHub-hosted `ubuntu-latest` matrix shards**
+(`SHARD_COUNT = 4`, `SCHEMES_PER_SHARD = 5`): shard `k` sweeps
+`--scheme-offset (schemeOffset + k*5) --scheme-limit 5` (≤ 530 cells) and uploads
+its `manifest.jsonl` (always a valid file — a clamped 0-cell shard still writes an
+empty manifest) as artifact `sweep-shard-<k>`. A fan-in **combine** job carrying
+both `needs: sweep` AND explicit `if: ${{ needs.sweep.result == 'success' }}` (no
+partial submit) downloads the `sweep-shard-*` glob, **asserts exactly
+`SHARD_COUNT` (4) manifests are present** (fewer ⇒ exit 3, no POST —
+defense-in-depth over the success gate), concatenates the parsed records +
+malformed lines, **sorts the records by `(schemeId ASC, mastermindId ASC)`** so the
+submitted `manifestBlob` is deterministic regardless of shard download order,
+classifies via the existing `classifyManifestRecords`, and POSTs **one** run to
+`POST /api/sweep/runs` (runId `<shortSha>-<compactTimestampUtc>-weekly`, mirroring
+`sweep-submit.mjs` verbatim — seconds-precision, no random suffix; a same-second
+collision is a safe 409 no-op; the `-weekly` suffix keeps the weekly id space
+disjoint from the daily). A failed shard fails the weekly run. The combine script
+reuses `sweep-submit.mjs`'s parse → classify → POST flow + exit-code discipline
+(0/2/3/4); it adds no engine symbol, no new endpoint, and no new sweep token
+(`SWEEP_SUBMIT_TOKEN` + `API_BASE_URL` reused). Self-hosted runners and a literal
+full-corpus-per-run sweep were considered and rejected (operator decision,
+2026-06-10).
+
+**Packet:** WP-234 (EC-267).
+**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
+**Status:** Reserved (proposed)
+
+---
+
 Protect this file.
