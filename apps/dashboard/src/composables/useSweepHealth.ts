@@ -18,6 +18,20 @@ const STALE_TOLERANCE_MS = 6 * 60 * 60 * 1000;
 // Recent-runs sparkline cap (mirrors the WP-204 30-day sparkline convention).
 const SPARKLINE_RUN_COUNT = 30;
 
+// why (D-23503): the dashboard names the SINGLE healthy-class anomaly key for
+// the sweep health rate. A meaningful rate is structurally impossible under
+// pure D-20703 opacity — the WP-195 classifier assigns every swept cell to
+// exactly one class, so `sum(anomalyCounts) === cellCount` and the generic
+// all-keys formula collapses to 0 on live data. Naming this one healthy key is
+// the narrowest possible exception: it does NOT import the engine's closed
+// anomaly-class union type, and every other anomaly key stays opaque and
+// renders verbatim (the engine union is never named here — only this one
+// healthy-key string literal). Engine-coupling
+// drift note: if the engine ever renames the healthy class, THIS one constant
+// is the single edit point. (If `escaped-villain-cap` should later count as
+// healthy, that is a one-line change here — see D-23503.)
+export const SWEEP_HEALTHY_ANOMALY_KEY = 'endgame-reached';
+
 /**
  * The composable's single data input: the resolved fetch state for
  * `GET /api/sweep/latest`. `response` is the `ServiceResponse` envelope when
@@ -37,6 +51,8 @@ export interface UseSweepHealthReturn {
   latestRun: ComputedRef<SweepRunSummary | null>;
   recentRuns: ComputedRef<readonly SweepRunSummary[]>;
   totalAnomalySparkline: ComputedRef<readonly number[]>;
+  healthRate: ComputedRef<number | null>;
+  healthRateSparkline: ComputedRef<readonly (number | null)[]>;
   lastRunAgeMs: ComputedRef<number | null>;
   staleStatus: ComputedRef<'fresh' | 'stale'>;
   kpiStatus: ComputedRef<KpiStatus | null>;
@@ -56,6 +72,31 @@ function sumAnomalyCounts(run: SweepRunSummary): number {
     total += count;
   }
   return total;
+}
+
+/**
+ * The sole source of truth for a sweep run's health rate: the fraction of swept
+ * cells that reached a clean endgame (`endgame-reached / cellCount`). Returns a
+ * value in [0, 1], or `null` for a 0-cell run. Both prior degenerate sites — the
+ * Pipeline health KPI and the Architect-lane trigger — are repaired to call this
+ * helper, so there is exactly one health-rate definition with no drift.
+ */
+export function computeSweepHealthRate(run: SweepRunSummary): number | null {
+  // why (rate guard): a 0-cell run has no meaningful rate — return null rather
+  // than dividing by zero into NaN, which would corrupt the trend axis.
+  if (run.cellCount <= 0) {
+    return null;
+  }
+  const rawHealthyCount = run.anomalyCounts[SWEEP_HEALTHY_ANOMALY_KEY];
+  // why (rate guard cont.): a missing, non-finite, or negative healthy-key count
+  // reads as 0 healthy cells — never propagate undefined/NaN into the rate. The
+  // `typeof === 'number'` test also narrows the `noUncheckedIndexedAccess`
+  // lookup (the key may be absent) before the numeric comparison.
+  const healthyCount =
+    typeof rawHealthyCount === 'number' && Number.isFinite(rawHealthyCount) && rawHealthyCount >= 0
+      ? rawHealthyCount
+      : 0;
+  return healthyCount / run.cellCount;
 }
 
 /**
@@ -120,6 +161,22 @@ export function useSweepHealth(
     const values: number[] = [];
     for (const run of recentRuns.value) {
       values.push(sumAnomalyCounts(run));
+    }
+    return values;
+  });
+
+  const healthRate = computed<number | null>(() => {
+    const latest = latestRun.value;
+    return latest === null ? null : computeSweepHealthRate(latest);
+  });
+
+  const healthRateSparkline = computed<readonly (number | null)[]>(() => {
+    // Mirror `totalAnomalySparkline`'s convention: index 0 = most-recent run,
+    // one entry per `recentRuns` row. A 0-cell run contributes `null` (a gap),
+    // never NaN.
+    const values: (number | null)[] = [];
+    for (const run of recentRuns.value) {
+      values.push(computeSweepHealthRate(run));
     }
     return values;
   });
@@ -191,6 +248,8 @@ export function useSweepHealth(
     latestRun,
     recentRuns,
     totalAnomalySparkline,
+    healthRate,
+    healthRateSparkline,
     lastRunAgeMs,
     staleStatus,
     kpiStatus,

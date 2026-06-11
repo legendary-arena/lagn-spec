@@ -24133,8 +24133,8 @@ Builder-velocity analytics are deferred (WP-235 §Future Work). The 30-run LIMIT
 (EC-241) is consumed as-is; raising it is a separate server WP.
 
 **Packet:** WP-235 (EC-268).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-11 (WP-235 execution close).
+**Status:** Active
 
 ---
 
@@ -24168,8 +24168,8 @@ the meaningful rate requires naming the healthy class (D-23503). Raw-count trend
 were likewise rejected (a meaningless sawtooth across the mixed cadences).
 
 **Packet:** WP-235 (EC-268).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-11 (WP-235 execution close).
+**Status:** Active
 
 ---
 
@@ -24207,8 +24207,8 @@ pure-opacity per-class composition; it changes no engine code and adds no engine
 import, so the ARCHITECTURE.md layer boundary is preserved.
 
 **Packet:** WP-235 (EC-268).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-11 (WP-235 execution close).
+**Status:** Active
 
 ---
 

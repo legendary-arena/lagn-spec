@@ -9,9 +9,15 @@ import {
   type PriorityRecommendation,
   type PipelineSweepData,
 } from '../../composables/useAgentPipeline.js';
-import { useSweepHealth, type SweepHealthFetchState } from '../../composables/useSweepHealth.js';
+import {
+  useSweepHealth,
+  computeSweepHealthRate,
+  type SweepHealthFetchState,
+} from '../../composables/useSweepHealth.js';
+import { useSweepTrend } from '../../composables/useSweepTrend.js';
 import { useDateRange } from '../../composables/useDateRange.js';
 import { fetchSweepHealth } from '../../services/mocks.js';
+import SweepTrendChart from '../../components/charts/SweepTrendChart.vue';
 
 const snapshot = useGovernanceSnapshot();
 
@@ -29,6 +35,10 @@ const sweepFetchState = computed<SweepHealthFetchState>(() => {
 });
 
 const sweep = useSweepHealth(() => sweepFetchState.value, nowMs);
+
+// Cadence-aware health-rate trend over the same `recentRuns` payload (no new
+// fetch, no new `Date.now()` read). The composable owns the daily/weekly split.
+const { series: sweepTrendSeries } = useSweepTrend(() => sweep.recentRuns.value);
 
 // The composable consumes a plain projection of the sweep return value (not the
 // composable itself), so the Pipeline composable stays testable without a fetch
@@ -138,12 +148,14 @@ const sweepTotalAnomalies = computed<number>(() => {
 });
 
 const sweepHealthPercent = computed<number | null>(() => {
+  // why (D-23503): the single health-rate source of truth. `computeSweepHealthRate`
+  // names the healthy class and returns null for a 0-cell run.
+  // It SUPERSEDES the prior `(cellCount − Σ all keys)/cellCount` KPI formula, which
+  // read a structural 0% on live data. `sweepTotalAnomalies` survives only as the
+  // opaque all-keys summary stat (D-20703) — it is no longer the health-rate input.
   const latest = sweep.latestRun.value;
-  if (latest === null || latest.cellCount === 0) {
-    return null;
-  }
-  const rate = (latest.cellCount - sweepTotalAnomalies.value) / latest.cellCount;
-  return Math.round(rate * 100);
+  const rate = latest === null ? null : computeSweepHealthRate(latest);
+  return rate === null ? null : Math.round(rate * 100);
 });
 
 const sweepHealthColorClass = computed<string>(() => {
@@ -261,6 +273,15 @@ const sweepSparklineBars = computed<readonly SparklineBar[]>(() => {
         </span>
       </div>
     </div>
+
+    <section
+      v-if="hasSweepData"
+      class="sweep-trend-section"
+      aria-label="Sweep health-rate trend across recent runs"
+    >
+      <h3 class="sweep-trend-heading">Sweep health-rate trend</h3>
+      <SweepTrendChart :daily="sweepTrendSeries.daily" :weekly="sweepTrendSeries.weekly" />
+    </section>
 
     <div v-if="state === 'loading'" class="pipeline-loading" aria-hidden="true">
       <div class="skeleton-row"></div>
@@ -406,6 +427,20 @@ const sweepSparklineBars = computed<readonly SparklineBar[]>(() => {
   background: var(--p-surface-card, var(--p-content-background));
   border: 1px solid var(--p-surface-border, var(--p-content-border-color));
   border-radius: 6px;
+}
+
+.sweep-trend-section {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--p-surface-card, var(--p-content-background));
+  border: 1px solid var(--p-surface-border, var(--p-content-border-color));
+  border-radius: 6px;
+}
+
+.sweep-trend-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--p-text-color);
 }
 
 .sweep-stat {

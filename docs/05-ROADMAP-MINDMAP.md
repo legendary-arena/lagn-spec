@@ -293,7 +293,7 @@ mindmap
         ["WP-232 ✅ Done — Agent handoff chain (Inspector → Builder → Architect)"]
         ["WP-233 ✅ Done — Closed-loop sweep verification (Builder fix → re-sweep → Inspector verify)"]
         ["WP-234 ✅ Done — Full-corpus sweep expansion (weekly rotating window beyond 2×2 smoke)"]
-        ["WP-235 📝 Drafted — Pipeline page sweep health trend view (cadence-aware health-rate trends + healthy-class constant)"]
+        ["WP-235 ✅ Done — Pipeline page sweep health trend view (cadence-aware health-rate trends + healthy-class constant)"]
 
       Admin & Route Wiring
         ["WP-110 ✅ Admin billing visibility"]
@@ -430,7 +430,7 @@ mindmap
 1. **Finish core-set ability coverage** — the hero reveal/rescue/draw executors (WP-215..225) and villain fight/ambush/escape/KO effects (WP-185..214) have largely landed; what remains is the deferred predicate machinery for filtered/targeted villain effects (per WP-188 / WP-202) and reveal player-choice breadth beyond WP-220 / WP-222, so the `core` set is fully playable on play.legendary-arena.com. Additional sets follow incrementally.
 2. **Live PvP matchmaking & reconnect** — WP-116 defined the disconnect/reconnect architecture; no implementation WP exists yet. Match discovery UX and reconnect handling are prerequisites for real multiplayer sessions.
 3. **Score submission HTTP wiring** — the PAR/competition/leaderboard pipeline is fully built, and WP-107 shipped `requireUnsuspendedAccount` as the locked caller-contract, but the score-submission request-handler route still doesn't exist at HEAD. Wiring it closes the loop from "play a game" to "see yourself on the leaderboard."
-4. **Agent triage pipeline — WP-235 (trend view)** — WP-231..234 have landed (scheduled triage sessions → handoff chain → closed-loop re-sweep verification, plus the parallel-safe full-corpus weekly sweep expansion). The only remaining step is WP-235: the Pipeline page sweep health-rate trend view (which also repairs the degenerate health-rate KPI), depending only on WP-230.
+4. **Agent triage pipeline — complete (WP-231..235 landed).** Scheduled triage sessions → handoff chain → closed-loop re-sweep verification, the parallel-safe full-corpus weekly sweep expansion, and now WP-235 — the Pipeline page sweep health-rate trend view, which also repaired the degenerate health-rate KPI + Architect-lane trigger via the single `computeSweepHealthRate` source of truth — have all shipped. No remaining step.
 5. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
 6. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
 
@@ -458,9 +458,6 @@ mindmap
 
 **Blocked (cannot start):**
 - ⏸ WP-042.1 — Deferred PostgreSQL seeding checklists; unblocks when Foundation Prompt 03 (seed runner + migrations) is revived.
-
-**Drafted (ready for execution):**
-- 📝 WP-235 — Pipeline page sweep health trend view (cadence-aware health-rate trends + healthy-class constant; repairs the degenerate health-rate KPI). Depends on: WP-230. (EC-268)
 
 **Pending (WP files not yet authored):**
 - (none — all Agent Triage Pipeline WPs are authored)

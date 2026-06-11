@@ -7,6 +7,7 @@ import {
   type PriorityHorizon,
   type PipelineSweepData,
 } from './useAgentPipeline.js';
+import { SWEEP_HEALTHY_ANOMALY_KEY } from './useSweepHealth.js';
 import type { GovernanceSnapshot } from './useGovernanceSnapshot.js';
 
 /**
@@ -663,13 +664,14 @@ describe('useAgentPipeline', () => {
     });
 
     it('should_add_architect_health_item_when_health_rate_below_threshold', () => {
+      // health rate = endgame-reached (70) / cellCount (100) = 0.70 < 0.8.
       const sweepData = makeSweepData({
         latestRun: {
           runId: 'r1',
           submittedAt: '2026-06-09T06:00:00Z',
           startedAt: '2026-06-09T05:55:00Z',
           cellCount: 100,
-          anomalyCounts: { 'soft-stall': 20, 'render-glitch': 10 },
+          anomalyCounts: { [SWEEP_HEALTHY_ANOMALY_KEY]: 70, 'soft-stall': 20, 'render-glitch': 10 },
         },
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);
@@ -683,13 +685,14 @@ describe('useAgentPipeline', () => {
     });
 
     it('should_not_add_architect_health_item_when_health_rate_at_or_above_threshold', () => {
+      // health rate = endgame-reached (90) / cellCount (100) = 0.90 >= 0.8.
       const sweepData = makeSweepData({
         latestRun: {
           runId: 'r1',
           submittedAt: '2026-06-09T06:00:00Z',
           startedAt: '2026-06-09T05:55:00Z',
           cellCount: 100,
-          anomalyCounts: { 'soft-stall': 10 },
+          anomalyCounts: { [SWEEP_HEALTHY_ANOMALY_KEY]: 90, 'soft-stall': 10 },
         },
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);
@@ -811,13 +814,14 @@ describe('useAgentPipeline', () => {
     });
 
     it('should_escalate_architect_this_week_to_high_when_health_rate_below_threshold', () => {
+      // health rate = endgame-reached (60) / cellCount (100) = 0.60 < 0.8.
       const sweepData = makeSweepData({
         latestRun: {
           runId: 'r1',
           submittedAt: '2026-06-09T06:00:00Z',
           startedAt: '2026-06-09T05:55:00Z',
           cellCount: 100,
-          anomalyCounts: { 'soft-stall': 40 },
+          anomalyCounts: { [SWEEP_HEALTHY_ANOMALY_KEY]: 60, 'soft-stall': 40 },
         },
       });
       const result = useAgentPipeline(makeSnapshot(), sweepData);

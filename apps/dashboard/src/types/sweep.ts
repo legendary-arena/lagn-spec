@@ -49,3 +49,23 @@ export interface SweepHealthSnapshot {
   readonly latest: SweepRunSummary | null;
   readonly recentRuns: readonly SweepRunSummary[];
 }
+
+/**
+ * One point on the sweep health-rate trend (WP-235 / D-23501) — a client-side
+ * projection of a `SweepRunSummary`. Carries the run's parsed timestamp
+ * (`submittedAtMs = Date.parse(submittedAt)`), its cadence derived from the
+ * `-weekly-w<N>` runId suffix grammar (`daily` | `weekly`, with `windowIndex`
+ * the weekly rotation window or `null` for daily), `cellCount`, and the per-run
+ * `healthRate` (∈ [0,1], or `null` for a 0-cell run — a gap the trend chart does
+ * NOT bridge). This is an additive App-layer projection type; the underlying
+ * `SweepRunSummary` wire contract is unchanged.
+ */
+export interface SweepTrendPoint {
+  readonly runId: string;
+  readonly submittedAt: string;
+  readonly submittedAtMs: number;
+  readonly cadence: 'daily' | 'weekly';
+  readonly windowIndex: number | null;
+  readonly cellCount: number;
+  readonly healthRate: number | null;
+}

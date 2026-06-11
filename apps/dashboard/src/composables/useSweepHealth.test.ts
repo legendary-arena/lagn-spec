@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { useSweepHealth, type SweepHealthFetchState } from './useSweepHealth.js';
+import {
+  useSweepHealth,
+  computeSweepHealthRate,
+  SWEEP_HEALTHY_ANOMALY_KEY,
+  type SweepHealthFetchState,
+} from './useSweepHealth.js';
 import { mockSweepHealth } from '../services/sweepHealthMocks.js';
 import type { ApiError, ServiceResponse } from '../types/index.js';
 import type { SweepHealthSnapshot, SweepRunSummary } from '../types/sweep.js';
@@ -204,6 +209,62 @@ test('should_map_kpi_status_via_computeKpiStatus_when_age_crosses_threshold_band
     FIXED_NOW_MS,
   );
   assert.equal(severe.kpiStatus.value, 'off-track');
+});
+
+test('should_compute_health_rate_as_healthy_key_over_cellCount', () => {
+  // why: AC #1 — the health rate is `endgame-reached / cellCount`. Non-healthy
+  // keys are opaque mock strings; only the healthy key drives the numerator.
+  const rate = computeSweepHealthRate(
+    run('r0', 0, { [SWEEP_HEALTHY_ANOMALY_KEY]: 80, 'soft-lock': 20 }, 100),
+  );
+  assert.equal(rate, 0.8);
+});
+
+test('should_treat_missing_healthy_key_as_zero_healthy_cells', () => {
+  // A run with no healthy key reads 0 healthy cells, not NaN/undefined.
+  assert.equal(computeSweepHealthRate(run('r0', 0, { 'soft-lock': 5 }, 100)), 0);
+});
+
+test('should_treat_non_numeric_healthy_value_as_zero_without_NaN', () => {
+  // why: AC #1 — a non-numeric healthy value (only reachable via a malformed
+  // payload past the type boundary) reads 0; it must never propagate NaN.
+  const base = run('r0', 0, { 'soft-lock': 1 }, 100);
+  const malformed: SweepRunSummary = {
+    ...base,
+    anomalyCounts: {
+      ...base.anomalyCounts,
+      [SWEEP_HEALTHY_ANOMALY_KEY]: 'oops' as unknown as number,
+    },
+  };
+  assert.equal(computeSweepHealthRate(malformed), 0);
+});
+
+test('should_return_null_health_rate_for_a_zero_cell_run', () => {
+  // why: AC #1 — a 0-cell run yields null, never a divide-by-zero NaN.
+  assert.equal(computeSweepHealthRate(run('r0', 0, { [SWEEP_HEALTHY_ANOMALY_KEY]: 0 }, 0)), null);
+});
+
+test('should_expose_latest_health_rate_and_per_run_sparkline_when_runs_present', () => {
+  const runs = [
+    // index 0 = most-recent run (mirrors the totalAnomalySparkline convention).
+    run('r0', 60 * 60 * 1000, { [SWEEP_HEALTHY_ANOMALY_KEY]: 90 }, 100),
+    run('r1', 2 * 60 * 60 * 1000, { [SWEEP_HEALTHY_ANOMALY_KEY]: 40 }, 100),
+  ];
+  const { healthRate, healthRateSparkline } = useSweepHealth(
+    () => loaded(snapshotOf(runs)),
+    FIXED_NOW_MS,
+  );
+  assert.equal(healthRate.value, 0.9);
+  assert.deepEqual([...healthRateSparkline.value], [0.9, 0.4]);
+});
+
+test('should_expose_null_health_rate_and_empty_sparkline_in_empty_state', () => {
+  const { healthRate, healthRateSparkline } = useSweepHealth(
+    () => loaded(snapshotOf([])),
+    FIXED_NOW_MS,
+  );
+  assert.equal(healthRate.value, null);
+  assert.deepEqual([...healthRateSparkline.value], []);
 });
 
 test('should_return_deep_equal_output_when_called_twice_with_identical_inputs', () => {

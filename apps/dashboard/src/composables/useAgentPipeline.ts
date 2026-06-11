@@ -1,4 +1,5 @@
 import { useGovernanceSnapshot, type GovernanceSnapshot } from './useGovernanceSnapshot.js';
+import { computeSweepHealthRate } from './useSweepHealth.js';
 import type { SweepRunSummary } from '../types/sweep.js';
 
 /**
@@ -491,11 +492,9 @@ export function useAgentPipeline(
     readonly count: number;
     readonly isFatal: boolean;
   }> = [];
-  let sweepTotalAnomalyCount = 0;
   let sweepFatalCount = 0;
   if (latestSweepRun !== null) {
     for (const [anomalyKey, anomalyCount] of Object.entries(latestSweepRun.anomalyCounts)) {
-      sweepTotalAnomalyCount += anomalyCount;
       const isFatalKey = anomalyKey.includes('fatal');
       if (isFatalKey) {
         sweepFatalCount += anomalyCount;
@@ -506,13 +505,13 @@ export function useAgentPipeline(
     }
   }
 
-  let sweepHealthRate: number | null = null;
-  if (latestSweepRun !== null && latestSweepRun.cellCount > 0) {
-    // why: guard divide-by-zero — a sweep run with zero cells yields no
-    // meaningful health rate, so the rate stays null and no item appears.
-    sweepHealthRate =
-      (latestSweepRun.cellCount - sweepTotalAnomalyCount) / latestSweepRun.cellCount;
-  }
+  // why (D-23503): the single health-rate source of truth. `computeSweepHealthRate`
+  // names the healthy class and returns null for a 0-cell run
+  // (never NaN). It SUPERSEDES the prior `(cellCount − Σ all keys)/cellCount`
+  // formula, which was degenerate ≡ 0 on live data (every cell is classified, so
+  // the all-keys sum equals cellCount).
+  const sweepHealthRate: number | null =
+    latestSweepRun !== null ? computeSweepHealthRate(latestSweepRun) : null;
 
   const priorityInputs: PriorityInputs = {
     openDrafts: kpis?.openDrafts ?? 0,

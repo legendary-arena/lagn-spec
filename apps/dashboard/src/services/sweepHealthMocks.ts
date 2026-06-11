@@ -1,5 +1,6 @@
 import type { DateRange, ServiceResponse } from '../types/index.js';
 import type { SweepHealthSnapshot, SweepRunSummary } from '../types/sweep.js';
+import { SWEEP_HEALTHY_ANOMALY_KEY } from '../composables/useSweepHealth.js';
 import { hashRange } from './hashRange.js';
 import { normalizeRange } from './normalizeRange.js';
 
@@ -45,6 +46,21 @@ const MOCK_RUN_SPACING_MS = 60 * 60 * 1000;
 // Maximum extra jitter added to a run's age (30 minutes), keeping the oldest
 // run comfortably under the 36h window.
 const MOCK_RUN_JITTER_MS = 30 * 60 * 1000;
+
+// Daily 2×2 smoke runs sweep a small matrix; the mock spread keeps them clearly
+// below the weekly full-corpus magnitude (production daily smoke is ~4 cells —
+// the mock uses a larger spread so the daily series is legible in the trend).
+const MOCK_DAILY_CELL_MIN = 50;
+const MOCK_DAILY_CELL_MAX = 500;
+// Weekly full-corpus runs sweep the whole matrix (~2,120 cells, WP-234); the
+// mock approximates that magnitude so only the health RATE — not raw counts —
+// is comparable across the two cadences.
+const MOCK_WEEKLY_CELL_MIN = 1900;
+const MOCK_WEEKLY_CELL_MAX = 2120;
+// Every Nth mock run is a weekly full-corpus run; the rest are daily smokes.
+const MOCK_WEEKLY_RUN_INTERVAL = 6;
+// Weekly rotation windows cycle 0–9 (WP-234's 10-window rotation).
+const MOCK_WEEKLY_WINDOW_COUNT = 10;
 
 /**
  * Seeded PRNG (mulberry32) — pure function: an identical seed produces an
@@ -101,15 +117,40 @@ function buildMockRun(prng: () => number, index: number, nowMs: number): SweepRu
   const submittedAtMs = nowMs - ageMs;
   const runDurationMs = Math.round(sampleRange(prng, 2 * 60 * 1000, 10 * 60 * 1000));
   const startedAtMs = submittedAtMs - runDurationMs;
-  const cellCount = Math.round(sampleRange(prng, 50, 500));
+
+  // why (WP-235 mock cadence): every Nth run is a weekly full-corpus sweep
+  // (~2,000 cells) and the rest are daily 2×2 smokes (small cellCount), so the
+  // mock exercises both cadences the trend plots as distinct series. Cadence is
+  // carried by the runId suffix only, never the cellCount magnitude.
+  const isWeekly = index % MOCK_WEEKLY_RUN_INTERVAL === 0;
+  const cellCount = isWeekly
+    ? Math.round(sampleRange(prng, MOCK_WEEKLY_CELL_MIN, MOCK_WEEKLY_CELL_MAX))
+    : Math.round(sampleRange(prng, MOCK_DAILY_CELL_MIN, MOCK_DAILY_CELL_MAX));
 
   const anomalyCounts: Record<string, number> = {};
   for (const anomalyKey of MOCK_ANOMALY_KEYS) {
     anomalyCounts[anomalyKey] = Math.round(sampleRange(prng, 0, 50));
   }
+  // why (WP-235 / D-23503): the dashboard health rate names 'endgame-reached' as
+  // the healthy class, so every mock run carries it (keyed via the imported
+  // constant, so the literal stays declared once in useSweepHealth.ts). ~70–98%
+  // of cells reach a clean endgame, giving a meaningful, varied rate in MOCK mode.
+  anomalyCounts[SWEEP_HEALTHY_ANOMALY_KEY] = Math.round(
+    sampleRange(prng, cellCount * 0.7, cellCount * 0.98),
+  );
+
+  const paddedIndex = String(index).padStart(2, '0');
+  let runId = `mock-sweep-run-${paddedIndex}`;
+  if (isWeekly) {
+    // The k-th weekly run carries rotation window `k % 10`; the `-weekly-w<N>`
+    // suffix is exactly what `classifyRunCadence` reads to flag a weekly run.
+    const weeklyOrdinal = index / MOCK_WEEKLY_RUN_INTERVAL;
+    const windowIndex = weeklyOrdinal % MOCK_WEEKLY_WINDOW_COUNT;
+    runId = `${runId}-weekly-w${windowIndex}`;
+  }
 
   return {
-    runId: `mock-sweep-run-${String(index).padStart(2, '0')}`,
+    runId,
     submittedAt: new Date(submittedAtMs).toISOString(),
     startedAt: new Date(startedAtMs).toISOString(),
     cellCount,
