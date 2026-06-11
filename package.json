@@ -20,6 +20,9 @@
 
     "migrate":              "node --env-file=.env scripts/migrate.mjs",
     "sweep:nightly":        "node scripts/sweep-submit.mjs",
+    "sweep:generate-axis":  "node scripts/sweep-generate-full-axis.mjs",
+    "sweep:weekly-plan":    "node scripts/sweep-weekly-plan.mjs",
+    "sweep:weekly-submit":  "node scripts/sweep-weekly-submit.mjs",
     "inspection:fetch":     "node scripts/inspection-fetch.mjs",
     "inspection:triage":    "node scripts/inspection-triage.mjs",
     "inspection:submit":    "node scripts/inspection-submit.mjs",

@@ -24052,9 +24052,18 @@ against a weekly report whose window excludes that cell would falsely resolve).
 This is the successor D-entry D-20704 required for a cardinality change; D-20704
 remains authoritative for the daily smoke.
 
+**ext_id derivation (reconciled at execution, 2026-06-10):** the card JSON files
+carry no literal `ext_id` field on schemes / masterminds; `sweep-generate-full-axis.mjs`
+composes the canonical ext_id as `<set.abbr>/<entry.slug>` (e.g.
+`core/midtown-bank-robbery`) — `abbr` equals each set's filename stem for all 40
+sets and the committed 2×2 smoke fixtures' ids are subsets of the generated full
+axes, so the composed strings match the engine setup composition exactly. The
+locked output (191 / 106 ascending-lexicographic unique ext_id strings) is
+unchanged; only the WP's "read a `schemes[].ext_id` field" phrasing was corrected.
+
 **Packet:** WP-234 (EC-267).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-10 (execution close).
+**Status:** Active
 
 ---
 
@@ -24091,8 +24100,8 @@ reused). Self-hosted runners and a literal full-corpus-per-run sweep were
 considered and rejected (operator decision, 2026-06-10).
 
 **Packet:** WP-234 (EC-267).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-10 (execution close).
+**Status:** Active
 
 ---
 

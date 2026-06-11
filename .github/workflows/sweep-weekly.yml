@@ -1,0 +1,163 @@
+# WP-234 / EC-267 — Weekly full-corpus sweep workflow.
+#
+# In ADDITION to the byte-unchanged daily 2×2 smoke (`sweep-nightly.yml`,
+# D-20704), this runs a weekly sweep covering a rotating window of the full
+# Scheme × Mastermind corpus (191 × 106 = 20,246 cells). Each weekly run sweeps
+# a 20-scheme window × all 106 masterminds (≤ 2,120 cells), split across 4
+# GitHub-hosted matrix shards (5 schemes each); a fan-in `combine` job
+# concatenates the 4 shard manifests, classifies via the WP-195 engine analyzer,
+# and POSTs ONE run to `${API_BASE_URL}/api/sweep/runs`. The window advances by
+# `windowIndex = isoWeek mod 10`, so the full corpus is covered over a 10-run
+# cycle.
+#
+# Three jobs:
+#   - plan:    the SOLE wall-clock read site — derives the ISO-week rotation
+#              window + the single run-id base, passes them to the shards +
+#              combine.
+#   - sweep:   matrix shards 0–3, each sweeping its scheme sub-slice over the
+#              full axis fixtures.
+#   - combine: runs ONLY when all 4 shards succeeded; downloads the shard
+#              manifests, combines + submits one run.
+#
+# Failure exit codes of the combine script (mirror `sweep-submit.mjs`):
+#   - 0: success    2: config/env    3: manifest/classify/shard-count    4: network/non-2xx/oversize
+
+name: Sweep Weekly
+
+on:
+  schedule:
+    # why (D-23401): Sunday 08:00 UTC — one hour after Saturday's last daily
+    # smoke (07:00 UTC), so the two cron ticks never overlap on the runner.
+    - cron: '0 8 * * 0'
+  workflow_dispatch:
+
+jobs:
+  plan:
+    name: Derive rotation plan
+    runs-on: ubuntu-latest
+    outputs:
+      window_index: ${{ steps.plan.outputs.window_index }}
+      scheme_offset: ${{ steps.plan.outputs.scheme_offset }}
+      run_id_base: ${{ steps.plan.outputs.run_id_base }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      # why (D-23401): `windowIndex = isoWeek mod 10` is computed ONCE here (the
+      # sole `date -u +%V` read) — NOT engine logic. The run-id base is derived
+      # in the same step from a single `date -u` so all 4 shards + the combine
+      # share one collision-relevant id with no per-shard date drift. The
+      # `10#`-free base-10 parse lives in sweep-weekly-plan.mjs (parseInt(value,
+      # 10)), so a zero-padded week (`08`/`09`) is never read as octal. No
+      # wall-clock value reaches the engine / seed chain / simulation.
+      - name: Compute rotation plan + run id base
+        id: plan
+        run: |
+          WEEK=$(date -u +%V)
+          echo "run_id_base=$(git rev-parse --short HEAD)-$(date -u +%Y%m%dT%H%M%SZ)" >> "$GITHUB_OUTPUT"
+          node scripts/sweep-weekly-plan.mjs --iso-week "$WEEK" --scheme-axis-length 191
+
+  sweep:
+    name: Sweep shard ${{ matrix.shard }}
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # why: `scripts/sweep-setup-matrix.mjs` imports the compiled sweep runner
+      # from `packages/game-engine/dist/`; `pnpm install` does not run tsc, so
+      # the dist must be built before the runner can resolve its imports.
+      - name: Build workspace
+        run: pnpm -r build
+
+      - name: Compute shard slice
+        id: slice
+        run: node scripts/sweep-weekly-plan.mjs --scheme-offset ${{ needs.plan.outputs.scheme_offset }} --shard-index ${{ matrix.shard }}
+
+      # why (D-23402): the mastermind axis is always full; only the scheme axis
+      # carries this shard's slice. A clamped 0-cell tail shard still writes a
+      # valid empty manifest.jsonl (the matrix script creates it), so every
+      # shard uploads an artifact and the combine's exactly-4 assert holds.
+      - name: Run sweep shard
+        run: |
+          node scripts/sweep-setup-matrix.mjs \
+            --run-id ${{ needs.plan.outputs.run_id_base }}-shard-${{ matrix.shard }} \
+            --seed weekly \
+            --policy random \
+            --setup data/sweep-fixtures/setup.json \
+            --scheme-ids data/sweep-fixtures/scheme-ids.full.json \
+            --mastermind-ids data/sweep-fixtures/mastermind-ids.full.json \
+            --scheme-offset ${{ steps.slice.outputs.scheme_offset }} \
+            --scheme-limit ${{ steps.slice.outputs.scheme_limit }}
+
+      - name: Upload shard manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: sweep-shard-${{ matrix.shard }}
+          path: sweep-output/${{ needs.plan.outputs.run_id_base }}-shard-${{ matrix.shard }}/manifest.jsonl
+          if-no-files-found: error
+
+  combine:
+    name: Combine shards + submit
+    needs: [plan, sweep]
+    # why (D-23402): both `needs: sweep` AND an explicit success gate — the
+    # combine runs ONLY when all 4 shards succeeded. A failed shard fails the
+    # weekly run with no partial submit; the assert in the combine script is
+    # defense-in-depth over this gate.
+    if: ${{ needs.sweep.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # why: the combine script imports the engine's `parseManifestLine` /
+      # `classifyManifestRecords` from `packages/game-engine/dist/`; the dist
+      # must be built before the import resolves.
+      - name: Build workspace
+        run: pnpm -r build
+
+      # why (D-23402): `pattern: sweep-shard-*` WITHOUT the flatten/merge option
+      # lands each artifact in its own subdir, so the 4 identically-named
+      # `manifest.jsonl` files never collide and the exactly-4 assert holds.
+      # Enabling the flatten option would clobber them into a single path. The
+      # flatten option key is deliberately omitted below (defaults to false).
+      - name: Download shard manifests
+        uses: actions/download-artifact@v4
+        with:
+          pattern: sweep-shard-*
+          path: combined-manifests
+
+      - name: Combine + submit weekly sweep
+        run: node scripts/sweep-weekly-submit.mjs --manifests-dir combined-manifests --run-id-base ${{ needs.plan.outputs.run_id_base }} --window-index ${{ needs.plan.outputs.window_index }}
+        env:
+          # why (D-20702): the shared-secret token; the same GitHub Actions
+          # repository secret the daily smoke uses (no new token).
+          SWEEP_SUBMIT_TOKEN: ${{ secrets.SWEEP_SUBMIT_TOKEN }}
+          # why (WP-209): production API base URL; the combine appends
+          # `/api/sweep/runs`. No trailing slash.
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}

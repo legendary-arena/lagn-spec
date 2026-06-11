@@ -17,6 +17,18 @@
  *   --mastermind-ids <path>         JSON array of non-empty unique strings
  *   --policy random|heuristic       policy family (no fallback)
  *   [--max-cells <N>]               cap; default MAX_CELLS_DEFAULT (10000)
+ *   [--scheme-offset <N>]           additive (WP-234); default 0
+ *   [--scheme-limit <M>]            additive (WP-234); default = scheme-axis length
+ *
+ * Axis-slice flags (WP-234 / EC-267): `--scheme-offset N --scheme-limit M`
+ * select `schemeIds[N : N+M]` of the loaded scheme axis BEFORE the
+ * cross-product; the mastermind axis is always used in full. Omitting both is
+ * byte-equivalent to the pre-WP-234 behavior (the daily 2×2 smoke is
+ * unaffected). The weekly sweep (WP-234) drives the window/shard rotation
+ * through these flags; the committed scheme-axis ORDER is the rotation
+ * coordinate system (D-23401). An over-offset slice yields zero cells and the
+ * script still writes a valid empty manifest (so every clamped shard uploads
+ * an artifact).
  *
  * Output: `sweep-output/<run-id>/manifest.jsonl`. The directory is
  * gitignored (D-19403); the bulk artifact never enters the repo.
@@ -33,10 +45,10 @@
  * `packages/game-engine/dist/simulation/sweep.runner.js`.
  */
 
-import { readFile, mkdir, access } from 'node:fs/promises';
+import { readFile, mkdir, access, writeFile } from 'node:fs/promises';
 import { appendFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import {
   sweepSetupMatrix,
@@ -84,6 +96,8 @@ function parseArguments(argv) {
     '--mastermind-ids',
     '--policy',
     '--max-cells',
+    '--scheme-offset',
+    '--scheme-limit',
   ]);
   const parsed = {};
   let cursor = 0;
@@ -230,6 +244,48 @@ function resolveMaxCells(parsedArgs) {
     );
   }
   return parsed;
+}
+
+/**
+ * Resolves an optional non-negative-integer flag (`--scheme-offset` /
+ * `--scheme-limit`). Returns the supplied default when the flag is absent.
+ *
+ * @param {Record<string, string>} parsedArgs
+ * @param {string} flagName
+ * @param {number} defaultValue
+ * @returns {number}
+ */
+function resolveNonNegativeIntegerFlag(parsedArgs, flagName, defaultValue) {
+  if (parsedArgs[flagName] === undefined) {
+    return defaultValue;
+  }
+  const parsed = Number(parsedArgs[flagName]);
+  if (!Number.isInteger(parsed) || parsed < 0) {
+    throw new Error(
+      `Sweep received ${flagName} "${parsedArgs[flagName]}" which is not a non-negative integer; supply a value like ${flagName} 0.`,
+    );
+  }
+  return parsed;
+}
+
+/**
+ * Selects the `[offset, offset + limit)` window of the scheme axis. Pure: a
+ * plain `.slice()` that clamps naturally — an offset past the axis end yields
+ * an empty array (a 0-cell shard), a limit past the end yields the clamped
+ * tail. Exported for unit testing.
+ *
+ * @param {readonly string[]} schemeIds - The full loaded scheme axis.
+ * @param {number} offset - Zero-based start index into the committed axis.
+ * @param {number} limit - Maximum number of schemes in the window.
+ * @returns {string[]} The selected scheme-id window (a new array).
+ */
+// why (D-23401): the committed full scheme-axis ORDER is the rotation/shard
+// coordinate system — `offset`/`limit` index into that fixed order, so the
+// weekly window "this run sweeps schemes A..B" is reproducible run-to-run.
+// Reordering the committed axis fixture silently shifts which cells a window
+// covers, so the file order is a locked contract.
+export function selectSchemeWindow(schemeIds, offset, limit) {
+  return schemeIds.slice(offset, offset + limit);
 }
 
 /**
@@ -433,7 +489,18 @@ async function main() {
     mastermindIdsPath,
   );
 
-  const cellCount = schemeIds.length * mastermindIds.length;
+  // why (WP-234): the additive scheme-axis window. Omitting both flags yields
+  // offset 0 + limit = full length, so `selectedSchemeIds` is the whole axis
+  // and the daily 2×2 smoke is byte-unchanged. Only the scheme axis is sliced;
+  // the mastermind axis is always used in full.
+  const schemeOffset = resolveNonNegativeIntegerFlag(parsedArgs, '--scheme-offset', 0);
+  const schemeLimit = resolveNonNegativeIntegerFlag(parsedArgs, '--scheme-limit', schemeIds.length);
+  const selectedSchemeIds = selectSchemeWindow(schemeIds, schemeOffset, schemeLimit);
+
+  // why (WP-234): cellCount is computed from the SLICED scheme length so
+  // --max-cells and the soft-warning threshold see the per-run/per-shard count
+  // (≤ 530 for a weekly shard), not the full 20,246-cell corpus.
+  const cellCount = selectedSchemeIds.length * mastermindIds.length;
   if (cellCount > maxCells) {
     throw new Error(
       `Sweep cell count ${cellCount} exceeds --max-cells cap ${maxCells}; raise the cap or shrink the axis files. No manifest written.`,
@@ -452,6 +519,13 @@ async function main() {
   let skipSet = new Set();
   if (await manifestExists(manifestPath)) {
     skipSet = await buildResumeSkipSet(manifestPath);
+  } else {
+    // why (WP-234): eagerly create the (empty) manifest on a fresh run so a
+    // 0-cell clamped scheme window (the tail shard of a weekly window) still
+    // produces a valid artifact for upload + the combine's exactly-4-manifests
+    // assert. A cell-bearing run loses nothing — appendFileSync appends to
+    // this same file as each cell completes.
+    await writeFile(manifestPath, '', 'utf8');
   }
 
   let processedCount = 0;
@@ -513,7 +587,7 @@ async function main() {
     sweepSetupMatrix(
       envelope.composition,
       envelope.playerCount,
-      schemeIds,
+      selectedSchemeIds,
       mastermindIds,
       EMPTY_REGISTRY,
       (cellSeed, playerCount) => buildPolicyListForCell(policyName, cellSeed, playerCount),
@@ -550,7 +624,15 @@ async function main() {
   );
 }
 
-main().catch((error) => {
-  process.stderr.write(`sweep-setup-matrix: ${error.message}\n`);
-  process.exit(1);
-});
+// why (WP-234): run main() only when this file is the process entry point so
+// the unit test can `import { selectSchemeWindow }` without executing main()
+// (which would throw on the missing --run-id). Mirrors the handoffs-sync.mjs
+// guard; behavior-preserving for the CLI (the workflow still runs it as the
+// process entry point).
+const isEntryPoint = import.meta.url === pathToFileURL(process.argv[1] ?? '').href;
+if (isEntryPoint) {
+  main().catch((error) => {
+    process.stderr.write(`sweep-setup-matrix: ${error.message}\n`);
+    process.exit(1);
+  });
+}
