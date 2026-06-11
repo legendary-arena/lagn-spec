@@ -293,7 +293,7 @@ mindmap
         ["WP-232 ✅ Done — Agent handoff chain (Inspector → Builder → Architect)"]
         ["WP-233 ✅ Done — Closed-loop sweep verification (Builder fix → re-sweep → Inspector verify)"]
         ["WP-234 ✅ Done — Full-corpus sweep expansion (weekly rotating window beyond 2×2 smoke)"]
-        ["WP-235 📦 Pending — Pipeline page trend view (multi-run anomaly trends)"]
+        ["WP-235 📝 Drafted — Pipeline page sweep health trend view (cadence-aware health-rate trends + healthy-class constant)"]
 
       Admin & Route Wiring
         ["WP-110 ✅ Admin billing visibility"]
@@ -391,7 +391,7 @@ mindmap
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 12/12 | — |
-| Agent Triage Pipeline | 5/6 | 1 📦 pending |
+| Agent Triage Pipeline | 5/6 | 1 📝 drafted |
 | Admin & Route Wiring | 4/4 | — |
 | Phase 9 — Profile Surface Follow-ups | 4/4 | — |
 | Architecture & API Governance | 4/4 | — |
@@ -400,7 +400,7 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **230/232 WP ✅** (+ 4/4 Foundation Prompts) | 1 📦 + 1 ⏸ |
+| **Total** | **230/232 WP ✅** (+ 4/4 Foundation Prompts) | 1 📝 + 1 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 >
@@ -430,7 +430,7 @@ mindmap
 1. **Finish core-set ability coverage** — the hero reveal/rescue/draw executors (WP-215..225) and villain fight/ambush/escape/KO effects (WP-185..214) have largely landed; what remains is the deferred predicate machinery for filtered/targeted villain effects (per WP-188 / WP-202) and reveal player-choice breadth beyond WP-220 / WP-222, so the `core` set is fully playable on play.legendary-arena.com. Additional sets follow incrementally.
 2. **Live PvP matchmaking & reconnect** — WP-116 defined the disconnect/reconnect architecture; no implementation WP exists yet. Match discovery UX and reconnect handling are prerequisites for real multiplayer sessions.
 3. **Score submission HTTP wiring** — the PAR/competition/leaderboard pipeline is fully built, and WP-107 shipped `requireUnsuspendedAccount` as the locked caller-contract, but the score-submission request-handler route still doesn't exist at HEAD. Wiring it closes the loop from "play a game" to "see yourself on the leaderboard."
-4. **Agent triage pipeline — WP-235 (trend view)** — WP-231..234 have landed (scheduled triage sessions → handoff chain → closed-loop re-sweep verification, plus the parallel-safe full-corpus weekly sweep expansion). The only remaining step is WP-235: the Pipeline page multi-run anomaly trend view, which depends only on WP-230.
+4. **Agent triage pipeline — WP-235 (trend view)** — WP-231..234 have landed (scheduled triage sessions → handoff chain → closed-loop re-sweep verification, plus the parallel-safe full-corpus weekly sweep expansion). The only remaining step is WP-235: the Pipeline page sweep health-rate trend view (which also repairs the degenerate health-rate KPI), depending only on WP-230.
 5. **Phase 10 placeholders** — promote a candidate to a real WP only when a concrete production-debugging need motivates it.
 6. **WP-042.1** — unblocks when Foundation Prompt 03 is revived.
 
@@ -460,10 +460,10 @@ mindmap
 - ⏸ WP-042.1 — Deferred PostgreSQL seeding checklists; unblocks when Foundation Prompt 03 (seed runner + migrations) is revived.
 
 **Drafted (ready for execution):**
-- (none currently drafted — the next agent-triage step, WP-235, is pending authoring)
+- 📝 WP-235 — Pipeline page sweep health trend view (cadence-aware health-rate trends + healthy-class constant; repairs the degenerate health-rate KPI). Depends on: WP-230. (EC-268)
 
 **Pending (WP files not yet authored):**
-- 📦 WP-235 — Pipeline page trend view (multi-run anomaly trends). Depends on: WP-230.
+- (none — all Agent Triage Pipeline WPs are authored)
 
 ---
 
@@ -488,7 +488,9 @@ mindmap
 
 ---
 
-*Last updated: 2026-06-10 (status reconcile: WP-231/232/233/234 ✅ done — the Agent Triage Pipeline's scheduled-triage → handoff-chain → closed-loop-verify sequence plus the parallel-safe full-corpus weekly sweep expansion all landed on `origin/main`. Flipped 📦→✅ in the mindmap + bullet list; Agent Triage Pipeline cluster 1/6 → 5/6 ✅; Progress Summary **226/232 → 230/232 WP ✅**, 5 📦 → 1 📦 (only WP-235 trend view remains), 1 ⏸. Next Unblocked item 4 narrowed to WP-235.)*
+*Last updated: 2026-06-10 (WP-235 drafted + revised: the Pipeline page sweep HEALTH trend view (cadence-aware health-rate trends) WP + EC-268 authored, reserving D-23501/D-23502/D-23503. A metric-review pass found the original aggregate anomaly-rate degenerate (`sum(anomalyCounts) === cellCount`) — and the EXISTING health-rate KPI/Architect-lane likewise ≡ 0 on live data; revised to a true health rate (`endgame-reached / cellCount`) via a narrow documented healthy-class-constant exception to D-20703 (D-23503), repairing both degenerate sites. Flipped WP-235 📦 → 📝 in the mindmap + moved it Pending → Drafted; Agent Triage Pipeline open `1 📦 → 1 📝`; Total `1 📦 → 1 📝 + 1 ⏸`. The only remaining Agent Triage Pipeline step, now authored and ready for execution.)*
+
+*Prior: 2026-06-10 (status reconcile: WP-231/232/233/234 ✅ done — the Agent Triage Pipeline's scheduled-triage → handoff-chain → closed-loop-verify sequence plus the parallel-safe full-corpus weekly sweep expansion all landed on `origin/main`. Flipped 📦→✅ in the mindmap + bullet list; Agent Triage Pipeline cluster 1/6 → 5/6 ✅; Progress Summary **226/232 → 230/232 WP ✅**, 5 📦 → 1 📦 (only WP-235 trend view remains), 1 ⏸. Next Unblocked item 4 narrowed to WP-235.)*
 
 *Prior: 2026-06-09 (session add: WP-230 ✅ done — Pipeline page sweep integration; the Pipeline page's agent lanes now consume nightly sweep findings via `useSweepHealth` (Inspector anomalies, Builder fatals, Architect health rate, Evaluator freshness + trend), with priority escalation on real findings. Agent Triage Pipeline cluster now 1/6 ✅; Progress Summary **226/232 WP ✅**, 0 📝, 5 📦, 1 ⏸. Next Unblocked reordered (WP-230 removed; core-set ability coverage now #1).)*
 
