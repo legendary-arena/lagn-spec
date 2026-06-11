@@ -145,6 +145,31 @@ export interface HandoffSyncSummary {
 }
 
 /**
+ * Response body shape for `POST /api/handoffs/verify`
+ * (`{ data: HandoffVerifySummary }`). The only NEW contract WP-233 adds — the
+ * lifecycle union, transition table, and `HandoffRecord` are reused from WP-232
+ * verbatim (no new state). Locked per WP-233 §Locked Type Contracts / D-23301.
+ *
+ * `reportId` is the latest (re-sweep) inspection report, or `null` when
+ * `inspection_reports` is empty. `verified` counts `fix-proposed` handoffs whose
+ * anomaly is GONE in the latest report (transitioned `fix-proposed → resolved`);
+ * `regressed` counts those whose anomaly PERSISTS (transitioned
+ * `fix-proposed → claimed`, the re-open edge); `skipped` counts those whose
+ * origin `reportId` equals the latest report's (no re-sweep yet — left
+ * `fix-proposed`). The accounting invariant is
+ * `verified + regressed + skipped <= ` the initial `fix-proposed` count: the
+ * delta is the set of handoffs a concurrent transition advanced out of
+ * `fix-proposed` between this run's load and its guarded UPDATE — each is caught
+ * and reported in NO counter (no `ignored` / `concurrent` field is added).
+ */
+export interface HandoffVerifySummary {
+  readonly reportId: string | null;
+  readonly verified: number;
+  readonly regressed: number;
+  readonly skipped: number;
+}
+
+/**
  * Per-status counts over the returned handoffs, computed by
  * `countHandoffsByStatus`. Sums to `handoffs.length`. The camelCase
  * `fixProposed` / `wontFix` keys map to the `'fix-proposed'` / `'wont-fix'`

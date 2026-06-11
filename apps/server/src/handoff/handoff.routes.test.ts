@@ -467,13 +467,122 @@ describe('GET /api/handoffs/latest (WP-232 / D-10403)', () => {
   });
 });
 
-describe('registerHandoffRoutes wiring (WP-232 / AC #4)', () => {
-  test('should_register_exactly_three_routes', () => {
+describe('registerHandoffRoutes wiring (WP-232 / AC #4; WP-233 verify route)', () => {
+  // why (WP-233): the additive POST /api/handoffs/verify route makes the wiring
+  // count 4. This is the ONE WP-232 test the additive endpoint must touch — a
+  // route-count assertion mechanically reflecting a genuinely-new route, not a
+  // weakening of WP-232 coverage (it now also asserts verify is wired).
+  test('should_register_exactly_four_routes', () => {
     const recorder = makeRecorder();
     const routes = registerWith(recorder);
-    assert.equal(routes.length, 3);
+    assert.equal(routes.length, 4);
     assert.ok(routes.find((r) => r.method === 'POST' && r.path === '/api/handoffs/sync'));
+    assert.ok(routes.find((r) => r.method === 'POST' && r.path === '/api/handoffs/verify'));
     assert.ok(routes.find((r) => r.method === 'POST' && r.path === '/api/handoffs/transition'));
     assert.ok(routes.find((r) => r.method === 'GET' && r.path === '/api/handoffs/latest'));
+  });
+});
+
+// WP-233 / EC-265 — verify route. Splits the two finding_handoffs SELECT shapes
+// the verify flow issues (bulk fix-proposed load vs applyHandoffTransition's
+// per-handoff load); the module-level `isInspectionSelect` / `isHandoffUpdate`
+// are reused.
+const isFixProposedLoad = (sql: string): boolean =>
+  /FROM legendary\.finding_handoffs\s+WHERE status = \$1/.test(sql);
+const isHandoffByIdLoad = (sql: string): boolean =>
+  /FROM legendary\.finding_handoffs WHERE handoff_id = \$1/.test(sql);
+
+describe('POST /api/handoffs/verify (WP-233 / D-23301, D-23302)', () => {
+  test('should_reject_with_401_when_X_Handoff_Token_header_is_missing_before_any_DB_access', async () => {
+    const recorder = makeRecorder();
+    const routes = registerWith(recorder);
+    const handler = findRoute(routes, 'POST', '/api/handoffs/verify').handler;
+    const koaContext = makeKoaContext({ body: {} });
+    await handler(koaContext);
+    assert.equal(koaContext.status, 401);
+    assert.deepStrictEqual(koaContext.body, { data: [], error: 'unauthorized' });
+    assert.equal(koaContext.responseHeaders['Cache-Control'], 'no-store');
+    assert.equal(recorder.recorded.length, 0, 'no DB query before the auth gate');
+  });
+
+  test('should_reject_with_401_when_token_is_strictly_shorter_without_RangeError', async () => {
+    const recorder = makeRecorder();
+    const routes = registerWith(recorder);
+    const handler = findRoute(routes, 'POST', '/api/handoffs/verify').handler;
+    const koaContext = makeKoaContext({ headers: { 'x-handoff-token': 'short' }, body: {} });
+    await handler(koaContext);
+    assert.equal(koaContext.status, 401);
+    assert.equal(recorder.recorded.length, 0);
+  });
+
+  test('should_reject_with_413_when_the_body_exceeds_the_64KB_cap_before_any_DB_access', async () => {
+    const recorder = makeRecorder();
+    const routes = registerWith(recorder);
+    const handler = findRoute(routes, 'POST', '/api/handoffs/verify').handler;
+    // why: the verify body is ignored, but a 70 KB padding field pushes
+    // JSON.stringify length past the 64 KB cap; the 413 fires before any DB I/O.
+    const koaContext = makeKoaContext({
+      headers: { 'x-handoff-token': TEST_HANDOFF_TOKEN },
+      body: { padding: 'x'.repeat(70 * 1024) },
+    });
+    await handler(koaContext);
+    assert.equal(koaContext.status, 413);
+    assert.deepStrictEqual(koaContext.body, { data: [], error: 'payload_too_large' });
+    assert.equal(koaContext.responseHeaders['Cache-Control'], 'no-store');
+    assert.equal(recorder.recorded.length, 0);
+  });
+
+  test('should_return_200_with_the_verify_summary_driving_resolved_and_claimed_counts', async () => {
+    const recorder = makeRecorder((sql, values) => {
+      if (isInspectionSelect(sql)) {
+        // latest report (id 'r1-...') carries only the 'cell-present' anomaly.
+        return [makeInspectionReportRow([makeInspectionFinding({ cellId: 'cell-present', anomalyClass: 'fatal' })])];
+      }
+      if (isFixProposedLoad(sql)) {
+        return [
+          makeHandoffRow({ handoff_id: 'report-old#0', report_id: 'report-old', status: 'fix-proposed', cell_id: 'cell-gone', anomaly_class: 'fatal' }),
+          makeHandoffRow({ handoff_id: 'report-old#1', report_id: 'report-old', status: 'fix-proposed', cell_id: 'cell-present', anomaly_class: 'fatal' }),
+        ];
+      }
+      if (isHandoffByIdLoad(sql)) {
+        return [makeHandoffRow({ handoff_id: values[0], report_id: 'report-old', status: 'fix-proposed' })];
+      }
+      if (isHandoffUpdate(sql)) {
+        return [makeHandoffRow({ handoff_id: values[0], report_id: 'report-old', status: values[1] })];
+      }
+      return [];
+    });
+    const routes = registerWith(recorder);
+    const handler = findRoute(routes, 'POST', '/api/handoffs/verify').handler;
+    const koaContext = makeKoaContext({ headers: { 'x-handoff-token': TEST_HANDOFF_TOKEN }, body: {} });
+    await handler(koaContext);
+    assert.equal(koaContext.status, 200);
+    const body = koaContext.body as {
+      data: { reportId: string | null; verified: number; regressed: number; skipped: number };
+    };
+    assert.equal(body.data.reportId, 'r1-20260610T071500Z-20260610T071530Z');
+    assert.equal(body.data.verified, 1, 'cell-gone anomaly absent → resolved → verified');
+    assert.equal(body.data.regressed, 1, 'cell-present anomaly persists → claimed → regressed');
+    assert.equal(body.data.skipped, 0);
+    assert.equal(koaContext.responseHeaders['Cache-Control'], 'no-store');
+  });
+
+  test('should_return_500_and_set_no_store_when_a_DB_query_throws', async () => {
+    const { router, routes } = makeRouter();
+    const handleThrowing = async (): Promise<{ rows: Array<Record<string, unknown>> }> => {
+      throw new Error('connection_refused');
+    };
+    const database = { query: handleThrowing } as unknown as DatabaseClient;
+    registerHandoffRoutes(
+      router as unknown as Parameters<typeof registerHandoffRoutes>[0],
+      database,
+      makeDeps(),
+    );
+    const handler = findRoute(routes, 'POST', '/api/handoffs/verify').handler;
+    const koaContext = makeKoaContext({ headers: { 'x-handoff-token': TEST_HANDOFF_TOKEN }, body: {} });
+    await handler(koaContext);
+    assert.equal(koaContext.status, 500);
+    assert.deepStrictEqual(koaContext.body, { data: [], error: 'internal_error' });
+    assert.equal(koaContext.responseHeaders['Cache-Control'], 'no-store');
   });
 });

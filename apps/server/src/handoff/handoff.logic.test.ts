@@ -27,10 +27,13 @@ import {
   deriveHandoffId,
   fetchLatestHandoffs,
   isAllowedTransition,
+  isAnomalyResolved,
   syncHandoffsFromLatestReport,
+  verifyFixProposedHandoffs,
 } from './handoff.logic.js';
 import type { HandoffRecord, HandoffStatus } from './handoff.types.js';
 import { HANDOFF_STATUSES } from './handoff.types.js';
+import type { InspectionReportSummary } from '../inspection/inspection.types.js';
 
 type RespondFn = (sql: string, values: readonly unknown[], callIndex: number) => Array<Record<string, unknown>>;
 
@@ -433,5 +436,298 @@ describe('fetchLatestHandoffs (WP-232 / D-23201 deterministic ordering)', () => 
     const recorder = makeRecorder(() => []);
     const result = await fetchLatestHandoffs(recorder.database);
     assert.deepEqual(result, { reportId: null, handoffs: [] });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-233 / EC-265 — closed-loop verify (additive). The verify flow issues three
+// distinguishable SELECTs against finding_handoffs: the bulk fix-proposed load
+// (`WHERE status = $1`), and applyHandoffTransition's per-handoff load + re-read
+// (`WHERE handoff_id = $1`). These local matchers split them; the module-level
+// `isHandoffUpdate` / `isInspectionSelect` are reused.
+// ---------------------------------------------------------------------------
+
+const isFixProposedLoad = (sql: string): boolean =>
+  /FROM legendary\.finding_handoffs\s+WHERE status = \$1/.test(sql);
+const isHandoffByIdLoad = (sql: string): boolean =>
+  /FROM legendary\.finding_handoffs WHERE handoff_id = \$1/.test(sql);
+
+describe('isAnomalyResolved (WP-233 / D-23301 strict-equality diff)', () => {
+  test('should_apply_the_strict_equality_truth_table_with_no_coercion', () => {
+    const runLevelHandoff = { cellId: null, anomalyClass: 'meta' } as unknown as HandoffRecord;
+    const cellHandoff = {
+      cellId: 'scheme-a:mastermind-b',
+      anomalyClass: 'fatal',
+    } as unknown as HandoffRecord;
+    const reportWith = (findings: Array<Record<string, unknown>>): InspectionReportSummary =>
+      ({ findings } as unknown as InspectionReportSummary);
+
+    // run-level null === null is a valid match → anomaly PRESENT → not resolved.
+    assert.equal(
+      isAnomalyResolved(
+        runLevelHandoff,
+        reportWith([makeInspectionFinding({ cellId: null, anomalyClass: 'meta' })]),
+      ),
+      false,
+    );
+    // a string cellId never matches a null handoff cellId (no coercion) → resolved.
+    assert.equal(
+      isAnomalyResolved(
+        runLevelHandoff,
+        reportWith([makeInspectionFinding({ cellId: 'scheme-a:mastermind-b', anomalyClass: 'meta' })]),
+      ),
+      true,
+    );
+    // exact (cellId, anomalyClass) match → present → not resolved.
+    assert.equal(
+      isAnomalyResolved(
+        cellHandoff,
+        reportWith([makeInspectionFinding({ cellId: 'scheme-a:mastermind-b', anomalyClass: 'fatal' })]),
+      ),
+      false,
+    );
+    // same cell, different anomalyClass → no match → resolved (BOTH fields must match).
+    assert.equal(
+      isAnomalyResolved(
+        cellHandoff,
+        reportWith([makeInspectionFinding({ cellId: 'scheme-a:mastermind-b', anomalyClass: 'not-endgame' })]),
+      ),
+      true,
+    );
+    // different cell, same anomalyClass → no match → resolved.
+    assert.equal(
+      isAnomalyResolved(
+        cellHandoff,
+        reportWith([makeInspectionFinding({ cellId: 'scheme-z:mastermind-z', anomalyClass: 'fatal' })]),
+      ),
+      true,
+    );
+    // empty findings → nothing matches → resolved.
+    assert.equal(isAnomalyResolved(cellHandoff, reportWith([])), true);
+  });
+});
+
+describe('verifyFixProposedHandoffs (WP-233 / D-23301 closed-loop verify)', () => {
+  test('should_transition_a_gone_anomaly_to_resolved_and_count_it_verified', async () => {
+    const recorder = makeRecorder((sql, values) => {
+      if (isInspectionSelect(sql)) {
+        return [makeInspectionReportRow([], { report_id: 'report-new' })];
+      }
+      if (isFixProposedLoad(sql)) {
+        assert.equal(values[0], 'fix-proposed', 'the load binds the fix-proposed status filter');
+        return [
+          makeHandoffRow({
+            handoff_id: 'report-old#0',
+            report_id: 'report-old',
+            status: 'fix-proposed',
+            cell_id: 'scheme-a:mastermind-b',
+            anomaly_class: 'fatal',
+          }),
+        ];
+      }
+      if (isHandoffByIdLoad(sql)) {
+        return [makeHandoffRow({ handoff_id: 'report-old#0', report_id: 'report-old', status: 'fix-proposed' })];
+      }
+      if (isHandoffUpdate(sql)) {
+        return [makeHandoffRow({ handoff_id: 'report-old#0', report_id: 'report-old', status: 'resolved' })];
+      }
+      return [];
+    });
+    const summary = await verifyFixProposedHandoffs(recorder.database);
+    assert.deepEqual(summary, { reportId: 'report-new', verified: 1, regressed: 0, skipped: 0 });
+    const update = recorder.recorded.find((entry) => isHandoffUpdate(entry.sql));
+    assert.ok(update, 'a transition UPDATE was issued');
+    assert.equal(update.values[1], 'resolved', 'transitioned to resolved');
+  });
+
+  test('should_count_one_regressed_even_with_multiple_matching_findings', async () => {
+    const matching = { cellId: 'scheme-a:mastermind-b', anomalyClass: 'fatal' };
+    const recorder = makeRecorder((sql, values) => {
+      if (isInspectionSelect(sql)) {
+        // why (multiplicity unweighted): TWO findings match the same handoff's
+        // (cellId, anomalyClass); the diff is existential so it counts ONE regressed.
+        return [
+          makeInspectionReportRow(
+            [makeInspectionFinding(matching), makeInspectionFinding(matching)],
+            { report_id: 'report-new' },
+          ),
+        ];
+      }
+      if (isFixProposedLoad(sql)) {
+        return [
+          makeHandoffRow({
+            handoff_id: 'report-old#0',
+            report_id: 'report-old',
+            status: 'fix-proposed',
+            cell_id: 'scheme-a:mastermind-b',
+            anomaly_class: 'fatal',
+          }),
+        ];
+      }
+      if (isHandoffByIdLoad(sql)) {
+        return [makeHandoffRow({ handoff_id: 'report-old#0', report_id: 'report-old', status: 'fix-proposed' })];
+      }
+      if (isHandoffUpdate(sql)) {
+        return [makeHandoffRow({ handoff_id: 'report-old#0', report_id: 'report-old', status: values[1] })];
+      }
+      return [];
+    });
+    const summary = await verifyFixProposedHandoffs(recorder.database);
+    assert.deepEqual(summary, { reportId: 'report-new', verified: 0, regressed: 1, skipped: 0 });
+    const updates = recorder.recorded.filter((entry) => isHandoffUpdate(entry.sql));
+    assert.equal(updates.length, 1, 'exactly one transition despite two matching findings');
+    assert.equal(updates[0]!.values[1], 'claimed', 'transitioned to claimed (the re-open edge)');
+  });
+
+  test('should_skip_a_same_report_handoff_and_leave_it_fix_proposed', async () => {
+    const recorder = makeRecorder((sql) => {
+      if (isInspectionSelect(sql)) {
+        return [makeInspectionReportRow([], { report_id: 'report-same' })];
+      }
+      if (isFixProposedLoad(sql)) {
+        return [makeHandoffRow({ handoff_id: 'report-same#0', report_id: 'report-same', status: 'fix-proposed' })];
+      }
+      return [];
+    });
+    const summary = await verifyFixProposedHandoffs(recorder.database);
+    assert.deepEqual(summary, { reportId: 'report-same', verified: 0, regressed: 0, skipped: 1 });
+    assert.equal(
+      recorder.recorded.some((entry) => isHandoffUpdate(entry.sql)),
+      false,
+      'no transition for a same-report (no re-sweep) handoff',
+    );
+    assert.equal(
+      recorder.recorded.some((entry) => isHandoffByIdLoad(entry.sql)),
+      false,
+      'applyHandoffTransition is never invoked for a skipped handoff',
+    );
+  });
+
+  test('should_return_the_null_report_summary_over_an_empty_inspection_table', async () => {
+    const recorder = makeRecorder((sql) => {
+      if (isInspectionSelect(sql)) {
+        return [];
+      }
+      return [];
+    });
+    const summary = await verifyFixProposedHandoffs(recorder.database);
+    assert.deepEqual(summary, { reportId: null, verified: 0, regressed: 0, skipped: 0 });
+    assert.equal(recorder.recorded.length, 1, 'only the inspection accessor read — no fix-proposed load when there is no report');
+    assert.equal(
+      recorder.recorded.some((entry) => isFixProposedLoad(entry.sql)),
+      false,
+    );
+  });
+
+  test('should_read_the_latest_report_through_the_inspection_accessor_only', async () => {
+    const recorder = makeRecorder((sql) => {
+      if (isInspectionSelect(sql)) {
+        return [makeInspectionReportRow([], { report_id: 'report-new' })];
+      }
+      if (isFixProposedLoad(sql)) {
+        return [];
+      }
+      return [];
+    });
+    await verifyFixProposedHandoffs(recorder.database);
+    // The source-file grep gate (0 `FROM legendary.inspection_reports` in
+    // handoff.logic.ts) is the hard enforcement; this asserts the runtime
+    // delegation — exactly one inspection read, the canonical accessor form.
+    const inspectionReads = recorder.recorded.filter((entry) => isInspectionSelect(entry.sql));
+    assert.equal(inspectionReads.length, 1, 'exactly one inspection_reports read (the accessor)');
+    assert.match(inspectionReads[0]!.sql, /ORDER BY submitted_at DESC/);
+  });
+
+  test('should_load_only_fix_proposed_handoffs_via_the_status_filter', async () => {
+    // why (AC #6): the `WHERE status = 'fix-proposed'` filter is the mechanism
+    // that keeps open / claimed / escalated / resolved / wont-fix rows out of the
+    // verify loop — they are never read, never transitioned.
+    const recorder = makeRecorder((sql, values) => {
+      if (isInspectionSelect(sql)) {
+        return [makeInspectionReportRow([], { report_id: 'report-new' })];
+      }
+      if (isFixProposedLoad(sql)) {
+        assert.equal(values[0], 'fix-proposed');
+        return [];
+      }
+      return [];
+    });
+    const summary = await verifyFixProposedHandoffs(recorder.database);
+    assert.deepEqual(summary, { reportId: 'report-new', verified: 0, regressed: 0, skipped: 0 });
+    const load = recorder.recorded.find((entry) => isFixProposedLoad(entry.sql));
+    assert.ok(load, 'the fix-proposed load was issued');
+    assert.match(load.sql, /WHERE status = \$1/);
+  });
+
+  test('should_count_verified_and_regressed_independently_in_one_run', async () => {
+    const recorder = makeRecorder((sql, values) => {
+      if (isInspectionSelect(sql)) {
+        // only the 'cell-present' anomaly persists in the latest report.
+        return [
+          makeInspectionReportRow(
+            [makeInspectionFinding({ cellId: 'cell-present', anomalyClass: 'fatal' })],
+            { report_id: 'report-new' },
+          ),
+        ];
+      }
+      if (isFixProposedLoad(sql)) {
+        return [
+          makeHandoffRow({ handoff_id: 'report-old#0', report_id: 'report-old', status: 'fix-proposed', cell_id: 'cell-gone', anomaly_class: 'fatal' }),
+          makeHandoffRow({ handoff_id: 'report-old#1', report_id: 'report-old', status: 'fix-proposed', cell_id: 'cell-present', anomaly_class: 'fatal' }),
+        ];
+      }
+      if (isHandoffByIdLoad(sql)) {
+        return [makeHandoffRow({ handoff_id: values[0], report_id: 'report-old', status: 'fix-proposed' })];
+      }
+      if (isHandoffUpdate(sql)) {
+        return [makeHandoffRow({ handoff_id: values[0], report_id: 'report-old', status: values[1] })];
+      }
+      return [];
+    });
+    const summary = await verifyFixProposedHandoffs(recorder.database);
+    // cell-gone → resolved (verified); cell-present → claimed (regressed).
+    assert.deepEqual(summary, { reportId: 'report-new', verified: 1, regressed: 1, skipped: 0 });
+  });
+
+  test('should_catch_a_concurrent_advance_exclude_it_and_finish_the_rest', async () => {
+    // why (AC #9, load-bearing): a racing transition advances report-old#0 out of
+    // fix-proposed between this run's load and its guarded UPDATE, so the UPDATE
+    // matches 0 rows and the re-read sees a moved status → applyHandoffTransition
+    // THROWS HandoffTransitionError. The verify loop catches it, counts it in NO
+    // bucket, and finishes report-old#1 — no double-act, no lost update, no throw.
+    let racedLoadCount = 0;
+    const recorder = makeRecorder((sql, values) => {
+      if (isInspectionSelect(sql)) {
+        return [makeInspectionReportRow([], { report_id: 'report-new' })];
+      }
+      if (isFixProposedLoad(sql)) {
+        return [
+          makeHandoffRow({ handoff_id: 'report-old#0', report_id: 'report-old', status: 'fix-proposed', cell_id: 'cell-0', anomaly_class: 'fatal' }),
+          makeHandoffRow({ handoff_id: 'report-old#1', report_id: 'report-old', status: 'fix-proposed', cell_id: 'cell-1', anomaly_class: 'fatal' }),
+        ];
+      }
+      if (isHandoffByIdLoad(sql)) {
+        if (values[0] === 'report-old#0') {
+          racedLoadCount = racedLoadCount + 1;
+          // first load: still fix-proposed (legality passes); re-read after the
+          // 0-row guarded UPDATE: a racing writer already moved it to resolved.
+          return [makeHandoffRow({ handoff_id: 'report-old#0', report_id: 'report-old', status: racedLoadCount === 1 ? 'fix-proposed' : 'resolved' })];
+        }
+        return [makeHandoffRow({ handoff_id: values[0], report_id: 'report-old', status: 'fix-proposed' })];
+      }
+      if (isHandoffUpdate(sql)) {
+        // report-old#0's guarded UPDATE matches 0 rows (raced); the other succeeds.
+        if (values[0] === 'report-old#0') {
+          return [];
+        }
+        return [makeHandoffRow({ handoff_id: values[0], report_id: 'report-old', status: values[1] })];
+      }
+      return [];
+    });
+    const summary = await verifyFixProposedHandoffs(recorder.database);
+    assert.deepEqual(summary, { reportId: 'report-new', verified: 1, regressed: 0, skipped: 0 });
+    // accounting: verified + regressed + skipped (1) < initial fix-proposed count
+    // (2); the delta of 1 is exactly the caught concurrent miss, in no counter.
+    assert.equal(summary.verified + summary.regressed + summary.skipped, 1);
   });
 });

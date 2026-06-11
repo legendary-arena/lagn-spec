@@ -376,7 +376,10 @@ git diff package.json apps/server/package.json
 
 ## Lint Gate Self-Review
 
-Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`, all 21 sections reviewed 2026-06-10:
+Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`, all 21 sections reviewed 2026-06-10
+(re-affirmed 2026-06-10 after the audit-tightening edits per the 01.0a Step 5 re-run
+rule — pre-flight `READY TO EXECUTE` + copilot `PASS/CONFIRM` recorded the same day;
+scratchpads at `docs/ai/invocations/preflight-wp233-*.md` + `copilot-wp233-*.md`):
 
 | § | Verdict | Note |
 |---|---|---|

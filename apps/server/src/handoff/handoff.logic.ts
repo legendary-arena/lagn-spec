@@ -21,6 +21,16 @@
  *   6. `fetchLatestHandoffs(database)` — the latest report's rows under the locked
  *      deterministic ordering.
  *   7. `mapRowToHandoff(row)` — snake_case row -> camelCase `HandoffRecord`.
+ *   8. `isAnomalyResolved(handoff, report)` — true iff the handoff's snapshotted
+ *      `(cellId, anomalyClass)` is ABSENT from the latest report's findings
+ *      (existential, strict `===`, no coercion). Pure; no IO. (WP-233 / EC-265)
+ *   9. `verifyFixProposedHandoffs(database)` — closes the sweep loop: diffs each
+ *      `fix-proposed` handoff against the latest report (read via
+ *      `fetchLatestInspectionReport` ONLY) and transitions newer-report matches
+ *      `→ resolved` (anomaly gone) / `→ claimed` (anomaly present) through the
+ *      EXISTING `applyHandoffTransition`; same-report handoffs are skipped; a
+ *      concurrent advance is caught and excluded. Returns a `HandoffVerifySummary`.
+ *      (WP-233 / EC-265)
  *
  * Plus `HandoffNotFoundError` (404) + `HandoffTransitionError` (409) the route
  * layer maps to status codes.
@@ -36,7 +46,9 @@
  *
  * Layer-boundary contract: imports only `./handoff.types.js`,
  * `../inspection/inspection.logic.js` (the `fetchLatestInspectionReport`
- * accessor — one source of truth), and `pg` (for the `Pool` type). No
+ * accessor — one source of truth), `../inspection/inspection.types.js`
+ * (type-only — `InspectionReportSummary`, the verify diff's report shape), and
+ * `pg` (for the `Pool` type). No
  * `boardgame.io`, no `@legendary-arena/game-engine`, no `apps/dashboard/**`. The
  * INSERT / UPDATE statements enumerate columns explicitly (positional form
  * forbidden — D-20701 carry-forward); `created_at` is omitted on INSERT (column
@@ -46,18 +58,25 @@
  * EC-264 §Locked Values + §Guardrails + §Required `// why:` Comments; D-23201
  * (storage shape + snapshot posture); D-23202 (lifecycle state machine + atomic
  * transition + plumbing-only lock); D-23203 (idempotent sync + source-of-truth
- * accessor).
+ * accessor). The additive closed-loop verify (`isAnomalyResolved` +
+ * `verifyFixProposedHandoffs`) is authorized by WP-233 §Locked Type Contracts +
+ * §Non-Negotiable Constraints; EC-265 §Locked Values + §Guardrails + §Required
+ * `// why:` Comments; D-23301 (closed-loop verification posture: full-report
+ * `(cellId, anomalyClass)` diff, newer-report-only guard, lifecycle reuse with no
+ * new state, server-authoritative transitions, concurrent-miss catch).
  */
 
 import type { Pool } from 'pg';
 
 import { fetchLatestInspectionReport } from '../inspection/inspection.logic.js';
+import type { InspectionReportSummary } from '../inspection/inspection.types.js';
 import type {
   HandoffRecord,
   HandoffStatus,
   HandoffStatusCounts,
   HandoffSyncSummary,
   HandoffTransitionPayload,
+  HandoffVerifySummary,
   InspectionRoute,
   InspectionSeverity,
 } from './handoff.types.js';
@@ -330,6 +349,126 @@ export async function applyHandoffTransition(
     throw new HandoffTransitionError(handoffId, movedRow.status, payload.toStatus);
   }
   return mapRowToHandoff(updateResult.rows[0] as Record<string, unknown>);
+}
+
+/**
+ * Returns `true` iff the handoff's snapshotted anomaly is GONE from the latest
+ * inspection report — NO finding in `report.findings` matches BOTH the handoff's
+ * `cellId` and its `anomalyClass`. Existential, NOT a count: a single match is
+ * enough to declare the anomaly still PRESENT, so a future engineer must never
+ * weight, score, or tie-break on the number of matches. Pure — no IO.
+ *
+ * Matching is strict `===` on each field with NO coercion. A run-level
+ * finding/handoff carries `cellId: null`; `null === null` is a valid run-level
+ * match, and a `string` cellId never matches `null`. Both `mapRowToHandoff` and
+ * `InspectionFinding` already supply `cellId: string | null`, so the two sides
+ * arrive pre-normalized and are compared raw (never `String()` / `?? ''` /
+ * `"null"`). `anomalyClass` is the opaque string compared as-is (no engine union
+ * import — D-23103 carry-forward); the LLM-nondeterministic finding `description`
+ * is never read.
+ */
+export function isAnomalyResolved(
+  handoff: HandoffRecord,
+  report: InspectionReportSummary,
+): boolean {
+  for (const finding of report.findings) {
+    if (finding.cellId === handoff.cellId && finding.anomalyClass === handoff.anomalyClass) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Closes the sweep loop: verifies every `fix-proposed` handoff against the latest
+ * (re-sweep) inspection report and transitions it through the EXISTING WP-232
+ * lifecycle (no new state). Returns a `HandoffVerifySummary`.
+ *
+ * The latest report is obtained through the inspection library accessor
+ * (`fetchLatestInspectionReport`) — see the source-of-truth `// why:` below; the
+ * `fix-proposed` rows are loaded with a single `WHERE status = 'fix-proposed'`
+ * SELECT against this module's own `finding_handoffs` table. For each handoff:
+ *
+ *   1. `R` null (empty `inspection_reports`) → no-op; all-zero, `reportId: null`.
+ *   2. `H.reportId === R.reportId` → `skipped` (no re-sweep has run since the fix).
+ *   3. else `isAnomalyResolved(H, R)` → gone ⇒ `resolved` (verified); present ⇒
+ *      `claimed` (regressed) — both through the existing `applyHandoffTransition`.
+ *
+ * Explicit `for...of`, never an array fold. Each handoff is diffed independently
+ * against the SAME immutable report, so processing order is outcome-irrelevant.
+ * `verified + regressed + skipped <= ` the initial `fix-proposed` count — the
+ * delta is the concurrent misses the per-transition catch excludes.
+ */
+export async function verifyFixProposedHandoffs(
+  database: DatabaseClient,
+): Promise<HandoffVerifySummary> {
+  const latestReport = await fetchLatestInspectionReport(database);
+  if (latestReport === null) {
+    return { reportId: null, verified: 0, regressed: 0, skipped: 0 };
+  }
+  // why (D-23203, source of truth): the latest report arrives ONLY through the
+  // inspection library accessor above — this module issues NO direct query
+  // against the inspection-reports table (Verification step 4 counts that policed
+  // literal at 0 here). The `fix-proposed` rows below come from this module's OWN
+  // handoff table, which it is free to read directly.
+  const fixProposedResult = await database.query(
+    `SELECT ${HANDOFF_ROW_COLUMNS} FROM legendary.finding_handoffs WHERE status = $1`,
+    ['fix-proposed'],
+  );
+  let verified = 0;
+  let regressed = 0;
+  let skipped = 0;
+  for (const dbRow of fixProposedResult.rows) {
+    const handoff = mapRowToHandoff(dbRow as Record<string, unknown>);
+    // why (D-23301, newer-report guard): a `fix-proposed` handoff is verified ONLY
+    // against a report NEWER than its origin (the `reportId` differs). When the
+    // latest report IS the handoff's origin report, no re-sweep has run since the
+    // fix was recorded, so the still-pre-fix report is not evidence — diffing
+    // against it would falsely regress the fix. Same-report handoffs are skipped.
+    if (handoff.reportId === latestReport.reportId) {
+      skipped = skipped + 1;
+      continue;
+    }
+    // why (D-23301, reuse-not-new-state): verification reuses the existing
+    // lifecycle — anomaly gone ⇒ `resolved`, anomaly present ⇒ `claimed` (the
+    // re-open edge WP-232 reserved); NO `verified` state is added (operator
+    // decision). Transitioning through `applyHandoffTransition` inherits its
+    // guarded UPDATE so the diff is server-authoritative and concurrency-safe.
+    const isResolved = isAnomalyResolved(handoff, latestReport);
+    const toStatus: HandoffStatus = isResolved === true ? 'resolved' : 'claimed';
+    try {
+      await applyHandoffTransition(database, handoff.handoffId, {
+        handoffId: handoff.handoffId,
+        toStatus,
+      });
+      if (isResolved === true) {
+        verified = verified + 1;
+      } else {
+        regressed = regressed + 1;
+      }
+    } catch (concurrentAdvanceError) {
+      if (
+        concurrentAdvanceError instanceof HandoffTransitionError ||
+        concurrentAdvanceError instanceof HandoffNotFoundError
+      ) {
+        // why (D-23301, concurrent-miss catch): `applyHandoffTransition` THROWS
+        // when a concurrent writer advanced this row out of `fix-proposed`
+        // between the load above and its guarded UPDATE — a `HandoffTransitionError`
+        // (its legality re-check or its 0-rows re-read) or a `HandoffNotFoundError`
+        // (the row was deleted mid-run). That handoff was already acted on by the
+        // other writer, so it is intentionally skipped — NOT retried, counted in
+        // NO bucket — and the loop continues with the rest. Swallowing the throw
+        // here is safe and deliberate (00.6 swallowed-error rule): the opposite of
+        // an unhandled abort that would 500 with the remaining handoffs
+        // unprocessed. A non-concurrency fault is NOT swallowed — it re-throws to
+        // the route's 500.
+        void concurrentAdvanceError;
+      } else {
+        throw concurrentAdvanceError;
+      }
+    }
+  }
+  return { reportId: latestReport.reportId, verified, regressed, skipped };
 }
 
 /**

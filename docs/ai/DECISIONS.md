@@ -23987,8 +23987,8 @@ diff against the next nightly full sweep, not a targeted subset re-sweep
 optimization over this same contract.
 
 **Packet:** WP-233 (EC-265).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-10 (EC-265).
+**Status:** Active
 
 ---
 
@@ -24014,8 +24014,8 @@ first run transitioned them out) and a run against an unchanged report only
 (request failure).
 
 **Packet:** WP-233 (EC-265).
-**Drafted:** 2026-06-10 (reserved). **Landed:** TBD (execution close).
-**Status:** Reserved (proposed)
+**Drafted:** 2026-06-10 (reserved). **Landed:** 2026-06-10 (EC-265).
+**Status:** Active
 
 ---
 

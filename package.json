@@ -24,6 +24,7 @@
     "inspection:triage":    "node scripts/inspection-triage.mjs",
     "inspection:submit":    "node scripts/inspection-submit.mjs",
     "handoffs:sync":        "node scripts/handoffs-sync.mjs",
+    "handoffs:verify":      "node scripts/handoffs-verify.mjs",
 
     "check":                "node --env-file=.env scripts/check-connections.mjs",
     "check:ec":             "node --env-file=.env scripts/ec/health-check.ec.mjs",

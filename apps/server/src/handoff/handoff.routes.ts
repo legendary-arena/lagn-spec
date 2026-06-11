@@ -1,7 +1,7 @@
 /**
  * Handoff HTTP Routes — Server Layer (WP-232 / EC-264)
  *
- * Registers three HTTP endpoints on the existing Koa router returned by
+ * Registers four HTTP endpoints on the existing Koa router returned by
  * boardgame.io's `Server({...})` instance:
  *
  *   * `POST /api/handoffs/sync` — `guest` per D-9905 with shared-secret header
@@ -9,6 +9,15 @@
  *     helper). Idempotently materializes one `open` handoff per finding of the
  *     latest inspection report (read via `fetchLatestInspectionReport` only).
  *     Status-code domain `{200, 401, 413, 500}`.
+ *
+ *   * `POST /api/handoffs/verify` — `guest` per D-9905 with the same shared-secret
+ *     header (the WP-233 closed-loop verify; body ignored). Reads the latest
+ *     inspection report via `fetchLatestInspectionReport` only, loads every
+ *     `fix-proposed` handoff, and — for each whose origin `reportId` differs from
+ *     the latest report's — diffs its `(cellId, anomalyClass)` and transitions it
+ *     `→ resolved` (anomaly gone) or `→ claimed` (anomaly present) through the
+ *     EXISTING `applyHandoffTransition` (no new lifecycle state). Returns
+ *     `{ data: HandoffVerifySummary }`. Status-code domain `{200, 401, 413, 500}`.
  *
  *   * `POST /api/handoffs/transition` — `guest` per D-9905 with the same
  *     shared-secret header. `handoffId` travels in the BODY (not the path).
@@ -41,7 +50,11 @@
  * Authority: WP-232 §Locked Type Contracts + §Non-Negotiable Constraints +
  * §Acceptance Criteria; EC-264 §Locked Values + §Guardrails + §Required `// why:`
  * Comments; D-23201..D-23203; D-9905 (auth taxonomy); D-10403 (session-code
- * collapse); D-11504 (Cache-Control first-statement lock).
+ * collapse); D-11504 (Cache-Control first-statement lock). The additive
+ * `POST /api/handoffs/verify` handler is authorized by WP-233 §Non-Negotiable
+ * Constraints + §Acceptance Criteria; EC-265 §Locked Values + §Guardrails; D-23301
+ * (closed-loop verification posture) + D-23302 (autonomous-action verify — the
+ * first autonomous-ACTION surface in the pipeline, NOT a code-writer).
  */
 
 import type {
@@ -65,6 +78,7 @@ import {
   countHandoffsByStatus,
   fetchLatestHandoffs,
   syncHandoffsFromLatestReport,
+  verifyFixProposedHandoffs,
 } from './handoff.logic.js';
 import type { HandoffStatus, HandoffTransitionPayload } from './handoff.types.js';
 import { HANDOFF_STATUSES } from './handoff.types.js';
@@ -347,6 +361,51 @@ export function registerHandoffRoutes(
         }
       }
       const summary = await syncHandoffsFromLatestReport(database);
+      koaContext.status = 200;
+      koaContext.body = { data: summary };
+    } catch (caughtError) {
+      // why: never re-throw to a global Koa handler — the 500 envelope is locked
+      // at `{ data: [], error: 'internal_error' }`. The caught value is
+      // intentionally discarded; the response body must not echo SQL fragments or
+      // stack traces.
+      void caughtError;
+      koaContext.status = 500;
+      koaContext.body = POST_FAILURE_ENVELOPES.internalError;
+    }
+  });
+
+  router.post('/api/handoffs/verify', koaBody(), async (koaContext) => {
+    // why (D-11504): `Cache-Control: no-store` first-statement lock ensures error
+    // paths cannot ship cacheable responses.
+    koaContext.set('Cache-Control', 'no-store');
+    try {
+      // Step 1 (auth). A 401 issues no DB query (validation-before-read).
+      const headerToken = readHandoffTokenHeader(koaContext.request);
+      if (validateSharedSecret(headerToken, deps.handoffSubmitToken) === false) {
+        koaContext.status = 401;
+        koaContext.body = POST_FAILURE_ENVELOPES.unauthorized;
+        return;
+      }
+      // Step 2 (body size). The verify body is IGNORED (the endpoint always
+      // verifies the latest report), but the 64 KB cap is enforced defensively so
+      // an oversize POST is rejected with 413 before any DB I/O — the same
+      // validation-before-read posture as the sync handler.
+      const rawBody = koaContext.request.body;
+      if (rawBody !== undefined && rawBody !== null) {
+        const bodyLength = measureBodyLength(rawBody);
+        if (bodyLength !== null && bodyLength > POST_BODY_SIZE_CAP_BYTES) {
+          koaContext.status = 413;
+          koaContext.body = POST_FAILURE_ENVELOPES.payloadTooLarge;
+          return;
+        }
+      }
+      // why (D-23302): the autonomy here is the verify-and-transition loop, NOT a
+      // code-writer — the server confirms (`→ resolved`) or regresses
+      // (`→ claimed`) fixes a human or a future autonomous Builder pushed; it
+      // writes no fix, opens no PR, and edits no spec. Step 3 (the diff + the
+      // EXISTING-lifecycle transitions) is the first DB access, AFTER the auth +
+      // size validation above.
+      const summary = await verifyFixProposedHandoffs(database);
       koaContext.status = 200;
       koaContext.body = { data: summary };
     } catch (caughtError) {

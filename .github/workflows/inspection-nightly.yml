@@ -111,6 +111,23 @@ jobs:
           HANDOFF_SUBMIT_TOKEN: ${{ secrets.HANDOFF_SUBMIT_TOKEN }}
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
 
+      # Step 5 (WP-233 / D-23302) — close the loop: POST /api/handoffs/verify
+      # diffs every fix-proposed handoff against the latest (re-sweep) inspection
+      # report and transitions each newer-report match -> resolved (anomaly gone)
+      # or -> claimed (anomaly present) through the existing WP-232 lifecycle.
+      # `if: success()` so a failed sync never verifies against a stale queue;
+      # runs AFTER handoffs:sync. Additive — every step above is byte-unchanged.
+      - name: Verify handoff fixes
+        if: success()
+        run: pnpm handoffs:verify
+        env:
+          # why (D-23302): the verify endpoint REUSES the handoff submit token
+          # (POST /api/handoffs/verify gates on X-Handoff-Token); no new secret —
+          # both ends (this Actions secret + the Render HANDOFF_SUBMIT_TOKEN) stay
+          # in lockstep with the sync step above.
+          HANDOFF_SUBMIT_TOKEN: ${{ secrets.HANDOFF_SUBMIT_TOKEN }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+
       # why (WP-231 §CI Failure Semantics): on ANY failure preserve the sweep
       # input + agent output for operator forensic — inspect a failed nightly
       # without re-running the agent. Runs only on failure.
