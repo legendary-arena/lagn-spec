@@ -28,10 +28,12 @@ last-reviewed: 2026-06-11
 
 The develop-from-anywhere loop describes how a change travels from idea
 to production for `legendary-arena.com`. Three operator surfaces (laptop,
-home workstation, phone) drive Claude Code sessions that build to WP/EC
-contracts, commit to GitHub, and deploy automatically via Render and
-Cloudflare on merge to `main`. A nightly CI triage agent closes the loop
-by generating new work packets from sweep results.
+home workstation, phone) drive Claude Code sessions that build to
+**WP/EC** contracts (Work Packet — scoped unit of work; Execution
+Checklist — the quick-reference compliance contract for that WP), commit
+to GitHub, and deploy automatically via Render and Cloudflare on merge to
+`main`. A nightly CI triage agent closes the loop by generating new work
+packets from sweep results.
 
 The home workstation is a personal cloud-grade dev + AI server: always-on,
 remotely accessible via Tailscale, and ready for local AI models. It
@@ -42,6 +44,41 @@ This document is structured around the **Four C's framework** (Nate Herk,
 "AI Operating System" — see References): Context, Connections,
 Capabilities, and Cadence. Each section of the workflow maps to one or
 more of these layers.
+
+## Quick Start (new machine → first deploy)
+
+Copy-paste sequence to go from a fresh Windows machine to a working
+dev environment. Assumes Windows 10/11 Pro with internet access.
+
+```powershell
+# 1. Install prerequisites
+winget install Tailscale.Tailscale
+winget install OpenJS.NodeJS --version 22.16.0
+npm install -g pnpm@latest
+npm install -g @anthropic-ai/claude-code
+
+# 2. Authenticate
+claude auth login
+
+# 3. Clone and build
+cd C:\dev
+git clone https://github.com/barefootbetters/legendary-arena.git
+cd legendary-arena
+pnpm install
+
+# 4. Copy .env from existing machine (one time)
+# scp user@laptop-tailscale-ip:C:/path/to/legendary-arena/.env .
+
+# 5. Validate everything
+pnpm check           # probes all 11 env vars + external services
+pnpm test            # run all tests
+pnpm -r build        # build all packages
+
+# 6. Open Tailscale, sign in, verify devices visible
+# 7. Enable Remote Desktop: Settings → System → Remote Desktop → ON
+```
+
+If `pnpm check` passes and tests are green, the machine is ready.
 
 ## Mechanics
 
@@ -82,6 +119,115 @@ Not part of the committed stack. The workstation may host Claude Code as
 primary orchestrator and local AI models (future: 7B–14B for
 experimentation, 70B+ for heavy reasoning). This reduces external API
 dependency and enables long-running autonomous workflows.
+
+### AI system flow
+
+```mermaid
+flowchart TD
+    subgraph surfaces["Operator Surfaces"]
+        laptop["Laptop"]
+        workstation["Home Workstation"]
+        phone["Phone"]
+    end
+
+    subgraph control["Control Plane"]
+        tailscale["Tailscale Network"]
+    end
+
+    subgraph orchestrator["AI Orchestration"]
+        claude["Claude Code<br/>(primary orchestrator)"]
+        ollama["Ollama Local Models<br/>(7B–70B, future)"]
+    end
+
+    subgraph external["External AI (operator-directed)"]
+        copilot["GitHub Copilot<br/>(inline code assist)"]
+        grok["Grok / Other LLMs<br/>(alt reasoning)"]
+    end
+
+    subgraph pipeline["CI + Deploy Pipeline"]
+        github["GitHub Repo"]
+        ci["GitHub Actions CI"]
+        inspector["Claude CI Inspector<br/>(nightly triage)"]
+        wp["New Work Packets"]
+    end
+
+    subgraph deploy["Deploy Targets"]
+        render["Render<br/>(server + PostgreSQL)"]
+        pages["Cloudflare Pages<br/>(front-ends)"]
+        r2["Cloudflare R2<br/>(images + metadata)"]
+    end
+
+    laptop --> tailscale
+    workstation --> tailscale
+    phone --> tailscale
+    tailscale --> workstation
+
+    laptop -->|"Claude Code session"| claude
+    workstation -->|"Claude Code session"| claude
+    workstation -->|"local inference"| ollama
+    ollama -->|"results"| claude
+    phone -->|"PR review + merge"| github
+
+    claude -->|"commit (2-step topology)"| github
+    claude -->|"rclone sync"| r2
+    github -->|"PR + CI checks"| ci
+    ci -->|"nightly cron"| inspector
+    inspector -->|"findings → new WPs"| wp
+    wp -->|"next session"| claude
+
+    github -->|"merge to main"| render
+    github -->|"merge to main"| pages
+
+    ci -.->|"failures / logs"| claude
+    render -.->|"runtime signals"| claude
+    pages -.->|"deploy status"| claude
+
+    classDef future stroke-dasharray:6;
+    class ollama future;
+    class copilot future;
+    class grok future;
+```
+
+> **Dashed** nodes are future or operator-discretionary — not part of the
+> committed orchestration loop.
+
+**Key architectural points:**
+
+- **Claude Code is the single orchestrator.** All implementation work
+  flows through it — WP/EC execution, local gates, commits, deploys.
+  It does not delegate to Copilot or Grok; those are separate tools the
+  operator may use independently for inline assists or alternative
+  reasoning.
+
+- **Dual AI layer (current + future).** Today: Claude Code (API-based)
+  is the only AI in the loop. Future: Ollama on the workstation adds
+  local inference for experimentation, long-running tasks, and reduced
+  API dependency. The orchestrator-to-local-model relationship is
+  Claude Code calling Ollama, not the reverse.
+
+- **Closed feedback loop.** The system is self-sustaining:
+  `Claude Code → GitHub → CI → Inspector → new WPs → Claude Code`.
+  Yesterday's deploy becomes today's backlog via nightly triage.
+
+- **External AI is operator-directed, not orchestrated.** GitHub Copilot
+  (inline code suggestions) and other LLMs (Grok, ChatGPT, etc.) are
+  tools the operator reaches for directly. They are not part of the
+  automated pipeline and Claude Code does not route tasks to them.
+
+**Future: AI routing (when local models are operational):**
+
+```mermaid
+flowchart LR
+    claude["Claude Code"] --> decision{Task type}
+    decision -->|"heavy reasoning"| api["Claude API<br/>(Opus / Sonnet)"]
+    decision -->|"experimentation"| ollama["Ollama<br/>(local 7B–70B)"]
+    decision -->|"code completion"| copilot["Copilot<br/>(inline)"]
+```
+
+This routing is aspirational. Today all AI tasks go through Claude Code's
+API. When Ollama is operational on the workstation, the operator can
+choose which model handles which class of task — but the routing is
+manual (operator choice), not automated.
 
 ## Four C's Assessment
 
@@ -382,14 +528,115 @@ them immediately at each service's dashboard.
 
 ### Phase 7 — Local AI models (optional)
 
+Local open-source models run on the workstation via Ollama. This layer
+is optional and future-facing — Claude Code remains the primary
+orchestrator. Local models add private inference, batch/long-running
+capacity, and reduced API dependency.
+
+**Install and smoke-test:**
+
 1. Install Ollama from `https://ollama.com`
-2. Run a test model: `ollama run mistral`
+2. Pull and run a starter model: `ollama run qwen2.5-coder:7b`
+3. Confirm the API is up: `curl http://localhost:11434/api/tags`
 
-**Pass condition:** model responds locally.
+**Pass condition:** model responds in the terminal and `/api/tags`
+lists it.
 
-This layer is future infrastructure — Claude Code remains the primary
-orchestrator. Local models (7B–70B) add experimentation capacity and
-reduce external API dependency.
+#### Model selection (open source)
+
+Pick models by task. Model releases move fast — check
+`https://ollama.com/library` for current versions and tags. Sizes
+below are the `:Nb` parameter counts; all run quantized (Q4) by default.
+
+| Task | Recommended models | Notes |
+|---|---|---|
+| **Coding / refactor** | `qwen2.5-coder` (7B / 14B / 32B), `deepseek-coder-v2` | Strongest open coding models; 14B is the sweet spot for most GPUs |
+| **General reasoning** | `llama3.1:8b`, `qwen2.5` (7B / 14B), `gemma2:9b` | Balanced quality vs. speed |
+| **Heavy reasoning** | `llama3.3:70b`, `qwen2.5:72b`, `deepseek-r1` | Needs a high-VRAM GPU; chain-of-thought models are slower |
+| **Fast / drafting** | `llama3.2:3b`, `phi3`, `gemma2:2b` | Run on CPU or modest GPU; good for quick passes |
+| **Embeddings** | `nomic-embed-text`, `mxbai-embed-large` | For local semantic search / RAG experiments |
+| **Vision** | `llama3.2-vision`, `llava` | Image description / OCR-style tasks |
+
+Start with `qwen2.5-coder:7b` (coding) and `llama3.1:8b` (general).
+Add a 70B model only if the GPU supports it.
+
+#### Hardware sizing
+
+Rough VRAM needed per model tier (Q4 quantization). System RAM should
+be at least the model's on-disk size; without enough VRAM, Ollama
+spills to CPU and runs far slower.
+
+| Model size | VRAM (GPU) | Realistic on |
+|---|---|---|
+| 1–3B | ~2–4 GB | Any modern GPU, or CPU-only |
+| 7–8B | ~6–8 GB | RTX 3060 / 4060 (8 GB) and up |
+| 13–14B | ~10–16 GB | RTX 4070 Ti / 4080 (12–16 GB) |
+| 32B | ~20–24 GB | RTX 4090 / 3090 (24 GB) |
+| 70B+ | ~40–48 GB | Dual-GPU, A6000, or CPU-offload (slow) |
+
+CPU-only inference works for the 1–8B tier but is much slower; use it
+for batch/overnight jobs, not interactive sessions.
+
+#### Sharing local-model results back to Claude Code
+
+Local models are not in Claude Code's automated loop — they produce raw
+output the operator (or Claude Code) consumes. Three handoff patterns,
+simplest first. All treat local-model output as **unverified draft
+input**: a 7B model's claim is not a citation, and the repo's
+determinism / citation rules still apply before anything lands.
+
+**Pattern A — File handoff (recommended default).** The local model
+writes to a gitignored scratch file; Claude Code reads it next turn.
+Deterministic, no live coupling, fits the "files are the interface"
+model.
+
+```powershell
+# Operator runs the local model, drops output to a scratch file
+ollama run qwen2.5-coder:14b "List failure modes in zoneOps.ts" > scratch/ollama-out.md
+```
+
+Then in a Claude Code session: *"Read `scratch/ollama-out.md` and fold
+the valid points into the WP draft."* Claude Code reads the file, keeps
+what survives review, and discards the rest.
+
+**Pattern B — Script-driven via the API.** For repeatable or batch work,
+a script in `scripts/` queries Ollama's OpenAI-compatible endpoint
+(`http://localhost:11434/v1/chat/completions`) and writes structured
+output. Claude Code can both run the script (PowerShell / Bash tool) and
+read its output.
+
+```powershell
+# Example: query Ollama, write JSON for Claude Code to consume
+$body = @{ model = "qwen2.5-coder:14b"; messages = @(@{ role = "user"; content = "..." }) } | ConvertTo-Json
+Invoke-RestMethod -Uri http://localhost:11434/v1/chat/completions -Method Post -Body $body -ContentType application/json |
+  ConvertTo-Json -Depth 10 > scratch/ollama-result.json
+```
+
+**Pattern C — Direct invocation by Claude Code.** Because Claude Code
+runs shell commands, it can call Ollama itself and capture stdout — no
+manual handoff. Most integrated; the model must be pulled and the
+session must reach `localhost:11434` (or the workstation's Ollama over
+Tailscale).
+
+```powershell
+# Claude Code runs this via its PowerShell tool and reads the output directly
+ollama run llama3.1:8b "Summarize the diff in apps/server/src/server.mjs"
+```
+
+To make local models a first-class tool, expose Ollama as an MCP server
+in Claude Code's config — then Claude can route specific subtasks to a
+local model the same way it uses any other tool. This is operator
+discretion, not automated routing (see the
+[AI system flow](#ai-system-flow) future-routing note).
+
+> **Governance:** scratch outputs are gitignored and never committed —
+> same posture as `docs/ai/invocations/` scratchpads. Add a `scratch/`
+> entry to `.gitignore` before using these patterns. Local-model output
+> informs work; it does not author it.
+
+**Pass condition:** a local model produces output, and Claude Code can
+read it from a scratch file (Pattern A) or invoke the model directly
+(Pattern C).
 
 ### Security hardening
 
@@ -411,6 +658,11 @@ reduce external API dependency.
 - Tailscale replaces all of this safely — all traffic is encrypted
   end-to-end through the mesh
 
+**If exposing Ollama across machines** (Pattern C over Tailscale): bind
+Ollama to the Tailscale interface, not `0.0.0.0`. Set
+`OLLAMA_HOST=<workstation-tailscale-ip>:11434` so the API is reachable
+only inside the mesh — never bind it to a public interface.
+
 ### Final checklist
 
 | Check | Required |
@@ -422,7 +674,8 @@ reduce external API dependency.
 | `.env` copied and `pnpm check` passes | Yes |
 | Repo builds successfully | Yes |
 | System set to never sleep | Yes |
-| Ollama installed | Optional |
+| Ollama installed + model pulled | Optional |
+| Local-model → Claude Code handoff tested (`scratch/` gitignored) | Optional |
 
 ## Multi-Machine Setup
 
@@ -566,6 +819,99 @@ truth.
 | Syncing code between machines | No — use `git push` / `git pull` |
 | Editing files directly in pCloud | No — use a local clone |
 
+### Branch and PR policy
+
+| Rule | Value |
+|---|---|
+| Branch naming | `claude/<wp-slug>` for WP work, `docs/<slug>` for docs, `fix/<slug>` for hotfixes |
+| Merge strategy | Squash-merge to `main` (single commit per PR) |
+| Required CI checks | Build, test, commit hygiene, registry validation |
+| Commit topology (WP work) | Two commits: `EC-NNN:` implementation + `SPEC:` governance close |
+| Commit topology (non-WP) | Single commit with `INFRA:` or `SPEC:` prefix — no two-commit requirement |
+| Emergency hotfix | Single-commit `fix/` branch, `INFRA:` prefix, squash-merge directly. Skip EC/SPEC topology. If the fix touches engine logic, open a reconciliation `SPEC:` PR within 24 hours documenting what changed and why. |
+| `pnpm check` | Local operator gate — not a CI merge gate. Run after machine setup and before investigating production issues. |
+
+**Commit prefix rules** (enforced by pre-commit hook):
+
+| Prefix | When to use |
+|---|---|
+| `EC-NNN:` | Work packet implementation (must have a matching EC) |
+| `SPEC:` | Governance close, WP/EC drafting, doc-only changes |
+| `INFRA:` | Infrastructure, tooling, CI, non-WP operational changes |
+
+### Secrets rotation
+
+**Rotation cadence:** No fixed schedule. Rotate immediately on:
+
+- Suspected compromise (key in logs, chat, email, public repo)
+- Employee offboarding (if applicable)
+- Service breach notification from a provider
+
+**Rotation order** (highest impact first):
+
+1. `DATABASE_URL` — rotate the PostgreSQL password in Render, update
+   `.env` on all machines, verify with `pnpm check`
+2. `ANTHROPIC_API_KEY` — regenerate at `console.anthropic.com`, update
+   `.env`, re-auth Claude Code (`claude auth login`)
+3. `JWT_SECRET` — rotate in Render env vars; active sessions invalidate
+   on next server restart
+4. GitHub tokens — regenerate in GitHub Settings → Developer settings →
+   Personal access tokens
+5. Cloudflare API tokens — regenerate in Cloudflare dashboard →
+   My Profile → API Tokens
+6. `rclone` R2 credentials — regenerate in Cloudflare R2 → Manage R2
+   API Tokens, update `rclone.conf`
+
+**Verification after rotation:** Run `pnpm check` on every machine with
+the updated `.env`. All probes must pass. If a deploy surface uses the
+rotated secret (Render, GitHub Actions), trigger a manual deploy or CI
+run to confirm.
+
+### Version pinning
+
+| Tool | Minimum | Pinned where | Upgrade path |
+|---|---|---|---|
+| Node.js | v22+ | `pnpm check` validates major version | `winget upgrade OpenJS.NodeJS`; run `pnpm test` after |
+| pnpm | v8+ | `pnpm check` validates major version | `npm install -g pnpm@latest`; run `pnpm install --frozen-lockfile` to verify lockfile compatibility |
+| boardgame.io | `0.50.x` (locked) | `package.json` + `pnpm check` verifies exact range | Do NOT upgrade without a DECISIONS.md entry — API surface changes are breaking |
+| Hugo | `0.135.0 Extended` | `apps/wiki-viewer/.hugo-version` | Update `.hugo-version` + test with `pnpm wiki-viewer:build`; needs DECISIONS entry |
+| rclone | v1.60+ | Not pinned; `pnpm check` verifies binary exists | `winget upgrade Rclone.Rclone`; verify with `rclone lsd r2:legendary-images` |
+| Tailscale | Latest | Auto-updates by default | No action needed |
+
+**Upgrade rule:** Never upgrade a pinned tool mid-WP. Upgrade between
+work packets on a clean `main`, run the full test suite, and commit the
+version bump as its own `INFRA:` change.
+
+### Cadence ownership
+
+| System | Runner | Check | Frequency | Failure response |
+|---|---|---|---|---|
+| Nightly Inspector triage | GitHub Actions | Workflow completes green | Daily | Investigate in next operator session |
+| Architecture inventory | GitHub Actions | PR generated on diff | Weekly (Mon 06:00 UTC) | Non-blocking; check Actions tab |
+| Auto-deploy (Render) | Render | Deploy status: Live | On merge to `main` | Check Render Events log; revert PR if needed |
+| Auto-deploy (Pages) | Cloudflare | Build status: Success | On merge to `main` | Check Pages Deployments log; revert PR if needed |
+| Uptime probes | Operator | `pnpm check` all green | Manual (run after deploys, incidents, machine setup) | Fix before proceeding |
+| Subdomain health | Operator | `pnpm check:domains` no FAILs | Manual (run after DNS/TLS changes) | Follow `dns:`/`tls:` diagnostics |
+
+No SLA beyond "investigate in next operator session" — this is a
+one-person operation. If cadence jobs gain external consumers or uptime
+commitments, formalize response times then.
+
+### Deploy rollback
+
+Each deploy surface has a deterministic rollback path.
+
+| Surface | Fail signal | Rollback action | Verification |
+|---|---|---|---|
+| **Render** (server) | Health check fails, migration error, 5xx spike | Revert the PR on GitHub → merge revert to `main` → Render auto-redeploys | `curl $GAME_SERVER_URL/health` returns 200 |
+| **Cloudflare Pages** (front-ends) | Build failure, missing assets, blank page | Revert the PR → merge to `main` → Pages auto-rebuilds | Site loads at `play.legendary-arena.com` |
+| **Cloudflare R2** (images/metadata) | Missing or corrupted assets | Re-run last known good `rclone sync` from operator machine | `pnpm check` R2 probe passes |
+| **GitHub Actions** (CI/triage) | Workflow fails or produces bad output | Fix the workflow file or inputs → push to `main` | Workflow re-runs green |
+
+**Rollback rule:** Always revert via a new PR to `main` (which triggers
+a clean redeploy), never via Render/Cloudflare dashboard rollback buttons
+— those create drift between the repo and deployed state.
+
 ## Interactions
 
 - **Committed stack:** GitHub, Render, Cloudflare, CI, governance — all
@@ -580,6 +926,28 @@ truth.
 - **WP/EC execution:** for the drafting and execution mechanics, see
   [01.0a-wp-drafting-phase.md](../docs/ai/REFERENCE/01.0a-wp-drafting-phase.md)
   and [01.0b-wp-execution-phase.md](../docs/ai/REFERENCE/01.0b-wp-execution-phase.md).
+
+## Troubleshooting
+
+| Symptom | Likely cause | Command | Pass condition |
+|---|---|---|---|
+| `pnpm check` fails on PostgreSQL | Wrong `DATABASE_URL` or DB unreachable | Check `.env`; `psql $DATABASE_URL -c "SELECT 1"` | Returns `1` |
+| `pnpm check` fails on Hanko JWKS | `HANKO_TENANT_BASE_URL` wrong or Hanko down | `curl $HANKO_TENANT_BASE_URL/.well-known/jwks.json` | Returns JSON with keys |
+| `pnpm check` fails on R2 | Cloudflare bot rules blocking or `R2_PUBLIC_URL` wrong | Check Cloudflare Security → Bots dashboard | `pnpm check` R2 row green |
+| `pnpm check` fails on game server | Server not running or `GAME_SERVER_URL` wrong | `curl $GAME_SERVER_URL/health` | HTTP 200, JSON body |
+| `pnpm test` fails | Code issue or missing `node_modules` | `pnpm install && pnpm test` | Exit 0, all tests pass |
+| `pnpm -r build` fails | TypeScript errors or missing deps | `pnpm install && pnpm -r build` | Exit 0, no errors |
+| Claude Code won't authenticate | API key expired or missing | `claude auth login` | Auth success message |
+| Git push rejected | Branch behind `main` or hook failure | Read hook error; `git pull --rebase origin main` | Push succeeds |
+| Render deploy fails | Build error or migration failure | Render dashboard → Events → latest deploy log | Deploy status: Live |
+| Cloudflare Pages deploy fails | Build error or env var missing | Pages dashboard → Deployments → latest build log | Build status: Success |
+| RDP won't connect | Tailscale offline, wrong IP, or Home edition | Check Tailscale dashboard; verify Windows Pro | Desktop visible from client |
+| `[conflicted N]` files appear | pCloud sync collision with git | Delete conflicted copies; `git status` | Clean working tree |
+| `pnpm check:domains` shows FAIL | DNS/TLS misconfigured for subdomain | Read `dns:` / `tls:` diagnostic lines | All live rows show `[OK]` |
+| Nightly triage didn't run | GitHub Actions cron skipped | Actions tab; `gh workflow run inspection-nightly.yml` | Workflow completes green |
+
+For detailed probe diagnostics, see
+[Operational Health Checks](operational-health-checks.md).
 
 ## Edge Cases
 
