@@ -113,6 +113,55 @@ access flows through the Tailscale private mesh — no public ports exposed.
 - **SSH** for terminal-first workflows
 - Sessions and dev servers survive laptop shutdown
 
+### Mobile operator workflow
+
+The phone is a **control surface**, not a compute node. It steers,
+approves, and verifies; all execution and repo writes happen on the
+workstation under Claude Code governance. This keeps a single
+authoritative compute plane and avoids half-applied changes from a
+device that can't run the gates.
+
+**Control plane vs compute plane:**
+
+| Plane | Where | Responsibilities |
+|---|---|---|
+| **Control** (phone) | GitHub mobile + Remote Desktop over Tailscale | Start/steer a session, send prompts, pick the repo/branch target, review diffs + CI, approve/revise/reject, merge PRs |
+| **Compute** (workstation) | Claude Code + local gates | Execute the task, run `test` / `typecheck` / `build`, make all repo writes, produce diffs/artifacts/summaries |
+
+**Two concrete channels — no custom dispatch layer:**
+
+1. **Remote Desktop steering.** RDP into the workstation over Tailscale,
+   drive a live Claude Code session directly (type prompts, watch gates
+   run, course-correct). Full control; survives disconnect.
+2. **GitHub mobile review.** For work already in flight, review the PR
+   diff + CI status and **merge** from the GitHub app — the
+   phone-friendly approval step in the round trip above.
+
+**End-to-end flow:**
+
+1. Operator triggers or steers work from the phone (task intent, repo +
+   branch target, constraints) via RDP, or reviews an open PR via GitHub
+   mobile.
+2. The workstation executes via Claude Code — to the WP/EC contract when
+   the work is WP-scoped.
+3. Deterministic outputs are produced on the workstation: code changes,
+   tests, artifacts, a diff summary.
+4. Claude Code persists results to the repo (branch commits, PR,
+   two-commit topology for WP work) — the standard governed path.
+5. Validation evidence returns to the phone: CI status, diff summary,
+   commit/PR links.
+6. Operator approves (merge), requests a revision, or rejects.
+
+**Governance and non-goals:**
+
+- All repo mutations occur on the workstation through approved Claude
+  Code flows — never directly from the phone.
+- The local gates (`test` / `typecheck` / `build`) and CI must pass on
+  the workstation/CI side before a change is surfaced as "ready."
+- The phone records operator disposition (approve / revise / reject); it
+  does not run model inference, builds, or tests, and does not bypass
+  workstation governance.
+
 ### AI layer (personal infrastructure)
 
 Not part of the committed stack. The workstation may host Claude Code as
