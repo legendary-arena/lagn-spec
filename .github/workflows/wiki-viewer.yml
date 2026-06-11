@@ -10,11 +10,13 @@ on:
     branches: [main]
     paths:
       - 'wiki/**'
+      - 'ewiki/**'
       - 'apps/wiki-viewer/**'
       - '.github/workflows/wiki-viewer.yml'
   pull_request:
     paths:
       - 'wiki/**'
+      - 'ewiki/**'
       - 'apps/wiki-viewer/**'
       - '.github/workflows/wiki-viewer.yml'
 
@@ -87,3 +89,30 @@ jobs:
           name: wiki-viewer-public
           path: apps/wiki-viewer/public/
           retention-days: 7
+
+  # why: deterministic deploy trigger. Render's implicit on-commit auto-deploy
+  # for legendary-arena-wiki stalled intermittently (2026-06-11), leaving the
+  # live site multiple commits behind main. autoDeploy is now disabled in
+  # render.yaml; this job is the single deploy trigger. It runs only on push
+  # to main and only after the build job's link-check + Hugo build + JS-free
+  # + determinism gates pass, so broken wiki content can never reach the live
+  # site. The Render Deploy Hook URL is stored as a repo secret.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Render deploy
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_WIKI_DEPLOY_HOOK }}
+        run: |
+          # why: skip (do not fail) when the secret is absent so the workflow
+          # stays green on forks / before the secret is configured. A missing
+          # hook means no deploy, which is visible in the live site, not a
+          # red CI run.
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "RENDER_WIKI_DEPLOY_HOOK is not set — skipping deploy trigger." >&2
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST "$DEPLOY_HOOK"
+          echo "Render deploy triggered for legendary-arena-wiki."
