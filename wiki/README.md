@@ -242,6 +242,33 @@ gate. CI also enforces the JS-free production invariant (no
 `<script>` tags in rendered output) and a determinism check (two
 consecutive builds produce byte-identical `*.html` + `*.css`).
 
+### Manual deployment
+
+To manually redeploy the wiki (when automatic CI-triggered deployment
+fails or is needed outside the normal push-to-main flow):
+
+1. **Via Render dashboard** (recommended):
+   - Go to [`https://dashboard.render.com/`](https://dashboard.render.com/)
+   - Find the `legendary-arena-wiki` static site service
+   - Click **Manual Deploy** → **Deploy latest commit** (or specify a
+     commit hash)
+   - The build runs the same CI pipeline (link check, Hugo, JS-free
+     verification, determinism check); watch the build logs for errors
+
+2. **Via deploy hook** (CLI, requires the `RENDER_WIKI_DEPLOY_HOOK`
+   secret):
+   ```bash
+   curl --fail --silent --show-error -X POST "$RENDER_WIKI_DEPLOY_HOOK"
+   ```
+   The hook URL is stored as a repository secret and used by the CI
+   workflow (`.github/workflows/wiki-viewer.yml`) to trigger deploys
+   after CI gates pass.
+
+**Note:** `autoDeploy` is disabled in [`render.yaml`](../render.yaml)
+to prevent stale or broken builds from reaching the live site. All
+deploys (automatic and manual) run the same CI verification pipeline
+before publishing.
+
 ### Preview locally
 
 Before pushing, render the wiki on a local Hugo dev server:
