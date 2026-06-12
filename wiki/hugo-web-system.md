@@ -20,7 +20,8 @@ source:
   - C:\www\legendary-arena-com\layouts\_partials\footer.html
   - C:\www\legendary-arena-com\layouts\_partials\extend_head.html
   - C:\www\legendary-arena-com\layouts\index.html
-last-reviewed: 2026-06-01
+  - C:\www\legendary-arena-com\static\favicon.ico
+last-reviewed: 2026-06-12
 ---
 
 ## Repository base URLs
@@ -48,6 +49,7 @@ committing:
 | Footer partial | Marketing | `C:\www\legendary-arena-com\layouts\_partials\footer.html` |
 | Head extensions | Marketing | `C:\www\legendary-arena-com\layouts\_partials\extend_head.html` |
 | Brand tokens CSS | Marketing | `C:\www\legendary-arena-com\static\brand-tokens.css` |
+| Favicon | Marketing | `C:\www\legendary-arena-com\static\favicon.ico` |
 | Content pages | Marketing | `C:\www\legendary-arena-com\content\` |
 | Static images | Marketing | `C:\www\legendary-arena-com\static\images\` |
 | This wiki page | Engine | `C:\pcloud\BB\DEV\legendary-arena\wiki\hugo-web-system.md` |
@@ -170,6 +172,52 @@ Injected into `<head>` on every page. Four sections:
    user intent. Keyboard shortcuts: `/` and `Ctrl+K` / `Cmd+K`.
 4. **Schema.org** — JSON-LD structured data, production builds only
    (WP-008).
+
+### Favicon configuration
+
+The site's favicon (the small icon that appears in browser tabs and
+bookmarks) lives in the site's static directory and is served
+automatically by Hugo.
+
+**How to add or replace a favicon:**
+
+1. Prepare a `.ico` file (32×32 or 16×16 pixels recommended, but 32×32
+   is standard for modern browsers).
+
+2. Save it to:
+   ```
+   C:\www\legendary-arena-com\static\favicon.ico
+   ```
+
+3. Hugo automatically serves it at:
+   ```
+   https://www.legendary-arena.com/favicon.ico
+   ```
+
+4. Browsers request it automatically via a `<link rel="icon">` tag in
+   the `<head>`. PaperMod includes this tag by default, so no manual
+   `<link>` is needed in `extend_head.html`.
+
+5. Commit the `.ico` file:
+   ```bash
+   git add static/favicon.ico
+   git commit -m "FIX: update site favicon"
+   ```
+
+6. Push to main. The favicon will be live within ~1 minute after
+   Cloudflare Pages redeploys.
+
+**Browser cache:** Favicons are aggressively cached by browsers. After
+updating, users may need to force-refresh (Ctrl+Shift+R) or clear
+their browser cache to see the new favicon. You can verify the
+deployment by checking the live site's HTTP response headers:
+```bash
+curl -I https://www.legendary-arena.com/favicon.ico
+```
+
+**Format note:** Modern browsers support `.ico`, `.png`, `.svg`. The
+`.ico` format is most compatible with older browsers and is the
+standard choice.
 
 ### Navigation menus
 
