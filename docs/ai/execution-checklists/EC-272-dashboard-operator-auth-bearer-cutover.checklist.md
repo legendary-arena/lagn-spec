@@ -63,9 +63,10 @@
 - `apps/dashboard/src/services/{analytics,sweep,triage}LiveFetchers.ts` (+ their `.test.ts`) — **modified** — delegate to the shared seam (Bearer); drop cookie; per-fetcher Bearer + negative-path (null-token ⇒ no fetch) assertions.
 - `apps/dashboard/src/types/index.ts` — **modified** — retire mock role surface.
 - `apps/dashboard/.env.example` — **modified** — add `VITE_HANKO_TENANT_BASE_URL`; fix `VITE_API_BASE_URL`.
-- `docs/ai/STATUS.md`, `docs/ai/DECISIONS.md` (D-24003..D-24005), `docs/ai/work-packets/WORK_INDEX.md`, `docs/ai/execution-checklists/EC_INDEX.md`, `docs/05-ROADMAP-MINDMAP.md` — **modified** — governance.
+- **Fold-inline consumer amendment (operator-sanctioned 2026-06-12)** — retiring `AuthUser`/`UserRole` + store `user`/`login`/`logout` breaks three consumers; added to keep `vue-tsc` green: `apps/dashboard/src/router/index.ts` (gate on `isAuthenticated` only; drop `UserRole`/role-meta/`hasRequiredRole`, D-24004), `apps/dashboard/src/layouts/AppLayout.vue` (remove email/role-badge footer; logout → `clearSession()`), `apps/dashboard/src/composables/useDailyChecklist.ts` (`user?.id` → `accountId`).
+- `docs/ai/STATUS.md`, `docs/ai/DECISIONS.md` (D-24003..D-24005), `docs/ai/work-packets/WORK_INDEX.md`, `docs/ai/execution-checklists/EC_INDEX.md`, `docs/05-ROADMAP-MINDMAP.md` + `docs/ai/post-mortems/01.6-WP-241-*.md` — **modified/new** — governance.
 
-~22 files: 17 App source/test + 5 governance. (Operator-authorised >~8; may split WP-241a/b — see WP-241 §Files.)
+24 files: 20 App source/test (incl. the 3 fold-inline consumers) + 5 governance (incl. post-mortem). (Operator-authorised >~8; may split WP-241a/b — see WP-241 §Files.)
 
 ## After Completing
 
@@ -74,7 +75,7 @@
 - [ ] `… typecheck` exits 0; no new error vs baseline.
 - [ ] `Select-String hankoClient.ts -Pattern "initializeHankoClient","subscribeToSessionEvents","__hankoFactory"` → all match.
 - [ ] `(Select-String hankoClient.ts,stores/auth.ts -Pattern "apps/arena-client","apps/server").Count` → 0.
-- [ ] `(Select-String {analytics,sweep,triage}LiveFetchers.ts -Pattern "credentials: 'include'").Count` → 0; `(Select-String {analytics,sweep,triage}LiveFetchers.ts -Pattern "buildLiveRequestOptions").Count` → 3 (delegation — NOT a bare `Authorization` grep on the fetchers, whose `// why:` comment names it, §18).
+- [ ] `(Select-String {analytics,sweep,triage}LiveFetchers.ts -Pattern "credentials: 'include'").Count` → 0; `(Select-String {analytics,sweep,triage}LiveFetchers.ts -Pattern "buildLiveRequestOptions").Count` → **9** (RECALIBRATED from "3" at execution — §F mandates an inline `fetch(url, buildLiveRequestOptions(token))` at each fire path, so the count is 1 import + N fetch sites per file: 4 analytics + 2 sweep + 3 triage. Real invariant = delegation in all 3 files + zero inline header literal + cookie-grep 0). NOT a bare `Authorization` grep on the fetchers, whose `// why:` comment names it (§18).
 - [ ] `Select-String authToken.ts -Pattern "registerAuthTokenReader","buildLiveRequestOptions","handleMissingAuthToken"` → all match (the single seam).
 - [ ] Each fetcher has a dedicated negative-path test: `readAuthToken()` null ⇒ `fetch` spy NOT called AND prior cache returned.
 - [ ] `registerAuthTokenReader` called once (App.vue); Hanko init idempotency proven (a re-mount does not re-subscribe).

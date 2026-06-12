@@ -7,6 +7,15 @@ import type { HandoffLatestData, HandoffStatusCounts, InspectionLatestData } fro
 // silently over the long tail of future edits, surfacing only when production
 // diverged from local-dev. `mocks.ts` holds no second gate either.
 import { isLiveModeEnabled } from './analyticsLiveFetchers.js';
+// why: server requires Authorization: Bearer (D-11202); cookies are ignored —
+// supersedes D-20601 (D-24003). The bearer header and the null-token
+// fail-silent path come from the shared authToken.ts seam (SOLE producer + SOLE
+// skip path), identical to the analytics + sweep fetchers.
+import {
+  buildLiveRequestOptions,
+  handleMissingAuthToken,
+  readAuthToken,
+} from './authToken.js';
 
 // ============================================================================
 // WP-239 / EC-270 / D-23903 — LIVE-mode triage fetchers.
@@ -27,20 +36,6 @@ import { isLiveModeEnabled } from './analyticsLiveFetchers.js';
 
 const MISSING_BASE_URL_WARNING =
   '[triage] LIVE mode requested but VITE_API_BASE_URL is unset; falling back to MOCK. Set the env var in the deployment environment.';
-
-/**
- * Locked fetch-options shape. Every triage LIVE fetch passes this exact object,
- * identical to the analytics + sweep LIVE fetchers.
- */
-// why (WP-112 session parity): `credentials: 'include'` forwards the operator's
-// authenticated session cookie cross-origin exactly as the shipped analytics +
-// sweep fetchers do; `GET /api/inspection/latest` and `GET /api/handoffs/latest`
-// are both `authenticated-session-required`, so omitting the cookie 401s. No
-// Bearer header is constructed at the dashboard layer.
-const FETCH_OPTIONS: RequestInit = {
-  credentials: 'include',
-  headers: { Accept: 'application/json' },
-};
 
 /**
  * Subset of `ImportMetaEnv` this module reads: `VITE_API_BASE_URL` for the
@@ -68,6 +63,12 @@ let now: () => number = () => Date.now();
  * first emission so the operator sees exactly one warning per process lifetime.
  */
 let hasWarnedAboutMissingBaseUrl = false;
+
+// why: D-24003 — one-shot guard set for the missing-auth-token fail-silent
+// warning, passed to the shared `handleMissingAuthToken()`. Separate from the
+// missing-URL guard above (no operator token vs no base URL). Shared across both
+// triage fetchers.
+const authTokenWarnOnce = new Set<string>();
 
 // why: single cached resource per endpoint — both endpoints ignore every query
 // param, so there is exactly ONE inspection resource and ONE handoff resource
@@ -195,15 +196,22 @@ export function fetchInspectionTriageLive(_nowMs: number): ServiceResponse<Inspe
   if (inspectionCache !== undefined) {
     return inspectionCache.value;
   }
+  const token = readAuthToken();
+  const liveRef = ref<ServiceResponse<InspectionLatestData>>(makeInspectionSentinel());
+  if (token === null) {
+    // why: D-24003 null-token fail-silent — same shape as the missing-URL case;
+    // the cache is intentionally NOT seeded so a later call after sign-in
+    // retries with the now-present token.
+    return handleMissingAuthToken(liveRef, authTokenWarnOnce);
+  }
   // why: cache-write-before-fetch dedup — seed the cached `Ref` BEFORE the async
   // closure fires so a same-tick second call hits the cached branch and skips
   // the fetch. At most ONE network request per resource for the process lifetime.
-  const liveRef = ref<ServiceResponse<InspectionLatestData>>(makeInspectionSentinel());
   inspectionCache = liveRef;
   const url = `${readEnv().VITE_API_BASE_URL}/api/inspection/latest`;
   void (async () => {
     try {
-      const response = await fetch(url, FETCH_OPTIONS);
+      const response = await fetch(url, buildLiveRequestOptions(token));
       if (!response.ok) {
         debugLogFetchFailure(url, 'returned non-200', `HTTP ${response.status}`);
         return;
@@ -240,13 +248,18 @@ export function fetchHandoffChainLive(_nowMs: number): ServiceResponse<HandoffLa
   if (handoffCache !== undefined) {
     return handoffCache.value;
   }
-  // why: cache-write-before-fetch dedup (see fetchInspectionTriageLive).
+  const token = readAuthToken();
   const liveRef = ref<ServiceResponse<HandoffLatestData>>(makeHandoffSentinel());
+  if (token === null) {
+    // why: D-24003 null-token fail-silent (see fetchInspectionTriageLive).
+    return handleMissingAuthToken(liveRef, authTokenWarnOnce);
+  }
+  // why: cache-write-before-fetch dedup (see fetchInspectionTriageLive).
   handoffCache = liveRef;
   const url = `${readEnv().VITE_API_BASE_URL}/api/handoffs/latest`;
   void (async () => {
     try {
-      const response = await fetch(url, FETCH_OPTIONS);
+      const response = await fetch(url, buildLiveRequestOptions(token));
       if (!response.ok) {
         debugLogFetchFailure(url, 'returned non-200', `HTTP ${response.status}`);
         return;

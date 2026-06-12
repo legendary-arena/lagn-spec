@@ -24640,4 +24640,67 @@ non-zero — never swallowed.)
 
 ---
 
+### D-24003 — Dashboard→API Auth Is a Real Hanko Bearer Token (`Authorization: Bearer`); Supersedes D-20601's Cookie Posture
+
+The dashboard's three LIVE fetcher families (analytics WP-206, sweep WP-238,
+triage WP-239) authenticate to `api.legendary-arena.com` with a real Hanko
+session JWT attached as `Authorization: Bearer <token>`, mirroring the
+arena-client WP-126/160 pattern. This **supersedes D-20601's cookie-credentials
+posture** (`credentials: 'include'`, no `Authorization` header) for the
+dashboard→API path: the server reads the token **exclusively** from
+`Authorization: Bearer` (`requireAuthenticatedSession` / `extractBearerToken`,
+D-11202) and sets no session cookie, so the cookie path carried nothing and had
+never run live (the dashboard was 100% MOCK). The token is produced by a real
+Hanko login that replaces the prior mock login (any email + a fabricated role).
+`credentials: 'include'` is removed from all three fetchers; a null token is
+fail-silent (no request, prior cache/sentinel preserved, one-shot DEV warn) —
+the same shape as the missing-`VITE_API_BASE_URL` case. Server untouched (CORS
+origin `dashboard.legendary-arena.com` already allowlisted).
+
+**Packet:** WP-241 (EC-272).
+**Drafted:** 2026-06-12 (number reserved in the WP-241/EC-272 body, PR #295/#296; never landed as a Reserved entry). **Landed:** 2026-06-12 (WP-241 execution close).
+**Status:** Active
+
+---
+
+### D-24004 — Admin Role-Scoping of the Dashboard Endpoints Is Deferred
+
+The consumed endpoints stay `authenticated-session-required` (any authenticated
+account); no server-side role check is added and no dashboard widget or route is
+gated on a role. The residual — any logged-in player could call
+`/api/inspection/latest` directly — exists TODAY and is not introduced by this
+WP; the Cloudflare Access gate (WP-197) is the operator-reachability boundary in
+front of the Pages deploy. The dashboard router gates **purely** on
+`isAuthenticated` (`token !== null`); the mock `AuthUser` / `UserRole` role
+surface (and the role dropdown) is retired. True role-scoping is a server-side
+change + a follow-up WP.
+
+**Packet:** WP-241 (EC-272).
+**Drafted:** 2026-06-12 (number reserved in the WP-241/EC-272 body, PR #295/#296; never landed as a Reserved entry). **Landed:** 2026-06-12 (WP-241 execution close).
+**Status:** Active
+
+---
+
+### D-24005 — The Dashboard Auth Token Lives in the Pinia Store; Plain-Module Fetchers Read It via an Injectable Accessor
+
+The session token lives ONLY in the Pinia auth store (mirroring WP-160). The
+plain-module LIVE fetchers read it via an injectable `readAuthToken()` accessor
+(parity with the existing `readEnv()` seam), keeping the fetchers decoupled from
+Vue/Pinia and test-injectable — they never call `useAuthStore()` directly. The
+reader is wired by an explicit `registerAuthTokenReader(fn)` called once from
+`App.vue` after Pinia is created (no implicit `useAuthStore()` in a plain module,
+which would bind to no/another Pinia instance and resolve a false-null token).
+In the same `authToken.ts` module, `buildLiveRequestOptions(token)` is the SOLE
+producer of live-fetch headers and `handleMissingAuthToken(cacheRef, warnOnceSet)`
+the SOLE fail-silent path — both used by all three fetchers, so the header shape
+and skip logic cannot drift. Hanko init + the session subscription are
+idempotent (a module-scoped `hankoInitialized` guard) so repeat mounts never
+double-fire `setSession`/`clearSession`.
+
+**Packet:** WP-241 (EC-272).
+**Drafted:** 2026-06-12 (number reserved in the WP-241/EC-272 body, PR #295/#296; never landed as a Reserved entry). **Landed:** 2026-06-12 (WP-241 execution close).
+**Status:** Active
+
+---
+
 Protect this file.

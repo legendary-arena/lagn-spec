@@ -12,14 +12,11 @@ export interface ApiError {
 
 export type DateRange = '7d' | '14d' | '30d' | '90d';
 
-export type UserRole = 'admin' | 'operator' | 'finance' | 'support';
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  roles: UserRole[];
-}
+// why: WP-241 / D-24004 — the mock `AuthUser` / `UserRole` role surface is
+// retired. The operator session is identity-only now (a Hanko bearer token in
+// the Pinia auth store); roles are out of scope (no server-side role check, no
+// role-based routing). Re-introducing a role type here requires a server-side
+// role-scoping WP first.
 
 export interface KpiSnapshot {
   id: string;

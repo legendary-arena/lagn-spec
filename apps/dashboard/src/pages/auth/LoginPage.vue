@@ -1,39 +1,95 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+/**
+ * Operator sign-in surface for the dashboard SPA (WP-241).
+ *
+ * Mounts the broker-provided `<hanko-auth>` custom element when the SDK
+ * initialization succeeds, surfaces a static banner when it doesn't, and on a
+ * successful sign-in event populates the Pinia auth store and navigates to the
+ * originally-requested route (the `?redirect=` query the router guard set).
+ *
+ * This page does NOT import the broker SDK directly — every broker surface goes
+ * through the wrapper under `../../auth/`, mirroring the arena-client LoginPage.
+ * It replaces the prior mock email/role form.
+ */
+import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../../stores/auth.js';
-import type { AuthUser, UserRole } from '../../types/index.js';
+import {
+  getCurrentTokenFromHandle,
+  initializeHankoClient,
+  subscribeToSessionEvents,
+  type HankoClientHandle,
+} from '../../auth/hankoClient.js';
+
+type LoginPageState = 'initializing' | 'ready' | 'unavailable';
 
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 
-const email = ref('');
-const selectedRole = ref<UserRole>('admin');
-const isSubmitting = ref(false);
+const state = ref<LoginPageState>('initializing');
 
-const roles: UserRole[] = ['admin', 'operator', 'finance', 'support'];
+function readTenantBaseUrl(): string {
+  // why: `import.meta.env` is Vite-provided; the dashboard's `env.d.ts` narrows
+  // `ImportMetaEnv` (no index signature), so the new var is read through a local
+  // cast — the same pattern the LIVE fetchers use — rather than widening
+  // `env.d.ts`. An empty value routes to the static 'unavailable' banner.
+  return (
+    (import.meta as unknown as { env?: { VITE_HANKO_TENANT_BASE_URL?: string } }).env
+      ?.VITE_HANKO_TENANT_BASE_URL ?? ''
+  );
+}
 
-async function handleLogin(): Promise<void> {
-  if (!email.value.trim()) {
+const tenantBaseUrl = readTenantBaseUrl();
+let handle: HankoClientHandle | null = null;
+
+async function handleSignIn(): Promise<void> {
+  if (handle === null) {
+    state.value = 'unavailable';
     return;
   }
-  isSubmitting.value = true;
-
-  const mockUser: AuthUser = {
-    id: 'user-1',
-    email: email.value.trim(),
-    name: email.value.split('@')[0] ?? 'User',
-    roles: [selectedRole.value],
-  };
-
-  authStore.login(mockUser);
-
+  const token = getCurrentTokenFromHandle(handle);
+  if (token === null) {
+    // Defensive: onSessionCreated fired but the SDK reports no token. Surface
+    // the banner so the operator can retry rather than silently spinning.
+    state.value = 'unavailable';
+    return;
+  }
+  authStore.setSession(token, null);
   const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/overview';
-
   await router.push(redirect);
-  isSubmitting.value = false;
 }
+
+onMounted(async () => {
+  if (tenantBaseUrl === '') {
+    state.value = 'unavailable';
+    return;
+  }
+  try {
+    handle = await initializeHankoClient({ tenantBaseUrl });
+  } catch {
+    // why: a broker init failure must surface the static 'unavailable' banner,
+    // not throw — the underlying detail is already swallowed inside the wrapper
+    // (D-16009). The operator sees a generic retry message, no transport leak.
+    state.value = 'unavailable';
+    return;
+  }
+  subscribeToSessionEvents(handle, {
+    onSessionCreated: () => {
+      void handleSignIn();
+    },
+    onSessionExpired: () => {
+      // why: on the sign-in page itself an expiry event is a no-op — the
+      // operator has not yet completed sign-in here. App.vue's global
+      // subscription clears the store on expiry for guarded routes.
+    },
+    onUserLoggedOut: () => {
+      // why: same rationale as onSessionExpired — logout state is not managed
+      // on the sign-in page.
+    },
+  });
+  state.value = 'ready';
+});
 </script>
 
 <template>
@@ -42,30 +98,21 @@ async function handleLogin(): Promise<void> {
       <h1>Legendary Arena</h1>
       <p class="subtitle">Admin Dashboard</p>
 
-      <form @submit.prevent="handleLogin" class="login-form">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          v-model="email"
-          type="email"
-          placeholder="operator@legendary-arena.com"
-          required
-          autocomplete="email"
-        />
+      <template v-if="state === 'initializing'">
+        <p class="login-status" data-testid="login-initializing">Preparing sign-in…</p>
+      </template>
 
-        <label for="role">Role (mock)</label>
-        <select id="role" v-model="selectedRole">
-          <option v-for="role in roles" :key="role" :value="role">
-            {{ role }}
-          </option>
-        </select>
+      <template v-else-if="state === 'ready'">
+        <div class="login-widget" data-testid="login-widget">
+          <hanko-auth :api="tenantBaseUrl"></hanko-auth>
+        </div>
+      </template>
 
-        <button type="submit" :disabled="isSubmitting">
-          {{ isSubmitting ? 'Signing in...' : 'Sign In' }}
-        </button>
-      </form>
-
-      <p class="mock-note">Mock mode — any email will be accepted.</p>
+      <template v-else>
+        <p class="login-banner" data-testid="login-unavailable">
+          Sign-in is temporarily unavailable. Please try again later.
+        </p>
+      </template>
     </div>
   </div>
 </template>
@@ -101,51 +148,21 @@ async function handleLogin(): Promise<void> {
   font-size: 0.9rem;
 }
 
-.login-form {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  gap: 0.5rem;
-}
-
-.login-form label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #475569;
-  margin-top: 0.5rem;
-}
-
-.login-form input,
-.login-form select {
-  padding: 0.6rem 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+.login-status {
   font-size: 0.9rem;
+  color: #64748b;
 }
 
-.login-form button {
-  margin-top: 1.5rem;
-  padding: 0.7rem;
-  background: #3b82f6;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
+.login-widget {
+  min-height: 18rem;
+}
+
+.login-banner {
   font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.login-form button:hover {
-  background: #2563eb;
-}
-.login-form button:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
-}
-
-.mock-note {
-  margin-top: 1.5rem;
-  font-size: 0.75rem;
-  color: #94a3b8;
+  padding: 0.75rem 1rem;
+  background: #fff4e6;
+  border: 1px solid #f4a261;
+  border-radius: 6px;
+  color: #0f172a;
 }
 </style>

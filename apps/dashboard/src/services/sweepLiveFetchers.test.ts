@@ -2,6 +2,7 @@ import { test, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { __testHooks, fetchSweepHealthLive, isValidSweepEnvelope } from './sweepLiveFetchers.js';
 import { __testHooks as analyticsTestHooks, isLiveModeEnabled } from './analyticsLiveFetchers.js';
+import { __testHooks as authTokenTestHooks } from './authToken.js';
 import type { SweepHealthSnapshot, SweepRunSummary } from '../types/sweep.js';
 
 // ============================================================================
@@ -93,6 +94,9 @@ beforeEach(() => {
   __testHooks.setNow(() => 1_700_000_000_000);
   __testHooks.resetWarningGuard();
   __testHooks.clearCache();
+  // why: register a non-null operator token so the LIVE fire path reaches the
+  // network fetch (WP-241 D-24003); without it the fetcher fails silent.
+  authTokenTestHooks.setAuthToken(() => 'test-token');
 });
 
 afterEach(() => {
@@ -101,6 +105,7 @@ afterEach(() => {
   __testHooks.setNow(() => Date.now());
   __testHooks.resetWarningGuard();
   __testHooks.clearCache();
+  authTokenTestHooks.setAuthToken(null);
 });
 
 // ----------------------------------------------------------------------------
@@ -357,16 +362,32 @@ test('25. Missing VITE_API_BASE_URL → live empty sentinel + ONE console.warn p
 });
 
 // ----------------------------------------------------------------------------
-// Fetch options — credentials + Accept header (session-auth parity)
+// Fetch options — Authorization: Bearer + Accept header, NO cookie (WP-241)
 // ----------------------------------------------------------------------------
 
-test('26. Fetch options always include credentials: include + Accept: application/json', async () => {
+test('26. Fetch carries Authorization: Bearer <token> + Accept and NO credentials', async () => {
   const spy = installFetchSpy(() => jsonResponse(sweepEnvelope(null, [])));
   fetchSweepHealthLive('14d', 0);
   await flushAsync();
-  assert.equal(spy.calls[0]?.init?.credentials, 'include');
   const headers = spy.calls[0]?.init?.headers as Record<string, string> | undefined;
+  assert.equal(headers?.Authorization, 'Bearer test-token');
   assert.equal(headers?.Accept, 'application/json');
+  // why (D-24003): the cookie path is dropped — bearer-only server (D-11202).
+  assert.equal(spy.calls[0]?.init?.credentials, undefined);
+});
+
+// ----------------------------------------------------------------------------
+// Null-token fail-silent (WP-241 §AC #5c — fetch NOT invoked, sentinel returned)
+// ----------------------------------------------------------------------------
+
+test('28. Null auth token → fetchSweepHealthLive fires no request, returns the live empty sentinel', async () => {
+  authTokenTestHooks.setAuthToken(() => null);
+  const spy = installFetchSpy(() => jsonResponse(sweepEnvelope(makeRun('r0'), [makeRun('r0')])));
+  const response = fetchSweepHealthLive('14d', 0);
+  await flushAsync();
+  assert.equal(spy.calls.length, 0);
+  assert.deepEqual(response.data, { latest: null, recentRuns: [] });
+  assert.equal(response.source, 'LIVE');
 });
 
 // ----------------------------------------------------------------------------

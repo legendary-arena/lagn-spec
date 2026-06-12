@@ -8,6 +8,7 @@ import {
   isValidHandoffEnvelope,
 } from './triageLiveFetchers.js';
 import { __testHooks as analyticsTestHooks, isLiveModeEnabled } from './analyticsLiveFetchers.js';
+import { __testHooks as authTokenTestHooks } from './authToken.js';
 import type {
   HandoffLatestData,
   HandoffRecord,
@@ -129,6 +130,9 @@ beforeEach(() => {
   __testHooks.setNow(() => 1_700_000_000_000);
   __testHooks.resetWarningGuard();
   __testHooks.clearCaches();
+  // why: register a non-null operator token so both LIVE fetchers reach the
+  // network fetch (WP-241 D-24003); without it they fail silent.
+  authTokenTestHooks.setAuthToken(() => 'test-token');
 });
 
 afterEach(() => {
@@ -137,6 +141,7 @@ afterEach(() => {
   __testHooks.setNow(() => Date.now());
   __testHooks.resetWarningGuard();
   __testHooks.clearCaches();
+  authTokenTestHooks.setAuthToken(null);
 });
 
 // ----------------------------------------------------------------------------
@@ -307,18 +312,24 @@ test('20. handoff fetcher — HTTP 401 preserves the sentinel', async () => {
 // Session-auth parity + missing-URL warning
 // ----------------------------------------------------------------------------
 
-test('21. both fetchers pass credentials: include + Accept: application/json', async () => {
+test('21. both fetchers carry Authorization: Bearer <token> + Accept and NO credentials', async () => {
   const inspectionSpy = installFetchSpy(() => jsonResponse(inspectionEnvelope(null, [])));
   fetchInspectionTriageLive(0);
   await flushAsync();
-  assert.equal(inspectionSpy.calls[0]?.init?.credentials, 'include');
-  const headers = inspectionSpy.calls[0]?.init?.headers as Record<string, string> | undefined;
-  assert.equal(headers?.Accept, 'application/json');
+  const inspectionHeaders = inspectionSpy.calls[0]?.init?.headers as
+    | Record<string, string>
+    | undefined;
+  assert.equal(inspectionHeaders?.Authorization, 'Bearer test-token');
+  assert.equal(inspectionHeaders?.Accept, 'application/json');
+  // why (D-24003): cookie path dropped — bearer-only server (D-11202).
+  assert.equal(inspectionSpy.calls[0]?.init?.credentials, undefined);
 
   const handoffSpy = installFetchSpy(() => jsonResponse(handoffEnvelope(null, [], ZERO_COUNTS)));
   fetchHandoffChainLive(0);
   await flushAsync();
-  assert.equal(handoffSpy.calls[0]?.init?.credentials, 'include');
+  const handoffHeaders = handoffSpy.calls[0]?.init?.headers as Record<string, string> | undefined;
+  assert.equal(handoffHeaders?.Authorization, 'Bearer test-token');
+  assert.equal(handoffSpy.calls[0]?.init?.credentials, undefined);
 });
 
 test('22. missing VITE_API_BASE_URL → sentinel + ONE console.warn per process', () => {
@@ -335,4 +346,28 @@ test('22. missing VITE_API_BASE_URL → sentinel + ONE console.warn per process'
   } finally {
     warnSpy.mock.restore();
   }
+});
+
+// ----------------------------------------------------------------------------
+// Null-token fail-silent (WP-241 §AC #5c — one per fetcher: no request, sentinel)
+// ----------------------------------------------------------------------------
+
+test('23. Null auth token → fetchInspectionTriageLive fires no request, returns the sentinel', async () => {
+  authTokenTestHooks.setAuthToken(() => null);
+  const spy = installFetchSpy(() => jsonResponse(inspectionEnvelope(makeReport('r0'), [makeReport('r0')])));
+  const response = fetchInspectionTriageLive(0);
+  await flushAsync();
+  assert.equal(spy.calls.length, 0);
+  assert.deepEqual(response.data, { latest: null, recentReports: [] });
+  assert.equal(response.source, 'LIVE');
+});
+
+test('24. Null auth token → fetchHandoffChainLive fires no request, returns the sentinel', async () => {
+  authTokenTestHooks.setAuthToken(() => null);
+  const spy = installFetchSpy(() => jsonResponse(handoffEnvelope('r0', [makeHandoff('r0#0', 'r0')], ZERO_COUNTS)));
+  const response = fetchHandoffChainLive(0);
+  await flushAsync();
+  assert.equal(spy.calls.length, 0);
+  assert.deepEqual(response.data, { reportId: null, handoffs: [], counts: ZERO_COUNTS });
+  assert.equal(response.source, 'LIVE');
 });

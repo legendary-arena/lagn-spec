@@ -7,6 +7,15 @@ import type { SweepHealthSnapshot } from '../types/sweep.js';
 // of future edits, surfacing only when production diverged from local-dev. The
 // close-out grep requires zero `VITE_USE_MOCKS` matches in this file.
 import { isLiveModeEnabled } from './analyticsLiveFetchers.js';
+// why: server requires Authorization: Bearer (D-11202); cookies are ignored —
+// supersedes D-20601 (D-24003). The bearer header and the null-token
+// fail-silent path come from the shared authToken.ts seam (SOLE producer + SOLE
+// skip path), identical to the analytics + triage fetchers.
+import {
+  buildLiveRequestOptions,
+  handleMissingAuthToken,
+  readAuthToken,
+} from './authToken.js';
 
 // ============================================================================
 // WP-238 / EC-269 / D-23801 — LIVE-mode sweep-health fetcher.
@@ -37,22 +46,6 @@ import { isLiveModeEnabled } from './analyticsLiveFetchers.js';
  */
 const MISSING_BASE_URL_WARNING =
   '[sweep] LIVE mode requested but VITE_API_BASE_URL is unset; falling back to MOCK. Set the env var in the deployment environment.';
-
-/**
- * Locked fetch-options shape. Every sweep LIVE fetch passes this exact object,
- * identical to the analytics LIVE fetchers.
- */
-// why: D-23801 session-auth parity — including the cookie credentials forwards
-// the operator's WP-112 session cross-origin exactly as the working analytics
-// LIVE fetchers do; `GET /api/sweep/latest` is `authenticated-session-required`,
-// so omitting the cookie 401s. No Bearer header is constructed at the dashboard
-// layer (api-endpoints.md prose says "bearer header" but the shipped code
-// authenticates by cookie per D-20601 — trust the working code, not the
-// catalog prose).
-const FETCH_OPTIONS: RequestInit = {
-  credentials: 'include',
-  headers: { Accept: 'application/json' },
-};
 
 /**
  * Subset of `ImportMetaEnv` this module reads. Only `VITE_API_BASE_URL` (for
@@ -88,6 +81,11 @@ let now: () => number = () => Date.now();
  * process lifetime (a page reload re-arms it once).
  */
 let hasWarnedAboutMissingBaseUrl = false;
+
+// why: D-24003 — one-shot guard set for the missing-auth-token fail-silent
+// warning, passed to the shared `handleMissingAuthToken()`. Separate from the
+// missing-URL guard above (no operator token vs no base URL).
+const authTokenWarnOnce = new Set<string>();
 
 // why: single cached resource — `GET /api/sweep/latest` ignores every query
 // param (WP-209), so there is exactly ONE sweep resource for the whole
@@ -203,17 +201,24 @@ export function fetchSweepHealthLive(
   if (sweepHealthCache !== undefined) {
     return sweepHealthCache.value;
   }
+  const token = readAuthToken();
+  const liveRef = ref<ServiceResponse<SweepHealthSnapshot>>(makeLiveEmptySentinel());
+  if (token === null) {
+    // why: D-24003 null-token fail-silent — same shape as the missing-URL case;
+    // the cache is intentionally NOT seeded so a later call after the operator
+    // signs in retries with the now-present token.
+    return handleMissingAuthToken(liveRef, authTokenWarnOnce);
+  }
   // why: cache-write-before-fetch is the dedup mechanism — the cached `Ref`
   // MUST be seeded BEFORE the async closure fires so a same-tick second call
   // hits the cached-branch return above and skips the fetch. Net invariant: at
   // most ONE network request per resource for the process lifetime. Inverting
   // the seed and the fetch is a hard fail caught by the single-request test.
-  const liveRef = ref<ServiceResponse<SweepHealthSnapshot>>(makeLiveEmptySentinel());
   sweepHealthCache = liveRef;
   const url = `${readEnv().VITE_API_BASE_URL}/api/sweep/latest`;
   void (async () => {
     try {
-      const response = await fetch(url, FETCH_OPTIONS);
+      const response = await fetch(url, buildLiveRequestOptions(token));
       if (!response.ok) {
         debugLogFetchFailure(url, 'returned non-200', `HTTP ${response.status}`);
         return;

@@ -8,6 +8,7 @@ import {
   isLiveModeEnabled,
   isValidEnvelope,
 } from './analyticsLiveFetchers.js';
+import { __testHooks as authTokenTestHooks } from './authToken.js';
 import type { ActivationFunnelStep, RetentionCohort, TrafficSource } from '../types/index.js';
 
 // ============================================================================
@@ -90,6 +91,10 @@ beforeEach(() => {
   __testHooks.setNow(() => 1_700_000_000_000);
   __testHooks.resetWarningGuard();
   __testHooks.clearAllCaches();
+  // why: register a non-null operator token so the LIVE fire path reaches the
+  // network fetch (WP-241 D-24003). Without a registered reader the fetchers
+  // take the fail-silent null-token branch and issue no request.
+  authTokenTestHooks.setAuthToken(() => 'test-token');
 });
 
 afterEach(() => {
@@ -97,6 +102,7 @@ afterEach(() => {
   __testHooks.setNow(() => Date.now());
   __testHooks.resetWarningGuard();
   __testHooks.clearAllCaches();
+  authTokenTestHooks.setAuthToken(null);
 });
 
 // ----------------------------------------------------------------------------
@@ -301,16 +307,24 @@ test('20. Missing VITE_API_BASE_URL → live empty sentinel + ONE console.warn p
 });
 
 // ----------------------------------------------------------------------------
-// Fetch options + URL construction (WP-206 §AC → credentials + Accept + URL)
+// Fetch options + URL construction (WP-241 §AC #5 → Bearer + no cookie + URL)
 // ----------------------------------------------------------------------------
 
-test('21. Fetch options always include credentials: include + Accept: application/json', async () => {
+test('21. Every fetch carries Authorization: Bearer <token> + Accept and NO credentials (all 3 fetchers)', async () => {
   const spy = installFetchSpy(() => jsonResponse({ data: [] }));
   fetchTrafficSourcesLive('14d', 0);
+  fetchActivationFunnelLive('30d', 0);
+  fetchRetentionCohortsLive(8, 0);
   await new Promise((resolve) => setImmediate(resolve));
-  assert.equal(spy.calls[0]?.init?.credentials, 'include');
-  const headers = spy.calls[0]?.init?.headers as Record<string, string> | undefined;
-  assert.equal(headers?.Accept, 'application/json');
+  assert.equal(spy.calls.length, 3);
+  for (const call of spy.calls) {
+    const headers = call.init?.headers as Record<string, string> | undefined;
+    assert.equal(headers?.Authorization, 'Bearer test-token');
+    assert.equal(headers?.Accept, 'application/json');
+    // why (D-24003): the cookie path is dropped — the server reads the token
+    // exclusively from Authorization: Bearer (D-11202) and ignores cookies.
+    assert.equal(call.init?.credentials, undefined);
+  }
 });
 
 test('22. URL construction matches the locked patterns for all 3 fetchers', async () => {
@@ -377,4 +391,39 @@ test('24. fetchActivationFunnelLive + fetchRetentionCohortsLive exhibit identica
   const cohortPopulated = fetchRetentionCohortsLive(8, 0);
   assert.equal(cohortPopulated.data.length, 1);
   assert.equal(cohortPopulated.data[0]?.cohortWeek, '2026-W22');
+});
+
+// ----------------------------------------------------------------------------
+// Null-token fail-silent (WP-241 §AC #5c → one dedicated negative-path test per
+// fetcher: fetch NOT invoked AND the prior sentinel returned unchanged)
+// ----------------------------------------------------------------------------
+
+test('25. Null auth token → fetchTrafficSourcesLive fires no request, returns the live empty sentinel', async () => {
+  authTokenTestHooks.setAuthToken(() => null);
+  const spy = installFetchSpy(() => jsonResponse({ data: [makeTrafficSource('2026-06-01')] }));
+  const response = fetchTrafficSourcesLive('14d', 0);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(spy.calls.length, 0);
+  assert.deepEqual(response.data, []);
+  assert.equal(response.source, 'LIVE');
+});
+
+test('26. Null auth token → fetchActivationFunnelLive fires no request, returns the live empty sentinel', async () => {
+  authTokenTestHooks.setAuthToken(() => null);
+  const spy = installFetchSpy(() => jsonResponse({ data: [makeFunnelStep('2026-06-01')] }));
+  const response = fetchActivationFunnelLive('14d', 0);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(spy.calls.length, 0);
+  assert.deepEqual(response.data, []);
+  assert.equal(response.source, 'LIVE');
+});
+
+test('27. Null auth token → fetchRetentionCohortsLive fires no request, returns the live empty sentinel', async () => {
+  authTokenTestHooks.setAuthToken(() => null);
+  const spy = installFetchSpy(() => jsonResponse({ data: [makeRetentionCohort('2026-W22')] }));
+  const response = fetchRetentionCohortsLive(8, 0);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(spy.calls.length, 0);
+  assert.deepEqual(response.data, []);
+  assert.equal(response.source, 'LIVE');
 });

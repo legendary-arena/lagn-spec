@@ -1,11 +1,9 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
-import type { UserRole } from '../types/index.js';
 
 declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth?: boolean;
-    roles?: UserRole[];
   }
 }
 
@@ -31,60 +29,41 @@ export const router = createRouter({
           path: 'overview',
           name: 'overview',
           component: () => import('../pages/dashboard/OverviewPage.vue'),
-          meta: { roles: ['admin', 'operator', 'finance', 'support'] },
         },
         {
           path: 'players',
           name: 'players',
           component: () => import('../pages/players/PlayerAnalyticsPage.vue'),
-          meta: { roles: ['admin', 'operator', 'support'] },
         },
         {
           path: 'monetization',
           name: 'monetization',
           component: () => import('../pages/monetization/MonetizationPage.vue'),
-          meta: { roles: ['admin', 'finance'] },
         },
         {
           path: 'gameplay',
           name: 'gameplay',
           component: () => import('../pages/gameplay/GameplayPage.vue'),
-          meta: { roles: ['admin', 'operator'] },
         },
         {
           path: 'system',
           name: 'system',
           component: () => import('../pages/system/SystemHealthPage.vue'),
-          meta: { roles: ['admin'] },
         },
         {
           path: 'debug',
           name: 'debug',
           component: () => import('../pages/debug/DebugPage.vue'),
-          meta: { roles: ['admin', 'operator'] },
         },
         {
           path: 'pipeline',
           name: 'pipeline',
           component: () => import('../pages/pipeline/PipelinePage.vue'),
-          meta: { roles: ['admin', 'operator'] },
         },
       ],
     },
   ],
 });
-
-function hasRequiredRole(userRoles: UserRole[], routeRoles: UserRole[] | undefined): boolean {
-  if (!routeRoles || routeRoles.length === 0) {
-    return true;
-  }
-  for (const role of routeRoles) {
-    if (userRoles.includes(role)) {
-      return true;
-    }
-  }
-  return false;
-}
 
 router.beforeEach((to: RouteLocationNormalized) => {
   const authStore = useAuthStore();
@@ -100,9 +79,10 @@ router.beforeEach((to: RouteLocationNormalized) => {
     return { name: 'login', query: { redirect: to.fullPath } };
   }
 
-  if (!hasRequiredRole(authStore.user?.roles ?? [], to.meta.roles)) {
-    return { name: 'overview' };
-  }
-
+  // why: WP-241 / D-24004 — routing gates PURELY on `isAuthenticated`
+  // (token !== null). Role-based routing is retired (no `roles` meta, no
+  // per-route role check); admin role-scoping is a server-side concern deferred
+  // to a follow-up WP. The Cloudflare Access gate (WP-197) remains the
+  // operator-reachability boundary in front of the deploy.
   return true;
 });

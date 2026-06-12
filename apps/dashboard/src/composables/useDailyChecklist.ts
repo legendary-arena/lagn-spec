@@ -117,10 +117,12 @@ const CHECKLIST_CONFIG: readonly ChecklistConfigItem[] = [
 ];
 
 /**
- * Resolves the user id used in the localStorage key. Under mock auth (the
+ * Resolves the user id used in the localStorage key. Under mock mode (the
  * current default) every browser shares the stable 'mock-user' id so the
- * checklist persists across reloads. The real-auth branch reads the
- * authenticated id once a real auth backend ships.
+ * checklist persists across reloads. Under live auth (WP-241) the key is the
+ * operator's `accountId` (server-provisioned `ext_id`); until that surfaces on
+ * the first authenticated profile call it is `null`, so the stable fallback id
+ * is used — the checklist is operator-local persistence, not security state.
  */
 function resolveUserId(): string {
   // why: import.meta.env is injected by Vite at build time; in the node:test
@@ -132,7 +134,7 @@ function resolveUserId(): string {
   }
   try {
     const authStore = useAuthStore();
-    return authStore.user?.id ?? FALLBACK_USER_ID;
+    return authStore.accountId ?? FALLBACK_USER_ID;
   } catch {
     // why: outside an active Pinia instance (e.g. unit tests, or before the
     // app mounts) there is no auth store to read; fall back to the stable

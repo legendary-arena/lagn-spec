@@ -289,6 +289,7 @@ mindmap
         ["WP-226 ✅ Global mock-mode banner"]
         ["WP-229 ✅ Agent Pipeline page (Architect/Builder/Inspector/Evaluator lanes)"]
         ["WP-238 ✅ Done — Sweep MOCK→LIVE flip (dashboard sweep panels render real GET /api/sweep/latest)"]
+        ["WP-241 ✅ Done — Operator auth + Bearer cutover (real Hanko login → Authorization: Bearer on the LIVE fetchers; supersedes the cookie posture, complies with the bearer-only server)"]
 
       Agent Triage Pipeline
         ["WP-230 ✅ Done — Pipeline page sweep integration (agent lanes consume nightly sweep findings)"]
@@ -395,7 +396,7 @@ mindmap
 | Hero Ability Coverage & Markup Pipeline | 10/10 | — |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
-| Dashboard & Operator Analytics | 13/13 | — |
+| Dashboard & Operator Analytics | 14/14 | — |
 | Agent Triage Pipeline | 7/7 | — |
 | Admin & Route Wiring | 4/4 | — |
 | Phase 9 — Profile Surface Follow-ups | 4/4 | — |
@@ -405,7 +406,7 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **236/237 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
+| **Total** | **237/238 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
 
 **Open / blocked WPs (derived from WORK_INDEX, 1):** WP-042.1 ⏸ blocked.
 <!-- ROADMAP-COUNTS:END -->
@@ -493,7 +494,9 @@ mindmap
 
 ---
 
-*Last updated: 2026-06-12 (WP-240 ✅ done — Roadmap Count-Table Generator. The Progress Summary count table is now **generated content** bounded by the `ROADMAP-COUNTS` start/end markers, derived by `scripts/roadmap-counts.mjs` from `WORK_INDEX.md` status × mindmap cluster membership (sole writer; hand-edits inside the markers are overwritten by the next run). Added the missing **WP-236** node (Phase 2 — Core Turn Engine) + the **WP-240** node (Domain Cutover & Infrastructure) — both were orphans the loud-fail gate (D-24002) named on the first run. The generated table corrected the WP-238 count drift the prior note flagged: Dashboard & Operator Analytics **12 → 13/13**, Total **WP ✅ 236/237** (= the raw WORK_INDEX checkbox count). Weekly cron `.github/workflows/roadmap-counts.yml` (`'0 6 * * 1'`) PRs the regenerated table on diff. D-24001/D-24002 Active.)*
+*Last updated: 2026-06-12 (WP-241 ✅ done — Dashboard Operator Auth + Bearer Cutover. The dashboard's mock login is replaced with real Hanko auth (mirroring `apps/arena-client`: local-copy `auth/hankoClient.ts` + the WP-160 token store + `<hanko-auth>`), and the three LIVE fetchers attach `Authorization: Bearer` via the shared `services/authToken.ts` seam instead of `credentials:'include'` — superseding D-20601's cookie posture so the client complies with the bearer-only server (D-11202). Added the **WP-241** node to Dashboard & Operator Analytics; the generated count table moved **13 → 14/14**, Total **237/238 WP ✅** (WP-241 was a latent orphan — drafted after WP-240's generator shipped — now noded). D-24003/D-24004/D-24005 Active. Operator cutover (post-merge): set `VITE_HANKO_TENANT_BASE_URL` + `VITE_API_BASE_URL=https://api.legendary-arena.com` + `VITE_USE_MOCKS=false` in CF Pages + redeploy.)*
+
+*Prior: 2026-06-12 (WP-240 ✅ done — Roadmap Count-Table Generator. The Progress Summary count table is now **generated content** bounded by the `ROADMAP-COUNTS` start/end markers, derived by `scripts/roadmap-counts.mjs` from `WORK_INDEX.md` status × mindmap cluster membership (sole writer; hand-edits inside the markers are overwritten by the next run). Added the missing **WP-236** node (Phase 2 — Core Turn Engine) + the **WP-240** node (Domain Cutover & Infrastructure) — both were orphans the loud-fail gate (D-24002) named on the first run. The generated table corrected the WP-238 count drift the prior note flagged: Dashboard & Operator Analytics **12 → 13/13**, Total **WP ✅ 236/237** (= the raw WORK_INDEX checkbox count). Weekly cron `.github/workflows/roadmap-counts.yml` (`'0 6 * * 1'`) PRs the regenerated table on diff. D-24001/D-24002 Active.)*
 
 *Prior: 2026-06-11 (WP-238 ✅ done — Sweep MOCK→LIVE flip. New `sweepLiveFetchers.ts` (`fetchSweepHealthLive`) mirrors the WP-206 analytics live-fetch pattern for the single object-envelope `GET /api/sweep/latest` resource (shared `isLiveModeEnabled()` gate, synchronous cached-`Ref` getter, fail-silent, `credentials:'include'` session parity, `{latest,recentRuns}` object guard); `mocks.ts` gates the existing `fetchSweepHealth` alias via the existing `liveMode` (no second env gate). `SweepHealthWidget.vue`/`PipelinePage.vue` byte-identical; MOCK stays the local-dev/test default. Added a WP-238 ✅ node under Dashboard & Operator Analytics; D-23801/D-23802 Active. Gates: dashboard test 247→274 / 0 fail, `vue-tsc --noEmit` 0, build 0. NOTE: the pre-existing Progress Summary count drift (the counting convention line still reads "WP-231..235 pending" though those nodes show ✅) was left as-is — not introduced or reconciled by this WP.)*
 

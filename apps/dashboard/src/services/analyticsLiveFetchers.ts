@@ -6,6 +6,15 @@ import type {
   ServiceResponse,
   TrafficSource,
 } from '../types/index.js';
+// why: server requires Authorization: Bearer (D-11202); cookies are ignored —
+// supersedes D-20601 (D-24003). The bearer header and the null-token
+// fail-silent path both come from the shared authToken.ts seam — the SOLE
+// header producer + SOLE skip path — so the three LIVE fetchers can never drift.
+import {
+  buildLiveRequestOptions,
+  handleMissingAuthToken,
+  readAuthToken,
+} from './authToken.js';
 
 // ============================================================================
 // WP-206 / EC-234 / D-20601 — LIVE-mode analytics fetchers.
@@ -57,22 +66,6 @@ const MISSING_BASE_URL_WARNING =
   '[analytics] LIVE mode requested but VITE_API_BASE_URL is unset; falling back to MOCK. Set the env var in the deployment environment.';
 
 /**
- * Locked fetch-options shape. Every analytics LIVE fetch passes this exact
- * object. `credentials: 'include'` forwards the operator's Hanko session
- * cookie cross-origin (dashboard.legendary-arena.com → api.legendary-arena.com)
- * — the server's CORS allowlist receives the dashboard origin in this WP's
- * paired server-side edit.
- */
-// why: D-20601 cookie-credentials auth posture — no Bearer header
-// construction at the dashboard layer; the operator's CF-Access-gated
-// browser session already carries a valid Hanko cookie, so `'include'`
-// is the only path that gets it onto the cross-origin request.
-const FETCH_OPTIONS: RequestInit = {
-  credentials: 'include',
-  headers: { Accept: 'application/json' },
-};
-
-/**
  * Subset of `ImportMetaEnv` this module actually reads. Kept narrow on
  * purpose so the test-injection hook (`__testHooks.setEnv`) only has to
  * supply the fields under test, not the full Vite env shape.
@@ -112,6 +105,13 @@ let now: () => number = () => Date.now();
 // still surfacing the misconfiguration loudly on first hit. The reset
 // happens implicitly on process restart; no manual clear path is exposed.
 let hasWarnedAboutMissingBaseUrl = false;
+
+// why: D-24003 — one-shot guard set for the missing-auth-token fail-silent
+// warning, passed to the shared `handleMissingAuthToken()` helper. Separate from
+// the missing-URL guard above (different cause: no operator token vs no base
+// URL). Shared across the three analytics fetchers, mirroring the missing-URL
+// one-shot semantics.
+const authTokenWarnOnce = new Set<string>();
 
 /**
  * Single-source-of-truth LIVE-mode predicate. Consumed by `mocks.ts` (for
@@ -314,19 +314,27 @@ export function fetchTrafficSourcesLive(
   if (cached !== undefined) {
     return cached.value;
   }
+  const token = readAuthToken();
+  const liveRef =
+    ref<ServiceResponse<readonly TrafficSource[]>>(makeLiveEmptySentinel<TrafficSource>());
+  if (token === null) {
+    // why: D-24003 null-token fail-silent — same shape as the missing-URL case.
+    // The cache is intentionally NOT seeded here so a later call (after the
+    // operator signs in) retries with the now-present token rather than
+    // returning a poisoned sentinel forever.
+    return handleMissingAuthToken(liveRef, authTokenWarnOnce);
+  }
   // why: D-20601 cache-write-before-fetch invariant — `cache.set` MUST
   // precede the async fetch closure invocation so concurrent same-tick
   // callers see the populated cache on step (2) and skip directly to
   // the cached-branch return above. Exactly ONE network fetch per
   // (range, process) is initiated. Inverting (2) and (3) is a HARD
   // FAIL caught by the two-same-tick test in the paired test file.
-  const liveRef =
-    ref<ServiceResponse<readonly TrafficSource[]>>(makeLiveEmptySentinel<TrafficSource>());
   trafficSourcesCache.set(range, liveRef);
   const url = buildAnalyticsUrl('/api/analytics/traffic-sources', `range=${range}`);
   void (async () => {
     try {
-      const response = await fetch(url, FETCH_OPTIONS);
+      const response = await fetch(url, buildLiveRequestOptions(token));
       if (!response.ok) {
         debugLogFetchFailure(url, 'returned non-200', `HTTP ${response.status}`);
         return;
@@ -379,17 +387,22 @@ export function fetchActivationFunnelLive(
   if (cached !== undefined) {
     return cached.value;
   }
-  // why: D-20601 cache-write-before-fetch invariant (see
-  // fetchTrafficSourcesLive for full rationale).
+  const token = readAuthToken();
   const liveRef =
     ref<ServiceResponse<readonly ActivationFunnelStep[]>>(
       makeLiveEmptySentinel<ActivationFunnelStep>(),
     );
+  if (token === null) {
+    // why: D-24003 null-token fail-silent (see fetchTrafficSourcesLive).
+    return handleMissingAuthToken(liveRef, authTokenWarnOnce);
+  }
+  // why: D-20601 cache-write-before-fetch invariant (see
+  // fetchTrafficSourcesLive for full rationale).
   activationFunnelCache.set(range, liveRef);
   const url = buildAnalyticsUrl('/api/analytics/activation-funnel', `range=${range}`);
   void (async () => {
     try {
-      const response = await fetch(url, FETCH_OPTIONS);
+      const response = await fetch(url, buildLiveRequestOptions(token));
       if (!response.ok) {
         debugLogFetchFailure(url, 'returned non-200', `HTTP ${response.status}`);
         return;
@@ -432,15 +445,20 @@ export function fetchRetentionCohortsLive(
   if (cached !== undefined) {
     return cached.value;
   }
-  // why: D-20601 cache-write-before-fetch invariant (see
-  // fetchTrafficSourcesLive for full rationale).
+  const token = readAuthToken();
   const liveRef =
     ref<ServiceResponse<readonly RetentionCohort[]>>(makeLiveEmptySentinel<RetentionCohort>());
+  if (token === null) {
+    // why: D-24003 null-token fail-silent (see fetchTrafficSourcesLive).
+    return handleMissingAuthToken(liveRef, authTokenWarnOnce);
+  }
+  // why: D-20601 cache-write-before-fetch invariant (see
+  // fetchTrafficSourcesLive for full rationale).
   retentionCohortsCache.set(cohortCount, liveRef);
   const url = buildAnalyticsUrl('/api/analytics/retention-cohorts', `cohortCount=${cohortCount}`);
   void (async () => {
     try {
-      const response = await fetch(url, FETCH_OPTIONS);
+      const response = await fetch(url, buildLiveRequestOptions(token));
       if (!response.ok) {
         debugLogFetchFailure(url, 'returned non-200', `HTTP ${response.status}`);
         return;

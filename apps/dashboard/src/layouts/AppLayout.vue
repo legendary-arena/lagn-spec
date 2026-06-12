@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
 import MockModeBanner from '../components/MockModeBanner.vue';
@@ -38,8 +38,6 @@ const EXTERNAL_LINKS: readonly ExternalLink[] = [
 
 const router = useRouter();
 const authStore = useAuthStore();
-
-const primaryRole = computed(() => authStore.user?.roles[0] ?? null);
 
 const isDark = ref(document.documentElement.classList.contains(DARK_MODE_CLASS));
 const isCollapsed = ref(false);
@@ -114,7 +112,11 @@ function handleNavigate(): void {
 }
 
 function handleLogout(): void {
-  authStore.logout();
+  // why: WP-241 — the identity-only store carries no broker sign-out flow in
+  // scope; clearing the local session drops the bearer token so the router
+  // guard (isAuthenticated) routes the operator to the LoginPage. A broker-side
+  // logout is a follow-up concern.
+  authStore.clearSession();
   router.push({ name: 'login' });
 }
 
@@ -173,10 +175,6 @@ onUnmounted(() => {
       </ul>
 
       <div class="sidebar-footer">
-        <div v-if="!isCollapsed" class="user-block">
-          <span class="user-email">{{ authStore.user?.email }}</span>
-          <span v-if="primaryRole" class="role-badge">{{ primaryRole }}</span>
-        </div>
         <button type="button" class="theme-toggle" :aria-pressed="isDark" @click="toggleTheme">
           {{ isCollapsed ? (isDark ? 'L' : 'D') : isDark ? 'Light mode' : 'Dark mode' }}
         </button>
@@ -358,33 +356,6 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.user-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-bottom: 0.25rem;
-}
-
-.user-email {
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.role-badge {
-  align-self: flex-start;
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.1rem 0.4rem;
-  border-radius: 3px;
-  background: var(--p-primary-color);
-  color: var(--p-primary-contrast-color);
 }
 
 .theme-toggle,

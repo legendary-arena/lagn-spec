@@ -126,6 +126,15 @@ Add `VITE_HANKO_TENANT_BASE_URL=` to `.env.example`; correct the wrong `VITE_API
 - `src/types/index.ts` — **modified** — retire the mock role surface to identity-only.
 - `.env.example` — **modified** — add `VITE_HANKO_TENANT_BASE_URL`; fix `VITE_API_BASE_URL`.
 
+**Consumer files — operator-sanctioned fold-inline amendment (2026-06-12):** retiring
+`AuthUser`/`UserRole` + the store `user`/`login`/`logout` breaks three in-tree
+consumers the original allowlist did not trace; added to keep `vue-tsc` green
+(per `01.0b §"the EC's allowlist is wrong"` — execution stopped and surfaced the
+gap; the operator approved the +3 files):
+- `src/router/index.ts` — **modified** — gate purely on `isAuthenticated`; drop `UserRole` import, the `roles` route meta, and `hasRequiredRole` (D-24004).
+- `src/layouts/AppLayout.vue` — **modified** — remove the email + role-badge footer block (no data in an identity-only store); logout button → `clearSession()` + `/login`.
+- `src/composables/useDailyChecklist.ts` — **modified** — `authStore.user?.id` → `authStore.accountId`.
+
 **Governance (`docs/`):**
 - `docs/ai/STATUS.md` — **modified** — Done entry naming WP-241.
 - `docs/ai/DECISIONS.md` — **modified** — D-24003, D-24004, D-24005 (Active at close).
@@ -183,7 +192,7 @@ Select-String -Path "apps/dashboard/src/auth/hankoClient.ts" -Pattern "initializ
 # "Authorization" absence in the fetchers (their // why: comment names it, which would
 # self-trip the grep per §18 / the grep-gate-comment pattern).
 Select-String -Path "apps/dashboard/src/services/authToken.ts" -Pattern "buildLiveRequestOptions","handleMissingAuthToken","registerAuthTokenReader"   # Expected: all match (the sole seam)
-(Select-String -Path "apps/dashboard/src/services/analyticsLiveFetchers.ts","apps/dashboard/src/services/sweepLiveFetchers.ts","apps/dashboard/src/services/triageLiveFetchers.ts" -Pattern "buildLiveRequestOptions").Count   # Expected: 3 (each fetcher delegates; no per-file header literal)
+(Select-String -Path "apps/dashboard/src/services/analyticsLiveFetchers.ts","apps/dashboard/src/services/sweepLiveFetchers.ts","apps/dashboard/src/services/triageLiveFetchers.ts" -Pattern "buildLiveRequestOptions").Count   # Expected: 9 — RECALIBRATED at execution (was "3"). §F mandates an INLINE `fetch(url, buildLiveRequestOptions(token))` at every fire path, so the count is 1 import + N fetch sites per file (4 analytics + 2 sweep + 3 triage). The real invariant is delegation-present-in-all-3 + zero inline header literal + the `credentials: 'include'` grep being 0; "3" miscounted 3 files × 1.
 (Select-String -Path "apps/dashboard/src/services/analyticsLiveFetchers.ts","apps/dashboard/src/services/sweepLiveFetchers.ts","apps/dashboard/src/services/triageLiveFetchers.ts" -Pattern "credentials: 'include'").Count   # Expected: 0
 
 # 3. Real login — no mock form
