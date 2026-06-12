@@ -339,6 +339,16 @@ deployed before the newsletter send.
 - No images in the Featured from the Shop section (keeps email
   weight low and avoids rendering issues).
 
+### Brand assets
+
+**Logo (PNG format)**
+
+![Legendary Arena logo](/brevo-email-pipeline/logo-la.svg)
+
+**Email signature graphic**
+
+![Legendary Arena email signature](/brevo-email-pipeline/la-email-signature-300px.png)
+
 ### Linking requirements
 
 | Link | Points to | Format |
