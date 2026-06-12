@@ -1,6 +1,7 @@
 import { useGovernanceSnapshot, type GovernanceSnapshot } from './useGovernanceSnapshot.js';
 import { computeSweepHealthRate } from './useSweepHealth.js';
 import type { SweepRunSummary } from '../types/sweep.js';
+import type { HandoffStatusCounts, InspectionVerdict } from '../types/triage.js';
 
 /**
  * A single item rendered in one of the four pipeline lanes.
@@ -25,6 +26,33 @@ export interface PipelineSweepData {
   readonly latestRun: SweepRunSummary | null;
   readonly staleStatus: 'fresh' | 'stale';
   readonly totalAnomalySparkline: readonly number[];
+}
+
+/**
+ * The triage projection the Pipeline page injects into the Inspector lane
+ * (WP-239 / D-23901). It is declared HERE — with `PipelineItem` and
+ * `PipelineSweepData` — because projection/lane types live with the consumer
+ * composable that injects them; `useTriageStatus.ts` (the producer) imports this
+ * type, keeping the dependency one-directional with no circular type import.
+ *
+ * `state` mirrors the sweep state machine (`useSweepHealth.state`). `coherence`
+ * is ORTHOGONAL to it: a reportId skew between the inspection and handoff
+ * endpoints (normal sync-lag) sets `'handoff-stale'` with the surface still
+ * rendered — it never becomes a fetch `error`. `summary` / `distribution` are
+ * non-null only in the `data` arm; the three buckets carry the `triage-`-prefixed
+ * lane items.
+ */
+export interface TriageProjection {
+  readonly state: 'loading' | 'empty' | 'error' | 'data';
+  readonly coherence: 'coherent' | 'handoff-stale';
+  readonly summary: {
+    readonly verdict: InspectionVerdict;
+    readonly counts: { readonly p0: number; readonly p1: number; readonly p2: number };
+  } | null;
+  readonly backlog: readonly PipelineItem[];
+  readonly active: readonly PipelineItem[];
+  readonly history: readonly PipelineItem[];
+  readonly distribution: HandoffStatusCounts | null;
 }
 
 /**
@@ -420,9 +448,14 @@ function deriveEvaluatorPriorities(inputs: PriorityInputs): PriorityRecommendati
 // why: sweep data is an optional parameter so the composable remains backward
 // compatible and testable without sweep fetch infrastructure (D-20703 opacity +
 // D-22901 snapshot-only posture extended).
+// why (D-23902): triageData is a third optional parameter mirroring sweepData —
+// the triage projection (inspection findings + handoff lifecycle) injects only
+// into the Inspector lane; the other three lanes never see it. Optional keeps
+// every existing caller backward compatible.
 export function useAgentPipeline(
   snapshotOverride?: GovernanceSnapshot,
   sweepData?: PipelineSweepData,
+  triageData?: TriageProjection,
 ): UseAgentPipelineReturn {
   const snapshot = useGovernanceSnapshot(snapshotOverride);
 
@@ -666,6 +699,18 @@ export function useAgentPipeline(
       label: `WP-${String(entry.wpNumber).padStart(3, '0')} / EC-${entry.ecNumber} — ${entry.title}`,
       meta: entry.date,
     });
+  }
+
+  // --- Triage projection: inspection findings + handoff lifecycle (WP-239) ---
+  // why (D-23902): triage items render INTO the Inspector lane only (Option A),
+  // never a new panel/lane. They are prepended so the verdict summary leads the
+  // backlog; their order is the projection's received order and is NOT run
+  // through the sweep fatal-first ordering above (that applies only to
+  // sweepAnomaliesWithCount). The other three lanes are untouched.
+  if (triageData !== undefined) {
+    inspectorBacklog.unshift(...triageData.backlog);
+    inspectorActive.unshift(...triageData.active);
+    inspectorHistory.unshift(...triageData.history);
   }
 
   // --- Evaluator lane: quarterly acquisition-readiness audit ---

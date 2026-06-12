@@ -93,6 +93,25 @@ import { fetchSweepHealthLive } from './sweepLiveFetchers.js';
 // byte-identical — the `fetchSweepHealth` alias identifier is the only seam.
 export const fetchSweepHealth = liveMode ? fetchSweepHealthLive : mockSweepHealth;
 
+// why: WP-239 / EC-270 / D-23903 — triage LIVE flip. Import + separate
+// re-export so `mockInspectionTriage` / `mockHandoffChain` are LOCAL bindings
+// the ternaries below can reference; a bare `export { x } from './mod'`
+// re-export creates no local binding (see the analytics-block note at the top
+// of this file). The mock re-exports are retained for factory-direct tests.
+import { mockInspectionTriage, mockHandoffChain } from './triageMocks.js';
+export { mockInspectionTriage, mockHandoffChain };
+import { fetchInspectionTriageLive, fetchHandoffChainLive } from './triageLiveFetchers.js';
+
+// why (D-23903): both triage fetchers are gated through the EXISTING shared
+// `liveMode` constant — this file adds NO second env gate (no env-var literal
+// here; the gate is the single `isLiveModeEnabled()` import above). When
+// `liveMode` is false (default + local-dev + tests) the MOCK factories run;
+// when true (deploy env flips use-mocks off + supplies a non-empty API base
+// URL) the LIVE fetchers run. `PipelinePage.vue` stays byte-identical — the
+// `fetchInspectionTriage` / `fetchHandoffChain` aliases are the only seam.
+export const fetchInspectionTriage = liveMode ? fetchInspectionTriageLive : mockInspectionTriage;
+export const fetchHandoffChain = liveMode ? fetchHandoffChainLive : mockHandoffChain;
+
 function randomBetween(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

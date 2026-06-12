@@ -15,8 +15,17 @@ import {
   type SweepHealthFetchState,
 } from '../../composables/useSweepHealth.js';
 import { useSweepTrend } from '../../composables/useSweepTrend.js';
+import {
+  useTriageStatus,
+  type InspectionTriageFetchState,
+  type HandoffChainFetchState,
+} from '../../composables/useTriageStatus.js';
 import { useDateRange } from '../../composables/useDateRange.js';
-import { fetchSweepHealth } from '../../services/mocks.js';
+import {
+  fetchSweepHealth,
+  fetchInspectionTriage,
+  fetchHandoffChain,
+} from '../../services/mocks.js';
 import SweepTrendChart from '../../components/charts/SweepTrendChart.vue';
 
 const snapshot = useGovernanceSnapshot();
@@ -49,7 +58,26 @@ const sweepData: PipelineSweepData = {
   totalAnomalySparkline: sweep.totalAnomalySparkline.value,
 };
 
-const pipeline = useAgentPipeline(undefined, sweepData);
+// Triage surface (WP-239): two LIVE-capable fetchers feed the projection that
+// injects inspection findings + handoff lifecycle into the Inspector lane.
+// MOCK-mode-first — the synchronous mocks resolve with data, so `error` is null
+// here; the LIVE flip swaps the fetchers in `mocks.ts` and may surface a real
+// error through this same shape.
+const inspectionFetchState = computed<InspectionTriageFetchState>(() => {
+  return { response: fetchInspectionTriage(nowMs), error: null };
+});
+const handoffFetchState = computed<HandoffChainFetchState>(() => {
+  return { response: fetchHandoffChain(nowMs), error: null };
+});
+const triage = useTriageStatus(
+  () => inspectionFetchState.value,
+  () => handoffFetchState.value,
+  nowMs,
+);
+
+// The projection is sampled once (like `sweepData`) and injected as the third
+// argument; the existing lane rendering consumes the `triage-`-prefixed items.
+const pipeline = useAgentPipeline(undefined, sweepData, triage.value);
 
 const lanes = computed<readonly PipelineLane[]>(() => [
   pipeline.architect,

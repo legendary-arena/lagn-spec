@@ -24497,4 +24497,85 @@ to the draw).
 
 ---
 
+### D-23901 — Dashboard Triage Types Are Hand-Maintained, Layer-Safe Mirrors of the WP-231/232 Server Envelopes (Drift-Guarded; `anomalyClass` Opaque; Projection Type Lives with the Consumer)
+
+The dashboard triage surface (WP-239) re-declares the two server response
+envelopes locally in `apps/dashboard/src/types/triage.ts` — `InspectionLatestData`
+(WP-231) and `HandoffLatestData` (WP-232), plus their `InspectionFinding` /
+`InspectionReportSummary` / `HandoffRecord` / `HandoffStatusCounts` shapes and the
+`InspectionVerdict` / `InspectionSeverity` / `TriageRoute` / `HandoffStatus`
+closed unions. The dashboard CANNOT import the server package (layer boundary), so
+the mirrors are kept in lock-step by a committed cross-app drift test
+(`types/triage.drift.test.ts`) modelled on the WP-211 sweep drift guard: a
+server-derived field-set / union-member / counts-key constant + a fully-typed
+sample + `Object.keys` deep-equal, with loud reconcile messages naming the
+authoritative server files. `anomalyClass` is the single deliberate cross-app
+widening — opaque `string`, never the engine's closed anomaly-class union
+(carry-forward of D-20703 / D-23103). The `TriageProjection` VIEW-MODEL is
+declared in `useAgentPipeline.ts` alongside `PipelineItem` / `PipelineSweepData`
+(projection types live with the consumer composable that injects them) and
+imported type-only by the producer `useTriageStatus.ts`, keeping the dependency
+one-directional with no circular type import; `types/triage.ts` stays wire-only.
+
+**Packet:** WP-239 (EC-270).
+**Drafted:** 2026-06-11 (numbers reserved in WP-239/EC-270 body; hardened via SPEC #288). **Landed:** 2026-06-11 (WP-239 execution close).
+**Status:** Active
+
+---
+
+### D-23902 — Inspection Findings + Handoff Lifecycle Render INTO the Existing Inspector Lane (Option A), Read-Only, with a Graceful Cross-Source Coherence Gate
+
+The triage surface integrates into the existing Pipeline Inspector lane (Option A
+— not a new panel/lane) via `triage-`-prefixed items injected through a new
+optional `triageData?` projection parameter on `useAgentPipeline` (mirrors the
+`sweepData?` injection); the other three lanes are untouched. Item id grammar is
+locked: `triage-summary-${reportId}` (the one verdict/counts item, at the backlog
+head), `triage-handoff-${handoffId}` (each lifecycle item), `triage-coherence-${reportId}`
+(the stale marker). Lane bucketing: open/claimed → backlog, fix-proposed/escalated
+→ active (with `branchRef` / `amendmentRequest` shown), resolved/wont-fix →
+history. The surface is **read-only** — the client never calls
+`POST /api/handoffs/transition` or `/verify`. State precedence mirrors
+`useSweepHealth.state` (error → loading → empty → data), with `empty` keyed on
+`inspection.latest === null` only (a PASS report with zero handoffs is `data`, not
+hidden). A **cross-source coherence gate** is the new mechanism: the inspection and
+handoff endpoints are fed by separate CI steps (`inspection-submit` vs
+`handoffs-sync`), so a reportId skew is a normal sync-lag window, NOT corruption.
+It degrades to an orthogonal `coherence: 'handoff-stale'` flag + a visible marker
+item with the lifecycle + distribution still rendered — it never becomes a fetch
+`error` and never blanks the surface (which would hide a freshly-submitted
+report's findings during the routine lag). Handoff rows render in their server
+order `(findingIndex ASC, handoffId ASC)` with no client re-sort, and the lane
+injection preserves that order (it is NOT run through the sweep fatal-first sort).
+
+**Packet:** WP-239 (EC-270).
+**Drafted:** 2026-06-11 (numbers reserved in WP-239/EC-270 body; hardened via SPEC #288). **Landed:** 2026-06-11 (WP-239 execution close).
+**Status:** Active
+
+---
+
+### D-23903 — Triage Fetchers Ship LIVE-Capable from Day One via the WP-238 Sweep-Live Pattern (Shared Gate, Structural Object Guards, Session-Cookie Parity)
+
+`triageLiveFetchers.ts` ships `fetchInspectionTriageLive` + `fetchHandoffChainLive`
+mirroring the WP-238 sweep-live pattern: the shared `isLiveModeEnabled()` gate
+(re-imported from the analytics module, never re-derived — D-20601), a synchronous
+cached-`Ref` getter, fire-and-forget populate, fail-silent prior-state
+preservation, and `credentials: 'include'` to forward the WP-112 session cookie
+(both endpoints are `authenticated-session-required`). Each endpoint ignores query
+params, so each is one cached resource (a single module-level `Ref`, not a Map).
+The two object-envelope guards are deliberately lightweight (structural shape only
+— `{ data: {…} }` object / array / nullable-key checks), matching the shipped
+`isValidSweepEnvelope` posture; per-field + the six camelCase `counts` keys are the
+drift test's job, narrowed at read time by the composable's defensive `?? 0` —
+there is NO hard "partial counts → error" gate. `mocks.ts` gates the
+`fetchInspectionTriage` / `fetchHandoffChain` aliases through the existing
+`liveMode` constant (no second env gate, zero `VITE_` literal), so the surface does
+not recreate the mock-only gap WP-238 closed for sweep; MOCK stays the
+local-dev/test default and `PipelinePage.vue` is the only consumer.
+
+**Packet:** WP-239 (EC-270).
+**Drafted:** 2026-06-11 (numbers reserved in WP-239/EC-270 body; hardened via SPEC #288). **Landed:** 2026-06-11 (WP-239 execution close).
+**Status:** Active
+
+---
+
 Protect this file.

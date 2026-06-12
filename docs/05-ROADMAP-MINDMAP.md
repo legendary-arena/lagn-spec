@@ -295,6 +295,7 @@ mindmap
         ["WP-233 ✅ Done — Closed-loop sweep verification (Builder fix → re-sweep → Inspector verify)"]
         ["WP-234 ✅ Done — Full-corpus sweep expansion (weekly rotating window beyond 2×2 smoke)"]
         ["WP-235 ✅ Done — Pipeline page sweep health trend view (cadence-aware health-rate trends + healthy-class constant)"]
+        ["WP-239 ✅ Done — Triage dashboard surfaces (inspection findings + handoff lifecycle on the Pipeline Inspector lane, read-only)"]
 
       Admin & Route Wiring
         ["WP-110 ✅ Admin billing visibility"]
