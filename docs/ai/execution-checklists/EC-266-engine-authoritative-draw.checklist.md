@@ -29,11 +29,12 @@
 - Only the `TurnActionBar` `handCount` PROP is deleted. The `UIState` `player.handCount` display field (PlayerPanel/OpponentPanel/fixtures) is a DIFFERENT field — untouched.
 - Auto-draw runs BEFORE `onTurnStart` hooks (Magneto reads the hand → must see it drawn).
 - `drawCardsIntoHand` consolidation of move + effect is BEHAVIOUR-NEUTRAL — the ONLY behavioural change is the new `onBegin` auto-draw + the move guard.
+- Single draw primitive is enforced by ABSENCE too: after consolidation neither `coreMoves.impl.ts` nor `ruleRuntime.effects.ts` imports `setup/shuffle` (the reshuffle moved into the helper; `shuffleDeck` is then imported by `drawCards.logic.ts` alone — verified: it is used by the draw loop only in both files today). Grep import-scoped (`setup/shuffle`), NOT a bare `shuffleDeck` token — both files name `shuffleDeck` in JSDoc; a bare-token grep self-trips (§18). Update those JSDocs to describe delegation.
 - Harness mirror is mandatory: `rotateToNextTurn` must mirror BOTH the flag reset AND the auto-draw, or replays never draw and diverge (WP-212 D-20903, extended to the draw).
 - Move never throws; turn hooks never throw — early `return` / no-op only.
 - `drawCards.logic.ts` module JSDoc must PARAPHRASE its purity (e.g. "pure helper — no game-framework import") and MUST NOT contain the literal token Verification Step 3's grep matches (`from 'boardgame`) — the grep is import-scoped; do not reintroduce a bare-token grep that JSDoc prose would self-trip (§18 / grep-gate-comment self-trip pattern).
 - Blocked second `drawCards` = ZERO mutation: assert `deepStrictEqual` vs a `structuredClone(G)` snapshot.
-- Fixture is REGENERATED, not re-pinned: `finalStateHash` + `messages` + `outcome` ALL change. Do NOT assert byte-identity. Instead validate the coherent-game sanity check (same endgame-condition class + comparable turn count). A different winner/condition is a STOP.
+- Fixture is REGENERATED, not re-pinned: `finalStateHash` + `messages` + `outcome` VALUES all change. Do NOT assert byte-identity. Coherent-game gate against the REAL oracle schema (`expected.outcome = { winner, counters }` — there is NO `outcome.type`; `expected.snapshotPerTurn` = per-turn array): **HARD** — `expected.outcome.winner` IDENTICAL to baseline (this fixture: `null`) AND the terminal counter in `outcome.counters` unchanged in kind (this fixture: `masterStrikeCount`); **SOFT** — turn count = `snapshotPerTurn.length`, record before/after, a large swing is investigated not auto-STOPped (do NOT hard-gate a fixed ±N). A flipped winner / changed terminal condition is a hard STOP.
 
 ## Required `// why:` Comments
 - `drawCards.logic.ts` `HAND_SIZE`: canonical start-of-turn hand size; single source; cross-check `00.2`
@@ -76,11 +77,12 @@
 - [ ] `pnpm --filter @legendary-arena/game-engine build` + `test` exit 0
 - [ ] `pnpm --filter @legendary-arena/arena-client build` + `test` exit 0
 - [ ] `Select-String drawCards.logic.ts -Pattern "boardgame.io"` → no output
+- [ ] `Select-String coreMoves.impl.ts,ruleRuntime.effects.ts -Pattern "setup/shuffle"` → no output (reshuffle lives only in `drawCards.logic.ts`; single draw primitive by absence — import-scoped, not a bare `shuffleDeck` token)
 - [ ] `Select-String ai.legalMoves.ts -Pattern "name: 'drawCards'"` → no output; `autoplay.mjs` `drawCards` → no output
 - [ ] `Select-String TurnActionBar.vue -Pattern "play-action-draw|handCount|onDraw|drawGate"` → no output
 - [ ] `Select-String PlayDesktop.vue,PlayMobile.vue -Pattern "hand-count"` → no output
 - [ ] `git diff` of `coreMoves.types.ts` / `coreMoves.gating.ts` / `coreMoves.validate.ts` / `uiMoveName.types.ts` → no output (contracts unchanged)
-- [ ] Regenerated fixture passes the coherent-game sanity check (same endgame-condition class)
+- [ ] Regenerated fixture passes the coherent-game HARD gate: `expected.outcome.winner` identical to baseline (`null`) + terminal counter (`masterStrikeCount`) unchanged in kind; turn count (`snapshotPerTurn.length`) recorded as soft signal (flipped winner / changed condition = STOP)
 - [ ] `git diff --name-only` → only the WP-listed files
 - [ ] `docs/ai/STATUS.md` updated
 - [ ] `docs/ai/DECISIONS.md` updated — D-23601 (auto-draw + guard), D-23602 (optional internal-G field), D-23603 (scaffold retirement), D-23604 (fixture regeneration + hash re-pin), D-23605 (draw-primitive consolidation)
@@ -96,3 +98,5 @@
 - `player.handCount` disappears from PlayerPanel/OpponentPanel → deleted the UIState field instead of just the TurnActionBar prop
 - Regenerated fixture shows a different winner → auto-draw altering game flow beyond draw-timing; STOP and investigate
 - New `vue-tsc` errors in arena-client UIState fixtures → something projected `hasDrawnThisTurn` to UIState (it must stay internal `G`)
+- `setup/shuffle` still imported in `coreMoves.impl.ts` or `ruleRuntime.effects.ts` → the inline loop was not actually replaced; two draw paths still exist (consolidation incomplete — the move/effect must delegate to `drawCardsIntoHand`)
+- A "count consumed" test passes only after moving `hasDrawnThisTurn = true` ahead of arg/stage validation → contract break. The flag is set unconditionally but ONLY after a clean validate-args → stage-gate pass; an args-invalid move (negative `count`) returns at step 1 and must leave the flag untouched

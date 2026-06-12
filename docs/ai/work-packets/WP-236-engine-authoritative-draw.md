@@ -248,8 +248,9 @@ Before writing a single line:
   `expected.messages`, AND `expected.outcome` all legitimately change. The WP-212
   "messages/outcome must stay byte-identical" guard does **NOT** apply here.
   Instead the executor regenerates the fixture via the capture mechanism and
-  validates that the new replay represents a **coherent game** (same winner /
-  endgame-condition class, comparable turn count) — see §Debuggability.
+  validates that the new replay represents a **coherent game** — `expected.outcome.winner`
+  identical to baseline and the terminal-condition kind preserved (HARD gate); turn
+  count a soft signal — see §Debuggability for the binary checks.
 
 **Session protocol:**
 - If any contract, field name, constant value, or file path is unclear, stop and
@@ -282,14 +283,26 @@ Before writing a single line:
 - Runtime state remains JSON-serializable after the new field is written (boolean).
 - No `G.messages` entry is added for a blocked `drawCards` (silent no-op per the
   Move Validation Contract — same as the existing stage-gate early return).
-- **Fixture-regeneration sanity check (replaces WP-212's byte-identity guard):**
-  after regenerating `sentinel-core-doom-2p.replay.json`, the executor confirms
-  the new `expected.outcome` reports the **same endgame-condition class** as
-  before (the game still ends the same way) and a comparable turn count. A
-  *different* winner or endgame condition is a STOP signal — the auto-draw is
-  altering game flow beyond the intended draw-timing shift. The `finalStateHash`,
-  `messages`, and `outcome` are all expected to change; the *shape* of the
-  outcome is what is validated.
+- **Fixture-regeneration sanity check (replaces WP-212's byte-identity guard).**
+  After regenerating `sentinel-core-doom-2p.replay.json`, validate the new oracles
+  against the pre-change fixture using the **actual** oracle schema —
+  `expected.outcome` is `{ winner, counters }` (NOT an `outcome.type`),
+  `expected.snapshotPerTurn` is the per-turn array:
+  - **HARD gate (binary — a mismatch is a STOP, not a re-pin):**
+    `expected.outcome.winner` is **identical** to the pre-change value (this
+    fixture: `null`). A flipped winner means auto-draw changed who wins, not just
+    draw timing — STOP and read the transcript.
+  - **HARD gate:** the terminal counter set in `expected.outcome.counters` is
+    unchanged in *kind* — the game still ends by the same condition (this fixture:
+    `masterStrikeCount` is still the present terminal counter). Its numeric value
+    may change; the counter that ends the game may not appear/disappear.
+  - **SOFT signal (record before/after; investigate a large swing — do NOT
+    hard-gate a fixed ±N, auto-draw legitimately shifts flow):** turn count =
+    `expected.snapshotPerTurn.length`. A small delta is expected; a large swing
+    warrants reading the new transcript before accepting.
+  - `finalStateHash`, `messages`, and the `outcome` numeric values are **all
+    expected to change**; the `winner` identity and terminal-condition *kind* are
+    what is validated.
 
 ---
 
@@ -348,12 +361,24 @@ Before writing a single line:
 - After the draw, add `G.hasDrawnThisTurn = true;` **unconditionally** with a
   `// why:` comment (the attempt is consumed regardless of how many cards were drawn).
 - `import { HAND_SIZE, drawCardsIntoHand } from './drawCards.logic.js';`
+- Remove the now-unused `shuffleDeck` import (`from '../setup/shuffle.js'`) — the
+  reshuffle moves into the helper, and `shuffleDeck` is verified to be used only by
+  the draw loop in this file (import + one call). After this packet `shuffleDeck` is
+  imported by `drawCards.logic.ts` **alone**; the §Verification negative-space grep
+  confirms it is gone here. If this file's JSDoc names `shuffleDeck`, reword it to
+  describe delegation (keep prose accurate; the grep is import-scoped, so prose is
+  not what trips it — but stale prose is still a lie).
 
 ### F) Consolidate the rule-effect applier — `src/rules/ruleRuntime.effects.ts` (modified)
 - Replace the inline `while` draw loop in `applyDrawCards` with a call to
   `drawCardsIntoHand(playerZones, effect.count, ctx)`. Keep the existing
   player-not-found `messages.push(...)` guard at the call site (the helper draws;
   the caller owns not-found handling). This consolidation is **behaviour-neutral**.
+- Remove the now-unused `shuffleDeck` import from this file (delegated to the
+  helper) and update `applyDrawCards`'s JSDoc — currently *"reshuffled into the
+  deck using shuffleDeck"* — to describe delegation to `drawCardsIntoHand`. After
+  this packet, `coreMoves.impl.ts` and `ruleRuntime.effects.ts` both import the
+  draw from `drawCards.logic.js`, not `setup/shuffle.js`.
 
 ### G) Mirror the harness — `src/test/fixtures/runFixture.ts` (modified)
 - In `rotateToNextTurn`, after the existing `villainRevealedThisTurn = false`
@@ -408,7 +433,13 @@ Before writing a single line:
   (a `count` above the cap fills only to 6 and sets `hasDrawnThisTurn`); (b) a
   second `drawCards` in the same turn leaves `G` `deepStrictEqual` to a
   `structuredClone` snapshot (blocked, zero mutation); (c) an empty-deck attempt
-  still sets `hasDrawnThisTurn === true`.
+  still sets `hasDrawnThisTurn === true`; (d) a zero-draw attempt — `count: 0`
+  (valid: the validator accepts `count >= 0`) or a hand already at `HAND_SIZE` —
+  draws **zero** cards yet still sets `hasDrawnThisTurn === true` (the flag is set
+  unconditionally *after* a clean args + stage pass). **Contract guard:** the flag
+  is NOT set when args fail validation — a negative `count` returns at step 1,
+  before the guard, leaving the flag untouched. Do not move the flag-set ahead of
+  validation to make a "count consumed" case pass.
 - `src/game.test.ts` (modified) — add a play-phase `onBegin` test: a turn begins
   with an empty hand → after `onBegin` the active player's hand length equals
   `HAND_SIZE` and `G.hasDrawnThisTurn === true`; a turn-start hook observes the
@@ -512,8 +543,16 @@ if so, fold them in and log the amendment, mirroring D-20903.)
       `HAND_SIZE` and sets `G.hasDrawnThisTurn === true`.
 - [ ] An empty-deck-and-empty-discard `drawCards` attempt still sets
       `G.hasDrawnThisTurn === true`.
+- [ ] A zero-draw `drawCards` (`count: 0`, or hand already at `HAND_SIZE`) still
+      sets `G.hasDrawnThisTurn === true`; an **args-invalid** `drawCards` (e.g.
+      negative `count`) returns at validation and does **not** set the flag.
 - [ ] `drawCards` and `applyDrawCards` both call `drawCardsIntoHand` (single draw
       primitive; confirmed by reading).
+- [ ] `shuffleDeck` is imported **only** by `drawCards.logic.ts` — neither
+      `coreMoves.impl.ts` nor `ruleRuntime.effects.ts` still imports `setup/shuffle`
+      (single draw primitive enforced by absence; confirmed by the import-scoped
+      `setup/shuffle` grep, which does not self-trip on JSDoc prose naming
+      `shuffleDeck`).
 
 ### D) onBegin auto-draw
 - [ ] A `game.test.ts` test proves a turn begins with the active player's hand at
@@ -533,9 +572,12 @@ if so, fold them in and log the amendment, mirroring D-20903.)
 ### F) Fixture regeneration
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0 with the
       regenerated `sentinel-core-doom-2p.replay.json` and re-pinned `PRE_WP080_HASH`.
-- [ ] The regenerated `expected.outcome` reports the **same endgame-condition
-      class** and a comparable turn count as the pre-change fixture (coherent-game
-      sanity check; a different winner/condition is a STOP).
+- [ ] The regenerated `expected.outcome.winner` is **identical** to the
+      pre-change value (this fixture: `null`), and the terminal counter in
+      `expected.outcome.counters` is unchanged in kind (coherent-game HARD gate; a
+      flipped winner or changed terminal condition is a STOP). Turn count
+      (`expected.snapshotPerTurn.length`) is recorded before/after as a soft signal
+      — a large swing is investigated, not auto-accepted.
 
 ### G) Builds + scope
 - [ ] `pnpm --filter @legendary-arena/game-engine build` + `test` exit 0.
@@ -565,9 +607,18 @@ Select-String -Path "packages\game-engine\src\moves\drawCards.logic.ts" -Pattern
 # game-framework import" — and MUST NOT contain the literal token the grep would
 # match, per §18 / the grep-gate-comment self-trip pattern.)
 
-# Step 4 — single draw primitive (move + effect both delegate)
+# Step 4 — single draw primitive, positive: move + effect both delegate
 Select-String -Path "packages\game-engine\src\moves\coreMoves.impl.ts","packages\game-engine\src\rules\ruleRuntime.effects.ts" -Pattern "drawCardsIntoHand"
 # Expected: a match in each file
+
+# Step 4b — single draw primitive, negative: the reshuffle now lives ONLY in the
+# helper, so neither consolidated file still imports it.
+# why: import-scoped pattern ("setup/shuffle" = the import path) matches the
+# import statement only, never JSDoc/comment prose that may still say the word
+# "shuffleDeck" — avoids the §18 grep-gate self-trip. After this packet,
+# shuffleDeck is imported by drawCards.logic.ts alone.
+Select-String -Path "packages\game-engine\src\moves\coreMoves.impl.ts","packages\game-engine\src\rules\ruleRuntime.effects.ts" -Pattern "setup/shuffle"
+# Expected: no output (both files delegate the draw to drawCardsIntoHand)
 
 # Step 5 — bot/sweep no longer emits drawCards
 Select-String -Path "packages\game-engine\src\simulation\ai.legalMoves.ts" -Pattern "name: 'drawCards'"
@@ -622,7 +673,8 @@ competitive surface is added. NG-1 (no pay-to-win) is untouched.
 `HAND_SIZE` at each `onBegin` using `ctx.random`-seeded reshuffle). Unlike the
 WP-212 reveal re-pin (behaviour-neutral), the sentinel fixture is **regenerated**
 because draw timing genuinely changes; the coherent-game sanity check (same
-endgame-condition class) replaces byte-identity as the determinism guard.
+`outcome.winner` + terminal-condition kind) replaces byte-identity as the
+determinism guard.
 
 ## Funding Surface Gate
 
@@ -670,6 +722,8 @@ Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`, all 21 sections reviewed 
 | 21 | N/A | No endpoint/library-function surface touched (see API Catalog) |
 
 Reserved decisions (Active at close): **D-23601** auto-draw at `onBegin` to `HAND_SIZE` before `onTurnStart` + once-per-turn guard on the kept `drawCards` move; **D-23602** optional internal-`G` `hasDrawnThisTurn?: boolean` (absent ⇒ false; not UIState-projected); **D-23603** Draw scaffold retirement (button + prop + bot/sweep emission removed; move + `UiMoveName` kept); **D-23604** sentinel replay regenerated (behavioural change; coherent-game sanity check replaces byte-identity; `PRE_WP080_HASH` re-pinned); **D-23605** `drawCardsIntoHand` + `HAND_SIZE` consolidation (single draw primitive; behaviour-neutral).
+
+**Tightening amendment (2026-06-11, post-self-review — verification hardening only, no scope/contract/locked-value change):** grounded against engine source before landing. (1) Single-draw-primitive enforced by **absence** as well as presence — after consolidation neither `coreMoves.impl.ts` nor `ruleRuntime.effects.ts` imports `setup/shuffle` (`shuffleDeck` is used only by their draw loops today; verified); added import-scoped Verification **Step 4b** + AC + §Scope E/F notes (the §18 self-trip is pre-empted: the grep matches the import path, not JSDoc prose naming `shuffleDeck`). (2) Fixture coherence made **binary against the real oracle schema** — `expected.outcome` is `{ winner, counters }` (there is no `outcome.type`); HARD gate = `outcome.winner` identity (this fixture: `null`) + terminal-counter kind; turn count via `snapshotPerTurn.length` is a soft signal, not a fixed ±N. (3) Added a **zero-draw** move case (`count: 0` is valid — the validator accepts `count >= 0`) asserting the flag is consumed, with an explicit contract guard that the flag is NOT set when args fail validation (do not move the flag-set ahead of validation). These extend §13 (now 11 steps + Step 4b), sharpen §14 (AC-C/AC-F), and refine §17's coherent-game guard; all 21 §-verdicts above stand.
 
 ---
 
