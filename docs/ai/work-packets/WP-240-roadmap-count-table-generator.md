@@ -74,31 +74,51 @@ A deterministic, dependency-free Node ESM tool that:
   `tallyClusters`, `renderCountTable`, `findOrphans`) plus a thin CLI wrapper, so
   the parser is unit-testable in isolation.
 - `parseWorkIndex(text)` → `Map<wpId, 'done'|'open'|'blocked'>` (`[x]`→done;
-  `[ ]`→open, or blocked when the row text contains `Blocked`). The id regex
-  matches `WP-NNN`, `WP-NNN<letter>`, and `WP-NNN.N`.
+  `[ ]`→open, or blocked when the row text contains `Blocked`). It MUST use the
+  **canonical WP-ID regex** (also used by `expandNodeId` — §Locked Contract
+  Values): `/\bWP-\d{3}(?:[A-Za-z]|\.\d+)?\b/`. The suffix class is `[A-Za-z]`
+  (case-insensitive) — the corpus has BOTH `WP-005A`/`WP-007A` and lowercase
+  `WP-053a`/`WP-207a`/`WP-207b`; an `[A-Z]`-only regex silently drops the
+  lowercase ids and yields false orphans. **Count-parity (enforced by test):**
+  `parseWorkIndex` MUST capture every `- [x]`/`- [ ]` WP row — its entry count
+  equals a raw checkbox-line count; any gap fails loudly (this self-validates the
+  regex regardless of its exact form).
 - `parseMindmap(text)` → ordered `[{ cluster, nodeId, icon, isCrossRef }]` from
   the ```` ```mermaid ```` block: a node is a line trimming to `["`; a cluster
   heading is a non-node, non-keyword indented label; `root((…))` / `mindmap` /
-  the root descriptor are ignored.
+  the root descriptor are ignored. Cluster and node order is preserved exactly as
+  it appears in the source.
 - `expandNodeId(rawId)` → member ids: `WP-NNNA/B`→`[WP-NNNA, WP-NNNB]`,
-  `WP-NNN..MMM`→the zero-padded numeric range, `FP-*`→itself (Foundation Prompt),
-  anything else→itself.
+  `WP-NNN..MMM`→the numeric range **preserving the left operand's digit width**
+  (`WP-043..047`→`WP-043,…,WP-047`; `WP-43..47`→`WP-43,…,WP-47`), `FP-*`→itself
+  (Foundation Prompt); all other id formats pass through unchanged.
 - `tallyClusters(...)` → per-cluster `{ done, open, blocked, total }` from
-  membership × status, **skipping** cross-ref nodes (`(see ` — counted in their
-  real cluster) and FP nodes (counted in a separate Foundation addend); a
-  placeholder cluster (all nodes `📦`/`📝`) renders as `0/N` with its
-  queued/placeholder note and is excluded from the WP done/total.
+  membership × status, in source order, **skipping** cross-ref nodes (any label
+  containing the **case-sensitive** substring `(see ` — counted once in its real
+  cluster) and FP nodes (counted in a separate Foundation `+N/N` addend). A
+  **placeholder cluster** — one whose nodes ALL (a) resolve to no WP/FP id AND
+  (b) carry only `📦`/`📝` icons — renders `0/N` where **N is the cluster's
+  node-line count** (NOT 0), classified by icon (`N 📦 queued` / `N 📝
+  placeholders`), and is excluded from the WP done/total. A cluster with ≥ 1
+  WP/FP node is never a placeholder.
 - `findOrphans(...)` → WORK_INDEX WPs present in no mindmap node.
-- CLI: default = print the regenerated count-table section to stdout (dry run);
-  `--write` = replace the marker-bounded section in
-  `docs/05-ROADMAP-MINDMAP.md` in place; `--check` = exit non-zero if the file's
-  current section differs from the regenerated one (CI gate). **Orphan gate
-  (D-24002):** in every mode, if `findOrphans` is non-empty, print each orphan
-  id + a one-line "add a mindmap node for it" instruction and **exit non-zero**;
-  `--write` does not rewrite the file while orphans exist. No `|| true` /
-  exit-code-swallowing anywhere.
+- `renderCountTable(...)` → the markdown table + a single WORK_INDEX-derived
+  open/blocked summary line; deterministic (identical input → byte-identical
+  output; no clock / `Math.random` / locale-dependent sort; `for…of` not
+  `.reduce()`).
+- CLI modes (exact behavior): **default** (no flag) prints the regenerated
+  section to stdout ONLY (never writes); **`--write`** replaces the
+  marker-bounded section in `docs/05-ROADMAP-MINDMAP.md` (only when there are no
+  orphans and the markers are valid); **`--check`** prints nothing unless drift
+  or error and its exit code reflects drift. **Orphan gate (D-24002):** in every
+  mode, if `findOrphans` is non-empty, print one strict line per orphan —
+  `ORPHAN: WP-NNN — add a mindmap node for this WP` — and **exit non-zero**;
+  `--write` does not rewrite while orphans exist. **Marker integrity:** if the
+  `ROADMAP-COUNTS:START/END` markers are missing or duplicated, print
+  `ERROR: ROADMAP-COUNTS markers not found or invalid`, exit non-zero, and do not
+  write. No `|| true` / exit-code-swallowing anywhere.
 - Exit codes: `0` clean; `1` orphan(s) present; `2` out-of-date (under `--check`);
-  crash exits non-zero (never swallowed).
+  uncaught exceptions MUST terminate with a non-zero exit code (never swallowed).
 
 **B) Generator tests — `scripts/roadmap-counts.test.ts` (NEW)**
 `node --test` (run via the `roadmap:counts:test` script, §D) over the pure
@@ -109,14 +129,17 @@ cluster → `0/N`; orphan detection (a WORK_INDEX WP with no node is reported);
 network, no boardgame.io.
 
 **C) Markers + missing nodes — `docs/05-ROADMAP-MINDMAP.md` (MODIFIED)**
-- Wrap the existing count table + its footer-notes in
-  `<!-- ROADMAP-COUNTS:START (generated by scripts/roadmap-counts.mjs — do not hand-edit) -->`
+- Wrap the count table + the single WORK_INDEX-derived open/blocked summary line
+  in `<!-- ROADMAP-COUNTS:START (generated by scripts/roadmap-counts.mjs — do not hand-edit) -->`
   … `<!-- ROADMAP-COUNTS:END -->` markers (the generator's regeneration boundary).
+  The hand-written explanatory notes ("counts only", "if counts disagree with the
+  mindmap, the mindmap wins", the counting-convention prose) stay **outside** the
+  markers and are never touched by the generator.
 - Add a mindmap node for every currently-orphaned WP so the orphan gate passes —
   at minimum **WP-236** (Phase 2 — Core Turn Engine cluster); the executor runs
   the generator first and adds a node for each orphan it names.
-- The count-table section between the markers becomes generated content (its
-  hand-edited values are replaced by the generator's first `--write`).
+- The marker-bounded section becomes generated content (its hand-edited values
+  are replaced by the generator's first `--write`).
 
 **D) Script wiring — `package.json` (MODIFIED, root)**
 Add `roadmap:counts` (dry-run stdout), `roadmap:counts:write` (`--write`),
@@ -173,11 +196,16 @@ auto-merge).
 
 - **Source of truth:** `WORK_INDEX.md` for WP status (`[x]`=done / `[ ]`=open / `Blocked`=blocked); the mindmap nodes for cluster membership. The generator never writes `WORK_INDEX.md`.
 - **Regeneration boundary:** the section between `<!-- ROADMAP-COUNTS:START … -->` and `<!-- ROADMAP-COUNTS:END -->` in `docs/05-ROADMAP-MINDMAP.md`; the generator is its sole writer; everything outside the markers (the mindmap nodes, prose) is hand-maintained and untouched.
-- **Counting convention (encoded, not redefined):** combined nodes expand to members (`WP-005A/B`, `WP-043..047`); cross-ref nodes (`(see `) are skipped (counted once in their real cluster); Foundation Prompts (`FP-*`) are a separate `+N/N` addend, not a WP cluster; placeholder clusters (all `📦`/`📝` nodes) render `0/N` and are excluded from the WP done/total.
-- **Orphan gate (D-24002):** a `WORK_INDEX.md` WP with no mindmap node → print the id(s) + exit non-zero, in every mode; `--write` refuses to rewrite while orphans exist. Fail loudly — never bucket into a catch-all, never silently ignore.
+- **WP-ID canonical regex (authoritative, used by `parseWorkIndex` AND `expandNodeId`):** `/\bWP-\d{3}(?:[A-Za-z]|\.\d+)?\b/` — matches `WP-123`, `WP-123A`, lowercase `WP-123a`, and `WP-123.1`. The suffix class is `[A-Za-z]` (case-insensitive): the corpus has both uppercase (`WP-005A`) and lowercase (`WP-053a`, `WP-207a/b`) ids. `parseWorkIndex` MUST capture every checkbox WP row (count-parity test), so a regex gap fails loudly.
+- **Counting convention (encoded, not redefined):** combined nodes expand to members (`WP-005A/B`→`WP-005A,WP-005B`); range nodes expand **preserving the left operand's digit width** (`WP-043..047`→`WP-043,…,WP-047`); cross-ref nodes — any label with the **case-sensitive** substring `(see ` — are skipped (counted once in their real cluster); Foundation Prompts (`FP-*`) are a separate `+N/N` addend, not a WP cluster.
+- **Placeholder-cluster rule:** a cluster is a placeholder iff ALL its nodes (a) resolve to no WP/FP id AND (b) carry only `📦`/`📝` icons. It renders `0/N` where **N = the cluster's node-line count** (not 0), classified by icon (`N 📦 queued` / `N 📝 placeholders`), and is excluded from the WP done/total. A cluster with ≥ 1 WP/FP node is never a placeholder.
+- **Ordering (determinism):** clusters render in mindmap source order; nodes preserve their source order within a cluster; the open/blocked summary line is derived from `WORK_INDEX.md` order (NOT mindmap order — single authority). No locale-based sort anywhere.
+- **Orphan gate (D-24002):** a `WORK_INDEX.md` WP with no mindmap node → in every mode, print one strict line per orphan — `ORPHAN: WP-NNN — add a mindmap node for this WP` — and exit non-zero; `--write` refuses to rewrite while orphans exist. Fail loudly — never bucket into a catch-all, never silently ignore.
+- **Marker integrity:** missing or duplicated `ROADMAP-COUNTS:START/END` markers → print `ERROR: ROADMAP-COUNTS markers not found or invalid`, exit non-zero, do not write.
+- **CLI modes:** default (no flag) = print the regenerated section to stdout ONLY (no write); `--write` = mutate the file only when no orphans + valid markers; `--check` = print nothing unless drift/error, exit code reflects drift. Exit codes: `0` clean, `1` orphan(s), `2` out-of-date; uncaught exceptions terminate non-zero.
 - **No exit-swallowing:** no `|| true`, no `--check` masking; the cron step is `continue-on-error: true` (visible-red) per the EC-145 visible-failure invariant.
 - **Cron policy (D-14501 reuse):** `cron: '0 6 * * 1'`; PR-on-diff to `bot/roadmap-counts-refresh`; no direct-to-main, no auto-merge; review is the gate.
-- **Determinism:** identical (WORK_INDEX, ROADMAP) input → byte-identical regenerated section across runs/platforms (no clock, no `Math.random`, no locale-dependent sort).
+- **Determinism:** identical (WORK_INDEX, ROADMAP) input → byte-identical regenerated section across runs/platforms (per the Ordering rules above; no clock, no `Math.random`, no locale-dependent sort; `for…of` not `.reduce()` for the tally).
 - **No new package:** nothing is added to `pnpm-lock.yaml`. The generator uses Node built-ins only; `tsx` (already a devDep in all 10 workspace packages + in the lockfile) is promoted to **root** `devDependencies` so the root `.test.ts` runs — a hoist, not a new install.
 
 ## Acceptance Criteria
@@ -191,6 +219,8 @@ auto-merge).
 7. `.github/workflows/roadmap-counts.yml` mirrors the architecture-inventory cron (`'0 6 * * 1'`, `workflow_dispatch`, contents+PR write, `continue-on-error` generate step, PR-on-diff to `bot/roadmap-counts-refresh`); contains no `|| true` / exit-swallowing.
 8. `package.json` adds the four `roadmap:counts*` scripts + promotes `tsx` to root `devDependencies` (already in `pnpm-lock.yaml`; `pnpm install` fetches nothing new); no other dependency change.
 9. `pnpm -r build` exits 0 (no package build is affected; the script is standalone) and `roadmap:counts:test` exits 0.
+10. `parseWorkIndex` exhibits count-parity: its entry count equals a raw count of `- [x]`/`- [ ]` WP rows in `WORK_INDEX.md` (the test asserts this), so the canonical regex captures every row including lowercase suffixes (`WP-053a`, `WP-207a/b`).
+11. `renderCountTable` is byte-deterministic: invoked twice with identical inputs it returns byte-identical strings (asserted by test); marker integrity is enforced — missing/duplicated markers produce `ERROR: ROADMAP-COUNTS markers not found or invalid` + non-zero exit + no write.
 
 ## Verification Steps
 
@@ -219,14 +249,20 @@ Select-String -Path "docs/05-ROADMAP-MINDMAP.md" -Pattern "ROADMAP-COUNTS:START"
 (Select-String -Path ".github/workflows/roadmap-counts.yml" -Pattern "\|\| true").Count
 # Expected: 0
 
-# 7. Tests + build
-node --import tsx --test scripts/roadmap-counts.test.ts   # Expected: 0 fail
+# 7. Orphan output format is the strict, script-consumable line (with a node removed)
+node scripts/roadmap-counts.mjs 2>&1 | Select-String "^ORPHAN: WP-\d{3}.* — add a mindmap node for this WP$"
+# Expected: one matching line per orphan; exit non-zero
+
+# 8. Count-parity: parseWorkIndex captures every checkbox WP row (incl. lowercase suffixes)
+node --import tsx --test scripts/roadmap-counts.test.ts   # Expected: 0 fail (count-parity + render-determinism cases included)
+
+# 9. Build
 pnpm -r build                                             # Expected: exit 0
 ```
 
 ## Definition of Done
 
-- [ ] All 9 Acceptance Criteria pass
+- [ ] All 11 Acceptance Criteria pass
 - [ ] All Verification Steps produce the expected output
 - [ ] `roadmap:counts:test` exits 0 (net-new parser tests; edge cases covered)
 - [ ] `roadmap:counts:check` exits 0 on the committed `docs/05-ROADMAP-MINDMAP.md`
@@ -277,7 +313,7 @@ Per `docs/ai/REFERENCE/00.3-prompt-lint-checklist.md`, all 21 sections reviewed 
 | 11 | N/A | No auth model touched |
 | 12 | PASS | `node --test` over pure helpers; no network/boardgame.io; determinism test for `renderCountTable` |
 | 13 | PASS | Exact commands + expected output / exit codes |
-| 14 | PASS | 9 binary, observable acceptance criteria aligned to deliverables |
+| 14 | PASS | 11 binary, observable acceptance criteria aligned to deliverables (9 base + 10 count-parity, 11 render-determinism/marker-integrity, from the tightening pass) |
 | 15 | PASS | DoD includes STATUS/DECISIONS/WORK_INDEX/EC_INDEX + scope-boundary check |
 | 16 | PASS | Human-style: pure helpers + thin CLI, explicit parsing, JSDoc, descriptive names, `// why:` on the orphan-gate + cron-policy choices |
 | 17 | N/A | No scoring/replay/RNG/card-data/monetization/public surface (see Vision Alignment) |

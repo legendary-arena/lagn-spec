@@ -19,8 +19,13 @@
 
 - Source of truth: `WORK_INDEX.md` for status (`[x]`=done / `[ ]`=open / `Blocked`); mindmap nodes for cluster membership. Generator NEVER writes `WORK_INDEX.md`.
 - Regeneration boundary: between `<!-- ROADMAP-COUNTS:START … -->` and `<!-- ROADMAP-COUNTS:END -->`; the generator is the sole writer; everything outside is hand-maintained and untouched.
-- Counting convention (encode, don't redefine): combined nodes expand to members; cross-ref `(see ` skipped (counted once in its real cluster); `FP-*` a separate `+N/N` addend; placeholder clusters (all `📦`/`📝`) render `0/N`, excluded from the WP done/total.
-- Orphan gate (D-24002): a WORK_INDEX WP with no mindmap node → print id + exit non-zero, every mode; `--write` refuses while orphans exist. Loud-fail — never bucket, never silently ignore.
+- WP-ID canonical regex (used by `parseWorkIndex` AND `expandNodeId`): `/\bWP-\d{3}(?:[A-Za-z]|\.\d+)?\b/` — suffix class is `[A-Za-z]` (corpus has lowercase `WP-053a`/`WP-207a/b`, NOT just uppercase). `parseWorkIndex` count MUST equal a raw checkbox-WP-row count (count-parity test) so a regex gap fails loudly.
+- Counting convention (encode, don't redefine): combined nodes → members; range nodes expand **preserving the left operand's digit width** (`WP-043..047`→`WP-043…WP-047`); cross-ref = case-sensitive substring `(see ` → skipped (counted once in its real cluster); `FP-*` a separate `+N/N` addend.
+- Placeholder cluster: ALL nodes resolve to no WP/FP id AND carry only `📦`/`📝` → render `0/N` where **N = node-line count** (NOT 0), by icon (`N 📦 queued` / `N 📝 placeholders`), excluded from the WP done/total. ≥ 1 WP/FP node → not a placeholder.
+- Ordering: clusters in mindmap source order; nodes preserve source order; the open/blocked summary line is derived from WORK_INDEX order (not mindmap). No locale sort.
+- Orphan gate (D-24002): a WORK_INDEX WP with no mindmap node → print one strict line per orphan `ORPHAN: WP-NNN — add a mindmap node for this WP` + exit non-zero, every mode; `--write` refuses while orphans exist. Loud-fail — never bucket, never silently ignore.
+- Marker integrity: missing/duplicated `ROADMAP-COUNTS:START/END` → print `ERROR: ROADMAP-COUNTS markers not found or invalid`, exit non-zero, do not write.
+- CLI modes: default = print section to stdout ONLY (no write); `--write` = mutate only when no orphans + valid markers; `--check` = silent unless drift/error, exit reflects drift.
 - No exit-swallowing: no `|| true`, no masked `--check`; cron generate step is `continue-on-error: true` (visible-red, EC-145 invariant).
 - Cron (D-14501 reuse): `cron: '0 6 * * 1'` + `workflow_dispatch`; PR-on-diff to `bot/roadmap-counts-refresh`; no direct-to-main, no auto-merge.
 - Determinism: identical (WORK_INDEX, ROADMAP) input → byte-identical section; no clock / `Math.random` / locale-dependent sort.
@@ -80,6 +85,9 @@
 - Forgetting to expand `WP-005A/B` / `WP-043..047` → undercount + spurious "orphan" (the combined id won't match a WORK_INDEX row). Expand to members before status lookup.
 - Counting `FP-*` as WP-cluster members → Foundation Prompts are a separate `+N/N` addend, not WPs.
 - A non-deterministic sort (`localeCompare`) or a clock read → cron churns a no-op diff every week. Stable keys, no wall-clock.
+- An `[A-Z]`-only WP-ID regex → silently drops lowercase `WP-053a` / `WP-207a/b` → they read as orphans (false fail). Use `[A-Za-z]`; the count-parity test (parseWorkIndex count == raw checkbox-row count) catches any gap.
+- Rendering a placeholder cluster as `0/0` instead of `0/N` → its nodes don't resolve to WP ids, but the row still counts node lines (`Next Horizons 0/4`, `Phase 10 0/8`). Count node lines + classify by icon.
+- Missing/duplicated markers handled by silently appending or rewriting the whole file → must `ERROR: ROADMAP-COUNTS markers not found or invalid` + exit non-zero + NOT write.
 
 ## DECISIONS.md Entries (D-24001..D-24002)
 
