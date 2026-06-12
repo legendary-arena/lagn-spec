@@ -22,14 +22,22 @@
 - Token attachment (D-24003, supersedes D-20601): headers `{ Accept: 'application/json', Authorization: \`Bearer ${token}\` }` when `readAuthToken()` non-null; `credentials: 'include'` REMOVED from all three fetchers. Null token ⇒ fail-silent (no request, cache/sentinel preserved, one-shot DEV warn).
 - `isLiveModeEnabled()` unchanged; the env flip is an operator deploy action, not a code change.
 - Server untouched (D-11202 bearer-only complied with; no admin-scoping — D-24004).
+- Token-reader registration: `registerAuthTokenReader(fn)` called ONCE from `App.vue` after Pinia is created; `readAuthToken()` returns the registered value (or `null` pre-registration / in tests); no `useAuthStore()` inside a plain module.
+- Single seam: `buildLiveRequestOptions(token)` is the SOLE header producer; `handleMissingAuthToken(cacheRef, warnOnceSet)` the SOLE fail-silent path; the three fetchers delegate to both — no per-file header/skip logic.
+- Hanko init idempotent: a `hankoInitialized` guard; repeat mounts MUST NOT re-init/re-subscribe (no duplicate `setSession`/`clearSession`).
+- Token-storage invariant: the token lives ONLY in the Pinia auth store; no other module caches/copies it.
 
 ## Guardrails
 
 - **App layer only.** Touch only `apps/dashboard/**` + the 5 governance files. No `apps/server`/engine/registry/migration edit. The Hanko wrapper + store are LOCAL copies — never import `apps/arena-client`.
 - **One new dep only:** `@teamhanko/hanko-elements` (version-match arena-client), in `dependencies` (not devDependencies).
 - **Drop the cookie everywhere.** After this WP, `Select-String *LiveFetchers.ts -Pattern "credentials: 'include'"` must be 0. The bearer header replaces it.
-- **Token read at fetch time, fail-silent on null.** `readAuthToken()` is the injectable accessor (parity with `readEnv()`); a null token is the missing-credential case — skip the request, keep prior cache, one-shot DEV warn. Never throw to the widget.
-- **Fetcher contracts byte-stable otherwise.** Synchronous getter, cached-`Ref`, object-envelope guard, single-request dedup, signature — all unchanged. Only `FETCH_OPTIONS` → bearer builder changes.
+- **`authToken.ts` is implemented FIRST, registered once.** `App.vue` calls `registerAuthTokenReader(() => authStore.token)` once after Pinia is created; the plain-module fetchers read via `readAuthToken()` — NEVER `useAuthStore()` directly (removes the Pinia-timing false-null). Build `authToken.ts` before editing the fetchers.
+- **Single drift-proof seam.** `buildLiveRequestOptions(token)` is the SOLE header producer; `handleMissingAuthToken(cacheRef, warnOnceSet)` the SOLE fail-silent path; all three fetchers call them — no per-file header or skip logic.
+- **Fail-silent on null token (uniform).** Token `null` ⇒ `fetch` is NOT invoked, the prior `cacheRef.value` is returned unchanged, one-shot DEV warn. Identical across the three; never throw to the widget.
+- **Hanko init idempotent.** A `hankoInitialized` guard — repeat mounts MUST NOT re-init/re-subscribe (no duplicate session callbacks).
+- **Token only in the store.** The session token lives ONLY in the Pinia auth store; no other module caches or copies it.
+- **Fetcher contracts byte-stable otherwise.** Synchronous getter, cached-`Ref`, object-envelope guard, single-request dedup, signature — all unchanged. Only `FETCH_OPTIONS` → the shared bearer builder changes.
 - **No mock login residue.** `LoginPage.vue` must lose the email/role form + "any email accepted" note; `stores/auth.ts` must lose `login(AuthUser)`. The router guard keeps gating on `isAuthenticated` (now token-derived).
 - **Roles are out of scope (D-24004).** Remove the mock role dropdown; do NOT add server-side role enforcement; do NOT gate widgets on role.
 - **`mocks.ts` / `isLiveModeEnabled()` frozen.** MOCK stays the default; the hardcoded-mock surfaces (KPI/players/billing/monetization) end byte-identical.
@@ -42,7 +50,7 @@
 - `stores/auth.ts` — why `bootstrapFromCachedToken` guards against a null cached token clobbering a set session (D-16003).
 - `authToken.ts` — why the fetchers read the token via an injectable accessor, not `useAuthStore()` directly (plain-module decoupling + test seam; D-24005).
 - `*LiveFetchers.ts` (D-24003) — why `Authorization: Bearer` replaces `credentials: 'include'` (server is bearer-only, D-11202; supersedes D-20601's cookie posture that never worked live).
-- `App.vue` — why an empty/unreachable `VITE_HANKO_TENANT_BASE_URL` falls back to the LoginPage instead of throwing (test/dev/unconfigured).
+- `App.vue` — why an empty/unreachable `VITE_HANKO_TENANT_BASE_URL` falls back to the LoginPage instead of throwing (test/dev/unconfigured); and why Hanko init is guarded idempotent (`hankoInitialized` — repeat mounts must not re-subscribe / double-fire `setSession`).
 
 ## Files to Produce
 
@@ -51,13 +59,13 @@
 - `apps/dashboard/src/stores/auth.ts` (+ `.test.ts`) — **modified/new** — real token store + tests.
 - `apps/dashboard/src/App.vue` — **modified** — Hanko init + session → store.
 - `apps/dashboard/src/pages/auth/LoginPage.vue` — **modified** — `<hanko-auth :api>`; drop mock form.
-- `apps/dashboard/src/services/authToken.ts` — **new** — `readAuthToken()` + `__testHooks`.
-- `apps/dashboard/src/services/{analytics,sweep,triage}LiveFetchers.ts` (+ their `.test.ts`) — **modified** — Bearer; drop cookie; assert in tests.
+- `apps/dashboard/src/services/authToken.ts` (+ `.test.ts`) — **new** — the live-fetch auth seam: `registerAuthTokenReader` + `readAuthToken` + `buildLiveRequestOptions(token)` + `handleMissingAuthToken(cacheRef, warnOnceSet)` + `__testHooks` + tests. **Implement before the fetchers.**
+- `apps/dashboard/src/services/{analytics,sweep,triage}LiveFetchers.ts` (+ their `.test.ts`) — **modified** — delegate to the shared seam (Bearer); drop cookie; per-fetcher Bearer + negative-path (null-token ⇒ no fetch) assertions.
 - `apps/dashboard/src/types/index.ts` — **modified** — retire mock role surface.
 - `apps/dashboard/.env.example` — **modified** — add `VITE_HANKO_TENANT_BASE_URL`; fix `VITE_API_BASE_URL`.
 - `docs/ai/STATUS.md`, `docs/ai/DECISIONS.md` (D-24003..D-24005), `docs/ai/work-packets/WORK_INDEX.md`, `docs/ai/execution-checklists/EC_INDEX.md`, `docs/05-ROADMAP-MINDMAP.md` — **modified** — governance.
 
-~21 files: 16 App source/test + 5 governance. (Operator-authorised >~8; may split WP-241a/b — see WP-241 §Files.)
+~22 files: 17 App source/test + 5 governance. (Operator-authorised >~8; may split WP-241a/b — see WP-241 §Files.)
 
 ## After Completing
 
@@ -66,7 +74,10 @@
 - [ ] `… typecheck` exits 0; no new error vs baseline.
 - [ ] `Select-String hankoClient.ts -Pattern "initializeHankoClient","subscribeToSessionEvents","__hankoFactory"` → all match.
 - [ ] `(Select-String hankoClient.ts,stores/auth.ts -Pattern "apps/arena-client","apps/server").Count` → 0.
-- [ ] `(Select-String {analytics,sweep,triage}LiveFetchers.ts -Pattern "credentials: 'include'").Count` → 0; `Authorization` present in each.
+- [ ] `(Select-String {analytics,sweep,triage}LiveFetchers.ts -Pattern "credentials: 'include'").Count` → 0; `(Select-String {analytics,sweep,triage}LiveFetchers.ts -Pattern "buildLiveRequestOptions").Count` → 3 (delegation — NOT a bare `Authorization` grep on the fetchers, whose `// why:` comment names it, §18).
+- [ ] `Select-String authToken.ts -Pattern "registerAuthTokenReader","buildLiveRequestOptions","handleMissingAuthToken"` → all match (the single seam).
+- [ ] Each fetcher has a dedicated negative-path test: `readAuthToken()` null ⇒ `fetch` spy NOT called AND prior cache returned.
+- [ ] `registerAuthTokenReader` called once (App.vue); Hanko init idempotency proven (a re-mount does not re-subscribe).
 - [ ] `(Select-String LoginPage.vue -Pattern "any email|mockUser|selectedRole").Count` → 0; `hanko-auth` present.
 - [ ] `Select-String .env.example -Pattern "VITE_HANKO_TENANT_BASE_URL"` → 1.
 - [ ] `git diff --stat apps/server packages` → no output.
