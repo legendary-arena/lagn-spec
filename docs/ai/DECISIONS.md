@@ -15706,6 +15706,90 @@ relocation. D-13808 / D-13809 / D-13811 unchanged.
 
 ---
 
+### D-13813 — Engineering Wiki Viewer: CI-Driven Deterministic Deploy (Amends D-13811)
+
+> **Date:** 2026-06-11. **Amends:** D-13811 (hosting target — specifically
+> its deploy-trigger assumption: "Render auto-deploys from `main` once the
+> workflow passes"). **Does not supersede** D-13808 (framework), D-13809
+> (external-link strategy), D-13810 / D-13812 (projection + source
+> location), or the rest of D-13811 (Render `static_site` hosting, build
+> command, publish path) — those remain in force.
+
+**Decision:** Wiki deploys are triggered **explicitly by the wiki-viewer
+CI workflow**, not by Render's implicit on-commit auto-deploy. Three
+coordinated changes:
+
+1. **`render.yaml`** sets `autoDeploy: false` on the `legendary-arena-wiki`
+   service. Render no longer deploys on every push to `main`.
+2. **`.github/workflows/wiki-viewer.yml`** gains a `deploy` job
+   (`needs: build`, `if:` push-to-`main` only) that POSTs to the service's
+   Render **Deploy Hook**. The deploy fires only **after** the build job's
+   link-integrity + Hugo build + JS-free + determinism gates pass, so
+   broken wiki content can never reach the live site. The hook URL is the
+   repo secret `RENDER_WIKI_DEPLOY_HOOK`; if the secret is absent the job
+   no-ops (stays green) rather than failing.
+3. **`.github/workflows/wiki-viewer.yml`** trigger paths gain `ewiki/**`.
+   Image / asset changes under `ewiki/` are wiki build inputs (projected to
+   `static/<slug>/` by `project-wiki.mjs`) but previously did not trigger
+   the workflow.
+
+A companion lint fix in **`apps/wiki-viewer/scripts/check-links.mjs`**
+exempts `/`-rooted destinations from the content-relative resolver: these
+are Hugo static-root URLs (e.g. `/development-workflow/ai-system-flow.png`),
+validated by the static projection, never `.md` cross-links (`wiki/SCHEMA.md`
+forbids absolute paths for those). This unblocks the first real in-body
+static image embed on a wiki page.
+
+**Rationale:**
+- **Determinism over an unreliable implicit trigger.** On 2026-06-11,
+  Render's on-commit auto-deploy stalled intermittently: four consecutive
+  merges to `main` (#273–#276) all failed to auto-deploy despite the
+  setting reading "On Commit," leaving the live ewiki multiple commits
+  behind `main` and requiring manual dashboard deploys to recover. A
+  CI-driven hook makes the deploy a gated, observable, self-triggering
+  step — every wiki change either deploys or leaves a visibly failed CI
+  run.
+- **The build gate becomes a true deploy gate.** Under D-13811 the
+  workflow was advisory (Render deployed in parallel regardless). Gating
+  the hook on `needs: build` means a failing link-check or determinism
+  check now actually blocks the deploy.
+- **`ewiki/**` path gap was load-bearing.** Without it, an asset-only
+  change (e.g. the 2026-06-11 diagram resize) ran no CI and triggered no
+  deploy — invisible until noticed manually.
+
+**Implementation (commit landing this decision):** PR #277 — `render.yaml`
+(`autoDeploy: false`), `.github/workflows/wiki-viewer.yml` (`deploy` job +
+`ewiki/**` paths). The `check-links.mjs` `/`-rooted exemption landed
+earlier in the same session (the image-embed enablement).
+
+**Operational contract:**
+- The `RENDER_WIKI_DEPLOY_HOOK` secret (the wiki service's Deploy Hook URL)
+  must exist in repo Actions secrets for deploys to fire. It is consumed by
+  CI only — it is **not** a Render service env var.
+- `autoDeploy: false` is synced to Render via the blueprint on push to
+  `main`; the Deploy Hook works independently of the auto-deploy setting.
+- Future moves (different host, GitOps deploy, etc.) require a new
+  DECISIONS entry superseding this lock.
+
+**Verification:** PR #277's merge ran the workflow; the `deploy` job logged
+`Render deploy triggered for legendary-arena-wiki` and Render registered a
+deploy for the merge commit. The next wiki merge (#279) and the
+architecture-inventory refresh (#280) both auto-deployed through the hook
+with no manual action.
+
+**Status:** Active.
+
+**Citation:** This entry; PR #277;
+[`render.yaml`](../../render.yaml) `legendary-arena-wiki` service block
+(`autoDeploy: false`);
+[`.github/workflows/wiki-viewer.yml`](../../.github/workflows/wiki-viewer.yml)
+`deploy` job + trigger paths;
+[`apps/wiki-viewer/scripts/check-links.mjs`](../../apps/wiki-viewer/scripts/check-links.mjs)
+`isExternal` `/`-rooted exemption. Amends D-13811; cross-references D-14501
+(the inventory cron now deploys via this same path).
+
+---
+
 ### D-13901 — `_skipPair[]` Annotation Grammar (WP-140)
 
 **Decision:** A new optional patch field `heroes[]._skipPair[]` is the
