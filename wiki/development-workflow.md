@@ -21,8 +21,27 @@ source:
   - ../docs/ai/REFERENCE/01-render-infrastructure.md
   - ../docs/ai/REFERENCE/01.0a-wp-drafting-phase.md
   - ../docs/ai/REFERENCE/01.0b-wp-execution-phase.md
-last-reviewed: 2026-06-11
+last-reviewed: 2026-06-12
 ---
+
+> **Editing this page**
+>
+> This is the operator-facing guide. Its canonical source is
+> `docs/ai/REFERENCE/development-workflow.md` (in this same
+> `legendary-arena` repo) — that REFERENCE doc is what we edit. This page
+> synthesizes it together with the companion REFERENCE docs listed in the
+> metadata panel above (`01-render-infrastructure.md`,
+> `01.0a-wp-drafting-phase.md`, `01.0b-wp-execution-phase.md`).
+>
+> - **To change the workflow itself:** edit
+>   `docs/ai/REFERENCE/development-workflow.md`, commit with the `SPEC:`
+>   prefix, push to `main`.
+> - **To update this page:** edit `wiki/development-workflow.md`, commit
+>   with the `SPEC:` prefix, push to `main`. Run `pnpm wiki-viewer:check-links`
+>   first — the merge to `main` rebuilds and publishes ewiki via Cloudflare
+>   Pages.
+> - **Keep both in sync.** When the REFERENCE source changes, update this
+>   page to match and bump `last-reviewed`.
 
 ## Summary
 
@@ -311,11 +330,29 @@ with no operator at the keyboard.
 
 | Automation | Schedule | What it does |
 |---|---|---|
-| Nightly Inspector triage | Cron (`.github/workflows/inspection-nightly.yml`) | Runs sweep over codebase, generates findings, creates WPs |
+| Nightly Inspector triage | Cron (`.github/workflows/inspection-nightly.yml`) | Runs sweep over codebase, generates **P0/P1/P2-tagged** findings, creates WPs |
 | Architecture inventory | Weekly Monday 06:00 UTC (`.github/workflows/architecture-inventory.yml`) | Regenerates `wiki/architecture-inventory.md`, opens PR on diff |
 | Auto-deploy (Render) | On merge to `main` | Rebuilds server, runs migrations |
 | Auto-deploy (Cloudflare Pages) | On merge to `main` | Rebuilds front-ends |
 | WP auto-verification (WP-231/233) | Part of nightly sweep | Closes verified findings, surfaces new ones |
+
+**Triage findings carry severity — the loop is prioritized, not flat.**
+The nightly Inspector applies the same **P0/P1/P2 rubric** the per-PR
+Inspector uses (see
+[code-checks-and-balances.md](../apps/dashboard/docs/code-checks-and-balances.md)),
+so the WPs it generates arrive ranked rather than as an undifferentiated
+backlog:
+
+- **P0** — breaks production, corrupts data, or violates determinism. A
+  P0 blocks the merge gate and heads the generated backlog.
+- **P1** — real bugs, missing error handling, undocumented spec
+  deviations, major maintainability problems. Also a merge blocker.
+- **P2** — style nits, naming, opportunistic cleanups. Optional; queued
+  behind revenue- and correctness-critical work.
+
+Severity is the prioritization signal: P0/P1 surface first because they
+are the findings that can cost real money or correctness, which lines up
+with the **Tie to KPIs** rule below (acquisition / value / cost).
 
 **What's not automated yet:**
 
@@ -331,6 +368,29 @@ with no operator at the keyboard.
 auto-deploy) but not on operator machines. The workstation enables a
 new cadence layer — scheduled Claude Code agents that run locally, not
 just in GitHub Actions. This is the highest-leverage gap to close.
+
+**Workstation cadence layer (planned).** The workstation can run
+scheduled agents CI can't: jobs that need the real `.env`, run longer
+than a CI minute budget, or lean on the cheap Tier-1 inference described
+in Phase 7. These are illustrative first candidates, not a committed
+backlog:
+
+- **Daily dev-health agent** — pull a clean `main`, run `pnpm check` /
+  `pnpm test` / `pnpm -r build`, and write a dated log under a gitignored
+  `health/` path. Surfaces red (a broken `main`, a failing probe) before
+  the operator sits down, instead of mid-session.
+- **Repo drift detector** — flag files churned without WP linkage and the
+  governance papercuts the operator otherwise finds by accident: stale
+  `.env` values, doc-vs-code drift, pre-existing test failures carried
+  across sessions.
+- **Dependency-update agent** — run `pnpm update` plus the full suite
+  between WPs on a clean `main`, and open an `INFRA:` PR **only if green**.
+  Never mid-WP (see the version-pinning upgrade rule below).
+
+Each stays operator-discretionary and starts low on the **autonomy
+spectrum** (L2 Drafted / L3 Supervised), governed by the same **Intern
+Rule** and **Kill Switch** as any other automation — earn write
+permissions, and shut it down if it costs more than it saves.
 
 ### Four C's — maturity summary
 
@@ -557,6 +617,31 @@ spills to CPU and runs far slower.
 CPU-only inference works for the 1–8B tier but is much slower; use it
 for batch/overnight jobs, not interactive sessions.
 
+#### Hosted alternative — OpenRouter (no GPU required)
+
+The local tier above assumes workstation VRAM. If the hardware isn't
+there — or you want a cheap Tier-1 pass from the laptop or a
+phone-steered session — **OpenRouter** (`https://openrouter.ai`) is the
+hosted equivalent: one OpenAI-compatible endpoint fronting dozens of
+models (open-weight and frontier), billed per token, typically a
+fraction of frontier-API cost for the same draft-grade work. It trades
+Ollama's zero-marginal-cost privacy (nothing leaves the machine) for
+zero-setup and no GPU — OpenRouter calls do go to a third-party
+provider, so it is for non-sensitive draft/scan work, not anything that
+shouldn't leave your infrastructure.
+
+Because the endpoint shape matches Ollama's
+(`/v1/chat/completions`), the Pattern B and Pattern C handoffs below work
+unchanged — swap the base URL to `https://openrouter.ai/api/v1` and add
+an `OPENROUTER_API_KEY` (optional, `.env`-only, never committed). The
+governance is identical: OpenRouter output is **unverified draft input**,
+gated by Claude or the operator before it lands.
+
+> Same Tier-1, two backends: **Ollama** for local / private /
+> zero-marginal-cost (needs VRAM); **OpenRouter** for hosted / no-setup
+> (pay-per-token, no GPU, leaves the machine). Both are
+> operator-discretionary — neither is in Claude Code's automated loop.
+
 #### Sharing local-model results back to Claude Code
 
 Local models are not in Claude Code's automated loop — they produce raw
@@ -628,7 +713,7 @@ that has to be right.
 
 | Tier | Engine | Use for |
 |---|---|---|
-| **Tier 1 — local, cheap** | Ollama on the workstation | Exploration, first-pass audits, pattern/keyword scanning, bulk text transforms, brainstorming, diff summaries, **narrowing which files matter** |
+| **Tier 1 — cheap, fast** | Ollama (local) or OpenRouter (hosted) | Exploration, first-pass audits, pattern/keyword scanning, bulk text transforms, brainstorming, diff summaries, **narrowing which files matter** |
 | **Tier 2 — precise** | Claude Code | Final decisions, architecture changes, WP/EC execution, bug fixes with tests, anything correctness-critical, commits |
 
 **The biggest lever is context pre-filtering.** Instead of asking Claude
@@ -1015,5 +1100,6 @@ For detailed probe diagnostics, see
 - [.github/workflows/inspection-nightly.yml](../.github/workflows/inspection-nightly.yml) — nightly Inspector triage agent
 - Tailscale — `https://tailscale.com`
 - Ollama — `https://ollama.com`
+- OpenRouter — `https://openrouter.ai` (hosted OpenAI-compatible model gateway; no-GPU Tier-1 alternative)
 - Nate Herk, "I Turned Claude Opus 4.8 Into My Entire AI Operating System" — `https://www.youtube.com/watch?v=0WDkwMxj13s` (Four C's + Three M's frameworks)
 - AIS-OS starter kit — `https://github.com/nateherkai/AIS-OS` (`/onboard`, `/audit`, `/level-up` skills)

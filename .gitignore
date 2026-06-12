@@ -23,6 +23,11 @@ apps/registry-viewer/dist/
 # dumps). Per-session, never load-bearing across sessions, never committed.
 .session/
 
+# Local-model scratch output (Ollama / OpenRouter Tier-1 handoff per the
+# development-workflow wiki guide). Unverified draft input the operator or
+# Claude Code reads next turn; never committed, never authoritative.
+scratch/
+
 # Invocation scratchpads — preflight / copilot / session-prompt files behave
 # like REPL transcripts. session-context-* files in docs/ai/session-context/
 # remain committed as governance artifacts. Override: `git add -f <path>` if

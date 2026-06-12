@@ -84,7 +84,11 @@ flowchart LR
    - Cloudflare rebuilds front-ends + serves assets via R2
    - Live across `*.legendary-arena.com`
 6. **It feeds itself**
-   - Nightly Claude CI runs Inspector triage
+   - Nightly Claude CI runs Inspector triage — findings are tagged
+     **P0/P1/P2** (same rubric as the per-PR Inspector: P0 breaks
+     prod / data / determinism, P1 real bugs or undocumented spec
+     deviations, P2 nits). P0/P1 gate the merge and head the generated WP
+     backlog; severity is the prioritization signal, not a flat list.
    - WP auto-verification loop (WP-231/233)
    - New findings generate new WPs → re-enter loop at step 1
 
@@ -117,6 +121,12 @@ The workstation may host:
 - **Local AI models** (future):
   - Small models (7B–14B) for experimentation
   - Large models (70B+) for heavy reasoning (hardware permitting)
+- **Hosted cheap tier — OpenRouter** (`https://openrouter.ai`): the
+  no-GPU alternative to local models. One OpenAI-compatible endpoint
+  fronting many models at a fraction of frontier-API cost; trades local
+  privacy (calls leave the machine) for zero hardware. Same
+  operator-discretionary, unverified-draft-input posture as the local
+  tier — neither is in Claude Code's automated loop.
 
 ```
 Claude Code (orchestrator)
