@@ -618,6 +618,52 @@ discretion, not automated routing (see the
 read it from a scratch file (Pattern A) or invoke the model directly
 (Pattern C).
 
+#### When to offload to a local model (token economics)
+
+Claude Code's cost scales with three things: **reasoning load, context
+size, and iteration count.** A local model's job is to **shrink the
+problem before Claude sees it** — not to replace Claude. The principle:
+use the local tier to narrow scope and draft; use Claude for the work
+that has to be right.
+
+| Tier | Engine | Use for |
+|---|---|---|
+| **Tier 1 — local, cheap** | Ollama on the workstation | Exploration, first-pass audits, pattern/keyword scanning, bulk text transforms, brainstorming, diff summaries, **narrowing which files matter** |
+| **Tier 2 — precise** | Claude Code | Final decisions, architecture changes, WP/EC execution, bug fixes with tests, anything correctness-critical, commits |
+
+**The biggest lever is context pre-filtering.** Instead of asking Claude
+to scan the whole repo, have the local model produce a candidate file
+list or summary, then point Claude at just those files. Context size is
+the dominant cost driver, so narrowing scope before Claude reads anything
+saves more than any prompt wording does. The mechanics are the Pattern A
+file handoff above:
+
+```powershell
+ollama run qwen2.5-coder:14b "List files likely involved in scoring bugs" > scratch/suspects.md
+```
+
+…then in Claude Code: *"Read `scratch/suspects.md` and analyze only the
+files it names."*
+
+**What does NOT meaningfully reduce cost** (common misconceptions):
+
+- Telling Claude to "be concise" — output tokens are a small fraction of
+  the bill; context and iteration dominate.
+- Minor prompt rewording — it changes phrasing, not the work.
+- Swapping Claude model tiers *mid-task* — a cheaper model for a whole
+  trivial task can help, but switching partway through a reasoning chain
+  does not.
+
+**The governance rule still holds:** local-model output is unverified
+draft input. Claude (or the operator) gates it before it lands — a 7B
+model's file list or audit is a starting point, not a citation. The local
+tier protects Claude from low-value scanning; it does not bypass the WP/EC
+contract or the local gates.
+
+> This tier is future infrastructure — Ollama is not operational yet.
+> Today all reasoning runs through Claude Code; this section is the
+> intended operating model once local models are live.
+
 ### Security hardening
 
 **Required:**
