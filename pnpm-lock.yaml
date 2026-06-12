@@ -14,6 +14,9 @@ importers:
       '@legendary-arena/game-engine':
         specifier: workspace:*
         version: link:packages/game-engine
+      tsx:
+        specifier: ^4.15.7
+        version: 4.21.0
       typescript:
         specifier: ^5.4.5
         version: 5.9.3

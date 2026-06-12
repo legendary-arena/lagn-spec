@@ -1,0 +1,86 @@
+name: roadmap-counts
+
+# why: (a) cron schedule lock per D-14501 — Mondays 06:00 UTC, mirroring the
+# architecture-inventory cron. The ROADMAP count table is a low-velocity
+# governance artifact; a weekly cadence bounds staleness without burning CI
+# on no-op runs. (b) diff/PR policy lock per D-14501 (D1 — PR-on-diff): on a
+# regenerated-table diff, open a PR for human review; on no-diff, no-op.
+# Direct commit to main and auto-merge are rejected — review is the gate.
+# (c) non-gating posture: the regenerate step uses `continue-on-error: true`
+# so a generator crash (or an orphan-WP loud-fail per D-24002) does not
+# cascade into unrelated pipelines. The step stays visibly red in the GitHub
+# UI; exit-code-swallowing shell tricks (an always-true OR-suffix appended to
+# the command) are forbidden (visible-failure invariant per EC-145 §Guardrails).
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Regenerate ROADMAP count table
+        # why: continue-on-error keeps the workflow alive when the generator
+        # exits non-zero — either an uncaught crash or, by design, an orphan
+        # WP loud-fail (D-24002). The step still shows red in the GitHub UI;
+        # the diff step below decides what to do when the table did not change.
+        continue-on-error: true
+        run: node scripts/roadmap-counts.mjs --write
+
+      - name: Detect diff against committed copy
+        id: diff
+        run: |
+          set -e
+          if git diff --quiet -- docs/05-ROADMAP-MINDMAP.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "ROADMAP count table is unchanged — no PR needed."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "ROADMAP count table changed — opening PR."
+          fi
+
+      - name: Open PR on diff
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          # why: scope the commit to ONLY the generated roadmap file so the PR
+          # is exactly the regenerated marker-bounded section, never anything
+          # the workflow happened to touch in the worktree.
+          add-paths: docs/05-ROADMAP-MINDMAP.md
+          commit-message: 'INFRA: regenerate ROADMAP count table (cron)'
+          title: 'INFRA: regenerate ROADMAP count table (cron)'
+          body: |
+            Automated regeneration of the `docs/05-ROADMAP-MINDMAP.md` count
+            table by `.github/workflows/roadmap-counts.yml` (D-14501 cron;
+            cadence `0 6 * * 1`).
+
+            The marker-bounded section (`ROADMAP-COUNTS:START` …
+            `ROADMAP-COUNTS:END`) is generated content; the sole writer is
+            `scripts/roadmap-counts.mjs` (D-24001), derived from
+            `WORK_INDEX.md` status × mindmap cluster membership. Hand-edits
+            inside the markers are non-authoritative and will be overwritten by
+            the next cron run. Review the diff for unexpected count drift, then
+            merge to publish the refresh.
+          branch: bot/roadmap-counts-refresh
+          delete-branch: true

@@ -44,7 +44,12 @@
     "dash:build":           "pnpm --filter @legendary-arena/dashboard build",
 
     "arch:inventory":       "node scripts/architecture-inventory.mjs",
-    "arch:inventory:save":  "node scripts/architecture-inventory.mjs --out docs/ai/audits/architecture-inventory-latest.md"
+    "arch:inventory:save":  "node scripts/architecture-inventory.mjs --out docs/ai/audits/architecture-inventory-latest.md",
+
+    "roadmap:counts":       "node scripts/roadmap-counts.mjs",
+    "roadmap:counts:write": "node scripts/roadmap-counts.mjs --write",
+    "roadmap:counts:check": "node scripts/roadmap-counts.mjs --check",
+    "roadmap:counts:test":  "node --import tsx --test scripts/roadmap-counts.test.ts"
   },
   "workspaces": [
     "packages/*",
@@ -52,6 +57,7 @@
   ],
   "devDependencies": {
     "@legendary-arena/game-engine": "workspace:*",
+    "tsx": "^4.15.7",
     "typescript": "^5.4.5"
   },
   "pnpm": {

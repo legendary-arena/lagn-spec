@@ -24578,4 +24578,66 @@ local-dev/test default and `PipelinePage.vue` is the only consumer.
 
 ---
 
+### D-24001 — The ROADMAP Count Table Is Generated Content (WORK_INDEX Status × Mindmap Membership; Marker-Bounded Sole Writer; Weekly Cron PR-on-Diff)
+
+The `docs/05-ROADMAP-MINDMAP.md` per-cluster count table is GENERATED content,
+not hand-maintained. `scripts/roadmap-counts.mjs` — a deterministic,
+dependency-free (Node built-ins only) generator — derives each cluster's
+`done/total` from `WORK_INDEX.md` status (`[x]`=done / `[ ]`=open / `Blocked`)
+× mindmap cluster membership, and rewrites only the section bounded by
+`<!-- ROADMAP-COUNTS:START … -->` / `<!-- ROADMAP-COUNTS:END -->` (the generator
+is the sole writer of that span; everything outside — the mindmap nodes, the
+explanatory prose — is hand-maintained and byte-preserved, including the file's
+CRLF line endings). The generator ENCODES the existing counting convention; it
+does not redefine it: combined nodes (`WP-005A/B`) and range nodes
+(`WP-043..047`, preserving the left operand's digit width) expand to members;
+cross-reference nodes (any label with the case-sensitive substring `(see `) are
+counted once in their real cluster; Foundation Prompts (`FP-*`) are a separate
+`+N/N` addend, not WPs; a placeholder cluster (all nodes resolve to no WP/FP id
+and carry only `📦`/`📝` icons) renders `0/N` by icon; a navigation-only cluster
+(`Reference`) is excluded. Output is deterministic — identical (WORK_INDEX,
+ROADMAP) input yields a byte-identical section: mindmap source order for
+clusters/nodes, WORK_INDEX order for the open/blocked summary line, no clock, no
+`Math.random`, no `localeCompare`, `for…of` not `.reduce()`. A weekly cron
+(`.github/workflows/roadmap-counts.yml`, `cron: '0 6 * * 1'`) regenerates and
+opens a PR on diff to `bot/roadmap-counts-refresh` (no direct-to-main, no
+auto-merge — review is the gate), mirroring the WP-139 / D-14501
+architecture-inventory pattern. `tsx` is promoted to the root `devDependencies`
+(a 3-line lockfile hoist of the already-resolved `tsx@4.21.0`, no new install)
+solely so the root `scripts/roadmap-counts.test.ts` runs; the generator itself
+needs no `tsx`.
+
+**Packet:** WP-240 (EC-271).
+**Drafted:** 2026-06-12 (number reserved in the WP-240/EC-271 body, PR #292/#293; never landed as a Reserved entry). **Landed:** 2026-06-12 (WP-240 execution close).
+**Status:** Active
+
+---
+
+### D-24002 — The Generator Fails Loudly on an Orphan WP (Print Id + Exit Non-Zero Every Mode; `--write` Refuses While Orphans Exist)
+
+A `WORK_INDEX.md` WP with no mindmap node is an **orphan**, and the generator
+treats it as a hard failure rather than bucketing it into a catch-all row or
+silently dropping it. In EVERY CLI mode (default print, `--write`, `--check`),
+if any orphan exists the generator prints one strict, script-consumable line per
+orphan — `ORPHAN: WP-NNN — add a mindmap node for this WP` — and exits non-zero
+(exit 1), ahead of any render or write; `--write` refuses to rewrite the file
+while an orphan exists. The fix is always to ADD the missing mindmap node (which
+also places the WP in its cluster's count), never to suppress the gate. This
+guarantees no work packet can be silently uncounted and keeps the mindmap the
+complete cluster-membership source of truth. The cron's regenerate step uses
+`continue-on-error: true` (visible-red per the EC-145 visible-failure invariant)
+so an orphan loud-fail shows red in the GitHub UI without cascading into
+unrelated pipelines, and without any exit-code-swallowing shell trick. Marker
+integrity is enforced the same way: missing or duplicated
+`ROADMAP-COUNTS:START/END` markers print `ERROR: ROADMAP-COUNTS markers not found
+or invalid`, exit non-zero, and do not write. (Exit codes: 0 clean; 1 orphan(s)
+or marker error; 2 out-of-date under `--check`; an uncaught exception terminates
+non-zero — never swallowed.)
+
+**Packet:** WP-240 (EC-271).
+**Drafted:** 2026-06-12 (number reserved in the WP-240/EC-271 body, PR #292/#293; never landed as a Reserved entry). **Landed:** 2026-06-12 (WP-240 execution close).
+**Status:** Active
+
+---
+
 Protect this file.
