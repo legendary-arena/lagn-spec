@@ -96,7 +96,14 @@ import { makeMockCtx } from '../test/mockCtx.js';
 // present `false`), shifting the hash with no behaviour change. Same
 // dependency-driven class as the notableEvents re-pin above. Pre-WP-212:
 // 'a3d25f9e'. Post-WP-212: '8658f02b'. Post-WP-214: 'f2c9f9ec'.
-const PRE_WP080_HASH = 'f2c9f9ec';
+// why: WP-236 cascade re-baseline — `G.hasDrawnThisTurn?: boolean` initialised
+// `false` in `buildInitialGameState` serializes into this empty replay's final
+// state (the canonical hash omits `undefined` but includes a present `false`),
+// shifting the hash with no behaviour change in this moves:[] replay (replayGame
+// hashes the initial state; the new onBegin auto-draw never fires here). Same
+// dependency-driven class as the WP-212 villainRevealedThisTurn re-pin above.
+// Pre-WP-236: 'f2c9f9ec'. Post-WP-236: '85deb41a'.
+const PRE_WP080_HASH = '85deb41a';
 
 /**
  * Minimal mock registry for replay tests. Mirrors replay.verify.test.ts.

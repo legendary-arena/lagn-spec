@@ -11,8 +11,7 @@
 import type { RuleEffect } from './ruleHooks.types.js';
 import type { LegendaryGameState } from '../types.js';
 import { moveAllCards } from '../moves/zoneOps.js';
-import { moveCardFromZone } from '../moves/zoneOps.js';
-import { shuffleDeck } from '../setup/shuffle.js';
+import { drawCardsIntoHand } from '../moves/drawCards.logic.js';
 
 /**
  * Minimal interface for the context needed by drawCards effect.
@@ -54,8 +53,13 @@ function applyModifyCounter(
 /**
  * Applies a drawCards effect by moving cards from deck to hand.
  *
- * If the deck runs out mid-draw, the discard pile is reshuffled into
- * the deck using shuffleDeck, then drawing continues.
+ * Delegates the deck-to-hand fill (with discard reshuffle on exhaustion)
+ * to the shared drawCardsIntoHand primitive — the same primitive used by
+ * the drawCards move and the play-phase onBegin auto-draw, so there is one
+ * draw mechanism across the engine. This is the hero `draw` keyword path;
+ * it deliberately does NOT consult G.hasDrawnThisTurn, so a card-effect
+ * draw is never blocked by the move's once-per-turn guard. The caller owns
+ * the player-not-found diagnostic; the helper owns the draw.
  *
  * @param gameState - The game state to mutate.
  * @param effect - The drawCards effect to apply.
@@ -74,27 +78,7 @@ function applyDrawCards(
     return;
   }
 
-  let drawn = 0;
-
-  while (drawn < effect.count) {
-    if (playerZones.deck.length === 0 && playerZones.discard.length > 0) {
-      // why: ctx.random.Shuffle provides deterministic reshuffling seeded
-      // by boardgame.io's PRNG, ensuring replay reproducibility.
-      const reshuffled = shuffleDeck(playerZones.discard, ctx);
-      playerZones.deck = reshuffled;
-      playerZones.discard = [];
-    }
-
-    if (playerZones.deck.length === 0) {
-      break;
-    }
-
-    const topCard = playerZones.deck[0]!;
-    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCard);
-    playerZones.deck = moveResult.from;
-    playerZones.hand = moveResult.to;
-    drawn++;
-  }
+  drawCardsIntoHand(playerZones, effect.count, ctx);
 }
 
 /**

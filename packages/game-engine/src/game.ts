@@ -5,6 +5,7 @@ import { buildInitialGameState } from './setup/buildInitialGameState.js';
 import { TURN_STAGES } from './turn/turnPhases.types.js';
 import { advanceTurnStage } from './turn/turnLoop.js';
 import { drawCards, playCard, endTurn } from './moves/coreMoves.impl.js';
+import { HAND_SIZE, drawCardsIntoHand } from './moves/drawCards.logic.js';
 import { resolveHeroChoice } from './moves/heroChoice.resolve.js';
 import { executeRuleHooks } from './rules/ruleRuntime.execute.js';
 import { applyRuleEffects } from './rules/ruleRuntime.effects.js';
@@ -384,7 +385,7 @@ export const LegendaryGame: Game<LegendaryGameState, Record<string, unknown>, Ma
         // why: Each new turn must begin at the first canonical turn stage.
         // TURN_STAGES[0] is used instead of a hardcoded string to prevent
         // drift if stage names ever change in turnPhases.types.ts.
-        onBegin: ({ G, ctx }) => {
+        onBegin: ({ G, ctx, random }) => {
           // why: TURN_STAGES is a readonly array with known contents. The
           // non-null assertion is safe because TURN_STAGES always has at
           // least one element (enforced by drift-detection tests in WP-007A).
@@ -398,6 +399,26 @@ export const LegendaryGame: Game<LegendaryGameState, Record<string, unknown>, Ma
           // start of every player turn; without this reset the wrapper guard
           // would permanently block reveals from turn 2 onward.
           G.villainRevealedThisTurn = false;
+
+          // why: the once-per-turn draw allowance refreshes at the start of
+          // every player turn; without this reset the drawCards move guard
+          // would permanently block draws from turn 2 onward.
+          G.hasDrawnThisTurn = false;
+
+          // why: the engine owns the start-of-turn draw — the former
+          // TurnActionBar "Draw to 6" UI scaffold is retired. Fill the active
+          // player's hand to HAND_SIZE from their deck (reshuffling the
+          // discard on exhaustion via the engine's deterministic shuffle — no
+          // new randomness source). This runs BEFORE the onTurnStart hooks
+          // below so a hand-reading turn-start hook (e.g. Magneto's hand-size
+          // trim) observes the freshly drawn hand. hasDrawnThisTurn is set so
+          // a subsequent drawCards submission is a guarded no-op.
+          const activePlayerZones = G.playerZones[ctx.currentPlayer];
+          if (activePlayerZones) {
+            const cardsToDraw = Math.max(0, HAND_SIZE - activePlayerZones.hand.length);
+            drawCardsIntoHand(activePlayerZones, cardsToDraw, { random });
+            G.hasDrawnThisTurn = true;
+          }
 
           // why: trigger -> collect effects -> apply effects pipeline.
           // onTurnStart fires at the beginning of each player's turn so

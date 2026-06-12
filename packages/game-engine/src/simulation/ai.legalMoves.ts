@@ -71,9 +71,8 @@ export interface SimulationLifecycleContext {
  *   4. fightMastermind — one entry (if stage === 'main', tactics remain,
  *      and availableAttack covers the base-card fightCost)
  *   5. revealVillainCard — one entry if stage === 'start'
- *   6. drawCards — one entry if stage === 'start' or 'main'
- *   7. advanceStage — one entry if stage !== 'cleanup'
- *   8. endTurn — one entry if stage === 'cleanup'
+ *   6. advanceStage — one entry if stage !== 'cleanup'
+ *   7. endTurn — one entry if stage === 'cleanup'
  *
  * // why: AI can only choose from legal moves — same constraint as human
  * players. Pre-flight RS-13 locks enumeration order; reordering silently
@@ -158,17 +157,17 @@ export function getLegalMoves(
     legalMoves.push({ name: 'revealVillainCard', args: {} });
   }
 
-  // 6. drawCards — one entry if stage permits (start or main).
-  if (stage === 'start' || stage === 'main') {
-    legalMoves.push({ name: 'drawCards', args: { count: 1 } });
-  }
+  // why: drawCards is no longer enumerated — the start-of-turn hand is drawn
+  // automatically by the play-phase onBegin auto-draw (WP-236). Emitting
+  // drawCards would only produce a guarded no-op (G.hasDrawnThisTurn is already
+  // true after onBegin) and waste a bot move choice.
 
-  // 7. advanceStage — one entry if not at cleanup.
+  // 6. advanceStage — one entry if not at cleanup.
   if (stage !== 'cleanup') {
     legalMoves.push({ name: 'advanceStage', args: {} });
   }
 
-  // 8. endTurn — one entry if at cleanup.
+  // 7. endTurn — one entry if at cleanup.
   if (stage === 'cleanup') {
     legalMoves.push({ name: 'endTurn', args: {} });
   }

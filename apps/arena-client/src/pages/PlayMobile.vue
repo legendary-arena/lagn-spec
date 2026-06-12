@@ -260,12 +260,14 @@ export default defineComponent({
         class="play-mobile__sticky-bottom"
         data-testid="play-mobile-sticky-bottom"
       >
-        <!-- why: WP-166 — viewer is typed nullable; the turn-action bar needs an
-             identified viewer to read handCount, matching the <main> guard above.
-             Mobile never produces a viewer-less play frame (PlayViewport forwards
-             matchId to PlayDesktop only, D-16501), so this is a type-safety guard,
-             not the EC-183 board-ungating restructure (which deliberately scoped
-             mobile out). The footer and preplan-affordance slot stay on isPlayPhase. -->
+        <!-- why: WP-166 — viewer is typed nullable; the pending-choice prompt needs
+             an identified viewer to read viewer.playerId, matching the <main> guard
+             above. (WP-236 retired the TurnActionBar handCount prop, but the viewer
+             guard remains for the prompt.) Mobile never produces a viewer-less play
+             frame (PlayViewport forwards matchId to PlayDesktop only, D-16501), so
+             this is a type-safety guard, not the EC-183 board-ungating restructure
+             (which deliberately scoped mobile out). The footer and preplan-affordance
+             slot stay on isPlayPhase. -->
         <template v-if="viewer !== null">
           <!-- why: D-22201 + WP-222 — prompt renders above TurnActionBar; appears
                only for the choosing player when pendingHeroChoice is set. -->
@@ -277,7 +279,6 @@ export default defineComponent({
           <TurnActionBar
             :current-stage="snapshot.game.currentStage"
             :is-viewer-turn="isViewerTurn"
-            :hand-count="viewer.handCount"
             :has-pending-choice="hasPendingChoice"
             :submit-move="submitMove"
           />

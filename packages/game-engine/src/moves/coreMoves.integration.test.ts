@@ -12,6 +12,7 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { drawCards, playCard, endTurn } from './coreMoves.impl.js';
+import { HAND_SIZE } from './drawCards.logic.js';
 import { TURN_STAGES } from '../turn/turnPhases.types.js';
 import type { LegendaryGameState } from '../types.js';
 
@@ -187,6 +188,93 @@ describe('drawCards', () => {
 
     assert.deepEqual(gameState.playerZones['0']!.deck, deckBefore);
     assert.deepEqual(gameState.playerZones['0']!.hand, handBefore);
+  });
+
+  it('caps the draw at HAND_SIZE and sets hasDrawnThisTurn (count above the cap)', () => {
+    // why: WP-236 — the move can never fill past HAND_SIZE, the race-free cap
+    // the deleted UI scaffold could only approximate.
+    const gameState = makeTestGameState({
+      deck: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8'],
+      hand: [],
+    });
+    const { context } = makeMoveContext(gameState);
+
+    drawCards(context, { count: 10 });
+
+    assert.equal(gameState.playerZones['0']!.hand.length, HAND_SIZE);
+    assert.equal(gameState.playerZones['0']!.deck.length, 8 - HAND_SIZE);
+    assert.equal(gameState.hasDrawnThisTurn, true);
+  });
+
+  it('blocks a second drawCards in the same turn with zero mutation', () => {
+    // why: WP-236 — once-per-turn guard. After the first draw consumes the
+    // allowance, a second drawCards leaves G deepStrictEqual to its snapshot.
+    const gameState = makeTestGameState({
+      deck: ['c1', 'c2', 'c3', 'c4'],
+      hand: [],
+    });
+    const { context } = makeMoveContext(gameState);
+
+    drawCards(context, { count: 2 });
+    const snapshot = structuredClone(gameState);
+
+    drawCards(context, { count: 2 });
+
+    assert.deepStrictEqual(gameState, snapshot);
+  });
+
+  it('consumes the allowance on an empty-deck-and-empty-discard attempt', () => {
+    // why: WP-236 — the flag is set on the draw attempt, not the draw count,
+    // foreclosing an empty-deck retry loop.
+    const gameState = makeTestGameState({ deck: [], hand: [], discard: [] });
+    const { context } = makeMoveContext(gameState);
+
+    drawCards(context, { count: 3 });
+
+    assert.deepEqual(gameState.playerZones['0']!.hand, []);
+    assert.equal(gameState.hasDrawnThisTurn, true);
+  });
+
+  it('consumes the allowance on a zero-draw attempt (count: 0)', () => {
+    // why: WP-236 — count: 0 is valid (the validator accepts count >= 0); the
+    // flag is set unconditionally after a clean validate-args + stage-gate pass.
+    const gameState = makeTestGameState({ deck: ['c1', 'c2'], hand: [] });
+    const { context } = makeMoveContext(gameState);
+
+    drawCards(context, { count: 0 });
+
+    assert.deepEqual(gameState.playerZones['0']!.hand, []);
+    assert.deepEqual(gameState.playerZones['0']!.deck, ['c1', 'c2']);
+    assert.equal(gameState.hasDrawnThisTurn, true);
+  });
+
+  it('consumes the allowance when the hand is already at HAND_SIZE (draws zero)', () => {
+    // why: WP-236 — count = min(args.count, max(0, HAND_SIZE - hand.length)) is
+    // zero when the hand is full, yet the attempt still spends the allowance.
+    const fullHand = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+    const gameState = makeTestGameState({ deck: ['c1', 'c2'], hand: [...fullHand] });
+    const { context } = makeMoveContext(gameState);
+
+    drawCards(context, { count: 3 });
+
+    assert.deepEqual(gameState.playerZones['0']!.hand, fullHand);
+    assert.deepEqual(gameState.playerZones['0']!.deck, ['c1', 'c2']);
+    assert.equal(gameState.hasDrawnThisTurn, true);
+  });
+
+  it('does NOT set hasDrawnThisTurn when args fail validation (negative count)', () => {
+    // why: WP-236 contract guard — the flag is set unconditionally but ONLY
+    // after a clean validate-args pass. A negative count returns at step 1,
+    // before the guard, leaving the flag untouched. Do not move the flag-set
+    // ahead of validation to make a "count consumed" case pass.
+    const gameState = makeTestGameState({ deck: ['c1', 'c2'], hand: [] });
+    const { context } = makeMoveContext(gameState);
+
+    drawCards(context, { count: -1 });
+
+    assert.equal(gameState.hasDrawnThisTurn, undefined);
+    assert.deepEqual(gameState.playerZones['0']!.hand, []);
+    assert.deepEqual(gameState.playerZones['0']!.deck, ['c1', 'c2']);
   });
 });
 

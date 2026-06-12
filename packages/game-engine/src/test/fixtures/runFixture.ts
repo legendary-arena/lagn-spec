@@ -37,6 +37,7 @@ import { resetTurnEconomy } from '../../economy/economy.logic.js';
 import { TURN_STAGES } from '../../turn/turnPhases.types.js';
 import { CORE_MOVE_NAMES } from '../../moves/coreMoves.types.js';
 import { drawCards, playCard, endTurn } from '../../moves/coreMoves.impl.js';
+import { HAND_SIZE, drawCardsIntoHand } from '../../moves/drawCards.logic.js';
 import { revealVillainCard } from '../../villainDeck/villainDeck.reveal.js';
 import { fightVillain } from '../../moves/fightVillain.js';
 import { recruitHero } from '../../moves/recruitHero.js';
@@ -258,14 +259,16 @@ function captureNormalisedSnapshot(
 /**
  * Rotates the cursor to the next seat in `playerOrder`, increments the
  * turn counter, resets `G.currentStage` to the first canonical stage,
- * and zeroes `G.turnEconomy`. Mirrors the work the framework's
- * play-phase `onBegin` hook performs at the start of each new turn.
+ * zeroes `G.turnEconomy`, resets the once-per-turn flags, and performs the
+ * start-of-turn auto-draw. Mirrors the work the framework's play-phase
+ * `onBegin` hook performs at the start of each new turn.
  */
 function rotateToNextTurn(
   gameState: LegendaryGameState,
   cursor: RunCursor,
   playerOrder: readonly string[],
   numPlayers: number,
+  nextRandom: () => number,
 ): void {
   const currentSeatIndex = playerOrder.indexOf(cursor.currentPlayer);
   const nextSeatIndex = (currentSeatIndex + 1) % numPlayers;
@@ -279,6 +282,21 @@ function rotateToNextTurn(
   // across the turn boundary and the wrapper guard wrongly blocks the next
   // player's legitimate first-of-turn reveal, diverging from real play.
   gameState.villainRevealedThisTurn = false;
+  // why: mirror BOTH the play phase onBegin reset of the once-per-turn draw
+  // allowance AND the auto-draw it performs (WP-236, extending the WP-212
+  // D-20903 harness-mirror lesson to the draw). The harness reimplements
+  // onBegin; without mirroring the auto-draw, replayed games never draw the
+  // start-of-turn hand and diverge from real play. The reshuffle reuses the
+  // harness's single mulberry32 stream (nextRandom) so determinism holds.
+  gameState.hasDrawnThisTurn = false;
+  const activePlayerZones = gameState.playerZones[cursor.currentPlayer];
+  if (activePlayerZones) {
+    const cardsToDraw = Math.max(0, HAND_SIZE - activePlayerZones.hand.length);
+    drawCardsIntoHand(activePlayerZones, cardsToDraw, {
+      random: { Shuffle: <T>(deck: T[]): T[] => shuffleWithPrng(deck, nextRandom) },
+    });
+    gameState.hasDrawnThisTurn = true;
+  }
 }
 
 /**
@@ -315,7 +333,7 @@ function dispatchSingleMove(
   moveDispatch(moveContext, move.args);
 
   if (endTurnFlag.triggered) {
-    rotateToNextTurn(gameState, cursor, fixture.input.playerOrder, numPlayers);
+    rotateToNextTurn(gameState, cursor, fixture.input.playerOrder, numPlayers, nextRandom);
     const snapshot = captureNormalisedSnapshot(gameState, cursor, fixture);
     cursor.snapshotPerTurn.push(snapshot);
   }

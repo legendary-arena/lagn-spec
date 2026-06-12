@@ -567,20 +567,11 @@ async function runBotMatchLoop({ matchId, playerCount, credentials, db, transpor
 
     const currentPlayer = state.ctx.currentPlayer;
 
-    // --- Start stage: draw hand, reveal one villain card, then advance ---
+    // --- Start stage: reveal one villain card, then advance. The engine
+    //     auto-draws the start-of-turn hand at onBegin (WP-236), so the bot
+    //     no longer submits the start-of-turn draw move — it would only be a
+    //     guarded no-op. ---
     if (state.G.currentStage === 'start') {
-      // Draw cards if hand is empty (start of game or after previous cleanup)
-      const playerZones = state.G.playerZones[currentPlayer];
-      if (playerZones && playerZones.hand.length === 0) {
-        await submitMove({
-          ...moveParams,
-          playerId: currentPlayer,
-          moveName: 'drawCards',
-          moveArgs: { count: 6 },
-        });
-        await recordAndPace(controller, db, matchId);
-      }
-
       await submitMove({
         ...moveParams,
         playerId: currentPlayer,

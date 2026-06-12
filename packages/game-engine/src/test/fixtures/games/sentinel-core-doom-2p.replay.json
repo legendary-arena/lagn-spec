@@ -1,6 +1,6 @@
 {
   "expected": {
-    "finalStateHash": "aecc19debb56ae9c971fdc17c314424e8b757bafb424e68c474e2e70a2bf7741",
+    "finalStateHash": "c084068826a5a265ecad52da3afcb9a9953e1a6e579ef8cb2b7927ddbdbcc618",
     "messages": [
       "Mastermind strike revealed — strike count incremented.",
       "Mastermind strike revealed — strike count incremented."
@@ -32,9 +32,9 @@
             "victoryCount": 0
           },
           {
-            "deckCount": 12,
+            "deckCount": 6,
             "discardCount": 0,
-            "handCount": 0,
+            "handCount": 6,
             "inPlayCount": 0,
             "playerId": "1",
             "victoryCount": 0
@@ -56,9 +56,9 @@
         "phase": "play",
         "players": [
           {
-            "deckCount": 6,
+            "deckCount": 0,
             "discardCount": 6,
-            "handCount": 0,
+            "handCount": 6,
             "inPlayCount": 0,
             "playerId": "0",
             "victoryCount": 0

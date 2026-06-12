@@ -385,6 +385,9 @@ export function buildInitialGameState(
     // why: the start-of-turn villain reveal has not occurred at setup time; the
     // play phase onBegin hook resets this to false on every turn including turn 1.
     villainRevealedThisTurn: false,
+    // why: no draw has occurred at setup time; the play phase onBegin hook resets
+    // this to false on every turn and performs the turn-1 auto-draw.
+    hasDrawnThisTurn: false,
     playerZones,
     piles,
     messages: setupMessages,

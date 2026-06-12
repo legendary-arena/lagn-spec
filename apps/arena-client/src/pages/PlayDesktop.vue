@@ -458,7 +458,6 @@ export default defineComponent({
           <TurnActionBar
             :current-stage="snapshot.game.currentStage"
             :is-viewer-turn="isViewerTurn"
-            :hand-count="viewer.handCount"
             :has-pending-choice="hasPendingChoice"
             :submit-move="submitMove"
           />

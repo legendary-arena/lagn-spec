@@ -41,19 +41,6 @@ export default defineComponent({
       required: false,
       default: true,
     },
-    handCount: {
-      // why: D-10003 / D-10013 (carried forward from WP-100) — the Draw
-      // button computes `count = max(0, 6 - handCount)` so the button is
-      // idempotent and never produces an illegal hand size. The engine's
-      // drawCards move has no HAND_SIZE check; the cap is enforced
-      // UI-side. The button is a SCAFFOLD ARTIFACT — it exists only
-      // because the engine has no automatic turn-start draw. When a
-      // follow-up engine WP adds `turn.onBegin` auto-draw to a canonical
-      // HAND_SIZE constant, both this button AND the handCount prop are
-      // DELETED, not refactored. See DECISIONS.md D-10003 + D-10013.
-      type: Number,
-      required: true,
-    },
     submitMove: {
       type: Function as PropType<SubmitMove>,
       required: true,
@@ -84,46 +71,11 @@ export default defineComponent({
       return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).canEndTurn();
     }
 
-    function drawGate(): { allowed: boolean; reason: string | null } {
-      if (!props.isViewerTurn) {
-        return { allowed: false, reason: 'It is not your turn.' };
-      }
-      // why: drawCards is gated to `start` or `main` per D-10003 +
-      // engine validateMoveAllowedInStage. Disabled at `cleanup`
-      // because End Turn does the canonical cleanup draw. Disabled
-      // when the hand is already at the 6-card cap so the button is
-      // idempotent (D-10013 regression — repeated clicks must not
-      // produce 12+ cards).
-      if (props.currentStage !== 'start' && props.currentStage !== 'main') {
-        return {
-          allowed: false,
-          reason: 'Only available during the Start (Reveal) or Main step.',
-        };
-      }
-      if (props.handCount >= 6) {
-        return {
-          allowed: false,
-          reason: 'Hand already at 6 cards.',
-        };
-      }
-      return { allowed: true, reason: null };
-    }
-
     function onReveal(): void {
       // why: empty-object payload — revealVillainCard takes no arguments
       // by engine design (see villainDeck.reveal.ts). Pops a card from
       // the villain deck into the City; gated to play.start.
       props.submitMove('revealVillainCard', {});
-    }
-
-    function onDraw(): void {
-      // why: D-10013 — fill to exactly 6 cards. cardsToDraw is computed
-      // each click from the current handCount so two clicks at hand=0
-      // do not produce a 12-card hand (the engine has no HAND_SIZE
-      // check; the cap is enforced UI-side per WP-100 D-10003).
-      const cardsToDraw = Math.max(0, 6 - props.handCount);
-      if (cardsToDraw === 0) return;
-      props.submitMove('drawCards', { count: cardsToDraw });
     }
 
     function onPassPriority(): void {
@@ -143,11 +95,9 @@ export default defineComponent({
     return {
       activeStep,
       revealGate,
-      drawGate,
       passPriorityGate,
       endTurnGate,
       onReveal,
-      onDraw,
       onPassPriority,
       onEndTurn,
     };
@@ -168,7 +118,7 @@ export default defineComponent({
         :class="{ 'turn-action-bar__step--active': activeStep() === 1 }"
         data-testid="play-turn-step-1"
       >
-        <header>Step 1 — Reveal villain + draw starting hand (play.start)</header>
+        <header>Step 1 — Reveal villain (play.start)</header>
         <button
           type="button"
           data-testid="play-action-reveal"
@@ -179,28 +129,10 @@ export default defineComponent({
         >
           <!-- why: stage gating per D-10012 — revealVillainCard is gated
                to play.start. Disabled-tooltip precedence per EC-132 §3
-               binds the reason from useTurnActions. -->
+               binds the reason from useTurnActions. The start-of-turn hand
+               is drawn automatically by the engine onBegin (WP-236); the
+               former "Draw to 6" scaffold button is retired. -->
           ▶ Reveal top of Villain Deck
-        </button>
-        <button
-          type="button"
-          data-testid="play-action-draw"
-          :disabled="!drawGate().allowed"
-          :aria-disabled="!drawGate().allowed ? 'true' : undefined"
-          :title="drawGate().reason ?? undefined"
-          @click="onDraw"
-        >
-          <!-- why: SCAFFOLD ARTIFACT per WP-100 D-10003 + D-10013. Required
-               at match start because the engine does not auto-draw initial
-               hands at setup time (per playerInit.ts:35-41 hand starts as
-               []). Without this button the active player would have to
-               burn turn 1 (Reveal → Pass → Pass → End Turn) just to get
-               their starting 6 cards. Restored in the EC-132 continuation
-               fix after WP-129's initial rewrite removed it on the
-               incorrect assumption that End Turn handled draw at all
-               times. Deletes when a future engine WP adds turn.onBegin
-               auto-draw to a HAND_SIZE constant. -->
-          Draw to 6
         </button>
       </li>
       <li

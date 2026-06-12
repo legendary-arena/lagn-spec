@@ -24349,4 +24349,152 @@ WP-210-promised single-file sweep LIVE flip.
 
 ---
 
+### D-23601 — Engine-Authoritative Start-of-Turn Auto-Draw + Once-Per-Turn `drawCards` Guard
+
+**Decision:**
+The Legendary Arena engine owns the start-of-turn draw. The play-phase
+`turn.onBegin` hook fills the active player's hand to the canonical
+`HAND_SIZE` (6) from their deck — `count = max(0, HAND_SIZE − hand.length)`
+for `ctx.currentPlayer` only, reshuffling the discard on exhaustion via the
+existing deterministic `shuffleDeck` (no new randomness source) — **before**
+the `executeRuleHooks('onTurnStart', …)` call, so a hand-reading turn-start
+hook (e.g. a Magneto-style hand-size trim) observes the freshly drawn hand.
+The kept `drawCards` move gains a once-per-turn guard
+(`if (G.hasDrawnThisTurn) return;`) placed after the existing arg-validation
+and stage-gate and **before** resolving zones or any reshuffle, plus a
+`HAND_SIZE` cap (`min(args.count, max(0, HAND_SIZE − hand.length))`). A
+second `drawCards` submission in the same turn — from any source, including a
+raw socket message — is therefore a zero-mutation, zero-RNG no-op
+(`deepStrictEqual` to a pre-call `structuredClone(G)`). This fixes the live
+`play.legendary-arena.com` over-draw bug at the only race-free authority: the
+engine. The move never throws and the turn hook never throws (early-return /
+no-op only). This mirrors the WP-212 `revealVillainCard` once-per-turn
+pattern and fulfils the consolidated-engine-WP that D-10003 / D-10013 named.
+
+**Packet:** WP-236 (EC-266).
+**Drafted:** 2026-06-10 (numbers reserved in WP-236/EC-266 body; tightening amendment 2026-06-11). **Landed:** 2026-06-11 (WP-236 execution close).
+**Status:** Active
+
+---
+
+### D-23602 — Optional Internal-`G` `hasDrawnThisTurn?: boolean` (Absent ⇒ False; Not UIState-Projected)
+
+**Decision:**
+The start-of-turn draw allowance is tracked by a new field
+`hasDrawnThisTurn?: boolean` on `LegendaryGameState`, declared immediately
+after `villainRevealedThisTurn` and initialised `false` in `baseState`. It is
+**optional** — absent is treated as not-yet-drawn — so the existing
+full-`LegendaryGameState` literals across the test suite need no edit (the
+WP-212 21-file lesson). It is a turn-scoped boolean **only** (never a counter,
+enum, or timestamp): set `false` by the `onBegin` reset, set `true` by the
+`onBegin` auto-draw and by the `drawCards` move when a clean validate+stage
+pass consumes the allowance. It is **internal `G` state, NOT projected to
+`UIState`** — `uiState.types.ts` / `uiState.build.ts` / UIState fixtures are
+untouched; the drawn hand surfaces through the normal UIState push, and the
+deleted Draw button removed the only would-be UI consumer. (This is why the
+WP-166/207/227 arena-client UIState-fixture-backfill recurrence does not apply
+to this packet.) The flag is set unconditionally on a clean validate+stage
+pass — even a zero-card draw (empty deck/discard, or a hand already at
+`HAND_SIZE`) consumes the allowance — but an args-invalid move (e.g. a
+negative `count`) returns at validation before the guard and leaves the flag
+untouched; the flag-set must never move ahead of validation.
+
+**Packet:** WP-236 (EC-266).
+**Drafted:** 2026-06-10 (numbers reserved in WP-236/EC-266 body; tightening amendment 2026-06-11). **Landed:** 2026-06-11 (WP-236 execution close).
+**Status:** Active
+
+---
+
+### D-23603 — Draw Scaffold Retirement (Button + Prop + Bot/Sweep Emission Removed; Move + `UiMoveName` Kept)
+
+**Decision:**
+The `TurnActionBar` "Draw to 6" scaffold — the button, its `onDraw` handler,
+the `drawGate` predicate, and the `handCount` prop — is **deleted** (not
+refactored) from `TurnActionBar.vue`, and the `:hand-count` bindings are
+dropped from both the `PlayDesktop.vue` and `PlayMobile.vue` render sites. The
+separate `UIState.player.handCount` display field (rendered by PlayerPanel /
+OpponentPanel and present in UIState fixtures) is a different field and is
+left untouched. The simulation legal-move enumerator (`ai.legalMoves.ts`) and
+the server bot loop (`autoplay.mjs`) stop emitting / submitting the
+start-of-turn draw move — after the auto-draw it would only be a guarded
+no-op and a wasted bot choice. The `drawCards` **move itself is kept** and
+stays registered in `LegendaryGame.moves` as defensive, engine-authoritative
+protection against any direct submission, so `CORE_MOVE_NAMES`, the
+`CoreMoveName` union, `MOVE_ALLOWED_STAGES`, `coreMoves.validate.ts`, the
+`UiMoveName` union, and `bgioClient.test.ts` are all byte-unchanged (no
+drift-array or transport churn). This retires the **Draw** scaffold only;
+Reveal-button and Advance-button retirement (D-10011 / D-10012) remain out of
+scope.
+
+**Packet:** WP-236 (EC-266).
+**Drafted:** 2026-06-10 (numbers reserved in WP-236/EC-266 body; tightening amendment 2026-06-11). **Landed:** 2026-06-11 (WP-236 execution close).
+**Status:** Active
+
+---
+
+### D-23604 — Sentinel Replay Fixture Regenerated (Behavioural Change; Coherent-Game Gate Replaces Byte-Identity; `PRE_WP080_HASH` Re-Pinned)
+
+**Decision:**
+Because the auto-draw moves the start-of-turn draw off explicit moves and into
+`onBegin`, the complete-game regression fixture
+`sentinel-core-doom-2p.replay.json` is **regenerated** (via
+`record-game-fixture.mjs --input`), not re-pinned: `finalStateHash`,
+`messages`, and the per-turn snapshot hand/deck counts legitimately change. The
+WP-212 "messages/outcome must stay byte-identical" guard does **not** apply
+here. The acceptance gate is instead a **coherent-game sanity check** against
+the real oracle schema (`expected.outcome = { winner, counters }` — there is no
+`outcome.type`; `expected.snapshotPerTurn` is the per-turn array): a **HARD**
+gate requires `outcome.winner` to be identical to baseline (this fixture:
+`null`) and the terminal counter in `outcome.counters` to be unchanged in kind
+(this fixture: `masterStrikeCount`) — a flipped winner or changed terminal
+condition is a STOP, not a re-pin; turn count (`snapshotPerTurn.length`) is a
+**soft** signal (recorded before/after; a large swing is investigated, not
+hard-gated to a fixed ±N). The villain-reveal sequence — and thus
+`masterStrikeCount` — is independent of player draws, and the fixture's decks
+do not exhaust at draw time, so no extra RNG is consumed and the game stays
+coherent (`winner` null, `masterStrikeCount` terminal, two turns), as verified
+at execution (`finalStateHash` aecc19→c08406). The separate `replay.execute.ts`
+determinism-harness hash `PRE_WP080_HASH` is re-pinned `f2c9f9ec → 85deb41a`: a
+pure structural cascade, since `replayGame` replays `moves:[]` and the shift is
+solely the new `hasDrawnThisTurn:false` field serialising into the hashed
+initial state (the WP-212 `villainRevealedThisTurn` re-pin class).
+
+**Packet:** WP-236 (EC-266).
+**Drafted:** 2026-06-10 (numbers reserved in WP-236/EC-266 body; tightening amendment 2026-06-11). **Landed:** 2026-06-11 (WP-236 execution close).
+**Status:** Active
+
+---
+
+### D-23605 — `drawCardsIntoHand` + `HAND_SIZE` Consolidation (Single Draw Primitive Across Move / Effect / `onBegin` / Harness)
+
+**Decision:**
+`HAND_SIZE = 6` is defined **once** in `moves/drawCards.logic.ts` (the single
+source of truth for the start-of-turn hand size; no other file hardcodes the
+literal `6` for hand size — Magneto's `MAGNETO_HAND_SIZE_LIMIT = 4` is a
+separate, untouched mastermind cap). The same module exports the pure helper
+`drawCardsIntoHand(playerZones, count, shuffleContext)` — deck→hand fill with
+discard-reshuffle on exhaustion, **no `boardgame.io` import, no `.reduce()`** —
+which is the **sole draw primitive** for all four call sites: the `drawCards`
+move, the rule-effect applier `applyDrawCards` (hero `draw` keyword path), the
+play-phase `onBegin` auto-draw, and the `runFixture` replay harness's
+`rotateToNextTurn`. Consolidating the move and the effect onto the helper is
+**behaviour-neutral** — the only behavioural changes in the packet are the new
+`onBegin` auto-draw and the move guard (D-23601). Single-primitive status is
+enforced by **absence** as well as presence: after consolidation neither
+`coreMoves.impl.ts` nor `ruleRuntime.effects.ts` imports `setup/shuffle` (the
+reshuffle moved into the helper, so `shuffleDeck` is imported by
+`drawCards.logic.ts` alone); their JSDocs were reworded to describe delegation,
+and the verification greps are import-scoped (`setup/shuffle`, not a bare
+`shuffleDeck` token) so prose that still names `shuffleDeck` does not self-trip
+the gate. The harness `rotateToNextTurn` mirrors both the flag reset and the
+auto-draw (threading the single mulberry32 stream), or replays would never draw
+and diverge from real play (the WP-212 D-20903 harness-mirror lesson, extended
+to the draw).
+
+**Packet:** WP-236 (EC-266).
+**Drafted:** 2026-06-10 (numbers reserved in WP-236/EC-266 body; tightening amendment 2026-06-11). **Landed:** 2026-06-11 (WP-236 execution close).
+**Status:** Active
+
+---
+
 Protect this file.

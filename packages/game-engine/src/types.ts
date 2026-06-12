@@ -491,6 +491,16 @@ export interface LegendaryGameState {
   /** Whether the start-of-turn villain reveal has been consumed this turn. */
   villainRevealedThisTurn?: boolean;
 
+  // why: tracks whether the start-of-turn draw has been consumed this turn.
+  // Optional so existing full-LegendaryGameState literals across the test suite
+  // need no edit (absent is treated as not-yet-drawn). Set by the play phase
+  // onBegin auto-draw and by the drawCards move when a draw attempt is consumed;
+  // reset to false each turn by the play phase onBegin hook. Internal G state —
+  // it is NOT projected to UIState (the deleted Draw button was the only UI
+  // consumer; the drawn hand surfaces through the normal UIState push).
+  /** Whether the start-of-turn draw has been consumed this turn. */
+  hasDrawnThisTurn?: boolean;
+
   // why: pending player-choice state set by reveal-attack-choose executor (D-22001).
   // Must be undefined at every turn-end. Optional so existing test state literals
   // do not need updating. Absent (undefined) = no pending choice.

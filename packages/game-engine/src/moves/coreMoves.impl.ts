@@ -15,7 +15,7 @@ import type { LegendaryGameState } from '../types.js';
 import type { DrawCardsArgs, PlayCardArgs } from './coreMoves.types.js';
 import { validateDrawCardsArgs, validatePlayCardArgs, validateMoveAllowedInStage } from './coreMoves.validate.js';
 import { moveCardFromZone, moveAllCards } from './zoneOps.js';
-import { shuffleDeck } from '../setup/shuffle.js';
+import { HAND_SIZE, drawCardsIntoHand } from './drawCards.logic.js';
 import { addResources } from '../economy/economy.logic.js';
 import { executeHeroEffects } from '../hero/heroEffects.execute.js';
 
@@ -23,10 +23,16 @@ import { executeHeroEffects } from '../hero/heroEffects.execute.js';
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
 
 /**
- * Draws cards from the active player's deck into their hand.
+ * Draws the active player's start-of-turn hand, capped at HAND_SIZE and
+ * guarded to once per turn.
  *
- * If the deck is exhausted mid-draw and the discard pile has cards, the
- * discard pile is reshuffled into the deck and drawing continues.
+ * The start-of-turn hand is normally drawn automatically by the play-phase
+ * onBegin auto-draw; this move is kept as defensive, engine-authoritative
+ * protection. A direct drawCards submission (including a raw socket message)
+ * is capped at HAND_SIZE and blocked after the first draw of the turn via
+ * G.hasDrawnThisTurn, so the production over-draw bug cannot recur over the
+ * wire. The deck-to-hand fill (with discard reshuffle on exhaustion)
+ * delegates to the shared drawCardsIntoHand primitive.
  *
  * @param context - boardgame.io move context with G, events, random, playerID.
  * @param args - DrawCardsArgs payload with a count field.
@@ -44,37 +50,35 @@ export function drawCards({ G, playerID, ...context }: MoveContext, args: DrawCa
     return;
   }
 
+  // why: once-per-turn guard — the start-of-turn draw is consumed once per turn
+  // (mirrors revealVillainCard). A second drawCards submission in the same turn,
+  // from any source, is a silent no-op. Card-effect draws (the hero `draw`
+  // keyword) use the rule-effect path (applyDrawCards) and bypass this guard.
+  // Placed before resolving zones / any reshuffle so a blocked move consumes no
+  // RNG and leaves G untouched.
+  if (G.hasDrawnThisTurn) {
+    return;
+  }
+
   // Step 3: Mutate G
   const playerZones = G.playerZones[playerID];
   if (!playerZones) {
     return;
   }
 
-  for (let cardsDrawn = 0; cardsDrawn < args.count; cardsDrawn++) {
-    // If deck is empty, attempt reshuffle from discard
-    if (playerZones.deck.length === 0) {
-      if (playerZones.discard.length === 0) {
-        // No cards available anywhere — stop drawing
-        return;
-      }
+  // why: cap the draw to HAND_SIZE — the authoritative, race-free cap the
+  // deleted UI scaffold could only approximate. The deck-to-hand fill with
+  // reshuffle delegates to the shared drawCardsIntoHand primitive.
+  const cardsToDraw = Math.min(
+    args.count,
+    Math.max(0, HAND_SIZE - playerZones.hand.length),
+  );
+  drawCardsIntoHand(playerZones, cardsToDraw, context);
 
-      // why: Reshuffling discard into deck is the standard Legendary rule
-      // when the draw pile is exhausted. ctx.random ensures determinism —
-      // identical seeds produce identical deck orders for replay.
-      const reshuffled = moveAllCards(playerZones.discard, []);
-      playerZones.discard = reshuffled.from;
-      playerZones.deck = shuffleDeck(reshuffled.to, context);
-    }
-
-    const topCard = playerZones.deck[0];
-    if (!topCard) {
-      return;
-    }
-
-    const result = moveCardFromZone(playerZones.deck, playerZones.hand, topCard);
-    playerZones.deck = result.from;
-    playerZones.hand = result.to;
-  }
+  // why: the draw attempt is consumed regardless of how many cards were drawn
+  // (even zero — an empty deck/discard or an already-full hand still spends the
+  // turn's draw allowance), foreclosing an empty-deck retry loop.
+  G.hasDrawnThisTurn = true;
 }
 
 /**
