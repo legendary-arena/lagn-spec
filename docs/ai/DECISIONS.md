@@ -24296,4 +24296,57 @@ import, so the ARCHITECTURE.md layer boundary is preserved.
 
 ---
 
+### D-23801 — Sweep LIVE Fetcher Mirrors the WP-206 Analytics Live-Fetch Pattern
+
+**Decision:**
+The sweep LIVE fetcher (`apps/dashboard/src/services/sweepLiveFetchers.ts`,
+`fetchSweepHealthLive`) mirrors the WP-206 analytics live-fetch pattern: the
+shared `isLiveModeEnabled()` gate (imported from `analyticsLiveFetchers.ts`,
+never re-derived — D-20601), a synchronous cached-`Ref` getter (returns the
+cached value or a fresh LIVE empty sentinel immediately and fires a
+fire-and-forget fetch that replaces the cached `Ref` on success), fail-silent
+behavior with prior-state preservation (no HTTP/network/parse error throws to
+the widget; the closure is fully `try/catch`-wrapped including
+`await response.json()`), `credentials:'include'` session parity (forwards the
+WP-112 session cookie to the `authenticated-session-required`
+`GET /api/sweep/latest`), and an object-envelope `{ latest, recentRuns }` shape
+guard (`isValidSweepEnvelope`) — the **one** structural deviation from the
+array-envelope (`{ data: readonly T[] }`) analytics fetchers. The endpoint
+ignores all query params (WP-209), so there is exactly **one** cached resource
+(a single module-level `Ref`, not a per-key Map) and at most one network
+request per resource for the process lifetime via cache-write-before-fetch; the
+accepted `range` parameter is signature parity with the mock and is never
+serialized into the URL. `now()` is an injectable module-level time source
+(never a bare `Date.now()`). App-layer only; no engine/server/registry/migration
+change, no new endpoint, no new dependency.
+
+**Packet:** WP-238 (EC-269).
+**Drafted:** 2026-06-11 (number reserved in WP-238/EC-269 body). **Landed:** 2026-06-11 (WP-238 execution close).
+**Status:** Active
+
+---
+
+### D-23802 — `mocks.ts` Flip Seam Gates `fetchSweepHealth` Through the Existing `liveMode`
+
+**Decision:**
+The `apps/dashboard/src/services/mocks.ts` flip seam gates the existing
+`fetchSweepHealth` alias via the **existing** shared `liveMode` constant
+(`const liveMode = isLiveModeEnabled()`) as
+`liveMode ? fetchSweepHealthLive : mockSweepHealth` — no second env gate is
+added (zero `VITE_`-prefixed literal in `mocks.ts`; the single
+`isLiveModeEnabled` import is the only gate). `mockSweepHealth` is imported and
+separately re-exported (a bare `export { x } from './mod'` creates no local
+binding the ternary can reference) so factory-direct tests keep working. The
+`/system` `SweepHealthWidget.vue` and `/pipeline` `PipelinePage.vue` consumers
+stay byte-identical — the alias identifier is the only seam — and MOCK remains
+the local-dev/test default (LIVE engages only when the deploy env flips
+use-mocks off and supplies a non-empty API base URL). Fulfils the
+WP-210-promised single-file sweep LIVE flip.
+
+**Packet:** WP-238 (EC-269).
+**Drafted:** 2026-06-11 (number reserved in WP-238/EC-269 body). **Landed:** 2026-06-11 (WP-238 execution close).
+**Status:** Active
+
+---
+
 Protect this file.

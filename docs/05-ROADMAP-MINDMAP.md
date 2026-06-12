@@ -286,6 +286,7 @@ mindmap
         ["WP-210 ✅ SweepHealthWidget dashboard surface"]
         ["WP-226 ✅ Global mock-mode banner"]
         ["WP-229 ✅ Agent Pipeline page (Architect/Builder/Inspector/Evaluator lanes)"]
+        ["WP-238 ✅ Done — Sweep MOCK→LIVE flip (dashboard sweep panels render real GET /api/sweep/latest)"]
 
       Agent Triage Pipeline
         ["WP-230 ✅ Done — Pipeline page sweep integration (agent lanes consume nightly sweep findings)"]
@@ -485,7 +486,9 @@ mindmap
 
 ---
 
-*Last updated: 2026-06-10 (WP-235 drafted + revised: the Pipeline page sweep HEALTH trend view (cadence-aware health-rate trends) WP + EC-268 authored, reserving D-23501/D-23502/D-23503. A metric-review pass found the original aggregate anomaly-rate degenerate (`sum(anomalyCounts) === cellCount`) — and the EXISTING health-rate KPI/Architect-lane likewise ≡ 0 on live data; revised to a true health rate (`endgame-reached / cellCount`) via a narrow documented healthy-class-constant exception to D-20703 (D-23503), repairing both degenerate sites. Flipped WP-235 📦 → 📝 in the mindmap + moved it Pending → Drafted; Agent Triage Pipeline open `1 📦 → 1 📝`; Total `1 📦 → 1 📝 + 1 ⏸`. The only remaining Agent Triage Pipeline step, now authored and ready for execution.)*
+*Last updated: 2026-06-11 (WP-238 ✅ done — Sweep MOCK→LIVE flip. New `sweepLiveFetchers.ts` (`fetchSweepHealthLive`) mirrors the WP-206 analytics live-fetch pattern for the single object-envelope `GET /api/sweep/latest` resource (shared `isLiveModeEnabled()` gate, synchronous cached-`Ref` getter, fail-silent, `credentials:'include'` session parity, `{latest,recentRuns}` object guard); `mocks.ts` gates the existing `fetchSweepHealth` alias via the existing `liveMode` (no second env gate). `SweepHealthWidget.vue`/`PipelinePage.vue` byte-identical; MOCK stays the local-dev/test default. Added a WP-238 ✅ node under Dashboard & Operator Analytics; D-23801/D-23802 Active. Gates: dashboard test 247→274 / 0 fail, `vue-tsc --noEmit` 0, build 0. NOTE: the pre-existing Progress Summary count drift (the counting convention line still reads "WP-231..235 pending" though those nodes show ✅) was left as-is — not introduced or reconciled by this WP.)*
+
+*Prior: 2026-06-10 (WP-235 drafted + revised: the Pipeline page sweep HEALTH trend view (cadence-aware health-rate trends) WP + EC-268 authored, reserving D-23501/D-23502/D-23503. A metric-review pass found the original aggregate anomaly-rate degenerate (`sum(anomalyCounts) === cellCount`) — and the EXISTING health-rate KPI/Architect-lane likewise ≡ 0 on live data; revised to a true health rate (`endgame-reached / cellCount`) via a narrow documented healthy-class-constant exception to D-20703 (D-23503), repairing both degenerate sites. Flipped WP-235 📦 → 📝 in the mindmap + moved it Pending → Drafted; Agent Triage Pipeline open `1 📦 → 1 📝`; Total `1 📦 → 1 📝 + 1 ⏸`. The only remaining Agent Triage Pipeline step, now authored and ready for execution.)*
 
 *Prior: 2026-06-10 (status reconcile: WP-231/232/233/234 ✅ done — the Agent Triage Pipeline's scheduled-triage → handoff-chain → closed-loop-verify sequence plus the parallel-safe full-corpus weekly sweep expansion all landed on `origin/main`. Flipped 📦→✅ in the mindmap + bullet list; Agent Triage Pipeline cluster 1/6 → 5/6 ✅; Progress Summary **226/232 → 230/232 WP ✅**, 5 📦 → 1 📦 (only WP-235 trend view remains), 1 ⏸. Next Unblocked item 4 narrowed to WP-235.)*
 

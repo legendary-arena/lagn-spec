@@ -75,13 +75,23 @@ export {
   mockInfraCostEntries as fetchInfraCostEntries,
 } from './opsHealthMocks.js';
 
-// why: WP-210 / EC-242 / D-20402 — sweep-health mock factory. Same dual-export
-// pattern as the WP-204 ops block above: the `mockX` binding for tests (direct
-// factory output) and the `fetchX` alias for the widget (so the widget file
-// contains zero literal mock-binding tokens — the MOCK → LIVE flip seam is a
-// future single-file swap here, not a widget-side change).
-export { mockSweepHealth } from './sweepHealthMocks.js';
-export { fetchSweepHealth } from './sweepHealthMocks.js';
+// why: WP-238 / EC-269 / D-23802 — sweep-health LIVE flip. Import + separate
+// re-export so `mockSweepHealth` is a LOCAL binding the ternary below can
+// reference; a bare `export { x } from './mod'` re-export creates no local
+// binding (see the analytics-block note at the top of this file). The
+// `mockSweepHealth` re-export is retained for factory-direct tests.
+import { mockSweepHealth } from './sweepHealthMocks.js';
+export { mockSweepHealth };
+import { fetchSweepHealthLive } from './sweepLiveFetchers.js';
+
+// why (D-23802): the `fetchSweepHealth` alias is gated through the EXISTING
+// shared `liveMode` constant — this file adds NO second env gate (no env-var
+// literal here; the gate is the single `isLiveModeEnabled()` import above).
+// When `liveMode` is false (default + local-dev + tests) the MOCK factory runs;
+// when true (deploy env flips use-mocks off + supplies a non-empty API base
+// URL) the LIVE fetcher runs. `SweepHealthWidget.vue` / `PipelinePage.vue` stay
+// byte-identical — the `fetchSweepHealth` alias identifier is the only seam.
+export const fetchSweepHealth = liveMode ? fetchSweepHealthLive : mockSweepHealth;
 
 function randomBetween(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
