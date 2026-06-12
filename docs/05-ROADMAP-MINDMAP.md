@@ -393,7 +393,7 @@ mindmap
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 12/12 | — |
-| Agent Triage Pipeline | 5/6 | 1 📝 drafted |
+| Agent Triage Pipeline | 7/7 | — |
 | Admin & Route Wiring | 4/4 | — |
 | Phase 9 — Profile Surface Follow-ups | 4/4 | — |
 | Architecture & API Governance | 4/4 | — |
@@ -402,11 +402,11 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **230/232 WP ✅** (+ 4/4 Foundation Prompts) | 1 📝 + 1 ⏸ |
+| **Total** | **231/232 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. If counts disagree with the mindmap, the mindmap wins.
 >
-> **Counting convention:** each row counts the distinct `WORK_INDEX.md` work-packets homed in that cluster (combined lines like `WP-005A/B` count their members; the Phase-6 `WP-048..051` line is a cross-reference, counted once under Scoring & PAR). Foundation = 4 Foundation Prompts (not WPs). `Next Horizons` (4 📦) and `Phase 10` (8 📝) are forward-looking nav placeholders, not WPs. WP rows sum to **226 done + 5 📦 pending (WP-231..235) + 1 ⏸ blocked (WP-042.1) = 232**, matching `WORK_INDEX.md`.
+> **Counting convention:** each row counts the distinct `WORK_INDEX.md` work-packets homed in that cluster (combined lines like `WP-005A/B` count their members; the Phase-6 `WP-048..051` line is a cross-reference, counted once under Scoring & PAR). Foundation = 4 Foundation Prompts (not WPs). `Next Horizons` (4 📦) and `Phase 10` (8 📝) are forward-looking nav placeholders, not WPs. WP-231..235 (and WP-236 / WP-238 / WP-239) are **done** — the earlier "5 📦 pending (WP-231..235)" breakdown was stale. The only open WP is the blocked **WP-042.1** (deferred PostgreSQL seeding, awaiting Foundation Prompt 03 revival). For the precise live tally, `WORK_INDEX.md` is authoritative; the per-cluster sub-counts above are a lagging summary, and the mindmap nodes win on any disagreement (per the note above). A full convention-based reconcile of every per-cluster sub-count is deferred — it re-drifts each WP and is subordinate to the two authoritative sources just named.
 
 ---
 
