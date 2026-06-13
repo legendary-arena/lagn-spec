@@ -31,6 +31,7 @@ import {
 import { hasAmbush } from '../board/boardKeywords.logic.js';
 import { koAttachedHeroesOnEscape } from '../board/heroCapture.logic.js';
 import { executeVillainAbilities } from '../villain/villainEffects.execute.js';
+import { hasPendingKoHeroChoice } from '../moves/koHeroChoice.resolve.js';
 import { composeAmbushNarrative } from '../events/notableEvents.compose.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
@@ -62,6 +63,12 @@ export function revealVillainCard({ G, ctx, ...context }: MoveContext): void {
   // Step 0: Stage gate (non-core move contract)
   // why: villain reveal is a start-of-turn action per tabletop Legendary
   if (G.currentStage !== 'start') return;
+
+  // why: block-all guard (D-24008) — while a KO-a-Hero choice is pending the
+  // board is frozen; revealVillainCard returns with no side effects. Placed
+  // immediately after the stage gate, before the once-per-turn guard and any
+  // G/zone write.
+  if (hasPendingKoHeroChoice(G)) return;
 
   // why: the start-of-turn reveal is once per turn; scheme/card effects that
   // chain extra reveals call performVillainReveal directly and intentionally

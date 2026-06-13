@@ -329,3 +329,78 @@ describe('filterUIStateForAudience — WP-128 redaction matrix', () => {
   });
 
 });
+
+// ---------------------------------------------------------------------------
+// WP-243 / EC-274 — discard + pendingKoHeroChoice redaction (D-24011)
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds a UIState where player '0' owes a KO choice with eligible cards
+ * spanning their (private) hand + discard. The chooser's hand identities are
+ * the leak vector — they must not appear in a non-chooser's UIState.
+ */
+function createKoChoiceUIState(): UIState {
+  const config = createTestConfig();
+  const registry = createMockRegistry();
+  const setupContext = makeMockCtx();
+  const gameState = buildInitialGameState(config, registry, setupContext);
+
+  gameState.playerZones['0']!.hand = ['ko-hand-secret-a', 'ko-hand-secret-b'];
+  gameState.playerZones['0']!.discard = ['ko-disc-secret-c'];
+  gameState.playerZones['1']!.hand = ['p1-card'];
+  gameState.pendingKoHeroChoices = [{ choiceType: 'ko-hero', playerID: '0' }];
+
+  return buildUIState(gameState, mockCtx);
+}
+
+describe('filterUIStateForAudience — discard redaction (WP-243)', () => {
+  it('owner sees own discardCards / discardDisplay; opponent + spectator do not', () => {
+    const uiState = createKoChoiceUIState();
+
+    const owner = filterUIStateForAudience(uiState, PLAYER_0).players.find((p) => p.playerId === '0')!;
+    assert.ok(owner.discardCards !== undefined, 'owner sees discardCards');
+    assert.ok(owner.discardDisplay !== undefined, 'owner sees discardDisplay');
+
+    const opponentView = filterUIStateForAudience(uiState, PLAYER_1).players.find((p) => p.playerId === '0')!;
+    assert.equal(opponentView.discardCards, undefined, 'opponent does NOT see discardCards');
+    assert.equal(opponentView.discardDisplay, undefined, 'opponent does NOT see discardDisplay');
+
+    const spectatorView = filterUIStateForAudience(uiState, SPECTATOR).players.find((p) => p.playerId === '0')!;
+    assert.equal(spectatorView.discardCards, undefined, 'spectator does NOT see discardCards');
+    assert.equal(spectatorView.discardDisplay, undefined, 'spectator does NOT see discardDisplay');
+  });
+});
+
+describe('filterUIStateForAudience — pendingKoHeroChoice redaction (D-24011)', () => {
+  it('the chooser sees pendingKoHeroChoice with the full eligible list', () => {
+    const uiState = createKoChoiceUIState();
+    const result = filterUIStateForAudience(uiState, PLAYER_0);
+    assert.ok(result.pendingKoHeroChoice !== undefined, 'chooser sees the KO choice');
+    assert.equal(result.pendingKoHeroChoice!.playerID, '0');
+    assert.ok(result.pendingKoHeroChoice!.eligible.length >= 1, 'eligible list non-empty');
+  });
+
+  it('an opponent does NOT see pendingKoHeroChoice and none of the chooser hand ext_ids leak', () => {
+    const uiState = createKoChoiceUIState();
+    const result = filterUIStateForAudience(uiState, PLAYER_1);
+    assert.equal(result.pendingKoHeroChoice, undefined, 'opponent must not see the KO choice');
+    const serialized = JSON.stringify(result);
+    assert.equal(serialized.includes('ko-hand-secret-a'), false, 'no chooser hand ext_id leaks');
+    assert.equal(serialized.includes('ko-hand-secret-b'), false, 'no chooser hand ext_id leaks');
+  });
+
+  it('a spectator does NOT see pendingKoHeroChoice and none of the chooser hand ext_ids leak', () => {
+    const uiState = createKoChoiceUIState();
+    const result = filterUIStateForAudience(uiState, SPECTATOR);
+    assert.equal(result.pendingKoHeroChoice, undefined, 'spectator must not see the KO choice');
+    const serialized = JSON.stringify(result);
+    assert.equal(serialized.includes('ko-hand-secret-a'), false, 'no chooser hand ext_id leaks');
+    assert.equal(serialized.includes('ko-hand-secret-b'), false, 'no chooser hand ext_id leaks');
+  });
+
+  it('does not mutate the input UIState (pendingKoHeroChoice still present on the source)', () => {
+    const uiState = createKoChoiceUIState();
+    filterUIStateForAudience(uiState, PLAYER_1);
+    assert.ok(uiState.pendingKoHeroChoice !== undefined, 'source UIState unchanged');
+  });
+});

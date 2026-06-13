@@ -37,6 +37,7 @@ import LobbyControls from '../components/play/LobbyControls.vue';
 import NotableEventOverlay from '../components/play/NotableEventOverlay.vue';
 import PileBrowseModal from '../components/play/PileBrowseModal.vue';
 import PendingHeroChoicePrompt from '../components/play/PendingHeroChoicePrompt.vue';
+import PendingKoHeroChoicePrompt from '../components/play/PendingKoHeroChoicePrompt.vue';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
 
 interface ActivePile {
@@ -85,6 +86,7 @@ export default defineComponent({
     NotableEventOverlay,
     PileBrowseModal,
     PendingHeroChoicePrompt,
+    PendingKoHeroChoicePrompt,
   },
   props: {
     submitMove: {
@@ -299,6 +301,13 @@ export default defineComponent({
       () => snapshot.value?.pendingHeroChoice !== undefined,
     );
 
+    // why: D-24012 — derived from UIState.pendingKoHeroChoice !== undefined.
+    // Passed to TurnActionBar to block end-turn and pass-priority at EVERY
+    // stage while a KO-a-Hero choice is pending (board frozen).
+    const hasPendingKoChoice = computed<boolean>(
+      () => snapshot.value?.pendingKoHeroChoice !== undefined,
+    );
+
     return {
       snapshot,
       viewer,
@@ -317,6 +326,7 @@ export default defineComponent({
       onPileOpen,
       onPileClose,
       hasPendingChoice,
+      hasPendingKoChoice,
     };
   },
 });
@@ -412,6 +422,8 @@ export default defineComponent({
                 :deck-count="viewer.deckCount"
                 :discard-count="viewer.discardCount"
                 :discard-top-card="viewer.discardTopCard"
+                :discard-cards="viewer.discardCards"
+                :discard-display="viewer.discardDisplay"
               />
             </div>
           </div>
@@ -447,6 +459,15 @@ export default defineComponent({
             />
             <EconomyBar :economy="snapshot.economy" />
           </section>
+          <!-- why: D-24012 + WP-243 — the KO prompt renders ABOVE the hero-choice
+               prompt (higher urgency — full board freeze) and both render above
+               TurnActionBar in DOM order. Appears only for the choosing player
+               when pendingKoHeroChoice is set. NOT a modal; normal document flow. -->
+          <PendingKoHeroChoicePrompt
+            :pending-ko-hero-choice="snapshot.pendingKoHeroChoice"
+            :viewer-player-id="viewer.playerId"
+            :submit-move="submitMove"
+          />
           <!-- why: D-22201 + WP-222 — prompt renders above TurnActionBar in DOM
                order; appears only for the choosing player when pendingHeroChoice
                is set. NOT a modal; NOT position:fixed. Normal document flow. -->
@@ -459,6 +480,7 @@ export default defineComponent({
             :current-stage="snapshot.game.currentStage"
             :is-viewer-turn="isViewerTurn"
             :has-pending-choice="hasPendingChoice"
+            :has-pending-ko-choice="hasPendingKoChoice"
             :submit-move="submitMove"
           />
         </template>

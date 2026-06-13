@@ -11,9 +11,14 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { executeVillainAbilities } from './villainEffects.execute.js';
+import {
+  executeVillainAbilities,
+  selectDefaultKoTarget,
+  buildKoEligibleTargets,
+} from './villainEffects.execute.js';
+import { resolveKoHeroChoice } from '../moves/koHeroChoice.resolve.js';
 import type { LegendaryGameState } from '../types.js';
-import type { CardExtId } from '../state/zones.types.js';
+import type { CardExtId, PlayerZones } from '../state/zones.types.js';
 import type { VillainAbilityHook } from '../rules/villainAbility.types.js';
 
 const WOUND = 'pile-wound' as CardExtId;
@@ -127,8 +132,13 @@ describe('executeVillainAbilities — gainWoundCurrentPlayer', () => {
   });
 });
 
-describe('executeVillainAbilities — koHeroCurrentPlayer', () => {
-  it('KOs the lexically-smallest non-wound card from discard (priority over hand)', () => {
+describe('executeVillainAbilities — koHeroCurrentPlayer (WP-242 park → resolve)', () => {
+  // why: WP-242 / D-24006 — koHeroCurrentPlayer is now INTERACTIVE for the
+  // current player. 0 eligible → no-op + no append; exactly 1 eligible →
+  // auto-KO + no append (decision C); ≥2 eligible → append a pending choice
+  // and KO nothing (the player picks via resolveKoHeroChoice). The legacy
+  // auto-pick now applies only to the each-player variants (unchanged).
+  it('≥2 eligible (discard + hand) → appends one pending choice and KOs nothing', () => {
     const G = makeG({
       hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
       playerZones: {
@@ -144,20 +154,26 @@ describe('executeVillainAbilities — koHeroCurrentPlayer', () => {
     });
     executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
 
-    assert.deepStrictEqual(G.ko, ['core-hero-a-00'], 'KOs the lexical-first discard hero');
-    assert.equal(
-      G.playerZones['0']!.discard.includes('core-hero-a-00' as CardExtId),
-      false,
-      'KO target removed from discard',
+    assert.deepStrictEqual(G.ko, [], 'nothing KOd yet — the player must choose');
+    assert.equal(G.pendingKoHeroChoices?.length, 1, 'one pending choice appended');
+    assert.deepStrictEqual(
+      G.pendingKoHeroChoices?.[0],
+      { choiceType: 'ko-hero', playerID: '0' },
+      'pending entry records the current player',
+    );
+    assert.deepStrictEqual(
+      G.playerZones['0']!.discard,
+      ['core-hero-b-00', 'core-hero-a-00', WOUND],
+      'discard untouched while pending',
     );
     assert.deepStrictEqual(
       G.playerZones['0']!.hand,
       ['core-hero-z-00'],
-      'hand untouched when discard had a hero',
+      'hand untouched while pending',
     );
   });
 
-  it('falls through to hand when discard holds only wounds', () => {
+  it('≥2 eligible in hand only → appends one pending choice (no auto-KO)', () => {
     const G = makeG({
       hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
       playerZones: {
@@ -173,11 +189,41 @@ describe('executeVillainAbilities — koHeroCurrentPlayer', () => {
     });
     executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
 
-    assert.deepStrictEqual(G.ko, ['core-hero-a-00'], 'KOs the lexical-first hand hero');
-    assert.equal(G.playerZones['0']!.discard.length, 2, 'wound-only discard untouched');
+    assert.deepStrictEqual(G.ko, [], 'wounds are not eligible; the two hand heroes are a choice');
+    assert.equal(G.pendingKoHeroChoices?.length, 1, 'one pending choice appended');
+    assert.equal(G.playerZones['0']!.hand.length, 2, 'hand untouched while pending');
   });
 
-  it('no-ops when neither zone has a hero (wounds only)', () => {
+  it('exactly 1 eligible → auto-KOs that card and appends nothing (decision C)', () => {
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: [WOUND] as CardExtId[],
+          discard: ['core-hero-a-00', WOUND] as CardExtId[],
+          inPlay: [],
+          victory: [],
+        },
+        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(G.ko, ['core-hero-a-00'], 'the single eligible hero is auto-KOd');
+    assert.equal(
+      G.pendingKoHeroChoices === undefined || G.pendingKoHeroChoices.length === 0,
+      true,
+      'no pending choice appended when exactly 1 eligible',
+    );
+    assert.equal(
+      G.playerZones['0']!.discard.includes('core-hero-a-00' as CardExtId),
+      false,
+      'auto-KO target removed from discard',
+    );
+  });
+
+  it('0 eligible (wounds only) → no-op, no KO, no append', () => {
     const G = makeG({
       hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
       playerZones: {
@@ -187,6 +233,108 @@ describe('executeVillainAbilities — koHeroCurrentPlayer', () => {
     });
     executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
     assert.deepStrictEqual(G.ko, [], 'no KO when no hero is available');
+    assert.equal(
+      G.pendingKoHeroChoices === undefined || G.pendingKoHeroChoices.length === 0,
+      true,
+      'no pending choice appended when 0 eligible',
+    );
+  });
+
+  it('a single move firing koHeroCurrentPlayer twice appends TWO pending entries (multi-KO queue)', () => {
+    const G = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer', 'koHeroCurrentPlayer'])],
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: ['core-hero-a-00', 'core-hero-b-00'] as CardExtId[],
+          discard: [],
+          inPlay: [],
+          victory: [],
+        },
+        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
+      },
+    });
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+    assert.equal(G.pendingKoHeroChoices?.length, 2, 'two pending entries (one per firing)');
+    assert.deepStrictEqual(G.ko, [], 'nothing KOd while both choices are pending');
+  });
+});
+
+describe('buildKoEligibleTargets (WP-242)', () => {
+  it('spans discard → hand → inPlay in array index order, excluding wounds', () => {
+    const zones = {
+      deck: [],
+      hand: ['core-hand-a' as CardExtId, WOUND],
+      discard: ['core-disc-a' as CardExtId, WOUND, 'core-disc-b' as CardExtId],
+      inPlay: ['core-play-a' as CardExtId],
+      victory: [],
+    } as unknown as PlayerZones;
+
+    assert.deepStrictEqual(buildKoEligibleTargets(zones), [
+      { zone: 'discard', cardId: 'core-disc-a' },
+      { zone: 'discard', cardId: 'core-disc-b' },
+      { zone: 'hand', cardId: 'core-hand-a' },
+      { zone: 'inPlay', cardId: 'core-play-a' },
+    ]);
+  });
+
+  it('dedupes the same ext_id within a zone (one option) but keeps it across zones (two options)', () => {
+    const zones = {
+      deck: [],
+      hand: ['dup' as CardExtId],
+      discard: ['dup' as CardExtId, 'dup' as CardExtId],
+      inPlay: [],
+      victory: [],
+    } as unknown as PlayerZones;
+
+    assert.deepStrictEqual(buildKoEligibleTargets(zones), [
+      { zone: 'discard', cardId: 'dup' },
+      { zone: 'hand', cardId: 'dup' },
+    ]);
+  });
+
+  it('returns an empty list when only wounds are present', () => {
+    const zones = {
+      deck: [],
+      hand: [WOUND],
+      discard: [WOUND],
+      inPlay: [],
+      victory: [],
+    } as unknown as PlayerZones;
+    assert.deepStrictEqual(buildKoEligibleTargets(zones), []);
+  });
+});
+
+describe('koHeroCurrentPlayer eligible-collapse (WP-242)', () => {
+  it('a 2-entry queue whose first resolution drops the eligible set to 1 still leaves the second entry (resolve never auto-resolves the collapse)', () => {
+    // why: D-24007 — only the parker auto-resolves. After the first
+    // resolveKoHeroChoice the second pending entry remains even though only
+    // one eligible card is left; it STILL requires an explicit resolve.
+    const G = makeG({
+      playerZones: {
+        '0': {
+          deck: [],
+          hand: ['hero-a' as CardExtId, 'hero-b' as CardExtId],
+          discard: [],
+          inPlay: [],
+          victory: [],
+        },
+      },
+    });
+    G.pendingKoHeroChoices = [
+      { choiceType: 'ko-hero', playerID: '0' },
+      { choiceType: 'ko-hero', playerID: '0' },
+    ];
+
+    // Resolve the first choice — KO hero-a, leaving hero-b as the only eligible.
+    resolveKoHeroChoice(
+      { G, playerID: '0' } as unknown as Parameters<typeof resolveKoHeroChoice>[0],
+      { zone: 'hand', cardId: 'hero-a' as CardExtId },
+    );
+
+    assert.deepStrictEqual(G.ko, ['hero-a'], 'first resolve KOs hero-a');
+    assert.equal(G.pendingKoHeroChoices.length, 1, 'second entry still pending — no auto-resolve');
+    assert.deepStrictEqual(G.playerZones['0']!.hand, ['hero-b'], 'hero-b NOT auto-KOd');
   });
 });
 
@@ -200,119 +348,79 @@ describe('executeVillainAbilities — starting-SHIELD KO priority (D-20602)', ()
   const SHIELD_AGENT = 'starting-shield-agent' as CardExtId;
   const SHIELD_TROOPER = 'starting-shield-trooper' as CardExtId;
 
-  it('koHeroCurrentPlayer prefers starting SHIELD card over a recruited hero in discard', () => {
-    const G = makeG({
-      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
-      playerZones: {
-        '0': {
-          deck: [],
-          hand: [],
-          // why: 'core/spider-man/...' lex-sorts before 'starting-shield-...';
-          // pre-D-20602 the resolver would have picked the recruited hero.
-          discard: ['core/spider-man/strike' as CardExtId, SHIELD_AGENT, SHIELD_TROOPER],
-          inPlay: [],
-          victory: [],
-        },
-        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
-      },
-    });
-    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+  // why: WP-242 — the starter-first / zone-priority selection now lives in the
+  // bot default pick `selectDefaultKoTarget` (reused for auto-1 and the sim
+  // bot). These tests assert that selection directly (the human-facing choice
+  // shows ALL eligible targets; the priority only governs the auto-resolution).
+  it('selectDefaultKoTarget prefers starting SHIELD card over a recruited hero in discard', () => {
+    const zones = {
+      deck: [],
+      hand: [],
+      // why: 'core/spider-man/...' lex-sorts before 'starting-shield-...';
+      // pure lex-asc would have picked the recruited hero (pre-D-20602).
+      discard: ['core/spider-man/strike' as CardExtId, SHIELD_AGENT, SHIELD_TROOPER],
+      inPlay: [],
+      victory: [],
+    } as unknown as PlayerZones;
 
     assert.deepStrictEqual(
-      G.ko,
-      [SHIELD_AGENT],
-      'KOs the lex-first starting SHIELD card, NOT the recruited hero',
-    );
-    assert.deepStrictEqual(
-      G.playerZones['0']!.discard,
-      ['core/spider-man/strike', SHIELD_TROOPER],
-      'recruited hero and second SHIELD card remain in discard',
+      selectDefaultKoTarget(zones),
+      { zone: 'discard', cardId: SHIELD_AGENT },
+      'auto-pick selects the lex-first starting SHIELD card, NOT the recruited hero',
     );
   });
 
-  it('koHeroCurrentPlayer prefers starting SHIELD card over a recruited hero in hand (discard had only wounds)', () => {
-    const G = makeG({
-      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
-      playerZones: {
-        '0': {
-          deck: [],
-          hand: ['core/hulk/smash' as CardExtId, SHIELD_TROOPER, SHIELD_AGENT],
-          discard: [WOUND],
-          inPlay: [],
-          victory: [],
-        },
-        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
-      },
-    });
-    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+  it('selectDefaultKoTarget prefers starting SHIELD card in hand (discard had only wounds)', () => {
+    const zones = {
+      deck: [],
+      hand: ['core/hulk/smash' as CardExtId, SHIELD_TROOPER, SHIELD_AGENT],
+      discard: [WOUND],
+      inPlay: [],
+      victory: [],
+    } as unknown as PlayerZones;
 
     assert.deepStrictEqual(
-      G.ko,
-      [SHIELD_AGENT],
+      selectDefaultKoTarget(zones),
+      { zone: 'hand', cardId: SHIELD_AGENT },
       'falls through to hand and picks the lex-first starting SHIELD card',
     );
-    assert.deepStrictEqual(
-      G.playerZones['0']!.hand,
-      ['core/hulk/smash', SHIELD_TROOPER],
-      'recruited hero and second SHIELD card remain in hand',
-    );
   });
 
-  it('falls back to lex-asc among recruited heroes when no starting SHIELD cards present', () => {
-    const G = makeG({
-      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
-      playerZones: {
-        '0': {
-          deck: [],
-          hand: [],
-          discard: [
-            'core/wolverine/claws' as CardExtId,
-            'core/black-widow/spy' as CardExtId,
-          ],
-          inPlay: [],
-          victory: [],
-        },
-        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
-      },
-    });
-    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+  it('selectDefaultKoTarget falls back to lex-asc among recruited heroes when no starting SHIELD cards present', () => {
+    const zones = {
+      deck: [],
+      hand: [],
+      discard: [
+        'core/wolverine/claws' as CardExtId,
+        'core/black-widow/spy' as CardExtId,
+      ],
+      inPlay: [],
+      victory: [],
+    } as unknown as PlayerZones;
 
     assert.deepStrictEqual(
-      G.ko,
-      ['core/black-widow/spy'],
+      selectDefaultKoTarget(zones),
+      { zone: 'discard', cardId: 'core/black-widow/spy' },
       'lex-asc tie-break still applies among non-starting cards (D-18503 preserved)',
     );
   });
 
-  it('discard zone priority is preserved even when only the hand holds a starting card', () => {
+  it('selectDefaultKoTarget discard zone priority is preserved even when only the hand holds a starting card', () => {
     // why: starting-first tier ordering does NOT override the zone-priority
     // (discard before hand) lock from D-18503. A recruited hero in discard
-    // is KO'd before a starting card in hand — same zone-priority semantics
-    // as before, only the within-zone tie-break is amended.
-    const G = makeG({
-      hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
-      playerZones: {
-        '0': {
-          deck: [],
-          hand: [SHIELD_AGENT],
-          discard: ['core/spider-man/strike' as CardExtId],
-          inPlay: [],
-          victory: [],
-        },
-        '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
-      },
-    });
-    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+    // is the auto-pick before a starting card in hand.
+    const zones = {
+      deck: [],
+      hand: [SHIELD_AGENT],
+      discard: ['core/spider-man/strike' as CardExtId],
+      inPlay: [],
+      victory: [],
+    } as unknown as PlayerZones;
 
     assert.deepStrictEqual(
-      G.ko,
-      ['core/spider-man/strike'],
+      selectDefaultKoTarget(zones),
+      { zone: 'discard', cardId: 'core/spider-man/strike' },
       'discard always beats hand, regardless of starting-card tier',
-    );
-    assert.deepStrictEqual(
-      G.playerZones['0']!.hand,
-      [SHIELD_AGENT],
-      'hand untouched while discard held any hero',
     );
   });
 
@@ -349,29 +457,25 @@ describe('executeVillainAbilities — starting-SHIELD KO priority (D-20602)', ()
     );
   });
 
-  it('determinism: starting-first priority is stable across two identical runs', () => {
+  it('determinism: selectDefaultKoTarget starting-first priority is stable across two identical calls', () => {
     const build = () =>
-      makeG({
-        hooks: [hook('v-x', 'onFight', ['koHeroCurrentPlayer'])],
-        playerZones: {
-          '0': {
-            deck: [],
-            hand: ['core/wolverine/claws' as CardExtId],
-            discard: [SHIELD_TROOPER, 'core/spider-man/strike' as CardExtId, SHIELD_AGENT, WOUND],
-            inPlay: [],
-            victory: [],
-          },
-          '1': { deck: [], hand: [], discard: [], inPlay: [], victory: [] },
-        },
-      });
+      ({
+        deck: [],
+        hand: ['core/wolverine/claws' as CardExtId],
+        discard: [SHIELD_TROOPER, 'core/spider-man/strike' as CardExtId, SHIELD_AGENT, WOUND],
+        inPlay: [],
+        victory: [],
+      } as unknown as PlayerZones);
 
-    const first = build();
-    executeVillainAbilities(first, CTX, 'v-x' as CardExtId, 'onFight');
-    const second = build();
-    executeVillainAbilities(second, CTX, 'v-x' as CardExtId, 'onFight');
+    const first = selectDefaultKoTarget(build());
+    const second = selectDefaultKoTarget(build());
 
-    assert.equal(JSON.stringify(first), JSON.stringify(second));
-    assert.deepStrictEqual(first.ko, [SHIELD_AGENT], 'lex-first starting card wins');
+    assert.deepStrictEqual(first, second, 'identical pick across two calls');
+    assert.deepStrictEqual(
+      first,
+      { zone: 'discard', cardId: SHIELD_AGENT },
+      'lex-first starting card wins',
+    );
   });
 });
 
@@ -689,74 +793,44 @@ describe('executeVillainAbilities — koHeroEachPlayer (WP-189)', () => {
     );
   });
 
-  it('shared-resolver parity: on a single-player G, koHeroEachPlayer and koHeroCurrentPlayer produce byte-identical post-state (load-bearing)', () => {
-    // why: this is the hardened §AC load-bearing test. Both branches MUST
-    // call the same shared per-player resolver and reach byte-identical
-    // post-state on a single-player G. If a future change duplicates and
-    // silently drifts the resolution logic between the branches, this test
-    // fails. The deep-equality classes covered: G.ko, every player zone
-    // (hand/discard/inPlay/victory/deck), G.attachedBystanders, G.messages.
-    const buildG = (effect: 'koHeroCurrentPlayer' | 'koHeroEachPlayer') =>
-      makeG({
-        hooks: [hook('v-x', 'onFight', [effect])],
-        playerZones: {
-          '0': {
-            deck: ['core-hero-deck-d' as CardExtId],
-            hand: ['core-hero-hand-h' as CardExtId, 'core-hero-hand-z' as CardExtId],
-            discard: ['core-hero-disc-b' as CardExtId, 'core-hero-disc-a' as CardExtId, WOUND],
-            inPlay: ['core-hero-play-p' as CardExtId],
-            victory: ['core-hero-vict-v' as CardExtId],
-          },
-        },
-        attachedBystanders: { ['v-other' as CardExtId]: ['by-1' as CardExtId] },
-      });
+  it('bot-parity: legacy auto-resolution (koHeroEachPlayer) and the new selectDefaultKoTarget→resolve KO the SAME cardId (load-bearing)', () => {
+    // why: WP-242 / D-24009 — the bot's KO target MUST be byte-identical to
+    // today's auto-resolution. (a) Run the legacy resolver on a single-player
+    // G via koHeroEachPlayer (it delegates to koOneHeroForPlayer) and capture
+    // the KO'd cardId. (b) Run the new flow — selectDefaultKoTarget then
+    // resolveKoHeroChoice with its result — and capture the KO'd cardId. The
+    // two cardIds MUST be identical (the bot-determinism anchor).
+    const buildZones = () => ({
+      deck: ['core-hero-deck-d' as CardExtId],
+      hand: ['core-hero-hand-h' as CardExtId, 'core-hero-hand-z' as CardExtId],
+      discard: ['core-hero-disc-b' as CardExtId, 'core-hero-disc-a' as CardExtId, WOUND],
+      inPlay: ['core-hero-play-p' as CardExtId],
+      victory: ['core-hero-vict-v' as CardExtId],
+    });
 
-    const gCurrent = buildG('koHeroCurrentPlayer');
-    executeVillainAbilities(gCurrent, CTX, 'v-x' as CardExtId, 'onFight');
+    // (a) legacy auto-resolution path
+    const gLegacy = makeG({
+      hooks: [hook('v-x', 'onFight', ['koHeroEachPlayer'])],
+      playerZones: { '0': buildZones() },
+    });
+    executeVillainAbilities(gLegacy, CTX, 'v-x' as CardExtId, 'onFight');
+    assert.equal(gLegacy.ko.length, 1, 'legacy resolver KOs exactly one card');
+    const legacyKoId = gLegacy.ko[0];
 
-    const gEach = buildG('koHeroEachPlayer');
-    executeVillainAbilities(gEach, CTX, 'v-x' as CardExtId, 'onFight');
+    // (b) new selectDefaultKoTarget → resolveKoHeroChoice path
+    const gNew = makeG({ playerZones: { '0': buildZones() } });
+    gNew.pendingKoHeroChoices = [{ choiceType: 'ko-hero', playerID: '0' }];
+    const defaultTarget = selectDefaultKoTarget(gNew.playerZones['0']!);
+    assert.ok(defaultTarget !== null, 'a default target exists');
+    resolveKoHeroChoice(
+      { G: gNew, playerID: '0' } as unknown as Parameters<typeof resolveKoHeroChoice>[0],
+      defaultTarget!,
+    );
+    assert.equal(gNew.ko.length, 1, 'new flow KOs exactly one card');
+    const newKoId = gNew.ko[0];
 
-    assert.deepStrictEqual(gEach.ko, gCurrent.ko, 'G.ko deep-equal');
-    assert.deepStrictEqual(
-      gEach.playerZones['0']!.discard,
-      gCurrent.playerZones['0']!.discard,
-      "player 0 discard deep-equal",
-    );
-    assert.deepStrictEqual(
-      gEach.playerZones['0']!.hand,
-      gCurrent.playerZones['0']!.hand,
-      "player 0 hand deep-equal",
-    );
-    assert.deepStrictEqual(
-      gEach.playerZones['0']!.inPlay,
-      gCurrent.playerZones['0']!.inPlay,
-      "player 0 inPlay deep-equal",
-    );
-    assert.deepStrictEqual(
-      gEach.playerZones['0']!.victory,
-      gCurrent.playerZones['0']!.victory,
-      "player 0 victory deep-equal",
-    );
-    assert.deepStrictEqual(
-      gEach.playerZones['0']!.deck,
-      gCurrent.playerZones['0']!.deck,
-      "player 0 deck deep-equal",
-    );
-    assert.deepStrictEqual(
-      gEach.attachedBystanders,
-      gCurrent.attachedBystanders,
-      'G.attachedBystanders deep-equal',
-    );
-    // why: messages is a separate JSON array; the resolver pushes none
-    // today, but deep equality pins it so a future per-branch message
-    // divergence (which would violate the mutation-location lock) fails the
-    // test.
-    assert.deepStrictEqual(
-      (gEach as { messages?: unknown }).messages,
-      (gCurrent as { messages?: unknown }).messages,
-      'G.messages deep-equal (resolver-pushed messages are uniform across branches)',
-    );
+    assert.equal(newKoId, legacyKoId, 'bot KO target is byte-identical to legacy auto-resolution');
+    assert.equal(gNew.pendingKoHeroChoices.length, 0, 'new flow front-pops the resolved choice');
   });
 
   it('determinism (audit-exact): two identical dispatches produce identical KO targets, mutation order, and messages', () => {

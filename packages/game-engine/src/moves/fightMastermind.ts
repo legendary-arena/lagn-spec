@@ -20,6 +20,7 @@ import { getAvailableAttack, spendAttack } from '../economy/economy.logic.js';
 import { defeatTopTactic, areAllTacticsDefeated } from '../mastermind/mastermind.logic.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
 import { composeMastermindDefeatedNarrative } from '../events/notableEvents.compose.js';
+import { hasPendingKoHeroChoice } from './koHeroChoice.resolve.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
@@ -59,6 +60,11 @@ export function fightMastermind(
   // why: boss fight during action window; non-core moves gate internally
   // per WP-014A precedent (same pattern as fightVillain/recruitHero)
   if (G.currentStage !== 'main') return;
+
+  // why: block-all guard (D-24008) — while a KO-a-Hero choice is pending the
+  // board is frozen; fightMastermind returns with no side effects. Placed
+  // immediately after the stage gate, before any G/zone write.
+  if (hasPendingKoHeroChoice(G)) return;
 
   // Step 3: Mutate G
   // why: capture the tactic card ID before defeatTopTactic moves it from

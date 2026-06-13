@@ -7,6 +7,7 @@ import { advanceTurnStage } from './turn/turnLoop.js';
 import { drawCards, playCard, endTurn } from './moves/coreMoves.impl.js';
 import { HAND_SIZE, drawCardsIntoHand } from './moves/drawCards.logic.js';
 import { resolveHeroChoice } from './moves/heroChoice.resolve.js';
+import { resolveKoHeroChoice, hasPendingKoHeroChoice } from './moves/koHeroChoice.resolve.js';
 import { executeRuleHooks } from './rules/ruleRuntime.execute.js';
 import { applyRuleEffects } from './rules/ruleRuntime.effects.js';
 import { DEFAULT_IMPLEMENTATION_MAP } from './rules/ruleRuntime.impl.js';
@@ -78,9 +79,15 @@ type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
  * @param context - boardgame.io move context with G and events.
  */
 function advanceStage({ G, events }: MoveContext): void {
+  // why: block-all guard (D-24008) — while a KO-a-Hero choice is pending the
+  // board is frozen; advanceStage (at any stage) returns with no side effects
+  // so the player resolves the Fight effect before any other action. Placed
+  // before any G read/write and before the cleanup turn-end check below.
+  if (hasPendingKoHeroChoice(G)) { return; }
   // why: turn cannot end while a player-choice reveal is pending; at cleanup,
   // advanceTurnStage would otherwise call events.endTurn() and bypass the
-  // endTurn-move guard (D-22002)
+  // endTurn-move guard (D-22002). The KO turn-end block is already covered by
+  // the block-all guard above (D-24008 — queue-non-empty blocks turn-end).
   if (G.currentStage === 'cleanup' && G.pendingHeroChoice !== undefined) { return; }
   advanceTurnStage(G, { events: { endTurn: () => events.endTurn() } });
 }
@@ -294,6 +301,7 @@ export const LegendaryGame: Game<LegendaryGameState, Record<string, unknown>, Ma
     recruitHero: { move: recruitHero, client: false },
     fightMastermind: { move: fightMastermind, client: false },
     resolveHeroChoice: { move: resolveHeroChoice, client: false },
+    resolveKoHeroChoice: { move: resolveKoHeroChoice, client: false },
   },
 
   // why: phase `next` fields declare the intended linear progression

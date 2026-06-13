@@ -162,8 +162,8 @@ function deepCopyKoPile(koPile: UIKoPileState): UIKoPileState {
  * Builds a redacted copy of a UIPlayerState with private fields removed.
  *
  * Redacted fields (omitted): handCards, handDisplay, inPlayCards,
- * inPlayDisplay. Preserved fields (public information): all counts,
- * discardTopCard, victoryCards, victoryVP.
+ * inPlayDisplay, discardCards, discardDisplay. Preserved fields (public
+ * information): all counts, discardTopCard, victoryCards, victoryVP.
  *
  * @param player - The source player state. Not mutated.
  * @returns A new UIPlayerState with private fields omitted.
@@ -187,6 +187,11 @@ function redactHandCards(player: UIPlayerState): UIPlayerState {
     // why: WP-128 / D-12803 — inPlayCards / inPlayDisplay redacted
     // for non-self / spectator audiences. Same omit-don't-assign
     // pattern as handCards for `exactOptionalPropertyTypes` discipline.
+    // why: WP-243 / D-24010 — discardCards / discardDisplay redacted for
+    // non-self / spectator audiences (same handCards privacy posture). The
+    // full discard list carries card identities the owning player may act on
+    // (KO-a-Hero); opponents and spectators see discardCount + discardTopCard
+    // only. Omit-don't-assign, both fields together.
   };
 
   // why: WP-128 / D-12803 — discardTopCard is public information (face-up
@@ -270,6 +275,22 @@ function preserveHandCards(player: UIPlayerState): UIPlayerState {
       copiedInPlayDisplay.push({ ...display });
     }
     base.inPlayDisplay = copiedInPlayDisplay;
+  }
+
+  // why: WP-243 / D-24010 — active player sees own full discard contents
+  // (needed for the KO-a-Hero prompt + the "View all" discard view); same
+  // conditional-assignment pattern as handCards. discardCards + discardDisplay
+  // are preserved together (both or neither) and spread/per-entry copied to
+  // prevent aliasing with the input UIState.
+  if (player.discardCards !== undefined) {
+    base.discardCards = [...player.discardCards];
+  }
+  if (player.discardDisplay !== undefined) {
+    const copiedDiscardDisplay = [];
+    for (const display of player.discardDisplay) {
+      copiedDiscardDisplay.push({ ...display });
+    }
+    base.discardDisplay = copiedDiscardDisplay;
   }
 
   // why: WP-128 / D-12803 — discardTopCard is public information; same
@@ -436,6 +457,35 @@ export function filterUIStateForAudience(
     result.pendingHeroChoice = {
       ...uiState.pendingHeroChoice,
       display: { ...uiState.pendingHeroChoice.display },
+    };
+  }
+
+  // why: D-24011 — pendingKoHeroChoice is redacted for EVERY audience except
+  // the choosing player. Unlike the public pendingHeroChoice (the revealed
+  // card is face-up on the table), the KO eligible list carries the chooser's
+  // HAND identities; passing it through to opponents or spectators would leak
+  // the hand. Present only when audience is a player whose playerId equals the
+  // chooser's playerID; omitted (conditional assignment, never an `undefined`
+  // literal) for opponents AND spectators. Per-entry display spread prevents
+  // aliasing with the input UIState.
+  if (
+    uiState.pendingKoHeroChoice !== undefined &&
+    audience.kind === 'player' &&
+    audience.playerId === uiState.pendingKoHeroChoice.playerID
+  ) {
+    const eligibleCopy = [];
+    for (const entry of uiState.pendingKoHeroChoice.eligible) {
+      eligibleCopy.push({
+        zone: entry.zone,
+        cardId: entry.cardId,
+        display: { ...entry.display },
+      });
+    }
+    result.pendingKoHeroChoice = {
+      choiceType: uiState.pendingKoHeroChoice.choiceType,
+      playerID: uiState.pendingKoHeroChoice.playerID,
+      eligible: eligibleCopy,
+      remaining: uiState.pendingKoHeroChoice.remaining,
     };
   }
 
