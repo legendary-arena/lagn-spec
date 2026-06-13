@@ -24704,3 +24704,35 @@ double-fire `setSession`/`clearSession`.
 ---
 
 Protect this file.
+
+---
+
+**D-24010: UIPendingKoHeroChoice Projection (Front-of-Queue, Fresh Eligible Computation)**
+
+The engine UIState projection builds `UIPendingKoHeroChoice` from `G.pendingKoHeroChoices[0]` (front of queue), computing eligible targets fresh from current G on every projection call. No snapshot of eligibility is stored; the front entry's zone+playerID are the only cached fields. This ensures the eligible list always reflects current zone contents and handles multi-KO scenarios where zones change between queue pops.
+
+**Packet:** WP-243 (EC-274).
+**Drafted:** 2026-06-12 (authored during WP-243 execution). **Landed:** 2026-06-12 (WP-243 implementation close).
+**Status:** Active
+
+---
+
+**D-24011: PendingKoHeroChoice Redaction — Chooser-Only (Hand-Leak Prevention)**
+
+The eligible list in `UIPendingKoHeroChoice` carries the chooser's hand ext_ids, so `pendingKoHeroChoice` is present ONLY for `audience === playerID` and OMITTED (not a `undefined` literal) for opponents and spectators. This is strictly stricter than `pendingHeroChoice` (which is public). Non-choosers receive `undefined`, never a redacted copy with an empty eligible list.
+
+**Packet:** WP-243 (EC-274).
+**Drafted:** 2026-06-12. **Landed:** 2026-06-12.
+**Status:** Active
+
+---
+
+**D-24012: KO Gate Blocks All Stages (Board-Freeze Semantics)**
+
+While `pendingKoHeroChoice` is present, `canEndTurn` and `canPassPriority` return blocked at ANY turn stage (not cleanup-only like `pendingHeroChoice`). When both pending choices are active, the KO gate reason takes precedence in client tooltips. This reflects the engine's block-all guard: a KO choice freezes the entire board, unlike a hero-reveal choice which only blocks turn-end in cleanup.
+
+**Packet:** WP-243 (EC-274).
+**Drafted:** 2026-06-12. **Landed:** 2026-06-12.
+**Status:** Active
+
+Protect this file.
