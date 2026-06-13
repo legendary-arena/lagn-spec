@@ -148,6 +148,14 @@ These packets make individual cards do things.
 
 These packets make the game safe to ship.
 
+---
+
+## Phase 7 — Ecosystem & Open Standards
+
+These packets publish game notation, tooling, and standards.
+
+- [ ] WP-244 — LAGN Spec Publication (NPM Package + GitHub Repo + Schema Hosting) — Drafted 2026-06-12
+
 
 - [x] WP-027 — Determinism & Replay Verification Harness — Done 2026-04-14
 - [x] WP-028 — UI State Contract (Authoritative View Model) — Done 2026-04-14
