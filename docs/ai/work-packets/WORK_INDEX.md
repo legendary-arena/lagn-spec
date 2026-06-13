@@ -155,7 +155,7 @@ These packets make the game safe to ship.
 These packets publish game notation, tooling, and standards.
 
 - [x] WP-244 — LAGN Spec Publication (NPM Package + GitHub Repo + Schema Hosting) — Completed 2026-06-12 (EC-275, commit 0147730)
-- [ ] WP-245 — LAGN Export in Registry Viewer Loadout Tab — [pending | EC-276]
+- [x] WP-245 — LAGN Export in Registry Viewer Loadout Tab — Completed 2026-06-12 (EC-276, commit 3ba5e4f)
 
 - [x] WP-027 — Determinism & Replay Verification Harness — Done 2026-04-14
 - [x] WP-028 — UI State Contract (Authoritative View Model) — Done 2026-04-14
