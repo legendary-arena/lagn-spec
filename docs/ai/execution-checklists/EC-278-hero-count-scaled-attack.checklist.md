@@ -8,7 +8,19 @@ tooling (`apply-hero-ability-markers.mjs`, `inputs/hero-ability-markers.json`,
 `data/cards/core.json`)
 
 > Use locked values from WP-247 verbatim. EC-278 is the operational order + gates +
-> failure smells; if EC-278 and WP-247 conflict, WP-247 wins.
+> failure smells; if EC-278 and WP-247 conflict on **design intent**, WP-247 wins.
+
+## Execution Mode — STRICT EC BINDING (no-interpretation)
+- **EC-278 binds execution correctness.** Every Locked Value, Guardrail, and
+  After-Completing gate below is mandatory and binary. Implement them exactly.
+- **WP-247 binds design intent only** (the "why" / scope). On an *execution-detail*
+  conflict, the EC's locked value wins; on a *design-intent* question, WP-247 wins.
+- **Ambiguity → STOP, do not interpret.** If any locked value, file boundary, or
+  contract here is unclear or appears to conflict with the actual source, halt and
+  ask — never guess, extend, optimize, or "improve". No inferred scope, no
+  helpful additions.
+- The PASS set is the union of `## Acceptance Criteria` in WP-247 (binary; ALL
+  required) + this EC's After-Completing gates. Any single FALSE = failed execution.
 
 ## Before Starting
 - [ ] **WP-022 landed** — `executeHeroEffects` switch + `MVP_KEYWORDS` +
@@ -99,14 +111,29 @@ tooling (`apply-hero-ability-markers.mjs`, `inputs/hero-ability-markers.json`,
   parse-suppression cases; no regress.
 - [ ] Drift greps: `grep -c "attack-per-count" .../heroKeywords.ts` = 2;
   `grep -c "victory-bystanders" .../heroCountSource.ts` = 2.
-- [ ] Re-run `node scripts/convert-cards/apply-hero-ability-markers.mjs`; `git diff --stat
-  data/cards/core.json` shows ONLY the covert-operation line.
+- [ ] **Apply-script single-hunk gate (HARD).** Re-run
+  `node scripts/convert-cards/apply-hero-ability-markers.mjs`; `git diff --stat
+  data/cards/core.json` shows EXACTLY 1 file changed, and `git diff data/cards/core.json`
+  shows EXACTLY 1 hunk affecting ONLY the `core/black-widow/covert-operation` ability
+  line (token appended). Any additional file, hunk, or line in the card-data diff = HARD
+  FAIL (silent mass-edit guard).
 - [ ] Registry-boundary grep on `heroCountSource.resolve.ts` + `heroEffects.execute.ts` = 0.
-- [ ] Parse-suppression test asserts the marked line → `attack-per-count` effect with
-  `countSource`/`magnitude`, NO `attack` keyword.
+- [ ] **Icon-suppression assertion (HARD).** A unit test proves the marked line parses to
+  exactly one `attack-per-count` effect with `countSource: 'victory-bystanders'`,
+  `magnitude: 1`, and keywords that EXCLUDE `attack` — i.e. no flat-`attack` double-count.
 - [ ] `git diff --name-only` = exactly the 16 files.
 - [ ] STATUS updated; DECISIONS D-24016 Active byte-identical; WORK_INDEX WP-247 `[x]`;
   EC_INDEX EC-278 → Done.
+
+## Completion Output (MANDATORY — emit at session close)
+The executing session MUST emit this structured block so the result is machine-checkable:
+1. **TEST** — engine `build` exit; `test` pass/fail counts (baseline → final); the net-new
+   case names (drift × 2, resolver N/0/mixed/excluded/unknown, executor m×N/no-op, parse-suppression).
+2. **DRIFT** — `attack-per-count` grep = 2; `victory-bystanders` grep = 2; registry grep = 0.
+3. **DIFF** — `git diff --name-only` (must equal the 16-file allowlist).
+4. **APPLY-SCRIPT** — confirmation: 1 file, 1 hunk, covert-operation line only.
+5. **GOVERNANCE** — STATUS updated (yes/no); D-24016 → Active; WORK_INDEX WP-247 → `[x]`;
+   EC_INDEX EC-278 → Done.
 
 ## Commit Discipline (`.githooks/commit-msg` — enforced)
 - Code path → prefix `EC-278:` (`SPEC:` rejected for code, D-20801). ≥ 12 chars after prefix.

@@ -187,8 +187,19 @@ or the bystander ext_id grammar conflicts with the actual files, **stop and ask*
 ### C) `hero/heroCountSource.resolve.ts` — **new**
 - `resolveCountSource(G, playerID, source): number` — pure dispatch over
   `HeroCountSource`. The `victory-bystanders` branch counts the player's victory-pile
-  bystanders (inline predicate per the locked constraint). Unknown source → `0`
-  (defensive). No registry import; imports `BYSTANDER_EXT_ID` only.
+  bystanders (per the atomic definition below). Unknown source → `0` (defensive).
+  No registry import; imports `BYSTANDER_EXT_ID` only.
+
+  **Resolver contract (enforced):**
+  - **Inputs:** `G` (game state), `playerID`, `source: HeroCountSource`. Reads only `G`.
+  - **Output:** an integer `≥ 0`. Never throws.
+  - **Purity:** no mutation of `G`/inputs; no randomness; no clock; no external/registry
+    state; no `.reduce()` (explicit `for...of`); unknown `source` → `0` (no throw).
+  - **`victory-bystanders` count (authoritative, atomic):** the number of cards in
+    `G.playerZones[playerID].victory` where `extId === BYSTANDER_EXT_ID` **OR** `extId`
+    has the prefix `bystander-villain-deck-`. Explicit exclusions: villain VP cards,
+    henchman VP cards, mastermind-tactic VP cards (anything not matching the two
+    bystander forms).
 
 ### D) `rules/heroAbility.types.ts` — modified
 - Add `countSource?: HeroCountSource` to `HeroEffectDescriptor` (import the type).
@@ -231,6 +242,20 @@ or the bystander ext_id grammar conflicts with the actual files, **stop and ask*
   the marked covert-operation line yields an `attack-per-count` effect with
   `countSource: 'victory-bystanders'`, `magnitude: 1`, and **no** `attack` keyword
   (icon-suppression proven).
+
+### K) Required `// why:` annotations (each MUST exist)
+- `rules/heroKeywords.ts` — `// why: D-24016` on the `attack-per-count` entry.
+- `rules/heroCountSource.ts` — `// why: D-24016` on the `victory-bystanders` entry.
+- `setup/heroAbility.setup.ts` (count-token regex) — `// why: D-24016`.
+- `setup/heroAbility.setup.ts` (icon-suppression) — `// why:` the count-scaled keyword
+  subsumes the printed attack icon (D-24016; mirrors D-21901).
+- `hero/heroEffects.execute.ts` (executor case) — `// why:` magnitude is the per-unit
+  rate; the source resolves the count.
+- `hero/heroCountSource.resolve.ts` (`victory-bystanders` branch) — `// why:` counts both
+  bystander ext_id forms (`pile-bystander` + `bystander-villain-deck-NN`).
+  Phrase the boundary `// why:` comments GENERICALLY — do not enumerate the forbidden
+  import token literals, or the After-Completing registry grep self-trips
+  (`feedback_grep_gate_comment_self_trip`).
 
 ---
 
@@ -369,8 +394,12 @@ Gate order (pre-flight → copilot → lint), all run in this drafting session a
 
 ## Acceptance Criteria
 
+> **Binary — PASS requires ALL of the following TRUE. Any single FALSE = failed
+> execution (STOP, do not interpret).**
+
 1. `HeroKeyword` union + `HERO_KEYWORDS` array each contain `'attack-per-count'`
-   (same index); the parity drift test passes.
+   (same index, and it is the ONLY count-scaled-attack keyword — no per-card or
+   per-source variant); the parity drift test passes.
 2. `HeroCountSource` union + `HERO_COUNT_SOURCES` array each contain
    `'victory-bystanders'`; a parity drift test asserts they match exactly.
 3. `resolveCountSource(G, '0', 'victory-bystanders')` returns the number of victory-pile
@@ -382,10 +411,12 @@ Gate order (pre-flight → copilot → lint), all run in this drafting session a
 5. `executeHeroEffects` with an `attack-per-count`/`victory-bystanders` hook (magnitude
    `m`) and N bystanders increases `G.turnEconomy.attack` by exactly `m × N`; 0 bystanders
    → 0; a descriptor with missing/invalid `countSource` is a no-op.
-6. `apply-hero-ability-markers.mjs` accepts
-   `[keyword:attack-per-count:victory-bystanders:N]` (N ≥ 1) and still loud-fails on a
-   genuinely-unknown token form; re-running it appends the token to ONLY the
-   covert-operation line in `core.json`.
+6. `apply-hero-ability-markers.mjs` `VALID_TOKEN_PATTERN` gains EXACTLY the form
+   `^\[keyword:attack-per-count:[a-z][a-z-]*:[1-9]\d*\]$` (perUnit `[1-9]\d*` enforces
+   `magnitude ≥ 1`; no `:0`); it still loud-fails on a genuinely-unknown token form.
+   Re-running the script changes EXACTLY 1 file (`data/cards/core.json`) in EXACTLY 1
+   hunk affecting ONLY the `core/black-widow/covert-operation` line — any additional
+   file/hunk/line is a FAIL.
 7. `hero/heroCountSource.resolve.ts` imports no `@legendary-arena/registry`.
 8. `pnpm --filter @legendary-arena/game-engine build` + `test` exit 0 with the net-new
    cases; no pre-existing test regresses; `JSON.stringify(G)` succeeds after execution.
