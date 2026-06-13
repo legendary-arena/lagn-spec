@@ -7,6 +7,7 @@ export type {
   PlayerZones,
   GlobalPiles,
   MatchSelection,
+  PendingKoHeroChoice,
 } from './types.js';
 export type {
   Zone,

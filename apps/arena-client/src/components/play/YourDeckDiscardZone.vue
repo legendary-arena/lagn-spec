@@ -1,18 +1,20 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
-import type { UIDisplayEntry } from '@legendary-arena/game-engine';
+import { defineComponent, ref, type PropType } from 'vue';
+import type { UIDisplayEntry, UICardDisplay } from '@legendary-arena/game-engine';
 import CardTile from './CardTile.vue';
 
 /**
  * Your deck + discard zone — renders the active player's deck count
  * (face-down annotation; top card NEVER visible per `DESIGN-BOARD-LAYOUT.md
- * §7.1`) and the discard top card (face-up via `discardTopCard`).
+ * §7.1`) and the discard top card (face-up via `discardTopCard`). Per WP-243,
+ * adds an expandable "View all (N)" toggle that lists full discard contents.
  *
  * Per the EC-132 §2 SFC authoring whitelist: this is a tested non-leaf
  * composer so it MUST use `defineComponent({ setup() { return {...} } })`
  * per P6-30 / P6-46 / D-6512.
  *
  * @see WP-129 §Acceptance Criteria — Your Deck/Discard zone
+ * @see WP-243 §Scope (In) — expandable full-discard view
  * @see DESIGN-BOARD-LAYOUT.md §7.1 Your Deck face-down / Discard face-up
  */
 export default defineComponent({
@@ -37,9 +39,28 @@ export default defineComponent({
       required: false,
       default: null,
     },
+    /**
+     * Full discard card ext_ids for the own player. Present when own player,
+     * undefined when redacted for opponents/spectators (WP-243 / D-24010).
+     */
+    discardCards: {
+      type: Array as PropType<string[] | undefined>,
+      required: false,
+      default: undefined,
+    },
+    /**
+     * Per-discard-card display data, parallel-aligned with discardCards
+     * (WP-243 / D-24010).
+     */
+    discardDisplay: {
+      type: Array as PropType<UICardDisplay[] | undefined>,
+      required: false,
+      default: undefined,
+    },
   },
   setup() {
-    return {};
+    const isExpanded = ref(false);
+    return { isExpanded };
   },
 });
 </script>
@@ -75,6 +96,29 @@ export default defineComponent({
       >
         Empty.
       </p>
+      <button
+        v-if="discardCards && discardCards.length > 0"
+        type="button"
+        class="your-deck-discard__expand-btn"
+        data-testid="play-your-discard-expand"
+        @click="isExpanded = !isExpanded"
+      >
+        {{ isExpanded ? 'Hide all' : `View all (${discardCount})` }}
+      </button>
+      <div
+        v-if="isExpanded && discardCards && discardDisplay"
+        class="your-deck-discard__all-cards"
+        data-testid="play-your-discard-all"
+      >
+        <div v-for="(cardId, index) in discardCards" :key="index" class="your-deck-discard__card-item">
+          <CardTile
+            v-if="discardDisplay[index]"
+            :display="discardDisplay[index]"
+            size="xs"
+            :show-cost="false"
+          />
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -106,5 +150,39 @@ export default defineComponent({
   font-style: italic;
   opacity: 0.7;
   font-size: 0.85rem;
+}
+
+.your-deck-discard__top {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.your-deck-discard__top-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.your-deck-discard__expand-btn {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.75rem;
+  background: var(--color-button-bg, #f5f5f5);
+  border: 1px solid var(--color-border, #ddd);
+  cursor: pointer;
+}
+
+.your-deck-discard__expand-btn:hover {
+  background: var(--color-button-hover, #efefef);
+}
+
+.your-deck-discard__all-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.your-deck-discard__card-item {
+  display: flex;
 }
 </style>

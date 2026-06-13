@@ -417,6 +417,27 @@ export interface PendingHeroChoice {
 }
 
 /**
+ * Pending KO-a-Hero player choice state (WP-242 / D-24006).
+ *
+ * Created when a koHeroCurrentPlayer effect discovers ≥2 eligible targets.
+ * Appended to G.pendingKoHeroChoices[] (FIFO queue). Removed (front-popped) by
+ * resolveKoHeroChoice after the player selects a target. Must be undefined or
+ * empty at every turn-end (enforced by dual turn-end guards).
+ *
+ * // why: D-24006 — the choice is "which of N cards to KO", not a binary
+ * discard-vs-return. The pending entry records only the choosing player and
+ * the queue position; eligibility is derived fresh from current G by the
+ * projection, the move validation, and the bot auto-resolver. This eliminates
+ * stale-target bugs across multi-KO queues.
+ */
+export interface PendingKoHeroChoice {
+  /** Discriminant for future extensibility; always 'ko-hero'. */
+  choiceType: 'ko-hero';
+  /** The player who must select a hero to KO. */
+  playerID: string;
+}
+
+/**
  * Minimal setup-time context interface for deterministic operations.
  *
  * Captures what buildInitialGameState needs from the boardgame.io setup
@@ -506,6 +527,15 @@ export interface LegendaryGameState {
   // do not need updating. Absent (undefined) = no pending choice.
   /** Pending hero reveal choice awaiting player resolution (WP-220 / D-22001). */
   pendingHeroChoice?: PendingHeroChoice | undefined;
+
+  // why: WP-242 / D-24006 — FIFO queue of pending KO-a-Hero choices (one per
+  // player owing a choice). Entries are appended by koHeroCurrentPlayer when
+  // ≥2 eligible targets exist; front-popped by resolveKoHeroChoice after the
+  // player selects. Must be undefined or empty at every turn-end. Optional so
+  // existing test state literals do not need updating. Absent (undefined) or
+  // empty [] both mean "no pending choice" (guards test `.length`).
+  /** FIFO queue of pending KO-a-Hero choices awaiting player resolution (WP-242). */
+  pendingKoHeroChoices?: PendingKoHeroChoice[] | undefined;
 
   // why: playerZones is keyed by player ID string (boardgame.io uses "0", "1",
   // etc.). Each player has exactly 5 zone arrays. Only deck is non-empty after

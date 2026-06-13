@@ -32,10 +32,11 @@
  */
 
 /**
- * The eleven engine move names the click-to-play UI surface is permitted to
+ * The twelve engine move names the click-to-play UI surface is permitted to
  * emit. Strict subset of the engine's `LegendaryGame.moves` bag plus the
  * `LegendaryGame.phases.lobby.moves` block. Any extension requires a new
- * Work Packet.
+ * Work Packet. Per WP-243, `'resolveKoHeroChoice'` was added to unblock the
+ * KO-a-Hero pending choice prompt (D-24010).
  */
 export type UiMoveName =
   | 'setPlayerReady'
@@ -48,7 +49,8 @@ export type UiMoveName =
   | 'fightVillain'
   | 'recruitHero'
   | 'fightMastermind'
-  | 'resolveHeroChoice';
+  | 'resolveHeroChoice'
+  | 'resolveKoHeroChoice';
 
 /**
  * Function signature shared by every prop-drilled `submitMove` in the

@@ -84,11 +84,16 @@ const NOT_YOUR_TURN: GatingResult = {
  *   (derived from `UIState.pendingHeroChoice !== undefined` at the call site).
  *   When true and `currentStage === 'cleanup'`, blocks `canEndTurn` and
  *   `canPassPriority`. Defaults to false — existing callers unaffected.
+ * @param hasPendingKoChoice Whether the viewer has an unresolved KO-a-Hero choice
+ *   (derived from `UIState.pendingKoHeroChoice !== undefined` at the call site).
+ *   When true, blocks `canEndTurn` and `canPassPriority` at ANY stage. Defaults
+ *   to false. When both pending choices are active, KO gate reason takes precedence.
  */
 export function useTurnActions(
   currentStage: string,
   isViewerTurn: boolean = true,
   hasPendingChoice: boolean = false,
+  hasPendingKoChoice: boolean = false,
 ): {
   activeStep: TurnStep;
   canRevealVillain: () => GatingResult;
@@ -139,8 +144,18 @@ export function useTurnActions(
     // Start and main must remain passable so the player can advance through
     // stages to reach the cleanup prompt; blocking all stages would prevent
     // the player from ever reaching the choice.
+    // why: D-24012 — blocked at ANY stage when hasPendingKoChoice is true
+    // (the KO choice freezes the board completely, unlike the cleanup-only
+    // hero-reveal gate). When both pending choices are active, KO gate
+    // reason takes precedence.
     canPassPriority: () => {
       if (!isViewerTurn) return NOT_YOUR_TURN;
+      if (hasPendingKoChoice) {
+        return {
+          allowed: false,
+          reason: 'Choose a Hero to KO before taking another action.',
+        };
+      }
       if (currentStage === 'cleanup' && hasPendingChoice) {
         return {
           allowed: false,
@@ -151,6 +166,16 @@ export function useTurnActions(
     },
     canEndTurn: () => {
       if (!isViewerTurn) return NOT_YOUR_TURN;
+      if (hasPendingKoChoice) {
+        // why: D-24012 — the engine's dual turn-end guard (WP-242) blocks
+        // endTurn when pendingKoHeroChoices queue is non-empty; this
+        // client-side gate surfaces the reason so the player sees a tooltip
+        // instead of a silent rejection.
+        return {
+          allowed: false,
+          reason: 'Choose a Hero to KO before taking another action.',
+        };
+      }
       if (currentStage === 'cleanup' && hasPendingChoice) {
         // why: D-22203 — the engine's dual turn-end guard (WP-220) blocks
         // endTurn when pendingHeroChoice is set; this client-side gate
