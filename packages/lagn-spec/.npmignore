@@ -1,0 +1,11 @@
+src/
+examples/
+.github/
+scripts/
+tsconfig.json
+*.test.ts
+dist/*.test.js
+dist/*.test.d.ts
+dist/*.test.d.ts.map
+dist/*.test.js.map
+.gitignore

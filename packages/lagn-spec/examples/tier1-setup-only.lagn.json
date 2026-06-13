@@ -1,0 +1,43 @@
+{
+  "lagn_version": "1.0.0",
+  "$schema": "https://legendary-arena.com/schemas/lagn/v1/lagn-v1.json",
+  "game_id": "example-tier1-001",
+  "variant": "solo",
+  "player_count": 1,
+  "setup": {
+    "mastermind": {
+      "id": "thanos",
+      "name": "Thanos"
+    },
+    "scheme": {
+      "id": "infinity-gems",
+      "name": "The Infinity Gems Scheme"
+    },
+    "villain_groups": [
+      {
+        "id": "black-order",
+        "name": "The Black Order"
+      }
+    ],
+    "henchmen_groups": [
+      {
+        "id": "aliens",
+        "name": "Alien Drones"
+      }
+    ],
+    "heroes": [
+      {
+        "id": "iron-man",
+        "name": "Iron Man"
+      },
+      {
+        "id": "captain-america",
+        "name": "Captain America"
+      }
+    ],
+    "bystanders_count": 10,
+    "wounds_count": 5,
+    "shield_officers_count": 2,
+    "sidekicks_count": 3
+  }
+}

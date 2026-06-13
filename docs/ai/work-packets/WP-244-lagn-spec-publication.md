@@ -4,8 +4,8 @@
 **Primary Layer:** Ecosystem / Open Standard (cross-cutting)  
 **Dependencies:** None — this is independent, can execute in parallel with any game WP  
 **Execution Category:** Publishing / Specification Work (not gameplay code)  
-**EC:** EC-274 (draft, see below)  
-**Commit prefix:** `EC-274:` (never `WP-244:` — `.githooks/commit-msg` rejects `WP-###:`)
+**EC:** EC-275 (draft, see below)  
+**Commit prefix:** `EC-275:` (never `WP-244:` — `.githooks/commit-msg` rejects `WP-###:`)
 
 ---
 
@@ -624,6 +624,14 @@ curl https://legendary-arena.com/schemas/lagn/v1/lagn-v1.json | jq '.lagn_versio
 | § Drift Prevention | No re-derivation | ✅ PASS | Zod source-of-truth locked, schema generation locked, seq ordering locked |
 
 **Lint Gate Verdict: ✅ ALL 21 SECTIONS PASS**
+
+---
+
+**EC Collision Resolution (2026-06-12):**
+- Initial draft: EC-274 reserved
+- WP-243 executed with EC-274 (completed 2026-06-12)
+- Retarget: WP-244 → EC-275 per 01.0b parallel-execution collision rules
+- EC-275 created with identical content, all references updated
 
 ---
 

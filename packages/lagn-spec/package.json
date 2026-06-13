@@ -1,0 +1,39 @@
+{
+  "name": "@legendary-arena/lagn",
+  "version": "1.0.0",
+  "description": "LAGN v1.0 — Legendary Arena Game Notation validator and schema",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "lagn": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./schema": "./schemas/lagn-v1.json"
+  },
+  "files": [
+    "dist",
+    "schemas"
+  ],
+  "scripts": {
+    "build": "tsc && node scripts/build.mjs && node scripts/generate-schema.mjs",
+    "generate:schema": "node scripts/generate-schema.mjs",
+    "test": "tsx --test src/**/*.test.ts"
+  },
+  "keywords": [
+    "legendary-arena",
+    "game-notation",
+    "json-schema",
+    "validation"
+  ],
+  "author": "Legendary Arena Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.0.0"
+  }
+}
