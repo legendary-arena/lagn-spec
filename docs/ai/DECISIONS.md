@@ -24798,4 +24798,34 @@ This completes the pattern: mastermind tactics were the LAST of D-11106's eight 
 **Drafted:** 2026-06-13. **Landed:** 2026-06-13.
 **Status:** Active
 
+---
+
+**D-24015: Diagnostic Report Carries the Current UIState Snapshot (Amends D-22801's "No UIState" Clause)**
+
+The arena-client diagnostic report (WP-228 / D-22801) is extended to include
+`uiStateSnapshot` — the current audience-filtered UIState projection read from
+`useUiStateStore().snapshot` at export click, or `null` when no match is active.
+This amends D-22801's "no `G`/`ctx`/UIState/card data" clause to permit the
+UIState snapshot specifically; raw `G`/`ctx` remain excluded (the client never
+holds them — only the `filterUIStateForAudience`-filtered projection exists
+client-side). The snapshot is read from the Pinia store, not via an engine
+import: it is typed `unknown` in `diagnostics.ts` so that module stays free of
+any engine surface, and `client/bgioClient.ts` (the sole engine-import site) is
+not modified — there is no `subscribe` hook, so the report carries the single
+current snapshot at click time, not a buffered history. Because the snapshot is
+already audience-filtered server-side, it carries no other player's hidden cards
+and opens no new cross-player visibility surface — it is the same data the
+player's own HUD renders, in a file they themselves download. All other D-22801
+posture stands unchanged: credential redaction (the snapshot does not contain the
+`credentials` value), client-only zero-network-egress export, the bounded
+`DIAGNOSTIC_BUFFER_CAP = 200` console/error ring buffer, and the client-layer
+wall-clock reads outside the engine determinism boundary. Deferred to follow-ups:
+a rolling snapshot history (would hook `bgioClient.ts` `subscribe`) and the
+on-click `[DIAG_EXPORT]` correlation marker.
+
+**Packet:** WP-246 (EC-277).
+**Amends:** D-22801 (the "no UIState/`G`/card data" clause only; the rest stands).
+**Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
+**Status:** Reserved (proposed)
+
 Protect this file.
