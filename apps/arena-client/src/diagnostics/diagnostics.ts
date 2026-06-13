@@ -58,11 +58,22 @@ export interface DiagnosticContext {
   viewportHeight: number;
   /** The current dropped-entry count, sourced from {@link getDroppedEntryCount}. */
   entryDroppedCount: number;
+  // why: typed `unknown`, not the engine UIState type — this is the already-
+  // audience-filtered projection the caller supplies from the client store; the
+  // builder only serializes it and never inspects it, which keeps this module
+  // free of any engine import.
+  /**
+   * The player's own audience-filtered UIState snapshot the caller read from the
+   * client store at export click, or `null` when no match is active. Opaque
+   * here: it is serialized into the report, never inspected.
+   */
+  uiStateSnapshot: unknown;
 }
 
 /**
  * The serializable report envelope: the scalar context fields plus the derived
- * `entryCount` / `truncated` plus the captured `entries`.
+ * `entryCount` / `truncated`, the current UIState snapshot, plus the captured
+ * `entries`.
  */
 export interface DiagnosticReport {
   appVersion: string;
@@ -78,6 +89,12 @@ export interface DiagnosticReport {
   entryCount: number;
   entryDroppedCount: number;
   truncated: boolean;
+  /**
+   * The player's own audience-filtered UIState snapshot at export click, or
+   * `null` when no match was active. Carried through opaque — see the typing
+   * rationale on {@link DiagnosticContext.uiStateSnapshot}.
+   */
+  uiStateSnapshot: unknown;
   entries: DiagnosticEntry[];
 }
 
@@ -447,6 +464,7 @@ export function buildDiagnosticReport(
     entryCount: entries.length,
     entryDroppedCount: context.entryDroppedCount,
     truncated: context.entryDroppedCount > 0,
+    uiStateSnapshot: context.uiStateSnapshot,
     entries,
   };
 }

@@ -10,6 +10,7 @@ import {
   buildDiagnosticFileName,
   type DiagnosticContext,
 } from '../diagnostics/diagnostics';
+import { useUiStateStore } from '../stores/uiState';
 
 /**
  * Small, unobtrusive fixed-position "Download diagnostics" button mounted on
@@ -55,6 +56,10 @@ export default defineComponent({
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
         entryDroppedCount: getDroppedEntryCount(),
+        // why: the snapshot is read once here at click time from the client
+        // store the live session already maintains; it is the player's own
+        // audience-filtered view (no cross-player data, no engine import).
+        uiStateSnapshot: useUiStateStore().snapshot,
       };
     }
 

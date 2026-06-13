@@ -3,6 +3,7 @@ import '../testing/jsdom-setup';
 import { describe, test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { mount, flushPromises } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 
 import {
   DIAGNOSTIC_BUFFER_CAP,
@@ -38,6 +39,10 @@ function sampleContext(
     viewportWidth: 1024,
     viewportHeight: 768,
     entryDroppedCount: 0,
+    // why: DiagnosticContext now requires uiStateSnapshot; the helper defaults
+    // it to null (the no-active-match case) so existing builder cases stay
+    // unchanged, and snapshot-specific cases override it explicitly.
+    uiStateSnapshot: null,
     ...overrides,
   };
 }
@@ -157,6 +162,68 @@ describe('diagnostics — pure redaction + report builders', () => {
       buildDiagnosticFileName('a/b\\c', 42),
       'legendary-arena-diagnostics-a-b-c-42.json',
     );
+  });
+
+  test('should_carry_snapshot_by_reference_and_round_trip_deep_equal_when_snapshot_present', () => {
+    const snapshot = {
+      currentStage: 'main',
+      pendingKoHeroChoice: null,
+      zones: { villain: 3, hq: 5 },
+      notableEvents: ['villainEscaped'],
+    };
+    const report = buildDiagnosticReport(
+      [],
+      sampleContext({ uiStateSnapshot: snapshot }),
+    );
+    // The exact reference comes back — proving no clone, field filter, or
+    // transformation between context and report.
+    assert.strictEqual(report.uiStateSnapshot, snapshot);
+    const roundTripped = JSON.parse(serializeDiagnosticReport(report));
+    assert.deepEqual(roundTripped.uiStateSnapshot, snapshot);
+  });
+
+  test('should_serialize_uiStateSnapshot_null_when_no_match_active', () => {
+    const report = buildDiagnosticReport(
+      [],
+      sampleContext({ uiStateSnapshot: null }),
+    );
+    assert.strictEqual(report.uiStateSnapshot, null);
+    const serialized = serializeDiagnosticReport(report);
+    assert.match(serialized, /"uiStateSnapshot": null/);
+    assert.strictEqual(JSON.parse(serialized).uiStateSnapshot, null);
+  });
+
+  test('should_pass_frozen_snapshot_through_unmodified_when_builder_runs', () => {
+    const frozenSnapshot = Object.freeze({
+      currentStage: 'cleanup',
+      pendingHeroChoice: null,
+      mastermind: 'mastermind.loki',
+    });
+    // A frozen sentinel would throw on any mutation; the builder reads no
+    // ambient global and assigns the reference straight through.
+    assert.equal(Object.isFrozen(frozenSnapshot), true);
+    const report = buildDiagnosticReport(
+      [sampleEntry(0)],
+      sampleContext({ uiStateSnapshot: frozenSnapshot }),
+    );
+    assert.strictEqual(report.uiStateSnapshot, frozenSnapshot);
+    const roundTripped = JSON.parse(serializeDiagnosticReport(report));
+    assert.deepEqual(roundTripped.uiStateSnapshot, frozenSnapshot);
+  });
+
+  test('should_redact_credentials_and_omit_secret_when_report_has_snapshot', () => {
+    const secret = 'SNAPSHOT-CASE-SECRET-7777';
+    const redactedHref = redactCredentialsFromUrl(
+      `http://localhost/play?match=room-9&credentials=${secret}`,
+    );
+    const snapshot = { currentStage: 'main', zones: { hand: 6 } };
+    const report = buildDiagnosticReport(
+      [],
+      sampleContext({ locationHref: redactedHref, uiStateSnapshot: snapshot }),
+    );
+    const serialized = serializeDiagnosticReport(report);
+    assert.equal(serialized.includes(secret), false);
+    assert.equal(serialized.includes('***redacted***'), true);
   });
 });
 
@@ -306,6 +373,12 @@ describe('diagnostics — console + window capture', () => {
 });
 
 describe('DiagnosticExportButton — render + export', () => {
+  beforeEach(() => {
+    // why: collectContext now reads the UIState store on the click path, which
+    // requires an active Pinia; matches the sibling component tests' setup.
+    setActivePinia(createPinia());
+  });
+
   test('should_render_download_diagnostics_button_when_mounted', () => {
     const wrapper = mount(DiagnosticExportButton);
     const button = wrapper.find('[data-testid="diagnostic-export-button"]');

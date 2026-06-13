@@ -24826,6 +24826,6 @@ on-click `[DIAG_EXPORT]` correlation marker.
 **Packet:** WP-246 (EC-277).
 **Amends:** D-22801 (the "no UIState/`G`/card data" clause only; the rest stands).
 **Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
-**Status:** Reserved (proposed)
+**Status:** Active
 
 Protect this file.
