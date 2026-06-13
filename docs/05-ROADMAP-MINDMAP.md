@@ -148,6 +148,7 @@ mindmap
         ["WP-178 ✅ Card image rendering on play surface (CardTile component)"]
         ["WP-179 ✅ Card traits + superpower condition evaluation"]
         ["WP-228 ✅ Arena-client diagnostic capture + export (shareable freeze log)"]
+        ["WP-246 ✅ Arena-client diagnostic UIState snapshot (richer freeze report)"]
 
       Auth Stack & Profile Surface
         ["WP-099 ✅ Auth provider selection (Hanko)"]
@@ -184,6 +185,7 @@ mindmap
         ["WP-184 ✅ Card mechanical pattern taxonomies"]
         ["WP-208 ✅ devLog category union extension (cardPatterns + schemeTwist)"]
         ["WP-213 ✅ devLog category single-source LOG_CATEGORIES array"]
+        ["WP-245 ✅ LAGN export in registry viewer loadout tab"]
 
       Phase 8 — Interactive Board Layout
         ["WP-128 ✅ UIState board projections"]
@@ -221,6 +223,7 @@ mindmap
         ["WP-146 ✅ cards.legendary-arena.com cutover prep"]
         ["WP-148 ✅ legendary-arena.com + www cutover prep"]
         ["WP-240 ✅ Roadmap count-table generator (WORK_INDEX × mindmap; cron auto-PR)"]
+        ["WP-244 ✅ LAGN spec publication (npm package + GitHub repo + schema hosting)"]
 
       Public Leaderboard (Marketing)
         ["WP-149 ✅ Public leaderboard Hugo page"]
@@ -247,6 +250,8 @@ mindmap
         ["WP-202 ✅ Magnitude-N each-player-KO (engine + data)"]
         ["WP-212 ✅ Once-per-turn villain reveal guard (engine)"]
         ["WP-214 ✅ Villain hero capture + dynamic attack resolution (engine + data)"]
+        ["WP-242 ✅ Villain Fight KO-Hero player choice (engine: park → resolve, bot auto-resolve)"]
+        ["WP-243 ✅ Villain Fight KO-Hero player choice (UX: engine projection + client prompt + discard visibility)"]
 
       Hero Ability Coverage & Markup Pipeline
         ["WP-215 ✅ Hero rescue + reveal-draw effects (engine + data)"]
@@ -259,6 +264,7 @@ mindmap
         ["WP-223 ✅ Reveal KO-attack compound executor (engine + data)"]
         ["WP-224 ✅ Hero ability markup corpus sweep (all 40 sets)"]
         ["WP-225 ✅ Hero draw markup corpus sweep"]
+        ["WP-247 ✅ Count-scaled hero attack framework (attack-per-count keyword + HeroCountSource resolver)"]
 
       Notable Events & Overlays
         ["WP-200 ✅ Notable game event log (engine)"]
@@ -379,21 +385,21 @@ mindmap
 | Scoring & PAR Pipeline | 4/4 | — |
 | Beta-Launch Pillar | 5/5 | — |
 | Engine Hardening | 2/2 | — |
-| Client Integration Cluster | 17/17 | — |
+| Client Integration Cluster | 18/18 | — |
 | Auth Stack & Profile Surface | 14/14 | — |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
-| Registry Viewer Enhancements | 13/13 | — |
+| Registry Viewer Enhancements | 14/14 | — |
 | Phase 8 — Interactive Board Layout | 3/3 | — |
 | G-State Extensions | 4/4 | — |
 | Monetization Stack | 3/3 | — |
 | Engine & Test-Harness Cleanup | 4/4 | — |
 | Physical Card Pipeline | 5/5 | — |
-| Domain Cutover & Infrastructure | 6/6 | — |
+| Domain Cutover & Infrastructure | 7/7 | — |
 | Public Leaderboard (Marketing) | 2/2 | — |
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
-| Villain & Henchman Effects | 9/9 | — |
-| Hero Ability Coverage & Markup Pipeline | 10/10 | — |
+| Villain & Henchman Effects | 11/11 | — |
+| Hero Ability Coverage & Markup Pipeline | 11/11 | — |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -406,7 +412,7 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **237/238 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
+| **Total** | **243/244 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
 
 **Open / blocked WPs (derived from WORK_INDEX, 1):** WP-042.1 ⏸ blocked.
 <!-- ROADMAP-COUNTS:END -->
