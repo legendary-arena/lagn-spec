@@ -152,9 +152,7 @@ export async function initializeHankoClient(
  * @param handle The handle returned by `initializeHankoClient`.
  * @returns The bearer token, or `null` if no active session.
  */
-export function getCurrentTokenFromHandle(
-  handle: HankoClientHandle,
-): string | null {
+export function getCurrentTokenFromHandle(handle: HankoClientHandle): string | null {
   const raw = handle.hanko.getSessionToken();
   if (raw === '' || raw === null || raw === undefined) {
     return null;
@@ -170,9 +168,7 @@ export function getCurrentTokenFromHandle(
  *
  * @param handle The handle returned by `initializeHankoClient`.
  */
-export async function signOutCurrentSession(
-  handle: HankoClientHandle,
-): Promise<void> {
+export async function signOutCurrentSession(handle: HankoClientHandle): Promise<void> {
   // why: in `@teamhanko/hanko-elements` ^2.4.0 the public sign-out method is
   // `hanko.logout()` directly (the `user` property is `private readonly`).
   // Mirrors the arena-client wrapper's execution-time API correction (WP-160).

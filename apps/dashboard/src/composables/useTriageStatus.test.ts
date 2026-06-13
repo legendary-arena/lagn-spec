@@ -105,17 +105,26 @@ function project(
 // ----------------------------------------------------------------------------
 
 test('1. inspection fetch error → state "error"', () => {
-  const p = project(inspState(null, { message: 'boom' }), handState({ reportId: null, handoffs: [], counts: ZERO_COUNTS }));
+  const p = project(
+    inspState(null, { message: 'boom' }),
+    handState({ reportId: null, handoffs: [], counts: ZERO_COUNTS }),
+  );
   assert.equal(p.state, 'error');
 });
 
 test('2. handoff fetch error → state "error"', () => {
-  const p = project(inspState({ latest: null, recentReports: [] }), handState(null, { message: 'boom' }));
+  const p = project(
+    inspState({ latest: null, recentReports: [] }),
+    handState(null, { message: 'boom' }),
+  );
   assert.equal(p.state, 'error');
 });
 
 test('3. inspection response unresolved → state "loading"', () => {
-  const p = project(inspState(null), handState({ reportId: null, handoffs: [], counts: ZERO_COUNTS }));
+  const p = project(
+    inspState(null),
+    handState({ reportId: null, handoffs: [], counts: ZERO_COUNTS }),
+  );
   assert.equal(p.state, 'loading');
 });
 
@@ -127,7 +136,11 @@ test('4. handoff response unresolved → state "loading"', () => {
 test('5. inspection.latest === null → state "empty" (even with handoffs present)', () => {
   const p = project(
     inspState({ latest: null, recentReports: [] }),
-    handState({ reportId: 'r0', handoffs: [handoff('r0#0', 'r0', 'open')], counts: { ...ZERO_COUNTS, open: 1 } }),
+    handState({
+      reportId: 'r0',
+      handoffs: [handoff('r0#0', 'r0', 'open')],
+      counts: { ...ZERO_COUNTS, open: 1 },
+    }),
   );
   assert.equal(p.state, 'empty');
   assert.equal(p.summary, null);

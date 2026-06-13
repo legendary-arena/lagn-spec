@@ -205,8 +205,14 @@ test('9. handoff guard accepts reportId: null with empty handoffs', () => {
 });
 
 test('10. handoff guard rejects non-array handoffs, non-object counts, bad reportId, array shape', () => {
-  assert.equal(isValidHandoffEnvelope({ data: { reportId: null, handoffs: 'no', counts: {} } }), false);
-  assert.equal(isValidHandoffEnvelope({ data: { reportId: null, handoffs: [], counts: null } }), false);
+  assert.equal(
+    isValidHandoffEnvelope({ data: { reportId: null, handoffs: 'no', counts: {} } }),
+    false,
+  );
+  assert.equal(
+    isValidHandoffEnvelope({ data: { reportId: null, handoffs: [], counts: null } }),
+    false,
+  );
   assert.equal(isValidHandoffEnvelope({ data: { reportId: 5, handoffs: [], counts: {} } }), false);
   assert.equal(isValidHandoffEnvelope({ data: [] }), false);
 });
@@ -215,7 +221,10 @@ test('11. handoff guard is STRUCTURAL — a partial counts object still passes (
   // why: the guard checks `counts` is a non-null object, NOT its six keys — a
   // partial counts object passes here and is narrowed to 0 by the composable's
   // defensive read, so one missing key never blanks the surface.
-  assert.equal(isValidHandoffEnvelope({ data: { reportId: 'r0', handoffs: [], counts: { open: 1 } } }), true);
+  assert.equal(
+    isValidHandoffEnvelope({ data: { reportId: 'r0', handoffs: [], counts: { open: 1 } } }),
+    true,
+  );
 });
 
 // ----------------------------------------------------------------------------
@@ -354,7 +363,9 @@ test('22. missing VITE_API_BASE_URL → sentinel + ONE console.warn per process'
 
 test('23. Null auth token → fetchInspectionTriageLive fires no request, returns the sentinel', async () => {
   authTokenTestHooks.setAuthToken(() => null);
-  const spy = installFetchSpy(() => jsonResponse(inspectionEnvelope(makeReport('r0'), [makeReport('r0')])));
+  const spy = installFetchSpy(() =>
+    jsonResponse(inspectionEnvelope(makeReport('r0'), [makeReport('r0')])),
+  );
   const response = fetchInspectionTriageLive(0);
   await flushAsync();
   assert.equal(spy.calls.length, 0);
@@ -364,7 +375,9 @@ test('23. Null auth token → fetchInspectionTriageLive fires no request, return
 
 test('24. Null auth token → fetchHandoffChainLive fires no request, returns the sentinel', async () => {
   authTokenTestHooks.setAuthToken(() => null);
-  const spy = installFetchSpy(() => jsonResponse(handoffEnvelope('r0', [makeHandoff('r0#0', 'r0')], ZERO_COUNTS)));
+  const spy = installFetchSpy(() =>
+    jsonResponse(handoffEnvelope('r0', [makeHandoff('r0#0', 'r0')], ZERO_COUNTS)),
+  );
   const response = fetchHandoffChainLive(0);
   await flushAsync();
   assert.equal(spy.calls.length, 0);

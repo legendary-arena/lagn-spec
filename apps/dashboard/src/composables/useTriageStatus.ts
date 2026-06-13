@@ -187,8 +187,7 @@ export function useTriageStatus(
     // normal sync-lag window, NOT corruption. It degrades to a 'handoff-stale'
     // marker with the surface still rendered — never a fetch error, never a
     // blank lane (which would hide a freshly-submitted report's findings).
-    const isCoherent =
-      handoffData.reportId !== null && handoffData.reportId === latest.reportId;
+    const isCoherent = handoffData.reportId !== null && handoffData.reportId === latest.reportId;
     const coherence: TriageProjection['coherence'] = isCoherent ? 'coherent' : 'handoff-stale';
 
     const backlog: PipelineItem[] = [];

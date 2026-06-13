@@ -11,11 +11,7 @@ import { isLiveModeEnabled } from './analyticsLiveFetchers.js';
 // supersedes D-20601 (D-24003). The bearer header and the null-token
 // fail-silent path come from the shared authToken.ts seam (SOLE producer + SOLE
 // skip path), identical to the analytics + triage fetchers.
-import {
-  buildLiveRequestOptions,
-  handleMissingAuthToken,
-  readAuthToken,
-} from './authToken.js';
+import { buildLiveRequestOptions, handleMissingAuthToken, readAuthToken } from './authToken.js';
 
 // ============================================================================
 // WP-238 / EC-269 / D-23801 — LIVE-mode sweep-health fetcher.

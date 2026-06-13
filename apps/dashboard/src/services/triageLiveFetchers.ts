@@ -1,6 +1,10 @@
 import { ref, type Ref } from 'vue';
 import type { ServiceResponse } from '../types/index.js';
-import type { HandoffLatestData, HandoffStatusCounts, InspectionLatestData } from '../types/triage.js';
+import type {
+  HandoffLatestData,
+  HandoffStatusCounts,
+  InspectionLatestData,
+} from '../types/triage.js';
 // why (D-20601, reused): the LIVE gate is the SHARED single-source-of-truth
 // predicate `isLiveModeEnabled` IMPORTED from the analytics module, never
 // re-derived here. Two independently-inlined env-var checks would drift
@@ -11,11 +15,7 @@ import { isLiveModeEnabled } from './analyticsLiveFetchers.js';
 // supersedes D-20601 (D-24003). The bearer header and the null-token
 // fail-silent path come from the shared authToken.ts seam (SOLE producer + SOLE
 // skip path), identical to the analytics + sweep fetchers.
-import {
-  buildLiveRequestOptions,
-  handleMissingAuthToken,
-  readAuthToken,
-} from './authToken.js';
+import { buildLiveRequestOptions, handleMissingAuthToken, readAuthToken } from './authToken.js';
 
 // ============================================================================
 // WP-239 / EC-270 / D-23903 — LIVE-mode triage fetchers.

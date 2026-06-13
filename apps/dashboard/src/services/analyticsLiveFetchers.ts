@@ -10,11 +10,7 @@ import type {
 // supersedes D-20601 (D-24003). The bearer header and the null-token
 // fail-silent path both come from the shared authToken.ts seam — the SOLE
 // header producer + SOLE skip path — so the three LIVE fetchers can never drift.
-import {
-  buildLiveRequestOptions,
-  handleMissingAuthToken,
-  readAuthToken,
-} from './authToken.js';
+import { buildLiveRequestOptions, handleMissingAuthToken, readAuthToken } from './authToken.js';
 
 // ============================================================================
 // WP-206 / EC-234 / D-20601 — LIVE-mode analytics fetchers.
