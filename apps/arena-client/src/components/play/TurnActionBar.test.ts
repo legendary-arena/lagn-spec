@@ -168,4 +168,38 @@ describe('TurnActionBar (WP-129 — 3-step rewrite of WP-100; WP-236 — Draw sc
       'Pass Priority tooltip must cite the pending choice gate reason at cleanup',
     );
   });
+
+  test('End Turn + Pass Priority are disabled at EVERY stage with the KO tooltip when hasPendingKoChoice is true (D-24012)', () => {
+    // why: D-24012 — a pending KO-a-Hero choice freezes the board, so both
+    // end-turn and pass-priority are blocked at every stage (not just cleanup).
+    const { submitMove } = recorder();
+    for (const stage of ['start', 'main', 'cleanup'] as const) {
+      const wrapper = mount(TurnActionBar, {
+        props: { currentStage: stage, submitMove, hasPendingKoChoice: true },
+      });
+      const endTurn = wrapper.find('[data-testid="play-action-end-turn"]');
+      const passPriority = wrapper.find('[data-testid="play-action-pass-priority"]');
+      assert.equal(passPriority.attributes('disabled'), '', `pass-priority disabled at ${stage}`);
+      assert.match(passPriority.attributes('title')!, /Choose a Hero to KO/);
+      if (stage === 'cleanup') {
+        assert.equal(endTurn.attributes('disabled'), '', 'end-turn disabled at cleanup');
+        assert.match(endTurn.attributes('title')!, /Choose a Hero to KO/);
+      }
+    }
+  });
+
+  test('KO gate reason takes precedence over the hero-choice reason when both are active', () => {
+    // why: D-24012 — when both pending systems are active at cleanup, the KO
+    // gate reason wins in the TurnActionBar messaging.
+    const { submitMove } = recorder();
+    const wrapper = mount(TurnActionBar, {
+      props: { currentStage: 'cleanup', submitMove, hasPendingChoice: true, hasPendingKoChoice: true },
+    });
+    const endTurn = wrapper.find('[data-testid="play-action-end-turn"]');
+    assert.match(
+      endTurn.attributes('title')!,
+      /Choose a Hero to KO/,
+      'KO gate reason takes precedence over the hero-choice reason',
+    );
+  });
 });

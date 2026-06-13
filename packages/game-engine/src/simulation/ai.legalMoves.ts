@@ -15,6 +15,8 @@ import type { CardExtId } from '../state/zones.types.js';
 import type { LegalMove } from './ai.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
 import { isGuardBlocking, getPatrolModifier } from '../board/boardKeywords.logic.js';
+import { hasPendingKoHeroChoice } from '../moves/koHeroChoice.resolve.js';
+import { selectDefaultKoTarget } from '../villain/villainEffects.execute.js';
 
 // why: simulation covers the play-phase only; lobby moves (setPlayerReady,
 // startMatchIfReady) are excluded because runSimulation starts the per-game
@@ -31,6 +33,7 @@ const SIMULATION_MOVE_NAMES = [
   'fightVillain',
   'recruitHero',
   'fightMastermind',
+  'resolveKoHeroChoice',
 ] as const;
 
 // why: type is exported implicitly via the const array above; external
@@ -96,6 +99,26 @@ export function getLegalMoves(
     // why: fail-closed — active player has no zones (malformed state).
     // Return empty list; the runner's zero-legal-moves fallback handles
     // the degenerate case.
+    return legalMoves;
+  }
+
+  // why: pending-KO short-circuit (D-24009) — when a KO-a-Hero choice is
+  // pending the engine block-all guard freezes every other move, so the bot
+  // must resolve it before anything else. The single legal move is
+  // resolveKoHeroChoice with the legacy auto-resolution target
+  // (selectDefaultKoTarget reuses selectKoHeroTarget over discard → hand →
+  // inPlay), keeping the bot KO target byte-identical to the prior
+  // auto-resolution for replay determinism. selectDefaultKoTarget is non-null
+  // here because a choice is appended only when ≥2 eligible targets exist and
+  // the board is frozen. Returns a list of length EXACTLY 1 — no other move
+  // is appended or merged.
+  if (hasPendingKoHeroChoice(gameState)) {
+    const defaultTarget = selectDefaultKoTarget(zones);
+    if (defaultTarget !== null) {
+      return [{ name: 'resolveKoHeroChoice', args: defaultTarget }];
+    }
+    // why: defensive — if no target exists (engine-invariant violation), fail
+    // closed with an empty list rather than emit an unresolvable move.
     return legalMoves;
   }
 

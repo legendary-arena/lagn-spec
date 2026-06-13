@@ -114,4 +114,39 @@ describe('PlayMobile (WP-129)', () => {
     assert.equal(wrapper.find('[data-testid="play-economy-bar"]').exists(), true);
     assert.equal(wrapper.find('[data-testid="play-hand-row"]').exists(), true);
   });
+
+  test('WP-243: with both pending choices for the viewer, the KO prompt renders ABOVE the hero prompt, both ABOVE TurnActionBar', () => {
+    setActivePinia(createPinia());
+    const frame = snapshot();
+    frame.game.currentStage = 'cleanup';
+    frame.pendingHeroChoice = {
+      choiceType: 'discard-or-return',
+      cardId: 'rev-card',
+      playerID: 'alice',
+      display: { extId: 'rev-card', name: 'Revealed Card', imageUrl: '', cost: 2 },
+    };
+    frame.pendingKoHeroChoice = {
+      choiceType: 'ko-hero',
+      playerID: 'alice',
+      remaining: 1,
+      eligible: [
+        { zone: 'hand', cardId: 'ko-a', display: { extId: 'ko-a', name: 'KO A', imageUrl: '', cost: 1 } },
+        { zone: 'discard', cardId: 'ko-b', display: { extId: 'ko-b', name: 'KO B', imageUrl: '', cost: 2 } },
+      ],
+    };
+    const store = useUiStateStore();
+    store.setSnapshot(frame);
+    const wrapper = mount(PlayMobile, { props: { submitMove: noopSubmitMove } });
+
+    const html = wrapper.html();
+    const koIndex = html.indexOf('pending-ko-hero-choice-prompt');
+    const heroIndex = html.indexOf('pending-hero-choice-prompt');
+    const barIndex = html.indexOf('play-turn-action-bar');
+
+    assert.ok(koIndex >= 0, 'KO prompt renders for the chooser');
+    assert.ok(heroIndex >= 0, 'hero prompt renders for the chooser');
+    assert.ok(barIndex >= 0, 'turn-action bar renders');
+    assert.ok(koIndex < heroIndex, 'KO prompt is above the hero prompt in DOM order');
+    assert.ok(heroIndex < barIndex, 'both prompts are above the TurnActionBar in DOM order');
+  });
 });

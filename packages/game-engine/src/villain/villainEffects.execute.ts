@@ -15,7 +15,7 @@
  */
 
 import type { LegendaryGameState } from '../types.js';
-import type { CardExtId } from '../state/zones.types.js';
+import type { CardExtId, PlayerZones } from '../state/zones.types.js';
 import type {
   VillainAbilityTiming,
   VillainEffectKeyword,
@@ -34,6 +34,18 @@ import {
   SHIELD_AGENT_EXT_ID,
   SHIELD_TROOPER_EXT_ID,
 } from '../setup/buildInitialGameState.js';
+
+/**
+ * A single KO-a-Hero target: which zone the card sits in and its ext_id.
+ *
+ * Used by the interactive KO flow (WP-242) — the eligible-target builder, the
+ * bot default-pick, and the auto-1 / single-target mutator all speak this
+ * shape. The zone union matches resolveKoHeroChoice's payload (D-24006).
+ */
+export interface KoHeroTarget {
+  zone: 'discard' | 'hand' | 'inPlay';
+  cardId: CardExtId;
+}
 
 // ---------------------------------------------------------------------------
 // executeVillainAbilities — main entry point
@@ -162,7 +174,21 @@ function applyVillainEffect(
       return true;
     }
     case 'koHeroCurrentPlayer': {
-      koOneHeroForPlayer(G, currentPlayer);
+      // why: interactive KO for the current player (supersedes the WP-185
+      // auto-resolution deferral, D-24006). 0 eligible → no-op; exactly 1 →
+      // auto-KO (no decision to make, D-24007 decision C); ≥2 → append a
+      // pending choice and KO nothing yet (the player picks via
+      // resolveKoHeroChoice, D-24007). Each-player variants below are unchanged.
+      const zones = G.playerZones[currentPlayer];
+      if (!zones) return true;
+      const eligible = buildKoEligibleTargets(zones);
+      if (eligible.length === 0) return true;
+      if (eligible.length === 1) {
+        koSingleTarget(G, zones, eligible[0]!);
+        return true;
+      }
+      if (!G.pendingKoHeroChoices) G.pendingKoHeroChoices = [];
+      G.pendingKoHeroChoices.push({ choiceType: 'ko-hero', playerID: currentPlayer });
       return true;
     }
     case 'koHeroEachPlayer': {
@@ -430,4 +456,102 @@ function selectKoHeroTarget(zone: CardExtId[]): CardExtId | null {
     }
   }
   return startingSelected ?? otherSelected;
+}
+
+// ---------------------------------------------------------------------------
+// Interactive KO-a-Hero helpers (WP-242)
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds the deduped eligible KO-a-Hero targets across a player's zones.
+ *
+ * Scans discard, then hand, then inPlay — each in array index order — emitting
+ * one target per non-wound card. Deduped by `(zone, cardId)` keeping the first
+ * occurrence: two copies of the same ext_id in the same zone collapse to one
+ * option (KOing either is outcome-identical), but the same ext_id in two
+ * different zones stays two options (a discard-KO and an inPlay-KO differ).
+ *
+ * Used by the parker (count), resolveKoHeroChoice has no need of it, and the
+ * WP-243 projection. Fresh recompute every call — no snapshot (D-24007).
+ *
+ * @param zones - The player's card zones.
+ * @returns The eligible KO targets in deterministic scan order.
+ */
+export function buildKoEligibleTargets(zones: PlayerZones): KoHeroTarget[] {
+  // why: per-zone (zone, cardId) dedupe — the same ext_id can legitimately
+  // appear twice within one zone (e.g., two starting-shield-agent in discard);
+  // KOing any copy of that ext_id in that zone is outcome-identical, so one
+  // option is shown per (zone, cardId) rather than N identical entries. Dedupe
+  // is per-zone: the same ext_id in two zones stays two distinct options.
+  const targets: KoHeroTarget[] = [];
+  const seen = new Set<string>();
+  const orderedZones: KoHeroTarget['zone'][] = ['discard', 'hand', 'inPlay'];
+  for (const zoneName of orderedZones) {
+    for (const cardId of zones[zoneName]) {
+      // why: a wound is never a "hero" for KO purposes (D-18503 carries
+      // forward); wounds are excluded even when sitting in an otherwise-valid zone.
+      if (cardId === WOUND_EXT_ID) continue;
+      const key = `${zoneName}:${cardId}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      targets.push({ zone: zoneName, cardId });
+    }
+  }
+  return targets;
+}
+
+/**
+ * Selects the single default KO target the legacy auto-resolution would pick.
+ *
+ * Runs selectKoHeroTarget over discard, then hand, then inPlay, returning the
+ * first non-null pick with its zone, or null when no zone has an eligible hero.
+ *
+ * This is the bot default pick AND the auto-1 pick, and it is the determinism
+ * anchor (reuses the unchanged selectKoHeroTarget so the bot's KO target is
+ * byte-identical to today's koOneHeroForPlayer resolution — D-24009).
+ *
+ * @param zones - The player's card zones.
+ * @returns The default KO target, or null when no eligible hero exists.
+ */
+export function selectDefaultKoTarget(zones: PlayerZones): KoHeroTarget | null {
+  // why: zone priority is discard → hand → inPlay (D-20603), identical to
+  // koOneHeroForPlayer. selectKoHeroTarget owns the within-zone starter-first
+  // tie-break (D-20602); reusing it verbatim keeps the bot KO target
+  // byte-identical to the prior auto-resolution (D-24009 replay determinism).
+  const discardTarget = selectKoHeroTarget(zones.discard);
+  if (discardTarget !== null) {
+    return { zone: 'discard', cardId: discardTarget };
+  }
+  const handTarget = selectKoHeroTarget(zones.hand);
+  if (handTarget !== null) {
+    return { zone: 'hand', cardId: handTarget };
+  }
+  const inPlayTarget = selectKoHeroTarget(zones.inPlay);
+  if (inPlayTarget !== null) {
+    return { zone: 'inPlay', cardId: inPlayTarget };
+  }
+  return null;
+}
+
+/**
+ * KOs a single target card out of the named zone (the auto-1 mutation).
+ *
+ * The two-line mutation resolveKoHeroChoice also performs: moveCardFromZone the
+ * cardId out of the zone, then koCard it on `found`. One copy here, one in the
+ * move (§16.1 duplicate-twice — a third appearance would justify extracting it).
+ *
+ * @param G - Game state (mutated under Immer draft).
+ * @param zones - The player's card zones (the source zone is shortened in place).
+ * @param target - The { zone, cardId } to KO.
+ */
+function koSingleTarget(
+  G: LegendaryGameState,
+  zones: PlayerZones,
+  target: KoHeroTarget,
+): void {
+  const moveResult = moveCardFromZone(zones[target.zone], [], target.cardId);
+  if (moveResult.found) {
+    zones[target.zone] = moveResult.from;
+    G.ko = koCard(G.ko, target.cardId);
+  }
 }

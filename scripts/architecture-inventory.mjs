@@ -445,6 +445,35 @@ const FIRST_PARTY_SUBSYSTEMS = [
       'resolveParForScenario',
     ],
   },
+  {
+    name: 'LAGN v1.0 Specification',
+    location: 'packages/lagn-spec',
+    owningWp: 'WP-244',
+    owningWpPath: 'docs/ai/work-packets/WP-244-lagn-spec-publication.md',
+    description:
+      'Legendary Arena Game Notation — the open standard format for game setup, ' +
+      'card catalog, and deterministic replay logs. Published as an NPM package with ' +
+      'Zod validator, generated JSON Schema, TypeScript types, and CLI tooling. ' +
+      'Three-tier format: Tier 1 (mandatory game setup), Tier 2 (optional card catalog), ' +
+      'Tier 3 (optional replay sequence). Single source of truth is the Zod schema; ' +
+      'TypeScript types are inferred; JSON Schema is auto-generated and versioned at ' +
+      '@legendary-arena/lagn@1.0.0 and published via npm and schema CDN.',
+    contractSymbols: [
+      'validate',
+      'summarize',
+      'generateSchema',
+      'lagnSchema',
+      'LAGN',
+      'GameSetup',
+      'CardCatalog',
+      'Replay',
+      'Card',
+      'Action',
+      'VillainEvent',
+      'Turn',
+      'GameResult',
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------

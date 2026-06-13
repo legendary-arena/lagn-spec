@@ -94,3 +94,46 @@ describe('useTurnActions — hasPendingChoice gating (WP-222 / EC-254 / D-22203)
     assert.equal(useTurnActions('main', true, true).canPassPriority().allowed, true);
   });
 });
+
+describe('useTurnActions — hasPendingKoChoice gating (WP-243 / EC-274 / D-24012)', () => {
+  const KO_REASON = 'Choose a Hero to KO before taking another action.';
+
+  test('canEndTurn blocked at EVERY stage when hasPendingKoChoice is true', () => {
+    for (const stage of ['start', 'main', 'cleanup'] as const) {
+      const result = useTurnActions(stage, true, false, true).canEndTurn();
+      assert.equal(result.allowed, false, `endTurn blocked at ${stage}`);
+      assert.equal(result.reason, KO_REASON, 'KO gate reason matches the locked value');
+    }
+  });
+
+  test('canPassPriority blocked at EVERY stage when hasPendingKoChoice is true (board frozen)', () => {
+    for (const stage of ['start', 'main', 'cleanup'] as const) {
+      const result = useTurnActions(stage, true, false, true).canPassPriority();
+      assert.equal(result.allowed, false, `passPriority blocked at ${stage}`);
+      assert.equal(result.reason, KO_REASON);
+    }
+  });
+
+  test('defaults false — both allowed when no KO choice pending', () => {
+    const actions = useTurnActions('cleanup', true, false, false);
+    assert.equal(actions.canEndTurn().allowed, true);
+    assert.equal(actions.canPassPriority().allowed, true);
+  });
+
+  test("OR'd gate: blocked when EITHER hasPendingChoice OR hasPendingKoChoice; KO reason takes precedence when both active", () => {
+    // hero-only at cleanup → hero reason
+    const heroOnly = useTurnActions('cleanup', true, true, false).canEndTurn();
+    assert.equal(heroOnly.allowed, false);
+    assert.match(heroOnly.reason!, /revealed card choice/);
+
+    // KO-only at main → KO reason (hero gate would not fire at main)
+    const koOnly = useTurnActions('main', true, false, true).canEndTurn();
+    assert.equal(koOnly.allowed, false);
+    assert.equal(koOnly.reason, KO_REASON);
+
+    // both active at cleanup → KO reason takes precedence
+    const both = useTurnActions('cleanup', true, true, true).canEndTurn();
+    assert.equal(both.allowed, false);
+    assert.equal(both.reason, KO_REASON, 'KO gate reason takes precedence over the hero reason');
+  });
+});

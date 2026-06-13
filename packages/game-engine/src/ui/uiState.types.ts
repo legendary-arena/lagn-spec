@@ -73,6 +73,12 @@ export interface UIState {
   // render the "Discard / Put it back" prompt. Absent (undefined) means no
   // pending choice; the client must not render the prompt in that case.
   pendingHeroChoice?: UIPendingHeroChoice;
+  // why: D-24010 + WP-243 — projects the FRONT of G.pendingKoHeroChoices with
+  // the freshly-computed eligible targets so the choosing player can render the
+  // "Choose a Hero to KO" prompt. Redacted (omitted) for every audience except
+  // the chooser — the eligible list carries the chooser's hand identities
+  // (D-24011 hand-leak). Absent (undefined) means no pending KO choice.
+  pendingKoHeroChoice?: UIPendingKoHeroChoice;
 }
 
 /**
@@ -191,6 +197,30 @@ export interface UIPlayerState {
    * face-up at the physical table — public to all audiences.
    */
   discardTopCard?: UIDisplayEntry | null;
+  /**
+   * Full discard-pile card ext_ids for this player.
+   *
+   * // why: WP-243 / D-24010 — present for the viewing player's own discard
+   * (so the KO-a-Hero prompt and the "View all" discard view can render the
+   * full contents); undefined (redacted) for other players and spectators,
+   * the exact `handCards` privacy posture. Length matches `discardDisplay`
+   * exactly when both are present. buildUIState always populates this for the
+   * own player; filterUIStateForAudience redacts it (together with
+   * `discardDisplay`) based on audience.
+   */
+  discardCards?: string[];
+  /**
+   * Per-discard-card display data, parallel-aligned with `discardCards` by
+   * index.
+   *
+   * // why: WP-243 / D-24010 — privacy-symmetric with `discardCards`; leaking
+   * display data is identical to leaking the CardExtId. Assigned in the SAME
+   * conditional block as `discardCards` (both or neither, length-matched) and
+   * redacted alongside it by the audience filter. Mirrors the WP-029 D-2902
+   * exactOptionalPropertyTypes conditional-assignment pattern: never written
+   * as a literal `undefined`.
+   */
+  discardDisplay?: UICardDisplay[];
   /**
    * Full victory-pile contents for this player.
    *

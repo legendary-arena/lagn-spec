@@ -24707,6 +24707,46 @@ Protect this file.
 
 ---
 
+**D-24006: koHeroCurrentPlayer Becomes Interactive (Park → Resolve); Each-Player Variants Stay Auto**
+
+The `koHeroCurrentPlayer` villain Fight effect no longer auto-picks the KO target. It computes eligible targets across the current player's discard + hand + inPlay (carrying the D-20603 zone union into the interactive set), then: 0 eligible → silent no-op; exactly 1 → auto-KO that card (no decision to make); ≥2 → park a player choice. This supersedes the WP-185 §Out-of-Scope auto-resolution deferral for the current-player case only. `koHeroEachPlayer` / `koHeroEachPlayerMag2` remain auto-resolved (non-active players choosing off-turn is a deferred turn-flow change).
+
+**Packet:** WP-242 (EC-273).
+**Drafted:** 2026-06-12 (reserved in the WP-242 body). **Landed:** 2026-06-12 (WP-242 real implementation; the earlier same-day docs-only governance close did NOT land these engine entries — see WORK_INDEX correction note).
+**Status:** Active
+
+---
+
+**D-24007: G.pendingKoHeroChoices FIFO Queue + PendingKoHeroChoice Type; No Eligible Snapshot**
+
+KO-a-Hero choices are tracked in `G.pendingKoHeroChoices?: PendingKoHeroChoice[]` (`{ choiceType: 'ko-hero'; playerID: string }`), a FIFO queue appended by the parker and front-popped by the resolver. `undefined` / `[]` both mean "no pending choice"; never `null`. The entry stores NO eligible-card snapshot — eligibility is recomputed fresh from current G at every use (parker count, move validation, projection), eliminating stale-target bugs across multi-KO queues. Auto-resolve at exactly 1 eligible (parker only); append at ≥2; no-op at 0.
+
+**Packet:** WP-242 (EC-273).
+**Drafted:** 2026-06-12. **Landed:** 2026-06-12 (WP-242 real implementation).
+**Status:** Active
+
+---
+
+**D-24008: resolveKoHeroChoice Move (Front-Only, Front-Pop) + Block-All / Dual Turn-End Guards + Dual-Pending Coexistence**
+
+A new `resolveKoHeroChoice({ zone, cardId })` move (registered `client: false`; move count 9→10) validates the submitted target against current G, KOs the first matching occurrence, and front-pops the queue on success only (invalid/stale target = no-op, queue intact). It always operates on the front entry (no entry index in the payload) and never auto-resolves (a later entry whose eligible set collapses to 1 still needs an explicit resolve). While the queue is non-empty, both turn-end callsites (`endTurn`, `advanceStage` at cleanup) AND all action moves (drawCards, playCard, recruitHero, fightVillain, fightMastermind, revealVillainCard, advanceStage) are silent no-ops — board-freeze (decision B). The block-all guard runs immediately after the stage gate, before any G/zone access. It exempts BOTH `resolveKoHeroChoice` and `resolveHeroChoice`: `pendingHeroChoice` (WP-220) and `pendingKoHeroChoices` may co-exist, each resolver acts only on its own state, either may be resolved first, and turn-end is blocked until both clear.
+
+**Packet:** WP-242 (EC-273).
+**Drafted:** 2026-06-12. **Landed:** 2026-06-12 (WP-242 real implementation).
+**Status:** Active
+
+---
+
+**D-24009: Bot/Sim Auto-Resolve Preserves the Prior Auto-Pick (Byte-Identical Target)**
+
+While a KO choice is pending, `getLegalMoves` returns exactly one move — `resolveKoHeroChoice` with the target chosen by `selectDefaultKoTarget`, which reuses the unchanged `selectKoHeroTarget` priority (discard → hand → inPlay; starter-S.H.I.E.L.D. first; ext_id lexical tie-break). The bot's KO target is therefore byte-identical to the prior auto-resolution; only the move stream changes (the KO lands one move later). A parity test pins legacy-`koOneHeroForPlayer` vs new-flow KO'd cardId equality. The sentinel/`PRE_WP080_HASH` replay is re-pinned only if it diverges (WP-236 coherent-game-gate discipline); at implementation time it did NOT diverge, so no fixture was touched.
+
+**Packet:** WP-242 (EC-273).
+**Drafted:** 2026-06-12. **Landed:** 2026-06-12 (WP-242 real implementation).
+**Status:** Active
+
+---
+
 **D-24010: UIPendingKoHeroChoice Projection (Front-of-Queue, Fresh Eligible Computation)**
 
 The engine UIState projection builds `UIPendingKoHeroChoice` from `G.pendingKoHeroChoices[0]` (front of queue), computing eligible targets fresh from current G on every projection call. No snapshot of eligibility is stored; the front entry's zone+playerID are the only cached fields. This ensures the eligible list always reflects current zone contents and handles multi-KO scenarios where zones change between queue pops.

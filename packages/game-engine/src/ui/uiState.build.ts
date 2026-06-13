@@ -32,6 +32,8 @@ import type {
   UISharedPilesState,
   UIKoPileState,
   UIPendingHeroChoice,
+  UIPendingKoHeroChoice,
+  UIEligibleKoHeroCard,
 } from './uiState.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
 import { resolveFightCost } from '../economy/economy.resolve.js';
@@ -39,6 +41,7 @@ import { evaluateEndgame } from '../endgame/endgame.evaluate.js';
 import { computeFinalScores } from '../scoring/scoring.logic.js';
 import { BYSTANDER_EXT_ID, WOUND_EXT_ID } from '../setup/buildInitialGameState.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
+import { buildKoEligibleTargets } from '../villain/villainEffects.execute.js';
 
 // why: exact structural contract — do not widen or add optional fields.
 // buildUIState MUST NOT depend on any other ctx fields.
@@ -393,6 +396,20 @@ export function buildUIState(
       };
     }
 
+    // why: WP-243 / D-24010 — full own-discard projection. discardCards is the
+    // verbatim discard ext_ids (spread copy prevents aliasing with
+    // G.playerZones[playerId].discard); discardDisplay is the parallel
+    // per-card resolveDisplay result (one entry per discard card, fresh shallow
+    // copy). Built in the SAME block (both or neither, length-matched).
+    // filterUIStateForAudience redacts both together for non-owner / spectator
+    // (the handCards privacy posture). Makes the buried discard targets
+    // renderable for the KO-a-Hero prompt and the "View all" discard view.
+    const discardCards = [...zones.discard];
+    const discardDisplay: UICardDisplay[] = [];
+    for (const cardExtId of zones.discard) {
+      discardDisplay.push(resolveDisplay(cardExtId, gameState));
+    }
+
     // why: WP-128 / D-12803 — VP cards are public knowledge by design;
     // not redacted by audience filter. WP-111 D-11105 aliasing-defense:
     // every entry is a fresh `{ extId, display }` with display itself
@@ -422,6 +439,12 @@ export function buildUIState(
       inPlayCards: [...zones.inPlay],
       inPlayDisplay,
       discardTopCard,
+      // why: WP-243 / D-24010 — own-player full discard contents; filter
+      // redacts both fields together for non-self / spectator. Assigned in
+      // the same object literal so they are always present together at build
+      // time (length-matched).
+      discardCards,
+      discardDisplay,
       victoryCards,
       victoryVP,
     });
@@ -658,6 +681,40 @@ export function buildUIState(
     };
   }
 
+  // --- 13b. Project pending KO-a-Hero choice (front of queue) ---
+  // why: D-24010 + WP-243 — project the FRONT entry of G.pendingKoHeroChoices
+  // with its eligible targets recomputed fresh from current G (no snapshot —
+  // WP-242 stores none). The eligible list spans the chooser's non-wound
+  // discard → hand → inPlay in array index order, deduped per (zone, cardId)
+  // by buildKoEligibleTargets. `remaining` = queue length (≥1 when present).
+  // resolveDisplay is spread fresh per entry so the projection holds no
+  // reference into G.cardDisplayData (aliasing defense, WP-111 D-11105).
+  // Redaction to the chooser-only audience is enforced by
+  // filterUIStateForAudience (D-24011 — the eligible list carries hand
+  // identities and must not leak to opponents/spectators).
+  let pendingKoHeroChoice: UIPendingKoHeroChoice | undefined;
+  if (gameState.pendingKoHeroChoices !== undefined && gameState.pendingKoHeroChoices.length > 0) {
+    const frontChoice = gameState.pendingKoHeroChoices[0]!;
+    const chooserZones = gameState.playerZones[frontChoice.playerID];
+    if (chooserZones !== undefined) {
+      const eligibleTargets = buildKoEligibleTargets(chooserZones);
+      const eligible: UIEligibleKoHeroCard[] = [];
+      for (const target of eligibleTargets) {
+        eligible.push({
+          zone: target.zone,
+          cardId: target.cardId,
+          display: { ...resolveDisplay(target.cardId, gameState) },
+        });
+      }
+      pendingKoHeroChoice = {
+        choiceType: frontChoice.choiceType,
+        playerID: frontChoice.playerID,
+        eligible,
+        remaining: gameState.pendingKoHeroChoices.length,
+      };
+    }
+  }
+
   // --- 14. Project game over ---
   // why: endgame state derived from G counters via evaluateEndgame
   // (pure); scores reuse the finalScores already computed for victoryVP
@@ -702,5 +759,6 @@ export function buildUIState(
     koPile,
     ...(gameOver !== undefined ? { gameOver } : {}),
     ...(pendingHeroChoice !== undefined ? { pendingHeroChoice } : {}),
+    ...(pendingKoHeroChoice !== undefined ? { pendingKoHeroChoice } : {}),
   };
 }
