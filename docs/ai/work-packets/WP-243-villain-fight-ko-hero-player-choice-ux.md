@@ -187,15 +187,21 @@ After this packet:
    `hasPendingKoChoice` to `TurnActionBar`; pass `discardCards`/`discardDisplay`
    to `YourDeckDiscardZone`.
 
-### Tests (2 new, ≥4 modified)
+### Tests (2 new, ≥6 modified)
 
-10. `uiState.build.test.ts` — ≥7: `discardCards`/`discardDisplay` projected +
+10. `uiState.build.test.ts` — ≥11: `discardCards`/`discardDisplay` projected +
     length-matched + non-aliased; `pendingKoHeroChoice` eligible list excludes
-    wounds, dedupes `(zone, cardId)`, spans all three zones, sets `remaining`;
-    `undefined` when queue empty; **deterministic order** (eligible scanned
-    discard → hand → inPlay in zone order; byte-identical for repeated calls on
-    the same `G`); **front entry** projected with `remaining` = queue length;
-    **purity** (`buildUIState` does not mutate `G`).
+    wounds, spans all three zones, sets `remaining`; `undefined` when queue
+    empty; **deterministic order** (eligible scanned discard → hand → inPlay in
+    array index order; byte-identical for repeated calls on the same `G`);
+    **reversed-array pin** (clone `G` with each zone array reversed → eligible
+    order matches the new array index order exactly); **within-zone dedupe**
+    (same ext_id twice in one zone → one entry; same ext_id in two zones → two
+    entries); **defensive copy** (mutating a returned `eligible[*].display` /
+    `discardDisplay[*]` field leaves `G` unchanged); **discard symmetry**
+    (`discardCards` present iff `discardDisplay` present, length-matched);
+    **front entry** projected with `remaining` = queue length; **purity**
+    (`buildUIState` does not mutate `G`).
 11. `uiState.filter.test.ts` (or the existing filter test file) — ≥4:
     `discardCards`/`discardDisplay` redacted (omitted, together) for non-owner +
     spectator; `pendingKoHeroChoice` present for the chooser; **negative leak
@@ -203,20 +209,25 @@ After this packet:
     contains `pendingKoHeroChoice === undefined` AND none of the chooser's hand
     ext_ids appear anywhere in the projection.
 12. `uiState.types.drift.test.ts` — pin `UIPendingKoHeroChoice` field names.
-13. `PendingKoHeroChoicePrompt.test.ts` (NEW) — ≥8: renders eligible cards;
+13. `PendingKoHeroChoicePrompt.test.ts` (NEW) — ≥9: renders eligible cards;
     fires the move with the clicked `{ zone, cardId }`; hidden when
     `pendingKoHeroChoice` undefined; hidden when viewer is not the chooser;
-    hidden when `viewerPlayerId` is `null`; entries disabled after first click
-    with **exactly one** move fired per mount; **render-all-and-only** (renders
-    exactly the projected `eligible`, no client-side filter/reorder); **dual
-    coexistence** (with both `pendingHeroChoice` + `pendingKoHeroChoice` props,
-    both prompts render and each submits independently).
+    hidden when `viewerPlayerId` is `null`; **double-click race** — a same-frame
+    double-click fires `resolveKoHeroChoice` **exactly once** (handler
+    early-returns on `isSubmitting`, not just the DOM `disabled`);
+    **render-all-and-only** (renders exactly the projected `eligible`, no
+    client-side filter/reorder); **fail-safe** (forced empty `eligible` mock
+    renders no actionable entry and fires no move).
 14. `useTurnActions.test.ts` — ≥4: end-turn + pass-priority blocked when
     `hasPendingKoChoice` at any stage; allowed when false; **blocked when
     `hasPendingChoice` OR `hasPendingKoChoice`** (either pending system gates).
 15. `YourDeckDiscardZone.test.ts` — ≥2: collapsed shows top card only; expanded
     lists all `discardCards`.
-16. `TurnActionBar.test.ts` — ≥1: end-turn disabled when `hasPendingKoChoice`.
+16. `TurnActionBar.test.ts` — ≥2: end-turn disabled when `hasPendingKoChoice`;
+    **KO gate reason takes precedence** when both gates are active.
+17. `PlayDesktop.test.ts` (and `PlayMobile.test.ts` mirror) — ≥1: with both
+    `pendingHeroChoice` + `pendingKoHeroChoice`, the **KO prompt renders above**
+    the hero-choice prompt, and both render above `TurnActionBar`, in DOM order.
 
 ## Out of Scope
 
@@ -260,7 +271,9 @@ After this packet:
 - `apps/arena-client/src/components/play/PendingKoHeroChoicePrompt.test.ts` — **new** — ≥8 component tests (incl. single-submit, render-all-and-only, dual coexistence)
 - `apps/arena-client/src/composables/useTurnActions.test.ts` — **modified** — ≥4 gate tests (incl. OR'd dual-pending gate)
 - `apps/arena-client/src/components/play/YourDeckDiscardZone.test.ts` — **modified** — ≥2 expand tests
-- `apps/arena-client/src/components/play/TurnActionBar.test.ts` — **modified** — ≥1 disable test
+- `apps/arena-client/src/components/play/TurnActionBar.test.ts` — **modified** — ≥2 disable + KO-reason-precedence tests
+- `apps/arena-client/src/pages/PlayDesktop.test.ts` — **modified** — ≥1 dual-prompt DOM-order test
+- `apps/arena-client/src/pages/PlayMobile.test.ts` — **modified** — ≥1 dual-prompt DOM-order test (mirror)
 
 ### Governance
 - `docs/ai/DECISIONS.md` — **modified** — D-24010..D-24012
@@ -268,7 +281,7 @@ After this packet:
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — WP-243 checked off
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — EC-274 Draft → Done
 
-**Total: ~21 files (17 code/test + 4 governance).** Exceeds the lint §5 ~8-file
+**Total: ~23 files (19 code/test + 4 governance).** Exceeds the lint §5 ~8-file
 guideline — operator-authorised (precedent WP-222 = 18); split across engine
 projection + client surfaces that must land together for the choice to work.
 
@@ -294,16 +307,42 @@ projection + client surfaces that must land together for the choice to work.
   `G.pendingKoHeroChoices.length` (≥1 whenever the field is present). As entries
   resolve, successive frames project the new front with a decremented
   `remaining`.
-- **Deterministic eligible ordering.** `eligible` is built by scanning
-  **discard, then hand, then inPlay**, each in its stored zone order, emitting
-  one entry per non-`WOUND_EXT_ID` card, deduped by `(zone, cardId)` keeping the
-  first occurrence. The order is stable across frames for identical `G` so the
-  prompt's card list does not reshuffle. Wounds are excluded — the engine
-  already excludes them; the projection MUST NOT re-introduce one.
-- `discardCards` / `discardDisplay` are length-matched, non-aliased
-  (`resolveDisplay` spread), and redacted **together** (both present or both
-  omitted — never one without the other); they mirror the `handCards` /
-  `handDisplay` redaction posture exactly.
+- **Deterministic eligible ordering (contractual, not "stored order").** The
+  builder iterates **discard, then hand, then inPlay**, and within each zone in
+  **array index order** of that zone array (`zones.discard` → `zones.hand` →
+  `zones.inPlay`). It MUST NOT derive order from `Object.keys` or iteration of
+  any non-array structure. One entry is emitted per non-`WOUND_EXT_ID` card. The
+  order is byte-stable across frames for identical `G` so the prompt does not
+  reshuffle. Wounds are excluded — the engine already excludes them; the
+  projection MUST NOT re-introduce one.
+- **Within-zone dedupe by `(zone, cardId)`, first occurrence kept.** Requires a
+  `// why:` comment with the accurate rationale: *the same definition-level
+  ext_id can legitimately appear multiple times within one zone (e.g., two
+  `starting-shield-agent` in discard); KOing any copy of that ext_id in that
+  zone is outcome-identical, so the prompt shows one option per `(zone, cardId)`
+  rather than N identical buttons.* Dedupe is **per-zone** — the same ext_id in
+  two different zones stays two distinct options (a discard-KO and an inPlay-KO
+  have different outcomes). Do not "simplify away" the dedupe.
+- **Eligible ≥ 1 is an engine guarantee; no client fallback.** Whenever
+  `pendingKoHeroChoice` is present, `eligible.length >= 1` (WP-242 appends a
+  choice only when ≥2 targets exist, auto-resolves the 1 case, no-ops the 0
+  case; the block-all freeze means a queued entry always has ≥1 target at
+  resolve time). The projection performs **no** fallback or synthesis. If
+  `eligible` were ever empty (engine-invariant violation), the prompt renders
+  **no actionable entry** and the turn stays blocked — fail-safe, never an
+  implicit client-side pick.
+- **Defensive display copy at the projection boundary.** Each
+  `eligible[*].display` and `discardDisplay[*]` MUST be constructed as a fresh
+  object at the boundary (`{ ...resolveDisplay(...) }`) so the projection holds
+  no reference into `G` **even if** `resolveDisplay`'s freshness contract later
+  changes. Mutating a projected display field MUST NOT affect `G` (test-pinned).
+- **`discardCards` / `discardDisplay` — own player, atomic, length-matched.**
+  "Own player" = the player whose `UIPlayerState.playerId` the field belongs to;
+  visible only to the audience equal to that `playerId` (redacted by
+  `filterUIStateForAudience` otherwise — same posture as `handCards`). Both
+  fields MUST be assigned in the **same conditional block** (both present or
+  both omitted — never partially assigned during build) and are length-matched
+  by index.
 - **Redaction (D-24011) — the leak vector is the eligible list.** Because
   `eligible` carries the chooser's **hand** ext_ids, `pendingKoHeroChoice` MUST
   be present **only** for `audience === playerID` and **omitted** (conditional
@@ -329,13 +368,23 @@ projection + client surfaces that must land together for the choice to work.
   frames; it re-renders from the live `pendingKoHeroChoice` prop each frame and
   unmounts when the prop clears (`remaining` reaches 0 / field becomes
   `undefined`).
-- The prompt is NOT dismissible. `isSubmitting` disables all entries after the
-  first click — **exactly one** `resolveKoHeroChoice` fires per prompt mount.
-- **Dual-prompt coexistence.** If both `pendingHeroChoice` (WP-222) and
-  `pendingKoHeroChoice` are present for the viewer, BOTH prompts may render; each
-  submits its own resolve independently and neither blocks the other
-  client-side. End Turn / Pass Priority are gated while **either** is pending —
-  `useTurnActions` blocks on `hasPendingChoice || hasPendingKoChoice`.
+- The prompt is NOT dismissible. **Double-submit guard (two layers):** the
+  click handler MUST early-return when `isSubmitting === true` **before** calling
+  `submitMove`, AND set `isSubmitting = true` synchronously on entry. The DOM
+  `disabled` attribute applies only after the next render tick, so a same-frame
+  double-click would otherwise fire twice — the JS early-return, not the DOM
+  disable, is the real guard. Net: **exactly one** `resolveKoHeroChoice` fires
+  per prompt mount.
+- **DOM order.** The prompt MUST render **before** `TurnActionBar` in DOM order
+  so the gating context is visible above the (disabled) action controls.
+- **Dual-prompt coexistence + ordering.** If both `pendingHeroChoice` (WP-222)
+  and `pendingKoHeroChoice` are present for the viewer, BOTH prompts may render;
+  each submits its own resolve independently and neither blocks the other
+  client-side. The **KO prompt renders above** the hero-choice prompt (higher
+  urgency — full board freeze). End Turn / Pass Priority are gated while
+  **either** is pending — `useTurnActions` blocks on
+  `hasPendingChoice || hasPendingKoChoice`; when both are active, the **KO gate
+  reason takes precedence** in the `TurnActionBar` messaging.
 - `useTurnActions` stays backward-compatible: `hasPendingKoChoice` defaults
   `false`.
 
@@ -347,9 +396,9 @@ projection + client surfaces that must land together for the choice to work.
 - Prompt move call: `submitMove('resolveKoHeroChoice', { zone, cardId })`.
 - Prompt render formula: `pendingKoHeroChoice !== undefined AND viewerPlayerId === pendingKoHeroChoice.playerID`.
 - Gate reason (locked): `'Choose a Hero to KO before taking another action.'`
-- Eligible ordering: discard → hand → inPlay, stored zone order, dedupe `(zone, cardId)` first-occurrence (deterministic, stable across frames).
-- `remaining` ≥ 1 whenever `pendingKoHeroChoice` is present; the "N KOs remaining" counter shows only when `remaining > 1`.
-- Turn-action gate predicate: `hasPendingChoice || hasPendingKoChoice` (blocks End Turn + Pass Priority while EITHER is pending).
+- Eligible ordering: `zones.discard` → `zones.hand` → `zones.inPlay`, each in **array index order**, dedupe `(zone, cardId)` first-occurrence (deterministic, byte-stable across frames; no `Object.keys`/non-array iteration).
+- `remaining` ≥ 1 whenever `pendingKoHeroChoice` is present (engine guarantee; no client fallback if violated); the "N KOs remaining" counter shows only when `remaining > 1`.
+- Turn-action gate predicate: `hasPendingChoice || hasPendingKoChoice` (blocks End Turn + Pass Priority while EITHER is pending); KO gate reason takes precedence when both are active.
 - `resolveKoHeroChoice` is `client: false` (no change — WP-242 owns it).
 
 ## Acceptance Criteria
@@ -402,17 +451,39 @@ projection + client surfaces that must land together for the choice to work.
     present for the viewer, both prompts render and submit independently; End
     Turn + Pass Priority are blocked while either is pending
     (`hasPendingChoice || hasPendingKoChoice`).
+16. **Zone-order determinism:** with `G` cloned and its zone arrays reversed,
+    `eligible` order matches the new array index order exactly (discard array
+    order, then hand, then inPlay) — order is derived from array index, never
+    `Object.keys`.
+17. **Within-zone dedupe:** a zone holding the same ext_id twice (e.g., two
+    `starting-shield-agent` in discard) yields exactly one eligible entry for
+    that `(zone, cardId)`; the same ext_id present in two different zones yields
+    two entries.
+18. **Defensive display copy:** mutating a projected `eligible[*].display` or
+    `discardDisplay[*]` field does not affect `G` (each is a fresh object at the
+    projection boundary).
+19. **Discard symmetry:** `discardCards` is present iff `discardDisplay` is
+    present (assigned in the same block, never one without the other) and the two
+    are length-matched.
+20. **Double-submit guard:** a same-frame double-click on an eligible card fires
+    `resolveKoHeroChoice` exactly once (the click handler early-returns on
+    `isSubmitting`, independent of the DOM `disabled` tick).
+21. **Eligible ≥1, fail-safe, dual-prompt UX:** when `pendingKoHeroChoice` is
+    present `eligible.length >= 1`; an (invariant-violating) empty set renders no
+    actionable entry and never auto-picks client-side; with both prompts present
+    the KO prompt renders above the hero-choice prompt and the KO gate reason
+    takes precedence.
 
 ## Verification Steps
 
 ```bash
 # Engine projection + redaction + drift
 pnpm --filter @legendary-arena/game-engine test
-# Expected: exits 0; ≥ post-WP-242 baseline + ~12 new cases
+# Expected: exits 0; ≥ post-WP-242 baseline + ~16 new cases
 
 # Client component + composable + discard expand + bar
 pnpm --filter arena-client test
-# Expected: exits 0; ≥ baseline + ~16 new cases
+# Expected: exits 0; ≥ baseline + ~20 new cases
 
 # Client typecheck — REQUIRED (vue-tsc; UIState field adds historically drift to main)
 pnpm --filter arena-client typecheck
@@ -436,7 +507,7 @@ grep -c "'resolveKoHeroChoice'" apps/arena-client/src/components/play/uiMoveName
 | §2 Constraints | PASS | Engine-wide + projection + client + session + locked values; forbids diffs/snippets; references 00.6 |
 | §3 Prerequisites | PASS | WP-242 dependency + field/move shapes; `resolveDisplay`, `handCards` posture, `UiMoveName` baseline |
 | §4 Context | PASS | Specific engine + client files + ARCHITECTURE §Layer Boundary + DECISIONS ids |
-| §5 Output | PASS | ~21 files, each new/modified with one-line change; over-8 operator-authorised (WP-222 precedent) |
+| §5 Output | PASS | ~23 files, each new/modified with one-line change; over-8 operator-authorised (WP-222 precedent) |
 | §6 Naming | PASS | `pendingKoHeroChoice`, `discardCards`/`discardDisplay`, `resolveKoHeroChoice`, `cardId`, `zone` consistent |
 | §7 Dependencies | PASS | No new npm deps |
 | §8 Architecture | PASS | Engine projection + audience redaction in engine; client imports types only; no `apps/server` import |
@@ -445,7 +516,7 @@ grep -c "'resolveKoHeroChoice'" apps/arena-client/src/components/play/uiMoveName
 | §11 Auth | N/A | No auth surface |
 | §12 Tests | PASS | node:test (engine) + arena-client harness; no network/DB; redaction + aliasing covered |
 | §13 Verification | PASS | Exact pnpm commands + typecheck gate + expected output |
-| §14 ACs | PASS | 15 binary, observable, specific items (count over the 6–12 guideline — WP-222 precedent; each is a distinct projection/redaction/render path) |
+| §14 ACs | PASS | 21 binary, observable, specific items (count over the 6–12 guideline — WP-222 precedent; each is a distinct projection/redaction/render path) |
 | §15 DoD | PASS | STATUS / DECISIONS / WORK_INDEX / EC_INDEX + scope check |
 | §16 Code style | PASS | 00.6 referenced; `// why:`; no `.reduce()`; `defineComponent({ setup })` |
 | §17 Vision | N/A | UI projection + prompt for an existing engine choice; no scoring/replay/RNG/identity/monetization surface (the determinism change lives in WP-242) |
@@ -458,7 +529,7 @@ grep -c "'resolveKoHeroChoice'" apps/arena-client/src/components/play/uiMoveName
 
 ## Definition of Done
 
-- [ ] All 15 acceptance criteria pass.
+- [ ] All 21 acceptance criteria pass.
 - [ ] `discardCards`/`discardDisplay` projected (own player) + redacted (others);
       `YourDeckDiscardZone` expandable full-discard view.
 - [ ] `UIPendingKoHeroChoice` + `pendingKoHeroChoice?` projected (front entry,
@@ -472,6 +543,11 @@ grep -c "'resolveKoHeroChoice'" apps/arena-client/src/components/play/uiMoveName
       the projected `eligible`; fires exactly one `submitMove` per mount;
       coexists with `PendingHeroChoicePrompt`; `useTurnActions` gates end-turn +
       pass-priority on `hasPendingChoice || hasPendingKoChoice`.
+- [ ] **Determinism + safety pins:** eligible order from array index (reversed-
+      array test), within-zone dedupe, defensive display copy (mutation leaves
+      `G` unchanged), discard `cards`/`display` both-or-neither, double-click
+      fires exactly one move (handler early-return), KO prompt above hero prompt
+      + KO gate-reason precedence.
 - [ ] `pnpm --filter @legendary-arena/game-engine test` — pass, 0 fail.
 - [ ] `pnpm --filter arena-client test` — pass, 0 fail.
 - [ ] `pnpm --filter arena-client typecheck` exits 0 (no new vue-tsc error).
