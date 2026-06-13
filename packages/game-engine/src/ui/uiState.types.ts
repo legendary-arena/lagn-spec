@@ -20,8 +20,8 @@
  * ship as Option A safe-skips per D-12806 — see `uiState.build.ts`.
  */
 
-import type { FinalScoreSummary } from '../scoring/scoring.types.js';
-import type { NotableGameEvent } from '../events/notableEvents.types.js';
+import type { FinalScoreSummary } from "../scoring/scoring.types.js";
+import type { NotableGameEvent } from "../events/notableEvents.types.js";
 
 // why: UIState is the only data the UI sees. All items in the canonical
 // forbidden internals list (hookRegistry, ImplementationMap, cardStats,
@@ -432,10 +432,35 @@ export interface UIPendingHeroChoice {
   // why: D-22201 — discriminant mirrors PendingHeroChoice.choiceType;
   // preserving it here allows the client to branch on future choice types
   // without a separate WP to extend the UI contract.
-  choiceType: 'discard-or-return';
+  choiceType: "discard-or-return";
   cardId: string;
   playerID: string;
   display: UICardDisplay;
 }
 
-export type { UIAudience } from './uiAudience.types.js';
+/**
+ * Eligible card for KO-a-Hero choice resolution (WP-243 / D-24010).
+ * @see WP-243 §Scope (In)
+ * @see EC-274 Locked Values
+ */
+export interface UIEligibleKoHeroCard {
+  zone: "discard" | "hand" | "inPlay";
+  cardId: string;
+  display: UICardDisplay;
+}
+
+/**
+ * UI contract for resolving a pending KO-a-Hero choice (WP-243 / D-24010).
+ * Only visible to the choosing player; redacted for opponents and spectators.
+ * @see WP-243 §Scope (In)
+ * @see EC-274 Locked Values
+ * @see DECISIONS.md D-24010..D-24012
+ */
+export interface UIPendingKoHeroChoice {
+  choiceType: "ko-hero";
+  playerID: string;
+  eligible: UIEligibleKoHeroCard[];
+  remaining: number;
+}
+
+export type { UIAudience } from "./uiAudience.types.js";

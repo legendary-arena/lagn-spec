@@ -1,7 +1,7 @@
 <script lang="ts">
-import { defineComponent, ref, type PropType } from 'vue';
-import type { UIPendingKoHeroChoice } from '@legendary-arena/game-engine';
-import type { SubmitMove } from './uiMoveName.types';
+import { defineComponent, ref, type PropType } from "vue";
+import type { UIPendingKoHeroChoice } from "@legendary-arena/game-engine";
+import type { SubmitMove } from "./uiMoveName.types";
 
 /**
  * Inline prompt for resolving a pending KO-a-Hero choice (WP-243).
@@ -20,7 +20,7 @@ import type { SubmitMove } from './uiMoveName.types';
  * @see DECISIONS.md D-24010..D-24012
  */
 export default defineComponent({
-  name: 'PendingKoHeroChoicePrompt',
+  name: "PendingKoHeroChoicePrompt",
   props: {
     pendingKoHeroChoice: {
       type: Object as PropType<UIPendingKoHeroChoice | undefined>,
@@ -49,22 +49,25 @@ export default defineComponent({
       );
     }
 
-    function onSelectCard(zone: 'discard' | 'hand' | 'inPlay', cardId: string): void {
+    function onSelectCard(
+      zone: "discard" | "hand" | "inPlay",
+      cardId: string,
+    ): void {
       if (isSubmitting.value) return;
       isSubmitting.value = true;
-      props.submitMove('resolveKoHeroChoice', { zone, cardId });
+      props.submitMove("resolveKoHeroChoice", { zone, cardId });
     }
 
     function groupByZone() {
       if (!props.pendingKoHeroChoice) return {};
-      const groups: Record<string, typeof props.pendingKoHeroChoice.eligible> = {};
+      const result: Record<string, any> = {};
       for (const entry of props.pendingKoHeroChoice.eligible) {
-        if (!groups[entry.zone]) {
-          groups[entry.zone] = [];
+        if (!result[entry.zone]) {
+          result[entry.zone] = [];
         }
-        groups[entry.zone].push(entry);
+        result[entry.zone]!.push(entry);
       }
-      return groups;
+      return result;
     }
 
     return {
@@ -87,12 +90,19 @@ export default defineComponent({
   >
     <h3 class="pending-ko-hero-choice-prompt__heading">
       Choose a Hero to KO
-      <span v-if="pendingKoHeroChoice!.remaining > 1" class="pending-ko-hero-choice-prompt__remaining">
+      <span
+        v-if="pendingKoHeroChoice!.remaining > 1"
+        class="pending-ko-hero-choice-prompt__remaining"
+      >
         ({{ pendingKoHeroChoice!.remaining }} remaining)
       </span>
     </h3>
     <div class="pending-ko-hero-choice-prompt__zones">
-      <div v-for="(zone, zoneKey) in groupByZone()" :key="zoneKey" class="pending-ko-hero-choice-prompt__zone">
+      <div
+        v-for="(zone, zoneKey) in groupByZone()"
+        :key="zoneKey"
+        class="pending-ko-hero-choice-prompt__zone"
+      >
         <h4 class="pending-ko-hero-choice-prompt__zone-label">
           From your {{ zoneKey }}
         </h4>
@@ -108,7 +118,9 @@ export default defineComponent({
             :title="entry.display.name"
             @click="onSelectCard(entry.zone, entry.cardId)"
           >
-            <span class="pending-ko-hero-choice-prompt__card-name">{{ entry.display.name }}</span>
+            <span class="pending-ko-hero-choice-prompt__card-name">{{
+              entry.display.name
+            }}</span>
             <img
               v-if="entry.display.imageUrl"
               :src="entry.display.imageUrl"

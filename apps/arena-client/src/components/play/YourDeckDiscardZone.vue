@@ -1,7 +1,10 @@
 <script lang="ts">
-import { defineComponent, ref, type PropType } from 'vue';
-import type { UIDisplayEntry, UICardDisplay } from '@legendary-arena/game-engine';
-import CardTile from './CardTile.vue';
+import { defineComponent, ref, type PropType } from "vue";
+import type {
+  UIDisplayEntry,
+  UICardDisplay,
+} from "@legendary-arena/game-engine";
+import CardTile from "./CardTile.vue";
 
 /**
  * Your deck + discard zone — renders the active player's deck count
@@ -18,7 +21,7 @@ import CardTile from './CardTile.vue';
  * @see DESIGN-BOARD-LAYOUT.md §7.1 Your Deck face-down / Discard face-up
  */
 export default defineComponent({
-  name: 'YourDeckDiscardZone',
+  name: "YourDeckDiscardZone",
   components: { CardTile },
   props: {
     deckCount: {
@@ -86,8 +89,14 @@ export default defineComponent({
         class="your-deck-discard__top"
         data-testid="play-your-discard-top"
       >
-        <CardTile :display="discardTopCard.display" size="sm" :show-cost="false" />
-        <span class="your-deck-discard__top-label">{{ discardTopCard.display.name }}</span>
+        <CardTile
+          :display="discardTopCard.display"
+          size="sm"
+          :show-cost="false"
+        />
+        <span class="your-deck-discard__top-label">{{
+          discardTopCard.display.name
+        }}</span>
       </div>
       <p
         v-else
@@ -103,18 +112,22 @@ export default defineComponent({
         data-testid="play-your-discard-expand"
         @click="isExpanded = !isExpanded"
       >
-        {{ isExpanded ? 'Hide all' : `View all (${discardCount})` }}
+        {{ isExpanded ? "Hide all" : `View all (${discardCount})` }}
       </button>
       <div
         v-if="isExpanded && discardCards && discardDisplay"
         class="your-deck-discard__all-cards"
         data-testid="play-your-discard-all"
       >
-        <div v-for="(cardId, index) in discardCards" :key="index" class="your-deck-discard__card-item">
+        <div
+          v-for="(cardId, index) in discardCards"
+          :key="index"
+          class="your-deck-discard__card-item"
+        >
           <CardTile
             v-if="discardDisplay[index]"
             :display="discardDisplay[index]"
-            size="xs"
+            size="sm"
             :show-cost="false"
           />
         </div>
