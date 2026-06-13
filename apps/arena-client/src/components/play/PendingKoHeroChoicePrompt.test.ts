@@ -125,14 +125,55 @@ describe('PendingKoHeroChoicePrompt (WP-243 / EC-274)', () => {
     assert.equal(calls.length, 1, 'second click is a no-op (handler early-returns on isSubmitting)');
   });
 
-  test('a second click on a DIFFERENT card after the first submit is also a no-op', async () => {
+  test('a second click on a different card in the SAME frame is a no-op (debounce until next frame)', async () => {
     const { calls, submitMove } = recorder();
     const wrapper = mount(PendingKoHeroChoicePrompt, {
       props: { pendingKoHeroChoice: mockPendingChoice, viewerPlayerId: 'player-0', submitMove },
     });
     await wrapper.find('[data-testid="pending-ko-hero-choice-card-discard-test-hero-1"]').trigger('click');
     await wrapper.find('[data-testid="pending-ko-hero-choice-card-hand-test-hero-2"]').trigger('click');
-    assert.equal(calls.length, 1, 'exactly one move per mount');
+    // why: with NO new server frame (props unchanged), the second click is
+    // debounced — isSubmitting clears only when the pendingKoHeroChoice prop
+    // changes (next frame). See the re-enable regression test below.
+    assert.equal(calls.length, 1, 'second same-frame click is blocked');
+  });
+
+  test('re-enables after the pending choice changes so the next queued KO is resolvable (freeze regression)', async () => {
+    // why: regression for the play.legendary-arena.com freeze — the prompt is
+    // kept mounted for the whole match by the parent page (only its inner
+    // content is v-if'd), so isSubmitting must reset when a new choice arrives.
+    // Without the reset, the front-popped SECOND choice in a multi-KO queue
+    // (and every later KO choice in the match) rendered with disabled buttons,
+    // freezing the board under the block-all guard.
+    const { calls, submitMove } = recorder();
+    const wrapper = mount(PendingKoHeroChoicePrompt, {
+      props: { pendingKoHeroChoice: mockPendingChoice, viewerPlayerId: 'player-0', submitMove },
+    });
+
+    // Resolve the first choice (remaining: 2).
+    await wrapper.find('[data-testid="pending-ko-hero-choice-card-discard-test-hero-1"]').trigger('click');
+    assert.equal(calls.length, 1);
+
+    // The engine front-pops the queue; the next server frame delivers the
+    // SECOND choice as a fresh object.
+    const secondChoice: UIPendingKoHeroChoice = {
+      choiceType: 'ko-hero',
+      playerID: 'player-0',
+      remaining: 1,
+      eligible: [
+        {
+          zone: 'inPlay',
+          cardId: 'test-hero-3',
+          display: { extId: 'test-hero-3', name: 'Test Hero 3', imageUrl: 'https://example.com/hero3.jpg', cost: 4 },
+        },
+      ],
+    };
+    await wrapper.setProps({ pendingKoHeroChoice: secondChoice });
+
+    // The buttons must be interactive again — the panel is NOT frozen.
+    await wrapper.find('[data-testid="pending-ko-hero-choice-card-inPlay-test-hero-3"]').trigger('click');
+    assert.equal(calls.length, 2, 'the next queued KO choice is resolvable (panel not frozen)');
+    assert.deepEqual(calls[1]!.args, { zone: 'inPlay', cardId: 'test-hero-3' });
   });
 
   test('fail-safe: an empty eligible list renders no actionable entry and fires no move', () => {

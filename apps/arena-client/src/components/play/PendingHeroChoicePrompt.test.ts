@@ -162,4 +162,43 @@ describe('PendingHeroChoicePrompt (WP-222 / EC-254)', () => {
       'second click must not submit another move (isSubmitting guard)',
     );
   });
+
+  test('re-enables after the pending choice changes so a later reveal choice is resolvable (freeze regression)', async () => {
+    // why: regression for the same freeze class as the KO prompt — the parent
+    // page keeps this component mounted for the whole match (only its inner
+    // content is v-if'd), so isSubmitting must reset when a new choice arrives.
+    // Without the reset, the SECOND reveal choice of the match rendered with
+    // both buttons disabled and could never be resolved.
+    const { calls, submitMove } = recorder();
+    const wrapper = mount(PendingHeroChoicePrompt, {
+      props: {
+        pendingHeroChoice: sampleChoice,
+        viewerPlayerId: '0',
+        submitMove,
+      },
+    });
+
+    // Resolve the first reveal choice.
+    await wrapper.find('[data-testid="pending-hero-choice-discard"]').trigger('click');
+    assert.equal(calls.length, 1);
+
+    // A later reveal delivers a fresh pendingHeroChoice object on a new frame.
+    const laterChoice: UIPendingHeroChoice = {
+      choiceType: 'discard-or-return',
+      cardId: 'core/spider-man/strike#0',
+      playerID: '0',
+      display: {
+        extId: 'core/spider-man/strike#0',
+        name: 'Web Shooters',
+        imageUrl: 'https://images.legendary-arena.com/core/hero-spider-man-1.webp',
+        cost: 3,
+      },
+    };
+    await wrapper.setProps({ pendingHeroChoice: laterChoice });
+
+    // The buttons must be interactive again — the prompt is NOT frozen.
+    await wrapper.find('[data-testid="pending-hero-choice-return"]').trigger('click');
+    assert.equal(calls.length, 2, 'the later reveal choice is resolvable (prompt not frozen)');
+    assert.deepEqual(calls[1]!.args, { resolution: 'return' });
+  });
 });
