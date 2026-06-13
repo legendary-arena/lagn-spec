@@ -542,32 +542,39 @@ export function buildCardDisplayData(
     }
   }
 
-  // --- 4. Mastermind base card (FlatCard name/imageUrl; SetData vAttack) ---
-  // why: tactic cards deferred — UIMastermindState exposes tactics as
-  // counts only. Base-card classification (`tactic !== true`) mirrors
-  // mastermind.setup.ts:findMastermindCards exactly so the projected
-  // ext_id matches G.mastermind.baseCardId.
+  // --- 4. Mastermind cards: base + tactics (FlatCard name/imageUrl; SetData vAttack) ---
+  // why: BOTH the base card AND every tactic card need a display entry. The
+  // base card surfaces on the MastermindTile; each DEFEATED tactic is pushed
+  // into the defeating player's victory pile by fightMastermind (a per-card
+  // rendered zone), so a tactic with no display entry renders as the literal
+  // `<unknown>`. Production symptom (match 1HU0E1bgAy7): a fully-defeated
+  // 4-tactic mastermind left 4 `<unknown>` cards in the victory pile. Tactic
+  // ext_ids share the base card's grammar —
+  // `${setAbbr}-mastermind-${slug}-${card.slug}` (mastermind.setup.ts:240) —
+  // which is exactly each mastermind card's FlatCard key (registry shared.ts
+  // flattenSet), so the FlatCard supplies name/imageUrl and the SetData card
+  // entry supplies vAttack for cost. Iterating ALL cards keeps the base-card
+  // entry byte-identical to before and simply adds the tactic entries.
   const mastermindParsed = parseQualifiedIdForSetup(matchConfig.mastermindId);
   if (mastermindParsed !== null) {
-    const baseCardEntry = findMastermindBaseCard(
+    const mastermindCards = findMastermindCardsForDisplay(
       registry,
       mastermindParsed.setAbbr,
       mastermindParsed.slug,
     );
 
-    if (baseCardEntry !== null) {
-      const baseCardKey = `${mastermindParsed.setAbbr}-mastermind-${mastermindParsed.slug}-${baseCardEntry.slug}`;
-      const matchingFlatCard = findFlatCardByKey(allFlatCards, baseCardKey);
+    for (const mastermindCard of mastermindCards) {
+      const cardKey = `${mastermindParsed.setAbbr}-mastermind-${mastermindParsed.slug}-${mastermindCard.slug}`;
+      const matchingFlatCard = findFlatCardByKey(allFlatCards, cardKey);
+      if (matchingFlatCard === undefined) continue;
 
-      if (matchingFlatCard !== undefined) {
-        const extId = matchingFlatCard.key as CardExtId;
-        result[extId] = {
-          extId,
-          name: matchingFlatCard.name,
-          imageUrl: matchingFlatCard.imageUrl,
-          cost: parseCostNullable(baseCardEntry.vAttack ?? null),
-        };
-      }
+      const extId = matchingFlatCard.key as CardExtId;
+      result[extId] = {
+        extId,
+        name: matchingFlatCard.name,
+        imageUrl: matchingFlatCard.imageUrl,
+        cost: parseCostNullable(mastermindCard.vAttack ?? null),
+      };
     }
   }
 
@@ -1038,40 +1045,39 @@ function findHenchmanGroup(
 }
 
 /**
- * Finds the base mastermind card within the named set's masterminds[].
+ * Finds ALL mastermind cards (base + tactics) within the named set's
+ * masterminds[] for the given slug.
  *
- * Mirrors mastermind.setup.ts:findMastermindCards classification: a
- * card with `tactic !== true` is the base; cards with `tactic === true`
- * are tactics (deferred — not projected by this builder).
+ * Returns every card — base (`tactic !== true`) and tactics
+ * (`tactic === true`) — so the builder can project a display entry for
+ * each. Tactic entries are required because each defeated tactic lands in
+ * the victory pile (a per-card rendered zone) and would otherwise render
+ * as the `<unknown>` placeholder. The caller resolves name/imageUrl per
+ * card from the FlatCard list (key `${setAbbr}-mastermind-${slug}-${card.slug}`)
+ * and cost from each card's vAttack.
  *
- * Returns null when the named set is not loaded, the slug is not
- * present, or the mastermind has no base card.
+ * Returns [] when the named set is not loaded, the slug is not present, or
+ * the mastermind has no cards array. No cross-set fallback.
  */
-function findMastermindBaseCard(
+function findMastermindCardsForDisplay(
   registry: CardDisplayDataRegistryReader,
   setAbbr: string,
   mastermindSlug: string,
-): DisplayDataMastermindCardEntry | null {
+): DisplayDataMastermindCardEntry[] {
   const setData = registry.getSet(setAbbr);
-  if (!setData || typeof setData !== 'object') return null;
+  if (!setData || typeof setData !== 'object') return [];
 
   const candidate = setData as { masterminds?: unknown };
-  if (!Array.isArray(candidate.masterminds)) return null;
+  if (!Array.isArray(candidate.masterminds)) return [];
 
   for (const mastermindRaw of candidate.masterminds) {
     if (!mastermindRaw || typeof mastermindRaw !== 'object') continue;
     const mastermind = mastermindRaw as DisplayDataMastermindEntry;
     if (mastermind.slug !== mastermindSlug) continue;
     if (!Array.isArray(mastermind.cards)) continue;
-
-    for (const card of mastermind.cards) {
-      if (card.tactic !== true) {
-        return card;
-      }
-    }
-    return null;
+    return mastermind.cards;
   }
-  return null;
+  return [];
 }
 
 /**

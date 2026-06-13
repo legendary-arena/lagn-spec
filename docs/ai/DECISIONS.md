@@ -24785,4 +24785,17 @@ While `pendingKoHeroChoice` is present, `canEndTurn` and `canPassPriority` retur
 **Drafted:** 2026-06-13. **Landed:** 2026-06-13.
 **Status:** Active
 
+---
+
+**D-24014: Mastermind Tactic Cards Gain `cardDisplayData` Projection (Un-defers the Last D-11106 Deferred Type)**
+
+`buildCardDisplayData` now projects a display entry for EVERY mastermind card — the base card AND all tactic cards — replacing the former base-only `findMastermindBaseCard` walk with `findMastermindCardsForDisplay` (returns the full `masterminds[].cards` array). This un-defers mastermind tactic cards under D-11106's own amendment mechanism ("each deferred card type gains projection support only when a new WP explicitly justifies its inclusion, defines the source-field map"). Justification: `fightMastermind` pushes each defeated tactic into the defeating player's victory pile (a per-card-rendered zone), so a tactic with no `cardDisplayData` entry renders as the literal `<unknown>` placeholder — production symptom (match `1HU0E1bgAy7`): a fully-defeated 4-tactic mastermind left 4 `<unknown>` cards in the victory pile. Source-field map: tactic ext_ids use the base card's grammar `${setAbbr}-mastermind-${slug}-${cardSlug}` (`mastermind.setup.ts:240`), which is byte-identical to each mastermind card's FlatCard key (`registry/shared.ts:flattenSet`); name + imageUrl come from the FlatCard, cost from the SetData card's `vAttack` via `parseCostNullable`. Uses the existing four-field `UICardDisplay` shape — NO field added, so the D-11106 four-field lock is untouched and no UIState shape change occurs (tactics already flow into the victory pile as `CardExtId`s; only their display resolution was missing).
+
+This completes the pattern: mastermind tactics were the LAST of D-11106's eight deferred types. The other seven were already un-deferred — scheme-twist + mastermind-strike (D-17201/WP-172), and bystander + wound + officer + sidekick + scheme (D-17301/WP-173). The bystander un-deferral (`pile-bystander`) was driven by the identical `<unknown>`-in-victory-pile symptom, making this the direct precedent. D-11106's mastermind-tactic clause is hereby superseded; the rest of D-11106 stands. Replay hashes unaffected (`cardDisplayData` is a setup-time display snapshot; it drives no game logic, RNG, or `G` mutation).
+
+**Packet:** None — operator-directed bug fix, no standalone WP/EC (same disposition as D-24013). Code landed under `INFRA:`; this entry under `SPEC:`.
+**Supersedes:** the mastermind-tactic clause of D-11106 (the remaining clauses stand).
+**Drafted:** 2026-06-13. **Landed:** 2026-06-13.
+**Status:** Active
+
 Protect this file.

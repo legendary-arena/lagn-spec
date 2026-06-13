@@ -638,7 +638,7 @@ describe('buildCardDisplayData', () => {
     );
   });
 
-  it('emits exactly one mastermind base card entry; no tactic cards', () => {
+  it('emits the mastermind base card AND its tactic cards (tactics land in the victory pile)', () => {
     const registry = buildFixtureRegistry();
     const config = buildFixtureConfig();
 
@@ -649,11 +649,19 @@ describe('buildCardDisplayData', () => {
     assert.equal(baseCard.name, 'Dr. Doom');
     assert.equal(baseCard.cost, 9);
 
-    // Tactic card must NOT be present
+    // why: each defeated tactic is pushed into the defeating player's victory
+    // pile by fightMastermind (a per-card rendered zone), so a tactic MUST
+    // have a display entry — otherwise it renders as the `<unknown>`
+    // placeholder (production symptom: 4 `<unknown>` cards in the victory
+    // pile of a fully-defeated mastermind). The tactic ext_id uses the same
+    // `${setAbbr}-mastermind-${slug}-${cardSlug}` grammar as the base card.
+    const tacticCard = result['core-mastermind-dr-doom-secret-of-time-travel'];
+    assert.ok(tacticCard, 'mastermind tactic card must be present');
+    assert.equal(tacticCard.name, 'Secret of Time Travel');
+    assert.equal(tacticCard.cost, 7);
     assert.equal(
-      result['core-mastermind-dr-doom-secret-of-time-travel'],
-      undefined,
-      'tactic card must NOT appear in cardDisplayData',
+      tacticCard.imageUrl,
+      'https://images.barefootbetters.com/core/core-mastermind-dr-doom-secret-of-time-travel.webp',
     );
   });
 
