@@ -28,6 +28,7 @@ import type {
 } from "../registry/browser";
 import type { ThemeDefinition } from "../lib/themeClient";
 import { useLoadoutDraft } from "../composables/useLoadoutDraft";
+import { useLoadoutLagnExport } from "../composables/useLoadoutLagnExport";
 import { serializeSetupToUrl } from "../lib/setupUrlParams";
 
 // why: Verbatim WP-093 UI strings referenced via imported constants, but also
@@ -73,6 +74,8 @@ const {
   exportFilename,
   resetDraft,
 } = draftApi;
+
+const lagnExportApi = useLoadoutLagnExport(draft);
 
 // ── Active slot (drives the picker filter) ─────────────────────────────────
 
@@ -222,6 +225,21 @@ function onDownload(): void {
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = exportFilename();
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+}
+
+function onDownloadLagn(): void {
+  if (!lagnExportApi.isValid.value) {
+    return;
+  }
+  const blob = lagnExportApi.exportToJsonBlob();
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = lagnExportApi.exportFilename();
   document.body.appendChild(anchor);
   anchor.click();
   document.body.removeChild(anchor);
@@ -505,10 +523,52 @@ function slotLabel(slot: PickerSlot): string {
       <div class="field-group">
         <div class="action-row">
           <button type="button" class="primary-btn" @click="onDownload" :disabled="!isValid">
-            ⬇ Download JSON
+            ⬇ Download MATCH-SETUP
+          </button>
+          <button
+            type="button"
+            class="primary-btn"
+            @click="onDownloadLagn"
+            :disabled="!isValid || !lagnExportApi.isValid.value"
+          >
+            ⬇ Download LAGN
           </button>
           <button type="button" class="mini-btn" @click="resetDraft">🔄 Reset draft</button>
           <button type="button" class="mini-btn" @click="onCopySetupLink">🔗 Copy Setup Link</button>
+        </div>
+
+        <!-- LAGN export options -->
+        <div v-if="isValid" class="lagn-options">
+          <div class="lagn-row">
+            <label class="field">
+              <span class="field-label">LAGN Variant</span>
+              <select v-model="lagnExportApi.variant.value">
+                <option value="classic">Classic</option>
+                <option value="custom">Custom</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">Outcome</span>
+              <select v-model="lagnExportApi.outcome.value">
+                <option value="victory">Victory</option>
+                <option value="loss">Loss</option>
+              </select>
+            </label>
+          </div>
+          <div class="lagn-info">
+            <p class="lagn-game-id">
+              <span class="field-label">Game ID:</span>
+              <code>{{ lagnExportApi.gameId.value }}</code>
+              <button type="button" class="mini-btn" @click="lagnExportApi.regenerateGameId">
+                🔄 Regenerate
+              </button>
+            </p>
+            <ul v-if="lagnExportApi.validationErrors.value.length > 0" class="error-list">
+              <li v-for="(error, index) in lagnExportApi.validationErrors.value" :key="`lagn-${index}`">
+                {{ error }}
+              </li>
+            </ul>
+          </div>
         </div>
 
         <p v-if="copyLinkStatus === 'copied'" class="copy-link-success">
@@ -798,4 +858,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #6060c0
 .picker-entry-name { font-weight: 600; font-size: 0.85rem; }
 .picker-entry-id { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: #8888aa; }
 .picker-empty { color: #6666aa; font-size: 0.8rem; }
+
+.lagn-options { background: #12121a; border: 1px solid #22222e; border-radius: 6px; padding: 0.75rem; margin-top: 0.5rem; }
+.lagn-row { display: flex; gap: 0.75rem; margin-bottom: 0.5rem; }
+.lagn-row .field { flex: 1; }
+.lagn-info { font-size: 0.8rem; }
+.lagn-game-id { margin: 0; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #0f0f13; border-radius: 4px; font-family: ui-monospace, Consolas, monospace; color: #c8c8e0; }
+.lagn-game-id code { color: #60a5fa; flex: 1; word-break: break-all; }
 </style>
