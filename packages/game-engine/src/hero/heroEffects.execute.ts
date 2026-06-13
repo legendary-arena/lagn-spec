@@ -21,6 +21,7 @@ import { shuffleDeck } from '../setup/shuffle.js';
 import { moveCardFromZone, moveAllCards } from '../moves/zoneOps.js';
 import { addResources } from '../economy/economy.logic.js';
 import { koCard } from '../board/ko.logic.js';
+import { resolveCountSource } from './heroCountSource.resolve.js';
 
 // ---------------------------------------------------------------------------
 // MVP keyword set
@@ -31,9 +32,10 @@ import { koCard } from '../board/ko.logic.js';
 // WP-219 adds 'reveal-cost-attack' (D-21901) and 'reveal-odd-draw' (D-21902).
 // WP-220 adds 'reveal-attack-choose' (D-22003).
 // WP-223 adds 'reveal-ko-attack' (D-22301).
+// WP-247 adds 'attack-per-count' (D-24016) — count-scaled attack.
 // 'wound' and 'conditional' remain deferred — they require targeting UI or
 // additional game systems not yet implemented.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack']);
+const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack', 'attack-per-count']);
 
 // why: these keywords have no external magnitude; the pre-check gate must not
 // reject them for missing magnitude — they use internal cost or parity logic
@@ -480,6 +482,24 @@ function executeSingleEffect(
         G.turnEconomy.attack += effect.magnitude as number;
       }
       // cost > 0: no zone mutation — card stays at deck[0]
+      break;
+    }
+    case 'attack-per-count': {
+      // why: D-24016 — magnitude is the per-unit rate; resolveCountSource resolves
+      // the count it scales by, so the grant is magnitude × count. The resolver is
+      // pure/total (unknown source → 0), so the grant is deterministic at play time.
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) { break; }
+      if (!G.turnEconomy) { break; }
+      // why: a count-scaled attack effect with no count source is a skipped no-op
+      // (mirrors the magnitude gate) — there is nothing to scale by.
+      if (effect.countSource === undefined) { break; }
+      const count = resolveCountSource(G, playerID, effect.countSource);
+      const grant = (effect.magnitude as number) * count;
+      G.turnEconomy = addResources(G.turnEconomy, grant, 0);
+      // why: record the source, count, and grant so the count-scaled attack is
+      // observable in replay inspection (no implicit side effects).
+      G.messages.push(`Count-scaled attack: +${grant} (${effect.magnitude as number} per ${effect.countSource}, count ${count}).`);
       break;
     }
     default: {

@@ -1924,3 +1924,103 @@ describe('executeHeroEffects', () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-247 — attack-per-count executor (D-24016)
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects attack-per-count (WP-247)', () => {
+  // why: makeMockCtx provides ShuffleProvider-compatible context; attack-per-count
+  // does not draw, but executeHeroEffects requires a ctx argument.
+  const mockCtx = makeMockCtx();
+
+  it('grants magnitude × victory-pile bystander count (m=2, N=3 → +6 attack)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      victory: ['pile-bystander', 'bystander-villain-deck-02', 'pile-bystander'],
+      turnEconomyAttack: 0,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack-per-count'],
+          effects: [{ type: 'attack-per-count', magnitude: 2, countSource: 'victory-bystanders' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 6,
+      'attack should increase by magnitude (2) × bystander count (3) = 6.');
+  });
+
+  it('grants 0 attack when the victory pile holds no bystanders', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      victory: [],
+      turnEconomyAttack: 1,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack-per-count'],
+          effects: [{ type: 'attack-per-count', magnitude: 3, countSource: 'victory-bystanders' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 1,
+      'attack should be unchanged (grant of 3 × 0 = 0) when there are no bystanders.');
+  });
+
+  it('is a skipped no-op when the effect carries no countSource', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      victory: ['pile-bystander', 'pile-bystander'],
+      turnEconomyAttack: 4,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack-per-count'],
+          effects: [{ type: 'attack-per-count', magnitude: 2 }],
+        },
+      ],
+    });
+
+    const messageCountBefore = gameState.messages.length;
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 4,
+      'attack should be unchanged when countSource is missing (skipped no-op).');
+    assert.equal(gameState.messages.length, messageCountBefore,
+      'no message should be appended for a missing-countSource no-op.');
+  });
+
+  it('leaves G JSON-serializable after a count-scaled attack grant', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      victory: ['pile-bystander', 'bystander-villain-deck-01'],
+      turnEconomyAttack: 0,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack-per-count'],
+          effects: [{ type: 'attack-per-count', magnitude: 1, countSource: 'victory-bystanders' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 2,
+      'attack should increase by 1 × 2 = 2.');
+    const serialized = JSON.stringify(gameState);
+    assert.ok(serialized.length > 0, 'JSON.stringify(G) must succeed after a count-scaled grant.');
+  });
+});

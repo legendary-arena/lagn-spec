@@ -58,7 +58,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "You get +1[icon:attack] for each Bystander in your Victory Pile."
+            "You get +1[icon:attack] for each Bystander in your Victory Pile. [keyword:attack-per-count:victory-bystanders:1]"
           ]
         },
         {

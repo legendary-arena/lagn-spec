@@ -232,7 +232,7 @@ describe('buildHeroAbilityHooks', () => {
 describe('HERO_KEYWORDS drift-detection', () => {
   // why: prevents union/array divergence — same pattern as
   // REVEALED_CARD_TYPES drift detection
-  it('contains exactly the 15 canonical keyword values', () => {
+  it('contains exactly the 16 canonical keyword values', () => {
     const expectedKeywords = [
       'draw',
       'attack',
@@ -248,13 +248,14 @@ describe('HERO_KEYWORDS drift-detection', () => {
       'reveal-odd-draw',
       'reveal-attack-choose',
       'reveal-ko-attack',
+      'attack-per-count',
       'conditional',
     ];
 
     assert.equal(
       HERO_KEYWORDS.length,
-      15,
-      'HERO_KEYWORDS must have exactly 15 entries',
+      16,
+      'HERO_KEYWORDS must have exactly 16 entries',
     );
 
     assert.deepStrictEqual(
@@ -395,6 +396,76 @@ describe('buildHeroAbilityHooks icon-adjacent magnitude extraction (WP-215)', ()
     const revealEffect = hook.effects!.find(e => e.type === 'reveal');
     assert.ok(revealEffect !== undefined, 'reveal effect must be present');
     assert.equal(revealEffect!.magnitude, undefined, 'reveal magnitude must be undefined for bare VP icon');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-247 — count-scaled attack parse + icon-suppression (D-24016)
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks count-scaled attack (WP-247)', () => {
+  it('marked covert-operation line yields one attack-per-count effect and suppresses the attack icon', () => {
+    // why: the printed "+1[icon:attack]" would otherwise emit a flat 'attack'
+    // effect AND the count-scaled effect (double-count); the parser must drop the
+    // plain 'attack' keyword on a line carrying an 'attack-per-count' effect.
+    const registry = makeHeroRegistry('core', 'black-widow', [
+      {
+        slug: 'covert-operation',
+        rarityLabel: 'Uncommon',
+        abilities: [
+          'You get +1[icon:attack] for each Bystander in your Victory Pile. [keyword:attack-per-count:victory-bystanders:1]',
+        ],
+      },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/black-widow'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+
+    // Keywords EXCLUDE the plain 'attack' icon (icon-suppression proven).
+    assert.ok(
+      !hook.keywords.includes('attack'),
+      'the plain attack keyword must be suppressed on a count-scaled line',
+    );
+    assert.ok(
+      hook.keywords.includes('attack-per-count'),
+      'the count-scaled keyword must be present',
+    );
+
+    // Exactly one effect, fully specified.
+    assert.ok(Array.isArray(hook.effects), 'effects must be present');
+    assert.equal(hook.effects!.length, 1, 'exactly one effect must be emitted (no flat attack)');
+    assert.deepStrictEqual(
+      hook.effects![0],
+      { type: 'attack-per-count', magnitude: 1, countSource: 'victory-bystanders' },
+      'the single effect must be the count-scaled attack with magnitude 1 and victory-bystanders',
+    );
+  });
+
+  it('ignores a count-scaled token with an unrecognized source (no attack-per-count effect)', () => {
+    // why: only sources in HERO_COUNT_SOURCES emit an effect; an unknown source
+    // produces no 'attack-per-count' effect, so the icon-suppression does not fire.
+    const registry = makeHeroRegistry('core', 'black-widow', [
+      {
+        slug: 'covert-operation',
+        rarityLabel: 'Uncommon',
+        abilities: ['You get +1[icon:attack]. [keyword:attack-per-count:made-up-source:1]'],
+      },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/black-widow'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+    assert.ok(
+      !hook.keywords.includes('attack-per-count'),
+      'an unrecognized source must not emit a count-scaled keyword',
+    );
+    // The printed attack icon is NOT suppressed (no count-scaled effect present).
+    const attackEffect = (hook.effects ?? []).find((effect) => effect.type === 'attack');
+    assert.ok(attackEffect !== undefined, 'the plain attack effect remains when no count-scaled effect is emitted');
+    assert.equal(attackEffect!.magnitude, 1, 'the plain attack magnitude is the icon-adjacent value');
   });
 });
 

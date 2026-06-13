@@ -17,6 +17,8 @@ import type {
 } from '../rules/heroAbility.types.js';
 import type { HeroKeyword, HeroAbilityTiming } from '../rules/heroKeywords.js';
 import { HERO_KEYWORDS } from '../rules/heroKeywords.js';
+import type { HeroCountSource } from '../rules/heroCountSource.js';
+import { HERO_COUNT_SOURCES } from '../rules/heroCountSource.js';
 import { normalizeTraitSlug } from '../state/traits.normalize.js';
 // why: D-18705 / D-18706 — hero hooks must key by the canonical-face slash
 // instance id (the id the played card carries in `G` zones), resolving
@@ -107,6 +109,12 @@ const TEAM_PATTERN = /\[team:([^\]]+)\]/g;
 // why: hyphen allowed in keyword names to support reveal-ko and reveal-min tokens (D-21701, D-21702)
 /** Regex for [keyword:X] or [keyword:X:N] keyword markup (N = non-negative integer). */
 const KEYWORD_PATTERN = /\[keyword:([a-zA-Z][a-zA-Z-]*)(?::(\d+))?\]/g;
+
+// why: D-24016 — the count-scaled attack token has three segments
+// ([keyword:attack-per-count:<source>:<perUnit>]); KEYWORD_PATTERN only captures
+// keyword(:N)?, so the count source and per-unit rate need a dedicated pattern.
+/** Regex for [keyword:attack-per-count:<source>:<perUnit>] count-scaled markup. */
+const COUNT_SCALED_PATTERN = /\[keyword:attack-per-count:([a-z][a-z-]*):(\d+)\]/g;
 
 // why: extract magnitude from icon-adjacent integers — avoids per-card manual markup (D-21505)
 /** Regex for attack/recruit icon-adjacent magnitude, e.g. "+2[icon:attack]". */
@@ -238,6 +246,28 @@ function parseAbilityText(abilityText: string): {
     magnitudes.set('reveal', vpThresholdValue);
   }
 
+  // Step 2d: Extract [keyword:attack-per-count:<source>:<perUnit>] count-scaled
+  // markup. The per-unit rate is stored in magnitudes; the count source is
+  // stored in countSources so the effect builder can attach it. Only sources in
+  // HERO_COUNT_SOURCES are accepted — an unrecognized source is ignored (no
+  // 'attack-per-count' effect is emitted, so the icon-suppression below does not
+  // fire and the line keeps its printed attack icon).
+  // why: D-24016 — count-scaled attack tokens have three segments not matched by
+  // KEYWORD_PATTERN; the per-unit rate is the magnitude, the source resolves the count.
+  const countSources: Map<HeroKeyword, HeroCountSource> = new Map();
+  const countScaledRegex = new RegExp(COUNT_SCALED_PATTERN.source, 'g');
+  let countScaledMatch: RegExpExecArray | null = countScaledRegex.exec(abilityText);
+  while (countScaledMatch !== null) {
+    const countSourceCandidate = countScaledMatch[1]!;
+    const perUnitString = countScaledMatch[2]!;
+    if (isValidHeroCountSource(countSourceCandidate)) {
+      keywords.push('attack-per-count');
+      magnitudes.set('attack-per-count', parseInt(perUnitString, 10));
+      countSources.set('attack-per-count', countSourceCandidate);
+    }
+    countScaledMatch = countScaledRegex.exec(abilityText);
+  }
+
   // Step 3: Extract [icon:X] markup
   const iconRegex = new RegExp(ICON_PATTERN.source, 'g');
   let iconMatch: RegExpExecArray | null = iconRegex.exec(abilityText);
@@ -251,7 +281,32 @@ function parseAbilityText(abilityText: string): {
   }
 
   // Step 4: Normalize keywords — dedup, validate against union
-  const uniqueKeywords = deduplicateKeywords(keywords);
+  let uniqueKeywords = deduplicateKeywords(keywords);
+
+  // Icon-suppression: a count-scaled attack effect subsumes the printed attack
+  // icon on the same line. Without this, "+N[icon:attack] for each X" would emit
+  // BOTH a flat 'attack' effect (from the icon, Steps 2b/3) AND the
+  // 'attack-per-count' effect — a double-count (N flat + N×count). Drop the plain
+  // 'attack' keyword and its magnitude so only the count-scaled effect remains.
+  // why: the count-scaled keyword subsumes the printed attack icon (D-24016;
+  // mirrors the D-21901 reveal-cost-attack precedent).
+  let lineHasCountScaledAttack = false;
+  for (const keyword of uniqueKeywords) {
+    if (keyword === 'attack-per-count') {
+      lineHasCountScaledAttack = true;
+      break;
+    }
+  }
+  if (lineHasCountScaledAttack) {
+    const keywordsWithoutAttackIcon: HeroKeyword[] = [];
+    for (const keyword of uniqueKeywords) {
+      if (keyword !== 'attack') {
+        keywordsWithoutAttackIcon.push(keyword);
+      }
+    }
+    uniqueKeywords = keywordsWithoutAttackIcon;
+    magnitudes.delete('attack');
+  }
 
   // If conditions were found, add 'conditional' keyword
   if (conditions.length > 0) {
@@ -272,7 +327,16 @@ function parseAbilityText(abilityText: string): {
   for (const keyword of uniqueKeywords) {
     if (keyword !== 'conditional') {
       const magnitude = magnitudes.get(keyword);
-      if (magnitude !== undefined) {
+      if (keyword === 'attack-per-count') {
+        // why: the count-scaled attack effect carries its count source so the
+        // executor can resolve the count to scale the per-unit magnitude by.
+        // Step 2d records both the per-unit magnitude and the source together,
+        // so the guard both narrows the optional Map reads and is defensive.
+        const countSource = countSources.get('attack-per-count');
+        if (magnitude !== undefined && countSource !== undefined) {
+          effects.push({ type: keyword, magnitude, countSource });
+        }
+      } else if (magnitude !== undefined) {
         effects.push({ type: keyword, magnitude });
       } else {
         effects.push({ type: keyword });
@@ -306,6 +370,22 @@ function parseAbilityText(abilityText: string): {
 function isValidHeroKeyword(value: string): value is HeroKeyword {
   for (const keyword of HERO_KEYWORDS) {
     if (keyword === value) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Checks if a string is a valid HeroCountSource.
+ *
+ * Used to gate the count-scaled attack token: only a source in
+ * HERO_COUNT_SOURCES produces an 'attack-per-count' effect; an unrecognized
+ * source is ignored (no effect emitted).
+ */
+function isValidHeroCountSource(value: string): value is HeroCountSource {
+  for (const source of HERO_COUNT_SOURCES) {
+    if (source === value) {
       return true;
     }
   }

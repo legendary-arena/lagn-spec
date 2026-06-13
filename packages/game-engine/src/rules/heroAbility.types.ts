@@ -13,6 +13,7 @@
 
 import type { CardExtId } from '../state/zones.types.js';
 import type { HeroKeyword, HeroAbilityTiming } from './heroKeywords.js';
+import type { HeroCountSource } from './heroCountSource.js';
 
 // ---------------------------------------------------------------------------
 // HeroAbilityHook — data-only interface
@@ -75,6 +76,11 @@ export interface HeroCondition {
 export interface HeroEffectDescriptor {
   type: HeroKeyword;
   magnitude?: number;
+  // why: D-24016 — for an 'attack-per-count' effect, countSource names the
+  // quantity the per-unit magnitude scales by (resolved by resolveCountSource).
+  // Other keywords ignore it; an 'attack-per-count' effect with no/invalid
+  // countSource is a skipped no-op.
+  countSource?: HeroCountSource;
 }
 
 // ---------------------------------------------------------------------------

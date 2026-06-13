@@ -24862,6 +24862,6 @@ if it diverges (no fixture plays Covert Operation).
 
 **Packet:** WP-247 (EC-278).
 **Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
-**Status:** Reserved (proposed)
+**Status:** Active
 
 Protect this file.
