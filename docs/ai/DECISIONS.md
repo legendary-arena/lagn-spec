@@ -24775,4 +24775,14 @@ While `pendingKoHeroChoice` is present, `canEndTurn` and `canPassPriority` retur
 **Drafted:** 2026-06-12. **Landed:** 2026-06-12.
 **Status:** Active
 
+---
+
+**D-24013: Mastermind Bystander Rescue Fires on EVERY Tactic Defeat (Not Vanquish-Only)**
+
+`moves/fightMastermind.ts` rescues all bystanders the Mastermind is currently holding (`G.mastermind.attachedBystanders`) into the fighting player's victory pile on **each** successful tactic defeat. The award + `attachedBystanders` clear + `G.attachedBystanders[baseCardId]` Path-A mirror-drop moved OUT of the `if (areAllTacticsDefeated)` branch so they run on every fight, then the store is cleared so a later Master Strike re-capture is rescued by the next fight. Per Universal Rules v23 §"When you fight a Mastermind/Commander" step 1 ("Also rescue any Bystanders the Mastermind was holding, putting them all into your Victory Pile"), the rescue is per-fight; "not truly defeated until all four Tactics are defeated" gates only the WIN condition (`MASTERMIND_DEFEATED` counter), not the rescue. Prior code awarded captures only on the vanquishing blow — root cause of the 2026-06-09 field report (bystanders shown on the tile but not moved to victory after a non-final fight; that investigation exercised only the vanquish path and could not reproduce). The `mastermindDefeated` notable event (D-20008) is unchanged — still emitted once on vanquish — and its `bystandersRescued` now denotes the count rescued on the vanquishing fight specifically (often 0 when a prior fight already cleared the store). This refines the award-timing assumption in D-20008's rationale; it does not alter the event's shape, firing condition, or the closed `NOTABLE_EVENT_TYPES` union. Replay hashes are unchanged (no fixture runs `fightMastermind`).
+
+**Packet:** None — operator-directed bug fix, no standalone WP/EC (same disposition as D-20008's `INFRA:` follow-up to squash commit `618327f`). Code landed under `INFRA:`; this entry under `SPEC:`.
+**Drafted:** 2026-06-13. **Landed:** 2026-06-13.
+**Status:** Active
+
 Protect this file.
