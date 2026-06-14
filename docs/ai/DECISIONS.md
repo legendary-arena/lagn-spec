@@ -25001,4 +25001,73 @@ accepted) + 11 LAGN converter tests; `pnpm -r build` clean.
 **Landed:** 2026-06-13.
 **Status:** Active
 
+---
+
+**D-24019: Optional-KO-then-Reward Hero Effect Framework — `optional-ko-reward` Keyword + Player-Choice Resolve Move**
+
+Hero abilities of the form "You may KO a card from your hand or discard pile. If
+you do, `<reward>`" are handled by a SINGLE parameterized mechanism, not a keyword
+per card. A new closed-union hero keyword `optional-ko-reward` parks an
+interactive choice when the hero card is played (`onPlay`): the active player
+either declines (no KO, no reward) or KOs exactly one card from their hand or
+discard pile, in which case a `<reward>` is granted. The reward is a value of the
+existing closed `HeroKeyword` union carried on the `HeroEffectDescriptor`
+(`rewardType?: HeroKeyword`, with the existing `magnitude` as the reward
+magnitude); on KO it is dispatched to the ALREADY-BUILT reward executor
+(`rescue`/`draw`/`attack`/`recruit`) rather than re-implemented. The choice reuses
+the WP-242 interactive-choice infrastructure: a FIFO `G.pendingOptionalKoRewards`
+(lazy-initialized at the park site, like `pendingKoHeroChoices`), a new
+`resolveOptionalKoReward` move (`{decline}` or `{zone,cardId}`, front-pop,
+`client:false`) plus a `hasPendingOptionalKoReward` predicate, the board-freeze +
+turn-end guards extended to exempt all three resolve moves, and a `getLegalMoves`
+short-circuit whose deterministic bot/sim default (`selectDefaultOptionalKoTarget`:
+lowest-cost eligible card, discard-preferred) KOs and takes the reward (decline is
+human-only). The reward fires ONLY on an actual KO (atomic). The marker token
+grammar is `[keyword:optional-ko-reward:<reward>:<perUnit>]` (added to
+`apply-hero-ability-markers.mjs`'s `VALID_TOKEN_PATTERN`); only
+`core/black-widow/dangerous-rescue` (reward `rescue`) is marked in this packet.
+
+**Extension recipe (the point of this decision):** a NEW "you may KO a card, then
+X" card needs (1) IF X is a new reward: build the reward executor (its own WP) +
+add it to the seeded reward set; (2) a data marker. Marking the whole ~15-card
+family is a single follow-up **sweep** WP (the WP-225 pattern), never per-card
+WPs. Deferred: the `gain-shard` / `gain-new-recruit` rewards (no executor yet),
+multi-card / repeat KO, and KO from other zones. Determinism preserved (pure
+park/resolve + a pure bot default; the only RNG is the existing draw-reward
+reshuffle); re-pin the replay sentinel only if it diverges (no fixture plays
+Dangerous Rescue). The player-facing choice surface (projection + prompt) ships
+in the co-release-locked WP-249 / EC-280 (D-24020); this engine packet parks,
+resolves, and bot-auto-resolves but renders no human prompt on its own.
+
+**Packet:** WP-248 (EC-279). Co-release: WP-249 (EC-280).
+**Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
+**Status:** Reserved (proposed)
+
+---
+
+**D-24020: Optional-KO-then-Reward UX — Chooser-Only Projection + Client Prompt**
+
+The player-facing surface for WP-248's `optional-ko-reward` choice (D-24019) is a
+chooser-only UIState projection + an arena-client prompt, mirroring the WP-243
+KO-hero UX. The engine projects a `UIPendingOptionalKoReward` (the front pending
+choice: a reward label + the eligible hand and discard cards with display data,
+recomputed fresh with defensive copies) into UIState; `uiState.filter.ts` redacts
+it — and the underlying hand/discard contents — for every player except the
+chooser and for spectators (the D-24011 hand-privacy rule). The arena-client adds
+`resolveOptionalKoReward` to the `UiMoveName` union, renders a non-dismissible
+`OptionalKoRewardPrompt.vue` (a zone-labeled selectable list of eligible
+hand/discard cards plus a Decline button, submitting
+`resolveOptionalKoReward({zone,cardId})` or `({decline:true})`), mounts it in both
+`PlayDesktop.vue` and `PlayMobile.vue`, and disables End Turn / Pass Priority
+while the choice is pending (`hasPendingOptionalKoReward`, mirroring
+`hasPendingKoChoice`). This packet changes NO engine gameplay — it only projects
+existing state and submits the existing move; the arena-client UIState fixtures
+are backfilled in the same packet so `vue-tsc` stays green (the WP-166/207/227
+recurrence). Co-release-locked with WP-248 (the prompt is inert without the engine
+state + move; the engine has no human choice surface without this packet).
+
+**Packet:** WP-249 (EC-280). Co-release: WP-248 (EC-279).
+**Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
+**Status:** Reserved (proposed)
+
 Protect this file.
