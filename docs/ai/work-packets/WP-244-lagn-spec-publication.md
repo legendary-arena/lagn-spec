@@ -384,7 +384,7 @@ Each example:
   - Total size < 500 KB
 - [ ] No files outside `packages/lagn-spec/` modified except `docs/ai/work-packets/WORK_INDEX.md`
 - [ ] No game engine, registry, server, or client code touched
-- [ ] Commit message(s) use `EC-274:` prefix (never `WP-244:`)
+- [ ] Commit message(s) use `EC-275:` prefix (never `WP-244:`)
 
 **Release-Complete Phase (Publishing — Requires Operator Credentials):**
 
@@ -408,7 +408,7 @@ Each example:
 **Final Governance:**
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` updated:
   - WP-244 marked complete with today's date
-  - Notes: "Code-complete EC-274 commit [hash], released via GitHub [repo], NPM [version], schema [URL]"
+  - Notes: "Code-complete EC-275 commit [hash], released via GitHub [repo], NPM [version], schema [URL]"
 - [ ] No uncommitted changes
 - [ ] All commits on `main` (or pushed to origin/[branch] if not merged yet)
 
@@ -520,7 +520,7 @@ curl https://legendary-arena.com/schemas/lagn/v1/lagn-v1.json | jq '.lagn_versio
 1. **Code-Complete Phase** (this session — single operator):
    - Build, test, verify all acceptance criteria
    - Generate schema from Zod
-   - Commit with `EC-274:` prefix
+   - Commit with `EC-275:` prefix
    - Verify `npm pack` output and contents
    - Update WORK_INDEX.md (mark code-complete)
 
