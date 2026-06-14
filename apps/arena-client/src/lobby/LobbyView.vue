@@ -468,7 +468,7 @@ export default defineComponent({
       data-testid="lobby-create-from-json"
     >
       <h2 id="create-from-json-heading">
-        Create match from loadout JSON (recommended)
+        Create match from game setup — LAGN format (recommended)
       </h2>
 
       <label for="loadoutFile">Upload a loadout JSON file</label>
