@@ -13,7 +13,8 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { getLegalMoves } from './ai.legalMoves.js';
 import { selectDefaultKoTarget } from '../villain/villainEffects.execute.js';
-import type { LegendaryGameState, PendingKoHeroChoice } from '../types.js';
+import { selectDefaultOptionalKoTarget } from '../hero/heroEffects.execute.js';
+import type { LegendaryGameState, PendingKoHeroChoice, PendingOptionalKoReward } from '../types.js';
 import type { CardExtId } from '../state/zones.types.js';
 
 const CONTEXT = { phase: 'play', turn: 1, currentPlayer: '0', numPlayers: 1 };
@@ -112,5 +113,65 @@ describe('getLegalMoves — pending-KO short-circuit (WP-242 / D-24009)', () => 
       false,
       'empty queue is not pending',
     );
+  });
+});
+
+describe('getLegalMoves — pending optional-KO-reward short-circuit (WP-248 / D-24019)', () => {
+  const optionalPending: PendingOptionalKoReward[] = [
+    { playerID: '0', rewardType: 'rescue', rewardMagnitude: 1, sourceCardId: 'hero-x' as CardExtId },
+  ];
+
+  test('returns EXACTLY one resolveOptionalKoReward whose target = selectDefaultOptionalKoTarget; never declines', () => {
+    const gameState = makeG({
+      discard: ['pricey-discard' as CardExtId],
+      hand: ['cheap-hand' as CardExtId],
+      currentStage: 'main',
+    });
+    gameState.pendingOptionalKoRewards = optionalPending;
+    gameState.cardStats = {
+      'pricey-discard': { attack: 0, recruit: 0, cost: 3, fightCost: 0 },
+      'cheap-hand': { attack: 0, recruit: 0, cost: 1, fightCost: 0 },
+    } as unknown as LegendaryGameState['cardStats'];
+
+    const legalMoves = getLegalMoves(gameState, CONTEXT);
+
+    assert.equal(legalMoves.length, 1, 'exactly one legal move while pending');
+    const only = legalMoves[0]!;
+    assert.equal(only.name, 'resolveOptionalKoReward', 'the single move is resolveOptionalKoReward');
+    const expectedTarget = selectDefaultOptionalKoTarget(gameState.playerZones['0']!, gameState.cardStats);
+    assert.deepStrictEqual(only.args, expectedTarget, 'target equals the deterministic default pick');
+    // The default target is the lowest-cost card (hand cost 1 beats discard cost 3).
+    assert.deepStrictEqual(only.args, { zone: 'hand', cardId: 'cheap-hand' });
+    // The bot never declines.
+    assert.notDeepStrictEqual(only.args, { decline: true }, 'the bot never emits decline');
+  });
+
+  test('optional-KO-reward short-circuit fires BEFORE the KO-hero one (precedence lock)', () => {
+    const gameState = makeG({
+      discard: ['only-card' as CardExtId],
+      currentStage: 'main',
+      pendingKoHeroChoices: [{ choiceType: 'ko-hero', playerID: '0' }],
+    });
+    gameState.pendingOptionalKoRewards = optionalPending;
+    gameState.cardStats = {
+      'only-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0 },
+    } as unknown as LegendaryGameState['cardStats'];
+
+    const legalMoves = getLegalMoves(gameState, CONTEXT);
+
+    assert.equal(legalMoves.length, 1, 'still exactly one move when both queues are non-empty');
+    assert.equal(
+      legalMoves[0]!.name,
+      'resolveOptionalKoReward',
+      'optional-KO-reward takes precedence over resolveKoHeroChoice',
+    );
+  });
+
+  test('no resolveOptionalKoReward and normal enumeration when no optional-KO-reward is pending', () => {
+    const gameState = makeG({ hand: ['hero-a' as CardExtId], currentStage: 'main' });
+    const legalMoves = getLegalMoves(gameState, CONTEXT);
+    const names = legalMoves.map((m) => m.name);
+    assert.equal(names.includes('resolveOptionalKoReward'), false, 'absent when not pending');
+    assert.equal(names.includes('playCard'), true, 'normal main-stage moves enumerated');
   });
 });

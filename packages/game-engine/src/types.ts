@@ -364,6 +364,9 @@ import type { MastermindState } from './mastermind/mastermind.types.js';
 import type { SchemeState } from './scheme/schemeState.types.js';
 import type { HookDefinition } from './rules/ruleHooks.types.js';
 import type { HeroAbilityHook } from './rules/heroAbility.types.js';
+// why: D-24019 — PendingOptionalKoReward.rewardType is a value of the closed
+// HeroKeyword union (the reward dispatched on KO).
+import type { HeroKeyword } from './rules/heroKeywords.js';
 import type { VillainAbilityHook } from './rules/villainAbility.types.js';
 import type { NotableGameEvent } from './events/notableEvents.types.js';
 import type { LobbyState } from './lobby/lobby.types.js';
@@ -435,6 +438,32 @@ export interface PendingKoHeroChoice {
   choiceType: 'ko-hero';
   /** The player who must select a hero to KO. */
   playerID: string;
+}
+
+/**
+ * Pending optional-KO-then-reward player choice state (WP-248 / D-24019).
+ *
+ * Created when an optional-ko-reward hero effect is played (`onPlay`) and the
+ * player has at least one card in hand or discard. Appended to
+ * G.pendingOptionalKoRewards[] (FIFO queue). Removed (front-popped) by
+ * resolveOptionalKoReward after the player declines or KOs a chosen card. Must
+ * be undefined or empty at every turn-end (enforced by the block-all guards).
+ *
+ * // why: D-24019 — the choice is "decline, or KO one of your hand/discard
+ * cards (→ reward)". The pending entry records the choosing player, the reward
+ * to grant on KO, the reward magnitude, and the source card; eligible cards are
+ * recomputed fresh from current G by the move validation and the bot
+ * auto-resolver (no snapshot, mirrors WP-242's PendingKoHeroChoice).
+ */
+export interface PendingOptionalKoReward {
+  /** The player who must decline or choose a card to KO. */
+  playerID: string;
+  /** The reward granted iff the player KOs a card (dispatched to the existing executor). */
+  rewardType: HeroKeyword;
+  /** The reward magnitude passed to the reward executor. */
+  rewardMagnitude: number;
+  /** The hero card whose ability parked this choice (passed to the reward executor). */
+  sourceCardId: CardExtId;
 }
 
 /**
@@ -536,6 +565,17 @@ export interface LegendaryGameState {
   // empty [] both mean "no pending choice" (guards test `.length`).
   /** FIFO queue of pending KO-a-Hero choices awaiting player resolution (WP-242). */
   pendingKoHeroChoices?: PendingKoHeroChoice[] | undefined;
+
+  // why: WP-248 / D-24019 — FIFO queue of pending optional-KO-then-reward
+  // choices (one per played optional-ko-reward hero ability with ≥1 eligible
+  // card). Entries are appended by the executor park case; front-popped by
+  // resolveOptionalKoReward after the player declines or KOs a card. Must be
+  // undefined or empty at every turn-end. Optional so existing test state
+  // literals do not need updating; **lazily initialized at the park site, never
+  // in Game.setup** (mirrors villainEffects.execute.ts:190). Absent (undefined)
+  // or empty [] both mean "no pending choice" (guards test `.length`).
+  /** FIFO queue of pending optional-KO-then-reward choices awaiting resolution (WP-248). */
+  pendingOptionalKoRewards?: PendingOptionalKoReward[] | undefined;
 
   // why: playerZones is keyed by player ID string (boardgame.io uses "0", "1",
   // etc.). Each player has exactly 5 zone arrays. Only deck is non-empty after

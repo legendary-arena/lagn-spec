@@ -17,6 +17,7 @@ import type { LegendaryGameState } from '../types.js';
 import { getAvailableRecruit, spendRecruit } from '../economy/economy.logic.js';
 import { refillHqSlot } from '../board/city.logic.js';
 import { hasPendingKoHeroChoice } from './koHeroChoice.resolve.js';
+import { hasPendingOptionalKoReward } from './optionalKoReward.resolve.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
 type MoveContext = FnContext<LegendaryGameState> & { playerID: PlayerID };
@@ -73,6 +74,9 @@ export function recruitHero(
   // board is frozen; recruitHero returns with no side effects. Placed
   // immediately after the stage gate, before any G/zone write.
   if (hasPendingKoHeroChoice(G)) return;
+  // why: block-all guard (D-24019) — optional-KO-reward choice pending; the
+  // board is frozen until resolved (beside the D-24008 KO-hero check above).
+  if (hasPendingOptionalKoReward(G)) return;
 
   // Step 3: Mutate G
   // why: WP-018 — economy deduction lands first; WP-135 — HQ slot refill

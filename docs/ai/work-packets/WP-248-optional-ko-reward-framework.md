@@ -399,6 +399,7 @@ assumes, **stop and ask** — do not fork a parallel choice system.
 - `packages/game-engine/src/hero/heroEffects.execute.ts` — **modified**.
 - `packages/game-engine/src/moves/optionalKoReward.resolve.ts` — **new** (move + `hasPendingOptionalKoReward` predicate).
 - `packages/game-engine/src/game.ts` — **modified** (move registration + `advanceStage`/cleanup turn-end block-all guard site).
+- `packages/game-engine/src/game.test.ts` — **modified** (Amendment A — move-registration drift test: add `resolveOptionalKoReward`, bump "10 moves" → "11 moves").
 - `packages/game-engine/src/moves/coreMoves.impl.ts` — **modified** (block-all guard sites: `drawCards`, `playCard`, `endTurn`).
 - `packages/game-engine/src/moves/fightVillain.ts` — **modified** (block-all guard site).
 - `packages/game-engine/src/moves/fightMastermind.ts` — **modified** (block-all guard site).
@@ -417,7 +418,7 @@ assumes, **stop and ask** — do not fork a parallel choice system.
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — WP-248 `[x]`.
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — EC-279 → Done.
 
-**Total: 24 files** (20 engine/data + 4 governance: STATUS / DECISIONS /
+**Total: 25 files** (21 engine/data + 4 governance: STATUS / DECISIONS /
 WORK_INDEX / EC_INDEX). Over the lint §5 ~8 guideline — justified inline: a new
 interactive-move subsystem (pending state + move + registration + bot path + their
 tests) is irreducible end-to-end, AND the WP-242 block-all guard it must extend is
@@ -430,7 +431,7 @@ than duplicating it, and it is the LAST multi-file engine WP for this family
 (subsequent cards are data markers). The distributed-guard footprint was confirmed
 by live inspection during the 2026-06-14 hardening pass (the earlier "±1 / shared
 helper" pin is RESOLVED: the guard is neither game.ts-only nor a shared module);
-the count is LOCKED at 24 — no flex.
+the count is LOCKED at 24 — no flex. **Amendment A (2026-06-14, execution; operator-authorized):** the draft allowlist omitted `packages/game-engine/src/game.test.ts`, the move-registration drift test that asserts the exact `LegendaryGame.moves` set + count — registering the mandated `resolveOptionalKoReward` mechanically breaks it (the move-bag analog of the `HERO_KEYWORDS` drift test this WP already includes). It is added as the 25th allowlist file; the WP-248 + EC-279 bodies are additionally amended in-flight (those two spec edits are the amendment act, not deliverable allowlist entries), so the execution-close `git diff` spans 27 paths (25 allowlist + WP-248 + EC-279). Allowlist count is now LOCKED at 25.
 
 ---
 
@@ -492,9 +493,10 @@ HTTP endpoint, and `getLegalMoves`/move registration are engine-internal.
 8. `pnpm --filter @legendary-arena/game-engine build` + `test` exit 0 with the
    net-new cases; no pre-existing test regresses; sentinel unchanged (no fixture
    plays Dangerous Rescue) OR re-pinned per WP-236 discipline.
-9. `git diff --name-only` lists exactly the 24 files in `## Files Expected to
-   Change` (count LOCKED — the distributed-guard footprint is confirmed, no flex;
-   EC-279 carries the same allowlist).
+9. `git diff --name-only` lists exactly the files in `## Files Expected to
+   Change` — 25 allowlist files (Amendment A added `game.test.ts`), plus the two
+   spec files amended in-flight (`WP-248`, `EC-279`) = 27 paths total. EC-279
+   carries the same allowlist.
 
 ---
 

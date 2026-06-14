@@ -232,7 +232,7 @@ describe('buildHeroAbilityHooks', () => {
 describe('HERO_KEYWORDS drift-detection', () => {
   // why: prevents union/array divergence — same pattern as
   // REVEALED_CARD_TYPES drift detection
-  it('contains exactly the 16 canonical keyword values', () => {
+  it('contains exactly the 17 canonical keyword values', () => {
     const expectedKeywords = [
       'draw',
       'attack',
@@ -249,13 +249,14 @@ describe('HERO_KEYWORDS drift-detection', () => {
       'reveal-attack-choose',
       'reveal-ko-attack',
       'attack-per-count',
+      'optional-ko-reward',
       'conditional',
     ];
 
     assert.equal(
       HERO_KEYWORDS.length,
-      16,
-      'HERO_KEYWORDS must have exactly 16 entries',
+      17,
+      'HERO_KEYWORDS must have exactly 17 entries',
     );
 
     assert.deepStrictEqual(
@@ -466,6 +467,77 @@ describe('buildHeroAbilityHooks count-scaled attack (WP-247)', () => {
     const attackEffect = (hook.effects ?? []).find((effect) => effect.type === 'attack');
     assert.ok(attackEffect !== undefined, 'the plain attack effect remains when no count-scaled effect is emitted');
     assert.equal(attackEffect!.magnitude, 1, 'the plain attack magnitude is the icon-adjacent value');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-248 — optional-KO-reward parse (D-24019)
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks optional-KO-reward (WP-248)', () => {
+  it('marked dangerous-rescue line yields one optional-ko-reward effect plus the conditional keyword (AC-3)', () => {
+    // why: the parser must emit exactly { type:'optional-ko-reward',
+    // rewardType:'rescue', magnitude:1 } from the three-segment token, plus the
+    // 'conditional' keyword from the [hc:covert] condition.
+    const registry = makeHeroRegistry('core', 'black-widow', [
+      {
+        slug: 'dangerous-rescue',
+        rarityLabel: 'Common 2',
+        abilities: [
+          '[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander. [keyword:optional-ko-reward:rescue:1]',
+        ],
+      },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/black-widow'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+
+    assert.ok(
+      hook.keywords.includes('optional-ko-reward'),
+      'the optional-ko-reward keyword must be present',
+    );
+    assert.ok(
+      hook.keywords.includes('conditional'),
+      'the [hc:covert] condition adds the conditional keyword',
+    );
+
+    // Exactly one effect (the conditional keyword never becomes an effect).
+    assert.ok(Array.isArray(hook.effects), 'effects must be present');
+    assert.equal(hook.effects!.length, 1, 'exactly one effect must be emitted');
+    assert.deepStrictEqual(
+      hook.effects![0],
+      { type: 'optional-ko-reward', magnitude: 1, rewardType: 'rescue' },
+      'the single effect must carry rewardType rescue and magnitude 1',
+    );
+  });
+
+  it('ignores an optional-ko-reward token with an unseeded reward (no effect emitted)', () => {
+    // why: only the seeded reward set (rescue/draw/attack/recruit) is dispatchable;
+    // an unseeded reward (e.g. a not-yet-built gain-shard) emits no descriptor, so
+    // such a marker can never reach the pending queue.
+    const registry = makeHeroRegistry('core', 'black-widow', [
+      {
+        slug: 'dangerous-rescue',
+        rarityLabel: 'Common 2',
+        abilities: ['You may KO a card. [keyword:optional-ko-reward:gain-shard:1]'],
+      },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/black-widow'] };
+
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0];
+    assert.ok(hook !== undefined, 'hook must be built');
+    assert.ok(
+      !hook.keywords.includes('optional-ko-reward'),
+      'an unseeded reward must not emit an optional-ko-reward keyword',
+    );
+    assert.equal(
+      (hook.effects ?? []).length,
+      0,
+      'no effect is emitted for an unseeded reward',
+    );
   });
 });
 

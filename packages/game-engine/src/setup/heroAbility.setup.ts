@@ -116,6 +116,27 @@ const KEYWORD_PATTERN = /\[keyword:([a-zA-Z][a-zA-Z-]*)(?::(\d+))?\]/g;
 /** Regex for [keyword:attack-per-count:<source>:<perUnit>] count-scaled markup. */
 const COUNT_SCALED_PATTERN = /\[keyword:attack-per-count:([a-z][a-z-]*):(\d+)\]/g;
 
+// why: D-24019 — the optional-KO-reward token has three segments
+// ([keyword:optional-ko-reward:<reward>:<n>]); KEYWORD_PATTERN cannot match it
+// (it stops at the second colon), so the reward and magnitude need a dedicated
+// pattern. The capture group is (\d+) — matching the COUNT_SCALED_PATTERN
+// precedent, NOT [1-9]\d*. The strict [1-9]\d* gate is the apply-script's job
+// (build time); here the parser captures the integer and the n ≥ 1 check is
+// enforced downstream (isValidMagnitude at the reward executor).
+/** Regex for [keyword:optional-ko-reward:<reward>:<n>] optional-KO-reward markup. */
+const OPTIONAL_KO_REWARD_PATTERN = /\[keyword:optional-ko-reward:([a-z][a-z-]*):(\d+)\]/g;
+
+// why: D-24019 — the reward of an optional-ko-reward effect is dispatched to an
+// ALREADY-BUILT reward executor; only these four are seeded. An unseeded reward
+// (e.g. a not-yet-built gain-shard) emits no descriptor — such a marker can
+// never reach the pending queue. Mirrored defensively in heroEffects.execute.ts.
+const OPTIONAL_KO_REWARD_SEEDED_REWARDS: ReadonlySet<HeroKeyword> = new Set<HeroKeyword>([
+  'rescue',
+  'draw',
+  'attack',
+  'recruit',
+]);
+
 // why: extract magnitude from icon-adjacent integers — avoids per-card manual markup (D-21505)
 /** Regex for attack/recruit icon-adjacent magnitude, e.g. "+2[icon:attack]". */
 const ICON_MAGNITUDE_PATTERN = /\+?(\d+)\s*\[icon:(attack|recruit)\]/g;
@@ -268,6 +289,31 @@ function parseAbilityText(abilityText: string): {
     countScaledMatch = countScaledRegex.exec(abilityText);
   }
 
+  // Step 2e: Extract [keyword:optional-ko-reward:<reward>:<n>] markup. The
+  // reward is stored in rewardTypes; the reward magnitude is stored in
+  // magnitudes so the effect builder can attach both. A descriptor is emitted
+  // ONLY when the reward is in the seeded set AND n ≥ 1 — an unseeded reward
+  // (e.g. a not-yet-built gain-shard) or a zero magnitude emits no effect, so
+  // such a marker can never reach the pending queue.
+  // why: D-24019 — the optional-KO-reward token has three segments not matched
+  // by KEYWORD_PATTERN; the reward dispatches to the existing executor and the
+  // magnitude is the reward magnitude.
+  const rewardTypes: Map<HeroKeyword, HeroKeyword> = new Map();
+  const optionalKoRewardRegex = new RegExp(OPTIONAL_KO_REWARD_PATTERN.source, 'g');
+  let optionalKoRewardMatch: RegExpExecArray | null = optionalKoRewardRegex.exec(abilityText);
+  while (optionalKoRewardMatch !== null) {
+    const rewardCandidate = optionalKoRewardMatch[1]!;
+    const rewardMagnitude = parseInt(optionalKoRewardMatch[2]!, 10);
+    if (isValidHeroKeyword(rewardCandidate)
+      && OPTIONAL_KO_REWARD_SEEDED_REWARDS.has(rewardCandidate)
+      && rewardMagnitude >= 1) {
+      keywords.push('optional-ko-reward');
+      magnitudes.set('optional-ko-reward', rewardMagnitude);
+      rewardTypes.set('optional-ko-reward', rewardCandidate);
+    }
+    optionalKoRewardMatch = optionalKoRewardRegex.exec(abilityText);
+  }
+
   // Step 3: Extract [icon:X] markup
   const iconRegex = new RegExp(ICON_PATTERN.source, 'g');
   let iconMatch: RegExpExecArray | null = iconRegex.exec(abilityText);
@@ -335,6 +381,15 @@ function parseAbilityText(abilityText: string): {
         const countSource = countSources.get('attack-per-count');
         if (magnitude !== undefined && countSource !== undefined) {
           effects.push({ type: keyword, magnitude, countSource });
+        }
+      } else if (keyword === 'optional-ko-reward') {
+        // why: D-24019 — the optional-KO-reward effect carries its rewardType so
+        // the resolve move can dispatch the reward to the existing executor on
+        // KO; magnitude is the reward magnitude. Step 2e records both together,
+        // so the guard both narrows the optional Map reads and is defensive.
+        const rewardType = rewardTypes.get('optional-ko-reward');
+        if (magnitude !== undefined && rewardType !== undefined) {
+          effects.push({ type: keyword, magnitude, rewardType });
         }
       } else if (magnitude !== undefined) {
         effects.push({ type: keyword, magnitude });

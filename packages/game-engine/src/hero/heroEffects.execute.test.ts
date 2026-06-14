@@ -10,7 +10,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { executeHeroEffects } from './heroEffects.execute.js';
+import { executeHeroEffects, selectDefaultOptionalKoTarget } from './heroEffects.execute.js';
 import { makeMockCtx } from '../test/mockCtx.js';
 import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
 import type { HeroAbilityHook } from '../rules/heroAbility.types.js';
@@ -2083,5 +2083,133 @@ describe('executeHeroEffects rescue logging (D-24017)', () => {
       gameState.messages.some((line) => line.includes('Bystander supply is empty')),
       'an empty-supply hero rescue must append a game-log line explaining the no-op.',
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-248 — optional-KO-reward park case (D-24019)
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects optional-ko-reward park (WP-248)', () => {
+  const mockCtx = makeMockCtx();
+
+  it('playing the effect with ≥1 card in hand/discard parks a choice (no auto-KO, no reward)', () => {
+    const gameState = makeTestState({
+      hand: ['card-h'],
+      discard: ['card-d'],
+      inPlay: ['hero-x'],
+      bystanders: ['bystander-0'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['optional-ko-reward'],
+          effects: [{ type: 'optional-ko-reward', magnitude: 1, rewardType: 'rescue' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.pendingOptionalKoRewards?.length, 1, 'exactly one choice parked');
+    assert.deepStrictEqual(
+      gameState.pendingOptionalKoRewards![0],
+      { playerID: '0', rewardType: 'rescue', rewardMagnitude: 1, sourceCardId: 'hero-x' },
+      'parked entry records player, reward, magnitude, and source card',
+    );
+    // No KO and no reward at play time.
+    assert.deepStrictEqual(gameState.ko, [], 'no card KOd at play time');
+    assert.deepStrictEqual(gameState.playerZones['0'].victory, [], 'no bystander rescued at play time');
+    assert.deepStrictEqual(gameState.piles.bystanders, ['bystander-0'], 'bystander supply untouched at play time');
+    // The park is SILENT (mirrors WP-242).
+    assert.equal(gameState.messages.length, 0, 'the park appends no game-log line');
+  });
+
+  it('with 0 eligible cards (hand + discard both empty) it is a no-op plus a game-log line', () => {
+    const gameState = makeTestState({
+      hand: [],
+      discard: [],
+      inPlay: ['hero-x'],
+      bystanders: ['bystander-0'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['optional-ko-reward'],
+          effects: [{ type: 'optional-ko-reward', magnitude: 1, rewardType: 'rescue' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.pendingOptionalKoRewards?.length ?? 0, 0, 'no choice parked when nothing is eligible');
+    assert.ok(
+      gameState.messages.some((line) => line.includes('both hand and discard pile are empty')),
+      'a 0-eligible optional-KO-reward must append a game-log line explaining the no-op',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-248 — selectDefaultOptionalKoTarget tie-break (D-24019)
+// ---------------------------------------------------------------------------
+
+describe('selectDefaultOptionalKoTarget tie-break (WP-248)', () => {
+  /** Minimal PlayerZones for the selector (only discard + hand are scanned). */
+  function zonesOf(hand: string[], discard: string[]) {
+    return {
+      deck: [],
+      hand,
+      discard,
+      inPlay: [],
+      victory: [],
+    } as unknown as Parameters<typeof selectDefaultOptionalKoTarget>[0];
+  }
+
+  /** Minimal cardStats with only the cost field the selector reads. */
+  function statsOf(costs: Record<string, number>) {
+    const result: Record<string, { attack: number; recruit: number; cost: number; fightCost: number }> = {};
+    for (const cardId of Object.keys(costs)) {
+      result[cardId] = { attack: 0, recruit: 0, cost: costs[cardId]!, fightCost: 0 };
+    }
+    return result as unknown as Parameters<typeof selectDefaultOptionalKoTarget>[1];
+  }
+
+  it('picks the lowest-cost card across both zones (cost beats zone)', () => {
+    const target = selectDefaultOptionalKoTarget(
+      zonesOf(['cheap-hand'], ['pricey-discard']),
+      statsOf({ 'cheap-hand': 1, 'pricey-discard': 3 }),
+    );
+    assert.deepStrictEqual(target, { zone: 'hand', cardId: 'cheap-hand' });
+  });
+
+  it('breaks a cost tie by preferring discard over hand', () => {
+    const target = selectDefaultOptionalKoTarget(
+      zonesOf(['hand-card'], ['discard-card']),
+      statsOf({ 'hand-card': 2, 'discard-card': 2 }),
+    );
+    assert.deepStrictEqual(target, { zone: 'discard', cardId: 'discard-card' });
+  });
+
+  it('breaks a cost+zone tie by lowest array index', () => {
+    const target = selectDefaultOptionalKoTarget(
+      zonesOf([], ['first', 'second']),
+      statsOf({ first: 2, second: 2 }),
+    );
+    assert.deepStrictEqual(target, { zone: 'discard', cardId: 'first' });
+  });
+
+  it('treats a card with no cardStats entry as cost 0', () => {
+    const target = selectDefaultOptionalKoTarget(
+      zonesOf(['unknown-card'], ['known-cost-1']),
+      statsOf({ 'known-cost-1': 1 }),
+    );
+    assert.deepStrictEqual(target, { zone: 'hand', cardId: 'unknown-card' });
+  });
+
+  it('returns null when both zones are empty', () => {
+    const target = selectDefaultOptionalKoTarget(zonesOf([], []), statsOf({}));
+    assert.equal(target, null);
   });
 });

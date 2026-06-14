@@ -165,6 +165,7 @@
 - `packages/game-engine/src/hero/heroEffects.execute.ts` — **modified** — MVP set + park case + `selectDefaultOptionalKoTarget`.
 - `packages/game-engine/src/moves/optionalKoReward.resolve.ts` — **new** — move + `hasPendingOptionalKoReward`.
 - `packages/game-engine/src/game.ts` — **modified** — registration + `advanceStage`/cleanup turn-end guard site.
+- `packages/game-engine/src/game.test.ts` — **modified** — Amendment A — move-registration drift test (add `resolveOptionalKoReward`, "10 moves" → "11 moves").
 - `packages/game-engine/src/moves/coreMoves.impl.ts` — **modified** — guard sites: `drawCards`, `playCard`, `endTurn`.
 - `packages/game-engine/src/moves/fightVillain.ts` — **modified** — guard site.
 - `packages/game-engine/src/moves/fightMastermind.ts` — **modified** — guard site.
@@ -183,12 +184,18 @@
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — WP-248 `[x]`.
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** — EC-279 Pending → Done.
 
-**Total: 24 files** (20 engine/data + 4 governance), per WP-248 §Files Expected
+**Total: 25 files** (21 engine/data + 4 governance), per WP-248 §Files Expected
 to Change. **Pre-flight pin RESOLVED (2026-06-14 hardening pass):** the board-freeze
 guard is NOT a single module — it is distributed inline across six move files
 (`coreMoves.impl.ts`, `game.ts`, `fightVillain.ts`, `fightMastermind.ts`,
 `recruitHero.ts`, `villainDeck/villainDeck.reveal.ts`), each taking the new
-`hasPendingOptionalKoReward` check. Count is LOCKED at 24 — no flex.
+`hasPendingOptionalKoReward` check. **Amendment A (2026-06-14, execution;
+operator-authorized):** `game.test.ts` (move-registration drift test) was omitted
+at draft — the mandated `resolveOptionalKoReward` registration breaks its exact
+`LegendaryGame.moves` assertion — so it is added as the 25th allowlist file. The
+WP-248 + EC-279 bodies are additionally amended in-flight (the amendment act), so
+the close `git diff` spans 27 paths (25 allowlist + WP-248 + EC-279). Count is now
+LOCKED at 25.
 
 ## After Completing
 - [ ] `pnpm --filter @legendary-arena/game-engine build` + `test` exit 0; net-new
@@ -213,7 +220,7 @@ guard is NOT a single module — it is distributed inline across six move files
   available, and `getLegalMoves` returns EXACTLY ONE deterministic
   `resolveOptionalKoReward` (never `{decline}`). One missed guard site = one
   failing assertion.
-- [ ] `git diff --name-only` = exactly the 24 files (count locked; no pre-flight flex).
+- [ ] `git diff --name-only` = exactly the 25 allowlist files (Amendment A added `game.test.ts`) plus the two in-flight spec amendments (`WP-248`, `EC-279`) = 27 paths total.
 - [ ] STATUS updated; DECISIONS D-24019 Active byte-identical; WORK_INDEX WP-248
   `[x]`; EC_INDEX EC-279 → Done.
 

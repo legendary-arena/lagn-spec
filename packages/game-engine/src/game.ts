@@ -8,6 +8,7 @@ import { drawCards, playCard, endTurn } from './moves/coreMoves.impl.js';
 import { HAND_SIZE, drawCardsIntoHand } from './moves/drawCards.logic.js';
 import { resolveHeroChoice } from './moves/heroChoice.resolve.js';
 import { resolveKoHeroChoice, hasPendingKoHeroChoice } from './moves/koHeroChoice.resolve.js';
+import { resolveOptionalKoReward, hasPendingOptionalKoReward } from './moves/optionalKoReward.resolve.js';
 import { executeRuleHooks } from './rules/ruleRuntime.execute.js';
 import { applyRuleEffects } from './rules/ruleRuntime.effects.js';
 import { DEFAULT_IMPLEMENTATION_MAP } from './rules/ruleRuntime.impl.js';
@@ -84,6 +85,10 @@ function advanceStage({ G, events }: MoveContext): void {
   // so the player resolves the Fight effect before any other action. Placed
   // before any G read/write and before the cleanup turn-end check below.
   if (hasPendingKoHeroChoice(G)) { return; }
+  // why: block-all guard (D-24019) — optional-KO-reward choice pending; the
+  // board is frozen until resolved (this also blocks the cleanup turn-end
+  // auto-transition below, mirroring the D-24008 KO-hero check above).
+  if (hasPendingOptionalKoReward(G)) { return; }
   // why: turn cannot end while a player-choice reveal is pending; at cleanup,
   // advanceTurnStage would otherwise call events.endTurn() and bypass the
   // endTurn-move guard (D-22002). The KO turn-end block is already covered by
@@ -302,6 +307,7 @@ export const LegendaryGame: Game<LegendaryGameState, Record<string, unknown>, Ma
     fightMastermind: { move: fightMastermind, client: false },
     resolveHeroChoice: { move: resolveHeroChoice, client: false },
     resolveKoHeroChoice: { move: resolveKoHeroChoice, client: false },
+    resolveOptionalKoReward: { move: resolveOptionalKoReward, client: false },
   },
 
   // why: phase `next` fields declare the intended linear progression

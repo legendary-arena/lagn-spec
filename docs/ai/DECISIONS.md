@@ -25041,7 +25041,7 @@ resolves, and bot-auto-resolves but renders no human prompt on its own.
 
 **Packet:** WP-248 (EC-279). Co-release: WP-249 (EC-280).
 **Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
-**Status:** Reserved (proposed)
+**Status:** Active
 
 ---
 

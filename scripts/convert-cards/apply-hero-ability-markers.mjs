@@ -50,8 +50,9 @@ const MAP_PATH = join(__dirname, 'inputs', 'hero-ability-markers.json');
 // why: reveal-attack-choose and reveal-ko-attack use [1-9]\d* (not \d+) to reject the zero-magnitude form per D-22003/D-22301
 // why: D-22501 — draw uses [1-9]\d* to reject the zero-magnitude form; appended additively, the existing rescue/reveal branches are kept byte-for-byte intact
 // why: D-24016 — count-scaled attack token has three segments ([keyword:attack-per-count:<source>:<perUnit>]); <source> is a lowercase-hyphen slug, <perUnit> uses [1-9]\d* to reject the zero-magnitude form
+// why: D-24019 — optional-ko-reward token has three segments ([keyword:optional-ko-reward:<reward>:<n>]); <reward> is a lowercase-hyphen reward slug, <n> uses [1-9]\d* to reject the zero-magnitude form (the strict build gate; the engine parser captures (\d+) and enforces n ≥ 1 downstream)
 const VALID_TOKEN_PATTERN =
-  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$|^\[keyword:reveal-cost-attack\]$|^\[keyword:reveal-odd-draw\]$|^\[keyword:reveal-attack-choose:[1-9]\d*\]$|^\[keyword:reveal-ko-attack:[1-9]\d*\]$|^\[keyword:draw:[1-9]\d*\]$|^\[keyword:attack-per-count:[a-z][a-z-]*:[1-9]\d*\]$/;
+  /^\[keyword:rescue:\d+\]$|^\[keyword:reveal\]$|^\[keyword:reveal:\d+\]$|^\[keyword:reveal-ko\]$|^\[keyword:reveal-min:\d+\]$|^\[keyword:reveal-ko-or-draw:\d+\]$|^\[keyword:reveal-cost-attack\]$|^\[keyword:reveal-odd-draw\]$|^\[keyword:reveal-attack-choose:[1-9]\d*\]$|^\[keyword:reveal-ko-attack:[1-9]\d*\]$|^\[keyword:draw:[1-9]\d*\]$|^\[keyword:attack-per-count:[a-z][a-z-]*:[1-9]\d*\]$|^\[keyword:optional-ko-reward:[a-z][a-z-]*:[1-9]\d*\]$/;
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -193,7 +194,7 @@ function resolveAbility(card, abilityIndex, cardSlug, heroSlug, setAbbr) {
  * @param {string} setAbbr - The set abbreviation (for error messages).
  */
 function assertValidToken(markupToken, cardSlug, heroSlug, setAbbr) {
-  // why: only valid token forms per D-21601, D-21701, D-21702, D-22301, D-22501, D-24016 — catch typos before data is written
+  // why: only valid token forms per D-21601, D-21701, D-21702, D-22301, D-22501, D-24016, D-24019 — catch typos before data is written
   if (!VALID_TOKEN_PATTERN.test(markupToken)) {
     console.error(
       `hero-ability-markers.json uses markupToken "${markupToken}" for card "${cardSlug}" ` +
@@ -201,8 +202,10 @@ function assertValidToken(markupToken, cardSlug, heroSlug, setAbbr) {
         `forms: "[keyword:rescue:N]", "[keyword:reveal]", "[keyword:reveal:N]", ` +
         `"[keyword:reveal-ko]", "[keyword:reveal-min:N]", "[keyword:reveal-ko-or-draw:N]", ` +
         `"[keyword:reveal-cost-attack]", "[keyword:reveal-odd-draw]", "[keyword:reveal-attack-choose:N]", ` +
-        `"[keyword:reveal-ko-attack:N]", "[keyword:draw:N]", or "[keyword:attack-per-count:<source>:N]" ` +
-        `(N ≥ 1; <source> a lowercase-hyphen count-source slug). Fix the typo in the marker map, or — if a new ` +
+        `"[keyword:reveal-ko-attack:N]", "[keyword:draw:N]", "[keyword:attack-per-count:<source>:N]", ` +
+        `or "[keyword:optional-ko-reward:<reward>:N]" ` +
+        `(N ≥ 1; <source> a lowercase-hyphen count-source slug; <reward> a lowercase-hyphen reward slug). ` +
+        `Fix the typo in the marker map, or — if a new ` +
         `token form is genuinely needed — update DECISIONS.md first (a separate WP) and then this validation.`,
     );
     process.exit(1);

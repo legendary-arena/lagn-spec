@@ -11,7 +11,9 @@
  */
 
 import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
-import type { CardExtId } from '../state/zones.types.js';
+import type { CardExtId, PlayerZones } from '../state/zones.types.js';
+import type { CardStatEntry } from '../economy/economy.types.js';
+import type { HeroKeyword } from '../rules/heroKeywords.js';
 import type { HeroAbilityHook, HeroEffectDescriptor } from '../rules/heroAbility.types.js';
 import { getHooksForCard } from '../rules/heroAbility.types.js';
 import { evaluateAllConditions } from './heroConditions.evaluate.js';
@@ -33,9 +35,23 @@ import { resolveCountSource } from './heroCountSource.resolve.js';
 // WP-220 adds 'reveal-attack-choose' (D-22003).
 // WP-223 adds 'reveal-ko-attack' (D-22301).
 // WP-247 adds 'attack-per-count' (D-24016) — count-scaled attack.
+// WP-248 adds 'optional-ko-reward' (D-24019) — parks a "you may KO a card; if
+// you do, <reward>" interactive choice.
 // 'wound' and 'conditional' remain deferred — they require targeting UI or
 // additional game systems not yet implemented.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack', 'attack-per-count']);
+const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack', 'attack-per-count', 'optional-ko-reward']);
+
+// why: D-24019 — the reward of an optional-ko-reward effect is dispatched to an
+// ALREADY-BUILT reward executor; only these four are seeded. Defensive guard at
+// the park site: the parser already filters unseeded rewards, so an unseeded
+// type here is a logged no-op that never reaches the pending queue. Mirrors the
+// same constant in setup/heroAbility.setup.ts (two copies, per duplicate-first).
+const OPTIONAL_KO_REWARD_SEEDED_REWARDS: ReadonlySet<HeroKeyword> = new Set<HeroKeyword>([
+  'rescue',
+  'draw',
+  'attack',
+  'recruit',
+]);
 
 // why: these keywords have no external magnitude; the pre-check gate must not
 // reject them for missing magnitude — they use internal cost or parity logic
@@ -194,7 +210,11 @@ export function executeHeroEffects(
  * @param cardId - The played hero card's CardExtId.
  * @param effect - The effect descriptor to execute.
  */
-function executeSingleEffect(
+// why: D-24019 — exported so resolveOptionalKoReward can dispatch the reward to
+// the existing executor (rescue / draw / attack / recruit) instead of
+// re-implementing it. The KO-then-reward path passes a synthesized
+// { type: rewardType, magnitude: rewardMagnitude } descriptor.
+export function executeSingleEffect(
   G: LegendaryGameState,
   ctx: unknown,
   playerID: string,
@@ -517,9 +537,116 @@ function executeSingleEffect(
       G.messages.push(`Count-scaled attack: +${grant} (${effect.magnitude as number} per ${effect.countSource}, count ${count}).`);
       break;
     }
+    case 'optional-ko-reward': {
+      // why: D-24019 — parks an interactive choice (mirrors WP-242); the reward
+      // is granted on resolve (resolveOptionalKoReward), not at play time. The
+      // player either declines (no KO, no reward) or KOs exactly one card from
+      // their hand or discard pile, in which case the reward fires.
+      const playerZones = G.playerZones[playerID];
+      if (!playerZones) { break; }
+      // why: eligible = discard ∪ hand, ANY card INCLUDING wounds (the printed
+      // text is "a card", not "a Hero") — no type/cost/keyword filtering. 0
+      // eligible (both zones empty) → skipped no-op + a G.messages line (mirrors
+      // the D-24017 empty-supply rescue logging), so the player can see why the
+      // ability did nothing.
+      const eligibleCount = playerZones.discard.length + playerZones.hand.length;
+      if (eligibleCount === 0) {
+        G.messages.push(
+          `Player ${playerID} could not KO a card for a hero ability — both hand and discard pile are empty, so no reward was granted.`,
+        );
+        break;
+      }
+      // why: defensive — the parser only emits a seeded rewardType, but an
+      // unseeded reward here is a logged no-op that never reaches the queue
+      // (no reward executor exists for it).
+      const rewardType = effect.rewardType;
+      if (rewardType === undefined || !OPTIONAL_KO_REWARD_SEEDED_REWARDS.has(rewardType)) {
+        G.messages.push(
+          `Player ${playerID} played a hero ability whose optional-KO reward is not yet supported, so the choice was skipped.`,
+        );
+        break;
+      }
+      // why: lazy-init at the park site (mirrors villainEffects.execute.ts:190
+      // pendingKoHeroChoices) — NEVER in Game.setup; the optional field tolerates
+      // older snapshots. The park itself is SILENT (no G.messages line), mirroring
+      // the WP-242 park; the reward grant is logged by the dispatched executor.
+      if (!G.pendingOptionalKoRewards) { G.pendingOptionalKoRewards = []; }
+      G.pendingOptionalKoRewards.push({
+        playerID,
+        rewardType,
+        rewardMagnitude: effect.magnitude ?? 1,
+        sourceCardId: cardId,
+      });
+      break;
+    }
     default: {
       // why: unreachable — MVP_KEYWORDS check above filters unsupported keywords
       break;
     }
   }
+}
+
+// ---------------------------------------------------------------------------
+// Deterministic bot/sim default for an optional-KO-reward choice (WP-248)
+// ---------------------------------------------------------------------------
+
+/**
+ * A single optional-KO-reward default target: the zone and the card ext_id.
+ *
+ * Unlike WP-242's KoHeroTarget, the zone union is only discard | hand — the
+ * optional-ko-reward effect KOs from hand or discard, never inPlay.
+ */
+export interface OptionalKoTarget {
+  zone: 'discard' | 'hand';
+  cardId: CardExtId;
+}
+
+/**
+ * Selects the card the deterministic bot/sim KOs when an optional-KO-reward
+ * choice is pending.
+ *
+ * Tie-break ORDER (D-24019, locked — its OWN policy, NOT a reuse of WP-242's
+ * selectDefaultKoTarget; it does not exclude wounds and does not prefer
+ * S.H.I.E.L.D. cards): (1) lowest cost; then (2) discard-zone before hand-zone;
+ * then (3) lowest array index within the chosen zone. ANY card is eligible
+ * (the printed text says "a card", not "a Hero").
+ *
+ * The bot ALWAYS returns a target and NEVER declines — decline is a human-only
+ * option. Returns null only when both zones are empty (an engine-invariant
+ * violation while a choice is pending, since the park requires ≥1 eligible
+ * card and the block-all guard freezes the board).
+ *
+ * @param zones - The player's card zones (only discard + hand are scanned).
+ * @param cardStats - Card stat lookup for the cost tie-break (?.cost ?? 0).
+ * @returns The default KO target, or null when both zones are empty.
+ */
+export function selectDefaultOptionalKoTarget(
+  zones: PlayerZones,
+  cardStats: Record<CardExtId, CardStatEntry>,
+): OptionalKoTarget | null {
+  // why: iterate discard fully (index ascending) then hand (index ascending),
+  // replacing the candidate ONLY on a STRICTLY lower cost. Because the scan
+  // order is discard-before-hand and lowest-index-first, the retained candidate
+  // for the minimum cost is automatically the discard-before-hand, lowest-index
+  // one — exactly the locked tie-break, without an explicit rank comparison.
+  let bestZone: 'discard' | 'hand' | null = null;
+  let bestCardId: CardExtId | null = null;
+  let bestCost = Number.POSITIVE_INFINITY;
+  const orderedZones: ('discard' | 'hand')[] = ['discard', 'hand'];
+  for (const zoneName of orderedZones) {
+    const zoneArray = zones[zoneName];
+    for (let cardIndex = 0; cardIndex < zoneArray.length; cardIndex++) {
+      const cardId = zoneArray[cardIndex]!;
+      const cost = cardStats[cardId]?.cost ?? 0;
+      if (cost < bestCost) {
+        bestCost = cost;
+        bestZone = zoneName;
+        bestCardId = cardId;
+      }
+    }
+  }
+  if (bestZone === null || bestCardId === null) {
+    return null;
+  }
+  return { zone: bestZone, cardId: bestCardId };
 }

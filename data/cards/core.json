@@ -43,7 +43,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander."
+            "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander. [keyword:optional-ko-reward:rescue:1]"
           ]
         },
         {

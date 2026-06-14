@@ -81,6 +81,11 @@ export interface HeroEffectDescriptor {
   // Other keywords ignore it; an 'attack-per-count' effect with no/invalid
   // countSource is a skipped no-op.
   countSource?: HeroCountSource;
+  // why: D-24019 — for an 'optional-ko-reward' effect, rewardType is the reward
+  // granted iff the player KOs a card (dispatched to the existing reward
+  // executor: rescue / draw / attack / recruit). The existing magnitude field
+  // carries the reward magnitude. Other keywords ignore it.
+  rewardType?: HeroKeyword;
 }
 
 // ---------------------------------------------------------------------------

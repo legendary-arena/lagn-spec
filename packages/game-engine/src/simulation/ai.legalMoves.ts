@@ -17,6 +17,8 @@ import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logi
 import { isGuardBlocking, getPatrolModifier } from '../board/boardKeywords.logic.js';
 import { hasPendingKoHeroChoice } from '../moves/koHeroChoice.resolve.js';
 import { selectDefaultKoTarget } from '../villain/villainEffects.execute.js';
+import { hasPendingOptionalKoReward } from '../moves/optionalKoReward.resolve.js';
+import { selectDefaultOptionalKoTarget } from '../hero/heroEffects.execute.js';
 
 // why: simulation covers the play-phase only; lobby moves (setPlayerReady,
 // startMatchIfReady) are excluded because runSimulation starts the per-game
@@ -34,6 +36,7 @@ const SIMULATION_MOVE_NAMES = [
   'recruitHero',
   'fightMastermind',
   'resolveKoHeroChoice',
+  'resolveOptionalKoReward',
 ] as const;
 
 // why: type is exported implicitly via the const array above; external
@@ -99,6 +102,25 @@ export function getLegalMoves(
     // why: fail-closed — active player has no zones (malformed state).
     // Return empty list; the runner's zero-legal-moves fallback handles
     // the degenerate case.
+    return legalMoves;
+  }
+
+  // why: pending optional-KO-reward short-circuit (D-24019) — inserted BEFORE
+  // the KO-hero short-circuit per the fixed precedence lock. While an
+  // optional-KO-reward choice is pending the engine block-all guard freezes
+  // every other move, so the bot must resolve it first. The single legal move
+  // is resolveOptionalKoReward with the deterministic default target
+  // (selectDefaultOptionalKoTarget: lowest cost, discard-before-hand, lowest
+  // index) — the bot KOs and takes the reward and NEVER declines (decline is
+  // human-only). defaultTarget is non-null here because the park requires ≥1
+  // eligible card and the board is frozen. Returns a list of length EXACTLY 1.
+  if (hasPendingOptionalKoReward(gameState)) {
+    const defaultTarget = selectDefaultOptionalKoTarget(zones, gameState.cardStats);
+    if (defaultTarget !== null) {
+      return [{ name: 'resolveOptionalKoReward', args: defaultTarget }];
+    }
+    // why: defensive — if no target exists (engine-invariant violation), fail
+    // closed with an empty list rather than emit an unresolvable move.
     return legalMoves;
   }
 
