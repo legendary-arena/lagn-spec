@@ -2024,3 +2024,64 @@ describe('executeHeroEffects attack-per-count (WP-247)', () => {
     assert.ok(serialized.length > 0, 'JSON.stringify(G) must succeed after a count-scaled grant.');
   });
 });
+
+// ---------------------------------------------------------------------------
+// D-24017 — hero-ability rescue observability (game-log feedback)
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects rescue logging (D-24017)', () => {
+  const mockCtx = makeMockCtx();
+
+  it('appends a game-log line naming the rescued count on a successful rescue', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: ['b-1', 'b-2'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    // The rescue still happens (behavior unchanged) ...
+    assert.deepEqual(gameState.playerZones['0'].victory, ['b-1'],
+      'b-1 should be rescued to the victory zone.');
+    // ... and is now observable in the game log.
+    assert.ok(
+      gameState.messages.some((line) => line.includes('rescued 1 bystander(s) via a hero ability')),
+      'a successful hero rescue must append a game-log line naming the count.',
+    );
+  });
+
+  it('appends a supply-empty game-log line when the Bystander supply is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: [],
+      victory: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    // The no-op behavior is unchanged ...
+    assert.deepEqual(gameState.playerZones['0'].victory, [],
+      'victory zone stays empty when the supply is empty.');
+    // ... but the player now sees WHY nothing was rescued.
+    assert.ok(
+      gameState.messages.some((line) => line.includes('Bystander supply is empty')),
+      'an empty-supply hero rescue must append a game-log line explaining the no-op.',
+    );
+  });
+});

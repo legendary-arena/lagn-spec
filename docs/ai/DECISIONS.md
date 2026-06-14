@@ -24864,4 +24864,32 @@ if it diverges (no fixture plays Covert Operation).
 **Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
 **Status:** Active
 
+---
+
+**D-24017: Hero-Ability Rescue Is Logged to the Game Log (Observability)**
+
+The hero-ability `rescue` executor (`hero/heroEffects.execute.ts` `case 'rescue'`) now
+appends a `G.messages` line in two cases that were previously **silent**: (1) a successful
+rescue logs `Player <id> rescued <N> bystander(s) via a hero ability.`, and (2) an
+empty-Bystander-supply no-op logs `Player <id> could not rescue a Bystander via a hero
+ability — the Bystander supply is empty.` This mirrors how fight rescues are already logged
+(`fightVillain.ts` / `fightMastermind.ts`) and surfaces in `UIState.log` (projected by
+`uiState.build.ts`, so it reaches the client — confirmed via the WP-246 diagnostic snapshot).
+
+**Why:** a live diagnostic (match `qxiY97A0m2J`) showed Black Widow's "Mission Accomplished"
+(`[hc:tech]: Rescue a Bystander`) appearing to "do nothing" — the Bystander supply had been
+exhausted (`piles.bystandersCount: 0`), so the rescue was a correct no-op, but the executor
+emitted no feedback, so the player could not tell whether the card was broken or merely had
+nothing to rescue. Rescue gameplay is unchanged; this is **observability only** — the same
+zone moves happen, plus a log line. Determinism preserved (a deterministic string append to
+`G.messages`, no RNG/clock); the replay sentinel did NOT diverge (no recorded fixture plays a
+hero-ability rescue), so no re-pin. Scoped to the `rescue` executor only — broader
+hero-effect logging and condition-unmet feedback are out of scope.
+
+**Direct fix** (operator-sanctioned, not a WP — small additive engine bugfix, mirrors the
+2026-06-13 mastermind-bystander rescue fix precedent). Engine `test` 1267 → 1269 pass / 0 fail.
+
+**Landed:** 2026-06-13.
+**Status:** Active
+
 Protect this file.

@@ -258,9 +258,17 @@ function executeSingleEffect(
         break;
       }
       if (G.piles.bystanders.length === 0) {
+        // why: D-24017 — an empty Bystander supply is a legitimate no-op, but a
+        // silent skip reads as "the hero card did nothing" (player confusion,
+        // per the live diagnostic). Log it so the reason is observable in the
+        // game log (UIState.log), mirroring how fight rescues are logged.
+        G.messages.push(
+          `Player ${playerID} could not rescue a Bystander via a hero ability — the Bystander supply is empty.`,
+        );
         break;
       }
       const rescueCount = Math.min(rescueMagnitude, G.piles.bystanders.length);
+      let rescuedCount = 0;
       for (let rescued = 0; rescued < rescueCount; rescued++) {
         // why: top-of-pile convention — pile[0] is the first available bystander (D-21501)
         const topBystander = G.piles.bystanders[0];
@@ -270,7 +278,14 @@ function executeSingleEffect(
         const moveResult = moveCardFromZone(G.piles.bystanders, playerZones.victory, topBystander);
         G.piles.bystanders = moveResult.from;
         playerZones.victory = moveResult.to;
+        rescuedCount++;
       }
+      // why: D-24017 — surface the hero-ability rescue in the game log the same
+      // way fight rescues are (fightVillain/fightMastermind), so a successful
+      // rescue is observable to the player rather than a silent zone move.
+      G.messages.push(
+        `Player ${playerID} rescued ${rescuedCount} bystander(s) via a hero ability.`,
+      );
       break;
     }
     case 'reveal': {
