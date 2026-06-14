@@ -24,9 +24,11 @@
   After-Completing gates. Any FALSE = failed execution.
 
 ## Before Starting
-- [ ] **WP-248 / EC-279 landed or co-releasing** — `G.pendingOptionalKoReward(s)`
-  + `PendingOptionalKoReward` + `resolveOptionalKoReward` exist. This packet
-  PROJECTS + SUBMITS only; it adds no engine gameplay.
+- [ ] **WP-248 / EC-279 landed** — ✅ on `main` 2026-06-14 (commit `1fe28c15`,
+  PR #317): `G.pendingOptionalKoRewards` + `PendingOptionalKoReward { playerID,
+  rewardType, rewardMagnitude, sourceCardId }` + `resolveOptionalKoReward` +
+  `hasPendingOptionalKoReward` exist. This packet PROJECTS + SUBMITS only; it adds
+  no engine gameplay.
 - [ ] **WP-243 landed** — the KO-hero UX template: `UIPendingKoHeroChoice`
   (`ui/uiState.types.ts`), its projection (`ui/uiState.build.ts`), chooser-only
   redaction (`ui/uiState.filter.ts`, D-24011); `PendingKoHeroChoicePrompt.vue`,
@@ -37,9 +39,15 @@
 
 ## Locked Values (verbatim from WP-249 — do not re-derive)
 - **Projection type:** `UIPendingOptionalKoReward` (`ui/uiState.types.ts`) — front
-  entry `{ rewardLabel: string; eligibleHand: UICardDisplay[]; eligibleDiscard:
-  UICardDisplay[] }`, mirroring `UIPendingKoHeroChoice`; reuse the existing
-  card-display sub-type.
+  entry `{ playerID: string; rewardLabel: string; eligibleHand:
+  UIEligibleKoHeroCard[]; eligibleDiscard: UIEligibleKoHeroCard[] }`, mirroring
+  `UIPendingKoHeroChoice`. **`playerID` REQUIRED** — the chooser-only redaction
+  keys on it (pre-flight finding 2026-06-14). Eligible entries **REUSE
+  `UIEligibleKoHeroCard`** (`{ zone, cardId, display }`), NOT bare
+  `UICardDisplay[]` — each entry carries the instance `cardId` (separate from
+  `display`) so the client `{zone,cardId}` submission round-trips to the engine
+  resolve (the KO-hero prompt submits `entry.cardId` for this reason). `eligibleHand`
+  entries carry `zone:"hand"`, `eligibleDiscard` `zone:"discard"`.
 - **Projection:** front `pendingOptionalKoReward`, eligible hand+discard
   recomputed fresh with defensive copies (no aliasing of `G` arrays), in current
   zone + index order — NO pre-filter / NO reorder (the round-trip rule).

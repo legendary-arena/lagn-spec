@@ -7,8 +7,11 @@
 > inert without WP-248's `pendingOptionalKoReward` state + `resolveOptionalKoReward`
 > move; WP-248 has no human-facing choice surface without this packet).
 > **Paired EC:** EC-280.
-> **Depends on:** WP-248 (engine), WP-243 (KO-hero UX precedent), WP-128 (UIState
-> board projections), WP-061 (arena-client). WP-248 must land first or co-release.
+> **Depends on:** WP-248 (engine) ✅ **landed 2026-06-14 (commit `1fe28c15`, PR #317)**,
+> WP-243 (KO-hero UX precedent), WP-128 (UIState board projections), WP-061
+> (arena-client). The co-release lock still binds the other direction: WP-249 must
+> not merge to a player-visible release before WP-248 — which is satisfied (WP-248
+> is already on `main`).
 
 ---
 
@@ -48,9 +51,11 @@ mapping (§Locked Contract Values), never an ad-hoc per-card string.
 > the in-flight `#314` branch; D-24019 reserved by WP-248; this packet reserves
 > **D-24020**.
 
-- **WP-248 complete (or co-released).** `G.pendingOptionalKoReward(s)` FIFO +
-  `PendingOptionalKoReward` shape + `resolveOptionalKoReward` move + reward
-  dispatch exist. **This UX packet does not change engine gameplay.**
+- **WP-248 complete.** ✅ Landed on `main` 2026-06-14 (commit `1fe28c15`, PR #317):
+  `G.pendingOptionalKoRewards` FIFO + `PendingOptionalKoReward` shape
+  (`{ playerID, rewardType, rewardMagnitude, sourceCardId }`) +
+  `resolveOptionalKoReward` move + `hasPendingOptionalKoReward` + the reward
+  dispatch all exist. **This UX packet does not change engine gameplay.**
 - **WP-243 complete.** The KO-hero UX exists and is the structural template:
   `ui/uiState.types.ts` (`UIPendingKoHeroChoice`), `ui/uiState.build.ts`
   (projection), `ui/uiState.filter.ts` (chooser-only redaction, D-24011);
@@ -132,9 +137,19 @@ If any of the above is false, this packet is **BLOCKED**.
 
 **Locked Contract Values:**
 - Projection type: `UIPendingOptionalKoReward` (in `ui/uiState.types.ts`) — front
-  entry: `{ rewardLabel: string; eligibleHand: UICardDisplay[]; eligibleDiscard:
-  UICardDisplay[] }` (exact shape mirrors `UIPendingKoHeroChoice`; reuse the
-  existing card-display sub-type). `eligibleHand` / `eligibleDiscard` are fresh,
+  entry: `{ playerID: string; rewardLabel: string; eligibleHand:
+  UIEligibleKoHeroCard[]; eligibleDiscard: UIEligibleKoHeroCard[] }`, mirroring
+  `UIPendingKoHeroChoice`. **`playerID` is REQUIRED** — `uiState.filter.ts` keys
+  the chooser-only redaction on it (`audience.playerId === ...playerID`), exactly
+  as the KO-hero filter does; omitting it makes the redaction unable to identify
+  the chooser (pre-flight finding, 2026-06-14). **Eligible entries REUSE the
+  existing `UIEligibleKoHeroCard` sub-type** (`{ zone, cardId, display }`) — NOT a
+  bare `UICardDisplay[]`. Each entry MUST carry its instance `cardId` separately
+  from `display`, because `UICardDisplay.extId` is the display-lookup id and is not
+  guaranteed equal to the zone instance id the engine resolve matches; the KO-hero
+  prompt submits `entry.cardId` for exactly this reason (round-trip rule, pre-flight
+  finding 2026-06-14). Entries in `eligibleHand` carry `zone:"hand"`, in
+  `eligibleDiscard` `zone:"discard"`. `eligibleHand` / `eligibleDiscard` are fresh,
   index-ordered, defensively-copied projections of the current hand/discard (no
   snapshot, no aliasing of `G` arrays, no pre-filter/reorder — the round-trip rule).
 - Reward-label derivation (LOCKED): `rewardLabel` is computed in `uiState.build.ts`
@@ -154,8 +169,10 @@ If any of the above is false, this packet is **BLOCKED**.
 ## Scope (In)
 
 ### A) `packages/game-engine/src/ui/uiState.types.ts` — modified
-- Add `UIPendingOptionalKoReward` + the optional field on the projected UIState
-  (mirrors `UIPendingKoHeroChoice`). `// why: D-24020`.
+- Add `UIPendingOptionalKoReward` (`{ playerID, rewardLabel, eligibleHand,
+  eligibleDiscard }`, eligible entries reusing `UIEligibleKoHeroCard`) + the
+  optional `pendingOptionalKoReward?` field on the projected UIState (mirrors
+  `UIPendingKoHeroChoice` / its `pendingKoHeroChoice?` field). `// why: D-24020`.
 
 ### B) `packages/game-engine/src/ui/uiState.build.ts` — modified
 - Project the front `pendingOptionalKoReward`: the derived `rewardLabel` (the single
@@ -167,7 +184,10 @@ If any of the above is false, this packet is **BLOCKED**.
 
 ### C) `packages/game-engine/src/ui/uiState.filter.ts` — modified
 - Redact `pendingOptionalKoReward` (and the eligible hand/discard) for everyone
-  except the chooser (D-24011 analog). `// why: D-24020 — hand/discard are private`.
+  except the chooser — keyed on `pendingOptionalKoReward.playerID` vs
+  `audience.playerId`, exactly as the KO-hero redaction keys on
+  `pendingKoHeroChoice.playerID` (D-24011 analog). `// why: D-24020 — hand/discard
+  are private to the chooser`.
 
 ### D) `apps/arena-client/src/components/play/OptionalKoRewardPrompt.vue` — **new**
 - Non-dismissible prompt: selectable list of eligible hand + discard cards (zone
@@ -260,11 +280,13 @@ engine UIState projection + arena-client only.
 
 > **Binary — PASS requires ALL TRUE. Any single FALSE = STOP.**
 
-1. `UIPendingOptionalKoReward` projected for the **chooser**: a `rewardLabel`
-   derived by the single deterministic `rewardType` + magnitude mapping (§Locked
-   Contract Values — no ad-hoc/per-card strings) + `eligibleHand`/`eligibleDiscard`
-   in current zone + index order (display data, fresh, defensive copies, no
-   pre-filter/reorder); the field is absent/empty when no choice is pending.
+1. `UIPendingOptionalKoReward` projected for the **chooser**: carries `playerID`
+   (the redaction key) + a `rewardLabel` derived by the single deterministic
+   `rewardType` + magnitude mapping (§Locked Contract Values — no ad-hoc/per-card
+   strings) + `eligibleHand`/`eligibleDiscard` as `UIEligibleKoHeroCard[]` (each
+   entry carrying `zone`, the instance `cardId`, and `display`) in current zone +
+   index order (fresh, defensive copies, no pre-filter/reorder); the field is
+   absent/empty when no choice is pending.
 2. The projection is **redacted** for non-choosers and spectators (no
    hand/discard leak) — proven by a filter test.
 3. `resolveOptionalKoReward` is in the `UiMoveName` union (+ drift assertion if
@@ -372,6 +394,35 @@ Gate order (pre-flight → copilot → lint), run in this drafting session again
   at-most-one-prompt note (defers to WP-248's block-all guard), decline-as-
   first-class, and the double-submit guard. No new files (mapping lives in
   `uiState.build.ts`, the guard in the component) — count unchanged.
+- **Pre-flight RE-RUN (2026-06-14, post-WP-248-merge): READY TO EXECUTE.** Per
+  01.0a Step 5 the prior verdict went stale when WP-248 landed (`1fe28c15`); re-run
+  against the post-merge `main`. WP-248's engine surface verified live
+  (`G.pendingOptionalKoRewards`, `PendingOptionalKoReward {playerID, rewardType,
+  rewardMagnitude, sourceCardId}`, `resolveOptionalKoReward`,
+  `hasPendingOptionalKoReward`). The WP-243 reuse surface verified live:
+  `UIPendingKoHeroChoice` + `UIEligibleKoHeroCard {zone, cardId, display}`
+  (`uiState.types.ts:489/476`), the front-of-queue projection
+  (`uiState.build.ts:695`), the chooser-only redaction keyed on `.playerID`
+  (`uiState.filter.ts:463-488`), `PendingKoHeroChoicePrompt.vue` (submits
+  `entry.cardId`), `uiMoveName.types.ts` (`UiMoveName` — a type-only union, NO
+  runtime drift-count assertion: just append the name), and
+  `useTurnActions.ts` (`hasPendingKoChoice` boolean param blocking
+  `canEndTurn`/`canPassPriority` at ANY stage — add a parallel
+  `hasPendingOptionalKoReward` param). **Two shape defects found and FIXED in this
+  commit:** (1) the projection type omitted `playerID`, which the redaction filter
+  keys on — added; (2) `eligibleHand`/`eligibleDiscard` were typed bare
+  `UICardDisplay[]`, which carry only the display-lookup `extId`, not the zone
+  instance `cardId` the engine resolve matches — retyped to reuse
+  `UIEligibleKoHeroCard` (`{zone, cardId, display}`) so the client's `{zone,cardId}`
+  submission round-trips, mirroring the KO-hero prompt's `entry.cardId` submit. No
+  file-count change (the type + reuse live in `uiState.types.ts`, already in the
+  allowlist). EC-280 §Locked Values updated in parallel (parity lock).
+- **Copilot (01.7) + Lint (00.3) RE-AFFIRMED PASS (2026-06-14, post-fix):** per the
+  Step 5 re-run rule, both gates re-ran after the shape fix. The fix only
+  strengthens the two load-bearing copilot risks (chooser-only redaction now has a
+  concrete key; round-trip now structurally guaranteed) and adds no scope, files,
+  contract surface, or new risk. Lint structure unchanged — all 21 sections remain
+  PASS / reasoned-N/A. No RISK/BLOCK; no Final-Gate FAIL.
 
 ---
 
