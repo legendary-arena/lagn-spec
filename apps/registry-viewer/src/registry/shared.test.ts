@@ -24,6 +24,7 @@ import type { SetData } from "./types/types-index.js";
 const fixtureCards: FlatCard[] = [
   {
     key:       "core-hero-spider-man-web-of-confusion",
+    extId:     "core/spider-man",
     cardType:  "hero",
     setAbbr:   "core",
     setName:   "Core Set",
@@ -34,6 +35,7 @@ const fixtureCards: FlatCard[] = [
   },
   {
     key:       "core-mastermind-dr-doom-main",
+    extId:     "core/dr-doom",
     cardType:  "mastermind",
     setAbbr:   "core",
     setName:   "Core Set",

@@ -10,6 +10,8 @@ import {
 import type { LobbyMatchSummary } from './lobbyApi';
 import { parseLoadoutJson } from './parseLoadoutJson';
 import type { ParsedLoadout } from './parseLoadoutJson';
+import { convertLagnUpload } from './lagnLoadout';
+import type { LagnDisplayNames } from './lagnLoadout';
 
 // why: defineComponent({ setup() { return {...} } }) is required (NOT
 // <script setup>) because the template references non-prop bindings under
@@ -88,6 +90,38 @@ export default defineComponent({
     // shape-guard pass is in hand.
     const pasteText = ref('');
     const parsedLoadout = ref<ParsedLoadout | null>(null);
+    // why: content-preview state so the operator can confirm the uploaded
+    // setup (mastermind, scheme, villains, henchmen, heroes) before creating
+    // the match. `loadoutDisplayNames` is populated only on the LAGN path
+    // (LAGN files carry human-readable names); the MATCH-SETUP path leaves it
+    // null and the preview falls back to the composition ext_ids.
+    const loadoutFormat = ref<'LAGN' | 'MATCH-SETUP' | null>(null);
+    const loadoutDisplayNames = ref<LagnDisplayNames | null>(null);
+    // why: the preview rows shown under the upload control. Each entity row
+    // prefers the LAGN display name and falls back to the composition ext_id,
+    // so a Registry-Viewer LAGN export (ids only) still reflects its contents.
+    const loadoutPreview = computed(() => {
+      const parsed = parsedLoadout.value;
+      if (parsed === null) {
+        return null;
+      }
+      const names = loadoutDisplayNames.value;
+      const composition = parsed.composition;
+      return {
+        format: loadoutFormat.value ?? 'MATCH-SETUP',
+        mastermind: names?.mastermind ?? composition.mastermindId,
+        scheme: names?.scheme ?? composition.schemeId,
+        villainGroups: names?.villainGroups ?? composition.villainGroupIds,
+        henchmanGroups: names?.henchmanGroups ?? composition.henchmanGroupIds,
+        heroes: names?.heroes ?? composition.heroDeckIds,
+        bystandersCount: composition.bystandersCount,
+        woundsCount: composition.woundsCount,
+        officersCount: composition.officersCount,
+        sidekicksCount: composition.sidekicksCount,
+        playerCount: parsed.playerCount,
+        heroSelectionMode: parsed.heroSelectionMode,
+      };
+    });
     // why: disabling the submit button until parse success prevents
     // partially parsed or stale JSON from being submitted, ensuring
     // createMatch is never called with unchecked input. The button also
@@ -195,13 +229,34 @@ export default defineComponent({
     }
 
     function applyParseResult(input: string): void {
-      const result = parseLoadoutJson(input);
+      // why: D-24018 — recognize a LAGN file (WP-244) first and convert it to
+      // the composition shape parseLoadoutJson already validates. A LAGN file
+      // carries names for the content preview; a MATCH-SETUP file does not, so
+      // the preview falls back to ext_ids. `not_lagn` (including malformed
+      // JSON) falls through to the MATCH-SETUP path, which owns the canonical
+      // invalid_json / shape errors.
+      const lagn = convertLagnUpload(input);
+      if (lagn.kind === 'error') {
+        parsedLoadout.value = null;
+        loadoutFormat.value = null;
+        loadoutDisplayNames.value = null;
+        errorMessage.value = lagn.message;
+        return;
+      }
+
+      const documentText = lagn.kind === 'ok' ? lagn.documentJson : input;
+      const result = parseLoadoutJson(documentText);
       if (result.ok === true) {
         parsedLoadout.value = result.value;
+        loadoutFormat.value = lagn.kind === 'ok' ? 'LAGN' : 'MATCH-SETUP';
+        loadoutDisplayNames.value =
+          lagn.kind === 'ok' ? lagn.displayNames : null;
         errorMessage.value = null;
         return;
       }
       parsedLoadout.value = null;
+      loadoutFormat.value = null;
+      loadoutDisplayNames.value = null;
       errorMessage.value = result.error.message;
     }
 
@@ -371,6 +426,7 @@ export default defineComponent({
       isSubmitting,
       pasteText,
       parsedLoadout,
+      loadoutPreview,
       canSubmitFromJson,
       handleFileUpload,
       parsePasted,
@@ -507,14 +563,51 @@ export default defineComponent({
         </button>
       </details>
 
-      <p
-        v-if="parsedLoadout !== null"
-        class="loadout-parsed-summary"
-        data-testid="lobby-loadout-parsed-summary"
+      <div
+        v-if="loadoutPreview !== null"
+        class="loadout-preview"
+        data-testid="lobby-loadout-preview"
       >
-        Loadout parsed: {{ parsedLoadout.playerCount }} seat(s),
-        rule mode {{ parsedLoadout.heroSelectionMode }}.
-      </p>
+        <p
+          class="loadout-parsed-summary"
+          data-testid="lobby-loadout-parsed-summary"
+        >
+          Loadout parsed ({{ loadoutPreview.format }}):
+          {{ loadoutPreview.playerCount }} seat(s),
+          rule mode {{ loadoutPreview.heroSelectionMode }}.
+        </p>
+        <dl class="loadout-preview-grid">
+          <div class="loadout-preview-row">
+            <dt>Mastermind</dt>
+            <dd data-testid="preview-mastermind">{{ loadoutPreview.mastermind }}</dd>
+          </div>
+          <div class="loadout-preview-row">
+            <dt>Scheme</dt>
+            <dd data-testid="preview-scheme">{{ loadoutPreview.scheme }}</dd>
+          </div>
+          <div class="loadout-preview-row">
+            <dt>Villain groups</dt>
+            <dd data-testid="preview-villains">{{ loadoutPreview.villainGroups.join(', ') }}</dd>
+          </div>
+          <div class="loadout-preview-row">
+            <dt>Henchman groups</dt>
+            <dd data-testid="preview-henchmen">{{ loadoutPreview.henchmanGroups.join(', ') }}</dd>
+          </div>
+          <div class="loadout-preview-row">
+            <dt>Heroes</dt>
+            <dd data-testid="preview-heroes">{{ loadoutPreview.heroes.join(', ') }}</dd>
+          </div>
+          <div class="loadout-preview-row">
+            <dt>Bystanders / Wounds / Officers / Sidekicks</dt>
+            <dd data-testid="preview-counts">
+              {{ loadoutPreview.bystandersCount }} /
+              {{ loadoutPreview.woundsCount }} /
+              {{ loadoutPreview.officersCount }} /
+              {{ loadoutPreview.sidekicksCount }}
+            </dd>
+          </div>
+        </dl>
+      </div>
 
       <button
         type="button"
@@ -709,6 +802,35 @@ export default defineComponent({
 .loadout-parsed-summary {
   padding: 0.25rem 0.5rem;
   border: 1px dashed var(--color-foreground, #666);
+}
+
+.loadout-preview {
+  margin: 0.5rem 0;
+}
+
+.loadout-preview-grid {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-foreground, #666);
+  border-radius: 4px;
+}
+
+.loadout-preview-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.15rem 0;
+  align-items: baseline;
+}
+
+.loadout-preview-row dt {
+  flex: 0 0 14rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.loadout-preview-row dd {
+  margin: 0;
+  word-break: break-word;
 }
 
 .match-list,

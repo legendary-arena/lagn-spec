@@ -49,7 +49,10 @@
     "roadmap:counts":       "node scripts/roadmap-counts.mjs",
     "roadmap:counts:write": "node scripts/roadmap-counts.mjs --write",
     "roadmap:counts:check": "node scripts/roadmap-counts.mjs --check",
-    "roadmap:counts:test":  "node --import tsx --test scripts/roadmap-counts.test.ts"
+    "roadmap:counts:test":  "node --import tsx --test scripts/roadmap-counts.test.ts",
+
+    "themes:check-slugs":   "node scripts/check-theme-slug-resolution.mjs",
+    "themes:check-slugs:check": "node scripts/check-theme-slug-resolution.mjs --check"
   },
   "workspaces": [
     "packages/*",

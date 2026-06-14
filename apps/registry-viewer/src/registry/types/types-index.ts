@@ -32,8 +32,21 @@ export type CardQuery       = z.infer<typeof CardQuerySchema>;
 
 // ── Flat "search result" card — useful for the viewer grid ───────────────────
 export interface FlatCard {
-  /** Unique key: "{setAbbr}-{cardType}-{slug}"  */
+  /**
+   * Unique key: "{setAbbr}-{cardType}-{slug}". Display/grid identity only —
+   * NOT a match-setup ext_id. The engine rejects flat-card keys (D-10014);
+   * use `extId` for loadout composition fields.
+   */
   key:       string;
+  /**
+   * Set-qualified ext_id "{setAbbr}/{slug}" the engine's match-setup
+   * validator requires (D-10014). For the five composition entity types the
+   * slug is the entity slug the engine derives — hero slug, mastermind group
+   * slug, villain group slug, henchman group slug, scheme slug — so a loadout
+   * authored here is accepted by Game.setup() rather than throwing an HTTP 500
+   * (D-24018).
+   */
+  extId:     string;
   cardType:  string;
   setAbbr:   string;
   setName:   string;

@@ -108,6 +108,9 @@ export function flattenSet(
         // survived filtering, making those cards appear to match every
         // search term.
         key:         `${abbr}-${resolvedCardType}-${hero.slug}-${card.slug}`,
+        // why: D-24018 — set-qualified ext_id (hero slug) for loadout
+        // composition, mirroring the engine's extractHeroSlug derivation.
+        extId:       `${abbr}/${hero.slug}`,
         cardType:    resolvedCardType,
         setAbbr:     abbr,
         setName,
@@ -144,6 +147,8 @@ export function flattenSet(
     for (const card of mm.cards) {
       cards.push({
         key:       `${abbr}-mastermind-${mm.slug}-${card.slug}`,
+        // why: D-24018 — set-qualified ext_id (mastermind group slug).
+        extId:     `${abbr}/${mm.slug}`,
         cardType:  "mastermind",
         setAbbr:   abbr,
         setName,
@@ -177,6 +182,9 @@ export function flattenSet(
       const villainMechanicalPattern = villainPatternMap?.get(`${abbr}/${group.slug}/${card.slug}`);
       cards.push({
         key:       `${abbr}-villain-${group.slug}-${card.slug}`,
+        // why: D-24018 — set-qualified ext_id (villain GROUP slug; every member
+        // card shares it), mirroring the engine's extractVillainGroupSlug.
+        extId:     `${abbr}/${group.slug}`,
         cardType:  "villain",
         setAbbr:   abbr,
         setName,
@@ -240,6 +248,9 @@ export function flattenSet(
         const cardSlug = String(cardRecord["slug"] ?? cardRecord["name"] ?? groupSlug);
         cards.push({
           key:       `${abbr}-henchman-${groupSlug}-${cardSlug}`,
+          // why: D-24018 — set-qualified ext_id (henchman GROUP slug; every
+          // sub-card shares it), matching the engine's henchman group lookup.
+          extId:     `${abbr}/${groupSlug}`,
           cardType:  "henchman",
           setAbbr:   abbr,
           setName,
@@ -255,6 +266,8 @@ export function flattenSet(
 
     cards.push({
       key:       `${abbr}-henchman-${groupSlug}`,
+      // why: D-24018 — set-qualified ext_id (henchman group slug).
+      extId:     `${abbr}/${groupSlug}`,
       cardType:  "henchman",
       setAbbr:   abbr,
       setName,
@@ -273,6 +286,8 @@ export function flattenSet(
     const twistPattern = schemeTwistAssignments?.get(`${abbr}/${scheme.slug}`);
     cards.push({
       key:       `${abbr}-scheme-${scheme.slug}`,
+      // why: D-24018 — set-qualified ext_id (scheme slug).
+      extId:     `${abbr}/${scheme.slug}`,
       cardType:  "scheme",
       setAbbr:   abbr,
       setName,
@@ -291,6 +306,10 @@ export function flattenSet(
     const slug = String(by["slug"] ?? by["name"] ?? "bystander");
     cards.push({
       key:       `${abbr}-bystander-${slug}`,
+      // why: D-24018 — bystanders are not a composition entity (they are a
+      // count, not an ext_id), but FlatCard.extId is required; the qualified
+      // form keeps the field consistent across every card type.
+      extId:     `${abbr}/${slug}`,
       cardType:  "bystander",
       setAbbr:   abbr,
       setName,
@@ -308,6 +327,9 @@ export function flattenSet(
     const slug = String(wd["slug"] ?? wd["name"] ?? "wound");
     cards.push({
       key:       `${abbr}-wound-${slug}`,
+      // why: D-24018 — wounds are a count, not a composition ext_id; the
+      // qualified form keeps the required FlatCard.extId field consistent.
+      extId:     `${abbr}/${slug}`,
       cardType:  "wound",
       setAbbr:   abbr,
       setName,
@@ -344,6 +366,9 @@ export function flattenSet(
     const slug = String(entryRecord["slug"] ?? entryRecord["name"] ?? "other");
     cards.push({
       key:       `${abbr}-${cardType}-${slug}`,
+      // why: D-24018 — generic bucket; the qualified form keeps the required
+      // FlatCard.extId field consistent for any future taxonomy slug.
+      extId:     `${abbr}/${slug}`,
       cardType,
       setAbbr:   abbr,
       setName,

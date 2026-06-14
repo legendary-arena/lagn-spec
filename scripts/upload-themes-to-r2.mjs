@@ -22,12 +22,31 @@ import { join, resolve } from 'node:path';
 
 const projectRoot = resolve(import.meta.dirname, '..');
 const themesDirectory = join(projectRoot, 'content', 'themes');
-const r2Destination = 'r2:legendary-arena/themes/';
+// why: themes live in the `legendary-images` R2 bucket — the same bucket that
+// backs images.barefootbetters.com for card data and metadata (see
+// scripts/check-connections.mjs `rclone lsd r2:legendary-images` and
+// convert-cards-v15.mjs `r2:legendary-images/metadata`). The earlier
+// `legendary-arena` value was stale and 403'd (rclone fell through to
+// CreateBucket against a bucket the token cannot see).
+const r2Destination = 'r2:legendary-images/themes/';
 
 // ── Step 1: Regenerate index.json ───────────────────────────────────────────
 
+// why: content/themes also holds non-served scratch JSON that must never enter
+// the served index or R2 — the combined-export files (`NN-ALL_THEMES_COMBINED`,
+// which are arrays, not single ThemeDefinitions) and the `minimal-example`
+// schema fixture (tracked for tests, deliberately absent from the committed
+// index.json). Without this guard the regenerated index would bloat to 71 and
+// the combined files would halt validation below.
+const NON_SERVED_THEME_FILES = new Set(['minimal-example.json']);
 const themeFiles = readdirSync(themesDirectory)
-  .filter((filename) => filename.endsWith('.json') && filename !== 'index.json')
+  .filter(
+    (filename) =>
+      filename.endsWith('.json') &&
+      filename !== 'index.json' &&
+      !/^\d+-ALL_THEMES_COMBINED\.json$/.test(filename) &&
+      !NON_SERVED_THEME_FILES.has(filename),
+  )
   .sort();
 
 const indexPath = join(themesDirectory, 'index.json');

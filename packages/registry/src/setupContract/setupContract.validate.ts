@@ -209,19 +209,23 @@ export function validateMatchSetupDocument(
     return { ok: false, errors };
   }
 
-  // ── Step 2 — registry ext_id existence checks (engine-identical) ───────
-  // why: Mirrors the engine's Stage 2 algorithm in
-  // packages/game-engine/src/matchSetup.validate.ts buildKnownExtIds() +
-  // validateMatchSetup() byte-for-byte: call listCards() once, build a
-  // Set<string> via for...of (never .reduce() — see
-  // .claude/rules/code-style.md §Patterns to Avoid), and check each of
-  // the five composition ext_id surfaces against Set.has(). A document
-  // accepted here is accepted by the engine's authoritative validator
-  // at match creation (A-091-03, D-1209).
+  // ── Step 2 — registry ext_id existence checks ─────────────────────────
+  // why: D-24018 — build the known-id set from each card's `extId` (the
+  // set-qualified "{setAbbr}/{slug}" form), NOT its flat-card `key`. The
+  // engine's authoritative validator
+  // (packages/game-engine/src/matchSetup.validate.ts) rejects flat-card keys
+  // and bare slugs (D-10014) and accepts only the qualified form; building
+  // this set from `key` previously green-lit loadouts the engine then threw
+  // on (HTTP 500 at match creation). Reading `extId` makes a document
+  // accepted here accepted by the engine too. Built with for...of (never
+  // .reduce() — .claude/rules/code-style.md §Patterns to Avoid). Note: the
+  // engine uses per-field qualified sets (stricter cross-type isolation);
+  // this single global set is a necessary-but-looser superset, so it never
+  // rejects an engine-valid id.
   const cards = registry.listCards();
   const knownExtIds = new Set<string>();
   for (const card of cards) {
-    knownExtIds.add(card.key);
+    knownExtIds.add(card.extId);
   }
 
   const composition = parsed.data.composition;

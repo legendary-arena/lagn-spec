@@ -11,10 +11,10 @@
       "black-order-of-thanos"
     ],
     "heroDeckIds": [
-      "doctor-strange",
-      "captain-marvel",
-      "black-panther",
-      "bruce-banner",
+      "msis/doctor-strange",
+      "msis/captain-marvel",
+      "msis/black-panther",
+      "msis/bruce-banner",
       "wanda-vision"
     ]
   },

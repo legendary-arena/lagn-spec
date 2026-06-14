@@ -24892,4 +24892,113 @@ hero-effect logging and condition-unmet feedback are out of scope.
 **Landed:** 2026-06-13.
 **Status:** Active
 
+---
+
+**D-24018: Canonical Qualified `extId` for Loadout Composition (Registry Viewer ↔ Engine Id-Space Alignment)**
+
+`FlatCard` carries a canonical set-qualified `extId` of the locked form `{setAbbr}/{slug}`
+(e.g. `core/magneto`) alongside the display-only flat-card `key`
+(`core-mastermind-magneto-magneto`). The registry-side setup-contract validator
+(`packages/registry/src/setupContract/setupContract.validate.ts`) and the Registry Viewer
+loadout picker (`apps/registry-viewer/src/components/LoadoutBuilder.vue`) now read `extId`,
+NOT `key`, so the id space the viewer authors and validates against is the SAME id space the
+engine's authoritative match-setup validator (`packages/game-engine/src/matchSetup.validate.ts`)
+accepts (D-10014). `extId` is derived at flatten time per card type, mirroring the engine's
+per-field slug derivation exactly: hero slug (engine `extractHeroSlug`), mastermind group
+slug, villain group slug (engine `extractVillainGroupSlug`), henchman group slug, scheme slug.
+The composition ext_id pattern in `setupContract.schema.ts` widens from `^[a-z0-9-]+$` to
+`^[a-z0-9-]+/[a-z0-9-]+$` (envelope `setupId`/`themeId` stay bare); `MATCH-SETUP-JSON-SCHEMA.json`
+mirrors it.
+
+**Why:** a field report — `Failed to create match … HTTP 500 Internal Server Error` on
+`POST /games/legendary-arena/create` — root-caused to the Registry Viewer emitting flat-card
+keys into loadout composition fields. The engine rejects flat-card keys and bare slugs
+(D-10014) and accepts only the qualified form, so `Game.setup()` threw and boardgame.io
+returned a generic 500. The viewer's own validator green-lit those keys because it built its
+known-id set from `card.key` — a DIFFERENT id space than the engine. The two validators had
+silently diverged.
+
+**Invariant (the point of this decision):** the registry `setupContract` validator and the
+engine `matchSetup.validate.ts` MUST validate against the same id space (qualified `extId`).
+If they diverge again, viewer-valid loadouts will 500 at match creation. The engine validator
+is byte-unchanged — it already produced the correct qualified ids; this entry aligns the
+registry and viewer to it.
+
+**Also:** the arena lobby (`apps/arena-client/src/lobby/lagnLoadout.ts`) now ingests native
+LAGN files (WP-244) by mapping a `setup` block onto the composition shape the existing
+`parseLoadoutJson` validates (that locked WP-092/093 guard is untouched), and a content
+preview reflects mastermind/scheme/villains/henchmen/heroes back before create (LAGN names,
+ext_id fallback for MATCH-SETUP).
+
+**Determinism:** unaffected — no engine gameplay or RNG path changed; `matchSetup.validate.ts`
+is byte-unchanged. Registry / registry-viewer / arena-client only.
+
+**Follow-up — theme bare-slug resolution (LANDED, commit `d6a621d`):** `prefillFromTheme`
+(`apps/registry-viewer/src/composables/useLoadoutDraft.ts`) now resolves each bare theme
+`setupIntent` slug to its qualified `extId` via `resolveThemeSlugToExtId(slug, cardType, cards)`.
+Two non-obvious rules: (1) match on the **slug portion of `FlatCard.extId`**, NOT `FlatCard.slug`
+— for hero/mastermind/villain/henchman `FlatCard.slug` is the per-*card* slug (hero `wolverine`
+→ `keen-senses`) while the engine derives the ext_id from the *entity* slug (`core/wolverine`);
+(2) **cardType filtering is mandatory** — `magneto` is a hero (`vill/magneto`) AND a mastermind
+(`core/magneto`), so resolving without the type guard could pick the wrong field's id and 500.
+
+**Ambiguity policy (governance-relevant):** when a bare slug has no `core/` printing but exists
+in 2+ non-core sets, the resolver picks the lexicographically-first `extId` deterministically
+(returning null — keeping the slug bare so the validator flags it — only when zero candidates
+exist). This keeps the theme **playable** rather than 500-ing. The trade-off, measured against
+real data: **all 16** such ambiguous heroes have **mechanically DIFFERENT decks** per printing
+(NOT cosmetic reprints — e.g. `dstr/doctor-strange` is a 4-card Artifact deck,
+`msis/doctor-strange` a 6-card Phasing deck), so the deterministic pick may not be the theme
+author's intended version. Per the survival lens (a thematically-adjacent playable match beats a
+broken theme) this is accepted over a hard-error, but the substitution is **surfaced** — not
+silent — via a `?debug`-gated `devLog("theme", …)` naming the chosen printing + alternatives
+(commit pending). The **proper fix** (deferred) is qualifying the ambiguous slugs at the
+theme-data source (store `{set}/{slug}` in the theme JSONs so the author controls the printing);
+once qualified, the fallback stops firing. `onDownload` (MATCH-SETUP export) also gained the
+`isValid` early-return that `onDownloadLagn` already had (defense-in-depth; the button was
+already `:disabled`).
+
+**Follow-up — ambiguous theme slugs qualified at source (LANDED 2026-06-13, branch
+`claude/lagn-upload-extid-roundtrip`):** deferred item (a) is done. The 24 ambiguous
+`setupIntent` references across 17 theme JSONs (`content/themes/*.json`) now store the
+set-qualified `{setAbbr}/{slug}` form, chosen per-theme from name/tags/references so the author
+controls the printing (e.g. `doctor-strange-sorcerer` → `dstr/doctor-strange`, the comic
+Artifact deck; `black-order-assault` [tag `mcu`] → `msis/doctor-strange`, the MCU deck — the
+same bare slug intentionally resolving to different printings per theme, which a single global
+canonical-printing map could NOT express). 7 picks corrected a wrong lexicographic auto-pick
+(`onslaught-unleashed` beast `ssw2`→`xmen`; `venom-lethal-protector` venom `vill`→`vnom`;
+`secret-wars-battleworld` captain-marvel `msis`→`ssw1`; `dark-city-streets` +
+`five-families-of-crime` daredevil `cvwr`→`dkcy`; `contest-of-champions` nova `chmp`→`cosm`;
+`black-order-assault` doctor-strange `dstr`→`msis`); the other 17 pin the already-correct pick
+against future set-addition sort drift. The qualified form is the same `<setAbbr>/<slug>`
+convention the theme schema already uses for `sidekickCardIds`/`officerCardIds` (D-22104), and
+`resolveThemeSlugToExtId` passes any slug containing `/` through untouched — so no viewer/engine
+code changed; this is data-only. A re-runnable guard, `scripts/check-theme-slug-resolution.mjs
+--check`, replicates the resolver against real card data and exits non-zero on any
+ambiguous/unresolved theme slug (now 0/0). The `?debug` devLog substitution warning (commit
+`d5e3965`) no longer fires for these themes.
+
+**Item (c) RESOLVED:** all 68 index-served themes carry `themeSchemaVersion: 2`, in-repo AND on
+live R2 (verified `images.barefootbetters.com/themes`); `index.json` excludes the only
+field-absent files (local combined-export / minimal-example scratch JSON). No further migration
+needed.
+
+**Still deferred:** (b) `apps/registry-viewer/src/registry/types/index.ts` is a stale
+pCloud-sync duplicate of the active `types-index.ts` (hygiene delete).
+
+**R2 re-upload (pending operator):** the 17 changed theme files must be copied to
+`r2:legendary-arena/themes/` *without* regenerating `index.json` (no themes added/removed). The
+stock `scripts/upload-themes-to-r2.mjs` rebuilds `index.json` from the directory and would sweep
+in the 3 non-theme scratch JSONs, so use a targeted `rclone copy --include` of the changed files
+for this change.
+
+**Direct fix** (operator-sanctioned, not a WP — cross-layer bugfix on a live revenue path;
+mirrors the D-24017 direct-fix precedent). Commit `f7e2efb` on branch
+`claude/lagn-upload-extid-roundtrip`. Tests: 1990 pass / 0 fail (engine 1269, registry 116,
+viewer 52, arena 553), incl. a D-24018 regression guard (flat-card key rejected, qualified
+accepted) + 11 LAGN converter tests; `pnpm -r build` clean.
+
+**Landed:** 2026-06-13.
+**Status:** Active
+
 Protect this file.

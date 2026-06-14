@@ -14,19 +14,22 @@
  * test inside setupContract.test.ts.
  */
 
-// why: Byte-identical mirror of the engine-side CardRegistryReader interface
-// declared at packages/game-engine/src/matchSetup.validate.ts:28 (D-1209).
-// The interface is redeclared registry-side (not imported) because
+// why: CardRegistryReader is redeclared registry-side (not imported) because
 // packages/registry/** and apps/registry-viewer/** must never import from
 // @legendary-arena/game-engine per the layer boundary in
 // docs/ai/ARCHITECTURE.md §Layer Boundary (Authoritative). The real
 // CardRegistry from @legendary-arena/registry satisfies this interface
-// structurally via its listCards(): FlatCard[] surface — each FlatCard
-// carries a `key: string` field, so passing a CardRegistry where a
-// CardRegistryReader is expected is a type-safe structural match.
+// structurally via its listCards(): FlatCard[] surface.
+//
+// why: D-24018 — the validator now reads `extId` (the set-qualified
+// "{setAbbr}/{slug}" form), not `key` (the flat-card display id). The engine's
+// authoritative match-setup validator rejects flat-card keys (D-10014), so
+// validating composition fields against `key` here green-lit loadouts the
+// engine then rejected with an HTTP 500. Reading `extId` makes this validator
+// accept exactly the id space the engine accepts.
 export interface CardRegistryReader {
-  /** Returns all cards. The validator uses the key field for ext_id lookup. */
-  listCards(): Array<{ key: string }>;
+  /** Returns all cards. The validator uses the extId field for ext_id lookup. */
+  listCards(): Array<{ extId: string }>;
 }
 
 // why: SetupCompositionInput mirrors the engine's MatchSetupConfig
