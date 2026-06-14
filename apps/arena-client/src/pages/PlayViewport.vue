@@ -48,20 +48,52 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    villainGroupIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    henchmanGroupIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    heroDeckIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
   },
   setup(props) {
     const { isMobile } = useViewport();
     const viewportRoot = ref<HTMLElement | null>(null);
     useSkinApplier(viewportRoot);
-    return { isMobile, viewportRoot, matchId: props.matchId };
+    return {
+      isMobile,
+      viewportRoot,
+      matchId: props.matchId,
+      villainGroupIds: props.villainGroupIds,
+      henchmanGroupIds: props.henchmanGroupIds,
+      heroDeckIds: props.heroDeckIds,
+    };
   },
 });
 </script>
 
 <template>
   <div ref="viewportRoot" class="play-viewport">
-    <PlayMobile v-if="isMobile" :submit-move="submitMove" />
-    <PlayDesktop v-else :submit-move="submitMove" :match-id="matchId" />
+    <PlayMobile
+      v-if="isMobile"
+      :submit-move="submitMove"
+      :villain-group-ids="villainGroupIds"
+      :henchman-group-ids="henchmanGroupIds"
+      :hero-deck-ids="heroDeckIds"
+    />
+    <PlayDesktop
+      v-else
+      :submit-move="submitMove"
+      :match-id="matchId"
+      :villain-group-ids="villainGroupIds"
+      :henchman-group-ids="henchmanGroupIds"
+      :hero-deck-ids="heroDeckIds"
+    />
     <DiagnosticExportButton />
   </div>
 </template>

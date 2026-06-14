@@ -100,6 +100,18 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    villainGroupIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    henchmanGroupIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    heroDeckIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
   },
   setup(props) {
     const store = useUiStateStore();
@@ -356,6 +368,9 @@ export default defineComponent({
         :snapshot="snapshot"
         :mastermind-tactics-total="4"
         :scheme-twist-threshold="8"
+        :villain-group-ids="villainGroupIds"
+        :henchman-group-ids="henchmanGroupIds"
+        :hero-deck-ids="heroDeckIds"
       />
       <EndgameSummary
         v-if="isGameOver && snapshot.gameOver"
