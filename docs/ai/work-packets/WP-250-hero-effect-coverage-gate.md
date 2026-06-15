@@ -222,6 +222,27 @@ git diff --name-only
 
 ---
 
+## Lint Gate Self-Review (`00.3`) — retroactive backfill (2026-06-15)
+
+> Backfilled per the 01.0a governance-debt squaring: WP-250 was drafted+executed in one flow (PR #321, `6bbf6ede`) without the 01.0a Phase-1 gates. The shipped gate is sound (CI-green, seeded-regression matrix verified); this records the lint disposition after the fact. All 21 sections resolve PASS or justified N/A:
+
+- **§1–§6 (structure / constraints / prerequisites / context / output / naming):** PASS — all sections present; ≤8 code/doc files; canonical names match `00.2`.
+- **§7 dependency discipline:** PASS — no new npm deps.
+- **§8 architectural boundaries:** PASS — Shared Tooling (`scripts/`) + CI; no engine/registry/contract change; no `Math.random`/clock/network in the probe.
+- **§9 Windows / §10 env / §11 auth:** N/A — deterministic `.mjs` probe; no env vars; no auth.
+- **§12 test quality:** N/A — CLI/CI gate; correctness is behavioral (seeded-regression matrix), no `node:test` file (scripts have no package runner — WP-158 precedent).
+- **§13 commands / §14 acceptance / §15 DoD:** PASS — exact `pnpm sim:coverage` commands; binary criteria; DoD includes STATUS/DECISIONS/WORK_INDEX.
+- **§16 code style:** PASS — full English names, `// why:` on the canonical import + decoupling + serializer.
+- **§17 Vision:** N/A — dev-tooling/CI; no scoring/replay-contract/identity/multiplayer/RNG/card-data/monetization/live-ops/accessibility/registry-viewer surface (the gate reads parser output, changes no game behavior).
+- **§18 prose-vs-grep:** PASS — the `KNOWN_MARKUP_KEYWORDS` self-trip was caught at execution and reinterpreted to the real derivation invariant.
+- **§19 bridge-vs-HEAD / §20 funding / §21 API catalog:** N/A — no repo-state-summary artifact; no funding surface; no HTTP endpoint or `apps/server` library function.
+
+## Pre-Flight & Copilot Verdicts — retroactive note
+
+WP-250 did **not** run pre-flight (`01.4`) or copilot (`01.7`) at draft time (drafted+executed in one flow). Squared retroactively: this self-review + the backfilled session prompt (`docs/ai/invocations/session-wp250-hero-effect-coverage-gate.md`). No re-execution needed — the gate shipped and is CI-verified on every run. Future effect-system WPs (WP-251/252) follow the full 01.0a workflow.
+
+---
+
 ## Definition of Done
 
 This packet is complete when ALL of the following are true:
