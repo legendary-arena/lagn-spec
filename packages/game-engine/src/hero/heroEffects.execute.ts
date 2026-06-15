@@ -5,6 +5,10 @@
  * is played. Only unconditional effects with valid magnitude are executed.
  * Conditional effects and unsupported keywords are safely skipped.
  *
+ * Dispatch is data-driven (WP-251 / D-24022): each keyword maps to a handler
+ * in HERO_EFFECT_HANDLERS (an ImplementationMap mirroring WP-009B) instead of a
+ * switch. Handlers hold no state and live outside G.
+ *
  * No boardgame.io imports. No registry imports. No .reduce().
  * Uses existing helpers only: moveCardFromZone, moveAllCards, shuffleDeck,
  * addResources, koCard.
@@ -39,7 +43,12 @@ import { resolveCountSource } from './heroCountSource.resolve.js';
 // you do, <reward>" interactive choice.
 // 'wound' and 'conditional' remain deferred — they require targeting UI or
 // additional game systems not yet implemented.
-const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack', 'attack-per-count', 'optional-ko-reward']);
+//
+// why (WP-251): exported as the single drift-test authority — the registry-drift
+// test in heroEffects.execute.test.ts asserts Object.keys(HERO_EFFECT_HANDLERS)
+// equals MVP_KEYWORDS bidirectionally. Do not duplicate this set elsewhere (the
+// coverage probe's EXECUTED_KEYWORDS is a separate, informational copy).
+export const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack', 'attack-per-count', 'optional-ko-reward']);
 
 // why: D-24019 — the reward of an optional-ko-reward effect is dispatched to an
 // ALREADY-BUILT reward executor; only these four are seeded. Defensive guard at
@@ -194,6 +203,475 @@ export function executeHeroEffects(
 }
 
 // ---------------------------------------------------------------------------
+// Effect handlers + ImplementationMap (WP-251 / D-24022)
+// ---------------------------------------------------------------------------
+
+/**
+ * A single hero effect handler — the per-keyword contract that was formerly one
+ * `switch` arm. Mutates G for one effect; returns void. `ctx` is narrowed to
+ * ShuffleProvider only where deck reshuffle is needed (the `draw` handler).
+ */
+type HeroEffectHandler = (
+  G: LegendaryGameState,
+  ctx: unknown,
+  playerID: string,
+  cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+) => void;
+
+function heroEffectDraw(
+  G: LegendaryGameState,
+  ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  // why: ctx is narrowed to ShuffleProvider here because deck reshuffle
+  // needs ctx.random.Shuffle. boardgame.io ctx satisfies ShuffleProvider
+  // structurally — this is the established pattern from WP-005B/008B.
+  drawFromPlayerDeck(G, playerID, effect.magnitude as number, ctx as ShuffleProvider);
+}
+
+function heroEffectAttack(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  _playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  G.turnEconomy = addResources(G.turnEconomy, effect.magnitude as number, 0);
+}
+
+function heroEffectRecruit(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  _playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  G.turnEconomy = addResources(G.turnEconomy, 0, effect.magnitude as number);
+}
+
+function heroEffectKo(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  cardId: CardExtId,
+  _effect: HeroEffectDescriptor,
+): void {
+  // why: MVP KO targets the played card itself. This models "KO this
+  // card" text found on some heroes. No player choice — target selection
+  // is deferred to future WPs. The card must be removed from inPlay
+  // before being added to the KO pile.
+  const playerZones = G.playerZones[playerID];
+  if (playerZones) {
+    const moveResult = moveCardFromZone(playerZones.inPlay, [], cardId);
+    if (moveResult.found) {
+      playerZones.inPlay = moveResult.from;
+      G.ko = koCard(G.ko, cardId);
+    }
+  }
+}
+
+function heroEffectRescue(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  const rescueMagnitude = effect.magnitude ?? 1;
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) {
+    return;
+  }
+  if (G.piles.bystanders.length === 0) {
+    // why: D-24017 — an empty Bystander supply is a legitimate no-op, but a
+    // silent skip reads as "the hero card did nothing" (player confusion,
+    // per the live diagnostic). Log it so the reason is observable in the
+    // game log (UIState.log), mirroring how fight rescues are logged.
+    G.messages.push(
+      `Player ${playerID} could not rescue a Bystander via a hero ability — the Bystander supply is empty.`,
+    );
+    return;
+  }
+  const rescueCount = Math.min(rescueMagnitude, G.piles.bystanders.length);
+  let rescuedCount = 0;
+  for (let rescued = 0; rescued < rescueCount; rescued++) {
+    // why: top-of-pile convention — pile[0] is the first available bystander (D-21501)
+    const topBystander = G.piles.bystanders[0];
+    if (!topBystander) {
+      break;
+    }
+    const moveResult = moveCardFromZone(G.piles.bystanders, playerZones.victory, topBystander);
+    G.piles.bystanders = moveResult.from;
+    playerZones.victory = moveResult.to;
+    rescuedCount++;
+  }
+  // why: D-24017 — surface the hero-ability rescue in the game log the same
+  // way fight rescues are (fightVillain/fightMastermind), so a successful
+  // rescue is observable to the player rather than a silent zone move.
+  G.messages.push(
+    `Player ${playerID} rescued ${rescuedCount} bystander(s) via a hero ability.`,
+  );
+}
+
+function heroEffectReveal(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) {
+    return;
+  }
+  // why: reveal does not trigger deck reshuffle; empty deck is a silent no-op (D-21502)
+  if (playerZones.deck.length === 0) {
+    return;
+  }
+  const topCardId = playerZones.deck[0];
+  if (!topCardId) {
+    return;
+  }
+  const cardStats = G.cardStats[topCardId];
+  // why: G.cardStats has no entry for SHIELD starter cards; missing entry is a safe no-op (D-21502)
+  if (cardStats === undefined) {
+    return;
+  }
+  if (cardStats.cost <= (effect.magnitude as number)) {
+    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+    playerZones.deck = moveResult.from;
+    playerZones.hand = moveResult.to;
+  }
+}
+
+function heroEffectRevealKo(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  _effect: HeroEffectDescriptor,
+): void {
+  // why: reveal-ko peeks one card and KOs it only when cost = 0; deck empty is a silent no-op per D-21502 precedent; D-21801 fixes zone integrity — card must be removed from deck before being added to KO
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) {
+    return;
+  }
+  if (playerZones.deck.length === 0) {
+    return;
+  }
+  const topCardId = playerZones.deck[0];
+  if (!topCardId) {
+    return;
+  }
+  const cardStats = G.cardStats[topCardId];
+  if (cardStats === undefined) {
+    return;
+  }
+  if (cardStats.cost === 0) {
+    const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
+    if (moveResult.found) {
+      playerZones.deck = moveResult.from;
+      G.ko = koCard(G.ko, topCardId);
+    }
+  }
+}
+
+function heroEffectRevealMin(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  // why: reveal-min draws the card only when cost >= threshold — opposite direction from 'reveal' which draws when cost <= threshold
+  if (!isValidMagnitude(effect.magnitude)) {
+    return;
+  }
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) {
+    return;
+  }
+  if (playerZones.deck.length === 0) {
+    return;
+  }
+  const topCardId = playerZones.deck[0];
+  if (!topCardId) {
+    return;
+  }
+  const cardStats = G.cardStats[topCardId];
+  if (cardStats === undefined) {
+    return;
+  }
+  if (cardStats.cost >= (effect.magnitude as number)) {
+    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+    playerZones.deck = moveResult.from;
+    playerZones.hand = moveResult.to;
+  }
+}
+
+function heroEffectRevealKoOrDraw(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  // why: reveal-ko-or-draw peeks deck top; KOs the card (removing it from deck)
+  // when cost = 0; draws it when 0 < cost <= magnitude; no-op otherwise (D-21802)
+  if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) {
+    return;
+  }
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) {
+    return;
+  }
+  if (playerZones.deck.length === 0) {
+    return;
+  }
+  const topCardId = playerZones.deck[0];
+  if (!topCardId) {
+    return;
+  }
+  const cardStats = G.cardStats[topCardId];
+  if (cardStats === undefined) {
+    return;
+  }
+  // KO branch MUST be evaluated before draw branch.
+  // cost === 0 MUST NOT reach the draw branch.
+  if (cardStats.cost === 0) {
+    const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
+    if (moveResult.found) {
+      playerZones.deck = moveResult.from;
+      G.ko = koCard(G.ko, topCardId);
+    }
+  } else if (cardStats.cost <= (effect.magnitude as number)) {
+    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+    if (moveResult.found) {
+      playerZones.deck = moveResult.from;
+      playerZones.hand = moveResult.to;
+    }
+  }
+  // cost > magnitude: no-op
+}
+
+function heroEffectRevealCostAttack(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  _effect: HeroEffectDescriptor,
+): void {
+  // why: reveal-cost-attack peeks deck top; grants attack equal to its cost;
+  // card stays on deck (no zone mutation) (D-21901)
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) { return; }
+  if (playerZones.deck.length === 0) { return; }
+  const topCardId = playerZones.deck[0];
+  if (!topCardId) { return; }
+  const cardStats = G.cardStats[topCardId];
+  if (cardStats === undefined) { return; }
+  if (!G.turnEconomy) { return; }
+  G.turnEconomy.attack += cardStats.cost;
+}
+
+function heroEffectRevealOddDraw(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  _effect: HeroEffectDescriptor,
+): void {
+  // why: reveal-odd-draw peeks deck top; draws it when cost is odd (cost % 2 !== 0);
+  // cost-0 is even and does NOT trigger the draw (D-21902)
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) { return; }
+  if (playerZones.deck.length === 0) { return; }
+  const topCardId = playerZones.deck[0];
+  if (!topCardId) { return; }
+  const cardStats = G.cardStats[topCardId];
+  if (cardStats === undefined) { return; }
+  if (cardStats.cost % 2 !== 0) {
+    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+    if (moveResult.found) {
+      playerZones.deck = moveResult.from;
+      playerZones.hand = moveResult.to;
+    }
+  }
+  // cost is even (including 0): no-op
+}
+
+function heroEffectRevealAttackChoose(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  // why: reveal-attack-choose peeks deck top; grants attack equal to cost when
+  // cost <= magnitude; then stores a pending choice (discard or return) that
+  // the player must resolve via resolveHeroChoice before the turn can end (D-22003)
+  if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { return; }
+  // why: reject-second — a pending choice is never silently overwritten; the first
+  // choice's data integrity is preserved until the player resolves it (D-22001)
+  if (G.pendingHeroChoice !== undefined) { return; }
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) { return; }
+  if (playerZones.deck.length === 0) { return; }
+  const topCardId = playerZones.deck[0];
+  if (!topCardId) { return; }
+  const cardStats = G.cardStats[topCardId];
+  if (cardStats === undefined) { return; }
+  if (!G.turnEconomy) { return; }
+  // NOTE: G.pendingHeroChoice is set AFTER the G.turnEconomy guard.
+  // If G.turnEconomy is undefined the break fires here and G.pendingHeroChoice
+  // is NOT set. Tests must verify this (AC-9).
+  if (cardStats.cost <= (effect.magnitude as number)) {
+    G.turnEconomy.attack += cardStats.cost;
+  }
+  // Card stays on deck until player resolves the choice.
+  const pendingChoice: PendingHeroChoice = {
+    choiceType: 'discard-or-return',
+    cardId: topCardId,
+    playerID,
+  };
+  G.pendingHeroChoice = pendingChoice;
+}
+
+function heroEffectRevealKoAttack(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  // why: D-22301 — compound executor. Peeks deck[0]; if cost === 0 (strict equality),
+  // (1) KOs the card via moveCardFromZone + koCard, then (2) grants fixed attack equal
+  // to magnitude. If cost > 0, no zone mutation — card stays at deck[0]. No player
+  // choice; G.pendingHeroChoice is NOT touched. Magnitude encodes the fixed attack grant
+  // amount, not a cost ceiling.
+  if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { return; }
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) { return; }
+  if (playerZones.deck.length === 0) { return; }
+  const topCardId = playerZones.deck[0];
+  if (!topCardId) { return; }
+  const cardStats = G.cardStats[topCardId];
+  if (cardStats === undefined) { return; }
+  // why: G.turnEconomy is initialised by turn-start machinery, not by this executor;
+  // if it is undefined the executor must not crash — silent no-op is correct here
+  if (!G.turnEconomy) { return; }
+  if (cardStats.cost === 0) {
+    // topCardId captured above before any mutation — do not re-read deck[0] after moveCardFromZone
+    const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
+    // why: atomic — attack is not granted when KO did not occur; no partial state mutation
+    if (!moveResult.found) { return; }
+    playerZones.deck = moveResult.from;
+    G.ko = koCard(G.ko, topCardId);
+    G.turnEconomy.attack += effect.magnitude as number;
+  }
+  // cost > 0: no zone mutation — card stays at deck[0]
+}
+
+function heroEffectAttackPerCount(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  _cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  // why: D-24016 — magnitude is the per-unit rate; resolveCountSource resolves
+  // the count it scales by, so the grant is magnitude × count. The resolver is
+  // pure/total (unknown source → 0), so the grant is deterministic at play time.
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) { return; }
+  if (!G.turnEconomy) { return; }
+  // why: a count-scaled attack effect with no count source is a skipped no-op
+  // (mirrors the magnitude gate) — there is nothing to scale by.
+  if (effect.countSource === undefined) { return; }
+  const count = resolveCountSource(G, playerID, effect.countSource);
+  const grant = (effect.magnitude as number) * count;
+  G.turnEconomy = addResources(G.turnEconomy, grant, 0);
+  // why: record the source, count, and grant so the count-scaled attack is
+  // observable in replay inspection (no implicit side effects).
+  G.messages.push(`Count-scaled attack: +${grant} (${effect.magnitude as number} per ${effect.countSource}, count ${count}).`);
+}
+
+function heroEffectOptionalKoReward(
+  G: LegendaryGameState,
+  _ctx: unknown,
+  playerID: string,
+  cardId: CardExtId,
+  effect: HeroEffectDescriptor,
+): void {
+  // why: D-24019 — parks an interactive choice (mirrors WP-242); the reward
+  // is granted on resolve (resolveOptionalKoReward), not at play time. The
+  // player either declines (no KO, no reward) or KOs exactly one card from
+  // their hand or discard pile, in which case the reward fires.
+  const playerZones = G.playerZones[playerID];
+  if (!playerZones) { return; }
+  // why: eligible = discard ∪ hand, ANY card INCLUDING wounds (the printed
+  // text is "a card", not "a Hero") — no type/cost/keyword filtering. 0
+  // eligible (both zones empty) → skipped no-op + a G.messages line (mirrors
+  // the D-24017 empty-supply rescue logging), so the player can see why the
+  // ability did nothing.
+  const eligibleCount = playerZones.discard.length + playerZones.hand.length;
+  if (eligibleCount === 0) {
+    G.messages.push(
+      `Player ${playerID} could not KO a card for a hero ability — both hand and discard pile are empty, so no reward was granted.`,
+    );
+    return;
+  }
+  // why: defensive — the parser only emits a seeded rewardType, but an
+  // unseeded reward here is a logged no-op that never reaches the queue
+  // (no reward executor exists for it).
+  const rewardType = effect.rewardType;
+  if (rewardType === undefined || !OPTIONAL_KO_REWARD_SEEDED_REWARDS.has(rewardType)) {
+    G.messages.push(
+      `Player ${playerID} played a hero ability whose optional-KO reward is not yet supported, so the choice was skipped.`,
+    );
+    return;
+  }
+  // why: lazy-init at the park site (mirrors villainEffects.execute.ts:190
+  // pendingKoHeroChoices) — NEVER in Game.setup; the optional field tolerates
+  // older snapshots. The park itself is SILENT (no G.messages line), mirroring
+  // the WP-242 park; the reward grant is logged by the dispatched executor.
+  if (!G.pendingOptionalKoRewards) { G.pendingOptionalKoRewards = []; }
+  G.pendingOptionalKoRewards.push({
+    playerID,
+    rewardType,
+    rewardMagnitude: effect.magnitude ?? 1,
+    sourceCardId: cardId,
+  });
+}
+
+// why: D-24022 — the hero-effect ImplementationMap (mirrors WP-009B's pattern).
+// Handlers are plain functions held OUTSIDE G; a new effect is a registry entry
+// + a drift-test entry, not a `switch` edit. Keyed by HeroKeyword and `Partial`
+// because 'wound'/'conditional' are intentionally unmapped (the deferred set);
+// the union therefore stays typed + drift-detected. Exported so the registry
+// drift test can assert its keys == MVP_KEYWORDS bidirectionally.
+export const HERO_EFFECT_HANDLERS: Partial<Record<HeroKeyword, HeroEffectHandler>> = {
+  draw: heroEffectDraw,
+  attack: heroEffectAttack,
+  recruit: heroEffectRecruit,
+  ko: heroEffectKo,
+  rescue: heroEffectRescue,
+  reveal: heroEffectReveal,
+  'reveal-ko': heroEffectRevealKo,
+  'reveal-min': heroEffectRevealMin,
+  'reveal-ko-or-draw': heroEffectRevealKoOrDraw,
+  'reveal-cost-attack': heroEffectRevealCostAttack,
+  'reveal-odd-draw': heroEffectRevealOddDraw,
+  'reveal-attack-choose': heroEffectRevealAttackChoose,
+  'reveal-ko-attack': heroEffectRevealKoAttack,
+  'attack-per-count': heroEffectAttackPerCount,
+  'optional-ko-reward': heroEffectOptionalKoReward,
+};
+
+// ---------------------------------------------------------------------------
 // Single effect dispatch
 // ---------------------------------------------------------------------------
 
@@ -201,8 +679,8 @@ export function executeHeroEffects(
  * Executes a single hero effect descriptor.
  *
  * Validates magnitude, checks keyword support, then dispatches to the
- * appropriate helper. Returns without mutation for unsupported keywords
- * or invalid magnitudes.
+ * registered handler in HERO_EFFECT_HANDLERS. Returns without mutation for
+ * unsupported keywords or invalid magnitudes.
  *
  * @param G - Game state (mutated under Immer draft).
  * @param ctx - Context (narrowed to ShuffleProvider for draw).
@@ -223,16 +701,15 @@ export function executeSingleEffect(
 ): void {
   const keyword = effect.type;
 
-  // why: unsupported keywords are safely ignored in MVP. Only 'draw',
-  // 'attack', 'recruit', and 'ko' execute. The remaining 4 keywords
-  // ('rescue', 'wound', 'reveal', 'conditional') are deferred to WP-023+.
+  // why: unsupported keywords are safely ignored in MVP. Only the keywords in
+  // MVP_KEYWORDS execute; 'wound' and 'conditional' are deferred.
   if (!MVP_KEYWORDS.has(keyword)) {
     return;
   }
 
   // why: 'ko' and NO_MAGNITUDE_KEYWORDS members do not use the pre-check magnitude
   // gate — they handle undefined magnitude internally or use internal cost/parity logic.
-  // 'reveal-min' and 'reveal-ko-or-draw' have their own magnitude gates inside their cases.
+  // 'reveal-min' and 'reveal-ko-or-draw' have their own magnitude gates inside their handlers.
   // All other MVP keywords require a valid magnitude at this level.
   if (keyword !== 'ko' && !NO_MAGNITUDE_KEYWORDS.has(keyword) && keyword !== 'reveal-min') {
     if (!isValidMagnitude(effect.magnitude)) {
@@ -240,350 +717,15 @@ export function executeSingleEffect(
     }
   }
 
-  switch (keyword) {
-    case 'draw': {
-      // why: ctx is narrowed to ShuffleProvider here because deck reshuffle
-      // needs ctx.random.Shuffle. boardgame.io ctx satisfies ShuffleProvider
-      // structurally — this is the established pattern from WP-005B/008B.
-      drawFromPlayerDeck(G, playerID, effect.magnitude as number, ctx as ShuffleProvider);
-      break;
-    }
-    case 'attack': {
-      G.turnEconomy = addResources(G.turnEconomy, effect.magnitude as number, 0);
-      break;
-    }
-    case 'recruit': {
-      G.turnEconomy = addResources(G.turnEconomy, 0, effect.magnitude as number);
-      break;
-    }
-    case 'ko': {
-      // why: MVP KO targets the played card itself. This models "KO this
-      // card" text found on some heroes. No player choice — target selection
-      // is deferred to future WPs. The card must be removed from inPlay
-      // before being added to the KO pile.
-      const playerZones = G.playerZones[playerID];
-      if (playerZones) {
-        const moveResult = moveCardFromZone(playerZones.inPlay, [], cardId);
-        if (moveResult.found) {
-          playerZones.inPlay = moveResult.from;
-          G.ko = koCard(G.ko, cardId);
-        }
-      }
-      break;
-    }
-    case 'rescue': {
-      const rescueMagnitude = effect.magnitude ?? 1;
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) {
-        break;
-      }
-      if (G.piles.bystanders.length === 0) {
-        // why: D-24017 — an empty Bystander supply is a legitimate no-op, but a
-        // silent skip reads as "the hero card did nothing" (player confusion,
-        // per the live diagnostic). Log it so the reason is observable in the
-        // game log (UIState.log), mirroring how fight rescues are logged.
-        G.messages.push(
-          `Player ${playerID} could not rescue a Bystander via a hero ability — the Bystander supply is empty.`,
-        );
-        break;
-      }
-      const rescueCount = Math.min(rescueMagnitude, G.piles.bystanders.length);
-      let rescuedCount = 0;
-      for (let rescued = 0; rescued < rescueCount; rescued++) {
-        // why: top-of-pile convention — pile[0] is the first available bystander (D-21501)
-        const topBystander = G.piles.bystanders[0];
-        if (!topBystander) {
-          break;
-        }
-        const moveResult = moveCardFromZone(G.piles.bystanders, playerZones.victory, topBystander);
-        G.piles.bystanders = moveResult.from;
-        playerZones.victory = moveResult.to;
-        rescuedCount++;
-      }
-      // why: D-24017 — surface the hero-ability rescue in the game log the same
-      // way fight rescues are (fightVillain/fightMastermind), so a successful
-      // rescue is observable to the player rather than a silent zone move.
-      G.messages.push(
-        `Player ${playerID} rescued ${rescuedCount} bystander(s) via a hero ability.`,
-      );
-      break;
-    }
-    case 'reveal': {
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) {
-        break;
-      }
-      // why: reveal does not trigger deck reshuffle; empty deck is a silent no-op (D-21502)
-      if (playerZones.deck.length === 0) {
-        break;
-      }
-      const topCardId = playerZones.deck[0];
-      if (!topCardId) {
-        break;
-      }
-      const cardStats = G.cardStats[topCardId];
-      // why: G.cardStats has no entry for SHIELD starter cards; missing entry is a safe no-op (D-21502)
-      if (cardStats === undefined) {
-        break;
-      }
-      if (cardStats.cost <= (effect.magnitude as number)) {
-        const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
-        playerZones.deck = moveResult.from;
-        playerZones.hand = moveResult.to;
-      }
-      break;
-    }
-    case 'reveal-ko': {
-      // why: reveal-ko peeks one card and KOs it only when cost = 0; deck empty is a silent no-op per D-21502 precedent; D-21801 fixes zone integrity — card must be removed from deck before being added to KO
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) {
-        break;
-      }
-      if (playerZones.deck.length === 0) {
-        break;
-      }
-      const topCardId = playerZones.deck[0];
-      if (!topCardId) {
-        break;
-      }
-      const cardStats = G.cardStats[topCardId];
-      if (cardStats === undefined) {
-        break;
-      }
-      if (cardStats.cost === 0) {
-        const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
-        if (moveResult.found) {
-          playerZones.deck = moveResult.from;
-          G.ko = koCard(G.ko, topCardId);
-        }
-      }
-      break;
-    }
-    case 'reveal-min': {
-      // why: reveal-min draws the card only when cost >= threshold — opposite direction from 'reveal' which draws when cost <= threshold
-      if (!isValidMagnitude(effect.magnitude)) {
-        break;
-      }
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) {
-        break;
-      }
-      if (playerZones.deck.length === 0) {
-        break;
-      }
-      const topCardId = playerZones.deck[0];
-      if (!topCardId) {
-        break;
-      }
-      const cardStats = G.cardStats[topCardId];
-      if (cardStats === undefined) {
-        break;
-      }
-      if (cardStats.cost >= (effect.magnitude as number)) {
-        const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
-        playerZones.deck = moveResult.from;
-        playerZones.hand = moveResult.to;
-      }
-      break;
-    }
-    case 'reveal-ko-or-draw': {
-      // why: reveal-ko-or-draw peeks deck top; KOs the card (removing it from deck)
-      // when cost = 0; draws it when 0 < cost <= magnitude; no-op otherwise (D-21802)
-      if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) {
-        break;
-      }
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) {
-        break;
-      }
-      if (playerZones.deck.length === 0) {
-        break;
-      }
-      const topCardId = playerZones.deck[0];
-      if (!topCardId) {
-        break;
-      }
-      const cardStats = G.cardStats[topCardId];
-      if (cardStats === undefined) {
-        break;
-      }
-      // KO branch MUST be evaluated before draw branch.
-      // cost === 0 MUST NOT reach the draw branch.
-      if (cardStats.cost === 0) {
-        const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
-        if (moveResult.found) {
-          playerZones.deck = moveResult.from;
-          G.ko = koCard(G.ko, topCardId);
-        }
-      } else if (cardStats.cost <= (effect.magnitude as number)) {
-        const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
-        if (moveResult.found) {
-          playerZones.deck = moveResult.from;
-          playerZones.hand = moveResult.to;
-        }
-      }
-      // cost > magnitude: no-op
-      break;
-    }
-    case 'reveal-cost-attack': {
-      // why: reveal-cost-attack peeks deck top; grants attack equal to its cost;
-      // card stays on deck (no zone mutation) (D-21901)
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) { break; }
-      if (playerZones.deck.length === 0) { break; }
-      const topCardId = playerZones.deck[0];
-      if (!topCardId) { break; }
-      const cardStats = G.cardStats[topCardId];
-      if (cardStats === undefined) { break; }
-      if (!G.turnEconomy) { break; }
-      G.turnEconomy.attack += cardStats.cost;
-      break;
-    }
-    case 'reveal-odd-draw': {
-      // why: reveal-odd-draw peeks deck top; draws it when cost is odd (cost % 2 !== 0);
-      // cost-0 is even and does NOT trigger the draw (D-21902)
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) { break; }
-      if (playerZones.deck.length === 0) { break; }
-      const topCardId = playerZones.deck[0];
-      if (!topCardId) { break; }
-      const cardStats = G.cardStats[topCardId];
-      if (cardStats === undefined) { break; }
-      if (cardStats.cost % 2 !== 0) {
-        const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
-        if (moveResult.found) {
-          playerZones.deck = moveResult.from;
-          playerZones.hand = moveResult.to;
-        }
-      }
-      // cost is even (including 0): no-op
-      break;
-    }
-    case 'reveal-attack-choose': {
-      // why: reveal-attack-choose peeks deck top; grants attack equal to cost when
-      // cost <= magnitude; then stores a pending choice (discard or return) that
-      // the player must resolve via resolveHeroChoice before the turn can end (D-22003)
-      if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { break; }
-      // why: reject-second — a pending choice is never silently overwritten; the first
-      // choice's data integrity is preserved until the player resolves it (D-22001)
-      if (G.pendingHeroChoice !== undefined) { break; }
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) { break; }
-      if (playerZones.deck.length === 0) { break; }
-      const topCardId = playerZones.deck[0];
-      if (!topCardId) { break; }
-      const cardStats = G.cardStats[topCardId];
-      if (cardStats === undefined) { break; }
-      if (!G.turnEconomy) { break; }
-      // NOTE: G.pendingHeroChoice is set AFTER the G.turnEconomy guard.
-      // If G.turnEconomy is undefined the break fires here and G.pendingHeroChoice
-      // is NOT set. Tests must verify this (AC-9).
-      if (cardStats.cost <= (effect.magnitude as number)) {
-        G.turnEconomy.attack += cardStats.cost;
-      }
-      // Card stays on deck until player resolves the choice.
-      const pendingChoice: PendingHeroChoice = {
-        choiceType: 'discard-or-return',
-        cardId: topCardId,
-        playerID,
-      };
-      G.pendingHeroChoice = pendingChoice;
-      break;
-    }
-    case 'reveal-ko-attack': {
-      // why: D-22301 — compound executor. Peeks deck[0]; if cost === 0 (strict equality),
-      // (1) KOs the card via moveCardFromZone + koCard, then (2) grants fixed attack equal
-      // to magnitude. If cost > 0, no zone mutation — card stays at deck[0]. No player
-      // choice; G.pendingHeroChoice is NOT touched. Magnitude encodes the fixed attack grant
-      // amount, not a cost ceiling.
-      if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { break; }
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) { break; }
-      if (playerZones.deck.length === 0) { break; }
-      const topCardId = playerZones.deck[0];
-      if (!topCardId) { break; }
-      const cardStats = G.cardStats[topCardId];
-      if (cardStats === undefined) { break; }
-      // why: G.turnEconomy is initialised by turn-start machinery, not by this executor;
-      // if it is undefined the executor must not crash — silent no-op is correct here
-      if (!G.turnEconomy) { break; }
-      if (cardStats.cost === 0) {
-        // topCardId captured above before any mutation — do not re-read deck[0] after moveCardFromZone
-        const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
-        // why: atomic — attack is not granted when KO did not occur; no partial state mutation
-        if (!moveResult.found) { break; }
-        playerZones.deck = moveResult.from;
-        G.ko = koCard(G.ko, topCardId);
-        G.turnEconomy.attack += effect.magnitude as number;
-      }
-      // cost > 0: no zone mutation — card stays at deck[0]
-      break;
-    }
-    case 'attack-per-count': {
-      // why: D-24016 — magnitude is the per-unit rate; resolveCountSource resolves
-      // the count it scales by, so the grant is magnitude × count. The resolver is
-      // pure/total (unknown source → 0), so the grant is deterministic at play time.
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) { break; }
-      if (!G.turnEconomy) { break; }
-      // why: a count-scaled attack effect with no count source is a skipped no-op
-      // (mirrors the magnitude gate) — there is nothing to scale by.
-      if (effect.countSource === undefined) { break; }
-      const count = resolveCountSource(G, playerID, effect.countSource);
-      const grant = (effect.magnitude as number) * count;
-      G.turnEconomy = addResources(G.turnEconomy, grant, 0);
-      // why: record the source, count, and grant so the count-scaled attack is
-      // observable in replay inspection (no implicit side effects).
-      G.messages.push(`Count-scaled attack: +${grant} (${effect.magnitude as number} per ${effect.countSource}, count ${count}).`);
-      break;
-    }
-    case 'optional-ko-reward': {
-      // why: D-24019 — parks an interactive choice (mirrors WP-242); the reward
-      // is granted on resolve (resolveOptionalKoReward), not at play time. The
-      // player either declines (no KO, no reward) or KOs exactly one card from
-      // their hand or discard pile, in which case the reward fires.
-      const playerZones = G.playerZones[playerID];
-      if (!playerZones) { break; }
-      // why: eligible = discard ∪ hand, ANY card INCLUDING wounds (the printed
-      // text is "a card", not "a Hero") — no type/cost/keyword filtering. 0
-      // eligible (both zones empty) → skipped no-op + a G.messages line (mirrors
-      // the D-24017 empty-supply rescue logging), so the player can see why the
-      // ability did nothing.
-      const eligibleCount = playerZones.discard.length + playerZones.hand.length;
-      if (eligibleCount === 0) {
-        G.messages.push(
-          `Player ${playerID} could not KO a card for a hero ability — both hand and discard pile are empty, so no reward was granted.`,
-        );
-        break;
-      }
-      // why: defensive — the parser only emits a seeded rewardType, but an
-      // unseeded reward here is a logged no-op that never reaches the queue
-      // (no reward executor exists for it).
-      const rewardType = effect.rewardType;
-      if (rewardType === undefined || !OPTIONAL_KO_REWARD_SEEDED_REWARDS.has(rewardType)) {
-        G.messages.push(
-          `Player ${playerID} played a hero ability whose optional-KO reward is not yet supported, so the choice was skipped.`,
-        );
-        break;
-      }
-      // why: lazy-init at the park site (mirrors villainEffects.execute.ts:190
-      // pendingKoHeroChoices) — NEVER in Game.setup; the optional field tolerates
-      // older snapshots. The park itself is SILENT (no G.messages line), mirroring
-      // the WP-242 park; the reward grant is logged by the dispatched executor.
-      if (!G.pendingOptionalKoRewards) { G.pendingOptionalKoRewards = []; }
-      G.pendingOptionalKoRewards.push({
-        playerID,
-        rewardType,
-        rewardMagnitude: effect.magnitude ?? 1,
-        sourceCardId: cardId,
-      });
-      break;
-    }
-    default: {
-      // why: unreachable — MVP_KEYWORDS check above filters unsupported keywords
-      break;
-    }
+  // why: data-driven dispatch (WP-251 / D-24022). An undefined handler reproduces
+  // the former `default` arm exactly — a silent skip with no throw. Because the
+  // pre-gate above already filters to MVP_KEYWORDS and the drift test pins the
+  // registry keys == MVP_KEYWORDS, this branch is unreachable in practice.
+  const handler = HERO_EFFECT_HANDLERS[keyword];
+  if (handler === undefined) {
+    return;
   }
+  handler(G, ctx, playerID, cardId, effect);
 }
 
 // ---------------------------------------------------------------------------

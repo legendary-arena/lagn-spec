@@ -10,10 +10,36 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { executeHeroEffects, selectDefaultOptionalKoTarget } from './heroEffects.execute.js';
+import { executeHeroEffects, selectDefaultOptionalKoTarget, MVP_KEYWORDS, HERO_EFFECT_HANDLERS } from './heroEffects.execute.js';
 import { makeMockCtx } from '../test/mockCtx.js';
 import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
 import type { HeroAbilityHook } from '../rules/heroAbility.types.js';
+
+// ---------------------------------------------------------------------------
+// Registry drift (WP-251 / D-24022)
+// ---------------------------------------------------------------------------
+
+describe('HERO_EFFECT_HANDLERS registry drift (WP-251 / D-24022)', () => {
+  // why: replacing the exhaustive `switch` with a map removes TypeScript's
+  // exhaustiveness check, so this runtime guard takes its place — a keyword in
+  // MVP_KEYWORDS without a handler (or a handler key not in MVP_KEYWORDS) fails
+  // here. Bidirectional, so neither side can drift silently.
+  it('keys equal MVP_KEYWORDS exactly (bidirectional)', () => {
+    const handlerKeys = Object.keys(HERO_EFFECT_HANDLERS).sort();
+    const mvpKeys = [...MVP_KEYWORDS].sort();
+    assert.deepStrictEqual(
+      handlerKeys,
+      mvpKeys,
+      'HERO_EFFECT_HANDLERS keys must equal MVP_KEYWORDS exactly',
+    );
+  });
+
+  it('has exactly 15 handlers and none for the deferred keywords', () => {
+    assert.equal(Object.keys(HERO_EFFECT_HANDLERS).length, 15);
+    assert.equal(HERO_EFFECT_HANDLERS['wound'], undefined);
+    assert.equal(HERO_EFFECT_HANDLERS['conditional'], undefined);
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Test helper

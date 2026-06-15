@@ -25098,4 +25098,23 @@ by `--json` / `--check` / `--update-baseline`; the baseline changes only via
 **Drafted:** 2026-06-13. **Landed:** 2026-06-14 (execution close).
 **Status:** Active
 
+**D-24022: Hero Effect Dispatch via HERO_EFFECT_HANDLERS ImplementationMap**
+
+`executeSingleEffect` (`hero/heroEffects.execute.ts`) dispatches hero effects through a
+runtime-only `HERO_EFFECT_HANDLERS: Partial<Record<HeroKeyword, HeroEffectHandler>>`
+ImplementationMap (mirroring the WP-009B scheme/mastermind pattern) instead of a `switch`.
+Each handler is a named function holding the former case body verbatim; the map lives
+OUTSIDE `G` (functions are never serialized). Behavior is byte-identical — the pre-dispatch
+gates (`MVP_KEYWORDS` membership + magnitude pre-check) and the per-handler logic are
+unchanged, and the WP-250 coverage gate's per-set `noEffect` baseline is unchanged, proving
+identity at the corpus level. The union stays typed + drift-detected: the map is keyed by
+`HeroKeyword` and `Partial` (only `wound`/`conditional` unmapped), and a bidirectional
+registry-drift test pins `Object.keys(HERO_EFFECT_HANDLERS)` == the exported `MVP_KEYWORDS`.
+Adding a future effect is now a handler + a map entry + a drift-test member, not a `switch`
+edit — the open-dispatch foundation the WP-252 villain parameterization mirrors.
+
+**Packet:** WP-251 (EC-282).
+**Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
+**Status:** Active
+
 Protect this file.
