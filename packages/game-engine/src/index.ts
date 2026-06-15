@@ -321,6 +321,7 @@ export type {
   UIKoPileState,
   UIPendingHeroChoice,
   UIPendingKoHeroChoice,
+  UIPendingOptionalKoReward,
   UIEligibleKoHeroCard,
 } from "./ui/uiState.types.js";
 export { buildUIState } from "./ui/uiState.build.js";

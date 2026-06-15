@@ -988,3 +988,120 @@ describe('buildUIState — pendingKoHeroChoice projection (WP-243 / D-24010)', (
     assert.equal(JSON.stringify(gameState), before, 'G byte-identical after projection');
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-249 / EC-280 — pendingOptionalKoReward projection (D-24020)
+// ---------------------------------------------------------------------------
+
+describe('buildUIState — pendingOptionalKoReward projection (WP-249 / D-24020)', () => {
+  /**
+   * Builds a game state with one front optional-KO-reward choice for player 0
+   * and a deterministic hand/discard so the eligible-order assertions are precise.
+   */
+  function withOptionalReward(
+    rewardType: 'rescue' | 'draw' | 'attack' | 'recruit',
+    rewardMagnitude: number,
+  ): LegendaryGameState {
+    const gameState = makeGameStateWithDisplayData();
+    // why: include a WOUND in discard to prove the projection does NOT pre-filter
+    // (the round-trip rule — unlike the KO-hero projection which excludes wounds).
+    gameState.playerZones['0']!.hand = ['hero-h1' as CardExtId, 'hero-h2' as CardExtId];
+    gameState.playerZones['0']!.discard = ['hero-d1' as CardExtId, WOUND, 'hero-d2' as CardExtId];
+    gameState.pendingOptionalKoRewards = [
+      {
+        playerID: '0',
+        rewardType,
+        rewardMagnitude,
+        sourceCardId: 'core/black-widow/strike#0' as CardExtId,
+      },
+    ];
+    return gameState;
+  }
+
+  it('is undefined when the engine queue is empty', () => {
+    const gameState = createTestGameState();
+    assert.equal(gameState.pendingOptionalKoRewards, undefined);
+    const ui = buildUIState(gameState, mockCtx);
+    assert.equal(ui.pendingOptionalKoReward, undefined, 'absent when no pending optional-KO-reward');
+  });
+
+  it('projects the FRONT entry with playerID + eligibleHand/eligibleDiscard in zone + index order, NO pre-filter', () => {
+    const ui = buildUIState(withOptionalReward('rescue', 1), mockCtx);
+    assert.ok(ui.pendingOptionalKoReward !== undefined, 'present when queue non-empty');
+    assert.equal(ui.pendingOptionalKoReward!.playerID, '0');
+    assert.deepStrictEqual(
+      ui.pendingOptionalKoReward!.eligibleHand.map((e) => ({ zone: e.zone, cardId: e.cardId })),
+      [
+        { zone: 'hand', cardId: 'hero-h1' },
+        { zone: 'hand', cardId: 'hero-h2' },
+      ],
+      'eligibleHand mirrors G hand in index order, every entry zone:"hand"',
+    );
+    assert.deepStrictEqual(
+      ui.pendingOptionalKoReward!.eligibleDiscard.map((e) => ({ zone: e.zone, cardId: e.cardId })),
+      [
+        { zone: 'discard', cardId: 'hero-d1' },
+        { zone: 'discard', cardId: WOUND },
+        { zone: 'discard', cardId: 'hero-d2' },
+      ],
+      'eligibleDiscard mirrors G discard in index order INCLUDING the wound (no pre-filter)',
+    );
+  });
+
+  it('derives rewardLabel from the single rewardType + magnitude mapping', () => {
+    assert.equal(buildUIState(withOptionalReward('rescue', 1), mockCtx).pendingOptionalKoReward!.rewardLabel, 'Rescue a Bystander');
+    assert.equal(buildUIState(withOptionalReward('draw', 1), mockCtx).pendingOptionalKoReward!.rewardLabel, 'Draw a card');
+    assert.equal(buildUIState(withOptionalReward('draw', 2), mockCtx).pendingOptionalKoReward!.rewardLabel, 'Draw 2 cards');
+    assert.equal(buildUIState(withOptionalReward('attack', 3), mockCtx).pendingOptionalKoReward!.rewardLabel, '+3 Attack');
+    assert.equal(buildUIState(withOptionalReward('recruit', 2), mockCtx).pendingOptionalKoReward!.rewardLabel, '+2 Recruit');
+  });
+
+  it('projects only the FRONT entry when the queue holds more than one', () => {
+    const gameState = withOptionalReward('attack', 1);
+    gameState.pendingOptionalKoRewards = [
+      { playerID: '0', rewardType: 'rescue', rewardMagnitude: 1, sourceCardId: 'src-a' as CardExtId },
+      { playerID: '0', rewardType: 'draw', rewardMagnitude: 1, sourceCardId: 'src-b' as CardExtId },
+    ];
+    const ui = buildUIState(gameState, mockCtx);
+    assert.equal(ui.pendingOptionalKoReward!.rewardLabel, 'Rescue a Bystander', 'front entry projected, not the second');
+  });
+
+  it('eligible order follows array index, not Object.keys (reversed-array pin)', () => {
+    const gameState = withOptionalReward('draw', 1);
+    gameState.playerZones['0']!.discard = [...gameState.playerZones['0']!.discard].reverse();
+    const ui = buildUIState(gameState, mockCtx);
+    assert.deepStrictEqual(
+      ui.pendingOptionalKoReward!.eligibleDiscard.map((e) => e.cardId),
+      ['hero-d2', WOUND, 'hero-d1'],
+      'eligibleDiscard follows the reversed array index order',
+    );
+  });
+
+  it('eligible lists are defensive copies — mutating them does not affect G', () => {
+    const gameState = makeGameStateWithDisplayData();
+    const cardId = 'core/black-widow/strike#0' as CardExtId;
+    gameState.playerZones['0']!.hand = [cardId];
+    gameState.playerZones['0']!.discard = [];
+    gameState.pendingOptionalKoRewards = [
+      { playerID: '0', rewardType: 'rescue', rewardMagnitude: 1, sourceCardId: cardId },
+    ];
+    const originalName = gameState.cardDisplayData[cardId]!.name;
+    const ui = buildUIState(gameState, mockCtx);
+    // mutate both the list and a projected entry's display
+    ui.pendingOptionalKoReward!.eligibleHand.push({
+      zone: 'hand',
+      cardId: 'injected' as CardExtId,
+      display: { ...UNKNOWN_DISPLAY_PLACEHOLDER },
+    });
+    ui.pendingOptionalKoReward!.eligibleHand[0]!.display.name = 'mutated';
+    assert.deepStrictEqual(gameState.playerZones['0']!.hand, [cardId], 'G hand untouched by list push');
+    assert.equal(gameState.cardDisplayData[cardId]!.name, originalName, 'G display untouched by entry mutation');
+  });
+
+  it('buildUIState does not mutate G (purity)', () => {
+    const gameState = withOptionalReward('attack', 2);
+    const before = JSON.stringify(gameState);
+    buildUIState(gameState, mockCtx);
+    assert.equal(JSON.stringify(gameState), before, 'G byte-identical after projection');
+  });
+});

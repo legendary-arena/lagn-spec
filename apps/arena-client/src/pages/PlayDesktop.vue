@@ -38,6 +38,7 @@ import NotableEventOverlay from '../components/play/NotableEventOverlay.vue';
 import PileBrowseModal from '../components/play/PileBrowseModal.vue';
 import PendingHeroChoicePrompt from '../components/play/PendingHeroChoicePrompt.vue';
 import PendingKoHeroChoicePrompt from '../components/play/PendingKoHeroChoicePrompt.vue';
+import OptionalKoRewardPrompt from '../components/play/OptionalKoRewardPrompt.vue';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
 
 interface ActivePile {
@@ -87,6 +88,7 @@ export default defineComponent({
     PileBrowseModal,
     PendingHeroChoicePrompt,
     PendingKoHeroChoicePrompt,
+    OptionalKoRewardPrompt,
   },
   props: {
     submitMove: {
@@ -320,6 +322,14 @@ export default defineComponent({
       () => snapshot.value?.pendingKoHeroChoice !== undefined,
     );
 
+    // why: D-24020 — derived from UIState.pendingOptionalKoReward !== undefined.
+    // Passed to TurnActionBar to block end-turn and pass-priority at EVERY stage
+    // while an optional-KO-then-reward choice is pending (board frozen, mirrors
+    // hasPendingKoChoice).
+    const hasPendingOptionalKoReward = computed<boolean>(
+      () => snapshot.value?.pendingOptionalKoReward !== undefined,
+    );
+
     return {
       snapshot,
       viewer,
@@ -339,6 +349,7 @@ export default defineComponent({
       onPileClose,
       hasPendingChoice,
       hasPendingKoChoice,
+      hasPendingOptionalKoReward,
     };
   },
 });
@@ -483,6 +494,16 @@ export default defineComponent({
             :viewer-player-id="viewer.playerId"
             :submit-move="submitMove"
           />
+          <!-- why: D-24020 + WP-249 — the optional-KO-reward prompt renders above
+               TurnActionBar in DOM order; appears only for the choosing player
+               when pendingOptionalKoReward is set. NOT a modal; normal document
+               flow. WP-248's block-all guard guarantees at most one pending-choice
+               type is set, so no client-side precedence is needed. -->
+          <OptionalKoRewardPrompt
+            :pending-optional-ko-reward="snapshot.pendingOptionalKoReward"
+            :viewer-player-id="viewer.playerId"
+            :submit-move="submitMove"
+          />
           <!-- why: D-22201 + WP-222 — prompt renders above TurnActionBar in DOM
                order; appears only for the choosing player when pendingHeroChoice
                is set. NOT a modal; NOT position:fixed. Normal document flow. -->
@@ -496,6 +517,7 @@ export default defineComponent({
             :is-viewer-turn="isViewerTurn"
             :has-pending-choice="hasPendingChoice"
             :has-pending-ko-choice="hasPendingKoChoice"
+            :has-pending-optional-ko-reward="hasPendingOptionalKoReward"
             :submit-move="submitMove"
           />
         </template>

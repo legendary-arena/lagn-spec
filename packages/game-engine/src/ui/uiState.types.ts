@@ -79,6 +79,14 @@ export interface UIState {
   // the chooser — the eligible list carries the chooser's hand identities
   // (D-24011 hand-leak). Absent (undefined) means no pending KO choice.
   pendingKoHeroChoice?: UIPendingKoHeroChoice;
+  // why: D-24020 + WP-249 — projects the FRONT of G.pendingOptionalKoRewards
+  // with the derived reward label + the chooser's eligible hand/discard cards so
+  // the choosing player can render the "KO a card for a reward, or Decline"
+  // prompt. Redacted (omitted) for every audience except the chooser — the
+  // eligible lists carry the chooser's private hand/discard identities (D-24011
+  // hand-privacy analog). Absent (undefined) means no pending optional-KO-reward
+  // choice.
+  pendingOptionalKoReward?: UIPendingOptionalKoReward;
 }
 
 /**
@@ -491,6 +499,34 @@ export interface UIPendingKoHeroChoice {
   playerID: string;
   eligible: UIEligibleKoHeroCard[];
   remaining: number;
+}
+
+/**
+ * UI contract for resolving a pending optional-KO-then-reward choice
+ * (WP-249 / D-24020). Mirrors UIPendingKoHeroChoice; only visible to the
+ * choosing player, redacted for opponents and spectators.
+ *
+ * `playerID` is REQUIRED — `uiState.filter.ts` keys the chooser-only redaction
+ * on it (`audience.playerId === playerID`), exactly as the KO-hero filter does.
+ * `eligibleHand` / `eligibleDiscard` REUSE `UIEligibleKoHeroCard` so each entry
+ * carries its instance `cardId` separately from `display`: the client submits
+ * `{ zone, cardId }` and the zone instance id (NOT `display.extId`) is what the
+ * engine resolve matches (the round-trip rule). `eligibleHand` entries carry
+ * `zone:"hand"`, `eligibleDiscard` entries `zone:"discard"`.
+ *
+ * @see WP-249 §Locked Contract Values
+ * @see EC-280 Locked Values
+ * @see DECISIONS.md D-24020
+ */
+export interface UIPendingOptionalKoReward {
+  // why: D-24020 — the redaction key; the chooser-only filter compares
+  // audience.playerId against this, mirroring UIPendingKoHeroChoice.playerID.
+  playerID: string;
+  // why: D-24020 — derived once in uiState.build.ts by the single deterministic
+  // rewardType + magnitude mapping; never an ad-hoc or per-card string.
+  rewardLabel: string;
+  eligibleHand: UIEligibleKoHeroCard[];
+  eligibleDiscard: UIEligibleKoHeroCard[];
 }
 
 export type { UIAudience } from "./uiAudience.types.js";

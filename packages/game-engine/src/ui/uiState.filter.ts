@@ -489,5 +489,42 @@ export function filterUIStateForAudience(
     };
   }
 
+  // why: D-24020 — hand/discard are private to the chooser. pendingOptionalKoReward
+  // is redacted for EVERY audience except the choosing player (the D-24011
+  // hand-privacy analog). Its eligibleHand and eligibleDiscard lists carry the
+  // chooser's PRIVATE hand and discard identities; passing them through to
+  // opponents or spectators would leak both zones. Present only when the audience
+  // is a player whose playerId equals the chooser's playerID; omitted (conditional
+  // assignment, never an `undefined` literal) for opponents AND spectators.
+  // Per-entry display spread prevents aliasing with the input UIState.
+  if (
+    uiState.pendingOptionalKoReward !== undefined &&
+    audience.kind === 'player' &&
+    audience.playerId === uiState.pendingOptionalKoReward.playerID
+  ) {
+    const eligibleHandCopy = [];
+    for (const entry of uiState.pendingOptionalKoReward.eligibleHand) {
+      eligibleHandCopy.push({
+        zone: entry.zone,
+        cardId: entry.cardId,
+        display: { ...entry.display },
+      });
+    }
+    const eligibleDiscardCopy = [];
+    for (const entry of uiState.pendingOptionalKoReward.eligibleDiscard) {
+      eligibleDiscardCopy.push({
+        zone: entry.zone,
+        cardId: entry.cardId,
+        display: { ...entry.display },
+      });
+    }
+    result.pendingOptionalKoReward = {
+      playerID: uiState.pendingOptionalKoReward.playerID,
+      rewardLabel: uiState.pendingOptionalKoReward.rewardLabel,
+      eligibleHand: eligibleHandCopy,
+      eligibleDiscard: eligibleDiscardCopy,
+    };
+  }
+
   return result;
 }

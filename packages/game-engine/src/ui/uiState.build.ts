@@ -33,6 +33,7 @@ import type {
   UIKoPileState,
   UIPendingHeroChoice,
   UIPendingKoHeroChoice,
+  UIPendingOptionalKoReward,
   UIEligibleKoHeroCard,
 } from './uiState.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
@@ -135,6 +136,47 @@ function buildDisplayEntries(
     entries.push({ extId, display: resolveDisplay(extId, gameState) });
   }
   return entries;
+}
+
+// why: D-24020 — a SINGLE deterministic mapping from WP-248's reward
+// (rewardType + magnitude) to the player-facing label rendered in the
+// optional-KO-reward prompt. Defined ONCE here — never an ad-hoc or per-card
+// string at any call site — so the label cannot drift as the future sweep WP
+// marks more cards with this effect. The seeded rewardType set is
+// rescue / draw / attack / recruit (D-24019, deferred to — not re-declared
+// here). An unseeded value cannot occur (WP-248 filters at parse) but still
+// returns a safe generic label rather than crashing the projection.
+/**
+ * Derives the reward label shown in the optional-KO-reward prompt.
+ *
+ * @param rewardType - WP-248's PendingOptionalKoReward.rewardType (a HeroKeyword
+ *   string; the seeded set is rescue / draw / attack / recruit).
+ * @param rewardMagnitude - the reward magnitude (≥1 for the seeded reward set).
+ * @returns the single-mapping player-facing label string.
+ */
+function deriveOptionalKoRewardLabel(
+  rewardType: string,
+  rewardMagnitude: number,
+): string {
+  if (rewardType === 'rescue') {
+    return 'Rescue a Bystander';
+  }
+  if (rewardType === 'draw') {
+    if (rewardMagnitude > 1) {
+      return `Draw ${rewardMagnitude} cards`;
+    }
+    return 'Draw a card';
+  }
+  if (rewardType === 'attack') {
+    return `+${rewardMagnitude} Attack`;
+  }
+  if (rewardType === 'recruit') {
+    return `+${rewardMagnitude} Recruit`;
+  }
+  // why: D-24020 — an unseeded rewardType cannot occur (WP-248 filters at
+  // parse); the generic fallback keeps the projection total rather than
+  // returning undefined / crashing.
+  return 'Take the reward';
 }
 
 /**
@@ -715,6 +757,55 @@ export function buildUIState(
     }
   }
 
+  // --- 13c. Project pending optional-KO-then-reward choice (front of queue) ---
+  // why: D-24020 + WP-249 — project the FRONT entry of G.pendingOptionalKoRewards
+  // with the chooser's eligible hand + discard cards recomputed fresh from current
+  // G (no snapshot — WP-248 stores none). The eligible lists mirror
+  // G.playerZones[pid].hand / .discard in zone + index order with NO pre-filter
+  // and NO reorder, so the client's { zone, cardId } selection always maps to a
+  // card the engine resolve accepts (the round-trip rule — a filtered/reordered
+  // list lets the client submit a card the resolve rejects). resolveDisplay is
+  // spread fresh per entry so the projection holds no reference into
+  // G.cardDisplayData (aliasing defense, WP-111 D-11105). The reward label is
+  // derived once by deriveOptionalKoRewardLabel (the single mapping). Redaction
+  // to the chooser-only audience is enforced by filterUIStateForAudience
+  // (D-24011 analog — the eligible lists carry the chooser's private hand/discard).
+  let pendingOptionalKoReward: UIPendingOptionalKoReward | undefined;
+  if (
+    gameState.pendingOptionalKoRewards !== undefined &&
+    gameState.pendingOptionalKoRewards.length > 0
+  ) {
+    const frontReward = gameState.pendingOptionalKoRewards[0]!;
+    const chooserZones = gameState.playerZones[frontReward.playerID];
+    if (chooserZones !== undefined) {
+      const eligibleHand: UIEligibleKoHeroCard[] = [];
+      for (const cardId of chooserZones.hand) {
+        eligibleHand.push({
+          zone: 'hand',
+          cardId,
+          display: { ...resolveDisplay(cardId, gameState) },
+        });
+      }
+      const eligibleDiscard: UIEligibleKoHeroCard[] = [];
+      for (const cardId of chooserZones.discard) {
+        eligibleDiscard.push({
+          zone: 'discard',
+          cardId,
+          display: { ...resolveDisplay(cardId, gameState) },
+        });
+      }
+      pendingOptionalKoReward = {
+        playerID: frontReward.playerID,
+        rewardLabel: deriveOptionalKoRewardLabel(
+          frontReward.rewardType,
+          frontReward.rewardMagnitude,
+        ),
+        eligibleHand,
+        eligibleDiscard,
+      };
+    }
+  }
+
   // --- 14. Project game over ---
   // why: endgame state derived from G counters via evaluateEndgame
   // (pure); scores reuse the finalScores already computed for victoryVP
@@ -760,5 +851,6 @@ export function buildUIState(
     ...(gameOver !== undefined ? { gameOver } : {}),
     ...(pendingHeroChoice !== undefined ? { pendingHeroChoice } : {}),
     ...(pendingKoHeroChoice !== undefined ? { pendingKoHeroChoice } : {}),
+    ...(pendingOptionalKoReward !== undefined ? { pendingOptionalKoReward } : {}),
   };
 }

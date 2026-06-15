@@ -25068,6 +25068,6 @@ state + move; the engine has no human choice surface without this packet).
 
 **Packet:** WP-249 (EC-280). Co-release: WP-248 (EC-279).
 **Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
-**Status:** Reserved (proposed)
+**Status:** Active
 
 Protect this file.

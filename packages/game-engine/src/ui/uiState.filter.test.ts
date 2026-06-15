@@ -404,3 +404,82 @@ describe('filterUIStateForAudience — pendingKoHeroChoice redaction (D-24011)',
     assert.ok(uiState.pendingKoHeroChoice !== undefined, 'source UIState unchanged');
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-249 / EC-280 — pendingOptionalKoReward redaction (D-24020, D-24011 analog)
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds a UIState where player '0' owes an optional-KO-reward choice with
+ * eligible cards spanning their (private) hand + discard. Both the hand and
+ * discard identities are leak vectors — they must not appear in a non-chooser's
+ * UIState.
+ */
+function createOptionalRewardUIState(): UIState {
+  const config = createTestConfig();
+  const registry = createMockRegistry();
+  const setupContext = makeMockCtx();
+  const gameState = buildInitialGameState(config, registry, setupContext);
+
+  // why: the discard TOP card (last index) is PUBLIC via discardTopCard (D-12803,
+  // face-up at the table), so the leak assertions target the non-top index-0
+  // discard card, which is private (exposed only via the redacted discardCards
+  // and the chooser-only eligible list). Hand identities are fully private.
+  gameState.playerZones['0']!.hand = ['okr-hand-secret-a', 'okr-hand-secret-b'];
+  gameState.playerZones['0']!.discard = ['okr-disc-secret-bottom', 'okr-disc-public-top'];
+  gameState.playerZones['1']!.hand = ['p1-card'];
+  gameState.pendingOptionalKoRewards = [
+    { playerID: '0', rewardType: 'rescue', rewardMagnitude: 1, sourceCardId: 'okr-src' },
+  ];
+
+  return buildUIState(gameState, mockCtx);
+}
+
+describe('filterUIStateForAudience — pendingOptionalKoReward redaction (D-24020)', () => {
+  it('the chooser sees pendingOptionalKoReward with the full eligible hand + discard', () => {
+    const uiState = createOptionalRewardUIState();
+    const result = filterUIStateForAudience(uiState, PLAYER_0);
+    assert.ok(result.pendingOptionalKoReward !== undefined, 'chooser sees the optional-KO-reward choice');
+    assert.equal(result.pendingOptionalKoReward!.playerID, '0');
+    assert.equal(result.pendingOptionalKoReward!.rewardLabel, 'Rescue a Bystander');
+    assert.equal(result.pendingOptionalKoReward!.eligibleHand.length, 2, 'eligibleHand projected for the chooser');
+    assert.equal(result.pendingOptionalKoReward!.eligibleDiscard.length, 2, 'eligibleDiscard projected for the chooser');
+  });
+
+  it('an opponent does NOT see pendingOptionalKoReward and none of the chooser private hand/discard ext_ids leak', () => {
+    const uiState = createOptionalRewardUIState();
+    const result = filterUIStateForAudience(uiState, PLAYER_1);
+    assert.equal(result.pendingOptionalKoReward, undefined, 'opponent must not see the optional-KO-reward choice');
+    const serialized = JSON.stringify(result);
+    assert.equal(serialized.includes('okr-hand-secret-a'), false, 'no chooser hand ext_id leaks');
+    assert.equal(serialized.includes('okr-hand-secret-b'), false, 'no chooser hand ext_id leaks');
+    assert.equal(serialized.includes('okr-disc-secret-bottom'), false, 'no chooser non-top discard ext_id leaks');
+  });
+
+  it('a spectator does NOT see pendingOptionalKoReward and none of the chooser private hand/discard ext_ids leak', () => {
+    const uiState = createOptionalRewardUIState();
+    const result = filterUIStateForAudience(uiState, SPECTATOR);
+    assert.equal(result.pendingOptionalKoReward, undefined, 'spectator must not see the optional-KO-reward choice');
+    const serialized = JSON.stringify(result);
+    assert.equal(serialized.includes('okr-hand-secret-a'), false, 'no chooser hand ext_id leaks');
+    assert.equal(serialized.includes('okr-hand-secret-b'), false, 'no chooser hand ext_id leaks');
+    assert.equal(serialized.includes('okr-disc-secret-bottom'), false, 'no chooser non-top discard ext_id leaks');
+  });
+
+  it('per-entry display is a defensive copy — mutating the chooser result does not affect the source', () => {
+    const uiState = createOptionalRewardUIState();
+    const result = filterUIStateForAudience(uiState, PLAYER_0);
+    result.pendingOptionalKoReward!.eligibleHand[0]!.display.name = 'mutated';
+    assert.notEqual(
+      uiState.pendingOptionalKoReward!.eligibleHand[0]!.display.name,
+      'mutated',
+      'source UIState eligible display untouched',
+    );
+  });
+
+  it('does not mutate the input UIState (pendingOptionalKoReward still present on the source)', () => {
+    const uiState = createOptionalRewardUIState();
+    filterUIStateForAudience(uiState, PLAYER_1);
+    assert.ok(uiState.pendingOptionalKoReward !== undefined, 'source UIState unchanged');
+  });
+});

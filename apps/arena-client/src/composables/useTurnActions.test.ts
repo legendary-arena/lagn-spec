@@ -137,3 +137,29 @@ describe('useTurnActions — hasPendingKoChoice gating (WP-243 / EC-274 / D-2401
     assert.equal(both.reason, KO_REASON, 'KO gate reason takes precedence over the hero reason');
   });
 });
+
+describe('useTurnActions — hasPendingOptionalKoReward gating (WP-249 / EC-280 / D-24020)', () => {
+  const OPTIONAL_REASON = 'Choose a card to KO or Decline before taking another action.';
+
+  test('canEndTurn blocked at EVERY stage when hasPendingOptionalKoReward is true', () => {
+    for (const stage of ['start', 'main', 'cleanup'] as const) {
+      const result = useTurnActions(stage, true, false, false, true).canEndTurn();
+      assert.equal(result.allowed, false, `endTurn blocked at ${stage}`);
+      assert.equal(result.reason, OPTIONAL_REASON, 'optional-KO-reward gate reason matches the locked value');
+    }
+  });
+
+  test('canPassPriority blocked at EVERY stage when hasPendingOptionalKoReward is true (board frozen)', () => {
+    for (const stage of ['start', 'main', 'cleanup'] as const) {
+      const result = useTurnActions(stage, true, false, false, true).canPassPriority();
+      assert.equal(result.allowed, false, `passPriority blocked at ${stage}`);
+      assert.equal(result.reason, OPTIONAL_REASON);
+    }
+  });
+
+  test('defaults false — both allowed at cleanup when no optional-KO-reward choice pending', () => {
+    const actions = useTurnActions('cleanup', true, false, false, false);
+    assert.equal(actions.canEndTurn().allowed, true);
+    assert.equal(actions.canPassPriority().allowed, true);
+  });
+});
