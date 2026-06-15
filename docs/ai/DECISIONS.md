@@ -25070,4 +25070,32 @@ state + move; the engine has no human choice surface without this packet).
 **Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
 **Status:** Active
 
+**D-24021: Hero-Effect Coverage Gate — Parser-Driven Non-Regression Taxonomy + Hybrid CI Posture**
+
+`pnpm sim:coverage` (`scripts/hero-effect-coverage.mjs`) drives the real setup-time
+parser (`buildHeroAbilityHooks`) over every hero card in all in-repo sets and buckets
+each parsed ability line as EXECUTABLE / PARSED_NOT_EXECUTED / NO_EFFECT, plus an
+`unsupportedMechanics` tally of `[keyword:X]` tokens whose normalized name is not a
+`HERO_KEYWORD`. `--check` compares the current corpus to a committed baseline
+(`scripts/coverage/hero-effect-coverage.baseline.json`, `schemaVersion: 1`) under a
+**hybrid** posture: a per-set `noEffect` rise or a baseline set missing from the
+current corpus HARD-FAILS (exit 1); a brand-new unsupported mechanic WARNS only
+(exit 0 — new mechanics appear routinely as sets get authored); a broken run
+(missing/unreadable baseline, missing `dist/`, absent/invalid `schemaVersion`, JSON
+parse failure, or zero corpus) is a PROBE FAILURE (exit 2). The gate is **decoupled
+from the executor**: it keys on `noEffect` (pure parser output), never on the probe's
+informational executed-keyword list (which mirrors the executor's handled set for the
+human-report EXECUTABLE/PARSED split only) — so the Lever 1/2 effect-system refactor
+(`docs/ai/DESIGN-EFFECT-AUTHORING-SCALE.md`) can change the executor without the
+gate's verdict depending on it. Serialization is byte-deterministic (object keys
+sorted by UTF-16 code unit, fixed formatting) via one `serializeDeterministic` shared
+by `--json` / `--check` / `--update-baseline`; the baseline changes only via
+`--update-baseline`, run on `main` after confirming the change is intentional. Tooling
++ CI only — no engine/registry source or contract change. A CI job
+`hero-effect-coverage` runs `pnpm -r build` then `pnpm sim:coverage --check`.
+
+**Packet:** WP-250 (EC-281).
+**Drafted:** 2026-06-13. **Landed:** 2026-06-14 (execution close).
+**Status:** Active
+
 Protect this file.

@@ -1,0 +1,336 @@
+{
+  "corpus": {
+    "executable": 2516,
+    "heroes": 309,
+    "hooks": 5739,
+    "noEffect": 3218,
+    "parsedNotExecuted": 5
+  },
+  "perSet": {
+    "2099": {
+      "executable": 51,
+      "hooks": 111,
+      "noEffect": 60
+    },
+    "3dtc": {
+      "executable": 41,
+      "hooks": 75,
+      "noEffect": 34
+    },
+    "amwp": {
+      "executable": 68,
+      "hooks": 183,
+      "noEffect": 115
+    },
+    "anni": {
+      "executable": 73,
+      "hooks": 125,
+      "noEffect": 52
+    },
+    "antm": {
+      "executable": 37,
+      "hooks": 109,
+      "noEffect": 72
+    },
+    "asrd": {
+      "executable": 38,
+      "hooks": 92,
+      "noEffect": 54
+    },
+    "bkpt": {
+      "executable": 39,
+      "hooks": 114,
+      "noEffect": 75
+    },
+    "bkwd": {
+      "executable": 22,
+      "hooks": 97,
+      "noEffect": 75
+    },
+    "ca75": {
+      "executable": 54,
+      "hooks": 100,
+      "noEffect": 46
+    },
+    "chmp": {
+      "executable": 29,
+      "hooks": 124,
+      "noEffect": 95
+    },
+    "core": {
+      "executable": 148,
+      "hooks": 229,
+      "noEffect": 76
+    },
+    "cosm": {
+      "executable": 44,
+      "hooks": 193,
+      "noEffect": 149
+    },
+    "cvwr": {
+      "executable": 128,
+      "hooks": 291,
+      "noEffect": 163
+    },
+    "dead": {
+      "executable": 41,
+      "hooks": 82,
+      "noEffect": 41
+    },
+    "dims": {
+      "executable": 41,
+      "hooks": 97,
+      "noEffect": 56
+    },
+    "dkcy": {
+      "executable": 177,
+      "hooks": 297,
+      "noEffect": 120
+    },
+    "dstr": {
+      "executable": 40,
+      "hooks": 76,
+      "noEffect": 36
+    },
+    "fear": {
+      "executable": 43,
+      "hooks": 119,
+      "noEffect": 76
+    },
+    "ff04": {
+      "executable": 64,
+      "hooks": 74,
+      "noEffect": 10
+    },
+    "gotg": {
+      "executable": 17,
+      "hooks": 92,
+      "noEffect": 75
+    },
+    "mdns": {
+      "executable": 61,
+      "hooks": 115,
+      "noEffect": 54
+    },
+    "mgtg": {
+      "executable": 39,
+      "hooks": 76,
+      "noEffect": 37
+    },
+    "msis": {
+      "executable": 64,
+      "hooks": 91,
+      "noEffect": 27
+    },
+    "msmc": {
+      "executable": 55,
+      "hooks": 182,
+      "noEffect": 127
+    },
+    "msp1": {
+      "executable": 82,
+      "hooks": 109,
+      "noEffect": 27
+    },
+    "nmut": {
+      "executable": 36,
+      "hooks": 88,
+      "noEffect": 52
+    },
+    "noir": {
+      "executable": 21,
+      "hooks": 71,
+      "noEffect": 50
+    },
+    "pttr": {
+      "executable": 45,
+      "hooks": 117,
+      "noEffect": 72
+    },
+    "rlmk": {
+      "executable": 45,
+      "hooks": 116,
+      "noEffect": 71
+    },
+    "rvlt": {
+      "executable": 55,
+      "hooks": 172,
+      "noEffect": 117
+    },
+    "shld": {
+      "executable": 37,
+      "hooks": 104,
+      "noEffect": 67
+    },
+    "smhc": {
+      "executable": 33,
+      "hooks": 103,
+      "noEffect": 70
+    },
+    "ssw1": {
+      "executable": 138,
+      "hooks": 221,
+      "noEffect": 83
+    },
+    "ssw2": {
+      "executable": 124,
+      "hooks": 256,
+      "noEffect": 132
+    },
+    "vill": {
+      "executable": 139,
+      "hooks": 280,
+      "noEffect": 141
+    },
+    "vnom": {
+      "executable": 47,
+      "hooks": 106,
+      "noEffect": 59
+    },
+    "wpnx": {
+      "executable": 20,
+      "hooks": 82,
+      "noEffect": 62
+    },
+    "wtif": {
+      "executable": 74,
+      "hooks": 136,
+      "noEffect": 62
+    },
+    "wwhk": {
+      "executable": 113,
+      "hooks": 328,
+      "noEffect": 215
+    },
+    "xmen": {
+      "executable": 93,
+      "hooks": 306,
+      "noEffect": 213
+    }
+  },
+  "schemaVersion": 1,
+  "unsupportedMechanics": {
+    "\"when-recruited\"-abilities": 15,
+    ":-cross-dimensional-wolverine-rampage.": 1,
+    "abomination": 3,
+    "ambush": 12,
+    "antics": 6,
+    "artifact": 12,
+    "artifact--": 6,
+    "artifacts": 2,
+    "astral-plane": 1,
+    "attack-per-count:victory-bystanders": 1,
+    "berserk": 43,
+    "blood-frenzy": 6,
+    "bridge": 3,
+    "bridge-conqueror": 3,
+    "burn-2-shards": 3,
+    "burn-4-shards": 2,
+    "burn-8-shards": 1,
+    "burn-a-shards": 1,
+    "burn-any-number-of-shards": 1,
+    "cheering-crowds": 6,
+    "clone": 16,
+    "conqueror": 11,
+    "contest-of-champions": 2,
+    "coordinate": 11,
+    "cosmic-threat": 2,
+    "cross-dimensional-colossus-rampage": 1,
+    "cross-dimensional-hulk-rampage.": 1,
+    "cross-dimensional-party-rampage": 1,
+    "cyber-mod": 9,
+    "cyber-mod-4-wounds": 1,
+    "cyber-mod-wound": 2,
+    "danger-sense": 18,
+    "dark-memories": 10,
+    "demolish": 3,
+    "demonic-bargain": 4,
+    "digest": 7,
+    "dodge": 24,
+    "don't-speak": 1,
+    "double-striker": 1,
+    "empowered": 19,
+    "endgame": 5,
+    "excessive-kindness": 7,
+    "excessive-violence": 21,
+    "explore": 2,
+    "fated-future": 6,
+    "feast": 7,
+    "focus": 25,
+    "fortify": 1,
+    "heist": 3,
+    "highest-abomination": 1,
+    "hunt-for-victims": 1,
+    "hyperspeed": 14,
+    "indigestion": 5,
+    "investigate": 28,
+    "last-stand": 3,
+    "liberate": 7,
+    "lightshow": 16,
+    "man-out-of-time": 8,
+    "man/woman-out-of-time": 4,
+    "microscopic-size-changing": 13,
+    "moonlight": 17,
+    "optional-ko-reward:rescue": 1,
+    "outwit": 13,
+    "patrol-any-city-space": 3,
+    "patrol-every-city-space": 1,
+    "patrol-the-bank": 2,
+    "patrol-the-bridge": 4,
+    "patrol-the-escape-pile": 1,
+    "patrol-the-rooftops": 6,
+    "patrol-the-sewers": 5,
+    "patrol-the-streets": 4,
+    "patrol-two-adjacent-city-spaces": 1,
+    "patrol-your-discard-pile": 1,
+    "patrol-your-victory-pile": 1,
+    "phasing": 12,
+    "piercing-energy": 11,
+    "ritual-artifact": 8,
+    "rooftops": 1,
+    "rooftops-abomination": 1,
+    "s.h.i.e.l.d.-level": 10,
+    "s.h.i.e.l.d.-levels": 3,
+    "sacrifice": 7,
+    "savior": 8,
+    "sewers-conqueror": 2,
+    "shatter": 7,
+    "size-changing": 45,
+    "smash": 19,
+    "soaring-flight": 17,
+    "soulbind": 5,
+    "soulbind-a-bystander-or-villain": 1,
+    "soulbind-six-villains": 1,
+    "speak": 1,
+    "spectrum": 9,
+    "streets": 3,
+    "streets-abomination": 1,
+    "streets-conqueror": 1,
+    "striker": 1,
+    "sunlight": 14,
+    "switcheroo": 7,
+    "tactical-formation": 13,
+    "teleport": 21,
+    "thrones-favor": 18,
+    "thrown-artifact": 13,
+    "transform": 21,
+    "transformed": 1,
+    "triggered-artifact": 7,
+    "undercover": 45,
+    "unleash": 7,
+    "versatile": 13,
+    "villain-or-mastermind-has-any-wounds": 2,
+    "waking-nightmare": 2,
+    "wall-crawl": 29,
+    "weapon-x-sequence": 8,
+    "what-if...?": 12,
+    "when-recruited": 16,
+    "woman-out-of-time": 4,
+    "worthy": 6,
+    "wound-a-villain": 3,
+    "wound-each-villain-and-the-mastermind": 1,
+    "wound-the-mastermind": 3,
+    "wounded-fury": 4,
+    "x-gene": 13
+  }
+}

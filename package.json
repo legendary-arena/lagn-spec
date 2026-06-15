@@ -51,6 +51,8 @@
     "roadmap:counts:check": "node scripts/roadmap-counts.mjs --check",
     "roadmap:counts:test":  "node --import tsx --test scripts/roadmap-counts.test.ts",
 
+    "sim:coverage":         "node scripts/hero-effect-coverage.mjs",
+
     "themes:check-slugs":   "node scripts/check-theme-slug-resolution.mjs",
     "themes:check-slugs:check": "node scripts/check-theme-slug-resolution.mjs --check"
   },
