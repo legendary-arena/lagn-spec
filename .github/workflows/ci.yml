@@ -201,6 +201,43 @@ jobs:
       - name: Build dashboard
         run: pnpm --filter @legendary-arena/dashboard build
 
+  # ── 3e. LAGN schema drift guard ──────────────────────────────────────────────
+  # why: packages/lagn-spec/schemas/lagn-v1.json is generated from the Zod source
+  # (src/validator.ts → generateSchema()) and committed to the repo, but nothing on
+  # the green path regenerated it. A Zod-source change without re-running the
+  # generator would land a stale schema silently — only a human noticing `git
+  # status` would catch it. This gate regenerates from current source and fails if
+  # the committed copy drifts. lagn depends only on zod (no registry/workspace dist
+  # needed), so a filtered regenerate is enough and this job runs independently of
+  # the registry chain.
+  lagn-schema-drift:
+    name: LAGN Schema Drift Guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with: { node-version: 22, cache: pnpm }
+
+      - run: pnpm install --frozen-lockfile
+
+      # why: generate:schema runs `tsc` before the generator so it imports freshly
+      # compiled dist/validator.js, never a stale incremental build (the footgun
+      # that produced spurious local drift before this guard existed).
+      - name: Regenerate schema from Zod source
+        run: pnpm --filter @legendary-arena/lagn generate:schema
+
+      - name: Assert committed schema matches generator output
+        run: |
+          if ! git diff --quiet -- packages/lagn-spec/schemas/lagn-v1.json; then
+            echo "::error file=packages/lagn-spec/schemas/lagn-v1.json::Committed LAGN schema is out of sync with its generator. Run 'pnpm --filter @legendary-arena/lagn generate:schema' and commit the result."
+            git --no-pager diff -- packages/lagn-spec/schemas/lagn-v1.json
+            exit 1
+          fi
+          echo "LAGN schema is in sync with generator output."
+
   # ── 4. Upload to R2 (tags only) ────────────────────────────────────────────
   upload-r2:
     name: Upload to Cloudflare R2

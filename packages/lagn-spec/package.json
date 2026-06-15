@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "tsc && node scripts/build.mjs && node scripts/generate-schema.mjs",
-    "generate:schema": "node scripts/generate-schema.mjs",
+    "generate:schema": "tsc && node scripts/generate-schema.mjs",
     "test": "tsx --test src/**/*.test.ts"
   },
   "keywords": [
