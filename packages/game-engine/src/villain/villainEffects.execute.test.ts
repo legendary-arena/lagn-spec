@@ -20,6 +20,7 @@ import { resolveKoHeroChoice } from '../moves/koHeroChoice.resolve.js';
 import type { LegendaryGameState } from '../types.js';
 import type { CardExtId, PlayerZones } from '../state/zones.types.js';
 import type { VillainAbilityHook } from '../rules/villainAbility.types.js';
+import { LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR } from '../rules/villainAbility.types.js';
 
 const WOUND = 'pile-wound' as CardExtId;
 const CTX = { currentPlayer: '0' };
@@ -94,11 +95,21 @@ function hook(
   timing: 'onAmbush' | 'onFight' | 'onEscape',
   effects: string[],
 ): VillainAbilityHook {
+  // why: WP-252 — the helper takes legacy keyword strings. keywords[] is that
+  // string array; effects[] is the translated descriptor array, mirroring the
+  // parser's dual output for hand-built fixtures. Unknown strings (safe-skip
+  // tests) translate to {} (no primitive) → the executor's handler lookup
+  // misses → safe-skip, exactly as before.
+  const keywords = effects as VillainAbilityHook['keywords'];
+  const descriptors: VillainAbilityHook['effects'] = [];
+  for (const keyword of keywords) {
+    descriptors.push({ ...LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR[keyword] });
+  }
   return {
     cardId: cardId as CardExtId,
     timing,
-    keywords: effects as VillainAbilityHook['keywords'],
-    effects: effects as VillainAbilityHook['effects'],
+    keywords,
+    effects: descriptors,
   };
 }
 

@@ -19,8 +19,10 @@ import type { CardExtId, PlayerZones } from '../state/zones.types.js';
 import type {
   VillainAbilityTiming,
   VillainEffectKeyword,
+  VillainEffectDescriptor,
+  VillainEffectPrimitive,
 } from '../rules/villainAbility.types.js';
-import { getVillainHooksForCard } from '../rules/villainAbility.types.js';
+import { getVillainHooksForCard, descriptorToLegacyKeyword } from '../rules/villainAbility.types.js';
 import { gainWound } from '../board/wounds.logic.js';
 import { koCard } from '../board/ko.logic.js';
 import {
@@ -101,10 +103,19 @@ export function executeVillainAbilities(
 
   const hooks = getVillainHooksForCard(G.villainAbilityHooks, cardId, timing);
   for (const hook of hooks) {
-    for (const effect of hook.effects) {
-      const applied = applyVillainEffect(G, currentPlayer, cardId, timing, effect);
+    for (const descriptor of hook.effects) {
+      const applied = applyVillainEffect(G, currentPlayer, cardId, timing, descriptor);
       if (applied) {
-        appliedEffects.push(effect);
+        // why: D-24023 — the applied-effects accumulator stays
+        // VillainEffectKeyword[] (reverse-mapped from the dispatched descriptor)
+        // so notableEvents, EFFECT_KEYWORD_LABELS, the replay state-hash, and the
+        // arena-client projection are byte-identical. Every dispatched descriptor
+        // came from a legacy marker, so the reverse-map always resolves; an
+        // unresolvable descriptor (none in this WP) is simply not recorded.
+        const legacyKeyword = descriptorToLegacyKeyword(descriptor);
+        if (legacyKeyword !== undefined) {
+          appliedEffects.push(legacyKeyword);
+        }
       }
     }
   }
@@ -117,209 +128,258 @@ export function executeVillainAbilities(
 // ---------------------------------------------------------------------------
 
 /**
- * Applies one villain effect keyword deterministically.
+ * Handler signature for one villain effect primitive (WP-252 / D-24023).
+ *
+ * Mirrors the WP-251 HeroEffectHandler shape. Handlers mutate G directly and
+ * return void; the dispatcher decides "applied" by primitive presence.
+ */
+type VillainEffectHandler = (
+  G: LegendaryGameState,
+  currentPlayer: string,
+  cardId: CardExtId,
+  timing: VillainAbilityTiming,
+  descriptor: VillainEffectDescriptor,
+) => void;
+
+/**
+ * gain-wound primitive — every player or the current player gains 1 wound.
+ *
+ * `target: 'each'` is verbatim from the former gainWoundEachPlayer case;
+ * `target: 'current'` is verbatim from gainWoundCurrentPlayer (WP-185 / WP-200).
+ * Only the dispatch shape changed (WP-252).
+ */
+function villainEffectGainWound(
+  G: LegendaryGameState,
+  currentPlayer: string,
+  _cardId: CardExtId,
+  _timing: VillainAbilityTiming,
+  descriptor: VillainEffectDescriptor,
+): void {
+  if (descriptor.target === 'each') {
+    // why: every player gains 1 wound (subject to wound-pile availability),
+    // mirroring the existing escape-wound no-op-on-empty semantics.
+    for (const playerId of Object.keys(G.playerZones)) {
+      const zones = G.playerZones[playerId];
+      if (!zones) continue;
+      if (G.piles.wounds.length === 0) continue;
+      const result = gainWound(G.piles.wounds, zones.discard);
+      G.piles.wounds = result.woundsPile;
+      zones.discard = result.playerDiscard;
+      if (playerId === currentPlayer) {
+        // why: woundsDrawn projects the current player's wounds only (UI
+        // economy), matching escape-wound and the deleted Ambush loop.
+        G.turnEconomy.woundsDrawn += 1;
+      }
+    }
+    return;
+  }
+  // why: target === 'current'. WP-200 — mutation-guarded short-circuit still
+  // counts as "applied" per the post-safe-skip contract (the dispatcher records
+  // applied by primitive presence, not by mutation). The empty-pile /
+  // missing-zone guards short-circuit body work, not the dispatch.
+  const zones = G.playerZones[currentPlayer];
+  if (!zones) return;
+  if (G.piles.wounds.length === 0) return;
+  const result = gainWound(G.piles.wounds, zones.discard);
+  G.piles.wounds = result.woundsPile;
+  zones.discard = result.playerDiscard;
+  G.turnEconomy.woundsDrawn += 1;
+}
+
+/**
+ * ko-hero primitive — KO a hero for the current player (interactive) or for
+ * every player (auto-resolved, magnitude-many).
+ *
+ * `target: 'current'` is verbatim from the former koHeroCurrentPlayer case (the
+ * WP-242 interactive park). `target: 'each'` is the koHeroEachPlayer (magnitude
+ * 1) and koHeroEachPlayerMag2 (magnitude 2) cases generalized to
+ * descriptor.magnitude (WP-252 / D-24023).
+ */
+function villainEffectKoHero(
+  G: LegendaryGameState,
+  currentPlayer: string,
+  _cardId: CardExtId,
+  _timing: VillainAbilityTiming,
+  descriptor: VillainEffectDescriptor,
+): void {
+  if (descriptor.target === 'current') {
+    // why: interactive KO for the current player (supersedes the WP-185
+    // auto-resolution deferral, D-24006). 0 eligible → no-op; exactly 1 →
+    // auto-KO (no decision to make, D-24007 decision C); ≥2 → append a
+    // pending choice and KO nothing yet (the player picks via
+    // resolveKoHeroChoice, D-24007).
+    const zones = G.playerZones[currentPlayer];
+    if (!zones) return;
+    const eligible = buildKoEligibleTargets(zones);
+    if (eligible.length === 0) return;
+    if (eligible.length === 1) {
+      koSingleTarget(G, zones, eligible[0]!);
+      return;
+    }
+    if (!G.pendingKoHeroChoices) G.pendingKoHeroChoices = [];
+    G.pendingKoHeroChoices.push({ choiceType: 'ko-hero', playerID: currentPlayer });
+    return;
+  }
+  // why: target === 'each'. Iteration order is Object.keys(G.playerZones).sort()
+  // — default JavaScript string compare → lexical ascending (D-18902), NOT
+  // insertion order and NOT a numeric sort. The shared per-player resolver owns
+  // target selection AND the koCard mutation; this caller MUST NOT post-process
+  // or modify the resolver's output (D-18902 mutation-location lock).
+  // descriptor.magnitude drives the per-player repetition: 1 == the former
+  // koHeroEachPlayer, 2 == koHeroEachPlayerMag2. The literal-2 inner loop is now
+  // a descriptor param (D-24023 retiring D-20201's closed-union-per-magnitude);
+  // a future Mag3 is data-only (magnitude: 3), no code change. Per-iteration
+  // semantics inherit D-18503 (discard→hand→inPlay, starter-first tie-break,
+  // silent no-op for zero eligible). Magnitude-N ≡ magnitude-1 N times — pinned
+  // by the shared-resolver parity test on a single-player G.
+  const repetitions = descriptor.magnitude ?? 1;
+  const playerIds = Object.keys(G.playerZones).sort();
+  for (const playerId of playerIds) {
+    for (let iteration = 0; iteration < repetitions; iteration++) {
+      koOneHeroForPlayer(G, playerId);
+    }
+  }
+}
+
+/**
+ * capture-hq-hero primitive — capture one HQ hero by the descriptor's selector.
+ *
+ * Verbatim from the former captureHqHeroRightmost / captureHqHeroHighestCost /
+ * captureHqHeroLowestCost cases. The hyphenated descriptor selector maps to
+ * captureHeroFromHq's camelCase selector union.
+ */
+function villainEffectCaptureHqHero(
+  G: LegendaryGameState,
+  _currentPlayer: string,
+  cardId: CardExtId,
+  _timing: VillainAbilityTiming,
+  descriptor: VillainEffectDescriptor,
+): void {
+  if (descriptor.selector === 'rightmost') {
+    // why: captures the rightmost non-null hero from the HQ (index 4 → 0)
+    captureHeroFromHq(G, cardId, 'rightmost');
+    return;
+  }
+  if (descriptor.selector === 'highest-cost') {
+    // why: captures the highest-cost hero from the HQ; ties resolved by
+    // rightmost index per selector determinism contract (WP-214)
+    captureHeroFromHq(G, cardId, 'highestCost');
+    return;
+  }
+  if (descriptor.selector === 'lowest-cost') {
+    // why: captures the lowest-cost hero from the HQ; ties resolved by
+    // rightmost index per selector determinism contract (WP-214)
+    captureHeroFromHq(G, cardId, 'lowestCost');
+  }
+}
+
+/**
+ * hero-deck-top-to-escape primitive — move the top hero-deck card to escaped.
+ *
+ * Verbatim from the former heroDeckTopToEscape case (WP-185).
+ */
+function villainEffectHeroDeckTopToEscape(
+  G: LegendaryGameState,
+  _currentPlayer: string,
+  _cardId: CardExtId,
+  _timing: VillainAbilityTiming,
+  _descriptor: VillainEffectDescriptor,
+): void {
+  // why: WP-185 §Scope wrote "G.piles.heroDeck[0]" but the engine's hero
+  // reservoir is the top-level G.heroDeck (GlobalPiles has no heroDeck); this
+  // moves the top of that reservoir to the escaped pile. Silent no-op when the
+  // reservoir is empty.
+  if (G.heroDeck.length === 0) return;
+  const topCard = G.heroDeck[0]!;
+  G.heroDeck = G.heroDeck.slice(1);
+  G.escapedPile = [...G.escapedPile, topCard];
+}
+
+/**
+ * capture-bystander primitive — attach a bystander to the triggering card,
+ * awarding immediately on the Fight fire site.
+ *
+ * Verbatim from the former captureBystander case (WP-185 / D-18506).
+ */
+function villainEffectCaptureBystander(
+  G: LegendaryGameState,
+  currentPlayer: string,
+  cardId: CardExtId,
+  timing: VillainAbilityTiming,
+  _descriptor: VillainEffectDescriptor,
+): void {
+  const attachResult = attachBystanderToVillain(
+    G.piles.bystanders,
+    cardId,
+    G.attachedBystanders,
+  );
+  G.piles.bystanders = attachResult.bystandersPile;
+  G.attachedBystanders = attachResult.attachedBystanders;
+  if (timing === 'onFight') {
+    // why: the Fight fire site is post-award, so a bystander attached now
+    // to a card already in the victory pile would be stranded (never
+    // awarded). Award it immediately to preserve tabletop "rescue on
+    // defeat" semantics (D-18506). No-op when the pile was empty (nothing
+    // was attached).
+    const zones = G.playerZones[currentPlayer];
+    if (zones) {
+      const awardResult = awardAttachedBystanders(
+        cardId,
+        G.attachedBystanders,
+        zones.victory,
+      );
+      G.attachedBystanders = awardResult.attachedBystanders;
+      zones.victory = awardResult.playerVictory;
+    }
+  }
+}
+
+// why: D-24023 — the ImplementationMap keyed by primitive (mirrors WP-251's
+// HERO_EFFECT_HANDLERS). Full Record over the 5 primitives; the drift test
+// asserts the key set equals VILLAIN_EFFECT_PRIMITIVES. Replaces the former
+// 10-arm switch on VillainEffectKeyword.
+/** Villain effect handlers keyed by primitive. Single dispatch source. */
+const VILLAIN_EFFECT_HANDLERS: Record<VillainEffectPrimitive, VillainEffectHandler> = {
+  'ko-hero': villainEffectKoHero,
+  'gain-wound': villainEffectGainWound,
+  'capture-hq-hero': villainEffectCaptureHqHero,
+  'hero-deck-top-to-escape': villainEffectHeroDeckTopToEscape,
+  'capture-bystander': villainEffectCaptureBystander,
+};
+
+/**
+ * Applies one villain effect descriptor deterministically by dispatching to its
+ * primitive handler.
  *
  * @param G - Game state (mutated under Immer draft).
  * @param currentPlayer - The active player id.
  * @param cardId - The triggering villain/henchman card-instance ext_id.
- * @param timing - The timing that fired (changes captureBystander behavior).
- * @param effect - The effect keyword to apply.
- * @returns `true` when an in-vocab case branch ran (regardless of whether
- *   mutation guards short-circuited inside it); `false` only on the
- *   out-of-vocab default. WP-200 D-20003: drives the `appliedEffects`
- *   array returned by `executeVillainAbilities` — only effects whose
- *   dispatch branch reached the body are listed (the post-safe-skip
- *   contract). Mutation-guarded short-circuits (e.g., empty wound pile)
- *   still count as "applied" because the keyword was attempted.
+ * @param timing - The timing that fired (changes capture-bystander behavior).
+ * @param descriptor - The parameterized effect descriptor to apply.
+ * @returns `true` when an in-vocab primitive handler ran (regardless of whether
+ *   mutation guards short-circuited inside it); `false` only when no handler
+ *   exists for the primitive (the former out-of-vocab default). WP-200 D-20003
+ *   carries forward: drives the reverse-mapped `appliedEffects` array — only
+ *   descriptors whose handler ran are recorded (post-safe-skip contract).
  */
 function applyVillainEffect(
   G: LegendaryGameState,
   currentPlayer: string,
   cardId: CardExtId,
   timing: VillainAbilityTiming,
-  effect: VillainEffectKeyword,
+  descriptor: VillainEffectDescriptor,
 ): boolean {
-  switch (effect) {
-    case 'gainWoundEachPlayer': {
-      // why: every player gains 1 wound (subject to wound-pile availability),
-      // mirroring the existing escape-wound no-op-on-empty semantics.
-      for (const playerId of Object.keys(G.playerZones)) {
-        const zones = G.playerZones[playerId];
-        if (!zones) continue;
-        if (G.piles.wounds.length === 0) continue;
-        const result = gainWound(G.piles.wounds, zones.discard);
-        G.piles.wounds = result.woundsPile;
-        zones.discard = result.playerDiscard;
-        if (playerId === currentPlayer) {
-          // why: woundsDrawn projects the current player's wounds only (UI
-          // economy), matching escape-wound and the deleted Ambush loop.
-          G.turnEconomy.woundsDrawn += 1;
-        }
-      }
-      return true;
-    }
-    case 'gainWoundCurrentPlayer': {
-      const zones = G.playerZones[currentPlayer];
-      // why: WP-200 — mutation-guarded short-circuit still counts as
-      // "applied" per the post-safe-skip contract (the keyword was
-      // attempted; the empty-pile / missing-zone guards short-circuit
-      // body work, not the dispatch). Returning true here keeps the
-      // emission accurate to which effect tokens fired their case branch.
-      if (!zones) return true;
-      if (G.piles.wounds.length === 0) return true;
-      const result = gainWound(G.piles.wounds, zones.discard);
-      G.piles.wounds = result.woundsPile;
-      zones.discard = result.playerDiscard;
-      G.turnEconomy.woundsDrawn += 1;
-      return true;
-    }
-    case 'koHeroCurrentPlayer': {
-      // why: interactive KO for the current player (supersedes the WP-185
-      // auto-resolution deferral, D-24006). 0 eligible → no-op; exactly 1 →
-      // auto-KO (no decision to make, D-24007 decision C); ≥2 → append a
-      // pending choice and KO nothing yet (the player picks via
-      // resolveKoHeroChoice, D-24007). Each-player variants below are unchanged.
-      const zones = G.playerZones[currentPlayer];
-      if (!zones) return true;
-      const eligible = buildKoEligibleTargets(zones);
-      if (eligible.length === 0) return true;
-      if (eligible.length === 1) {
-        koSingleTarget(G, zones, eligible[0]!);
-        return true;
-      }
-      if (!G.pendingKoHeroChoices) G.pendingKoHeroChoices = [];
-      G.pendingKoHeroChoices.push({ choiceType: 'ko-hero', playerID: currentPlayer });
-      return true;
-    }
-    case 'koHeroEachPlayer': {
-      // why: iterate every player and delegate to the shared resolver. The
-      // iteration order is derived from `Object.keys(G.playerZones).sort()`
-      // — default JavaScript string compare → lexical ascending — NOT from
-      // `Object.keys`'s natural insertion order and NOT from a `Number()`
-      // numeric sort (D-18902). For 1-5-player boardgame.io string ids
-      // ('0'..'N-1') lexical equals numeric equals insertion order, so this
-      // is observationally equal to the pre-existing `gainWoundEachPlayer`
-      // iteration (which does not sort); the explicit `.sort()` here makes
-      // the determinism contract auditable and robust to future setup-order
-      // changes. The branch body is a thin loop — the shared resolver owns
-      // target selection AND the `koCard` mutation; this caller MUST NOT
-      // post-process or modify the resolver's output (D-18902 mutation-
-      // location lock). The resolver is the same one called by the
-      // `koHeroCurrentPlayer` case above, ensuring identical per-player
-      // resolution (pinned by the shared-resolver parity test on a
-      // single-player G). Auto-resolved, not interactive, not VP-based
-      // (D-18503 carries forward from `koHeroCurrentPlayer`).
-      const playerIds = Object.keys(G.playerZones).sort();
-      for (const playerId of playerIds) {
-        koOneHeroForPlayer(G, playerId);
-      }
-      return true;
-    }
-    case 'koHeroEachPlayerMag2': {
-      // why: magnitude-2 each-player hero KO — iterate every player
-      // (lexically sorted, D-18902 inherited from the `koHeroEachPlayer`
-      // branch above) and run a literal-2 inner loop per player, each
-      // iteration delegating to the same shared per-player KO resolver
-      // (`koOneHeroForPlayer`). The literal `2` is intentional and NOT a
-      // parameter (D-20201 closed-union-per-magnitude): magnitude lives in
-      // the keyword name, not in a runtime field — parameterizing the
-      // magnitude would force a parser regex change + a dispatch-contract
-      // shape change (`effect` becomes `{ keyword, args }`) + every drift
-      // test, which is the larger blast radius D-20201 rejects for v1.
-      // The shared resolver owns target selection AND the `koCard`
-      // mutation; this caller MUST NOT post-process or modify the
-      // resolver's output (D-18902 mutation-location lock extends here).
-      // Per-iteration semantics inherit from D-18503: discard before
-      // hand, ext_id lexical tie-break, silent no-op for zero eligible
-      // heroes — auto-resolved, not interactive, not VP-based. A player
-      // with exactly 1 eligible hero loses 1 (the second iteration silent
-      // no-ops); a player with 0 eligible heroes loses 0 (both iterations
-      // silent no-op). Magnitude-2 ≡ magnitude-1-twice parity is pinned
-      // by the shared-resolver parity test on a single-player G.
-      //
-      // Future magnitude-N expansion (e.g., `koHeroEachPlayerMag3`): copy
-      // this entire case body, rename to `MagN`, change the literal `2`
-      // to `N`, append the new keyword at the next position in
-      // `VILLAIN_EFFECT_KEYWORDS`. No parser/regex/dispatch contract
-      // change — closed-union-per-magnitude (D-20201) is the seam, and
-      // the inner-loop bound is intentionally literal (not extracted to
-      // a helper) because parameterization would re-introduce the shape
-      // D-20201 rejects.
-      const playerIds = Object.keys(G.playerZones).sort();
-      for (const playerId of playerIds) {
-        for (let iteration = 0; iteration < 2; iteration++) {
-          koOneHeroForPlayer(G, playerId);
-        }
-      }
-      return true;
-    }
-    case 'heroDeckTopToEscape': {
-      // why: WP-185 §Scope wrote "G.piles.heroDeck[0]" but the engine's hero
-      // reservoir is the top-level G.heroDeck (GlobalPiles has no heroDeck);
-      // this moves the top of that reservoir to the escaped pile. Silent no-op
-      // when the reservoir is empty.
-      if (G.heroDeck.length === 0) return true;
-      const topCard = G.heroDeck[0]!;
-      G.heroDeck = G.heroDeck.slice(1);
-      G.escapedPile = [...G.escapedPile, topCard];
-      return true;
-    }
-    case 'captureBystander': {
-      const attachResult = attachBystanderToVillain(
-        G.piles.bystanders,
-        cardId,
-        G.attachedBystanders,
-      );
-      G.piles.bystanders = attachResult.bystandersPile;
-      G.attachedBystanders = attachResult.attachedBystanders;
-      if (timing === 'onFight') {
-        // why: the Fight fire site is post-award, so a bystander attached now
-        // to a card already in the victory pile would be stranded (never
-        // awarded). Award it immediately to preserve tabletop "rescue on
-        // defeat" semantics (D-18506). No-op when the pile was empty (nothing
-        // was attached).
-        const zones = G.playerZones[currentPlayer];
-        if (zones) {
-          const awardResult = awardAttachedBystanders(
-            cardId,
-            G.attachedBystanders,
-            zones.victory,
-          );
-          G.attachedBystanders = awardResult.attachedBystanders;
-          zones.victory = awardResult.playerVictory;
-        }
-      }
-      return true;
-    }
-    case 'captureHqHeroRightmost': {
-      // why: captures the rightmost non-null hero from the HQ (index 4 → 0)
-      captureHeroFromHq(G, cardId, 'rightmost');
-      return true;
-    }
-    case 'captureHqHeroHighestCost': {
-      // why: captures the highest-cost hero from the HQ; ties resolved by
-      // rightmost index per selector determinism contract (WP-214)
-      captureHeroFromHq(G, cardId, 'highestCost');
-      return true;
-    }
-    case 'captureHqHeroLowestCost': {
-      // why: captures the lowest-cost hero from the HQ; ties resolved by
-      // rightmost index per selector determinism contract (WP-214)
-      captureHeroFromHq(G, cardId, 'lowestCost');
-      return true;
-    }
-    default: {
-      // why: out-of-vocabulary effects safe-skip silently — moves never throw,
-      // no console output, no message push (matches the WP-022 hero-effects
-      // precedent for unsupported keywords). Reachable only via a malformed
-      // hook; the parser validates markers against VILLAIN_EFFECT_KEYWORDS.
-      // WP-200 D-20003: returning false excludes the effect from the
-      // executor's `appliedEffects[]` return value — the post-safe-skip
-      // contract means emission sites only see effects whose dispatch
-      // branch ran (not parsed-but-unknown tokens).
-      return false;
-    }
+  const handler = VILLAIN_EFFECT_HANDLERS[descriptor.primitive];
+  if (handler === undefined) {
+    // why: out-of-vocabulary primitives safe-skip silently — moves never throw,
+    // no console output, no message push (matches the WP-022 hero-effects
+    // precedent). Reachable only via a malformed hook; the parser validates
+    // markers before building descriptors. Returning false excludes the
+    // descriptor from the executor's appliedEffects[] (post-safe-skip contract).
+    return false;
   }
+  handler(G, currentPlayer, cardId, timing, descriptor);
+  return true;
 }
 
 // ---------------------------------------------------------------------------

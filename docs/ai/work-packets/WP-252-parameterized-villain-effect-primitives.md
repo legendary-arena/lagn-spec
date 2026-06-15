@@ -1,6 +1,6 @@
 # WP-252 — Parameterized Villain Effect Primitives (Reopens D-20201 / D-18901)
 
-**Status:** Draft — pending review. **Execution-BLOCKED until WP-251 merges to `main`** (the executor mirrors the merged `HERO_EFFECT_HANDLERS` shape; pre-flight RS-1).
+**Status:** ✅ **Done 2026-06-15** (EC-283; executed in a worktree off `main` `c2d82697`, after WP-251 #326 merged). Lands D-24023 (Active); retires D-20201 + D-18901 → Superseded. Engine test 1323 → 1329 / 0; `data/cards` + sentinel hash byte-unchanged. See WORK_INDEX + STATUS for the full execution record.
 **Primary Layer:** Game Engine / Contracts + Implementation
 **Dependencies:** WP-251 ✅-on-merge (the `HERO_EFFECT_HANDLERS` ImplementationMap pattern this mirrors), WP-185 ✅, WP-189 ✅, WP-202 ✅, WP-214 ✅ (the villain keywords being collapsed), WP-009B ✅ (ImplementationMap precedent), WP-250 ✅ (coverage gate — hero-only; see §Debuggability)
 

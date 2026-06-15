@@ -19830,6 +19830,8 @@ part of the same action.
 
 ### D-18901 — `koHeroEachPlayer` Appended at Position 6; Incremental Each-Player Vocabulary Expansion Clause
 
+**Status:** Superseded by D-24023 (WP-252, 2026-06-15). The incremental keyword-by-keyword each-player vocabulary expansion is retired — variants are now parameterized `VillainEffectDescriptor` fields (`target`/`magnitude`/`selector`), not appended keywords. `VillainEffectKeyword` stays frozen at 10 as the parser's translation input (never appended again). The historical reasoning below is retained for the record.
+
 **Decision:** `'koHeroEachPlayer'` is appended at position 6 of
 `VILLAIN_EFFECT_KEYWORDS` and added as the sixth member of the
 `VillainEffectKeyword` union. The first five entries and their order are
@@ -21648,6 +21650,8 @@ presence) are styling concerns by design and do not derive new meaning
 ---
 
 ### D-20201 — Magnitude-N Each-Player Hero KO Uses Closed-Union-Per-Magnitude Keywords; Parameterized Markers Rejected for v1
+
+**Status:** Superseded by D-24023 (WP-252, 2026-06-15). The `koHeroEachPlayerMag2` literal-2 loop is now a `descriptor.magnitude ?? 1` loop, and `[effect:ko-hero:each:N]` parameterized markers ARE accepted — a future magnitude is data-only, no keyword/switch/drift-test change. The original cost/benefit ("parser regex + dispatch contract + overlay validator + drift tests would all change for only N=2 empirically") is reversed by the WP-250 coverage gate (auto-catches regressions) + the 122 unmodeled mechanics the probe found. The historical reasoning below is retained for the record.
 
 **Decision:**
 Each magnitude variant of an each-player-KO effect is its own
@@ -25114,6 +25118,22 @@ Adding a future effect is now a handler + a map entry + a drift-test member, not
 edit — the open-dispatch foundation the WP-252 villain parameterization mirrors.
 
 **Packet:** WP-251 (EC-282).
+**Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
+**Status:** Active
+
+---
+
+**D-24023: Parameterized Villain Effect Primitives + VILLAIN_EFFECT_HANDLERS ImplementationMap (Reopens + Supersedes D-20201 / D-18901)**
+
+Villain effects dispatch through a runtime-only `VILLAIN_EFFECT_HANDLERS: Record<VillainEffectPrimitive, VillainEffectHandler>` ImplementationMap (mirroring D-24022's hero map) keyed by a closed 5-member `VillainEffectPrimitive` set (`ko-hero`, `gain-wound`, `capture-hq-hero`, `hero-deck-top-to-escape`, `capture-bystander`), consuming a parameterized `VillainEffectDescriptor { primitive, target?, magnitude?, selector? }`. The ten fragmented `VillainEffectKeyword`s collapse into the five primitives; `koHeroEachPlayerMag2`'s literal `for i<2` loop becomes a `descriptor.magnitude ?? 1` loop. The setup parser accepts BOTH the legacy `[effect:<keyword>]` grammar (translated through the frozen `LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR` table) AND a new parameterized `[effect:<primitive>(:<target|selector>)(:<magnitude>)]` grammar; `apply-effect-markers.mjs`'s validator is widened to match (emitter unchanged). **Card data is byte-unchanged** — every existing token is legacy and still parses. A future magnitude/selector variant (e.g. `[effect:ko-hero:each:3]`) is now **data-only** — no new keyword, no switch arm, no drift test.
+
+**Behavior identity (the load-bearing design).** `VillainAbilityHook.effects` is retyped to `VillainEffectDescriptor[]`, but the applied-effects narrative surface stays `VillainEffectKeyword[]`: `executeVillainAbilities` reverse-maps each dispatched descriptor back to its legacy keyword via `descriptorToLegacyKeyword` (the inverse table `DESCRIPTOR_TO_LEGACY_VILLAIN_KEYWORD`, total + injective over the 10 legacy descriptors) before pushing to the applied-effects accumulator. So `notableEvents`, `EFFECT_KEYWORD_LABELS`, the message log, and `apps/arena-client/**` are byte-identical and out of scope (zero diff — the WP-166/207/227 vue-tsc recurrence is dodged; arena-client has zero `villainAbilityHooks` references). `keywords` (legacy, kept keyword-typed) and `effects` (descriptors) are now DISTINCT arrays in `buildVillainAbilityHooks` (was a shared reference). Verified: engine test 1323 → 1329 / 0 (the 1323 unmodified + 6 new: primitive drift, translation totality, reverse-map round-trip ×10, injectivity, dual-grammar equivalence, parameterized-no-keyword); `sim:coverage --check` OK; build 0; no `switch(effect)`/literal-2 loop; `data/cards`/`events`/`arena-client`/`test/fixtures` zero diff.
+
+**Replay-hash note (representational, not behavioral).** `villainAbilityHooks` is a field of `LegendaryGameState`, which `hashGameState` serializes in full — so retyping `hook.effects` to descriptor objects WOULD change `finalStateHash` for any scenario whose hooks carry effects. It does NOT for the WP-158 sentinel because the replay harness runs with `EMPTY_REGISTRY` (`getSet: () => undefined`) → `buildVillainAbilityHooks` collects nothing → `villainAbilityHooks` is always `[]` (an empty array serializes identically as keywords or descriptors). So the sentinel `finalStateHash` + fixture are byte-unchanged (verified). **Caveat for future real-registry fixtures:** a fixture built against a real registry (non-empty hooks) WILL see a `finalStateHash` change from the hook-table representation — that change is representational (the message-log + outcome + within-run-determinism oracles stay identical; gameplay is unchanged), and re-baselining that fixture's hash is the correct, documented response, NOT a behavioral regression. The reverse-map keeps the *narrative* surface identical; the hook *table* representation is the legitimate, intended change of Lever 1.
+
+**Reopens + supersedes D-20201 + D-18901.** Both were minted when the cost/benefit favored a frozen keyword union: D-20201 (closed-union-per-magnitude) judged that parameterizing magnitude would force a parser regex + dispatch-contract + overlay-validator + drift-test change "for only N=2 empirically"; D-18901 (incremental each-player vocabulary expansion) added each variant keyword-by-keyword. Two things flipped that calculus: (1) the WP-250 `sim:coverage` non-regression gate now catches effect-coverage regressions automatically, and (2) the coverage probe found 122 distinct unmodeled `[keyword:X]` mechanics across 40 sets — a per-keyword cadence projects to ~6 months. Parameterization (Lever 1 of `docs/ai/DESIGN-EFFECT-AUTHORING-SCALE.md`) makes new variants data-only, collapsing that cost. The literal-loop-bound + closed-union policies of D-20201/D-18901 are retired; `VillainEffectKeyword`/`VILLAIN_EFFECT_KEYWORDS` stay frozen at 10 as the translation input (never appended again).
+
+**Packet:** WP-252 (EC-283).
 **Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
 **Status:** Active
 

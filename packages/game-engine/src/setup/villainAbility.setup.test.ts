@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { buildVillainAbilityHooks } from './villainAbility.setup.js';
 import { buildCardKeywords } from './buildCardKeywords.js';
 import { hasAmbush } from '../board/boardKeywords.logic.js';
-import { VILLAIN_ABILITY_TIMINGS } from '../rules/villainAbility.types.js';
+import { VILLAIN_ABILITY_TIMINGS, LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR } from '../rules/villainAbility.types.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { CardExtId } from '../state/zones.types.js';
 
@@ -171,18 +171,26 @@ describe('buildVillainAbilityHooks — [effect:] marker extraction', () => {
   );
   const hooks = buildVillainAbilityHooks(registry, makeConfig(['core/mix'], []));
   // why: WP-191 — villain hooks key by the -00 copy instance (no `copies` field).
+  const keywordsFor = (slug: string) =>
+    hooks.find((h) => h.cardId === `core-villain-mix-${slug}-00`)!.keywords;
   const effectsFor = (slug: string) =>
     hooks.find((h) => h.cardId === `core-villain-mix-${slug}-00`)!.effects;
 
   it('extracts a valid [effect:] marker', () => {
-    assert.deepStrictEqual(effectsFor('real'), ['koHeroCurrentPlayer']);
+    assert.deepStrictEqual(keywordsFor('real'), ['koHeroCurrentPlayer']);
+    // why: WP-252 — the legacy keyword also translates to its descriptor.
+    assert.deepStrictEqual(effectsFor('real'), [
+      { primitive: 'ko-hero', target: 'current' },
+    ]);
   });
 
   it('ignores unknown [effect:] values and never reads [keyword:]/[icon:]', () => {
+    assert.deepStrictEqual(keywordsFor('bogus'), []);
     assert.deepStrictEqual(effectsFor('bogus'), []);
   });
 
   it('never parses free-text English into effects', () => {
+    assert.deepStrictEqual(keywordsFor('freetext'), []);
     assert.deepStrictEqual(effectsFor('freetext'), []);
   });
 
@@ -194,7 +202,7 @@ describe('buildVillainAbilityHooks — [effect:] marker extraction', () => {
 });
 
 describe('buildVillainAbilityHooks — keywords/effects parity', () => {
-  it('keywords and effects are the same array on every hook', () => {
+  it('keywords and effects are distinct but parallel arrays (WP-252)', () => {
     const registry = makeRegistry(
       'core',
       [
@@ -216,7 +224,18 @@ describe('buildVillainAbilityHooks — keywords/effects parity', () => {
     );
     assert.ok(hooks.length > 0);
     for (const hook of hooks) {
-      assert.equal(hook.keywords, hook.effects, 'keywords === effects (same array) in v1');
+      // why: WP-252 retyped effects to descriptors — keywords (legacy strings)
+      // and effects (descriptors) are now DISTINCT array references, but
+      // parallel: each effect is the descriptor translation of its keyword.
+      assert.notEqual(hook.keywords, hook.effects, 'distinct array references');
+      assert.equal(hook.keywords.length, hook.effects.length, 'parallel length');
+      for (let keywordIndex = 0; keywordIndex < hook.keywords.length; keywordIndex++) {
+        assert.deepStrictEqual(
+          hook.effects[keywordIndex],
+          LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR[hook.keywords[keywordIndex]!],
+          'each effect is the descriptor translation of its keyword',
+        );
+      }
     }
   });
 });
@@ -239,7 +258,7 @@ describe('buildVillainAbilityHooks — henchman group-level fan-out', () => {
       );
       assert.ok(match, `hook for henchman-doombot-legion-${paddedIndex} must exist`);
       assert.equal(match!.timing, 'onFight');
-      assert.deepStrictEqual(match!.effects, ['koHeroCurrentPlayer']);
+      assert.deepStrictEqual(match!.keywords, ['koHeroCurrentPlayer']);
     }
   });
 
@@ -420,10 +439,10 @@ describe('buildVillainAbilityHooks — Escape: / Overrun: prefix detection (WP-1
 
     assert.equal(byCard('caps').length, 1, 'ESCAPE: matches case-insensitively');
     assert.equal(byCard('caps')[0]!.timing, 'onEscape');
-    assert.deepStrictEqual(byCard('caps')[0]!.effects, ['gainWoundEachPlayer']);
+    assert.deepStrictEqual(byCard('caps')[0]!.keywords, ['gainWoundEachPlayer']);
     assert.equal(byCard('spaced').length, 1, 'leading whitespace is trimmed');
     assert.equal(byCard('spaced')[0]!.timing, 'onEscape');
-    assert.deepStrictEqual(byCard('spaced')[0]!.effects, ['gainWoundCurrentPlayer']);
+    assert.deepStrictEqual(byCard('spaced')[0]!.keywords, ['gainWoundCurrentPlayer']);
     assert.equal(byCard('emdash').length, 0, 'em-dash variant is not matched');
     assert.equal(byCard('spacedcolon').length, 0, 'spaced-colon variant is not matched');
   });
@@ -460,7 +479,7 @@ describe('buildVillainAbilityHooks — Escape: / Overrun: prefix detection (WP-1
       'onEscape',
       "Overrun: emits onEscape — 'onOverrun' is not a timing in v1 (D-18602)",
     );
-    assert.deepStrictEqual(overrunHook!.effects, ['gainWoundEachPlayer']);
+    assert.deepStrictEqual(overrunHook!.keywords, ['gainWoundEachPlayer']);
 
     const overrunCapsHook = hooks.find(
       (h) => h.cardId === 'core-villain-siege-overrun-caps-00',
@@ -614,7 +633,7 @@ describe('buildVillainAbilityHooks — villain per-copy fan-out (WP-191)', () =>
       );
       assert.ok(match, `hook for core-villain-brotherhood-magneto-${paddedIndex} must exist`);
       assert.equal(match!.timing, 'onFight');
-      assert.deepStrictEqual(match!.effects, ['koHeroCurrentPlayer']);
+      assert.deepStrictEqual(match!.keywords, ['koHeroCurrentPlayer']);
     }
 
     // why: copies must not alias a shared effects array (D-13502).
@@ -623,5 +642,63 @@ describe('buildVillainAbilityHooks — villain per-copy fan-out (WP-191)', () =>
       magnetoHooks[1]!.effects,
       'each copy must own a freshly-constructed effects array',
     );
+  });
+});
+
+describe('buildVillainAbilityHooks — dual-grammar equivalence (WP-252 / D-24023)', () => {
+  // why: the parser accepts BOTH the legacy keyword marker and the equivalent
+  // parameterized marker; they must yield the SAME descriptor so a future
+  // magnitude (e.g. ko-hero:each:3) is purely data-only — no new keyword, no
+  // code change. No real card uses the parameterized grammar yet; this proves
+  // the seam, not a card-data change.
+  it('[effect:koHeroEachPlayerMag2] and [effect:ko-hero:each:2] yield the same descriptor', () => {
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'grammar',
+          cards: [
+            { slug: 'legacy', abilities: ['Fight: KO two Heroes. [effect:koHeroEachPlayerMag2]'] },
+            { slug: 'param', abilities: ['Fight: KO two Heroes. [effect:ko-hero:each:2]'] },
+          ],
+        },
+      ],
+      [],
+    );
+    const hooks = buildVillainAbilityHooks(registry, makeConfig(['core/grammar'], []));
+    const effectsFor = (slug: string) =>
+      hooks.find((h) => h.cardId === `core-villain-grammar-${slug}-00`)!.effects;
+    const expected = [{ primitive: 'ko-hero', target: 'each', magnitude: 2 }];
+    assert.deepStrictEqual(effectsFor('legacy'), expected, 'legacy keyword → descriptor');
+    assert.deepStrictEqual(effectsFor('param'), expected, 'parameterized token → same descriptor');
+    assert.deepStrictEqual(
+      effectsFor('legacy'),
+      effectsFor('param'),
+      'both grammars must produce byte-identical descriptors',
+    );
+  });
+
+  it('a parameterized-only token carries no legacy keyword', () => {
+    const registry = makeRegistry(
+      'core',
+      [
+        {
+          slug: 'grammar2',
+          cards: [{ slug: 'param', abilities: ['Fight: x [effect:ko-hero:each:2]'] }],
+        },
+      ],
+      [],
+    );
+    const hooks = buildVillainAbilityHooks(registry, makeConfig(['core/grammar2'], []));
+    const paramHook = hooks.find((h) => h.cardId === 'core-villain-grammar2-param-00');
+    assert.ok(paramHook, 'parameterized marker still yields a hook');
+    // why: a parameterized token has no legacy keyword — keywords[] is empty
+    // while effects[] carries the descriptor (the executor's reverse-map then
+    // yields undefined for it, so it is not recorded in appliedEffects; WP-253
+    // adds descriptor-keyed narrative labels).
+    assert.deepStrictEqual(paramHook!.keywords, [], 'no legacy keyword for a parameterized token');
+    assert.deepStrictEqual(paramHook!.effects, [
+      { primitive: 'ko-hero', target: 'each', magnitude: 2 },
+    ]);
   });
 });

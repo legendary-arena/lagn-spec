@@ -115,7 +115,7 @@ describe('henchman Sentinel Fight: koHeroCurrentPlayer fires end-to-end', () => 
     assert.equal(sentinelHooks.length, 10, 'one hook per henchman copy (00–09)');
     for (const hook of sentinelHooks) {
       assert.equal(hook.timing, 'onFight');
-      assert.deepStrictEqual(hook.effects, ['koHeroCurrentPlayer']);
+      assert.deepStrictEqual(hook.keywords, ['koHeroCurrentPlayer']);
     }
   });
 

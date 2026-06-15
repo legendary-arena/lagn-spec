@@ -17,10 +17,14 @@ import type {
   VillainAbilityHook,
   VillainAbilityTiming,
   VillainEffectKeyword,
+  VillainEffectDescriptor,
+  VillainEffectPrimitive,
 } from '../rules/villainAbility.types.js';
 import {
   VILLAIN_ABILITY_TIMINGS,
   VILLAIN_EFFECT_KEYWORDS,
+  VILLAIN_EFFECT_PRIMITIVES,
+  LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR,
 } from '../rules/villainAbility.types.js';
 // why: D-18704 / D-18706 — villain hooks must key by the copy-indexed
 // instance ext_id (matching the Fight/Ambush fire sites that pass a zone id),
@@ -107,7 +111,10 @@ interface HookEntry {
   timing: VillainAbilityTiming;
   /** Index of the source ability line within its source abilities[] array. */
   lineIndex: number;
-  effects: VillainEffectKeyword[];
+  /** Recognized legacy keywords on this line, in source order. */
+  keywords: VillainEffectKeyword[];
+  /** Executable descriptors on this line, in source order. */
+  effects: VillainEffectDescriptor[];
 }
 
 // ---------------------------------------------------------------------------
@@ -174,27 +181,148 @@ function detectTiming(abilityLine: string): VillainAbilityTiming | null {
 }
 
 /**
- * Extracts recognized effect keywords from an ability line, in source order.
+ * Checks whether a string is a valid VillainEffectPrimitive.
  *
- * Reads only `[effect:<value>]` markers, validates each value against
- * VILLAIN_EFFECT_KEYWORDS, and ignores unknown values. The `[keyword:]` and
- * `[icon:]` namespaces and free-text English are never read for effects.
+ * @param value - The raw token to validate.
+ * @returns True when value is one of the canonical primitives.
+ */
+function isVillainEffectPrimitive(
+  value: string,
+): value is VillainEffectPrimitive {
+  for (const primitive of VILLAIN_EFFECT_PRIMITIVES) {
+    if (primitive === value) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Parses a positive-integer magnitude token (1, 2, 3, …); rejects anything else.
+ *
+ * @param token - The raw magnitude token from a parameterized marker.
+ * @returns The parsed integer, or null when the token is not a positive integer.
+ */
+// why: the magnitude grammar is intentionally strict — only bare positive
+// decimal integers with no sign, decimal point, or leading zero. Rejecting
+// loose forms keeps the descriptor output canonical so two spellings of the
+// same magnitude can never produce two different descriptors.
+function parsePositiveInteger(token: string): number | null {
+  if (!/^[1-9][0-9]*$/.test(token)) {
+    return null;
+  }
+  return Number.parseInt(token, 10);
+}
+
+/**
+ * Parses a parameterized effect token `<primitive>[:<param>…]` into a
+ * descriptor, or null when the token is not a valid parameterized effect.
+ *
+ * Forward-compatible grammar (WP-252 / D-24023): no real card uses it yet, but
+ * accepting it now is what makes a future magnitude (e.g. `ko-hero:each:3`) or
+ * selector data-only — no new keyword, no code change. Colon-delimited and
+ * positional per primitive:
+ *   - `ko-hero:current` | `ko-hero:each:<N>`
+ *   - `gain-wound:current` | `gain-wound:each`
+ *   - `capture-hq-hero:rightmost` | `:highest-cost` | `:lowest-cost`
+ *   - `hero-deck-top-to-escape` | `capture-bystander`  (no params)
+ *
+ * @param value - The raw marker value (the text inside `[effect:…]`).
+ * @returns The parsed descriptor, or null.
+ */
+function parseParameterizedEffect(
+  value: string,
+): VillainEffectDescriptor | null {
+  const parts = value.split(':');
+  const primitiveToken = parts[0] ?? '';
+  if (!isVillainEffectPrimitive(primitiveToken)) {
+    return null;
+  }
+  if (primitiveToken === 'ko-hero') {
+    const target = parts[1];
+    if (target === 'current' && parts.length === 2) {
+      return { primitive: 'ko-hero', target: 'current' };
+    }
+    if (target === 'each' && parts.length === 3) {
+      const magnitude = parsePositiveInteger(parts[2]!);
+      if (magnitude === null) {
+        return null;
+      }
+      return { primitive: 'ko-hero', target: 'each', magnitude };
+    }
+    return null;
+  }
+  if (primitiveToken === 'gain-wound') {
+    const target = parts[1];
+    if (parts.length === 2 && (target === 'current' || target === 'each')) {
+      return { primitive: 'gain-wound', target };
+    }
+    return null;
+  }
+  if (primitiveToken === 'capture-hq-hero') {
+    const selector = parts[1];
+    if (
+      parts.length === 2 &&
+      (selector === 'rightmost' ||
+        selector === 'highest-cost' ||
+        selector === 'lowest-cost')
+    ) {
+      return { primitive: 'capture-hq-hero', selector };
+    }
+    return null;
+  }
+  // why: hero-deck-top-to-escape and capture-bystander take no params; reject
+  // any trailing colon-separated tokens so a malformed marker does not silently
+  // collapse to a param-less descriptor.
+  if (parts.length === 1) {
+    return { primitive: primitiveToken };
+  }
+  return null;
+}
+
+/**
+ * Extracts the recognized effects from an ability line, in source order, as
+ * parallel keyword + descriptor arrays.
+ *
+ * Reads only `[effect:<value>]` markers. A legacy keyword value (in
+ * VILLAIN_EFFECT_KEYWORDS) yields BOTH a keyword and its translated descriptor;
+ * a parameterized value (`<primitive>:…`) yields a descriptor only (no legacy
+ * keyword); an unknown value is ignored. The `[keyword:]` and `[icon:]`
+ * namespaces and free-text English are never read for effects.
  *
  * @param abilityLine - One ability text line.
- * @returns Recognized effect keywords in left-to-right source order.
+ * @returns Recognized keywords and descriptors in left-to-right source order.
  */
-function extractEffectKeywords(abilityLine: string): VillainEffectKeyword[] {
-  const effects: VillainEffectKeyword[] = [];
+function extractEffects(abilityLine: string): {
+  keywords: VillainEffectKeyword[];
+  effects: VillainEffectDescriptor[];
+} {
+  const keywords: VillainEffectKeyword[] = [];
+  const effects: VillainEffectDescriptor[] = [];
   const regex = new RegExp(EFFECT_MARKER_PATTERN.source, 'g');
   let match: RegExpExecArray | null = regex.exec(abilityLine);
   while (match !== null) {
     const rawValue = match[1]!;
     if (isValidVillainEffectKeyword(rawValue)) {
-      effects.push(rawValue);
+      // why: legacy grammar — record the keyword AND its frozen-table
+      // descriptor, spread into a fresh object so no two hooks alias the shared
+      // LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR entry (D-13502).
+      keywords.push(rawValue);
+      effects.push({ ...LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR[rawValue] });
+    } else {
+      const descriptor = parseParameterizedEffect(rawValue);
+      if (descriptor !== null) {
+        // why: parameterized grammar — descriptor only, no legacy keyword. No
+        // real card uses this yet; the executor's reverse-map yields undefined
+        // for such a descriptor, so it is simply not recorded in appliedEffects
+        // (descriptor-keyed narrative labels are deferred to WP-253).
+        effects.push(descriptor);
+      }
+      // else: unknown value, ignored (matches the prior extractEffectKeywords).
     }
     match = regex.exec(abilityLine);
   }
-  return effects;
+  return { keywords, effects };
 }
 
 // ---------------------------------------------------------------------------
@@ -339,9 +467,9 @@ function collectVillainHookEntries(
         if (typeof abilityLine !== 'string') continue;
         const timing = detectTiming(abilityLine);
         if (timing === null) continue;
-        const effects = extractEffectKeywords(abilityLine);
+        const extracted = extractEffects(abilityLine);
         // why: fan out one freshly-constructed hook per copy instance so
-        // copies never alias a shared object or effects array (D-13502),
+        // copies never alias a shared keywords/effects array (D-13502),
         // mirroring the henchman fan-out below. The deterministic sort in
         // buildVillainAbilityHooks restores the locked total order
         // (cardId lexical, timing, lineIndex).
@@ -350,7 +478,8 @@ function collectVillainHookEntries(
             cardId,
             timing,
             lineIndex,
-            effects: [...effects],
+            keywords: [...extracted.keywords],
+            effects: [...extracted.effects],
           });
         }
       }
@@ -397,9 +526,9 @@ function collectHenchmanHookEntries(
       // on a henchman escape, which safely no-ops via per-card hook lookup.
       if (timing !== 'onFight') continue;
 
-      const effects = extractEffectKeywords(abilityLine);
+      const extracted = extractEffects(abilityLine);
       // why: fan out one freshly-constructed hook per virtual copy ext_id so
-      // copies never alias a shared object or effects array (D-13502).
+      // copies never alias a shared keywords/effects array (D-13502).
       for (
         let copyIndex = 0;
         copyIndex < HENCHMAN_COPIES_PER_GROUP;
@@ -412,7 +541,8 @@ function collectHenchmanHookEntries(
           cardId,
           timing,
           lineIndex,
-          effects: [...effects],
+          keywords: [...extracted.keywords],
+          effects: [...extracted.effects],
         });
       }
     }
@@ -470,15 +600,22 @@ export function buildVillainAbilityHooks(
 
   const hooks: VillainAbilityHook[] = [];
   for (const entry of entries) {
-    // why: keywords and effects are the SAME array reference within a hook
-    // (identical by construction in v1, per WP-185); freshly built per entry
-    // so no two hooks share an array (D-13502).
-    const effectsArray: VillainEffectKeyword[] = [...entry.effects];
+    // why: keywords (legacy VillainEffectKeyword[]) and effects (descriptors)
+    // are now DISTINCT arrays (D-24023 retyped effects to
+    // VillainEffectDescriptor[]); both freshly built per entry — keywords as a
+    // fresh string array, effects as freshly-spread descriptor objects — so no
+    // two hooks (e.g., card copies sharing a source line) alias a mutable array
+    // or descriptor object (D-13502).
+    const hookKeywords: VillainEffectKeyword[] = [...entry.keywords];
+    const hookEffects: VillainEffectDescriptor[] = [];
+    for (const descriptor of entry.effects) {
+      hookEffects.push({ ...descriptor });
+    }
     hooks.push({
       cardId: entry.cardId,
       timing: entry.timing,
-      keywords: effectsArray,
-      effects: effectsArray,
+      keywords: hookKeywords,
+      effects: hookEffects,
     });
   }
 

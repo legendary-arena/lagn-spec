@@ -269,6 +269,7 @@ mindmap
         ["WP-249 ✅ Optional-KO-then-Reward UX (chooser-only UIState projection + non-dismissible OptionalKoRewardPrompt + turn-end gating)"]
         ["WP-250 ✅ Hero-effect coverage gate (pnpm sim:coverage + CI non-regression; hybrid posture)"]
         ["WP-251 ✅ Hero effect ImplementationMap (executeSingleEffect switch → HERO_EFFECT_HANDLERS registry; behavior-preserving Lever-2 foundation)"]
+        ["WP-252 ✅ Parameterized villain effect primitives (10 keywords → 5 VillainEffectPrimitive + VillainEffectDescriptor via VILLAIN_EFFECT_HANDLERS; dual legacy/parameterized parser; Mag3 data-only; reverse-map keeps narrative byte-identical; Lever 1; retires D-20201/D-18901)"]
 
       Notable Events & Overlays
         ["WP-200 ✅ Notable game event log (engine)"]
@@ -403,7 +404,7 @@ mindmap
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
 | Villain & Henchman Effects | 11/11 | — |
-| Hero Ability Coverage & Markup Pipeline | 15/15 | — |
+| Hero Ability Coverage & Markup Pipeline | 16/16 | — |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -416,7 +417,7 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **247/248 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
+| **Total** | **248/249 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
 
 **Open / blocked WPs (derived from WORK_INDEX, 1):** WP-042.1 ⏸ blocked.
 <!-- ROADMAP-COUNTS:END -->

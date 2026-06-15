@@ -96,6 +96,10 @@ export type VillainEffectKeyword =
 // `captureHqHeroLowestCost` were added at positions 8, 9, 10 (0-indexed
 // 7, 8, 9) by WP-214 to support the v1 HQ hero capture vocabulary
 // (D-21401). Append-only; prior positions unchanged.
+// why: D-24023 — this union + array are now FROZEN at 10 (the parser's
+// legacy-translation input). No keyword is ever appended again; the
+// closed-union-per-magnitude (D-20201) + incremental-expansion (D-18901)
+// policies are retired in favor of VillainEffectDescriptor below.
 /**
  * All villain effect keywords in canonical order. Single source of truth.
  */
@@ -113,6 +117,123 @@ export const VILLAIN_EFFECT_KEYWORDS: readonly VillainEffectKeyword[] = [
 ] as const;
 
 // ---------------------------------------------------------------------------
+// VillainEffectPrimitive + VillainEffectDescriptor (WP-252 / D-24023)
+// ---------------------------------------------------------------------------
+
+// why: D-24023 — the parameterized effect vocabulary that retires the
+// closed-union-per-magnitude (D-20201) and incremental-expansion-per-keyword
+// (D-18901) policies. The 10 VILLAIN_EFFECT_KEYWORDS above are now FROZEN as the
+// parser's legacy-translation INPUT only (no keyword is ever appended again);
+// the executor and hooks speak VillainEffectDescriptor. A new target / magnitude
+// / selector variant becomes a descriptor param (a data marker), not a new
+// keyword + switch arm + drift test.
+
+/**
+ * Closed canonical union of villain effect primitives — the parameterized
+ * vocabulary the executor dispatches on (WP-252). Five primitives collapse the
+ * ten fragmented keywords along the target × magnitude × selector axes.
+ */
+export type VillainEffectPrimitive =
+  | 'ko-hero'
+  | 'gain-wound'
+  | 'capture-hq-hero'
+  | 'hero-deck-top-to-escape'
+  | 'capture-bystander';
+
+// why: drift-detection array — must match VillainEffectPrimitive exactly
+// (villainAbility.types.test.ts asserts bidirectional parity). Adding a
+// primitive requires updating both this array and the union, plus a DECISIONS
+// entry.
+/** All villain effect primitives in canonical order. Single source of truth. */
+export const VILLAIN_EFFECT_PRIMITIVES: readonly VillainEffectPrimitive[] = [
+  'ko-hero',
+  'gain-wound',
+  'capture-hq-hero',
+  'hero-deck-top-to-escape',
+  'capture-bystander',
+] as const;
+
+/**
+ * Parameterized villain effect descriptor (WP-252 / D-24023). The optional
+ * fields are primitive-specific:
+ *   - `ko-hero`:         `target` 'current' | 'each'; `magnitude` (each only)
+ *   - `gain-wound`:      `target` 'current' | 'each'
+ *   - `capture-hq-hero`: `selector` 'rightmost' | 'highest-cost' | 'lowest-cost'
+ *   - `hero-deck-top-to-escape`, `capture-bystander`: no params
+ */
+export interface VillainEffectDescriptor {
+  primitive: VillainEffectPrimitive;
+  target?: 'current' | 'each';
+  magnitude?: number;
+  selector?: 'rightmost' | 'highest-cost' | 'lowest-cost';
+}
+
+// why: D-24023 — the frozen legacy-keyword → descriptor translation table. The
+// parser maps each legacy `[effect:<keyword>]` marker through this to a
+// descriptor, so existing card data keeps working unchanged. Total over the 10
+// frozen keywords; each maps to a distinct descriptor (injective — pinned by the
+// reverse-map round-trip test).
+/** Maps each legacy VillainEffectKeyword to its parameterized descriptor. */
+export const LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR: Readonly<
+  Record<VillainEffectKeyword, VillainEffectDescriptor>
+> = {
+  gainWoundEachPlayer: { primitive: 'gain-wound', target: 'each' },
+  gainWoundCurrentPlayer: { primitive: 'gain-wound', target: 'current' },
+  koHeroCurrentPlayer: { primitive: 'ko-hero', target: 'current' },
+  heroDeckTopToEscape: { primitive: 'hero-deck-top-to-escape' },
+  captureBystander: { primitive: 'capture-bystander' },
+  koHeroEachPlayer: { primitive: 'ko-hero', target: 'each', magnitude: 1 },
+  koHeroEachPlayerMag2: { primitive: 'ko-hero', target: 'each', magnitude: 2 },
+  captureHqHeroRightmost: { primitive: 'capture-hq-hero', selector: 'rightmost' },
+  captureHqHeroHighestCost: { primitive: 'capture-hq-hero', selector: 'highest-cost' },
+  captureHqHeroLowestCost: { primitive: 'capture-hq-hero', selector: 'lowest-cost' },
+};
+
+/**
+ * Canonical string key for a descriptor (primitive + its params). Stable field
+ * order; absent params render empty. Used to build + query the inverse lookup.
+ *
+ * @param descriptor - A villain effect descriptor.
+ * @returns A stable string key uniquely identifying the descriptor's shape.
+ */
+function descriptorKey(descriptor: VillainEffectDescriptor): string {
+  return [
+    descriptor.primitive,
+    descriptor.target ?? '',
+    descriptor.magnitude ?? '',
+    descriptor.selector ?? '',
+  ].join('|');
+}
+
+// why: D-24023 — the inverse lookup (descriptor → its legacy keyword). The
+// executor reverse-maps each dispatched descriptor back to a keyword for the
+// applied-effects accumulator, so notableEvents / EFFECT_KEYWORD_LABELS / the
+// replay state-hash / arena-client stay keyword-typed and byte-identical. Total
+// + injective over the 10 legacy descriptors.
+/** Inverse of LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR: descriptor key → keyword. */
+export const DESCRIPTOR_TO_LEGACY_VILLAIN_KEYWORD: ReadonlyMap<string, VillainEffectKeyword> =
+  new Map<string, VillainEffectKeyword>(
+    VILLAIN_EFFECT_KEYWORDS.map((keyword) => [
+      descriptorKey(LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR[keyword]),
+      keyword,
+    ]),
+  );
+
+/**
+ * Returns the legacy keyword for a dispatched descriptor, or undefined for a
+ * descriptor that did not originate from a legacy marker (no card uses such a
+ * marker in this WP — descriptor-keyed narrative labels are deferred to WP-253).
+ *
+ * @param descriptor - A dispatched VillainEffectDescriptor.
+ * @returns The legacy keyword, or undefined.
+ */
+export function descriptorToLegacyKeyword(
+  descriptor: VillainEffectDescriptor,
+): VillainEffectKeyword | undefined {
+  return DESCRIPTOR_TO_LEGACY_VILLAIN_KEYWORD.get(descriptorKey(descriptor));
+}
+
+// ---------------------------------------------------------------------------
 // VillainAbilityHook — data-only descriptor
 // ---------------------------------------------------------------------------
 
@@ -123,19 +244,22 @@ export const VILLAIN_EFFECT_KEYWORDS: readonly VillainEffectKeyword[] = [
  * G.villainAbilityHooks. Immutable during gameplay — moves must never modify
  * these hooks.
  *
- * `keywords` and `effects` are identical arrays in v1 (schema parity with
- * HeroAbilityHook; reserved for future divergence where `keywords` could
- * carry non-executable markers while `effects` stays the executable subset).
+ * `keywords` (the recognized legacy keywords) and `effects` (the parameterized
+ * descriptors) are now **distinct arrays** built in parallel from the same
+ * source tokens (WP-252 / D-24023). They were the same reference in v1; the
+ * descriptor retype of `effects` makes them separate types. `keywords` stays
+ * keyword-typed so any keyword-typed consumer (and the reverse-mapped
+ * applied-effects narrative surface) is byte-identical.
  */
 export interface VillainAbilityHook {
   /** The card-instance ext_id this hook fires for. */
   cardId: CardExtId;
   /** When the hook fires, derived from the ability-line text prefix. */
   timing: VillainAbilityTiming;
-  /** Recognized effect keywords on this line (identical to `effects` in v1). */
+  /** Recognized legacy effect keywords on this line, in source order. */
   keywords: VillainEffectKeyword[];
-  /** Executable effect keywords applied left-to-right by the executor. */
-  effects: VillainEffectKeyword[];
+  /** Executable effect descriptors applied left-to-right by the executor. */
+  effects: VillainEffectDescriptor[];
 }
 
 // ---------------------------------------------------------------------------
