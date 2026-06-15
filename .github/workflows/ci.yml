@@ -79,6 +79,15 @@ jobs:
         uses: actions/download-artifact@v4
         with: { name: registry-dist, path: packages/registry/dist }
 
+      # why: registry-viewer imports @legendary-arena/lagn (WP-245 loadout
+      # export), whose package "types" resolve to dist/*.d.ts. lagn's dist is
+      # gitignored and this job only downloads the registry dist artifact, so
+      # without an explicit build vue-tsc fails with TS2307 "Cannot find module
+      # '@legendary-arena/lagn'". lagn depends only on zod (no registry dist
+      # needed), so a filtered build is enough — no need for a full `pnpm -r build`.
+      - name: Build lagn types
+        run: pnpm --filter @legendary-arena/lagn build
+
       - name: Lint viewer
         run: pnpm --filter registry-viewer lint
 
