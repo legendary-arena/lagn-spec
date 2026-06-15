@@ -327,7 +327,7 @@ describe('buildHeroAbilityHooks [keyword:X:N] magnitude extraction (WP-215)', ()
     assert.equal(rescueEffect!.magnitude, undefined, 'rescue effect must have no magnitude');
   });
 
-  it('[keyword:reveal] with VP-cost pattern extracts reveal magnitude from icon (AC-11)', () => {
+  it('[keyword:reveal] with VP-cost pattern translates to a cost-lte branch-list (AC-11)', () => {
     const registry = makeHeroRegistry('core', 'spider-man', [
       {
         slug: 'web-shooters',
@@ -343,7 +343,16 @@ describe('buildHeroAbilityHooks [keyword:X:N] magnitude extraction (WP-215)', ()
     assert.ok(Array.isArray(hook.effects) && hook.effects!.length > 0, 'effects must be present');
     const revealEffect = hook.effects!.find(e => e.type === 'reveal');
     assert.ok(revealEffect !== undefined, 'reveal effect must be present');
-    assert.equal(revealEffect!.magnitude, 2, 'reveal magnitude must be 2 from the VP-cost pattern');
+    // why: WP-253 / D-24024 — the top-level magnitude is dropped for the collapsed
+    // reveal; the VP-cost threshold (2) now lives in the cost-lte predicate of the
+    // translated branch-list.
+    assert.equal(revealEffect!.magnitude, undefined, 'top-level magnitude is dropped for the collapsed reveal');
+    assert.equal(revealEffect!.revealCount, 1, 'a translated legacy reveal carries revealCount 1');
+    assert.deepStrictEqual(
+      revealEffect!.revealRules,
+      [{ predicate: { kind: 'cost-lte', threshold: 2 }, actions: [{ kind: 'draw' }] }],
+      'the VP-cost threshold 2 lives in the cost-lte predicate of the reveal branch-list',
+    );
   });
 });
 
@@ -396,7 +405,11 @@ describe('buildHeroAbilityHooks icon-adjacent magnitude extraction (WP-215)', ()
     assert.ok(Array.isArray(hook.effects) && hook.effects!.length > 0, 'effects must be present');
     const revealEffect = hook.effects!.find(e => e.type === 'reveal');
     assert.ok(revealEffect !== undefined, 'reveal effect must be present');
-    assert.equal(revealEffect!.magnitude, undefined, 'reveal magnitude must be undefined for bare VP icon');
+    // why: WP-253 / D-24024 — a bare VP icon yields no reveal threshold, so the
+    // legacy translation produces empty revealRules (a no-op reveal), reproducing the
+    // old undefined-magnitude skip while still emitting one effect.
+    assert.equal(revealEffect!.magnitude, undefined, 'top-level magnitude is dropped for the collapsed reveal');
+    assert.deepStrictEqual(revealEffect!.revealRules, [], 'a bare VP icon yields empty reveal rules (no draw threshold)');
   });
 });
 
@@ -538,6 +551,91 @@ describe('buildHeroAbilityHooks optional-KO-reward (WP-248)', () => {
       0,
       'no effect is emitted for an unseeded reward',
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-253 — reveal token parsing → collapsed branch-list (D-24024)
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks reveal collapse parsing (WP-253)', () => {
+  /** Builds a single-ability reveal hook and returns its hook + reveal effect. */
+  function revealEffectFor(abilityText: string) {
+    const registry = makeHeroRegistry('core', 'reveal-hero', [
+      { slug: 'reveal-card', rarityLabel: 'Common 1', abilities: [abilityText] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/reveal-hero'] };
+    const hooks = buildHeroAbilityHooks(registry, config);
+    const hook = hooks[0]!;
+    return { hook, effect: hook.effects?.find((e) => e.type === 'reveal') };
+  }
+
+  it('a legacy [keyword:reveal-ko] token translates to cost-zero→ko and keeps the keyword on the hook', () => {
+    const { hook, effect } = revealEffectFor('KO the revealed cost-0 card. [keyword:reveal-ko]');
+    assert.ok(effect !== undefined, 'a reveal effect must be emitted');
+    assert.equal(effect!.type, 'reveal', 'the effect is the collapsed reveal type');
+    assert.equal(effect!.revealCount, 1, 'a legacy reveal carries revealCount 1');
+    assert.deepStrictEqual(
+      effect!.revealRules,
+      [{ predicate: { kind: 'cost-zero' }, actions: [{ kind: 'ko' }] }],
+      'reveal-ko translates to cost-zero → ko',
+    );
+    // why: D-24024 — narrative identity, no reverse-map: the LEGACY keyword stays on
+    // hook.keywords even though the effect collapsed to type 'reveal'.
+    assert.ok(hook.keywords.includes('reveal-ko'), 'the legacy reveal-ko keyword stays on hook.keywords');
+    assert.ok(!hook.keywords.includes('reveal'), 'a legacy token does not also record the base reveal keyword');
+  });
+
+  it('a legacy [keyword:reveal-ko-attack:2] token translates to an atomic ko + attack-fixed(2) rule', () => {
+    const { effect } = revealEffectFor('Reveal the top card. [keyword:reveal-ko-attack:2]');
+    assert.deepStrictEqual(
+      effect!.revealRules,
+      [{ predicate: { kind: 'cost-zero' }, actions: [{ kind: 'ko' }, { kind: 'attack-fixed', amount: 2 }] }],
+      'reveal-ko-attack:2 translates to cost-zero → [ko, attack-fixed 2]',
+    );
+  });
+
+  it('a parameterized [keyword:reveal:cost-zero:ko] token parses to the same descriptor as legacy reveal-ko (dual-grammar)', () => {
+    const legacy = revealEffectFor('[keyword:reveal-ko]');
+    const parameterized = revealEffectFor('[keyword:reveal:cost-zero:ko]');
+    assert.ok(parameterized.effect !== undefined, 'the parameterized token must emit a reveal effect');
+    assert.deepStrictEqual(
+      parameterized.effect!.revealRules,
+      legacy.effect!.revealRules,
+      'the parameterized form and its legacy equivalent yield identical reveal rules',
+    );
+    assert.equal(parameterized.effect!.revealCount, legacy.effect!.revealCount, 'both carry revealCount 1');
+    // why: the parameterized grammar records the base 'reveal' keyword (forward-compat).
+    assert.ok(parameterized.hook.keywords.includes('reveal'), 'the parameterized token records the base reveal keyword');
+  });
+
+  it('a parameterized reveal token parses a threshold predicate, action, and continue flag', () => {
+    const { effect } = revealEffectFor('[keyword:reveal:cost-lte-3:attack-by-cost:continue]');
+    assert.deepStrictEqual(
+      effect!.revealRules,
+      [{ predicate: { kind: 'cost-lte', threshold: 3 }, actions: [{ kind: 'attack-by-cost' }], continue: true }],
+      'the predicate threshold, action, and continue flag all parse from one token',
+    );
+  });
+
+  it('two parameterized reveal tokens accumulate into one descriptor in source order (reveal-attack-choose shape)', () => {
+    const { effect } = revealEffectFor(
+      '[keyword:reveal:cost-lte-4:attack-by-cost:continue][keyword:reveal:always:choose-discard-or-return]',
+    );
+    assert.deepStrictEqual(
+      effect!.revealRules,
+      [
+        { predicate: { kind: 'cost-lte', threshold: 4 }, actions: [{ kind: 'attack-by-cost' }], continue: true },
+        { predicate: { kind: 'always' }, actions: [{ kind: 'choose-discard-or-return' }] },
+      ],
+      'two reveal-rule tokens build the reveal-attack-choose branch-list directly',
+    );
+  });
+
+  it('a malformed parameterized reveal token is safe-skipped (no reveal effect, no throw)', () => {
+    const { hook, effect } = revealEffectFor('[keyword:reveal:bogus-predicate:draw]');
+    assert.equal(effect, undefined, 'a malformed predicate voids the rule, so no reveal effect is emitted');
+    assert.ok(!hook.keywords.includes('reveal'), 'no reveal keyword is recorded for a fully-malformed reveal token');
   });
 });
 

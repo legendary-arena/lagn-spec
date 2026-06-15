@@ -14,6 +14,7 @@
 import type { CardExtId } from '../state/zones.types.js';
 import type { HeroKeyword, HeroAbilityTiming } from './heroKeywords.js';
 import type { HeroCountSource } from './heroCountSource.js';
+import type { RevealRule } from './revealRule.js';
 
 // ---------------------------------------------------------------------------
 // HeroAbilityHook — data-only interface
@@ -86,6 +87,14 @@ export interface HeroEffectDescriptor {
   // executor: rescue / draw / attack / recruit). The existing magnitude field
   // carries the reward magnitude. Other keywords ignore it.
   rewardType?: HeroKeyword;
+  // why: D-24024 — for a collapsed 'reveal' effect, revealCount is the number of
+  // deck-top cards peeked (default 1; every legacy reveal peeks one) and revealRules
+  // is the ordered branch-list the single reveal handler evaluates. Other keywords
+  // ignore them. Top-level `magnitude` is NOT used by 'reveal': a cost threshold
+  // lives in a predicate (RevealPredicate.threshold) and a fixed-attack grant in an
+  // action (RevealAction.amount).
+  revealCount?: number;
+  revealRules?: RevealRule[];
 }
 
 // ---------------------------------------------------------------------------

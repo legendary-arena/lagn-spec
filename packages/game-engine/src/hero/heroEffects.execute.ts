@@ -20,6 +20,7 @@ import type { CardStatEntry } from '../economy/economy.types.js';
 import type { HeroKeyword } from '../rules/heroKeywords.js';
 import type { HeroAbilityHook, HeroEffectDescriptor } from '../rules/heroAbility.types.js';
 import { getHooksForCard } from '../rules/heroAbility.types.js';
+import type { RevealRule, RevealAction, RevealPredicate, RevealActionKind } from '../rules/revealRule.js';
 import { evaluateAllConditions } from './heroConditions.evaluate.js';
 import type { HeroEffectResult } from './heroEffects.types.js';
 import type { ShuffleProvider } from '../setup/shuffle.js';
@@ -44,11 +45,30 @@ import { resolveCountSource } from './heroCountSource.resolve.js';
 // 'wound' and 'conditional' remain deferred — they require targeting UI or
 // additional game systems not yet implemented.
 //
-// why (WP-251): exported as the single drift-test authority — the registry-drift
-// test in heroEffects.execute.test.ts asserts Object.keys(HERO_EFFECT_HANDLERS)
-// equals MVP_KEYWORDS bidirectionally. Do not duplicate this set elsewhere (the
-// coverage probe's EXECUTED_KEYWORDS is a separate, informational copy).
-export const MVP_KEYWORDS = new Set(['draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack', 'attack-per-count', 'optional-ko-reward']);
+// why (WP-251 / re-spec WP-253 D-24024): the registry-drift test splits into two
+// concerns. HANDLED_KEYWORDS is the keywords with a HERO_EFFECT_HANDLERS entry — the
+// single handler-completeness authority (the drift test asserts the handler keys
+// deep-equal it bidirectionally). After the reveal collapse there are 8 handlers:
+// the 7 legacy reveal-* keywords lost their dedicated handlers (folded into the one
+// 'reveal' handler) but stay executable via revealRulesForLegacyKeyword translation.
+export const HANDLED_KEYWORDS = new Set<HeroKeyword>([
+  'draw', 'attack', 'recruit', 'ko', 'rescue', 'reveal', 'attack-per-count', 'optional-ko-reward',
+]);
+
+// why: the 7 frozen legacy reveal keywords (REVEAL_KEYWORDS minus 'reveal') keep NO
+// handler — they translate to a 'reveal' descriptor at parse time. They remain in
+// the executable-coverage set so the drift test still recognizes them as reachable.
+const FROZEN_REVEAL_TRANSLATED: readonly HeroKeyword[] = [
+  'reveal-ko', 'reveal-min', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw', 'reveal-attack-choose', 'reveal-ko-attack',
+];
+
+// why (WP-251 / D-24024): MVP_KEYWORDS = HANDLED_KEYWORDS ∪ the frozen-translated
+// reveal keywords — the set of keywords that execute (directly via a handler, or via
+// reveal translation). The executeSingleEffect pre-gate keys on it; the coverage
+// drift test asserts every member is handled directly OR resolves through
+// revealRulesForLegacyKeyword. Do not duplicate this set elsewhere (the coverage
+// probe's EXECUTED_KEYWORDS is a separate, informational copy).
+export const MVP_KEYWORDS = new Set<string>([...HANDLED_KEYWORDS, ...FROZEN_REVEAL_TRANSLATED]);
 
 // why: D-24019 — the reward of an optional-ko-reward effect is dispatched to an
 // ALREADY-BUILT reward executor; only these four are seeded. Defensive guard at
@@ -62,10 +82,17 @@ const OPTIONAL_KO_REWARD_SEEDED_REWARDS: ReadonlySet<HeroKeyword> = new Set<Hero
   'recruit',
 ]);
 
-// why: these keywords have no external magnitude; the pre-check gate must not
-// reject them for missing magnitude — they use internal cost or parity logic
+// why: these keywords bypass the executeSingleEffect pre-check magnitude gate.
+// 'rescue' defaults its magnitude to 1. 'reveal' is here because the collapsed
+// reveal handler (D-24024) routes ALL 8 legacy reveal-* variants — including the
+// no-magnitude ones (reveal-ko / reveal-odd-draw / reveal-cost-attack) and the
+// M=0-valid ones (reveal / reveal-min) — so ALL reveal magnitude gating now lives
+// in revealRulesForLegacyKeyword + the per-rule predicates, NEVER at this top-level
+// gate. The 7 legacy reveal-* keywords no longer reach the pre-gate (they are
+// translated to 'reveal' at parse time), so their former entries are dropped.
+// (D-24024 / pre-flight PS-1)
 const NO_MAGNITUDE_KEYWORDS = new Set<string>([
-  'rescue', 'reveal-ko', 'reveal-ko-or-draw', 'reveal-cost-attack', 'reveal-odd-draw',
+  'rescue', 'reveal',
 ]);
 
 // ---------------------------------------------------------------------------
@@ -316,6 +343,16 @@ function heroEffectRescue(
   );
 }
 
+// ---------------------------------------------------------------------------
+// Parameterized reveal handler + per-action helpers (WP-253 / D-24024)
+//
+// The 8 legacy reveal-* handlers collapsed into ONE 'reveal' handler that peeks
+// the deck top (× revealCount, =1 today) and evaluates an ordered RevealRule
+// branch-list. The per-action helpers hold the verbatim zone-mutation bodies the
+// legacy handlers used; revealRulesForLegacyKeyword (rules/revealRule.ts) maps the
+// 8 card markers onto these rules, so behavior is byte-identical.
+// ---------------------------------------------------------------------------
+
 function heroEffectReveal(
   G: LegendaryGameState,
   _ctx: unknown,
@@ -327,252 +364,327 @@ function heroEffectReveal(
   if (!playerZones) {
     return;
   }
-  // why: reveal does not trigger deck reshuffle; empty deck is a silent no-op (D-21502)
-  if (playerZones.deck.length === 0) {
+  const rules = effect.revealRules ?? [];
+  // why: reveal-attack-choose's reject-second guard (D-22001) aborts the WHOLE
+  // effect — no peek, no attack, no second park — when a choice is already pending.
+  // Only the choose action parks a choice, so the guard is hoisted above the peek
+  // loop; other reveal rules never read pendingHeroChoice. (D-24024)
+  if (revealRulesContainAnyAction(rules, ['choose-discard-or-return']) && G.pendingHeroChoice !== undefined) {
     return;
   }
-  const topCardId = playerZones.deck[0];
-  if (!topCardId) {
+  // why: reveal-cost-attack / reveal-attack-choose / reveal-ko-attack all guarded
+  // G.turnEconomy BEFORE any mutation (including reveal-ko-attack's KO). Reproduce
+  // that: when the rules grant attack and turnEconomy is undefined the whole effect
+  // no-ops, never partially KOing first. (D-24024 / D-22003 AC-9 / D-22301)
+  if (revealRulesContainAnyAction(rules, ['attack-by-cost', 'attack-fixed']) && !G.turnEconomy) {
     return;
   }
-  const cardStats = G.cardStats[topCardId];
-  // why: G.cardStats has no entry for SHIELD starter cards; missing entry is a safe no-op (D-21502)
-  if (cardStats === undefined) {
-    return;
-  }
-  if (cardStats.cost <= (effect.magnitude as number)) {
-    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
-    playerZones.deck = moveResult.from;
-    playerZones.hand = moveResult.to;
+  const revealCount = effect.revealCount ?? 1;
+  for (let peekIndex = 0; peekIndex < revealCount; peekIndex++) {
+    // why: re-read deck[0] each iteration — a prior iteration's draw/ko shifts the
+    // top. count=1 today (every legacy reveal peeks once → byte-identical); a
+    // non-deck-mutating action at count>1 would re-peek the same card and is
+    // deferred/undefined this WP. Empty deck is a silent no-op (no reshuffle, D-21502).
+    if (playerZones.deck.length === 0) {
+      return;
+    }
+    const topCardId = playerZones.deck[0];
+    if (!topCardId) {
+      return;
+    }
+    const cardStats = G.cardStats[topCardId];
+    // why: G.cardStats has no entry for SHIELD starter cards; missing entry is a safe no-op (D-21502)
+    if (cardStats === undefined) {
+      return;
+    }
+    applyRevealRules(G, playerID, playerZones, topCardId, cardStats.cost, rules);
   }
 }
 
-function heroEffectRevealKo(
+/**
+ * Evaluates a reveal branch-list against one peeked card's cost. Applies the first
+ * matching rule's actions and stops, unless the matched rule sets `continue: true`,
+ * in which case it keeps evaluating later rules.
+ *
+ * @param G - Game state (mutated under Immer draft).
+ * @param playerID - Active player ID.
+ * @param playerZones - The active player's zones (resolved once by the handler).
+ * @param topCardId - The peeked deck-top card's CardExtId.
+ * @param cost - The peeked card's cost (the predicate input).
+ * @param rules - The ordered RevealRule branch-list.
+ */
+function applyRevealRules(
   G: LegendaryGameState,
-  _ctx: unknown,
   playerID: string,
-  _cardId: CardExtId,
-  _effect: HeroEffectDescriptor,
+  playerZones: PlayerZones,
+  topCardId: CardExtId,
+  cost: number,
+  rules: RevealRule[],
 ): void {
-  // why: reveal-ko peeks one card and KOs it only when cost = 0; deck empty is a silent no-op per D-21502 precedent; D-21801 fixes zone integrity — card must be removed from deck before being added to KO
-  const playerZones = G.playerZones[playerID];
-  if (!playerZones) {
-    return;
-  }
-  if (playerZones.deck.length === 0) {
-    return;
-  }
-  const topCardId = playerZones.deck[0];
-  if (!topCardId) {
-    return;
-  }
-  const cardStats = G.cardStats[topCardId];
-  if (cardStats === undefined) {
-    return;
-  }
-  if (cardStats.cost === 0) {
-    const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
-    if (moveResult.found) {
-      playerZones.deck = moveResult.from;
-      G.ko = koCard(G.ko, topCardId);
+  for (const rule of rules) {
+    if (!revealPredicateMatches(G, rule.predicate, cost)) {
+      continue;
+    }
+    applyRevealRuleActions(G, playerID, playerZones, topCardId, cost, rule.actions);
+    // why: first-match-wins unless the rule opts into `continue` — the
+    // reveal-attack-choose attack rule sets continue so the always→choose rule still
+    // parks the choice after the attack. (D-24024)
+    if (rule.continue !== true) {
+      return;
     }
   }
 }
 
-function heroEffectRevealMin(
+/**
+ * Returns whether the peeked card's cost satisfies a reveal predicate.
+ *
+ * @param G - Game state (for logging an unknown/malformed predicate; never throws).
+ * @param predicate - The RevealPredicate to test.
+ * @param cost - The peeked card's cost.
+ * @returns Whether the predicate matches.
+ */
+function revealPredicateMatches(
   G: LegendaryGameState,
-  _ctx: unknown,
-  playerID: string,
-  _cardId: CardExtId,
-  effect: HeroEffectDescriptor,
-): void {
-  // why: reveal-min draws the card only when cost >= threshold — opposite direction from 'reveal' which draws when cost <= threshold
-  if (!isValidMagnitude(effect.magnitude)) {
-    return;
+  predicate: RevealPredicate,
+  cost: number,
+): boolean {
+  if (predicate.kind === 'always') {
+    return true;
   }
-  const playerZones = G.playerZones[playerID];
-  if (!playerZones) {
-    return;
+  if (predicate.kind === 'cost-zero') {
+    return cost === 0;
   }
-  if (playerZones.deck.length === 0) {
-    return;
+  if (predicate.kind === 'cost-odd') {
+    return cost % 2 !== 0;
   }
-  const topCardId = playerZones.deck[0];
-  if (!topCardId) {
-    return;
-  }
-  const cardStats = G.cardStats[topCardId];
-  if (cardStats === undefined) {
-    return;
-  }
-  if (cardStats.cost >= (effect.magnitude as number)) {
-    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
-    playerZones.deck = moveResult.from;
-    playerZones.hand = moveResult.to;
-  }
-}
-
-function heroEffectRevealKoOrDraw(
-  G: LegendaryGameState,
-  _ctx: unknown,
-  playerID: string,
-  _cardId: CardExtId,
-  effect: HeroEffectDescriptor,
-): void {
-  // why: reveal-ko-or-draw peeks deck top; KOs the card (removing it from deck)
-  // when cost = 0; draws it when 0 < cost <= magnitude; no-op otherwise (D-21802)
-  if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) {
-    return;
-  }
-  const playerZones = G.playerZones[playerID];
-  if (!playerZones) {
-    return;
-  }
-  if (playerZones.deck.length === 0) {
-    return;
-  }
-  const topCardId = playerZones.deck[0];
-  if (!topCardId) {
-    return;
-  }
-  const cardStats = G.cardStats[topCardId];
-  if (cardStats === undefined) {
-    return;
-  }
-  // KO branch MUST be evaluated before draw branch.
-  // cost === 0 MUST NOT reach the draw branch.
-  if (cardStats.cost === 0) {
-    const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
-    if (moveResult.found) {
-      playerZones.deck = moveResult.from;
-      G.ko = koCard(G.ko, topCardId);
+  if (predicate.kind === 'cost-lte') {
+    // why: a threshold of 0 is legitimate (reveal M=0 → cost-lte 0), so test for
+    // undefined explicitly rather than a falsy `?? default`.
+    if (predicate.threshold === undefined) {
+      G.messages.push('A reveal rule used a cost-lte predicate with no threshold and was skipped. Check the reveal rule markup.');
+      return false;
     }
-  } else if (cardStats.cost <= (effect.magnitude as number)) {
-    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
-    if (moveResult.found) {
-      playerZones.deck = moveResult.from;
-      playerZones.hand = moveResult.to;
-    }
+    return cost <= predicate.threshold;
   }
-  // cost > magnitude: no-op
+  if (predicate.kind === 'cost-gte') {
+    if (predicate.threshold === undefined) {
+      G.messages.push('A reveal rule used a cost-gte predicate with no threshold and was skipped. Check the reveal rule markup.');
+      return false;
+    }
+    return cost >= predicate.threshold;
+  }
+  // why: unknown predicate kind → warn to G.messages and do not match, never throw
+  // (the rule-execution-pipeline unknown-effect posture). (D-24024)
+  G.messages.push(`A reveal rule used an unknown predicate kind "${String(predicate.kind)}" and was skipped. Check the reveal rule markup.`);
+  return false;
 }
 
-function heroEffectRevealCostAttack(
+/**
+ * Applies a matched rule's actions in order. Stops the rule early when a
+ * deck-mutating action (draw / ko) reports it did not apply, so a follow-on action
+ * (reveal-ko-attack's fixed attack) fires only after the KO succeeded.
+ *
+ * @param G - Game state (mutated under Immer draft).
+ * @param playerID - Active player ID.
+ * @param playerZones - The active player's zones.
+ * @param topCardId - The peeked deck-top card's CardExtId.
+ * @param cost - The peeked card's cost (for attack-by-cost).
+ * @param actions - The matched rule's actions, applied in order.
+ */
+function applyRevealRuleActions(
   G: LegendaryGameState,
-  _ctx: unknown,
   playerID: string,
-  _cardId: CardExtId,
-  _effect: HeroEffectDescriptor,
+  playerZones: PlayerZones,
+  topCardId: CardExtId,
+  cost: number,
+  actions: RevealAction[],
 ): void {
-  // why: reveal-cost-attack peeks deck top; grants attack equal to its cost;
-  // card stays on deck (no zone mutation) (D-21901)
-  const playerZones = G.playerZones[playerID];
-  if (!playerZones) { return; }
-  if (playerZones.deck.length === 0) { return; }
-  const topCardId = playerZones.deck[0];
-  if (!topCardId) { return; }
-  const cardStats = G.cardStats[topCardId];
-  if (cardStats === undefined) { return; }
-  if (!G.turnEconomy) { return; }
-  G.turnEconomy.attack += cardStats.cost;
-}
-
-function heroEffectRevealOddDraw(
-  G: LegendaryGameState,
-  _ctx: unknown,
-  playerID: string,
-  _cardId: CardExtId,
-  _effect: HeroEffectDescriptor,
-): void {
-  // why: reveal-odd-draw peeks deck top; draws it when cost is odd (cost % 2 !== 0);
-  // cost-0 is even and does NOT trigger the draw (D-21902)
-  const playerZones = G.playerZones[playerID];
-  if (!playerZones) { return; }
-  if (playerZones.deck.length === 0) { return; }
-  const topCardId = playerZones.deck[0];
-  if (!topCardId) { return; }
-  const cardStats = G.cardStats[topCardId];
-  if (cardStats === undefined) { return; }
-  if (cardStats.cost % 2 !== 0) {
-    const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
-    if (moveResult.found) {
-      playerZones.deck = moveResult.from;
-      playerZones.hand = moveResult.to;
+  for (const action of actions) {
+    const applied = applyRevealAction(G, playerID, playerZones, topCardId, cost, action);
+    // why: only a deck-mutating action (ko / draw) gates the rest of the rule —
+    // reveal-ko-attack's [ko, attack-fixed] grants the fixed attack ONLY after the
+    // KO move returned found (no partial mutation). A non-mutating action that
+    // no-ops (e.g. attack with no turnEconomy) does NOT abort the rule. (D-24024 / D-22301)
+    if (!applied && isDeckMutatingRevealAction(action.kind)) {
+      return;
     }
   }
-  // cost is even (including 0): no-op
 }
 
-function heroEffectRevealAttackChoose(
+/**
+ * Dispatches one reveal action to its helper. Returns whether the action applied
+ * its intended mutation (true for non-deck actions that succeeded; false when a
+ * helper's guard fired). Unknown action kinds warn and return true (not a
+ * deck-mutation failure, so they do not break the rule).
+ *
+ * @param G - Game state (mutated under Immer draft).
+ * @param playerID - Active player ID.
+ * @param playerZones - The active player's zones.
+ * @param topCardId - The peeked deck-top card's CardExtId.
+ * @param cost - The peeked card's cost (for attack-by-cost).
+ * @param action - The RevealAction to apply.
+ * @returns Whether the action applied.
+ */
+function applyRevealAction(
   G: LegendaryGameState,
-  _ctx: unknown,
   playerID: string,
-  _cardId: CardExtId,
-  effect: HeroEffectDescriptor,
-): void {
-  // why: reveal-attack-choose peeks deck top; grants attack equal to cost when
-  // cost <= magnitude; then stores a pending choice (discard or return) that
-  // the player must resolve via resolveHeroChoice before the turn can end (D-22003)
-  if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { return; }
-  // why: reject-second — a pending choice is never silently overwritten; the first
-  // choice's data integrity is preserved until the player resolves it (D-22001)
-  if (G.pendingHeroChoice !== undefined) { return; }
-  const playerZones = G.playerZones[playerID];
-  if (!playerZones) { return; }
-  if (playerZones.deck.length === 0) { return; }
-  const topCardId = playerZones.deck[0];
-  if (!topCardId) { return; }
-  const cardStats = G.cardStats[topCardId];
-  if (cardStats === undefined) { return; }
-  if (!G.turnEconomy) { return; }
-  // NOTE: G.pendingHeroChoice is set AFTER the G.turnEconomy guard.
-  // If G.turnEconomy is undefined the break fires here and G.pendingHeroChoice
-  // is NOT set. Tests must verify this (AC-9).
-  if (cardStats.cost <= (effect.magnitude as number)) {
-    G.turnEconomy.attack += cardStats.cost;
+  playerZones: PlayerZones,
+  topCardId: CardExtId,
+  cost: number,
+  action: RevealAction,
+): boolean {
+  if (action.kind === 'draw') {
+    return applyRevealDraw(playerZones, topCardId);
   }
-  // Card stays on deck until player resolves the choice.
+  if (action.kind === 'ko') {
+    return applyRevealKo(G, playerZones, topCardId);
+  }
+  if (action.kind === 'attack-by-cost') {
+    return applyRevealAttackByCost(G, cost);
+  }
+  if (action.kind === 'attack-fixed') {
+    return applyRevealAttackFixed(G, action.amount);
+  }
+  if (action.kind === 'choose-discard-or-return') {
+    return applyRevealChoose(G, playerID, topCardId);
+  }
+  // why: unknown action kind → warn to G.messages and skip, never throw. Treated as
+  // a no-op that is NOT a deck-mutation failure, so it does not break the rule. (D-24024)
+  G.messages.push(`A reveal rule used an unknown action kind "${String(action.kind)}" and was skipped. Check the reveal rule markup.`);
+  return true;
+}
+
+/**
+ * Returns whether a reveal action mutates the deck (draw / ko). Only these gate the
+ * rest of a rule's action list when they fail to apply.
+ *
+ * @param kind - The reveal action kind.
+ * @returns Whether the action is deck-mutating.
+ */
+function isDeckMutatingRevealAction(kind: RevealActionKind): boolean {
+  return kind === 'draw' || kind === 'ko';
+}
+
+/**
+ * Returns whether any rule's action list contains one of the given action kinds.
+ * Used to hoist the reject-second (choose) and turnEconomy (attack) guards above
+ * the peek loop, reproducing the legacy handlers' whole-effect guard ordering.
+ *
+ * @param rules - The reveal branch-list.
+ * @param kinds - The action kinds to look for.
+ * @returns Whether any action in any rule matches one of the kinds.
+ */
+function revealRulesContainAnyAction(rules: RevealRule[], kinds: RevealActionKind[]): boolean {
+  for (const rule of rules) {
+    for (const action of rule.actions) {
+      for (const kind of kinds) {
+        if (action.kind === kind) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Draw action — moves the peeked deck-top card into the player's hand. Verbatim
+ * from the legacy reveal / reveal-min / reveal-odd-draw draw bodies.
+ *
+ * @param playerZones - The active player's zones.
+ * @param topCardId - The peeked deck-top card's CardExtId.
+ * @returns Whether the card was found and moved (false leaves zones unchanged).
+ */
+function applyRevealDraw(playerZones: PlayerZones, topCardId: CardExtId): boolean {
+  const moveResult = moveCardFromZone(playerZones.deck, playerZones.hand, topCardId);
+  if (!moveResult.found) {
+    return false;
+  }
+  playerZones.deck = moveResult.from;
+  playerZones.hand = moveResult.to;
+  return true;
+}
+
+/**
+ * KO action — removes the peeked deck-top card from the deck and adds it to the KO
+ * pile. Verbatim from the legacy reveal-ko / reveal-ko-or-draw / reveal-ko-attack
+ * KO bodies (card removed from deck before being added to KO — D-21801 zone integrity).
+ *
+ * @param G - Game state (mutated under Immer draft).
+ * @param playerZones - The active player's zones.
+ * @param topCardId - The peeked deck-top card's CardExtId.
+ * @returns Whether the card was found and KO'd (false leaves zones unchanged).
+ */
+function applyRevealKo(G: LegendaryGameState, playerZones: PlayerZones, topCardId: CardExtId): boolean {
+  const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
+  if (!moveResult.found) {
+    return false;
+  }
+  playerZones.deck = moveResult.from;
+  G.ko = koCard(G.ko, topCardId);
+  return true;
+}
+
+/**
+ * Attack-by-cost action — grants attack equal to the peeked card's cost; no zone
+ * mutation (the card stays on the deck). Verbatim from reveal-cost-attack /
+ * reveal-attack-choose; keeps the turnEconomy guard (D-21901 / D-22003).
+ *
+ * @param G - Game state (mutated under Immer draft).
+ * @param cost - The peeked card's cost.
+ * @returns Whether the grant applied (false when turnEconomy is undefined).
+ */
+function applyRevealAttackByCost(G: LegendaryGameState, cost: number): boolean {
+  if (!G.turnEconomy) {
+    return false;
+  }
+  G.turnEconomy.attack += cost;
+  return true;
+}
+
+/**
+ * Attack-fixed action — grants a fixed attack amount (the reveal-ko-attack
+ * magnitude). Verbatim from reveal-ko-attack's `G.turnEconomy.attack += magnitude`.
+ *
+ * @param G - Game state (mutated under Immer draft).
+ * @param amount - The fixed attack grant.
+ * @returns Whether the grant applied (false when turnEconomy is undefined or amount
+ *   is missing).
+ */
+function applyRevealAttackFixed(G: LegendaryGameState, amount: number | undefined): boolean {
+  if (!G.turnEconomy) {
+    return false;
+  }
+  if (amount === undefined) {
+    return false;
+  }
+  G.turnEconomy.attack += amount;
+  return true;
+}
+
+/**
+ * Choose-discard-or-return action — parks the existing PendingHeroChoice the player
+ * resolves via resolveHeroChoice. Verbatim from reveal-attack-choose: the
+ * turnEconomy guard fires BEFORE the park (an undefined turnEconomy means NO park);
+ * the reject-second (a choice already pending) is hoisted to the handler top, so a
+ * pending choice aborts the whole effect. (D-22001 / D-22003)
+ *
+ * @param G - Game state (mutated under Immer draft).
+ * @param playerID - Active player ID.
+ * @param topCardId - The peeked deck-top card's CardExtId.
+ * @returns Whether the choice was parked (false when turnEconomy is undefined).
+ */
+function applyRevealChoose(G: LegendaryGameState, playerID: string, topCardId: CardExtId): boolean {
+  if (!G.turnEconomy) {
+    return false;
+  }
   const pendingChoice: PendingHeroChoice = {
     choiceType: 'discard-or-return',
     cardId: topCardId,
     playerID,
   };
   G.pendingHeroChoice = pendingChoice;
-}
-
-function heroEffectRevealKoAttack(
-  G: LegendaryGameState,
-  _ctx: unknown,
-  playerID: string,
-  _cardId: CardExtId,
-  effect: HeroEffectDescriptor,
-): void {
-  // why: D-22301 — compound executor. Peeks deck[0]; if cost === 0 (strict equality),
-  // (1) KOs the card via moveCardFromZone + koCard, then (2) grants fixed attack equal
-  // to magnitude. If cost > 0, no zone mutation — card stays at deck[0]. No player
-  // choice; G.pendingHeroChoice is NOT touched. Magnitude encodes the fixed attack grant
-  // amount, not a cost ceiling.
-  if (!isValidMagnitude(effect.magnitude) || effect.magnitude < 1) { return; }
-  const playerZones = G.playerZones[playerID];
-  if (!playerZones) { return; }
-  if (playerZones.deck.length === 0) { return; }
-  const topCardId = playerZones.deck[0];
-  if (!topCardId) { return; }
-  const cardStats = G.cardStats[topCardId];
-  if (cardStats === undefined) { return; }
-  // why: G.turnEconomy is initialised by turn-start machinery, not by this executor;
-  // if it is undefined the executor must not crash — silent no-op is correct here
-  if (!G.turnEconomy) { return; }
-  if (cardStats.cost === 0) {
-    // topCardId captured above before any mutation — do not re-read deck[0] after moveCardFromZone
-    const moveResult = moveCardFromZone(playerZones.deck, [], topCardId);
-    // why: atomic — attack is not granted when KO did not occur; no partial state mutation
-    if (!moveResult.found) { return; }
-    playerZones.deck = moveResult.from;
-    G.ko = koCard(G.ko, topCardId);
-    G.turnEconomy.attack += effect.magnitude as number;
-  }
-  // cost > 0: no zone mutation — card stays at deck[0]
+  return true;
 }
 
 function heroEffectAttackPerCount(
@@ -652,7 +764,10 @@ function heroEffectOptionalKoReward(
 // + a drift-test entry, not a `switch` edit. Keyed by HeroKeyword and `Partial`
 // because 'wound'/'conditional' are intentionally unmapped (the deferred set);
 // the union therefore stays typed + drift-detected. Exported so the registry
-// drift test can assert its keys == MVP_KEYWORDS bidirectionally.
+// drift test can assert its keys == HANDLED_KEYWORDS bidirectionally.
+// why: WP-253 / D-24024 — the 7 legacy reveal-* entries are gone; ALL 8 reveal
+// keywords now dispatch through the single parameterized `reveal` handler (their
+// markers are translated to a `reveal` descriptor with revealRules at parse time).
 export const HERO_EFFECT_HANDLERS: Partial<Record<HeroKeyword, HeroEffectHandler>> = {
   draw: heroEffectDraw,
   attack: heroEffectAttack,
@@ -660,13 +775,6 @@ export const HERO_EFFECT_HANDLERS: Partial<Record<HeroKeyword, HeroEffectHandler
   ko: heroEffectKo,
   rescue: heroEffectRescue,
   reveal: heroEffectReveal,
-  'reveal-ko': heroEffectRevealKo,
-  'reveal-min': heroEffectRevealMin,
-  'reveal-ko-or-draw': heroEffectRevealKoOrDraw,
-  'reveal-cost-attack': heroEffectRevealCostAttack,
-  'reveal-odd-draw': heroEffectRevealOddDraw,
-  'reveal-attack-choose': heroEffectRevealAttackChoose,
-  'reveal-ko-attack': heroEffectRevealKoAttack,
   'attack-per-count': heroEffectAttackPerCount,
   'optional-ko-reward': heroEffectOptionalKoReward,
 };
@@ -707,11 +815,13 @@ export function executeSingleEffect(
     return;
   }
 
-  // why: 'ko' and NO_MAGNITUDE_KEYWORDS members do not use the pre-check magnitude
-  // gate — they handle undefined magnitude internally or use internal cost/parity logic.
-  // 'reveal-min' and 'reveal-ko-or-draw' have their own magnitude gates inside their handlers.
-  // All other MVP keywords require a valid magnitude at this level.
-  if (keyword !== 'ko' && !NO_MAGNITUDE_KEYWORDS.has(keyword) && keyword !== 'reveal-min') {
+  // why: 'ko' and NO_MAGNITUDE_KEYWORDS members ('rescue', 'reveal') bypass the
+  // pre-check magnitude gate — 'ko' targets the played card (no magnitude), 'rescue'
+  // defaults its magnitude to 1, and 'reveal' moves ALL its magnitude gating into the
+  // translation (revealRulesForLegacyKeyword) + the per-rule predicates, so the
+  // no-magnitude and M=0-valid reveals still fire (D-24024 / pre-flight PS-1). Every
+  // other MVP keyword requires a valid magnitude here.
+  if (keyword !== 'ko' && !NO_MAGNITUDE_KEYWORDS.has(keyword)) {
     if (!isValidMagnitude(effect.magnitude)) {
       return;
     }

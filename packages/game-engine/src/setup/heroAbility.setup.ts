@@ -19,6 +19,8 @@ import type { HeroKeyword, HeroAbilityTiming } from '../rules/heroKeywords.js';
 import { HERO_KEYWORDS } from '../rules/heroKeywords.js';
 import type { HeroCountSource } from '../rules/heroCountSource.js';
 import { HERO_COUNT_SOURCES } from '../rules/heroCountSource.js';
+import type { RevealRule, RevealPredicate, RevealAction } from '../rules/revealRule.js';
+import { revealRulesForLegacyKeyword, REVEAL_KEYWORDS } from '../rules/revealRule.js';
 import { normalizeTraitSlug } from '../state/traits.normalize.js';
 // why: D-18705 / D-18706 — hero hooks must key by the canonical-face slash
 // instance id (the id the played card carries in `G` zones), resolving
@@ -125,6 +127,24 @@ const COUNT_SCALED_PATTERN = /\[keyword:attack-per-count:([a-z][a-z-]*):(\d+)\]/
 // enforced downstream (isValidMagnitude at the reward executor).
 /** Regex for [keyword:optional-ko-reward:<reward>:<n>] optional-KO-reward markup. */
 const OPTIONAL_KO_REWARD_PATTERN = /\[keyword:optional-ko-reward:([a-z][a-z-]*):(\d+)\]/g;
+
+// why: D-24024 — the forward-compat parameterized reveal token has 3+
+// colon-separated segments ([keyword:reveal:<predicate>:<actions>(:continue)?]).
+// KEYWORD_PATTERN stops at the second colon and cannot match it; the legacy
+// [keyword:reveal:<n>] form is disambiguated because the predicate segment must
+// START WITH A LETTER (so a bare digit magnitude routes to KEYWORD_PATTERN, not
+// here). One token = one RevealRule (mirrors COUNT_SCALED_PATTERN's
+// one-token-one-effect shape). predicate ∈ {always, cost-zero, cost-odd,
+// cost-lte-<n>, cost-gte-<n>}; actions are '+'-joined ∈ {draw, ko, attack-by-cost,
+// attack-fixed-<n>, choose-discard-or-return}; an optional trailing ':continue'.
+// No card uses this grammar this WP — it makes a new reveal variant data-only.
+/** Regex for [keyword:reveal:<predicate>:<actions>(:continue)?] parameterized reveal markup. */
+const REVEAL_RULE_PATTERN = /\[keyword:reveal:([a-z][a-z0-9-]*):([a-z][a-z0-9+-]*)(?::(continue))?\]/g;
+
+// why: D-24024 — the 8 legacy reveal keywords whose markers translate to the
+// collapsed `reveal` descriptor. Built from the canonical REVEAL_KEYWORDS array so
+// the parser and the translation function share one source of truth.
+const REVEAL_KEYWORD_SET: ReadonlySet<HeroKeyword> = new Set<HeroKeyword>(REVEAL_KEYWORDS);
 
 // why: D-24019 — the reward of an optional-ko-reward effect is dispatched to an
 // ALREADY-BUILT reward executor; only these four are seeded. An unseeded reward
@@ -314,6 +334,28 @@ function parseAbilityText(abilityText: string): {
     optionalKoRewardMatch = optionalKoRewardRegex.exec(abilityText);
   }
 
+  // Step 2f: Extract [keyword:reveal:<predicate>:<actions>(:continue)?] parameterized
+  // reveal tokens (forward-compat — no card uses this grammar this WP). Each token is
+  // ONE RevealRule, accumulated in source order. When at least one rule parses, the
+  // base 'reveal' keyword is recorded so the effect builder emits a single collapsed
+  // reveal descriptor carrying these rules.
+  // why: D-24024 — the parameterized grammar makes a new reveal variant a data marker
+  // rather than a new keyword + handler + drift-test + WP. A malformed predicate or
+  // action voids that one rule token (safe-skip, no throw).
+  const parameterizedRevealRules: RevealRule[] = [];
+  const revealRuleRegex = new RegExp(REVEAL_RULE_PATTERN.source, 'g');
+  let revealRuleMatch: RegExpExecArray | null = revealRuleRegex.exec(abilityText);
+  while (revealRuleMatch !== null) {
+    const parsedRule = parseRevealRuleToken(revealRuleMatch[1]!, revealRuleMatch[2]!, revealRuleMatch[3]);
+    if (parsedRule !== null) {
+      parameterizedRevealRules.push(parsedRule);
+    }
+    revealRuleMatch = revealRuleRegex.exec(abilityText);
+  }
+  if (parameterizedRevealRules.length > 0) {
+    keywords.push('reveal');
+  }
+
   // Step 3: Extract [icon:X] markup
   const iconRegex = new RegExp(ICON_PATTERN.source, 'g');
   let iconMatch: RegExpExecArray | null = iconRegex.exec(abilityText);
@@ -391,6 +433,21 @@ function parseAbilityText(abilityText: string): {
         if (magnitude !== undefined && rewardType !== undefined) {
           effects.push({ type: keyword, magnitude, rewardType });
         }
+      } else if (REVEAL_KEYWORD_SET.has(keyword)) {
+        // why: D-24024 — the dual-grammar seam. A legacy reveal-* keyword translates
+        // through revealRulesForLegacyKeyword into the collapsed `reveal` descriptor;
+        // the parameterized `[keyword:reveal:...]` grammar (Step 2f) supplies its rules
+        // directly for the base `reveal` keyword. Either way the LEGACY keyword stays
+        // on hook.keywords (narrative identity — no reverse-map), only the effect is
+        // translated. An invalid magnitude yields empty revealRules (a no-op reveal),
+        // reproducing the legacy pre-gate/self-guard skip while still emitting one effect.
+        let revealRules: RevealRule[];
+        if (keyword === 'reveal' && parameterizedRevealRules.length > 0) {
+          revealRules = parameterizedRevealRules;
+        } else {
+          revealRules = revealRulesForLegacyKeyword(keyword, magnitude);
+        }
+        effects.push({ type: 'reveal', revealCount: 1, revealRules });
       } else if (magnitude !== undefined) {
         effects.push({ type: keyword, magnitude });
       } else {
@@ -429,6 +486,118 @@ function isValidHeroKeyword(value: string): value is HeroKeyword {
     }
   }
   return false;
+}
+
+// ---------------------------------------------------------------------------
+// Parameterized reveal token parsing (forward-compat; D-24024)
+// ---------------------------------------------------------------------------
+
+/**
+ * Parses a non-negative integer from a parameterized reveal token segment.
+ *
+ * @param value - The digit substring (e.g. the `2` of `cost-lte-2`).
+ * @returns The parsed integer, or null when the segment is not all digits.
+ */
+function parseRevealTokenInteger(value: string): number | null {
+  if (!/^\d+$/.test(value)) {
+    return null;
+  }
+  return parseInt(value, 10);
+}
+
+/**
+ * Parses a parameterized reveal predicate segment into a RevealPredicate.
+ *
+ * Grammar: `always` | `cost-zero` | `cost-odd` | `cost-lte-<n>` | `cost-gte-<n>`.
+ *
+ * @param token - The predicate segment of a `[keyword:reveal:...]` token.
+ * @returns The RevealPredicate, or null when the segment is unrecognized.
+ */
+function parseRevealPredicateToken(token: string): RevealPredicate | null {
+  if (token === 'always') {
+    return { kind: 'always' };
+  }
+  if (token === 'cost-zero') {
+    return { kind: 'cost-zero' };
+  }
+  if (token === 'cost-odd') {
+    return { kind: 'cost-odd' };
+  }
+  if (token.startsWith('cost-lte-')) {
+    const threshold = parseRevealTokenInteger(token.slice('cost-lte-'.length));
+    return threshold === null ? null : { kind: 'cost-lte', threshold };
+  }
+  if (token.startsWith('cost-gte-')) {
+    const threshold = parseRevealTokenInteger(token.slice('cost-gte-'.length));
+    return threshold === null ? null : { kind: 'cost-gte', threshold };
+  }
+  return null;
+}
+
+/**
+ * Parses a parameterized reveal action segment into a RevealAction.
+ *
+ * Grammar: `draw` | `ko` | `attack-by-cost` | `attack-fixed-<n>` |
+ * `choose-discard-or-return`.
+ *
+ * @param token - One action segment (the `+`-joined parts are split by the caller).
+ * @returns The RevealAction, or null when the segment is unrecognized.
+ */
+function parseRevealActionToken(token: string): RevealAction | null {
+  if (token === 'draw') {
+    return { kind: 'draw' };
+  }
+  if (token === 'ko') {
+    return { kind: 'ko' };
+  }
+  if (token === 'attack-by-cost') {
+    return { kind: 'attack-by-cost' };
+  }
+  if (token === 'choose-discard-or-return') {
+    return { kind: 'choose-discard-or-return' };
+  }
+  if (token.startsWith('attack-fixed-')) {
+    const amount = parseRevealTokenInteger(token.slice('attack-fixed-'.length));
+    return amount === null ? null : { kind: 'attack-fixed', amount };
+  }
+  return null;
+}
+
+/**
+ * Parses one parameterized reveal token (one RevealRule) from its captured
+ * segments. Returns null when the predicate or any action segment is malformed —
+ * a malformed token voids that one rule (safe-skip, no throw).
+ *
+ * @param predicateToken - The predicate segment.
+ * @param actionsToken - The `+`-joined actions segment.
+ * @param continueToken - The optional `continue` flag (undefined when absent).
+ * @returns The RevealRule, or null when any segment is malformed.
+ */
+function parseRevealRuleToken(
+  predicateToken: string,
+  actionsToken: string,
+  continueToken: string | undefined,
+): RevealRule | null {
+  const predicate = parseRevealPredicateToken(predicateToken);
+  if (predicate === null) {
+    return null;
+  }
+  const actions: RevealAction[] = [];
+  for (const actionToken of actionsToken.split('+')) {
+    const action = parseRevealActionToken(actionToken);
+    if (action === null) {
+      return null;
+    }
+    actions.push(action);
+  }
+  if (actions.length === 0) {
+    return null;
+  }
+  const rule: RevealRule = { predicate, actions };
+  if (continueToken === 'continue') {
+    rule.continue = true;
+  }
+  return rule;
 }
 
 /**
