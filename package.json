@@ -10,7 +10,7 @@
     "registry:build":       "pnpm --filter @legendary-arena/registry build",
     "registry:upload":      "pnpm --filter @legendary-arena/registry upload",
     "viewer:dev":           "pnpm --filter registry-viewer dev",
-    "viewer:build":         "pnpm registry:build && pnpm --filter registry-viewer build",
+    "viewer:build":         "pnpm --filter @legendary-arena/lagn build && pnpm registry:build && pnpm --filter registry-viewer build",
 
     "wiki-viewer:project":     "node apps/wiki-viewer/scripts/project-wiki.mjs",
     "wiki-viewer:check-links": "node apps/wiki-viewer/scripts/check-links.mjs",
