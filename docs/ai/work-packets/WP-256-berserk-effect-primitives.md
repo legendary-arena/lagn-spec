@@ -89,7 +89,8 @@ The homogeneous AST node union + value-expression union + the closed parameter u
 - `EffectNode` = `SequenceNode | MoveCardNode | GainResourceNode`; canonical `EFFECT_NODE_TYPES = ['sequence','move-card','gain-resource']`.
 - `ValueExpression` = `CardPrintedStatExpression`; canonical `VALUE_EXPRESSION_TYPES = ['card-printed-stat']`.
 - Parameter unions + arrays: `EFFECT_RESOURCE_KINDS = ['attack','recruit']`, `EFFECT_ZONE_KINDS = ['deck','discard']`, `EFFECT_CARD_POSITIONS = ['top']`, `EFFECT_OWNER_KINDS = ['current-player']`.
-- `ZoneEndpoint { owner; zone; position? }`, `CardReference { ref: string }`, and the `EffectExecutionContext` type (the transient `bind` store — a `Map<string, CardExtId>`, documented as never-persisted).
+- The **`bind`/`ref` binding pair** (the two halves of D-24029 §9's context mechanism): the **write** side is `bind?: string` on `MoveCardNode` (stores the moved card id into the context); the **read** side is `CardReference { ref: string }`, the only shape a value expression's `card` field accepts this WP (`CardPrintedStatExpression.card: CardReference`). Both key into the same `EffectExecutionContext`.
+- `ZoneEndpoint { owner; zone; position? }`, `CardReference { ref: string }`, and the `EffectExecutionContext` type (the transient `bind`/`ref` store — a `Map<string, CardExtId>`, documented as never-persisted).
 
 ### B) Interpreter — `hero/effectPrimitive.interpret.ts`
 - `EFFECT_NODE_HANDLERS: Record<EffectNodeType, …>` + `VALUE_EXPRESSION_EVALUATORS: Record<ValueExpressionType, …>` — ImplementationMaps mirroring `HERO_EFFECT_HANDLERS`, held outside `G`.
@@ -106,7 +107,7 @@ The homogeneous AST node union + value-expression union + the closed parameter u
 - Add `primitiveEffects?: EffectNode[]` to `HeroAbilityHook` (additive optional; imports `EffectNode` from the new contract). Each element is a top-level effect with its own fresh context.
 
 ### E) Parser — `setup/heroAbility.setup.ts`
-- A composition-marker step: when a `[keyword:X]` token's normalized name is a key in `HERO_COMPOSITION_MARKERS`, attach a copy of that composition to the hook's `primitiveEffects` (do NOT push to `hook.keywords` — `berserk` is not a `HeroKeyword`). Thread `primitiveEffects` into `buildHeroAbilityHooks`'s hook assembly.
+- A composition-marker step: when a `[keyword:X]` token's normalized name is a key in `HERO_COMPOSITION_MARKERS`, attach a `structuredClone(...)` of that composition to the hook's `primitiveEffects` (do NOT push to `hook.keywords` — `berserk` is not a `HeroKeyword`). **`structuredClone` is mandated** (a Node v22 global; deterministic over the plain-JSON AST; no functions/`Map`/`Set` in a descriptor): it forecloses both the shared-const aliasing footgun and the drift risk of a hand-written literal. Thread `primitiveEffects` into `buildHeroAbilityHooks`'s hook assembly.
 
 ### F) Executor seam — `hero/heroEffects.execute.ts`
 - In `executeHeroEffects`, inside the existing conditions-passed block (so primitive effects are gated by the same hook conditions as legacy effects), iterate `hook.primitiveEffects` and call `interpretHeroPrimitiveEffect` per node.
