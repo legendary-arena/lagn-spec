@@ -1,0 +1,76 @@
+# Build Vision & Roadmap — schedule-watch agent (increment C of the Vision
+# initiative; companion to `apps/dashboard/docs/build-vision-and-roadmap.md` §5).
+#
+# Nightly, computes each roadmap task's schedule state (the §4 rule) from
+# `apps/dashboard/src/data/buildRoadmap.ts` and surfaces slippage by maintaining
+# a single `schedule-watch`-labelled GitHub issue: opened/updated when any task
+# is overdue or due-soon, closed when everything is on schedule. Zero external
+# secrets — it uses the built-in `GITHUB_TOKEN`.
+#
+# `workflow_dispatch:` allows on-demand runs without waiting for the cron tick.
+name: Roadmap Schedule Watch
+
+on:
+  schedule:
+    # why: 13:00 UTC sits after the sweep (07:00) and weekly-sweep (Sun 08:00)
+    # crons, so the morning issue reflects an otherwise-settled repo.
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  schedule-watch:
+    name: Compute roadmap schedule + maintain tracking issue
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Compute schedule report
+        id: report
+        run: pnpm --filter @legendary-arena/dashboard roadmap:schedule
+
+      - name: Ensure the schedule-watch label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh label create schedule-watch --color FBCA04 --description "Build Vision roadmap slippage (overdue / due-soon tasks)" --force
+
+      - name: Open, update, or close the tracking issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          existing=$(gh issue list --label schedule-watch --state open --json number --jq '.[0].number // empty')
+          if [ "${{ steps.report.outputs.has_slippage }}" = "true" ]; then
+            if [ -n "$existing" ]; then
+              gh issue edit "$existing" \
+                --title "${{ steps.report.outputs.issue_title }}" \
+                --body-file "${{ steps.report.outputs.body_file }}"
+              echo "Updated tracking issue #$existing."
+            else
+              gh issue create \
+                --title "${{ steps.report.outputs.issue_title }}" \
+                --body-file "${{ steps.report.outputs.body_file }}" \
+                --label schedule-watch
+              echo "Opened a new tracking issue."
+            fi
+          else
+            if [ -n "$existing" ]; then
+              gh issue close "$existing" --comment "All tracked roadmap tasks are on schedule as of this run. ✅"
+              echo "Closed tracking issue #$existing (back on schedule)."
+            else
+              echo "On schedule; no tracking issue to maintain."
+            fi
+          fi

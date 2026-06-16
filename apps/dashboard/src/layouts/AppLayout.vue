@@ -24,6 +24,7 @@ interface ExternalLink {
 
 const NAV_ITEMS: readonly NavItem[] = [
   { to: '/overview', label: 'Overview', abbreviation: 'Ov' },
+  { to: '/vision', label: 'Vision', abbreviation: 'Vi' },
   { to: '/players', label: 'Players', abbreviation: 'Pl' },
   { to: '/monetization', label: 'Monetization', abbreviation: 'Mo' },
   { to: '/gameplay', label: 'Gameplay', abbreviation: 'Ga' },
