@@ -1,6 +1,6 @@
 # WP-254 — Lobby Qualified-Form Ext_id Guard (parseLoadoutJson)
 
-**Status:** **Executed 2026-06-16** (EC-285 commit `25f40038`; arena-client `test` 568 → 576 / 0, `typecheck` 0). **Live-verification PENDING (D-24026)** — see Definition of Done; not closed until the play.legendary-arena.com bundle is confirmed serving this SHA.
+**Status:** **DONE 2026-06-16** (EC-285 commit `25f40038`, merged #342 `765f75c2`; arena-client `test` 568 → 576 / 0, `typecheck` 0). **✅ D-24026 LIVE-VERIFIED** — play.legendary-arena.com serves bundle `index-BXp3Og8h.js` embedding `__GIT_SHA__` `765f75c` and containing the new `unqualified_ext_id` guard (see Definition of Done + STATUS.md).
 **Primary Layer:** Arena Client (`apps/arena-client/src/lobby/**`) + governance reconciliation
 **User-Visible Surface:** play.legendary-arena.com (D-24026; resolved 2026-06-16 — NOT `none — infrastructure`; see `## User-Visible Impact`)
 **Dependencies:** WP-092 ✅ (the `parseLoadoutJson` shape guard + locked 9-code error enum this extends), WP-093 ✅ (the locked `heroSelectionMode` template — this WP must NOT disturb it), WP-113 ✅ / D-10014 (the engine's `<setAbbr>/<slug>` qualified-ID contract this mirrors), WP-244/245 ✅ (the LAGN intake path that routes through `parseLoadoutJson`), D-24018 (the canonical-extId fix that made the viewer emit qualified ids and widened `MATCH-SETUP-JSON-SCHEMA.json`)
@@ -286,4 +286,4 @@ All 21 sections resolved (PASS or justified N/A):
 - [x] `docs/ai/work-packets/WORK_INDEX.md` has WP-254 checked off (2026-06-16, EC-285 `25f40038`).
 - [x] `docs/ai/execution-checklists/EC_INDEX.md` has EC-285 marked Done.
 - [x] `docs/05-ROADMAP-MINDMAP.md` WP-254 node added; `node scripts/roadmap-counts.mjs --check` passes.
-- [ ] **D-24026 live-verification (User-Visible Surface = play.legendary-arena.com):** NOT done on green tests + a merged PR alone. Confirm the play.legendary-arena.com bundle is serving the WP-254 commit SHA (deploy-confirmed-SHA evidence — the parser is pure/deterministic ⇒ bundle-live = guard-live; optional gold-standard: paste a pre-D-24018 loadout and observe the `unqualified_ext_id` message in the lobby). Record the evidence here + in STATUS.md when the deploy confirms.
+- [x] **D-24026 live-verification (User-Visible Surface = play.legendary-arena.com)** — ✅ **2026-06-16.** PR #342 merged (`765f75c2`); the Cloudflare Pages play deploy is serving `assets/index-BXp3Og8h.js`, whose embedded `__GIT_SHA__` = `765f75c` (the merge SHA) and which contains both the `unqualified_ext_id` code and the `set-qualified ext_id` guard message — deploy-confirmed-SHA evidence with the new code string present in the served bundle. Recorded in STATUS.md.

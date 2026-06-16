@@ -25170,7 +25170,7 @@ The eight fragmented `reveal-*` HeroKeywords (`reveal`, `reveal-ko`, `reveal-min
 **Verified (execution, 2026-06-16):** implemented per EC-285 (commit `25f40038`) — `ParseErrorCode` nine → ten; `isQualifiedExtId` mirrors `parseQualifiedId` (slash envelope only); fail-fast pass after the type loop, before `playerCount`; bracket-notation array fields; WP-093 five-copy template byte-unchanged; no registry/engine import. The bare-slug valid-loadout fixtures migrated to qualified ids (assertions unchanged); arena-client `test` **568 → 576 / 0**, `typecheck` 0.
 **Packet:** WP-254 (EC-285).
 **Drafted:** 2026-06-15 (redrafted same day). **Landed:** 2026-06-16 (execution close).
-**Status:** Active — D-24026 live-verification pending (User-Visible Surface = play.legendary-arena.com; closes when the play bundle serves commit `25f40038`).
+**Status:** Active — ✅ D-24026 live-verified 2026-06-16 (User-Visible Surface = play.legendary-arena.com; merged #342 `765f75c2`, the play deploy serves bundle `index-BXp3Og8h.js` with `__GIT_SHA__` `765f75c` + the `unqualified_ext_id` guard code).
 
 ---
 
