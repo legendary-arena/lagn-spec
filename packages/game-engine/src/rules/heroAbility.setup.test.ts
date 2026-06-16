@@ -16,6 +16,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildHeroAbilityHooks } from '../setup/heroAbility.setup.js';
 import { HERO_KEYWORDS, HERO_ABILITY_TIMINGS } from './heroKeywords.js';
+import { HERO_COMPOSITION_MARKERS } from './heroCompositions.js';
 import type { MatchSetupConfig } from '../matchSetup.types.js';
 
 // ---------------------------------------------------------------------------
@@ -677,6 +678,57 @@ describe('buildHeroAbilityHooks reveal collapse parsing (WP-253)', () => {
     // lands on hook.keywords and the 17-entry HERO_KEYWORDS drift test stays untouched).
     assert.ok(!(hook.keywords as string[]).includes('reveal-count'),
       'reveal-count is a modifier, never recorded as a keyword');
+  });
+});
+
+describe('buildHeroAbilityHooks composition-marker parsing (WP-256 / D-24031)', () => {
+  /** Builds a single-ability hook from one Berserk-bearing ability line. */
+  function berserkHookFor(abilityText: string) {
+    const registry = makeHeroRegistry('core', 'berserk-hero', [
+      { slug: 'berserk-card', rarityLabel: 'Common 1', abilities: [abilityText] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/berserk-hero'] };
+    const hooks = buildHeroAbilityHooks(registry, config);
+    return hooks[0]!;
+  }
+
+  it('a [keyword:Berserk] token attaches the Berserk composition to hook.primitiveEffects', () => {
+    const hook = berserkHookFor(
+      'Discard the top card of your deck. You get +Attack equal to its printed Attack. [keyword:Berserk]',
+    );
+    assert.ok(hook.primitiveEffects !== undefined, 'primitiveEffects must be present for a Berserk line');
+    assert.equal(hook.primitiveEffects!.length, 1, 'exactly one composition attaches');
+    assert.deepStrictEqual(
+      hook.primitiveEffects![0],
+      HERO_COMPOSITION_MARKERS['berserk'],
+      'the attached AST equals the seeded Berserk composition',
+    );
+  });
+
+  it('berserk attaches to primitiveEffects, NEVER to hook.keywords (it is not a HeroKeyword)', () => {
+    const hook = berserkHookFor('[keyword:Berserk]');
+    // why: D-24031 — berserk is a composition marker, never a HeroKeyword, so the parser
+    // records no keyword for it (the 17-entry HERO_KEYWORDS drift test stays untouched).
+    assert.ok(!(hook.keywords as string[]).includes('berserk'), 'berserk must not appear on hook.keywords');
+    assert.equal(hook.keywords.length, 0, 'a Berserk-only line records no hero keywords');
+  });
+
+  it('the parsed hook owns a DEEP COPY — mutating it does not mutate the shared registry const', () => {
+    const before = JSON.stringify(HERO_COMPOSITION_MARKERS['berserk']);
+    const hook = berserkHookFor('[keyword:Berserk]');
+    // Mutate the parsed hook's primitive AST in place.
+    (hook.primitiveEffects![0] as { type: string }).type = 'mutated';
+    (hook.primitiveEffects![0] as { steps?: unknown[] }).steps = [];
+    assert.equal(
+      JSON.stringify(HERO_COMPOSITION_MARKERS['berserk']),
+      before,
+      'mutating a parsed hook primitive effect must not mutate HERO_COMPOSITION_MARKERS[berserk]',
+    );
+  });
+
+  it('an ability line with no composition marker leaves primitiveEffects absent', () => {
+    const hook = berserkHookFor('You get +1[icon:attack].');
+    assert.equal(hook.primitiveEffects, undefined, 'no composition marker ⇒ primitiveEffects is not assigned');
   });
 });
 

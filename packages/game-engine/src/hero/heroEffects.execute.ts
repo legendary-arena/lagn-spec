@@ -29,6 +29,7 @@ import { moveCardFromZone, moveAllCards } from '../moves/zoneOps.js';
 import { addResources } from '../economy/economy.logic.js';
 import { koCard } from '../board/ko.logic.js';
 import { resolveCountSource } from './heroCountSource.resolve.js';
+import { interpretHeroPrimitiveEffect } from './effectPrimitive.interpret.js';
 
 // ---------------------------------------------------------------------------
 // MVP keyword set
@@ -217,14 +218,25 @@ export function executeHeroEffects(
       continue;
     }
 
-    // why: effects is optional on HeroAbilityHook. A hook with no effects
-    // produces no mutations.
-    if (hook.effects === undefined || hook.effects.length === 0) {
-      continue;
+    // why: effects is optional on HeroAbilityHook. A hook may carry legacy `effects`,
+    // composition `primitiveEffects`, or both — run whichever are present. (The former
+    // early-`continue` on absent `effects` is gone because it would skip a Berserk hook,
+    // which carries only primitiveEffects.)
+    if (hook.effects !== undefined) {
+      for (const effect of hook.effects) {
+        executeSingleEffect(G, ctx, playerID, cardId, effect);
+      }
     }
 
-    for (const effect of hook.effects) {
-      executeSingleEffect(G, ctx, playerID, cardId, effect);
+    // why: D-24031 / RISK-2 — primitiveEffects run AFTER the legacy `effects` loop, in
+    // array order, inside the same conditions-passed gate. The legacy-then-primitive
+    // order is locked for determinism: a line carrying both a legacy effect (e.g. an
+    // [icon:recruit]) and the Berserk composition applies them in a fixed order. Each
+    // top-level node gets its own fresh, never-persisted execution context.
+    if (hook.primitiveEffects !== undefined) {
+      for (const primitiveEffect of hook.primitiveEffects) {
+        interpretHeroPrimitiveEffect(G, ctx, playerID, primitiveEffect);
+      }
     }
   }
 }

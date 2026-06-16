@@ -44,6 +44,11 @@ import { buildHeroAbilityHooks } from '../packages/game-engine/dist/setup/heroAb
 // HERO_KEYWORDS array (single source of truth) instead of a duplicated local
 // literal, so the unsupported-mechanic scan can never drift from the parser.
 import { HERO_KEYWORDS } from '../packages/game-engine/dist/rules/heroKeywords.js';
+// why: D-24031 — composition markers (berserk) are recognized mechanics implemented as
+// DATA (not HeroKeywords); union their canonical names into the known-markup set so a
+// supported composition leaves the unsupported-mechanic scan. Sourced from the engine
+// dist so the probe never duplicates the vocabulary.
+import { HERO_COMPOSITION_MARKER_NAMES } from '../packages/game-engine/dist/rules/heroCompositions.js';
 
 // why: __dirname is unavailable in ESM; anchor data + baseline paths to the
 // repo root (one level above scripts/) regardless of the invoking cwd.
@@ -58,7 +63,7 @@ const BASELINE_PATH = join(REPO_ROOT, 'scripts', 'coverage', 'hero-effect-covera
 // rather than silently comparing incompatible shapes.
 const SCHEMA_VERSION = 1;
 
-const KNOWN_MARKUP_KEYWORDS = new Set(HERO_KEYWORDS);
+const KNOWN_MARKUP_KEYWORDS = new Set([...HERO_KEYWORDS, ...HERO_COMPOSITION_MARKER_NAMES]);
 
 // why: the keywords whose executor branch actually mutates G today (mirrors
 // MVP_KEYWORDS in heroEffects.execute.ts). This list is INFORMATIONAL ONLY —
@@ -79,10 +84,16 @@ class ProbeFailure extends Error {}
 /**
  * Buckets one HeroAbilityHook by its executability.
  *
- * @param {{effects?: Array<{type: string}>}} hook - a parsed hook.
+ * @param {{effects?: Array<{type: string}>, primitiveEffects?: Array<object>}} hook - a parsed hook.
  * @returns {'EXECUTABLE'|'PARSED_NOT_EXECUTED'|'NO_EFFECT'} the bucket.
  */
 function classifyHook(hook) {
+  // why: D-24031 — a hook carrying a composition AST (primitiveEffects) is executed by the
+  // primitive interpreter, independent of legacy keyword effects. Checked FIRST so a
+  // Berserk hook (no legacy effects) is EXECUTABLE, not NO_EFFECT.
+  if ((hook.primitiveEffects ?? []).length > 0) {
+    return 'EXECUTABLE';
+  }
   const effects = hook.effects ?? [];
   if (effects.length === 0) {
     return 'NO_EFFECT';

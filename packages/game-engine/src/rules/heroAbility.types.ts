@@ -15,6 +15,7 @@ import type { CardExtId } from '../state/zones.types.js';
 import type { HeroKeyword, HeroAbilityTiming } from './heroKeywords.js';
 import type { HeroCountSource } from './heroCountSource.js';
 import type { RevealRule } from './revealRule.js';
+import type { EffectNode } from './effectPrimitive.types.js';
 
 // ---------------------------------------------------------------------------
 // HeroAbilityHook — data-only interface
@@ -48,6 +49,11 @@ export interface HeroAbilityHook {
   // why: effects are descriptors, not functions. They describe what an
   // effect would do; they do not do it. Execution is WP-022+.
   effects?: HeroEffectDescriptor[];
+  // why: D-24031 — the OPEN composition-marker mechanic space (additive optional). A
+  // composition marker (Berserk) attaches a DEEP COPY of its AST here, never to
+  // hook.keywords (`berserk` is not a HeroKeyword). Each element is a top-level effect
+  // the interpreter runs with its own fresh, never-persisted execution context.
+  primitiveEffects?: EffectNode[];
 }
 
 // ---------------------------------------------------------------------------

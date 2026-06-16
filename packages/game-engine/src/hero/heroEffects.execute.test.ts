@@ -16,6 +16,7 @@ import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
 import type { HeroAbilityHook, HeroEffectDescriptor } from '../rules/heroAbility.types.js';
 import type { HeroKeyword } from '../rules/heroKeywords.js';
 import { revealRulesForLegacyKeyword } from '../rules/revealRule.js';
+import { HERO_COMPOSITION_MARKERS } from '../rules/heroCompositions.js';
 
 // why: WP-253 Amendment-A — the pre-existing reveal fixtures hand-built legacy
 // `{ type: 'reveal-ko' }` descriptors; once those keywords lose their handlers
@@ -2544,5 +2545,92 @@ describe('selectDefaultOptionalKoTarget tie-break (WP-248)', () => {
   it('returns null when both zones are empty', () => {
     const target = selectDefaultOptionalKoTarget(zonesOf([], []), statsOf({}));
     assert.equal(target, null);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Primitive-effect path (WP-256 / D-24031)
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects primitiveEffects path (WP-256 / D-24031)', () => {
+  const mockCtx = makeMockCtx();
+
+  const berserkStat = {
+    attack: 4,
+    recruit: 0,
+    cost: 0,
+    fightCost: 0,
+    fightCostMode: 'static' as const,
+    fightCostBase: 0,
+  };
+
+  it('a hook with primitiveEffects fires Berserk — deck-top discards and grants attack', () => {
+    const gameState = makeTestState({
+      deck: ['top', 'b', 'c'],
+      inPlay: ['hero-x'],
+      cardStats: { top: berserkStat },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          primitiveEffects: [HERO_COMPOSITION_MARKERS['berserk']!],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].discard, ['top'], 'top card discarded by Berserk');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['b', 'c'], 'top card left the deck');
+    assert.equal(gameState.turnEconomy.attack, 4, '+Attack equals the discarded card printed attack');
+  });
+
+  it('a hook whose conditions fail does NOT fire primitiveEffects', () => {
+    const gameState = makeTestState({
+      deck: ['top', 'b'],
+      inPlay: ['hero-x'],
+      cardStats: { top: berserkStat },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          conditions: [{ type: 'heroClassMatch', value: 'strength' }],
+          primitiveEffects: [HERO_COMPOSITION_MARKERS['berserk']!],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['top', 'b'], 'deck unchanged when conditions fail');
+    assert.deepEqual(gameState.playerZones['0'].discard, [], 'nothing discarded when conditions fail');
+    assert.equal(gameState.turnEconomy.attack, 0, 'no attack granted when conditions fail');
+  });
+
+  it('legacy effects run before primitiveEffects (legacy-then-primitive order)', () => {
+    // why: RISK-2 — a hook carrying BOTH a legacy effect (recruit) and the Berserk
+    // composition applies them in a fixed order; both fire inside the conditions gate.
+    const gameState = makeTestState({
+      deck: ['top', 'b'],
+      inPlay: ['hero-x'],
+      cardStats: { top: berserkStat },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['recruit'],
+          effects: [{ type: 'recruit', magnitude: 2 }],
+          primitiveEffects: [HERO_COMPOSITION_MARKERS['berserk']!],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.recruit, 2, 'the legacy recruit effect fired');
+    assert.equal(gameState.turnEconomy.attack, 4, 'the Berserk composition also fired');
+    assert.deepEqual(gameState.playerZones['0'].discard, ['top'], 'Berserk discarded the deck-top card');
   });
 });

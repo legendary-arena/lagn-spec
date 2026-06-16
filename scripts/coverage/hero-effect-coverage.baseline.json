@@ -1,9 +1,9 @@
 {
   "corpus": {
-    "executable": 2517,
+    "executable": 2600,
     "heroes": 309,
-    "hooks": 5741,
-    "noEffect": 3219,
+    "hooks": 5758,
+    "noEffect": 3153,
     "parsedNotExecuted": 5
   },
   "perSet": {
@@ -188,9 +188,9 @@
       "noEffect": 59
     },
     "wpnx": {
-      "executable": 20,
-      "hooks": 82,
-      "noEffect": 62
+      "executable": 53,
+      "hooks": 83,
+      "noEffect": 30
     },
     "wtif": {
       "executable": 74,
@@ -203,9 +203,9 @@
       "noEffect": 215
     },
     "xmen": {
-      "executable": 93,
-      "hooks": 306,
-      "noEffect": 213
+      "executable": 143,
+      "hooks": 322,
+      "noEffect": 179
     }
   },
   "schemaVersion": 1,
@@ -220,7 +220,6 @@
     "artifacts": 2,
     "astral-plane": 1,
     "attack-per-count:victory-bystanders": 1,
-    "berserk": 43,
     "blood-frenzy": 6,
     "bridge": 3,
     "bridge-conqueror": 3,

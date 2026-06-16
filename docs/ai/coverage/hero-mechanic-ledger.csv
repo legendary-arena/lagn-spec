@@ -505,11 +505,11 @@ vnom/venompool,Venompool,vnom,digest,unsupported,,,
 vnom/venompool,Venompool,vnom,excessive-violence,unsupported,,,
 vnom/venompool,Venompool,vnom,indigestion,unsupported,,,
 wpnx/fantomex,Fantomex,wpnx,weapon-x-sequence,unsupported,,,
-wpnx/marrow,Marrow,wpnx,berserk,unsupported,,,
+wpnx/marrow,Marrow,wpnx,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 wpnx/marrow,Marrow,wpnx,weapon-x-sequence,unsupported,,,
-wpnx/weapon-h,Weapon H,wpnx,berserk,unsupported,,,
+wpnx/weapon-h,Weapon H,wpnx,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 wpnx/weapon-h,Weapon H,wpnx,weapon-x-sequence,unsupported,,,
-wpnx/weapon-x-wolverine,Weapon X (Wolverine),wpnx,berserk,unsupported,,,
+wpnx/weapon-x-wolverine,Weapon X (Wolverine),wpnx,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 wpnx/weapon-x-wolverine,Weapon X (Wolverine),wpnx,weapon-x-sequence,unsupported,,,
 wtif/apocalyptic-black-widow,Apocalyptic Black Widow,wtif,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 wtif/apocalyptic-black-widow,Apocalyptic Black Widow,wtif,liberate,unsupported,,,
@@ -581,35 +581,35 @@ wwhk/she-hulk,She-Hulk,wwhk,transform,unsupported,,,
 wwhk/skaar-son-of-hulk,"Skaar, Son of Hulk",wwhk,smash,unsupported,,,
 wwhk/skaar-son-of-hulk,"Skaar, Son of Hulk",wwhk,transform,unsupported,,,
 wwhk/skaar-son-of-hulk,"Skaar, Son of Hulk",wwhk,wounded-fury,unsupported,,,
-xmen/aurora-northstar,Aurora & Northstar,xmen,berserk,unsupported,,,
+xmen/aurora-northstar,Aurora & Northstar,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 xmen/aurora-northstar,Aurora & Northstar,xmen,lightshow,unsupported,,,
 xmen/aurora-northstar,Aurora & Northstar,xmen,soaring-flight,unsupported,,,
 xmen/banshee,Banshee,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 xmen/banshee,Banshee,xmen,piercing-energy,unsupported,,,
 xmen/banshee,Banshee,xmen,soaring-flight,unsupported,,,
 xmen/banshee,Banshee,xmen,x-gene,unsupported,,,
-xmen/beast,Beast,xmen,berserk,unsupported,,,
+xmen/beast,Beast,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 xmen/beast,Beast,xmen,x-gene,unsupported,,,
 xmen/cannonball,Cannonball,xmen,soaring-flight,unsupported,,,
-xmen/colossus-wolverine,Colossus & Wolverine,xmen,berserk,unsupported,,,
+xmen/colossus-wolverine,Colossus & Wolverine,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 xmen/colossus-wolverine,Colossus & Wolverine,xmen,soaring-flight,unsupported,,,
 xmen/colossus-wolverine,Colossus & Wolverine,xmen,x-gene,unsupported,,,
 xmen/dazzler,Dazzler,xmen,lightshow,unsupported,,,
 xmen/dazzler,Dazzler,xmen,piercing-energy,unsupported,,,
-xmen/havok,Havok,xmen,berserk,unsupported,,,
+xmen/havok,Havok,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 xmen/havok,Havok,xmen,lightshow,unsupported,,,
 xmen/havok,Havok,xmen,x-gene,unsupported,,,
 xmen/jubilee,Jubilee,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 xmen/jubilee,Jubilee,xmen,lightshow,unsupported,,,
 xmen/kitty-pryde,Kitty Pryde,xmen,soaring-flight,unsupported,,,
 xmen/kitty-pryde,Kitty Pryde,xmen,x-gene,unsupported,,,
-xmen/legion,Legion,xmen,berserk,unsupported,,,
+xmen/legion,Legion,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 xmen/legion,Legion,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 xmen/legion,Legion,xmen,lightshow,unsupported,,,
 xmen/legion,Legion,xmen,piercing-energy,unsupported,,,
 xmen/legion,Legion,xmen,soaring-flight,unsupported,,,
-xmen/longshot,Longshot,xmen,berserk,unsupported,,,
-xmen/phoenix,Phoenix,xmen,berserk,unsupported,,,
+xmen/longshot,Longshot,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/phoenix,Phoenix,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 xmen/phoenix,Phoenix,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 xmen/phoenix,Phoenix,xmen,piercing-energy,unsupported,,,
 xmen/phoenix,Phoenix,xmen,soaring-flight,unsupported,,,
@@ -620,5 +620,5 @@ xmen/polaris,Polaris,xmen,x-gene,unsupported,,,
 xmen/psylocke,Psylocke,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 xmen/psylocke,Psylocke,xmen,piercing-energy,unsupported,,,
 xmen/psylocke,Psylocke,xmen,x-gene,unsupported,,,
-xmen/x-23,X-23,xmen,berserk,unsupported,,,
+xmen/x-23,X-23,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 xmen/x-23,X-23,xmen,x-gene,unsupported,,,

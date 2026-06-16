@@ -21,6 +21,8 @@ import type { HeroCountSource } from '../rules/heroCountSource.js';
 import { HERO_COUNT_SOURCES } from '../rules/heroCountSource.js';
 import type { RevealRule, RevealPredicate, RevealAction } from '../rules/revealRule.js';
 import { revealRulesForLegacyKeyword, REVEAL_KEYWORDS } from '../rules/revealRule.js';
+import type { EffectNode } from '../rules/effectPrimitive.types.js';
+import { HERO_COMPOSITION_MARKERS, HERO_COMPOSITION_MARKER_NAMES } from '../rules/heroCompositions.js';
 import { normalizeTraitSlug } from '../state/traits.normalize.js';
 // why: D-18705 / D-18706 — hero hooks must key by the canonical-face slash
 // instance id (the id the played card carries in `G` zones), resolving
@@ -221,12 +223,16 @@ function parseAbilityText(abilityText: string): {
   keywords: HeroKeyword[];
   conditions: HeroCondition[];
   effects: HeroEffectDescriptor[];
+  primitiveEffects: EffectNode[];
   timing: HeroAbilityTiming;
 } {
   const keywords: HeroKeyword[] = [];
   const heroClassConditions: HeroCondition[] = [];
   const teamConditions: HeroCondition[] = [];
   const effects: HeroEffectDescriptor[] = [];
+  // why: D-24031 — composition markers (Berserk) accumulate here as deep copies of their
+  // registry AST, kept separate from `keywords`/`effects` (the open mechanic space).
+  const primitiveEffects: EffectNode[] = [];
 
   // Step 1a: Extract [hc:X] condition markup
   // why: defense-in-depth normalization on already-validated hc values — pipeline
@@ -271,6 +277,16 @@ function parseAbilityText(abilityText: string): {
       const magnitudeString = keywordMatch[2];
       if (magnitudeString !== undefined && /^\d+$/.test(magnitudeString)) {
         magnitudes.set(normalizedKeyword, parseInt(magnitudeString, 10));
+      }
+    } else if (isHeroCompositionMarker(normalizedKeyword)) {
+      // why: D-24031 — a composition marker (berserk) attaches a DEEP COPY of its AST to
+      // primitiveEffects, NEVER to hook.keywords (berserk is not a HeroKeyword;
+      // isValidHeroKeyword stays false). structuredClone (a Node v22 global, deterministic
+      // over the plain-JSON AST) forecloses both aliasing the shared registry const
+      // (D-13502) and hand-literal drift. A cousin is a registry row, not an engine edit.
+      const composition = HERO_COMPOSITION_MARKERS[normalizedKeyword];
+      if (composition !== undefined) {
+        primitiveEffects.push(structuredClone(composition));
       }
     }
     keywordMatch = keywordRegex.exec(abilityText);
@@ -506,6 +522,7 @@ function parseAbilityText(abilityText: string): {
     keywords: uniqueKeywords,
     conditions,
     effects: effects.length > 0 ? effects : [],
+    primitiveEffects,
     timing,
   };
 }
@@ -516,6 +533,21 @@ function parseAbilityText(abilityText: string): {
 function isValidHeroKeyword(value: string): value is HeroKeyword {
   for (const keyword of HERO_KEYWORDS) {
     if (keyword === value) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Checks if a string is a hero composition marker (a key in HERO_COMPOSITION_MARKERS).
+ *
+ * Mirrors isValidHeroKeyword. A composition marker is the OPEN mechanic space (D-24031),
+ * distinct from the closed HeroKeyword union — `berserk` is a marker, never a keyword.
+ */
+function isHeroCompositionMarker(value: string): boolean {
+  for (const markerName of HERO_COMPOSITION_MARKER_NAMES) {
+    if (markerName === value) {
       return true;
     }
   }
@@ -839,6 +871,14 @@ export function buildHeroAbilityHooks(
 
         if (parsedAbility.effects.length > 0) {
           hook.effects = parsedAbility.effects;
+        }
+
+        // why: D-24031 — assign primitiveEffects only when non-empty (mirror the
+        // effects/conditions conditional construction — exactOptionalPropertyTypes
+        // forbids `: x ?? undefined`). Each element is already a deep copy of its
+        // registry AST, so the hook never aliases the shared HERO_COMPOSITION_MARKERS const.
+        if (parsedAbility.primitiveEffects.length > 0) {
+          hook.primitiveEffects = parsedAbility.primitiveEffects;
         }
 
         hooks.push(hook);

@@ -11,6 +11,7 @@
     "reveal-attack-choose": { "wp": "WP-253", "decision": "D-24024" },
     "reveal-ko-attack": { "wp": "WP-253", "decision": "D-24024" },
     "attack-per-count": { "wp": "WP-247", "decision": "" },
-    "optional-ko-reward": { "wp": "WP-248", "decision": "" }
+    "optional-ko-reward": { "wp": "WP-248", "decision": "" },
+    "berserk": { "wp": "WP-256", "decision": "D-24031" }
   }
 }

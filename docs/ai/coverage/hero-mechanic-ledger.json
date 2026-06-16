@@ -4,9 +4,9 @@
   "summary": {
     "totalRows": 623,
     "byStatus": {
-      "executable": 108,
+      "executable": 119,
       "deferred": 0,
-      "unsupported": 468,
+      "unsupported": 457,
       "unmarked": 47
     },
     "distinctMechanics": 134
@@ -5077,10 +5077,10 @@
       "heroName": "Marrow",
       "set": "wpnx",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "wpnx/marrow",
@@ -5097,10 +5097,10 @@
       "heroName": "Weapon H",
       "set": "wpnx",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "wpnx/weapon-h",
@@ -5117,10 +5117,10 @@
       "heroName": "Weapon X (Wolverine)",
       "set": "wpnx",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "wpnx/weapon-x-wolverine",
@@ -5837,10 +5837,10 @@
       "heroName": "Aurora & Northstar",
       "set": "xmen",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "xmen/aurora-northstar",
@@ -5907,10 +5907,10 @@
       "heroName": "Beast",
       "set": "xmen",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "xmen/beast",
@@ -5937,10 +5937,10 @@
       "heroName": "Colossus & Wolverine",
       "set": "xmen",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "xmen/colossus-wolverine",
@@ -5987,10 +5987,10 @@
       "heroName": "Havok",
       "set": "xmen",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "xmen/havok",
@@ -6057,10 +6057,10 @@
       "heroName": "Legion",
       "set": "xmen",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "xmen/legion",
@@ -6107,20 +6107,20 @@
       "heroName": "Longshot",
       "set": "xmen",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "xmen/phoenix",
       "heroName": "Phoenix",
       "set": "xmen",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "xmen/phoenix",
@@ -6227,10 +6227,10 @@
       "heroName": "X-23",
       "set": "xmen",
       "mechanic": "berserk",
-      "status": "unsupported",
-      "wp": "",
-      "decision": "",
-      "handler": ""
+      "status": "executable",
+      "wp": "WP-256",
+      "decision": "D-24031",
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "xmen/x-23",
