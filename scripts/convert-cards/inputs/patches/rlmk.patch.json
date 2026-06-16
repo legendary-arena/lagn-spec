@@ -15,7 +15,10 @@
           "rarityLabel": "Common 1"
         },
         {
-          "slug": "wordless-murmur",
+          "slug": "worldess-murmur",
+          "_slug": "wordless-murmur",
+          "name": "Wordless Murmur",
+          "displayName": "Wordless Murmur",
           "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-5u.webp",
           "abilities": [],
           "rarityLabel": "Uncommon",
@@ -41,6 +44,12 @@
           ],
           "rarityLabel": "Rare"
         }
+      ],
+      "_skipPair": [
+        [
+          "break-the-silence",
+          "declaration-of-war"
+        ]
       ]
     },
     {
