@@ -20,8 +20,9 @@ handler consuming a `RevealRule {predicate, actions[], continue?}` branch-list, 
 implemented a `revealCount` loop seeded/tested at count=1 — explicitly **deferring**
 the count>1 case where a non-deck-mutating peek would re-read the same `deck[0]`.
 This packet implements that deferred multi-peek (advance past cards left on the
-deck) and marks one flagship card with it. It modifies WP-253's reveal handler
-additively; the count=1 path must stay byte-identical.
+deck) and marks one flagship card with it. It **rewrites WP-253's reveal peek-loop
+body** (not a purely additive change); count=1 byte-identity is preserved by
+construction, verified by leaving the WP-253 reveal tests untouched.
 
 ---
 
@@ -131,15 +132,27 @@ Before writing a single line:
 ## Scope (In)
 
 ### A) Engine — reveal peek-advance loop (`hero/heroEffects.execute.ts`)
-- In `heroEffectReveal`, replace the hardcoded `deck[0]` peek with a `deck[peekOffset]`
-  peek (`let peekOffset = 0`). Each iteration:
-  - stop when `peekOffset >= playerZones.deck.length` (covers the empty-deck no-op)
+- This **rewrites the existing `heroEffectReveal` peek-loop body** (the `deck[0]` /
+  `peekIndex` loop from WP-253); it is not a purely additive change. Byte-identity at
+  count=1 is preserved **by construction** (see below), not by leaving code untouched.
+- Replace the hardcoded `deck[0]` peek with a `deck[peekOffset]` peek (`let peekOffset = 0`).
+  **DUAL BOUND (pre-flight PS-2):** the loop iterates **at most `revealCount` times**
+  (`peekIndex < revealCount` outer bound) AND stops early when
+  `peekOffset >= playerZones.deck.length` (deck-end inner stop) — an offset-only loop
+  would reveal the whole deck. Each iteration:
+  - stop the whole reveal when `peekOffset >= playerZones.deck.length` (empty-deck / offset-overrun)
+  - **skip-and-advance (copilot #22):** if `topCardId` is missing OR `cardStats === undefined`
+    (a S.H.I.E.L.D. starter has no `G.cardStats` entry), `peekOffset++` and `continue` —
+    do NOT `return`/abort the rest of the reveal. (Byte-identical at count=1: one iteration
+    ⇒ the skip is the same no-op as the WP-253 `return`. At count>1 it prevents a starter
+    in the top N from silently killing the reveal of the cards beneath it.)
   - capture the deck length before applying the rules
   - after `applyRevealRules`, if the deck length is **unchanged** (the card stayed),
     `peekOffset++`; if it **shrank** (draw/ko removed the peeked card), leave `peekOffset`
     (the next card slid into the same index)
-- Add a `// why:` comment: count=1 is byte-identical (one iteration at offset 0);
-  the offset advance is the WP-253-deferred multi-peek (D-24024 → this WP's D-24027).
+- Add a `// why:` comment: count=1 is byte-identical (one iteration at offset 0; the
+  skip-and-advance and the offset stop both reduce to the WP-253 no-op `return`); the
+  offset advance + skip is the WP-253-deferred multi-peek (D-24024 → this WP's D-24027).
 - The hoisted reject-second (choose) + turnEconomy (attack) guards stay as-is.
 
 ### B) Parser — `revealCount` marker (`setup/heroAbility.setup.ts`)
@@ -158,11 +171,16 @@ Before writing a single line:
 - No other card touched.
 
 ### D) Tests
-- `heroEffects.execute.test.ts`: reveal-top-3 over a mixed-cost deck (e.g.
-  `[cost-1, cost-5, cost-2, cost-9]`, threshold 2) draws `cost-1` + `cost-2`, leaves
-  `cost-5` + `cost-9` in order, peek offset advanced past the non-drawn cards;
-  reveal-top-N stops early when the deck has fewer than N cards; **byte-identity:** the
-  WP-253 count=2 deck-mutating loop test + the 8 per-keyword reveal tests pass unchanged.
+- `heroEffects.execute.test.ts` — REQUIRED named assertions (copilot #11/#26):
+  - **mixed-cost reveal-top-3** over `['cost-1','cost-5','cost-2','cost-9']` threshold 2
+    ⇒ `hand` has `cost-1` + `cost-2` and **`deck === ['cost-5','cost-9']` in EXACT order**
+    (assert the array, not membership — the peek advanced past the non-drawn cards)
+  - **SHIELD-starter skip** — reveal-top-3 over a deck whose window holds a card with NO
+    `cardStats` entry draws the eligible cards around it and **leaves the unstatted card
+    in place** (does NOT abort the reveal)
+  - **short-deck** — reveal-top-3 over a 1–2 card deck stops cleanly (no throw)
+  - **byte-identity:** the WP-253 count=2 deck-mutating loop test + the 8 per-keyword
+    reveal tests pass UNCHANGED (do not edit them)
 - `heroAbility.setup.test.ts`: `[keyword:reveal-count:3]` sets `revealCount: 3` on the
   reveal descriptor; the `the-amazing-spider-man`-shaped line parses to the expected
   `revealCount: 3` + `cost-lte 2 → draw` descriptor.
@@ -172,6 +190,11 @@ Before writing a single line:
 ## Out of Scope
 - **"Put the rest back in any order"** — the non-drawn revealed cards stay in place
   (existing relative order). The player-reorder is a separate choice mechanic — DEFERRED.
+- **Cost-0 S.H.I.E.L.D. starters in the reveal window are revealed-but-NOT-drawn**
+  (accepted MVP limitation, copilot #22): the engine has no `cardStats` for starters
+  (D-21502), so it cannot evaluate their cost; they are skipped-and-left, not drawn,
+  even though their printed cost is ≤ 2. Drawing starters via reveal needs a
+  starter-cost source — DEFERRED. The reveal does NOT abort on them.
 - **Sweeping the rest of the "reveal top N, draw cost ≤ X" family** across other sets —
   a follow-on **data-only** corpus sweep once the engine + parser support lands here
   (separate WP; this packet ships the infrastructure + the one marquee card).
