@@ -1,10 +1,9 @@
 # Decision: Effect Descriptor Model — Closed Mechanics vs. Composable Primitives
 
-> **Status:** DRAFT — proposed architecture decision for Jeff's ratification.
-> Subordinate to `docs/ai/ARCHITECTURE.md` and `.claude/rules/*.md`. **Extends**
-> `docs/ai/DESIGN-EFFECT-AUTHORING-SCALE.md`, especially §2b's load-bearing
-> finding on closed-union vocabulary pressure. Reserves one `DECISIONS.md`
-> D-entry, to be assigned on ratification.
+> **Status:** RATIFIED 2026-06-16 — recorded as **D-24029** (`docs/ai/DECISIONS.md`);
+> merged as a proposal via #350. Subordinate to `docs/ai/ARCHITECTURE.md` and
+> `.claude/rules/*.md`. **Extends** `docs/ai/DESIGN-EFFECT-AUTHORING-SCALE.md`,
+> especially §2b's load-bearing finding on closed-union vocabulary pressure.
 > **Date:** 2026-06-16
 
 ---

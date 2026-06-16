@@ -76,6 +76,11 @@ effect at two magnitudes** (D-20201). The same split produced
 That combinatorial expansion (effect × target × magnitude × condition, each cell
 a new keyword) is what turns 40 sets into 6 months.
 
+> **Resolved by D-24029 (2026-06-16):** this finding is addressed by moving to
+> **composable primitives** — the closed union now enumerates *primitives*, not
+> *mechanics*, so the combinatorial expansion collapses into data composition.
+> See `docs/ai/DESIGN-EFFECT-MODEL-DECISION.md`.
+
 ### 2c. The executor is a hardcoded switch, not the registry the codebase already has
 
 `executeHeroEffects` (`heroEffects.execute.ts:161`) dispatches keywords through
@@ -163,6 +168,13 @@ the bug" — the thing originally requested.
 **Net effect:** the unit of work shifts from *one WP per mechanic* to *one WP to
 author a whole set's markup* + the simulation telling you what is still broken.
 
+> **Update — D-24029 (2026-06-16):** the three Levers are **step 1 of 2**. They
+> *parameterized within* the closed keyword vocabulary (e.g. the 8 `reveal-*`
+> keywords → one `reveal`, D-24024); D-24029 takes the next step — *opening* it
+> to **composable primitives**, where the closed union enumerates primitives (not
+> mechanics) and most new mechanics ship as data. See
+> `docs/ai/DESIGN-EFFECT-MODEL-DECISION.md`.
+
 ---
 
 ## 6. Open decisions to reopen (DECISIONS.md)
@@ -170,9 +182,12 @@ author a whole set's markup* + the simulation telling you what is still broken.
 - **D-20201** — closed-union-per-magnitude policy (villain each-player-KO).
   Lever 1 supersedes it with parameterized markers `[effect:ko-hero:each:N]`.
 - **D-18901** — villain incremental-expansion-per-keyword clause.
-- A new D-entry will be needed to authorize the open ImplementationMap surface on
-  the hero/villain path (the closed union was chosen deliberately for safety;
-  the replacement must preserve those guarantees via range validation).
+- **D-24029** (ratified 2026-06-16) authorizes the open dispatch surface: the
+  effect descriptor model moves to **composable primitives** — the closed union
+  reframes from *mechanics* to a closed, drift-tested *primitive registry*,
+  preserving determinism via the primitive contracts + the `bind`/`ref`
+  context-lifetime invariant (transient, never persisted to `G`). See
+  `docs/ai/DESIGN-EFFECT-MODEL-DECISION.md`.
 
 ---
 
