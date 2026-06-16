@@ -637,6 +637,47 @@ describe('buildHeroAbilityHooks reveal collapse parsing (WP-253)', () => {
     assert.equal(effect, undefined, 'a malformed predicate voids the rule, so no reveal effect is emitted');
     assert.ok(!hook.keywords.includes('reveal'), 'no reveal keyword is recorded for a fully-malformed reveal token');
   });
+
+  // -------------------------------------------------------------------------
+  // WP-255 / D-24027 — reveal-count modifier marker
+  // -------------------------------------------------------------------------
+
+  it('a [keyword:reveal-count:3] modifier sets revealCount 3 on the reveal descriptor (D-24027)', () => {
+    const { effect } = revealEffectFor('[keyword:reveal:cost-lte-2:draw][keyword:reveal-count:3]');
+    assert.ok(effect !== undefined, 'a reveal effect must be emitted');
+    assert.equal(effect!.revealCount, 3, 'the reveal-count modifier sets revealCount on the descriptor');
+    assert.deepStrictEqual(
+      effect!.revealRules,
+      [{ predicate: { kind: 'cost-lte', threshold: 2 }, actions: [{ kind: 'draw' }] }],
+      'the parameterized reveal rule is unaffected by the reveal-count modifier',
+    );
+  });
+
+  it('an absent reveal-count modifier leaves the WP-253 default revealCount 1', () => {
+    const { effect } = revealEffectFor('[keyword:reveal:cost-lte-2:draw]');
+    assert.ok(effect !== undefined, 'a reveal effect must be emitted');
+    assert.equal(effect!.revealCount, 1, 'no reveal-count marker ⇒ the descriptor keeps revealCount 1');
+  });
+
+  it('the "The Amazing Spider-Man"-shaped line parses to revealCount 3 + cost-lte 2 → draw (WP-255)', () => {
+    const { hook, effect } = revealEffectFor(
+      'Reveal the top three cards of your deck. Put any that cost 2[icon:vp] or less into your hand. Put the rest back in any order. [keyword:reveal:cost-lte-2:draw][keyword:reveal-count:3]',
+    );
+    assert.ok(effect !== undefined, 'the marked Spider-Man line emits a reveal effect');
+    assert.equal(effect!.type, 'reveal', 'the effect is the collapsed reveal type');
+    assert.equal(effect!.revealCount, 3, 'reveal-count 3 → the handler peeks the top three cards');
+    assert.deepStrictEqual(
+      effect!.revealRules,
+      [{ predicate: { kind: 'cost-lte', threshold: 2 }, actions: [{ kind: 'draw' }] }],
+      'the parameterized [keyword:reveal:cost-lte-2:draw] marker builds a single cost-lte 2 → draw rule',
+    );
+    assert.equal(effect!.magnitude, undefined, 'the top-level magnitude is dropped for the collapsed reveal');
+    assert.ok(hook.keywords.includes('reveal'), 'the parameterized reveal records the base reveal keyword');
+    // why: D-24027 — reveal-count is a modifier marker, never a HeroKeyword (so it never
+    // lands on hook.keywords and the 17-entry HERO_KEYWORDS drift test stays untouched).
+    assert.ok(!(hook.keywords as string[]).includes('reveal-count'),
+      'reveal-count is a modifier, never recorded as a keyword');
+  });
 });
 
 describe('HERO_ABILITY_TIMINGS drift-detection', () => {

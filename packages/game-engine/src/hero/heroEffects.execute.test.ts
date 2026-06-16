@@ -2157,6 +2157,105 @@ describe('executeHeroEffects reveal collapse (WP-253 / D-24024)', () => {
     assert.deepEqual(gameState.playerZones['0'].deck, [],
       'deck is empty after the only card is drawn.');
   });
+
+  // -------------------------------------------------------------------------
+  // WP-255 / D-24027 — reveal-top-N peek-advance (the multi-peek WP-253 deferred)
+  // -------------------------------------------------------------------------
+
+  it('reveal-top-3 draws every cost-≤-2 card and advances the peek past the rest in exact deck order (D-24027)', () => {
+    // why: the peek-offset advances past a card a rule leaves on the deck so the reveal
+    // reaches the cards beneath it; the remaining deck order is asserted EXACTLY (not
+    // membership) to pin the advance — this is "The Amazing Spider-Man" in miniature.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-1', 'cost-5', 'cost-2', 'cost-9'],
+      hand: [],
+      cardStats: {
+        'cost-1': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-5': { attack: 0, recruit: 0, cost: 5, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-2': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-9': { attack: 0, recruit: 0, cost: 9, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', revealCount: 3, revealRules: revealRulesForLegacyKeyword('reveal', 2) }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['cost-1', 'cost-2'],
+      'reveal-top-3 draws the two cost-≤-2 cards (cost-1, then cost-2) in reveal order.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['cost-5', 'cost-9'],
+      'cost-5 (peeked, over threshold → offset advanced past it) and cost-9 (never reached — only 3 peeks) stay on deck in exact order.');
+    assert.ok(JSON.stringify(gameState).length > 0,
+      'JSON.stringify(G) must succeed after a reveal-top-N effect (the descriptor is plain data).');
+  });
+
+  it('reveal-top-3 skips an unstatted S.H.I.E.L.D. starter in the window and does NOT abort the reveal (copilot #22)', () => {
+    // why: a peeked card with no cardStats entry is SKIPPED-AND-ADVANCED, not a whole-effect
+    // abort — the cards beneath it still reveal. The starter is left on the deck (a cost-0
+    // starter is revealed-but-not-drawn, the accepted D-21502 limitation).
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-1', 'shield-starter', 'cost-2', 'cost-9'],
+      hand: [],
+      cardStats: {
+        'cost-1': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-2': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-9': { attack: 0, recruit: 0, cost: 9, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', revealCount: 3, revealRules: revealRulesForLegacyKeyword('reveal', 2) }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['cost-1', 'cost-2'],
+      'the eligible cards around the unstatted starter are still drawn — the missing-stats peek did not abort the reveal.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['shield-starter', 'cost-9'],
+      'the unstatted shield-starter is left in place (skipped, not drawn, not KOd); cost-9 was never reached.');
+  });
+
+  it('reveal-top-3 over a short deck stops cleanly at the deck end (no throw)', () => {
+    // why: revealCount (3) exceeds the deck size (2). The loop draws the eligible card,
+    // advances past the over-threshold one, then stops at peekOffset >= deck.length — the
+    // only whole-loop exit — without throwing or indexing past the array.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-1', 'cost-5'],
+      hand: [],
+      cardStats: {
+        'cost-1': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-5': { attack: 0, recruit: 0, cost: 5, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', revealCount: 3, revealRules: revealRulesForLegacyKeyword('reveal', 2) }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['cost-1'],
+      'the single cost-≤-2 card is drawn; the short deck does not loop forever or throw.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['cost-5'],
+      'cost-5 (over threshold) stays on deck; the loop stops once the offset overruns the deck end.');
+  });
 });
 
 // ---------------------------------------------------------------------------

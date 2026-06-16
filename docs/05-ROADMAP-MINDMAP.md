@@ -271,6 +271,7 @@ mindmap
         ["WP-251 ✅ Hero effect ImplementationMap (executeSingleEffect switch → HERO_EFFECT_HANDLERS registry; behavior-preserving Lever-2 foundation)"]
         ["WP-252 ✅ Parameterized villain effect primitives (10 keywords → 5 VillainEffectPrimitive + VillainEffectDescriptor via VILLAIN_EFFECT_HANDLERS; dual legacy/parameterized parser; Mag3 data-only; reverse-map keeps narrative byte-identical; Lever 1; retires D-20201/D-18901)"]
         ["WP-253 ✅ Hero reveal-* collapse (8 reveal keywords → 1 parameterized reveal + RevealRule branch-list via revealRulesForLegacyKeyword; dual legacy/parameterized parser; no reverse-map needed; Lever 1 for heroes; D-24024)"]
+        ["WP-255 ✅ The Amazing Spider-Man reveal-top-N (deck[peekOffset] dual-bound peek-advance multi-peek + reveal-count marker; first visible-win card under D-24026; D-24027)"]
 
       Notable Events & Overlays
         ["WP-200 ✅ Notable game event log (engine)"]
@@ -405,7 +406,7 @@ mindmap
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
 | Villain & Henchman Effects | 11/11 | — |
-| Hero Ability Coverage & Markup Pipeline | 17/17 | — |
+| Hero Ability Coverage & Markup Pipeline | 17/18 | 1 open |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -418,9 +419,9 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **249/250 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
+| **Total** | **249/251 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 1 open |
 
-**Open / blocked WPs (derived from WORK_INDEX, 1):** WP-042.1 ⏸ blocked.
+**Open / blocked WPs (derived from WORK_INDEX, 2):** WP-042.1 ⏸ blocked; WP-255 open.
 <!-- ROADMAP-COUNTS:END -->
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. The table inside the markers above is **generated** by `scripts/roadmap-counts.mjs` (sole writer; D-24001), derived from `WORK_INDEX.md` status × mindmap cluster membership — it is no longer hand-maintained, so it no longer drifts. Status is authoritative from `WORK_INDEX.md`; cluster membership is authoritative from the mindmap nodes above. The generator **fails loudly** on a WORK_INDEX WP with no mindmap node (D-24002), so no work packet can be silently uncounted.

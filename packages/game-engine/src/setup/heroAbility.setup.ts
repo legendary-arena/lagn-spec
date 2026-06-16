@@ -141,6 +141,17 @@ const OPTIONAL_KO_REWARD_PATTERN = /\[keyword:optional-ko-reward:([a-z][a-z-]*):
 /** Regex for [keyword:reveal:<predicate>:<actions>(:continue)?] parameterized reveal markup. */
 const REVEAL_RULE_PATTERN = /\[keyword:reveal:([a-z][a-z0-9-]*):([a-z][a-z0-9+-]*)(?::(continue))?\]/g;
 
+// why: D-24027 — how many deck-top cards a reveal descriptor peeks is DESCRIPTOR-level
+// (the reveal handler's loop bound), NOT rule-level (the per-card predicate), so it rides
+// a dedicated 2-segment token mirroring COUNT_SCALED_PATTERN's dedicated-token shape — not
+// the legacy `[keyword:reveal:N]` magnitude (that is a draw threshold) nor a RevealRule
+// segment. Disambiguation: `[keyword:reveal-count:N]` is NOT matched by REVEAL_RULE_PATTERN
+// (which needs the literal `reveal:<predicate>`); KEYWORD_PATTERN matches it as keyword
+// `reveal-count`, but isValidHeroKeyword('reveal-count') is false (it is a modifier marker,
+// never a HeroKeyword — absent from HERO_KEYWORDS), so only REVEAL_COUNT_PATTERN consumes it.
+/** Regex for [keyword:reveal-count:<n>] reveal-count modifier markup. */
+const REVEAL_COUNT_PATTERN = /\[keyword:reveal-count:(\d+)\]/g;
+
 // why: D-24024 — the 8 legacy reveal keywords whose markers translate to the
 // collapsed `reveal` descriptor. Built from the canonical REVEAL_KEYWORDS array so
 // the parser and the translation function share one source of truth.
@@ -356,6 +367,26 @@ function parseAbilityText(abilityText: string): {
     keywords.push('reveal');
   }
 
+  // Step 2g: Extract the [keyword:reveal-count:<n>] modifier — how many deck-top
+  // cards the reveal descriptor peeks. Absent ⇒ the WP-253 default of 1. Only the
+  // first occurrence is read (one reveal descriptor per ability line).
+  // why: D-24027 — the count is DESCRIPTOR-level (the reveal handler's peek-loop
+  // bound), not rule-level (a per-card predicate); a dedicated 2-segment token
+  // (mirrors COUNT_SCALED_PATTERN) keeps it distinct from the legacy
+  // `[keyword:reveal:N]` draw threshold. `reveal-count` is a modifier marker, never
+  // a HeroKeyword, so it contributes no keyword/effect of its own.
+  let revealCount = 1;
+  const revealCountRegex = new RegExp(REVEAL_COUNT_PATTERN.source, 'g');
+  const revealCountMatch = revealCountRegex.exec(abilityText);
+  if (revealCountMatch !== null) {
+    const parsedRevealCount = parseInt(revealCountMatch[1]!, 10);
+    // why: guard n ≥ 1 (mirrors the optional-ko-reward magnitude gate) — a 0 count
+    // would build a reveal that peeks nothing, so fall back to the default.
+    if (parsedRevealCount >= 1) {
+      revealCount = parsedRevealCount;
+    }
+  }
+
   // Step 3: Extract [icon:X] markup
   const iconRegex = new RegExp(ICON_PATTERN.source, 'g');
   let iconMatch: RegExpExecArray | null = iconRegex.exec(abilityText);
@@ -447,7 +478,10 @@ function parseAbilityText(abilityText: string): {
         } else {
           revealRules = revealRulesForLegacyKeyword(keyword, magnitude);
         }
-        effects.push({ type: 'reveal', revealCount: 1, revealRules });
+        // why: D-24027 — the descriptor-level reveal-count (Step 2g; default 1) sets how
+        // many deck-top cards the reveal handler peeks. Threaded onto the one collapsed
+        // reveal descriptor this line emits, whether legacy-translated or parameterized.
+        effects.push({ type: 'reveal', revealCount, revealRules });
       } else if (magnitude !== undefined) {
         effects.push({ type: keyword, magnitude });
       } else {

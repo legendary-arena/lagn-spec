@@ -380,24 +380,47 @@ function heroEffectReveal(
     return;
   }
   const revealCount = effect.revealCount ?? 1;
+  // why (D-24024 → D-24027): this is the multi-peek WP-253 deferred. peekOffset indexes
+  // the live deck; peekIndex counts iterations. DUAL BOUND — iterate at most revealCount
+  // times (peekIndex) AND stop at the deck end (peekOffset >= deck.length); an offset-only
+  // loop would reveal the WHOLE deck. count=1 is BYTE-IDENTICAL to the WP-253 deck[0] peek:
+  // a single iteration runs at offset 0, and the skip-and-advance + the deck-end stop both
+  // reduce to the WP-253 no-op `return`.
+  let peekOffset = 0;
   for (let peekIndex = 0; peekIndex < revealCount; peekIndex++) {
-    // why: re-read deck[0] each iteration — a prior iteration's draw/ko shifts the
-    // top. count=1 today (every legacy reveal peeks once → byte-identical); a
-    // non-deck-mutating action at count>1 would re-peek the same card and is
-    // deferred/undefined this WP. Empty deck is a silent no-op (no reshuffle, D-21502).
-    if (playerZones.deck.length === 0) {
+    // why: re-read the live deck each iteration (do NOT snapshot) — a prior draw/ko shifts
+    // the deck. The offset overrunning the deck end is the ONLY whole-loop exit; an empty
+    // deck / exhausted window is a silent no-op (no reshuffle, D-21502).
+    if (peekOffset >= playerZones.deck.length) {
       return;
     }
-    const topCardId = playerZones.deck[0];
+    const topCardId = playerZones.deck[peekOffset];
+    // why: a peek with no card id OR no cardStats entry (a S.H.I.E.L.D. starter has no
+    // G.cardStats entry, D-21502) SKIPS-AND-ADVANCES — leave the card on the deck and peek
+    // the next — it MUST NOT `return`/abort the rest of the reveal (copilot #22). At count=1
+    // this is observably the same no-op as the WP-253 `return`; at count>1 it stops one
+    // starter in the top N from silently killing the reveal of the cards beneath it (the
+    // exact "the card did nothing" failure D-24017 exists to stamp out). A cost-0 starter in
+    // the window is therefore revealed-but-not-drawn (no stats to evaluate its cost) — the
+    // accepted MVP limitation; aborting would be far worse.
     if (!topCardId) {
-      return;
+      peekOffset++;
+      continue;
     }
     const cardStats = G.cardStats[topCardId];
-    // why: G.cardStats has no entry for SHIELD starter cards; missing entry is a safe no-op (D-21502)
     if (cardStats === undefined) {
-      return;
+      peekOffset++;
+      continue;
     }
+    const deckLengthBeforeRules = playerZones.deck.length;
     applyRevealRules(G, playerID, playerZones, topCardId, cardStats.cost, rules);
+    // why: advance the offset ONLY when the deck length is unchanged (the card stayed on the
+    // deck). A draw/ko shrank the deck and slid the next card into the same index, so the
+    // offset must NOT advance — this is what keeps the WP-253 count=2 test (each iteration
+    // re-reads deck[0] after a draw) byte-identical.
+    if (playerZones.deck.length === deckLengthBeforeRules) {
+      peekOffset++;
+    }
   }
 }
 
