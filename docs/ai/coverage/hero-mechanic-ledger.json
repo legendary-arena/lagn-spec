@@ -1,0 +1,6246 @@
+{
+  "schemaVersion": 1,
+  "cardType": "hero",
+  "summary": {
+    "totalRows": 623,
+    "byStatus": {
+      "executable": 108,
+      "deferred": 0,
+      "unsupported": 468,
+      "unmarked": 47
+    },
+    "distinctMechanics": 134
+  },
+  "rows": [
+    {
+      "extId": "2099/doctor-doom-2099",
+      "heroName": "Doctor Doom 2099",
+      "set": "2099",
+      "mechanic": "cyber-mod",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/doctor-doom-2099",
+      "heroName": "Doctor Doom 2099",
+      "set": "2099",
+      "mechanic": "fated-future",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/doctor-doom-2099",
+      "heroName": "Doctor Doom 2099",
+      "set": "2099",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/ghost-rider-2099",
+      "heroName": "Ghost Rider 2099",
+      "set": "2099",
+      "mechanic": "cyber-mod",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/ghost-rider-2099",
+      "heroName": "Ghost Rider 2099",
+      "set": "2099",
+      "mechanic": "fated-future",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/ghost-rider-2099",
+      "heroName": "Ghost Rider 2099",
+      "set": "2099",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/hulk-2099",
+      "heroName": "Hulk 2099",
+      "set": "2099",
+      "mechanic": "cyber-mod-4-wounds",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/hulk-2099",
+      "heroName": "Hulk 2099",
+      "set": "2099",
+      "mechanic": "cyber-mod-wound",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/hulk-2099",
+      "heroName": "Hulk 2099",
+      "set": "2099",
+      "mechanic": "fated-future",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/hulk-2099",
+      "heroName": "Hulk 2099",
+      "set": "2099",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/ravage-2099",
+      "heroName": "Ravage 2099",
+      "set": "2099",
+      "mechanic": "fated-future",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/ravage-2099",
+      "heroName": "Ravage 2099",
+      "set": "2099",
+      "mechanic": "reveal-attack-choose",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-attack-choose"
+    },
+    {
+      "extId": "2099/spider-man-2099",
+      "heroName": "Spider-Man 2099",
+      "set": "2099",
+      "mechanic": "cyber-mod",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/spider-man-2099",
+      "heroName": "Spider-Man 2099",
+      "set": "2099",
+      "mechanic": "fated-future",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "2099/spider-man-2099",
+      "heroName": "Spider-Man 2099",
+      "set": "2099",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "3dtc/black-widow",
+      "heroName": "Black Widow",
+      "set": "3dtc",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "3dtc/black-widow",
+      "heroName": "Black Widow",
+      "set": "3dtc",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "3dtc/deadpool",
+      "heroName": "Deadpool",
+      "set": "3dtc",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "3dtc/howard-the-duck",
+      "heroName": "Howard the Duck",
+      "set": "3dtc",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "3dtc/hulk",
+      "heroName": "Hulk",
+      "set": "3dtc",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "3dtc/man-thing",
+      "heroName": "Man-Thing",
+      "set": "3dtc",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/ant-army",
+      "heroName": "Ant Army",
+      "set": "amwp",
+      "mechanic": "antics",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/ant-army",
+      "heroName": "Ant Army",
+      "set": "amwp",
+      "mechanic": "heist",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/ant-army",
+      "heroName": "Ant Army",
+      "set": "amwp",
+      "mechanic": "microscopic-size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/ant-army",
+      "heroName": "Ant Army",
+      "set": "amwp",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/ant-man",
+      "heroName": "Ant-Man",
+      "set": "amwp",
+      "mechanic": "antics",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/ant-man",
+      "heroName": "Ant-Man",
+      "set": "amwp",
+      "mechanic": "heist",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/ant-man",
+      "heroName": "Ant-Man",
+      "set": "amwp",
+      "mechanic": "microscopic-size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/ant-man",
+      "heroName": "Ant-Man",
+      "set": "amwp",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/cassie-lang",
+      "heroName": "Cassie Lang",
+      "set": "amwp",
+      "mechanic": "microscopic-size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/cassie-lang",
+      "heroName": "Cassie Lang",
+      "set": "amwp",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/freedom-fighters",
+      "heroName": "Freedom Fighters",
+      "set": "amwp",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "amwp/janet-van-dyne",
+      "heroName": "Janet van Dyne",
+      "set": "amwp",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "amwp/jentorra",
+      "heroName": "Jentorra",
+      "set": "amwp",
+      "mechanic": "bridge-conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/jentorra",
+      "heroName": "Jentorra",
+      "set": "amwp",
+      "mechanic": "explore",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/jentorra",
+      "heroName": "Jentorra",
+      "set": "amwp",
+      "mechanic": "sewers-conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/scott-lang-cat-burglar",
+      "heroName": "Scott Lang, Cat Burglar",
+      "set": "amwp",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "amwp/wasp",
+      "heroName": "Wasp",
+      "set": "amwp",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/brainstorm",
+      "heroName": "Brainstorm",
+      "set": "anni",
+      "mechanic": "woman-out-of-time",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/fantastic-four-united",
+      "heroName": "Fantastic Four United",
+      "set": "anni",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "anni/fantastic-four-united",
+      "heroName": "Fantastic Four United",
+      "set": "anni",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/heralds-of-galactus",
+      "heroName": "Heralds of Galactus",
+      "set": "anni",
+      "mechanic": "bridge-conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/heralds-of-galactus",
+      "heroName": "Heralds of Galactus",
+      "set": "anni",
+      "mechanic": "conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/heralds-of-galactus",
+      "heroName": "Heralds of Galactus",
+      "set": "anni",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/psi-lord",
+      "heroName": "Psi-Lord",
+      "set": "anni",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/psi-lord",
+      "heroName": "Psi-Lord",
+      "set": "anni",
+      "mechanic": "man/woman-out-of-time",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/super-skrull",
+      "heroName": "Super-Skrull",
+      "set": "anni",
+      "mechanic": "bridge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/super-skrull",
+      "heroName": "Super-Skrull",
+      "set": "anni",
+      "mechanic": "conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/super-skrull",
+      "heroName": "Super-Skrull",
+      "set": "anni",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/super-skrull",
+      "heroName": "Super-Skrull",
+      "set": "anni",
+      "mechanic": "rooftops",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "anni/super-skrull",
+      "heroName": "Super-Skrull",
+      "set": "anni",
+      "mechanic": "streets",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/ant-man",
+      "heroName": "Ant-Man",
+      "set": "antm",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "antm/ant-man",
+      "heroName": "Ant-Man",
+      "set": "antm",
+      "mechanic": "microscopic-size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/ant-man",
+      "heroName": "Ant-Man",
+      "set": "antm",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/black-knight",
+      "heroName": "Black Knight",
+      "set": "antm",
+      "mechanic": "empowered",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/jocasta",
+      "heroName": "Jocasta",
+      "set": "antm",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "antm/jocasta",
+      "heroName": "Jocasta",
+      "set": "antm",
+      "mechanic": "empowered",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/jocasta",
+      "heroName": "Jocasta",
+      "set": "antm",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/wasp",
+      "heroName": "Wasp",
+      "set": "antm",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "antm/wasp",
+      "heroName": "Wasp",
+      "set": "antm",
+      "mechanic": "microscopic-size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/wasp",
+      "heroName": "Wasp",
+      "set": "antm",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/wonder-man",
+      "heroName": "Wonder Man",
+      "set": "antm",
+      "mechanic": "empowered",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "antm/wonder-man",
+      "heroName": "Wonder Man",
+      "set": "antm",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/beta-ray-bill",
+      "heroName": "Beta Ray Bill",
+      "set": "asrd",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/beta-ray-bill",
+      "heroName": "Beta Ray Bill",
+      "set": "asrd",
+      "mechanic": "worthy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/lady-sif",
+      "heroName": "Lady Sif",
+      "set": "asrd",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/thor",
+      "heroName": "Thor",
+      "set": "asrd",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/thor",
+      "heroName": "Thor",
+      "set": "asrd",
+      "mechanic": "worthy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/valkyrie",
+      "heroName": "Valkyrie",
+      "set": "asrd",
+      "mechanic": "bridge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/valkyrie",
+      "heroName": "Valkyrie",
+      "set": "asrd",
+      "mechanic": "conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/valkyrie",
+      "heroName": "Valkyrie",
+      "set": "asrd",
+      "mechanic": "sewers-conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/valkyrie",
+      "heroName": "Valkyrie",
+      "set": "asrd",
+      "mechanic": "streets",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/valkyrie",
+      "heroName": "Valkyrie",
+      "set": "asrd",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/warriors-three-the",
+      "heroName": "Warriors Three, The",
+      "set": "asrd",
+      "mechanic": "bridge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/warriors-three-the",
+      "heroName": "Warriors Three, The",
+      "set": "asrd",
+      "mechanic": "conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "asrd/warriors-three-the",
+      "heroName": "Warriors Three, The",
+      "set": "asrd",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "asrd/warriors-three-the",
+      "heroName": "Warriors Three, The",
+      "set": "asrd",
+      "mechanic": "streets-conqueror",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/general-okoye",
+      "heroName": "General Okoye",
+      "set": "bkpt",
+      "mechanic": "ambush",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/general-okoye",
+      "heroName": "General Okoye",
+      "set": "bkpt",
+      "mechanic": "wound-a-villain",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/king-black-panther",
+      "heroName": "King Black Panther",
+      "set": "bkpt",
+      "mechanic": "ambush",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/king-black-panther",
+      "heroName": "King Black Panther",
+      "set": "bkpt",
+      "mechanic": "thrones-favor",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/princess-shuri",
+      "heroName": "Princess Shuri",
+      "set": "bkpt",
+      "mechanic": "ambush",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/princess-shuri",
+      "heroName": "Princess Shuri",
+      "set": "bkpt",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "bkpt/princess-shuri",
+      "heroName": "Princess Shuri",
+      "set": "bkpt",
+      "mechanic": "empowered",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/queen-storm-of-wakanda",
+      "heroName": "Queen Storm of Wakanda",
+      "set": "bkpt",
+      "mechanic": "ambush",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/queen-storm-of-wakanda",
+      "heroName": "Queen Storm of Wakanda",
+      "set": "bkpt",
+      "mechanic": "empowered",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/queen-storm-of-wakanda",
+      "heroName": "Queen Storm of Wakanda",
+      "set": "bkpt",
+      "mechanic": "thrones-favor",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/queen-storm-of-wakanda",
+      "heroName": "Queen Storm of Wakanda",
+      "set": "bkpt",
+      "mechanic": "wound-the-mastermind",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/white-wolf",
+      "heroName": "White Wolf",
+      "set": "bkpt",
+      "mechanic": "ambush",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/white-wolf",
+      "heroName": "White Wolf",
+      "set": "bkpt",
+      "mechanic": "villain-or-mastermind-has-any-wounds",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/white-wolf",
+      "heroName": "White Wolf",
+      "set": "bkpt",
+      "mechanic": "wound-a-villain",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/white-wolf",
+      "heroName": "White Wolf",
+      "set": "bkpt",
+      "mechanic": "wound-each-villain-and-the-mastermind",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkpt/white-wolf",
+      "heroName": "White Wolf",
+      "set": "bkpt",
+      "mechanic": "wound-the-mastermind",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/black-widow",
+      "heroName": "Black Widow",
+      "set": "bkwd",
+      "mechanic": "dark-memories",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/black-widow",
+      "heroName": "Black Widow",
+      "set": "bkwd",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/black-widow",
+      "heroName": "Black Widow",
+      "set": "bkwd",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/falcon-winter-soldier",
+      "heroName": "Falcon & Winter Soldier",
+      "set": "bkwd",
+      "mechanic": "dark-memories",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/falcon-winter-soldier",
+      "heroName": "Falcon & Winter Soldier",
+      "set": "bkwd",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/falcon-winter-soldier",
+      "heroName": "Falcon & Winter Soldier",
+      "set": "bkwd",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "bkwd/red-guardian",
+      "heroName": "Red Guardian",
+      "set": "bkwd",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "bkwd/red-guardian",
+      "heroName": "Red Guardian",
+      "set": "bkwd",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/red-guardian",
+      "heroName": "Red Guardian",
+      "set": "bkwd",
+      "mechanic": "unleash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/red-guardian",
+      "heroName": "Red Guardian",
+      "set": "bkwd",
+      "mechanic": "when-recruited",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/white-tiger",
+      "heroName": "White Tiger",
+      "set": "bkwd",
+      "mechanic": "dark-memories",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/white-tiger",
+      "heroName": "White Tiger",
+      "set": "bkwd",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/yelena-belova",
+      "heroName": "Yelena Belova",
+      "set": "bkwd",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/yelena-belova",
+      "heroName": "Yelena Belova",
+      "set": "bkwd",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "bkwd/yelena-belova",
+      "heroName": "Yelena Belova",
+      "set": "bkwd",
+      "mechanic": "unleash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ca75/agent-x-13",
+      "heroName": "Agent X-13",
+      "set": "ca75",
+      "mechanic": "savior",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ca75/agent-x-13",
+      "heroName": "Agent X-13",
+      "set": "ca75",
+      "mechanic": "woman-out-of-time",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ca75/captain-america-falcon",
+      "heroName": "Captain America (Falcon)",
+      "set": "ca75",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "ca75/captain-america-falcon",
+      "heroName": "Captain America (Falcon)",
+      "set": "ca75",
+      "mechanic": "savior",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ca75/captain-america-1941",
+      "heroName": "Captain America 1941",
+      "set": "ca75",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "ca75/captain-america-1941",
+      "heroName": "Captain America 1941",
+      "set": "ca75",
+      "mechanic": "man-out-of-time",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ca75/captain-america-1941",
+      "heroName": "Captain America 1941",
+      "set": "ca75",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "ca75/captain-america-1941",
+      "heroName": "Captain America 1941",
+      "set": "ca75",
+      "mechanic": "savior",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ca75/steve-rogers-director-of-shield",
+      "heroName": "Steve Rogers, Director of S.H.I.E.L.D.",
+      "set": "ca75",
+      "mechanic": "man-out-of-time",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ca75/steve-rogers-director-of-shield",
+      "heroName": "Steve Rogers, Director of S.H.I.E.L.D.",
+      "set": "ca75",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "ca75/steve-rogers-director-of-shield",
+      "heroName": "Steve Rogers, Director of S.H.I.E.L.D.",
+      "set": "ca75",
+      "mechanic": "savior",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ca75/winter-soldier",
+      "heroName": "Winter Soldier",
+      "set": "ca75",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "ca75/winter-soldier",
+      "heroName": "Winter Soldier",
+      "set": "ca75",
+      "mechanic": "man-out-of-time",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/gwenpool",
+      "heroName": "Gwenpool",
+      "set": "chmp",
+      "mechanic": "cheering-crowds",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/gwenpool",
+      "heroName": "Gwenpool",
+      "set": "chmp",
+      "mechanic": "demolish",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/gwenpool",
+      "heroName": "Gwenpool",
+      "set": "chmp",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "chmp/gwenpool",
+      "heroName": "Gwenpool",
+      "set": "chmp",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/gwenpool",
+      "heroName": "Gwenpool",
+      "set": "chmp",
+      "mechanic": "versatile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/ms-marvel",
+      "heroName": "Ms. Marvel",
+      "set": "chmp",
+      "mechanic": "cheering-crowds",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/ms-marvel",
+      "heroName": "Ms. Marvel",
+      "set": "chmp",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "chmp/ms-marvel",
+      "heroName": "Ms. Marvel",
+      "set": "chmp",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "chmp/ms-marvel",
+      "heroName": "Ms. Marvel",
+      "set": "chmp",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/ms-marvel",
+      "heroName": "Ms. Marvel",
+      "set": "chmp",
+      "mechanic": "versatile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/nova",
+      "heroName": "Nova",
+      "set": "chmp",
+      "mechanic": "cheering-crowds",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/nova",
+      "heroName": "Nova",
+      "set": "chmp",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "chmp/nova",
+      "heroName": "Nova",
+      "set": "chmp",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/nova",
+      "heroName": "Nova",
+      "set": "chmp",
+      "mechanic": "versatile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/totally-awesome-hulk",
+      "heroName": "Totally Awesome Hulk",
+      "set": "chmp",
+      "mechanic": "cheering-crowds",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/totally-awesome-hulk",
+      "heroName": "Totally Awesome Hulk",
+      "set": "chmp",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "chmp/totally-awesome-hulk",
+      "heroName": "Totally Awesome Hulk",
+      "set": "chmp",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/viv-vision",
+      "heroName": "Viv Vision",
+      "set": "chmp",
+      "mechanic": "cheering-crowds",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/viv-vision",
+      "heroName": "Viv Vision",
+      "set": "chmp",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "chmp/viv-vision",
+      "heroName": "Viv Vision",
+      "set": "chmp",
+      "mechanic": "versatile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/black-widow",
+      "heroName": "Black Widow",
+      "set": "core",
+      "mechanic": "attack-per-count:victory-bystanders",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/black-widow",
+      "heroName": "Black Widow",
+      "set": "core",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "core/black-widow",
+      "heroName": "Black Widow",
+      "set": "core",
+      "mechanic": "optional-ko-reward:rescue",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/black-widow",
+      "heroName": "Black Widow",
+      "set": "core",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "core/captain-america",
+      "heroName": "Captain America",
+      "set": "core",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/cyclops",
+      "heroName": "Cyclops",
+      "set": "core",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/deadpool",
+      "heroName": "Deadpool",
+      "set": "core",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/emma-frost",
+      "heroName": "Emma Frost",
+      "set": "core",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "core/gambit",
+      "heroName": "Gambit",
+      "set": "core",
+      "mechanic": "reveal-cost-attack",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-cost-attack"
+    },
+    {
+      "extId": "core/hawkeye",
+      "heroName": "Hawkeye",
+      "set": "core",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "core/hulk",
+      "heroName": "Hulk",
+      "set": "core",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/iron-man",
+      "heroName": "Iron Man",
+      "set": "core",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "core/nick-fury",
+      "heroName": "Nick Fury",
+      "set": "core",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/rogue",
+      "heroName": "Rogue",
+      "set": "core",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/spider-man",
+      "heroName": "Spider-Man",
+      "set": "core",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "core/spider-man",
+      "heroName": "Spider-Man",
+      "set": "core",
+      "mechanic": "reveal",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal"
+    },
+    {
+      "extId": "core/spider-man",
+      "heroName": "Spider-Man",
+      "set": "core",
+      "mechanic": "reveal-count",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/spider-man",
+      "heroName": "Spider-Man",
+      "set": "core",
+      "mechanic": "reveal:cost-lte-2:draw",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/storm",
+      "heroName": "Storm",
+      "set": "core",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "core/thor",
+      "heroName": "Thor",
+      "set": "core",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "core/wolverine",
+      "heroName": "Wolverine",
+      "set": "core",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cosm/adam-warlock",
+      "heroName": "Adam Warlock",
+      "set": "cosm",
+      "mechanic": "burn-2-shards",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/adam-warlock",
+      "heroName": "Adam Warlock",
+      "set": "cosm",
+      "mechanic": "burn-4-shards",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/adam-warlock",
+      "heroName": "Adam Warlock",
+      "set": "cosm",
+      "mechanic": "burn-8-shards",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/captain-mar-vell",
+      "heroName": "Captain Mar-Vell",
+      "set": "cosm",
+      "mechanic": "danger-sense",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/moondragon",
+      "heroName": "Moondragon",
+      "set": "cosm",
+      "mechanic": "danger-sense",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/nebula",
+      "heroName": "Nebula",
+      "set": "cosm",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/nova",
+      "heroName": "Nova",
+      "set": "cosm",
+      "mechanic": "cosmic-threat",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/nova",
+      "heroName": "Nova",
+      "set": "cosm",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cosm/phyla-vell",
+      "heroName": "Phyla-Vell",
+      "set": "cosm",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cosm/quasar",
+      "heroName": "Quasar",
+      "set": "cosm",
+      "mechanic": "burn-2-shards",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/quasar",
+      "heroName": "Quasar",
+      "set": "cosm",
+      "mechanic": "burn-4-shards",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/quasar",
+      "heroName": "Quasar",
+      "set": "cosm",
+      "mechanic": "burn-a-shards",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/ronan-the-accuser",
+      "heroName": "Ronan the Accuser",
+      "set": "cosm",
+      "mechanic": "burn-2-shards",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/ronan-the-accuser",
+      "heroName": "Ronan the Accuser",
+      "set": "cosm",
+      "mechanic": "contest-of-champions",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/ronan-the-accuser",
+      "heroName": "Ronan the Accuser",
+      "set": "cosm",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "cosm/yondu",
+      "heroName": "Yondu",
+      "set": "cosm",
+      "mechanic": "burn-any-number-of-shards",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cosm/yondu",
+      "heroName": "Yondu",
+      "set": "cosm",
+      "mechanic": "danger-sense",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/captain-america-secret-avenger",
+      "heroName": "Captain America, Secret Avenger",
+      "set": "cvwr",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/cloak-dagger",
+      "heroName": "Cloak & Dagger",
+      "set": "cvwr",
+      "mechanic": "phasing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/cloak-dagger",
+      "heroName": "Cloak & Dagger",
+      "set": "cvwr",
+      "mechanic": "reveal-ko",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko"
+    },
+    {
+      "extId": "cvwr/cloak-dagger",
+      "heroName": "Cloak & Dagger",
+      "set": "cvwr",
+      "mechanic": "reveal-min",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-min"
+    },
+    {
+      "extId": "cvwr/daredevil",
+      "heroName": "Daredevil",
+      "set": "cvwr",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/falcon",
+      "heroName": "Falcon",
+      "set": "cvwr",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/goliath",
+      "heroName": "Goliath",
+      "set": "cvwr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cvwr/goliath",
+      "heroName": "Goliath",
+      "set": "cvwr",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/hercules",
+      "heroName": "Hercules",
+      "set": "cvwr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cvwr/hercules",
+      "heroName": "Hercules",
+      "set": "cvwr",
+      "mechanic": "reveal-ko",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko"
+    },
+    {
+      "extId": "cvwr/hulkling",
+      "heroName": "Hulkling",
+      "set": "cvwr",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/luke-cage",
+      "heroName": "Luke Cage",
+      "set": "cvwr",
+      "mechanic": "fortify",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/patriot",
+      "heroName": "Patriot",
+      "set": "cvwr",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/peter-parker",
+      "heroName": "Peter Parker",
+      "set": "cvwr",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "cvwr/peter-parker",
+      "heroName": "Peter Parker",
+      "set": "cvwr",
+      "mechanic": "reveal",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal"
+    },
+    {
+      "extId": "cvwr/speedball",
+      "heroName": "Speedball",
+      "set": "cvwr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cvwr/stature",
+      "heroName": "Stature",
+      "set": "cvwr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cvwr/stature",
+      "heroName": "Stature",
+      "set": "cvwr",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/storm-black-panther",
+      "heroName": "Storm & Black Panther",
+      "set": "cvwr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cvwr/tigra",
+      "heroName": "Tigra",
+      "set": "cvwr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cvwr/vision",
+      "heroName": "Vision",
+      "set": "cvwr",
+      "mechanic": "phasing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/vision",
+      "heroName": "Vision",
+      "set": "cvwr",
+      "mechanic": "size-changing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "cvwr/wiccan",
+      "heroName": "Wiccan",
+      "set": "cvwr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "cvwr/wiccan",
+      "heroName": "Wiccan",
+      "set": "cvwr",
+      "mechanic": "phasing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dead/bob-agent-of-hydra",
+      "heroName": "Bob, Agent of HYDRA",
+      "set": "dead",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dead/deadpool",
+      "heroName": "Deadpool",
+      "set": "dead",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dead/slapstick",
+      "heroName": "Slapstick",
+      "set": "dead",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dead/solo",
+      "heroName": "Solo",
+      "set": "dead",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dead/stingray",
+      "heroName": "Stingray",
+      "set": "dead",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dead/stingray",
+      "heroName": "Stingray",
+      "set": "dead",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dims/howard-the-duck",
+      "heroName": "Howard the Duck",
+      "set": "dims",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dims/jessica-jones",
+      "heroName": "Jessica Jones",
+      "set": "dims",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dims/jessica-jones",
+      "heroName": "Jessica Jones",
+      "set": "dims",
+      "mechanic": "switcheroo",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dims/man-thing",
+      "heroName": "Man-Thing",
+      "set": "dims",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dims/ms-america",
+      "heroName": "Ms. America",
+      "set": "dims",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dims/ms-america",
+      "heroName": "Ms. America",
+      "set": "dims",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dims/squirrel-girl",
+      "heroName": "Squirrel Girl",
+      "set": "dims",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dims/squirrel-girl",
+      "heroName": "Squirrel Girl",
+      "set": "dims",
+      "mechanic": "switcheroo",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/angel",
+      "heroName": "Angel",
+      "set": "dkcy",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/bishop",
+      "heroName": "Bishop",
+      "set": "dkcy",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dkcy/blade",
+      "heroName": "Blade",
+      "set": "dkcy",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/cable",
+      "heroName": "Cable",
+      "set": "dkcy",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/colossus",
+      "heroName": "Colossus",
+      "set": "dkcy",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/daredevil",
+      "heroName": "Daredevil",
+      "set": "dkcy",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/domino",
+      "heroName": "Domino",
+      "set": "dkcy",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dkcy/domino",
+      "heroName": "Domino",
+      "set": "dkcy",
+      "mechanic": "versatile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/elektra",
+      "heroName": "Elektra",
+      "set": "dkcy",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dkcy/forge",
+      "heroName": "Forge",
+      "set": "dkcy",
+      "mechanic": "versatile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/ghost-rider",
+      "heroName": "Ghost Rider",
+      "set": "dkcy",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dkcy/iceman",
+      "heroName": "Iceman",
+      "set": "dkcy",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dkcy/iron-fist",
+      "heroName": "Iron Fist",
+      "set": "dkcy",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dkcy/iron-fist",
+      "heroName": "Iron Fist",
+      "set": "dkcy",
+      "mechanic": "versatile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/jean-grey",
+      "heroName": "Jean Grey",
+      "set": "dkcy",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "dkcy/nightcrawler",
+      "heroName": "Nightcrawler",
+      "set": "dkcy",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/professor-x",
+      "heroName": "Professor X",
+      "set": "dkcy",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dkcy/punisher",
+      "heroName": "Punisher",
+      "set": "dkcy",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dkcy/punisher",
+      "heroName": "Punisher",
+      "set": "dkcy",
+      "mechanic": "reveal-ko",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko"
+    },
+    {
+      "extId": "dkcy/wolverine",
+      "heroName": "Wolverine",
+      "set": "dkcy",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dstr/ancient-one-the",
+      "heroName": "Ancient One, The",
+      "set": "dstr",
+      "mechanic": "astral-plane",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/ancient-one-the",
+      "heroName": "Ancient One, The",
+      "set": "dstr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "dstr/ancient-one-the",
+      "heroName": "Ancient One, The",
+      "set": "dstr",
+      "mechanic": "ritual-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/clea",
+      "heroName": "Clea",
+      "set": "dstr",
+      "mechanic": "demonic-bargain",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/clea",
+      "heroName": "Clea",
+      "set": "dstr",
+      "mechanic": "ritual-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/doctor-strange",
+      "heroName": "Doctor Strange",
+      "set": "dstr",
+      "mechanic": "artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/doctor-strange",
+      "heroName": "Doctor Strange",
+      "set": "dstr",
+      "mechanic": "ritual-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/doctor-voodoo",
+      "heroName": "Doctor Voodoo",
+      "set": "dstr",
+      "mechanic": "artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/doctor-voodoo",
+      "heroName": "Doctor Voodoo",
+      "set": "dstr",
+      "mechanic": "ritual-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/vishanti-the",
+      "heroName": "Vishanti, The",
+      "set": "dstr",
+      "mechanic": "demonic-bargain",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "dstr/vishanti-the",
+      "heroName": "Vishanti, The",
+      "set": "dstr",
+      "mechanic": "ritual-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/greithoth-breaker-of-wills",
+      "heroName": "Greithoth, Breaker of Wills",
+      "set": "fear",
+      "mechanic": "artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/greithoth-breaker-of-wills",
+      "heroName": "Greithoth, Breaker of Wills",
+      "set": "fear",
+      "mechanic": "artifacts",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/greithoth-breaker-of-wills",
+      "heroName": "Greithoth, Breaker of Wills",
+      "set": "fear",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/kuurth-breaker-of-stone",
+      "heroName": "Kuurth, Breaker of Stone",
+      "set": "fear",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/nerkkod-breaker-of-oceans",
+      "heroName": "Nerkkod, Breaker of Oceans",
+      "set": "fear",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/nul-breaker-of-worlds",
+      "heroName": "Nul, Breaker of Worlds",
+      "set": "fear",
+      "mechanic": "demolish",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/nul-breaker-of-worlds",
+      "heroName": "Nul, Breaker of Worlds",
+      "set": "fear",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/skadi",
+      "heroName": "Skadi",
+      "set": "fear",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "fear/skirn-breaker-of-men",
+      "heroName": "Skirn, Breaker of Men",
+      "set": "fear",
+      "mechanic": "thrown-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ff04/human-torch",
+      "heroName": "Human Torch",
+      "set": "ff04",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ff04/invisible-woman",
+      "heroName": "Invisible Woman",
+      "set": "ff04",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ff04/mr-fantastic",
+      "heroName": "Mr. Fantastic",
+      "set": "ff04",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "ff04/mr-fantastic",
+      "heroName": "Mr. Fantastic",
+      "set": "ff04",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ff04/silver-surfer",
+      "heroName": "Silver Surfer",
+      "set": "ff04",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ff04/thing",
+      "heroName": "Thing",
+      "set": "ff04",
+      "mechanic": "focus",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "gotg/drax-the-destroyer",
+      "heroName": "Drax the Destroyer",
+      "set": "gotg",
+      "mechanic": "artifact--",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "gotg/gamora",
+      "heroName": "Gamora",
+      "set": "gotg",
+      "mechanic": "artifact--",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "gotg/groot",
+      "heroName": "Groot",
+      "set": "gotg",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "gotg/rocket-raccoon",
+      "heroName": "Rocket Raccoon",
+      "set": "gotg",
+      "mechanic": "artifact--",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "gotg/star-lord",
+      "heroName": "Star-Lord",
+      "set": "gotg",
+      "mechanic": "artifact--",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/blade-daywalker",
+      "heroName": "Blade, Daywalker",
+      "set": "mdns",
+      "mechanic": "blood-frenzy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/blade-daywalker",
+      "heroName": "Blade, Daywalker",
+      "set": "mdns",
+      "mechanic": "moonlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/blade-daywalker",
+      "heroName": "Blade, Daywalker",
+      "set": "mdns",
+      "mechanic": "patrol-the-rooftops",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/blade-daywalker",
+      "heroName": "Blade, Daywalker",
+      "set": "mdns",
+      "mechanic": "patrol-the-sewers",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/blade-daywalker",
+      "heroName": "Blade, Daywalker",
+      "set": "mdns",
+      "mechanic": "sunlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/elsa-bloodstone",
+      "heroName": "Elsa Bloodstone",
+      "set": "mdns",
+      "mechanic": "blood-frenzy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/elsa-bloodstone",
+      "heroName": "Elsa Bloodstone",
+      "set": "mdns",
+      "mechanic": "hunt-for-victims",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/elsa-bloodstone",
+      "heroName": "Elsa Bloodstone",
+      "set": "mdns",
+      "mechanic": "patrol-any-city-space",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/elsa-bloodstone",
+      "heroName": "Elsa Bloodstone",
+      "set": "mdns",
+      "mechanic": "patrol-the-streets",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/morbius",
+      "heroName": "Morbius",
+      "set": "mdns",
+      "mechanic": "blood-frenzy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/morbius",
+      "heroName": "Morbius",
+      "set": "mdns",
+      "mechanic": "moonlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/morbius",
+      "heroName": "Morbius",
+      "set": "mdns",
+      "mechanic": "sunlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/werewolf-by-night",
+      "heroName": "Werewolf by Night",
+      "set": "mdns",
+      "mechanic": "blood-frenzy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/werewolf-by-night",
+      "heroName": "Werewolf by Night",
+      "set": "mdns",
+      "mechanic": "moonlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/werewolf-by-night",
+      "heroName": "Werewolf by Night",
+      "set": "mdns",
+      "mechanic": "sunlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/wong-master-of-the-mystic-arts",
+      "heroName": "Wong, Master of the Mystic Arts",
+      "set": "mdns",
+      "mechanic": "patrol-the-bridge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mdns/wong-master-of-the-mystic-arts",
+      "heroName": "Wong, Master of the Mystic Arts",
+      "set": "mdns",
+      "mechanic": "sunlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/drax",
+      "heroName": "Drax",
+      "set": "mgtg",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/drax",
+      "heroName": "Drax",
+      "set": "mgtg",
+      "mechanic": "triggered-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/gamora",
+      "heroName": "Gamora",
+      "set": "mgtg",
+      "mechanic": "artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/gamora",
+      "heroName": "Gamora",
+      "set": "mgtg",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "mgtg/gamora",
+      "heroName": "Gamora",
+      "set": "mgtg",
+      "mechanic": "triggered-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/mantis",
+      "heroName": "Mantis",
+      "set": "mgtg",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "mgtg/mantis",
+      "heroName": "Mantis",
+      "set": "mgtg",
+      "mechanic": "excessive-kindness",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/rocket-groot",
+      "heroName": "Rocket & Groot",
+      "set": "mgtg",
+      "mechanic": "excessive-kindness",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/rocket-groot",
+      "heroName": "Rocket & Groot",
+      "set": "mgtg",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/rocket-groot",
+      "heroName": "Rocket & Groot",
+      "set": "mgtg",
+      "mechanic": "triggered-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/star-lord",
+      "heroName": "Star-Lord",
+      "set": "mgtg",
+      "mechanic": "artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "mgtg/star-lord",
+      "heroName": "Star-Lord",
+      "set": "mgtg",
+      "mechanic": "triggered-artifact",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msis/black-panther",
+      "heroName": "Black Panther",
+      "set": "msis",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "msis/black-panther",
+      "heroName": "Black Panther",
+      "set": "msis",
+      "mechanic": "sacrifice",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msis/bruce-banner",
+      "heroName": "Bruce Banner",
+      "set": "msis",
+      "mechanic": "sacrifice",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msis/captain-marvel",
+      "heroName": "Captain Marvel",
+      "set": "msis",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "msis/captain-marvel",
+      "heroName": "Captain Marvel",
+      "set": "msis",
+      "mechanic": "endgame",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msis/doctor-strange",
+      "heroName": "Doctor Strange",
+      "set": "msis",
+      "mechanic": "phasing",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msis/doctor-strange",
+      "heroName": "Doctor Strange",
+      "set": "msis",
+      "mechanic": "sacrifice",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msis/wanda-vision",
+      "heroName": "Wanda & Vision",
+      "set": "msis",
+      "mechanic": "reveal-odd-draw",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-odd-draw"
+    },
+    {
+      "extId": "msis/wanda-vision",
+      "heroName": "Wanda & Vision",
+      "set": "msis",
+      "mechanic": "sacrifice",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/m",
+      "heroName": "M",
+      "set": "msmc",
+      "mechanic": "clone",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/m",
+      "heroName": "M",
+      "set": "msmc",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "msmc/m",
+      "heroName": "M",
+      "set": "msmc",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/m",
+      "heroName": "M",
+      "set": "msmc",
+      "mechanic": "tactical-formation",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/m",
+      "heroName": "M",
+      "set": "msmc",
+      "mechanic": "when-recruited",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/multiple-man",
+      "heroName": "Multiple Man",
+      "set": "msmc",
+      "mechanic": "clone",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/multiple-man",
+      "heroName": "Multiple Man",
+      "set": "msmc",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/multiple-man",
+      "heroName": "Multiple Man",
+      "set": "msmc",
+      "mechanic": "tactical-formation",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/rictor",
+      "heroName": "Rictor",
+      "set": "msmc",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/rictor",
+      "heroName": "Rictor",
+      "set": "msmc",
+      "mechanic": "shatter",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/shatterstar",
+      "heroName": "Shatterstar",
+      "set": "msmc",
+      "mechanic": "clone",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/shatterstar",
+      "heroName": "Shatterstar",
+      "set": "msmc",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "msmc/shatterstar",
+      "heroName": "Shatterstar",
+      "set": "msmc",
+      "mechanic": "shatter",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/shatterstar",
+      "heroName": "Shatterstar",
+      "set": "msmc",
+      "mechanic": "tactical-formation",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/shatterstar",
+      "heroName": "Shatterstar",
+      "set": "msmc",
+      "mechanic": "when-recruited",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/siryn",
+      "heroName": "Siryn",
+      "set": "msmc",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/siryn",
+      "heroName": "Siryn",
+      "set": "msmc",
+      "mechanic": "shatter",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/siryn",
+      "heroName": "Siryn",
+      "set": "msmc",
+      "mechanic": "tactical-formation",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/stepford-cuckoos",
+      "heroName": "Stepford Cuckoos",
+      "set": "msmc",
+      "mechanic": "clone",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/stepford-cuckoos",
+      "heroName": "Stepford Cuckoos",
+      "set": "msmc",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/stepford-cuckoos",
+      "heroName": "Stepford Cuckoos",
+      "set": "msmc",
+      "mechanic": "tactical-formation",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/stepford-cuckoos",
+      "heroName": "Stepford Cuckoos",
+      "set": "msmc",
+      "mechanic": "when-recruited",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/strong-guy",
+      "heroName": "Strong Guy",
+      "set": "msmc",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/strong-guy",
+      "heroName": "Strong Guy",
+      "set": "msmc",
+      "mechanic": "tactical-formation",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/warpath",
+      "heroName": "Warpath",
+      "set": "msmc",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msmc/warpath",
+      "heroName": "Warpath",
+      "set": "msmc",
+      "mechanic": "tactical-formation",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msp1/black-widow",
+      "heroName": "Black Widow",
+      "set": "msp1",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "msp1/black-widow",
+      "heroName": "Black Widow",
+      "set": "msp1",
+      "mechanic": "rescue",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#rescue"
+    },
+    {
+      "extId": "msp1/captain-america",
+      "heroName": "Captain America",
+      "set": "msp1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msp1/hawkeye",
+      "heroName": "Hawkeye",
+      "set": "msp1",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "msp1/hulk",
+      "heroName": "Hulk",
+      "set": "msp1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msp1/iron-man",
+      "heroName": "Iron Man",
+      "set": "msp1",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "msp1/nick-fury",
+      "heroName": "Nick Fury",
+      "set": "msp1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "msp1/thor",
+      "heroName": "Thor",
+      "set": "msp1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/karma",
+      "heroName": "Karma",
+      "set": "nmut",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/mirage",
+      "heroName": "Mirage",
+      "set": "nmut",
+      "mechanic": "moonlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/mirage",
+      "heroName": "Mirage",
+      "set": "nmut",
+      "mechanic": "waking-nightmare",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/sunspot",
+      "heroName": "Sunspot",
+      "set": "nmut",
+      "mechanic": "moonlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/sunspot",
+      "heroName": "Sunspot",
+      "set": "nmut",
+      "mechanic": "sunlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/warlock",
+      "heroName": "Warlock",
+      "set": "nmut",
+      "mechanic": "moonlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/warlock",
+      "heroName": "Warlock",
+      "set": "nmut",
+      "mechanic": "sunlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/wolfsbane",
+      "heroName": "Wolfsbane",
+      "set": "nmut",
+      "mechanic": "moonlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "nmut/wolfsbane",
+      "heroName": "Wolfsbane",
+      "set": "nmut",
+      "mechanic": "sunlight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "noir/angel-noir",
+      "heroName": "Angel Noir",
+      "set": "noir",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "noir/daredevil-noir",
+      "heroName": "Daredevil Noir",
+      "set": "noir",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "noir/iron-man-noir",
+      "heroName": "Iron Man Noir",
+      "set": "noir",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "noir/luke-cage-noir",
+      "heroName": "Luke Cage Noir",
+      "set": "noir",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "noir/spider-man-noir",
+      "heroName": "Spider-Man Noir",
+      "set": "noir",
+      "mechanic": "investigate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "pttr/black-cat",
+      "heroName": "Black Cat",
+      "set": "pttr",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "pttr/moon-knight",
+      "heroName": "Moon Knight",
+      "set": "pttr",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "pttr/scarlet-spider",
+      "heroName": "Scarlet Spider",
+      "set": "pttr",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "pttr/scarlet-spider",
+      "heroName": "Scarlet Spider",
+      "set": "pttr",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "pttr/spider-woman",
+      "heroName": "Spider-Woman",
+      "set": "pttr",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "pttr/symbiote-spider-man",
+      "heroName": "Symbiote Spider-Man",
+      "set": "pttr",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/black-bolt",
+      "heroName": "Black Bolt",
+      "set": "rlmk",
+      "mechanic": "\"when-recruited\"-abilities",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/black-bolt",
+      "heroName": "Black Bolt",
+      "set": "rlmk",
+      "mechanic": "don't-speak",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/black-bolt",
+      "heroName": "Black Bolt",
+      "set": "rlmk",
+      "mechanic": "speak",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/black-bolt",
+      "heroName": "Black Bolt",
+      "set": "rlmk",
+      "mechanic": "thrones-favor",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/crystal",
+      "heroName": "Crystal",
+      "set": "rlmk",
+      "mechanic": "\"when-recruited\"-abilities",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/crystal",
+      "heroName": "Crystal",
+      "set": "rlmk",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "rlmk/crystal",
+      "heroName": "Crystal",
+      "set": "rlmk",
+      "mechanic": "thrones-favor",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/gorgon",
+      "heroName": "Gorgon",
+      "set": "rlmk",
+      "mechanic": "\"when-recruited\"-abilities",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/gorgon",
+      "heroName": "Gorgon",
+      "set": "rlmk",
+      "mechanic": "abomination",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/gorgon",
+      "heroName": "Gorgon",
+      "set": "rlmk",
+      "mechanic": "highest-abomination",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/gorgon",
+      "heroName": "Gorgon",
+      "set": "rlmk",
+      "mechanic": "rooftops-abomination",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/gorgon",
+      "heroName": "Gorgon",
+      "set": "rlmk",
+      "mechanic": "streets-abomination",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/gorgon",
+      "heroName": "Gorgon",
+      "set": "rlmk",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/karnak",
+      "heroName": "Karnak",
+      "set": "rlmk",
+      "mechanic": "\"when-recruited\"-abilities",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/medusa",
+      "heroName": "Medusa",
+      "set": "rlmk",
+      "mechanic": "\"when-recruited\"-abilities",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rlmk/medusa",
+      "heroName": "Medusa",
+      "set": "rlmk",
+      "mechanic": "thrones-favor",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/captain-marvel-agent-of-shield",
+      "heroName": "Captain Marvel, Agent of S.H.I.E.L.D.",
+      "set": "rvlt",
+      "mechanic": "last-stand",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/darkhawk",
+      "heroName": "Darkhawk",
+      "set": "rvlt",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "rvlt/darkhawk",
+      "heroName": "Darkhawk",
+      "set": "rvlt",
+      "mechanic": "hyperspeed",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/hellcat",
+      "heroName": "Hellcat",
+      "set": "rvlt",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/photon",
+      "heroName": "Photon",
+      "set": "rvlt",
+      "mechanic": "hyperspeed",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/photon",
+      "heroName": "Photon",
+      "set": "rvlt",
+      "mechanic": "last-stand",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/quicksilver",
+      "heroName": "Quicksilver",
+      "set": "rvlt",
+      "mechanic": "hyperspeed",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/ronin",
+      "heroName": "Ronin",
+      "set": "rvlt",
+      "mechanic": "dark-memories",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/ronin",
+      "heroName": "Ronin",
+      "set": "rvlt",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "rvlt/ronin",
+      "heroName": "Ronin",
+      "set": "rvlt",
+      "mechanic": "hyperspeed",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/scarlet-witch",
+      "heroName": "Scarlet Witch",
+      "set": "rvlt",
+      "mechanic": "dark-memories",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/speed",
+      "heroName": "Speed",
+      "set": "rvlt",
+      "mechanic": "hyperspeed",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "rvlt/war-machine",
+      "heroName": "War Machine",
+      "set": "rvlt",
+      "mechanic": "hyperspeed",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/agent-phil-coulson",
+      "heroName": "Agent Phil Coulson",
+      "set": "shld",
+      "mechanic": "s.h.i.e.l.d.-level",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/agent-phil-coulson",
+      "heroName": "Agent Phil Coulson",
+      "set": "shld",
+      "mechanic": "s.h.i.e.l.d.-levels",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/agent-phil-coulson",
+      "heroName": "Agent Phil Coulson",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/deathlok",
+      "heroName": "Deathlok",
+      "set": "shld",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "shld/deathlok",
+      "heroName": "Deathlok",
+      "set": "shld",
+      "mechanic": "s.h.i.e.l.d.-level",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/deathlok",
+      "heroName": "Deathlok",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/dum-dum-dugan",
+      "heroName": "Dum Dum Dugan",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/gw-bridge",
+      "heroName": "G.W. Bridge",
+      "set": "shld",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/grant-ward",
+      "heroName": "Grant Ward",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/leo-fitz-and-jemma-simmons",
+      "heroName": "Leo Fitz and Jemma Simmons",
+      "set": "shld",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/melinda-may",
+      "heroName": "Melinda May",
+      "set": "shld",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/mockingbird",
+      "heroName": "Mockingbird",
+      "set": "shld",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "shld/mockingbird",
+      "heroName": "Mockingbird",
+      "set": "shld",
+      "mechanic": "s.h.i.e.l.d.-level",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/mockingbird",
+      "heroName": "Mockingbird",
+      "set": "shld",
+      "mechanic": "s.h.i.e.l.d.-levels",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/mockingbird",
+      "heroName": "Mockingbird",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/quake",
+      "heroName": "Quake",
+      "set": "shld",
+      "mechanic": "s.h.i.e.l.d.-level",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/quake",
+      "heroName": "Quake",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/sharon-carter",
+      "heroName": "Sharon Carter",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/victoria-hand",
+      "heroName": "Victoria Hand",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "shld/yo-yo-rodriguez",
+      "heroName": "Yo-Yo Rodriguez",
+      "set": "shld",
+      "mechanic": "undercover",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/happy-hogan",
+      "heroName": "Happy Hogan",
+      "set": "smhc",
+      "mechanic": "coordinate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/happy-hogan",
+      "heroName": "Happy Hogan",
+      "set": "smhc",
+      "mechanic": "danger-sense",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/happy-hogan",
+      "heroName": "Happy Hogan",
+      "set": "smhc",
+      "mechanic": "double-striker",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/happy-hogan",
+      "heroName": "Happy Hogan",
+      "set": "smhc",
+      "mechanic": "striker",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/high-tech-spider-man",
+      "heroName": "High Tech Spider-Man",
+      "set": "smhc",
+      "mechanic": "coordinate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/high-tech-spider-man",
+      "heroName": "High Tech Spider-Man",
+      "set": "smhc",
+      "mechanic": "danger-sense",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/high-tech-spider-man",
+      "heroName": "High Tech Spider-Man",
+      "set": "smhc",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "smhc/high-tech-spider-man",
+      "heroName": "High Tech Spider-Man",
+      "set": "smhc",
+      "mechanic": "reveal",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal"
+    },
+    {
+      "extId": "smhc/high-tech-spider-man",
+      "heroName": "High Tech Spider-Man",
+      "set": "smhc",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/peter-parker-homecoming",
+      "heroName": "Peter Parker, Homecoming",
+      "set": "smhc",
+      "mechanic": "coordinate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/peter-parker-homecoming",
+      "heroName": "Peter Parker, Homecoming",
+      "set": "smhc",
+      "mechanic": "danger-sense",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/peter-parker-homecoming",
+      "heroName": "Peter Parker, Homecoming",
+      "set": "smhc",
+      "mechanic": "reveal",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal"
+    },
+    {
+      "extId": "smhc/peter-parker-homecoming",
+      "heroName": "Peter Parker, Homecoming",
+      "set": "smhc",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/peters-allies",
+      "heroName": "Peter's Allies",
+      "set": "smhc",
+      "mechanic": "coordinate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/tony-stark",
+      "heroName": "Tony Stark",
+      "set": "smhc",
+      "mechanic": "coordinate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "smhc/tony-stark",
+      "heroName": "Tony Stark",
+      "set": "smhc",
+      "mechanic": "danger-sense",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/apocalyptic-kitty-pryde",
+      "heroName": "Apocalyptic Kitty Pryde",
+      "set": "ssw1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/black-bolt",
+      "heroName": "Black Bolt",
+      "set": "ssw1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/black-panther",
+      "heroName": "Black Panther",
+      "set": "ssw1",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "ssw1/captain-marvel",
+      "heroName": "Captain Marvel",
+      "set": "ssw1",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "ssw1/dr-strange",
+      "heroName": "Dr. Strange",
+      "set": "ssw1",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/lady-thor",
+      "heroName": "Lady Thor",
+      "set": "ssw1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/magik",
+      "heroName": "Magik",
+      "set": "ssw1",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/maximus",
+      "heroName": "Maximus",
+      "set": "ssw1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/namor-the-sub-mariner",
+      "heroName": "Namor, the Sub-Mariner",
+      "set": "ssw1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/old-man-logan",
+      "heroName": "Old Man Logan",
+      "set": "ssw1",
+      "mechanic": ":-cross-dimensional-wolverine-rampage.",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/proxima-midnight",
+      "heroName": "Proxima Midnight",
+      "set": "ssw1",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/superior-iron-man",
+      "heroName": "Superior Iron Man",
+      "set": "ssw1",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "ssw1/thanos",
+      "heroName": "Thanos",
+      "set": "ssw1",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw1/ultimate-spider-man",
+      "heroName": "Ultimate Spider-Man",
+      "set": "ssw1",
+      "mechanic": "reveal",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal"
+    },
+    {
+      "extId": "ssw2/agent-venom",
+      "heroName": "Agent Venom",
+      "set": "ssw2",
+      "mechanic": "patrol-the-bank",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/agent-venom",
+      "heroName": "Agent Venom",
+      "set": "ssw2",
+      "mechanic": "patrol-the-sewers",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/agent-venom",
+      "heroName": "Agent Venom",
+      "set": "ssw2",
+      "mechanic": "spectrum",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/agent-venom",
+      "heroName": "Agent Venom",
+      "set": "ssw2",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/arkon-the-magnificent",
+      "heroName": "Arkon the Magnificent",
+      "set": "ssw2",
+      "mechanic": "patrol-the-rooftops",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/arkon-the-magnificent",
+      "heroName": "Arkon the Magnificent",
+      "set": "ssw2",
+      "mechanic": "patrol-the-sewers",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/arkon-the-magnificent",
+      "heroName": "Arkon the Magnificent",
+      "set": "ssw2",
+      "mechanic": "patrol-two-adjacent-city-spaces",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/arkon-the-magnificent",
+      "heroName": "Arkon the Magnificent",
+      "set": "ssw2",
+      "mechanic": "spectrum",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/arkon-the-magnificent",
+      "heroName": "Arkon the Magnificent",
+      "set": "ssw2",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/beast",
+      "heroName": "Beast",
+      "set": "ssw2",
+      "mechanic": "patrol-any-city-space",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/beast",
+      "heroName": "Beast",
+      "set": "ssw2",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/black-swan",
+      "heroName": "Black Swan",
+      "set": "ssw2",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/captain-britain",
+      "heroName": "Captain Britain",
+      "set": "ssw2",
+      "mechanic": "patrol-the-rooftops",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/captain-and-the-devil-the",
+      "heroName": "Captain and the Devil, The",
+      "set": "ssw2",
+      "mechanic": "patrol-the-streets",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/captain-and-the-devil-the",
+      "heroName": "Captain and the Devil, The",
+      "set": "ssw2",
+      "mechanic": "spectrum",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/corvus-glaive",
+      "heroName": "Corvus Glaive",
+      "set": "ssw2",
+      "mechanic": "patrol-the-escape-pile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/dr-punisher-soldier-supreme",
+      "heroName": "Dr. Punisher, Soldier Supreme",
+      "set": "ssw2",
+      "mechanic": "patrol-every-city-space",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/dr-punisher-soldier-supreme",
+      "heroName": "Dr. Punisher, Soldier Supreme",
+      "set": "ssw2",
+      "mechanic": "patrol-the-streets",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/dr-punisher-soldier-supreme",
+      "heroName": "Dr. Punisher, Soldier Supreme",
+      "set": "ssw2",
+      "mechanic": "reveal-ko-attack",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko-attack"
+    },
+    {
+      "extId": "ssw2/elsa-bloodstone",
+      "heroName": "Elsa Bloodstone",
+      "set": "ssw2",
+      "mechanic": "patrol-the-sewers",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/elsa-bloodstone",
+      "heroName": "Elsa Bloodstone",
+      "set": "ssw2",
+      "mechanic": "spectrum",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/elsa-bloodstone",
+      "heroName": "Elsa Bloodstone",
+      "set": "ssw2",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/phoenix-force-cyclops",
+      "heroName": "Phoenix Force Cyclops",
+      "set": "ssw2",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/ruby-summers",
+      "heroName": "Ruby Summers",
+      "set": "ssw2",
+      "mechanic": "teleport",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/shang-chi",
+      "heroName": "Shang-Chi",
+      "set": "ssw2",
+      "mechanic": "patrol-the-rooftops",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/shang-chi",
+      "heroName": "Shang-Chi",
+      "set": "ssw2",
+      "mechanic": "patrol-your-discard-pile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/shang-chi",
+      "heroName": "Shang-Chi",
+      "set": "ssw2",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/silk",
+      "heroName": "Silk",
+      "set": "ssw2",
+      "mechanic": "reveal-ko-or-draw",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko-or-draw"
+    },
+    {
+      "extId": "ssw2/silk",
+      "heroName": "Silk",
+      "set": "ssw2",
+      "mechanic": "spectrum",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/silk",
+      "heroName": "Silk",
+      "set": "ssw2",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/soulsword-colossus",
+      "heroName": "Soulsword Colossus",
+      "set": "ssw2",
+      "mechanic": "cross-dimensional-colossus-rampage",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/spider-gwen",
+      "heroName": "Spider-Gwen",
+      "set": "ssw2",
+      "mechanic": "patrol-the-bank",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/spider-gwen",
+      "heroName": "Spider-Gwen",
+      "set": "ssw2",
+      "mechanic": "patrol-the-bridge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/spider-gwen",
+      "heroName": "Spider-Gwen",
+      "set": "ssw2",
+      "mechanic": "patrol-the-rooftops",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/spider-gwen",
+      "heroName": "Spider-Gwen",
+      "set": "ssw2",
+      "mechanic": "patrol-your-victory-pile",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/spider-gwen",
+      "heroName": "Spider-Gwen",
+      "set": "ssw2",
+      "mechanic": "wall-crawl",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/time-traveling-jean-grey",
+      "heroName": "Time-Traveling Jean Grey",
+      "set": "ssw2",
+      "mechanic": "patrol-any-city-space",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "ssw2/time-traveling-jean-grey",
+      "heroName": "Time-Traveling Jean Grey",
+      "set": "ssw2",
+      "mechanic": "patrol-the-bridge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/bullseye",
+      "heroName": "Bullseye",
+      "set": "vill",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/bullseye",
+      "heroName": "Bullseye",
+      "set": "vill",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "vill/dr-octopus",
+      "heroName": "Dr. Octopus",
+      "set": "vill",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "vill/electro",
+      "heroName": "Electro",
+      "set": "vill",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/enchantress",
+      "heroName": "Enchantress",
+      "set": "vill",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "vill/green-goblin",
+      "heroName": "Green Goblin",
+      "set": "vill",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/juggernaut",
+      "heroName": "Juggernaut",
+      "set": "vill",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/kingpin",
+      "heroName": "Kingpin",
+      "set": "vill",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/kraven",
+      "heroName": "Kraven",
+      "set": "vill",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/loki",
+      "heroName": "Loki",
+      "set": "vill",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/magneto",
+      "heroName": "Magneto",
+      "set": "vill",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/mysterio",
+      "heroName": "Mysterio",
+      "set": "vill",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/mystique",
+      "heroName": "Mystique",
+      "set": "vill",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/sabretooth",
+      "heroName": "Sabretooth",
+      "set": "vill",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/ultron",
+      "heroName": "Ultron",
+      "set": "vill",
+      "mechanic": "dodge",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vill/venom",
+      "heroName": "Venom",
+      "set": "vill",
+      "mechanic": "(unmarked)",
+      "status": "unmarked",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/carnage",
+      "heroName": "Carnage",
+      "set": "vnom",
+      "mechanic": "digest",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/carnage",
+      "heroName": "Carnage",
+      "set": "vnom",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/carnage",
+      "heroName": "Carnage",
+      "set": "vnom",
+      "mechanic": "indigestion",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venom",
+      "heroName": "Venom",
+      "set": "vnom",
+      "mechanic": "digest",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venom",
+      "heroName": "Venom",
+      "set": "vnom",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venom",
+      "heroName": "Venom",
+      "set": "vnom",
+      "mechanic": "indigestion",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venom-rocket",
+      "heroName": "Venom Rocket",
+      "set": "vnom",
+      "mechanic": "digest",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venom-rocket",
+      "heroName": "Venom Rocket",
+      "set": "vnom",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venomized-dr-strange",
+      "heroName": "Venomized Dr. Strange",
+      "set": "vnom",
+      "mechanic": "digest",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venompool",
+      "heroName": "Venompool",
+      "set": "vnom",
+      "mechanic": "digest",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venompool",
+      "heroName": "Venompool",
+      "set": "vnom",
+      "mechanic": "excessive-violence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "vnom/venompool",
+      "heroName": "Venompool",
+      "set": "vnom",
+      "mechanic": "indigestion",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wpnx/fantomex",
+      "heroName": "Fantomex",
+      "set": "wpnx",
+      "mechanic": "weapon-x-sequence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wpnx/marrow",
+      "heroName": "Marrow",
+      "set": "wpnx",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wpnx/marrow",
+      "heroName": "Marrow",
+      "set": "wpnx",
+      "mechanic": "weapon-x-sequence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wpnx/weapon-h",
+      "heroName": "Weapon H",
+      "set": "wpnx",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wpnx/weapon-h",
+      "heroName": "Weapon H",
+      "set": "wpnx",
+      "mechanic": "weapon-x-sequence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wpnx/weapon-x-wolverine",
+      "heroName": "Weapon X (Wolverine)",
+      "set": "wpnx",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wpnx/weapon-x-wolverine",
+      "heroName": "Weapon X (Wolverine)",
+      "set": "wpnx",
+      "mechanic": "weapon-x-sequence",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/apocalyptic-black-widow",
+      "heroName": "Apocalyptic Black Widow",
+      "set": "wtif",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wtif/apocalyptic-black-widow",
+      "heroName": "Apocalyptic Black Widow",
+      "set": "wtif",
+      "mechanic": "liberate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/apocalyptic-black-widow",
+      "heroName": "Apocalyptic Black Widow",
+      "set": "wtif",
+      "mechanic": "what-if...?",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/captain-carter",
+      "heroName": "Captain Carter",
+      "set": "wtif",
+      "mechanic": "liberate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/captain-carter",
+      "heroName": "Captain Carter",
+      "set": "wtif",
+      "mechanic": "what-if...?",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/doctor-strange-supreme",
+      "heroName": "Doctor Strange Supreme",
+      "set": "wtif",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wtif/doctor-strange-supreme",
+      "heroName": "Doctor Strange Supreme",
+      "set": "wtif",
+      "mechanic": "soulbind",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/doctor-strange-supreme",
+      "heroName": "Doctor Strange Supreme",
+      "set": "wtif",
+      "mechanic": "soulbind-a-bystander-or-villain",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/doctor-strange-supreme",
+      "heroName": "Doctor Strange Supreme",
+      "set": "wtif",
+      "mechanic": "what-if...?",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/gamora-destroyer-of-thanos",
+      "heroName": "Gamora, Destroyer of Thanos",
+      "set": "wtif",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wtif/gamora-destroyer-of-thanos",
+      "heroName": "Gamora, Destroyer of Thanos",
+      "set": "wtif",
+      "mechanic": "soulbind",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/gamora-destroyer-of-thanos",
+      "heroName": "Gamora, Destroyer of Thanos",
+      "set": "wtif",
+      "mechanic": "soulbind-six-villains",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/gamora-destroyer-of-thanos",
+      "heroName": "Gamora, Destroyer of Thanos",
+      "set": "wtif",
+      "mechanic": "what-if...?",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/killmonger-spec-ops",
+      "heroName": "Killmonger, Spec Ops",
+      "set": "wtif",
+      "mechanic": "liberate",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/killmonger-spec-ops",
+      "heroName": "Killmonger, Spec Ops",
+      "set": "wtif",
+      "mechanic": "what-if...?",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/party-thor",
+      "heroName": "Party Thor",
+      "set": "wtif",
+      "mechanic": "cross-dimensional-party-rampage",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/party-thor",
+      "heroName": "Party Thor",
+      "set": "wtif",
+      "mechanic": "what-if...?",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/star-lord-tchalla",
+      "heroName": "Star-Lord T'Challa",
+      "set": "wtif",
+      "mechanic": "empowered",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/star-lord-tchalla",
+      "heroName": "Star-Lord T'Challa",
+      "set": "wtif",
+      "mechanic": "what-if...?",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/uatu-the-watcher",
+      "heroName": "Uatu, The Watcher",
+      "set": "wtif",
+      "mechanic": "empowered",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/uatu-the-watcher",
+      "heroName": "Uatu, The Watcher",
+      "set": "wtif",
+      "mechanic": "soulbind",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wtif/uatu-the-watcher",
+      "heroName": "Uatu, The Watcher",
+      "set": "wtif",
+      "mechanic": "what-if...?",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/amadeus-cho",
+      "heroName": "Amadeus Cho",
+      "set": "wwhk",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wwhk/amadeus-cho",
+      "heroName": "Amadeus Cho",
+      "set": "wwhk",
+      "mechanic": "outwit",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/amadeus-cho",
+      "heroName": "Amadeus Cho",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/bruce-banner",
+      "heroName": "Bruce Banner",
+      "set": "wwhk",
+      "mechanic": "outwit",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/bruce-banner",
+      "heroName": "Bruce Banner",
+      "set": "wwhk",
+      "mechanic": "reveal-ko",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko"
+    },
+    {
+      "extId": "wwhk/bruce-banner",
+      "heroName": "Bruce Banner",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/bruce-banner",
+      "heroName": "Bruce Banner",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/caiera",
+      "heroName": "Caiera",
+      "set": "wwhk",
+      "mechanic": "outwit",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/caiera",
+      "heroName": "Caiera",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/caiera",
+      "heroName": "Caiera",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/gladiator-hulk",
+      "heroName": "Gladiator Hulk",
+      "set": "wwhk",
+      "mechanic": "cross-dimensional-hulk-rampage.",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/gladiator-hulk",
+      "heroName": "Gladiator Hulk",
+      "set": "wwhk",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wwhk/gladiator-hulk",
+      "heroName": "Gladiator Hulk",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/gladiator-hulk",
+      "heroName": "Gladiator Hulk",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/gladiator-hulk",
+      "heroName": "Gladiator Hulk",
+      "set": "wwhk",
+      "mechanic": "wounded-fury",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/hiroim",
+      "heroName": "Hiroim",
+      "set": "wwhk",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wwhk/hiroim",
+      "heroName": "Hiroim",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/hulkbuster-iron-man",
+      "heroName": "Hulkbuster Iron Man",
+      "set": "wwhk",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wwhk/hulkbuster-iron-man",
+      "heroName": "Hulkbuster Iron Man",
+      "set": "wwhk",
+      "mechanic": "outwit",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/hulkbuster-iron-man",
+      "heroName": "Hulkbuster Iron Man",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/hulkbuster-iron-man",
+      "heroName": "Hulkbuster Iron Man",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/joe-fixit-grey-hulk",
+      "heroName": "Joe Fixit, Grey Hulk",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/joe-fixit-grey-hulk",
+      "heroName": "Joe Fixit, Grey Hulk",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/korg",
+      "heroName": "Korg",
+      "set": "wwhk",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wwhk/korg",
+      "heroName": "Korg",
+      "set": "wwhk",
+      "mechanic": "outwit",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/korg",
+      "heroName": "Korg",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/korg",
+      "heroName": "Korg",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/miek-the-unhived",
+      "heroName": "Miek, The Unhived",
+      "set": "wwhk",
+      "mechanic": "feast",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/miek-the-unhived",
+      "heroName": "Miek, The Unhived",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/miek-the-unhived",
+      "heroName": "Miek, The Unhived",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/namora",
+      "heroName": "Namora",
+      "set": "wwhk",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wwhk/namora",
+      "heroName": "Namora",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/namora",
+      "heroName": "Namora",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/no-name-brood-queen",
+      "heroName": "No-Name, Brood Queen",
+      "set": "wwhk",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "wwhk/no-name-brood-queen",
+      "heroName": "No-Name, Brood Queen",
+      "set": "wwhk",
+      "mechanic": "feast",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/no-name-brood-queen",
+      "heroName": "No-Name, Brood Queen",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/rick-jones",
+      "heroName": "Rick Jones",
+      "set": "wwhk",
+      "mechanic": "reveal-min",
+      "status": "executable",
+      "wp": "WP-253",
+      "decision": "D-24024",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#reveal-min"
+    },
+    {
+      "extId": "wwhk/rick-jones",
+      "heroName": "Rick Jones",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/rick-jones",
+      "heroName": "Rick Jones",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/sentry",
+      "heroName": "Sentry",
+      "set": "wwhk",
+      "mechanic": "feast",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/sentry",
+      "heroName": "Sentry",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/sentry",
+      "heroName": "Sentry",
+      "set": "wwhk",
+      "mechanic": "transformed",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/she-hulk",
+      "heroName": "She-Hulk",
+      "set": "wwhk",
+      "mechanic": "outwit",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/she-hulk",
+      "heroName": "She-Hulk",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/she-hulk",
+      "heroName": "She-Hulk",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/skaar-son-of-hulk",
+      "heroName": "Skaar, Son of Hulk",
+      "set": "wwhk",
+      "mechanic": "smash",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/skaar-son-of-hulk",
+      "heroName": "Skaar, Son of Hulk",
+      "set": "wwhk",
+      "mechanic": "transform",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "wwhk/skaar-son-of-hulk",
+      "heroName": "Skaar, Son of Hulk",
+      "set": "wwhk",
+      "mechanic": "wounded-fury",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/aurora-northstar",
+      "heroName": "Aurora & Northstar",
+      "set": "xmen",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/aurora-northstar",
+      "heroName": "Aurora & Northstar",
+      "set": "xmen",
+      "mechanic": "lightshow",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/aurora-northstar",
+      "heroName": "Aurora & Northstar",
+      "set": "xmen",
+      "mechanic": "soaring-flight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/banshee",
+      "heroName": "Banshee",
+      "set": "xmen",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "xmen/banshee",
+      "heroName": "Banshee",
+      "set": "xmen",
+      "mechanic": "piercing-energy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/banshee",
+      "heroName": "Banshee",
+      "set": "xmen",
+      "mechanic": "soaring-flight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/banshee",
+      "heroName": "Banshee",
+      "set": "xmen",
+      "mechanic": "x-gene",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/beast",
+      "heroName": "Beast",
+      "set": "xmen",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/beast",
+      "heroName": "Beast",
+      "set": "xmen",
+      "mechanic": "x-gene",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/cannonball",
+      "heroName": "Cannonball",
+      "set": "xmen",
+      "mechanic": "soaring-flight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/colossus-wolverine",
+      "heroName": "Colossus & Wolverine",
+      "set": "xmen",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/colossus-wolverine",
+      "heroName": "Colossus & Wolverine",
+      "set": "xmen",
+      "mechanic": "soaring-flight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/colossus-wolverine",
+      "heroName": "Colossus & Wolverine",
+      "set": "xmen",
+      "mechanic": "x-gene",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/dazzler",
+      "heroName": "Dazzler",
+      "set": "xmen",
+      "mechanic": "lightshow",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/dazzler",
+      "heroName": "Dazzler",
+      "set": "xmen",
+      "mechanic": "piercing-energy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/havok",
+      "heroName": "Havok",
+      "set": "xmen",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/havok",
+      "heroName": "Havok",
+      "set": "xmen",
+      "mechanic": "lightshow",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/havok",
+      "heroName": "Havok",
+      "set": "xmen",
+      "mechanic": "x-gene",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/jubilee",
+      "heroName": "Jubilee",
+      "set": "xmen",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "xmen/jubilee",
+      "heroName": "Jubilee",
+      "set": "xmen",
+      "mechanic": "lightshow",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/kitty-pryde",
+      "heroName": "Kitty Pryde",
+      "set": "xmen",
+      "mechanic": "soaring-flight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/kitty-pryde",
+      "heroName": "Kitty Pryde",
+      "set": "xmen",
+      "mechanic": "x-gene",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/legion",
+      "heroName": "Legion",
+      "set": "xmen",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/legion",
+      "heroName": "Legion",
+      "set": "xmen",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "xmen/legion",
+      "heroName": "Legion",
+      "set": "xmen",
+      "mechanic": "lightshow",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/legion",
+      "heroName": "Legion",
+      "set": "xmen",
+      "mechanic": "piercing-energy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/legion",
+      "heroName": "Legion",
+      "set": "xmen",
+      "mechanic": "soaring-flight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/longshot",
+      "heroName": "Longshot",
+      "set": "xmen",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/phoenix",
+      "heroName": "Phoenix",
+      "set": "xmen",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/phoenix",
+      "heroName": "Phoenix",
+      "set": "xmen",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "xmen/phoenix",
+      "heroName": "Phoenix",
+      "set": "xmen",
+      "mechanic": "piercing-energy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/phoenix",
+      "heroName": "Phoenix",
+      "set": "xmen",
+      "mechanic": "soaring-flight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/polaris",
+      "heroName": "Polaris",
+      "set": "xmen",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "xmen/polaris",
+      "heroName": "Polaris",
+      "set": "xmen",
+      "mechanic": "piercing-energy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/polaris",
+      "heroName": "Polaris",
+      "set": "xmen",
+      "mechanic": "soaring-flight",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/polaris",
+      "heroName": "Polaris",
+      "set": "xmen",
+      "mechanic": "x-gene",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/psylocke",
+      "heroName": "Psylocke",
+      "set": "xmen",
+      "mechanic": "draw",
+      "status": "executable",
+      "wp": "",
+      "decision": "",
+      "handler": "packages/game-engine/src/hero/heroEffects.execute.ts#draw"
+    },
+    {
+      "extId": "xmen/psylocke",
+      "heroName": "Psylocke",
+      "set": "xmen",
+      "mechanic": "piercing-energy",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/psylocke",
+      "heroName": "Psylocke",
+      "set": "xmen",
+      "mechanic": "x-gene",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/x-23",
+      "heroName": "X-23",
+      "set": "xmen",
+      "mechanic": "berserk",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    },
+    {
+      "extId": "xmen/x-23",
+      "heroName": "X-23",
+      "set": "xmen",
+      "mechanic": "x-gene",
+      "status": "unsupported",
+      "wp": "",
+      "decision": "",
+      "handler": ""
+    }
+  ]
+}

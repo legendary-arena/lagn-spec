@@ -157,6 +157,13 @@ jobs:
       - name: Hero-effect coverage gate
         run: pnpm sim:coverage --check
 
+      # why: the committed hero mechanic ledger (docs/ai/coverage/) is generated
+      # from the same registry + engine dist; this freshness gate fails if a
+      # card-data or keyword change landed without regenerating it, so the
+      # at-a-glance worklist / debugging index never silently goes stale.
+      - name: Hero mechanic ledger freshness
+        run: pnpm ledger:heroes:check
+
   # ── 3c. Dashboard gates ──────────────────────────────────────────────────────
   # why: wires the apps/dashboard checks from
   # apps/dashboard/docs/code-checks-and-balances.md §11 into CI. The dashboard is

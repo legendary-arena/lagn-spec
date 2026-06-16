@@ -52,6 +52,8 @@
     "roadmap:counts:test":  "node --import tsx --test scripts/roadmap-counts.test.ts",
 
     "sim:coverage":         "node scripts/hero-effect-coverage.mjs",
+    "ledger:heroes":        "node scripts/hero-mechanic-ledger.mjs",
+    "ledger:heroes:check":  "node scripts/hero-mechanic-ledger.mjs --check",
 
     "themes:check-slugs":   "node scripts/check-theme-slug-resolution.mjs",
     "themes:check-slugs:check": "node scripts/check-theme-slug-resolution.mjs --check"
