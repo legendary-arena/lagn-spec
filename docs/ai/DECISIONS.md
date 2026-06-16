@@ -25159,6 +25159,19 @@ The eight fragmented `reveal-*` HeroKeywords (`reveal`, `reveal-ko`, `reveal-min
 
 ---
 
+**D-24025: Lobby Qualified-Form Ext_id Guard — Tenth `parseLoadoutJson` Error Code `unqualified_ext_id` (grammar-only, layer-boundary-safe)**
+
+`apps/arena-client`'s `parseLoadoutJson` (WP-092 shape guard) validated loadout SHAPE only, never id GRAMMAR, so a pre-D-24018 export — flat-card keys (`core-scheme-midtown-bank-robbery`) or bare slugs (`black-widow`) — passed the lobby and 500'd inside `Game.setup()` instead of failing in the lobby with an actionable message. WP-254 adds a tenth `ParseErrorCode` member `"unqualified_ext_id"` (nine → ten; the nine are byte-unchanged) and a fail-fast envelope-grammar pass over the five composition entity-id fields (`schemeId`, `mastermindId`, and each element of `villainGroupIds` / `henchmanGroupIds` / `heroDeckIds`): a value passes iff `value === value.trim()`, contains exactly one `/`, and both sides are non-empty. The pass runs AFTER the `COMPOSITION_FIELDS` type-check loop and BEFORE the `playerCount` checks, fail-fast (scalars first, then arrays villain → henchman → hero, first offender). Both the MATCH-SETUP and LAGN intake paths gain the guard from this one change.
+
+**Grammar-only, re-derived (layer boundary).** The check mirrors the engine's authoritative `parseQualifiedId` envelope grammar (D-10014) but is **re-derived by hand** — `apps/arena-client` must not import `@legendary-arena/registry` or the engine setup-tooling surface `@legendary-arena/game-engine/setup` at runtime (D-14401). It is the slash ENVELOPE only, never a `[a-z0-9-]` charset or registry-existence check: the engine remains the existence/charset authority (D-10014), and a lobby charset check could reject an engine-valid id — the inverse of the D-24018 bug. The message is **single-home** (`UNQUALIFIED_EXT_ID_TEMPLATE` in `parseLoadoutJson.ts`), deliberately NOT joined to the WP-093 five-copy byte-identity gate (D-9301); it is documented (not byte-locked) in `MATCH-SETUP-VALIDATION.md`, whose stale §Stage 2 `^[a-z0-9-]+$` prose this WP reconciles to the qualified `^[a-z0-9-]+/[a-z0-9-]+$` form (per the schema, D-24018).
+
+**Empirical-scaffold redraft (2026-06-15).** The original WP-254 draft + hardening reasoned "strictly additive — no existing test changes" and reached READY without running the suite. A scaffold run showed the guard rejects the bare-slug valid-loadout fixtures: 568 → 552 pass / 16 fail (14 in `parseLoadoutJson.test.ts`, 2 in `lobbyApi.test.ts` — outside the original three-file allowlist). The redraft folds the bare-slug → qualified fixture migration into scope (assertions unchanged) and adds `lobbyApi.test.ts` to the allowlist (four code files). The incident also drove the `01.0a §Step 3` / `01.4 §Empirical Scaffold (Validation-Tightening WPs)` rule that any validation-tightening WP be scaffold-tested before its pre-flight verdict.
+
+**Packet:** WP-254 (EC-285).
+**Status:** Reserved — drafted 2026-06-15; lands Active at WP-254 execution close.
+
+---
+
 **D-24026: "Done" Means User-Observable, Not Merged — `User-Visible Surface` Classification + Live-Verification Definition-of-Done Gate**
 
 Every Work Packet now declares a `**User-Visible Surface:**` in its header (one of

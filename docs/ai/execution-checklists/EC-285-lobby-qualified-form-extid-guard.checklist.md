@@ -7,6 +7,8 @@
 
 Authoritative execution contract for WP-254. Compliance is binary.
 
+**Redrafted 2026-06-15** (empirical-scaffold scope correction): the guard rejects bare-slug ids, so the pre-existing valid-loadout fixtures (`VALID_COMPOSITION`, its inline array override, and `lobbyApi.test.ts`'s `SAMPLE_CONFIG`) MUST be migrated to qualified ids — a fixture-VALUE change with every assertion unchanged. **Four** code files now (see Files to Produce). A throwaway scaffold run observed 568 → 552 pass / 16 fail before the migration; see WP-254 §Pre-Flight Self-Review (redraft note).
+
 ---
 
 ## Before Starting
@@ -31,6 +33,7 @@ Authoritative execution contract for WP-254. Compliance is binary.
 - **Renderer + helper visibility (locked):** `renderUnqualifiedExtIdMessage`, `isQualifiedExtId`, and the array-walk helper are all **module-private** — none is exported, despite `renderUnsupportedModeMessage` being exported (WP-092). The new message has no cross-file contract. Tests exercise behavior through `parseLoadoutJson` and assert the full message against a literal expected string; they do NOT import these helpers.
 - **`field` presence (locked):** every `unqualified_ext_id` error carries `field`. Scalars: `composition.schemeId` / `composition.mastermindId`. Array element: `composition.<name>[<index>]` with bracket notation (e.g. `composition.heroDeckIds[2]`), mirroring the engine validator's `checkArrayExtIds` field style.
 - **Ordering (locked):** the qualified-form pass runs **after** the `COMPOSITION_FIELDS` type-check loop has fully succeeded (every entity-id is already a string / non-empty-string array) and **before** the `playerCount` checks, and is **fail-fast** (first offender returned, scalar fields before array fields, arrays in the order villain → henchman → hero, ascending index). A value that fails a type check returns its original `missing_field` / `wrong_type` code — it never reaches the qualified pass. Placing it before `playerCount` is deliberate: the stale-id error (the defect this EC exists to catch) surfaces as soon as the composition is structurally valid, not after unrelated envelope checks.
+- **Fixture migration (locked — B1 + D):** the pre-existing valid-loadout fixtures use bare-slug ids the new guard rejects; migrate them to qualified `<setAbbr>/<slug>` ids. `parseLoadoutJson.test.ts`: shared `VALID_COMPOSITION` (`scheme-midtown-bank-robbery` → `core/midtown-bank-robbery`, `mastermind-magneto` → `core/magneto`, `villains-brotherhood` → `core/brotherhood`, `henchmen-hand-ninjas` → `core/hand-ninjas`, `hero-spider-man`/`hero-hulk`/`hero-wolverine`/`hero-black-widow` → `core/spider-man`/`core/hulk`/`core/wolverine`/`core/black-widow`) **and** the inline override in the "multiple entries per array" test (`villains-a`→`core/villains-a` … `hero-5`→`core/hero-5`). `lobbyApi.test.ts`: the same on `SAMPLE_CONFIG`. **Only fixture VALUES change** — every WP-092 / WP-090 assertion, test name, and count stays byte-identical (grammar-only guard ⇒ any `<nonempty>/<nonempty>` slug works; `deepEqual` compares against the same migrated constant). Mapping authority: WP-254 §Scope (In) B1.
 - **Commit message (execution):** `EC-285: lobby qualified-form ext_id guard — parseLoadoutJson (D-24025)`. (`EC-###:` prefix — code staged. The drafting commit that lands this WP+EC is a separate `SPEC:` commit.)
 
 ---
@@ -60,7 +63,8 @@ Authoritative execution contract for WP-254. Compliance is binary.
 ## Files to Produce
 
 - `apps/arena-client/src/lobby/parseLoadoutJson.ts` — **modified** — tenth code `"unqualified_ext_id"`; `UNQUALIFIED_EXT_ID_TEMPLATE` + `renderUnqualifiedExtIdMessage`; `isQualifiedExtId`; the fail-fast qualified-form pass + array-walk helper.
-- `apps/arena-client/src/lobby/parseLoadoutJson.test.ts` — **modified** — new `describe('parseLoadoutJson qualified-form guard (WP-254)')` block; the WP-092 30-test block untouched.
+- `apps/arena-client/src/lobby/parseLoadoutJson.test.ts` — **modified** — new `describe('parseLoadoutJson qualified-form guard (WP-254)')` block (B2) **and** B1 fixture migration (`VALID_COMPOSITION` + inline override → qualified ids); WP-092 assertions, names, and count unchanged.
+- `apps/arena-client/src/lobby/lobbyApi.test.ts` — **modified** — D fixture migration (`SAMPLE_CONFIG` → qualified ids); assertions, names, and count unchanged. (Second file the empirical scaffold surfaced — outside the original three-file allowlist; still arena-client, so the "only non-arena-client file" guardrail is unaffected.)
 - `docs/ai/REFERENCE/MATCH-SETUP-VALIDATION.md` — **modified** — §Stage 2 pattern reconciliation (`^[a-z0-9-]+$` → `^[a-z0-9-]+/[a-z0-9-]+$` for composition entity-ids, cite D-24018/D-24025) + the lobby `unqualified_ext_id` pre-check note (grammar-only, layer-boundary-safe, cite WP-254/D-24025).
 - Governance (execution close, NOT the SPEC commit): `STATUS.md`, `DECISIONS.md` (D-24025), `WORK_INDEX.md` (WP-254 ✅), `EC_INDEX.md` (EC-285 Done), `05-ROADMAP-MINDMAP.md`.
 
@@ -68,7 +72,7 @@ Authoritative execution contract for WP-254. Compliance is binary.
 
 ## After Completing
 
-- [ ] `pnpm --filter @legendary-arena/arena-client test` — all pass / 0 fail; WP-092 block unchanged; new WP-254 block green.
+- [ ] `pnpm --filter @legendary-arena/arena-client test` — all pass / 0 fail; WP-092 block green with **assertions/names/count unchanged** (only `VALID_COMPOSITION` + inline-override fixture values migrated, B1); `lobbyApi.test.ts` `parseLoadoutJson + createMatch (WP-092)` block green with `SAMPLE_CONFIG` migrated (D); new WP-254 block green.
 - [ ] `pnpm --filter @legendary-arena/arena-client typecheck` exits 0.
 - [ ] `ParseErrorCode` has exactly 10 members; `"unqualified_ext_id"` present; nine originals byte-unchanged.
 - [ ] `isQualifiedExtId` truth table holds: false for `"core-scheme-midtown-bank-robbery"`, `"black-widow"`, `"/x"`, `"core/"`, `"core/x/y"`, `" core/x"`, `"core/x "`, `""`; true for `"core/black-widow"`, `"vill/magneto"`.
@@ -79,14 +83,14 @@ Authoritative execution contract for WP-254. Compliance is binary.
 - [ ] `Select-String -Path apps\arena-client\src\lobby\parseLoadoutJson.ts -Pattern "parseQualifiedId"` → matches ONLY the JSDoc/why comment naming the mirrored authority; no import statement and no `parseQualifiedId(` call site. (The import grep above is kept separate so the required citation does not self-trip the gate.)
 - [ ] WP-093 template const byte-unchanged (`git diff` shows additions only, no edit to `UNSUPPORTED_HERO_SELECTION_MODE_TEMPLATE`).
 - [ ] `MATCH-SETUP-VALIDATION.md §Stage 2` no longer carries the bare `^[a-z0-9-]+$` for composition ids; the lobby pre-check is documented.
-- [ ] `git diff --name-only` → in the `EC-285:` code commit, ONLY the three Files to Produce; the governance files (`STATUS.md`, `DECISIONS.md`, `WORK_INDEX.md`, `EC_INDEX.md`, `05-ROADMAP-MINDMAP.md`) appear only in the separate closeout commit, never bundled into the code commit.
+- [ ] `git diff --name-only` → in the `EC-285:` code commit, ONLY the four Files to Produce (`parseLoadoutJson.ts`, `parseLoadoutJson.test.ts`, `lobbyApi.test.ts`, `MATCH-SETUP-VALIDATION.md`); the governance files (`STATUS.md`, `DECISIONS.md`, `WORK_INDEX.md`, `EC_INDEX.md`, `05-ROADMAP-MINDMAP.md`) appear only in the separate closeout commit, never bundled into the code commit.
 - [ ] `node scripts/roadmap-counts.mjs --check` passes (WP-254 node present).
 
 ---
 
 ## Common Failure Smells
 
-- A pre-existing WP-092 test's expected **code or message** changed → the new pass is not additive/ordered-after; it must only fire on a value that already passed its type check. Revert and re-order.
+- A pre-existing WP-092 **assertion, expected code, expected message, test name, or count** changed → the migration must touch fixture VALUES only (B1/D). The guard is additive/ordered-after; if a test's *expected code or message* changed (not just its fixture id values), the pass is mis-ordered — re-check that it fires only on a value that already passed its type check. (The bare-slug → qualified fixture VALUE change is required and expected; it is **not** a smell — that mistaken assumption is what the original draft got wrong.)
 - The new message reuses or paraphrases the heroSelectionMode template, or gets added to the five-copy gate → it is single-home; keep it separate (D-24025 vs D-9301).
 - `parseLoadoutJson.ts` imports `parseQualifiedId` / the engine / the registry → layer-boundary violation; re-derive the ≈6-line grammar locally.
 - The layer-boundary grep flags the required `parseQualifiedId` JSDoc citation as a violation → the import check must target `from '@legendary-arena/...'` import lines (Step 3), and the `parseQualifiedId` name legitimately appears in the mirrored-authority comment (Step 3b expects comment-only, not no-output). Do NOT delete the citation to satisfy a too-broad grep.
@@ -94,6 +98,6 @@ Authoritative execution contract for WP-254. Compliance is binary.
 - A valid qualified id (`"core/black-widow"`) is rejected → a charset check crept in; the grammar is slash-envelope ONLY.
 - `isQualifiedExtId("core/")` or `("/x")` returns true → the empty-segment guard is missing.
 - An array offender's `field` is `composition.heroDeckIds` without the `[index]` → bracket notation missing (mirror the engine's `checkArrayExtIds`).
-- `LobbyView.vue`, `lagnLoadout.ts`, `MATCH-SETUP-JSON-SCHEMA.json`, or any engine/registry file in the diff → the change leaked; re-confine to the three Files to Produce.
+- `LobbyView.vue`, `lagnLoadout.ts`, `MATCH-SETUP-JSON-SCHEMA.json`, or any engine/registry file in the diff → the change leaked; re-confine to the four Files to Produce.
 - The qualified pass runs before the type-check loop and throws/`undefined`-derefs on a non-string id → it must run only after the type loop succeeds.
 - `assert.match` / `.includes()` / substring used on the message → use `assert.strictEqual` on the full rendered message.
