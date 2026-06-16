@@ -72,6 +72,7 @@ For each WP, extract:
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
 - [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0
 - [ ] `pnpm --filter <package> typecheck` exits 0 — REQUIRED for app/client packages (see Rules)
+- [ ] Live-on-surface verification — REQUIRED when the WP's `User-Visible Surface` ≠ `none — infrastructure` (see Rules); for `none`, STATUS.md states "No user-observable change — infrastructure only"
 - [ ] `docs/ai/STATUS.md` updated
 - [ ] `docs/ai/DECISIONS.md` updated (list specific decisions)
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` checked off with date
@@ -113,6 +114,18 @@ For each WP, extract:
   WP-229 (a `VALID_HORIZONS` error caught + fixed in WP-230). Engine / registry
   / server WPs are covered by `pnpm -r build` (their build IS the typecheck) and
   need no separate line.
+- **User-facing WPs MUST gate live-on-surface verification (D-24026).** When the
+  WP's `User-Visible Surface` is NOT `none — infrastructure`, `After Completing`
+  MUST include a check that the change is confirmed **live on the named surface**
+  (a real match on play.legendary-arena.com, the deployed cards/dashboard page),
+  with observable evidence — green tests + a merged PR do not, alone, satisfy it.
+  The drift this prevents: WP-248..253 each marked "done" on tests + merge while
+  the operator saw no change on cards/play, because most were behavior-identical
+  refactors or tooling (legitimately `none — infrastructure`) — but "done" never
+  said so. For a `none — infrastructure` WP, the gate inverts: STATUS.md must
+  state "No user-observable change — infrastructure only" so the run is not read
+  as visible progress. Engine refactors a player cannot perceive ARE
+  `none — infrastructure`; classify honestly.
 - Short Title in the EC header should match the filename slug semantically
 - The "Common Failure Smells" section is optional — include it when the WP
   has known failure modes that are non-obvious from the guardrails alone

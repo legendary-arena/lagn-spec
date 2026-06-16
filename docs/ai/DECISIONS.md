@@ -25157,4 +25157,51 @@ The eight fragmented `reveal-*` HeroKeywords (`reveal`, `reveal-ko`, `reveal-min
 **Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
 **Status:** Active
 
+---
+
+**D-24026: "Done" Means User-Observable, Not Merged — `User-Visible Surface` Classification + Live-Verification Definition-of-Done Gate**
+
+Every Work Packet now declares a `**User-Visible Surface:**` in its header (one of
+`play.legendary-arena.com` / `cards.legendary-arena.com` / `dashboard` / `wiki` /
+`none — infrastructure`) plus a `## User-Visible Impact` statement, and the
+Definition of Done carries a CONDITIONAL gate keyed on it: a packet whose surface
+is NOT `none — infrastructure` is **not done on green tests + a merged PR alone** —
+the change must be confirmed **live on the named surface** (a real match on
+play.legendary-arena.com, the deployed cards/dashboard page) with observable
+evidence (a screenshot, an observed behavior, or a deploy-confirmed commit SHA
+serving the change). A packet whose surface IS `none — infrastructure` inverts the
+gate: its `STATUS.md` entry MUST state "No user-observable change — infrastructure
+only" (with the payoff named) so a run of such packets is never read as visible
+progress.
+
+**Why.** "Done" had drifted to mean "tests pass + PR merged + governance ledger
+updated" — an engineering-internal bar fully decoupled from whether a player,
+visitor, or operator can observe anything. WP-248 through WP-253 were each marked
+"done" while the operator saw zero change on cards.legendary-arena.com and
+play.legendary-arena.com. That was *mostly correct and mostly invisible by design*:
+WP-250 (coverage gate) is tooling; WP-251/252/253 are behavior-identical engine
+refactors (the reveal/villain vocabulary collapse — byte-identical by construction,
+sentinel hash unchanged); only WP-249 added a player-facing prompt, and narrowly.
+The defect was not the work — it was that "done" never distinguished
+"infrastructure that pays off later" from "value a human can see now," so six
+consecutive closes read as progress on the revenue-facing surfaces when there was
+none. This gate makes that distinction mandatory and auditable at draft time
+(`00.3 §15.1` lint check), at execution close (`EC-TEMPLATE` After Completing +
+Rules; `01.0b` Step 11), and in the WP's own Definition of Done.
+
+**Scope / enforcement surface.** `docs/ai/work-packets/PACKET-TEMPLATE.md` (header
+field + `## User-Visible Impact` section + conditional DoD gate);
+`docs/ai/REFERENCE/00.3-prompt-lint-checklist.md §15.1` (draft-time lint check +
+FAIL conditions); `docs/ai/execution-checklists/EC-TEMPLATE.md` (After Completing
+item + a Rule mirroring the `typecheck` conditional-gate precedent);
+`docs/ai/REFERENCE/01.0b-wp-execution-phase.md §Step 11` (push+cleanup note). No
+code, no engine/contract change — a process-governance change only. It does NOT
+relax any existing gate (tests/build/typecheck/scope-boundary all still required);
+it ADDS the observability requirement on top.
+
+**Packet:** none — SPEC governance change (process/template/lint docs). Authored
+2026-06-15 in response to the operator's "the definition of done is drifting in
+meaning" flag.
+**Status:** Active
+
 Protect this file.
