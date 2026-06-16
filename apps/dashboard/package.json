@@ -6,8 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/build-governance-snapshot.mjs && vite build",
+    "build": "node scripts/build-governance-snapshot.mjs && node scripts/build-coverage-ledger.mjs && vite build",
     "prebuild:snapshot": "node scripts/build-governance-snapshot.mjs",
+    "prebuild:coverage": "node scripts/build-coverage-ledger.mjs",
     "roadmap:schedule": "node --import tsx scripts/roadmap-schedule-check.mjs",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",

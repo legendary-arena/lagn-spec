@@ -193,6 +193,12 @@ jobs:
       - name: Generate governance snapshot
         run: pnpm --filter @legendary-arena/dashboard prebuild:snapshot
 
+      # why: src/data/coverage-ledger.json is a build-time copy of the committed
+      # hero mechanic ledger (gitignored) imported statically by useCoverageLedger
+      # — it must exist before typecheck / test / build can resolve the module.
+      - name: Generate coverage ledger
+        run: pnpm --filter @legendary-arena/dashboard prebuild:coverage
+
       - name: Lint dashboard
         run: pnpm --filter @legendary-arena/dashboard lint
 

@@ -1,12 +1,22 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useBuildRoadmap, taskStateLabel } from '../../composables/useBuildRoadmap.js';
+import { useCoverageLedger } from '../../composables/useCoverageLedger.js';
 import type { TaskState } from '../../types/roadmap.js';
 
 // why: the data is static, so the summary is computed once at setup against the
 // real clock. Tests cover the pure logic directly (useBuildRoadmap.test.ts); the
 // page is thin presentation over the composable.
 const summary = useBuildRoadmap();
+
+// why: surface live hero-effect coverage on the product-content workstream so the
+// roadmap reflects real progress (e.g. Berserk shipping) instead of only the
+// hand-set task statuses. Reads the same bundled ledger as the Coverage page.
+const coverage = useCoverageLedger();
+const productCoverageLabel = computed(
+  () =>
+    `${coverage.percentExecutable.value}% hero mechanics executable · ${coverage.summary.value.byStatus.unsupported} unsupported`,
+);
 
 /** Maps a schedule state to its CSS modifier class for the colored badges/banner. */
 function stateClass(state: TaskState): string {
@@ -85,6 +95,10 @@ const bannerMessage = computed(() => {
           {{ taskStateLabel(workstream.state) }}
         </span>
       </div>
+      <p v-if="workstream.id === 'product-content'" class="coverage-line">
+        {{ productCoverageLabel }} —
+        <RouterLink to="/coverage">full coverage ledger →</RouterLink>
+      </p>
       <ul class="task-list">
         <li v-for="task in workstream.tasks" :key="task.id" class="task-row">
           <span class="state-badge" :class="stateClass(task.state)">
@@ -196,6 +210,12 @@ const bannerMessage = computed(() => {
   margin: 0;
   font-size: 1.1rem;
   color: var(--p-text-color);
+}
+
+.coverage-line {
+  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  color: var(--p-text-muted-color);
 }
 
 .task-list {
