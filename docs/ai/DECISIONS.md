@@ -25237,4 +25237,21 @@ D-24024 (WP-253) collapsed the 8 `reveal-*` keywords into one parameterized `rev
 **Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
 **Status:** Active
 
+---
+
+**D-24028: Lightweight (Single-Session) Lane for Small Additive WPs — Eligibility Gate + Empirical-over-Procedural Independence**
+
+The two-session pattern (`01.0a`) optimizes for cross-layer coordination, contract safety, and audit separation. For small, single-scope, additive work it inverts the cost — process exceeds execution (the WP-254 precedent: ~2h of code across three PRs + a redraft cycle, with excessive permission round-trips). This decision adds an **opt-in, strictly-narrower** lightweight lane that collapses such a WP into one session / one branch / one PR, governed by `01.0a §Lightweight Lane (single session)` with a cross-reference in `01.0b`.
+
+**The eligibility gate is the locked invariant** (ALL required; any miss → the two-session pattern; any ambiguity resolves against eligibility): single layer / single package; ≤ 4 code-test files + ≤ 1 same-layer runtime-wiring file; no `01.6` trigger; no new contract file; ≤ 1 scoped rationale-only D-entry; surface limited to narrow validation / UX copy (never scoring/PAR/identity/sync/monetization/RNG/determinism); strictly additive or a mechanical migration; zero determinism/persistence/sentinel-hash impact (`finalStateHash` unchanged or N/A). Eligibility is **provisional at draft** (structural criteria) and **confirmed at govern-close** (empirical criteria).
+
+**Nothing load-bearing is dropped.** Tests + typecheck green, scaffold-first for validation-tightening, layer-boundary discipline, the EC allowlist + locked values, the `00.3` lint gate, the two-commit topology (`EC-NNN:` + `SPEC:`), a **condensed pre-flight** (dependencies complete + cited authority/contracts on `main` + scope locked), and D-24026 live-verification for user-visible surfaces all remain. What collapses: the two-session split, the separate `SPEC:`-draft PR, the separate live-verification PR (→ a single post-merge STATUS-flip commit, since live-verification is inherently post-deploy), and the full `01.7` copilot audit (→ a targeted self-review).
+
+**The tradeoff (rationale).** The two-session split provides *procedural* independence (draft author ≠ executor at the same moment). The lane replaces it with **empirical** independence: a mandatory scaffold run — the change prototyped and the affected suite run, with observed output recorded; no reasoning or simulation substitute. An observed test result does not care who holds the pen, which is the stronger guarantee. WP-254's original pre-flight failed precisely because it was reasoned, not run; the scaffold gate (`01.4 §Empirical Scaffold`, `01.0a §Step 3`) is the fix.
+
+**Anti-gaming + self-demotion.** A WP is disqualified from the lane if eligibility is argued in prose rather than demonstrated with evidence (a `git diff --name-only` file count, an unchanged `finalStateHash`, the absence of a contract file, the scaffold output), if the scaffold is skipped or not run before eligibility is confirmed, or if inline EC amendments exceed 3 (deliberately tighter than `01.0b`'s ~5-amendment heavyweight threshold). The lane self-demotes — STOP, convert to two-session or split — the moment a new contract is required, a layer is crossed, a determinism/persistence/hash surface is touched, the file/wiring budget is exceeded, a `01.6` trigger fires, or any scope-classification ambiguity arises. The lane MUST NOT absorb out-of-scope work.
+
+**Packet:** none — SPEC governance change (`01.0a` / `01.0b` process docs). Authored 2026-06-16 in response to the operator's WP-254 retrospective (a minor WP consumed a day + excessive permission pauses); complements the `01.4` / `01.0a §Step 3` scaffold-first rule (D-24025 incident) and the #344 CLAUDE.md full-preflight mandate.
+**Status:** Active
+
 Protect this file.
