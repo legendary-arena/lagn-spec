@@ -25273,4 +25273,28 @@ Ratifies the architecture proposed in `docs/ai/DESIGN-EFFECT-MODEL-DECISION.md` 
 **Packet:** none — architecture decision; the design doc (`docs/ai/DESIGN-EFFECT-MODEL-DECISION.md`) merged via #350. `DESIGN-EFFECT-AUTHORING-SCALE.md` §2b/§5/§6 updated to reflect the shift from mechanic-keywords to primitive composition. The Berserk proving WP follows.
 **Status:** Active
 
+---
+
+**D-24030: Effect Primitive Registry v1 — Homogeneous Effect-Descriptor AST + Deterministic Interpreter + Transient Execution-Context Invariant (the CLOSED surface)**
+
+Implements the closed half of **D-24029** (composable primitives) as the bootstrap landed by WP-256 (Berserk). The engine gains a small, closed, versioned, drift-tested set of **primitives** the interpreter walks — never arbitrary per-card code. The descriptor is a **homogeneous AST**: every node carries a `type`; a composition is an explicit `{ type: 'sequence', steps: [...] }`, never a raw array. The first node types (`rules/effectPrimitive.types.ts`) are `sequence` (control), `move-card` + `gain-resource` (actions), and the `card-printed-stat` value expression; the first parameter unions are `EFFECT_RESOURCE_KINDS` (`attack`/`recruit`), `EFFECT_ZONE_KINDS` (`deck`/`discard`), `EFFECT_CARD_POSITIONS` (`top`), `EFFECT_OWNER_KINDS` (`current-player`). Each closed union carries a canonical readonly array with a drift test (code-style §Drift Detection); the two dispatch registries (`EFFECT_NODE_HANDLERS`, `VALUE_EXPRESSION_EVALUATORS` in `hero/effectPrimitive.interpret.ts`) are ImplementationMaps held outside `G` whose keys are asserted bidirectionally against their arrays (the WP-251 `HANDLED_KEYWORDS` pattern).
+
+**The closed union grows by PRIMITIVES, not mechanics (D-24029 §7).** `recruit`/`recruit`-stat are seeded so the Berserk Recruit cousin is pure data, not an engine edit; a primitive named for a mechanic (`discard-top-gain-from-stat`) FAILS D-24029 §6. The `HeroKeyword` union and its 17-entry drift test are **untouched** — Berserk is NOT a keyword.
+
+**Load-bearing replay invariant (D-24029 §9):** the `bind`/`ref` `EffectExecutionContext` is a local `Map<string, CardExtId>` created **per top-level effect evaluation**, lexically scoped to its enclosing `sequence`, and **NEVER written to `G`/`ctx`** — bound values are transient interpreter state, re-derived identically on replay, not game state. A binding in `G` would break the persistence boundary and risk replay double-application. Determinism is preserved throughout: `card-printed-stat` reads setup-resolved `G.cardStats`; empty-source `move-card` is a deterministic no-op (no reshuffle, mirroring the `reveal` D-21502 posture); a missing `cardStats` entry or unbound `ref` resolves to 0; unknown node/value types warn to `G.messages` and continue (never throw). The interpreter imports no `boardgame.io`/registry (uses `zoneOps` + `addResources`).
+
+**Packet:** WP-256 / EC-287.
+**Status:** Drafted 2026-06-16; not yet landed — lands at WP-256 execution.
+
+---
+
+**D-24031: Hero Composition Marker Seam — the OPEN, Data-Authored, Coverage-Ledgered Mechanic Space**
+
+Implements the open half of **D-24029** (landed by WP-256). A card **mechanic** (Berserk) is a *composition of primitives* expressed as data, distinct from the closed primitive registry (D-24030). `rules/heroCompositions.ts` holds `HERO_COMPOSITION_MARKERS: Record<string, EffectNode>` mapping a card marker name to a top-level AST, seeded with exactly one entry — `berserk` → `sequence[ move-card{deck.top → discard, bind discardedCard}, gain-resource{attack, card-printed-stat(discardedCard, attack)} ]` — plus `HERO_COMPOSITION_MARKER_NAMES` (the canonical key array). The setup parser recognizes a `[keyword:X]` token whose normalized name is a registry key and attaches a copy of that AST to a **new additive** `HeroAbilityHook.primitiveEffects?: EffectNode[]` — **never** to `hook.keywords` (`berserk` is not a `HeroKeyword`). `executeHeroEffects` interprets `primitiveEffects` inside the same hook-conditions gate as legacy `effects`.
+
+**This is the open surface (D-24029 §7):** adding a mechanically-adjacent mechanic — the Recruit-stat Berserk cousin (`resource:recruit`/`stat:recruit`) — is a **data row** in `HERO_COMPOSITION_MARKERS` (no new keyword, primitive, handler, union edit, or D-entry), proven by a WP-256 test that feeds the cousin AST to the interpreter. The 29 existing `[keyword:Berserk]` markers (`wpnx`/`xmen` heroes) keep working unchanged — **`data/cards` byte-unchanged** (the parser learns to translate them, mirroring WP-252/253). The Lever-3 instruments learn the mechanic space without duplicating vocabulary: the coverage probe (`scripts/hero-effect-coverage.mjs`) counts a hook with `primitiveEffects` as EXECUTABLE and unions `HERO_COMPOSITION_MARKER_NAMES` into its known-markup set (so `berserk` leaves `unsupportedMechanics`); the mechanic ledger (`scripts/hero-mechanic-ledger.mjs`) reports composition markers as `executable` with an interpreter handler column; `mechanic-provenance.json` records `berserk → {wp:"WP-256", decision:"D-24031"}`. Premature-abstraction counter-pressure (D-24029 §10) holds: only `berserk` is seeded; no general AST-from-markup parser and no second card are built this WP.
+
+**Packet:** WP-256 / EC-287.
+**Status:** Drafted 2026-06-16; not yet landed — lands at WP-256 execution.
+
 Protect this file.
