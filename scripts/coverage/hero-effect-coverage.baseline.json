@@ -1,9 +1,9 @@
 {
   "corpus": {
-    "executable": 2516,
+    "executable": 2517,
     "heroes": 309,
-    "hooks": 5739,
-    "noEffect": 3218,
+    "hooks": 5741,
+    "noEffect": 3219,
     "parsedNotExecuted": 5
   },
   "perSet": {
@@ -58,9 +58,9 @@
       "noEffect": 95
     },
     "core": {
-      "executable": 148,
+      "executable": 149,
       "hooks": 229,
-      "noEffect": 76
+      "noEffect": 75
     },
     "cosm": {
       "executable": 44,
@@ -149,8 +149,8 @@
     },
     "rlmk": {
       "executable": 45,
-      "hooks": 116,
-      "noEffect": 71
+      "hooks": 118,
+      "noEffect": 73
     },
     "rvlt": {
       "executable": 55,
@@ -286,6 +286,8 @@
     "patrol-your-victory-pile": 1,
     "phasing": 12,
     "piercing-energy": 11,
+    "reveal-count": 1,
+    "reveal:cost-lte-2:draw": 1,
     "ritual-artifact": 8,
     "rooftops": 1,
     "rooftops-abomination": 1,
