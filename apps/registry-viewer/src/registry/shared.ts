@@ -115,6 +115,11 @@ export function flattenSet(
         setAbbr:     abbr,
         setName,
         name:        card.name ?? "",
+        // why: group/entity display name for the loadout picker — the hero
+        // ("Black Widow"), not the member card's name ("Mission Accomplished").
+        // The picker collapses a hero's cards by extId; labeling by groupName
+        // makes one click add the whole hero group.
+        groupName:   hero.name,
         slug:        card.slug,
         imageUrl:    sideToImageUrl.get(card.slug) ?? "",
         physicalCardImageUrl: sideToImageUrl.get(card.slug),
@@ -153,6 +158,9 @@ export function flattenSet(
         setAbbr:   abbr,
         setName,
         name:      card.name,
+        // why: group name for the loadout picker — the mastermind ("Dr. Doom"),
+        // not whichever tactic/main card lands first in the collapsed entry.
+        groupName: mm.name,
         slug:      card.slug,
         imageUrl:  card.imageUrl ?? "",
         abilities: card.abilities ?? [],
@@ -189,6 +197,9 @@ export function flattenSet(
         setAbbr:   abbr,
         setName,
         name:      card.name,
+        // why: group name for the loadout picker — the villain group
+        // ("Brotherhood"), not a member card ("Blob"). One click adds the group.
+        groupName: group.name,
         slug:      card.slug,
         imageUrl:  card.imageUrl ?? "",
         abilities: card.abilities ?? [],
@@ -255,6 +266,9 @@ export function flattenSet(
           setAbbr:   abbr,
           setName,
           name:      String(cardRecord["name"] ?? groupName),
+          // why: group name for the loadout picker — the henchman group, not a
+          // per-variant sub-card (e.g. one of Mandarin's Rings).
+          groupName,
           slug:      cardSlug,
           imageUrl:  String(cardRecord["imageUrl"] ?? henchmanRecord["imageUrl"] ?? ""),
           abilities: Array.isArray(cardRecord["abilities"]) ? cardRecord["abilities"] as string[] : [],
@@ -272,6 +286,8 @@ export function flattenSet(
       setAbbr:   abbr,
       setName,
       name:      groupName,
+      // why: group name for the loadout picker (single-card henchman group).
+      groupName,
       slug:      groupSlug,
       imageUrl:  String(henchmanRecord["imageUrl"] ?? ""),
       abilities: Array.isArray(henchmanRecord["abilities"]) ? henchmanRecord["abilities"] as string[] : [],
@@ -292,6 +308,9 @@ export function flattenSet(
       setAbbr:   abbr,
       setName,
       name:      scheme.name,
+      // why: schemes are a single entity, so groupName mirrors name — set
+      // explicitly so the picker's groupName label path is uniform across slots.
+      groupName: scheme.name,
       slug:      scheme.slug,
       imageUrl:  scheme.imageUrl ?? "",
       abilities: scheme.cards?.flatMap((c) => c.abilities ?? []) ?? [],

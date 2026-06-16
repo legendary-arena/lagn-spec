@@ -51,6 +51,18 @@ export interface FlatCard {
   setAbbr:   string;
   setName:   string;
   name:      string;
+  /**
+   * Group/entity display name for the loadout picker (WP-091 builder).
+   * For the five composition entity types this is the GROUP the `extId`
+   * points at — hero name ("Black Widow"), mastermind name, villain group
+   * ("Brotherhood"), henchman group, scheme name — NOT a member card's
+   * name. The picker collapses a group's member cards into one entry by
+   * `extId`; labeling by `groupName` (rather than `name`) makes one click
+   * add the whole group instead of reading like an individual card.
+   * Absent on non-composition card types (bystander, wound, other), where
+   * the picker never renders.
+   */
+  groupName?: string;
   slug:      string;
   imageUrl:  string;
   /** Hero-only: image URL resolved from physicalCards[] (D-14103). */

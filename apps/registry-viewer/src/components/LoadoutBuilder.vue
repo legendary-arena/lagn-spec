@@ -119,7 +119,15 @@ const pickerOptions = computed<Array<{ id: string; label: string; cardType: Flat
     // member card.
     const id = card.extId;
     if (!entriesById.has(id)) {
-      entriesById.set(id, { id, label: card.name, cardType });
+      // why: label the collapsed entry by the GROUP/entity name carried on
+      // FlatCard.groupName (hero "Black Widow", villain "Brotherhood", …),
+      // NOT a member card's name. The cards already collapse into one entry
+      // per group above; labeling by card.name made that single entry read
+      // like an individual card (e.g. "Mission Accomplished"), so authors
+      // thought they had to pick each of a hero's 14 cards. groupName makes
+      // one click add the whole group. Falls back to card.name for any card
+      // type that doesn't carry a groupName (never a picker slot today).
+      entriesById.set(id, { id, label: card.groupName ?? card.name, cardType });
     }
   }
   const all = [...entriesById.values()];
