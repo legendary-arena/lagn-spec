@@ -19,16 +19,20 @@ interface ValidCompositionFixture {
   sidekicksCount: number;
 }
 
+// WP-254 (D-24025): the lobby qualified-form guard rejects bare-slug ids, so
+// these fixtures use set-qualified <setAbbr>/<slug> ext_ids (the form a real
+// post-D-24018 Registry Viewer export produces). Migrating the VALUES leaves
+// every WP-092 assertion below byte-identical; the grammar guard is satisfied.
 const VALID_COMPOSITION: ValidCompositionFixture = {
-  schemeId: 'scheme-midtown-bank-robbery',
-  mastermindId: 'mastermind-magneto',
-  villainGroupIds: ['villains-brotherhood'],
-  henchmanGroupIds: ['henchmen-hand-ninjas'],
+  schemeId: 'core/midtown-bank-robbery',
+  mastermindId: 'core/magneto',
+  villainGroupIds: ['core/brotherhood'],
+  henchmanGroupIds: ['core/hand-ninjas'],
   heroDeckIds: [
-    'hero-spider-man',
-    'hero-hulk',
-    'hero-wolverine',
-    'hero-black-widow',
+    'core/spider-man',
+    'core/hulk',
+    'core/wolverine',
+    'core/black-widow',
   ],
   bystandersCount: 1,
   woundsCount: 30,
@@ -67,14 +71,14 @@ describe('parseLoadoutJson (WP-092)', () => {
       buildValidDocument({
         composition: {
           ...VALID_COMPOSITION,
-          villainGroupIds: ['villains-a', 'villains-b', 'villains-c'],
-          henchmanGroupIds: ['henchmen-a', 'henchmen-b'],
+          villainGroupIds: ['core/villains-a', 'core/villains-b', 'core/villains-c'],
+          henchmanGroupIds: ['core/henchmen-a', 'core/henchmen-b'],
           heroDeckIds: [
-            'hero-1',
-            'hero-2',
-            'hero-3',
-            'hero-4',
-            'hero-5',
+            'core/hero-1',
+            'core/hero-2',
+            'core/hero-3',
+            'core/hero-4',
+            'core/hero-5',
           ],
         },
       }),
@@ -559,5 +563,195 @@ describe('parseLoadoutJson (WP-092)', () => {
         `expected ok=false for input length ${input.length}`,
       );
     }
+  });
+});
+
+// WP-254 (D-24025): renderUnqualifiedExtIdMessage is module-private, so the
+// expected message is rebuilt here from the same template and asserted in full
+// (strictEqual, never substring / .includes).
+function expectedUnqualifiedExtIdMessage(field: string, value: string): string {
+  return `The loadout field "${field}" value "${value}" is not a set-qualified ext_id of the form "<setAbbr>/<slug>" (for example, "core/black-widow"). This usually means the loadout was exported before the qualified-ext_id fix; re-export it from the Registry Viewer loadout builder at cards.barefootbetters.com.`;
+}
+
+describe('parseLoadoutJson qualified-form guard (WP-254)', () => {
+  test('rejects a flat-card-key schemeId with the full unqualified_ext_id message', () => {
+    const json = JSON.stringify(
+      buildValidDocument({
+        composition: {
+          ...VALID_COMPOSITION,
+          schemeId: 'core-scheme-midtown-bank-robbery',
+        },
+      }),
+    );
+    const result = parseLoadoutJson(json);
+
+    assert.equal(result.ok, false);
+    if (result.ok !== false) {
+      return;
+    }
+    assert.equal(result.error.code, 'unqualified_ext_id');
+    assert.strictEqual(result.error.field, 'composition.schemeId');
+    assert.strictEqual(
+      result.error.message,
+      expectedUnqualifiedExtIdMessage(
+        'composition.schemeId',
+        'core-scheme-midtown-bank-robbery',
+      ),
+    );
+  });
+
+  test('rejects a bare-slug mastermindId', () => {
+    const json = JSON.stringify(
+      buildValidDocument({
+        composition: { ...VALID_COMPOSITION, mastermindId: 'magneto' },
+      }),
+    );
+    const result = parseLoadoutJson(json);
+
+    assert.equal(result.ok, false);
+    if (result.ok !== false) {
+      return;
+    }
+    assert.equal(result.error.code, 'unqualified_ext_id');
+    assert.strictEqual(result.error.field, 'composition.mastermindId');
+    assert.strictEqual(
+      result.error.message,
+      expectedUnqualifiedExtIdMessage('composition.mastermindId', 'magneto'),
+    );
+  });
+
+  test('rejects a flat-key heroDeckIds entry with bracket-notation field at its index', () => {
+    const json = JSON.stringify(
+      buildValidDocument({
+        composition: {
+          ...VALID_COMPOSITION,
+          heroDeckIds: [
+            'core/spider-man',
+            'core/hulk',
+            'hero-wolverine',
+            'core/black-widow',
+          ],
+        },
+      }),
+    );
+    const result = parseLoadoutJson(json);
+
+    assert.equal(result.ok, false);
+    if (result.ok !== false) {
+      return;
+    }
+    assert.equal(result.error.code, 'unqualified_ext_id');
+    assert.strictEqual(result.error.field, 'composition.heroDeckIds[2]');
+    assert.strictEqual(
+      result.error.message,
+      expectedUnqualifiedExtIdMessage(
+        'composition.heroDeckIds[2]',
+        'hero-wolverine',
+      ),
+    );
+  });
+
+  test('rejects each edge-envelope failure (empty setAbbr, empty slug, multiple slashes, surrounding whitespace)', () => {
+    const badValues = [
+      '/black-widow',
+      'core/',
+      'core/x/y',
+      ' core/x',
+      'core/x ',
+    ];
+    for (const badValue of badValues) {
+      const json = JSON.stringify(
+        buildValidDocument({
+          composition: { ...VALID_COMPOSITION, schemeId: badValue },
+        }),
+      );
+      const result = parseLoadoutJson(json);
+
+      assert.equal(
+        result.ok,
+        false,
+        `expected ok=false for schemeId "${badValue}"`,
+      );
+      if (result.ok !== false) {
+        return;
+      }
+      assert.equal(result.error.code, 'unqualified_ext_id');
+      assert.strictEqual(result.error.field, 'composition.schemeId');
+      assert.strictEqual(
+        result.error.message,
+        expectedUnqualifiedExtIdMessage('composition.schemeId', badValue),
+      );
+    }
+  });
+
+  test('accepts a fully-qualified document (no false rejection of engine-valid ids)', () => {
+    const json = JSON.stringify(
+      buildValidDocument({
+        composition: {
+          schemeId: 'core/midtown-bank-robbery',
+          mastermindId: 'core/magneto',
+          villainGroupIds: ['core/skrulls'],
+          henchmanGroupIds: ['core/sentinel'],
+          heroDeckIds: ['core/thor', 'core/black-widow'],
+          bystandersCount: 1,
+          woundsCount: 30,
+          officersCount: 5,
+          sidekicksCount: 12,
+        },
+        playerCount: 2,
+      }),
+    );
+    const result = parseLoadoutJson(json);
+
+    assert.equal(result.ok, true);
+  });
+
+  test('regression: an unrelated WP-092 failure still returns its original code (the new pass is additive)', () => {
+    const document = buildValidDocument();
+    delete (document['composition'] as Record<string, unknown>)['schemeId'];
+    const result = parseLoadoutJson(JSON.stringify(document));
+
+    assert.equal(result.ok, false);
+    if (result.ok !== false) {
+      return;
+    }
+    assert.equal(result.error.code, 'missing_field');
+    assert.strictEqual(result.error.field, 'composition.schemeId');
+  });
+
+  test('type-precedence: a non-string schemeId returns wrong_type, never unqualified_ext_id', () => {
+    const json = JSON.stringify(
+      buildValidDocument({
+        composition: { ...VALID_COMPOSITION, schemeId: 42 },
+      }),
+    );
+    const result = parseLoadoutJson(json);
+
+    assert.equal(result.ok, false);
+    if (result.ok !== false) {
+      return;
+    }
+    assert.equal(result.error.code, 'wrong_type');
+    assert.strictEqual(result.error.field, 'composition.schemeId');
+  });
+
+  test('cross-field first-offender: villainGroupIds[1] is reported before heroDeckIds[0]', () => {
+    const json = JSON.stringify(
+      buildValidDocument({
+        composition: {
+          ...VALID_COMPOSITION,
+          villainGroupIds: ['core/brotherhood', 'villains-bad'],
+          heroDeckIds: ['hero-bad', 'core/hulk'],
+        },
+      }),
+    );
+    const result = parseLoadoutJson(json);
+
+    assert.equal(result.ok, false);
+    if (result.ok !== false) {
+      return;
+    }
+    assert.equal(result.error.code, 'unqualified_ext_id');
+    assert.strictEqual(result.error.field, 'composition.villainGroupIds[1]');
   });
 });

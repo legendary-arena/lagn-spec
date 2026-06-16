@@ -1,7 +1,8 @@
 # WP-254 — Lobby Qualified-Form Ext_id Guard (parseLoadoutJson)
 
-**Status:** Draft — **redrafted 2026-06-15** (fixture-migration scope correction after an empirical scaffold run; see §Pre-Flight Self-Review). Pending review.
+**Status:** **Executed 2026-06-16** (EC-285 commit `25f40038`; arena-client `test` 568 → 576 / 0, `typecheck` 0). **Live-verification PENDING (D-24026)** — see Definition of Done; not closed until the play.legendary-arena.com bundle is confirmed serving this SHA.
 **Primary Layer:** Arena Client (`apps/arena-client/src/lobby/**`) + governance reconciliation
+**User-Visible Surface:** play.legendary-arena.com (D-24026; resolved 2026-06-16 — NOT `none — infrastructure`; see `## User-Visible Impact`)
 **Dependencies:** WP-092 ✅ (the `parseLoadoutJson` shape guard + locked 9-code error enum this extends), WP-093 ✅ (the locked `heroSelectionMode` template — this WP must NOT disturb it), WP-113 ✅ / D-10014 (the engine's `<setAbbr>/<slug>` qualified-ID contract this mirrors), WP-244/245 ✅ (the LAGN intake path that routes through `parseLoadoutJson`), D-24018 (the canonical-extId fix that made the viewer emit qualified ids and widened `MATCH-SETUP-JSON-SCHEMA.json`)
 
 ---
@@ -235,6 +236,12 @@ git diff --name-only
 
 ---
 
+## User-Visible Impact
+
+On `play.legendary-arena.com`, a user who uploads or pastes a stale loadout (a pre-D-24018 export with flat-card keys like `core-scheme-midtown-bank-robbery` or bare slugs like `black-widow`) now sees an actionable in-lobby error — `unqualified_ext_id`: "…re-export it from the Registry Viewer loadout builder…" — instead of the previous opaque `Game.setup()` HTTP 500. The success path is unchanged: a current, qualified loadout submits exactly as before. This is an **error-path UX improvement**, not a new feature — observable, but only when a malformed loadout is submitted. (Surface reachability: the lobby loadout-paste / upload path is the WP-092 / WP-244–245 ingestion surface; the live-verification evidence states honestly whether it is fully user-facing or developer/beta on live play today.)
+
+---
+
 ## Vision Alignment
 
 **§17 status: N/A — declared, not omitted.** This WP touches none of the §17.1 trigger surfaces: it is a client-side input-validation guard on match-setup ingestion. It does not touch scoring/PAR/leaderboards, replays or replay verification, player identity/accounts, multiplayer sync/reconnection, determinism/RNG sourcing, card-data/content semantics, monetization, live-ops/beta gates, accessibility/i18n, or the Registry Viewer public surface (the change is in `apps/arena-client`, not `apps/registry-viewer`). If anything, it strengthens the MATCH-SETUP "invalid setup must be rejected before a game exists" trust boundary by catching a malformed setup earlier, but it introduces no new behavior on any §17.1 surface. **§20 Funding:** N/A — client-side validation only; no funding affordances, channels, or user-visible funding copy. **§21 API Catalog:** N/A — no `apps/server` HTTP endpoint or `Library-only` function is added, modified, removed, or restatused; the change is client-side validation before an existing, unchanged `create` endpoint.
@@ -270,12 +277,13 @@ All 21 sections resolved (PASS or justified N/A):
 
 ## Definition of Done
 
-- [ ] All acceptance criteria pass.
-- [ ] `pnpm --filter @legendary-arena/arena-client test` exits 0; `pnpm --filter @legendary-arena/arena-client typecheck` exits 0.
-- [ ] `ParseErrorCode` has exactly ten members; WP-093 template byte-unchanged; no registry/engine import in `parseLoadoutJson.ts` (`Select-String`).
-- [ ] No files outside `## Files Expected to Change` modified (`git diff --name-only`).
-- [ ] `docs/ai/STATUS.md` updated — the lobby now rejects non-qualified loadout ids with an actionable message instead of a server 500.
-- [ ] `docs/ai/DECISIONS.md` updated — **D-24025** (lobby qualified-form ext_id guard; tenth `parseLoadoutJson` error code `unqualified_ext_id`; grammar-only, layer-boundary-safe; reconciles the stale MATCH-SETUP-VALIDATION.md §Stage 2 pattern).
-- [ ] `docs/ai/work-packets/WORK_INDEX.md` has WP-254 checked off with today's date.
-- [ ] `docs/ai/execution-checklists/EC_INDEX.md` has EC-285 marked Done.
-- [ ] `docs/05-ROADMAP-MINDMAP.md` WP-254 node added; `node scripts/roadmap-counts.mjs --check` passes.
+- [x] All acceptance criteria pass.
+- [x] `pnpm --filter @legendary-arena/arena-client test` exits 0 (568 → 576 / 0); `pnpm --filter @legendary-arena/arena-client typecheck` exits 0.
+- [x] `ParseErrorCode` has exactly ten members; WP-093 template byte-unchanged; no registry/engine import in `parseLoadoutJson.ts` (import-line grep empty; `parseQualifiedId` comment-only).
+- [x] No files outside `## Files Expected to Change` modified in the `EC-285:` code commit (`git diff --name-only` = the four files).
+- [x] `docs/ai/STATUS.md` updated — the lobby now rejects non-qualified loadout ids with an actionable message instead of a server 500.
+- [x] `docs/ai/DECISIONS.md` updated — **D-24025** flipped Reserved → Active.
+- [x] `docs/ai/work-packets/WORK_INDEX.md` has WP-254 checked off (2026-06-16, EC-285 `25f40038`).
+- [x] `docs/ai/execution-checklists/EC_INDEX.md` has EC-285 marked Done.
+- [x] `docs/05-ROADMAP-MINDMAP.md` WP-254 node added; `node scripts/roadmap-counts.mjs --check` passes.
+- [ ] **D-24026 live-verification (User-Visible Surface = play.legendary-arena.com):** NOT done on green tests + a merged PR alone. Confirm the play.legendary-arena.com bundle is serving the WP-254 commit SHA (deploy-confirmed-SHA evidence — the parser is pure/deterministic ⇒ bundle-live = guard-live; optional gold-standard: paste a pre-D-24018 loadout and observe the `unqualified_ext_id` message in the lobby). Record the evidence here + in STATUS.md when the deploy confirms.

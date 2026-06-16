@@ -25167,8 +25167,10 @@ The eight fragmented `reveal-*` HeroKeywords (`reveal`, `reveal-ko`, `reveal-min
 
 **Empirical-scaffold redraft (2026-06-15).** The original WP-254 draft + hardening reasoned "strictly additive — no existing test changes" and reached READY without running the suite. A scaffold run showed the guard rejects the bare-slug valid-loadout fixtures: 568 → 552 pass / 16 fail (14 in `parseLoadoutJson.test.ts`, 2 in `lobbyApi.test.ts` — outside the original three-file allowlist). The redraft folds the bare-slug → qualified fixture migration into scope (assertions unchanged) and adds `lobbyApi.test.ts` to the allowlist (four code files). The incident also drove the `01.0a §Step 3` / `01.4 §Empirical Scaffold (Validation-Tightening WPs)` rule that any validation-tightening WP be scaffold-tested before its pre-flight verdict.
 
+**Verified (execution, 2026-06-16):** implemented per EC-285 (commit `25f40038`) — `ParseErrorCode` nine → ten; `isQualifiedExtId` mirrors `parseQualifiedId` (slash envelope only); fail-fast pass after the type loop, before `playerCount`; bracket-notation array fields; WP-093 five-copy template byte-unchanged; no registry/engine import. The bare-slug valid-loadout fixtures migrated to qualified ids (assertions unchanged); arena-client `test` **568 → 576 / 0**, `typecheck` 0.
 **Packet:** WP-254 (EC-285).
-**Status:** Reserved — drafted 2026-06-15; lands Active at WP-254 execution close.
+**Drafted:** 2026-06-15 (redrafted same day). **Landed:** 2026-06-16 (execution close).
+**Status:** Active — D-24026 live-verification pending (User-Visible Surface = play.legendary-arena.com; closes when the play bundle serves commit `25f40038`).
 
 ---
 
