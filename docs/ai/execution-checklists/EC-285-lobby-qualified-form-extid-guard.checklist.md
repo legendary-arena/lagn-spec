@@ -27,8 +27,10 @@ Authoritative execution contract for WP-254. Compliance is binary.
 - **Message (single-home — NOT the five-copy gate):**
   `The loadout field "<field>" value "<value>" is not a set-qualified ext_id of the form "<setAbbr>/<slug>" (for example, "core/black-widow"). This usually means the loadout was exported before the qualified-ext_id fix; re-export it from the Registry Viewer loadout builder at cards.barefootbetters.com.`
   `<field>` and `<value>` are the ONLY permitted substitutions, via `renderUnqualifiedExtIdMessage(field, value)`. This message lives in exactly ONE place (`parseLoadoutJson.ts`); it is documented (NOT byte-locked) in `MATCH-SETUP-VALIDATION.md`. It MUST NOT be added to the WP-093 five-copy byte-identity gate, and MUST NOT reuse/paraphrase the heroSelectionMode template.
+- **Template literal encoding (locked):** in TypeScript source the template uses **literal angle brackets** — exactly `"<field>"`, `"<value>"`, and the explanatory `"<setAbbr>/<slug>"` — never HTML entities (`&lt;`/`&gt;`). Mirror the existing `UNSUPPORTED_HERO_SELECTION_MODE_TEMPLATE`, which uses a literal `<value>`.
+- **Renderer + helper visibility (locked):** `renderUnqualifiedExtIdMessage`, `isQualifiedExtId`, and the array-walk helper are all **module-private** — none is exported, despite `renderUnsupportedModeMessage` being exported (WP-092). The new message has no cross-file contract. Tests exercise behavior through `parseLoadoutJson` and assert the full message against a literal expected string; they do NOT import these helpers.
 - **`field` presence (locked):** every `unqualified_ext_id` error carries `field`. Scalars: `composition.schemeId` / `composition.mastermindId`. Array element: `composition.<name>[<index>]` with bracket notation (e.g. `composition.heroDeckIds[2]`), mirroring the engine validator's `checkArrayExtIds` field style.
-- **Ordering (locked):** the qualified-form pass runs **after** the `COMPOSITION_FIELDS` type-check loop has fully succeeded (every entity-id is already a string / non-empty-string array) and is **fail-fast** (first offender returned, scalar fields before array fields, arrays in the order villain → henchman → hero, ascending index). A value that fails a type check returns its original `missing_field` / `wrong_type` code — it never reaches the qualified pass.
+- **Ordering (locked):** the qualified-form pass runs **after** the `COMPOSITION_FIELDS` type-check loop has fully succeeded (every entity-id is already a string / non-empty-string array) and **before** the `playerCount` checks, and is **fail-fast** (first offender returned, scalar fields before array fields, arrays in the order villain → henchman → hero, ascending index). A value that fails a type check returns its original `missing_field` / `wrong_type` code — it never reaches the qualified pass. Placing it before `playerCount` is deliberate: the stale-id error (the defect this EC exists to catch) surfaces as soon as the composition is structurally valid, not after unrelated envelope checks.
 - **Commit message (execution):** `EC-285: lobby qualified-form ext_id guard — parseLoadoutJson (D-24025)`. (`EC-###:` prefix — code staged. The drafting commit that lands this WP+EC is a separate `SPEC:` commit.)
 
 ---
@@ -71,10 +73,13 @@ Authoritative execution contract for WP-254. Compliance is binary.
 - [ ] `ParseErrorCode` has exactly 10 members; `"unqualified_ext_id"` present; nine originals byte-unchanged.
 - [ ] `isQualifiedExtId` truth table holds: false for `"core-scheme-midtown-bank-robbery"`, `"black-widow"`, `"/x"`, `"core/"`, `"core/x/y"`, `" core/x"`, `"core/x "`, `""`; true for `"core/black-widow"`, `"vill/magneto"`.
 - [ ] A flat-key `schemeId` → `unqualified_ext_id`, `field === 'composition.schemeId'`, `assert.strictEqual` on the full message; a flat-key `heroDeckIds[2]` → `field === 'composition.heroDeckIds[2]'`; an all-qualified document → `{ ok: true }`; a WP-092 regression case still returns its original code/message.
-- [ ] `Select-String -Path apps\arena-client\src\lobby\parseLoadoutJson.ts -Pattern "@legendary-arena/registry|@legendary-arena/game-engine|parseQualifiedId"` → no output.
+- [ ] **Type-precedence:** a non-string `schemeId` (e.g. `42`) returns the original `wrong_type` code, never `unqualified_ext_id` — proves the qualified pass runs only after the type-check loop.
+- [ ] **Cross-field first-offender:** a document with both `villainGroupIds[1]` and `heroDeckIds[0]` unqualified returns `field === 'composition.villainGroupIds[1]'` — proves villain → henchman → hero ordering fails fast before later arrays.
+- [ ] `Select-String -Path apps\arena-client\src\lobby\parseLoadoutJson.ts -Pattern "from\s+['""]@legendary-arena/(registry|game-engine)"` → no output (import lines only).
+- [ ] `Select-String -Path apps\arena-client\src\lobby\parseLoadoutJson.ts -Pattern "parseQualifiedId"` → matches ONLY the JSDoc/why comment naming the mirrored authority; no import statement and no `parseQualifiedId(` call site. (The import grep above is kept separate so the required citation does not self-trip the gate.)
 - [ ] WP-093 template const byte-unchanged (`git diff` shows additions only, no edit to `UNSUPPORTED_HERO_SELECTION_MODE_TEMPLATE`).
 - [ ] `MATCH-SETUP-VALIDATION.md §Stage 2` no longer carries the bare `^[a-z0-9-]+$` for composition ids; the lobby pre-check is documented.
-- [ ] `git diff --name-only` → only the three Files to Produce (+ governance at close).
+- [ ] `git diff --name-only` → in the `EC-285:` code commit, ONLY the three Files to Produce; the governance files (`STATUS.md`, `DECISIONS.md`, `WORK_INDEX.md`, `EC_INDEX.md`, `05-ROADMAP-MINDMAP.md`) appear only in the separate closeout commit, never bundled into the code commit.
 - [ ] `node scripts/roadmap-counts.mjs --check` passes (WP-254 node present).
 
 ---
@@ -84,6 +89,8 @@ Authoritative execution contract for WP-254. Compliance is binary.
 - A pre-existing WP-092 test's expected **code or message** changed → the new pass is not additive/ordered-after; it must only fire on a value that already passed its type check. Revert and re-order.
 - The new message reuses or paraphrases the heroSelectionMode template, or gets added to the five-copy gate → it is single-home; keep it separate (D-24025 vs D-9301).
 - `parseLoadoutJson.ts` imports `parseQualifiedId` / the engine / the registry → layer-boundary violation; re-derive the ≈6-line grammar locally.
+- The layer-boundary grep flags the required `parseQualifiedId` JSDoc citation as a violation → the import check must target `from '@legendary-arena/...'` import lines (Step 3), and the `parseQualifiedId` name legitimately appears in the mirrored-authority comment (Step 3b expects comment-only, not no-output). Do NOT delete the citation to satisfy a too-broad grep.
+- `renderUnqualifiedExtIdMessage` / `isQualifiedExtId` exported (copying the exported `renderUnsupportedModeMessage`) → they are module-private; the new message has no cross-file contract.
 - A valid qualified id (`"core/black-widow"`) is rejected → a charset check crept in; the grammar is slash-envelope ONLY.
 - `isQualifiedExtId("core/")` or `("/x")` returns true → the empty-segment guard is missing.
 - An array offender's `field` is `composition.heroDeckIds` without the `[index]` → bracket notation missing (mirror the engine's `checkArrayExtIds`).
