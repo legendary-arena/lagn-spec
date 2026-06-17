@@ -125,6 +125,37 @@ function buildLagnObject(
 }
 
 /**
+ * Checks that a LAGN file's variant and player_count agree, returning a
+ * full-sentence error per violation (empty array when they are consistent).
+ *
+ * Why this guard exists: the @legendary-arena/lagn schema validates variant
+ * and player_count independently — it accepts "solo" with player_count 2, or
+ * "cooperative" with player_count 1, because neither is structurally illegal.
+ * But a solo loadout with two seats can never start a solo match on the play
+ * surface: the engine holds the match in its lobby phase until every required
+ * seat readies (packages/game-engine/src/lobby/lobby.validate.ts
+ * validateCanStartMatch), so the lone player waits forever for a second who
+ * never joins. The Registry Viewer's default player count is 2 while the LAGN
+ * variant dropdown defaults to Classic (→ "solo"), so an unedited export is
+ * this exact contradiction. This export guard blocks it at authoring time
+ * rather than letting an unstartable file ship. It lives in the export layer,
+ * not the published spec validator, so the LAGN contract itself is unchanged.
+ */
+function checkVariantPlayerCountConsistency(lagn: LAGN): string[] {
+  if (lagn.variant === "solo" && lagn.player_count !== 1) {
+    return [
+      `This loadout's variant is "solo", which requires exactly 1 player, but the player count is ${lagn.player_count}. Set the "Player count (1–5)" field to 1 to export a solo loadout, or change the LAGN Variant to a multiplayer mode.`,
+    ];
+  }
+  if (lagn.variant !== "solo" && lagn.player_count < 2) {
+    return [
+      `This loadout's variant is "${lagn.variant}", which requires at least 2 players, but the player count is ${lagn.player_count}. Set the "Player count (1–5)" field to 2 or more to export a ${lagn.variant} loadout, or change the LAGN Variant to Classic (solo).`,
+    ];
+  }
+  return [];
+}
+
+/**
  * Builds a loadout-LAGN-export composable for a given draft.
  * Each invocation returns an independent composable (no module-level state).
  */
@@ -144,10 +175,13 @@ export function useLoadoutLagnExport(draft: Ref<MatchSetupDocument>): UseLoadout
       return ["Draft composition is incomplete (missing mastermind, scheme, villain group, henchman group, or hero group)."];
     }
     const result = validate(lagnObject.value);
-    if (result.valid) {
-      return [];
-    }
-    return result.errors || [];
+    const schemaErrors = result.valid ? [] : result.errors || [];
+    // why: the LAGN schema validates variant and player_count independently,
+    // so a "solo" export with 2 seats passes it but cannot start a solo match
+    // (see checkVariantPlayerCountConsistency). Append the cross-field guard
+    // so isValid drops and the Download LAGN button disables.
+    const consistencyErrors = checkVariantPlayerCountConsistency(lagnObject.value);
+    return [...schemaErrors, ...consistencyErrors];
   });
 
   const isValid = computed<boolean>(() => validationErrors.value.length === 0);
