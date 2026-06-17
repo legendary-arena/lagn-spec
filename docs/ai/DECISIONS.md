@@ -25310,4 +25310,26 @@ Implements the open half of **D-24029** (landed by WP-256). A card **mechanic** 
 **Packet:** Ad-hoc operator fix (branch `claude/fix-sample-loadout-bystander-count`; no WP) — conversational bug-fix from the Web-Shooters rescue field report.
 **Status:** Active.
 
+---
+
+**D-24033: Hollow-Effect Boundary — Handler-Reachability, Not State-Diff (Reason Taxonomy + Explicit Deferred Allowlist)**
+
+A declared card ability that produces nothing is a *hollow effect* — a defect the engine must surface — **only** when the declared mechanic reaches no executable handler. The classification is **handler reachability, NOT a `G` state-diff**: a reachable handler that intentionally no-ops (empty bystander supply, empty deck, a failed `[hc:]`/`[team:]` condition, or an explicitly-deferred mechanic) is correct behavior and is **not** hollow. The closed reason taxonomy `EFFECT_EXECUTION_REASONS = ['applied','handler-noop','condition-failed','deferred','no-handler','unsupported-keyword','parse-unrecognized']` (drift-tested) flags exactly three: `parse-unrecognized`, `no-handler`, `unsupported-keyword`. "Deferred = not hollow" holds only for mechanics on an explicit `DEFERRED_BY_DESIGN_MECHANICS` allowlist (its members locked here at execution) — `wound`/`conditional` have no handler today, so without the allowlist they would (mis)classify as `no-handler`.
+
+**Why:** the most likely implementation drift is diffing pre/post `G` and flagging correct empty-supply/failed-condition plays — a false-positive firehose on working behavior. Anchoring the boundary on reachability makes the detector precise: it fires on genuinely unimplemented mechanics (the Web-Shooters bug class, generalized to hero + villain/ambush) and stays silent on legitimate no-ops.
+
+**Packet:** WP-257 / EC-288. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §3`.
+**Status:** Drafted 2026-06-16; not yet landed (flips to Active when WP-257 executes).
+
+---
+
+**D-24034: Hollow-Effect Runtime Channel — `G.diagnostics.hollowEffects` (Shape, Cap/Reset, Parser `unresolvedMarkers` Surfacing)**
+
+The detector emits a `HollowEffectRecord { cardId; cardType: 'hero'|'villain'|'henchman'; timing; mechanic; reason; turn }` into a runtime-only channel `G.diagnostics = { hollowEffects: HollowEffectRecord[]; hollowEffectsDropped: number }`, plus one full-sentence `G.messages` line (the record is the machine-readable contract; the message is operator-visibility only). The channel is JSON-serializable, **runtime-only** (never persisted, never snapshotted), **never read as gameplay input** (no move/rule/`endIf` may consume it), bounded by `HOLLOW_EFFECTS_CAP` + a dropped-count, lazy-init at the push site (mirroring `pendingOptionalKoRewards`), and reset empty at the match-creation/hydration boundary (`buildInitialGameState`). Detecting `parse-unrecognized` requires the parser (`heroAbility.setup.ts` / `villainAbility.setup.ts`) to surface unresolved marker tokens on an additive `hook.unresolvedMarkers?: string[]` — hooks otherwise carry parsed descriptors only, so an unresolved marker is indistinguishable from flavor text, which must NOT flag.
+
+**Why:** the channel must observe without ever influencing the game (determinism + the persistence boundary: `G` is runtime-only). The `unresolvedMarkers` surfacing is the non-obvious enabler — without it, `parse-unrecognized` cannot be told apart from a no-mechanic flavor line.
+
+**Packet:** WP-257 / EC-288. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §4–§5`.
+**Status:** Drafted 2026-06-16; not yet landed (flips to Active when WP-257 executes).
+
 Protect this file.
