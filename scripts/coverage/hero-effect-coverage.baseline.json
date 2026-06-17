@@ -1,16 +1,16 @@
 {
   "corpus": {
-    "executable": 2600,
+    "executable": 2609,
     "heroes": 309,
-    "hooks": 5758,
-    "noEffect": 3153,
+    "hooks": 5949,
+    "noEffect": 3335,
     "parsedNotExecuted": 5
   },
   "perSet": {
     "2099": {
       "executable": 51,
-      "hooks": 111,
-      "noEffect": 60
+      "hooks": 112,
+      "noEffect": 61
     },
     "3dtc": {
       "executable": 41,
@@ -18,14 +18,14 @@
       "noEffect": 34
     },
     "amwp": {
-      "executable": 68,
-      "hooks": 183,
-      "noEffect": 115
+      "executable": 69,
+      "hooks": 187,
+      "noEffect": 118
     },
     "anni": {
       "executable": 73,
-      "hooks": 125,
-      "noEffect": 52
+      "hooks": 127,
+      "noEffect": 54
     },
     "antm": {
       "executable": 37,
@@ -34,18 +34,18 @@
     },
     "asrd": {
       "executable": 38,
-      "hooks": 92,
-      "noEffect": 54
+      "hooks": 102,
+      "noEffect": 64
     },
     "bkpt": {
-      "executable": 39,
-      "hooks": 114,
-      "noEffect": 75
+      "executable": 44,
+      "hooks": 135,
+      "noEffect": 91
     },
     "bkwd": {
       "executable": 22,
-      "hooks": 97,
-      "noEffect": 75
+      "hooks": 130,
+      "noEffect": 108
     },
     "ca75": {
       "executable": 54,
@@ -54,8 +54,8 @@
     },
     "chmp": {
       "executable": 29,
-      "hooks": 124,
-      "noEffect": 95
+      "hooks": 134,
+      "noEffect": 105
     },
     "core": {
       "executable": 149,
@@ -69,8 +69,8 @@
     },
     "cvwr": {
       "executable": 128,
-      "hooks": 291,
-      "noEffect": 163
+      "hooks": 300,
+      "noEffect": 172
     },
     "dead": {
       "executable": 41,
@@ -79,13 +79,13 @@
     },
     "dims": {
       "executable": 41,
-      "hooks": 97,
-      "noEffect": 56
+      "hooks": 105,
+      "noEffect": 64
     },
     "dkcy": {
       "executable": 177,
-      "hooks": 297,
-      "noEffect": 120
+      "hooks": 298,
+      "noEffect": 121
     },
     "dstr": {
       "executable": 40,
@@ -108,9 +108,9 @@
       "noEffect": 75
     },
     "mdns": {
-      "executable": 61,
-      "hooks": 115,
-      "noEffect": 54
+      "executable": 64,
+      "hooks": 123,
+      "noEffect": 59
     },
     "mgtg": {
       "executable": 39,
@@ -119,8 +119,8 @@
     },
     "msis": {
       "executable": 64,
-      "hooks": 91,
-      "noEffect": 27
+      "hooks": 94,
+      "noEffect": 30
     },
     "msmc": {
       "executable": 55,
@@ -134,8 +134,8 @@
     },
     "nmut": {
       "executable": 36,
-      "hooks": 88,
-      "noEffect": 52
+      "hooks": 98,
+      "noEffect": 62
     },
     "noir": {
       "executable": 21,
@@ -144,13 +144,13 @@
     },
     "pttr": {
       "executable": 45,
-      "hooks": 117,
-      "noEffect": 72
+      "hooks": 122,
+      "noEffect": 77
     },
     "rlmk": {
       "executable": 45,
-      "hooks": 118,
-      "noEffect": 73
+      "hooks": 120,
+      "noEffect": 75
     },
     "rvlt": {
       "executable": 55,
@@ -159,13 +159,13 @@
     },
     "shld": {
       "executable": 37,
-      "hooks": 104,
-      "noEffect": 67
+      "hooks": 107,
+      "noEffect": 70
     },
     "smhc": {
       "executable": 33,
-      "hooks": 103,
-      "noEffect": 70
+      "hooks": 119,
+      "noEffect": 86
     },
     "ssw1": {
       "executable": 138,
@@ -174,13 +174,13 @@
     },
     "ssw2": {
       "executable": 124,
-      "hooks": 256,
-      "noEffect": 132
+      "hooks": 271,
+      "noEffect": 147
     },
     "vill": {
       "executable": 139,
-      "hooks": 280,
-      "noEffect": 141
+      "hooks": 288,
+      "noEffect": 149
     },
     "vnom": {
       "executable": 47,
@@ -194,18 +194,18 @@
     },
     "wtif": {
       "executable": 74,
-      "hooks": 136,
-      "noEffect": 62
+      "hooks": 140,
+      "noEffect": 66
     },
     "wwhk": {
       "executable": 113,
-      "hooks": 328,
-      "noEffect": 215
+      "hooks": 336,
+      "noEffect": 223
     },
     "xmen": {
       "executable": 143,
-      "hooks": 322,
-      "noEffect": 179
+      "hooks": 332,
+      "noEffect": 189
     }
   },
   "schemaVersion": 1,
