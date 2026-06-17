@@ -4,6 +4,7 @@ import { defineComponent, ref, type PropType } from 'vue';
 import PlayDesktop from './PlayDesktop.vue';
 import PlayMobile from './PlayMobile.vue';
 import DiagnosticExportButton from '../components/DiagnosticExportButton.vue';
+import HollowEffectsPanel from '../components/play/HollowEffectsPanel.vue';
 import { useViewport } from '../composables/useViewport';
 import { useSkinApplier } from '../composables/useSkinApplier';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
@@ -34,7 +35,7 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
  */
 export default defineComponent({
   name: 'PlayViewport',
-  components: { PlayDesktop, PlayMobile, DiagnosticExportButton },
+  components: { PlayDesktop, PlayMobile, DiagnosticExportButton, HollowEffectsPanel },
   props: {
     submitMove: {
       type: Function as PropType<SubmitMove>,
@@ -95,6 +96,15 @@ export default defineComponent({
       :hero-deck-ids="heroDeckIds"
     />
     <DiagnosticExportButton />
+    <!--
+      // why: WP-258 — mounted ONCE here at the shared viewport root (the
+      // Mounting Rule's shared-child case), alongside <DiagnosticExportButton>,
+      // so a single fixed-position overlay covers BOTH the <PlayMobile> and
+      // <PlayDesktop> production play surfaces (whichever this viewport renders).
+      // The panel self-hides (v-if ≥1 record) so it adds no DOM during a clean
+      // match.
+    -->
+    <HollowEffectsPanel />
   </div>
 </template>
 

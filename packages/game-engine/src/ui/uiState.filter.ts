@@ -30,6 +30,9 @@ import type {
   UIKoPileState,
 } from './uiState.types.js';
 import type { UIAudience } from './uiAudience.types.js';
+// why: WP-258 — the filtered hollow-effect records are the engine's canonical
+// HollowEffectRecord (WP-257); the public pass-through copies them value-for-value.
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 
 // why: non-active players and spectators must not see the active player's
 // remaining resources (attack/recruit/piercing/woundsDrawn). Zeroed
@@ -524,6 +527,30 @@ export function filterUIStateForAudience(
       eligibleHand: eligibleHandCopy,
       eligibleDiscard: eligibleDiscardCopy,
     };
+  }
+
+  // why: WP-258 / D-12803 — hollowEffects is PUBLIC card/mechanic data, not
+  // hidden info. The filter passes it through value-unchanged for EVERY
+  // audience (own-player AND other-player AND spectator) — it redacts /
+  // reorders / rewrites / drops NOTHING. A per-record fresh-object copy
+  // (aliasing defense, mirroring the notableEvents / victoryCards posture)
+  // prevents the audience-filtered UIState from aliasing the input array, while
+  // every field value is preserved so both audiences deep-equal the source.
+  // Conditional assignment (never a `hollowEffects: undefined` literal) keeps
+  // the absent-channel case omitting the field under exactOptionalPropertyTypes.
+  if (uiState.hollowEffects !== undefined) {
+    const hollowEffectsCopy: HollowEffectRecord[] = [];
+    for (const record of uiState.hollowEffects) {
+      hollowEffectsCopy.push({
+        cardId: record.cardId,
+        cardType: record.cardType,
+        timing: record.timing,
+        mechanic: record.mechanic,
+        reason: record.reason,
+        turn: record.turn,
+      });
+    }
+    result.hollowEffects = hollowEffectsCopy;
   }
 
   return result;

@@ -36,6 +36,9 @@ import type {
   UIPendingOptionalKoReward,
   UIEligibleKoHeroCard,
 } from './uiState.types.js';
+// why: WP-258 — the projected hollow-effect record type is the engine's
+// canonical HollowEffectRecord (WP-257), reused directly, not a parallel UI type.
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
 import { resolveFightCost } from '../economy/economy.resolve.js';
 import { evaluateEndgame } from '../endgame/endgame.evaluate.js';
@@ -806,6 +809,35 @@ export function buildUIState(
     }
   }
 
+  // --- 13d. Project hollow-effect diagnostics (read-only) ---
+  // why: WP-258 — surface the WP-257 runtime channel G.diagnostics.hollowEffects
+  // onto UIState. Read-only over G (buildUIState NEVER mutates G); per-record
+  // fresh objects so the projection holds no reference into G.diagnostics
+  // (aliasing defense, WP-111 D-11105). When the channel is absent (older
+  // snapshots / narrow test mocks never wrote it), the field is OMITTED — no
+  // empty-array injection that would dirty optional-field fixtures (mirrors the
+  // pendingHeroChoice / gameOver omit-when-absent posture). The records are
+  // public card/mechanic data, not hidden info, so the audience filter passes
+  // them through value-unchanged (D-12803).
+  let hollowEffects: HollowEffectRecord[] | undefined;
+  if (
+    gameState.diagnostics !== undefined &&
+    gameState.diagnostics.hollowEffects.length > 0
+  ) {
+    const projectedHollowEffects: HollowEffectRecord[] = [];
+    for (const record of gameState.diagnostics.hollowEffects) {
+      projectedHollowEffects.push({
+        cardId: record.cardId,
+        cardType: record.cardType,
+        timing: record.timing,
+        mechanic: record.mechanic,
+        reason: record.reason,
+        turn: record.turn,
+      });
+    }
+    hollowEffects = projectedHollowEffects;
+  }
+
   // --- 14. Project game over ---
   // why: endgame state derived from G counters via evaluateEndgame
   // (pure); scores reuse the finalScores already computed for victoryVP
@@ -852,5 +884,9 @@ export function buildUIState(
     ...(pendingHeroChoice !== undefined ? { pendingHeroChoice } : {}),
     ...(pendingKoHeroChoice !== undefined ? { pendingKoHeroChoice } : {}),
     ...(pendingOptionalKoReward !== undefined ? { pendingOptionalKoReward } : {}),
+    // why: WP-258 — conditional spread so an absent channel omits the field
+    // (no `hollowEffects: undefined` literal under exactOptionalPropertyTypes,
+    // and no empty-array injection that would dirty optional-field fixtures).
+    ...(hollowEffects !== undefined ? { hollowEffects } : {}),
   };
 }

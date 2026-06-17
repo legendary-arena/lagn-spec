@@ -19,6 +19,7 @@ import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { CardRegistryReader } from '../matchSetup.validate.js';
 import type { UIState } from './uiState.types.js';
 import type { UIAudience } from './uiAudience.types.js';
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 
 /** Audience constants for test readability. */
 const PLAYER_0: UIAudience = { kind: 'player', playerId: '0' };
@@ -481,5 +482,132 @@ describe('filterUIStateForAudience — pendingOptionalKoReward redaction (D-2402
     const uiState = createOptionalRewardUIState();
     filterUIStateForAudience(uiState, PLAYER_1);
     assert.ok(uiState.pendingOptionalKoReward !== undefined, 'source UIState unchanged');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-258 / EC-289 — hollowEffects public value-preserving pass-through (D-12803)
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds two sample HollowEffectRecord values for the pass-through tests.
+ */
+function sampleHollowEffectRecords(): HollowEffectRecord[] {
+  return [
+    {
+      cardId: 'core/black-widow/covert-operation#0',
+      cardType: 'hero',
+      timing: 'onPlay',
+      mechanic: 'covert-operation',
+      reason: 'no-handler',
+      turn: 3,
+    },
+    {
+      cardId: 'core/doombot-legion#1',
+      cardType: 'villain',
+      timing: 'onAmbush',
+      mechanic: 'ambush-discard',
+      reason: 'unsupported-keyword',
+      turn: 5,
+    },
+  ];
+}
+
+/**
+ * Builds a UIState carrying a populated G.diagnostics.hollowEffects channel.
+ */
+function createHollowEffectsUIState(): UIState {
+  const config = createTestConfig();
+  const registry = createMockRegistry();
+  const setupContext = makeMockCtx();
+  const gameState = buildInitialGameState(config, registry, setupContext);
+  gameState.diagnostics = {
+    hollowEffects: sampleHollowEffectRecords(),
+    hollowEffectsDropped: 0,
+  };
+  return buildUIState(gameState, mockCtx);
+}
+
+describe('filterUIStateForAudience — hollowEffects public pass-through (D-12803)', () => {
+  it('own-player filtered hollowEffects deep-equals the source records', () => {
+    // why: D-12803 — hollowEffects is public card/mechanic data; the filter must
+    // pass it through value-unchanged for the own-player audience.
+    const uiState = createHollowEffectsUIState();
+    const source = uiState.hollowEffects;
+
+    const result = filterUIStateForAudience(uiState, PLAYER_0);
+
+    assert.ok(result.hollowEffects !== undefined, 'own-player must see hollowEffects');
+    assert.deepStrictEqual(
+      result.hollowEffects,
+      source,
+      'own-player hollowEffects must deep-equal the source records',
+    );
+  });
+
+  it('other-player filtered hollowEffects deep-equals the SAME source records', () => {
+    // why: D-12803 — the filter redacts NOTHING for hollowEffects; an opponent
+    // sees the identical record values (no redact / reorder / rewrite / drop).
+    const uiState = createHollowEffectsUIState();
+    const source = uiState.hollowEffects;
+
+    const result = filterUIStateForAudience(uiState, PLAYER_1);
+
+    assert.ok(result.hollowEffects !== undefined, 'other-player must see hollowEffects');
+    assert.deepStrictEqual(
+      result.hollowEffects,
+      source,
+      'other-player hollowEffects must deep-equal the same source records',
+    );
+  });
+
+  it('spectator filtered hollowEffects deep-equals the SAME source records', () => {
+    // why: D-12803 — spectators are a non-owner public audience; same value-
+    // preserving pass-through as the other-player case.
+    const uiState = createHollowEffectsUIState();
+    const source = uiState.hollowEffects;
+
+    const result = filterUIStateForAudience(uiState, SPECTATOR);
+
+    assert.ok(result.hollowEffects !== undefined, 'spectator must see hollowEffects');
+    assert.deepStrictEqual(result.hollowEffects, source);
+  });
+
+  it('passes through value-equal but NOT array-identical (per-record fresh copy)', () => {
+    // why: aliasing defense — value equality is required, array identity is NOT
+    // (a shallow/per-record copy is allowed/preferred so the filtered view does
+    // not alias the input). Mutating the filtered copy must not touch the source.
+    const uiState = createHollowEffectsUIState();
+
+    const result = filterUIStateForAudience(uiState, PLAYER_0);
+
+    assert.notStrictEqual(
+      result.hollowEffects,
+      uiState.hollowEffects,
+      'filtered hollowEffects must be a fresh array, not the same reference',
+    );
+    result.hollowEffects![0]!.mechanic = 'mutated';
+    assert.notEqual(
+      uiState.hollowEffects![0]!.mechanic,
+      'mutated',
+      'source UIState hollowEffects untouched by mutating the filtered copy',
+    );
+  });
+
+  it('omits hollowEffects for all audiences when the source has none', () => {
+    // why: optional field — an absent source omits it for every audience (no
+    // empty-array injection).
+    const config = createTestConfig();
+    const registry = createMockRegistry();
+    const setupContext = makeMockCtx();
+    const gameState = buildInitialGameState(config, registry, setupContext);
+    const uiState = buildUIState(gameState, mockCtx);
+    assert.equal(uiState.hollowEffects, undefined);
+
+    for (const audience of [PLAYER_0, PLAYER_1, SPECTATOR]) {
+      const result = filterUIStateForAudience(uiState, audience);
+      assert.equal(result.hollowEffects, undefined);
+      assert.equal('hollowEffects' in result, false);
+    }
   });
 });

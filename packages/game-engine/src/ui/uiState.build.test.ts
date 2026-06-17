@@ -19,6 +19,7 @@ import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { CardRegistryReader } from '../matchSetup.validate.js';
 import type { LegendaryGameState, CardExtId, PendingHeroChoice } from '../types.js';
 import type { UICardDisplay } from './uiState.types.js';
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
 
 /**
@@ -1103,5 +1104,135 @@ describe('buildUIState — pendingOptionalKoReward projection (WP-249 / D-24020)
     const before = JSON.stringify(gameState);
     buildUIState(gameState, mockCtx);
     assert.equal(JSON.stringify(gameState), before, 'G byte-identical after projection');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-258 / EC-289 — hollowEffects projection (WP-257 G.diagnostics channel)
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds two sample HollowEffectRecord values for the projection tests. Plain
+ * JSON shape (cardId, cardType, timing, mechanic, reason, turn) per WP-257.
+ */
+function sampleHollowEffectRecords(): HollowEffectRecord[] {
+  return [
+    {
+      cardId: 'core/black-widow/covert-operation#0' as CardExtId,
+      cardType: 'hero',
+      timing: 'onPlay',
+      mechanic: 'covert-operation',
+      reason: 'no-handler',
+      turn: 3,
+    },
+    {
+      cardId: 'core/doombot-legion#1' as CardExtId,
+      cardType: 'villain',
+      timing: 'onAmbush',
+      mechanic: 'ambush-discard',
+      reason: 'unsupported-keyword',
+      turn: 5,
+    },
+  ];
+}
+
+describe('buildUIState — hollowEffects projection (WP-258 / EC-289)', () => {
+  it('omits hollowEffects when G has no diagnostics channel', () => {
+    // why: an absent channel must project as an absent UIState field — no
+    // empty-array injection that would dirty optional-field fixtures (EC-289).
+    const gameState = createTestGameState();
+    assert.equal(gameState.diagnostics, undefined);
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      ui.hollowEffects,
+      undefined,
+      'hollowEffects must be absent from UIState when G has no diagnostics channel',
+    );
+    assert.equal(
+      'hollowEffects' in ui,
+      false,
+      'the field key must not appear at all when the channel is absent',
+    );
+  });
+
+  it('omits hollowEffects when the channel exists but is empty', () => {
+    // why: an empty channel is the no-hollow-effects case; omit rather than
+    // ship an empty array (keeps the absent-vs-present contract clean).
+    const gameState = createTestGameState();
+    gameState.diagnostics = { hollowEffects: [], hollowEffectsDropped: 0 };
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(ui.hollowEffects, undefined);
+    assert.equal('hollowEffects' in ui, false);
+  });
+
+  it('projects the exact record values when the channel carries records', () => {
+    // why: the projection surfaces the WP-257 channel value-for-value (EC-289).
+    const gameState = createTestGameState();
+    const records = sampleHollowEffectRecords();
+    gameState.diagnostics = {
+      hollowEffects: records,
+      hollowEffectsDropped: 0,
+    };
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.ok(ui.hollowEffects !== undefined, 'hollowEffects must be present');
+    assert.deepStrictEqual(
+      ui.hollowEffects,
+      records,
+      'projected hollowEffects must deep-equal the source records',
+    );
+  });
+
+  it('does not alias G.diagnostics.hollowEffects (per-record fresh objects)', () => {
+    // why: aliasing defense (WP-111 D-11105) — mutating the projection must not
+    // reach back into G; the projected entries must be fresh objects.
+    const gameState = createTestGameState();
+    const records = sampleHollowEffectRecords();
+    gameState.diagnostics = {
+      hollowEffects: records,
+      hollowEffectsDropped: 0,
+    };
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.notStrictEqual(
+      ui.hollowEffects,
+      gameState.diagnostics.hollowEffects,
+      'projected array must not be the same reference as G.diagnostics.hollowEffects',
+    );
+    assert.notStrictEqual(
+      ui.hollowEffects![0],
+      gameState.diagnostics.hollowEffects[0],
+      'each projected record must be a fresh object',
+    );
+    ui.hollowEffects![0]!.mechanic = 'mutated-by-aliasing-test';
+    assert.equal(
+      gameState.diagnostics.hollowEffects[0]!.mechanic,
+      records[0]!.mechanic,
+      'G.diagnostics must NOT be aliased by the projected hollowEffects',
+    );
+  });
+
+  it('buildUIState does not mutate G when projecting hollowEffects', () => {
+    // why: read-only projection contract — G must be byte-identical afterward.
+    const gameState = createTestGameState();
+    gameState.diagnostics = {
+      hollowEffects: sampleHollowEffectRecords(),
+      hollowEffectsDropped: 0,
+    };
+    const before = JSON.stringify(gameState);
+
+    buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      JSON.stringify(gameState),
+      before,
+      'G byte-identical after hollowEffects projection',
+    );
   });
 });

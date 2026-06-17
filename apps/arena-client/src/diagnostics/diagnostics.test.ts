@@ -186,6 +186,39 @@ describe('diagnostics — pure redaction + report builders', () => {
     assert.deepEqual(roundTripped.uiStateSnapshot, snapshot);
   });
 
+  test('should_carry_hollowEffects_on_uiStateSnapshot_through_export_when_present', () => {
+    // why: WP-258 / EC-289 — the structured hollow-effect records ride the
+    // Download-diagnostics export for free: once `hollowEffects` is on UIState,
+    // the snapshot the button reads (uiStateSnapshot) carries them and the pure
+    // builder serializes them verbatim. This proves the export carries them
+    // WITHOUT any diagnostics.ts / DiagnosticExportButton.vue production change.
+    const hollowEffects = [
+      {
+        cardId: 'core/black-widow/covert-operation#0',
+        cardType: 'hero',
+        timing: 'onPlay',
+        mechanic: 'covert-operation',
+        reason: 'no-handler',
+        turn: 3,
+      },
+      {
+        cardId: 'core/doombot-legion#1',
+        cardType: 'villain',
+        timing: 'onAmbush',
+        mechanic: 'ambush-discard',
+        reason: 'unsupported-keyword',
+        turn: 5,
+      },
+    ];
+    const snapshot = { currentStage: 'main', hollowEffects };
+    const report = buildDiagnosticReport(
+      [],
+      sampleContext({ uiStateSnapshot: snapshot }),
+    );
+    const roundTripped = JSON.parse(serializeDiagnosticReport(report));
+    assert.deepEqual(roundTripped.uiStateSnapshot.hollowEffects, hollowEffects);
+  });
+
   test('should_serialize_uiStateSnapshot_null_when_no_match_active', () => {
     const report = buildDiagnosticReport(
       [],

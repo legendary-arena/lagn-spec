@@ -22,6 +22,10 @@
 
 import type { FinalScoreSummary } from "../scoring/scoring.types.js";
 import type { NotableGameEvent } from "../events/notableEvents.types.js";
+// why: WP-258 — reuse the engine's canonical HollowEffectRecord rather than
+// declaring a parallel UI type. The projection surfaces the WP-257 runtime
+// channel (G.diagnostics.hollowEffects) to the client unchanged.
+import type { HollowEffectRecord } from "../diagnostics/hollowEffect.types.js";
 
 // why: UIState is the only data the UI sees. All items in the canonical
 // forbidden internals list (hookRegistry, ImplementationMap, cardStats,
@@ -87,6 +91,15 @@ export interface UIState {
   // hand-privacy analog). Absent (undefined) means no pending optional-KO-reward
   // choice.
   pendingOptionalKoReward?: UIPendingOptionalKoReward;
+  // why: WP-258 — projects the WP-257 runtime hollow-effect channel
+  // (G.diagnostics.hollowEffects) so the client can render a structured debug
+  // panel + carry the records on the Download-diagnostics export. OPTIONAL on
+  // purpose: an absent channel omits the field entirely, so existing client
+  // UIState fixtures need no backfill (the WP-166/207/227 required-field
+  // recurrence). The records are PUBLIC (card/mechanic identities, never hidden
+  // state) and pass through the audience filter value-unchanged for every
+  // audience (D-12803 public-projection posture — like `log`/`piles`).
+  hollowEffects?: HollowEffectRecord[];
 }
 
 /**
