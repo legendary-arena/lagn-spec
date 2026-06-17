@@ -12,6 +12,7 @@ import { parseLoadoutJson } from './parseLoadoutJson';
 import type { ParsedLoadout } from './parseLoadoutJson';
 import { convertLagnUpload } from './lagnLoadout';
 import type { LagnDisplayNames } from './lagnLoadout';
+import { persistMatchSetup } from '../diagnostics/matchSetupSession';
 
 // why: defineComponent({ setup() { return {...} } }) is required (NOT
 // <script setup>) because the template references non-prop bindings under
@@ -173,6 +174,10 @@ export default defineComponent({
         const config = buildConfig();
         const seatCount = parsePositiveInteger(numPlayers.value, 'numPlayers');
         const created = await createMatch(config, seatCount);
+        // why: stash the submitted setup so the play-surface Download diagnostics
+        // can include the input pile counts (matchSetupSession; client-local,
+        // no network egress). Best-effort — never blocks create/join.
+        persistMatchSetup(created.matchID, config);
         const joined = await joinMatch(created.matchID, '0', playerName.value.trim());
         const query =
           `?match=${encodeURIComponent(created.matchID)}` +
@@ -347,6 +352,10 @@ export default defineComponent({
         // fields other than playerCount are dropped on submission per
         // D-9201 (envelope archival is a future server-side concern).
         const created = await createMatch(parsed.composition, parsed.playerCount);
+        // why: stash the submitted composition so the play-surface Download
+        // diagnostics can include the input pile counts (matchSetupSession;
+        // client-local, no network egress). Best-effort — never blocks create/join.
+        persistMatchSetup(created.matchID, parsed.composition);
         const joined = await joinMatch(
           created.matchID,
           '0',

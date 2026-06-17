@@ -43,6 +43,10 @@ function sampleContext(
     // it to null (the no-active-match case) so existing builder cases stay
     // unchanged, and snapshot-specific cases override it explicitly.
     uiStateSnapshot: null,
+    // why: DiagnosticContext now requires matchSetup; defaults to null (no setup
+    // persisted) so existing builder cases stay unchanged, and the matchSetup
+    // case overrides it explicitly.
+    matchSetup: null,
     ...overrides,
   };
 }
@@ -191,6 +195,34 @@ describe('diagnostics — pure redaction + report builders', () => {
     const serialized = serializeDiagnosticReport(report);
     assert.match(serialized, /"uiStateSnapshot": null/);
     assert.strictEqual(JSON.parse(serialized).uiStateSnapshot, null);
+  });
+
+  test('should_carry_matchSetup_through_and_round_trip_when_present', () => {
+    const matchSetup = {
+      schemeId: 'core/midtown-bank-robbery',
+      bystandersCount: 1,
+      woundsCount: 30,
+      officersCount: 5,
+      sidekicksCount: 12,
+    };
+    const report = buildDiagnosticReport(
+      [],
+      sampleContext({ matchSetup }),
+    );
+    // The exact reference comes back — proving no clone or transformation between
+    // context and report (same posture as uiStateSnapshot).
+    assert.strictEqual(report.matchSetup, matchSetup);
+    const roundTripped = JSON.parse(serializeDiagnosticReport(report));
+    assert.deepEqual(roundTripped.matchSetup, matchSetup);
+  });
+
+  test('should_serialize_matchSetup_null_when_none_persisted', () => {
+    const report = buildDiagnosticReport([], sampleContext({ matchSetup: null }));
+    assert.strictEqual(report.matchSetup, null);
+    assert.strictEqual(
+      JSON.parse(serializeDiagnosticReport(report)).matchSetup,
+      null,
+    );
   });
 
   test('should_pass_frozen_snapshot_through_unmodified_when_builder_runs', () => {

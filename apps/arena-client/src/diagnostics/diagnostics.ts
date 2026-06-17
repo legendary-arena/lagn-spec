@@ -68,6 +68,14 @@ export interface DiagnosticContext {
    * here: it is serialized into the report, never inspected.
    */
   uiStateSnapshot: unknown;
+  // why: the INPUT match-setup composition (scheme / mastermind / groups / heroes
+  // + the four supply-pile counts) the caller read back from sessionStorage via
+  // matchSetupSession at export click, or `null` when none was persisted (a join
+  // the client did not create, or a non-browser context). It pairs the *input*
+  // config with the snapshot's *live* pile counts so an under-provisioned supply
+  // (the Web-Shooters rescue bug class) is one read instead of a code hunt.
+  // Opaque here for the same reason as uiStateSnapshot: serialized, never inspected.
+  matchSetup: unknown;
 }
 
 /**
@@ -95,6 +103,11 @@ export interface DiagnosticReport {
    * rationale on {@link DiagnosticContext.uiStateSnapshot}.
    */
   uiStateSnapshot: unknown;
+  /**
+   * The INPUT match-setup composition at export click, or `null` when none was
+   * persisted. Carried through opaque — see {@link DiagnosticContext.matchSetup}.
+   */
+  matchSetup: unknown;
   entries: DiagnosticEntry[];
 }
 
@@ -465,6 +478,7 @@ export function buildDiagnosticReport(
     entryDroppedCount: context.entryDroppedCount,
     truncated: context.entryDroppedCount > 0,
     uiStateSnapshot: context.uiStateSnapshot,
+    matchSetup: context.matchSetup,
     entries,
   };
 }

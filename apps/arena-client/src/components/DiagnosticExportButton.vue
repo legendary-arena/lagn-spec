@@ -10,6 +10,7 @@ import {
   buildDiagnosticFileName,
   type DiagnosticContext,
 } from '../diagnostics/diagnostics';
+import { readMatchSetup } from '../diagnostics/matchSetupSession';
 import { useUiStateStore } from '../stores/uiState';
 
 /**
@@ -41,6 +42,7 @@ export default defineComponent({
     function collectContext(capturedAtMs: number): DiagnosticContext {
       const redactedHref = redactCredentialsFromUrl(window.location.href);
       const params = new URLSearchParams(window.location.search);
+      const matchId = params.get('match');
       return {
         appVersion: __APP_VERSION__,
         gitSha: __GIT_SHA__,
@@ -50,7 +52,7 @@ export default defineComponent({
         // packages/game-engine only).
         capturedAtIso: new Date(capturedAtMs).toISOString(),
         locationHref: redactedHref,
-        matchId: params.get('match'),
+        matchId,
         playerId: params.get('player'),
         userAgent: navigator.userAgent,
         viewportWidth: window.innerWidth,
@@ -60,6 +62,10 @@ export default defineComponent({
         // store the live session already maintains; it is the player's own
         // audience-filtered view (no cross-player data, no engine import).
         uiStateSnapshot: useUiStateStore().snapshot,
+        // why: the INPUT match-setup config persisted at match creation, keyed by
+        // the same matchId; pairs the input pile counts with the snapshot's live
+        // counts. null when this client did not create the match.
+        matchSetup: readMatchSetup(matchId),
       };
     }
 
