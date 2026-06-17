@@ -359,26 +359,29 @@ deployed before the newsletter send.
 ### Email signature block
 
 The personal email sign-off for outbound mail — logo, name, role, the
-two canonical links, and the brand sign-off line. Paste the HTML
-verbatim into the mail client's signature setting (or wherever a
-personal sender sign-off is wanted). Colors map to the documented email
-design tokens: `#1a1d2e` text-primary, `#4a5168` text-secondary,
-`#1d4ed8` link blue, `#7a1d1f` brand red.
+two canonical links, the brand sign-off line, and social links. Paste
+the HTML verbatim into a mail client that renders HTML signatures.
+Colors map to the documented email design tokens: `#1a1d2e`
+text-primary, `#4a5168` text-secondary, `#1d4ed8` link blue, `#7a1d1f`
+brand red.
 
 ```html
-<table border="0" cellpadding="0" cellspacing="0" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.4; color: #1a1d2e;">
+<table border="0" cellpadding="0" cellspacing="0" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.5; color: #1a1d2e;">
   <tr>
-    <td style="padding-right: 15px; vertical-align: top;">
-      <img src="https://www.legendary-arena.com/images/logo-la.jpg" alt="Legendary Arena" width="180" style="display: block;">
+    <td style="padding-right: 20px; vertical-align: top;">
+      <img src="https://www.legendary-arena.com/images/logo-la.jpg" alt="Legendary Arena" width="200" style="display: block;">
     </td>
-    <td style="vertical-align: top; padding-top: 8px;">
-      <strong style="font-size: 16px; color: #1a1d2e;">Jeffery J. Jensen</strong><br>
+    <td style="vertical-align: top; padding-top: 10px;">
+      <strong style="font-size: 17px; color: #1a1d2e;">Jeffery J. Jensen</strong><br>
       <span style="color: #4a5168;">Founder &amp; Game Architect</span><br><br>
 
       <a href="https://www.legendary-arena.com" style="color: #1d4ed8; text-decoration: none;">www.legendary-arena.com</a><br>
       <a href="mailto:jeff@legendary-arena.com" style="color: #1d4ed8; text-decoration: none;">jeff@legendary-arena.com</a><br><br>
 
-      <span style="color: #7a1d1f; font-style: italic;">Mastery — not luck — determines victory.</span>
+      <span style="color: #7a1d1f; font-style: italic;">Every game is fair. Every result is provable.</span><br><br>
+
+      <a href="https://www.youtube.com/@playlegendaryarena" style="color: #1d4ed8; text-decoration: none;">YouTube</a> •
+      <a href="https://www.facebook.com/playlegendaryarena/" style="color: #1d4ed8; text-decoration: none;">Facebook</a>
     </td>
   </tr>
 </table>
@@ -387,14 +390,19 @@ design tokens: `#1a1d2e` text-primary, `#4a5168` text-secondary,
 **Notes:**
 
 - Brand voice holds: no emoji, no exclamation marks. The sign-off line
-  "Mastery — not luck — determines victory." is mechanics-forward, which
-  matches the brand rule to lead with mechanics over fantasy.
-- **Logo asset pending.** The `src` resolves to
-  `C:\www\legendary-arena-com\static\images\logo-la.jpg` (Hugo serves it
-  at `/images/logo-la.jpg`). Save the winged-emblem logo there as a PNG
-  or JPG — not SVG; Outlook and Gmail do not render SVG in email. Export
-  it ~360px wide so it stays crisp at the 180px display size. Until the
-  file exists, the logo will 404.
+  "Every game is fair. Every result is provable." is mechanics-forward,
+  which matches the brand rule to lead with mechanics over fantasy.
+- **Outlook needs a flat image.** Outlook does not render HTML-table or
+  SVG signatures, so a flattened raster of this block is published at
+  `C:\www\legendary-arena-com\static\images\email-signature-jeff.jpg`
+  (served at `/images/email-signature-jeff.jpg`). Insert that image in
+  the Outlook signature editor; use the HTML above only in clients that
+  render HTML signatures. Regenerate the image whenever this block
+  changes.
+- **Logo.** The `src` resolves to
+  `C:\www\legendary-arena-com\static\images\logo-la.jpg` (served at
+  `/images/logo-la.jpg`) — published, a raster (gold-on-black), not SVG,
+  since Outlook and Gmail do not render SVG in email.
 
 ### Linking requirements
 
